@@ -1,286 +1,534 @@
-Return-Path: <linux-kernel+bounces-237272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB1D91EE64
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:37:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053F291EE68
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708F11F22AD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:37:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE954283873
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302035477A;
-	Tue,  2 Jul 2024 05:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECF75A0FE;
+	Tue,  2 Jul 2024 05:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="2y3U4cXc"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wzkLo0iN"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA853EA9A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 05:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B452B9D8
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 05:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719898656; cv=none; b=WffVcX8Qc9I3PKR+cKqIJcLq74xuBuMVn5jVUGUqVxJ5BnmOvFn6UQFADRuCAt8yF+F3DqN4InysjEjzBkbxulbRCdm6YYQh1vibyksz62bmDZ9UuKw1N9esqaId/m0Sbw17iH1tk3uib7g10sMGOsSNgujx9pYRjqGt6dfX+FY=
+	t=1719898678; cv=none; b=RC/ERLYRfa0126keydmJC86QHTbI8Vh8Np6eP5LlDVes9j66xq07FazPbGYf4Ao612iopM0C9ibgCkn6hWjNuZX8npopAqoB7tkoDx9vjKmsSvYelOX3i6g8ce3fNwrn8LhxmAVu54FDNl0Knk/7sXpGQUUt59vi0n/PCw9j4XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719898656; c=relaxed/simple;
-	bh=VVbh0fQ7/Q2au2kwoY1UK0e85qra4bt9HY3Ly61I5K0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tFZypMiJYc6vB2SYp+OrgD4X2MyPL2A/m5rfAyNCzczRz4MMPKHHcadCt7SgEQAaU6gW6QsAj5kFVi9YecHHdyADcL36P9gfiaiRJbthm1LJawisKISlmOmOKl3yYhHp0+HiRMsCyxxo/c1G8rOCLU6tV4UMzdTge5P3O7NnBo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=2y3U4cXc; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fa9f540f45so21116715ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 22:37:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719898653; x=1720503453; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QylUuXEtNL3Eo0vKPHJFlDtSdhA+F4KnUDy2bHeIjjY=;
-        b=2y3U4cXcNcx5T2KOxAFsBFR6Vayr//5HhAnuY1M26FAqDH9qdyP2kGo83qayKSB6lG
-         LGIf+a5SPuNncRhoniY2+XGLJvRB0mEMuZz28IbHJm+icyf8/k88IxEVV2e7UphHWvpm
-         jve4YAHOZlpdR80fL/op9YR8tM5B6pao7lfNVRdqA2+Qt8mx07DQcMADu0mFMxwvegOR
-         OGzSSuqbJ5l3VSLwECJCkqL+wPGA8QmoxyT3xQUhNpNU13yJdwTCDOfyIb8H+p/JJ2dr
-         0KJVcIxLgkszJehD/YuoPHcIiCJE/UAnj9ahQdwAa3egGDBjWno+rSjf7tXqreZOlJkq
-         +IYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719898653; x=1720503453;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QylUuXEtNL3Eo0vKPHJFlDtSdhA+F4KnUDy2bHeIjjY=;
-        b=Ns+a9KOwzg2ggMqw6jYCri/dYTKawACanwc6bmXo5DI0YsJ0gSPr9fc/2Zsh6cgggi
-         ZiLjSpI/QH7ALd4zzVbViYtgyren6BZ8ETMfRIAvNaZ6ZKpwcmLokDU/sx2QkE9S8Dh8
-         Fiiio2MmuGS3oFAfQn3kfjV9n7UKbz8WBLfKYzEYE7dZQide102/MV6oPeYJv99IdXsQ
-         a2FxmnH4OMWQ2h2RL55oCBcR1xGl5G2/8HpuRGG8EiABdI6rA4aQl1BBWqJdDtekQqsN
-         UYgTh/vA8JdhgOPGwiWxxLshJ83MSL9OypkbLkFRMaTtowWarEih6UIjhCfr3w95+jEG
-         2RaA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTNj1BcnI2/8Nra2Uju973o/Z4jw8jMTO5DEZKRzrN/vcY3avdLtC2LznJJdQCs4FoZaiFCFaagTR4agTJNTuD2lV6PduFNeu0cZ70
-X-Gm-Message-State: AOJu0Yze3tOT/QJOGnss/jkMpr9KUsznShURhQNwAWqBvPmqxC7vJm0i
-	uPi29+BTX1PWujoszrT3mFnwMLsgUuP+rYNoWRj1AqEPU7l+x4QhyokT83Bf7m0=
-X-Google-Smtp-Source: AGHT+IHD/AlEviT8SXJiTbsVNwnXf2yMzxVXULAD/ULUcJEhqMDI0cnZbgXoTsLn/2TmyvmqZXXKYw==
-X-Received: by 2002:a17:902:e5cb:b0:1f6:6ef0:dae4 with SMTP id d9443c01a7336-1fadbca5bc3mr43646675ad.32.1719898653462;
-        Mon, 01 Jul 2024 22:37:33 -0700 (PDT)
-Received: from ghost ([2601:647:5700:6860:a569:328b:99ad:ce17])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10d15a9sm74873685ad.37.2024.07.01.22.37.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 22:37:32 -0700 (PDT)
-Date: Mon, 1 Jul 2024 22:37:30 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: zhouquan@iscas.ac.cn
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, oleg@redhat.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	andy.chiu@sifive.com, shuah@kernel.org
-Subject: Re: [PATCH v1 2/2] riscv: selftests: Add a ptrace test to verify
- syscall parameter modification
-Message-ID: <ZoOSGt9jbKn1f37d@ghost>
-References: <cover.1719408040.git.zhouquan@iscas.ac.cn>
- <1e9cbab1b0badc05592fce46717418930076a6ae.1719408040.git.zhouquan@iscas.ac.cn>
+	s=arc-20240116; t=1719898678; c=relaxed/simple;
+	bh=XPgd9odMqUx3qiZpRzCeyqipM38IXfdj9CgZf+m9zi8=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=pyRDlSkm09/jS9P3ZbrcJ/90ecHPy3bvqVLg6USau7782BbCPk9kfum4t+NN25YCMvh4nWFgLfQ9l/6ZSKgU+F2bJCBjy3TdIAx0R0m9GFm5E1z3aWPPgWp3dc55lEjAeBhUWx4+iSAJCA2IB7AQ5tYqy77bnfuk/oeQj5xMnqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wzkLo0iN; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: ying.huang@intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719898673;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=73xYp2UvuuiTqq3Dx4h6CO2Kz6sGNd96n78O6ol2uyA=;
+	b=wzkLo0iNP5B95/q8zo3yui0WSwg4gSn0wJwWhEOfkCDJAZx7/Sg1xvt2+Rp1MKooX6Rfym
+	tULVAT1RgSHPe71YnGh9mQ3vUmzVjOndjK6u4cSIfT4vdU2L0HDluE68B8y772SQ/Jc8wA
+	y80wW74TTj5XFkLKMDZyi0wvp7qin6E=
+X-Envelope-To: jonathan.cameron@huawei.com
+X-Envelope-To: gourry.memverge@gmail.com
+X-Envelope-To: aneesh.kumar@linux.ibm.com
+X-Envelope-To: mhocko@suse.com
+X-Envelope-To: tj@kernel.org
+X-Envelope-To: john@jagalactic.com
+X-Envelope-To: emirakhur@micron.com
+X-Envelope-To: vtavarespetr@micron.com
+X-Envelope-To: ravis.opensrc@micron.com
+X-Envelope-To: apopple@nvidia.com
+X-Envelope-To: sthanneeru@micron.com
+X-Envelope-To: sj@kernel.org
+X-Envelope-To: rafael@kernel.org
+X-Envelope-To: lenb@kernel.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: dave.jiang@intel.com
+X-Envelope-To: dan.j.williams@intel.com
+X-Envelope-To: linux-acpi@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: horenc@vt.edu
+X-Envelope-To: horenchuang@bytedance.com
+X-Envelope-To: horenchuang@gmail.com
+X-Envelope-To: linux-cxl@vger.kernel.org
+X-Envelope-To: qemu-devel@nongnu.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1e9cbab1b0badc05592fce46717418930076a6ae.1719408040.git.zhouquan@iscas.ac.cn>
+Date: Tue, 02 Jul 2024 05:37:47 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev>
+Message-ID: <970686ea8a7aba6f5daa752a39609f5ab7a48a06@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH v2 1/1] memory tier: consolidate the initialization of
+ memory tiers
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: "Jonathan Cameron" <Jonathan.Cameron@huawei.com>, "Gregory Price"
+ <gourry.memverge@gmail.com>, aneesh.kumar@linux.ibm.com, mhocko@suse.com,
+ tj@kernel.org, john@jagalactic.com, "Eishan Mirakhur"
+ <emirakhur@micron.com>, "Vinicius Tavares Petrucci"
+ <vtavarespetr@micron.com>, "Ravis OpenSrc" <Ravis.OpenSrc@micron.com>,
+ "Alistair Popple" <apopple@nvidia.com>, "Srinivasulu Thanneeru"
+ <sthanneeru@micron.com>, "SeongJae Park" <sj@kernel.org>, "Rafael J. 
+ Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>, "Andrew
+ Morton" <akpm@linux-foundation.org>, "Dave Jiang" <dave.jiang@intel.com>,
+ "Dan  Williams" <dan.j.williams@intel.com>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, "Ho-Ren (Jack)  Chuang"
+ <horenc@vt.edu>, "Ho-Ren (Jack) Chuang" <horenchuang@bytedance.com>,
+ "Ho-Ren (Jack) Chuang" <horenchuang@gmail.com>,
+ linux-cxl@vger.kernel.org, qemu-devel@nongnu.org
+In-Reply-To: <87tth9ofsi.fsf@yhuang6-desk2.ccr.corp.intel.com>
+References: <20240628060925.303309-1-horen.chuang@linux.dev>
+ <20240628060925.303309-2-horen.chuang@linux.dev>
+ <87tth9ofsi.fsf@yhuang6-desk2.ccr.corp.intel.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jun 27, 2024 at 11:02:54AM +0800, zhouquan@iscas.ac.cn wrote:
-> From: Quan Zhou <zhouquan@iscas.ac.cn>
-> 
-> This test checks that orig_a0 allows a syscall argument to be modified,
-> and that changing a0 does not change the syscall argument.
-> 
-> Suggested-by: Charlie Jenkins <charlie@rivosinc.com>
-> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-> ---
->  tools/testing/selftests/riscv/Makefile       |   2 +-
->  tools/testing/selftests/riscv/abi/.gitignore |   1 +
->  tools/testing/selftests/riscv/abi/Makefile   |  12 ++
->  tools/testing/selftests/riscv/abi/ptrace.c   | 124 +++++++++++++++++++
->  4 files changed, 138 insertions(+), 1 deletion(-)
->  create mode 100644 tools/testing/selftests/riscv/abi/.gitignore
->  create mode 100644 tools/testing/selftests/riscv/abi/Makefile
->  create mode 100644 tools/testing/selftests/riscv/abi/ptrace.c
-> 
-> diff --git a/tools/testing/selftests/riscv/Makefile b/tools/testing/selftests/riscv/Makefile
-> index 7ce03d832b64..98541dc2f164 100644
-> --- a/tools/testing/selftests/riscv/Makefile
-> +++ b/tools/testing/selftests/riscv/Makefile
-> @@ -5,7 +5,7 @@
->  ARCH ?= $(shell uname -m 2>/dev/null || echo not)
->  
->  ifneq (,$(filter $(ARCH),riscv))
-> -RISCV_SUBTARGETS ?= hwprobe vector mm sigreturn
-> +RISCV_SUBTARGETS ?= hwprobe vector mm sigreturn abi
->  else
->  RISCV_SUBTARGETS :=
->  endif
-> diff --git a/tools/testing/selftests/riscv/abi/.gitignore b/tools/testing/selftests/riscv/abi/.gitignore
-> new file mode 100644
-> index 000000000000..d61c51358965
-> --- /dev/null
-> +++ b/tools/testing/selftests/riscv/abi/.gitignore
-> @@ -0,0 +1 @@
-> +ptrace
-> diff --git a/tools/testing/selftests/riscv/abi/Makefile b/tools/testing/selftests/riscv/abi/Makefile
-> new file mode 100644
-> index 000000000000..808d48a91ad7
-> --- /dev/null
-> +++ b/tools/testing/selftests/riscv/abi/Makefile
-> @@ -0,0 +1,12 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (C) 2021 ARM Limited
-> +# Originally tools/testing/arm64/abi/Makefile
-> +
-> +CFLAGS += -I$(top_srcdir)/tools/include
-> +
-> +TEST_GEN_PROGS := ptrace
-> +
-> +include ../../lib.mk
-> +
-> +$(OUTPUT)/ptrace: ptrace.c
-> +	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
-> diff --git a/tools/testing/selftests/riscv/abi/ptrace.c b/tools/testing/selftests/riscv/abi/ptrace.c
-> new file mode 100644
-> index 000000000000..f85f927cd685
-> --- /dev/null
-> +++ b/tools/testing/selftests/riscv/abi/ptrace.c
-> @@ -0,0 +1,124 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +#include <fcntl.h>
-> +#include <signal.h>
-> +#include <errno.h>
-> +#include <sys/types.h>
-> +#include <sys/ptrace.h>
-> +#include <sys/stat.h>
-> +#include <sys/user.h>
-> +#include <sys/wait.h>
-> +#include <sys/uio.h>
-> +#include <linux/elf.h>
-> +#include <linux/unistd.h>
-> +#include <asm/ptrace.h>
-> +
-> +#include "../../kselftest_harness.h"
-> +
-> +#define ORIG_A0_MODIFY      0x01
-> +#define A0_MODIFY           0x02
-> +#define A0_OLD              0x03
-> +#define A0_NEW              0x04
-> +
-> +#define perr_and_exit(fmt, ...)					\
-> +	({								\
-> +	 	char buf[256];						\
+Hi Huang, Ying,
 
-Apologies, I missed this in the last review. In the above line there is
-a space in the middle of the tabs before `char buf[256];`.
+Thanks for your feedback and helpful suggestions. Replies inlined.
 
-> +		snprintf(buf, sizeof(buf), "%s:%d: " fmt ": %m\n",	\
-> +			__func__, __LINE__, ##__VA_ARGS__);		\
-> +		perror(buf);						\
-> +		exit(-1);						\
-> +	})
-> +
-> +static inline void resume_and_wait_tracee(pid_t pid, int flag)
-> +{
-> +	int status;
-> +
-> +	if (ptrace(flag, pid, 0, 0))
-> +		perr_and_exit("failed to resume the tracee %d\n", pid);
-> +
-> +	if (waitpid(pid, &status, 0) != pid)
-> +		perr_and_exit("failed to wait for the tracee %d\n", pid);
-> +}
-> +
-> +static void ptrace_test(int opt, int *result)
-> +{
-> +	int status;
-> +	pid_t pid;
-> +	struct user_regs_struct regs;
-> +	struct iovec iov = {
-> +		.iov_base = &regs,
-> +		.iov_len = sizeof(regs),
-> +	};
-> +
-> +	pid = fork();
-> +	if (pid == 0) {
-> +		/* Mark oneself being traced */
-> +		long val = ptrace(PTRACE_TRACEME, 0, 0, 0);
-> +		if (val)
-> +			perr_and_exit("failed to request for tracer to trace me: %ld\n", val);
-> +
-> +		kill(getpid(), SIGSTOP);
-> +
-> +		/* Perform exit syscall that will be intercepted */
-> +		exit(A0_OLD);
-> +	}
-> +	if (pid < 0)
-> +		exit(1);
-> +
-> +	if (waitpid(pid, &status, 0) != pid)
-> +		perr_and_exit("failed to wait for the tracee %d\n", pid);
-> +
-> +	/* Stop at the entry point of the syscall */
-> +	resume_and_wait_tracee(pid, PTRACE_SYSCALL);
-> +
-> +	/* Check tracee orig_a0 before the syscall */
-> +	if (ptrace(PTRACE_GETREGSET, pid, NT_PRSTATUS, &iov))
-> +		perr_and_exit("failed to get tracee registers\n");
-> +	if (regs.orig_a0 != A0_OLD)
-> +		perr_and_exit("unexpected orig_a0: 0x%lx\n", regs.orig_a0);
-> +
-> +	/* Modify a0/orig_a0 for the syscall */
-> +	switch (opt) {
-> +	case A0_MODIFY:
-> +		regs.a0 = A0_NEW;
-> +		break;
-> +	case ORIG_A0_MODIFY:
-> +		regs.orig_a0 = A0_NEW;
-> +		break;
-> +	}
-> +
-> +	if (ptrace(PTRACE_SETREGSET, pid, NT_PRSTATUS, &iov))
-> +		perr_and_exit("failed to set tracee registers\n");
-> +
-> +	/* Resume the tracee */
-> +	ptrace(PTRACE_CONT, pid, 0, 0);
-> +	if (waitpid(pid, &status, 0) != pid)
-> +		perr_and_exit("failed to wait for the tracee\n");
-> +
-> +	*result = WEXITSTATUS(status);
-> +}
-> +
-> +TEST(ptrace_modify_a0)
-> +{
-> +	int result;
-> +
-> +	ptrace_test(A0_MODIFY, &result);
-> +
-> +	/* The modification of a0 cannot affect the first argument of the syscall */
-> +	EXPECT_EQ(A0_OLD, result);
-> +}
-> +
-> +TEST(ptrace_modify_orig_a0)
-> +{
-> +	int result;
-> +
-> +	ptrace_test(ORIG_A0_MODIFY, &result);
-> +
-> +	/* Only modify orig_a0 to change the first argument of the syscall */
-> +	EXPECT_EQ(A0_NEW, result);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> -- 
-> 2.34.1
-> 
 
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+June 30, 2024 at 10:13 PM, "Huang, Ying" <ying.huang@intel.com> wrote:
+>=20
+>=20Hi, Jack,
+>=20
+>=20"Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev> writes:
+>=20
+>=20I suggest you to merge the [0/1] with the change log here. [0/1]
+>=20
+>=20describes why do we need the patch. The below text describes some
+>=20
+>=20details. Just don't use "---" to separate them. We need both parts in
+>=20
+>=20the final commit message.
+>=20
 
+Sounds=20good! I will merge them into 1 patch in the v3.
+
+> >=20
+>=20> If we simply move the set_node_memory_tier() from memory_tier_init(=
+)
+> >=20
+>=20>  to late_initcall(), it will result in HMAT not registering
+> >=20
+>=20>  the mt_adistance_algorithm callback function, because
+> >=20
+>=20>  set_node_memory_tier() is not performed during the memory tiering
+> >=20
+>=20>  initialization phase, leading to a lack of correct default_dram
+> >=20
+>=20>  information.
+> >=20
+>=20>  Therefore, we introduced a nodemask to pass the information of the
+> >=20
+>=20>  default DRAM nodes. The reason for not choosing to reuse
+> >=20
+>=20>  default_dram_type->nodes is that it is not clean enough. So in the=
+ end,
+> >=20
+>=20>  we use a __initdata variable, which is a variable that is released=
+ once
+> >=20
+>=20>  initialization is complete, including both CPU and memory nodes fo=
+r HMAT
+> >=20
+>=20>  to iterate through.
+> >=20
+>=20>  Besides, since default_dram_type may be checked/used during the
+> >=20
+>=20>  initialization process of HMAT and drivers, it is better to keep t=
+he
+> >=20
+>=20>  allocation of default_dram_type in memory_tier_init().
+> >=20
+>=20
+> Why do we need it? IIRC, we have deleted its usage in hmat.c.
+>=20
+
+Although=20default_dram_type is still used in set_node_memory_tier(),
+I can totally remove this description to remove confusion.
+
+> >=20
+>=20> Signed-off-by: Ho-Ren (Jack) Chuang <horenchuang@bytedance.com>
+> >=20
+>=20>  Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> >=20
+>=20>  ---
+> >=20
+>=20>  drivers/acpi/numa/hmat.c | 5 +--
+> >=20
+>=20>  include/linux/memory-tiers.h | 2 ++
+> >=20
+>=20>  mm/memory-tiers.c | 59 +++++++++++++++---------------------
+> >=20
+>=20>  3 files changed, 28 insertions(+), 38 deletions(-)
+> >=20
+>=20>  diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
+> >=20
+>=20>  index 2c8ccc91ebe6..a2f9e7a4b479 100644
+> >=20
+>=20>  --- a/drivers/acpi/numa/hmat.c
+> >=20
+>=20>  +++ b/drivers/acpi/numa/hmat.c
+> >=20
+>=20>  @@ -940,10 +940,7 @@ static int hmat_set_default_dram_perf(void)
+> >=20
+>=20>  struct memory_target *target;
+> >=20
+>=20>  struct access_coordinate *attrs;
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  - if (!default_dram_type)
+> >=20
+>=20>  - return -EIO;
+> >=20
+>=20>  -
+> >=20
+>=20>  - for_each_node_mask(nid, default_dram_type->nodes) {
+> >=20
+>=20>  + for_each_node_mask(nid, default_dram_nodes) {
+> >=20
+>=20>  pxm =3D node_to_pxm(nid);
+> >=20
+>=20>  target =3D find_mem_target(pxm);
+> >=20
+>=20>  if (!target)
+> >=20
+>=20>  diff --git a/include/linux/memory-tiers.h b/include/linux/memory-t=
+iers.h
+> >=20
+>=20>  index 0d70788558f4..fa61ad9c4d75 100644
+> >=20
+>=20>  --- a/include/linux/memory-tiers.h
+> >=20
+>=20>  +++ b/include/linux/memory-tiers.h
+> >=20
+>=20>  @@ -38,6 +38,7 @@ struct access_coordinate;
+> >=20
+>=20>  #ifdef CONFIG_NUMA
+> >=20
+>=20>  extern bool numa_demotion_enabled;
+> >=20
+>=20>  extern struct memory_dev_type *default_dram_type;
+> >=20
+>=20
+> Can we remove the above line?
+>=20
+
+Yes,=20you are right. Good catch, thanks! Will remove it in the v3.
+
+> >=20
+>=20> +extern nodemask_t default_dram_nodes __initdata;
+> >=20
+>=20
+> We don't need to use __initdata in variable declaration.
+>=20
+
+Thank=20you for your guidance! Will remove __initdata it in the v3.
+
+> >=20
+>=20> struct memory_dev_type *alloc_memory_type(int adistance);
+> >=20
+>=20>  void put_memory_type(struct memory_dev_type *memtype);
+> >=20
+>=20>  void init_node_memory_type(int node, struct memory_dev_type *defau=
+lt_type);
+> >=20
+>=20>  @@ -76,6 +77,7 @@ static inline bool node_is_toptier(int node)
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  #define numa_demotion_enabled false
+> >=20
+>=20>  #define default_dram_type NULL
+> >=20
+>=20>  +#define default_dram_nodes NODE_MASK_NONE
+> >=20
+>=20
+> Should we use <tab> after "default_dram_nodes"?
+>=20
+
+Yes,=20thanks for the reminder. Will fix it in the v3.
+
+> >=20
+>=20> /*
+> >=20
+>=20>  * CONFIG_NUMA implementation returns non NULL error.
+> >=20
+>=20>  */
+> >=20
+>=20>  diff --git a/mm/memory-tiers.c b/mm/memory-tiers.c
+> >=20
+>=20>  index 6632102bd5c9..a19a90c3ad36 100644
+> >=20
+>=20>  --- a/mm/memory-tiers.c
+> >=20
+>=20>  +++ b/mm/memory-tiers.c
+> >=20
+>=20>  @@ -43,6 +43,7 @@ static LIST_HEAD(memory_tiers);
+> >=20
+>=20>  static LIST_HEAD(default_memory_types);
+> >=20
+>=20>  static struct node_memory_type_map node_memory_types[MAX_NUMNODES]=
+;
+> >=20
+>=20>  struct memory_dev_type *default_dram_type;
+> >=20
+>=20>  +nodemask_t default_dram_nodes __initdata =3D NODE_MASK_NONE;
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  static const struct bus_type memory_tier_subsys =3D {
+> >=20
+>=20>  .name =3D "memory_tiering",
+> >=20
+>=20>  @@ -671,28 +672,38 @@ EXPORT_SYMBOL_GPL(mt_put_memory_types);
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  /*
+> >=20
+>=20>  * This is invoked via `late_initcall()` to initialize memory tiers=
+ for
+> >=20
+>=20>  - * CPU-less memory nodes after driver initialization, which is
+> >=20
+>=20>  - * expected to provide `adistance` algorithms.
+> >=20
+>=20>  + * memory nodes, both with and without CPUs. After the initializa=
+tion of
+> >=20
+>=20>  + * firmware and devices, adistance algorithms are expected to be =
+provided.
+> >=20
+>=20>  */
+> >=20
+>=20>  static int __init memory_tier_late_init(void)
+> >=20
+>=20>  {
+> >=20
+>=20>  int nid;
+> >=20
+>=20>  + struct memory_tier *memtier;
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  + get_online_mems();
+> >=20
+>=20>  guard(mutex)(&memory_tier_lock);
+> >=20
+>=20>  + /*
+> >=20
+>=20>  + * Look at all the existing and uninitialized N_MEMORY nodes and
+> >=20
+>=20>  + * add them to default memory tier or to a tier if we already hav=
+e
+> >=20
+>=20>  + * memory types assigned.
+> >=20
+>=20>  + */
+> >=20
+>=20
+> If the memory type of the node has been assigned, we will skip it in th=
+e
+>=20
+>=20following code. So, I think that we need to revise the comments.
+>=20
+
+You=20are right, the new version in the v3 will be:
+/* Assign each uninitialized N_MEMORY node to a memory tier. */
+
+> >=20
+>=20> for_each_node_state(nid, N_MEMORY) {
+> >=20
+>=20>  /*
+> >=20
+>=20>  - * Some device drivers may have initialized memory tiers
+> >=20
+>=20>  - * between `memory_tier_init()` and `memory_tier_late_init()`,
+> >=20
+>=20>  - * potentially bringing online memory nodes and
+> >=20
+>=20>  - * configuring memory tiers. Exclude them here.
+> >=20
+>=20>  + * Some device drivers may have initialized
+> >=20
+>=20>  + * memory tiers, potentially bringing memory nodes
+> >=20
+>=20>  + * online and configuring memory tiers.
+> >=20
+>=20>  + * Exclude them here.
+> >=20
+>=20>  */
+> >=20
+>=20>  if (node_memory_types[nid].memtype)
+> >=20
+>=20>  continue;
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  - set_node_memory_tier(nid);
+> >=20
+>=20>  + memtier =3D set_node_memory_tier(nid);
+> >=20
+>=20>  + if (IS_ERR(memtier))
+> >=20
+>=20>  + /* Continue with memtiers we are able to setup. */
+> >=20
+>=20>  + break;
+> >=20
+>=20>  }
+> >=20
+>=20>  -
+> >=20
+>=20>  establish_demotion_targets();
+> >=20
+>=20>  + put_online_mems();
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  return 0;
+> >=20
+>=20>  }
+> >=20
+>=20>  @@ -875,8 +886,7 @@ static int __meminit memtier_hotplug_callback(=
+struct notifier_block *self,
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  static int __init memory_tier_init(void)
+> >=20
+>=20>  {
+> >=20
+>=20>  - int ret, node;
+> >=20
+>=20>  - struct memory_tier *memtier;
+> >=20
+>=20>  + int ret;
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  ret =3D subsys_virtual_register(&memory_tier_subsys, NULL);
+> >=20
+>=20>  if (ret)
+> >=20
+>=20>  @@ -887,7 +897,8 @@ static int __init memory_tier_init(void)
+> >=20
+>=20>  GFP_KERNEL);
+> >=20
+>=20>  WARN_ON(!node_demotion);
+> >=20
+>=20>  #endif
+> >=20
+>=20>  - mutex_lock(&memory_tier_lock);
+> >=20
+>=20>  +
+> >=20
+>=20>  + guard(mutex)(&memory_tier_lock);
+> >=20
+>=20>  /*
+> >=20
+>=20>  * For now we can have 4 faster memory tiers with smaller adistance
+> >=20
+>=20>  * than default DRAM tier.
+> >=20
+>=20>  @@ -897,29 +908,9 @@ static int __init memory_tier_init(void)
+> >=20
+>=20>  if (IS_ERR(default_dram_type))
+> >=20
+>=20>  panic("%s() failed to allocate default DRAM tier\n", __func__);=0D
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  - /*
+> >=20
+>=20>  - * Look at all the existing N_MEMORY nodes and add them to
+> >=20
+>=20>  - * default memory tier or to a tier if we already have memory
+> >=20
+>=20>  - * types assigned.
+> >=20
+>=20>  - */
+> >=20
+>=20>  - for_each_node_state(node, N_MEMORY) {
+> >=20
+>=20>  - if (!node_state(node, N_CPU))
+> >=20
+>=20>  - /*
+> >=20
+>=20>  - * Defer memory tier initialization on
+> >=20
+>=20>  - * CPUless numa nodes. These will be initialized
+> >=20
+>=20>  - * after firmware and devices are initialized.
+> >=20
+>=20>  - */
+> >=20
+>=20>  - continue;
+> >=20
+>=20>  -
+> >=20
+>=20>  - memtier =3D set_node_memory_tier(node);
+> >=20
+>=20>  - if (IS_ERR(memtier))
+> >=20
+>=20>  - /*
+> >=20
+>=20>  - * Continue with memtiers we are able to setup
+> >=20
+>=20>  - */
+> >=20
+>=20>  - break;
+> >=20
+>=20>  - }
+> >=20
+>=20>  - establish_demotion_targets();
+> >=20
+>=20>  - mutex_unlock(&memory_tier_lock);
+> >=20
+>=20>  + /* Record nodes with memory and CPU to set default DRAM performa=
+nce. */
+> >=20
+>=20>  + nodes_and(default_dram_nodes, node_states[N_MEMORY],
+> >=20
+>=20>  + node_states[N_CPU]);
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  hotplug_memory_notifier(memtier_hotplug_callback, MEMTIER_HOTPLUG_=
+PRI);
+> >=20
+>=20>  return 0;
+> >=20
+>=20
+> --
+>=20
+>=20Best Regards,
+>=20
+>=20Huang, Ying
+>
+
+--
+Best Regards,
+Ho-Ren (Jack) Chuang
 
