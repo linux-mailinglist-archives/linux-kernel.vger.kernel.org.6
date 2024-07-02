@@ -1,139 +1,244 @@
-Return-Path: <linux-kernel+bounces-238458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14E3924B1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:06:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2B7924A35
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D5DD287A8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:06:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E00BEB22EE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05FA1AEFDD;
-	Tue,  2 Jul 2024 21:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7484205E20;
+	Tue,  2 Jul 2024 21:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kG4j0ldx"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niPPaf0q"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB48D1ABC4C
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C89B1BD512;
+	Tue,  2 Jul 2024 21:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719957540; cv=none; b=Qfyj2sRtFOL6fOmW2lHx+smjxJTtHVDP4kC/mYqAXowCIjhv9cuZ9/3LtGSlczdyISNUsjkj8ISmn5UVNzGOIR3pIWUutHKAGIfwYip2HcL1nIETCfhoc444XqTsphSwAGLY86pl3B7nWXNZ6HftH2Fnjc28LFp6cIy5dMu8e6o=
+	t=1719957471; cv=none; b=ca9PoNQkEQNbFzM0H8ntodKMgC8zV1WUH/SVpgaVmJvsPW5ziDBbCbzUnRgOmDox4vj3VVKE48GShcn6909/Wk/dBmpIwC+JKcL5v6Hlo95q2A+SDZJpJ3g9d+nUeV+hzrUIPxjJw2NVE5YeKYElLQf7Z06kue5anBA++2vs/Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719957540; c=relaxed/simple;
-	bh=BmoS/pi4WE3RilgtxDmWX/Z/qwCySxzocceyZaJhNAY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BBLeWNzZtw5IKXIug7mi8fEbVJmsgu73zIjZag7A3jLlpzzlNOu8UV8kGZtadpqKt0oBCbEI45v+El82Lh5g9OEbd8kVyNQ6QFg2Ppvm5Y3dAsdZL5JrF4BcfIGCllTdfPXkw9uBEZwKYjpKctY4NvP4aJZcbvOATIdh5kCQ0HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kG4j0ldx; arc=none smtp.client-ip=209.85.166.51
+	s=arc-20240116; t=1719957471; c=relaxed/simple;
+	bh=3IoNLmFrW04h5NZct8LpCc5lx5DRX/yIR+IZxZhLabU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=acgl5pbaaajAtvyLjBAaMYFmar0i7lUf1mrt2XFwO9ZZz59B80HP5n4DytlyLOjjyeSm4ciYChg8EWKp24MgTk3yvHWIoQy6lfLqKylopUtxyBohqbDsDvxeCSHTXLQcz00t54hKHUtOLELKRGjYIDJS2CpLtjtFUPa4Q639kdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niPPaf0q; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7f64f66fdd7so60623139f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:58:58 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a724598cfe3so592316566b.1;
+        Tue, 02 Jul 2024 14:57:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719957538; x=1720562338; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719957467; x=1720562267; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=94MIkUtYPNbEjf2ABNxMIbyceZTrdE5XkTP/b1VTHKc=;
-        b=kG4j0ldxkZpfNsdamHeNpHlyzessz4115+aDbzJaBfmQQKf57CUWeq4YPgMRppD6KK
-         mqKJor56qZsZ6nTn7KZBaJA9jIE7y/xmzp0luc9e3DjIPU8MtDluwxOOBApsrFW/B8Rk
-         caBIdFUOq2PiXFWqcJwIScroO+ajxlYeABk03U3saQlZtt8GZiJb7oTwcZKqLSvISpnR
-         z2EPLsL3f1mtlXRs+OTplaHDfrUgm4RodW31TdXnrs04yzViJSdgzUL9fUDmNT61LqQT
-         L9375au7MNLafdfFH8bPWrru1S3i7sBx1UpdtA5vvDnk0UiheNLlir+EiR9CKCZiO9tj
-         Wv6A==
+        bh=0qVUlcxGg0CHOekHZ6+YIbM0eY0VoswlJ0lYpz49cnw=;
+        b=niPPaf0qL7/cCI55fzipByy82mm4fRwqTj435f38/0Ri9XpOVV4hNSLkmjM0iYJVTj
+         Qw2Sjdo3MyCJbYLskKj78NFchwc6z1OQZpiYRPpl3XTr+GaQUJP/zyWOCC2TPTJJIQ77
+         MmUgq1fRDmeNJXPg3Hh+1zS2K4NcL0bzE+An0T/umxpOymBFt2mQxwRW+OGsnXVY9vGN
+         3ZlZ2YTdjp3knEccISCqH95GsjeBVvF3alxJLS5f09KkMuExc+oe5r0VBIKSVqSQHZAT
+         XLDFXCdqOKvOvX19JTzJEKMwpHp08bojkOErkUTkYzi13Adsz/VswZoxqJnvYgc5FZeL
+         1wig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719957538; x=1720562338;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719957467; x=1720562267;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=94MIkUtYPNbEjf2ABNxMIbyceZTrdE5XkTP/b1VTHKc=;
-        b=gbz1QUfIYXyaJnOts0YUg67aLaF7QwjUL4ZJJPpGWtg35JKFbKtHZiJrFHRH9VA/Gg
-         WAsx6H7rrsJk53fOMX/ww81MkfOWxtJa1ARWc5Pc9xVhP8dI6emhXSed0fWYG88Q3stc
-         qiUXqePeurGShbqTYxVHv5Ci1oEHHA/4wOvlZU23CYWPf9ISpmI6cl40C7DguGqbSjNi
-         5gaXGreRAlmkHvjPQPhNq2Q2ZafeAwuVRVqJCEvNWACf7/jBbajSb0Y91vG5RAehVqrv
-         WqpD2K9TgVLxS3u6Baxv3fMfKHgKlnfpuMn4DDHEBOTDR1azgkoCwlLwQeaU6TliKCNW
-         wZbQ==
-X-Gm-Message-State: AOJu0YzqtHSGm0JPtufSPWbaJebTgswdbqRWp7yb0XySKxzCyTFECEWE
-	0iDIz9Pj7wsrWQF9Jl4tMPR0g9tAbo8hIBPK0dHxcvyE9BzME8/B
-X-Google-Smtp-Source: AGHT+IEeyfoDsrnF6r4ABpMFuIX2eN+Lbm0YqA2PfdZDRQYY0jl8O9vciO2Q9HKa3iN91XoM/brm0g==
-X-Received: by 2002:a05:6602:600d:b0:7f6:5035:1826 with SMTP id ca18e2360f4ac-7f650351c42mr444802439f.11.1719957538015;
-        Tue, 02 Jul 2024 14:58:58 -0700 (PDT)
-Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.58.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 14:58:57 -0700 (PDT)
-From: Jim Cromie <jim.cromie@gmail.com>
-To: daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com,
-	jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com,
-	jbaron@akamai.com,
-	gregkh@linuxfoundation.org,
-	ukaszb@chromium.org
-Cc: linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	linux@rasmusvillemoes.dk,
-	joe@perches.com,
-	mcgrof@kernel.org,
-	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v9 34/53] drm-dyndbg: DRM_CLASSMAP_USE in i915 driver
-Date: Tue,  2 Jul 2024 15:57:27 -0600
-Message-ID: <20240702215804.2201271-38-jim.cromie@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240702215804.2201271-1-jim.cromie@gmail.com>
-References: <20240702215804.2201271-1-jim.cromie@gmail.com>
+        bh=0qVUlcxGg0CHOekHZ6+YIbM0eY0VoswlJ0lYpz49cnw=;
+        b=UQxQMTIWiQl9V5ZdUIjjMQHEy7A7jXhXrQ6V7vCwxuxTaKazzjWqegS9PduJh9Pu2L
+         /bw0aQU9O6Kq0bpxQCVcrjojIeyndksRD5CwGDEmgnXnloaj4aiAunHDd5VLEymYROth
+         B1eY8QbvCdKKVLZWHuiHRmQFyyNyfrkk0UdKOu9DiKZQSw+wvLhGWrXeKWCqsTsB4ILp
+         AoV4fnbOiH8DD890JrmgcvVGUotwW5ItO+aUYcgIQKpYaTWoeE7+azNoOiwo2FDCyL1h
+         1B+VCNmxy9RYcvW1KWVbwssQL45oXgGn0aeTElTM4zge88HtSS7KZai4xXgnoX3Z7fEV
+         VTmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSkznQorx/vYU1TyNQa+tdHoP40V67IBh75yAjgh/N38mhd5OKk/HA69KaChaxoITJl/3hEmWsd40MHK+RbQt5ThXY4vuyr7nZxW0Lr3OqqjTpen+fpGKRdLbmYyCgQNeIYjRBDGPxAq08yvI5GkTBNoQvgai/2GiGLBhhbeQ7jh5UqX5z
+X-Gm-Message-State: AOJu0Yy0wII6a6w53qPXklFWd/naUucCcpvJE/9h8AoErhjR6aHa43zI
+	Vch97yDjCFyiwDbyKbH77q9gW6Z9tUxhJIgv7Qc50BF7mlkrHAtLMMqdSxoYdY8VsMRXDbzoV28
+	Ihv0jlFgny1BD+J1Mi1oljLEyd30=
+X-Google-Smtp-Source: AGHT+IEWKwRh13zALGUZeYb54SJjh/VFz3E8OF502MPQpiXuwMwTmJpwUAyI27pPStrbjgG0Mr0sC0aGcS91RQtdCZc=
+X-Received: by 2002:a17:906:b897:b0:a72:4402:9344 with SMTP id
+ a640c23a62f3a-a7514488e8amr754070866b.20.1719957467509; Tue, 02 Jul 2024
+ 14:57:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240701164115.723677-1-jolsa@kernel.org> <20240701164115.723677-7-jolsa@kernel.org>
+In-Reply-To: <20240701164115.723677-7-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 2 Jul 2024 14:57:33 -0700
+Message-ID: <CAEf4Bzby-7tt3fmLocL8_TXrP+ZuUOQYv9TnBg1vnb4GpXTzXg@mail.gmail.com>
+Subject: Re: [PATCHv2 bpf-next 6/9] selftests/bpf: Add uprobe session test
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Following the dyndbg-api-fix, replace DECLARE_DYNDBG_CLASSMAP with
-DRM_CLASSMAP_USE.  This refs the defined & exported classmap, rather
-than re-declaring it redundantly, and error-prone-ly.
+On Mon, Jul 1, 2024 at 9:43=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> Adding uprobe session test and testing that the entry program
+> return value controls execution of the return probe program.
+>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  .../bpf/prog_tests/uprobe_multi_test.c        | 42 +++++++++++++++
+>  .../bpf/progs/uprobe_multi_session.c          | 53 +++++++++++++++++++
+>  2 files changed, 95 insertions(+)
+>  create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_sessio=
+n.c
+>
 
-This resolves the appearance of "class:_UNKNOWN_" in the control file
-for the driver's drm_dbg()s.
+LGTM.
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-Fixes: f158936b60a7 ("drm: POC drm on dyndbg - use in core, 2 helpers, 3 drivers.")
-
-Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
----
- drivers/gpu/drm/i915/i915_params.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/i915_params.c b/drivers/gpu/drm/i915/i915_params.c
-index de43048543e8..dccf12d05105 100644
---- a/drivers/gpu/drm/i915/i915_params.c
-+++ b/drivers/gpu/drm/i915/i915_params.c
-@@ -29,17 +29,7 @@
- #include "i915_params.h"
- #include "i915_drv.h"
- 
--DECLARE_DYNDBG_CLASSMAP(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS, 0,
--			"DRM_UT_CORE",
--			"DRM_UT_DRIVER",
--			"DRM_UT_KMS",
--			"DRM_UT_PRIME",
--			"DRM_UT_ATOMIC",
--			"DRM_UT_VBL",
--			"DRM_UT_STATE",
--			"DRM_UT_LEASE",
--			"DRM_UT_DP",
--			"DRM_UT_DRMRES");
-+DRM_CLASSMAP_USE(drm_debug_classes);
- 
- #define i915_param_named(name, T, perm, desc) \
- 	module_param_named(name, i915_modparams.name, T, perm); \
--- 
-2.45.2
-
+> diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c b=
+/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
+> index bf6ca8e3eb13..cd9581f46c73 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
+> @@ -6,6 +6,7 @@
+>  #include "uprobe_multi.skel.h"
+>  #include "uprobe_multi_bench.skel.h"
+>  #include "uprobe_multi_usdt.skel.h"
+> +#include "uprobe_multi_session.skel.h"
+>  #include "bpf/libbpf_internal.h"
+>  #include "testing_helpers.h"
+>  #include "../sdt.h"
+> @@ -615,6 +616,45 @@ static void test_link_api(void)
+>         __test_link_api(child);
+>  }
+>
+> +static void test_session_skel_api(void)
+> +{
+> +       struct uprobe_multi_session *skel =3D NULL;
+> +       LIBBPF_OPTS(bpf_kprobe_multi_opts, opts);
+> +       struct bpf_link *link =3D NULL;
+> +       int err;
+> +
+> +       skel =3D uprobe_multi_session__open_and_load();
+> +       if (!ASSERT_OK_PTR(skel, "fentry_raw_skel_load"))
+> +               goto cleanup;
+> +
+> +       skel->bss->pid =3D getpid();
+> +
+> +       err =3D uprobe_multi_session__attach(skel);
+> +       if (!ASSERT_OK(err, " uprobe_multi_session__attach"))
+> +               goto cleanup;
+> +
+> +       /* trigger all probes */
+> +       skel->bss->uprobe_multi_func_1_addr =3D (__u64) uprobe_multi_func=
+_1;
+> +       skel->bss->uprobe_multi_func_2_addr =3D (__u64) uprobe_multi_func=
+_2;
+> +       skel->bss->uprobe_multi_func_3_addr =3D (__u64) uprobe_multi_func=
+_3;
+> +
+> +       uprobe_multi_func_1();
+> +       uprobe_multi_func_2();
+> +       uprobe_multi_func_3();
+> +
+> +       /*
+> +        * We expect 2 for uprobe_multi_func_2 because it runs both entry=
+/return probe,
+> +        * uprobe_multi_func_[13] run just the entry probe.
+> +        */
+> +       ASSERT_EQ(skel->bss->uprobe_session_result[0], 1, "uprobe_multi_f=
+unc_1_result");
+> +       ASSERT_EQ(skel->bss->uprobe_session_result[1], 2, "uprobe_multi_f=
+unc_2_result");
+> +       ASSERT_EQ(skel->bss->uprobe_session_result[2], 1, "uprobe_multi_f=
+unc_3_result");
+> +
+> +cleanup:
+> +       bpf_link__destroy(link);
+> +       uprobe_multi_session__destroy(skel);
+> +}
+> +
+>  static void test_bench_attach_uprobe(void)
+>  {
+>         long attach_start_ns =3D 0, attach_end_ns =3D 0;
+> @@ -703,4 +743,6 @@ void test_uprobe_multi_test(void)
+>                 test_bench_attach_usdt();
+>         if (test__start_subtest("attach_api_fails"))
+>                 test_attach_api_fails();
+> +       if (test__start_subtest("session"))
+> +               test_session_skel_api();
+>  }
+> diff --git a/tools/testing/selftests/bpf/progs/uprobe_multi_session.c b/t=
+ools/testing/selftests/bpf/progs/uprobe_multi_session.c
+> new file mode 100644
+> index 000000000000..72c00ae68372
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/uprobe_multi_session.c
+> @@ -0,0 +1,53 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <linux/bpf.h>
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_tracing.h>
+> +#include <stdbool.h>
+> +#include "bpf_kfuncs.h"
+> +#include "bpf_misc.h"
+> +
+> +char _license[] SEC("license") =3D "GPL";
+> +
+> +__u64 uprobe_multi_func_1_addr =3D 0;
+> +__u64 uprobe_multi_func_2_addr =3D 0;
+> +__u64 uprobe_multi_func_3_addr =3D 0;
+> +
+> +__u64 uprobe_session_result[3];
+> +
+> +int pid =3D 0;
+> +
+> +static int uprobe_multi_check(void *ctx, bool is_return)
+> +{
+> +       const __u64 funcs[] =3D {
+> +               uprobe_multi_func_1_addr,
+> +               uprobe_multi_func_2_addr,
+> +               uprobe_multi_func_3_addr,
+> +       };
+> +       unsigned int i;
+> +       __u64 addr;
+> +
+> +       if (bpf_get_current_pid_tgid() >> 32 !=3D pid)
+> +               return 1;
+> +
+> +       addr =3D bpf_get_func_ip(ctx);
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(funcs); i++) {
+> +               if (funcs[i] =3D=3D addr) {
+> +                       uprobe_session_result[i]++;
+> +                       break;
+> +               }
+> +       }
+> +
+> +       /* only uprobe_multi_func_2 executes return probe */
+> +       if ((addr =3D=3D uprobe_multi_func_1_addr) ||
+> +           (addr =3D=3D uprobe_multi_func_3_addr))
+> +               return 1;
+> +
+> +       return 0;
+> +}
+> +
+> +SEC("uprobe.session//proc/self/exe:uprobe_multi_func_*")
+> +int uprobe(struct pt_regs *ctx)
+> +{
+> +       return uprobe_multi_check(ctx, bpf_session_is_return());
+> +}
+> --
+> 2.45.2
+>
 
