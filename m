@@ -1,113 +1,90 @@
-Return-Path: <linux-kernel+bounces-237698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D9A923CCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:48:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E47923CDD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117541F21BF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:48:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 017771C219AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFB815B14E;
-	Tue,  2 Jul 2024 11:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="k2kfU3xi"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C9115B99E;
+	Tue,  2 Jul 2024 11:51:59 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FB012FB02
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F8412FB02;
+	Tue,  2 Jul 2024 11:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719920894; cv=none; b=qDQskHmXdY31F4bLVkrm0kzHtzbLAiBBPSdECbzldNdsOibk04NORQH73l3fLOJNyRVZieKil1dIfuIRmyFWPFnM6dodL9ha1sszRZMiiCZUZW1WWZYGF8PXM98ucNoPVF6vdfd6wkK7D76fGfkbp1cF1XPo4LWHQU16QR+2c/w=
+	t=1719921119; cv=none; b=NGEPW+NTTz9b0hDbIp+crhLZk5WaudO8QDVnrTHqnD/Gk8PUk7Ld9R1Hdh87LY54CK6gogZmnd1xhmRxL7ZjlLDGNnEOC3NBzhT8F9G4fpL5Pu6rsm3rcGh1CxJ5SjCyOq4RTQQLKHQvqn5FKju7aR+lGQaUSvlaJ/AR4nWWz5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719920894; c=relaxed/simple;
-	bh=J+IFH/UAtx0MadyzuFPkt42kK2cdz7LHsWds9tSV8Ac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lGfBCZ4QK3NzUc7UnCKMu0W6MY26Xwyk97Td1EsfuO1KYLDSZtue9Abilde2am5M7vhr4HJ14I3ITzGVeZtf1ybHIBvuI07SRwlasZXUHR8wPBga//XqJA47tPaItEDwlCh16X1bp3sfEQYogAszO6Gp4K+X+7DMzjGXzOywD5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=k2kfU3xi; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec4eefbaf1so42772851fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 04:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719920891; x=1720525691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J+IFH/UAtx0MadyzuFPkt42kK2cdz7LHsWds9tSV8Ac=;
-        b=k2kfU3xikfYi1UDFshkUsg42cOuzIpcklVFzdpdG/4MLc9TYYy1PhqiJtL4pvjrD2G
-         NPx+ntX9mfRgZFUtdUhMVb8/fcpdakiGDswo8+8xTD8ezgRHGccosoRItdYX2Vlt6NOt
-         rNBQJCDbtQd2QfCNxGLx1ylFrJNx5v4OdWd4jL4bZpIEH1uD1kVTqlMJuKuXn5GI9T5X
-         4dEnfNL/Smt8Cojkbb5rP1UtHWwMKT+JqhooOCyPUlYPft87lW4TqnZQf+DMWIIvQFZL
-         NyK+scHXFwV8iFbj+SSc/JCe/pqTFGxKfJJkh7edn9uegHRpljo9i4iDDCEkUYoBDlAW
-         cSog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719920891; x=1720525691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J+IFH/UAtx0MadyzuFPkt42kK2cdz7LHsWds9tSV8Ac=;
-        b=bzS0gj1zxAJH7Xy54NYCkGoc+f7qzVM3FMxoIE+b+aw/mdsZFWs0G4E7UuS1KqDy6z
-         9DD2hUsnc7JMW6ZHVbHoFcfF6+KaGrLw1/qQovQy4Pb3ORbzDzsypBzQJ9Sq2m7aKQ+R
-         Ucndjj9tx96H1pIMWUpN6hu347INa62mM5t3BLHuqxeEwFY+Cnayb94VtE7bNh5XpDUh
-         h8GafGHHx/Fp7oTCSS1HfjOi1WfWQg64UB6PpvNkNooRU3ctox2bUqgvC01N8Ohv9qt0
-         bByofe5iM8MsdiFB5BNAQ9q6RCCQXFWlB8BJXoL4dDQRfRwnRi7suAQDTTNIyY8i0wTw
-         hKoA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5O6iZekhkl/EZ41g6xigybff44oFsMqWuWpt9LePIcz+9xPBQaFp1nuX4VSP5jlfCjJGm8EAHax9Yd0AtzmFgNL8smBhvrgpt+5Hg
-X-Gm-Message-State: AOJu0YyKBMx561s0NHk3radmdeF0XZOuOBs7LSh1y5HaXYoebmCdApg7
-	HEFi5ppsD7RS2i+hGSdFwq9bJVSFxLyd+knjOr6PO+HjLDMVed2KDXctQOS+sY4adV8bL2+J9QO
-	RZLopIiCFfBrbrcGXx191TSLk+pfgylI2gQlnsQ==
-X-Google-Smtp-Source: AGHT+IGYlnBmWEqJp+GJI605I3OI/Z/NbtE8viKRB4pNaGMzYRQDjSTGWfLQ7W+EGMfmgv9q+2mq30gnD2xwey5TD5M=
-X-Received: by 2002:a05:651c:1509:b0:2ec:5603:41a with SMTP id
- 38308e7fff4ca-2ee5e345927mr55982491fa.2.1719920890946; Tue, 02 Jul 2024
- 04:48:10 -0700 (PDT)
+	s=arc-20240116; t=1719921119; c=relaxed/simple;
+	bh=FEnpvishjCAzWVQUMT7jQW/jici2ageO5mrvsiNPeQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KGSj8vJq1JG+zqDlMt3rjsFPRWQVjfvqwMymXPaE2z7IcXa3XPb54XOiJOna9P4kTnpYFTOVuM+qx3qleJwwzLxfliaGPY16mIGVjtAHYUVjKe/JMoCvWUmbEdL+PSZb6iVnt1dYKz0HplindFump3RkqFauzeI81Y92oGGG3/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D343968AA6; Tue,  2 Jul 2024 13:51:51 +0200 (CEST)
+Date: Tue, 2 Jul 2024 13:51:51 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>, dan.j.williams@intel.com,
+	vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
+	bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca,
+	catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+	npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com,
+	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+	linmiaohe@huawei.com, peterx@redhat.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+	david@fromorbit.com
+Subject: Re: [PATCH 07/13] huge_memory: Allow mappings of PUD sized pages
+Message-ID: <20240702115151.GA16313@lst.de>
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com> <bd332b0d3971b03152b3541f97470817c5147b51.1719386613.git-series.apopple@nvidia.com> <cf572c69-a754-4d41-b9c4-7a079b25b3c3@redhat.com> <874j98gjfg.fsf@nvdebian.thelocal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702114103.16068-1-brgl@bgdev.pl> <CAA8EJppo4X1KmeeTRz9n7+9S0fGWE4AD1O1cCc_aPHTWPUGVvw@mail.gmail.com>
-In-Reply-To: <CAA8EJppo4X1KmeeTRz9n7+9S0fGWE4AD1O1cCc_aPHTWPUGVvw@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 2 Jul 2024 13:48:00 +0200
-Message-ID: <CAMRc=McVo364EruPtBCkLdR86=PfvSQFztTC_HUO0RPRCayAxQ@mail.gmail.com>
-Subject: Re: [PATCH] power: sequencing: qcom-wcn: don't request BT enable
- GPIOs for wcn7850
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Amit Pundir <amit.pundir@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874j98gjfg.fsf@nvdebian.thelocal>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Jul 2, 2024 at 1:42=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Tue, 2 Jul 2024 at 14:41, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Due to having many existing users of wcn7850 in the kernel, conversion
-> > of the hci_qca driver to using pwrseq exclusively must be done
-> > carefully. Right now, the Bluetooth driver requests and controls the BT
-> > enable GPIO and so the PMU pwrseq driver must not do it or we will run
-> > into problems depending on the probe ordering.
-> >
-> > Add a flag that tells the driver not to request the BT-enable GPIO. We
-> > will remove it once the conversion of the Bluetooth driver is complete.
->
-> This will not prevent the pinctrl conflict if both PMU and BT devices
-> declare pinctrl for the BT_EN pin.
->
+On Tue, Jul 02, 2024 at 08:19:01PM +1000, Alistair Popple wrote:
+> > (B) As long as we have subpage mapcounts, this prevents vmemmap
+> >     optimizations [1]. Is that only used for device-dax for now and are
+> >     there no plans to make use of that for fs-dax?
+> 
+> I don't have any plans to. This is purely focussed on refcounting pages
+> "like normal" so we can get rid of all the DAX special casing.
+> 
+> > (C) We managed without so far :)
+> 
+> Indeed, although Christoph has asked repeatedly ([1], [2] and likely
+> others) that this gets fixed and I finally got sick of it coming up
+> everytime I need to touch something with ZONE_DEVICE pages :)
+> 
+> Also it removes the need for people to understand the special DAX page
+> recounting scheme and ends up removing a bunch of cruft as a bonus:
+> 
+>  59 files changed, 485 insertions(+), 869 deletions(-)
+> 
+> And that's before I clean up all the pgmap reference handling. It also
+> removes the pXX_trans_huge and pXX_leaf distinction. So we managed, but
+> things could be better IMHO.
 
-Hmm... So maybe we'll need to modify the BT driver after all. Should
-we see if we have the enable-gpios property in hci_qca and - if not -
-try to use the power sequencer? Or prioritize the sequencer first and
-if it doesn't match, then fall-back to the current mode of operation?
+Yes.  I can't wait for this series making the finish line.  There might
+be more chance for cleanups and optimizations around ZONE_DEVICE, but
+this alone is a huge step forward.
 
-Bart
 
