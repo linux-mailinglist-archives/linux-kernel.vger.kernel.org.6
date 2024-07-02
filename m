@@ -1,130 +1,219 @@
-Return-Path: <linux-kernel+bounces-237987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F3A9241BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:02:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17DC19241C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C257B1F26DF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99DCF1F27261
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E174A1BB6B3;
-	Tue,  2 Jul 2024 15:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889C41BC08A;
+	Tue,  2 Jul 2024 15:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnAMx7iQ"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FdtOqmEh"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83CD14884E
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9BE1BB6AC
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719932481; cv=none; b=e/+f2btvk8BrQ5j25TXX6qiyzYR24Lcj/vkhw88Ycj4AsZypOghL20owG8dnuk10/JGb3L3F50DICLs0Mj9kPiO/3KIULYcXZsRxWv2VKdtijC/gJ7XCGYu8WWT7yBWgVDXR5GpmC3Ljc3aIr0nliLOitIGWJvTVTUEq25ENOUk=
+	t=1719932483; cv=none; b=mQp/oPUA1y/0ZKWbRx3xTv+WsT9VdcD6+Q4/ojxq6b7TJtvK/292Tj7UPz6NFGDmAHaz9qXdWtyyH5XuvfTn7RrHbcBMe9HxP5SVuT95CC4p9r+dzKcWqewmjUvoDg3k8Y6YgigEb2y1wc6X4CasUA+nty3wktrPzdPpcp8jDdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719932481; c=relaxed/simple;
-	bh=831tu98jKFCFQ3uP5sVH2PjPbyOqkBN44XZyqazKP/s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YJEHpefEUgWRULLrtMxUpuV/HcsRA935k+LZDjGBy2pSiCbN2alyUqAJOuNTZoJDPxlTZxVKUhzLf3W1jeHWFZL5atSbi/x9VxWiWy6FFUGrCMddF90Ro6nu3anct9O/DUeczXmCwXDmIbZUMWpsf3RVQZdLBq8m6QCv5r9J0cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnAMx7iQ; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f480624d0dso32539915ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:01:19 -0700 (PDT)
+	s=arc-20240116; t=1719932483; c=relaxed/simple;
+	bh=CG+rBf4yTRPOgC2KYNPzyy4hPgXZUBxziahcbss4fHE=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=T6FcQ7p60Sy5by8tSa+YxF7L+FGGA17vSByb64CONbK2doVAlvWGCMNa4gOWU+PFD7ILhaiAisVLzzoA4dNTcap1M8N1e9QJQgk7l+OM8ob10HooLmFo5VQijQhAUzGbO8/UxSeJNFW9A3lMlr3EydI+tKkhJpYtZSlDmJQIJ1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FdtOqmEh; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-79c0abd3eaaso331619985a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:01:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719932479; x=1720537279; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kccJC5x8mJGzE036SHnXkNKeOkpSU8i0/myZGjFkRi8=;
-        b=EnAMx7iQu5f8tYyjDqz95RGDeLzdusH+szsbdo7c5aRg3fBePh/u/i4YA4t3WSmhrX
-         yLs+16WoR4xbdJAGPOTFSpV9PDT44UuQI7NP06mWC6FjLUrBwMAusgpJLMiA2uY0r6xn
-         2+d3JwUGJ2jZ+OD+ibBjutxHeIfTLK9k1ykE12I8vxC05KWTdpWqfe6ZEjZxpB4ii8J3
-         XENQN0oleS5cjqqDg8VfE9/ZaoHOAYaMBHuAs5+Jz5VxJH0UOz/MJQAr0DirllHa5O4Z
-         7/joCW4HlzID8wm2WRQ9QaIlmn/kD2ESJimXZASKG8SsIz+75sOkZrAgyO/jAcA16ohI
-         wKzg==
+        d=broadcom.com; s=google; t=1719932481; x=1720537281; darn=vger.kernel.org;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9GpV5s4RtglAF9UQmJocE1wZ/sCtVkHO+wnJrWWiUeI=;
+        b=FdtOqmEhCgelA/TsSThL62Y79LtxcO02Uq1Ig1KQMMw/tIaVimwmnfxH/huZoKMBuY
+         SjJr9jVluCtNVfdHXT8zDMCbRz/prRhJTjCwEBBpbLGn5XFDB2xH2zNa1uSFTM2O5spG
+         xcc94hgz3KH0/IuhiPDPqN7609fcEqY3Oebsk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719932479; x=1720537279;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kccJC5x8mJGzE036SHnXkNKeOkpSU8i0/myZGjFkRi8=;
-        b=ri5+WQruV7rl9JPuDKnnkCH/TjmNrj1C49KHrJG4E3cJMEsvPHf2lkNJ0s0719iNf3
-         WMwUi8FYk3ID1zbN2FMn7vYXywSfMR9aldVjnYK+O55PozA7r6X/y5X6q1N9bAXLEk04
-         yYMTU39QtDwGz0iGLK0AnLzCbZrjXGXMW8Y8j5OCH470M9bYLLO9LIvFGQYXb229rmLn
-         f2gRlp1zG4hBiD9kXCL63RnlnhODapOyg3Zk2A/IrWOEEyngc6+YgM8paDiPiCpqR9S5
-         FBjYV2HbeynkzbzLnmjUbC4m4rkQ1OHaa9n749a2z/u7k9uBfsohtYUglbSJJUx4nPkL
-         B2fw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQgP4Ke43Jgc4Tn6D51voHe+X4GrJ+zfyDvyz/jZnJUh0J18Vn8LOdS3GQzHOFz5BD2pngayeRJuAAAIiTmGQZeL1aaPBE3wonsv4L
-X-Gm-Message-State: AOJu0YwW/Ohm2InU9/SHjrdi7VBG/f1nC8HDO2yDcCDjz8f1oee3QHDq
-	B/mTftbbOTZajh2+rTo5L2TBZgrhUetVKMen91d17DTZ+LZHExro
-X-Google-Smtp-Source: AGHT+IE7mDrMbY3nNfbC0OUxkT91CI3YYSTu2s7yLJufJoLhDvsBQaufm8doEdyDfmd+GBWU7/FyWQ==
-X-Received: by 2002:a17:902:e841:b0:1fa:9c04:946a with SMTP id d9443c01a7336-1fadbc5c2a9mr90903915ad.1.1719932478846;
-        Tue, 02 Jul 2024 08:01:18 -0700 (PDT)
-Received: from dev0.. ([49.43.162.163])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faf92ee538sm15371925ad.274.2024.07.02.08.01.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 08:01:18 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: p.zabel@pengutronix.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	jain.abhinav177@gmail.com,
-	julia.lawall@inria.fr
-Subject: [PATCH] gpu: ipu-v3: Removal of of_node_put with __free for auto cleanup
-Date: Tue,  2 Jul 2024 15:01:09 +0000
-Message-Id: <20240702150109.1002065-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1719932481; x=1720537281;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9GpV5s4RtglAF9UQmJocE1wZ/sCtVkHO+wnJrWWiUeI=;
+        b=QvOkV0TPmz/AICxEdwP9lli4WZJCf3tAcGnzMiSM94DMmwnaJE5/ePmUdZruqsLN+2
+         ZBiYUsys4YXGNnqdzK/ROQN0YI85ArGXUQQwxcivWZ4tB4ullSDzhHSQlI2LFLcuX2oy
+         0N0Nzvt8G3elOZ/g0ArHL//E7dR1NtJGoUwVVUnpEFzqYDDSzQzP3F58Bvr6SLp2C9ru
+         cb4CruYtG55CrGH/N0wSgzcbURXr6b5gPtEbWDPimIalUjTbgKAdJexTnCyhnHnuQtFz
+         mTB8Bb7nGYuaT7OaB0zDcfvGGBzqdfFs6t0I2frnKDzGPi8xVeHZnpsyXaP1LUxptTxu
+         LdbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGpQrGa9Uwxoa4suNkGVLvzfuuut0IH/MwLpxHWfHUcvV2r7j0kXYou+LUO0nbD0ZQ5PSIShpQgIIWosGXjHawZ4W23RcyyAePe+lp
+X-Gm-Message-State: AOJu0YzEjOHNiob7EgK9/OtdD5VdNa+q7PyWWyrUnUTn7jBOkDpIvC2j
+	HmRDj4WX4lX//TrapsEPMTZ/2zMuykR5ifD+vzPl0aur3RQ1fah/22xDJn0ygg==
+X-Google-Smtp-Source: AGHT+IFFStNTYgGdj+GqsrGQpXiBJjbRncg8J9s6u9qrFknNapaz8Uy/bKd9ajTPLOK8cIfpA6gqbg==
+X-Received: by 2002:a05:6214:300b:b0:6b5:44c:24ea with SMTP id 6a1803df08f44-6b5b709501emr102967926d6.16.1719932480617;
+        Tue, 02 Jul 2024 08:01:20 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5bcf1acc0sm27300076d6.44.2024.07.02.08.01.13
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2024 08:01:20 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Jonas Gorski <jonas.gorski@gmail.com>, Su Hui <suhui@nfschina.com>
+CC: <kvalo@kernel.org>, <johannes.berg@intel.com>, <kees@kernel.org>, <a@bayrepo.ru>, <quic_alokad@quicinc.com>, <zyytlz.wz@163.com>, <marcan@marcan.st>, <petr.tesarik.ext@huawei.com>, <duoming@zju.edu.cn>, <colin.i.king@gmail.com>, <u.kleine-koenig@pengutronix.de>, <quic_jjohnson@quicinc.com>, <linville@tuxdriver.com>, <pieterpg@broadcom.com>, <meuleman@broadcom.com>, <frankyl@broadcom.com>, <stanley.hsu@cypress.com>, <wright.feng@cypress.com>, <ian.lin@infineon.com>, <chi-hsien.lin@cypress.com>, <zajec5@gmail.com>, <antonio@open-mesh.com>, <franky.lin@broadcom.com>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Date: Tue, 02 Jul 2024 17:01:09 +0200
+Message-ID: <19073f6bf08.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <CAOiHx=n5rfCBkO8wfqpa=UgL==Ty9=s1f=roVHiaFy2acQOHtw@mail.gmail.com>
+References: <20240702122450.2213833-1-suhui@nfschina.com>
+ <CAOiHx=n5rfCBkO8wfqpa=UgL==Ty9=s1f=roVHiaFy2acQOHtw@mail.gmail.com>
+User-Agent: AquaMail/1.51.5 (build: 105105504)
+Subject: Re: [PATCH wireless 0/9] wifi: cfg80211: avoid some garbage values
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000009403c1061c44fc4b"
+
+--0000000000009403c1061c44fc4b
+Content-Type: text/plain; format=flowed; charset="us-ascii"
 Content-Transfer-Encoding: 8bit
 
-Remove of_node_put for device node prg_node.
+On July 2, 2024 4:02:39 PM Jonas Gorski <jonas.gorski@gmail.com> wrote:
 
-Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
----
- drivers/gpu/ipu-v3/ipu-prg.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+> Hi,
+>
+> On Tue, 2 Jul 2024 at 14:50, Su Hui <suhui@nfschina.com> wrote:
+>>
+>> Clang static checker (scan-build) has some warnings as follows.
+>>
+>> included from drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c:16
+>> drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h:123:2:
+>> warning:Assigned value is garbage or undefined [core.uninitialized.Assign]
+>> 123 |         __le32 data_le = cpu_to_le32(*data);
+>> |         ^~~~~~~~~~~~~~   ~~~~~~~~~~~~~~~~~~
+>> drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c:138:3:warning
+>> Value stored to 'err' is never read [deadcode.DeadStores]
+>>
+>> There are some functions like brcmf_fil_{cmd,iovar,basscfg}_int_get()
+>> which read the value of its parameter, but some callers have not
+>> initialized these parameters which will be read. And this patchset fixes
+>> these problems.
+>
+> The core issue here seems to be that
+> brcmf_fil_{cmd,iovar,basscfg}_int_get() function (needlessly?) read
+> from *data.
+>
+> So instead of forcing all callers of
+> brcmf_fil_{cmd,iovar,basscfg}_int_get() to initialize *data first, I
+> suggest changing brcmf_fil_{cmd,iovar,basscfg}_int_get() to just not
+> read from it.
+>
+> I see no reason why they should care about what the previous value
+> was, since they are supposed to overwrite it anyway.
 
-diff --git a/drivers/gpu/ipu-v3/ipu-prg.c b/drivers/gpu/ipu-v3/ipu-prg.c
-index 729605709955..d1f46bc761ec 100644
---- a/drivers/gpu/ipu-v3/ipu-prg.c
-+++ b/drivers/gpu/ipu-v3/ipu-prg.c
-@@ -84,8 +84,8 @@ static LIST_HEAD(ipu_prg_list);
- struct ipu_prg *
- ipu_prg_lookup_by_phandle(struct device *dev, const char *name, int ipu_id)
- {
--	struct device_node *prg_node = of_parse_phandle(dev->of_node,
--							name, 0);
-+	struct device_node *prg_node __free(device_node) =
-+		of_parse_phandle(dev->of_node, name, 0);
- 	struct ipu_prg *prg;
- 
- 	mutex_lock(&ipu_prg_list_mutex);
-@@ -95,14 +95,11 @@ ipu_prg_lookup_by_phandle(struct device *dev, const char *name, int ipu_id)
- 			device_link_add(dev, prg->dev,
- 					DL_FLAG_AUTOREMOVE_CONSUMER);
- 			prg->id = ipu_id;
--			of_node_put(prg_node);
- 			return prg;
- 		}
- 	}
- 	mutex_unlock(&ipu_prg_list_mutex);
- 
--	of_node_put(prg_node);
--
- 	return NULL;
- }
- 
--- 
-2.34.1
+The issue here is that these are generic functions and there is a reason. 
+Some firmware API primitives allow/require the caller to pass selection 
+parameters in *data. We wanted to keep the functions generic and leave out 
+that knowledge. I suppose we could introduce a separate set of api 
+functions for that purpose, but it seems like significant overhead to 
+silence compiler warnings. Guess I underestimate the potential risk of 
+leaking few bytes of stack data.
 
+
+Regards,
+Arend
+
+
+
+
+
+--0000000000009403c1061c44fc4b
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
+Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
+HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
+KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
+Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
+dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
+OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
+MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
+BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
+ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
+zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
+sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
+BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
+N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
+p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
+YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
+bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCHEpuiGSTh+tj9jQ0c
+lbBFEX6PxCSaLD+AwUpZnKrMCzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0yNDA3MDIxNTAxMjFaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
+AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAWsdgkI0g3cy0UBzh0fqNfA43NBnWcTktPJ1l
+CzRZrCVNpnsqJPjqGn3O8PadMicICDHa+TocZAkamrdxSHTXGXvSU3egSUxyrew75+O39wGkWpdS
+hrObifdYKHK7dc6man0lMrIDBHPTeT5MhYuo+ytobtQHLCpeIzuhFkjZP1Cf5ufi6IpXFd54/js/
+UHzlVc6Izo/PT/8C11/Lywq99tNM/P44Hfmg7TGpVHLGSzhCtqA2nJ7p8YKtmdAwae8IV6E1AiCO
+VBfV/bL1m0tC8LMtLZHcJ2z9o0RsDMWijMz4CBAQOUXdrMFPiPKu64NMkLIWFfbe79pmqFb+HZ//
+lQ==
+--0000000000009403c1061c44fc4b--
 
