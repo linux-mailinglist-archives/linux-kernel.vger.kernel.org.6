@@ -1,124 +1,128 @@
-Return-Path: <linux-kernel+bounces-238070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F389242EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:54:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D9A9242F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60DA41F26777
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:54:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D4CC28BB1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3553E1BC092;
-	Tue,  2 Jul 2024 15:53:59 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5014B1BD001;
+	Tue,  2 Jul 2024 15:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJbpM50l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACB026AE4;
-	Tue,  2 Jul 2024 15:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1AF26AE4;
+	Tue,  2 Jul 2024 15:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719935638; cv=none; b=q8Kqdhn8CHeLETk5LfxxurOU3jAGGL5AwTq+EZWzhonkXkTeSOyfqIh7szp+GJqJDDDUkJrplOJb4zxw0eTYqXdPyC/VM9ObEuav6ywFT4FtpgMAQl+JD+CPxqIEhsjtUhFkzthjWlqXlG1tTtGJTHjB7jOEDh9C4i2STF0n+2Y=
+	t=1719935749; cv=none; b=ucsBsDJThU/3V13riynljmu8LyNzmofcVqRWriO23H1RsbCKU27JUb7wRn0TwWV7pRG59OfbFW4T+/sVi+8/B9eJZqp6xYDakyYvJ1RdYu5cGQupg9XZxHJUnpkjcgqnORrXuPdxsTRGgcsXgg1e8yXVq6iJMs4TRNUR1V+Dlh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719935638; c=relaxed/simple;
-	bh=tbEB5y4YiyR4kUelXRyJ2OIV+l3q1HZubohZF3UN4T4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qyu419p+SBUgg7J4u2vUNyR5WYKAGFr3a7a5+RWbBECiCiGBYXwhI1YqGZMAEbG5YysOZgedRmZlwDa87UxRRQc/73NYf72jxOyOnUQy7XdsdyeFlAsH6z/i0bYqIElizleb8nDilVC1JsBzWUbsOvuvq9sIqvDYNbsnbCQHfDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WD6r42R60z6J6jS;
-	Tue,  2 Jul 2024 23:52:52 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4349C140B55;
-	Tue,  2 Jul 2024 23:53:53 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 2 Jul
- 2024 16:53:52 +0100
-Date: Tue, 2 Jul 2024 16:53:51 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <Terry.Bowman@amd.com>
-CC: <dan.j.williams@intel.com>, <ira.weiny@intel.com>, <dave@stgolabs.net>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>, <ming4.li@intel.com>,
-	<vishal.l.verma@intel.com>, <jim.harris@samsung.com>,
-	<ilpo.jarvinen@linux.intel.com>, <ardb@kernel.org>,
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <Yazen.Ghannam@amd.com>,
-	<Robert.Richter@amd.com>
-Subject: Re: [RFC PATCH 6/9] cxl/pci: Add trace logging for CXL PCIe port
- RAS errors
-Message-ID: <20240702165351.00004abb@Huawei.com>
-In-Reply-To: <550358f7-66d0-441c-abd9-f8edce9a5eb1@amd.com>
-References: <20240617200411.1426554-1-terry.bowman@amd.com>
-	<20240617200411.1426554-7-terry.bowman@amd.com>
-	<20240620135332.000053f5@Huawei.com>
-	<550358f7-66d0-441c-abd9-f8edce9a5eb1@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1719935749; c=relaxed/simple;
+	bh=bR4HNfKuY8jGJG6iuXf2xRGlqbsq3FVgf0n2KcVyQlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G0Qgc9LXlBE7KUCJ0MQOKVI2mYasnsb5WlkAlOo1/e/M+bwywMXzkJJhEVO783QzDvMCiGaVnR9jyL/111PKAvAheljwjdJL9yrf3xAD1uOwZfGBSpYX0of+MfsXdB6L1nTfKgDA6ID5u9cu2WG2i1z1DHD7kT1w4TOPd7nwOLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJbpM50l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69D7EC4AF07;
+	Tue,  2 Jul 2024 15:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719935749;
+	bh=bR4HNfKuY8jGJG6iuXf2xRGlqbsq3FVgf0n2KcVyQlo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pJbpM50lyyIUovqd33O82XefqYGxiM+do2g3jXYXYoxk1GTBC93LwYs+pV0ot3Y8K
+	 UqnVJVu51D3hUcB8VXMFZbJzn9glQPfYrUz8F9rpN+MNExo14wFGuiIrIY9ysDqvKo
+	 OTFRTqcAC0ePiWxzyvaJQXGrV15NbXc08BaE6XwBQoh8mKYMQfR/zCXBwVpthHZR0a
+	 efDoebDxfIGXFWaZhQ/QqzMMEUd01hxtLFfDCy7QXZ1O8O1pPnd8rNZo84Fu/oHrqa
+	 aQWnG/7eGENVZzDQ9r9QBjHU9NTK0a1bjUY+ZwGAwHOrhr8v+4rk155nOb7rPNdtTY
+	 VaBB7glgeMDmQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sOfr7-000000003W1-26rB;
+	Tue, 02 Jul 2024 17:55:46 +0200
+Date: Tue, 2 Jul 2024 17:55:45 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org,
+	konrad.dybcio@linaro.org, jassisinghbrar@gmail.com,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com,
+	conor+dt@kernel.org, quic_nkela@quicinc.com,
+	quic_psodagud@quicinc.com, abel.vesa@linaro.org
+Subject: Re: [PATCH V6 5/5] arm64: dts: qcom: x1e80100: Enable cpufreq
+Message-ID: <ZoQjAWse2YxwyRJv@hovoldconsulting.com>
+References: <20240612124056.39230-1-quic_sibis@quicinc.com>
+ <20240612124056.39230-6-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612124056.39230-6-quic_sibis@quicinc.com>
 
-On Mon, 24 Jun 2024 10:53:51 -0500
-Terry Bowman <Terry.Bowman@amd.com> wrote:
+On Wed, Jun 12, 2024 at 06:10:56PM +0530, Sibi Sankar wrote:
+> Enable cpufreq on X1E80100 SoCs through the SCMI perf protocol node.
+> 
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 63 ++++++++++++++++----------
+>  1 file changed, 39 insertions(+), 24 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index 7b619db07694..d134dc4c7425 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -69,8 +69,8 @@ CPU0: cpu@0 {
+>  			reg = <0x0 0x0>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&L2_0>;
+> -			power-domains = <&CPU_PD0>;
+> -			power-domain-names = "psci";
+> +			power-domains = <&CPU_PD0>, <&scmi_dvfs 0>;
+> +			power-domain-names = "psci", "perf";
+>  			cpu-idle-states = <&CLUSTER_C4>;
 
-> Hi Jonathan,
-> 
-> I added responses inline below.
-> 
-> On 6/20/24 07:53, Jonathan Cameron wrote:
-> > On Mon, 17 Jun 2024 15:04:08 -0500
-> > Terry Bowman <terry.bowman@amd.com> wrote:
-> >   
-> >> The cxl_pci driver uses kernel trace functions to log RAS errors for
-> >> endpoints and RCH downstream ports. The same is needed for CXL root ports,
-> >> CXL downstream switch ports, and CXL upstream switch ports.
-> >>
-> >> Add RAS correctable and RAS uncorrectable trace logging functions for
-> >> CXL PCIE ports.
-> >>
-> >> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> >> ---
-> >>  drivers/cxl/core/trace.h | 34 ++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 34 insertions(+)
-> >>
-> >> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-> >> index e5f13260fc52..5cfd9952d88a 100644
-> >> --- a/drivers/cxl/core/trace.h
-> >> +++ b/drivers/cxl/core/trace.h
-> >> @@ -48,6 +48,23 @@
-> >>  	{ CXL_RAS_UC_IDE_RX_ERR, "IDE Rx Error" }			  \
-> >>  )
-> >>  
-> >> +TRACE_EVENT(cxl_port_aer_uncorrectable_error,
-> >> +	TP_PROTO(struct device *dev, u32 status),  
-> > 
-> > By comparison with existing code, why no fe or header
-> > log?  Don't exist for ports for some reason?
-> > Serial number of the port might also be useful.
-> >   
-> 
-> The AER FE and header are the same for ports and the logging 
-> needs to be added here.
-> 
-> There is no serial number for the ports.
-Why not? At least for switch USP there might be (actually
-I believe there can be for pretty much anything but there
-are rules on them matching in switch funcitons).
+> +		scmi {
+> +			compatible = "arm,scmi";
+> +			mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
+> +			mbox-names = "tx", "rx";
+> +			shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
+> +
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			scmi_dvfs: protocol@13 {
+> +				reg = <0x13>;
+> +				#power-domain-cells = <1>;
+> +			};
+> +		};
+>  	};
 
-J
+This series gives a nice performance boost on the x1e80100 CRD, but I'm
+seeing a bunch of warnings and errors that need to be addressed:
 
-> 
-> Regards,
-> Terry
+[    9.533053] arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:0] - ret:-95. Using regular messaging.
+[    9.549458] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+[    9.563925] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+[    9.572835] arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:1] - ret:-95. Using regular messaging.
+[    9.609471] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+[    9.633341] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+[    9.650000] arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:2] - ret:-95. Using regular messaging.
+[    9.727098] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
+[    9.737157] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
+[    9.875039] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
+[    9.888428] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
+[    9.913506] debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+[    9.922198] debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+
+Johan
 
