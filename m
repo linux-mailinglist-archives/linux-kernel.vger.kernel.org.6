@@ -1,180 +1,104 @@
-Return-Path: <linux-kernel+bounces-238326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342FC92484D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:29:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D30924852
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49D13B2809B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:29:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92B59B21C04
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E8A1CFD77;
-	Tue,  2 Jul 2024 19:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB221C8FB7;
+	Tue,  2 Jul 2024 19:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3acl89+"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RH1OjcfH"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F3F1CE09B;
-	Tue,  2 Jul 2024 19:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D764B1CB31A;
+	Tue,  2 Jul 2024 19:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719948519; cv=none; b=VU5F1HOhr8cbas876mF2QBnKwTHRHltdWmWyG+6Pqdp8z/mZi7Mx0al97c/lisRwcl6XGCzKPNKcEVmA7N4jmGhMC3ic4mVCRJXVi7E7BmlXviSQs9KUEuvF/42wSIu2wMeD3U3/IgQpsVaZIVghCibjlnNk31MDCrpBely7qio=
+	t=1719948552; cv=none; b=MD7A50X5gj4AhijWNWOQqF4KBp/VRfWMrR1vfHGNT65Vop9H/A+mzeLDIvLfmm2yioTLfl27beOgTjSh7cTIxfn1FvCUv2dVNoCCUHnOXDgDYPiyeySUqJUdvK3QpYQBlEBUbP00pr3nQe/D1XkNB/eSsFXJdrIdBKKLNy1zH4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719948519; c=relaxed/simple;
-	bh=tul9GGxVOJheZfp6ob6RkPcc0U0d7m5QmW2bOPPbdg8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nZMRG/hCWThzgdj8P+ptwuPmO38wFx81htWyYRXvOcdUMA+H2Ul7yrqyS/8aAqzqK99xozRwBS01sn8DyMrIKEa9U/VpcuG6gajj54L36oDXSGilZVpqYAmUAVscj2IBwBnK1rXT2bCaj5f1lIh8GZSk3vuQxT2jwVJgtZfVFH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3acl89+; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1719948552; c=relaxed/simple;
+	bh=CBWZWmuugeImQuT2m4SY3zJJM7K1jAR3HFwIw9QBHR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rbvgVUTenrVGSHwLQ/EqVZn+sBJcMRaHD2ggD5jKrjWLnmjLcTP+opShUiZvNBjDvq54kKqL2kLmg0KG2ng2spN4TADDNnEdISsV1Jm/yui7ATR75loZAKADx6AiJWHVxZDxqQ5dVwiVYEe68gE8g6dd/B/fpbOuzWCsYAE9UxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RH1OjcfH; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-424ad289912so32273125e9.2;
-        Tue, 02 Jul 2024 12:28:37 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7066a3229f4so3018019b3a.2;
+        Tue, 02 Jul 2024 12:29:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719948516; x=1720553316; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tul9GGxVOJheZfp6ob6RkPcc0U0d7m5QmW2bOPPbdg8=;
-        b=E3acl89+9FCgDvAhl+5crCOYHlEXKkK50tzu0SGTg8FWhUHLw6zyr3YH/z7YOgKkCE
-         RFN9jwXxuaoCs9fZ0XN6Em/Aw+3sBTFj8ZfQwj4Agudk4c/QiLYxFDv+R5zfzYWXT+RQ
-         ooVGlXFpHSzTn2JJs0yZR54TNTlC1gXN+bMvNgb1rDPFw9lRKizljwpG6sEhawx8Effu
-         XHcf6eEUATInxC05KvrHYL4N9TVihQPfsQTHiUZhr5uGgjf6F3lNZc4prkFDlBZ9p0kc
-         QRpbMbQGsDzrhHo0BwSShyFPCAh+LM40CFA2MQR/OwUVgdo5IPx6/1djZYcrsb18xVBe
-         k6ww==
+        d=gmail.com; s=20230601; t=1719948550; x=1720553350; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A4NCTmI4coc84e5gkxcvjfWMDSk5YUBVomKbGjgxM2A=;
+        b=RH1OjcfHniPjVRMDrsBixFbk4PAebY7jQG/VEG3OxMrjusstrVpXtxzsMnxuhRtgrz
+         wijq8iwQ0Dqt11eQMy+z6xsTeYme64RKTTDQDTpjqImwi88mevEoGvSBgN7BJ8nvj07/
+         8aE7uOGFx4rrkRRuQkcr5BZ/GZZWhjVlDqDk7BS/dUjI4lZMN23AeUqw47RYhicdTDyf
+         D6adExbpfLLyyI3iZXUbtRKzhckzRnGwspk09+dW++1lcJqsvaqcc0h5g7hgPVvUzyR4
+         DSqQT1F0X9AwI1NdqLZJs3RVb7tyVn7J3378LuwcYUN2eRhEZT+ZhQCqbEnLwgs5vLio
+         uw+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719948516; x=1720553316;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tul9GGxVOJheZfp6ob6RkPcc0U0d7m5QmW2bOPPbdg8=;
-        b=jJ3tt7BkQMhmmmrtnJme0BylPuaYG6aIeWGsPJAUKhuyCFw+N1cELLz7xXXmn61quR
-         Sfg1VBnhmrbzcUWTEpn1oK/OcfjAuzUaWBkOIqLvjqirSjVOYJ3Xh5O10MdlumEoTz8X
-         H+Lf5BfzLIFjKq85TY08Q85/Xw1PBC+0KKcxyhHqSxq1VOblgWWPsq4565VURsjcd1t0
-         NMc3kI85G6zoCOoaS6xPzY0dUxIJ+roqYpKCKXYlaxXYQpnF6JC0u0fkOM/1Wx58xMUL
-         rRaxI3JvEjwc29Hgs9YyrGps4t1YPJV3ufJqDfkVVUdWOneQB9wgkgiSt4x80YxLrzzb
-         1Ang==
-X-Forwarded-Encrypted: i=1; AJvYcCWc3dTQIwKR2OpCvY/EEI1ElMvzlXTbf4fRWYGjao8O05E0e2HVbJdMaEopgULnHHIubkjai3GZ5QX4ImdgZAZVPoXlMla5MImlCEhkti38HWy01gExG9cvNere95D7Dyjw00DSIgNKbIZXD5BY8apvkpqKkIE+8hbQJHoK7/4e4ItgHV0uoYqhzhbBQ4LJvGkF8BHNBpNYAhkp
-X-Gm-Message-State: AOJu0YxY4qcQZBSJIN7qkwqMI6biN1JEJZlSsGJC7L7Y3SZSR/8zZCL5
-	3SjUn+Cio+r3PW6NZghz7TvS4cLKB2QhKPrllSIBZFSsvuCnqI4K
-X-Google-Smtp-Source: AGHT+IEvjPTxMj0JsgTr5zdhlobmpuoHq2YNMq0ll0Nna1fgaDgjHIF7g/bD9TLi2GctXVCTSByhDw==
-X-Received: by 2002:a05:600c:304a:b0:424:ac90:8571 with SMTP id 5b1f17b1804b1-4257a01161cmr64297235e9.18.1719948515718;
-        Tue, 02 Jul 2024 12:28:35 -0700 (PDT)
-Received: from ?IPv6:2001:8a0:e622:f700:768c:7ffe:4763:3ff5? ([2001:8a0:e622:f700:768c:7ffe:4763:3ff5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af55aeasm206364485e9.17.2024.07.02.12.28.33
+        d=1e100.net; s=20230601; t=1719948550; x=1720553350;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A4NCTmI4coc84e5gkxcvjfWMDSk5YUBVomKbGjgxM2A=;
+        b=GgEzt1NfD89ZDyoVOMRWEggg+E/EBFLcmhyfYVvNwXBJTc197isHUvHtGTN/bXVNKg
+         VRPz1kiOCSfNVn2jLt3LKkvYTEdSjicJewwAzRF78zK83aActHL+EJ6Vk9j6LCYuKZi3
+         fm1TQcT/aILH8n6FvgKmOtsgfS7eVtnwpquMLff/XtgFnw3OO0tk3ZCipVw1/uFjSBSs
+         r//xDGjfoEjuKgXUAr7hr7iWImJiPgdQBqVxWuEoTwu4imB40EEU2Aqmkm9QN3L2H/Nq
+         D4EE3Q6UDUmtyFfQVve7BkvP4sK6bqY8H7IuWk1YbE5ZjpyIIvyM53ZDfvXfonlToN9e
+         WRmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXq8S5++sM7S24dxkg+ZjYKStK33KYPXLLRSH5OtxNm3LuaFmoHa76YrOVDF6mbhn7gnppq0NbSRd8MG6yYeIUoYLfeWyY4Vc2fW4cV7O9WR+fcEa/e4PCaGBIX78wm5K2ChNxCAWcSFAO3JFX9O59L7LcYkl6i+myEqn9lj6KVbvKro82RBGPS1BwnNQW/i3LRIwRm/F8ffwgKIhOQGC4dMNf6ICln9XlGr+QK4eGcB+wR3GMmteT9rD+Y
+X-Gm-Message-State: AOJu0YzFL4hVj8pJecxdV2tzSipBOkuGOUPFKxRNNmGyUgmlWbUfphjE
+	DMnEtIu9Q3Nr+J3pDsMP5wV5pLUPk1XAsTMk/k2z2MYF+XL3rb4V
+X-Google-Smtp-Source: AGHT+IFSlkcx7+6K80XNhQ8XSJJHHVBy3ib9ITKLvGpGc6h9GHUm/8KgUk8oukAES3IWcw0avTXE2g==
+X-Received: by 2002:a05:6a00:a8c:b0:706:742a:1c3b with SMTP id d2e1a72fcca58-70aaad388a7mr9228268b3a.8.1719948550014;
+        Tue, 02 Jul 2024 12:29:10 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708045a9f52sm9197225b3a.177.2024.07.02.12.29.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 12:28:35 -0700 (PDT)
-Message-ID: <87e0dac344d927ca6e2655ce7f7433ff73da6b58.camel@gmail.com>
-Subject: Re: [PATCH v1] arm64: dts: imx8mp: Fix VPU PGC power-domain parents
-From: Vitor Soares <ivitro@gmail.com>
-To: Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn
- Guo <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
- <festevam@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Vitor Soares <vitor.soares@toradex.com>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org"
- <linux-pm@vger.kernel.org>, "stable@vger.kernel.org"
- <stable@vger.kernel.org>,  Lucas Stach <l.stach@pengutronix.de>
-Date: Tue, 02 Jul 2024 20:28:33 +0100
-In-Reply-To: <AM6PR04MB5941E53A5742E95EF1579C6688D32@AM6PR04MB5941.eurprd04.prod.outlook.com>
-References: <20240701124302.16520-1-ivitro@gmail.com>
-	 <AM6PR04MB5941E53A5742E95EF1579C6688D32@AM6PR04MB5941.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Tue, 02 Jul 2024 12:29:08 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Tue, 2 Jul 2024 12:29:07 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Alex Vdovydchenko <xzeol@yahoo.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>,
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: hwmon: Add MPS mp5920
+Message-ID: <cdff38fb-ac8c-4f5f-8067-aa99acb7c677@roeck-us.net>
+References: <20240702115252.981416-1-xzeol@yahoo.com>
+ <20240702115252.981416-2-xzeol@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702115252.981416-2-xzeol@yahoo.com>
 
-T24gTW9uLCAyMDI0LTA3LTAxIGF0IDIzOjU5ICswMDAwLCBQZW5nIEZhbiB3cm90ZToKPiA+IFN1
-YmplY3Q6IFtQQVRDSCB2MV0gYXJtNjQ6IGR0czogaW14OG1wOiBGaXggVlBVIFBHQyBwb3dlci1k
-b21haW4KPiA+IHBhcmVudHMKPiA+IAo+ID4gRnJvbTogVml0b3IgU29hcmVzIDx2aXRvci5zb2Fy
-ZXNAdG9yYWRleC5jb20+Cj4gPiAKPiA+IE9uIGlNWDhNIFBsdXMgUXVhZExpdGUgKFZQVS1sZXNz
-IFNvQyksIHRoZSBkZXBlbmRlbmN5IGJldHdlZW4KPiA+IFZQVSBwb3dlciBkb21haW5zIGxlYWQg
-dG8gYSBkZWZlcnJlZCBwcm9iZSBlcnJvciBkdXJpbmcgYm9vdDoKPiA+IFvCoMKgIDE3LjE0MDE5
-NV0gaW14LXBnYyBpbXgtcGdjLWRvbWFpbi44OiBmYWlsZWQgdG8gY29tbWFuZCBQR0MKPiA+IFvC
-oMKgIDE3LjE0NzE4M10gcGxhdGZvcm0gaW14LXBnYy1kb21haW4uMTE6IGRlZmVycmVkIHByb2Jl
-IHBlbmRpbmc6Cj4gPiAocmVhc29uIHVua25vd24pCj4gPiBbwqDCoCAxNy4xNDcyMDBdIHBsYXRm
-b3JtIGlteC1wZ2MtZG9tYWluLjEyOiBkZWZlcnJlZCBwcm9iZSBwZW5kaW5nOgo+ID4gKHJlYXNv
-biB1bmtub3duKQo+ID4gW8KgwqAgMTcuMTQ3MjA3XSBwbGF0Zm9ybSBpbXgtcGdjLWRvbWFpbi4x
-MzogZGVmZXJyZWQgcHJvYmUgcGVuZGluZzoKPiA+IChyZWFzb24gdW5rbm93bikKPiA+IAo+ID4g
-VGhpcyBpcyBpbmNvcnJlY3QgYW5kIHNob3VsZCBiZSB0aGUgVlBVIGJsay1jdHJsIGNvbnRyb2xs
-aW5nIHRoZXNlIHBvd2VyCj4gPiBkb21haW5zLCB3aGljaCBpcyBhbHJlYWR5IGRvaW5nIGl0Lgo+
-ID4gCj4gPiBBZnRlciByZW1vdmluZyB0aGUgYHBvd2VyLWRvbWFpbmAgcHJvcGVydHkgZnJvbSB0
-aGUgVlBVIFBHQyBub2RlcywKPiA+IGJvdGggaU1YOE0gUGx1cyB3LyBhbmQgdy9vdXQgVlBVIGJv
-b3QgY29ycmVjdGx5LiBIb3dldmVyLCBpdCBicmVha3MKPiA+IHRoZSBzdXNwZW5kL3Jlc3VtZSBm
-dW5jdGlvbmFsaXR5LiBBIGZpeCBmb3IgdGhpcyBpcyBwZW5kaW5nLCBzZWUgTGlua3MuCj4gPiAK
-PiA+IENjOiA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4KPiA+IEZpeGVzOiBkZjY4MDk5MmRkNjIg
-KCJhcm02NDogZHRzOiBpbXg4bXA6IGFkZCB2cHUgcGdjIG5vZGVzIikKPiA+IExpbms6Cj4gPiBT
-dWdnZXN0ZWQtYnk6IEx1Y2FzIFN0YWNoIDxsLnN0YWNoQHBlbmd1dHJvbml4LmRlPgo+ID4gU2ln
-bmVkLW9mZi1ieTogVml0b3IgU29hcmVzIDx2aXRvci5zb2FyZXNAdG9yYWRleC5jb20+Cj4gCj4g
-Rm9yIFZQVS1MZXNzIDhNUCwgYWxsIHRoZSBWUFUgUEdDIG5vZGVzIHNob3VsZCBiZSBkcm9wcGVk
-LAo+IHJpZ2h0PwoKVGhleSBkb24ndCBuZWVkIHRvIGJlIGRyb3BwZWQuIFRha2luZyB0aGUgaU1Y
-OE1NIExpdGUgdmFyaWFudGUgYXMgZXhhbXBsZSAoaXQKYWxzbyBkb2Vzbid0IGhhdmUgVlBVKSwg
-dGhlIG5vZGVzIGFyZSB0aGVyZSBhbmQgdGhpcyBpc3N1ZSBpcyBub3QgcHJlc2VudC4KCj4gCj4g
-V2h5IG5vdCB1c2UgYm9vdGxvYWRlciB0byB1cGRhdGUgdGhlIGRldmljZSB0cmVlIGJhc2VkIG9u
-IGZ1c2UKPiBzZXR0aW5ncz8KCldoaWxlIGZpeGluZyBWUFUgYmxrLWN0cmwgc3VzcGVuZC9yZXN1
-bWUgZnVuY3Rpb25hbGl0eSwgSSByZWNlaXZlZCBmZWVkYmFjayB0aGF0CnRoaXMgVlBVIEdQQyBk
-ZXBlbmRlbmN5IGlzIGluY29ycmVjdCBhbmQgaXMgdXAgdG8gVlBVIGJsay1jdHJsIHRvIGNvbnRy
-b2wgdGhlCkdQQyBkb21haW5zLgpBcyB3ZSBkaXNhYmxlIHRoZSBWUFUgYmxrLWN0cmwgbm9kZSBv
-biB0aGUgYm9vdGxvYWRlciwgcmVtb3ZpbmcgdGhlIGRlcGVuZGVuY3kKc29sdmVzIHRoZSBpc3N1
-ZS4KClJlZ2FyZHMsClZpdG9yIFNvYXJlcwo+IAo+IFJlZ2FyZHMsCj4gUGVuZy4KPiAKPiA+IC0t
-LQo+ID4gwqBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bXAuZHRzaSB8IDMgLS0t
-Cj4gPiDCoDEgZmlsZSBjaGFuZ2VkLCAzIGRlbGV0aW9ucygtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0
-IGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1wLmR0c2kKPiA+IGIvYXJjaC9h
-cm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1wLmR0c2kKPiA+IGluZGV4IGI5MmFiYjVhNWM1
-My4uMTI1NDgzMzZiNzM2IDEwMDY0NAo+ID4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVl
-c2NhbGUvaW14OG1wLmR0c2kKPiA+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxl
-L2lteDhtcC5kdHNpCj4gPiBAQCAtODgyLDIxICs4ODIsMTggQEAgcGdjX3ZwdW1peDogcG93ZXIt
-ZG9tYWluQDE5IHsKPiA+IAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwZ2NfdnB1X2cxOiBw
-b3dlci0KPiA+IGRvbWFpbkAyMCB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAjcG93ZXItZG9tYWluLQo+ID4gY2VsbHMgPSA8MD47Cj4gPiAtwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBvd2VyLWRvbWFpbnMgPQo+ID4gPCZwZ2NfdnB1bWl4
-PjsKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZyA9Cj4gPiA8
-SU1YOE1QX1BPV0VSX0RPTUFJTl9WUFVfRzE+Owo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgY2xvY2tzID0gPCZjbGsKPiA+IElNWDhNUF9DTEtfVlBVX0cxX1JPT1Q+
-Owo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Owo+ID4gCj4gPiDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoHBnY192cHVfZzI6IHBvd2VyLQo+ID4gZG9tYWluQDIxIHsKPiA+IMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCNwb3dlci1kb21haW4tCj4gPiBjZWxscyA9IDww
-PjsKPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcG93ZXItZG9tYWlu
-cyA9Cj4gPiA8JnBnY192cHVtaXg+Owo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgcmVnID0KPiA+IDxJTVg4TVBfUE9XRVJfRE9NQUlOX1ZQVV9HMj47Cj4gPiDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjbG9ja3MgPSA8JmNsawo+ID4gSU1Y
-OE1QX0NMS19WUFVfRzJfUk9PVD47Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH07Cj4gPiAK
-PiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcGdjX3ZwdV92YzgwMDBlOiBwb3dlci0KPiA+IGRv
-bWFpbkAyMiB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAjcG93
-ZXItZG9tYWluLQo+ID4gY2VsbHMgPSA8MD47Cj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoHBvd2VyLWRvbWFpbnMgPQo+ID4gPCZwZ2NfdnB1bWl4PjsKPiA+IMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZyA9Cj4gPiA8SU1YOE1QX1BPV0VS
-X0RPTUFJTl9WUFVfVkM4MDAwRT47Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqBjbG9ja3MgPSA8JmNsawo+ID4gSU1YOE1QX0NMS19WUFVfVkM4S0VfUk9PVD47Cj4g
-PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH07Cj4gPiAtLQo+ID4gMi4zNC4xCj4gCgo=
+On Tue, Jul 02, 2024 at 02:52:50PM +0300, Alex Vdovydchenko wrote:
+> Add support for MPS mp5920 controller
+> 
+> Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
+> ---
 
+Applied, after adding Conor's Ack from v3.
+
+Guenter
 
