@@ -1,118 +1,135 @@
-Return-Path: <linux-kernel+bounces-237428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA6991F0F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:22:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 162619238C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FB601C21466
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:22:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BB101C21157
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A8614D449;
-	Tue,  2 Jul 2024 08:22:20 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B43414C596;
+	Tue,  2 Jul 2024 08:23:58 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11794963F;
-	Tue,  2 Jul 2024 08:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2937416419
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 08:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719908539; cv=none; b=RX863m2zPA8lexYitkrYeFK3+4cFmNupnKRHwoSp6vC54lLX0wCO89fOOFtt+0Vn0b81Atkw2JcyZmYITxe9HD/hYn+eRnylASPu5XmRaEctdMVOS3kMaCwhMZ/q8v2f9J0nxnwPe3hMq2OtPIjRbyKbMQI1xKy3pMaMKwTxHGM=
+	t=1719908638; cv=none; b=stVCbvqAEUPAQdrwltHGES7KRT/rIePwd+iRSUXdb71SPbefcAmWsWyZk2yS6ZXldnTho9Lhjgb/zG21s1Vu8EfMB3/eV8QQ5jGP3DyFgQrn5GZxbdvsKIfYPi15H64H21Ks1VL1MUUkGVIB/1QPzKVPT0mM68pbxEy03qfMs5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719908539; c=relaxed/simple;
-	bh=Bk0aDhp5iOwermG+lJG9SHuvKM3ItOI1gjfJfDpNSCw=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=TprKRxQXuw0AdKtiPpqfRMmehYEWbLpgdQV1zFIdTnSgXK6l0ozYl2Rz72UW/dB0cRfXCWvsSU0fJIVXr4qKGKg5nfVZAqqEpALgeGfXdJAHUUkt3GvbQpx/xjrQEtWtA0VhNcnPpkzhbb5wzuKQi/+HtzRuxsXOdUVstd0gjxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WCwks2S5BzZhFj;
-	Tue,  2 Jul 2024 16:17:41 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 58D781400C9;
-	Tue,  2 Jul 2024 16:22:13 +0800 (CST)
-Received: from [10.174.179.80] (10.174.179.80) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 2 Jul 2024 16:22:12 +0800
-Subject: Re: [PATCH] Fix WARNING in __ext4_ioctl
-To: Pei Li <peili.dev@gmail.com>
-CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<skhan@linuxfoundation.org>, <syzkaller-bugs@googlegroups.com>,
-	<linux-kernel-mentees@lists.linuxfoundation.org>,
-	<syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com>, Theodore Ts'o
-	<tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>
-References: <20240628-bug8-v1-1-417ef53cca33@gmail.com>
-From: Zhang Yi <yi.zhang@huawei.com>
-Message-ID: <0c5957b2-3319-4c10-a3da-1c656809d9de@huawei.com>
-Date: Tue, 2 Jul 2024 16:22:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1719908638; c=relaxed/simple;
+	bh=PF7t4m8gFjUEXljEAYhJjqo97jcQQ/DgD6Wg064kH8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tCvEXLqh4envLMMyde118bsP6T0GtSRss4dizE2FSXcgPr1mQGqzjTFwQd4ZQxROlzhH7THrnArwQ6pQVY/7iOPafozMhY+FnTvGODecEQ4CC7Sw7o4FDxPctb7V+zlGHoOLM/AuN0ya/kETfu7lNuGZYuD8hDPCCjqXVnU3MDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sOYmu-00011E-US; Tue, 02 Jul 2024 10:22:56 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sOYmp-006ZAc-UQ; Tue, 02 Jul 2024 10:22:51 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sOYmp-00ANey-2Z;
+	Tue, 02 Jul 2024 10:22:51 +0200
+Date: Tue, 2 Jul 2024 10:22:51 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Russell King <linux@armlinux.org.uk>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
+	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH 2/9] mtd: add mtd_is_master helper
+Message-ID: <20240702082251.ljdaz2b7agabbm76@pengutronix.de>
+References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
+ <20240701-b4-v6-10-topic-usbc-tcpci-v1-2-3fd5f4a193cc@pengutronix.de>
+ <b97bf565-bef5-fbc7-63c5-f174880ad9ab@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240628-bug8-v1-1-417ef53cca33@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b97bf565-bef5-fbc7-63c5-f174880ad9ab@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 2024/6/29 11:31, Pei Li wrote:
-> Specify the size of s_volume_name in strscpy_pad() to avoid buffer
-> overflow.
+On 24-07-01, Sergei Shtylyov wrote:
+> On 7/1/24 4:53 PM, Marco Felsch wrote:
 > 
-> Reported-by: syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=2cab87506a0e7885f4b9
+> > Provide a simple helper to make it easy to detect an master mtd device.
+> > 
+> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > ---
+> >  include/linux/mtd/mtd.h | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
+> > index 8d10d9d2e830..bf3fc2ea7230 100644
+> > --- a/include/linux/mtd/mtd.h
+> > +++ b/include/linux/mtd/mtd.h
+> > @@ -408,6 +408,11 @@ static inline struct mtd_info *mtd_get_master(struct mtd_info *mtd)
+> >  	return mtd;
+> >  }
+> >  
+> > +static inline bool mtd_is_master(struct mtd_info *mtd)
+> > +{
+> > +	return mtd->parent ? false : true;
+> 
+>    Perhaps:
+> 
+> 	return !mtd->parent;
 
-Please add,
-Fixes: 744a56389f73 ("ext4: replace deprecated strncpy with alternatives")
+Sure, if you prefer this style rather I will change it.
 
-> Signed-off-by: Pei Li <peili.dev@gmail.com>
-> ---
-> strscpy_pad() by default takes the size of destination string as the
-> size to be read from source string. However, as s_volume_name is only
-> declared as an array of size EXT4_LABEL_MAX, we are reading 1 byte more
-> than expected.
-> 
-
-I'd suggested to move this into the commit log to make it easier to
-understand, and IIUC this issue only happens when s_volume_name is full
-of 16 bytes length since it's not NULL terminated, so it can't break out
-after copying 16 bytes.
-
-Thanks,
-Yi.
-
-> Specify the size of s_volume_name in strscpy_pad() to avoid buffer
-> overflow.> ---
->  fs/ext4/ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> index dab7acd49709..0c4fb579757a 100644
-> --- a/fs/ext4/ioctl.c
-> +++ b/fs/ext4/ioctl.c
-> @@ -1151,7 +1151,7 @@ static int ext4_ioctl_getlabel(struct ext4_sb_info *sbi, char __user *user_label
->  	BUILD_BUG_ON(EXT4_LABEL_MAX >= FSLABEL_MAX);
->  
->  	lock_buffer(sbi->s_sbh);
-> -	strscpy_pad(label, sbi->s_es->s_volume_name);
-> +	strscpy_pad(label, sbi->s_es->s_volume_name, EXT4_LABEL_MAX);
->  	unlock_buffer(sbi->s_sbh);
->  
->  	if (copy_to_user(user_label, label, sizeof(label)))
-> 
-> ---
-> base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
-> change-id: 20240628-bug8-7f700a228c4a
-> 
-> Best regards,
-> 
+Regards,
+  Marco
 
