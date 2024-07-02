@@ -1,196 +1,108 @@
-Return-Path: <linux-kernel+bounces-238045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C17924296
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:40:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D88D924299
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B57C21F2374E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:40:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286AB1F23D21
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1BE1BD020;
-	Tue,  2 Jul 2024 15:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4231BC07A;
+	Tue,  2 Jul 2024 15:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2rFR4+1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EJlo0la8"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7841BD00E;
-	Tue,  2 Jul 2024 15:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F331BB69C
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934774; cv=none; b=Gp5VufWosYcdvEPo9DRdTL0NwjPk8jjGR4xBiQNMTOu3QwSjUpJxljKAHqTZDKP4lqtu5ZiSrHLgwFah4TzkHPYNsGIyADICWTMGMztoiJCkk0BuPeSoD1c3UdwsYyCiNxJemtFWBttr6J7coSVb4wykBxAiLKMksIUmTUEQpzA=
+	t=1719934869; cv=none; b=C34xiGRZAZeVsImDEyky3dKnWPfbh63HtkzzzPmva/z6Hne2O/Qiv/gKgnt23fVIVkh5YDsrqf2F3P90W6+7nMuMVGIH2cObBq6QZ2hE2r3MnBnSHWfoqjpLlom9dBG//Rex8BgrBtfoWzL4Izz5eDYlt2s8tL1RRDnvBf54iW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934774; c=relaxed/simple;
-	bh=g+sRA4FxF0h1IXfXKKTkTHt+QuvIbChKxddB8lzK4EU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ABwyb6unX5BvqAFwMerMVvzSKFyIQVHOufBqhn9aoK4ZmWTNA89jy6pCsmDJdMbojzJ27JjZIzuW9LaqU6us7n/oKZvPuqU0MeGuwDqaQTsfVcTSHw09hN1CgGAY8zsu4oEDpdYhOcj1u3JhubT7Rdpdk9Wr48z+0L0JyoBiByg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2rFR4+1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A64C5C4AF0C;
-	Tue,  2 Jul 2024 15:39:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719934773;
-	bh=g+sRA4FxF0h1IXfXKKTkTHt+QuvIbChKxddB8lzK4EU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h2rFR4+1H8QAjHvU9Nz3JkKytSJuyGXKQhLFL1bLBu4/dRgrX3qdt0w6Xq/S6XkFZ
-	 ZlB8VolHFV5FXsu4clie838j9pElkHVJKrVH2pYsB34+zZPYXftXRi0jLjnmKosCF+
-	 XRqvP4pTy97ke6vL8nabJ3odm4GxIbubsDZztRCtBQhRkPTZeOcs6LUWEU8C684usv
-	 5ZbydD7hBTg+SJjg+VwMNbV0djJTy9wrTgEA/3DLdINP+ZmnGY9KmI+sMgil7QiQMZ
-	 t9VU8adMQ/COk9f2GOfv1+DkuhttuUaaPgJg/2LUPc3gtKxmh4MJHSExYyjk3CSlLz
-	 jq57ItKWe1/vg==
-Date: Tue, 2 Jul 2024 16:39:26 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Yu-Chien Peter Lin <peterlin@andestech.com>
-Cc: Samuel Holland <samuel.holland@sifive.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>, tim609@andestech.com,
-	dminus@andestech.com, ycliang@andestech.com
-Subject: Re: [PATCH v3 03/13] riscv: dts: allwinner: Add xtheadvector to the
- D1/D1s devicetree
-Message-ID: <20240702-protegee-exploring-49c0dbd831e5@spud>
-References: <20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com>
- <20240619-xtheadvector-v3-3-bff39eb9668e@rivosinc.com>
- <0cc13581-5cc4-4a25-a943-7a896f42da4c@sifive.com>
- <20240701-prancing-outpost-3cbce791c554@spud>
- <7ab7d629-6993-4cad-b5b7-62bddfc74a49@sifive.com>
- <20240701-pyromania-spinster-709a6c8cc460@spud>
- <ZoPMEaq8wKzXhFuA@APC323>
+	s=arc-20240116; t=1719934869; c=relaxed/simple;
+	bh=3iFFFMShLQ1EZrUtj0wlYgM/8EAXOVw7Zi303LuWzBQ=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=gaUTjr+nyQRaYJbK+Bt9L4+wsFOr/SJQJXpbqp6GBybocX1ah56T6/FkW19FiFInEaeivvqatk+myNuMn8THtQV1ht0MUqXbvXK4PGbsV/oPYgrJntpna8MI1eXPDrfp3NYpwJ35RoQXVWqtgvk3lYMY+0F7gzg1px2mTxJCjg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EJlo0la8; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b06e63d288so20008726d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:41:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1719934865; x=1720539665; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OP/DQwYrCVrITtYRx3Ev8bw4+QSb5aJdgZyh0buQtdo=;
+        b=EJlo0la8WdzZfM/rr5q9wWBfpNnie7SvB7W8xfh0TvWkSvX9zn3BZD9KgW+TkEBVfu
+         TWH0Zs8pPxPkF4hEMr9irgrjMP9m6q2lUrSETtF7niI4pZla3gRd/mESGHcNrfh5Wr2A
+         P/+3zqx0Ic3fKGy+oBZJ/60pNf5BvbVSv3BMTIwrQeyXIQgxlXUBb/uzp1VMU8ImlVa0
+         vGolYCBKcqSd/vN88USWD7t0uzSPJOuCEB9iJV4MyeAu+BGPJucFZKMhbi/agfLWQH53
+         2uyq/XcgcZho3oXl8SwzQ0kbvHN8YOvKhyNjVP63Slk2/mifWPZNJMO9HssFipNMx85J
+         qCLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719934865; x=1720539665;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OP/DQwYrCVrITtYRx3Ev8bw4+QSb5aJdgZyh0buQtdo=;
+        b=lG7d3c2f0cEjYf9JuO8Ve+bbwk7JMfnUsdCKiNGGqBU8WcoEhaoN5YnIGD2Jim8XvP
+         q39dlr8EC3mb/8wnnikJUxNszpVdmReoERcOb1RIY4/+e/dxJ1jpeneIBeqDx7eHHIa6
+         O7LWUvZ2La9yk9yw4v/0ZScU2RneT78JVJH1WInSmc0+3evgaogtahyZxw9RzmPNZm1K
+         F4XWPrU8K2KdkwNkSZLpykEuJLfUHFJXCm9RAI+Follc/d7C+2mFEsDhDPIweRtG0pPM
+         uF1mTxlwa+IWen3iqwKk+PeO3ouGZlZrbtS6LtAw37rppcFR6I5kl+I5LIMWwhN67CqO
+         nuwA==
+X-Forwarded-Encrypted: i=1; AJvYcCX63g7Gyfby/16oumVyrbF2bbfZrqFhudGnzGAf2Q0goi3+Kye7B8uDP1xr6M6m7S1+llkDIgCkr8DDQgpJp5TFuPh37AP2ejsZ3bAR
+X-Gm-Message-State: AOJu0YyRLk/g0evswqRVNzUEcafQgPZys4026XMSFUlUFprE+abOYI8T
+	KWDQoNSlvNwQf9IxkMnx+W6N1wVw643AM8uM+xDuHUnqD5lt5gRiogckGJ+oDg==
+X-Google-Smtp-Source: AGHT+IFo837CZWVrAhqw/4vbVYvDWAFGqECphXob0gkVGdbXPaXQhe/r6vlQz4h2Yib18TcMgO65/g==
+X-Received: by 2002:a05:6214:212d:b0:6b5:26f7:76b5 with SMTP id 6a1803df08f44-6b5b704eafcmr144055546d6.7.1719934865537;
+        Tue, 02 Jul 2024 08:41:05 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e721e9csm44805766d6.137.2024.07.02.08.41.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 08:41:05 -0700 (PDT)
+Date: Tue, 02 Jul 2024 11:41:04 -0400
+Message-ID: <d5b7485edf9a4cdbc85b6b191b00e572@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hXUitlnmUnc9XLtm"
-Content-Disposition: inline
-In-Reply-To: <ZoPMEaq8wKzXhFuA@APC323>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: Canfeng Guo <guocanfeng@uniontech.com>
+Cc: stephen.smalley.work@gmail.com, omosnace@redhat.com, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, Canfeng Guo <guocanfeng@uniontech.com>
+Subject: Re: [PATCH] selinux: Use 1UL for EBITMAP_BIT to match maps type
+References: <20240629041012.156495-1-guocanfeng@uniontech.com>
+In-Reply-To: <20240629041012.156495-1-guocanfeng@uniontech.com>
 
+On Jun 29, 2024 Canfeng Guo <guocanfeng@uniontech.com> wrote:
+> 
+> This patch modifies the definition of EBITMAP_BIT in
+> security/selinux/ss/ebitmap.h from 1ULL to 1UL to match the type
+> of elements in the ebitmap_node maps array.
+> 
+> This change does not affect the functionality or correctness of
+> the code but aims to enhance code quality by adhering to good
+> programming practices and avoiding unnecessary type conversions.
+> 
+> Signed-off-by: Canfeng Guo <guocanfeng@uniontech.com>
+> ---
+>  security/selinux/ss/ebitmap.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
---hXUitlnmUnc9XLtm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, this looks good to me, and it's trivial enough that I think it
+is safe to merge at this point in the release cycle; merged to
+selinux/dev.
 
-On Tue, Jul 02, 2024 at 05:46:42PM +0800, Yu-Chien Peter Lin wrote:
-> On Mon, Jul 01, 2024 at 05:31:01PM +0100, Conor Dooley wrote:
-> > On Mon, Jul 01, 2024 at 11:11:55AM -0500, Samuel Holland wrote:
-> > > Hi Conor, Charlie,
-> > >=20
-> > > On 2024-07-01 11:07 AM, Conor Dooley wrote:
-> > > > On Mon, Jul 01, 2024 at 10:27:01AM -0500, Samuel Holland wrote:
-> > > >> On 2024-06-19 6:57 PM, Charlie Jenkins wrote:
-> > > >>> diff --git a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi b/arch=
-/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-> > > >>> index 64c3c2e6cbe0..6367112e614a 100644
-> > > >>> --- a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-> > > >>> +++ b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-> > > >>> @@ -27,7 +27,8 @@ cpu0: cpu@0 {
-> > > >>>  			riscv,isa =3D "rv64imafdc";
-> > > >>
-> > > >> The ISA string should be updated to keep it in sync with riscv,isa=
--extensions.
-> > > >=20
-> > > > This probably looks like this cos I said that the kernel shouldn't =
-parse
-> > > > vendor extensions from "riscv,isa". My rationale was that we have
-> > > > basically no control of what a vendor extension means in riscv,isa =
-so=20
-> > > > we shouldn't parse them from it (so marginally worse than standard
-> > > > extensions, where it means what the spec says except when it doesn'=
-t).
-> > > >=20
-> > > > Given how we implement the parsing, it also meant we weren't implyi=
-ng
-> > > > meanings for vendor extensions ACPI-land, where we also can't ensur=
-e the
-> > > > meanings or that they remain stable. That change is in a different
-> > > > series:
-> > > > https://patchwork.kernel.org/project/linux-riscv/patch/20240609-sup=
-port_vendor_extensions-v2-1-9a43f1fdcbb9@rivosinc.com/
-> > > >=20
-> > > > Although now that I think about it, this might break xandespmu... I
-> > > > dunno if the Andes guys switched over to using the new property out=
-side
-> > > > of the single dts in the kernel tree using their SoC. We could
-> > > > potentially special-case that extension if they haven't - but my
-> > > > position on this mostly is that if you want to use vendor extension=
-s you
-> > > > should not be using riscv,isa (even if the regex doesn't complain i=
-f you
-> > > > add them). I'd like to leave the code in the other patch as-is if w=
-e can
-> > > > help it.
-> > > >=20
-> > > > I added Yu Chien Peter Lin here, maybe they can let us know what th=
-ey're
-> > > > doing.
-> > >=20
-> > > OK, that makes sense to me. Then please ignore my original comment.
-> >=20
-> > Should the xandespmu thing be an issue, I'd suggest we just do something
-> > like the following, in place of the new switch arm added by Charlie:
-> >=20
-> > diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeat=
-ure.c
-> > index ec4bff7a827c..bb99b4055ec2 100644
-> > --- a/arch/riscv/kernel/cpufeature.c
-> > +++ b/arch/riscv/kernel/cpufeature.c
-> > @@ -628,6 +628,17 @@ static void __init riscv_parse_isa_string(const ch=
-ar *isa, unsigned long *bitmap
-> >  		if (unlikely(ext_err))
-> >  			continue;
-> > =20
-> > +		if (*ext =3D=3D 'x' && acpi_disabled) {
-> > +			/*
-> > +			 * xandespmu predates this "rule", so special case it for
-> > +			 * hysterical raisins
-> > +			 */
-> > +			if (strncasecmp(ext, "xandespmu", ext_end - ext)) {
-> > +				pr_warn_once("Vendor extensions are ignored in riscv,isa. Use risc=
-v,isa-extensions instead.");
-> > +				break;
-> > +			}
-> > +		}
-> > +
-> >  		match_isa_ext(ext, ext_end, bitmap);
-> >  	}
-> >  }
-> >=20
->=20
-> Thanks for the hands-up!
-> We don't use the deprecated riscv,isa to specify xandespmu, so no
-> need to address this special case.
-
-Great, that's good to know - thanks!
-
---hXUitlnmUnc9XLtm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoQfLgAKCRB4tDGHoIJi
-0hXfAQCCxZXEBqT4cPTHb0LGQh6uikBkC+CR23ztTmUdfDTFHgD+LGxDU34bLk9W
-K+AGaZjFkN9dMlpWdebZ/9qZ/D4iqAY=
-=KERh
------END PGP SIGNATURE-----
-
---hXUitlnmUnc9XLtm--
+--
+paul-moore.com
 
