@@ -1,232 +1,164 @@
-Return-Path: <linux-kernel+bounces-237494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3329239A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:19:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE52E9239AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B3E3286644
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:19:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7011828277E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C595815958A;
-	Tue,  2 Jul 2024 09:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lwDYBVZU"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368EA155307;
+	Tue,  2 Jul 2024 09:19:30 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831D4158DCA
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB8C15359B
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719911823; cv=none; b=hT3HzMKls0COVCFZKbcCaeKwGKfynE8/oQu64HnKvh9QMyS57nPFe3eNRtponhqO7mbljYv+D5PX/RrJlPvCiLkgsXf67jeMRsp5lx89S2aIvzKY7nx9uusoy8Xa03XihkGMBYZWXqyfchv/i5/Glc81ILXBEUXl2qHXFfbNroA=
+	t=1719911969; cv=none; b=QTbciH243gq5uy514yqmcZLWxRaNiv9OV6IQWrFydT0vS1bM0Gc2Otk6KjnzpcnbldOWNwgVoXzNW3B3RussUBcN5W0ZBzuvanI+SKHr5HlewJJLBHMYrgVUrjzjP3PdLdGRRKyHonzzKEG7wvqTGyf66eO4YQJwDODmolGcEcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719911823; c=relaxed/simple;
-	bh=MmCHrblA17iBOZcaUxF0rlX2dqqdSVwFaRXmp9j7aFc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hrg69XkItI3uO/YHHbNlJGYD9gWGQ3N33oC/6q/gIG6W4Cxn9kHw5P/v2/lx8sdBDbZwEbLZ2lOFjRuOk409IRvw0u5dX8J6+FtzlNOYkSnhhV84NdwjjcX5DGP5NDxn61H4Lx5zwlI8x/enUyAARof0wGCh3Y52g5GH+/kSVGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lwDYBVZU; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f9ffd24262so22340105ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 02:17:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719911821; x=1720516621; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=im7X66Ftq9hh3pjMAHs9Kh1cZ/MUVXZiYxPN2eGhMlI=;
-        b=lwDYBVZUMwSPx6x/zZ1ajUouibWswnFRVoTUxZHN4U8dHE4CNeAClg244vwmJL2FBH
-         nMzB41RlNAzfTy4+zFEEYfK7iQ2Bwnk0904sJ3BZTfPrPTAelne1lRR3PfNh6YBHm9SZ
-         h5+TrhqsGdLyFlmvoai1eifV657FT+JYxyI9j0pS0pTs5eY99G527Sa+8DshV9+LREuR
-         81x4JUQrM/yisvI5k0PGqyuwzESVuWKf5Sp0m8F5dVb8drCeOMFqprqTWa/mxPFwwRi2
-         ilN1uxtwDyCdc3PBUixkd5Y4iXYi0JKJMmvPUzqHFsd5XzhLDkKo1JRkc9joC2CxVgdE
-         BcNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719911821; x=1720516621;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=im7X66Ftq9hh3pjMAHs9Kh1cZ/MUVXZiYxPN2eGhMlI=;
-        b=m8fWijUmDOLehewXIqOTx+yGnaQsYcdKQvDmEz+EvB2PCYG6BsNUARzg98xbRK6GsK
-         7SjwovOd4CDmjUtXpbe4/uzjClfxChNhdBy9ZE42HNlI60TX9uS37FkuBTjTBH6JvcKK
-         936Y8cXD0uLyrCjljev82hzH2T7dnh0f/6GoTQ/7zF/4dD3lEdTX46oTyJpc8jpixIx/
-         W5yxnN8cr4OpHrOqWmC1WzOwbStT6Q+zSD1plqH2PFrQ/9cuxTi6pHMziLGkWTE6n5z2
-         EBMLSCX85zvgCRM2lT5Aw0PsncP+QlApe5rRVjzQLiFSbzp+LGlaNc/xiT9maJ63q00k
-         or+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW9MZc3wIlox1Up+kHlYya89R2qNRkFvjJ20Rh93Cq/owPOL1FhWZWcGcXWYjCtH8chOEiRUkjyzKUvGXpvfp4Sm2162CERXM6pKf3T
-X-Gm-Message-State: AOJu0YzoN111f5h/n1kpsKRAvoCjRB7rvL2VMfM+9S1LC6kiIOPHrJTx
-	aAMmwdnhqFEP56gv0moL7XyNb/+hYprMBYQ48UI3wgMFGDr0V6kpBR40aXRVHiI=
-X-Google-Smtp-Source: AGHT+IFoLL5kK93Tt9eDt6tcLEBD5AjNAtjEjyQFNm7zDU8m2s47MtCFW3t9xsc30wpZf1p8ytb1hA==
-X-Received: by 2002:a17:902:e841:b0:1f7:42ba:5b1e with SMTP id d9443c01a7336-1fadbc7504amr36177085ad.17.1719911820696;
-        Tue, 02 Jul 2024 02:17:00 -0700 (PDT)
-Received: from x-wing.lan ([106.51.163.238])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15bd0edsm79120375ad.306.2024.07.02.02.16.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 02:17:00 -0700 (PDT)
-From: Amit Pundir <amit.pundir@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-	dt <devicetree@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: [PATCH] arm64: dts: qcom: sm8550-hdk: add the Wifi node
-Date: Tue,  2 Jul 2024 14:46:55 +0530
-Message-Id: <20240702091655.278974-1-amit.pundir@linaro.org>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719911969; c=relaxed/simple;
+	bh=cNHTFJ/n3QMWAVCGagrw8w6CJDEPeEFn4tz0HcbbJAw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ro4EhceDzNv07yWZowUc4wCfQ7VcGv4UtcVfwlaoH/JgaAC7eSntHHhiVt+u3OGUroqG+JRTKYdQwb6wlStXU/TEmjTkR2tjRdHZacS0fe9X6uNOLmi/PDj2XzXzrEpcy1hrkpAuxzP1WCVL9Ehw9hwufJ9xKTsuzuIkwklXoNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sOZfR-0004nV-G7; Tue, 02 Jul 2024 11:19:17 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sOZfQ-006Zmn-Sx; Tue, 02 Jul 2024 11:19:16 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sOZfQ-0003wH-2l;
+	Tue, 02 Jul 2024 11:19:16 +0200
+Message-ID: <3fe74a3fc2747c8f9a3f433352720cfed76918ba.camel@pengutronix.de>
+Subject: Re: [PATCH 2/2] reset: eyeq: add platform driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: =?ISO-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>, Rob Herring
+	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	 <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir
+ Kondratiev <vladimir.kondratiev@mobileye.com>, =?ISO-8859-1?Q?Gr=E9gory?=
+ Clement <gregory.clement@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>,  Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Date: Tue, 02 Jul 2024 11:19:16 +0200
+In-Reply-To: <D2EC7KK40YX5.C3G1SM3FEDJO@bootlin.com>
+References: <20240628-mbly-reset-v1-0-2a8294fd4392@bootlin.com>
+	 <20240628-mbly-reset-v1-2-2a8294fd4392@bootlin.com>
+	 <e9bfd8087ddef3d66f437719530df54a1f6529a4.camel@pengutronix.de>
+	 <D2EC7KK40YX5.C3G1SM3FEDJO@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Describe the ath12k WLAN on-board the WCN7850 module present on the
-board.
+Hi Th=C3=A9o,
 
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
----
-Kanged verbatim from 490812872449 ("arm64: dts: qcom: sm8550-qrd: add the Wifi node").
+On Mo, 2024-07-01 at 18:19 +0200, Th=C3=A9o Lebrun wrote:
+[...]
+> > Is there any benefit from per-domain mutexes over just a single mutex?
+>=20
+> Some domains can stay locked for pretty long in theory because of Logic
+> built-in self-test (LBIST). This is the reasoning behind
+> eqr_busy_wait_locked().
+>=20
+> Other domains are not concerned by this behavior.
+>=20
+> More concretely, on EyeQ5, SARCR and ACRP domains can lock their mutexes
+> for a relatively long time, and for good reasons. We wouldn't want the
+> PCIE domain  to suffer from that if it happens to (de)assert a reset at
+> the same time.
 
- arch/arm64/boot/dts/qcom/sm8550-hdk.dts | 97 +++++++++++++++++++++++++
- 1 file changed, 97 insertions(+)
+Thank you for the explanation.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-index 12d60a0ee095..c453d081a2df 100644
---- a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-@@ -279,6 +279,68 @@ platform {
- 			};
- 		};
- 	};
-+
-+	wcn7850-pmu {
-+		compatible = "qcom,wcn7850-pmu";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wlan_en>, <&pmk8550_sleep_clk>;
-+
-+		wlan-enable-gpios = <&tlmm 80 GPIO_ACTIVE_HIGH>;
-+		/*
-+		 * TODO Add bt-enable-gpios once the Bluetooth driver is
-+		 * converted to using the power sequencer.
-+		 */
-+
-+		vdd-supply = <&vreg_s5g_0p85>;
-+		vddio-supply = <&vreg_l15b_1p8>;
-+		vddaon-supply = <&vreg_s2g_0p85>;
-+		vdddig-supply = <&vreg_s4e_0p95>;
-+		vddrfa1p2-supply = <&vreg_s4g_1p25>;
-+		vddrfa1p8-supply = <&vreg_s6g_1p86>;
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p8: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p8";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -954,6 +1016,23 @@ &pcie0 {
- 	status = "okay";
- };
- 
-+&pcieport0 {
-+	wifi@0 {
-+		compatible = "pci17cb,1107";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+	};
-+};
-+
- &pcie0_phy {
- 	vdda-phy-supply = <&vreg_l1e_0p88>;
- 	vdda-pll-supply = <&vreg_l3e_1p2>;
-@@ -1046,6 +1125,17 @@ &pon_resin {
- 	status = "okay";
- };
- 
-+&pmk8550_gpios {
-+	pmk8550_sleep_clk: sleep-clk-state {
-+		pins = "gpio3";
-+		function = "func1";
-+		input-disable;
-+		output-enable;
-+		bias-disable;
-+		power-source = <0>;
-+	};
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -1206,6 +1296,13 @@ wcd_default: wcd-reset-n-active-state {
- 		bias-disable;
- 		output-low;
- 	};
-+
-+	wlan_en: wlan-en-state {
-+		pins = "gpio80";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-pull-down;
-+	};
- };
- 
- &uart7 {
--- 
-2.25.1
+> >=20
+> > > +	void __iomem			*base;
+> > > +	const struct eqr_match_data	*data;
+> > > +	struct reset_controller_dev	rcdev;
+> > > +};
+> > > +
+> > > +#define rcdev_to_priv(rcdev) container_of(rcdev, struct eqr_private,=
+ rcdev)
+> >=20
+> > Please use checkpatch --strict, and ideally mention when you ignore a
+> > warning on purpose. In this case, the macro parameter should named
+> > something else, because the last parameter to container_of must be
+> > "rcdev" verbatim. This only works by accident because the passed
+> > parameter also happens to be called called "rcdev" at all call sites.
 
+Thinking about this again, it would be even better to turn this into a
+static inline function instead.
+
+> I have let this CHECK from `checkpatch --strict` slip through indeed.
+> Other remaining messages, with explanations, are:
+>=20
+>  - WARNING: added, moved or deleted file(s), does MAINTAINERS need
+>    updating?
+>=20
+>    This is done in a single patch [0] in the MIPS series to avoid
+>    conflicts in between series.
+>
+>  - CHECK: struct mutex definition without comment
+>=20
+>    This is about the above mutexes field. Do you want a code comment
+>    about the reasoning for one mutex per domain?
+
+Yes, that would be nice. I'm not pedantic about the lock comments
+because in reset drivers it's usually pretty obvious what the lock is
+used for, but mentioning that the mutexes cover register read-modify-
+write plus waiting for LBIST on some domains seems like a good idea.
+
+[...]
+> >=20
+> > > +static void eqr_assert_locked(struct eqr_private *priv, u32 domain, =
+u32 offset)
+> > > +{
+[...]
+> > > +	case EQR_EYEQ6H_SARCR:
+> > > +		val =3D readl(base + EQR_EYEQ6H_SARCR_RST_REQUEST);
+> > > +		val &=3D ~BIT(offset);
+> > > +		writel(val, base + EQR_EYEQ6H_SARCR_RST_REQUEST);
+> > > +		writel(val, base + EQR_EYEQ6H_SARCR_CLK_REQUEST);
+> >=20
+> > This looks peculiar. Why is it ok to write the value read from
+> > RST_REQUEST into CLK_REQUEST?
+>=20
+> What is abstracted away by the hardware on EyeQ5 is not anymore on
+> EyeQ6H. Previously a single register was used for requests and a single
+> register for status. Now there are two request registers and two status
+> registers.
+>=20
+> Those registers *must be kept in sync*. The register name referencing
+> clock is not to be confused with the clock driver of the
+> system-controller. It is describing a register within the reset
+> controller.
+>=20
+> This hardware interface is odd, I might add a comment?
+
+Yes, please. With the knowledge that those registers must be kept in
+sync, this goes from strange to obvious.
+
+
+regards
+Philipp
 
