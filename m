@@ -1,98 +1,114 @@
-Return-Path: <linux-kernel+bounces-238170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7402892464D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:33:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48709924654
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E7E42823C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:33:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAB33B27128
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ED81BD4EA;
-	Tue,  2 Jul 2024 17:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dehl02sl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0485263D;
-	Tue,  2 Jul 2024 17:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749501BD51F;
+	Tue,  2 Jul 2024 17:33:50 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7700B1BD50C;
+	Tue,  2 Jul 2024 17:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719941614; cv=none; b=jRYfbj04qYJ+fHs2nb3Fw9rynBM8zQRDUWIb+3+QMDUnO0eeqiZZa4LrULc5bocoeI3GXwu690RYw/SyCoa/LXOCnzjDVYJbTHKKHgeIJCddtut3poj6Ried2xWeXkcdmv5QzqPGKGIVpeWll7x8aLU6U99j59kMO5tw3/47hwI=
+	t=1719941630; cv=none; b=LRXSfHLuc2Bp1jm8c/ZglYdN6CWzTt4Cb37Ei4PCZTpsAqeSOaPXHVxtr7Jf8kyV/Agn5EiH12bfk9Rsw160vxsBQ87T2twjuh3NfWGIZ107luo83cXaUm82i+G7+ho34w/ZEhnI+J9nObFBjy1y/qyGZUXhTsNfd0RoagOt2I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719941614; c=relaxed/simple;
-	bh=4j4GNVQr5opjEZRmGefLrNlSuzcnLcQvhwYiSey2+3s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tpZQeT146RgIcoBU3VBKEYus+4Tj4fPnoGY2tOc+rqNOGvQROEo8UiKV6lAkr0LhDXGiwn0w5Vk8IiHuBotcXmj7AetB1SVxwF6qtr9SgVPXnLDMK7vlqdeeaSlAuW0UmMeaN6KdkZraIi1+aRwsB+xta9P52UKoPYyRyRy142k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dehl02sl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7675C116B1;
-	Tue,  2 Jul 2024 17:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719941613;
-	bh=4j4GNVQr5opjEZRmGefLrNlSuzcnLcQvhwYiSey2+3s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Dehl02slIB5zW97q15CrYsnx7M9ox/nTrm95yti7+WWj7oLuNtjwC8zT9ak7ulQGU
-	 /7s6v53YAmAUGCmE8f1ynLVqTgjlRWS2PAVtEk9eRhVQNbDtHVDGGX2aTLeOf36pZn
-	 PN7gKwtBffLrX6X6578xfAiqDwbP2fKl2K5btX3j0qHa4TeWAwAVSOSr7S8RIanBHn
-	 M7c3cOOfEZbb3da+QJaIHHrPCbRW9GGwKrrkyc8BcnayCyYJyEuSibPOq9Pyh0m/Cr
-	 sR9ndMBmg9ZkOXMlzQLZUZPIys26bYyQgGMdDBwNkjkD8E079JocKlJnFkBK/8n46L
-	 AkQDb7QQ7d1dQ==
-From: superm1@kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1719941630; c=relaxed/simple;
+	bh=Z0xtPjIqXFptQeYP2r3VxJ7kkk1vhuKPqDQr1WYTpKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ru3gwUbmQBXjPeEcmVzAc4eTC1vIKag1kcX6UkL2wIphhqCFUfBAtRZXZTJATLuWbEtzOZ3yu44Sn9GmRfsJmAxD2R7dipbDEQsblhH9DsH76QRtNCKdXKmnOgpXv1Bz0f4xHFeDxQbn/Pmrxo+oyjl5fnR7xwvsDnJODQQTyAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id 611CD72C8CC;
+	Tue,  2 Jul 2024 20:33:46 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+	id 53DB67CCB3A; Tue,  2 Jul 2024 20:33:46 +0300 (IDT)
+Date: Tue, 2 Jul 2024 20:33:46 +0300
+From: "Dmitry V. Levin" <ldv@strace.io>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincent Donnefort <vdonnefort@google.com>, mhiramat@kernel.org,
+	kernel-team@android.com, rdunlap@infradead.org, rppt@kernel.org,
+	david@redhat.com, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-api@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Amit Pundir <amit.pundir@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	Praveenkumar Patil <PraveenKumar.Patil@amd.com>
-Subject: [PATCH] PCI/pwrctl: Decrease message about child OF nodes to debug
-Date: Tue,  2 Jul 2024 12:32:55 -0500
-Message-ID: <20240702173255.39932-1-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v23 3/5] tracing: Allow user-space mapping of the
+ ring-buffer
+Message-ID: <20240702173346.GA16408@altlinux.org>
+References: <20240510140435.3550353-1-vdonnefort@google.com>
+ <20240510140435.3550353-4-vdonnefort@google.com>
+ <20240630105322.GA17573@altlinux.org>
+ <20240630084053.0b506916@rorschach.local.home>
+ <9a9c8ea4-8e17-4e7e-95fe-7b51441a228c@efficios.com>
+ <20240702111807.13d2dd2c@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702111807.13d2dd2c@rorschach.local.home>
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+On Tue, Jul 02, 2024 at 11:18:07AM -0400, Steven Rostedt wrote:
+> On Tue, 2 Jul 2024 10:36:03 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+> > > I can send a patch this week to update it. Or feel free to send a patch
+> > > yourself.  
+> > 
+> > You need to reserve an unused ioctl Code and Seq# range within:
+> > 
+> > Documentation/userspace-api/ioctl/ioctl-number.rst
+> 
+> Ug, it's been so long, I completely forgot about that file.
+> 
+> Thanks for catching this.
+> 
+> > 
+> > Otherwise this duplicate will confuse all system call instrumentation
+> > tooling.
+> 
+> Agreed, what if we did this then:
+> 
+> -- Steve
+> 
+> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> index a141e8e65c5d..9a97030c6c8d 100644
+> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> @@ -186,6 +186,7 @@ Code  Seq#    Include File                                           Comments
+>  'Q'   all    linux/soundcard.h
+>  'R'   00-1F  linux/random.h                                          conflict!
+>  'R'   01     linux/rfkill.h                                          conflict!
+> +'R'   20-2F  linux/trace_mmap.h
+>  'R'   C0-DF  net/bluetooth/rfcomm.h
+>  'R'   E0     uapi/linux/fsl_mc.h
+>  'S'   all    linux/cdrom.h                                           conflict!
 
-commit 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF
-nodes of the port node") introduced a new error message about populating
-OF nodes. This message isn't relevant on non-OF platforms, so downgrade
-it to debug instead.
+Just in case, I've checked the list of ioctls known to strace and can
+confirm that there are no users of 'R' ioctl code in 0x20..0x2f range yet.
 
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Amit Pundir <amit.pundir@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD, SM8650-QRD & SM8650-HDK
-Cc: Caleb Connolly <caleb.connolly@linaro.org> # OnePlus 8T
-Reported-by: Praveenkumar Patil <PraveenKumar.Patil@amd.com>
-Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF nodes of the port node")
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/pci/bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+By the way, this file is definitely not up to date, the 'R' part of it
+should have contained the following:
 
-diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-index e4735428814d..f21c4ec979b5 100644
---- a/drivers/pci/bus.c
-+++ b/drivers/pci/bus.c
-@@ -354,7 +354,7 @@ void pci_bus_add_device(struct pci_dev *dev)
- 		retval = of_platform_populate(dev->dev.of_node, NULL, NULL,
- 					      &dev->dev);
- 		if (retval)
--			pci_err(dev, "failed to populate child OF nodes (%d)\n",
-+			pci_dbg(dev, "failed to populate child OF nodes (%d)\n",
- 				retval);
- 	}
- }
+'R'   00-1F  uapi/linux/random.h                                     conflict!
+'R'   01-02  uapi/linux/rfkill.h                                     conflict!
+'R'   01-0D  uapi/misc/fastrpc.h                                     conflict!
+'R'   C0-DF  net/bluetooth/rfcomm.h
+'R'   E0     uapi/linux/fsl_mc.h
+
+
 -- 
-2.43.0
-
+ldv
 
