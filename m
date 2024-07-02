@@ -1,254 +1,118 @@
-Return-Path: <linux-kernel+bounces-238202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B999246BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:55:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24FE9246BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA3EE1C208F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:55:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D49C284448
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992631C8FAB;
-	Tue,  2 Jul 2024 17:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A584D1C0DF2;
+	Tue,  2 Jul 2024 17:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLooFOTV"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="neuX7k4j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B8B15B104;
-	Tue,  2 Jul 2024 17:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566301BE873;
+	Tue,  2 Jul 2024 17:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719942906; cv=none; b=Ibn6//pzvK4NTmNUZlM3OFonnONL60WbE6yfoTt+ivawve/5SirlTQJDcNehaVCwuZBch/e5idT89SmSe3u1pqH2xVd2Y17zUyoXak8wMrjQN+n4jDqPZTWQ9VA/P/Xazj4KmRjkxB8GXpXXO3DXoRVauZFTQf8C6SejjvOjRLo=
+	t=1719942990; cv=none; b=ikL3XVUDWoSjiA3X9u6bhBQcu99Iu+uRo1akjjEcfWQo6b3EtPxVvdo0j9Q9mwxIRTdqRkcbmwy0P0yu8vMbbEPvLf1Og4do+H/LXUtg+GHTE1u4U/nbaUV0O7MkTeEFq78K0AIhf10wjuejdZsutmvOz5GRoYXbf7MJqQTA02k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719942906; c=relaxed/simple;
-	bh=oRQApVEe2s158r1wJospfawwOp3o/XpQXXhOYr/y7IE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aNHvNqe3kaDIdDu2uZdCqQDrlJQHVu4fk7cY8+9ynJV6IaxRDu44lN6VVEoqDNXrvnyfRVy9iqefwbX2EIqTIe38JBSs5U7diTbQk9r4SXy6fcnRCdJbAakQgLdg30+BKHJlquCiCJrWhJatd8k/DtufR9ubkJ708VYJRF8Xrys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLooFOTV; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-25d8ab4f279so2560804fac.3;
-        Tue, 02 Jul 2024 10:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719942904; x=1720547704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tKUGvgpI83xD4b3uGOJIjYtXHI59r73b7qdVFPeKbA0=;
-        b=DLooFOTVJJuyoheooTPAuwKAvGaUsUZcI5D4pHomvb+yODXSiuiIUmNa/scI6lkhXM
-         ioIpoHW8qMwqDYofSDLvhGoIzzsHJ0mVFyzoPoLcmU2HdKzo8pheZ9tPMzzE/XrRgaY/
-         uQAoHRHi68AceNa5w5p9rGQ5QQheNegp0742aiON5QlGoqS+wZSgMOjQGGJuN+//fFGW
-         GaaB5FGvZCvgEykHjmdgZKpZiHA7jbQjWxHw38YKmHQ6/Lt/GZ+uoP9WOa+a9qi6vaDg
-         hNz0IMX5t+SqhJjtM3Fy8AoVgKA4uwQ+Wivlkcd8IygkTn/mvxt1NLRCSmltkcUkxvxs
-         GRmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719942904; x=1720547704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tKUGvgpI83xD4b3uGOJIjYtXHI59r73b7qdVFPeKbA0=;
-        b=Pc7DW0Osuri7jG2R6Syf7jafEgK84yvSfgemsC2sgTaDjGf4fcWzSYDXUJqoCkXsXM
-         skH2CRiMhIzVjYMXfVafIEUFp4m76X6tKTswRWq6hmc83fSFrf9Vsx4zuJe3Nhc2OzxJ
-         0uimfbJcsKsmqrA/4TnBKBcHAESSVFlA9hCFilUqCScN5qT0b+eK14l1dJys6Dd/V3Zc
-         0tmBzXByFfXQEdfOBEUnHVZYVakIDCJk6lSvTm8YnqzeUwMYMhUFUV6Ijd95MA5UL4DM
-         vPhAb719ZmtomfLdTlOoaQAkoNFnhZI2vnq8rnLuRkPtcJpJ2EOfl+Kc48dsHR8bCQkk
-         oyDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYGNr60kzNJv8Elt1yNU2XVoQZhLz7pesHvQA+zdVZRkZnoVWQ2U0E2TwaWFn7+lwXNMWK7ycq1Lf4QaKEN8fH4ES2vCHZvRtjCeX6DqtIWxrznfz2WpJuQykcaD270uolP5RjLvRPLHyjhhP5z3fHutuyIsiFxwm5CizESMWBJG3tKbks
-X-Gm-Message-State: AOJu0YxhYnPGGG7nCbAu8BYPK+455O4ALvCxA9APSrz8r32QpNoyFoL6
-	R64kwSpJEjdmlrsvnCcr1Omgl6Ji3KqL7XbS5qgZCK0Lz4Vn3chzms9JKx9g4TAp/Lz8OrlG+hK
-	P3W+wANwpZ9jQdfsZSIpa86n2x3yjzSBv
-X-Google-Smtp-Source: AGHT+IEZgIAQE0Oa6Z3JyHRrDUyaBxqoyHRtKtZmJVmhLd42aC/XcYZy6Wc4NlLDIGDDNh+w2CshSw5enyRJhIY99BI=
-X-Received: by 2002:a05:6871:3a13:b0:254:b5d7:f469 with SMTP id
- 586e51a60fabf-25db351715amr8168306fac.31.1719942904058; Tue, 02 Jul 2024
- 10:55:04 -0700 (PDT)
+	s=arc-20240116; t=1719942990; c=relaxed/simple;
+	bh=Apev7mV1TmbmNliNcO9E2giuYRzMGlA8lEdXvzWk5K8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hr9mFwg0yiYisWI7rtJKkEsMVckDrZDxX36YPvqz3u+hjb44ayPIvwgM22AGZJTjXTgs5fbjNFP+/N0W3Y2DxH4amFNVnUFmDgyQBNcdiUv/NNr7J9YzPN7MuUOa5TJhXH75bKbpnxyaRYUKooy7A2ZLJsEhM8c7VleqGp73eNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=neuX7k4j; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719942989; x=1751478989;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Apev7mV1TmbmNliNcO9E2giuYRzMGlA8lEdXvzWk5K8=;
+  b=neuX7k4jwwnJRenC9sc1wHBwyYOwfqdhO1HwLVGux5nQsSpgnH/DjYC7
+   /yXtap0RVqI43zysyT7svqZej0Gwc3Z57TssF85d1hzTyMGtqonfCFpXF
+   RZEe7Fzo8feFhZMkMaWer7gUlLi9pZs3KUhgw0emeGxGmSKjgDyCvMOnH
+   bZaKShb9ZwtGlrpKxdn+Xnf2iFozowbHOlrihxnC8kxj9E+lrzfH1CWIJ
+   X0S5wQVvnmrEWut4I93L5pM1gGegzhyrqOBzZoendyF4liHR7EYMdqRnn
+   VxyUjRBoxQWX14yBB+UxPqadi+n03pstZ6/28lNF39R919/VjElHwqpKS
+   Q==;
+X-CSE-ConnectionGUID: tPjIfqw8Riig4GoSv+2nWA==
+X-CSE-MsgGUID: RaZthrMPR8WQ8toWlulLvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="16976994"
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="16976994"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 10:56:28 -0700
+X-CSE-ConnectionGUID: 0w0GjoV9TYS9IszbimlegA==
+X-CSE-MsgGUID: qJ2dLYKeReqovNOnMY+mjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="83533564"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 02 Jul 2024 10:56:25 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sOhjq-000OUS-1p;
+	Tue, 02 Jul 2024 17:56:22 +0000
+Date: Wed, 3 Jul 2024 01:55:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Petar Stoykov via B4 Relay <devnull+pd.pstoykov.gmail.com@kernel.org>,
+	linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, Petar Stoykov <pd.pstoykov@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] MAINTAINERS: Add Sensirion SDP500
+Message-ID: <202407030117.3F6Sm9vA-lkp@intel.com>
+References: <20240702-mainline_sdp500-v3-3-0902047b3eee@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701223935.3783951-1-andrii@kernel.org> <20240702102353.GG11386@noisy.programming.kicks-ass.net>
- <20240702115447.GA28838@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240702115447.GA28838@noisy.programming.kicks-ass.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 2 Jul 2024 10:54:51 -0700
-Message-ID: <CAEf4BzaQUzQdba2=F2NoV7=Th98fxz2EN62QX2Ej92bazt1GAg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
- and per-CPU RW semaphore
-To: Peter Zijlstra <peterz@infradead.org>, "Paul E . McKenney" <paulmck@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	rostedt@goodmis.org, mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com, 
-	bpf@vger.kernel.org, jolsa@kernel.org, clm@meta.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702-mainline_sdp500-v3-3-0902047b3eee@gmail.com>
 
-On Tue, Jul 2, 2024 at 4:54=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
->
-> +LKML
->
-> On Tue, Jul 02, 2024 at 12:23:53PM +0200, Peter Zijlstra wrote:
-> > On Mon, Jul 01, 2024 at 03:39:23PM -0700, Andrii Nakryiko wrote:
-> > > This patch set, ultimately, switches global uprobes_treelock from RW =
-spinlock
-> > > to per-CPU RW semaphore, which has better performance and scales bett=
-er under
-> > > contention and multiple parallel threads triggering lots of uprobes.
-> >
-> > Why not RCU + normal lock thing?
->
-> Something like the *completely* untested below.
->
-> ---
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 2c83ba776fc7..03b38f3f7be3 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -40,6 +40,7 @@ static struct rb_root uprobes_tree =3D RB_ROOT;
->  #define no_uprobe_events()     RB_EMPTY_ROOT(&uprobes_tree)
->
->  static DEFINE_RWLOCK(uprobes_treelock);        /* serialize rbtree acces=
-s */
-> +static seqcount_rwlock_t uprobes_seqcount =3D SEQCNT_RWLOCK_ZERO(uprobes=
-_seqcount, &uprobes_treelock);
->
->  #define UPROBES_HASH_SZ        13
->  /* serialize uprobe->pending_list */
-> @@ -54,6 +55,7 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
->  struct uprobe {
->         struct rb_node          rb_node;        /* node in the rb tree */
->         refcount_t              ref;
-> +       struct rcu_head         rcu;
->         struct rw_semaphore     register_rwsem;
->         struct rw_semaphore     consumer_rwsem;
->         struct list_head        pending_list;
-> @@ -67,7 +69,7 @@ struct uprobe {
->          * The generic code assumes that it has two members of unknown ty=
-pe
->          * owned by the arch-specific code:
->          *
-> -        *      insn -  copy_insn() saves the original instruction here f=
-or
-> +        *      insn -  copy_insn() saves the original instruction here f=
-or
->          *              arch_uprobe_analyze_insn().
->          *
->          *      ixol -  potentially modified instruction to execute out o=
-f
-> @@ -593,6 +595,12 @@ static struct uprobe *get_uprobe(struct uprobe *upro=
-be)
->         return uprobe;
->  }
->
-> +static void uprobe_free_rcu(struct rcu_head *rcu)
-> +{
-> +       struct uprobe *uprobe =3D container_of(rcu, struct uprobe, rcu);
-> +       kfree(uprobe);
-> +}
-> +
->  static void put_uprobe(struct uprobe *uprobe)
->  {
->         if (refcount_dec_and_test(&uprobe->ref)) {
-> @@ -604,7 +612,8 @@ static void put_uprobe(struct uprobe *uprobe)
+Hi Petar,
 
-right above this we have roughly this:
+kernel test robot noticed the following build warnings:
 
-percpu_down_write(&uprobes_treelock);
+[auto build test WARNING on ab27740f76654ed58dd32ac0ba0031c18a6dea3b]
 
-/* refcount check */
-rb_erase(&uprobe->rb_node, &uprobes_tree);
+url:    https://github.com/intel-lab-lkp/linux/commits/Petar-Stoykov-via-B4-Relay/dt-bindings-iio-pressure-Add-Sensirion-SDP500/20240702-235054
+base:   ab27740f76654ed58dd32ac0ba0031c18a6dea3b
+patch link:    https://lore.kernel.org/r/20240702-mainline_sdp500-v3-3-0902047b3eee%40gmail.com
+patch subject: [PATCH v3 3/3] MAINTAINERS: Add Sensirion SDP500
+reproduce: (https://download.01.org/0day-ci/archive/20240703/202407030117.3F6Sm9vA-lkp@intel.com/reproduce)
 
-percpu_up_write(&uprobes_treelock);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407030117.3F6Sm9vA-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
 
-This writer lock is necessary for modification of the RB tree. And I
-was under impression that I shouldn't be doing
-percpu_(down|up)_write() inside the normal
-rcu_read_lock()/rcu_read_unlock() region (percpu_down_write has
-might_sleep() in it). But maybe I'm wrong, hopefully Paul can help to
-clarify.
+   Warning: Documentation/devicetree/bindings/power/wakeup-source.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/watchdog/da90??-wdt.txt
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/iio/pressure/sdp500.yaml
+   Warning: file ./Documentation/ABI/testing/sysfs-platform-silicom#20:
+   What '/sys/devices/platform/silicom-platform/power_cycle' doesn't have a description
+   Using alabaster theme
 
-But actually what's wrong with RCU Tasks Trace flavor? I will
-ultimately use it anyway to avoid uprobe taking unnecessary refcount
-and to protect uprobe->consumers iteration and uc->handler() calls,
-which could be sleepable, so would need rcu_read_lock_trace().
-
->                 mutex_lock(&delayed_uprobe_lock);
->                 delayed_uprobe_remove(uprobe, NULL);
->                 mutex_unlock(&delayed_uprobe_lock);
-> -               kfree(uprobe);
-> +
-> +               call_rcu(&uprobe->rcu, uprobe_free_rcu);
->         }
->  }
->
-> @@ -668,12 +677,25 @@ static struct uprobe *__find_uprobe(struct inode *i=
-node, loff_t offset)
->  static struct uprobe *find_uprobe(struct inode *inode, loff_t offset)
->  {
->         struct uprobe *uprobe;
-> +       unsigned seq;
->
-> -       read_lock(&uprobes_treelock);
-> -       uprobe =3D __find_uprobe(inode, offset);
-> -       read_unlock(&uprobes_treelock);
-> +       guard(rcu)();
->
-> -       return uprobe;
-> +       do {
-> +               seq =3D read_seqcount_begin(&uprobes_seqcount);
-> +               uprobes =3D __find_uprobe(inode, offset);
-> +               if (uprobes) {
-> +                       /*
-> +                        * Lockless RB-tree lookups are prone to false-ne=
-gatives.
-> +                        * If they find something, it's good. If they do =
-not find,
-> +                        * it needs to be validated.
-> +                        */
-> +                       return uprobes;
-> +               }
-> +       } while (read_seqcount_retry(&uprobes_seqcount, seq));
-> +
-> +       /* Really didn't find anything. */
-> +       return NULL;
->  }
-
-Honest question here, as I don't understand the tradeoffs well enough.
-Is there a lot of benefit to switching to seqcount lock vs using
-percpu RW semaphore (previously recommended by Ingo). The latter is a
-nice drop-in replacement and seems to be very fast and scale well.
-Right now we are bottlenecked on uprobe->register_rwsem (not
-uprobes_treelock anymore), which is currently limiting the scalability
-of uprobes and I'm going to work on that next once I'm done with this
-series.
-
->
->  static struct uprobe *__insert_uprobe(struct uprobe *uprobe)
-> @@ -702,7 +724,9 @@ static struct uprobe *insert_uprobe(struct uprobe *up=
-robe)
->         struct uprobe *u;
->
->         write_lock(&uprobes_treelock);
-> +       write_seqcount_begin(&uprobes_seqcount);
->         u =3D __insert_uprobe(uprobe);
-> +       write_seqcount_end(&uprobes_seqcount);
->         write_unlock(&uprobes_treelock);
->
->         return u;
-> @@ -936,7 +960,9 @@ static void delete_uprobe(struct uprobe *uprobe)
->                 return;
->
->         write_lock(&uprobes_treelock);
-> +       write_seqcount_begin(&uprobes_seqcount);
->         rb_erase(&uprobe->rb_node, &uprobes_tree);
-> +       write_seqcount_end(&uprobes_seqcount);
->         write_unlock(&uprobes_treelock);
->         RB_CLEAR_NODE(&uprobe->rb_node); /* for uprobe_is_active() */
->         put_uprobe(uprobe);
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
