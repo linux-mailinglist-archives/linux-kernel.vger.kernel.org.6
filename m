@@ -1,141 +1,180 @@
-Return-Path: <linux-kernel+bounces-238295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E24924804
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:19:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F39924805
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21416B24262
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:19:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746CC1F21D47
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177591C9EB1;
-	Tue,  2 Jul 2024 19:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FD41CCCAD;
+	Tue,  2 Jul 2024 19:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h13ybAA4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FwHHpTTq"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533D41EB25;
-	Tue,  2 Jul 2024 19:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1552D1EB25;
+	Tue,  2 Jul 2024 19:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719947937; cv=none; b=OSXrmHgh2m/imdzRaO9he7R6K6gaTuuJ8W76Nybncd+9Jrk9OPE2rc9OWVCCmP8sKJG19D+cdIPY6vKLGICNuvP9mhEIA3n5m5Xt8kTWJmAB8XhVOTsO2IqgZ5j2GSPCrcBf0kON1YlLK9dwzXiWOkbs/LGv/S3oTxhF3LjJAcM=
+	t=1719947949; cv=none; b=OZxgXwo727nah7jUJmiBeoP3W8cv16j11KaQKg/Cwb5CpUtkFEqZ6Sfc8Yf7RDnCDF4duW98XWS7WMX0qg8LPio+OUd1aC9/lM8eMFNkUv1gdsOIIJS2MOdkIE1Y8HQJu1HBA0BCKHGLMclWsWnxrSzTbju3t5hKJ4piaZuTjyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719947937; c=relaxed/simple;
-	bh=CzLi21/gLCzjAYQxAxiW/afKJ7ulheUZD71U2PZ+f+Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N1p3RMcCQktFnqQpq0T8VY116WL8xWK2rojMqNU6ILs/vqX0+DvZgMtDEgnDd6Insrw42SLh/Hy8B5EcGpgkKBLniKLPnrg6CX4Z70fZIJUrWpY62KsAupCsZn0zL/78yT9KfgKVW++IvBvNH9M37NhxTOfW59j+qJvY+V5g6Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h13ybAA4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57838C116B1;
-	Tue,  2 Jul 2024 19:18:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719947936;
-	bh=CzLi21/gLCzjAYQxAxiW/afKJ7ulheUZD71U2PZ+f+Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h13ybAA4bA+7BUTeIDm9/A9K/0sSzDm7suveJEhqOjxdP0H2Q1ZZFYMF4Z3UI2uJ1
-	 cVtEGSTgxRaj0GK+MyW2ao6Ntiyd/fR05aTI0pXjMoOlorVLXnc8+fq3lSY9E8X5Zz
-	 EwG3dOBfD0oSD6wlgik7JCfs/qfYGOfZOADNTI4MWkn1VO1llglpqvaHre5ebTj2Hz
-	 qUTUIslUDBrnYIEXj77s95Ax6FcPq/9SA02jp+FHdddbz+XtnPwn7fRdQeubCIaj1R
-	 FscSgnShftn+3uhVl+Oho8fCLl6LxGy3ENEECO0im45QLcwj4H91eVzG3vHkrPWCR5
-	 pAMSOh9B/NaFA==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 6.6 000/163] 6.6.37-rc1 review
-Date: Tue,  2 Jul 2024 12:18:52 -0700
-Message-Id: <20240702191852.70810-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240702170233.048122282@linuxfoundation.org>
-References: 
+	s=arc-20240116; t=1719947949; c=relaxed/simple;
+	bh=qE5auNhai9dGV9LtL6KaE2P0rxgrR5aQwmk1i1Ie/T4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jn28i5ZhP0Zp72F6gTP4g3597iQwAxnx7Ld9VPHD868RhfeueXffq3OJTViwV3+GOGOvowb6rQjQlXqJ64LKSnc00OVFxuT61AqF9CUPEsxVq3AHfNT71uc1XAPpJpUOcOdESmQBdacOyIW2gTU+oG/qiGnZN1KgCe/qa7QNeww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FwHHpTTq; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=652kzr90UlMHK6R7AjCXVbHKXbDJFiJb4ijYez+VQrI=; b=FwHHpTTqbKxtFPHHu7y62KH28K
+	W/tKXaL3YLfeSHOooxkTjPD+dtFtxlpYnJ6wV/aqI81osSBtkgMEyXOFLeulxKtp4GHNQHxLQ9X36
+	nvHNi51FhRnKuMY9ZXDHSUVbyTNt802rzFU1xi2n0L0uuM5nzJqmeO7saplQ+PYRxShFF2IvTuw4J
+	j6AvM8Dboj5FBUAfU7SwQIBaZNtJvfffOVW1ODLTUEWlDTmc3qpvoQgNsf+DzIZDo2VI4vbW2LrFi
+	PdrsK4lNSQr7pF1lduxA+sPfeErOr8B0eKrNPIaymXkmoXBucxDodmKTiFXjYjUooRh+bcB4stP/t
+	RxqtkUZw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sOj1p-00000009rOm-0csw;
+	Tue, 02 Jul 2024 19:19:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EDFFD300694; Tue,  2 Jul 2024 21:18:57 +0200 (CEST)
+Date: Tue, 2 Jul 2024 21:18:57 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
+	mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com,
+	bpf@vger.kernel.org, jolsa@kernel.org, clm@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
+ and per-CPU RW semaphore
+Message-ID: <20240702191857.GJ11386@noisy.programming.kicks-ass.net>
+References: <20240701223935.3783951-1-andrii@kernel.org>
+ <20240702102353.GG11386@noisy.programming.kicks-ass.net>
+ <20240702115447.GA28838@noisy.programming.kicks-ass.net>
+ <CAEf4BzaQUzQdba2=F2NoV7=Th98fxz2EN62QX2Ej92bazt1GAg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzaQUzQdba2=F2NoV7=Th98fxz2EN62QX2Ej92bazt1GAg@mail.gmail.com>
 
-Hello,
+On Tue, Jul 02, 2024 at 10:54:51AM -0700, Andrii Nakryiko wrote:
 
-On Tue,  2 Jul 2024 19:01:54 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> This is the start of the stable review cycle for the 6.6.37 release.
-> There are 163 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> > @@ -593,6 +595,12 @@ static struct uprobe *get_uprobe(struct uprobe *uprobe)
+> >         return uprobe;
+> >  }
+> >
+> > +static void uprobe_free_rcu(struct rcu_head *rcu)
+> > +{
+> > +       struct uprobe *uprobe = container_of(rcu, struct uprobe, rcu);
+> > +       kfree(uprobe);
+> > +}
+> > +
+> >  static void put_uprobe(struct uprobe *uprobe)
+> >  {
+> >         if (refcount_dec_and_test(&uprobe->ref)) {
+> > @@ -604,7 +612,8 @@ static void put_uprobe(struct uprobe *uprobe)
 > 
-> Responses should be made by Thu, 04 Jul 2024 17:01:55 +0000.
-> Anything received after that time might be too late.
+> right above this we have roughly this:
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.37-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
+> percpu_down_write(&uprobes_treelock);
+> 
+> /* refcount check */
+> rb_erase(&uprobe->rb_node, &uprobes_tree);
+> 
+> percpu_up_write(&uprobes_treelock);
+> 
+> 
+> This writer lock is necessary for modification of the RB tree. And I
+> was under impression that I shouldn't be doing
+> percpu_(down|up)_write() inside the normal
+> rcu_read_lock()/rcu_read_unlock() region (percpu_down_write has
+> might_sleep() in it). But maybe I'm wrong, hopefully Paul can help to
+> clarify.
 
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
+preemptible RCU or SRCU would work.
 
-Tested-by: SeongJae Park <sj@kernel.org>
+> 
+> But actually what's wrong with RCU Tasks Trace flavor? 
 
-[1] https://github.com/awslabs/damon-tests/tree/next/corr
-[2] ca32fab2f2f9 ("Linux 6.6.37-rc1")
+Paul, isn't this the RCU flavour you created to deal with
+!rcu_is_watching()? The flavour that never should have been created in
+favour of just cleaning up the mess instead of making more.
 
-Thanks,
-SJ
+> I will
+> ultimately use it anyway to avoid uprobe taking unnecessary refcount
+> and to protect uprobe->consumers iteration and uc->handler() calls,
+> which could be sleepable, so would need rcu_read_lock_trace().
 
-[...]
+I don't think you need trace-rcu for that. SRCU would do nicely I think.
 
----
+> >                 mutex_lock(&delayed_uprobe_lock);
+> >                 delayed_uprobe_remove(uprobe, NULL);
+> >                 mutex_unlock(&delayed_uprobe_lock);
+> > -               kfree(uprobe);
+> > +
+> > +               call_rcu(&uprobe->rcu, uprobe_free_rcu);
+> >         }
+> >  }
+> >
+> > @@ -668,12 +677,25 @@ static struct uprobe *__find_uprobe(struct inode *inode, loff_t offset)
+> >  static struct uprobe *find_uprobe(struct inode *inode, loff_t offset)
+> >  {
+> >         struct uprobe *uprobe;
+> > +       unsigned seq;
+> >
+> > -       read_lock(&uprobes_treelock);
+> > -       uprobe = __find_uprobe(inode, offset);
+> > -       read_unlock(&uprobes_treelock);
+> > +       guard(rcu)();
+> >
+> > -       return uprobe;
+> > +       do {
+> > +               seq = read_seqcount_begin(&uprobes_seqcount);
+> > +               uprobes = __find_uprobe(inode, offset);
+> > +               if (uprobes) {
+> > +                       /*
+> > +                        * Lockless RB-tree lookups are prone to false-negatives.
+> > +                        * If they find something, it's good. If they do not find,
+> > +                        * it needs to be validated.
+> > +                        */
+> > +                       return uprobes;
+> > +               }
+> > +       } while (read_seqcount_retry(&uprobes_seqcount, seq));
+> > +
+> > +       /* Really didn't find anything. */
+> > +       return NULL;
+> >  }
+> 
+> Honest question here, as I don't understand the tradeoffs well enough.
+> Is there a lot of benefit to switching to seqcount lock vs using
+> percpu RW semaphore (previously recommended by Ingo). The latter is a
+> nice drop-in replacement and seems to be very fast and scale well.
 
-ok 1 selftests: damon: debugfs_attrs.sh
-ok 2 selftests: damon: debugfs_schemes.sh
-ok 3 selftests: damon: debugfs_target_ids.sh
-ok 4 selftests: damon: debugfs_empty_targets.sh
-ok 5 selftests: damon: debugfs_huge_count_read_write.sh
-ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
-ok 7 selftests: damon: debugfs_rm_non_contexts.sh
-ok 8 selftests: damon: sysfs.sh
-ok 9 selftests: damon: sysfs_update_removed_scheme_dir.sh
-ok 10 selftests: damon: reclaim.sh
-ok 11 selftests: damon: lru_sort.sh
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh
-ok 12 selftests: damon-tests: build_m68k.sh
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
+As you noted, that percpu-rwsem write side is quite insane. And you're
+creating this batch complexity to mitigate that.
+
+The patches you propose are quite complex, this alternative not so much.
+
+> Right now we are bottlenecked on uprobe->register_rwsem (not
+> uprobes_treelock anymore), which is currently limiting the scalability
+> of uprobes and I'm going to work on that next once I'm done with this
+> series.
+
+Right, but it looks fairly simple to replace that rwsem with a mutex and
+srcu.
 
