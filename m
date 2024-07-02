@@ -1,148 +1,138 @@
-Return-Path: <linux-kernel+bounces-237683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC69B923C9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:41:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44EA7923CA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FD311F25321
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:41:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D69F5B24302
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B9415B13A;
-	Tue,  2 Jul 2024 11:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D2516FF2A;
+	Tue,  2 Jul 2024 11:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="e1jGGGU8"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Aij3nAQ4"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA8D158D98
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE1616F260
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719920472; cv=none; b=fDE+ZGedSxi1c0OwCRZ0H0Od30dzTDmo5/eqKhyYk41oSeOd0eK73m/fUar15kFhn2VA0/LNNVvBgS4ZinQ+TLKXlh3yKDX81C21cGANbdCnCmN7mFSNaPu4lMOrfsofongRjZ3FaY8SxNOqU/0RSHqI31xCOpmhB/n6jPcVy9w=
+	t=1719920481; cv=none; b=bV5dg7jfxTLN9nFzOGpfsjGejNZJy/mCQscbDf8GhuUPMW7DTJIz6puWtVzhT3uqdHpY7hvZIGff66kPGQjM/75s8Z8sE+v0g4NNZmGI7QbjJWQHtRRgxglry8jJLUDfhg0Pf9tl2XmpBk+2eEbvjf8bEfv0FoadA7hYjQHltUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719920472; c=relaxed/simple;
-	bh=EjhoZ8OblHPETlxZbG+8SNtqIJsd3VP1PTSzTC6gkK8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MkHsDfl6rD5FjchYl6BVmU8C8Bjun6qI8GRKIy3RL6qpJAxrBM8wQyUzH1FJ8RU3YBsVQyKZenuFLQYFz8iRDaQc5o31jm0VQioKI6YPKmqHhZ9V5NwHFR2iOA4CVPwKLTDnvONG3K8YPCILUekGnB/0Fq8vhRJvWLgZgKjkqcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=e1jGGGU8; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3626c29d3f0so2070915f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 04:41:10 -0700 (PDT)
+	s=arc-20240116; t=1719920481; c=relaxed/simple;
+	bh=NSroMKxF+iEaFAVVz8p4WKV4y7ZnU+9j/v7aX3NGInk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VntbLqQ/znAgbcEUk3VwQ75UIDlqwyGxFEZg1wfVQa4IvgUqz93WLjNfQNka5rCIBbXs5sE07hGwqwmxliRf6c4COOizwfa/IhpeXYaI2g38Bqj2n9g8fyIp8se/UHgI34GYYUHxBEx0W19lRKmahKOsy8p6BKXV5E2xTtxbflY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Aij3nAQ4; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cdb9526e2so2970317e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 04:41:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719920469; x=1720525269; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ibYk2INHrDewcc6rOpyR3n0ptWH8fAE6FA5MquhF0qk=;
-        b=e1jGGGU8RlUHnyAPyIBRgc5yHf3TIgwvt7LHI7nHCgyIt7Ia8OpI3FzKNk9vWP6Uxp
-         Lsrg+Py+z1TqC7hQ/gw+tbjCpLaapT4tTrUCjukm87AEogzslWOu+NWnDNpLCQ/3I9Jr
-         oCODDIp3A4LGjYB296VskdIbxiqjZL0W49R1uXXZbYbdSb5w2bWpn32cM0hQZ9YclsoS
-         zdfcB2y2F1Ae1RXzEmn+Z1nHnk6l7h9UEwII0npyqMF6taWg0IRmr7MQb/PS7x+nEj3v
-         M3Fo4gGYjbkbXNTaJlP9WtE7EM0SboN9dliHITapYSnFIFPfT9jIcsS4grAYcgVA7gtq
-         /I4w==
+        d=linaro.org; s=google; t=1719920477; x=1720525277; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kQVFB1Ory94czUgWNWBlgE/4b9Cm7QVvjGoDYPQAvFo=;
+        b=Aij3nAQ4/WoczJMW9ELIykb7PgDVYwmKQNslgdLDcCNq3ovTXxWXWiMPEnHClQK09p
+         d57wVRh5N9Cb7ntZiRS5DpMKXIplps01PMBZK4oZWv4Go66ZygPGFtjOV5Yr+++2Hl/v
+         0+o8JH5joKLqCvve+7Zfjvga2iy4oNV1t4biEv/D385YM11yfdFa4Bqq9uHOKnBFdsKS
+         1HIvQuwUCIEuxI6XYnYjeUTxGifaDefBI44GI1KV7bDWvK5d2pny/fmNBB/Ha6d36cvv
+         AA6xy+BkGEFPAcuxW5dpOzNaVD8b87+RGmV0Oxi/eeNRXpgNr5o5Xj9QZ2erIwvF0KAC
+         qyig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719920469; x=1720525269;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ibYk2INHrDewcc6rOpyR3n0ptWH8fAE6FA5MquhF0qk=;
-        b=K+f8Q4h2dEwrssWdd8aC2lkZjDtAC3JMbtWhzJt4hI+Jd89otAy3fw+1ANlkcrhXdQ
-         UlYlVUQx6ydcLe3lm7pGIndJtXyaUheNag9rM4hOkkacTIemmfV1mP9cLUIPVw26OvE4
-         MyAZ67dmCtQcyNXo4/Dd/k9xdfm/4ZtsNiAXKWtop3p68x7yFVrlaasX5rwdmq2NfYlj
-         FH/Wm/SdzJWNFWmuz6xv+t7r3wZgLfqtbeZqJp7mqK87F2+zgN0auPuCMcy0AEYIPb29
-         PtjY9Cx8PbKFQmhC9JkvQqNIH36Txq+yk/7FFPU5demfoICMJSEx3ueBfaD0CRFTZK6m
-         vIdg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDfVJR+oKNfEVt9e1YN/S/lTPtrpN+hjnA4kSzqCUX/+VhXUINmYCrsuJ5MZsk0kAw2y//ELuAH5rLoUDDqwHAwp6zjlsaFnJFG+bn
-X-Gm-Message-State: AOJu0YxUUHPE30YrARainH1PjktdmMEjKVfpiF+QrYakszd5fyTGyHD0
-	XuGKu4pKg6HJEzjoCzSUZNmWLwKisSUfjpXqCiFZ1zGxnli7LGBkRaPskRZZlU8r6DwxD30HaOj
-	S
-X-Google-Smtp-Source: AGHT+IEU5xcCH/1EAfhOaWb9JMDGA6qsWvtR9LL9IGXqlYSEFIFdTaE5gkIzrS/Q7ZbPZLxOAp3Crg==
-X-Received: by 2002:a05:6000:d43:b0:366:6ef0:e92 with SMTP id ffacd0b85a97d-367756b96a9mr6870973f8f.27.1719920468559;
-        Tue, 02 Jul 2024 04:41:08 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:628b:5bc8:edc:9c60])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a1030c8sm12966271f8f.98.2024.07.02.04.41.08
+        d=1e100.net; s=20230601; t=1719920477; x=1720525277;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kQVFB1Ory94czUgWNWBlgE/4b9Cm7QVvjGoDYPQAvFo=;
+        b=TktePQ7DN+viJoqYiVrIHN5ISKSZHMw3b695+lkrrGaHkH5UrYl6oj4Yf2C6RfOiPE
+         SaXnkn50zXajU7ro9reZ5zEn0zQq81EPu6zyiKclZAFLG7eHFEKez5q6p8W7jYYTgpKo
+         ZKI+J/44Rsk83I1SmE4u5rS7INmMkyCxIXKlWg3DcFGRML0A4GCpkXCk46aiYfYgGE8b
+         +wL4jYLYM2VBpJSfn2eJKEzR1ystzXQ+22K0wOIdE/uWVHq2TEsmWMeUes/2P7mqsaI4
+         5yUrKwCXwYQNuFS/i2mN1NkgiGYbfrJr6fAT2CA3+MVzgG02oRunWdMOlc8xLnjyJQM0
+         fJZg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2CvEuzx9fu+B/yb2GHNsHwdlIuk7YHGKYkz+A+fon2PRwpKVoUZKcpSYwk0/FRiFZHLNgTeoJsetDqFL17jzSHTTayXN973LzvdWA
+X-Gm-Message-State: AOJu0YzOTN0WqU8lO7cu/6AEqu2kma9qxM6f/UOQPW9wwQs1X3D+D4RZ
+	eW2SUdoWxvianvkHKbya4HNCFk1s5vwR7uoxhtq6dAES5hOKmDODoN4UkbKydlg=
+X-Google-Smtp-Source: AGHT+IFqRDyr09Nd7VDWumaaV4++hDJsHKTRvx5HWWdlWqBKX6NlFxjkCBaAtoRxcjfUWhxGiOhj5A==
+X-Received: by 2002:a19:e017:0:b0:52c:81ba:aeba with SMTP id 2adb3069b0e04-52e8259ff12mr1988718e87.14.1719920477367;
+        Tue, 02 Jul 2024 04:41:17 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2f8b5sm1774583e87.233.2024.07.02.04.41.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 04:41:08 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Amit Pundir <amit.pundir@linaro.org>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] power: sequencing: qcom-wcn: don't request BT enable GPIOs for wcn7850
-Date: Tue,  2 Jul 2024 13:41:03 +0200
-Message-ID: <20240702114103.16068-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+        Tue, 02 Jul 2024 04:41:17 -0700 (PDT)
+Date: Tue, 2 Jul 2024 14:41:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/1] drm/bridge: Silence error messages upon probe
+ deferral
+Message-ID: <5f2qg7cidl6rchculjzw52sfadwoprcptkhz2ikvo43kyny42s@o2ejrvqg7xjg>
+References: <20240628115131.2903251-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240628115131.2903251-1-alexander.stein@ew.tq-group.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Fri, Jun 28, 2024 at 01:51:30PM GMT, Alexander Stein wrote:
+> When -EPROBE_DEFER is returned do not raise an error, but silently return
+> this error instead. Fixes error like this:
+> [drm:drm_bridge_attach] *ERROR* failed to attach bridge
+>   /soc@0/bus@30800000/mipi-dsi@30a00000 to encoder None-34: -517
+> [drm:drm_bridge_attach] *ERROR* failed to attach bridge
+>   /soc@0/bus@30800000/mipi-dsi@30a00000 to encoder None-34: -517
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Reviewed-by: Robert Foss <rfoss@kernel.org>
+> ---
+> Changes in v4:
+> * Rebased to next-20240628
+> 
+>  drivers/gpu/drm/drm_bridge.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index d44f055dbe3e7..3e72dfd941577 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -353,8 +353,9 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+>  	bridge->encoder = NULL;
+>  	list_del(&bridge->chain_node);
+>  
+> -	DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
+> -		  bridge->of_node, encoder->name, ret);
+> +	if (ret != -EPROBE_DEFER)
+> +		DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
+> +			  bridge->of_node, encoder->name, ret);
 
-Due to having many existing users of wcn7850 in the kernel, conversion
-of the hci_qca driver to using pwrseq exclusively must be done
-carefully. Right now, the Bluetooth driver requests and controls the BT
-enable GPIO and so the PMU pwrseq driver must not do it or we will run
-into problems depending on the probe ordering.
+Maybe?
 
-Add a flag that tells the driver not to request the BT-enable GPIO. We
-will remove it once the conversion of the Bluetooth driver is complete.
+else
+   dev_err_probe(encoder->dev->dev, -EPROBE_DEFER, "failed to attach...\n");
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/power/sequencing/pwrseq-qcom-wcn.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.34.1
+> 
 
-diff --git a/drivers/power/sequencing/pwrseq-qcom-wcn.c b/drivers/power/sequencing/pwrseq-qcom-wcn.c
-index 42dacfda745e..68bcd6ec4269 100644
---- a/drivers/power/sequencing/pwrseq-qcom-wcn.c
-+++ b/drivers/power/sequencing/pwrseq-qcom-wcn.c
-@@ -22,6 +22,7 @@ struct pwrseq_qcom_wcn_pdata {
- 	size_t num_vregs;
- 	unsigned int pwup_delay_ms;
- 	unsigned int gpio_enable_delay_ms;
-+	bool no_bt_gpio;
- };
- 
- struct pwrseq_qcom_wcn_ctx {
-@@ -212,6 +213,11 @@ static const struct pwrseq_qcom_wcn_pdata pwrseq_wcn7850_of_data = {
- 	.vregs = pwrseq_wcn7850_vregs,
- 	.num_vregs = ARRAY_SIZE(pwrseq_wcn7850_vregs),
- 	.pwup_delay_ms = 50,
-+	/*
-+	 * FIXME: Remove it once the entire hci_qca driver is converted to
-+	 * using the power sequencer.
-+	 */
-+	.no_bt_gpio = true,
- };
- 
- static int pwrseq_qcom_wcn_match(struct pwrseq_device *pwrseq,
-@@ -277,10 +283,13 @@ static int pwrseq_qcom_wcn_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, ret,
- 				     "Failed to get all regulators\n");
- 
--	ctx->bt_gpio = devm_gpiod_get_optional(dev, "bt-enable", GPIOD_OUT_LOW);
--	if (IS_ERR(ctx->bt_gpio))
--		return dev_err_probe(dev, PTR_ERR(ctx->bt_gpio),
--				     "Failed to get the Bluetooth enable GPIO\n");
-+	if (!ctx->pdata->no_bt_gpio) {
-+		ctx->bt_gpio = devm_gpiod_get_optional(dev, "bt-enable",
-+						       GPIOD_OUT_LOW);
-+		if (IS_ERR(ctx->bt_gpio))
-+			return dev_err_probe(dev, PTR_ERR(ctx->bt_gpio),
-+					     "Failed to get the Bluetooth enable GPIO\n");
-+	}
- 
- 	ctx->wlan_gpio = devm_gpiod_get_optional(dev, "wlan-enable",
- 						 GPIOD_OUT_LOW);
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
