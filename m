@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-237220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DAA91ED9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:05:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A985C91EDA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4694A284011
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:05:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E661F2268E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6703C2BB09;
-	Tue,  2 Jul 2024 04:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB272BCFF;
+	Tue,  2 Jul 2024 04:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FKk3z8Wm"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2UxHVFTC"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F48179AF
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 04:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F9D2030B
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 04:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719893126; cv=none; b=rrV2WljEoFeMR0iWVOId9ZN73c7eC5kZCKTCR2O6kPoFZymzdKcDK/bE5abUSx9fww5IJ1l2I6/U4eva3M4OKBeyhtVH8HBtx1NPXczOZydG23tO4h60K5L8B1GgYMfcgt/b0HWBVKvsz5kL8VQQCqHuYumv4XIV1UH3D6fIsAI=
+	t=1719893356; cv=none; b=dQgxEJPQW0xdcuk9xAJuQT3oBbbOzujjkbYuYjykNl8oxveW0NASdYBtztrLKZVEkPsZqKwNqzFbDvp7Fzl5mSLw9iDdkn3oxYHFaoePxdJ71PulpxjnbHuNoBPP0tOGrSmZWuJMvSMiQPjhtMTNonwdtzPfXtqgrqCFtE+RTmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719893126; c=relaxed/simple;
-	bh=3rMerDqkSin4+l5V6gNE92tGLz1myPI3hZ2pw1p/upk=;
+	s=arc-20240116; t=1719893356; c=relaxed/simple;
+	bh=BFpkRpp+5/s4ui2OkFqLTnCrmNyT2rJHYUvLQkug3uY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mj8mqXxLcnhxxLUZ8ILg6pcKLe8+ZtbURUEzpY+jTnLzBo/3kWnJsChMeLtFZzI6/HxiQKKv5wculFeTVdM1UOMpeHlFMCXzKOVEMLc8smGY+1+oJfnlZKepgN/6X816E86Tebfi+wL4CjHbfAh808j96gUS3GennxZnRa15erY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FKk3z8Wm; arc=none smtp.client-ip=209.85.160.181
+	 To:Cc:Content-Type; b=NFhL8yUbCQVITBlMHMwAqQ/0Izo1obXS/+lNDRGiajgpdVyz95qF3x50mD5S+6i6x0pwGv+s3/6qDmJQHTQzk+U9qtZIJ6vUvf7SqAdiDYKYKUSlLzdTe7uOLT1NVj7x/BWkKKqCi0EAe+JDTWmNRDE+rCchXG7B85rZ6S68IGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2UxHVFTC; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-444fe7e9f11so765011cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 21:05:23 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-444fe7e9f11so765781cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 21:09:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719893123; x=1720497923; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719893353; x=1720498153; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3rMerDqkSin4+l5V6gNE92tGLz1myPI3hZ2pw1p/upk=;
-        b=FKk3z8WmctQCzWKbB6U+jEJxN90Sr7iJsYhrDhy5+rzwfFz4FEnN33DA4NS3L+tExO
-         GIObRw3Ztb4Wg9kk/m7iJnjM1jtcPFfHsnRuMBW0b8JhcOwGSxIbZrJFtPGu6ZFaIW65
-         6G2vapSTBOJty67wQ4pR2ceeb33AZ2zaWIdET2aENuFAclekIrgmqu9vKzuxh9Um82/r
-         EolqXp3OA7B3Gjh+o5gofdEKzXU4iqqD6C+ATiFWAaIrY1tY47qy3Rz0wvInI3PtNoix
-         bfWAYaq2ZIXurE0fSE/HTvDTpM6VaiQ/r8RFAGwQwW71QF9bod0zvrAwewFS8FX4CwDS
-         1Tlw==
+        bh=BFpkRpp+5/s4ui2OkFqLTnCrmNyT2rJHYUvLQkug3uY=;
+        b=2UxHVFTCPrOO6+8A0JaaSbvVg4nHrNSmYLM4omoJgFYQVu9ypoaVGxWMF8VGjZhJ5e
+         lYJtTG/nIliS9IavV4GCB5iNNXPm9sWJp6ZxcvOAmA0JUibs5j1aZKlqsxa9xzWI50sa
+         /0OnMF+VTpqF9X5ZvvyYDOdgea2sdW5qWx++0RK1M7CVBBAq4ep80nbiUmXo5W+oenmq
+         WtwhSVXUrrPPIiDIBgtTtH9L538ur5kQ3KfyyUF79GaUg6E//YOit2+X++M4apExH+9I
+         OIw3RK3E6ANf3RNdBczlNc7sEN1abDMgEps5tXK1tQo3bgNqtYHhUuRMD8HW0wQFXB5U
+         GrJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719893123; x=1720497923;
+        d=1e100.net; s=20230601; t=1719893353; x=1720498153;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3rMerDqkSin4+l5V6gNE92tGLz1myPI3hZ2pw1p/upk=;
-        b=Zo5zaTPdeJieBNKoeiYF0CbereEvqmPH6H6dKfC78fpH1yixbajEZ6pH85TUIlPEWe
-         Fne7cAJwCLYEqwvw/6ZiunlfaiPWTthesx14MGo347ZOWkgnmdoLcUnq0X9L6j8JXTQO
-         1CcpzKr+hJB6TGIIuMPIIArzDosrDchjRjiYV7juplKfxPu5pU6dPMZ4C3ZRW7t9uj0Q
-         wQvmqMHKWX4deN2bf7OMmEhO/wy5lK87miRMEVs2rhbb5T8JEdmc4cEt6VPeWDewLNzq
-         76iPdzy3YNN6c3uoNjrN2MjaOes4KisL6bzOxI+sIW04uQoF9dp/G0+5ln8xXK3rsg6H
-         1v5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWhCkXjPD13UlXaApS0tjzvDJL/Yo2oEwodUqeNSf0DpW8+rYMyBAzHdeVjg3XOIL6nf1LOOR3sf6OKcrMdCawpaQH8LRw0QRuCrDp+
-X-Gm-Message-State: AOJu0YxCubbrAEVwJBjG+VHY5QBV1nYSoi/zLW5z4Ny063F+fDPIPNkh
-	528Enk4hWglYbnS1nDRosgPxOfgetluNPaWCdQo01gafJ3CAnfhaM4TqatskFSq5OMhrZa2nPoI
-	XCOIYmRnIbId0HY2CAyajWQyFpC0dEehEqVH7
-X-Google-Smtp-Source: AGHT+IERnb8c9twaRApiB6apELSkVdUVuCvxqT8JyCmXCXDDLsHGhtHYDy4PTcuFVgv+tVRHq1244xcxH3u9Pp+J/rU=
+        bh=BFpkRpp+5/s4ui2OkFqLTnCrmNyT2rJHYUvLQkug3uY=;
+        b=UACbfSKsY24zh6v8AC47Au0ZaNbAUSCj++PYvL/5pIW2XFD8DzAV854b5whI9McUUl
+         jisXJ+HYJ8g124ljepd+z5/B+LgrzReJaBdmkrpSZRuPLV8T67nAqZlwjDDsPprAd4R1
+         gYMeb/gSHYPhMjYAICjYms9bMAC9S+h9kctRcfZDA05QSTZ/c6u7bQ8RiBISTWxOvbdC
+         fzpWfRamuyKH5yhvjLGkblRzxiQwMC9rePvrKVycI/Z26g/YJfEbwNTaJWttDJyQQXFi
+         wr9ji3bp+tTqD/XnPttvJMspE8P69y/kZ1dCBx7xPxsNHIF50jfm5DJ2CTOfi0qbXHb1
+         O7lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9KNfheL1SuNVuDfSW2t53xi7gTKBEqFn+fSnY34sPtmRPq/mCojcO5UwfbbCR+AArmwe/3kJX4A9StKUuxA0l6Vpq2/zqmWLv3Qcf
+X-Gm-Message-State: AOJu0Yy6JW2UcJMnYVoCQEU5iU1dbrJPO0p6sIv2lmHS7Ph361S5Y4c1
+	kvxnTgORX0MwjBZJO6D1qzb5vvz0brKPAxXgTeky0j+jGKJE8/BA1sEhNrZJEVygcHrahg9cDSS
+	lw2XHvTjrffE8ITxS8s8AQYf1nzEdPp2rJaed
+X-Google-Smtp-Source: AGHT+IHTq2vFWnuyFleYxcX5szuebmkHdxhFqmK8wuyk709Ytw8htr39s3gY8nGlhUuM4CRQtEyhWRNhMKc2HBnhxDE=
 X-Received: by 2002:a05:622a:4709:b0:444:e9b9:708f with SMTP id
- d75a77b69052e-4465df8c326mr6031971cf.21.1719893122967; Mon, 01 Jul 2024
- 21:05:22 -0700 (PDT)
+ d75a77b69052e-4465df8c326mr6039071cf.21.1719893353560; Mon, 01 Jul 2024
+ 21:09:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619202511.it.861-kees@kernel.org>
-In-Reply-To: <20240619202511.it.861-kees@kernel.org>
+References: <20240619202659.work.532-kees@kernel.org>
+In-Reply-To: <20240619202659.work.532-kees@kernel.org>
 From: David Gow <davidgow@google.com>
-Date: Tue, 2 Jul 2024 12:05:10 +0800
-Message-ID: <CABVgOSk7RCMak0ZjRaTE4tYAwV5ZZ2ZHdWC7RWO0Vo6ZwORMdQ@mail.gmail.com>
-Subject: Re: [PATCH v2] kunit/usercopy: Disable testing on !CONFIG_MMU
+Date: Tue, 2 Jul 2024 12:09:02 +0800
+Message-ID: <CABVgOS=Sqt7dbMkece_dokZm60PeyOtO1t1hPor+vYJqjN+ApA@mail.gmail.com>
+Subject: Re: [PATCH] kunit/usercopy: Add missing MODULE_DESCRIPTION()
 To: Kees Cook <kees@kernel.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, kernel test robot <lkp@intel.com>, 
+Cc: Shuah Khan <skhan@linuxfoundation.org>, Jeff Johnson <quic_jjohnson@quicinc.com>, 
 	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
 	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
 	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
 	linux-hardening@vger.kernel.org, linux-mm@kvack.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000ac17cc061c3bd2f1"
+	boundary="0000000000006a2583061c3be085"
 
---000000000000ac17cc061c3bd2f1
+--0000000000006a2583061c3be085
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 20 Jun 2024 at 04:25, Kees Cook <kees@kernel.org> wrote:
+On Thu, 20 Jun 2024 at 04:27, Kees Cook <kees@kernel.org> wrote:
 >
-> Since arch_pick_mmap_layout() is an inline for non-MMU systems, disable
-> this test there.
+> From: Jeff Johnson <quic_jjohnson@quicinc.com>
 >
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202406160505.uBge6TMY-lkp@intel.com/
+> Fix warning seen with:
+>
+> $ make allmodconfig && make W=1 C=1 lib/usercopy_kunit.ko
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/usercopy_kunit.o
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > Signed-off-by: Kees Cook <kees@kernel.org>
 > ---
-> Resending as v2 with Shuah in To:
+> At Jeff's reminder, I've split this out of:
+> https://lore.kernel.org/all/20240601-md-lib-test-v1-1-a728620e37d8@quicinc.com/
+> since the file got renamed.
 > ---
 > Cc: Shuah Khan <skhan@linuxfoundation.org>
+> Cc: Jeff Johnson <quic_jjohnson@quicinc.com>
 > Cc: Brendan Higgins <brendan.higgins@linux.dev>
 > Cc: David Gow <davidgow@google.com>
 > Cc: Rae Moar <rmoar@google.com>
@@ -116,7 +122,7 @@ Reviewed-by: David Gow <davidgow@google.com>
 Cheers,
 -- David
 
---000000000000ac17cc061c3bd2f1
+--0000000000006a2583061c3be085
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -184,14 +190,14 @@ GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
 kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
 MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
 IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
-hvcNAQkEMSIEIERdrr/H+lcdIq/omLS+iZA7EBY0pE5H3TdzU0sC0PyaMBgGCSqGSIb3DQEJAzEL
-BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDcwMjA0MDUyM1owaQYJKoZIhvcNAQkPMVww
+hvcNAQkEMSIEIIghmbmhS3G8lIcy8JlVXs9mFoz9qVPdKiQPo/8w//l2MBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDcwMjA0MDkxM1owaQYJKoZIhvcNAQkPMVww
 WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
-hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAeCMCg
-tCdPjIqGlcKMlKtJmPCqeRkGLVnYVmfq+0NHbmKYhVRPrt9gBRN22kMzWLYXDkQEJ8Y3fhCJBmMc
-AdP1zNzBBuj4aooMxRpItgXoXskUBJ/Y8/r99knnZeV5JTPNVMIbLIYkAiRrrNYp42r7sXs5u6AK
-ZttK2Xy7KbPhwmwI9QRfCFgG1PQG5cnWgZYLBN+TJN7bHkElYCFz4oWw3BmKFuSw/lZL9mWdCLdG
-3wPWI+ANRH8czQ57qCn8hzHfYhVok00jyKdbuD0XT6tqGwudI4ybSSGZR3HA84tRR93CkRUrHALn
-L3HraDUZYCsnK9h2y3vsaT+OBkeAyNvy
---000000000000ac17cc061c3bd2f1--
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBpcU9W
+t8fkP77r0aUywd4EpBwPBYopY7onJVlcUdGcXy1zQqR0ucOaLmYUwMKsD2AtNBF38XfrE22sJD/w
+Q6YYbWDF8x/M2rC1Zyqr00dz3v1QarqEGmcchKGtXwKF6nCwuoKynAXroF5o6J4bEy3vSOHnubx7
+NErL5HbmT4AIUnQ7YOy1SJ6rzU06SueaAKYJCT5Ks7DxuJW/IfCkz5l61ybBZwnQ9QaExwG2RvO7
+c/DSdMBj+9WCkWb+P9g/5ZWymhZ3B3lefHkN7wqOd9oOHittL4zrCdcwj/hmsISlULSjFfzdkdwh
+81OqarBpq5TLi1p92Dme5YGgQVOSuU1s
+--0000000000006a2583061c3be085--
 
