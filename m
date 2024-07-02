@@ -1,181 +1,165 @@
-Return-Path: <linux-kernel+bounces-237182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6BE391ED20
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:51:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173F291ED28
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70CFA1F21B0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56501F222A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637021756A;
-	Tue,  2 Jul 2024 02:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220A71756A;
+	Tue,  2 Jul 2024 02:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KEOQkZXb"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pmn4rVl5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DC264D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 02:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1E329CF0
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 02:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719888662; cv=none; b=IwY0zuuZvyKVbgfpxmIPmuHIN69SdFSovGtA3n3rRwxXvTMfAtDjVRpt5ZR8Ghw4nh3A2CuM31JBda1a980X/iLtqT/NUR3NcNQ5znqK3InVkClxp2t0a22ksiGiVaX0DYIOVcOACW4ELIuDjNTVLnFbhF/kKP0LeRGupCI6PXc=
+	t=1719889016; cv=none; b=tZL3VaMknHR13Fjw34CSaI+yrvIYHGIpwO8nK/LpI+IbK4JZB07PpoHeyjzduKT1LePR4wvWFdhgLdCk3MbKGu2i1EGxHmZzJiiSA5sMRXK0czdubFEA+6aaUg08C68zcnUcKU/Cw9S/X98oEtGim+1lb20C4n2WjoSC6IpD/x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719888662; c=relaxed/simple;
-	bh=dI4FUUfMjl69PrOL983cIvqHwtYC/LP2jgUv1UMPb4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=buxF+qEdQKna+76j79sPkkULkrlaDzHdJtqNwOa7UMGJYfysQp5bw4CYeL6X15kuXP+YNihFSzDgJMZr+gkqofPaSMnxQUcYGDhBh2Bgq19biNHPASW5IIAOPPgnXjAnJm/9joa0V+N0ucarLExjA5uRwY/v2bCz9+FReF27okc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KEOQkZXb; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-707f9c3bd02so2414873b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 19:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719888659; x=1720493459; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nBp88gZrUa2YS7lo6hEmRMUQenqjZqceKeedcGibfdc=;
-        b=KEOQkZXbdHMQKAMmA8s+fZDUnapasIIQlXOqJRuy7fE2l4u/1FnOLd5oy/0splC6oV
-         B1ScMcNB1auB2GuQWE148z6cXritZM3BxCsHuX0cOyDhN7lmW9jFwTI377Nc/g4QY+eU
-         HOAEHM7Qj++eK++Gaxhz6B97ReKVU+GkghOtlnOTdEQs2de9EdV6K0uRWQ3JLmQsQEnT
-         cpVm0eC+OviBuUVwaElc3CtdD7c5djEiJiKmS1NltdrQbPDKr558M0TBS8IcqnLUAxzN
-         jhNLQsybPmAObbOchbpRS/XzOK7OojEHOqvosB23PwzBETnRLfKcrqgaJi9oCQ2rmYrg
-         3/0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719888659; x=1720493459;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nBp88gZrUa2YS7lo6hEmRMUQenqjZqceKeedcGibfdc=;
-        b=F0T8axfaMrR9f6+5+E+1K5yzQGEjo3OdIT8S3SOAE2AmSYTVpiO8yttQvXq6c41A2Y
-         y71LZU+/xvpGy+L91B6ssmAadYK9n0NrnjpAlIr8mN8oQX95PDMU21JrGIvedTTt1YdT
-         fHv7CyDH/Wa1wEUrD3xItyq5gLRE9SUDQZnLEq+LN410KCym+pKuLa2NPpRQtANtjxBU
-         nW2b7qMaOX4/z+QzYuLHV42cDL9IZiCJ0BR/2spEo7ga/jCq8DkRFEjck4ps0yoZmBMc
-         lBWVeKGh8zY0EmxNGwaJKDtYxO86Uh/UX6UJH//jz6nfku+1dJ517pqLvgh9w3D8JOP5
-         TgtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtrNJvXbVC/pbnyCPZONhoLR6BvB1j6gTh6bd6Q6913WPIebPQNz+lJHlC818eWoy2uOTChbpvP1QWibBHBwsGc8OubBkKd1peYweP
-X-Gm-Message-State: AOJu0YwH2pHcQZIXGKrQzDuiP+P/KVd8Q9B3FDoOmSjBPIKdcvqWmy5Z
-	qHtyQOwypkooIKPfjUCUc3l1+tKkHXfm7Q1gs6Igp9RVm/hyPO741sGpVRDi6g==
-X-Google-Smtp-Source: AGHT+IFf88EVVdjFfdu2f1Xd7SqqWlpsU+fSNzdJfNG3fiH6hUTe+nsB4Eh7rlvmYm98E6DkS52y3w==
-X-Received: by 2002:a05:6a00:4b4c:b0:706:705f:313a with SMTP id d2e1a72fcca58-70aaad3add2mr5320365b3a.12.1719888658875;
-        Mon, 01 Jul 2024 19:50:58 -0700 (PDT)
-Received: from google.com (148.98.83.34.bc.googleusercontent.com. [34.83.98.148])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70801e57aa0sm7300844b3a.28.2024.07.01.19.50.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 19:50:58 -0700 (PDT)
-Date: Tue, 2 Jul 2024 02:50:54 +0000
-From: Igor Pylypiv <ipylypiv@google.com>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 8/8] ata: libata-scsi: Make ata_scsi_qc_complete()
- more readable
-Message-ID: <ZoNrDo0HIISlBMdX@google.com>
-References: <20240701195758.1045917-1-ipylypiv@google.com>
- <20240701195758.1045917-9-ipylypiv@google.com>
- <ZoMciql1lQcj5MbM@ryzen.lan>
+	s=arc-20240116; t=1719889016; c=relaxed/simple;
+	bh=PJeB1T6WtFGRGHqRWzoEPRuTK3UanbHnCIilELdSNEA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XwIeIenw926IwBntc+k7d3K0uH48tXlcu+FRP7dmwgQ1QD8t3cetWTB3w5fIu8NCBGby8/9+hiLEMXjoVSW21K1faJ2T4hCBMktpMn3lWorUkqmejJ5M8hc9+qozZAj5hkv5E7pgYh/6D6Yc8DQSSezx4zH6Ocm1BJQpQkhl5eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pmn4rVl5; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719889014; x=1751425014;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=PJeB1T6WtFGRGHqRWzoEPRuTK3UanbHnCIilELdSNEA=;
+  b=Pmn4rVl5yKVYdC71KyN/P9yegbx0VZ7H0NHnV3EICcyjhxX3eW2PzdMm
+   YuJSnVdqDCYm0rCS/+6HRPZTjiq3zCahIIKkrRPBwqvJqdfbV7ErsASpR
+   eTnYG4oKj8FG7oi3Rm/m4aWh1xJu5mGLCnkBj8sffZLDd1cWuoowdskPo
+   zczUoYUn/tdMonO8M6e+xPH03Ps2wprIeVYCACrEj8MOOawcxDgdj+NrW
+   QLDeT/x63rrULB28k26Q/wsz8jgTFAzq627qyPLMGIVj4doyt9TYdbhCM
+   ttKYCFEbyOfdR1Rdbv+NlhYCeYKGP0O9mX1tIQGk0l4NhaUxjBcEDlkxU
+   Q==;
+X-CSE-ConnectionGUID: wPMKpFjdRleVWc3FI6dgJg==
+X-CSE-MsgGUID: n1kCplg2TMGFR/sunwLvOw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="17171745"
+X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
+   d="scan'208";a="17171745"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 19:56:54 -0700
+X-CSE-ConnectionGUID: jv1h/Hj1Tsi9eKZnFDIjjg==
+X-CSE-MsgGUID: 7c35zjW2RfmY6UoGVFRosw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="50598103"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa003.jf.intel.com with ESMTP; 01 Jul 2024 19:56:52 -0700
+Message-ID: <663b7309-31e6-4b60-a792-b7aca77c190d@linux.intel.com>
+Date: Tue, 2 Jul 2024 10:54:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZoMciql1lQcj5MbM@ryzen.lan>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] iommu/vt-d: Add helper to flush caches for context
+ change
+To: Jacob Pan <jacob.jun.pan@linux.intel.com>
+References: <20240627023121.50166-1-baolu.lu@linux.intel.com>
+ <20240627023121.50166-2-baolu.lu@linux.intel.com>
+ <20240701172319.264e718c@jacob-builder>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240701172319.264e718c@jacob-builder>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 01, 2024 at 11:15:54PM +0200, Niklas Cassel wrote:
-> On Mon, Jul 01, 2024 at 07:57:58PM +0000, Igor Pylypiv wrote:
-> > The ATA PASS-THROUGH handling logic in ata_scsi_qc_complete() is hard
-> > to read/understand. Improve the readability of the code by moving checks
-> > into self-explanatory boolean variables.
-> > 
-> > Additionally, always set SAM_STAT_CHECK_CONDITION when CK_COND=1 because
-> > SAT specification mandates that SATL shall return CHECK CONDITION if
-> > the CK_COND bit is set.
-> > 
-> > Co-developed-by: Niklas Cassel <cassel@kernel.org>
-> > Signed-off-by: Niklas Cassel <cassel@kernel.org>
-> > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-> > ---
-> >  drivers/ata/libata-scsi.c | 21 +++++++++++----------
-> >  1 file changed, 11 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> > index a66c177b6087..8f21b3b0bc75 100644
-> > --- a/drivers/ata/libata-scsi.c
-> > +++ b/drivers/ata/libata-scsi.c
-> > @@ -1659,26 +1659,27 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
-> >  {
-> >  	struct scsi_cmnd *cmd = qc->scsicmd;
-> >  	u8 *cdb = cmd->cmnd;
-> > -	int need_sense = (qc->err_mask != 0) &&
-> > -		!(qc->flags & ATA_QCFLAG_SENSE_VALID);
-> > -	int need_passthru_sense = (qc->err_mask != 0) ||
-> > -		(qc->flags & ATA_QCFLAG_SENSE_VALID);
-> > +	bool have_sense = qc->flags & ATA_QCFLAG_SENSE_VALID;
-> > +	bool is_ata_passthru = cdb[0] == ATA_16 || cdb[0] == ATA_12;
-> > +	bool is_ck_cond_request = cdb[2] & 0x20;
-> > +	bool is_error = qc->err_mask != 0;
-> >  
-> >  	/* For ATA pass thru (SAT) commands, generate a sense block if
-> >  	 * user mandated it or if there's an error.  Note that if we
-> > -	 * generate because the user forced us to [CK_COND =1], a check
-> > +	 * generate because the user forced us to [CK_COND=1], a check
-> >  	 * condition is generated and the ATA register values are returned
-> >  	 * whether the command completed successfully or not. If there
-> > -	 * was no error, we use the following sense data:
-> > +	 * was no error, and CK_COND=1, we use the following sense data:
-> >  	 * sk = RECOVERED ERROR
-> >  	 * asc,ascq = ATA PASS-THROUGH INFORMATION AVAILABLE
-> >  	 */
-> > -	if (((cdb[0] == ATA_16) || (cdb[0] == ATA_12)) &&
-> > -	    ((cdb[2] & 0x20) || need_passthru_sense)) {
-> > -		if (!(qc->flags & ATA_QCFLAG_SENSE_VALID))
-> > +	if (is_ata_passthru && (is_ck_cond_request || is_error || have_sense)) {
-> > +		if (!have_sense)
-> >  			ata_gen_passthru_sense(qc);
-> >  		ata_scsi_set_passthru_sense_fields(qc);
-> > -	} else if (need_sense) {
-> > +		if (is_ck_cond_request)
-> > +			set_status_byte(qc->scsicmd, SAM_STAT_CHECK_CONDITION);
-> > +	} else if (is_error && !have_sense) {
-> >  		ata_gen_ata_sense(qc);
-> >  	} else {
-> >  		/* Keep the SCSI ML and status byte, clear host byte. */
-> > -- 
-> > 2.45.2.803.g4e1b14247a-goog
-> > 
+On 7/2/24 8:23 AM, Jacob Pan wrote:
+> On Thu, 27 Jun 2024 10:31:20 +0800, Lu Baolu<baolu.lu@linux.intel.com>
+> wrote:
 > 
-> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+>> +/*
+>> + * Cache invalidations after change in a context table entry that was
+>> present
+>> + * according to the Spec 6.5.3.3 (Guidance to Software for
+>> Invalidations). If
+>> + * IOMMU is in scalable mode and all PASID table entries of the device
+>> were
+>> + * non-present, set affect_domains to true. Otherwise, false.
+>> + */
+> The spec says:
+> "Domain-selective PASID-cache invalidation to affected domains (can be
+> skipped if all PASID entries were not-present and CM=0)"
 > 
-> However: I really think that this patch should be squashed with patch 2/8.
+> So we should skip PASID cache invalidation if affect_domain is true
+> according to this comment.
 > 
-> Sure, the changes in this patch will make it harder to backport...
-> but, even patch 2/8 will be a pain to backport...
-> 
-> And this patch will need to have CC: stable and be backported as well...
-> (such that we always set CHECK_CONDITION when CK_COND=1), so I strongly
-> suggest that we should squash these, since it will probably be way simpler
-> to backport the patch that is "patch 2/8 squashed with this patch",
-> compared to backporting patch 2/8, and then backporting this patch.
-> (That would just give two patches that will need manual backport, rather
-> than one patch that needs manual backport.)
-> 
-> Both of these are fixing incorrect sense data for ATA passthough commands
-> anyway.
+>> +void intel_context_flush_present(struct device_domain_info *info,
+>> +				 struct context_entry *context,
+>> +				 bool affect_domains)
+>> +{
+>> +	struct intel_iommu *iommu = info->iommu;
+>> +	u16 did = context_domain_id(context);
+>> +	struct pasid_entry *pte;
+>> +	int i;
+>> +
+>> +	assert_spin_locked(&iommu->lock);
+>> +
+>> +	/*
+>> +	 * Device-selective context-cache invalidation. The Domain-ID
+>> field
+>> +	 * of the Context-cache Invalidate Descriptor is ignored by
+>> hardware
+>> +	 * when operating in scalable mode. Therefore the @did value
+>> doesn't
+>> +	 * matter in scalable mode.
+>> +	 */
+>> +	iommu->flush.flush_context(iommu, did, PCI_DEVID(info->bus,
+>> info->devfn),
+>> +				   DMA_CCMD_MASK_NOBIT,
+>> DMA_CCMD_DEVICE_INVL); +
+>> +	/*
+>> +	 * For legacy mode:
+>> +	 * - Domain-selective IOTLB invalidation
+>> +	 * - Global Device-TLB invalidation to all affected functions
+>> +	 */
+>> +	if (!sm_supported(iommu)) {
+>> +		iommu->flush.flush_iotlb(iommu, did, 0, 0,
+>> DMA_TLB_DSI_FLUSH);
+>> +		__context_flush_dev_iotlb(info);
+>> +
+>> +		return;
+>> +	}
+>> +
+>> +	/*
+>> +	 * For scalable mode:
+>> +	 * - Domain-selective PASID-cache invalidation to affected
+>> domains
+>> +	 * - Domain-selective IOTLB invalidation to affected domains
+>> +	 * - Global Device-TLB invalidation to affected functions
+>> +	 */
+>> +	if (affect_domains) {
+>> +		for (i = 0; i < info->pasid_table->max_pasid; i++) {
+>> +			pte = intel_pasid_get_entry(info->dev, i);
+>> +			if (!pte || !pasid_pte_is_present(pte))
+>> +				continue;
+>> +
+>> +			did = pasid_get_domain_id(pte);
+>> +			qi_flush_pasid_cache(iommu, did,
+>> QI_PC_ALL_PASIDS, 0);
+> This is conflicting with the comments above where PASID cache flush can be
+> skipped if affect_domain==true, no?
 
-Agreed, it makes more sense to squash. Squashed the patches in v5.
+Yes. I have fixed it in the v3.
 
-I really appreciate your thorough reviews and feedback, Niklas! Thank you!
-
-Best,
-Igor
-> 
-> 
-> Kind regards,
-> Niklas
+Best regards,
+baolu
 
