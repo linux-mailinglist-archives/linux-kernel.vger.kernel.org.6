@@ -1,100 +1,236 @@
-Return-Path: <linux-kernel+bounces-238278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759CB9247C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:00:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8D19247CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC62CB24268
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:00:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 817CB282737
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDD4322E;
-	Tue,  2 Jul 2024 19:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8AD7E574;
+	Tue,  2 Jul 2024 19:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Aex1PcL4"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="eYnnGdL0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vFXFlM/7"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB722BCFF
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 19:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440121EB25;
+	Tue,  2 Jul 2024 19:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719946837; cv=none; b=uYtWwA/JyJ/M1kI7WgpCXE6QfMu/A5+6GR1wBAbUD/peaOS78THEBCeWq8IyxkyHMaV40V/1yC3J6W02OYjF4w5mTxz8Xyc7XqhxabXTXrmGCUFhK/fIu1tnKDXt9DTg/c79ZA7uUs0gkhqqaudmeGcPINgCVjhu5W+KDv7MirI=
+	t=1719947003; cv=none; b=SKwK7h5mgqrUi3+3Uxee0n7kpu9Vgd4DPEQkM3EjYx9wIlYtc+tYYpTpGpwyuyQJsSiMG+U4VBh9Dr8NoSiVoGSduC3K6Ur+2vBMbcmrhfgLYuw0oXRxXJ6IlMWuD1yIAPylgTURLFTxXKd/5DH3iBOS0CJF4EzPU3XNXGySR84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719946837; c=relaxed/simple;
-	bh=TRh3kCtvO58B3TS/ro9pEJNNo6FOlD9/z7qzRrzSlqs=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gSTiHTSzW7uqMI8moB9goe5Phb6V7LTIvaNfC6eC+qKwzN2rpN+HHCmZDAIGszUCfUZ4pQgTJFxo9K1AgqRdcq06FBfY9Jxf2UKlbXeOWtVij5ZcRJ0IFR9B+j5v//vTMBS0Z6dsQw+P0Mw3SiptVqLDPF8lhKKzulvlFZiQ32Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Aex1PcL4; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7021702f3f1so1552121a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 12:00:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719946835; x=1720551635; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TRh3kCtvO58B3TS/ro9pEJNNo6FOlD9/z7qzRrzSlqs=;
-        b=Aex1PcL4TQzx8xBTycaadMgX5n4tITaDJ7ONqUNBdF1vjeiOMgSC7gfpdYgMNs2lpz
-         sN8BIfgFJPooNk7fLnAPOogWzWhcLP/V/GdwoECSQQ1PBIpuB69W9QQKCLX8UVGKuOV/
-         hoy2aSRq+4RZcb1OEn93WMKX2ZPMXrFFYB+x8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719946835; x=1720551635;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TRh3kCtvO58B3TS/ro9pEJNNo6FOlD9/z7qzRrzSlqs=;
-        b=wvHcMRXlD+vYT2BYEif5Cdy86DC7mZKGYKFx3F8ojqFNJPusJmqOw4ZDeJqDYLqsGM
-         w2T28kNSGObz2qRJitfmlfHHc1p4V9WheNe65dJdVC1j4fBXQmZVb409J6AEo3hv+M8o
-         L3Bz2VkEYzryGi4zyXXxK7c9R3A4Mwn+w9hH2qcdfAF0Hp+YuamcY9xz51ZQubLfizV7
-         k/K5cJ0fOvrH9uoWFNG3xSYhNQbdBkqa65XGERZumETOS/9xQInI4YT+2Lw80JmTi5iJ
-         VSBDdNQXnW+8BjFHqSBkc4Sm7TSufjX6rwmZ5rk8A1OcYJf6QrmBKvigcwYXczThkmBW
-         la1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUpkc8G4rNzliHDpFKkZ+vhPCa3OIm0V2dy+eBlfjbgJUw8uw6vc4B+YQhEbVYyoKFZwj5MyjgmpogmNYBkB4obp/iKItO6TDiF8xdH
-X-Gm-Message-State: AOJu0YxkHMUFfq7K+lKLUBb+fflZp4pnKG343Jmyw0Id5+6yHj9CDosw
-	fol05fyubv129DaTWx7yje9TMd/wfM8uH85+I99/zkNY9qFdaXjn8BP6tP+sakw3eYAPhgmeK3M
-	u8G4ySD+e3mTgcXuWsdhgm9rTzMkVXSAHq2bD
-X-Google-Smtp-Source: AGHT+IEuctwteLzkcWtPEA88NJi6Q3ar2tx3qa3jOR7L3cOw0C0DH0EuKI1yUKU29vx9JV4sFz9I67UQX3NV/JxAMfc=
-X-Received: by 2002:a9d:6c56:0:b0:702:526:284e with SMTP id
- 46e09a7af769-702076f2ed8mr10449874a34.33.1719946835587; Tue, 02 Jul 2024
- 12:00:35 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 2 Jul 2024 12:00:34 -0700
+	s=arc-20240116; t=1719947003; c=relaxed/simple;
+	bh=IYHGOWQYHzfej5qUuNd7psK1kiJHU76lRKzC9PeXtNU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RxAoxthVT+EiOjD2QJTblyihN1vTTvkCGR6IIBZKtuGuvgD+A2u82fUUV+XpkUHSJZsgIOkNjwvZwRHPBaRAzVvC8WR17I4JnnlxyJzmXpgEyrN5WED4g+8QPLUeHgCrhePgJNFxiz7PidwWeM3GICfhwjG2i7T433ePCsIlqAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=eYnnGdL0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vFXFlM/7; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id EC8671140175;
+	Tue,  2 Jul 2024 15:03:16 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Tue, 02 Jul 2024 15:03:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1719946996; x=1720033396; bh=nQ
+	YbCpa+E8n2YlgnyPwC0P6/tQ4hyVyrd8XEfm45oWI=; b=eYnnGdL0pYPDVVGht1
+	dShxEo3pnCH8FYyAU+nVoKkAPoHtbB2niNzHh9Z8XcI7wxQxaa6ckVFvZSYP2LKx
+	0V5DkkfN5pyQc862lrfM0rQLWVJjHvCJDvH/P1DYv3QKJ1fRip5IGc9QLoAlVrRL
+	Q5MkC6Upuks4j2pfeKRhP2zoikbVm60phPdJqb4UUkZYVwLanR5K064Rs3+sy3Y9
+	9kr605XNSxBULysrrG2OiWP0wTBSTKi9RA3Em5Gj9VOa+7kPThMak7HyNVsZ2ROo
+	O4sV57vfLskDE+kFg4WAzObSys4ke8GbM4n/JL/P6iCY49B9Yk5bg+XwRFh+THxM
+	ga7w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm2; t=1719946996; x=1720033396; bh=nQYbCpa+E8n2Y
+	lgnyPwC0P6/tQ4hyVyrd8XEfm45oWI=; b=vFXFlM/7fv3z3ZVnjNUxTC8HyfAnF
+	eBO/6g8EH5H1GWhaHm9S46hL+hqA5meG5ZCSQK63OCBhqt969WPp2HyDbsUfGSli
+	5gxOxIPzWMX8dBV2Nsscz3Sj5yBwd9Sacdvvj3r2NI8Tvw/H11l/y86CKZXHM2jM
+	Lk7Aw54lA/IKs2mHg2G/qyR5LroSTjqnw80vtSGqLFKp5OgLNivQ8MpKhO12mqfu
+	9giV8QlZl16RBJVQ6H2+HBFGI8+2XfDzRQBbkx55WFqL+l/19E6RaSFLaTQVPYXS
+	PU6E4114SrdK8I28nRDTyaiiqqY7E923tNHIU1YoCNhnj79Oyl8GCwC5w==
+X-ME-Sender: <xms:9E6EZor_hxt7wsAhuEwNZhURVLah5Yprrgf4kbzbLSLIBcy1fWxPZA>
+    <xme:9E6EZurlq2_5ekhT_dNNggswl2U8inNO1K60pIB_NZSjjIfx3exi9RIlItbAf8KRU
+    kq41nzi8i34qiG-NB0>
+X-ME-Received: <xmr:9E6EZtN42dNUc9RP_Mc9SHKlwds8VFb4i4kxMqZcSmEFUtPAj-0AcSmxiTppy6SEVEz0jm-pLUgSHYeS-EwdSwgiYw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgdduvdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpefpihhklhgr
+    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvsh
+    grshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeehudelteetkefg
+    ffefudefuedvjeeivdekhfevieefgeffheeltddvvefhfeetgeenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhl
+    uhhnugesrhgrghhnrghtvggthhdrshgv
+X-ME-Proxy: <xmx:9E6EZv5vjTd2eRo3WtGfHcCMITuRpFt3UzuGZxj2Z1tIqREtAm5SjA>
+    <xmx:9E6EZn6nQnjYhb0yeEcmFH2WpMSfsHgQhWt6CIHZS2EgByaYOROr_A>
+    <xmx:9E6EZvgg60PtLMoM0nenzDQsTLbFPLYVs3mYpblDECFXGYVq9TYofA>
+    <xmx:9E6EZh5r-RExlLmVYEQ9KraDTeTNAXDxwFVf8E-HiipqOK80sJJgSA>
+    <xmx:9E6EZtRAOJbdVZQNKnVI2-SXf36b-s7XxCoeH9j2fuy5IC4sbfP5QABe>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 2 Jul 2024 15:03:15 -0400 (EDT)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] clocksource/drivers/sh_cmt: Address race condition for clock events
+Date: Tue,  2 Jul 2024 21:02:30 +0200
+Message-ID: <20240702190230.3825292-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240624-usb_core_of_memleak-v1-1-af6821c1a584@gmail.com>
-References: <20240624-usb_core_of_memleak-v1-1-af6821c1a584@gmail.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Tue, 2 Jul 2024 12:00:34 -0700
-Message-ID: <CAE-0n51SfZiQ_XnPXYrG4Fyu=H8xDc0zpJ_Hxa+MrFq8V8PXTQ@mail.gmail.com>
-Subject: Re: [PATCH] usb: core: add missing of_node_put() in usb_of_has_devices_or_graph
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Quoting Javier Carrasco (2024-06-24 14:10:06)
-> The for_each_child_of_node() macro requires an explicit call to
-> of_node_put() on early exits to decrement the child refcount and avoid a
-> memory leak.
-> The child node is not required outsie the loop, and the resource must be
-> released before the function returns.
->
-> Add the missing of_node_put().
->
-> Cc: stable@vger.kernel.org
-> Fixes: 82e82130a78b ("usb: core: Set connect_type of ports based on DT node")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
+There is a race condition in the CMT interrupt handler. In the interrupt
+handler the driver sets a driver private flag, FLAG_IRQCONTEXT. This
+flag is used to indicate any call to set_next_event() should not be
+directly propagated to the device, but instead cached. This is done as
+the interrupt handler itself reprograms the device when needed before it
+completes and this avoids this operation to take place twice.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+It is unclear why this design was chosen, my suspicion is to allow the
+struct clock_event_device.event_handler callback, which is called while
+the FLAG_IRQCONTEXT is set, can update the next event without having to
+write to the device twice.
+
+Unfortunately there is a race between when the FLAG_IRQCONTEXT flag is
+set and later cleared where the interrupt handler have already started to
+write the next event to the device. If set_next_event() is called in
+this window the value is only cached in the driver but not written. This
+leads to the board to misbehave, or worse lockup and produce a splat.
+
+   rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+   rcu:     0-...!: (0 ticks this GP) idle=f5e0/0/0x0 softirq=519/519 fqs=0 (false positive?)
+   rcu:     (detected by 1, t=6502 jiffies, g=-595, q=77 ncpus=2)
+   Sending NMI from CPU 1 to CPUs 0:
+   NMI backtrace for cpu 0
+   CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.10.0-rc5-arm64-renesas-00019-g74a6f86eaf1c-dirty #20
+   Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
+   pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+   pc : tick_check_broadcast_expired+0xc/0x40
+   lr : cpu_idle_poll.isra.0+0x8c/0x168
+   sp : ffff800081c63d70
+   x29: ffff800081c63d70 x28: 00000000580000c8 x27: 00000000bfee5610
+   x26: 0000000000000027 x25: 0000000000000000 x24: 0000000000000000
+   x23: ffff00007fbb9100 x22: ffff8000818f1008 x21: ffff8000800ef07c
+   x20: ffff800081c79ec0 x19: ffff800081c70c28 x18: 0000000000000000
+   x17: 0000000000000000 x16: 0000000000000000 x15: 0000ffffc2c717d8
+   x14: 0000000000000000 x13: ffff000009c18080 x12: ffff8000825f7fc0
+   x11: 0000000000000000 x10: ffff8000818f3cd4 x9 : 0000000000000028
+   x8 : ffff800081c79ec0 x7 : ffff800081c73000 x6 : 0000000000000000
+   x5 : 0000000000000000 x4 : ffff7ffffe286000 x3 : 0000000000000000
+   x2 : ffff7ffffe286000 x1 : ffff800082972900 x0 : ffff8000818f1008
+   Call trace:
+    tick_check_broadcast_expired+0xc/0x40
+    do_idle+0x9c/0x280
+    cpu_startup_entry+0x34/0x40
+    kernel_init+0x0/0x11c
+    do_one_initcall+0x0/0x260
+    __primary_switched+0x80/0x88
+   rcu: rcu_preempt kthread timer wakeup didn't happen for 6501 jiffies! g-595 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
+   rcu:     Possible timer handling issue on cpu=0 timer-softirq=262
+   rcu: rcu_preempt kthread starved for 6502 jiffies! g-595 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
+   rcu:     Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+   rcu: RCU grace-period kthread stack dump:
+   task:rcu_preempt     state:I stack:0     pid:15    tgid:15    ppid:2      flags:0x00000008
+   Call trace:
+    __switch_to+0xbc/0x100
+    __schedule+0x358/0xbe0
+    schedule+0x48/0x148
+    schedule_timeout+0xc4/0x138
+    rcu_gp_fqs_loop+0x12c/0x764
+    rcu_gp_kthread+0x208/0x298
+    kthread+0x10c/0x110
+    ret_from_fork+0x10/0x20
+
+The design have been part of the driver since it was first merged in
+early 2009. It becomes increasingly harder to trigger the issue the
+older kernel version one tries. It only takes a few boots on v6.10-rc5,
+while hundreds of boots are needed to trigger it on v5.10.
+
+Close the race condition by using the CMT channel lock for the two
+competing sections. The channel lock was added to the driver after its
+initial design.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+Hello,
+
+I only have access to R-Car based SoCs and that is what I have tested
+this change on. I have not been able to test on any SH platforms which
+also uses this driver.
+---
+ drivers/clocksource/sh_cmt.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
+index 26919556ef5f..b72b36e0abed 100644
+--- a/drivers/clocksource/sh_cmt.c
++++ b/drivers/clocksource/sh_cmt.c
+@@ -528,6 +528,7 @@ static void sh_cmt_set_next(struct sh_cmt_channel *ch, unsigned long delta)
+ static irqreturn_t sh_cmt_interrupt(int irq, void *dev_id)
+ {
+ 	struct sh_cmt_channel *ch = dev_id;
++	unsigned long flags;
+ 
+ 	/* clear flags */
+ 	sh_cmt_write_cmcsr(ch, sh_cmt_read_cmcsr(ch) &
+@@ -558,6 +559,8 @@ static irqreturn_t sh_cmt_interrupt(int irq, void *dev_id)
+ 
+ 	ch->flags &= ~FLAG_SKIPEVENT;
+ 
++	raw_spin_lock_irqsave(&ch->lock, flags);
++
+ 	if (ch->flags & FLAG_REPROGRAM) {
+ 		ch->flags &= ~FLAG_REPROGRAM;
+ 		sh_cmt_clock_event_program_verify(ch, 1);
+@@ -570,6 +573,8 @@ static irqreturn_t sh_cmt_interrupt(int irq, void *dev_id)
+ 
+ 	ch->flags &= ~FLAG_IRQCONTEXT;
+ 
++	raw_spin_unlock_irqrestore(&ch->lock, flags);
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -780,12 +785,18 @@ static int sh_cmt_clock_event_next(unsigned long delta,
+ 				   struct clock_event_device *ced)
+ {
+ 	struct sh_cmt_channel *ch = ced_to_sh_cmt(ced);
++	unsigned long flags;
+ 
+ 	BUG_ON(!clockevent_state_oneshot(ced));
++
++	raw_spin_lock_irqsave(&ch->lock, flags);
++
+ 	if (likely(ch->flags & FLAG_IRQCONTEXT))
+ 		ch->next_match_value = delta - 1;
+ 	else
+-		sh_cmt_set_next(ch, delta - 1);
++		__sh_cmt_set_next(ch, delta - 1);
++
++	raw_spin_unlock_irqrestore(&ch->lock, flags);
+ 
+ 	return 0;
+ }
+-- 
+2.45.2
+
 
