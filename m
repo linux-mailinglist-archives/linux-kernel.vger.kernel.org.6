@@ -1,130 +1,169 @@
-Return-Path: <linux-kernel+bounces-238553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30421924BFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:07:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE39924BFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298071C227C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:07:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64CE41C22574
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56D817A5A9;
-	Tue,  2 Jul 2024 23:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E80017A592;
+	Tue,  2 Jul 2024 23:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CS+ypEcv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKOeoQz2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06DF1DA32F;
-	Tue,  2 Jul 2024 23:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96BD91DA30B;
+	Tue,  2 Jul 2024 23:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719961628; cv=none; b=qwqbjKrSWR8dfzIhb2U2kamJJCl4SJwUkt3cn7Vh2OTtFxB8w1WUNt0l0Cg1hPAXqIzhl0TlWAPmQNY5FjDN/rINL/40bEcOOMC6kgnKwJ0UwlkPqYlWrIZHVKFh+HQ6cU4+5oSMsLazFfYbX3lOYCiBRPZqJMrFKCrNLkanct0=
+	t=1719961699; cv=none; b=e9+7SSH2reRIIItYNF4rsG68lR+b2byhWWhD0oeXwgxPw8CWrcv6SpEbk9niSEcEwGiwRRFvTb3kM6vi0BEWR8SbAhzWqxDHN0qeIwdAUWgqguGeBGm0X9PdTrMLG8RuapOdd6lPIPY8giu4eUdsBbaR1248HQZ55pvW8IcX6wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719961628; c=relaxed/simple;
-	bh=VaZbpHrnVdRdxut18TFiJFMK7EU8ulNyiBToDBAPk7o=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aauljZ466rBxEHHQHpIsUkU5fD3pi8vJXIc1+rpWIzK1FGE7B60qvXRm8aG470s5jsUacVGPqJmSoQcrPV1MdaPynztjvmBAOKGiOL2zY9eaQ9GJFqHkZP7Pwp2JMyV2aTVmmu9KpBSxNufo7keEyMUa1ahg7Yp1CsWQrkTH7/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CS+ypEcv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462IsmDW007871;
-	Tue, 2 Jul 2024 23:06:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=5pNzyK56bwu0gf2EFSYChrj/
-	qBc7aPtMRqvy55yKLxg=; b=CS+ypEcvai+grbzhkJNWcf9IuIIHgkbYcxlDzSIV
-	xDSaA0yaed+i/eT9wz8HSF7f17eMQuAxROvQS7WUq7SvA6Sk6pdocbW2+UodLBTV
-	hW1mPM+uPCgqLxpAuCwSzhjXNZH7JvsYzwXginUSjuEcExmwqtFzFtkNrXBOEygR
-	g3nOvbxTjr4wCqO+rgpw5N1IhPl67/7Kze3h6SSdGyEf7eRWH2u6/DFFIBlEDPRJ
-	JXhJZvLsSZ4lcUcSWNMuSveySI1r4vBhiOJCtwRZs1W1rpjsL55sLcL0bQ1Niqw2
-	AsSDbp5zeKs3gIiOkUwMQb16m5mjNi3BmwOqU9Hqtio+uA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402bj89qbd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 23:06:49 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462N6nId018069
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Jul 2024 23:06:49 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 2 Jul 2024 16:06:48 -0700
-Date: Tue, 2 Jul 2024 16:06:47 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: Sebastian Reichel <sre@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Andy Yan
-	<andy.yan@rock-chips.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        "Mark
- Rutland" <mark.rutland@arm.com>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Shivendra Pratap <quic_spratap@quicinc.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
-Message-ID: <20240702155630416-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
- <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
- <20240619135143.kr2tx4ynxayc5v3a@bogus>
- <20240619080933071-0700.eberman@hu-eberman-lv.qualcomm.com>
- <20240620162547309-0700.eberman@hu-eberman-lv.qualcomm.com>
- <ZnmTtmZB8epgbUTN@bogus>
+	s=arc-20240116; t=1719961699; c=relaxed/simple;
+	bh=4v44RV6ZEhl5+m0N3QwHq5yw1b9JD/QuNu1dEFKSJeM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=s8P9nPTBw+Dzi7fIL640QLZlXjrwymsghhDuCaGEc3oJYfd2regOUSfl249Vjdsb4OE7V4Ip1z+glS9ptgT5WKPQzFy2hyoU/Ym5eu7dSK62YteqH45OEGJSEvCFux2ZmmHoqVdFpJZt1Uiu7Hbf/eihDhTU12CwNdthb5fNAHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKOeoQz2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45151C116B1;
+	Tue,  2 Jul 2024 23:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719961699;
+	bh=4v44RV6ZEhl5+m0N3QwHq5yw1b9JD/QuNu1dEFKSJeM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hKOeoQz2MrfDh4zxOhfGVOl7TDqIfZolkzOZUV+QX1k8sEnbvumGB5RtIv80SPRPE
+	 3hyWP6JFC3nUhnCTbUt/PqY1WWRkH5AOg13+pgqhl5nGQhQFyAT2nsaf4Q0qROpKZN
+	 QuGCPr5/vYMe3VDgf/o7S1DYa6MRsJXJZeCRSNhMvXbi4NoW41FD6UioTveZNLCFyQ
+	 Fs0jcejnZmGxR2RNn/WIf4Jy7Jv7RUPl3oN69Q6Kp5/LhAcCYVmvLID+hG7OnKawg+
+	 X8q51OjG2l7n0tp6fR6QTUMZ4sRVR5cjSIW6EOO7q9DO8d6a6fnFfTi9r0zbdNra57
+	 QXjQq7RKiM0rA==
+Date: Wed, 3 Jul 2024 08:08:14 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Tom Zanussi <zanussi@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] tracing: Support poll on event hist file
+Message-Id: <20240703080814.c8bbe5b27ad70a5520262a6d@kernel.org>
+In-Reply-To: <4ec0e4822293763691d8699750b0df88385ab646.camel@kernel.org>
+References: <171932861260.584123.15653284949837094747.stgit@devnote2>
+	<4ec0e4822293763691d8699750b0df88385ab646.camel@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZnmTtmZB8epgbUTN@bogus>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: G7CnMmUwN--HDCXDBHEnONEcrL9zzQLM
-X-Proofpoint-GUID: G7CnMmUwN--HDCXDBHEnONEcrL9zzQLM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-02_16,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- spamscore=0 suspectscore=0 mlxlogscore=805 mlxscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407020169
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Sudeep,
+On Sun, 30 Jun 2024 16:07:43 -0500
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-On Mon, Jun 24, 2024 at 04:41:42PM +0100, Sudeep Holla wrote:
-> Sorry, I completely missed to see that you had already answered those
-> in your commit message. As mentioned earlier I haven't looked at the
-> reboot mode framework completely yet, so I can't comment on it yet.
+> Hi Masami,
 > 
-> I don't want to be blocker though if others are happy with this.
+> On Wed, 2024-06-26 at 00:16 +0900, Masami Hiramatsu (Google) wrote:
+> > Hi,
+> > 
+> > Here is an RFC patch to support polling on event 'hist' file.
+> > 
+> > There has been interest in allowing user programs to monitor kernel
+> > events in real time. Ftrace provides `trace_pipe` interface to wait
+> > on events in the ring buffer, but it is needed to wait until filling
+> > up a page with events in the ring buffer. We can also peek the
+> > `trace` file periodically, but that is inefficient way to monitor
+> > a randomely happening event.
+> > 
+> > This patch set allows user to `poll`(or `select`, `epoll`) on event
+> > histogram interface. As you know each event has its own `hist` file
+> > which shows histograms generated by trigger action. So user can set
+> > a new hist trigger on any event you want to monitor, and poll on the
+> > `hist` file until it is updated.
+> > 
+> > There are 2 poll events are supported, POLLIN and POLLPRI. POLLIN
+> > means that there are any readable update on `hist` file and this
+> > event will be flashed only when you call read(). So, this is
+> > useful if you want to read the histogram periodically.
+> > The other POLLPRI event is for monitoring trace event. Like the
+> > POLLIN, this will be returned when the histogram is updated, but
+> > you don't need to read() the file and use poll() again.
+> > 
+> > Note that this waits for histogram update (not event arrival), thus
+> > you must set a histogram on the event at first.
+> > 
+> > Here is an example usage:
+> > 
+> > ----
+> > TRACEFS=/sys/kernel/tracing
+> > EVENT=$TRACEFS/events/sched/sched_process_free
+> > 
+> > # setup histogram trigger and enable event
+> > echo "hist:key=comm" >> $EVENT/trigger
+> > echo 1 > $EVENT/enable
+> > 
+> > # Wait for update
+> > poll $EVENT/hist
+> > 
+> > # Event arrived.
+> > echo "process free event is comming"
+> > tail $TRACEFS/trace
+> > ----
+> > 
+> > The 'poll' command is in the selftest patch.
+> > 
+> > You can take this series also from here;
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/event-hist-poll
+> > 
+> > Thank you,
+> 
+> I think this is a clever use of the histogram files, and will be very
+> useful for real-time monitoring apps. I'm looking forward to using it
+> myself - thanks for doing this.
+> 
+> For the whole series,
+> 
+> Reviewed-by: Tom Zanussi <zanussi@kernel.org>
 
-I think folks are satisfied with the other parts of the series and now
-looking for your conclusion on the PSCI driver part.
+Thanks Tom!
 
-Thanks,
-Elliot
+I found an issue in the selftests (can not support old stable kernel) so
+let me update it.
 
+Thank you,
+
+> 
+> > 
+> > ---
+> > 
+> > Masami Hiramatsu (Google) (3):
+> >       tracing/hist: Add poll(POLLIN) support on hist file
+> >       tracing/hist: Support POLLPRI event for poll on histogram
+> >       selftests/tracing: Add hist poll() support test
+> > 
+> > 
+> >  include/linux/trace_events.h                       |    5 +
+> >  kernel/trace/trace_events.c                        |   18 ++++
+> >  kernel/trace/trace_events_hist.c                   |  101
+> > +++++++++++++++++++-
+> >  tools/testing/selftests/ftrace/Makefile            |    3 +
+> >  tools/testing/selftests/ftrace/poll.c              |   34 +++++++
+> >  .../ftrace/test.d/trigger/trigger-hist-poll.tc     |   46 +++++++++
+> >  6 files changed, 204 insertions(+), 3 deletions(-)
+> >  create mode 100644 tools/testing/selftests/ftrace/poll.c
+> >  create mode 100644
+> > tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
+> > 
+> > --
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
