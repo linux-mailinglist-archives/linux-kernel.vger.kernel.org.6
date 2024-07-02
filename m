@@ -1,206 +1,153 @@
-Return-Path: <linux-kernel+bounces-238143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0395924427
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:07:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7951892442F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE2F2821E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:07:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350AD282943
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF971BE22F;
-	Tue,  2 Jul 2024 17:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668FC1BE248;
+	Tue,  2 Jul 2024 17:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MjsvDOWh"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="CTTpYiNh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YA82QPSJ"
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1491E178381;
-	Tue,  2 Jul 2024 17:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C444178381;
+	Tue,  2 Jul 2024 17:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719940022; cv=none; b=s2gm+4PN0za5tqitKojBv4OMcTPPEVKmOjpknb7tdeQnPlu+WtlTPiWXc3yfnvAqua4997+spxCPOUOGwvzk6AkD9doLZONz4MXGB5g1Z+e4E5/1/20VqycZIPMje9qUBXckMhN2DvK1EI13IxrEHcuL9AdQt8VFD/4MLvth7Is=
+	t=1719940038; cv=none; b=Sy7wnvDoHPYHKawLcLRWjPOuLKZBSXCAIEdZyYHJR+nhpBmpKyTlyv1jsmEHnOKkQKnTe+2xWLCEc31JcjiX+YH2MY9ORXGVZvjkxwI2xfQ7DRy/4FExDeoAi6Kl5zQEsr202xkmCHluzcQzOuIJg0RHo+V927S3nNyzGQwb07Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719940022; c=relaxed/simple;
-	bh=stnT9VHL8D7sKzLq7A6gLELNoVjidpFadno3u6FQKHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lJrI66xGY9jUH0OQ09YqIKJJYIibcxAG87Ag2PrIdRZfMpy5fBwUyc0xMAWKdjsBfwsIWERzHFKMt6mvXYGKCgKO+QlwnXC3mgfgFmcbhbJ9jHDSetZcpP2sttoljPi/I2evlHo5Ikr/W+MbJ9iHBrW3fO2Z93N5V1uQprDOIT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MjsvDOWh; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1719940015;
-	bh=6sLw9MQZhQc+HTNLYMKYnVJTRlC72RBttPky6RnqO2M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MjsvDOWhGlcOnQM7PZZcoZDj6QKMhSTRqQJjwXMx3tnTiposOVi+sbE8pzUJQKnCU
-	 yi+jiWjL1X5b1ZjeEtTRkcVcMkNWpB8cVX55Tva2ASYN6onIQvJMyIgEuJ+YtBEbsq
-	 921yoMx3rKjB5QlTyk7V4IG5l4MELxSAoszv/EfQB/HO7ZPilKKsRg1MwwaXn7+Hxu
-	 xdiogJ7Kp/3Au2CqBMG/2BsnZSdMVe2l1HHWJRufRukm+QDwRzAtKz4qLnhM7nSBwk
-	 QU71rtow0C7q4Zdz9SJInQp2EuU91ncYzKVl/MQg+AuqgWMj1OLLOCoO1GN4+QT3ll
-	 a/fFIMJjswbIw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WD8TV3vSgz4wx6;
-	Wed,  3 Jul 2024 03:06:54 +1000 (AEST)
-Date: Wed, 3 Jul 2024 03:06:52 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Jiri Olsa
- <olsajiri@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Christian Brauner <brauner@kernel.org>, Christian =?UTF-8?B?R8O2dHRz?=
- =?UTF-8?B?Y2hl?= <cgzones@googlemail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Mark
- Brown <broonie@kernel.org>
-Subject: Re: linux-next: manual merge of the ftrace tree with the
- vfs-brauner tree
-Message-ID: <20240703030652.1e40e057@canb.auug.org.au>
-In-Reply-To: <20240614100748.fcaa7efe6debea3801682ba1@kernel.org>
-References: <20240613114243.2a50059b@canb.auug.org.au>
-	<ZmqaytbJ0r0EXO8d@krava>
-	<20240614090523.246f48e4@canb.auug.org.au>
-	<20240614100748.fcaa7efe6debea3801682ba1@kernel.org>
+	s=arc-20240116; t=1719940038; c=relaxed/simple;
+	bh=FQwg6a8nMdp1BsXF1goaiUjznOr3KBtRKTTh98UR/lM=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=rhZ42ufg2qQLvmWv7/0rHGG0UzXYg9XrQ1JdbWk1jwgzp1VSFWeNKOX/cq+mt0rEp1u8MKNqAoVt6k3S/wfJUkk2+QHV4Q/LsJbm6KlrGUYBJtRCtM5eu5o3Va1IRH/DUoY0T5LUrgtdDrh1xT4NjlAnHTlL1chFVP0+Mz6EpDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=CTTpYiNh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YA82QPSJ; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id B737E1380262;
+	Tue,  2 Jul 2024 13:07:15 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 02 Jul 2024 13:07:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1719940035;
+	 x=1720026435; bh=02lqCeohhDRoeVg0KpfzdqcfaHWT7DV6FXoK/ZsOGDU=; b=
+	CTTpYiNh2+vqYbxoHmNRAOgDMs157QY/20a+zn0hbHZ/0BO5Oc4CkLJssMVI6rMw
+	sXryWlTUzM3ijsSC0piB5nzqbZDy4ZfLM6ssHloiLPLD2lmBsd2+rHiFA8vfwjXF
+	Frn9so4Vwbgl1tQonJEiEsX/Qv/ngCkpwO5MGm9e5stix3WgkME9ZZSnKyGZx0b7
+	cU2Zv2OlrYte8mcc3BuoCwZPiTO8I2luRwHD6i0RjTsu8FzG4lZxOMDtDJrtlgRY
+	WAr31O0JCryI6S32ZiKPvV2pTNF+R84Sf+bbOVmI/qLrtTl8hcLC41zP+d3dv4ch
+	TxPGjf/DpVNTr3gvdINuHA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719940035; x=
+	1720026435; bh=02lqCeohhDRoeVg0KpfzdqcfaHWT7DV6FXoK/ZsOGDU=; b=Y
+	A82QPSJkwu1JEznu+WPK3XsFoDLipQJZwigGRTPV0cuTHEDFKSBheA2T4PxHz1Ql
+	YcUZg7Br33Ehj/sXL6vMen7Sy1T9ei5v8jN9GFs1TM/+or4gEbPyuIwSoeVYYADM
+	J7Nk5KwBjm0QCJmyTrrDDcvMkXo3y5aPts2m1X2ylLH3rLtn3wlbwJ3nu6Ncy4J9
+	vsrQqxUsK9+DGw4Zp2y5c0ip7qdpMRy/4TQQv5V8tL+j0hnbJ6O0i7dKpPDoQ97v
+	GGN7IywolM3Sd7Q9/vLv7cPOmootTvFEGwaAqo5GGFfyYy6H3U0z6H4qnT7nkFvH
+	pRe7UGUg7UU2OY/cYPczw==
+X-ME-Sender: <xms:wjOEZr2uB0qim3zm7640K329vCwA47OaIp2UJyBSNNnAqFqRuwT0rQ>
+    <xme:wjOEZqFQdbAPAzmOOfak2VeBMbb7v_5Tbu1uFCc17293DgbQHQIMTOyaUbb8GvuL9
+    dATNpJOhOP9I6fs_TY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgddutdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:wjOEZr5SMHIz7DCEE-mfkPvOaQqCI3ivt-DpU3uILf0MKkyWuxlvsA>
+    <xmx:wjOEZg1b9ViA-A6rdu85ok19R8zbDdh8PBv1ZJzBeaCtij7NW-dbCw>
+    <xmx:wjOEZuE2hcK4KlR8yu0KqUxL-DLKRbfsNhxd78kCiKY9c4AkwNQdlg>
+    <xmx:wjOEZh8gWbgct-iLqfDifofA3NDZZZC1BeWyO2duTglo-m0EEl2EoQ>
+    <xmx:wzOEZp94g-39Q7Dr71ulB24ZRP8O483QGADs4er7MnppTCiMYDzRE31a>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id B8572B60092; Tue,  2 Jul 2024 13:07:14 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/u2Ep.m7UPegn4BAjcOS.3wW";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/u2Ep.m7UPegn4BAjcOS.3wW
-Content-Type: text/plain; charset=US-ASCII
+Message-Id: <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
+In-Reply-To: 
+ <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+References: <20240625110029.606032-1-mjguzik@gmail.com>
+ <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+ <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+ <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+Date: Tue, 02 Jul 2024 19:06:53 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Huacai Chen" <chenhuacai@kernel.org>
+Cc: "Xi Ruoyao" <xry111@xry111.site>, "Mateusz Guzik" <mjguzik@gmail.com>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, "Jens Axboe" <axboe@kernel.dk>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Jul 2, 2024, at 17:36, Huacai Chen wrote:
+> On Mon, Jul 1, 2024 at 7:59=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> w=
+rote:
+>> On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
+>> > On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
+>> >> >
+>> >> > Yes, both Linus and Christian hates introducing a new AT_ flag f=
+or
+>> >> > this.
+>> >> >
+>> >> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
+>> >> > like
+>> >> > statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the
+>> >> > performance
+>> >> > issue and it's also audit-able by seccomp BPF.
+>> >> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
+>> >> even if statx() becomes audit-able, it is still blacklisted now.
+>> >
+>> > Then patch the sandbox to allow it.
+>> >
+>> > The sandbox **must** be patched anyway or it'll be broken on all 32=
+-bit
+>> > systems after 2037.  [Unless they'll unsupport all 32-bit systems b=
+efore
+>> > 2037.]
+>>
+>> More importantly, the sandbox won't be able to support any 32-bit
+>> targets that support running after 2037, regardless of how long
+>> the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
+>> in order to be sure those don't get called by accident, the
+>> fallback is immediately broken.
+> Would you mind if I restore newstat for LoongArch64 even if this patch=
+ exist?
 
-On Fri, 14 Jun 2024 10:07:48 +0900 Masami Hiramatsu (Google) <mhiramat@kern=
-el.org> wrote:
->
-> On Fri, 14 Jun 2024 09:05:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >=20
-> > On Thu, 13 Jun 2024 09:07:54 +0200 Jiri Olsa <olsajiri@gmail.com> wrote=
-: =20
-> > >
-> > > On Thu, Jun 13, 2024 at 11:42:43AM +1000, Stephen Rothwell wrote: =20
-> > > >=20
-> > > > Today's linux-next merge of the ftrace tree got conflicts in:
-> > > >=20
-> > > >   arch/x86/entry/syscalls/syscall_64.tbl
-> > > >   include/uapi/asm-generic/unistd.h
-> > > >=20
-> > > > between commit:
-> > > >=20
-> > > >   e6873349f700 ("fs/xattr: add *at family syscalls")
-> > > >=20
-> > > > from the vfs-brauner tree and commit:
-> > > >=20
-> > > >   190fec72df4a ("uprobe: Wire up uretprobe system call")
-> > > >=20
-> > > > from the ftrace tree.
-> > > >=20
-> > > > I fixed it up (see below) and can carry the fix as necessary. This
-> > > > is now fixed as far as linux-next is concerned, but any non trivial
-> > > > conflicts should be mentioned to your upstream maintainer when your=
- tree
-> > > > is submitted for merging.  You may also want to consider cooperating
-> > > > with the maintainer of the conflicting tree to minimise any particu=
-larly
-> > > > complex conflicts.
-> > > >=20
-> > > >=20
-> > > > diff --cc arch/x86/entry/syscalls/syscall_64.tbl
-> > > > index 26af003921d2,6452c2ec469a..000000000000
-> > > > --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> > > > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> > > > @@@ -385,10 -384,7 +385,11 @@@
-> > > >   460	common	lsm_set_self_attr	sys_lsm_set_self_attr
-> > > >   461	common	lsm_list_modules	sys_lsm_list_modules
-> > > >   462 	common  mseal			sys_mseal
-> > > >  -463	64	uretprobe		sys_uretprobe
-> > > >  +463	common	setxattrat		sys_setxattrat
-> > > >  +464	common	getxattrat		sys_getxattrat
-> > > >  +465	common	listxattrat		sys_listxattrat
-> > > >  +466	common	removexattrat		sys_removexattrat
-> > > > ++467	64	uretprobe		sys_uretprobe
-> > > >  =20
-> > > >   #
-> > > >   # Due to a historical design error, certain syscalls are numbered=
- differently
-> > > > diff --cc include/uapi/asm-generic/unistd.h
-> > > > index 5b8dab0b934e,2378f88d5ad4..000000000000
-> > > > --- a/include/uapi/asm-generic/unistd.h
-> > > > +++ b/include/uapi/asm-generic/unistd.h
-> > > > @@@ -845,17 -845,11 +845,20 @@@ __SYSCALL(__NR_lsm_list_modules, sy=
-s_ls
-> > > >   #define __NR_mseal 462
-> > > >   __SYSCALL(__NR_mseal, sys_mseal)
-> > > >  =20
-> > > >  -#define __NR_uretprobe 463
-> > > >  +#define __NR_setxattrat 463
-> > > >  +__SYSCALL(__NR_setxattrat, sys_setxattrat)
-> > > >  +#define __NR_getxattrat 464
-> > > >  +__SYSCALL(__NR_getxattrat, sys_getxattrat)
-> > > >  +#define __NR_listxattrat 465
-> > > >  +__SYSCALL(__NR_listxattrat, sys_listxattrat)
-> > > >  +#define __NR_removexattrat 466
-> > > >  +__SYSCALL(__NR_removexattrat, sys_removexattrat)
-> > > >  +
-> > > > ++#define __NR_uretprobe 467
-> > > > + __SYSCALL(__NR_uretprobe, sys_uretprobe)   =20
-> > >=20
-> > > we need one more change in tests (below), otherwise lgtm
-> > > I can send formal patch for you if needed, plz let me know
-> > >=20
-> > > ---
-> > > diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c =
-b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-> > > index c8517c8f5313..bd8c75b620c2 100644
-> > > --- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-> > > +++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-> > > @@ -216,7 +216,7 @@ static void test_uretprobe_regs_change(void)
-> > >  }
-> > > =20
-> > >  #ifndef __NR_uretprobe
-> > > -#define __NR_uretprobe 463
-> > > +#define __NR_uretprobe 467
-> > >  #endif
-> > > =20
-> > >  __naked unsigned long uretprobe_syscall_call_1(void) =20
-> >=20
-> > Or you could change __NR_uretprobe in the patch set to 467, then this
-> > will become just a conflict and not a renumbering. =20
->=20
-> OK, Jiri, can you send it to me. I will update probes/for-next.
+I still prefer not add newstat back: it's easier to
+get applications to correctly implement the statx() code
+path if there are more architectures that only have that.
 
-So, is there any chance that the uretprobe syscall can change to 467 in
-the ftrace tree, so we have no overlap in syscall numbers for all the
-syscalls likely to be merged by Linus?
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/u2Ep.m7UPegn4BAjcOS.3wW
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaEM6wACgkQAVBC80lX
-0Gx1XwgAjtmiYFDMqsVjZWzerNj+iuHdTn5PhpMTb35jb0/KOCoGD6GMpIIYWsnS
-eO+USCjhQMrJZP0okEKpD/g5YFrRQzd0GRK3IpOAq5Auy1NqcfrpX9/UBH3zdghy
-2gsFjulU3QYW76H/2Of3NsnIPu3aXoTb/dKohdGXonR+4ALbwTEIvOmCek1JXVq1
-mlBpUAm9jINMeE4KNiZ9NQ7rLw7AUXKXLAePlOeH6P66QYhTVppBBEeBl3cxxRHc
-Po9LXBBIxynXE7I45lGpl/RWA/w3pyWOmSrWebVjyy1ug6zsDL75S4AfS5rUuSUL
-n+Yv2cHpstWplOYfXJAtCEYcbbkhZg==
-=xe/t
------END PGP SIGNATURE-----
-
---Sig_/u2Ep.m7UPegn4BAjcOS.3wW--
+       Arnd
 
