@@ -1,185 +1,190 @@
-Return-Path: <linux-kernel+bounces-238559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E28A924C12
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C617924C14
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E708128582B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:20:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04560285883
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E20115921B;
-	Tue,  2 Jul 2024 23:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBE217A59C;
+	Tue,  2 Jul 2024 23:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRtUbb+y"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OrsEWSFV"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459941DA30B;
-	Tue,  2 Jul 2024 23:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB101DA30B;
+	Tue,  2 Jul 2024 23:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719962439; cv=none; b=L71GPbRRBJ2bIdQHZkxxIwGjUp6G+8PP4sbQrB3M+AwqBhssTjsBWHKcrs5a61t8QmK+MKmxrr2ypruxJIFUvFKRHupjgV+Z7Ulhezpq6O2R+WB3xcsfK9YgH83a4MaiyU0cEONksEJJaQaGBvJb+xBvMviWN5yh1IH74c7rPHA=
+	t=1719962568; cv=none; b=ZWm6+dloKB9F4lPXa69JS6FyLADdUXUIuXXKjbiv1rBnff6Aw2z2Nu0NNiX20dvRDwv5jmRIdtX5bZQWFxkLUDezuIdkiGY0ooGhdAXqEFTBidfS2L550q3vpxyhHtGy/elCHLYyhyuC8X3khQ7sB4aNkXcucCHCXnKgYCJSDLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719962439; c=relaxed/simple;
-	bh=bpyJm8lxbDc2q85IMQqnT9fTV06FGhkC9f0cwxjqP4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1gWpZMh2JLcJhORhAut/6/eEQcHdIrz0DoJlq7YgW1PzKWTCgy4Hxy4R+SIYYeUUInIJ0z9WkD4g1Sd0L1R2dggjvgb05e1aLDtPBJ3Q6GotCVfIOcnPuHrMY7ZQ+LxI1cZnGRpn++jSLRpnn1epe+/zmZNAAWlzzQE71Gj8RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRtUbb+y; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-79d5e61704eso288530285a.3;
-        Tue, 02 Jul 2024 16:20:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719962437; x=1720567237; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qjSB7hLGu+RSjy1F3pz8TY7vKbIQRE/DZkSdMM026z4=;
-        b=BRtUbb+ykfZUrSEL9umUEI2KM8eFl2huOCL6QKKvDeiNvAWzXGEOVmftj4ApJDzSvr
-         Ksq2AljB56Mseqqdgv4hY3ZqiCyofKA9DTgOcpmRGmF1H9GI81egtkhDZ5PJQ+gLHy0P
-         mQBUm3f/2MGndCZe6zIxvqymawbDa9vQwiyGhmbEyEVWGgPAJ1oeYf7YYX0m/pHxbVUT
-         KRLQjhrLtAzQkK1yC5S3eLZAju1eFCDilrLZH9hCCooWiSOmdPwH1+C6Gdf8fyD1tpDJ
-         toI8qqlLNHgwrmXMhfG1Kg9EQVAqse+nRJ+Cu3WseLuTMHwdq1upAs072ZP+5BrlBgP/
-         TBrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719962437; x=1720567237;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qjSB7hLGu+RSjy1F3pz8TY7vKbIQRE/DZkSdMM026z4=;
-        b=Z8bQtUlFdUfUJ+cEDPlr6F545pH825GaHjpFy27n9ZSh3mKdr5WtAke90Wm0nnKelN
-         I13LNixzJA4R7sTbGaPiliPo+img062rNMBPryfy3F7ADwzhaZc6b2jhyl+pV0QvxSiS
-         1G+ENV4DBG3Df1loSc8cJHbXv9mLKjkPsPUs0HOwM+HwxlEk6qx3BRookl1h9hdh7VoP
-         x0lwfwYdZWF4VfXCHaupgpyXzz72B8UMpnN2e6k70Aed/rlZI+BKOo/3WR6WNSJXgi/h
-         4N38KiCN/ilp9awamgaE5iGdCDH+bBhvMAQG3ChEIQ9iX73m0iB7yt/Pnguq1rEf/BhJ
-         VTBw==
-X-Forwarded-Encrypted: i=1; AJvYcCV94uduIReQ2U33+aWaJxvA2JtPP24M+WE+kFnGh7+1Wr7+mgzGFb4SPaMiMRyRPBoUzK4KjwJ1XKNt/2Q4+qzB49r7
-X-Gm-Message-State: AOJu0YxUAInSwhDg1EyV2FeGtv/lxyqS4v+4ot1bMVod0Sg1/SVUMSgf
-	oYluTSbLOWmrkUQXV83vELIVXnvpII6gctzr+WfqBXFquPH9TlAl
-X-Google-Smtp-Source: AGHT+IFqzoEArcUNqIvbViixR0/Meat25i/cKIFz+5YuJrxKNDABNkuzD0s7fM8Q0BGMt4VIrPUnhw==
-X-Received: by 2002:a05:620a:558c:b0:79d:5ff2:c39f with SMTP id af79cd13be357-79d7b9f1ae6mr1024818185a.33.1719962437039;
-        Tue, 02 Jul 2024 16:20:37 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-446641f7ea9sm31907881cf.26.2024.07.02.16.20.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 16:20:36 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id E59071200043;
-	Tue,  2 Jul 2024 19:20:35 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 02 Jul 2024 19:20:35 -0400
-X-ME-Sender: <xms:Q4uEZkm1NoVNEzPbXq1ErwORQiyzbDwEcx2609ZDvYOtecv3mJJSGQ>
-    <xme:Q4uEZj3ibJSoHOF4lwGlkl84Wql-RZFMkmzQHZahWdWrVRp6HLFDEBmKLQy6nSTLu
-    NEO_f56Kw2abOV4sQ>
-X-ME-Received: <xmr:Q4uEZip6O3MXqtdMwvkodohl1UPEdpKFgwl_wVuBubL7fQzOHkrWcCN1B8ql1g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeigddvudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
-    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
-    htvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudff
-    iedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
-    hoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieeg
-    qddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigi
-    hmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:Q4uEZgkssM8md12s09nu65YHtUX9VLe3_B3-2PzXgwYlP3HT-ZVrIA>
-    <xmx:Q4uEZi2aIliUa_2ftBtkVeX8INBfqEgu-NUlQ4dkFbrffLoWdv8IQw>
-    <xmx:Q4uEZnuvokUU2BBYKMWHgqW8Rg8D-DOP9XaS7i54A4CLUkgyix6Ydg>
-    <xmx:Q4uEZuXK7rFTGA7BZR3APzjhXMxCgnB5gQsE0EbwuSJqFURlm4-atA>
-    <xmx:Q4uEZl3uwvaVGiM1iLnQ_8eaka8t8oVN4wQwMFZabcdrk9LMSKke863z>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 2 Jul 2024 19:20:35 -0400 (EDT)
-Date: Tue, 2 Jul 2024 16:19:36 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 11/11] rcu/nocb: Simplify (de-)offloading state machine
-Message-ID: <ZoSLCHWKXAOvd5Zl@boqun-archlinux>
-References: <20240530134552.5467-1-frederic@kernel.org>
- <20240530134552.5467-12-frederic@kernel.org>
+	s=arc-20240116; t=1719962568; c=relaxed/simple;
+	bh=REbe6WGQ6Ib0OcOX5pORxT0QBGzBhRKYGxco9d+az/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g+H+en/mbLLiLjEC4aLhm7uUwEppjIFPZqhQwdU8zkW9YijOSgz9KL5uE1QHhUhypZG6G3nRAuabDzwSgltugTs6FWJTu9jMlXvKR9nHx1y1QLehKZYsrpSyl06nBWBCDLL3N8Phcg2TvRQs6IPobIRHB8txW5KFsQ19YadbnkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OrsEWSFV; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1719962555;
+	bh=j1lYas/9hzOOuzljKOtg9P7FT/xPULbebgfHS6aaLBA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OrsEWSFVWkhfcXuDw3kF3+vyYjOFHMca9USYrkC86DFW/a1wYQnW+9SnONYxhUSxp
+	 P+KyeV3UaKXGVSY10pXpJeniBfr8MRIzv8Wb//+C5zexhUOIX/sWCdIl4npiP/hShv
+	 ul4xs+YrzcuHMHkX9KYneq5Ll3FalYSgzzECyB4LrUDC9Y+aDaK4umEAlxMII54gt8
+	 IxOeNBgg+bB8N9VvIUZ+X6UclbbJ3uBDWMnZiFHSpnsLe7xXX8EjJX0Jif/lh2Xy+A
+	 BKMRP8V0u57/sM6DVNmR6Ox+2SO1YVQQXd4Jip1maGATja4Kqi3qEKXbqIJExHVEUO
+	 F6qFD3zc+mmoQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WDJpy3m7Mz4wc1;
+	Wed,  3 Jul 2024 09:22:34 +1000 (AEST)
+Date: Wed, 3 Jul 2024 09:22:33 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yang Shi <yang@os.amperecomputing.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm-hotfixes tree
+Message-ID: <20240703092233.44f51416@canb.auug.org.au>
+In-Reply-To: <20240703084440.3af9f526@canb.auug.org.au>
+References: <20240701101641.4fea0ac2@canb.auug.org.au>
+	<20240701110159.216a8d1f@canb.auug.org.au>
+	<37b70d3f-c46c-4df4-b52a-3c6ba5feb692@os.amperecomputing.com>
+	<20240703084440.3af9f526@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530134552.5467-12-frederic@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/AoCmTEf.GTVRbHxwH4s6.Ki";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, May 30, 2024 at 03:45:52PM +0200, Frederic Weisbecker wrote:
-> Now that the (de-)offloading process can only apply to offline CPUs,
-> there is no more concurrency between rcu_core and nocb kthreads. Also
-> the mutation now happens on empty queues.
-> 
-> Therefore the state machine can be reduced to a single bit called
-> SEGCBLIST_OFFLOADED. Simplify the transition as follows:
-> 
-> * Upon offloading: queue the rdp to be added to the rcuog list and
->   wait for the rcuog kthread to set the SEGCBLIST_OFFLOADED bit. Unpark
->   rcuo kthread.
-> 
-> * Upon de-offloading: Park rcuo kthread. Queue the rdp to be removed
->   from the rcuog list and wait for the rcuog kthread to clear the
->   SEGCBLIST_OFFLOADED bit.
-> 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
-[...]
-> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-> index 24daf606de0c..72a2990d2087 100644
-> --- a/kernel/rcu/tree_nocb.h
-> +++ b/kernel/rcu/tree_nocb.h
-[...]
-> @@ -1079,29 +1080,14 @@ static int rcu_nocb_rdp_deoffload(struct rcu_data *rdp)
->  		 * but we stick to paranoia in this rare path.
->  		 */
->  		rcu_nocb_lock_irqsave(rdp, flags);
-> -		rcu_segcblist_clear_flags(&rdp->cblist, SEGCBLIST_KTHREAD_GP);
-> -		rcu_nocb_unlock_irqrestore(rdp, flags);
-> +		rcu_segcblist_clear_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
-> +		raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
->  
+--Sig_/AoCmTEf.GTVRbHxwH4s6.Ki
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Dropping rdp->nocb_lock unconditionally means we are the holder of it,
-right? If so, I think we better replace the above
-rcu_nocb_lock_irqsave() with raw_spin_lock_irqsave().
+Hi Andrew,
 
-Regards,
-Boqun
+On Wed, 3 Jul 2024 08:44:40 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> On Mon, 1 Jul 2024 11:15:17 -0700 Yang Shi <yang@os.amperecomputing.com> =
+wrote:
+> >
+> > On 6/30/24 6:01 PM, Stephen Rothwell wrote: =20
+> > >
+> > > On Mon, 1 Jul 2024 10:16:41 +1000 Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:   =20
+> > >> After merging the mm-hotfixes tree, today's linux-next build (powerpc
+> > >> ppc64_defconfig) failed like this:
+> > >>
+> > >> mm/gup.c: In function 'gup_hugepte':
+> > >> mm/gup.c:474:25: error: implicit declaration of function 'try_grab_f=
+olio_fast'; did you mean 'try_grab_folio'? [-Werror=3Dimplicit-function-dec=
+laration]
+> > >>    474 |                 folio =3D try_grab_folio_fast(page, refs, f=
+lags);
+> > >>        |                         ^~~~~~~~~~~~~~~~~~~
+> > >>        |                         try_grab_folio
+> > >> mm/gup.c:474:23: warning: assignment to 'struct folio *' from 'int' =
+makes pointer from integer without a cast [-Wint-conversion]
+> > >>    474 |                 folio =3D try_grab_folio_fast(page, refs, f=
+lags);
+> > >>        |                       ^
+> > >> mm/gup.c: At top level:
+> > >> mm/gup.c:2747:22: error: conflicting types for 'try_grab_folio_fast'=
+; have 'struct folio *(struct page *, int,  unsigned int)'
+> > >>   2747 | static struct folio *try_grab_folio_fast(struct page *page,=
+ int refs,
+> > >>        |                      ^~~~~~~~~~~~~~~~~~~
+> > >> mm/gup.c:474:25: note: previous implicit declaration of 'try_grab_fo=
+lio_fast' with type 'int()'
+> > >>    474 |                 folio =3D try_grab_folio_fast(page, refs, f=
+lags);
+> > >>        |                         ^~~~~~~~~~~~~~~~~~~
+> > >> cc1: some warnings being treated as errors
+> > >>
+> > >> Caused by commit
+> > >>
+> > >>    5f408bfe0d13 ("mm: gup: stop abusing try_grab_folio")
+> > >>
+> > >> I have reverted that commit for today.   =20
+> > > And I also had to revert commit
+> > >
+> > >    52cca85b0ebf ("mm-gup-introduce-memfd_pin_folios-for-pinning-memfd=
+-folios-fix")
+> > >
+> > > from the mm-unstable branch of the mm tree.   =20
+> >=20
+> > The patch attached in this mail should fix the compile error.
+> >=20
+> > https://lore.kernel.org/linux-mm/CAHbLzkowMSso-4Nufc9hcMehQsK9PNz3OSu-+=
+eniU-2Mm-xjhA@mail.gmail.com/ =20
+>=20
+> It looks like that patch has been applied to the mm tree instead of the
+> mm-hotfixes tree - as a fix for commit
+>=20
+>   50ceb37037f3 ("mm: gup: stop abusing try_grab_folio")
 
->  		list_del(&rdp->nocb_entry_rdp);
->  	}
-> +
->  	mutex_unlock(&rdp_gp->nocb_gp_kthread_mutex);
->  
-> -	/*
-> -	 * Lock one last time to acquire latest callback updates from kthreads
-> -	 * so we can later handle callbacks locally without locking.
-> -	 */
-> -	rcu_nocb_lock_irqsave(rdp, flags);
-> -	/*
-> -	 * Theoretically we could clear SEGCBLIST_LOCKING after the nocb
-> -	 * lock is released but how about being paranoid for once?
-> -	 */
-> -	rcu_segcblist_clear_flags(cblist, SEGCBLIST_LOCKING);
-> -	/*
-> -	 * Without SEGCBLIST_LOCKING, we can't use
-> -	 * rcu_nocb_unlock_irqrestore() anymore.
-> -	 */
-> -	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
-> -
->  	return 0;
->  }
->  
-[...]
+So for today, I have applied the following patch to the mm-hotfixes
+tree merge and stopped reverting
+mm-gup-introduce-memfd_pin_folios-for-pinning-memfd-folios-fix.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 3 Jul 2024 08:52:20 +1000
+Subject: [PATCH] fixup for "mm: gup: stop abusing try_grab_folio"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/gup.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/mm/gup.c b/mm/gup.c
+index 12c7b41712f7..5f58c95b3ab9 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -437,6 +437,9 @@ static unsigned long hugepte_addr_end(unsigned long add=
+r, unsigned long end,
+ 	return (__boundary - 1 < end - 1) ? __boundary : end;
+ }
+=20
++static struct folio *try_grab_folio_fast(struct page *page, int refs,
++					 unsigned int flags);
++
+ /*
+  * Returns 1 if succeeded, 0 if failed, -EMLINK if unshare needed.
+  *
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/AoCmTEf.GTVRbHxwH4s6.Ki
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaEi7kACgkQAVBC80lX
+0GxzwQgApIcRpx/dRkzrNBQUATis0acRzM32NogLihXcAC5j09S2ZJ6trZiRp/r6
+LsLuMUhPtvX+2+pZWINpqGTn/LU/l48kVSOL/guichHAainSGqUHBnfZ9V+93icd
+y3oQvBL2cC5DIq3WH5MowrAhhc/kAbZq2EqofZgPWFMG+HpBME98PTXaSS1mukjz
+s6z5a6svp/OZ2nGJleQos5mjxr5EzAd1fIG4wV/c4ED4hgpskLxKn90TAK8WJAqq
+I22ImsnfuY70W953DTVbEZpnHP/5sQEApDC+4itXHW2yjjISLaj+owFtouiQDBR2
+g2/xwEZk2ccSPgZGgi4mbGajRVQ8Kg==
+=BW72
+-----END PGP SIGNATURE-----
+
+--Sig_/AoCmTEf.GTVRbHxwH4s6.Ki--
 
