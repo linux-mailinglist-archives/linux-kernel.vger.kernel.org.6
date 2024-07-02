@@ -1,210 +1,165 @@
-Return-Path: <linux-kernel+bounces-237251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8333491EDE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:33:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5109A91EDEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC49D1C213B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:33:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFC2E1F232C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C734376E5;
-	Tue,  2 Jul 2024 04:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A3F364A0;
+	Tue,  2 Jul 2024 04:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZMb+YCUg"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="aEeuSrFr"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1A581F
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 04:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6202A1A28C
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 04:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719894818; cv=none; b=pjX8Awfqh4RuqPmPFOffEBmyA4A1bFKEe034ZgUe3Ce4qn89gf5hvmOVIjMqPnkgAgaULCb3VePjc1cOytRofTOL0021LwTvO810XtcDSobt+ohveztfl7GtD4Ga60NcDu3eLJKYiJtC9DrwH1J5u1rkhZq9E/8Nvx/eHv5hlaw=
+	t=1719894861; cv=none; b=OebrLACqqfjE8hl1wh6GXJFJj5nmgrKjhC9sgcPZCfctsulMBGsEOZ3TCg4io37D6YPsEQ5k/atl+C4fHDPbj9piBvtsXwhRMfwR9EKmWfgD68r6WK9G9SAttnR3y4rwjfqRr1Zgu1RBoxvUxNBnqfJ8lrzROhv3qz3CYHj2yO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719894818; c=relaxed/simple;
-	bh=helbAJbRih6JEFEDzWsc4hDLbmjo26gsM3G3/7KRtCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KsetdC+gsA8YlyWpuGYPp7XFkDR7mS002Ko0mWL9T8rzjFJOzmLKvDT+96ZGa6satkiFJrq34os1xIRIYOPzSFXdp4V3ncEElL7qhM+14UPlCAxF3to6Uc0NM1FviYBxdsglakBZhvISfqFkk7lvxE7zY0QLaLkLFUAUL0MaeyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZMb+YCUg; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-364a3d5d901so2173811f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 21:33:35 -0700 (PDT)
+	s=arc-20240116; t=1719894861; c=relaxed/simple;
+	bh=q2Cc35SOsDHpJeJOWn7FTe19A5jZWBMPUxY/THw20DE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b2H7O8kQh8Buue/BI8MJ1/PcQ9CI2U+746l9ZMElj+dX7u2zcdxukH4rUV6exPuSTa6FtS8UjHszlatrWZal3aqyziOlS8vMAhjuBZ8cvxUlBo1HTi+PH6BP3EGvE/U6LtpkPVNbdkp4DP4JDCS6IeYRSE0CC+rZxtZBL4BUhck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=aEeuSrFr; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e039be89de9so219077276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 21:34:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719894814; x=1720499614; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2hACoZqRsGCJqarz3d4IaeWELtsQGiX6WuVT0TwVleE=;
-        b=ZMb+YCUgrfee1QB+kU22xSPZb4RBEWKvixu41naPcollByyd3ZQlmcLU6CXYBbCMFw
-         Lm4p5q+81wtNKjY2Wt4HMWwkEaVZs0/vniCo7a4nCmUjQEdH54WMHPuesrOzY7ke0SEP
-         t3mribvlGCxeHoRsCfykgk2auVQJ8OKMXDayc94YYo2lhpf/DA7HXhVjIJmH9EgNrDnu
-         VOqB/ZmUvYO5Kw2b641ScXL6s+IcgkPwtfF4n/5LuJJkpDtXm/jxtDiU5Y34V3Kg2YdK
-         QghfiEavyXjTktdcdFrdtWgwCcdiGfZCf54hdiNyfsdOhu7wnE6qZQXMmq3w8G7OLbqs
-         pdzA==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719894859; x=1720499659; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=h4yh23E/AmlByOcWJD4eWcZh7D8p3BbXHSztKcWq0cA=;
+        b=aEeuSrFrQVtv2G4B7g86L1WmTDy6WmabvepSyX+zHaRVtwLQFrPqhcN/WHj5udzSm5
+         zRJlwC1dPR2ILzEUphxHrXaSuQuvl6F9wYUWMNekG4FEXgKOL7ui94xIMykH+/pH8aze
+         hp+tGnEJj6lXaIlN86HI6gZm3/5PU08yMWZoOcU5tZvgc1l88WwrTq8eZSEeReKA4GuQ
+         oN3NpLk+iXoT0hqbn5oUyZ8FRyWkdOglo+9vRCXVBQFCNymIv7EmI9iZ5Atb2o01Vx0O
+         5fqkuDRvzRR/v7dzkscDNy4uUkkmpj6cye0IseqwaX1hCWo41r9zx7NSlifd59UopjUf
+         v0aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719894814; x=1720499614;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2hACoZqRsGCJqarz3d4IaeWELtsQGiX6WuVT0TwVleE=;
-        b=VU14+bO605fkewcSQpVriPHVUnkss3B3ViJd9o5//hFhC9KqL60Csee90qOgRhGYnH
-         RqUbfS2H37NoFFVesJ98rAw8K6OrZH2mywHE3vN6K8Rrzf52pnFDFjXzbcuNspZLtobK
-         3EzsA42GQ9Oykx+Etk8/rC6RoDpTkVBv2mvH6hq0+hzWSe2hwtvhw7HVcuEM8iQZURnQ
-         mKnRn8tHZIH1EybOj9OjE2PD+WMKAPWaQETj+oFIP3vLWdToO44NUDoBVtbv3mINGAXN
-         7I+L5rCL9x3EkPV8xKxtKSnFXKbRrcviLYUycUe8ZQDhbW7p+u4bZio7nH6+LJ+7l8pw
-         rmIw==
-X-Gm-Message-State: AOJu0YwnWUqSRlZXWgt1H8oSjKfcAjjPgancKh/ovXmkEag8Dmw6YTA5
-	dkEh9zNz5n1H+5NUSrrZHVx54cYjivn/BpXImOyF3Ytq0LiiMf4WxKbCiPlDyuQ8sOVlQ5He7WR
-	4QJY9Z+E7ggvBjID1GIcHU4nxDO4JZMyr+ZeO
-X-Google-Smtp-Source: AGHT+IEKCedqhfrqW3JHJeVQYmdhQ5WwMlSAtWVSs49qtQj332c4+w16tm1IY2fFcGRLqKTd7mnLN/vtzwoPFXXMbYY=
-X-Received: by 2002:adf:e246:0:b0:366:ddc2:a14a with SMTP id
- ffacd0b85a97d-367756cf3f2mr4606325f8f.40.1719894813987; Mon, 01 Jul 2024
- 21:33:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719894859; x=1720499659;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h4yh23E/AmlByOcWJD4eWcZh7D8p3BbXHSztKcWq0cA=;
+        b=HXIVgQIJBTvk/YKWECCJDzlO1WF3iOc8obnaDlLNPYJjmihJ23whL0kttg3s3+qxmr
+         KsAUcd3b59/xBT9IMS6JOtgi5J8BFW0vyXSYPnidVK+ty5YzyWxzPJAq9JCQvhac3tIi
+         U46JWprVxw8QkRe77IJ8ZoN0oWtqfi95PDwAV/b8nw1rhQhMQpeGYz23sNhsSUtWuWph
+         z+WUnS81E/YgKxbpkT4BoYPcYOob4AQIOS+QJ4rzqEOj2W7tU+6zA9RzvulT9pLf7vUu
+         ARUEl7B84eR/va0uECq1nGhNpf0pCW7JUFozDs0G6dAk+X7nD02X9rsL1mQWTtPDpPcR
+         nl/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWvuZ/IOTx1AMlpnPGJkXWoo/WBKo5CQIb9yDdXoS+yrXDhwPNa8WepYsuqm63/4RP81sI8fb6LsAN7a3TXLem2y505uk9FbSrO6olm
+X-Gm-Message-State: AOJu0YwMUl9JrABPN8gaTkxrgOSHP2fMirury3K7bRk5rvKU1FB3zEkl
+	xcMAi9cnCxUbRQsTkh32t/ATc6hsMK01qwINkEP6Su3b3nGiu7GJnlNakqfV7Cw=
+X-Google-Smtp-Source: AGHT+IFr7sVN2iw1k2zfGO5K3dhcutxzXrXIQmhw11TwtYUrAFSIAsviplllqAK0LOhKsh6tA8qHVg==
+X-Received: by 2002:a25:53c9:0:b0:dff:4862:b0a with SMTP id 3f1490d57ef6-e036ec357fcmr8474625276.46.1719894859404;
+        Mon, 01 Jul 2024 21:34:19 -0700 (PDT)
+Received: from ghost ([2601:647:5700:6860:a569:328b:99ad:ce17])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6d3efeddsm5826997a12.88.2024.07.01.21.34.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 21:34:18 -0700 (PDT)
+Date: Mon, 1 Jul 2024 21:34:16 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: zhouquan@iscas.ac.cn
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, oleg@redhat.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	andy.chiu@sifive.com, shuah@kernel.org
+Subject: Re: [PATCH v1 1/2] riscv: Expose orig_a0 in the user_regs_struct
+ structure
+Message-ID: <ZoODSMYCRbNcZWaY@ghost>
+References: <cover.1719408040.git.zhouquan@iscas.ac.cn>
+ <a424caf3072d12ef6ba0c56c411789fb3282e844.1719408040.git.zhouquan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701184912.01f1f9ce@canb.auug.org.au> <20240701201448.7878e9b35e1569bfc1f2ddbc@linux-foundation.org>
- <CACw3F52=GxTCDw-PqFh3-GDM-fo3GbhGdu0hedxYXOTT4TQSTg@mail.gmail.com>
-In-Reply-To: <CACw3F52=GxTCDw-PqFh3-GDM-fo3GbhGdu0hedxYXOTT4TQSTg@mail.gmail.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Mon, 1 Jul 2024 21:33:20 -0700
-Message-ID: <CACw3F52wm=5Rg+QP-E7JDOjBvA2mYv0uDBL+8=KPCfQ8tkHQaA@mail.gmail.com>
-Subject: Re: linux-next: build warnings after merge of the mm tree
-To: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a424caf3072d12ef6ba0c56c411789fb3282e844.1719408040.git.zhouquan@iscas.ac.cn>
 
-On Mon, Jul 1, 2024 at 9:15=E2=80=AFPM Jiaqi Yan <jiaqiyan@google.com> wrot=
-e:
->
-> On Mon, Jul 1, 2024 at 8:15=E2=80=AFPM Andrew Morton <akpm@linux-foundati=
-on.org> wrote:
-> >
-> > On Mon, 1 Jul 2024 18:49:12 +1000 Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> >
-> > > Hi all,
-> > >
-> > > After merging the mm tree, today's linux-next build (htmldocs) produc=
-ed
-> > > these warnings:
-> > >
-> > > Documentation/admin-guide/sysctl/vm.rst:278: ERROR: Unexpected indent=
-ation.
-> > > Documentation/admin-guide/sysctl/vm.rst:279: WARNING: Block quote end=
-s without a blank line; unexpected unindent.
-> > >
-> > > Introduced by commit
-> > >
-> > >   2cba7831f62c ("docs: mm: add enable_soft_offline sysctl")
-> >
-> > Well that's annoying.
-> >
-> > @@ -267,6 +268,37 @@ used::
-> >  These are informational only.  They do not mean that anything is wrong
-> >  with your system.  To disable them, echo 4 (bit 2) into drop_caches.
-> >
-> > +enable_soft_offline
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +Correctable memory errors are very common on servers. Soft-offline is =
-kernel's
-> > +solution for memory pages having (excessive) corrected memory errors.
-> > +
-> > +For different types of page, soft-offline has different behaviors / co=
-sts.
-> > +- For a raw error page, soft-offline migrates the in-use page's conten=
-t to
-> > +  a new raw page.
-> > +- For a page that is part of a transparent hugepage, soft-offline spli=
-ts the
-> > +  transparent hugepage into raw pages, then migrates only the raw erro=
-r page.
-> > +  As a result, user is transparently backed by 1 less hugepage, impact=
-ing
-> > +  memory access performance.
-> > +- For a page that is part of a HugeTLB hugepage, soft-offline first mi=
-grates
-> > +  the entire HugeTLB hugepage, during which a free hugepage will be co=
-nsumed
-> > +  as migration target.  Then the original hugepage is dissolved into r=
-aw
-> > +  pages without compensation, reducing the capacity of the HugeTLB poo=
-l by 1.
-> > +
-> > + ...
-> >
-> > This seems a reasonable thing to do so there's probably some way in
-> > which to do it, but a bit of grepping failed to turn up examples in
-> > existing .rst files.  Can someone please suggest?
->
-> It seems I need to add some blank lines according to [1], especially
-> to add a blank line above the first list item:
->
-> diff --git a/Documentation/admin-guide/sysctl/vm.rst
-> b/Documentation/admin-guide/sysctl/vm.rst
-> index 75e22137d849..74b4c0f65213 100644
-> --- a/Documentation/admin-guide/sysctl/vm.rst
-> +++ b/Documentation/admin-guide/sysctl/vm.rst
-> @@ -274,12 +274,15 @@ Correctable memory errors are very common on
-> servers. Soft-offline is kernel's
->  solution for memory pages having (excessive) corrected memory errors.
->
->  For different types of page, soft-offline has different behaviors / cost=
-s.
-> +
->  - For a raw error page, soft-offline migrates the in-use page's content =
-to
->    a new raw page.
-> +
->  - For a page that is part of a transparent hugepage, soft-offline splits=
- the
->    transparent hugepage into raw pages, then migrates only the raw error =
-page.
->    As a result, user is transparently backed by 1 less hugepage, impactin=
-g
->    memory access performance.
-> +
->  - For a page that is part of a HugeTLB hugepage, soft-offline first migr=
-ates
->    the entire HugeTLB hugepage, during which a free hugepage will be cons=
-umed
->    as migration target.  Then the original hugepage is dissolved into raw
->
-> But I am having trouble testing the build, so wasn't able to validate
-> the change above:
->
-> Documentation$ make
-> /tools/net/ynl/ynl-gen-rst.py -o
-> /Documentation/networking/netlink_spec/index.rst -x
-> make: /tools/net/ynl/ynl-gen-rst.py: No such file or directory
-> make: *** [Makefile:113:
-> /Documentation/networking/netlink_spec/index.rst] Error 127
+On Thu, Jun 27, 2024 at 11:02:46AM +0800, zhouquan@iscas.ac.cn wrote:
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
+> 
+> Expose orig_a0 to userspace to ensure that users can modify
+> the actual value of `a0` in the traced process through the
+> ptrace(PTRACE_SETREGSET, ...) path.
+> 
+> The addition of orig_a0 also requires the following adjustments:
+> 1) Adjust the position of orig_a0 in pt_regs to ensure correct copying.
+> 2) MAX_REG_OFFSET should match the new bottom of pt_regs.
+> 
+> Suggested-by: Charlie Jenkins <charlie@rivosinc.com>
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> ---
+>  arch/riscv/include/asm/ptrace.h      | 7 ++++---
+>  arch/riscv/include/uapi/asm/ptrace.h | 2 ++
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/riscv/include/asm/ptrace.h b/arch/riscv/include/asm/ptrace.h
+> index b5b0adcc85c1..380cf54c1f3d 100644
+> --- a/arch/riscv/include/asm/ptrace.h
+> +++ b/arch/riscv/include/asm/ptrace.h
+> @@ -12,6 +12,7 @@
+>  
+>  #ifndef __ASSEMBLY__
+>  
+> +/* MAX_REG_OFFSET should match the bottom of pt_regs */
+>  struct pt_regs {
+>  	unsigned long epc;
+>  	unsigned long ra;
+> @@ -45,12 +46,12 @@ struct pt_regs {
+>  	unsigned long t4;
+>  	unsigned long t5;
+>  	unsigned long t6;
+> +	/* a0 value before the syscall */
+> +	unsigned long orig_a0;
+>  	/* Supervisor/Machine CSRs */
+>  	unsigned long status;
+>  	unsigned long badaddr;
+>  	unsigned long cause;
+> -	/* a0 value before the syscall */
+> -	unsigned long orig_a0;
+>  };
+>  
+>  #define PTRACE_SYSEMU			0x1f
+> @@ -64,7 +65,7 @@ struct pt_regs {
+>  
+>  #define user_mode(regs) (((regs)->status & SR_PP) == 0)
+>  
+> -#define MAX_REG_OFFSET offsetof(struct pt_regs, orig_a0)
+> +#define MAX_REG_OFFSET offsetof(struct pt_regs, cause)
+>  
+>  /* Helpers for working with the instruction pointer */
+>  static inline unsigned long instruction_pointer(struct pt_regs *regs)
+> diff --git a/arch/riscv/include/uapi/asm/ptrace.h b/arch/riscv/include/uapi/asm/ptrace.h
+> index a38268b19c3d..3e37f80cb3e8 100644
+> --- a/arch/riscv/include/uapi/asm/ptrace.h
+> +++ b/arch/riscv/include/uapi/asm/ptrace.h
+> @@ -54,6 +54,8 @@ struct user_regs_struct {
+>  	unsigned long t4;
+>  	unsigned long t5;
+>  	unsigned long t6;
+> +	/* a0 value before the syscall */
+> +	unsigned long orig_a0;
+>  };
+>  
+>  struct __riscv_f_ext_state {
+> -- 
+> 2.34.1
+> 
 
-I tried another way: make htmldocs at repo's root directory. Although
-I wasn't able to finish the make process,
+Thank you!
 
-- without the blank lines:
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
 
-  Documentation/admin-guide/sysctl/vm.rst:278: ERROR: Unexpected indentatio=
-n.
-  Documentation/admin-guide/sysctl/vm.rst:279: WARNING: Block quote
-ends without a blank line; unexpected unindent.
-
-- with the blank lines added, the ERROR and WARNING in vm/rst are gone.
-
-Andrew and Stephen, what is the best way to post the fix for this?
-Should I send out a v8 of the patch with the blank lines added? or a
-standalone commit for this fix?
-
->
-> [1] https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bu=
-llet-lists
 
