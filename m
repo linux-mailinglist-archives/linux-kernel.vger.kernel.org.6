@@ -1,189 +1,189 @@
-Return-Path: <linux-kernel+bounces-237849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7A0923EEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:27:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49FB0923EED
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5221288CF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DCA21C22AD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5F51B4C38;
-	Tue,  2 Jul 2024 13:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9C31B582D;
+	Tue,  2 Jul 2024 13:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f6KzzZyE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gtSOVgqR"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76421B14FF
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7541B581C
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719926776; cv=none; b=ikvfWg231hONhKvsc12H0ARWU0geJmz6tX3iECXuzuDaVTFu7LyNZEghE3LxE+JA9X6MErx4pMivV38XBDn+CyJWnTpcYTYx8qdN9LcxHJ5vgjXBqPL3aosapQVRvlqXfhptidaeIBYpiWOrDG16JVV0lyvU7Z971DrZJezhIb4=
+	t=1719926790; cv=none; b=D0SVUjFmZP+bFgbgKVerRRI3G+kRKdx9vKMq5++D/wCVpStDCU3b38m8QnUZDiVHo/7bA4H9djCUFyi0P0fa+82z6BqCUraTqxziwKutTVu4f5Y++lyqWnNeUKDE4kZHmVw1Bp3pS3YeUy2rX8h5gI8tARL3uYty1+H5J+ljJSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719926776; c=relaxed/simple;
-	bh=IQbNOgOoRkyfDYxx5w02BrHQHsaXZuibllgVfkd+XAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bM3OjYfD9OOzoWQ6TN7WJIbr3G9Mxw/cX1WMnXv783i94wB+kgBVvwmzWPvmUpwXihlQ1cp+dM+j9ozVmsL/LK5DAl87rTWwiePyxnMYHxqgCEReIU+kPL9tkZ5yd/woR9p4p5iG0crUdb7wBS+tNugl1WTONAcF2OsFKkvQVME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f6KzzZyE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719926773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iRZmQrLRNR3A4IamYYh7sN5cFic3ZaWwiLI6KSEAkDY=;
-	b=f6KzzZyEb18Xd2FtEOFgsb/JJcf32MNl7Nj48xmATyFpQE6QI3wRnA6vBW8smJPROMHNy/
-	MWLY6s08grwsXZANa2egdSg6NEAYHAENSaNgZqLbDknFQDN1Ph+ro+fp4fKyVBDkYSZ2VJ
-	rfpLFJmcg1VCsT8nwhxE5uKGDCN5FUM=
-Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com
- [209.85.221.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-286-0KuInFodONWCXncpO0CdfA-1; Tue, 02 Jul 2024 09:26:12 -0400
-X-MC-Unique: 0KuInFodONWCXncpO0CdfA-1
-Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-4ef651410c2so1246530e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:26:12 -0700 (PDT)
+	s=arc-20240116; t=1719926790; c=relaxed/simple;
+	bh=lg+tZDVs4hEyLY3HQiLLe2lKwm2BGwh2GCtDRaNR0hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wklp/8wveaOL8IofZJ5czv9bRvXDvBy2SF7f/o78ZStj7h0813Ymb7U5WOqCplJv92LWsuOY62HruGOyhfZlz2Bi90vsl4QwrYd/Mp88EyIgn6TR/O1I7IQEyrQvKe+/POXhqRo19IAcMGwriSZ11B+ASNJ5mwPwIxi1sFFW+j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gtSOVgqR; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ee7885ac1cso5759901fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719926785; x=1720531585; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gEXzoyWOhFjqKYW61KLBPXBOfhQL6RJZ80o2uJwzay0=;
+        b=gtSOVgqRsBClLWCLp+ZMn446DSCHeBhorvS8olEOTUpcDRvpe/S82Y6Xpp67EfcNhO
+         0P5QaERRDxWpLfVzMuT7d9/cxw4l0ItrkwcPkSD3ojBgrQrfoU1tDKO6EepqWZ0rS+qk
+         fh1PzyK75vGLFdQ58JAWDD32UoTmrRp24bLMo9e4QG4KdCLs8wdzQd0jlMx5bhqvjy5e
+         tCmV/qZh/NPAlOHTQgJDQ90zxizqMAGZS7Quv2nRX0SG54nJJRrfy17v6EljUXPpuxwX
+         l9RVxZjDUwRbjAf22UKFy3//PdY5NZjG4TgKM/dAgkePOb9omdTEmHIy9FEW+QtZuX/l
+         MTJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719926772; x=1720531572;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1719926785; x=1720531585;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iRZmQrLRNR3A4IamYYh7sN5cFic3ZaWwiLI6KSEAkDY=;
-        b=ZOnfdCGEio6VyBpTgTH2aJyRuwURGzv6RNCR5cqOUSaEtNkfO+kgWX9QqKoFYbst0U
-         fi8QLQjTXVBsfqLxIwW7mwaVi1v6ouG0a2KgXfoZJzEO2XKC6UPq10U/V0J/18Q70QCo
-         zRGY5vpxgiS1kxMhgmurD+WkCEICt0FljBe3xcAdJH0qVEaRHZuaxve2Y2e1+tOiswLe
-         RfbLk6LcnvuI0Mum6H2FvOvqhgOF0R6/dwtAyBHOZQCGsR+upUiWilMgJ7xFIHEfIK/M
-         8z3b6807xFkWvJlHbIsQEnzlU+sUfU04mFPUTXbkRbSjeeKFv6lZRGlTelLieSq1yQvK
-         o+1w==
-X-Forwarded-Encrypted: i=1; AJvYcCV3v/oirSzm33LaTqdfz5X2Ind8XPPasTrEFCyMfQq/+yHvhfOlTgEFD02PF49sQ1EJzSVRWCNZXggEKxp8e4Mj9oHKQwmkzs4ZjezN
-X-Gm-Message-State: AOJu0YxdzwYHpcg4wBQkVv3FDpxumz7aC3JM8aLQ9i01T6Tu+QoUmwt3
-	lvMSr6e+BloGfwPVU8g9Q8G3RXW72s6HvYZJhS39Qu0cxhmP6oka4nytMUvAFfRrh4kL8dx3XG0
-	H1CEI7luFSnEhkvfXLT7+m6p31DMZ/dX68Yy+Ifv2VWKKo88Jo0PvrBp7yhDT/w==
-X-Received: by 2002:a05:6122:608a:b0:4ef:6530:4ced with SMTP id 71dfb90a1353d-4f2a563e56bmr10180309e0c.2.1719926771957;
-        Tue, 02 Jul 2024 06:26:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0ZABEmXNy0mupa7tDFXFKUu+ANK4YXL/daiZL2XoDMct7TNoWJkktWNKKK23psqT2eQ4Ygw==
-X-Received: by 2002:a05:6122:608a:b0:4ef:6530:4ced with SMTP id 71dfb90a1353d-4f2a563e56bmr10180276e0c.2.1719926771595;
-        Tue, 02 Jul 2024 06:26:11 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c739:2400:78ac:64bb:a39e:2578? (p200300cbc739240078ac64bba39e2578.dip0.t-ipconnect.de. [2003:cb:c739:2400:78ac:64bb:a39e:2578])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44651408b32sm41037951cf.23.2024.07.02.06.26.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 06:26:11 -0700 (PDT)
-Message-ID: <9381d6e6-14f5-4499-9d7a-ed28aa16a3d1@redhat.com>
-Date: Tue, 2 Jul 2024 15:26:08 +0200
+        bh=gEXzoyWOhFjqKYW61KLBPXBOfhQL6RJZ80o2uJwzay0=;
+        b=kmo2SLb0rfG4wHwPUlWhWyQwaaTaueijXzNVuMuqwhDZz/ohiK3KWQGbJmJgfY1gX7
+         PM8ooLNurT3iYNnqgMr1InwMsa/ALWIy6U7SbDQGhMKQklgMxn2q7tYdriZht8vY8NpD
+         1JRps7oFRKSC8YMFr/TwozgXl3/6pUjCmL0U0g31AwqbttLWSTBGxAbcs3GsYdUyd/hu
+         hXs2J7/N7GFIhHqnjK+RtLzfnQJPRNWZ+JaabvRMiwKudS/5vRL42t2sHSQYjSx1w7Lt
+         XXeKcRzeI9tb9tpPdZfi+11uXvl+E0729SRjptQWtd5ZcADzgjs7qZjuJKz8mi29lptt
+         GhPA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/fjaU7znJNFyS3Z4fDglbQYwvYWMyEV2RyEY7tizN8RW8ttVrDHxCIPvgAOHC3F/Su7AJ388a/SrlBhA4tL50Thtw121jJZPTjdI5
+X-Gm-Message-State: AOJu0YwfKMZH1JyVBXC1twci6YIvbEMRx7KQRrVNwm2SITZ1YMo+2bGa
+	2oZfwZL68/SVd3m8OJYruQfo1NkmJZfhOEjc6HBehdw86KVg8ponH/aDqFbLFUc=
+X-Google-Smtp-Source: AGHT+IHOwy0gSsJlyo6I2CbsLhWTUOs3Wi9zfbRiK0I3klKQk6XIRE1REHPqeHNsrUu9XlM+VeBpkw==
+X-Received: by 2002:a2e:a813:0:b0:2ee:7a3e:4728 with SMTP id 38308e7fff4ca-2ee7a3e48d9mr4524661fa.53.1719926784755;
+        Tue, 02 Jul 2024 06:26:24 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce44d5esm8782234a91.19.2024.07.02.06.26.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 06:26:24 -0700 (PDT)
+Date: Tue, 2 Jul 2024 15:26:15 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v2 17/18] printk: Avoid false positive lockdep
+ report for legacy printing
+Message-ID: <ZoP_9w0nNr_ploOn@pathway.suse.cz>
+References: <20240603232453.33992-1-john.ogness@linutronix.de>
+ <20240603232453.33992-18-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: shrink skip folio mapped by an exiting task
-To: Zhiguo Jiang <justinjiang@vivo.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240221114904.1849-1-justinjiang@vivo.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240221114904.1849-1-justinjiang@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603232453.33992-18-john.ogness@linutronix.de>
 
-On 21.02.24 12:49, Zhiguo Jiang wrote:
-> If an anon folio reclaimed by shrink_inactive_list is mapped by an
-> exiting task, this anon folio will be firstly swaped-out into
-> swapspace in shrink flow and then this swap folio is freed in task
-> exit flow. But if this folio mapped by an exiting task can skip
-> shrink and be freed directly in task exiting flow, which will save
-> swap-out time and alleviate the load of the tasks exiting process.
-> The file folio is also similar.
+On Tue 2024-06-04 01:30:52, John Ogness wrote:
+> Legacy console printing from printk() caller context may invoke
+> the console driver from atomic context. This leads to a lockdep
+> splat because the console driver will acquire a sleeping lock
+> and the caller may already hold a spinning lock. This is noticed
+> by lockdep on !PREEMPT_RT configurations because it will lead to
+> a problem on PREEMPT_RT.
 > 
-> And when system is low memory, it more likely to occur, because more
-> backend applidatuions will be killed.
+> However, on PREEMPT_RT the printing path from atomic context is
+> always avoided and the console driver is always invoked from a
+> dedicated thread. Thus the lockdep splat on !PREEMPT_RT is a
+> false positive.
 > 
-> This patch can alleviate the load of the tasks exiting process.
+> For !PREEMPT_RT override the lock-context before invoking the
+> console driver to avoid the false positive.
 > 
-> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
+> Do not override the lock-context for PREEMPT_RT in order to
+> allow lockdep to catch any real locking context issues related
+> to the write callback usage.
+
+Could you please provide more information?
+Is this anything new?
+How did it work so far?
+
+See below.
+
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
 > ---
->   mm/rmap.c | 7 +++++++
->   1 file changed, 7 insertions(+)
->   mode change 100644 => 100755 mm/rmap.c
+>  kernel/printk/printk.c | 31 ++++++++++++++++++++++++++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
 > 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 3746a5531018..146e5f4ec069
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -840,6 +840,13 @@ static bool folio_referenced_one(struct folio *folio,
->   	int referenced = 0;
->   	unsigned long start = address, ptes = 0;
->   
-> +	/* Skip this folio if it's mapped by an exiting task */
-> +	if (unlikely(!atomic_read(&vma->vm_mm->mm_users)) ||
-> +		unlikely(test_bit(MMF_OOM_SKIP, &vma->vm_mm->flags))) {
-> +		pra->referenced = -1;
-> +		return false;
-> +	}
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index ea2d66152256..5e9778f69206 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2980,6 +2980,33 @@ bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+>  	return true;
+>  }
+>  
+> +/*
+> + * Legacy console printing from printk() caller context does not respect
+> + * raw_spinlock/spinlock nesting. For !PREEMPT_RT the lockdep warning is a
+> + * false positive. For PREEMPT_RT the false positive condition does not
+> + * occur.
+> + *
+> + * This map is used to establish LD_WAIT_SLEEP context for the console write
+> + * callbacks when legacy printing to avoid false positive lockdep complaints,
+> + * thus allowing lockdep to continue to function for real issues.
+> + */
+> +#ifdef CONFIG_PREEMPT_RT
+> +static inline void printk_legacy_lock_map_acquire_try(void) { }
+> +static inline void printk_legacy_lock_map_release(void) { }
+> +#else
+> +static DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map, LD_WAIT_SLEEP);
 > +
->   	while (page_vma_mapped_walk(&pvmw)) {
->   		address = pvmw.address;
->   
+> +static inline void printk_legacy_lock_map_acquire_try(void)
+> +{
+> +	lock_map_acquire_try(&printk_legacy_map);
+> +}
+> +
+> +static inline void printk_legacy_lock_map_release(void)
+> +{
+> +	lock_map_release(&printk_legacy_map);
+> +}
+> +#endif /* CONFIG_PREEMPT_RT */
+> +
+>  /*
+>   * Used as the printk buffers for non-panic, serialized console printing.
+>   * This is for legacy (!CON_NBCON) as well as all boot (CON_BOOT) consoles.
+> @@ -3035,7 +3062,7 @@ static bool console_emit_next_record(struct console *con, bool *handover, int co
+>  		/*
+>  		 * With forced threading this function is either in a thread
+>  		 * or panic context. So there is no need for concern about
+> -		 * printk reentrance or handovers.
+> +		 * printk reentrance, handovers, or lockdep complaints.
+>  		 */
+>  
+>  		con->write(con, outbuf, pmsg.outbuf_len);
+> @@ -3057,7 +3084,9 @@ static bool console_emit_next_record(struct console *con, bool *handover, int co
+>  		/* Do not trace print latency. */
+>  		stop_critical_timings();
+>  
+> +		printk_legacy_lock_map_acquire_try();
 
-... but what if it is shared among multiple processes and only one of 
-them is exiting?
+I am not familiar with lockdep in these depths. The comment in
+include/kernel/lockdep_types.h says that LD_WAIT_SLEEP is
+a type used for sleeping locks. And this code says that
+it is acquire_try(). I would assume that similar lockdep
+map is set also by "console_trylock()".
 
--- 
-Cheers,
+Do we need this for a new callpath without console_trylock()?
+Or do I miss anything?
 
-David / dhildenb
+>  		con->write(con, outbuf, pmsg.outbuf_len);
+> +		printk_legacy_lock_map_release();
+>  
+>  		start_critical_timings();
 
+Best Regards,
+Petr
 
