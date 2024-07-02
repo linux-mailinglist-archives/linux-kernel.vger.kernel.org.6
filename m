@@ -1,336 +1,130 @@
-Return-Path: <linux-kernel+bounces-238087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56AA924351
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:11:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDEB6924354
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 161591C23E63
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:11:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A989289901
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914301BD027;
-	Tue,  2 Jul 2024 16:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032061BD025;
+	Tue,  2 Jul 2024 16:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rl62NnDN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9m/LTV0"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35EE1BA095;
-	Tue,  2 Jul 2024 16:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0701BBBD7;
+	Tue,  2 Jul 2024 16:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719936653; cv=none; b=ngFDLXUw61e0FqcjNzovoshrJk1kXEIqfAxsjjiU/8j7X9OBXDCz/6lHwUiEqYLPghCElLj1iDQE1NKUMnw3r9VpaZYm0hm5oX15sl7j+knMH7nSacfzrdY5MLKirVAPfy2Q8PgSfCTbvpA7mnbNlV5zW4pdGpkOMDaSA41mkxI=
+	t=1719936668; cv=none; b=VO3kOS4PBuFIod9P2vo69utvRVvEM4zHJi/wco3zoFhXnV0V0jHILrZo8DzyknL1LqNCdXe7R4dAsP8tgYoz+C8G4cPXbaow8JGLKRgJlt/0u/pHt2pIIIMdZW8tv+9vqqJVxi4+/b4p4GqqKqq/8bE7GDl+wUuu2Igsa/HQv+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719936653; c=relaxed/simple;
-	bh=Foqi+0/w6QnfJwz2VBdmJaLu5Vl+j/wJ903/i+1ldcg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d2HfWz82Fv5TYMsnajK1nwlvIb5tg8N0Duy1Eo/WL+UNagodjOzjBvgMIpxuIXQHr/4rHmEpbprt8L1Fl5LR0B1ppNJOGC2uuUQJX4I8rjUC0m2cqutpiO8jIxW43kJGUQKCSHxmeFZa7aRFyWABB3mzKl4uCcDIKl2xdTUIFf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rl62NnDN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D657C116B1;
-	Tue,  2 Jul 2024 16:10:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719936653;
-	bh=Foqi+0/w6QnfJwz2VBdmJaLu5Vl+j/wJ903/i+1ldcg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Rl62NnDNF9JhDP74QvAcJyvVTBjtpbLuaawoOdvQGQbrtt4n+EWSvZ0r2Wf4SCw/W
-	 7qgY0VPU4QaPEForh2kUFrHCbwm3gXxXKQ2Gbyow/va+DaoWzARQy3bLk0cHGR7BH2
-	 9sG5NJonwRs9aLZhzN4rW8S4v3PMqoE4f90mu5APy2a+KyrwCPVJkRe3Ss8CVLOiuw
-	 t/d3OVUoVqPw1EtAeRNiJ+oTxGEQe5bbA4FUUflRlHf66Vje4qORWQfCZSnWV/1JHa
-	 qLMfsIWUTHvJOgDmrPQT6ouYgz/EZUCZhp+APJnNhTmWsgBsUyMJ1D787wGiZN0U57
-	 K9mCBG7NfM8sA==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] tpm: atmel: Drop PPC64 specific MMIO setup
-Date: Tue,  2 Jul 2024 10:10:48 -0600
-Message-ID: <20240702161052.3563599-1-robh@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1719936668; c=relaxed/simple;
+	bh=3xJuzOTRMluaoR8nsvkgFb7mnpaY4B66CdYGgij2JvE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DLQWsGBu6IvSSPci6YHZyXVXlj4isoz4ZldA8XTWeoldpIamBCCNKibaS52fUi+y/xQ1njVeQhUFUojqA8/kpbsDBsXphG06sFNt70RYmPDz8zy+5cUyYMbCjNfM14RvWgS84YjH9psnmaZWjrL92rR+Sxe37KdO7GzCwjDUa7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9m/LTV0; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-424ad289912so31011965e9.2;
+        Tue, 02 Jul 2024 09:11:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719936665; x=1720541465; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V0Qz98KWmiG+EMpaS/dWI6Z22uc/M7LVTuKKam6RTUU=;
+        b=i9m/LTV0N2dD9sCg8hGwELfMHD3G5FA986CUb6JKsSpzcaOdYKfpTXLioFueKzfi3N
+         NcapAMkIt6RgcwoKynRcdaQwjBVU2tcGN4F2y/ngQtZZzrHfe6h4y3W+a8gvG8eHYl6c
+         NN/oKRTjKcD+mMNd35nhjNtegKsBs405FIdaGMvtVCo1mKOJmLNsIHmHt/AbcY0CO30w
+         0YHWocDVLcBT2G6obGZgjI1TOKHACR2Ny70pmaRDXItsqtiGbkMn0aFBeOFSmfVXPP2K
+         elB1V0fvfcqomAx2GH3IUHXDrQzgqENmqECfwKS11eytMaxaHCy9qB6EVTzoaXx1O02w
+         YTGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719936665; x=1720541465;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V0Qz98KWmiG+EMpaS/dWI6Z22uc/M7LVTuKKam6RTUU=;
+        b=uPG47nBl6mkqjxmvgA6GBym23DTXHNmWwoIRoMpZ6ae348hRMaLI45EJVQUQhPUVMa
+         U0g5OfZjUgUdBM6Wujmlvq+VAiE12sIdBr4GRNaKKWbD8u86WOD0cy1J9QZlIbH/Ahlb
+         RXJoarFlUhlRAH5sTMgMZKguMaF/qfeCzuepAD1fYNC3HO/+Y3HJVH38bLbhGqh06HJh
+         u3Dhk4TPrMv9fVr7B9MygGzTOjW1Zm/WuQ/853crCtMAPNyvazjf9ux+E2/JCG/fvGYo
+         SDxfrn1x5fnaHeSXuUd12wlpxTZHR8tvMSym9Rq+IS1LweyEW7t/1cnpfr5hQDh3Axhi
+         Uupw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgl6b5s9Ww/L/ijwZk7l0AC7ibuypsaboscgFdXRsdtSjNwCF6L7oeXkE8PQ7+Pjee9Dh/HmEY+WS2jE9NzwZzX3jwoDM7axaP8VJCfvnJSptz0JcNjpkXwqIk5iQrpaBM/j+BPxpoAMd7yHvwQvEezt1unjT4yTuBSc5/8SqDprzccpo8
+X-Gm-Message-State: AOJu0Yxym2InxVnFwMTpiRoVIpvze0y1gla0JRbdqMWMQC5BMb+vS+Fv
+	UQ2Wa9D2hVXxCzhR3sZKVc7BLUNo+dUYbFFAskFyn0FoJ+TZ9TYM
+X-Google-Smtp-Source: AGHT+IFxlAlKL7CVEdpm+YsZgzcGzjI937/84Y3tdXQrGJ2iODKxpg6z2gXa40cQl9BEceDHAi8nvQ==
+X-Received: by 2002:a05:600c:4da1:b0:424:acf6:6068 with SMTP id 5b1f17b1804b1-4257a03479emr70285705e9.34.1719936664991;
+        Tue, 02 Jul 2024 09:11:04 -0700 (PDT)
+Received: from krava ([176.105.156.1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a2bcsm202179825e9.36.2024.07.02.09.11.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 09:11:04 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 2 Jul 2024 18:10:58 +0200
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
+Message-ID: <ZoQmkiKwsy41JNt4@krava>
+References: <20240701164115.723677-1-jolsa@kernel.org>
+ <20240701164115.723677-2-jolsa@kernel.org>
+ <20240702130408.GH11386@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702130408.GH11386@noisy.programming.kicks-ass.net>
 
-The PPC64 specific MMIO setup open codes DT address functions rather
-than using standard address parsing functions. The open-coded version
-fails to handle any address translation and is not endian safe.
+On Tue, Jul 02, 2024 at 03:04:08PM +0200, Peter Zijlstra wrote:
+> On Mon, Jul 01, 2024 at 06:41:07PM +0200, Jiri Olsa wrote:
+> 
+> > +static void
+> > +uprobe_consumer_account(struct uprobe *uprobe, struct uprobe_consumer *uc)
+> > +{
+> > +	static unsigned int session_id;
+> > +
+> > +	if (uc->session) {
+> > +		uprobe->sessions_cnt++;
+> > +		uc->session_id = ++session_id ?: ++session_id;
+> > +	}
+> > +}
+> 
+> The way I understand this code, you create a consumer every time you do
+> uprobe_register() and unregister makes it go away.
+> 
+> Now, register one, then 4g-1 times register+unregister, then register
+> again.
+> 
+> The above seems to then result in two consumers with the same
+> session_id, which leads to trouble.
+> 
+> Hmm?
 
-I haven't found any evidence of what platform used this. The only thing
-that turned up was a PPC405 platform, but that is 32-bit and PPC405
-support is being removed as well. CONFIG_TCG_ATMEL is not enabled for
-any powerpc config and never was. The support was added in 2005 and
-hasn't been touched since.
+ugh true.. will make it u64 :)
 
-Rather than try to modernize and fix this code, just remove it.
+I think we could store uprobe_consumer pointer+ref in session_consumer,
+and that would make the unregister path more interesting.. will check
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- drivers/char/tpm/Kconfig     |   2 +-
- drivers/char/tpm/tpm_atmel.c |  64 +++++++++++++++-
- drivers/char/tpm/tpm_atmel.h | 140 -----------------------------------
- 3 files changed, 62 insertions(+), 144 deletions(-)
- delete mode 100644 drivers/char/tpm/tpm_atmel.h
-
-diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-index e63a6a17793c..9b655e9fc7ab 100644
---- a/drivers/char/tpm/Kconfig
-+++ b/drivers/char/tpm/Kconfig
-@@ -162,7 +162,7 @@ config TCG_NSC
- 
- config TCG_ATMEL
- 	tristate "Atmel TPM Interface"
--	depends on PPC64 || HAS_IOPORT_MAP
-+	depends on HAS_IOPORT_MAP
- 	depends on HAS_IOPORT
- 	help
- 	  If you have a TPM security chip from Atmel say Yes and it 
-diff --git a/drivers/char/tpm/tpm_atmel.c b/drivers/char/tpm/tpm_atmel.c
-index 9fb2defa9dc4..622c4abe8cb3 100644
---- a/drivers/char/tpm/tpm_atmel.c
-+++ b/drivers/char/tpm/tpm_atmel.c
-@@ -15,7 +15,67 @@
-  */
- 
- #include "tpm.h"
--#include "tpm_atmel.h"
-+
-+struct tpm_atmel_priv {
-+	int region_size;
-+	int have_region;
-+	unsigned long base;
-+	void __iomem *iobase;
-+};
-+
-+#define atmel_getb(chip, offset) inb(atmel_get_priv(chip)->base + offset)
-+#define atmel_putb(val, chip, offset) \
-+	outb(val, atmel_get_priv(chip)->base + offset)
-+#define atmel_request_region request_region
-+#define atmel_release_region release_region
-+/* Atmel definitions */
-+enum tpm_atmel_addr {
-+	TPM_ATMEL_BASE_ADDR_LO = 0x08,
-+	TPM_ATMEL_BASE_ADDR_HI = 0x09
-+};
-+
-+static inline int tpm_read_index(int base, int index)
-+{
-+	outb(index, base);
-+	return inb(base+1) & 0xFF;
-+}
-+
-+/* Verify this is a 1.1 Atmel TPM */
-+static int atmel_verify_tpm11(void)
-+{
-+
-+	/* verify that it is an Atmel part */
-+	if (tpm_read_index(TPM_ADDR, 4) != 'A' ||
-+	    tpm_read_index(TPM_ADDR, 5) != 'T' ||
-+	    tpm_read_index(TPM_ADDR, 6) != 'M' ||
-+	    tpm_read_index(TPM_ADDR, 7) != 'L')
-+		return 1;
-+
-+	/* query chip for its version number */
-+	if (tpm_read_index(TPM_ADDR, 0x00) != 1 ||
-+	    tpm_read_index(TPM_ADDR, 0x01) != 1)
-+		return 1;
-+
-+	/* This is an atmel supported part */
-+	return 0;
-+}
-+
-+/* Determine where to talk to device */
-+static void __iomem * atmel_get_base_addr(unsigned long *base, int *region_size)
-+{
-+	int lo, hi;
-+
-+	if (atmel_verify_tpm11() != 0)
-+		return NULL;
-+
-+	lo = tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_LO);
-+	hi = tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_HI);
-+
-+	*base = (hi << 8) | lo;
-+	*region_size = 2;
-+
-+	return ioport_map(*base, *region_size);
-+}
- 
- /* write status bits */
- enum tpm_atmel_write_status {
-@@ -142,7 +202,6 @@ static void atml_plat_remove(void)
- 	tpm_chip_unregister(chip);
- 	if (priv->have_region)
- 		atmel_release_region(priv->base, priv->region_size);
--	atmel_put_base_addr(priv->iobase);
- 	platform_device_unregister(pdev);
- }
- 
-@@ -211,7 +270,6 @@ static int __init init_atmel(void)
- err_unreg_dev:
- 	platform_device_unregister(pdev);
- err_rel_reg:
--	atmel_put_base_addr(iobase);
- 	if (have_region)
- 		atmel_release_region(base,
- 				     region_size);
-diff --git a/drivers/char/tpm/tpm_atmel.h b/drivers/char/tpm/tpm_atmel.h
-deleted file mode 100644
-index 7ac3f69dcf0f..000000000000
---- a/drivers/char/tpm/tpm_atmel.h
-+++ /dev/null
-@@ -1,140 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Copyright (C) 2005 IBM Corporation
-- *
-- * Authors:
-- * Kylene Hall <kjhall@us.ibm.com>
-- *
-- * Maintained by: <tpmdd-devel@lists.sourceforge.net>
-- *
-- * Device driver for TCG/TCPA TPM (trusted platform module).
-- * Specifications at www.trustedcomputinggroup.org
-- *
-- * These difference are required on power because the device must be
-- * discovered through the device tree and iomap must be used to get
-- * around the need for holes in the io_page_mask.  This does not happen
-- * automatically because the tpm is not a normal pci device and lives
-- * under the root node.
-- */
--
--struct tpm_atmel_priv {
--	int region_size;
--	int have_region;
--	unsigned long base;
--	void __iomem *iobase;
--};
--
--#ifdef CONFIG_PPC64
--
--#include <linux/of.h>
--
--#define atmel_getb(priv, offset) readb(priv->iobase + offset)
--#define atmel_putb(val, priv, offset) writeb(val, priv->iobase + offset)
--#define atmel_request_region request_mem_region
--#define atmel_release_region release_mem_region
--
--static inline void atmel_put_base_addr(void __iomem *iobase)
--{
--	iounmap(iobase);
--}
--
--static void __iomem * atmel_get_base_addr(unsigned long *base, int *region_size)
--{
--	struct device_node *dn;
--	unsigned long address, size;
--	const unsigned int *reg;
--	int reglen;
--	int naddrc;
--	int nsizec;
--
--	dn = of_find_node_by_name(NULL, "tpm");
--
--	if (!dn)
--		return NULL;
--
--	if (!of_device_is_compatible(dn, "AT97SC3201")) {
--		of_node_put(dn);
--		return NULL;
--	}
--
--	reg = of_get_property(dn, "reg", &reglen);
--	naddrc = of_n_addr_cells(dn);
--	nsizec = of_n_size_cells(dn);
--
--	of_node_put(dn);
--
--
--	if (naddrc == 2)
--		address = ((unsigned long) reg[0] << 32) | reg[1];
--	else
--		address = reg[0];
--
--	if (nsizec == 2)
--		size =
--		    ((unsigned long) reg[naddrc] << 32) | reg[naddrc + 1];
--	else
--		size = reg[naddrc];
--
--	*base = address;
--	*region_size = size;
--	return ioremap(*base, *region_size);
--}
--#else
--#define atmel_getb(chip, offset) inb(atmel_get_priv(chip)->base + offset)
--#define atmel_putb(val, chip, offset) \
--	outb(val, atmel_get_priv(chip)->base + offset)
--#define atmel_request_region request_region
--#define atmel_release_region release_region
--/* Atmel definitions */
--enum tpm_atmel_addr {
--	TPM_ATMEL_BASE_ADDR_LO = 0x08,
--	TPM_ATMEL_BASE_ADDR_HI = 0x09
--};
--
--static inline int tpm_read_index(int base, int index)
--{
--	outb(index, base);
--	return inb(base+1) & 0xFF;
--}
--
--/* Verify this is a 1.1 Atmel TPM */
--static int atmel_verify_tpm11(void)
--{
--
--	/* verify that it is an Atmel part */
--	if (tpm_read_index(TPM_ADDR, 4) != 'A' ||
--	    tpm_read_index(TPM_ADDR, 5) != 'T' ||
--	    tpm_read_index(TPM_ADDR, 6) != 'M' ||
--	    tpm_read_index(TPM_ADDR, 7) != 'L')
--		return 1;
--
--	/* query chip for its version number */
--	if (tpm_read_index(TPM_ADDR, 0x00) != 1 ||
--	    tpm_read_index(TPM_ADDR, 0x01) != 1)
--		return 1;
--
--	/* This is an atmel supported part */
--	return 0;
--}
--
--static inline void atmel_put_base_addr(void __iomem *iobase)
--{
--}
--
--/* Determine where to talk to device */
--static void __iomem * atmel_get_base_addr(unsigned long *base, int *region_size)
--{
--	int lo, hi;
--
--	if (atmel_verify_tpm11() != 0)
--		return NULL;
--
--	lo = tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_LO);
--	hi = tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_HI);
--
--	*base = (hi << 8) | lo;
--	*region_size = 2;
--
--	return ioport_map(*base, *region_size);
--}
--#endif
--- 
-2.43.0
-
+thanks,
+jirka
 
