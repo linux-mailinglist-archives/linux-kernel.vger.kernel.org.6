@@ -1,110 +1,95 @@
-Return-Path: <linux-kernel+bounces-237398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9485C91F075
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:45:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB43591F07C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D5061F22792
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:45:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB792832D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01115CDF0;
-	Tue,  2 Jul 2024 07:45:03 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8161369B4;
+	Tue,  2 Jul 2024 07:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bD2n8Xlt"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C104CB23
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E716372;
+	Tue,  2 Jul 2024 07:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719906303; cv=none; b=FJF23Xv/qzzrFNJOJI0/7MIswGPugptbG2KmVjkvfkVFPYWqkXOO2UFec0Ypc5yKPIhA2t496zFQYacbScC+rJZkVGvzgZfpXQqxZTWFY+8F3xiemEPolcIWjBSAhLh/j8uChnmkVIJjcCktK49YmxHP0KTf/nnxlvm0bs+WDys=
+	t=1719906558; cv=none; b=RgCoJCMOWqWz5DTOSmd8LzpkMFbfnUHfn8Iok5IB8uF5OQXa0Htd8H3wkr7N1LBB14Xpy9DMv3QlDbaNyesfko9MREK8a2QqlLCPwxZwtV2hvq3wbpuU8M9brhOTIjN1VDimq6xZSZ2p/U+XplqWzsJV352NzDfK+H8WZ/Pqun0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719906303; c=relaxed/simple;
-	bh=zBp+Mi0WuvTANNUQHSNKoWAMetKEODtoHLldptsiNIA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UP9NCv/Q6SzZ6JQKpUJZD+m22N0F4fRxq1nVUQFNTJb4F/h5xGOMXP63b9JxMThexKfLuZwc8ABhKqDxghFbBB4r8bYSgPwwJP4jatv8AXgTAKnhLO+Cy1tEw2EVkttai2BKv9Tp0mhF5jTulZ2nt2ZQcXboQO8j933JYybpKQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WCvzF6k6Hzdfx9;
-	Tue,  2 Jul 2024 15:43:21 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8BE94140488;
-	Tue,  2 Jul 2024 15:44:58 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 2 Jul 2024 15:44:57 +0800
-Message-ID: <e34620c4-0305-ba97-55fb-4318eafcd7c8@huawei.com>
-Date: Tue, 2 Jul 2024 15:44:56 +0800
+	s=arc-20240116; t=1719906558; c=relaxed/simple;
+	bh=omU/zp+xhlo5mfigTz70TZjn24ZIXFiMMwm2piQK378=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5M6SEsT14ZSFF0Wz+nVY5fq/CAT7clzmI4J2GDx0TUU1yYDyQR8bcdIvET0gxP3h2j0krFx7ZM4T0klH5AzIeDQYPcVRMgkSUZ7aSWBtObk9G+dC8C1U6/JKL/IngKhLohH0L2zzix9PtpLZyjhX/omSNjjh/w/Jn8/DDu8AFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bD2n8Xlt; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (117.145-247-81.adsl-dyn.isp.belgacom.be [81.247.145.117])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2F5775A4;
+	Tue,  2 Jul 2024 09:48:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1719906527;
+	bh=omU/zp+xhlo5mfigTz70TZjn24ZIXFiMMwm2piQK378=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bD2n8Xlt3GjH50oEmxp1wd+X1GRqiG5IZggAsVmcP+GPFyp0+mU7Y4QJBYTQNvh2D
+	 o/YFWX0CaVMzun39KGvd0SjaOSXGNTwQGXZmqZRXS+XnP22Cqs9/nMfmqJpvT1fB1b
+	 lrNy6W+UXm+5lRmoZIP//7rKRS65uDoWb1L3I8wY=
+Date: Tue, 2 Jul 2024 10:48:53 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: paul.elder@ideasonboard.com, mchehab@kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: thp7312: Convert comma to semicolon
+Message-ID: <20240702074853.GF15391@pendragon.ideasonboard.com>
+References: <20240702025711.1411715-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH 0/2] ARM: 9322/1: Switch over to GENERIC_CPU_DEVICES
-Content-Language: en-US
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: <arnd@arndb.de>, <afd@ti.com>, <akpm@linux-foundation.org>,
-	<linus.walleij@linaro.org>, <eric.devolder@oracle.com>, <ardb@kernel.org>,
-	<gregkh@linuxfoundation.org>, <deller@gmx.de>, <javierm@redhat.com>,
-	<bhe@redhat.com>, <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <20240702065906.929987-1-ruanjinjie@huawei.com>
- <ZoOsqrhlsENjHwKN@shell.armlinux.org.uk>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <ZoOsqrhlsENjHwKN@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240702025711.1411715-1-nichen@iscas.ac.cn>
 
+Hello Chen,
 
+Thank you for the patch.
 
-On 2024/7/2 15:30, Russell King (Oracle) wrote:
-> What's going on with the subject in all of this series? Why does it
-> contain:
-> 
-> 	"ARM: 9322/1"
-> 
-> ?
-> 
-> We already have:
-> 	"3562257b3416 ARM: 9322/1: Explicitly include correct DT includes"
-> 
-> Merged in the kernel tree, and this has nothing to do with it. Moreover,
-> these numbers are generated by the patch system and are supposed to be
-> unique to each patch.
+On Tue, Jul 02, 2024 at 10:57:11AM +0800, Chen Ni wrote:
+> Replace a comma between expression statements by a semicolon.
 
-The title refers to "git log --online arch/arm/kernel/setup.c", I
-misunderstood its meaning, I'll resend it and remove it, thank you very
-much.
+Oops.
 
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>  drivers/media/i2c/thp7312.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> On Tue, Jul 02, 2024 at 02:59:04PM +0800, Jinjie Ruan wrote:
->> Currently, almost all architectures have switched to GENERIC_CPU_DEVICES,
->> except for arm32. Also switch over to GENERIC_CPU_DEVICES, which can also
->> make the code more concise.
->>
->> Jinjie Ruan (2):
->>   ARM: 9322/1: Switch over to GENERIC_CPU_DEVICES using
->>     arch_register_cpu()
->>   ARM: 9322/1: Convert to arch_cpu_is_hotpluggable()
->>
->>  arch/arm/Kconfig           |  1 +
->>  arch/arm/include/asm/cpu.h |  1 -
->>  arch/arm/kernel/setup.c    | 14 ++------------
->>  3 files changed, 3 insertions(+), 13 deletions(-)
->>
->> -- 
->> 2.34.1
->>
->>
-> 
+> diff --git a/drivers/media/i2c/thp7312.c b/drivers/media/i2c/thp7312.c
+> index 19bd923a7315..75225ff5eff6 100644
+> --- a/drivers/media/i2c/thp7312.c
+> +++ b/drivers/media/i2c/thp7312.c
+> @@ -1503,7 +1503,7 @@ static int __thp7312_flash_reg_read(struct thp7312_device *thp7312,
+>  
+>  	msgs[0].addr = client->addr;
+>  	msgs[0].flags = 0;
+> -	msgs[0].len = sizeof(thp7312_cmd_read_reg),
+> +	msgs[0].len = sizeof(thp7312_cmd_read_reg);
+>  	msgs[0].buf = (u8 *)thp7312_cmd_read_reg;
+>  
+>  	msgs[1].addr = client->addr;
+
+-- 
+Regards,
+
+Laurent Pinchart
 
