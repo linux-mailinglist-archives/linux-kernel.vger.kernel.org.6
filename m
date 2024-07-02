@@ -1,109 +1,163 @@
-Return-Path: <linux-kernel+bounces-237676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0B1923C8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 791F2923C8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8737D1F21FE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:38:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E83351F21F80
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8966015B12D;
-	Tue,  2 Jul 2024 11:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F23415B13A;
+	Tue,  2 Jul 2024 11:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Cvh0FCZn"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bu0WyF1t"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524DE158D98
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7DE157A47
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719920302; cv=none; b=BE52Te8Q8C+5Wm7Nz/OmAyTJidju8Hsz1wKa3eMS4/3ibZth6FA2uutQa0ZcT07sQuTfOzbFhC/96mJbcr0ID21w4opiGQQbVCDI9Mwhw3csoGRYDFbD/ZKpZh+AGCiTRunr55y4wlehEVsPLUNr7ad2fy37jBJVXzg6GgnvYNY=
+	t=1719920322; cv=none; b=SKWI9rmHPeHukB6n/d5vHhjwUAgFpAfpDBNUjChtKLpEWNsKdm2NI/2vDzhlMKZ/qt+htspKbb4hXoLLWMuoB6UZdRCia0SGl1T+rMJIxKqc0iZsV77h5s3Nqb22D6ra2Hit0I7bhnn6gmC12k80tQYw0Kl5GExYmb/vFTw3M2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719920302; c=relaxed/simple;
-	bh=PMxrC5TKVJf22V5/57I5TeYs4p9gUbgtiEdMn8BmCyk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=QIyp3bQRl0YcPABoiLjRn4r4CEchYKjnleU1ENvRrfAH9zOJjKEbhfL/JAYMtbz8MVygC7XDgMP8OCDL0QGhL74zsZS8Df1ep/N44C+vb/dNQaa0fMu8ygw9hAQPtVSvkPo6DpO1VPRK67qrWVeUx25HXgS4bwuUX0ovdm5qzso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Cvh0FCZn; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719920280; x=1720525080; i=markus.elfring@web.de;
-	bh=PMxrC5TKVJf22V5/57I5TeYs4p9gUbgtiEdMn8BmCyk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Cvh0FCZn9HEOQxmBMnuXnZucebT2Q7Xur9sqDou+0Qpg23W54o+38A2Ytvy3SL5K
-	 GerlAUmAZXWwSQG0MWOnHFV4PyYs/naLhI4mSOKUUUfyzGil0S5/WQMmXrGFoMhzw
-	 GiCRGpqIYiacf/NWjsgaMVyXTTd0FJ0CSxvyZ2DIM1XSzKDMEUEsH9M71ToUFuKPE
-	 8LqwCEsNOmSGFzsd3Ku+edAOFoRmxoEx/mUrR+79HGRC3TMN73lV7oZaPrAtPuQw7
-	 njp7nV2ffF9FkUjC5LcOkjTK6Mnc5Edt6/doJkK6V97ob0y2IB+vmtCMJdon9PrEs
-	 80h/vK3eyR7gajfXVw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MJWsc-1siLdg1FCi-00QutZ; Tue, 02
- Jul 2024 13:38:00 +0200
-Message-ID: <364b65a6-8717-4da3-aca4-8f8c847ad6a2@web.de>
-Date: Tue, 2 Jul 2024 13:37:58 +0200
+	s=arc-20240116; t=1719920322; c=relaxed/simple;
+	bh=zxPuS5kzIwm5vk5t+BjoNbU+A4vRHHGlPQxbOuS2DX0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SjEFy5EMT9BQaXyQBlI93L0HIkQNOCjXC7IItasMciw9kOI+p2lJxyclWIRx7QRFVRZuP1FE9am5yQAevHFxdrc8rVGqjxPjJIhji0S221bA0IBfTRhOgaU5HVKzaB+1UYH7vg3Lu+FstAKH34gxbsOXlqJB+bGkV1TqbiysrdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bu0WyF1t; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec50d4e47bso39466201fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 04:38:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719920319; x=1720525119; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7NjO96YfHbcurYXoOtukjWlkFgYmx5Yqic6PVS6K5qg=;
+        b=bu0WyF1tCSHkpNwmiriN3cFg/Usa2nBvP0iX9kU0qTF0TtHzB62UtlAYgKeRmskaOP
+         x9uo7PjgpdV9/36W66mYDUacyMwA8CoVDD12ixrOu416loBZVOLnJ1RAE3VYw0JKvUKj
+         mKEbGbuVqu7pVe+nzZGVTscAt7vnjpnQXO3WJSMRTviGBxZGnaPeevL3P95mxohKl04I
+         H9OEaB0gvQgNA4YbacTHslV1jwKkcdq+MhFZ9HkrDBJO4kEvqsaFVdNMF3sHrPl5Ajs1
+         cMW2lX+GjmlTGROFFJu9RR/n/QesHzgOMZn7RHAjjAOd71xcQqKwbQz8gs6Ls6TfhO/l
+         L2kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719920319; x=1720525119;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7NjO96YfHbcurYXoOtukjWlkFgYmx5Yqic6PVS6K5qg=;
+        b=vUKP5puIgqTm/GHFxIvC3PQAewVuaIbGZRv62YSvGogoX4MwF+6+RKnGNz1w/WXigP
+         KFbVxEEEMx6std8qIbWUh6GjOPUm3q1uGXuJnjoGjSNRVFTpjiYyHZQ1FDYDgG8u9F6y
+         AkVtLpa+B51KCRLCcuU3ZlZkQoFjSJMgJF+AkbaQ4QcVvDAFhMhyJ+qBuAIzUrsC/2bF
+         428FJkOIB2tPo31ibGWVlOJACG5k3SXJqsxBdRMRrDX/OawRxfXQ+dTRpvVXskmBHEYa
+         3r4YrjhMCOP1ofvGE3tHxjN3QPfAKytBPLSHu34QhmL/ClbrJtr8NsEJShQEV3+jt/qM
+         79dw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2q1dGtvLj6Kij3qnqt5cfYPbeB3uVwVlNkDVR8ejf8p/E6I+KDYW80mckfN+RS3y2UmZPHdDdTGITsv8BdrN3M7oBk/Y5O1JHoGKX
+X-Gm-Message-State: AOJu0YzeFZOWZBATR6kFn77vAWxc1RZMfC2VRZ5gtDb/peQji9N7TlSr
+	wBPCHTIijixO1zBmDgDCyNYnnQhDTLVJE4by1MWVJclZkf50cjEYPQNKX0sOulCvWrVqX87cGqP
+	aPaKPG6Y5q0MCU2hbzykxIAHVPGL1inwrszgtQw==
+X-Google-Smtp-Source: AGHT+IEct1k3J7FL99TS+D1ZokLj073HD7kx+D6FCbVI9CHvsVitKkiw5Aq8FbYEWpxeuF0Ur6G8a/zFteINawUVG8w=
+X-Received: by 2002:a2e:9e57:0:b0:2ec:5ff1:2274 with SMTP id
+ 38308e7fff4ca-2ee5e36f20dmr51288421fa.25.1719920318943; Tue, 02 Jul 2024
+ 04:38:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: zhang.chuna@h3c.com, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Zhang Zhengming <zhang.zhengming@h3c.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, berlin@h3c.com, jiaoxupo@h3c.com,
- shaohaojize@126.com, wang.yuI@h3c.com, zhang.zhansheng@h3c.com
-References: <1719903369-35385-1-git-send-email-zhang.chuna@h3c.com>
-Subject: Re: [PATCH] mm: fix kmap_high deadlock V2
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <1719903369-35385-1-git-send-email-zhang.chuna@h3c.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240702091655.278974-1-amit.pundir@linaro.org>
+ <8ba07bbf-e8b1-4244-882b-ff2575368b20@kernel.org> <he7q4mzj7u7t3c4pndu565m727e6hqpf2srrqgbdltjdffugdl@x3xrwteqpki3>
+ <CAMRc=Mepx86sQmPYLq2TkvhxtwUtsQGeYTVUc585oiuvOzLc-A@mail.gmail.com> <j2pvpoxrw7swutchmpgkzsacbwjcpdickmhprpxzedvcqxqx4o@6gyaqv4a35if>
+In-Reply-To: <j2pvpoxrw7swutchmpgkzsacbwjcpdickmhprpxzedvcqxqx4o@6gyaqv4a35if>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 2 Jul 2024 13:38:27 +0200
+Message-ID: <CAMRc=MdWQ6SKfubCqOOwwkn027W=Mt4PYQapQDJtfrei265GhA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: sm8550-hdk: add the Wifi node
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Amit Pundir <amit.pundir@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>, dt <devicetree@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jKaQcRj1eCOQIm7UXp8deZuShjOvY7aDgonKc4BYvqTKVjB13Go
- Z/QgoljEKDusxBXBpanbF/ic413wBqq6BIuSP24TWXFp4qvymd9C6yAHggTtiCdpAI+Mb4p
- EZtM9gvB3h7hSIIgYZkkfiQ1mqJ+BGE9hpTmSmpBKhyJ3rHFeuMk+YxPB462Prayg7V3uh5
- QHDvknFw1lqRfQyQxaUUQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:sdT7kVaeu3o=;OYu22aOgxpB3EiposwZg8VcvJVG
- w44AW66M92gVkgmYNLlVgknXyk3CNW25cpu/Nz2M3pQFEmfTXK+c6O3BdJPn4yb4sFHkfdUG3
- 2Y2DKJdbO7yxOIB09UitfrJ3x+2H6lssBzkfCesroeEVJu3M9VVB5B+ce+UFXWDb3Uwvij+5x
- q7UfLv6mZD1l1g/oWEHLpSrx0giY54Wce6S14td36dF+vf3qdY0S4doQ8w5xo0DIxSBZXy3ae
- c9yJXQ4nMbzmWb1mVEl//OqA7ZE858+84CgQhA4jG5gKnZSbN4SvJ6kE4yvpPrqj+N4lJVmnJ
- w5H7ZBrIhEeif7y7NLyuC2bd6rjLk45MYCAskcxerFBzLSdit8hG7wA2BkpOW09N/oygW1a8+
- QTIolYDE7lC0D4KVJbecZY4nUkgfzPBhXCFek/TaBlrnrjqg++d7RgjUY+iR7N0/K2tdQKnsK
- nkp+gNJyVnl2akSdyapYbqJi0hVSisidSGM4YqTmvsCyfLy4N4faKe5cd5rHjS+6LJ/H/6R0A
- oQgRAqo7lkKypEnuXdg3PRzxSQe9WxhNtB0h7urehbFlY/T21ZUZxtTULps5FCKv21liUsJcA
- Q03C8Sz0em3BXgU5fyd8OOLvuo9kPAl2lSiJJHN9VX6uBSdu8ujEOAtDr24TQ+iBr94xldqu/
- AXifkNalHGrFTXeWhlXynn3UUHDecunWykNXsZP9L+/QTiPYAyJSEkgvWK90nF2O8JKu7tOS1
- DgJpaXICmVFUsKLZNvlanE+rO7RJIK7C8bLhI/r31GaXi54pD0Y8XZRFO0mJ5/g2I8yMkXQtb
- d5XPRWcZ4eCfHyh+lm/5yv6Z4OnvUl8SUje1e+VXHp68c=
 
-=E2=80=A6
-> this is some deadlock condition. I think it's necessary to give
-> kmap_lock before call flush_tlb_kernel_range.
-=E2=80=A6
+On Tue, Jul 2, 2024 at 1:32=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Tue, Jul 02, 2024 at 01:13:09PM GMT, Bartosz Golaszewski wrote:
+> > On Tue, Jul 2, 2024 at 1:10=E2=80=AFPM Dmitry Baryshkov
+> > <dmitry.baryshkov@linaro.org> wrote:
+> > >
+> > > On Tue, Jul 02, 2024 at 12:42:02PM GMT, Krzysztof Kozlowski wrote:
+> > > > On 02/07/2024 11:16, Amit Pundir wrote:
+> > > > > Describe the ath12k WLAN on-board the WCN7850 module present on t=
+he
+> > > > > board.
+> > > > >
+> > > > > Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+> > > > > ---
+> > > > > Kanged verbatim from 490812872449 ("arm64: dts: qcom: sm8550-qrd:=
+ add the Wifi node").
+> > > > >
+> > > > >  arch/arm64/boot/dts/qcom/sm8550-hdk.dts | 97 +++++++++++++++++++=
+++++++
+> > > > >  1 file changed, 97 insertions(+)
+> > > > >
+> > > > > diff --git a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts b/arch/arm64=
+/boot/dts/qcom/sm8550-hdk.dts
+> > > > > index 12d60a0ee095..c453d081a2df 100644
+> > > > > --- a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+> > > > > +++ b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+> > > > > @@ -279,6 +279,68 @@ platform {
+> > > > >                     };
+> > > > >             };
+> > > > >     };
+> > > > > +
+> > > > > +   wcn7850-pmu {
+> > > > > +           compatible =3D "qcom,wcn7850-pmu";
+> > > > > +
+> > > > > +           pinctrl-names =3D "default";
+> > > > > +           pinctrl-0 =3D <&wlan_en>, <&pmk8550_sleep_clk>;
+> > > > > +
+> > > > > +           wlan-enable-gpios =3D <&tlmm 80 GPIO_ACTIVE_HIGH>;
+> > > > > +           /*
+> > > > > +            * TODO Add bt-enable-gpios once the Bluetooth driver=
+ is
+> > > > > +            * converted to using the power sequencer.
+> > > >
+> > > > I don't understand why hardware description should depend on the dr=
+iver.
+> > > > Either you have this GPIO or not. If you have it, what does it matt=
+er if
+> > > > there is no driver who can play with it?
+> > >
+> > > Then there is a conflict between BT and PMU, which both will try to
+> > > access the gpio (or at least the pinctrl).
+> >
+> > Ah, so this slipped through the cracks. Amit merely copied it from exis=
+ting dts.
+> >
+> > Yes, there's a conflict but Krzysztof is right - we should handle this
+> > in the driver, not in dts.
+> >
+> > However for that we need a patch for the PMU pwrseq driver first. Let
+> > me cook something up.
+>
+> Or for the BT driver, which might be more futureproof.
 
-How do you think about to improve such a change description another bit?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n94
+The problem here is that we have DT bindings that define the Bluetooth
+node properties (including the bt-enable GPIO) for wcn7850 and so are
+committed to supporting existing device-trees. Any change to the
+handling of this model (unlike QCA6390) must retain backward
+compatibility. I don't know yet how to approach it so for now I
+propose to add a quirk to the pwrseq driver and revisit later.
 
-Will the tag =E2=80=9CFixes=E2=80=9D become relevant here?
-
-
-The version identifier should be specified at an other place in the messag=
-e subject.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n668
-
-Regards,
-Markus
+Bart
 
