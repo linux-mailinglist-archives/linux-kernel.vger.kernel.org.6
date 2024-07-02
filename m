@@ -1,154 +1,105 @@
-Return-Path: <linux-kernel+bounces-237787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52AE6923E1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:45:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B286D923E23
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 874412850FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E43881C21B83
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B63B15DBAE;
-	Tue,  2 Jul 2024 12:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675DF16F0E0;
+	Tue,  2 Jul 2024 12:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ik3s/CRH"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="coy6VasB"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DF59470;
-	Tue,  2 Jul 2024 12:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF00715689B;
+	Tue,  2 Jul 2024 12:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719924350; cv=none; b=C2U1z4Ae9+uVSR6/5LCYlbYdmq/NOFbmgvhoEl6hZ38JbpJ9U50JFF7R2Q5SpA3NBzDY5LeZk+NSSLwFjViNOerlD7nlOHPmTKiHYU/8Qnn4dmslqCaid49pM2M6o1HsN+5GLy7TwGZbxc1xbbCPvXXKyQo5j/+5j1V5wig2PQk=
+	t=1719924638; cv=none; b=oLhEorqS4MMwb0M2uesEGF8b112uxhsGmfYalwxk/FHPBrAj6pHACdnWOrPZ/IDs1t5xV3JOcUXEplGwfke57DEoLvyziKGTmDCivb+keIWccr9Iop9CBry2P9ZJec5CeAQcLmIOtfhY2MQS3vlOXVtSNJVEXF2/cpkSI+F+5Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719924350; c=relaxed/simple;
-	bh=6MxOCjaZBfyhMv8du5omxW8oPy/q2TFH9X6JuMNqPjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TS/r6J98nauKIOVcCuH/Sd5YaCstUOFpzTIKzSP8+dEcD7Tv+veUnpmEvTjqZmXLUq116i7ac5FyJ+FknqaXR25aSBbGC6Pe2ia2JxGrNclBFYvozB8q21nTzXV6rDDdfwbY7GpQOFuMrCg/iVrI4HA27TfKPd6iwgipaF2CSIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ik3s/CRH; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 37F8B40E0185;
-	Tue,  2 Jul 2024 12:45:45 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id yDrurNuZkDgg; Tue,  2 Jul 2024 12:45:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719924341; bh=ijZkZE9XznnApp6up4UcjQQ75hPC45pe2q9sFxxaCZQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ik3s/CRHtyfWtp3Gj8m+o/DrBiNBlAESRzya4ZShBaVclzri05XQoLmxeLeV+xd2H
-	 KbVGekNohy70doRGqxfRx06Uvndh7piOLm4rd2u5Tyg4bvBdHk2gH9ejSPiv4dz1AC
-	 AAsoW3y37gIS88FsmVh5lHfemsHjDqlZAtKZw7ZiStA3hV78K2Ridxw3q/Di174CE+
-	 oqeDypiECwEoEaRzryxlQG4QLgpRQePAY4gitDPGZKHyiIvxp24AYJ79ItWWDx/uGn
-	 jfcLtKOdsPaOxnkRTlTMH30jb/FRKn10cfEVLBRVolvX1z5b+gS54Itif8exwPbZnh
-	 D91EXhkaG2vcPdarTxyixGj4OGRmPIHNHfo93HlhTg34ZF10dhOqgQ1/5eqWkbNnUN
-	 MCBzocbo1oFQKZgGbt1P/Y0/6+QPTDjDET1ILGrVaVx3zs4r8bpvbT3GV9I0UwL35x
-	 sl7W91zcf1RuOQejgvpH30h2d/4yiACK9pJBNYId46JfumGpp2TODpla8pHzr8psMf
-	 KJ7ENF/ee/M9ZhIo5gm1anStDpYuufLgcS5fENsFYt9hXXn4LJa8hR4rJlqcWkeUBo
-	 X7+Kv8L3flPO/KB+39aZXRv31xm9xz+WoG5ushF10ZEAbs5WoIno1AzwJwlG4zqcim
-	 f3IOlQSMLifHy5+q/Di9iHK4=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DD80B40E0192;
-	Tue,  2 Jul 2024 12:45:29 +0000 (UTC)
-Date: Tue, 2 Jul 2024 14:45:24 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-	"Li, Zhiquan1" <zhiquan1.li@intel.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Subject: Re: [PATCH v3] x86/acpi: fix panic while AP online later with kernel
- parameter maxcpus=1
-Message-ID: <20240702124524.GEZoP2ZKcTcKl1ca1R@fat_crate.local>
-References: <20240702005800.622910-1-zhiquan1.li@intel.com>
- <41ee5438e8059c299f5722e386cdc1457ddc16eb.camel@intel.com>
+	s=arc-20240116; t=1719924638; c=relaxed/simple;
+	bh=wZ4ce2/JHQtbnvdZNkk2cs0IMP+Jit6BbiJX6+NDK44=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hr0NsKHugdykzlxpk3LaQJ7lpndYXmWAbtpX8YuWxTGQ2AytWW2/DyfgagoQGN9GM7Cqw8t7Eye2J9tynbTdCzMnaJrpFIzrxvOJzbOS8eFZ3QJuQ+35g9XC4XGRMv1T/bDzBppm3WzYhO9r0T+c1Tramp4OjS5XsdgljzwhG3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=coy6VasB; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=hjgeQkxHClGKMnLDtElE5OXrX6B0Ogb3jMe/A0TWZuI=;
+	t=1719924628; x=1721134228; b=coy6VasBNpsYbku5gYtDtcIbx1Xwar2MdsVvMfINWQDXHWv
+	8gHtyfchLulGD2y+280qIlIhzJlHS/81thKqBympGursYWuFKx0N2P8vU9cqi4uYXCv2YeR2U8qsv
+	d6CZFC9PmqqnmuJ7fMSPnDjHnfBwd7pePDC1OD0srB+yJPR+lDssbUJAhkfsx6S/mZYkvCgJeMM5K
+	nRVgSXG4B7YBym0mgy6iDKwjGY7AsjiiAgIBh2tykni7Z6DtxXwIbmwKGoiU/WOP1tDRW5JD8ZIru
+	GFIm716v2LSFd3hcW+IVKrOF2DdzJpbSojyFuVseWrXf1FanTwJERg9LIHrdmZ4Q==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sOcwr-00000005UvX-3u1H;
+	Tue, 02 Jul 2024 14:49:30 +0200
+Message-ID: <2db23d6f3bd62c955c76d30aa2dfc3f03c8c5748.camel@sipsolutions.net>
+Subject: Re: [PATCH wireless 0/9] wifi: cfg80211: avoid some garbage values
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Su Hui <suhui@nfschina.com>, arend.vanspriel@broadcom.com,
+ kvalo@kernel.org
+Cc: kees@kernel.org, a@bayrepo.ru, quic_alokad@quicinc.com,
+ zyytlz.wz@163.com,  marcan@marcan.st, petr.tesarik.ext@huawei.com,
+ duoming@zju.edu.cn,  colin.i.king@gmail.com,
+ u.kleine-koenig@pengutronix.de,  quic_jjohnson@quicinc.com,
+ linville@tuxdriver.com, pieterpg@broadcom.com,  meuleman@broadcom.com,
+ frankyl@broadcom.com, stanley.hsu@cypress.com,  wright.feng@cypress.com,
+ ian.lin@infineon.com, chi-hsien.lin@cypress.com,  zajec5@gmail.com,
+ antonio@open-mesh.com, franky.lin@broadcom.com, 
+ linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev, 
+ brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+Date: Tue, 02 Jul 2024 14:49:25 +0200
+In-Reply-To: <20240702122450.2213833-1-suhui@nfschina.com>
+References: <20240702122450.2213833-1-suhui@nfschina.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <41ee5438e8059c299f5722e386cdc1457ddc16eb.camel@intel.com>
+X-malware-bazaar: not-scanned
 
-On Tue, Jul 02, 2024 at 12:05:38PM +0000, Huang, Kai wrote:
-> On Tue, 2024-07-02 at 08:58 +0800, Zhiquan Li wrote:
-> > The issue was found on the platform that using "Multiprocessor Wakeup
-> > Structure"[1] to startup secondary CPU, which is usually used by
-> > encrypted guest.  When restrict boot time CPU to 1 with the kernel
-> > parameter "maxcpus=1" and bring other CPUs online later, there will be
-> > a kernel panic.
-> > 
-> > The variable acpi_mp_wake_mailbox, which holds the virtual address of
-> > the MP Wakeup Structure mailbox, will be set as read-only after init.
-> > If the first AP gets online later, after init, the attempt to update
-> > the variable results in panic.
-> > 
-> > The memremap() call that initializes the variable cannot be moved into
-> > acpi_parse_mp_wake() because memremap() is not functional at that point
-> > in the boot process.
-> > 
-> > [1] Details about the MP Wakeup structure can be found in ACPI v6.4, in
-> >     the "Multiprocessor Wakeup Structure" section.
-> > 
-> > Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
-> > Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> 
-> Seems this changelog only mentions the problem, but doesn't say how to fix:
-> 
->   Remove the __ro_after_init annotation of acpi_mp_wake_mailbox to fix.
+On Tue, 2024-07-02 at 20:24 +0800, Su Hui wrote:
+>=20
+> Su Hui (9):
+>   wifi: cfg80211: avoid garbage value of 'io_type' in=20
+>     brcmf_cfg80211_attach()
+>   wifi: brcmfmac: avoid garbage value of 'status' in
+>     brcmf_c_download_blob()
+>   wifi: cfg80211: avoid garbage value of 'noise' in
+>     brcmf_cfg80211_dump_survey()
+>   wifi: cfg80211: avoid garbage value of 'chanspec' in
+>     brcmf_cfg80211_get_channel()
+>   wifi: cfg80211: avoid garbage value of 'freq' in
+>     brcmf_cfg80211_mgmt_tx()
+>   wifi: cfg80211: avoid garbage value of 'wsec' in
+>     brcmf_cfg80211_reconfigure_wep()
+>   wifi: cfg80211: avoid garbage value of 'wsec' in
+>     brcmf_cfg80211_add_key()
+>   wifi: cfg80211: avoid garbage value of 'val' in brcmf_set_key_mgmt()
+>   wifi: cfg80211: avoid garbage value of 'wsec' in
+>     brcmf_cfg80211_{get,config_default}_key()
+>=20
 
-Do not talk about *what* the patch is doing in the commit message - that
-should be obvious from the diff itself. Rather, concentrate on the *why*
-it needs to be done.
+Uh where did all those line breaks come from?
 
-Imagine one fine day you're doing git archeology, you find the place in
-the code about which you want to find out why it was changed the way it 
-is now.
+anyway all the titles are wrong - all of this is brcmfmac, not cfg80211.
 
-You do git annotate <filename> ... find the line, see the commit id and
-you do:
-
-git show <commit id>
-
-You read the commit message and there's just gibberish and nothing's
-explaining *why* that change was done. And you start scratching your
-head, trying to figure out why. Because the damn commit message is worth
-sh*t.
-
-This happens to us maintainers at least once a week. Well, I don't want
-that to happen in my tree anymore.
-
-So none of this text above still doesn't explain to me *why* this is
-happening.
-
-Why do APs need to update acpi_mp_wake_mailbox?
-
-Which patch is this fixing?
-
-See Documentation/process/submitting-patches.rst
-
-Questions over questions...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+johannes
 
