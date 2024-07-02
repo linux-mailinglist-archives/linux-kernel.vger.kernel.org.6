@@ -1,134 +1,178 @@
-Return-Path: <linux-kernel+bounces-238072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062AA9242F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:56:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAAE39242F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD051C248BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:56:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7871F23017
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889141BD000;
-	Tue,  2 Jul 2024 15:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C9C1BC096;
+	Tue,  2 Jul 2024 15:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="i43a3zt0"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cozWUnlm"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C014326AE4;
-	Tue,  2 Jul 2024 15:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFA926AE4
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719935779; cv=none; b=Xw7okwRUCsB8FAlVjqShw38UrZx8oVpvhBU5Y5JUoa32sIUdeVUGcMj0lUX07i9XOwCt2ZvaDn+mM+DaX5q6POju3+QaO2o4d3DyfYxJ1zV57xJVH5cFB66WB+npg1p2LLMa92TvvTEEZ6sawN/WDym9x/FgVjJFpdHiWtJ2vUM=
+	t=1719935812; cv=none; b=HXLrzSYWXifEFedyITORYshruLq1nZh+A37UjYiMsmRCU/+21QziCbr0Mmm4YmeYPA08NzCYVsl7MRyCSDqHq1uvrreMbRGQ2c8QshEHHKUSTi6XldA84dbmU1YNe2qbQKQdnhlSs66TUEg8AHl8nCY3vZIqlLggYFLDZNu25Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719935779; c=relaxed/simple;
-	bh=1+gzNbPlpcRYJgNGJGSRAyloxA2ydKZJokzw9VBOuMc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sL5iH8t2UmVuimDizsjn0mkAXLjOn711DXM/guPnIxpqCnmJzu2Qjgi1z2pwsA7z5Fi+55KYiMErxOwNjWal+8siDHo2qykiAfdp9WXVjtDoUd41lPD4PTPqr3gBZ6qRi3kywEBOBeMjtd5b2N4bSHUC+fXFT6bE5K/HZsHdnE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=i43a3zt0; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462FSOsa020096;
-	Tue, 2 Jul 2024 15:56:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=0MCtPccUAv/HyOA5SIGH355/4W
-	OzGzAz1a93r83mZlE=; b=i43a3zt0wFoSxGEF8NS1wzom4JXP7Lq/BTcNdayNfN
-	fpXRfZ4KEh3xt0r3jonp3RDD6h69ZWFp1my9UAH+8kH1xfPv5KMzX5t9HvzL9UJw
-	Lsf4c6Tm2txz7dUFk8qmpkm7dpvF1HTJbNHFBPVS2LpC8S5MCYTbq2d//pcBMqFp
-	zUPocpRcx2wzC3nBW5y/ma9CUXDolcdvgiVXlXiI8VmWhsN7dfXymtGUb6Magmq2
-	Iae457+YkkrB1lAVDQkbf/uX/UEkxO38ITNgRRv2PPYS6eYpBdtDSjc+gk6fcSLL
-	TRRTIQ+N1u5quPDVGKLkZdaSxaVqXGTrev4Lbk6SQUaw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 404m7j82tu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 15:56:15 +0000 (GMT)
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 462FuFbf032583;
-	Tue, 2 Jul 2024 15:56:15 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 404m7j82tk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 15:56:15 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 462D8enu005942;
-	Tue, 2 Jul 2024 15:56:14 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 402vku5w0k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 15:56:14 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 462Fu6K156164852
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 2 Jul 2024 15:56:08 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A5B22004E;
-	Tue,  2 Jul 2024 15:56:06 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6C40920043;
-	Tue,  2 Jul 2024 15:56:06 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  2 Jul 2024 15:56:06 +0000 (GMT)
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        frankja@linux.ibm.com, borntraeger@de.ibm.com, nrb@linux.ibm.com,
-        nsg@linux.ibm.com, seiden@linux.ibm.com, david@redhat.com
-Subject: [PATCH v1 1/1] KVM: s390: remove useless include
-Date: Tue,  2 Jul 2024 17:56:06 +0200
-Message-ID: <20240702155606.71398-1-imbrenda@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719935812; c=relaxed/simple;
+	bh=8ner41gRskw+GSfgxISqqxmCp4VWSYH/4KdQPpuLGM0=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=JJFQrjSwr/qac0Rj8aCfoA/eOhhY0OwnvBx+IsregrCyoUkvTg0Y7/13HzILdTDzSgG7RMQS8bP18qBkxRBvynra8qsm3zVKTaqZEaDOl5IQ4MNLt99lYvGtZrGxMIbwJmLZeoRdQRy6yuBVwhhcrBWOlXqCpNuRoZ1EB7fgf3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cozWUnlm; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b5db7936b3so2574526d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:56:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1719935809; x=1720540609; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FB8UHDOaIKLrgIWEE8g4mg51WR8c0nOJoFegB46Qoig=;
+        b=cozWUnlmfWxoQ4IxgusiFt3R70S1Q5Q1L5rX1VNTvO2ckMWFW+SrWmJILBcizGo7yi
+         UaD7sbtTaGxIkOPC+AMzcRuBZuRRqaPhrllVoKODDuQGmAZyuQxvlnNSI2A0tdMvFeVi
+         HErL97dxR3z34ThGYBTeEUhRExQUzGX8p1PlxA7AMrm1f9wXd4F17vOCVEdesHKrHg3K
+         E8CL5eOx241hTcxzLcxAz5HN5x1PoETA9ym/aWleTpVWrYcZEh7qwhQFYWcj4yC7odzm
+         SsC/fNhVoVo8gKT7QhwAhIOHGgIOtjwmXSNjrvUNGdlRVlbMwkvSQHu8VreI3yhjG76O
+         L3mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719935809; x=1720540609;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FB8UHDOaIKLrgIWEE8g4mg51WR8c0nOJoFegB46Qoig=;
+        b=QVO2h55Z01uNwbquGS2SL0J+AfxgPDT5IAuFr/V3Ksmjpjo4qsbwIXs0fY+JgvUgI2
+         jTVp8+R18OEYUeEuBTOKuDtAacU33fe9cWkjP4dFpnhR5kFbLRQ5p5IMduZ17F2I9gDm
+         2NUoYLuaBb+KP3BtsCEhH2MGVhXCACxyxyafvm7XukO33K0ImOr+ZF60Eb8Cd+wBSGA8
+         oaLEJsbpJaRdWhO39vcl5sotZijsEkV3kubp0Yf6Ez8xPr8KTXnmB+5EsPfhVbLFNLv3
+         nWhKSC14qr6Lnli4wjBh6YHF3oX2EeOZRA05vpEiv6XDcLdQH+TbXMkX597daX1Cfdp+
+         v86g==
+X-Forwarded-Encrypted: i=1; AJvYcCUT+PlWUZQ0zoAoY6jaTtRCcDs3JaR7Mg1HAjNoevYh9R3YIpq6zJ50hCPDB8FY+rxCyr4h1rKZhyvvLwxJlV+8PiCCq1Pt34rSrWOd
+X-Gm-Message-State: AOJu0YxT525+ec9YbBa+vSFAh/sN4lXjlWd3qD8LZsMV7VDkvXfGokh1
+	MPCPf0DvxgbAv6pVD9E3U6yEXcBnX7Cg7k96UWWODVnydCZncUmS10TjE6QPZg==
+X-Google-Smtp-Source: AGHT+IGjBlHimts/oaQ3Af8rs53H92WprPl+hFmtp0WMpy+HhR/2A4KlwlRph0QRmPf5uT43vkBHAw==
+X-Received: by 2002:a05:6214:2422:b0:6b0:763c:e069 with SMTP id 6a1803df08f44-6b5b7098a37mr126280576d6.18.1719935809612;
+        Tue, 02 Jul 2024 08:56:49 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5a705bc83sm41082046d6.131.2024.07.02.08.56.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 08:56:49 -0700 (PDT)
+Date: Tue, 02 Jul 2024 11:56:48 -0400
+Message-ID: <0c6a49b11150cb088f3be6a8e49fdd02@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 0hwgbO1KruNFT2MfLeSYV6--RUqPwABr
-X-Proofpoint-ORIG-GUID: CrUXzvGo2326g7e36vx9EoHdMCaJf3V2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-02_11,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=1 priorityscore=1501
- impostorscore=0 phishscore=0 spamscore=1 mlxlogscore=198 adultscore=0
- suspectscore=0 mlxscore=1 malwarescore=0 clxscore=1015 lowpriorityscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407020117
+From: Paul Moore <paul@paul-moore.com>
+To: Canfeng Guo <guocanfeng@uniontech.com>
+Cc: stephen.smalley.work@gmail.com, omosnace@redhat.com, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, Canfeng Guo <guocanfeng@uniontech.com>
+Subject: Re: [PATCH] selinux: Streamline type determination in  security_compute_sid
+References: <20240629041124.156720-1-guocanfeng@uniontech.com>
+In-Reply-To: <20240629041124.156720-1-guocanfeng@uniontech.com>
 
-arch/s390/include/asm/kvm_host.h includes linux/kvm_host.h, but
-linux/kvm_host.h includes asm/kvm_host.h .
+On Jun 29, 2024 Canfeng Guo <guocanfeng@uniontech.com> wrote:
+> 
+> Simplifies the logic for determining the security context type in
+> security_compute_sid, enhancing readability and efficiency.
+> 
+> Consolidates default type assignment logic next to type transition
+> checks, removing redundancy and improving code flow.
+> 
+> Signed-off-by: Canfeng Guo <guocanfeng@uniontech.com>
+> ---
+>  security/selinux/ss/services.c | 32 ++++++++++++++++----------------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
+> 
+> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+> index e33e55384b75..0c07ebf0b1e7 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -1804,21 +1804,7 @@ static int security_compute_sid(u32 ssid,
+>  			newcontext.role = OBJECT_R_VAL;
+>  	}
+>  
+> -	/* Set the type to default values. */
+> -	if (cladatum && cladatum->default_type == DEFAULT_SOURCE) {
+> -		newcontext.type = scontext->type;
+> -	} else if (cladatum && cladatum->default_type == DEFAULT_TARGET) {
+> -		newcontext.type = tcontext->type;
+> -	} else {
+> -		if ((tclass == policydb->process_class) || sock) {
+> -			/* Use the type of process. */
+> -			newcontext.type = scontext->type;
+> -		} else {
+> -			/* Use the type of the related object. */
+> -			newcontext.type = tcontext->type;
+> -		}
+> -	}
+> -
+> +	/* Set the type. */
+>  	/* Look for a type transition/member/change rule. */
+>  	avkey.source_type = scontext->type;
+>  	avkey.target_type = tcontext->type;
+> @@ -1837,9 +1823,23 @@ static int security_compute_sid(u32 ssid,
+>  		}
+>  	}
+>  
+> +	/* If a permanent rule is found, use the type from */
+> +	/* the type transition/member/change rule. Otherwise, */
+> +	/* set the type to its default values. */
 
-It turns out that arch/s390/include/asm/kvm_host.h only needs
-linux/kvm_types.h, which it already includes.
+In general this patch looks fine with the exception of the comment
+block above, you can either follow the multi-line comment used elsewhere
+in this source file, example:
 
-Stop including linux/kvm_host.h from arch/s390/include/asm/kvm_host.h .
+ /* line one
+    line two
+    line three */
 
-Due to the #ifdef guards, the code works as it is today, but it's ugly
-and it will get in the way of future patches.
+... or you can follow the generally accepted style for multi-line
+comments in the Linux kernel:
 
-Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
----
- arch/s390/include/asm/kvm_host.h | 1 -
- 1 file changed, 1 deletion(-)
+ /* line one
+  * line two
+  * line three
+  */
 
-diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-index 95990461888f..736cc88f497d 100644
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -15,7 +15,6 @@
- #include <linux/hrtimer.h>
- #include <linux/interrupt.h>
- #include <linux/kvm_types.h>
--#include <linux/kvm_host.h>
- #include <linux/kvm.h>
- #include <linux/seqlock.h>
- #include <linux/module.h>
--- 
-2.45.2
+See the link below for more information:
 
+* https://docs.kernel.org/process/coding-style.html#commenting
+
+>  	if (avnode) {
+> -		/* Use the type from the type transition/member/change rule. */
+>  		newcontext.type = avnode->datum.u.data;
+> +	} else if (cladatum && cladatum->default_type == DEFAULT_SOURCE) {
+> +		newcontext.type = scontext->type;
+> +	} else if (cladatum && cladatum->default_type == DEFAULT_TARGET) {
+> +		newcontext.type = tcontext->type;
+> +	} else {
+> +		if ((tclass == policydb->process_class) || sock) {
+> +			/* Use the type of process. */
+> +			newcontext.type = scontext->type;
+> +		} else {
+> +			/* Use the type of the related object. */
+> +			newcontext.type = tcontext->type;
+> +		}
+>  	}
+>  
+>  	/* if we have a objname this is a file trans check so check those rules */
+> -- 
+> 2.20.1
+
+--
+paul-moore.com
 
