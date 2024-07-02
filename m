@@ -1,51 +1,83 @@
-Return-Path: <linux-kernel+bounces-237650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31878923C1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:10:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189C0923C1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF75C2879A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:10:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1F191F25639
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4607215B0F4;
-	Tue,  2 Jul 2024 11:10:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331E91591ED;
-	Tue,  2 Jul 2024 11:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772B515AADA;
+	Tue,  2 Jul 2024 11:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PX+uurSk"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4F64CDF9
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719918628; cv=none; b=FSs83FVZCTpU630M1nZNiKjSScYmUVK9PuBp3/Jqkez1P/hX1mxwttDizPiyMeRX7APkeuAm++wQCsfgH1c+m6A3pOtmFbrdprhh/7EqyZAH4NNx40t3A28PsZ2oM9fYkrHXmnsThbqmzvXp2hyW/FYyXakPwLtuaSF34NK7cOI=
+	t=1719918627; cv=none; b=hXRJIIZ+BJF+9YjXXEJPtg2arPu3OgJurGZVBRV5dakQ+jXFL1o90ZwOxjZHloEucrrgynu3lbLSRpJR2DgI/fIrmsOJXBEj9tuStGNR4FlSukYbG4j9DAu65GZkOk5SJzwvDgJlTsxtasNd3aZLnb0qSEkLtFk2GtXx1Jz/rog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719918628; c=relaxed/simple;
-	bh=rTaJ0w6/itfmt4ygZvgEm2Q6+AQjMGYbtw9tNRjtlu8=;
+	s=arc-20240116; t=1719918627; c=relaxed/simple;
+	bh=SfEjw4cFfxixrvq6qtIfO/ZWv+HyMAbCOPeV0PYn3fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nfwn8xRzEHEqS7Vgvmndow3+2IWFhPg6TyU7whMID3fFN+ahE/8HgMRxrMcpjO7/LtNIjUbGeH7Mlg4IipKWkJSc34GwbOMOB7Az/cjGD2M9KjQvURn203c4hjWlNqYlOibADqx13eso+TSFIqtv5j5Y+DCFg6aurljvkpVGZkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72550339;
-	Tue,  2 Jul 2024 04:10:50 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E7013F762;
-	Tue,  2 Jul 2024 04:10:24 -0700 (PDT)
-Date: Tue, 2 Jul 2024 12:10:21 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Luke Parkin <luke.parkin@arm.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	Sudeep Holla <Sudeep.Holla@arm.com>
-Subject: Re: [PATCH 2/3] Track basic SCMI statistics
-Message-ID: <ZoPgHRl8FUo9-Xvz@pluto>
-References: <20240701142851.1448515-1-luke.parkin@arm.com>
- <20240701142851.1448515-3-luke.parkin@arm.com>
- <ZoLWH9-JPFQB4YSu@pluto>
- <490bb053-f2dd-4c6a-a976-c8d21d66eb4c@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwwnlZksatofxTbpqKRxO3vfGU/1swvZAtILkkFJD3UeScfE5WfbfKcNCBypKZuLPmKbG57bzJRR6ihC4XVTpdIxiw6gfqlKtcHtCt3jnmj9mDQ5nuLSPtU8viLd6e40t7DbAks+7CRo41Lj/UkH5R1XjAw9b//Bh0fszhyyknU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PX+uurSk; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52cd87277d8so4164434e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 04:10:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719918624; x=1720523424; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GUL6InU1s2oamDAjQ14QR1sgjo5CD0g2L+SSERlRdFs=;
+        b=PX+uurSkYHA1OXCMSJiiocGz/VMb6MGfNCpF9I17uoPpoPG6CXxgi5NMmn02ea5UiC
+         UmGyUuKbwePN7euLN7YLoRTG0ZJ43SIhKLyMnzZnG93mXMzM0zrkZkZTK84//LLAYrOn
+         fKn3OUHgPByZjw6vrwr73varjOKs4lBK83v9l/KkWgraRvLgw/brJz/+DBetzxe/v33n
+         JC4MXeaSJ7XU0+aYgLx8626K4HXBi/k89ZBlSTlSXlcLaujLorWpUvGmnkCjNP4Wxt3i
+         waayR4dzXvH2SB0kyEggRy1eH9QccRjngkEIsKwxU6E1U5E7O2GYr9DxVbbRpqeS1BMq
+         i05Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719918624; x=1720523424;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GUL6InU1s2oamDAjQ14QR1sgjo5CD0g2L+SSERlRdFs=;
+        b=rRl8NzHMmRAD9qsV8p9PTnzDZzQEL8h3YvqBaA6QelRohhtUqU5ucCOV+bVS5kqDZO
+         nfiWmIdfuflaf0sYuDb5uBlIJTTIV0hdt1FFS8jG82VE+COP8TCXkFrPycrsTUb+gZmg
+         4zBo9IHr6AySNfWayhmHbrvymmZADd89QOMgONbOrulPNDYZmmmuTBcSkYTR+/tY4DLu
+         teRf3oN7AnL9fFgOMjqvbJLoB1YbCQVRGq49FhN6nSa+GWmt0YCluV3l46jXeI8EexSy
+         w2zLRgO/FSsNLtt3hdZwPPXLyBYtOnqcSej1iFf9tKlfPeD3SzzILub8XWnhNVBA65fX
+         2/aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8tZaQBSVwa5Q26YZtCYHrmQJBPwf1yMDZ89mZO2CJHAysnFh6i+Ps/uNMJH/5t6lFX/5mKefKoAIaBdzJV7Z5gjKGKkUOeU8NGPmj
+X-Gm-Message-State: AOJu0YzwiRx1vLVNFKtrrhtJvBJ4ksV5OegAx5bINfTmv+JJt6cD68jL
+	enGVSOdDpIbW97TdIUiB4e8pPHu3OOz4C6SHfbe4tYWgESe492zdbLlJj4vTJPA=
+X-Google-Smtp-Source: AGHT+IHsgF9I8uZJmqTmWCz+zNt8GwFkL2X6pxZhrZeGft31aGGDWcnY7hGJ7WQ7OHecVueU0YVRJA==
+X-Received: by 2002:a05:6512:3996:b0:52c:a1ad:18bd with SMTP id 2adb3069b0e04-52e82651a88mr6252854e87.6.1719918623990;
+        Tue, 02 Jul 2024 04:10:23 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab30a68sm1775997e87.242.2024.07.02.04.10.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 04:10:23 -0700 (PDT)
+Date: Tue, 2 Jul 2024 14:10:22 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Amit Pundir <amit.pundir@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, 
+	dt <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: qcom: sm8550-hdk: add the Wifi node
+Message-ID: <he7q4mzj7u7t3c4pndu565m727e6hqpf2srrqgbdltjdffugdl@x3xrwteqpki3>
+References: <20240702091655.278974-1-amit.pundir@linaro.org>
+ <8ba07bbf-e8b1-4244-882b-ff2575368b20@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,73 +86,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <490bb053-f2dd-4c6a-a976-c8d21d66eb4c@arm.com>
+In-Reply-To: <8ba07bbf-e8b1-4244-882b-ff2575368b20@kernel.org>
 
-On Tue, Jul 02, 2024 at 10:57:23AM +0100, Luke Parkin wrote:
-> > Ok, so IMO, this is the main core thing to rework in this series: the
-> > "counting" operation/block should be defined as a macro so that it can
-> > be fully compiled out when STATS=n, because these are counters
-> > incremented on the hot path for each message, not just once in a while,
-> > so the above if(IS_ENABELD()) now will be there and evaluated even when
-> > STATS=n.
-> >
-> > Something like:
-> >
-> > 	#ifdef CONFIG_ARM_SCMI_DEBUG_STATISTICS
-> > 	#define SCMI_LOG_STATS(counter)			\
-> > 		<your magic here> 			\
-> > 	#else
-> > 	#define SCMI_LOG_STATS(counter)
-> > 	#endif
-> >
-> > .... I have not thought it through eh...so it could be radically
-> > different...the point is ... the counting machinery should just
-> > disappear at compile time when STATS=n
+On Tue, Jul 02, 2024 at 12:42:02PM GMT, Krzysztof Kozlowski wrote:
+> On 02/07/2024 11:16, Amit Pundir wrote:
+> > Describe the ath12k WLAN on-board the WCN7850 module present on the
+> > board.
+> > 
+> > Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+> > ---
+> > Kanged verbatim from 490812872449 ("arm64: dts: qcom: sm8550-qrd: add the Wifi node").
+> > 
+> >  arch/arm64/boot/dts/qcom/sm8550-hdk.dts | 97 +++++++++++++++++++++++++
+> >  1 file changed, 97 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+> > index 12d60a0ee095..c453d081a2df 100644
+> > --- a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+> > +++ b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+> > @@ -279,6 +279,68 @@ platform {
+> >  			};
+> >  		};
+> >  	};
+> > +
+> > +	wcn7850-pmu {
+> > +		compatible = "qcom,wcn7850-pmu";
+> > +
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&wlan_en>, <&pmk8550_sleep_clk>;
+> > +
+> > +		wlan-enable-gpios = <&tlmm 80 GPIO_ACTIVE_HIGH>;
+> > +		/*
+> > +		 * TODO Add bt-enable-gpios once the Bluetooth driver is
+> > +		 * converted to using the power sequencer.
 > 
-> Hey Cristian, Unless I've missed something, It looks like IS_ENABLED() does do
-> what you ask for.
-> In Documentation/process/coding-style.rst:1168 it reccomends using IS_ENABLED
-> for conditional compilation over #if and #ifdef, saying that the compiler will
-> constant-fold the conditional away.
+> I don't understand why hardware description should depend on the driver.
+> Either you have this GPIO or not. If you have it, what does it matter if
+> there is no driver who can play with it?
 
-Yes indeed, it will be compiled out anyway, forgot that despite having
-it used myself a few lines below :D .... but from the readability standpoint,
-given that we will sprinkle this all over the code, wont be much clearer to
-conditionally define once for all an inline function (like mentioned at the
-start of that coding-style.rst paragraph) or a macro in a header (like common.h)
-to wrap the atomic_inc
+Then there is a conflict between BT and PMU, which both will try to
+access the gpio (or at least the pinctrl).
 
-#ifdef CONFIG_ARM_SCMI_DEBUG_STATISTICS
-static inline void scmi_log_stats(atomic_t *cnt)
-{
-	atomic_inc(cnt);
-}
-#else
-static inline void scmi_log_stats(atomic_t *cnt) { }
-#endif
-
-and then just call it plainly wherever it needs, knowing that the compiler
-will equally compile it out all-over when STATS=n.
-
-ifdeffery is discouraged in the code flow but it is acceptable to define
-alternative nop fucntions in a header.
-
-Also because in some of the callsite you handle 2 stats with some ifcond
-(conditional on the IS_ENABLED that is good) and that could be a problem,
-but those calls can be split and placed alone where that some condition is
-already check normally as in as an example in scmi_handle_response():
-
-	if (xfer->hdr.type == MSG_TYPE_DELAYED_RESP) {                           
-                scmi_clear_channel(info, cinfo);
-                complete(xfer->async_done);
-+		scmi_log_stats(&info->stats.dlyd_response_ok);
-	} else {                                                                 
-                complete(&xfer->done);                                           
-+		scmi_log_stats(&info->stats.response_ok);
-        }                                    
-
-...what do you think, am I missing something else ?
-
-Thanks,
-Cristian
+-- 
+With best wishes
+Dmitry
 
