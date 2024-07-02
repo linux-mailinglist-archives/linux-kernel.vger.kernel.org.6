@@ -1,191 +1,227 @@
-Return-Path: <linux-kernel+bounces-238565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0281924C25
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:34:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D4E924C28
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3D4D1C213B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:34:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E045FB238D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480C717A5BF;
-	Tue,  2 Jul 2024 23:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DEE1586D5;
+	Tue,  2 Jul 2024 23:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UjyzXxDd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dTcG1/Q2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11C51DA320;
-	Tue,  2 Jul 2024 23:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC4D1DA332
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 23:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719963273; cv=none; b=cnZVSOARCDtZQ3HnCtC2Cyt1ivDzVFVR46dLlI8u+ecEHUDPzWv6oNpH+bmwmYEnOEWXfUTfDtwHRKwPEK3tQ5588C0nfVhOJgfZ+VJpF5NMHvBfiDJGXj9OSzCXXhNbx/wPdmOW7Zcg125w/K5JrozET/xrMCkeOkxxqGaIy9E=
+	t=1719963306; cv=none; b=e8599bF6w84cAJpYCCUZwOcPVfi+hCHgIpXEzI+rbKPyf+xFh25CfdPZfrEVrlTxxLTt4mPrlhDsthC/pW5NYmm48myn6V2114WCPsWvI2mU4VibPgriEcJ3GiBYn16uVDSMs13PY/J9gIQCrqUwoupcmNFEKuBgqMPo+at5EEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719963273; c=relaxed/simple;
-	bh=LNH3O5IfY6PoWnz4btQ0PNI/uE/ZJQXWAD5uRijVgoo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GIC0xIOPI2eDEOELR3nARsj6mel+kf1KNIZ8xDM6tV31osyr+A1qyn1/dGbtndqSqFettWuG6O6ZtqtfFCGkLBcAdfUvoMw0KOSJU7YHNKQb/Lu5AwZv1HIDeyXzcrBsRZ9mMB2/xxeodn3KCWKUy8uKy3Xrc5SWwC+YenU7RW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UjyzXxDd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462HJL7W023818;
-	Tue, 2 Jul 2024 23:34:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LNH3O5IfY6PoWnz4btQ0PNI/uE/ZJQXWAD5uRijVgoo=; b=UjyzXxDdt3+S5ipz
-	Xqb3V2a6qismCtxLuKBWoGkFU/4i4P80dIpDf8hww/0NdkOcf7oQfGohv0VMi8R+
-	y8DxI9fx6D9jhL9djOr4FdUF9VmxopCNyV025AvR+pdjiOiTXLLO+loqMAbT1kIQ
-	sP7XTQYtIdSlr27WW/NYQK8KWkCInJaynzhFcl95Lqiaeijdrb7cmsYBYlvpixmx
-	nzWHDiaZmNnfb7AcCthsYEruft40PmKI2wGPDttTquo/XrgCwa9HX2XXiMT+Jx9U
-	h6Dq71Pv1qv5zq0fRBM98o672loSsxC2gatRt5lvBNg6VgY8RHqESJoTwc8qQcV4
-	7ieS9w==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40297rt2vy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 23:34:09 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462NY96V026581
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Jul 2024 23:34:09 GMT
-Received: from [10.110.95.24] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
- 16:34:08 -0700
-Message-ID: <3c358604-6926-4f90-8fc8-8139c68c3418@quicinc.com>
-Date: Tue, 2 Jul 2024 16:34:07 -0700
+	s=arc-20240116; t=1719963306; c=relaxed/simple;
+	bh=IAWVXmG5RVQGeSXuBjF8WACaxW+bGGlMwMjFJD3ncjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ShcSCagbJHgCxHZn3OTMVDZ1oZU9vJX+hGJLSdgp+Q9A4lDz3kL4d721qZeBG7fGKdCl3yOsAUy0hdUNfbiMnx0ZkgcIacoTbSd6tf8KgBmwctF6crGhBiO6PHZn/n3wH4IHss6M2QQzne5nJjVnY7bhCa0ZcW36c7EYqQAR80I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dTcG1/Q2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719963303;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CDJrW/fweje5WkTGpyth3SwWRqpHU5OBcviptdCfIuo=;
+	b=dTcG1/Q2AwM4NIvOJxOR8QBkekOCqDeIzriR3kYgDxjBctGQ9N6QS1lLr3BvpG11zy1Rwg
+	VpjN1zSV7JlPH1c8+R03gJnPayjrYyDCxXG7ZhFYs0t67EijnAMSWKEWAwcZ8Vsd9rMFAb
+	QeCcG6L/v9acf+ng0muOPGuxiW0oB1E=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-488-qxhzJhEWP-Wkz85eGRnjpA-1; Tue,
+ 02 Jul 2024 19:35:02 -0400
+X-MC-Unique: qxhzJhEWP-Wkz85eGRnjpA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 93CA31956089;
+	Tue,  2 Jul 2024 23:35:00 +0000 (UTC)
+Received: from chopper.lyude.net (unknown [10.22.10.132])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 08B753000221;
+	Tue,  2 Jul 2024 23:34:57 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/panic: Fix uninitialized spinlock acquisition with CONFIG_DRM_PANIC=n
+Date: Tue,  2 Jul 2024 19:34:50 -0400
+Message-ID: <20240702233451.1238645-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
-	<amadeuszx.slawinski@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <robh@kernel.org>, <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
- <20240610235808.22173-33-quic_wcheng@quicinc.com>
- <5be51e1f-70c9-4bbc-96fa-1e50e441bd35@linux.intel.com>
- <408d9e8e-0f40-7e66-54be-2f8d2c0783a3@quicinc.com>
- <ca1e1063-e1bd-4e03-a7cd-91985e9954e9@linux.intel.com>
- <096d59a0-5e18-092c-c9ae-d98130226f06@quicinc.com>
- <368d9019-2c96-468e-b472-7e1127f76213@linux.intel.com>
- <eb6370ea-47a0-3659-3c10-cb7f95e3e520@quicinc.com>
- <510468c7-b181-48d0-bf2d-3e478b2f2aca@linux.intel.com>
- <c7a95157-1b71-1489-3657-8fe67f9acb4e@quicinc.com>
- <90463a4e-c2e7-4b59-9a79-23533b4acd1e@linux.intel.com>
- <fd8f1eb0-4b21-4697-8175-a61bc3858852@quicinc.com>
- <f982842a-1804-420b-a539-a609ecf8fb8a@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <f982842a-1804-420b-a539-a609ecf8fb8a@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: sz5hhODFOp_NmTAUPVtNmQvfhu6jIR9c
-X-Proofpoint-GUID: sz5hhODFOp_NmTAUPVtNmQvfhu6jIR9c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-02_16,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 clxscore=1011 mlxscore=0 suspectscore=0 spamscore=0
- adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407020173
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Pierre/Amadeusz,
+It turns out that if you happen to have a kernel config where
+CONFIG_DRM_PANIC is disabled and spinlock debugging is enabled, along with
+KMS being enabled - we'll end up trying to acquire an uninitialized
+spin_lock with drm_panic_lock() when we try to do a commit:
 
-On 7/2/2024 1:30 AM, Pierre-Louis Bossart wrote:
->>> There are really multiple layers to deal with
->>>
->>> a) is the controller able to support the offload path? IIRC this is
->>> embedded in an obscure XHCI property, it would make sense to expose it
->>> as a control, or component string, of the USB card.
->> If a component string/tag is desired, I already have some way of doing that.  I can add it to the USB card.
->>
->>> b) is there a companion card capable of dealing with the offload path?
->>> Since the presence of this card may depend on driver probe, there should
->>> be a control on the USB card. userspace could detect changes to this
->>> control and detect if that path is or is no longer enabled.
->> So currently, the "USB Offload Playback Capable Card" kcontrol (on the USB card) will determine if there is an offload path.  However, this differs than what Amadeusz is suggesting, in that he wants a single kcontrol created for EACH USB card identified (per USB audio device), and a simple enable/disable control to determine if the offload path is enabled for that card/pcm stream.
->>
->> It would be a simpler approach for the userspace, and if the card that handles the offload card isn't present, then these enable/disable control will be set to "disabled," and even if users attempt to set the control, it won't go through.
-> Not following. Are you suggesting userspace would modify the
-> enable/disable status?
+  rvkms rvkms.0: [drm:drm_atomic_commit] committing 0000000068d2ade1
+  INFO: trying to register non-static key.
+  The code is fine but needs lockdep annotation, or maybe
+  you didn't initialize this object before use?
+  turning off the locking correctness validator.
+  CPU: 4 PID: 1347 Comm: modprobe Not tainted 6.10.0-rc1Lyude-Test+ #272
+  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20240524-3.fc40 05/24/2024
+  Call Trace:
+   <TASK>
+   dump_stack_lvl+0x77/0xa0
+   assign_lock_key+0x114/0x120
+   register_lock_class+0xa8/0x2c0
+   __lock_acquire+0x7d/0x2bd0
+   ? __vmap_pages_range_noflush+0x3a8/0x550
+   ? drm_atomic_helper_swap_state+0x2ad/0x3a0
+   lock_acquire+0xec/0x290
+   ? drm_atomic_helper_swap_state+0x2ad/0x3a0
+   ? lock_release+0xee/0x310
+   _raw_spin_lock_irqsave+0x4e/0x70
+   ? drm_atomic_helper_swap_state+0x2ad/0x3a0
+   drm_atomic_helper_swap_state+0x2ad/0x3a0
+   drm_atomic_helper_commit+0xb1/0x270
+   drm_atomic_commit+0xaf/0xe0
+   ? __pfx___drm_printfn_info+0x10/0x10
+   drm_client_modeset_commit_atomic+0x1a1/0x250
+   drm_client_modeset_commit_locked+0x4b/0x180
+   drm_client_modeset_commit+0x27/0x50
+   __drm_fb_helper_restore_fbdev_mode_unlocked+0x76/0x90
+   drm_fb_helper_set_par+0x38/0x40
+   fbcon_init+0x3c4/0x690
+   visual_init+0xc0/0x120
+   do_bind_con_driver+0x409/0x4c0
+   do_take_over_console+0x233/0x280
+   do_fb_registered+0x11f/0x210
+   fbcon_fb_registered+0x2c/0x60
+   register_framebuffer+0x248/0x2a0
+   __drm_fb_helper_initial_config_and_unlock+0x58a/0x720
+   drm_fbdev_generic_client_hotplug+0x6e/0xb0
+   drm_client_register+0x76/0xc0
+   _RNvXs_CsHeezP08sTT_5rvkmsNtB4_5RvkmsNtNtCs1cdwasc6FUb_6kernel8platform6Driver5probe+0xed2/0x1060 [rvkms]
+   ? _RNvMs_NtCs1cdwasc6FUb_6kernel8platformINtB4_7AdapterNtCsHeezP08sTT_5rvkms5RvkmsE14probe_callbackBQ_+0x2b/0x70 [rvkms]
+   ? acpi_dev_pm_attach+0x25/0x110
+   ? platform_probe+0x6a/0xa0
+   ? really_probe+0x10b/0x400
+   ? __driver_probe_device+0x7c/0x140
+   ? driver_probe_device+0x22/0x1b0
+   ? __device_attach_driver+0x13a/0x1c0
+   ? __pfx___device_attach_driver+0x10/0x10
+   ? bus_for_each_drv+0x114/0x170
+   ? __device_attach+0xd6/0x1b0
+   ? bus_probe_device+0x9e/0x120
+   ? device_add+0x288/0x4b0
+   ? platform_device_add+0x75/0x230
+   ? platform_device_register_full+0x141/0x180
+   ? rust_helper_platform_device_register_simple+0x85/0xb0
+   ? _RNvMs2_NtCs1cdwasc6FUb_6kernel8platformNtB5_6Device13create_simple+0x1d/0x60
+   ? _RNvXs0_CsHeezP08sTT_5rvkmsNtB5_5RvkmsNtCs1cdwasc6FUb_6kernel6Module4init+0x11e/0x160 [rvkms]
+   ? 0xffffffffc083f000
+   ? init_module+0x20/0x1000 [rvkms]
+   ? kernfs_xattr_get+0x3e/0x80
+   ? do_one_initcall+0x148/0x3f0
+   ? __lock_acquire+0x5ef/0x2bd0
+   ? __lock_acquire+0x5ef/0x2bd0
+   ? __lock_acquire+0x5ef/0x2bd0
+   ? put_cpu_partial+0x51/0x1d0
+   ? lock_acquire+0xec/0x290
+   ? put_cpu_partial+0x51/0x1d0
+   ? lock_release+0xee/0x310
+   ? put_cpu_partial+0x51/0x1d0
+   ? fs_reclaim_acquire+0x69/0xf0
+   ? lock_acquire+0xec/0x290
+   ? fs_reclaim_acquire+0x69/0xf0
+   ? kfree+0x22f/0x340
+   ? lock_release+0xee/0x310
+   ? kmalloc_trace_noprof+0x48/0x340
+   ? do_init_module+0x22/0x240
+   ? kmalloc_trace_noprof+0x155/0x340
+   ? do_init_module+0x60/0x240
+   ? __se_sys_finit_module+0x2e0/0x3f0
+   ? do_syscall_64+0xa4/0x180
+   ? syscall_exit_to_user_mode+0x108/0x140
+   ? do_syscall_64+0xb0/0x180
+   ? vma_end_read+0xd0/0xe0
+   ? do_user_addr_fault+0x309/0x640
+   ? clear_bhb_loop+0x45/0xa0
+   ? clear_bhb_loop+0x45/0xa0
+   ? clear_bhb_loop+0x45/0xa0
+   ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+   </TASK>
 
-Yes, this is the suggestion.  One writeable kcontrol on the USB SND audio device that will control if that USB audio device is going to be offloaded.  If the kcontrol reads back "enabled" (or 1) then userspace knows that the offload path is active.  Else, if it reads "disabled" (or 0) after the attempt to set the kcontrol, then the offload path was unsuccessfully enabled, ie maybe due to no available offload streams.
+Fix this by stubbing these macros out when this config option isn't
+enabled, along with fixing the unused variable warning that introduces.
 
-> I would just have a read-only control that reports what the hardware can
-> do and which other card can deal with offload. It's up to userspace to
-> select the offloaded PCM device or not.
->
-That is what I have implemented in the previous patch series.  One USB SND kcontrol within each USB audio device, which points to the ASoC platform card that supports offloading:
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+ drivers/gpu/drm/drm_atomic_helper.c | 2 +-
+ include/drm/drm_panic.h             | 8 ++++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-"USB Offload Playback Capable Card" --> returns the card index to the ASoC platform card
-
-From there the offloading control is all within the ASoC platform card.  This is opposite to what Amaduesz suggested in that, the offload control of which USB device to offload should be within USB SND (not ASoC)
-
->
->>> c) which PCM device is actually offloaded? This could be plural for some
->>> implementations. The mapping between PCM devices exposed by the USB
->>> card, and those exposed by the companion card, should be known to
->>> userspace. I am not sure how this would be done though, a variable
->>> number of controls is a sure way to confuse userspace.
->> Expanding on Amadeusz's suggestion, my idea is to have an enable/disable kcontrol per USB stream.  For example, one USB card could have multiple PCM devices (USB streams).  So we would have something like:
->>
->> PCM Offload Playback Enable Stream#0  enable/disable
->>
->> PCM Offload Playback Enable Stream#1  enable/disable
->>
->> ....
-> are those read-only or not?
-
-No, writable and readable.
-
->
->> So we'd know which USB card and PCM device is selected for USB SND.  However, I see what you're getting at in case there are multiple supported streams, because userspace needs to know which ASoC card/pcm combination corresponds to which USB device/combination.
-> I don't understand how this would help map the two parts? There's got to
-> be an additional mapping...
-It won't help with the mapping.  That is something which we'd need to add, suggestion below.
->> What do you think about having a USB card kcontrol to display the mapped ASoC card and PCM indexes?
->>
->> PCM Offload Playback Enable Stream Mapping#0  0, 1 (ASoC card#0, PCM device#1)
->>
->> To summarize, if we did this, I'd plan to remove all the kcontrols in ASoC card, and have the following in the USB card for an USB audio device that supports one USB stream:
->>
->> PCM Offload Playback Enable Stream#0  enable/disable
->>
->> PCM Offload Playback Enable Stream Mapping#0  0, 1 (ASoC card#0, PCM device#1)
-> ... which is suggested here.
->
-> Assuming these are read-only controls, we would need to know which PCM
-> device on the USB card can be optimized with the use of which PCM device
-> on the ASoC card. That means a set of three values. You would also want
-> a number of streams to make the guesswork on controls less painful.
-
-OK, so now to just figuring out something that both you and Amadeusz can agree on before I put time implementing it.  So I've implemented the "enable/disable" path that Amadeusz suggested, which is highlighted in my previous response, for evaluation purposes.  The overall question is which layer should control the devices that will be offloaded.  In my submissions up until now, the control was given to the ASoC platform card to determine which USB device to offload.  Amadeusz mentioned that it might be beneficial to move the control to the USB SND devices, because what if the offloading is NOT backed by ASoC. (highlighted in [1])  However, IMO the current implementation assumes there is ASoC involved, which should mean that there is some platform "card" that is backing the offload path.  Please let me know if my understanding is incorrect, @Amadeusz. 
-
-[1] - Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB - Amadeusz Sławiński (kernel.org) <https://lore.kernel.org/linux-usb/510468c7-b181-48d0-bf2d-3e478b2f2aca@linux.intel.com/>
-
-Thanks
-
-Wesley Cheng
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index fb97b51b38f15..dd5caa8030aa3 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -3017,7 +3017,7 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
+ 				  bool stall)
+ {
+ 	int i, ret;
+-	unsigned long flags;
++	unsigned long __maybe_unused flags;
+ 	struct drm_connector *connector;
+ 	struct drm_connector_state *old_conn_state, *new_conn_state;
+ 	struct drm_crtc *crtc;
+diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
+index 822dbb1aa9d6f..9cd4239f09286 100644
+--- a/include/drm/drm_panic.h
++++ b/include/drm/drm_panic.h
+@@ -52,6 +52,8 @@ struct drm_scanout_buffer {
+ 	unsigned int pitch[DRM_FORMAT_MAX_PLANES];
+ };
+ 
++#ifdef CONFIG_DRM_PANIC
++
+ /**
+  * drm_panic_trylock - try to enter the panic printing critical section
+  * @dev: struct drm_device
+@@ -137,13 +139,15 @@ struct drm_scanout_buffer {
+ #define drm_panic_unlock(dev, flags) \
+ 	raw_spin_unlock_irqrestore(&(dev)->mode_config.panic_lock, flags)
+ 
+-#ifdef CONFIG_DRM_PANIC
+-
+ void drm_panic_register(struct drm_device *dev);
+ void drm_panic_unregister(struct drm_device *dev);
+ 
+ #else
+ 
++#define drm_panic_trylock(dev, flags) (true)
++#define drm_panic_lock(dev, flags)
++#define drm_panic_unlock(dev, flags)
++
+ static inline void drm_panic_register(struct drm_device *dev) {}
+ static inline void drm_panic_unregister(struct drm_device *dev) {}
+ 
+-- 
+2.45.2
 
 
