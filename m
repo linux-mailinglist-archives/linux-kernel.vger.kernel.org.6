@@ -1,139 +1,154 @@
-Return-Path: <linux-kernel+bounces-237167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A63C91ED00
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:35:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E27D91ECF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057FD283BDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:35:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3ACDB20925
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7720F15E85;
-	Tue,  2 Jul 2024 02:35:11 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32FD14A9D;
+	Tue,  2 Jul 2024 02:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W2Li7dud"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67750171BA;
-	Tue,  2 Jul 2024 02:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AD5B674;
+	Tue,  2 Jul 2024 02:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719887711; cv=none; b=Yb7Zs0KoDXUxNaFHkf7EmPRP/mkdBycVzi9gpRxOKgr+Buv3W4AnUFc19YX2PmLJsr/aGOp0bQRKQHx0eiunI+EGkB/Xm3elq8dDTJxqN/6HMu0YKxrQNhIxGATOJPOn4F/dBLtinEwhAe5f6pXz7RGq1wZcGXOG/rnV0VfQHKw=
+	t=1719887342; cv=none; b=La9muTq0yofjujU5fagdnuACX4GfWWDuwNgWMt+CsdIF4PBAkbfx4nmhMch2RH1a/Dmg8nJ8nuUZ/lNtZi7XTWskd2CDRcPFVY5RTIMUraRLMLsCjoj7dvoQw4ZirZ5ZXW/A0OTCP5kyYxdphPS6ScsGtQYJQRwPXvvL/EIFREY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719887711; c=relaxed/simple;
-	bh=duOE5/WUTmEt2OMV+3Ya1x3dxJYEKTpX14cmRqn2wUA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nH/H6NqleSJFrIJT/aWbV7NX5KFWb+44B6GXNF5L1sXgjoBXRZaWE1p/aJwH+mihTisVDR7srzYqSoGDuGVzmiAxBLwENhC6fYBE3rwtkP957TdBD9f3GUSlkri0Me1RMIW6OlXNhfUzX8boc4mM5QuJ6d/Tz9Ln7u+WkbZIHr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WCn2L3q1Qz1T4gb;
-	Tue,  2 Jul 2024 10:30:34 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 17DA518007E;
-	Tue,  2 Jul 2024 10:35:06 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 2 Jul
- 2024 10:35:05 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<longman@redhat.com>
-CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 -next] cgroup/rstat: add force idle show helper
-Date: Tue, 2 Jul 2024 02:28:22 +0000
-Message-ID: <20240702022822.1032693-1-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719887342; c=relaxed/simple;
+	bh=j8d61EAjQsOLrMk5eu64iDHSBTUZUUS3SPJgXhshpLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NUu9VrF1EJlO32MlG0j9z+JHrpQaLZCd0qEq2dpSeMODi/wvpSgGXhw/XcCrGzAt8Qibuq/kuiF7u/DaAcZ1vgcUkpAgy/qVJFC01WQnwRbHIf2nF37SAi26jKM6cjsAPJUnIcmp+ni3HL8s7iJBsczs+9gJPfRsWHD3Ot52hXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W2Li7dud; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719887340; x=1751423340;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=j8d61EAjQsOLrMk5eu64iDHSBTUZUUS3SPJgXhshpLI=;
+  b=W2Li7dud5EApdCzB4pDNcqLJxQUrMaokJGZBgeFkGL7CkX9A2G4zMf5C
+   +m8hTwxrfkgnk7CYSp/DzYp71ERgt/bMlgWC70sRbl0cwtxEAk6TDjePd
+   g3k3gu1kWlv7YqQTUBnUox+IGJvt8sPMFB+PwZ1NqXodeN3IJyekfNtDA
+   oRgQSQoVFzXZGQWCrrhEojRc/w8BKsmoCAylRMU67Zf6W7Rq38DevqFYl
+   o4AW75s9ktpaBL5czU1+XKfvQT8dmJ9A+BNzRJXSKUlwAI+D/bsoHF/3G
+   OXHrtdzzN+My6MERGCkKcsIqDnobfNUnTKPZGgIwrwdL/K8vx1llQ5L7c
+   A==;
+X-CSE-ConnectionGUID: evICt6qjQYOME1ck7GWacg==
+X-CSE-MsgGUID: vnR+8lW+Tumy3cFpur7OGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="16882760"
+X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
+   d="scan'208";a="16882760"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 19:28:59 -0700
+X-CSE-ConnectionGUID: ttmgwcqDTPyxr2a52EQCRw==
+X-CSE-MsgGUID: /5JFrGbGTzOTE/cOJp2txg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
+   d="scan'208";a="68946742"
+Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.38.161]) ([10.247.38.161])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 19:28:58 -0700
+Message-ID: <26d42742-d9bd-4817-8a08-94b12598fe4c@linux.intel.com>
+Date: Tue, 2 Jul 2024 10:28:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH iwl-net v1 1/1] igc: Fix packet still tx
+ after gate close by reducing i226 MAC retry buffer
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>, netdev@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
+References: <20240701100058.3301229-1-faizal.abdul.rahim@linux.intel.com>
+ <e981261e-77be-407b-b601-f7214a4f57dd@molgen.mpg.de>
+Content-Language: en-US
+From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
+In-Reply-To: <e981261e-77be-407b-b601-f7214a4f57dd@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd100013.china.huawei.com (7.221.188.163)
 
-In the function cgroup_base_stat_cputime_show, there are five
-instances of #ifdef, which makes the code not concise.
-To address this, add the function cgroup_force_idle_show
-to make the code more succinct.
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/rstat.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-index fb8b49437573..22bb4e9050f0 100644
---- a/kernel/cgroup/rstat.c
-+++ b/kernel/cgroup/rstat.c
-@@ -594,49 +594,47 @@ static void root_cgroup_cputime(struct cgroup_base_stat *bstat)
- 	}
- }
- 
-+
-+static void cgroup_force_idle_show(struct seq_file *seq, struct cgroup_base_stat *bstat)
-+{
-+#ifdef CONFIG_SCHED_CORE
-+	u64 forceidle_time = bstat->forceidle_sum;
-+
-+	do_div(forceidle_time, NSEC_PER_USEC);
-+	seq_printf(seq, "core_sched.force_idle_usec %llu\n", forceidle_time);
-+#endif
-+}
-+
- void cgroup_base_stat_cputime_show(struct seq_file *seq)
- {
- 	struct cgroup *cgrp = seq_css(seq)->cgroup;
- 	u64 usage, utime, stime;
- 	struct cgroup_base_stat bstat;
--#ifdef CONFIG_SCHED_CORE
--	u64 forceidle_time;
--#endif
- 
- 	if (cgroup_parent(cgrp)) {
- 		cgroup_rstat_flush_hold(cgrp);
- 		usage = cgrp->bstat.cputime.sum_exec_runtime;
- 		cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime,
- 			       &utime, &stime);
--#ifdef CONFIG_SCHED_CORE
--		forceidle_time = cgrp->bstat.forceidle_sum;
--#endif
-+		bstat = cgrp->bstat;
- 		cgroup_rstat_flush_release(cgrp);
- 	} else {
- 		root_cgroup_cputime(&bstat);
- 		usage = bstat.cputime.sum_exec_runtime;
- 		utime = bstat.cputime.utime;
- 		stime = bstat.cputime.stime;
--#ifdef CONFIG_SCHED_CORE
--		forceidle_time = bstat.forceidle_sum;
--#endif
- 	}
- 
- 	do_div(usage, NSEC_PER_USEC);
- 	do_div(utime, NSEC_PER_USEC);
- 	do_div(stime, NSEC_PER_USEC);
--#ifdef CONFIG_SCHED_CORE
--	do_div(forceidle_time, NSEC_PER_USEC);
--#endif
- 
- 	seq_printf(seq, "usage_usec %llu\n"
- 		   "user_usec %llu\n"
- 		   "system_usec %llu\n",
- 		   usage, utime, stime);
- 
--#ifdef CONFIG_SCHED_CORE
--	seq_printf(seq, "core_sched.force_idle_usec %llu\n", forceidle_time);
--#endif
-+	cgroup_force_idle_show(seq, &bstat);
- }
- 
- /* Add bpf kfuncs for cgroup_rstat_updated() and cgroup_rstat_flush() */
--- 
-2.34.1
+On 1/7/2024 8:42 pm, Paul Menzel wrote:
+> Dear Faizal,
+> 
+> 
+> Thank you for your patch.
+> 
+>> This follows guidelines from:
+>>
+>> a) Ethernet Controller I225/I22 Spec Update Rev 2.1 Errata Item 9:
+>>     TSN: Packet Transmission Might Cross Qbv Window
+>> b) I225/6 SW User Manual Rev 1.2.4: Section 8.11.5 Retry Buffer Control
+>>
+>> Test Steps:
+>> 1. Send taprio cmd to board A
+>> tc qdisc replace dev enp1s0 parent root handle 100 taprio \
+>> num_tc 4 \
+>> map 3 2 1 0 3 3 3 3 3 3 3 3 3 3 3 3 \
+>> queues 1@0 1@1 1@2 1@3 \
+>> base-time 0 \
+>> sched-entry S 0x07 500000 \
+>> sched-entry S 0x0f 500000 \
+>> flags 0x2 \
+>> txtime-delay 0
+>>
+>> - Note that for TC3, gate opens for 500us and close for another 500us
+>>
+>> 3. Take tcpdump log on Board B
+>>
+>> 4. Send udp packets via UDP tai app from Board A to Board B
+>>
+>> 5. Analyze tcpdump log via wireshark log on Board B
+>> - Observed that the total time from the first to the last packet
+>> received during one cycle for TC3 does not exceed 500us
+> 
+> Indent the list item by four spaces? (Also above?)
 
+
+Hi Paul,
+
+Would like to confirm, the indent suggestion from you is referring to which 
+style ?
+
+(a)
+1.  Send taprio ...
+     tc qdisc  ..
+     map 3 4 ..
+     queue 1@0 ....
+
+(b)
+1. Send taprio ...
+     tc qdisc  ..
+     map 3 4 ..
+     queue 1@0 ....
+
+(c)
+     1. Send taprio ...
+        tc qdisc  ..
+        map 3 4 ..
+        queue 1@0 ....
+
+I think it's (a), but afraid if misunderstood the suggestion.
+Thank you !
+
+Regards,
+Faizal
 
