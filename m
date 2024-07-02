@@ -1,134 +1,162 @@
-Return-Path: <linux-kernel+bounces-238402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098AC9249F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:34:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93389249FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1341C22B7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4A32853E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22B620127D;
-	Tue,  2 Jul 2024 21:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C921205E0E;
+	Tue,  2 Jul 2024 21:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LVosFV6S"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYbU5oeU"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968AA154C00
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170317EEE7;
+	Tue,  2 Jul 2024 21:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719956049; cv=none; b=izGAyHha+yS6/smpejOu779Kq+XPluxCoZoa6MM84Wa5lOiu7+HfGhYqsvlCHGeKby9S79IOvHvL65iiLnSZsYStOooyjgZgQk/q12I+myXLr44OA9QtdJTXCRXnNbnqz4AN4oRgFzo/hV5robftoFEmmVxbw8I7aGeeYwWtdN4=
+	t=1719956092; cv=none; b=D0uASB1W27zj7hnK2gzAAKOkxs7v39VXhZ5+7da3xDKcHve4WS7+eyJItAhOh5KO910TwJn9rSgwfz3xq/1lidRJ5EmMbjC2oCOxDrMMQmT6/PV8j0fKX/8LHht+NzJ5O7c5P/5jDSTsNm3nxZkxI5EjokohYy9O1ZfHv3otP2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719956049; c=relaxed/simple;
-	bh=ELI3qm3FmCNzQfbVTY5hJV3PlWzVeUfnT25kFEvdp+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HjL1hVwCQNAUhAnUtc8Y4d9Sy4zlGYx0auNsocFw2hIm7Ftu+MHQGrQlLVj2V9oHcEaInL/wF6IPiw2LmiTkjDLdOkr0aoE7uZfDN+wdZ5ajwTna6CvqVuIhnipsBqdSOk0piBrAMcnuhhA2gCEhAXBIcKIc8hh2cUhX5tv6mfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LVosFV6S; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3745eeedc76so2255855ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:34:07 -0700 (PDT)
+	s=arc-20240116; t=1719956092; c=relaxed/simple;
+	bh=pjY9q7p++zS/H2NWRf3PwR6JvPpZA4K0nI+XHDLu7n8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cvBHNKdIobXWlIppEhPRBYg61jFfaNSWbNLN1Gmz3Mabe1RzUhas8oIbsJ3vw2zyGAdCnE9mIJaPuxbtHOX+1/ZyBbmqknuZ3na41+ZHsDrTBHzDcpeMcdt+t37iKm9BONaYoDpE4iPIJZZcW41IgH8WeqzpyUdQhaOnfQ34G0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYbU5oeU; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a724b3a32d2so543751966b.2;
+        Tue, 02 Jul 2024 14:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719956047; x=1720560847; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b1WgNk/YPEbRVNBSRfJrE9za+i3oxO1I0TjYFVdi7kY=;
-        b=LVosFV6SOdwJE8vs1ZKkpRVEu6+F9AHp25lwTL5QspYf7XlLKUOVCSY0dnvhK3Dddl
-         0xcwNkUCu+38hls6fOoVMhNZCbZ/fzB8Vk8MeAgmCLCUBwt5Tb7foz/sPpW8cdpAMNXI
-         LfSJpmOqEkD109N2zM2Wd/N3+1pkIbX2oOE6g=
+        d=gmail.com; s=20230601; t=1719956089; x=1720560889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lNIEBN48BUarwjdlHvfFRLjDjXUEDIAJ8YA1P/t4Ao4=;
+        b=gYbU5oeUu4dz/AiRKVvO/24bIo+pZ6reLxJr0iwjiVcbP5cNHHxTahQT4dJL+y90PM
+         cUrOUmvLWvV4H34IHDsQ0eB8RNiWv1H2yyOPD3Iry30DClulDnLOJJCTwpUobL26CFcz
+         s+0Z++FaYyxq81CT7BB/tPIJGLggx+mq+1iISKySbGyjhQ4qsSBSE24osgU/lzN+CvJC
+         Wl7JOkfy+bzQuqNIYlM6m8ZRp+6vyJiGjlv7nNhczABlrqYSgKzKoIFdv/QQbshjxeAV
+         Uphr1mBSrQH8WqZcGuDqLjzznZR1Bxt5mXGArpseUIGtjEDXuxHqPe8PB2n56hnZBc3L
+         Eo4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719956047; x=1720560847;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b1WgNk/YPEbRVNBSRfJrE9za+i3oxO1I0TjYFVdi7kY=;
-        b=r+8GyrRlVpVA0wWYgSNANgAT0LjImQoeivN92LASFtV2pZ+DyTQ0uQfaYA8jAHF3gk
-         ji47tF+rdP3P+5ofDQvCiOLt8WuN3UzwlOt0w3O9af1TZh0v6u0irFOEihOFe1EBj6xH
-         2XcgVLGCOSxPUM6HQ3XhHCMNBjOVRf4HOwVW3ZBJ3CcYO6uTQJKwdWj0bY7pf5+StLjr
-         x3409qOf9VHpCvnAX7j0Gg3Kvw8NlRzIYYGpUlkoBAtmyQeOcziEZ5sRMO2SYURQT9AU
-         Zwf3zq5Vu2epfn8C3IZb0C/tfK9Hc3ZFAlWMH8+SoXeMUJWbBQpotcMJEkweV1rZSANW
-         BLog==
-X-Forwarded-Encrypted: i=1; AJvYcCXJcHiCmUVesMHm3ZT2efy52oZVdfavCmXIgv1gnOiCE9Whs3ZCZNtKAByZE3mPmfcyda+4gT45zo0+LJ5xwXtGwVOwAeXoLGUfbHkk
-X-Gm-Message-State: AOJu0YwVOdt7UrS+gZh0TrHg64ik3YkVWaRBqxAgy/A81wUROEJRggpw
-	w0wCk7NjKgyortFspE5Mqu6zuouQWgIEhwfj88Y4NuBOb3zrj1YFcBj7MgQTcwQ=
-X-Google-Smtp-Source: AGHT+IHtaBQC52DDcEJ8qeKFFOsLfGso6U0Z9VOH3B7LnIkEUyY6IjpKReJg7jT8NZRnXtU9141MDQ==
-X-Received: by 2002:a6b:fe09:0:b0:7eb:66a5:d1c with SMTP id ca18e2360f4ac-7f62ed686a2mr915246239f.0.1719956046707;
-        Tue, 02 Jul 2024 14:34:06 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73e08428sm2972009173.77.2024.07.02.14.34.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 14:34:06 -0700 (PDT)
-Message-ID: <753c55df-82d7-4756-861b-62e4e59c7615@linuxfoundation.org>
-Date: Tue, 2 Jul 2024 15:34:05 -0600
+        d=1e100.net; s=20230601; t=1719956089; x=1720560889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lNIEBN48BUarwjdlHvfFRLjDjXUEDIAJ8YA1P/t4Ao4=;
+        b=PaPG8GIVe0V1JIGxPsB6P+BAsOUQPJK6D6Yk8X06ERwV79D6QpfKyzKOg+gGuHHxl8
+         jSSxZDalmBvs4SH+OLendpKBnsfqAqa87UGj1b4gLBXIwAvsxMp08SUiIaGrvsXdWAYK
+         1tAEz20EK6/wBMoAkZd6NpgNUHtMelFBFlLLRc3C1hnoa1vP02zwpL+7tF2A4+/N0X8f
+         30NAKDpZiVYm6IQjJzSTF12EL+ovOHYjeiwfm3E641X0DHo2eg6qGjXHO/5lZ+B4zhe/
+         cq+ePezyc2Qk/o8pSIjJmuHibNnm9LXUwgMm7Uqi9VnRcDmvot5Tmof8fT19QRxz/pqh
+         IRmA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5VgNwKEjkqkB1hhY9q7ygjCEQh4IyYFKaWzLK7yDraQljkGJ5GHzWCkQbrKD0FD/ZDsi09ebOHDvuIEkLQTkJiCWogwTth9iPphD9iHrPD4aXiksysOkSocNV91LBZrhW977cFgK0ABe+oQr6G23uHKtu6AuGmHIbckLsjo1tyGk7z0sM
+X-Gm-Message-State: AOJu0YxhcKkND3NazWpWvXBGyDzxfzkJ/g1Bblwbd39xf6LDkI4oGOw/
+	97rpizDRF5NUsJG0vjwywVF6PmyJELcYjrT7yoFU4AHC8uQgrcrlJ/6ngY/3wwW62PpBIbCagVp
+	iYHeNAL9HrkNZ3RTKhPq2QXFPnpw=
+X-Google-Smtp-Source: AGHT+IE67kVdBXP1jdj20qhCLnDStDdU9bC2i3kH1m6wJ2m/bIINIsm8LnxomXIX/xLJULhRjCumndLG1zughsNgUz4=
+X-Received: by 2002:a17:907:845:b0:a75:2387:7801 with SMTP id
+ a640c23a62f3a-a752387794bmr522579366b.61.1719956089136; Tue, 02 Jul 2024
+ 14:34:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cpupower: fix lib default installation path
-To: Roman Storozhenko <romeusmeister@gmail.com>,
- Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240702-fix-lib-install-v2-1-9b84dcd3c22b@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240702-fix-lib-install-v2-1-9b84dcd3c22b@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240701164115.723677-1-jolsa@kernel.org> <20240701164115.723677-5-jolsa@kernel.org>
+In-Reply-To: <20240701164115.723677-5-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 2 Jul 2024 14:34:34 -0700
+Message-ID: <CAEf4BzYP6zW0Mmi_=J5ng+GiUSJpB1JCg-qai0kp_N+_vestxA@mail.gmail.com>
+Subject: Re: [PATCHv2 bpf-next 4/9] libbpf: Add support for uprobe multi
+ session attach
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/2/24 01:56, Roman Storozhenko wrote:
-> Invocation the tool built with the default settings fails:
-> $ cpupower
-> cpupower: error while loading shared libraries: libcpupower.so.1: cannot
-> open shared object file: No such file or directory
-> 
-> The issue is that Makefile puts the library to "/usr/lib64" dir for a 64
-> bit machine. This is wrong. According to the "File hierarchy standard
-> specification:
-> https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
-> https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.pdf
-> 
-> "/usr/lib<qual>" dirs are intended for alternative-format libraries
-> (e.g., "/usr/lib32" for 32-bit libraries on a 64-bit machine (optional)).
-> 
-> The utility is built for the current machine and doesn't handle
-> 'CROSS_COMPILE' and 'ARCH' env variables. It also doesn't change bit
-> depth. So the result is always the same - binary for x86_64
-> architecture. Therefore the library should be put in the '/usr/lib'
-> dir regardless of the build options.
-> This is the case for all the distros that comply with the
-> 'File Hierarchy Standard 3.0" by Linux Foundation. Most of the distros
-> comply with it. For example, one can check this by examining the
-> "/usr/lb64" dir on debian-based distros and find that it contains only
-> "/usr/lib64/ld-linux-x86-64.so.2". And examine that "/usr/lib" contains
-> both 32 and 64 bit code:
-> find /usr/lib -name "*.so*" -type f | xargs file | grep 32-bit
-> find /usr/lib -name "*.so*" -type f | xargs file | grep 64-bit
-> 
-> Fix the issue by changing library destination dir to "/usr/lib".
-> 
-> Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
+On Mon, Jul 1, 2024 at 9:42=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> Adding support to attach program in uprobe session mode
+> with bpf_program__attach_uprobe_multi function.
+>
+> Adding session bool to bpf_uprobe_multi_opts struct that allows
+> to load and attach the bpf program via uprobe session.
+> the attachment to create uprobe multi session.
+>
+> Also adding new program loader section that allows:
+>   SEC("uprobe.session/bpf_fentry_test*")
+>
+> and loads/attaches uprobe program as uprobe session.
+>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
-> Changes in v2:
-> - Enchance changelog by providing more details
-> - Link to v1: https://lore.kernel.org/r/20240623-fix-lib-install-v1-1-bcbd03b78d87@gmail.com
-> ---
+>  tools/lib/bpf/bpf.c    |  1 +
+>  tools/lib/bpf/libbpf.c | 50 ++++++++++++++++++++++++++++++++++++++++--
+>  tools/lib/bpf/libbpf.h |  4 +++-
+>  3 files changed, 52 insertions(+), 3 deletions(-)
+>
 
-Applied to
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git/?h=cpupower
+[...]
 
-thanks,
--- Shuah
+> @@ -9362,6 +9363,7 @@ static const struct bpf_sec_def section_defs[] =3D =
+{
+>         SEC_DEF("kprobe.session+",      KPROBE, BPF_TRACE_KPROBE_SESSION,=
+ SEC_NONE, attach_kprobe_session),
+>         SEC_DEF("uprobe.multi+",        KPROBE, BPF_TRACE_UPROBE_MULTI, S=
+EC_NONE, attach_uprobe_multi),
+>         SEC_DEF("uretprobe.multi+",     KPROBE, BPF_TRACE_UPROBE_MULTI, S=
+EC_NONE, attach_uprobe_multi),
+> +       SEC_DEF("uprobe.session+",      KPROBE, BPF_TRACE_UPROBE_SESSION,=
+ SEC_NONE, attach_uprobe_session),
 
+sleepable ones as well?
 
+>         SEC_DEF("uprobe.multi.s+",      KPROBE, BPF_TRACE_UPROBE_MULTI, S=
+EC_SLEEPABLE, attach_uprobe_multi),
+>         SEC_DEF("uretprobe.multi.s+",   KPROBE, BPF_TRACE_UPROBE_MULTI, S=
+EC_SLEEPABLE, attach_uprobe_multi),
+>         SEC_DEF("ksyscall+",            KPROBE, 0, SEC_NONE, attach_ksysc=
+all),
+> @@ -11698,6 +11700,40 @@ static int attach_uprobe_multi(const struct bpf_=
+program *prog, long cookie, stru
+>         return ret;
+>  }
+>
+> +static int attach_uprobe_session(const struct bpf_program *prog, long co=
+okie, struct bpf_link **link)
+> +{
+> +       char *binary_path =3D NULL, *func_name =3D NULL;
+> +       LIBBPF_OPTS(bpf_uprobe_multi_opts, opts,
+> +               .session =3D true,
+> +       );
 
+nit: keep a single line?
+
+> +       int n, ret =3D -EINVAL;
+> +       const char *spec;
+> +
+> +       *link =3D NULL;
+> +
+> +       spec =3D prog->sec_name + sizeof("uprobe.session/") - 1;
+> +       n =3D sscanf(spec, "%m[^:]:%m[^\n]",
+> +                  &binary_path, &func_name);
+
+single line, wrapping lines is a necessary evil, please
+
+[...]
 
