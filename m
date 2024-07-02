@@ -1,272 +1,408 @@
-Return-Path: <linux-kernel+bounces-237884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73015923F7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:50:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E72F4923F82
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026BE1F24375
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:50:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173841C22E2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200A71B5811;
-	Tue,  2 Jul 2024 13:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BnR+UJTN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E966F1B5808;
+	Tue,  2 Jul 2024 13:51:38 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F9C1B5805
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F253CBA2D
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719928244; cv=none; b=QP9Hm/iUuLbD2xJf8p5iAAYSoDSE63BBdc4W6dLJJpsXtChQzOE26Tic8MP8LNQ//n7YUNxShvns222v1UFRsFz0hde5z05fAkk7kqzRscf/i14PWCAxKYcmzFDxeLEqOEl1o7velJzmZJte1m/qKRU3933719Wgw8kt11svOeQ=
+	t=1719928298; cv=none; b=QLuLPuafAzvfuF5S7Nq6xZ8b/aHC/GrT8yVq5SzEXIZc1gHjOBa4i06VHs6L48qH1FQ8sIk1nD37+5uzYCjBKEQsK5KmCmpf4zLUbTgdbtc/yakHfbGm7b89OQDdQRG4roeqDv4Y4qldiyaUro2i2eHm3xa/7SFz2fVW70i23hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719928244; c=relaxed/simple;
-	bh=1A/q726w8j9RoZNpYQDl/C0Z2QDzDKsb0QtR0sbr3ZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=otgdzfqx8whJQr1YV6AhoAcMNMu+I2sfpGCklL2LWccBwFWkGl+l4BAdEz8TgcyRH1rkDxsE88nFZrEtYLOk3nnTmBCGQJRmeSa1TzOvaxL46AqKqc333Yv6M1oZq0cFlZBseiCC6r3DnyaTCVf4Ck7tBcrNP1MjbHpVYShDuY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BnR+UJTN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719928241;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tTKDBwxWZ4tURdnzVUB78+C/Ls28msJkJkSY3ZvgpLs=;
-	b=BnR+UJTNpGu6Ut/W0Yivk7rRL65ztQiAY8AUUHsR5/scFZe0a5l0ToE4gBlYTGPyOsvEL6
-	+M/jSSyquyK3ZLbzRovfk2UGlb6ITERKMesLNR4tSuJD0cDeJBtXM4Nc7VX+A+2w2gvhay
-	W0cgXocxdawpPRgOWaLIWv0VyHJLMos=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-266-Gt0UTzmXM-C9MDN7r6jarg-1; Tue, 02 Jul 2024 09:50:40 -0400
-X-MC-Unique: Gt0UTzmXM-C9MDN7r6jarg-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3625bef4461so2093867f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:50:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719928238; x=1720533038;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tTKDBwxWZ4tURdnzVUB78+C/Ls28msJkJkSY3ZvgpLs=;
-        b=dXq2cOcoS+oHO65Afbl9FJTjIXQ6hTZUZ+cHrM+AubBCW0YafRAmrowGU3f45657oD
-         uT3cnQxYsTp3a4LlmD4wkD7dYcIkabqsZyREUbzND/TnkQ6h1ew62Pov0X5D5PxUyD6i
-         JVXqLHEtFiNcZHg+ggN1kLuPQLyGD+2rRTVt1JpM3aFl99llmh+gCNwkDqQeozYZl+sA
-         e3SwZxyEq9AaGM5QnsLA9yL7rxgmyJi1UJNcpNzDtoWj5O8HomCaWwESktc9mfZyNUsg
-         sJFGn1ontvZI3Z6i9o+9LrwKqpWnAKbM6lhzMl/nZglHeVYpWWWbTEYRknm1YO6bMt3c
-         KTaA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSR4o6Pvw6l2AWs7TxIoGetP4Yk9/SxySz42deI3M4M7zOmV7N20hI4s9Z5b/y17LYQvvFXg1ehMcb42af+UhwdcF3e3GAf5c09IS4
-X-Gm-Message-State: AOJu0YwlqhMLRZnEiN6mfAfPG3wMa13R2whDmY2XQHHCSRgUfLW5/6CF
-	hKwCliDyFfEcVwWToWp1Y3xGoDykZelLWWn0fxPr6fS6gJvCd/ZhT4QjlRj7vWk44dHX/lWqW36
-	7YmBNr5gvTDdS3LjDWppk8G7Z7wdw2FKYho1oz5H+DFOGXKo0n3Xb6BIwFYd/PA==
-X-Received: by 2002:a5d:5987:0:b0:363:776:821b with SMTP id ffacd0b85a97d-3676045b4a0mr12273655f8f.0.1719928237941;
-        Tue, 02 Jul 2024 06:50:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGcCpbzrLR989YOaTGBpSD0jjipyIo03w+1m82EKoUEd+QPpxkfucAXqG5zdd4Ayz4vqdGwow==
-X-Received: by 2002:a5d:5987:0:b0:363:776:821b with SMTP id ffacd0b85a97d-3676045b4a0mr12273633f8f.0.1719928237497;
-        Tue, 02 Jul 2024 06:50:37 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c739:2400:78ac:64bb:a39e:2578? (p200300cbc739240078ac64bba39e2578.dip0.t-ipconnect.de. [2003:cb:c739:2400:78ac:64bb:a39e:2578])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09890dsm199525095e9.36.2024.07.02.06.50.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 06:50:36 -0700 (PDT)
-Message-ID: <7be46fdd-f73b-4edd-9bed-b631e80d305b@redhat.com>
-Date: Tue, 2 Jul 2024 15:50:35 +0200
+	s=arc-20240116; t=1719928298; c=relaxed/simple;
+	bh=kHQEhINhbmsF2/yOOt9OedbuX2eA20Sp7q+sk7LuIWg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FkyT7De+sribaW/vvu2ejT1suVbEmzIUYz2fbEfJY1W0h/ETBYsrUlipK0p/J133hAcsabs7PTserB4FNEf8StP7M2z0nQLG24ajE8u13ccy+U5iVnT0XMk9dLd4uh5NsFuwUGujf3u0DpZa8pxvLnqIoumdyPSj+1/v6CP2YGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4WD47y26csz9v2V;
+	Tue,  2 Jul 2024 15:51:26 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id dTRvj7dpzd3O; Tue,  2 Jul 2024 15:51:26 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4WD47x3sRpz9tZl;
+	Tue,  2 Jul 2024 15:51:25 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 800D98B775;
+	Tue,  2 Jul 2024 15:51:25 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id ziD_a5MpHMl8; Tue,  2 Jul 2024 15:51:25 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.12])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E9E128B774;
+	Tue,  2 Jul 2024 15:51:24 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Peter Xu <peterx@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v7 01/23] powerpc/64e: Remove unused IBM HTW code
+Date: Tue,  2 Jul 2024 15:51:13 +0200
+Message-ID: <820dd1385ecc931f07b0d7a0fa827b1613917ab6.1719928057.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <cover.1719928057.git.christophe.leroy@csgroup.eu>
+References: <cover.1719928057.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Yang Shi <yang@os.amperecomputing.com>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, will@kernel.org,
- anshuman.khandual@arm.com, scott@os.amperecomputing.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Jinjiang Tu <tujinjiang@huawei.com>
-References: <20240626191830.3819324-1-yang@os.amperecomputing.com>
- <Zn7q3oL1AE8jdM-g@arm.com> <773c8be7-eb73-010c-acea-1c2fefd65b84@gentwo.org>
- <Zn7xs6OYZz4dyA8a@arm.com>
- <200c5d06-c551-4847-adaf-287750e6aac4@os.amperecomputing.com>
- <ZoMG6n4hQp5XMhUN@arm.com> <3743d7e1-0b79-4eaf-82d5-d1ca29fe347d@arm.com>
- <34f2d8c6-50fa-4a8a-82a8-d417eb30ea70@redhat.com>
- <905e1319-7b20-4812-b052-8031a3c4dcf3@arm.com>
- <168f9fd4-527d-4b74-86b0-029ef474f9b6@redhat.com>
- <9a9e0a83-59a8-46ac-ae7a-8f2a65b48e1e@arm.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <9a9e0a83-59a8-46ac-ae7a-8f2a65b48e1e@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719928273; l=10427; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=2h8pbz81hz7A9kWlbZomb+s/bHgtRVC1UTR2w333/4M=; b=izE7XFJ47Sk/D0H0FwiBZtTuWj0XJrh2eDhX68TR/tBT1FcX4RLBeECK2siy5iJKIhtsN96ue gZlbvbMdVZhAGupVPaJtXuD6dZ8u8eK0JhZSFiISZgWGp0cDSFG0p66
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
->>>>> Changing to this new behaviour would only be a partial solution for your use
->>>>> case, since you would still have 2 faults. But it would remove the cost of the
->>>>> shattering and ensure you have a THP immediately after the write fault. But I
->>>>> can't think of a reason why this wouldn't be a generally useful change
->>>>> regardless? Any thoughts?
->>>>
->>>> The "let's read before we write" as used by QEMU migration code is the desire
->>>> to not waste memory by populating the zeropages. Deferring consuming memory
->>>> until really required.
->>>>
->>>>       /*
->>>>        * We read one byte of each page; this will preallocate page tables if
->>>>        * required and populate the shared zeropage on MAP_PRIVATE anonymous
->>>> memory
->>>>        * where no page was populated yet. This might require adaption when
->>>>        * supporting other mappings, like shmem.
->>>>        */
->>>
->>> So QEMU is concerned with preallocatiing page tables? I would have thought you
->>> could make that a lot more efficient with an explicit MADV_POPULATE_PGTABLE
->>> call? (i.e. 1 kernel call vs 1 call per 2M, allocate all the pages in one trip
->>> through the allocator, fewer pud/pmd lock/unlocks, etc).
->>
->> I think we are only concerned about the "shared zeropage" part. Everything else
->> is just unnecessary detail that adds confusion here :) One requires the other.
-> 
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-BTW, I was quoting the wrong QEMU code. The relevant QEMU commit that first added
-that handling is:
+The nohash HTW_IBM (Hardware Table Walk) code is unused since support
+for A2 was removed in commit fb5a515704d7 ("powerpc: Remove platforms/
+wsp and associated pieces") (2014).
 
-commit 211ea74022f51164a7729030b28eec90b6c99a08
-Author: Peter Lieven <pl@kamp.de>
-Date:   Mon Jun 10 12:14:20 2013 +0200
+The remaining supported CPUs use either no HTW (data_tlb_miss_bolted),
+or the e6500 HTW (data_tlb_miss_e6500).
 
-     migration: do not overwrite zero pages
-     
-     on incoming migration do not memset pages to zero if they already read as zero.
-     this will allocate a new zero page and consume memory unnecessarily. even
-     if we madvise a MADV_DONTNEED later this will only deallocate the memory
-     asynchronously.
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/powerpc/include/asm/nohash/mmu-e500.h |   3 +-
+ arch/powerpc/mm/nohash/tlb.c               |  57 +-----
+ arch/powerpc/mm/nohash/tlb_low_64e.S       | 195 ---------------------
+ 3 files changed, 2 insertions(+), 253 deletions(-)
 
-(note that the MADV_DONTNEED handling in that form does not really apply
-anymore AFAIK)
-
-
-> Sorry I don't quite follow your comment. As I understand it, the zeropage
-> concept is intended as a memory-saving mechanism for applications that read
-> memory but never write it.
-
-"never written" -- then we wouldn't support COW faults on it, right? :P
-
-> I don't think that really applies in your migration
-> case, because you are definitely going to write all the memory eventually, I
-> think?
-
-Especially with memory ballooning and things like free-page-reporting we might
-be migrating a whole bunch of zero-memory and only have to make sure that the
-destination is actually zero. We don't want to consume memory.
-
-I recently fixed that handling for s390x where customers were running into
-precisely that issue (and zeropages in s390x VMs were disabled for historical
-reasons).
-
-> So I guess you are not interested in the "memory-saving" property, but in
-> the side-effect, which is the pre-allocation of pagetables? (if you just wanted
-> the memory-saving property, why not just skip the "read one byte of each page"
-> op? It's not important though, so let's not go down the rabbit hole.
-
-There are cases where, during an incoming migration, some memory pages might
-already have been populated and might not be zero. And IIRC there are some cases
-(postcopy -> uffd) where I think it is important that we actually do have a page
-in place. But I forgot some of the details around userfaultfd handling in QEMU.
-
-> 
->>
->> Note that this is from migration code where we're supposed to write a single
->> page we received from the migration source right now (not more). And we want to
->> avoid allcoating memory if it can be avoided (usually for overcommit).
->>
->>
->>
->>>
->>> TBH I always assumed in the past the that huge zero page is only useful because
->>> its a placeholder for a real THP that would be populated on write. But that's
->>> obviously not the case at the moment. So other than a hack to preallocate the
->>> pgtables with only 1 fault per 2M, what other benefits does it have?
->>
->> I don't quite udnerstand that question. [2] has some details why the huge
->> zeropage was added -- because we would have never otherwise received huge
->> zeropages with THP enabled but always anon THP directly on read.
->>
->>>
->>>>
->>>>
->>>> Without THP this works as expected. With THP this currently also works as
->>>> expected, but of course with the price [1] of not getting anon THP
->>>> immediately, which usually we don't care about. As you note, khugepaged might
->>>> fix this up later.
->>>>
->>>> If we disable the huge zeropage, we would get anon THPs when reading instead of
->>>> small zeropages.
->>>
->>> I wasn't aware of that behaviour either. Although that sounds like another
->>> reason why allocating a THP over the huge zero page on write fault should be the
->>> "more consistent" behaviour.
->>
->> Reading [2] I think the huge zeropage was added to avoid the allocation of THP
->> on read. Maybe for really only large readable regions, not sure why exactly.
-> 
-> I might raise this on the THP call tomorrow, if Kyril joins and get his view.
-
-Makes sense.
-
+diff --git a/arch/powerpc/include/asm/nohash/mmu-e500.h b/arch/powerpc/include/asm/nohash/mmu-e500.h
+index 6ddced0415cb..7dc24b8632d7 100644
+--- a/arch/powerpc/include/asm/nohash/mmu-e500.h
++++ b/arch/powerpc/include/asm/nohash/mmu-e500.h
+@@ -303,8 +303,7 @@ extern unsigned long linear_map_top;
+ extern int book3e_htw_mode;
+ 
+ #define PPC_HTW_NONE	0
+-#define PPC_HTW_IBM	1
+-#define PPC_HTW_E6500	2
++#define PPC_HTW_E6500	1
+ 
+ /*
+  * 64-bit booke platforms don't load the tlb in the tlb miss handler code.
+diff --git a/arch/powerpc/mm/nohash/tlb.c b/arch/powerpc/mm/nohash/tlb.c
+index 5ffa0af4328a..a5bb87ec8578 100644
+--- a/arch/powerpc/mm/nohash/tlb.c
++++ b/arch/powerpc/mm/nohash/tlb.c
+@@ -400,9 +400,8 @@ void tlb_flush_pgtable(struct mmu_gather *tlb, unsigned long address)
+ static void __init setup_page_sizes(void)
+ {
+ 	unsigned int tlb0cfg;
+-	unsigned int tlb0ps;
+ 	unsigned int eptcfg;
+-	int i, psize;
++	int psize;
+ 
+ #ifdef CONFIG_PPC_E500
+ 	unsigned int mmucfg = mfspr(SPRN_MMUCFG);
+@@ -471,50 +470,6 @@ static void __init setup_page_sizes(void)
+ 		goto out;
+ 	}
+ #endif
+-
+-	tlb0cfg = mfspr(SPRN_TLB0CFG);
+-	tlb0ps = mfspr(SPRN_TLB0PS);
+-	eptcfg = mfspr(SPRN_EPTCFG);
+-
+-	/* Look for supported direct sizes */
+-	for (psize = 0; psize < MMU_PAGE_COUNT; ++psize) {
+-		struct mmu_psize_def *def = &mmu_psize_defs[psize];
+-
+-		if (tlb0ps & (1U << (def->shift - 10)))
+-			def->flags |= MMU_PAGE_SIZE_DIRECT;
+-	}
+-
+-	/* Indirect page sizes supported ? */
+-	if ((tlb0cfg & TLBnCFG_IND) == 0 ||
+-	    (tlb0cfg & TLBnCFG_PT) == 0)
+-		goto out;
+-
+-	book3e_htw_mode = PPC_HTW_IBM;
+-
+-	/* Now, we only deal with one IND page size for each
+-	 * direct size. Hopefully all implementations today are
+-	 * unambiguous, but we might want to be careful in the
+-	 * future.
+-	 */
+-	for (i = 0; i < 3; i++) {
+-		unsigned int ps, sps;
+-
+-		sps = eptcfg & 0x1f;
+-		eptcfg >>= 5;
+-		ps = eptcfg & 0x1f;
+-		eptcfg >>= 5;
+-		if (!ps || !sps)
+-			continue;
+-		for (psize = 0; psize < MMU_PAGE_COUNT; psize++) {
+-			struct mmu_psize_def *def = &mmu_psize_defs[psize];
+-
+-			if (ps == (def->shift - 10))
+-				def->flags |= MMU_PAGE_SIZE_INDIRECT;
+-			if (sps == (def->shift - 10))
+-				def->ind = ps + 10;
+-		}
+-	}
+-
+ out:
+ 	/* Cleanup array and print summary */
+ 	pr_info("MMU: Supported page sizes\n");
+@@ -543,10 +498,6 @@ static void __init setup_mmu_htw(void)
+ 	 */
+ 
+ 	switch (book3e_htw_mode) {
+-	case PPC_HTW_IBM:
+-		patch_exception(0x1c0, exc_data_tlb_miss_htw_book3e);
+-		patch_exception(0x1e0, exc_instruction_tlb_miss_htw_book3e);
+-		break;
+ #ifdef CONFIG_PPC_E500
+ 	case PPC_HTW_E6500:
+ 		extlb_level_exc = EX_TLB_SIZE;
+@@ -577,12 +528,6 @@ static void early_init_this_mmu(void)
+ 		mmu_pte_psize = MMU_PAGE_2M;
+ 		break;
+ 
+-	case PPC_HTW_IBM:
+-		mas4 |= MAS4_INDD;
+-		mas4 |=	BOOK3E_PAGESZ_1M << MAS4_TSIZED_SHIFT;
+-		mmu_pte_psize = MMU_PAGE_1M;
+-		break;
+-
+ 	case PPC_HTW_NONE:
+ 		mas4 |=	BOOK3E_PAGESZ_4K << MAS4_TSIZED_SHIFT;
+ 		mmu_pte_psize = mmu_virtual_psize;
+diff --git a/arch/powerpc/mm/nohash/tlb_low_64e.S b/arch/powerpc/mm/nohash/tlb_low_64e.S
+index 7e0b8fe1c279..b0eb3f7eaed1 100644
+--- a/arch/powerpc/mm/nohash/tlb_low_64e.S
++++ b/arch/powerpc/mm/nohash/tlb_low_64e.S
+@@ -893,201 +893,6 @@ virt_page_table_tlb_miss_whacko_fault:
+ 	TLB_MISS_EPILOG_ERROR
+ 	b	exc_data_storage_book3e
+ 
+-
+-/**************************************************************
+- *                                                            *
+- * TLB miss handling for Book3E with hw page table support    *
+- *                                                            *
+- **************************************************************/
+-
+-
+-/* Data TLB miss */
+-	START_EXCEPTION(data_tlb_miss_htw)
+-	TLB_MISS_PROLOG
+-
+-	/* Now we handle the fault proper. We only save DEAR in normal
+-	 * fault case since that's the only interesting values here.
+-	 * We could probably also optimize by not saving SRR0/1 in the
+-	 * linear mapping case but I'll leave that for later
+-	 */
+-	mfspr	r14,SPRN_ESR
+-	mfspr	r16,SPRN_DEAR		/* get faulting address */
+-	srdi	r11,r16,44		/* get region */
+-	xoris	r11,r11,0xc
+-	cmpldi	cr0,r11,0		/* linear mapping ? */
+-	beq	tlb_load_linear		/* yes -> go to linear map load */
+-	cmpldi	cr1,r11,1		/* vmalloc mapping ? */
+-
+-	/* We do the user/kernel test for the PID here along with the RW test
+-	 */
+-	srdi.	r11,r16,60		/* Check for user region */
+-	ld	r15,PACAPGD(r13)	/* Load user pgdir */
+-	beq	htw_tlb_miss
+-
+-	/* XXX replace the RMW cycles with immediate loads + writes */
+-1:	mfspr	r10,SPRN_MAS1
+-	rlwinm	r10,r10,0,16,1		/* Clear TID */
+-	mtspr	SPRN_MAS1,r10
+-	ld	r15,PACA_KERNELPGD(r13)	/* Load kernel pgdir */
+-	beq+	cr1,htw_tlb_miss
+-
+-	/* We got a crappy address, just fault with whatever DEAR and ESR
+-	 * are here
+-	 */
+-	TLB_MISS_EPILOG_ERROR
+-	b	exc_data_storage_book3e
+-
+-/* Instruction TLB miss */
+-	START_EXCEPTION(instruction_tlb_miss_htw)
+-	TLB_MISS_PROLOG
+-
+-	/* If we take a recursive fault, the second level handler may need
+-	 * to know whether we are handling a data or instruction fault in
+-	 * order to get to the right store fault handler. We provide that
+-	 * info by keeping a crazy value for ESR in r14
+-	 */
+-	li	r14,-1	/* store to exception frame is done later */
+-
+-	/* Now we handle the fault proper. We only save DEAR in the non
+-	 * linear mapping case since we know the linear mapping case will
+-	 * not re-enter. We could indeed optimize and also not save SRR0/1
+-	 * in the linear mapping case but I'll leave that for later
+-	 *
+-	 * Faulting address is SRR0 which is already in r16
+-	 */
+-	srdi	r11,r16,44		/* get region */
+-	xoris	r11,r11,0xc
+-	cmpldi	cr0,r11,0		/* linear mapping ? */
+-	beq	tlb_load_linear		/* yes -> go to linear map load */
+-	cmpldi	cr1,r11,1		/* vmalloc mapping ? */
+-
+-	/* We do the user/kernel test for the PID here along with the RW test
+-	 */
+-	srdi.	r11,r16,60		/* Check for user region */
+-	ld	r15,PACAPGD(r13)		/* Load user pgdir */
+-	beq	htw_tlb_miss
+-
+-	/* XXX replace the RMW cycles with immediate loads + writes */
+-1:	mfspr	r10,SPRN_MAS1
+-	rlwinm	r10,r10,0,16,1			/* Clear TID */
+-	mtspr	SPRN_MAS1,r10
+-	ld	r15,PACA_KERNELPGD(r13)		/* Load kernel pgdir */
+-	beq+	htw_tlb_miss
+-
+-	/* We got a crappy address, just fault */
+-	TLB_MISS_EPILOG_ERROR
+-	b	exc_instruction_storage_book3e
+-
+-
+-/*
+- * This is the guts of the second-level TLB miss handler for direct
+- * misses. We are entered with:
+- *
+- * r16 = virtual page table faulting address
+- * r15 = PGD pointer
+- * r14 = ESR
+- * r13 = PACA
+- * r12 = TLB exception frame in PACA
+- * r11 = crap (free to use)
+- * r10 = crap (free to use)
+- *
+- * It can be re-entered by the linear mapping miss handler. However, to
+- * avoid too much complication, it will save/restore things for us
+- */
+-htw_tlb_miss:
+-#ifdef CONFIG_PPC_KUAP
+-	mfspr	r10,SPRN_MAS1
+-	rlwinm.	r10,r10,0,0x3fff0000
+-	beq-	htw_tlb_miss_fault /* KUAP fault */
+-#endif
+-	/* Search if we already have a TLB entry for that virtual address, and
+-	 * if we do, bail out.
+-	 *
+-	 * MAS1:IND should be already set based on MAS4
+-	 */
+-	PPC_TLBSRX_DOT(0,R16)
+-	beq	htw_tlb_miss_done
+-
+-	/* Now, we need to walk the page tables. First check if we are in
+-	 * range.
+-	 */
+-	rldicl.	r10,r16,64-PGTABLE_EADDR_SIZE,PGTABLE_EADDR_SIZE+4
+-	bne-	htw_tlb_miss_fault
+-
+-	/* Get the PGD pointer */
+-	cmpldi	cr0,r15,0
+-	beq-	htw_tlb_miss_fault
+-
+-	/* Get to PGD entry */
+-	rldicl	r11,r16,64-(PGDIR_SHIFT-3),64-PGD_INDEX_SIZE-3
+-	clrrdi	r10,r11,3
+-	ldx	r15,r10,r15
+-	cmpdi	cr0,r15,0
+-	bge	htw_tlb_miss_fault
+-
+-	/* Get to PUD entry */
+-	rldicl	r11,r16,64-(PUD_SHIFT-3),64-PUD_INDEX_SIZE-3
+-	clrrdi	r10,r11,3
+-	ldx	r15,r10,r15
+-	cmpdi	cr0,r15,0
+-	bge	htw_tlb_miss_fault
+-
+-	/* Get to PMD entry */
+-	rldicl	r11,r16,64-(PMD_SHIFT-3),64-PMD_INDEX_SIZE-3
+-	clrrdi	r10,r11,3
+-	ldx	r15,r10,r15
+-	cmpdi	cr0,r15,0
+-	bge	htw_tlb_miss_fault
+-
+-	/* Ok, we're all right, we can now create an indirect entry for
+-	 * a 1M or 256M page.
+-	 *
+-	 * The last trick is now that because we use "half" pages for
+-	 * the HTW (1M IND is 2K and 256M IND is 32K) we need to account
+-	 * for an added LSB bit to the RPN. For 64K pages, there is no
+-	 * problem as we already use 32K arrays (half PTE pages), but for
+-	 * 4K page we need to extract a bit from the virtual address and
+-	 * insert it into the "PA52" bit of the RPN.
+-	 */
+-	rlwimi	r15,r16,32-9,20,20
+-	/* Now we build the MAS:
+-	 *
+-	 * MAS 0   :	Fully setup with defaults in MAS4 and TLBnCFG
+-	 * MAS 1   :	Almost fully setup
+-	 *               - PID already updated by caller if necessary
+-	 *               - TSIZE for now is base ind page size always
+-	 * MAS 2   :	Use defaults
+-	 * MAS 3+7 :	Needs to be done
+-	 */
+-	ori	r10,r15,(BOOK3E_PAGESZ_4K << MAS3_SPSIZE_SHIFT)
+-
+-	srdi	r16,r10,32
+-	mtspr	SPRN_MAS3,r10
+-	mtspr	SPRN_MAS7,r16
+-
+-	tlbwe
+-
+-htw_tlb_miss_done:
+-	/* We don't bother with restoring DEAR or ESR since we know we are
+-	 * level 0 and just going back to userland. They are only needed
+-	 * if you are going to take an access fault
+-	 */
+-	TLB_MISS_EPILOG_SUCCESS
+-	rfi
+-
+-htw_tlb_miss_fault:
+-	/* We need to check if it was an instruction miss. We know this
+-	 * though because r14 would contain -1
+-	 */
+-	cmpdi	cr0,r14,-1
+-	beq	1f
+-	mtspr	SPRN_DEAR,r16
+-	mtspr	SPRN_ESR,r14
+-	TLB_MISS_EPILOG_ERROR
+-	b	exc_data_storage_book3e
+-1:	TLB_MISS_EPILOG_ERROR
+-	b	exc_instruction_storage_book3e
+-
+ /*
+  * This is the guts of "any" level TLB miss handler for kernel linear
+  * mapping misses. We are entered with:
 -- 
-Cheers,
-
-David / dhildenb
+2.44.0
 
 
