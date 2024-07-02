@@ -1,107 +1,321 @@
-Return-Path: <linux-kernel+bounces-237415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C1E91F0BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E464E91F0C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46511C21DF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:04:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 648D71F22E9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C33814B950;
-	Tue,  2 Jul 2024 08:04:14 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBB814A4ED;
+	Tue,  2 Jul 2024 08:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RTBGHitW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dKW6zci5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RTBGHitW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dKW6zci5"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A64148311
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 08:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEE9148311
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 08:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719907454; cv=none; b=FdNUBx8eqLd2RI+ULyHEH25ZcvscjH9LeoxCIDen6uzvoVnUUnlCmlZNJvOJDjdjdwRBS+42Dw2ornjbIfuovoZ/sr1EkzGfS7IczRY4t1nchn9d9aqEXSnGYLlibyhkBetOxODfA1CPuMaOw/X6FjbY+hlorwGgbSlB7FPBqfs=
+	t=1719907513; cv=none; b=fEzjhfEOR4ZGeDI2MG1IOZawj38uWLKifC86yedPPPJH9YQ+dwybKX21rH37IEKJLtujDVFjD30Y4CHdeJIXnKRBGg+emDpOJhBe8DD2206NAe9XMt9tKEqORtfukzTJycI+o5qybaOSlPHRFRXz9ESeJFhRR31WnRsl39mKxa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719907454; c=relaxed/simple;
-	bh=T/v6aLQeJkcufU4wheleZvvlW+a4m9q9gimchSO1kiA=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=knTZuf8CqXv8r0+LLaWpO8GlRlqr62VcfCYd2bAlwLdcxAdddCESka/xC5SVTIDEk+qJPFN+gyqXUjql/saVB+aqivZjZl8xR5PZfumVKrcguvEy7kVgiulVzcOnr62dMrszyB1ZJl2TPhb2VPrChZ1OdEJU3+UY1MXjw8BohTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WCwKv4cR7z1T4lb;
-	Tue,  2 Jul 2024 15:59:31 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7ABD31400C9;
-	Tue,  2 Jul 2024 16:04:03 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 2 Jul 2024 16:04:02 +0800
-Subject: Re: [PATCH] mm/memory-failure: allow memory allocation from emergency
- reserves
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: Rui Qi <qirui.001@bytedance.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <nao.horiguchi@gmail.com>
-References: <20240625022342.6158-1-qirui.001@bytedance.com>
- <d7fb45a9-2d16-a2d5-59f4-f1e7a4362e33@huawei.com>
- <20240702001940.43a9447a76b51a871d8dec97@linux-foundation.org>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <070697f1-83f5-ff8e-dfc0-2f99c98c448c@huawei.com>
-Date: Tue, 2 Jul 2024 16:04:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1719907513; c=relaxed/simple;
+	bh=uHshY5ZIv3p3Jh7cuyYnOBpj3swZLswx0qFVfsD4i68=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qKfncyAIMbWEvKTRLQ6z8hGmDM2JnjE+E2iOjaqlV7+IlAktL95rxMmG0aJVJ3fVjn0qsuglcL8EuUtRnewshOnwPviPa/dQW06kgNo3kpvAiZ8F2+Ev2GXZMhkVYUCEIazDldbEz7C8tmkAaDv+kqbiWjJgE/R5+4Zq1F94LLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RTBGHitW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dKW6zci5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RTBGHitW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dKW6zci5; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5B49C1FB8F;
+	Tue,  2 Jul 2024 08:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719907509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=iaxLyCKlDQhNKH+7Ea3S4IE1W/oYFYWQH/On61mLNw8=;
+	b=RTBGHitWX7TymI7Is1X1tpbfyQrkXthWXets1YKdAZbiz3kvfpSdoNM5gY0mvjJ9TWLElm
+	ja2mdul+90eBBEkzB4tINp++C/hd+Ec0RHUF/J0EdOXjtKhNj6VXgHHOg/7MHVSRaKRQ6j
+	MlVSL9f2/h3RzqKV2WTzJjEhftqMx6E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719907509;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=iaxLyCKlDQhNKH+7Ea3S4IE1W/oYFYWQH/On61mLNw8=;
+	b=dKW6zci5a1Mmu3g15T8Te2tgJZg9pEw9q+gSHLmX11Q959VOpGL15m5/F9oG6VsfxIVLcR
+	P5mhpX5kR1Xw26DQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RTBGHitW;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=dKW6zci5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719907509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=iaxLyCKlDQhNKH+7Ea3S4IE1W/oYFYWQH/On61mLNw8=;
+	b=RTBGHitWX7TymI7Is1X1tpbfyQrkXthWXets1YKdAZbiz3kvfpSdoNM5gY0mvjJ9TWLElm
+	ja2mdul+90eBBEkzB4tINp++C/hd+Ec0RHUF/J0EdOXjtKhNj6VXgHHOg/7MHVSRaKRQ6j
+	MlVSL9f2/h3RzqKV2WTzJjEhftqMx6E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719907509;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=iaxLyCKlDQhNKH+7Ea3S4IE1W/oYFYWQH/On61mLNw8=;
+	b=dKW6zci5a1Mmu3g15T8Te2tgJZg9pEw9q+gSHLmX11Q959VOpGL15m5/F9oG6VsfxIVLcR
+	P5mhpX5kR1Xw26DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0823A13A9A;
+	Tue,  2 Jul 2024 08:05:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9V2/ALW0g2Z6EQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 02 Jul 2024 08:05:09 +0000
+Message-ID: <5ccc62fe-3b44-487b-b807-412921395601@suse.de>
+Date: Tue, 2 Jul 2024 10:05:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240702001940.43a9447a76b51a871d8dec97@linux-foundation.org>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] QXL display malfunction
+To: Linux regressions mailing list <regressions@lists.linux.dev>,
+ "Kaplan, David" <David.Kaplan@amd.com>
+Cc: "Petkov, Borislav" <Borislav.Petkov@amd.com>,
+ "zack.rusin@broadcom.com" <zack.rusin@broadcom.com>,
+ "dmitry.osipenko@collabora.com" <dmitry.osipenko@collabora.com>,
+ "Koenig, Christian" <Christian.Koenig@amd.com>,
+ Dave Airlie <airlied@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ ML dri-devel <dri-devel@lists.freedesktop.org>,
+ "spice-devel@lists.freedesktop.org" <spice-devel@lists.freedesktop.org>,
+ "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>
+References: <DS7PR12MB576622398096CB650FF6AF4294FF2@DS7PR12MB5766.namprd12.prod.outlook.com>
+ <DS7PR12MB57665F9F4BDF0598D7CC53DD94FF2@DS7PR12MB5766.namprd12.prod.outlook.com>
+ <67b279c7-1b65-46be-baa2-06794b47b9d1@leemhuis.info>
+ <ab0fb17d-0f96-4ee6-8b21-65d02bb02655@suse.de>
+ <DS7PR12MB57662053B081FBD62213016B94C22@DS7PR12MB5766.namprd12.prod.outlook.com>
+ <e0d95288-17b4-4286-8084-95f496603ada@leemhuis.info>
 Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <e0d95288-17b4-4286-8084-95f496603ada@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+X-Rspamd-Queue-Id: 5B49C1FB8F
+X-Spam-Score: -5.50
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-5.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On 2024/7/2 15:19, Andrew Morton wrote:
-> On Sat, 29 Jun 2024 10:09:46 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
-> 
->> On 2024/6/25 10:23, Rui Qi wrote:
->>> From: Rui Qi <qirui.001@bytedance.com>
+
+Am 01.07.24 um 12:02 schrieb Linux regression tracking (Thorsten Leemhuis):
+> Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
+> for once, to make this easily accessible to everyone.
+>
+> Thomas, was there some progress wrt to fixing below regression? I might
+> have missed something, but from here it looks like this fall through the
+> cracks.
+
+Thanks for reminding.
+
+
+>
+> Makes me wonder if we should temporarily revert this for now to fix this
+> for rc7 and ensure things get at least one week of testing before the final.
+>
+> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+> --
+> Everything you wanna know about Linux kernel regression tracking:
+> https://linux-regtracking.leemhuis.info/about/#tldr
+> If I did something stupid, please tell me, as explained on that page.
+>
+> #regzbot poke
+>
+> On 14.06.24 15:45, Kaplan, David wrote:
+>> [AMD Official Use Only - AMD Internal Distribution Only]
+>>
+>>> -----Original Message-----
+>>> From: Thomas Zimmermann <tzimmermann@suse.de>
+>>> Sent: Wednesday, June 12, 2024 9:26 AM
+>>> To: Linux regressions mailing list <regressions@lists.linux.dev>
+>>> Cc: Petkov, Borislav <Borislav.Petkov@amd.com>;
+>>> zack.rusin@broadcom.com; dmitry.osipenko@collabora.com; Kaplan, David
+>>> <David.Kaplan@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>;
+>>> Dave Airlie <airlied@redhat.com>; Maarten Lankhorst
+>>> <maarten.lankhorst@linux.intel.com>; Maxime Ripard
+>>> <mripard@kernel.org>; LKML <linux-kernel@vger.kernel.org>; ML dri-devel
+>>> <dri-devel@lists.freedesktop.org>; spice-devel@lists.freedesktop.org;
+>>> virtualization@lists.linux.dev
+>>> Subject: Re: [REGRESSION] QXL display malfunction
 >>>
->>> we hope that memory errors can be successfully handled quickly, using
->>> __GFP_MEMALLOC can help us improve the success rate of processing
+>>> Caution: This message originated from an External Source. Use proper
+>>> caution when opening attachments, clicking links, or responding.
+>>>
+>>>
+>>> Hi
+>>>
+>>> Am 12.06.24 um 14:41 schrieb Linux regression tracking (Thorsten Leemhuis):
+>>>> [CCing a few more people and lists that get_maintainers pointed out
+>>>> for qxl]
+>>>>
+>>>> Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
+>>>> for once, to make this easily accessible to everyone.
+>>>>
+>>>> Thomas, from here it looks like this report that apparently is caused
+>>>> by a change of yours that went into 6.10-rc1 (b33651a5c98dbd
+>>>> ("drm/qxl: Do not pin buffer objects for vmap")) fell through the
+>>>> cracks. Or was progress made to resolve this and I just missed this?
+>>>>
+>>>> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker'
+>>>> hat)
+>>>> --
+>>>> Everything you wanna know about Linux kernel regression tracking:
+>>>> https://linux-regtracking.leemhuis.info/about/#tldr
+>>>> If I did something stupid, please tell me, as explained on that page.
+>>>>
+>>>> #regzbot poke
+>>>>
+>>>>
+>>>> On 03.06.24 04:29, Kaplan, David wrote:
+>>>>>> -----Original Message-----
+>>>>>> From: Kaplan, David
+>>>>>> Sent: Sunday, June 2, 2024 9:25 PM
+>>>>>> To: tzimmermann@suse.de; dmitry.osipenko@collabora.com; Koenig,
+>>>>>> Christian <Christian.Koenig@amd.com>; zach.rusin@broadcom.com
+>>>>>> Cc: Petkov, Borislav <Borislav.Petkov@amd.com>;
+>>>>>> regressions@list.linux.dev
+>>>>>> Subject: [REGRESSION] QXL display malfunction
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> I am running an Ubuntu 19.10 VM with a tip kernel using QXL video
+>>>>>> and I've observed the VM graphics often malfunction after boot,
+>>>>>> sometimes failing to load the Ubuntu desktop or even immediately
+>>> shutting the guest down.
+>>>>>> When it does load, the guest dmesg log often contains errors like
+>>>>>>
+>>>>>> [    4.303586] [drm:drm_atomic_helper_commit_planes] *ERROR* head
+>>> 1
+>>>>>> wrong: 65376256x16777216+0+0
+>>>>>> [    4.586883] [drm:drm_atomic_helper_commit_planes] *ERROR* head
+>>> 1
+>>>>>> wrong: 65376256x16777216+0+0
+>>>>>> [    4.904036] [drm:drm_atomic_helper_commit_planes] *ERROR* head
+>>> 1
+>>>>>> wrong: 65335296x16777216+0+0
+>>> I don't see how these messages are related. Did they already appear before
+>>> the broken commit was there?
+>> No, I did not observe them prior to the broken commit.
 >>
->> Comments of __GFP_MEMALLOC says:
+>>>>>> [    5.374347] [drm:qxl_release_from_id_locked] *ERROR* failed to find
+>>> id in
+>>>>>> release_idr
+>>> Is there only one such message in the log? Or multiple/frequent ones.
+>> I would usually only see one.
 >>
->>  * Users of this flag have to be extremely careful to not deplete the reserve
->>  * completely and implement a throttling mechanism which controls the
->>  * consumption of the reserve based on the amount of freed memory.
+>>> Could you provide a stack trace of what happens before?
+>> Here's the top of a backtrace when the error occurs:
+>> #0  qxl_release_from_id_locked (qdev=qdev@entry=0xffff88810126e000, id=id@entry=262151)
+>>      at drivers/gpu/drm/qxl/qxl_release.c:373
+>> #1  0xffffffff819f5b6a in qxl_garbage_collect (qdev=0xffff88810126e000)
+>>      at drivers/gpu/drm/qxl/qxl_cmd.c:222
+>> #2  0xffffffff810e3aa8 in process_one_work (worker=worker@entry=0xffff888101680300,
+>>      work=0xffff88810126f340) at kernel/workqueue.c:3231
+>> #3  0xffffffff810e6281 in process_scheduled_works (worker=<optimized out>)
+>>      at kernel/workqueue.c:3312
+>> #4  worker_thread (__worker=0xffff888101680300) at kernel/workqueue.c:3393
 >>
->> It seems there's no such throttling mechanism in memory_failure.
+>>> We sometimes draw into the buffer object from the CPU. For accessing the
+>>> buffer object's pages from the CPU, only a vmap operation should be
+>>> necessary. It appears as if qxl also requires a pin. My guess is that the pin
+>>> inserts the buffer-object's host-side pages and the code around
+>>> qxl_release_from_id_locked() appears to be garbage-collecting them.
+>>> Hence without the pin, the GC complains about inconsistent state.
+>>>>>> I bisected the issue down to "drm/qxl: Do not pin buffer objects for
+>>> vmap"
+>>>>>> (b33651a5c98dbd5a919219d8c129d0674ef74299).
+>>> Thanks for bisecting. Does it work if you revert that commit?
+>> Yes
 >>
->>> under memory pressure, because to_kill struct is freed very quickly,
->>> so using __GFP_MEMALLOC will not exacerbate memory pressure for a long time,
->>> and  more memory will be freed after killed task exiting, which will also
->>
->> Tasks might not be killed even to_kill struct is allocated.
->>
->> ...
->>
->>> -	raw_hwp = kmalloc(sizeof(struct raw_hwp_page), GFP_ATOMIC);
->>> +	raw_hwp = kmalloc(sizeof(struct raw_hwp_page), GFP_ATOMIC | __GFP_MEMALLOC);
->>
->> In already hardware poisoned code path, raw_hwp can be allocated to store raw page info
->> without killing anything. So __GFP_MEMALLOC might not be suitable to use.
->> Or am I miss something?
-> 
-> Yes, I'm doubtful about this patch.  I think that rather than poking at a
-> particular implementation, it would be helpful for us to see a complete
-> description of the issues which were observed, please.  Let's see the
-> bug report and we can discuss fixes later.
+>> Thanks --David Kaplan
 
-I agree with you, Andrew. Thanks. :)
-.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
