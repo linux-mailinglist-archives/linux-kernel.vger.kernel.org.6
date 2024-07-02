@@ -1,152 +1,260 @@
-Return-Path: <linux-kernel+bounces-238447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04C0924B13
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:04:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB5D924A32
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B042879C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:03:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69161B23487
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EB220FA91;
-	Tue,  2 Jul 2024 21:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ECD205E1A;
+	Tue,  2 Jul 2024 21:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L2bPSByt"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PwBe9QGf"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10FA18DB0E
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90024201257
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719957528; cv=none; b=eoldUIS48hQuyVrThgSl6xg2IK1TMybW7sUDHN+W+nsOVqn5PpheyknAIsJIF1iiRlEdCqgBivABBiA563J7aAP28TRtmSzIz/2A0FvUcofNpOu0OJJhv4Lw8rfAbHrOS/v0RCzVodiGeucHGNB9noQ887GBYmQXS+Nq28VIAA4=
+	t=1719957453; cv=none; b=fh2Srcr/sR0Vc36ZKoZcC4i/NSxLJfBdU1D7qCdNRZ3JSv1RX401TsnUwpeRzRnidzxkszoKmmGutBBPmRg9qqGB9zazQirtpqvqDmggZZjNm17aJvlCulR1NzazEPZY2duIvRTxHbGXNuZYhFusDgqXNqb+fyP6imLajpv6YFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719957528; c=relaxed/simple;
-	bh=qGonLoeAF1nKI66oYiyq/9w8tauQ74p3yAoY7oXxkr8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eO+pm0fyV3O8/ByfaIBbLXqQWtanO1t4YEXPA0uZKm29ZRgd4KEGYvFsgOM8Ae8oqU3kf5H7ijw06NzaE2Gp9uVsfYKEn54Ha2Sr5K8bk4rXUbi9XIIPa4v/LL3sTAX5XsYDxVSM3nEsY72M/SeFvoN6t0+d/3xPJn9mJwjiFCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L2bPSByt; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7f3d3919a4aso177937839f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:58:46 -0700 (PDT)
+	s=arc-20240116; t=1719957453; c=relaxed/simple;
+	bh=Je9kVQrIgaxsRgrSWPFlFhDE4Vq4y0q8UKQudsgFpfQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tthmMxJvz60LlKA56sjbEnGO2OmMuUTYzZ1r3tHbXNhdAb4FQ6sTZy08xeU5hvWA90TkWeh9zeM7aqFMCpk+y9UJDe9FQb8LMihbJXuE0gooIn0103q3g0Pc+P2Gt3PTnjFhe0j1mBhZaGMCdLkCvkZ3ZqwLFZArE3IuwSsQGQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PwBe9QGf; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ce9ba0cedso8239640e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:57:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719957526; x=1720562326; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AlDKvAdBKoPRv/bIs38+uKi/tkvNJDzr4jduq2zKdbM=;
-        b=L2bPSBytG3u5hNKLMAYLiHPt3C5115tbK1AHbvoiU8XoUcwWqUGX3mYy9ejwLhH8NC
-         Nd7k3eaTowtr7HNldX4mqZ38E/0FGNa900HPPKF1PVnFdUs48xogmZlvHPhalf14Kb/0
-         CcNeAB4rdbJxaI8YWL9kNXJGVQZUv6SsRyRxX7bnmuZTIOKCWUwvGefWGlqjkWHgogg5
-         cTArhqjd5e1ZPvCrZ41AK3+RgDdMUR+CzLlsPCujm1WHqFez5YmHB+nEXUzlPoJQtPrR
-         u2oAXJAK5sc5rg5AB8tNHPZMV9fQW80+zIadLyAi9xVOG9mIj2OveIS4PcIKTErEVR6Q
-         cnuQ==
+        d=broadcom.com; s=google; t=1719957450; x=1720562250; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9z+8bdnHCMPCApRJBPIUlmhdXsDcMjQ8o+Q70WqEG6c=;
+        b=PwBe9QGfm93EmVBLrxgKtHdzCiN8gdRlsfuFKMo43Kp4VTrHzagvZoUxFSqAENCiAo
+         02FAaamaxZiRUKtyXufz0Fh25atzlghVKW0f1RgXt528XFn1ugBLqJ8El7rNe/z/zxUl
+         ZjlOMS0at6ZS+m/LZqhJ3BfAZzQYQVR9RDkfw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719957526; x=1720562326;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AlDKvAdBKoPRv/bIs38+uKi/tkvNJDzr4jduq2zKdbM=;
-        b=hXfplBui/Vw7/ZMBgc20xal9/7vMUtaZPjoXDQbbnfeMbbmSHuZ2RSQDeaCdibhI1s
-         7z+WQH3jCYk4P6+NmP0aL36CK+LJ5O1ExHq3PgdaLJxtdx2G4LZkghMHrBHoMVoQ/3xI
-         9GpIfcgL6SN0q7Yuh66lZ/3+teelGIcqlGulsXnzEO203HA1lESLrcLVomRGxhoVBprj
-         E17kwNF8RMhHy/8ODJ4YUsrg8YjGAk4cQ3+cuRg6soeTSUXar9mBoJ1JXtvStz5W73e4
-         tjVob5lWdsXPzsxK1Jfjhcky8CqgJJxTvvpKMpT1LBbpQqJQoYY96VbSg1keWfIZ/o4t
-         a5cg==
-X-Gm-Message-State: AOJu0YwQmO3GszyjTSOuX6G0+mZ1E278GbOITrJBwwbNvLkXOkga9Hb2
-	jZlSC6YCT4+CoWCVzx0FxBpVmai4B8HVxYhhKnUsln0J856oxlCI
-X-Google-Smtp-Source: AGHT+IEykACPg8Yuh6xy1PBNO3lKJQHFEEJ8ReiFUL2QHWIsQS/wu8Ny162mn5gSs3mLVbeCJLAYLw==
-X-Received: by 2002:a6b:ce01:0:b0:7eb:7887:a496 with SMTP id ca18e2360f4ac-7f62ee118a2mr1185180239f.4.1719957526148;
-        Tue, 02 Jul 2024 14:58:46 -0700 (PDT)
-Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.58.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 14:58:45 -0700 (PDT)
-From: Jim Cromie <jim.cromie@gmail.com>
-To: daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com,
-	jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com,
-	jbaron@akamai.com,
-	gregkh@linuxfoundation.org,
-	ukaszb@chromium.org
-Cc: linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	linux@rasmusvillemoes.dk,
-	joe@perches.com,
-	mcgrof@kernel.org,
-	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v9 26/52] dyndbg: change __dynamic_func_call_cls* macros into expressions
-Date: Tue,  2 Jul 2024 15:57:16 -0600
-Message-ID: <20240702215804.2201271-27-jim.cromie@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240702215804.2201271-1-jim.cromie@gmail.com>
-References: <20240702215804.2201271-1-jim.cromie@gmail.com>
+        d=1e100.net; s=20230601; t=1719957450; x=1720562250;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9z+8bdnHCMPCApRJBPIUlmhdXsDcMjQ8o+Q70WqEG6c=;
+        b=Qz8Kpgpv9aN42oWUq5TF2M1wFrDYzs0dOKMo5dumecJxp1EDRvC+5E5n2uqCWkC1ek
+         YqFYnnnE/kLYJHsB3p4/jsoCmYf3S3D0Vjiaflfr5sZgu7BDSAVXrNyEY7nBpJj3i4at
+         50cCnLI+jp5KmOKqVYsM7NU1iM8v/R9G4hLaQQW9c6+6qVCrLh9rQFXa545Gd8eQLhJX
+         beBLAQ5KAFAXvIIHPQbVn4GHURGWS7n5FX4Hjr7RmXkwFJNMN64ukuYTd2PXP1F2mmMx
+         JxRz9aHcv/a9oD0vxxxNkNASBmKrZeZmPJ+pqxzi+S1OnMhe61DLWgGjefhRbgubrbDL
+         YV1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUMsjhyVbk8oUlqJWzOjJGhZq3SmnwVO1a+Eu6x8NiQlcUdWT0Hi5q40QXcUI7Z0dnuuJoBYVJQwGlz3bD3je3zO1u0XyWXLFDfe9EO
+X-Gm-Message-State: AOJu0YyX+3Iz1eysXtWjPMZbD9fNSxryTsZQpHoeB2vUlTXTw5xnGIHi
+	uslUQSF3vZUAFqcyHkf45xL+TH2ppELlEUYIpX55He/dy2xzp+WfR67MFl9KzBt5WzdStAjCE1H
+	0/4keRqq1muU/NnRl18oY0TEp7vO1ElljCvD2
+X-Google-Smtp-Source: AGHT+IF+RYXnS9P09KG8u4Bf3AZ2HvJkSySrEDejE6ieNhBaC41VEUORI/mqe2KAWvV5bl+hbrNoUVP0FBBN87NT4AA=
+X-Received: by 2002:a05:6512:3d1e:b0:52c:9ae0:beed with SMTP id
+ 2adb3069b0e04-52e82705d17mr9360475e87.52.1719957449672; Tue, 02 Jul 2024
+ 14:57:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240628205430.24775-1-james.quinlan@broadcom.com>
+ <20240628205430.24775-2-james.quinlan@broadcom.com> <5d0950fd-dcd2-4996-aab0-0030f1911960@kernel.org>
+In-Reply-To: <5d0950fd-dcd2-4996-aab0-0030f1911960@kernel.org>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Tue, 2 Jul 2024 17:57:17 -0400
+Message-ID: <CA+-6iNzoPTk0mxwug8Odv4Loj5hN8eDy56AjYmsAa+qV3SnWfA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/8] dt-bindings: PCI: Add Broadcom STB 7712 SOC,
+ update maintainter
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000d78ae9061c4acc0f"
 
-The Xe driver's XE_IOCTL_DBG macro calls drm_dbg() from inside an if
-(expression).  This breaks when CONFIG_DRM_USE_DYNAMIC_DEBUG=y because
-the invoked macro has a do-while-0 wrapper.
+--000000000000d78ae9061c4acc0f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-   if (cond && (drm_dbg("expr-form"),1)) {
-      ... do some more stuff
-   }
+On Mon, Jul 1, 2024 at 5:12=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 28/06/2024 22:54, Jim Quinlan wrote:
+> > - Update maintainer.
+>
+> Why?
 
-Fix it by changing __dynamic_func_call_cls{,_no_desc} macros into
-expressions, by replacing the do-while-0s with a ({ }) wrapper.
+I haven't observed any action or feedback from Nicolas in years.
+Nicolas, please
+state your case for being a maintainer because it is not making sense from
+my perspective.
+>
+> > - Adds a driver compatible string for the new STB SOC 7712
+> > - Adds two new resets for the 7712: "bridge", for the
+> >   the bridge between the PCIe core and the memory bus;
+> >   and "swinit", the PCIe core reset.
+> >
+> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > ---
+> >  .../bindings/pci/brcm,stb-pcie.yaml           | 24 ++++++++++++++++++-
+> >  1 file changed, 23 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b=
+/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> > index 11f8ea33240c..f594fef343a1 100644
+> > --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> > +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> > @@ -7,12 +7,13 @@ $schema: http://devicetree.org/meta-schemas/core.yaml=
+#
+> >  title: Brcmstb PCIe Host Controller
+> >
+> >  maintainers:
+> > -  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > +  - Jim Quinlan <james.quinlan@broadcom.com>
+> >
+> >  properties:
+> >    compatible:
+> >      items:
+> >        - enum:
+> > +          - brcm,bcm7712-pcie # STB sibling SOC of Raspberry Pi 5
+>
+> Why did you place it here? Isn't the list ordered?
 
-In C, all legal expressions are also legal statements, as converted by
-the trailing semi-colon in a statement-style macro invocation:
+It is ordered from newest at top to oldest at bottom -- is the
+convention to put the "new" at the bottom?
+>
+> >            - brcm,bcm2711-pcie # The Raspberry Pi 4
+> >            - brcm,bcm4908-pcie
+> >            - brcm,bcm7211-pcie # Broadcom STB version of RPi4
+> > @@ -146,6 +147,27 @@ allOf:
+> >        required:
+> >          - resets
+> >          - reset-names
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: brcm,bcm7712-pcie
+> > +    then:
+> > +      properties:
+> > +        resets:
+>
+> Fix the binding first - properties should be defined in top level
+> "properties:" and then customized. Where are "resets"?
+>
+> > +          items:
+> > +            - description: phandle pointing to the RESCAL reset contro=
+ller
+>
+> Drop redundant text. There is no point in saying that phandle is a
+> phandle. It's obvious. Say something which is not obvious.
 
-   drm_dbg("statement form");
+My kernel Yaml-fu is weak.  I will redo.
 
-Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
----
- include/linux/dynamic_debug.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Regards,
+Jim Quinlan
+Broadcom STB/CM
+>
+>
+> Best regards,
+> Krzysztof
+>
 
-diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-index 19f959f9a6b4..121a66b0ca25 100644
---- a/include/linux/dynamic_debug.h
-+++ b/include/linux/dynamic_debug.h
-@@ -287,20 +287,20 @@ void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
-  * (|_cls):	adds in _DPRINT_CLASS_DFLT as needed
-  * (|_no_desc):	former gets callsite descriptor as 1st arg (for prdbgs)
-  */
--#define __dynamic_func_call_cls(id, cls, fmt, func, ...) do {	\
-+#define __dynamic_func_call_cls(id, cls, fmt, func, ...) ({	\
- 	DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);	\
- 	if (DYNAMIC_DEBUG_BRANCH(id))				\
- 		func(&id, ##__VA_ARGS__);			\
--} while (0)
-+})
- #define __dynamic_func_call(id, fmt, func, ...)				\
- 	__dynamic_func_call_cls(id, _DPRINTK_CLASS_DFLT, fmt,		\
- 				func, ##__VA_ARGS__)
- 
--#define __dynamic_func_call_cls_no_desc(id, cls, fmt, func, ...) do {	\
-+#define __dynamic_func_call_cls_no_desc(id, cls, fmt, func, ...) ({	\
- 	DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);		\
- 	if (DYNAMIC_DEBUG_BRANCH(id))					\
- 		func(__VA_ARGS__);					\
--} while (0)
-+})
- #define __dynamic_func_call_no_desc(id, fmt, func, ...)			\
- 	__dynamic_func_call_cls_no_desc(id, _DPRINTK_CLASS_DFLT,	\
- 					fmt, func, ##__VA_ARGS__)
--- 
-2.45.2
+--000000000000d78ae9061c4acc0f
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBwVW8pXlVLww1mPrKvYhO2eKmE4KGc
+/a99BY7AIDuRMDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
+MDIyMTU3MzBaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAgOr5PGRh3EYtSSiNDPp3bD5oLqzQ4gkYdx/y41hzbzVNDuTk
+WFJLIFfb9pOGhuk7ZNNuJQcF4GKClEtfiG532martVSKMJ17ILFRNTo1uad5JlORx/i3D/p3TS03
+HhD7uYx43+zxRp1ZwvrmQ0XWtqsp9LStRdhNfbanW72AIiemlAZEQ2Tidg5paKs03EU/rSTqLdU2
+Givq3fTJ29E/4QstxnqZZZ107YOctvTp5IhZMdsvmlFidE6njFs6WCtr/KBAn9qaV550RNLMk5oo
+PJnh4EY3UoTgpjkGrkx72mIvEjHlW7uownilbL27oGxxPcH9cUwreQV9ysYiWHFEQw==
+--000000000000d78ae9061c4acc0f--
 
