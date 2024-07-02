@@ -1,147 +1,180 @@
-Return-Path: <linux-kernel+bounces-238325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 970CB924849
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:29:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342FC92484D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C90F61C24CD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:29:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49D13B2809B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651BB1CFD49;
-	Tue,  2 Jul 2024 19:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E8A1CFD77;
+	Tue,  2 Jul 2024 19:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0MQy4zz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3acl89+"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D451CFD40;
-	Tue,  2 Jul 2024 19:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F3F1CE09B;
+	Tue,  2 Jul 2024 19:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719948502; cv=none; b=LaW8JNqIPKZFSW0O3Yi0qu6fbVfSCJJ0IW/mJ1XFyNdJpvH/lH7TTiJFx6F9xpiitmEXFRo0uJvNZhT2LYyq6F96IGbEH5f/JexcW1c95vd1vMXHOD1p8IXOwaezgN92/4sh7gVmzwtp1tHU9RPz+NwiESaRDg8Gkjx2IDbZgj8=
+	t=1719948519; cv=none; b=VU5F1HOhr8cbas876mF2QBnKwTHRHltdWmWyG+6Pqdp8z/mZi7Mx0al97c/lisRwcl6XGCzKPNKcEVmA7N4jmGhMC3ic4mVCRJXVi7E7BmlXviSQs9KUEuvF/42wSIu2wMeD3U3/IgQpsVaZIVghCibjlnNk31MDCrpBely7qio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719948502; c=relaxed/simple;
-	bh=d53Mhpa3K0NHA0txmiM9wG0bXC8iq/XIoY210mn1Tzk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EsSF/4bLqLLN8o/c3J34mUtMTeHisqrzBt7AAMM8AZmkO2DdmWzv+/9q+GLfmnfVZ+xnetY3aqA42nTqqOoSQPe/gmCQIqKMouANc1Lyoyq7xD/lO78Ot9Oap/DjuOTORuOvrCnCR9Br8zaObeqsqZ/yk71lSQgb0q7K9kTvowc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g0MQy4zz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40FBAC116B1;
-	Tue,  2 Jul 2024 19:28:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719948502;
-	bh=d53Mhpa3K0NHA0txmiM9wG0bXC8iq/XIoY210mn1Tzk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=g0MQy4zzkvUMn7/yh2JMaaiWSgCflKaCuzeCY6BpnbwOEhVptWir6q3V2rR9RTH8t
-	 cOSdvlQ1q1lnTIJO0CKNtvgd0143Gc78Id8oGPLimiLfmmTEPS2FQ60/2qXtl1U+iM
-	 v36FKWuMKzi6eTsV55aSa8TiSjH+cqpAs99TuxGh9Ao4EWn1UQMDokDJJsdArmDWoO
-	 i2XoGAj0jBvGXUkDJ/k5C6OzsyhKl3lFyZBapaRfIE9s9o6FzwymlJ7Xs58kGgsW4+
-	 JNC1204oE21CLY0EB/iiGv/QC5nscUojMbrOtXIuBe2AIGwJIPIDh6C5qnxOMmeIqD
-	 Spl9G0aIivz1g==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-25cd49906aeso590309fac.2;
-        Tue, 02 Jul 2024 12:28:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWWF9VL+MWGHsOs+aL4DcxvfSLjj5VyUDbV6gGRZrR0ZNWEblfW8fyUgNOjZn4nXyozl3jE9VSWNQareW2ZGOKgFBqp0frgMJWArzeq7rT/1fXrh2ijIRuaB8Etd2osatGDAgW4n64hDQ==
-X-Gm-Message-State: AOJu0YxeUIt/yYe4NP4u0LWvLxekt4LpFetw9O2+CRNlPgAc9iKwEA6c
-	LCo/QgtjbXw/3i1bl1PXX0xTHSca4cLSdOUUqiVSXlRIoLv0eezRmHmkCboz3Tn7Czw6fmVpAGW
-	XgRl7+/KMqfbaIQYLOXgmRBslx9g=
-X-Google-Smtp-Source: AGHT+IHv14pqGHYCsUwo4I6/73RApsIYCL242vkVHrSHAiljgO8mfJlUMTP9AZ0Ok1GXd+Y/mre3u2VlJ6FHTLhFN8A=
-X-Received: by 2002:a05:6870:2892:b0:255:1fea:340d with SMTP id
- 586e51a60fabf-25db3049d93mr9852571fac.0.1719948501560; Tue, 02 Jul 2024
- 12:28:21 -0700 (PDT)
+	s=arc-20240116; t=1719948519; c=relaxed/simple;
+	bh=tul9GGxVOJheZfp6ob6RkPcc0U0d7m5QmW2bOPPbdg8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nZMRG/hCWThzgdj8P+ptwuPmO38wFx81htWyYRXvOcdUMA+H2Ul7yrqyS/8aAqzqK99xozRwBS01sn8DyMrIKEa9U/VpcuG6gajj54L36oDXSGilZVpqYAmUAVscj2IBwBnK1rXT2bCaj5f1lIh8GZSk3vuQxT2jwVJgtZfVFH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3acl89+; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-424ad289912so32273125e9.2;
+        Tue, 02 Jul 2024 12:28:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719948516; x=1720553316; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tul9GGxVOJheZfp6ob6RkPcc0U0d7m5QmW2bOPPbdg8=;
+        b=E3acl89+9FCgDvAhl+5crCOYHlEXKkK50tzu0SGTg8FWhUHLw6zyr3YH/z7YOgKkCE
+         RFN9jwXxuaoCs9fZ0XN6Em/Aw+3sBTFj8ZfQwj4Agudk4c/QiLYxFDv+R5zfzYWXT+RQ
+         ooVGlXFpHSzTn2JJs0yZR54TNTlC1gXN+bMvNgb1rDPFw9lRKizljwpG6sEhawx8Effu
+         XHcf6eEUATInxC05KvrHYL4N9TVihQPfsQTHiUZhr5uGgjf6F3lNZc4prkFDlBZ9p0kc
+         QRpbMbQGsDzrhHo0BwSShyFPCAh+LM40CFA2MQR/OwUVgdo5IPx6/1djZYcrsb18xVBe
+         k6ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719948516; x=1720553316;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tul9GGxVOJheZfp6ob6RkPcc0U0d7m5QmW2bOPPbdg8=;
+        b=jJ3tt7BkQMhmmmrtnJme0BylPuaYG6aIeWGsPJAUKhuyCFw+N1cELLz7xXXmn61quR
+         Sfg1VBnhmrbzcUWTEpn1oK/OcfjAuzUaWBkOIqLvjqirSjVOYJ3Xh5O10MdlumEoTz8X
+         H+Lf5BfzLIFjKq85TY08Q85/Xw1PBC+0KKcxyhHqSxq1VOblgWWPsq4565VURsjcd1t0
+         NMc3kI85G6zoCOoaS6xPzY0dUxIJ+roqYpKCKXYlaxXYQpnF6JC0u0fkOM/1Wx58xMUL
+         rRaxI3JvEjwc29Hgs9YyrGps4t1YPJV3ufJqDfkVVUdWOneQB9wgkgiSt4x80YxLrzzb
+         1Ang==
+X-Forwarded-Encrypted: i=1; AJvYcCWc3dTQIwKR2OpCvY/EEI1ElMvzlXTbf4fRWYGjao8O05E0e2HVbJdMaEopgULnHHIubkjai3GZ5QX4ImdgZAZVPoXlMla5MImlCEhkti38HWy01gExG9cvNere95D7Dyjw00DSIgNKbIZXD5BY8apvkpqKkIE+8hbQJHoK7/4e4ItgHV0uoYqhzhbBQ4LJvGkF8BHNBpNYAhkp
+X-Gm-Message-State: AOJu0YxY4qcQZBSJIN7qkwqMI6biN1JEJZlSsGJC7L7Y3SZSR/8zZCL5
+	3SjUn+Cio+r3PW6NZghz7TvS4cLKB2QhKPrllSIBZFSsvuCnqI4K
+X-Google-Smtp-Source: AGHT+IEvjPTxMj0JsgTr5zdhlobmpuoHq2YNMq0ll0Nna1fgaDgjHIF7g/bD9TLi2GctXVCTSByhDw==
+X-Received: by 2002:a05:600c:304a:b0:424:ac90:8571 with SMTP id 5b1f17b1804b1-4257a01161cmr64297235e9.18.1719948515718;
+        Tue, 02 Jul 2024 12:28:35 -0700 (PDT)
+Received: from ?IPv6:2001:8a0:e622:f700:768c:7ffe:4763:3ff5? ([2001:8a0:e622:f700:768c:7ffe:4763:3ff5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af55aeasm206364485e9.17.2024.07.02.12.28.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 12:28:35 -0700 (PDT)
+Message-ID: <87e0dac344d927ca6e2655ce7f7433ff73da6b58.camel@gmail.com>
+Subject: Re: [PATCH v1] arm64: dts: imx8mp: Fix VPU PGC power-domain parents
+From: Vitor Soares <ivitro@gmail.com>
+To: Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Vitor Soares <vitor.soares@toradex.com>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org"
+ <linux-pm@vger.kernel.org>, "stable@vger.kernel.org"
+ <stable@vger.kernel.org>,  Lucas Stach <l.stach@pengutronix.de>
+Date: Tue, 02 Jul 2024 20:28:33 +0100
+In-Reply-To: <AM6PR04MB5941E53A5742E95EF1579C6688D32@AM6PR04MB5941.eurprd04.prod.outlook.com>
+References: <20240701124302.16520-1-ivitro@gmail.com>
+	 <AM6PR04MB5941E53A5742E95EF1579C6688D32@AM6PR04MB5941.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702185523.17716-1-qasim.majeed20@gmail.com>
-In-Reply-To: <20240702185523.17716-1-qasim.majeed20@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 2 Jul 2024 21:28:10 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gOKf1kv9Zj+wo5BE24ApftNrpgxuYPbZ2e_PtiqxpDJg@mail.gmail.com>
-Message-ID: <CAJZ5v0gOKf1kv9Zj+wo5BE24ApftNrpgxuYPbZ2e_PtiqxpDJg@mail.gmail.com>
-Subject: Re: [PATCH v2] Updating a vulnerable use of strcpy.
-To: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 2, 2024 at 9:04=E2=80=AFPM Muhammad Qasim Abdul Majeed
-<qasim.majeed20@gmail.com> wrote:
->
-> Replacing strcpy with strscpy and memory bound the copy.
+T24gTW9uLCAyMDI0LTA3LTAxIGF0IDIzOjU5ICswMDAwLCBQZW5nIEZhbiB3cm90ZToKPiA+IFN1
+YmplY3Q6IFtQQVRDSCB2MV0gYXJtNjQ6IGR0czogaW14OG1wOiBGaXggVlBVIFBHQyBwb3dlci1k
+b21haW4KPiA+IHBhcmVudHMKPiA+IAo+ID4gRnJvbTogVml0b3IgU29hcmVzIDx2aXRvci5zb2Fy
+ZXNAdG9yYWRleC5jb20+Cj4gPiAKPiA+IE9uIGlNWDhNIFBsdXMgUXVhZExpdGUgKFZQVS1sZXNz
+IFNvQyksIHRoZSBkZXBlbmRlbmN5IGJldHdlZW4KPiA+IFZQVSBwb3dlciBkb21haW5zIGxlYWQg
+dG8gYSBkZWZlcnJlZCBwcm9iZSBlcnJvciBkdXJpbmcgYm9vdDoKPiA+IFvCoMKgIDE3LjE0MDE5
+NV0gaW14LXBnYyBpbXgtcGdjLWRvbWFpbi44OiBmYWlsZWQgdG8gY29tbWFuZCBQR0MKPiA+IFvC
+oMKgIDE3LjE0NzE4M10gcGxhdGZvcm0gaW14LXBnYy1kb21haW4uMTE6IGRlZmVycmVkIHByb2Jl
+IHBlbmRpbmc6Cj4gPiAocmVhc29uIHVua25vd24pCj4gPiBbwqDCoCAxNy4xNDcyMDBdIHBsYXRm
+b3JtIGlteC1wZ2MtZG9tYWluLjEyOiBkZWZlcnJlZCBwcm9iZSBwZW5kaW5nOgo+ID4gKHJlYXNv
+biB1bmtub3duKQo+ID4gW8KgwqAgMTcuMTQ3MjA3XSBwbGF0Zm9ybSBpbXgtcGdjLWRvbWFpbi4x
+MzogZGVmZXJyZWQgcHJvYmUgcGVuZGluZzoKPiA+IChyZWFzb24gdW5rbm93bikKPiA+IAo+ID4g
+VGhpcyBpcyBpbmNvcnJlY3QgYW5kIHNob3VsZCBiZSB0aGUgVlBVIGJsay1jdHJsIGNvbnRyb2xs
+aW5nIHRoZXNlIHBvd2VyCj4gPiBkb21haW5zLCB3aGljaCBpcyBhbHJlYWR5IGRvaW5nIGl0Lgo+
+ID4gCj4gPiBBZnRlciByZW1vdmluZyB0aGUgYHBvd2VyLWRvbWFpbmAgcHJvcGVydHkgZnJvbSB0
+aGUgVlBVIFBHQyBub2RlcywKPiA+IGJvdGggaU1YOE0gUGx1cyB3LyBhbmQgdy9vdXQgVlBVIGJv
+b3QgY29ycmVjdGx5LiBIb3dldmVyLCBpdCBicmVha3MKPiA+IHRoZSBzdXNwZW5kL3Jlc3VtZSBm
+dW5jdGlvbmFsaXR5LiBBIGZpeCBmb3IgdGhpcyBpcyBwZW5kaW5nLCBzZWUgTGlua3MuCj4gPiAK
+PiA+IENjOiA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4KPiA+IEZpeGVzOiBkZjY4MDk5MmRkNjIg
+KCJhcm02NDogZHRzOiBpbXg4bXA6IGFkZCB2cHUgcGdjIG5vZGVzIikKPiA+IExpbms6Cj4gPiBT
+dWdnZXN0ZWQtYnk6IEx1Y2FzIFN0YWNoIDxsLnN0YWNoQHBlbmd1dHJvbml4LmRlPgo+ID4gU2ln
+bmVkLW9mZi1ieTogVml0b3IgU29hcmVzIDx2aXRvci5zb2FyZXNAdG9yYWRleC5jb20+Cj4gCj4g
+Rm9yIFZQVS1MZXNzIDhNUCwgYWxsIHRoZSBWUFUgUEdDIG5vZGVzIHNob3VsZCBiZSBkcm9wcGVk
+LAo+IHJpZ2h0PwoKVGhleSBkb24ndCBuZWVkIHRvIGJlIGRyb3BwZWQuIFRha2luZyB0aGUgaU1Y
+OE1NIExpdGUgdmFyaWFudGUgYXMgZXhhbXBsZSAoaXQKYWxzbyBkb2Vzbid0IGhhdmUgVlBVKSwg
+dGhlIG5vZGVzIGFyZSB0aGVyZSBhbmQgdGhpcyBpc3N1ZSBpcyBub3QgcHJlc2VudC4KCj4gCj4g
+V2h5IG5vdCB1c2UgYm9vdGxvYWRlciB0byB1cGRhdGUgdGhlIGRldmljZSB0cmVlIGJhc2VkIG9u
+IGZ1c2UKPiBzZXR0aW5ncz8KCldoaWxlIGZpeGluZyBWUFUgYmxrLWN0cmwgc3VzcGVuZC9yZXN1
+bWUgZnVuY3Rpb25hbGl0eSwgSSByZWNlaXZlZCBmZWVkYmFjayB0aGF0CnRoaXMgVlBVIEdQQyBk
+ZXBlbmRlbmN5IGlzIGluY29ycmVjdCBhbmQgaXMgdXAgdG8gVlBVIGJsay1jdHJsIHRvIGNvbnRy
+b2wgdGhlCkdQQyBkb21haW5zLgpBcyB3ZSBkaXNhYmxlIHRoZSBWUFUgYmxrLWN0cmwgbm9kZSBv
+biB0aGUgYm9vdGxvYWRlciwgcmVtb3ZpbmcgdGhlIGRlcGVuZGVuY3kKc29sdmVzIHRoZSBpc3N1
+ZS4KClJlZ2FyZHMsClZpdG9yIFNvYXJlcwo+IAo+IFJlZ2FyZHMsCj4gUGVuZy4KPiAKPiA+IC0t
+LQo+ID4gwqBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bXAuZHRzaSB8IDMgLS0t
+Cj4gPiDCoDEgZmlsZSBjaGFuZ2VkLCAzIGRlbGV0aW9ucygtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0
+IGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1wLmR0c2kKPiA+IGIvYXJjaC9h
+cm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1wLmR0c2kKPiA+IGluZGV4IGI5MmFiYjVhNWM1
+My4uMTI1NDgzMzZiNzM2IDEwMDY0NAo+ID4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVl
+c2NhbGUvaW14OG1wLmR0c2kKPiA+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxl
+L2lteDhtcC5kdHNpCj4gPiBAQCAtODgyLDIxICs4ODIsMTggQEAgcGdjX3ZwdW1peDogcG93ZXIt
+ZG9tYWluQDE5IHsKPiA+IAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwZ2NfdnB1X2cxOiBw
+b3dlci0KPiA+IGRvbWFpbkAyMCB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAjcG93ZXItZG9tYWluLQo+ID4gY2VsbHMgPSA8MD47Cj4gPiAtwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBvd2VyLWRvbWFpbnMgPQo+ID4gPCZwZ2NfdnB1bWl4
+PjsKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZyA9Cj4gPiA8
+SU1YOE1QX1BPV0VSX0RPTUFJTl9WUFVfRzE+Owo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgY2xvY2tzID0gPCZjbGsKPiA+IElNWDhNUF9DTEtfVlBVX0cxX1JPT1Q+
+Owo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Owo+ID4gCj4gPiDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoHBnY192cHVfZzI6IHBvd2VyLQo+ID4gZG9tYWluQDIxIHsKPiA+IMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCNwb3dlci1kb21haW4tCj4gPiBjZWxscyA9IDww
+PjsKPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcG93ZXItZG9tYWlu
+cyA9Cj4gPiA8JnBnY192cHVtaXg+Owo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgcmVnID0KPiA+IDxJTVg4TVBfUE9XRVJfRE9NQUlOX1ZQVV9HMj47Cj4gPiDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjbG9ja3MgPSA8JmNsawo+ID4gSU1Y
+OE1QX0NMS19WUFVfRzJfUk9PVD47Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH07Cj4gPiAK
+PiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcGdjX3ZwdV92YzgwMDBlOiBwb3dlci0KPiA+IGRv
+bWFpbkAyMiB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAjcG93
+ZXItZG9tYWluLQo+ID4gY2VsbHMgPSA8MD47Cj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoHBvd2VyLWRvbWFpbnMgPQo+ID4gPCZwZ2NfdnB1bWl4PjsKPiA+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZyA9Cj4gPiA8SU1YOE1QX1BPV0VS
+X0RPTUFJTl9WUFVfVkM4MDAwRT47Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqBjbG9ja3MgPSA8JmNsawo+ID4gSU1YOE1QX0NMS19WUFVfVkM4S0VfUk9PVD47Cj4g
+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH07Cj4gPiAtLQo+ID4gMi4zNC4xCj4gCgo=
 
-Why?  In this particular case, it is not fundamentally necessary.
-
-> strcpy is a deprecated function. It should be removed from the kernel sou=
-rce.
-
-If the goal is to get rid of all strcpy() calls from the kernel
-because using it is generally unsafe, just say so in the changelog and
-it will be fine.
-
-> Reference: https://github.com/KSPP/linux/issues/88
->
-> Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
->
-> > In what way exactly is it vulnerable?
-> strcpy is a deprecated interface (reference: https://github.com/KSPP/linu=
-x/issues/88). It should be removed from kernel source.
-> It is reported as vulnerable in Enabling Linux in Safety Critical Applica=
-tions (ELISA) builder.
->
-> > Why is a runtime check needed here if all of the sizes in question are =
-known at compile time?
-> Runtime check has been replaced with compile time check.
->
-> ---
-> v1 -> v2: Commit message has been updated and runtime check is replace wi=
-th compile time check.
->
->  drivers/acpi/acpi_video.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-> index 1fda30388297..be8346a66374 100644
-> --- a/drivers/acpi/acpi_video.c
-> +++ b/drivers/acpi/acpi_video.c
-> @@ -1128,8 +1128,8 @@ static int acpi_video_bus_get_one_device(struct acp=
-i_device *device, void *arg)
->                 return -ENOMEM;
->         }
->
-> -       strcpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
-> -       strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
-> +       strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME, sizeof(=
-ACPI_VIDEO_DEVICE_NAME));
-> +       strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS, sizeof(ACPI_=
-VIDEO_CLASS));
-
-The strscpy() kerneldoc comment says this:
-
- * The size argument @... is only required when @dst is not an array, or
- * when the copy needs to be smaller than sizeof(@dst).
-
-So is it necessary to use the size argument here and below?
-
->         data->device_id =3D device_id;
->         data->video =3D video;
-> @@ -2010,8 +2010,8 @@ static int acpi_video_bus_add(struct acpi_device *d=
-evice)
->         }
->
->         video->device =3D device;
-> -       strcpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
-> -       strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
-> +       strscpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME, sizeof(ACP=
-I_VIDEO_BUS_NAME));
-> +       strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS, sizeof(ACPI_=
-VIDEO_CLASS));
->         device->driver_data =3D video;
->
->         acpi_video_bus_find_cap(video);
-> --
 
