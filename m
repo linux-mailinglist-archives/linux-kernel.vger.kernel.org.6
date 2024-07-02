@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-238476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AFD3924B38
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:09:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B3D924B39
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5AB61F24BBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:09:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA34D1C20896
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66104210189;
-	Tue,  2 Jul 2024 21:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E881CD33B;
+	Tue,  2 Jul 2024 21:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BiHcNwiV"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RB8yFdvk"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611C61CA2AB
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681F21CA2CC
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719957555; cv=none; b=IKvUf58/qRsi2RO3hnJ18Xy7KGlecMgOQsgRqYKZUUUio4cZ4Y3yLxkTtqK4dwlv0TpCkc/t8RJOnFVtxvrRxolv9LLUjw+ziE2uXvfXWQUXjCnAIUyaBu17yfr9/YUC7EUPN6eziGHm3maFZkndyiDO3RoYAMKvzV7GsI9vW/I=
+	t=1719957556; cv=none; b=pWJYueQdfm02irIQgduMSMzgTKeH1OI8KPMg+lRpOqpan1Cx14gt7Du8ULcGSWHC2avB7QdoIvnYAlXOB3t10/xdHhOTOlv15+565a4XHn0wSxD8uBPMMk0CakkSWUi7tmzWEK7/oolaebj8jDKGsBIyJJSSDhYIIJ8FwwkgfUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719957555; c=relaxed/simple;
-	bh=zmyLO65yPZ2P+sQ2d3HjTXHc3m95hCKtg7yLZG+YhsY=;
+	s=arc-20240116; t=1719957556; c=relaxed/simple;
+	bh=tCPOUZzz1n3M3/Vbz4zH5Gffd4O1Gv0jydxTr8IfQGM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JkGa5RcfkCEOSUgOUTKAV1MmOafGm/h0Pdxv7PDC6dJ4rGj++xKYRLhg2++06mUCDCQKkRnzS72qDBCmltxRY2U+rtr4mUtVlaz4HypAny5LzDqeIx1KG/bugq5eqpfWe0/MMIMgKzLDCn/+6lMvjQ7RlihpIr1JqULfs4V1ROI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BiHcNwiV; arc=none smtp.client-ip=209.85.166.51
+	 MIME-Version; b=VpqE1HdPBXEQStouha2bN+tGJLHQhc/T37fI0OHrCMPqR7s+0tDnD+1iB1eLm3cz/Qmr/KRIJGqjcX9qcZ7IsE78W0jn6T975r6+LjpTM21a+5eLSt4/Zf4tLghdleLFUYS5mRyhGgKWSSUd7PqVLCEUDTi5MTtcuPC9rqXdQB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RB8yFdvk; arc=none smtp.client-ip=209.85.166.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7f3d884e70bso237627739f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:59:14 -0700 (PDT)
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7f61549406eso180475439f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:59:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719957553; x=1720562353; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719957554; x=1720562354; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wzxAaDu6jznCkYGTIESxKGj+agIaj+uEvHm/3W7k4f4=;
-        b=BiHcNwiVT7EJy4BMvXDyHErX1SJJ8X1BSl/BhEzMuYvnoKsqESBlFYmHwDLH5/vK2O
-         kb6uHDkW5Utzd+3LokRR5hUBQzrrslQKzEH+dUTUFGgTVSZ7lb5MBymVjkol51ddfNyq
-         A9Iftedl+WTXZrhTduXpokKA4GU6mEKOTSv1pXmQrocQc8genAR8/bKaHT9BxsHiaIEo
-         KvOLmu+m5OAZ24EG2upYrtUE9y145hci6MF9l1ToxNDkvgYKxLIvLOAqkh7xTuFi/6/T
-         rmq1N3TlxoDpP24107FoLr6zjS/3cnq7XHoIzLT/nE+zx+0sMsXvo7ddcorqL7GwgJ0N
-         5/HQ==
+        bh=BVVliFbCcRiwMu0SQpi190huBei8IpcPa+B6oudggrw=;
+        b=RB8yFdvkcwspmHLNXfZeaky4yUA2W65nYaJqpIkgt0nVA9ZZGlDySgS8DbeYvcUEXB
+         YHWJI1nIBGZ+PzhSCC0/WtWJSTYDZsIasD7aVQQQS68WarrDZvAp1KR7QgnDmcz+GdFG
+         5P2yJFtpdtthXI9KHu87z6IHqzmkhfLCuySMq2pHUfqJG4Ch59hp4KZMEbM9scdw30oR
+         Kk/N1V+t251NIuA3WS6yT/qXD646xDQc4tAfmHyJeiUs70pSP2oDk/owW9CI/MaeWQAh
+         lmbSRr8y7WNb/d6ZER9kc8ayKr1LfO8vUHp18J/pmzByfDeRCSKYB20po1nai/xa53j0
+         bwnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719957553; x=1720562353;
+        d=1e100.net; s=20230601; t=1719957554; x=1720562354;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wzxAaDu6jznCkYGTIESxKGj+agIaj+uEvHm/3W7k4f4=;
-        b=fw3PKX9pHmuZCzsod/3G6bBHv0yC3FWVAbfHdgOg+OS8NPkdyUBk63qbd7VVdnicmI
-         A63mjxdBIcJKOfJLRNANVKKsXAT/s2IXg7n+P/+4lmos4N9pehrNbqo3VAbxJDZxXs7d
-         sBXua0jzrs7jQhWR9r/oeDFTtmr6YpXcXY80ZpSJlv7TmMPQ6VY7gYpdJqowq/js3cl6
-         XpmqmwGlCwnC5Tl/67VlgUE7eJ8sEX8s7VHy9rMh3RH3OfVuvVtD7THvr/3eKvreog72
-         MQcZHHoGn87qcpWZIXEE9k8Dw+pZV0aoUAZHOckM09VOkcEy1EWT6GL38Y95qSfjgYSj
-         QB7g==
-X-Gm-Message-State: AOJu0Yy02+ACb0QhqxbnuxO0uQgrqKQQeS1OB6bFqJXHi1Z7rc3xK1w7
-	Oma2+DsWYp1VATh55vHC3GoiwipjpYQ4SSrzvMR97IMOlNgh44tmzR8iHA==
-X-Google-Smtp-Source: AGHT+IF2IV262mxUL5Fv2D4fSAIWDRHFT00nSwPai7dQls4045AmbHQ4mcu0vY1Ry054DisDUO53kA==
-X-Received: by 2002:a5d:954e:0:b0:7f3:c683:2257 with SMTP id ca18e2360f4ac-7f62ee79dacmr1311983139f.19.1719957553542;
-        Tue, 02 Jul 2024 14:59:13 -0700 (PDT)
+        bh=BVVliFbCcRiwMu0SQpi190huBei8IpcPa+B6oudggrw=;
+        b=r7mvYc1PXe2prsaM2oSDmBjAPrzIPzDgW64I3ftg2y5WBhyb1J/lVqtlA/RFQr82aw
+         2mj28imUXOTcvNwAQLZdz3F7Mmp0tY4L4r0VKOYDzMkcHdKlWtHixafo5B5+lhGiQULn
+         PEHk0aazOZNyCSKCkizTSBZrSNFfnNjb+VbXKgupHr9qSvRnILfxhibqjm2GPpC9q4Cv
+         TgmO5ukYcOlCQjLRetG9vwVyyIj3ObWHM6vhwMIuEPRIgC9i1xCBmC6H9dMU2JVxGiSI
+         Q2ZtRLP32Rarr/Bxly61aaCKUfnNmk9b0zb8GMxeaEqSWAXevZImLuFvMPpzFr5xUaSD
+         hBgQ==
+X-Gm-Message-State: AOJu0YzjHoZ2YFpPSTJEjkeFBAkJnEhgvHeQ2azt1R+L61SdKv1+Ttp6
+	IUdkVmP3G2bqFDzy4C0zwSQNkqcvyijenxT6r/9bTi8UjTn9CKBU
+X-Google-Smtp-Source: AGHT+IFZ62yf97Gt7+RArnHZHhfQvkUmAT8LPZ/RRX0mXtYibWBEHGPj0AQZKFILtjlHvXFtoqdSew==
+X-Received: by 2002:a5e:8c05:0:b0:7f6:2b2d:8ad4 with SMTP id ca18e2360f4ac-7f62edff929mr1067144439f.4.1719957554487;
+        Tue, 02 Jul 2024 14:59:14 -0700 (PDT)
 Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.59.12
+        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.59.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 14:59:13 -0700 (PDT)
+        Tue, 02 Jul 2024 14:59:14 -0700 (PDT)
 From: Jim Cromie <jim.cromie@gmail.com>
 To: daniel.vetter@ffwll.ch,
 	tvrtko.ursulin@linux.intel.com,
@@ -82,9 +82,9 @@ Cc: linux-kernel@vger.kernel.org,
 	joe@perches.com,
 	mcgrof@kernel.org,
 	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v9 41/53] drm-dyndbg: add DRM_CLASSMAP_USE to simpledrm
-Date: Tue,  2 Jul 2024 15:57:41 -0600
-Message-ID: <20240702215804.2201271-52-jim.cromie@gmail.com>
+Subject: [PATCH v9 42/53] drm-dyndbg: add DRM_CLASSMAP_USE to bochs
+Date: Tue,  2 Jul 2024 15:57:42 -0600
+Message-ID: <20240702215804.2201271-53-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240702215804.2201271-1-jim.cromie@gmail.com>
 References: <20240702215804.2201271-1-jim.cromie@gmail.com>
@@ -96,28 +96,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-tiny/simpledrm has 3 DRM_UT_DRIVER debugs, make them controllable when
+tiny/bochs has 5 DRM_UT_* debugs, make them controllable when
 CONFIG_DRM_USE_DYNAMIC_DEBUG=y by telling dyndbg that the module has
 class'd debugs.
 
 Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 ---
- drivers/gpu/drm/tiny/simpledrm.c | 2 ++
+ drivers/gpu/drm/tiny/bochs.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tiny/simpledrm.c
-index 7ce1c4617675..9cab48bd0581 100644
---- a/drivers/gpu/drm/tiny/simpledrm.c
-+++ b/drivers/gpu/drm/tiny/simpledrm.c
-@@ -33,6 +33,8 @@
- #define DRIVER_MAJOR	1
- #define DRIVER_MINOR	0
+diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
+index c23c9f0cf49c..ee98fab5597e 100644
+--- a/drivers/gpu/drm/tiny/bochs.c
++++ b/drivers/gpu/drm/tiny/bochs.c
+@@ -54,6 +54,8 @@ static int bochs_modeset = -1;
+ static int defx = 1024;
+ static int defy = 768;
  
 +DRM_CLASSMAP_USE(drm_debug_classes);
 +
- /*
-  * Helpers for simplefb
-  */
+ module_param_named(modeset, bochs_modeset, int, 0444);
+ MODULE_PARM_DESC(modeset, "enable/disable kernel modesetting");
+ 
 -- 
 2.45.2
 
