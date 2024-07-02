@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-238353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF2F9248BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:06:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D40EC9248CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A6B281D2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:06:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70364B23060
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E03200103;
-	Tue,  2 Jul 2024 20:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECBA200111;
+	Tue,  2 Jul 2024 20:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="DRKq6Hr8"
-Received: from out.smtpout.orange.fr (out-15.smtpout.orange.fr [193.252.22.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WkRhS5R6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A0C1D363F;
-	Tue,  2 Jul 2024 20:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9B61D3638;
+	Tue,  2 Jul 2024 20:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719950776; cv=none; b=nHax+1YSl6NBviUFGZyR5pel2O2/WFJuxV8kchuUSmGUvM3YfZGbiJv6Q1T1z208TBBY578vVgHupzk7eMUanVs/6x2/EBkwk7Gqpqdywb8XnW1VdZUHAujRVi4REubouvTVjeiNF8V0z1QQQ2cdC03xRp7StPhLoH9hncCVFFc=
+	t=1719951038; cv=none; b=u+Xz/ggFEbp7DUk5JHRXUd/jxRx3yv5PR8KOaw5REwCxpnCHxns5BvfkZsm1QwlW7breenwpvl0041q1kSIyuag84T68MAoqYcGSOH2zCY+vgecORnxQnJV9M+W1VPYbQXjKInw4GqH4aOG4CCoMLKb2G64gI7tFJF8UR0kJu/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719950776; c=relaxed/simple;
-	bh=HYgHf45maMm5vC6jU2kAxdSVSaDqUHvOwfljxjzEybA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mMTd8RE1V2HfU8l0VeS39sKVf45WzG67QGsaCAKF+IBY15xKkvn8i4Jlj8sh3yRZvqhomFIym54TcHPUqAKYo8LLJzZF3HDTqmGvPO0qE6vF5tZ73sa2Rt8iQega79iAOIvkEjvHKp3pHCGYVqdQUveEMeb7JeYglu/zasmw838=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=DRKq6Hr8; arc=none smtp.client-ip=193.252.22.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id OjC0sb4vkwcAuOjC1sg3t4; Tue, 02 Jul 2024 21:29:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719948573;
-	bh=kghFvL0qk69v98trETzF8z6G4zKMGUUWfQe6WfzbKgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=DRKq6Hr83ccpP3ZIKudTuLY7mxLy11hKph0yOrABP9GGFPdJOClST0Gg+76BmIGXz
-	 pXadtMZuExpuYvUT4i1HMQArLZP0/joZzIXhGrPL531f5W3nRvxK/+/y2OfXU3WCMg
-	 GSjW52SVKv5FO0xeSY0JmB1xu7v1zSjoYIVdfsWQ4i/xNtt0L1vmolS1uEv1jvBK4x
-	 iqxzQkN5l6b4bZJXDwsBXci1F+yWChEcOBjzKPDnbXn6bcg8CxyoH9VN/0Cu9tv2g6
-	 rEHU29nmyyAmtH9/jCTy44XiTm30Opd8L9ItTd0qYoFumBYhqjCZOkMwq28An0NXmO
-	 63Z9LfGQ/5JwQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 02 Jul 2024 21:29:33 +0200
-X-ME-IP: 86.243.222.230
-Message-ID: <8f2284e3-bf6b-44ff-b34f-9512b1155542@wanadoo.fr>
-Date: Tue, 2 Jul 2024 21:29:31 +0200
+	s=arc-20240116; t=1719951038; c=relaxed/simple;
+	bh=kg2Q+tvG2CSfuvv//x7rHQEG0q5L6gS1q4lFnI9QkLk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ss9Cojs+OjmBDiIpogmjpHDZLf70pI+aeJAmPIfw/qLvwdsAiHukxt2e7d82iqFbsMGYd+djQB7UcvWPdEqd/JZLPRcvFrFO6IiHDytU8bu3bARsV8SovnJO9vb3puLkfmJLP5xvxnXjeXOXCFkMxwITHfhLhu0p3FW/evswoIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WkRhS5R6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462He7xw004288;
+	Tue, 2 Jul 2024 20:10:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Trl3wBd3Ms8JnkrcozxPpQ
+	+/rF1C9Mx5b7+0DvlBfu0=; b=WkRhS5R6xz1354YRk6Jk8GH/06oMJ8gN8a+oc5
+	Q0O8kEj+7Z/x3EMQ4FEIkv0b6SEpZ0b0zuw8ufjVJVWV9ICJTrGSeIgvpIWPrnLZ
+	27OH6Y68G2HcoU/9unHn+XfRRSOoImdv+RlPYDM9eSan0EulEGWihrNrx0vRxgj/
+	Kr2DRLULHFBYU6dqQmkAOz4v8Ok57vbn+RkM6rRdTg+NCSf8xmJy2pEQBaCEp/ZW
+	0F7X90qj3SMVgdJoPZ3bCJTK5ll11KgwVlcjV1ELqhkQdXhxJwL3BHr0JDyFSGKB
+	NwojvevZXYYp1O/ydlTg8ifPcaeWC55u/t+y3XtSs03Zydfg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4027yf9wpd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 20:10:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462KAJgu030383
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 20:10:19 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
+ 13:10:19 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 2 Jul 2024 13:10:18 -0700
+Subject: [PATCH] virtio: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Updating a vulnerable use of strcpy.
-To: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>,
- rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240702185523.17716-1-qasim.majeed20@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240702185523.17716-1-qasim.majeed20@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240702-md-sh-drivers-virtio-v1-1-cf7325ab6ccc@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAKpehGYC/x3MTQrCMBBA4auUWTsQQzDqVcRFfqbNgE1lpoZC6
+ d2NLr/FezsoCZPCfdhBqLHyUjvOpwFSCXUi5NwN1lhnvLE4Z9SCWbiRKDaWlRf0xlG8On+5pQg
+ 9fQuNvP23j2d3DEoYJdRUfrMX18+Gc9CVBI7jC9JagleFAAAA
+To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        =?utf-8?q?Eugenio_P=C3=A9rez?=
+	<eperezma@redhat.com>
+CC: <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: HutdNiJI12GPIWG-8IJcQZ7YT0kqB4z1
+X-Proofpoint-ORIG-GUID: HutdNiJI12GPIWG-8IJcQZ7YT0kqB4z1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_15,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 mlxlogscore=899 phishscore=0 impostorscore=0
+ clxscore=1011 malwarescore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020148
 
-Le 02/07/2024 à 20:55, Muhammad Qasim Abdul Majeed a écrit :
-> Replacing strcpy with strscpy and memory bound the copy. strcpy is a deprecated function. It should be removed from the kernel source.
-> 
-> Reference: https://github.com/KSPP/linux/issues/88
-> 
-> Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
-> 
->> In what way exactly is it vulnerable?
-> strcpy is a deprecated interface (reference: https://github.com/KSPP/linux/issues/88). It should be removed from kernel source.
-> It is reported as vulnerable in Enabling Linux in Safety Critical Applications (ELISA) builder.
-> 
->> Why is a runtime check needed here if all of the sizes in question are known at compile time?
-> Runtime check has been replaced with compile time check.
-> 
-> ---
-> v1 -> v2: Commit message has been updated and runtime check is replace with compile time check.
-> 
->   drivers/acpi/acpi_video.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-> index 1fda30388297..be8346a66374 100644
-> --- a/drivers/acpi/acpi_video.c
-> +++ b/drivers/acpi/acpi_video.c
-> @@ -1128,8 +1128,8 @@ static int acpi_video_bus_get_one_device(struct acpi_device *device, void *arg)
->   		return -ENOMEM;
->   	}
->   
-> -	strcpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
-> -	strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
-> +	strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME, sizeof(ACPI_VIDEO_DEVICE_NAME));
-> +	strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS, sizeof(ACPI_VIDEO_CLASS));
+With ARCH=sh, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_ring.o
 
-Hi,
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-for that to work, shouldn't the size of the *destination* buffer be 
-passed, instead of the length of the string we want to copy?
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/virtio/virtio.c      | 1 +
+ drivers/virtio/virtio_ring.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-Not tested, but the 3rd argument of strscpy () is optional.
-(https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/string.h#L87), 
-so maybe just:
+diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+index b968b2aa5f4d..396d3cd49a1b 100644
+--- a/drivers/virtio/virtio.c
++++ b/drivers/virtio/virtio.c
+@@ -609,4 +609,5 @@ static void __exit virtio_exit(void)
+ core_initcall(virtio_init);
+ module_exit(virtio_exit);
+ 
++MODULE_DESCRIPTION("Virtio core interface");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index 2a972752ff1b..1cac7d5b3062 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -3244,4 +3244,5 @@ void virtqueue_dma_sync_single_range_for_device(struct virtqueue *_vq,
+ }
+ EXPORT_SYMBOL_GPL(virtqueue_dma_sync_single_range_for_device);
+ 
++MODULE_DESCRIPTION("Virtio ring implementation");
+ MODULE_LICENSE("GPL");
 
-	strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
-
-would do what you expect.
-
-CJ
-
->   
->   	data->device_id = device_id;
->   	data->video = video;
-> @@ -2010,8 +2010,8 @@ static int acpi_video_bus_add(struct acpi_device *device)
->   	}
->   
->   	video->device = device;
-> -	strcpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
-> -	strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
-> +	strscpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME, sizeof(ACPI_VIDEO_BUS_NAME));
-> +	strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS, sizeof(ACPI_VIDEO_CLASS));
->   	device->driver_data = video;
->   
->   	acpi_video_bus_find_cap(video);
+---
+base-commit: 1dfe225e9af5bd3399a1dbc6a4df6a6041ff9c23
+change-id: 20240702-md-sh-drivers-virtio-704eb84769cb
 
 
