@@ -1,82 +1,57 @@
-Return-Path: <linux-kernel+bounces-238122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39059243D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:45:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D45C9243DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 433AEB268CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:45:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 203C71F27583
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CC61BD51B;
-	Tue,  2 Jul 2024 16:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTlHJP8o"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B9F1C0DCA;
-	Tue,  2 Jul 2024 16:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0311C230E;
+	Tue,  2 Jul 2024 16:44:57 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0C11C0DCA;
+	Tue,  2 Jul 2024 16:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719938685; cv=none; b=uKawxVTn1ONyRmNO13PE1pe5o5ZUzkoFS059KkOwD23BSLpi/+zzz6u2clpp3TDfyOee/xOky3FDzPCYTQjS09F+SYXQ+w+s+5NPYZoCnLmMG6RDGQ9iGKpbCYyrUzpJ06woRKDZfvNBMuQ/82FlDAphxGevic1tuQx1865IkxU=
+	t=1719938696; cv=none; b=m9C0Sp7sxgHP9vhZREFhcly1R6X82P5wsLq6hHwp8iHmxE0XVKQIjmR0zfS1pHFcOTt70fqXx4cxU9K2BN7ulJxebz44yEM+8et7khmHGMBqJCDWA16nkPgBerRTxRLGpcg0zWNrWkQ8IEIeOUUUW4eRXwhiSTUZpnMrjoWhQQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719938685; c=relaxed/simple;
-	bh=Tyz3TqYU3UX8c5xyn01VKHdXHg/5NiIVo+c3mmPCbMc=;
+	s=arc-20240116; t=1719938696; c=relaxed/simple;
+	bh=Yhje840QSjNSdNQxsc4dG5jeAsfocmN5qaeueFJZNZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPqfsyx1BN33hv6HnMMxV8+Gt+MKQYKYBGWC+C4OL7yE7E9t4Y1WkVOJ0ME66oP1vryMFLmS+QOcmqUFdeE361vKR+sBhev2mi/7kn1hxMUzOralSoHN6+xte8SmTv+Ne6rDacaSyayTzEpXjJ/iEuXELdHMsQha2iqZfaJTKCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTlHJP8o; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f9aeb96b93so30031605ad.3;
-        Tue, 02 Jul 2024 09:44:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719938683; x=1720543483; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yYQFfspilKOpcYu5H8+151P184PuyX7LYe2ftiXcF2g=;
-        b=cTlHJP8o51bskjpIItl/1BVoDE5vBv04aGSWR75cGdzL4h4+jAo0OCx8SG/JovGrqy
-         u11iOj3fb5bL9Z53IpwJjXxddmcY1kwDrB47ZLPqVSEkk8HXF1k9Orz7ZWimi6fj2t3K
-         6a2Kk0SW2uqBSLqXcoUpqV4ZTFzCubIiVMlNn4kU8uoyxyoqs5BKPIFBUfpJ1zsfcdmE
-         s+AdR4ni/Zmv9ZJG9N3JoSEunpoXzyjKJuvW3VFaCVEyyeOtA08VkrmemAcUB9EezMgU
-         UmMWj+jhG8tdJHj8GX6RNa2WDrOPfwL8NYDEWuJ9pmwLDd774rmbprQrvg3giXuYJydt
-         7BJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719938683; x=1720543483;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yYQFfspilKOpcYu5H8+151P184PuyX7LYe2ftiXcF2g=;
-        b=Lp8rhHbM6xz/nThpXap++7idiBUY60ZgOykm1dIRbB7VWUpYoDxDhIOLdpDSeZu5bZ
-         iUmC6igocC422lAAxSL5fwmNAdxZJ4wHEZiWF3SMXih5XkhgTFVd8YFyqf2dVTd/5JQD
-         U8l3zHxUSp2tCejl7MB1R6/D89QWYr8yjHfc3FJRNs7KRSLgPeF3YDiimFw16NyfU8wq
-         lrSKuKcd8dMLFjvC1jK0FiFUEYlUzgWz2O0cxfkfrtR4uxe9cVNuDaXVhOvxIv247Wgj
-         Clu/S7A8ao5Pgq2QWLzP7rxFmJG/4SUI66XPYXkH0oPtSALifLx+Qbb0gm8zuK9Z2v+o
-         6bYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXKRTLadQLx3f7yiVtZCtxvL04him0HFZ6ny6XCya+46FosOhBlsFRnQebVFAodaCPV3CxpOcbIPhSUvyxGYYSTp+HqEyYurGabzYs77/MyTPj+nXBfSsdXRhhgwsm6Nv48evd9sgD+mUUB0kJuUtyrikaOiMR/K21pRJRelh4UA==
-X-Gm-Message-State: AOJu0YyfynjBNQZUedWKM0KFMYFfNZLPfSEktLvUJWC2FKWwZASO75iN
-	1hYo43r9HD/JGR/uOGyMovi/ChXenRfQ8ofETf/Ppk8vHNWCzBOQz3IJQA==
-X-Google-Smtp-Source: AGHT+IFtRAVfGfX7WOnLBEzo8/hdJ4YwGMYKD5zNpsgpRGteKfUv7M/KfKScvhDpxNUvVD2263RTgg==
-X-Received: by 2002:a17:90b:1294:b0:2c7:c6c4:1693 with SMTP id 98e67ed59e1d1-2c93d71f47emr8104054a91.21.1719938683575;
-        Tue, 02 Jul 2024 09:44:43 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce53bdasm9067348a91.23.2024.07.02.09.44.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 09:44:43 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 2 Jul 2024 06:44:41 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, corbet@lwn.net,
-	kamalesh.babulal@oracle.com, haitao.huang@linux.intel.com,
-	cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 -next] cgroup/misc: Introduce misc.peak
-Message-ID: <ZoQueSY_8NYcApfi@slm.duckdns.org>
-References: <20240702075718.2657635-1-xiujianfeng@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B3O5m+ulHk3p/C1WdsdHO8VEH25cNXTXpY400ilu4MontiF5Kiow2c4OeDOZkRGNB6QbDeRvEhEttOcRieO2d//ZfaZm21LpRkGG1wwfZ7qJTpxGuZI/g0rXz1h/iAiXSBEWUpwTkQvA+ID1xMZq0qvG/RJY2edRWYehgbG41Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id A673472C8CC;
+	Tue,  2 Jul 2024 19:44:46 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+	id 92B507CCB3A; Tue,  2 Jul 2024 19:44:46 +0300 (IDT)
+Date: Tue, 2 Jul 2024 19:44:46 +0300
+From: "Dmitry V. Levin" <ldv@strace.io>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Vincent Donnefort <vdonnefort@google.com>, mhiramat@kernel.org,
+	kernel-team@android.com, rdunlap@infradead.org, rppt@kernel.org,
+	david@redhat.com, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-api@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v23 3/5] tracing: Allow user-space mapping of the
+ ring-buffer
+Message-ID: <20240702164445.GA16225@altlinux.org>
+References: <20240510140435.3550353-1-vdonnefort@google.com>
+ <20240510140435.3550353-4-vdonnefort@google.com>
+ <20240630105322.GA17573@altlinux.org>
+ <20240630084053.0b506916@rorschach.local.home>
+ <9a9c8ea4-8e17-4e7e-95fe-7b51441a228c@efficios.com>
+ <20240702111807.13d2dd2c@rorschach.local.home>
+ <cb02f5a0-d6a3-4228-9cbb-473fd392ee48@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,45 +60,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240702075718.2657635-1-xiujianfeng@huawei.com>
+In-Reply-To: <cb02f5a0-d6a3-4228-9cbb-473fd392ee48@efficios.com>
 
-Hello,
+On Tue, Jul 02, 2024 at 11:32:53AM -0400, Mathieu Desnoyers wrote:
+[...]
+> Note that user events also has this issue: the ioctl is not reserved in
+> the ioctl-number.rst list. See include/uapi/linux/user_events.h:
+> 
+> #define DIAG_IOC_MAGIC '*'
+> 
+> /* Request to register a user_event */
+> #define DIAG_IOCSREG _IOWR(DIAG_IOC_MAGIC, 0, struct user_reg *)
+> 
+> /* Request to delete a user_event */
+> #define DIAG_IOCSDEL _IOW(DIAG_IOC_MAGIC, 1, char *)
+> 
+> /* Requests to unregister a user_event */
+> #define DIAG_IOCSUNREG _IOW(DIAG_IOC_MAGIC, 2, struct user_unreg*)
+> 
+> Where '*' maps to Code 0x2A. Looking at the list I don't see any
+> conflicts there, but we should definitely add it.
+> 
+> If we use '*' for user events already, perhaps we'd want to consider
+> using the same range for the ring buffer ioctls ? Arguably one is
+> about instrumentation and the other is about ring buffer interaction
+> (data transport), but those are both related to tracing.
 
-On Tue, Jul 02, 2024 at 07:57:18AM +0000, Xiu Jianfeng wrote:
->  struct misc_res {
->  	u64 max;
-> +	u64 watermark;
+FWIW, I've checked the list of ioctls known to strace and can confirm that
+currently there are no more users of 0x2a ioctl code besides these three
+DIAG_* ioctls.
 
-atomic64_t is probably better here.
-
->  	atomic64_t usage;
->  	atomic64_t events;
->  };
-...
-> +static void misc_cg_update_watermark(struct misc_res *res, u64 new_usage)
-> +{
-> +	u64 old;
-> +
-
-How about just while (true)?
-
-> +	do {
-> +		old = READ_ONCE(res->watermark);
-
-here, you can use atomic64_read().
-
-> +		if (new_usage <= old)
-> +			break;
-> +		if (cmpxchg(&res->watermark, old, new_usage) == old)
-
-and atomic64_cmpxchg().
-
-> +			break;
-> +	} while (1);
-> +}
-
-Thanks.
 
 -- 
-tejun
+ldv
 
