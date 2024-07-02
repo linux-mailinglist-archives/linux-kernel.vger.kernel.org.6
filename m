@@ -1,117 +1,140 @@
-Return-Path: <linux-kernel+bounces-238570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFFAE924C34
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:40:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A110D924C37
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C933283D0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:40:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D1B9B22A65
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83C617A5BD;
-	Tue,  2 Jul 2024 23:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC3817DA27;
+	Tue,  2 Jul 2024 23:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="guAjtI8T"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyFhom0u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E6E17A595
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 23:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEAD17DA03;
+	Tue,  2 Jul 2024 23:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719963637; cv=none; b=C9//ni+Ob/99oYel4VaKXYBAvGb4xcfuIsXZLfJM5pRc34QiFJn4BtgmQgnM3JTEMBisXhFNrz2dYY3Lsrr+QTJm90x+3CUpPmM9QNUR2TQQF68+C76PEizVsD0TVxgGPmZVb3ce0z/VVAhPceCWfKOHVGv+AyCZ5W31AA42kP0=
+	t=1719963649; cv=none; b=VjpBynwDBuRVgtmSIkEPlmIW2bmopgL6LQnMQl38KK13TBeVCBn1LvZnbcARSDRq/GF/AWJcSwPXFHFf2gt+G70v22t1aqCD7K8JwRxnqtt2qMhiOaUv9L9Qji+kLhgJ3DWrAgufy6p65ClSNI3CWj3QXHv2UYfA2FwyjcwKSd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719963637; c=relaxed/simple;
-	bh=q/Q++bZUqwx4rHkgKvz/qr06d8ZoEgwD8AdUokHeVi4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZL2fJonDFT6kQDID7VeCDmYLy1kczGxgSXcMj2oRqIcVR3+/DKBCAqwQsWvmsL15umSm2CXvz4Gh93ZbOCH/1/GUsfFW5/nyGN5mZPYcf8A24FGeo1+0hJijOTha8KyTi+e/9Y7LX5tO90AoLwpPsmsyVW7Fg3pJTJHuF9yd/Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=guAjtI8T; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-380cdc44559so787035ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 16:40:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719963634; x=1720568434; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M1GBiR2qP3dwXuNbCIfCAYqEpvO2cT6fV21GvANeJLs=;
-        b=guAjtI8Txfx+2xC7+ga5NwFLyyXBX2x2RwRhWK1UMY14rP9igHRn5JHcfp3sqTywxw
-         g93wQRvxbEre98ziohlTCwQ/ZG44ut7yRvMto6wJLeow3XVNJcUsWox8R4YrqB0U67Xq
-         VtS2ei8EkfwagPyICYJynqcDn5tn4u/FH4Tkw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719963634; x=1720568434;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M1GBiR2qP3dwXuNbCIfCAYqEpvO2cT6fV21GvANeJLs=;
-        b=ik7x97/rMQuzEqHFltA0kv7B7MBWt7Om54MHYAwnunY09pkDnBvOKya45hTvIFZUaF
-         ru4/3qL0pprNVajQUbUmK9nHA/vcq6/Ogu2M1+BYdG/1m3rR7zYOSPub3AWX4b/zbEy6
-         GgkG3cy8ElYAgCQ2mO8mF6d1MUQuaiJ7vRInIsevgCQLbXdbtpn7NkvBSy7uysrp5hYg
-         6N4mq4tcfFC52MsvI7qdSHnGF07amfqOvWgYr5BWh9uYWmf09sJuMmqwWMnX35LDrN1s
-         o1PIY/RaT/a0D1RAji94h0bkXhzAPlMUvF01f99t/Y0+6XYfeOQcaAPY+EkbEoVNUyK9
-         wQfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWx2T91Xd7eIPToDtzZJEg5mPqeel6ZLlH7jGpWnK7J1PDu5Joac8U/SKcmR3yL5OKGg5AlIUbeh7PgarWo9S+6eZKv3BY0vFBz9JnM
-X-Gm-Message-State: AOJu0Yz0MsXMF/Xhs8vUyDXP0fRtvhYV2+aOmPSk694pMFnYPC2alB1e
-	i7//0zK4zVdscW2x7Rx6Yq7uMptHV5sn7MKEw1koNM9SxFDXJykvL4DkLdAbYiM=
-X-Google-Smtp-Source: AGHT+IEROh2kDmfI0/vSuk2WwbomsNqHiQ8Mhs6Xsy7UzYSACQgA31qwiBNSiGoU/iCVvVcaUQXN4A==
-X-Received: by 2002:a92:c54d:0:b0:376:3907:4912 with SMTP id e9e14a558f8ab-37cd1b799ecmr112365645ab.1.1719963633925;
-        Tue, 02 Jul 2024 16:40:33 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-37ad22cb662sm25750825ab.7.2024.07.02.16.40.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 16:40:33 -0700 (PDT)
-Message-ID: <857aae90-6251-4532-a8d4-6d2fb8d29114@linuxfoundation.org>
-Date: Tue, 2 Jul 2024 17:40:32 -0600
+	s=arc-20240116; t=1719963649; c=relaxed/simple;
+	bh=r6NI3gRk8PvoRVepVbEFbr7nnjKYdoij5IyeZd/5+XU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QYekWS69PtvW/qCBcsoqytZ4Gu2+7l7awjy0bxSpohxOWXkvHQf7DUTViolFDqZjV3tthhniR4QrK1scsefb5uWDbTQ/99K4h/+dGGnWio1z5gmBzbmwQocCmdxX0va4etWM9f/j9PQXCwJK6LKGUQS2cNbMGuXrLO4c02iZ/go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyFhom0u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5053AC4AF0D;
+	Tue,  2 Jul 2024 23:40:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719963648;
+	bh=r6NI3gRk8PvoRVepVbEFbr7nnjKYdoij5IyeZd/5+XU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kyFhom0uD7GC8yV1UwEOtghiO75l38Bm2NAd0AxMh78KM7zMwK3th806oQv8ZILgE
+	 CBcKOOzSN+i+nKx75Vccmu8JYv0UtrfVk5h3kwX48EeTq3x3eGu7r/cotSOSNrE4zq
+	 pZ+TJOQ1X/lXymtMlD1lNa4/j3lzm7dKfucl5ucAMemrgLWlGTvluc7T4Sn5CnUTNG
+	 WU2Okw0Gd305WApQSPAf8wtDC2vvSYj48qLYMgpp2mUMYySB6tIaPt6ua21yIQYkJD
+	 2TFbdwnUlTck+oLFzbA/0sps42ojnmuZjZS9/BWwyEaLeegzfXVQ2J73lcQviPUMfQ
+	 yRSITSdUogLOg==
+Date: Tue, 2 Jul 2024 16:40:46 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Guilherme Amadio <amadio@gentoo.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Thorsten Leemhuis <linux@leemhuis.info>, Leo Yan <leo.yan@arm.com>,
+	linux-perf-users@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] tools: Make pkg-config dependency checks usable
+ by other tools
+Message-ID: <ZoSP_vFMVl83pxES@google.com>
+References: <20240628202608.3273329-1-amadio@gentoo.org>
+ <20240628203432.3273625-1-amadio@gentoo.org>
+ <20240628203432.3273625-3-amadio@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.9 000/222] 6.9.8-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240702170243.963426416@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240702170243.963426416@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240628203432.3273625-3-amadio@gentoo.org>
 
-On 7/2/24 11:00, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.8 release.
-> There are 222 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 04 Jul 2024 17:01:55 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.8-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
++CC Steve and linux-trace-kernel list.
 
-Compiled and booted on my test system. No dmesg regressions.
+Thanks,
+Namhyung
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
+On Fri, Jun 28, 2024 at 10:34:29PM +0200, Guilherme Amadio wrote:
+> Other tools, in tools/verification and tools/tracing, make use of
+> libtraceevent and libtracefs as dependencies. This allows setting
+> up the feature check flags for them as well.
+> 
+> Signed-off-by: Guilherme Amadio <amadio@gentoo.org>
+> ---
+>  tools/build/Makefile.feature | 20 ++++++++++++++++++++
+>  tools/perf/Makefile.config   | 10 ----------
+>  2 files changed, 20 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+> index 1e2ab148d5db..79a03e034073 100644
+> --- a/tools/build/Makefile.feature
+> +++ b/tools/build/Makefile.feature
+> @@ -149,6 +149,26 @@ FEATURE_DISPLAY ?=              \
+>  #
+>  FEATURE_GROUP_MEMBERS-libbfd = libbfd-liberty libbfd-liberty-z
+>  
+> +#
+> +# Declare list of feature dependency packages that provide pkg-config files.
+> +#
+> +FEATURE_PKG_CONFIG ?=           \
+> +         libtraceevent          \
+> +         libtracefs
+> +
+> +feature_pkg_config = $(eval $(feature_pkg_config_code))
+> +define feature_pkg_config_code
+> +  ifeq ($(shell $(PKG_CONFIG) --exists $(1) 2>&1 1>/dev/null; echo $$?),0)
+> +    FEATURE_CHECK_CFLAGS-$(1) := $(shell $(PKG_CONFIG) --cflags $(1))
+> +    FEATURE_CHECK_LDFLAGS-$(1) := $(shell $(PKG_CONFIG) --libs $(1))
+> +  endif
+> +endef
+> +
+> +# Set FEATURE_CHECK_(C|LD)FLAGS-$(package) for packages using pkg-config.
+> +ifneq ($(PKG_CONFIG),)
+> +  $(foreach package,$(FEATURE_PKG_CONFIG),$(call feature_pkg_config,$(package)))
+> +endif
+> +
+>  # Set FEATURE_CHECK_(C|LD)FLAGS-all for all FEATURE_TESTS features.
+>  # If in the future we need per-feature checks/flags for features not
+>  # mentioned in this list we need to refactor this ;-).
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index ba51ecfca02b..23f2b54d8ee6 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -187,16 +187,6 @@ ifneq ($(NO_LIBTRACEEVENT),1)
+>    dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
+>    endif
+>  endif
+> -ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent 2>&1 1>/dev/null; echo $$?),0)
+> -  # for linking with debug library, run like:
+> -  # make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
+> -  FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
+> -  FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
+> -endif
+> -ifeq ($(shell $(PKG_CONFIG) --exists libtracefs 2>&1 1>/dev/null; echo $$?),0)
+> -  FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
+> -  FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
+> -endif
+>  
+>  FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
+>  # include ARCH specific config
+> -- 
+> 2.45.2
+> 
 
