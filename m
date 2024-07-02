@@ -1,100 +1,125 @@
-Return-Path: <linux-kernel+bounces-237805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CFF923E5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:04:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E11923E67
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FC8B1F23027
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F22D81C21FD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EB018E770;
-	Tue,  2 Jul 2024 13:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF94E19D8BC;
+	Tue,  2 Jul 2024 13:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="frNB2o+5"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KXYmwcmM"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A093A16F858;
-	Tue,  2 Jul 2024 13:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28BB19AD74
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719925467; cv=none; b=Ybu4TXnxOoeelJkK2BPax4QScKjDZRqY5mtvjocQjLrk242OK5RAWTU3npg2tX0CIaMTQ3uwQwmHkf2WDSj1vG1CF7FR0lB8BvjV1K4xF6izf3wjoq/m9Xeu84LCAZBt1a95lsewq+HwjNGnnwiOBKWv/F2j6M2dONPjBbi01Mk=
+	t=1719925701; cv=none; b=oGtGDnJrsv0QwudwGiSbDpCfKZDR6hEobZ2E+VXf6NWE0QRzc9HXPowENJeXKRnefxeuez75np6dGetsyc8yVovqgMpZ4YQm+Yq6qhOTB0lQNLQ0MEL7b7lAlbcVIKWgJES8mkMHYmHvxodjZjst/SNIYtv5S5+ygJgCg0+8E6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719925467; c=relaxed/simple;
-	bh=wcCKkAf9LeZlQUUgB4iwi//wVVqoNwx/15yAOShTGZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SIYYk8s68wMRmK1kXcQNs4qa4MzD6GOAJUReODVMwQPRoeCBdXALxnF09ut5BbB7lPlH2FcwVaFXKQ2KbaYb2EVOMjJUhaM8x60RCxL9VvuIryDedzqiF2feVesL3pa18/y4cs8GfqjZAxRI22oaHxYO2Z3ZDmyh8USwJpURNV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=frNB2o+5; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aE50TOJGmMs56D5keFB0ZpbHVyMbTxUF2K2Gl2vDliA=; b=frNB2o+56C+04ofDDQrQj97WAp
-	pUYuSQh9p+/dyvHA/b6yticybkp99022dvqOn+oxFUs/UjeiDTVOAsTK7huR0sZ1hSZxTTN17enmi
-	078itthmAcewlpWUGNvGlXODMEPNJbi+Ob86V6UC20QnaB0nx8cDoeL5cPA03xEK4HEERohMkXkNa
-	aiRm7rNuJOTCD9xO9S1XiLMzi4j7X/cVCnDA7gjXbLX8wf8H5laAQSk6p5aFghy++HnNNtoV8ewwH
-	D+lbxcaXkT8CgdxFf60OEL6+m9q4pY5Gu69QJ353cGe/auzFh06h7wJrUP4XyQCs0x+Tnov1Pqzdv
-	AogRD0uQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOdB6-00000009p2E-0pO1;
-	Tue, 02 Jul 2024 13:04:12 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EA86E300694; Tue,  2 Jul 2024 15:04:08 +0200 (CEST)
-Date: Tue, 2 Jul 2024 15:04:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
-Message-ID: <20240702130408.GH11386@noisy.programming.kicks-ass.net>
-References: <20240701164115.723677-1-jolsa@kernel.org>
- <20240701164115.723677-2-jolsa@kernel.org>
+	s=arc-20240116; t=1719925701; c=relaxed/simple;
+	bh=S9WAdF5zIp6DOMlbWzRmjzJu0uGlfzXZ7p8RCFnmTG8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cGLfuyD3D1aeusVyw9nOhSY082boM09PY6/jqyAnv9i/J0LiCheT+0RG6A7HqBX8I/09Ri1HujEfdjsmntUCB/JW+xUhCa+M+lvUvCJs53X/HAUXa8B85cCfpuPsPw0mwQs86X8oMJ2o7vySCRwM4hKRMA6lG5JYeJpi2qBQ/Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KXYmwcmM; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so4405155276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719925699; x=1720530499; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S9WAdF5zIp6DOMlbWzRmjzJu0uGlfzXZ7p8RCFnmTG8=;
+        b=KXYmwcmMKKYBi5yexqO4pin1cb5HGL430GBaG4HMJDkbBPx86anhXl3g8NSbAHii6h
+         /ha4gOQfIPioxjSNw6v7pgeB+0uGeqZ9jJP2jpLlhP54Bh3OoLtrSN+GXml0/V2Xl+eo
+         dI7WQACmUfVpkB+pkX6SoPw696xDHwtX0N+lSByeRPAjhl7ula38smq00J9PW+ghCjRe
+         cv80+xhPZQpo7t8rG9ZHHbt2epdNNUJ8UaxiEo1OH7ZpcYla+DLFsL/XaXTFILWh0gaV
+         aHWN7ewZtO6FUXGuIIDdx+2CwHnuiaXbUowXB3TyRLRHRK42t5qCJqCt8zs/VRm8LjKT
+         j8mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719925699; x=1720530499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S9WAdF5zIp6DOMlbWzRmjzJu0uGlfzXZ7p8RCFnmTG8=;
+        b=Y0D2+pRaPKVGWFF+Ht8fTmq6IiVJoChu3XaOgZaYsPppKty3EB/YbchIHWDpeDvBpL
+         LucG78eDW+FpKqxCvhcx8GfI4471pIejd8gBY/bq58XDwSx8dWbjLzLtc3hH595B5u+I
+         B0a/Se01WBk877xCRRK8vLOrX63fEi4XAZBZl2gk4i0uIxu3lQi+JhqurhMKeFXkWTpv
+         XquW9JQ9iK+ddFUM2kc4cz0W15OjNqY4IeDZSYHzb1A6r5y4YI6+0UcgMtP3BnT23XHW
+         GZF5EzNmiZZXvm7vTmUrNl3S5wqSCglU3hvry/rdc+Bm/ncdJEbM3N9+9KRpB3uMGWAU
+         xC2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVeBnUeL9sTxtqS1vYQty6KSwWzlY8nvzswsX4ocr2eGMR70F+OIfXCDBLBZyLkRn6WB1hEWHCq+Rzhg5Ga8Nnr/7vAaUm8sNUAbcwP
+X-Gm-Message-State: AOJu0Yyc/f2MmvQtmvyZ06MyAofs73eWIUzADMIBvDz9ldlz+mKRHYOw
+	yonDPp1z2NA4vbX38+T9Je3VcruL959xYcdX8ymWwCPNziSUX7mhjVsPDd1h//Dpu7+/X0TPO2m
+	HhwiB4V7BzWjPLYiNvN7ecn10nCC+8ZZ+1FysLA==
+X-Google-Smtp-Source: AGHT+IFd5P5nvAOCFhI34eu3EgzzjA69f2Au+mefSwkWxzhefLYYUPNhJFm+L/KZewGETUij+yyWjdPRQk02bxj11bk=
+X-Received: by 2002:a0d:e604:0:b0:646:7b75:5c2c with SMTP id
+ 00721157ae682-64c718039c9mr86962577b3.16.1719925698688; Tue, 02 Jul 2024
+ 06:08:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701164115.723677-2-jolsa@kernel.org>
+References: <20240702114103.16068-1-brgl@bgdev.pl> <CAA8EJppo4X1KmeeTRz9n7+9S0fGWE4AD1O1cCc_aPHTWPUGVvw@mail.gmail.com>
+ <CAMRc=McVo364EruPtBCkLdR86=PfvSQFztTC_HUO0RPRCayAxQ@mail.gmail.com>
+In-Reply-To: <CAMRc=McVo364EruPtBCkLdR86=PfvSQFztTC_HUO0RPRCayAxQ@mail.gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 2 Jul 2024 16:08:07 +0300
+Message-ID: <CAA8EJpqk+yko_jqyRFo4sFJgtz+YZyEPh2sOEcDa-cYD3pGtnA@mail.gmail.com>
+Subject: Re: [PATCH] power: sequencing: qcom-wcn: don't request BT enable
+ GPIOs for wcn7850
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Amit Pundir <amit.pundir@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 01, 2024 at 06:41:07PM +0200, Jiri Olsa wrote:
+On Tue, 2 Jul 2024 at 14:48, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> On Tue, Jul 2, 2024 at 1:42=E2=80=AFPM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > On Tue, 2 Jul 2024 at 14:41, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > >
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > Due to having many existing users of wcn7850 in the kernel, conversio=
+n
+> > > of the hci_qca driver to using pwrseq exclusively must be done
+> > > carefully. Right now, the Bluetooth driver requests and controls the =
+BT
+> > > enable GPIO and so the PMU pwrseq driver must not do it or we will ru=
+n
+> > > into problems depending on the probe ordering.
+> > >
+> > > Add a flag that tells the driver not to request the BT-enable GPIO. W=
+e
+> > > will remove it once the conversion of the Bluetooth driver is complet=
+e.
+> >
+> > This will not prevent the pinctrl conflict if both PMU and BT devices
+> > declare pinctrl for the BT_EN pin.
+> >
+>
+> Hmm... So maybe we'll need to modify the BT driver after all. Should
+> we see if we have the enable-gpios property in hci_qca and - if not -
+> try to use the power sequencer? Or prioritize the sequencer first and
+> if it doesn't match, then fall-back to the current mode of operation?
 
-> +static void
-> +uprobe_consumer_account(struct uprobe *uprobe, struct uprobe_consumer *uc)
-> +{
-> +	static unsigned int session_id;
-> +
-> +	if (uc->session) {
-> +		uprobe->sessions_cnt++;
-> +		uc->session_id = ++session_id ?: ++session_id;
-> +	}
-> +}
+I'd say, try powerseq first, then fallback to enable-gpio.
 
-The way I understand this code, you create a consumer every time you do
-uprobe_register() and unregister makes it go away.
-
-Now, register one, then 4g-1 times register+unregister, then register
-again.
-
-The above seems to then result in two consumers with the same
-session_id, which leads to trouble.
-
-Hmm?
+--=20
+With best wishes
+Dmitry
 
