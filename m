@@ -1,161 +1,139 @@
-Return-Path: <linux-kernel+bounces-237164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20F1591ECF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A63C91ED00
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B68B3B20AD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:26:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057FD283BDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E237314A90;
-	Tue,  2 Jul 2024 02:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="PrAjDdOr";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="PrAjDdOr"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7720F15E85;
+	Tue,  2 Jul 2024 02:35:11 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85AE14293;
-	Tue,  2 Jul 2024 02:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67750171BA;
+	Tue,  2 Jul 2024 02:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719887210; cv=none; b=Z4K6w3ikHCEFsFf2iGWDWPOK+7RLTZ3PXlR/dqbOgwVvxVTuoaox61qQkO+HzlwGrhalYI7DXUePV7QQp2s9aExjRYnjHti2ebfzjJkcUlnHkZMc624hSkOVJdzPwtyqL4paDf8jYh/gw94KfFZ0rAdj/iwypTxdOYDsKFrmSy4=
+	t=1719887711; cv=none; b=Yb7Zs0KoDXUxNaFHkf7EmPRP/mkdBycVzi9gpRxOKgr+Buv3W4AnUFc19YX2PmLJsr/aGOp0bQRKQHx0eiunI+EGkB/Xm3elq8dDTJxqN/6HMu0YKxrQNhIxGATOJPOn4F/dBLtinEwhAe5f6pXz7RGq1wZcGXOG/rnV0VfQHKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719887210; c=relaxed/simple;
-	bh=7VWvMsjMHz5vpZgJgChD4sJ+XNDMoIvDIOsXcuM/Oys=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=pmc7NSikzit0LxTqbyKa94p3tMuJMvflErbJNOknao9PQcjyNl5Nd69NDaDFzyMVg5LY27zVdebj3kofceCIOaNaFfA6dnYWyld9uMw8bD8DRT3Id8ZxyyCfnCbxJ1wW5gKPiBOVhxYGmdK4tn3zjL6EoOCG+wInmUYo4x5+JEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=PrAjDdOr; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=PrAjDdOr; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1719887206;
-	bh=7VWvMsjMHz5vpZgJgChD4sJ+XNDMoIvDIOsXcuM/Oys=;
-	h=Message-ID:Subject:From:To:Date:From;
-	b=PrAjDdOrVp6EaySNPYIjD211GQ/whiuYjXiW1YkFWRKHvb8lWwZ2JA75qMRj5/0zo
-	 uYWqTcgaLqcPKTkK3LNKcBZhIDOw1MYwiYtgEzCXzszgfSF+uOAznDDPgMB5pePWq6
-	 HUzO3cAZ/4wcvfg3IXk8irbeEmmt3HIMPbEZe0WU=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9030B1286A68;
-	Mon, 01 Jul 2024 22:26:46 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id 1pbM5qQSN7xt; Mon,  1 Jul 2024 22:26:46 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1719887206;
-	bh=7VWvMsjMHz5vpZgJgChD4sJ+XNDMoIvDIOsXcuM/Oys=;
-	h=Message-ID:Subject:From:To:Date:From;
-	b=PrAjDdOrVp6EaySNPYIjD211GQ/whiuYjXiW1YkFWRKHvb8lWwZ2JA75qMRj5/0zo
-	 uYWqTcgaLqcPKTkK3LNKcBZhIDOw1MYwiYtgEzCXzszgfSF+uOAznDDPgMB5pePWq6
-	 HUzO3cAZ/4wcvfg3IXk8irbeEmmt3HIMPbEZe0WU=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 976DF1286ABD;
-	Mon, 01 Jul 2024 22:26:45 -0400 (EDT)
-Message-ID: <912f0f5fe2c02157edb47b1e9c730d1dbc563c55.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 6.10-rc6
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
-	 <torvalds@linux-foundation.org>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
-	 <linux-kernel@vger.kernel.org>
-Date: Mon, 01 Jul 2024 22:26:43 -0400
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1719887711; c=relaxed/simple;
+	bh=duOE5/WUTmEt2OMV+3Ya1x3dxJYEKTpX14cmRqn2wUA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nH/H6NqleSJFrIJT/aWbV7NX5KFWb+44B6GXNF5L1sXgjoBXRZaWE1p/aJwH+mihTisVDR7srzYqSoGDuGVzmiAxBLwENhC6fYBE3rwtkP957TdBD9f3GUSlkri0Me1RMIW6OlXNhfUzX8boc4mM5QuJ6d/Tz9Ln7u+WkbZIHr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WCn2L3q1Qz1T4gb;
+	Tue,  2 Jul 2024 10:30:34 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 17DA518007E;
+	Tue,  2 Jul 2024 10:35:06 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 2 Jul
+ 2024 10:35:05 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<longman@redhat.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 -next] cgroup/rstat: add force idle show helper
+Date: Tue, 2 Jul 2024 02:28:22 +0000
+Message-ID: <20240702022822.1032693-1-chenridong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-A couple of error leg problems, one affecting scsi_debug and the other
-affecting pure SAS (i.e. not SATA) SCSI expanders.
+In the function cgroup_base_stat_cputime_show, there are five
+instances of #ifdef, which makes the code not concise.
+To address this, add the function cgroup_force_idle_show
+to make the code more succinct.
 
-The patch is available here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
-
-The short changelog is:
-
-Ming Lei (1):
-      scsi: scsi_debug: Fix create target debugfs failure
-
-Xingui Yang (1):
-      scsi: libsas: Fix exp-attached device scan after probe failure scanned in again after probe failed
-
-And the diffstat
-
- drivers/scsi/libsas/sas_internal.h | 14 ++++++++++++++
- drivers/scsi/scsi_debug.c          |  6 +++++-
- 2 files changed, 19 insertions(+), 1 deletion(-)
-
-With full diff below
-
-James
-
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
 ---
+ kernel/cgroup/rstat.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
-index 85948963fb97..03d6ec1eb970 100644
---- a/drivers/scsi/libsas/sas_internal.h
-+++ b/drivers/scsi/libsas/sas_internal.h
-@@ -145,6 +145,20 @@ static inline void sas_fail_probe(struct domain_device *dev, const char *func, i
- 		func, dev->parent ? "exp-attached" :
- 		"direct-attached",
- 		SAS_ADDR(dev->sas_addr), err);
-+
-+	/*
-+	 * If the device probe failed, the expander phy attached address
-+	 * needs to be reset so that the phy will not be treated as flutter
-+	 * in the next revalidation
-+	 */
-+	if (dev->parent && !dev_is_expander(dev->dev_type)) {
-+		struct sas_phy *phy = dev->phy;
-+		struct domain_device *parent = dev->parent;
-+		struct ex_phy *ex_phy = &parent->ex_dev.ex_phy[phy->number];
-+
-+		memset(ex_phy->attached_sas_addr, 0, SAS_ADDR_SIZE);
-+	}
-+
- 	sas_unregister_dev(dev->port, dev);
- }
- 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index acf0592d63da..91f022fb8d0c 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -926,6 +926,7 @@ static const int device_qfull_result =
- static const int condition_met_result = SAM_STAT_CONDITION_MET;
- 
- static struct dentry *sdebug_debugfs_root;
-+static ASYNC_DOMAIN_EXCLUSIVE(sdebug_async_domain);
- 
- static void sdebug_err_free(struct rcu_head *head)
- {
-@@ -1148,6 +1149,8 @@ static int sdebug_target_alloc(struct scsi_target *starget)
- 	if (!targetip)
- 		return -ENOMEM;
- 
-+	async_synchronize_full_domain(&sdebug_async_domain);
-+
- 	targetip->debugfs_entry = debugfs_create_dir(dev_name(&starget->dev),
- 				sdebug_debugfs_root);
- 
-@@ -1174,7 +1177,8 @@ static void sdebug_target_destroy(struct scsi_target *starget)
- 	targetip = (struct sdebug_target_info *)starget->hostdata;
- 	if (targetip) {
- 		starget->hostdata = NULL;
--		async_schedule(sdebug_tartget_cleanup_async, targetip);
-+		async_schedule_domain(sdebug_tartget_cleanup_async, targetip,
-+				&sdebug_async_domain);
+diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+index fb8b49437573..22bb4e9050f0 100644
+--- a/kernel/cgroup/rstat.c
++++ b/kernel/cgroup/rstat.c
+@@ -594,49 +594,47 @@ static void root_cgroup_cputime(struct cgroup_base_stat *bstat)
  	}
  }
  
++
++static void cgroup_force_idle_show(struct seq_file *seq, struct cgroup_base_stat *bstat)
++{
++#ifdef CONFIG_SCHED_CORE
++	u64 forceidle_time = bstat->forceidle_sum;
++
++	do_div(forceidle_time, NSEC_PER_USEC);
++	seq_printf(seq, "core_sched.force_idle_usec %llu\n", forceidle_time);
++#endif
++}
++
+ void cgroup_base_stat_cputime_show(struct seq_file *seq)
+ {
+ 	struct cgroup *cgrp = seq_css(seq)->cgroup;
+ 	u64 usage, utime, stime;
+ 	struct cgroup_base_stat bstat;
+-#ifdef CONFIG_SCHED_CORE
+-	u64 forceidle_time;
+-#endif
+ 
+ 	if (cgroup_parent(cgrp)) {
+ 		cgroup_rstat_flush_hold(cgrp);
+ 		usage = cgrp->bstat.cputime.sum_exec_runtime;
+ 		cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime,
+ 			       &utime, &stime);
+-#ifdef CONFIG_SCHED_CORE
+-		forceidle_time = cgrp->bstat.forceidle_sum;
+-#endif
++		bstat = cgrp->bstat;
+ 		cgroup_rstat_flush_release(cgrp);
+ 	} else {
+ 		root_cgroup_cputime(&bstat);
+ 		usage = bstat.cputime.sum_exec_runtime;
+ 		utime = bstat.cputime.utime;
+ 		stime = bstat.cputime.stime;
+-#ifdef CONFIG_SCHED_CORE
+-		forceidle_time = bstat.forceidle_sum;
+-#endif
+ 	}
+ 
+ 	do_div(usage, NSEC_PER_USEC);
+ 	do_div(utime, NSEC_PER_USEC);
+ 	do_div(stime, NSEC_PER_USEC);
+-#ifdef CONFIG_SCHED_CORE
+-	do_div(forceidle_time, NSEC_PER_USEC);
+-#endif
+ 
+ 	seq_printf(seq, "usage_usec %llu\n"
+ 		   "user_usec %llu\n"
+ 		   "system_usec %llu\n",
+ 		   usage, utime, stime);
+ 
+-#ifdef CONFIG_SCHED_CORE
+-	seq_printf(seq, "core_sched.force_idle_usec %llu\n", forceidle_time);
+-#endif
++	cgroup_force_idle_show(seq, &bstat);
+ }
+ 
+ /* Add bpf kfuncs for cgroup_rstat_updated() and cgroup_rstat_flush() */
+-- 
+2.34.1
 
 
