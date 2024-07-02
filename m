@@ -1,448 +1,229 @@
-Return-Path: <linux-kernel+bounces-237123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A097491EBB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:08:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7335F91EBB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5500D282A95
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:08:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E079283EB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2E823CE;
-	Tue,  2 Jul 2024 00:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE924A22;
+	Tue,  2 Jul 2024 00:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H9YlDVI0"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XOzI15dz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C79ECC;
-	Tue,  2 Jul 2024 00:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719878912; cv=none; b=Q/pmE0gOOovShhmHDrpcE3y9d5xv8FbyZW8Ik4vhm1uPcQ0jYgGrjtJ3W599PJBjMir8l7ZIM6A8dBelXiNQqUII8sH6xzfjLIc+JNxdlzrbsRnP4CzkgL4019BIpmJ3PTTNAyCE3qcCgekV3sLt+ZTT+uVjWHmBlOtlif11zaE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719878912; c=relaxed/simple;
-	bh=FDVWcLmwNg13JppX8QDj1e6CIDHM2o7mhcfA8dmytKo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ae8mAP4qZ+eyYkdbvRQs5R/r5NctCHVlmIU+vKOUzSqd56aqAXRVxmVmmmQW2g1yNmFvX3D+FNmY86gNAnNP6gGe2PZ4MmZDJH7Ke0UNVNxDUqjgJfPkAV7ioSXtlTuYF9wGjvntgHYkEdPRXFW5arjZQEZYoJ0wCrMyGrRoKqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H9YlDVI0; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70aaab1cb72so2161153b3a.0;
-        Mon, 01 Jul 2024 17:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719878910; x=1720483710; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zwXlu1WVqsnVJZ9utDU8T7rgXo210umX1xN+HtCfvHk=;
-        b=H9YlDVI0z+Kxlg4pC7AWo4BDrAXGNywsbeoWDywis8cZWz3A0V4wP4SChSiMjfNr3+
-         KbY1Dvv2UB1K0QHwrbKr/dXIw0PjR0C9GLitrANt2iKAxUIlWl7JdenDLe4ynkpbV1MQ
-         tl9yykkW75PqI0GRo83zodVN3ezkRIyk1Na9J+2fAvJ0Ouf9lDJXIFkAlxgBu17RTvmz
-         FeHf6JRftzSUivyh3BYQrEFxcwLDvZHNP85IPNt8+GuUaetUj1HvcwV71ILC62RUKIvv
-         XY1QJXLH+Unpc9EdLxMcvApIVY3+gLmoQ5gxi0J6wC0KvSvzK/DJTys4csGjFH3R7GFT
-         PmoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719878910; x=1720483710;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zwXlu1WVqsnVJZ9utDU8T7rgXo210umX1xN+HtCfvHk=;
-        b=niMe3ae3pLGatTXxTmh3Spd2gPE+mK2/wElXhNck1VCrA7T9tKui4hrT3k6Ia8cZlV
-         HpjmP+ecg8rPS3DgvqyDKzNimXIUssI++sqD4Yysz5P5EUjLlGiZsTAb6AWoS//BoXom
-         ZTMWBLSIG/mrk4NniwPQMzFTEI5sP4Rcntxn6ar70hnrXYsXGhzSpdQAiM+Saieouyp4
-         utZyW8xTpHzh236uzmsTqs0p00OADXMtLKTOa1GYw7bnrjIHmkPFBVOE+al1MJOpY+EK
-         KCG0HlDugc7T9JIo6tFo0GmgJQY1Jdlv6blhMF5QiRznGlrZOlEyMscmio2kaj8gWmrr
-         5fuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVirNcs8t0qsRxsI9n9rlnvTLZG0RMIaOAOIbn27kBjtOeXqKGV2unDJfpChTyUhSb4NVEihZn2MN8qHLsiWBcq7leff8M1xefavI1l
-X-Gm-Message-State: AOJu0YxnMDORecAfWaBN0M+ixH5Y9bd8VtMUz0d4t2gFPvuGgRETPAE6
-	pjgQO3F+InG4/8/Xt1mJQ9vsN0sO48IfUjIiw9HCU5Kuqhj0q7Dm
-X-Google-Smtp-Source: AGHT+IFL9tfJxnSiQ1ohuj80uEisjABTfCEmpgMn4bUaZduxfPeqy8o3YyadjSYRSeX9qvb5RNfDgg==
-X-Received: by 2002:a05:6a21:6d96:b0:1be:ca24:964c with SMTP id adf61e73a8af0-1bef6109d5bmr11975347637.16.1719878909973;
-        Mon, 01 Jul 2024 17:08:29 -0700 (PDT)
-Received: from ?IPv6:2605:59c8:829:4c00:82ee:73ff:fe41:9a02? ([2605:59c8:829:4c00:82ee:73ff:fe41:9a02])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1fac1535b94sm70925405ad.155.2024.07.01.17.08.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 17:08:29 -0700 (PDT)
-Message-ID: <12a8b9ddbcb2da8431f77c5ec952ccfb2a77b7ec.camel@gmail.com>
-Subject: Re: [PATCH net-next v9 06/13] mm: page_frag: reuse existing space
- for 'size' and 'pfmemalloc'
-From: Alexander H Duyck <alexander.duyck@gmail.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
- kuba@kernel.org,  pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton
-	 <akpm@linux-foundation.org>, linux-mm@kvack.org
-Date: Mon, 01 Jul 2024 17:08:28 -0700
-In-Reply-To: <20240625135216.47007-7-linyunsheng@huawei.com>
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
-	 <20240625135216.47007-7-linyunsheng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700D763B;
+	Tue,  2 Jul 2024 00:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719879428; cv=fail; b=fJtCftk3owBVPRo5F4XnsYLprchaZI9b8PBGnCJPm4CIEK1o2TCgrOCkByc9Xwc5mmhg8m+9k9j2OBYJ8kr6KFk3dG6Wh2Q2Vx9lYKD6OhKNAYMNaF48gPpDSKjdHKPOFuoj2WbHcODduMeZyODNO9htkcR84lfzmrNChBqkUIU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719879428; c=relaxed/simple;
+	bh=TOz7h7orUhSGG/AlQwvm7hmAU0lQoCDUpB3gNjpwc7M=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cOA/4hOgIgJAHACDlp7CQZ1HQtBWImLFTEaZOaAaqvsYEYK9iLt2aHgbpibDXYyzajeq1lBcyIAZXfAwWq1SToRqZr0Zh2DNm9SoYmyiFM+NWB+W3vx4+Vus1LjaBZ11Wds5KPTueqeH9+zZCp1+yinbCRs4PuRPaAcrsX70gUM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XOzI15dz; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719879426; x=1751415426;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=TOz7h7orUhSGG/AlQwvm7hmAU0lQoCDUpB3gNjpwc7M=;
+  b=XOzI15dzi6+JSYcUQHPMSaKuBfjJfinvM85kSuvxRVjaMWDEfpkys8rn
+   0AZPzGb8xG0ou4wLFhRvw2lzFic4FDPbYzbzX+B9EpuLmWiyeJpArj0TH
+   +3uEfrdyQVI+Io7d8GA5Dve8RAX+n9TPLFtqhYt9CByt9mtwcCEGiyXkH
+   X2d71jtq0KMm9ckYfrm92vcl4VMtvG20u/vV8Ty8ygMGBbDPQUZTIrknt
+   AjGDf1l+RXQW/UTq4A5sV+TeeLfKo6D+rReToCEfKlZXKE7kSN/Lnh29m
+   3+2p0+emhekMhvO80/mZ0MrJqAaMA8hd1bOBbvF+3F6NHhz6IIlQMUi/q
+   Q==;
+X-CSE-ConnectionGUID: k1rZhNLmSMunCAn7EwuHYA==
+X-CSE-MsgGUID: 8KL2TUdnTqOakwDjPsEzoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="28431296"
+X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
+   d="scan'208";a="28431296"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 17:17:06 -0700
+X-CSE-ConnectionGUID: nQL15VesSp+twPh38C4ACQ==
+X-CSE-MsgGUID: k+MJBGFOTB2W3r4ZjHL1cQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
+   d="scan'208";a="45665158"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Jul 2024 17:17:05 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 1 Jul 2024 17:17:05 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 1 Jul 2024 17:17:04 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 1 Jul 2024 17:17:04 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.48) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 1 Jul 2024 17:17:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EL/RvD7qI3+5tMhVYtgf1krR6izc5X71C2g09ILN+Y2GSCmrgJm/jq06X6cTiVozaV0A1C+jAueQhdXQWgYMHygpnXCG5KCcIgCsC8bz7tQAhlwvAc/0dmmgKScJTt9pJXbpzQ2N+g/BeVVJOfM8j6TGbh7UtnD9sbQbBXXUkDOzVg7xrSYlab2tLYchLCgIOeWWqnYswGcidXLrNdMhTt6THlztmVKujL372shAMEYEDxDoiVWnRxwUtJZIIYVGtN/KBKcogQh38Jbp+gCnddxtXzXCMvVZpXRVBttJodXUmO3crMbQaN39uKUZVW8OnIYTnA17qPCUqiA+LLr8KA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M6zlFYjqULphPTtbwDdlR+Uu22qS3rjxyDeiSXX6NEw=;
+ b=DM3vXxE/ZAuVz+J8FU7n6mgylB7VJZ7MLwvrwnIDyrLgOR3yEfpIE0TNg309T/bXchaRf8xxmzHPNYxuU0pYp+sVl9Y0ykziCLALoZ9XtLQybSqAk0mBbcfq8gq/eM19imjVQNQNAlhPFa1GIdROIQu6lHwOYcj+IaB5/PavzaX4v6ftMK2xgFfptAg++4JkjKIi+AyOiPBXS2dYq7mpmdCfv0xOEApEBXvajHE1Vjn6P/HoxUipaZI0c3dKnPTuASTY9zIQ38xTlpuUu+LQ1iKyFEhCxtVictodjVachZOx/gOyb45aX5LHcvzcZp60/7fGYQZzcB8KUBAWEVxOtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by PH8PR11MB8108.namprd11.prod.outlook.com (2603:10b6:510:257::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Tue, 2 Jul
+ 2024 00:17:02 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7719.029; Tue, 2 Jul 2024
+ 00:17:02 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: "Zhao, Yan Y" <yan.y.zhao@intel.com>, "Liu, Yi L" <yi.l.liu@intel.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "jgg@nvidia.com"
+	<jgg@nvidia.com>
+Subject: RE: [PATCH] vfio: Get/put KVM only for the first/last
+ vfio_df_open/close in cdev path
+Thread-Topic: [PATCH] vfio: Get/put KVM only for the first/last
+ vfio_df_open/close in cdev path
+Thread-Index: AQHayW6q9Ma1HJkB/EOYHWiKOaLUf7HhiCJAgAAoR4CAABm0gIAAyxpQ
+Date: Tue, 2 Jul 2024 00:17:02 +0000
+Message-ID: <BN9PR11MB5276546B8657FB468F5BA33F8CDC2@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240628151845.22166-1-yan.y.zhao@intel.com>
+ <BN9PR11MB5276059EAED001D833949DF88CD32@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <fddd5230-28ac-463b-8536-ee953072d973@intel.com>
+ <ZoKavalggv/iXCPB@yzhao56-desk.sh.intel.com>
+In-Reply-To: <ZoKavalggv/iXCPB@yzhao56-desk.sh.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|PH8PR11MB8108:EE_
+x-ms-office365-filtering-correlation-id: ce0ea0cc-3678-4693-baac-08dc9a2c4c30
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?srVSY/fXQwX65Thc4kZIGlgBt5T3pFPHOeWWwhjQr/52cN+0PuhOCZlCeioH?=
+ =?us-ascii?Q?bz/XHmequq7i/0RH4YK35NcyU9r9Al/fkwG4Aew94W/HraTN0ffS30fMMSXt?=
+ =?us-ascii?Q?qrfqHJsQnsqqnbUhoFZ6YE40ozpP1JzENv/46IBoUjn4gKHudk9lcrMgLey8?=
+ =?us-ascii?Q?nNA50NIFqquhiwTvz3Y6FDKBPPoMCCY9pDc6qxCNFwUgaJdEQzlFgVTKYZ4r?=
+ =?us-ascii?Q?OpfClWi+U273iwm2QBE99LtWqybdELVdheOjqYRg8GpENbUHeGJ6lEAoqYKN?=
+ =?us-ascii?Q?ZsoysJekCnZRRWHs2ExYiPC3zBX2ZIVu3VQSjKUf4SvjWgLaWq2SPQDm4/Co?=
+ =?us-ascii?Q?kfI0Hipkpc51/mTrZKfJjq1aOX6mTUZjLOrGG5BpWsG39agKzfo4k2WcmGMf?=
+ =?us-ascii?Q?q3cBLJPeZN9RiT5ezHQoT7Nc9FnPE+Y8W8CMFXlOAT7c8fHEOtE4RF4en2Xp?=
+ =?us-ascii?Q?HhtwZkUx+tthRFTUXBzmXQjpRUqEvJVUB06BIQv06P4IOodDeBVHPfsA5pbo?=
+ =?us-ascii?Q?nJrUiCjyw8UGdxuaF6KZQzi5SytCjy6Hc6Q5H3snlIWBWvBcmXdI3WdfDM7h?=
+ =?us-ascii?Q?DfFBAD7vZ3DgQ8GmrrCOUUuxLYh7qzoAuues8BzR4Otd1GuVPTcZKMVzLasr?=
+ =?us-ascii?Q?t0SY5owYCQ6pXDuatx46ZKybYdbbK+2lzs3g/xAigj+ZPCHIvv8RIaulKzdX?=
+ =?us-ascii?Q?+0jTdz5edt8gxj/o7cflyRdLhVHe0cSAzfm0nz4pwOGheSr1NN9LUq22rqFy?=
+ =?us-ascii?Q?2f+NxTHlA92KEMNuaQYD7InAVgGO8HC7V3dBIpEUMfPs5lFEqvrw22S1YXRA?=
+ =?us-ascii?Q?1gew0egucO5gmix5J2LQfNxgFACv8B72NfGhLh3MMR/Q8kFQC2dg5Y/4Nil/?=
+ =?us-ascii?Q?JguGh4wzr8bwlJiTOcmUAhktzIY/8uXn/PKsOxI6WzhLZ3VblQPr5KA/MWaD?=
+ =?us-ascii?Q?V0atAfgcoOw4srERKhBgRh+7c/GhUiNIWwB1j0Dwzw71/3WAKDBwwgWX9nJP?=
+ =?us-ascii?Q?2shwjJrpZ0uTndUA/WADv/gHY+dfdx4mb67LIx/Xe1g/jqMDyGWB1RF1oYve?=
+ =?us-ascii?Q?+4JdMytTsmovAW/ihTQ/GAfct0G50ZhH9MyZ27d5J7NEvdIf8OgPAWUeyJ4u?=
+ =?us-ascii?Q?GvRSR2MAGpv9G/HW2C90JV0Oz7JVL6w84xZWDU6+HjCgwB3h5QRg9fZdJ0N0?=
+ =?us-ascii?Q?HSf32DJMCt+zMeO4T2jwFyZs9nIso//+ZtquWt3PP8To+7rFRehhpQ+b05AN?=
+ =?us-ascii?Q?auX6eoJ2I9miFggWOT9BmwSD5RcVeVxhMcScFHZXnvHsagsKD+qTiZRnOjch?=
+ =?us-ascii?Q?n2SDoN1svyLE+8yPKzy1x92pZPFP17zLilQwNttrkz7zks51ay+0XlVziAZ4?=
+ =?us-ascii?Q?9XcoUuDsZHiCAHYualpHVBw2vIcdo3/Vv7jaah5c/CdhjJtXLw=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?VTV6IS74YdgzFZftFz6cVcfbDGmbGi18GjcIuwsuYlCgY3xcSBPqhK39v3Ot?=
+ =?us-ascii?Q?0aukV0Ndlx5lxRybasCFQFMQTpH3smABxVTRuk1aaWpAlm9F00kBNtz3iyRf?=
+ =?us-ascii?Q?p6tDoVphcCAvD5qPyHEm276vE92kkAU6FurlOSY//vAqLmAcKaYAxHFuyzqL?=
+ =?us-ascii?Q?Nuw/sZSucAkfzqyAEzpSxzho78co9qfv+wSUGDn/zNvybDlzqqrvqOuIqHdD?=
+ =?us-ascii?Q?YzkzgSO0Q/AWAUXjhvs3mV6kfPfNDDmGmG9WR90zRfN6TJV/NPAjil0rSlrM?=
+ =?us-ascii?Q?CWZEPOAKh+4Nu5oQT3Na1Az0TellKnj+cDAjuMmU5+LJ+BotP+9XPxNWgFWc?=
+ =?us-ascii?Q?er0SU0wCRxf1Zte3jvZgpucfCExmdtZtK5D8qV6LwssbWAgpGuWCW6ZW6mRb?=
+ =?us-ascii?Q?Qq0e/woyq6sc5y79ZNdX/EQAWMGb/R6ArW0jxM+KUrPJnMIqP8vQXE5aJ3h4?=
+ =?us-ascii?Q?ezYr+jT4qzlj+qsOglRgEMehONQmECKuR719Vrh9fY/3w82lhRUhXnHtqqTL?=
+ =?us-ascii?Q?CNjM8n+jU3vTsubAPkWT8ldmITreGV+AdqawXn2V+EOoOCuju/AG16nL3PAI?=
+ =?us-ascii?Q?z1TKSl4eCH+puxIvJCCd+eghatRLGa0NMJcoKDOusYUVHkjGR+75oXoYogUN?=
+ =?us-ascii?Q?LG1EwQctfCex+MTaLK+u9QrtAvrYgRbBprfOAY8Sh9Qr+gJqt8dRRNM1ua+J?=
+ =?us-ascii?Q?zIkb5crD6zUD4rOLqGdpbc0K15gKRWhZqAdt6R97EFL4tJSHrZst6l4+agEp?=
+ =?us-ascii?Q?y72tzunYwZdbjmSzdl8pHxcdHwIykzL6gZ0KLGq0/bjh3gUIRRj14Vz1en54?=
+ =?us-ascii?Q?14hUMpt/3/TDulsU5qCWyKolaw0+pVNXAlomlwVrwAp/vUm1sHlHgTI3YznY?=
+ =?us-ascii?Q?K337CHhnRUOy1QY8Tal22yqoOeS/jbIKNR1nEwGWDNtKHSE4P/tWlF58l4eN?=
+ =?us-ascii?Q?Xz3avzRY8+uUAyFUW1y4Q+MamPrAhU2XTjto78j1YaKPyE2xTff0AhEWkT/u?=
+ =?us-ascii?Q?O9tY2bW+BSkY+yPqxAXHGdFF9IOrm9lWTnD7ABjB1TJv7Dmkubc8+ICn8cyx?=
+ =?us-ascii?Q?kiqh1ErJHyUDSNqoIsxFt5v6u0LT1nXwDgagzR6n1MEWDaEQ3Y80blKtRc3e?=
+ =?us-ascii?Q?KuIuyXHH4IjgTLtoGfl0+9SF0gCpLhW9yeCnbe3tk5UbuePFBOz9PhIO5wsW?=
+ =?us-ascii?Q?sHV4Zps0qkk6IC4L8SuMz8GZ1G2B4LN18T4VK1I3tczSHl345mvbB/kNQpdw?=
+ =?us-ascii?Q?ijNB8RqWo1A8Eao/GxGS0LyjvnzOA71GhNMwI3l9NcmftN/QaEJ3rpthsCg4?=
+ =?us-ascii?Q?59+fG3Xgrz4myYhO8QLtKVGt9/hISPXMDO7RshttdPk0D1DYT2jQe8XWC9Mn?=
+ =?us-ascii?Q?5BzR2rpZvDOfmPpBunx8mblgrX4b0HLzxqYoJN+93AG850DNXG0Y5mvPkV/p?=
+ =?us-ascii?Q?2wCCSzO9zSfbqsVR2oXxG1ra/ZgN1AzWjn10VR11tmq0Fa/GNI+GrbxSJzi9?=
+ =?us-ascii?Q?x14wGaWoGsz06kASaZv6p4ANI0oAHdyT5jzR56Ms03xthJY+VHcr730MogtJ?=
+ =?us-ascii?Q?8crLKE5LP7XIv7w3N0XaJnxsnn+dwKKpgJd2gH5J?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce0ea0cc-3678-4693-baac-08dc9a2c4c30
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2024 00:17:02.7009
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: H5EaNMw8eyAUykQX2i6fU82G2LmUMXWRZtFHb/B2q6lT6m1scjwkxxp1ObR6Bg9rW2yh7KfNV8QiPuC2NAaRBg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8108
+X-OriginatorOrg: intel.com
 
-On Tue, 2024-06-25 at 21:52 +0800, Yunsheng Lin wrote:
-> Currently there is one 'struct page_frag' for every 'struct
-> sock' and 'struct task_struct', we are about to replace the
-> 'struct page_frag' with 'struct page_frag_cache' for them.
-> Before begin the replacing, we need to ensure the size of
-> 'struct page_frag_cache' is not bigger than the size of
-> 'struct page_frag', as there may be tens of thousands of
-> 'struct sock' and 'struct task_struct' instances in the
-> system.
+> From: Zhao, Yan Y <yan.y.zhao@intel.com>
+> Sent: Monday, July 1, 2024 8:02 PM
 >=20
-> By or'ing the page order & pfmemalloc with lower bits of
-> 'va' instead of using 'u16' or 'u32' for page size and 'u8'
-> for pfmemalloc, we are able to avoid 3 or 5 bytes space waste.
-> And page address & pfmemalloc & order is unchanged for the
-> same page in the same 'page_frag_cache' instance, it makes
-> sense to fit them together.
+> On Mon, Jul 01, 2024 at 06:30:05PM +0800, Yi Liu wrote:
+> > On 2024/7/1 16:43, Tian, Kevin wrote:
+> > >
+> > > what about extending vfio_df_open() to unify the get/put_kvm()
+> > > and open_count trick in one place?
+> > >
+> > > int vfio_df_open(struct vfio_device_file *df, struct kvm *kvm,
+> > > 	spinlock_t *kvm_ref_lock)
+> > > {
+> >
+> > this should work. But need a comment to note why need pass in both kvm
+> > and kvm_ref_lock given df has both of them. :)
+> So why to pass them?
+
+hmm actually passing them is wrong especially for the group path.
+We have to get kvm upon the first reference to the pointer otherwise
+it is prone to use-after-free issue.
+
 >=20
-> Also, it is better to replace 'offset' with 'remaining', which
-> is the remaining size for the cache in a 'page_frag_cache'
-> instance, we are able to do a single 'fragsz > remaining'
-> checking for the case of cache not being enough, which should be
-> the fast path if we ensure size is zoro when 'va' =3D=3D NULL by
-> memset'ing 'struct page_frag_cache' in page_frag_cache_init()
-> and page_frag_cache_drain().
+> What about making vfio_device_group_get_kvm_safe() or
+> vfio_df_get_kvm_safe()
+> not static and calling one of them in vfio_df_open() according to the df-
+> >group
+> ?
 >=20
-> After this patch, the size of 'struct page_frag_cache' should be
-> the same as the size of 'struct page_frag'.
->=20
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> ---
->  include/linux/page_frag_cache.h | 76 +++++++++++++++++++++++-----
->  mm/page_frag_cache.c            | 90 ++++++++++++++++++++-------------
->  2 files changed, 118 insertions(+), 48 deletions(-)
->=20
-> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_ca=
-che.h
-> index 6ac3a25089d1..b33904d4494f 100644
-> --- a/include/linux/page_frag_cache.h
-> +++ b/include/linux/page_frag_cache.h
-> @@ -8,29 +8,81 @@
->  #define PAGE_FRAG_CACHE_MAX_SIZE	__ALIGN_MASK(32768, ~PAGE_MASK)
->  #define PAGE_FRAG_CACHE_MAX_ORDER	get_order(PAGE_FRAG_CACHE_MAX_SIZE)
-> =20
-> -struct page_frag_cache {
-> -	void *va;
-> +/*
-> + * struct encoded_va - a nonexistent type marking this pointer
-> + *
-> + * An 'encoded_va' pointer is a pointer to a aligned virtual address, wh=
-ich is
-> + * at least aligned to PAGE_SIZE, that means there are at least 12 lower=
- bits
-> + * space available for other purposes.
-> + *
-> + * Currently we use the lower 8 bits and bit 9 for the order and PFMEMAL=
-LOC
-> + * flag of the page this 'va' is corresponding to.
-> + *
-> + * Use the supplied helper functions to endcode/decode the pointer and b=
-its.
-> + */
-> +struct encoded_va;
-> +
 
-Why did you create a struct for this? The way you use it below it is
-just a pointer. No point in defining a struct that doesn't exist
-anywhere.
+yeah, this sounds better.
 
-> +#define PAGE_FRAG_CACHE_ORDER_MASK		GENMASK(7, 0)
-> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT		BIT(8)
-> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT	8
-> +
-> +static inline struct encoded_va *encode_aligned_va(void *va,
-> +						   unsigned int order,
-> +						   bool pfmemalloc)
-> +{
->  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> -	__u16 offset;
-> -	__u16 size;
-> +	return (struct encoded_va *)((unsigned long)va | order |
-> +			pfmemalloc << PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT);
->  #else
-> -	__u32 offset;
-> +	return (struct encoded_va *)((unsigned long)va |
-> +			pfmemalloc << PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT);
-> +#endif
-> +}
-> +
-> +static inline unsigned long encoded_page_order(struct encoded_va *encode=
-d_va)
-> +{
-> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> +	return PAGE_FRAG_CACHE_ORDER_MASK & (unsigned long)encoded_va;
-> +#else
-> +	return 0;
-> +#endif
-> +}
-> +
-> +static inline bool encoded_page_pfmemalloc(struct encoded_va *encoded_va=
-)
-> +{
-> +	return PAGE_FRAG_CACHE_PFMEMALLOC_BIT & (unsigned long)encoded_va;
-> +}
-> +
-
-My advice is that if you just make encoded_va an unsigned long this
-just becomes some FIELD_GET and bit operations.
-
-> +static inline void *encoded_page_address(struct encoded_va *encoded_va)
-> +{
-> +	return (void *)((unsigned long)encoded_va & PAGE_MASK);
-> +}
-> +
-> +struct page_frag_cache {
-> +	struct encoded_va *encoded_va;
-
-This should be an unsigned long, not a pointer since you are storing
-data other than just a pointer in here. The pointer is just one of the
-things you extract out of it.
-
-> +
-> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <=3D 32)
-> +	u16 pagecnt_bias;
-> +	u16 remaining;
-> +#else
-> +	u32 pagecnt_bias;
-> +	u32 remaining;
->  #endif
-> -	/* we maintain a pagecount bias, so that we dont dirty cache line
-> -	 * containing page->_refcount every time we allocate a fragment.
-> -	 */
-> -	unsigned int		pagecnt_bias;
-> -	bool pfmemalloc;
->  };
-> =20
->  static inline void page_frag_cache_init(struct page_frag_cache *nc)
->  {
-> -	nc->va =3D NULL;
-> +	memset(nc, 0, sizeof(*nc));
-
-Shouldn't need to memset 0 the whole thing. Just setting page and order
-to 0 should be enough to indicate that there isn't anything there.
-
->  }
-> =20
->  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache =
-*nc)
->  {
-> -	return !!nc->pfmemalloc;
-> +	return encoded_page_pfmemalloc(nc->encoded_va);
-> +}
-> +
-> +static inline unsigned int page_frag_cache_page_size(struct encoded_va *=
-encoded_va)
-> +{
-> +	return PAGE_SIZE << encoded_page_order(encoded_va);
->  }
-> =20
->  void page_frag_cache_drain(struct page_frag_cache *nc);
-> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-> index dd640af5607a..a3316dd50eff 100644
-> --- a/mm/page_frag_cache.c
-> +++ b/mm/page_frag_cache.c
-> @@ -18,34 +18,61 @@
->  #include <linux/page_frag_cache.h>
->  #include "internal.h"
-> =20
-> +static void *page_frag_cache_current_va(struct page_frag_cache *nc)
-> +{
-> +	struct encoded_va *encoded_va =3D nc->encoded_va;
-> +
-> +	return (void *)(((unsigned long)encoded_va & PAGE_MASK) |
-> +		(page_frag_cache_page_size(encoded_va) - nc->remaining));
-> +}
-> +
-
-Rather than an OR here I would rather see this just use addition.
-Otherwise this logic becomes overly complicated.
-
->  static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->  					     gfp_t gfp_mask)
->  {
->  	struct page *page =3D NULL;
->  	gfp_t gfp =3D gfp_mask;
-> +	unsigned int order;
-> =20
->  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
->  	gfp_mask =3D (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
->  		   __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
->  	page =3D alloc_pages_node(NUMA_NO_NODE, gfp_mask,
->  				PAGE_FRAG_CACHE_MAX_ORDER);
-> -	nc->size =3D page ? PAGE_FRAG_CACHE_MAX_SIZE : PAGE_SIZE;
->  #endif
-> -	if (unlikely(!page))
-> +	if (unlikely(!page)) {
->  		page =3D alloc_pages_node(NUMA_NO_NODE, gfp, 0);
-> +		if (unlikely(!page)) {
-> +			memset(nc, 0, sizeof(*nc));
-> +			return NULL;
-> +		}
-> +
-> +		order =3D 0;
-> +		nc->remaining =3D PAGE_SIZE;
-> +	} else {
-> +		order =3D PAGE_FRAG_CACHE_MAX_ORDER;
-> +		nc->remaining =3D PAGE_FRAG_CACHE_MAX_SIZE;
-> +	}
-> =20
-> -	nc->va =3D page ? page_address(page) : NULL;
-> +	/* Even if we own the page, we do not use atomic_set().
-> +	 * This would break get_page_unless_zero() users.
-> +	 */
-> +	page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
-> =20
-> +	/* reset page count bias of new frag */
-> +	nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
-
-I would rather keep the pagecnt_bias, page reference addition, and
-resetting of remaining outside of this. The only fields we should be
-setting are order, the virtual address, and pfmemalloc since those are
-what is encoded in your unsigned long variable.
-
-> +	nc->encoded_va =3D encode_aligned_va(page_address(page), order,
-> +					   page_is_pfmemalloc(page));
->  	return page;
->  }
-> =20
->  void page_frag_cache_drain(struct page_frag_cache *nc)
->  {
-> -	if (!nc->va)
-> +	if (!nc->encoded_va)
->  		return;
-> =20
-> -	__page_frag_cache_drain(virt_to_head_page(nc->va), nc->pagecnt_bias);
-> -	nc->va =3D NULL;
-> +	__page_frag_cache_drain(virt_to_head_page(nc->encoded_va),
-> +				nc->pagecnt_bias);
-> +	memset(nc, 0, sizeof(*nc));
-
-Again, no need for memset when "nv->encoded_va =3D 0" will do.
-
->  }
->  EXPORT_SYMBOL(page_frag_cache_drain);
-> =20
-> @@ -62,51 +89,41 @@ void *__page_frag_alloc_va_align(struct page_frag_cac=
-he *nc,
->  				 unsigned int fragsz, gfp_t gfp_mask,
->  				 unsigned int align_mask)
->  {
-> -	unsigned int size =3D PAGE_SIZE;
-> +	struct encoded_va *encoded_va =3D nc->encoded_va;
->  	struct page *page;
-> -	int offset;
-> +	int remaining;
-> +	void *va;
-> =20
-> -	if (unlikely(!nc->va)) {
-> +	if (unlikely(!encoded_va)) {
->  refill:
-> -		page =3D __page_frag_cache_refill(nc, gfp_mask);
-> -		if (!page)
-> +		if (unlikely(!__page_frag_cache_refill(nc, gfp_mask)))
->  			return NULL;
-> =20
-> -		/* Even if we own the page, we do not use atomic_set().
-> -		 * This would break get_page_unless_zero() users.
-> -		 */
-> -		page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
-> -
-> -		/* reset page count bias and offset to start of new frag */
-> -		nc->pfmemalloc =3D page_is_pfmemalloc(page);
-> -		nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
-> -		nc->offset =3D 0;
-> +		encoded_va =3D nc->encoded_va;
->  	}
-> =20
-> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> -	/* if size can vary use size else just use PAGE_SIZE */
-> -	size =3D nc->size;
-> -#endif
-> -
-> -	offset =3D __ALIGN_KERNEL_MASK(nc->offset, ~align_mask);
-> -	if (unlikely(offset + fragsz > size)) {
-> -		page =3D virt_to_page(nc->va);
-> -
-> +	remaining =3D nc->remaining & align_mask;
-> +	remaining -=3D fragsz;
-> +	if (unlikely(remaining < 0)) {
-
-Now this is just getting confusing. You essentially just added an
-additional addition step and went back to the countdown approach I was
-using before except for the fact that you are starting at 0 whereas I
-was actually moving down through the page.
-
-What I would suggest doing since "remaining" is a negative offset
-anyway would be to look at just storing it as a signed negative number.
-At least with that you can keep to your original approach and would
-only have to change your check to be for "remaining + fragsz <=3D 0".
-With that you can still do your math but it becomes an addition instead
-of a subtraction.
-
-> +		page =3D virt_to_page(encoded_va);
->  		if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
->  			goto refill;
-> =20
-> -		if (unlikely(nc->pfmemalloc)) {
-> -			free_unref_page(page, compound_order(page));
-> +		if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
-> +			VM_BUG_ON(compound_order(page) !=3D
-> +				  encoded_page_order(encoded_va));
-> +			free_unref_page(page, encoded_page_order(encoded_va));
->  			goto refill;
->  		}
-> =20
->  		/* OK, page count is 0, we can safely set it */
->  		set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
-> =20
-> -		/* reset page count bias and offset to start of new frag */
-> +		/* reset page count bias and remaining of new frag */
->  		nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
-> -		offset =3D 0;
-> -		if (unlikely(fragsz > PAGE_SIZE)) {
-> +		nc->remaining =3D remaining =3D page_frag_cache_page_size(encoded_va);
-> +		remaining -=3D fragsz;
-> +		if (unlikely(remaining < 0)) {
->  			/*
->  			 * The caller is trying to allocate a fragment
->  			 * with fragsz > PAGE_SIZE but the cache isn't big
-
-I find it really amusing that you went to all the trouble of flipping
-the logic just to flip it back to being a countdown setup. If you were
-going to bother with all that then why not just make the remaining
-negative instead? You could save yourself a ton of trouble that way and
-all you would need to do is flip a few signs.
-
-> @@ -120,10 +137,11 @@ void *__page_frag_alloc_va_align(struct page_frag_c=
-ache *nc,
->  		}
->  	}
-> =20
-> +	va =3D page_frag_cache_current_va(nc);
->  	nc->pagecnt_bias--;
-> -	nc->offset =3D offset + fragsz;
-> +	nc->remaining =3D remaining;
-> =20
-> -	return nc->va + offset;
-> +	return va;
->  }
->  EXPORT_SYMBOL(__page_frag_alloc_va_align);
-> =20
-
-Not sure I am huge fan of the way the order of operations has to get so
-creative for this to work.  Not that I see a better way to do it, but
-my concern is that this is going to add technical debt as I can easily
-see somebody messing up the order of things at some point in the future
-and generating a bad pointer.
 
