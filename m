@@ -1,149 +1,234 @@
-Return-Path: <linux-kernel+bounces-237952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229C9924120
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:45:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 975A4924137
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A58C91F21EB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2BA287611
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B1B1BA87D;
-	Tue,  2 Jul 2024 14:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="YHEOPZXf"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B6FBE7F;
-	Tue,  2 Jul 2024 14:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4531BA08F;
+	Tue,  2 Jul 2024 14:46:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FDC1E48A;
+	Tue,  2 Jul 2024 14:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719931495; cv=none; b=aH4qMpORMYev9NhFGEUX4CeQ7TYgQ/dO3KAM66aUAXc95LD4Sm/zenhay/DcWWB/ROimEVhgg4HEDtI0trKLgYFNjqfinnxXxviWZM/CpLtRvLIFKz9189zvjQW41EJI+4r6Cz8Exs9K40F4WIVAarVtdawWkVwzjvVWr9uP3K4=
+	t=1719931590; cv=none; b=bKe6ym918avWEOJjcbg8OsV9iPcUhTV5+AieTwjm7nBxqhXxjDycjjacBm1jtSOCXuKtr/gPVU0qMfjoShja7Cahn/L2Bfo/PpbCw1Srt5a0wLpZG9vxh2OFQWuUlUlyB2+h6Dnrr0oiYdqJQZGNQ9DGvevTmMCgjErop0Ciwc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719931495; c=relaxed/simple;
-	bh=hylGUm911e4WMhiZzXuDXft7cF0yyM6IgOOX8pQZKto=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GQNrkLTyqoTar9DlZKbHHjnhXgyyhNI+X4pE6INZTzIPywR4N5+cHCFAbuWs/VZTCN0qYmDSJfJEU7M/u8QWh+sHMvBbbtFEyLROgTluCrBjAbYFS36YsZAi/7mBqMF/nM3e3KBNTBAiwFn4RBbpnImwFz2RspRt81buVLiJfAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=YHEOPZXf reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id aed396a62b52ac75; Tue, 2 Jul 2024 16:44:43 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 43444A562AE;
-	Tue,  2 Jul 2024 16:44:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1719931483;
-	bh=hylGUm911e4WMhiZzXuDXft7cF0yyM6IgOOX8pQZKto=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=YHEOPZXf+76dohpZb1tqnMCHzzVnxT+Eithjngiq2luwFTK7aUUkjmymASzTAodqH
-	 gHQaFoRKyp3ixiPuj96QCVVz44w9ZM84M7pGewktFATsgAU0jnkVb8zGmjvj/4coJn
-	 keswOV8bywQr5KtTO4PgYZyMZn86loZGqBe598EG/rN6Qk0jQII2ew1xbH0lwvGzrm
-	 K2vNtHcaXRCuz3x2Ah0/LHaxKjG+/z33MZcFxcPQWK2iBuINh4TiXk1Lxj/kz6iWgo
-	 MOG3NppUhThUPI5qppVr1ZgiPAk9SOBRltXONZI4iyP8w5plnAJujoAvKRozOBuGwF
-	 jE/Xtd5Gm7kDg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>, Shawn Guo <shawnguo@kernel.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Thara Gopinath <thara.gopinath@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-wireless@vger.kernel.org,
- linux-tegra@vger.kernel.org
-Subject:
- [RESEND][PATCH v1 5/5] thermal: trip: Fold __thermal_zone_get_trip() into its
- caller
-Date: Tue, 02 Jul 2024 16:44:27 +0200
-Message-ID: <22339769.EfDdHjke4D@rjwysocki.net>
-In-Reply-To: <1890956.tdWV9SEqCh@rjwysocki.net>
-References: <1890956.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1719931590; c=relaxed/simple;
+	bh=tfbXEDM67LJIeWeBawXPL/+exKqsdKpe3pypdG3HYK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DMyWWOR7AonZfNOXWk5lgKoncwz16/2VMLr1IqriTTeHZmIdc1Phgi15XzED9Q6gZrMPGgwRCwgTkQpmgnksOnYy+rSEQ49YcjVbdWwKgx2IgaAkPF9eqUBCr7H53djjTzOLYgZeHHCL6qrT3HCXq9KzaQ4XzhEOGC4T/NjvcLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78B8C339;
+	Tue,  2 Jul 2024 07:46:52 -0700 (PDT)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A8D63F766;
+	Tue,  2 Jul 2024 07:46:26 -0700 (PDT)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	David Hildenbrand <david@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Lance Yang <ioworker0@gmail.com>,
+	Yang Shi <shy828301@gmail.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v1] mm: Fix khugepaged activation policy
+Date: Tue,  2 Jul 2024 15:46:14 +0100
+Message-ID: <20240702144617.2291480-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgdejjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopegurghnihgvlhdrlhgviigt
- rghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=14 Fuz1=14 Fuz2=14
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Since the introduction of mTHP, the docuementation has stated that
+khugepaged would be enabled when any mTHP size is enabled, and disabled
+when all mTHP sizes are disabled. There are 2 problems with this; 1.
+this is not what was implemented by the code and 2. this is not the
+desirable behavior.
 
-Because __thermal_zone_get_trip() is only called by thermal_zone_get_trip()
-now, fold the former into the latter.
+Desirable behavior is for khugepaged to be enabled when any PMD-sized
+THP is enabled, anon or file. (Note that file THP is still controlled by
+the top-level control so we must always consider that, as well as the
+PMD-size mTHP control for anon). khugepaged only supports collapsing to
+PMD-sized THP so there is no value in enabling it when PMD-sized THP is
+disabled. So let's change the code and documentation to reflect this
+policy.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Further, per-size enabled control modification events were not
+previously forwarded to khugepaged to give it an opportunity to start or
+stop. Consequently the following was resulting in khugepaged eroneously
+not being activated:
+
+  echo never > /sys/kernel/mm/transparent_hugepage/enabled
+  echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+
+Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+Fixes: 3485b88390b0 ("mm: thp: introduce multi-size THP sysfs interface")
+Closes: https://lore.kernel.org/linux-mm/7a0bbe69-1e3d-4263-b206-da007791a5c4@redhat.com/
+Cc: stable@vger.kernel.org
 ---
- drivers/thermal/thermal_trip.c |   18 ++++--------------
- include/linux/thermal.h        |    2 --
- 2 files changed, 4 insertions(+), 16 deletions(-)
 
-Index: linux-pm/drivers/thermal/thermal_trip.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_trip.c
-+++ linux-pm/drivers/thermal/thermal_trip.c
-@@ -114,27 +114,17 @@ void thermal_zone_set_trips(struct therm
- 		dev_err(&tz->device, "Failed to set trips: %d\n", ret);
+Hi All,
+
+Applies on top of today's mm-unstable (9bb8753acdd8). No regressions observed in
+mm selftests.
+
+When fixing this I also noticed that khugepaged doesn't get (and never has been)
+activated/deactivated by `shmem_enabled=`. I'm not sure if khugepaged knows how
+to collapse shmem - perhaps it should be activated in this case?
+
+Thanks,
+Ryan
+
+ Documentation/admin-guide/mm/transhuge.rst | 11 +++++------
+ include/linux/huge_mm.h                    | 13 +++++++------
+ mm/huge_memory.c                           |  7 +++++++
+ mm/khugepaged.c                            | 13 ++++++-------
+ 4 files changed, 25 insertions(+), 19 deletions(-)
+
+diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+index 709fe10b60f4..fc321d40b8ac 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -202,12 +202,11 @@ PMD-mappable transparent hugepage::
+
+ 	cat /sys/kernel/mm/transparent_hugepage/hpage_pmd_size
+
+-khugepaged will be automatically started when one or more hugepage
+-sizes are enabled (either by directly setting "always" or "madvise",
+-or by setting "inherit" while the top-level enabled is set to "always"
+-or "madvise"), and it'll be automatically shutdown when the last
+-hugepage size is disabled (either by directly setting "never", or by
+-setting "inherit" while the top-level enabled is set to "never").
++khugepaged will be automatically started when PMD-sized THP is enabled
++(either of the per-size anon control or the top-level control are set
++to "always" or "madvise"), and it'll be automatically shutdown when
++PMD-sized THP is disabled (when both the per-size anon control and the
++top-level control are "never")
+
+ Khugepaged controls
+ -------------------
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 4d155c7a4792..ce1b47b49cc3 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -128,16 +128,17 @@ static inline bool hugepage_global_always(void)
+ 			(1<<TRANSPARENT_HUGEPAGE_FLAG);
  }
- 
--int __thermal_zone_get_trip(struct thermal_zone_device *tz, int trip_id,
--			    struct thermal_trip *trip)
--{
--	if (!tz || trip_id < 0 || trip_id >= tz->num_trips || !trip)
--		return -EINVAL;
--
--	*trip = tz->trips[trip_id].trip;
--	return 0;
--}
--EXPORT_SYMBOL_GPL(__thermal_zone_get_trip);
--
- int thermal_zone_get_trip(struct thermal_zone_device *tz, int trip_id,
- 			  struct thermal_trip *trip)
+
+-static inline bool hugepage_flags_enabled(void)
++static inline bool hugepage_pmd_enabled(void)
  {
--	int ret;
-+	if (!tz || !trip || trip_id < 0 || trip_id >= tz->num_trips)
-+		return -EINVAL;
- 
- 	mutex_lock(&tz->lock);
--	ret = __thermal_zone_get_trip(tz, trip_id, trip);
-+	*trip = tz->trips[trip_id].trip;
- 	mutex_unlock(&tz->lock);
- 
--	return ret;
-+	return 0;
+ 	/*
+-	 * We cover both the anon and the file-backed case here; we must return
+-	 * true if globally enabled, even when all anon sizes are set to never.
+-	 * So we don't need to look at huge_anon_orders_inherit.
++	 * We cover both the anon and the file-backed case here; for
++	 * file-backed, we must return true if globally enabled, regardless of
++	 * the anon pmd size control status. So we don't need to look at
++	 * huge_anon_orders_inherit.
+ 	 */
+ 	return hugepage_global_enabled() ||
+-	       READ_ONCE(huge_anon_orders_always) ||
+-	       READ_ONCE(huge_anon_orders_madvise);
++	       test_bit(PMD_ORDER, &huge_anon_orders_always) ||
++	       test_bit(PMD_ORDER, &huge_anon_orders_madvise);
  }
- EXPORT_SYMBOL_GPL(thermal_zone_get_trip);
- 
-Index: linux-pm/include/linux/thermal.h
-===================================================================
---- linux-pm.orig/include/linux/thermal.h
-+++ linux-pm/include/linux/thermal.h
-@@ -202,8 +202,6 @@ static inline void devm_thermal_of_zone_
+
+ static inline int highest_order(unsigned long orders)
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 251d6932130f..085f5e973231 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -502,6 +502,13 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
+ 	} else
+ 		ret = -EINVAL;
+
++	if (ret > 0) {
++		int err;
++
++		err = start_stop_khugepaged();
++		if (err)
++			ret = err;
++	}
+ 	return ret;
  }
- #endif
- 
--int __thermal_zone_get_trip(struct thermal_zone_device *tz, int trip_id,
--			    struct thermal_trip *trip);
- int thermal_zone_get_trip(struct thermal_zone_device *tz, int trip_id,
- 			  struct thermal_trip *trip);
- int for_each_thermal_trip(struct thermal_zone_device *tz,
 
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 409f67a817f1..708d0e74b61f 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -449,7 +449,7 @@ void khugepaged_enter_vma(struct vm_area_struct *vma,
+ 			  unsigned long vm_flags)
+ {
+ 	if (!test_bit(MMF_VM_HUGEPAGE, &vma->vm_mm->flags) &&
+-	    hugepage_flags_enabled()) {
++	    hugepage_pmd_enabled()) {
+ 		if (thp_vma_allowable_order(vma, vm_flags, TVA_ENFORCE_SYSFS,
+ 					    PMD_ORDER))
+ 			__khugepaged_enter(vma->vm_mm);
+@@ -2462,8 +2462,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
 
+ static int khugepaged_has_work(void)
+ {
+-	return !list_empty(&khugepaged_scan.mm_head) &&
+-		hugepage_flags_enabled();
++	return !list_empty(&khugepaged_scan.mm_head) && hugepage_pmd_enabled();
+ }
+
+ static int khugepaged_wait_event(void)
+@@ -2536,7 +2535,7 @@ static void khugepaged_wait_work(void)
+ 		return;
+ 	}
+
+-	if (hugepage_flags_enabled())
++	if (hugepage_pmd_enabled())
+ 		wait_event_freezable(khugepaged_wait, khugepaged_wait_event());
+ }
+
+@@ -2567,7 +2566,7 @@ static void set_recommended_min_free_kbytes(void)
+ 	int nr_zones = 0;
+ 	unsigned long recommended_min;
+
+-	if (!hugepage_flags_enabled()) {
++	if (!hugepage_pmd_enabled()) {
+ 		calculate_min_free_kbytes();
+ 		goto update_wmarks;
+ 	}
+@@ -2617,7 +2616,7 @@ int start_stop_khugepaged(void)
+ 	int err = 0;
+
+ 	mutex_lock(&khugepaged_mutex);
+-	if (hugepage_flags_enabled()) {
++	if (hugepage_pmd_enabled()) {
+ 		if (!khugepaged_thread)
+ 			khugepaged_thread = kthread_run(khugepaged, NULL,
+ 							"khugepaged");
+@@ -2643,7 +2642,7 @@ int start_stop_khugepaged(void)
+ void khugepaged_min_free_kbytes_update(void)
+ {
+ 	mutex_lock(&khugepaged_mutex);
+-	if (hugepage_flags_enabled() && khugepaged_thread)
++	if (hugepage_pmd_enabled() && khugepaged_thread)
+ 		set_recommended_min_free_kbytes();
+ 	mutex_unlock(&khugepaged_mutex);
+ }
+--
+2.43.0
 
 
