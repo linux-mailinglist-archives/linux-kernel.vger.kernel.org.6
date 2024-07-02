@@ -1,122 +1,145 @@
-Return-Path: <linux-kernel+bounces-238342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7A492488D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:46:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E1492488F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EDC1284D8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:46:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60D0E1C22B13
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6810C1BC088;
-	Tue,  2 Jul 2024 19:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A7B1BC088;
+	Tue,  2 Jul 2024 19:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lb6kHIgP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=colorremedies.com header.i=@colorremedies.com header.b="MBKu923b";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KkgGMGoj"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C0D14F7A;
-	Tue,  2 Jul 2024 19:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E433814F7A;
+	Tue,  2 Jul 2024 19:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719949551; cv=none; b=HusuNPnOhSWqGTN42igCc0RATbCwsC3YkRp0rDUjrlMXlcQrGWDlS1odXQ8NzspleTmw+MJTLYptU8PeMzQGScqti1L62TpcvIZtgwNaykKmkGkm5FxzQEfCkTzaXRvkPM2eQsu9y9C+axnSydog0Uq8F1aw+Gmaa3nIQRtUk1A=
+	t=1719949615; cv=none; b=Bvy1hU5b62+b/G9TDgSl8wLqYezFYIKJFgwIGaExoNMRXtaVuAt3l5SBS4ODEUN0OMJwlw/hxwhAIYfZAZFrBrq+LsAS+ekcakyPUwj9MQQcGrStYtgeveEMJYLBVpkGGvvio0Q40bmGSlm14Y8YnF3PHHGmUIjES0eqRGME6Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719949551; c=relaxed/simple;
-	bh=hGfQI2Ehn8ygen6cblJjPQfXi2Rj/CizY3+P7kvje9k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oF7gbZ9q1U/vX2ORvXlTuPVxTLhoHeGHOlWKEh3U2tZbgk8fOzSqUANzfX/Cc33toQ+3qdrwUtvfeaACaiAobo1ltzlpo1ukYBM6mqCG80f8MO8xYGVksTaFsObKtGnghVTu7SprTjWNF1VYUvPz7UaTxCZ15hETwn7lc4gzQPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lb6kHIgP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E96C116B1;
-	Tue,  2 Jul 2024 19:45:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719949551;
-	bh=hGfQI2Ehn8ygen6cblJjPQfXi2Rj/CizY3+P7kvje9k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lb6kHIgPsIUe/XXB8mnxMkCwvEqZrnfuANbXJDv6H8VSjtvDhJwHx35M5wVEtsQy8
-	 7Ifle3iN8HI0qDnJSlEF3zaG8m9884bB+RdGVOPbX3quS0FBJg1dRlM9W6xpiqPhDx
-	 Nn/nlOTU2RJEawQhcqfOGlBUCtvhZrDSlxVIKH8NQaNSV1vfXunrM1cbAof5Th4UER
-	 x+ADmYk5WWKxETwHrb3vnxrJi4qCkBb1jK4x9ByIz3UAeZlaIQ5VFEbWqGEvN14Mir
-	 fxYVtb6BwDY7w+tHQ/BprvZFvCqcd3f1MfGXSRr9Dlne5lWkzkjuHSD/8OFD7wv3Ld
-	 DEXeV4lAu4RPA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Tue,  2 Jul 2024 21:44:27 +0200
-Message-ID: <20240702-vfs-fixes-7b80dba61b09@brauner>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1719949615; c=relaxed/simple;
+	bh=qZaEi+CqhBPcsH5Eow79zhbsY4RJIggjmkMPqJf8N0k=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=i00FawLrpkxYCVoaxBShRhxxznEEJnKjKuJiHEeGbB/fjkwI6jBqwKO/fhExz5Z18Qj82E244a+FSfVbjzVS8i6AfXiOw9hU2sLcopKRYLrmP+lP34kHw99hjU2AqMf2IFGs0ln5JiqsBRyeb4Q9UqS+pDkFx00vQUqhsaZ0Kn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorremedies.com; spf=pass smtp.mailfrom=colorremedies.com; dkim=pass (2048-bit key) header.d=colorremedies.com header.i=@colorremedies.com header.b=MBKu923b; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KkgGMGoj; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=colorremedies.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=colorremedies.com
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 0EB79114021B;
+	Tue,  2 Jul 2024 15:46:53 -0400 (EDT)
+Received: from imap50 ([10.202.2.100])
+  by compute4.internal (MEProxy); Tue, 02 Jul 2024 15:46:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	colorremedies.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1719949613; x=1720036013; bh=qZaEi+CqhB
+	PcsH5Eow79zhbsY4RJIggjmkMPqJf8N0k=; b=MBKu923baKTVC4S1f+EmmxDywZ
+	BbVqs4kIev4QCGLw+ujN1H/1v7JGwMvuIGaL8diK0XuNTHpMf+ubvkgIIaRjqfAF
+	pPklYXrJ6qdOYnfpf+V1UjEKUB3cLinQye0Uic1dAiGfBmrxkcktBK0v3lwzDr2f
+	qN1017/nZ9OsJ2NZqosfXwv67jJByr1mzwrIoLCzpKXt0SX5rPONe1h0gEV8ZUJU
+	hRIzlzpYjOjdqybIaTbYe2yWOkZ4UmA6S/alFGDR5GGcvf4magTo/N5PCxJV9S6m
+	b0A8MS3tX5lPDDrkgeUhAyljC/FWEHTPN5tQ8LxiRzy+WOLdQq/UJLXMKZ/g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719949613; x=
+	1720036013; bh=qZaEi+CqhBPcsH5Eow79zhbsY4RJIggjmkMPqJf8N0k=; b=K
+	kgGMGoj9N/GlnGimst7f0kLl0AoVr5VSMYpDDl2k+TxhYY/gG6oxpTy8d+ODqdOJ
+	QWOTBO3hXluQwkWfDC5UT04/9PSF5a0UX6+xBkzdV2Fj1WXK6lKZ27exyLet/UbR
+	toaU5ht0QYirVsKivLljWaF/0xqEUQqcbyGL5kP+ZtPW9RK3vfosPVDqmItNuB97
+	tj8VT0MCIbafzfm/tlfESOoUsTUxgFeiJ0Gd9i6ENJEIWzTk3YpxwqymxJS7jLJq
+	n2c7LJMBE/fBCiBtMx7L5SBrBv93Yf22+PPLnQkU/ll44AcctDC0l6nt3RfzctXI
+	lXGPB5d1cAbz7jrm5+/dw==
+X-ME-Sender: <xms:LFmEZh4osfu8j9Yp-zKhewtDYcUryrMhEkMaUxZ_2fW5EJiIB8ue3w>
+    <xme:LFmEZu4kF5x1L-319bqGfC_nt7HCAZXGKEMs7rllPsfLFQc78hvfglgAO2XgiANMV
+    ftHyCeTNe70Lhsj5m8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgddufeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdev
+    hhhrihhsucfouhhrphhhhidfuceolhhishhtshestgholhhorhhrvghmvgguihgvshdrtg
+    homheqnecuggftrfgrthhtvghrnhepleeifeeutdefgfejgfetieeiveektdevvdetiefh
+    vdelveetlefhuedvffejieeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheplhhishhtshestgholhhorhhrvghmvgguihgvshdrtghomh
+X-ME-Proxy: <xmx:LFmEZofl0KdKIRU3e_cyh62iflkW4ccCiC7bbB2z-mXKXMaOmigFkw>
+    <xmx:LFmEZqJwgBH8hh99M-kq0Ngu5PJ9f7fF2F7vbzKqaEU6N1FfEi-vWQ>
+    <xmx:LFmEZlJFfWZ7gnthytXGz6jW0YewId_vwSeOe6a5xFDrDM2WVLmTdA>
+    <xmx:LFmEZjzMHLSy1dvBEOYWiz3qnASPsMld9dSddStS0UCn56PlZ7letw>
+    <xmx:LVmEZt_QUGNeUjtF0fyU8Hng0kzDB6xTJPlI0LghNJrAXI3A3K7uxWQ2>
+Feedback-ID: i06494636:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id B4EED1700093; Tue,  2 Jul 2024 15:46:52 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1730; i=brauner@kernel.org; h=from:subject:message-id; bh=hGfQI2Ehn8ygen6cblJjPQfXi2Rj/CizY3+P7kvje9k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS1RNyYafXWnTF/dvv/GW4bHtVw/operZ8ibmd30j61c deXDJ/NHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpamP4H/7o9bG5NQfXTVJ/ fL8x+F6O1dOTVw/MeOV07gzHlmepT+cw/C+7ePnF/3v36u85q4Z73BG/HWK8r367SvU3thDT+9L 9xswA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Message-Id: <93b5fac5-6315-4f2e-a2df-37ef4bf56f9e@app.fastmail.com>
+In-Reply-To: 
+ <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
+References: 
+ <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
+ <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
+ <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
+ <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
+ <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
+ <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
+Date: Tue, 02 Jul 2024 15:46:30 -0400
+From: "Chris Murphy" <lists@colorremedies.com>
+To: "Filipe Manana" <fdmanana@kernel.org>,
+ =?UTF-8?Q?=D0=9C=D0=B8=D1=85=D0=B0=D0=B8=D0=BB_=D0=93=D0=B0=D0=B2=D1=80?=
+ =?UTF-8?Q?=D0=B8=D0=BB=D0=BE=D0=B2?= <mikhail.v.gavrilov@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+ "Linux regressions mailing list" <regressions@lists.linux.dev>,
+ "Btrfs BTRFS" <linux-btrfs@vger.kernel.org>,
+ "David Sterba" <dsterba@suse.com>, "Josef Bacik" <josef@toxicpanda.com>
+Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
+ execution time of the kswapd0 process and symptoms as if there is not enough
+ memory
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hey Linus,
 
-/* Summary */
-This contains three fixes:
 
-VFS:
+On Tue, Jul 2, 2024, at 1:22 PM, Filipe Manana wrote:
+> On Tue, Jul 2, 2024 at 3:13=E2=80=AFPM Mikhail Gavrilov
+> <mikhail.v.gavrilov@gmail.com> wrote:
 
-- Improve handling of deep ancestor chains in is_subdir().
-- Release locks cleanly when fctnl_setlk() races with close().
-  When setting a file lock fails the VFS tries to cleanup the already
-  created lock. The helper used for this calls back into the LSM layer
-  which may cause it to fail, leaving the lock accessible via
-  /proc/locks.
+>> Unfortunately, the patch didn't improve anything.
+>> kswapd0 still consumes 100% CPU under load.
+>> And my system continues to freeze.
+>
+> Ok, the concerning part is the freezing and high cpu usage.
 
-AFS:
+We're seeing this in Fedora Rawhide, which is always using the most rece=
+nt mainline kernel.=20
 
-- Fix a comma/semicolon typo.
+User first reported June 25 they were experiencing much longer backup ti=
+mes, normal is ~5 minutes, they're taking 1+ hours now, with frequent fr=
+eezes of the DE, notices kswapd using 100% CPU and then other processes =
+also start hanging with 100% CPU. Resolution is a power cycle and revert=
+ing to 6.9 series.
 
-/* Testing */
-clang: Debian clang version 16.0.6 (27)
-gcc: (Debian 13.2.0-25) 13.2.0
+The workload is described as "restic via ssh to a repo on a backup serve=
+r".
 
-All patches are based on v6.10-rc6. No build failures or warnings were observed.
+I can try to get more info to narrow down the last known good and first =
+known bad kernels if that's useful.
 
-/* Conflicts */
-No known conflicts.
 
-The following changes since commit 22a40d14b572deb80c0648557f4bd502d7e83826:
-
-  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc7.fixes.2
-
-for you to fetch changes up to 655593a40efc577edc651f1d5c5dfde83367c477:
-
-  afs: Convert comma to semicolon (2024-07-02 21:23:00 +0200)
-
-Please consider pulling these changes from the signed vfs-6.10-rc7.fixes.2 tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.10-rc7.fixes.2
-
-----------------------------------------------------------------
-Chen Ni (1):
-      afs: Convert comma to semicolon
-
-Christian Brauner (1):
-      fs: better handle deep ancestor chains in is_subdir()
-
-Jann Horn (1):
-      filelock: Remove locks reliably when fcntl/close race is detected
-
- fs/afs/inode.c |  4 ++--
- fs/dcache.c    | 31 ++++++++++++++-----------------
- fs/locks.c     |  9 ++++-----
- 3 files changed, 20 insertions(+), 24 deletions(-)
+--=20
+Chris Murphy
 
