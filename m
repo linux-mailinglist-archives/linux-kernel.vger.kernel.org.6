@@ -1,116 +1,134 @@
-Return-Path: <linux-kernel+bounces-238011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E97292421D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:16:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF7E92421E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3E781F25B3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:16:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E597288888
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DA31BBBC4;
-	Tue,  2 Jul 2024 15:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807861BBBE1;
+	Tue,  2 Jul 2024 15:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZDhYFsJ+"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zA2ZJQEw"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CB915B0F0
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4621E1BB69D
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719933373; cv=none; b=u0NVlGqw94+GD63daOa9/8dJUCjX8gytBaLfQhNrRFtPS9i1gbQctPErM/ARnN0B7VBsnStXnwwI/VcS7BcY83CVQxfl/mWPhVDVLQK7I3TJIShZ2CeH+bl/65NSwGLswcUjinQgWt8FB7+7z4k9COmxXGNjvEpQ41/1af/WOMg=
+	t=1719933392; cv=none; b=QSv/uHSbK12MEbeBvCu7OYsxGMoHDnBGyAuD7qh43CkawA3gFRktmROxkeztX5MOE8uOnMM8oY8a4YE1nRCarm5GZxf5QtcUXKgRucxqobHZlr2OJDkccvqHw9PhNecwwB2gJi/hyHvKMrUl2PBJ2l/C4sQ1tH4RNDf1niexrDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719933373; c=relaxed/simple;
-	bh=PFuSodRLNrK58rHG08Ugt6OOXdx1ce25g0GNHzycwgM=;
+	s=arc-20240116; t=1719933392; c=relaxed/simple;
+	bh=sa19PPKQit/6l2WVAcrh2RkbPmxofPvqwrxfkehB9rs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=atwv6ccpHHvQ3/fv7+WV9Cbo4JVQ81LCwYVIApxVYwyl2Wi75J263EkVEHxlx1aIdMeRNyOpsgRc6KyWPPTxWi7Fv5OTa0C+1xS0rcwG9T8BA8JFbjX0+pl2MAXGbSKHZKtLhZK3aKWmpwNCrzen+LzJrrWOhEoVp6AqJK8E9vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZDhYFsJ+; arc=none smtp.client-ip=209.85.167.50
+	 To:Cc:Content-Type; b=WKgb7JyzOKA0HVA8NC17uemNQAdWtPDjpTPQQBmd0in6q+rMDyFDxJmtx4TxmADtaEFSYcMUJuspkytk2di16kNoxxjZgH1v7JaTtSiBnXD4xWp3wVSrv4K6Oi52/JBMZcxiY/TWNg9zJx8kO1TqGY9puMFf61Jwg897TIwrv98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zA2ZJQEw; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52e90679d5dso2308e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:16:11 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-643efaf0786so37075917b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:16:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719933370; x=1720538170; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719933390; x=1720538190; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PFuSodRLNrK58rHG08Ugt6OOXdx1ce25g0GNHzycwgM=;
-        b=ZDhYFsJ+jogtX4Ayq0BKYSLk+yp7ukS8R15IIZOMv0thsWe0AhTeMj60pk4ftidHWp
-         5bQVl9nEBx6GswDwe760AJM3qiv/hQqoDWsO9/mtPi3VLiIq4NrzhFwtTQMDxtw0f0cC
-         TTsdgd9d9ZLt2yMhXe18b17Ql2BOJPYJDK5ooJaOWb3khAVwqBLPPC9JmeyCgzizOMIQ
-         l5qjvXWX/3+G5F2S8gVwRYUKXPFlAw1uqXiviDyrK2CrnGHIJCb2wJPXdMEPeHi0kjLD
-         o9X4yNonrXxX1dH0qhO1xKLfOy8+TxQi8if94R+EjA40rumKOXviHTVvv5tY24/vLx5Q
-         PjsA==
+        bh=sa19PPKQit/6l2WVAcrh2RkbPmxofPvqwrxfkehB9rs=;
+        b=zA2ZJQEwF9DUbIc7PJrlMLkdZahViNZ3gLVyEFSUe7xMGVYutN0hWBsCfs1pjF29ND
+         kUtDUxuezq1cJjCRozlf7ekbD0ClItMvk3m6+64jBAeRIh13LCI2YrGub/FxTGuXq/7Y
+         w6hYqtBMH+NdVQ+calNX5w0Ab3xwW2y1HWxpxOgYJwYrHHBoweZ4JIXRIGxxPIM7eM3/
+         IkrdZt1dMJFYbnnmoCKtgaZ1NpaxRaU6ESqFqA4no2GT1D1tVNwZgvYmVLVoIAEDNruB
+         lQpS7K3yVBmriNdF2KCzre2spwukuu3huYPb9AMssCHpHe5sTiNOw66SYX1JRJlhdCEe
+         nREA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719933370; x=1720538170;
+        d=1e100.net; s=20230601; t=1719933390; x=1720538190;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PFuSodRLNrK58rHG08Ugt6OOXdx1ce25g0GNHzycwgM=;
-        b=kIYj99XFIeCdhvuzi0172MypSON1S+5dNI68jHKPjg6bDoNiYsWRzaTiVK+gkVrrAB
-         7Cn4pT0rCPpti9VFbK07w3SXz5MVsiMhtf5uipG/tsV/jRa/SLc7MQogPGpJXaWHHto3
-         Zf+mcjDVLR4AxCfLCtl9VYtMFN4FJxGPfQMPt4bh2PWf/tFQpC/e/6cbWtsiNOcsBPxw
-         KLjsAwLTtSiwOcK9FXRwrhl7Z6gznmw5n/qAfDe2E/m+pETOqfoviXAYC7p1bHRBCWWi
-         i/TtXOwpD/I5wwxKdtRMb9r9MoJpIz3I69QRDWNXWb9Fx4sBgpD6j/ugUq0bHS/A/hhm
-         3A3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWLj/a6N/PxjBix9HFONFkloNg8yYGzdmcm7Xg1ngz/yIbDeglLNOwDzzSIVTco+BAcr1JPdiXm6ozDtTs603NWEE62wepZ5rDP2znN
-X-Gm-Message-State: AOJu0YxlQlY1GRkw09y7wOGTJqkOvrtcDSqhSisrJMOXuNp2fXk1ql0O
-	RiumpqTzJvMebouYPhvfzM91KFNidAgBXMyq0Mot8ufCdeLWghpIA1yqBpsveBGVqsBDODhq1o/
-	BpX2Zb8OA3T8/9prp6OfH7/4GP73DtU9uwQfi
-X-Google-Smtp-Source: AGHT+IFX7cHYnRfyVZKgBvOahQcReiRUsN8SfmAePb9EYJsizFIm/Tgu8OMWGap6ZV8kbrdWXuhSL9HzGY+dRqxmJLo=
-X-Received: by 2002:ac2:5f7a:0:b0:52c:ea5c:fb8c with SMTP id
- 2adb3069b0e04-52e93d5e565mr8637e87.2.1719933369561; Tue, 02 Jul 2024 08:16:09
- -0700 (PDT)
+        bh=sa19PPKQit/6l2WVAcrh2RkbPmxofPvqwrxfkehB9rs=;
+        b=lC9+hmqKOYUVwuuI8+KiQexOxOwMjo6hIG8VevxvcIj9u9bIt0CiA9S0SV2W08nCM4
+         wjCBgZAvTIOoEceb2btN83iZ+KoFl2fqdftdgz4lBZB0b49jdtipXtgv53U+VBF4Kfu9
+         Hdk26imOivI+Ajftm1Hqf3xapjYdsgDoUmi5MQ1var3SkpKo1LTBpYP0SIdltLUzFIPq
+         s/te6wPlQODMqXeCmZ1hBan7dSNa8MLwGj2Yl6l+AvH8d7iX/5I3FdW2gLgK1ZHx8FuO
+         /HzwasUEyGw6AoABNsWSKs+yUZkdf5IbFGOli6dLOt0pbftQif9LGB/3od0n5WX3L6Kd
+         aO2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXxDFnFwx2qb4kCgKexmmZhw/IQz/dwpb171omAfEqMxJ6LwGo/WmlRNRZ7BCPUir3/Mqf0Wp/+Z9Pk/O9rHb3JzYzVj5JYvIFq99z2
+X-Gm-Message-State: AOJu0YzYb8vYyRf6yaiQ4b3112O9KA+6zlWfyi0VAll17a13LFYC0Uz3
+	uQiVGycAiwCbP1V6lsXLwJhrJ6JjLHMU7h3Qkqk2C57WlUKy/HOJgZ41AFhZwbmp7un36vF4WFJ
+	VXJub9mdeetBW/uzsDidedhBtBo+mzS/QMySr
+X-Google-Smtp-Source: AGHT+IFx6DSHJnJhc4x7w1fofiZ/DpQdbBv1kkUvEbzs7Z3G4JNMTfpmq8uXFoB3KhpwOcT4URKG2MSZNmrwdubCYIE=
+X-Received: by 2002:a0d:e682:0:b0:64a:49a4:3e9 with SMTP id
+ 00721157ae682-64c71aeb4e8mr69774637b3.19.1719933389857; Tue, 02 Jul 2024
+ 08:16:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702142406.465415-1-leone4fernando@gmail.com> <20240702142406.465415-3-leone4fernando@gmail.com>
-In-Reply-To: <20240702142406.465415-3-leone4fernando@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 2 Jul 2024 17:15:55 +0200
-Message-ID: <CANn89iKLWtyVP9-YU4a8cnE4Mj0zMNtzQkzkHgM0uqdQV-mcPQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 2/4] net: dst_cache: add input_dst_cache API
-To: Leone Fernando <leone4fernando@gmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	dsahern@kernel.org, willemb@google.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240614225951.3845577-1-surenb@google.com> <18a30d5c-abf3-4ceb-a7fd-2edfd8bee2a8@suse.cz>
+ <CAJuCfpFPDAjE5aNYxTngxzAusz_9QkOdnELSRNadi2Sxb4O=oA@mail.gmail.com> <bb4214ca-fada-4aa9-af40-008182ea4006@suse.cz>
+In-Reply-To: <bb4214ca-fada-4aa9-af40-008182ea4006@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 2 Jul 2024 15:16:18 +0000
+Message-ID: <CAJuCfpGr237=zQb58Zd6E-NmpBfvq-6_LQ58nsiwgx9S1KE0pQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm/slab: fix 'variable obj_exts set but not used' warning
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, 
+	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 2, 2024 at 4:26=E2=80=AFPM Leone Fernando <leone4fernando@gmail=
-.com> wrote:
+On Tue, Jul 2, 2024 at 9:31=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wro=
+te:
 >
-> The input_dst_cache allows fast lookup of frequently encountered dsts.
+> On 6/30/24 9:20 PM, Suren Baghdasaryan wrote:
+> > On Mon, Jun 17, 2024 at 3:04=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz=
+> wrote:
+> >>
+> >> On 6/15/24 12:59 AM, Suren Baghdasaryan wrote:
+> >> > slab_post_alloc_hook() uses prepare_slab_obj_exts_hook() to obtain
+> >> > slabobj_ext object. Currently the only user of slabobj_ext object in
+> >> > this path is memory allocation profiling, therefore when it's not en=
+abled
+> >> > this object is not needed. This also generates a warning when compil=
+ing
+> >> > with CONFIG_MEM_ALLOC_PROFILING=3Dn. Move the code under this config=
+uration
+> >> > to fix the warning. If more slabobj_ext users appear in the future, =
+the
+> >> > code will have to be changed back to call prepare_slab_obj_exts_hook=
+().
+> >> >
+> >> > Fixes: 4b8736964640 ("mm/slab: add allocation accounting into slab a=
+llocation and free paths")
+> >> > Reported-by: kernel test robot <lkp@intel.com>
+> >> > Closes: https://lore.kernel.org/oe-kbuild-all/202406150444.F6neSaiy-=
+lkp@intel.com/
+> >> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> >>
+> >> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> >>
+> >> But it seems to me we could remove the whole #ifdef if current->alloc_=
+tag
+> >> (which doesn't exist with !MEM_ALLOC_PROFILING) had an access helper, =
+or
+> >> there was a alloc_tag_add_current() variant?
+> >
+> > Hmm. I'll check if current->alloc_tag is the only reason for this
+> > ifdef. If so then you are correct and we can simplify this code.
 >
-> In order to provide stable results, I implemented a simple linear
-> hashtable with each bucket containing a constant amount of
-> entries (DST_CACHE_INPUT_BUCKET_SIZE).
->
-> Similarly to how the route hint is used, I defined the hashtable key to
-> contain the daddr and the tos of the IP header.
->
-> Lookup is performed in a straightforward manner: start at the bucket head
-> corresponding the hashed key and search the following
-> DST_CACHE_INPUT_BUCKET_SIZE entries of the array for a matching key.
->
-> When inserting a new dst to the cache, if all the bucket entries are
-> full, the oldest one is deleted to make room for the new dst.
->
-> Signed-off-by: Leone Fernando <leone4fernando@gmail.com>
+> The fix is now in mm-hotfixes-stable but we can cleanup for the future as=
+ a
+> non-hotfix.
 
-Hmm...
+Yes, it's on my TODO list now. Thanks!
 
-This patch adds 10MB of memory per netns on host with 512 cpus,
-and adds netns creation and dismantle costs (45% on a host with 256 cpus)
-
-It targets IPv4 only, which some of us no longer use.
-
-Also, what is the behavior (loss of performance) of this cache under
-flood, when 16 slots need to be looked up for each packet ?
+>
 
