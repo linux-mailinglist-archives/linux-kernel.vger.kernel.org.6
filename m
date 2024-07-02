@@ -1,140 +1,140 @@
-Return-Path: <linux-kernel+bounces-238572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A110D924C37
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:41:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90848924C3F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D1B9B22A65
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E8E3283B32
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC3817DA27;
-	Tue,  2 Jul 2024 23:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4489717DA08;
+	Tue,  2 Jul 2024 23:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyFhom0u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SXySJUsh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEAD17DA03;
-	Tue,  2 Jul 2024 23:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9D615B0FA;
+	Tue,  2 Jul 2024 23:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719963649; cv=none; b=VjpBynwDBuRVgtmSIkEPlmIW2bmopgL6LQnMQl38KK13TBeVCBn1LvZnbcARSDRq/GF/AWJcSwPXFHFf2gt+G70v22t1aqCD7K8JwRxnqtt2qMhiOaUv9L9Qji+kLhgJ3DWrAgufy6p65ClSNI3CWj3QXHv2UYfA2FwyjcwKSd8=
+	t=1719963742; cv=none; b=CxER6jNBXg6QSI3rvP7rPp5fuL1Slv/4Fpmi6Uzx2tgWV9mxDC2tds+Y9ZYY10Twb6Lqhmcsma22rHGpSd2sL0bwzvw9kFlfvVyVwJuyUNP2GHdQfFOgxsHKSbMT7y5IE1371QV7VTqAykVmGDW158jJ99WvgrOMX9L1lkHljPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719963649; c=relaxed/simple;
-	bh=r6NI3gRk8PvoRVepVbEFbr7nnjKYdoij5IyeZd/5+XU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYekWS69PtvW/qCBcsoqytZ4Gu2+7l7awjy0bxSpohxOWXkvHQf7DUTViolFDqZjV3tthhniR4QrK1scsefb5uWDbTQ/99K4h/+dGGnWio1z5gmBzbmwQocCmdxX0va4etWM9f/j9PQXCwJK6LKGUQS2cNbMGuXrLO4c02iZ/go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyFhom0u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5053AC4AF0D;
-	Tue,  2 Jul 2024 23:40:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719963648;
-	bh=r6NI3gRk8PvoRVepVbEFbr7nnjKYdoij5IyeZd/5+XU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kyFhom0uD7GC8yV1UwEOtghiO75l38Bm2NAd0AxMh78KM7zMwK3th806oQv8ZILgE
-	 CBcKOOzSN+i+nKx75Vccmu8JYv0UtrfVk5h3kwX48EeTq3x3eGu7r/cotSOSNrE4zq
-	 pZ+TJOQ1X/lXymtMlD1lNa4/j3lzm7dKfucl5ucAMemrgLWlGTvluc7T4Sn5CnUTNG
-	 WU2Okw0Gd305WApQSPAf8wtDC2vvSYj48qLYMgpp2mUMYySB6tIaPt6ua21yIQYkJD
-	 2TFbdwnUlTck+oLFzbA/0sps42ojnmuZjZS9/BWwyEaLeegzfXVQ2J73lcQviPUMfQ
-	 yRSITSdUogLOg==
-Date: Tue, 2 Jul 2024 16:40:46 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Guilherme Amadio <amadio@gentoo.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Thorsten Leemhuis <linux@leemhuis.info>, Leo Yan <leo.yan@arm.com>,
-	linux-perf-users@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] tools: Make pkg-config dependency checks usable
- by other tools
-Message-ID: <ZoSP_vFMVl83pxES@google.com>
-References: <20240628202608.3273329-1-amadio@gentoo.org>
- <20240628203432.3273625-1-amadio@gentoo.org>
- <20240628203432.3273625-3-amadio@gentoo.org>
+	s=arc-20240116; t=1719963742; c=relaxed/simple;
+	bh=jlWxBxFk+HCXJYnmffwKODc013vrhbNl2Nc0J2JH3Qg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=b6TpNFg48+R/5Op41gwabsqIcO+8F3Uk8qXuFSoAHczjakeoHRJEtvQvV3jQKHlwTvyZW4Mz1k1N+EPDeQG77/kmDu4WeN4EF/EB8GkTKVhNLOjcsd8boKIkSYT82m3T9lkazFvNpMLcd2Za+IiEKEFiyA12Cpr9+8pJtLcd5kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SXySJUsh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462EVDhb028831;
+	Tue, 2 Jul 2024 23:42:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pifJmqE360Wi2ZlB+7FyAUTiHz21CDAqRbjc2BGXkF0=; b=SXySJUshwLJIEUZ5
+	TFez692Js580eVCKbfs3aNEO8vFX3TdD0I3fue5aif0SaaZUQt34xxdpxcO+uqjb
+	NBuFF5jPovwvP4uHFuel5shR1pfUYAZjOBJR+LEUUhfLPB1KWD1qWTEMh0vipS3V
+	9ZYsb+AoXZpUhzvIZkUbzISrjc4Gb1ZEdpJxqe6UdQaJgfIHTCIF2/GO4vyOuwQU
+	eW+tT0WNzzEofL+i4HOQkab+DnOEK2YD/fjnciE4SY+gjiCj/sWlCtrxBUQS0Bx5
+	vp+ioK9IRVj3tGuM3fkHbnqiY6zRILFzTK8MSty+NzeBC6AVT9GEf6vhOvJ+zh7a
+	JtNs0g==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404kcthgmt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 23:42:06 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462Ng5pi005312
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 23:42:05 GMT
+Received: from [10.110.10.43] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
+ 16:42:05 -0700
+Message-ID: <1bdc4d4c-9cf1-a8bd-80de-7463cecd2c78@quicinc.com>
+Date: Tue, 2 Jul 2024 16:42:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240628203432.3273625-3-amadio@gentoo.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
+Content-Language: en-US
+To: Elliot Berman <quic_eberman@quicinc.com>,
+        Sudeep Holla
+	<sudeep.holla@arm.com>
+CC: Sebastian Reichel <sre@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Andy Yan
+	<andy.yan@rock-chips.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        "Mark
+ Rutland" <mark.rutland@arm.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Shivendra Pratap <quic_spratap@quicinc.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
+ <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
+ <20240619135143.kr2tx4ynxayc5v3a@bogus>
+ <20240619080933071-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <20240620162547309-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <ZnmTtmZB8epgbUTN@bogus>
+ <20240702155630416-0700.eberman@hu-eberman-lv.qualcomm.com>
+From: Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <20240702155630416-0700.eberman@hu-eberman-lv.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NKwRwjM6Tcs4eLOciR9alWglevT05tc5
+X-Proofpoint-ORIG-GUID: NKwRwjM6Tcs4eLOciR9alWglevT05tc5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_16,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ bulkscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
+ suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1011 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020175
 
-+CC Steve and linux-trace-kernel list.
+On 7/2/2024 4:06 PM, Elliot Berman wrote:
+> Hi Sudeep,
+> 
+> On Mon, Jun 24, 2024 at 04:41:42PM +0100, Sudeep Holla wrote:
+>> Sorry, I completely missed to see that you had already answered those
+>> in your commit message. As mentioned earlier I haven't looked at the
+>> reboot mode framework completely yet, so I can't comment on it yet.
+>>
+>> I don't want to be blocker though if others are happy with this.
+> 
+> I think folks are satisfied with the other parts of the series and now
+> looking for your conclusion on the PSCI driver part.
 
-Thanks,
-Namhyung
+I will be nice to get these patches picked up before 4th July holiday in US :).
 
-On Fri, Jun 28, 2024 at 10:34:29PM +0200, Guilherme Amadio wrote:
-> Other tools, in tools/verification and tools/tracing, make use of
-> libtraceevent and libtracefs as dependencies. This allows setting
-> up the feature check flags for them as well.
-> 
-> Signed-off-by: Guilherme Amadio <amadio@gentoo.org>
-> ---
->  tools/build/Makefile.feature | 20 ++++++++++++++++++++
->  tools/perf/Makefile.config   | 10 ----------
->  2 files changed, 20 insertions(+), 10 deletions(-)
-> 
-> diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-> index 1e2ab148d5db..79a03e034073 100644
-> --- a/tools/build/Makefile.feature
-> +++ b/tools/build/Makefile.feature
-> @@ -149,6 +149,26 @@ FEATURE_DISPLAY ?=              \
->  #
->  FEATURE_GROUP_MEMBERS-libbfd = libbfd-liberty libbfd-liberty-z
->  
-> +#
-> +# Declare list of feature dependency packages that provide pkg-config files.
-> +#
-> +FEATURE_PKG_CONFIG ?=           \
-> +         libtraceevent          \
-> +         libtracefs
-> +
-> +feature_pkg_config = $(eval $(feature_pkg_config_code))
-> +define feature_pkg_config_code
-> +  ifeq ($(shell $(PKG_CONFIG) --exists $(1) 2>&1 1>/dev/null; echo $$?),0)
-> +    FEATURE_CHECK_CFLAGS-$(1) := $(shell $(PKG_CONFIG) --cflags $(1))
-> +    FEATURE_CHECK_LDFLAGS-$(1) := $(shell $(PKG_CONFIG) --libs $(1))
-> +  endif
-> +endef
-> +
-> +# Set FEATURE_CHECK_(C|LD)FLAGS-$(package) for packages using pkg-config.
-> +ifneq ($(PKG_CONFIG),)
-> +  $(foreach package,$(FEATURE_PKG_CONFIG),$(call feature_pkg_config,$(package)))
-> +endif
-> +
->  # Set FEATURE_CHECK_(C|LD)FLAGS-all for all FEATURE_TESTS features.
->  # If in the future we need per-feature checks/flags for features not
->  # mentioned in this list we need to refactor this ;-).
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index ba51ecfca02b..23f2b54d8ee6 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -187,16 +187,6 @@ ifneq ($(NO_LIBTRACEEVENT),1)
->    dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
->    endif
->  endif
-> -ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent 2>&1 1>/dev/null; echo $$?),0)
-> -  # for linking with debug library, run like:
-> -  # make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
-> -  FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
-> -  FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
-> -endif
-> -ifeq ($(shell $(PKG_CONFIG) --exists libtracefs 2>&1 1>/dev/null; echo $$?),0)
-> -  FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
-> -  FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
-> -endif
->  
->  FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
->  # include ARCH specific config
-> -- 
-> 2.45.2
-> 
+-- 
+---Trilok Soni
+
 
