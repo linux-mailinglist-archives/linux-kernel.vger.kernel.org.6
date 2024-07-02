@@ -1,190 +1,273 @@
-Return-Path: <linux-kernel+bounces-237747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57016923DAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:26:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0BFC923DAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09891F23DD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:26:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CD801F232A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A72C16C847;
-	Tue,  2 Jul 2024 12:25:18 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614441662FE;
+	Tue,  2 Jul 2024 12:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EFVLc/Lx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE7B167D8C;
-	Tue,  2 Jul 2024 12:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C580A16FF2A
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719923117; cv=none; b=SYyxc+EViFmQuKpmkkyOwwlHfoA/W/05aTCicXdmX3Ew7FEQtI6nRg8P5jc1cDlOokUyKAiI0Hf9E++g4h2oFqo+7eDBGDurUxcshGtIjtXt79zCgNFxkm9ppVIxG4D1rPPxsfQsU13/MzlTJ+gP5OLhz812XZnjfayrQLIezu4=
+	t=1719923128; cv=none; b=ZfL/a2/pr220k0KYPFbVBeMF+inKo2qrz/aFb2tLKKb6bUmD5P6jrUHVeT9dz7O0hZmjYFtHK8Ezcyal0E6aKdPgtULZGuehuosdUauxg6lEaGO2o656eTbBBWxhIrKPBs7Fj1Q2/0pgI0TIEmGS8zrES+JCeqEpOjdkmpGNxek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719923117; c=relaxed/simple;
-	bh=ktCITwpxHpI1W1hj/sUArc8rIdogsyyInYcXkBWuLH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W+kehe7JDYqZ7awSj9wIKc9kwNProwtT3pm0rAe8CxbfN+wZ3rMRDUqV0wm/oxmOgbBZB8Zb91TFjntkrYMWPRWTr8C+6YS9WEZGbhYv/EmUBUrtUXwfdfE2s2lfJxZBkZlHZBgqqmJj8RBnsKYCEA9ah4lTWyf1KqNegzPHdBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WD2DK2qWwz4f3jtx;
-	Tue,  2 Jul 2024 20:25:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B2B4A1A016E;
-	Tue,  2 Jul 2024 20:25:12 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgBXgHyi8YNm6TG7Aw--.61077S3;
-	Tue, 02 Jul 2024 20:25:10 +0800 (CST)
-Message-ID: <5e3ffecd-4def-44b4-b141-e24429d13929@huaweicloud.com>
-Date: Tue, 2 Jul 2024 20:25:06 +0800
+	s=arc-20240116; t=1719923128; c=relaxed/simple;
+	bh=evl2bS6d9F1sSu4fuJWgautkM5r1gEFsGAw1GotDw2g=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=SUbwiQ/Vz7QSK+iMqVsIpnthLYQW3Mi1Xui1/jgGnyRt/12clIzoylkocR1VgGTkmsAZ/bOnbnBk5ZdwDxnSTbQh6yv9zOcUjUO/g2sM8dWWh7H5eqBFNPSnVAnlP13iMLF/CX8E8toWVfc0VnyuHbrqIr8SzAzc4bn1k8Nq2IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EFVLc/Lx; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719923126; x=1751459126;
+  h=date:from:to:cc:subject:message-id;
+  bh=evl2bS6d9F1sSu4fuJWgautkM5r1gEFsGAw1GotDw2g=;
+  b=EFVLc/LxnF3ivB3J+5utW2HTKNm+Go46RuZfSnrbJUuaavaMXFbUz7A/
+   XDXPUPr3FSPLMBg+7itaKJwbQ72+zutb3qnkySbYK3ZrY0bDz3tqpwXnm
+   t+xmO8hT/hphw7rHDN+bgBtY5QZJV39qD7Rb7J00CE8o7hspqOKC6uT5u
+   ETPvn3XVrPGoGgoJeTsIvALtvddOhVqSlcCE/jiBkB9lCTZ3oFT4JSi0y
+   6ZgHCp30fgSZFilBmyOkQeDzBvoAPOHnloZe1lGH6c+jVpm184bJM37Up
+   Rp0JSiBxMlGD2sdJZNzVCKO7JhASpK/ApVSbNWOw6emgj1dCXX1Jh4qmT
+   w==;
+X-CSE-ConnectionGUID: hwFdQCoBR/qtzRigW5ZxKA==
+X-CSE-MsgGUID: 7lSiIWABToa2itfDh88Q3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="20963215"
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="20963215"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 05:25:25 -0700
+X-CSE-ConnectionGUID: rIt6luoARgejGyoIME3pCA==
+X-CSE-MsgGUID: HqAcdEwTRUOFxrm9lwKPQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="46622541"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 02 Jul 2024 05:25:25 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sOcZV-000O9y-1V;
+	Tue, 02 Jul 2024 12:25:21 +0000
+Date: Tue, 02 Jul 2024 20:25:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/alternatives] BUILD SUCCESS
+ 0d3db1f14abb4eb28613fbeb1e2ad92bac76debf
+Message-ID: <202407022017.aHHSr75d-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/9] cachefiles: random bugfixes
-To: netfs@lists.linux.dev, dhowells@redhat.com, jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
- zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org, brauner@kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
- wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- Baokun Li <libaokun@huaweicloud.com>
-References: <20240628062930.2467993-1-libaokun@huaweicloud.com>
-Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <20240628062930.2467993-1-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBXgHyi8YNm6TG7Aw--.61077S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF13tr18Wr1kZw45uFy8Zrb_yoWrCw17pF
-	WakanxArykWryxCws3Zw4xtFyFy3yxX3Z2gr1xXw15A3s8XF1FvrWIkr15ZFy5Crs7GrW2
-	vr1q9Fn3Gw1qv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvt
-	AUUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAMBV1jkHxNzQAAsZ
 
-Friendly ping...
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/alternatives
+branch HEAD: 0d3db1f14abb4eb28613fbeb1e2ad92bac76debf  x86/alternatives, kvm: Fix a couple of CALLs without a frame pointer
 
-On 2024/6/28 14:29, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
->
-> Hi all!
->
-> This is the third version of this patch series, in which another patch set
-> is subsumed into this one to avoid confusing the two patch sets.
-> (https://patchwork.kernel.org/project/linux-fsdevel/list/?series=854914)
->
-> Thank you, Jia Zhu, Gao Xiang, Jeff Layton, for the feedback in the
-> previous version.
->
-> We've been testing ondemand mode for cachefiles since January, and we're
-> almost done. We hit a lot of issues during the testing period, and this
-> patch series fixes some of the issues. The patches have passed internal
-> testing without regression.
->
-> The following is a brief overview of the patches, see the patches for
-> more details.
->
-> Patch 1-2: Add fscache_try_get_volume() helper function to avoid
-> fscache_volume use-after-free on cache withdrawal.
->
-> Patch 3: Fix cachefiles_lookup_cookie() and cachefiles_withdraw_cache()
-> concurrency causing cachefiles_volume use-after-free.
->
-> Patch 4: Propagate error codes returned by vfs_getxattr() to avoid
-> endless loops.
->
-> Patch 5-7: A read request waiting for reopen could be closed maliciously
-> before the reopen worker is executing or waiting to be scheduled. So
-> ondemand_object_worker() may be called after the info and object and even
-> the cache have been freed and trigger use-after-free. So use
-> cancel_work_sync() in cachefiles_ondemand_clean_object() to cancel the
-> reopen worker or wait for it to finish. Since it makes no sense to wait
-> for the daemon to complete the reopen request, to avoid this pointless
-> operation blocking cancel_work_sync(), Patch 1 avoids request generation
-> by the DROPPING state when the request has not been sent, and Patch 2
-> flushes the requests of the current object before cancel_work_sync().
->
-> Patch 8: Cyclic allocation of msg_id to avoid msg_id reuse misleading
-> the daemon to cause hung.
->
-> Patch 9: Hold xas_lock during polling to avoid dereferencing reqs causing
-> use-after-free. This issue was triggered frequently in our tests, and we
-> found that anolis 5.10 had fixed it. So to avoid failing the test, this
-> patch is pushed upstream as well.
->
-> Comments and questions are, as always, welcome.
-> Please let me know what you think.
->
-> Thanks,
-> Baokun
->
-> Changes since v2:
->    * Collect Acked-by from Jeff Layton.(Thanks for your ack!)
->    * Collect RVB from Gao Xiang.(Thanks for your review!)
->    * Patch 1-4 from another patch set.
->    * Pathch 4,6,7: Optimise commit messages and subjects.
->
-> Changes since v1:
->    * Collect RVB from Jia Zhu and Gao Xiang.(Thanks for your review!)
->    * Pathch 1,2：Add more commit messages.
->    * Pathch 3：Add Fixes tag as suggested by Jia Zhu.
->    * Pathch 4：No longer changing "do...while" to "retry" to focus changes
->      and optimise commit messages.
->    * Pathch 5: Drop the internal RVB tag.
->
-> v1: https://lore.kernel.org/all/20240424033409.2735257-1-libaokun@huaweicloud.com
-> v2: https://lore.kernel.org/all/20240515125136.3714580-1-libaokun@huaweicloud.com
->
-> Baokun Li (7):
->    netfs, fscache: export fscache_put_volume() and add
->      fscache_try_get_volume()
->    cachefiles: fix slab-use-after-free in fscache_withdraw_volume()
->    cachefiles: fix slab-use-after-free in cachefiles_withdraw_cookie()
->    cachefiles: propagate errors from vfs_getxattr() to avoid infinite
->      loop
->    cachefiles: stop sending new request when dropping object
->    cachefiles: cancel all requests for the object that is being dropped
->    cachefiles: cyclic allocation of msg_id to avoid reuse
->
-> Hou Tao (1):
->    cachefiles: wait for ondemand_object_worker to finish when dropping
->      object
->
-> Jingbo Xu (1):
->    cachefiles: add missing lock protection when polling
->
->   fs/cachefiles/cache.c          | 45 ++++++++++++++++++++++++++++-
->   fs/cachefiles/daemon.c         |  4 +--
->   fs/cachefiles/internal.h       |  3 ++
->   fs/cachefiles/ondemand.c       | 52 ++++++++++++++++++++++++++++++----
->   fs/cachefiles/volume.c         |  1 -
->   fs/cachefiles/xattr.c          |  5 +++-
->   fs/netfs/fscache_volume.c      | 14 +++++++++
->   fs/netfs/internal.h            |  2 --
->   include/linux/fscache-cache.h  |  6 ++++
->   include/trace/events/fscache.h |  4 +++
->   10 files changed, 123 insertions(+), 13 deletions(-)
->
+elapsed time: 1467m
+
+configs tested: 181
+configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                            alldefconfig   gcc-13.2.0
+alpha                             allnoconfig   gcc-13.2.0
+alpha                            allyesconfig   gcc-13.2.0
+alpha                               defconfig   gcc-13.2.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                   randconfig-001-20240702   gcc-13.2.0
+arc                   randconfig-002-20240702   gcc-13.2.0
+arm                              allmodconfig   gcc-13.2.0
+arm                               allnoconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-13.2.0
+arm                                 defconfig   gcc-13.2.0
+arm                       omap2plus_defconfig   gcc-13.2.0
+arm                   randconfig-001-20240702   gcc-13.2.0
+arm                   randconfig-002-20240702   gcc-13.2.0
+arm                   randconfig-003-20240702   gcc-13.2.0
+arm                   randconfig-004-20240702   gcc-13.2.0
+arm64                            allmodconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                               defconfig   gcc-13.2.0
+arm64                 randconfig-001-20240702   gcc-13.2.0
+arm64                 randconfig-002-20240702   gcc-13.2.0
+arm64                 randconfig-003-20240702   gcc-13.2.0
+arm64                 randconfig-004-20240702   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                                defconfig   gcc-13.2.0
+csky                  randconfig-001-20240702   gcc-13.2.0
+csky                  randconfig-002-20240702   gcc-13.2.0
+i386                             allmodconfig   clang-18
+i386                              allnoconfig   clang-18
+i386                             allyesconfig   clang-18
+i386         buildonly-randconfig-001-20240702   gcc-13
+i386         buildonly-randconfig-002-20240702   gcc-10
+i386         buildonly-randconfig-002-20240702   gcc-13
+i386         buildonly-randconfig-003-20240702   gcc-13
+i386         buildonly-randconfig-004-20240702   clang-18
+i386         buildonly-randconfig-004-20240702   gcc-13
+i386         buildonly-randconfig-005-20240702   gcc-10
+i386         buildonly-randconfig-005-20240702   gcc-13
+i386         buildonly-randconfig-006-20240702   gcc-13
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240702   gcc-10
+i386                  randconfig-001-20240702   gcc-13
+i386                  randconfig-002-20240702   gcc-12
+i386                  randconfig-002-20240702   gcc-13
+i386                  randconfig-003-20240702   gcc-13
+i386                  randconfig-004-20240702   gcc-13
+i386                  randconfig-005-20240702   gcc-10
+i386                  randconfig-005-20240702   gcc-13
+i386                  randconfig-006-20240702   clang-18
+i386                  randconfig-006-20240702   gcc-13
+i386                  randconfig-011-20240702   gcc-13
+i386                  randconfig-011-20240702   gcc-9
+i386                  randconfig-012-20240702   clang-18
+i386                  randconfig-012-20240702   gcc-13
+i386                  randconfig-013-20240702   gcc-11
+i386                  randconfig-013-20240702   gcc-13
+i386                  randconfig-014-20240702   clang-18
+i386                  randconfig-014-20240702   gcc-13
+i386                  randconfig-015-20240702   clang-18
+i386                  randconfig-015-20240702   gcc-13
+i386                  randconfig-016-20240702   clang-18
+i386                  randconfig-016-20240702   gcc-13
+loongarch                        allmodconfig   gcc-13.2.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                           defconfig   gcc-13.2.0
+loongarch             randconfig-001-20240702   gcc-13.2.0
+loongarch             randconfig-002-20240702   gcc-13.2.0
+m68k                             allmodconfig   gcc-13.2.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                             allyesconfig   gcc-13.2.0
+m68k                          amiga_defconfig   gcc-13.2.0
+m68k                                defconfig   gcc-13.2.0
+m68k                          hp300_defconfig   gcc-13.2.0
+m68k                          multi_defconfig   gcc-13.2.0
+m68k                        mvme147_defconfig   gcc-13.2.0
+microblaze                       allmodconfig   gcc-13.2.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                       allyesconfig   gcc-13.2.0
+microblaze                          defconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+mips                         cobalt_defconfig   gcc-13.2.0
+mips                      maltaaprp_defconfig   gcc-13.2.0
+mips                        maltaup_defconfig   gcc-13.2.0
+mips                       rbtx49xx_defconfig   gcc-13.2.0
+mips                          rm200_defconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                               defconfig   gcc-13.2.0
+nios2                 randconfig-001-20240702   gcc-13.2.0
+nios2                 randconfig-002-20240702   gcc-13.2.0
+openrisc                          allnoconfig   gcc-13.2.0
+openrisc                         allyesconfig   gcc-13.2.0
+openrisc                            defconfig   gcc-13.2.0
+parisc                           allmodconfig   gcc-13.2.0
+parisc                            allnoconfig   gcc-13.2.0
+parisc                           allyesconfig   gcc-13.2.0
+parisc                              defconfig   gcc-13.2.0
+parisc                randconfig-001-20240702   gcc-13.2.0
+parisc                randconfig-002-20240702   gcc-13.2.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                          allmodconfig   gcc-13.2.0
+powerpc                           allnoconfig   gcc-13.2.0
+powerpc                          allyesconfig   gcc-13.2.0
+powerpc                      arches_defconfig   gcc-13.2.0
+powerpc                      pcm030_defconfig   gcc-13.2.0
+powerpc               randconfig-001-20240702   gcc-13.2.0
+powerpc               randconfig-002-20240702   gcc-13.2.0
+powerpc               randconfig-003-20240702   gcc-13.2.0
+powerpc                 xes_mpc85xx_defconfig   gcc-13.2.0
+powerpc64             randconfig-001-20240702   gcc-13.2.0
+powerpc64             randconfig-002-20240702   gcc-13.2.0
+powerpc64             randconfig-003-20240702   gcc-13.2.0
+riscv                            allmodconfig   gcc-13.2.0
+riscv                             allnoconfig   gcc-13.2.0
+riscv                            allyesconfig   gcc-13.2.0
+riscv                               defconfig   gcc-13.2.0
+riscv                 randconfig-001-20240702   gcc-13.2.0
+riscv                 randconfig-002-20240702   gcc-13.2.0
+s390                             allmodconfig   clang-19
+s390                              allnoconfig   clang-19
+s390                              allnoconfig   gcc-13.2.0
+s390                             allyesconfig   clang-19
+s390                                defconfig   gcc-13.2.0
+s390                  randconfig-001-20240702   gcc-13.2.0
+s390                  randconfig-002-20240702   gcc-13.2.0
+sh                                allnoconfig   gcc-13.2.0
+sh                                  defconfig   gcc-13.2.0
+sh                            hp6xx_defconfig   gcc-13.2.0
+sh                          landisk_defconfig   gcc-13.2.0
+sh                    randconfig-001-20240702   gcc-13.2.0
+sh                    randconfig-002-20240702   gcc-13.2.0
+sparc64                             defconfig   gcc-13.2.0
+sparc64               randconfig-001-20240702   gcc-13.2.0
+sparc64               randconfig-002-20240702   gcc-13.2.0
+um                               allmodconfig   gcc-13.2.0
+um                                allnoconfig   clang-17
+um                                allnoconfig   gcc-13.2.0
+um                               allyesconfig   gcc-13.2.0
+um                                  defconfig   gcc-13.2.0
+um                             i386_defconfig   gcc-13.2.0
+um                    randconfig-001-20240702   gcc-13.2.0
+um                    randconfig-002-20240702   gcc-13.2.0
+um                           x86_64_defconfig   gcc-13.2.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240702   gcc-8
+x86_64       buildonly-randconfig-002-20240702   gcc-8
+x86_64       buildonly-randconfig-003-20240702   gcc-8
+x86_64       buildonly-randconfig-004-20240702   gcc-8
+x86_64       buildonly-randconfig-005-20240702   gcc-8
+x86_64       buildonly-randconfig-006-20240702   gcc-8
+x86_64                              defconfig   clang-18
+x86_64                                  kexec   clang-18
+x86_64                randconfig-001-20240702   gcc-8
+x86_64                randconfig-002-20240702   gcc-8
+x86_64                randconfig-003-20240702   gcc-8
+x86_64                randconfig-004-20240702   gcc-8
+x86_64                randconfig-005-20240702   gcc-8
+x86_64                randconfig-006-20240702   gcc-8
+x86_64                randconfig-011-20240702   gcc-8
+x86_64                randconfig-012-20240702   gcc-8
+x86_64                randconfig-013-20240702   gcc-8
+x86_64                randconfig-014-20240702   gcc-8
+x86_64                randconfig-015-20240702   gcc-8
+x86_64                randconfig-016-20240702   gcc-8
+x86_64                randconfig-071-20240702   gcc-8
+x86_64                randconfig-072-20240702   gcc-8
+x86_64                randconfig-073-20240702   gcc-8
+x86_64                randconfig-074-20240702   gcc-8
+x86_64                randconfig-075-20240702   gcc-8
+x86_64                randconfig-076-20240702   gcc-8
+x86_64                           rhel-8.3-bpf   clang-18
+x86_64                          rhel-8.3-func   clang-18
+x86_64                          rhel-8.3-rust   clang-18
+x86_64                               rhel-8.3   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                randconfig-001-20240702   gcc-13.2.0
+xtensa                randconfig-002-20240702   gcc-13.2.0
+xtensa                         virt_defconfig   gcc-13.2.0
 
 -- 
-With Best Regards,
-Baokun Li
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
