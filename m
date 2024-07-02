@@ -1,171 +1,203 @@
-Return-Path: <linux-kernel+bounces-237227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5C891EDB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:13:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB1891EDA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9F4C1F23A95
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:13:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EFB32845FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C484212F596;
-	Tue,  2 Jul 2024 04:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CF92BCFF;
+	Tue,  2 Jul 2024 04:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YkuWZ/S5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7322B12E1C6;
-	Tue,  2 Jul 2024 04:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="HJNsOiXH"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731DC179AF;
+	Tue,  2 Jul 2024 04:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719893521; cv=none; b=tfJU/MFBXA5uXOXXXshZVhbLq7q6teUb0zqtGorpyIPmqpZERxfTAnsl+QIdKCni7iKIEbNA5rZ08V/jTujQ4me3+KR8eBWNqKN0fWUd8eQLf0LkPPQbIumDef18Z21rumocNG2v/D6rrXIQO/ogkcwcxAOY5oLWw2PCFyhcJo4=
+	t=1719893506; cv=none; b=hAbewWlEPyGgU3yEf0McH02BlanbLGhiGuDGWqbCltkVYsSyFOEmns6UNPb3ARuIfGNPiY2h2bSOjx3jJgVH25lMnV85sdOdZPc/cGJcNygC5LOnzzifdcloXOW/K97nKpkS+S6IgQlUZRd4i3kEUTFabjAkS82JJ5+LmMHbBWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719893521; c=relaxed/simple;
-	bh=6DF+Tg08u2ZMCkSK6BU/n5CzYxotLfqWDSV6lDu1oZo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SNzzNpRYTc2Bq+csKuFY5ELiwp6V2rJ+0h73EalCQ0YAgO90199oSTDJtDjJOe+dztYIpFUksZbfbCjLjABO8g5UaQQ97ebLnFy/auxk0rZk7qpFyMzQwk1/t2K9wkKxhlg3PsiRlKtCRJ0GRk5twLzCEvFiG9Em0MFD5UCxreA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YkuWZ/S5; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719893519; x=1751429519;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6DF+Tg08u2ZMCkSK6BU/n5CzYxotLfqWDSV6lDu1oZo=;
-  b=YkuWZ/S5mGDmunJNAvcSzwr/H/n7/WkF1sLagFukJIjAfIz6IWhl3Y4T
-   EWxKXVsLIQGDxqToqdEhz5k1QO6ebgYZe4+aSYSXhYe2458/kwqGHBDHd
-   R+CHI4aqoEF9AJA7+gwc2XHF1sFppyRLtE1c+lwxdlPp3jN2wYdpWJ/t2
-   qOxUr+hebeObfBU352b2GNzbcCijoOwjQKRpm8OYOQZmFZuGcJuDSgIVO
-   W4Hde8wUuyeH/cpZfPnU2ozSCYhlJYKJaiWief01WRZM4b/g/Um7HA5sj
-   jzIevg1PIS6w9r4UmClnJM1uDLvGYcJP4U3mF3v8XWIa6xZZoL+XBgc45
-   Q==;
-X-CSE-ConnectionGUID: C33KhS79Qtq3Ros4VQvn+A==
-X-CSE-MsgGUID: M+xKdIvXQs+EoxBE4uRTsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="20916516"
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="20916516"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 21:11:59 -0700
-X-CSE-ConnectionGUID: 013kFb9YRG6E1dNdSTzwNw==
-X-CSE-MsgGUID: EMJIRaMTTNijTvRFkaUmcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="50959324"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 21:11:59 -0700
-Received: from mohdfai2-iLBPG12-1.png.intel.com (mohdfai2-iLBPG12-1.png.intel.com [10.88.227.73])
-	by linux.intel.com (Postfix) with ESMTP id 7B6C1201A797;
-	Mon,  1 Jul 2024 21:11:56 -0700 (PDT)
-From: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-Subject: [PATCH iwl-net v1 4/4] igc: Fix qbv tx latency by setting gtxoffset
-Date: Tue,  2 Jul 2024 00:09:26 -0400
-Message-Id: <20240702040926.3327530-5-faizal.abdul.rahim@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240702040926.3327530-1-faizal.abdul.rahim@linux.intel.com>
-References: <20240702040926.3327530-1-faizal.abdul.rahim@linux.intel.com>
+	s=arc-20240116; t=1719893506; c=relaxed/simple;
+	bh=WNIW031Xge/X5WvEvR0amu3sR8nBLxBVhMO5x3XuHjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PIQFpiJMPbRrYb2y2HjtE63++X3C0IoYPjJSbNj8UWHmYFO9KKgafXKJEZXcfLz2qrI7v8BjcJKfBBUNTBpttkRzKIKx+bKeFTWLwpy0O1wbsn6rThjlTzOhK7poYRhFLP8TeF6vYkpwoVabZ5U1kiqIsftIlRMqIuU0xX3l9BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=HJNsOiXH; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=BTf0yHthWHICtLSK/4rntYV8tS0Sys4XbAF0SFXsaC0=;
+	b=HJNsOiXHTnRtwPG9Yg2kDVOz0ZaPKpUOwUKh9QdsOwWcJfN2PswQTkaJv5FUNf
+	RB19sXXFqakH8VNhlfWjYirz298MUUMwISDVVYsUIaQdtlKFIXzf42kLnapoHENC
+	JfTd3ZTmLJBKjEgo8WPmxAkBNqmTYQlHc4Ug2Y/FffJ4c=
+Received: from dragon (unknown [114.218.218.47])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgC3H4nSfYNmasI+AA--.7783S3;
+	Tue, 02 Jul 2024 12:11:00 +0800 (CST)
+Date: Tue, 2 Jul 2024 12:10:58 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/8] arm64: dts: imx8qm: add lvds subsystem
+Message-ID: <ZoN90rHfpK7niqEr@dragon>
+References: <20240701-imx8qm-dts-usb-v4-0-03cdbc8c44b6@nxp.com>
+ <20240701-imx8qm-dts-usb-v4-2-03cdbc8c44b6@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701-imx8qm-dts-usb-v4-2-03cdbc8c44b6@nxp.com>
+X-CM-TRANSID:Ms8vCgC3H4nSfYNmasI+AA--.7783S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWr4DKF4kJw48Cw4DAr4fKrg_yoWrWw1rpF
+	9rCa12qF1IyFyI9r9xKF18Krn5G3s8tF4j9ry3GrWjyrsxJry7tan3Cr1kury8XF42v3y0
+	gFn0qr1FkrnIvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jO8nOUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAhUQZWZv-d3PvwAAs7
 
-A large tx latency issue was discovered during testing when only QBV was
-enabled. The issue occurs because gtxoffset was not set when QBV is
-active, it was only set when launch time is active.
+On Mon, Jul 01, 2024 at 11:03:28AM -0400, Frank Li wrote:
+> Add irqsteer, pwm and i2c in lvds subsystem.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi | 77 +++++++++++++++++++++++
+>  arch/arm64/boot/dts/freescale/imx8qm.dtsi         | 10 +++
+>  2 files changed, 87 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi b/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi
+> new file mode 100644
+> index 0000000000000..1da3934847057
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi
+> @@ -0,0 +1,77 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +
+> +/*
+> + * Copyright 2024 NXP
+> + */
+> +
+> +&qm_lvds0_lis_lpcg {
+> +	clocks = <&lvds_ipg_clk>;
+> +	clock-indices = <IMX_LPCG_CLK_4>;
+> +};
+> +
+> +&qm_lvds0_pwm_lpcg {
+> +	clocks = <&clk IMX_SC_R_LVDS_0_PWM_0 IMX_SC_PM_CLK_PER>,
+> +		 <&lvds_ipg_clk>;
+> +	clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
+> +};
+> +
+> +&qm_lvds0_i2c0_lpcg {
+> +	clocks = <&clk IMX_SC_R_LVDS_0_I2C_0 IMX_SC_PM_CLK_PER>,
+> +		 <&lvds_ipg_clk>;
+> +	clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
+> +};
+> +
+> +&qm_pwm_lvds0 {
+> +	clocks = <&qm_lvds0_pwm_lpcg IMX_LPCG_CLK_4>,
+> +		 <&qm_lvds0_pwm_lpcg IMX_LPCG_CLK_0>;
+> +};
+> +
+> +&qm_i2c0_lvds0 {
+> +	clocks = <&qm_lvds0_i2c0_lpcg IMX_LPCG_CLK_0>,
+> +		 <&qm_lvds0_i2c0_lpcg IMX_LPCG_CLK_4>;
+> +};
+> +
+> +&lvds0_subsys {
+> +	interrupt-parent = <&irqsteer_lvds0>;
+> +
+> +	irqsteer_lvds0: interrupt-controller@56240000 {
+> +		compatible = "fsl,imx8qm-irqsteer", "fsl,imx-irqsteer";
 
-The patch "igc: Correct the launchtime offset" only sets gtxoffset when
-the launchtime_enable field is set by the user. Enabling launchtime_enable
-ultimately sets the register IGC_TXQCTL_QUEUE_MODE_LAUNCHT (referred to as
-LaunchT in the SW user manual).
+Is compatible "fsl,imx8qm-irqsteer" documented in bindings?
 
-Section 7.5.2.6 of the IGC i225/6 SW User Manual Rev 1.2.4 states:
-"The latency between transmission scheduling (launch time) and the
-time the packet is transmitted to the network is listed in Table 7-61."
+Shawn
 
-However, the patch misinterprets the phrase "launch time" in that section
-by assuming it specifically refers to the LaunchT register, whereas it
-actually denotes the generic term for when a packet is released from the
-internal buffer to the MAC transmit logic.
-
-This launch time, as per that section, also implicitly refers to the QBV
-gate open time, where a packet waits in the buffer for the QBV gate to
-open. Therefore, latency applies whenever QBV is in use. TSN features such
-as QBU and QAV reuse QBV, making the latency universal to TSN features.
-
-Discussed with i226 HW owner (Shalev, Avi) and we were in agreement that
-the term "launch time" used in Section 7.5.2.6 is not clear and can be
-easily misinterpreted. Avi will update this section to:
-"When TQAVCTRL.TRANSMIT_MODE = TSN, the latency between transmission
-scheduling and the time the packet is transmitted to the network is listed
-in Table 7-61."
-
-Fix this issue by using igc_tsn_is_tx_mode_in_tsn() as a condition to
-write to gtxoffset, aligning with the newly updated SW User Manual.
-
-Tested:
-1. Enrol taprio on talker board
-   base-time 0
-   cycle-time 1000000
-   flags 0x2
-   index 0 cmd S gatemask 0x1 interval1
-   index 0 cmd S gatemask 0x1 interval2
-
-   Note:
-   interval1 = interval for a 64 bytes packet to go through
-   interval2 = cycle-time - interval1
-
-2. Take tcpdump on listener board
-
-3. Use udp tai app on talker to send packets to listener
-
-4. Check the timestamp on listener via wireshark
-
-Test Result:
-100 Mbps: 113 ~193 ns
-1000 Mbps: 52 ~ 84 ns
-2500 Mbps: 95 ~ 223 ns
-
-Note that the test result is similar to the patch "igc: Correct the
-launchtime offset".
-
-Fixes: 790835fcc0cb ("igc: Correct the launchtime offset")
-Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
----
- drivers/net/ethernet/intel/igc/igc_tsn.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/intel/igc/igc_tsn.c b/drivers/net/ethernet/intel/igc/igc_tsn.c
-index 26dbe3442ad1..e95502fc844b 100644
---- a/drivers/net/ethernet/intel/igc/igc_tsn.c
-+++ b/drivers/net/ethernet/intel/igc/igc_tsn.c
-@@ -61,7 +61,7 @@ void igc_tsn_adjust_txtime_offset(struct igc_adapter *adapter)
- 	struct igc_hw *hw = &adapter->hw;
- 	u16 txoffset;
- 
--	if (!is_any_launchtime(adapter))
-+	if (!igc_tsn_is_tx_mode_in_tsn(adapter))
- 		return;
- 
- 	switch (adapter->link_speed) {
--- 
-2.25.1
+> +		reg = <0x56240000 0x1000>;
+> +		interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		interrupt-parent = <&gic>;
+> +		#interrupt-cells = <1>;
+> +		clocks = <&qm_lvds0_lis_lpcg IMX_LPCG_CLK_4>;
+> +		clock-names = "ipg";
+> +		power-domains = <&pd IMX_SC_R_LVDS_0>;
+> +
+> +		fsl,channel = <0>;
+> +		fsl,num-irqs = <32>;
+> +	};
+> +
+> +	lvds0_i2c1_lpcg: clock-controller@56243014 {
+> +		compatible = "fsl,imx8qxp-lpcg";
+> +		reg = <0x56243014 0x4>;
+> +		#clock-cells = <1>;
+> +		clocks = <&clk IMX_SC_R_LVDS_0_I2C_0 IMX_SC_PM_CLK_PER>,
+> +			 <&lvds_ipg_clk>;
+> +		clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
+> +		clock-output-names = "lvds0_i2c1_lpcg_clk",
+> +				     "lvds0_i2c1_lpcg_ipg_clk";
+> +		power-domains = <&pd IMX_SC_R_LVDS_0_I2C_0>;
+> +	};
+> +
+> +	i2c1_lvds0: i2c@56247000 {
+> +		compatible = "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
+> +		reg = <0x56247000 0x1000>;
+> +		interrupts = <9>;
+> +		clocks = <&lvds0_i2c1_lpcg IMX_LPCG_CLK_0>,
+> +			 <&lvds0_i2c1_lpcg IMX_LPCG_CLK_4>;
+> +		clock-names = "per", "ipg";
+> +		assigned-clocks = <&clk IMX_SC_R_LVDS_0_I2C_0 IMX_SC_PM_CLK_PER>;
+> +		assigned-clock-rates = <24000000>;
+> +		power-domains = <&pd IMX_SC_R_LVDS_0_I2C_0>;
+> +		status = "disabled";
+> +	};
+> +};
+> +
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+> index 61986e0639e53..1e8511e8d8577 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+> @@ -560,11 +560,20 @@ clk_spdif1_rx: clock-spdif1-rx {
+>  		clock-output-names = "spdif1_rx";
+>  	};
+>  
+> +	lvds_ipg_clk: clock-controller-lvds-ipg {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <24000000>;
+> +		clock-output-names = "lvds0_ipg_clk";
+> +	};
+> +
+>  	/* sorted in register address */
+>  	#include "imx8-ss-cm41.dtsi"
+>  	#include "imx8-ss-audio.dtsi"
+>  	#include "imx8-ss-vpu.dtsi"
+>  	#include "imx8-ss-gpu0.dtsi"
+> +	#include "imx8-ss-lvds0.dtsi"
+> +	#include "imx8-ss-lvds1.dtsi"
+>  	#include "imx8-ss-img.dtsi"
+>  	#include "imx8-ss-dma.dtsi"
+>  	#include "imx8-ss-conn.dtsi"
+> @@ -576,3 +585,4 @@ clk_spdif1_rx: clock-spdif1-rx {
+>  #include "imx8qm-ss-conn.dtsi"
+>  #include "imx8qm-ss-lsio.dtsi"
+>  #include "imx8qm-ss-audio.dtsi"
+> +#include "imx8qm-ss-lvds.dtsi"
+> 
+> -- 
+> 2.34.1
+> 
 
 
