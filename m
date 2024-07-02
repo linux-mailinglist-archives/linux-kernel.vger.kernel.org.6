@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-238190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1ECD924698
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:43:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E25E92469B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E148281BCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:43:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8AC92817AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F03C1BF325;
-	Tue,  2 Jul 2024 17:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074431BF330;
+	Tue,  2 Jul 2024 17:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYgbV/Gt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Zmq2BK6s"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950EC1BD02F;
-	Tue,  2 Jul 2024 17:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322A81BF323
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 17:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719942193; cv=none; b=Pqry4XKupxFNUFZElA1XjMi0JXe2fGG/QuSSBKtEGvle4ECSCBGowm0ptwe/A6YyAUh6Gk2BqBFzjTNkIMQZP8FC+dpOQAifKQiLl7la1xLPoSGgUqYVlzQfZjhrKBE4Rb0gVXmXgnccjF6b0kSdbpSDeN4Ol3AN4zuNna0rKuU=
+	t=1719942305; cv=none; b=sI0uLJBW02+EI/vGqLVLL38sjG2SDDy/2o5I6TaT9CO6kco1B5M1nQkYbnowS41uZVEojCI2QgfDsW5ouQZiyGz/NYF6C0mdkYBHpQXCk9A2VqQvgG5zBtyN1OcT1nE35JdJVFQLqV9r582+ukK0rEMl6DToRCTPwVvL55B980Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719942193; c=relaxed/simple;
-	bh=p/qm+v26kUc0ox29i003KD+oPtYq1CDkFNO2ztKMjLg=;
+	s=arc-20240116; t=1719942305; c=relaxed/simple;
+	bh=oYqR3wLiRfWSLLApkAQi3EaN6keWhZrozeSyZ8MlMC4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fCc3XxOqtj8dT+MQRGavIJjuLJvyyrklHcWQPnJToaSsGdCH9mA2GMb1tWdczrAF/SHv/Aqbp7MAduzKmjh6BT7hhCMuk9J6fFSgVicqTVj/PKvg4sTKDJZsDw/xo7/G04KPevjCxQTgtTmTPaIBRJ3uODe9s8n7yfZArc/PJQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYgbV/Gt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E96CC116B1;
-	Tue,  2 Jul 2024 17:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719942193;
-	bh=p/qm+v26kUc0ox29i003KD+oPtYq1CDkFNO2ztKMjLg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=nlOF3RHaeIYr0aa15e0CQWn5u1u6+bbUEH6kirZsBUKrZJlcctJxwA2Rd8Nl/Aiot7BC4KHJ58D47yjfFgqzo6oOpokhmdWoF5h6PX+GIoRu2sTsqcvmB9iOBkYvpC+RIgpR4cwwsGx5HlDfPPCRDARIThceFrBZaQHyI0ygg7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Zmq2BK6s; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 99BAB40E0185;
+	Tue,  2 Jul 2024 17:45:00 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 5fKRksOYuIgZ; Tue,  2 Jul 2024 17:44:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719942297; bh=saeEPFUiOPFddDdAFi8h6suMw9zu7xx9gxAbltffxCc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CYgbV/GtG/Vpr+Jh7kqIgc+8lKJ/2wgpckkLRxNHBEjVMZUiv5NMujQIOyUqUlpMQ
-	 pgGzoHKhD1ouX44P2Ldpzm3nFGkr+uQG989vz3csXrpnUJyXe4Vj/Dqh8TL/bQkSrh
-	 2t0KfLJEmmNtQxMmzhrNJrvjuQAeVjgONEXR4sHQ2oPIZwkXgtyehPRGz4cpAF8zRC
-	 LXezH28PZorqTZygHzPE+otjgtjsYvOOqELjTkpkmPDPOBwJC1DC7M9R6/mVLpOdlt
-	 ngSyDEg/8bDR9BnKRzNkcTDg9V3GGwiyzFDghLluaCg6yFqEpcG9n3lf8RBEPOti4c
-	 sHvWsFivifZuA==
-Date: Tue, 2 Jul 2024 18:43:07 +0100
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: robin.murphy@arm.com, joro@8bytes.org, jgg@nvidia.com,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v9 4/6] iommu/arm-smmu-v3: Add CS_NONE quirk for
- CONFIG_TEGRA241_CMDQV
-Message-ID: <20240702174307.GB4740@willie-the-truck>
-References: <cover.1718228494.git.nicolinc@nvidia.com>
- <d20dc9939523fac490bc02e57d7836f680916a36.1718228494.git.nicolinc@nvidia.com>
+	b=Zmq2BK6s8VIRbdHJrU0NIAl/cTDBrZjhMVlr13bZqH1bTR1lFz8AruL2hD5qEDUnl
+	 4pxvVSqP81EI0fN+9FcLm1h5bnxkZm11oPnjKlCK5O7Nag+I+RX4FQuQwC4hlr2USl
+	 GfYTY4NP78rsBbuzPn1PZ5W8uVXjA7/NgKWn/BuwLckRLEcBsr0jyz6wX7zg5PievM
+	 /4HSNIj6bzxmvJBxYF2Y3D6jtn/FeWu3Af1ABiLyI1krJv9d99VUI/+MB/spxeSaFH
+	 C5pOC2adhGYgBXXNSIXnAIw8UbJxpEeHJsWMRZ5UTYmiNQ4ctXFWx1+v8o4T6SmxcF
+	 PaNZggpEOvAD3bJTkdGWNM6mvDOpsL+bN/HL8FGjp8CVJoSh4RYFqVsQjK76OEcb8E
+	 q3saS888JobkUnfJ43KQMwIBQkwNZhXQ/ey6FtPJLSbiECYQlOx79r+9y6vB4k99pO
+	 rBBtdlPK1SA2Si5DXu0PTdqGzbx5KKjg28qQiq6+b5oU6w/tnyX6KDIexNhyJXpCo1
+	 6cLua57D58h34OB7setVanVUosjZiA4Jrm58nocxAobqzDj97vASER0vjyiogZyNw+
+	 NnHKrpqqdLXagXJiSi2fIi4zJLMrMNaARFUs6OK5QfbRCUMeO4MfgFvtP2WPRSpStn
+	 V096Pby2Fh7ZHWmM1ACAzcDs=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8FA1340E0187;
+	Tue,  2 Jul 2024 17:44:30 +0000 (UTC)
+Date: Tue, 2 Jul 2024 19:44:25 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Steve Wahl <steve.wahl@hpe.com>, Ashish Kalra <ashish.kalra@amd.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+	Pavin Joseph <me@pavinjoseph.com>,
+	Eric Hagberg <ehagberg@gmail.com>,
+	Simon Horman <horms@verge.net.au>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
+	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
+	Hou Wenlong <houwenlong.hwl@antgroup.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
+	Michael Roth <michael.roth@amd.com>
+Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
+Message-ID: <20240702174425.GHZoQ8edlTfB1falcO@fat_crate.local>
+References: <20240520183633.1457687-1-steve.wahl@hpe.com>
+ <20240613152826.GKZmsQGnO3OthLH3Vu@fat_crate.local>
+ <ZmsbZCF9rFzuB3rO@swahl-home.5wahls.com>
+ <20240616202533.GDZm9KPZtpDKw5aXWX@fat_crate.local>
+ <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com>
+ <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
+ <ZnmNKAE5qT48yhrI@swahl-home.5wahls.com>
+ <20240701142704.GGZoK8uDt-2VVtclHl@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d20dc9939523fac490bc02e57d7836f680916a36.1718228494.git.nicolinc@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240701142704.GGZoK8uDt-2VVtclHl@fat_crate.local>
 
-On Wed, Jun 12, 2024 at 02:45:31PM -0700, Nicolin Chen wrote:
-> The CMDQV extension in NVIDIA Tegra241 SoC only supports CS_NONE in the
-> CS field of CMD_SYNC. Add a quirk flag to accommodate that.
+On Mon, Jul 01, 2024 at 04:27:04PM +0200, Borislav Petkov wrote:
+> On Mon, Jun 24, 2024 at 10:13:44AM -0500, Steve Wahl wrote:
+> > These accesses are a problem because they happen prior to establishing
+> > the page fault interrupt handler that would mend the identity map.  I
+> > know very little about the AMD SEV feature but reading the code I
+> > think it may be required to do this before setting up that handler.
 > 
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 8 +++++++-
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 3 +++
->  2 files changed, 10 insertions(+), 1 deletion(-)
+> Yeah, from looking at it, we should be able to establish a #PF handler that
+> early too but the devil's in the detail, especially in that early boot code.
 > 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index c864c634cd23..ba0e24d5ffbf 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -345,6 +345,11 @@ static void arm_smmu_cmdq_build_sync_cmd(u64 *cmd, struct arm_smmu_device *smmu,
->  		 FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH) |
->  		 FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
->  
-> +	if (q->quirks & CMDQ_QUIRK_SYNC_CS_NONE_ONLY) {
-> +		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_NONE);
-> +		return;
-> +	}
-> +
->  	if (!(smmu->options & ARM_SMMU_OPT_MSIPOLL)) {
->  		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_SEV);
->  		return;
-> @@ -690,7 +695,8 @@ static int arm_smmu_cmdq_poll_until_sync(struct arm_smmu_device *smmu,
->  					 struct arm_smmu_cmdq *cmdq,
->  					 struct arm_smmu_ll_queue *llq)
->  {
-> -	if (smmu->options & ARM_SMMU_OPT_MSIPOLL)
-> +	if (smmu->options & ARM_SMMU_OPT_MSIPOLL &&
-> +	    !(cmdq->q.quirks & CMDQ_QUIRK_SYNC_CS_NONE_ONLY))
->  		return __arm_smmu_cmdq_poll_until_msi(smmu, cmdq, llq);
->  
->  	return __arm_smmu_cmdq_poll_until_consumed(smmu, cmdq, llq);
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> index 180c0b1e0658..01227c0de290 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> @@ -543,6 +543,9 @@ struct arm_smmu_queue {
->  
->  	u32 __iomem			*prod_reg;
->  	u32 __iomem			*cons_reg;
-> +
-> +#define CMDQ_QUIRK_SYNC_CS_NONE_ONLY	BIT(0)	/* CMD_SYNC CS field supports CS_NONE only */
-> +	u32				quirks;
+> Lemme poke some things and people...
 
-Please can you use the existing smmu->options field instead of adding
-another place to track quirks? Or do you need this only for some of the
-queues for a given SMMU device?
+Ard, from EFI perspective and boot services exiting, do you see any potential
+issues if we enable a pagefault handler in load_stage1_idt() in
+arch/x86/boot/compressed/head_64.S already or is the EFI pagetable not really
+"reliable" then?
 
-Thanks,
+Would solve the issue in this thread where the EFI config table ends up not
+mapped on some hw configurations, elegantly...
 
-Will
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
