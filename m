@@ -1,118 +1,142 @@
-Return-Path: <linux-kernel+bounces-237616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1BB6923B91
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:36:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC158923B81
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E08BB24341
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:36:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D06C1C21BEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF69158DA8;
-	Tue,  2 Jul 2024 10:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EFE158A27;
+	Tue,  2 Jul 2024 10:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="RgYiyb5G"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OE8LTcyI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65977156F5D;
-	Tue,  2 Jul 2024 10:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FB914F106
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 10:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719916560; cv=none; b=YR/aBHY9HBtLtpHB0ryZmQAtF6dcBxvsabuadO2IkwAusOOomuG5+EIFxor/G5XQuqHjVokVhGWPWniwrSOsPl/c8Zh1J5JhfoN8VGb0TjrSVkW4vX1R+NgVnm+UaSdnAOvIBILwnOh8+DXVgd/H7q6YxtaeM59O1gUv5q54H74=
+	t=1719916467; cv=none; b=pcgQTy43pdMcC5wb4WDF3NA5ET7NwK8yHR3mkN3Tfmn3qSS//k+98NWmWJSfKeAjCsDjy0wOhribquazXc+RrumnkHhe/12Nj/3YRIWdkv5Mgk5AfSmO6WsJnxFZibVWrCdRNrYIpr44TAakvNo3HVagQGC+AjSHNsLTJeADx90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719916560; c=relaxed/simple;
-	bh=Nu9SNRKlY5dcGjnfA90V2TuhQrrDN9sZftchFkZx3js=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cfHzX9GR5NKvgKnQubK6MLQGl41OFXK6uByqMYatdZZE8XfRT0QjhgM1nnY4Y6fs9kMfNNYc+OPaOAvDAWKsO4uB+/5+wtfQiIqSRi2EKlepablUTAZ9KJSLwnxEhv/V51teogj1XTBr9A0k1EQFRp565Hrpiw6v1TJk33226Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=RgYiyb5G; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id E49F8100004;
-	Tue,  2 Jul 2024 13:35:36 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1719916536; bh=xTXqeo22zGaunSUFiiPX6tZNCiEVm+Lap5W0eeokBtM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=RgYiyb5Gn4xCRwGGY9ZGUATIE6VzMjOqwDLEYiohDdsh1D4G98N7qzf48oHpFywQp
-	 ffLRgHmgkSo1OQPfzEZKou4VAW1bU7kcfTWR1dlbf5H/yCdqlOGQgGKZFSM0YD52zU
-	 Vcb8hU1alixquwNeZTaAq3HwXBof7VqH4CYDv8R+SuvR8YxtTBLnb1JsPM98oXQEw+
-	 uwlC+6KVqmwg6klkxoaxQ2GDZY49L9YhrUlXFdbyQF50YVdrminxXC5SIxYrJLgOKi
-	 er99OCTKLMNsFJlzMElDrsuX9O34KzZihdHEIj+pAlOD/lurRsLdh4OsrghCLFMYjJ
-	 YonoHz42pC3zQ==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Tue,  2 Jul 2024 13:34:26 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
- 13:34:06 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Jiri Pirko <jiri@resnulli.us>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Ido Schimmel <idosch@nvidia.com>,
-	Petr Machata <petrm@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH net] mlxsw: core_linecards: Fix double memory deallocation in case of invalid INI file
-Date: Tue, 2 Jul 2024 13:33:52 +0300
-Message-ID: <20240702103352.15315-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1719916467; c=relaxed/simple;
+	bh=x2/Oyy5DPkl5NQW/LRGwjK6gfV4hKaQ5VLGj0MD35GQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=azTdWpH7guYANwlySCjM5U9qyl7GSF4MsTjYUqddGxqNAZmQNFU8tR3ixlfZnH0Dnoap2+KV5E2YlF0H2Uc8QKhqDti45nnT0xPlNWrv+hVuxnqxWZ2VYCZu77x0OzIf0p9Kojh1ho9qhzHnxKvm4twa08Hq5xsMSLtKlZ+oyUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OE8LTcyI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719916464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rNsm3cCjXERmJcGp+XO8HnPAr7s9nThDQztD3pwHsbE=;
+	b=OE8LTcyIPdNur7RH2HaVy8o/ejBK5o3AFBkyUhPTFXwqmTV9JEFZyhGC7GJJAYUKkPN/uJ
+	jyR52o5RwtlvewdgfGnpKggYSl/p+woOJ8HRks2evdb03pLOYuI6NSIN/+v6Ng1FVYk6AE
+	BXduoQv9OxsGoJgE37Ym65E/UA4OfjM=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-528-iYmLFyrGMXiMeetp0IqG1w-1; Tue, 02 Jul 2024 06:34:23 -0400
+X-MC-Unique: iYmLFyrGMXiMeetp0IqG1w-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a72436378bdso329131266b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 03:34:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719916462; x=1720521262;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rNsm3cCjXERmJcGp+XO8HnPAr7s9nThDQztD3pwHsbE=;
+        b=LA6RIYRr4aQ5dtOOuXSLZ5Yk2FoMv5V4nS5oDGsElyDpIZ3XnfSUjE+N4O4KnF/Ai/
+         V7nY+4QPclksw6hvpPiJd7X8Whk7+tUQHmSyg58JBEbQ87GPZ6YVW8LxA3jaVejPoGRq
+         nC7/xKtTTJ8iUxu/CmIgMJsCN2FKqGPLlACBaCf6aKAD68zLWN/eBlLR3PhZqZTpId0e
+         0OVZNY1CwGRgGqh6jVPdsF1HHSddZQp9BLUbfIkrZWFfD95QMHohBQ+hYCwZjx1wQmMX
+         gTEUONJkYqi2ChuXA9Htb5XUFSKEkcYbQN8MypXCciWow9PfmodAfyv50JWkbZugJFO6
+         R/BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHqi4aTaTg8iIaN59C4JmnmOxdgVyg1nhB6/9BX5OSdMZcD60TJdHfs7kZCXVReawz+BR70q8nN6HJF2aA8cBH1NfBsDmst45WpVnC
+X-Gm-Message-State: AOJu0YzlDBRdtfJBIyqzlnIbfZPrGma5DTSpc575XcNx8H+TbZys2mbe
+	HDllR9/0RO3cNxFRksr4DB2nrU7pOP9hBVZRPkqZOIZxUOmfvuHMx0bm3Ke0uStxAboYb4ry79I
+	QWrYLmpiZR4DhVYnUXk6wc2he8+OOzjNa9xVEKf2M+elB90bALdy7C9rE0lJTMg==
+X-Received: by 2002:a17:906:594:b0:a72:40b4:c845 with SMTP id a640c23a62f3a-a75144badc1mr476047366b.51.1719916462667;
+        Tue, 02 Jul 2024 03:34:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE02tMzwHkCasG8ml1t2odshm6nGKnezRzG5G+/ON+FwptvvDVPwLlQ1cIbeXnlAmgbhRORow==
+X-Received: by 2002:a17:906:594:b0:a72:40b4:c845 with SMTP id a640c23a62f3a-a75144badc1mr476043966b.51.1719916461239;
+        Tue, 02 Jul 2024 03:34:21 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab08cf7csm408654466b.155.2024.07.02.03.34.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 03:34:20 -0700 (PDT)
+Message-ID: <bd635e11-53b5-4fde-9802-ee2481bfb777@redhat.com>
+Date: Tue, 2 Jul 2024 12:34:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186273 [Jul 02 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1;127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/02 10:26:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/02 07:20:00 #25796017
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/2] media: atomisp: A couple of cleanups
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20240424184421.1737776-1-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240424184421.1737776-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In case of invalid INI file mlxsw_linecard_types_init() deallocates memory
-but doesn't reset pointer to NULL and returns 0. In case of any error
-occured after mlxsw_linecard_types_init() call, mlxsw_linecards_init()
-calls mlxsw_linecard_types_fini() which perform memory deallocation again.
+Hi,
 
-Add pointer reset to NULL.
+On 4/24/24 8:43 PM, Andy Shevchenko wrote:
+> 1/ Drop a lot of unused math related macros.
+> 2/ Replace homegrown static_assert()
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Thank you for your patches.
 
-Fixes: b217127e5e4e ("mlxsw: core_linecards: Add line card objects and implement provisioning")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
- drivers/net/ethernet/mellanox/mlxsw/core_linecards.c | 1 +
- 1 file changed, 1 insertion(+)
+I have merged these in my media-atomisp branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/hansg/linux.git/log/?h=media-atomisp
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c b/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
-index 025e0db983fe..b032d5a4b3b8 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
-@@ -1484,6 +1484,7 @@ static int mlxsw_linecard_types_init(struct mlxsw_core *mlxsw_core,
- 	vfree(types_info->data);
- err_data_alloc:
- 	kfree(types_info);
-+	linecards->types_info = NULL;
- 	return err;
- }
- 
--- 
-2.30.2
+And these patches will be included in my next
+pull-request to Mauro (to media subsystem maintainer)
+
+Regards,
+
+Hans
+
+
+
+> 
+> Andy Shevchenko (2):
+>   media: atomisp: Clean up unused macros from math_support.h
+>   media: atomisp: Replace COMPILATION_ERROR_IF() by static_assert()
+> 
+>  .../circbuf/interface/ia_css_circbuf_comm.h   |   6 +
+>  .../pci/camera/util/interface/ia_css_util.h   |  11 --
+>  .../media/atomisp/pci/camera/util/src/util.c  |  25 ++--
+>  .../pci/hive_isp_css_include/assert_support.h |  23 ----
+>  .../pci/hive_isp_css_include/math_support.h   | 110 +-----------------
+>  .../pci/hive_isp_css_include/type_support.h   |   5 +-
+>  drivers/staging/media/atomisp/pci/ia_css_3a.h |   5 +
+>  .../staging/media/atomisp/pci/ia_css_dvs.h    |   4 +
+>  .../media/atomisp/pci/ia_css_metadata.h       |   4 +
+>  .../staging/media/atomisp/pci/ia_css_types.h  |   2 +
+>  .../kernels/xnr/xnr_3.0/ia_css_xnr3.host.c    |   6 +-
+>  .../atomisp/pci/runtime/binary/src/binary.c   |   2 -
+>  .../spctrl/interface/ia_css_spctrl_comm.h     |   4 +
+>  drivers/staging/media/atomisp/pci/sh_css.c    |  38 ------
+>  .../staging/media/atomisp/pci/sh_css_frac.h   |   4 +-
+>  .../media/atomisp/pci/sh_css_internal.h       |  15 ++-
+>  16 files changed, 60 insertions(+), 204 deletions(-)
+> 
 
 
