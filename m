@@ -1,109 +1,166 @@
-Return-Path: <linux-kernel+bounces-238161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4472D924543
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:20:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B358D924580
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0162A28AB67
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5BBD1C20976
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEA41BF30B;
-	Tue,  2 Jul 2024 17:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904C51BE249;
+	Tue,  2 Jul 2024 17:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/UKvDnm"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7EtQm8L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2D31BE85B;
-	Tue,  2 Jul 2024 17:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C845D15218A;
+	Tue,  2 Jul 2024 17:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719940794; cv=none; b=QOBBfKaFubkVKORTGlMDz8AG3bx94L13/5mUKnjMvdDcqooX4z52RAm+ls5+JvKYXdqupyuaFFU/u3Qkp3Jhy2n6QCREn8sh/GLGXdgVdEIml3bSwZSMzcehHIyAoSLTcu8xJfNlIYkm3aIA1i/zMzmC4oaAQR+nAOUdfs2mwBg=
+	t=1719940986; cv=none; b=WtbyJWHiDPjnyKEQMKBTJw8rqgWrai4RKJgjyrj2h6KX/KxoTULaJKxk0EIVKIgLXZVFjBzylqGW0hvinUSKvIq5FraQLCzK02JRo9GRgj3V7rs1kSkOuFbx947qAMH4nOLwWtNzgHz4AY6AHa3A+enQ8hBoWTRki16KJcPvW7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719940794; c=relaxed/simple;
-	bh=DTrYWF3WX9XTMQJjDxP1P7/Hs6Ylpuj2bLq4FCk9sVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QVQGYt+Sd8L3hTZqC5CC42wKmXZv60w4FmyZrLC5srI7I9LEBpu/hAKdQub17YLDnw/xUDvwzCvq20hJ+zB8HTQM7RYGtlr2G/rfys9lPBpul1IYH2DYGlzjQmiSmJhVIQ7RmnMoOSQKJTEspXAgx6Y+hjfG/vXqQkx9re+/1bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/UKvDnm; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-25da8a19acaso2083153fac.2;
-        Tue, 02 Jul 2024 10:19:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719940792; x=1720545592; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o+LeKSyNiYZl01CREUkEC5UyawrBHODzePPwogqcsLo=;
-        b=A/UKvDnmv1Ggc5Klp9d6FhqIbNohyc413MVAnBCcXvdQ1CpJFfev8iR4zk3+F+J/cx
-         a8dRcQxDkyjvUpJYrZZZZVxQU52W1Pe1as4KDf1Vg4Uo7aE/0LGKG99a4bcFKEZkyRsl
-         td7EWurhDUBJLo+PMgMHr9RcNuqGOVY8JDtSKAuoQ8iSzB92KtIVdKc+548El6TfHwZR
-         41I0ppNuu40jtjvsvysrwMjXF2TO/OaQ1CWM3z3N5ZTNAovXeh9VyUKMZAmhWWnt/ySz
-         4PLCEpo0J9uuY8uSUCVH60UOouiCNh48ryu4/awV6UBFn0Y9kl1oPS546tNJRKPptEgJ
-         fKpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719940792; x=1720545592;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o+LeKSyNiYZl01CREUkEC5UyawrBHODzePPwogqcsLo=;
-        b=UWLa1d+YJ7/tXbXhe7EIwXifbI1tb0DFHDD8B1XBOdmVnAVUyBohbQFv3V3Gi14qfR
-         U/+RuBFG53IfVRwfZGlbQ5WEKWSm/844wwIr1cvvrjVw/hf4JfZThhwkdYJRtYkutrir
-         jf5uT/fC2aSV8LKjMcF5hncughnf4tR9+ifb0MAzq2V+7JJpQXUvf4ha+LM4ctjyoYml
-         yeQp4E5HqDPP8yDFn3JrP1I1hvA46fN3eFPQyNaGqx0oGBaJsIrMwqJ3/lAuDZbkAakT
-         Gg0K1saaG5r8Kp7Y5Zw9TL0wfS9qTOMM9dRWYfVV1TABIm4atFw3rMDpmC/j4zf5o5EG
-         UmnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKVFozgWLU05sl+kjj5l8AKMkMDOE/7TdCIgHocipsiVonuu1x9QANfJszIqB2PaFIJW4PwIjACx2g3DjbATMR5ScuDM00seZUmjkZXo3+z7z8LrfaTm54486KUc0OTVgmQ0YAew==
-X-Gm-Message-State: AOJu0Yy6Ak9KKFfd1SuexSp2G8/3Oo+j11ZMXo2Ych3kaFoETBbMiEz5
-	S4q8hKKcfQ7nmRsxF1X36SFqZ1gkjAXn6plI5iA/by/RZkBpBVKX
-X-Google-Smtp-Source: AGHT+IERtRWeqDgNUQBksZ3dIu7zuC2ahEwg1n7khkj/y2qPZPJUjYuhjpolYC+OaJl6ryJSpmbWDw==
-X-Received: by 2002:a05:6871:24c2:b0:25e:368:b5a4 with SMTP id 586e51a60fabf-25e0368bc3emr843194fac.18.1719940791783;
-        Tue, 02 Jul 2024 10:19:51 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70838a9a188sm8606794b3a.131.2024.07.02.10.19.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 10:19:51 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 2 Jul 2024 07:19:50 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Chen Ridong <chenridong@huawei.com>
-Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, longman@redhat.com,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 -next] cgroup/rstat: add force idle show helper
-Message-ID: <ZoQ2ti7nnz9EJSc3@slm.duckdns.org>
-References: <20240702022822.1032693-1-chenridong@huawei.com>
+	s=arc-20240116; t=1719940986; c=relaxed/simple;
+	bh=3RkhrkCsDj/rWDDE6h/Y/eiySzgdZEtD7L+eGORbcj4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YoO2AHkAmEWxIFtvxBIdo+38jl8CR6t+kKgQb16OWTPo2/9n6KP65HIIz1lnjk+87W1xX62GoaFvpEOC9wmgkkdbwLViure6A7M2I4jjdvANbJTrT6FmLPZGnKKV5ZBy4vfU31DCIZU+0lXZDdXiPXMKokNmG+1Fy3zOy+H0dEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7EtQm8L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D1F4C4AF07;
+	Tue,  2 Jul 2024 17:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719940986;
+	bh=3RkhrkCsDj/rWDDE6h/Y/eiySzgdZEtD7L+eGORbcj4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=E7EtQm8LEH9s0u/4qwA9kyXKZU1MF+7HgEr3PCYG5weVQLfUK7+gXNM4WZBIBTiSe
+	 yTjtfpFtYSFZUfTne1ZEmcMOZgxkD4/SAA/EwWzs5rGUkR6zkMXzfQCJt5XsQe3jaU
+	 +2xYPPXqFVhdEUQmIqrslP9q1tfURjPAvRY6Y5daXrlHcL3OgeAIaQAZnwAKIBmTiH
+	 H4wPiMPHwaGyGBl904G5xLpPvbrWYRlucbOA4es1zFt+BBqpwlPhEYHM5SIheEIg6G
+	 ae+Fwpu0LxC7kwCaivo21UrkAOOcTFwKAGDK/FSHTtPDsyo9SVyQV8qrL+LAVgn/Jq
+	 gxv/E2xWrwemw==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a727d9dd367so481773366b.3;
+        Tue, 02 Jul 2024 10:23:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUbF1dIjZj6B0J9FTOaewmJn7Rv/CuVHj9TRCs/zIhAihUgS2kIHgDA+jV6UF4luf5x+hZCy69XW1JPoFux0DCb0ZB7xSZEXpI4PeE=
+X-Gm-Message-State: AOJu0YwTGzu/BjlsX+tNBXwh4pbSNLCoNc5BYlFuMqvIsiy2foGhy6YE
+	3lMfZD2MG5Wd7qAolvL4W/Lg3DwvlBehuFB8mHbkpYQl2Vs00uAjPma31AWV1BSny/f3ZlpMG2w
+	nGCNgf3idiFO5rxvRh2opspXPnLY=
+X-Google-Smtp-Source: AGHT+IFHZRFJIkl21gROK6833dtOQFdcTFQHZl/+DXEhNIDbjcRrc5YKDfHhEfdhQQqI7Jxjxi0qdFkIt3rxAoUpWw8=
+X-Received: by 2002:a17:907:988:b0:a72:65e5:3e2 with SMTP id
+ a640c23a62f3a-a751443c66dmr738739266b.6.1719940985196; Tue, 02 Jul 2024
+ 10:23:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702022822.1032693-1-chenridong@huawei.com>
+References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
+ <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
+ <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
+ <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com> <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
+In-Reply-To: <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Tue, 2 Jul 2024 18:22:27 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
+Message-ID: <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
+Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
+ execution time of the kswapd0 process and symptoms as if there is not enough memory
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
+	dsterba@suse.com, josef@toxicpanda.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Jul 2, 2024 at 3:13=E2=80=AFPM Mikhail Gavrilov
+<mikhail.v.gavrilov@gmail.com> wrote:
+>
+> On Mon, Jul 1, 2024 at 2:31=E2=80=AFPM Filipe Manana <fdmanana@kernel.org=
+> wrote:
+> >
+> > Try this:
+> >
+> > https://lore.kernel.org/linux-btrfs/cb12212b9c599817507f3978c9102767267=
+625b2.1719825714.git.fdmanana@suse.com/
+> >
+> > That applies only to the "for-next", it will need conflict resolution
+> > for 6.10-rc, as noted in the commnets.
+> > For a version that cleanly applies to 6.10-rc:
+> >
+> > https://gist.githubusercontent.com/fdmanana/5262e608b3eecb9a3b2631f8dad=
+49863/raw/1a82fe8eafbd5f6958dddf34d3c9648d7335018e/btrfs-don-t-loop-again-o=
+ver-pinned-extent-maps-when-.patch
+>
+> I tested this patch on top of v6.10-rc6
+>
+> > Btw, besides the longer kswapd execution times, what else do you observ=
+e?
+> > Is it impacting performance of any applications?
+>
+> I observe that the system freezes under load.
+> Demonstration: https://youtu.be/1-gUrnEi2aU
+> The GNOME shell stops responding, and even the clock in the GNOME
+> status bar stops updating seconds.
+> And this didn't happen when the v6.9 kernel was running. Second, I
+> spotted high CPU usage by process kswapd0 when freezes occurred.
+> Therefore, I decided to find the commit that led to high CPU
+> consumption by the kswapd0 process.
+> As we found out, this commit turned out to be 956a17d9d050.
+>
+> > I think no matter what we do, it's likely that kswapd will take more
+> > time than before, because now there's extra work of going through
+> > extent maps and dropping them.
+> > We had to do it to prevent OOM situations because extent map creation
+> > was unbounded.
+>
+> Unfortunately, the patch didn't improve anything.
+> kswapd0 still consumes 100% CPU under load.
+> And my system continues to freeze.
 
-On Tue, Jul 02, 2024 at 02:28:22AM +0000, Chen Ridong wrote:
-...
->  	if (cgroup_parent(cgrp)) {
->  		cgroup_rstat_flush_hold(cgrp);
->  		usage = cgrp->bstat.cputime.sum_exec_runtime;
->  		cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime,
->  			       &utime, &stime);
-> -#ifdef CONFIG_SCHED_CORE
-> -		forceidle_time = cgrp->bstat.forceidle_sum;
-> -#endif
-> +		bstat = cgrp->bstat;
+Ok, the concerning part is the freezing and high cpu usage.
 
-Please don't copy non-trivial struct like this. Maybe add a pointer which
-points to the bstat to use?
+So besides that patch, try 2 other patches on top of it:
 
+1) https://gist.githubusercontent.com/fdmanana/5262e608b3eecb9a3b2631f8dad4=
+9863/raw/aaf4c00fd40aaee0ee2788cd9fdfe2f083328c39/btrfs-don-t-loop-again-ov=
+er-pinned-extent-maps-when-.patch
+    (this is the patch you tried before)
+
+2) https://gist.githubusercontent.com/fdmanana/f2275050f04d1830adb811745bfd=
+99d4/raw/1001d8154133d862e305959ee9eedebf55941669/gistfile1.txt
+
+3) https://gist.githubusercontent.com/fdmanana/0a71b9e0fe71f38f67a50b7b53d5=
+20e6/raw/680cab70d2ef32337583bee6a4fb6519241b2faa/0003-btrfs-prevent-extent=
+-map-shrinker-from-monopolizing-.patch
+
+Apply those patches on top of 6.10-rc in that order and let me know how it =
+goes.
 Thanks.
 
--- 
-tejun
+>
+> 6.10.0-0.rc6.51.fc41.x86_64+debug with patch
+> up  1:00
+> root         269 13.1  0.0      0     0 ?        S    12:24   7:53 [kswap=
+d0]
+> up  2:00
+> root         269 29.9  0.0      0     0 ?        R    12:24  36:02 [kswap=
+d0]
+> up  3:00
+> root         269 37.8  0.0      0     0 ?        S    12:24  68:19 [kswap=
+d0]
+> up  4:05
+> root         269 39.3  0.0      0     0 ?        R    12:24  96:40 [kswap=
+d0]
+> up  5:01
+> root         269 38.8  0.0      0     0 ?        R    12:24 117:00 [kswap=
+d0]
+> up  6:00
+> root         269 40.3  0.0      0     0 ?        S    12:24 145:24 [kswap=
+d0]
+>
+> --
+> Best Regards,
+> Mike Gavrilov.
 
