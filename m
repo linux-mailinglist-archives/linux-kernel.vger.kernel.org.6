@@ -1,87 +1,372 @@
-Return-Path: <linux-kernel+bounces-237708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59B7923CFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:55:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1726F923D01
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2961F21A5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:55:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ACD71C20B31
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222E815B141;
-	Tue,  2 Jul 2024 11:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E066C15B972;
+	Tue,  2 Jul 2024 11:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPkJYK3L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BVtIfD4q"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0EA15B12A;
-	Tue,  2 Jul 2024 11:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571D515B153;
+	Tue,  2 Jul 2024 11:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719921337; cv=none; b=UnV1cXo6Bo1m4e6RF+yEIRUxIMuCH3JwyxAvfKn9jZ01Ay7O94P6Yg7jCh1YlExTkdpIoADpgdc9eR4kF2QnRk6Q3TQE5L5Q87nmX0L9OXIOOro6AdZm4CuaSLMPZcry7fKJfq8TXD/HjzZrAnJNwZw184p7/5eHU8e0HlG672c=
+	t=1719921480; cv=none; b=ZmjqPKxmWvvZZijbiNsBjf0nF9FRxZlFgJjFw+SwTGFznAOAL5aTWQlhiCoFz0nrCOYqkbZUNoIw4kIzQu/PpjbCvyxetr1Uecx7m0VGIJlPh8zBizTgYz3RqP8fTktQw3Qlp2WQdX0r3s69eQzbP3wShp7TStRfy7DyzgVUWtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719921337; c=relaxed/simple;
-	bh=0WLx0sVpAm2PfL4LXPyRIZSBzMFqc5zzhcWp8V1oGZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dhMXLmzkCQvk+2m7QIM79RNnIsUemzGo+Qvrz8hSAkqrY7ROUPa5wR2QwZbQFQARtIstJ9YlqzRD7MaL830OUe8UypBv0tN40GrjsVUxneqoLCXEwqxB9jlL3VrosoPNE80720Er9ubW8UCYExZk86ciPa8U3wDsDdR0vyzVFyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPkJYK3L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DB26C116B1;
-	Tue,  2 Jul 2024 11:55:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719921336;
-	bh=0WLx0sVpAm2PfL4LXPyRIZSBzMFqc5zzhcWp8V1oGZc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LPkJYK3L0EF7ZaPmft0aOZPoTcm1QhgePfpyJD4EYI1TEOIG3tJVXcYWgREHuc/er
-	 Aef6Ks3CiQfJW9G7zTnDMi2/6C/6h1QzTjK+6i6jbT5+FsxgcIRrSLNUe/BIPQ+yd8
-	 3Z6QHnfSn5gq/8hWGEy1VFfpM/9m/X8mnJZ1HytDRlkTvXKamxeeAe83V1xqXjQWez
-	 TRA+Wos9dj3jMwVy5K2aNTDUSlVfE1s81Nmfyl4qzMzKZb/I4MEVAQAOR8UrLL94Jp
-	 /e/7AxScUCRNXD8KL82EEXoxQK29Zw2rghMy4XIhSkoAho619jh9xrGLXH7sgZRXi6
-	 6MGoTo/MpdUug==
-Date: Tue, 2 Jul 2024 13:55:32 +0200
-From: Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM
- <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the arm-soc tree
-Message-ID: <20240702135532.18156015@dellmb>
-In-Reply-To: <20240702174938.04c12aab@canb.auug.org.au>
-References: <20240702174938.04c12aab@canb.auug.org.au>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719921480; c=relaxed/simple;
+	bh=8tBn7d9egtTfk6RcgKGNq8THWiD8xgGZ5iRUzbFRRY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QIvI8gCtV0ja1TB3s7Clg+8kEHs/Ali75MYdQTHckp+VoErshshVsCuqTMKplQV3GCIxDuOZ8DmrQGLlXysFIRWI3MCho6dvLeT09PPrxAccUgRZlvf8wImvPcBfPG111HeqtJH4yl8x5l5VqXOX+Cd7bkjtmeZDzEV4ufNvm4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BVtIfD4q; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c927152b4bso2924888a91.2;
+        Tue, 02 Jul 2024 04:57:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719921477; x=1720526277; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MW+eKYzT1rkuJCvQPjaZc5Cbl0mGwx+TZKnAq/vbJZ8=;
+        b=BVtIfD4qt86Wq1SnOar8DFbMKGsk9Q9sdeXSTzMCqPvmXJ+nS0RITbBFDIP1CITqXF
+         jJL/9PYZULxc98t+e8QKWQjT1e6vvbBpnSVO0AgU7sSIVnZOnGAB/Me12qtgagJEhu40
+         I4Ejg7KUfMxs4pEfqOPLkJWaLj+jDQ3Z6f/DgaW56KAE8CA1eslLJ3NpqR9TQKHABZgY
+         1FpxqVc3Ssm+zBzn5nhe45wf+h4Au1t1QAorvLkheWJE1+m+RgHSHN//KOINicnqlELW
+         WHjAfvZbxaEcA7VMXbhmlVsDExAytX6aD5vEA56xc2ksU4ICEQVHoeg3aq2PEM1MnVL+
+         GEPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719921477; x=1720526277;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MW+eKYzT1rkuJCvQPjaZc5Cbl0mGwx+TZKnAq/vbJZ8=;
+        b=WfeeWzb9pNhmJLrnEl2naeYWdC4fBYVeLyyYWUmkghXrwZztxwq0YjOSvxR6gLbIh5
+         ob0kMmlhI1x0PGov1UXsANnGvq6Ft7ox+cZMPw32WbQyjpYRVnTtXiPbqg2q1Tcl/tug
+         xod8pTOoBcFrrO9dsYcRuLzv2Ae+2nIohv8Trp8xBki6/KxGt8ZRbn/EFqfVbZnF3e6q
+         ICF4FCbavTOhmI/aMkkifgHoPuDwzzf4DkxVjc7ZHMJJ7A62pUTzheBspBRkFaDzKQ1N
+         w/w/A45O8Ai29ke9FhdiQOb009QAelJLK33TnBGyK+ZMHneWXCy3FPRegUA+pnnT6nMF
+         km6w==
+X-Forwarded-Encrypted: i=1; AJvYcCU0v97CS85Oa9ae1UMqfXzKm7saOYCefra9+fwzn5QLCu5JlBW4tSkhYW5DA8hiLhGtcRINMuY/6HtLbn58U520Ue/2pte2+6AFEkOs
+X-Gm-Message-State: AOJu0Yx3hEJttBJNOch6I0zzfdQiudYRvT1Z0lqauRt2L/tq4hIOJkd4
+	04qP0YdS3A7Mimw2Jw5RMdjfCCzRDY/THpM09hlcrtGwmEgbgymcVykxLgxLYnZxag==
+X-Google-Smtp-Source: AGHT+IGI2ZGzFpcZQXzyWS3DNBvkJNfTL+NsUb/2LpOZVg8xlBhPosJO0huzUD6m+N2nFUYfPLmlew==
+X-Received: by 2002:a17:90b:3a8e:b0:2c9:321:1bf1 with SMTP id 98e67ed59e1d1-2c93d775a7amr6994418a91.39.1719921477141;
+        Tue, 02 Jul 2024 04:57:57 -0700 (PDT)
+Received: from localhost.localdomain ([182.66.218.119])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2c91ce71017sm8621186a91.29.2024.07.02.04.57.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 04:57:56 -0700 (PDT)
+From: Abhash Jha <abhashkumarjha123@gmail.com>
+To: linux-iio@vger.kernel.org
+Cc: jic23@kernel.org,
+	lars@metafoo.de,
+	linux-kernel@vger.kernel.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: [PATCH] iio: light: apds9960: Add proximity and gesture offset calibration
+Date: Tue,  2 Jul 2024 17:26:48 +0530
+Message-ID: <20240702115648.160511-1-abhashkumarjha123@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2 Jul 2024 17:49:38 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Proximity and gesture offset registers perform offset correction to improve
+cross-talk performance. Add support for reading from and writing to
+proximity and gesture offset registers. Create sysfs attributes for
+them via iio to expose them to userspace.
 
-> Hi all,
-> 
-> After merging the arm-soc tree, today's linux-next build (htmldocs)
-> produced this warning:
-> 
-> Documentation/ABI/testing/sysfs-bus-i2c-devices-turris-omnia-mcu:26: ERROR: Unexpected indentation.
-> Documentation/ABI/testing/sysfs-bus-i2c-devices-turris-omnia-mcu:26: WARNING: Block quote ends without a blank line; unexpected unindent.
-> 
-> Introduced by commit
-> 
->   dfa556e45ae9 ("platform: cznic: turris-omnia-mcu: Add support for MCU connected GPIOs")
-> 
+Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+---
+ drivers/iio/light/apds9960.c | 245 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 245 insertions(+)
 
-I don't see what can be the problem on those lines. Is it possible to
-build that specific file?
+diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
+index 1065a340b..bccf9a8c7 100644
+--- a/drivers/iio/light/apds9960.c
++++ b/drivers/iio/light/apds9960.c
+@@ -101,6 +101,10 @@
+ #define APDS9960_MAX_ALS_THRES_VAL	0xffff
+ #define APDS9960_MAX_INT_TIME_IN_US	1000000
+ 
++/* MIN and MAX offset from pg: 26 of the datasheet */
++#define MIN_OFFSET -127
++#define MAX_OFFSET 127
++
+ enum apds9960_als_channel_idx {
+ 	IDX_ALS_CLEAR, IDX_ALS_RED, IDX_ALS_GREEN, IDX_ALS_BLUE,
+ };
+@@ -316,6 +320,234 @@ static const struct iio_chan_spec apds9960_channels[] = {
+ 	APDS9960_INTENSITY_CHANNEL(BLUE),
+ };
+ 
++static ssize_t apds9960_proximity_offset_ur_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	if (kstrtoint(buf, 10, &offset))
++		return -EINVAL;
++
++	if (offset < MIN_OFFSET || offset > MAX_OFFSET)
++		return -EINVAL;
++
++	ret = regmap_write(data->regmap, APDS9960_REG_POFFSET_UR, offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "proximity offset reg write failed\n");
++		return ret;
++	}
++
++	return count;
++}
++
++static ssize_t apds9960_proximity_offset_dl_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	if (kstrtoint(buf, 10, &offset))
++		return -EINVAL;
++
++	if (offset < MIN_OFFSET || offset > MAX_OFFSET)
++		return -EINVAL;
++
++	ret = regmap_write(data->regmap, APDS9960_REG_POFFSET_DL, offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "proximity offset reg write failed\n");
++		return ret;
++	}
++
++	return count;
++}
++
++static ssize_t apds9960_proximity_offset_ur_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	ret = regmap_read(data->regmap, APDS9960_REG_POFFSET_UR, &offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "proximity offset reg read failed\n");
++		return ret;
++	}
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", offset);
++}
++
++static ssize_t apds9960_proximity_offset_dl_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	ret = regmap_read(data->regmap, APDS9960_REG_POFFSET_DL, &offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "proximity offset reg read failed\n");
++		return ret;
++	}
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", offset);
++}
++
++static ssize_t apds9960_gesture_offset_u_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	if (kstrtoint(buf, 10, &offset))
++		return -EINVAL;
++
++	if (offset < MIN_OFFSET || offset > MAX_OFFSET)
++		return -EINVAL;
++
++	ret = regmap_write(data->regmap, APDS9960_REG_GOFFSET_U, offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "gesture offset reg write failed\n");
++		return ret;
++	}
++
++	return count;
++}
++
++static ssize_t apds9960_gesture_offset_d_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	if (kstrtoint(buf, 10, &offset))
++		return -EINVAL;
++
++	if (offset < MIN_OFFSET || offset > MAX_OFFSET)
++		return -EINVAL;
++
++	ret = regmap_write(data->regmap, APDS9960_REG_GOFFSET_D, offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "gesture offset reg write failed\n");
++		return ret;
++	}
++
++	return count;
++}
++
++static ssize_t apds9960_gesture_offset_l_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	if (kstrtoint(buf, 10, &offset))
++		return -EINVAL;
++
++	if (offset < MIN_OFFSET || offset > MAX_OFFSET)
++		return -EINVAL;
++
++	ret = regmap_write(data->regmap, APDS9960_REG_GOFFSET_L, offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "gesture offset reg write failed\n");
++		return ret;
++	}
++
++	return count;
++}
++
++static ssize_t apds9960_gesture_offset_r_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	if (kstrtoint(buf, 10, &offset))
++		return -EINVAL;
++
++	if (offset < MIN_OFFSET || offset > MAX_OFFSET)
++		return -EINVAL;
++
++	ret = regmap_write(data->regmap, APDS9960_REG_GOFFSET_R, offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "gesture offset reg write failed\n");
++		return ret;
++	}
++
++	return count;
++}
++
++static ssize_t apds9960_gesture_offset_u_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	ret = regmap_read(data->regmap, APDS9960_REG_GOFFSET_U, &offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "gesture offset reg read failed\n");
++		return ret;
++	}
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", offset);
++}
++
++static ssize_t apds9960_gesture_offset_d_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	ret = regmap_read(data->regmap, APDS9960_REG_GOFFSET_D, &offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "gesture offset reg read failed\n");
++		return ret;
++	}
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", offset);
++}
++
++static ssize_t apds9960_gesture_offset_l_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	ret = regmap_read(data->regmap, APDS9960_REG_GOFFSET_L, &offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "gesture offset reg read failed\n");
++		return ret;
++	}
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", offset);
++}
++
++static ssize_t apds9960_gesture_offset_r_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct apds9960_data *data = iio_priv(indio_dev);
++	int offset;
++	int ret;
++
++	ret = regmap_read(data->regmap, APDS9960_REG_GOFFSET_R, &offset);
++	if (ret < 0) {
++		dev_err(&data->client->dev, "gesture offset reg read failed\n");
++		return ret;
++	}
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", offset);
++}
++
+ /* integration time in us */
+ static const int apds9960_int_time[][2] = {
+ 	{ 28000, 246},
+@@ -332,10 +564,23 @@ static IIO_CONST_ATTR(proximity_scale_available, "1 2 4 8");
+ static IIO_CONST_ATTR(intensity_scale_available, "1 4 16 64");
+ static IIO_CONST_ATTR_INT_TIME_AVAIL("0.028 0.1 0.2 0.7");
+ 
++static IIO_DEVICE_ATTR(proximity_offset_ur, S_IRUGO | S_IWUSR, apds9960_proximity_offset_ur_show, apds9960_proximity_offset_ur_store, 0);
++static IIO_DEVICE_ATTR(proximity_offset_dl, S_IRUGO | S_IWUSR, apds9960_proximity_offset_dl_show, apds9960_proximity_offset_dl_store, 0);
++static IIO_DEVICE_ATTR(gesture_offset_u, S_IRUGO | S_IWUSR, apds9960_gesture_offset_u_show, apds9960_gesture_offset_u_store, 0);
++static IIO_DEVICE_ATTR(gesture_offset_d, S_IRUGO | S_IWUSR, apds9960_gesture_offset_d_show, apds9960_gesture_offset_d_store, 0);
++static IIO_DEVICE_ATTR(gesture_offset_l, S_IRUGO | S_IWUSR, apds9960_gesture_offset_l_show, apds9960_gesture_offset_l_store, 0);
++static IIO_DEVICE_ATTR(gesture_offset_r, S_IRUGO | S_IWUSR, apds9960_gesture_offset_r_show, apds9960_gesture_offset_r_store, 0);
++
+ static struct attribute *apds9960_attributes[] = {
+ 	&iio_const_attr_proximity_scale_available.dev_attr.attr,
+ 	&iio_const_attr_intensity_scale_available.dev_attr.attr,
+ 	&iio_const_attr_integration_time_available.dev_attr.attr,
++	&iio_dev_attr_proximity_offset_ur.dev_attr.attr,
++	&iio_dev_attr_proximity_offset_dl.dev_attr.attr,
++	&iio_dev_attr_gesture_offset_u.dev_attr.attr,
++	&iio_dev_attr_gesture_offset_d.dev_attr.attr,
++	&iio_dev_attr_gesture_offset_l.dev_attr.attr,
++	&iio_dev_attr_gesture_offset_r.dev_attr.attr,
+ 	NULL,
+ };
+ 
+-- 
+2.43.0
 
-I tried make htmldocs SPHINXDIRS=ABI/testing, but that does not work
-(probably because there are no .rst files in that directory?).
-
-Marek
 
