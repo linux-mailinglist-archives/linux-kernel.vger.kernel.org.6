@@ -1,109 +1,125 @@
-Return-Path: <linux-kernel+bounces-238090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438F292435E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15198924360
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1A711F24172
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:13:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A4E31F23FBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73161BD039;
-	Tue,  2 Jul 2024 16:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2711BD4EA;
+	Tue,  2 Jul 2024 16:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="GTze8lmn"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eocu5ISx"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3977D1BD005;
-	Tue,  2 Jul 2024 16:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5CE1BD037
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719936826; cv=none; b=ZvA8N6YhSuxMZZ18AEwXMoK3Ql7Blf5DC7qDNcSe3MBlzgZm+9MLq6ahNmjtSpcbnqhWgR80vro8EsRvsmMTYPfKhyZvYVKoQHye3zQ5n/I1yoShjxAG5gzx+OcRDk1UtqBSIcVA7I7KPhAK+xBCwsyaIqpNNr8v301rc4c6Hkk=
+	t=1719936905; cv=none; b=N2LtnHDZaPVGpj2Hyf4LDT/FwCYls6SD8pjkrEOauqxT0c5nh8oN6sAywv4TCXFmjFw1vxgRugGQQPOBF0TVceymB7yImOXjPxFlpPdm/Plq4IwglK1p/WuHcM7IBvt6UZU25W1BmGvpr17nThZdFglzQYDH87tMVb3GUM8R79Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719936826; c=relaxed/simple;
-	bh=1NPPosvEoa7YEfb3YTpwtuFz3L6/xLc2gKJ9TAc2y6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C8FcZQrUUi+q5eRYTIBrSXD/XB0b8aP7d949jfW45dzEKIQXP2Sb8zYGjAsFpa7HXTkxNACTwF9Z8EYKOGoqREnIR9NGvO3gnBMUc7xxAW4vVnmD9CDsrhhzhqHe21dlb+B+zL/4qs/ND1QfLPvns3ML6XOsUoHCclR++hF7ygU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=GTze8lmn; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WD7Hy1Dr1z9sST;
-	Tue,  2 Jul 2024 18:13:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1719936814;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oA2Wr6VOMzgFZ0qUaQebVyDCKpm9ZO191hQv44sz+Fs=;
-	b=GTze8lmnNNlFCHrThB/+rsNsw9R8Twukx9Hl2tJi+qQCgI2mMsh/6+J0lnPan0kqT7d0XQ
-	i6zh7ni3jyRVUt67LghCN9oST2X3rtk+66m9JqtltYVdQ4A9f+kGM85FgdKhBqlVam9dn8
-	5bkKl55oquwI57fbnrw0THmxQDb7sn0ckmNc7jXyGg0uakz9HpUoq+D0kBtY/P/0XStobb
-	v5xK0h+Oy/fTOPu/AzF4QsQjYimxfrFo6Nogyk4PWMk5ugxFCWbht1K3WYl+JQvIAAUsmJ
-	orz3r2CEWAiVfMEHP7Gb5qJ1EH9b59z3ibtoOyBLfzODISoZsBsKbzZh1Snc1A==
-Date: Tue, 2 Jul 2024 16:13:29 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
-	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <20240702161329.i4w6ipfs7jg5rpwx@quentin>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-7-kernel@pankajraghav.com>
- <20240702074203.GA29410@lst.de>
- <20240702101556.jdi5anyr3v5zngnv@quentin>
- <20240702120250.GA17373@lst.de>
- <20240702140123.emt2gz5kbigth2en@quentin>
- <20240702154216.GA1037@lst.de>
+	s=arc-20240116; t=1719936905; c=relaxed/simple;
+	bh=vl0S7Z8DpmU2zNirDJUeMFIKfv3z94bq8ndZdBprWrs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rXcpT50/2YYGEg4Ogu8imStt3MmMFZmQdzfku4xy52wlmEo9l7d9yH1XrTHSQW5SZmqqZpZlrVkQg1ifSJFNZeqk2KtcuhJ0Rwj9f61mxbG5SvYl4ozJgM6kK85U3Q6B2S/6Eg/hJWFwMaD23NRjamOdIcs6fKZefQiegZbG9sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eocu5ISx; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-375deacb3e1so2300025ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 09:15:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1719936903; x=1720541703; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t+JnTEY5nK6WHCH03S/fnQh6gkAQjGBHi3UQYO6T6R4=;
+        b=eocu5ISx3NZm4z2OqYqHenuVEDv01ODXmQR19rCfdoTms0ZeveqvUO3ctWU4D9M8ro
+         H2DHI21kasar2tFK7TVV8l71kPIpkrMTLiiyUDcN2hV4yDkRR/WU3UuRjO0Yt2BoYGpB
+         UhK6JfCfGgphEwiQipKrlD9Bkzlvch6SAYXEs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719936903; x=1720541703;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t+JnTEY5nK6WHCH03S/fnQh6gkAQjGBHi3UQYO6T6R4=;
+        b=SMHQ+qwVIAM2RVlg6cBLOxAKfHxbRX7sDy8YaXzpJWhzP5oRB2KmlbUeNLsxEtOQ34
+         scQPKpnlrV5U7JzOulRmecmycNTm2msJq8s0YoV4ELfKHJ4knL1WyTRN45W5h36Ur8tj
+         uSzyaA9MW/uPG96U4L2P/tuWX/KDUvoAc25Y0L6xjMoTUiqRLxo+Eehh43YqF0qCO2rh
+         ty/E15Gv5Ub+w69CHHubVCqv4LBHgb4E3q89WL7G1chLvC6JH/ZYHR8g9YAFEPe3scwm
+         9zwr1o/PS6gBs+bV16icDwZBLkbPiuQWpujoZQc6FmuVcmd0ySKlDHK2KLUIWuF8bhdf
+         w5OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/IbiPVuRM82yoc6I60kp5H+CKisQh+f87ezuM+ftrz+VbK90fo3gJNO5m4q4A+5GIZE7KMaITnY3GSMXj+4uC88bj6I0t0AR+iPVR
+X-Gm-Message-State: AOJu0Yy+QhZNDQP6svPDJo6cQnQ+kl+jiTsj3DqGNVAQSHsCOMGAXfOP
+	t9/mTUBLbMrPpT2T3gfSkqrEboiwZQJMMYsIYea1jfwCA4onyFfshtwHv2T+kXg=
+X-Google-Smtp-Source: AGHT+IHlIAprc4clVNBI6LajbpkwWNn6lQCN1xV4M6c0WjzXYwqzBdJE1r0JFxzSfgbla2kaNTXAoQ==
+X-Received: by 2002:a5d:9b8e:0:b0:7f3:a20e:c38f with SMTP id ca18e2360f4ac-7f62ed4cf57mr825907439f.0.1719936902970;
+        Tue, 02 Jul 2024 09:15:02 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73f910fdsm2867682173.91.2024.07.02.09.15.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 09:15:02 -0700 (PDT)
+Message-ID: <42ebb5e2-66c5-4787-b934-3eeef0e9903f@linuxfoundation.org>
+Date: Tue, 2 Jul 2024 10:15:01 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702154216.GA1037@lst.de>
-X-Rspamd-Queue-Id: 4WD7Hy1Dr1z9sST
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] kunit/usercopy: Disable testing on !CONFIG_MMU
+To: David Gow <davidgow@google.com>, Kees Cook <kees@kernel.org>
+Cc: kernel test robot <lkp@intel.com>,
+ Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kselftest@vger.kernel.org,
+ kunit-dev@googlegroups.com, linux-hardening@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240619202511.it.861-kees@kernel.org>
+ <CABVgOSk7RCMak0ZjRaTE4tYAwV5ZZ2ZHdWC7RWO0Vo6ZwORMdQ@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CABVgOSk7RCMak0ZjRaTE4tYAwV5ZZ2ZHdWC7RWO0Vo6ZwORMdQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 02, 2024 at 05:42:16PM +0200, Christoph Hellwig wrote:
-> On Tue, Jul 02, 2024 at 02:01:23PM +0000, Pankaj Raghav (Samsung) wrote:
-> +static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-> >                 loff_t pos, unsigned len)
-> >  {
-> >         struct inode *inode = file_inode(dio->iocb->ki_filp);
-> >         struct bio *bio;
-> >  
-> > +       if (!len)
-> > +               return 0;
-> >         /*
-> >          * Max block size supported is 64k
-> >          */
-> > -       WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
-> > +       if (len > ZERO_PAGE_64K_SIZE)
-> > +               return -EINVAL;
+On 7/1/24 22:05, David Gow wrote:
+> On Thu, 20 Jun 2024 at 04:25, Kees Cook <kees@kernel.org> wrote:
+>>
+>> Since arch_pick_mmap_layout() is an inline for non-MMU systems, disable
+>> this test there.
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202406160505.uBge6TMY-lkp@intel.com/
+>> Signed-off-by: Kees Cook <kees@kernel.org>
+>> ---
+>> Resending as v2 with Shuah in To:
+>> ---
+>> Cc: Shuah Khan <skhan@linuxfoundation.org>
+>> Cc: Brendan Higgins <brendan.higgins@linux.dev>
+>> Cc: David Gow <davidgow@google.com>
+>> Cc: Rae Moar <rmoar@google.com>
+>> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: linux-kselftest@vger.kernel.org
+>> Cc: kunit-dev@googlegroups.com
+>> Cc: linux-hardening@vger.kernel.org
+>> Cc: linux-mm@kvack.org
+>> ---
 > 
-> The should probably be both WARN_ON_ONCE in addition to the error
-> return (and ZERO_PAGE_64K_SIZE really needs to go away..)
+> Reviewed-by: David Gow <davidgow@google.com>
+> 
+> Cheers,
+> -- David
 
-Yes, I will rename it to ZERO_PAGE_SZ_64K as you suggested.
-> 
-> > +                       ret = iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
-> 
-> Overly lone line here.
-> 
-> Otherwise this looks good.
-> 
+Thank you both. Applied to linux-kselftest kunit branch for next.
+
+thanks,
+-- Shuah
 
