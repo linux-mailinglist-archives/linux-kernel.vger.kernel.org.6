@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-238381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A0E9249A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:56:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB96C9249A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64F21284F50
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:56:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD0551C2259A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E837620125E;
-	Tue,  2 Jul 2024 20:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1C820125C;
+	Tue,  2 Jul 2024 20:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdsF9hJU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZK4VdKd+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C3C1BA096;
-	Tue,  2 Jul 2024 20:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9870A201253;
+	Tue,  2 Jul 2024 20:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719953798; cv=none; b=B525/ZwfC/0zifdFWIf3jSYB+yR7H0bZeDQx/ZLK7eQtYDb8YUUfy+8YWIcEjUsMAxWlxlecG+t8VDyjtleUHQBakyue/+XUk3laaOB9gJIJJ7XSZapFA/aR62ZTRss3M0e/Za+8+BeMOL5sbzo7cYPzczN17gI5WwIkC3Vs9ag=
+	t=1719953811; cv=none; b=dXmL2ADoM8iuqOImvwbWIrhyTj0QDWG44f+Z7mCvunhWD2QD2+Y0gN9daeaK63UKPZOCDAawN4gx9kGB6Gae8AxUtHK1M1NEGY+G6WJdpJYbYaDg/A9ILVws2Pq5PiJarv/CwReRHBvMff4aVDwKmN4AMLxqlK/e8HSHyLrbY8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719953798; c=relaxed/simple;
-	bh=pQOFBDK3jDAJf5H+jjZOSGLaf0hNHzIigPqH7V1kdxQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HsJQmLWIT7l/7mNz4Sw/YKf92ILOIcGmzgB73fhIUWtNsw7IWfwqTAIrGE+svMn7i/LSWs7bIGmGAVPOCQILVfcyfkgt1BjaZwXfDc83raZcD9V0tisz3wVoiF4K7oTd7XLwSkAeNpvkyMYTYvn92iQ7lSWP3/0Mo9UqXkkghwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdsF9hJU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 162B1C116B1;
-	Tue,  2 Jul 2024 20:56:38 +0000 (UTC)
+	s=arc-20240116; t=1719953811; c=relaxed/simple;
+	bh=G8YeaSu41JY0T99M2q2DXkxKV+kUg0JiMQk/DeSPrj4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FHESEkXpyz/yuz5ZAsLtvq7X/ab8oP2cD27ncuUMM6Btu+rrhyEC3DE9P1YBLNu4GJX+Fn37uVNRd65maZtsRqgYLFMso6AtpVX66W3r9/VTQrM/wLx0AgmQT1xp3luGl5JcPaeHwjhlQ0Th2Hb033vcF4zB9L3uQJJZ1BzP6TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZK4VdKd+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 29D3DC116B1;
+	Tue,  2 Jul 2024 20:56:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719953798;
-	bh=pQOFBDK3jDAJf5H+jjZOSGLaf0hNHzIigPqH7V1kdxQ=;
+	s=k20201202; t=1719953811;
+	bh=G8YeaSu41JY0T99M2q2DXkxKV+kUg0JiMQk/DeSPrj4=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=fdsF9hJUCdHD9MZzolsPbrZc00kvjZzaZqR6AcWQD2hhROu87eaA9lZIZy4n+hfOw
-	 WSHBkfk1X17bjcIhCuoXRQ9JyhRsjSm7RI1YjWNN6q002C4jLl6QO0FBQYQWzSOEOA
-	 51EmCY7D82Y9D32Ht/vnobRG0AiarY4i7jZ9GTArV8XZyykrHO/VtSdVIMwKHhk+f2
-	 fY9OJEOXnHaee9pgSyYmN62kUQ7EZMdyK+2IL5h3u4k3Ev3hz8EuKVgO1biQrtk35Y
-	 iB+U1c8NogQwvxKcNyFymabG68dmAvQq46eZP1ikqpn2w/QTmwfs+ls2v7CoBviO+v
-	 4SHJwtHFPFnSA==
+	b=ZK4VdKd+5vVlgSzqeGe2LZwLbv028jGH2vzVH0z022e2L1H/FHdIai5Cxb/x3r2Sc
+	 CZGH30oqLYhuNb9/TVdGR5dRKYE1NJQ6wkOyDDPWqGNHyTFhSyON8YoWEoslD1OJMz
+	 jbVZO3aRz1BtjfyKCaXf+UU3TiBBMZARP/0VxIiUgGtMub2aQZZI1MU3+ZKoWVX4XJ
+	 O5z4RBRfpqq++ncmRFYfxfXbzZTgRbwfTE6U+pQNFnN2ePtFY0wFQWPVzAfr6M6zEQ
+	 fD8SoxFm3O3Tly4Kzt07ZM5W36z5/Y3udA8ocXkbikPqbDWCjvy3xcs31QZnhE3AVC
+	 VW/iWiWnk0xkg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0113BC43331;
-	Tue,  2 Jul 2024 20:56:38 +0000 (UTC)
-Subject: Re: [GIT PULL] vfs fixes
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1A0ACC43332;
+	Tue,  2 Jul 2024 20:56:51 +0000 (UTC)
+Subject: Re: [GIT PULL] Kselftest fixes for Linux 6.10-rc7
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240702-vfs-fixes-7b80dba61b09@brauner>
-References: <20240702-vfs-fixes-7b80dba61b09@brauner>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240702-vfs-fixes-7b80dba61b09@brauner>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc7.fixes.2
-X-PR-Tracked-Commit-Id: 655593a40efc577edc651f1d5c5dfde83367c477
+In-Reply-To: <457af485-777d-4675-aea5-e3b77ccb8246@linuxfoundation.org>
+References: <457af485-777d-4675-aea5-e3b77ccb8246@linuxfoundation.org>
+X-PR-Tracked-List-Id: <linux-kselftest.vger.kernel.org>
+X-PR-Tracked-Message-Id: <457af485-777d-4675-aea5-e3b77ccb8246@linuxfoundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-fixes-6.10-rc7
+X-PR-Tracked-Commit-Id: 48236960c06d32370bfa6f2cc408e786873262c8
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dbd8132aced4596ce8386af3041dfd310c8f42c8
-Message-Id: <171995379799.5346.4648857822596764102.pr-tracker-bot@kernel.org>
-Date: Tue, 02 Jul 2024 20:56:37 +0000
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: e9d22f7a6655941fc8b2b942ed354ec780936b3e
+Message-Id: <171995381110.5346.125140324739356226.pr-tracker-bot@kernel.org>
+Date: Tue, 02 Jul 2024 20:56:51 +0000
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Tue,  2 Jul 2024 21:44:27 +0200:
+The pull request you sent on Tue, 2 Jul 2024 14:49:16 -0600:
 
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc7.fixes.2
+> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-fixes-6.10-rc7
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dbd8132aced4596ce8386af3041dfd310c8f42c8
+https://git.kernel.org/torvalds/c/e9d22f7a6655941fc8b2b942ed354ec780936b3e
 
 Thank you!
 
