@@ -1,77 +1,82 @@
-Return-Path: <linux-kernel+bounces-237228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B124291EDB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:13:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD6B91EDB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E162F1C22FD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:13:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FDC31F23B92
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F22171BA;
-	Tue,  2 Jul 2024 04:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F4D4F1F8;
+	Tue,  2 Jul 2024 04:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ekDsvfGk"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K0m4AxPi"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEF814293
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 04:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9AB49633
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 04:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719893545; cv=none; b=bMnvdPJBIoSr+nAdBxZdjc0Lcz2jD+zEVd1G+MlCDG7F+ybmcNTKnFc/XGt2wkKkx06snTljWdxHu6L8+2SHZUGUODVU/k/8H9dykVrIRRQBRw8d3SSfPPs2UE/2Xl+itj01ERlKAfBm5wbsXVJB0AcpFxdT+rK36VSby9106wA=
+	t=1719893549; cv=none; b=XMc+GnFjPCKfIEA4jKJ3xYgVkoEGVUmDI7ZB2odb2hkfyFBT+QyPNHPIrC1QkYya4mFbAprrc9KBSTjuXNpnP3/1OEJqqMtUVPQSd/XH+Njbll7BUpBrSowC5b405aFqFC97T7bs/de4Vf02gS/gMEieQxcDLnf7NGhZWPuXfno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719893545; c=relaxed/simple;
-	bh=ndND2X9vnV96MeAItWUYFsizr8uVKuVfd+fe4A3XHG0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CaCXUfp/qoHP2puolDgN5V8A54q/yPmA6r2eowTdDhgs8S0Ad+BNeovWFWeRhxVA7zXfPkPo3/Gk6hVjfohhWyS1p+sK1zgc2SKCiYAVZ/y3S5fe/GOTBjitd/MKgupvTxJn3jRi/yjoq2JeJPjg9OehD4hzjmYeDS788K9Kozs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ekDsvfGk; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1719893549; c=relaxed/simple;
+	bh=2JOeR7fENn6vQvRJ0I6IcJoBl0wuu+rGXpaa+IZPSs8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=D0fHt2mYw4zFPkzyibTBsZ1JjXEZJCmwbljkX+35XS7n2+p1REIGKr/qNsC1Tt1ZzjdQQY3FrwKYGdXGr/8FxNMrI7VshgEYzlNjvC48vu/OMmaWb9K11xRZKlfWf+5x2PNz4EpeUjrBe6BEZrfWWXcagi3yUTTaN29IBOJF3+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K0m4AxPi; arc=none smtp.client-ip=209.85.160.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c80637d8adso2175362a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 21:12:23 -0700 (PDT)
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-25da8a19acaso1711331fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 21:12:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719893542; x=1720498342; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HtBevkzdVcZvkprNbpCyepGhlW/xh6/7OZ0Nvs7yDQ0=;
-        b=ekDsvfGkwL0OJfWXzy3APWP8/iFPNLbk7FXCIvxHfxfYyCfn/gq2fl9+1Ou1XyLcrv
-         sjVXP8BpBRKrCDkwXqSbWSBSY5NqT+DdFwrHW2ihgaVnDnoyzrNiNXWxoCROLtl0U2mr
-         /i7TFiqJA6si0I9kndpHojW4IsgXvn5nW3uH8PG05RRuMnK04iU/7pmEZQ3gpm8Eo8r6
-         E+zrO4g6rL8yEDm8uVqJT+7kIziyQXBS/On1cZYggNbvg4L3sN/6ksIle4Eq8GhL45vA
-         rXuO7/a/Ob9vP8LwUySq0WQMYnF/QlqGFi9IvmTvhtX4aM/l6yogD23AkmjiZOHBmzGx
-         wRsQ==
+        d=gmail.com; s=20230601; t=1719893546; x=1720498346; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MHleub4mTrFQ67+iGWbwKzDxzdJV1cPZuDZmtYlZDR0=;
+        b=K0m4AxPifYojef7iYAh5Gi+IXc2nO9871+ouHJ1JWeNIQxP6X1OEXcFn+r1MM9A9vn
+         EW6qzac5yd/T43kSG+92X5qqpmZ/f9fF4Eew5FinSONI13r0C0EcvXGeEkfzkbbhLMJc
+         3fQ0h3ls4VEwThX8Buasfdal2E79aSLPxkXC1ttHx9POz2SwKiQb0oNvdLbfPLkcg0nD
+         keTGnrxHn5MmkXLYts6E4r818V00b4iRLMSAU5HnN4CuE++Hhgz/S11lK/QdhOaLensh
+         HPbj9id5kcLboK/TSr7+JaXGDJbglR7uNBp3aheBaIYXom8D+yuab1ghKBX6LH2SqkWF
+         TefQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719893542; x=1720498342;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HtBevkzdVcZvkprNbpCyepGhlW/xh6/7OZ0Nvs7yDQ0=;
-        b=edBnsyxlGHi4Rjc3s9YzLeADYsVpJJc1zyyFIoykcZiBxVj+V3BrNQdYS/yUHPThWF
-         n/yJ37Q64GT3L4CUdiWAYm+lTHerEW4CnVGdZt48kd/BvawN3MESkdIsJQgJWoU4OLmK
-         qlkwNTX+qP4hD2cCC6DpLKsi37w3AYNUxTcGrMGC9Rrcg2Y3KCuKhsm+MO9xryqJxuBq
-         hWWHSbrtBBrqXRfeFIkUlZ3XcarQ3MRkRCqt9KO+E6oeqgj/RgqRf9C1W/a8Pg3G92RT
-         H6fnHjx5liR5dT8zRpW24ad1KJQiJghMHoZ+ttiEk/VMsK9ncZNtkr90QlHTXgIzG+ut
-         HFPg==
-X-Gm-Message-State: AOJu0YwJJuXkPss5I///0uN0kjMSce+2X3Lk88AvYSW37gVK3h4hyV3u
-	QlG3UuKTKsDwTvC49HnUG8eDGIqOgImVOBTaFrU2k/8xt8PjX3mONXVrDQ==
-X-Google-Smtp-Source: AGHT+IHWe8udlmSFgVceoXK70wRCR5cNgwV11GWDL1uB78Dydo8HPExOmn/JD2336v7nZWan18U+UA==
-X-Received: by 2002:a17:90b:35d0:b0:2c9:371c:ea9 with SMTP id 98e67ed59e1d1-2c93d708d52mr4797609a91.21.1719893542329;
-        Mon, 01 Jul 2024 21:12:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719893546; x=1720498346;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MHleub4mTrFQ67+iGWbwKzDxzdJV1cPZuDZmtYlZDR0=;
+        b=HqSZsRaGc3WkJ3TGMhrCULga4iHrHraEO4XCfp+JEE+SCVE4++Hix2DdxRJOWa0vjm
+         b9eMaQMUkpKFFC1dSl9dkf4/uFzxwac+v3vv/6XuRoQqax6QBCcI6CpFcZfWyyweZMDc
+         mGnH5WeOtTL1vjqkeRkgYr3SBvmbzemLDE4w3Qk2D5/DdBKuCZsBdKpE+MhdmYjQDdPv
+         z9ktGNBWgMKLYiVh9kpcq2fWGQ4AzKVQbdK64jaT7eEELgwCDdfrpek+6E8tMsGf9s3y
+         XWsMTJrKYh4yjQHF1I0SgHeaCDEvg82bgfTc5Ybg24wtAAOC3kDmhoNPV67XMNw48S/a
+         I+5w==
+X-Gm-Message-State: AOJu0Yz/qUtRD8fjY8JoPwbaoAxz8kdDYXP50J7pdMvuiN8G2QNi4c1W
+	w7JbbPbdWwRV7vCKlAIelmi62h9/jodavmYYk2Veu5pDwwRaEDMszR+CDw==
+X-Google-Smtp-Source: AGHT+IHxoa0cbbZvmF/M6jub10PdERSR4mAqHILNcKZX+NqO4q2QM0Cy6F69HJl9DSAheOiwi4QuJw==
+X-Received: by 2002:a05:6870:d1c8:b0:259:8805:b634 with SMTP id 586e51a60fabf-25db36cd02amr6985728fac.49.1719893546109;
+        Mon, 01 Jul 2024 21:12:26 -0700 (PDT)
 Received: from localhost ([47.88.5.130])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce43303sm7642295a91.17.2024.07.01.21.12.21
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708045a69a6sm7377734b3a.165.2024.07.01.21.12.25
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2024 21:12:21 -0700 (PDT)
+        Mon, 01 Jul 2024 21:12:25 -0700 (PDT)
 From: Lai Jiangshan <jiangshanlai@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
+	Waiman Long <longman@redhat.com>,
 	Tejun Heo <tj@kernel.org>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH 0/2] workqueue: Simple fix and cleanup for exclusive cpumasks
-Date: Tue,  2 Jul 2024 12:14:54 +0800
-Message-Id: <20240702041456.629328-1-jiangshanlai@gmail.com>
+	Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH 1/2] workqueue: Update cpumasks after only applying it successfully
+Date: Tue,  2 Jul 2024 12:14:55 +0800
+Message-Id: <20240702041456.629328-2-jiangshanlai@gmail.com>
 X-Mailer: git-send-email 2.19.1.6.gb485710b
+In-Reply-To: <20240702041456.629328-1-jiangshanlai@gmail.com>
+References: <20240702041456.629328-1-jiangshanlai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,20 +87,59 @@ Content-Transfer-Encoding: 8bit
 
 From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
 
-Simple fix and cleanup for the commit fe28f631fa94("workqueue:
-Add workqueue_unbound_exclude_cpumask() to exclude CPUs from
-wq_unbound_cpumask")
+Make workqueue_unbound_exclude_cpumask() and workqueue_set_unbound_cpumask()
+only update wq_isolated_cpumask and wq_requested_unbound_cpumask when
+workqueue_apply_unbound_cpumask() returns successfully.
 
-Lai Jiangshan (2):
-  workqueue: Update cpumasks after only applying it successfully
-  workqueue: Simplify goto statement
-
-Cc: Tejun Heo <tj@kernel.org>
+Fixes: fe28f631fa94("workqueue: Add workqueue_unbound_exclude_cpumask() to exclude CPUs from wq_unbound_cpumask")
 Cc: Waiman Long <longman@redhat.com>
+Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+---
+ kernel/workqueue.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
- kernel/workqueue.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
-
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index dc9acf8ecd0c..a3f9ff4fe657 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -6853,9 +6853,6 @@ int workqueue_unbound_exclude_cpumask(cpumask_var_t exclude_cpumask)
+ 	lockdep_assert_cpus_held();
+ 	mutex_lock(&wq_pool_mutex);
+ 
+-	/* Save the current isolated cpumask & export it via sysfs */
+-	cpumask_copy(wq_isolated_cpumask, exclude_cpumask);
+-
+ 	/*
+ 	 * If the operation fails, it will fall back to
+ 	 * wq_requested_unbound_cpumask which is initially set to
+@@ -6867,6 +6864,10 @@ int workqueue_unbound_exclude_cpumask(cpumask_var_t exclude_cpumask)
+ 	if (!cpumask_equal(cpumask, wq_unbound_cpumask))
+ 		ret = workqueue_apply_unbound_cpumask(cpumask);
+ 
++	/* Save the current isolated cpumask & export it via sysfs */
++	if (!ret)
++		cpumask_copy(wq_isolated_cpumask, exclude_cpumask);
++
+ 	mutex_unlock(&wq_pool_mutex);
+ 	free_cpumask_var(cpumask);
+ 	return ret;
+@@ -7202,7 +7203,6 @@ static int workqueue_set_unbound_cpumask(cpumask_var_t cpumask)
+ 	cpumask_and(cpumask, cpumask, cpu_possible_mask);
+ 	if (!cpumask_empty(cpumask)) {
+ 		apply_wqattrs_lock();
+-		cpumask_copy(wq_requested_unbound_cpumask, cpumask);
+ 		if (cpumask_equal(cpumask, wq_unbound_cpumask)) {
+ 			ret = 0;
+ 			goto out_unlock;
+@@ -7211,6 +7211,8 @@ static int workqueue_set_unbound_cpumask(cpumask_var_t cpumask)
+ 		ret = workqueue_apply_unbound_cpumask(cpumask);
+ 
+ out_unlock:
++		if (!ret)
++			cpumask_copy(wq_requested_unbound_cpumask, cpumask);
+ 		apply_wqattrs_unlock();
+ 	}
+ 
 -- 
 2.19.1.6.gb485710b
 
