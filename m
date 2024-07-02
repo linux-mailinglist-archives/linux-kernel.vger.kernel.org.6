@@ -1,115 +1,146 @@
-Return-Path: <linux-kernel+bounces-237490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297EA923998
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C23E9239A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 634461C214C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:18:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EEC81C20DE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B97015533B;
-	Tue,  2 Jul 2024 09:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C9C15667C;
+	Tue,  2 Jul 2024 09:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ef0Q0TyH"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1dm3YN2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B468E153BFA
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0E1156641;
+	Tue,  2 Jul 2024 09:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719911733; cv=none; b=WDt6CklCv7VoqHL6TASVOvjLfrt9Y+dm8UmVPXBpwckDxgKXbphyJlYJNYjvdGRRASWOUrg3RotalNS5xD0OzooWVEJYiUZ7/ph423+NYIMgFuZmbYoIxPFS2FYKB7cHKDuVRMkRs83esotFConxvZAXHi+v618JSd1oPdymWhY=
+	t=1719911820; cv=none; b=ZyXS7l8Su/FAFncSUp5Juhp+oPgULC/1GY3umyJgCfbUqCMn3tVS7WkeJCUxCNrTNBInoC1/6AhreBFn2MektBlvVsEObXhTjspZyYbcx4qgr/aDhg6dT4S7MHeVJjLIzernNLSpqXIR9cdGEZoxTHVEe53HJHE2yIbtqE2tQCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719911733; c=relaxed/simple;
-	bh=x8O97DEZPgQhWLob7+pXj/VXdusYxVqk5LngBSgOZCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nwK8GUCTUlhcy5UsQ3Vlqi7yFUWKpc93u8IM4E85+MyDxYMneItTtpHYVlRikK+zV8xuxAVYuXI7/wsf5g5JP83TeHEUTq/jrO+IRxWBsz2ZNsXiBAiZIr4Y1Fv0ITw09bDak+rDSlzfuR0AQFOa2VFOo9HboJlyDomAiBzHsdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ef0Q0TyH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nFOLrii+a7A5+5R1fp/ZHouWeXJUp2LUhKv44nnc4qM=; b=Ef0Q0TyH9F1UktnQ+QschrioxN
-	DjnZYikYKUZosbbf511FUt0JMY5HD5wCv1GExsOhZNeJHuagh9v3J3MEp1gL1+itjtrfOsosHknEn
-	WeZuNtYhplCfJ2R6SH9Gm9pqbK3/jJimsJAKEUrDCcB6VOugifOj5VGXv2gjMtXoNLO0dZiHdocxn
-	INK2/l2Ml9JLNPcGEzPOcn8Dc6C3ISWm+/JjNQv9vPTyt3L395ceKnxwzUkObx2Ad/MeXjJlRFkPf
-	n76ObZhb7G/xTX9NeHSIS3V68MgncXtIGfuDpBaDebUdLzd1x/vkjVzioSnlTC9/Yat7kv/HJled8
-	qLOce4UA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOZbj-00000000cyy-0FTK;
-	Tue, 02 Jul 2024 09:15:27 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0F7D0300694; Tue,  2 Jul 2024 11:15:24 +0200 (CEST)
-Date: Tue, 2 Jul 2024 11:15:23 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Stephane Eranian <eranian@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [RESEND Patch 1/2] perf/x86: Remove perf_events_lapic_init()
- calling from x86_pmu_enable()
-Message-ID: <20240702091523.GD11386@noisy.programming.kicks-ass.net>
-References: <20240702225703.346951-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1719911820; c=relaxed/simple;
+	bh=A95+J/M+hBp0B3YAI/nsGZZXz9ZcUwI13nO0P8PUUhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VtFRPO4yLfZd81loLxKMJT3qT497eIDQrDxyI+xt+1LP8PvKJBDyhxYt0OvAEQcbMTKcg1RAVP6pIPStjMuCcX/wb4nH/edimyeN4MA0pDeVngTItAEylXxKZeBpyV+aj2KfIIyIQY/y7fADFfBnCYc5ZV1JnMsHe4J8g4/SRBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1dm3YN2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A81C6C32781;
+	Tue,  2 Jul 2024 09:16:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719911819;
+	bh=A95+J/M+hBp0B3YAI/nsGZZXz9ZcUwI13nO0P8PUUhg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=L1dm3YN25lvx78G5TzkZsGCMqktja8XEDagGP2IeUC4rmbQNtSVwGFe9i0vsRVIyR
+	 xcumraU8kbp3lDvtZWBJO5bZsW2paPECdkl2jushfX3AFBEoevkDf/SVkukw6chcX3
+	 +71HEb7xZTNO7fvRLDTt0j9oto5IurDLdoeNssggzeakXWIRurPHh308arLPrE0BCt
+	 DUlIA1bME+UrRWkCpAD4aIdSfqjZMhO9/LkyJGx7bXAFD5g98LM6L58R9OC5AGeRWK
+	 DWcilHBmvuiB8XK6Gvm5vZvNlXXE2Y/0eMk65Cm3qNqL8kfLga4In1C9GFSUxrg86W
+	 5VBnWEPjdyZVQ==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec61eeed8eso48897991fa.0;
+        Tue, 02 Jul 2024 02:16:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUSdh2Tqun4lIKjMF0rAvRJHRk9lMAL3exBVHW0lTmBwMjjYGVYPsX18l2XKF6Ec+KC81lJCVUurWMoyyFSx1jTX8JBR3zjy1DCCJJUm0A5tBp+24jokRzi4/jYOOawNO86lh/WE4NWf73z
+X-Gm-Message-State: AOJu0Yz8cBZqmTtqB9nsVZXlT6tY1Ro0XiSnkodEkQil1MEcCAEN8bYq
+	iY93ianPjtmWQdrOsJ4lTnN4vK0yV1nXM6h7p2wQnnUmDD2b8LwLYwlAJSgRl/Q+B6S08bs4eVt
+	hcWKmWvVVLd9lGuW2uUkObthvzSk=
+X-Google-Smtp-Source: AGHT+IFfhlmSaAaQmfgNgpWikVPetj7fCvtt1FQlhm049GGmJ6bkGBLCsrBYTswT1MVMx6x56qR9eL7fxZ9oN7jQ3X0=
+X-Received: by 2002:a05:651c:154c:b0:2ec:5dfc:a64e with SMTP id
+ 38308e7fff4ca-2ee5e2a8a4dmr71464391fa.0.1719911818304; Tue, 02 Jul 2024
+ 02:16:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702225703.346951-1-dapeng1.mi@linux.intel.com>
+References: <20240613093433.131699-1-wenst@chromium.org>
+In-Reply-To: <20240613093433.131699-1-wenst@chromium.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 2 Jul 2024 18:16:21 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT2i_28f7jojpwQrTsW-h_pYZ1ifraM50RoMmUvdPUbuw@mail.gmail.com>
+Message-ID: <CAK7LNAT2i_28f7jojpwQrTsW-h_pYZ1ifraM50RoMmUvdPUbuw@mail.gmail.com>
+Subject: Re: [PATCH v2] scripts/make_fit: Support decomposing DTBs
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Simon Glass <sjg@chromium.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 03, 2024 at 06:57:02AM +0800, Dapeng Mi wrote:
-> perf_events_lapic_init() helper is called to configure PMI to NMI vector
-> and clear MASK bit simultaneously by writing APIC_LVTPC MSR. It's called
-> firstly to initialize APIC_LVTPC MSR by init_hw_perf_events(), and the
-> PMI handler would always to clear the MASK bit in APIC_LVTPC MSR by
-> writing APIC_LVTPC MSR directly.
-> 
-> So it becomes unnecessary to call perf_events_lapic_init() again in
-> x86_pmu_enable(), and worse x86_pmu_enable() could be called very
-> frequently in some scenarios with very high context-switches. This would
-> cause performance overhead which can't be ignored especially in KVM guest
-> environment since frequent APIC_LVTPC writing would cause huge number
-> of VM-Exits.
-> 
-> For example, in guest environment Geekbench score (running multiplxing
-> perf-stat command in background) increases 1% and perf-sched benchmark
-> increases 7% after removing perf_events_lapic_init() calling from
-> x86_pmu_enable().
-> 
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+On Thu, Jun 13, 2024 at 6:34=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
+rote:
+>
+> The kernel tree builds some "composite" DTBs, where the final DTB is the
+> result of applying one or more DTB overlays on top of a base DTB with
+> fdtoverlay.
+>
+> The FIT image specification already supports configurations having one
+> base DTB and overlays applied on top. It is then up to the bootloader to
+> apply said overlays and either use or pass on the final result. This
+> allows the FIT image builder to reuse the same FDT images for multiple
+> configurations, if such cases exist.
+>
+> The decomposition function depends on the kernel build system, reading
+> back the .cmd files for the to-be-packaged DTB files to check for the
+> fdtoverlay command being called. This will not work outside the kernel
+> tree. The function is off by default to keep compatibility with possible
+> existing users.
+>
+> To facilitate the decomposition and keep the code clean, the model and
+> compatitble string extraction have been moved out of the output_dtb
+> function. The FDT image description is replaced with the base file name
+> of the included image.
+>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > ---
->  arch/x86/events/core.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 5b0dd07b1ef1..580923443813 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -1347,7 +1347,6 @@ static void x86_pmu_enable(struct pmu *pmu)
->  			x86_pmu_start(event, PERF_EF_RELOAD);
->  		}
->  		cpuc->n_added = 0;
-> -		perf_events_lapic_init();
->  	}
+> Changes since v1:
+> - Replace OrderedDict with standard {} dict
+> - Change short form command line argument to -D
+> - Drop [] around "'fdt-{x}\x00' for x in files"
+> - Add spaces around '+' in slice argument
+> - Split out DTB parsing into separate function
+>
+> Simon's reviewed-by was dropped.
+>
+> This is a feature I alluded to in my replies to Simon's original
+> submission of the make_fit.py script [1].
+>
+> This is again made a runtime argument as not all firmware out there
+> that boot FIT images support applying overlays. Like my previous
+> submission for disabling compression for included FDT images, the
+> bootloader found in RK3399 and MT8173 Chromebooks do not support
+> applying overlays. Another case of this is U-boot shipped by development
+> board vendors in binary form (without upstream) in an image or in
+> SPI flash on the board that were built with OF_LIBFDT_OVERLAY=3Dn.
+> These would fail to boot FIT images with DT overlays. One such
+> example is my Hummingboard Pulse. In these cases the firmware is
+> either not upgradable or very hard to upgrade.
+>
+> I believe there is value in supporting these cases. A common script
+> shipped with the kernel source that can be shared by distros means
+> the distro people don't have to reimplement this in their downstream
+> repos or meta-packages. For ChromeOS this means reducing the amount
+> of package code we have in shell script.
+>
+> [1] https://lore.kernel.org/linux-kbuild/20231207142723.GA3187877@google.=
+com/
+>
+>  scripts/Makefile.lib |  1 +
+>  scripts/make_fit.py  | 86 ++++++++++++++++++++++++++++++++------------
+>  2 files changed, 65 insertions(+), 22 deletions(-)
 
-Stephane, I don't suppose you remember why you put that there? Afaict
-the above reasoning is correct and this one is entirely superfluous, but
-this hardware is 'funny' at the best of times and maybe I'm overlooking
-something.
 
 
+
+Applied to linux-kbuild.
+Thanks!
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
