@@ -1,165 +1,224 @@
-Return-Path: <linux-kernel+bounces-237798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C19D923E46
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:00:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D83923E4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 412071F22C19
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A93F283168
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCEA16D4CE;
-	Tue,  2 Jul 2024 13:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CFA16B748;
+	Tue,  2 Jul 2024 13:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozESms7C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FFpvN313"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D91158871;
-	Tue,  2 Jul 2024 13:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB98C16B390
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719925230; cv=none; b=duJejHNvKA9b8y0YlTPWk2aAgnPGvJDB4dbLFwoKF9bi1NgpA59eufp8C+cOlhk0sxECCqAygQ1DHvmAQaA+RNkiiTz9sB6U+JRJ2t7IGheF4rKUwegJlVjvpWbqG13WHD8t0O/XXLP34ADbl3xcV5QkxBdRrfR5jeyYcgYcK9s=
+	t=1719925272; cv=none; b=cGTLYTOITUh9/a+uO+Kae1QV0lQchH8nZBz53bWWvojIWLTspq3rUNcoA2KKnUgOATi5C5/vfbtfPvXU9SJFG+Akvrd+ftxyyM4mAuwcXJG+CrfmUf0TfzEE0S3/6YjRaMLAznc1l7QCep2AVuGGTqhB84QIydKwLcbIvMrO0oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719925230; c=relaxed/simple;
-	bh=3IcKndPgJRKyDI4uLAvL9dcl2uguX3FJbSHktips0FI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D7rFW3Bysoo44OQOJnbQywJEkIRW0iewL3eaMBbhA2q3iMhXqmWsglA8ppwIeN2XBkhV6fuNJR48T2VeG7ueeR5afRmdM063unpsFbt7ce/GPq31UOtakCdIrAbGhW9oDBIme7aqdUEKHXXs20gjMfZ4RZbugJC3QBkP7L2RcJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozESms7C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 957EAC2BD10;
-	Tue,  2 Jul 2024 13:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719925230;
-	bh=3IcKndPgJRKyDI4uLAvL9dcl2uguX3FJbSHktips0FI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ozESms7CPjBSF7HnyGgtc5BOIx/GdqR1fdGFtQDO8e2pWqvWA3H92MeHHz0lsqsm+
-	 KWf7GUFwobINaivWa2jXhe/rVmBOT8AoUfVKjp7KAsBbwEZcZv56xGsYPbSHNMRmyt
-	 kxKgoKLsPKVU0JxTB54QYBeYbmo/xV0GmDcgfKaH03i+BnoGQFONeBS1wdTsUopZph
-	 J1+kBPg8oq1Zbv7Hr3xKr7+9Jq5Z3M7bZmuZJRyFL9yBE6wW/k7KJVDxpQspfJeUMl
-	 sNBOWdVlTKweq+g/p17iXmK98PgtTP+C4eqLrFg+R7K4663SzUIFoidm4LPPFwd6Em
-	 BzBGnQ9P8pvOw==
-Date: Tue, 2 Jul 2024 14:00:24 +0100
-From: Simon Horman <horms@kernel.org>
-To: Peter Yin <peteryin.openbmc@gmail.com>
-Cc: patrick@stwcx.xyz, amithash@meta.com,
-	Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Cosmo Chou <cosmo.chou@quantatw.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org
-Subject: Re: [PATCH v1 1/1] net/ncsi: specify maximum package to probe
-Message-ID: <20240702130024.GJ598357@kernel.org>
-References: <20240701154336.3536924-1-peteryin.openbmc@gmail.com>
+	s=arc-20240116; t=1719925272; c=relaxed/simple;
+	bh=lzLXQy0yeh10k1V5HMthvj0Nq5/nTL/G2qR1mGuyZJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S5hln7QMuxgEJWIsYC250HGoUJExXNs/9S3Sbn5dKzoklkDpaokSoGjcwoUmjWLFJPOM5UmhzmrkHlZXW8Y5XBlsG+tIO2Na2CcXg9wjDYI9H3q/msbuIGA8+REKyJc9Le95uV8s89lEkstz9/+jrQZTIAimDr0kXnBN1eujfFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FFpvN313; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719925270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jyEO3+UzYxm+hTM+bXCMesYBadmj5Ly0ujSdz+Y7wU4=;
+	b=FFpvN313464XOU5DGDQFAmXZ2GLXc/OCacxfYnYxSfamC1ERCr+HZcGSVwNSbmzP8CSmkk
+	vg+9YgFNSYCf2+Z5yWBudNJKlx+ynIk0Ux8pZfm1gwyTuEYuNNAM4aSqet0d9bg8RH82MS
+	1jfPIcsg016osu9ZC0IYyl5INrmi1ks=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-593-58ErJ9atNpiaGx1CPOp_2A-1; Tue, 02 Jul 2024 09:01:08 -0400
+X-MC-Unique: 58ErJ9atNpiaGx1CPOp_2A-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4248fa5daacso28991475e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:01:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719925267; x=1720530067;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jyEO3+UzYxm+hTM+bXCMesYBadmj5Ly0ujSdz+Y7wU4=;
+        b=wl8DObhAf4ZCvhtIs//larARK4eAjMtHPhfv70puP++XIS6LBCFJNFGn904n9TlLTt
+         bz/CZ64DMFeM6DYkOAWIrYitJxaPd+gPmEzzjr/UdCeNEpFp5A5d4K/OzpJh+b8zf6IA
+         JO2obBNniL54K+n9VdF1MKye4ge/SOBIes9FBjnDspIwuW0MAFrOK627WWmf3KTAoWEb
+         hHjrSDz0AZtIsVjsQeNC/bSaJ2k8eVwIlypsD+K3NJW6v6QOBeTCqpw9kuUD1u+ivF+w
+         OqQpubKIYKMRbdvQ9/G2MWZCP191t2l5EvXwV7bRSR49KulR0CI5kZVIslKQZsyQT+/x
+         5ArA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzTFisGnbJX4QKIpTSxgoXhHdOpej6FfVE8OTgY/OUBwwHpkLeO8q8U1YzdS5avK5oduwmyfsS6RELvXCbFZuKK/sMY+43bcp42Fty
+X-Gm-Message-State: AOJu0YwCPk+C7/9h6kmNZ81YZO8eaHBq42ctRC0G3G8diokBSpfJfWFY
+	k3LXYfw0IwiXOzrOJAaY6P1DhAilEmffxpDowbwlDqSmZPlpfRACcMR/T4m/S6X6wZAEVNxwtSx
+	egL35qzfNLl3XNGDmyS2shvxXRvFaFzLlWNObVCAmp8Lv7oZm7AcwPn2pYkqVmQ==
+X-Received: by 2002:a05:600c:1907:b0:425:80d5:b8b2 with SMTP id 5b1f17b1804b1-42580d5b949mr42161835e9.16.1719925267569;
+        Tue, 02 Jul 2024 06:01:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGNRWXVq25i4+xzNptJNzupJEva9JBF4UmMbTPOec4KVS/tV15hD65O9Gcf+IGsZJl8VbVPcA==
+X-Received: by 2002:a05:600c:1907:b0:425:80d5:b8b2 with SMTP id 5b1f17b1804b1-42580d5b949mr42161595e9.16.1719925267004;
+        Tue, 02 Jul 2024 06:01:07 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c739:2400:78ac:64bb:a39e:2578? (p200300cbc739240078ac64bba39e2578.dip0.t-ipconnect.de. [2003:cb:c739:2400:78ac:64bb:a39e:2578])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b068e93sm198233215e9.24.2024.07.02.06.01.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 06:01:06 -0700 (PDT)
+Message-ID: <0b6d36b9-ce12-4278-a697-0186088e17b1@redhat.com>
+Date: Tue, 2 Jul 2024 15:01:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701154336.3536924-1-peteryin.openbmc@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/13] huge_memory: Allow mappings of PUD sized pages
+To: Alistair Popple <apopple@nvidia.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com, dave.jiang@intel.com,
+ logang@deltatee.com, bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca,
+ catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+ npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com,
+ willy@infradead.org, djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com,
+ peterx@redhat.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, jhubbard@nvidia.com,
+ hch@lst.de, david@fromorbit.com
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
+ <bd332b0d3971b03152b3541f97470817c5147b51.1719386613.git-series.apopple@nvidia.com>
+ <cf572c69-a754-4d41-b9c4-7a079b25b3c3@redhat.com>
+ <874j98gjfg.fsf@nvdebian.thelocal>
+ <0b549ff0-b0b6-4fc8-aa6f-0d76157575b3@redhat.com>
+ <87wmm4f1y6.fsf@nvdebian.thelocal>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <87wmm4f1y6.fsf@nvdebian.thelocal>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-[ As this seems to relate to: DT, ASPEED and ARM, CC:
-  Rob Herring, Krzysztof Kozlowski, Conor Dooley, Joel Stanley, Andrew Jeffery,
-  devicetree, linux-arm-kernel, linux-aspeed. ]
-
-On Mon, Jul 01, 2024 at 11:43:36PM +0800, Peter Yin wrote:
-> Most NICs have a single package. For OCP3.0 NICs, the package ID is
-> determined by the slot ID. Probing all 8 package IDs is usually
-> unnecessary. To reduce probe time, add properties to specify the
-> maximum number of packages.
+On 02.07.24 13:30, Alistair Popple wrote:
 > 
-> Signed-off-by: Cosmo Chou <cosmo.chou@quantatw.com>
-> Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
-> ---
->  net/ncsi/internal.h    |  1 +
->  net/ncsi/ncsi-manage.c | 16 ++++++++++++----
->  2 files changed, 13 insertions(+), 4 deletions(-)
+> David Hildenbrand <david@redhat.com> writes:
 > 
-> diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
-> index ef0f8f73826f..bd7ad0bf803f 100644
-> --- a/net/ncsi/internal.h
-> +++ b/net/ncsi/internal.h
-> @@ -341,6 +341,7 @@ struct ncsi_dev_priv {
->  #define NCSI_MAX_VLAN_VIDS	15
->  	struct list_head    vlan_vids;       /* List of active VLAN IDs */
->  
-> +	unsigned int        max_package;     /* Num of packages to probe   */
->  	bool                multi_package;   /* Enable multiple packages   */
->  	bool                mlx_multi_host;  /* Enable multi host Mellanox */
->  	u32                 package_whitelist; /* Packages to configure    */
-> diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
-> index 5ecf611c8820..159943ee1317 100644
-> --- a/net/ncsi/ncsi-manage.c
-> +++ b/net/ncsi/ncsi-manage.c
-> @@ -1358,12 +1358,12 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
->  		nd->state = ncsi_dev_state_probe_deselect;
->  		fallthrough;
->  	case ncsi_dev_state_probe_deselect:
-> -		ndp->pending_req_num = 8;
-> +		ndp->pending_req_num = ndp->max_package;
->  
->  		/* Deselect all possible packages */
->  		nca.type = NCSI_PKT_CMD_DP;
->  		nca.channel = NCSI_RESERVED_CHANNEL;
-> -		for (index = 0; index < 8; index++) {
-> +		for (index = 0; index < ndp->max_package; index++) {
->  			nca.package = index;
->  			ret = ncsi_xmit_cmd(&nca);
->  			if (ret)
-> @@ -1491,7 +1491,7 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
->  
->  		/* Probe next package */
->  		ndp->package_probe_id++;
-> -		if (ndp->package_probe_id >= 8) {
-> +		if (ndp->package_probe_id >= ndp->max_package) {
->  			/* Probe finished */
->  			ndp->flags |= NCSI_DEV_PROBED;
->  			break;
-> @@ -1746,7 +1746,7 @@ struct ncsi_dev *ncsi_register_dev(struct net_device *dev,
->  	struct platform_device *pdev;
->  	struct device_node *np;
->  	unsigned long flags;
-> -	int i;
-> +	int i, ret;
->  
->  	/* Check if the device has been registered or not */
->  	nd = ncsi_find_dev(dev);
-> @@ -1795,6 +1795,14 @@ struct ncsi_dev *ncsi_register_dev(struct net_device *dev,
->  		if (np && (of_property_read_bool(np, "mellanox,multi-host") ||
->  			   of_property_read_bool(np, "mlx,multi-host")))
->  			ndp->mlx_multi_host = true;
-> +
-
-Should the "ncsi-package" (and above multi-host properties) be
-documented in DT bindings somewhere? I was unable to locate such
-documentation.
-
-> +		if (np) {
-> +			ret = of_property_read_u32(np, "ncsi-package",
-> +						   &ndp->max_package);
-> +			if (ret || !ndp->max_package ||
-> +			    ndp->max_package > NCSI_MAX_PACKAGE)
-> +				ndp->max_package = NCSI_MAX_PACKAGE;
-> +		}
->  	}
-
-It seems that ndp->max_package will be 0 unless pdev != NULL and np != NULL.
-Would it be better set to NCSI_MAX_PACKAGE in such cases?
-
->  
->  	return nd;
-> -- 
-> 2.25.1
+>> On 02.07.24 12:19, Alistair Popple wrote:
+>>> David Hildenbrand <david@redhat.com> writes:
+>>>
+>>>> On 27.06.24 02:54, Alistair Popple wrote:
+>>>>> Currently DAX folio/page reference counts are managed differently to
+>>>>> normal pages. To allow these to be managed the same as normal pages
+>>>>> introduce dax_insert_pfn_pud. This will map the entire PUD-sized folio
+>>>>> and take references as it would for a normally mapped page.
+>>>>> This is distinct from the current mechanism, vmf_insert_pfn_pud,
+>>>>> which
+>>>>> simply inserts a special devmap PUD entry into the page table without
+>>>>> holding a reference to the page for the mapping.
+>>>>
+>>>> Do we really have to involve mapcounts/rmap for daxfs pages at this
+>>>> point? Or is this only "to make it look more like other pages" ?
+>>> The aim of the series is make FS DAX and other ZONE_DEVICE pages
+>>> look
+>>> like other pages, at least with regards to the way they are refcounted.
+>>> At the moment they are not refcounted - instead their refcounts are
+>>> basically statically initialised to one and there are all these special
+>>> cases and functions requiring magic PTE bits (pXX_devmap) to do the
+>>> special DAX reference counting. This then adds some cruft to manage
+>>> pgmap references and to catch the 2->1 page refcount transition. All
+>>> this just goes away if we manage the page references the same as other
+>>> pages (and indeed we already manage DEVICE_PRIVATE and COHERENT pages
+>>> the same as normal pages).
+>>> So I think to make this work we at least need the mapcounts.
+>>>
+>>
+>> We only really need the mapcounts if we intend to do something like
+>> folio_mapcount() == folio_ref_count() to detect unexpected folio
+>> references, and if we have to have things like folio_mapped()
+>> working. For now that was not required, that's why I am asking.
 > 
+> Oh I see, thanks for pointing that out. In that case I agree, we don't
+> need the mapcounts. As you say we don't currently need to detect
+> unexpect references for FS DAX and this series doesn't seek to introduce
+> any new behviour/features.
 > 
+>> Background also being that in a distant future folios will be
+>> decoupled more from other compound pages, and only folios (or "struct
+>> anon_folio" / "struct file_folio") would even have mapcounts.
+>>
+>> For example, most stuff we map (and refcount!) via vm_insert_page()
+>> really must stop involving mapcounts. These won't be "ordinary"
+>> mapcount-tracked folios in the future, they are simply some refcounted
+>> pages some ordinary driver allocated.
+> 
+> Ok, so for FS DAX we should take a reference on the folio for the
+> mapping but not a mapcount?
+
+That's what we could do, yes. But if we really just want to track page 
+table mappings like we do with other folios (anon/pagecache/shmem), and 
+want to keep doing that in the future, then maybe we should just do it 
+right away. The rmap code you add will be required in the future either way.
+
+Using that code for device dax would likely be impossible right now due 
+to the vmemmap optimizations I guess, if we would end up writing subpage 
+mapcounts. But for FSDAX purposes (no vmemmap optimization) it would work.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
