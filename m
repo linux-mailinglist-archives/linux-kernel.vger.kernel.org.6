@@ -1,169 +1,135 @@
-Return-Path: <linux-kernel+bounces-238554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE39924BFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:08:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42062924C01
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64CE41C22574
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:08:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74A041C226EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E80017A592;
-	Tue,  2 Jul 2024 23:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E180817A5B1;
+	Tue,  2 Jul 2024 23:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKOeoQz2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSVc0O6r"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96BD91DA30B;
-	Tue,  2 Jul 2024 23:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF9F17A58B;
+	Tue,  2 Jul 2024 23:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719961699; cv=none; b=e9+7SSH2reRIIItYNF4rsG68lR+b2byhWWhD0oeXwgxPw8CWrcv6SpEbk9niSEcEwGiwRRFvTb3kM6vi0BEWR8SbAhzWqxDHN0qeIwdAUWgqguGeBGm0X9PdTrMLG8RuapOdd6lPIPY8giu4eUdsBbaR1248HQZ55pvW8IcX6wc=
+	t=1719961715; cv=none; b=QntbAHsjro53UYAPw5ZLkVFebO860+6qA77WQKhPilUcOm6ojZsxn8LRrxBs0l/nIYq3sl8sRIKOzlRVFRm2Ww0UbwXm5g5ejZ41LB2r+htOnuweQzI8rN0TDt7kFwxzShuroBPRmGeR7YWLY8sQqb+0prlyN8OCCTwlFOYc+fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719961699; c=relaxed/simple;
-	bh=4v44RV6ZEhl5+m0N3QwHq5yw1b9JD/QuNu1dEFKSJeM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=s8P9nPTBw+Dzi7fIL640QLZlXjrwymsghhDuCaGEc3oJYfd2regOUSfl249Vjdsb4OE7V4Ip1z+glS9ptgT5WKPQzFy2hyoU/Ym5eu7dSK62YteqH45OEGJSEvCFux2ZmmHoqVdFpJZt1Uiu7Hbf/eihDhTU12CwNdthb5fNAHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKOeoQz2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45151C116B1;
-	Tue,  2 Jul 2024 23:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719961699;
-	bh=4v44RV6ZEhl5+m0N3QwHq5yw1b9JD/QuNu1dEFKSJeM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hKOeoQz2MrfDh4zxOhfGVOl7TDqIfZolkzOZUV+QX1k8sEnbvumGB5RtIv80SPRPE
-	 3hyWP6JFC3nUhnCTbUt/PqY1WWRkH5AOg13+pgqhl5nGQhQFyAT2nsaf4Q0qROpKZN
-	 QuGCPr5/vYMe3VDgf/o7S1DYa6MRsJXJZeCRSNhMvXbi4NoW41FD6UioTveZNLCFyQ
-	 Fs0jcejnZmGxR2RNn/WIf4Jy7Jv7RUPl3oN69Q6Kp5/LhAcCYVmvLID+hG7OnKawg+
-	 X8q51OjG2l7n0tp6fR6QTUMZ4sRVR5cjSIW6EOO7q9DO8d6a6fnFfTi9r0zbdNra57
-	 QXjQq7RKiM0rA==
-Date: Wed, 3 Jul 2024 08:08:14 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Tom Zanussi <zanussi@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] tracing: Support poll on event hist file
-Message-Id: <20240703080814.c8bbe5b27ad70a5520262a6d@kernel.org>
-In-Reply-To: <4ec0e4822293763691d8699750b0df88385ab646.camel@kernel.org>
-References: <171932861260.584123.15653284949837094747.stgit@devnote2>
-	<4ec0e4822293763691d8699750b0df88385ab646.camel@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719961715; c=relaxed/simple;
+	bh=EQsZHPSLuHnOui19pQmJ+cHXC6DD1ZYxjH0AnaaR3Ik=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FS2VfUaditvZEZ21M+llGG1Am5ZkyzJ3nw4kzzicylh1F97YeYObxm80JMaiTB1CUw6TU6+DhRmi5761Bz7raLIcesYblVago6MDSUHBeBTKkNU+7ugK1YD4SSmjCFE0pVDf8cEKR0CH01jSwraCMR23sIAnS5yl5krN6tK9Pb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bSVc0O6r; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7066a3229f4so3148244b3a.2;
+        Tue, 02 Jul 2024 16:08:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719961713; x=1720566513; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EQsZHPSLuHnOui19pQmJ+cHXC6DD1ZYxjH0AnaaR3Ik=;
+        b=bSVc0O6r46Xjr334U+HmOtJjhxZHZPjC29u3/xWOAAG1gE6mMtMUudcA8SFa6MsYEV
+         lNEWa9pkVo/fwOozZ/tQnE3NaZGHtzMTy5bdOYX1zZG86I+bMBRnOBXCTPBP37sN36f9
+         hXs/DEaiqv9czlj3ZcBcPxW1AI989LeCHHCS+xM8vDPwtEnrX0qIzRS7jpJLMf/imCvV
+         //4vbCoEbvF72tUsLHYFzGBRW+ziRoYeF7+NoTiI8P2g+4mVcGF5j7vVDcg6FLrUPGZk
+         6hqYP0IYuEXLGulHk1tAjxOSqWCTnhH2l+cXsZqujh4tclFSmhsjeAn+iALcnlzrK6K0
+         DQ1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719961713; x=1720566513;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EQsZHPSLuHnOui19pQmJ+cHXC6DD1ZYxjH0AnaaR3Ik=;
+        b=IgpxoOtmFzQwnrra9t5tbxXfsY+E0twkgK9xayu0akNKji9pdFZK04cVaSjzrYp0u8
+         BFw7Pw1xTw21i+2lJPMq3nuLjJ9Lb4iRWRF3vMVoXP4wwrEjh5vvd+3ZXeQb1Q+CMC8l
+         lVfSfDHmGOzqjIZ+uF4k5BZexvWu+ZiykN7GDIlLCIR1Cg+prS3iByc6ascEoaXEfvcr
+         DpYQJHaLZ3scc+E9RPDufy9uCGcOz84b9g3K/dPfsaLyevh0QIcNSnY4dHo2TYnK1R35
+         6mS+PpDjMcldoosRbw3xugmY9tr9QCIVg9j8oT0VfoXIdCL/1FD4HUWTrvYg6Lialgvu
+         J3pw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOz135gp/R+Sk11/QDEjfb2T4JhmsRD6paUBBFrTHsyr0UTJA6Vp1Qs7IRKURLwBeXl+rq+USu1NYcthvp8CCoQQ53usEC6trZ8zi5zBvQoJJFH6fjP0JFBffHcCYSLtyNnorRAwRsEi1RsNXQwkPjfoB5pZE1rLC4Q86ChYQ03g==
+X-Gm-Message-State: AOJu0YwXLmxXyD/5AS7L+Cv/ZDJBFkoyiHkoh21RYlOqAOU3G7ehidNY
+	BEctoYhEVOScKjhJP+aCSgaDuivdLsyz3QXP1OYgDG+XKFi4UwW/5mnnKT2cxoRET1pPTRVnvGD
+	7bsv+IH5/VuhV8b52t+J/P+umXFU=
+X-Google-Smtp-Source: AGHT+IF62KepZG9zhiSnwIcBUc8jO8tEH7cP6XYJ/8YYop6rGd5cjdUizZ76OvaAyZWOZUNGhUxiQ8LI8At1xFO9kOQ=
+X-Received: by 2002:a05:6a00:22cf:b0:706:6331:f56c with SMTP id
+ d2e1a72fcca58-70aaaf32f31mr9978215b3a.32.1719961713057; Tue, 02 Jul 2024
+ 16:08:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+References: <20240627170900.1672542-1-andrii@kernel.org> <20240627170900.1672542-4-andrii@kernel.org>
+ <878qyqyorq.fsf@linux.intel.com> <CAEf4BzZHOhruFGinsRoPLtOsCzbEJyf2hSW=-F67hEHhvAsNZQ@mail.gmail.com>
+ <Zn86IUVaFh7rqS2I@tassilo> <CAEf4Bzb3CnCKZi-kZ21F=qM0BHvJnexgajP0mHanRfEOzzES6A@mail.gmail.com>
+ <ZoQTlSLDwaX3u37r@tassilo>
+In-Reply-To: <ZoQTlSLDwaX3u37r@tassilo>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 2 Jul 2024 16:08:21 -0700
+Message-ID: <CAEf4BzZx428C4v4D3MWVJa-ySOYKd4tny=JdDE2u-7DTtPYS3w@mail.gmail.com>
+Subject: Re: [PATCH v6 3/6] fs/procfs: add build ID fetching to PROCMAP_QUERY API
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, liam.howlett@oracle.com, surenb@google.com, 
+	rppt@kernel.org, adobriyan@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 30 Jun 2024 16:07:43 -0500
-Tom Zanussi <zanussi@kernel.org> wrote:
+On Tue, Jul 2, 2024 at 7:50=E2=80=AFAM Andi Kleen <ak@linux.intel.com> wrot=
+e:
+>
+> > 1) non-executable file-backed VMA still has build ID associated with
+> > it. Note, build ID is extracted from the backing file's content, not
+> > from VMA itself. The part of ELF file that contains build ID isn't
+> > necessarily mmap()'ed at all
+>
+> That's true, but there should be at least one executable mapping
+> for any useful ELF file.
+>
+> Basically such a check guarantee that you cannot tell anything
+> about a non x mapping not related to ELF.
+>
 
-> Hi Masami,
-> 
-> On Wed, 2024-06-26 at 00:16 +0900, Masami Hiramatsu (Google) wrote:
-> > Hi,
-> > 
-> > Here is an RFC patch to support polling on event 'hist' file.
-> > 
-> > There has been interest in allowing user programs to monitor kernel
-> > events in real time. Ftrace provides `trace_pipe` interface to wait
-> > on events in the ring buffer, but it is needed to wait until filling
-> > up a page with events in the ring buffer. We can also peek the
-> > `trace` file periodically, but that is inefficient way to monitor
-> > a randomely happening event.
-> > 
-> > This patch set allows user to `poll`(or `select`, `epoll`) on event
-> > histogram interface. As you know each event has its own `hist` file
-> > which shows histograms generated by trigger action. So user can set
-> > a new hist trigger on any event you want to monitor, and poll on the
-> > `hist` file until it is updated.
-> > 
-> > There are 2 poll events are supported, POLLIN and POLLPRI. POLLIN
-> > means that there are any readable update on `hist` file and this
-> > event will be flashed only when you call read(). So, this is
-> > useful if you want to read the histogram periodically.
-> > The other POLLPRI event is for monitoring trace event. Like the
-> > POLLIN, this will be returned when the histogram is updated, but
-> > you don't need to read() the file and use poll() again.
-> > 
-> > Note that this waits for histogram update (not event arrival), thus
-> > you must set a histogram on the event at first.
-> > 
-> > Here is an example usage:
-> > 
-> > ----
-> > TRACEFS=/sys/kernel/tracing
-> > EVENT=$TRACEFS/events/sched/sched_process_free
-> > 
-> > # setup histogram trigger and enable event
-> > echo "hist:key=comm" >> $EVENT/trigger
-> > echo 1 > $EVENT/enable
-> > 
-> > # Wait for update
-> > poll $EVENT/hist
-> > 
-> > # Event arrived.
-> > echo "process free event is comming"
-> > tail $TRACEFS/trace
-> > ----
-> > 
-> > The 'poll' command is in the selftest patch.
-> > 
-> > You can take this series also from here;
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/event-hist-poll
-> > 
-> > Thank you,
-> 
-> I think this is a clever use of the histogram files, and will be very
-> useful for real-time monitoring apps. I'm looking forward to using it
-> myself - thanks for doing this.
-> 
-> For the whole series,
-> 
-> Reviewed-by: Tom Zanussi <zanussi@kernel.org>
+Ok, I can add this check. If you know off the top of your head how to
+do that for struct address_space, I'd appreciate the pointer. Quick
+glance didn't show anything useful in linux/fs.h, but I'll dig deeper
+a bit later.
 
-Thanks Tom!
+> >
+> > 2) What sort of exploitation are we talking about here? it's not
+> > enough for backing file to have correct 4 starting bytes (0x7f"ELF"),
+> > we still have to find correct PT_NOTE segment, and .note.gnu.build-id
+> > section within it, that has correct type (3) and key name "GNU".
+>
+> There's a timing side channel, you can tell where the checks
+> stop. I don't think it's a big problem, but it's still better to avoid
+> such leaks in the first place as much as possible.
+>
+> >
+> > I'm trying to understand what we are protecting against here.
+> > Especially that opening /proc/<pid>/maps already requires
+> > PTRACE_MODE_READ permissions anyways (or pid should be self).
+>
+> While that's true for the standard security permission model there might
+> be non standard ones where the relationship is more complicated.
+>
 
-I found an issue in the selftests (can not support old stable kernel) so
-let me update it.
+Presumably non-standard ones will have more and custom security checks
+(LSM, seccomp, etc) involved. Basically, I acknowledge your point, but
+I'm not sure it changes anything about adding this API.
 
-Thank you,
-
-> 
-> > 
-> > ---
-> > 
-> > Masami Hiramatsu (Google) (3):
-> >       tracing/hist: Add poll(POLLIN) support on hist file
-> >       tracing/hist: Support POLLPRI event for poll on histogram
-> >       selftests/tracing: Add hist poll() support test
-> > 
-> > 
-> >  include/linux/trace_events.h                       |    5 +
-> >  kernel/trace/trace_events.c                        |   18 ++++
-> >  kernel/trace/trace_events_hist.c                   |  101
-> > +++++++++++++++++++-
-> >  tools/testing/selftests/ftrace/Makefile            |    3 +
-> >  tools/testing/selftests/ftrace/poll.c              |   34 +++++++
-> >  .../ftrace/test.d/trigger/trigger-hist-poll.tc     |   46 +++++++++
-> >  6 files changed, 204 insertions(+), 3 deletions(-)
-> >  create mode 100644 tools/testing/selftests/ftrace/poll.c
-> >  create mode 100644
-> > tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
-> > 
-> > --
-> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> -Andi
 
