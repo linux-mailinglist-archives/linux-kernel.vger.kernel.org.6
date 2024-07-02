@@ -1,158 +1,107 @@
-Return-Path: <linux-kernel+bounces-237966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F65592415E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:51:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8748E924167
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C90CA285507
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:51:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E6F2289506
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6A81BB6A9;
-	Tue,  2 Jul 2024 14:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895E61BA086;
+	Tue,  2 Jul 2024 14:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fbH6HACB"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RkfVjZi+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6738315B995;
-	Tue,  2 Jul 2024 14:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DE376F17
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 14:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719931884; cv=none; b=YZV9wXkStbCUTTsGxC8/K9D2bb1j4DJeVg8FU+O8RFwagYzHueBFzBNmOodXFimAetaYdW1VRYjL+dl7ho8Tp7Il316w3TlehMPKwA2h7Rp6dyfQ4WwlsQGp5biZyETaFXNnMBld8qqtl60Wn1yplW33EQMRjaww9yZjUkrtqto=
+	t=1719931968; cv=none; b=YnzWEfH34VBuMuT26QzCWLUfCdSAeam0x7DK01h+8ifL4LPXuCyaLHVXtTRYv9rEmzLbUfepyd9qzwNxUBxZMnah0hd1eKWKMgV1iIXT8nu6DWVSPxMePa+6et2nMwIYkxpBT+lM3eLMiKEq6suTHLkfR0UBQ+A4kKDdewz/CiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719931884; c=relaxed/simple;
-	bh=a6MsgyRv5ETlLiC+FFxBcEYINP46U3opPqsO9hRNSEU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tbC/rGhMHwF2lOrri/qzkETr4/4Q3BN4KpD9UgSILMtGl8Goys2JFsD3q7ZSxTNgt5DfBbxZsZrYsIJwVFV3ZFYXimq/Q5VOyo9tGtaD/YJ7jX3Nn03VT71xzBAE60psDIO92VhTTWNVPgVtdk3cDycbdYgc0ccZDTM6z3pNyI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fbH6HACB; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-425809eef0eso16896815e9.3;
-        Tue, 02 Jul 2024 07:51:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719931881; x=1720536681; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9exeTGo15NDIXtZ8CZttQ0DqkF9R2Zr4DFJbKqAaPNs=;
-        b=fbH6HACBfuTgGeRjrV+1iAxXV1fDV/GLue6zWfnKxXb7qetANEJ6UVDjIqQXes8GoN
-         Qqp4UMuKsOjZv+h50QXKqlIZUXdzAi/AXjLr+D3rIq+FudB0b9KG+VIQMInUdcvAPlhg
-         dhd6aWd/Dtl92qLhriLDBNRPjY2OoOqxv+aPeWBbm3qtMj7KhDi5jTij/d7wlkv2YYnA
-         NJMau2Yg79UKkS2EFo0Xl5idpS490C+D7mzrPnrI/CJjI9JDjZJcaOix6ABJOuB1um74
-         mVs3mr7cN25ApYaRpB/tOC0zuRp/lggWRiCd9+aH2p0UQHt1LcRFEq9bIUP4J8FgPM1N
-         fP4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719931881; x=1720536681;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9exeTGo15NDIXtZ8CZttQ0DqkF9R2Zr4DFJbKqAaPNs=;
-        b=HKPByz/OZW+qnrSxTx8c3j/O4g8fOlre3p+ujKy9Ms4UkFxtHzlMFpKSg3fNNIAP4C
-         m5CSdTSdyAISInDNPoCGQ5l9jdqOHAn/UbCI0yg0sOdxq+ChyYviu5dkP/WAqd01o9Of
-         6B+tP93riGGTHcD1NEU8OKmH89q9PQfNBLOVsjPQ4lRIGFQA14avzlt1HC1D76EOWYHf
-         QNROcivOg693bW8+J5g4AARJ0GDZL+vPvEW5jiBln3xtovLd6gqhw4iG1ZHL7wv7iS3z
-         Qe5WjiksXCaSvFlh7/Mv5lfk6CiZLJztK/3+YCSO1XvAfeuJa+G6bKJ0J4/CSlilSoLg
-         y+RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiTIa2nSMURR/CpeKfoeiOVOiEC/rxMJ+LAZ7q+SAxK+fgF4GtQGlFS0pjG9GHuVQ9pOgRTgtLZ5aanuEjAQyhOWSX72brY+WcvRwgKGanF0UCeXHB7G7l5XNqpLV5Gvq0uvhDfIXIq4dYZocZKfT7gqNRE5TjHoOVWqH9f/pvY6I3DFFaHhb9q0M/d3b4xZpkSh08c2+qr4q+SqPxh7PHCGYwB2gdxr5pDcACsOVobIWtLZHw8rySsfWCaL33nQYBpDL26+TCZKxw8cPzyE8JcqoD5izT9QwTPPvYsQI/m93nIFdQks9ZCZjufbdInqJk9hOtMtpLMFhAwFf1W3lvNErW38zxWjenJjinAwEfMW0neDAsLxM8WrrK3LlYdzf/kD/OxAG9JAj8/N1i0Ghoq3Y7LTeRasOQIy1FMB4QFXAuD5xjne/tP8O8EANecIRUvssAqxqiWiQduouyta9bNsOdyLipV96PFoKkjbvuw1Yb9KbbJ7SaNH5iBIez9mHFuhiJyA==
-X-Gm-Message-State: AOJu0YxwqvCnHFtwiFul6H4V6o3sZJ2Q1SspoTL+gFWWPiGSpOP1vIGo
-	yVvtHj0AU97Ol/z6Ep5Yt6i2pnFEdzWZvIfADOaZYzliJQ7mErpG
-X-Google-Smtp-Source: AGHT+IGzOBc1vQHu0QBwklnUCvbjhak188JOOHMbtiFlqkhdFm9lr/bH6DiMEipX26Z4kjyu+6WAGA==
-X-Received: by 2002:a5d:6c6a:0:b0:366:ead8:6019 with SMTP id ffacd0b85a97d-3677571b6c7mr7819432f8f.49.1719931880435;
-        Tue, 02 Jul 2024 07:51:20 -0700 (PDT)
-Received: from [192.168.42.74] ([148.252.146.204])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fba0bsm13413733f8f.69.2024.07.02.07.51.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 07:51:20 -0700 (PDT)
-Message-ID: <8335651b-3296-460a-b9a6-4a36a7ec8bc8@gmail.com>
-Date: Tue, 2 Jul 2024 15:51:27 +0100
+	s=arc-20240116; t=1719931968; c=relaxed/simple;
+	bh=tSHE8RfYTZrZObSZ4n3dnw1aB2inwmeuzWy8iMcpFKQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uJmWhx3uICGzuhlTl5EUNoA7vnQHcpdvdteBbjlHP7Y1+/Ag02V1FY3q5fp5zWT5WlVMInpkrFy4FmGZcOrNQTwYfkCtGmUjJORuN3PDi+l9UFQQ/0AI21AiJInqslmGp1BU7X8wAvfr/Hwf9Z/SDVjy9VeYRyz6P/rp05JRCKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RkfVjZi+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462CT5iA024745;
+	Tue, 2 Jul 2024 14:52:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=Z9nVYaCB7u2uXCVnEetCnG1dSqVjA0GOCHKXm9Nchnw=; b=Rk
+	fVjZi+AAxTUvQLYJTsHeJTmzRmxtxb1S6yOcEt2BeloSF3X99Eg7ntZlwVqlpXnx
+	wsip5K5AXqdwwLzA/4IYXpai2Y/mqONLb7eewrPvtlivy/q1Tw6slskYRetf+NO8
+	gQnPG2oZGHEm/zmMUbedDFr+dWz6fB9nS9G/rVvgQ2VNA822nSIIr4ffyu8csk6H
+	fxXoqbVj8iXwau46AHqLHm5h49UroeZ6anAmSEoYgqpAMGG+NQLdcSdpPH+WAHHs
+	szJwElet6cI9DIIXcBTkDLAStr5TjTFXZJ7MpKMOKKpfgBYuicGWj4ZrvyhZIPCG
+	dpjfBY5CW/V+UOfp0UTg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40297rrqfs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 14:52:38 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462EqbdW022757
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 14:52:37 GMT
+Received: from zijuhu-gv.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 2 Jul 2024 07:52:36 -0700
+From: Zijun Hu <quic_zijuhu@quicinc.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <brgl@bgdev.pl>,
+        <madalin.bucur@nxp.com>, <davem@davemloft.net>,
+        <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 0/5] Collection of my bug fixes and code optimizations for devres
+Date: Tue, 2 Jul 2024 22:51:49 +0800
+Message-ID: <1719931914-19035-1-git-send-email-quic_zijuhu@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v15 10/14] tcp: RX path for devmem TCP
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Nikolay Aleksandrov <razor@blackwall.org>, David Wei <dw@davidwei.uk>,
- Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>,
- Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-References: <20240628003253.1694510-1-almasrymina@google.com>
- <20240628003253.1694510-11-almasrymina@google.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240628003253.1694510-11-almasrymina@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ZRXE4ONug4mvKgMDagh8NzfMF_iDlMH6
+X-Proofpoint-GUID: ZRXE4ONug4mvKgMDagh8NzfMF_iDlMH6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_10,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=820
+ lowpriorityscore=0 clxscore=1015 mlxscore=0 suspectscore=0 spamscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020110
 
-On 6/28/24 01:32, Mina Almasry wrote:
-> In tcp_recvmsg_locked(), detect if the skb being received by the user
-> is a devmem skb. In this case - if the user provided the MSG_SOCK_DEVMEM
-> flag - pass it to tcp_recvmsg_devmem() for custom handling.
-> 
-> tcp_recvmsg_devmem() copies any data in the skb header to the linear
-> buffer, and returns a cmsg to the user indicating the number of bytes
-> returned in the linear buffer.
-> 
-> tcp_recvmsg_devmem() then loops over the unaccessible devmem skb frags,
-> and returns to the user a cmsg_devmem indicating the location of the
-> data in the dmabuf device memory. cmsg_devmem contains this information:
-> 
-> 1. the offset into the dmabuf where the payload starts. 'frag_offset'.
-> 2. the size of the frag. 'frag_size'.
-> 3. an opaque token 'frag_token' to return to the kernel when the buffer
-> is to be released.
-> 
-> The pages awaiting freeing are stored in the newly added
-> sk->sk_user_frags, and each page passed to userspace is get_page()'d.
-> This reference is dropped once the userspace indicates that it is
-> done reading this page.  All pages are released when the socket is
-> destroyed.
+This patch series is to collect all of my recent patches for devres. These
+patches were sent separately for different bug fixes or code optimizations
+but none of them have been merged yet. Therefore, I would like to collect
+them together in order to manage them more easily.
 
-Already gave it in v13, but it got lost
+Zijun Hu (5):
+  devres: Fix devm_krealloc() wasting memory
+  devres: Fix memory leakage caused by driver API devm_free_percpu()
+  devres: Initialize an uninitialized struct member
+  devres: Simplify devm_percpu_match() implementation
+  devres: Correct code style for functions that return a pointer type
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+ drivers/base/devres.c | 39 +++++++++++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 16 deletions(-)
 
+
+base-commit: 6b521fc111a2ad5ead39776960d3d2d289ce0722
 -- 
-Pavel Begunkov
+2.34.1
+
 
