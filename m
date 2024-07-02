@@ -1,167 +1,139 @@
-Return-Path: <linux-kernel+bounces-238067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B7A9242E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:53:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 459469242EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B6FC28B5A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3D5928BA99
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FE71BD01A;
-	Tue,  2 Jul 2024 15:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288EA1BE871;
+	Tue,  2 Jul 2024 15:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CICZtsYR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5Lmh2Hr"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07241BBBD7;
-	Tue,  2 Jul 2024 15:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE791BD02F;
+	Tue,  2 Jul 2024 15:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719935515; cv=none; b=WoNPZn+Tth1RGxGc/A7GdWzCWmMbTskCiFv/8FwSQE4vQ5bhv7BYDfW8+FAhildo7a4kcSpqYMSsYR4BPEpUQh2DDAp0fD+owjhCHr7gUv9b9eNxO2h8NqI0TRLYJTrnaYduY6aDgvrfPol1X+4DeBlBnnzC8CjIWiSr8JwWSqM=
+	t=1719935525; cv=none; b=XxhXwPbTqJummSbgNeqmJFylw43QZpcEXMRzqb3b78eTxr29PpYP4YTyDCo17sizG/VfxsTo58/8lTWAFM/p9bWOmX3yvXmg4AWmYtncqSWEhhc5BYQaE448vUBLfczML6XPmhouhQX4tf+nd9zseDspytia00y6Cfx6y/A2VIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719935515; c=relaxed/simple;
-	bh=SAfYNBxH6Pgtj2iX/+fRfgZXTZ4rbJNocVdHZQRDBBY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=RnRRwUDXM0wmY2UqJ6f3Uld2FkARJMu+HpILMY22LEnnXIJi1Px8JDVSuaiJwQu5YJg0lonPindCQDvXSj3exibOFnMadlZOaVAdYIQDeCRnGldKwvlk7fzGOMyX1/pzxsS4/qc7+z8+ra5jCQON98GKajTF1nz+c8AIkBkwxIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CICZtsYR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462EAQMM004045;
-	Tue, 2 Jul 2024 15:51:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AlJxuN0uquBxhcLM2axp5fy7OGB8bG92FlFPnXA2UOc=; b=CICZtsYRk5i5yICO
-	VJ0O/DGhU5/RckBkx3t9Mx09qsUygFoYK1ysoLoQe7o0fVk7cMeXxLSnYUGXY+iY
-	Qi9tw3oPlkQiOWqcV+h7ITwiagnwOUzTKj96lpQG3eOYd5Uu+gCdKvzfIIcQOp+S
-	i6qMx3sbvMbiz0URGEHUSS5gpf5xoEUFf7kvEeavCQedkQfFWWKaX4LL1DGwvwaS
-	m6b4qOrEZfC6KmJlhhphdtD8UVIrLqRmvvQ1t+liPrUF7rI1hyiB/VTHRB8oxzs6
-	QMKl61oTO7ptMSE9DF8zrTmiRuiI/lirmPyX8b6L7PGC5gP6wCqFWoG7CD9EMKVR
-	/ZFDQQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402ag2gvst-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 15:51:27 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462FpQ66010795
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Jul 2024 15:51:26 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 2 Jul 2024 08:51:21 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Date: Tue, 2 Jul 2024 21:20:44 +0530
-Subject: [PATCH v2 6/6] arm64: dts: qcom: Add camera clock controller for
- sm8150
+	s=arc-20240116; t=1719935525; c=relaxed/simple;
+	bh=vULl7+VDZTZWO0p+Y1boRLwPrR9jVgPMSSnIuOzTPB4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WqxH1olueEZwn+WAWFKm7TDun/XEAzF7hIayRmqT/eepo2Svga3HBT08GxeQtAJRVWhrh2kehnbvW4Tilw1050fM5KRbi3u7KQ9DLAhxLAdbkSQv5EZfKb3sYKsCLdmh/UKu88P9TXkTOWWgCF68tqewJ2pR5WSppxr7k0WKT94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A5Lmh2Hr; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-706b14044cbso3239416b3a.2;
+        Tue, 02 Jul 2024 08:52:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719935523; x=1720540323; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xILFTgKGL//TlB4amQJt93ujxH7DLueHW296/2BvKz8=;
+        b=A5Lmh2Hr3RViNSbfSZWmVaUvdjuUq3/LQ81CrBKdqUPAUZOefgL4jXSa47rLg+KcnL
+         FE/QAQUOsH89XT54jIfwfR6dTEfOkO+oQWV5BqHIo4po+tzD02sXcHjmxVvyZVaa57Hf
+         iDpdJNE9tBpVhx7eMrnrP5mu3fYi4u5pwDctH+lBf+aIvfscLDV54Q71Gj+oYpTf9bVd
+         nAhKgos64x2M4kqb5KbkKO/Eo86ibt6l78G7FT8kBJHQJPb8y+3/SBG5VZEPB9fPblCE
+         4eOStfp/C3ojAmUiQadKv4igLZZeh+r2cuH8Kq9O+cnPv5c7mWlPURfD7R0pfDyqDOA2
+         Hd9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719935523; x=1720540323;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xILFTgKGL//TlB4amQJt93ujxH7DLueHW296/2BvKz8=;
+        b=Yva9a+4Bqh/2mENEy4etZ7YfUfZXYIEQ2XbrHeH4DplZR3glLDlWlxUTZ7r4tWKooi
+         3y83HkJ8JDW095vozaTkMpMCIbXCuB3LiocX9otRTCTJ053Yk/bBUl/xS/rG5uI2hVV+
+         HL0JiPAHrDalhsaPM8UvC3C0rkXAGefVaCa4SH4sgeffXXcs6BNdQdPeBzumoQj9Z1f/
+         nmNo/gx+2KRl2J1/tACOxaIKM8+ctrUa2XosFpoaOUSMsOOEmTDRvCAMOeb8fdiR47yI
+         76Igri6650lqJUVIJIbHwgyeFRHc9bHb2tb4+PiR2hewcDks6G+CJTQ/IbVqOgB0W3uM
+         J45A==
+X-Forwarded-Encrypted: i=1; AJvYcCXst92Pq2H7iVd8iO4Dh68qtTTePoFxNotYb7lxnEc+CsD9mUIkuYCVnYvNXBul8kD5vwpV8YqOWgaNienCR2deppSYG1FoLHGZeMHv
+X-Gm-Message-State: AOJu0YyUIjjEvoF6BsJ96ktYM1O8o6sCtpl4qzSzmiDpRKJMRMMJ7gEF
+	Nffmqs157dHw0VVPvOmTbKY1WbOAP63NN61SrvMVvbDAqY8ipVBs
+X-Google-Smtp-Source: AGHT+IEomOF4JO97SvzdbYgAQYUWY+XqWoXXx/toNzx+tjD+VWggrPgp87K4ZyTjleam9otAPNdCTQ==
+X-Received: by 2002:a05:6a00:b56:b0:705:9992:e7f2 with SMTP id d2e1a72fcca58-70aaad3bff4mr7473560b3a.12.1719935523304;
+        Tue, 02 Jul 2024 08:52:03 -0700 (PDT)
+Received: from [192.168.0.128] ([98.97.103.43])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-708045a69a6sm8668970b3a.165.2024.07.02.08.52.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 08:52:02 -0700 (PDT)
+Message-ID: <16f0d900bff994c1e23fe3862c3953819bf6a63a.camel@gmail.com>
+Subject: Re: [PATCH net-next v9 09/13] net: introduce the
+ skb_copy_to_va_nocache() helper
+From: Alexander H Duyck <alexander.duyck@gmail.com>
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org,  pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet
+	 <edumazet@google.com>
+Date: Tue, 02 Jul 2024 08:52:01 -0700
+In-Reply-To: <20240625135216.47007-10-linyunsheng@huawei.com>
+References: <20240625135216.47007-1-linyunsheng@huawei.com>
+	 <20240625135216.47007-10-linyunsheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240702-camcc-support-sm8150-v2-6-4baf54ec7333@quicinc.com>
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
-In-Reply-To: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Ooo26-ZjI8woBq8UlydhME0zh7Fb4Nwn
-X-Proofpoint-GUID: Ooo26-ZjI8woBq8UlydhME0zh7Fb4Nwn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-02_11,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- malwarescore=0 phishscore=0 impostorscore=0 mlxlogscore=999 bulkscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407020117
 
-Add device node for camera clock controller on Qualcomm
-SM8150 platform.
+On Tue, 2024-06-25 at 21:52 +0800, Yunsheng Lin wrote:
+> introduce the skb_copy_to_va_nocache() helper to avoid
+> calling virt_to_page() and skb_copy_to_page_nocache().
+>=20
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  include/net/sock.h | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>=20
+> diff --git a/include/net/sock.h b/include/net/sock.h
+> index cce23ac4d514..7ad235465485 100644
+> --- a/include/net/sock.h
+> +++ b/include/net/sock.h
+> @@ -2201,6 +2201,21 @@ static inline int skb_copy_to_page_nocache(struct =
+sock *sk, struct iov_iter *fro
+>  	return 0;
+>  }
+> =20
+> +static inline int skb_copy_to_va_nocache(struct sock *sk, struct iov_ite=
+r *from,
+> +					 struct sk_buff *skb, char *va, int copy)
+> +{
+> +	int err;
+> +
+> +	err =3D skb_do_copy_data_nocache(sk, skb, from, va, copy, skb->len);
+> +	if (err)
+> +		return err;
+> +
+> +	skb_len_add(skb, copy);
+> +	sk_wmem_queued_add(sk, copy);
+> +	sk_mem_charge(sk, copy);
+> +	return 0;
+> +}
+> +
+>  /**
+>   * sk_wmem_alloc_get - returns write allocations
+>   * @sk: socket
 
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8155p.dtsi |  4 ++++
- arch/arm64/boot/dts/qcom/sm8150.dtsi  | 13 +++++++++++++
- 2 files changed, 17 insertions(+)
+One minor nit. Rather than duplicate skb_copy_to_page_nocache you would
+be better served to implement this one before it, and then just update
+skb_copy_to_page_nocache to be:
+	return skb_copy_to_va_nocache(sk, from, skb,
+				      page_address(page) + off, copy);
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8155p.dtsi b/arch/arm64/boot/dts/qcom/sa8155p.dtsi
-index ffb7ab695213..52f6019885c1 100644
---- a/arch/arm64/boot/dts/qcom/sa8155p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8155p.dtsi
-@@ -9,6 +9,10 @@
- 
- #include "sm8150.dtsi"
- 
-+&camcc {
-+	power-domains = <&rpmhpd SA8155P_CX>;
-+};
-+
- &dispcc {
- 	power-domains = <&rpmhpd SA8155P_CX>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index a35c0852b5a1..7ea6c5e4f886 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -16,6 +16,7 @@
- #include <dt-bindings/clock/qcom,gpucc-sm8150.h>
- #include <dt-bindings/interconnect/qcom,osm-l3.h>
- #include <dt-bindings/interconnect/qcom,sm8150.h>
-+#include <dt-bindings/clock/qcom,sm8150-camcc.h>
- #include <dt-bindings/thermal/thermal.h>
- 
- / {
-@@ -3722,6 +3723,18 @@ camnoc_virt: interconnect@ac00000 {
- 			qcom,bcm-voters = <&apps_bcm_voter>;
- 		};
- 
-+		camcc: clock-controller@ad00000 {
-+			compatible = "qcom,sm8150-camcc";
-+			reg = <0 0x0ad00000 0 0x10000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_CAMERA_AHB_CLK>;
-+			power-domains = <&rpmhpd SM8150_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		mdss: display-subsystem@ae00000 {
- 			compatible = "qcom,sm8150-mdss";
- 			reg = <0 0x0ae00000 0 0x1000>;
-
--- 
-2.25.1
-
+We can save ourselves at least a few lines of code that way and it
+creates one spot to do any changes.
+			=09
 
