@@ -1,119 +1,122 @@
-Return-Path: <linux-kernel+bounces-237395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F6791F06B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:42:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0319F91F06F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A57FBB24258
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:42:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB3E61F21AE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C42146D43;
-	Tue,  2 Jul 2024 07:42:12 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28F9146D42;
+	Tue,  2 Jul 2024 07:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OshYRO+R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142A0537E7;
-	Tue,  2 Jul 2024 07:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B9D4CB23;
+	Tue,  2 Jul 2024 07:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719906131; cv=none; b=OH8VCf7EBlgHr2SMC/5SglnJ3ZegNZ4c7QTClz6soswiXMTOlYcS9z76A6gdelgyVQA8rJ61y+QRxM63ERIg2qNNNxVuJ4yudfSfAXw5bgDxagd9B6c27OjJKFeWlbtC7fsZEk7oSJN59mbU3Lxent56RMLg2udQoR9K+zWZJK4=
+	t=1719906176; cv=none; b=V7YH7+VRLODwSvZI1MV0RI/rxMnODh+MHue0SsPKfzFhYo/GwGRpoxaBGooy5djsB63npcrsrmgeENQVYsV5m9lRLCoYnoMCa1Dn7y6weGLbavQZ/mIYmtMmyHw6Un26Efs2jF4TWl5y4gpU7gjqAR7pcKB1OI4FCceVXBnibwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719906131; c=relaxed/simple;
-	bh=XYA+tZcK3FwJGaNsBu0yee8YqNCuyxVDT51PYRw1Cik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C5NgcILcQ7hEM8clpBOq9691+8CTnqNkgzBi5lyefkOlLKds3VI0m10xTihBpEZ6m2rztOzMCUIUqBFAUfT2i6cRHmnG6L8bvGLWn9U4FB3AcbiBFJnCrBzU3PhOJGUAmFucYdf8aY0io90j7VlDPl7VXU30WxIL0CM4JkiQZ18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 2D1EE68AFE; Tue,  2 Jul 2024 09:42:04 +0200 (CEST)
-Date: Tue, 2 Jul 2024 09:42:03 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
-	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs >
- system page size
-Message-ID: <20240702074203.GA29410@lst.de>
-References: <20240625114420.719014-1-kernel@pankajraghav.com> <20240625114420.719014-7-kernel@pankajraghav.com>
+	s=arc-20240116; t=1719906176; c=relaxed/simple;
+	bh=b9oO32qfFgklf7sETD8/dcIhc/Mu840qILzRUiMTpP4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=SRVdjxAvNkRauoJP4T7ggZiLCyzJ1I7ArehIkiYDZF2JytK6u6QVs7sq15Od0/xAxs/FnnoLm/0X4cWcofnHuWtxdFOM+vYcdJbWBN4f27gDQMgbIz+6w6jI3EwnWlcLshxm/QG/5ovD1MQAHGFLv01HSbYlkUTgaUmdPDF/zMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OshYRO+R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9194C116B1;
+	Tue,  2 Jul 2024 07:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1719906175;
+	bh=b9oO32qfFgklf7sETD8/dcIhc/Mu840qILzRUiMTpP4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OshYRO+RqtW//uVs0njfZO7RS9kJp7HLUpkuV1+ecHPNjZ4TMDFd+ugEBS0Pi7c1j
+	 4NzTC/LyznWWg2EQLbG1xW5vZ28wBuRKvTHc7rpWhFih0+wqUumCbAP7TXxdJ0vmlT
+	 +XaG2OR5kNm6vFn4gpH1YXOJO7gEKW7cQ4RcGDmU=
+Date: Tue, 2 Jul 2024 00:42:54 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+ tglx@linutronix.de, linux-crypto@vger.kernel.org,
+ linux-api@vger.kernel.org, x86@kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Adhemerval Zanella Netto
+ <adhemerval.zanella@linaro.org>, Carlos O'Donell <carlos@redhat.com>,
+ Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann
+ Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, David
+ Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v19 1/5] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+Message-Id: <20240702004254.3ab2db4a98cb7fdd245407cb@linux-foundation.org>
+In-Reply-To: <20240701135801.3698-2-Jason@zx2c4.com>
+References: <20240701135801.3698-1-Jason@zx2c4.com>
+	<20240701135801.3698-2-Jason@zx2c4.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240625114420.719014-7-kernel@pankajraghav.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 25, 2024 at 11:44:16AM +0000, Pankaj Raghav (Samsung) wrote:
-> -static int __init iomap_init(void)
-> +static int __init iomap_pagecache_init(void)
->  {
->  	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
->  			   offsetof(struct iomap_ioend, io_bio),
->  			   BIOSET_NEED_BVECS);
->  }
-> -fs_initcall(iomap_init);
-> +fs_initcall(iomap_pagecache_init);
+On Mon,  1 Jul 2024 15:57:55 +0200 "Jason A. Donenfeld" <Jason@zx2c4.com> wrote:
 
-s/iomap_pagecache_init/iomap_buffered_init/
+> The vDSO getrandom() implementation works with a buffer allocated with a
+> new system call that has certain requirements:
+> 
+> - It shouldn't be written to core dumps.
+>   * Easy: VM_DONTDUMP.
+> - It should be zeroed on fork.
+>   * Easy: VM_WIPEONFORK.
+> 
+> - It shouldn't be written to swap.
+>   * Uh-oh: mlock is rlimited.
+>   * Uh-oh: mlock isn't inherited by forks.
+> 
+> It turns out that the vDSO getrandom() function has three really nice
+> characteristics that we can exploit to solve this problem:
+> 
+> 1) Due to being wiped during fork(), the vDSO code is already robust to
+>    having the contents of the pages it reads zeroed out midway through
+>    the function's execution.
+> 
+> 2) In the absolute worst case of whatever contingency we're coding for,
+>    we have the option to fallback to the getrandom() syscall, and
+>    everything is fine.
+> 
+> 3) The buffers the function uses are only ever useful for a maximum of
+>    60 seconds -- a sort of cache, rather than a long term allocation.
+> 
+> These characteristics mean that we can introduce VM_DROPPABLE, which
+> has the following semantics:
+> 
+> a) It never is written out to swap.
+> b) Under memory pressure, mm can just drop the pages (so that they're
+>    zero when read back again).
+> c) It is inherited by fork.
+> d) It doesn't count against the mlock budget, since nothing is locked.
+> 
+> This is fairly simple to implement, with the one snag that we have to
+> use 64-bit VM_* flags, but this shouldn't be a problem, since the only
+> consumers will probably be 64-bit anyway.
+> 
+> This way, allocations used by vDSO getrandom() can use:
+> 
+>     VM_DROPPABLE | VM_DONTDUMP | VM_WIPEONFORK | VM_NORESERVE
+> 
+> And there will be no problem with using memory when not in use, not
+> wiping on fork(), coredumps, or writing out to swap.
 
-We don't use pagecache naming anywhere else in the file.
+The patch is impressively comment-free.  It is a little harsh to make
+readers go poking around in the git history to figure out what
+VM_DROPPABLE is, and why it exists.
 
-> +/*
-> + * Used for sub block zeroing in iomap_dio_zero()
-> + */
-> +#define ZERO_PAGE_64K_SIZE (65536)
-
-just use SZ_64K
-
-> +#define ZERO_PAGE_64K_ORDER (get_order(ZERO_PAGE_64K_SIZE))
-
-No really point in having this.
-
-> +static struct page *zero_page_64k;
-
-This should be a folio.  Encoding the size in the name is also really
-weird and just creates churn when we have to increase it.
-
-
-> +	/*
-> +	 * Max block size supported is 64k
-> +	 */
-> +	WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
-
-
-A WARN_ON without actually erroring out here is highly dangerous. 
-
-> +
->  	bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
-
-Overly long line here.
-
-> +
-> +static int __init iomap_dio_init(void)
-> +{
-> +	zero_page_64k = alloc_pages(GFP_KERNEL | __GFP_ZERO,
-> +				    ZERO_PAGE_64K_ORDER);
-
-> +
-> +	if (!zero_page_64k)
-> +		return -ENOMEM;
-> +
-> +	set_memory_ro((unsigned long)page_address(zero_page_64k),
-> +		      1U << ZERO_PAGE_64K_ORDER);
-
-What's the point of the set_memory_ro here?  Yes, we won't write to
-it, but it's hardly an attack vector and fragments the direct map.
+Seems hard to test that this mode is working correctly.  Can you think
+of a way for userspace to check this?  And if so, add it to selftests?
 
 
