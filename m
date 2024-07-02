@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-237950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2599A924115
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:42:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EADE9924117
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D12E21F24258
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:42:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55B78B27B19
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9743C1BA087;
-	Tue,  2 Jul 2024 14:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5FA1BA087;
+	Tue,  2 Jul 2024 14:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7uH0Kax"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZqFDZos4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FDFBE7F;
-	Tue,  2 Jul 2024 14:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6580FBE7F;
+	Tue,  2 Jul 2024 14:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719931372; cv=none; b=BwV4GbGg90Nr2VPnqRbL0jtKgwIpvt6qF0J8ZDxqPSloHWSb6aLJg35OHyJQFQkonW45XVcf/aGiip0LlXUBu5JBTgDd8qBMZSU5wyzsGqpOl9BxseKH8Apstw5ghCWVWAAbTGE0H6EQCriGnNcKzH/ImHaPBvaa3+EWexlBZGo=
+	t=1719931414; cv=none; b=NC2CGjXWUD9tsfASRit8Fy1Ov5csB7zsnq+60Uy4T+/UGDFSzFVPc7JbUyMgGnLBW/AYJ7IlZb7+bUd/do+JsEpNyFxFVV63m5aJCb9sj+9YmUPtkPhkVgssF7fvsch4ZN48AOwZkiRl3TRgWixm/xM7uwD1DvRd4UUbFfEfscE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719931372; c=relaxed/simple;
-	bh=V0uekJLLnO8HH1U4kVAv/bV1cAEF38ni3DMFNyDOaPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GhBYfPfUbMX5MZmFM1nuLIVNcxsjj74f0Ih1BCC64zEtqonQXq05rAlDvxz04CkoelaeiR6Nlxped97mrpS/p8OL4O/MkmyqsqWQdRO00qT1rQuJt14dtfl4HvUV3D3JaKpmIZfF2Pgwl4B7zU7WGzs+YRhbK854IyKxMIQL6r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7uH0Kax; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F544C116B1;
-	Tue,  2 Jul 2024 14:42:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719931371;
-	bh=V0uekJLLnO8HH1U4kVAv/bV1cAEF38ni3DMFNyDOaPg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P7uH0KaxSF/k9vKRkI88LOipINDeNnpeDsRw2riJqFWEdjsJlqjPdmhj7OTigUjyt
-	 XF5cIQPDeaPw+JiwmRzIdhIsLE21xNfbfn/x/gzM5CYGlpJMo921XfbHkaqAH77sti
-	 yQiS1QgDRvj1a+vfhxSIPyuHd0axFp9xEMpAFOLdkc0IjpwvkFXN0g7dodkOQ1NJGI
-	 3pqQvD4ybnm31VrW9Msm9tEHliqwBng5lt4qzT/KM7hsa8ma2KH31gBoAUYfyEhVTn
-	 +qkaWprfYELD0BwYBM3ON5zVG6VFw8Cqfg9SnF7DEeagPTIAXQnOda3j5dB+OTv5H5
-	 FlF2Z+7/KR5lw==
-Date: Tue, 2 Jul 2024 15:42:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
-Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch,
-	dianders@chromium.org, linus.walleij@linaro.org,
-	swboyd@chromium.org, airlied@gmail.com, dmitry.baryshkov@linaro.org,
-	krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-	conor+dt@kernel.org, lvzhaoxiong@huaqin.corp-partner.google.com,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: display: panel: Add compatible for
- melfas lmfbx101117480
-Message-ID: <20240702-unplanned-oat-b4757f618539@spud>
-References: <20240702130138.2543711-1-yangcong5@huaqin.corp-partner.google.com>
- <20240702130138.2543711-2-yangcong5@huaqin.corp-partner.google.com>
+	s=arc-20240116; t=1719931414; c=relaxed/simple;
+	bh=Ewc+Nh03yjPZR+ueWNbFezjcHbaY+TESO4Fc3R9gE1E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b/YbrBI9H9kH7fe1hNr2rP/ZwLbDoo5Mh9kqGi/bwiTZVciH46crU3fAUKaM1/6m1N9XNuuR328c+EWzDCbpcHrfLhbuE9RUT1frw8Gtv3FPNSI5kN765cFBOqF16ebSa7DQGMk5N1uAzpxiXNfQTUCTFrr0lg0tyL3jnGmEk0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=ZqFDZos4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05289C4AF0E;
+	Tue,  2 Jul 2024 14:43:33 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZqFDZos4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1719931411;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zXXeFMq/nRaS9iayRn6IsvflwzLp/kF0XFNwUtC+MBQ=;
+	b=ZqFDZos441mvpYJQ2HrCAPLSQFw0DaHlAIaA649IELznV2d0xJOJFkr80MloEpKUEyTnKJ
+	g0zH2K5CnEhXVMssS1ftcOkVBtb+vv3rvx70zmqGkyQoQrVS0HrCtgYgLKov4kp/vMtBfZ
+	qzSOX33cS57ZQ9QiQVhQYlkOz5+gsPY=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 54d48fee (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 2 Jul 2024 14:43:29 +0000 (UTC)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25c9786835eso2519713fac.3;
+        Tue, 02 Jul 2024 07:43:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXNSWJacyEjIrHe/HuAlnmDeildfHYDRR5nLp1peC7bsiT7RpyDU303t6Iy74pFoRU5AHWrdOUfjRmbyfWOCIENYUgMmpRyq0M4E/JQJVnsqtXE0OZC/pGsfjfOYP9yRGIhVuEDKXMT/Q==
+X-Gm-Message-State: AOJu0Yx+nO4HE58vbgd1c6xcFRENeK/dbnxGJCVlKPzbMiMzIOuKmr54
+	YZCPvoydcJppXWrPTDnOORDYguZY30k9DCq+DnATEMVWrE6LwuSxzeB3WtknfvnOjWf63Arqb7S
+	cw0+Pw4wbVcJuPq5oE+qX1aXm0SQ=
+X-Google-Smtp-Source: AGHT+IGclrLKwuVggXhaPkcX0BzCbOmf+xj1+cgZxD0rVwMU8M8iRW42aSuLffCowufW6GLjoyYsWbtg7xBfCjVAD+I=
+X-Received: by 2002:a05:6870:3751:b0:254:a810:cdf with SMTP id
+ 586e51a60fabf-25db340a2bamr8358777fac.13.1719931408681; Tue, 02 Jul 2024
+ 07:43:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oHUFRZu9Gcv6C1ca"
-Content-Disposition: inline
-In-Reply-To: <20240702130138.2543711-2-yangcong5@huaqin.corp-partner.google.com>
-
-
---oHUFRZu9Gcv6C1ca
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240702165601.08bb4545@canb.auug.org.au>
+In-Reply-To: <20240702165601.08bb4545@canb.auug.org.au>
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Tue, 2 Jul 2024 16:43:17 +0200
+X-Gmail-Original-Message-ID: <CAHmME9rYfTtO9CPGi1nB=ohZ_SBMFocxpB=Ga3cqA54EF8F7Og@mail.gmail.com>
+Message-ID: <CAHmME9rYfTtO9CPGi1nB=ohZ_SBMFocxpB=Ga3cqA54EF8F7Og@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the random tree with the vfs-brauner,
+ ftrace trees
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Christian Brauner <brauner@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 02, 2024 at 09:01:37PM +0800, Cong Yang wrote:
-> The Melfas lmfbx101117480 is a 10.1" WXGA TFT LCD panel with jadard-jd936=
-5da
-> controller. Hence, we add a new compatible with panel specific config.
->=20
-> Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+Hi Stephen,
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+On Tue, Jul 2, 2024 at 8:56=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+>  +466   n32     removexattrat                   sys_removexattrat
+> ++468   n32     vgetrandom_alloc                sys_vgetrandom_alloc
 
---oHUFRZu9Gcv6C1ca
-Content-Type: application/pgp-signature; name="signature.asc"
+Wondering why 467 was skipped.
 
------BEGIN PGP SIGNATURE-----
+Also, any chance you can let me keep 463 and shift the others (unless
+Christian objects)? Or does it not really matter anyway because Linus
+is gonna merge this how he wants, separately from what you do in
+-next?
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoQR5gAKCRB4tDGHoIJi
-0lP/AP9hjJ3cSdPG0aEpu2VcKOIuGrQ1XIWAreUik6m9rgLemwEApSrqFpUqtJ23
-JH+naFm1JeFIQn25OcRek7vQecXFLwg=
-=MFC5
------END PGP SIGNATURE-----
-
---oHUFRZu9Gcv6C1ca--
+Jason
 
