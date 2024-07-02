@@ -1,62 +1,51 @@
-Return-Path: <linux-kernel+bounces-237270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0420C91EE5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:36:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A34191EE63
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8274F1F22A93
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:36:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA68728378A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E420F35280;
-	Tue,  2 Jul 2024 05:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027425A110;
+	Tue,  2 Jul 2024 05:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a3yd34JE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="N7bKrAr2"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8048329CFE
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 05:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36513D548;
+	Tue,  2 Jul 2024 05:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719898592; cv=none; b=RaLMuuDT14794X/NiAiQ7JJ8Qn1uPkGXtskxsIGzUgRVXIJXgmGHKeAe2ZAYtFB5bfmPd+9p3XOUDqfxeeGDGpxgLyr79p8GHYfORHsQw+WA6fEOZV7lABUmt/mC5kxEt2Lkc6aAkorXGtjpKRD+zTokg/tVufkJuH04OEcOpZI=
+	t=1719898641; cv=none; b=jdFplU/ECBwfugav6HansAePBdmXpfNZIBZLp1yAuT3n1TbrJaU+wXg5GKSmVnD+hO+aE7ckGx7xp7VZMRFc/q41LCMRnXhcpsIQkH0ys4UcV5EJvlJq22J+1IvT69cRh4cFBBRbXXfSFWipzCmh26SQdGjcZJjiFs7rFTX1S5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719898592; c=relaxed/simple;
-	bh=sL5nzFeaxwlUGFSlwQnB4VkaZsUf0L92v3A8Fkt7R5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kUtNA+e29ruWN7MmtAR30q0dVllBzODKrhrsW73aeabual4RllhDjdOatz/nODSoF9EDzznJgZeWjT8vmtv8skY2GNjp9EF0ZbQEdLaPsRLEjzEN1zrV6kTSLduJrrZ/Lm91PrmOLXiRRsdsJ7R4JSc6K1zm4ELFRgo/DC0iYBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a3yd34JE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461KuP4d002759;
-	Tue, 2 Jul 2024 05:36:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LSixqxhbZGIwo80cuabU965GEJrQdlG8pqBF8SD3JEw=; b=a3yd34JEosgTBsPS
-	tT15XW997sCFbwp6pxhDa00e0CPMrrVitcAzafZRJeaYbnOl9X/6BpykT51XVgeQ
-	JZdCUx36fNsjztPZnHsifXFfrq93Ig7Tw3O6xplaEOy1gkpn64j8pGxtY+VfEbP2
-	SUdXA8t+VUmCBpiR4qE385UbYD3mk8g11N/964k5RHH1DduhtrIAH+fJCDpGUY9D
-	ZRb6/6aqp+rCVQpf1HmI9d0f0RjXoLRloXmi/Q+wIeYkp0Ph4X1oq5mDYOO49Zmx
-	cxYzV0FUtdpx17hM2+hpfNgJeIuV+Pz0p62G2EPba6RahQSk5BvkefNINikLSLO6
-	OddMmg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4027yf6dsc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 05:36:26 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4625aQnC015632
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Jul 2024 05:36:26 GMT
-Received: from [10.253.33.75] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 1 Jul 2024
- 22:36:25 -0700
-Message-ID: <0c0a3ccf-82d0-4690-9a64-1bd26a69196e@quicinc.com>
-Date: Tue, 2 Jul 2024 13:36:22 +0800
+	s=arc-20240116; t=1719898641; c=relaxed/simple;
+	bh=16pWVQDlV3oMxIYcAJWP63TGtGj5GzcFV1gJpcFFfU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bqzGakV/Mupa1j1FwbvYIggT7deS7wjpEHP/F3QPRIx++kNfCOZDopnfvlhlhBlUC1g2B+WERTgYzEIMB9npFa/e6qwpfmB1z3eibqKwmCFnRuC8q84PsG9ht58pKGohty3C3xfsh1qvitSxwy7TigR2Ra/cAG/lE01+hQR4VzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=N7bKrAr2; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=DS77JC9w8wcnStim2W/xitvraXik/3HNJqyNkDayJog=;
+	t=1719898639; x=1720330639; b=N7bKrAr2jZFhWWJg3MaE1vvqSt9XZbCWHIbSiBIIOWWwuTe
+	rNtukRTtpO115hOHSdFI5XF9LlkZbl7e2i0/JV+s4fp6U7NHJcuISmRbYMGMofYmIG8U+2DGNpkY6
+	+v77NiPXsblmvgp7DvBRBNQL+SBHFxYKxzhY+LuJy24w/PUANPzOjtGFenImkMKUzCWPzXOVBbdqz
+	4R2AcCyKP3/O/ojTLnIc2B7Z77Bvs8Zbm4QVbMz3ENdz74DxbcIyQNvALcTlIE4kzZutXYWT1Gpia
+	Nv4qw5VAsKLurRRZ6OZToFyEJf8p3oaLrxZP8xyNJ3RjjITaBqsppX1AfhMMeqgw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sOWCX-0005Ro-VY; Tue, 02 Jul 2024 07:37:14 +0200
+Message-ID: <08aabeaf-6a81-48a9-9c5b-82a69b071faa@leemhuis.info>
+Date: Tue, 2 Jul 2024 07:37:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,57 +53,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Summarize my recent devres changes for code review and merging
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: LKML <linux-kernel@vger.kernel.org>, <rafael@kernel.org>
-References: <d2a150dc-1bac-4be2-a19a-d9dc6296e810@quicinc.com>
- <2024070248-those-rearview-ac34@gregkh>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <2024070248-those-rearview-ac34@gregkh>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: Kernel hang caused by commit "can: m_can: Start/Cancel polling
+ timer together with interrupts"
+To: Markus Schneider-Pargmann <msp@baylibre.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+ Marc Kleine-Budde <mkl@pengutronix.de>,
+ Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Tony Lindgren <tony@atomide.com>, Judith Mendez <jm@ti.com>,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux@ew.tq-group.com
+References: <e72771c75988a2460fa8b557b0e2d32e6894f75d.camel@ew.tq-group.com>
+ <c93ab2cc-d8e9-41ba-9f56-51acb331ae38@leemhuis.info>
+ <h7lmtmqizoipzlazl36fz37w2f5ow7nbghvya3wu766la5hx6d@3jdesa3ltmuz>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <h7lmtmqizoipzlazl36fz37w2f5ow7nbghvya3wu766la5hx6d@3jdesa3ltmuz>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZthW61HIkMLAk3Bwye4l_u7gv098NS0u
-X-Proofpoint-ORIG-GUID: ZthW61HIkMLAk3Bwye4l_u7gv098NS0u
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-02_02,2024-07-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0 impostorscore=0
- clxscore=1015 malwarescore=0 suspectscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407020040
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1719898639;2ce6bdd2;
+X-HE-SMSGID: 1sOWCX-0005Ro-VY
 
-On 7/2/2024 1:33 PM, Greg KH wrote:
-> On Tue, Jul 02, 2024 at 06:48:04AM +0800, quic_zijuhu wrote:
->> I would like to summarize my recent patches for devres as following:
+On 01.07.24 16:34, Markus Schneider-Pargmann wrote:
+> On Mon, Jul 01, 2024 at 02:12:55PM GMT, Linux regression tracking (Thorsten Leemhuis) wrote:
+>> [CCing the regression list, as it should be in the loop for regressions:
+>> https://docs.kernel.org/admin-guide/reporting-regressions.html]
 >>
->> [PATCH v2] devres: Fix devm_krealloc() allocating memory with wrong size
->> https://lore.kernel.org/lkml/1718537455-20208-1-git-send-email-quic_zijuhu@quicinc.com/
+>> Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
+>> for once, to make this easily accessible to everyone.
 >>
->> [PATCH v1] devres: Fix memory leakage due to driver API devm_free_percpu()
->> https://lore.kernel.org/lkml/1718804281-1796-1-git-send-email-quic_zijuhu@quicinc.com/
+>> Hmm, looks like there was not even a single reply to below regression
+>> report. But also seens Markus hasn't posted anything archived on Lore
+>> since about three weeks now, so he might be on vacation.
 >>
->> [PATCH v1] devres: Correct code style for functions that return a
->> pointer type
->> https://lore.kernel.org/lkml/1718631689-11929-1-git-send-email-quic_zijuhu@quicinc.com/
->>
->> [PATCH v3] devres: Initialize a uninitialized struct member
->> https://lore.kernel.org/lkml/1719871765-14774-1-git-send-email-quic_zijuhu@quicinc.com/
->>
->> [PATCH v2] devres: Simplify devm_percpu_match() implementation
->> https://lore.kernel.org/lkml/1719871779-14818-1-git-send-email-quic_zijuhu@quicinc.com/
+>> Marc, do you might have an idea what's wrong with the culprit? Or do we
+>> expected Markus to be back in action soon?
 > 
-> Please submit a patch series for all of these, that would make managing
-> them much easier, don't you think?
-> 
-good suggestion, will do it, thank you.
-> thanks,
-> 
-> greg k-h
+> Great, ping here.
 
+Thx for replying!
+
+> @Matthias: Thanks for debugging and sorry for breaking it. If you have a
+> fix for this, let me know. I have a lot of work right now, so I am not
+> sure when I will have a proper fix ready. But it is on my todo list.
+
+Thx. This made me wonder: is "revert the culprit to resolve this quickly
+and reapply it later together with a fix" something that we should
+consider if a proper fix takes some time? Or is this not worth it in
+this case or extremely hard? Or would it cause a regression on it's own
+for users of 6.9?
+
+Ciao, Thorsten
+
+>> On 18.06.24 18:12, Matthias Schiffer wrote:
+>>> Hi Markus,
+>>>
+>>> we've found that recent kernels hang on the TI AM62x SoC (where no m_can interrupt is available and
+>>> thus the polling timer is used), always a few seconds after the CAN interfaces are set up.
+>>>
+>>> I have bisected the issue to commit a163c5761019b ("can: m_can: Start/Cancel polling timer together
+>>> with interrupts"). Both master and 6.6 stable (which received a backport of the commit) are
+>>> affected. On 6.6 the commit is easy to revert, but on master a lot has happened on top of that
+>>> change.
+>>>
+>>> As far as I can tell, the reason is that hrtimer_cancel() tries to cancel the timer synchronously,
+>>> which will deadlock when called from the hrtimer callback itself (hrtimer_callback -> m_can_isr ->
+>>> m_can_disable_all_interrupts -> hrtimer_cancel).
+>>>
+>>> I can try to come up with a fix, but I think you are much more familiar with the driver code. Please
+>>> let me know if you need any more information.
+>>>
+>>> Best regards,
+>>> Matthias
+>>>
+>>>
+> 
+> 
 
