@@ -1,321 +1,195 @@
-Return-Path: <linux-kernel+bounces-237416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E464E91F0C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:05:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4B291EF36
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 648D71F22E9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:05:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A32B61C2346C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBB814A4ED;
-	Tue,  2 Jul 2024 08:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8440012E1F9;
+	Tue,  2 Jul 2024 06:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RTBGHitW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dKW6zci5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RTBGHitW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dKW6zci5"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oIjAB7W6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEE9148311
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 08:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6934D60BBE;
+	Tue,  2 Jul 2024 06:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719907513; cv=none; b=fEzjhfEOR4ZGeDI2MG1IOZawj38uWLKifC86yedPPPJH9YQ+dwybKX21rH37IEKJLtujDVFjD30Y4CHdeJIXnKRBGg+emDpOJhBe8DD2206NAe9XMt9tKEqORtfukzTJycI+o5qybaOSlPHRFRXz9ESeJFhRR31WnRsl39mKxa4=
+	t=1719902383; cv=none; b=VqFfkry2W3pcQz6jcSlEqDFdTTOA5SqiYcohz3ys6hORx1LfHSr/aOxz+j87BqWgfWuqzJ3SJa72AMsYb0mA3ATgfPdbNUqTjQj3Vsch/wflS22twe+YFa/XwHMKgrBohOgqFrrOM/THhoPL4Td1SJWHkxzejbrWRQA/W40GbAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719907513; c=relaxed/simple;
-	bh=uHshY5ZIv3p3Jh7cuyYnOBpj3swZLswx0qFVfsD4i68=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qKfncyAIMbWEvKTRLQ6z8hGmDM2JnjE+E2iOjaqlV7+IlAktL95rxMmG0aJVJ3fVjn0qsuglcL8EuUtRnewshOnwPviPa/dQW06kgNo3kpvAiZ8F2+Ev2GXZMhkVYUCEIazDldbEz7C8tmkAaDv+kqbiWjJgE/R5+4Zq1F94LLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RTBGHitW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dKW6zci5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RTBGHitW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dKW6zci5; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5B49C1FB8F;
-	Tue,  2 Jul 2024 08:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719907509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iaxLyCKlDQhNKH+7Ea3S4IE1W/oYFYWQH/On61mLNw8=;
-	b=RTBGHitWX7TymI7Is1X1tpbfyQrkXthWXets1YKdAZbiz3kvfpSdoNM5gY0mvjJ9TWLElm
-	ja2mdul+90eBBEkzB4tINp++C/hd+Ec0RHUF/J0EdOXjtKhNj6VXgHHOg/7MHVSRaKRQ6j
-	MlVSL9f2/h3RzqKV2WTzJjEhftqMx6E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719907509;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iaxLyCKlDQhNKH+7Ea3S4IE1W/oYFYWQH/On61mLNw8=;
-	b=dKW6zci5a1Mmu3g15T8Te2tgJZg9pEw9q+gSHLmX11Q959VOpGL15m5/F9oG6VsfxIVLcR
-	P5mhpX5kR1Xw26DQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RTBGHitW;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=dKW6zci5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719907509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iaxLyCKlDQhNKH+7Ea3S4IE1W/oYFYWQH/On61mLNw8=;
-	b=RTBGHitWX7TymI7Is1X1tpbfyQrkXthWXets1YKdAZbiz3kvfpSdoNM5gY0mvjJ9TWLElm
-	ja2mdul+90eBBEkzB4tINp++C/hd+Ec0RHUF/J0EdOXjtKhNj6VXgHHOg/7MHVSRaKRQ6j
-	MlVSL9f2/h3RzqKV2WTzJjEhftqMx6E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719907509;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iaxLyCKlDQhNKH+7Ea3S4IE1W/oYFYWQH/On61mLNw8=;
-	b=dKW6zci5a1Mmu3g15T8Te2tgJZg9pEw9q+gSHLmX11Q959VOpGL15m5/F9oG6VsfxIVLcR
-	P5mhpX5kR1Xw26DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0823A13A9A;
-	Tue,  2 Jul 2024 08:05:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9V2/ALW0g2Z6EQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 02 Jul 2024 08:05:09 +0000
-Message-ID: <5ccc62fe-3b44-487b-b807-412921395601@suse.de>
-Date: Tue, 2 Jul 2024 10:05:08 +0200
+	s=arc-20240116; t=1719902383; c=relaxed/simple;
+	bh=yS6+toy5gDTjIQbeVctj+axI5oUwmnO5GhkB03VeDZ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fdVU1e1eZhVBTb9ZFxKOkAbLkw6x/sLigIwzAv382EioZy/cudfVWB58dxTZ6FkmGt4ZDwoHlQjrCghpsr4QND9NJoEU8Ajt6dXbi0uw2opQlS1AW2kluon0KUDiQguAfagbIM/FgEdZmJI3toX8rUkZRWWYfcozs0Z7b39LRZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oIjAB7W6; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719902383; x=1751438383;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yS6+toy5gDTjIQbeVctj+axI5oUwmnO5GhkB03VeDZ0=;
+  b=oIjAB7W6+ydK9iQTvTPRNbjM1o4+LH4XDBp1TKL+g22ssvek4PmaL4yU
+   LB2wpkA/RNr9GDt0HR8wFNEV8CGpMyd5H0uNkcPylNRzzKjid2TOzhkOj
+   nrUQQIX+FpciYxnZoudYUslGlvWLjezcrKuZqHnYKycNs/zBzLNI9wsE3
+   IR1oHj3hKHrsXMsPYhT2m/f+SQ4ZUsRCTm400PrYMPYbUoQw5G/h+ejSK
+   JlxrOZuoRL8hNiqr4AAAOnDz5nABo90hAzcyCDCV5YmonNMmLpaEkEz7w
+   Zs42+IJ/RiP4AxOJqUPuHQ3T79C3k63es0uDY4jWkQqSD2Em1g2sE601Q
+   Q==;
+X-CSE-ConnectionGUID: z4vfzI7wRbKIavAWhwwTfQ==
+X-CSE-MsgGUID: d3YiEFkEQkyfMcYSBVBkcQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="20868273"
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="20868273"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 23:39:41 -0700
+X-CSE-ConnectionGUID: 8Pwl+vYTTnKPiPDhAHgykA==
+X-CSE-MsgGUID: 7Gd7uE/ESgOeuonmI7jdaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="45926326"
+Received: from unknown (HELO dell-3650.sh.intel.com) ([10.239.159.147])
+  by orviesa009.jf.intel.com with ESMTP; 01 Jul 2024 23:39:37 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yanfei Xu <yanfei.xu@intel.com>,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH 0/4] Bug fixes on topdown metrics group leader selection
+Date: Wed,  3 Jul 2024 06:40:33 +0800
+Message-Id: <20240702224037.343958-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] QXL display malfunction
-To: Linux regressions mailing list <regressions@lists.linux.dev>,
- "Kaplan, David" <David.Kaplan@amd.com>
-Cc: "Petkov, Borislav" <Borislav.Petkov@amd.com>,
- "zack.rusin@broadcom.com" <zack.rusin@broadcom.com>,
- "dmitry.osipenko@collabora.com" <dmitry.osipenko@collabora.com>,
- "Koenig, Christian" <Christian.Koenig@amd.com>,
- Dave Airlie <airlied@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- ML dri-devel <dri-devel@lists.freedesktop.org>,
- "spice-devel@lists.freedesktop.org" <spice-devel@lists.freedesktop.org>,
- "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>
-References: <DS7PR12MB576622398096CB650FF6AF4294FF2@DS7PR12MB5766.namprd12.prod.outlook.com>
- <DS7PR12MB57665F9F4BDF0598D7CC53DD94FF2@DS7PR12MB5766.namprd12.prod.outlook.com>
- <67b279c7-1b65-46be-baa2-06794b47b9d1@leemhuis.info>
- <ab0fb17d-0f96-4ee6-8b21-65d02bb02655@suse.de>
- <DS7PR12MB57662053B081FBD62213016B94C22@DS7PR12MB5766.namprd12.prod.outlook.com>
- <e0d95288-17b4-4286-8084-95f496603ada@leemhuis.info>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <e0d95288-17b4-4286-8084-95f496603ada@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 5B49C1FB8F
-X-Spam-Score: -5.50
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-5.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+Content-Transfer-Encoding: 8bit
+
+when counting/sampling topdown slots and metrics events, the following
+issues are found.
+
+a. incorrect sampling leader selection if group only contains topdown
+slots event without topdown metrics event, such as
+
+perf record -e '{slots,branches}:S' -c 10000 -vv sleep 1
+
+In this case, the slots event should be sampled as leader but the
+branches event is sampled in fact like the verbose output shows.
+
+perf_event_attr:
+  type                             4 (cpu)
+  size                             168
+  config                           0x400 (slots)
+  sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+  read_format                      ID|GROUP|LOST
+  disabled                         1
+  sample_id_all                    1
+  exclude_guest                    1
+------------------------------------------------------------
+sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
+------------------------------------------------------------
+perf_event_attr:
+  type                             0 (PERF_TYPE_HARDWARE)
+  size                             168
+  config                           0x4 (PERF_COUNT_HW_BRANCH_INSTRUCTIONS)
+  { sample_period, sample_freq }   10000
+  sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+  read_format                      ID|GROUP|LOST
+  sample_id_all                    1
+  exclude_guest                    1
+
+b. Fail to run the perf command
+
+perf record -e "{slots,instructions,topdown-retiring}:S" -vv -C0 sleep 1
+
+------------------------------------------------------------
+perf_event_attr:
+  type                             4 (cpu)
+  size                             168
+  config                           0x400 (slots)
+  sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
+  read_format                      ID|GROUP|LOST
+  disabled                         1
+  sample_id_all                    1
+  exclude_guest                    1
+------------------------------------------------------------
+sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
+------------------------------------------------------------
+perf_event_attr:
+  type                             4 (cpu)
+  size                             168
+  config                           0x8000 (topdown-retiring)
+  { sample_period, sample_freq }   4000
+  sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
+  read_format                      ID|GROUP|LOST
+  freq                             1
+  sample_id_all                    1
+  exclude_guest                    1
+------------------------------------------------------------
+sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8
+sys_perf_event_open failed, error -22
+
+Error:
+The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (topdown-retiring).
+
+Perf tool tries to regroup the events and move topdown-retiring event
+closely after slots event and leads to topdown-retiring event is select
+to sample. This is incorrect.
+
+c. unnecessary events regroup for the group which only has slots event
+but without topdown metrics events, such as
+
+perf stat -e "{instructions,slots}" -C 0 sleep 1
+WARNING: events were regrouped to match PMUs
+
+ Performance counter stats for 'CPU(s) 0':
+
+        27,581,148      slots
+         8,390,827      instructions
+
+       1.045546595 seconds time elapsed
+
+Obviously, this events regroup is unnecessary.
+
+The patches 1-3 separately fixes the above 3 issues in order and the
+patch 4/4 adds a new perf test to verify the leader sampling.
 
 
-Am 01.07.24 um 12:02 schrieb Linux regression tracking (Thorsten Leemhuis):
-> Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-> for once, to make this easily accessible to everyone.
->
-> Thomas, was there some progress wrt to fixing below regression? I might
-> have missed something, but from here it looks like this fall through the
-> cracks.
+Dapeng Mi (4):
+  perf topdown: Correct leader selection with sample_read enabled
+  perf parse-events: Don't move topdown metrics events when sorting
+    events
+  perf parse-events: Don't move slots event when no topdwon metrics
+    event
+  perf tests: Add leader sampling test in record tests
 
-Thanks for reminding.
+ tools/perf/arch/x86/util/evlist.c  | 11 ++++------
+ tools/perf/arch/x86/util/topdown.c | 16 ++++++++++++--
+ tools/perf/tests/shell/record.sh   | 28 ++++++++++++++++++++++++
+ tools/perf/util/evlist.h           |  7 +++++-
+ tools/perf/util/parse-events.c     | 35 ++++++++++++++++++------------
+ 5 files changed, 73 insertions(+), 24 deletions(-)
 
 
->
-> Makes me wonder if we should temporarily revert this for now to fix this
-> for rc7 and ensure things get at least one week of testing before the final.
->
-> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
-> --
-> Everything you wanna know about Linux kernel regression tracking:
-> https://linux-regtracking.leemhuis.info/about/#tldr
-> If I did something stupid, please tell me, as explained on that page.
->
-> #regzbot poke
->
-> On 14.06.24 15:45, Kaplan, David wrote:
->> [AMD Official Use Only - AMD Internal Distribution Only]
->>
->>> -----Original Message-----
->>> From: Thomas Zimmermann <tzimmermann@suse.de>
->>> Sent: Wednesday, June 12, 2024 9:26 AM
->>> To: Linux regressions mailing list <regressions@lists.linux.dev>
->>> Cc: Petkov, Borislav <Borislav.Petkov@amd.com>;
->>> zack.rusin@broadcom.com; dmitry.osipenko@collabora.com; Kaplan, David
->>> <David.Kaplan@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>;
->>> Dave Airlie <airlied@redhat.com>; Maarten Lankhorst
->>> <maarten.lankhorst@linux.intel.com>; Maxime Ripard
->>> <mripard@kernel.org>; LKML <linux-kernel@vger.kernel.org>; ML dri-devel
->>> <dri-devel@lists.freedesktop.org>; spice-devel@lists.freedesktop.org;
->>> virtualization@lists.linux.dev
->>> Subject: Re: [REGRESSION] QXL display malfunction
->>>
->>> Caution: This message originated from an External Source. Use proper
->>> caution when opening attachments, clicking links, or responding.
->>>
->>>
->>> Hi
->>>
->>> Am 12.06.24 um 14:41 schrieb Linux regression tracking (Thorsten Leemhuis):
->>>> [CCing a few more people and lists that get_maintainers pointed out
->>>> for qxl]
->>>>
->>>> Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
->>>> for once, to make this easily accessible to everyone.
->>>>
->>>> Thomas, from here it looks like this report that apparently is caused
->>>> by a change of yours that went into 6.10-rc1 (b33651a5c98dbd
->>>> ("drm/qxl: Do not pin buffer objects for vmap")) fell through the
->>>> cracks. Or was progress made to resolve this and I just missed this?
->>>>
->>>> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker'
->>>> hat)
->>>> --
->>>> Everything you wanna know about Linux kernel regression tracking:
->>>> https://linux-regtracking.leemhuis.info/about/#tldr
->>>> If I did something stupid, please tell me, as explained on that page.
->>>>
->>>> #regzbot poke
->>>>
->>>>
->>>> On 03.06.24 04:29, Kaplan, David wrote:
->>>>>> -----Original Message-----
->>>>>> From: Kaplan, David
->>>>>> Sent: Sunday, June 2, 2024 9:25 PM
->>>>>> To: tzimmermann@suse.de; dmitry.osipenko@collabora.com; Koenig,
->>>>>> Christian <Christian.Koenig@amd.com>; zach.rusin@broadcom.com
->>>>>> Cc: Petkov, Borislav <Borislav.Petkov@amd.com>;
->>>>>> regressions@list.linux.dev
->>>>>> Subject: [REGRESSION] QXL display malfunction
->>>>>>
->>>>>> Hi,
->>>>>>
->>>>>> I am running an Ubuntu 19.10 VM with a tip kernel using QXL video
->>>>>> and I've observed the VM graphics often malfunction after boot,
->>>>>> sometimes failing to load the Ubuntu desktop or even immediately
->>> shutting the guest down.
->>>>>> When it does load, the guest dmesg log often contains errors like
->>>>>>
->>>>>> [    4.303586] [drm:drm_atomic_helper_commit_planes] *ERROR* head
->>> 1
->>>>>> wrong: 65376256x16777216+0+0
->>>>>> [    4.586883] [drm:drm_atomic_helper_commit_planes] *ERROR* head
->>> 1
->>>>>> wrong: 65376256x16777216+0+0
->>>>>> [    4.904036] [drm:drm_atomic_helper_commit_planes] *ERROR* head
->>> 1
->>>>>> wrong: 65335296x16777216+0+0
->>> I don't see how these messages are related. Did they already appear before
->>> the broken commit was there?
->> No, I did not observe them prior to the broken commit.
->>
->>>>>> [    5.374347] [drm:qxl_release_from_id_locked] *ERROR* failed to find
->>> id in
->>>>>> release_idr
->>> Is there only one such message in the log? Or multiple/frequent ones.
->> I would usually only see one.
->>
->>> Could you provide a stack trace of what happens before?
->> Here's the top of a backtrace when the error occurs:
->> #0  qxl_release_from_id_locked (qdev=qdev@entry=0xffff88810126e000, id=id@entry=262151)
->>      at drivers/gpu/drm/qxl/qxl_release.c:373
->> #1  0xffffffff819f5b6a in qxl_garbage_collect (qdev=0xffff88810126e000)
->>      at drivers/gpu/drm/qxl/qxl_cmd.c:222
->> #2  0xffffffff810e3aa8 in process_one_work (worker=worker@entry=0xffff888101680300,
->>      work=0xffff88810126f340) at kernel/workqueue.c:3231
->> #3  0xffffffff810e6281 in process_scheduled_works (worker=<optimized out>)
->>      at kernel/workqueue.c:3312
->> #4  worker_thread (__worker=0xffff888101680300) at kernel/workqueue.c:3393
->>
->>> We sometimes draw into the buffer object from the CPU. For accessing the
->>> buffer object's pages from the CPU, only a vmap operation should be
->>> necessary. It appears as if qxl also requires a pin. My guess is that the pin
->>> inserts the buffer-object's host-side pages and the code around
->>> qxl_release_from_id_locked() appears to be garbage-collecting them.
->>> Hence without the pin, the GC complains about inconsistent state.
->>>>>> I bisected the issue down to "drm/qxl: Do not pin buffer objects for
->>> vmap"
->>>>>> (b33651a5c98dbd5a919219d8c129d0674ef74299).
->>> Thanks for bisecting. Does it work if you revert that commit?
->> Yes
->>
->> Thanks --David Kaplan
-
+base-commit: 73e931504f8e0d42978bfcda37b323dbbd1afc08
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+2.40.1
 
 
