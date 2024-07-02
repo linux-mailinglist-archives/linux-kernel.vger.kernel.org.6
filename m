@@ -1,157 +1,184 @@
-Return-Path: <linux-kernel+bounces-238036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E537924273
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:32:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A95E92427B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 858B5B21F5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:32:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCDCB1C20FCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA021BBBFD;
-	Tue,  2 Jul 2024 15:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C701BC06C;
+	Tue,  2 Jul 2024 15:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="h2n2xVeH"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHlopjPf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950FA1AD9E7;
-	Tue,  2 Jul 2024 15:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D4216C69A;
+	Tue,  2 Jul 2024 15:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934358; cv=none; b=MDxhIMAQEOeaSTy1PlvtKQJB+dWoT2ffgovXKqgw2IHZSqtN4d1pmpWBxhJws1+NRQ1KCUeBMdI8M2TcKENdQr+OokVA0aaJVDJe89HlMjwS28zEmkuf2d7c0+qCqOMmpIDxe0CH21f1TkTdXn/zCu8jlWyvB9fKnkVpO+FefUM=
+	t=1719934488; cv=none; b=VVcRLJWO+KnCIlx3Oczto1mGT9INS4KbmRowqFoEWwwybfZkjMh4iYxeUQhfVEB6ZrUA7NFTpOTqLQdTjVCMQi4r91Q66/RTLaNJj105bkYnT6v40LC4P3Z1WwRcN9YNRoUi7Az1Nl6eKMDWu6hjvFL5W5Cg0gQ3bqjUp6W1WoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934358; c=relaxed/simple;
-	bh=QwdTvN2w8magt7NV4w0a71FnxDWn0zOLPn5PX026wl8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Na58O1Zq13M9YnVoWXJ2UrJu0Jtk6tGWXqzQz84BFL1jQKc48N4XQZkEnXshfvx38PY86WC8rSApRBMZ+fdNcqX0+i0WuTitgMFVRJvuV+TGMDppuZv7vNxrX70AYn+FsxFIxG71wd+ysO4Yu3sFMVDG2V6g3TNRWtrsjCDRKCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=h2n2xVeH; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1719934355;
-	bh=QwdTvN2w8magt7NV4w0a71FnxDWn0zOLPn5PX026wl8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h2n2xVeHYDmTWHWbKVMllVb6cRZHs5fiOSf7bi9PYgEEZVm8jkjVKod71hfQo6A8h
-	 XOtbqnDjrQM199DOGtUHU0k+x0qCU/Jk+9MmKQu4Yzyms6RZI33rgZpgM79N3JvsmF
-	 0JLefZAE/V21nGW2O1ueXJci2nWV0F6nGXj2gtVI0CwhvGn7RAf7sUrxlOi2w8lgGi
-	 dFCUWA6NSwRAjSanmGa5gOymcS3If55BMuGO0XHrC061gV/UkyzJB8F5ZFvyU7PAnn
-	 A6DFpOp+4p69y/H6tG8L9YXTRWZ6BLlN6asisrhYM3jRxKDQZELszKKzYq2VXEGBSo
-	 8Bzgy9TUScy5A==
-Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WD6Ng1CKcz187J;
-	Tue,  2 Jul 2024 11:32:35 -0400 (EDT)
-Message-ID: <cb02f5a0-d6a3-4228-9cbb-473fd392ee48@efficios.com>
-Date: Tue, 2 Jul 2024 11:32:53 -0400
+	s=arc-20240116; t=1719934488; c=relaxed/simple;
+	bh=+dYiFmhmoQq6ipJE6mlBFSYVxPXJIa9oBX8SvQ1Od/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jLyFjAEV3MNgj9UJPmTr1vdCqITzNJ63m/qOhxjtrU88jn5mY6r6pLnRn5M0j5kr6/3bBKA4fPndoIvoEZ1CtzT8+Lxc1corcOgeQWu5encfn4cCP2mxjTtk4D3DeV1cLSCpVbYsQfSETMxWjafKWsrKq3OzxGjdPYskj0FyVYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHlopjPf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F94C116B1;
+	Tue,  2 Jul 2024 15:34:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719934487;
+	bh=+dYiFmhmoQq6ipJE6mlBFSYVxPXJIa9oBX8SvQ1Od/0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aHlopjPfwKNLP8sg48SSnpmQ5D4dZ5ylFVdez1Wv3FlKTOo5st+VquVoSvYCuDngm
+	 CQQ91dB4rDedUSUmeu3oHUw84DE9Y5lZk+8YqwrLFvALUgnkXDXMF/pUDylGL7YwVt
+	 rDbDfwbJbaLW/YBG5xoHocFBZaoelikmsCqlrKGc872N+PgViLLKu23JsEYt6nY49g
+	 vmFtWis0SaLdjhp1krsTKDI7tjmLWl9TryPOlT/HidCCOlbC0+tymUcTtvBlCPAPcn
+	 u1odPFJgqegm0pP5tw4OU1oX15iI53gi8l83+6eIyNtAlf08aFFSO/1ZpnkrA8RTdJ
+	 jRsr0+ya4LRhA==
+Date: Tue, 2 Jul 2024 16:34:42 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Hironori KIKUCHI <kikuchan98@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: display: st7701: Add Anbernic RG28XX
+ panel
+Message-ID: <20240702-magnetism-amends-d535f626e433@spud>
+References: <20240628051019.975172-1-kikuchan98@gmail.com>
+ <20240628051019.975172-2-kikuchan98@gmail.com>
+ <20240628-splashy-slug-1d74e3fd9fe6@spud>
+ <CAG40kxERY2r2cj58kjVMMg1JVOChRKraKYFo_K5C5fnx0g80Qw@mail.gmail.com>
+ <20240630-babied-grill-13c840abb70a@spud>
+ <CAG40kxHxnSNp1_4fX0fOWypLunPm-NnH1UEKZNQgM0g-Z1u1DQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 3/5] tracing: Allow user-space mapping of the
- ring-buffer
-To: Steven Rostedt <rostedt@goodmis.org>,
- Beau Belgrave <beaub@linux.microsoft.com>
-Cc: "Dmitry V. Levin" <ldv@strace.io>,
- Vincent Donnefort <vdonnefort@google.com>, mhiramat@kernel.org,
- kernel-team@android.com, rdunlap@infradead.org, rppt@kernel.org,
- david@redhat.com, linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <20240510140435.3550353-1-vdonnefort@google.com>
- <20240510140435.3550353-4-vdonnefort@google.com>
- <20240630105322.GA17573@altlinux.org>
- <20240630084053.0b506916@rorschach.local.home>
- <9a9c8ea4-8e17-4e7e-95fe-7b51441a228c@efficios.com>
- <20240702111807.13d2dd2c@rorschach.local.home>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <20240702111807.13d2dd2c@rorschach.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="8Wkwgm2LZxTD6wYX"
+Content-Disposition: inline
+In-Reply-To: <CAG40kxHxnSNp1_4fX0fOWypLunPm-NnH1UEKZNQgM0g-Z1u1DQ@mail.gmail.com>
 
-On 2024-07-02 11:18, Steven Rostedt wrote:
-> On Tue, 2 Jul 2024 10:36:03 -0400
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> 
->>> I can send a patch this week to update it. Or feel free to send a patch
->>> yourself.
->>
->> You need to reserve an unused ioctl Code and Seq# range within:
->>
->> Documentation/userspace-api/ioctl/ioctl-number.rst
-> 
-> Ug, it's been so long, I completely forgot about that file.
-> 
-> Thanks for catching this.
-> 
->>
->> Otherwise this duplicate will confuse all system call instrumentation
->> tooling.
-> 
-> Agreed, what if we did this then:
-> 
-> -- Steve
-> 
-> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> index a141e8e65c5d..9a97030c6c8d 100644
-> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> @@ -186,6 +186,7 @@ Code  Seq#    Include File                                           Comments
->   'Q'   all    linux/soundcard.h
->   'R'   00-1F  linux/random.h                                          conflict!
->   'R'   01     linux/rfkill.h                                          conflict!
-> +'R'   20-2F  linux/trace_mmap.h
->   'R'   C0-DF  net/bluetooth/rfcomm.h
->   'R'   E0     uapi/linux/fsl_mc.h
->   'S'   all    linux/cdrom.h                                           conflict!
-> diff --git a/include/uapi/linux/trace_mmap.h b/include/uapi/linux/trace_mmap.h
-> index bd1066754220..c102ef35d11e 100644
-> --- a/include/uapi/linux/trace_mmap.h
-> +++ b/include/uapi/linux/trace_mmap.h
-> @@ -43,6 +43,6 @@ struct trace_buffer_meta {
->   	__u64	Reserved2;
->   };
->   
-> -#define TRACE_MMAP_IOCTL_GET_READER		_IO('T', 0x1)
-> +#define TRACE_MMAP_IOCTL_GET_READER		_IO('R', 0x20)
 
-Note that user events also has this issue: the ioctl is not reserved in
-the ioctl-number.rst list. See include/uapi/linux/user_events.h:
+--8Wkwgm2LZxTD6wYX
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-#define DIAG_IOC_MAGIC '*'
+On Tue, Jul 02, 2024 at 02:28:27AM +0900, Hironori KIKUCHI wrote:
+> On Sun, Jun 30, 2024 at 11:17=E2=80=AFPM Conor Dooley <conor@kernel.org> =
+wrote:
+> > On Sat, Jun 29, 2024 at 05:26:56PM +0900, Hironori KIKUCHI wrote:
+> > > On Sat, Jun 29, 2024 at 1:27=E2=80=AFAM Conor Dooley <conor@kernel.or=
+g> wrote:
+> > > > On Fri, Jun 28, 2024 at 02:10:15PM +0900, Hironori KIKUCHI wrote:
 
-/* Request to register a user_event */
-#define DIAG_IOCSREG _IOWR(DIAG_IOC_MAGIC, 0, struct user_reg *)
+> > > > >            - densitron,dmt028vghmcmi-1a
+> > > > >            - elida,kd50t048a
+> > > > >            - techstar,ts8550b
+> > > > >        - const: sitronix,st7701
+> > > > >
+> > > > >    reg:
+> > > > > -    description: DSI virtual channel used by that screen
+> > > > > +    description: DSI / SPI channel used by that screen
+> > > > >      maxItems: 1
+> > > > >
+> > > > >    VCC-supply:
+> > > > > @@ -43,6 +41,13 @@ properties:
+> > > > >    IOVCC-supply:
+> > > > >      description: I/O system regulator
+> > > > >
+> > > > > +  dc-gpios:
+> > > > > +    maxItems: 1
+> > > > > +    description:
+> > > > > +      Controller data/command selection (D/CX) in 4-line SPI mod=
+e.
+> > > > > +      If not set, the controller is in 3-line SPI mode.
+> > > > > +      Disallowed for DSI.
+> > > > > +
+> > > > >    port: true
+> > > > >    reset-gpios: true
+> > > > >    rotation: true
+> > > > > @@ -57,7 +62,38 @@ required:
+> > > > >    - port
+> > > > >    - reset-gpios
+> > > > >
+> > > > > -additionalProperties: false
+> > > > > +allOf:
+> > > > > +  - $ref: panel-common.yaml#
+> > > > > +  - if:
+> > > > > +      properties:
+> > > > > +        compatible:
+> > > > > +          contains:
+> > > > > +            # SPI connected panels
+> > > > > +            enum:
+> > > > > +              - anbernic,rg28xx-panel
+> > > > > +    then:
+> > > > > +      $ref: /schemas/spi/spi-peripheral-props.yaml
+> > > >
+> > > > I'm not really keen on this. I'd rather see a different binding for=
+ the
+> > > > SPI version compared to the MIPI ones. Is doing things like this co=
+mmon
+> > > > for panels? If it is, I'll turn a blind eye..
+> > >
+> > > This might be the first case that a driver supports both DSI and SPI
+> > > for a panel.
+> > > The panel can be either a DSI device or an SPI device.
+> >
+> > The commit message sounded like the panel was capable of doing SPI
+> > instead of DSI, is that not the case and the panel is actually capable
+> > of doing both, just happens to be connected as SPI in this particular
+> > device?
+>=20
+> Sorry for the confusion.
+> I think it depends on what the "panel" refers to...
+> Although the "panel driver IC" (ST7701 variant) is capable of doing
+> both, the "panel assy" (including its cable) of the RG28XX only has an
+> SPI interface in its pinout.
+> If the compatible string "rg28xx-panel" represents the assy, then I
+> could say the "panel" only supports SPI, and the other panels only
+> support DSI.
+> But if it only represents a specific LCD panel and its driver IC with
+> control parameters, then it theoretically supports both, and it might
+> be sufficient to just include spi-peripheral-props, as in v1.
+> v1: https://lore.kernel.org/linux-kernel/20240618081515.1215552-2-kikucha=
+n98@gmail.com/
 
-/* Request to delete a user_event */
-#define DIAG_IOCSDEL _IOW(DIAG_IOC_MAGIC, 1, char *)
-
-/* Requests to unregister a user_event */
-#define DIAG_IOCSUNREG _IOW(DIAG_IOC_MAGIC, 2, struct user_unreg*)
-
-Where '*' maps to Code 0x2A. Looking at the list I don't see any
-conflicts there, but we should definitely add it.
-
-If we use '*' for user events already, perhaps we'd want to consider
-using the same range for the ring buffer ioctls ? Arguably one is
-about instrumentation and the other is about ring buffer interaction
-(data transport), but those are both related to tracing.
+I thought about it some more, and I think what you've got for this in
+the binding at present is fine. Splitting the binding I think would
+require a select and wouldn't really be any "cleaner" of an
+implementation.
 
 Thanks,
+Conor.
 
-Mathieu
+--8Wkwgm2LZxTD6wYX
+Content-Type: application/pgp-signature; name="signature.asc"
 
->   
->   #endif /* _TRACE_MMAP_H_ */
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoQeEgAKCRB4tDGHoIJi
+0vvsAP9+fpoFYD3SA3hRRGAIfCwJ3EiGoPOw3FcWVA1dtXs6FwEA7OBNrPnGxdQo
+DSBupiUCLvbAS0u7Q+v/iLTAaozWdAY=
+=4eFZ
+-----END PGP SIGNATURE-----
 
+--8Wkwgm2LZxTD6wYX--
 
