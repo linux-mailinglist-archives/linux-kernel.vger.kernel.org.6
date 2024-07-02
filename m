@@ -1,155 +1,125 @@
-Return-Path: <linux-kernel+bounces-238538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C676924BAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:44:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A658924BB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBDAEB2403C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:44:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8761C20BDD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A260D155A24;
-	Tue,  2 Jul 2024 22:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D194156F46;
+	Tue,  2 Jul 2024 22:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BkXYo7wW"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHxIllVL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35A51DA30E;
-	Tue,  2 Jul 2024 22:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC9112FF8F;
+	Tue,  2 Jul 2024 22:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719960287; cv=none; b=LlT8HYknIxwdlX/eM+vogxce0L6l0Dr6A2RpcorBu7uIcNpLkS9dQFNgDR9lkVL+YYlcEpKTPL1mN6JCd/3+F4IOnTHW54qd/i1+sABTaIDj6HFv0S992r1iCigeV2OgjFflibict1khZk4U6MFlQZTYIXLTuVWTBAUJIPIPVEY=
+	t=1719960300; cv=none; b=myFom1WLPg/h1ioFCICZp43hT1RCQf6raskBDf7NEvNf0e9vX52538sl56Cv/QM+f1Iney162Gu3QYixMhu8iPV1tESZi1sn3gBBDOatLQRF59xDXIGpJVelgK9lr3iksSZW2U3oRlTdn5dRY7lCnQ5yny1hBp+vYi7y2ToWS6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719960287; c=relaxed/simple;
-	bh=r6dl5o6b+tpCl+zPTrFXIMBDaTcNaBsMEkhLGNzaf8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IcfkIzISf26HyMzlD0bsb5ZMyEmbeFzPBevbsVOuCosSyljLI5dfMXUuVrsQA9JzTqQ/vReH+msKdRwRZFvNumKxwA/tbTMbgFf43s8wHlVbXUBNkXNJc/W+GUazpi9klypzXaNqDGM8BYTjK0hqjzSQlxxOxs6Q1dsssGCfWxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BkXYo7wW; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1719960281;
-	bh=W501ohJfK4bcCT1I0QGDVSBzpvUJBPFl9dyX+zr+M/A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BkXYo7wWsOKTFymrWDtJM8pABd5Jz8yRZ4NM//AoGbKl3gAtx+uEwdtlCHgRRYiXO
-	 L1Z22jPXESqu+9oHYxxjvdafBYsEB76wrtfdKxnI1JAII52wn1hmVAHkDlJ3VDolb7
-	 yJOUvRa65CxtMkcn1rzZAMc7Zwc+Eem2MRgM93soD/ijeXRlSZCAunhA+jKQy+TE90
-	 OAXHfNvTCTjP8l+FoAGhjL2qGUpY9UDjn2ZfI3oj7slYErzHUIJWfpbsO0KSXcrVoi
-	 mzEkuDllaWXRSsWwIkHrSEFv4KDto6hsbWonRDMaJbMv2O7qhMN/uHmM04GH26HEe+
-	 0zYrh3XWVuy0Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WDHzF3YKlz4wny;
-	Wed,  3 Jul 2024 08:44:41 +1000 (AEST)
-Date: Wed, 3 Jul 2024 08:44:40 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yang Shi <yang@os.amperecomputing.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the mm-hotfixes tree
-Message-ID: <20240703084440.3af9f526@canb.auug.org.au>
-In-Reply-To: <37b70d3f-c46c-4df4-b52a-3c6ba5feb692@os.amperecomputing.com>
-References: <20240701101641.4fea0ac2@canb.auug.org.au>
-	<20240701110159.216a8d1f@canb.auug.org.au>
-	<37b70d3f-c46c-4df4-b52a-3c6ba5feb692@os.amperecomputing.com>
+	s=arc-20240116; t=1719960300; c=relaxed/simple;
+	bh=N9gkNN597b9sR0qa3FEqcM+w+j2TQMy5ad+/Ia1JOuA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nWegRaC3OsWnFhsJUEBmMZppWyCVw8d4cDJJqCdQgbWyoQg10IrHYXsGZuB3rgONBXXiaF1kSl5kLyc0dzeqwRO2s86n0iIhsbi56L3OMjs+ZkX9ltsJMyEzobTYMAs5tzWuesNqgK/m9bHtGX40FJX4Mffk1/DBM9LPWEjCl7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHxIllVL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5A56C116B1;
+	Tue,  2 Jul 2024 22:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719960300;
+	bh=N9gkNN597b9sR0qa3FEqcM+w+j2TQMy5ad+/Ia1JOuA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=fHxIllVLyhXeUzrrqgBSxZaqdLY4X/Ny3uM6gnugxlqFmhRRW+L6yAtk4aSb/jusO
+	 sUEOi3jp4fSqxFEm/7DSadrIGxOva0mgShM2tGwFNIjqs1rN519+FSx/TAuOAD6hCh
+	 +MO9xXKwOOm3+meX6HGfNkTkmRHty+Ya9yu5hbkStr1kUL3EmjE70fgOUd26hoyZOw
+	 Oq6KnwDL4N3etWPQ9Uyf6y3ngGQ6yMybAvJgjiHMRlw2KE+zUEwped5FXWqNy0i37r
+	 YSt8feEeKdibzUVJNEIFRHgCgvoYHIaywre0ZO/J57PdPF77eCWPXAnOaF2LKVwTAo
+	 qbPR3xWaR6QTQ==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Tue, 02 Jul 2024 18:44:48 -0400
+Subject: [PATCH] filelock: fix potential use-after-free in posix_lock_inode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/s0wOsfB+nzVviVkr5Uf40y=";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240702-filelock-6-10-v1-1-96e766aadc98@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAN+ChGYC/x3MQQqAIBBA0avIrBuY1Aq6SrQQG2soKhQiEO+et
+ HyL/zMkjsIJRpUh8iNJrrOibRT4zZ0royzVoElbGkhjkIOPy+/YY0togiPyzgbuDNTmjhzk/X/
+ TXMoH6WIooV8AAAA=
+To: Chuck Lever <chuck.lever@oracle.com>, 
+ Alexander Aring <alex.aring@gmail.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ =?utf-8?q?Light_Hsieh_=28=E8=AC=9D=E6=98=8E=E7=87=88=29?= <Light.Hsieh@mediatek.com>, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1398; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=N9gkNN597b9sR0qa3FEqcM+w+j2TQMy5ad+/Ia1JOuA=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmhILqZlQ+jSGuftugdfRgVXDYEoT/mrJY9prPk
+ nxSHoES/ICJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZoSC6gAKCRAADmhBGVaC
+ FU1sEACqh3qt+ZjTufAOay8j1Wmhc3HGHy7QZd/s81V9UE/vLuINRtRe3ZthoaMhHZP0VGkkqf8
+ 7G0hyIjvJTRedRVBSSMdMRKzNq1QvsIlNWWP/KSRUAfF3jlUSlql5PzS3nC2FIpaP3KT9h+KWG6
+ a65s+/AL1gWte8ADd6CBhU9lo6gOFh51KP3nwJa1+axZHtO4uTzMLBzY/1HUV8W/l3oxZmzKU5J
+ hqwaNIGlv64CDr/pY7XGqDYjFN0e16D6q9lNeBI6UdKk1zj9HLtRKKeFXyFXnmfiBCd/iwrudeJ
+ PLtHACyGDG5oohrdXFut5zDhJBiYb0oNITnpBkcf/lj+7zwdxQG7zXEDb/7fIOYHs/CFXFENI0o
+ QvXQ3CYbSaEjXICClQ26OFW4M4KTD31DlMosoLUz/e9JAlwFkBGJuKt4UbUbLIBu9htT4SOU3Mh
+ tmCeDN9cAW8BMxvI9L5JJ/nTx6m0GyAG5qUexbAdpWvCke4rD8oc+0ToE5zi2DpoFmAB7U0fff6
+ Ek4/rqJCyoLfDoC0/ArjRuErm3mVJtDS4pDixLbkjtY+NJLno3hbCHGuya2OiQfQnsMMm4Fxca6
+ FdHNRQlYxkQqefOPO/ZhKUcStv/BcDBm2aCKAOuE3bSiW1w1e3VrGAezwgHvPXgMdDdzgFpE5hf
+ pffpExgn/VgI2ng==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
---Sig_/s0wOsfB+nzVviVkr5Uf40y=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Light Hsieh reported a KASAN UAF warning in trace_posix_lock_inode().
+The request pointer had been changed earlier to point to a lock entry
+that was added to the inode's list. However, before the tracepoint could
+fire, another task raced in and freed that lock.
 
-Hi Andrew,
+Fix this by moving the tracepoint inside the spinlock, which should
+ensure that this doesn't happen.
 
-On Mon, 1 Jul 2024 11:15:17 -0700 Yang Shi <yang@os.amperecomputing.com> wr=
-ote:
->
-> On 6/30/24 6:01 PM, Stephen Rothwell wrote:
-> >
-> > On Mon, 1 Jul 2024 10:16:41 +1000 Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote: =20
-> >> After merging the mm-hotfixes tree, today's linux-next build (powerpc
-> >> ppc64_defconfig) failed like this:
-> >>
-> >> mm/gup.c: In function 'gup_hugepte':
-> >> mm/gup.c:474:25: error: implicit declaration of function 'try_grab_fol=
-io_fast'; did you mean 'try_grab_folio'? [-Werror=3Dimplicit-function-decla=
-ration]
-> >>    474 |                 folio =3D try_grab_folio_fast(page, refs, fla=
-gs);
-> >>        |                         ^~~~~~~~~~~~~~~~~~~
-> >>        |                         try_grab_folio
-> >> mm/gup.c:474:23: warning: assignment to 'struct folio *' from 'int' ma=
-kes pointer from integer without a cast [-Wint-conversion]
-> >>    474 |                 folio =3D try_grab_folio_fast(page, refs, fla=
-gs);
-> >>        |                       ^
-> >> mm/gup.c: At top level:
-> >> mm/gup.c:2747:22: error: conflicting types for 'try_grab_folio_fast'; =
-have 'struct folio *(struct page *, int,  unsigned int)'
-> >>   2747 | static struct folio *try_grab_folio_fast(struct page *page, i=
-nt refs,
-> >>        |                      ^~~~~~~~~~~~~~~~~~~
-> >> mm/gup.c:474:25: note: previous implicit declaration of 'try_grab_foli=
-o_fast' with type 'int()'
-> >>    474 |                 folio =3D try_grab_folio_fast(page, refs, fla=
-gs);
-> >>        |                         ^~~~~~~~~~~~~~~~~~~
-> >> cc1: some warnings being treated as errors
-> >>
-> >> Caused by commit
-> >>
-> >>    5f408bfe0d13 ("mm: gup: stop abusing try_grab_folio")
-> >>
-> >> I have reverted that commit for today. =20
-> > And I also had to revert commit
-> >
-> >    52cca85b0ebf ("mm-gup-introduce-memfd_pin_folios-for-pinning-memfd-f=
-olios-fix")
-> >
-> > from the mm-unstable branch of the mm tree. =20
->=20
-> The patch attached in this mail should fix the compile error.
->=20
-> https://lore.kernel.org/linux-mm/CAHbLzkowMSso-4Nufc9hcMehQsK9PNz3OSu-+en=
-iU-2Mm-xjhA@mail.gmail.com/
+Fixes: 74f6f5912693 ("locks: fix KASAN: use-after-free in trace_event_raw_event_filelock_lock")
+Link: https://lore.kernel.org/linux-fsdevel/724ffb0a2962e912ea62bb0515deadf39c325112.camel@kernel.org/
+Reported-by: Light Hsieh (謝明燈) <Light.Hsieh@mediatek.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/locks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It looks like that patch has been applied to the mm tree instead of the
-mm-hotfixes tree - as a fix for commit
+diff --git a/fs/locks.c b/fs/locks.c
+index c360d1992d21..bdd94c32256f 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -1367,9 +1367,9 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+ 		locks_wake_up_blocks(&left->c);
+ 	}
+  out:
++	trace_posix_lock_inode(inode, request, error);
+ 	spin_unlock(&ctx->flc_lock);
+ 	percpu_up_read(&file_rwsem);
+-	trace_posix_lock_inode(inode, request, error);
+ 	/*
+ 	 * Free any unused locks.
+ 	 */
 
-  50ceb37037f3 ("mm: gup: stop abusing try_grab_folio")
+---
+base-commit: e9d22f7a6655941fc8b2b942ed354ec780936b3e
+change-id: 20240702-filelock-6-10-3fa00ca4fe53
 
---=20
-Cheers,
-Stephen Rothwell
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
---Sig_/s0wOsfB+nzVviVkr5Uf40y=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaEgtgACgkQAVBC80lX
-0Gyi6QgAjAjm9gJaIQHcXedjj2ZE8lBIT/Otubmgndt39SS+iIpbw258k0kHUEVI
-hqUhWkjndCbTndn5gzcTuUO73+6VcnY8vIPynyyGOj0e6egDlv8j2X6DDzAlm2c9
-X6FFGPqhDjzT0UJIVpsUL9r7BWHTo/pg4ZpZMURuiMEgYj8+NOdwDghB0RTBNzTI
-MpEcmQlqOdJlRc4984l7a0foov3N6XqqTZDGh2oH6XpU1/FaMltUfQi8U6K7rdd5
-3S5VCW1OpCVKztvqWS8BU2n1E2nc6uTiZRzDtsgRjuT5AHqeTtIGbIgq6kQjbx0P
-LGS0HTt44pWYZ7A1GQ5pBmKpAZoRkA==
-=1saV
------END PGP SIGNATURE-----
-
---Sig_/s0wOsfB+nzVviVkr5Uf40y=--
 
