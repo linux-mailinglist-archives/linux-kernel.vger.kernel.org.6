@@ -1,140 +1,118 @@
-Return-Path: <linux-kernel+bounces-238575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90848924C3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:42:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3967E924C42
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E8E3283B32
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:42:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1C09282C52
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4489717DA08;
-	Tue,  2 Jul 2024 23:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7400D158853;
+	Tue,  2 Jul 2024 23:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SXySJUsh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WO4au7BM"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9D615B0FA;
-	Tue,  2 Jul 2024 23:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A3317A5B4
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 23:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719963742; cv=none; b=CxER6jNBXg6QSI3rvP7rPp5fuL1Slv/4Fpmi6Uzx2tgWV9mxDC2tds+Y9ZYY10Twb6Lqhmcsma22rHGpSd2sL0bwzvw9kFlfvVyVwJuyUNP2GHdQfFOgxsHKSbMT7y5IE1371QV7VTqAykVmGDW158jJ99WvgrOMX9L1lkHljPM=
+	t=1719963818; cv=none; b=XIEbJzabeYkWLxmZzd3pmbo3VIJnjjZ9P0iDQGIOj281QLC8PFh1doK1C8GEUeh2t2QdjWbyoyb31jaIf9E5a67RtXBrb62JE88V7EFmk/VXXOuEgN/oP5XaTNPPs1p/1Y+N9JVz1H1KIzOCV69fGFA2golcTbgPJTaTgyRSsxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719963742; c=relaxed/simple;
-	bh=jlWxBxFk+HCXJYnmffwKODc013vrhbNl2Nc0J2JH3Qg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=b6TpNFg48+R/5Op41gwabsqIcO+8F3Uk8qXuFSoAHczjakeoHRJEtvQvV3jQKHlwTvyZW4Mz1k1N+EPDeQG77/kmDu4WeN4EF/EB8GkTKVhNLOjcsd8boKIkSYT82m3T9lkazFvNpMLcd2Za+IiEKEFiyA12Cpr9+8pJtLcd5kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SXySJUsh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462EVDhb028831;
-	Tue, 2 Jul 2024 23:42:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pifJmqE360Wi2ZlB+7FyAUTiHz21CDAqRbjc2BGXkF0=; b=SXySJUshwLJIEUZ5
-	TFez692Js580eVCKbfs3aNEO8vFX3TdD0I3fue5aif0SaaZUQt34xxdpxcO+uqjb
-	NBuFF5jPovwvP4uHFuel5shR1pfUYAZjOBJR+LEUUhfLPB1KWD1qWTEMh0vipS3V
-	9ZYsb+AoXZpUhzvIZkUbzISrjc4Gb1ZEdpJxqe6UdQaJgfIHTCIF2/GO4vyOuwQU
-	eW+tT0WNzzEofL+i4HOQkab+DnOEK2YD/fjnciE4SY+gjiCj/sWlCtrxBUQS0Bx5
-	vp+ioK9IRVj3tGuM3fkHbnqiY6zRILFzTK8MSty+NzeBC6AVT9GEf6vhOvJ+zh7a
-	JtNs0g==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404kcthgmt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 23:42:06 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462Ng5pi005312
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Jul 2024 23:42:05 GMT
-Received: from [10.110.10.43] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
- 16:42:05 -0700
-Message-ID: <1bdc4d4c-9cf1-a8bd-80de-7463cecd2c78@quicinc.com>
-Date: Tue, 2 Jul 2024 16:42:04 -0700
+	s=arc-20240116; t=1719963818; c=relaxed/simple;
+	bh=3rHOtTtX/eBgobiyISQcQyKnKhcM7dv4HpFKtMHXTD8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=li8WQLn8bk35TebejHdbIb2TMnK2nRUzmDbxtdpvV4jarrR6h/9V7tkRwu3LxfK6wAH6Avoc5Z+wo+8laIqBJBqjDkIWFA0SCwdwR2VTU5VuacLdg/yb/m+VEIEBfj6iVR05IsNt7HuBNzin/m2Gsauf2+t2Xu7+DKQc7QzQ+Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WO4au7BM; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-24c5ec50da1so693164fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 16:43:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1719963815; x=1720568615; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=exqubn+2LOYZAY1f3ejUa6v9hn+LU2tgQrcCMEUOeSI=;
+        b=WO4au7BM/h/8Abur7V+l9m3SFOecICD/RLbC+q5Dd1jv7nx1fyhP2R5LMvizCerw5F
+         qNYBcRjWq0RAPlHTLByReFWrhl0/vWsNxsoZ03j69jUtkMDRtjUYsDy4BRcXTpyXPa/t
+         0KNKxNqL/BnkjaRW/C710g6IfSI5+SBdj4pz8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719963815; x=1720568615;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=exqubn+2LOYZAY1f3ejUa6v9hn+LU2tgQrcCMEUOeSI=;
+        b=OCIhRtNgLDZpAD+Qe6ECQdLE7XEaKU7Pzqgh3+vKx65ikpaL4dLA4eyMFSwCW6/5Mz
+         oj9vvcXa6vmKywSURVz1PfwoFPVzLCEk2yP8e7l79d1Vpim+ag+Qww50I6Luh272W1CR
+         JiMIHrgvkmz8wam+GBhC/FmIJW3OjVW6Ii7QSvoim0ScALiFOjJZ1cibwZgF5or6EEfk
+         1baFQywHFvJLypbLWSk+kI9ur4KlRbM/aV76jPTr4MvLu9fwBGao6K9z6I3qnGnSwMVd
+         rZ8QKG2mxGGJ6nxVNZV9KqgVabxpJhppkj8VRWvRZdmUK097JxTdNUFmhS0vShNGBhVr
+         PlCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmVR7pKG4QiXDX282DVD15kWnuRQVHdggINvDEOjmF0JvSp0ipemrp+VdbkFyslSdNl3ordSKeDJ9/CA9o/5dgHq62s2y6lXVtFNWv
+X-Gm-Message-State: AOJu0Yw7VvZsi9uJ2vt35/JWMAemZlQhIEehmoBSwMXGbo+56BlX6zkI
+	g13tzk1zE7YpAGi0hQDYpArQcFT1ghpk+K4LldEDACMyiSOtlCunUufEFxYFl00=
+X-Google-Smtp-Source: AGHT+IEsQU8oJU5zEmQD4zGi0A+8HyFsrUfkPPf+gpNjRM6jiN8rJ10aPicdU+U6OYHOdUy8GK4Vsg==
+X-Received: by 2002:a05:6870:8192:b0:24f:e599:9168 with SMTP id 586e51a60fabf-25db33732ffmr10377174fac.1.1719963815229;
+        Tue, 02 Jul 2024 16:43:35 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25e0b696ec8sm118546fac.11.2024.07.02.16.43.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 16:43:34 -0700 (PDT)
+Message-ID: <948e3cca-c590-41a4-9805-fc8f6b43643c@linuxfoundation.org>
+Date: Tue, 2 Jul 2024 17:43:33 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/163] 6.6.37-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240702170233.048122282@linuxfoundation.org>
 Content-Language: en-US
-To: Elliot Berman <quic_eberman@quicinc.com>,
-        Sudeep Holla
-	<sudeep.holla@arm.com>
-CC: Sebastian Reichel <sre@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Andy Yan
-	<andy.yan@rock-chips.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        "Mark
- Rutland" <mark.rutland@arm.com>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Shivendra Pratap <quic_spratap@quicinc.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
- <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
- <20240619135143.kr2tx4ynxayc5v3a@bogus>
- <20240619080933071-0700.eberman@hu-eberman-lv.qualcomm.com>
- <20240620162547309-0700.eberman@hu-eberman-lv.qualcomm.com>
- <ZnmTtmZB8epgbUTN@bogus>
- <20240702155630416-0700.eberman@hu-eberman-lv.qualcomm.com>
-From: Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <20240702155630416-0700.eberman@hu-eberman-lv.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240702170233.048122282@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NKwRwjM6Tcs4eLOciR9alWglevT05tc5
-X-Proofpoint-ORIG-GUID: NKwRwjM6Tcs4eLOciR9alWglevT05tc5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-02_16,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
- suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1011 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407020175
 
-On 7/2/2024 4:06 PM, Elliot Berman wrote:
-> Hi Sudeep,
+On 7/2/24 11:01, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.37 release.
+> There are 163 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On Mon, Jun 24, 2024 at 04:41:42PM +0100, Sudeep Holla wrote:
->> Sorry, I completely missed to see that you had already answered those
->> in your commit message. As mentioned earlier I haven't looked at the
->> reboot mode framework completely yet, so I can't comment on it yet.
->>
->> I don't want to be blocker though if others are happy with this.
+> Responses should be made by Thu, 04 Jul 2024 17:01:55 +0000.
+> Anything received after that time might be too late.
 > 
-> I think folks are satisfied with the other parts of the series and now
-> looking for your conclusion on the PSCI driver part.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.37-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-I will be nice to get these patches picked up before 4th July holiday in US :).
+Compiled and booted on my test system. No dmesg regressions.
 
--- 
----Trilok Soni
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
 
 
