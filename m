@@ -1,54 +1,64 @@
-Return-Path: <linux-kernel+bounces-238212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15DB69246E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:03:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35B59246E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B961F26795
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D79CE1C24B0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D6D1C9EBB;
-	Tue,  2 Jul 2024 18:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051791CCCA4;
+	Tue,  2 Jul 2024 18:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0s4h+AD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDW/sPSj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89C02F4A;
-	Tue,  2 Jul 2024 18:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385621C6884;
+	Tue,  2 Jul 2024 18:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719943392; cv=none; b=DKx6Cbgn4DV0++svCefNB/rAb9Cqwl5c6zitc+KvLcZU0pflKpgMI0V/qApdh7Jl33hD5HGNh+k1cKy9jKKFJsh9pEsYOuTRZGvrw0gqXVL4wKzk1CoNIwAV+wxK1/9xktUZ+ypP4IHXSbB++3tPqDo+i8+Nouzf/xlfXXiI7jc=
+	t=1719943401; cv=none; b=bxZXB+rm7ltlRnMTSSx4J6JKp3OlDyv7DYWwqKObpIVZY0Zi2j0+9TC9E6FuH471/60Brpncat6JeFSLtKBpIlG7/o0Kou9dMjr+p0P3SEBsxbBtj7lkIZDxs8IVZ+leki30N77G6CQ8Lgwprs1pREwcq/8h5mIp+1Bc/SdSqtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719943392; c=relaxed/simple;
-	bh=+V/1vASOgtMkSpHriCblfChzgeI4EF0vyr4JiB9hAdo=;
+	s=arc-20240116; t=1719943401; c=relaxed/simple;
+	bh=1PTZ3uQgLKGQChj25rDAqkSCJmHzdA4sq5F+oAYqs4I=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jP/d9UFbolH7MirZernk2ZN5vTa1ft2duF5bJoGODXEqyHmCMTaKSTGvLv+881Xrw6TDA6tbJapXZYR927i0Xph+gEty7pt6S6V/dmsGl8PI9vSq7ZVevPaJTQ5sLuZ3MpL+y+07C+mF9LiqGE3e1kIfhMmWC2g7V7DeJKnr36U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U0s4h+AD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 969C1C116B1;
-	Tue,  2 Jul 2024 18:03:11 +0000 (UTC)
+	 MIME-Version:Content-Type; b=CgR8GIQWx7HV+9PDbmbGWYnwEV/RQinVw1myM/GQ/oXn69kGYB/aPH7NBxFh8P5YCoJBlzYQQj9IHw5+du1ih2DiBDAgXkKlGpFdbPPdnYh97n0x6ZZ/vgxBo3/ASzkeY9HcTBDClk4rB14OqtFrv1cpwH1aEBViubCUnLialYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDW/sPSj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EFD5C4AF0C;
+	Tue,  2 Jul 2024 18:03:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719943392;
-	bh=+V/1vASOgtMkSpHriCblfChzgeI4EF0vyr4JiB9hAdo=;
+	s=k20201202; t=1719943400;
+	bh=1PTZ3uQgLKGQChj25rDAqkSCJmHzdA4sq5F+oAYqs4I=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=U0s4h+ADasx4Ery8ujuVrP5yR4QxNj749vMxx2KNEajkFWhOxtWRjJiUCzSosWwXe
-	 I6VjYo6i9NB166vNlH1YDgpQcTHYjt1WnJnHDSMmyXrTw192F8Tdt/ko1A94u2SXp7
-	 wkG/ja9BVv3fGnXhB2A71Bm+90ITeFSrsGMJdvzTO0mteUJhtpESi+EaaWekqzni5L
-	 pxUmrOyeovbp4RQ8JVoJkIXkPVh7prwVEDhBV29ee7FieYLO5y5kyXmscXxzxkyf5z
-	 7IdHM9gorzoA4HE9dvR2TM+9+omrwn1Z26hu3hOGIevuwAMhotRRoqAgf5SF2MXAsA
-	 2VCm1TXNRLjNQ==
+	b=hDW/sPSj3h9jL8Kqc/SGeHmG7EvO/537Jie5OQ1hK7jsU0foy6ZK+y+hdhYn3EmLY
+	 0TNhVNo+fTLbLYQcFJGD/BCz4/fwCil5Qe+2z+FMBUhNJj9Ih+2fUOAscAzXnNaOeG
+	 tn8IDzbb0205hCfEqIIalNz2dEGDvoXvpIZVySK4qpOVMfRIzuwKPWvdjhp0F6buBO
+	 0mHqPGeUxfC1KbEP1G8HhhwKidkXeyRko+fpoab6x6s32w9h/uLvCkB3kP8pO7UpPT
+	 ZziXOWTUF0bPcPz0LTD8bFOjaPdbqg+S5wrnkkAkQlmw9OS5lJMe8tU3J0HDuKzL/Y
+	 NPMVyKHUfl8UQ==
 From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, 
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-In-Reply-To: <20240701104444.172556-1-rf@opensource.cirrus.com>
-References: <20240701104444.172556-1-rf@opensource.cirrus.com>
-Subject: Re: [PATCH 0/3] ASoC: cs35l56: Remove obsolete and redundant code
-Message-Id: <171994339125.996226.7675778991183465328.b4-ty@kernel.org>
-Date: Tue, 02 Jul 2024 19:03:11 +0100
+To: Banajit Goswami <bgoswami@quicinc.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, srinivas.kandagatla@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>, alsa-devel@alsa-project.org, 
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Manikantan R <quic_manrav@quicinc.com>
+In-Reply-To: <20240626-port-map-v2-0-6cc1c5608cdd@linaro.org>
+References: <20240626-port-map-v2-0-6cc1c5608cdd@linaro.org>
+Subject: Re: (subset) [PATCH v2 0/6] ASoC: codecs: wsa88xx: add support for
+ static port mapping.
+Message-Id: <171994339579.996226.3049749876359199381.b4-ty@kernel.org>
+Date: Tue, 02 Jul 2024 19:03:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,14 +69,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Mon, 01 Jul 2024 11:44:41 +0100, Richard Fitzgerald wrote:
-> These commits remove various code that is either no longer needed,
-> or is redundant.
+On Thu, 27 Jun 2024 15:44:37 +0100, srinivas.kandagatla@linaro.org wrote:
+> Existing way of allocating soundwire master ports on Qualcommm platforms is
+> dynamic, and in linear order starting from 1 to MAX_PORTS.
+> This will work as long as soundwire device ports are 1:1 mapped
+> linearly. However on most Qcom SoCs like SM8550, SM8650, x1e80100, these
+> are NOT mapped in that order.
 > 
-> Richard Fitzgerald (3):
->   ASoC: cs35l56: Revert support for dual-ownership of ASP registers
->   ASoC: cs35l56: Remove support for A1 silicon
->   ASoC: cs35l56: Remove redundant clearing of clk_stop_mode1
+> The result of this is that only one speaker among the pair of speakers
+> is always silent, With recent changes for WSA codec to support codec
+> versions and along with these patches we are able to get all speakers
+> working on these SoCs.
 > 
 > [...]
 
@@ -76,12 +89,14 @@ Applied to
 
 Thanks!
 
-[1/3] ASoC: cs35l56: Revert support for dual-ownership of ASP registers
-      commit: 5d7e328e20b3d2bd3e1e8bea7a868ab8892aeed1
-[2/3] ASoC: cs35l56: Remove support for A1 silicon
-      commit: e2996141d6db0d8b353e1c221a37c8e1be109d4a
-[3/3] ASoC: cs35l56: Remove redundant clearing of clk_stop_mode1
-      commit: e5524e3316ac54ca04dde3bfef4565bacf72c594
+[1/6] ASoC: dt-bindings: wsa883x: Document port mapping property
+      commit: 49beb4d2e85634ec1e1c82d76461d9552676045d
+[2/6] ASoC: codecs: wsa883x: parse port-mapping information
+      commit: 1cf3295bd108abbd7f128071ae9775fd18394ca9
+[3/6] ASoC: dt-bindings: wsa8840: Document port mapping property
+      commit: d47abee9fede21b19d5227061c5a8761ec1659fb
+[4/6] ASoC: codecs: wsa884x: parse port-mapping information
+      commit: e1bc5c324bcca3acdbe817ccbf9aa7992d89479d
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
