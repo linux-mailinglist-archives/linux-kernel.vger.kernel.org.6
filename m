@@ -1,121 +1,159 @@
-Return-Path: <linux-kernel+bounces-237524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FEA8923A4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:40:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB35923A51
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 886B61C227A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:40:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CACF31F235DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937FC15574C;
-	Tue,  2 Jul 2024 09:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D9A1552E3;
+	Tue,  2 Jul 2024 09:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A0miFm+3"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e161Zy2d"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBDB1553B4
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2E114C596
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719913180; cv=none; b=udymxsIUDNJCbKXSKcq30GjP4hKSuw5pJudGvamttY8Nd6IujbfZXNVeufF349nxf1C7JTPmJYErOjL7mykNYwfdBi7DL1OfDo3bKKvx93N+CAKi5aJaTwdsqglODuQWgoqTYum5I2GZs2gIRvDA9e8dYlZgGQjcdykOP0c/5FY=
+	t=1719913237; cv=none; b=JvFOKs4aZAjTxXSUroci89/WKTg4JA/Mc2V/SpUBp95LwGR/8sv4RsGtHm9q37fQCAl31EAATqrTnPm2r9mpnhOtFfG1EbY4WTNxOqxdTml7fa2v+3b25RAfurYo302QAFyblMeChXStqlt36R1pAMr52jBJb8wD94EWeAZqQkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719913180; c=relaxed/simple;
-	bh=f5aEQaGOfXIWPwTo1jSU1LMxGqsSJKtFgwK76UHJzk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qFZW6IAWGOhpMHRIwiQnK723bCa9Fp24MUqRWj5mAU44u/lgjJgPoZKz7QxSuYbzNbIg0MZc985C85zH4JolDxqnSwqOPruT7SmIhGshNca++hZYO3GHGOEjX2uugjDe4zMbuW/98OBZo1JttqqjSo3IOZyXRA0P55n1kQ7+yoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A0miFm+3; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57cf8880f95so1520109a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 02:39:38 -0700 (PDT)
+	s=arc-20240116; t=1719913237; c=relaxed/simple;
+	bh=B7+94hvlkodJOvFHC3YK4CIhT2VDmqcOGPfsXeZNpxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kqn83mhhL8JwzclCGZrei97EN6PTwBeqiyoGagDfRsBUJQWQen/qj82SbZIW5zE151Y/eR4dLEOKapaNUBlVV0CdnOIPyccGGa93dDn0sxCC4u9mBKjxQPWlYnsfGqI69Y6iQSmwy+RdD0Dvc5zYIWT28Ta8Rv+97ufQMDx5JiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e161Zy2d; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-64b05fab14eso36920657b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 02:40:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719913177; x=1720517977; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=08t6/yLozDZn4kBoH75KkbY5mjLhEGn74LBuGG/v9cc=;
-        b=A0miFm+3ezpNTIFu+EbslB7ppR0dZu8oHEb4tmlCA4IdhbgFoO2+mCNcLEQ8zz1mK4
-         u7q+ZvV72rl9TtlLJcAZtN4UyyV6sKBEMUnp8j9PYn0kiiR0kt1/iGYrQFpaeOhcmT0K
-         NByOU6nvfzYT3+FhA69iIJdvCqml/3TmYaW6hkHXIAGzg6er82Du0WUw2sbSbtKfwR9Q
-         iacpHQPEf2AkeJeAct2dQlY1uyFsSYVtiXix2yENUzD9Jb/S4btyGfAVaC2AtODevQqC
-         xHMSEqFWInjUSNhxJAuu5Wbgo/DcNnXcSJdz2Z/MJvbnd8z8M0QP+S7hcHGRs0i8aWo4
-         yJvg==
+        d=linaro.org; s=google; t=1719913235; x=1720518035; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gq/Bbroqxvnpkgip5EYHo2n8xKxIxzuqj82AqyB4e9g=;
+        b=e161Zy2dc+TPIXuzp/QpNIyGpkvwLczL1vuFiyM+qctLDrr0O7d65MFvRgmZu9aagU
+         SrFzF+UkAnlTDrw+4hwNg+UMVGIOknzGKPYkQi+ZqVpcldCUFL3x37ZjsakvVdYyzOhB
+         o8fmrhLRhkbBkyOMu/B9mM3+Tet0S/My0tp3JxwjK5z7Nwqs2IC1RkjueG39lX3LMUmL
+         xCGCHCGWgZ1w2o0wdcStqan59lGlP2im37BtOm+ekfq1A+y0HtBJO812PXkVe8d58+a3
+         wNBs7fta+giVboL9z3ArN/B9xb3fc1vrhyZ2P5DsBF4FZKpvUV50p6wIRAIc1fQZsJ+P
+         z9Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719913177; x=1720517977;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=08t6/yLozDZn4kBoH75KkbY5mjLhEGn74LBuGG/v9cc=;
-        b=aIWMEvhFLCVUH/YMdKb0y0CiI7rYODqygANoyyGr5EcEIOqo6GGvAnIqwNqDKTlg9I
-         ir15qZ1YR6PtzuXjV0reaCdcsQOwObMhEEMM2qUa+FzBbn+o67zCqiH0n4ejnI1NCG/A
-         z5WFYlD1CjJG9n73HTQ+c7IbS7ivtNo/8xXTHiwl+51e+LTLZJkFrbTlDJ60T76/WX2j
-         PIV39r5n2qZfyaA/f+b7atNHtW5o3/qUEztJ0QoftYEZyixF16AFvW3ekSrsQkidSdhd
-         QZQLHnAEnk76oc6msaAKFxwntivxLQUW1LrMJNVrfH1aB+40JPaZJlftlkGhMzNqQIa0
-         bFbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtVediLvCxz+g0s+aZihtTAAh5xosUkFWrziIT1gna4uIX4xatDLsahM6hAPHxsF5obzgK8WYMbFIHZdFp5BWcb5oIo7IcJKOXW2/b
-X-Gm-Message-State: AOJu0Yxwya91gIaoqjDsIn1vUuvzDpcGsYMjWduffG7c5nd2a/NNvZy6
-	nhYkcQucjGUG0T0D1Nst2xPsxZiNZ8FqPuC1TC8liaH4gxnUP2/5/UyJdmLLvIaJ5HBcaw4+mRa
-	ycvA=
-X-Google-Smtp-Source: AGHT+IF+0VvqoaZK4H0Ai/2Buh2/MXXAKhg716vK9ayi8LgqviMp/4trv0JhQg4YfvnIpmCvVYTRsQ==
-X-Received: by 2002:a05:6402:1cc1:b0:57c:ad11:e759 with SMTP id 4fb4d7f45d1cf-587a0919633mr5285153a12.28.1719913177175;
-        Tue, 02 Jul 2024 02:39:37 -0700 (PDT)
-Received: from [192.168.1.16] (79-100-234-73.ip.btc-net.bg. [79.100.234.73])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58614d50da0sm5463359a12.59.2024.07.02.02.39.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 02:39:36 -0700 (PDT)
-Message-ID: <44ed5fe1-9c75-4b63-94f2-38a5b1817538@suse.com>
-Date: Tue, 2 Jul 2024 12:39:34 +0300
+        d=1e100.net; s=20230601; t=1719913235; x=1720518035;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gq/Bbroqxvnpkgip5EYHo2n8xKxIxzuqj82AqyB4e9g=;
+        b=ImgZGzMN4mKJG7Nfs+jFjJ7hMbPT9eCmI9Kq+djx2KeDO4T9a19Hv6voL6uX5CM4es
+         h6xVbaNBjrH4MBm1qdXc6MijfD6NvzRwl8AKulLINv6MtuH0w4Im7o+rgvg1rLrMmkrW
+         3v7HRJ089eIgU5EKKcDYsBvpdmATbpd88yOoTNDq03wx1Uo7nkuv7hsg55kL11BZFUuG
+         x9irURgCF4HoJsymNw0fNPd/9OADO2dP9x1e3AlPJoC2V1tao22YCRVV+VoAZ+ilX/X+
+         KxQcWc4/f16bUsA5F5TzOc0lmb+W5MQHQhZ8KjS3Zc4KW71qkN0f7SAS8l7G4u0hOuaA
+         C8gA==
+X-Forwarded-Encrypted: i=1; AJvYcCUC1bkf1UfW5Rw9iDKDqW2eHdB/wnJa4qMaTK4I7NnIE8gnqlR0MhgsBAa0sDukqbV6yLiyUVXRa9/lZyMBgxfO5ym4hsdNQ7tfyjoR
+X-Gm-Message-State: AOJu0Yw15NNgqQadjwFTFZ/wBJZDZ17lfA8DoGmz8Ptmw7TIW64afour
+	PjlWzQ+4YVysSfUpl8GvMB7qZaGFF6B6dubUuE7vEdhHq9Na1lGRhg5iD8j5dIbPjJiyrJQy3kI
+	n8g8OsAl9SabJwcVWQ9/qrbq30xxJsu/9USAyCg==
+X-Google-Smtp-Source: AGHT+IHVPH+x2D9veQuZ61oIQPsTP9AxyUNRYacWvYz9JNRPToJi6VkCzlbwDQrN1Pa4LZ0UIwceeMzNftvj14uy+cs=
+X-Received: by 2002:a81:a9c4:0:b0:63b:f6c1:6068 with SMTP id
+ 00721157ae682-64c7277c692mr81276737b3.32.1719913234764; Tue, 02 Jul 2024
+ 02:40:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] dt-bindings: interrupt-controller: Add bcm2712 MSI-X
- DT bindings
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
- Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
-References: <20240626104544.14233-1-svarbanov@suse.de>
- <20240626104544.14233-2-svarbanov@suse.de>
- <baa71bf0-49af-49c1-93c4-a4c647ca0f94@broadcom.com>
-Content-Language: en-US
-From: Stanimir Varbanov <stanimir.varbanov@suse.com>
-In-Reply-To: <baa71bf0-49af-49c1-93c4-a4c647ca0f94@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240627060518.1510124-1-quic_ekangupt@quicinc.com>
+ <62dzilcvsp3efxpxulzkf6e62rzcrhp55k6yjk5fymkqthdfzw@yageexbx6ddz>
+ <f3d502ca-228e-4be4-b296-a9073975d34b@quicinc.com> <a5e69a5e-b882-4f36-b023-f85da430fa2f@quicinc.com>
+ <2024062849-brunt-humvee-d338@gregkh> <2e616e9d-fc04-4826-b784-4c6ee45bfbc2@quicinc.com>
+ <foe6khsckzdvd5ccwitzfpdwoigdgu3uostuar3zk5d5stcd4s@hkrdg7vp4mqt> <3b07be20-e0c9-4ee2-a37b-34400e63862b@quicinc.com>
+In-Reply-To: <3b07be20-e0c9-4ee2-a37b-34400e63862b@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 2 Jul 2024 12:40:23 +0300
+Message-ID: <CAA8EJpoxwNv-wpJvqEf9U+Dg9=BJXG++GWB+2DES92MSqXN-3w@mail.gmail.com>
+Subject: Re: [PATCH v2] misc: fastrpc: Remove user PD initmem size check
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, srinivas.kandagatla@linaro.org, 
+	linux-arm-msm@vger.kernel.org, quic_bkumar@quicinc.com, 
+	linux-kernel@vger.kernel.org, quic_chennak@quicinc.com, 
+	dri-devel@lists.freedesktop.org, arnd@arndb.de, stable <stable@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Tue, 2 Jul 2024 at 10:07, Ekansh Gupta <quic_ekangupt@quicinc.com> wrote:
+>
+>
+>
+> On 7/1/2024 10:41 PM, Dmitry Baryshkov wrote:
+> > On Mon, Jul 01, 2024 at 10:50:38AM GMT, Ekansh Gupta wrote:
+> >>
+> >> On 6/28/2024 7:51 PM, Greg KH wrote:
+> >>> On Fri, Jun 28, 2024 at 04:12:10PM +0530, Ekansh Gupta wrote:
+> >>>> On 6/28/2024 3:59 PM, Ekansh Gupta wrote:
+> >>>>> On 6/27/2024 4:43 PM, Dmitry Baryshkov wrote:
+> >>>>>> On Thu, Jun 27, 2024 at 11:35:18AM GMT, Ekansh Gupta wrote:
+> >>>>>>> For user PD initialization, initmem is allocated and sent to DSP for
+> >>>>>>> initial memory requirements like shell loading. This size is passed
+> >>>>>>> by user space and is checked against a max size. For unsigned PD
+> >>>>>>> offloading, more than 2MB size could be passed by user which would
+> >>>>>>> result in PD initialization failure. Remove the user PD initmem size
+> >>>>>>> check and allow buffer allocation for user passed size. Any additional
+> >>>>>>> memory sent to DSP during PD init is used as the PD heap.
+> >>>>>> Would it allow malicious userspace to allocate big enough buffers and
+> >>>>>> reduce the amount of memory available to the system? To other DSP
+> >>>>>> programs?
+> >>>>> The allocation here is happening from SMMU context bank which is uniquely assigned
+> >>>>> to processes going to DSP. As per my understanding process can allocate maximum
+> >>>>> 4GB of memory from the context bank and the memory availability will be taken care
+> >>>>> by kernel memory management. Please correct me if my understanding is incorrect.
+> >>>> Just wanted to add 1 question here:
+> >>>> User space can also directly allocate memory. Wouldn't that be a problem if any malicious userspace
+> >>>> allocated huge memory?
+> >>> No, because any userspace program that takes up too much memory will be
+> >>> killed by the kernel.
+> >>>
+> >>> You can not have userspace tell the kernel to allocate 100Gb of memory,
+> >>> as then the kernel is the one that just took it all up, and then
+> >>> userspace applications will start to be killed off.
+> >>>
+> >>> You MUST bounds check your userspace-supplied memory requests.  Remember
+> >>> the 4 words of kernel development:
+> >>>
+> >>>     All input is evil.
+> >> Thanks for the detailed explanation, Greg. I'll remember this going forward.
+> >>
+> >> For this change, I'll increase the max size limit to 5MB which is the requirement for
+> >> unsigned PD to run on DSP.
+> > So we are back to the quesiton of why 5MB is considered to be enough,
+> > see
+> >
+> > https://lore.kernel.org/linux-arm-msm/2024061755-snare-french-de38@gregkh/
+> This is based on the initial memory requirement for unsigned PD. This includes memory for shell loading on DSP
+> + memory for static heap allocations(heap allocations are dynamic for Signed PD). This requirement tends to
+> around 5MB. I'll update this  also information in commit text. There will be some additional memory passed to
+> the PD which will get added to the PD heap.
 
-Thank you for the review!
+Could you please clarify, are these 2MB and 5MB requirements coming
+from the DSP side or from the userspace side? In other words, is it
+coming from the shell / firmware / etc?
 
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupt-controller
->> +  - "#interrupt-cells"
->> +  - msi-controller
-> 
-> From the implementation of the driver, it looks like all properties are
-> required, except for brcm,msi-offset which has a fallback to the value 0.
+>
+> --Ekansh
+> >
+> >> --Ekansh
+> >>> thanks,
+> >>>
+> >>> greg k-h
+>
 
-Yes, correct. Will update in next revision.
 
-~Stan
+-- 
+With best wishes
+Dmitry
 
