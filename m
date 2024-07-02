@@ -1,73 +1,80 @@
-Return-Path: <linux-kernel+bounces-237979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B6E92418F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:57:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC19924192
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0447B1C2166D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:57:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DAD6B21C16
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7081BB6A4;
-	Tue,  2 Jul 2024 14:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BB31BA87A;
+	Tue,  2 Jul 2024 14:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KApZ9dfw"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NgHzVu1X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3025F26AE4;
-	Tue,  2 Jul 2024 14:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CAD19AD86
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 14:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719932203; cv=none; b=d3fOirZqzJF2OhkWa5wd6HTFB6eS/eg/e8W0WyTiOZvQvzGShxErldMfZ/dA45dj/wfnZFSIJSNKXNOIvwx/kdOj4NrtvdJ8mKEtNx+tpLhLUWSvjFubq4CysKRqy5MkPgGGNG8b2zzsxDLYd6W9TwFEKfJDfmUUYJ2Lf07bdyg=
+	t=1719932271; cv=none; b=cbudQzc1joKS6WvgOZQP2fmgl+g6iC/4gko/U1gWNKRqAJNse2T9P6D+l45UUWbXbF0jdbgjQG9uMQKy7IeelFZVFNnkL0pgSoLeqqJIPnbjK4Gu6mgEXFU/LItZzoCzEMXuZcHawPIBiz9HfZam2+kWZ++E9DK4eNG8FL3xixs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719932203; c=relaxed/simple;
-	bh=9V2ogH/SJYyTvtEmDrX9sYfvP7KhZMqjjyAUZui03Ck=;
+	s=arc-20240116; t=1719932271; c=relaxed/simple;
+	bh=/CgyK46HdK2hUZHWsjXOa3N+7bMlrtcHyHdWQLnPcX0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gI8mWWGbTd4R6AoBBG9PQEDCrU2ne6w+1+wlO2VT3WX9dpEzigvECMTEDNIUN1w4RyRGKCtSXHdF4dErxJ/a39a1jWkXmqhi94YpXZMm7HjxwTvTKuhCgfEE6478VmfhXS/Al85URLO3K0tSIeKZXMtG4In11PvYLrXUqQf2j0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KApZ9dfw; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3674e1931b7so2933342f8f.2;
-        Tue, 02 Jul 2024 07:56:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719932200; x=1720537000; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1O/aJn8vsv/arvmXTxuQEie1if3A4RdufXewAuUWOyI=;
-        b=KApZ9dfwvzVnKiuOm9T1OgXa9iCOaCMVEyJV0e9u/XuP6A4l9Hh2or+IAFfUSY9tMt
-         ti293czuPHA8fRJKTnR4+IFpQJE31ORZlTkdDyfuA4nw+rwbUoJEUCDsJwTNSb1ZXa/x
-         2tFhZ15Erjfld0Sd61qKhm+kaJOx5selXpooBdOnC5ANJKtHViMjH4vkxkzwcrUmwsJi
-         c+8vwx4so+Q2IuIWxVLAkVV6Xv155bD6LrBiekpwdTd24efdBHD9yOKS2tfhWqvRmI7P
-         VxImEq2OCsHoHZ30h5isl/B7MMDxlEShQ40Yj4BIahBRznpPI3gztNMXJnIHcLoDK8Jl
-         7YlQ==
+	 In-Reply-To:Content-Type; b=cHi8yeve1uY+Iab4ChMecnB3mSerLxwnfYlpd/AcRafWEkwFBE/TQCbKGblzVGsUIcezN+qebZJNjzr7yX0d6YvX9EzsjcBv2lzqzM2vRWcXLufc1rz9AwA8h3pswEuBTXZUboLf1gu8Kf4ony4AqS+c895lr8Ga1tzt0IVK2wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NgHzVu1X; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719932269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Skfcwdt+j48BYnr0l9jeHaERQcRlGVKWEr4NqGvPOM4=;
+	b=NgHzVu1XjtRiye7ru/VFE8QYQFxe3uZCpX353jidnJ3qLo41VHUh2DBQOvTZi5SrAyX+WB
+	U/BcYZam6YCAl6bHJ42wQIHqX+dTJAVF2pMShtTk2hv/GJAEnNEa0O7BD9X43l5W9bH1X4
+	ctB2jcR49y2BES4vrn1my84EPxpHYnA=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-658-VAAHZThQPEmx0zFZnFL0ag-1; Tue, 02 Jul 2024 10:57:47 -0400
+X-MC-Unique: VAAHZThQPEmx0zFZnFL0ag-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52cdaae5b3dso4170663e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 07:57:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719932200; x=1720537000;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1O/aJn8vsv/arvmXTxuQEie1if3A4RdufXewAuUWOyI=;
-        b=Df8p3h3JXmk32MEHC/RhXJJ/4mFfDoNpAxveojhCcZC8ZqNiUpMJeq81SX1B0Ta1lm
-         mppIWRrugzqiqvG2dtySULJSZLMmE7QYWIK9d19wT++iTB4aTMoGS169q2DR1/fOUX75
-         oJjDn8nwcBvtEqjRfpac5c+7kNSoPShIYFOU9jF9X7Xyh4/MzJMd35wmgxCJOkA4oy/G
-         2J5y06qafQrJecC77wXOkrpLLn96s0i3UL9lvExINoE99080MxRWm5Xa0Bkx+2iwtXD1
-         qVRCMK+UmBWp7i7eYzIjYANzaWVYPQXPSmLJonmnILXoxlR3AoV+dposSjMFtVaRBJWt
-         t/RA==
-X-Forwarded-Encrypted: i=1; AJvYcCV12VrEq+8kMO637fS1R6Yq1e76tKqFoWRXkP5v9CekRcoUC0g/M9AEARFFLrokOP1NZ38WgTZ0onRQjcqG/5RJxNLJzO56LhV19f5UHPq+kV4VVtu/qVzpEZ9Qujne3dQ5/PYnI1MbkaBrHLidvW2Ebktclm0LXg65ThfVc1gDTSDLsUM5yXjRa8MXw70resFUSgVe6tcaATTRor36IpU31Ymy8zKtbCZKRURFoiFnsiXbXJsP05nzTYoC1GfdqXYcnNiJZQZstKiJaYH9JxbP7wnHxmx8V8UIr1xS5W8IpO+uRDpZbsHjR9Ho9Q6ivh0YifJ31UAfPkOsSFKd4IjVjrswM24Qdm9fCkhwTZPblzKGFmvIEbiYRKTQcxFL/AO2nhAyWBESOiVysZoMj8mMNdwW7O0yhkEpfpUljudvIgKwfvaoQbJYb03GjMt/wgNLAurWn0MaUiOhjYepVRz/e9WWD2UwVQ69s1ru0+AXikLpPcW2SSE17IV1Dg7crWGZEojUww==
-X-Gm-Message-State: AOJu0YxxrjmqmZljpzJtsUV94x11XlFj7T1NyosCLN3dI6Kd/nMyJ7eb
-	1uxR/dbt60GY/eZFtzO0tp/DGWJ6Y0+p/S7j/1Fucaq6lFO08Xa9
-X-Google-Smtp-Source: AGHT+IEDS9QP4kQhr2RPA2dvCTTRVUMX3IHs1vr7q4LcbCSOZVwNq2UlHJCaLHCwFYt+fP7HWAZGgA==
-X-Received: by 2002:adf:f98a:0:b0:35f:b03:bf45 with SMTP id ffacd0b85a97d-367756adf42mr6081448f8f.24.1719932200413;
-        Tue, 02 Jul 2024 07:56:40 -0700 (PDT)
-Received: from [192.168.42.74] ([148.252.146.204])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb92fsm13572218f8f.88.2024.07.02.07.56.37
+        d=1e100.net; s=20230601; t=1719932266; x=1720537066;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Skfcwdt+j48BYnr0l9jeHaERQcRlGVKWEr4NqGvPOM4=;
+        b=o0qL4fTgyWrfIxnaqZTA7MU6OefYtg0h0EdJgbo/JRPIPVqcD3wVtC8T6YtJP5Ch8m
+         WwxnfD7vwLZCs0OOWEHGYZ/K32DWS0gtKe0FBkvRjnayK9DUl5khD/+5KC8R3g21WZzY
+         ySL6IPsFJppa6WcIlph3RiT2ohP0fnLqtJZs/gsBD8ekN3hme9MNkwfNdmvXf/cBHQeQ
+         D1h6pJhQaB7S2S9yFwjsyBrnIxQHeuYhIcHkTffnD9guepTu8gIJikjFlrskgVj4+2oM
+         5YmlUG0uHNkl28XSMGdqLaAkbJ9tx34xM/ljptePXQnFZWE51n5+GtODQfhvliLzsuXA
+         9nGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuqdGJDRm+1nsDgLzalK9TiM2I800GVvrYQGGCQEHD3A4SZWg086Gr88JWR8S5AojA2RFme+Tv7zaAz5eOOpLwQP4UZ+CLEkAm6+7t
+X-Gm-Message-State: AOJu0Yw71eVUKQjwGhJOnQLWWf0uB+aM0fFKrUjrywsHZliKhRLwCJHa
+	/+NTFamBZmcFLjTbAObjcUuaSahu/4+bbbUJ2ouWtiNTp1ddYpjb3RnxCz6QJGdhnflR9HYqcfR
+	efUnCc11PmlzfxC6YJC1420UUaViBRS8guwf+9zvAYXglA8RnFVpNXjv9TxpnlQ==
+X-Received: by 2002:a05:6512:1385:b0:52c:e030:1450 with SMTP id 2adb3069b0e04-52e8264b681mr4832523e87.14.1719932266361;
+        Tue, 02 Jul 2024 07:57:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEDHilUwaAXcPVxexTTUeQlNBFNURMx0L6gn/9TdAm2ayvdLGuwxeSBGKDJMYwjtgRzoGuRxg==
+X-Received: by 2002:a05:6512:1385:b0:52c:e030:1450 with SMTP id 2adb3069b0e04-52e8264b681mr4832496e87.14.1719932265851;
+        Tue, 02 Jul 2024 07:57:45 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c739:2400:78ac:64bb:a39e:2578? (p200300cbc739240078ac64bba39e2578.dip0.t-ipconnect.de. [2003:cb:c739:2400:78ac:64bb:a39e:2578])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e141esm13345649f8f.58.2024.07.02.07.57.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 07:56:40 -0700 (PDT)
-Message-ID: <4db52d39-24ad-4034-882f-9336717b4706@gmail.com>
-Date: Tue, 2 Jul 2024 15:56:46 +0100
+        Tue, 02 Jul 2024 07:57:45 -0700 (PDT)
+Message-ID: <c877a136-4294-4f00-b0ac-7194fe170452@redhat.com>
+Date: Tue, 2 Jul 2024 16:57:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,74 +82,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v15 11/14] net: add SO_DEVMEM_DONTNEED setsockopt
- to release RX frags
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Nikolay Aleksandrov <razor@blackwall.org>, David Wei <dw@davidwei.uk>,
- Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>,
- Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-References: <20240628003253.1694510-1-almasrymina@google.com>
- <20240628003253.1694510-12-almasrymina@google.com>
+Subject: Re: [PATCH v1] mm: Fix khugepaged activation policy
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+ Barry Song <baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lance Yang <ioworker0@gmail.com>, Yang Shi <shy828301@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240702144617.2291480-1-ryan.roberts@arm.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240628003253.1694510-12-almasrymina@google.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240702144617.2291480-1-ryan.roberts@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/28/24 01:32, Mina Almasry wrote:
-> Add an interface for the user to notify the kernel that it is done
-> reading the devmem dmabuf frags returned as cmsg. The kernel will
-> drop the reference on the frags to make them available for reuse.
+On 02.07.24 16:46, Ryan Roberts wrote:
+> Since the introduction of mTHP, the docuementation has stated that
+> khugepaged would be enabled when any mTHP size is enabled, and disabled
+> when all mTHP sizes are disabled. There are 2 problems with this; 1.
+> this is not what was implemented by the code and 2. this is not the
+> desirable behavior.
 > 
-> Signed-off-by: Willem de Bruijn <willemb@google.com>
-> Signed-off-by: Kaiyuan Zhang <kaiyuanz@google.com>
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> Desirable behavior is for khugepaged to be enabled when any PMD-sized
+> THP is enabled, anon or file. (Note that file THP is still controlled by
+> the top-level control so we must always consider that, as well as the
+> PMD-size mTHP control for anon). khugepaged only supports collapsing to
+> PMD-sized THP so there is no value in enabling it when PMD-sized THP is
+> disabled. So let's change the code and documentation to reflect this
+> policy.
+> 
+> Further, per-size enabled control modification events were not
+> previously forwarded to khugepaged to give it an opportunity to start or
+> stop. Consequently the following was resulting in khugepaged eroneously
+> not being activated:
+> 
+>    echo never > /sys/kernel/mm/transparent_hugepage/enabled
+>    echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+> 
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> Fixes: 3485b88390b0 ("mm: thp: introduce multi-size THP sysfs interface")
+> Closes: https://lore.kernel.org/linux-mm/7a0bbe69-1e3d-4263-b206-da007791a5c4@redhat.com/
+> Cc: stable@vger.kernel.org
+> ---
+> 
+> Hi All,
+> 
+> Applies on top of today's mm-unstable (9bb8753acdd8). No regressions observed in
+> mm selftests.
+> 
+> When fixing this I also noticed that khugepaged doesn't get (and never has been)
+> activated/deactivated by `shmem_enabled=`. I'm not sure if khugepaged knows how
+> to collapse shmem - perhaps it should be activated in this case?
+> 
 
-Same, lost tag from v13
+Call me confused.
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+khugepaged_scan_mm_slot() and madvise_collapse() only all 
+hpage_collapse_scan_file() with ... IS_ENABLED(CONFIG_SHMEM) ?
 
-And, as a follow up, would be great to clean up the loop.
-Helper functions and "continue" should help to bring the
-indention down.
+collapse_file() is only called by hpage_collapse_scan_file() ... and 
+there we check "shmem_file(file)".
+
+So why is the IS_ENABLED(CONFIG_SHMEM) check in there if collapse_file() 
+seems to "collapse filemap/tmpfs/shmem pages into huge one".
+
+Anyhow, we certainly can collapse shmem (that's how it all started IIUC).
+
+Besides that, khugepaged only seems to collapse !shmem with
+   VM_BUG_ON(!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && !is_shmem);
+
+The thp_vma_allowable_order() check tests if we are allowed to collapse 
+a PMD_ORDER in that VMA.
 
 -- 
-Pavel Begunkov
+Cheers,
+
+David / dhildenb
+
 
