@@ -1,236 +1,255 @@
-Return-Path: <linux-kernel+bounces-238280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB8D19247CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:03:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF3C9247D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 817CB282737
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:03:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44D28B231B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8AD7E574;
-	Tue,  2 Jul 2024 19:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996521CD5B3;
+	Tue,  2 Jul 2024 19:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="eYnnGdL0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vFXFlM/7"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fi4yk0A8"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440121EB25;
-	Tue,  2 Jul 2024 19:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F12182C76
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 19:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719947003; cv=none; b=SKwK7h5mgqrUi3+3Uxee0n7kpu9Vgd4DPEQkM3EjYx9wIlYtc+tYYpTpGpwyuyQJsSiMG+U4VBh9Dr8NoSiVoGSduC3K6Ur+2vBMbcmrhfgLYuw0oXRxXJ6IlMWuD1yIAPylgTURLFTxXKd/5DH3iBOS0CJF4EzPU3XNXGySR84=
+	t=1719947165; cv=none; b=bPGapXH3HQETBCbwqfdxZ5qYbZxcg6dFFwZyuCINC9iTtcKQ+IcHm/pfShUkvw2Sz1kg4gb6mTFpe77eOJq8U35W8bkGAGPDDkRf+muGItn9IrxhoL3URykftt+DyCOYV9i8UbHHetmCSFiWztp+6i1oQaKyinKy4DatFEj2bM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719947003; c=relaxed/simple;
-	bh=IYHGOWQYHzfej5qUuNd7psK1kiJHU76lRKzC9PeXtNU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RxAoxthVT+EiOjD2QJTblyihN1vTTvkCGR6IIBZKtuGuvgD+A2u82fUUV+XpkUHSJZsgIOkNjwvZwRHPBaRAzVvC8WR17I4JnnlxyJzmXpgEyrN5WED4g+8QPLUeHgCrhePgJNFxiz7PidwWeM3GICfhwjG2i7T433ePCsIlqAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=eYnnGdL0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vFXFlM/7; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id EC8671140175;
-	Tue,  2 Jul 2024 15:03:16 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Tue, 02 Jul 2024 15:03:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1719946996; x=1720033396; bh=nQ
-	YbCpa+E8n2YlgnyPwC0P6/tQ4hyVyrd8XEfm45oWI=; b=eYnnGdL0pYPDVVGht1
-	dShxEo3pnCH8FYyAU+nVoKkAPoHtbB2niNzHh9Z8XcI7wxQxaa6ckVFvZSYP2LKx
-	0V5DkkfN5pyQc862lrfM0rQLWVJjHvCJDvH/P1DYv3QKJ1fRip5IGc9QLoAlVrRL
-	Q5MkC6Upuks4j2pfeKRhP2zoikbVm60phPdJqb4UUkZYVwLanR5K064Rs3+sy3Y9
-	9kr605XNSxBULysrrG2OiWP0wTBSTKi9RA3Em5Gj9VOa+7kPThMak7HyNVsZ2ROo
-	O4sV57vfLskDE+kFg4WAzObSys4ke8GbM4n/JL/P6iCY49B9Yk5bg+XwRFh+THxM
-	ga7w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm2; t=1719946996; x=1720033396; bh=nQYbCpa+E8n2Y
-	lgnyPwC0P6/tQ4hyVyrd8XEfm45oWI=; b=vFXFlM/7fv3z3ZVnjNUxTC8HyfAnF
-	eBO/6g8EH5H1GWhaHm9S46hL+hqA5meG5ZCSQK63OCBhqt969WPp2HyDbsUfGSli
-	5gxOxIPzWMX8dBV2Nsscz3Sj5yBwd9Sacdvvj3r2NI8Tvw/H11l/y86CKZXHM2jM
-	Lk7Aw54lA/IKs2mHg2G/qyR5LroSTjqnw80vtSGqLFKp5OgLNivQ8MpKhO12mqfu
-	9giV8QlZl16RBJVQ6H2+HBFGI8+2XfDzRQBbkx55WFqL+l/19E6RaSFLaTQVPYXS
-	PU6E4114SrdK8I28nRDTyaiiqqY7E923tNHIU1YoCNhnj79Oyl8GCwC5w==
-X-ME-Sender: <xms:9E6EZor_hxt7wsAhuEwNZhURVLah5Yprrgf4kbzbLSLIBcy1fWxPZA>
-    <xme:9E6EZurlq2_5ekhT_dNNggswl2U8inNO1K60pIB_NZSjjIfx3exi9RIlItbAf8KRU
-    kq41nzi8i34qiG-NB0>
-X-ME-Received: <xmr:9E6EZtN42dNUc9RP_Mc9SHKlwds8VFb4i4kxMqZcSmEFUtPAj-0AcSmxiTppy6SEVEz0jm-pLUgSHYeS-EwdSwgiYw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgdduvdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpefpihhklhgr
-    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvsh
-    grshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeehudelteetkefg
-    ffefudefuedvjeeivdekhfevieefgeffheeltddvvefhfeetgeenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhl
-    uhhnugesrhgrghhnrghtvggthhdrshgv
-X-ME-Proxy: <xmx:9E6EZv5vjTd2eRo3WtGfHcCMITuRpFt3UzuGZxj2Z1tIqREtAm5SjA>
-    <xmx:9E6EZn6nQnjYhb0yeEcmFH2WpMSfsHgQhWt6CIHZS2EgByaYOROr_A>
-    <xmx:9E6EZvgg60PtLMoM0nenzDQsTLbFPLYVs3mYpblDECFXGYVq9TYofA>
-    <xmx:9E6EZh5r-RExlLmVYEQ9KraDTeTNAXDxwFVf8E-HiipqOK80sJJgSA>
-    <xmx:9E6EZtRAOJbdVZQNKnVI2-SXf36b-s7XxCoeH9j2fuy5IC4sbfP5QABe>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 2 Jul 2024 15:03:15 -0400 (EDT)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] clocksource/drivers/sh_cmt: Address race condition for clock events
-Date: Tue,  2 Jul 2024 21:02:30 +0200
-Message-ID: <20240702190230.3825292-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719947165; c=relaxed/simple;
+	bh=V+Nc0TLNJzDMIN0ag2GErLq3o7T9fCPKeV1qRIpvfcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=khk8xloPyC7H/kMQIGnqAkZNLsHkzIM8tEcSdMGFlmz+IpLqYjUntptvS8jXSyp+EKpw4Ewaa82SzAFqoHJx+Y7wrmzYCfJDiPshpRdlH0Y6qUHj6DRI7uBmIp6uNninR9tqMHKjC2oqguGKeqf4dOjIXySpb6rN2cS4VrvHZfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=fi4yk0A8; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58ba3e38027so1247142a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 12:06:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1719947162; x=1720551962; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b8QG9lt5nQyJNUeJVA1IGNHATSaUBsfadGA4H0hfWOU=;
+        b=fi4yk0A818J56h103d/Dfmthwp091c6VsE6kiC/rwTupkpdr8pvJ8We4EKkHP1fGTq
+         lkvjjB7NzpWXB162qxfLHF7NWSAuMEoeF36WIbtkMXXykDRhw6lLow2NY/Cu/0Sh9vJY
+         eHg8iVnrU49uwSZzsXK7RjdpTEeNPlFhgVTwk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719947162; x=1720551962;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=b8QG9lt5nQyJNUeJVA1IGNHATSaUBsfadGA4H0hfWOU=;
+        b=a2wXMy9VreLQjcFGuBvrMVpH54WGmXqtRE0qeRQuVkaP5KAOGBeBSiTtsZELXVhkke
+         IvmiiuS4B+WSbNPgzcfMZY8XzJKtlKyYIKXovZgZmxw8T+7+dkzmLmWOnKFdgIJdC8vk
+         QF+DWZJyn61v1WVgS12mgRS2vwqBH4Zp/hGRt9P5SK7X6iE54peBkD6v74KBwKgYKc4n
+         2Pwc+jECJroESDHM4UmvXidk3++WQOYrg4czsTpUDzBQVFJ+MjTdXNeX9lkpLhb4JJBM
+         ZCGxUOMWKUxVBY2APV9dU6jqwLMsbJuL6kx13Ipg3ZwhvsXFbkHmyAzFJix4pA3MBPe3
+         LfLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2RZmo98gLizxVucSFEPQT6bOeklAi3tJyLVd2UIFKis31+yCGTCTv3G8tFeanFADu6znIskNMYrQWmA9uSmcXytuOXFsZnn2DoRiy
+X-Gm-Message-State: AOJu0YwEllKmwnhLPjHhfhw2jplKQbKlYuJlMiqjYOkn2U69g35FpnMB
+	+K2XjhHqTRQzDGwkAyinbjVofPjssDm6wjNRJwmDxm1t4uToDzu2UZlbLtIE9A==
+X-Google-Smtp-Source: AGHT+IH/LucmvJ3f8fHHg5hD1eTufc+gU2laYnHZQrj4QEBwS65ymOpWeNxHt/x7wFFfcuu5iEiUYQ==
+X-Received: by 2002:a17:906:dacc:b0:a72:455f:e8b with SMTP id a640c23a62f3a-a75142c653amr831102766b.0.1719947161563;
+        Tue, 02 Jul 2024 12:06:01 -0700 (PDT)
+Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0b7dcfsm446048966b.209.2024.07.02.12.06.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 12:06:01 -0700 (PDT)
+Message-ID: <0446de88-3b73-447f-96d2-4b8461defac2@broadcom.com>
+Date: Tue, 2 Jul 2024 21:05:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] dt-bindings: net: wireless: brcm4329-fmac: add
+ clock description for AP6275P Wi-Fi device
+To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
+ krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
+References: <20240630073605.2164346-1-jacobe.zang@wesion.com>
+ <20240630073605.2164346-3-jacobe.zang@wesion.com>
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <20240630073605.2164346-3-jacobe.zang@wesion.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000a08756061c4867ac"
 
-There is a race condition in the CMT interrupt handler. In the interrupt
-handler the driver sets a driver private flag, FLAG_IRQCONTEXT. This
-flag is used to indicate any call to set_next_event() should not be
-directly propagated to the device, but instead cached. This is done as
-the interrupt handler itself reprograms the device when needed before it
-completes and this avoids this operation to take place twice.
+--000000000000a08756061c4867ac
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-It is unclear why this design was chosen, my suspicion is to allow the
-struct clock_event_device.event_handler callback, which is called while
-the FLAG_IRQCONTEXT is set, can update the next event without having to
-write to the device twice.
+On 6/30/2024 9:36 AM, Jacobe Zang wrote:
+> Add clocks and clock-names for brcm4329-fmac.
 
-Unfortunately there is a race between when the FLAG_IRQCONTEXT flag is
-set and later cleared where the interrupt handler have already started to
-write the next event to the device. If set_next_event() is called in
-this window the value is only cached in the driver but not written. This
-leads to the board to misbehave, or worse lockup and produce a splat.
+you can add my....
 
-   rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-   rcu:     0-...!: (0 ticks this GP) idle=f5e0/0/0x0 softirq=519/519 fqs=0 (false positive?)
-   rcu:     (detected by 1, t=6502 jiffies, g=-595, q=77 ncpus=2)
-   Sending NMI from CPU 1 to CPUs 0:
-   NMI backtrace for cpu 0
-   CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.10.0-rc5-arm64-renesas-00019-g74a6f86eaf1c-dirty #20
-   Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
-   pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-   pc : tick_check_broadcast_expired+0xc/0x40
-   lr : cpu_idle_poll.isra.0+0x8c/0x168
-   sp : ffff800081c63d70
-   x29: ffff800081c63d70 x28: 00000000580000c8 x27: 00000000bfee5610
-   x26: 0000000000000027 x25: 0000000000000000 x24: 0000000000000000
-   x23: ffff00007fbb9100 x22: ffff8000818f1008 x21: ffff8000800ef07c
-   x20: ffff800081c79ec0 x19: ffff800081c70c28 x18: 0000000000000000
-   x17: 0000000000000000 x16: 0000000000000000 x15: 0000ffffc2c717d8
-   x14: 0000000000000000 x13: ffff000009c18080 x12: ffff8000825f7fc0
-   x11: 0000000000000000 x10: ffff8000818f3cd4 x9 : 0000000000000028
-   x8 : ffff800081c79ec0 x7 : ffff800081c73000 x6 : 0000000000000000
-   x5 : 0000000000000000 x4 : ffff7ffffe286000 x3 : 0000000000000000
-   x2 : ffff7ffffe286000 x1 : ffff800082972900 x0 : ffff8000818f1008
-   Call trace:
-    tick_check_broadcast_expired+0xc/0x40
-    do_idle+0x9c/0x280
-    cpu_startup_entry+0x34/0x40
-    kernel_init+0x0/0x11c
-    do_one_initcall+0x0/0x260
-    __primary_switched+0x80/0x88
-   rcu: rcu_preempt kthread timer wakeup didn't happen for 6501 jiffies! g-595 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
-   rcu:     Possible timer handling issue on cpu=0 timer-softirq=262
-   rcu: rcu_preempt kthread starved for 6502 jiffies! g-595 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
-   rcu:     Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-   rcu: RCU grace-period kthread stack dump:
-   task:rcu_preempt     state:I stack:0     pid:15    tgid:15    ppid:2      flags:0x00000008
-   Call trace:
-    __switch_to+0xbc/0x100
-    __schedule+0x358/0xbe0
-    schedule+0x48/0x148
-    schedule_timeout+0xc4/0x138
-    rcu_gp_fqs_loop+0x12c/0x764
-    rcu_gp_kthread+0x208/0x298
-    kthread+0x10c/0x110
-    ret_from_fork+0x10/0x20
+Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> ---
+>   .../bindings/net/wireless/brcm,bcm4329-fmac.yaml          | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+> index 2c2093c77ec9a..f542b60e44dc4 100644
+> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+> @@ -122,6 +122,14 @@ properties:
+>         NVRAM. This would normally be filled in by the bootloader from platform
+>         configuration data.
+>   
+> +  clocks:
+> +    items:
+> +      - description: Wi-Fi RTC clock
 
-The design have been part of the driver since it was first merged in
-early 2009. It becomes increasingly harder to trigger the issue the
-older kernel version one tries. It only takes a few boots on v6.10-rc5,
-while hundreds of boots are needed to trigger it on v5.10.
+Having a few problems with the description. There is only one LPO clock 
+input on the 43752 chipset. From the AMPAK AP6275P datasheet:
 
-Close the race condition by using the CMT channel lock for the two
-competing sections. The channel lock was added to the driver after its
-initial design.
+| 31 | LPO_IN | I | External Low Power Clock input (32.768KHz) |
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-Hello,
+I would suggest to use the description from the datasheet or something 
+similar.
 
-I only have access to R-Car based SoCs and that is what I have tested
-this change on. I have not been able to test on any SH platforms which
-also uses this driver.
----
- drivers/clocksource/sh_cmt.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+--000000000000a08756061c4867ac
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index 26919556ef5f..b72b36e0abed 100644
---- a/drivers/clocksource/sh_cmt.c
-+++ b/drivers/clocksource/sh_cmt.c
-@@ -528,6 +528,7 @@ static void sh_cmt_set_next(struct sh_cmt_channel *ch, unsigned long delta)
- static irqreturn_t sh_cmt_interrupt(int irq, void *dev_id)
- {
- 	struct sh_cmt_channel *ch = dev_id;
-+	unsigned long flags;
- 
- 	/* clear flags */
- 	sh_cmt_write_cmcsr(ch, sh_cmt_read_cmcsr(ch) &
-@@ -558,6 +559,8 @@ static irqreturn_t sh_cmt_interrupt(int irq, void *dev_id)
- 
- 	ch->flags &= ~FLAG_SKIPEVENT;
- 
-+	raw_spin_lock_irqsave(&ch->lock, flags);
-+
- 	if (ch->flags & FLAG_REPROGRAM) {
- 		ch->flags &= ~FLAG_REPROGRAM;
- 		sh_cmt_clock_event_program_verify(ch, 1);
-@@ -570,6 +573,8 @@ static irqreturn_t sh_cmt_interrupt(int irq, void *dev_id)
- 
- 	ch->flags &= ~FLAG_IRQCONTEXT;
- 
-+	raw_spin_unlock_irqrestore(&ch->lock, flags);
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -780,12 +785,18 @@ static int sh_cmt_clock_event_next(unsigned long delta,
- 				   struct clock_event_device *ced)
- {
- 	struct sh_cmt_channel *ch = ced_to_sh_cmt(ced);
-+	unsigned long flags;
- 
- 	BUG_ON(!clockevent_state_oneshot(ced));
-+
-+	raw_spin_lock_irqsave(&ch->lock, flags);
-+
- 	if (likely(ch->flags & FLAG_IRQCONTEXT))
- 		ch->next_match_value = delta - 1;
- 	else
--		sh_cmt_set_next(ch, delta - 1);
-+		__sh_cmt_set_next(ch, delta - 1);
-+
-+	raw_spin_unlock_irqrestore(&ch->lock, flags);
- 
- 	return 0;
- }
--- 
-2.45.2
-
+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
+2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
+Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
+HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
+KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
+Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
+dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
+OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
+MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
+BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
+ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
+zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
+sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
+BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
+N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
+p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
+YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
+bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCoWqxrJTBED2/yhHGv
+sR8XzzS71vYUwiUDh8Ccj5vIVjAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0yNDA3MDIxOTA2MDJaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
+AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEASUOq1Ck1Oh8EB+upVNwuiIZ0S2zVSEEYVdVN
+IPOg8J7vjrciUGVNZpMnUaX6tF3/Z9auMG/vXo0NCUk0StegnYVXZL4am42eihOS41xl8p6u3RMq
+qb2lMldDAhePzr2hlMqD4a/C0AumwuxkzwMtuIN3eLY/z5MC+YSaIbNFIf8v9oCyiQp/FH0k1M9R
+us7HRs/zH93TqiufPjtO0uK+3DQTFmLculKMaDWv5eDCSQUNHE1JgUuoClZNNGgTFZi2FVw6c8LX
+s5i1y4+71bhqxMz9yWiVPT+JSEcsIIiI2QJmRwOCe431MbQDKlq3aRnh7xhTZ28cFKfpjl/EOxRE
+dQ==
+--000000000000a08756061c4867ac--
 
