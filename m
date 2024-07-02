@@ -1,69 +1,109 @@
-Return-Path: <linux-kernel+bounces-237199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE4D91ED4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:04:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDDAD91ED58
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61F5D1F22C65
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 03:04:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5777AB21403
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 03:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62FF2BB12;
-	Tue,  2 Jul 2024 03:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5TwHVY5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC0C18E0E;
+	Tue,  2 Jul 2024 03:11:36 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE5A288A4;
-	Tue,  2 Jul 2024 03:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9513C8F72
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 03:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719889389; cv=none; b=mM6p5Wyw513Y8pnfQJrPypIOZA2zIz46NJMZB7FCHWuTt7Sh2hHxsl1LA3MlOCwzi+pdkivZsH3UY49VmZzheV8vhkU/lGuBUAtF/RSjgI9K0bMTnxYOS0GvTFJvXvKuZY2RCMX8omZ/GIeVNpBEIdu1k1oWJ/IyjxuqS5qJW90=
+	t=1719889896; cv=none; b=tevX6i+Lx9bI3G72zg0DP47CNDybEyLPTjrIoX8jJB6qwHfEylk7WkLjHMaHsMBx+n6ytCopzFVEeQR3TPZ001f1JBAyI5nk1ISoHeBOgXcA6Oz+rbNGijfOaqBGTeLDn7u1dQF94FS7iU7Qbu2NFuQv07ZDzgtv1s7tNeYFTGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719889389; c=relaxed/simple;
-	bh=Mst3gO62KAP9YjVa3vTLzVXE7I0SlzT0bNqTqL4l9zU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LT+O1QjAl2vHTUWoBJXvffddCYqxAJRVrT2RFabIZzpWixUrhbeqwoVd1eX94yi0L7g4Mr8IpTEe5/gBdZYeUQak5nvLw95pH9l/nOspr/wYpvN7rK/iK/oZexjQ+IDyw8znAg+7kwV4x+8/VRKGOXr15LtSLnXw6vNzkBWhNn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5TwHVY5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D76BC116B1;
-	Tue,  2 Jul 2024 03:03:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719889388;
-	bh=Mst3gO62KAP9YjVa3vTLzVXE7I0SlzT0bNqTqL4l9zU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m5TwHVY5HTqK/mNXkW/uj/CP1tRkMf9iFRErq0Xo9PNBpDYvN4V5Mgw2I//JwomBN
-	 y+e7mlV6VaIK+TkJWNZ3TaMM96OiFDTerg4DZR/hzmChQTpWUf/jXMuaT9SEkxH1K2
-	 6BV9IrO/tOqv/maFN+3vd2+DEqRkYGoNk1F1VScK2v067DVuAXuwpumSMp+7j04ocT
-	 Ux0OeLDjZKc/Dze8W1Ujtb2DwULbfqV8MxYOFAp8yd5B0r7zCeE1cvnzLYG+LqTRZN
-	 KLw0PuunMjKT58MoSXRzRfzmr61HvqsJiPDX+bRjS62z6lq32i2FHTvlyXG+9aiVJ8
-	 1jk7nBa114fug==
-Date: Mon, 1 Jul 2024 20:03:07 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Liu Jing <liujing@cmss.chinamobile.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- shuah@kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftest: epoll_busy_poll: remove unnecessary
- assignment in TEST_F(epoll_busy_poll, test_get_params)
-Message-ID: <20240701200307.6fbcbacc@kernel.org>
-In-Reply-To: <20240701113251.6630-1-liujing@cmss.chinamobile.com>
-References: <20240701113251.6630-1-liujing@cmss.chinamobile.com>
+	s=arc-20240116; t=1719889896; c=relaxed/simple;
+	bh=y4HWiU9fNH/2Gq2iXWIc/zcAVrK0zjNPvfixn8cfhTo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=grFL1ZlVYH9BF+M6PVIq1xxa4sltnxDi03H9FdZstfbjiTGs9y+Tp/3JIgYPPNjGRuHw1U9iEmAuclSuo7ZTkKWcuzmF8azVQNbOSWMbBFs+ts+u3r4cF7qjhdzaelpfg0yXDsx2mc/POAEPga3BoO1xAc75jHwIBen5QuCmTLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAAXHZnIb4NmPq6XEw--.36219S2;
+	Tue, 02 Jul 2024 11:11:04 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: jgross@suse.com,
+	boris.ostrovsky@oracle.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	jbeulich@suse.com
+Cc: xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] x86/xen: Convert comma to semicolon
+Date: Tue,  2 Jul 2024 11:10:10 +0800
+Message-Id: <20240702031010.1411875-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAXHZnIb4NmPq6XEw--.36219S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Jw4UZF1rGF4UKF1UuF18Grg_yoW8JrWUpF
+	12kwnxCrykWrWqg3ZxG3WYgr13Cwn5KryrAFZ7Wa42y3ZxXryIkrW8Ka1Utr1UJa13ZF45
+	Ja9Yq3WrK3y3tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
+	4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+	628vn2kIc2xKxwCY02Avz4vE14v_Gr4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfU8gAwDUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Mon,  1 Jul 2024 19:32:51 +0800 Liu Jing wrote:
-> In the TEST_F(epoll_busy_poll, test_get_params), the initialized value of 'ret' is unused,
-> because it will be assigned by the ioctl.thus remove it.
+Replace a comma between expression statements by a semicolon.
 
-I don't think this is worth the noise, please don't send such changes
-to networking.
+Fixes: 8310b77b48c5 ("Xen/gnttab: handle p2m update errors on a per-slot basis")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ arch/x86/xen/p2m.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/xen/p2m.c b/arch/x86/xen/p2m.c
+index 99918beccd80..6bcbdf3b7999 100644
+--- a/arch/x86/xen/p2m.c
++++ b/arch/x86/xen/p2m.c
+@@ -730,7 +730,7 @@ int set_foreign_p2m_mapping(struct gnttab_map_grant_ref *map_ops,
+ 		 * immediate unmapping.
+ 		 */
+ 		map_ops[i].status = GNTST_general_error;
+-		unmap[0].host_addr = map_ops[i].host_addr,
++		unmap[0].host_addr = map_ops[i].host_addr;
+ 		unmap[0].handle = map_ops[i].handle;
+ 		map_ops[i].handle = INVALID_GRANT_HANDLE;
+ 		if (map_ops[i].flags & GNTMAP_device_map)
+@@ -740,7 +740,7 @@ int set_foreign_p2m_mapping(struct gnttab_map_grant_ref *map_ops,
+ 
+ 		if (kmap_ops) {
+ 			kmap_ops[i].status = GNTST_general_error;
+-			unmap[1].host_addr = kmap_ops[i].host_addr,
++			unmap[1].host_addr = kmap_ops[i].host_addr;
+ 			unmap[1].handle = kmap_ops[i].handle;
+ 			kmap_ops[i].handle = INVALID_GRANT_HANDLE;
+ 			if (kmap_ops[i].flags & GNTMAP_device_map)
+-- 
+2.25.1
+
 
