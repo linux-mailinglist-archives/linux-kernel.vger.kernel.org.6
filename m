@@ -1,80 +1,122 @@
-Return-Path: <linux-kernel+bounces-238341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6BC92488A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:43:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7A492488D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EF7FB22C1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EDC1284D8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937561CE09C;
-	Tue,  2 Jul 2024 19:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6810C1BC088;
+	Tue,  2 Jul 2024 19:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4Rl2+TV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lb6kHIgP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40371CE081;
-	Tue,  2 Jul 2024 19:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C0D14F7A;
+	Tue,  2 Jul 2024 19:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719949384; cv=none; b=Zzt9JE8f4hzi2urfYGwPQWlGz+iBKPjmspDuFK03OdxVOE3dHD4qDXqMTLfA1Jhqb5z4AJhvYzeS454zAenVjhaMqoPD6UG80MWBVQBE0mYU77dTLopUMFZPcjQceVEU3t+yvZ/e2tohE3s+TeWZGonBEtIgvUHJOs53sZB+/7c=
+	t=1719949551; cv=none; b=HusuNPnOhSWqGTN42igCc0RATbCwsC3YkRp0rDUjrlMXlcQrGWDlS1odXQ8NzspleTmw+MJTLYptU8PeMzQGScqti1L62TpcvIZtgwNaykKmkGkm5FxzQEfCkTzaXRvkPM2eQsu9y9C+axnSydog0Uq8F1aw+Gmaa3nIQRtUk1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719949384; c=relaxed/simple;
-	bh=1Af7dOq/VVVXmMQiunoP36ng6uRURIvlVcmZwUEBrOY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=UStGiP/a1HIPH7MYpu+ZY2pCyknA+0t3NUWCqUdk4Ju8wxscHWkmzkkAiDxK+ReYGR+TvqMViPSzofTUzO4STXc6eiSs258peA9b6gQOSF8AwR3KMZq7RSf6n4V3ocQFMNah/JsdjGcH3dCE52ZspYFmS5/7pdE7RZifXj12Be0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T4Rl2+TV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D70C116B1;
-	Tue,  2 Jul 2024 19:43:04 +0000 (UTC)
+	s=arc-20240116; t=1719949551; c=relaxed/simple;
+	bh=hGfQI2Ehn8ygen6cblJjPQfXi2Rj/CizY3+P7kvje9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oF7gbZ9q1U/vX2ORvXlTuPVxTLhoHeGHOlWKEh3U2tZbgk8fOzSqUANzfX/Cc33toQ+3qdrwUtvfeaACaiAobo1ltzlpo1ukYBM6mqCG80f8MO8xYGVksTaFsObKtGnghVTu7SprTjWNF1VYUvPz7UaTxCZ15hETwn7lc4gzQPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lb6kHIgP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E96C116B1;
+	Tue,  2 Jul 2024 19:45:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719949384;
-	bh=1Af7dOq/VVVXmMQiunoP36ng6uRURIvlVcmZwUEBrOY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=T4Rl2+TVsw6zOxuU1a8rY978AYWyDyxJAe1T84mZtlip+KTLFN+Tot7zSRFdtA9M1
-	 w7kq3iBdDSot4E0e3L+NfVO09TPFSnpOYy/bhvCcIptcohIlZGdgjZwElCZh03GU6A
-	 zUczEBcv8JMKoU6DaNlkEnIAw8eiutvVSIxUoYvEoJsRoGvZeXDyyX82Bd03Hk4wER
-	 zoquKXEPs9LckGiO8GDwYyG3E+pQ+An3+ReZ4j+GocbnaXc9FkgSqS5U/+NFjYXd3E
-	 cR566AL8SOWfuWWJGZMU8j/3CDPXwIJ/H2NYy7OAnzho0fB2+J7xpkADogNXSrAkAg
-	 U6EjeB4SkUjAg==
-Message-ID: <a35c04d7d3ba579294ff1b7319a147b6.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1719949551;
+	bh=hGfQI2Ehn8ygen6cblJjPQfXi2Rj/CizY3+P7kvje9k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lb6kHIgPsIUe/XXB8mnxMkCwvEqZrnfuANbXJDv6H8VSjtvDhJwHx35M5wVEtsQy8
+	 7Ifle3iN8HI0qDnJSlEF3zaG8m9884bB+RdGVOPbX3quS0FBJg1dRlM9W6xpiqPhDx
+	 Nn/nlOTU2RJEawQhcqfOGlBUCtvhZrDSlxVIKH8NQaNSV1vfXunrM1cbAof5Th4UER
+	 x+ADmYk5WWKxETwHrb3vnxrJi4qCkBb1jK4x9ByIz3UAeZlaIQ5VFEbWqGEvN14Mir
+	 fxYVtb6BwDY7w+tHQ/BprvZFvCqcd3f1MfGXSRr9Dlne5lWkzkjuHSD/8OFD7wv3Ld
+	 DEXeV4lAu4RPA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Tue,  2 Jul 2024 21:44:27 +0200
+Message-ID: <20240702-vfs-fixes-7b80dba61b09@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240702063120.5821-1-krzysztof.kozlowski@linaro.org>
-References: <20240702063120.5821-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.11
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 02 Jul 2024 12:43:02 -0700
-User-Agent: alot/0.10
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1730; i=brauner@kernel.org; h=from:subject:message-id; bh=hGfQI2Ehn8ygen6cblJjPQfXi2Rj/CizY3+P7kvje9k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS1RNyYafXWnTF/dvv/GW4bHtVw/operZ8ibmd30j61c deXDJ/NHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpamP4H/7o9bG5NQfXTVJ/ fL8x+F6O1dOTVw/MeOV07gzHlmepT+cw/C+7ePnF/3v36u85q4Z73BG/HWK8r367SvU3thDT+9L 9xswA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Quoting Krzysztof Kozlowski (2024-07-01 23:31:19)
-> The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfab=
-d0:
->=20
->   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.11
->=20
-> for you to fetch changes up to e61f400d6cf3d598ac3ff88a47b34823f9e1f2d5:
->=20
->   clk: samsung: gs101: mark gout_hsi2_ufs_embd_i_clk_unipro as critical (=
-2024-07-01 10:15:30 +0200)
->=20
-> ----------------------------------------------------------------
+Hey Linus,
 
-Thanks. Pulled into clk-next
+/* Summary */
+This contains three fixes:
+
+VFS:
+
+- Improve handling of deep ancestor chains in is_subdir().
+- Release locks cleanly when fctnl_setlk() races with close().
+  When setting a file lock fails the VFS tries to cleanup the already
+  created lock. The helper used for this calls back into the LSM layer
+  which may cause it to fail, leaving the lock accessible via
+  /proc/locks.
+
+AFS:
+
+- Fix a comma/semicolon typo.
+
+/* Testing */
+clang: Debian clang version 16.0.6 (27)
+gcc: (Debian 13.2.0-25) 13.2.0
+
+All patches are based on v6.10-rc6. No build failures or warnings were observed.
+
+/* Conflicts */
+No known conflicts.
+
+The following changes since commit 22a40d14b572deb80c0648557f4bd502d7e83826:
+
+  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc7.fixes.2
+
+for you to fetch changes up to 655593a40efc577edc651f1d5c5dfde83367c477:
+
+  afs: Convert comma to semicolon (2024-07-02 21:23:00 +0200)
+
+Please consider pulling these changes from the signed vfs-6.10-rc7.fixes.2 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.10-rc7.fixes.2
+
+----------------------------------------------------------------
+Chen Ni (1):
+      afs: Convert comma to semicolon
+
+Christian Brauner (1):
+      fs: better handle deep ancestor chains in is_subdir()
+
+Jann Horn (1):
+      filelock: Remove locks reliably when fcntl/close race is detected
+
+ fs/afs/inode.c |  4 ++--
+ fs/dcache.c    | 31 ++++++++++++++-----------------
+ fs/locks.c     |  9 ++++-----
+ 3 files changed, 20 insertions(+), 24 deletions(-)
 
