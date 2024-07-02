@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-237868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDE8923F1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 987E5923F1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27082288403
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 554D2282E40
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85E81BA898;
-	Tue,  2 Jul 2024 13:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EBB1BB686;
+	Tue,  2 Jul 2024 13:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="asKQJdbH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVci5Ktq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24AE1BA877;
-	Tue,  2 Jul 2024 13:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A041B4C2C;
+	Tue,  2 Jul 2024 13:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719927375; cv=none; b=Ojaq3BdeuMmOripMMkk8Ec7wSc/JcBlwm5/3PPgqQ9j9ecdsXfNrrUcD0SUzSKw3uMSm2BoZGX1IKRHRAkcYuSeuca9Tb9OiU9LsM9tuNI6g30nzJ5LDLMS+01KulDbV8Xt7PhKoRXWFg2S7VzcPXlp+Uyk49Om49PrkdkJayjc=
+	t=1719927380; cv=none; b=McSDymBmN3Y4tdQGV4e9IAQgvTyi7YYfbuANj61mnhuzUId8EjK9ekF4E/Nu+rciIYM11ZD6tPWgrTa0Eo3M+ZGO6FYv499A/2dV0aWKl0YngjqVWq2lnoaxAVW/AQ9Ey70scEUMrmD89zeVdHrGJ8h+Nd/WGX7zktdo4qnBm60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719927375; c=relaxed/simple;
-	bh=iuCyZDHCjUYh1ESjfx75LKbK8pm+Pveq1GXDorcZ1BE=;
+	s=arc-20240116; t=1719927380; c=relaxed/simple;
+	bh=44/04iEfSWZJOuq7DzquvfVUDBFC9Eq1hI75oOfnXIs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GK/IQ1CAuwNafJe290JkLcaHZorrCOrAG+ynL9ROB5Q6BaGK21YR6wtiaFh1osXMcdDvy3tHAVd38XhGsPA4e1ExPHELNdW82FV47KJBWutJ1HPQT5UWHCfGjT5WKT88rTUgnG30CQejnG4h/cER+WAzXxVMp3thZwQ0h3KYzzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=asKQJdbH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD8FAC4AF07;
-	Tue,  2 Jul 2024 13:36:10 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Vlbkv21dNY4uNUMTStzLsP+EHd2NJ9IpbvBY0gYIdBfx1+c2QRxKW5XlPkFWzm3rxDKa8oF5iNZppUgx1AhdRYAM+Ff7KW9eENL8M4qVfVWvKhlRr0JWk8jvS30lKsOXfNIplqxWC2V99/OX6mRa3U2GTpWOtniT7OwI6rGm7a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVci5Ktq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 626F3C4AF0D;
+	Tue,  2 Jul 2024 13:36:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719927374;
-	bh=iuCyZDHCjUYh1ESjfx75LKbK8pm+Pveq1GXDorcZ1BE=;
+	s=k20201202; t=1719927380;
+	bh=44/04iEfSWZJOuq7DzquvfVUDBFC9Eq1hI75oOfnXIs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=asKQJdbHZMp9fW5ZZLxkwsKC796lTozLhyTnmV0uIqh+G/pr/uJfZGotHs8lAVdkz
-	 rtl8rCUdY6oaJKb/uqSQRdwQWSMTbjwv2QGQyzSykBhw/Rej+VGlyv6HuktFb1A9Au
-	 FRk3WukAHFFCW23mnbAtwNiw7d4yWVMXzl6hTgnXLrOg6vLRg6cA0ZhX58C7jP11fT
-	 YefzHYViAIejRbq+PVFxgqf0nXSMWdR1CO3kj7l16kVBFlnlqhAN7fAYzUnSgNktCJ
-	 KKSLFH53Svl+IrfZUiDP6UF824tX1pKpBXU4pgqR+ezYzGi1ORpWSxi4JNuwESaNDd
-	 4pAiYOZrzwBVg==
+	b=jVci5KtqNo3GJS9u7LJbYxh/4jq6YhT4F//kmuRhytaqnhc7EvRekBO1pD/dd3WOh
+	 K9jNhs9L/sya9xTFciiZOoCazKFzcX/gkAV6VYR8POvAQgzaLlV6w7pHBWzMBcYsdJ
+	 xMY1C17123lRebRssDu9O+VdQgxM9tvh/197nYBprSrDSCnueZNL7FIXTdAV81fGV7
+	 8Lg9F/5F9+96m3INFmptqbVTY+MByZQWKKBb9L3knZVjCOrnD5sGJCbFUCMlDdud3q
+	 IyKZofoN0zy4Ih9int/zQ+z28TRsTm1hGUWb1mxFtx7Z4XBS14xdMRNgMW72NCAk6p
+	 kVfbVFgCjg47A==
 From: Vinod Koul <vkoul@kernel.org>
 To: kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, YijieYang <quic_yijiyang@quicinc.com>
-Cc: quic_tengfan@quicinc.com, quic_aiquny@quicinc.com, 
- quic_jiegan@quicinc.com, kernel@quicinc.com, stable@vger.kernel.org
-In-Reply-To: <20240624021916.2033062-1-quic_yijiyang@quicinc.com>
-References: <20240624021916.2033062-1-quic_yijiyang@quicinc.com>
-Subject: Re: [PATCH v2] dt-bindings: phy: qcom,qmp-usb: fix spelling error
-Message-Id: <171992737051.699169.5180410107372263971.b4-ty@kernel.org>
-Date: Tue, 02 Jul 2024 19:06:10 +0530
+ conor+dt@kernel.org, heiko@sntech.de, sebastian.reichel@collabora.com, 
+ andy.yan@rock-chips.com, s.hauer@pengutronix.de, jbx6244@yandex.com, 
+ Shresth Prasad <shresthprasad7@gmail.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, javier.carrasco.cruz@gmail.com, 
+ skhan@linuxfoundation.org
+In-Reply-To: <20240620212806.3011-2-shresthprasad7@gmail.com>
+References: <20240620212806.3011-2-shresthprasad7@gmail.com>
+Subject: Re: [PATCH v5] dt-bindings: phy: rockchip-emmc-phy: Convert to
+ dtschema
+Message-Id: <171992737501.699169.18109328511977115085.b4-ty@kernel.org>
+Date: Tue, 02 Jul 2024 19:06:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,15 +66,16 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Mon, 24 Jun 2024 10:19:16 +0800, YijieYang wrote:
-> Correct the spelling error, changing 'com' to 'qcom'.
+On Fri, 21 Jun 2024 02:58:07 +0530, Shresth Prasad wrote:
+> Convert txt bindings of Rockchip EMMC PHY to dtschema to allow
+> for validation.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] dt-bindings: phy: qcom,qmp-usb: fix spelling error
-      commit: 3d83abcae6e8fa6698f6b0a026ca650302bdbfd8
+[1/1] dt-bindings: phy: rockchip-emmc-phy: Convert to dtschema
+      commit: e245c725c72f8c94e5fe435fdefd6852851450b5
 
 Best regards,
 -- 
