@@ -1,252 +1,210 @@
-Return-Path: <linux-kernel+bounces-238043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD4792428E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:38:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF70924292
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0924BB25CA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FCF01F22CF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCE01BC072;
-	Tue,  2 Jul 2024 15:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D471BC08C;
+	Tue,  2 Jul 2024 15:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cxWK2efT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YId3Nheb"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32641BBBDB
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498261BBBF7
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934705; cv=none; b=pc+/SH4yh3WPuHs41/UtF1el4ZlaXXozaFParQjd4qbS87yVpbo4gXIGokunpGd9cj4wIOZuYuc13QCZopoTuUnSDxDmtmJDHmBEJChZ3GNu0NWvfbXTXSnvhvWn2P506xOWZoXWsGd92l5q0s+w3ICi5rwP1bOSV+cTg3YK/fM=
+	t=1719934768; cv=none; b=DNUwhpjlez0OOWswbzC+qjS6gIysaRPlcpE6/mQaZkQ7J831o+fa8lxazSjN465YmN9iz9K9MQ9BpU9lNYWIMQOQ4j+r4gqtUHPsb18d7JL80VJGLRdikSV5mqvqoAivB0MxkkdXjTOLNAAjlN4ifrkBSFcmjH16BEcBpJgwCPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934705; c=relaxed/simple;
-	bh=SIsFCrQ/9NTgHBaGGLLFdWsoNHUzgWqjgWYroA8qSyg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WT8GLf2+DRPoebJ7wGxRtFVWtRf4z4Tr2hQw2OlWH/dvSXLiE+XrlGqBQZxSOeBrC/g3/zXnRGY6xDxk/Yu1uF6pc30trQ7KpO+e1wDB19p1Gz2OF31F9RrPLeoH7OQsfb2lRXa5TSYWiOlDZvzmgpPPt3uSg7XfP6H/fnk3U1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cxWK2efT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719934702;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iAzfxFyO9LwltD4YxV4jTJpadHiZLqH04rmYDKvnDWc=;
-	b=cxWK2efT4AkSkAe4TDs0y1ZMo8HHEAz7U/ZnjRDKaH9yX5Og8z7WUujPvmSesjc3DVHU/U
-	FsWG6o06725rm9uggAFqSuQ0C/1wXgWrYBFINfNPDV3S+kdKrdshm9XjC3enDGj5TNIS5l
-	YMzyR0XDYfECqSL0gGJ0kSeTwkF1CV8=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-230-emwUqRFQNYKlJemchXR92w-1; Tue, 02 Jul 2024 11:38:21 -0400
-X-MC-Unique: emwUqRFQNYKlJemchXR92w-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ec507c1b59so52332881fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:38:21 -0700 (PDT)
+	s=arc-20240116; t=1719934768; c=relaxed/simple;
+	bh=4AHxNIEa/py4Psv9/UziocWJzIZMugKPBmchZkKZJ2w=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=f/+ee4xfzp7En1Mle5e/eNXIxnapjz5QpfYzrneo4CCttG7+rRsi0T60L3mj7pWjwHncz9QyAScaF+EWBIbeg4/3lZ82TG1kbLTX78/KbVLnK4osjGeGJfPdR56q0fqrmJXq7Ktdwdp6pOIrhdLM8iP+QGqzmoqgPksDP2VxlQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=YId3Nheb; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f480624d0dso33015525ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1719934767; x=1720539567; darn=vger.kernel.org;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rH44fYQTDjEGbnbysnUTzJZqHwARkAornTGHiQKvP5Y=;
+        b=YId3NhebDzPVGd7XK5o7DsZLJYQOZZwnvytB23zUBxkdZ1k6046zKAXgCHi5FBqztI
+         WtPvVPHImLGRO9Q2RwgyRwc2jhpNhFUObLq3JmETdXgLoPKcOjnbM/NNz5iV31GNjgXo
+         6a7yEf8oJ5r0dXDx7dgGxfS+9h9mYS1TpGoKo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719934700; x=1720539500;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1719934767; x=1720539567;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:cc:to:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iAzfxFyO9LwltD4YxV4jTJpadHiZLqH04rmYDKvnDWc=;
-        b=SLVlXn0gnsNJSfdVEQjMcvBSgxaIXk3ZpddJ16Lu7K5LgPvDjeM+VzRz+fPrztgFes
-         rEt5FlmTsCasIFe4ss8evxvgnpP3ZCpm6MuzFR9REYdUH7t25IGUKokPHClXlcNgwi/8
-         9cnLMrs0h4e2+928TIW+Kw2+uW9XYP7+FYhiVCelHaoYk68l6PRSnMwy/e3wh88GbX+K
-         30nypgJ9HwqQc4Kzb0J/Eq7J2gavcm3nTXdBgjV86V+0Bm7ZxIDSN0icFrX4+h9XRCHs
-         td9YUKNa1WDCd/hXrejSLHU0+D1vdNhXLWsLAbkA3onM456RA/6R5PEo0AgxV8fgMNzR
-         6zrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXopdkjQjUfrG+XxWfoEzsIABOzVvP2qK3Fi/nUl1jCUKCJM2HCbJedG5EjoKmEnBkJeNLQkCpq8KEvc1zqGjKA7IgJnGdm/3YtPWgg
-X-Gm-Message-State: AOJu0YxS5s4Yh51rZKeB22+gA3pQ3WHBBM7RzyCk6gK0zYBSKlxuPr81
-	srxKf28wAGCO3p0dvLEBcGDRCgOmzUqkv1/sxl2lWwf4kPiw7hkI+5vXkbGajen6NQT0O9yfrLK
-	JpLmyv1K0C8/pEBDqMzrduYDCa2p//mJDsy4sP21iiidSCxqMkjd0GaInjxnDIg==
-X-Received: by 2002:a2e:ab0b:0:b0:2ec:5945:62e9 with SMTP id 38308e7fff4ca-2ee5e6f60ccmr91090581fa.32.1719934699726;
-        Tue, 02 Jul 2024 08:38:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8FsOViU0tLBkJ4MYGisQkin3IcHk046lhGDLNQonBPeFO9Vc5cI43qiofMRBy/LRH6fNcow==
-X-Received: by 2002:a2e:ab0b:0:b0:2ec:5945:62e9 with SMTP id 38308e7fff4ca-2ee5e6f60ccmr91090361fa.32.1719934699285;
-        Tue, 02 Jul 2024 08:38:19 -0700 (PDT)
-Received: from [192.168.3.141] (p5b0c6364.dip0.t-ipconnect.de. [91.12.99.100])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0c19eesm208322605e9.45.2024.07.02.08.38.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 08:38:18 -0700 (PDT)
-Message-ID: <686d3f32-45b0-4dd5-8954-e75748b9c946@redhat.com>
-Date: Tue, 2 Jul 2024 17:38:17 +0200
+        bh=rH44fYQTDjEGbnbysnUTzJZqHwARkAornTGHiQKvP5Y=;
+        b=Yodlpo/8m2MvsjUFGmg6DGys4rZdOdO8Z0Y3PCwUXX0oAxLT4sCu6gR27NdXACMLNM
+         hae1RLVvf+qmeZRvY2YISEnpfwbGFSXp2oDt77uHwrqpnaKDCzUqBMqydZCAQBQ+O6w8
+         8uVsqXI0MTaOZ05d+2L3z0JYCCF41ysOzhYVmw8DoPS3jHcR2mVkGnmytY7FWeHRfMj0
+         c+T/wt2FFRxlmxG1m8w7Dt1h6pFJgGLNF9xmnffxhl45nY8J6KKC2n2O+qBj7PKibcuW
+         lQGzDS9A3OEmRiM4kAte7ZyHNp0YXpW+6LQOE7IIetKHDoKrf64vkLdIOtr8dTMonjKp
+         6GjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAlGRUhGSIXl+ginb1Nbg3I15ZcKvVsiFYK9nRnu3RA1P9+gY3z6XbVJns31hyjOWhggR+wdd5M9uk8Zq1QkkDxccDMbqLbW5itaYo
+X-Gm-Message-State: AOJu0YyOKZBuJO/qjhdJ+BD9EaDq8VkLSSWLmzX8sds6Knjsw84nZNmY
+	XBrbNso7zrxVaaWVY1w42bDS8D0Fut9l7s2tmXsKpAfSxIFNZwf36U05flDhGw==
+X-Google-Smtp-Source: AGHT+IHGNe88xaz9V3wl7Y0BZz+8Vp1YXhbqAgPA/0D0pXcdR5pI17FqahEDKlWelRJEO2oTR4B6Gg==
+X-Received: by 2002:a17:902:bb09:b0:1f7:174d:3309 with SMTP id d9443c01a7336-1fadbc8eabbmr64859875ad.30.1719934766597;
+        Tue, 02 Jul 2024 08:39:26 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1539160sm85687665ad.180.2024.07.02.08.39.21
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2024 08:39:26 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Kalle Valo <kvalo@kernel.org>
+CC: Dan Carpenter <dan.carpenter@linaro.org>, Su Hui <suhui@nfschina.com>, <johannes.berg@intel.com>, <kees@kernel.org>, <a@bayrepo.ru>, <marcan@marcan.st>, <quic_alokad@quicinc.com>, <zyytlz.wz@163.com>, <petr.tesarik.ext@huawei.com>, <duoming@zju.edu.cn>, <colin.i.king@gmail.com>, <frankyl@broadcom.com>, <meuleman@broadcom.com>, <phaber@broadcom.com>, <linville@tuxdriver.com>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Date: Tue, 02 Jul 2024 17:39:17 +0200
+Message-ID: <1907419a888.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <878qyjg6cv.fsf@kernel.org>
+References: <20240702122450.2213833-1-suhui@nfschina.com>
+ <20240702122450.2213833-2-suhui@nfschina.com>
+ <ba67020a-04bb-46b8-bc05-751684f71e8a@suswa.mountain>
+ <19073fcc9e8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <878qyjg6cv.fsf@kernel.org>
+User-Agent: AquaMail/1.51.5 (build: 105105504)
+Subject: Re: [PATCH wireless 1/9]  wifi: cfg80211: avoid garbage value of 'io_type' in  brcmf_cfg80211_attach()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm: Fix khugepaged activation policy
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Barry Song <baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Lance Yang <ioworker0@gmail.com>, Yang Shi <shy828301@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240702144617.2291480-1-ryan.roberts@arm.com>
- <c877a136-4294-4f00-b0ac-7194fe170452@redhat.com>
- <ed5042af-b12f-4a36-a2e7-9d8983141099@arm.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ed5042af-b12f-4a36-a2e7-9d8983141099@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000d34b64061c458433"
+
+--000000000000d34b64061c458433
+Content-Type: text/plain; format=flowed; charset="us-ascii"
 Content-Transfer-Encoding: 8bit
 
-On 02.07.24 17:29, Ryan Roberts wrote:
-> On 02/07/2024 15:57, David Hildenbrand wrote:
->> On 02.07.24 16:46, Ryan Roberts wrote:
->>> Since the introduction of mTHP, the docuementation has stated that
->>> khugepaged would be enabled when any mTHP size is enabled, and disabled
->>> when all mTHP sizes are disabled. There are 2 problems with this; 1.
->>> this is not what was implemented by the code and 2. this is not the
->>> desirable behavior.
->>>
->>> Desirable behavior is for khugepaged to be enabled when any PMD-sized
->>> THP is enabled, anon or file. (Note that file THP is still controlled by
->>> the top-level control so we must always consider that, as well as the
->>> PMD-size mTHP control for anon). khugepaged only supports collapsing to
->>> PMD-sized THP so there is no value in enabling it when PMD-sized THP is
->>> disabled. So let's change the code and documentation to reflect this
->>> policy.
->>>
->>> Further, per-size enabled control modification events were not
->>> previously forwarded to khugepaged to give it an opportunity to start or
->>> stop. Consequently the following was resulting in khugepaged eroneously
->>> not being activated:
->>>
->>>     echo never > /sys/kernel/mm/transparent_hugepage/enabled
->>>     echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
->>>
->>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->>> Fixes: 3485b88390b0 ("mm: thp: introduce multi-size THP sysfs interface")
->>> Closes:
->>> https://lore.kernel.org/linux-mm/7a0bbe69-1e3d-4263-b206-da007791a5c4@redhat.com/
->>> Cc: stable@vger.kernel.org
->>> ---
->>>
->>> Hi All,
->>>
->>> Applies on top of today's mm-unstable (9bb8753acdd8). No regressions observed in
->>> mm selftests.
->>>
->>> When fixing this I also noticed that khugepaged doesn't get (and never has been)
->>> activated/deactivated by `shmem_enabled=`. I'm not sure if khugepaged knows how
->>> to collapse shmem - perhaps it should be activated in this case?
->>>
+On July 2, 2024 5:29:27 PM Kalle Valo <kvalo@kernel.org> wrote:
+
+> Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
+>
+>> On July 2, 2024 3:57:27 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
 >>
->> Call me confused.
+>>> On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
+>>>> brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
+>>>> brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage value.
+>>>
+>>> Since you're going to be resending anyway, please delete the space char
+>>> from the start of the line.
+>>>
+>>> It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
+>>> It looks like it just goes to great lengths to preserve the original
+>>> data in io_type...  So it likely is harmless enough but still a strange
+>>> and complicated way write a no-op.
 >>
->> khugepaged_scan_mm_slot() and madvise_collapse() only all
->> hpage_collapse_scan_file() with ... IS_ENABLED(CONFIG_SHMEM) ?
-> 
-> Looks like khugepaged_scan_mm_slot() was converted from:
-> 
->    if (shmem_file(vma->vm_file)) {
-> 
-> to:
-> 
->    if (IS_ENABLED(CONFIG_SHMEM) && vma->vm_file) {
-> 
-> By 99cb0dbd47a15d395bf3faa78dc122bc5efe3fc0 which adds THP collapse support for
-> non-shmem files. Clearly that looks wrong, but I guess never spotted in practice
-> because noone disables shemem?
-> 
-> I guess madvise_collapse() was a copy/paste?
-> 
+>> Not sure if it helps, but I tried to explain the reason in response to
+>> patch 0 (cover letter).
+>
+> Would it make more sense to have just one patch? It's the same issue
+> anyway.
 
-Likely.
+Yes, but I would solve it in brcmf_fil_* functions (fwil.[ch]).
 
->>
->> collapse_file() is only called by hpage_collapse_scan_file() ... and there we
->> check "shmem_file(file)".
->>
->> So why is the IS_ENABLED(CONFIG_SHMEM) check in there if collapse_file() seems
->> to "collapse filemap/tmpfs/shmem pages into huge one".
->>
->> Anyhow, we certainly can collapse shmem (that's how it all started IIUC).
-> 
-> Yes, thanks for pointing me at it. Should have just searched "shmem" in
-> khugepaged.c :-/
-> 
->>
->> Besides that, khugepaged only seems to collapse !shmem with
->>    VM_BUG_ON(!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && !is_shmem);
-> 
-> That makes sense. I guess I could use IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) to
-> tighen the (non-shmem) file THP check in hugepage_pmd_enabled() (currently I'm
-> unconditionally using the top-level enabled setting as a "is THP enabled for
-> files" check).
-> 
-> But back to my original question, I think hugepage_pmd_enabled() should also be
-> explicitly checking the appropriate shmem_enabled controls and ORing in the
-> result? Otherwise in a situation where only shmem is THP enabled (and file/anon
-> THP is disabled) khugepaged won't run.
+Regards,
+Arend
 
-I think so.
+> --
+> https://patchwork.kernel.org/project/linux-wireless/list/
+>
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-> 
->>
->> The thp_vma_allowable_order() check tests if we are allowed to collapse a
->> PMD_ORDER in that VMA.
-> 
-> I don't follow the relevance of this statement.
 
-On whatever VMA we indicate true, we will try to collapse in khugepaged. 
-Regarding the question, what khugepaged will try to collapse.
 
--- 
-Cheers,
 
-David / dhildenb
+--000000000000d34b64061c458433
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
+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
+2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
+Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
+HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
+KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
+Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
+dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
+OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
+MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
+BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
+ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
+zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
+sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
+BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
+N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
+p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
+YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
+bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCeOi8qC29vhaKHam6V
+P4dzvmzOFshznc/u5y1ytFdEeTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0yNDA3MDIxNTM5MjdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
+AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAfrgN78bbaCqlzFzw2xUlkvSTnlOWT3C2LQ/O
+molPJwy5vF9mW6ppJA6CwV0DPCTJ8EpKISOfS5Ey/V23Zzi2mujPqWlG5U9LxVPn4rrXdtrbAL0E
+CX79W95tP+7+7CSHZEz3OI60sn8ZpNvEKn7IK1s7wMpK1kvrmaofHDDbAFzXWh5DJqiadUDuW4WC
+hsJaef7UCeGhDCcf8k8b+UnOmq+DHioQ0ekwMcYAs8JPFASowb847C/JtqC/P3cfN8sjuMfvs0Sw
+/d2DxUa7MdZyuBmm12HVGnI4qBXp2QE3u9yglDYGlCcAz9DXHPuVkRYOYAUJCzUm4Cw3Z+Zi+0rl
+Bg==
+--000000000000d34b64061c458433--
 
