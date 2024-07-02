@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-237748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96B7923DAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:26:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 656C4923D6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FF5E2877BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:26:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF48DB25906
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B5216F8F5;
-	Tue,  2 Jul 2024 12:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF0316D9DF;
+	Tue,  2 Jul 2024 12:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="L8PzqMIs"
-Received: from sonic308-44.consmr.mail.ir2.yahoo.com (sonic308-44.consmr.mail.ir2.yahoo.com [77.238.178.180])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="W0GmMW36"
+Received: from sonic314-46.consmr.mail.ir2.yahoo.com (sonic314-46.consmr.mail.ir2.yahoo.com [77.238.177.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEA816F0E4
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.178.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4731F16CD2E
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.177.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719923124; cv=none; b=uXvXdRRQ6r/GAFtn/9IfLFNdcJMoZ12mh8eTtrC3eQ4VYGX6lZYYIczIEDm/yhWO5mSFoIRSC6XOHsyjQa4t+GV0PQRWrgb+RL6S50OP9e2SfB5oQ2120Z3UjMVlMHizfzgSGhks6mu3f5oD9mvGZa5/1mTxqe4TIHasMOjWV34=
+	t=1719922517; cv=none; b=ogOfo89x9cCVMBoV93pwCdX6Z8BuAlHOEz7daZEi1XFSIpkawetirTUQ0rPBLXlAP25r0Wtth6G0d3LCS82H/65zPVs2yJVwhHyW08cyKyML9/gD0i7gS9KtoOrDRm6cyGKQgnVc1FnxDxxfRTSHVKbSy2QYueq0pxcqg/8jzWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719923124; c=relaxed/simple;
-	bh=czYlFkR7gACaffEBBYkZYMloku7B869PLgAxG+uGO7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=tSuBf8ISSN/tqteuR/MHzY62sl//7UW8hjMd6YG10XdXrefEG1icQedua1yeKYoLq2Nbjj9Cv9Mbo/ceXa42H3dqkYtEILn5mqSR9XIqozmAKyKMOYyflSGZGPfYMxRhFsWaXppM7E4RLu6tnnq6L4nHC+QNFVYa1BgwFqJu2h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=L8PzqMIs; arc=none smtp.client-ip=77.238.178.180
+	s=arc-20240116; t=1719922517; c=relaxed/simple;
+	bh=5A/LPrJoCxitojeJt7eBlNk3snz2b7ebrhihpRcHwVk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YVZPHOuERO30VjZWWRAEHtCmkmUyFcdm43qGKCmlYl4hORvoOio2eND3EAUr0+SMeIB2gx1aCXjBQ8KsiQXhVGYtjIrOJ0GhN5Pve+GQqqdsNUoyKs+z3GfVJCY8KH4QQ1q53MHdwGryCQC1o+y0e+eVmwYPWh5WbFULNUJ9wCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=W0GmMW36; arc=none smtp.client-ip=77.238.177.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719923121; bh=J8LVgZXsBn/SKy0ON6Xyfp/jRyWWH2Gsbog4fAcslz4=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=L8PzqMIsKDTAK56PMorZq7qZ61MdL2ugyUDQ+g2LY+T7W6D9cEpCC6yp+h85eJwC3n0lLqYaRFLRLb7z6esToj6ef1un5gbVQKXpqq4rMOG0eQPDK5RjYN4mKCfrirYpk++Ym2lcYf7PkgQLzvrBucCartUDCZkjbIMxpin82kJtZ3m1S5EAFrakPMPLksFo0LT3wr9eU361BSHt1qPgRd+UX+lFMfYuWE76PIZO/HPa/eCKk0B6yEoQPpodVMc36i6FnbN/5p7SEU19fVhsO3Ch0vViSo9K3fqVX6A9mZbL1hJjEBx9CXGzwJONNMKh5He8BrAR5HO/Kd+RJYaIxw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719923121; bh=ojo8wkfSFDTTQ+tYwEoPp0kEyAweQJADnia1W5e98f4=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=e9e1EtIgvfoxLMx1LoRRC/LYpIeMTfSUiQNHMWo2/ltJEuqTDMIfAqWO9XlRrQRs9pDr7YNcNeBIk/EDh98233xthDEbkrEsrg2o1epd2kEXJFjxkw3GViykcpZ1K5Smk6gQfi81HihIbbCIdHm2qr8m8Y9FTZr2w5k8E6ft6/lpOH1Ja2j23IFiFAtKvBiFaDW3XcJha9FvFwD59GsnqD4i6mHuHjBH1uFDwFCuJ0RkRFtgem/Z22/qaKDcSFBb/KvKHcy8ZTZokkz/lV9qFTkO03HK4o8BQdXzNdivi8dT8itX7MoUQ89er8MBxi4TjxEbMi0fS858lJOaz1ET9w==
-X-YMail-OSG: INJqqsoVM1nUAl02a13QJLORw6oGZokgB9tm0D_u0t7.L.3_e8rDkhW0asv59PQ
- wUB7ez8C6hw2C66ImTssx46a7xqfLZpGmx.b9PxJWj6kMkbk64d5wPuFePSRhmRcdNyCR1FYP5EV
- HPwhTSavDu9zWK73CFsTIJ76uI_LLg1EaSbwpwyGLYzIgOM5O.o_MIXcgvPiIhrYSw6mBe3lNrIF
- jgHTL6oGsYRrG2D7FPo2FJbsuP2dCxBIX8l3hRK4nry77Gx9Cpi8eApdfhHc5Jgot9uzDbvjykd8
- ySZnsdbxn6lXbl4uOmZEQBpslc7CVG1GbH8NXZj_PRXBf.WbA0XKOugzTRGPRKLYuH4F8W7EIf76
- vZuukz7ZQofO9EugcmV2HV2qCcV_GRAqahcjlPhP5aNzgE4c39JwdeBD5FLnLUS5lfhhCSFiF4kX
- Qdfp4Rwx_V3ygH.1g.xRcwtMO4HP7c253DxO8Y3FwdrS37n9AYS.B3ogqPOy94PCXTfSsrRmNsBw
- TDno83H0N_p37.mARmrXa5qZvxnLd8JobcTS9yViaetHuSpq0y6Rcrvv1xPOrPDSpAJnHrLXEJuM
- xiB35FeIU4WwsZ2RpttSmIkZxbfS2OdBkC3zcOkEhPh6c_EsjilB5uF4EPo0QRjjgclx4BEoSG2G
- RTomCdub9A2Kl5fXW3Iyb3JwTLzUuWcOAzIZiRCVb9wmbt.XPpwMNJVFm1WCH5tIg7mMY2ul5msE
- Y0cv0S2XxxVJ.raBl1mPpPlsr2tANCk5SoSzsfo0Ydc31xE_Mz6yk0rahRsWYlKm6iAP1FLq1_XN
- Gpbm_sXubjjeg4bvX1TUMCi6rUSBLa.DhK6TGHz9uAhOaEjFh8OMWTL4DwsRsg62nNPtgSCCOOZe
- O7PJHKPLTGt37sH21x0csJy6Oa20jG.gQeoRg_g9EranMPJDfS59anwWW7UzrDQOqOCsd6BRTVqr
- oejA9rlIXRU1awHyrz4ICGNPfb.6IpUeyAkz70QXHeV54M_asDv3Mr3vQR4xXWjokvgJnHZKPrAD
- vcYV_9rtdjJPgQBpVw79wTw.tr5FzF1jhyuiUiGfGeNCVg4DbOnoatnxnDxw3gtVgnCfR6HP_LEZ
- O_nOnTJ4z_58kWOuoNMRoanxUUk_a2mm2Ntyj4DIEVTnj9GKO6ndWlkxQO.kUEpUbWHvlFxKrjiT
- q1o6Lv5ZxlifJ3hRwcx_D2DdTs_1bQnDw6qvuAT4uOdIS.jLKi9DoabPle203FeAx_KQmUdOR8L0
- 5lWF8Lzwg23ZDW1Hpxoxx.TNG74ZUD_t4AspQXJHWizYo0poqnlJ5zeaQZDelLEcrLvgNHGRe6Nr
- wpUHPQ9f2yQJDsQ3ADVppsNcRZME951iXAWtPRzry.Mtw.9T9zFWIHhA5pRnpIz174IvXawZnFRZ
- 0QQDJ9F9nb_EUfzn6hVlslQ8hngLGtFw4VStOBn4e0l_BLdkRVNPLXAZdglMs.8lWSCOxyq5XNot
- T7uzchyjW7FpQm9NrgYIyrb22lSGN91uX9ujSf7D.BM4kv5_gt1plXDcEaVy.A0r7NsDgXofBZB6
- EnOk1gpi7SbbBRqv1.7sigXnuzeiJTsIN0oBSl62Y_lvcoXe9VAUni8IxulWDnYqdZjw.JoO80p_
- rWBlfnY3qLL3b_V_Iav0oYgVVx74zkvTHWY0tG3ytP8x0CqwROaETxlE8l0Wwz.MyeWCZwO3zyKk
- szoeKme69weeGHYsKK5klMTM98WrvkQNRxgGfL4WPfJob0q1ORg94cY0nEoRRfDydfq6YY7jlj17
- 6pXXd9GpBoeTENmft6HgwEC4mlxBmTB7EwEU4xUYlJNa0oEr9Xu4IRCsTG_WP8_Z2DkWUDfb5Crs
- rRhr2isIezCmRjRJPjuFar.eAvUupu1ljHnjmeY_oMHAifaXy.Op1KhAEHRS4riDxqZZleB4HqZO
- S7w2nfRaXNrw.BTFuw_kRrFKfD9NGYerZ9rFIRRHox1cky96VzGe3aDFBUHJQ5sPtIXuvx08G5.j
- LfaBCHbFQnjWtjvgSI45zi1kt58OLLxOoH0s9wjdHRCWx3Zd6GMrpBE3z5zwYV08YN.UgdNk6UPg
- E3Ik49m7izLziYezWdonBe4OJf3z8yuPGwy3uED77zpFK4fr.PDwDg_xtZURZoRpfDkW.edw-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719922514; bh=SI7tOorPKK3iwm2YfS1Q/1Qsuj151Q4jTdztaPUQtFQ=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=W0GmMW36rP0dyoHybBYHWPwrq7WKLdiIT71YN/hYayZ3kCTHJT57HIUx7aJhL+pnKaUFzxAxRQ+oy5/rQH5RVeDaaA0wYz4tt+yjY4skEKIpPpIxZCUk/VIoXn+KM0cZwUF4UcY7gUUrnhPcpkINLXW8fx91oHSIt4gvC2OTTQEpysCaT4OE8JqY0WTSsBGQ0XBo3FQyWyMU3YTgXG2ty0YGOq7dTY4pJB4+oJN6gDNNLGR8zkRS+GsuQcvuhdMzhbtBWE3W8+enX48L5VR5SvUgbOipzxFA45wMsZBO5Nboj7OajBdlq7CEmg9/ZRbpC8dSqFAcYjTS3w3Cl9wT7Q==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719922514; bh=hcfzUVawVVnbnXKHIXQxFqBsiaYVIbdVjVVVA0ARjWF=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=ofA1Zqctco8x0d5CPMeL7HCZ/MekOySYjaWHgXBwhWYz/JoC2En7GTrc4Nl1iZSLY/KkakcN75Y7uDGddfDelAKmJq2aNkHDh5qRpZfBn9TU/rZC+JYqsYIpAWxQSlFMsWnpPEr6fHkMud2YOr56nUknXgcxKUSXpxTD0KU/At4EUFF0z7mF9M/fhHGsuHyat7fuwHnS52u9hV2uXQj6lVGU4Fv1+Oz+lOrLzEu5HEOso76gG//wJ44jhmrI9PR5+Bkxxh/mWSCrAVBCdpBC+stQ7OqCrFxTbs6l0F2kJRgRk3u3EgC6FDQXqivvVb1acXeeIemWPsCH5/pmWKPfdg==
+X-YMail-OSG: ElClSJoVM1kUkOe6xQFoHRNY54mPJP6B7tC6uj_3Brw__zqhVQ2DoPACgCDwrrF
+ R9lmIY.b1BomJ4A1apc6Emx1ZzQZYGvJDVLjjzqEZB3UTiq00K9.Eq3aRazKiLR2bzh5Qe2qAbNh
+ ML.cT4e9F1lx8Un25yjgtwnjTlt1aJEGoDoTgOTww0xG.eL3SE7JaV0V7oKs6EVm2FutJV4ZGoLK
+ H1OHbFoVcbH1J68X30f8ZVNVqZO6UxEnkUZwJSZ1WQ81n5q0sG56Nq045setkuAsQB5PqcKZ.nQ2
+ hNzygx_DMUXqU62DvFAwMm9d8B7qzUdHiINV1RaS_m6zrIJVRXkrMLcX1_hrIX2VtozztwpDcA7K
+ gI1B.ey6HqFlWvaBpqvsVYOzIvB9bim6toaORiAmcEH.0EgeHFfmam0MR7pP9EmWkQ2Kdvupi3vZ
+ 6Fefeq3sxWCHuFd6VIiUuyUAth4zziIzKWIBaYhTQFjKuNdJUNwH.y2ImvrCIHWivlKQBZQafq2G
+ bUzQiIJeQrGZbkgq__9cP4pCbVMe0ctO.5UCjdSMQszPbBCEW57HfhhTg..9q_L4ySQFAS_xSC7Q
+ UsIGeRXcyH1TvqLblSNC3Bafip.vtsLbJg.UBYHvPyh7cJ4fyvi6uLkYsUyU4WkZYXTkzKKb0EvY
+ 6I1ef.MSS6dp5NvdKu2ZrOaFLxlFVdSFgTl4d0fyHZxYKexouC4W_ldHKO6n14d2oKdjZ2xbH3CI
+ jsoVBPCL4cSfwiZVk1p.kp_TJ5OnbNOfaqybVjHpxGaH8A7Xp.WsSMubPE7JxhMJhpGvlI75wdlA
+ 0.PwF3bX6huSzp2Hg4pekj4z0cwEH2faIabZWV8EH72uzECwlptGhAVUg9r4JqC1DjoV9e_uOMr5
+ eOU02LjaaXqCZiBJapRiWKlAFYFuJbn9L.ORfZk2kqylr7yxSoG3pZE2KE03.7eeSWRk40MCofBE
+ 5S2wKvhcyMxKhXZq7fJhUUhoeWpeJ4ZLV5w2wPiuwNM9CjPqvla7oIk1uQ9P7Al7_0wW3_NWXVmK
+ NkhOTrY9dryUROMiUSMy7QAyYWR8Hk7y7JTPSJi5B3Vv67HbPTRuKOyCfObw0PIqjymaKIN8tEFd
+ 8oce3gH1FF4PhYjZ61J9Xu9lJOA3hH9kVVWy5Hl_6dGvw6rgxKFKGhIX.vcDAVNMn5e7Dx368Mgl
+ 5mSJ_zE44I84OkHpL2v9Wsr2pvlSZUX3KJyZ7IuNJNgn0RMmughcpBXHouv4kBVivzk1Q9zRR4W7
+ 96UHq8JRVSeSsjPyoZcK50krIuYt3RebgtNEw3TUoplkdCgXejz9_SqM4B26AiytJih1PR5O0wNF
+ CQhfYOkAx7y5Z07UTZMzcCIxXbkY.1FtKKAbo6E8ncgQUZmzsau67KklsB88SrNXdSxDfS00WTxb
+ BZYP9hjNEoCj7xEPpMnMEsz61kc.hI2GAb4faQtP7R3UIbRl6AMD8XGsH1ZbU1T9q8Spl.mPiLBf
+ guiyIx5g.e2I2y6sqf6lCaGcDIGyO7HC5zp5gSN08chtLloOH3Yc8C5uGnMyJKsIBkWcFxuZ.mO7
+ OiZOn33tHUrsoHIcvrJFSr.WTvzADM8ap1x5RaqH1W2FDaLuNouy9T4FO.MoUGXMgx7OLuDqtcgw
+ jFnRpKGe9je.Z.rdrzS8p6Thh2WtnRHRxt8kx3pYrdHgnnjv_akDZrhKy2BS7JncP.T85S257Rnl
+ mXuAgXX61OuhhUnnV1uX8H25QzeDA6pCWC2mjEtrp57TjgDMuBSOiDYYXduCZyRcvPQr778.bX.W
+ UP9cuWSt.sO6VU1DorbXJfC2dSOEVRKRTnFe6xcEApnqE15NZ5qIIWkVO..l7HdvAjhoAUDFiR5R
+ AU.TGmWIqud8womiJYuD.I9k48dzgTjSZImSvD0Cv_NI52s5Gz1H4u7g1OLWcCHl4mnbIPyHcpa3
+ DCL0TS3I8KlSI1CUcfF9O.Lxx8uHqG5MfMrKPO.1QT7_w.RZgtER72mGBO.4FC3WsmrG5Q8XL_jX
+ Ey4kHZ0sJbiWRtS4JFzVgEEd8.0Vfcudj3kANixtHpOO4bVWh16aAaC1goGPmxBP7cW9mZmUrFmD
+ .gQlY8Sq5UgUER2jkAzE0DAGUL.aQTlnl1eMYijON7ZMYP7FJuZym.w5dmkU3sAcTJdW3LUC8PZl
+ Ko2vzwYHrndjNvkhdi9y5GVs.1fCkPAEEEggy40pUfpY1rDzooZF_qjI1xw--
 X-Sonic-MF: <xzeol@yahoo.com>
-X-Sonic-ID: 22345d43-bb8b-4137-a272-4ea238d35601
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ir2.yahoo.com with HTTP; Tue, 2 Jul 2024 12:25:21 +0000
+X-Sonic-ID: 5be21093-340e-4cd2-8dfd-5895edaad512
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ir2.yahoo.com with HTTP; Tue, 2 Jul 2024 12:15:14 +0000
 Received: by hermes--production-ir2-85cf877599-mvt7h (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0dd9cec1d13f3a8113ebc66190b2d374;
-          Tue, 02 Jul 2024 11:52:55 +0000 (UTC)
+          Tue, 02 Jul 2024 11:52:58 +0000 (UTC)
 From: Alex Vdovydchenko <xzeol@yahoo.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -81,64 +82,40 @@ Cc: devicetree@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-i2c@vger.kernel.org,
 	Alex Vdovydchenko <xzeol@yahoo.com>
-Subject: [PATCH v4 0/2] Add MPS MP5920 Host-Swap controller
-Date: Tue,  2 Jul 2024 14:52:49 +0300
-Message-ID: <20240702115252.981416-1-xzeol@yahoo.com>
+Subject: [PATCH v4 1/2] dt-bindings: hwmon: Add MPS mp5920
+Date: Tue,  2 Jul 2024 14:52:50 +0300
+Message-ID: <20240702115252.981416-2-xzeol@yahoo.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240702115252.981416-1-xzeol@yahoo.com>
+References: <20240702115252.981416-1-xzeol@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-References: <20240702115252.981416-1-xzeol.ref@yahoo.com>
 
-This series of patches adds the MP5920 Host-swap controller, which is used
-as a protection and control IC for devices that are being inserted into a live
-backplane. MP5920 acts as a voltage regulator (MP5911 etc) supervisor. IC
-utilizes pmbus and provides monitoring, statistics and limits to electrical and
-thermal characteristics such as:
-- input and output voltage
-- output current
-- output power
-- IC temperature
+Add support for MPS mp5920 controller
 
-One must take into account the nonlinear character of readings, so there will be
-a statistical error in the range 5–10 percents, depending on current passing
-through. In order to use the IC, make sure to specify a valid I2C address
-(consult to datasheet and dts-bindings)
-MP5920 datasheet: https://www.monolithicpower.com/en/mp5920.html
+Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
+---
+ Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes in v2:
-  -  fixed typos
-Changes in v3:
-  -  removed unnecessary license blob
-  -  removed unnecessary headers
-  -  edited device tables style
-  -  added chip name checking in probing
-  -  fixed typos in pmbus_driver_info struct initialization
-Changes in v4:
-  -  added i2c_check_functionality in probing
-  -  refactored usage of dev_err_probe insted of dev_err
-  -  edited chip name string handling while printing
-  -  restored .driver.of_match_table, keeping i2c_driver "old" style
-
-Alex Vdovydchenko (2):
-  dt-bindings: hwmon: Add MPS mp5920
-  hwmon: add MP5920 driver
-
- .../devicetree/bindings/trivial-devices.yaml  |  2 +
- Documentation/hwmon/index.rst                 |  1 +
- Documentation/hwmon/mp5920.rst                | 91 ++++++++++++++++++
- drivers/hwmon/pmbus/Kconfig                   |  9 ++
- drivers/hwmon/pmbus/Makefile                  |  1 +
- drivers/hwmon/pmbus/mp5920.c                  | 93 +++++++++++++++++++
- 6 files changed, 197 insertions(+)
- create mode 100644 Documentation/hwmon/mp5920.rst
- create mode 100644 drivers/hwmon/pmbus/mp5920.c
-
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index ff70f0926..cb2fc26d9 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -296,6 +296,8 @@ properties:
+           - mps,mp2975
+             # Monolithic Power Systems Inc. multi-phase controller mp2993
+           - mps,mp2993
++            # Monolithic Power Systems Inc. multi-phase hot-swap controller mp5920
++          - mps,mp5920
+             # Monolithic Power Systems Inc. multi-phase hot-swap controller mp5990
+           - mps,mp5990
+             # Monolithic Power Systems Inc. digital step-down converter mp9941
 -- 
 2.43.0
 
