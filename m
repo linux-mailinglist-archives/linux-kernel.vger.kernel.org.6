@@ -1,105 +1,132 @@
-Return-Path: <linux-kernel+bounces-237591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5E3923B34
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:17:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CBC923B33
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C357283A4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:17:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE3D283C97
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26271581E1;
-	Tue,  2 Jul 2024 10:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C5D157A5A;
+	Tue,  2 Jul 2024 10:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4wdjhoqk"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oi/9xOCg"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF3D15749C;
-	Tue,  2 Jul 2024 10:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1C3156F3A
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 10:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719915463; cv=none; b=jGanv22NWlTA+QFC9BahEDVztitRda2n/uIWgpJ+xTEdxE/SHpZJ4XxA8wGzBnAHvVi4b9i7f7losW9frrmtqCPcFt+wJX742vVgdiPDYrOjYaAN9+lpXN6KXXum/yxZsmQ5k54AIGKJqi+DM56RXf1CG+3x3Y9+d6TpWtzHif0=
+	t=1719915453; cv=none; b=lE5ZLpmfdCR2ho1pWUiSxdfL0dGwwdFWGThEOZLQWMaM2edx8lc0AVxivhi14d0kqLAtabGEy0Y6HH1l7Us+HvyVs1SEGemsLyLue9WFM/TwELGZC7Lsu/p5FUVkJEY77d+U5mFLfeOt7oPLmdllYSPqxJ6RgEIXLBQuN75RITM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719915463; c=relaxed/simple;
-	bh=l1Jbp/GpCO/hk6T5uQ4gxgDy9ClqWJaMhxVtIwAnasU=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Ig8NzdgYUgCIJfF9H4EQvqB84m/WhesJZgpk+0qzKiR6Ihz9FoDZVgJb7R9RHUBBS7wAW+4yTCQUG71SBsmpIbVE6iOqTmXkbBJSNo7BDQlT2DDt5cJFVbf1q1zj5D9TGFut3yOZ+ahJkUZKpxNgrN9U6ZPBk2TR7X/MIQXMVZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4wdjhoqk; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719915460;
-	bh=l1Jbp/GpCO/hk6T5uQ4gxgDy9ClqWJaMhxVtIwAnasU=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=4wdjhoqkb7oOKkDL7VCb7chUYwf49AlCto1+2Z5GSaZjJTxyrct05+rrGPuMhjBAS
-	 V0yd0CaJHEDRHuhDS1vpkvq6U1R47fZiw26mxgypgsZuf2aIKWlVu/tQphLG+ENWUH
-	 ZFklB+0ZzKpDTloN3qZPqYDV9Y0AGwxnA/Ycn4mVWANfZlbb521kppe+d5M6KbA1zz
-	 JcJiSI+tdjAwlgCOSR4eS+YN9zc+03erIF3blexuVNOrjt7pLD662mz/RnJbK+vfys
-	 fjFCFYRJEWgDqkTBQREiKLYIxBTGwfOfvr8mGYo8/D1yobQ1UHNGZdcsumIU7gZe8e
-	 HU374TYVjeqcQ==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 930E1378217E;
-	Tue,  2 Jul 2024 10:17:31 +0000 (UTC)
-Message-ID: <83d0c57a-dd87-42eb-935a-e4104c17a5ed@collabora.com>
-Date: Tue, 2 Jul 2024 15:17:26 +0500
+	s=arc-20240116; t=1719915453; c=relaxed/simple;
+	bh=siQZBD9sunBwr34OkX0W48YJK07Ln8v4+0iG1uCeLGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bv+hWy7ocq7QL7o8sSyarAvilopfk3XlthCdT0MyDQXGts7Gtuis1L764YgALDN5uJ0h4SpjRbNUxGhgXQ+cgyCOO3GLkqn1XgDChbHSY/Wbx+qKKVknTvLXJ5M3WezfDJZIrFkWb+gBEhY7ikUz/lya3eWRx71YTvzv+/RH6IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oi/9xOCg; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fab03d2eecso30710305ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 03:17:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719915450; x=1720520250; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4pKTTPmrnQobxgE7l8dU8flNulXP3EKlbQMbrPlJki0=;
+        b=oi/9xOCg2XvwABheFw6zU/5Mcy6ehXLaKDDdDw9pzqDcPqSNnxDXV0vNZbwwWqsq5A
+         /KvU6aOpHyO9DCgbhzO2pjU57Du9SaPT9wKQzJZBIsvGnBLI3gFSMePgH8l8I/jlRT+o
+         Mchie0vHqyD1aONoUty6CjET260c0mT/131g/lbkfzns1UvDeMF6HG9uiczUuolQoob+
+         R6qqSsx4ek8YRe2JaEvwyaXVXc4BXBW4aq3HWqTwTf5iQnn8rd/n2IU6e33NnrdGQwes
+         OVLOr7o/It82AVr2Be2OsTvYb4ay2QV3uhHTIl3NfY0fnkFtz4xKhyVc6uVlUBt16CWF
+         sQnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719915450; x=1720520250;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4pKTTPmrnQobxgE7l8dU8flNulXP3EKlbQMbrPlJki0=;
+        b=QJRB33mMW3697LHzmZnSIMByqBouaoIujU1swltuEQKp79MOINidxB1OCQxfdhb7wx
+         eDD7So6YHt9VnP6mIeC/fLYQKjijZtg5YZ1LCo/Al1WT8wCx9PxS9ICeEQLiwoWDyFIz
+         5Ag0kA9TdZZPCrNj3I2R6H240mVv40WFweiuqpgIWv/1dpZrg+99R1kGbpOO9TX+mEgC
+         5N0ep3cW2lUS/aVhjarv/I8h7gixrZkhpdKgCOE68sllVEn4FDrroQXinYnVcrNpfxo+
+         RhsNRNOvoSQPe6OGZrAXiBdAVw7BVth7x6JTsMVOM9/scrjyascAuHtTfjGv7tN/7XGn
+         WsIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhaj0xre19HvxHpJirYdy7WytvcbbNmj9t65TG1SifLPvbni81FYYLIJHQct/gBoJB93RXM7r3p7dpAWBBHvtFfqVyFAUwHqueAkAe
+X-Gm-Message-State: AOJu0Yy7SGvmL95doR10ogE5M/nEluji9Cx31yHHRoQ9Uf3BgtQrwrZR
+	P9Ej5DuXyVvukN7yRePhJQFWQYM0Tq+u7+rG+zFP2O3k7bNIp1UqY1kd/fiW7rk=
+X-Google-Smtp-Source: AGHT+IHMrBbMSgnyrBXJhkELUhdwwa1R4OK+0ew1rSLs2lXmY8A6OkIB5/dasHrqflqjUaIo8Xz5rw==
+X-Received: by 2002:a17:902:c40c:b0:1f9:b1a4:d43e with SMTP id d9443c01a7336-1fadbc96accmr80929285ad.20.1719915450474;
+        Tue, 02 Jul 2024 03:17:30 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1549e59sm82771525ad.179.2024.07.02.03.17.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 03:17:29 -0700 (PDT)
+Date: Tue, 2 Jul 2024 15:47:27 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] xen: privcmd: Switch from mutex to spinlock for
+ irqfds
+Message-ID: <20240702101727.nytmrgdzcebtinbt@vireshk-i7>
+References: <a66d7a7a9001424d432f52a9fc3931a1f345464f.1718703669.git.viresh.kumar@linaro.org>
+ <17aa46c3-89e9-40aa-bb15-817230712f07@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com
-Subject: Re: [PATCH] MAINTAINERS: Add selftests/x86 entry
-To: skhan@linuxfoundation.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20240610052810.1488793-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240610052810.1488793-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17aa46c3-89e9-40aa-bb15-817230712f07@suse.com>
 
-Kind reminder
+On 02-07-24, 12:12, Juergen Gross wrote:
+> On 18.06.24 11:42, Viresh Kumar wrote:
+> > irqfd_wakeup() gets EPOLLHUP, when it is called by
+> > eventfd_release() by way of wake_up_poll(&ctx->wqh, EPOLLHUP), which
+> > gets called under spin_lock_irqsave(). We can't use a mutex here as it
+> > will lead to a deadlock.
+> > 
+> > Fix it by switching over to a spin lock.
+> > 
+> > Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > ---
+> >   drivers/xen/privcmd.c | 26 +++++++++++++++-----------
+> >   1 file changed, 15 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+> > index 67dfa4778864..5ceb6c56cf3e 100644
+> > --- a/drivers/xen/privcmd.c
+> > +++ b/drivers/xen/privcmd.c
+> > @@ -13,7 +13,6 @@
+> >   #include <linux/file.h>
+> >   #include <linux/kernel.h>
+> >   #include <linux/module.h>
+> > -#include <linux/mutex.h>
+> 
+> I don't think you can drop that. There is still the ioreq_lock mutex.
 
-On 6/10/24 10:28 AM, Muhammad Usama Anjum wrote:
-> There are no maintainers specified for tools/testing/selftests/x86.
-> Shuah has mentioned [1] that the patches should go through x86 tree or
-> in special cases directly to Shuah's tree after getting ack-ed from x86
-> maintainers. Different people have been confused when sending patches as
-> correct maintainers aren't found by get_maintainer.pl script. Fix
-> this by adding entry to MAINTAINERS file.
+You are right. The header got included from somewhere else I believe
+since the build didn't fail for me.
+
+> I can fix that up while committing, with that:
 > 
-> [1] https://lore.kernel.org/all/90dc0dfc-4c67-4ea1-b705-0585d6e2ec47@linuxfoundation.org
-> 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 523d84b2d6139..f3a17e5d954a3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -24378,6 +24378,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
->  F:	Documentation/arch/x86/
->  F:	Documentation/devicetree/bindings/x86/
->  F:	arch/x86/
-> +F:	tools/testing/selftests/x86
->  
->  X86 ENTRY CODE
->  M:	Andy Lutomirski <luto@kernel.org>
+> Reviewed-by: Juergen Gross <jgross@suse.com>
+
+Thanks.
 
 -- 
-BR,
-Muhammad Usama Anjum
+viresh
 
