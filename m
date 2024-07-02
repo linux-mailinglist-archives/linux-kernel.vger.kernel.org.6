@@ -1,163 +1,108 @@
-Return-Path: <linux-kernel+bounces-237142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE99591EC3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 03:04:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252D091EC41
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 03:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3380B1F222BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 01:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8CBF1F22219
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 01:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F84D9473;
-	Tue,  2 Jul 2024 01:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FB44C8B;
+	Tue,  2 Jul 2024 01:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FnP4ABDn"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Y7balNkR"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFFA8479;
-	Tue,  2 Jul 2024 01:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F036FCB
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 01:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719882260; cv=none; b=qaSuZ0cJcrarTlUM9o4LTichtOVHVT3/BfT1DQYypXNlG2RXwnQfOmlCoSF9aZ7sU2sraDCVprWEtFzfXmAtM2IeuHh9h8yJVE1xcrXAqvrPEwEhrE6gl/OUeznB5+vcfoKdBQei3L50OZhI12oHH8L/e2Arz14kyzObq3b2f4E=
+	t=1719882290; cv=none; b=Ngus5x/eN9jBeYomgeoWhQ184pj0+U0TO1WnU3GSVDZgljIaQ3+y9n1h1rOBBn3QCpiYOyf8K+nd+gfwo8Iaw9bcmxgFciVrX0P8WoU5uph7ntlxK9r4PoQcqFkQ/vOgU6Uha9rowa/+3rstBXxLpN10f+8MFZQMUPdahUaGyWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719882260; c=relaxed/simple;
-	bh=rSdvgnJANMza7cv2Jq/gA1bXg/Ri2T+DVceHUO/MoaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZugIW4ziNuipu4+kmJ811KS4JUn/L51+gHXnJFwavZfwLd/0EV3uauCBMHhHvo+ESEB5BJpM9ALhN1Q7mFHr2GCNehFjdQ79esYnKwgDsrvyJEYCJ7pNJGVciCQJEGzm6NNVzPYMDmYi36NM480Y8nKR4ClQey/XloZ55g9+Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FnP4ABDn; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3d55f1e52bcso2106405b6e.2;
-        Mon, 01 Jul 2024 18:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719882258; x=1720487058; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pGUnY4g1oaF4OnT/ERTEKmY9epCpAK1aDqzYl6Qb5jw=;
-        b=FnP4ABDnwt0hbnzZeMtrlu+Tg3Ez/2ql7UtxKrHfODU72zu8M6921A2QCdSZghQKlg
-         0aHhsN2i0p08J9NOvVuur2Jxu1izL0pTNIs2T9VqhvqL7iA5ZBIc4JTCLa0URbJqU3e8
-         AAeH66IqDlA34C/TiWo7wCUaV0+hEAhut3MLrMLA5BRuEYOlHZSl3Uv6aur7qOPbD/KO
-         hR4RZlD0N/BhraZ+1R95L4732DWavoKIoAt1RBG9Tb5FEc7rnz7hC2DHDPqkcNOG1i/n
-         wDOUHMtEc/kZHVxI/xES2gVASyvHYOCIdifxNmfu8Mj5Bm9+1Oj5MP0JmjJ5Unb1b+Ec
-         WR9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719882258; x=1720487058;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pGUnY4g1oaF4OnT/ERTEKmY9epCpAK1aDqzYl6Qb5jw=;
-        b=ZBt63V99Vlg0rbS/UX4t+4M7xBw2KLYwO1XlxLjHrFElOzgVnlc58/eQe5sksGuQP0
-         Nc2A6af3PFxP2KcmP5Qc+kT0Bc2K+++Q5/N1rC4T847LpkqsHmxKxx5bAru/VorVFSPO
-         4XmYILP5R2KCplKv9fwiNjUxrBzBsxnOSjnXqe1ryDNk5eiSWkWKR6uvbsu2cfam+ZXN
-         ZkKGQWsAWP04sWanbUXGo9OLms7VW7KVCdpbr/3Smle0uddoCB73T30Uf8JKvu3KKlAw
-         evkmvoKMqI8rKG0VgsghDHTDgkZnAicKL7WmO0ITPa9tUptTRpiRpJRBRLTCGyzc5ewZ
-         2UjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNaZcrU/F4OkbVdstDW9+GJNXwcJzJ3pv/SmY5J4zJliVHecjqxcpOA6S1x91zBdOHci/XZI2tFp23E0Nj6kog8/Mx+WvWfHPAofc6
-X-Gm-Message-State: AOJu0YypW0kR5Qfg2z6zMPSYLr5//krHD7OlRONEQDJS7XeiMbTRP0OB
-	2/fNAFrCOOPUzvrSDNTph2a/MDcndvVYS1a6Cdb2MtkgJkgUO4Al
-X-Google-Smtp-Source: AGHT+IFnwNgg4Ze9pZplQvvTnkE9/RMsDWedBEQs7uJuCtCW/TMRlZ2VXi9VoINfX7T0Lrv/0HpElw==
-X-Received: by 2002:a05:6808:1185:b0:3d6:331b:ae05 with SMTP id 5614622812f47-3d6b3e729ccmr8653327b6e.33.1719882258437;
-        Mon, 01 Jul 2024 18:04:18 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044adb21sm7403128b3a.141.2024.07.01.18.04.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 18:04:17 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 5363B1816BD16; Tue, 02 Jul 2024 08:04:13 +0700 (WIB)
-Date: Tue, 2 Jul 2024 08:04:13 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, maple-tree@lists.infradead.org
-Subject: Re: [PATCH v2 2/5] rosebush: Add new data structure
-Message-ID: <ZoNSDQfohcDHAcU9@archie.me>
-References: <20240625211803.2750563-1-willy@infradead.org>
- <20240625211803.2750563-3-willy@infradead.org>
+	s=arc-20240116; t=1719882290; c=relaxed/simple;
+	bh=5z7atQ1VjiYvr2o9gWZIqlkvHfprQlCHTqWMYytQ00Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LRufVOGNQpBneLi0tLB3OTespLlIUQ05+ZQhx3iygdtFbZ6/iFTkhe2t/QsEaa/lIQnlkLTVRNzvfF74bVTTsEcdneL8bdjBLQyvdTO4ypiIMQIpvzQvClZTHnuTW0W/O3W50sNNynTBWJwSJthXJDvxoR9sevk70/DGoR8mSUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Y7balNkR; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719882287;
+	bh=5z7atQ1VjiYvr2o9gWZIqlkvHfprQlCHTqWMYytQ00Y=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Y7balNkRr12dGs53p8cujgzf8a47EFsbUeTXjjdWPBY7trHiJ2tdYeKKS44bBXmNt
+	 CrEAd825ApjlVEufjeg8bJeTe5K9Ax8Zn4H8LAjPOPQbr3lXjZf4peHGJzdt/tIGPU
+	 uQqXNdB80pLMHFk7rCs67NVjm97/kYifhZYwfAShvguDiCZron2f88CCzapobKTT58
+	 ZRFj1s0POiyHvpUKGB9sxN62gUdUDHdrpmOHvovRuKqB2qFdwZcz9+HASuGSN37uAF
+	 XWgIS9AQ27aCbldlDNk7oWAzCKOZ34Wc1oiCbguVTGIqVJlVswFHauvHsYcEFqaJLD
+	 Xn3U1Y7AYGSVw==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B399937820DE;
+	Tue,  2 Jul 2024 01:04:46 +0000 (UTC)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Tue, 02 Jul 2024 04:04:24 +0300
+Subject: [PATCH] drm/rockchip: Unregister platform drivers in reverse order
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6FUSCBHY6FWIkT0I"
-Content-Disposition: inline
-In-Reply-To: <20240625211803.2750563-3-willy@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240702-rk-drm-fix-unreg-v1-1-5bd325ed42b4@collabora.com>
+X-B4-Tracking: v=1; b=H4sIABdSg2YC/x2MQQqAMAzAviI9W6hTlPkV8SCu0yJO6VAE2d8dH
+ kNIXoiswhH64gXlW6IcIUNVFjCvU1gYxWUGQ6ahjgzqhk539PLgFZQXtL72xlrbTkSQs1M5y38
+ 5jCl9N7zm72IAAAA=
+To: Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Sean Paul <seanpaul@chromium.org>, Jeffy Chen <jeffy.chen@rock-chips.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, Mark Yao <markyao0591@gmail.com>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.0
 
+Move rockchip_drm_platform_driver unregistration after its sub-drivers,
+which ensures all drivers are unregistered in the reverse order used
+when they were registered.
 
---6FUSCBHY6FWIkT0I
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 8820b68bd378 ("drm/rockchip: Refactor the component match logic.")
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On Tue, Jun 25, 2024 at 10:17:57PM +0100, Matthew Wilcox (Oracle) wrote:
-> Rosebush is a resizing hash table.  See
-> Docuemntation/core-api/rosebush.rst for details.
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+index 44d769d9234d..ca7b07503fbe 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -528,10 +528,9 @@ static int __init rockchip_drm_init(void)
+ 
+ static void __exit rockchip_drm_fini(void)
+ {
+-	platform_driver_unregister(&rockchip_drm_platform_driver);
+-
+ 	platform_unregister_drivers(rockchip_sub_drivers,
+ 				    num_rockchip_sub_drivers);
++	platform_driver_unregister(&rockchip_drm_platform_driver);
+ }
+ 
+ module_init(rockchip_drm_init);
 
-What about "Document Rosebush hash table - overview, implementation details=
-/internals, and API
-docs"?
+---
+base-commit: 1eb586a9782cde8e5091b9de74603e0a8386b09e
+change-id: 20240702-rk-drm-fix-unreg-9f3f29996a00
 
-> +Overview
-> +=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Rosebush is a hashtable, different from the rhashtable.  It is scalable
-> +(one spinlock per bucket), resizing in two dimensions (number and size
-> +of buckets), and concurrent (can be iterated under the RCU read lock).
-> +It is designed to minimise dependent cache misses, which can stall a
-> +modern CPU for thousands of instructions.
-> +
-> +Objects stored in a rosebush do not have an embedded linked list.
-> +They can therefore be placed into the same rosebush multiple times and
-> +be placed in multiple rosebushes.  It is also possible to store pointers
-> +which have special meaning like ERR_PTR().  It is not possible to store
-> +a NULL pointer in a rosebush, as this is the return value that indicates
-                                "..., however, as this ..."
-> +the iteration has finished.
-> +
-> +The user of the rosebush is responsible for calculating their own hash.
-> +A high quality hash is desirable to keep the scalable properties of
-> +the rosebush, but a hash with poor distribution in the lower bits will
-> +not lead to a catastrophic breakdown.  It may lead to excessive memory
-                                       "..., but rather it may lead to ..."
-What does catastrophic breakdown mean anyway?
-
-> +consumption and a lot of CPU time spent during lookup.
-> +
-> +Rosebush is not yet IRQ or BH safe.  It can be iterated in interrupt
-                                     "This means that ..."
-> +context, but not modified.
-> +
-> <snipped>...
-> +IRQ / BH safety
-> +---------------
-> +
-> +If we decide to make the rosebush modifiable in IRQ context, we need
-> +to take the locks in an irq-safe way; we need to figure out how to
-> +allocate the top level table without vmalloc(), and we need to manage
-> +without kvfree_rcu_mightsleep().  These all have solutions, but those
-> +solutions have a cost that isn't worth paying until we have users.
-
-Use cases?
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---6FUSCBHY6FWIkT0I
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZoNSCAAKCRD2uYlJVVFO
-o4apAP9PZ3g9T5lFRsj6oPjo8kO5n1EDN/32Y31h0AisexRO8AEA37nZcCLUHhFv
-QgulTfF7stm9rpAKOaWHT5hCqczjuw8=
-=ljDu
------END PGP SIGNATURE-----
-
---6FUSCBHY6FWIkT0I--
 
