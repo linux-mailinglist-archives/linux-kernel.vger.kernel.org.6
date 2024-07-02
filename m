@@ -1,149 +1,145 @@
-Return-Path: <linux-kernel+bounces-237606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA21923B62
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5544C923B68
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 923F32855E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13ACE2830B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2640215887D;
-	Tue,  2 Jul 2024 10:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EEC158A20;
+	Tue,  2 Jul 2024 10:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cssSimQO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gvHys8v2"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B58B1586FB;
-	Tue,  2 Jul 2024 10:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9063D374F5;
+	Tue,  2 Jul 2024 10:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719916128; cv=none; b=fF5ktNxEbQF1Zu55/9fRrBO/5SxnZzPiN0nonUZ+XFzfAiskOexiPUcleHUoAACXGSYf0J5jZQ8oThgrERqt6AHwurtUSYILWAsifsrgN2Rn6G+NeYs5ko+FoV05RfUTBW1J2L8EOGnkaYRnF7b5G+V4qKzwFcU80429epefShA=
+	t=1719916172; cv=none; b=DVnpELo9GPmRKcm2t45mZwcxy7Y+obY1q8ATNU0rsu9/L9ZNZbq3OE2Kb1+cxBsOVNFTjoWQFOX0859XXjSG/wMnsddQf4ozWOmDtCaB2PNgBSMlyEyGeVSuvyFdoKLvlu+Isryast33cQ1PbyFBcy2x1FOHbzoyjpg9UyKLyVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719916128; c=relaxed/simple;
-	bh=5Da4XpjNVfQ7N6+Y3f4xsDAcVO2Gntj9bbnFtQpmSNc=;
+	s=arc-20240116; t=1719916172; c=relaxed/simple;
+	bh=H2/3ABc6eBv29cZXj/nd74OqEp38o2YnlcZ74Uiskbg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQeYZDFJlHPFU3aNGlwL5BDRB2uE9Jn3jE5xkb0ZFE57EAMcrKaNGr1y51/l/8Fe5iVT/mhH06dMqU19t/i83rXUfPwsPy0Mv5lbPRWMvM0jz2XUsynd/FH/0WK9UDcSUmQ5YQBsMBqQHNcBvlvQds7iXDvp1LiT1r9Jv+YgAsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cssSimQO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72C68C116B1;
-	Tue,  2 Jul 2024 10:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719916127;
-	bh=5Da4XpjNVfQ7N6+Y3f4xsDAcVO2Gntj9bbnFtQpmSNc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cssSimQODutroiBttk5MhlwJcf2Wc3SrO7fTIiGX9f2mJli4BdtnuBhod5XRnnb6o
-	 TlHxwaYGSSJTcHBSPj1PDk4pUsBRwk0h1N9pX3Fw+aehJznmIx3QdmXTCMU3OJoo7J
-	 pPpa+xlC+nTVUHznLtajH/CyEzJMV+jIdJ+ugtIlcbqkDpy1PlW70ThftCYY0LYDpg
-	 S6nWwa8BInzlkJHDoEXekVeVKsuKoxkB2cGeJZTl8fqwmKjXDyC4FxcMr0fMdivKmS
-	 EBrS6Ya5ndJVdcWhtP6kxKwVLn8sPxhQU1Wn9z2Qyh2QxyOWyN9vYCihFl/atR6i1e
-	 VkG29g+AHn8hw==
-Date: Tue, 2 Jul 2024 11:28:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: Srujana Challa <schalla@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, pabeni@redhat.com, sgoutham@marvell.com,
-	lcherian@marvell.com, gakula@marvell.com, jerinj@marvell.com,
-	hkelam@marvell.com, sbhatta@marvell.com
-Subject: Re: [PATCH net,2/6] octeontx2-af: reduce cpt flt interrupt vectors
- for cn10kb
-Message-ID: <20240702102843.GE598357@kernel.org>
-References: <20240701090746.2171565-1-schalla@marvell.com>
- <20240701090746.2171565-3-schalla@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pWZQkY63cWOo1xSnprliRGAek9/Ll2QmHnGDw159XrFgMONakT+5AXXEmMO911PCoHnS3yoq7mnEjwy5bZkYjVEpJHDP7GwPBUYFDnGciw64S26PqiYGfMIHVRObb9QRfAlvUHEsxd6ga9zxwHlkKtd/E8UDZf6MhNn93taSGMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gvHys8v2; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ce6c8db7bso6042791e87.1;
+        Tue, 02 Jul 2024 03:29:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719916169; x=1720520969; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H2/3ABc6eBv29cZXj/nd74OqEp38o2YnlcZ74Uiskbg=;
+        b=gvHys8v265Cu0EfcvikWMzEnBoEi+tbRyMy0v+WXvyEPTmE9DKzfLHZyIY7KKidy5H
+         FDRAZFw9UST1RcfRlcwBiozc8LJGKJ1qPnPh8suXhwsjaxA4s97/tNC69/FuDm32WENV
+         7i4uPwtYPA7a/bHQlHvTl8x+Xv4zXf/lyNpNbJQzErAyT8XMOkE9X0OWruDiRPaCdCfB
+         sVDPiTBHpv20JVC0rU6UsfCtSi0jvtFtzUCWt8+YwW/yfGBcnrO/scKyl6IHUOuGthgN
+         Eo7+jBCdiVJJsM4dMnWPs3NTV6gnhjhFhybQDz7FYbNfV9bT9a6hCqM8cihmZMqA1DCp
+         z/MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719916169; x=1720520969;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H2/3ABc6eBv29cZXj/nd74OqEp38o2YnlcZ74Uiskbg=;
+        b=sIs6WBSGV80QX3SydlJN1sk9Eek5PkArVC2kIL2aMB7NYcER2ydFvO9od6Ev2c0fJY
+         95NZQYszfCkr5xyIK4f+BwvhZdj0JXYGOqWT2JnNgjSM9JQ+j0HwLDFrWs99LfeYQfVO
+         6YypWSG6df5TZ2w2agOhv+fbFr26YLdlQHw2zYZ+G2dSfNRvzfgTWTcVZi0BAJbB3epk
+         NrMMbroRDp7KtVdsYjC/6ynfDS7QzdUF5xB3ublNhEcMBHqz9kvX4zIXeuM1qnKFqCxA
+         BYSWzk1MhmdvPhrniEhiQQ1SzNj1n99yjp0fSp0tXM6ZOnbKKGbEo/r3U1qlNP8Ivsgx
+         Z91g==
+X-Forwarded-Encrypted: i=1; AJvYcCX04wP670fQD1utgxIfPOktzmcC8fA69e68hLTUVlYy1WNJhdoS4LlmPPO+WkohTYmK8iG6Cl9IYCEdjfSHjO6q1H/iHCAfcDJ0DoUbk4MfoXPbcK42LZXrFXq6U8mwFfYjAWbP9JzJ0H/7vzfnYIvv923ouxnmCZV0JoFusrwiVmM2z2+lDw8ebJgLhzhjkeRC4Q5lzYvwarfZddveumoKNan60gVcKmtL5e6mg71bg18VfG+5L5oEIZWWYVoXZAcgJZUjkCDkOJa8vqN2a3Qyhf2tTJtF
+X-Gm-Message-State: AOJu0YzswhKI+A7mMUOUxHun+8NjGbAVFJKVZ0sB8fINaO7vliq0K5ic
+	mWmBQKusUQF6lcboYxs/qMmIrMvdrzbTPaK14Hp0XNROulDdVT8j
+X-Google-Smtp-Source: AGHT+IH+UZ+cnnKf87ciV6pECjzYY5dFmRwXwK7sPq0mN/njl3BqGEi3ofEaZkVKjtvBMh44Emakkg==
+X-Received: by 2002:a05:6512:3996:b0:52c:a1ad:18bd with SMTP id 2adb3069b0e04-52e82651a88mr6168223e87.6.1719916168007;
+        Tue, 02 Jul 2024 03:29:28 -0700 (PDT)
+Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256d664052sm182632065e9.27.2024.07.02.03.29.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 03:29:27 -0700 (PDT)
+Date: Tue, 2 Jul 2024 12:29:25 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Krishna Yarlagadda <kyarlagadda@nvidia.com>, 
+	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jonathanh@nvidia.com, krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net, 
+	andi.shyti@kernel.org, wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org, 
+	adrian.hunter@intel.com, digetx@gmail.com, ldewangan@nvidia.com, mkumard@nvidia.com
+Subject: Re: [RFC PATCH V2 04/12] dt-bindings: misc: tegra-i2c: config
+ settings
+Message-ID: <hqlckp6hxvxwkkbiagdb5pm4eo5efu55hwuupdal6lojxj2xu5@5zibskqdbdju>
+References: <20240701151231.29425-1-kyarlagadda@nvidia.com>
+ <20240701151231.29425-5-kyarlagadda@nvidia.com>
+ <20240701174227.GA148633-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vtzv7b6agyajbvep"
+Content-Disposition: inline
+In-Reply-To: <20240701174227.GA148633-robh@kernel.org>
+
+
+--vtzv7b6agyajbvep
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701090746.2171565-3-schalla@marvell.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 01, 2024 at 02:37:42PM +0530, Srujana Challa wrote:
-> On new silicon(cn10kb), the number of FLT interrupt vectors has
-> been reduced. Hence, this patch modifies the code to make
-> it work for both cn10ka and cn10kb.
-> 
+On Mon, Jul 01, 2024 at 11:42:27AM GMT, Rob Herring wrote:
+> On Mon, Jul 01, 2024 at 08:42:22PM +0530, Krishna Yarlagadda wrote:
+> > I2C interface timing registers are configured using config setting
+> > framework. List available field properties for Tegra I2C controllers.
+>=20
+> How is I2C bus timing parameters specific to NVIDIA? Just because you=20
+> have more controls? No. That's no reason to invent a whole new way to=20
+> specify parameters. Extend what's already there and make it work for=20
+> anyone.
 
-I am tempted to think this is more about enabling new hardware
-than fixing a bug. But I do also see how one might argue otherwise.
+This may be applicable to a subset of this, and yes, maybe we can find
+generalizations for some of these parameters.
 
-In any case, if this is a fix then a fixes tag should go here.
-> Signed-off-by: Srujana Challa <schalla@marvell.com>
-> ---
->  .../net/ethernet/marvell/octeontx2/af/mbox.h  |  5 +-
->  .../ethernet/marvell/octeontx2/af/rvu_cpt.c   | 73 ++++++++++++++++---
->  .../marvell/octeontx2/af/rvu_struct.h         |  5 +-
->  3 files changed, 65 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-> index 4a77f6fe2622..41b46724cb3d 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-> @@ -1848,8 +1848,9 @@ struct cpt_flt_eng_info_req {
->  
->  struct cpt_flt_eng_info_rsp {
->  	struct mbox_msghdr hdr;
-> -	u64 flt_eng_map[CPT_10K_AF_INT_VEC_RVU];
-> -	u64 rcvrd_eng_map[CPT_10K_AF_INT_VEC_RVU];
-> +#define CPT_AF_MAX_FLT_INT_VECS 3
-> +	u64 flt_eng_map[CPT_AF_MAX_FLT_INT_VECS];
-> +	u64 rcvrd_eng_map[CPT_AF_MAX_FLT_INT_VECS];
->  	u64 rsvd;
->  };
->  
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
-> index 98440a0241a2..38363ea56c6c 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
-> @@ -37,6 +37,38 @@
->  	(_rsp)->free_sts_##etype = free_sts;                        \
->  })
->  
-> +#define MAX_AE  GENMASK_ULL(47, 32)
-> +#define MAX_IE  GENMASK_ULL(31, 16)
-> +#define MAX_SE  GENMASK_ULL(15, 0)
-> +static u32 cpt_max_engines_get(struct rvu *rvu)
-> +{
-> +	u16 max_ses, max_ies, max_aes;
-> +	u64 reg;
-> +
-> +	reg = rvu_read64(rvu, BLKADDR_CPT0, CPT_AF_CONSTANTS1);
-> +	max_ses = FIELD_GET(MAX_SE, reg);
-> +	max_ies = FIELD_GET(MAX_IE, reg);
-> +	max_aes = FIELD_GET(MAX_AE, reg);
-> +
-> +	return max_ses + max_ies + max_aes;
-> +}
-> +
-> +/* Number of flt interrupt vectors are depends on number of engines that
-> + * the chip has. Each flt vector represents 64 engines.
-> + */
-> +static int cpt_10k_flt_nvecs_get(struct rvu *rvu)
-> +{
-> +	u32 max_engs;
-> +	int flt_vecs;
-> +
-> +	max_engs = cpt_max_engines_get(rvu);
-> +
-> +	flt_vecs = (max_engs / 64);
-> +	flt_vecs += (max_engs % 64) ? 1 : 0;
-> +
-> +	return flt_vecs;
-> +}
-> +
+However, we're also looking for feedback specifically on these config
+nodes that go beyond individual timing parameters. For example in the
+case of I2C, how should parameters for different operating modes be
+described?
 
-I think the callers of this function assume it will never return a value
-greater than 3. Perhaps it would be worth enforcing that, or WARNing if it
-not so.  I'm thinking of a case a fw/hw revision comes along and this
-assumption no longer holds.
+Would you agree with something along the lines provided in this series?
+Do you have any better suggestions?
 
->  static irqreturn_t cpt_af_flt_intr_handler(int vec, void *ptr)
->  {
->  	struct rvu_block *block = ptr;
+Thanks,
+Thierry
 
-...
+--vtzv7b6agyajbvep
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmaD1oMACgkQ3SOs138+
+s6EUWQ//d69gXBtNSFP7l+KPjDhDZ598cE4CgLGFB1MCw5CciuHjfQ0+hCmcttn9
+uX9wbBufhK4HfhZibObvUSCRQMWASt8xovXIpwQ14fYvQHDZTACjBbrOYvKRjMXS
+go95WVp45nVUe5vtvOMwkY2l7fJ7ooH4kRfsg6P3HHbAUIewyohXaVQxdjzosd7I
+uQ4HtxHrQEVyS0i9ifbUHP/+1H89rBuXOgAbZ9hgXRh6X1uAKTBxdeMP3vC/2UDf
+EUD8lPkAphVeLwOld4SOUtq9wS/MmoxEqr+vh+HNK2R7fHXbGxzyPgX8MhgYDddP
+PjADI5XFQbc4CXpZRsVsgEfR3iOxNhOhqySEP0rMR9/M4/R9PluK2XrbgswwnKnT
+Vn1mRRKDbcDIjyc35OMxB6bqLMLQNmYWAN8Abzkx8UY8VvVk2RSoS+SG/qR+xTZU
+tNCq36PQN6dUnQ9fdq1/DJEtWNEGXJUMMZzGKF9UOg2x9dLap15nCgzB091vkURw
+rnsQ4/3ff1nyVv+3gjOcIuYFuqvMz7SzvthZ8801PO811noTmblYVD9pVxhA/U0V
+C9pmgSQDzRUeJWV+MoeGH7csaUrcSDBzuGLiH2dTLTCoLQQIiMfVSMrPjxMQ3BOb
+ow4FkVuyyKsMuSSPB7RjPsplJ7PN/F0Emo+PoTlRmreN071u4Gg=
+=egWb
+-----END PGP SIGNATURE-----
+
+--vtzv7b6agyajbvep--
 
