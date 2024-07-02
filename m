@@ -1,121 +1,126 @@
-Return-Path: <linux-kernel+bounces-238239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8DA924752
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:32:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20593924755
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88B50B22F02
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:32:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF3BD1F23BBC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B47158DD1;
-	Tue,  2 Jul 2024 18:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A3A1C9EA3;
+	Tue,  2 Jul 2024 18:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3IIdxIq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cc5wEaS9"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005FA15B0FE
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECFF158DD1;
+	Tue,  2 Jul 2024 18:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719945156; cv=none; b=j34cSqf6UDuMpAMaT4z+n9HpPtRP6TkuklOuK2arAbUo7qb+x+twewPp0zRObQC/PscgoiTMQyFNvRm2ken4VhVYSKfdyjs/Tr7j06ul5ZV9kf9tJR8IbuvnppiwLRPF4crZvsPbrsUmseZgKVjQ7IxqmQB4cnffYTdN92gXysk=
+	t=1719945319; cv=none; b=fMJPGxgOoT/wZYgCWe81Tv9vQIy4u7PkMugaEAXaDDfH4XJxSagHAkaUGborlTb6RgU3Zaiqg3cAbVkt9nexW9cMEDcKtJU88l3swGDmZwAwZs48Ha/cDBOl+gcUELBKU9bXGHaU0ZeDbTvRnN//N8aNfu53tvG/G3AwE08zypo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719945156; c=relaxed/simple;
-	bh=Ijwt3t6RGj94zzsfSM5vtcMFHfqpvDdnYaHDUHFtmQQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d6qW/kUmL7F4CBNeJ3Fe/mYZ2hGSw1iixlbUNu04Jb/MswcekYEcTedLtRlPCqCMnPR7+IPkGmrQoTCMEsNB+0vQ9qzzAkQp4WEgcccHEpjOxTj213TcLwHYn7Xkp5YHH2ERXQm9x8MBfpXXV+rBNdcETmO6MRDfwQ2Jk/09s+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3IIdxIq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89068C4AF10
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719945155;
-	bh=Ijwt3t6RGj94zzsfSM5vtcMFHfqpvDdnYaHDUHFtmQQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=f3IIdxIqFIpP8qvlg04PCAIlEUgsWJaGzTtW2+nGFQn6VQNDTVeHbulbqrVWhWXlF
-	 CxH014hxOtdWB63Es6Ry4e8AZzddS3MTxZYRGFH3WCsJifw8xYEiltf2qbzPmc54VJ
-	 CkvcWag5590OWJwq4/yP3HrU8Ex5uCdyu7bayyI8+VJPhgzCgVkfQGepr6rWBjoiw5
-	 KVoJDRoNmreQ0JemUbMQgjdeqJd7AxpGSAh/A33Jd2PWqEnZZ+46Pu0UrCxF5j3/zz
-	 ohEO6lQ1J6ZZOPzmPxn7Rlqlyqqwx3UHAjeiLdCnsv1w6QA+Dw0v1H8sm+0uzpnOxu
-	 7wUjOpm2SYPzg==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ee794ebffbso12216181fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:32:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUvBMHt+c5t4O2pJEXV6sICm2m+fbvnR4yNXlR3Y/aLiwFFFF78fUxtW5FT0MlBQmuHeYTq+uNtN0bVsmy/vdGd7YnA3066iC1RT9Va
-X-Gm-Message-State: AOJu0YyiHJ2kbcB0rQtiVuDq73K2cQ2DXIN+M6tMWSHfULPE97P4gnvl
-	1+AaBDnId0SVXy9pcCRKz3Rgxh52z8FC7Wiwsg+4AzsRNQsNmxyrj+LfBditQwPy0xZS70vYu8q
-	STTnOsO/KmVt7AVBEctByj8D3p10=
-X-Google-Smtp-Source: AGHT+IEFBdp2NYkhhGlphnnpgmJ2f9sJZsmLcRuohyYXagxlA5d9BR8Ije+vsuujrFjW6o26dBV9hPZMYy8cdvRMMEU=
-X-Received: by 2002:a05:651c:a0c:b0:2ec:4d8a:785a with SMTP id
- 38308e7fff4ca-2ee5e38002dmr88975241fa.4.1719945153840; Tue, 02 Jul 2024
- 11:32:33 -0700 (PDT)
+	s=arc-20240116; t=1719945319; c=relaxed/simple;
+	bh=hfIC1dzJV63i9JqhLxmmJQ/kZj/j1H5fSz75DC+4KPg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CAId858S1lgsO+g05NBlmyZ8asQ5xjVath6b0XpSBtAxPsQJ0VxgFkZBSwegX6LH/ePZWxjvrxdMunpy+M5L4JSycj7qvLPD1sipngJkxgm233E1gwPiFuJIYL9suybDtGtJJs/SNNXp359+rIdnk7GXpB6Pf/MzYdzXesb67d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cc5wEaS9; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5c21f1bb810so2233175eaf.3;
+        Tue, 02 Jul 2024 11:35:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719945317; x=1720550117; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yfZkAgkKDLiBxWm1TW/R5w6toVXsLssVKJzooYjVeFU=;
+        b=cc5wEaS9r8JVN4g3NhCMA2i3bhTVOpp6ZpFwbw0i6QN+aHt528v4Q7YVfWewYLzNme
+         yQbxVIoCZbL6bMSWMlLQXGEub2DfmWl/34GtcQzBHB22IOTmCwVmhlcMDLXiQXXiwr07
+         eIVFfsxUi3uIEkYquLScq4FyCbqFw8pWr3aMddwYAviDZLJ1EhbmdRhr/Yr6ffUKIIob
+         0SzvCWuUPu+7DPa+EtUUVgZ/OiHvlW8WamU+OZk6XsDxcHS8xpq+RNX41PIWYKJ6HIRS
+         7NFvMqvQMo6KFpataFeXy/A0DALSS+5g85ElB+9V4AaAAcyN7Q7CgExQ5WAjdlSNmQ7d
+         jgCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719945317; x=1720550117;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yfZkAgkKDLiBxWm1TW/R5w6toVXsLssVKJzooYjVeFU=;
+        b=SrgIP8yeEgVJXsrkCcLQ5HBx78d7fbBMP6QjJVCfvN3d+FSJOrzUsVoYz1JIDTgnj0
+         cbBx7b6NOebokI6RRXs/FceDjKXYs9ru9yrZuP8/x7UnTJmACn1s5kFVGfV7ShSP3tau
+         4o7up5vwOwxNtO+kOVBe5pTdl3ZPhqKGnOJBnlLOBJ1sguWYGutP+jMwhqn7mxbVhgTn
+         onpkzUmwMYw8rgRAJZ1p3BxTDsR609Kfta7add1ubh6Pz0CJUS6z+6Ztj3Ka0C85Sp3L
+         aZMJ6Plcw+cBB0lVinBOp1vud7BVV0/nK8KAPh3u1Q2+K8aUib+WalcV30g43C/XsIYH
+         PTpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUloAkk2uSSA0rByqM3NyHC9MLTT26hQNDwpBmvOacAMH5x/kvyE57ViCQBU4TMHbapDhWxmf1a0ObM3TKCQzHZ81RrrFp/xoyq0spj
+X-Gm-Message-State: AOJu0YxD9GQo2y8DwG+/vtF07eR4tqwwjg/bOphJcM4FVDUrI7D/WNqU
+	KjzE9BPTSOv2LSuidF0i5G4dLpMYsPHPrqY4eOG3dwxa1emc5zWudzwdTA==
+X-Google-Smtp-Source: AGHT+IE/WyiWOTZIbsPlEwk63c0ctcPKh6b12hMqtcAT/Al/ih5/llZ1LW1U9YiwvhL5kCccrh7LHA==
+X-Received: by 2002:a05:6358:70f:b0:199:28ad:1447 with SMTP id e5c5f4694b2df-1a6acc6e5c3mr922190555d.10.1719945317317;
+        Tue, 02 Jul 2024 11:35:17 -0700 (PDT)
+Received: from carrot.. (i114-180-52-104.s42.a014.ap.plala.or.jp. [114.180.52.104])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6c7f6db9sm6918090a12.72.2024.07.02.11.35.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 11:35:16 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] nilfs2: avoid undefined behavior in nilfs_cnt32_ge macro
+Date: Wed,  3 Jul 2024 03:35:12 +0900
+Message-Id: <20240702183512.6390-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520183633.1457687-1-steve.wahl@hpe.com> <20240613152826.GKZmsQGnO3OthLH3Vu@fat_crate.local>
- <ZmsbZCF9rFzuB3rO@swahl-home.5wahls.com> <20240616202533.GDZm9KPZtpDKw5aXWX@fat_crate.local>
- <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com> <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
- <ZnmNKAE5qT48yhrI@swahl-home.5wahls.com> <20240701142704.GGZoK8uDt-2VVtclHl@fat_crate.local>
- <20240702174425.GHZoQ8edlTfB1falcO@fat_crate.local>
-In-Reply-To: <20240702174425.GHZoQ8edlTfB1falcO@fat_crate.local>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 2 Jul 2024 20:32:22 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGsjU5CpF655me1XNA8-5nbk3020vT2Bu5ZoFY25igovg@mail.gmail.com>
-Message-ID: <CAMj1kXGsjU5CpF655me1XNA8-5nbk3020vT2Bu5ZoFY25igovg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-To: Borislav Petkov <bp@alien8.de>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	linux-kernel@vger.kernel.org, Pavin Joseph <me@pavinjoseph.com>, 
-	Eric Hagberg <ehagberg@gmail.com>, Simon Horman <horms@verge.net.au>, 
-	Eric Biederman <ebiederm@xmission.com>, Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>, 
-	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>, 
-	Hou Wenlong <houwenlong.hwl@antgroup.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2 Jul 2024 at 19:45, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Mon, Jul 01, 2024 at 04:27:04PM +0200, Borislav Petkov wrote:
-> > On Mon, Jun 24, 2024 at 10:13:44AM -0500, Steve Wahl wrote:
-> > > These accesses are a problem because they happen prior to establishing
-> > > the page fault interrupt handler that would mend the identity map.  I
-> > > know very little about the AMD SEV feature but reading the code I
-> > > think it may be required to do this before setting up that handler.
-> >
-> > Yeah, from looking at it, we should be able to establish a #PF handler that
-> > early too but the devil's in the detail, especially in that early boot code.
-> >
-> > Lemme poke some things and people...
->
-> Ard, from EFI perspective and boot services exiting, do you see any potential
-> issues if we enable a pagefault handler in load_stage1_idt() in
-> arch/x86/boot/compressed/head_64.S already or is the EFI pagetable not really
-> "reliable" then?
->
+According to the C standard 3.4.3p3, the result of signed integer
+overflow is undefined.  The macro nilfs_cnt32_ge(), which compares two
+sequence numbers, uses signed integer subtraction that can overflow,
+and therefore the result of the calculation may differ from what is
+expected due to undefined behavior in different environments.
 
-For the first boot, this shouldn't be needed - EFI maps all of RAM so
-I wouldn't expect the PF handler to fire, except when writing to code
-regions that were mapped ROX by the firmware. But even then, things
-should just keep working, although from a security pov, it would be
-better if the r/o regions remain r/o
+Similar to an earlier change to the jiffies-related comparison macros
+in commit 5a581b367b5d ("jiffies: Avoid undefined behavior from signed
+overflow"), avoid this potential issue by changing the definition of
+the macro to perform the subtraction as unsigned integers, then cast
+the result to a signed integer for comparison.
 
-> Would solve the issue in this thread where the EFI config table ends up not
-> mapped on some hw configurations, elegantly...
->
+Link: https://lkml.kernel.org/r/20130727225828.GA11864@linux.vnet.ibm.com
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Fixes: 9ff05123e3bf ("nilfs2: segment constructor")
+---
+Andrew, please add this to the queue for the next cycle.
 
-The #PF handler makes sense when entering via the 32-bit entrypoint,
-where the asm can only map the lower 4G and is in no position to
-reason about where RAM lives.
+This fixes a potential issue with undefined behavior on signed integer
+overflow.
 
-For kexec on a 64-bit system, I would expect the high-level support
-code to be capable of simply mapping all of DRAM 1:1, rather than
-playing these games with #PF handlers and on-demand mapping.
+Thanks,
+Ryusuke Konishi
+
+ fs/nilfs2/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
+index 36e0bb38e1aa..0ca3110d6386 100644
+--- a/fs/nilfs2/segment.c
++++ b/fs/nilfs2/segment.c
+@@ -136,7 +136,7 @@ static void nilfs_dispose_list(struct the_nilfs *, struct list_head *, int);
+ 
+ #define nilfs_cnt32_ge(a, b)   \
+ 	(typecheck(__u32, a) && typecheck(__u32, b) && \
+-	 ((__s32)(a) - (__s32)(b) >= 0))
++	 ((__s32)((a) - (b)) >= 0))
+ 
+ static int nilfs_prepare_segment_lock(struct super_block *sb,
+ 				      struct nilfs_transaction_info *ti)
+-- 
+2.34.1
+
 
