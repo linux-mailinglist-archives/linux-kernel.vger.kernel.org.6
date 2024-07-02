@@ -1,121 +1,94 @@
-Return-Path: <linux-kernel+bounces-237822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A447923E86
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:13:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A97923E88
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF161F250C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:13:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F0CF1F25256
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABC419EEC5;
-	Tue,  2 Jul 2024 13:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549A71A0723;
+	Tue,  2 Jul 2024 13:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="APjp0ayf"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFYJZJYO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E86F16C440;
-	Tue,  2 Jul 2024 13:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FED19DF60;
+	Tue,  2 Jul 2024 13:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719925919; cv=none; b=u3FPXssb+tpiDFkz2WikseUuCZasnLTJTpS2iQ8+IlraNFVaGj59c1P2yNQ6gYSiX23/ImEbpiXw+R2Aw+BtvcPRuNzUyiUuROrLcfxKzlsSCrHKLg1PER2RsKxK/C3uqOOym6B04bh/i0hqKimVfA8yQ0MQMLgZhptX/2y6JGE=
+	t=1719925942; cv=none; b=JxmTJ6nTMg3hAzOHyU/xuWR7YvWk65b4CUqsfkFFf/9E+cV4/55z2jIFDfDDfEIxEHQ/DF8lIlDyQaGEd2ImUmvt8hpTybD8H8FpeiVui9lZ7w4q6A2biW560qJNEoztU3azlpPTfdPd3DAtu5oN4H9NljIzxRcXWMcWoR3n8i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719925919; c=relaxed/simple;
-	bh=liDn5QvB3NTOv7iQ2Q/LV71tMS7ynYvrDPlX0J/YcFY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kHuZ05d7HkjHqjqa+QvAFW/Xlo1D5OLY4OictuPUW/0xdfHy3VOc9UqwZ2Dd3T1JhTgJ5yeCV+Gf2HVlIy/Jo7v/+eA5o9M1qwrCYKNC7U6Hk8JfsxwQxgJpKb3eIxqpFfhethfywSgcII7CVIqW8hp6aqwDjNMUJZ489jDaDPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=APjp0ayf; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fa244db0b2so31763005ad.3;
-        Tue, 02 Jul 2024 06:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719925918; x=1720530718; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhtQtFMCZm11P34Z/J+01S+WnAXcD678eovlYxy5Kxw=;
-        b=APjp0ayfB11AZHazW0gOZqOpPqKswtWPJzIpc+6LMm3tteXWnMG6J4JfYoVopSlUIg
-         I7tnhGvTFIHgfyFd4zdnUnYAgSi7i+qmZeo0Yo7rpAptV7hkEkuIskjtGi6mc6j6I/ot
-         HW48TJuXA3lr5/2yW9j9G+xnaaG2c9lqTJ1DhCRA1rWrbjHFiKCtRaDk82L9WRKZQ+yi
-         i4/TTiJImnA+HlRoUROcx+FxX1GbOlYUhHCXjzu9/2ls4nvrpR2S0clH9+L1JZJVmA2J
-         i7vedNgpKjox9WdJUFlEQPwLEvc4WJyP22vEzTrcsnD9peGb67QFfjTBlWq8Vc8X1at7
-         Mq2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719925918; x=1720530718;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zhtQtFMCZm11P34Z/J+01S+WnAXcD678eovlYxy5Kxw=;
-        b=fAIm9xs9wf53rpgWWC+NGB4J39Zc0vwL6yP9rtAvZ1APr7ZOSdncF+B7SG7DgEUGmp
-         8nTtkoYS09kZCFewR+kMAqBbp4JVgHj2gyHS+t2H0n8C+lChjeje2MN/uMi3Eai2y+63
-         i9NiyWm0Tb1Q7+9ZMn4zy6pjBvTQUp9qKvPIrD/b2PwupMi1BEDUCBVyStlhnJ20P4WK
-         4EEzUTmsD6gpegtodePe77QwwFGGjYJdlMYCpF9Cc1YFEPQ3mCDmQO0oJlxNDqAQchbb
-         41BwlyLWgyXarwcjBehVwXR3X3GoTeqts0iWkyV/9qCRHhufip7XpPRMW4H87YEpuU6R
-         KP3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVy2gF+a3x366jSJL2h0X/1Z2HpuHT395vZFzCcFj1ZFFUjCTr/j4VFE3YxdOAXr6+e6TJ9bBRHpfmEWKX4AOn6SckhAVcg4WdffRLXrHzfpaw4vchqB8EnWHh0XiparvqQ
-X-Gm-Message-State: AOJu0Yzz7GmTdUmNOerpARFJzgNU2+pwS3VsqWShX3zKVxdEh3kfyhRH
-	tchTuhIXtnKETUYm/HQah6Hk+J+YJTB9AIeGG5vNfW76qFRy9tDxHS0mYg==
-X-Google-Smtp-Source: AGHT+IGiT9MIy2ign/waoPuk99ueA6hjVY9lmddp7mAxqE6/faR05ZsxGiTXYWp/vXhvLfzIM7Hqjw==
-X-Received: by 2002:a17:902:db02:b0:1fa:f703:6441 with SMTP id d9443c01a7336-1faf7037b76mr12193155ad.59.1719925917447;
-        Tue, 02 Jul 2024 06:11:57 -0700 (PDT)
-Received: from localhost ([116.198.225.81])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1568ea7sm83773015ad.186.2024.07.02.06.11.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 06:11:56 -0700 (PDT)
-From: Tao Chen <chen.dylane@gmail.com>
-To: Quentin Monnet <qmo@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	bpf@vger.kernel.org,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	linux-kernel@vger.kernel.org,
-	chen.dylane@gmail.com
-Subject: [PATCH bpf-next] bpftool: Mount bpffs when pinmaps path not under the bpffs
-Date: Tue,  2 Jul 2024 21:11:50 +0800
-Message-Id: <20240702131150.15622-1-chen.dylane@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719925942; c=relaxed/simple;
+	bh=p+lBJAEBNcH6mzYX4tBdWs7yrDOUKpDqlewKL2RMD8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WX9krxPfC4ly+xKkDD0yUJK6zgycdytFepSeyJPu3rjguD41+ydvZbM5ri2S7JBbsyan8jKtJt71I3NdG9GbfGEx4En7vG6r8ubvINTgTXmiSzv0dc+BkkQYnzGf1It7z4zYBEqdAFboNSY68uExYBDIc0Zqv8NQv06ZdAjV2UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFYJZJYO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 578E7C116B1;
+	Tue,  2 Jul 2024 13:12:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719925942;
+	bh=p+lBJAEBNcH6mzYX4tBdWs7yrDOUKpDqlewKL2RMD8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WFYJZJYO3UR/3JWTw+bvTFiEj+fr6L7XT7a4jC19rbfuBFMi4S0T8fGsD+eSBjewI
+	 K9a3ZEcwOQVT5Nsh+a0KgW+CY8TfpnUoiGva+XKt1StQdIDJTDzycabrADOekJil3E
+	 8s5NbGjb6wVA/0pqtQtgT5dMzjiqaSqNDtzZFB1tdXm3mABF1tvoAMLVmyKIDVXHJv
+	 hKmuH4M52gqxev+CuvLb5yARGsQDUp+sNun3kWzjd6f8LDobhUbClixczDpp/4J4yr
+	 fz98pu/Jf5Icaaql8W7xvXXHYRoVyonMczAS4BAr92Hhjdm5vE/ckI9RMEdwhtzsdp
+	 F6Zt8yZQ8Cwtg==
+Date: Tue, 2 Jul 2024 18:42:17 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Ma Ke <make24@iscas.ac.cn>, linux-phy@lists.infradead.org,
+	kernel-janitors@vger.kernel.org,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>, Roger Quadros <rogerq@kernel.org>,
+	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+	Swapnil Jakhade <sjakhade@cadence.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] phy: cadence-torrent: Check return value on register read
+Message-ID: <ZoP8seqQxMFb-kS2@matsya>
+References: <20240702032042.3993031-1-make24@iscas.ac.cn>
+ <def496b0-ea98-467c-be47-77d965bb3a88@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <def496b0-ea98-467c-be47-77d965bb3a88@web.de>
 
-As qmonnet said [1], map pinning will fail if the pinmaps path not under
-the bpffs, like:
-libbpf: specified path /home/ubuntu/test/sock_ops_map is not on BPF FS
-Error: failed to pin all maps
-[1]: https://github.com/libbpf/bpftool/issues/146
+On 02-07-24, 09:43, Markus Elfring wrote:
+> > cdns_torrent_dp_set_power_state() does not consider that ret might be
+> > overwritten. Add return value check of regmap_read_poll_timeout() after
+> > register read in cdns_torrent_dp_set_power_state().
+> 
+> I suggest to improve such a change description another bit.
+> 
+> 1. A return value is stored in the mentioned local variable.
+> 
+> 2. Unfortunately, it was not immediately checked.
+> 
+>    * https://cwe.mitre.org/data/definitions/252.html
+> 
+>    * https://wiki.sei.cmu.edu/confluence/display/c/EXP12-C.+Do+not+ignore+values+returned+by+functions
+> 
+> 3. How do you think about to avoid a repeated reference to a function name?
 
-Fixes: 3767a94b3253 ("bpftool: add pinmaps argument to the load/loadall")
-Signed-off-by: Tao Chen <chen.dylane@gmail.com>
----
- tools/bpf/bpftool/prog.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-index 1a501cf09e78..40ea743d139f 100644
---- a/tools/bpf/bpftool/prog.c
-+++ b/tools/bpf/bpftool/prog.c
-@@ -1813,6 +1813,10 @@ static int load_with_options(int argc, char **argv, bool first_prog_only)
- 	}
- 
- 	if (pinmaps) {
-+		err = create_and_mount_bpffs_dir(pinmaps);
-+		if (err)
-+			goto err_unpin;
-+
- 		err = bpf_object__pin_maps(obj, pinmaps);
- 		if (err) {
- 			p_err("failed to pin all maps");
+<form letter>
+Feel free to ignore all comments from Markus, regardless whether the
+suggestion is reasonable or not. This person is banned from LKML and
+several maintainers ignore Markus' feedback, because it is just a waste
+of time.
+</form letter>
+
 -- 
-2.34.1
-
+~Vinod
 
