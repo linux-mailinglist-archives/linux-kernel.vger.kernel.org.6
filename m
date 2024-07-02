@@ -1,148 +1,170 @@
-Return-Path: <linux-kernel+bounces-237426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F4C691F0E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:19:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE75691F0E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD2C1F234F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:19:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3254FB21627
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4092D14E2E9;
-	Tue,  2 Jul 2024 08:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dr+92Fuq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CA34CE09;
-	Tue,  2 Jul 2024 08:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AD214B950;
+	Tue,  2 Jul 2024 08:19:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9184CE09
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 08:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719908345; cv=none; b=F+BFhV9jYysM7bQPhfG4e0+LHk4y/yLkhtGzmdBr4fi+6NngV8N5UXy8W7S5xekrT//JuC1jvtobbG1rgD1gcrpEE2m/Dlu2R+wEmHvY2m00+pqIf1dalz6NDz5dKusn8hWaq9RPltjm/hbNmATkr4JzNjU0nOLQyjDX8KtFu2c=
+	t=1719908341; cv=none; b=T1b9iJHipv+XbCLBI86b6rwIcon1YGGqbOpmQNkHGhv1iEWAtAupwZDZCkj0vaqUxmOxOFAsdZ9eN53EGkKKC0A8+eqfRT6ns90gDN7IRyiKZkl1jxW9BRzSn6iSDx2sXq8pdJQiDD/6TflBWnsV6eMF/U3enmxBGUBLWPD6VGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719908345; c=relaxed/simple;
-	bh=RzpV9qaqwHuuRQM83MwVSglsal7/lXC+YUdHRHr7VCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t66Vxtd7PUawZ3NLgVO237CcHPVJhUm2HjZT+Lw0kfTA7Pd1fCpl3dtNkXpBG+C4Hf58uielh8bWxnUU7HMLwN5yvJhlQta9RmTtYdeUMFJm4ZG/Dr7vPK6Qrie4ijfWawBWX6wHjqIumd0vnjghx4OZPBufATIrn2PgI36JuO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dr+92Fuq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F36BDC116B1;
-	Tue,  2 Jul 2024 08:19:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719908345;
-	bh=RzpV9qaqwHuuRQM83MwVSglsal7/lXC+YUdHRHr7VCg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Dr+92FuqyBWgmLDCTMhNKDE4mVBP3sxUMgWdTHf5EAFHFEXg6h2fWzOPSiX7Av672
-	 oy4Ru7izPNmn0sf80fElznKEu8AANKnKqxUGCP3VRIUIbRGWqkVD8VKIp/lyqgrIU7
-	 inrjpcnRBk6lhXYYrWjl48evnPTT5eYV2hq6oKiorT5AN8x8aqV9ER/NLAsIG1gIR8
-	 IkFFtNdSs2/i2QS9dgY6QINBl7T5ERtga0VEUP8lExARHjC27lPfM1KWEr/Sl4Vev9
-	 GAA1f4YBAnpH1TKPYw/Mwnusmn+KOCKp9+H9dubH/cA5d2Ogd5t9AUjPEYtioZSona
-	 FgtjFNShd7hvQ==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ee4ab4076bso42314621fa.0;
-        Tue, 02 Jul 2024 01:19:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVYEf1mjHb7GAXb2CBzHxUcBmoDpuh62kpTWV2WyoYGFh2qbdcjSOpOVAdX5F3fQz79zPktEZ/k8COzNuMDAJ6gbQ+wl9lUHj91tmiO
-X-Gm-Message-State: AOJu0YxwJx6BYi5L6ptFmUhWfUbQIJ2pHLiGB5lPXnNnJNSTfJulJnYF
-	nrJ1D48rVOK+vltY7Xd4H6xxxxRAbFnS9nO3R/kuOina2huXwSDUTbBdu/qvbXZm0Nk6EcVAKEW
-	DreUoar4i/wb3mRuWy8zBfyGlI00=
-X-Google-Smtp-Source: AGHT+IGZCLZCDiHqujnjOIEhR/fmNiQYGVdcu639B4lScKs5vNFq96qBK+DiO/OkuH+QAaTO+BYj6d5ODyaB+Cf+PRI=
-X-Received: by 2002:a05:6512:3d0e:b0:52b:aae0:2d41 with SMTP id
- 2adb3069b0e04-52e825d7156mr2718388e87.28.1719908343630; Tue, 02 Jul 2024
- 01:19:03 -0700 (PDT)
+	s=arc-20240116; t=1719908341; c=relaxed/simple;
+	bh=kkKIITcUg9oP9Wi1l5zsvVb76B8TQyoXp2TAZv6UER8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sRpk0rV9RNN2whGeScxbbpCnOmbvIPXST9MecP+tXEb7zUy1Np3nFRzm9WWU79x3L4clY17lmIRis1Y4oLYjLjFbXI64I5GPQ/EDx04KYlFiDMPaOPakZhEax0psyAxrAfkbbWxtSJaIMIrJRTTpVg2Z6RzwLKEZRhr+0sDEBwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D40B0339;
+	Tue,  2 Jul 2024 01:19:16 -0700 (PDT)
+Received: from [10.57.72.41] (unknown [10.57.72.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4DCA03F766;
+	Tue,  2 Jul 2024 01:18:50 -0700 (PDT)
+Message-ID: <507da6d0-77c5-46ca-8351-53b405ecb131@arm.com>
+Date: Tue, 2 Jul 2024 09:18:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2c8833e1-1995-4f49-804a-705ab9e702a5@gmail.com>
-In-Reply-To: <2c8833e1-1995-4f49-804a-705ab9e702a5@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 2 Jul 2024 17:18:27 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASH6mS3X_YhkVV9z5ZVXdew_nGpJxaakaE1moZckETM7A@mail.gmail.com>
-Message-ID: <CAK7LNASH6mS3X_YhkVV9z5ZVXdew_nGpJxaakaE1moZckETM7A@mail.gmail.com>
-Subject: Re: [PROBLEM linux-next] Segfault while building headers with dpkg-deb
-To: Mirsad Todorovac <mtodorovac69@gmail.com>
-Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: thp: support "THPeligible" semantics for mTHP with
+ anonymous shmem
+Content-Language: en-GB
+To: Bang Li <libang.li@antgroup.com>, ughd@google.com,
+ akpm@linux-foundation.org
+Cc: david@redhat.com, wangkefeng.wang@huawei.com,
+ baolin.wang@linux.alibaba.com, ioworker0@gmail.com, ziy@nvidia.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240702023401.41553-1-libang.li@antgroup.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240702023401.41553-1-libang.li@antgroup.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jun 29, 2024 at 3:59=E2=80=AFAM Mirsad Todorovac <mtodorovac69@gmai=
-l.com> wrote:
->
-> Hi all,
->
-> On the vanilla linux-next tree, branch next-20240627, there happens to be=
- a bug while building
-> with the randconfig seed KCONFIG_SEED=3D0x90E8E591:
->
->   .
->   .
->   .
->   XZ      debian/linux-image-6.10.0-rc5-next-20240627-dirty/lib/modules/6=
-.10.0-rc5-next-20240627-dirty/kernel/samples/trace_events/trace-events-samp=
-le.ko.xz
->   XZ      debian/linux-image-6.10.0-rc5-next-20240627-dirty/lib/modules/6=
-.10.0-rc5-next-20240627-dirty/kernel/samples/trace_events/trace_custom_sche=
-d.ko.xz
->   XZ      debian/linux-image-6.10.0-rc5-next-20240627-dirty/lib/modules/6=
-.10.0-rc5-next-20240627-dirty/kernel/samples/ftrace/sample-trace-array.ko.x=
-z
->   XZ      debian/linux-image-6.10.0-rc5-next-20240627-dirty/lib/modules/6=
-.10.0-rc5-next-20240627-dirty/kernel/samples/fprobe/fprobe_example.ko.xz
-> dpkg-deb: building package 'linux-libc-dev' in '../linux-libc-dev_6.10.0-=
-rc5-45_i386.deb'.
->   DEPMOD  debian/linux-image-6.10.0-rc5-next-20240627-dirty/lib/modules/6=
-.10.0-rc5-next-20240627-dirty
-> dpkg-deb: building package 'linux-headers-6.10.0-rc5-next-20240627-dirty'=
- in '../linux-headers-6.10.0-rc5-next-20240627-dirty_6.10.0-rc5-45_i386.deb=
-'.
-> Segmentation fault (core dumped)
-> make[6]: *** [scripts/Makefile.modinst:128: depmod] Error 139
-> make[5]: *** [Makefile:1842: modules_install] Error 2
-> make[4]: *** [Makefile:2058: run-command] Error 2
-> make[3]: *** [debian/rules:61: binary-image] Error 2
-> make[3]: *** Waiting for unfinished jobs....
-> dpkg-deb: building package 'linux-image-6.10.0-rc5-next-20240627-dirty-db=
-g' in '../linux-image-6.10.0-rc5-next-20240627-dirty-dbg_6.10.0-rc5-45_i386=
-.deb'.
-> dpkg-buildpackage: error: make -f debian/rules binary subprocess returned=
- exit status 2
-> make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
-> make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:1555: bindeb-=
-pkg] Error 2
-> make: *** [Makefile:240: __sub-make] Error 2
->
-> Build log and .config are attached at your convenience.
+On 02/07/2024 03:34, Bang Li wrote:
+> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
+> anonymous shmem"), we can configure different policies through
+> the multi-size THP sysfs interface for anonymous shmem. But
+> currently "THPeligible" indicates only whether the mapping is
+> eligible for allocating THP-pages as well as the THP is PMD
+> mappable or not for anonymous shmem, we need to support semantics
+> for mTHP with anonymous shmem similar to those for mTHP with
+> anonymous memory.
+> 
+> Signed-off-by: Bang Li <libang.li@antgroup.com>
+> ---
+> Changes since v1 [1]:
+>  - Put anonymous shmem mthp related logic into
+>    thp_vma_allowable_orders() (per David)
+> 
+> [1] https://lore.kernel.org/linux-mm/20240628104926.34209-1-libang.li@antgroup.com/
+> ---
+>  include/linux/huge_mm.h | 11 +++++++++++
+>  mm/huge_memory.c        | 13 +++++++++----
+>  mm/shmem.c              |  9 +--------
+>  3 files changed, 21 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 212cca384d7e..f87136f38aa1 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -267,6 +267,10 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+>  	return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders);
+>  }
+>  
+> +unsigned long shmem_allowable_huge_orders(struct inode *inode,
+> +				struct vm_area_struct *vma, pgoff_t index,
+> +				bool global_huge);
+> +
+>  struct thpsize {
+>  	struct kobject kobj;
+>  	struct list_head node;
+> @@ -460,6 +464,13 @@ static inline unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+>  	return 0;
+>  }
+>  
+> +static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
+> +				struct vm_area_struct *vma, pgoff_t index,
+> +				bool global_huge)
+> +{
+> +	return 0;
+> +}
+> +
+>  #define transparent_hugepage_flags 0UL
+>  
+>  #define thp_get_unmapped_area	NULL
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index c7ce28f6b7f3..ea377bb4af91 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -151,10 +151,15 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>  	 * Must be done before hugepage flags check since shmem has its
+>  	 * own flags.
+>  	 */
+> -	if (!in_pf && shmem_file(vma->vm_file))
+> -		return shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff,
+> -				     !enforce_sysfs, vma->vm_mm, vm_flags)
+> -			? orders : 0;
+> +	if (!in_pf && shmem_file(vma->vm_file)) {
+> +		bool global_huge = shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff,
+> +							!enforce_sysfs, vma->vm_mm, vm_flags);
+> +
+> +		if (!vma_is_anon_shmem(vma))
+> +			return global_huge? orders : 0;
 
+nit: missing space before '?'
 
+> +		return shmem_allowable_huge_orders(file_inode(vma->vm_file),
+> +							vma, vma->vm_pgoff, global_huge);
 
+What's the rationale for splitting these functions into shmem_is_huge() and
+shmem_allowable_huge_orders()? Why not just have a single
+shmem_allowable_huge_orders() that tells you the answer?
 
+> +	}
+>  
+>  	if (!vma_is_anonymous(vma)) {
+>  		/*
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index d495c0701a83..aa85df9c662a 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1622,7 +1622,7 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
+>  }
+>  
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -static unsigned long shmem_allowable_huge_orders(struct inode *inode,
+> +unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>  				struct vm_area_struct *vma, pgoff_t index,
+>  				bool global_huge)
+>  {
+> @@ -1707,13 +1707,6 @@ static unsigned long shmem_suitable_orders(struct inode *inode, struct vm_fault
+>  	return orders;
+>  }
+>  #else
+> -static unsigned long shmem_allowable_huge_orders(struct inode *inode,
+> -				struct vm_area_struct *vma, pgoff_t index,
+> -				bool global_huge)
+> -{
+> -	return 0;
+> -}
+> -
+>  static unsigned long shmem_suitable_orders(struct inode *inode, struct vm_fault *vmf,
+>  					   struct address_space *mapping, pgoff_t index,
+>  					   unsigned long orders)
 
-If you used an old kmod version, this is a known issue.
-
-https://lore.kernel.org/linux-kbuild/E1rNVlL-000qDm-Pg@rmk-PC.armlinux.org.=
-uk/
-
-A quick solution is to upgrade your kmod version.
-
-
-
-
-
-
-
->
-> Hope this helps.
->
-> Best regards,
-> Mirsad Todorovac
-
-
-
---
-Best Regards
-Masahiro Yamada
 
