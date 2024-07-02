@@ -1,107 +1,113 @@
-Return-Path: <linux-kernel+bounces-238568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC99924C2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:39:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34569924C36
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74CF8283C00
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:39:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4411B229C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7BC17DA03;
-	Tue,  2 Jul 2024 23:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7102717A5B8;
+	Tue,  2 Jul 2024 23:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHx74wJG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sgje/WwI"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26FD12F37B;
-	Tue,  2 Jul 2024 23:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DFE15B0FA;
+	Tue,  2 Jul 2024 23:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719963545; cv=none; b=sAl1iEs7qhqIqtxQkIp5lzIVluQozApJo+3ahH7cgXt97hqowEuX0ITpvbLRmu44J2AUrDH0JmK4/GUk2DBOerEyFYQtJCa8QrL8hYuh5DXJ47Ch9GQnMRG27HtJyW2r9184ph/1zBcPROtPSrg7JiSKrMH/v9cA5rGEYPzKaU4=
+	t=1719963647; cv=none; b=H+3ZjtLwM0tLpO5sG22yBZY8/bjeezCYtYEPbuybRqNKyA4CodFjvOV0NtsF9WcUw1nxXGXrlwNuzPjBaifAgljmiIVU6Z9F1KK0xDKF7grpf68neAjFc1RTsnkT5PWnzBW7rXTc1GO86Y2YrWSRMe86SGyE2pk0TybjVyR5uWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719963545; c=relaxed/simple;
-	bh=UjxnxLhiGA9d+TthrYHIqBGx+X7+t17Yzvu+fEUiXZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XPZJc+0HyuNxavOfA+yQL7Dmam3Cj2iwmQdpcVYcBhPr8Oipkiui+Sxrxfaq4RvEdxIOtdzV7p16hKA1qJ80p0XGY2deRQn+Sm3n7wq6rDoJcl8piEuYCM8z5wOfmScELjUWrfk32HaaEkt8Wwdy8n+cxQHZChSbLCZGLYUo3HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHx74wJG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B950EC116B1;
-	Tue,  2 Jul 2024 23:39:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719963545;
-	bh=UjxnxLhiGA9d+TthrYHIqBGx+X7+t17Yzvu+fEUiXZI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cHx74wJGAG7QAn2Ezj2m4UcuEenAq+rfg1ploYBfnJWQ6i7XcgEEktEd6g2e5gltr
-	 +49O5TMnpiAIJBRNterCsrInXLiI22dfCYFd7RSCtj3VGhl16mICOjCs0ST60zIQR7
-	 mlZONVtfOXuLACTF+OaHmTAGFVOCD7iVDgfXZE8PpfOSyHdIg8UcSKm+123AVDIOKT
-	 W2Sq3aRySY4qq+9L4OIhId4dhhiXr85ajQiLfotTjXB7/rQ/899RmXWtvPNnOHgbHx
-	 ZCk66pab69RChBZhqtd/kRHXWyJtMRS5UXpfwqZ++Jp+MNgvbPL4rdqxdtBf08jSrV
-	 TvYwwq1ke9MJA==
-Date: Tue, 2 Jul 2024 16:39:02 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
-	rostedt@goodmis.org, mhiramat@kernel.org, x86@kernel.org,
-	mingo@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, rihams@fb.com,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2] perf,x86: avoid missing caller address in stack
- traces captured in uprobe
-Message-ID: <20240702233902.p42gfhhnxo2veemf@treble>
-References: <20240702171858.187562-1-andrii@kernel.org>
- <20240702233554.slj6kh7dn2mc2w4n@treble>
+	s=arc-20240116; t=1719963647; c=relaxed/simple;
+	bh=N+wq443NlUjcf3lRNRxhQH5p2CHjsuOd2xXb07QdHRk=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=R1MBW6eRV+R6rU6u8rSobZt8+CbgjyigV5UY3mky5ADrA6UsN7tCS5N1NDLSdbRSfmVbFX7a7xZPsEeSoP0xBO7Rnc7bOl+Nl9uJbvEfWT9Lf7Y75Bn+CbC8Raw1OjmtD0e/9xJ20StM4rhMOFU4WsKYR3y9mESju5/PpAmJ0Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sgje/WwI; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-58b0beaf703so2286720a12.2;
+        Tue, 02 Jul 2024 16:40:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719963644; x=1720568444; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cJEOaZsRPVbiGuudIWGWy1zvfHhkTSKgzDUwc10vK+0=;
+        b=Sgje/WwIhyqX19FCjwF8AF8Yi43KUTwY4g2zjuHVWE66/CglYHMWP2E6aHoed51vn1
+         xyPcf/usV3+VczYU80UHE1zYhyG3/inrZUEbiWLjhRPlWlT6Hb3Ljpv/TsS5P6jPZ23a
+         eMe/2usMcFCdQnw//AIdaA5yd4EhCT6J3oPxYHIFZr9akenfe8yGdq9YueYcaa60WExj
+         ataemVbJiwjcg18e6PL5Er8KEsKF/eb6+k+m13nOOPX+vGnSjulJ1v6MKURODCCrugbS
+         uZ9OlDSL1FNP0m9mqQZccSvaCniSTsQLBK6/ksCje5Vdq63gCgnhIsWk045uB154JCkP
+         daCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719963644; x=1720568444;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cJEOaZsRPVbiGuudIWGWy1zvfHhkTSKgzDUwc10vK+0=;
+        b=MQGD7W8wEFsRtBlbHMRhu/yUrxjBAttVwjGSbwXryAAjkZ5nvA3ebmvBKuxvLbJxRk
+         oTlApJB5rwsme7ckxbvBC7FxagJIyQoeXYh0mKjxBi61HdFp2ChHkhVCKFzbrHnzOxIJ
+         y4eH/fH4kldKp/dYcexBA3y8svhid6ewW4DrdX2j+jhl/4ahbvapnAOxD3h81KyF1cpg
+         woy3T9bUd8bazLJ7KEwsZfclkuctUfgTKf8RG/jYX9KbISJnDfEdFYRme1kan5e7DxkP
+         Vqv3W2fllPZ1Mka8jFani6lcKdRDXPH8UQlj7zuzeXo99JTWwOTqY+4aevk+AcASEYkh
+         9O2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUwbIwnB24fY/GS/a1G9RyUnH9cWrd8g2aogcLD0XLt7QDO7rkxM7YDAzHUKPV+qeZgEJthhpJhRU/kxZEUkCMb1p2+ve/jp0g6wYdFfL44s98VI+3+LoZDmESsEQg1mW5fGklinzlzuhRl
+X-Gm-Message-State: AOJu0YyrmghXQ14QSdLSWE6LL4yb4QK7NeV7VmsyxkfHcaTHjPSYkAHy
+	4B3nwtnxVo9AQPC62f7jGc6ad/IGavofYSIJvm06zy+STEZodHQ7bMPXrPWB
+X-Google-Smtp-Source: AGHT+IF/LZCrG2zoDAv3cjefO0IGr0QgiiQyn54Z8x+2P/A6Ygm8z4rCBAE4MqSe7gjXGbjq1US8rg==
+X-Received: by 2002:a05:6402:354c:b0:57c:9d54:67db with SMTP id 4fb4d7f45d1cf-5879f0cbdbfmr6803888a12.9.1719963644396;
+        Tue, 02 Jul 2024 16:40:44 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58614d50580sm6287616a12.72.2024.07.02.16.40.41
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2024 16:40:42 -0700 (PDT)
+From: Wei Yang <richard.weiyang@gmail.com>
+To: akpm@linux-foundation.org,
+	masahiroy@kernel.org,
+	nathan@kernel.org,
+	nicolas@fjasle.eu
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Mike Rapoport <rppt@kernel.org>
+Subject: [PATCH 1/3] mm: use zonelist_zone() to get zone
+Date: Tue,  2 Jul 2024 23:40:06 +0000
+Message-Id: <20240702234008.19101-1-richard.weiyang@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240702233554.slj6kh7dn2mc2w4n@treble>
 
-On Tue, Jul 02, 2024 at 04:35:56PM -0700, Josh Poimboeuf wrote:
-> On Tue, Jul 02, 2024 at 10:18:58AM -0700, Andrii Nakryiko wrote:
-> > When tracing user functions with uprobe functionality, it's common to
-> > install the probe (e.g., a BPF program) at the first instruction of the
-> > function. This is often going to be `push %rbp` instruction in function
-> > preamble, which means that within that function frame pointer hasn't
-> > been established yet. This leads to consistently missing an actual
-> > caller of the traced function, because perf_callchain_user() only
-> > records current IP (capturing traced function) and then following frame
-> > pointer chain (which would be caller's frame, containing the address of
-> > caller's caller).
-> > 
-> > So when we have target_1 -> target_2 -> target_3 call chain and we are
-> > tracing an entry to target_3, captured stack trace will report
-> > target_1 -> target_3 call chain, which is wrong and confusing.
-> > 
-> > This patch proposes a x86-64-specific heuristic to detect `push %rbp`
-> > (`push %ebp` on 32-bit architecture) instruction being traced. Given
-> > entire kernel implementation of user space stack trace capturing works
-> > under assumption that user space code was compiled with frame pointer
-> > register (%rbp/%ebp) preservation, it seems pretty reasonable to use
-> > this instruction as a strong indicator that this is the entry to the
-> > function. In that case, return address is still pointed to by %rsp/%esp,
-> > so we fetch it and add to stack trace before proceeding to unwind the
-> > rest using frame pointer-based logic.
-> > 
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> 
-> Should it also check for ENDBR64?
-> 
-> When compiled with -fcf-protection=branch, the first instruction of the
-> function will almost always be ENDBR64.  I'm not sure about other
-> distros, but at least Fedora compiles its binaries like that.
+Instead of accessing zoneref->zone directly, use zonelist_zone() like
+other places for consistency.
 
-BTW, there are some cases (including leaf functions and some stack
-alignment sequences) where a "push %rbp" can happen inside a function.
-Then it would presumably add a bogus trace entry.  Are such false
-positives ok?
+No functional change.
 
+Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+CC: Mike Rapoport (IBM) <rppt@kernel.org>
+---
+ include/linux/mmzone.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index cb7f265c2b96..a34a74f5b113 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -1690,7 +1690,7 @@ static inline struct zoneref *first_zones_zonelist(struct zonelist *zonelist,
+ 			zone = zonelist_zone(z))
+ 
+ #define for_next_zone_zonelist_nodemask(zone, z, highidx, nodemask) \
+-	for (zone = z->zone;	\
++	for (zone = zonelist_zone(z);	\
+ 		zone;							\
+ 		z = next_zones_zonelist(++z, highidx, nodemask),	\
+ 			zone = zonelist_zone(z))
 -- 
-Josh
+2.34.1
+
 
