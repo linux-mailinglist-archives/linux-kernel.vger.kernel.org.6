@@ -1,82 +1,98 @@
-Return-Path: <linux-kernel+bounces-237875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A16923F36
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:41:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE17923F2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70F628AF12
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:41:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BECF61C21F7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC311B4C59;
-	Tue,  2 Jul 2024 13:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1811B4C56;
+	Tue,  2 Jul 2024 13:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cCTD0IQD"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBPVwi6L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB1318755A;
-	Tue,  2 Jul 2024 13:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C414A1AED5D;
+	Tue,  2 Jul 2024 13:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719927644; cv=none; b=Fko450wi8vyJ9Vhu53GPg5XpCeXgkhhSxDWK1eLUGLXvoIvBgJBnClIo0JQpFuwK2xVMe/1mqhbtpEPVww7LImIESBdgURuDqYGbzNNUs9xErvvRaOTeCDYuBxehpJWrkJWuv9NVD2km6X4Yl0/wAIytkOXg4WEOsfL/0WBjcuA=
+	t=1719927632; cv=none; b=FNQ4D+D4OEh61UEaI4sA2glmNLRpx9paHmORiZcmDcJlTcZTzoFozlWjfLDwry9rKkPugHFZZPKqo3GxqsPArHciBIVSSWkG/TrTORnQnaMv07fVgbRzYb4Esb0InxG4LW24VK6VDq70g03/QMTWjusQyi7XrljM36drFNgh1f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719927644; c=relaxed/simple;
-	bh=AU/qdBOM6SXuHEJq9Agt49uegv1H+uuZp34OljBygFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dBaNZIksJo4HhFth9kpi6tNmEsAt7D323XVLcVgn4D3O7WMsNcr40c+upMZRibSIPQYwRwpJZPQO3QmPCOAVYsJFP4lMhJueOJ3yu7oRfrJLxL6H++ZL3Tc/AKNNpc4KGzyCInx7xaiLlM2WDwvYVlBF/H4HgagFCEy1z1Juylw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cCTD0IQD; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=e4kZhyAqPLnjl0fZjSn+t21vrlos4A4MwU5pTA+wAIo=; b=cCTD0IQDupZaLwcS163PyH2DnE
-	m1NGQ89xRwsjEC2RrxXZ1r0PREHCDdJNa0Csj1rorQ2E+eB3UCXHwiJjKq6Yo6JDyGbgNPERJIpHa
-	KTOvWDpyXfELY+FWoA9rHf8+iTaXLEq2jaUNBtZX4DlyNdHtGKg0EoeY09x/4bT4gyPU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sOdkB-001dpn-Jm; Tue, 02 Jul 2024 15:40:27 +0200
-Date: Tue, 2 Jul 2024 15:40:27 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michael Walle <michael@walle.cc>
-Cc: Aleksandr Mishin <amishin@t-argos.ru>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH net v2] net: phy: mscc-miim: Validate bus frequency
- obtained from Device Tree
-Message-ID: <1c7eefe0-7262-45a0-b734-39b9202adfc5@lunn.ch>
-References: <20240702110650.17563-1-amishin@t-argos.ru>
- <20240702130247.18515-1-amishin@t-argos.ru>
- <D2F2Y45Y1LQS.8GN3PG7ZYAPB@walle.cc>
+	s=arc-20240116; t=1719927632; c=relaxed/simple;
+	bh=oWyMMPuMnk/cVjDHZftH+TzqlB1ahjPwRtOGWTrmum4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=dG9IVJy7jK8T65e70N5agKy+NTLUmvBVTIaJEyeh0bQvy6uHc7RrnRHULb347B+x8sdCsQZiI/erMorxrFqsfAJHrD63ygdJ0hYFzB6x2avNfznoIYCdLl1zL96j19Z5weV9lm5MvMjfos5HCei9ETs7AHf8V1tueWDW62PKyMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBPVwi6L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4C7AAC116B1;
+	Tue,  2 Jul 2024 13:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719927632;
+	bh=oWyMMPuMnk/cVjDHZftH+TzqlB1ahjPwRtOGWTrmum4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=iBPVwi6LyVgmhJNUGEtqynTEpSRPX/kUSJrh9ZjrUKwHEy0Z/svKF1QxOl0ldaJ6/
+	 YnNkN53iWQNyVTRWUot5Fx2Q/1Y0YqzT+OIPcl73IDoGywY2wzbcqsxumYOeKK+RP9
+	 31690r0e+f+OYTvzOPfDex/4GcMC/fUJ9QFZmW1GC6dQRNohtAbC/fZFh4Q2IkXEVI
+	 yN0l5chOUxW6g2tDVzwKGbssDRXy+wydi3WPfotNJl4M4bbS3EBmrfDQakGbbbdzlZ
+	 s92nAey6swXuU3dsjDnxmuH8tmEmR2eshfvkJqQ68Ud2JKFX7p+1dK1KWKyCu6ZbdH
+	 VSb9Fl9S+hReQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 38CB5CF3B95;
+	Tue,  2 Jul 2024 13:40:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D2F2Y45Y1LQS.8GN3PG7ZYAPB@walle.cc>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: stmmac: dwmac-qcom-ethqos: fix error array size
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171992763222.28501.4782727810061359612.git-patchwork-notify@kernel.org>
+Date: Tue, 02 Jul 2024 13:40:32 +0000
+References: <20240701014720.2547856-1-quic_yijiyang@quicinc.com>
+In-Reply-To: <20240701014720.2547856-1-quic_yijiyang@quicinc.com>
+To: YijieYang <quic_yijiyang@quicinc.com>
+Cc: vkoul@kernel.org, alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, bartosz.golaszewski@linaro.org,
+ netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com, quic_tengfan@quicinc.com, quic_aiquny@quicinc.com,
+ quic_jiegan@quicinc.com, stable@vger.kernel.org
 
-On Tue, Jul 02, 2024 at 03:16:21PM +0200, Michael Walle wrote:
-> Hi,
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon, 1 Jul 2024 09:47:20 +0800 you wrote:
+> From: Yijie Yang <quic_yijiyang@quicinc.com>
 > 
-> Please post a new version of a patch at the earliest after 24 hours,
-> so reviewers got a chance to reply.
+> Correct member @num_por with size of right array @emac_v4_0_0_por for
+> struct ethqos_emac_driver_data @emac_v4_0_0_data.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 8c4d92e82d50 ("net: stmmac: dwmac-qcom-ethqos: add support for emac4 on sa8775p platforms")
+> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+> 
+> [...]
 
-Just adding to that, please also read:
+Here is the summary with links:
+  - net: stmmac: dwmac-qcom-ethqos: fix error array size
+    https://git.kernel.org/netdev/net/c/b698ab56837b
 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-	Andrew
+
 
