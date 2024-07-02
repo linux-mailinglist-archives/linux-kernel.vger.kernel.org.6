@@ -1,170 +1,119 @@
-Return-Path: <linux-kernel+bounces-237425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE75691F0E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:19:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9925E91F0EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3254FB21627
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43C781F23600
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AD214B950;
-	Tue,  2 Jul 2024 08:19:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9184CE09
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 08:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07D314A62D;
+	Tue,  2 Jul 2024 08:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="MdN91Y4X"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE69514884C;
+	Tue,  2 Jul 2024 08:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719908341; cv=none; b=T1b9iJHipv+XbCLBI86b6rwIcon1YGGqbOpmQNkHGhv1iEWAtAupwZDZCkj0vaqUxmOxOFAsdZ9eN53EGkKKC0A8+eqfRT6ns90gDN7IRyiKZkl1jxW9BRzSn6iSDx2sXq8pdJQiDD/6TflBWnsV6eMF/U3enmxBGUBLWPD6VGE=
+	t=1719908371; cv=none; b=sxIcHw9u6yf0VtR8tYDHqsZ/PVYoo/KoF4qysQFwoAFBEY/KyqF+nynLcDMIWIPUgQ324ItMCJy1nYbSNrDOfuAnwoZaEapzK7/gjs5+PcbRlmiRtBMu/aF1WNUaNr9ag7mspaIhLQVF7sv8W5l/QxoAicFBbt8Pwp15eExf8n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719908341; c=relaxed/simple;
-	bh=kkKIITcUg9oP9Wi1l5zsvVb76B8TQyoXp2TAZv6UER8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sRpk0rV9RNN2whGeScxbbpCnOmbvIPXST9MecP+tXEb7zUy1Np3nFRzm9WWU79x3L4clY17lmIRis1Y4oLYjLjFbXI64I5GPQ/EDx04KYlFiDMPaOPakZhEax0psyAxrAfkbbWxtSJaIMIrJRTTpVg2Z6RzwLKEZRhr+0sDEBwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D40B0339;
-	Tue,  2 Jul 2024 01:19:16 -0700 (PDT)
-Received: from [10.57.72.41] (unknown [10.57.72.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4DCA03F766;
-	Tue,  2 Jul 2024 01:18:50 -0700 (PDT)
-Message-ID: <507da6d0-77c5-46ca-8351-53b405ecb131@arm.com>
-Date: Tue, 2 Jul 2024 09:18:48 +0100
+	s=arc-20240116; t=1719908371; c=relaxed/simple;
+	bh=q5MZcYXTG4Pd0D+0SZGew/DTm9RJ1zf3Kssculi3i88=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I7zG+gilwc4tCdzaaNp8ERRR3uqPWjlJ3XCTtNKduPxfrfCP5+WkjMLxQHExdmH3qyjOvp2cf+tFa3yvxcamdJ1VLeFO4ovpWuYC6yNSMCJU5X9YjkdBKKyfyYEhXngi05MKo+G8qBo2n5s3ueCgiVqzd/plFZpafo9vNfA2i9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=MdN91Y4X; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4627I45A022022;
+	Tue, 2 Jul 2024 04:19:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=za7IYtfl6n1xtDLxO19ry0fEsMv
+	qhvDostuZGHAhhds=; b=MdN91Y4XU9DV4NCeL1piqtwgN0Vi1597WhV5WT9Cgvd
+	HdD/KoNFvRG7aT+/QE0Nae7aFEuJ6kI/itckdFzPbJhrcR7XWuTGQIRTlgWNShfG
+	MP1aAN5q0fC2B1a6diAQxN23uHZxxpH0WT6J+DbwQh7mJm2UfrrRt/OG6nEF+g1T
+	oeRKdtI3MO6ipT2a7Yr1REJASOig/6MQQrVXkQrwJXxYbCx/bjAgTBC0qCu/zEwG
+	uDXCeDcA4N++4KpoDspVVb0dtrJ1P95vlwx0qv+ZrbLylabFVZ0T9dGMhWtuRxt5
+	a4ARyzLd+SBEqTKcV/xqT9f40HOnCtnQaUPu0X7Tb9g==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 402f639upr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 04:19:07 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4628J6hS003280
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 2 Jul 2024 04:19:06 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Tue, 2 Jul 2024 04:19:05 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Tue, 2 Jul 2024 04:19:05 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Tue, 2 Jul 2024 04:19:05 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.159])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4628Isft025612;
+	Tue, 2 Jul 2024 04:18:57 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+        Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ABI: testing: fix admv8818 attr description
+Date: Tue, 2 Jul 2024 11:18:50 +0300
+Message-ID: <20240702081851.4663-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: thp: support "THPeligible" semantics for mTHP with
- anonymous shmem
-Content-Language: en-GB
-To: Bang Li <libang.li@antgroup.com>, ughd@google.com,
- akpm@linux-foundation.org
-Cc: david@redhat.com, wangkefeng.wang@huawei.com,
- baolin.wang@linux.alibaba.com, ioworker0@gmail.com, ziy@nvidia.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240702023401.41553-1-libang.li@antgroup.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240702023401.41553-1-libang.li@antgroup.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: kDzv8nf4JqwuyL_bH0-b3w1ubChJY5Gn
+X-Proofpoint-ORIG-GUID: kDzv8nf4JqwuyL_bH0-b3w1ubChJY5Gn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_04,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=956
+ adultscore=0 suspectscore=0 impostorscore=0 priorityscore=1501
+ malwarescore=0 phishscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020062
 
-On 02/07/2024 03:34, Bang Li wrote:
-> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
-> anonymous shmem"), we can configure different policies through
-> the multi-size THP sysfs interface for anonymous shmem. But
-> currently "THPeligible" indicates only whether the mapping is
-> eligible for allocating THP-pages as well as the THP is PMD
-> mappable or not for anonymous shmem, we need to support semantics
-> for mTHP with anonymous shmem similar to those for mTHP with
-> anonymous memory.
-> 
-> Signed-off-by: Bang Li <libang.li@antgroup.com>
-> ---
-> Changes since v1 [1]:
->  - Put anonymous shmem mthp related logic into
->    thp_vma_allowable_orders() (per David)
-> 
-> [1] https://lore.kernel.org/linux-mm/20240628104926.34209-1-libang.li@antgroup.com/
-> ---
->  include/linux/huge_mm.h | 11 +++++++++++
->  mm/huge_memory.c        | 13 +++++++++----
->  mm/shmem.c              |  9 +--------
->  3 files changed, 21 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 212cca384d7e..f87136f38aa1 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -267,6 +267,10 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
->  	return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders);
->  }
->  
-> +unsigned long shmem_allowable_huge_orders(struct inode *inode,
-> +				struct vm_area_struct *vma, pgoff_t index,
-> +				bool global_huge);
-> +
->  struct thpsize {
->  	struct kobject kobj;
->  	struct list_head node;
-> @@ -460,6 +464,13 @@ static inline unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
->  	return 0;
->  }
->  
-> +static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
-> +				struct vm_area_struct *vma, pgoff_t index,
-> +				bool global_huge)
-> +{
-> +	return 0;
-> +}
-> +
->  #define transparent_hugepage_flags 0UL
->  
->  #define thp_get_unmapped_area	NULL
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index c7ce28f6b7f3..ea377bb4af91 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -151,10 +151,15 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->  	 * Must be done before hugepage flags check since shmem has its
->  	 * own flags.
->  	 */
-> -	if (!in_pf && shmem_file(vma->vm_file))
-> -		return shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff,
-> -				     !enforce_sysfs, vma->vm_mm, vm_flags)
-> -			? orders : 0;
-> +	if (!in_pf && shmem_file(vma->vm_file)) {
-> +		bool global_huge = shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff,
-> +							!enforce_sysfs, vma->vm_mm, vm_flags);
-> +
-> +		if (!vma_is_anon_shmem(vma))
-> +			return global_huge? orders : 0;
+Fix description of the filter_mode_available attribute by pointing to
+the correct name of the attribute that can be written with valid values.
 
-nit: missing space before '?'
+Fixes: bf92d87 ("iio:filter:admv8818: Add sysfs ABI documentation")
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+---
+ Documentation/ABI/testing/sysfs-bus-iio-filter-admv8818 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +		return shmem_allowable_huge_orders(file_inode(vma->vm_file),
-> +							vma, vma->vm_pgoff, global_huge);
-
-What's the rationale for splitting these functions into shmem_is_huge() and
-shmem_allowable_huge_orders()? Why not just have a single
-shmem_allowable_huge_orders() that tells you the answer?
-
-> +	}
->  
->  	if (!vma_is_anonymous(vma)) {
->  		/*
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index d495c0701a83..aa85df9c662a 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1622,7 +1622,7 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
->  }
->  
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -static unsigned long shmem_allowable_huge_orders(struct inode *inode,
-> +unsigned long shmem_allowable_huge_orders(struct inode *inode,
->  				struct vm_area_struct *vma, pgoff_t index,
->  				bool global_huge)
->  {
-> @@ -1707,13 +1707,6 @@ static unsigned long shmem_suitable_orders(struct inode *inode, struct vm_fault
->  	return orders;
->  }
->  #else
-> -static unsigned long shmem_allowable_huge_orders(struct inode *inode,
-> -				struct vm_area_struct *vma, pgoff_t index,
-> -				bool global_huge)
-> -{
-> -	return 0;
-> -}
-> -
->  static unsigned long shmem_suitable_orders(struct inode *inode, struct vm_fault *vmf,
->  					   struct address_space *mapping, pgoff_t index,
->  					   unsigned long orders)
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-filter-admv8818 b/Documentation/ABI/testing/sysfs-bus-iio-filter-admv8818
+index 31dbb390573f..c431f0a13cf5 100644
+--- a/Documentation/ABI/testing/sysfs-bus-iio-filter-admv8818
++++ b/Documentation/ABI/testing/sysfs-bus-iio-filter-admv8818
+@@ -3,7 +3,7 @@ KernelVersion:
+ Contact:	linux-iio@vger.kernel.org
+ Description:
+ 		Reading this returns the valid values that can be written to the
+-		on_altvoltage0_mode attribute:
++		filter_mode attribute:
+ 
+ 		- auto -> Adjust bandpass filter to track changes in input clock rate.
+ 		- manual -> disable/unregister the clock rate notifier / input clock tracking.
+-- 
+2.45.2
 
 
