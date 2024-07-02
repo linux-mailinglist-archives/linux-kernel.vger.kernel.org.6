@@ -1,81 +1,118 @@
-Return-Path: <linux-kernel+bounces-238080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F973924327
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:05:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED4592432B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AC6A1F2198E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:05:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7281C2406A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD80F1BD025;
-	Tue,  2 Jul 2024 16:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546621BD016;
+	Tue,  2 Jul 2024 16:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2KpePO4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jR6N/eyn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3127214D42C;
-	Tue,  2 Jul 2024 16:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C84B1BA868
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719936311; cv=none; b=E0TX/Nnf6xAwr1ZOZ6p2jYVQBoY+pHB9EyHcHW/DIyzOr5DDE0O4c+q/HkEMbXHeVxmiB5noGpbLFYlgXphyHIMCWc68CLfxSx/nHUbv+s5BYj9m2sJCIyK8k3FMGkg3La7r71str/jc/95151npPkWe9r0DrajR/aqRxlF8lZI=
+	t=1719936321; cv=none; b=mIGnPc3f3IFhI14hEjgXthZjoQ1Mq+KnOnC9AjCdADbUrLJiLyNFiV5tyshvtMx1N/HmozES6D8bJvg2AvCQMsVbcj7FaWQXfqcKKuwZANg+T6ATkmEIn/9lmiKO7TdQeIPm83w9rdhuRUuy2UsERaEcTfzMi+6DAlzk/m4U6k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719936311; c=relaxed/simple;
-	bh=gcPZu10Fun4CSdDBFTvZqP809dlNmXQL0R/O6Jbl7Pg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RT2FAHSQYOfQrtzFsAlqqLsj220mzodc/XQ3csFo47LiC2K3BQNP5/wak2nOoyYdXmqAheCzSLvV+tuMdK+iN9sPXEvgyHzBgqm+3xHftn8lzShs4qr9Mw3crPU6bj5Ok/2FFdoK3zs8+boc9Gt5mfx/bRoU+5K3h2Z4jI7XD3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2KpePO4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00769C116B1;
-	Tue,  2 Jul 2024 16:05:08 +0000 (UTC)
+	s=arc-20240116; t=1719936321; c=relaxed/simple;
+	bh=syIp2eAtSwSV1hJbA1lDFrbWh4wHMuVpkhgYugmdvnU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MaEEPlnqnp0tazAY2eyNSWrX1a1kIQJ3+hKtrvjXOaUm6LJotHM9y4AN5MIIyCthdAPL2LewZ/8CP/oaZM1eCkZYM5IxAs9AG7svSGfkcAMn5FcEvQhgWTzrBhJ+ggJYaE/inf8UeGfYqltuyz80l5esEGIRCq8mzwE7g72tUHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jR6N/eyn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FD5AC4AF13
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:05:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719936311;
-	bh=gcPZu10Fun4CSdDBFTvZqP809dlNmXQL0R/O6Jbl7Pg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l2KpePO4t11G+vPXMFznq4GeBoJO+vQ3xre1jn9wq1fRsZicA0Wjr47jXlP5PhU+W
-	 QC0jr6l+vpiAd6aXVRWleW/v6gSjtOJIDzyG6U0jlLDEPxutoY2KXORErqZ1JYMwVJ
-	 zhDbA0HG881HGqW05bW6cW+CrdH8Bf/FIXkPH4tQfzKDSVaqZdXKAK41Ns9Nkk6DW3
-	 fUBHGjkqckjwS9EQUqE9PZskNLN8JYftzWRUYRm6hlb/tpw5PA3arpZ5IGjlTnWVpb
-	 K/1BVvzzZEHWbJIRm/6ZauoiSl8Hg/vf5cTx4pIc6gNOlfRGZTk4B7jV1Dlhm/qCD1
-	 bPuPa0Gu8eUSg==
-Message-ID: <a095e65d-fdde-4bb4-832a-daa8ea999f2d@kernel.org>
-Date: Tue, 2 Jul 2024 17:05:06 +0100
+	s=k20201202; t=1719936321;
+	bh=syIp2eAtSwSV1hJbA1lDFrbWh4wHMuVpkhgYugmdvnU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jR6N/eyng+xqAZrCwVB3AkqP86jCFo5ENmDSyMnINnqWe25QcmAL+WZOSaTgJPQTe
+	 LXNmiGW4wga9uSrf16qwxrQPI6qPuzitGCXUMGOspvgPjlJMenJS9aCUnYaEC2NWnV
+	 Mn6x84PO9Ew+3i3L8pdNyTzWQ9rVd9hXLjbfEt5B9b9FVlM1vd88uOiNXWZgY95QYO
+	 FvqggpPLcebX+0471D0bZmkLxYTA8qK19g/7OC+dOyiFpZO+df0y+zDJi54i/WKc2L
+	 XeJTvxGZxwjJSPPboNrhHSnqE0Lh7F552JG2WGPgG4BM97ACCzni4fiS1mkylmTT5v
+	 DUrY/jFvcuczw==
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a724958f118so536050366b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 09:05:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXLYW3iyrZlXVT3j3b+U+pcyP8GmartS04mBD0Flo4B+qZ0YX6qqMOElQvR5qsO4xHxiayv3ZDRtJ+00xYM1WyDVgDEGpw1TIDLgIqX
+X-Gm-Message-State: AOJu0Yw22BtOO0Sykag+fYMhLadTWqNwTR8G6ms9D0gyTHexpWlsvUdx
+	QXv/yS49nsyYuV0wW6dsQrS0tx6CwI6ym4J1htID/BxtslYUHoIzYbiZr+zzVHd+f2EKMjp8sZl
+	msv180IBgbam0pGjXHagvMl6VzPIRitEfNGXevA==
+X-Google-Smtp-Source: AGHT+IEBp4AdEUbTVgkYnrR4l+M9u5QRL7lxuLE7wPVki6HJriUGGhJlS+z/qX598S3G9T3Nof1fz6H2Rp80Ffza6Tk=
+X-Received: by 2002:a17:907:6e9f:b0:a6f:668b:3442 with SMTP id
+ a640c23a62f3a-a75144de9c7mr601088966b.77.1719936319707; Tue, 02 Jul 2024
+ 09:05:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH bpf-next] bpftool: Mount bpffs when pinmaps path not under
- the bpffs
-To: Tao Chen <chen.dylane@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- bpf@vger.kernel.org, Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>, linux-kernel@vger.kernel.org
-References: <20240702131150.15622-1-chen.dylane@gmail.com>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20240702131150.15622-1-chen.dylane@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240628-x1e80100-bindings-thermal-qcom-tsens-v2-1-4843d4c2ba24@linaro.org>
+In-Reply-To: <20240628-x1e80100-bindings-thermal-qcom-tsens-v2-1-4843d4c2ba24@linaro.org>
+From: Amit Kucheria <amitk@kernel.org>
+Date: Tue, 2 Jul 2024 21:35:07 +0530
+X-Gmail-Original-Message-ID: <CAHLCerNKcHf3e71jTSihbd+Mp1W9ndZ+ULbn-B-iJ734Cj8OEQ@mail.gmail.com>
+Message-ID: <CAHLCerNKcHf3e71jTSihbd+Mp1W9ndZ+ULbn-B-iJ734Cj8OEQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: thermal: qcom-tsens: Document the
+ X1E80100 Temperature Sensor
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/07/2024 14:11, Tao Chen wrote:
-> As qmonnet said [1], map pinning will fail if the pinmaps path not under
-> the bpffs, like:
-> libbpf: specified path /home/ubuntu/test/sock_ops_map is not on BPF FS
-> Error: failed to pin all maps
-> [1]: https://github.com/libbpf/bpftool/issues/146
-> 
-> Fixes: 3767a94b3253 ("bpftool: add pinmaps argument to the load/loadall")
-> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+On Fri, Jun 28, 2024 at 2:01=E2=80=AFPM Abel Vesa <abel.vesa@linaro.org> wr=
+ote:
+>
+> Document the Temperature Sensor (TSENS) on the X1E80100 Platform.
+>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-The patch looks good, thank you!
+Reviewed-by: Amit Kucheria <amitk@kernel.org>
 
-Tested-by: Quentin Monnet <qmo@kernel.org>
-Reviewed-by: Quentin Monnet <qmo@kernel.org>
+> ---
+> Changes in v2:
+> - Just picked up Krzysztof's R-b tag
+> - Link to v1: https://lore.kernel.org/r/20240527-x1e80100-bindings-therma=
+l-qcom-tsens-v1-1-0f50f58253e1@linaro.org
+> ---
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/=
+Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> index 99d9c526c0b6..ac54ed604b74 100644
+> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> @@ -67,6 +67,7 @@ properties:
+>                - qcom,sm8450-tsens
+>                - qcom,sm8550-tsens
+>                - qcom,sm8650-tsens
+> +              - qcom,x1e80100-tsens
+>            - const: qcom,tsens-v2
+>
+>        - description: v2 of TSENS with combined interrupt
+>
+> ---
+> base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
+> change-id: 20240522-x1e80100-bindings-thermal-qcom-tsens-aa2db90c4a74
+>
+> Best regards,
+> --
+> Abel Vesa <abel.vesa@linaro.org>
+>
 
