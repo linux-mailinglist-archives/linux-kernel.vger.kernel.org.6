@@ -1,143 +1,177 @@
-Return-Path: <linux-kernel+bounces-237276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA0091EE83
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:46:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921F291EE86
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F7CA282169
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:46:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C35D81C2119D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA25E374C6;
-	Tue,  2 Jul 2024 05:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F086754FB5;
+	Tue,  2 Jul 2024 05:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="xU+Qz5vt"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4L1OOc1C"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768913BBF6
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 05:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC06179CC;
+	Tue,  2 Jul 2024 05:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719899176; cv=none; b=dBLJAwtDY8k9mcZKzq+qbMqy9UMWODTUFAxKKxi9ItkP9q4CvN0Uw1Wu0UcsJatrb2fqlQy8nCxN/eIp1lJf3qSuCGnCpS9/q38X6h6ipWO9Tm5GUsJlEQq5QSk44m2cBy/fr/jSigX7tgAXdAUwiTbqmILzvq7+5YuuFpyuKcc=
+	t=1719899280; cv=none; b=TE1iErGEh+XHSkPq8nk1sV6WkqJXu0sQTfAwab+IRKHCT3KflMtY/pmbaT4im6fRmN66FhV4lCt10ZOq/9CWAzs/zJ8n2yqW/21PLa9EBbzLMpRZFc/n6baunfjBogG7SbRUrf5JAR7cs4OgxiUEQ9NSZHkkj1HCpNZOogPphmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719899176; c=relaxed/simple;
-	bh=AdkaUjRTJIhO/K8YUDZQ1Q0hdKG/eUYO18zWbxAkJ+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r/nrtbuKW/23aSUsaI8JHOuIl17EMNgZEXJU/5v2vKHgOtyTcUzO6zG46GxPviTCcdyvxGq/IzWeV7SqaTd/vgbBMDrXB0WI2981SC4dwOanPkTC5/GQyfG4k0AV3FGZzn47vV8mNr1cfjHjZjXIL3GUTFN6Xn+pBCI5o+o/NeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=xU+Qz5vt; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70679845d69so2412469b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 22:46:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719899173; x=1720503973; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BGGBEWgqwliEqnZATHjMM1K2Xkz4OG63sXpZDZIsbfo=;
-        b=xU+Qz5vtMWlGv7Gpl1n5kg3KOGQIqSgzjPs7s2nu71MB+EpE9biNDMVboQiGHCcpyf
-         7cR47w3w2+9SjvSB/MBcX1JC62f0LrS/vHHcaqlNUF1ZoVOZSolmCMcQlFu/rmzj2giO
-         PwXFtHM6BITw4FDAy7Z8UQ1jzlhmsM8FwsTKFhFvnppjICROWWSHjAVp7/McPhAJ22sT
-         uBWqUH4WVrs+UlavQrViqht1TjsWuQd74/OOmtd4zpxem9KlGDCm18GUH/On6PYF8KbH
-         0dfZZwv6GCgVwmhy/mcAL5snTQdjZZTYfHzN8iz7AkTOuCKO0s8q/8YQlkXAvFV8fAn/
-         OWfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719899173; x=1720503973;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BGGBEWgqwliEqnZATHjMM1K2Xkz4OG63sXpZDZIsbfo=;
-        b=giMjrQZSfWDS6noQaSyRaifYiYxMYQd1trTNpdpNgZNqq143dk2CksD5c4F4fVHKLl
-         EhPKNhMPur5dkQx8mNEEfDDuc1ONw2Q9xrRYGU1IolwmcKnVDP/PqS0hS1Dt55/TSlYN
-         IK+uixPml5v4/F1zLYyTNFKxMtEnVCPWdpOUgGFfkxR7DCAkGKC0VvSd3/0OX6PltMPY
-         Ykl3xUO+ef91Wo7b4nQxKP5r/XRZntLRpjL52FnWyBvyLi0WXWSAdpwMSxHsH9PeV8Cn
-         a52yOLxs9nzCsWN/uJJHWyNsSleS6WL42JGHXy745DycJA2xbEIoZhVWzhcWZjIQfOjo
-         PWvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLNsRuCC7J8BIW/gcof2CovlnoHaqlN7C67RKZ9ttePYAFk5Hu6zzGg80YQzWQo2ELJxux8iQDuJQ4/rc8TKMjbLTqP5GZlfG5seh/
-X-Gm-Message-State: AOJu0YzIy0PMqaXBLMFx9uxk6PPqSmOakpz6ernrzJXkiYAEoeeLf17A
-	pJa1eWU7fwV5mEC9+i9nn+b5PX4nnTmXChGMwTzGwg76W5MV1m4PyaTteMCcFTk=
-X-Google-Smtp-Source: AGHT+IG2WieA6d2VXCXPEULk6bM4rk8RGnz2VXlb5+XlqbXE2HDHRrkVhtC3A7gynucOeClBzA/BEQ==
-X-Received: by 2002:a05:6a00:3e1d:b0:705:9a28:aa04 with SMTP id d2e1a72fcca58-70aaaefd5ddmr6625232b3a.23.1719899172664;
-        Mon, 01 Jul 2024 22:46:12 -0700 (PDT)
-Received: from ghost ([2601:647:5700:6860:a569:328b:99ad:ce17])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf95bsm7787118b3a.140.2024.07.01.22.46.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 22:46:12 -0700 (PDT)
-Date: Mon, 1 Jul 2024 22:46:08 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>
-Subject: Re: [PATCH v3 07/13] riscv: csr: Add CSR encodings for
- VCSR_VXRM/VCSR_VXSAT
-Message-ID: <ZoOUIJIxnwpqxBHR@ghost>
-References: <20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com>
- <20240619-xtheadvector-v3-7-bff39eb9668e@rivosinc.com>
- <54232f3e-4fea-4996-a90b-6de51e1c51e0@sifive.com>
+	s=arc-20240116; t=1719899280; c=relaxed/simple;
+	bh=Bn3wG4lA+xxGiSruiHBol9oYVeiEnMeIGUNym8g/cIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WFv62Vn35yW95sPPIOKESQXALOdC5EueFWiLe4Kio5TP5PWGbnSTKR26B8kAgU2z8Y07hRYYNXkDgfVpAOAalBbh3JQ9pItFTZgU1QSPeHfwvIJxoLWSkkTZfTXpPyVw2ZpHHxuH3eN6eWrG1WBpbLpq0TypN4cHS9kP2+Q4eus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4L1OOc1C; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719899277;
+	bh=Bn3wG4lA+xxGiSruiHBol9oYVeiEnMeIGUNym8g/cIo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=4L1OOc1CMaqgg0QIXjgIFNkXfJ0CecvLU2J0BI6d5vzQBkZQhz0yY2bR9K+YU0sor
+	 GOHqzqFBN8NXvkwF3Sz8yft2ORq6G7wDqct3gu0wYmVY4dIE+L3xnuuEC/09vpcrrq
+	 SPwsLiB437/77bdi6yDbrI/hFopyJI4vey7asWFl/y3ENpqKVhlY2hQQ73Vnm2P7Z/
+	 IGvoEhoSJqsL6GVHjqKsg7mQMDZOqCHJG7OxmcPujOYn4GB+B4Xdb0lNApvmJ3xQpk
+	 SOD5S+yyLGZiwY2MAUUuRdeSKuxmV63nRzZF8HmtlI3sWs+trb/wyHuyvk7/hVEg8N
+	 PEEFRuxcTIidg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 81F9837811EB;
+	Tue,  2 Jul 2024 05:47:56 +0000 (UTC)
+Message-ID: <70b31b71-750b-4de0-9102-0852fef7d623@collabora.com>
+Date: Tue, 2 Jul 2024 07:47:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54232f3e-4fea-4996-a90b-6de51e1c51e0@sifive.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpufreq: mediatek: Use dev_err_probe in every error path
+ in probe
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: kernel@collabora.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240628-mtk-cpufreq-dvfs-fail-init-err-v1-1-19c55db23011@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240628-mtk-cpufreq-dvfs-fail-init-err-v1-1-19c55db23011@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 01, 2024 at 10:49:23AM -0500, Samuel Holland wrote:
-> Hi Charlie,
+Il 28/06/24 21:48, Nícolas F. R. A. Prado ha scritto:
+> Use the dev_err_probe() helper to log the errors on every error path in
+> the probe function and its sub-functions. This includes
+> * adding error messages where there was none
+> * converting over dev_err/dev_warn
+> * removing the top-level error message after mtk_cpu_dvfs_info_init() is
+>    called, since every error path inside that function already logs the
+>    error reason. This gets rid of the misleading error message when probe
+>    is deferred:
 > 
-> On 2024-06-19 6:57 PM, Charlie Jenkins wrote:
-> > The VXRM vector csr for xtheadvector has an encoding of 0xa and VXSAT
-> > has an encoding of 0x9.
-> > 
-> > Co-developed-by: Heiko Stuebner <heiko@sntech.de>
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > ---
-> >  arch/riscv/include/asm/csr.h | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> > index 18e178d83401..9086639a3dde 100644
-> > --- a/arch/riscv/include/asm/csr.h
-> > +++ b/arch/riscv/include/asm/csr.h
-> > @@ -220,6 +220,8 @@
-> >  #define VCSR_VXRM_MASK			3
-> >  #define VCSR_VXRM_SHIFT			1
-> >  #define VCSR_VXSAT_MASK			1
-> > +#define VCSR_VXSAT			0x9
-> > +#define VCSR_VXRM			0xa
+>      mtk-cpufreq mtk-cpufreq: failed to initialize dvfs info for cpu0
 > 
-> These are normal CSR indexes, so the prefix should be just "CSR_".
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>   drivers/cpufreq/mediatek-cpufreq.c | 66 ++++++++++++++++++--------------------
+>   1 file changed, 31 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
+> index 518606adf14e..b21425bb83be 100644
+> --- a/drivers/cpufreq/mediatek-cpufreq.c
+> +++ b/drivers/cpufreq/mediatek-cpufreq.c
 
-Ok, I can change them.
+..snip..
 
-- Charlie
+> @@ -487,7 +488,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
+>   	rate = clk_get_rate(info->inter_clk);
+>   	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
+>   	if (IS_ERR(opp)) {
+> -		dev_err(cpu_dev, "cpu%d: failed to get intermediate opp\n", cpu);
+> +		dev_err_probe(cpu_dev, ret, "cpu%d: failed to get intermediate opp\n", cpu);
+>   		ret = PTR_ERR(opp);
 
+I believe you want to first assign ret, and then use it in dev_err_probe() :-P
+
+Please fix. After which:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+Cheers!
+
+>   		goto out_disable_inter_clock;
+>   	}
+> @@ -501,7 +502,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
+>   	info->opp_nb.notifier_call = mtk_cpufreq_opp_notifier;
+>   	ret = dev_pm_opp_register_notifier(cpu_dev, &info->opp_nb);
+>   	if (ret) {
+> -		dev_err(cpu_dev, "cpu%d: failed to register opp notifier\n", cpu);
+> +		dev_err_probe(cpu_dev, ret, "cpu%d: failed to register opp notifier\n", cpu);
+>   		goto out_disable_inter_clock;
+>   	}
+>   
+> @@ -629,11 +630,9 @@ static int mtk_cpufreq_probe(struct platform_device *pdev)
+>   	int cpu, ret;
+>   
+>   	data = dev_get_platdata(&pdev->dev);
+> -	if (!data) {
+> -		dev_err(&pdev->dev,
+> -			"failed to get mtk cpufreq platform data\n");
+> -		return -ENODEV;
+> -	}
+> +	if (!data)
+> +		return dev_err_probe(&pdev->dev, -ENODEV,
+> +				     "failed to get mtk cpufreq platform data\n");
+>   
+>   	for_each_possible_cpu(cpu) {
+>   		info = mtk_cpu_dvfs_info_lookup(cpu);
+> @@ -643,24 +642,21 @@ static int mtk_cpufreq_probe(struct platform_device *pdev)
+>   		info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+>   		if (!info) {
+>   			ret = -ENOMEM;
+> +			dev_err_probe(&pdev->dev, ret, "Failed to allocate dvfs_info\n");
+>   			goto release_dvfs_info_list;
+>   		}
+>   
+>   		info->soc_data = data;
+>   		ret = mtk_cpu_dvfs_info_init(info, cpu);
+> -		if (ret) {
+> -			dev_err(&pdev->dev,
+> -				"failed to initialize dvfs info for cpu%d\n",
+> -				cpu);
+> +		if (ret)
+>   			goto release_dvfs_info_list;
+> -		}
+>   
+>   		list_add(&info->list_head, &dvfs_info_list);
+>   	}
+>   
+>   	ret = cpufreq_register_driver(&mtk_cpufreq_driver);
+>   	if (ret) {
+> -		dev_err(&pdev->dev, "failed to register mtk cpufreq driver\n");
+> +		dev_err_probe(&pdev->dev, ret, "failed to register mtk cpufreq driver\n");
+>   		goto release_dvfs_info_list;
+>   	}
+>   
 > 
-> Regards,
-> Samuel
+> ---
+> base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
+> change-id: 20240627-mtk-cpufreq-dvfs-fail-init-err-0a662ca72de2
 > 
-> >  
-> >  /* symbolic CSR names: */
-> >  #define CSR_CYCLE		0xc00
-> > 
-> 
+> Best regards,
+
+
 
