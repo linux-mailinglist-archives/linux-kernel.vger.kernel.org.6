@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-237600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81DD3923B55
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:24:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED54923B58
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F457B23533
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:24:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E475282A24
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2258C158853;
-	Tue,  2 Jul 2024 10:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6BE15884B;
+	Tue,  2 Jul 2024 10:26:27 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DB6154449;
-	Tue,  2 Jul 2024 10:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E996154449
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 10:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719915845; cv=none; b=C+XnbTCWW9zJ5K3s+LdT9DPWTzmYGQGKSG+60dO1a+35U4FUQZOZKpf8EMbulnOgQWbDv2HHzZtjq0gbVtdo2lBdlt09MarWvTqywpDeQ5/HSi62aUsDfj799YJWLVqhz68vBgjysrr7grciIU6/bC6Inuy463TqynfjPQNsQnk=
+	t=1719915987; cv=none; b=UNHbcrv74ZttF82DWtry5bkKwCWlY0Z92HLBX1tf//1My2UzB6p7IL3g7x6J+gK2QSXiHZds7Px0ZbAmqaF3B5DDfdj2CfRBD8O8eLk1p1VGyHO4tQePh+eGGXCgM06LDs88ych6FzYJu/gSfdDXcDM2ukVqshFJroeCnKJCv3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719915845; c=relaxed/simple;
-	bh=ATd5VV0LncNUb8HTNw6yZa2RlrvTq5uy/ZnS4DU0H50=;
+	s=arc-20240116; t=1719915987; c=relaxed/simple;
+	bh=VR9tXPykvNiwoEziiNPsUhmQ7VutUy7dDdMJOePa788=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MZd3kWu8GPB4pbZ99CarAtOZBbkkSE5MSQVraRpm31sQVUjEzEA2nfA3JQeuOvSxwCgIcHsOr34e8OeZAz5uA/gRLTb8rx8ozNB2rSBxfkQM2BxyhKpAIdsdqWdqxWnDxERx4XJ8HS58/w2xtIa0V+QMgGst41Nk2eMqH2wJl+A=
+	 In-Reply-To:Content-Type; b=NYw642Ld7ZDPR49RMySREv6JM5ov1s2/0ktURWJt/g2mj311JU0rwnZ681b4tkF4MiFB9INmsJz49PGh6AW/juqLwPeamNHwt0hWZqSVtbDKTpfSkaafkAiEnlKoUh6ociHkUeErUxUciPuuPwMwcOJm03bqKkPTsHI3UTicnUM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA864339;
-	Tue,  2 Jul 2024 03:24:26 -0700 (PDT)
-Received: from [10.1.34.77] (e133649.arm.com [10.1.34.77])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 11BA53F762;
-	Tue,  2 Jul 2024 03:23:59 -0700 (PDT)
-Message-ID: <63c76af4-6451-4d6a-8aeb-0bc4812c4101@arm.com>
-Date: Tue, 2 Jul 2024 11:23:58 +0100
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 849DD339;
+	Tue,  2 Jul 2024 03:26:48 -0700 (PDT)
+Received: from [10.1.32.193] (XHFQ2J9959.cambridge.arm.com [10.1.32.193])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 34F593F762;
+	Tue,  2 Jul 2024 03:26:22 -0700 (PDT)
+Message-ID: <3743d7e1-0b79-4eaf-82d5-d1ca29fe347d@arm.com>
+Date: Tue, 2 Jul 2024 11:26:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,132 +41,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] sched_ext: Add cpuperf support
-To: Tejun Heo <tj@kernel.org>, rafael@kernel.org, viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org, void@manifault.com,
- linux-kernel@vger.kernel.org, kernel-team@meta.com, mingo@redhat.com,
- peterz@infradead.org, David Vernet <dvernet@meta.com>,
- "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-References: <20240619031250.2936087-1-tj@kernel.org>
- <20240619031250.2936087-3-tj@kernel.org>
-Content-Language: en-US
-From: Hongyan Xia <hongyan.xia2@arm.com>
-In-Reply-To: <20240619031250.2936087-3-tj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
+ instructions
+Content-Language: en-GB
+To: Catalin Marinas <catalin.marinas@arm.com>,
+ Yang Shi <yang@os.amperecomputing.com>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, will@kernel.org,
+ anshuman.khandual@arm.com, david@redhat.com, scott@os.amperecomputing.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240626191830.3819324-1-yang@os.amperecomputing.com>
+ <Zn7q3oL1AE8jdM-g@arm.com> <773c8be7-eb73-010c-acea-1c2fefd65b84@gentwo.org>
+ <Zn7xs6OYZz4dyA8a@arm.com>
+ <200c5d06-c551-4847-adaf-287750e6aac4@os.amperecomputing.com>
+ <ZoMG6n4hQp5XMhUN@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <ZoMG6n4hQp5XMhUN@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/06/2024 04:12, Tejun Heo wrote:
-> sched_ext currently does not integrate with schedutil. When schedutil is the
-> governor, frequencies are left unregulated and usually get stuck close to
-> the highest performance level from running RT tasks.
+On 01/07/2024 20:43, Catalin Marinas wrote:
+> On Fri, Jun 28, 2024 at 11:20:43AM -0700, Yang Shi wrote:
+>> On 6/28/24 10:24 AM, Catalin Marinas wrote:
+>>> This patch does feel a bit like working around a non-optimal user choice
+>>> in kernel space. Who knows, madvise() may even be quicker if you do a
+>>> single call for a larger VA vs touching each page.
+>>
+>> IMHO, I don't think so. I viewed this patch to solve or workaround some ISA
+>> inefficiency in kernel. Two faults are not necessary if we know we are
+>> definitely going to write the memory very soon, right?
 > 
-> Add CPU performance monitoring and scaling support by integrating into
-> schedutil. The following kfuncs are added:
+> I agree the Arm architecture behaviour is not ideal here and any
+> timelines for fixing it in hardware, if they do happen, are far into the
+> future. Purely from a kernel perspective, what I want though is make
+> sure that longer term (a) we don't create additional maintenance burden
+> and (b) we don't keep dead code around.
 > 
-> - scx_bpf_cpuperf_cap(): Query the relative performance capacity of
->    different CPUs in the system.
+> Point (a) could be mitigated if the architecture is changed so that any
+> new atomic instructions added to this range would also come with
+> additional syndrome information so that we don't have to update the
+> decoding patterns.
 > 
-> - scx_bpf_cpuperf_cur(): Query the current performance level of a CPU
->    relative to its max performance.
+> Point (b), however, depends on the OpenJDK and the kernel versions in
+> distros. Nick Gasson kindly provided some information on the OpenJDK
+> changes. The atomic_add(0) change happened in early 2022, about 5-6
+> months after MADV_POPULATE_WRITE support was added to the kernel. What's
+> interesting is Ampere already contributed MADV_POPULATE_WRITE support to
+> OpenJDK a few months ago:
 > 
-> - scx_bpf_cpuperf_set(): Set the current target performance level of a CPU.
+> https://github.com/openjdk/jdk/commit/a65a89522d2f24b1767e1c74f6689a22ea32ca6a
 > 
-> This gives direct control over CPU performance setting to the BPF scheduler.
-> The only changes on the schedutil side are accounting for the utilization
-> factor from sched_ext and disabling frequency holding heuristics as it may
-> not apply well to sched_ext schedulers which may have a lot weaker
-> connection between tasks and their current / last CPU.
+> The OpenJDK commit lacks explanation but what I gathered from the diff
+> is that this option is the preferred one in the presence of THP (which
+> most/all distros enable by default). If we merge your proposed kernel
+> patch, it will take time before it makes its way into distros. I'm
+> hoping that by that time, distros would have picked a new OpenJDK
+> version already that doesn't need the atomic_add(0) pattern. If that's
+> the case, we end up with some dead code in the kernel that's almost
+> never exercised.
 > 
-> With cpuperf support added, there is no reason to block uclamp. Enable while
-> at it.
+> I don't follow OpenJDK development but I heard that updates are dragging
+> quite a lot. I can't tell whether people have picked up the
+> atomic_add(0) feature and whether, by the time a kernel patch would make
+> it into distros, they'd also move to the MADV_POPULATE_WRITE pattern.
 > 
-> A toy implementation of cpuperf is added to scx_qmap as a demonstration of
-> the feature.
+> There's a point (c) as well on the overhead of reading the faulting
+> instruction. I hope that's negligible but I haven't measured it.
 > 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: David Vernet <dvernet@meta.com>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->   kernel/sched/cpufreq_schedutil.c         |  12 +-
->   kernel/sched/ext.c                       |  83 ++++++++++++-
->   kernel/sched/ext.h                       |   9 ++
->   kernel/sched/sched.h                     |   1 +
->   tools/sched_ext/include/scx/common.bpf.h |   3 +
->   tools/sched_ext/scx_qmap.bpf.c           | 142 ++++++++++++++++++++++-
->   tools/sched_ext/scx_qmap.c               |   8 ++
->   7 files changed, 252 insertions(+), 6 deletions(-)
-> 
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index 972b7dd65af2..12174c0137a5 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -197,7 +197,9 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
->   
->   static void sugov_get_util(struct sugov_cpu *sg_cpu, unsigned long boost)
->   {
-> -	unsigned long min, max, util = cpu_util_cfs_boost(sg_cpu->cpu);
-> +	unsigned long min, max;
-> +	unsigned long util = cpu_util_cfs_boost(sg_cpu->cpu) +
-> +		scx_cpuperf_target(sg_cpu->cpu);
->   
->   	util = effective_cpu_util(sg_cpu->cpu, util, &min, &max);
->   	util = max(util, boost);
-> @@ -330,6 +332,14 @@ static bool sugov_hold_freq(struct sugov_cpu *sg_cpu)
->   	unsigned long idle_calls;
->   	bool ret;
->   
-> +	/*
-> +	 * The heuristics in this function is for the fair class. For SCX, the
-> +	 * performance target comes directly from the BPF scheduler. Let's just
-> +	 * follow it.
-> +	 */
-> +	if (scx_switched_all())
-> +		return false;
-> +
->   	/* if capped by uclamp_max, always update to be in compliance */
->   	if (uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)))
->   		return false;
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index f814e84ceeb3..04fb0eeee5ec 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -16,6 +16,8 @@ enum scx_consts {
->   	SCX_EXIT_BT_LEN			= 64,
->   	SCX_EXIT_MSG_LEN		= 1024,
->   	SCX_EXIT_DUMP_DFL_LEN		= 32768,
-> +
-> +	SCX_CPUPERF_ONE			= SCHED_CAPACITY_SCALE,
->   };
->   
->   enum scx_exit_kind {
-> @@ -3520,7 +3522,7 @@ DEFINE_SCHED_CLASS(ext) = {
->   	.update_curr		= update_curr_scx,
->   
->   #ifdef CONFIG_UCLAMP_TASK
-> -	.uclamp_enabled		= 0,
-> +	.uclamp_enabled		= 1,
->   #endif
->   };
->   
 
-Hi. I know this is a bit late, but the implication of this change here 
-can be quite interesting.
+Just to add to this, I note the existing kernel behaviour is that if a write
+fault happens in a region that has a (RO) huge zero page mapped at PMD level,
+then the PMD is shattered, the PTE of the fault address is populated with a
+writable page and the remaining PTEs are populated with order-0 zero pages
+(read-only).
 
-With this patch but without switching this knob from 0 to 1, this series 
-gives me the perfect opportunity to implement a custom uclamp within 
-sched_ext on top of the cpufreq support added. I think this would be 
-what some vendors looking at sched_ext would also want. But, if 
-.uclamp_enabled == 1, then the mainline uclamp implementation is in 
-effect regardless of what ext scheduler is loaded. In fact, 
-uclamp_{inc,dec}() are before calling the {enqueue,dequeue}_task() so 
-now there's no easy way to circumvent it.
+This seems like odd behaviour to me. Surely it would be less effort and more
+aligned with the app's expectations to notice the huge zero page in the PMD,
+remove it, and install a THP, as would have been done if pmd_none() was true? I
+don't think there is a memory bloat argument here because, IIUC, with the
+current behaviour, khugepaged would eventually upgrade it to a THP anyway?
 
-What would be really nice is to have cpufreq support in sched_ext but 
-not force uclamp_enabled. But, I also think there will be people who are 
-happy with the current uclamp implementation and want to just reuse it. 
-The best thing is to let the loaded scheduler decide, somehow, which I 
-don't know if there's an easy way to do this yet.
+Changing to this new behaviour would only be a partial solution for your use
+case, since you would still have 2 faults. But it would remove the cost of the
+shattering and ensure you have a THP immediately after the write fault. But I
+can't think of a reason why this wouldn't be a generally useful change
+regardless? Any thoughts?
 
-> [...]
+Thanks,
+Ryan
+
 
