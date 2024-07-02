@@ -1,123 +1,204 @@
-Return-Path: <linux-kernel+bounces-237825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95383923E95
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:14:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7C2923E9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21934B26D40
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:14:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9461F25271
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEEE19DF6C;
-	Tue,  2 Jul 2024 13:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0691A0B02;
+	Tue,  2 Jul 2024 13:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P2e3SWN+"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b88BRPvU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEA115CD7A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC05319D085;
+	Tue,  2 Jul 2024 13:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719926081; cv=none; b=MwhCOD4u4jHI0SIEENsxlfNOuiCZ7dh6taxskEAaNKVncGdSCYwywHT4V44++knxDiTunZeYoBb9hfNnK/Nab6vQ/JegN17NV0LtMtXDXYTUkm0zHpSliV5UFFuhWU33gwhWrViyzMC9ZVeNj9q+imqBwmqXK04YxJduREiX6QA=
+	t=1719926092; cv=none; b=HZHO1nnVxXqo2K65udSCtRztu0C+SnCgBj5/av2TsKoIUWIp6t+11QJyBBx+x1Q9cx/9Esj8raXrDfddnmkPGRP07wXb45GOV7UxxCeN9Rcg8sd4Mw+b9dfsnR7L8/UsZvCYo968GyWDttNvf3/xfa6h/yey8XkOB2h+Ar1gZN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719926081; c=relaxed/simple;
-	bh=qcbSk1txeKGjtUgrI5TEa2OFa9eUbMFBvTxpismD3E0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jQPRikielt0qeu4OBhlCnIp7QQLdd4/YXnFAXzRxNRqbfLHHu1Pq+LKCFL1FW9IU7QeZX1Ooh242+uR1HWZoDq4rtxe6z2iwBqSfgUkfrYI2IySFOCyrRBEspwa86XS7XemRScigLR5J1rPwyJl+nmLdPmOsGAtG+K9bLoh4c84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P2e3SWN+; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58c0abd6b35so4016a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719926078; x=1720530878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qcbSk1txeKGjtUgrI5TEa2OFa9eUbMFBvTxpismD3E0=;
-        b=P2e3SWN+yseDMp90p9VEzZHdkGUJX9Ld0Lj6dP8ekUsLe8WFMUvAkLLe78MDS5i4EN
-         tR404H/0eeBkXwqz6cEs0wa8kKW0z3UTY4UZ/Z2VHDf9iA94POb9ISGx+gxT15YkEzv/
-         WmZ3qHVASbx8qKTwDFYpM8WY0IUd7M0XZYIHHxmOLGp3HsBz1gJM+bvXXvIKLLEq51UY
-         UK2jscCD6GaFo29bpNziVw68wgEtOjjhlNCcjACm1kB3mVAzPq17QH7ewZq15jN4VR3Q
-         SxTV1baqz7uqrV15hW4+z0toLL/X1R4jw8Cgsc0bmvj2xTdgtrRgIRz5fH/9T2GwHcum
-         MWFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719926078; x=1720530878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qcbSk1txeKGjtUgrI5TEa2OFa9eUbMFBvTxpismD3E0=;
-        b=xR/W9Opd6zrpx2cuFkCfJmujpgcqFEU+HUMlHI9VsSFm/tuZ1Kdlf5zKC62DeHZAUP
-         sU4TaofCW1NnuebQRJDPmiBlaFtcvz9mqZ593D8qs1UYfXeozscpsBLWXOS9em+lvChK
-         UXPuIhWyTJ+B2NkeKRTNcaMkgKdCViMpg3yfjqCW6iDtXOxJMCiZu2CuTapQX/+4ogu5
-         nK7Yct5lta8qc10DB7/bxSihlnANfYWVIMl8LGpDs/ghSHQjNQ1fXH4U/ubuDnk5IRUU
-         6NigeYJShJdssjLTW2NS4amysop/YNXvHTAMWgf/BI7436EzgTi4YOhu1l/Tfq0T1WUa
-         7V4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWCMefvaFd7nVh+u7YbYslrPdywHS8MVPwUbSaSglNNteQyYzob5adVWkfrYBOeHEwvfTjmoIG9gQcKg6bYWr4sER8yGqv5+hXaCeph
-X-Gm-Message-State: AOJu0YzYQSYPSaF26j3tgkcggz/sev4TZgf0AwlHueEnllH4s6C7v08q
-	ixK1Do5lHu+eEGYgJMScxSUFwYFST+isf3cFVpZThPgH31hpHSfSVlNPOLT8xDwrNgplzzhu+Rm
-	kkwvuyNka81ocKs6E+FrumFyQ/naPnVAQX9h8jnew/SwRWAnEDg==
-X-Google-Smtp-Source: AGHT+IERKkCVpVomNRYr8KNFI5e5JCBWRQ7HMLMgDv1aOW++vU+Fu31VZ6RrRqWEtIXBu1Sq7l+LYKSRxYEU9Pq/83U=
-X-Received: by 2002:a50:9308:0:b0:57d:32ff:73ef with SMTP id
- 4fb4d7f45d1cf-5872f79a720mr634350a12.6.1719926077342; Tue, 02 Jul 2024
- 06:14:37 -0700 (PDT)
+	s=arc-20240116; t=1719926092; c=relaxed/simple;
+	bh=0qpxZPhCEx3EMAmnhgP6pEgufhEKOr/B4RtgvPeZFzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MDIbZfidP3k+K4pzHu2aihubLP/LIp2qBlwap8XuEmbewxafRGELZLTcVqoXfKjbH2a7iOjqd39uIAuN7Rd7CM8AXlBuF80jUeIPhRl1HE76JaiaHd95Qm/7nuHFg6NwFO3zSmzsF/6jt89wpwyi7YZ9Z1uaY1VpX8gh3xKEct4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b88BRPvU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F915C116B1;
+	Tue,  2 Jul 2024 13:14:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719926091;
+	bh=0qpxZPhCEx3EMAmnhgP6pEgufhEKOr/B4RtgvPeZFzA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=b88BRPvUSeSZlCyR1wASdvO/X3IDL0cPk+khldSHjDvsEDZT7A1mAFXbwdfamnlbn
+	 nmAe/RPFzJT8nQr5VOgqB8Fq8M0Y23tlH7BdPlY8HAjzG+xg7mLCHidZ4MlDsYsTzp
+	 89j4ayyCjh5i6JXmjfUTH+xHd0nbYcBvc/Ip/a9BlLWF2H0yHgSumdgRdebLWkYEVv
+	 risPV6pElQuHetsdBFxJ7cgvrfgrAA/s9FD0fpeNHuANJOrd+tWahEeltxr3wfupOb
+	 GG3xznq2R7jK7VEbepK/YLEilvO6IzqXH5GVM7YJKATiUTf1SwjDsMCwQGMqazZcnU
+	 Wsh7Rnd9RpOZQ==
+Message-ID: <f0f08f0d-3bc6-4649-ad31-b46f0748c6ef@kernel.org>
+Date: Tue, 2 Jul 2024 15:14:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628003253.1694510-1-almasrymina@google.com> <20240628003253.1694510-9-almasrymina@google.com>
-In-Reply-To: <20240628003253.1694510-9-almasrymina@google.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 2 Jul 2024 15:14:22 +0200
-Message-ID: <CANn89iJ1ys-eNyM3BGQ1PuLKsbo+Kcj78wfoAtaFPygQdYawkg@mail.gmail.com>
-Subject: Re: [PATCH net-next v15 08/14] net: support non paged skb frags
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 4/7] dt-bindings: clock: Add ipq9574 NSSCC clock and
+ reset definitions
+To: Devi Priya <quic_devipriy@quicinc.com>,
+ "Rob Herring (Arm)" <robh@kernel.org>
+Cc: catalin.marinas@arm.com, u-kumar1@ti.com,
+ linux-arm-kernel@lists.infradead.org, krzk+dt@kernel.org,
+ geert+renesas@glider.be, neil.armstrong@linaro.org, nfraprado@collabora.com,
+ mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+ dmitry.baryshkov@linaro.org, netdev@vger.kernel.org,
+ konrad.dybcio@linaro.org, m.szyprowski@samsung.com, arnd@arndb.de,
+ richardcochran@gmail.com, will@kernel.org, sboyd@kernel.org,
+ andersson@kernel.org, p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, conor+dt@kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
+ <20240626143302.810632-5-quic_devipriy@quicinc.com>
+ <171941612020.3280624.794530163562164163.robh@kernel.org>
+ <5ccbfde6-f26a-4796-abac-e8d6a18c74e7@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <5ccbfde6-f26a-4796-abac-e8d6a18c74e7@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 28, 2024 at 2:33=E2=80=AFAM Mina Almasry <almasrymina@google.co=
-m> wrote:
->
-> Make skb_frag_page() fail in the case where the frag is not backed
-> by a page, and fix its relevant callers to handle this case.
->
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
->
+On 02/07/2024 14:13, Devi Priya wrote:
+> 
+> 
+> On 6/26/2024 9:05 PM, Rob Herring (Arm) wrote:
+>>
+>> On Wed, 26 Jun 2024 20:02:59 +0530, Devi Priya wrote:
+>>> Add NSSCC clock and reset definitions for ipq9574.
+>>>
+>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> ---
+>>>   Changes in V5:
+>>> 	- Dropped interconnects and added interconnect-cells to NSS
+>>> 	  clock provider so that it can be  used as icc provider.
+>>>
+>>>   .../bindings/clock/qcom,ipq9574-nsscc.yaml    |  74 +++++++++
+>>>   .../dt-bindings/clock/qcom,ipq9574-nsscc.h    | 152 ++++++++++++++++++
+>>>   .../dt-bindings/reset/qcom,ipq9574-nsscc.h    | 134 +++++++++++++++
+>>>   3 files changed, 360 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+>>>   create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+>>>   create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+>>>
+>>
+>> My bot found errors running 'make dt_binding_check' on your patch:
+>>
+>> yamllint warnings/errors:
+>>
+>> dtschema/dtc warnings/errors:
+>> Error: Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.example.dts:26.26-27 syntax error
+>> FATAL ERROR: Unable to parse input tree
+>> make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.example.dtb] Error 1
+>> make[2]: *** Waiting for unfinished jobs....
+>> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
+>> make: *** [Makefile:240: __sub-make] Error 2
+>>
+>> doc reference errors (make refcheckdocs):
+>>
+>> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240626143302.810632-5-quic_devipriy@quicinc.com
+>>
+>> The base for the series is generally the latest rc1. A different dependency
+>> should be noted in *this* patch.
+>>
+>> If you already ran 'make dt_binding_check' and didn't see the above
+>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+>> date:
+>>
+>> pip3 install dtschema --upgrade
+>>
+>> Please check and re-submit after running the above command yourself. Note
+>> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+>> your schema. However, it must be unset to test all examples with your schema.
+>> Hi Rob,
+> 
+> We tried running dt_binding_check on linux-next and we do not face any
+> sort of errors.
+> 
+> However in case of v6.10-rc1, patch[1] failed to apply as the dependent
+> patch[2] is not available on rc1.
+> 
+> [1] 
+> https://patchwork.kernel.org/project/linux-arm-msm/patch/20240626143302.810632-3-quic_devipriy@quicinc.com/
+> 
+> [2] 
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20240531&id=475beea0b9f631656b5cc39429a39696876af613
+> 
+> Patch [2] does not hold any functional dependency on this series but has 
+> a patch rebase dependency.
+> 
+> The Bot has went ahead and tried running the dt_binding_check on patch 
+> https://patchwork.kernel.org/project/linux-arm-msm/patch/20240626143302.810632-5-quic_devipriy@quicinc.com/
+> which is dependent on patch [1] and hence the issue was reported.
+> 
+> Is this the expected behaviour?
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+If you expect your patch not to be ignored after such feedback, explain
+briefly missing dependency in changelog. I think Rob told it many times
+already.
+
+Otherwise you will get this message *every time* and maintainers might
+ignore your patch, due to unresolved reports from automation.
+
+Best regards,
+Krzysztof
+
 
