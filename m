@@ -1,77 +1,114 @@
-Return-Path: <linux-kernel+bounces-238108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26689243AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:38:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DB29243AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8490B1F2583F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:38:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20D03B22F1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880571BD504;
-	Tue,  2 Jul 2024 16:37:51 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEB11BE229;
+	Tue,  2 Jul 2024 16:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Efdt5UHI"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147621BC094;
-	Tue,  2 Jul 2024 16:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2D71BC094;
+	Tue,  2 Jul 2024 16:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719938271; cv=none; b=nncndl7aMua3T/YPWMrxHovrnW8wRt3SnsRUcZ+Nc5ZLmG8kdDmFSF5s95VPW9FO0/Xe7kiNwldOy4K/ajJ1w76rzSf3II7QQbYOwF2pDJSKbFH0DQBrMTALg9J/I04CzfX9sm5pm/K2jqN2kfxMyhcvct7zsOX48jMSpzt4GYo=
+	t=1719938275; cv=none; b=bZqYd5Ebb5MIYUVPD387PC9AyURpcCwaqeCj65FDB+WHHHYiCO0t5xX9vqu2lLECoZk4jOs4WPT+Fn6IPWx6EPyowxBKFoMeyRFNpccZ5rqW+J6zeYNskkQbGgPfJtcI+E4SvNrODOYzGHfGBlTHxHerYOC5YH+7U5AuiZwbaRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719938271; c=relaxed/simple;
-	bh=NyDSteSnZ6BQf94sFoFThr5Rp9UVaWXqBJvOAZRP5uY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Su8y3mkh9xdaOwKs0HfDn7whbUpn4Z1vM02nhudHmGhbmFtHO0iB+l4dRMLxe4lNKEwaUZ233TscS0PiAYrB2tutrsgRxaI0Xeb7jjSSyOExo4O1u4VW4iBtsMVHZmoVtJGmZ3iUgUSDkaTk9jMwU1ZoDenNjXIRWr+vIJtFFgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D882C116B1;
-	Tue,  2 Jul 2024 16:37:49 +0000 (UTC)
-Date: Tue, 2 Jul 2024 12:37:47 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Takaya Saeki <takayas@chromium.org>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Matthew Wilcox
- <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Junichi Uekawa
- <uekawa@chromium.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: Re: [PATCH v2] filemap: add trace events for get_pages, map_pages,
- and fault
-Message-ID: <20240702123747.796b98c5@rorschach.local.home>
-In-Reply-To: <CAH9xa6ej2g+DvCd=cqjj8sx9yZ=DjL6Ffu6aOfebvcjBmGs5pQ@mail.gmail.com>
-References: <20240620161903.3176859-1-takayas@chromium.org>
-	<20240626213157.e2d1b916bcb28d97620043d1@kernel.org>
-	<20240626095812.2c5ffb72@rorschach.local.home>
-	<CAH9xa6ej2g+DvCd=cqjj8sx9yZ=DjL6Ffu6aOfebvcjBmGs5pQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719938275; c=relaxed/simple;
+	bh=QTHInueh2zOhyM/NnMXkSo+K/bvg50RVXZ0RIEZKrtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e3X7OegB24YaOwTgm4rZkGnd+jSV6v6lic8kWXcOu1NCZ4SqmfIz1lcAsNYvCWF04SP6MNqo5645llvNnlDPwqDuewTHoOGRFadRtty6gFzzmCKJ0w7x2jVsFmXvT+x99Bq6DzQ2fIdgE+GFtcCq7Q3/jj8x8+8KxCQWz+imDAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Efdt5UHI; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f480624d0dso33594595ad.1;
+        Tue, 02 Jul 2024 09:37:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719938274; x=1720543074; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gVslO6h8F/lYJAAohGQ7HU3YjE27gn7fwMIXd36HBZw=;
+        b=Efdt5UHISr/NjsSosBC0f6bV6QudRSK78Ai+LuG8Jt0S45Ui5M6eGxB9x3dREzaUBp
+         SY0MMv/ReKoMNBC7LNxH2ib2UTNB0GD3YfFYuHnLwZHwTKipSDI3IJWMskgzr4ywB9tf
+         unIsa1YLNtdADuXkUXiAi+fW94GOyyJzcLJ3TaNMJ0yt6FejGbTCsisfbaWd5sRkVmN/
+         xIL8Xyv18MTNNfpRmIByMJSLTElBpSUt2+0TCYuUTRn5lh084ylJhTkwgElOgec8svqk
+         oV12Xi/CVDA6LtEjGkfTYhhIA6WICks8Ej7up/giBYhStEv5gKiP4R5FTvjHY3DT0get
+         zzZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719938274; x=1720543074;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gVslO6h8F/lYJAAohGQ7HU3YjE27gn7fwMIXd36HBZw=;
+        b=Le+c7fR30xsprGwRTZg9kDxUyml+KWvjBPE4I2wA5bXv8FL2mjJT3hnVVcgfhHtxkZ
+         qi4BrjZIHpNPpyGgDel6u7S0rcMo6WSuX1inFYqgtfVnycFjhuiO5WqdqPew0sfmMZmC
+         NhqsAzQfgiIcEcs30Sr/pnQfqPP1RrMIhvCqsHK8/Ge1S9kAmTRt7rUdmCEyVMuuNb0O
+         /dj5iS2oRIkR2CCI3MTqCU54r7GyeOkChcH3Ng1O9sYBVmvA02/f0uOQg+GrUIC87VUQ
+         6vMmxsXkHS7HKDtxMwrxQHCKwLA3odu0W8NTABxPOdpWeSzSFj8l+aa3+ODImFu2Kv9I
+         IvZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBjr8eiTYYOUxqehFANNkvAneaWaJfM5AwiFL8JNlgmF43qAhyO5+PgVxOHYoVGAjE99/79LKvEeyiVPiWIjM4oNsgfZ/5Pa0aLY7N1yBEypxBmjVfIU0ldtFqFfrfNqkfyvtGDjw=
+X-Gm-Message-State: AOJu0Yw+8RAwqRLG5LoJhvqqUGbx+OmDEmuMH1SifoffwwgxwHYIv/7q
+	HQxQS3jMaJsOnxVenFTUfmmJSQZzhuzo/XIdohXrPmF8O+vlCuZP
+X-Google-Smtp-Source: AGHT+IGy3+3dhOQC3GorSUqhxQxMJCe+2RDDLlpK4bQXMcr6CPV+V4mtkgOWevwjKc4SnPbpn9o1Rw==
+X-Received: by 2002:a17:903:1c4:b0:1f7:1706:2596 with SMTP id d9443c01a7336-1fadbd07d45mr99542045ad.67.1719938273566;
+        Tue, 02 Jul 2024 09:37:53 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10e3311sm86082035ad.79.2024.07.02.09.37.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 09:37:53 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 2 Jul 2024 06:37:51 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Hongyan Xia <hongyan.xia2@arm.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+	void@manifault.com, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
+	David Vernet <dvernet@meta.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH 2/2] sched_ext: Add cpuperf support
+Message-ID: <ZoQs384bAMuaeDEs@slm.duckdns.org>
+References: <20240619031250.2936087-1-tj@kernel.org>
+ <20240619031250.2936087-3-tj@kernel.org>
+ <63c76af4-6451-4d6a-8aeb-0bc4812c4101@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <63c76af4-6451-4d6a-8aeb-0bc4812c4101@arm.com>
 
-On Tue, 2 Jul 2024 19:27:16 +0900
-Takaya Saeki <takayas@chromium.org> wrote:
+Hello, Hongyan.
 
-> Hello all, and thank you so much for the review, Steven and Masami.
-> 
-> I'm currently considering replacing the `max_ofs` output with
-> `length`. Please let me know your thoughts.
-> With the current design, a memory range of an event is an inclusive
-> range of [ofs, max_ofs + 4096]. I found the `+4096` part confusing
-> during the ureadahead's upstreaming work. Replacing `max_ofs` with
-> `length` makes the range specified by an event much more concise.
+On Tue, Jul 02, 2024 at 11:23:58AM +0100, Hongyan Xia wrote:
+> What would be really nice is to have cpufreq support in sched_ext but not
+> force uclamp_enabled. But, I also think there will be people who are happy
+> with the current uclamp implementation and want to just reuse it. The best
+> thing is to let the loaded scheduler decide, somehow, which I don't know if
+> there's an easy way to do this yet.
 
-This makes sense to me.
+I don't know much about uclamp but at least from sched_ext side, it's
+trivial add an ops flag for it and because we know that no tasks are on the
+ext class before BPF scheduler is loaded, as long as we switch the
+uclamp_enabled value while the BPF scheduler is not loaded, the uclamp
+buckets should stay balanced. AFAICS, the only core change we need to make
+is mooving the uclamp_enabled bool outside sched_class so that it can be
+changed runtime. Is that the case or am I missing something?
 
-Matthew, have any comments on this?
+Thanks.
 
-Thanks,
-
--- Steve
+-- 
+tejun
 
