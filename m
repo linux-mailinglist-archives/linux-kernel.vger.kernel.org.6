@@ -1,189 +1,255 @@
-Return-Path: <linux-kernel+bounces-238186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA76924691
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:38:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C21924693
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D242829A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:38:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3598B23BF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCDA1C0DF2;
-	Tue,  2 Jul 2024 17:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A3E1BF330;
+	Tue,  2 Jul 2024 17:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k0cjY0OW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BKgmIENM";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="YEN8M42y"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CCE1BE86D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 17:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719941911; cv=none; b=vEHiVh+SDby1TUD8NPi5astkgH9351R8FSt396ba9Me5RghYCaCeGEm5HilpleV67nBIcLiLbFp4AmTKGkcTc6H7fLw9oBx+93UjfE6E70yALrpjMMwcdDsld5qLODZcvG6i+3N+1LvxbyUS4xrpyaWynH/6QIvj5HSEzc0c5uY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719941911; c=relaxed/simple;
-	bh=8K66SPJ02TBdZrgo9xAqznHP69oXc5WaQk2Cg8Tgt2k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aJXum95fyJG2D8MCaQYqNgyz8Xc9eMMa0lqmBMZg8Vx7nnJ1/QlAOw/l+tvUEy7f46cW0Sp/0n9c7fmIQO8sRj7zobwuzglZHlqvC5ZchOmgzILNqoginiv36LTk1O6bR5ug4xyMTsFoIBSyno3dxlZPm1I4mMrgGQ+Nb5+wlNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k0cjY0OW; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719941910; x=1751477910;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=8K66SPJ02TBdZrgo9xAqznHP69oXc5WaQk2Cg8Tgt2k=;
-  b=k0cjY0OWCSOxcqzdbNRxLCkFEGjHYOn3HWmSKr2pzd6RSezsjyTTNZdt
-   XXdRUQI0RIwWKNfCrm1yAuNordOXbSQ3hxtg/FJvsqjZUm6cTkj5uhjiw
-   42TpA7Z5qHgMZ1guxHa/8ocysFZucWz9KAMzyXZ7po8J3GxKrWVHkzdGN
-   YzckBdJDD0et0h7YOvy+o1XJzqae2KGuOCzswn2d3XUZ69cFdIuq2lb3n
-   9GSn1nBnxx1UmlatbyHAvVNDw2egUbwipOAFN8kRnCmKZDou4UzJjj2TH
-   /zmrh9J462pMTnYf0hynxkmvYn5p/7hrEOE3MTUSvGdWyEo7RXVMHkL5R
-   w==;
-X-CSE-ConnectionGUID: NyxtMCyySb+6LgRlJThI1Q==
-X-CSE-MsgGUID: MV/RGJuLRYOpVUts9LGl2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="20035392"
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="20035392"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 10:38:28 -0700
-X-CSE-ConnectionGUID: holEedPlRVey0pq+jMBbsw==
-X-CSE-MsgGUID: nDz1Uc2vToeob781E03FVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="45836600"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 10:38:27 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH 17/19] x86/resctrl: Enable shared RMID mode on Sub-NUMA Cluster (SNC) systems
-Date: Tue,  2 Jul 2024 10:38:20 -0700
-Message-ID: <20240702173820.90368-3-tony.luck@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240702173820.90368-1-tony.luck@intel.com>
-References: <20240702173820.90368-1-tony.luck@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B7A1BBBD7;
+	Tue,  2 Jul 2024 17:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719941960; cv=fail; b=qBSWgiUzHLH4lnTp54vkJVrGWZtQv42GxRIya9SxycL/E+CKUsfmdOfNOgWvi2oh6W5uUiVU0seTvV4Y98yPvH15XVIHOxHMwlyM9091RDcmFRhiBYgjcJgKuPRy2xrRoufykNDNGpKsUHYJLyJS2xcL2DDLiFvt5sJhJPPNN4k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719941960; c=relaxed/simple;
+	bh=qQ9OQSC1k5F63WEQb92SBmbFvx8nF+iXh9r0c/hNflg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=UUgoaSqkVG2Gq+BCY88ej6OnCYTuZmHHNcqyDivn7IgpKiMXJu6/aF+dQXjmam24Wbel7TEAv6LJnzZ3b6RuTOwLSZKQBrwmqxESHu4XNFYLFPrmgAcMYGLB7zGp2jCzaVy+vtCiFXL1vVgnVdjnUxQrv0OL4lRPDnsitg+71Mw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BKgmIENM; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=YEN8M42y; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462GtTja009667;
+	Tue, 2 Jul 2024 17:39:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=7eqYzgXdtvMvx1b
+	RKDsagpZBIE+Zg0SPu28o3F6ioJ8=; b=BKgmIENMJJPs173AIgeQh2jAYXwO18i
+	lUiMvjSOBVy+EQibQrA7as+wA3QKSzrbK4PkxOpQfvZbY1JgqPP3ZSnlFofHYSsj
+	WfTT3HQtBWTnV8NdhoOnJ2D7v6VV+OOV1PCKqo41Obb2xsoW4qLDt31/DSLpVoPE
+	SMf0m4QpoHkw4wOBGA1LUkyQTgyBkhLctgMjK4XrzrmeBWeFSEJwUYcXJxpTOVVs
+	iK0ZgFXg97PRwegz0pW/oiaeAAAvd2vO1egYse3fKf85i8M2yk8UpsbtjlOMPvlC
+	ImDLpNbroaa7X69vWtVq8dWbynQXWHgNAwcAcUF/Kv/ZXLsSwTHE2EA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 402aaceh0j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Jul 2024 17:39:03 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 462GL2sE021600;
+	Tue, 2 Jul 2024 17:39:03 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2046.outbound.protection.outlook.com [104.47.70.46])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4028qe74np-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Jul 2024 17:39:03 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IfsxI1Aei0zeERzdrRrkcrUlFyXvXRkrKtnshK8ZQ7CaL1iiitcEIUrkduYZ2Ket1ilIPAwL/vpcXQ7DFThzHKKp+QiqwAIuehsg3ruo0B+FyDNgrzNP6CL2htOFjI0lttPMZBvtcu9ixJrmNNRAmK5xoVQf2V85BvZGKAbzApu9VqDy6Knq703aHGUCAitOeg/lslzmYQARL0y3OuqVWgBOMxSbjQgnQN3HNdx0M/7AwNzbGJbgOXMuFFc0DPLrhSQ7F19iNHmQWF0n+N5AXU8Bxfe3QMT3/1PB9u5N3UQkBtxqaI1hmdh/rgs6dtaxbrl2Fo8fCHU0LuSi1R0SMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7eqYzgXdtvMvx1bRKDsagpZBIE+Zg0SPu28o3F6ioJ8=;
+ b=I0/kHRgSDWsMCROZ18Tv7t3laMvv9WGk8H+KCsUokBsczlQ4Mp57iuH8QqVVw5JsFJ/1UbC7HH9UO34bDlgNLoSGxrAnJYAHbqP2x0dw1nCd8h44WgTcwMa9r4PFsJl7L8AEJT0ib909goj5R3b/90M21TEH0xBIYY6EAOQJuTtM9q289inGUVWLijNVrKT7rj1ZDTJkcmmsZZSEAq91TkZ8qPQ3U+McS3bITI+cvGA2Hh9nFywRf6SnHEsE2vTTiy0uFOco+J2On6N05G1REqVmRPPJJeW/qa45j+aEJiLxWj3OTz60idwmzjk1d6WWTeAwYHEdl7g6kgIudg0ZrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7eqYzgXdtvMvx1bRKDsagpZBIE+Zg0SPu28o3F6ioJ8=;
+ b=YEN8M42y/InQ+dnn+Qwb+4fLUxD+j3HYz26qwpTz/rgAzEquLq0m+Abg7Bwz046qsdTomZSH2ax5FqawJTT+mBWw66L/3MfzdIs9sthD19IyhhJG/Ttn6139Rv0qy2q0tBUUqJt8xb8Q0/5mcHwCov2qnltlKdl1I4nkGgn5T/c=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by PH0PR10MB6982.namprd10.prod.outlook.com (2603:10b6:510:287::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Tue, 2 Jul
+ 2024 17:39:00 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%5]) with mapi id 15.20.7719.028; Tue, 2 Jul 2024
+ 17:39:00 +0000
+Date: Tue, 2 Jul 2024 13:38:58 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Lorenzo Stoakes <lstoakes@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [RFC PATCH v2 4/7] mm: move internal core VMA manipulation
+ functions to own file
+Message-ID: <o3c66lbg2c43wtut6hyoruggdp65jdb22gtyn6scnycluevqs3@f2rzgmqlri2w>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lstoakes@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>
+References: <cover.1719584707.git.lstoakes@gmail.com>
+ <4fd37092b65caf30187c29399c2cc320a8126a66.1719584707.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4fd37092b65caf30187c29399c2cc320a8126a66.1719584707.git.lstoakes@gmail.com>
+User-Agent: NeoMutt/20231103
+X-ClientProxiedBy: YT4PR01CA0320.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10a::13) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|PH0PR10MB6982:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b05f44f-1f68-476c-1991-08dc9abddbba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?tmfXwmXbU1h/YjwLLSr1GxoghIg4I8dIbVGEMf//Xk8eMybQPzaaofmzkW3d?=
+ =?us-ascii?Q?HPnTDCP8ivJD+u5be0h1hJ5rOCoUAKrIgspgmJshHvGomwxsYrMLyrgUAj2L?=
+ =?us-ascii?Q?nhzJZQl9/KXJIHDwV8Ww2p7nW7dNJhT5KnLgvKYGvzVCAtZ4bQOxCRDt8Nf6?=
+ =?us-ascii?Q?l17up8h6a5v0EX+czsyO+mBOD74jgK9zcxdHQyYUeIE1bExAlEDy3x7aSm1V?=
+ =?us-ascii?Q?TivPLH6XtqUqGQTSDvmzDpiQICTu2GXAwQUbjf0ih1YnTBLACT0wU6Wg2CRD?=
+ =?us-ascii?Q?Uy7ocXg1pS86POQdJLtfU3VQDcMc1lPsbkCF+qsWzct2f72xL7+L5lwGCAHb?=
+ =?us-ascii?Q?AAzdffwJhIkStIteC7aXTXDmwJWw4s7nqF4cPGLP0jKf9RQ73EXrTEslPNgL?=
+ =?us-ascii?Q?XbNuwgOjIEUrQ8dDJp3yxhv+syfb5gP6RML2axj0UQwpD5bMM9EBjuwSyUKn?=
+ =?us-ascii?Q?oFR5Apii5fQpvuBQIshJdCfgEP/kQlya1CVjaG1ObONyMJfXph6GKxwNo5iF?=
+ =?us-ascii?Q?WWUfYVlLkbsVCAAv4mmdCtVaIrKLs5U+1P1M85joAbtk+g/LuBEwwjx3wKA7?=
+ =?us-ascii?Q?RA69h1HF3nminFBE3nrb3g/gUVTT2Gmux0bAVlrVavmSNC1iWerRzRgs8Bqz?=
+ =?us-ascii?Q?pydh+eDMH11feds2MtusCHH+kaR2zJytXAokcvC7yiDH2a76YQHiyJkCLP5t?=
+ =?us-ascii?Q?uXqrvWsQr+vo+nI9fGT8xWTGigk4CUadTpT5/v9zT/qXpBTRBKb2gmVievx4?=
+ =?us-ascii?Q?FZg7ZlOVh7yY04yYvpYn484dneDYvlLDdyF69PHPq3TZlN72tSyiCSHs1oVl?=
+ =?us-ascii?Q?sDFC9nVvriHdblvD9Xuf9P5dGJunLxRwqLBXUGYoiw9SscztvHIlpYwOQ02m?=
+ =?us-ascii?Q?utJBoezH6r53SHixwOWDLnDAsJCMf/qgQB4rtI0ccnr6XCJx3Y9zUDhTHcT3?=
+ =?us-ascii?Q?1rnmz9DkCCl5SGADPRfx9EbOjTd+Hj6zyq8srGYtryKBPP9ckFKJ5AXSHmHs?=
+ =?us-ascii?Q?v4Or4zKgz1PtQhsBrp6bNMtflv0yPviG17eAL17cS0l1VwYFlCMevgi2ICSP?=
+ =?us-ascii?Q?eAzyllvUniKI258yqJ7tasI1OcqiRRHBIo2JLzSFAWZLiscocr6VnDNZ2hc7?=
+ =?us-ascii?Q?PGQWt7bWyhWbAisw0Lu8LQ5O4PZcNE6V4fZXj9C6UlVjvyvM6DajA2L9hZ6q?=
+ =?us-ascii?Q?vxkhLKNrf3ALHmynuUi834QZ6iMwHbktrZQd9Vsj+B9Cd+brKs5Hxpr6tHrM?=
+ =?us-ascii?Q?hirpbB3lP426nubunedu+44vokzpUGY9e3Y6Ajs3wniK9QO19sixrLO7pw+D?=
+ =?us-ascii?Q?hu+jymp+WBnWHRfYDeTuQoRp0IdgEtA2HFSi2H0yXeqlmA=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?oqc/Zlkoz0QW3dkRYJXK58HBMmlDgJcnnO5nuCTG1tBgyYTdjNyMyyd3kowA?=
+ =?us-ascii?Q?ZiI9PgHXNHKccBbzlo0bZ4P4vqrz3PYgldGMBCt25m3i2vihja6JncI2f7U4?=
+ =?us-ascii?Q?7+WnLTBtHSMTTnDYSEfUEModdBfjl71CC983+mELg1g4mXtgLbu6iib1ji80?=
+ =?us-ascii?Q?IYVpev8P8qF9vMOsnSUC2lcxv9DpO9PLtzyI1O4MfYxCA1WCipzoRK66bfgN?=
+ =?us-ascii?Q?kwEpCMGoDF47Ol2R84fKqh6+krsot6fKP3ssRvs9sgONePF1HBlLKAJMdGrf?=
+ =?us-ascii?Q?CENB60sh4LPqnGEl7R+Gx9uo0E2MyDbAF00XrUSt8WjznsfBsYmhSEdrBH/n?=
+ =?us-ascii?Q?YdoqCaxrOAls+5chtIV6iztwnPeRu/aDQUZH8NTHr6cnCH2Aeo8UXv7uhnYt?=
+ =?us-ascii?Q?H1P/rb7fxtgeX8DK0sECk54tBByn3B6muy7fVf+MglKEmuZVn2OgTwo/dxEs?=
+ =?us-ascii?Q?uAUYzaCTklLS/be5pHyHmGQz7AUUd/LeDZKRp9MPeHaOnZWe6TrXlzeU906I?=
+ =?us-ascii?Q?ZS8qAg43hQSaqXRMyhr3sFS7+OAxDvCcUK6QxDvWr/ywAvg6MQhJ4ZHqw8vj?=
+ =?us-ascii?Q?C2USWXsTp1WGtp9VqynjQGBDHu8H/2561Oetkh2GxcHFuk/PKIk2TQtRA/ok?=
+ =?us-ascii?Q?Ou5g/w2L+dqpHp5osK6ou2ZNh7pUy1RbkvSA+twsndiR4FTJQju1RTx5cUeu?=
+ =?us-ascii?Q?Iq98YUd3VX6kxTqrfeiRTktexpYNxtcc509Oq5Y1UlbYkQiy6+NfRTY0DdkH?=
+ =?us-ascii?Q?z1ZRIG/IV07kQsZhLWiO4EdQkwhuBvldLxpIai8ZuZuLDl8uhfVFFiqJLjor?=
+ =?us-ascii?Q?6+lrZ8MQkVMjR4PI3xvAT+UMDQVsLbZl0LzQ9JnoT8x//oRlAyeVL4f74RGv?=
+ =?us-ascii?Q?KGnjs/mWy/MABhfzqCezLOwKGxXLGB0Ggm+2MjH9ch+HYoaj60wcTYS/onqP?=
+ =?us-ascii?Q?pB9I9k98+SbugWxWVODOPpQ6Sig4/NHTxQoLNnRcLJrzWsWlww7YVcn1kLh6?=
+ =?us-ascii?Q?CFfIKWspx8JNtxNO0//yYi40qc+8n5hcV1iE597/cW+LUyMM3+iEweC/uBfG?=
+ =?us-ascii?Q?Qa65dsPaKH+EXsWfneMvrqpTavzQt8DIrZgq1QlBdbiO4jDYOhyYehzDg8xc?=
+ =?us-ascii?Q?6At2t7n0ftcyC/zt3xyjA872RPRzfKEqbk8ycfbiCqYJii6zdvOf9fsuR6vL?=
+ =?us-ascii?Q?bUgMJyxp+i6BNI1XKSRzbA9isDZmqH9IVbmYPsAIYTLAY4ZCQbNSghV4qZR4?=
+ =?us-ascii?Q?3UEx18qg1TZ3sZJrfZTtq5JqKSQAG2a+eRV682KYmxaF8yh0RyhFNBREx0Hj?=
+ =?us-ascii?Q?4iyrwsxVhFaEegx9PwQDbHTgEEvee2T5dZp54fuOWZYhqoHc6246sX/hD7W/?=
+ =?us-ascii?Q?gdInPhTJ81wP+6MdUQwxzYBvMNTSJZohVO7pCl0nVs7T/JqvuedwXJc1w0pC?=
+ =?us-ascii?Q?/d6Kq8h4eXUjUmsqaFrQW+2KceAvRrtjn3/PWPA7Q3DtMoepP/X/E0OtrePw?=
+ =?us-ascii?Q?pbh1L2IPKNYWbVfhlD9WBMXyUS2ukMJ2HSyA5z4L6mzdSlUQ0qXBrxUFlpVz?=
+ =?us-ascii?Q?fQqEUbxQAYbCjv2z4fMp6TNZZzEHCSiXtlS/WOxg?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	+6LkA73gm7SQ8igS3T2bcsyRBRIOhQNfdZ0z26HdG3jPxuF7O32jkIlMOUi8baJTmuVRPydzB46W+obZlnJmaIkJG5IftwOzvzIDMFHe5yUKczNIpXxfCFRKw8LNXZ/8y/O+Zmw2dtvsb5iLH+sUl2mgq7IuvijK6mMdyUZMdZeSvI5dnFLOxAZCT4KwJXqF9OKsG5L0CkWUuQzJoum7csCww0ECYnKWL3LOGS4iQCXbBipzMFVlIkgGsFTh9jIJkA5EZcirLZwI0hfrRfSpGJ+31qnQhgxFHsKCu5Du1CTbaQOmCfhtf8EtX8FX3YYGTdGFVMKKz/vcBBWSRFJqukePmfnzOTKQCCjFBuziXdbS8S8Dyktu5NelLyS7YaCtDbGeFbSpMgSFkM6ZAA6I2WnavNLgSDBLqfR+YDO2Qj20dx3VOnz1ZLxPOKmOJtJKZm68AQaK99fGaSkVi+d1eyW89u+YKoebgj0uMmbs5i6wvBnFWPKbgSqKDa3S+IekV3MCrZi88dca6s0UaKJE1dAtmjCRIyMGs10JYMK9rOHEc+DLgsbSWDT83XJVQjQaSuSPzOekH+06kZj2hjx8+cS6xyK8V4aMOVrSWBTJpRI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b05f44f-1f68-476c-1991-08dc9abddbba
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 17:39:00.6576
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: O/iRCHWRtERtodJXMH57yVjxzog29AZVFU69MXIn652LumtGJhy5/XNKXEOh5YdcizWx/uvyEqUfOjA0SokLtg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB6982
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_13,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 mlxscore=0
+ phishscore=0 malwarescore=0 suspectscore=0 mlxlogscore=984 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407020130
+X-Proofpoint-GUID: dJFMr2sl7Hp2swT58YblZbpnC27qOnv2
+X-Proofpoint-ORIG-GUID: dJFMr2sl7Hp2swT58YblZbpnC27qOnv2
 
-Hardware has two RMID configuration options for SNC systems. The default
-mode divides RMID counters between SNC nodes. E.g. with 200 RMIDs and
-two SNC nodes per L3 cache RMIDs 0..99 are used on node 0, and 100..199
-on node 1. This isn't compatible with Linux resctrl usage. On this
-example system a process using RMID 5 would only update monitor counters
-while running on SNC node 0.
+* Lorenzo Stoakes <lstoakes@gmail.com> [240628 10:35]:
+> This patch introduces vma.c and moves internal core VMA manipulation
+> functions to this file from mmap.c.
+> 
+> This allows us to isolate VMA functionality in a single place such that we
+> can create userspace testing code that invokes this functionality in an
+> environment where we can implement simple unit tests of core functionality.
+> 
+> This patch ensures that core VMA functionality is explicitly marked as such
+> by its presence in mm/vma.h.
+> 
+> It also places the header includes required by vma.c in vma_internal.h,
+> which is simply imported by vma.c. This makes the VMA functionality
+> testable, as userland testing code can simply stub out functionality
+> as required.
+> 
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
+>  include/linux/mm.h |   35 -
+>  mm/Makefile        |    2 +-
+>  mm/internal.h      |  236 +-----
+>  mm/mmap.c          | 1981 +++-----------------------------------------
+>  mm/mmu_notifier.c  |    2 +
+>  mm/vma.c           | 1766 +++++++++++++++++++++++++++++++++++++++
+>  mm/vma.h           |  362 ++++++++
+>  mm/vma_internal.h  |   52 ++
+>  8 files changed, 2293 insertions(+), 2143 deletions(-)
+>  create mode 100644 mm/vma.c
+>  create mode 100644 mm/vma.h
+>  create mode 100644 mm/vma_internal.h
+> 
 
-The other mode is "RMID Sharing Mode". This is enabled by clearing bit
-0 of the RMID_SNC_CONFIG (0xCA0) model specific register. In this mode
-the number of logical RMIDs is the number of physical RMIDs (from CPUID
-leaf 0xF) divided by the number of SNC nodes per L3 cache instance. A
-process can use the same RMID across different SNC nodes.
+...
 
-See the "Intel Resource Director Technology Architecture Specification"
-for additional details.
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index d2eebbed87b9..721870f380bf 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -57,6 +57,7 @@
+>  #include <trace/events/mmap.h>
+>  
+>  #include "internal.h"
+> +#include "vma.h"
 
-When SNC is enabled, update the MSR when a monitor domain is marked
-online. Technically this is overkill. It only needs to be done once
-per L3 cache instance rather than per SNC domain. But there is no harm
-in doing it more than once, and this is not in a critical path.
+This isn't needed as internal.h includes vma.h in this revision.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
----
- arch/x86/include/asm/msr-index.h       |  1 +
- arch/x86/kernel/cpu/resctrl/internal.h |  2 ++
- arch/x86/kernel/cpu/resctrl/core.c     |  2 ++
- arch/x86/kernel/cpu/resctrl/monitor.c  | 20 ++++++++++++++++++++
- 4 files changed, 25 insertions(+)
+>  
+>  #ifndef arch_mmap_check
+>  #define arch_mmap_check(addr, len, flags)	(0)
 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index e022e6eb766c..3cb8dd6311c3 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -1164,6 +1164,7 @@
- #define MSR_IA32_QM_CTR			0xc8e
- #define MSR_IA32_PQR_ASSOC		0xc8f
- #define MSR_IA32_L3_CBM_BASE		0xc90
-+#define MSR_RMID_SNC_CONFIG		0xca0
- #define MSR_IA32_L2_CBM_BASE		0xd10
- #define MSR_IA32_MBA_THRTL_BASE		0xd50
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 16982d1baf99..955999aecfca 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -534,6 +534,8 @@ static inline bool resctrl_arch_get_cdp_enabled(enum resctrl_res_level l)
- 
- int resctrl_arch_set_cdp_enabled(enum resctrl_res_level l, bool enable);
- 
-+void arch_mon_domain_online(struct rdt_resource *r, struct rdt_mon_domain *d);
-+
- /*
-  * To return the common struct rdt_resource, which is contained in struct
-  * rdt_hw_resource, walk the resctrl member of struct rdt_hw_resource.
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 95ef8fe3cb50..1930fce9dfe9 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -615,6 +615,8 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
- 	}
- 	cpumask_set_cpu(cpu, &d->hdr.cpu_mask);
- 
-+	arch_mon_domain_online(r, d);
-+
- 	if (arch_domain_mbm_alloc(r->num_rmid, hw_dom)) {
- 		mon_domain_free(hw_dom);
- 		return;
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index ca486d00541e..16b7bf5a048d 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -1090,6 +1090,26 @@ static void l3_mon_evt_init(struct rdt_resource *r)
- 		list_add_tail(&mbm_local_event.list, &r->evt_list);
- }
- 
-+/*
-+ * The power-on reset value of MSR_RMID_SNC_CONFIG is 0x1
-+ * which indicates that RMIDs are configured in legacy mode.
-+ * This mode is incompatible with Linux resctrl semantics
-+ * as RMIDs are partitioned between SNC nodes, which requires
-+ * a user to know which RMID is allocated to a task.
-+ * Clearing bit 0 reconfigures the RMID counters for use
-+ * in RMID sharing mode. This mode is better for Linux.
-+ * The RMID space is divided between all SNC nodes with the
-+ * RMIDs renumbered to start from zero in each node when
-+ * counting operations from tasks. Code to read the counters
-+ * must adjust RMID counter numbers based on SNC node. See
-+ * logical_rmid_to_physical_rmid() for code that does this.
-+ */
-+void arch_mon_domain_online(struct rdt_resource *r, struct rdt_mon_domain *d)
-+{
-+	if (snc_nodes_per_l3_cache > 1)
-+		msr_clear_bit(MSR_RMID_SNC_CONFIG, 0);
-+}
-+
- int __init rdt_get_mon_l3_config(struct rdt_resource *r)
- {
- 	unsigned int mbm_offset = boot_cpu_data.x86_cache_mbm_width_offset;
--- 
-2.45.2
+...
 
+Thanks,
+Liam
 
