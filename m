@@ -1,39 +1,73 @@
-Return-Path: <linux-kernel+bounces-238029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8744492425E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:29:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CCCE924260
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26F26B22BB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:29:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 574FD287C00
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A415D1BBBE1;
-	Tue,  2 Jul 2024 15:29:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB161BB6B0;
-	Tue,  2 Jul 2024 15:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8125D1BBBD5;
+	Tue,  2 Jul 2024 15:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C41hIJxh"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4F91BB6B0
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934150; cv=none; b=b8eXsZkEYA0ofwTTq02jqQCm9QO+y1H/F2bXgtN0+X/5zDqVE//g/czgyQcluxXL04RQpAoGElv9/TK4fWD9ULLs4zj9UDUDVPy2EmMYyCBD5K9ZQqQktQh5cEGtqXw9hBVQWF+qxCY9kAFzwspVjrhUBR6jN4j4ZdrsBMLaGds=
+	t=1719934160; cv=none; b=BSOWKIC+r8hVAnj/c10iEfrFmb42vPci1SyAcu8fYwfZRPi08oJ3xEVW3aUiytF5FzFPzR2nmiI1PATb30LHACr5r64zEk61SYJPP4PzjPS67ZEGqNPU2hsmeAHuYpCVPCjuCa1Lg6jG3kkm2Ynvl5kX6x1W900SFC2mIn/TZYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934150; c=relaxed/simple;
-	bh=k9zcHWSU3SVCDd1jDmuhPlvQkn/cGB17Vzw6wwxarDM=;
+	s=arc-20240116; t=1719934160; c=relaxed/simple;
+	bh=vWc+6MSkDVzHr4pzSOUH5S/bvDkJBF/OTPdK/EBI214=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dpTbI2kTuxp5zsy177bvPQx2bPgmIIVtr7a3GFAboeermMx82o+h+D+O1uTMeZNS6imqZiARSJPk2NkVLH5jieIcdRiB3B2RPYrZ26Ht9uPzwTzZYs2yJ7K1mZ+nFXLEVSN15euEdrrYcQIcIOk5NLCBa1t1MZRc5uFS/4FJ5VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69935339;
-	Tue,  2 Jul 2024 08:29:32 -0700 (PDT)
-Received: from [10.1.32.193] (XHFQ2J9959.cambridge.arm.com [10.1.32.193])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6B7A3F766;
-	Tue,  2 Jul 2024 08:29:05 -0700 (PDT)
-Message-ID: <ed5042af-b12f-4a36-a2e7-9d8983141099@arm.com>
-Date: Tue, 2 Jul 2024 16:29:04 +0100
+	 In-Reply-To:Content-Type; b=KdxhCl0p68IE8Vi1ohO/l9USNSwkad9eUSMYMM6Lph1VicjkFGbncLhQ8+yP5xCKbrwYiNGZFHwCJXJMM3kpMHnfPZ+c4HnmlTjKNIaQTZVtjoc94cbBGFQCoTOZP72buhv9KryQbtQuYhxn3PrXTIcpE7OtVViRcEL5DN8b5ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C41hIJxh; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42565697036so32442675e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719934157; x=1720538957; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M37+WZeSe+oikF2i/7+dIIsR6vGmSE7qj6kzbbudUC0=;
+        b=C41hIJxh0TyJbDLtu+HyxN9rP+RreSTgUBMRm/UqXAfubFFtSMQLfK5uc9vqtxh0gv
+         zIxvy7M59YV0xmjIvIeG0OYc2KRl+rzs0NcThprPfGDFnPHSD4fivUe9tDM5EzLGA7F3
+         hi2EBwSvhYNuNZF6IVac/vY7z2AsX3HSMAgv/BqJmBiK0lVwoTOGszS/QC7t9h7Bfrfv
+         XAMlGo/Ert0z2fim1cNWMchw4ULZkQ9+Lq2yVTC4z/mHKQDGlCJBJPsnmbu12/XR8ZY9
+         eWpM7zaeRJV7AzZkiE/cxY9liKdLQemaHRYHowZ6c/ifS5fvUlu5UENwGPB/2pVtzaVl
+         Sqkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719934157; x=1720538957;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M37+WZeSe+oikF2i/7+dIIsR6vGmSE7qj6kzbbudUC0=;
+        b=sis1pBG4va4d1wsL1Qvexowb92obAJXxQWTrBHEmvk5klCGx1LiZ8e0iCL2VdNTHlF
+         977HT5IK0nJ38FvoFLuZvpvHQuWHk3OI1d6QibOnAg+VTSb5pjJj2ZVmr+KS5ZuhbxGV
+         OhTzQSfP2Buegf9VWw4C/wVKyVICEJrcfCyfX6VF3rNF4a7fGnp4yKLOLsCIvYT3d4ri
+         NipzXJppq1n7JcXydpwmzVb85GsYvIBjEpW8Xp/eYXk5qcyUE8iG4XxFy9p1wFPTtcHx
+         8BXoiGyXmqrzxnG9vKDNJygLV0lOi3fdOvUca2hbc0KoLs8p8wN7ZiQfcDwONA6+8e1i
+         +7kw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCTmsei2EPYPxB4J0uFkkBrYxbHH7kjmgoEnvPqCKLiesK9+HqLAr4Dhhsydgyw6xrlwyv150dzWR5Bg7o/EVFgKTB7IoecjM9pbdg
+X-Gm-Message-State: AOJu0Yy/UhRaD1EpduKvb/vmAHHAZfY/43H7fWls/HYX9vQKVys37dKo
+	XSTsjbfsLdbZEKkKxb7dcbQ9bU7/ZE5QEQ9a4cnJBqvLHA1hb/H9
+X-Google-Smtp-Source: AGHT+IFm4ASczFv+04gwkE02HpGzFWOJlA4riesLhyWmf9wxQVWR6d3VoZtP1C6Q6/pMuYMIm0DbyA==
+X-Received: by 2002:adf:ec03:0:b0:367:8e63:4da4 with SMTP id ffacd0b85a97d-3678e634fa5mr971274f8f.14.1719934157387;
+        Tue, 02 Jul 2024 08:29:17 -0700 (PDT)
+Received: from [192.168.0.31] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af5a3b0sm203368325e9.13.2024.07.02.08.29.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 08:29:16 -0700 (PDT)
+Message-ID: <035757b1-5dc5-4966-9eaf-a52b707bd48e@gmail.com>
+Date: Tue, 2 Jul 2024 17:29:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,110 +75,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm: Fix khugepaged activation policy
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Barry Song <baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Lance Yang <ioworker0@gmail.com>, Yang Shi <shy828301@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240702144617.2291480-1-ryan.roberts@arm.com>
- <c877a136-4294-4f00-b0ac-7194fe170452@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <c877a136-4294-4f00-b0ac-7194fe170452@redhat.com>
+Subject: Re: [PATCH] gpu: ipu-v3: Removal of of_node_put with __free for auto
+ cleanup
+To: Abhinav Jain <jain.abhinav177@gmail.com>, p.zabel@pengutronix.de,
+ airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org, julia.lawall@inria.fr
+References: <20240702150109.1002065-1-jain.abhinav177@gmail.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20240702150109.1002065-1-jain.abhinav177@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 02/07/2024 15:57, David Hildenbrand wrote:
-> On 02.07.24 16:46, Ryan Roberts wrote:
->> Since the introduction of mTHP, the docuementation has stated that
->> khugepaged would be enabled when any mTHP size is enabled, and disabled
->> when all mTHP sizes are disabled. There are 2 problems with this; 1.
->> this is not what was implemented by the code and 2. this is not the
->> desirable behavior.
->>
->> Desirable behavior is for khugepaged to be enabled when any PMD-sized
->> THP is enabled, anon or file. (Note that file THP is still controlled by
->> the top-level control so we must always consider that, as well as the
->> PMD-size mTHP control for anon). khugepaged only supports collapsing to
->> PMD-sized THP so there is no value in enabling it when PMD-sized THP is
->> disabled. So let's change the code and documentation to reflect this
->> policy.
->>
->> Further, per-size enabled control modification events were not
->> previously forwarded to khugepaged to give it an opportunity to start or
->> stop. Consequently the following was resulting in khugepaged eroneously
->> not being activated:
->>
->>    echo never > /sys/kernel/mm/transparent_hugepage/enabled
->>    echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> Fixes: 3485b88390b0 ("mm: thp: introduce multi-size THP sysfs interface")
->> Closes:
->> https://lore.kernel.org/linux-mm/7a0bbe69-1e3d-4263-b206-da007791a5c4@redhat.com/
->> Cc: stable@vger.kernel.org
->> ---
->>
->> Hi All,
->>
->> Applies on top of today's mm-unstable (9bb8753acdd8). No regressions observed in
->> mm selftests.
->>
->> When fixing this I also noticed that khugepaged doesn't get (and never has been)
->> activated/deactivated by `shmem_enabled=`. I'm not sure if khugepaged knows how
->> to collapse shmem - perhaps it should be activated in this case?
->>
+On 02/07/2024 17:01, Abhinav Jain wrote:
+> Remove of_node_put for device node prg_node.
 > 
-> Call me confused.
+> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+> ---
+>  drivers/gpu/ipu-v3/ipu-prg.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 > 
-> khugepaged_scan_mm_slot() and madvise_collapse() only all
-> hpage_collapse_scan_file() with ... IS_ENABLED(CONFIG_SHMEM) ?
+> diff --git a/drivers/gpu/ipu-v3/ipu-prg.c b/drivers/gpu/ipu-v3/ipu-prg.c
+> index 729605709955..d1f46bc761ec 100644
+> --- a/drivers/gpu/ipu-v3/ipu-prg.c
+> +++ b/drivers/gpu/ipu-v3/ipu-prg.c
+> @@ -84,8 +84,8 @@ static LIST_HEAD(ipu_prg_list);
+>  struct ipu_prg *
+>  ipu_prg_lookup_by_phandle(struct device *dev, const char *name, int ipu_id)
+>  {
+> -	struct device_node *prg_node = of_parse_phandle(dev->of_node,
+> -							name, 0);
+> +	struct device_node *prg_node __free(device_node) =
+> +		of_parse_phandle(dev->of_node, name, 0);
+>  	struct ipu_prg *prg;
+>  
+>  	mutex_lock(&ipu_prg_list_mutex);
+> @@ -95,14 +95,11 @@ ipu_prg_lookup_by_phandle(struct device *dev, const char *name, int ipu_id)
+>  			device_link_add(dev, prg->dev,
+>  					DL_FLAG_AUTOREMOVE_CONSUMER);
+>  			prg->id = ipu_id;
+> -			of_node_put(prg_node);
+>  			return prg;
+>  		}
+>  	}
+>  	mutex_unlock(&ipu_prg_list_mutex);
+>  
+> -	of_node_put(prg_node);
+> -
+>  	return NULL;
+>  }
+>  
 
-Looks like khugepaged_scan_mm_slot() was converted from:
+Hi Abhinav,
 
-  if (shmem_file(vma->vm_file)) {
+Apart form having sent two different patches with the same title (hence
+the confusion), this cleanup is right from a functional point of view.
 
-to:
+On the other hand, the description should address why you are doing this
+cleanup (e.g. to remove the need for explicit of_node_put() when the
+variable goes out of scope). The need for of_node_put() does no vanish,
+it is only automated and no longer visible at first glance by means of
+the cleanup attribute.
 
-  if (IS_ENABLED(CONFIG_SHMEM) && vma->vm_file) {
-
-By 99cb0dbd47a15d395bf3faa78dc122bc5efe3fc0 which adds THP collapse support for
-non-shmem files. Clearly that looks wrong, but I guess never spotted in practice
-because noone disables shemem?
-
-I guess madvise_collapse() was a copy/paste?
-
-> 
-> collapse_file() is only called by hpage_collapse_scan_file() ... and there we
-> check "shmem_file(file)".
-> 
-> So why is the IS_ENABLED(CONFIG_SHMEM) check in there if collapse_file() seems
-> to "collapse filemap/tmpfs/shmem pages into huge one".
-> 
-> Anyhow, we certainly can collapse shmem (that's how it all started IIUC).
-
-Yes, thanks for pointing me at it. Should have just searched "shmem" in
-khugepaged.c :-/
-
-> 
-> Besides that, khugepaged only seems to collapse !shmem with
->   VM_BUG_ON(!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && !is_shmem);
-
-That makes sense. I guess I could use IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) to
-tighen the (non-shmem) file THP check in hugepage_pmd_enabled() (currently I'm
-unconditionally using the top-level enabled setting as a "is THP enabled for
-files" check).
-
-But back to my original question, I think hugepage_pmd_enabled() should also be
-explicitly checking the appropriate shmem_enabled controls and ORing in the
-result? Otherwise in a situation where only shmem is THP enabled (and file/anon
-THP is disabled) khugepaged won't run.
-
-> 
-> The thp_vma_allowable_order() check tests if we are allowed to collapse a
-> PMD_ORDER in that VMA.
-
-I don't follow the relevance of this statement.
-
+Best regards,
+Javier Carrasco
 
