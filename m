@@ -1,108 +1,165 @@
-Return-Path: <linux-kernel+bounces-238046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D88D924299
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:41:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBF092429D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286AB1F23D21
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:41:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40DD91C23D81
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4231BC07A;
-	Tue,  2 Jul 2024 15:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940961BC086;
+	Tue,  2 Jul 2024 15:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EJlo0la8"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UcHIAOHQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F331BB69C
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15AF14D42C;
+	Tue,  2 Jul 2024 15:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934869; cv=none; b=C34xiGRZAZeVsImDEyky3dKnWPfbh63HtkzzzPmva/z6Hne2O/Qiv/gKgnt23fVIVkh5YDsrqf2F3P90W6+7nMuMVGIH2cObBq6QZ2hE2r3MnBnSHWfoqjpLlom9dBG//Rex8BgrBtfoWzL4Izz5eDYlt2s8tL1RRDnvBf54iW8=
+	t=1719934931; cv=none; b=O1g2soxJNp7+cUv2tDQQZuUsmy7raTN5F9T98ATWIf9Dsn5Nq1zsVrIZTDVr1+nP+l2I4/BI3dCzIuaTn8UwEybsdxaT/uxB2PtV+v2y5CEoYfhgd9YQsqxBG+3o6q8dEGwI26iW02bVoTaETUJolDVmZoUSyj6pgHryuKL8OzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934869; c=relaxed/simple;
-	bh=3iFFFMShLQ1EZrUtj0wlYgM/8EAXOVw7Zi303LuWzBQ=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=gaUTjr+nyQRaYJbK+Bt9L4+wsFOr/SJQJXpbqp6GBybocX1ah56T6/FkW19FiFInEaeivvqatk+myNuMn8THtQV1ht0MUqXbvXK4PGbsV/oPYgrJntpna8MI1eXPDrfp3NYpwJ35RoQXVWqtgvk3lYMY+0F7gzg1px2mTxJCjg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EJlo0la8; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b06e63d288so20008726d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1719934865; x=1720539665; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=OP/DQwYrCVrITtYRx3Ev8bw4+QSb5aJdgZyh0buQtdo=;
-        b=EJlo0la8WdzZfM/rr5q9wWBfpNnie7SvB7W8xfh0TvWkSvX9zn3BZD9KgW+TkEBVfu
-         TWH0Zs8pPxPkF4hEMr9irgrjMP9m6q2lUrSETtF7niI4pZla3gRd/mESGHcNrfh5Wr2A
-         P/+3zqx0Ic3fKGy+oBZJ/60pNf5BvbVSv3BMTIwrQeyXIQgxlXUBb/uzp1VMU8ImlVa0
-         vGolYCBKcqSd/vN88USWD7t0uzSPJOuCEB9iJV4MyeAu+BGPJucFZKMhbi/agfLWQH53
-         2uyq/XcgcZho3oXl8SwzQ0kbvHN8YOvKhyNjVP63Slk2/mifWPZNJMO9HssFipNMx85J
-         qCLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719934865; x=1720539665;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OP/DQwYrCVrITtYRx3Ev8bw4+QSb5aJdgZyh0buQtdo=;
-        b=lG7d3c2f0cEjYf9JuO8Ve+bbwk7JMfnUsdCKiNGGqBU8WcoEhaoN5YnIGD2Jim8XvP
-         q39dlr8EC3mb/8wnnikJUxNszpVdmReoERcOb1RIY4/+e/dxJ1jpeneIBeqDx7eHHIa6
-         O7LWUvZ2La9yk9yw4v/0ZScU2RneT78JVJH1WInSmc0+3evgaogtahyZxw9RzmPNZm1K
-         F4XWPrU8K2KdkwNkSZLpykEuJLfUHFJXCm9RAI+Follc/d7C+2mFEsDhDPIweRtG0pPM
-         uF1mTxlwa+IWen3iqwKk+PeO3ouGZlZrbtS6LtAw37rppcFR6I5kl+I5LIMWwhN67CqO
-         nuwA==
-X-Forwarded-Encrypted: i=1; AJvYcCX63g7Gyfby/16oumVyrbF2bbfZrqFhudGnzGAf2Q0goi3+Kye7B8uDP1xr6M6m7S1+llkDIgCkr8DDQgpJp5TFuPh37AP2ejsZ3bAR
-X-Gm-Message-State: AOJu0YyRLk/g0evswqRVNzUEcafQgPZys4026XMSFUlUFprE+abOYI8T
-	KWDQoNSlvNwQf9IxkMnx+W6N1wVw643AM8uM+xDuHUnqD5lt5gRiogckGJ+oDg==
-X-Google-Smtp-Source: AGHT+IFo837CZWVrAhqw/4vbVYvDWAFGqECphXob0gkVGdbXPaXQhe/r6vlQz4h2Yib18TcMgO65/g==
-X-Received: by 2002:a05:6214:212d:b0:6b5:26f7:76b5 with SMTP id 6a1803df08f44-6b5b704eafcmr144055546d6.7.1719934865537;
-        Tue, 02 Jul 2024 08:41:05 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e721e9csm44805766d6.137.2024.07.02.08.41.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 08:41:05 -0700 (PDT)
-Date: Tue, 02 Jul 2024 11:41:04 -0400
-Message-ID: <d5b7485edf9a4cdbc85b6b191b00e572@paul-moore.com>
+	s=arc-20240116; t=1719934931; c=relaxed/simple;
+	bh=D+AzAWjxfUjC9KFtkLpFRJsjafrnXXkauvIj9N7Pm6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JazidG2WXYA8c/wJJQUxQ+k9dtFEtiFsCBGGIie0jQfYf1v7Dfs8EEN2I2lKclNXG0z/N4taH4JtPzfkHzLHzdayuLRw14RD5MBzWi/bDRMsK8eVJwl5gaSHpV0jeJn4o3gdlPtfLuD5XZxueqdZF+iPcOyy6ZAl45M/nnoWyNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UcHIAOHQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF85FC116B1;
+	Tue,  2 Jul 2024 15:42:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719934931;
+	bh=D+AzAWjxfUjC9KFtkLpFRJsjafrnXXkauvIj9N7Pm6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UcHIAOHQ5t9qxQbVe1cefKCNU5kkD/MlJCKI214oiLJVdrvit0ZDsYFOZY0kRZfF9
+	 yHYzhKBMdIR38unM5YHk+lF5OgMD/bESyrB6knNPcFt3o02bf3HBKkawK+1I88MBFQ
+	 kHY4HbCBJWLEoAkUmsDtMuthBp82AGexJAZP2iF0E7XTSAgxtDmzg560TS8RpcsLTi
+	 6huyXugXgbAr/zmF0SWNBitC/z0gw4XANjVCdiP18KofnL7Qpdwf2wWnEsyvC11k6r
+	 nqooI2Pwi9Ivw6gV+KG6xUIUGksTEyw5gX3fMZ2sVzInDwM1J0WgZ9fY+xEseQFZ90
+	 FTIVi45QDBHqA==
+Date: Tue, 2 Jul 2024 16:42:06 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: utsav.agarwal@analog.com,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Arturs Artamonovs <arturs.artamonovs@analog.com>,
+	Vasileios Bimpikas <vasileios.bimpikas@analog.com>,
+	Oliver Gaskell <oliver.gaskell@analog.com>
+Subject: Re: [PATCH v4 2/2] dt-bindings: input: Update dtbinding for adp5588
+Message-ID: <20240702-comic-tannery-792d461e0ab7@spud>
+References: <20240701-adp5588_gpio_support-v4-0-44bba0445e90@analog.com>
+ <20240701-adp5588_gpio_support-v4-2-44bba0445e90@analog.com>
+ <20240701-battalion-tacky-c52566b37a97@spud>
+ <ZoLrYTp2IUKFBvzq@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: Canfeng Guo <guocanfeng@uniontech.com>
-Cc: stephen.smalley.work@gmail.com, omosnace@redhat.com, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, Canfeng Guo <guocanfeng@uniontech.com>
-Subject: Re: [PATCH] selinux: Use 1UL for EBITMAP_BIT to match maps type
-References: <20240629041012.156495-1-guocanfeng@uniontech.com>
-In-Reply-To: <20240629041012.156495-1-guocanfeng@uniontech.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DW1LKY6BicGgV+zw"
+Content-Disposition: inline
+In-Reply-To: <ZoLrYTp2IUKFBvzq@google.com>
 
-On Jun 29, 2024 Canfeng Guo <guocanfeng@uniontech.com> wrote:
-> 
-> This patch modifies the definition of EBITMAP_BIT in
-> security/selinux/ss/ebitmap.h from 1ULL to 1UL to match the type
-> of elements in the ebitmap_node maps array.
-> 
-> This change does not affect the functionality or correctness of
-> the code but aims to enhance code quality by adhering to good
-> programming practices and avoiding unnecessary type conversions.
-> 
-> Signed-off-by: Canfeng Guo <guocanfeng@uniontech.com>
-> ---
->  security/selinux/ss/ebitmap.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, this looks good to me, and it's trivial enough that I think it
-is safe to merge at this point in the release cycle; merged to
-selinux/dev.
+--DW1LKY6BicGgV+zw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---
-paul-moore.com
+On Mon, Jul 01, 2024 at 10:46:09AM -0700, Dmitry Torokhov wrote:
+> On Mon, Jul 01, 2024 at 04:46:12PM +0100, Conor Dooley wrote:
+> > On Mon, Jul 01, 2024 at 04:04:51PM +0100, Utsav Agarwal via B4 Relay wr=
+ote:
+> > > From: Utsav Agarwal <utsav.agarwal@analog.com>
+> > >=20
+> > > Updating dt bindings for adp5588. Following properties are now made
+> > > optional:
+> > > 	- interrupts
+> > > 	- keypad,num-rows
+> > > 	- keypad,num-columns
+> > > 	- linux,keymap
+> > > The proposed new property "gpio-only" has been added as an optional
+> > > property with an additional example.
+> >=20
+> > I can see that as it is clear in the diff, but this doesn't explain why,
+> > which is what you need to do in your commit message.
+> >=20
+> > >=20
+> > > Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+> > > ---
+> > >  .../devicetree/bindings/input/adi,adp5588.yaml     | 28 ++++++++++++=
+++++++----
+> > >  1 file changed, 24 insertions(+), 4 deletions(-)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.yaml=
+ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> > > index 26ea66834ae2..158fbf02cc16 100644
+> > > --- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> > > +++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> > > @@ -46,6 +46,11 @@ properties:
+> > >    '#gpio-cells':
+> > >      const: 2
+> > > =20
+> > > +  gpio-only:
+> > > +    description:
+> > > +      This property applies if keypad,num-rows, keypad,num-columns a=
+nd
+> > > +      linux,keypad are not specified. All keys will be marked as gpi=
+o.
+> >=20
+> > Why is a property required for this? Is the absence of the 3 keypad
+> > properties not sufficient to determine that you're in this mode?
+>=20
+> Yes, I think it should be enough.
+>=20
+> >=20
+> >=20
+> > >    interrupt-controller:
+> > >      description:
+> > >        This property applies if either keypad,num-rows lower than 8 or
+> > > @@ -68,10 +73,6 @@ properties:
+> > >  required:
+> > >    - compatible
+> > >    - reg
+> > > -  - interrupts
+> >=20
+> > I don't understand why interrupts is no longer required.
+>=20
+> I think it should be possible to use this chip as a GPIO controller but
+> not an interrupt controller, in which case one does not have to wire up
+> the interrupt line from it. However this requires much more elaborate
+> binding description (i.e. no keys and no "interrupt-controller"
+> property).
+
+Aye. I can totally understand why you might want to make the interrupt
+portion optional - but it seems unrelated to the rest of the changes in
+the patch (use as a keypad without interrupts could be possible, right?)
+and is unexplained.
+
+Cheers,
+Conor.
+
+--DW1LKY6BicGgV+zw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoQfzgAKCRB4tDGHoIJi
+0lquAP9bna7cBICOAimP3OFaEcfDauwaXWxk5OuMVv35e9Ab4wD+MHVU1fOj/6D+
+hn0FQ1J1b8m2EWgcYtxuU8GbRsJQQg8=
+=1pa+
+-----END PGP SIGNATURE-----
+
+--DW1LKY6BicGgV+zw--
 
