@@ -1,109 +1,108 @@
-Return-Path: <linux-kernel+bounces-237528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1775923A58
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:41:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97776923A59
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D979B21D76
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:41:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B1C1F23F2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75609155CA5;
-	Tue,  2 Jul 2024 09:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B177E15689B;
+	Tue,  2 Jul 2024 09:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LtUwbk09"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWaxIt3c"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B70F153836
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5F2155312;
+	Tue,  2 Jul 2024 09:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719913291; cv=none; b=XDNjj09asZSgfsXdkRvZSn12+kkYi1PZmEKoxKMk4mVy5Xpc0JtVUsg0oc07sLuVe8qxzxX1A5xPPNSyZSVM4wnaNIQhXwnNncXIvPWL7n1w7+wUKxAK+aCfbmpsqIdHMb+ZVO83xdqPjvza2o42abSTb0tlSnRjh5we9+cJrHQ=
+	t=1719913302; cv=none; b=bamPYybfuz09ra7QgzFBy53Hq3w+1jQAGRfQOXtcki/oFy2leyL5eURt5Zt6TC7MhqxyhgHZ96ilbZOL3xWUbzlmcfLCCb3rwfS1pdC5PRAAFGqBPsgjXNM/QMkv+tcl4fHWiub/C85Ztau5gO3HUZ9AHWXc3TdsvLkzBm+JOxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719913291; c=relaxed/simple;
-	bh=kxWmBl/62F6kGkS01rbXx3MfKTWBN/DQsH2ryOG58n0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vl6YwesE3FMHojZKhs8YUjHO6ERVPsfHfFt/GZd7G2P/TcxGYdgd1hDG8uF4lSaEMVHTxX9NaIxC4nw2W/bT7O5kUYn8ozSrtyh3I1+wmBtjQoG5vf3svvkYNu+ge6WG7TAieLs/pP/8FtynspH9974c8QNzKj1sey3zlQdpnZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LtUwbk09; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42563a9fa58so28009185e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 02:41:30 -0700 (PDT)
+	s=arc-20240116; t=1719913302; c=relaxed/simple;
+	bh=rrHJuzABvv32dcWokveTz7Dnd/80nmaf3YwG2Ar19yE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K1jJ/WQUrcQO0m9pIQ82mQCfqmM0bEmS8g9+8P191HPj9+kc4n7LcbP/ouRNrJMeMcebO6bPchTrtIXaBzJ2wiKHkPN4Ylwum7z7eLXY277GtoyY35ufi+Q7XBwe9bnCpVlgmTm/yjeQ82OlQOq2zo4Ys+Zvk9c1cFXfcn3y3xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWaxIt3c; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c8c6cc53c7so2731048a91.0;
+        Tue, 02 Jul 2024 02:41:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719913289; x=1720518089; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719913300; x=1720518100; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YE0waSrgtEeU0HkldbaEfxX0jG9ixu+KFSkm+VwWqgM=;
-        b=LtUwbk09LHEpI1H3BgtRpWN7R5TtEXkgkvonFlJmeFtQLfFRoBb4gsrtCO/0fc23qc
-         k8ie+qlVWSbFgBOWLRRVg/RSgNMG4ZpvkcSdgAcGgkfk+b84ddj4VxjIKVQCeqtAJcHj
-         5E24UtCIzuys204RdgPIyYjkegkq78LEqIab9rw2ZJyOC4cB81x7l1oJABxeR5aPtBLy
-         1RsQgpi9eAK6Q94Nlxm+EZCu/8UAec0nZNmWvxr1FgMD2AeboZVQCYGrB8PNDTgsN1jh
-         97zB+F35s2NhfoPji7tANlPYaAzXcz/3thTHQKXXPKnCmCfyj++YVHABSRVurf7QjP9y
-         EMGA==
+        bh=rrHJuzABvv32dcWokveTz7Dnd/80nmaf3YwG2Ar19yE=;
+        b=EWaxIt3cf1wXAoV7eCxzvLnu/RJrtIQKk1u5/eVfZohla6F04WhG6VB8dK9c2PTCKk
+         nom8CftNH43FlRxL2UBGjboUxTkCWcpQLM/mXfzv+D6dcFiYpPE1RvCdu3qetHj0w/Jk
+         E5h5xNoKvKTm/VqoqAjgvgZZPdctD6pMW6VKs49V72iDUxWZGaDPtkCkhtiVBciDAjuT
+         yRXwYlWpyDNKk6Lu4hpd62xNA50htXnTStXa39eIXtkXAyWrdEq4cvh9kgfiAfEmnzza
+         P6GjvvesALtBi6mF9GP+HfYTBH0B2gEbqPIPS1rsCCVPEYurTfuNfoXXGTh256CqxiEE
+         sTyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719913289; x=1720518089;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719913300; x=1720518100;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YE0waSrgtEeU0HkldbaEfxX0jG9ixu+KFSkm+VwWqgM=;
-        b=B/awHrVaBWsYj9Pfmjdr0eH0Wo8eElBiZtdZxhfBuBhHKcNtbgKL5mUIECPHVu9ynX
-         Uarz/bQhA3zk+tm9MVo4o0YfDwThOLroPSAetOYFIASsX3wBSmGAk1SWlOpX4C+OdY0u
-         wgSQRaRN+j3NkCqWC9sy8I/FSTEwv0c15PtHsy5CLyLJycByHKYMZWZ8brF1jMopyWDZ
-         tLPELNVA9nvXrPm1Ra0lGOu5ZMhlZAUBqaj6btRlX0sQAQkpXbYoR624vjMLwNkLjXqe
-         zpoJ/rbVTUnEgDNgw20f65V7A7JAgEh2O8wjLNhYwk2INB+2K6QcC2X0dEw7NsxSw03/
-         NuSg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+inlPLxOj1Qo1s85DHd5F16iOUwINc2R3yxAiUAFPTXVlqXYh6a6F142azT9zcxc0vD9vRmIKVRZg3eFlpoSV+2J2mV/FSd7tvZUZ
-X-Gm-Message-State: AOJu0YyScQvAXxnPU3KF07y3wWKBpkfnFytgIeaVw0nIBbYwlz8gJT5W
-	Hq+o3h2HOGQQiWGwA3suBaTpxide+EPah4oC1tvHpMICyrhqCkb+cKoKkLOgfBc=
-X-Google-Smtp-Source: AGHT+IGkyESW9xePTb5X/hnH8dGkmvMTF0N+RUyGBGuPtMLfLKFbJSjRsa3XTlj/FaSou+MTpduycw==
-X-Received: by 2002:a05:600c:4a16:b0:424:a779:b5c1 with SMTP id 5b1f17b1804b1-4257a0114a9mr56336445e9.20.1719913288699;
-        Tue, 02 Jul 2024 02:41:28 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:628b:5bc8:edc:9c60])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4258014f8b7sm95708385e9.41.2024.07.02.02.41.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 02:41:28 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: unexport gpiochip_get_desc()
-Date: Tue,  2 Jul 2024 11:41:26 +0200
-Message-ID: <171991328463.12913.15479546795148049516.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240625073815.12376-1-brgl@bgdev.pl>
-References: <20240625073815.12376-1-brgl@bgdev.pl>
+        bh=rrHJuzABvv32dcWokveTz7Dnd/80nmaf3YwG2Ar19yE=;
+        b=SJKYJcc3N34tYVXHx2BZ8e96+K2SjQrgZEOCA/XXXxqKRK+Rm22lXjb9WFBXOabx3C
+         hWLpdVm3lPt9DFICOrgkHdeUqm14Y2AxHrYnSoSFJWAs7FwK0sAqLnjdKR0hDTW4QC4J
+         eNE8cLn3KFxxy0INeAwOkd/CdjAEfiLn+rLrlag4/heMo8K1qmsHFW/LPfLx3x6IiP2O
+         8JBHlnT7qMH6UvHcLd7DibQqE6JIx7jrt4DVniY4RaisClro5LMjjTImdr+9dM7VNsBr
+         ekwrsoTJlJ/384L+wFBw2aETHoXsdQxOnjn5r37HB5aQOlOZ6tldVCnWUa2MtoWXm3LX
+         Xnxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGR3fGBdxhWs+Q6tjkZeE188/V7fUB/m2+KFpjriTfk1CJvJerSJk2vnDA8DBvOea/KnZy5ElhmyTXw3biQCfzZuhP2PIZVzwdo3FFBHoLaml2UFPhen5/fsJgDJlHsbrRDxuSS/ie4cA3rlA=
+X-Gm-Message-State: AOJu0YxqUcrkii58zRyy9BSZ+2M81+kFBCdYTmf+j2TpzrebB7KLBu8R
+	EkcYTkgpSC2WQFl2t+yTYjqqyegUR4tLIWD6esZp7UUEn2yQADt6D/ienCP7hf4LnobxRogMkeY
+	wJwyYCGXakfEjv9XjxIygk9c/mNA=
+X-Google-Smtp-Source: AGHT+IEDftu7sk+tfSLkqpQkBEgUNXL8IgNpgAL9Frlx/qQPKc4RNAvHIN4qui+yL3vGvj/+3mk7DlNTp02STXHJzQQ=
+X-Received: by 2002:a17:90b:180d:b0:2c5:32c3:a777 with SMTP id
+ 98e67ed59e1d1-2c93d7242f8mr6335964a91.28.1719913299802; Tue, 02 Jul 2024
+ 02:41:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240701183625.665574-1-ojeda@kernel.org> <4fa15761-7cab-4463-a2ff-717256c67d76@proton.me>
+In-Reply-To: <4fa15761-7cab-4463-a2ff-717256c67d76@proton.me>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 2 Jul 2024 11:41:27 +0200
+Message-ID: <CANiq72kX2yhAVwd2FVRaGZvGrhPhTnnM=v18nng___Pu+aZaSg@mail.gmail.com>
+Subject: Re: [PATCH 00/13] Support several Rust toolchain versions
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Jul 2, 2024 at 8:25=E2=80=AFAM Benno Lossin <benno.lossin@proton.me=
+> wrote:
+>
+> I applied the series and successfully ran the kunit tests on nixos.
+> I tried the following rust versions via fenix:
+> - rustc 1.78.0 (9b00956e5 2024-04-29)
+> - rustc 1.79.0 (129f3b996 2024-06-10)
+> - 1.80.0-beta.4 (64a1fe671 2024-06-21)
+> - 1.81.0-nightly (6868c831a 2024-06-30)
+>
+> My bindgen version is 0.69.4.
+>
+> Everything worked as expected :)
 
+Thanks Benno! I tried nixpkgs' toolchain for the examples in the docs
+patch, but not fenix's ones, so it's good to know those work as well. :)
 
-On Tue, 25 Jun 2024 09:38:15 +0200, Bartosz Golaszewski wrote:
-> This function has been deprecated for some time and is now only used
-> within the GPIOLIB core. Remove it from the public header and unexport
-> it as all current users are linked against the compilation unit where
-> it is defined.
-> 
-> 
-
-Applied, thanks!
-
-[1/1] gpiolib: unexport gpiochip_get_desc()
-      commit: 6f2a875024993449f1b19a144d3e4391411a1b51
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cheers,
+Miguel
 
