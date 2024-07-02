@@ -1,124 +1,229 @@
-Return-Path: <linux-kernel+bounces-237281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D16691EEAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:57:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC7491EEB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C13F1C21A5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:57:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 979641F22CC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392535C8EF;
-	Tue,  2 Jul 2024 05:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D77E5CDF0;
+	Tue,  2 Jul 2024 05:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q7XXWNXI"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mklgCt2x"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CF0374C6
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 05:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F75374C6;
+	Tue,  2 Jul 2024 05:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719899829; cv=none; b=g2rS07i3wpBRlv87yZ862KRAjwNp7g+AZzm3RbHDAfsOd20hB4ivt7RlYh8Djhaot5Zk84bljMjwC7OJTDhkEjyCBvPQPXz0gE3a0stFugbzxzDteEPAk/Up3NElqjzQ9LX8pHlYuE2xUbuectxm/66rFbfIYZGTLFMzs6bbr4k=
+	t=1719899992; cv=none; b=beF2pRJdHAv3STw8vvTAvZUws/hzFLn+hkOt7Zlr1E2rfAwdp/gsp7QCC8OAxHcTej6axM1eRzFczj8dlMijubmrkEjox2qTTRRpoyJXSaX7e8nbqzsTyhNIdice+ZhudS6bdhgWKHxHH7+dPobjeUO5RU+vaf+oEFxtto8sVT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719899829; c=relaxed/simple;
-	bh=hrWd+DMfhLdhgvgZ6CcFG8Yrdx//qAY+wVKO8Ywgkv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AnTTr3p+3GlR+82Fs0JLWoBX/kJhwYYgyL4cDjMiZgjKsH3afqAXorX8b0DJHeWLaOVywGMakorJJYjYetBVAd+xHQxuELhnDgOHgXgrjFb0371A7Hh1ks/p0IHyk/1bNdU/DmVDspKmw3rYlpO2bw+VNwD5Jc57c6Y51AgBM8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q7XXWNXI; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f480624d0fso22221725ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 22:57:06 -0700 (PDT)
+	s=arc-20240116; t=1719899992; c=relaxed/simple;
+	bh=WwZQ9+CI8V/K3pwYtNCgVlG6FppDRsL1hckrMX0QhhQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XqrQvOqBPo03Wd0Ly5wBjwNLB8XjrQfVr9TfqhcNEGAdCOnm+EUN8Fgug/dzOaQsN8u6tVlFURNaxne5nE8RA3sXsfhYO+rav9JyNpu74Ib6MDr9DTON7Ew5gsbQ8VctGVzRUWFczXesR+r2+DZjut8izIDu1sj8fwdz1bwDLz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mklgCt2x; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4ef662a4725so1677497e0c.0;
+        Mon, 01 Jul 2024 22:59:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719899826; x=1720504626; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=I5rG7724QFwFDpF6Kn0xpJ+NJU0J1nnnGMkvWaoZGyc=;
-        b=Q7XXWNXImDCrtYHPdzBHtx39ccJ1r7eAdGwnAnwgJUBky6uKE8qDY6noZ5qDUGggBg
-         K0bkA5gNWFkYQrUo+NmXhwLO7qkV90ACGgfEhs+vSDf3u/6S1R4SKyriuUjl4z4jPAsa
-         6LTnrI18muMeE2piIJLNeoEjt0h3rISrzVZ2H+JSizWaoWJHvZbToK0LOI0PikJCy3rl
-         9Te6evRbuA1MXR7dv0r6TY8AXaVd1rCcX5WQiX/jWY5oDr0C0Be7c9ISbBxGqAKHb5E5
-         I4/gbTQpumopUjOards1Hsluz+R+3mrskMUV7fsKNGeauCfjXs2UGYqX6wJclVc5OEix
-         Z+jA==
+        d=gmail.com; s=20230601; t=1719899989; x=1720504789; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gC2h0CHYsZZaUAzCk04zWux1R2sWmKldSedDZlcr5aQ=;
+        b=mklgCt2xlZeQ7gjCASc39kyFu74gvA7RFRy4KVJJYIUkkvP6HpfWHlJIs0a2606C19
+         KaDzUPfGGFlbSzQPFMGbiV+XYRVysKkmGUvL/Yu97Uk1uz74HbKB0mcrXJpMOIj6M191
+         k0W7iixXUzMvlf3tCCRVy1ClXG/w/rD3pxs+Fhgfx2ohSzvxv8mfkNyxymus49hEPkSU
+         SUXOfiBK6uE7VlaM+Q9vUB3N2GRDSDvvrFP1cvLc2F/InVi27HLpoVzrp+2sT3EKXYsf
+         cx2UfmJWd79VsFxh1gqphjCIhG2r/yjlDHIsCL12RL25Uke9CfHeR8ezQvYSodU0gxG6
+         L68w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719899826; x=1720504626;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I5rG7724QFwFDpF6Kn0xpJ+NJU0J1nnnGMkvWaoZGyc=;
-        b=vnWeO5B53g0yH0BB/xqylXqGVpWP2wUCsb3fogCBhA+byzNcbkLvTsNtHSY5sEXH0e
-         4zmoWygTC19TNIMQCMmB7Mg+s50Gu8r1H7miPsA0xIA/Fd6QJGM+P+DEPYS5nVM7YX8j
-         Ez5U4MtWMkhTSg0dceNQ/1zi/m+vwGhoSAPy3meWgJ0+djNHeVIj1ulIGEQcC1kEyXL2
-         VCmn5TSkicaciGqx/bmYzWxLyKlRWyHpQba6PNhtYO/2H4ufjf/Hhb7dWBikWX0pa889
-         1jSCfdTDupbwsvOA9dvkH7yYuWN+VEPA9MPy9i866FyY6oarXoPqQ9WIPHZb7C3iJUKg
-         cbaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5IYP5msCFzU7Rey7EVk/qbGMX+G6+9cf4JHIAOvlzgD26+1gXymSUmHEMR9PqyPxohFNIvb5UEviRkCgIA0X7XaPN+MwurXcsGPLZ
-X-Gm-Message-State: AOJu0YzZ5xAkWHyOiaYBsBfKJupsnbztXBzMVjnXpKUWPkT+btpfyTph
-	m3F/g6oO9ozN8myLIDycX2V3x/F77RRMCTJJI4uZ/XpciaMPUa+12PKaRbOB9yM=
-X-Google-Smtp-Source: AGHT+IHCa/XZ44PQvOPHK1Yiee37rkwXi6KHLsgAh7cZkOVdJcrPdLHRisJCUzRqNJuStcv8fmZSkw==
-X-Received: by 2002:a17:903:2446:b0:1fa:d1df:d41e with SMTP id d9443c01a7336-1fadbcf4690mr46300745ad.58.1719899826024;
-        Mon, 01 Jul 2024 22:57:06 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fad067031fsm66279735ad.259.2024.07.01.22.57.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 22:57:05 -0700 (PDT)
-Date: Tue, 2 Jul 2024 11:27:03 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	kernel@collabora.com, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] cpufreq: mediatek: Use dev_err_probe in every error path
- in probe
-Message-ID: <20240702055703.obendyy2ykbbutrz@vireshk-i7>
-References: <20240628-mtk-cpufreq-dvfs-fail-init-err-v1-1-19c55db23011@collabora.com>
+        d=1e100.net; s=20230601; t=1719899989; x=1720504789;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gC2h0CHYsZZaUAzCk04zWux1R2sWmKldSedDZlcr5aQ=;
+        b=s01a1XODhsUjaJSfUGqXq+rM1oEHoR/6AYOOangRrg/WkAr1ImGrnD2VBu8iMJekGU
+         wCAO6CkOixAdwUjWEQMrkDj+Xf4ROQgd86dfUT7G36fVe2xfGK9FMZ8xgyAx4l8mzZoE
+         6jH0FwQ/D7KovvZlrtWC7Hzl92OCQp0ehC8etQNhug7wzuVnzZ1V0FvY25NMZX102FIV
+         pdHbudvKzdHaRKnz8XyY5V/4LtfFEnAALzu9zvhUDsFfCTjJqmDP0nRJ5L1HCg/V08G+
+         z6zOXoBMuOkHrDBLKISRDxYCqXSFVd6XHXm8K1dFFztWDuUZrwimfvjuVVEJ451qktLV
+         LvmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEMnv8hYkcI4HIVfwYL1Olq45DfvPRi3voSItglOKRNYET8gXBLmRjb4WiBm/9woklGXxNoJYslJ/izXPpTkSpBLF1TQ9/minSN3VBJ0LzUJ33nB+v/6O1mvQmYJDzyVF6NYGQSfM7
+X-Gm-Message-State: AOJu0Yw3ntl/lElhmVMdtvuYkj9bWaq9wsSvVtYmm22y3RPm/Xzl4YGJ
+	6PrXR9OJ3nHdbrL0wO+JpI2nZlWXRt1JC0h3V+9II4CyQiyV9jM2duLNUCRwFCXK2MFQP5+J2b7
+	OzNcAv7HOOCy1Pmg/Ns1HsY1IxXTp5IG4
+X-Google-Smtp-Source: AGHT+IF5a5OjIzyaJocMTBPTWgNa0DegmthX+97mHhYb4JNjZcLM20NDrHPJLpcN5xTagUJ+OwTuyt1O2PyEbnKEHao=
+X-Received: by 2002:a05:6122:6085:b0:4ef:27e0:3f8c with SMTP id
+ 71dfb90a1353d-4f2a5561996mr9305501e0c.0.1719899988648; Mon, 01 Jul 2024
+ 22:59:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240628-mtk-cpufreq-dvfs-fail-init-err-v1-1-19c55db23011@collabora.com>
+References: <20240626045926.680380-1-alistair.francis@wdc.com>
+ <20240626045926.680380-3-alistair.francis@wdc.com> <20240701122721.0000034d@Huawei.com>
+In-Reply-To: <20240701122721.0000034d@Huawei.com>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Tue, 2 Jul 2024 15:59:21 +1000
+Message-ID: <CAKmqyKP9_TukgkMFScuXYJP9bfJ-NVCgYqhbNPPv8ZgsbX560Q@mail.gmail.com>
+Subject: Re: [PATCH v12 3/4] PCI/DOE: Expose the DOE features via sysfs
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org, lukas@wunner.de, 
+	alex.williamson@redhat.com, christian.koenig@amd.com, kch@nvidia.com, 
+	gregkh@linuxfoundation.org, logang@deltatee.com, linux-kernel@vger.kernel.org, 
+	chaitanyak@nvidia.com, rdunlap@infradead.org, 
+	Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28-06-24, 15:48, Nícolas F. R. A. Prado wrote:
-> diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-> @@ -629,11 +630,9 @@ static int mtk_cpufreq_probe(struct platform_device *pdev)
->  	int cpu, ret;
->  
->  	data = dev_get_platdata(&pdev->dev);
-> -	if (!data) {
-> -		dev_err(&pdev->dev,
-> -			"failed to get mtk cpufreq platform data\n");
-> -		return -ENODEV;
-> -	}
-> +	if (!data)
-> +		return dev_err_probe(&pdev->dev, -ENODEV,
+On Mon, Jul 1, 2024 at 9:27=E2=80=AFPM Jonathan Cameron
+<Jonathan.Cameron@huawei.com> wrote:
+>
+> On Wed, 26 Jun 2024 14:59:25 +1000
+> Alistair Francis <alistair23@gmail.com> wrote:
+>
+> > The PCIe 6 specification added support for the Data Object
+> > Exchange (DOE).
+> > When DOE is supported the DOE Discovery Feature must be implemented per
+> > PCIe r6.1 sec 6.30.1.1. The protocol allows a requester to obtain
+> > information about the other DOE features supported by the device.
+> >
+> > The kernel is already querying the DOE features supported and cacheing
+> > the values. Expose the values in sysfs to allow user space to
+> > determine which DOE features are supported by the PCIe device.
+> >
+> > By exposing the information to userspace tools like lspci can relay the
+> > information to users. By listing all of the supported features we can
+> > allow userspace to parse the list, which might include
+> > vendor specific features as well as yet to be supported features.
+> >
+> > As the DOE Discovery feature must always be supported we treat it as a
+> > special named attribute case. This allows the usual PCI attribute_group
+> > handling to correctly create the doe_features directory when registerin=
+g
+> > pci_doe_sysfs_group (otherwise it doesn't and sysfs_add_file_to_group()
+> > will seg fault).
+> >
+> > After this patch is supported you can see something like this when
+> > attaching a DOE device
+> >
+> > $ ls /sys/devices/pci0000:00/0000:00:02.0//doe*
+> > 0001:01        0001:02        doe_discovery
+> >
+> > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> Hi Alistair,
+>
+> I think I missed an error path issue in earlier reviews.
+>
+> Suggestion for minimal fix inline. If that is fine feel
+> free to add
+>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>
+> > diff --git a/drivers/pci/doe.c b/drivers/pci/doe.c
+> > index defc4be81bd4..580370dc71ee 100644
+> > --- a/drivers/pci/doe.c
+> > +++ b/drivers/pci/doe.c
+>
+>
+> > +
+> > +int pci_doe_sysfs_init(struct pci_dev *pdev)
+> > +{
+> > +     struct pci_doe_mb *doe_mb;
+> > +     unsigned long index;
+> > +     int ret;
+> > +
+> > +     xa_for_each(&pdev->doe_mbs, index, doe_mb) {
+> > +             ret =3D pci_doe_sysfs_feature_populate(pdev, doe_mb);
+>
+> This doesn't feel quite right.  If we wait after a doe_mb features
+> set succeeds and then an error occurs this code doesn't cleanup and...
+>
+> > +             if (ret)
+> > +                     return ret;
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +#endif
+> > +
+> >  static int pci_doe_wait(struct pci_doe_mb *doe_mb, unsigned long timeo=
+ut)
+> >  {
+> >       if (wait_event_timeout(doe_mb->wq,
+> > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> > index 40cfa716392f..b5db191cb29f 100644
+> > --- a/drivers/pci/pci-sysfs.c
+> > +++ b/drivers/pci/pci-sysfs.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/kernel.h>
+> >  #include <linux/sched.h>
+> >  #include <linux/pci.h>
+> > +#include <linux/pci-doe.h>
+> >  #include <linux/stat.h>
+> >  #include <linux/export.h>
+> >  #include <linux/topology.h>
+> > @@ -1143,6 +1144,9 @@ static void pci_remove_resource_files(struct pci_=
+dev *pdev)
+> >  {
+> >       int i;
+> >
+> > +     if (IS_ENABLED(CONFIG_PCI_DOE))
+> > +             pci_doe_sysfs_teardown(pdev);
+> > +
+> >       for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
+> >               struct bin_attribute *res_attr;
+> >
+> > @@ -1227,6 +1231,12 @@ static int pci_create_resource_files(struct pci_=
+dev *pdev)
+> >       int i;
+> >       int retval;
+> >
+> > +     if (IS_ENABLED(CONFIG_PCI_DOE)) {
+> > +             retval =3D pci_doe_sysfs_init(pdev);
+> > +             if (retval)
+>
+> ... this doesn't call pci_remove_resource_files() unlike te
+> other error path in this function which does.
+>
+> I think just calling that here would be sufficient and inline
+> with how error cleanup works for the rest of this code.
+> Personally I prefer driving for a function to have no side effects
+> but such is life.
 
-What's the point of calling dev_err_probe() when we know for sure that
-the error isn't EPROBE_DEFER ?
+Thanks. While looking at this I realised we can actually drop
+pci_doe_sysfs_init() entirely (with a few other changes). So I have
+done that in v13.
 
-> +				     "failed to get mtk cpufreq platform data\n");
->  
->  	for_each_possible_cpu(cpu) {
->  		info = mtk_cpu_dvfs_info_lookup(cpu);
-> @@ -643,24 +642,21 @@ static int mtk_cpufreq_probe(struct platform_device *pdev)
->  		info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
->  		if (!info) {
->  			ret = -ENOMEM;
-> +			dev_err_probe(&pdev->dev, ret, "Failed to allocate dvfs_info\n");
+Alistair
 
-Same here.
-
--- 
-viresh
+>
+> > +                     return retval;
+> > +     }
+> > +
+> >       /* Expose the PCI resources from this device as files */
+> >       for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
+> >
+> > @@ -1661,6 +1671,9 @@ const struct attribute_group *pci_dev_attr_groups=
+[] =3D {
+> >  #endif
+> >  #ifdef CONFIG_PCIEASPM
+> >       &aspm_ctrl_attr_group,
+> > +#endif
+> > +#ifdef CONFIG_PCI_DOE
+> > +     &pci_doe_sysfs_group,
+> >  #endif
+> >       NULL,
+> >  };
+>
 
