@@ -1,235 +1,223 @@
-Return-Path: <linux-kernel+bounces-238242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C2892475A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:37:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C5192475C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC32D2879FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:37:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8AE61C2450F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933A81CB312;
-	Tue,  2 Jul 2024 18:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C3A1CB320;
+	Tue,  2 Jul 2024 18:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NBDsjzqr"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b6E/20Yk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93611C8FB2
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E822F1C0DD9
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719945430; cv=none; b=olpGNobJcXy/NThecaHHjXtUfd/dMHdNiB0Jg167jkfqNQRDdd6sdhTWHsMhlMHbYrqvktSZmdCyVpPFsO5l1wUqhL9cXAOtz5M5VhuGMQbPwVdGEx1ErCUbDK4eEv6hgolBZ/0Sn1GUkjQWSkiPzdPi1jAimRLXnBHFSXvhV68=
+	t=1719945478; cv=none; b=thXruVl4J/7Umqu97YTIXEoS8T7NIv9Ccfwb0lyMCtJS0x0NZMi+QnMTsdCGb2tErysAqdoOgCMxvSteduXQ8K0aNEJy3gOHiUJP1FzDlsiIoE2xbV6PEF8NP89hdvUWzrsd7PEYSDcEc2X2IODxj0rV/OeSMKHdAteji34oM+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719945430; c=relaxed/simple;
-	bh=dAKqXlz/Rk44RY6uPeFnrcIZMSXG36oo3oeH9yxdZSE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M471EsPr7QKB4p7Ivh6w4YQpBcWwgrTyyE/d35jiwiNCNExAxtbg0kaZmm5k4WqOTzxynUOn0eqAL+cKqAimI5HBfDk2qa2pNEHgMNgbHORr4t7Rp9skSIUl7B0hxC7eV3aqizZ/pvCxhnHq7x6nsD/gN37NvhIRrGttgQFTZIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=NBDsjzqr; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52cdb0d8107so5297551e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:37:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1719945427; x=1720550227; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EesUpurwwYyPjITZch1V6UBgZkhS8WVzxXqLOBkc140=;
-        b=NBDsjzqrZyd6cHrzL682PtNAdcYQYkV2zrg6PP27IFIsjLom94c8xif59qR4nEnBOA
-         5O9C+5ffw7Y/nvirJFv+hF+hiapmVaVUZPitYcaDOPAYqV98U2cQcS2sGWbyH4ZVhYfI
-         g6AdcV/XbRXviWCA7e8fWm+wmXMFaYs6vc+qo=
+	s=arc-20240116; t=1719945478; c=relaxed/simple;
+	bh=EJuM4BeUouWHK1O6ywRFzDk+t1MZsyao5tjnnmJjmvg=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FTx4AZPM02LnuuA8NDv2rHZw1/MBkVaCv/7xHMFGJCTph/W4+M1bd0+vWUgN8tezHanqPTt/PYkTBUo56zEFDC3hMGg+qojc1hKPseWGdkEuUHVD55bwIA6qOOcbDHr1yDBx4y3G24ciAwsR/1jNX/F2F7m6dmGFPEdP+9MSKhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b6E/20Yk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719945475;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qSyFQVy0mrp4ZXotenEF6TBWA9Vz1QKR3hy/5ETJnho=;
+	b=b6E/20YkR0XeQDQeXP8ty8o+veEH1G9g2Qt6BhH1QSedfdD2Stla9qrkrTecLFEH6Jb1ZD
+	DlgWtQb76nRzXRG6HcW5lZzaB9NOC3CCBHPgVAKnPcfx+unvwRXrAPGJOn89qSaj9muZZK
+	zwrVEPJQ+WAYOlpisOgIovJ8+EjD504=
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
+ [209.85.167.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-439-02Eme--pPm-1Y5FCpsvgyw-1; Tue, 02 Jul 2024 14:37:54 -0400
+X-MC-Unique: 02Eme--pPm-1Y5FCpsvgyw-1
+Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3d6cce2f6e3so2763444b6e.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:37:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719945427; x=1720550227;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EesUpurwwYyPjITZch1V6UBgZkhS8WVzxXqLOBkc140=;
-        b=fdc7ZUF6MPSs7kbnTutvUU4cQQpg9Us9ffdf8VUVc4vJAgF6RKcEo9faP60F6Z3G9n
-         r6c0g+fT7fqDZ5bVlaCUGq3SUN5yzuP42hVJpVi7twhhujFoTHr32z5mWT/vKihhDEeQ
-         bvoRmtFdQE98J/yHL7fRLS1dPrMNDj+oSK3OKLad2kd0qvx4HkDJimD9fAwZZK3ECTQ3
-         0sdDCs52ZbKxtan5Ez3n/8+kfyohDtxsX9K2lKnZ4ff4YUWEc7OO8AvO7q5GJahF8q1d
-         1pLRiZGDHPMEtVOJ6aqAiCbaVHcqDiV/a9vlFwjBnd0KvxOV7mxRsHx6dF986Uoi1Njc
-         1EhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcrdGjYvcm6LyKY012bb2M/df+MGp9Zs5N+kpqVmInR+vmF1Mk+EjLKEXiW57ycNOnJzsyse8AnzauopJTWziPEHNp1+MmbMfz84f8
-X-Gm-Message-State: AOJu0Yx0fwq1HEwdpf0kfv+1gz9YtfM1J2JHBUIcvlLf8wS9Pvfy/+3E
-	oMgepx4SfRsw+5omieIrSQKTrG8po8tbOqgbgRePEGhNfuvgDfx5IZbrCR+PRBmDqIopP+CUwcv
-	Fyspw7zAzK22V4oGEkFTSPz/BNaSMc5TkfDsQ
-X-Google-Smtp-Source: AGHT+IFGXCiB3Ew1Bv0VhauijrJZY41m5P/iJjvEIR4cv/UbwHzhjsD70hD34EXNXyz/eUPUUPsKPWX5WnYHiKbZXHY=
-X-Received: by 2002:a05:6512:3190:b0:52c:8a39:83d7 with SMTP id
- 2adb3069b0e04-52e826fb0b7mr7026931e87.52.1719945426870; Tue, 02 Jul 2024
- 11:37:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719945473; x=1720550273;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
+         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qSyFQVy0mrp4ZXotenEF6TBWA9Vz1QKR3hy/5ETJnho=;
+        b=fp8uD4BEypTqXqJl6k4o7t4yRAMbdG9Vq+d5S+hvJwyFtIGr3/Q4AN8AXM6PHON+qn
+         zc1hfKZVnaGkv6j99wf/vQrSykcl6duGIU9PLwMMPxLm6wBHrUjRRqYGj89K2qPNm9ZE
+         U+5rEP0O/Q3OGmEuWLjpe+7InmtgiOr1b24O+yBqkCOoi4/C+Voz1OSa49nFuHVx5c/o
+         M1FC9z9f5Ngm5EMGNPM+SXGgCcGgsug1T9e9vK8zfZthAonAKdJOc3ozJAKZBoRIiS6O
+         fOc420+X9lJOSHPoBBTTB7vRoB3tdNa7gg2bH7KAYceENx4Vol3mzC3188fIktOTttDg
+         mAcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXg+2QOQBuZTFDEJVjoPEtXMX1epdjxiQjZLsaD8yHi5lJ+pfPYHqRguCSSFprP1ZzEG5tHHIiNzXcE4Jk1pgXlWJahvKqeDNDHsqw5
+X-Gm-Message-State: AOJu0YyOh/VPq+WTeRplhio0OwluU6gmOHEbOjPqGJ7HW+IV4Blj0VhK
+	EG8MqNeJ8ylwoa1pHXn+00BCpbaT8TBletglZo6hA+R7voIF9xX9RrlUu73RoG4El4A1QGgL5K2
+	dLwmnbnvvWluBjRDkEz1i6Z4a7E2WgL9OKu+sD89Q7RXKNtOMw9vG07kdTI9N3Xzmza2l0s7Mnu
+	OQRuMT2kJQPcSg8jRbRIlVYow0rIuWLAexCLHS
+X-Received: by 2002:a05:6808:14d2:b0:3d6:36a9:52d with SMTP id 5614622812f47-3d6b31ec0b0mr14206608b6e.21.1719945473577;
+        Tue, 02 Jul 2024 11:37:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHPSxkilT9DdWBJFZjsaNYQcIjxzUG1bXAru9m/dYqWgp631Sy+6424p144kpSXsZCB9Gqkd2hDhuDOh2nYhK8=
+X-Received: by 2002:a05:6808:14d2:b0:3d6:36a9:52d with SMTP id
+ 5614622812f47-3d6b31ec0b0mr14206588b6e.21.1719945473245; Tue, 02 Jul 2024
+ 11:37:53 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 2 Jul 2024 18:37:52 +0000
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240630195740.1469727-1-amorenoz@redhat.com> <20240630195740.1469727-6-amorenoz@redhat.com>
+ <f7to77hvunj.fsf@redhat.com> <CAG=2xmOaMy2DVNfTOkh1sK+NR_gz+bXvKLg9YSp1t_K+sEUzJg@mail.gmail.com>
+ <20240702093726.GD598357@kernel.org> <447c0d2a-f7cf-4c34-b5d5-96ca6fffa6b0@ovn.org>
+ <20240702123301.GH598357@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628205430.24775-1-james.quinlan@broadcom.com>
- <20240628205430.24775-4-james.quinlan@broadcom.com> <48a3b910-e2c8-4faf-a8f0-d53b5ddcd5fe@suse.de>
-In-Reply-To: <48a3b910-e2c8-4faf-a8f0-d53b5ddcd5fe@suse.de>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Tue, 2 Jul 2024 14:36:54 -0400
-Message-ID: <CA+-6iNw3QziFzGuqrwzb8QsgY-B3uL9Z3z1rcTCBFG=6BW9MRQ@mail.gmail.com>
-Subject: Re: [PATCH v1 3/8] PCI: brcmstb: Use bridge reset if available
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000039b94d061c480026"
-
---00000000000039b94d061c480026
+In-Reply-To: <20240702123301.GH598357@kernel.org>
+Date: Tue, 2 Jul 2024 18:37:52 +0000
+Message-ID: <CAG=2xmNXJyyTtbEMDT149pZSv75birHYAH67oC+xc6jpxtQjDw@mail.gmail.com>
+Subject: Re: [ovs-dev] [PATCH net-next v7 05/10] net: openvswitch: add psample action
+To: Simon Horman <horms@kernel.org>
+Cc: Ilya Maximets <i.maximets@ovn.org>, dev@openvswitch.org, 
+	Donald Hunter <donald.hunter@gmail.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 2, 2024 at 8:59=E2=80=AFAM Stanimir Varbanov <svarbanov@suse.de=
-> wrote:
->
->
->
-> On 6/28/24 23:54, Jim Quinlan wrote:
-> > The 7712 SOC has a bridge reset which can be described in the device tr=
-ee.
-> > If it is present, use it. Otherwise, continue to use the legacy method =
-to
-> > reset the bridge.
+On Tue, Jul 02, 2024 at 01:33:01PM GMT, Simon Horman wrote:
+> On Tue, Jul 02, 2024 at 11:53:01AM +0200, Ilya Maximets wrote:
+> > On 7/2/24 11:37, Simon Horman wrote:
+> > > On Tue, Jul 02, 2024 at 03:05:02AM -0400, Adri=C3=A1n Moreno wrote:
+> > >> On Mon, Jul 01, 2024 at 02:23:12PM GMT, Aaron Conole wrote:
+> > >>> Adrian Moreno <amorenoz@redhat.com> writes:
+> > >
+> > > ...
+> > >
+> > >>>> diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
+> > >
+> > > ...
+> > >
+> > >>>> @@ -1299,6 +1304,39 @@ static int execute_dec_ttl(struct sk_buff *=
+skb, struct sw_flow_key *key)
+> > >>>>  	return 0;
+> > >>>>  }
+> > >>>>
+> > >>>> +#if IS_ENABLED(CONFIG_PSAMPLE)
+> > >>>> +static void execute_psample(struct datapath *dp, struct sk_buff *=
+skb,
+> > >>>> +			    const struct nlattr *attr)
+> > >>>> +{
+> > >>>> +	struct psample_group psample_group =3D {};
+> > >>>> +	struct psample_metadata md =3D {};
+> > >>>> +	const struct nlattr *a;
+> > >>>> +	int rem;
+> > >>>> +
+> > >>>> +	nla_for_each_attr(a, nla_data(attr), nla_len(attr), rem) {
+> > >>>> +		switch (nla_type(a)) {
+> > >>>> +		case OVS_PSAMPLE_ATTR_GROUP:
+> > >>>> +			psample_group.group_num =3D nla_get_u32(a);
+> > >>>> +			break;
+> > >>>> +
+> > >>>> +		case OVS_PSAMPLE_ATTR_COOKIE:
+> > >>>> +			md.user_cookie =3D nla_data(a);
+> > >>>> +			md.user_cookie_len =3D nla_len(a);
+> > >>>> +			break;
+> > >>>> +		}
+> > >>>> +	}
+> > >>>> +
+> > >>>> +	psample_group.net =3D ovs_dp_get_net(dp);
+> > >>>> +	md.in_ifindex =3D OVS_CB(skb)->input_vport->dev->ifindex;
+> > >>>> +	md.trunc_size =3D skb->len - OVS_CB(skb)->cutlen;
+> > >>>> +
+> > >>>> +	psample_sample_packet(&psample_group, skb, 0, &md);
+> > >>>> +}
+> > >>>> +#else
+> > >>>> +static inline void execute_psample(struct datapath *dp, struct sk=
+_buff *skb,
+> > >>>> +				   const struct nlattr *attr) {}
+> > >>>
+> > >>> I noticed that this got flagged in patchwork since it is 'static in=
+line'
+> > >>> while being part of a complete translation unit - but I also see so=
+me
+> > >>> other places where that has been done.  I guess it should be just
+> > >>> 'static' though.  I don't feel very strongly about it.
+> > >>>
+> > >>
+> > >> We had a bit of discussion about this with Ilya. It seems "static
+> > >> inline" is a common pattern around the kernel. The coding style
+> > >> documentation says:
+> > >> "Generally, inline functions are preferable to macros resembling fun=
+ctions."
+> > >>
+> > >> So I think this "inline" is correct but I might be missing something=
+.
+> > >
+> > > Hi Adri=C3=A1n,
+> > >
+> > > TL;DR: Please remove this inline keyword
+> > >
+> > > For Kernel networking code at least it is strongly preferred not
+> > > to use inline in .c files unless there is a demonstrable - usually
+> > > performance - reason to do so. Rather, it is preferred to let the
+> > > compiler decide when to inline such functions. OTOH, the inline
+> > > keyword in .h files is fine.
 > >
-> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > ---
-> >  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
-> >  1 file changed, 19 insertions(+), 5 deletions(-)
+> > FWIW, the main reason for 'inline' here is not performance, but silenci=
+ng
+> > compiler's potential 'maybe unused' warnings:
 > >
-> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
-ller/pcie-brcmstb.c
-> > index c2eb29b886f7..4104c3668fdb 100644
-> > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > @@ -265,6 +265,7 @@ struct brcm_pcie {
-> >       enum pcie_type          type;
-> >       struct reset_control    *rescal;
-> >       struct reset_control    *perst_reset;
-> > +     struct reset_control    *bridge;
-> >       int                     num_memc;
-> >       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
-> >       u32                     hw_rev;
-> > @@ -732,12 +733,19 @@ static void __iomem *brcm7425_pcie_map_bus(struct=
- pci_bus *bus,
+> >  Function-like macros with unused parameters should be replaced by stat=
+ic
+> >  inline functions to avoid the issue of unused variables
 > >
-> >  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pci=
-e, u32 val)
-> >  {
-> > -     u32 tmp, mask =3D  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-> > -     u32 shift =3D RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
-> > +     if (pcie->bridge) {
-> > +             if (val)
-> > +                     reset_control_assert(pcie->bridge);
-> > +             else
-> > +                     reset_control_deassert(pcie->bridge);
+> > I think, the rule for static inline functions in .c files is at odds wi=
+th
+> > the 'Conditional Compilation' section of coding style.  The section doe=
+s
+> > recommend to avoid conditional function declaration in .c files, but I'=
+m not
+> > sure it is reasonable to export internal static functions for that reas=
+on.
+> >
+> > In this particular case we can either define a macro, which is discoura=
+ged
+> > by the coding style:
+> >
+> >  Generally, inline functions are preferable to macros resembling functi=
+ons.
+> >
+> > Or create a static inline function, that is against rule of no static
+> > inline functions in .c files.
+> >
+> > Or create a simple static function and mark all the arguments as unused=
+,
+> > which kind of compliant to the coding style, but the least pretty.
 >
-> Please check reset_control_assert/deassert() calls for error. This might
-> need to change the definition of brcm_pcie_bridge_sw_init_set_generic()
-> to return error.
-
-Hi Stan,
-
-Do you really think this is necessary?  If you look at
-"drivers/reset/reset-brcmstb.c"  there is no way for either of these
-calls to fail and I don't see that changing because it is just writing
-a bit into a register.
-
-Regards,
-Jim Quinlan
-Broadcom STB/CM
+> Hi Ilya,
 >
-> ~Stan
+> I guess I would lean towards the last option.
+> But in any case, thanks for pointing out that this is complex:
+> I had not realised that when I wrote my previous email.
+>
 
---00000000000039b94d061c480026
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+In that case this version (v7) should be good to go? Are there any other
+comments? Or is v8 preferred (the only change is between them is
+dropping the "inline")?
 
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCD/w/ZsrAMva9PkivF1d3Pa5dlckI/k
-PiGZHHgeCeUHKzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
-MDIxODM3MDdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAFyBdguU7EMZN+saQCEhQgj4yKfVGXSAkb3ixJUvFeTHsnSRL
-iOzJPIML8RC9Ix3WdiI9FlbR30zN4rTUuVv+y5WsSQhkB5HszqHJ59pSbFbcIHohGrWuyGc9kyk/
-+BnQG7r23Xk14+qLIxIWur0jrFK1b3y+ADtlbbq+yhDMo1hL3rKtwuGL4g5Mgj11k+SX1bWF2Aw2
-loX9ia+XaIcXISD00h4wxQP40wf9+LZ7K4YJkt3IMMs/kmVd/JaHllQXPbDcG540o9BKMs5DQ1la
-MgiLpj81ljVpoKTdyndu2DJqyOJkP5bcl3WRYdEI3JYK10I3KO5GUZM3rkiwmuL57g==
---00000000000039b94d061c480026--
+Thanks.
+Adri=C3=A1n
+
 
