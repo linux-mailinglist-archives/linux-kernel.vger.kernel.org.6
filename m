@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-237712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8362D923D08
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:59:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B457923D0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1106428575A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C541F2206D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F0D15D5B8;
-	Tue,  2 Jul 2024 11:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE41315B984;
+	Tue,  2 Jul 2024 11:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yYIkmgoc"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="ORaQ7w0G"
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C5E15B96F
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3320D15B54B;
+	Tue,  2 Jul 2024 11:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719921528; cv=none; b=NBEulwZxs7MZj5LofWY3c/jwoH1s0vPrKhulv9CmkEDWqZWBumGNCArzllrniYL6ELLPCjRNhuOc7KiTXjudpD94NrW79gN6TTqSqJSBvg0MmaLzY5erMWYDQ6gu0psetWgU/QAgMDatedWV9aY27PoSaEH9oOMVB/QKtthsJIw=
+	t=1719921559; cv=none; b=IglyUETLZuTfWxT/PT9lMCI+1DAV8rDOAOTWkkU3XLaO7w3uqXRbECUHm41H3eGmOkjE6pQnsvvpF1H6uYVuIrrnmfsAzIWQZg+hheTx2o3fh12eSVFwvXayZIjvtlVVBQ9li4d4xeWQkd7m0+D3qF+dgdqGw1ALtdsof+nPF/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719921528; c=relaxed/simple;
-	bh=6HBcDvUYgc7G8pAGE5H3ShPPqC5EVGedKJgNxCTIbPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hXuTjPu+FVACHEeSp9b0EwtBdK9aVY7IpGOEJ0yityg+r3io95GBjqsYBUQgUBHswjqt9HZwI2qooprxS7ztWjh0H0ZsQgI+UmuM4Oy5zr2vbDqDukPRL7o76A0+5k2doKzyFaqYDg2zJY51XaOjimFcQszIq+m5LaKCUl5KV/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yYIkmgoc; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a727d9dd367so440426966b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 04:58:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719921524; x=1720526324; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hJE3RjkR7P6xLKXHqEeA3UnQKhR6h3J7+TbtG/HNlPw=;
-        b=yYIkmgocA7z+ey6mx/G1aq0yqFXJyxU6FNbcFFAP5Sdkjwj1ph2XcFKtGCk9JhMT4y
-         /JcB1JmSIDxsDRu+oi6WXHYcwsdC4iIXQPeKWWIbNoJO+ctP9gxg/oXhj9Qkb4LwkrF5
-         5kl6KdMmXiz+6pkdsF4+5M0PIJKZSl7plIg4lBy6h2uelx20ivbdeBpGdPsvS928J94D
-         Oiv0D+N3XvO9RXDfH2xUZkZK2sHIaWg+jseCkGWApsj7Ut1elXkzp5Oo6bl4h7UfyFwD
-         3CP3j9Nrmhp0MXB05fRJVdQc0udCyp+OcmjN0T7EpfRL5XJEf94IofSVVkEbbXrAb8h0
-         uCEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719921524; x=1720526324;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hJE3RjkR7P6xLKXHqEeA3UnQKhR6h3J7+TbtG/HNlPw=;
-        b=dboW9bJAWCljaHwqCqn4nTLmg1o/Wx1/4lsUMCxyMcOuw7Su2/oS/YQpEsN+GEHuUK
-         rGO1Hw/1IgIP7rU/GPXqqdtrGFK6S6eIuNrODcI90ylsqb0lXr8/s0y7IxyIh5Etw1L0
-         2ShQ7YpsK6XvXd7wwxalkW/v/dk5Dn7bxrYXdRmK47/6REErebscRQgnjJJk2H3E5RV8
-         6OFB4HAx2ETLUzCnDzu+3/z3ee3EvTtfOSN5zEQrcQdTzBCNuZI6qVeB9hW9+MJWtbEq
-         vTtKDb48/D46nOoTs8a+/ANcLipcI/7Kx25dfjK3Yab+zghQ5cr2YHTZkDldgqNToOsz
-         sE/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWup1HXx+GELmymTsHMPtUtFkeDNY5RaUPSbzzxzYNS4Zxq2gDnCT97TS1LXJBTjo4oODWiR4X4xKo5Ye+lvvOjvpDPVkWFtiNaraNQ
-X-Gm-Message-State: AOJu0YwRi3pfBl7Ucz7IV9FgVpaMl/RPqDC78Qx8R7x5f095WKjWNnuN
-	gpU8GI9ZTUEm+gpO6y7ZL6shdp1srnxY8pz4kp8NpsktLH7A5htLUxEAYiPfSszt4snLFiVMdbh
-	NavH1wQQXtuZaZLNLEEfYcN+X5UB7k9Vp8ujDX7rvzhoW3tcIJYz3
-X-Google-Smtp-Source: AGHT+IEgm5z95cSGFxQ3V0ayY7Ai0asCW3V+jsOOSHTXOTWqh+9MPajWk+OvayBaKI3FNgoXefKdwE6XKrFDcgHdCBk=
-X-Received: by 2002:a17:907:724d:b0:a6f:b84e:8454 with SMTP id
- a640c23a62f3a-a751443c63emr627377266b.11.1719921524083; Tue, 02 Jul 2024
- 04:58:44 -0700 (PDT)
+	s=arc-20240116; t=1719921559; c=relaxed/simple;
+	bh=F++UahbENhm/ZjnaTLj0NSol7yay0twUWoVmOFZhbt4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=Vmlr/h9XugSkwsOcVxOhl6qaGaT6ALzuFUVIaqmnmBsdtXwsJ9Sskvyc8zYVwp7GpJr8wKOyAmyo+Ig3q/svMJ4PwbAwIaqba/NMIdMO6WnsWGe9I6TsvGk+dI1k0wDnHFZU/PJwts69nwj2+82JmNDUA3ZWy7CLOZxzeGH11Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=ORaQ7w0G; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id 0BB7655AC;
+	Tue,  2 Jul 2024 13:59:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
+	t=1719921548;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QyglTi9KHysASncK5Oh7S0RPke7ZcqfGxMohvs1cwTk=;
+	b=ORaQ7w0G92jN8q9k5pOoJa6IydOKlhfIUZRCY74ZR5FVLG4lS5YV8/PfimWSojKHzsEQu/
+	XNb0NC3aW2RUmVnTIxXK43TKi90qj0wfGEywTI+8onZ5yjHvSu81cv2N8ytsBJ08sp3s3r
+	gscpcJbWCKA8Ewwxt9nrRvmm06oWxaje7ptX+udTUqqXXnUyGinpWDWaTfwEaGWWSFfKmu
+	KWDwb49G9aye5011yEcYz6T9J/a8BrcjhZl4AWAXQZn2UFSOPRVclAgvRjRMpZXH/YEklK
+	abeKUY5aN21Z9P/JWM2nvOqwfN8lHFOOM0GVUkvxQzTlbZEq114Bnu04yNV7yA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240629232231.42394-1-21cnbao@gmail.com> <20240701235210.5c187c85aa225292d034cafc@linux-foundation.org>
-In-Reply-To: <20240701235210.5c187c85aa225292d034cafc@linux-foundation.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 2 Jul 2024 04:58:05 -0700
-Message-ID: <CAJD7tkYJwRF5B2-vQGkmEhgw9t20OcVbB7MNrQqvmTor8Vjptw@mail.gmail.com>
-Subject: Re: [PATCH] mm: zswap: fix zswap_never_enabled() for CONFIG_ZSWAP==N
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Barry Song <21cnbao@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Barry Song <v-songbaohua@oppo.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Chris Li <chrisl@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 02 Jul 2024 13:59:07 +0200
+Message-Id: <D2F1AZ99RBVF.X9Z84Y6Q61SM@walle.cc>
+Subject: Re: [PATCH net] net: phy: mscc-miim: Validate bus frequency
+ obtained from Device Tree
+Cc: "Andrew Lunn" <andrew@lunn.ch>, "Heiner Kallweit"
+ <hkallweit1@gmail.com>, "Russell King" <linux@armlinux.org.uk>, "David S.
+ Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <lvc-project@linuxtesting.org>
+From: "Michael Walle" <michael@walle.cc>
+To: "Aleksandr Mishin" <amishin@t-argos.ru>
+X-Mailer: aerc 0.16.0
+References: <20240702110650.17563-1-amishin@t-argos.ru>
+In-Reply-To: <20240702110650.17563-1-amishin@t-argos.ru>
 
-On Mon, Jul 1, 2024 at 11:52=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Sun, 30 Jun 2024 11:22:31 +1200 Barry Song <21cnbao@gmail.com> wrote:
->
-> > From: Barry Song <v-songbaohua@oppo.com>
-> >
-> > If CONFIG_ZSWAP is set to N, it means zswap cannot be enabled.
-> > zswap_never_enabled() should return true.
-> >
-> > ...
-> >
-> > --- a/include/linux/zswap.h
-> > +++ b/include/linux/zswap.h
-> > @@ -68,7 +68,7 @@ static inline bool zswap_is_enabled(void)
-> >
-> >  static inline bool zswap_never_enabled(void)
-> >  {
-> > -     return false;
-> > +     return true;
-> >  }
->
-> Well, that code was as wrong as it's possible to get.
->
-> But what effect does this have?  Seems "not much"?  Perhaps we'll
-> attempt a zswap_load() which later fails for other reasons?
+Hi,
 
-Actually zswap_load() is a noop with !CONFIG_ZSWAP, so it doesn't have
-an effect there. The only effect is that with Barry's latest large
-folio swapin patches for zram, we will always fallback to order-0
-swapin, even mistakenly when !CONFIG_ZSWAP.
+On Tue Jul 2, 2024 at 1:06 PM CEST, Aleksandr Mishin wrote:
+> In mscc_miim_clk_set() miim->bus_freq is taken from Device Tree and can
+> contain any value in case of any error or broken DT. A value of 214748364=
+8
+> multiplied by 2 will result in an overflow and division by 0.
+>
+> Add bus frequency value check to avoid overflow.
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
+> Fixes: bb2a1934ca01 ("net: phy: mscc-miim: add support to set MDIO bus fr=
+equency")
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> ---
+>  drivers/net/mdio/mdio-mscc-miim.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/net/mdio/mdio-mscc-miim.c b/drivers/net/mdio/mdio-ms=
+cc-miim.c
+> index c29377c85307..6380c22567ea 100644
+> --- a/drivers/net/mdio/mdio-mscc-miim.c
+> +++ b/drivers/net/mdio/mdio-mscc-miim.c
+> @@ -254,6 +254,11 @@ static int mscc_miim_clk_set(struct mii_bus *bus)
+>  	if (!miim->bus_freq)
+>  		return 0;
+> =20
+> +	if (miim->bus_freq =3D=3D 2147483648) {
 
-Basically the bug just makes Barry's in progress patches not work at all.
+Please avoid magic numbers.
+
+Instead of this, can we reorder the code and detect whether
+2*bus_freq will overflow?
+
+-michael
+
+> +		dev_err(&bus->dev, "Incorrect bus frequency\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	rate =3D clk_get_rate(miim->clk);
+> =20
+>  	div =3D DIV_ROUND_UP(rate, 2 * miim->bus_freq) - 1;
+
 
