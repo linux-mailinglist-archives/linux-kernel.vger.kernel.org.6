@@ -1,161 +1,142 @@
-Return-Path: <linux-kernel+bounces-237830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC91E923EAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:18:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD70923EBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73B50284867
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:18:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE038B24BC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1D51B47D4;
-	Tue,  2 Jul 2024 13:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1941B47DC;
+	Tue,  2 Jul 2024 13:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZElrYb39"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="emnKcO9R"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F551B4C41
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4B818C336
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719926272; cv=none; b=PxNNSAupI+BG5fBWHaINKiqOEQ7HSnhuA+jiDOvVLGpzgFC9kTGu2lmfLiKfk/zFzxOhLVBY2ucLBn1KL962OPM2oCsxbRU32EwRfrayi9K6Gxh0/NM6AL0sxwxg2saUGnm7WjrlfGdzfxNai0gtrZg23cxzqOOEE5nv9ZaX5WM=
+	t=1719926387; cv=none; b=JUINOju+3EEfmG9BcP5f4V+a4ZbQ+BoKuuNW11CXH0FLqTNG09zIJ5dUslJomZJ/D2pBjZLp/fs2YvxlOUULSGjGrApLyd49WYF9cCnRgbzVPOZhGQt2ZJYG4YfJeVNpRHRMMgjXOzfjgU2+7+dvBc3KBfjzwauD7AGF++NwG6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719926272; c=relaxed/simple;
-	bh=56D3oFUPXB12nDvAZQIXxt0iogBKNk73+4BwzOU+G/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o06C1GYtZAb6qPF3HLgorXCDUwyDE9EFi4GSRiItzoVLbmUz8/nMgDdHhwbctl3eIIlE6wkv1kPjrlUHUSd4jcAjIkloYTOC0JjUV8lbtkTFooblYw6s3SXahJOWeFkkNOIshVXortWLm/C+vGfzVrnoaSwuyjHTYull/ykvke8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZElrYb39; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1719926387; c=relaxed/simple;
+	bh=Ri2OlNdqm6+frOnytDrJauYbkPW4MU889L3TlKhT20g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mFU8Sp+Z4gnQTF2DLn/5oi7Lgdj9XOr1DAlbJsyK9NIQu83avx46hVdIepFjBVdyhzBDOPwjE47vpTzcrBlQ0+RkpvqqsRngLYFTzHeLWFoasldrg/X6n3HcXzdf+o3Yu2efT6udjenjsZ9rA5ZCMnvDibctn+ojV7MjevhryL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=emnKcO9R; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719926270;
+	s=mimecast20190719; t=1719926384;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=r2p9uBmenVl5aAeKfTbtNeRdv1FGbf5smq3mGsQuJ+g=;
-	b=ZElrYb390esAhU1mahPlGiovdBN4IXHVFaLxk6SPstkH6mBrSY3k758gBnwr0PnGJvt/yO
-	dzqVbS1cnx/wWN6o1K5NyZFN36yMDPlN9CBTYZdzLaJEQgS2nIlC0N9DXowGoUEHaysPEZ
-	HeRzw1HKgz7SxCIX9836kbGtkLijmE8=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=k4t3HYIWPAnXFThWat7RXWIQu9AR4mO328pEd1oUXQs=;
+	b=emnKcO9R93mjLpWYx4ydg7vSEDsWoQzGLDtCGcEBu/USz+U7dqYQX2AACMx82V0D+4dc/U
+	M545I1/3AZDhEUAkzb8IzbgdV8YEvyJ9uVGpdkf5YDQhD0iXVpswL11n0Mk9Npw2t5wPoE
+	3xm+605tyy/gmLiQOwiJ7nMDsOC6WRw=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-564-4-KEeDsfMXahCywpCThgOw-1; Tue, 02 Jul 2024 09:17:48 -0400
-X-MC-Unique: 4-KEeDsfMXahCywpCThgOw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42566c4aa0fso33558375e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:17:48 -0700 (PDT)
+ us-mta-117-XKP8UmFvNsW2esb1L4BI3Q-1; Tue, 02 Jul 2024 09:19:43 -0400
+X-MC-Unique: XKP8UmFvNsW2esb1L4BI3Q-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3678fcc4d7fso2149f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:19:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719926267; x=1720531067;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=r2p9uBmenVl5aAeKfTbtNeRdv1FGbf5smq3mGsQuJ+g=;
-        b=dMUEkTJhL6mN/CxWolzQbOMVp2lrAPRbKjvM/wUMz4d64RbLZsDK4FVMcdJKDWvHyZ
-         T1IwOORWS4P7QNEHhfTHBnvqsuTlC45j3sM+CDdQ8Dx935GgQt5d+idFEXI8L2nvx/yN
-         4oeNYNzRRNfaWAeq0dmCaUFNwtLaGPr/Z610xU5OqZkGlcaiMvDPgozU4K/cHHV1i1Af
-         5ZC0qRQXOgY+ZrWbGTiJjR9vhxc5Gatg5HV88vwATM1tg5qeKZ5u8msLDSlw9Ue96PWg
-         MiADJKmPmh2LcDuGmNw6L3O1aFnHNy0ONSd96tNe6671WY1uLIbfs1t6UDSffjJ1g2LG
-         ta1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUYgVDo+KcQ37Wa6mpAD/jV8Rk0pBIVojTrcLCncfOlqlbAwBiudBQ4+l6LfAJv6NKM7FLpVXhqMpDOC+yiiUbyeZ3CZwM2g5HkfKMX
-X-Gm-Message-State: AOJu0YziCtJUHSgJvrApZ5U185fceN5rYKbGbfPKBl09GbytvXQ7Jjgg
-	xku18NxoAGna5KhhGvwJekiOsDSs5VjDFiZywolgI3OV7VEbmGon2KZLqarHY6lAdV990tagrC6
-	ukrwVSN3RAGqNzqyRq58ZjWFyCjhgyk1C/vtyvbOEYJDII3u0reMrMWFlIPw2hQ==
-X-Received: by 2002:a05:600c:63c8:b0:425:7974:2266 with SMTP id 5b1f17b1804b1-4257a03a58amr60218315e9.24.1719926267656;
-        Tue, 02 Jul 2024 06:17:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZSyo/GPdMeFh9+/jb/swoMKCwXF3lTMsSpqIL3VWN0OM+Ynzh0EQWu+uY7PgSuw3FzktIiQ==
-X-Received: by 2002:a05:600c:63c8:b0:425:7974:2266 with SMTP id 5b1f17b1804b1-4257a03a58amr60218005e9.24.1719926267149;
-        Tue, 02 Jul 2024 06:17:47 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c739:2400:78ac:64bb:a39e:2578? (p200300cbc739240078ac64bba39e2578.dip0.t-ipconnect.de. [2003:cb:c739:2400:78ac:64bb:a39e:2578])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af5b66csm194551335e9.18.2024.07.02.06.17.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 06:17:46 -0700 (PDT)
-Message-ID: <b0c3ab9b-6115-4ffc-88a4-f0c3640b9c62@redhat.com>
-Date: Tue, 2 Jul 2024 15:17:45 +0200
+        d=1e100.net; s=20230601; t=1719926382; x=1720531182;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k4t3HYIWPAnXFThWat7RXWIQu9AR4mO328pEd1oUXQs=;
+        b=FdDalVrZ1OKc4JV++FRb2TdXOM9DU1mfjSf8cDiUikc4PRY8CY5pPFSo+EaVOVa0d4
+         E6u38Ia1khuiyLR6rc8otHlBkGJG/LyLRznwJEOi3Vpo0ImVMecnh1kMfPZf6SE2AN5i
+         HrTfojagmMru0i9VSPN0pzIxF+Sm2lOrcvh/WDMLU687Xhyiz0XaFRhPaJTg2H+w4yU5
+         11upgm2yFKs3XndqnCs+owfVKpCFBg+lGZVGSpOu5bGmWU117rQmJFPvLcOGzieJ/Wus
+         sAB+9fdjdilWsb0kAgI8XyoCDdgfMQT92gUsljcWRIl+R15hXLDJ+hgy6zv/f+Lmiahh
+         zeLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3wnib8fbVszAJiyTbYBe6HaeLnPCVKxJEv2lZpPx12LjgTeBnnmpeCf/89DRrpK9MPdgW9NW3/MFaEBKdImfLRAwVeCGVZB/rJBoP
+X-Gm-Message-State: AOJu0YzVFu6EceTF3p8FtgXOQXQQAGVvZQUA5hHXzerUzN2hC67SZ/EX
+	ZDOxBuNaHZxXHEl3Ewcqw7YhXDW32ZmadmbveSMkUWSmLZyxhyYj02HyTQSU6lF3ba1JTCNhu2g
+	MB0q8e/squuca2TB5DDSjigjKrqFYbbH47hkkLBkbRMbmrIOMPVgtM/31eRUBMQ==
+X-Received: by 2002:a05:600c:4848:b0:425:7ac6:96f7 with SMTP id 5b1f17b1804b1-4257ac69876mr57582365e9.0.1719926382061;
+        Tue, 02 Jul 2024 06:19:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHMqbmBmqm89pN9bKVVywZSK576kfBQm2aipe3OWPR1KebDTcG/r9YI4+9+6wjKKkIIlL4W7g==
+X-Received: by 2002:a05:600c:4848:b0:425:7ac6:96f7 with SMTP id 5b1f17b1804b1-4257ac69876mr57582155e9.0.1719926381667;
+        Tue, 02 Jul 2024 06:19:41 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3341:b0a6:6710::f71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af55cccsm198502145e9.16.2024.07.02.06.19.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 06:19:41 -0700 (PDT)
+Message-ID: <8ee273f0647d00ee23f964e3f3f4a216c8413b84.camel@redhat.com>
+Subject: Re: [PATCH net-next v5 2/7] netlink: specs: Expand the PSE netlink
+ command with C33 new features
+From: Paolo Abeni <pabeni@redhat.com>
+To: Kory Maincent <kory.maincent@bootlin.com>, "David S. Miller"
+	 <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	 <kuba@kernel.org>, Donald Hunter <donald.hunter@gmail.com>, Oleksij Rempel
+	 <o.rempel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Dent Project
+	 <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
+	linux-doc@vger.kernel.org
+Date: Tue, 02 Jul 2024 15:19:39 +0200
+In-Reply-To: <20240628-feature_poe_power_cap-v5-2-5e1375d3817a@bootlin.com>
+References: <20240628-feature_poe_power_cap-v5-0-5e1375d3817a@bootlin.com>
+	 <20240628-feature_poe_power_cap-v5-2-5e1375d3817a@bootlin.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: remove CONFIG_MEMCG_KMEM
-To: Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>, Roman Gushchin
- <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240701153148.452230-1-hannes@cmpxchg.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240701153148.452230-1-hannes@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 01.07.24 17:31, Johannes Weiner wrote:
-> CONFIG_MEMCG_KMEM used to be a user-visible option for whether slab
-> tracking is enabled. It has been default-enabled and equivalent to
-> CONFIG_MEMCG for almost a decade. We've only grown more kernel memory
-> accounting sites since, and there is no imaginable cgroup usecase
-> going forward that wants to track user pages but not the multitude of
-> user-drivable kernel allocations.
+On Fri, 2024-06-28 at 10:31 +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+>=20
+> Expand the c33 PSE attributes with PSE class, extended state information
+> and power consumption.
+>=20
+> ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-get
+> 	     --json '{"header":{"dev-name":"eth0"}}'
+> {'c33-pse-actual-pw': 1700,
+>  'c33-pse-admin-state': 3,
+>  'c33-pse-pw-class': 4,
+>  'c33-pse-pw-d-status': 4,
+>  'header': {'dev-index': 4, 'dev-name': 'eth0'}}
+>=20
+> ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-get
+> 	     --json '{"header":{"dev-name":"eth0"}}'
+> {'c33-pse-admin-state': 3,
+>  'c33-pse-ext-state': 'mr-mps-valid',
+>  'c33-pse-ext-substate': 2,
+>  'c33-pse-pw-d-status': 2,
+>  'header': {'dev-index': 4, 'dev-name': 'eth0'}}
+>=20
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Absolutely
+This does not apply cleanly to net-next due to commit 46fb3ba95b93
+("ethtool: Add an interface for flashing transceiver modules'
+firmware").
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Please rebase and re-submit.
 
--- 
-Cheers,
+Also it would be great if you could add some documentation to the new
+attributes.
 
-David / dhildenb
+Thanks,
+
+Paolo
 
 
