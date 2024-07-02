@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-237292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 827CC91EECB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:14:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E4491EED6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E789BB21B07
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:14:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330A42833A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED5855C1A;
-	Tue,  2 Jul 2024 06:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3EE7E0FC;
+	Tue,  2 Jul 2024 06:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rhqNNg0I"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24806747F
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 06:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="CoUYIKQ6"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3893F5CDE9;
+	Tue,  2 Jul 2024 06:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719900847; cv=none; b=Qb2IjwXe1QxV9Rf1C8eTEpak6uKEX9OPi/5bZjtv6DtJGv1Jz7hGxgvitV8RV/pjqpM9iJqnu7WKuixtK2hehNHhPFvKJnQTMRbhPWbZ8/IEpd/PH+uN5qo0/OTv3r9PM9i3P4/qPSKdVsYEMxK83cCmI0ktQTNRelmEWXA/RRA=
+	t=1719901143; cv=none; b=JzEP158lKBZP/GLJVatMXrciiKO1UMimU4+TWc3sQ1y9g62pMkI+2T3MBaVaTf6wc0atkAgwNo7k5ThGc42SG2AwZ2xwZx9QXdMvbYgAD0Jt/e/sCMyB9DBX9Ye0wvtATvCUV4uhhE7438G3PKRV2stMSLi5Nj1PW0Cit4Ff5SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719900847; c=relaxed/simple;
-	bh=cuq57puEZlPVYH0zxLtbdFgQQUF/SdQZusuVvv78jy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F6hUrGVfFBB7zJyJW4rJQZ62OvtwIktC3U3b7bwZFnBjwJotBjtImLeHs/ih13vayXZqscqUq4Do6D7xB4j0wwTuHTZsax6J6uicKONiOgfWbG+nLXK8todBgmG1bLZSqPL2wMMLqo3Uvq62ucuvHhdBA9z9DfBk9R9paR0c6Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rhqNNg0I; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719900843; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=erDT9J5j1rBE4ZxSrWgpupITXKbScrM2e64G+CfHvXQ=;
-	b=rhqNNg0I/qjp4O0FlMjOEeDfM8rowrw6mXvNOeIC/Qc7tcYbbl7Xvmp6ON7vBwPQ/ql4EOiKrS6ufVeZzOREcadAcB4KMEH4u+rj030jQW3Oj9BZahbSsAisCcfVc4aB9h2iSIFeZyUzi31lDV0iUSqVMoEC8V6alvFam/9vK7A=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0W9hWdSb_1719900840;
-Received: from 30.97.56.72(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9hWdSb_1719900840)
-          by smtp.aliyun-inc.com;
-          Tue, 02 Jul 2024 14:14:01 +0800
-Message-ID: <6f383c8c-b125-4374-bf21-67b6cc3edcbe@linux.alibaba.com>
-Date: Tue, 2 Jul 2024 14:14:00 +0800
+	s=arc-20240116; t=1719901143; c=relaxed/simple;
+	bh=O0w7oKR0burBEOSpg+U3UFChgxP0OfT3G9l1MZDodiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7txL0vhEhmWloTQ+y5vX/ECoYRboDVwExS9ICbiLJ4Xh4FjlPcOVDZQ7zp/ihnnfqnRrOgRxVt+mkh+iqd0IMSn5oNvA4trtV6BnezIwrmc3zlMAGxJ85D+JCA+HSQQeiqybEOrCKsj2LPJwV+cI2wcEu8DkKDHv3ZAQTcXvhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=CoUYIKQ6; arc=none smtp.client-ip=1.95.21.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=Ak5QZwwkUOt94pN1EzjhG1GszUbTrlXG7hmPV7Sskx0=;
+	b=CoUYIKQ6GYEzZp3TKUEtEfKy7wrlsPkaps7HvlVQ/V9uREkeuMJ635kHQogJ9x
+	arN06v5fF/Z0eeB0+viRPlkHb8obnpRQ9BO1Rm5l6l0lUhcY65yPviTUrxqF2kW6
+	UX2WPl6oLD4VW7dQMxd/KjAFdaUJOPUoGSUNcw3OlGyOE=
+Received: from dragon (unknown [114.218.218.47])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgD3Pwedm4Nm4zIHAA--.18405S3;
+	Tue, 02 Jul 2024 14:18:06 +0800 (CST)
+Date: Tue, 2 Jul 2024 14:18:04 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/8] arm64: dts: imx8qm: add lvds subsystem
+Message-ID: <ZoObnDqMd2EL4W6F@dragon>
+References: <20240701-imx8qm-dts-usb-v4-0-03cdbc8c44b6@nxp.com>
+ <20240701-imx8qm-dts-usb-v4-2-03cdbc8c44b6@nxp.com>
+ <ZoN90rHfpK7niqEr@dragon>
+ <ZoOAjSUp29DBhY+/@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: thp: support "THPeligible" semantics for mTHP with
- anonymous shmem
-To: Bang Li <libang.li@antgroup.com>, ughd@google.com,
- akpm@linux-foundation.org
-Cc: david@redhat.com, ryan.roberts@arm.com, wangkefeng.wang@huawei.com,
- ioworker0@gmail.com, ziy@nvidia.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240702023401.41553-1-libang.li@antgroup.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20240702023401.41553-1-libang.li@antgroup.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZoOAjSUp29DBhY+/@lizhi-Precision-Tower-5810>
+X-CM-TRANSID:M88vCgD3Pwedm4Nm4zIHAA--.18405S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uF15GFWDXrW8uw13CrW8tFb_yoW8uw48p3
+	48CF1aqr18tFW7ur9Ig3W8KFn5Kwn5tF1Uur17G34jyrnIyrnrtr1rCr45ury8Xr4Ik3yS
+	9Fn0qr4fKrn8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j6_M3UUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRsQZWZv-d19HwABst
 
-
-
-On 2024/7/2 10:34, Bang Li wrote:
-> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
-> anonymous shmem"), we can configure different policies through
-> the multi-size THP sysfs interface for anonymous shmem. But
-> currently "THPeligible" indicates only whether the mapping is
-> eligible for allocating THP-pages as well as the THP is PMD
-> mappable or not for anonymous shmem, we need to support semantics
-> for mTHP with anonymous shmem similar to those for mTHP with
-> anonymous memory.
+On Tue, Jul 02, 2024 at 12:22:37AM -0400, Frank Li wrote:
+> On Tue, Jul 02, 2024 at 12:10:58PM +0800, Shawn Guo wrote:
+> > On Mon, Jul 01, 2024 at 11:03:28AM -0400, Frank Li wrote:
+> > > Add irqsteer, pwm and i2c in lvds subsystem.
+> > > 
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > >  arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi | 77 +++++++++++++++++++++++
+> > >  arch/arm64/boot/dts/freescale/imx8qm.dtsi         | 10 +++
+> > >  2 files changed, 87 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi b/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi
+> > > new file mode 100644
+> > > index 0000000000000..1da3934847057
+> > > --- /dev/null
+> > > +++ b/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi
+> > > @@ -0,0 +1,77 @@
+> > > +// SPDX-License-Identifier: GPL-2.0+
+> > > +
+> > > +/*
+> > > + * Copyright 2024 NXP
+> > > + */
+> > > +
+> > > +&qm_lvds0_lis_lpcg {
+> > > +	clocks = <&lvds_ipg_clk>;
+> > > +	clock-indices = <IMX_LPCG_CLK_4>;
+> > > +};
+> > > +
+> > > +&qm_lvds0_pwm_lpcg {
+> > > +	clocks = <&clk IMX_SC_R_LVDS_0_PWM_0 IMX_SC_PM_CLK_PER>,
+> > > +		 <&lvds_ipg_clk>;
+> > > +	clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
+> > > +};
+> > > +
+> > > +&qm_lvds0_i2c0_lpcg {
+> > > +	clocks = <&clk IMX_SC_R_LVDS_0_I2C_0 IMX_SC_PM_CLK_PER>,
+> > > +		 <&lvds_ipg_clk>;
+> > > +	clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
+> > > +};
+> > > +
+> > > +&qm_pwm_lvds0 {
+> > > +	clocks = <&qm_lvds0_pwm_lpcg IMX_LPCG_CLK_4>,
+> > > +		 <&qm_lvds0_pwm_lpcg IMX_LPCG_CLK_0>;
+> > > +};
+> > > +
+> > > +&qm_i2c0_lvds0 {
+> > > +	clocks = <&qm_lvds0_i2c0_lpcg IMX_LPCG_CLK_0>,
+> > > +		 <&qm_lvds0_i2c0_lpcg IMX_LPCG_CLK_4>;
+> > > +};
+> > > +
+> > > +&lvds0_subsys {
+> > > +	interrupt-parent = <&irqsteer_lvds0>;
+> > > +
+> > > +	irqsteer_lvds0: interrupt-controller@56240000 {
+> > > +		compatible = "fsl,imx8qm-irqsteer", "fsl,imx-irqsteer";
+> > 
+> > Is compatible "fsl,imx8qm-irqsteer" documented in bindings?
 > 
-> Signed-off-by: Bang Li <libang.li@antgroup.com>
-> ---
-> Changes since v1 [1]:
->   - Put anonymous shmem mthp related logic into
->     thp_vma_allowable_orders() (per David)
+> In rob' tree
 > 
-> [1] https://lore.kernel.org/linux-mm/20240628104926.34209-1-libang.li@antgroup.com/
-> ---
->   include/linux/huge_mm.h | 11 +++++++++++
->   mm/huge_memory.c        | 13 +++++++++----
->   mm/shmem.c              |  9 +--------
->   3 files changed, 21 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 212cca384d7e..f87136f38aa1 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -267,6 +267,10 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
->   	return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders);
->   }
->   
-> +unsigned long shmem_allowable_huge_orders(struct inode *inode,
-> +				struct vm_area_struct *vma, pgoff_t index,
-> +				bool global_huge);
-> +
->   struct thpsize {
->   	struct kobject kobj;
->   	struct list_head node;
-> @@ -460,6 +464,13 @@ static inline unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
->   	return 0;
->   }
->   
-> +static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
-> +				struct vm_area_struct *vma, pgoff_t index,
-> +				bool global_huge)
-> +{
-> +	return 0;
-> +}
+> https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git/commit/?h=dt/next&id=285c645d842c5a15d3be2d653faaa5f68d81be1f
 
-This function should be placed in the ‘shmem_fs.h’ header file, just 
-like shmem_is_huge().
+I do not see "fsl,imx8qm-irqsteer" in the patch.
+
+Shawn
+
 
