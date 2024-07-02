@@ -1,191 +1,99 @@
-Return-Path: <linux-kernel+bounces-238584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61CF0924C67
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 214B4924C6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B4B11F22E33
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:51:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0C491F23B43
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7574417A5BC;
-	Tue,  2 Jul 2024 23:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA86B17DA01;
+	Tue,  2 Jul 2024 23:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxK70bGB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jb/HnJBB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46C31DA32A;
-	Tue,  2 Jul 2024 23:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276841DA32A;
+	Tue,  2 Jul 2024 23:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719964262; cv=none; b=ga/9C2QRt/9E89XLqiFYHFlRc/AC4SzT5L5X9fxxhkmuV7MLizo4s9qbMkaSWWy1NRwWOIhwh60qIr9MxwF0k0uKDvpU9wMUTsaoLhcihqiXvyLET3XgSJgvhnrCCg6cpJsgY7jiuxI8Raegp4KoZ9NSC3kpidaoFfV0JHyV6Do=
+	t=1719964318; cv=none; b=gE98a3dScspoVxzvu1a3n5/cDwvy9umxzgjC6XCL58wlpz1ATRgCMAv1tGNDvS+jI4nl1TawDoOe96YKPFkZ+7lZ78UbBakOI1nMsLTpYng+UuSjWkNL0zHON+Gj4+0ZhG+m2z2Ijui8a7fj4no3MapUwZ1LfeeoW/Ruq2VkVlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719964262; c=relaxed/simple;
-	bh=ctcDbJ9YllTRckLiie3Fv33wxtw7FWJYQwy96EE4ENg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XJAuCMDjKjsrTickaVaFPNDSuxcbwJYOxkX7ZzJZ0IxT4c4udunEnrMXy6NuuRXaTwkyY06yKwt73pjSliEzHCqmNB/7FllzzgIVvYEgqHIsXq5Lmg6kqmCFHlscFgVfB/wGygyL5sS0nMghkS1SbXAy5e/ZPDPlfnjyMjqJgXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxK70bGB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02530C116B1;
-	Tue,  2 Jul 2024 23:51:01 +0000 (UTC)
+	s=arc-20240116; t=1719964318; c=relaxed/simple;
+	bh=xtGEMklBASK9K0okBDOej3qK+gT+9/BIodo+1smdjCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HVf8p3JKjVVbzrjJMPJAjaPKsI/ILbSPd2Q1zH/d5G1YWpfDhiST2HSAzYpPriGFZsNcPpuhWzvC9zYiHfpckA9JKgSd73Dqjg77UIy5x4UuOl/J5WR/Y7/a+fSKOoQs8/O5kIujD+KKJNLqZwawSNKyakwtzrjSXiJ91EP1Tok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jb/HnJBB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B1AEC116B1;
+	Tue,  2 Jul 2024 23:51:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719964262;
-	bh=ctcDbJ9YllTRckLiie3Fv33wxtw7FWJYQwy96EE4ENg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=jxK70bGBMieCUxYq1eVUZu5ETs9nQnTUi+WaREKXaxDiU+S+9I+HPr3PGEAsCOXGR
-	 NC5eUyk7nU5/393x7t+vX7jnDz889wiWvMHspiNdbRNJIaYACgTnaYHGQ8uvqfogHL
-	 JT+iKg1xOjJH2TR/n9GR2aPOn4OvoV+J4/CuC5XK+hvqG23RdcKOl1q3V2x9urpOOl
-	 P2D8gjbYbejVu6A2XJIywioUEqr8z8HrYPW8VRwKTeIH4YCt70l+o192sVPXPNCDlY
-	 WL0B2jfqgms5GkW+Wd8x0rRHBmGwgCsCEPsMH2WVwwOOD57zXt3L3Fqn836iWR3R2U
-	 LBxHbgbOgL9Vw==
-Message-ID: <1e74e47457e2dec53bdb0b18b678a1e99299d53e.camel@kernel.org>
-Subject: Re: [PATCH] selftests: tpm2: conform test to TAP output
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>, Shuah Khan
-	 <shuah@kernel.org>
-Cc: kernel@collabora.com, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 03 Jul 2024 02:50:58 +0300
-In-Reply-To: <20240702065559.772855-1-usama.anjum@collabora.com>
-References: <20240702065559.772855-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=k20201202; t=1719964318;
+	bh=xtGEMklBASK9K0okBDOej3qK+gT+9/BIodo+1smdjCA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jb/HnJBBDEdpZiTmtQAk61Kx2Ohuufbxox3fv5JTpJ+v0sJ/RcZt7JCWNKfXROERb
+	 A2/Sf1N9tG8rdadPsCJO6FESq5C286nF+7jyy+NV8inVWbENWPIGSz+U7sKpv7Rmel
+	 THBM98c0ZjSVR/MZYoBcljxNHV2apRXtAqDdjhTLAs/VgmverZYLo0lAc3QwWTYW2/
+	 hE/CC2emDPLEBn8T4ntA1ju+NMPbBr1L6m+QIRWgkGr+2EhzNEn+xkPYyQ9DNKwVFZ
+	 3F/RaWeRTrlHqS+HiK4SsgS+6XJ/uWS63EcEsd05SqzzfhXzxKWA6uifikbsnOc1eJ
+	 VK8CqhOMLVnuw==
+Date: Tue, 2 Jul 2024 16:51:56 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, james.clark@arm.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf pmu: Remove unneeded semicolon
+Message-ID: <ZoSSnBBXr5kb_zv3@google.com>
+References: <20240701034300.558886-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240701034300.558886-1-nichen@iscas.ac.cn>
 
-On Tue, 2024-07-02 at 11:55 +0500, Muhammad Usama Anjum wrote:
-> The python unittest is being used for executing tests. TAP output
-> cannot be added in the unittest framework. The python unittest is being
-> run from a script. Add the output TAP logs to the script. Add "#"
-> prefix to the python unittest output which will mark all output as
-> informational TAP messages. Check exit status of the python unittest to
-> decide if test passed or failed. Not sure why but python unittest
-> outputs logs in stderr. So redirect the logs to stdout and then add
-> prefix.
->=20
-> Specify the bash explicitly instead of sh to run these tests as all of
-> the kselftests are shifting towards using bash explicitly. Some
-> interpreters have different syntax and cause issues.
->=20
-> Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Hello,
+
+On Mon, Jul 01, 2024 at 11:43:00AM +0800, Chen Ni wrote:
+> Remove unneeded semicolon.
+> This is detected by coccinelle.
+> 
+> Fixes: d9c5f5f94c2d ("perf pmu: Count sys and cpuid JSON events separately")
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+
+Thanks for the fix but it's already fixed.
+
+https://lore.kernel.org/linux-perf-users/20240628053049.44521-1-yang.lee@linux.alibaba.com/
+
+Namhyung
+
 > ---
-> Changes since v1:
-> - CC more people which were missing earlier
-> ---
-> =C2=A0tools/testing/selftests/tpm2/test_async.sh | 24 ++++++++++++++++---=
----
-> =C2=A0tools/testing/selftests/tpm2/test_smoke.sh | 19 ++++++++++++++---
-> =C2=A0tools/testing/selftests/tpm2/test_space.sh | 19 ++++++++++++++---
-> =C2=A03 files changed, 50 insertions(+), 12 deletions(-)
->=20
-> diff --git a/tools/testing/selftests/tpm2/test_async.sh
-> b/tools/testing/selftests/tpm2/test_async.sh
-> index 43bf5bd772fd4..0e6e5d9d649fb 100755
-> --- a/tools/testing/selftests/tpm2/test_async.sh
-> +++ b/tools/testing/selftests/tpm2/test_async.sh
-> @@ -1,10 +1,22 @@
-> -#!/bin/sh
-> +#!/bin/bash
-> =C2=A0# SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-> =C2=A0
-> -# Kselftest framework requirement - SKIP code is 4.
-> -ksft_skip=3D4
-> +DIR=3D"$(dirname $(readlink -f "$0"))"
-> +source "${DIR}"/../kselftest/ktap_helpers.sh
-> =C2=A0
-> -[ -e /dev/tpm0 ] || exit $ksft_skip
-> -[ -e /dev/tpmrm0 ] || exit $ksft_skip
-> +ktap_print_header
-> =C2=A0
-> -python3 -m unittest -v tpm2_tests.AsyncTest
-> +[ -e /dev/tpm0 ] || ktap_finished
-> +[ -e /dev/tpmrm0 ] || ktap_finished
-> +
-> +ktap_set_plan 1
-> +
-> +python3 -m unittest -v tpm2_tests.AsyncTest 2>&1 | sed "s/^/# /"
-> +
-> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
-> +	ktap_test_pass "tpm2_tests.AsyncTest"
-> +else
-> +	ktap_test_fail "tpm2_tests.AsyncTest"
-> +fi
-> +
-> +ktap_finished
-> diff --git a/tools/testing/selftests/tpm2/test_smoke.sh
-> b/tools/testing/selftests/tpm2/test_smoke.sh
-> index 58af963e5b55a..2219a180de91d 100755
-> --- a/tools/testing/selftests/tpm2/test_smoke.sh
-> +++ b/tools/testing/selftests/tpm2/test_smoke.sh
-> @@ -1,9 +1,22 @@
-> -#!/bin/sh
-> +#!/bin/bash
-> =C2=A0# SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-> =C2=A0
-> =C2=A0# Kselftest framework requirement - SKIP code is 4.
-> -ksft_skip=3D4
-> +DIR=3D"$(dirname $(readlink -f "$0"))"
-> +source "${DIR}"/../kselftest/ktap_helpers.sh
-> +
-> +ktap_print_header
-> =C2=A0
-> =C2=A0[ -e /dev/tpm0 ] || exit $ksft_skip
-> =C2=A0
-> -python3 -m unittest -v tpm2_tests.SmokeTest
-> +ktap_set_plan 1
-> +
-> +python3 -m unittest -v tpm2_tests.SmokeTest 2>&1 | sed "s/^/# /"
-> +
-> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
-> +	ktap_test_pass "tpm2_tests.AsyncTest"
-> +else
-> +	ktap_test_fail "tpm2_tests.AsyncTest"
-> +fi
-> +
-> +ktap_finished
-> diff --git a/tools/testing/selftests/tpm2/test_space.sh
-> b/tools/testing/selftests/tpm2/test_space.sh
-> index 04c47b13fe8ac..6a55d13d74983 100755
-> --- a/tools/testing/selftests/tpm2/test_space.sh
-> +++ b/tools/testing/selftests/tpm2/test_space.sh
-> @@ -1,9 +1,22 @@
-> -#!/bin/sh
-> +#!/bin/bash
-> =C2=A0# SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-> =C2=A0
-> =C2=A0# Kselftest framework requirement - SKIP code is 4.
-> -ksft_skip=3D4
-> +DIR=3D"$(dirname $(readlink -f "$0"))"
-> +source "${DIR}"/../kselftest/ktap_helpers.sh
-> +
-> +ktap_print_header
-> =C2=A0
-> =C2=A0[ -e /dev/tpmrm0 ] || exit $ksft_skip
-> =C2=A0
-> -python3 -m unittest -v tpm2_tests.SpaceTest
-> +ktap_set_plan 1
-> +
-> +python3 -m unittest -v tpm2_tests.SpaceTest 2>&1 | sed "s/^/# /"
-> +
-> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
-> +	ktap_test_pass "tpm2_tests.AsyncTest"
-> +else
-> +	ktap_test_fail "tpm2_tests.AsyncTest"
-> +fi
-> +
-> +ktap_finished
-
-Acknowledging that I noticed this but won't test
-before week 31, when I'm back from holiday.
-
-BR, Jarkko
-
+>  tools/perf/util/pmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> index c94a91645b21..884eb23445e4 100644
+> --- a/tools/perf/util/pmu.c
+> +++ b/tools/perf/util/pmu.c
+> @@ -1773,7 +1773,7 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
+>  	size_t nr;
+>  
+>  	pmu_aliases_parse(pmu);
+> -	nr = pmu->sysfs_aliases + pmu->sys_json_aliases;;
+> +	nr = pmu->sysfs_aliases + pmu->sys_json_aliases;
+>  
+>  	if (pmu->cpu_aliases_added)
+>  		 nr += pmu->cpu_json_aliases;
+> -- 
+> 2.25.1
+> 
 
