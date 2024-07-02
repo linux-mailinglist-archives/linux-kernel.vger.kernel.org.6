@@ -1,534 +1,217 @@
-Return-Path: <linux-kernel+bounces-237273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053F291EE68
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:38:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A86891EE75
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE954283873
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:38:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4091B2257C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECF75A0FE;
-	Tue,  2 Jul 2024 05:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D825821A;
+	Tue,  2 Jul 2024 05:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wzkLo0iN"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="mLL5iRS1";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="AC/0tVkZ"
+Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B452B9D8
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 05:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719898678; cv=none; b=RC/ERLYRfa0126keydmJC86QHTbI8Vh8Np6eP5LlDVes9j66xq07FazPbGYf4Ao612iopM0C9ibgCkn6hWjNuZX8npopAqoB7tkoDx9vjKmsSvYelOX3i6g8ce3fNwrn8LhxmAVu54FDNl0Knk/7sXpGQUUt59vi0n/PCw9j4XY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719898678; c=relaxed/simple;
-	bh=XPgd9odMqUx3qiZpRzCeyqipM38IXfdj9CgZf+m9zi8=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=pyRDlSkm09/jS9P3ZbrcJ/90ecHPy3bvqVLg6USau7782BbCPk9kfum4t+NN25YCMvh4nWFgLfQ9l/6ZSKgU+F2bJCBjy3TdIAx0R0m9GFm5E1z3aWPPgWp3dc55lEjAeBhUWx4+iSAJCA2IB7AQ5tYqy77bnfuk/oeQj5xMnqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wzkLo0iN; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: ying.huang@intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719898673;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=73xYp2UvuuiTqq3Dx4h6CO2Kz6sGNd96n78O6ol2uyA=;
-	b=wzkLo0iNP5B95/q8zo3yui0WSwg4gSn0wJwWhEOfkCDJAZx7/Sg1xvt2+Rp1MKooX6Rfym
-	tULVAT1RgSHPe71YnGh9mQ3vUmzVjOndjK6u4cSIfT4vdU2L0HDluE68B8y772SQ/Jc8wA
-	y80wW74TTj5XFkLKMDZyi0wvp7qin6E=
-X-Envelope-To: jonathan.cameron@huawei.com
-X-Envelope-To: gourry.memverge@gmail.com
-X-Envelope-To: aneesh.kumar@linux.ibm.com
-X-Envelope-To: mhocko@suse.com
-X-Envelope-To: tj@kernel.org
-X-Envelope-To: john@jagalactic.com
-X-Envelope-To: emirakhur@micron.com
-X-Envelope-To: vtavarespetr@micron.com
-X-Envelope-To: ravis.opensrc@micron.com
-X-Envelope-To: apopple@nvidia.com
-X-Envelope-To: sthanneeru@micron.com
-X-Envelope-To: sj@kernel.org
-X-Envelope-To: rafael@kernel.org
-X-Envelope-To: lenb@kernel.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: dave.jiang@intel.com
-X-Envelope-To: dan.j.williams@intel.com
-X-Envelope-To: linux-acpi@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: horenc@vt.edu
-X-Envelope-To: horenchuang@bytedance.com
-X-Envelope-To: horenchuang@gmail.com
-X-Envelope-To: linux-cxl@vger.kernel.org
-X-Envelope-To: qemu-devel@nongnu.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E702B9D8;
+	Tue,  2 Jul 2024 05:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.153.141
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719898885; cv=fail; b=nRfYGldJKnjl0r9AMh4Qm5TLfQKxQXl6ocC0Ah460VckgwJoRk+zvbS//+9GUbFxRciALUKOVdvs89h/TtAPTpz8m8v67MU6X7Oc1KJlj10TX9yM0h8HYWI9q7ezyOPb6GZkY/BJp1FVAQLlPiPsezRNUaGeM35umolFHCgI9AM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719898885; c=relaxed/simple;
+	bh=TPADmyGfhHgn3rCrbERf70/Ulj2xDv0HjYwtueRQtrE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dHWIy5fxwXAEwQqukXkft2HJL4A9PLjbW3kgGKPx+2UIW0B1GOUNskjx/5A3a/fte0Q4h075UMfMm43NAuQqFmjvTQxGpV01XZv/ggoeDO5Zw0iYarz8F50AVLtFl/RPSNbuXstZvjTR+pkotcTetxdzzz7OkJ4iSekzxldCyks=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=mLL5iRS1; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=AC/0tVkZ; arc=fail smtp.client-ip=216.71.153.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1719898884; x=1751434884;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=TPADmyGfhHgn3rCrbERf70/Ulj2xDv0HjYwtueRQtrE=;
+  b=mLL5iRS1fhJuCjMiqIE1eAASdMt6NItGQ5IMP8Y7ShHIoG+SSWp30NYr
+   R2o4TC9LVObeq1mVMGfyvrgY7LonBBROksZoniReQfL+bJWTTGFmsNyZ5
+   9XQMIpI9c3RR5dqgXbzFuwZPztEwwMYQUE+/Gq0pwbAGSMma3XOKs9423
+   KN2vbe4stY46loouIQLOfFPahw/8JkAOiDeWteZbgTJ1M6xwOMrRlTnDj
+   pANyRfFg9a5wsCH5gYmIAli4IxIwvULvaUVkHlPewNTz8TEZSroZQcplC
+   Xkj5DUyFm9jXJl6pBCyU2Abs/coHke9xQQkgjElCVHA7Jn1S8ljsN5uHI
+   Q==;
+X-CSE-ConnectionGUID: DAaEbu27Qdihzt47HubCFA==
+X-CSE-MsgGUID: msPxGH4oSNujnIm9Mz8Bmg==
+X-IronPort-AV: E=Sophos;i="6.09,178,1716220800"; 
+   d="scan'208";a="20326640"
+Received: from mail-bn7nam10lp2049.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.49])
+  by ob1.hgst.iphmx.com with ESMTP; 02 Jul 2024 13:41:22 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UxC3Sker5BdwTIoDXOsVQEeUslxtxMq+N7CC9YFDJ+qq9qH2aSsHpDcXTNyqpvMp5h6+pt9niL+2KGCbukO38gDrmwCEyobKOKVPDUyxNVujLqbohQl8yz0xkaxY6d7CJtaiJ9BJy3qfNrcLrMaly1/RjlcoZeGvgK6S+ZsxJ2N9XIDgdpsMmzgkFg7Nhwzpde85awPWWF3yOECHjU+Jm4YheR5h7txlLPR7ZEgfMxS7JhSXckRDOP1mqGWK1KNO7GnjqyeboX6UQtT1P6DT65JLiwLrQb+74ZB+Qkvgd994IPXrv9LF0IIGJ2jLF/jLiwIuRyqzxw8/t1DqXaBDqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TPADmyGfhHgn3rCrbERf70/Ulj2xDv0HjYwtueRQtrE=;
+ b=MTbqQ3DaZh4GCkzU+M0/Qr9eE6MazUrVrcx9DtMD7sLeogfbzUnXE3ZNhEaQS++PsoQ4uXuT9SER+aaQ/mmFUPoFVsg1pCftApxl6IBAspQ8MQZ6ZCPfUK7yTo13ii8rKiu6T5fiRHWD5eo/Dhycnmk3o34ldFWPWGfKxNu0YhF6Z9oTIHgSQbeJvTPX3AwMdQo7gi1li3AZnQoJvCqa85nlt53FadC8NlKqla2ZYtQ8CAjaobDp2fD6v8Gg3xHkLwNyQwN/v8RoiLuUu5Kjg26AvZp5UTF/4uG8glv6rdPCwLAtowoJRud+vAXrCfrjDE7bgK6/Z3CK11Me4YU6rA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TPADmyGfhHgn3rCrbERf70/Ulj2xDv0HjYwtueRQtrE=;
+ b=AC/0tVkZ/4sOFqEYFQBMRWPJ/+F5D5iN9hnRKP66/t9qQV8WrCPKYe4xMr7IxkqBPfBirnn4HGmgJZx8KN6Y+md6C72lifHpdfDllbHbakNNWzj8HLlZnzgbwnBWVo4Kfroxpy+ybwCxP0ksT+YqQ0+LKHod7YMpepYVrJtk6YE=
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
+ by SJ0PR04MB8229.namprd04.prod.outlook.com (2603:10b6:a03:3e5::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.34; Tue, 2 Jul
+ 2024 05:41:19 +0000
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::ee22:5d81:bfcf:7969]) by PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::ee22:5d81:bfcf:7969%4]) with mapi id 15.20.7719.029; Tue, 2 Jul 2024
+ 05:41:19 +0000
+From: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To: Josef Bacik <josef@toxicpanda.com>, Johannes Thumshirn <jth@kernel.org>
+CC: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] btrfs: replace stripe extents
+Thread-Topic: [PATCH v3 1/5] btrfs: replace stripe extents
+Thread-Index: AQHay6EAp8S4JW/Ct0a3xUYtoSH4nrHiVbwAgACX74A=
+Date: Tue, 2 Jul 2024 05:41:19 +0000
+Message-ID: <88e73b63-27b8-480e-9df5-847acb9c093a@wdc.com>
+References: <20240701-b4-rst-updates-v3-0-e0437e1e04a6@kernel.org>
+ <20240701-b4-rst-updates-v3-1-e0437e1e04a6@kernel.org>
+ <20240701203732.GC510298@perftesting>
+In-Reply-To: <20240701203732.GC510298@perftesting>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR04MB7416:EE_|SJ0PR04MB8229:EE_
+x-ms-office365-filtering-correlation-id: 5930fe43-da22-4bb4-b402-08dc9a599958
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Y1ZPUUtZeFFtOTdnd3prU3FlQnNEc0RPbGk4VmRkYWgwSXIzQ2lCdk5vbmpL?=
+ =?utf-8?B?Q0gyYlFta0R6YWRwbnB4aUpIQmVSdVhLSlliVnBuZWI2eXpjN2FLNjl5WUdm?=
+ =?utf-8?B?Wkc1eEtkNGFYOTU0R3JkUVZ3TFduc2RnUkV6MmxoNlhHdk1XLzRCTW4zS0d1?=
+ =?utf-8?B?TkIvTVpJQjFDOU5MdkgzZG1DSnl2WktTNlEvcHVQNDBaMjFaeHgxaEtUMWpH?=
+ =?utf-8?B?d0RleUxLaDBpVi91ekE0RTRyQ1o3V3dMMGdsaDIzRzduUlBwVm5PNkxTWWhh?=
+ =?utf-8?B?Rm1QMEFyRVdwK1ZjaU9udXJxYnB0ZFRFay8vNEtUWVpSQmdDVml2bS9YTGlF?=
+ =?utf-8?B?bkJLSHFVRmdKc3h1d3NoSkZ2dGFxdHFXSFRBUFVUaklPOUtWTjV6M2NIZmpp?=
+ =?utf-8?B?SUVFd3BRcmZHRmJKZVhFZWt3K0ZpaC84NkZRZ2Y4ckpMU2NsM2g5VmVacnpw?=
+ =?utf-8?B?Nk1PY1VXdHJPL3JtTERMUXo3YVJGajZacUJSV1hXRFNkTkg2cjErREhDMmtO?=
+ =?utf-8?B?R1hEaGFGZDZrRk9FRklOQk5PWHh0VVpZb2d1b09yQ1AvWDhDOTFOL2lFYmVF?=
+ =?utf-8?B?NDdlNzdwSDZLbGE1SnZDR0JYVEZtRGFJN2NOLytXeVB5QlVtWHRIMWJwcGto?=
+ =?utf-8?B?bGU1OGpFbkZQUUlUQWdUbXZ6V2NKUmE3clhZYmpGQzlqdllneC9NQ2xRZXdO?=
+ =?utf-8?B?QUxteHd0ZG5FN0E4S2d4OGlFRlgxVXFZTmJza20yamV0ZU1kK25pOVFaUnZO?=
+ =?utf-8?B?cGNRWlB2WkIzMVp6eXdYc1lrdmEzN0plVEhCbVljRjhtcnRlVHIzU25iNlUw?=
+ =?utf-8?B?ekVGU1J0cVZ4bnNjN1RpZXhiUzUrTDYrbEJEbEtyQmd0Z3J1dXJ6RnNlUi9q?=
+ =?utf-8?B?dU1HaXhORUFRNnpZN2lweXByL0U2UnVKSzhIa0t5cWhKemJkMEY0TmRZZGFE?=
+ =?utf-8?B?THZrcFhkeHA4N3RudWFXbng0amtZRW4xZ2lYekc0bjhrdW45VzdBR09PNEs3?=
+ =?utf-8?B?RjczeW4yQVl6aC85MEwzUnBjTFdkVUxnYWx6SCtrUTc2R1pUSDVFR1UwQUlH?=
+ =?utf-8?B?NHlhM3pPeDI2QVpQMWlMWkN4OVhFUGEwbk84WEl2ZUJwbmdBN1FKK0lBNHdq?=
+ =?utf-8?B?SFJPRGUvdFB5ZEwyZThTZU9UTTJlVTJjVTJyTVNSblAyQmcza0VxK29jQ3Qv?=
+ =?utf-8?B?T2xGZmlZRGlEV0IrMy9hVjdTdUhZdmoyanlVVGQxOTY4ZzlCV1pKYVg3NVdD?=
+ =?utf-8?B?NlZsU3NCU1puQ2FZRG9WUDNtWXl6UHE0cTdkMGlRREdmeDFCVkpiK2FUdDg3?=
+ =?utf-8?B?eWlSdnlZYUExRXNtbjA5MHRWTUJOdnB6NFA0YlB4cWNPRHNCUTlQL0h2anJw?=
+ =?utf-8?B?ZXF1TTRnVjhlcFZKa0F5TUVvZG5VdkErQlI0M2lGSlF1bFB6YVg2b3ROZVJp?=
+ =?utf-8?B?UDRtQUwvUFhLQi9wVFJHQ0Uxb2JvSWd6c1VyWnpwa3pyakJXbE5oc1pPdkRG?=
+ =?utf-8?B?Wm9waFJLNExHVWhmR09JbmtISVF2aWFuQm9YSGwzN1FEVHl2NEFFbytkclFh?=
+ =?utf-8?B?NGtHWHdoVjV2VzFweU5VOWo0WmZxQ3dBOXdORlFCNzIrbzI3T094dTNPMVRi?=
+ =?utf-8?B?SjNPWVkxc2QwYStOMDdBZXpUcEdMR2pZcGlMMjNUT2w2THo1Mk0zLzEyUXBL?=
+ =?utf-8?B?V3FsL09NZktEMXZaSUFLYmpkYmh1dktnUWdzbmpPaHh3djlGdWxYbHRxSlpn?=
+ =?utf-8?B?a0xHR05QTUlEa0M5dFlkWDVTb05Qc1RxanNoUXpkWlgxRG9hRFVwVjhxS3ly?=
+ =?utf-8?B?YVhwN1BmUDlONExGUnEzejRLYm9kV3VLSlhaRU1mVnZVZXp0a25hRGxSd1pP?=
+ =?utf-8?B?NUNkNE9LeGhheGxTd1FOTFVCdStpVUk3dWNiTy9IMHc2aEE9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?T0lHMVovWlhHNkE5czNlTkFjYk9iakZ3UVFVdEVtYWJZM256VFFDVGtJQkNv?=
+ =?utf-8?B?TjBxRlN5YVp4NjhlQTNXb3J0TmZid3Y2SHdsVTd3c2dzc2tpb1BvMWZOeng2?=
+ =?utf-8?B?UFg4Z2NFMUd0b3p0VjRoQy91dlkrMy8xd1NYbFNONUhFSlhhTXpxdGJRUmFB?=
+ =?utf-8?B?L2F2YVdGalJoQlNJTUdkR0tmVHcweklEdVlVUUhhd0tBbEtGUERLc21sZi85?=
+ =?utf-8?B?ZTVYdVBJeHNkOHlDY0NhY04vY1BPdDJLRGt2UE8vaXVXODg3Y2tLSy9DZkYr?=
+ =?utf-8?B?a0JXMXdqN1RNemk4S0VxMVV3RWlBdzZNWjk4SFdMeFRTVmR4MElnQ2N1elRW?=
+ =?utf-8?B?TU5rOTgvVnAwbmk4RzAxYTI1TWlUSlRwSGhYaU5yMUZGMjhCRENONXFxUC8x?=
+ =?utf-8?B?VzRkVDVHM1VWM3FIT0RtUzdXZXZyRzV5Zk5rTjdTY2hCS1BqZi8vejBPZk9a?=
+ =?utf-8?B?YWFTd09HMW14S2QyT2xocDBlNmhqUjQ0d2M1b05OTCtiWnlEUXN5MGtxd1Z2?=
+ =?utf-8?B?cFAycXdMaGRpcVZJNEFGbUc1Q2tkYTBGV095eUxUZGU3MVdHdkpGaEE0bXh6?=
+ =?utf-8?B?VE1ldG4vWnkwVlhNQW5qUzBneHR4RG9xV3FvVTlYMGRvTy91aElHc3BISFdz?=
+ =?utf-8?B?RG1SQjRMYU01VVpuUGs2OEdGRjROUVhqQisyUUhXdXBNSDVrMWFCaHdvbVVm?=
+ =?utf-8?B?MXFXaE1JanVCYjV1ME9ZZnBWMFo0OE16MFRaWWl2Q0Z6SXJlUmNZMUJiczJT?=
+ =?utf-8?B?K0xKZjBKT3pRZUVSVWN3VWwrSjB4N2RkNGlnMUJBaDdraUdNZ1liZWttbUpC?=
+ =?utf-8?B?VTA0Z2JGVFJYQmxRL0ZOUjNPNVZOYjd4ZEpaYmlWRW5xU1Z6aHMvcmZnak5p?=
+ =?utf-8?B?MmNidHdtbDdqeXpYbXdiS0F1QVQ1UmEvVXdGUlJmV05DbE9kL2NlM3hQUFlW?=
+ =?utf-8?B?TE5FQXJvVzR5OWlvRGRpYjNkSVVMSXNFN2duMzVlVDJSYUpENWw2eWsxV25U?=
+ =?utf-8?B?eU5PNzBUUFFaVXF4Q0dtdUIwTVU5OXhIR1JtZ2xrRkgveDluNmlsWjFnSFc1?=
+ =?utf-8?B?N1pDd2FlZ2R2bWdoV3k1eVpGck9OdytqdG1Tb1hkblJrT1ZhRHNnNGtjczJz?=
+ =?utf-8?B?Mld1VjBFb2x0czZQSWduYmxocGpWdUNoVzREdDRqOWZwclBUUGx1NU14Qmh3?=
+ =?utf-8?B?UUtYYU8xV0JmeGJQT2lIOG9oOU1xMU5lcXJVUjNCdjRFaEJkbHFTck52MytZ?=
+ =?utf-8?B?NDFwdm1pVjR0eUJhUk9QQWdLUEQzUGxhdTVtSDl3MlNjaU40enR6YmNtVGpa?=
+ =?utf-8?B?NHRQNkJtUmdYMjB3SFJVYlRqdms0S3BmUXJRaXFpeW5EdGtrUnRvNkJoNW1N?=
+ =?utf-8?B?Nm5TS0d1TVFFTnVmaW1zVEpjeTQwUkJ6R1dkY2FSWTF2TXpxZjdpaWh5UGtQ?=
+ =?utf-8?B?VTFFSGhrd1JLRE0vdGlrblZUQkFMNFZVM3E1MGJ1N1lEdzJqSktyU1JuT1hx?=
+ =?utf-8?B?SDc2TmNZRDhzZzJQRGNWcTkrcEEzZ3dla1RYMUF4RXJFR0ZaT2RML2E2Yk53?=
+ =?utf-8?B?S1lGQlBnTitCNzR1QkE5QjVtUlFLdzFWWWxwV1pXa2dBTGNjZUJ4bUMxYm5k?=
+ =?utf-8?B?bHZWb21jaENzMHV3M2xHYWltT0pwbzVoY214M24yeHhzVk5BeVU0QXJ0NzJH?=
+ =?utf-8?B?cWZ3RVpsVFNwOVZlbTdJWCtWNTRWR3RyVnV2UmJNN3JaYWFsWVpWampTaHZH?=
+ =?utf-8?B?L0Nya0pGVXQzdmxFYXZ2Y3JqRzB3VEtMMTJWQ015ODRTckpqbWg1Wm5sanJo?=
+ =?utf-8?B?Q2RHazZqM0l1ZVlpc3gzbkZjWTdlL1EwM3djSFZEY1RwNUZNK3ZhVHdZc2N2?=
+ =?utf-8?B?Nlo0M0pKV0JQYWQ4eWlMQ1VjckljRzU5RFR6OGtjRmcxNm5PS0lIdW9xOGhI?=
+ =?utf-8?B?YTdER01wenM2K29GdjlWK2h3ZGpsSjRsSDdPMUVRNGw3ZEp1UFI5SUw2aW5M?=
+ =?utf-8?B?YVpWNnVCOFZvblowRW1ZVXV4QmFRZEdsK1h2bXprblB0Z01yaTNjU3F2WEtC?=
+ =?utf-8?B?czY0ZTZlWjFvVkp5WEF1UnNTREhTazNlMWYxWU5WdEdtTUlyTHlLblA1TTMx?=
+ =?utf-8?B?NnFuN2s5Q0JjMTU2cjFMaUFTS2RoNjU1US9CT1JmV1pwQ2lPS1BMWmpBT0VQ?=
+ =?utf-8?B?U3JZTnNRdnNBWVhUOGVjajhMU2FzR1h2elhXZjdoZkFUU1QvRTZ1YVhEMmFB?=
+ =?utf-8?B?LzR1L1FwTVBscWZyOHVITkhNUXJnPT0=?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <332A1400E652F248B039D7DEB98C4E31@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 02 Jul 2024 05:37:47 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev>
-Message-ID: <970686ea8a7aba6f5daa752a39609f5ab7a48a06@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH v2 1/1] memory tier: consolidate the initialization of
- memory tiers
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: "Jonathan Cameron" <Jonathan.Cameron@huawei.com>, "Gregory Price"
- <gourry.memverge@gmail.com>, aneesh.kumar@linux.ibm.com, mhocko@suse.com,
- tj@kernel.org, john@jagalactic.com, "Eishan Mirakhur"
- <emirakhur@micron.com>, "Vinicius Tavares Petrucci"
- <vtavarespetr@micron.com>, "Ravis OpenSrc" <Ravis.OpenSrc@micron.com>,
- "Alistair Popple" <apopple@nvidia.com>, "Srinivasulu Thanneeru"
- <sthanneeru@micron.com>, "SeongJae Park" <sj@kernel.org>, "Rafael J. 
- Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>, "Andrew
- Morton" <akpm@linux-foundation.org>, "Dave Jiang" <dave.jiang@intel.com>,
- "Dan  Williams" <dan.j.williams@intel.com>, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, "Ho-Ren (Jack)  Chuang"
- <horenc@vt.edu>, "Ho-Ren (Jack) Chuang" <horenchuang@bytedance.com>,
- "Ho-Ren (Jack) Chuang" <horenchuang@gmail.com>,
- linux-cxl@vger.kernel.org, qemu-devel@nongnu.org
-In-Reply-To: <87tth9ofsi.fsf@yhuang6-desk2.ccr.corp.intel.com>
-References: <20240628060925.303309-1-horen.chuang@linux.dev>
- <20240628060925.303309-2-horen.chuang@linux.dev>
- <87tth9ofsi.fsf@yhuang6-desk2.ccr.corp.intel.com>
-X-Migadu-Flow: FLOW_OUT
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	NJFozIn9q1B4Gkp3ArRWTL4cHbJG2uC7Wk2a9Lp2I7Uvmc+96E33675/Fivg7CZdHVGK9L+X7lP+BoGrmRlnQhBU4TOlY3VCO064s0mR4+yKeiwhWjaEe04cqeUuxG931sDjEgP1Z/F6Ii2WGC6n+EVX7UPgQJYzkcXObobGm8L4Mauy4JXgGTMDFqntxswqAmHvP/yiVRgtmvjBRUb6lqwE1cyR9v5oPSosP4hjHWGvuR4DF5T4wmQ0z+KiwTn0JGRfncANI83toj2J5Do/RY5a545fw883V0NPUAYbLMzjfbr99P+bGZHipBNUAvAVy0rVy1M93dzLLobnx3p2QiNsMUZYW2C9Pkj4JGG9G2JeSJQiZ1nks1hRykCwjxinEmNnRqPXmTkN/zzxujaQihRXquyAUIuUDeBvMD1yZjjR1ZVhz6OmY7RVLdPIUDX6iBHOEOkpOg96s4/1srosfd/815bfDif8dYHvZM+u8ZYWZjJYjLQwuC4O2O1i/cr+rfMYKMYXf5SFsX0LSnA7sZLXDjfEH42zhD6o2K4ZRyMdRlXn0WtpQgwSIleOnx6MWxSZiMk21ZbyA+UDCaNzN/b7zQ4thvTuy2uPSB5Kn07kGXbDn7tsX2noK2dHk+sg
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5930fe43-da22-4bb4-b402-08dc9a599958
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2024 05:41:19.4752
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: t58sxxC5i+aRSlyGhafyQDXBznrLqRvOOpAzTjz0UxBsuvZ00HZOZjC6SPsuxsJNagcLY+8bnwmHWIc52kSIDUWlml4ONFKgItBtqyI7/Mk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR04MB8229
 
-Hi Huang, Ying,
-
-Thanks for your feedback and helpful suggestions. Replies inlined.
-
-
-June 30, 2024 at 10:13 PM, "Huang, Ying" <ying.huang@intel.com> wrote:
->=20
->=20Hi, Jack,
->=20
->=20"Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev> writes:
->=20
->=20I suggest you to merge the [0/1] with the change log here. [0/1]
->=20
->=20describes why do we need the patch. The below text describes some
->=20
->=20details. Just don't use "---" to separate them. We need both parts in
->=20
->=20the final commit message.
->=20
-
-Sounds=20good! I will merge them into 1 patch in the v3.
-
-> >=20
->=20> If we simply move the set_node_memory_tier() from memory_tier_init(=
-)
-> >=20
->=20>  to late_initcall(), it will result in HMAT not registering
-> >=20
->=20>  the mt_adistance_algorithm callback function, because
-> >=20
->=20>  set_node_memory_tier() is not performed during the memory tiering
-> >=20
->=20>  initialization phase, leading to a lack of correct default_dram
-> >=20
->=20>  information.
-> >=20
->=20>  Therefore, we introduced a nodemask to pass the information of the
-> >=20
->=20>  default DRAM nodes. The reason for not choosing to reuse
-> >=20
->=20>  default_dram_type->nodes is that it is not clean enough. So in the=
- end,
-> >=20
->=20>  we use a __initdata variable, which is a variable that is released=
- once
-> >=20
->=20>  initialization is complete, including both CPU and memory nodes fo=
-r HMAT
-> >=20
->=20>  to iterate through.
-> >=20
->=20>  Besides, since default_dram_type may be checked/used during the
-> >=20
->=20>  initialization process of HMAT and drivers, it is better to keep t=
-he
-> >=20
->=20>  allocation of default_dram_type in memory_tier_init().
-> >=20
->=20
-> Why do we need it? IIRC, we have deleted its usage in hmat.c.
->=20
-
-Although=20default_dram_type is still used in set_node_memory_tier(),
-I can totally remove this description to remove confusion.
-
-> >=20
->=20> Signed-off-by: Ho-Ren (Jack) Chuang <horenchuang@bytedance.com>
-> >=20
->=20>  Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> >=20
->=20>  ---
-> >=20
->=20>  drivers/acpi/numa/hmat.c | 5 +--
-> >=20
->=20>  include/linux/memory-tiers.h | 2 ++
-> >=20
->=20>  mm/memory-tiers.c | 59 +++++++++++++++---------------------
-> >=20
->=20>  3 files changed, 28 insertions(+), 38 deletions(-)
-> >=20
->=20>  diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-> >=20
->=20>  index 2c8ccc91ebe6..a2f9e7a4b479 100644
-> >=20
->=20>  --- a/drivers/acpi/numa/hmat.c
-> >=20
->=20>  +++ b/drivers/acpi/numa/hmat.c
-> >=20
->=20>  @@ -940,10 +940,7 @@ static int hmat_set_default_dram_perf(void)
-> >=20
->=20>  struct memory_target *target;
-> >=20
->=20>  struct access_coordinate *attrs;
-> >=20
->=20>=20=20
->=20>=20
->=20>  - if (!default_dram_type)
-> >=20
->=20>  - return -EIO;
-> >=20
->=20>  -
-> >=20
->=20>  - for_each_node_mask(nid, default_dram_type->nodes) {
-> >=20
->=20>  + for_each_node_mask(nid, default_dram_nodes) {
-> >=20
->=20>  pxm =3D node_to_pxm(nid);
-> >=20
->=20>  target =3D find_mem_target(pxm);
-> >=20
->=20>  if (!target)
-> >=20
->=20>  diff --git a/include/linux/memory-tiers.h b/include/linux/memory-t=
-iers.h
-> >=20
->=20>  index 0d70788558f4..fa61ad9c4d75 100644
-> >=20
->=20>  --- a/include/linux/memory-tiers.h
-> >=20
->=20>  +++ b/include/linux/memory-tiers.h
-> >=20
->=20>  @@ -38,6 +38,7 @@ struct access_coordinate;
-> >=20
->=20>  #ifdef CONFIG_NUMA
-> >=20
->=20>  extern bool numa_demotion_enabled;
-> >=20
->=20>  extern struct memory_dev_type *default_dram_type;
-> >=20
->=20
-> Can we remove the above line?
->=20
-
-Yes,=20you are right. Good catch, thanks! Will remove it in the v3.
-
-> >=20
->=20> +extern nodemask_t default_dram_nodes __initdata;
-> >=20
->=20
-> We don't need to use __initdata in variable declaration.
->=20
-
-Thank=20you for your guidance! Will remove __initdata it in the v3.
-
-> >=20
->=20> struct memory_dev_type *alloc_memory_type(int adistance);
-> >=20
->=20>  void put_memory_type(struct memory_dev_type *memtype);
-> >=20
->=20>  void init_node_memory_type(int node, struct memory_dev_type *defau=
-lt_type);
-> >=20
->=20>  @@ -76,6 +77,7 @@ static inline bool node_is_toptier(int node)
-> >=20
->=20>=20=20
->=20>=20
->=20>  #define numa_demotion_enabled false
-> >=20
->=20>  #define default_dram_type NULL
-> >=20
->=20>  +#define default_dram_nodes NODE_MASK_NONE
-> >=20
->=20
-> Should we use <tab> after "default_dram_nodes"?
->=20
-
-Yes,=20thanks for the reminder. Will fix it in the v3.
-
-> >=20
->=20> /*
-> >=20
->=20>  * CONFIG_NUMA implementation returns non NULL error.
-> >=20
->=20>  */
-> >=20
->=20>  diff --git a/mm/memory-tiers.c b/mm/memory-tiers.c
-> >=20
->=20>  index 6632102bd5c9..a19a90c3ad36 100644
-> >=20
->=20>  --- a/mm/memory-tiers.c
-> >=20
->=20>  +++ b/mm/memory-tiers.c
-> >=20
->=20>  @@ -43,6 +43,7 @@ static LIST_HEAD(memory_tiers);
-> >=20
->=20>  static LIST_HEAD(default_memory_types);
-> >=20
->=20>  static struct node_memory_type_map node_memory_types[MAX_NUMNODES]=
-;
-> >=20
->=20>  struct memory_dev_type *default_dram_type;
-> >=20
->=20>  +nodemask_t default_dram_nodes __initdata =3D NODE_MASK_NONE;
-> >=20
->=20>=20=20
->=20>=20
->=20>  static const struct bus_type memory_tier_subsys =3D {
-> >=20
->=20>  .name =3D "memory_tiering",
-> >=20
->=20>  @@ -671,28 +672,38 @@ EXPORT_SYMBOL_GPL(mt_put_memory_types);
-> >=20
->=20>=20=20
->=20>=20
->=20>  /*
-> >=20
->=20>  * This is invoked via `late_initcall()` to initialize memory tiers=
- for
-> >=20
->=20>  - * CPU-less memory nodes after driver initialization, which is
-> >=20
->=20>  - * expected to provide `adistance` algorithms.
-> >=20
->=20>  + * memory nodes, both with and without CPUs. After the initializa=
-tion of
-> >=20
->=20>  + * firmware and devices, adistance algorithms are expected to be =
-provided.
-> >=20
->=20>  */
-> >=20
->=20>  static int __init memory_tier_late_init(void)
-> >=20
->=20>  {
-> >=20
->=20>  int nid;
-> >=20
->=20>  + struct memory_tier *memtier;
-> >=20
->=20>=20=20
->=20>=20
->=20>  + get_online_mems();
-> >=20
->=20>  guard(mutex)(&memory_tier_lock);
-> >=20
->=20>  + /*
-> >=20
->=20>  + * Look at all the existing and uninitialized N_MEMORY nodes and
-> >=20
->=20>  + * add them to default memory tier or to a tier if we already hav=
-e
-> >=20
->=20>  + * memory types assigned.
-> >=20
->=20>  + */
-> >=20
->=20
-> If the memory type of the node has been assigned, we will skip it in th=
-e
->=20
->=20following code. So, I think that we need to revise the comments.
->=20
-
-You=20are right, the new version in the v3 will be:
-/* Assign each uninitialized N_MEMORY node to a memory tier. */
-
-> >=20
->=20> for_each_node_state(nid, N_MEMORY) {
-> >=20
->=20>  /*
-> >=20
->=20>  - * Some device drivers may have initialized memory tiers
-> >=20
->=20>  - * between `memory_tier_init()` and `memory_tier_late_init()`,
-> >=20
->=20>  - * potentially bringing online memory nodes and
-> >=20
->=20>  - * configuring memory tiers. Exclude them here.
-> >=20
->=20>  + * Some device drivers may have initialized
-> >=20
->=20>  + * memory tiers, potentially bringing memory nodes
-> >=20
->=20>  + * online and configuring memory tiers.
-> >=20
->=20>  + * Exclude them here.
-> >=20
->=20>  */
-> >=20
->=20>  if (node_memory_types[nid].memtype)
-> >=20
->=20>  continue;
-> >=20
->=20>=20=20
->=20>=20
->=20>  - set_node_memory_tier(nid);
-> >=20
->=20>  + memtier =3D set_node_memory_tier(nid);
-> >=20
->=20>  + if (IS_ERR(memtier))
-> >=20
->=20>  + /* Continue with memtiers we are able to setup. */
-> >=20
->=20>  + break;
-> >=20
->=20>  }
-> >=20
->=20>  -
-> >=20
->=20>  establish_demotion_targets();
-> >=20
->=20>  + put_online_mems();
-> >=20
->=20>=20=20
->=20>=20
->=20>  return 0;
-> >=20
->=20>  }
-> >=20
->=20>  @@ -875,8 +886,7 @@ static int __meminit memtier_hotplug_callback(=
-struct notifier_block *self,
-> >=20
->=20>=20=20
->=20>=20
->=20>  static int __init memory_tier_init(void)
-> >=20
->=20>  {
-> >=20
->=20>  - int ret, node;
-> >=20
->=20>  - struct memory_tier *memtier;
-> >=20
->=20>  + int ret;
-> >=20
->=20>=20=20
->=20>=20
->=20>  ret =3D subsys_virtual_register(&memory_tier_subsys, NULL);
-> >=20
->=20>  if (ret)
-> >=20
->=20>  @@ -887,7 +897,8 @@ static int __init memory_tier_init(void)
-> >=20
->=20>  GFP_KERNEL);
-> >=20
->=20>  WARN_ON(!node_demotion);
-> >=20
->=20>  #endif
-> >=20
->=20>  - mutex_lock(&memory_tier_lock);
-> >=20
->=20>  +
-> >=20
->=20>  + guard(mutex)(&memory_tier_lock);
-> >=20
->=20>  /*
-> >=20
->=20>  * For now we can have 4 faster memory tiers with smaller adistance
-> >=20
->=20>  * than default DRAM tier.
-> >=20
->=20>  @@ -897,29 +908,9 @@ static int __init memory_tier_init(void)
-> >=20
->=20>  if (IS_ERR(default_dram_type))
-> >=20
->=20>  panic("%s() failed to allocate default DRAM tier\n", __func__);=0D
-> >=20
->=20>=20=20
->=20>=20
->=20>  - /*
-> >=20
->=20>  - * Look at all the existing N_MEMORY nodes and add them to
-> >=20
->=20>  - * default memory tier or to a tier if we already have memory
-> >=20
->=20>  - * types assigned.
-> >=20
->=20>  - */
-> >=20
->=20>  - for_each_node_state(node, N_MEMORY) {
-> >=20
->=20>  - if (!node_state(node, N_CPU))
-> >=20
->=20>  - /*
-> >=20
->=20>  - * Defer memory tier initialization on
-> >=20
->=20>  - * CPUless numa nodes. These will be initialized
-> >=20
->=20>  - * after firmware and devices are initialized.
-> >=20
->=20>  - */
-> >=20
->=20>  - continue;
-> >=20
->=20>  -
-> >=20
->=20>  - memtier =3D set_node_memory_tier(node);
-> >=20
->=20>  - if (IS_ERR(memtier))
-> >=20
->=20>  - /*
-> >=20
->=20>  - * Continue with memtiers we are able to setup
-> >=20
->=20>  - */
-> >=20
->=20>  - break;
-> >=20
->=20>  - }
-> >=20
->=20>  - establish_demotion_targets();
-> >=20
->=20>  - mutex_unlock(&memory_tier_lock);
-> >=20
->=20>  + /* Record nodes with memory and CPU to set default DRAM performa=
-nce. */
-> >=20
->=20>  + nodes_and(default_dram_nodes, node_states[N_MEMORY],
-> >=20
->=20>  + node_states[N_CPU]);
-> >=20
->=20>=20=20
->=20>=20
->=20>  hotplug_memory_notifier(memtier_hotplug_callback, MEMTIER_HOTPLUG_=
-PRI);
-> >=20
->=20>  return 0;
-> >=20
->=20
-> --
->=20
->=20Best Regards,
->=20
->=20Huang, Ying
->
-
---
-Best Regards,
-Ho-Ren (Jack) Chuang
+T24gMDEuMDcuMjQgMjI6MzcsIEpvc2VmIEJhY2lrIHdyb3RlOg0KPj4gKwlpZiAocmV0ID09IC1F
+RVhJU1QpDQo+PiArCQlyZXQgPSByZXBsYWNlX3JhaWRfZXh0ZW50X2l0ZW0odHJhbnMsICZzdHJp
+cGVfa2V5LA0KPj4gKwkJCQkJICAgICAgIHN0cmlwZV9leHRlbnQsIGl0ZW1fc2l6ZSk7DQo+IA0K
+PiBJIGhhZCBhbm90aGVyIHRob3VnaHQsIGhvdyBvZnRlbiBpcyB0aGlzIHBhcnRpY3VsYXIgdGhp
+bmcgaGFwcGVuaW5nPyAgQmVjIGF1c2UNCj4gd2UncmUgZG9pbmcgMyBwYXRoIGFsbG9jYXRpb25z
+IGhlcmUgaW4gdGhlIHdvcnN0IGNhc2UuICBJZiBpdCBoYXBwZW5zIG1vcmUgdGhhbg0KPiBzYXkg
+MTAlIG9mIHRoZSB0aW1lIHRoZW4gd2UgbmVlZCB0byBhbGxvY2F0ZSBhIHBhdGggb25jZSBpbg0K
+PiBidHJmc19pbnNlcnRfb25lX3JhaWRfZXh0ZW50KCksIGRvIHRoZSBpbnNlcnQsIGFuZCBpZiBp
+dCBmYWlscyByZS11c2UgdGhhdCBwYXRoDQo+IHRvIGRvIHRoZSBkZWxldGUgYW5kIGluc2VydCB0
+aGUgbmV3IG9uZS4gIFRoYW5rcywNCg0KVGhhdCBpbmRlZWQgaXMgYSBnb29kIHF1ZXN0aW9uLiBJ
+J2xsIGFkZCBzb21lIHRyYWNlcG9pbnRzIHRvIHNlZSBob3cgDQpvZnRlbiB0aGlzIGlzIGdldHRp
+bmcgY2FsbGVkLg0KDQo=
 
