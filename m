@@ -1,130 +1,122 @@
-Return-Path: <linux-kernel+bounces-237644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6279923C04
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:04:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FE6923C19
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 739CB281E01
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:04:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4527286192
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAC41591FC;
-	Tue,  2 Jul 2024 11:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0D115B12D;
+	Tue,  2 Jul 2024 11:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lT0/uhzb"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="absIHYmk"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B13F4CDF9;
-	Tue,  2 Jul 2024 11:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652D115B10F;
+	Tue,  2 Jul 2024 11:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719918290; cv=none; b=hFihWQQ9ak9/aqeCa7FhRIsawGNPD0lf7F1Ecok29qNkNaqvb9Bfl0ZzEe4Ldiq/r+20RXWeRpwp0VsVPAcja8+1KoBMMRb+RvbkCeiKj2VE1ehek/FB9am5saM5aL9UI0UO7264N0lJoYbe0B/oA8G0xSfaQWjUbjaHfKu+EN8=
+	t=1719918534; cv=none; b=Vdni/Z2vYPYjHoP3pF+2RQ/GZ6OJMkIIAXOYxDAl6sNMgGoxHz4afKwZyOyZgV+9/kuplgsMcjeH3ICpF+9SOVC0sGLJdmiV7wV3mmw0C8mhDB7P417FWv+oUmxlCqd3k3W/OhPylIOQob8q+SgJ6qxmcRa91WiQhln2f9C7Yic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719918290; c=relaxed/simple;
-	bh=bPk2/IIwST2pJD9LhpzJKQ93eMA0RcRc12FF8ggibBg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MxmYf4tn4fXiuxj8i5KcEhHSH6oNbKu+FTyKBOb1cZ/6wUDoKPkSmGraT+QlTDLaPBgZwKExmNdlKJQ+TBWcegnkWNKa8rbXJOYrJNVbCDtcphETHo0wT27qjXYteiEzS9OcAEyHDkt1khzDgAwE/wPNmQXkz3a9n0LH7D4xz0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lT0/uhzb; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a72988749f0so606239066b.0;
-        Tue, 02 Jul 2024 04:04:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719918287; x=1720523087; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y7C2POcto3F3gOVRPECf0Cy4M4QGPtyi7Wen09vwi84=;
-        b=lT0/uhzbpACHgWT7nSDMV1q/BPXFbJ280lKnlCXKqodySqaZDxTMN5sz4EQLR7Z2ny
-         niSOAVsVDre3Kf8N1cqKKT3BnjyGwsZD5wwH6bqs+jOk/irfMY3jmY1BLWHG8Dk5QgoS
-         WTdx0cm37uF/bJK2GTowXcvAVg1dGlIDso8fOsQtTAi3swPatomhfcLPVPwA2Bwj9ymY
-         s2gkQbr4TzFfpsWZ7CYqCRhxCwlAcwuK4jCEhhcyRTIqMyNacSlZG9ivDP5uO7TZIzau
-         uU/4GrDrxhj5Fjma6kCFzyLgNtxDSMbdb+PlPMnBiJW1SVzZIcNmBEo7QKbsLgDsEbbZ
-         UQHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719918287; x=1720523087;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y7C2POcto3F3gOVRPECf0Cy4M4QGPtyi7Wen09vwi84=;
-        b=CzfdXVGF6Ok3WYsd/po2SJ1XKH9b3r6yYgkrdYJCTxcBK83xzp3nGirdUgXIrV48tl
-         FUtxPc1c9rCxOvoGrnuFEie6a0QXTxGfXspGiy2YwnqGWVFzd6BCryLu6o9tM1ue9OR2
-         RmPLNWR/CGziCn+uw1bWuCzmZAlqBF3edFqDT7lIMInW2nfVam26NlOjTT+4/S38Ow3F
-         kQuFB75i3KFMpV2t1hnEXowgW4AClfBAMoQ0U8vkluSs06ENbrFxkRODdSWuKPkySjt1
-         NObLCGGibmWBMwTGAcWPBF0uu7rfqR6PcjCQlamowwniSVTNINVVjeTNhty4fK0fwOCW
-         GT3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUnmqkXgv8keg4J3raNKO15hk4v5o+rmuQYWj/xfLxujSxERX8X+wxzQr3xrDY92mogLMXjhDMRXP8jzWQzD5KKgm1iqFJ0neC7kQshSunSqq+FrPEx/1K20bUgGGRZ8OW/NSCpDPLaMc4=
-X-Gm-Message-State: AOJu0YwyxYaVmmuSUYIyPx6o90wqOhoZqDDRrvv8+2p5e39okNuWWJ95
-	Gq89ALIw3gzXXgUrZ+x7buUdAlQXUowLZVSW7JevmvcxjfJkm8r1LIm13EFEGRvcwYMAFOEXw4p
-	GWil5wLXzosUhhYYQcRjdEnd6N27tjZiZ
-X-Google-Smtp-Source: AGHT+IGTZWm3mkqa483Gpfcd5M6uFw2wq281cSe1BfyN2Nq/vJFZ/pcKxnlR5hPzqOjus7y5wwWatZOwB4GTYzSc/6M=
-X-Received: by 2002:a17:906:c293:b0:a71:94ce:9b03 with SMTP id
- a640c23a62f3a-a751447b1d8mr536870466b.20.1719918287223; Tue, 02 Jul 2024
- 04:04:47 -0700 (PDT)
+	s=arc-20240116; t=1719918534; c=relaxed/simple;
+	bh=qqu1f8bbeU/SvJtG0ec6mPjZ4RG7l4GtvYUYiXGx2Z0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q25lgNbJ9LmHqh356wCMH+YfU6a99YqP+1subeRO9YtGbs2NPFLEWf99yoxNtm7GCou0m5Q7P00FIy/OZXc8sNfLWzpJZ3KaOqX8L9a6xF5Gda+pRkb6Es/P1InDjoh554ZLWX1l6TMnY15HDUCJK5JUenUP7CA9zcbvOV0940I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=absIHYmk; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id E1C3C100005;
+	Tue,  2 Jul 2024 14:08:30 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1719918510; bh=fPpkEigsqYyjY+usdDH0XAppyEwih+KQZdXHBtDT3hE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=absIHYmkNib+lwQ3U/psX8NwxfEO4GxLGeMy7iCga6mucsKDyQNe/Ry191Pf9Ig5Y
+	 DHHf6wf7Jfu1+7pzMZ/zhZSIaSEXiegjgJbbafAG4KrTAwMXWrq5VXWxnl4R2EKZXx
+	 f/dLzeMT84f99djqiOZ8Br10OfTqdTj7EuoGoQHXeQDncXfPJouTWL+M72Do0PNXWO
+	 t3w60RfnpaW5AnboRZLsLmDaHcu80KlrGi5+cLdGphSStBxK6VaN4PuPNw6/7cNB3/
+	 1PYIkrv99wug0GsN/1hZ8KRrZ6bcn6QGCsfdSxocHfZyyN9zguX/hWwi/iZE9sc69V
+	 ZwxTMiQIM04uA==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Tue,  2 Jul 2024 14:07:24 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
+ 14:07:04 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Michael Walle <michael@walle.cc>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH net] net: phy: mscc-miim: Validate bus frequency obtained from Device Tree
+Date: Tue, 2 Jul 2024 14:06:50 +0300
+Message-ID: <20240702110650.17563-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701073252.317397-1-chineweff@gmail.com> <6c91530f-00f3-44ed-ae77-312260c2af9e@roeck-us.net>
-In-Reply-To: <6c91530f-00f3-44ed-ae77-312260c2af9e@roeck-us.net>
-From: Wayne Tung <chineweff@gmail.com>
-Date: Tue, 2 Jul 2024 19:04:35 +0800
-Message-ID: <CABrnb7xSnrAF66easMHPBs6cFXS7FU+hKAhXDH=DE0EBvAJ3UQ@mail.gmail.com>
-Subject: Re: [PATCH] hwmon: (adt7475) Fix default duty on fan is disabled
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186273 [Jul 02 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mx1.t-argos.ru.ru:7.1.1;t-argos.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/02 10:26:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/02 07:20:00 #25796017
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-I'm using adt7475 on the x86 system.
-When I tried to probe the driver manually, fans would run at full
-speed (It's in disabled mode by default).
-It's not the expected behavior.
-I traced the driver and found the issue.
+In mscc_miim_clk_set() miim->bus_freq is taken from Device Tree and can
+contain any value in case of any error or broken DT. A value of 2147483648
+multiplied by 2 will result in an overflow and division by 0.
 
-Thanks,
-Wayne
+Add bus frequency value check to avoid overflow.
 
-Guenter Roeck <linux@roeck-us.net> =E6=96=BC 2024=E5=B9=B47=E6=9C=882=E6=97=
-=A5 =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=886:45=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Mon, Jul 01, 2024 at 03:32:52PM +0800, Wayne Tung wrote:
-> > According to the comments on fan is disabled, we change to manual mode
-> > and set the duty cycle to 0.
-> > For setting the duty cycle part, the register is wrong. Fix it.
-> >
-> > Signed-off-by: Wayne Tung <chineweff@gmail.com>
-> > ---
->
-> Applied.
->
-> Curious - how did you find that ? That bug existed since the driver was
-> introduced.
->
-> Thanks,
-> Guenter
->
-> >  drivers/hwmon/adt7475.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
-> > index 4224ffb30483..ec3336804720 100644
-> > --- a/drivers/hwmon/adt7475.c
-> > +++ b/drivers/hwmon/adt7475.c
-> > @@ -1900,7 +1900,7 @@ static void adt7475_read_pwm(struct i2c_client *c=
-lient, int index)
-> >               data->pwm[CONTROL][index] &=3D ~0xE0;
-> >               data->pwm[CONTROL][index] |=3D (7 << 5);
-> >
-> > -             i2c_smbus_write_byte_data(client, PWM_CONFIG_REG(index),
-> > +             i2c_smbus_write_byte_data(client, PWM_REG(index),
-> >                                         data->pwm[INPUT][index]);
-> >
-> >               i2c_smbus_write_byte_data(client, PWM_CONFIG_REG(index),
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: bb2a1934ca01 ("net: phy: mscc-miim: add support to set MDIO bus frequency")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/net/mdio/mdio-mscc-miim.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/net/mdio/mdio-mscc-miim.c b/drivers/net/mdio/mdio-mscc-miim.c
+index c29377c85307..6380c22567ea 100644
+--- a/drivers/net/mdio/mdio-mscc-miim.c
++++ b/drivers/net/mdio/mdio-mscc-miim.c
+@@ -254,6 +254,11 @@ static int mscc_miim_clk_set(struct mii_bus *bus)
+ 	if (!miim->bus_freq)
+ 		return 0;
+ 
++	if (miim->bus_freq == 2147483648) {
++		dev_err(&bus->dev, "Incorrect bus frequency\n");
++		return -EINVAL;
++	}
++
+ 	rate = clk_get_rate(miim->clk);
+ 
+ 	div = DIV_ROUND_UP(rate, 2 * miim->bus_freq) - 1;
+-- 
+2.30.2
+
 
