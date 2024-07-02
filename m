@@ -1,229 +1,127 @@
-Return-Path: <linux-kernel+bounces-237282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC7491EEB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:00:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F7D91EEB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 979641F22CC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 294D528487D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D77E5CDF0;
-	Tue,  2 Jul 2024 05:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C485FDA7;
+	Tue,  2 Jul 2024 06:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mklgCt2x"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="L7vC1fK5"
+Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F75374C6;
-	Tue,  2 Jul 2024 05:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4AF747F;
+	Tue,  2 Jul 2024 06:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719899992; cv=none; b=beF2pRJdHAv3STw8vvTAvZUws/hzFLn+hkOt7Zlr1E2rfAwdp/gsp7QCC8OAxHcTej6axM1eRzFczj8dlMijubmrkEjox2qTTRRpoyJXSaX7e8nbqzsTyhNIdice+ZhudS6bdhgWKHxHH7+dPobjeUO5RU+vaf+oEFxtto8sVT0=
+	t=1719900114; cv=none; b=gW3UKREedViabUV/sWKWY+Vf448TWWijtwW2KtTUHvfZJJBC8fltG7lquc+jst2USBiV3yMnGHuuLKseCkcpP65m4wrMjzeE8ohN3eZ0Zt4wsaBRY+BoytfKdldykg2lcfdc0m7HvvVKrjZl35ewqCEeVf+NVdOs27AqDmeuIoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719899992; c=relaxed/simple;
-	bh=WwZQ9+CI8V/K3pwYtNCgVlG6FppDRsL1hckrMX0QhhQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XqrQvOqBPo03Wd0Ly5wBjwNLB8XjrQfVr9TfqhcNEGAdCOnm+EUN8Fgug/dzOaQsN8u6tVlFURNaxne5nE8RA3sXsfhYO+rav9JyNpu74Ib6MDr9DTON7Ew5gsbQ8VctGVzRUWFczXesR+r2+DZjut8izIDu1sj8fwdz1bwDLz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mklgCt2x; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4ef662a4725so1677497e0c.0;
-        Mon, 01 Jul 2024 22:59:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719899989; x=1720504789; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gC2h0CHYsZZaUAzCk04zWux1R2sWmKldSedDZlcr5aQ=;
-        b=mklgCt2xlZeQ7gjCASc39kyFu74gvA7RFRy4KVJJYIUkkvP6HpfWHlJIs0a2606C19
-         KaDzUPfGGFlbSzQPFMGbiV+XYRVysKkmGUvL/Yu97Uk1uz74HbKB0mcrXJpMOIj6M191
-         k0W7iixXUzMvlf3tCCRVy1ClXG/w/rD3pxs+Fhgfx2ohSzvxv8mfkNyxymus49hEPkSU
-         SUXOfiBK6uE7VlaM+Q9vUB3N2GRDSDvvrFP1cvLc2F/InVi27HLpoVzrp+2sT3EKXYsf
-         cx2UfmJWd79VsFxh1gqphjCIhG2r/yjlDHIsCL12RL25Uke9CfHeR8ezQvYSodU0gxG6
-         L68w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719899989; x=1720504789;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gC2h0CHYsZZaUAzCk04zWux1R2sWmKldSedDZlcr5aQ=;
-        b=s01a1XODhsUjaJSfUGqXq+rM1oEHoR/6AYOOangRrg/WkAr1ImGrnD2VBu8iMJekGU
-         wCAO6CkOixAdwUjWEQMrkDj+Xf4ROQgd86dfUT7G36fVe2xfGK9FMZ8xgyAx4l8mzZoE
-         6jH0FwQ/D7KovvZlrtWC7Hzl92OCQp0ehC8etQNhug7wzuVnzZ1V0FvY25NMZX102FIV
-         pdHbudvKzdHaRKnz8XyY5V/4LtfFEnAALzu9zvhUDsFfCTjJqmDP0nRJ5L1HCg/V08G+
-         z6zOXoBMuOkHrDBLKISRDxYCqXSFVd6XHXm8K1dFFztWDuUZrwimfvjuVVEJ451qktLV
-         LvmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEMnv8hYkcI4HIVfwYL1Olq45DfvPRi3voSItglOKRNYET8gXBLmRjb4WiBm/9woklGXxNoJYslJ/izXPpTkSpBLF1TQ9/minSN3VBJ0LzUJ33nB+v/6O1mvQmYJDzyVF6NYGQSfM7
-X-Gm-Message-State: AOJu0Yw3ntl/lElhmVMdtvuYkj9bWaq9wsSvVtYmm22y3RPm/Xzl4YGJ
-	6PrXR9OJ3nHdbrL0wO+JpI2nZlWXRt1JC0h3V+9II4CyQiyV9jM2duLNUCRwFCXK2MFQP5+J2b7
-	OzNcAv7HOOCy1Pmg/Ns1HsY1IxXTp5IG4
-X-Google-Smtp-Source: AGHT+IF5a5OjIzyaJocMTBPTWgNa0DegmthX+97mHhYb4JNjZcLM20NDrHPJLpcN5xTagUJ+OwTuyt1O2PyEbnKEHao=
-X-Received: by 2002:a05:6122:6085:b0:4ef:27e0:3f8c with SMTP id
- 71dfb90a1353d-4f2a5561996mr9305501e0c.0.1719899988648; Mon, 01 Jul 2024
- 22:59:48 -0700 (PDT)
+	s=arc-20240116; t=1719900114; c=relaxed/simple;
+	bh=xcSQiVNOMATEXEpewV4rKAkfpC7Es+uQVI1OXvCfdSs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lmcHoAesSpgHqH4HcCvRAuWpwC2ooDf653LiGmxc2usL27pFngnb3YCfBROY4sHYKVubDQpB1c+xIVxS1dBH1lLgQ6EDYgx81zlzhBM+kAv6PS+ouhqyi/742jfUUfoAql2f01oJnDuDyeO3bm5i07yldtSiw0P6IYFyLtrNdAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=L7vC1fK5; arc=none smtp.client-ip=198.252.153.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx0.riseup.net (Postfix) with ESMTPS id 4WCsk800Mwz9tCm;
+	Tue,  2 Jul 2024 06:01:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1719900112; bh=xcSQiVNOMATEXEpewV4rKAkfpC7Es+uQVI1OXvCfdSs=;
+	h=From:Date:Subject:To:Cc:From;
+	b=L7vC1fK5z/bNPFDADUtNi/2HsHiRSXQ5l/nCXi1INv5MxJQTTwIvOmtCwCGG/s74L
+	 CtLAmzcX2U2xtn59L4Y263H0uececU0eG+9MeJljSXZ2z+OmoqDkuz9cZGb3NGVewD
+	 HdWbuC9XbBRtNW/+GS7qySGh5lUzUzDttL1EfdQA=
+X-Riseup-User-ID: 03BF26FFB56FD71EFBC1F986A0C6E788064EFC6FD312FAC9CB199716DF497863
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4WCsjt025dzJrSk;
+	Tue,  2 Jul 2024 06:01:37 +0000 (UTC)
+From: Dang Huynh <danct12@riseup.net>
+Date: Tue, 02 Jul 2024 13:01:19 +0700
+Subject: [PATCH v3] arm64: dts: qcom: qrb4210-rb2: Correct max current draw
+ for VBUS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626045926.680380-1-alistair.francis@wdc.com>
- <20240626045926.680380-3-alistair.francis@wdc.com> <20240701122721.0000034d@Huawei.com>
-In-Reply-To: <20240701122721.0000034d@Huawei.com>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Tue, 2 Jul 2024 15:59:21 +1000
-Message-ID: <CAKmqyKP9_TukgkMFScuXYJP9bfJ-NVCgYqhbNPPv8ZgsbX560Q@mail.gmail.com>
-Subject: Re: [PATCH v12 3/4] PCI/DOE: Expose the DOE features via sysfs
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org, lukas@wunner.de, 
-	alex.williamson@redhat.com, christian.koenig@amd.com, kch@nvidia.com, 
-	gregkh@linuxfoundation.org, logang@deltatee.com, linux-kernel@vger.kernel.org, 
-	chaitanyak@nvidia.com, rdunlap@infradead.org, 
-	Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240702-qrd4210rb2-vbus-volt-v3-1-fbd24661eec4@riseup.net>
+X-B4-Tracking: v=1; b=H4sIAK6Xg2YC/43NQQ6CMBCF4auQrh3TDoU2rryHcUFLkUkM6BQaD
+ eHuFnaudPm/ZL5ZRAxMIYpTsQgOiSKNQ47yUAjfN8MtALW5BUrU0kgFT241KskOIbk5QhrvE1h
+ EU2tvfOcbkU8fHDp67ezlmrunOI383r8kta0/wKRAQeVl3dmysrqsz0wxzI/jECaxiQn/UTArz
+ jjfYmOst+5LWdf1A1oRinX/AAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Luca Weiss <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dang Huynh <danct12@riseup.net>
 
-On Mon, Jul 1, 2024 at 9:27=E2=80=AFPM Jonathan Cameron
-<Jonathan.Cameron@huawei.com> wrote:
->
-> On Wed, 26 Jun 2024 14:59:25 +1000
-> Alistair Francis <alistair23@gmail.com> wrote:
->
-> > The PCIe 6 specification added support for the Data Object
-> > Exchange (DOE).
-> > When DOE is supported the DOE Discovery Feature must be implemented per
-> > PCIe r6.1 sec 6.30.1.1. The protocol allows a requester to obtain
-> > information about the other DOE features supported by the device.
-> >
-> > The kernel is already querying the DOE features supported and cacheing
-> > the values. Expose the values in sysfs to allow user space to
-> > determine which DOE features are supported by the PCIe device.
-> >
-> > By exposing the information to userspace tools like lspci can relay the
-> > information to users. By listing all of the supported features we can
-> > allow userspace to parse the list, which might include
-> > vendor specific features as well as yet to be supported features.
-> >
-> > As the DOE Discovery feature must always be supported we treat it as a
-> > special named attribute case. This allows the usual PCI attribute_group
-> > handling to correctly create the doe_features directory when registerin=
-g
-> > pci_doe_sysfs_group (otherwise it doesn't and sysfs_add_file_to_group()
-> > will seg fault).
-> >
-> > After this patch is supported you can see something like this when
-> > attaching a DOE device
-> >
-> > $ ls /sys/devices/pci0000:00/0000:00:02.0//doe*
-> > 0001:01        0001:02        doe_discovery
-> >
-> > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> Hi Alistair,
->
-> I think I missed an error path issue in earlier reviews.
->
-> Suggestion for minimal fix inline. If that is fine feel
-> free to add
->
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->
-> > diff --git a/drivers/pci/doe.c b/drivers/pci/doe.c
-> > index defc4be81bd4..580370dc71ee 100644
-> > --- a/drivers/pci/doe.c
-> > +++ b/drivers/pci/doe.c
->
->
-> > +
-> > +int pci_doe_sysfs_init(struct pci_dev *pdev)
-> > +{
-> > +     struct pci_doe_mb *doe_mb;
-> > +     unsigned long index;
-> > +     int ret;
-> > +
-> > +     xa_for_each(&pdev->doe_mbs, index, doe_mb) {
-> > +             ret =3D pci_doe_sysfs_feature_populate(pdev, doe_mb);
->
-> This doesn't feel quite right.  If we wait after a doe_mb features
-> set succeeds and then an error occurs this code doesn't cleanup and...
->
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +#endif
-> > +
-> >  static int pci_doe_wait(struct pci_doe_mb *doe_mb, unsigned long timeo=
-ut)
-> >  {
-> >       if (wait_event_timeout(doe_mb->wq,
-> > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> > index 40cfa716392f..b5db191cb29f 100644
-> > --- a/drivers/pci/pci-sysfs.c
-> > +++ b/drivers/pci/pci-sysfs.c
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/kernel.h>
-> >  #include <linux/sched.h>
-> >  #include <linux/pci.h>
-> > +#include <linux/pci-doe.h>
-> >  #include <linux/stat.h>
-> >  #include <linux/export.h>
-> >  #include <linux/topology.h>
-> > @@ -1143,6 +1144,9 @@ static void pci_remove_resource_files(struct pci_=
-dev *pdev)
-> >  {
-> >       int i;
-> >
-> > +     if (IS_ENABLED(CONFIG_PCI_DOE))
-> > +             pci_doe_sysfs_teardown(pdev);
-> > +
-> >       for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
-> >               struct bin_attribute *res_attr;
-> >
-> > @@ -1227,6 +1231,12 @@ static int pci_create_resource_files(struct pci_=
-dev *pdev)
-> >       int i;
-> >       int retval;
-> >
-> > +     if (IS_ENABLED(CONFIG_PCI_DOE)) {
-> > +             retval =3D pci_doe_sysfs_init(pdev);
-> > +             if (retval)
->
-> ... this doesn't call pci_remove_resource_files() unlike te
-> other error path in this function which does.
->
-> I think just calling that here would be sufficient and inline
-> with how error cleanup works for the rest of this code.
-> Personally I prefer driving for a function to have no side effects
-> but such is life.
+According to downstream sources, maximum current for PMI632 VBUS
+is 1A.
 
-Thanks. While looking at this I realised we can actually drop
-pci_doe_sysfs_init() entirely (with a few other changes). So I have
-done that in v13.
+Taken from msm-4.19 (631561973a034e46ccacd0e53ef65d13a40d87a4)
+Line 685-687 in drivers/power/supply/qcom/qpnp-smb5.c
 
-Alistair
+Fixes: a06a2f12f9e2 ("arm64: dts: qcom: qrb4210-rb2: enable USB-C port handling")
+Reviewed-by: Luca Weiss <luca.weiss@fairphone.com>
+Signed-off-by: Dang Huynh <danct12@riseup.net>
+---
+In previous patch series, there's a suggestion to correct maximum
+current for PMI632 VBUS.
 
->
-> > +                     return retval;
-> > +     }
-> > +
-> >       /* Expose the PCI resources from this device as files */
-> >       for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
-> >
-> > @@ -1661,6 +1671,9 @@ const struct attribute_group *pci_dev_attr_groups=
-[] =3D {
-> >  #endif
-> >  #ifdef CONFIG_PCIEASPM
-> >       &aspm_ctrl_attr_group,
-> > +#endif
-> > +#ifdef CONFIG_PCI_DOE
-> > +     &pci_doe_sysfs_group,
-> >  #endif
-> >       NULL,
-> >  };
->
+Unfortunately it didn't make it and probably forgotten.
+
+Link to the suggestion mentioned:
+https://lore.kernel.org/linux-arm-msm/CYMDEAJZ0TJK.K31XZB3E9QOG@fairphone.com/
+
+Signed-off-by: Dang Huynh <danct12@riseup.net>
+----
+Changes in v3:
+- Fixed wrong usage of electrical units.
+- Link to v2: https://lore.kernel.org/r/20240701-qrd4210rb2-vbus-volt-v2-1-b7bcd2a78c8b@riseup.net
+
+Changes in v2:
+- Fixed typo (voltage -> ampere)
+- Link to v1: https://lore.kernel.org/r/20240701-qrd4210rb2-vbus-volt-v1-1-5c06f8358436@riseup.net
+---
+ arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+index 1c7de7f2db79..1888d99d398b 100644
+--- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
++++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+@@ -305,7 +305,7 @@ pmi632_ss_in: endpoint {
+ 
+ &pmi632_vbus {
+ 	regulator-min-microamp = <500000>;
+-	regulator-max-microamp = <3000000>;
++	regulator-max-microamp = <1000000>;
+ 	status = "okay";
+ };
+ 
+
+---
+base-commit: 642a16ca7994a50d7de85715996a8ce171a5bdfb
+change-id: 20240701-qrd4210rb2-vbus-volt-822764c7cfca
+
+Best regards,
+-- 
+Dang Huynh <danct12@riseup.net>
+
 
