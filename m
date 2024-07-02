@@ -1,260 +1,233 @@
-Return-Path: <linux-kernel+bounces-238418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB5D924A32
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:57:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B68924B14
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69161B23487
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:57:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA451C22B8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ECD205E1A;
-	Tue,  2 Jul 2024 21:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6DA191F8C;
+	Tue,  2 Jul 2024 21:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PwBe9QGf"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="duWbtE5O"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90024201257
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB9B18DB31
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719957453; cv=none; b=fh2Srcr/sR0Vc36ZKoZcC4i/NSxLJfBdU1D7qCdNRZ3JSv1RX401TsnUwpeRzRnidzxkszoKmmGutBBPmRg9qqGB9zazQirtpqvqDmggZZjNm17aJvlCulR1NzazEPZY2duIvRTxHbGXNuZYhFusDgqXNqb+fyP6imLajpv6YFc=
+	t=1719957529; cv=none; b=BGAyJEZmRyCWRyUaeOiq8vB+w20DgKjRAcJS8oGWI+CVFHOQGqCPMG5uKC0GGun4PneCiFVbAkLoIEoBTmrYKRBFYTN7OgmusQe+ydAR4vtFhPSuuRq4TZXBrRc2cUnPs98diFzdunqk0OcBDFdEXNjPBg0E4Q7xC9DP5+Inarg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719957453; c=relaxed/simple;
-	bh=Je9kVQrIgaxsRgrSWPFlFhDE4Vq4y0q8UKQudsgFpfQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tthmMxJvz60LlKA56sjbEnGO2OmMuUTYzZ1r3tHbXNhdAb4FQ6sTZy08xeU5hvWA90TkWeh9zeM7aqFMCpk+y9UJDe9FQb8LMihbJXuE0gooIn0103q3g0Pc+P2Gt3PTnjFhe0j1mBhZaGMCdLkCvkZ3ZqwLFZArE3IuwSsQGQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PwBe9QGf; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ce9ba0cedso8239640e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:57:31 -0700 (PDT)
+	s=arc-20240116; t=1719957529; c=relaxed/simple;
+	bh=ruM/z33ybyG4BT7EGafatX+PVpfZYy41EY6pGKapSCM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u3SczcwpGErv5CX7rxKjzbEYCkTL+5CGfIcXI3lqkYXfSbdoT3zgaTKBAL8mUwDon6FsqHK+WTvSiwBuEve+L5bzlKkHrO8vdPHTWzcPSpPrblDZ90c3sZ2X4WS+yPw7zNCZD6DMygMOsp6yIT4gIkPcR+OoptKNr7+2zQ64F8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=duWbtE5O; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7f63db7a69cso142342639f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:58:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1719957450; x=1720562250; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9z+8bdnHCMPCApRJBPIUlmhdXsDcMjQ8o+Q70WqEG6c=;
-        b=PwBe9QGfm93EmVBLrxgKtHdzCiN8gdRlsfuFKMo43Kp4VTrHzagvZoUxFSqAENCiAo
-         02FAaamaxZiRUKtyXufz0Fh25atzlghVKW0f1RgXt528XFn1ugBLqJ8El7rNe/z/zxUl
-         ZjlOMS0at6ZS+m/LZqhJ3BfAZzQYQVR9RDkfw=
+        d=gmail.com; s=20230601; t=1719957527; x=1720562327; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gt92vv+l+QrwNWjlUzQRBip24zXOkaNnGwWlphVTLFQ=;
+        b=duWbtE5OIn/38AMUZrLNRaW1P8wd/508o+V0Vo1VymiHl2sg1czQ2p0VPfUQ1qUQ7H
+         Xj/RgPwv6WQXIobXYe17TeFOC81HeqJeIlBvoZEegqJS2CsoqA/Himp4g1zY7HMmpzaW
+         aNN3/G7O07lvjGYWRQM7r7mll627PpCykmxQIcxWbH4DhrLQFcVrcSSyV5dElStsblw/
+         EIB1S0tqPdt2zW0xp07Wh4gNRDaz1qUUPhI4xYM3WbrgMUYhYryXgK00nKhjr0yy5Az7
+         hAQlAxlyv/VBQjbAdYCOFRpMhIhz6oF/rUepc8rECB9yQql0BpL5njNI54taMjqrsjgR
+         ihdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719957450; x=1720562250;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9z+8bdnHCMPCApRJBPIUlmhdXsDcMjQ8o+Q70WqEG6c=;
-        b=Qz8Kpgpv9aN42oWUq5TF2M1wFrDYzs0dOKMo5dumecJxp1EDRvC+5E5n2uqCWkC1ek
-         YqFYnnnE/kLYJHsB3p4/jsoCmYf3S3D0Vjiaflfr5sZgu7BDSAVXrNyEY7nBpJj3i4at
-         50cCnLI+jp5KmOKqVYsM7NU1iM8v/R9G4hLaQQW9c6+6qVCrLh9rQFXa545Gd8eQLhJX
-         beBLAQ5KAFAXvIIHPQbVn4GHURGWS7n5FX4Hjr7RmXkwFJNMN64ukuYTd2PXP1F2mmMx
-         JxRz9aHcv/a9oD0vxxxNkNASBmKrZeZmPJ+pqxzi+S1OnMhe61DLWgGjefhRbgubrbDL
-         YV1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUMsjhyVbk8oUlqJWzOjJGhZq3SmnwVO1a+Eu6x8NiQlcUdWT0Hi5q40QXcUI7Z0dnuuJoBYVJQwGlz3bD3je3zO1u0XyWXLFDfe9EO
-X-Gm-Message-State: AOJu0YyX+3Iz1eysXtWjPMZbD9fNSxryTsZQpHoeB2vUlTXTw5xnGIHi
-	uslUQSF3vZUAFqcyHkf45xL+TH2ppELlEUYIpX55He/dy2xzp+WfR67MFl9KzBt5WzdStAjCE1H
-	0/4keRqq1muU/NnRl18oY0TEp7vO1ElljCvD2
-X-Google-Smtp-Source: AGHT+IF+RYXnS9P09KG8u4Bf3AZ2HvJkSySrEDejE6ieNhBaC41VEUORI/mqe2KAWvV5bl+hbrNoUVP0FBBN87NT4AA=
-X-Received: by 2002:a05:6512:3d1e:b0:52c:9ae0:beed with SMTP id
- 2adb3069b0e04-52e82705d17mr9360475e87.52.1719957449672; Tue, 02 Jul 2024
- 14:57:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719957527; x=1720562327;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gt92vv+l+QrwNWjlUzQRBip24zXOkaNnGwWlphVTLFQ=;
+        b=e9MI0Cx0pRBdkt+oa60/NnzhqfFLzHmiscyTYmIjGSAxR8z+9MlYWj996P4gev8LEv
+         tSgBvTgH1MrTh6x+mmOAptsmWz2UZ2P006lNyExurf1UueIsIeZG3om/Uuy5emC7ET9c
+         /R4uXHpG/MwC2SL1UFFkuDuPpIFGl7o2rImcBRmD3v1ogK+2XM0iiPsPt+AnO3Gw+enR
+         MlZJfUWqAkEAz2fXQwQQBhpKGng5W/5qobp8WtVWA0uvgd2FZmggyJdQCt8w5vYOUZKo
+         EaeyyJywr+eWRtAOT1skEisQx2gg5PaV96pdSSNYYS3N+AZL8DDQGK0sV8gTjiFf/bGJ
+         M3ZA==
+X-Gm-Message-State: AOJu0YyJrnFwyc/3G79p2WG0I6XJXqZBExnZkuy1/YohvGSiM5i0BN39
+	T1a+phC0Fp8Q54NGb7nFih7bPwTiAojfwhVV/HGWAGfiB0qgyEPg
+X-Google-Smtp-Source: AGHT+IF3h87zduF7F4ddnH2q9ze+NFD9i3fNyFNxg/0ttCijjGWkOENGZRuQmey084nqd6Ft/oa1CQ==
+X-Received: by 2002:a5e:de4c:0:b0:7f6:20dd:7117 with SMTP id ca18e2360f4ac-7f62ed4675fmr1103892639f.0.1719957527247;
+        Tue, 02 Jul 2024 14:58:47 -0700 (PDT)
+Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
+        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.58.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 14:58:46 -0700 (PDT)
+From: Jim Cromie <jim.cromie@gmail.com>
+To: daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com,
+	jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com,
+	jbaron@akamai.com,
+	gregkh@linuxfoundation.org,
+	ukaszb@chromium.org
+Cc: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux@rasmusvillemoes.dk,
+	joe@perches.com,
+	mcgrof@kernel.org,
+	Jim Cromie <jim.cromie@gmail.com>
+Subject: [PATCH v9 27/52] selftests-dyndbg: check KCONFIG_CONFIG to avoid silly fails
+Date: Tue,  2 Jul 2024 15:57:17 -0600
+Message-ID: <20240702215804.2201271-28-jim.cromie@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240702215804.2201271-1-jim.cromie@gmail.com>
+References: <20240702215804.2201271-1-jim.cromie@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628205430.24775-1-james.quinlan@broadcom.com>
- <20240628205430.24775-2-james.quinlan@broadcom.com> <5d0950fd-dcd2-4996-aab0-0030f1911960@kernel.org>
-In-Reply-To: <5d0950fd-dcd2-4996-aab0-0030f1911960@kernel.org>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Tue, 2 Jul 2024 17:57:17 -0400
-Message-ID: <CA+-6iNzoPTk0mxwug8Odv4Loj5hN8eDy56AjYmsAa+qV3SnWfA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/8] dt-bindings: PCI: Add Broadcom STB 7712 SOC,
- update maintainter
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000d78ae9061c4acc0f"
+Content-Transfer-Encoding: 8bit
 
---000000000000d78ae9061c4acc0f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Several tests are dependent upon config choices. Lets avoid failing
+where that is noise.
 
-On Mon, Jul 1, 2024 at 5:12=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 28/06/2024 22:54, Jim Quinlan wrote:
-> > - Update maintainer.
->
-> Why?
+The KCONFIG_CONFIG var exists to convey the config-file around.  If
+the var names a file, read it and extract the relevant CONFIG items,
+and use them to skip the dependent tests, thus avoiding the fails that
+would follow, and the disruption to whatever CI is running these
+selftests.
 
-I haven't observed any action or feedback from Nicolas in years.
-Nicolas, please
-state your case for being a maintainer because it is not making sense from
-my perspective.
->
-> > - Adds a driver compatible string for the new STB SOC 7712
-> > - Adds two new resets for the 7712: "bridge", for the
-> >   the bridge between the PCIe core and the memory bus;
-> >   and "swinit", the PCIe core reset.
-> >
-> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > ---
-> >  .../bindings/pci/brcm,stb-pcie.yaml           | 24 ++++++++++++++++++-
-> >  1 file changed, 23 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b=
-/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> > index 11f8ea33240c..f594fef343a1 100644
-> > --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> > +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> > @@ -7,12 +7,13 @@ $schema: http://devicetree.org/meta-schemas/core.yaml=
-#
-> >  title: Brcmstb PCIe Host Controller
-> >
-> >  maintainers:
-> > -  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> > +  - Jim Quinlan <james.quinlan@broadcom.com>
-> >
-> >  properties:
-> >    compatible:
-> >      items:
-> >        - enum:
-> > +          - brcm,bcm7712-pcie # STB sibling SOC of Raspberry Pi 5
->
-> Why did you place it here? Isn't the list ordered?
+If the envar doesn't name a config-file, ".config" is assumed.
 
-It is ordered from newest at top to oldest at bottom -- is the
-convention to put the "new" at the bottom?
->
-> >            - brcm,bcm2711-pcie # The Raspberry Pi 4
-> >            - brcm,bcm4908-pcie
-> >            - brcm,bcm7211-pcie # Broadcom STB version of RPi4
-> > @@ -146,6 +147,27 @@ allOf:
-> >        required:
-> >          - resets
-> >          - reset-names
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: brcm,bcm7712-pcie
-> > +    then:
-> > +      properties:
-> > +        resets:
->
-> Fix the binding first - properties should be defined in top level
-> "properties:" and then customized. Where are "resets"?
->
-> > +          items:
-> > +            - description: phandle pointing to the RESCAL reset contro=
-ller
->
-> Drop redundant text. There is no point in saying that phandle is a
-> phandle. It's obvious. Say something which is not obvious.
+CONFIG_DYNAMIC_DEBUG=y:
 
-My kernel Yaml-fu is weak.  I will redo.
+basic-tests() and comma-terminator-tests() test for the presence of
+the builtin pr_debugs in module/main.c, which I deemed stable and
+therefore safe to count.  That said, the test fails if only
+CONFIG_DYNAMIC_DEBUG_CORE=y is set.  It could be rewritten to test
+against test-dynamic-debug.ko, but that just trades one config
+dependence for another.
 
-Regards,
-Jim Quinlan
-Broadcom STB/CM
->
->
-> Best regards,
-> Krzysztof
->
+CONFIG_TEST_DYNAMIC_DEBUG=m
 
---000000000000d78ae9061c4acc0f
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+As written, test_percent_splitting() modprobes test_dynamic_debug,
+enables several classes, and count them.  It could be re-written to
+work for the builtin module also, but builtin test modules are not a
+common or desirable build/config.
 
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBwVW8pXlVLww1mPrKvYhO2eKmE4KGc
-/a99BY7AIDuRMDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
-MDIyMTU3MzBaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAgOr5PGRh3EYtSSiNDPp3bD5oLqzQ4gkYdx/y41hzbzVNDuTk
-WFJLIFfb9pOGhuk7ZNNuJQcF4GKClEtfiG532martVSKMJ17ILFRNTo1uad5JlORx/i3D/p3TS03
-HhD7uYx43+zxRp1ZwvrmQ0XWtqsp9LStRdhNfbanW72AIiemlAZEQ2Tidg5paKs03EU/rSTqLdU2
-Givq3fTJ29E/4QstxnqZZZ107YOctvTp5IhZMdsvmlFidE6njFs6WCtr/KBAn9qaV550RNLMk5oo
-PJnh4EY3UoTgpjkGrkx72mIvEjHlW7uownilbL27oGxxPcH9cUwreQV9ysYiWHFEQw==
---000000000000d78ae9061c4acc0f--
+CONFIG_TEST_DYNAMIC_DEBUG=m && CONFIG_TEST_DYNAMIC_DEBUG_SUBMOD=m
+
+test_mod_submod() recaps the bug found in DRM-CI where drivers werent
+enabled by drm.debug=<bits>.  It modprobes both test_dynamic_debug &
+test_dynamic_debug_submod, so it depends on a loadable modules config.
+
+It could be rewritten to work in a builtin parent config; DRM=y is
+common enough to be pertinent, but testing that config also wouldn't
+really test anything more fully than all-loadable modules, since they
+default together.
+
+Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+
+fixup-kconfig
+---
+ .../dynamic_debug/dyndbg_selftest.sh          | 45 ++++++++++++++++++-
+ 1 file changed, 44 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh b/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
+index fccd2012b548..d09ef26b2308 100755
+--- a/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
++++ b/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
+@@ -11,6 +11,30 @@ CYAN="\033[0;36m"
+ NC="\033[0;0m"
+ error_msg=""
+ 
++[ -e /proc/dynamic_debug/control ] || {
++    echo -e "${RED}: this test requires CONFIG_DYNAMIC_DEBUG=y ${NC}"
++    exit 0 # nothing to test here, no good reason to fail.
++}
++
++# need info to avoid failures due to untestable configs
++
++[ -f "$KCONFIG_CONFIG" ] || KCONFIG_CONFIG=".config"
++if [ -f "$KCONFIG_CONFIG" ]; then
++    echo "# consulting KCONFIG_CONFIG: $KCONFIG_CONFIG"
++    grep -q "CONFIG_DYNAMIC_DEBUG=y" $KCONFIG_CONFIG ; LACK_DD_BUILTIN=$?
++    grep -q "CONFIG_TEST_DYNAMIC_DEBUG=m" $KCONFIG_CONFIG ; LACK_TMOD=$?
++    grep -q "CONFIG_TEST_DYNAMIC_DEBUG_SUBMOD=m" $KCONFIG_CONFIG ; LACK_TMOD_SUBMOD=$?
++    if [ $V -eq 1 ]; then
++	echo LACK_DD_BUILTIN: $LACK_DD_BUILTIN
++	echo LACK_TMOD: $LACK_TMOD
++	echo LACK_TMOD_SUBMOD: $LACK_TMOD_SUBMOD
++    fi
++else
++    LACK_DD_BUILTIN=0
++    LACK_TMOD=0
++    LACK_TMOD_SUBMOD=0
++fi
++
+ function vx () {
+     echo $1 > /sys/module/dynamic_debug/parameters/verbose
+ }
+@@ -192,6 +216,10 @@ function check_err_msg() {
+ 
+ function basic_tests {
+     echo -e "${GREEN}# BASIC_TESTS ${NC}"
++    if [ $LACK_DD_BUILTIN -eq 1 ]; then
++	echo "SKIP"
++	return
++    fi
+     ddcmd =_ # zero everything (except class'd sites)
+     check_match_ct =p 0
+     # there are several main's :-/
+@@ -214,6 +242,10 @@ EOF
+ 
+ function comma_terminator_tests {
+     echo -e "${GREEN}# COMMA_TERMINATOR_TESTS ${NC}"
++    if [ $LACK_DD_BUILTIN -eq 1 ]; then
++	echo "SKIP"
++	return
++    fi
+     # try combos of spaces & commas
+     check_match_ct '\[params\]' 4 -r
+     ddcmd module,params,=_		# commas as spaces
+@@ -226,9 +258,12 @@ function comma_terminator_tests {
+     ddcmd =_
+ }
+ 
+-    
+ function test_percent_splitting {
+     echo -e "${GREEN}# TEST_PERCENT_SPLITTING - multi-command splitting on % ${NC}"
++    if [ $LACK_TMOD -eq 1 ]; then
++	echo "SKIP"
++	return
++    fi
+     ifrmmod test_dynamic_debug_submod
+     ifrmmod test_dynamic_debug
+     ddcmd =_
+@@ -248,6 +283,14 @@ function test_percent_splitting {
+ 
+ function test_mod_submod {
+     echo -e "${GREEN}# TEST_MOD_SUBMOD ${NC}"
++    if [ $LACK_TMOD -eq 1 ]; then
++	echo "SKIP"
++	return
++    fi
++    if [ $LACK_TMOD_SUBMOD -eq 1 ]; then
++	echo "SKIP"
++	return
++    fi
+     ifrmmod test_dynamic_debug_submod
+     ifrmmod test_dynamic_debug
+     ddcmd =_
+-- 
+2.45.2
+
 
