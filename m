@@ -1,214 +1,266 @@
-Return-Path: <linux-kernel+bounces-237781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAAB2923E05
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:36:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E668B923E09
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B7D0B20C51
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:36:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9835828D6BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AEA167DB8;
-	Tue,  2 Jul 2024 12:36:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D071615B133
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A1C16A947;
+	Tue,  2 Jul 2024 12:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rwjQ6HVu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F46823DE;
+	Tue,  2 Jul 2024 12:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719923809; cv=none; b=gGHQDfbD+eO9eEsOSjfAZeJvpiTtmbw+1hystZXWDqqmprpTco4d0n+D4bq2vDTphre3ROeOaqumCriXJc5FHmlsYG03+j9K6bwGaloeNvSd2MdSB9Ir/4SKy5lsGpiwlKNFHCNsxHW0Gvbknqnl4spkXj5TOvhZZmRdOR2wRSw=
+	t=1719924001; cv=none; b=TQiE7qrZdXa76xG1eIdA26toPOE3OaxZytk3F4HPBj6U3Il2n931/6nOAAIJ+MrnW8bm09lS3oAMEyyJTM2HWsRYp6J8G0gOLYfNVnGHBoJ7HqDHzQgFHMHjfgniKmX8NYEs3Of0GU+P11ERPWyRaB63p9bA/gcd0d/GW7PrQ0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719923809; c=relaxed/simple;
-	bh=pfO0nG4Gnmn6alBJrTjUAgM/3BtOYt7KT8G1Qrd1Lvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iwH4jp9CdX4FwYIZ0cKmnfdwopDfVo99jGfMPmdrdQ849xUG8pxwNZgOFTNdfDfqf3429ZcauEpx9PZUDpSrYr0iDqA44ZnAgNaTlvQTSkm5DF0NhfNuHpY5ezwERGNpxxLdUU9snlAiPyBwtJb9ap3LMhFHaNBMYgJhVKtc7iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DDAD367;
-	Tue,  2 Jul 2024 05:37:11 -0700 (PDT)
-Received: from [10.1.32.193] (XHFQ2J9959.cambridge.arm.com [10.1.32.193])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F22633F762;
-	Tue,  2 Jul 2024 05:36:44 -0700 (PDT)
-Message-ID: <905e1319-7b20-4812-b052-8031a3c4dcf3@arm.com>
-Date: Tue, 2 Jul 2024 13:36:43 +0100
+	s=arc-20240116; t=1719924001; c=relaxed/simple;
+	bh=G4lrwOm8PBJDnOGCzEkhxC+Ha38BeZflLdrxWcXKBnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBxCFmeHWDW5fUz62zxRkrwOhu13M8McSqIEgM5yy/4Ft7bFUlhlpDVBeOvHLE/A8YCiRw9J+LTafDCW6CVxkASlGDVT0JL35Q1h94QS+WA18TL+aiNkRE00S6/jr38WiSoH5CiG7ggeVIcmGvHdP3y9WPYXvbVOkdzOO+WdMS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rwjQ6HVu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9379C2BD10;
+	Tue,  2 Jul 2024 12:40:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719924001;
+	bh=G4lrwOm8PBJDnOGCzEkhxC+Ha38BeZflLdrxWcXKBnM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rwjQ6HVugtneW0zEDQh2DOGLqh/YDpFk5SsPlLV3JbU74z3nTMKyEJ/emzLvEzFh9
+	 pKNW9MRtdBvly3m1k9QNn7gVYamGu9uxV4xSMJCYzJXatRyCvKTtAs55uTryWhy5cs
+	 9nG6RDyRrT7h5KYD9We4nUCvpBiWwwxtEj7umJHvdD6qzdQKiQxnqn/Y8YCLHY/0NC
+	 dNcdlXyStmPdpi1O2expbN5C2PfHqosWCtrRBBUXkuEljiIcw4e6zy3vBjUkZRmFs2
+	 NPt3g+cAdKeqt689Oiz2mlq9VlufZS2MTa1BPuvz4ga9uihPEsqcoN7oLIOOFQx005
+	 KupHQdPmkLNKw==
+Date: Tue, 2 Jul 2024 14:39:58 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Sandor Yu <sandor.yu@nxp.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, 
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@ew.tq-group.com" <linux@ew.tq-group.com>
+Subject: Re: [PATCH v15 4/8] drm: bridge: Cadence: Add MHDP8501 DP/HDMI driver
+Message-ID: <20240702-seahorse-of-unreal-brotherhood-dce5d0@houat>
+References: <20240306101625.795732-1-alexander.stein@ew.tq-group.com>
+ <20240306101625.795732-5-alexander.stein@ew.tq-group.com>
+ <20240306-mysterious-hoatzin-of-faith-49aec0@houat>
+ <PAXPR04MB9448829F4BA8F8AF18F371F3F4DC2@PAXPR04MB9448.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Yang Shi <yang@os.amperecomputing.com>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, will@kernel.org,
- anshuman.khandual@arm.com, scott@os.amperecomputing.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Jinjiang Tu <tujinjiang@huawei.com>
-References: <20240626191830.3819324-1-yang@os.amperecomputing.com>
- <Zn7q3oL1AE8jdM-g@arm.com> <773c8be7-eb73-010c-acea-1c2fefd65b84@gentwo.org>
- <Zn7xs6OYZz4dyA8a@arm.com>
- <200c5d06-c551-4847-adaf-287750e6aac4@os.amperecomputing.com>
- <ZoMG6n4hQp5XMhUN@arm.com> <3743d7e1-0b79-4eaf-82d5-d1ca29fe347d@arm.com>
- <34f2d8c6-50fa-4a8a-82a8-d417eb30ea70@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <34f2d8c6-50fa-4a8a-82a8-d417eb30ea70@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3bvkkyl5thqxineu"
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB9448829F4BA8F8AF18F371F3F4DC2@PAXPR04MB9448.eurprd04.prod.outlook.com>
 
-On 02/07/2024 12:22, David Hildenbrand wrote:
-> On 02.07.24 12:26, Ryan Roberts wrote:
->> On 01/07/2024 20:43, Catalin Marinas wrote:
->>> On Fri, Jun 28, 2024 at 11:20:43AM -0700, Yang Shi wrote:
->>>> On 6/28/24 10:24 AM, Catalin Marinas wrote:
->>>>> This patch does feel a bit like working around a non-optimal user choice
->>>>> in kernel space. Who knows, madvise() may even be quicker if you do a
->>>>> single call for a larger VA vs touching each page.
->>>>
->>>> IMHO, I don't think so. I viewed this patch to solve or workaround some ISA
->>>> inefficiency in kernel. Two faults are not necessary if we know we are
->>>> definitely going to write the memory very soon, right?
->>>
->>> I agree the Arm architecture behaviour is not ideal here and any
->>> timelines for fixing it in hardware, if they do happen, are far into the
->>> future. Purely from a kernel perspective, what I want though is make
->>> sure that longer term (a) we don't create additional maintenance burden
->>> and (b) we don't keep dead code around.
->>>
->>> Point (a) could be mitigated if the architecture is changed so that any
->>> new atomic instructions added to this range would also come with
->>> additional syndrome information so that we don't have to update the
->>> decoding patterns.
->>>
->>> Point (b), however, depends on the OpenJDK and the kernel versions in
->>> distros. Nick Gasson kindly provided some information on the OpenJDK
->>> changes. The atomic_add(0) change happened in early 2022, about 5-6
->>> months after MADV_POPULATE_WRITE support was added to the kernel. What's
->>> interesting is Ampere already contributed MADV_POPULATE_WRITE support to
->>> OpenJDK a few months ago:
->>>
->>> https://github.com/openjdk/jdk/commit/a65a89522d2f24b1767e1c74f6689a22ea32ca6a
->>>
->>> The OpenJDK commit lacks explanation but what I gathered from the diff
->>> is that this option is the preferred one in the presence of THP (which
->>> most/all distros enable by default). If we merge your proposed kernel
->>> patch, it will take time before it makes its way into distros. I'm
->>> hoping that by that time, distros would have picked a new OpenJDK
->>> version already that doesn't need the atomic_add(0) pattern. If that's
->>> the case, we end up with some dead code in the kernel that's almost
->>> never exercised.
->>>
->>> I don't follow OpenJDK development but I heard that updates are dragging
->>> quite a lot. I can't tell whether people have picked up the
->>> atomic_add(0) feature and whether, by the time a kernel patch would make
->>> it into distros, they'd also move to the MADV_POPULATE_WRITE pattern.
->>>
->>> There's a point (c) as well on the overhead of reading the faulting
->>> instruction. I hope that's negligible but I haven't measured it.
->>>
->>
->> Just to add to this, I note the existing kernel behaviour is that if a write
->> fault happens in a region that has a (RO) huge zero page mapped at PMD level,
->> then the PMD is shattered, the PTE of the fault address is populated with a
->> writable page and the remaining PTEs are populated with order-0 zero pages
->> (read-only).
-> 
-> That also recently popped up in [1]. CCing Jinjiang. Ever since I
-> replied there, I also thought some more about that handling in regard to the
-> huge zeropage.
-> 
->>
->> This seems like odd behaviour to me. Surely it would be less effort and more
->> aligned with the app's expectations to notice the huge zero page in the PMD,
->> remove it, and install a THP, as would have been done if pmd_none() was true? I
->> don't think there is a memory bloat argument here because, IIUC, with the
->> current behaviour, khugepaged would eventually upgrade it to a THP anyway?
-> 
-> One detail: depending on the setting of khugepaged_max_ptes_none. zeropages
-> are treated like pte_none. But in the common case, that setting is left alone.
 
-Ahh, got it. So in the common case, khugepaged won't actually collapse
-unless/until a bunch more write faults occur in the 2M region, and in that case
-there is a risk that changing this behaviour could lead to a memory bloat
-regression.
+--3bvkkyl5thqxineu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->>
->> Changing to this new behaviour would only be a partial solution for your use
->> case, since you would still have 2 faults. But it would remove the cost of the
->> shattering and ensure you have a THP immediately after the write fault. But I
->> can't think of a reason why this wouldn't be a generally useful change
->> regardless? Any thoughts?
-> 
-> The "let's read before we write" as used by QEMU migration code is the desire
-> to not waste memory by populating the zeropages. Deferring consuming memory
-> until really required.
-> 
->     /*
->      * We read one byte of each page; this will preallocate page tables if
->      * required and populate the shared zeropage on MAP_PRIVATE anonymous memory
->      * where no page was populated yet. This might require adaption when
->      * supporting other mappings, like shmem.
->      */
+Hi,
 
-So QEMU is concerned with preallocatiing page tables? I would have thought you
-could make that a lot more efficient with an explicit MADV_POPULATE_PGTABLE
-call? (i.e. 1 kernel call vs 1 call per 2M, allocate all the pages in one trip
-through the allocator, fewer pud/pmd lock/unlocks, etc).
+On Tue, Jul 02, 2024 at 12:13:16PM GMT, Sandor Yu wrote:
+> > Subject: [EXT] Re: [PATCH v15 4/8] drm: bridge: Cadence: Add MHDP8501
+> > DP/HDMI driver
+> >=20
+> > Hi,
+> >=20
+> > On Wed, Mar 06, 2024 at 11:16:21AM +0100, Alexander Stein wrote:
+> > > +static int cdns_mhdp8501_read_hpd(struct cdns_mhdp8501_device
+> > *mhdp)
+> > > +{
+> > > +	u8 status;
+> > > +	int ret;
+> > > +
+> > > +	mutex_lock(&mhdp->mbox_mutex);
+> > > +
+> > > +	ret =3D cdns_mhdp_mailbox_send(&mhdp->base,
+> > MB_MODULE_ID_GENERAL,
+> > > +				     GENERAL_GET_HPD_STATE, 0, NULL);
+> > > +	if (ret)
+> > > +		goto err_get_hpd;
+> > > +
+> > > +	ret =3D cdns_mhdp_mailbox_recv_header(&mhdp->base,
+> > MB_MODULE_ID_GENERAL,
+> > > +					    GENERAL_GET_HPD_STATE,
+> > > +					    sizeof(status));
+> > > +	if (ret)
+> > > +		goto err_get_hpd;
+> > > +
+> > > +	ret =3D cdns_mhdp_mailbox_recv_data(&mhdp->base, &status,
+> > sizeof(status));
+> > > +	if (ret)
+> > > +		goto err_get_hpd;
+> > > +
+> > > +	mutex_unlock(&mhdp->mbox_mutex);
+> > > +
+> > > +	return status;
+> > > +
+> > > +err_get_hpd:
+> > > +	dev_err(mhdp->dev, "read hpd  failed: %d\n", ret);
+> > > +	mutex_unlock(&mhdp->mbox_mutex);
+> > > +
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +enum drm_connector_status cdns_mhdp8501_detect(struct
+> > > +cdns_mhdp8501_device *mhdp) {
+> > > +	u8 hpd =3D 0xf;
+> > > +
+> > > +	hpd =3D cdns_mhdp8501_read_hpd(mhdp);
+> > > +	if (hpd =3D=3D 1)
+> > > +		return connector_status_connected;
+> > > +	else if (hpd =3D=3D 0)
+> > > +		return connector_status_disconnected;
+> > > +
+> > > +	dev_warn(mhdp->dev, "Unknown cable status, hdp=3D%u\n", hpd);
+> > > +	return connector_status_unknown;
+> > > +}
+> > > +
+> > > +static void hotplug_work_func(struct work_struct *work) {
+> > > +	struct cdns_mhdp8501_device *mhdp =3D container_of(work,
+> > > +						     struct cdns_mhdp8501_device,
+> > > +						     hotplug_work.work);
+> > > +	enum drm_connector_status status =3D cdns_mhdp8501_detect(mhdp);
+> > > +
+> > > +	drm_bridge_hpd_notify(&mhdp->bridge, status);
+> > > +
+> > > +	if (status =3D=3D connector_status_connected) {
+> > > +		/* Cable connected  */
+> > > +		DRM_INFO("HDMI/DP Cable Plug In\n");
+> > > +		enable_irq(mhdp->irq[IRQ_OUT]);
+> > > +	} else if (status =3D=3D connector_status_disconnected) {
+> > > +		/* Cable Disconnected  */
+> > > +		DRM_INFO("HDMI/DP Cable Plug Out\n");
+> > > +		enable_irq(mhdp->irq[IRQ_IN]);
+> > > +	}
+> > > +}
+> > > +
+> > > +static irqreturn_t cdns_mhdp8501_irq_thread(int irq, void *data) {
+> > > +	struct cdns_mhdp8501_device *mhdp =3D data;
+> > > +
+> > > +	disable_irq_nosync(irq);
+> > > +
+> > > +	mod_delayed_work(system_wq, &mhdp->hotplug_work,
+> > > +			 msecs_to_jiffies(HOTPLUG_DEBOUNCE_MS));
+> > > +
+> > > +	return IRQ_HANDLED;
+> > > +}
+> >=20
+> > AFAICT from the rest of the driver, you support HDMI modes with a chara=
+cter
+> > rate > 340Mchar/s, and thus you need to enable the scrambler.
+> >=20
+> > If you unplug/replug a monitor with the scrambler enabled though, and if
+> > there's no userspace component to react to the userspace event, the cod=
+e you
+> > have here won't enable the scrambler again.
+> >=20
+> > You can test that by using modetest with a 4k@60Hz mode or something, a=
+nd
+> > then disconnecting / reconnecting the monitor.
+> >=20
+> > We addressed it in vc4 in commit 6bed2ea3cb38 ("drm/vc4: hdmi: Reset li=
+nk
+> > on hotplug").
+> >=20
+> > Arguably, the whole handling of the HDMI scrambling setup should be tur=
+ned
+> > into a helper, and I wanted to extend the work I've been doing around t=
+he
+> > HDMI infra to support the scrambler setup once it landed.
+> >=20
+>=20
+> Yes, for userspace components that do not handle HPD events (such as
+> modetest), if they are connected to a 4K display and enable scramble
+> then the cable is unplugged/plugged, HDMI will not work. However, this
+> is a userspace component limitation.
 
-TBH I always assumed in the past the that huge zero page is only useful because
-its a placeholder for a real THP that would be populated on write. But that's
-obviously not the case at the moment. So other than a hack to preallocate the
-pgtables with only 1 fault per 2M, what other benefits does it have?
+No, it's not.
 
-> 
-> 
-> Without THP this works as expected. With THP this currently also works as
-> expected, but of course with the price [1] of not getting anon THP
-> immediately, which usually we don't care about. As you note, khugepaged might
-> fix this up later.
-> 
-> If we disable the huge zeropage, we would get anon THPs when reading instead of
-> small zeropages.
+I mean, yes, it's something the userspace *could* do. But it doesn't
+have to, and the expectation is very much that the display keeps
+working.
 
-I wasn't aware of that behaviour either. Although that sounds like another
-reason why allocating a THP over the huge zero page on write fault should be the
-"more consistent" behaviour.
+> fbdev and weston could work well for this case.
 
-> 
-> As reply to [1], I suggested using preallcoation (using MADV_POPULATE_WRITE)
-> when we really care about that performance difference, which would also
-> avoid the huge zeropage completely, but it's also not quite optimal in some cases.
+Yeah, they could work well. We don't want them to possibly work, we want
+them to work, period. That's why amdgpu, i915 and vc4 all have that code.
 
-I could imagine some cases could benefit from a MADV_POPULATE_WRITE_ON_FAULT,
-which would just mark the VMA so that any read fault is upgraded to write.
+> The patch for vc4 in commit 6bed2ea3cb38 ("drm/vc4: hdmi: Reset link
+> on hotplug") assumes unplug/replug the same monitor as stated in its
+> commit log.
 
-> 
-> 
-> I don't really know what to do here: changing the handling for the huge zeropage
-> only unconditionally does not sound too wrong, but the change in behavior
-> might (or might not) be desired for some use cases.
-> 
-> Reading from unpopulated memory can be a clear sign that really the shared zeropage
-> is desired (as for QEMU), and concurrent memory preallcoation/population should
-> ideally use MADV_POPULATE_WRITE. Maybe there are some details buried in [2]
-> regarding
-> the common use cases for the huge zeropage back than.
+Indeed.
 
-The current huge zero page behavior on write fault sounds wonky to me. But I
-agree there are better and more complete solutions to the identified use cases.
-So unless something pops up where the change is a clear benefit, I guess better
-to be safe and leave as is.
+> It does not support the case where unplug/plug to different displays.=20
+> For example, if the cable is unplugged from a 4K monitor and then plugged=
+ into a 1080p monitor,=20
+> 4K video mode will be output to the 1080p monitor because this userspace =
+component cannot respond to the monitor change.
+> Therefore, for userspace components that do not handle HPD events (such a=
+s modetest),=20
+> this patch can only partially solve the limitation, but it is not a perfe=
+ct solution.
 
-> 
-> [1] https://lkml.kernel.org/r/740d7379-3e3d-4c8c-4350-6c496969db1f@huawei.com
-> [2] https://lwn.net/Articles/517465/
-> 
+You're looking at it from the wrong PoV. What matters is the behaviour
+we offer from userspace. Userspace is in charge of setting the mode, and
+it's expectation is that the mode is going to be output until it either
+changes the mode or disables the display.
 
+Reenabling the scrambler when a display is disconnected and reconnected
+matches that expectation. If we ignore the case where the display has
+changed, we still match that expectation: the userspace is in control of
+the mode.
+
+If it wants to react to monitors being unplugged, it can. But it doesn't
+have to, and it should keep working as long as you don't change the
+moniter / panel.
+
+And you're also completely ignoring things like AV amplifiers that
+really like to do those kind of short HPD pulses.
+
+> If helper functions are used to restore the HDMI scramble bit after
+> hotplug, I would like to use it.
+
+Those helpers don't exist yet, so feel free to work on them.
+
+Maxime
+
+--3bvkkyl5thqxineu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZoP1HQAKCRDj7w1vZxhR
+xdkwAP40UCWrNOV2VLiJyvMg4LRN4JC8s6714BNQ8fq8rI1Q2wD+LrtpkGVb424r
+IxBXtjaaRMRF0KCaST36XTcm25I57Qc=
+=5pfl
+-----END PGP SIGNATURE-----
+
+--3bvkkyl5thqxineu--
 
