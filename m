@@ -1,58 +1,67 @@
-Return-Path: <linux-kernel+bounces-238129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF1F9243E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:48:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DDB9243ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 517B3283734
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:48:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 361D4B2783E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25F31BD50E;
-	Tue,  2 Jul 2024 16:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839911BD512;
+	Tue,  2 Jul 2024 16:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgZCeT0j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gdEun3Yo"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033B014293;
-	Tue,  2 Jul 2024 16:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5511BC08A;
+	Tue,  2 Jul 2024 16:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719938915; cv=none; b=Z2G/AZ6zLyzaQaImzkBdfMak7eyjk94FT7ekYXkwY+RXKDlvWgNHwFMwnpuRdlMc6i1sYG6L9O+8JyCPzu07pn8dkpho+0EXt9kg9M4bi0ckMX360QhdY2xtaajbi574g1nvLB7EhpvsSj2TIDAqDBIGjo1aIYXmlb+IsCK0g1w=
+	t=1719939020; cv=none; b=dKP/CfdY5wd+sCjAPZIONg/K+sQHx7KItLyOIF7DYZG6a9HK/VhqrQRL1vwLhtPDXaBoMioIjbNZSn2JPRTnZNNTK/xP4PnmLyfrzC5XUOJsoqWeD9mlyc24BY0OLfTkxpXo+L620yhl77R5KH2XTbQBwHNPpJl4172yZcqbHFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719938915; c=relaxed/simple;
-	bh=gfU5QuXQlaiam67/XOpq2UzL8FJkb0/ESvDTmSYpo+g=;
+	s=arc-20240116; t=1719939020; c=relaxed/simple;
+	bh=NBU8FpE3Irj66yKw+4xwB67VdXxsBFU30+zKXbrRKJ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n0qvfsIxHUP5EDboAEYrXFUM9x3IoUPGOuxNBBdosaJgNjRd87wlcVdWSLXKh91Eh/lDtdtPoz/vKwQywPh/f5adeWNbFAZRPtnYtBleOCcnn8uG4wtg6ubTZadi2rIhYu0t3Ovlj7OxQvKxIufkYF6e+Zb/rgGkx0w9wyJuf1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgZCeT0j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF76C116B1;
-	Tue,  2 Jul 2024 16:48:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719938914;
-	bh=gfU5QuXQlaiam67/XOpq2UzL8FJkb0/ESvDTmSYpo+g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fgZCeT0jiLJ2JP6oGESvJjatUQCqjDBnbc9LUuXhSVLYs2A9HUswO0QQzQNIQqtL+
-	 8V8zQ194eu5KxiuIc23JK3LPL9a7bcIH5TcGQ6/nqnlVwjKIA2vtyktSWTh9AsAGRA
-	 oDmfi183WIfNMP4AzpVASNrsbynOO9binPIdXcMYP8VVqRDAWLORmkzBsxOPJQGQa2
-	 qtKWZbK0lRIPkGIVvGcvy5E9DPfPtdu8jueWMaxfxmJtF3KbKJ0Qh7X6bPVqFwBUY5
-	 +XK2Hk4FBaIslMyBNDjc4b5ArcxiiAci3QMFsQMt8rgVpH5fy5VOHuC3KcoafF9GRH
-	 omtXMsgQQ0OlQ==
-Date: Tue, 2 Jul 2024 17:48:29 +0100
-From: Simon Horman <horms@kernel.org>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, andrew@lunn.ch, jiri@resnulli.us,
-	rkannoth@marvell.com, jdamato@fastly.com, pkshih@realtek.com,
-	larry.chiu@realtek.com
-Subject: Re: [PATCH net-next v22 01/13] rtase: Add support for a pci table in
- this module
-Message-ID: <20240702164829.GL598357@kernel.org>
-References: <20240701115403.7087-1-justinlai0215@realtek.com>
- <20240701115403.7087-2-justinlai0215@realtek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPnx4rlLgBgJZMufSulbt0a2nmbCTiKnKhvxZTMYH7AIkp9fHvedLb06Hh8xmOz6rc42D5hhVusuapoA78tIQ8jmlPOqDP6YmedM7Sud2bD1+u0niYNZbn468HeLQMMuaLGt4W6iZeiC0vTHagPmtrXmJjRgP6mQZNYEBL3YWTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gdEun3Yo; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DyQD/12RCuPa/pHvJFloMLSkNit2iJNd6Y55+8X+S9o=; b=gdEun3Yo7nq+uQsT+MfWgV2pI0
+	NHKpEb0uH816likmx6uDX2hKw+Uc1cgxWuJzGWdM0N2ToOKGE37jkxuzGKaHDc56W+fqj7rKhaUap
+	NZ6wzMLKNNHlKgNOfy07Fmma9XVs3WvxXNZo9XIZc6hM9rE8E8YXjAEV8QTKm7nhNynBKr0xGhfw/
+	81zSiGZJlgL0iwa/YVtUsnEZfKvD1d21JVYUa+FWbJxHtji1EBsNmd04aAg7jmyorIlSoqDO3dqi4
+	OWNJ9Z6aOIkh37x35qi0IT0MhNYZzaSVujIMrIvDDj6wcl91BkUS03IR0zOXzV7eZswDOjHcc/0Hw
+	5QXNhjFQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sOghm-00000000xck-3ywy;
+	Tue, 02 Jul 2024 16:50:10 +0000
+Date: Tue, 2 Jul 2024 17:50:10 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
+	brauner@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
+Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <ZoQvwkcL3uWONfzV@casper.infradead.org>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-7-kernel@pankajraghav.com>
+ <20240702074203.GA29410@lst.de>
+ <20240702101556.jdi5anyr3v5zngnv@quentin>
+ <20240702120250.GA17373@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,27 +70,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701115403.7087-2-justinlai0215@realtek.com>
+In-Reply-To: <20240702120250.GA17373@lst.de>
 
-On Mon, Jul 01, 2024 at 07:53:51PM +0800, Justin Lai wrote:
-> Add support for a pci table in this module, and implement pci_driver
-> function to initialize this driver, remove this driver, or shutdown
-> this driver.
+On Tue, Jul 02, 2024 at 02:02:50PM +0200, Christoph Hellwig wrote:
+> On Tue, Jul 02, 2024 at 10:15:56AM +0000, Pankaj Raghav (Samsung) wrote:
+> > Willy suggested we could use raw pages as we don't need the metadata
+> > from using a folio. [0]
 > 
-> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
-> ---
->  drivers/net/ethernet/realtek/rtase/rtase.h    | 338 ++++++++++
->  .../net/ethernet/realtek/rtase/rtase_main.c   | 638 ++++++++++++++++++
->  2 files changed, 976 insertions(+)
->  create mode 100755 drivers/net/ethernet/realtek/rtase/rtase.h
->  create mode 100755 drivers/net/ethernet/realtek/rtase/rtase_main.c
-> 
-> diff --git a/drivers/net/ethernet/realtek/rtase/rtase.h b/drivers/net/ethernet/realtek/rtase/rtase.h
-> new file mode 100755
+> Ok, that feels weird but I'll defer to his opinion in that case.
 
-nit: Source files should not have the execute bit(s) set.
+Let me see if I can make you feel less weird about it, since I think
+this is something that people should have a clear feeling about.
 
-     Flagged by Checkpatch.
+In the Glorious Future, when we've separated pages and folios from each
+other, folios are conceptually memory that gets mapped to userspace.
+They have refcounts, mapcounts, a pointer to a file's mapping or an anon
+vma's anon_vma, an index within that object, an LRU list, a dirty flag,
+a lock bit, and so on.
 
-Otherwise, this patch looks good to me.
+We don't need any of that here.  We might choose to use a special memdesc
+for accounting purposes, but there's no need to allocate a folio for it.
+For now, leaving it as a plain allocation of pages seems like the smartest
+option, and we can revisit in the future.
 
