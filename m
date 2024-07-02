@@ -1,263 +1,254 @@
-Return-Path: <linux-kernel+bounces-238372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654BC924964
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:36:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5695692497C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22273281697
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:36:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C07CBB220D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FA4201254;
-	Tue,  2 Jul 2024 20:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dc+6/1my"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A9120013B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 20:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EA820125A;
+	Tue,  2 Jul 2024 20:41:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0B61CF8F;
+	Tue,  2 Jul 2024 20:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719952587; cv=none; b=gJFnp/Mv7qF0rmP16q/SNGy+TUAN07Sa7t+k0FA/RIkJskm7oYdW1NoROyVZ17pI+rVYU2/hZ81XOhLOUrb8ECGIMAkyFiJCVRDu/khnm/0Hnlzjo4AbyFFJk4YpzHTk66+FR/GCM7fEY0CvmSiL4YeISXe+TSUZ4KFVTICTXko=
+	t=1719952897; cv=none; b=Sy4HIvdxqN5N9NtkOOCoTp5JqF1zClf3Djvdv8V7lQUebW4mDFPIf6EPnHcBgBcpOPLfOYL6tANxe/0IB4Y7a+G1yeTV58JadWSb2+pAy+m57RvoQZTE9Y5R0So1pZQGjWCv84RGnK/wIQGvcCM1rRKk+lPSEJ3tdwghbUZgJ/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719952587; c=relaxed/simple;
-	bh=oIZ+qFeEAMiEHqcHkGf420iEqeFpgZPDR6xLSjPRQZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lUz5hRmKbNQU3Kq0raVqlhowawhhlNH6RNGoRbzpCsqzT750KMb1dQOGYJiqVnzfwWGkWQwLr/tWyZNV1qYxZioMgsYo6UTrSB6C/UZhm6RfIjeR883tk3T6BBGqeMvuQW/6CPAzdFATJh2cCS1/64aF1phcff1/MLrUxZsWbY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dc+6/1my; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-44664ad946eso26701cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 13:36:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719952584; x=1720557384; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t3XnOUTxL7Khvj5clLjXUpjkjIAJvXl6J+yhlYNwVw0=;
-        b=Dc+6/1myJBVkHbpgutY9GzbhK9z295MV5LjraiqT+PycFTY7ZAj5faQ8heBYyknVGn
-         5Kq6wZ4Sp5Qaqs6/NZag3bO+sM1cIiLDCeHa7W09Mlrfuz3fkAe+csZvNwo3SbRS010D
-         +/U6VgRChXu/M+Pi0TelI8i1yDpjmQbbOuFcHW3zN8xXuZ74rZywV+ll11raxVeh9u+E
-         uFC4YtOSSqdbgNoJ1As80B9n+2qYWrjcWaht6b4ode5FPNdEcCtjh4o33qC7MydNaEgr
-         zrHKoEwmvcZKug8wvROGhf0T6n0af0gY+jpdaH7tYBPXAL2+hUV5+6fNzbp5v5E19Sp4
-         8nTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719952584; x=1720557384;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t3XnOUTxL7Khvj5clLjXUpjkjIAJvXl6J+yhlYNwVw0=;
-        b=VRPpD3dT8WM3489TbETjgJakyxqh/p38j58JeHmv/ReNeQ5G7aTFTQ4LGuquPAzHBF
-         VO46X4b5/460I0UZoilIEzDyGt+voH/dsW7ZoMvw/8X4xHxPHZwx9Yv445JbxDrYUcPe
-         8JvFSMadW2Kaz3N7amZtmcgN7DJPn2U/O+ZtaHjzVhlf0pgoCgV8w9v1ZFtGFawyZhnM
-         F7WjRlkEQzPvxpg0ICmlnJ6dNkFubLbU9utp9JvG6cWdvLNDfG7v02eBQPfuGpSbrXy0
-         h2mJ9wQObx0SgArVLE/qHJUcXkgN/Io8dNOxiuOfVKCqXWHVUPL3gbIXuJaPtq3MrVTP
-         bH9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXzD0/8no/nMVGEBawu8r9Vw9y1pjLqDTYwUnZ6sZ6rMOtj1wnNVnonb7enD/aTbi0isG3Ch8sBMEYgZvQkspsZER6MtIEmJwx2MEVL
-X-Gm-Message-State: AOJu0YyQIgza1DhbH+wQavPthiAKEwCmPrljvoITNCCDBN3QR3aEnEsM
-	LfQ4yCUEaW0oU/2+akiOtftYPWKnKgqBIb7BUuD0/B0VYIF2JcqFJsM1qg783fS4rCbGYkPmP4t
-	dxkuEqqGARiByHExUeRc+gRjM4xr6Q2iSU5Ts
-X-Google-Smtp-Source: AGHT+IHAG7v9n5i2ldh8TX1jsYKCXmrofIE/3++As3TOB5fu1ttid4KYzf35bt3BFAU6aTcbOkSIW3Fghzdnyy/bWqM=
-X-Received: by 2002:a05:622a:a028:b0:43f:ff4f:c130 with SMTP id
- d75a77b69052e-447bc4a36c6mr980141cf.2.1719952584271; Tue, 02 Jul 2024
- 13:36:24 -0700 (PDT)
+	s=arc-20240116; t=1719952897; c=relaxed/simple;
+	bh=hhH4iZXp8qOnFwnFupvfayXAquZLbQ+GU/0m8/x3+Qs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IW5PzvlfQYftXPWOCSPfYy8FXmn3/TpNruqOsppK0e1A0t2S6SjtCJClWYLxhMYIUPTlyW/eSjofHd+xMC6QMfmBJ/aztvkSc/XuMQDtpfUup4GrKW3PfPsYEZ5t1fgvdxYB2u9t/VAPqS1MGWAoPffKGaAt3MO1cs9Iv47GSFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C2A7339;
+	Tue,  2 Jul 2024 13:41:58 -0700 (PDT)
+Received: from [10.57.82.69] (unknown [10.57.82.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F33893F766;
+	Tue,  2 Jul 2024 13:41:31 -0700 (PDT)
+Message-ID: <20208c07-1ea8-43a0-a499-51c9fd63b037@arm.com>
+Date: Tue, 2 Jul 2024 21:41:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6d4afb49-3cb9-f176-61a2-5bbaab698644@gmail.com>
-In-Reply-To: <6d4afb49-3cb9-f176-61a2-5bbaab698644@gmail.com>
-From: Rae Moar <rmoar@google.com>
-Date: Tue, 2 Jul 2024 16:36:11 -0400
-Message-ID: <CA+GJov5=HVTQL8fk50f5LGCfVMDXRLx65UYLt-t1vD9vu0M5Dw@mail.gmail.com>
-Subject: Re: [RFC] ktap_v2: KTAP specification transition method
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: David Gow <davidgow@google.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Kees Cook <keescook@chromium.org>, Tim.Bird@sony.com, 
-	Brendan Higgins <brendanhiggins@google.com>, Jonathan Corbet <corbet@lwn.net>, rmr167@gmail.com, 
-	guillaume.tucker@collabora.com, dlatypov@google.com, kernelci@groups.io, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] sched_ext: Add cpuperf support
+To: Tejun Heo <tj@kernel.org>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+ void@manifault.com, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ mingo@redhat.com, peterz@infradead.org, David Vernet <dvernet@meta.com>,
+ "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+References: <20240619031250.2936087-1-tj@kernel.org>
+ <20240619031250.2936087-3-tj@kernel.org>
+ <63c76af4-6451-4d6a-8aeb-0bc4812c4101@arm.com>
+ <ZoQs384bAMuaeDEs@slm.duckdns.org>
+ <940a41d0-2660-4a7a-ad07-581b3ac24cca@arm.com>
+ <ZoQ_XuXn1Y2Kp3Ba@slm.duckdns.org>
+Content-Language: en-US
+From: Hongyan Xia <hongyan.xia2@arm.com>
+In-Reply-To: <ZoQ_XuXn1Y2Kp3Ba@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello everyone,
+On 02/07/2024 18:56, Tejun Heo wrote:
+> Hello,
+> 
+> So, maybe something like this. It's not the prettiest but avoids adding
+> indirect calls to fair and rt while allowing sched_ext to report what the
+> BPF scheduler wants. Only compile tested. Would something like this work for
+> the use cases you have on mind?
+> 
+> Thanks.
+> 
+> Index: work/kernel/sched/core.c
+> ===================================================================
+> --- work.orig/kernel/sched/core.c
+> +++ work/kernel/sched/core.c
+> @@ -1671,6 +1671,20 @@ static inline void uclamp_rq_dec_id(stru
+>   	}
+>   }
+>   
+> +bool sched_uclamp_enabled(void)
+> +{
+> +	return true;
+> +}
+> +
+> +static bool class_supports_uclamp(const struct sched_class *class)
+> +{
+> +	if (likely(class->uclamp_enabled == sched_uclamp_enabled))
+> +		return true;
+> +	if (!class->uclamp_enabled)
+> +		return false;
+> +	return class->uclamp_enabled();
+> +}
+> +
+>   static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+>   {
+>   	enum uclamp_id clamp_id;
+> @@ -1684,7 +1698,7 @@ static inline void uclamp_rq_inc(struct
+>   	if (!static_branch_unlikely(&sched_uclamp_used))
+>   		return;
+>   
+> -	if (unlikely(!p->sched_class->uclamp_enabled))
+> +	if (class_supports_uclamp(p->sched_class))
+>   		return;
+>   
+>   	for_each_clamp_id(clamp_id)
+> @@ -1708,7 +1722,7 @@ static inline void uclamp_rq_dec(struct
+>   	if (!static_branch_unlikely(&sched_uclamp_used))
+>   		return;
+>   
+> -	if (unlikely(!p->sched_class->uclamp_enabled))
+> +	if (class_supports_uclamp(p->sched_class))
+>   		return;
+>   
+>   	for_each_clamp_id(clamp_id)
+> Index: work/kernel/sched/ext.c
+> ===================================================================
+> --- work.orig/kernel/sched/ext.c
+> +++ work/kernel/sched/ext.c
+> @@ -116,10 +116,17 @@ enum scx_ops_flags {
+>   	 */
+>   	SCX_OPS_SWITCH_PARTIAL	= 1LLU << 3,
+>   
+> +	/*
+> +	 * Disable built-in uclamp support. Can be useful when the BPF scheduler
+> +	 * wants to implement custom uclamp support.
+> +	 */
+> +	SCX_OPS_DISABLE_UCLAMP	= 1LLU << 4,
+> +
+>   	SCX_OPS_ALL_FLAGS	= SCX_OPS_KEEP_BUILTIN_IDLE |
+>   				  SCX_OPS_ENQ_LAST |
+>   				  SCX_OPS_ENQ_EXITING |
+> -				  SCX_OPS_SWITCH_PARTIAL,
+> +				  SCX_OPS_SWITCH_PARTIAL |
+> +				  SCX_OPS_DISABLE_UCLAMP,
+>   };
+>   
+>   /* argument container for ops.init_task() */
+> @@ -3437,6 +3444,13 @@ static void switched_from_scx(struct rq
+>   static void wakeup_preempt_scx(struct rq *rq, struct task_struct *p,int wake_flags) {}
+>   static void switched_to_scx(struct rq *rq, struct task_struct *p) {}
+>   
+> +#ifdef CONFIG_UCLAMP_TASK
+> +static bool uclamp_enabled_scx(void)
+> +{
+> +	return !(scx_ops.flags & SCX_OPS_DISABLE_UCLAMP);
+> +}
+> +#endif
+> +
+>   int scx_check_setscheduler(struct task_struct *p, int policy)
+>   {
+>   	lockdep_assert_rq_held(task_rq(p));
+> @@ -3522,7 +3536,7 @@ DEFINE_SCHED_CLASS(ext) = {
+>   	.update_curr		= update_curr_scx,
+>   
+>   #ifdef CONFIG_UCLAMP_TASK
+> -	.uclamp_enabled		= 1,
+> +	.uclamp_enabled		= uclamp_enabled_scx,
+>   #endif
+>   };
+>   
+> Index: work/kernel/sched/fair.c
+> ===================================================================
+> --- work.orig/kernel/sched/fair.c
+> +++ work/kernel/sched/fair.c
+> @@ -13228,9 +13228,7 @@ DEFINE_SCHED_CLASS(fair) = {
+>   	.task_is_throttled	= task_is_throttled_fair,
+>   #endif
+>   
+> -#ifdef CONFIG_UCLAMP_TASK
+> -	.uclamp_enabled		= 1,
+> -#endif
+> +	SCHED_CLASS_UCLAMP_ENABLED
+>   };
+>   
+>   #ifdef CONFIG_SCHED_DEBUG
+> Index: work/kernel/sched/rt.c
+> ===================================================================
+> --- work.orig/kernel/sched/rt.c
+> +++ work/kernel/sched/rt.c
+> @@ -2681,9 +2681,7 @@ DEFINE_SCHED_CLASS(rt) = {
+>   	.task_is_throttled	= task_is_throttled_rt,
+>   #endif
+>   
+> -#ifdef CONFIG_UCLAMP_TASK
+> -	.uclamp_enabled		= 1,
+> -#endif
+> +	SCHED_CLASS_UCLAMP_ENABLED
+>   };
+>   
+>   #ifdef CONFIG_RT_GROUP_SCHED
+> Index: work/kernel/sched/sched.h
+> ===================================================================
+> --- work.orig/kernel/sched/sched.h
+> +++ work/kernel/sched/sched.h
+> @@ -2339,11 +2339,6 @@ struct affinity_context {
+>   extern s64 update_curr_common(struct rq *rq);
+>   
+>   struct sched_class {
+> -
+> -#ifdef CONFIG_UCLAMP_TASK
+> -	int uclamp_enabled;
+> -#endif
+> -
+>   	void (*enqueue_task) (struct rq *rq, struct task_struct *p, int flags);
+>   	void (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
+>   	void (*yield_task)   (struct rq *rq);
+> @@ -2405,8 +2400,21 @@ struct sched_class {
+>   #ifdef CONFIG_SCHED_CORE
+>   	int (*task_is_throttled)(struct task_struct *p, int cpu);
+>   #endif
+> +
+> +#ifdef CONFIG_UCLAMP_TASK
+> +	bool (*uclamp_enabled)(void);
+> +#endif
+>   };
+>   
+> +#ifdef CONFIG_UCLAMP_TASK
+> +bool sched_uclamp_enabled(void);
+> +
+> +#define SCHED_CLASS_UCLAMP_ENABLED	\
+> +	.uclamp_enabled = sched_uclamp_enabled,
+> +#else
+> +#define SCHED_CLASS_UCLAMP_ENABLED
+> +#endif
+> +
+>   static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
+>   {
+>   	WARN_ON_ONCE(rq->curr != prev);
 
-It has been a few months since there has been activity regarding the
-second version of KTAP. I wanted to bring this topic back up to the
-surface.
+Looks good to me!
 
-Currently, Frank has compiled a list of KTAPv2 patches here at this
-link: https://elinux.org/Test_Results_Format_Notes#KTAP_version_2
+Actually, if we are okay with changing the sched_class struct and 
+touching the code of other classes, I wonder if a cleaner solution is 
+just to completely remove sched_class->uclamp_enabled and let each class 
+decide what to do in enqueue and dequeue, so instead of
 
-I am interested in starting the process of accepting these patches as
-changes to the KTAP documentation as KTAPv2.
+	uclamp_inc/dec();
+	p->sched_class->enqueue/dequeue_task();
 
-First, a decision that needs to be made is which branch should be used
-to accept these changes. Frank has a git repository for KTAPv2.
-However, it is my understanding he has retired. As a reviewer of
-KUnit, I am happy to take the patches in through the KUnit branch.
-Would this work for everyone?
+we can just
 
-Second, we need to finalize the changes. A current list of proposed
-KTAPv2 patches is as follows:
+	p->sched_class->enqueue/dequeue_task();
+		do_uclamp_inside_each_class();
 
-[PATCH v3 0/2] begin KTAP spec v2 process
-[PATCH v3 1/2] ktap_v2: change version to 2-rc in KTAP specification
-[PATCH v3 2/2] ktap_v2: change "version 1" to "version 2" in examples
-[KTAP V2 PATCH] ktap_v2: add skip test result
-[KTAP V2 PATCH v4] ktap_v2: add test metadata
+and we export uclamp_inc/dec() functions from core.c to RT, fair and 
+ext. For RT and fair, just
 
-Note the patch on adding a skip test result has not yet been reviewed.
-So please take a look at this change if interested.
+	enqueue/dequeue_task_fair/rt();
+		uclamp_inc/dec();
 
-As a rule, for any feature of KTAPv1 that is replaced in KTAPv2, it
-will stay in the documentation as allowed but deprecated to allow a
-smooth transition.
-
-If this process sounds good to people, I will try to get discussions
-going on current patches and ask for reviews. My goal is by the end of
-the summer, I can apply the approved patches and send them through a
-chosen branch (potentially KUnit, as discussed above).
-
-Let me know what you think. Thanks!
--Rae
-
-
-On Sun, Mar 26, 2023 at 7:25=E2=80=AFPM Frank Rowand <frowand.list@gmail.co=
-m> wrote:
->
-> In the middle of the thread about a patch to add the skip test result,
-> I suggested documenting the process of deprecating the KTAP v1 Specificat=
-ion
-> method of marking a skipped test:
->
->   https://lore.kernel.org/all/490271eb-1429-2217-6e38-837c6e5e328b@gmail.=
-com/T/#u
->
-> In a reply to that email I suggested that we ought to have a process to t=
-ransition
-> the KTAP Specification from v1 to v2, and possibly v3 and future.
->
-> This email is meant to be the root of that discussion.
->
-> My initial thinking is that there are at least three different types of p=
-roject
-> and/or community that may have different needs in this area.
->
-> Type 1 - project controls both the test output generation and the test ou=
-tput
-> parsing tool.  Both generation and parsing code are in the same repositor=
-y
-> and/or synchronized versions are distributed together.
->
-> Devicetree unittests are an example of Type 1.  I plan to maintain change=
-s
-> of test output to KTAP v2 format in coordination with updating the parser
-> to process KTAP v2 data.
->
-> Type 2 - project controls both the test output generation and the test ou=
-tput
-> parsing tool.  The test output generation and a parser modifications may =
-be
-> controlled by the project BUT there are one or more external testing proj=
-ects
-> that (1) may have their own parsers, and (2) may have a single framework =
-that
-> tests multiple versions of the tests.
->
-> I think that kselftest and kunit tests are probably examples of Type 2.  =
-I also
-> think that DT unittests will become a Type 2 project as a result of conve=
-rting
-> to KTAP v2 data.
->
-> Type 3 - project may create and maintain some tests, but is primarily a c=
-onsumer
-> of tests created by other projects.  Type 3 projects typically have a sin=
-gle
-> framework that is able to execute and process multiple versions of the te=
-sts.
->
-> The Fuego test project is an example of Type 3.
->
-> Maybe adding all of this complexity of different Types in my initial thin=
-king
-> was silly -- maybe everything in this topic is governed by the more compl=
-ex
-> Type 3.
->
-> My thinking was that the three different Types of project would be impact=
-ed
-> in different ways by transition plans.  Type 3 would be the most impacted=
-,
-> so I wanted to be sure that any transition plan especially considered the=
-ir
-> needs.
->
-> There is an important aspect of the KTAP format that might ease the trans=
-ition
-> from one version to another: All KTAP formatted results begin with a "ver=
-sion
-> line", so as soon as a parser has processed the first line of a test, it =
-can
-> apply the appropriate KTAP Specification version to all subsequent lines =
-of
-> test output.  A parser implementation could choose to process all version=
-s,
-> could choose to invoke a version specific parser, or some other approach
-> all together.
->
-> In the "add skip test results" thread, I suggested deprecating the v1
-> method of marking a skipped test in v2, with a scheduled removal of
-> the v1 method in v3.  But since the KTAP format version is available
-> in the very first line of test output, is it necessary to do a slow
-> deprecation and removal over two versions?
->
-> One argument to doing a two version deprecation/removal process is that
-> a parser that is one version older the the test output _might_ be able
-> to process the test output without error, but would not be able to take
-> advantage of features added in the newer version of the Specification.
->
-> My opinion is that a two version deprecation/removal process will slow
-> the Specification update process and lead to more versions of the
-> Specification over a given time interval.
->
-> A one version deprecation/removal process puts more of a burden on Type 3
-> projects and external parsers for Type 2 projects to implement parsers
-> that can process the newer Specification more quickly and puts a burden
-> on test maintainers to delay a move to the newer Specification, or possib=
-ly
-> pressure to support selection of more than one Specification version form=
-at
-> for output data.
->
-> One additional item...  On the KTAP Specification version 2 process wiki =
-page,
-> I suggested that it is "desirable for test result parsers that understand=
- the
-> KTAP Specification version 2 data also be able to parse version 1 data."
-> With the implication "Converting version 1 compliant data to version 2 co=
-mpliant
-> data should not require a "flag day" switch of test result parsers."  If =
-this
-> thread discussion results in a different decision, I will update the wiki=
-.
->
-> Thoughts?
->
-> -Frank
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "KUnit Development" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kunit-dev+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/kunit-dev/6d4afb49-3cb9-f176-61a2-5bbaab698644%40gmail.com.
+For ext, maybe expose bpf_uclamp_inc/dec() to the custom scheduler. If a 
+scheduler wants to reuse the current uclamp implementation, just call 
+these. If not, skip them and implement its own.
 
