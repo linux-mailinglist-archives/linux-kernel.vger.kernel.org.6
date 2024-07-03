@@ -1,146 +1,156 @@
-Return-Path: <linux-kernel+bounces-238903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F7C92531A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E41D792531B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575AA1F2313C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BC6D1C25005
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6C21304B0;
-	Wed,  3 Jul 2024 05:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC47760DCF;
+	Wed,  3 Jul 2024 05:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hXNe8PhP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tzTBXAyP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169DB17996;
-	Wed,  3 Jul 2024 05:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BE2621
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 05:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719984991; cv=none; b=bzweTVID9dbpCfmUsKoyhC7tXAkHjrhMFulf+mcAqS9I08/9tnWuAVfi5gShkWa/eT7/Fn2wx8EOpnrFm5mV3gsIX4aTe/CVwcHN+PhV1h4rocmprlXTKhOKFS+4Flzr2Rdw9eKTeP9t8WaX8KgS6Wxu0xOEzQMJCyMhqoqIFig=
+	t=1719985224; cv=none; b=i+JtUv9vqfhxuKmVhNiG7mjplxmzWZf8B7QkpLrE5hOZCPPxsq+oZ4fRz30AjeiU5swfo9PzZJpwCw13Iu/igLV9sEm4Fe+JW6f+LP4d8bz9p0edwoukxc2ZJoEEBuXzE3tdtoXFlRv5zswYVkSZsQj54WyNSvokoOieoY7/aj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719984991; c=relaxed/simple;
-	bh=IqYMDHXTd5RtQdMHI3rY7t86+H3DAox5dASetNL6o9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=g5CUu61vWf9cENcnycDyQ7FcT/JGcnKhexl0UVxNgrpeanxQgQSJ/CDpuI8dA2PA+Spn8WFmtO+avHUdcNXlznjJu4DQEwc/4MhkIT9F8SIpsDTfCy+O9KgxOdWGCDLlJcoPQymeOO39iG/inS1tiIGZcCrVTn+TLlxr7FzUAV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hXNe8PhP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462HEImb032039;
-	Wed, 3 Jul 2024 05:35:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vEVq87AQcLxqSzjd33YFwLExMjs188eHyfneCEj+UDE=; b=hXNe8PhPrrp+FVGZ
-	NuvieG1pC+wgJ/vaAb8nNIOGTPYIE6nC7NWHuwTTaP/4vNbrCfJcn4onPCNcJoTS
-	4z9Zkcp5xUW2sOiR61zuqiFenqwkEdBl1NhEM/JPcR6FQQ0GzdgVPHs2nKZg6hL6
-	+1/SdraCW7DZkyvkQH0Dj2v4jWj/LxFlDzWYwNEeNb5KJvcNJ8/0/Ir2+UR4rlXA
-	AhV2OfKxdxIkqlH+3/1z2lCbbC7COlwG/TjrLarefFnJnCsj3q3uyTnkp5PepMmc
-	/X/zzwRJG6StBE7K9Ybpv4FdNEGs/8AEM2r3Wgjwz1mwaEoTa6rDIM/KMQA8uP0/
-	UzYa4g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402abtqsjh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Jul 2024 05:35:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4635ZlZg021927
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Jul 2024 05:35:47 GMT
-Received: from [10.218.0.85] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
- 22:35:16 -0700
-Message-ID: <23303bc2-4fa2-4b28-af5d-2cadf6795b94@quicinc.com>
-Date: Wed, 3 Jul 2024 11:05:12 +0530
+	s=arc-20240116; t=1719985224; c=relaxed/simple;
+	bh=anS1J6SWlEks8LjRWPJ+9Wrys4H8dx06W6CXq9v7Zgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UqFrEe+JuPWWUIjwK8rvdHtf+3i8I4aPQxzRskYpxYwgcaIozqx5Opv0cgoyjx8hHZ/Z+OqoHyRlhim538qucsS/cQgEsyGZ0K35gwbCAJm/pbG/Jixn8vSzhQ0s/9Ko+WtUoiGhjLXOiMZ+ZopRgtoD/YvQprwRiEJbrwyuq/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tzTBXAyP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44F54C32781;
+	Wed,  3 Jul 2024 05:40:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1719985223;
+	bh=anS1J6SWlEks8LjRWPJ+9Wrys4H8dx06W6CXq9v7Zgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tzTBXAyPO9Q/ByNLbTzBhwYaNVqwXdzMhYEG5WMPx8H9Y1Mnn7AkvO+x/VrVPgCoB
+	 gF15ylUkn6FLWH/lg5bu65AyeMIBiQLrEw/pLR00umAGQzKbhI6N/92A8aB5S+NC67
+	 jU06TFncGyxNjtqf1Xv9NWIBFNGj+tY8J3UeUKbU=
+Date: Wed, 3 Jul 2024 07:40:17 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Yu-Ting Tseng <yutingtseng@google.com>
+Cc: cmllamas@google.com, tkjos@google.com, arve@android.com,
+	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+	surenb@google.com, aliceryhl@google.com, kernel-team@android.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] binder: frozen notification binder_features flag
+Message-ID: <2024070339-clarinet-deceased-6200@gregkh>
+References: <20240702230453.1441209-2-yutingtseng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 27/47] dt-bindings: cpufreq: cpufreq-qcom-hw: Add QCS9100
- compatibles
-To: Tengfei Fan <quic_tengfan@quicinc.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <djakov@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <manivannan.sadhasivam@linaro.org>, <will@kernel.org>,
-        <joro@8bytes.org>, <conor@kernel.org>, <tglx@linutronix.de>,
-        <amitk@kernel.org>, <thara.gopinath@gmail.com>,
-        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
-        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>
-CC: <robimarko@gmail.com>, <quic_gurus@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <kishon@kernel.org>,
-        <quic_wcheng@quicinc.com>, <alim.akhtar@samsung.com>,
-        <avri.altman@wdc.com>, <bvanassche@acm.org>, <agross@kernel.org>,
-        <gregkh@linuxfoundation.org>, <robin.murphy@arm.com>,
-        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <quic_rjendra@quicinc.com>,
-        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
-        <otto.pflueger@abscue.de>, <quic_rohiagar@quicinc.com>,
-        <luca@z3ntu.xyz>, <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
-        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
-        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
-        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <bhelgaas@google.com>, <ahalaney@redhat.com>,
-        <krzysztof.kozlowski@linaro.org>, <u.kleine-koenig@pengutronix.de>,
-        <dmitry.baryshkov@linaro.org>, <quic_cang@quicinc.com>,
-        <danila@jiaxyga.com>, <quic_nitirawa@quicinc.com>,
-        <mantas@8devices.com>, <athierry@redhat.com>,
-        <quic_kbajaj@quicinc.com>, <quic_bjorande@quicinc.com>,
-        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <quic_tsoni@quicinc.com>, <quic_rgottimu@quicinc.com>,
-        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-        <linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
-References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
- <20240703035735.2182165-1-quic_tengfan@quicinc.com>
- <20240703035735.2182165-28-quic_tengfan@quicinc.com>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20240703035735.2182165-28-quic_tengfan@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8lJLEVbQuwd3L6rNbNczrDg_BxIJ7MEN
-X-Proofpoint-ORIG-GUID: 8lJLEVbQuwd3L6rNbNczrDg_BxIJ7MEN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_02,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 mlxscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- lowpriorityscore=0 phishscore=0 adultscore=0 spamscore=0 impostorscore=0
- mlxlogscore=772 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407030039
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702230453.1441209-2-yutingtseng@google.com>
 
+On Tue, Jul 02, 2024 at 04:04:54PM -0700, Yu-Ting Tseng wrote:
+> Add a flag to binder_features to indicate that the freeze notification
+> feature is available.
+> ---
+>  drivers/android/binderfs.c                                | 8 ++++++++
+>  .../selftests/filesystems/binderfs/binderfs_test.c        | 1 +
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+> index 3001d754ac36..ad1fa7abc323 100644
+> --- a/drivers/android/binderfs.c
+> +++ b/drivers/android/binderfs.c
+> @@ -58,6 +58,7 @@ enum binderfs_stats_mode {
+>  struct binder_features {
+>  	bool oneway_spam_detection;
+>  	bool extended_error;
+> +	bool freeze_notification;
+>  };
+>  
+>  static const struct constant_table binderfs_param_stats[] = {
+> @@ -74,6 +75,7 @@ static const struct fs_parameter_spec binderfs_fs_parameters[] = {
+>  static struct binder_features binder_features = {
+>  	.oneway_spam_detection = true,
+>  	.extended_error = true,
+> +	.freeze_notification = true,
+>  };
+>  
+>  static inline struct binderfs_info *BINDERFS_SB(const struct super_block *sb)
+> @@ -608,6 +610,12 @@ static int init_binder_features(struct super_block *sb)
+>  	if (IS_ERR(dentry))
+>  		return PTR_ERR(dentry);
+>  
+> +	dentry = binderfs_create_file(dir, "freeze_notification",
+> +				      &binder_features_fops,
+> +				      &binder_features.freeze_notification);
+> +	if (IS_ERR(dentry))
+> +		return PTR_ERR(dentry);
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> index 5f362c0fd890..319567f0fae1 100644
+> --- a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> +++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> @@ -65,6 +65,7 @@ static int __do_binderfs_test(struct __test_metadata *_metadata)
+>  	static const char * const binder_features[] = {
+>  		"oneway_spam_detection",
+>  		"extended_error",
+> +		"freeze_notification",
+>  	};
+>  
+>  	change_mountns(_metadata);
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
 
+Hi,
 
-On 7/3/2024 9:27 AM, Tengfei Fan wrote:
-> +              - qcom,qcs9100-cpufreq-epss
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-This is not required as we already have sa8775p bindings.
+You are receiving this message because of the following common error(s)
+as indicated below:
 
--- 
-Thanks & Regards,
-Taniya Das.
+- Your patch does not have a Signed-off-by: line.  Please read the
+  kernel file, Documentation/process/submitting-patches.rst and resend
+  it after adding that line.  Note, the line needs to be in the body of
+  the email, before the patch, not at the bottom of the patch or in the
+  email signature.
+
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what is needed in
+  order to properly describe the change.
+
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what a proper
+  Subject: line should look like.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
