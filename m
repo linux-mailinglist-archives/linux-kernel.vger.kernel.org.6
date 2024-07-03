@@ -1,206 +1,128 @@
-Return-Path: <linux-kernel+bounces-240286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B898926B5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:16:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1523C926B61
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FBAE1C21958
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:16:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE7B51F21ECF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51341940B9;
-	Wed,  3 Jul 2024 22:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF332181D18;
+	Wed,  3 Jul 2024 22:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FNQkNAjV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4mIakU6/"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFA913B59A;
-	Wed,  3 Jul 2024 22:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9488313B59A
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 22:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720044971; cv=none; b=S72MjwkyVX+fXtp99ZSaiv/j1uAa2YbXMEJ6yCpA7M1u9/IeZPJfSTUWNAOgwAH3MyvOaSNdC63+aiNX/mQBCMDHWI6L+45WabP5CDHneUSq5RfUiNTcfLWW5SYudsNhbitrdAJt1a3eu51hBniD5oTChMF1Ey3NUc2Fv2qtAPQ=
+	t=1720045063; cv=none; b=fd6FzUbeyHueBeqd+Vor4N0/abZOR23AWlTgUIY5nxfA6nJ1NuwfoKbKD0cRoJ6SLFt1JvM1gQF2vP4xr7dIgct3KWenQpEmqijWMhT8D/AS1ja0MhUKlV4Gx+QsmMw1+BQlox0qisUo3iNBWzMilGnud4QhF5XV01HJe5vtp28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720044971; c=relaxed/simple;
-	bh=UQd0EeHvwuiEjQaFcAKp5z898/9I3p67P2UNvkMBYmQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=D3pYpw/3Jtc3iEVcaApMS1sNUxRI8+esBURP41vXbIMWzwQqi8k/I9iNAcxbsL3ZLGanfJI5w8iZiwZyKdCVosqvsyDaVLD2qy5MY3zKy+fsQ+L1wQrqzXhWIMEnvEdP/eNifFuDxzzezTtasUwqSYOKhZ1pcTl0KlNWXmhehVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FNQkNAjV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 463K3EdV022467;
-	Wed, 3 Jul 2024 22:15:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KS606ZWf5wW3Nf/IpnMfTERzoRSsXb3f/8SaJ+eoiwA=; b=FNQkNAjVvuu31Bjl
-	ezcEvUWvV9ywpUEUSNUnI5Xj0We/gsoiDAI/Kxf9fsw2kEp5O+xtCJKGEvHNYqOX
-	T4h2L0vBWgFhFrfEk5WdsNcbKSGSh/rAzvRao8DSXi8q3jURLZpzF6zoOO0Fh23u
-	N2CV3ofBsR1ogvKMzXQOmOIvsqlVTDrZG6YAz8ODcACdPyYVs1qz12Ps3hIQAGUN
-	HTiTrKK9/sjwt+4l+0vcyVsxpakimg//AXxl5eaMfVLg399WpJoRvJNOfJ6tFIZT
-	GyTQ3hT9jgtyL6TSsS6rCjoAdVHT8357Fh15q0owq2q0mZOSzgjutBTcHYmExE4C
-	8Tlbvg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 405dbe06q1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Jul 2024 22:15:41 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 463MFeOF007405
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Jul 2024 22:15:40 GMT
-Received: from hu-scheluve-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 3 Jul 2024 15:15:37 -0700
-From: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Date: Wed, 3 Jul 2024 15:15:22 -0700
-Subject: [PATCH v3 2/2] net: stmmac: Add interconnect support
+	s=arc-20240116; t=1720045063; c=relaxed/simple;
+	bh=DaQtQUezy9Cd6dPj/vQJgAG0+5hzPIdQv4yBLL7Tw+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kz6H8N+rbzZibpFhbin7jgSIV+VCHLAEctMtx2Y13E5NnpXk50yP3D0hwQdyCFnfjBmKd1KzmIXBRL8WVOdv8nWZWtmk2j6aSGhyalYtECB4IqD4tC8WpBKkytw67IhmlU0BCEF+JDcwaM1Qr+zknLUDzy9ePu7m3mBvRuXbKLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4mIakU6/; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e03a9f7c6a6so2046276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 15:17:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720045060; x=1720649860; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kBFY0AezQv8pUC4Zn75QewV+jmxCpy323lgmyp3n110=;
+        b=4mIakU6/CkWDxyKFCzoHKk4fCgn90vZ/srgah71MWq8PxeaBr/9/uSALLM04qKDz7R
+         kXkIYsb6n1ZQ/SGyBus4sPCmG8KhnQTSEuuD7bvZzdVY15JbRaAZlLoOaxP7BtKJ8YFv
+         M8Au1nhgdJQtZJJV7G5usAFdyQA6xbvIBW3Txsmd9NGuI1sKWYAqBznHsMWLCALSqMqy
+         2b47n20kJfmE3D0Qgn9+DvKtPbxDfcw2UTg2gGBPGfXDHtgtrMVNR0rDDfe2iUCbdjjK
+         C8Tb++KOPjKka1RZtvRRPopTkf8LYo5vH74FsPmhsRNOZhOtw+gkAKgG4bGkAbxmxPB8
+         OGyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720045060; x=1720649860;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kBFY0AezQv8pUC4Zn75QewV+jmxCpy323lgmyp3n110=;
+        b=kJR90NFQXE5Esc+DPwNlw5Rsslm6txn+mkx2eeXh1i1THw1G2FrK6NVLdA+25+oR1D
+         fXEFmfUQlFhBXvAS8UEW0+jsFCFR4Lq2Jbgy8uFCLGeRSwEMsED8wjvIev35p/wMnAH1
+         ornW/Exvy6VMZ7rmS/K+rCzY2UCopDIugfwS3d47aQiNiSW6XZY1tumtklPW53isz8rS
+         ZCfs81P+BH4uDxd1gJvuPoxEbkGlv9+ZgxQa+ia7RjVoT4QIg3udnJHLK8QpvJpiCqv3
+         de/glfVEx7voqUL3Nb4rOjbA8pW0QnE8C7NX9BDpd8VAbZNHR32n4h5sYsGXdX6XORK1
+         LX5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUEd3ZRK2vyZo7FnJ/KCjIJzrj7EEMLTFln9+dXM/fkWk5KwSqwrYlbXzaZNruKIhTN+BGIoOHP73MiD1Rq3Mg8U5PdtVQS6B47P+TA
+X-Gm-Message-State: AOJu0Ywbbc1aHlLa2TVBZbgI/m+lmTRKOwFfCWncH+9+kci5RMuLlSqx
+	xWPfOonOvLkUEvu40BKgVYHUbv2gzxN2nVoOMbJJAIP1jkeeE+2ByvwKwyWt8Ee7SqF5VjqwYhU
+	lp0i4/ODzJtafIba8Gc35aLsNanExk4NTtu4o
+X-Google-Smtp-Source: AGHT+IF+YHjIjtyJP3TQiVa5IYtgSjacB1lIHVSnp746reC92x+NB1avh2v9/xG67hBD7Y6DlOQnEo7BO3UvXnbsAwM=
+X-Received: by 2002:a05:690c:650f:b0:64a:3d6c:476d with SMTP id
+ 00721157ae682-64c71803990mr143734497b3.25.1720045060293; Wed, 03 Jul 2024
+ 15:17:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240703-icc_bw_voting_from_ethqos-v3-2-8f9148ac60a3@quicinc.com>
-References: <20240703-icc_bw_voting_from_ethqos-v3-0-8f9148ac60a3@quicinc.com>
-In-Reply-To: <20240703-icc_bw_voting_from_ethqos-v3-0-8f9148ac60a3@quicinc.com>
-To: Vinod Koul <vkoul@kernel.org>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Russell King <linux@armlinux.org.uk>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>
-CC: <kernel@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>,
-        Andrew Lunn
-	<andrew@lunn.ch>, <linux-arm-msm@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KgCNz1_N_5gVeeMPqWskJum1U1lOOxEv
-X-Proofpoint-GUID: KgCNz1_N_5gVeeMPqWskJum1U1lOOxEv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_16,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 malwarescore=0 phishscore=0 clxscore=1015 suspectscore=0
- impostorscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407030166
+References: <202407032306.gi9nZsBi-lkp@intel.com>
+In-Reply-To: <202407032306.gi9nZsBi-lkp@intel.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 3 Jul 2024 15:17:27 -0700
+Message-ID: <CAJuCfpEtRLSiAmv_5+bo-oW_Lnx+=v=rasgVerdVJyoaFQ-R5w@mail.gmail.com>
+Subject: Re: WARNING: modpost: vmlinux: section mismatch in reference:
+ alloc_tag_restore+0x3c (section: .text.unlikely) -> initcall_level_names
+ (section: .init.data)
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Memory Management List <linux-mm@kvack.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add interconnect support to vote for bus bandwidth based
-on the current speed of the driver.
-Adds support for two different paths - one from ethernet to
-DDR and the other from CPU to ethernet, Vote from each
-interconnect client is aggregated and the on-chip interconnect
-hardware is configured to the most appropriate bandwidth profile.
+On Wed, Jul 3, 2024 at 8:42=E2=80=AFAM kernel test robot <lkp@intel.com> wr=
+ote:
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t master
+> head:   e9d22f7a6655941fc8b2b942ed354ec780936b3e
+> commit: b951aaff503502a7fe066eeed2744ba8a6413c89 mm: enable page allocati=
+on tagging
+> date:   10 weeks ago
+> config: xtensa-randconfig-r051-20240703 (https://download.01.org/0day-ci/=
+archive/20240703/202407032306.gi9nZsBi-lkp@intel.com/config)
+> compiler: xtensa-linux-gcc (GCC) 13.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20240703/202407032306.gi9nZsBi-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407032306.gi9nZsBi-lkp=
+@intel.com/
+>
+> All warnings (new ones prefixed by >>, old ones prefixed by <<):
+>
+> WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+> >> WARNING: modpost: vmlinux: section mismatch in reference: alloc_tag_re=
+store+0x3c (section: .text.unlikely) -> initcall_level_names (section: .ini=
+t.data)
 
-Suggested-by: Andrew Halaney <ahalaney@redhat.com>
-Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac.h          |  1 +
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c     |  8 ++++++++
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 12 ++++++++++++
- include/linux/stmmac.h                                |  2 ++
- 4 files changed, 23 insertions(+)
+Fix posted at: https://lore.kernel.org/all/20240703221520.4108464-1-surenb@=
+google.com/
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-index b23b920eedb1..56a282d2b8cd 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-@@ -21,6 +21,7 @@
- #include <linux/ptp_clock_kernel.h>
- #include <linux/net_tstamp.h>
- #include <linux/reset.h>
-+#include <linux/interconnect.h>
- #include <net/page_pool/types.h>
- #include <net/xdp.h>
- #include <uapi/linux/bpf.h>
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index b3afc7cb7d72..ec7c61ee44d4 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -985,6 +985,12 @@ static void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up)
- 	}
- }
- 
-+static void stmmac_set_icc_bw(struct stmmac_priv *priv, unsigned int speed)
-+{
-+	icc_set_bw(priv->plat->axi_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
-+	icc_set_bw(priv->plat->ahb_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
-+}
-+
- static void stmmac_mac_link_down(struct phylink_config *config,
- 				 unsigned int mode, phy_interface_t interface)
- {
-@@ -1080,6 +1086,8 @@ static void stmmac_mac_link_up(struct phylink_config *config,
- 	if (priv->plat->fix_mac_speed)
- 		priv->plat->fix_mac_speed(priv->plat->bsp_priv, speed, mode);
- 
-+	stmmac_set_icc_bw(priv, speed);
-+
- 	if (!duplex)
- 		ctrl &= ~priv->hw->link.duplex;
- 	else
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 54797edc9b38..201f9dea6da9 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -642,6 +642,18 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
- 		dev_dbg(&pdev->dev, "PTP rate %d\n", plat->clk_ptp_rate);
- 	}
- 
-+	plat->axi_icc_path = devm_of_icc_get(&pdev->dev, "mac-mem");
-+	if (IS_ERR(plat->axi_icc_path)) {
-+		ret = ERR_CAST(plat->axi_icc_path);
-+		goto error_hw_init;
-+	}
-+
-+	plat->ahb_icc_path = devm_of_icc_get(&pdev->dev, "cpu-mac");
-+	if (IS_ERR(plat->ahb_icc_path)) {
-+		ret = ERR_CAST(plat->ahb_icc_path);
-+		goto error_hw_init;
-+	}
-+
- 	plat->stmmac_rst = devm_reset_control_get_optional(&pdev->dev,
- 							   STMMAC_RESOURCE_NAME);
- 	if (IS_ERR(plat->stmmac_rst)) {
-diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
-index f92c195c76ed..385f352a0c23 100644
---- a/include/linux/stmmac.h
-+++ b/include/linux/stmmac.h
-@@ -283,6 +283,8 @@ struct plat_stmmacenet_data {
- 	struct reset_control *stmmac_rst;
- 	struct reset_control *stmmac_ahb_rst;
- 	struct stmmac_axi *axi;
-+	struct icc_path *axi_icc_path;
-+	struct icc_path *ahb_icc_path;
- 	int has_gmac4;
- 	int rss_en;
- 	int mac_port_sel_speed;
-
--- 
-2.34.1
-
+> WARNING: modpost: vmlinux: section mismatch in reference: bitmap_copy_cle=
+ar_tail+0x44 (section: .text.unlikely) -> __setup_str_initcall_blacklist (s=
+ection: .init.rodata)
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
