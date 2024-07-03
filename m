@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-239313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3139259E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:52:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDDB9259F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 801CE1F22379
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8911F22334
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF3417DA34;
-	Wed,  3 Jul 2024 10:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B29180A9C;
+	Wed,  3 Jul 2024 10:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UGo3+dYa"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i16lebZd"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF8717DA00
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8716917E900
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720003379; cv=none; b=U0ZgtRmdPt+kD7m/fxWn77qHXSut8EkyIX/4n/zqZp0NtsRYKhQlpCv31J7oULfKbgu4BL2ERInT6sE1T5fO2ZoHTN+05Gg1XaMkalkyr5rNuxyZNPgV4ccEV06q//mdMcsreMpbeg6oHrEhaudX3fmR3s4eGUx2Tb/KSJcr/b4=
+	t=1720003408; cv=none; b=mW9ZIFkg1f9F6Osd8SIvA978VbfToWt+dyzxJ/gStkLEbqAGNM0AUJfQi8EtOM7u68VTva6ak4nxQdlKcO2ahf6O8lferl1T+EKTbdh0GV2e9qCjYJ8mDk4OmkQuEzDMYaWoMsEitnZ12CJNlaKdZL8JwlkIadtrEZnDYUPesGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720003379; c=relaxed/simple;
-	bh=5x7iVFmmOCeg7gmKXakTIO88Klmb/Ljrt+SWcudmyj8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ya0a095iXeRKEjyjAMUu+IjJQdnqzfxqh0x7hhM7OnMHo2TMVn+0q9sYT8SWAVtEfKyrRmz+HK6EzRlIuJhh575q9Bl4jUf7Oi4txbB9Z1Hw04IIfb0y+eOfmD+J/DLHCQaAaZbHtRWgHgSbQBDH1qCnqe2r78wlrfB8p2yDc3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UGo3+dYa; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: hch@lst.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720003375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VQ0x5M8745iJdoh6tHN0tzYonslhz7xwJWvLxeue+x0=;
-	b=UGo3+dYatV3+LHOqZstdITsJeOnkGNrjjKudxHxps7f66nrP6L2jPec8eQh+kgocd01E++
-	5ZH9rxoshew0yf6Kc3Deyv+ijw/nOCWKOnj/sPJHL/iD1p19uxG1dh3GI+QQiruFD8TsYh
-	lVwQS8zKiifLTR0s/1tHh0utloLHppM=
-X-Envelope-To: leon@kernel.org
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: jgg@ziepe.ca
-X-Envelope-To: robin.murphy@arm.com
-X-Envelope-To: joro@8bytes.org
-X-Envelope-To: will@kernel.org
-X-Envelope-To: kbusch@kernel.org
-X-Envelope-To: oak.zeng@intel.com
-X-Envelope-To: kch@nvidia.com
-X-Envelope-To: sagi@grimberg.me
-X-Envelope-To: bhelgaas@google.com
-X-Envelope-To: logang@deltatee.com
-X-Envelope-To: yishaih@nvidia.com
-X-Envelope-To: shameerali.kolothum.thodi@huawei.com
-X-Envelope-To: kevin.tian@intel.com
-X-Envelope-To: alex.williamson@redhat.com
-X-Envelope-To: m.szyprowski@samsung.com
-X-Envelope-To: jglisse@redhat.com
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-rdma@vger.kernel.org
-X-Envelope-To: iommu@lists.linux.dev
-X-Envelope-To: linux-nvme@lists.infradead.org
-X-Envelope-To: linux-pci@vger.kernel.org
-X-Envelope-To: kvm@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-Message-ID: <f781c3ea-8097-4e5f-84b2-0cd1f49bdb96@linux.dev>
-Date: Wed, 3 Jul 2024 18:42:42 +0800
+	s=arc-20240116; t=1720003408; c=relaxed/simple;
+	bh=2wxWeoN2eQclXzHkcGpowUW3NZvFsYJvCo5CaNFq/eE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WFuT1LaBdoF/nuyxqzKy79cbyXKq1m0kdYro0EvOwjTfRSalDTJshrvkI8lUjIKU1ZywfD5RTJ19i4svHELdIzUn5vcMUpVEV+lS/EK/SwWVA0l2U4X6DipdkFVWgPDr625WDvZxth1oye8FAo6EP5SoJHf6hZpO2Vf2sry7P2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i16lebZd; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52d259dbe3cso5405496e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:43:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720003404; x=1720608204; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QBebKiAbFSe/AKxcyTneERXqkxEhAYvVNEM7VkxhZlQ=;
+        b=i16lebZd4SxtJ91Cj3I2fItsWruqOn9UNE1KoQXAYs3Ca0OZPJ4m8grePTYpLdkQwy
+         jcMhIkVz34+nnz9ipL0OkjsQsbW6FUXOEcHQn0qwhLtnE+DiKXqL4hr/wuOPXc57Ix6C
+         7dgQc87soRBa9XGeTQli+dP5KG2393kP189FKpi3ck6BZhHMGXlpP6oHB0DZaCzyG9yO
+         msBCvNShx4E5lGu+iyITM+Bb/6mHxvClRRJb4cu4pvznRLqNXFb/H5aX/ljGflYoiGzB
+         fEsFsXHwHs8KUHMd8002QnFQ1PpVquoM2JDO7/FVX3uYvHciKECOUYJUC97AjhbxqnIg
+         DZkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720003404; x=1720608204;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QBebKiAbFSe/AKxcyTneERXqkxEhAYvVNEM7VkxhZlQ=;
+        b=XfnRmeSefy93Xq5AwdmPg8Lk5jfABRSpCujfZqYwFRC85MQRnRpnIiPZR9E3k5uFW8
+         jMVbei7/nKA7lVV8v7GE8vrvXwrg07g8RCifJziqUPiIBC/xTWSVzpqqERVKaMjIZ/uu
+         y0Gwt+rjCVzwLUk+LJ75jPOphcLJexZ82dCYJuNxBGjExScV4Vk3S/+57Lq06jxzYEi9
+         ymwCFMh2+TvHEAC6HoTP/zvJ9DLe63kuoqYlohFnTVOeQr0I1BddNYiv5A1Gm1dUnghU
+         V2o5vpVicH6bzq2gjw1Q6uu2pYv5zTG59Gm+CeFX2zTJtfWXIjVVRB4F+DKsosVuWknT
+         FgiA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/5sxPwvx7hduhP06ruuUnO5fqpb7XnaTn/tVfomzPmwF9x0tDSygsfU9M6kiLWhnEyepn9fC1U7oVvzmeXcj1A3cItqnXWzfLi2ip
+X-Gm-Message-State: AOJu0YzKG3tvbDEWer8caJq2eOsNiuV133Ukvrijp8rBZ14U329URRLi
+	n3kGALE3z5QrfHH/u8pFbwYodt5z9qPhE0nGE7yiSyNhjugy2hiuBXv0MMvO6jU=
+X-Google-Smtp-Source: AGHT+IGperAsreQwk8XnRev3gOt4q7GzktMMONxmuUmn1kwS+TeNOFT2WVeQTw74xTeeAtlxjJAZJw==
+X-Received: by 2002:a05:6512:285:b0:52e:9b74:120 with SMTP id 2adb3069b0e04-52e9b7403f4mr111118e87.19.1720003403696;
+        Wed, 03 Jul 2024 03:43:23 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2ebacsm2124167e87.210.2024.07.03.03.43.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 03:43:22 -0700 (PDT)
+Date: Wed, 3 Jul 2024 13:43:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: sm6350: Add missing
+ qcom,non-secure-domain property
+Message-ID: <wlqlcrlh4ogzxkbwmte75hvfatiysodt3ohlxxsyzhxkzyukh7@epjxupcod4z3>
+References: <20240703-sm6350-fastrpc-fix-v1-1-9f127de17175@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
-To: Christoph Hellwig <hch@lst.de>, Leon Romanovsky <leon@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
- Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Keith Busch <kbusch@kernel.org>,
- "Zeng, Oak" <oak.zeng@intel.com>, Chaitanya Kulkarni <kch@nvidia.com>,
- Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
- Logan Gunthorpe <logang@deltatee.com>, Yishai Hadas <yishaih@nvidia.com>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
-References: <cover.1719909395.git.leon@kernel.org>
- <20240703054238.GA25366@lst.de>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20240703054238.GA25366@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703-sm6350-fastrpc-fix-v1-1-9f127de17175@fairphone.com>
 
-在 2024/7/3 13:42, Christoph Hellwig 写道:
-> I just tried to boot this on my usual qemu test setup with emulated
-> nvme devices, and it dead-loops with messages like this fairly late
-> in the boot cycle:
+On Wed, Jul 03, 2024 at 09:03:01AM GMT, Luca Weiss wrote:
+> By default the DSP domains are non secure, add the missing
+
+nit: secure
+
+With that fixed:
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
+> qcom,non-secure-domain property to mark them as non-secure.
 > 
-> [   43.826627] iommu: unaligned: iova 0xfff7e000 pa 0x000000010be33650 size 0x1000 min_pagesz 0x1000
-> [   43.826982] dma_mapping_error -12
-> 
-> passing intel_iommu=off instead of intel_iommu=on (expectedly) makes
-
-I also confronted this problem.IMO, if intel_iommu=off, the driver of 
-drivers/iommu can not be used.
-
-If I remember correctly, some guys in the first version can fix this 
-problem. I will check the mails.
-
-To me, I just revert this commit because I do not use this commit about 
-nvme.
-
-Zhu Yanjun
-
-> it go away.
+> Fixes: efc33c969f23 ("arm64: dts: qcom: sm6350: Add ADSP nodes")
+> Fixes: 8eb5287e8a42 ("arm64: dts: qcom: sm6350: Add CDSP nodes")
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm6350.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
+-- 
+With best wishes
+Dmitry
 
