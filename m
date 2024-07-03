@@ -1,191 +1,226 @@
-Return-Path: <linux-kernel+bounces-238602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2225924CB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:18:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BEF0924CBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E0A1C21F6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:18:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B11981C221E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D33184E;
-	Wed,  3 Jul 2024 00:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DB046BA;
+	Wed,  3 Jul 2024 00:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="gPNxC/Wp"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2096.outbound.protection.outlook.com [40.92.102.96])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiWEWXh/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DED2621;
-	Wed,  3 Jul 2024 00:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.96
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719965920; cv=fail; b=CXM1zm7CtPah6hRC65ERcygUHS3ebUlD7+eJxxWXmEcjhWoGn6E6v5bMkIUAElsPInZ787wxqEXJPB082UlULJoUOZUCMJv9yVzhS7ddCidtoZ9GN1vQ65Hy/Lxb+9C0OASlxhY89HawsZttNgcU0g/AQnTp+xuQ5oWoJSG/aJY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719965920; c=relaxed/simple;
-	bh=tELbtsTPF3ZujpVIHo5w1q6EfTBF1FPIeLNIp4BHWs0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pOCde8WrND2AHWekXMmSsIAWm3iSgcf2oZ4eHApUrha3W+et7EDKlHgkwGJ0VRnG01W4nkvhUusYc2A5GbYkW3TI1vVoW98tsyUhLhxwCFy84x5P0exp/yfDYfCW/CIyQNV/bPSpioVhTuNLfpcnu/Kj1EIUoMIwTOGlafWq5nA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=gPNxC/Wp; arc=fail smtp.client-ip=40.92.102.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aAB8wnig5zbxtFhaXJoPKGwas2F8/ZovERkSiKhSW2wz2PVtnCgsxWPqd2Wi6vaDO8voZSWqxf51SS4VmcQCfPbhClL/WttGiCZoqlpVayl7qn5wsUArOIJexePSCD/3v+4i9mNGZwiQ3K98Jm1E8jVAMfs0Z03/DCMuNbf245Y+4vZOwIdTnxqsPH3Kvt0/mwvZuKdHv786/fuiEYPyQBKIR/36YyGkX07gbMvNFmj6yIQHauI/ev4vF1FPZh6o2QTK2+IQNcuVzSVgtSRzbbgGkBYIExZeXZ4/2lHQn8KMfT5xHejBqWPFeGuhNTZ8j+IXOANlnWvj7GNOgTpEng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=coZ61vzd69LhhCu9qdITtdW5+b4E6lfGCWU9drL0pNM=;
- b=fXjacyHk5C/CVioyQ8xwTmArwQH2Siiauvwr2Qp5o4CDPp60bzPwRwTKkykAwfDMqkbNQc/Mf1WHNDKj7/VX+al+sKNUVx5ZpQqp2A7K+Oz4vwZCJpDuqRyvphswhbvyVEBaXzAbUFuoM8DeSN3l4Ag7fxAwMsBVFUu8alQS+b84N2H2hu3HSjLl3PnXauD2qVqxkST8cgbihh3HKutnbI/ioxhPpQVo5c/gjvd4HIvP1J2Wtt/bgBCak2t6/E/MHlcPDC+evpwR8zFYM9fm5nXv7syXLDMFhkYJzvf6QjQfbylR7vzrwwm/T1MWVIJ77Q4cGbaztFAjTy7Mr9RjKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=coZ61vzd69LhhCu9qdITtdW5+b4E6lfGCWU9drL0pNM=;
- b=gPNxC/WpuOHsSt6PVjXoDNYshBUeGhvAIIW/dD+g9EsXwzXjtv/vV2TEg4txNp4s1DkH6crXlg01oZoq+ekjEeYuvzkbuYY5dBUIjeI2xx+xTPdJWJtCJgnRTSSeBe9Sp9G+CQv1uMwgdvAYS32BJGd57NNrGGdngXPVvH9oc2SFvJxTWzDSfD9qZT7HcN+D3Pi5b2OHHMUcJemb40Z8nzZwp3ti/wZS/ypxG4YMhs+jCSHleOGL/iAp/bTtUG6Tql4f4U4NoeQeP5NkxYTf1rukPchBC04hxgKDCZoyHRkSG3uoBG0tGEyGFqb6cxHvJkSgL9F6ORSXfhgvZNmnLQ==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN2P287MB2064.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1c7::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Wed, 3 Jul
- 2024 00:18:31 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.7741.017; Wed, 3 Jul 2024
- 00:18:30 +0000
-Message-ID:
- <MA0P287MB282240D38A2D9B0F2D1ED186FEDD2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Wed, 3 Jul 2024 08:18:27 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] iio: adc: sophgo-saradc: Add driver for Sophgo SARADC
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20240702-sg2002-adc-v1-0-ac66e076a756@bootlin.com>
- <20240702-sg2002-adc-v1-2-ac66e076a756@bootlin.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20240702-sg2002-adc-v1-2-ac66e076a756@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [9YuLmH2OZDwm4w62j6QQ09I14yfT6nEM]
-X-ClientProxiedBy: SI1PR02CA0042.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::17) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <0d1dbf4c-e3d1-4577-b9a1-b299da80ca68@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCCE621;
+	Wed,  3 Jul 2024 00:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719965997; cv=none; b=T1Mg0CLs9mGg0J9w36PxuZybc+UluVCri907+kPzVrGkvF8q0ypi6iPWFaTL4TeQNttu7XBCKeWMLPEwL41HK1nehJqBa7hRYfPeiNiFeY0RwAuWgf7dMiUK49Zb9HBmko+0g8luDG5uBRspT5T0EWjBikTXu572cSv4C7vwN3c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719965997; c=relaxed/simple;
+	bh=SFsqNX+6slZmjSB86CGH3XB+ZErTnNT0rtJ8aW8Urz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kvRQi1sdOXSnOeavf5zFPOca8daW6pzIi4KI41V6MNeCOLNnuwo4E5pDVCrx6XZ5opWPleNNw1RFMstb2+yb40wkT2URfyzyGcUbe2GgUt2rG43/2EBGSrJawctDYiVeXYt1n8hkYj+N8ejlApSqHW7P5ZXuHY1IqjEjdAiGpTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiWEWXh/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E2EC116B1;
+	Wed,  3 Jul 2024 00:19:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719965997;
+	bh=SFsqNX+6slZmjSB86CGH3XB+ZErTnNT0rtJ8aW8Urz0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CiWEWXh/UkVNmeAUfZXdtG67Y1o49S9dbYoJ0d6QyE8RKvUU9FNdAKA2NUpPNV9PI
+	 bN41jqlN514pW/0dqfjftsE6C1Wl/gey08FMJGlkX+FEtsrqOG6Jrd7wYaZw5oGVTx
+	 BPvwt9pjrvgo8hMtjSWSZHjpQQHjRa5AT89glk/nTXEwMu2EjQMrv0D2h/Bq3/aR0s
+	 duFLcXIui+tre++3IefsnC8WBEUTIIqVuvE2wFaj0m/deieFGTvZAwznVeS92uKcJf
+	 +Hk8u3LzmuanxtVkpELuHg4qBKIfgdn5+Jkie18lSYvYRX44x/THC6zycH2Ald7Tli
+	 4Ls+aEZ227geg==
+Date: Tue, 2 Jul 2024 17:19:53 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Donald
+ Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Richard
+ Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
+ <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan
+ <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, "Christian
+ =?UTF-8?B?S8O2bmln?=" <christian.koenig@amd.com>, Bagas Sanjaya
+ <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, Nikolay
+ Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>,
+ David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
+ <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
+ <pkaligineedi@google.com>, Stanislav Fomichev <sdf@google.com>
+Subject: Re: [PATCH net-next v15 02/14] net: netdev netlink api to bind
+ dma-buf to a net device
+Message-ID: <20240702171953.00886d5a@kernel.org>
+In-Reply-To: <20240628003253.1694510-3-almasrymina@google.com>
+References: <20240628003253.1694510-1-almasrymina@google.com>
+	<20240628003253.1694510-3-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN2P287MB2064:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d4ba0e6-fb3c-4526-dff4-08dc9af5aaf4
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|8060799006|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	UdyozPnMFko5MOMu/43eobMwPJnDIqlCY9grhvGEvg5G7PIwjT7YdjHxM/Mc01mIZJUJFQnEPKpDKJzvnYEo30kI7Cl1VKpWvgXVowkwCYYCkHs4CfnYFWQPHiYDf5jpQ/SpI+kZan+4w/7yAqfRhmfLvH+1BWp+tnsjmNfurXsGkoADjafjT2JAPVnubdFC1fVpQkwcYCw7hcgVkrW6ioCw6AYCC5/9FcQHN026QgKzgtaNxqIVlfKX/fGLXjr25lAY1/2xLJBs4HcGbottIBLPt77iY39ZaCaOLokX4tnVeBM/0noWcIq6ht2fzGdFBxsIJEAwRcDe5UrZyil9c0V3i3+heoko+wLcjO6ZkU1TJhQeyo8YhDDNAjHRGBoHJCvMs6OSfW/fadieZnAa0fhyegOsDt2WcZbPRNl8mykYy6C5aIb1opW/SaGpRtJLzHF6lpunPMGOWTPPdMXcHOVj8BWD1KPG902bzRc/5fsFa+/SVbREnSKAmFTIgC2jVkEyq5UbX/wyZe9w3GLIDK6/ZT3vVUGDt8KkP7XRcydnBVqSZ55ejGW3BrMiOTJPDmov6m2/OgEOI6R3ZSmTmPqH0Ce5zcDZauWAIZ0atZI=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N0pqZm9FZXA0SERmaDNrRDc1WU1LakNBSGlIQ3BwQ1ZjK1IyZmg5SjJLT2hm?=
- =?utf-8?B?V0VqL05WU0FxM0g0endPZUhJUUJmRWl6TkVMbEhDVS90UG4vdE9tSEU5by9N?=
- =?utf-8?B?VkJORWtidDVTbEtHUERHb0c4S3c4Rm42NDdzNXgvZ0I4VDA5azRNV1N3cU9X?=
- =?utf-8?B?UHlPNk5QVE55MmlmMUlubU5OSU9uV0FkNnNWZW82azB1WkMwenN6M2pKU3pS?=
- =?utf-8?B?aXNKLyt6WkV5WDBnRWhibk0yNkZyUXJrdEtvaFk5VHphbVp1d21RbndBTkR4?=
- =?utf-8?B?VVZOOS9nTEtUNTRVdVIrajgwV2czeHlubmNFL0JYc290SzRWVUlGN0pwVDMw?=
- =?utf-8?B?b2JUMFcxMFlscXg4cTUzRDhUTVpRT1lQb3cwaGtuRHJBTFljTEFkZXBqQWJW?=
- =?utf-8?B?dEczVDZwdFVSWE5RWXFnWjRoOXlBSW9tTGxQWjZMbVRlTUNwTHcwNytVd3kx?=
- =?utf-8?B?RkMvM3Zxd09QTkFoV056VVg4WnRZRXFKZzFWSkcvRzhNMVFkSldHRXhDMHBk?=
- =?utf-8?B?bzEwTERza3J5WExzeVQ4WkppTThsYURlemRtckdrUnMxNU5XSnl4cmxZcUFO?=
- =?utf-8?B?d1JKV010UDFDSnRWU2dJU3dvZzBNdEdBL0pYVkJZSTBRaWNWeFlzWVFGMzha?=
- =?utf-8?B?WWx2Q2VTU3lDNlRVenpxTEpHTVJ6ZDZlWExJQTE2MDRvNDRrMjdJUzhia3h5?=
- =?utf-8?B?VlJGSHh2bWxUbkFMQXdhZ1FRUXV0NFVNUThGU1cydFdDVDhhTnlJT2NZU09m?=
- =?utf-8?B?YzVBRno1dG92Y0ZnOTRLUjRaaU9mV1VZS0F4cGJYUjBsYVFlV2VwT3BoZWJm?=
- =?utf-8?B?NUIwRWk3VTUzb1B3NUQ1eTBYczUyMCtUM1k0RWJ6dWcxenplZ0xLWmVmUmg1?=
- =?utf-8?B?aEJwZEsrdmxpeFlLc0phUzJPZHVkUTJSL3dVQ2dkOC9xNWZaV1BQK1VrcWRP?=
- =?utf-8?B?Y2NmbzdCbTE3MUJIZkhkZVN6Q3V2QUZvRXVyYWpyQWRZZHlyOHdhZzI4Nm1l?=
- =?utf-8?B?YUREdmJrbFNSSmtFc0RSb21hWFJST0hQSGhVdUZzQTlsVDQrUHcwWGdqTTdW?=
- =?utf-8?B?QzhoY0hYZXB6S2ZXWWRSVkxsek0rWUU3Z0NqcGN1RnFSSDZZbm1RbFBSYUcv?=
- =?utf-8?B?dTZ6endqcDJzV3ZyQXU5N0ZDVE5uMHR4NXBVN0JqNnNwcTZxT0llRlhiSHJo?=
- =?utf-8?B?N0FpRVRFWmFlZWwrSXdMUHhMeEVNSnk3eTR6UWtGT3pKZFJGVVkxRXNER2dk?=
- =?utf-8?B?QXVYeEE0UldRVDhOWXhjY01VR0hmR2JIWVNyUTRzNEFWOUcwWDNxeGM4cHdP?=
- =?utf-8?B?ZjVIVHF0enp5VkpMZTNQVnF4cFpNWTlRbkZYTDBjem9VdlA1MEpSYzFOYS92?=
- =?utf-8?B?TVJETUFJNlpzbkRuM1FwKytBajBiVjhFTENIRGxocmtac2JVSFdibm9IOHhz?=
- =?utf-8?B?TmhXSkYwbDNkYjlKUTZRUFhNR0ZaR3VWMkJTK1FIRXczaEwyMkgzVkQxczU4?=
- =?utf-8?B?OWFwY3QzNUViaDN0NVVLUFF5aUR5OUlORVJoTXFYaXFzYUFvM1N6VlRjTDdK?=
- =?utf-8?B?Uk5KeGNXQjBITjNyK1RSajdLYmx1QTFmU0NTeFoyc1hMUjlEYTFXN0lPOGtM?=
- =?utf-8?B?SGZoajJ4OUFlcGNTdE5KNmxRNURDVmhFSEVkcWVlM1VaQnM2OHNhQUErMWNL?=
- =?utf-8?Q?y9ZPnyXngc63417PLrlP?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d4ba0e6-fb3c-4526-dff4-08dc9af5aaf4
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 00:18:30.7790
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB2064
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 28 Jun 2024 00:32:39 +0000 Mina Almasry wrote:
+> API takes the dma-buf fd as input, and binds it to the netdevice. The
+> user can specify the rx queues to bind the dma-buf to.
+> 
+> Suggested-by: Stanislav Fomichev <sdf@google.com>
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
 
-On 2024/7/2 19:52, Thomas Bonnefille wrote:
+> diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netlink/specs/netdev.yaml
+> index 959755be4d7f9..899ac0882a098 100644
+> --- a/Documentation/netlink/specs/netdev.yaml
+> +++ b/Documentation/netlink/specs/netdev.yaml
+> @@ -268,6 +268,45 @@ attribute-sets:
+>          name: napi-id
+>          doc: ID of the NAPI instance which services this queue.
+>          type: u32
+> +  -
+> +    name: queue-dmabuf
+> +    attributes:
+> +      -
+> +        name: type
+> +        doc: rx or tx queue
+> +        type: u8
+> +        enum: queue-type
+> +      -
+> +        name: idx
+> +        doc: queue index
+> +        type: u32
 
-[......]
+u8 is a waste of space, since attrs are rounded up to 4B
+and we don't use "idx"
 
->   SOUND
->   M:	Jaroslav Kysela <perex@perex.cz>
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 8db68b80b391..826871a2e61a 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -1122,6 +1122,15 @@ config SC27XX_ADC
->   	  This driver can also be built as a module. If so, the module
->   	  will be called sc27xx_adc.
->   
-> +config SOPHGO_ADC
-> +	tristate "Sophgo ADC"
-> +	depends on ARCH_SOPHGO || COMPILE_TEST
-> +	help
-> +	  Say yes here to build support for the ADC integrated in Sophgo SoCs.
+How about we use a subset of queue attrs?
+
+	name: queue-id
+	subset-of: queue
+	attributes:
+	  -
+	    name: id
+	  -
+	    name: type
+
+> +  -
+> +    name: bind-dmabuf
+
+The naming is a bit too command specific, how about pp-buf ?
+Or just dmabuf ?
+
+> +    attributes:
+> +      -
+> +        name: ifindex
+> +        doc: netdev ifindex to bind the dma-buf to.
+> +        type: u32
+> +        checks:
+> +          min: 1
+> +      -
+> +        name: queues
+> +        doc: receive queues to bind the dma-buf to.
+> +        type: nest
+> +        nested-attributes: queue-dmabuf
+> +        multi-attr: true
+> +      -
+> +        name: dmabuf-fd
+> +        doc: dmabuf file descriptor to bind.
+> +        type: u32
+> +      -
+> +        name: dmabuf-id
+> +        doc: id of the dmabuf binding
+> +        type: u32
+> +        checks:
+> +          min: 1
 > +
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called sophgo_adc.
+
+We need some form of introspection. Can we add both in the queue dump
+and page pool dump some info (dmabuf-id?) to indicate there is a DMABUF
+bound to the queue / page pool?
+
+>    -
+>      name: qstats
+> @@ -579,6 +618,20 @@ operations:
+>            attributes:
+>              - ifindex
+>          reply: *queue-get-op
+> +    -
+> +      name: bind-rx
+> +      doc: Bind dmabuf to netdev
+> +      attribute-set: bind-dmabuf
+> +      flags: [ admin-perm ]
+> +      do:
+> +        request:
+> +          attributes:
+> +            - ifindex
+> +            - dmabuf-fd
+> +            - queues
+> +        reply:
+> +          attributes:
+> +            - dmabuf-id
+
+The ops end up getting rendered as an enum, so the ordering matters.
+You can't insert in the middle without breaking uAPI.
+For attribute sets (which you also added before qstat) it technically
+doesn't matter but would be good to have them in order to match ops.
+
+> diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
+> index 43742ac5b00da..190a504a62358 100644
+> --- a/include/uapi/linux/netdev.h
+> +++ b/include/uapi/linux/netdev.h
+> @@ -136,6 +136,24 @@ enum {
+>  	NETDEV_A_QUEUE_MAX = (__NETDEV_A_QUEUE_MAX - 1)
+>  };
+>  
+> +enum {
+> +	NETDEV_A_QUEUE_DMABUF_TYPE = 1,
+> +	NETDEV_A_QUEUE_DMABUF_IDX,
 > +
+> +	__NETDEV_A_QUEUE_DMABUF_MAX,
+> +	NETDEV_A_QUEUE_DMABUF_MAX = (__NETDEV_A_QUEUE_DMABUF_MAX - 1)
+> +};
+> +
+> +enum {
+> +	NETDEV_A_BIND_DMABUF_IFINDEX = 1,
+> +	NETDEV_A_BIND_DMABUF_QUEUES,
+> +	NETDEV_A_BIND_DMABUF_DMABUF_FD,
+> +	NETDEV_A_BIND_DMABUF_DMABUF_ID,
 
-I believe this adc driver is only for sophgo cv18xx, sophgo has other 
-soc chipset, such as sg2024 etc., so it's better use add more limitation 
-for this.
+This does look kinda repetitive, maybe let's drop the dmabuf from attr
+names?
 
->   config SPEAR_ADC
->   	tristate "ST SPEAr ADC"
->   	depends on PLAT_SPEAR || COMPILE_TEST
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index edb32ce2af02..106a83d50d01 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -102,6 +102,7 @@ obj-$(CONFIG_ROCKCHIP_SARADC) += rockchip_saradc.o
->   obj-$(CONFIG_RICHTEK_RTQ6056) += rtq6056.o
->   obj-$(CONFIG_RZG2L_ADC) += rzg2l_adc.o
->   obj-$(CONFIG_SC27XX_ADC) += sc27xx_adc.o
-> +obj-$(CONFIG_SOPHGO_ADC) += sophgo-adc.o
->   obj-$(CONFIG_SPEAR_ADC) += spear_adc.o
->   obj-$(CONFIG_SUN4I_GPADC) += sun4i-gpadc-iio.o
->   obj-$(CONFIG_SUN20I_GPADC) += sun20i-gpadc-iio.o
-> diff --git a/drivers/iio/adc/sophgo-adc.c b/drivers/iio/adc/sophgo-adc.c
-
-As I mentioned upon, soghgo has many other product code, and 
-"sophgo-cv18xx-adc.c" should be more accurate.
-
-[......]
-
+> +	__NETDEV_A_BIND_DMABUF_MAX,
+> +	NETDEV_A_BIND_DMABUF_MAX = (__NETDEV_A_BIND_DMABUF_MAX - 1)
+> +};
 
