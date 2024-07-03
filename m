@@ -1,112 +1,154 @@
-Return-Path: <linux-kernel+bounces-240136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F8392697D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:21:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C10DC926980
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E2A289416
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:21:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24765B24CB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCAB18FDD6;
-	Wed,  3 Jul 2024 20:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B4018FDD8;
+	Wed,  3 Jul 2024 20:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sk3J19kL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkVM4a6x"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9A4185095;
-	Wed,  3 Jul 2024 20:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E45D18FC7E;
+	Wed,  3 Jul 2024 20:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720038079; cv=none; b=mmT5c3l9oVCDVv6I/Tqxvnt9zEfELJzkL7SIC3h5KIxFhiQ7r0oCqSzSKcQpRXimFE+mT0ua4yryc4WO9wkNHdCuspk//zhwcuPt3z3c+3hR1SwglhTbLZmyRP6Q8tmQcKfnyAVmQ9Djom0dNgRpc8D6dpl5TLmQUOZmo8PIWMs=
+	t=1720038233; cv=none; b=iy7d7b5Z2BF/wcHht1mHKBoE3pjlEvwNsXuUxSlcIs26eUZJLiidPbd6eV++OzQgqregkV0IE+ttOJG2PCGsEpexSKEBkEnvQrmNvR4mYRWv0zNBCr/7KOSYwwgi2+gB0hLS1vL3nTQxPoOB2AvtaRB0VGcoUUdzvi5s1nJ9t38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720038079; c=relaxed/simple;
-	bh=rPvIWW2IUaIr2Cw4CK82UCHdJ+i1JMw6S82PykL7SKg=;
+	s=arc-20240116; t=1720038233; c=relaxed/simple;
+	bh=lqDVL16W5PbR3pUnUv+XQD4CLo94RjrhSDsC+yXoXSk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CCT/cBt1U4So/EJh42o7zjEfk9zP/MJf7ills+3HRacJfSZ1YLOvgrYMp739ZQAm2wb21f1gl4Hn2E6qtpTX7iY2kI0IgEqt5XCcbeK9M8mLIQHZlP64eh+SBFmKywWujgsIUpxaPRGd5/+qKDtWNPtNMBnrXYrMtFLVx65GXR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sk3J19kL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E06C4AF0A;
-	Wed,  3 Jul 2024 20:21:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720038078;
-	bh=rPvIWW2IUaIr2Cw4CK82UCHdJ+i1JMw6S82PykL7SKg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sk3J19kLZOWas8QOHSZltgbRvBLXaonPTXwU1DEW39b1yG0gY34KfKMbtMI3bHEU1
-	 yeDKp6QnUxPm3/Z9GWCo7kB4Ri/cTf3ZhDN4eiV4giODeRAp/WrziyOI/mWGY5WEUH
-	 QPjPFjd9PBsruzq9WOnYZhAcj7D3yCuS8PMYP3+ImqxuFGFW+36Kx2K7/KLav44qGO
-	 CXnQH/lPtIwJa6I/5yccS8fWOgCtWTs1JAQx0zta7B/V8BeBAFKpl3gTLTjkaJkUT+
-	 2GyaYA2LOPbL/ggBA3dEyBsFePpVS89NsBo3P6q3vgvCssmhucVEaxI3esqUJh9Oxd
-	 xSy/8kohjfzJw==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e764bb3fbso7754719e87.3;
-        Wed, 03 Jul 2024 13:21:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXUKo5xSAu/tkT4Yx5S+tBlEE6b+5vreVeSxcFDPSL8sCuGbStRQS4AYGsyH9S5L+5XlquOKBuIfWyBmAF6oytEemNtP5yu32XNry93swzxOr44mS7B8WoIUVYKIu6QMvHrV2nAetqzDCsPfgTbdoLmDqn6frh4NgquA6Cyf/h8d+c4PgWqBJMOO96vVTqJUaUXxTYxvtsaP9o/VqGNkYtoywtnX+E22M4u2GkK63NEvbB+/a2kNjSFnuvvvUgDyTxkobsZFgjfTEmD1/Ew+rbefH2LTVW2
-X-Gm-Message-State: AOJu0Yy3ATx1at4QujPJmsFbVBsO1Jf3oIMZTDJfBbOWcZSgyRm2CAgD
-	agkFdkQFxkPepklK4q3lBXBCBGy/u0fwOrmiNHIhWnePNUflNokNtPpzSFsAWGGDwm29flbWl0g
-	Mf6j1g0mZ/MksRe8w2Ok/tYUObQ==
-X-Google-Smtp-Source: AGHT+IHkJyLufysSPAp6OLlmdgVCxJhhtA7jCjroJG4RfWGCFjmvlqKevKnTA5kF72TY71LMsM29/tv7IaZgzL2wT8U=
-X-Received: by 2002:a05:6512:33d1:b0:52c:e3af:7c5c with SMTP id
- 2adb3069b0e04-52e82686b63mr8472949e87.34.1720038076812; Wed, 03 Jul 2024
- 13:21:16 -0700 (PDT)
+	 To:Cc:Content-Type; b=qUOhikEWXP4DHfDmdMU7NrFkZ4GdLeQVsK+BNVbohYJ1brNiT4sAWrIcU+WptZwxVYkUE/fGB2Y0i8Nov+xL5xRjEkHA7vtlwYCJTd2r29NwC02deun8YG/O7xPm+kBdy1uHWnnfJ4tanTscXHvHjZMLIcYKhnjtx2GlaQQE8N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkVM4a6x; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7041053c0fdso3232749b3a.3;
+        Wed, 03 Jul 2024 13:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720038232; x=1720643032; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rwvomoHjIbpct4hwfR4THyZoJBvV1mwfytBaKIOlC+o=;
+        b=TkVM4a6x0VRnfV2L2DLphfkRlxeAeDXsnWyB7sHeYWfnNypKeLHQBe8rLPc46ve46C
+         ggO5iKHZ6qJGevFOhQC/NQ5n3VWXKMape/6g/ns6uQO0y+BHcJIYFM5l7b1ONZnH6wx3
+         ZwzZ6NctNNmiBcPXWMgt/ZRv9ym9A+zAuepWwaBmnrVBcCk4WxrtFacNIB0uoMqIQXnm
+         7faQ6HjEi7mh8/9OdyOo1Vao3lbTXQ+YnpmR1AEunAgmmmhK+wVz0BK4YIJLO9ix6X5W
+         pDFt4oF3QaAPWTwBfoN02bh7GODuWT6dTMc88oPUk8yjpYaPMbtj5/stwlx0KopgOeoJ
+         zOAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720038232; x=1720643032;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rwvomoHjIbpct4hwfR4THyZoJBvV1mwfytBaKIOlC+o=;
+        b=te1Rm+GdB5OFl4oCgBgqssE7CCPUrxUwXm+MtXkCS5aJIqDovDUUloUfV1DdhbcMJk
+         a1bsT7l98csJP34YKcI9XwbiwB9+VyFZ3JlLlBVKrkxNTnwjjYf03V2qhGrQ92iWyKKN
+         kPIQ/hnTjbW15hhPszW85J459NeX1fpsmoleqjmMl5tcEruh43z1YwC/1M2nG79qE+gT
+         xzGN+Bmd+rhHvPuy+YDGy0i++KtU6z0sKKj18P5okY4iY+qmeMMnMeeTa35BAciewgg/
+         iy+AInLr0Tv+5dEkjJC8y6W9LG5IljtBEvLT2zFL4OokLrpcgpvo/KCGMsQ5bGFIF8m/
+         36Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCXLIFKYsAE1XumE0fJ8IBsxvoOawogR0MI2OyLeqd4tF04H4iv+qLnN6qqgFIS08Er/Sx5f9/aNnV+Dpx050U2SKpOS3D0Y334fItiqk1aBEXvOaCxSVnW7b1j+EioBucAqzXGMa20WfOqg3hbySJG+stJ6jZu4DvVIJeQ05voK+NHvDO6s0eqyJxxtbeWHrx9i+5fGwaSVxhsxhTorV4cELxPK7wXfbg==
+X-Gm-Message-State: AOJu0YylrjT+TRkD0lmQuxXg5hW7EMLwioe5yGcXkYTEMcnT6lZzhZnR
+	iZ8ar49swdEnO3jms0NykYQnBlROp+JmDWBaXa076Vies9TG9FevW0FJJLg5QGylNSs/EVQL/iG
+	q4v7zvp5XotF7LqHOnoxr7foH0O8=
+X-Google-Smtp-Source: AGHT+IEkPtR6WJw6D9+mrqSDTc+aTZrIYnAIpKILeYtKnzwURGBRPO835B/vkMpMUBZz2R+28Vqe7LW+nkXMye0Ibv0=
+X-Received: by 2002:a05:6a00:4614:b0:706:726b:ae60 with SMTP id
+ d2e1a72fcca58-70aaad60567mr12788838b3a.17.1720038231567; Wed, 03 Jul 2024
+ 13:23:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701151231.29425-1-kyarlagadda@nvidia.com>
- <20240701151231.29425-5-kyarlagadda@nvidia.com> <20240701174227.GA148633-robh@kernel.org>
- <hqlckp6hxvxwkkbiagdb5pm4eo5efu55hwuupdal6lojxj2xu5@5zibskqdbdju>
-In-Reply-To: <hqlckp6hxvxwkkbiagdb5pm4eo5efu55hwuupdal6lojxj2xu5@5zibskqdbdju>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 3 Jul 2024 14:21:04 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+hzbHKeKM9UnJ=VK8_rKs5HJpZRGH2YYWAvjtf9SbPRw@mail.gmail.com>
-Message-ID: <CAL_Jsq+hzbHKeKM9UnJ=VK8_rKs5HJpZRGH2YYWAvjtf9SbPRw@mail.gmail.com>
-Subject: Re: [RFC PATCH V2 04/12] dt-bindings: misc: tegra-i2c: config settings
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Krishna Yarlagadda <kyarlagadda@nvidia.com>, linux-tegra@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jonathanh@nvidia.com, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, corbet@lwn.net, andi.shyti@kernel.org, 
-	wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org, 
-	adrian.hunter@intel.com, digetx@gmail.com, ldewangan@nvidia.com, 
-	mkumard@nvidia.com
+References: <20240702171858.187562-1-andrii@kernel.org> <20240702233554.slj6kh7dn2mc2w4n@treble>
+ <20240702233902.p42gfhhnxo2veemf@treble> <CAEf4BzZ1GexY6uhO2Mwgbd7DgUnpMeTR2R37G5_5vdchQUAvjA@mail.gmail.com>
+ <20240703011153.jfg6jakxaiedyrom@treble> <CAEf4BzbzsKLtzPUOhby0ZOM3FskE0q4bYx-o5bB4P=dVBVPSNw@mail.gmail.com>
+ <20240703061119.iamshulwf3qzsdu3@treble>
+In-Reply-To: <20240703061119.iamshulwf3qzsdu3@treble>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 3 Jul 2024 13:23:39 -0700
+Message-ID: <CAEf4Bza6YdQ5HCcuPozOwVx75UrcyZL_1DGnYrJ=2pz=DxJpPQ@mail.gmail.com>
+Subject: Re: [PATCH v2] perf,x86: avoid missing caller address in stack traces
+ captured in uprobe
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org, 
+	x86@kernel.org, mingo@redhat.com, tglx@linutronix.de, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, rihams@fb.com, 
+	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 2, 2024 at 4:29=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
-.com> wrote:
+On Tue, Jul 2, 2024 at 11:11=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org=
+> wrote:
 >
-> On Mon, Jul 01, 2024 at 11:42:27AM GMT, Rob Herring wrote:
-> > On Mon, Jul 01, 2024 at 08:42:22PM +0530, Krishna Yarlagadda wrote:
-> > > I2C interface timing registers are configured using config setting
-> > > framework. List available field properties for Tegra I2C controllers.
+> On Tue, Jul 02, 2024 at 08:35:08PM -0700, Andrii Nakryiko wrote:
+> > On Tue, Jul 2, 2024 at 6:11=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.=
+org> wrote:
+> > > On Tue, Jul 02, 2024 at 05:06:14PM -0700, Andrii Nakryiko wrote:
+> > > > In general, even with false positives, I think it's overwhelmingly
+> > > > better to get correct entry stack trace 99.9% of the time, and in t=
+he
+> > > > rest 0.01% cases it's fine having one extra bogus entry (but the re=
+st
+> > > > should still be correct), which should be easy for humans to recogn=
+ize
+> > > > and filter out, if necessary.
+> > >
+> > > Agreed, this is a definite improvement overall.
 > >
-> > How is I2C bus timing parameters specific to NVIDIA? Just because you
-> > have more controls? No. That's no reason to invent a whole new way to
-> > specify parameters. Extend what's already there and make it work for
-> > anyone.
+> > Cool, I'll incorporate that into v3 and send it soon.
+> >
+
+BTW, if you have a chance, please do take a look at v3 and leave your
+ack, if you are ok with it. Thanks!
+
+> > >
+> > > BTW, soon there will be support for sframes instead of frame pointers=
+,
+> > > at which point these checks should only be done for the frame pointer
+> > > case.
+> >
+> > Nice, this is one of the reasons I've been thinking about asynchronous
+> > stack trace capture in BPF (see [0] from recent LSF/MM).
+> >  [0] https://docs.google.com/presentation/d/1k10-HtK7pP5CMMa86dDCdLW55f=
+HOut4co3Zs5akk0t4
 >
-> This may be applicable to a subset of this, and yes, maybe we can find
-> generalizations for some of these parameters.
+> I don't seem to have permission to open it.
 >
-> However, we're also looking for feedback specifically on these config
-> nodes that go beyond individual timing parameters. For example in the
-> case of I2C, how should parameters for different operating modes be
-> described?
 
-Like what? It all looks like timing to me.
+Argh, sorry, it's under my corporate account which doesn't allow
+others to view it. Try this, I "published" it, let me know if that
+still doesn't work:
 
-> Would you agree with something along the lines provided in this series?
+  [0] https://docs.google.com/presentation/d/e/2PACX-1vRgL3UPbkrznwtNPKn-sS=
+jvan7tFeMqOrIyZAFSSEPYiWG20JGSP80jBmZqGwqMuBGVmv9vyLU4KRTx/pub
 
-When there are multiple users/vendors of it, maybe.
+> > Few questions, while we are at it. Does it mean that
+> > perf_callchain_user() will support working from sleepable context and
+> > will wait for data to be paged in? Is anyone already working on this?
+> > Any pointers?
+>
+> I had a prototype here:
+>
+>   https://lkml.kernel.org/lkml/cover.1699487758.git.jpoimboe@kernel.org
+>
+> Hopefully I can get started on v2 soon.
 
-In general, it goes against the DT design of properties for foo go in
-foo's node. This looks more like how ACPI does things where it's add
-another table for this new thing we need.
+Ok, so you are going to work on this. Please cc me on future revisions
+then. Thanks!
 
-Rob
+>
+> --
+> Josh
 
