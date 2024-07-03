@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-238808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 365CA9250E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:09:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E5E9250CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80256B286C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:07:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C641C22AF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB7E13D2BE;
-	Wed,  3 Jul 2024 04:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7B013D60B;
+	Wed,  3 Jul 2024 04:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwygWuGt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QNbHJxK4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A4E13D282
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 04:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D72413D603
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 04:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719979280; cv=none; b=o2Mn2maVp2ud6DUaiEOPlIk6IM7sGKLGMN7zWwXdMT/ZZK5//GnCqdPhJhjhWEWledkyfNmlop7ONlqfVh42usJIh8VH/26yc1uuWsxanY7/OnVnZMMGhBmntHoouVXHx07v2SSoMWrLdA/c121syzDE1cpnCDX7N9QJx/VlwEU=
+	t=1719979284; cv=none; b=G4rIvDPeEBn6Fy5FvVH7oQYGmZ2Rt2EISQQbWJZ173Sg75CMmzPN7ocZQN81NG4L81gyj0eOEc5kRQ1DrySr/HtAMJiCT8GC6GQvHAH5LiUcQhdt2/KmJ5FPlNk76o+nrPS9y0xuqiVn1DaBxUP92umzkXNbZEWzTHyRF1R7kf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719979280; c=relaxed/simple;
-	bh=ezRZsoVNxvO9p/Es1oKbiCO8zRXU9uaLAm4pSSvGkg4=;
+	s=arc-20240116; t=1719979284; c=relaxed/simple;
+	bh=1lHtFt8ZtGmaai/qGPIEUZAmHxJr0sOHHO8xZgO8IhM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ltkKrivr8V9aDIM8I3kquJTolYgclSSbgKQSu6DJYSl82W0bCaJkDZqjULPJTZtQu1IvrmGj967d4WddlzhYm88Y4EbkKz6LFPBVvpjnMpKIqe6L0Q1Uvu/UwVP/YAgK+5LZlgGEoWSQKVrHtWQROSGn1lYOxdmR5bL3o161bJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwygWuGt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A3EBC4AF0B;
-	Wed,  3 Jul 2024 04:01:16 +0000 (UTC)
+	 MIME-Version; b=CpFbAISQhCxf5hqJRZWvoiaxh1Wynhx3ECuREZspuqWHRMQuqdlSiOa7GqWwU+FIks+8Scsw0jAgAVTrZQ5ug1e/FNyZbUG6ogh+pNcCeXV+Rk9WNFmqquqHvYN+itlWKtyTD5bjU+HK4WqosTxh0iPaezebx7TIprrApj5Wo70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QNbHJxK4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7079CC4AF0A;
+	Wed,  3 Jul 2024 04:01:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719979279;
-	bh=ezRZsoVNxvO9p/Es1oKbiCO8zRXU9uaLAm4pSSvGkg4=;
+	s=k20201202; t=1719979283;
+	bh=1lHtFt8ZtGmaai/qGPIEUZAmHxJr0sOHHO8xZgO8IhM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TwygWuGtgKvxgwB10GWVsnz/3isUS/MQMC9Xy3wCXH3LbpIlnFGgsLTVo3vhpbFji
-	 FiO84usSj+i0Ez8oI8g3tH5PlCJBj++GLnlkjKGdY3AV/8Dp+4wCx9PohogcDNjlzP
-	 b4ybo55igdo98aSZFekjv6ZYFaH4LyyZwRORJ+/EQx+nW04btD9BvbObiSkwN2RLn0
-	 3YT1WOS/2mpQWRedGerzZOzYsLU5SXoRzJkQZ3Oqj52OdO3t8zXCsVNdp2h+YlWxZk
-	 NZvdf+VxMWPVrpM043z+zyIpla47SpmiLILg43uwi2uQvkL9w9ZffuwQu96pQye/yF
-	 uOlDeyIXvkq3Q==
+	b=QNbHJxK4D6ImP2YzB0FOoQm3eGnBS+mZMAHPctPm0Ee21F3ECLriusqxrK3WCcuBx
+	 j1uedLH/jQcFqFam1Pi73yNj+PUAvGE5uysX/xNPmPiDCguFqG4F7NL8MXbZMhehtH
+	 ujUyVDOrH7NOM/L8nNAhdmsn4JET++rVfKxdTdPe0uwEQewgTlPAJIgdESwevnP6iC
+	 nAukgNgU+uUI//YtUBEgMtJH4A2ICHYlwmj2s2uRNYdAJyBl1BfYuU/6imKmtohjpR
+	 w4zdLzppZBMQCbgWGjAKg+VLvML+I0IpPi7TS9qicMsbP+vF6q4waqCBsyR5CfSrtO
+	 xtz9bmUDuPS2A==
 From: alexs@kernel.org
 To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	Miaohe Lin <linmiaohe@huawei.com>,
@@ -54,9 +54,9 @@ To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	Yosry Ahmed <yosryahmed@google.com>,
 	nphamcs@gmail.com
 Cc: Alex Shi <alexs@kernel.org>
-Subject: [PATCH v2 03/20] mm/zsmalloc: convert __zs_map_object/__zs_unmap_object to use zpdesc
-Date: Wed,  3 Jul 2024 12:05:53 +0800
-Message-ID: <20240703040613.681396-4-alexs@kernel.org>
+Subject: [PATCH v2 04/20] mm/zsmalloc: add and use pfn/zpdesc seeking funcs
+Date: Wed,  3 Jul 2024 12:05:54 +0800
+Message-ID: <20240703040613.681396-5-alexs@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240703040613.681396-1-alexs@kernel.org>
 References: <20240703040613.681396-1-alexs@kernel.org>
@@ -70,96 +70,240 @@ Content-Transfer-Encoding: 8bit
 
 From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 
-These two functions take pointer to an array of struct page. Introduce
-zpdesc_kmap_atomic() and make __zs_{map,unmap}_object() take pointer
-to an array of zpdesc instead of page.
-
-Add silly type casting when calling them. Casting will be removed late.
+Add pfn_zpdesc conversion, convert obj_to_location() to take zpdesc
+and also convert its users to use zpdesc.
 
 Signed-off-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 Signed-off-by: Alex Shi <alexs@kernel.org>
 ---
- mm/zsmalloc.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ mm/zpdesc.h   |  9 +++++++
+ mm/zsmalloc.c | 75 ++++++++++++++++++++++++++-------------------------
+ 2 files changed, 47 insertions(+), 37 deletions(-)
 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 243677a9c6d2..68a39c233d34 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -243,6 +243,11 @@ struct zs_pool {
- 	atomic_t compaction_in_progress;
- };
+diff --git a/mm/zpdesc.h b/mm/zpdesc.h
+index 8a359d228507..96b9ce80ea49 100644
+--- a/mm/zpdesc.h
++++ b/mm/zpdesc.h
+@@ -91,4 +91,13 @@ static inline void zpdesc_put(struct zpdesc *zpdesc)
+ 	folio_put(zpdesc_folio(zpdesc));
+ }
  
-+static inline void *zpdesc_kmap_atomic(struct zpdesc *zpdesc)
++static inline unsigned long zpdesc_pfn(struct zpdesc *zpdesc)
 +{
-+	return kmap_atomic(zpdesc_page(zpdesc));
++	return page_to_pfn(zpdesc_page(zpdesc));
 +}
 +
- struct zspage {
- 	struct {
- 		unsigned int huge:HUGE_BITS;
-@@ -1061,7 +1066,7 @@ static inline void __zs_cpu_down(struct mapping_area *area)
++static inline struct zpdesc *pfn_zpdesc(unsigned long pfn)
++{
++	return page_zpdesc(pfn_to_page(pfn));
++}
+ #endif
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 68a39c233d34..149fe2b332cb 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -773,15 +773,15 @@ static struct zpdesc *get_next_zpdesc(struct zpdesc *zpdesc)
  }
  
- static void *__zs_map_object(struct mapping_area *area,
--			struct page *pages[2], int off, int size)
-+			struct zpdesc *zpdescs[2], int off, int size)
+ /**
+- * obj_to_location - get (<page>, <obj_idx>) from encoded object value
++ * obj_to_location - get (<zpdesc>, <obj_idx>) from encoded object value
+  * @obj: the encoded object value
+- * @page: page object resides in zspage
++ * @zpdesc: zpdesc object resides in zspage
+  * @obj_idx: object index
+  */
+-static void obj_to_location(unsigned long obj, struct page **page,
++static void obj_to_location(unsigned long obj, struct zpdesc **zpdesc,
+ 				unsigned int *obj_idx)
  {
- 	int sizes[2];
- 	void *addr;
-@@ -1078,10 +1083,10 @@ static void *__zs_map_object(struct mapping_area *area,
- 	sizes[1] = size - sizes[0];
- 
- 	/* copy object to per-cpu buffer */
--	addr = kmap_atomic(pages[0]);
-+	addr = zpdesc_kmap_atomic(zpdescs[0]);
- 	memcpy(buf, addr + off, sizes[0]);
- 	kunmap_atomic(addr);
--	addr = kmap_atomic(pages[1]);
-+	addr = zpdesc_kmap_atomic(zpdescs[1]);
- 	memcpy(buf + sizes[0], addr, sizes[1]);
- 	kunmap_atomic(addr);
- out:
-@@ -1089,7 +1094,7 @@ static void *__zs_map_object(struct mapping_area *area,
+-	*page = pfn_to_page(obj >> OBJ_INDEX_BITS);
++	*zpdesc = pfn_zpdesc(obj >> OBJ_INDEX_BITS);
+ 	*obj_idx = (obj & OBJ_INDEX_MASK);
  }
  
- static void __zs_unmap_object(struct mapping_area *area,
--			struct page *pages[2], int off, int size)
-+			struct zpdesc *zpdescs[2], int off, int size)
+@@ -1208,13 +1208,13 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
+ 			enum zs_mapmode mm)
  {
- 	int sizes[2];
- 	void *addr;
-@@ -1108,10 +1113,10 @@ static void __zs_unmap_object(struct mapping_area *area,
- 	sizes[1] = size - sizes[0];
+ 	struct zspage *zspage;
+-	struct page *page;
++	struct zpdesc *zpdesc;
+ 	unsigned long obj, off;
+ 	unsigned int obj_idx;
  
- 	/* copy per-cpu buffer to object */
--	addr = kmap_atomic(pages[0]);
-+	addr = zpdesc_kmap_atomic(zpdescs[0]);
- 	memcpy(addr + off, buf, sizes[0]);
- 	kunmap_atomic(addr);
--	addr = kmap_atomic(pages[1]);
-+	addr = zpdesc_kmap_atomic(zpdescs[1]);
- 	memcpy(addr, buf + sizes[0], sizes[1]);
- 	kunmap_atomic(addr);
+ 	struct size_class *class;
+ 	struct mapping_area *area;
+-	struct page *pages[2];
++	struct zpdesc *zpdescs[2];
+ 	void *ret;
  
-@@ -1252,7 +1257,7 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
- 	pages[1] = get_next_page(page);
- 	BUG_ON(!pages[1]);
+ 	/*
+@@ -1227,8 +1227,8 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
+ 	/* It guarantees it can get zspage from handle safely */
+ 	read_lock(&pool->migrate_lock);
+ 	obj = handle_to_obj(handle);
+-	obj_to_location(obj, &page, &obj_idx);
+-	zspage = get_zspage(page);
++	obj_to_location(obj, &zpdesc, &obj_idx);
++	zspage = get_zspage(zpdesc_page(zpdesc));
  
--	ret = __zs_map_object(area, pages, off, class->size);
-+	ret = __zs_map_object(area, (struct zpdesc **)pages, off, class->size);
+ 	/*
+ 	 * migration cannot move any zpages in this zspage. Here, class->lock
+@@ -1247,17 +1247,17 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
+ 	area->vm_mm = mm;
+ 	if (off + class->size <= PAGE_SIZE) {
+ 		/* this object is contained entirely within a page */
+-		area->vm_addr = kmap_atomic(page);
++		area->vm_addr = zpdesc_kmap_atomic(zpdesc);
+ 		ret = area->vm_addr + off;
+ 		goto out;
+ 	}
+ 
+ 	/* this object spans two pages */
+-	pages[0] = page;
+-	pages[1] = get_next_page(page);
+-	BUG_ON(!pages[1]);
++	zpdescs[0] = zpdesc;
++	zpdescs[1] = get_next_zpdesc(zpdesc);
++	BUG_ON(!zpdescs[1]);
+ 
+-	ret = __zs_map_object(area, (struct zpdesc **)pages, off, class->size);
++	ret = __zs_map_object(area, zpdescs, off, class->size);
  out:
  	if (likely(!ZsHugePage(zspage)))
  		ret += ZS_HANDLE_SIZE;
-@@ -1287,7 +1292,7 @@ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
- 		pages[1] = get_next_page(page);
- 		BUG_ON(!pages[1]);
+@@ -1269,7 +1269,7 @@ EXPORT_SYMBOL_GPL(zs_map_object);
+ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
+ {
+ 	struct zspage *zspage;
+-	struct page *page;
++	struct zpdesc *zpdesc;
+ 	unsigned long obj, off;
+ 	unsigned int obj_idx;
  
--		__zs_unmap_object(area, pages, off, class->size);
-+		__zs_unmap_object(area, (struct zpdesc **)pages, off, class->size);
+@@ -1277,8 +1277,8 @@ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
+ 	struct mapping_area *area;
+ 
+ 	obj = handle_to_obj(handle);
+-	obj_to_location(obj, &page, &obj_idx);
+-	zspage = get_zspage(page);
++	obj_to_location(obj, &zpdesc, &obj_idx);
++	zspage = get_zspage(zpdesc_page(zpdesc));
+ 	class = zspage_class(pool, zspage);
+ 	off = offset_in_page(class->size * obj_idx);
+ 
+@@ -1286,13 +1286,13 @@ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
+ 	if (off + class->size <= PAGE_SIZE)
+ 		kunmap_atomic(area->vm_addr);
+ 	else {
+-		struct page *pages[2];
++		struct zpdesc *zpdescs[2];
+ 
+-		pages[0] = page;
+-		pages[1] = get_next_page(page);
+-		BUG_ON(!pages[1]);
++		zpdescs[0] = zpdesc;
++		zpdescs[1] = get_next_zpdesc(zpdesc);
++		BUG_ON(!zpdescs[1]);
+ 
+-		__zs_unmap_object(area, (struct zpdesc **)pages, off, class->size);
++		__zs_unmap_object(area, zpdescs, off, class->size);
  	}
  	local_unlock(&zs_map_area.lock);
  
+@@ -1434,23 +1434,24 @@ static void obj_free(int class_size, unsigned long obj)
+ {
+ 	struct link_free *link;
+ 	struct zspage *zspage;
+-	struct page *f_page;
++	struct zpdesc *f_zpdesc;
+ 	unsigned long f_offset;
+ 	unsigned int f_objidx;
+ 	void *vaddr;
+ 
+-	obj_to_location(obj, &f_page, &f_objidx);
++
++	obj_to_location(obj, &f_zpdesc, &f_objidx);
+ 	f_offset = offset_in_page(class_size * f_objidx);
+-	zspage = get_zspage(f_page);
++	zspage = get_zspage(zpdesc_page(f_zpdesc));
+ 
+-	vaddr = kmap_atomic(f_page);
++	vaddr = zpdesc_kmap_atomic(f_zpdesc);
+ 	link = (struct link_free *)(vaddr + f_offset);
+ 
+ 	/* Insert this object in containing zspage's freelist */
+ 	if (likely(!ZsHugePage(zspage)))
+ 		link->next = get_freeobj(zspage) << OBJ_TAG_BITS;
+ 	else
+-		f_page->index = 0;
++		f_zpdesc->next = NULL;
+ 	set_freeobj(zspage, f_objidx);
+ 
+ 	kunmap_atomic(vaddr);
+@@ -1495,7 +1496,7 @@ EXPORT_SYMBOL_GPL(zs_free);
+ static void zs_object_copy(struct size_class *class, unsigned long dst,
+ 				unsigned long src)
+ {
+-	struct page *s_page, *d_page;
++	struct zpdesc *s_zpdesc, *d_zpdesc;
+ 	unsigned int s_objidx, d_objidx;
+ 	unsigned long s_off, d_off;
+ 	void *s_addr, *d_addr;
+@@ -1504,8 +1505,8 @@ static void zs_object_copy(struct size_class *class, unsigned long dst,
+ 
+ 	s_size = d_size = class->size;
+ 
+-	obj_to_location(src, &s_page, &s_objidx);
+-	obj_to_location(dst, &d_page, &d_objidx);
++	obj_to_location(src, &s_zpdesc, &s_objidx);
++	obj_to_location(dst, &d_zpdesc, &d_objidx);
+ 
+ 	s_off = offset_in_page(class->size * s_objidx);
+ 	d_off = offset_in_page(class->size * d_objidx);
+@@ -1516,8 +1517,8 @@ static void zs_object_copy(struct size_class *class, unsigned long dst,
+ 	if (d_off + class->size > PAGE_SIZE)
+ 		d_size = PAGE_SIZE - d_off;
+ 
+-	s_addr = kmap_atomic(s_page);
+-	d_addr = kmap_atomic(d_page);
++	s_addr = zpdesc_kmap_atomic(s_zpdesc);
++	d_addr = zpdesc_kmap_atomic(d_zpdesc);
+ 
+ 	while (1) {
+ 		size = min(s_size, d_size);
+@@ -1542,17 +1543,17 @@ static void zs_object_copy(struct size_class *class, unsigned long dst,
+ 		if (s_off >= PAGE_SIZE) {
+ 			kunmap_atomic(d_addr);
+ 			kunmap_atomic(s_addr);
+-			s_page = get_next_page(s_page);
+-			s_addr = kmap_atomic(s_page);
+-			d_addr = kmap_atomic(d_page);
++			s_zpdesc = get_next_zpdesc(s_zpdesc);
++			s_addr = zpdesc_kmap_atomic(s_zpdesc);
++			d_addr = zpdesc_kmap_atomic(d_zpdesc);
+ 			s_size = class->size - written;
+ 			s_off = 0;
+ 		}
+ 
+ 		if (d_off >= PAGE_SIZE) {
+ 			kunmap_atomic(d_addr);
+-			d_page = get_next_page(d_page);
+-			d_addr = kmap_atomic(d_page);
++			d_zpdesc = get_next_zpdesc(d_zpdesc);
++			d_addr = zpdesc_kmap_atomic(d_zpdesc);
+ 			d_size = class->size - written;
+ 			d_off = 0;
+ 		}
+@@ -1791,7 +1792,7 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+ 	struct zs_pool *pool;
+ 	struct size_class *class;
+ 	struct zspage *zspage;
+-	struct page *dummy;
++	struct zpdesc *dummy;
+ 	void *s_addr, *d_addr, *addr;
+ 	unsigned int offset;
+ 	unsigned long handle;
 -- 
 2.43.0
 
