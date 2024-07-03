@@ -1,187 +1,175 @@
-Return-Path: <linux-kernel+bounces-238991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03535925498
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:27:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E2792549C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25CE51C22F57
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:27:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AFB01C23A63
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E73E136986;
-	Wed,  3 Jul 2024 07:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6261D136E1C;
+	Wed,  3 Jul 2024 07:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cWCUWJRE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VfecQw4B"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="e3rcjBZ6"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08063131BDD
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CD6131BDD;
+	Wed,  3 Jul 2024 07:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719991637; cv=none; b=ntktQMgWWfbEQcnr+sQ+/zWaq6shysTEcojNsgWB9ymhFq2SO/CPY/FWk/5EwFkajAcaA7x+B8VERdX+AE+sW3gd0DbK/h4uTm6EJQPDY/4qQxzhWqaiLc9IpgxdOaMz5XKy00kpCDWuoe4JhFzM+JU+zgEZiRxMjxlA58t5fl8=
+	t=1719991766; cv=none; b=mcuKVhRF/Hfhr0f/AGTD3Vxq7PIrTd97BQCtBXG3RSrtceeZ7UyukX7KN4pRGqt8xxgIq/hV2i8D18i24atbGAdkvKKpJLSaxMC0AoKpsorrfIoZoR/jLHED/HF0QlSwV5GZSO3md+WOH7y+M/mN+wvnO5yENIg03jB4doidavk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719991637; c=relaxed/simple;
-	bh=cM8/M8U634gVxIx336CkQPrPYnfeztmQtdkWIoUGX8w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eKw6GiC/T8FnYJWMqFrU+HPLFVeySxkAL2+HrvCojT+s4HczSACRdqjB2cUavx/2A48X5NrP7lcMd5XsjYDVB0w7oPyZ/SJHm7+1tfS4ccDbLnBKQZxbIM9qFgitFd6fOaeg9pbX892e9aocBJjOM1hck3XOXUfkgP2WcClMid0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cWCUWJRE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VfecQw4B; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719991632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MRcJPtwAugYmLwEOwHvkFNkj81DmVpTFKEzVl8DhqJA=;
-	b=cWCUWJREPkgjz37I6P43j3hFhZiohMBVz1GQbLrPDZnFfwz4OhL8sRSHHNUVvqbenZUhQk
-	DFmNoElj7rVxYLBoNenv8g+uQ9C30Hr3r/AOLX3LrfW43KJhk1gydRHLt4ar6+wyxsgpeg
-	XqjytzayiC6s1QnhNV9yWmoJYP1YrXwvNEVb5PEsD2GBFkUEhZxCRRr9Y/QT8pkHHfSeEw
-	xkRhFYjnwtUshJhQBoQULnjmOEcKIYjflpYh7UJkN2Zt2s4jSZVhRfErJIoMhWh7poqVvR
-	nHizDL/udwwRD1QJSzVDz9icxEsPb9mR8wBV1OE2F3ilvveMUyPTTQBYjihpNw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719991632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MRcJPtwAugYmLwEOwHvkFNkj81DmVpTFKEzVl8DhqJA=;
-	b=VfecQw4BTpl4G88MXoxRxCmbv0R/oY7OVgFVy++xzFwQ0gAjrd6gCE2wvuMsU0+CHfauGK
-	g7e5fp+5fuxt/PBA==
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: b.spranger@linutronix.de,
-	Nam Cao <namcao@linutronix.de>,
-	Anup Patel <anup@brainfault.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH] irqchip/sifive-plic: Fix plic_set_affinity() only enables 1 cpu
-Date: Wed,  3 Jul 2024 09:26:59 +0200
-Message-Id: <20240703072659.1427616-1-namcao@linutronix.de>
+	s=arc-20240116; t=1719991766; c=relaxed/simple;
+	bh=XH8pzdAoHuWv8DznMXqsk1aeuJ++vg5q3W+27mPM9vo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhYLq2IJZ+rw7F0CscT801yiUHMBG8kaVLBCHH2znS7bhu4vkutT5YCUh0yz0vrgPiGNfV/KFsL4HmYNsWSHpzG3ZY0WYbLg2rGgX+Ne9G7ng4hARMxioteilNk69k5PEgm9LFYjGT2v+U/qArjMBTKixm+Xk/fQpS+YjOaFvUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=e3rcjBZ6; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1719991764; x=1751527764;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XH8pzdAoHuWv8DznMXqsk1aeuJ++vg5q3W+27mPM9vo=;
+  b=e3rcjBZ6w1YCQadfPHuEgtKs9dThgtIuBbIMQEcRE7c57rwkAhQXJ0fT
+   ZqI5igh+PVw0FzZGL9MvCRXuplnbdwbp9jf1PMh3ntc2f5dauAB/gg0wi
+   jEP1SITvoBIxu6TJXYe9BOtHfQDC2TPXtu5rJIhLEltBMLlqbGwMXyzBD
+   A+MUZEdW3WDsNJ1jEk+MgdLBQTd8myE4ZIUQNDHJajXLq5EtIo6lVkNV/
+   ig0llmZw2jOM6Bqjv8FCUb7pKOQeWHlCTCywHQwYAbXjRDaVT5P0A14OR
+   p1GuQyR4/dfksh1oyWx32c4sQa90SKOmrxst0Gvuy8MTcUAlf+6Oji3x0
+   A==;
+X-CSE-ConnectionGUID: feGJv0yDT+igZZ1QI9ykeA==
+X-CSE-MsgGUID: ChZ+M0e1TT+Kc9XQeYII1A==
+X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
+   d="asc'?scan'208";a="28765840"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Jul 2024 00:29:16 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 3 Jul 2024 00:29:00 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Wed, 3 Jul 2024 00:28:57 -0700
+Date: Wed, 3 Jul 2024 08:28:36 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Serge Semin <fancer.lancer@gmail.com>
+CC: Samuel Holland <samuel.holland@sifive.com>, Kanak Shilledar
+	<kanakshilledar@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown
+	<broonie@kernel.org>, Rob Herring <robh@kernel.org>, Jisheng Zhang
+	<jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	<linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v2 2/3] spi: dw-mmio: update dw_spi_mmio_of_match struct
+ with thead
+Message-ID: <20240703-garbage-explicit-bd95f8deb716@wendy>
+References: <20240701121355.262259-2-kanakshilledar@gmail.com>
+ <20240701121355.262259-4-kanakshilledar@gmail.com>
+ <f8604c68-8866-447b-a874-562bdad1df79@sifive.com>
+ <23gvjkszxvf6zehiqetjfmtf67nlpnnfmhgx234jnxwrtmbdpr@4yv64sz2kpcs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wONVh+6L225rrd86"
+Content-Disposition: inline
+In-Reply-To: <23gvjkszxvf6zehiqetjfmtf67nlpnnfmhgx234jnxwrtmbdpr@4yv64sz2kpcs>
 
-plic_set_affinity() only enables interrupt for the first possible CPU in
-the mask. The point is to prevent all CPUs trying to claim an interrupt,
-but only one CPU succeeds and the other CPUs wasted some clock cycles for
-nothing.
+--wONVh+6L225rrd86
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-However, there are two problems with that:
-1. Users cannot enable interrupt on multiple CPUs (for example, to minimize
-interrupt latency).
-2. Even if users do not touch SMP interrupt affinity, plic_set_affinity()
-is still invoked once (in plic_irqdomain_map()). Thus, by default, only
-CPU0 handles interrupts from PLIC. That may overload CPU0.
+On Mon, Jul 01, 2024 at 09:57:20PM +0300, Serge Semin wrote:
+> Hi folks
+>=20
+> On Mon, Jul 01, 2024 at 08:17:29AM -0500, Samuel Holland wrote:
+> > Hi Kanak,
+> >=20
+> > On 2024-07-01 7:13 AM, Kanak Shilledar wrote:
+> > > updated the struct of_device_id dw_spi_mmio_of_match to include
+> > > the updated compatible value for TH1520 SoC ("thead,th1520-spi")
+> > > to initialize with dw_spi_pssi_init().
+> > >=20
+> > > Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+> > > ---
+> > > Changes in v2:
+> > > - Separated from a single patch file.
+> > > ---
+> > >  drivers/spi/spi-dw-mmio.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >=20
+> > > diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
+> > > index 819907e332c4..39e3d46ebf5d 100644
+> > > --- a/drivers/spi/spi-dw-mmio.c
+> > > +++ b/drivers/spi/spi-dw-mmio.c
+> > > @@ -419,6 +419,7 @@ static const struct of_device_id dw_spi_mmio_of_m=
+atch[] =3D {
+> > >  	{ .compatible =3D "microchip,sparx5-spi", dw_spi_mscc_sparx5_init},
+> > >  	{ .compatible =3D "canaan,k210-spi", dw_spi_canaan_k210_init},
+> > >  	{ .compatible =3D "amd,pensando-elba-spi", .data =3D dw_spi_elba_in=
+it},
+> > > +	{ .compatible =3D "thead,th1520-spi", .data =3D dw_spi_pssi_init},
+> >=20
+> > Your binding requires snps,dw-apb-ssi as a fallback compatible string, =
+which is
+> > already supported by this driver and uses the same match data. So you d=
+on't need
+> > this patch; its only effect is to make the kernel larger.
+>=20
+> Agree with Samuel comment. Indeed there is no point in adding the
+> vendor-specific device-name supported in the driver if the fallback
+> compatible works as-is.
 
-Considering this optimization is not strictly the best (it is tradeoff
-between CPU cycles and interrupt latency), it should not be forced on
-users.
+FWIW, Mark picked up the binding alone so I think there's nothing for
+Kanak to do here & the driver patch should just be forgotten about :)
 
-Rewrite plic_set_affinity() to enable interrupt for all possible CPUs in
-the mask.
+> >From that perspective we shouldn't have merged in the patch adding the
+> Renesas RZN1 SPI device name support, since the generic fallback
+> compatible works for it. On the contrary the Microsemi Ocelot/Jaguar2
+> SoC SPI DT-bindings shouldn't have been defined with the generic
+> fallback compatible since should the device be bound via the generic
+> name it won't work as expected.
+>=20
+> Although, it's better to hear out what Rob, Conor or Krzysztof think
+> about this.
 
-Before:
-$ cat /proc/interrupts
-           CPU0       CPU1       CPU2       CPU3
- 10:       2538       2695       3080       2309  RISC-V INTC   5 Edge      riscv-timer
- 12:          3          0          0          0  SiFive PLIC 111 Edge      17030000.power-controller
- 13:       1163          0          0          0  SiFive PLIC  25 Edge      13010000.spi
- 14:         60          0          0          0  SiFive PLIC   7 Edge      end0
- 15:          0          0          0          0  SiFive PLIC   6 Edge      end0
- 16:          0          0          0          0  SiFive PLIC   5 Edge      end0
- 17:          0          0          0          0  SiFive PLIC  78 Edge      end1
- 18:          0          0          0          0  SiFive PLIC  77 Edge      end1
- 19:          0          0          0          0  SiFive PLIC  76 Edge      end1
- 22:        796          0          0          0  SiFive PLIC  32 Edge      ttyS0
- 23:          0          0          0          0  SiFive PLIC  38 Edge      pl022
- 24:       9062          0          0          0  SiFive PLIC  75 Edge      dw-mci
- 25:          0          0          0          0  SiFive PLIC  35 Edge      10030000.i2c
- 26:          0          0          0          0  SiFive PLIC  37 Edge      10050000.i2c
- 27:          1          0          0          0  SiFive PLIC  50 Edge      12050000.i2c
- 28:          0          0          0          0  SiFive PLIC  51 Edge      12060000.i2c
-IPI0:       118         98         88        138  Rescheduling interrupts
-IPI1:      2272       1910       3758       3200  Function call interrupts
-IPI2:         0          0          0          0  CPU stop interrupts
-IPI3:         0          0          0          0  CPU stop (for crash dump) interrupts
-IPI4:         0          0          0          0  IRQ work interrupts
-IPI5:         0          0          0          0  Timer broadcast interrupts
+I agree with what you've written. If the fallback works identically, then
+the specific compatible shouldn't be added here. And if the fallback
+will cause the device to misbehave (or not behave at all), then it
+should not have been added.
+I'm not sure if the Microsemi stuff is in the "won't work {,properly}"
+camp or in the "will work in a limited fashion" camp. The latter would
+be suitable for a fallback, the former not.
 
-After:
-$ cat /proc/interrupts
-           CPU0       CPU1       CPU2       CPU3
- 10:       2539       2734       2295       2552  RISC-V INTC   5 Edge      riscv-timer
- 12:          2          1          0          0  SiFive PLIC 111 Edge      17030000.power-controller
- 13:        643        194        368         75  SiFive PLIC  25 Edge      13010000.spi
- 14:          6         22         19         27  SiFive PLIC   7 Edge      end0
- 15:          0          0          0          0  SiFive PLIC   6 Edge      end0
- 16:          0          0          0          0  SiFive PLIC   5 Edge      end0
- 17:          0          0          0          0  SiFive PLIC  78 Edge      end1
- 18:          0          0          0          0  SiFive PLIC  77 Edge      end1
- 19:          0          0          0          0  SiFive PLIC  76 Edge      end1
- 22:        158        254        226        207  SiFive PLIC  32 Edge      ttyS0
- 23:          0          0          0          0  SiFive PLIC  38 Edge      pl022
- 24:       2265       2250       1452       2024  SiFive PLIC  75 Edge      dw-mci
- 25:          0          0          0          0  SiFive PLIC  35 Edge      10030000.i2c
- 26:          0          0          0          0  SiFive PLIC  37 Edge      10050000.i2c
- 27:          0          0          0          1  SiFive PLIC  50 Edge      12050000.i2c
- 28:          0          0          0          0  SiFive PLIC  51 Edge      12060000.i2c
-IPI0:        92        118        116        120  Rescheduling interrupts
-IPI1:      4135       2653       2170       3160  Function call interrupts
-IPI2:         0          0          0          0  CPU stop interrupts
-IPI3:         0          0          0          0  CPU stop (for crash dump) interrupts
-IPI4:         0          0          0          0  IRQ work interrupts
-IPI5:         0          0          0          0  Timer broadcast interrupts
+Cheers,
+Conor.
 
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Cc: Anup Patel <anup@brainfault.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
----
- drivers/irqchip/irq-sifive-plic.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 9e22f7e378f5..f30bdb94ceeb 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -163,20 +163,19 @@ static void plic_irq_eoi(struct irq_data *d)
- static int plic_set_affinity(struct irq_data *d,
- 			     const struct cpumask *mask_val, bool force)
- {
--	unsigned int cpu;
- 	struct plic_priv *priv = irq_data_get_irq_chip_data(d);
-+	struct cpumask new_mask;
- 
--	if (force)
--		cpu = cpumask_first_and(&priv->lmask, mask_val);
--	else
--		cpu = cpumask_first_and_and(&priv->lmask, mask_val, cpu_online_mask);
-+	cpumask_and(&new_mask, mask_val, &priv->lmask);
-+	if (!force)
-+		cpumask_and(&new_mask, &new_mask, cpu_online_mask);
- 
--	if (cpu >= nr_cpu_ids)
-+	if (cpumask_empty(&new_mask))
- 		return -EINVAL;
- 
- 	plic_irq_disable(d);
- 
--	irq_data_update_effective_affinity(d, cpumask_of(cpu));
-+	irq_data_update_effective_affinity(d, &new_mask);
- 
- 	if (!irqd_irq_disabled(d))
- 		plic_irq_enable(d);
--- 
-2.39.2
+--wONVh+6L225rrd86
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoT9owAKCRB4tDGHoIJi
+0jYGAP9sjC9GgGM9qE1ZoqzHHiaERajD3hAFoKB9OYEHsOFtxQEAl1g8BT7QyaMo
+nMrjiPXoOmUwVmAt6fFAiWSAim+W7ws=
+=Z2Ad
+-----END PGP SIGNATURE-----
+
+--wONVh+6L225rrd86--
 
