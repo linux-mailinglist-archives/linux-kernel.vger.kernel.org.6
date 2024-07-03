@@ -1,250 +1,218 @@
-Return-Path: <linux-kernel+bounces-239124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030759256BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:26:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA3B9256C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4B72B214F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:26:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACC0C1F209B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B1514037C;
-	Wed,  3 Jul 2024 09:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6750B142659;
+	Wed,  3 Jul 2024 09:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Sgsbf1jU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Yc3bWi7N"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lbbWWjue"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376B213698B;
-	Wed,  3 Jul 2024 09:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A50137760;
+	Wed,  3 Jul 2024 09:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719998730; cv=none; b=pcQLXcE53UVxMxGBLx24Uef4bbjeIznwCeYCsWFUNSBXcuYj4pef1TQUpvIk9HABHSV034GOcgwGAA97oJM5vmZ6vCiCVXZmFFUoTCss3mcAgPoBXBSypNylEzWgg0wk35e3A0ibOaZNhmSKsoGoh4pnncGw5tR1TRIn2VBCFFA=
+	t=1719998748; cv=none; b=ctfa4EcCYJwCU/qCAfGSK98tPW2WspiGdeul27Ko9TJSUQ0BJdYhy9L4/Pn70kSxF4eM5VCEPZldnhEA0X0gkMaIkpL//BJZDoxpzGO5CeAwi+j6UTAg9x7Rk5epmr+ts3KsyD9Emrsaldp5kICRZvgI07bIOpBcrj2Ev8S1Aeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719998730; c=relaxed/simple;
-	bh=aNr5LsPPRXyZ7znURdhRpNzyLMqjsxePdNEZVumFhEU=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=aofTNRQZ8TNcGGVm7xRvXH3mF/MOaBang8XOLZz2lwvaLlZvoeoeBg4R8BiyLwPGsLA2OyhvH+iw9eCz4H6U6Cwlhxd99jnm9oSVqE2dnoR7uUZyUHzpIrWx4z+pU6R1zJ2hgQ2pidg7HwBxvV88KizE0ixpJj3qhy0BcBGrekI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Sgsbf1jU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Yc3bWi7N; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 4B1D111401BD;
-	Wed,  3 Jul 2024 05:25:26 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 03 Jul 2024 05:25:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1719998726; x=1720085126; bh=1EJB48ZUHi
-	VP/+yG3YT6uhk4ELVB4dHK9uYd0Uk+epE=; b=Sgsbf1jUQYfka50MHVgxqd+q2D
-	kcYBPT8sp01BlFcXTSJXaO+mjt18ZKxFuWgl5h7rECS0PCPyQ+Jluvd8kWv3MPKg
-	gtdEQHO2iKBG0J6KSbxlSlPf1bK08b7yXQIU7p2Jwp5HBN9+zADk+vu9SxefqAV8
-	LsS+LurGs1s4scFaATOOVTx4exVjrqAZF28dkGT3DbkcnONXrtyk9llOFWMO7fIN
-	d0TUAkkE0MaBfBAcqw0kE1POiGbWiuNleEWw/9Ts8+RrjvDSFY7YFPohZVXvCydz
-	XrsivSi2wbuSozgCey5hEVTLTV3PmuOguorDTbqQxuPFmszmiRLwgZG7cTxA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719998726; x=1720085126; bh=1EJB48ZUHiVP/+yG3YT6uhk4ELVB
-	4dHK9uYd0Uk+epE=; b=Yc3bWi7NdTkraAjJ8FMA5lSjqD5Z2hGaiiebRsmCpBL3
-	DeCO068ll1kVnmJjmqEEkwpvxs/uw+mVBbBh+hQGgUaKhEW7jBl6xEy34wweNkhi
-	8QR853g1O0lMyDTGGUP1lzsjxOhtNzP+79ayXhyNLQ6eYTRx+e6Pgy9V5CcKBg1C
-	6BGUbpdagRuAQCVUtxbbv/T5oUU01+icDE6AZd9T1+mlef41VP4+vBg46dbjpwT2
-	GWK5wdd3uIx+i+MKVamADA2nMWNJT02cKXRyJ27YiIfDHsp7o6kcyJYRlbOmfNzE
-	mT5fxDU/UBjFC371EtnTlnMN/m7o4JHuJ7Hx8WSWDw==
-X-ME-Sender: <xms:BRmFZhX_aF1opeOf99uk22W4aqlpGWuOato-W9EKGijR2l_Z5iJYVA>
-    <xme:BRmFZhmWM8Db_N1ZHCTgHDClFBsg1CCSjuAWlEoCDHs7r2jbgRGhyhQbNlAEFJGgi
-    Y88i_3RhXEzsnVa-BA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejgdduiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeelhfettdekkeeggffgvedvieehudeljeetkeefjedthedtjeejhfeiudetfffh
-    hfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhlihhnrghrohdrohhrghdpthhugi
-    hsuhhithgvrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:BRmFZta2PTPYw-PEyN6Sjhs2F35CDrVqgoeUpXuzwCrmMJTIS7sNGg>
-    <xmx:BRmFZkWJtqmVjpbWcdZKqc0fOyVJDurPudSjU4d7KcsM6hfnCCdBbQ>
-    <xmx:BRmFZrk07N8bf5Xpw592SB8deAhy5doXspuNhLQVHDonsCX-2KftCw>
-    <xmx:BRmFZhdFYxhyoqFSZZUntYkIAKjM7StE0EwL0viU6M9UNPQiT8LGlA>
-    <xmx:BhmFZl3JePpItb98l70bxngIR7NomNzkfm7NC_Xct4aI7Ghhvnc90BEP>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1AAEDB6008D; Wed,  3 Jul 2024 05:25:25 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1719998748; c=relaxed/simple;
+	bh=c0JvzLh5DpeNsGgQt+W9f6HSLP0IxixpFFDQ/B5hKCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SIlTEj1QKNOSpmHiyRyZAcnpsj2q+mW6Z3DkjrDOLE3bNdCS6A8aHSuXRb9CKSTkoF1ol+7xS2guGFz490VWiOR6ruZ6G4RtYV6kZwQfbzvWWQ5WGkr2clUP23Z05OUwwGvr9fMXx2UBoPVfcuKm9ksLPC3mXNySrHumJYyNZMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lbbWWjue; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4637OU4R003862;
+	Wed, 3 Jul 2024 09:25:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ejzttzK64DsVwhu9fW5iFUwBdmhQXcGVqYJFfm7aIMQ=; b=lbbWWjueKNvpEWjA
+	RAA5DftQD3q0+U6ZgGao7lzjhJRSMcYSaEOsweno5jTAQvs4hpHbzUb7ctdrxz5X
+	Dd3GhhNQ3C0WLrFdsZmVo2ga1Tc5BMOi585odphd3MSApS2fx0DqwGFEiktRzoQX
+	mc65K3bS8okVJ0QdKNSaRBDFOMXsQ1NCttFYR1Lw53jP+BfLWBoUMxmKw8Q5faee
+	CREPgsKN4yEK6QBPotgtPcUH4TUQjPl6mGpwugG4wDKTJ6FJhtJGvZHR1bbT/Tcx
+	5YGBPKV5k7NavnZA48gOL0Bgsxg+VfA8Ul/GgA8hPt4OrM2lwborKxVQXN3VgN8U
+	mmC8Sg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4027yfbbtd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 09:25:01 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4639P0HE027548
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Jul 2024 09:25:00 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 02:24:38 -0700
+Message-ID: <d81740ba-0b15-4f9f-be75-9958ed9f032c@quicinc.com>
+Date: Wed, 3 Jul 2024 17:24:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <c440be12-3c22-4bb6-9a10-e3fd03b87974@app.fastmail.com>
-In-Reply-To: 
- <CA+G9fYuK+dFrz3dcuUkxbP3R-5NUiSVNJ3tAcRc=Wn=Hs0C5ng@mail.gmail.com>
-References: <20240702170243.963426416@linuxfoundation.org>
- <CA+G9fYuK+dFrz3dcuUkxbP3R-5NUiSVNJ3tAcRc=Wn=Hs0C5ng@mail.gmail.com>
-Date: Wed, 03 Jul 2024 11:24:29 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Guenter Roeck" <linux@roeck-us.net>, shuah <shuah@kernel.org>,
- patches@kernelci.org, lkft-triage@lists.linaro.org,
- "Pavel Machek" <pavel@denx.de>, "Jon Hunter" <jonathanh@nvidia.com>,
- "Florian Fainelli" <f.fainelli@gmail.com>,
- "Sudip Mukherjee" <sudipm.mukherjee@gmail.com>, srw@sladewatkins.net,
- rwarsow@gmx.de, "Conor Dooley" <conor@kernel.org>,
- Allen <allen.lkml@gmail.com>, "Mark Brown" <broonie@kernel.org>,
- linux-block <linux-block@vger.kernel.org>, "Jens Axboe" <axboe@kernel.dk>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Can Guo" <quic_cang@quicinc.com>, "Ziqi Chen" <quic_ziqichen@quicinc.com>,
- "Bart Van Assche" <bvanassche@acm.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH 6.9 000/222] 6.9.8-rc1 review
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/47] arm64: dts: qcom: qcs9100: Add QCS9100 RIDE board
+ dts
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <djakov@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <manivannan.sadhasivam@linaro.org>, <will@kernel.org>,
+        <joro@8bytes.org>, <conor@kernel.org>, <tglx@linutronix.de>,
+        <amitk@kernel.org>, <thara.gopinath@gmail.com>,
+        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
+        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>
+CC: <robimarko@gmail.com>, <bartosz.golaszewski@linaro.org>,
+        <kishon@kernel.org>, <quic_wcheng@quicinc.com>,
+        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <agross@kernel.org>, <gregkh@linuxfoundation.org>,
+        <quic_tdas@quicinc.com>, <robin.murphy@arm.com>,
+        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <quic_rjendra@quicinc.com>,
+        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
+        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
+        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
+        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <ahalaney@redhat.com>,
+        <krzysztof.kozlowski@linaro.org>, <u.kleine-koenig@pengutronix.de>,
+        <dmitry.baryshkov@linaro.org>, <quic_cang@quicinc.com>,
+        <danila@jiaxyga.com>, <quic_nitirawa@quicinc.com>,
+        <mantas@8devices.com>, <athierry@redhat.com>,
+        <quic_kbajaj@quicinc.com>, <quic_bjorande@quicinc.com>,
+        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <quic_tsoni@quicinc.com>, <quic_rgottimu@quicinc.com>,
+        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
+        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
+        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+ <20240703025850.2172008-5-quic_tengfan@quicinc.com>
+ <9b739f4a-c9e1-4d2a-9bec-83106dcf8868@kernel.org>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <9b739f4a-c9e1-4d2a-9bec-83106dcf8868@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fpiIBsiH_E6Bhr5OJ8BTnX5KfJw6CL5q
+X-Proofpoint-ORIG-GUID: fpiIBsiH_E6Bhr5OJ8BTnX5KfJw6CL5q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_05,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0 impostorscore=0
+ clxscore=1011 malwarescore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407030069
 
-On Wed, Jul 3, 2024, at 11:08, Naresh Kamboju wrote:
-> On Tue, 2 Jul 2024 at 22:36, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->>
->> This is the start of the stable review cycle for the 6.9.8 release.
->> There are 222 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Thu, 04 Jul 2024 17:01:55 +0000.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.8-rc1.gz
->> or in the git tree and branch at:
->>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
->>
->
-> The following kernel warning was noticed on arm64 Qualcomm db845c device while
-> booting stable-rc 6.9.8-rc1.
->
-> This is not always a reproducible warning.
 
-I see that commit 77691af484e2 ("scsi: ufs: core: Quiesce request
-queues before checking pending cmds") got backported, and
-this adds direct calls to the function that warns, so this
-is my first suspicion without having done a detailed analysis.
 
-Adding everyone from that commit to Cc.
+On 7/3/2024 12:39 PM, Krzysztof Kozlowski wrote:
+> On 03/07/2024 04:58, Tengfei Fan wrote:
+>> Add support for the QCS9100 RIDE board dts. The current QCS9100 RIDE
+>> board dts is directly renamed from the SA8775p RIDE board dts.
+>> The difference between the current QCS9100 RIDE board and the SA8775p
+>> RIDE board lies solely in the replacement of the SA8775p SoC with the
+>> QCS9100 SoC, all other board resources remain the same.
+>> The following items have been updated:
+>>    - use QCS9100-related compatible names for this board dts.
+>>    - replace the inclusion of sa8775p.dtsi with qcs9100.dtsi.
+>>    - replace the inclusion of sa8775p-pmics.dtsi with qcs9100-pmics.dtsi
+>>
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/Makefile                         | 2 +-
+>>   .../boot/dts/qcom/{sa8775p-ride.dts => qcs9100-ride.dts}  | 8 ++++----
+>>   2 files changed, 5 insertions(+), 5 deletions(-)
+>>   rename arch/arm64/boot/dts/qcom/{sa8775p-ride.dts => qcs9100-ride.dts} (99%)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>> index 5576c7d6ea06..a7a3792b0691 100644
+>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>> @@ -103,6 +103,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
+>> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qrb4210-rb2.dtb
+>> @@ -112,7 +113,6 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qru1000-idp.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= sa8155p-adp.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= sa8295p-adp.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= sa8540p-ride.dtb
+>> -dtb-$(CONFIG_ARCH_QCOM)	+= sa8775p-ride.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-acer-aspire1.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-idp.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-trogdor-coachz-r1.dtb
+>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dts b/arch/arm64/boot/dts/qcom/qcs9100-ride.dts
+>> similarity index 99%
+>> rename from arch/arm64/boot/dts/qcom/sa8775p-ride.dts
+>> rename to arch/arm64/boot/dts/qcom/qcs9100-ride.dts
+>> index 26ad05bd3b3f..2415d34b8aa5 100644
+>> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs9100-ride.dts
+>> @@ -8,12 +8,12 @@
+>>   #include <dt-bindings/gpio/gpio.h>
+>>   #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>>   
+>> -#include "sa8775p.dtsi"
+>> -#include "sa8775p-pmics.dtsi"
+>> +#include "qcs9100.dtsi"
+>> +#include "qcs9100-pmics.dtsi"
+>>   
+>>   / {
+>> -	model = "Qualcomm SA8775P Ride";
+>> -	compatible = "qcom,sa8775p-ride", "qcom,sa8775p";
+>> +	model = "Qualcomm QCS9100 Ride";
+>> +	compatible = "qcom,qcs9100-ride", "qcom,qcs9100";
+> 
+> It does not look like you tested the DTS against bindings. Please run
+> `make dtbs_check W=1` (see
+> Documentation/devicetree/bindings/writing-schema.rst or
+> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+> for instructions).
+> 
+> Your own internal guideline tells you to perform above tests, doesn't it?
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Naresh, could you try reverting that commit?
+I have performed relevant check, and it's possible that there are some 
+issues about the parameters used. I will follow your advice and refer to 
+the relevant documentation to perform DTBS check again, ensuring that 
+similar issues do not arise in the future.
 
-      Arnd
-
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->
-> Boot log:
-> ------
-> [    0.000000] Linux version 6.9.8-rc1 (tuxmake@tuxmake) (Debian clang
-> version 18.1.8 (++20240615103650+3b5b5c1ec4a3-1~exp1~20240615223815.136),
-> Debian LLD 18.1.8) #1 SMP PREEMPT @1719942561
-> [    0.000000] KASLR enabled
-> [    0.000000] Machine model: Thundercomm Dragonboard 845c
-> ...
-> [    7.097994] ------------[ cut here ]------------
-> [    7.097997] WARNING: CPU: 5 PID: 418 at block/blk-mq.c:262
-> blk_mq_unquiesce_tagset (/builds/linux/block/blk-mq.c:295
-> /builds/linux/block/blk-mq.c:297)
-> [    7.098009] Modules linked in: drm_display_helper qcom_q6v5_mss
-> camcc_sdm845 i2c_qcom_geni videobuf2_memops qcom_rng bluetooth
-> videobuf2_common spi_geni_qcom qrtr gpi phy_qcom_qmp_usb aux_bridge
-> stm_core slim_qcom_ngd_ctrl qcrypto phy_qcom_qmp_ufs cfg80211 rfkill
-> icc_osm_l3 phy_qcom_qmp_pcie lmh ufs_qcom slimbus qcom_wdt
-> pdr_interface llcc_qcom qcom_q6v5_pas(+) qcom_pil_info icc_bwmon
-> qcom_q6v5 display_connector qcom_sysmon qcom_common drm_kms_helper
-> qcom_glink_smem mdt_loader qmi_helpers drm backlight socinfo rmtfs_mem
-> [    7.098062] Hardware name: Thundercomm Dragonboard 845c (DT)
-> [    7.098064] Workqueue: devfreq_wq devfreq_monitor
-> [    7.098071] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    7.098074] pc : blk_mq_unquiesce_tagset
-> (/builds/linux/block/blk-mq.c:295 /builds/linux/block/blk-mq.c:297)
-> [    7.098077] lr : blk_mq_unquiesce_tagset
-> (/builds/linux/block/blk-mq.c:262 /builds/linux/block/blk-mq.c:297)
-> [    7.098080] sp : ffff8000812f3b40
-> [    7.098081] x29: ffff8000812f3b40 x28: 00000000000f4240 x27: 20c49ba5e353f7cf
-> [    7.098086] x26: 0000000000000000 x25: 0000000000000000 x24: ffff5bbe0a2e9910
-> [    7.098089] x23: ffff5bbe01f1a170 x22: ffff5bbe0a2e9220 x21: 0000000000000000
-> [    7.098093] x20: ffff5bbe0a2e9620 x19: ffff5bbe01f1a0e0 x18: 0000000000000002
-> [    7.098096] x17: 0000000000000400 x16: 0000000000000400 x15: 00000000a63e566e
-> [    7.098099] x14: 0000000000015eb9 x13: ffff8000812f0000 x12: ffff8000812f4000
-> [    7.098103] x11: 7cea885bfc7e6700 x10: ffffb0c2e5eb69ac x9 : 0000000000000000
-> [    7.098106] x8 : ffff5bbe0a2e9624 x7 : ffff5bbe0c828000 x6 : 0000000000000003
-> [    7.098110] x5 : 00000000000009d3 x4 : 000000000000039e x3 : ffff8000812f3af0
-> [    7.098113] x2 : ffff5bbe0a2acc00 x1 : 0000000000000000 x0 : 0000000000000000
-> [    7.098117] Call trace:
-> [    7.098118] blk_mq_unquiesce_tagset
-> (/builds/linux/block/blk-mq.c:295 /builds/linux/block/blk-mq.c:297)
-> [    7.098121] ufshcd_devfreq_scale
-> (/builds/linux/drivers/ufs/core/ufshcd.c:2050
-> /builds/linux/drivers/ufs/core/ufshcd.c:1426
-> /builds/linux/drivers/ufs/core/ufshcd.c:1472)
-> [    7.098126] ufshcd_devfreq_target
-> (/builds/linux/drivers/ufs/core/ufshcd.c:1581)
-> [    7.098129] devfreq_set_target (/builds/linux/drivers/devfreq/devfreq.c:364)
-> [    7.098132] devfreq_update_target (/builds/linux/drivers/devfreq/devfreq.c:0)
-> [    7.098134] devfreq_monitor (/builds/linux/drivers/devfreq/devfreq.c:461)
-> [    7.098136] process_scheduled_works
-> (/builds/linux/kernel/workqueue.c:3272
-> /builds/linux/kernel/workqueue.c:3348)
-> [    7.098141] worker_thread (/builds/linux/include/linux/list.h:373
-> /builds/linux/kernel/workqueue.c:955
-> /builds/linux/kernel/workqueue.c:3430)
-> [    7.098143] kthread (/builds/linux/kernel/kthread.c:390)
-> [    7.098146] ret_from_fork (/builds/linux/arch/arm64/kernel/entry.S:861)
-> [    7.098150] ---[ end trace 0000000000000000 ]---
->
->
-> Full boot log link:
->  - 
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.7-223-g03247eed042d/testrun/24504400/suite/log-parser-boot/test/check-kernel-exception/log
->  - https://lkft.validation.linaro.org/scheduler/job/7711345#L5312
->
-> Details of build and test environment:
->  - 
-> https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2ihUJNrmztabOMpKVRNzLpixoUR
->
-> Build, vmlinux, System.map and Image,
->  - 
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2ihUHH774XQWba653iwCVtCnpjl/
->
-> metadata:
-> -------
->   git_describe: v6.9.7-223-g03247eed042d
->   git_repo: 
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
->   git_sha: 03247eed042d6a770c3a2adaeed6b7b4a0f0b46c
->   kernel-config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2ihUHH774XQWba653iwCVtCnpjl/config
->   kernel_version: 6.9.8-rc1
->   toolchain: clang-18
->   build-url: 
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2ihUHH774XQWba653iwCVtCnpjl/
->   build_name: clang-18-lkftconfig
->
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+-- 
+Thx and BRs,
+Tengfei Fan
 
