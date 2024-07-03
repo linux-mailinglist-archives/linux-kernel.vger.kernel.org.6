@@ -1,100 +1,97 @@
-Return-Path: <linux-kernel+bounces-238626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862DD924D01
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1479924D03
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41B682837A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:04:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED452830D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340752564;
-	Wed,  3 Jul 2024 01:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAEE2107;
+	Wed,  3 Jul 2024 01:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEaiVgWy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EsP9RIs9"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7156B139D;
-	Wed,  3 Jul 2024 01:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403E9621;
+	Wed,  3 Jul 2024 01:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719968676; cv=none; b=GaPOwBwM0FnzhitKmYDlmKYdUlk7gpifEaU7QI08PYUysQHoa8/GccdSN7F/CRDp3fWQKL6WrO9AMw1OiEu/aXY+WOfYJvB4fQnxvRaqRDo1AKTeimWnE/dNIuNmQOhpTY190WLj4VthIC5/+rR50JEc3suXW4j45qOEltawgKs=
+	t=1719968845; cv=none; b=FYnnVS+a/bENSQCktPwxPRtSfge/7/9SN+LxTD+h3LPyqaAahWvjcjSduJlrynneSqq5OA4aac5SJQiQ7dACkXCwb0tBCl7s8ISC8AoumVD25EyH9mHijdzX6YA586mOcsWC+LshRNQP4UW/UPXbhvulNlrlZS+EtrQJfMhww+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719968676; c=relaxed/simple;
-	bh=LcnahQlqsMIdmoV8uTqbUdIbnrzfrdwjOBwRUmo/5b0=;
+	s=arc-20240116; t=1719968845; c=relaxed/simple;
+	bh=XeKBUMVmmJk/2dfbxwl5tpGn0xHRZTXt6kgLETf/a0Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TV53WIKunlkUNSF5NERt1g7q2JmQdBaDWZntBdy72sSJsJrOPErd7OmvGUUK/efi2KbhpS5ovPPFLX+0blZqwAauQ+zvEwzKuTPT+BK07Zc7hMX33MvEvJJB/hRlkC/z/Mzi3HAldbIZo5CHqNlKwj+IjWcd1x0ANuXtQXqd6Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEaiVgWy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4169C32781;
-	Wed,  3 Jul 2024 01:04:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719968676;
-	bh=LcnahQlqsMIdmoV8uTqbUdIbnrzfrdwjOBwRUmo/5b0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GEaiVgWy3hKxjdHsqqVx2D8rAU4aFWq/yHxIxYMQa8B5+cEzvd9t81rmLD4donzUr
-	 SFqwfdTdQfIbt+jfG3AzOVsnj5A/WxZ/el9bRx5wmMEWhO+xumc/UjmAZTbFyhvHBz
-	 /AcUvUntaLuqZZcUCqD5JQV3y1r8T4/ITYDGY9sLhZOxGTJZ5avtmGRRamazIc3XDt
-	 fyRob+/r8MrW+uf+5uPGnrv/K6mkRiS2up8q0SPRPXjCtecGe9sBgCN5MbeNZg9Pfs
-	 pDmMeJJZjPbOWUgrr4WZATUs/47HKXcGZSk9EZdYZrmbDt1g4llifmJsHNTWKxPcup
-	 p1otuy+JarWOA==
-Date: Tue, 2 Jul 2024 18:04:33 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [PATCH PATCH v2 9/9] x86/rfds: Exclude P-only parts from the
- RFDS affected list
-Message-ID: <20240703010433.2ymzh5g7osth5ch5@treble>
-References: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com>
- <20240627-add-cpu-type-v2-9-f927bde83ad0@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M0TxtYmfZ7/squgGnXpHPPuDfRGTCVPGSzMd02/Kr1Lu43t8nE+snzglMvK/GJRO0pnUCS0oksrY3RJ/TR2o8Xx4OX34eZnnjtQLShRsSotVFagR0Muts9o1OF4b4LPuVfwbRvztVtGxJBSCo5zxQhqwiUJPUkqi2jGi/c6i7EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EsP9RIs9; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=7zSwlg1qEsKo/YaSRLo0OVZNEeLPPSbMSMNnphemIRQ=; b=EsP9RIs93kUX0pKUtEiQYuxtp1
+	nYCjvPlTkjxlAdEnYwZF0pqg7TtbOteI7h5IB26taptNqHLMTOdhsU8rMwOBZBimYZZ3/vWSskmFC
+	ZYthOV0DMGIl3xmstrqewQ39kaU24frAA/M+2EdkhwaLRK3swsC+/ypX2JX+QjGOBVK0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sOoSc-001g5Z-Dq; Wed, 03 Jul 2024 03:07:02 +0200
+Date: Wed, 3 Jul 2024 03:07:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Landen Chao <Landen.Chao@mediatek.com>,
+	Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, regressions@lists.linux.dev
+Subject: Re: [PATCH net v3] net: dsa: mt7530: fix impossible MDIO address and
+ issue warning
+Message-ID: <9ea7eca7-bc6b-4b69-8c95-5c883ae45114@lunn.ch>
+References: <7e3fed489c0bbca84a386b1077c61589030ff4ab.1719963228.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240627-add-cpu-type-v2-9-f927bde83ad0@linux.intel.com>
+In-Reply-To: <7e3fed489c0bbca84a386b1077c61589030ff4ab.1719963228.git.daniel@makrotopia.org>
 
-On Thu, Jun 27, 2024 at 01:44:55PM -0700, Pawan Gupta wrote:
-> @@ -1255,9 +1260,7 @@ static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
->  	VULNBL_INTEL(TIGERLAKE,			GDS),
->  	VULNBL_INTEL(LAKEFIELD,			MMIO | MMIO_SBDS | RETBLEED),
->  	VULNBL_INTEL(ROCKETLAKE,		MMIO | RETBLEED | GDS),
-> -	VULNBL_INTEL(ALDERLAKE,			RFDS),
->  	VULNBL_INTEL(ALDERLAKE_L,		RFDS),
-> -	VULNBL_INTEL(RAPTORLAKE,		RFDS),
->  	VULNBL_INTEL(RAPTORLAKE_P,		RFDS),
->  	VULNBL_INTEL(RAPTORLAKE_S,		RFDS),
->  	VULNBL_INTEL(ATOM_GRACEMONT,		RFDS),
-> @@ -1271,6 +1274,8 @@ static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
->  	/* Match more than Vendor/Family/Model */
->  	VULNBL_INTEL_STEPPINGS(COMETLAKE_L,	X86_STEPPINGS(0x0, 0x0),	MMIO | RETBLEED),
->  	VULNBL_INTEL	      (COMETLAKE_L,					MMIO | MMIO_SBDS | RETBLEED | GDS),
-> +	VULNBL_INTEL_TYPE     (ALDERLAKE,	ATOM,				RFDS),
-> +	VULNBL_INTEL_TYPE     (RAPTORLAKE,	ATOM,				RFDS),
+On Wed, Jul 03, 2024 at 12:44:28AM +0100, Daniel Golle wrote:
+> The MDIO address of the MT7530 and MT7531 switch ICs can be configured
+> using bootstrap pins. However, there are only 4 possible options for the
+> switch itself: 7, 15, 23 and 31. As in MediaTek's SDK the address of the
+> switch is wrongly stated in the device tree as 0 (while in reality it is
+> 31), warn the user about such broken device tree and make a good guess
+> what was actually intended.
+> 
+> This is imporant also to not break compatibility with older Device Trees
+> as with commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of
+> switch from device tree") the address in device tree will be taken into
+> account, while before it was hard-coded to 0x1f.
+> 
+> Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-Same comment here, these should be inline with the main list.  Maybe
-there's some way to structure the indentations so they align better
-vertically with the STEPPINGS/TYPE variants.
+Fun code. Not seen anything like this before.
 
--- 
-Josh
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
