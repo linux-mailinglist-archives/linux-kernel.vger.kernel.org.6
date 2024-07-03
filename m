@@ -1,177 +1,195 @@
-Return-Path: <linux-kernel+bounces-239627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD21926348
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:22:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6EB926352
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF90D1C2130D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:22:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE38A2886B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B56217B432;
-	Wed,  3 Jul 2024 14:22:20 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2536E17B51A;
+	Wed,  3 Jul 2024 14:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="efw1zff6"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597C21EA90;
-	Wed,  3 Jul 2024 14:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2632C1DFD1;
+	Wed,  3 Jul 2024 14:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720016539; cv=none; b=BuBdtig0WIc3TBPLB8CknGRtuKWmWLJEfnGUz/Smj1BltBGxWP3PS3gqySHBVdkPHD8cv/Vwq6Ft/mb/G8i+A7IFHJEdC2ZNO+KQjpA+ssZPU2exDukGmsOXBrCkpoUK1Sp4GXN8HFezmOYOv6KloXxSadwn7PrjvzpJlvCoBzM=
+	t=1720016727; cv=none; b=fKj5IqjKJJOt5i3yMZoSBw9bJ4wAkyPOrLuFiKJlcMvWFwuDs1o9E0b8drGG7f/GvXdOHE1yxzOWwKTbcyXLDsal3MB6AMS6qVHd6zM8j0TAEpH6WmJv8rYXAdy5qa/rQvYTR7h+5cinWEYF4hjWhD9NMH2OgSidT3AA6MACFW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720016539; c=relaxed/simple;
-	bh=f4NbyDhmUMSoMc3JreD102aM4vkKTbicMQZs0rsnIK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=okgw7DhXql/selLDY7rI35IFLm7IQXyRs5Y/DXY+ASa2uah/cp+qQVaLRMxEsI2sfi+4CakE5ISlg2jT/omZrRh/zRnejlWQMUxtOzwRNwrwESbwqGDZbBhSkJ8nQ6XEORlDaI8LmTwM1qKd6r0EckRMUUsg8Eb3z7sEyZcS044=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Wed, 3 Jul 2024 14:22:13 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	s=arc-20240116; t=1720016727; c=relaxed/simple;
+	bh=8Vjl3YttzwHH2IsyM7t6WRqmidD0zMc9LqpB46m1uxQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t9Dkc3fhW7zoo9/j9P5HtuLZYPOUr9KOCr4SjyAzMeoYpVuzb8AmiYcy56DPB+21NmSNVIsP8LCvD2bYdgOpkrvX+ykBCohYVY548mzjKI3Mlti+DigwsZml+b/ZeIPPgOsIDK9Q4vkHeX7VnA9VM+yVH9aazlKjfskIJkZFddA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=efw1zff6; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3818C40005;
+	Wed,  3 Jul 2024 14:25:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720016723;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QDrB6n0exh4TdxMHPeUljoSu3UlZuOXj1a37x1NMQyo=;
+	b=efw1zff6/mM4ToIHGLXq4pik4y9K5PRagdQwScUtXevMt4iBZccvfoQ43IsnA/R5gnOO15
+	6uAfu0n2IILJDh60tHAHPdffOay49z+Gh5SRWVm7vQJcAqFs69xt8SAKZXd4JwukBZdbWC
+	294jQyZ3K6HdYrcEIklapQmOXQ/nAsoxtvAMcNfuJM0zPKnJ1Vej299O7y0riOzml9YtUg
+	iNhOrJ5RdDi2JmNts94QTwCVp5AFjqm97nQ0UMEkxwn5Xn1XKx33ESjVCtg3Tj00zMkhpH
+	y9c0ci8ReWQeBWUNT1wY0KM27N37Uaj2xcy+6qioCsawhY/ZYUtFTnJVtPI39Q==
+From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org,
-	Meng Zhang <zhangmeng.kevin@spacemit.com>,
-	Yangyu Chen <cyy@cyyself.name>
-Subject: Re: [PATCH v2 08/10] riscv: dts: add initial SpacemiT K1 SoC device
- tree
-Message-ID: <20240703142213.GA2734247@ofsar>
-References: <20240627-k1-01-basic-dt-v2-0-cc06c7555f07@gentoo.org>
- <20240627-k1-01-basic-dt-v2-8-cc06c7555f07@gentoo.org>
- <CAJM55Z9jeAQTsVjRiLeofDm1RyMWCuHXC0a-pdKtpUiTkSjJCA@mail.gmail.com>
- <20240702012847.GA2447193@ofsar>
- <IA1PR20MB4953C031CB453AA0E51657B3BBDC2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240702-appease-attire-6afbe758bf0f@spud>
- <20240703094049.GB2676251@ofsar>
- <CAJM55Z9AdOq_yd7sK_VhkutokK+-QKscdq9i759H3N1UKVwJkQ@mail.gmail.com>
+	Henrik Rydberg <rydberg@bitmath.org>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Jeff LaBundy <jeff@labundy.com>
+Cc: catalin.popescu@leica-geosystems.com,
+	mark.satterthwaite@touchnetix.com,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	bsp-development.geo@leica-geosystems.com,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>
+Subject: [PATCH v16 0/3] Input: Add TouchNetix axiom touchscreen driver
+Date: Wed,  3 Jul 2024 16:25:15 +0200
+Message-ID: <20240703142520.207066-1-kamel.bouhara@bootlin.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJM55Z9AdOq_yd7sK_VhkutokK+-QKscdq9i759H3N1UKVwJkQ@mail.gmail.com>
+X-GND-Sasl: kamel.bouhara@bootlin.com
 
-On 04:22 Wed 03 Jul     , Emil Renner Berthing wrote:
-> Yixun Lan wrote:
-> > Hi Conor:
-> >
-> > On 16:25 Tue 02 Jul     , Conor Dooley wrote:
-> > > On Tue, Jul 02, 2024 at 09:35:45AM +0800, Inochi Amaoto wrote:
-> > > > On Tue, Jul 02, 2024 at 01:28:47AM GMT, Yixun Lan wrote:
-> > > > > On 12:49 Mon 01 Jul     , Emil Renner Berthing wrote:
-> > > > > > Yixun Lan wrote:
-> > > > > > > From: Yangyu Chen <cyy@cyyself.name>
-> > > > > > >
-> > > > > > > Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
-> > > > > > >
-> > > > > > > Key features:
-> > > > > > > - 4 cores per cluster, 2 clusters on chip
-> > > > > > > - UART IP is Intel XScale UART
-> > > > > > >
-> > > > > > > Some key considerations:
-> > > > > > > - ISA string is inferred from vendor documentation[2]
-> > > > > > > - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
-> > > > > > > - No coherent DMA on this board
-> > > > > > >     Inferred by taking vendor ethernet and MMC drivers to the mainline
-> > > > > > >     kernel. Without dma-noncoherent in soc node, the driver fails.
-> > > > > > > - No cache nodes now
-> > > > > > >     The parameters from vendor dts are likely to be wrong. It has 512
-> > > > > > >     sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
-> > > > > > >     When the size of the cache line is 64B, it is a directly mapped
-> > > > > > >     cache rather than a set-associative cache, the latter is commonly
-> > > > > > >     used. Thus, I didn't use the parameters from vendor dts.
-> > > > > > >
-> > > > > > > Currently only support booting into console with only uart, other
-> > > > > > > features will be added soon later.
-> > > > > > >
-> > > > > ...
-> > > > >
-> > > > > > > +		clint: timer@e4000000 {
-> > > > > > > +			compatible = "spacemit,k1-clint", "sifive,clint0";
-> > > > > > > +			reg = <0x0 0xe4000000 0x0 0x10000>;
-> > > > > > > +			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>,
-> > > > > > > +					      <&cpu1_intc 3>, <&cpu1_intc 7>,
-> > > > > > > +					      <&cpu2_intc 3>, <&cpu2_intc 7>,
-> > > > > > > +					      <&cpu3_intc 3>, <&cpu3_intc 7>,
-> > > > > > > +					      <&cpu4_intc 3>, <&cpu4_intc 7>,
-> > > > > > > +					      <&cpu5_intc 3>, <&cpu5_intc 7>,
-> > > > > > > +					      <&cpu6_intc 3>, <&cpu6_intc 7>,
-> > > > > > > +					      <&cpu7_intc 3>, <&cpu7_intc 7>;
-> > > > > > > +		};
-> > > > > > > +
-> > > > > > > +		uart0: serial@d4017000 {
-> > > > > > > +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> > > > > > > +			reg = <0x0 0xd4017000 0x0 0x100>;
-> > > > > > > +			interrupts = <42>;
-> > > > > > > +			clock-frequency = <14857000>;
-> > > > > > > +			reg-shift = <2>;
-> > > > > > > +			reg-io-width = <4>;
-> > > > > > > +			status = "disabled";
-> > > > > > > +		};
-> > > > > > > +
-> > > > > > > +		/* note: uart1 skipped */
-> > > > > >
-> > > > > > The datasheet page you link to above says "-UART (×10)", but here you're
-> > > > > > skipping one of them. Why? I can see the vendor tree does the same, but it
-> > > > > > would be nice with an explanation of what's going on.
-> > > > > >
-> > > > > /* note: uart1 in 0xf0612000, reserved for TEE usage */
-> > > > > I would put something like this, does this sound ok to you?
-> > > > >
-> > > > > more detail, iomem range from 0xf000,0000 - 0xf080,0000 are dedicated for TEE purpose,
-> > > > > It won't be exposed to Linux once TEE feature is enabled..
-> > > > >
-> > > > > skipping uart1 may make people confused but we are trying to follow datasheet..
-> > > >
-> > > > Instead of skipping it, I suggest adding this to reserved-memory area,
-> > > > which make all node visible and avoid uart1 being touched by mistake.
-> > >
-> > > No, don't make it reserved-memory - instead add it as
-> > > status = "reserved"; /* explanation for why */
-> > Ok, got
-> >
-> > > Also, I'd appreciate if the nodes were sorted by unit address in the
-> > > dtsi.
-> > so I would move "plic, clint" after node of uart9 as this suggestion
-> >
-> > for uart1, its unit-address is 0xf0610000, it should be moved to after clint
-> > (once unit-address sorted), if we follow this rule strictly.
-> > but it occur to me this is not very intuitive, if no objection, I would put
-> > it between uart0 and uart2 (thus slightly break the rule..)
-> 
-> No, please order nodes by their address as Conor said. It actually says so in
-> the DTS coding style:
-> 
-> https://docs.kernel.org/devicetree/bindings/dts-coding-style.html
-> 
-I was thinking about grouping all same type devices (uart here) together
-according to "1. Order of Nodes", but after reconsideration, I'd just follow
-yours and Conor's suggestion, thus it will be more straightforward, also match
-more well with datasheet[1] if we have to add more "reserved" nodes in the future.
+Add a new driver for the TouchNetix's axiom family of touchscreen
+controller. This driver only support i2c and can be later adapted for
+SPI and USB support.
+--
+Changes in v16:
+ - Fix bug report: https://lore.kernel.org/oe-kbuild-all/202406290709.X77lx18x-lkp@intel.com/
+ - Remove leica from list of Maintainers
+ - Rebase on v6.10-rc6
 
-Link: https://developer.spacemit.com/#/documentation?token=LzJyw97BCipK1dkUygrcbT0NnMg [1]
+Changes in v15:
+ - Fix report ABS_MT_TRACKING_ID after input_mt_slot
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+Changes in v14:
+ - Fix is_report/present as booleans
+ - Add a comment to describe the boolean variable insert
+ - Remove not needed packed attributed from struct axiom_cmd_header
+ - Remove duplicate target event checking
+ - Only emit ABS_MT_DISTANCE/ABS_MT_PRESSURE
+ - Remove input_report_key() as a mean to indicate firs reported contact
+ - Remove EV_REL only need for u46 aka debug data
+ - Report only MT_TOOL_FINGER instead of MT_TOOL_MAX
+ - Remove unused EV_REL
+ - Remove emit BTN_TOUCH as a way to indicate first target report
+ - Remove unjustified delay after read access
+ - Remove falling back to polling mode when no irq acquired in ACPI/DT
+ - Remove handle of u46 report as it's not used
+ - Remove touchscreen_report_pos() call as it generates extra dummy events
+ - Rebase on v6.10-rc5
+
+Changes in v13:
+ - Fix CRC16 not selected reported in:https://lore.kernel.org/oe-kbuild-all/202405311035.5QZSREJv-lkp@intel.com/
+ - Rebase on v6.10-rc2
+
+Changes in v12:
+ - Fix REGMAP_I2C not selected
+ - Rebase on v6.10-rc1
+
+Changes in v11:
+ - Fix regulators name to match dt-binding
+ - Enable regulators before reset is asserted
+
+Changes in v10:
+ - Set regulators as required
+ - Enable power supply before reset
+ - Fix ref count due to regulator requested twice
+ - Rebase on v6.9-rc4
+
+Changes in v9:
+ - Fix issue reported in https://lore.kernel.org/oe-kbuild-all/202402201157.BKo97uWl-lkp@intel.com/
+ - Rebase on v6.8-rc2
+
+Changes in v8:
+ - Fix missing call to input_report_slot_state()
+ - Fix issue reported in https://lore.kernel.org/oe-kbuild-all/202402020623.8T1Ah513-lkp@intel.com/
+
+Changes in v7:
+ - Remove startup time from dt-binding
+ - Fix usage table not correctly populated
+
+Changes in v6:
+ - Fix missing unevaluatedProperties.in dt-binding
+ - Use __le16 to correctly deal with device endianness
+ - Use standart kernel types s/char/u8/
+ - Use regmap api as driver might support spi later
+ - Use get_unaligned_le16() for the sake of clarity
+ - Use devm_regulator_enable_optional()
+
+Changes in v5:
+ - Fix wrong message constructed in axiom_i2c_read
+ - Delay required between i2c reads is >= 250us
+ - Do not split report reading in two phases as we'll
+   have to wait 500us
+ - Use lower-case in properties names
+ - Make regulators properties are required in dt-binding
+ - Fix bug report: https://lore.kernel.org/lkml/202312051457.y3N1q3sZ-lkp@intel.com/
+ - Fix bug report: https://lore.kernel.org/lkml/6f8e3b64-5b21-4a50-8680-063ef7a93bdb@suswa.mountain/
+
+Changes in v4:
+ - Cleanup unused headers and macros
+ - Use standard kernel type
+ - Namespace structures and functions
+ - Use packed struct when possible to avoid bitfield operators
+ - Fix missing break when address is found in axiom_populate_target_address()
+ - Split reads in two steps for the reports, first length then report
+   itself so we only read required bytes
+ - Get poll-interval from devicetree
+ - Add VDDI/VDDA regulators
+ - Add a startup delay of 110 ms required after VDDA/VDDI is applied
+ - Remove axiom_i2c_write() as it is no more used
+
+Changes in v3:
+ - Remove irq-gpios property in dt-binding
+ - Use a generic node name
+ - Fix issues reported in https://lore.kernel.org/oe-kbuild-all/202310100300.oAC2M62R-lkp@intel.com/
+
+Changes in v2:
+ - Add device tree binding documentation
+ - Move core functions in axiom_i2c as we only care about i2c support now
+ - Use static function when required
+ - Use syntax dev_err_probe()
+ - Add an hardware based reset
+
+Kamel Bouhara (3):
+  dt-bindings: vendor-prefixes: Add TouchNetix AS
+  dt-bindings: input: Add TouchNetix axiom touchscreen
+  Input: Add TouchNetix axiom i2c touchscreen driver
+
+ .../input/touchscreen/touchnetix,ax54a.yaml   |  62 ++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |   7 +
+ drivers/input/touchscreen/Kconfig             |  14 +
+ drivers/input/touchscreen/Makefile            |   1 +
+ drivers/input/touchscreen/touchnetix_axiom.c  | 616 ++++++++++++++++++
+ 6 files changed, 702 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/touchnetix,ax54a.yaml
+ create mode 100644 drivers/input/touchscreen/touchnetix_axiom.c
+
+--
+2.25.1
+
 
