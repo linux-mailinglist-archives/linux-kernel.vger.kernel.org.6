@@ -1,1138 +1,224 @@
-Return-Path: <linux-kernel+bounces-238740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E468924F91
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:29:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AED924F72
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 404E9B2ED56
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46C781C24E32
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2686517548;
-	Wed,  3 Jul 2024 03:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66971B5AA;
+	Wed,  3 Jul 2024 03:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="PzS9Wd1x";
-	dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="y5OPKi6s"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UIl0igWP";
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="4xGVlxHk"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4019A11187;
-	Wed,  3 Jul 2024 03:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FB510A1F;
+	Wed,  3 Jul 2024 03:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.153.233
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719976469; cv=pass; b=B7wuhUlVwbu/tYeZBPi95keYa0gJ+TCqbXjnq0hjPef3IgurrEiXKC27x/6zj9rIOKTrN9U3uBwrAAvCQEcELBlckISxFjk6y+noOXKihKkUNKYOTj3nz940Zohj5NKRfThwMO04qUXpVREa7zuAwm0Sl40jzmTI14m7hpmEc9E=
+	t=1719976522; cv=fail; b=AkKSfzeYESXqhhvM2Yvlw0CTz4nTGA5yWBsAEem/G8HRfRqdI4Okx5yQvJm16V5mt5AoZQx5LxXpLZ8H7aZPERjjDe7c5h8J4ZcqByeAlmc3gLqk52ZGSrUAPfT9y9LGRhbGLxz7gMqAhlWT27Osdf8WDLJq9BXPFvdSobC17F0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719976469; c=relaxed/simple;
-	bh=FduxzsLpfYAP1gKedwcjzF0bTrpOk57+kvts041XmmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eBg83nh+xHxP0/Bc6YuhRRKdgborMlRWBjsxl7N3X0IWihkasENJG+q+F91yHJtatnSien5psdjW0HXSt43hqe7dWI9pUEfWgkgPXxsbqyEE0kYvDn0UWDWEwGigGBEwJYHDqXws5kdIppJeGN32H5YKgaI4SibyU5TeqT7TtLU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de; spf=none smtp.mailfrom=xenosoft.de; dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=PzS9Wd1x; dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=y5OPKi6s; arc=pass smtp.client-ip=85.215.255.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=xenosoft.de
-ARC-Seal: i=1; a=rsa-sha256; t=1719976281; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=smmxyXFIO87clTVspTInv7QbLpYTThcLUTNJ6wEKeq0tDJ2siDC+Z4nQ1wp1X6qBRH
-    50KTsWKtsV+Eb801gsp1zrN2uuCZXLoGAeswH2YppSHhAxiJPm0RCw+Shk+gGSBKQddK
-    qP8GmeXpET9DFChAsmvlQbbgZ+QJgKIQTEOxYlpialfi2GxvxorGErzdar7PNCT5xws1
-    NdeBrrVeFyjYFDkBTtnESXKvD40hkxEPs14gkzHKdIbFpshfj5KpdMvzwx3x3EVcugVZ
-    US2611LnlSC3n+FV9B/MYLbCMj5PloPYUnzEXDPuwkG90VjxIesIv2xGb79WezqXkhoa
-    9KGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1719976281;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=LkLT6d+AB9sxIUSqM+FbA1xqneqeb+Ia9dwfhTd4Sr4=;
-    b=jPlkW6FrThEhfnV3HtqQmEfyyBH8scShY4Na6lmCEXjPlbtF8Pa5/bZzOUAKznIEM3
-    vLbJHIIQPUv6Lzoy4ThzD73BKlcqWoRnj7e5h+GUJ0E+pv0VaOGEFVbJsU36csG6xYno
-    2GPihXC1MH2xqw5Bol0w1UMfvM5trMahCtxPs/BVMKD1a8h58WBFM1k2bfF9a800BwhC
-    Ju34dEv5dZ1f6ohC+xsq6RWSG0dZiJJ/H3n3zBpHmzNMGzfL3sBgY0dUzINv0J8cTpn1
-    OimgZ1U/WZFBw76h/yM1Tov/0aU61CYsBkokX79tD4VhxXs28VgoXaVrlcTAs5ibfk6r
-    B4kg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1719976281;
-    s=strato-dkim-0002; d=xenosoft.de;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=LkLT6d+AB9sxIUSqM+FbA1xqneqeb+Ia9dwfhTd4Sr4=;
-    b=PzS9Wd1xlJIY0SxJuahJTdRrDL+IfJSGUN+zpogi69gfjTgPilTxe/538Wyr7eYe1z
-    w3iZKaedazJGvrjo3FmEzQnwboRjKarutUHp7TAY34fZV8rR/3eLFVNn5kO7P+UGgA4j
-    4wxFUe5UjU3KJx+0F7xdG56HII1vvZyjxAWqTdnOZABS0y5NCU+E6+ILZMtwJJQPw5wQ
-    utLs+V/3eoGmvh4UCcguy0JDuASadt4AUMS+sBO6T3JnYIqKTCu55Bo4rcODOaQ64Cxz
-    U1QY4Llq1B9JzTyq8Yh4x/iUT6HZd0fLE91900eQrN2hEASFnQN7cuEQiyKkPEt+NhUn
-    9+Dg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1719976280;
-    s=strato-dkim-0003; d=xenosoft.de;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=LkLT6d+AB9sxIUSqM+FbA1xqneqeb+Ia9dwfhTd4Sr4=;
-    b=y5OPKi6sY9YxC7YHhN46mmCquwNpHJ8LYCN4Tf7EPOMB/pdypDnbG7DihunUFWw1z1
-    M1rLsUpoxrvS14iU9kDw==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHvJzedR43JwnbX6uY2qFStl/aCni1Nc81TAvUiF9uCdWDcE="
-Received: from [IPV6:2a01:599:806:4825:5b9f:b248:3889:7da0]
-    by smtp.strato.de (RZmta 50.5.0 AUTH)
-    with ESMTPSA id e083890633BJMon
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Wed, 3 Jul 2024 05:11:19 +0200 (CEST)
-Message-ID: <f150eb06-b796-48be-9373-544ca8948ab6@xenosoft.de>
-Date: Wed, 3 Jul 2024 05:11:55 +0200
+	s=arc-20240116; t=1719976522; c=relaxed/simple;
+	bh=aq/IbRyFqWxu19IYDmXJKwlRk6Oe2wyeDeL2Hn6mZa0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GTWg5eMW+CnmeOg/iBEJzANyO4d6xPEMiup++A2vQoN8ZgCWgDIRD2IDVflg3ppwpxOg0GdqY7musTArYT4r8A72dYxnfR0MEZj5MZX2J7QfRozeMfEuTGw1FIpdRkb5OjpIr607WzwSyC0TZthaVh1R1PCTXqxIp4u+ZRGVzmg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UIl0igWP; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=4xGVlxHk; arc=fail smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1719976521; x=1751512521;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=aq/IbRyFqWxu19IYDmXJKwlRk6Oe2wyeDeL2Hn6mZa0=;
+  b=UIl0igWPBcENcAzt7DfF4ufR4x2Eas1vWZB7octbq0UMWXbE5ugmKXf1
+   J0Oeeg3VCIiRVYlufcUR7HABGva6p4kzhkRL/DmBBXJR8MhTzxl/OwBJx
+   W1ktQ4/HeFSqsv+ZmnR2E/nrI7K87JRtxFfoMhKNSg4/M08TbgpdoMG4Q
+   Ydvn7W/L5JtPut89NUF/MBb0u4Q+clFr9R5YTr8MQmRjZ67Kxqn70P+G0
+   iG6cCpsf7njw7lykJuN2FWIE7jKO5wCTROrEmUXiw5Yk97zROnZGUV/Fl
+   pb7H2OE1qlNmyJxngzbGFRKiTqeIE0wGq0KJx7Q3iOAZDSoRWyQHvYcsq
+   w==;
+X-CSE-ConnectionGUID: Dqo9LXViRhCMywrhSoe8vw==
+X-CSE-MsgGUID: gA37JX8gQg2X+ajYdgkUgA==
+X-IronPort-AV: E=Sophos;i="6.09,180,1716274800"; 
+   d="scan'208";a="259667897"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Jul 2024 20:15:20 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 2 Jul 2024 20:15:09 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (10.10.215.250)
+ by email.microchip.com (10.10.87.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Tue, 2 Jul 2024 20:15:09 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aT2T9rbsCZ4D/1GquSxWuoT00wyAZFBFmU0bgAjTrMYApImPGZUkq7HxEyVjX/np/d3dAPUgEyN7ripG/6FBmy8oMvvjI5MkhjsYgD+w9Ihh5ir7LV6VlUGvAJf4cZlaCoTsMOsYKPoFFx1e0eQtKDWd3JVvvIztqa4CsV1QRSQPXrEAIhuj3k/8DJxFAPqtAGvYmYzuQkkHmoMR7spBeIvAKBACjHWQk4wK/UG6wd5F49Fcnx3mK2fj2URHeW4dpSQlvoXqk/bkeaeng+qd73Q2X4/6IXDQ9SqoNBy1K108qTYls0tWbxQdxLv+XSPYxlZVTkqjaIDlj9ZuaqjE+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aq/IbRyFqWxu19IYDmXJKwlRk6Oe2wyeDeL2Hn6mZa0=;
+ b=Eu1fmoqcWxwpXHEsDdVhMOj+GIj6V8gLg/SwN0XzVjpqxEgfiBx/jT2oXe03k8tQ+hhO2XjwFJF9gVnH1WJe2d4Ycg34kNB4lgfs26RdBnS1m2DmYUjo2OCir3IGGot5edkfn7tmWuKFqBctJgcbpXu4fV2pFxCNf9N3LitQq2MCr6Ij2PgwJ2G7vQ6LPiKDv5eTyQ3sYCeAUXzcQoemEv8VQLmF1FeNVN490FUuCx2hejMwlcC8KeTA1tjPasQyPdMQ3IaLBZhsQ4aS0Ntc6Rlfd9PgZ7et04TWuzwJd0sUZ+Q41KGiDY5W31+ajkDfW+1lld/dQqH6QunOXeRvTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aq/IbRyFqWxu19IYDmXJKwlRk6Oe2wyeDeL2Hn6mZa0=;
+ b=4xGVlxHk00S4vghHBIbIIP6IWBy3ZGQ3tf4ACMBHv47I7V+W87ImyixyPsjBuK8xhH49DMCitYyO0cvYpyXhMr3pKHXQ3bH9xU/cRUKmFe+2CphoHINEzYMB7Os2akzgVkKENTCTN4R2ClSTpQxJLXjpJNdp9RFmR0rsZMs6ABMUb9aBG7zdJbRQTPhX8QdH1/sEISdAYCNFU9qp01hIY+8GfNLju34GbAw834QY4GTyeP6iMn+tUdD8XcePjr81U2bJHYwIMRApStdoS2zFy3fcsM2m7M4ZyCDGWMAT0oHaVbF9dsPhVm8lSdmz/VBeMjN521OGg+53fSIC6ku50Q==
+Received: from PH7PR11MB8033.namprd11.prod.outlook.com (2603:10b6:510:246::12)
+ by IA1PR11MB7269.namprd11.prod.outlook.com (2603:10b6:208:42b::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.33; Wed, 3 Jul
+ 2024 03:15:06 +0000
+Received: from PH7PR11MB8033.namprd11.prod.outlook.com
+ ([fe80::22a1:16dd:eea9:330c]) by PH7PR11MB8033.namprd11.prod.outlook.com
+ ([fe80::22a1:16dd:eea9:330c%3]) with mapi id 15.20.7698.033; Wed, 3 Jul 2024
+ 03:15:06 +0000
+From: <Arun.Ramadoss@microchip.com>
+To: <andrew@lunn.ch>, <olteanv@gmail.com>, <davem@davemloft.net>,
+	<Woojung.Huh@microchip.com>, <pabeni@redhat.com>, <o.rempel@pengutronix.de>,
+	<edumazet@google.com>, <f.fainelli@gmail.com>, <kuba@kernel.org>
+CC: <l.stach@pengutronix.de>, <kernel@pengutronix.de>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<UNGLinuxDriver@microchip.com>
+Subject: Re: [PATCH net-next v2 3/3] net: dsa: microchip: lan937x: disable
+ VPHY support
+Thread-Topic: [PATCH net-next v2 3/3] net: dsa: microchip: lan937x: disable
+ VPHY support
+Thread-Index: AQHay5RAQE1RPnxQ70+nyXtVpKCRm7HkV9oA
+Date: Wed, 3 Jul 2024 03:15:06 +0000
+Message-ID: <d147c4363c778c6c94f849c0be0996fa8695fdd0.camel@microchip.com>
+References: <20240701085343.3042567-1-o.rempel@pengutronix.de>
+	 <20240701085343.3042567-3-o.rempel@pengutronix.de>
+In-Reply-To: <20240701085343.3042567-3-o.rempel@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.36.5-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR11MB8033:EE_|IA1PR11MB7269:EE_
+x-ms-office365-filtering-correlation-id: 0dae5bcf-98f4-43db-1bc1-08dc9b0e56a2
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?Yk1rUWhKbndSOHBHMEVRL1E3Q0Y1N3BoUk00NGdFNmV3cnhmOEJ5TU5XM1NN?=
+ =?utf-8?B?WWlxclhOWGFNYjdSSG1ZMGZGMGFlM201YUdYMmtIS3RoUzV6REo3bXNnTGZS?=
+ =?utf-8?B?aWlwQm8zeFc1eW9MRWxqQkpkelQrcDRnalRSS0pxZHVYSWNyaURxWmk0N3Rq?=
+ =?utf-8?B?ZjJma3lQNVRRV013WWMxYTdHWGFaazZQWEpiYnR6NmVwcHlRYW4rblVOdEVL?=
+ =?utf-8?B?THhXcXBhRHJ3YkNUVmZnWTBuR3drSkNnZ2MzZXdFQ2RHQU9jY2ltdUtnOGZU?=
+ =?utf-8?B?RGx6T0w3cHBoV1hQRXlwZS9IL1hHWS9helptcFY1cnZraUJZV3NiVTk4bEhx?=
+ =?utf-8?B?bEpDRFBaODEvTjdMd1g0V3ZlV1hsc1Y5bzdqT2U4RXEyNVo4MGhkMlNUNlFm?=
+ =?utf-8?B?aGF6RHI0TUwzM3BWMjVWclI3NE5nUmtScFdLY2dBNVRrUENhdTlzSlViNE1Z?=
+ =?utf-8?B?eUliUnB5ZUZzUkFBR0NOYnRkbWs0aG9Uc05JMkIyaTlxRzhYeWxJT2FxSUFy?=
+ =?utf-8?B?MElNUTI3bWFYM2VCbWJ1Y2dyZ25aOHEwSytBTlplOHB4dVJDSVNjZXdPSWZV?=
+ =?utf-8?B?d2xjZUlmQVRla0xlSUIvNFhEaXYvN0VtdFd6QmdyczNheUJkSTZiK2dUeE5t?=
+ =?utf-8?B?K0JuMTJLN3hsamdJUEVtU1pDd2JibTJnaC94WFdLMEJTL2o3d0dGZk10Rnht?=
+ =?utf-8?B?dW91VVk0clpRb3ljcTdFT01STEVtNDlFREpscFBCeE1rUnNZNXNqQ0IrUG0w?=
+ =?utf-8?B?NG8wdGZZeVpscHNUUzRNSUR5eHhsTGlnV1htaGlBZFNxZDQrWVBRZGIrSllo?=
+ =?utf-8?B?TXhKUXFLeE1Ka0hjbjBNczkzeG40UkswUEhZQlFRZTRQM3grREp3K0sxak85?=
+ =?utf-8?B?aHFkcndHbXZJcFdPa0phRkYzaDF3aXJDVUVSb2tEZ1E1SitacEN2MnZYeHpW?=
+ =?utf-8?B?b09JQncxL1ljVDJOalVDWDJhMXFzNk1XWU0xWWpmdHBQbVcyZ2xsOCtrcE9W?=
+ =?utf-8?B?RENGQW1ndVZseUgxTnBtVGR3Rm1LVHlIUEpmVXhPMzRZNE1pOGo2VWtwdm80?=
+ =?utf-8?B?YklWVWNMaHlxQVFweTNVaTJmTTFXaW44bklNOUdnT2F1UlhNbTg4M1NEU2hW?=
+ =?utf-8?B?M25TV3o5Tk9yTDNUY05kdWlZYXh4QlRwUERBL1NzUCtRWGNkaHhSK0ZWVDBF?=
+ =?utf-8?B?OWFMZ3RoZDdvT0FXMGtTRzRBbzJtTlVwM1k3ZkxQRWV2VDRwTzRpUGoxcGVa?=
+ =?utf-8?B?RklNRzBPb3J0L0ZZNTJOejBybytEWitBdVJjTW90a0IvMzcyRm5GekJxUlZ5?=
+ =?utf-8?B?YjNnZFI5dE5CNmoxcG5jeGJraU9WYTM2N3FOR2xObWNxWWxzeWZlUWRob2JJ?=
+ =?utf-8?B?V0l2MndvbGtPNGxqTnhVR0RNRFpDYXhqZnFCc0d5YUZ0OUFxYXEvcmNkaFB5?=
+ =?utf-8?B?eVNQYXV4eXRUSDByQUF1QnlvTml2S0dHK0IyK3BHZU1oV0UzSHhORGRrUDd3?=
+ =?utf-8?B?ZU1aVGNhdTJ6Zjg3V3NlUkdIOHpOVXlmWitpQXpJOHJOMytYK2IvMDljdkgw?=
+ =?utf-8?B?QkxvcTI2Y0c0bFlTUllWV09MUDZjbVNWTnNoZzFRcHdsdjlhYW1vZlFISnV5?=
+ =?utf-8?B?ejdQdTNKSjkrWWF0YnhKc2Zmcm5TWGFQRXN3WUFQTE8wMHVLRCs3Vm9COFpR?=
+ =?utf-8?B?NVRGa0xmV2NFakIzTUdlcXJZQTVqSUpzN3RyMnNMWExYaFE2czF0VHowbzBy?=
+ =?utf-8?B?RXIvL01kT050dkJMbjB1VndKSE9JWWthM1dpcXN1MWYrNDNyNVJpT0Z2Ny9X?=
+ =?utf-8?B?bjRZMHg5K1lwNS9TMTFRUGlETTVJSEJUMGtnMWxuU2Mxc0FvVTFGMmdjQmx0?=
+ =?utf-8?B?czVvajhVSGJEVWY0bllGTTgzbVNqbC9mcXBwNXZtUGhXdVE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB8033.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VnY1ZnkvZk1aZVpYUktYQ05iSnBZOGpybktkT05vc2JsQjNnMkttRyswSjJY?=
+ =?utf-8?B?aWlVWjQ5Y1VyZEZPWi8zZ0xLczVhbHVkNGpMR3lJdkxnZlRnaWcwTFBlT0U4?=
+ =?utf-8?B?WmJvUVo1ekR2eFRTcWNYNWg3OU93R2NOT2dMSGVGWnFzTnRYVERxVk1IdTQ1?=
+ =?utf-8?B?QVJzL2h5bjlZMjJ6RUFkYjNPWG9qbUhJdXVhVmV1SzFYS1Yvblg2YVJYZ3o3?=
+ =?utf-8?B?Tm1ZU3FpaEluQUI1K29JY1BLUDlkY1NEeG1VUVl2TFc0SnBLNFNMNXlrZHZq?=
+ =?utf-8?B?MnFYY0RNbUpUeDNnU1JmbWlzNCtsUlh5UlAyZzNETHU1SThnQWdRNVYwdjEv?=
+ =?utf-8?B?d2RYdWw3SGFOYWVuazZ1eVpyNUMrbTlGZ0U5NDVzV2xyNXE1cjdWZGc5OEhZ?=
+ =?utf-8?B?L3MyK3NkeXZkTjZ4My9URWY0WkQ3cDAxdTVSUHhFUlNvc05NZGF1Q1p2VVJ2?=
+ =?utf-8?B?cElBYVRYaVMzYlBqUkJFVWFqSlYwUEFaZDJqclYzR3hGeG1SVy90VHRLU2tV?=
+ =?utf-8?B?U2dwVmVLOFpQWHRWbXpYYk54ZGFXWUI1VFdGREgrcWRFT25HcWJkWjMzdk9D?=
+ =?utf-8?B?RGdsbW5pTmNnQllXSEFTTHJJcnpaL0NrWlBwY05Ocmx1cEM3bU44VUZjWVZl?=
+ =?utf-8?B?c1B0SDczWWswVHV1bXBPbzBzM3dxM3A2bE9sbSswbjRoKzZnNmJvY2JkYUwr?=
+ =?utf-8?B?SXZUSFdETERoL1VGWGRjeGlCdlVjNGx6cHVDMTVzejQxOWY0Y2hkVzI3L1BG?=
+ =?utf-8?B?WEpHdit2LzdpbGlhMDUvSnpFUmk2UUpXZ1A2dTBIT2FidnUzQkhjdTBMVWVK?=
+ =?utf-8?B?akRwY1M1ZEYvZGhaRHd0QVlJV3JwcmkxWVFhYzBVUll1NUZyM3gzbGxIazdi?=
+ =?utf-8?B?bE9ac1NHRm05V2VmMVBGa2U1aHc0VXcraG4xVzk5dG54R2M3YkhWbGtLcVNH?=
+ =?utf-8?B?NEpJODdQZytFUEJvWTZXeGIyVmNweThCeTdlRGhOb1VMZUZHR3ZzcnBhdm1J?=
+ =?utf-8?B?L1FkWkpVdUg0NGpVWUZUZndLZEdKOStUUjhWQ0VhWHFLanBMcVhQT1VaelJY?=
+ =?utf-8?B?WVlrTWkrVVBUbkV4MWgxMFVwaENLUThPVWhyNDR6MTJ4YmprQWY1NjFLL0Q4?=
+ =?utf-8?B?M2JPRFNqbm5rN2NCd1UvN3QyZU9TRERIRzRHWjFCb1FrNnY1MC94YitJNjVC?=
+ =?utf-8?B?T2NzU3ZLNTZySndROTUzTlAxTDZlVGJJL0hKZnVlMjg5OWVUSlpIYWQ0eEtQ?=
+ =?utf-8?B?Nm1vRU5ldTArYlNEWi84SEZwRDN5cmhtNW1hSytSSWY2WDkzN0dpeGlKZDhs?=
+ =?utf-8?B?cGtLMFFiRy9vbk5hMWFwdCtvR3A5TkFPNEtkL0JnZnBTWms5aFVIMFh3ZUJK?=
+ =?utf-8?B?VVZ5ZzgwcnJIOEhEMWZ6M2hwUWF3T0JwRnpOUkcwOTgzdGU0d0FQV2E1UEkv?=
+ =?utf-8?B?WUFBdUNIcEhtV1NESVNaTDJ4dWU4QStwM09vcGpLMEhyekh0NjFtWVVrVUQ1?=
+ =?utf-8?B?N3pGOFhkdklZSVR5N2pXWSs3ZzFid0s5UEEzZHVoZDJwSU1OMXBPQlVrejhK?=
+ =?utf-8?B?WFQ1aE13b3F6VXlQL1FXK2ZvTGd3MFE3cUlWSDJZUGpyU1J1OUt2SWtCYnVr?=
+ =?utf-8?B?bnlEMFNtNXNWcTFwRlhkTDF0N3pxOG1GWTE2Wmlwc0FRMk9DTGtyak13MnZk?=
+ =?utf-8?B?WnI4UkhPS0lXajlMWDVpVXNnbThXTS82VHBHNEFKSlBGS2FKb25OTzArNXp3?=
+ =?utf-8?B?V1FCWDl5ZGJWby9oWXpHME1EWkJqakFPK3lXVC9sNkpIdUhMVEY0dVlhMmp1?=
+ =?utf-8?B?US9ESm53cVFGMEJXWTllWk5vYi9XcXNoNjl5bSt5VFdpeityQXVRTGliM1Mv?=
+ =?utf-8?B?OGx2WkgyOE02TzZIYlk3QlhHcTFkbUR5MkZGY0R2RERtcjF3aWRsc3FVWjZG?=
+ =?utf-8?B?eVZ0Y2d2OXVnK0dVZ1VKSzhpOEU0U0VCcHUrNUxLVVBPQklLdEluNEE2Um5s?=
+ =?utf-8?B?dW1PWlBXTWhRUHNjRTg5L243TE5sdmZTWHVGTmxCTTJObXUwdjVvRUFORWtL?=
+ =?utf-8?B?Q1dvM1pqb2h2VTltS2NFM1p4MzdhVmhPZUJXWTEzZUdBTFNtV2I5Ynl4T3di?=
+ =?utf-8?B?RVVQNWp1SEZJdk9OT0cwTnF3cGljTmJqNzNlTXB2emdtc2ZIT3JNc3NaL2Ry?=
+ =?utf-8?B?c1E9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <635F21788939CD47AB7DCF6BDED3B473@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives
- after the of/irq updates 2024-05-29
-To: Marc Zyngier <maz@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, apatel@ventanamicro.com,
- DTML <devicetree@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
- mad skateman <madskateman@gmail.com>, "R.T.Dickinson" <rtd2@xtra.co.nz>,
- Matthew Leaman <matthew@a-eon.biz>, Darren Stevens
- <darren@stevens-zone.net>, Christian Zigotzky <info@xenosoft.de>
-References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
- <861q4bizxc.wl-maz@kernel.org>
- <68b7988d-eaaa-4713-99c3-525a34c5b322@xenosoft.de>
- <5a6166f107ae31536665d42f410d314d@kernel.org>
-Content-Language: en-US
-From: Christian Zigotzky <chzigotzky@xenosoft.de>
-In-Reply-To: <5a6166f107ae31536665d42f410d314d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Hello Marc,
-
-On 02.07.24 21:49, Marc Zyngier wrote:
-> On 2024-07-02 18:55, Christian Zigotzky wrote:
->> Hello Marc,
->>
->> Thank you for your reply.
->>
->> On 02.07.24 17:19, Marc Zyngier wrote:
->>> Please provide the device tree for your platform. It isn't possible to
->>> debug this without it, no matter how many pictures you provide. If it
->>> doesn't exist in source form, you can dump it using:
->>>
->>> # dtc -I dtb /sys/firmware/fdt
->>>
->>> and posting the full output.
->>>
->>> Additionally, a full dmesg of both working and non working boots would
->>> be useful.
->>>
->>> Thanks,
->>>
->>>     M.
->>>
->> The device tree of the Nemo board and further information:
->> https://forum.hyperion-entertainment.com/viewtopic.php?p=54406#p54406
->
-> Please post these things on the list. I have no interest in
-> fishing things on a random forum, and this information is
-> useful for everyone.
->
-> Thanks,
->
->          M.
-
-Sorry, here you are:
-
-Device tree of the Nemo board (Hardinfo):
-
--Device Tree-
-Summary
-Maps
-/
-/sdc@fc000000
-/sdc@fc000000/openpic@fc000000
-/sdc@fc000000/mdio@0
-/sdc@fc000000/mdio@0/ethernet-phy@0
-/sdc@fc000000/rng@fc105000
-/sdc@fc000000/gizmo@fc104000
-/sdc@fc000000/gpio@fc103000
-/pxp@0,e0000000
-/pxp@0,e0000000/i2c@1c,2
-/pxp@0,e0000000/serial@1d
-/pxp@0,e0000000/io-bridge@0
-/pxp@0,e0000000/dma-engine@1a
-/pxp@0,e0000000/pci@11
-/pxp@0,e0000000/pci@11/pci@13
-/pxp@0,e0000000/pci@11/pci@13,3
-/pxp@0,e0000000/pci@11/pci@13,1
-/pxp@0,e0000000/pci@11/pci@14,4
-/pxp@0,e0000000/pci@11/pci@14,4/pci@6
-/pxp@0,e0000000/pci@11/pci@14,4/pci@6,1
-/pxp@0,e0000000/pci@11/pci@14,4/pci@5
-/pxp@0,e0000000/pci@11/pci@14,2
-/pxp@0,e0000000/pci@11/pci@14
-/pxp@0,e0000000/pci@11/pci@13,4
-/pxp@0,e0000000/pci@11/pci@12
-/pxp@0,e0000000/pci@11/pci@12/atapi0.1
-/pxp@0,e0000000/pci@11/pci@12/ide0.0
-/pxp@0,e0000000/pci@11/pci@13,2
-/pxp@0,e0000000/pci@11/pci@14,3
-/pxp@0,e0000000/pci@11/pci@14,1
-/pxp@0,e0000000/pci@11/pci@13,5
-/pxp@0,e0000000/pci@8
-/pxp@0,e0000000/i2c@1c
-/pxp@0,e0000000/pci@11,2
-/pxp@0,e0000000/pci@4
-/pxp@0,e0000000/ethernet@14,3
-/pxp@0,e0000000/pci@1b
-/pxp@0,e0000000/i2c@1c,1
-/pxp@0,e0000000/pci@9
-/pxp@0,e0000000/pci@11,3
-/pxp@0,e0000000/pci@10
-/pxp@0,e0000000/pci@10/pci@0,1
-/pxp@0,e0000000/pci@10/pci@0
-/pxp@0,e0000000/pci@11,1
-/pxp@0,e0000000/cache-controller@1
-/pxp@0,e0000000/pci@5
-/pxp@0,e0000000/serial@1d,1
-/pxp@0,e0000000/pci@1e
-/pxp@0,e0000000/pci@3
-/pxp@0,e0000000/pci@15
-/bootconsole
-/options
-/openprom
-/lpc@fe000000
-/chosen
-/cpus
-/cpus/PowerPC,PA6T@0
-/cpus/PowerPC,PA6T@1
-/memory
-/localbus@f0000000
-/localbus@f0000000/cf@1000000
-Messages
-
---------
-
-lsprop /proc/device-tree:
-
-compatible       "pasemi,nemo"
-          "pasemi,pa6t-1682m"
-          "PA6T-1682M"
-          "pasemi,pwrficient"
-          "pasemi"
-device_type      "bootrom"
-model            "pasemi,nemo"
-#interrupt-cells 00000002
-#address-cells   00000002
-#size-cells      00000002
-linux,phandle    7fdff018 (2145382424)
-platform-open-pic 00000000 fc000000 00000000 00041000
-name             ""
-
-/proc/device-tree/sdc@fc000000:
-compatible       "1682m-sdc"
-          "pasemi,pwrficient-sdc"
-          "pasemi,sdc"
-device_type      "sdc"
-#address-cells   00000001
-#size-cells      00000001
-reg              00000000 fc000000 00000000 00800000
-linux,phandle    7fe2f458 (2145580120)
-name             "sdc"
-
-/proc/device-tree/sdc@fc000000/rng@fc105000:
-compatible       "1682m-rng"
-          "pasemi,pwrficient-rng"
-          "pasemi,rng"
-device_type      "rng"
-reg              fc105000 00001000
-linux,phandle    7fe2fdd0 (2145582544)
-name             "rng"
-
-/proc/device-tree/sdc@fc000000/mdio@0:
-compatible       "gpio-mdio"
-mdc-pin          00000005
-#address-cells   00000001
-#size-cells      00000000
-reg              00000000 00000000
-linux,phandle    7fe3d5a0 (2145637792)
-mdio-pin         00000006
-name             "mdio"
-
-/proc/device-tree/sdc@fc000000/mdio@0/ethernet-phy@0:
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000007 00000001
-reg              00000000
-linux,phandle    7fe3d860 (2145638496)
-name             "ethernet-phy"
-
-/proc/device-tree/sdc@fc000000/openpic@fc000000:
-compatible       "pasemi,pwrficient-openpic"
-          "chrp,open-pic"
-device_type      "open-pic"
-msi-available-ranges 00000200 00000200
-#interrupt-cells 00000002
-#address-cells   00000000
-reg              fc000000 00100000
-linux,phandle    7fe2f6e8 (2145580776)
-name             "openpic"
-interrupt-controller
-
-/proc/device-tree/sdc@fc000000/gizmo@fc104000:
-compatible       "1682m-gizmo"
-          "pasemi,pwrficient-gizmo"
-          "pasemi,gizmo"
-device_type      "gizmo"
-reg              fc104000 00001000
-linux,phandle    7fe2fbf0 (2145582064)
-name             "gizmo"
-
-/proc/device-tree/sdc@fc000000/gpio@fc103000:
-compatible       "1682m-gpio"
-          "pasemi,pwrficient-gpio"
-          "pasemi,gpio"
-device_type      "gpio"
-reg              fc103000 00001000
-linux,phandle    7fe2fa18 (2145581592)
-name             "gpio"
-
-/proc/device-tree/options:
-MENU_2_LABEL     "Debian Sid/experimental Kernel 4.9"
-MENU_4_COMMAND   "set pmu -astate=A4 ; ramdisk -z -addr=0x24000000 
--fatfs cf0:slitaz25.gz ; boot -elf -noints -fatfs cf0:vmlinux-3.13.14"
-ETH0_HWADDR      "00:50:C2:20:DA:9E"
-CFE_MEMORYSIZE   "8192"
-MENU_5_LABEL     "Fedora 17 Kernel 3.13.9"
-MENU_8_LABEL     "ubuntu MATE 16.04.2 LTS Kernel 4.9"
-MENU_1_COMMAND   "setenv amigaboot_quiet Y ;boot -fs=iso 
-atapi0.1:amigaboot.of"
-MENU_8_COMMAND   "set pmu -astate=A4 ; setenv bootargs "root=/dev/sdb1 
-quiet ro splash" ; boot -elf -noints -fatfs cf0:vmlinux-4.9"
-bootargs         "root=/dev/sda4"
-STARTUP          "speed;menu"
-MENU_DEFAULT     "0"
-MENU_0_LABEL     "AmigaOS"
-MENU_5_COMMAND   73657420 706d7520 2d617374 6174653d
-          4134203b 20736574 656e7620 626f6f74
-          61726773 20227264 2e6d643d 30207264
-          2e6c766d 3d302072 642e646d 3d302053
-          5953464f 4e543d54 72756520 4b455954
-          41424c45 3d646520 72642e6c 756b733d
-          3020726f 6f743d2f 6465762f 73646233
-          204c414e 473d6465 5f44452e 5554462d
-          [191 bytes total]
-MENU_3_LABEL     "ubuntu MATE 17.04 Kernel 4.9"
-MENU_6_LABEL     "Fedora 25 PPC64 Kernel 4.9"
-MENU_2_COMMAND   "set pmu -astate=A4 ; setenv bootargs "root=/dev/sda4" 
-; boot -elf -noints -fatfs cf0:vmlinux-4.9"
-MENU_9_LABEL     "openSUSE Tumbleweed Kernel 4.14"
-speed            "set pmu -astate=A4"
-MENU_9_COMMAND   "set pmu -astate=A4 ; setenv bootargs "root=/dev/sdb6 
-splash=silent" ; boot -elf -noints -fatfs cf0:vmlinux-4.14"
-BOOT_CONSOLE     "pcconsole0"
-CFE_VERSION      "PAS-2.0.30"
-little-endian?   00000000
-MENU_6_COMMAND   "set pmu -astate=A4 ; setenv bootargs "root=/dev/sdb4" 
-; boot -elf -noints -fatfs cf0:vmlinux-4.9"
-CFE_BOARDNAME    "NEMO"
-MENU_1_LABEL     "AmigaOS CD Boot"
-MENU_4_LABEL     "SliTaz Snapshot 25 Kernel 3.13.14"
-MENU_3_COMMAND   "set pmu -astate=A4 ; setenv bootargs "root=/dev/sdb7 
-quiet ro splash" ; boot -elf -noints -fatfs cf0:vmlinux-4.9"
-MENU_7_LABEL     "openSUSE 11.1 Kernel 4.13"
-os4_commandline  "DEBUGLEVEL=0 SERIAL"
-MENU_0_COMMAND   "setenv amigaboot_quiet Y ;boot -fs=amigafs 
-ide0.0:amigaboot.of"
-linux,phandle    7fe2f1f0 (2145579504)
-MENU_TIMEOUT     "6"
-MENU_7_COMMAND   "set pmu -astate=A4 ; setenv bootargs "root=/dev/sdb5" 
-; boot -elf -noints -fatfs cf0:vmlinux-4.13"
-framebuffer      "800/600/8/0x90000000/832"
-name             "options"
-
-/proc/device-tree/chosen:
-linux,stdout-package 7fe35880 (2145605760)
-bootargs         "root=/dev/sda4"
-cpu              7fe30698 (2145584792)
-stdout           7fe35990 (2145606032)
-memory           7fe316c8 (2145588936)
-stdin            7fe35990 (2145606032)
-linux,stdout-path "/bootconsole"
-sdc-interrupt-controller 7fe2f6e8 (2145580776)
-linux,phandle    7fe34628 (2145601064)
-name             "chosen"
-
-/proc/device-tree/openprom:
-device_type      "BootROM"
-model            "Open Firmware 3"
-linux,phandle    7fe2f2f0 (2145579760)
-name             "openprom"
-
-/proc/device-tree/localbus@f0000000:
-compatible       "pasemi,localbus"
-          "localbus"
-device_type      "localbus"
-ranges           00000000 00000000 f0000000 0c000000
-#interrupt-cells 00000002
-#address-cells   00000001
-#size-cells      00000001
-reg              00000000 f0000000 00000000 0c000000
-linux,phandle    7fe342e0 (2145600224)
-name             "localbus"
-
-/proc/device-tree/localbus@f0000000/cf@1000000:
-compatible       "pasemi,chitra-cf"
-          "pasemi,electra-cf"
-          "electra-cf"
-card-3v-gpio     0000000a (10)
-device_type      "electra-cf"
-card-vsense-gpio 00000001
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000000 00000001
-reg              00000000 00001000 01000000 00001000
-card-detect-gpio 0000000e (14)
-linux,phandle    7fe3da70 (2145639024)
-card-5v-gpio     0000000b (11)
-name             "cf"
-
-/proc/device-tree/memory:
-device_type      "memory"
-available        00000000 00000000 00000000 7fd1d000
-          00000001 00000000 00000001 80000000
-reg              00000000 00000000 00000000 80000000
-          00000001 00000000 00000001 80000000
-linux,phandle    7fe316c8 (2145588936)
-name             "memory"
-
-/proc/device-tree/pxp@0,e0000000:
-compatible       "pasemi,rootbus"
-          "pa-pxp"
-device_type      "pci"
-interrupt-map-mask 00000000 00000000 00000000 000000ff
-model            "pa"
-ranges           00000000 00000000 e0000000 00000000
-          e0000000 00000000 10000000 01000000
-          00000000 00000000 00000000 fc800000
-          00000000 00800000 02000000 00000000
-          80000000 00000000 80000000 00000000
-          60000000 02000000 00000000 e0000000
-          00000000 e0000000 00000000 00100000
-          02000000 00000000 fd800000 00000000
-          [168 bytes total]
-#interrupt-cells 00000001
-bus-range        00000000 000000ff
-#address-cells   00000003
-interrupt-map    00000000 00000000 00000000 00000030
-          7fe2f6e8 00000030 00000001 00000000
-          00000000 00000000 00000031 7fe2f6e8
-          00000031 00000001 00000000 00000000
-          00000000 00000032 7fe2f6e8 00000032
-          00000001 00000000 00000000 00000000
-          00000033 7fe2f6e8 00000033 00000001
-#size-cells      00000002
-reg              00000000 e0000000 00000000 10000000
-linux,phandle    7fe2ffa8 (2145583016)
-name             "pxp"
-interrupt-controller
-
-/proc/device-tree/pxp@0,e0000000/i2c@1c,2:
-assigned-addresses 8100e210 00000000 007f0280 00000000 00000040
-device_type      "i2c"
-revision-id      00000001
-class-code       000c0500 (787712)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000048 00000001
-device-id        0000a003 (40963)
-reg              0000e200 00000000 00000000 00000000 00000000
-          0100e210 00000000 00000000 00000000 00000040
-linux,phandle    7fe33c80 (2145598592)
-name             "i2c"
-
-/proc/device-tree/pxp@0,e0000000/pci@8:
-device_type      "pci"
-revision-id      00000012 (18)
-class-code       000b2000 (729088)
-vendor-id        00001959 (6489)
-device-id        0000a000 (40960)
-reg              00004000 00000000 00000000 00000000 00000000
-linux,phandle    7fe383f8 (2145616888)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/serial@1d,1:
-current-speed    0001c200 (115200)
-compatible       "ns16550"
-          "pciclass,0700"
-assigned-addresses 8100e910 00000000 007f02f8 00000000 00000008
-device_type      "serial"
-revision-id      00000002
-class-code       00070003 (458755)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       0000004a 00000001
-device-id        0000a004 (40964)
-reg              0000e900 00000000 00000000 00000000 00000000
-          0100e910 00000000 00000000 00000000 00000008
-clock-frequency  07f28155 (133333333)
-linux,phandle    7fe31db0 (2145590704)
-name             "serial"
-
-/proc/device-tree/pxp@0,e0000000/pci@1b:
-device_type      "pci"
-revision-id      00000011 (17)
-class-code       00088000 (557056)
-vendor-id        00001959 (6489)
-device-id        0000a00b (40971)
-reg              0000d800 00000000 00000000 00000000 00000000
-linux,phandle    7fe38d78 (2145619320)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11,2:
-device_type      "pci"
-revision-id      00000011 (17)
-class-code       00060400 (394240)
-vendor-id        00001959 (6489)
-#interrupt-cells 00000001
-bus-range        00000008 00000008
-#address-cells   00000003
-#size-cells      00000002
-device-id        0000a002 (40962)
-reg              00008a00 00000000 00000000 00000000 00000000
-linux,phandle    7fe367d0 (2145609680)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@4:
-device_type      "pci"
-revision-id      00000011 (17)
-class-code       00050000 (327680)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000058 00000001
-device-id        0000a00a (40970)
-reg              00002000 00000000 00000000 00000000 00000000
-linux,phandle    7fe37d08 (2145615112)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@10:
-device_type      "pci"
-revision-id      00000011 (17)
-class-code       00060400 (394240)
-ranges           01000000 00000000 00002000 01000000
-          00000000 00002000 00000000 00001000
-          02000000 00000000 90000000 02000000
-          00000000 90000000 00000000 10100000
-vendor-id        00001959 (6489)
-#interrupt-cells 00000001
-bus-range        00000001 00000001
-#address-cells   00000003
-#size-cells      00000002
-device-id        0000a002 (40962)
-reg              00008000 00000000 00000000 00000000 00000000
-linux,phandle    7fe374d8 (2145613016)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@10/pci@0,1:
-assigned-addresses 82010110 00000000 a0040000 00000000 00004000
-device_type      "pci"
-revision-id      00000000
-subsystem-id     0000aa88 (43656)
-class-code       00040300 (262912)
-vendor-id        00001002 (4098)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000031 00000001
-device-id        0000aa88 (43656)
-reg              00010100 00000000 00000000 00000000 00000000
-          02010110 00000000 00000000 00000000 00004000
-subsystem-vendor-id 00001682 (5762)
-linux,phandle    7fe39948 (2145622344)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@10/pci@0:
-assigned-addresses c2010010 00000000 90000000 00000000 10000000
-          82010018 00000000 a0020000 00000000 00020000
-          81010020 00000000 00002000 00000000 00000100
-device_type      "pci"
-revision-id      00000000
-subsystem-id     00003107 (12551)
-class-code       00030000 (196608)
-vendor-id        00001002 (4098)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000030 00000001
-device-id        00006738 (26424)
-reg              00010000 00000000 00000000 00000000 00000000
-          42010010 00000000 00000000 00000000 10000000
-          02010018 00000000 00000000 00000000 00020000
-          01010020 00000000 00000000 00000000 00000100
-subsystem-vendor-id 00001682 (5762)
-linux,phandle    7fe39458 (2145621080)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/i2c@1c,1:
-assigned-addresses 8100e110 00000000 007f0240 00000000 00000040
-device_type      "i2c"
-revision-id      00000001
-class-code       000c0500 (787712)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000047 00000001
-device-id        0000a003 (40963)
-reg              0000e100 00000000 00000000 00000000 00000000
-          0100e110 00000000 00000000 00000000 00000040
-linux,phandle    7fe33890 (2145597584)
-name             "i2c"
-
-/proc/device-tree/pxp@0,e0000000/pci@1e:
-assigned-addresses 8100f010 00000000 007f0400 00000000 00000100
-          8100f014 00000000 007f0500 00000000 00000100
-device_type      "pci"
-revision-id      00000012 (18)
-class-code       000601ff (393727)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000051 00000001
-device-id        0000a008 (40968)
-reg              0000f000 00000000 00000000 00000000 00000000
-          0100f010 00000000 00000000 00000000 00000100
-          0100f014 00000000 00000000 00000000 00000100
-linux,phandle    7fe39040 (2145620032)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@9:
-device_type      "pci"
-revision-id      00000012 (18)
-class-code       000b2000 (729088)
-vendor-id        00001959 (6489)
-device-id        0000a000 (40960)
-reg              00004800 00000000 00000000 00000000 00000000
-linux,phandle    7fe386c0 (2145617600)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/io-bridge@0:
-compatible       "pasemi,1682m-iob"
-          "pasemi,io-bridge"
-assigned-addresses 82000000 00000000 e0000000 00000000 00002000
-          c2000000 00000000 fd800000 00000000 00001000
-device_type      "isa"
-revision-id      00000012 (18)
-class-code       00060000 (393216)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000056 00000001
-device-id        0000a001 (40961)
-reg              00000000 00000000 00000000 00000000 00000000
-          82000000 00000000 e0000000 00000000 00002000
-          c2000000 00000000 fd800000 00000000 00001000
-linux,phandle    7fe32728 (2145593128)
-name             "io-bridge"
-
-/proc/device-tree/pxp@0,e0000000/pci@15:
-assigned-addresses 82000000 00000000 e00a8000 00000000 00001000
-device_type      "pci"
-revision-id      00000011 (17)
-class-code       00020000 (131072)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000044 00000001
-device-id        0000a006 (40966)
-reg              0000a800 00000000 00000000 00000000 00000000
-          82000000 00000000 e00a8000 00000000 00001000
-linux,phandle    7fe38988 (2145618312)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/dma-engine@1a:
-compatible       "1682m-dma"
-          "pasemi,dma-engine"
-assigned-addresses 82000000 00000000 e00d0000 00000000 00001000
-device_type      "dma-engine"
-revision-id      00000012 (18)
-class-code       000801ff (524799)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000080 00000001
-device-id        0000a007 (40967)
-reg              0000d000 00000000 00000000 00000000 00000000
-          82000000 00000000 e00d0000 00000000 00001000
-linux,phandle    7fe322b8 (2145591992)
-name             "dma-engine"
-
-/proc/device-tree/pxp@0,e0000000/pci@11,3:
-device_type      "pci"
-revision-id      00000011 (17)
-class-code       00060400 (394240)
-vendor-id        00001959 (6489)
-#interrupt-cells 00000001
-bus-range        00000009 00000009
-#address-cells   00000003
-#size-cells      00000002
-device-id        0000a002 (40962)
-reg              00008b00 00000000 00000000 00000000 00000000
-linux,phandle    7fe363a8 (2145608616)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@5:
-device_type      "pci"
-revision-id      00000011 (17)
-class-code       00050000 (327680)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       0000005a 00000001
-device-id        0000a00a (40970)
-reg              00002800 00000000 00000000 00000000 00000000
-linux,phandle    7fe38080 (2145616000)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/i2c@1c:
-assigned-addresses 8100e010 00000000 007f0200 00000000 00000040
-device_type      "i2c"
-revision-id      00000001
-class-code       000c0500 (787712)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000046 00000001
-device-id        0000a003 (40963)
-reg              0000e000 00000000 00000000 00000000 00000000
-          0100e010 00000000 00000000 00000000 00000040
-linux,phandle    7fe334a0 (2145596576)
-name             "i2c"
-
-/proc/device-tree/pxp@0,e0000000/cache-controller@1:
-compatible       "pasemi,1682m-l2c"
-          "pasemi,l2c"
-device_type      "cache-controller"
-revision-id      00000011 (17)
-class-code       00058000 (360448)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000052 00000001
-device-id        0000a009 (40969)
-reg              00000800 00000000 00000000 00000000 00000000
-linux,phandle    7fe32bc8 (2145594312)
-name             "cache-controller"
-
-/proc/device-tree/pxp@0,e0000000/pci@11:
-device_type      "pci"
-revision-id      00000011 (17)
-class-code       00060400 (394240)
-ranges           01000000 00000000 00000000 01000000
-          00000000 00000000 00000000 00004000
-          02000000 00000000 a0100000 02000000
-          00000000 a0100000 00000000 00300000
-vendor-id        00001959 (6489)
-#interrupt-cells 00000001
-bus-range        00000005 00000006
-#address-cells   00000003
-#size-cells      00000002
-device-id        0000a002 (40962)
-reg              00008800 00000000 00000000 00000000 00000000
-linux,phandle    7fe37020 (2145611808)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@14,1:
-assigned-addresses 8105a110 00000000 00001030 00000000 00000008
-          8105a114 00000000 00001054 00000000 00000004
-          8105a118 00000000 00001038 00000000 00000008
-          8105a11c 00000000 00001050 00000000 00000004
-          8105a120 00000000 00001000 00000000 00000010
-device_type      "pci"
-revision-id      00000000
-class-code       00010183 (65923)
-vendor-id        00001002 (4098)
-interrupt-parent 7fe2ffa8 (2145583016)
-interrupts       00000009 00000001
-device-id        0000438c (17292)
-reg              0005a100 00000000 00000000 00000000 00000000 0105a110
-          00000000 00000000 00000000 00000008 0105a114 00000000
-          00000000 00000000 00000004 0105a118 00000000 00000000
-          00000000 00000008 0105a11c 00000000 00000000 00000000
-          00000004 0105a120 00000000 00000000 00000000 00000010
-linux,phandle    7fe3bfb0 (2145632176)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@13,5:
-assigned-addresses 82059d10 00000000 a0209800 00000000 00000100
-device_type      "pci"
-revision-id      00000000
-class-code       000c0320 (787232)
-vendor-id        00001002 (4098)
-interrupt-parent 7fe2ffa8 (2145583016)
-interrupts       0000000c 00000001
-device-id        00004386 (17286)
-reg              00059d00 00000000 00000000 00000000 00000000
-          02059d10 00000000 00000000 00000000 00000100
-linux,phandle    7fe3b858 (2145630296)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@13,3:
-assigned-addresses 82059b10 00000000 a0204000 00000000 00001000
-device_type      "pci"
-revision-id      00000000
-class-code       000c0310 (787216)
-vendor-id        00001002 (4098)
-interrupt-parent 7fe2ffa8 (2145583016)
-interrupts       0000000a 00000001
-device-id        0000438a (17290)
-reg              00059b00 00000000 00000000 00000000 00000000
-          02059b10 00000000 00000000 00000000 00001000
-linux,phandle    7fe3b078 (2145628280)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@14:
-assigned-addresses 8105a010 00000000 00001020 00000000 00000010
-          8205a014 00000000 a0209000 00000000 00000400
-device_type      "pci"
-revision-id      00000014 (20)
-class-code       000c0500 (787712)
-vendor-id        00001002 (4098)
-device-id        00004385 (17285)
-reg              0005a000 00000000 00000000 00000000 00000000
-          0105a010 00000000 00000000 00000000 00000010
-          0205a014 00000000 00000000 00000000 00000400
-linux,phandle    7fe3bc48 (2145631304)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@13,1:
-assigned-addresses 82059910 00000000 a0207000 00000000 00001000
-device_type      "pci"
-revision-id      00000000
-class-code       000c0310 (787216)
-vendor-id        00001002 (4098)
-interrupt-parent 7fe2ffa8 (2145583016)
-interrupts       0000000a 00000001
-device-id        00004388 (17288)
-reg              00059900 00000000 00000000 00000000 00000000
-          02059910 00000000 00000000 00000000 00001000
-linux,phandle    7fe3a898 (2145626264)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@12:
-assigned-addresses 81059010 00000000 00001040 00000000 00000008 81059014
-          00000000 0000105c 00000000 00000004 81059018 00000000
-          00001048 00000000 00000008 8105901c 00000000 00001058
-          00000000 00000004 81059020 00000000 00001010 00000000
-          00000010 82059024 00000000 a0209400 00000000 00000400
-device_type      "pci"
-revision-id      00000000
-class-code       0001018f (65935)
-vendor-id        00001002 (4098)
-interrupt-parent 7fe2ffa8 (2145583016)
-interrupts       00000009 00000001
-device-id        00004380 (17280)
-reg              00059000 00000000 00000000 00000000
-          00000000 01059010 00000000 00000000
-          00000000 00000008 01059014 00000000
-          00000000 00000000 00000004 01059018
-          00000000 00000000 00000000 00000008
-          0105901c 00000000 00000000 00000000
-          00000004 01059020 00000000 00000000
-          00000000 00000010 02059024 00000000
-          [140 bytes total]
-linux,phandle    7fe39de8 (2145623528)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@12/ide0.0:
-device_type      "block"
-linux,phandle    7fe3a2a0 (2145624736)
-name             "ide0.0"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@12/atapi0.1:
-device_type      "block"
-linux,phandle    7fe3a3a0 (2145624992)
-name             "atapi0.1"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@14,4:
-device_type      "pci"
-revision-id      00000000
-class-code       00060400 (394240)
-ranges           01000000 00000000 00003000 01000000
-          00000000 00003000 00000000 00001000
-          02000000 00000000 a0300000 02000000
-          00000000 a0300000 00000000 00100000
-vendor-id        00001002 (4098)
-#interrupt-cells 00000001
-bus-range        00000006 00000006
-#address-cells   00000003
-#size-cells      00000002
-device-id        00004384 (17284)
-reg              0005a400 00000000 00000000 00000000 00000000
-linux,phandle    7fe3cc20 (2145635360)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@14,4/pci@5:
-assigned-addresses 81062810 00000000 00003000 00000000 00000100
-          82062814 00000000 a0310000 00000000 00000100
-device_type      "pci"
-revision-id      00000010 (16)
-subsystem-id     00008139 (33081)
-class-code       00020000 (131072)
-vendor-id        000010ec (4332)
-interrupt-parent 7fe2ffa8 (2145583016)
-interrupts       00000004 00000001
-device-id        00008139 (33081)
-reg              00062800 00000000 00000000 00000000 00000000
-          01062810 00000000 00000000 00000000 00000100
-          02062814 00000000 00000000 00000000 00000100
-subsystem-vendor-id 000010ec (4332)
-linux,phandle    7fe3d0d8 (2145636568)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@14,2:
-assigned-addresses 8205a210 00000000 a0200000 00000000 00004000
-device_type      "pci"
-revision-id      00000000
-subsystem-id     00001000 (4096)
-class-code       00040300 (262912)
-vendor-id        00001002 (4098)
-interrupt-parent 7fe2ffa8 (2145583016)
-interrupts       00000009 00000001
-device-id        00004383 (17283)
-reg              0005a200 00000000 00000000 00000000 00000000
-          0205a210 00000000 00000000 00000000 00004000
-subsystem-vendor-id 00001888 (6280)
-linux,phandle    7fe3c440 (2145633344)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@13,4:
-assigned-addresses 82059c10 00000000 a0205000 00000000 00001000
-device_type      "pci"
-revision-id      00000000
-class-code       000c0310 (787216)
-vendor-id        00001002 (4098)
-interrupt-parent 7fe2ffa8 (2145583016)
-interrupts       0000000b 00000001
-device-id        0000438b (17291)
-reg              00059c00 00000000 00000000 00000000 00000000
-          02059c10 00000000 00000000 00000000 00001000
-linux,phandle    7fe3b468 (2145629288)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@13,2:
-assigned-addresses 82059a10 00000000 a0206000 00000000 00001000
-device_type      "pci"
-revision-id      00000000
-class-code       000c0310 (787216)
-vendor-id        00001002 (4098)
-interrupt-parent 7fe2ffa8 (2145583016)
-interrupts       0000000b 00000001
-device-id        00004389 (17289)
-reg              00059a00 00000000 00000000 00000000 00000000
-          02059a10 00000000 00000000 00000000 00001000
-linux,phandle    7fe3ac88 (2145627272)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@13:
-assigned-addresses 82059810 00000000 a0208000 00000000 00001000
-device_type      "pci"
-revision-id      00000000
-class-code       000c0310 (787216)
-vendor-id        00001002 (4098)
-interrupt-parent 7fe2ffa8 (2145583016)
-interrupts       00000009 00000001
-device-id        00004387 (17287)
-reg              00059800 00000000 00000000 00000000 00000000
-          02059810 00000000 00000000 00000000 00001000
-linux,phandle    7fe3a4a8 (2145625256)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11/pci@14,3:
-assigned-addresses 8205a310 00000000 a0100000 00000000 00100000
-device_type      "pci"
-revision-id      00000000
-class-code       00060100 (393472)
-vendor-id        00001002 (4098)
-device-id        0000438d (17293)
-reg              0005a300 00000000 00000000 00000000 00000000
-          0205a310 00000000 00000000 00000000 00100000
-linux,phandle    7fe3c8e0 (2145634528)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/pci@11,1:
-device_type      "pci"
-revision-id      00000011 (17)
-class-code       00060400 (394240)
-vendor-id        00001959 (6489)
-#interrupt-cells 00000001
-bus-range        00000007 00000007
-#address-cells   00000003
-#size-cells      00000002
-device-id        0000a002 (40962)
-reg              00008900 00000000 00000000 00000000 00000000
-linux,phandle    7fe36bf8 (2145610744)
-name             "pci"
-
-/proc/device-tree/pxp@0,e0000000/serial@1d:
-current-speed    0001c200 (115200)
-compatible       "ns16550"
-          "pciclass,0700"
-assigned-addresses 8100e810 00000000 007f03f8 00000000 00000008
-device_type      "serial"
-revision-id      00000002
-class-code       00070003 (458755)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000049 00000001
-device-id        0000a004 (40964)
-reg              0000e800 00000000 00000000 00000000 00000000
-          0100e810 00000000 00000000 00000000 00000008
-clock-frequency  07f28155 (133333333)
-linux,phandle    7fe318a8 (2145589416)
-name             "serial"
-
-/proc/device-tree/pxp@0,e0000000/ethernet@14,3:
-phy-handle       7fe3d860 (2145638496)
-compatible       "pasemi,1682m-gmac"
-          "pasemi,ethernet"
-assigned-addresses 82000000 00000000 e00a3000 00000000 00001000
-local-mac-address 02 00 ffffffe0 0a 30 00                              
-....0.
-device_type      "ethernet"
-revision-id      00000011 (17)
-class-code       00020000 (131072)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000043 00000001
-device-id        0000a005 (40965)
-reg              0000a300 00000000 00000000 00000000 00000000
-          82000000 00000000 e00a3000 00000000 00001000
-linux,phandle    7fe32fd0 (2145595344)
-name             "ethernet"
-
-/proc/device-tree/pxp@0,e0000000/pci@3:
-device_type      "pci"
-revision-id      00000013 (19)
-class-code       00080080 (524416)
-vendor-id        00001959 (6489)
-interrupt-parent 7fe2f6e8 (2145580776)
-interrupts       00000054 00000001
-device-id        0000a00c (40972)
-reg              00001800 00000000 00000000 00000000 00000000
-linux,phandle    7fe37990 (2145614224)
-name             "pci"
-
-/proc/device-tree/lpc@fe000000:
-device_type      "lpc"
-ranges           fe000000 00000000 fe000000 02000000
-#address-cells   00000001
-#size-cells      00000001
-reg              00000000 fe000000 00000000 02000000
-linux,phandle    7fe34070 (2145599600)
-name             "lpc"
-
-/proc/device-tree/bootconsole:
-device_type      "bootconsole"
-linux,phandle    7fe35880 (2145605760)
-name             "bootconsole"
-
-/proc/device-tree/cpus:
-#address-cells   00000001
-#size-cells      00000000
-linux,phandle    7fe30540 (2145584448)
-name             "cpus"
-
-/proc/device-tree/cpus/PowerPC,PA6T@0:
-bus-frequency    35a4e900 (900000000)
-64-bit
-timebase-frequency 03f940aa (66666666)
-graphics
-device_type      "cpu"
-ibm,segment-page-sizes 0000000c 00000000 00000001 0000000c
-          00000000 0000000e 00000020 00000001
-          0000000e 00000001 00000010 00000110
-          00000001 00000010 00000003 00000012
-          00000130 00000001 00000012 0000000f
-          00000014 00000030 00000001 00000014
-          0000001f 00000018 00000100 00000001
-          00000018 00000000 0000001e 00000120
-          [140 bytes total]
-i-cache-line-size 00000040 (64)
-cpu-version      00900102 (9437442)
-i-cache-block-size 00000040 (64)
-reg              00000000
-d-cache-block-size 00000040 (64)
-clock-frequency  6b49d200 (1800000000)
-ibm,processor-segment-sizes 0000001c 00000028
-linux,phandle    7fe30698 (2145584792)
-d-cache-size     00010000 (65536)
-i-cache-size     00010000 (65536)
-general-purpose
-name             "PowerPC,PA6T"
-ibm,processor-page-sizes 0000000c 0000000e 00000010 00000012
-          00000014 00000018 0000001e
-d-cache-sets     00000002
-i-cache-sets     00000002
-d-cache-line-size 00000040 (64)
-
-/proc/device-tree/cpus/PowerPC,PA6T@1:
-bus-frequency    35a4e900 (900000000)
-64-bit
-timebase-frequency 03f940aa (66666666)
-graphics
-device_type      "cpu"
-ibm,segment-page-sizes 0000000c 00000000 00000001 0000000c
-          00000000 0000000e 00000020 00000001
-          0000000e 00000001 00000010 00000110
-          00000001 00000010 00000003 00000012
-          00000130 00000001 00000012 0000000f
-          00000014 00000030 00000001 00000014
-          0000001f 00000018 00000100 00000001
-          00000018 00000000 0000001e 00000120
-          [140 bytes total]
-i-cache-line-size 00000040 (64)
-cpu-version      00900102 (9437442)
-i-cache-block-size 00000040 (64)
-reg              00000001
-d-cache-block-size 00000040 (64)
-clock-frequency  6b49d200 (1800000000)
-ibm,processor-segment-sizes 0000001c 00000028
-linux,phandle    7fe30eb0 (2145586864)
-d-cache-size     00010000 (65536)
-i-cache-size     00010000 (65536)
-general-purpose
-name             "PowerPC,PA6T"
-ibm,processor-page-sizes 0000000c 0000000e 00000010 00000012
-          00000014 00000018 0000001e
-d-cache-sets     00000002
-i-cache-sets     00000002
-d-cache-line-size 00000040 (64)
-
---------
-
-Download the compiled device tree for the Nemo board: 
-http://www.xenosoft.de/fdt-nemo-board.zip
-
---------
-
-Darren wrote:
-
-...
-
-The dtb passed by the CFE firmware has a number of issues, which up till
-now have been fixed by use of patches applied to the mainline kernel.
-This occasionally causes problems with changes made to mainline.
-
-Patching the firmware to correct the dtb is not an option for the
-following reasons:
-
-It was modified by a 3rd party, and we don't have a copy of the source.
-
-All versions of CFE used on the X1000 export the same dtb.
-
-At least one machine suffered damage during a firmware upgrade attempt,
-many people will be unwilling to reflash their system if an upgrade is
-produced.
-
-...
-
-Pasemi arch code finds the root of the PCI-e bus by searching the
-device-tree for a node called 'pxp'. But the root bus has a
-compatible property of 'pasemi,rootbus' so search for that instead.
-
-...
-
-The device tree on the Nemo passes all of the i8259 interruts with
-numbers between 212 and 222, and points their interrupt-parent property
-to the pasemi-opic, requiring custom patches to the kernel.
-Fix the values so that they can be controlled by the generic ppc i8259
-code.
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB8033.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0dae5bcf-98f4-43db-1bc1-08dc9b0e56a2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jul 2024 03:15:06.4908
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: x9AzdO/L9dB5H2bB8r8C6nbR+ekux9/KHbX1sjBtelPlU73hL7fALwb/a1VYdspiI4Nmtv4pV0CAQxtuSR+PISN2oLKNFayaRuegpVNPVV4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7269
+
+SGkgT2xla3NpaiwNCg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvZHNhL21pY3JvY2hpcC9sYW45
+Mzd4X21haW4uYyB8IDMgKysrDQo+ICBkcml2ZXJzL25ldC9kc2EvbWljcm9jaGlwL2xhbjkzN3hf
+cmVnLmggIHwgNCArKysrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKQ0KPiAN
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2RzYS9taWNyb2NoaXAvbGFuOTM3eF9tYWluLmMN
+Cj4gYi9kcml2ZXJzL25ldC9kc2EvbWljcm9jaGlwL2xhbjkzN3hfbWFpbi5jDQo+IGluZGV4IGVh
+YTg2MmViNmIyNjUuLjA2MDY3OTZiMTQ4NTYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2Rz
+YS9taWNyb2NoaXAvbGFuOTM3eF9tYWluLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvZHNhL21pY3Jv
+Y2hpcC9sYW45Mzd4X21haW4uYw0KPiBAQCAtMzkwLDYgKzM5MCw5IEBAIGludCBsYW45Mzd4X3Nl
+dHVwKHN0cnVjdCBkc2Ffc3dpdGNoICpkcykNCj4gICAgICAgICBsYW45Mzd4X2NmZyhkZXYsIFJF
+R19TV19HTE9CQUxfT1VUUFVUX0NUUkxfXzEsDQo+ICAgICAgICAgICAgICAgICAgICAgKFNXX0NM
+SzEyNV9FTkIgfCBTV19DTEsyNV9FTkIpLCB0cnVlKTsNCj4gDQo+ICsgICAgICAgLyogRGlzYWJs
+ZSBnbG9iYWwgVlBIWSBzdXBwb3J0LiBSZWxhdGVkIHRvIENQVSBpbnRlcmZhY2UNCj4gb25seT8g
+Ki8NCj4gKyAgICAgICBrc3pfcm13MzIoZGV2LCBSRUdfU1dfQ0ZHX1NUUkFQX09WUiwgU1dfVlBI
+WV9ESVNBQkxFLA0KPiBTV19WUEhZX0RJU0FCTEUpOw0KDQpEbyB3ZSBuZWVkIHRvIGNoZWNrIHRo
+ZSByZXR1cm4gdmFsdWUgb2Yga3N6X3JtdzMyPw0KDQo+ICsNCj4gICAgICAgICByZXR1cm4gMDsN
+Cj4gIH0NCj4gDQo+IA0K
 
