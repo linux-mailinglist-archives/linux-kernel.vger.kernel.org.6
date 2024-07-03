@@ -1,122 +1,133 @@
-Return-Path: <linux-kernel+bounces-239538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D8A9261DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:29:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C459261DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 158211F21870
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D701C20D13
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5C617C9F2;
-	Wed,  3 Jul 2024 13:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C438917A59A;
+	Wed,  3 Jul 2024 13:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MlVdVK6/"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JE0oyDp0"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5983217CA1D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A47C17A596
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720013311; cv=none; b=KUSL5EEpXV5zB6BdoGIEyor7yH/oOK385QtjYMNVRvM6o6ri7lTR6flsBS3JPJX1DEIXmouAwAPBZCxnigU8Hvk5+MRLC6QNXo9i3JjndbZVDPhfXbacQAORYj7oUukF/mWKIO/9kb8g5JHL1etKSjEHvocXxe25YN7Avr+kH7A=
+	t=1720013399; cv=none; b=L83uEp6pHa5+WpKv/pKXVl4p+OcZ47myFjsK5X6+YzvxQTZPmTCucIFs+uXsY1VBXyxDBJMCHqZv1AQRJZW+Dj+tvbr4Vo//dmVRPW7gjthhX6RfEZJt8KomRE0btN+Fedb+K4fuAvMkzj3apxcqis4d9gMf0iVBCqBVty6l0LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720013311; c=relaxed/simple;
-	bh=eXeh+odNiG8x4cyW9ttyv7RVPgMeH+bDRXBp/ntb5AQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nxpvXQU04tb4UXS/Dsc2CKsEQatkRJJYMl/GR7AdjnQfT5ljeDo968yLw2U7dMWz4AjO0L86U9p590tx/rIQciXglxaPF1G1Z9Kfp4YeR9mPA/a7rjNV49HBAquBU1mPACmQsya4NeHc98vu2YfPqrad982tnXBRSoHwWMG7RZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MlVdVK6/; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ee7a1ad286so16344871fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 06:28:29 -0700 (PDT)
+	s=arc-20240116; t=1720013399; c=relaxed/simple;
+	bh=n8rNcgytzr18aqcfGjlWgLimsnfqxE4xExXiuU5ntOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKcXN1TbCZbNWNCpYDV8YOcD/OHX8MzW5qmbQZ3BQW0BqFvYo/YYjM84jP+jwWsdG414/Xkdj/XTB/w1gOFBxgurDv8lFjMFhBHWmhtMDJ+kuAgC9dodXvt+yL1qvhHiCIVUcOcT2uxf21tGIO6d2Q31GI3qhIuMyKnrkGNUKKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JE0oyDp0; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5c46dcf9f0eso739808eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 06:29:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720013307; x=1720618107; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XH47RNmUX1AGSr0QbImyT9elpUv6h36gp7mCFp6MkqA=;
-        b=MlVdVK6/beA4npbdCAzgMv39IjfvLx8k+mcrNqaXj3Us5koXQIDlN/i+hVkL1qiXTU
-         rO/b9EO5NbZte2k3jZKftE/UzZbzF1RXW18eXm8YFjjoSMX7dAfobuHeFFH8gcJLlqnC
-         p87YjnNp4vtpBQPaAC3/AgyCZjxCmqsG+zvCKeeBU9b8bk6bdomaqud/b3KJNj10xo1N
-         fzdOIir+XJxnfulwj4jUEF6rFk146Y5SCYRtBN/hgh4afvOcYeDupeIrv+Ch3KtovCls
-         15Sa5v4hFj8OGjhAWdCTW6Zin+os6ED6ma19gYGMSfZv2upGyxC7CbT5PDcs0rUDIMto
-         1EIg==
+        d=linaro.org; s=google; t=1720013396; x=1720618196; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tkRMXmFtnswe4eBnsfdstcxfteOHZcne41UQHuOq2C8=;
+        b=JE0oyDp0v1XKneFjNkeMUQz5RLmAyvd2W7fbYw9NgFZDSIhvQtU3fZmZ5GKfBwNb+V
+         iXXhUUfW+5T0d0Cyd/utNhn9z/k7wWWPSzXeNs/8LMZyMZGJZwr5xToo3HICjKlqPAV2
+         gsezImmIieklV9KSeffwq9OIN9jvwGWya37dwy5/vQ4IOHTQs1ccJx9xZhPbr8zVr1F/
+         tIeI38vCd5FXw3abcqY5pTKIodCNj4SvwcZ4q7U4/CNs+Jr7sVv1tysJ8KyVI1lOcSVr
+         /twaYNlJ5fsT93JbnO3kFaUaDluAL8Vx74TYI12t1/EWAu7OidgmqDc4qgo5/p6/oniu
+         HwFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720013307; x=1720618107;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XH47RNmUX1AGSr0QbImyT9elpUv6h36gp7mCFp6MkqA=;
-        b=E/rITlEC7YOy60vbGDZAd0k4tZXEfW3T+aSZvHILvZj4hq+iRXJz2cR8BZaR2tN6v0
-         tIUlUvG/e/bxx0zy3xKdVPyLwoc5o/JsnthYiiWSdlL/sWbjucPauBR+lNGcrSr7CRL7
-         GNU3VWindbwGHtcgPzWTVQDy241kAFUsFk/5MXBGt9tXNAHXRyI1oX2VFs2dlwl716Ld
-         NxRk+GrEg4jvzmnIztR/QKzLNu9Y3RcQ7iTE+A2YEWRXJ5/iTjs+P1LzzBnihVjXjeuV
-         UxrMxdRLewwQi65BqK94E0A5qVrifvdFs5EBxuhq+iZXOIpuPLgyw/sO26P5WRF2C0Ni
-         M7jA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQOzy3Q4aLOnsp72RupjwSbm9zevXeML9UOKRIz2QVvDygcrHrW7GQrQAfRkanlaujW4au2JKux4EMB+6JtyCdKaT+A03psccdSl1m
-X-Gm-Message-State: AOJu0Yz5pttXUitBugqRhDY86ryerr6uMY35MD3cd8I+dq9V7v7T97MU
-	5HOrnhg5HrzW2zxcQXmlZocHUaiBzOcVATo2cNrL6H1gJ7WJq3V0gW3P24tmzEw=
-X-Google-Smtp-Source: AGHT+IF8+t0W+Jxcef2zPEJhg/UHQYLfiKh8V3SIvq9COfdpuCwDUDYiE5vlgZ1/wChFAeIeucnstg==
-X-Received: by 2002:a2e:9d44:0:b0:2ec:57c7:c737 with SMTP id 38308e7fff4ca-2ee5e6e60fbmr73030221fa.40.1720013307158;
-        Wed, 03 Jul 2024 06:28:27 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:c37f:195e:538f:bf06])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4258036d034sm137144915e9.43.2024.07.03.06.28.21
+        d=1e100.net; s=20230601; t=1720013396; x=1720618196;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tkRMXmFtnswe4eBnsfdstcxfteOHZcne41UQHuOq2C8=;
+        b=kG2NE5HDAZKwXagdSCtBHbjVlAbNT+zJK7vuhxJ2Tc5x4GO2gHwsIel7EcA1SBzmz4
+         GW7DP3QgX2AL41x59iOwx9ngZd094D8zTisDHl0V6uJDkTO0Is2tlu51VUrBgeb4sLVP
+         4qZjj/ZZP8+LCZQGF7FEn04GO6WfhShQLuizrMNImMuefLJ5kBOEEXVCzaBr71vCZN2D
+         zn2KNjDGNtebAOgPHnAUNVn+punYfqC79BIBy+Ypj08mJmsGWdgaP6lwhXag6zpHU+zS
+         BAow8OiRcFkRmR3Z3+PoBhp+wmHV/mRVR/wzbjUMTT9At1iYae7KyAMm1YYArueT6wKd
+         OnZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZumrOyQUmTF6/bXnsmKxfRfCQD8VtRujzO8aUYGG6i3NdccG5rlYx/nw8lfwQTDzWdoh04m8hvWBK82+z6DrbNiAX6Tofk+Epe6n/
+X-Gm-Message-State: AOJu0YxpK2naraWFb8LLqh0pe1wQd4aLdpbJt+oXszpznD589yQ/B1d7
+	QFDjD2q8ev9PAeQvXaAzF9Dsr6QwrqhWkVBg422mcGYPAJF0MPemMR8kUyTXNiA=
+X-Google-Smtp-Source: AGHT+IFanVXEA/1p7SjGFF8jh/JC/+imI8O4iXN7/80UChDVmSkOKSU/7pzcNDcgJUpdKpfCj/5s4w==
+X-Received: by 2002:a4a:ad8e:0:b0:5ba:f20c:361b with SMTP id 006d021491bc7-5c439286278mr14014241eaf.8.1720013394630;
+        Wed, 03 Jul 2024 06:29:54 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:5b79:ebe0:e3cb:2ba6])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c414939fdcsm1524335eaf.25.2024.07.03.06.29.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 06:28:23 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-gpio@vger.kernel.org,
-	Shiji Yang <yangshiji66@outlook.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Asmaa Mnebhi <asmaa@nvidia.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Mark Mentovai <mark@mentovai.com>,
-	Jonas Gorski <jonas.gorski@gmail.com>,
-	=?UTF-8?q?L=C3=B3r=C3=A1nd=20Horv=C3=A1th?= <lorand.horvath82@gmail.com>
-Subject: Re: [PATCH] gpio: mmio: do not calculate bgpio_bits via "ngpios"
-Date: Wed,  3 Jul 2024 15:28:20 +0200
-Message-ID: <172001329822.19609.1796927408061216237.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
-References: <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
+        Wed, 03 Jul 2024 06:29:54 -0700 (PDT)
+Date: Wed, 3 Jul 2024 15:29:52 +0200
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Datta Shubhrajyoti <shubhrajyoti@ti.com>, linux-iio@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH] staging: iio: frequency: ad9834: Validate frequency
+ parameter value
+Message-ID: <b7cc378d-11a8-44b6-a86f-baee12b5b1fa@suswa.mountain>
+References: <20240703104734.12034-1-amishin@t-argos.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703104734.12034-1-amishin@t-argos.ru>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Tue, 25 Jun 2024 09:19:49 +0800, Shiji Yang wrote:
-> bgpio_bits must be aligned with the data bus width. For example, on a
-> 32 bit big endian system and we only have 16 GPIOs. If we only assume
-> bgpio_bits=16 we can never control the GPIO because the base address
-> is the lowest address.
+On Wed, Jul 03, 2024 at 01:47:34PM +0300, Aleksandr Mishin wrote:
+> In ad9834_write_frequency() clk_get_rate() can return 0. In such case
+> ad9834_calc_freqreg() call will lead to division by zero. Checking
+> 'if (fout > (clk_freq / 2))' doesn't protect in case of 'fout' is 0.
+> ad9834_write_frequency() is called from ad9834_write(), where fout is
+> taken from text buffer, which can contain any value.
 > 
-> low address                          high address
-> -------------------------------------------------
-> |   byte3   |   byte2   |   byte1   |   byte0   |
-> -------------------------------------------------
-> |    NaN    |    NaN    |  gpio8-15 |  gpio0-7  |
-> -------------------------------------------------
+> Modify parameters checking.
 > 
-> [...]
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 12b9d5bf76bf ("Staging: IIO: DDS: AD9833 / AD9834 driver")
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> ---
+>  drivers/staging/iio/frequency/ad9834.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/iio/frequency/ad9834.c b/drivers/staging/iio/frequency/ad9834.c
+> index a7a5cdcc6590..9e42129f44f7 100644
+> --- a/drivers/staging/iio/frequency/ad9834.c
+> +++ b/drivers/staging/iio/frequency/ad9834.c
+> @@ -114,7 +114,7 @@ static int ad9834_write_frequency(struct ad9834_state *st,
+>  
+>  	clk_freq = clk_get_rate(st->mclk);
+>  
+> -	if (fout > (clk_freq / 2))
+> +	if (!fout || fout > (clk_freq / 2))
 
-Applied, thanks!
+So you don't want "clk_freq" to be zero so you check if "fout" can be
+zero and do the algebra?  That's a lot of acrobatics.  Just check
+if clk_freq == 0 directly.
 
-[1/1] gpio: mmio: do not calculate bgpio_bits via "ngpios"
-      commit: f07798d7bb9c46d17d80103fb772fd2c75d47919
+regards,
+dan carpenter
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>  		return -EINVAL;
+>  
+>  	regval = ad9834_calc_freqreg(clk_freq, fout);
+> -- 
+> 2.30.2
+> 
 
