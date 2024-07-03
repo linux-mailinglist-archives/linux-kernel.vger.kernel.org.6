@@ -1,87 +1,175 @@
-Return-Path: <linux-kernel+bounces-239525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0599261AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:19:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3769261B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8901C22F6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:19:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D3D7B23081
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A0B17A58B;
-	Wed,  3 Jul 2024 13:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fNOUDqhM"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69926178CEE;
-	Wed,  3 Jul 2024 13:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEBA179970;
+	Wed,  3 Jul 2024 13:20:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B581428F8;
+	Wed,  3 Jul 2024 13:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720012776; cv=none; b=GBhgPtoWjgCftWf5JBKRLHEmC6vIuRjPR4ybL+CAUogN4l6Zl3Afb1RqrGV/q0j0Q1Ba13vcmJDDPu4q5sMYalQN/fFrsPk2ee6tvGOmyfWJ6tk1mV/Ik2+nZJSEht8Si7ql4XPU7qoEPbk6Fft+tcuBBgTWQims+e8pTE2cTtY=
+	t=1720012824; cv=none; b=XqW8HIXAxsp2tKp4psjW7Pqs3eLWdM4dqTIayOhVji5Iw7G7jjwkjG8B6ZektTD134cvSFtJbcWVaJslUXAeMU4D4v3iNq49ljNKxYmXBQHS5pR64ozEItsnV67mYsV8/VknsHo8g752szVeAK4er8hFC1Kawdk/RdRzRBUw0Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720012776; c=relaxed/simple;
-	bh=dhUbszQYZ16St23VHIu0tFLExWMcJ5jU50lppUTa+9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nlcUfGMqP1psTI1Pq0xOx1D1QO+g2SLc0wCZIjUse21dvitB+Uvze1j2pi3tHMzw72uojZw8PxQUfCEAs5ylW35cKZ+qOK/eooBOkTE/u+MF09x7ZuYv6q4q7CGseFWmo2G1IchpCdgGmjQHVm3wKJsOnigwAXQ9lusvbuw4Sng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fNOUDqhM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5rDjlZZEKG84QDIShgonwEJOVJtAmB4KTYil0+eurmE=; b=fNOUDqhMhUE1oGfgA946jOjNnD
-	r1QUfk55VVHMOqmfs0WfbosbGFGz+9JFdoychdws8+ogUtyAeXzUE7l0b/0S8FAXtRM4N6jlFBpZZ
-	zohXLFwrWHJwwhaYQICIT9AAnlPK5czeKdzDXkKRLNNfubW1gYhx/yJkdYuR/+agWPWCsBb0WgtKV
-	Ulbs8jmium7Y/XXl1WxK7vrA3Ct84ibb5Z/NVtGCtSFExF7FD5QAdJaKadmIu90O2S/SMtQcgqIxD
-	WzeKVRv2SSgZ8ZD8ay4H2rRLvQT4Cgf9vrZL8GOPZ6GXZq2DAouvORipjna4//oQGOv/PCqw8wYCg
-	3GQM0q6A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOztU-0000000AHbZ-1Zzj;
-	Wed, 03 Jul 2024 13:19:32 +0000
-Date: Wed, 3 Jul 2024 06:19:32 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: blk_validate_limits validation of block size (was Re: [PATCH v2]
- null_blk: fix validation of block size)
-Message-ID: <ZoVP5NZhCmMH6qBp@infradead.org>
-References: <20240603192645.977968-1-nmi@metaspace.dk>
- <Zl4dxaQgPbw19Irk@kbusch-mbp.dhcp.thefacebook.com>
- <Zl6cHI48ye7Tp1-C@infradead.org>
- <8f8f8f78-fcd4-4e71-8dd5-bae03a627a34@oracle.com>
- <Zn-Wpq2AzBo6rcgd@infradead.org>
- <43aab70c-8521-4dfa-847a-1175d31a55d1@oracle.com>
+	s=arc-20240116; t=1720012824; c=relaxed/simple;
+	bh=nrYBlQVDY4wdv3cIojmtcgZBo6zZUA17TcFzzDUqcnI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bRrIpo0DAWZQd24b0o+lyzX18u6As9Uf2SwR/w3vseUVzFvPLXaA+uyg1edlG53d41pc4dheXVZIpKsYSZra/YU1jVI2Z7yTBbAtMpJaPtXsn1py6tMyU7qZOC9CO/iICt1zHNvcf12pWwM2kwy8oQKV16zapKoOf7350231dZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4135C367;
+	Wed,  3 Jul 2024 06:20:46 -0700 (PDT)
+Received: from [10.1.37.29] (e122027.cambridge.arm.com [10.1.37.29])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA2C93F762;
+	Wed,  3 Jul 2024 06:20:18 -0700 (PDT)
+Message-ID: <e42a55ba-cbb5-47a4-bec6-9c3067040970@arm.com>
+Date: Wed, 3 Jul 2024 14:20:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <43aab70c-8521-4dfa-847a-1175d31a55d1@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panfrost: Mark simple_ondemand governor as softdep
+To: Dragan Simic <dsimic@manjaro.org>, dri-devel@lists.freedesktop.org
+Cc: boris.brezillon@collabora.com, robh@kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, linux-kernel@vger.kernel.org,
+ Diederik de Haas <didi.debian@cknow.org>,
+ Furkan Kardame <f.kardame@manjaro.org>, stable@vger.kernel.org
+References: <4e1e00422a14db4e2a80870afb704405da16fd1b.1718655077.git.dsimic@manjaro.org>
+ <f672e7460c92bc9e0c195804f7e99d0b@manjaro.org>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <f672e7460c92bc9e0c195804f7e99d0b@manjaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 03, 2024 at 01:20:26PM +0100, John Garry wrote:
-> So if we stop validating the limits in a., there is a user-visible change in
-> behaviour (as we stop rejecting invalid limits from the NBD_SET_BLKSIZE
-> ioctl).
+On 03/07/2024 13:42, Dragan Simic wrote:
+> Hello everyone,
 > 
-> We could add a "dryrun" option to queue_limits_commit_update() (and call
-> that instead of blk_validate_block_size(), which is effectively the same as
-> calling blk_validate_block_size()). Or we can keep
-> nbd as the only blk_validate_limits() user (outside the block layer).
+> On 2024-06-17 22:17, Dragan Simic wrote:
+>> Panfrost DRM driver uses devfreq to perform DVFS, while using
+>> simple_ondemand
+>> devfreq governor by default.  This causes driver initialization to
+>> fail on
+>> boot when simple_ondemand governor isn't built into the kernel
+>> statically,
+>> as a result of the missing module dependency and, consequently, the
+>> required
+>> governor module not being included in the initial ramdisk.  Thus,
+>> let's mark
+>> simple_ondemand governor as a softdep for Panfrost, to have its kernel
+>> module
+>> included in the initial ramdisk.
+>>
+>> This is a rather longstanding issue that has forced distributions to
+>> build
+>> devfreq governors statically into their kernels, [1][2] or has forced
+>> users
+>> to introduce some unnecessary workarounds. [3]
+>>
+>> For future reference, not having support for the simple_ondemand
+>> governor in
+>> the initial ramdisk produces errors in the kernel log similar to these
+>> below,
+>> which were taken from a Pine64 RockPro64:
+>>
+>>   panfrost ff9a0000.gpu: [drm:panfrost_devfreq_init [panfrost]]
+>> *ERROR* Couldn't initialize GPU devfreq
+>>   panfrost ff9a0000.gpu: Fatal error during GPU init
+>>   panfrost: probe of ff9a0000.gpu failed with error -22
+>>
+>> Having simple_ondemand marked as a softdep for Panfrost may not
+>> resolve this
+>> issue for all Linux distributions.  In particular, it will remain
+>> unresolved
+>> for the distributions whose utilities for the initial ramdisk
+>> generation do
+>> not handle the available softdep information [4] properly yet. 
+>> However, some
+>> Linux distributions already handle softdeps properly while generating
+>> their
+>> initial ramdisks, [5] and this is a prerequisite step in the right
+>> direction
+>> for the distributions that don't handle them properly yet.
+>>
+>> [1]
+>> https://gitlab.manjaro.org/manjaro-arm/packages/core/linux/-/blob/linux61/config?ref_type=heads#L8180
+>> [2] https://salsa.debian.org/kernel-team/linux/-/merge_requests/1066
+>> [3] https://forum.pine64.org/showthread.php?tid=15458
+>> [4]
+>> https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/commit/?id=49d8e0b59052999de577ab732b719cfbeb89504d
+>> [5]
+>> https://github.com/archlinux/mkinitcpio/commit/97ac4d37aae084a050be512f6d8f4489054668ad
+>>
+>> Cc: Diederik de Haas <didi.debian@cknow.org>
+>> Cc: Furkan Kardame <f.kardame@manjaro.org>
+>> Cc: stable@vger.kernel.org
+>> Fixes: f3ba91228e8e ("drm/panfrost: Add initial panfrost driver")
+>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
 
-I'd just keep the extra external blk_validate_block_size call in nbd.c.
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-Maybe add a comment to the blk_validate_block_size declaration that
-drivers should not bother with it as it's already done by
-blk_validate_limits.
+> 
+> Just checking, could this patch be accepted, please?  The Lima counterpart
+> has already been accepted. [6]
+
+Thanks for the prod - I have to admit I saw there was discussion about
+the Lima patch and so just put this on my list to look again later after
+the discussion had reached a conclusion.
+
+> The approach in this patch is far from perfect, but it's still fine until
+> there's a better solution, such as harddeps.  I'll continue my research
+> about the possibility for introducing harddeps, which would hopefully
+> replace quite a few instances of the softdep (ab)use that already extend
+> rather far.  For example, have a look at the commit d5178578bcd4 (btrfs:
+> directly call into crypto framework for checksumming) [7] and the lines
+> containing MODULE_SOFTDEP() at the very end of fs/btrfs/super.c. [8]
+
+I agree - it's not perfect, but it's the best we have for now. I hope
+sometime we'll have a cleaner solution to express dependencies like this
+(good luck! ;) ).
+
+Thanks,
+
+Steve
+
+> If a filesystem driver can rely on the (ab)use of softdeps, which may be
+> fragile or seen as a bit wrong, I think we can follow the same approach,
+> at least until a better solution is available.
+> 
+> [6]
+> https://cgit.freedesktop.org/drm/drm-misc/commit/?id=0c94f58cef319ad054fd909b3bf4b7d09c03e11c
+> [7]
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d5178578bcd4
+> [8]
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/btrfs/super.c#n2593
+> 
+>> ---
+>>  drivers/gpu/drm/panfrost/panfrost_drv.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> b/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> index ef9f6c0716d5..149737d7a07e 100644
+>> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> @@ -828,3 +828,4 @@ module_platform_driver(panfrost_driver);
+>>  MODULE_AUTHOR("Panfrost Project Developers");
+>>  MODULE_DESCRIPTION("Panfrost DRM Driver");
+>>  MODULE_LICENSE("GPL v2");
+>> +MODULE_SOFTDEP("pre: governor_simpleondemand");
+
 
