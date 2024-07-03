@@ -1,296 +1,203 @@
-Return-Path: <linux-kernel+bounces-239818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 389CA9265B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:11:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 590119265C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91224B2753B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:11:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF4D81F23525
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D46418754E;
-	Wed,  3 Jul 2024 16:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E57181CEF;
+	Wed,  3 Jul 2024 16:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HE4SoZ7l"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hk4ZyBnx"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406D61822C8;
-	Wed,  3 Jul 2024 16:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D398442C
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720022967; cv=none; b=ENfNk2nw+oUc7qBeAUVD2X4Ebcng9FE0Q9+P2gx/DL4ZnCnRbL5IYVSKkWGHA9lwP1pC/3ZyQwzkKuKoKWwGtzRON8wFjnVDt1cQJDf9rarclja366k0ykQ/q6/7RU9PCejs6mHaAa1tjAw/RxURKvnWfsfM4Cs51a6BeL4QqO0=
+	t=1720023120; cv=none; b=c48/qd49qjODlPQphriYg1z+5uooGvPZGcwJwcfA/w8yiWy5moB1ZzXJcv/0yxgdruMcHRD6KkzXpkVl+Dlr3zUs9ytct7ZYBxtL2u0WN6D7vSNbUhTXHPVuOqISmLlc4Qbbe6F9+OUI7EO5PDgfCEu8oEktp+QwLbEfJrTEvHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720022967; c=relaxed/simple;
-	bh=t4iW7lBcz3MGBh+u2TsCN4v259jNbuNs7J3WIlww2zM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRFWh7RkUQtoofL4DSpYad8NskzavuAlsEdY3CEMW7y/nGugv5IZHchlQQZW3y+FO9MMV85ny/B0EycasGHcrhhIsxJkYktO52JSWHlVIa1FuyS/CCHPjGEd+qdAGMYTfP+UByKI2Bh8yR9L0ipumBkaOt5M9JjRWdlB/4uE3cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HE4SoZ7l; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1720023120; c=relaxed/simple;
+	bh=Vq2WviJPzU9+t4YbTs8q1YmTVcOSzsA58Ukn6pilCeM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cpANKEeKHDLOVQi2efYY5B6AcWnOJBL4oxz9dBfHBluscY6VQjOFQqwIaGdUv5zmYOMSbLfSgpGZOtBKBI0spRc+T+vk142vL8lteuyyFu8yjltxdPZ+YX+JbB6QZAcYJnkMQGfTjcK96YXImBKr1WrXWe0ZXKjgfYMYMogxNNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hk4ZyBnx; arc=none smtp.client-ip=209.85.210.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so33592355e9.2;
-        Wed, 03 Jul 2024 09:09:25 -0700 (PDT)
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7021702f3f1so2194676a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:11:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720022964; x=1720627764; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=y+CHxrZ7qtoT8BKTUaekwlP3cat/UcO3wyY4oAUzx8s=;
-        b=HE4SoZ7ltoFhvePSZftpAoSeVgiRR+LuxEme8JJk7+ysQ06TbDp74uL/9HcCSrNLEm
-         5l00QWTDFdfXP7NPB2w9e3duDfZtNdknU4d6lkfOap/oWCj8IOikqPlwvNZtUBhagxVJ
-         c6JfSjPIVRxOHs1bukFHw57jHpMH6YvemZrXvFf7gh19KfQDn8wh4kAirad4rQYniTQA
-         8QAMYo3TH4uc4kNHo4pK8lbgjLL3xpO9O4dXC2QHMyFX2EIYeJF5RevfoT8BNX2znEk4
-         ZLca3zuJeQpW6MfTn7PTqV5NbUZvD+ohCt5ETmcsMaIw4pcPcred9nN09MrUWISO70Qs
-         CDJw==
+        d=gmail.com; s=20230601; t=1720023118; x=1720627918; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3/dH8jV/d+x/FI16gAcv4uydOAqFjUfOw8j20FTynlU=;
+        b=hk4ZyBnxmBbfcIYTT+95kuyZfKtEndK20EM0LaKcBw8pb/AS/X3pnCkz3PtCjB7MZi
+         nSiWDUpJX/AXgpSN1kZOVLAFyZX52hARCrmPdY4cJI7bXTwWA971PNsoiZItE9PvsQ1I
+         /riD89cr3k+eRK9HRAsHIwJzp1tELKEIPziUgd/1y7xG1mOrlFucQzPcg79xmVzdKiO0
+         z35+lCC9nCb2kDPIgylp/x4vOfP+Rm1t+I/RlM4Uo4IajvAaACbHwKaiq56if5wp7rRj
+         n5w2x+ZkWriJ/D6NWs4aLnGf7+zPL3Lq5KM4HA6j9bewVVlDZHFJfm4UZNIuKaXlZ+qq
+         lO/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720022964; x=1720627764;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y+CHxrZ7qtoT8BKTUaekwlP3cat/UcO3wyY4oAUzx8s=;
-        b=OhKCaNhd8NZwkMuD/IdWdrlC0cci7D+hQGkvBylIHjxs0uBZIrAbBTd7z1doSXs2Do
-         IDrI9l186yYsvmt0Nri5BvscC4+kT0pPIGSY/9n1rNGVlu1DG6Ga8o8stK74OWKg8NL+
-         xlk6AEbfU+eaBqT5RyhwAcMTlIcbdb9m8lKkipHkhEB6L4c+R5Sc1dZKqwVVDH+w7XXV
-         JY5uOzSGE9yfYcbwguewuJgW8GzoQReMd/5t2GptCvFKnf3zGOmF6QiYx16N5BVw3v81
-         s5hBl8RkB0jHP2qf058mNx33oDJkXO/BLMeJFemMHtRrQuV6vRYCMnQpcnhnDKm5ckyA
-         bKVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtd8FHQckh2j8EvboZdx3cQNXSKHOd8fKWob9fINg+fukS+kQazH4vzvs/GUs2bDWy81xzbJDCObLmlCPNELb9MqyE1rRGhXVS+KhBe4odWXhMarKeLfeR8meu5NktO9UWAkeKdkHP8j2gqOKjGpogef1fb1gdyzX+6Z2Vx3HlcT3hdIn1
-X-Gm-Message-State: AOJu0Yw2y5PcMjvkDwu1bh/sZ7/ZjT14qibf5rRKRBdpyyQbGnu95GyD
-	QU3lERZbUc/YPE6/KZgF8QdSTQgOeAtH/FxgP5n7lvgUCG0FyB6M
-X-Google-Smtp-Source: AGHT+IFOaHsI2OUQyY5F67H8NM44xcYZe4pbNrjUXpk995cJtsWH9MtvzobpmdfYGMDAq7foffVEuw==
-X-Received: by 2002:a05:600c:4f50:b0:425:73ba:e012 with SMTP id 5b1f17b1804b1-42579ffcce8mr97229955e9.7.1720022963234;
-        Wed, 03 Jul 2024 09:09:23 -0700 (PDT)
-Received: from krava ([176.105.156.1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b061eedsm233590495e9.26.2024.07.03.09.09.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 09:09:22 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 3 Jul 2024 18:09:17 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
-Message-ID: <ZoV3rRUHEdvTmJjG@krava>
-References: <20240701164115.723677-1-jolsa@kernel.org>
- <20240701164115.723677-2-jolsa@kernel.org>
- <20240703085533.820f90544c3fc42edf79468d@kernel.org>
- <CAEf4Bzbn+jky3hb+tUwmDCUgUmgCBxL5Ru_9G5SO3=uTWpi=kA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1720023118; x=1720627918;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3/dH8jV/d+x/FI16gAcv4uydOAqFjUfOw8j20FTynlU=;
+        b=m99hyeGbWqfiMlKSEFRZiGzq9ZdKRnUOOeClvyn/3IRlN5RWE5IWkBB+msp2kZNXws
+         n9FMpKCiT6qe8xvNcij5XK3MqMuD2pS3dEAhxj8blv/XUzMYgvoeYp9dy2XM3BDnU/tK
+         UsPh4rr8jqX5Mmd7cj5APaRgWwx8ztdYyladkR+1Nw6wklf8pNhU5Wn8E7DJe/oHk5n6
+         T1zxG5hP/3FQqnJ9bDUyPap3c0utK2iUYGIfDaKLW/BSeysRD2FKROkbSC51QyO7q3uY
+         4RB5cERqWo9CLZp93E+oJbzd0imCBVcTLtPCGDQi+M/BU0iAmz3V3iIEKMLsUP0/Hut1
+         rjcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSxQ9c/SK2RG4IMDDeOkHZSG6yhlHcnixahEaDJHB0m3RnE7vFKxC6dXlr1g20CEDXT1hLnfBW2D5UYPc/jv6+NWSA6YPRL5wRWKfE
+X-Gm-Message-State: AOJu0Yx3KV7dRPeTrZgruUsgaxb7BGsdibl9Gs4ol9b0xY92NXqKmICf
+	ftCwA2/SUihxYzo/6mfDnOYCETp4yLQunv2KvSfO7CA26o8xPAxUfTuGL2poleGgSPzfMbt5upD
+	/anOO8s6C6IXYVdDwlcaIWKchop8=
+X-Google-Smtp-Source: AGHT+IHHyVJ7tvgjX6YNT5yXxjT4ZfaP2CSlRVqBQQ9Svv1tUxG/jN+Xkt79kJWNOKN+ENdTMdSGcTnRp+qX6KDNUkc=
+X-Received: by 2002:a05:6808:1909:b0:3d5:5e58:528b with SMTP id
+ 5614622812f47-3d6b2b24045mr15706235b6e.1.1720023118007; Wed, 03 Jul 2024
+ 09:11:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bzbn+jky3hb+tUwmDCUgUmgCBxL5Ru_9G5SO3=uTWpi=kA@mail.gmail.com>
+References: <20240702215804.2201271-1-jim.cromie@gmail.com>
+ <20240702215804.2201271-31-jim.cromie@gmail.com> <ZoSOMClB0MeWeokU@intel.com>
+ <CAJfuBxzsZUpO-Q_uAfMhzXs0WHYMTnj1F8ju7af-kQZKQjLvNQ@mail.gmail.com> <ZoU7kR2aYwVDvd_G@intel.com>
+In-Reply-To: <ZoU7kR2aYwVDvd_G@intel.com>
+From: jim.cromie@gmail.com
+Date: Wed, 3 Jul 2024 10:11:31 -0600
+Message-ID: <CAJfuBxwVWbJ9TdgH0ARmxUy+_DfNVKrTewjkqWKmCQtfOKQEAg@mail.gmail.com>
+Subject: Re: [PATCH v9 30/52] drm-dyndbg: adapt drm core to use dyndbg classmaps-v2
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
+	jani.nikula@intel.com, jbaron@akamai.com, gregkh@linuxfoundation.org, 
+	ukaszb@chromium.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
+	intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+	linux@rasmusvillemoes.dk, joe@perches.com, mcgrof@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 02, 2024 at 05:13:38PM -0700, Andrii Nakryiko wrote:
-> On Tue, Jul 2, 2024 at 4:55 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > Hi Jiri,
-> >
-> > On Mon,  1 Jul 2024 18:41:07 +0200
-> > Jiri Olsa <jolsa@kernel.org> wrote:
-> >
-> > > Adding support for uprobe consumer to be defined as session and have
-> > > new behaviour for consumer's 'handler' and 'ret_handler' callbacks.
-> > >
-> > > The session means that 'handler' and 'ret_handler' callbacks are
-> > > connected in a way that allows to:
-> > >
-> > >   - control execution of 'ret_handler' from 'handler' callback
-> > >   - share data between 'handler' and 'ret_handler' callbacks
-> > >
-> > > The session is enabled by setting new 'session' bool field to true
-> > > in uprobe_consumer object.
-> > >
-> > > We keep count of session consumers for uprobe and allocate session_consumer
-> > > object for each in return_instance object. This allows us to store
-> > > return values of 'handler' callbacks and data pointers of shared
-> > > data between both handlers.
-> > >
-> > > The session concept fits to our common use case where we do filtering
-> > > on entry uprobe and based on the result we decide to run the return
-> > > uprobe (or not).
-> > >
-> > > It's also convenient to share the data between session callbacks.
-> > >
-> > > The control of 'ret_handler' callback execution is done via return
-> > > value of the 'handler' callback. If it's 0 we install and execute
-> > > return uprobe, if it's 1 we do not.
-> > >
-> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > ---
-> > >  include/linux/uprobes.h     |  16 ++++-
-> > >  kernel/events/uprobes.c     | 129 +++++++++++++++++++++++++++++++++---
-> > >  kernel/trace/bpf_trace.c    |   6 +-
-> > >  kernel/trace/trace_uprobe.c |  12 ++--
-> > >  4 files changed, 144 insertions(+), 19 deletions(-)
-> > >
-> > > diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> > > index f46e0ca0169c..903a860a8d01 100644
-> > > --- a/include/linux/uprobes.h
-> > > +++ b/include/linux/uprobes.h
-> > > @@ -34,15 +34,18 @@ enum uprobe_filter_ctx {
-> > >  };
-> > >
-> > >  struct uprobe_consumer {
-> > > -     int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs);
-> > > +     int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs, __u64 *data);
-> > >       int (*ret_handler)(struct uprobe_consumer *self,
-> > >                               unsigned long func,
-> > > -                             struct pt_regs *regs);
-> > > +                             struct pt_regs *regs, __u64 *data);
-> > >       bool (*filter)(struct uprobe_consumer *self,
-> > >                               enum uprobe_filter_ctx ctx,
-> > >                               struct mm_struct *mm);
-> > >
-> > >       struct uprobe_consumer *next;
-> > > +
-> > > +     bool                    session;        /* marks uprobe session consumer */
-> > > +     unsigned int            session_id;     /* set when uprobe_consumer is registered */
-> >
-> > Hmm, why this has both session and session_id?
-> 
-> session is caller's request to establish session semantics. Jiri, I
+Got it.
+I had some mental block about passing designated intializers as macro args.
+it just worked, I needed to eyeball the .i file just to be sure.
+thanks.
+I have a fixup patch.
+whats the best thing to do with it, squash it in for later ? send in
+reply here ?
 
-and session_id is set when uprobe is registered and used when
-return uprobe is executed to find matching uprobe_consumer,
-plz check handle_uretprobe_chain/session_consumer_find
-
-> think it's better to move it higher next to
-> handler/ret_handler/filter, that's the part of uprobe_consumer struct
-> which has read-only caller-provided data (I'm adding offset and
-> ref_ctr_offset there as well).
-
-ok, makes sense
-
-> 
-> > I also think we can use the address of uprobe_consumer itself as a unique id.
-> 
-> +1
-> 
-> >
-> > Also, if we can set session enabled by default, and skip ret_handler by handler's
-> > return value, it is more simpler. (If handler returns a specific value, skip ret_handler)
-> 
-> you mean derive if it's a session or not by both handler and
-> ret_handler being set? I guess this works fine for BPF side, because
-> there we never had them both set. If this doesn't regress others, I
-> think it's OK. We just need to make sure we don't unnecessarily
-> allocate session state for consumers that don't set both handler and
-> ret_handler. That would be a waste.
-
-hum.. so the current code installs return uprobe if there's ret_handler
-defined in consumer and also the entry 'handler' needs to return 0
-
-if entry 'handler' returns 1 the uprobe is unregistered
-
-we could define new return value from 'handler' to 'not execute the
-'ret_handler' and have 'handler' return values:
-
-  0 - execute 'ret_handler' if defined
-  1 - remove the uprobe
-  2 - do NOT execute 'ret_handler'  // this current triggers WARN
-
-we could delay the allocation of 'return_instance' until the first
-consumer returns 0, so there's no perf regression
-
-that way we could treat all consumers the same and we wouldn't need
-the session flag..
-
-ok looks like good idea ;-) will try that
-
-thanks,
-jirka
-
-> 
-> >
-> > >  };
+On Wed, Jul 3, 2024 at 5:52=E2=80=AFAM Ville Syrj=C3=A4l=C3=A4
+<ville.syrjala@linux.intel.com> wrote:
+>
+> On Tue, Jul 02, 2024 at 08:34:39PM -0600, jim.cromie@gmail.com wrote:
+> > On Tue, Jul 2, 2024 at 5:33=E2=80=AFPM Ville Syrj=C3=A4l=C3=A4
+> > <ville.syrjala@linux.intel.com> wrote:
 > > >
-> > >  #ifdef CONFIG_UPROBES
-> > > @@ -80,6 +83,12 @@ struct uprobe_task {
-> > >       unsigned int                    depth;
-> > >  };
+> > > On Tue, Jul 02, 2024 at 03:57:20PM -0600, Jim Cromie wrote:
+> > > > dyndbg's CLASSMAP-v1 api was broken; DECLARE_DYNDBG_CLASSMAP tried =
+to
+> > > > do too much.  Its replaced by DRM_CLASSMAP_DEFINE, which creates &
+> > > > EXPORTs the classmap when CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy, for dir=
+ect
+> > > > reference by drivers.
+> > > >
+> > > > The drivers still use DECLARE_DYNDBG_CLASSMAP for now, so they stil=
+l
+> > > > redundantly re-declare the classmap, but we can convert the drivers
+> > > > later to DYNDBG_CLASSMAP_USE
+> > > >
+> > > > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> > > > ---
+> > > >  drivers/gpu/drm/drm_print.c | 25 +++++++++++++------------
+> > > >  include/drm/drm_print.h     |  8 ++++++++
+> > > >  2 files changed, 21 insertions(+), 12 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_prin=
+t.c
+> > > > index 699b7dbffd7b..4a5f2317229b 100644
+> > > > --- a/drivers/gpu/drm/drm_print.c
+> > > > +++ b/drivers/gpu/drm/drm_print.c
+> > > > @@ -55,18 +55,19 @@ MODULE_PARM_DESC(debug, "Enable debug output, w=
+here each bit enables a debug cat
+> > > >  #if !defined(CONFIG_DRM_USE_DYNAMIC_DEBUG)
+> > > >  module_param_named(debug, __drm_debug, ulong, 0600);
+> > > >  #else
+> > > > -/* classnames must match vals of enum drm_debug_category */
+> > > > -DECLARE_DYNDBG_CLASSMAP(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_=
+BITS, 0,
+> > > > -                     "DRM_UT_CORE",
+> > > > -                     "DRM_UT_DRIVER",
+> > > > -                     "DRM_UT_KMS",
+> > > > -                     "DRM_UT_PRIME",
+> > > > -                     "DRM_UT_ATOMIC",
+> > > > -                     "DRM_UT_VBL",
+> > > > -                     "DRM_UT_STATE",
+> > > > -                     "DRM_UT_LEASE",
+> > > > -                     "DRM_UT_DP",
+> > > > -                     "DRM_UT_DRMRES");
+> > > > +/* classnames must match value-symbols of enum drm_debug_category =
+*/
+> > > > +DRM_CLASSMAP_DEFINE(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS=
+,
+> > > > +                 DRM_UT_CORE,
+> > > > +                 "DRM_UT_CORE",
+> > > > +                 "DRM_UT_DRIVER",
+> > > > +                 "DRM_UT_KMS",
+> > > > +                 "DRM_UT_PRIME",
+> > > > +                 "DRM_UT_ATOMIC",
+> > > > +                 "DRM_UT_VBL",
+> > > > +                 "DRM_UT_STATE",
+> > > > +                 "DRM_UT_LEASE",
+> > > > +                 "DRM_UT_DP",
+> > > > +                 "DRM_UT_DRMRES");
 > > >
-> > > +struct session_consumer {
-> > > +     __u64           cookie;
+> > > Looks like this stuff just ends up in an array, so presumably
+> > > it should be possible to use designated initializers to make this
+> > > less fragile?
 > >
-> > And this cookie looks not scalable. If we can pass a data to handler, I would like to
-> > reuse it to pass the target function parameters to ret_handler as kretprobe/fprobe does.
+> > Im not sure I got your whole point, but:
+>
+> I mean using
+>  [DRM_UT_CORE] =3D "DRM_UT_CORE"
+> instead of
+>  "DRM_UT_CORE"
+> so there is no chance of screwing up the order.
+> Or maybe the order doesn't even matter here?
+>
+> Could also stringify to avoid accidental of typos.
+>
 > >
-> >         int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs, void *data);
+> > the fragility is the repetitive re-statement of the map,
+> > in those un-modified DECLARE_s,
+> > once replaced, the USEs just ref the struct built by the _DEFINE
+> > (once, and exported)
 > >
-> > uprobes can collect its uc's required sizes and allocate the memory (shadow stack frame)
-> > at handler_chain().
-> 
-> The goal here is to keep this simple and fast. I'd prefer to keep it
-> small and fixed size, if possible. I'm thinking about caching and
-> reusing return_instance as one of the future optimizations, so if we
-> can keep this more or less fixed (assuming there is typically not more
-> than 1 or 2 consumers per uprobe, which seems realistic), this will
-> provide a way to avoid excessive memory allocations.
-> 
+> > I dont really like the _DEFINEs restatement of the enum-values: DRM_UT_=
+*
+> > especially as "strings".
+> > I can automate the stringification with an APPLY_FN_(__stringify, ...)
+> > but the enum-list DRM_UT_* (w.o quotes) is still needed as args.
 > >
-> > > +     unsigned int    id;
-> > > +     int             rc;
-> > > +};
-> > > +
-> > >  struct return_instance {
-> > >       struct uprobe           *uprobe;
-> > >       unsigned long           func;
-> > > @@ -88,6 +97,9 @@ struct return_instance {
-> > >       bool                    chained;        /* true, if instance is nested */
+> > unless there is something C can do thats like Enum.values() ?
+> >
+> >
+> >
 > > >
-> > >       struct return_instance  *next;          /* keep as stack */
-> > > +
-> > > +     int                     sessions_cnt;
-> > > +     struct session_consumer sessions[];
-> >
-> > In that case, we don't have this array, but
-> >
-> >         char data[];
-> >
-> > And decode data array, which is a slice of variable length structure;
-> >
-> > struct session_consumer {
-> >         struct uprobe_consumer *uc;
-> >         char data[];
-> > };
-> >
-> > The size of session_consumer is uc->session_data_size + sizeof(uc).
-> >
-> > What would you think?
-> >
-> > Thank you,
-> >
-> > >  };
-> > >
-> > >  enum rp_check {
-> > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > > index 2c83ba776fc7..4da410460f2a 100644
-> > > --- a/kernel/events/uprobes.c
-> > > +++ b/kernel/events/uprobes.c
-> > > @@ -63,6 +63,8 @@ struct uprobe {
-> > >       loff_t                  ref_ctr_offset;
-> > >       unsigned long           flags;
-> > >
-> > > +     unsigned int            sessions_cnt;
-> 
-> [...]
+> > > --
+> > > Ville Syrj=C3=A4l=C3=A4
+> > > Intel
+>
+> --
+> Ville Syrj=C3=A4l=C3=A4
+> Intel
 
