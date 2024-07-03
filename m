@@ -1,319 +1,774 @@
-Return-Path: <linux-kernel+bounces-238984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60A692547F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:16:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF1292548A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E771C22441
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:16:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25F9628370B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D84213776F;
-	Wed,  3 Jul 2024 07:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86034136986;
+	Wed,  3 Jul 2024 07:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GbKq6viF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ndVDEOHk"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F186135A5B;
-	Wed,  3 Jul 2024 07:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE0133D5;
+	Wed,  3 Jul 2024 07:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719991000; cv=none; b=BKv8qUUoDf2R34sIfM/pWbyK/P/StY0kalHjrEEJ5t95nuS5HC+QSYoEjW3pcmgtcgYufgp9DZDRXXhhsVAMtQV+z9uv4MocajTOzXdWvDZTRcASl/GlVGcsPXZwTVwlXt4t73iDGER+UX9LJqKvLBJMkKElIoH6uRWEm0jw0jI=
+	t=1719991266; cv=none; b=UpYYpPRxH4pOpLnZRsTbNSVAyJa6E/c4Rb1XxxwQtN5MZROBGiN1LrTdnoaBwOK6xxnAAld4noDTb3GePkrGfz4eF8JJFL5484DH7GPqnuRklCT3DXJEE2NxcijjrmtXHDaacq3LPCJQB8vWGhW9DdXX8JTyafRom4uSwKILf8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719991000; c=relaxed/simple;
-	bh=Jnn7HRX+w2X1FfG/ozQi4PUqTF2VQIuM9En9tHDhNG0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mLbI77JbenQxx2tP60sAyJy6K8lJCGd0JxTtlUA078++PNr8R/CkPoaMMh/+s/R70jXvVsFM3bTYjobnTVSuSlWvXkWOwdrfXMBzjDo/bGkBg7QDe9JUI77vJfz9S0uwr1HtJKtFH5Xy6PXKwWvrt4hANgmOW5rRmbUci68lNsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GbKq6viF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462JHddG031391;
-	Wed, 3 Jul 2024 07:16:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=/sACPhImwWUed1O1qusp4XbK
-	WCHzdJchPgYvl42r6lU=; b=GbKq6viFhVIdDb/ENBp71K6HZMoT150paza7QfQE
-	7KJn4MOcDClDefdg0tSiOJN0e+CJPKFU5DmQ/S+3WyvX4wPuXjcVHwisheMJZMxi
-	bdw+Cf9FFws74XWkP+f2t/cr+uINS+eHwbYn5VaWTmEXOis+mJ+yBvtCiW2Haov+
-	DDjnkgmP+rv1gKcccXOIQ0PV7zbDMInoIXobvJ3IwvlrvzjTcFsx0krV7E1SrXIh
-	WJmYcZTYfJluxKg4Gn2ExgfOIhxSQAIxRrIdM4WwopkJCycbX4GFMmaZYwVtwzEu
-	Lo2NigvzHf/AluNsNV8Ezma9qVnR20et4/4sgIt0lx9UdQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402bj8aj9k-1
+	s=arc-20240116; t=1719991266; c=relaxed/simple;
+	bh=TTg4CPfdjRYDW1JBkP7OYmCC93nVcZxHSNVD1RCr3jA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uvDnS7i0nqPwS3byCcdbZwITJzeplgMex7fPXJYiBe163eVJsMSzo6TU0Ofb4ss689XlreXQd0McTFXoQF64kLYceNWJSbYsGaCFBtJXPiCtYlYeI4ogk8pK7AoppBh4z56SJFQ5RW8lMFVnR0cHdpjxHGb+E+qRnn3M549GupU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ndVDEOHk; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46307GtF023736;
+	Wed, 3 Jul 2024 09:20:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	1/qMI2ZSAly0qG+/NLeEaqZCgk3N+qux9koNP9N4Svs=; b=ndVDEOHk+VsQUBLy
+	lo/PsLTJkwCEWEypJf6GHsVTBBXVlENcFAWaarmzWtHAqfZWW32kFw09w/MrPBDB
+	B3muuy3wli/JOEf5oAdnCNKwxq04VJLEfg8+4QeXIgu9md9p9AGcfS+3rgZldglp
+	eJ+B+8ExQSDBlmdyYHpaQoeovjM+gQsbmb6EwwkOT/5wpiVTcI1kSRfFhFKR0ZYI
+	hOuYuxsbemvs46rc1I1yFbwoTlsuUsQUWRC92OgGLN6o6DCathCLn65DUJ7xwRrN
+	GSAbVyy+Seu4mFrM54MaROG1simZcUQC1uVUMWPGGbVR6FDWT+zoCQkzVF3rvthQ
+	Vb6YMA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 402uu0vnm5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Jul 2024 07:16:25 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4637GO4c017837
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Jul 2024 07:16:24 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 3 Jul 2024 00:16:17 -0700
-Date: Wed, 3 Jul 2024 12:46:12 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ilia.lin@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <ulf.hansson@linaro.org>,
-        <quic_sibis@quicinc.com>, <otto.pflueger@abscue.de>,
-        <neil.armstrong@linaro.org>, <luca@z3ntu.xyz>, <abel.vesa@linaro.org>,
-        <danila@jiaxyga.com>, <quic_ipkumar@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v3 2/9] cpufreq: qcom-nvmem: Add genpd names to
- match_data_kryo
-Message-ID: <ZoT6vBAipbkfdh11@hu-varada-blr.qualcomm.com>
-References: <20240626104002.420535-1-quic_varada@quicinc.com>
- <20240626104002.420535-3-quic_varada@quicinc.com>
- <za7t6ltttq2o5qwahfrzftsb7xfzbzdtg4zx3bvnf3fewhfeqf@vjrq7na5ioqm>
- <Zn5ZEI1m4jImz/Wp@hu-varada-blr.qualcomm.com>
- <kcgqm3ywdzdttllk357szirjdvdddsrcznfuwux6y237ncjnwb@3ots4rqreznu>
+	Wed, 03 Jul 2024 09:20:39 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 167244004D;
+	Wed,  3 Jul 2024 09:20:35 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6F507214529;
+	Wed,  3 Jul 2024 09:19:46 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 3 Jul
+ 2024 09:19:46 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 3 Jul
+ 2024 09:19:45 +0200
+Message-ID: <97eee634-1b11-490f-9d96-f1564b022b34@foss.st.com>
+Date: Wed, 3 Jul 2024 09:19:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <kcgqm3ywdzdttllk357szirjdvdddsrcznfuwux6y237ncjnwb@3ots4rqreznu>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: QAcsVQlZX_EfFTXbYG5ElCoxJ3YLrwsN
-X-Proofpoint-GUID: QAcsVQlZX_EfFTXbYG5ElCoxJ3YLrwsN
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/5] remoteproc: Add TEE support
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20240621143759.547793-1-arnaud.pouliquen@foss.st.com>
+ <20240621143759.547793-3-arnaud.pouliquen@foss.st.com>
+ <ZoQuW7lXZlYf+kEF@p14s>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <ZoQuW7lXZlYf+kEF@p14s>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-03_03,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- spamscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407030052
 
-On Fri, Jun 28, 2024 at 10:40:23AM +0300, Dmitry Baryshkov wrote:
-> On Fri, Jun 28, 2024 at 12:02:48PM GMT, Varadarajan Narayanan wrote:
-> > On Wed, Jun 26, 2024 at 09:23:17PM +0300, Dmitry Baryshkov wrote:
-> > > On Wed, Jun 26, 2024 at 04:09:55PM GMT, Varadarajan Narayanan wrote:
-> > > > This is used for tying up the cpu@N nodes with the power domains.
-> > > > Without this, 'cat /sys/kernel/debug/qcom_cpr3/thread0'
-> > > > crashes with NULL pointer access.
-> > >
-> > > Add the interesting part of the backtrace, please.
+Hello Mathieu
 
-Sure.
+On 7/2/24 18:44, Mathieu Poirier wrote:
+> Good morning,
+> 
+> On Fri, Jun 21, 2024 at 04:37:56PM +0200, Arnaud Pouliquen wrote:
+>> Add a remoteproc TEE (Trusted Execution Environment) driver
+>> that will be probed by the TEE bus. If the associated Trusted
+>> application is supported on secure part this driver offers a client
+>> interface to load a firmware by the secure part.
+>> This firmware could be authenticated by the secure trusted application.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>> Updates vs previous version:
+>> - rename tee_remoteproc.* file to rmeoteproc_tee.*,
+>> - rename TEE_REMOTEPROC config to REMOTEPROC_TEE,
+>> - remove "stm32" in some variable declarations,
+>> - remove useless "remoteproc_internal.h" include,
+>> - fix tee_rproc_ctx devm_kzalloc.
+>> - rework module description
+>> ---
+>>  drivers/remoteproc/Kconfig          |  10 +
+>>  drivers/remoteproc/Makefile         |   1 +
+>>  drivers/remoteproc/remoteproc_tee.c | 446 ++++++++++++++++++++++++++++
+>>  include/linux/remoteproc.h          |   4 +
+>>  include/linux/remoteproc_tee.h      | 100 +++++++
+>>  5 files changed, 561 insertions(+)
+>>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
+>>  create mode 100644 include/linux/remoteproc_tee.h
+>>
+>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>> index 48845dc8fa85..278f197acb90 100644
+>> --- a/drivers/remoteproc/Kconfig
+>> +++ b/drivers/remoteproc/Kconfig
+>> @@ -365,6 +365,16 @@ config XLNX_R5_REMOTEPROC
+>>  
+>>  	  It's safe to say N if not interested in using RPU r5f cores.
+>>  
+>> +
+>> +config REMOTEPROC_TEE
+>> +	tristate "Remoteproc support by a TEE application"
+>> +	depends on OPTEE
+>> +	help
+>> +	  Support a remote processor with a TEE application. The Trusted
+>> +	  Execution Context is responsible for loading the trusted firmware
+>> +	  image and managing the remote processor's lifecycle.
+>> +	  This can be either built-in or a loadable module.
+>> +
+>>  endif # REMOTEPROC
+>>  
+>>  endmenu
+>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>> index 91314a9b43ce..b4eb37177005 100644
+>> --- a/drivers/remoteproc/Makefile
+>> +++ b/drivers/remoteproc/Makefile
+>> @@ -36,6 +36,7 @@ obj-$(CONFIG_RCAR_REMOTEPROC)		+= rcar_rproc.o
+>>  obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+>>  obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
+>>  obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
+>> +obj-$(CONFIG_REMOTEPROC_TEE)		+= remoteproc_tee.o
+>>  obj-$(CONFIG_TI_K3_DSP_REMOTEPROC)	+= ti_k3_dsp_remoteproc.o
+>>  obj-$(CONFIG_TI_K3_R5_REMOTEPROC)	+= ti_k3_r5_remoteproc.o
+>>  obj-$(CONFIG_XLNX_R5_REMOTEPROC)	+= xlnx_r5_remoteproc.o
+>> diff --git a/drivers/remoteproc/remoteproc_tee.c b/drivers/remoteproc/remoteproc_tee.c
+>> new file mode 100644
+>> index 000000000000..70cb67451767
+>> --- /dev/null
+>> +++ b/drivers/remoteproc/remoteproc_tee.c
+>> @@ -0,0 +1,446 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2024
+>> + * Author: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> + */
+>> +
+>> +#include <linux/firmware.h>
+>> +#include <linux/io.h>
+>> +#include <linux/module.h>
+>> +#include <linux/remoteproc.h>
+>> +#include <linux/remoteproc_tee.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/tee_drv.h>
+>> +
+>> +#define MAX_TEE_PARAM_ARRY_MEMBER	4
+>> +
+>> +/*
+>> + * Authentication of the firmware and load in the remote processor memory
+>> + *
+>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>> + * [in]	 params[1].memref:	buffer containing the image of the buffer
+>> + */
+>> +#define TA_RPROC_FW_CMD_LOAD_FW		1
+>> +
+>> +/*
+>> + * Start the remote processor
+>> + *
+>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>> + */
+>> +#define TA_RPROC_FW_CMD_START_FW	2
+>> +
+>> +/*
+>> + * Stop the remote processor
+>> + *
+>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>> + */
+>> +#define TA_RPROC_FW_CMD_STOP_FW		3
+>> +
+>> +/*
+>> + * Return the address of the resource table, or 0 if not found
+>> + * No check is done to verify that the address returned is accessible by
+>> + * the non secure context. If the resource table is loaded in a protected
+>> + * memory the access by the non secure context will lead to a data abort.
+>> + *
+>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>> + * [out]  params[1].value.a:	32bit LSB resource table memory address
+>> + * [out]  params[1].value.b:	32bit MSB resource table memory address
+>> + * [out]  params[2].value.a:	32bit LSB resource table memory size
+>> + * [out]  params[2].value.b:	32bit MSB resource table memory size
+>> + */
+>> +#define TA_RPROC_FW_CMD_GET_RSC_TABLE	4
+>> +
+>> +/*
+>> + * Return the address of the core dump
+>> + *
+>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>> + * [out] params[1].memref:	address of the core dump image if exist,
+>> + *				else return Null
+>> + */
+>> +#define TA_RPROC_FW_CMD_GET_COREDUMP	5
+>> +
+>> +struct tee_rproc_context {
+>> +	struct list_head sessions;
+>> +	struct tee_context *tee_ctx;
+>> +	struct device *dev;
+>> +};
+>> +
+>> +static struct tee_rproc_context *tee_rproc_ctx;
+>> +
+>> +static void tee_rproc_prepare_args(struct tee_rproc *trproc, int cmd,
+>> +				   struct tee_ioctl_invoke_arg *arg,
+>> +				   struct tee_param *param,
+>> +				   unsigned int num_params)
+>> +{
+>> +	memset(arg, 0, sizeof(*arg));
+>> +	memset(param, 0, MAX_TEE_PARAM_ARRY_MEMBER * sizeof(*param));
+>> +
+>> +	arg->func = cmd;
+>> +	arg->session = trproc->session_id;
+>> +	arg->num_params = num_params + 1;
+>> +
+>> +	param[0] = (struct tee_param) {
+>> +		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+>> +		.u.value.a = trproc->rproc_id,
+>> +	};
+>> +}
+>> +
+>> +int tee_rproc_load_fw(struct rproc *rproc, const struct firmware *fw)
+>> +{
+>> +	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+>> +	struct tee_rproc *trproc = rproc->tee_interface;
+>> +	struct tee_ioctl_invoke_arg arg;
+>> +	struct tee_shm *fw_shm;
+>> +	int ret;
+>> +
+>> +	if (!trproc)
+>> +		return -EINVAL;
+>> +
+>> +	fw_shm = tee_shm_register_kernel_buf(tee_rproc_ctx->tee_ctx, (void *)fw->data, fw->size);
+>> +	if (IS_ERR(fw_shm))
+>> +		return PTR_ERR(fw_shm);
+>> +
+>> +	tee_rproc_prepare_args(trproc, TA_RPROC_FW_CMD_LOAD_FW, &arg, param, 1);
+>> +
+>> +	/* Provide the address of the firmware image */
+>> +	param[1] = (struct tee_param) {
+>> +		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT,
+>> +		.u.memref = {
+>> +			.shm = fw_shm,
+>> +			.size = fw->size,
+>> +			.shm_offs = 0,
+>> +		},
+>> +	};
+>> +
+>> +	ret = tee_client_invoke_func(tee_rproc_ctx->tee_ctx, &arg, param);
+>> +	if (ret < 0 || arg.ret != 0) {
+>> +		dev_err(tee_rproc_ctx->dev,
+>> +			"TA_RPROC_FW_CMD_LOAD_FW invoke failed TEE err: %x, ret:%x\n",
+>> +			arg.ret, ret);
+>> +		if (!ret)
+>> +			ret = -EIO;
+>> +	}
+>> +
+>> +	tee_shm_free(fw_shm);
+>> +
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(tee_rproc_load_fw);
+>> +
+>> +static int tee_rproc_get_loaded_rsc_table(struct rproc *rproc, phys_addr_t *rsc_pa,
+>> +					  size_t *table_sz)
+>> +{
+>> +	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+>> +	struct tee_rproc *trproc = rproc->tee_interface;
+>> +	struct tee_ioctl_invoke_arg arg;
+>> +	int ret;
+>> +
+>> +	tee_rproc_prepare_args(trproc, TA_RPROC_FW_CMD_GET_RSC_TABLE, &arg, param, 2);
+>> +
+>> +	param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
+>> +	param[2].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
+>> +
+>> +	ret = tee_client_invoke_func(tee_rproc_ctx->tee_ctx, &arg, param);
+>> +	if (ret < 0 || arg.ret != 0) {
+>> +		dev_err(tee_rproc_ctx->dev,
+>> +			"TA_RPROC_FW_CMD_GET_RSC_TABLE invoke failed TEE err: %x, ret:%x\n",
+>> +			arg.ret, ret);
+>> +		return -EIO;
+>> +	}
+>> +
+>> +	*table_sz = param[2].u.value.a;
+>> +
+>> +	if (*table_sz)
+>> +		*rsc_pa = param[1].u.value.a;
+>> +	else
+>> +		*rsc_pa  = 0;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +int tee_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>> +{
+>> +	phys_addr_t rsc_table;
+>> +	void __iomem *rsc_va;
+>> +	size_t table_sz;
+>> +	int ret;
+>> +
+>> +	ret = tee_rproc_load_fw(rproc, fw);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = tee_rproc_get_loaded_rsc_table(rproc, &rsc_table, &table_sz);
+>> +	if (ret)
+>> +		return ret;
+> 
+> Do we need an API to unload the firware from memory too?  If anything fails we
+> still have firmware loaded into memory.
 
-> >
-> >         if (thread->drv->desc->cpr_type < CTRL_TYPE_CPRH) {
-> >                 seq_printf(s, "current_volt = %d uV\n", thread->drv->last_uV);
-> >                 seq_printf(s, "requested voltage: %d uV\n", thread->corner->last_uV);
-> >         }
-> >
-> > thread->corner is NULL in the second printf above.
-> >
-> > 	# cat /sys/kernel/debug/qcom_cpr3/thread0
-> > 	[   16.965241] Unable to handle kernel NULL pointer dereference at virtual address 000000000000000c
-> > 	[   16.965270] Mem abort info:
-> > 	[   16.973181]   ESR = 0x0000000096000004
-> > 	[   16.975607]   EC = 0x25: DABT (current EL), IL = 32 bits
-> > 	[   16.979425]   SET = 0, FnV = 0
-> > 	[   16.984889]   EA = 0, S1PTW = 0
-> > 	[   16.987756]   FSC = 0x04: level 0 translation fault
-> > 	[   16.990792] Data abort info:
-> > 	[   16.995652]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> > 	[   16.998779]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> > 	[   17.004074]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > 	[   17.009196] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000481b1000
-> > 	[   17.014579] [000000000000000c] pgd=0000000000000000, p4d=0000000000000000
-> > 	[   17.020919] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> > 	[   17.020921] Modules linked in:
-> > 	[   17.020926] CPU: 0 UID: 0 PID: 118 Comm: cat Not tainted 6.10.0-rc4-next-20240620-00020-g125eb3184fc1-dirty #9
-> > 	[   17.020931] Hardware name: Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7 (DT)
-> > 	[   17.020933] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > 	[   17.020936] pc : cpr3_debug_info_show+0x3a0/0x3ac
-> > 	[   17.020945] lr : cpr3_debug_info_show+0x390/0x3ac
-> > 	[   17.020948] sp : ffff800086293b90
-> > 	[   17.020949] x29: ffff800086293b90 x28: ffff0000034ae038 x27: 0000000000400cc0
-> > 	[   17.020953] x26: 000000007ffff000 x25: ffff0000034ae028 x24: 0000000000000000
-> > 	[   17.020957] x23: ffff800086293c80 x22: ffff000002399880 x21: ffff000002a8fa80
-> > 	[   17.020960] x20: ffff0000034ae000 x19: 0000000000000000 x18: ffffffffffffffff
-> > 	[   17.020964] x17: 0000000000000000 x16: 0000000000000000 x15: ffff800086293a40
-> > 	[   17.020967] x14: ffff000002913000 x13: ffff00000291200f x12: 0000000000000000
-> > 	[   17.020970] x11: 0000000000000000 x10: 0000000000000000 x9 : ffff0000034a9000
-> > 	[   17.020973] x8 : 000000000a567520 x7 : 0000000000000001 x6 : 000000000a567520
-> > 	[   17.020976] x5 : ffff000002912014 x4 : ffff800080e1f3a5 x3 : 0000000000000014
-> > 	[   17.020979] x2 : 0000000000000000 x1 : ffff800080e1f848 x0 : ffff0000034ae000
-> > 	[   17.020983] Call trace:
-> > 	[   17.020984]  cpr3_debug_info_show+0x3a0/0x3ac
-> > 	[   17.020987]  seq_read_iter+0xe0/0x45c
-> > 	[   17.020993]  seq_read+0xec/0x130
-> > 	[   17.020996]  full_proxy_read+0x60/0xb4
-> > 	[   17.020999]  vfs_read+0xc0/0x31c
-> > 	[   17.021003]  ksys_read+0x70/0x104
-> > 	[   17.021006]  __arm64_sys_read+0x1c/0x28
-> > 	[   17.021008]  invoke_syscall+0x48/0x114
-> > 	[   17.021014]  el0_svc_common+0x3c/0xe8
-> > 	[   17.021017]  do_el0_svc+0x20/0x2c
-> > 	[   17.021020]  el0_svc+0x34/0xd8
-> > 	[   17.021024]  el0t_64_sync_handler+0x120/0x12c
-> > 	[   17.021027]  el0t_64_sync+0x190/0x194
-> > 	[   17.021031] Code: f94012c2 aa1403e0 b0004701 91212021 (b9400c42)
-> > 	[   17.021033] ---[ end trace 0000000000000000 ]---
-> > 	Segmentation fault
->
-> Well, I asked to add it, so please drop the timestamps and registers and
-> include it into the commit message. While you are at it, please review
-> Documentation/process/submitting-patches.rst and change the commit
-> message to follow the guidelines.
->
-> While doing so (and while responding to a comment below) you will notice
-> that this change should not be applied to the generic match_data_kryo
-> instance. Instead you should add a device-specific entry into match
-> table and use struct qcom_cpufreq_match_data instance that has
-> .genpd_names set.
+For the time being, the clean-up of the memory is not implemented in OP-TEE.
+I plan to upstream this part in a second step, associated with a memory protection
+strategy. This should be directly implemented in the OP-TEE service to avoid
+reliance on Linux error management.
+Nonetheless, an API could be added to clean the memory if needed.
 
-Ok, will add a new match data for IPQ9574.
+Thanks,
+Arnaud
 
-> > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > > ---
-> > > >  drivers/cpufreq/qcom-cpufreq-nvmem.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> > > > index 939702dfa73f..5e6525c7788c 100644
-> > > > --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> > > > +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> > > > @@ -399,6 +399,7 @@ static const char *generic_genpd_names[] = { "perf", NULL };
-> > > >
-> > > >  static const struct qcom_cpufreq_match_data match_data_kryo = {
-> > > >  	.get_version = qcom_cpufreq_kryo_name_version,
-> > > > +	.genpd_names = generic_genpd_names,
-> > >
-> > > This forces that every Kryo SoC has "perf" genpd, which obviously isn't
-> > > corret (at least from the upstream support point of view).
-
-Understand, will have a different match data for IPQ9574.
-
-> > While trying to get the above backtrace, randomly during boot
-> > I see the following BUG too.
->
-> This isn't a response to my comment.
-
-Sorry, felt that genpd_names would be needed for kryo CPUs too
-and wanted to bring this BUG() to your attention. Was wondering
-how kryo CPUs didn't face the following BUG(). Since this BUG()
-was hitting occasionally, assumed it could be some boot time
-driver probe order/timing related race that was getting masked in
-kryo CPUs but occuring in IQP9574.
-
-> > 	[    1.562847] ------------[ cut here ]------------
-> > 	[    1.574342] kernel BUG at drivers/cpufreq/cpufreq.c:1542!
-> > 	[    1.579203] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-> > 	[    1.579209] Modules linked in:
-> > 	[    1.579217] CPU: 2 UID: 0 PID: 11 Comm: kworker/u16:0 Not tainted 6.10.0-rc4-next-20240620-00020-g125eb3184fc1-dirty #10
-> > 	[    1.579227] Hardware name: Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7 (DT)
-> > 	[    1.579232] Workqueue: events_unbound deferred_probe_work_func
-> > 	[    1.579249] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > 	[    1.579257] pc : cpufreq_online+0x938/0x954
-> > 	[    1.579271] lr : cpufreq_online+0x788/0x954
-> > 	[    1.579281] sp : ffff8000817c3520
-> > 	[    1.579283] x29: ffff8000817c3520 x28: ffff0000029efa50 x27: 0000000000000001
-> > 	[    1.579294] x26: 0000000000000001 x25: ffff8000814d8da0 x24: 0000000000000000
-> > 	[    1.579303] x23: ffff0000029ef9d0 x22: ffff800081735000 x21: 0000000000000000
-> > 	[    1.579312] x20: 00000000000c15c0 x19: ffff0000029ef800 x18: ffff00000183481c
-> > 	[    1.579321] x17: ffff8000818a3638 x16: 0000000000000000 x15: ffff8000818a3670
-> > 	[    1.579330] x14: 0000000000000003 x13: ffff00000192b140 x12: ffff8000814d8c58
-> > 	[    1.579338] x11: ffff00000192b140 x10: 00000000000009b0 x9 : ffff8000817c3240
-> > 	[    1.579347] x8 : ffff00000192bad0 x7 : 0000000000000001 x6 : ffff8000814d8da0
-> > 	[    1.579355] x5 : ffff8000812c32d0 x4 : 0000000000000000 x3 : 0000000000000000
-> > 	[    1.579363] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 00000000fffffff0
-> > 	[    1.579372] Call trace:
-> > 	[    1.579375]  cpufreq_online+0x938/0x954
-> > 	[    1.579386]  cpufreq_add_dev+0x80/0x98
-> > 	[    1.579395]  subsys_interface_register+0x100/0x130
-> > 	[    1.579404]  cpufreq_register_driver+0x150/0x244
-> > 	[    1.579413]  dt_cpufreq_probe+0x8c/0x440
-> > 	[    1.579420]  platform_probe+0x68/0xc8
-> > 	[    1.579430]  really_probe+0xbc/0x29c
-> > 	[    1.579438]  __driver_probe_device+0x78/0x12c
-> > 	[    1.579446]  driver_probe_device+0xd8/0x15c
-> > 	[    1.579454]  __device_attach_driver+0xb8/0x134
-> > 	[    1.579463]  bus_for_each_drv+0x84/0xe0
-> > 	[    1.579470]  __device_attach+0x9c/0x188
-> > 	[    1.579478]  device_initial_probe+0x14/0x20
-> > 	[    1.579487]  bus_probe_device+0xac/0xb0
-> > 	[    1.579494]  device_add+0x55c/0x720
-> > 	[    1.579500]  platform_device_add+0x1b8/0x244
-> > 	[    1.579510]  platform_device_register_full+0xfc/0x184
-> > 	[    1.579516]  platform_device_register_resndata.constprop.0+0x5c/0x8c
-> > 	[    1.579524]  qcom_cpufreq_probe+0x1e4/0x498
-> > 	[    1.579531]  platform_probe+0x68/0xc8
-> > 	[    1.579540]  really_probe+0xbc/0x29c
-> > 	[    1.579548]  __driver_probe_device+0x78/0x12c
-> > 	[    1.579556]  driver_probe_device+0xd8/0x15c
-> > 	[    1.579564]  __device_attach_driver+0xb8/0x134
-> > 	[    1.579573]  bus_for_each_drv+0x84/0xe0
-> > 	[    1.579580]  __device_attach+0x9c/0x188
-> > 	[    1.579588]  device_initial_probe+0x14/0x20
-> > 	[    1.579596]  bus_probe_device+0xac/0xb0
-> > 	[    1.579603]  deferred_probe_work_func+0x88/0xc0
-> > 	[    1.579611]  process_one_work+0x148/0x28c
-> > 	[    1.579623]  worker_thread+0x2e8/0x3f8
-> > 	[    1.579633]  kthread+0x110/0x114
-> > 	[    1.579641]  ret_from_fork+0x10/0x20
-> > 	[    1.579653] Code: aa1703e0 52800021 97e38ed5 17ffffea (d4210000)
-> > 	[    1.579657] ---[ end trace 0000000000000000 ]---
-> > 	[    1.851078] note: kworker/u16:0[11] exited with irqs disabled
-> > 	[    1.855791] note: kworker/u16:0[11] exited with preempt_count 1
-> > 	[    1.861586] ------------[ cut here ]------------
-> >
-> > Randomly, the following call seems to return -EBUSY causing
-> > the above BUG().
-> >
-> > 	ret = __cpufreq_driver_target(policy, old_freq - 1,
-> > 				      CPUFREQ_RELATION_L);
-> >
-> > 	/*
-> > 	 * Reaching here after boot in a few seconds may not
-> > 	 * mean that system will remain stable at "unknown"
-> > 	 * frequency for longer duration. Hence, a BUG_ON().
-> > 	 */
-> > 	BUG_ON(ret);
-> >
-> > Not sure why this does not happen in every boot, and how it
-> > is tied to genpd_names. Will debug and update.
-
-qcom_cpufreq_probe invokes dev_pm_opp_set_config if either
-genpd_names or get_version is set in qcom_cpufreq_match_data.
-If genpd_names is available, dev_pm_opp_set_config calls
-_opp_attach_genpd giving genpd_names as an input. This in turn
-calls dev_pm_domain_attach_by_name and binds the CPU device with
-the OPP tables etc. Sometimes, the pm_domain driver is probed by
-this time and sometimes it is not. When it is not probed,
-qcom_cpufreq_probe is also held back via the EPROBE_DEFER
-mechanism. This in turn holds back the cpufreq driver probe.
-
-When genpd_names is not set in match_data_kryo,
-dev_pm_opp_set_config doesn't call _opp_attach_genpd. Hence,
-regardless of pm_domain driver's probe status, qcom_cpufreq_probe
-completes. This allows the cpufreq driver's probe to proceed. The
-cpufreq driver tries to set some frequency based on the
-opp-tables. At this point if pm_domain driver is probed, the
-frequency change goes through. If pm_domain is not probed yet,
-the above BUG() happens.
-
-Will post the next version shortly with this and the other
-comments addressed. Please take a look.
-
-Thanks
-Varada
+> 
+> More comments to come later.
+> 
+> Mathieu
+> 
+>> +
+>> +	/*
+>> +	 * We assume here that the memory mapping is the same between the TEE and Linux kernel
+>> +	 * contexts. Else a new TEE remoteproc service could be needed to get a copy of the
+>> +	 * resource table
+>> +	 */
+>> +	rsc_va = ioremap_wc(rsc_table, table_sz);
+>> +	if (IS_ERR_OR_NULL(rsc_va)) {
+>> +		dev_err(tee_rproc_ctx->dev, "Unable to map memory region: %pa+%zx\n",
+>> +			&rsc_table, table_sz);
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Create a copy of the resource table to have the same behavior as the elf loader.
+>> +	 * This cached table will be used after the remoteproc stops to free resources, and for
+>> +	 * crash recovery to reapply the settings.
+>> +	 */
+>> +	rproc->cached_table = kmemdup((__force void *)rsc_va, table_sz, GFP_KERNEL);
+>> +	if (!rproc->cached_table) {
+>> +		ret = -ENOMEM;
+>> +		goto out;
+>> +	}
+>> +
+>> +	rproc->table_ptr = rproc->cached_table;
+>> +	rproc->table_sz = table_sz;
+>> +
+>> +out:
+>> +	iounmap(rsc_va);
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(tee_rproc_parse_fw);
+>> +
+>> +struct resource_table *tee_rproc_find_loaded_rsc_table(struct rproc *rproc,
+>> +						       const struct firmware *fw)
+>> +{
+>> +	struct tee_rproc *trproc = rproc->tee_interface;
+>> +	phys_addr_t rsc_table;
+>> +	size_t table_sz;
+>> +	int ret;
+>> +
+>> +	if (!trproc)
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	ret = tee_rproc_get_loaded_rsc_table(rproc, &rsc_table, &table_sz);
+>> +	if (ret)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	rproc->table_sz = table_sz;
+>> +	if (!table_sz)
+>> +		return NULL;
+>> +
+>> +	/*
+>> +	 * At this step the memory area that contains the resource table should have be declared
+>> +	 * in the remote proc platform driver and allocated by rproc_alloc_registered_carveouts().
+>> +	 */
+>> +	return (struct resource_table *)rproc_pa_to_va(rproc, rsc_table, table_sz, NULL);
+>> +}
+>> +EXPORT_SYMBOL_GPL(tee_rproc_find_loaded_rsc_table);
+>> +
+>> +int tee_rproc_start(struct rproc *rproc)
+>> +{
+>> +	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+>> +	struct tee_rproc *trproc = rproc->tee_interface;
+>> +	struct tee_ioctl_invoke_arg arg;
+>> +	int ret = 0;
+>> +
+>> +	if (!trproc)
+>> +		return -EINVAL;
+>> +
+>> +	tee_rproc_prepare_args(trproc, TA_RPROC_FW_CMD_START_FW, &arg, param, 0);
+>> +
+>> +	ret = tee_client_invoke_func(tee_rproc_ctx->tee_ctx, &arg, param);
+>> +	if (ret < 0 || arg.ret != 0) {
+>> +		dev_err(tee_rproc_ctx->dev,
+>> +			"TA_RPROC_FW_CMD_START_FW invoke failed TEE err: %x, ret:%x\n",
+>> +			arg.ret, ret);
+>> +		if (!ret)
+>> +			return  -EIO;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(tee_rproc_start);
+>> +
+>> +int tee_rproc_stop(struct rproc *rproc)
+>> +{
+>> +	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+>> +	struct tee_rproc *trproc = rproc->tee_interface;
+>> +	struct tee_ioctl_invoke_arg arg;
+>> +	int ret;
+>> +
+>> +	if (!trproc)
+>> +		return -EINVAL;
+>> +
+>> +	tee_rproc_prepare_args(trproc, TA_RPROC_FW_CMD_STOP_FW, &arg, param, 0);
+>> +
+>> +	ret = tee_client_invoke_func(tee_rproc_ctx->tee_ctx, &arg, param);
+>> +	if (ret < 0 || arg.ret != 0) {
+>> +		dev_err(tee_rproc_ctx->dev,
+>> +			"TA_RPROC_FW_CMD_STOP_FW invoke failed TEE err: %x, ret:%x\n",
+>> +			arg.ret, ret);
+>> +		if (!ret)
+>> +			ret = -EIO;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(tee_rproc_stop);
+>> +
+>> +static const struct tee_client_device_id tee_rproc_id_table[] = {
+>> +	{UUID_INIT(0x80a4c275, 0x0a47, 0x4905, 0x82, 0x85, 0x14, 0x86, 0xa9, 0x77, 0x1a, 0x08)},
+>> +	{}
+>> +};
+>> +
+>> +struct tee_rproc *tee_rproc_register(struct device *dev, struct rproc *rproc, unsigned int rproc_id)
+>> +{
+>> +	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+>> +	struct tee_ioctl_open_session_arg sess_arg;
+>> +	struct tee_client_device *tee_device;
+>> +	struct tee_rproc *trproc, *p_err;
+>> +	int ret;
+>> +
+>> +	/*
+>> +	 * Test if the device has been probed by the TEE bus. In case of failure, we ignore the
+>> +	 * reason. The bus could be not yet probed or the service not available in the secure
+>> +	 * firmware.The assumption in such a case is that the TEE remoteproc is not probed.
+>> +	 */
+>> +	if (!tee_rproc_ctx)
+>> +		return ERR_PTR(-EPROBE_DEFER);
+>> +
+>> +	/* Prevent tee rproc module from being removed */
+>> +	if (!try_module_get(THIS_MODULE)) {
+>> +		dev_err(tee_rproc_ctx->dev, "can't get owner\n");
+>> +		return ERR_PTR(-ENODEV);
+>> +	}
+>> +
+>> +	trproc =  devm_kzalloc(dev, sizeof(*trproc), GFP_KERNEL);
+>> +	if (!trproc) {
+>> +		p_err = ERR_PTR(-ENOMEM);
+>> +		goto module_put;
+>> +	}
+>> +	tee_device = to_tee_client_device(tee_rproc_ctx->dev);
+>> +	memset(&sess_arg, 0, sizeof(sess_arg));
+>> +
+>> +	memcpy(sess_arg.uuid, tee_device->id.uuid.b, TEE_IOCTL_UUID_LEN);
+>> +
+>> +	sess_arg.clnt_login = TEE_IOCTL_LOGIN_REE_KERNEL;
+>> +	sess_arg.num_params = 1;
+>> +
+>> +	param[0] = (struct tee_param) {
+>> +		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+>> +		.u.value.a = rproc_id,
+>> +	};
+>> +
+>> +	ret = tee_client_open_session(tee_rproc_ctx->tee_ctx, &sess_arg, param);
+>> +	if (ret < 0 || sess_arg.ret != 0) {
+>> +		dev_err(dev, "tee_client_open_session failed, err: %x\n", sess_arg.ret);
+>> +		p_err = ERR_PTR(-EINVAL);
+>> +		goto module_put;
+>> +	}
+>> +
+>> +	trproc->parent = dev;
+>> +	trproc->rproc_id = rproc_id;
+>> +	trproc->session_id = sess_arg.session;
+>> +
+>> +	trproc->rproc = rproc;
+>> +	rproc->tee_interface = trproc;
+>> +
+>> +	list_add_tail(&trproc->node, &tee_rproc_ctx->sessions);
+>> +
+>> +	return trproc;
+>> +
+>> +module_put:
+>> +	module_put(THIS_MODULE);
+>> +	return p_err;
+>> +}
+>> +EXPORT_SYMBOL_GPL(tee_rproc_register);
+>> +
+>> +int tee_rproc_unregister(struct tee_rproc *trproc)
+>> +{
+>> +	struct rproc *rproc = trproc->rproc;
+>> +	int ret;
+>> +
+>> +	ret = tee_client_close_session(tee_rproc_ctx->tee_ctx, trproc->session_id);
+>> +	if (ret < 0)
+>> +		dev_err(trproc->parent,	"tee_client_close_session failed, err: %x\n", ret);
+>> +
+>> +	list_del(&trproc->node);
+>> +	rproc->tee_interface = NULL;
+>> +
+>> +	module_put(THIS_MODULE);
+>> +
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(tee_rproc_unregister);
+>> +
+>> +static int tee_rproc_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+>> +{
+>> +	/* Today we support only the OP-TEE, could be extend to other tees */
+>> +	return (ver->impl_id == TEE_IMPL_ID_OPTEE);
+>> +}
+>> +
+>> +static int tee_rproc_probe(struct device *dev)
+>> +{
+>> +	struct tee_context *tee_ctx;
+>> +	int ret;
+>> +
+>> +	/* Open context with TEE driver */
+>> +	tee_ctx = tee_client_open_context(NULL, tee_rproc_ctx_match, NULL, NULL);
+>> +	if (IS_ERR(tee_ctx))
+>> +		return PTR_ERR(tee_ctx);
+>> +
+>> +	tee_rproc_ctx = devm_kzalloc(dev, sizeof(*tee_rproc_ctx), GFP_KERNEL);
+>> +	if (!tee_rproc_ctx) {
+>> +		ret = -ENOMEM;
+>> +		goto err;
+>> +	}
+>> +
+>> +	tee_rproc_ctx->dev = dev;
+>> +	tee_rproc_ctx->tee_ctx = tee_ctx;
+>> +	INIT_LIST_HEAD(&tee_rproc_ctx->sessions);
+>> +
+>> +	return 0;
+>> +err:
+>> +	tee_client_close_context(tee_ctx);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int tee_rproc_remove(struct device *dev)
+>> +{
+>> +	struct tee_rproc *entry, *tmp;
+>> +
+>> +	list_for_each_entry_safe(entry, tmp, &tee_rproc_ctx->sessions, node) {
+>> +		tee_client_close_session(tee_rproc_ctx->tee_ctx, entry->session_id);
+>> +		list_del(&entry->node);
+>> +		kfree(entry);
+>> +	}
+>> +
+>> +	tee_client_close_context(tee_rproc_ctx->tee_ctx);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +MODULE_DEVICE_TABLE(tee, tee_rproc_id_table);
+>> +
+>> +static struct tee_client_driver tee_rproc_fw_driver = {
+>> +	.id_table	= tee_rproc_id_table,
+>> +	.driver		= {
+>> +		.name		= KBUILD_MODNAME,
+>> +		.bus		= &tee_bus_type,
+>> +		.probe		= tee_rproc_probe,
+>> +		.remove		= tee_rproc_remove,
+>> +	},
+>> +};
+>> +
+>> +static int __init tee_rproc_fw_mod_init(void)
+>> +{
+>> +	return driver_register(&tee_rproc_fw_driver.driver);
+>> +}
+>> +
+>> +static void __exit tee_rproc_fw_mod_exit(void)
+>> +{
+>> +	driver_unregister(&tee_rproc_fw_driver.driver);
+>> +}
+>> +
+>> +module_init(tee_rproc_fw_mod_init);
+>> +module_exit(tee_rproc_fw_mod_exit);
+>> +
+>> +MODULE_DESCRIPTION(" remote processor support with a TEE application");
+>> +MODULE_LICENSE("GPL");
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index 8fd0d7f63c8e..fbe1d6793709 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -503,6 +503,8 @@ enum rproc_features {
+>>  	RPROC_MAX_FEATURES,
+>>  };
+>>  
+>> +struct tee_rproc;
+>> +
+>>  /**
+>>   * struct rproc - represents a physical remote processor device
+>>   * @node: list node of this rproc object
+>> @@ -545,6 +547,7 @@ enum rproc_features {
+>>   * @cdev: character device of the rproc
+>>   * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+>>   * @features: indicate remoteproc features
+>> + * @tee_interface: pointer to the remoteproc tee context
+>>   */
+>>  struct rproc {
+>>  	struct list_head node;
+>> @@ -586,6 +589,7 @@ struct rproc {
+>>  	struct cdev cdev;
+>>  	bool cdev_put_on_release;
+>>  	DECLARE_BITMAP(features, RPROC_MAX_FEATURES);
+>> +	struct tee_rproc *tee_interface;
+>>  };
+>>  
+>>  /**
+>> diff --git a/include/linux/remoteproc_tee.h b/include/linux/remoteproc_tee.h
+>> new file mode 100644
+>> index 000000000000..ccf34a218d54
+>> --- /dev/null
+>> +++ b/include/linux/remoteproc_tee.h
+>> @@ -0,0 +1,100 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>> +/*
+>> + * Copyright(c) 2024 STMicroelectronics
+>> + */
+>> +
+>> +#ifndef REMOTEPROC_TEE_H
+>> +#define REMOTEPROC_TEE_H
+>> +
+>> +#include <linux/tee_drv.h>
+>> +#include <linux/firmware.h>
+>> +#include <linux/remoteproc.h>
+>> +
+>> +struct rproc;
+>> +
+>> +/**
+>> + * struct tee_rproc - TEE remoteproc structure
+>> + * @node:		Reference in list
+>> + * @rproc:		Remoteproc reference
+>> + * @parent:		Parent device
+>> + * @rproc_id:		Identifier of the target firmware
+>> + * @session_id:		TEE session identifier
+>> + */
+>> +struct tee_rproc {
+>> +	struct list_head node;
+>> +	struct rproc *rproc;
+>> +	struct device *parent;
+>> +	u32 rproc_id;
+>> +	u32 session_id;
+>> +};
+>> +
+>> +#if IS_REACHABLE(CONFIG_REMOTEPROC_TEE)
+>> +
+>> +struct tee_rproc *tee_rproc_register(struct device *dev, struct rproc *rproc,
+>> +				     unsigned int rproc_id);
+>> +int tee_rproc_unregister(struct tee_rproc *trproc);
+>> +int tee_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw);
+>> +int tee_rproc_load_fw(struct rproc *rproc, const struct firmware *fw);
+>> +struct resource_table *tee_rproc_find_loaded_rsc_table(struct rproc *rproc,
+>> +						       const struct firmware *fw);
+>> +int tee_rproc_start(struct rproc *rproc);
+>> +int tee_rproc_stop(struct rproc *rproc);
+>> +
+>> +#else
+>> +
+>> +static inline struct tee_rproc *tee_rproc_register(struct device *dev, struct rproc *rproc,
+>> +						   unsigned int rproc_id)
+>> +{
+>> +	return ERR_PTR(-ENODEV);
+>> +}
+>> +
+>> +static int tee_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline int tee_rproc_unregister(struct tee_rproc *trproc)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline int tee_rproc_load_fw(struct rproc *rproc,  const struct firmware *fw)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline int tee_rproc_start(struct rproc *rproc)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline int tee_rproc_stop(struct rproc *rproc)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline struct resource_table *
+>> +tee_rproc_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *fw)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return NULL;
+>> +}
+>> +#endif /* CONFIG_REMOTEPROC_TEE */
+>> +#endif /* REMOTEPROC_TEE_H */
+>> -- 
+>> 2.25.1
+>>
 
