@@ -1,91 +1,122 @@
-Return-Path: <linux-kernel+bounces-239728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 483A6926496
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:13:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D195926484
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E72AF1F24090
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:13:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890111C21424
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB89181BA6;
-	Wed,  3 Jul 2024 15:13:08 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2939180A8C;
-	Wed,  3 Jul 2024 15:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C0017FAB8;
+	Wed,  3 Jul 2024 15:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QctYtcqB"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DE61DA319;
+	Wed,  3 Jul 2024 15:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720019587; cv=none; b=kfjrZFZ+SmPmenHWvVeAOpzDwBfl+h5mogJ9upihEMEwuc/GpsHwLuMIq/xRvQ47Jk2fSVy1V42FXqtG7xLN6InsYW3t80C0sVUm8C/UPvM11wN/tcfeT2FQetC1gb+p2F28hBgQVfp9uxmzR8zM8OUD5HDBYzl2c6gj33ajbQw=
+	t=1720019467; cv=none; b=Gh0Km+NDm3G6DG16BjoPfGj7NCIgXDq2D0JA+6UDvrONPhk4XHCm/sUm6LlDwtz8YZVy1BkFT/w9B/3UqF6lSLf5Hz1PaEICgBoPjZvLLFcrEiXipduQ26+t5AtdGD3ta88Y5cI4YgFTpHV1ziTJZbPqrBhau0uQ4mwHeu/0YG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720019587; c=relaxed/simple;
-	bh=0BJr0XI6mAaHzmUHZcGXPiiFlw7kDDa7xgjNkKNbqMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pcle5qluKpFZbwLccg/qxY/DM+GbSAsWJlM+7qkUOA34ttFbhHohnCWuN8HqjFlvXRTXpCDcyeegAOmfYHTB1bDWztu8F+rHYtj4QT3jcS/7mzjsC33iCzPBUJ/AI7CZVA6veGLmSmsrR+82CvJ2NmogbnoFiECisAAPSdynUpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sP1eq-0000BH-00; Wed, 03 Jul 2024 17:12:32 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 72759C0411; Wed,  3 Jul 2024 17:04:49 +0200 (CEST)
-Date: Wed, 3 Jul 2024 17:04:49 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Paul Burton <paulburton@kernel.org>, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] MIPS: smp: Make IPI interrupts scalable
-Message-ID: <ZoVokcDYqZnuqd2X@alpha.franken.de>
-References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com>
- <20240616-b4-mips-ipi-improvements-v1-1-e332687f1692@flygoat.com>
+	s=arc-20240116; t=1720019467; c=relaxed/simple;
+	bh=3wjTP1DBKceOOiIIRZ+CtbjKJjvmYWz9hXD+GkONhlo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=G6G+R5c7NE25FndVIBgOc4IPngj3zYC1/N7yQ66Ok0Xu4hMvnLhF46g+w2n/dN9K3lpuhxo9HLB7USjZM8m+NBbUlc5oDHSFUuh5QmnsNA61hxC/TdcwRFp1peKFSyvhojOw2UvlHCj0lueJ5+jMuiDSEFocRVRxwzPAfoxPriM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QctYtcqB; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720019462; x=1720624262; i=markus.elfring@web.de;
+	bh=uzXyAXmbJBxGH6PQ3hVx3H9XYijhY9dW2zRghJjaRTI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=QctYtcqBAc9Z7SyNbdJh4kGMRJx+WhM3exw+AS54JsJAzzZq4gkRLIQRZBh/ZNdb
+	 uI6gZykd6BzQo4orusmIJM/tWoGmoNRyGzcDykFjb5lQkDAGkaqEFb+uHGM8dNrAn
+	 2BpIRCqL7Z3ZboCPKX+cMjk6Rrj/FmDtQFTZa38sM+nDycmzezFBDj3M4rzqdUoHG
+	 Nh4Aw7GxsMH7bQA4ZL3147x892CPOhKKfxjqf/XRsH4oy16Ht/dX7qjNmTsYqNy8/
+	 SORh5RcMOBzieCuU5x1d+X6LLZ+eEb02Pm6ZhTwTmDKZX0IygU7i8wz7JytqlfmHu
+	 gD1IPlNrNCu6L2bEIQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Ml46w-1rzp832BZM-00ekp4; Wed, 03
+ Jul 2024 17:05:15 +0200
+Message-ID: <b0fe50c3-9279-4225-aad5-2869b335fe53@web.de>
+Date: Wed, 3 Jul 2024 17:05:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240616-b4-mips-ipi-improvements-v1-1-e332687f1692@flygoat.com>
+User-Agent: Mozilla Thunderbird
+To: Haoxiang Li <make24@iscas.ac.cn>, linux-hyperv@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Andrea Parri <parri.andrea@gmail.com>,
+ Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>, Michael Kelley
+ <mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240703084221.12057-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v2] drivers: hv: vmbus: Add missing check for dma_set_mask
+ in vmbus_device_register()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240703084221.12057-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YV8ws4IVXhh8faxR3kOPPdm6RfB/oTFu1GWuLpn3YbmM6sIdPrS
+ kdcANEgP8Z3mzIkApf8ZC6F+eE8H9zgChVOZllxO5YZyDBJz7IvNo2qG7WZgbV1FEo/YUZx
+ En6C+uRQWZKf47+Fgyqh7vgGCu8V+2e07I/2hNOm/g7UJknTRyTAscOnJG+1QSKMHoQuMxQ
+ DH1aX6qwRzRq7oCWtKbTQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:njd83SA+1ts=;J++nmAq9qfV+/27rRiJIp7+2skC
+ ie7foP98eRndAw9gUKDk3/WRDjb7nlNxefeJLjVZakxQyUUScjeabFmhN8y4YEBlfvqIgbiEp
+ KPWTpuOYnD1/EArT0dYcenbLcWv8sjapAypkUOzyrxC0QVk8ZbCdWezbK+K3EG8tr3FwuenQY
+ 14CLBPN7IlmhOa041iu7KW047zdTuG7NZalH5csWhpX91GuZkFKQhoNPVoW9waBQjaTzb4nyu
+ jq0XJWtMdN/q2F+1s9EEspSgpqSK4oZHxx/aPGq9M0W8698cglHJV/fDkbyOlM1z5p3iA1Onv
+ EBXX9y1GZmE5yXOeKicPzEFGDr3eDiBdMHQ6rcMmHxB8xpxGHcNAXdWdFokSE++jZpiojWzxB
+ GxJGttL9jCv4COvG0PK1y9hnTdUH+mi5gGnAAgVaNwoJJv1mvSNjegmgMWksRHTaTfgdroxs4
+ 5b4rXt8zBwhOjCvuOHu6EM8wx+OrhviaufEY1AvOryfnqreFIGN8soeaGvfTBZJ49QILoD7/c
+ T6L8/W3jHqlL5B5dmouUk+y2n23JwdfzzHX85AstyF7nmQu42rrPNpAhHhg0Tvd95MVk/Ahop
+ 2lpP24KXemslIloJjLqPwNKLog79crjZKVDIzkv4XvJKTT+AugA6t8DHZ6umkOV1AxCPArWpD
+ qTpuH5iw5d7GEm28JtTW92Nf45Uo9nQM7gUWvuLg0JWe9rRe1edMIih5ViQ1cn/ppS9kB1hXK
+ m6M+gTkoCrKx4wGSHv1lMaGB0POF22yFUY3SV5G+tTigD7oq7InFz3Bfm5v54I6/9cDoeh5Y/
+ tbSYpyOkwHymqUMLqwj/jpnEGADY4DBwejG2RmYLuqliQ=
 
-On Sun, Jun 16, 2024 at 10:03:05PM +0100, Jiaxun Yang wrote:
-> Define enum ipi_message_type as other architectures did to
-> allow easy extension to number of IPI interrupts, fiddle
-> around platform IPI code to adopt to the new infra, add
-> extensive BUILD_BUG_ON on IPI numbers to ensure future
-> extensions won't break existing platforms.
-> 
-> IPI related stuff are pulled to asm/ipi.h to avoid include
-> linux/interrupt.h in asm/smp.h.
-> 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->  arch/mips/cavium-octeon/smp.c   | 109 ++++++++++++-----------------------
->  arch/mips/include/asm/ipi.h     |  34 +++++++++++
->  arch/mips/include/asm/smp-ops.h |   8 +--
->  arch/mips/include/asm/smp.h     |  42 ++++++--------
->  arch/mips/kernel/smp-bmips.c    |  43 +++++++-------
->  arch/mips/kernel/smp-cps.c      |   1 +
->  arch/mips/kernel/smp.c          | 124 ++++++++++++++++++++--------------------
->  arch/mips/loongson64/smp.c      |  51 +++++++++--------
->  arch/mips/mm/c-octeon.c         |   2 +-
->  arch/mips/sgi-ip27/ip27-smp.c   |  15 +++--
->  arch/mips/sgi-ip30/ip30-smp.c   |  15 +++--
->  arch/mips/sibyte/bcm1480/smp.c  |  19 +++---
->  arch/mips/sibyte/sb1250/smp.c   |  13 +++--
->  13 files changed, 236 insertions(+), 240 deletions(-)
+> child_device_obj->device cannot perform DMA properly if dma_set_mask()
+> returns non-zero. =E2=80=A6
 
-you are touching a lot of platforms, how many did you test ?
+Can the repetition of another wording suggestion influence the software ev=
+olution?
+  Direct memory access can not be properly performed any more
+  after a dma_set_mask() call failed.
 
-Thomas.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+See also:
+https://elixir.bootlin.com/linux/v6.10-rc6/source/kernel/dma/mapping.c#L80=
+4
+
+
+=E2=80=A6
+> Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
+
+Under which circumstances will applications of the Developer's Certificate=
+ of Origin
+be reconsidered any more (after three different names were presented so fa=
+r)?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
+
+
+Would you like to append parentheses to another function name in the summa=
+ry phrase?
+
+Regards,
+Markus
 
