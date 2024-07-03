@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-239338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9E9925B29
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:05:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D981925B36
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2CC61C20DC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:05:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC6E31F2235C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BB21822D6;
-	Wed,  3 Jul 2024 10:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B33018308B;
+	Wed,  3 Jul 2024 10:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uJ0g6iqW"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kKjtKxiR"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DD31822CD
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED78E183079
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720004049; cv=none; b=HiKWaCXl/+kr9oAfgCKMMT+fjo5JiSPdaw3M4ioDdem5LY5Sy/K+68eKNMRUwc3TPZD3QuCMMmoqAZEiNyqde9BN3WT8yBPvznwvQQOISqoUtJU6xLlyAMVlX/g2NhKuKulHMzpATcYgHsJ0/RP9zcVKKt1DbeLIV3+t1K9E9Yw=
+	t=1720004072; cv=none; b=isDq6B9Xt+Mx/jQgBtMhENcKKSzCz+Z+84oSDPVWs73kMBoC9HgpSgj8X5yz95xV/i5jtoFDr/9nmpWir+ZTDD1k5rW+jGdIL67Ipi2kJ7+WFdmdM9BC3CvDHKe6tzPfu9PeiTH25FFxnVJYzcrMi056RC9KUlTh6bvy5yj3A1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720004049; c=relaxed/simple;
-	bh=v+LcIkQeE6VnibfYBosiQU36K7avbPdAnd6TRofVBqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TWPhnzZah+ujA4jo/4lij2Kv3REHqKc8JgsxP7o5kRQpN2xVTPhJYvesp4t3+kNmnYN6JU7YG1FlCLPpgGznBOD+olEZ58endul1S3E+HW4HgFtvjt+IFJRTUmZp+J8BrzV6eEPBSd3+FDElnPCk1l4X/hdb+RKpnGDrjkuxgZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uJ0g6iqW; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1720004072; c=relaxed/simple;
+	bh=I/GpiHkKyV3BTuoiY5xI07I/ghOqMqti1L8LlNhnjHk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sfz7b2NnWIcx8XEjATuXC33X9UOYJ6KJeozqQwsV36HMBTlQ5PKdeKYc0uEJ0W5Wjbroyzdj5WCDPKXk/ecuuzc5TkX4koIhIvZZmBdeKDo7DEKa9Pvj2PS78IkXTj215jAjJ3SoeF6Zm0qyE6iwnDAgmur/rl63wtZgzvuZBDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kKjtKxiR; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-367818349a0so927285f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:54:06 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-367895d9991so765100f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:54:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720004045; x=1720608845; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:reply-to
-         :autocrypt:from:content-language:references:cc:to:subject:user-agent
+        d=linaro.org; s=google; t=1720004069; x=1720608869; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+p6bEMX9YONbLaw0sZ5j1nuPhjD7JRXd1vca2HJaFig=;
-        b=uJ0g6iqWty+Stj1Bj6zC+FM6ieirsD9cVA+whqTQKfETgQa1+J16iHdPsXgvVHkbmJ
-         R8mvRcoQ6HA3ZbxfUQT0UxSZDRHrVrMNWVd5U47ZXDqVx9XdjIUEbbvdcx1jUSoP2PZk
-         fLGZ6xfNM1+vuQNRymVwr+uLzjLUkdMFLYX7MyldV5gR6i1yW/Wlwh2ZU6BYEkproXlK
-         49UB7jFivKb0HK82Kxw2kLXVMGxGlOrbYnRQRuOVFKFGTrc0iiiTFKJxG+dnFDqdmbn2
-         UDw1FHNB1YGzksbhMyw8+Jwf4Jb7AWHZY8TEX2yE4mv0oTA0x8jFkNzLVvVLdLRL5SC8
-         lWXQ==
+        bh=po7h5jyYg7hwETO6R9fEgslkMlPrxWStSZ0gtZEh01Y=;
+        b=kKjtKxiRnvDk0EkNLNuhlnrdj5Rwd24+ycGDACZ1ZioNUN23Dx3M/+hfM3ZSMVw3+H
+         Hrki1XZcYyiRm5gGNeZnCt0f1BRzYtCWnhGjjqwkpxkhg9Z/2d0djUmeW+3I2pUSQiGH
+         HB9MIh9CcUWD+tjAdYEUdaQ35ih9tLauSYODTK831/BV246qaMsSm9kuEdhczynyy6Zp
+         yJ/I+U/+17+LO2O6Yqk6ZiUa2ZJe+t8wwM86/XTkWIN+UlKU4XcEePwdTmOaQaDcXkRx
+         GrzqfiCCxO1Rne2WUlyyKt2JsxuKUvjiXQhG/M1DOtiOvJzUItpTzwC84KMGHggW+/Ub
+         GrKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720004045; x=1720608845;
-        h=content-transfer-encoding:in-reply-to:organization:reply-to
-         :autocrypt:from:content-language:references:cc:to:subject:user-agent
+        d=1e100.net; s=20230601; t=1720004069; x=1720608869;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=+p6bEMX9YONbLaw0sZ5j1nuPhjD7JRXd1vca2HJaFig=;
-        b=ZPgxu5un+ivLALJNbuRnYzOd5OqLpNixuAHBQ6uvDN0+tEIWCOmWD6PW5rnIRZgS2Y
-         f49CfO72YhzJXFFm/LTTeJXT8IpFVtgwO1vxcAQZDTODCsoaIVFujffs2Bt6TBmu2F0M
-         71M6yxTfYfx8bCVR5iQia/OWp7IZ9+aylvMB8QT9iLo19WxOh+R9aCAR7qcfL/dF8Oaq
-         qeEQBIOszVbjCu2kDIJGQZhh4mWeCSvSuCzFwHMTHlSOGZxwdSeFSbUVQkLT1j05oO9J
-         BXMrvG71QLYk8DbTRHTV4m9KLleuBomS9a4AAdAVc/UnIfvNtKU01MUCRlVfp287PhDn
-         NQ/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWVGrc+rcmBy/6KbOS6oGhDKWTae+LdwR52C7BlupKni2TNUmgnWi6whRdk/oU82g7Q+0DlpTPsWYDRkXpkcZ9Qbryf6zNKswC7Xj5W
-X-Gm-Message-State: AOJu0Yy6LBnzAgeWkwDAl675qSC8p9/4mFB6JQ70kolBvbQAxl2bJOgW
-	CvFgShRP5ofhUiUBQFsmxC+UPL6ccpVF0nvJIgaL3e1QkMEcwNs0M1eKNoaYiTg=
-X-Google-Smtp-Source: AGHT+IFS2NEtwIRqoxk93UeQqIVriDU61FHBi9UJSFAeOh6tVg5an4pMMJC6ImdbMh2ie+e8fG+bHw==
-X-Received: by 2002:adf:f012:0:b0:367:9795:92ba with SMTP id ffacd0b85a97d-36797959437mr152350f8f.23.1720004044633;
-        Wed, 03 Jul 2024 03:54:04 -0700 (PDT)
+        bh=po7h5jyYg7hwETO6R9fEgslkMlPrxWStSZ0gtZEh01Y=;
+        b=e1gdi7/mdVZO3P1Sv1hWMTnY6SyIrFlcZbTIpaX/PSrCKZTXbTZb0uzZi2B9us9dEN
+         l+8yFdr69Ydp7YNhusi33danuXUMvMFe75y4tUYp1j29Y4oCT1FIzzz3gKEXO3doKQ1u
+         AmOLb9JmQ8QqN0ybLe1zyZy4DKZhQkSi4vEr61iOWO/pNIdkBkKmrR089xguAIa6RNQO
+         RzXtpUfWooBmEAcw0D7lwJAiVjpgrivySIPEARHvkuQ0NDG6nRd4xpbcx97IoYbEpTXk
+         nSMXaRpyHw28v3/2Hy3bV0ANVQoEBCiDPUJws71Qj3k+Wrc0Ku4nV9KVaTDCqx+DYJtw
+         1p5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVKRl0FKZq28YcvaVnA1NXnSoA+QH1kX1u0yab6puqD/KuJ8Wt63ybsxZMICpj6ZIBWVDMVnuV2qpIjwaIW5/keGrwflmGhB+HyVvDR
+X-Gm-Message-State: AOJu0Yz30nzTg141yKssYX2japs1iPtsOKXL2c93sVv7kmg8+UR6e64i
+	QZoKMziu8t8xF4pJIyvidBlUMge2LCtfgP7Ls2GpLhz1nLoqOCnauA/4XU0Fnro=
+X-Google-Smtp-Source: AGHT+IFMCkLGFvnP8HSPPqHrZs1or35FFjDvFpUWNEiNiN89WTN27PTcrYD99R4NsVRe24lUHiGeYQ==
+X-Received: by 2002:adf:e947:0:b0:367:96bd:127e with SMTP id ffacd0b85a97d-36796bd12femr418667f8f.46.1720004069003;
+        Wed, 03 Jul 2024 03:54:29 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:ef03:73b5:7503:ee71? ([2a01:e0a:982:cbb0:ef03:73b5:7503:ee71])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a104dbdsm15578186f8f.113.2024.07.03.03.54.03
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fbbfesm15660302f8f.66.2024.07.03.03.54.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 03:54:04 -0700 (PDT)
-Message-ID: <2ed4c630-204a-4f80-a37f-f2ca838eb455@linaro.org>
-Date: Wed, 3 Jul 2024 12:54:03 +0200
+        Wed, 03 Jul 2024 03:54:28 -0700 (PDT)
+Message-ID: <b604e36e-18a4-4d01-b896-a37cd9fc1317@linaro.org>
+Date: Wed, 3 Jul 2024 12:54:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,18 +77,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] thermal: core: Call monitor_thermal_zone() if zone
- temperature is invalid
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <2764814.mvXUDI8C0e@rjwysocki.net>
-Content-Language: en-US, fr
 From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 01/10] clk: meson: a1: peripherals: Constify struct
+ regmap_config
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Vladimir Zapolskiy <vz@mleia.com>, Bjorn Andersson <andersson@kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Michal Simek <michal.simek@amd.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev
+References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
+ <20240703-clk-const-regmap-v1-1-7d15a0671d6f@gmail.com>
+Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
  GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
@@ -113,148 +119,34 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Reply-To: neil.armstrong@linaro.org
 Organization: Linaro
-In-Reply-To: <2764814.mvXUDI8C0e@rjwysocki.net>
+In-Reply-To: <20240703-clk-const-regmap-v1-1-7d15a0671d6f@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 28/06/2024 14:10, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 03/07/2024 11:50, Javier Carrasco wrote:
+> `a1_periphs_regmap_cfg` is not modified and can be declared as const to
+> move its data to a read-only section.
 > 
-> Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
-> if zone temperature is invalid") caused __thermal_zone_device_update()
-> to return early if the current thermal zone temperature was invalid.
-> 
-> This was done to avoid running handle_thermal_trip() and governor
-> callbacks in that case which led to confusion.  However, it went too
-> far because monitor_thermal_zone() still needs to be called even when
-> the zone temperature is invalid to ensure that it will be updated
-> eventually in case thermal polling is enabled and the driver has no
-> other means to notify the core of zone temperature changes (for example,
-> it does not register an interrupt handler or ACPI notifier).
-> 
-> Also if the .set_trips() zone callback is expected to set up monitoring
-> interrupts for a thermal zone, it has to be provided with valid
-> boundaries and that can only happen if the zone temperature is known.
-> 
-> Accordingly, to ensure that __thermal_zone_device_update() will
-> run again after a failing zone temperature check, make it call
-> monitor_thermal_zone() regardless of whether or not the zone
-> temperature is valid and make the latter schedule a thermal zone
-> temperature update if the zone temperature is invalid even if
-> polling is not enabled for the thermal zone.
-> 
-> Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip() if zone temperature is invalid")
-> Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 > ---
->   drivers/thermal/thermal_core.c |    5 ++++-
->   drivers/thermal/thermal_core.h |    6 ++++++
->   2 files changed, 10 insertions(+), 1 deletion(-)
+>   drivers/clk/meson/a1-peripherals.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -300,6 +300,8 @@ static void monitor_thermal_zone(struct
->   		thermal_zone_device_set_polling(tz, tz->passive_delay_jiffies);
->   	else if (tz->polling_delay_jiffies)
->   		thermal_zone_device_set_polling(tz, tz->polling_delay_jiffies);
-> +	else if (tz->temperature == THERMAL_TEMP_INVALID)
-> +		thermal_zone_device_set_polling(tz, msecs_to_jiffies(THERMAL_RECHECK_DELAY_MS));
->   }
->   
->   static struct thermal_governor *thermal_get_tz_governor(struct thermal_zone_device *tz)
-> @@ -514,7 +516,7 @@ void __thermal_zone_device_update(struct
->   	update_temperature(tz);
->   
->   	if (tz->temperature == THERMAL_TEMP_INVALID)
-> -		return;
-> +		goto monitor;
->   
->   	tz->notify_event = event;
->   
-> @@ -536,6 +538,7 @@ void __thermal_zone_device_update(struct
->   
->   	thermal_debug_update_trip_stats(tz);
->   
-> +monitor:
->   	monitor_thermal_zone(tz);
->   }
->   
-> Index: linux-pm/drivers/thermal/thermal_core.h
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.h
-> +++ linux-pm/drivers/thermal/thermal_core.h
-> @@ -133,6 +133,12 @@ struct thermal_zone_device {
->   	struct thermal_trip_desc trips[] __counted_by(num_trips);
+> diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
+> index 99b5bc450446..728ad13924ad 100644
+> --- a/drivers/clk/meson/a1-peripherals.c
+> +++ b/drivers/clk/meson/a1-peripherals.c
+> @@ -2183,7 +2183,7 @@ static struct clk_regmap *const a1_periphs_regmaps[] = {
+>   	&dmc_sel2,
 >   };
 >   
-> +/*
-> + * Default delay after a failing thermal zone temperature check before
-> + * attempting to check it again.
-> + */
-> +#define THERMAL_RECHECK_DELAY_MS	100
-> +
->   /* Default Thermal Governor */
->   #if defined(CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE)
->   #define DEFAULT_THERMAL_GOVERNOR       "step_wise"
-> 
-> 
-> 
+> -static struct regmap_config a1_periphs_regmap_cfg = {
+> +static const struct regmap_config a1_periphs_regmap_cfg = {
+>   	.reg_bits   = 32,
+>   	.val_bits   = 32,
+>   	.reg_stride = 4,
 > 
 
-This patch on next-20240702 makes Qualcomm HDK8350, HDK8450, QRD8550, HDK8560, QRD8650 & HDK8650 output in loop:
-
-thermal thermal_zoneXX: failed to read out thermal zone (-19)
-
-Boot logs or ARM64 defconfig:
-https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/152439#L1393
-https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/152440#L2200
-https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/152442#L2828
-https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/152441#L1862
-https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/152443#L1776
-https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/152444#L1723
-
-Result of git bisect:
-# bad: [82e4255305c554b0bb18b7ccf2db86041b4c8b6e] Add linux-next specific files for 20240702
-# good: [22a40d14b572deb80c0648557f4bd502d7e83826] Linux 6.10-rc6
-git bisect start 'FETCH_HEAD' 'v6.10-rc6'
-# bad: [f6dfcf0e9567b57b93f2564966d9177f0d8dbe05] Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git
-git bisect bad f6dfcf0e9567b57b93f2564966d9177f0d8dbe05
-# good: [7f86ae0c2dc19fea7be1da29b2bf03f085463ae7] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git
-git bisect good 7f86ae0c2dc19fea7be1da29b2bf03f085463ae7
-# bad: [077d5bbd75dd12af2096c96846ffc78ab5dd65b1] Merge branch 'devfreq-next' of git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
-git bisect bad 077d5bbd75dd12af2096c96846ffc78ab5dd65b1
-# good: [271bcaf753d0afe2bd0386ab1e98132ee65b61ca] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git
-git bisect good 271bcaf753d0afe2bd0386ab1e98132ee65b61ca
-# good: [9758a2ee5316a6f8736ab4fd39a6f6176aa057ec] Merge branch 'hwmon-next' of git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git
-git bisect good 9758a2ee5316a6f8736ab4fd39a6f6176aa057ec
-# good: [e6bd69ea345045520bd63487b85a4b5676aff76b] Merge branch 'master' of git://linuxtv.org/mchehab/media-next.git
-git bisect good e6bd69ea345045520bd63487b85a4b5676aff76b
-# good: [46398edfb36e2882be5e86ea563b2db9138ae499] Merge branches 'pm-cpuidle' and 'pm-powercap' into linux-next
-git bisect good 46398edfb36e2882be5e86ea563b2db9138ae499
-# good: [d3927cbc52eed166f74ea7e031ed6384cc3d4d5f] Merge branch 'thermal-intel' into linux-next
-git bisect good d3927cbc52eed166f74ea7e031ed6384cc3d4d5f
-# good: [ce84b7beeb524e7b20983838687862454ba54df7] cpufreq: sti: add missing MODULE_DEVICE_TABLE entry for stih418
-git bisect good ce84b7beeb524e7b20983838687862454ba54df7
-# bad: [fcf61315d38d41f4e55856b179f9e5538e299ef4] Merge branch 'thermal-fixes' into linux-next
-git bisect bad fcf61315d38d41f4e55856b179f9e5538e299ef4
-# good: [4262b8d782a74c7cf7b8b94ed9e4fcb94e856d1e] dt-bindings: thermal: mediatek: Fix thermal zone definition for MT8186
-git bisect good 4262b8d782a74c7cf7b8b94ed9e4fcb94e856d1e
-# good: [7eeb114a635a04bea2fa7d57cedbf374c714d29e] dt-bindings: thermal: convert hisilicon-thermal.txt to dt-schema
-git bisect good 7eeb114a635a04bea2fa7d57cedbf374c714d29e
-# good: [107ac0d49ae6a86b4986146b9a612294f7e34406] Merge branch 'thermal/linux-next' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/thermal/linux into linux-next
-git bisect good 107ac0d49ae6a86b4986146b9a612294f7e34406
-# bad: [5725f40698b9ba7f84fbfee25b9059ba044c4b86] thermal: core: Call monitor_thermal_zone() if zone temperature is invalid
-git bisect bad 5725f40698b9ba7f84fbfee25b9059ba044c4b86
-# first bad commit: [5725f40698b9ba7f84fbfee25b9059ba044c4b86] thermal: core: Call monitor_thermal_zone() if zone temperature is invalid
-
-#regzbot introduced: 5725f40698b9ba7f84fbfee25b9059ba044c4b86
-
-Thanks,
-Neil
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
