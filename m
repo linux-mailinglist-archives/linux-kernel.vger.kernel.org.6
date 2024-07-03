@@ -1,230 +1,163 @@
-Return-Path: <linux-kernel+bounces-239475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36F0926097
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:40:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98AD59260A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44DA28745A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:39:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88D501C22843
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BC6178374;
-	Wed,  3 Jul 2024 12:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="GnZFnWrg"
-Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9A0171E60;
-	Wed,  3 Jul 2024 12:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E09178364;
+	Wed,  3 Jul 2024 12:40:22 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CE316DEAC;
+	Wed,  3 Jul 2024 12:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720010368; cv=none; b=BOY2CigUgKZaIVhS6TaJoofiBirXj3l8UC5l4ZvRbnW94ikO2OurHrHfLy3h52pyac+GkEc1y4J6hseINISKZoIc3/xQyC0L2OwQ9e8RTi3MzJk84erB2xaUl5U7UNxVe2T7HxTodEFkolI9ybsBp2w0IVLFjg/1HPaMrQectVM=
+	t=1720010422; cv=none; b=Yp3RbKkUaVhmP/7tAG7eOJwBp9lXgc0zbhxpVtspx1C7qX5ZREbPrsCfCZRzy1w9N4+0IgXUUsvWcyGIoUurAYW87t8k2DHQ79FLSjK6ndrGrqYnp6bvB5fydB1YL/KAoPXuLMfxugTjhHZtQzSUFq4Ym6zzHPPM10cRiHmwi9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720010368; c=relaxed/simple;
-	bh=4KS0NOSTe916DVS2ghPWA1bcCCr8Xm00pZgHtyhX8Kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tCOo2xYLbwJgP/j7Zn7GvcnZPn/Kx/FqnyJRortqE01nD5dnJv6srrq0AO/8gEdQI5dOD3mDwiKv5rnFk9WzbRA8ppVVsbvxmZ6hXLctlIhSqXF54WkTlntIkIz2kxo+Jg5OVSIrcY+umXXCKFNEGMyk6M2fU44SWJqZbHvj3to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=GnZFnWrg; arc=none smtp.client-ip=3.9.82.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
-Received: from localhost (unknown [IPv6:2a02:8012:909b:0:1e90:7398:2278:75e2])
-	(Authenticated sender: tom)
-	by mail.katalix.com (Postfix) with ESMTPSA id 11FDB7D76D;
-	Wed,  3 Jul 2024 13:39:26 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
-	t=1720010366; bh=4KS0NOSTe916DVS2ghPWA1bcCCr8Xm00pZgHtyhX8Kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Disposition:In-Reply-To:From;
-	z=Date:=20Wed,=203=20Jul=202024=2013:39:25=20+0100|From:=20Tom=20Pa
-	 rkin=20<tparkin@katalix.com>|To:=20Hillf=20Danton=20<hdanton@sina.
-	 com>|Cc:=20syzbot=20<syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspot
-	 mail.com>,=0D=0A=09linux-kernel@vger.kernel.org,=20netdev@vger.ker
-	 nel.org,=0D=0A=09James=20Chapman=20<jchapman@katalix.com>,=0D=0A=0
-	 9syzkaller-bugs@googlegroups.com|Subject:=20Re:=20[syzbot]=20[net?
-	 ]=20KASAN:=20slab-use-after-free=20Write=20in=0D=0A=20l2tp_session
-	 _delete|Message-ID:=20<ZoVGfR6Gx7PLbnn1@katalix.com>|References:=2
-	 0<ZoU1Aa/JJ+60FZla@katalix.com>=0D=0A=20<20240703115113.2928-1-hda
-	 nton@sina.com>|MIME-Version:=201.0|Content-Disposition:=20inline|I
-	 n-Reply-To:=20<20240703115113.2928-1-hdanton@sina.com>;
-	b=GnZFnWrgLUYiTr5NbJYMtRCj0TOpeqxDrAybnef27jT4/ntNTFLn3lnCdCKA8pSHN
-	 ToSADbbWTU7JvvcPiW54YKlE9mORbjbR0E7urB0jxhjr2Et1UPI6+1YErEeG6SEo5O
-	 bqwzsKFoLOXDaXGDU85xoa/Iju+zix6wx4jFA5QIi2dNxEyAD4z4bzmyBE6RVfdguK
-	 k4K22t7PEUtY3w30DAINd6ZA0vjLtoY26cSAY+HbO7sQxRToX3T4dOnpkP2ZWjDtim
-	 QeCj4o3sMHt+HmznJ0UyNOsrPVpYxJQj6Ikpu60HvjimxFVIS5px2HkRNkqT3//OWq
-	 mmLLJ2gtUfALQ==
-Date: Wed, 3 Jul 2024 13:39:25 +0100
-From: Tom Parkin <tparkin@katalix.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	James Chapman <jchapman@katalix.com>,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in
- l2tp_session_delete
-Message-ID: <ZoVGfR6Gx7PLbnn1@katalix.com>
-References: <ZoU1Aa/JJ+60FZla@katalix.com>
- <20240703115113.2928-1-hdanton@sina.com>
+	s=arc-20240116; t=1720010422; c=relaxed/simple;
+	bh=e5UzmP6jWjPo5yQW7Z1/Zwlv4Kk6YHUFqfos7e+dpME=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Cg2LckjTiM2ldLM0/6IpeQwtIUCfv85ZInwMcbQpFk3ymr7TH10lHvCxPQqDNxyb04yXFy94rX5P0s+j/w0bipU/6MBnkPfihEawlRRzZqPGIQZQpJddqTdeaCuCX0uueB6zuDK/3EudgfucqVxaNL4Hj5obSxoK/Kcid5otEdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WDfQ81s21zZhG9;
+	Wed,  3 Jul 2024 20:35:44 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id D6C6B180087;
+	Wed,  3 Jul 2024 20:40:17 +0800 (CST)
+Received: from [10.69.30.204] (10.69.30.204) by dggpemf200006.china.huawei.com
+ (7.185.36.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Jul
+ 2024 20:40:17 +0800
+Subject: Re: [PATCH net-next v9 10/13] mm: page_frag: introduce
+ prepare/probe/commit API
+To: Yunsheng Lin <yunshenglin0825@gmail.com>, Alexander Duyck
+	<alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
+References: <20240625135216.47007-1-linyunsheng@huawei.com>
+ <20240625135216.47007-11-linyunsheng@huawei.com>
+ <33c3c7fc00d2385e741dc6c9be0eade26c30bd12.camel@gmail.com>
+ <38da183b-92ba-ce9d-5472-def199854563@huawei.com>
+ <CAKgT0Ueg1u2S5LJuo0Ecs9dAPPDujtJ0GLcm8BTsfDx9LpJZVg@mail.gmail.com>
+ <0a80e362-1eb7-40b0-b1b9-07ec5a6506ea@gmail.com>
+ <CAKgT0UcRbpT6UFCSq0Wd9OHrCqOGR=BQ063-zNBZ4cVNmduZGw@mail.gmail.com>
+ <15623dac-9358-4597-b3ee-3694a5956920@gmail.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <200ee8ff-557f-e17b-e71f-645267a49831@huawei.com>
+Date: Wed, 3 Jul 2024 20:40:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OWXArNVFVWFs/V+O"
-Content-Disposition: inline
-In-Reply-To: <20240703115113.2928-1-hdanton@sina.com>
+In-Reply-To: <15623dac-9358-4597-b3ee-3694a5956920@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
+On 2024/6/30 23:05, Yunsheng Lin wrote:
+> On 6/30/2024 10:35 PM, Alexander Duyck wrote:
+>> On Sun, Jun 30, 2024 at 7:05 AM Yunsheng Lin <yunshenglin0825@gmail.com> wrote:
+>>>
+>>> On 6/30/2024 1:37 AM, Alexander Duyck wrote:
+>>>> On Sat, Jun 29, 2024 at 4:15 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>>
+>>> ...
+>>>
+>>>>>>
+>>>>>> Why is this a macro instead of just being an inline? Are you trying to
+>>>>>> avoid having to include a header due to the virt_to_page?
+>>>>>
+>>>>> Yes, you are right.
+>>
+>> ...
+>>
+>>>> I am pretty sure you just need to add:
+>>>> #include <asm/page.h>
+>>>
+>>> I am supposing you mean adding the above to page_frag_cache.h, right?
+>>>
+>>> It seems thing is more complicated for SPARSEMEM_VMEMMAP case, as it
+>>> needs the declaration of 'vmemmap'(some arch defines it as a pointer
+>>> variable while some arch defines it as a macro) and the definition of
+>>> 'struct page' for '(vmemmap + (pfn))' operation.
+>>>
+>>> Adding below for 'vmemmap' and 'struct page' seems to have some compiler
+>>> error caused by interdependence between linux/mm_types.h and asm/pgtable.h:
+>>> #include <asm/pgtable.h>
+>>> #include <linux/mm_types.h>
+>>>
+>>
+>> Maybe you should just include linux/mm.h as that should have all the
+>> necessary includes to handle these cases. In any case though it
+> 
+> Including linux/mm.h seems to have similar compiler error, just the
+> interdependence is between linux/mm_types.h and linux/mm.h now.
 
---OWXArNVFVWFs/V+O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+How about splitting page_frag_cache.h into page_frag_types.h and
+page_frag_cache.h mirroring the above linux/mm_types.h and linux/mm.h
+to fix the compiler error?
 
-Hi Hillf,
-
-On  Wed, Jul 03, 2024 at 19:51:13 +0800, Hillf Danton wrote:
-> On Wed, 3 Jul 2024 12:24:49 +0100 Tom Parkin <tparkin@katalix.com>
-> >=20
-> > [-- Attachment #1.1: Type: text/plain, Size: 379 bytes --]
-> >=20
-> > On  Tue, Jun 25, 2024 at 06:25:23 -0700, syzbot wrote:
-> > > syzbot found the following issue on:
-> > >=20
-> > > HEAD commit:    185d72112b95 net: xilinx: axienet: Enable multicast b=
-y def..
-> > > git tree:       net-next
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1062bd469=
-80000
-> >=20
-> > #syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-ne=
-xt.git  185d72112b95
-> >=20
-> > [-- Attachment #1.2: 0001-l2tp-fix-possible-UAF-when-cleaning-up-tunnel=
-s.patch --]
-> > [-- Type: text/x-diff, Size: 3275 bytes --]
-> >=20
-> > From 31321b7742266c4e58355076c19d8d490fa005d2 Mon Sep 17 00:00:00 2001
-> > From: James Chapman <jchapman@katalix.com>
-> > Date: Tue, 2 Jul 2024 12:49:07 +0100
-> > Subject: [PATCH] l2tp: fix possible UAF when cleaning up tunnels
-> >=20
-> > syzbot reported a UAF caused by a race when the L2TP work queue closes a
-> > tunnel at the same time as a userspace thread closes a session in that
-> > tunnel.
-> >=20
-> > Tunnel cleanup is handled by a work queue which iterates through the
-> > sessions contained within a tunnel, and closes them in turn.
-> >=20
-> > Meanwhile, a userspace thread may arbitrarily close a session via
-> > either netlink command or by closing the pppox socket in the case of
-> > l2tp_ppp.
-> >=20
-> > The race condition may occur when l2tp_tunnel_closeall walks the list
-> > of sessions in the tunnel and deletes each one.  Currently this is
-> > implemented using list_for_each_safe, but because the list spinlock is
-> > dropped in the loop body it's possible for other threads to manipulate
-> > the list during list_for_each_safe's list walk.  This can lead to the
-> > list iterator being corrupted, leading to list_for_each_safe spinning.
-> > One sequence of events which may lead to this is as follows:
-> >=20
-> >  * A tunnel is created, containing two sessions A and B.
-> >  * A thread closes the tunnel, triggering tunnel cleanup via the work
-> >    queue.
-> >  * l2tp_tunnel_closeall runs in the context of the work queue.  It
-> >    removes session A from the tunnel session list, then drops the list
-> >    lock.  At this point the list_for_each_safe temporary variable is
-> >    pointing to the other session on the list, which is session B, and
-> >    the list can be manipulated by other threads since the list lock has
-> >    been released.
-> >  * Userspace closes session B, which removes the session from its parent
-> >    tunnel via l2tp_session_delete.  Since l2tp_tunnel_closeall has
-> >    released the tunnel list lock, l2tp_session_delete is able to call
-> >    list_del_init on the session B list node.
-> >  * Back on the work queue, l2tp_tunnel_closeall resumes execution and
-> >    will now spin forever on the same list entry until the underlying
-> >    session structure is freed, at which point UAF occurs.
-> >=20
-> > The solution is to iterate over the tunnel's session list using
-> > list_first_entry_not_null to avoid the possibility of the list
-> > iterator pointing at a list item which may be removed during the walk.
-> >=20
-> > ---
-> >  net/l2tp/l2tp_core.c | 9 +++++----
-> >  1 file changed, 5 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
-> > index 64f446f0930b..afa180b7b428 100644
-> > --- a/net/l2tp/l2tp_core.c
-> > +++ b/net/l2tp/l2tp_core.c
-> > @@ -1290,13 +1290,14 @@ static void l2tp_session_unhash(struct l2tp_ses=
-sion *session)
-> >  static void l2tp_tunnel_closeall(struct l2tp_tunnel *tunnel)
-> >  {
-> >  	struct l2tp_session *session;
-> > -	struct list_head *pos;
-> > -	struct list_head *tmp;
-> > =20
-> >  	spin_lock_bh(&tunnel->list_lock);
-> >  	tunnel->acpt_newsess =3D false;
-> > -	list_for_each_safe(pos, tmp, &tunnel->session_list) {
-> > -		session =3D list_entry(pos, struct l2tp_session, list);
-> > +	for (;;) {
-> > +		session =3D list_first_entry_or_null(&tunnel->session_list,
-> > +						   struct l2tp_session, list);
-> > +		if (!session)
-> > +			break;
->=20
-> WTF difference could this patch make wrt closing the race above?
->
-
-Sorry if the commit message isn't clear :-(
-
-The specific UAF that syzbot hits is due to the list node that the
-list_for_each_safe temporary variable points to being modified while
-the list_for_each_safe walk is in process.
-
-This is possible due to l2tp_tunnel_closeall dropping the spin lock
-that protects the list mid way through the list_for_each_safe loop.
-This opens the door for another thread to call list_del_init on the
-node that list_for_each_safe is planning to process next, causing
-l2tp_tunnel_closeall to repeatedly iterate on that node forever.
-
-In the context of l2tp_ppp, this eventually leads to UAF because the
-session structure itself is freed when the pppol2tp socket is
-destroyed and the pppol2tp sk_destruct handler unrefs the session
-structure to zero.
-
-So to avoid the UAF, the list can safely be processed using a loop
-which accesses the first entry in the tunnel session list under
-spin lock protection, removing that entry, then dropping the lock
-to call l2tp_session_delete.
-
-FWIW, I note that syzbot has bisected this UAF to d18d3f0a24fc ("l2tp:
-replace hlist with simple list for per-tunnel session list") which
-changes l2tp_tunnel_closeall from a similar pattern of repeatedly
-grabbing the list head under spin lock projection, to the current code
-in net-next.
-
-> >  		list_del_init(&session->list);
-> >  		spin_unlock_bh(&tunnel->list_lock);
-> >  		l2tp_session_delete(session);
-
---OWXArNVFVWFs/V+O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEsUkgyDzMwrj81nq0lIwGZQq6i9AFAmaFRnkACgkQlIwGZQq6
-i9D4MQgAlIrC9CzRSg+P0UVnqtS/PLhm/PeRB4C6jo0u0H9ikWTDgNC0oM1Rxc18
-jxt1yHHMUxdwKIdZGsY2i07WaA9ZAgpGfZk3w07GFDpa1Mub449igzOBPK9XwaYa
-J6gjgMMQmiQ3b3ag0VZkhreMuN3uPUERi2r2gxWfsqQq7Z8AZmsUkbWirM+VxnLE
-1jwVrQmqxFvJB0S9nIq81srJcpr/LlE6KtzB7g1RXGBJtY/veJ58yRH66i9I51KA
-Y5AHKm0vVgTlFVzb1XKio97dH0pPBFwleJkYGEFNDn+MN06br7b/XHzUidBJGVZ+
-oNOJrb+SfoRbisG2s5ElFcDdi7WckQ==
-=XdNU
------END PGP SIGNATURE-----
-
---OWXArNVFVWFs/V+O--
+> 
+> As below, linux/mmap_lock.h obviously need the definition of
+> 'struct mm_struct' from linux/mm_types.h, and linux/mm_types.h
+> has some a long dependency of linux/mm.h starting from
+> linux/uprobes.h if we add '#include <linux/mm.h>' in linux/page_frag_cache.h:
+> 
+> In file included from ./include/linux/mm.h:16,
+>                  from ./include/linux/page_frag_cache.h:6,
+>                  from ./include/linux/sched.h:49,
+>                  from ./include/linux/percpu.h:13,
+>                  from ./arch/x86/include/asm/msr.h:15,
+>                  from ./arch/x86/include/asm/tsc.h:10,
+>                  from ./arch/x86/include/asm/timex.h:6,
+>                  from ./include/linux/timex.h:67,
+>                  from ./include/linux/time32.h:13,
+>                  from ./include/linux/time.h:60,
+>                  from ./include/linux/jiffies.h:10,
+>                  from ./include/linux/ktime.h:25,
+>                  from ./include/linux/timer.h:6,
+>                  from ./include/linux/workqueue.h:9,
+>                  from ./include/linux/srcu.h:21,
+>                  from ./include/linux/notifier.h:16,
+>                  from ./arch/x86/include/asm/uprobes.h:13,
+>                  from ./include/linux/uprobes.h:49,
+>                  from ./include/linux/mm_types.h:16,
+>                  from ./include/linux/mmzone.h:22,
+>                  from ./include/linux/gfp.h:7,
+>                  from ./include/linux/slab.h:16,
+>                  from ./include/linux/crypto.h:17,
+>                  from arch/x86/kernel/asm-offsets.c:9:
+> ./include/linux/mmap_lock.h: In function ‘mmap_assert_locked’:
+> ./include/linux/mmap_lock.h:65:30: error: invalid use of undefined type ‘const struct mm_struct’
+>    65 |         rwsem_assert_held(&mm->mmap_lock);
+>       |                              ^~
+> 
+>> doesn't make any sense to have a define in one include that expects
+>> the user to then figure out what other headers to include in order to
+>> make the define work they should be included in the header itself to
+>> avoid any sort of weird dependencies.
+> 
+> Perhaps there are some season why there are two headers for the mm subsystem, linux/mm_types.h and linux/mm.h?
+> And .h file is supposed to include the linux/mm_types.h while .c file
+> is supposed to include the linux/mm.h?
+> If the above is correct, it seems the above rule is broked by including linux/mm.h in linux/page_frag_cache.h.
+> .
+> 
 
