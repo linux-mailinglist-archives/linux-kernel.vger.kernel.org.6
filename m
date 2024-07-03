@@ -1,162 +1,106 @@
-Return-Path: <linux-kernel+bounces-239673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF989263D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:51:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7159263D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95D77B246F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:49:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 613261C2421A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D263B177980;
-	Wed,  3 Jul 2024 14:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778C017C9E1;
+	Wed,  3 Jul 2024 14:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IPLvQ85f"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcFbI+Z6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46674409;
-	Wed,  3 Jul 2024 14:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B821417B41F;
+	Wed,  3 Jul 2024 14:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720018143; cv=none; b=iGh6dFVu68C/9F8rnbCDEeosFSFYmRuyWzzMB1+vKvXWZ93Wg/CAxx3h0JdOvzNhiDjqZlWsY1MgZ/8misMERF4A1coxV9772tQnbv6sTVGgexJfUyTwbadx6drb8HeZ7qnL7tCpCIgiYVg9U2pvmZOiSHOLSR1EAPqogIv9G9k=
+	t=1720018218; cv=none; b=eIa5nIRbp7Csc5cUgudD30T/tLHpGt8zOuPfdB8gGfqVphwvNCBIxsEWmzybDqZxI0TWQazJy+A5k9VipURizHF0+06r+Xc1F16QQyjgb0dzxlKrCLV57TT7ktPo1tgtKqBFVh/NIhr31dn43/ZxCmPNhrbXus4mfePeYSvCX2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720018143; c=relaxed/simple;
-	bh=25gu+WwJyKTENkTQ95Kbel2+YZEIEeQcyr6d71uuPZk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UrlFIEQ0yjiapRa6oeBQMphBumDIrihyJJpQnsNZr1dIlJO41a2Jd6BIqrSpNM+SKpeRKMGY2TIYERnGkFopQCLJaEhIY74iWC3u/3JMf/oZS8IX/c45lL8rtemAzzPgRq306u4TKCgnFnlIAYk5xOErBMvoV0UGJLBD4UCe4HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IPLvQ85f; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720018140;
-	bh=25gu+WwJyKTENkTQ95Kbel2+YZEIEeQcyr6d71uuPZk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IPLvQ85fDUBG6WUqxP4baLVBBw9HqvANb4ABZVqsBwDWzDmmFdZCSYkQjdPwoKESQ
-	 NeBb+v5+sNVfbIh9BVTMOt0PiYcvuX35R97rcPomUycXMNMauAMyeh/EhTjU2ytB7i
-	 qHE5zYKEmDAW3JvBqPQALW7pWclzWz9P9ts5vY42qYhpzqXihFFOWfNwVXkrsunA0L
-	 OlB9B5/za081GEmvS+0xobP34n098XVyncX8qwA1LhvEToZ7+cocMA1eZrBdC+GD8H
-	 t9EffZHaQZ95xJE94pQKzQpDTkdrKlJ8/kSYVJBES5lQR8/yv+0IE30Kx7NTQCbQxm
-	 l+nn06ufPBeYw==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A869F37821A0;
-	Wed,  3 Jul 2024 14:48:59 +0000 (UTC)
-From: Laura Nao <laura.nao@collabora.com>
-To: skhan@linuxfoundation.org
-Cc: kernel@collabora.com,
-	laura.nao@collabora.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	shuah@kernel.org
-Subject: Re: [PATCH 2/2] selftests/watchdog: convert the test output to KTAP format
-Date: Wed,  3 Jul 2024 16:49:29 +0200
-Message-Id: <20240703144929.89966-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <8facf491-3c4c-4efb-8a14-f34011ffe011@linuxfoundation.org>
-References: <8facf491-3c4c-4efb-8a14-f34011ffe011@linuxfoundation.org>
+	s=arc-20240116; t=1720018218; c=relaxed/simple;
+	bh=DiZJ0dILrXy2O013iz+bCGWZocmbBOMiap6sH6MRS2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HTIZh9dk76LAtLvl8/S69NO+57+40ywGbG523BDEdPLwdyVdDqxFYG+xUdENgUBaFyMkK2JFFF6neBz5flLTdFtTkf/N/s3cfL2Qt2vXXGMJXiC+OpcLGMsQcCY5hA4fGnDZOuetLLNisfcTQQYNje8xKdNLjPN8pOZZNCuduYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcFbI+Z6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DEAFC4AF07;
+	Wed,  3 Jul 2024 14:50:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720018218;
+	bh=DiZJ0dILrXy2O013iz+bCGWZocmbBOMiap6sH6MRS2s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jcFbI+Z6lRD3WEZSda4ofZtQCQaCdDIk96edMJ+s6TxX/U4DfAJtrLLzHna3j79OG
+	 tPpjAXpi3Nd+aO3IJKBFW7Q4u+QH2J8UjKAP/kTgwS7rFTEilIjoqsdTzuKkr42LZN
+	 2JpI0ojfYh1w52bIW1na6U5VAEZ46Uv1yFcGNqLw+Qmv0WUE1/teG4Cn9C/IX2qYID
+	 /FWRd+Njfy+VNi+TsKvmkcf/evGUmFJ/rFFPWNEWYXQsFiX+qdWIxO/s7h/wse3o+6
+	 RNlbfv7klYn46Lz6nWgKk8zozcKxXIWNzTTYuI7MZ88aSXTpA/AhOs18U3bnB3zade
+	 tYPpEAcm+S+jw==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ec52fbb50cso53622321fa.2;
+        Wed, 03 Jul 2024 07:50:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUu0D/1X6NwdgiXAcNy4sH5ebURn/yhnatzJiRrEWWVhAVr+nr8nKyeUtR/r+ceLHDnDo6r3rx/cTt+BEJyviJavzRTDQz1Id3HsdbxYjbJrUF7fKrJvR82+3JgvzaIIrqu+khpFMKptB20
+X-Gm-Message-State: AOJu0Ywnuldx695UttZHFwzv15I0F9O12m6ZDKlANhEULMwSRKDEx91a
+	7OIZDpPI4GTYzYSmlcpCA3MmX5GDjee2rpa/7KW0xNRh5OtdNDeXI93yBoXALvGlL26VS3ofr2h
+	LVkZHnEIjo4O1STpJ7gz5tLcj8kU=
+X-Google-Smtp-Source: AGHT+IEIWx0ohubc/gEMbIlq7uaD+5IUVCdvsx24gzXDTf+BCAo6XWw/fWojD8I4j0YT/KHy8zlrPKTeoiWu61pmhgs=
+X-Received: by 2002:a2e:bcc5:0:b0:2ee:7b7d:66ed with SMTP id
+ 38308e7fff4ca-2ee7b7d68cdmr29931121fa.10.1720018216931; Wed, 03 Jul 2024
+ 07:50:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240702234008.19101-1-richard.weiyang@gmail.com>
+ <20240702234008.19101-2-richard.weiyang@gmail.com> <20240702185230.9ff500bf6a89db888207f8f1@linux-foundation.org>
+In-Reply-To: <20240702185230.9ff500bf6a89db888207f8f1@linux-foundation.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 3 Jul 2024 23:49:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS+TgSo6CCrvKQ=n8=pFPDTJ3wq2chq1-p9KgSSv=N9Ww@mail.gmail.com>
+Message-ID: <CAK7LNAS+TgSo6CCrvKQ=n8=pFPDTJ3wq2chq1-p9KgSSv=N9Ww@mail.gmail.com>
+Subject: Re: [PATCH 2/3] modpost: .meminit.* is not in init section when
+ CONFIG_MEMORY_HOTPLUG set
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Wei Yang <richard.weiyang@gmail.com>, nathan@kernel.org, nicolas@fjasle.eu, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, Mike Rapoport <rppt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/27/24 20:41, Shuah Khan wrote:
-> On 5/6/24 05:13, Laura Nao wrote:
->> Modify the script output to conform to the KTAP format standard. The
-> 
-> What is script here?
-> 
+On Wed, Jul 3, 2024 at 10:52=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Tue,  2 Jul 2024 23:40:07 +0000 Wei Yang <richard.weiyang@gmail.com> w=
+rote:
+>
+> > .meminit.* is not put into init section when CONFIG_MEMORY_HOTPLUG is
+> > set, since we define MEM_KEEP()/MEM_DISCARD() according to
+> > CONFIG_MEMORY_HOTPLUG.
+>
+> Please describe how this changes modpost behaviour.
+>
+> Something like: "we're currently not checking for references into
+> meminit and meminitdata when CONFIG_HOTPLUG=3Dy, which may cause us to
+> fail to notice incorrect references.".  But I don't think that's
+> correct.  So what *is* wrong with the current code?
+>
 
-I was referring to the watchdog-test.c file addressed in this patch. I 
-understand this could be confusing, I will rephrase the commit message 
-to avoid ambiguity.
 
->> number of tests executed is determined by the script arguments, and
->> options such as -c, -f, -h, -i, and -p do not impact the total test
->> count.
->>
->> No functional change is intended.
-> 
-> There are functional changes - keep_alive() coupled with changes
-> tailored by a script that isn't in the kernel code which isn't
-> ideal.
-> 
-> Why not inlcude the script in this patch series to make it part
-> of the kernel?
-> 
+Sigh.
 
-Right, I'll remove the 'no functional change is intended' sentence from 
-the commit message.
+If you do not understand, you should not apply it.
 
-Apart from the patches already in this series, no other script is 
-required to run the test in a CI environment.
+I am surprised that there exists a person who
+attempted to apply this.
 
->>
->> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->> ---
->>   .../selftests/watchdog/watchdog-test.c        | 154 ++++++++++--------
->>   1 file changed, 89 insertions(+), 65 deletions(-)
->>
->> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c 
->> b/tools/testing/selftests/watchdog/watchdog-test.c
->> index 786cc5a26206..90f32de9e194 100644
->> --- a/tools/testing/selftests/watchdog/watchdog-test.c
->> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
->> @@ -22,6 +22,7 @@
->>   #include <sys/ioctl.h>
->>   #include <linux/types.h>
->>   #include <linux/watchdog.h>
->> +#include "../kselftest.h"
->>   #define DEFAULT_PING_RATE    1
->>   #define DEFAULT_PING_COUNT    5
->> @@ -29,6 +30,7 @@
->>   int fd;
->>   const char v = 'V';
->>   static const char sopts[] = "bdehp:c:st:Tn:NLf:i";
->> +static const char topts[] = "bdeLn:Nst:T";
->>   static const struct option lopts[] = {
->>       {"bootstatus",          no_argument, NULL, 'b'},
->>       {"disable",             no_argument, NULL, 'd'},
->> @@ -52,7 +54,7 @@ static const struct option lopts[] = {
->>    * the PC Watchdog card to reset its internal timer so it doesn't 
->> trigger
->>    * a computer reset.
->>    */
->> -static void keep_alive(void)
->> +static int keep_alive(void)
->>   {
->>       int dummy;
->>       int ret;
->> @@ -60,6 +62,8 @@ static void keep_alive(void)
->>       ret = ioctl(fd, WDIOC_KEEPALIVE, &dummy);
->>       if (!ret)
->>           printf(".");
->> +
->> +    return ret;
->>   }
-> 
-> Are these changes driven by the script that isn't in the kernel code?
-> I don't want to see changes to keep_alive() bevator.
-> 
 
-These changes are not driven by any external script; the aim of this
-patch is just to conform the output to KTAP for easier parsing of the
-results in CI environments.
 
-Returning ret from keep_alive() allows to track the result for
-the last WDIOC_KEEPALIVE ioctl and report it to the user through 
-ksft_test_result, analogously to other ioctls tested in this
-same file.
-
-Thanks,
-
-Laura
+--=20
+Best Regards
+Masahiro Yamada
 
