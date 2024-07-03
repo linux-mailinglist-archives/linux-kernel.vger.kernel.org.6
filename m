@@ -1,66 +1,129 @@
-Return-Path: <linux-kernel+bounces-240088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609D7926902
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:36:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 214EC92690C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE4BBB219E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:36:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C98441F253EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF3D18E77F;
-	Wed,  3 Jul 2024 19:36:21 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9983D191F6F;
+	Wed,  3 Jul 2024 19:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e8emhiFG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wBB7D3tj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7AF1DA316;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A359A1849D2;
 	Wed,  3 Jul 2024 19:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720035380; cv=none; b=tYIvFJUlX8RboN1JX1kcADdR+CpZWO/2Q2PZRGErT5TrXYFbt/93ttkocbv5KRqk6IYI+7aEf6opJdxn9dXoYi6ZreRuCXu3BlKeva2QS4NmW+W/zNvk+tGvbPMRa+1uYaXXzYLd1rIan02gJjPJC4gcwFmHVyB1xLhpmdl71a8=
+	t=1720035382; cv=none; b=BcxTg/7oJaX6DSsoW0XFP/BZH6/FCidzELu47+zr8LNmV8QS4y6dAX1DylMF0c9eqkASfTjThsLRVd6l2C88UxUrp7hSFFmOuTa6EIjsciMZtveW7wVldiUiaw1EWWM+lIJVj73vq8oP9NHTnqpu4/zHt359hSNOcVi4LgDTTsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720035380; c=relaxed/simple;
-	bh=wvJnBj/S0cpi1UBzVKpHlZ82ps8JxftzfYszzQdgOHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MGbYUNDvg0ygVRBfiHQZlFQ9xC61FgUU69/aCntwBnQ02HKxQfm1drN1Zf3+les84vtfO480y7I789IDLmiyJfYXmHL1pQrDYVC3Cr1FOIfYl0lp7JdpZOUQO1SDqRZpLJT6HdY/CaTAfL2DPlbWbJ1E1f0qh64Q0hHEKSFDo+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE28C2BD10;
-	Wed,  3 Jul 2024 19:36:18 +0000 (UTC)
-Date: Wed, 3 Jul 2024 15:36:17 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Guilherme Amadio <amadio@gentoo.org>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Ian Rogers <irogers@google.com>, Thorsten Leemhuis
- <linux@leemhuis.info>, Leo Yan <leo.yan@arm.com>,
- linux-perf-users@vger.kernel.org, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] tools: Make pkg-config dependency checks usable
- by other tools
-Message-ID: <20240703153617.650fcc1c@rorschach.local.home>
-In-Reply-To: <ZoSP_vFMVl83pxES@google.com>
-References: <20240628202608.3273329-1-amadio@gentoo.org>
-	<20240628203432.3273625-1-amadio@gentoo.org>
-	<20240628203432.3273625-3-amadio@gentoo.org>
-	<ZoSP_vFMVl83pxES@google.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720035382; c=relaxed/simple;
+	bh=cyov/uXH6nAW3JfR+A9pDGautkIvBvuRb6Vha5Kmiug=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=SJoX/XD/8xKcE26kMM7+ZA2Nyrh2p1dC8jWf/IT7QXe8xefSLpDInziNIAi677WtW6n8MWQAA6dHNiKZC178rxHPqKEBrSPOFo1d67yO4IDeqP0GcYROrUMgsplEQsxw5O2Ed2TTFPXH90MuYMxZG/kBPswzgLHYVuuCXXDNEoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e8emhiFG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wBB7D3tj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 03 Jul 2024 19:36:18 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720035378;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9IXwKPSYDMuupaRkOYPcllYwSbvPtAPr2jwAVJ5t4RQ=;
+	b=e8emhiFGuUm9EH2ykSQ4uqlO38H+hcqEexeq8DHfmAtfXN/zPqICk9xnFenzVO4QhZ+w8z
+	/2aVCKflYbAb2j7jN6xTWET/rRAF9CGTpHxgf0vKy/7iDzU0kGPwQkMZCrbfD0TkidToun
+	Pmw/XuQZtEofpMIulzPrqlF3kU7NWtxRDkuz2ew1xtmDFnyRoGnd4GsRweJXxx/k2E6WOH
+	y252mb97MNDDHtBVJ84jqWV2Pt8b7xW0fhirpxm7QOvoTsidguYEhBIDUrhTslH+uOcFG3
+	G7xGVQPTIqDNaiLYUHhIGT2s9t2OPNRHg+Brdo5L1Ugu0sZIvbTzeXGCjBTkSA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720035378;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9IXwKPSYDMuupaRkOYPcllYwSbvPtAPr2jwAVJ5t4RQ=;
+	b=wBB7D3tjDywehvJrDgM4sfSJXeKI3N0BvLWS1Vs3WxrZKHkcjHnxfBJc7f7Tu+38NWTmuW
+	lxbUx60ocutMZ1BA==
+From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] tick/sched: Combine WARN_ON_ONCE and print_once
+Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240610103552.25252-1-anna-maria@linutronix.de>
+References: <20240610103552.25252-1-anna-maria@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Message-ID: <172003537827.2215.3767578007917654423.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Tue, 2 Jul 2024 16:40:46 -0700
-Namhyung Kim <namhyung@kernel.org> wrote:
+The following commit has been merged into the timers/core branch of tip:
 
-> +CC Steve and linux-trace-kernel list.
+Commit-ID:     59dbee7d4d59425658b1d86238732c575216b718
+Gitweb:        https://git.kernel.org/tip/59dbee7d4d59425658b1d86238732c575216b718
+Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
+AuthorDate:    Mon, 10 Jun 2024 12:35:52 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 03 Jul 2024 21:32:55 +02:00
 
-There doesn't seem to be a cover page, and it doesn't apply on
-v6.10-rc6 nor on tip.
+tick/sched: Combine WARN_ON_ONCE and print_once
 
--- Steve
+When the WARN_ON_ONCE() triggers, the printk() of the additional
+information related to the warning will not happen in print level
+"warn". When reading dmesg with a restriction to level "warn", the
+information published by the printk_once() will not show up there.
+
+Transform WARN_ON_ONCE() and printk_once() into a WARN_ONCE().
+
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Link: https://lore.kernel.org/r/20240610103552.25252-1-anna-maria@linutronix.de
+
+---
+ kernel/time/tick-sched.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 43a6370..753a184 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -1026,10 +1026,10 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
+ 		if (expires == KTIME_MAX || ts->next_tick == hrtimer_get_expires(&ts->sched_timer))
+ 			return;
+ 
+-		WARN_ON_ONCE(1);
+-		printk_once("basemono: %llu ts->next_tick: %llu dev->next_event: %llu timer->active: %d timer->expires: %llu\n",
+-			    basemono, ts->next_tick, dev->next_event,
+-			    hrtimer_active(&ts->sched_timer), hrtimer_get_expires(&ts->sched_timer));
++		WARN_ONCE(1, "basemono: %llu ts->next_tick: %llu dev->next_event: %llu "
++			  "timer->active: %d timer->expires: %llu\n", basemono, ts->next_tick,
++			  dev->next_event, hrtimer_active(&ts->sched_timer),
++			  hrtimer_get_expires(&ts->sched_timer));
+ 	}
+ 
+ 	/*
 
