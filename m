@@ -1,110 +1,114 @@
-Return-Path: <linux-kernel+bounces-240053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB4A926893
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:49:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF2839268A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF33A1C21266
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 867E61F2174E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEA418E778;
-	Wed,  3 Jul 2024 18:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1379518EFD2;
+	Wed,  3 Jul 2024 18:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="BBQhst6x"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQ7eo1Ak"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE85188CD1;
-	Wed,  3 Jul 2024 18:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F04217A5B0;
+	Wed,  3 Jul 2024 18:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720032528; cv=none; b=VNMMTcthECs+6ybaId/ttg5WVSfzqsMExYV2NpDiNCNSvB+YeYa6LKFjSsCjr2qOWzD2t0Ghrfk3UTub3f1ds0zn+lTgkIX9rcrgFSbYMUj5lW+3MicBn4nHTDRGV0tcaM0m54g97w21Id59X/VT6xYv1uMbMhUhmItI+Cr6OWo=
+	t=1720032597; cv=none; b=WE22ywmJmHRtS6u/MFaxb+9nO+2vFc7NhL8o/LpFMpzUKOKrWOJD9w0uM0GjMwZMS7Y8kQaPlF7AdFRcZHJ0xTMAg1HmG1jTH21c98pMFBgn18EDfNCEBm1ck8Hdrn0H0s8rk2NgKsC1fsVpt9PLOZHFrlDoCwF3PshI5WHxgd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720032528; c=relaxed/simple;
-	bh=1UeOixBnqwCS2PCW7+/Bxiux1FjH7BQbeXhlLcGA6t8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KjKMMqFvRZKBJn2l5D37WXg9fE6F9V9Di27B7a6vXFs8feKwAmtkUprNatUP7i1ftiEB5CYgHDvc3hUwqjv4B4PMySoDjRI6GI3b70uzJp6OofkhWfF/iZmBM5HZszkMyCWUQjxuqRn+0P0t7BcBzy5zNUdxhW2VIId6PdwAPRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=BBQhst6x; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1720032523;
-	bh=1UeOixBnqwCS2PCW7+/Bxiux1FjH7BQbeXhlLcGA6t8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=BBQhst6xCRvTKTbLholr9TJQWBj3kLOJ1AxcoFJT3cfa6FvU6GHmfbaWtddmGSvqv
-	 3C1snKtnd4kekwFxQoGWyNXWbOSIWlokN6UNupwu2YwbZ0uoLjuJMOOZqZ670wNAy4
-	 g5Wn2tYubk1vjXGtpQyjHZprFNFQbQdUDIu+dhpI=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 8751A1A40D4;
-	Wed,  3 Jul 2024 14:48:41 -0400 (EDT)
-Message-ID: <e40b8edeea1d3747fe79a4f9f932ea4a8d891db0.camel@xry111.site>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, libc-alpha@sourceware.org, 
- "Andreas K. Huettel"
-	 <dilfridge@gentoo.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen
-	 <chenhuacai@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, Alexander Viro
-	 <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	loongarch@lists.linux.dev
-Date: Thu, 04 Jul 2024 02:48:40 +0800
-In-Reply-To: <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com>
-References: <20240625110029.606032-1-mjguzik@gmail.com>
-	 <20240625110029.606032-3-mjguzik@gmail.com>
-	 <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
-	 <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
-	 <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
-	 <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
-	 <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
-	 <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
-	 <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
-	 <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
-	 <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
-	 <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
-	 <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
-	 <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site>
-	 <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
-	 <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1720032597; c=relaxed/simple;
+	bh=tL3e/ur6/KMkg7mh3t7r3ZIFeZQ4xi5Q34S/7FlZ2qA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SLq2w25GpHpJBUellizhaTjqXXk76DXYVeBiRdvDL7I8h7/vRs3pjJ1J40oIPwxA/uls4pJOVx7u1tzsLEceO+TuGQgjyA1/QA+yKbeX5uuaueX724HZHO5boF25b4Bkxs49NUb2f8Y7/MrgRLdac44sLslW72RIbiIdV51tqBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQ7eo1Ak; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82B6EC2BD10;
+	Wed,  3 Jul 2024 18:49:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720032596;
+	bh=tL3e/ur6/KMkg7mh3t7r3ZIFeZQ4xi5Q34S/7FlZ2qA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SQ7eo1AkC8LjRWberzbfTrXdEmn8AVAPTH1nI5h830+ubxo1C5MaKmEtPRy9gsG1o
+	 M8aW67LDGZEnsrCM4Q/GRKRYn+r39JIjjMUn4+wwhQ4mb+Nyw7/6h4NQGIjateXcmW
+	 XAfTSrhx2kUyLwJweon5gGjsH9sMGD6YpKO/TIf9EwzO/u3UL14SYAuIKAMoMlbYkK
+	 bxKEJlfNCtFdikjht8PVx57e+Ez2TZA0kY1xDB4xr5o96jrOLhYPq5oX8riaz0aLMe
+	 pQxRIT/WAYj12CgJvmnxQibErDTaKj3syhCujN4MjJ27ACtbE6kpJopp6TU3GIN89Q
+	 vkEmm7DBvS+3g==
+Date: Wed, 3 Jul 2024 11:49:52 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: patchwork-bot+netdevbpf@kernel.org
+Cc: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, djakov@kernel.org, mturquette@baylibre.com,
+ sboyd@kernel.org, jassisinghbrar@gmail.com, herbert@gondor.apana.org.au,
+ davem@davemloft.net, manivannan.sadhasivam@linaro.org, will@kernel.org,
+ joro@8bytes.org, conor@kernel.org, tglx@linutronix.de, amitk@kernel.org,
+ thara.gopinath@gmail.com, linus.walleij@linaro.org, wim@linux-watchdog.org,
+ linux@roeck-us.net, rafael@kernel.org, viresh.kumar@linaro.org,
+ vkoul@kernel.org, edumazet@google.com, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, robimarko@gmail.com, quic_gurus@quicinc.com,
+ bartosz.golaszewski@linaro.org, kishon@kernel.org, quic_wcheng@quicinc.com,
+ alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+ agross@kernel.org, gregkh@linuxfoundation.org, quic_tdas@quicinc.com,
+ robin.murphy@arm.com, daniel.lezcano@linaro.org, rui.zhang@intel.com,
+ lukasz.luba@arm.com, quic_rjendra@quicinc.com, ulf.hansson@linaro.org,
+ quic_sibis@quicinc.com, otto.pflueger@abscue.de, quic_rohiagar@quicinc.com,
+ luca@z3ntu.xyz, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+ bhupesh.sharma@linaro.org, alexandre.torgue@foss.st.com,
+ peppe.cavallaro@st.com, joabreu@synopsys.com, netdev@vger.kernel.org,
+ lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+ ahalaney@redhat.com, krzysztof.kozlowski@linaro.org,
+ u.kleine-koenig@pengutronix.de, dmitry.baryshkov@linaro.org,
+ quic_cang@quicinc.com, danila@jiaxyga.com, quic_nitirawa@quicinc.com,
+ mantas@8devices.com, athierry@redhat.com, quic_kbajaj@quicinc.com,
+ quic_bjorande@quicinc.com, quic_msarkar@quicinc.com,
+ quic_devipriy@quicinc.com, quic_tsoni@quicinc.com,
+ quic_rgottimu@quicinc.com, quic_shashim@quicinc.com,
+ quic_kaushalk@quicinc.com, quic_tingweiz@quicinc.com,
+ quic_aiquny@quicinc.com, srinivas.kandagatla@linaro.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-crypto@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ kernel@quicinc.com
+Subject: Re: [PATCH 00/47] arm64: qcom: dts: add QCS9100 support
+Message-ID: <20240703114952.6013f05e@kernel.org>
+In-Reply-To: <171998042970.21654.12559535993133117436.git-patchwork-notify@kernel.org>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+	<171998042970.21654.12559535993133117436.git-patchwork-notify@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-07-03 at 10:54 -0700, Linus Torvalds wrote:
-> On Wed, 3 Jul 2024 at 10:40, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >=20
-> > Oh wow. Shows just *how* long ago that was - and how long ago I
-> > looked
-> > at 32-bit code. Because clearly, I was wrong.
->=20
-> Ok, so clearly any *new* 32-bit architecture should use 'struct statx'
-> as 'struct stat', and at least avoid the conversion pain.
->=20
-> Of course, if using <asm-generic/stat.h> like loongarch does, that is
-> very much not what happens. You get those old models with just 'long'.
+On Wed, 03 Jul 2024 04:20:29 +0000 patchwork-bot+netdevbpf@kernel.org
+wrote:
+> This series was applied to netdev/net-next.git (main)
+> by Jakub Kicinski <kuba@kernel.org>:
 
-Fortunately LoongArch ILP32 ABI is not finalized yet (there's no 32-bit
-kernel and 64-bit kernel does not support 32-bit userspace yet) so we
-can still make it happen to use struct statx as (userspace) struct
-stat...
+> Here is the summary with links:
+>   - [01/47] dt-bindings: arm: qcom: Document QCS9100 SoC and RIDE board
+>     (no matching commit)
+>   - [02/47] arm64: dts: qcom: qcs9100: Introduce QCS9100 SoC dtsi
+>     (no matching commit)
+>   - [03/47] arm64: dts: qcom: qcs9100: Introduce QCS9100 PMIC dtsi
+>     https://git.kernel.org/netdev/net-next/c/df18948d331e
 
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+This is some bug / false positive in the bot, to be clear.
+Commit df18948d331e is ("Merge branch 'device-memory-tcp'").
+No idea how it got from that to DTS.
 
