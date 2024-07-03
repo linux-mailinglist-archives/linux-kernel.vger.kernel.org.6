@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-239929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F7759266F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B74659266F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91C3B1C2200D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:19:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E899F1C21860
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C7A1849CF;
-	Wed,  3 Jul 2024 17:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5C3185084;
+	Wed,  3 Jul 2024 17:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSW8ZgOK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b="T17HPMPY"
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A7518C05;
-	Wed,  3 Jul 2024 17:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FE418309B;
+	Wed,  3 Jul 2024 17:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720027168; cv=none; b=UyLvG7fnFAQQJEst2DNRK0BNqLuJ583b/I5/4cD7ApAvIR5YN3sZlWdlOuBIh6XMaG8FvgtpJBoD5c3dp8XVM9DanzWnpeWOLaO55kwVnvRrpvu+Kb057gs6Iep6WTU7lIl54rNimoJhcIFQf1KuYJDYHfdNkhd+sjOUo10xSVM=
+	t=1720027261; cv=none; b=jDWEdfv7pypxUIKtwQVPFfR4vwpXRdM9slAlCs68CP2TAPQ7+PdrrTs0N/sFd6TvWMQ68aVR98ZHmF5UetqDP3cbIS3L/O3BjorZvn13tmlK1xHsJgt3AEOa8HW23pRPX6fvyV0CVyvUPcnrOqVa7t1xs7nbTntI6Kxsjc/o5fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720027168; c=relaxed/simple;
-	bh=o8bRY5T5C6boQ2KouICg/cTizZ7ZWeyIRo5f1hrciYI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=eYg3oVlAtgtWs0Wg+CGn8megVPgE9lyzneVkL7BPRVIoThqmxTgtjbeommGnUcAVhnSuDnL+3+ZwndXdDJ3pEfohVUZqMDqYE+rbQlV12zuSk56bb6/e1jbcbe20xvSSthSre77FyltOFCJfQcT+F/NLh1IcutBg4U+2oW/Ql+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSW8ZgOK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D836C2BD10;
-	Wed,  3 Jul 2024 17:19:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720027168;
-	bh=o8bRY5T5C6boQ2KouICg/cTizZ7ZWeyIRo5f1hrciYI=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=RSW8ZgOKuNP3kUjxdp16wHyDbj3SyvB8+j0FBKpGHDNqZMU7zWW5bvsaYO/j8jl9s
-	 0wZz/MyAn2hUekHv8BjlRrjTxucPiSI9KLfwMkqcHldYCLVO/lAddTDItuJV3Ink3T
-	 tLlfAbfxZNpQoH/1a8WffAps1xTv8jutc7GQMIJk36BSVpwWWrOmhy9rJjg6XKCbQG
-	 UbgBQ+nI+2Kp4WKSP5/EuU5396Hi89dg4c+MKf+bOGTg0NvtqFr4xr6yDONARsVQge
-	 vDvtxQO3cizPHV0eZo9m5PeDrwTGUgpUaVTOIXqYc052E1k/ErVL3SMavk1UC0qjZ2
-	 TBgN6pOQIODCg==
+	s=arc-20240116; t=1720027261; c=relaxed/simple;
+	bh=PMZ8fXfFqcesgh4os0cEpNSLQicO4IEGRrW58SumQa8=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AIHPBGQL0C17+3I0FdhB+SvNxvOE0LpV2b85c3m9fESPTrmPopj7hjF/w909ELCxKbfuq8kAGaWcs+aQnoeQ9IdEQz000H9HfFoQb/C2w4Z36O1DmO08B6/qyheshNUfoyvnMcLNqpVfxrxTLjYF3VR2WSVNpJLxp7Hr6ESifTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk; spf=pass smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b=T17HPMPY; arc=none smtp.client-ip=51.77.79.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metaspace.dk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=metaspace.dk;
+	s=protonmail; t=1720027243; x=1720286443;
+	bh=ndDGJ5uXrO4sGpkfcf5wznWFZi4Q7sy1VDuTcL5Kfro=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=T17HPMPYGDYS9yM7ZcV0UBuiTcwJVUuq7V6Juxt/NEvEJQW29YcPTdfs+oKQ6jt+2
+	 1zA7jrKPpg2Ig+P+YyRMIkexstlNFnXJ/5D95ENZhLQQOr17yKj33RTbpK2N4aTt6F
+	 q9PUCdp04UKuCcwbLurE0Q3ym1JaRlSqTAInXDaCrqHWEZzKiG63A8UIuJVlkBm9au
+	 DH7DhmvuNHbfoeZ2yCNAtuyJrEgVyLffU/4P0XDhypEm8npkFxri336xC8hV0M3B0i
+	 78Ex0hFUm8+MMEhg1CwECLvGSOFDNrd4aW+pfPqDzIpU9sT7wCKK3jctuaIRXIalza
+	 q3ZKg9uiD+pBg==
+Date: Wed, 03 Jul 2024 17:20:37 +0000
+To: Miguel Ojeda <ojeda@kernel.org>
+From: Andreas Hindborg <nmi@metaspace.dk>
+Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev, Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 06/13] rust: start supporting several compiler versions
+Message-ID: <87ed8a8ka3.fsf@metaspace.dk>
+Feedback-ID: 113830118:user:proton
+X-Pm-Message-ID: cb700748314eafeccfd6719d4fa10cbf2e19f93c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Jul 2024 20:19:24 +0300
-Message-Id: <D2G2QR0DMG8B.R0B95Z5T5YAF@kernel.org>
-Cc: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, <keyrings@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 0/3] Address !chip->auth
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240703170815.1494625-1-jarkko@kernel.org>
-In-Reply-To: <20240703170815.1494625-1-jarkko@kernel.org>
 
-On Wed Jul 3, 2024 at 8:08 PM EEST, Jarkko Sakkinen wrote:
-> Tested on x86-64 with:
->
-> - TCG_TPM2_HMAC disabled.
-> - TCG_TPM2_HMAC enabled.
-> - TCG_TPM2_HMAC enabled, and "/* rc =3D tpm2_sessions_init(chip); */".
->
-> Jarkko Sakkinen (3):
->   tpm: Address !chip->auth in tpm2_*_auth_session()
->   tpm: Address !chip->auth in tpm_buf_append_name()
->   tpm: Address !chip->auth in tpm_buf_append_hmac_session*()
->
->  drivers/char/tpm/Makefile        |   2 +-
->  drivers/char/tpm/tpm2-sessions.c | 400 +++++++++++++++++--------------
->  include/linux/tpm.h              |  75 ++----
->  3 files changed, 245 insertions(+), 232 deletions(-)
+Miguel Ojeda <ojeda@kernel.org> writes:
 
-Aiming these still to 6.10 so that there would not be known regressions
-in hmac authenticated sessions. Note that issue is wider than "just"
-tpm_ibmvtpm.
+[...]
 
-BR, Jarkko
+> diff --git a/scripts/rust_is_available.sh b/scripts/rust_is_available.sh
+> index 117018946b57..67cb900124cc 100755
+> --- a/scripts/rust_is_available.sh
+> +++ b/scripts/rust_is_available.sh
+> @@ -117,14 +117,6 @@ if [ "$rust_compiler_cversion" -lt "$rust_compiler_m=
+in_cversion" ]; then
+>  =09echo >&2 "***"
+>  =09exit 1
+>  fi
+> -if [ "$rust_compiler_cversion" -gt "$rust_compiler_min_cversion" ]; then
+> -=09echo >&2 "***"
+> -=09echo >&2 "*** Rust compiler '$RUSTC' is too new. This may or may not =
+work."
+> -=09echo >&2 "***   Your version:     $rust_compiler_version"
+> -=09echo >&2 "***   Expected version: $rust_compiler_min_version"
+> -=09echo >&2 "***"
+> -=09warning=3D1
+> -fi
+
+This does not set a max version. Will older versions of the kernel
+always compile with newer releases of `rustc`?
+
+Best regards,
+Andreas
+
 
