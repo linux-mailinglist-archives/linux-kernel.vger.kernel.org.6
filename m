@@ -1,109 +1,144 @@
-Return-Path: <linux-kernel+bounces-240064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF99F9268C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:00:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77639268C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BAD628D199
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71F091F22819
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AF918FC87;
-	Wed,  3 Jul 2024 18:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B346188CAE;
+	Wed,  3 Jul 2024 19:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJpW1Ve9"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KnNdd/2H"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB27D1822E5;
-	Wed,  3 Jul 2024 18:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D9A41A81
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 19:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720033185; cv=none; b=quN80t9Va7db8617UfgldcPkncLN+hQx7/5rfETobQUEgnjqW0kdsvEFPNddcXXPGw9eV1sFU/AyJygjt5aErz7bTP/1uX58JVnT5WLycC/e/rQFxIFs/Io8QkqEXeMamkQEadPqbP5eabGJ9Tk4yeMUivHEjt3YUt7B1mkwH/g=
+	t=1720033257; cv=none; b=a0gpxy+WEf6P1APCNS/klRhykTbMqbLiIaE2PSkkiVD1TSG85FRCQ6485Qw7StFYv75sNWKu+7BSonPRRJ9qeuGyMLQyfU52C260nVBINNvd2/PmSa26CK+/OAYYJPvJT7jnXYQJ+TIh6qoDSStoite8PgaYIcfNQu/042o6I0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720033185; c=relaxed/simple;
-	bh=xZ0tMr2lgtIQKAJ+nZbTyo4OVAyOdQQFAHj/Cu8JXaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcehFNM5ychDaapjUvddUxQovgp2fkIU9oFYevDtgF6qsLMc9J6S24RcE9wL4TO3+CBVGKMw/EKagU9AkNWIQuEDsfmE/9oLzqrZSc64gSvnKzduhNfgnlE6GLaJmICpX4eFUh7NSecaZmlSjgeoNPIAM32HaJ1xpG0ZRDDOhMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FJpW1Ve9; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f4a5344ec7so7981345ad.1;
-        Wed, 03 Jul 2024 11:59:43 -0700 (PDT)
+	s=arc-20240116; t=1720033257; c=relaxed/simple;
+	bh=UYxPNFpMcGneQ/ECP3GOas6d4yYi/uC/3SPT66tF62M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DHnOleFtAaok7fnfmV2LZfL1eZ2czulxzqLiDeJE5qkLTVvXNOdkObcU7fAFQh8O7Mxojk+zmuEZ2Ci/MYAMUtl2BPrnOg9SCJJjpXhm0mDwTOx3dLr+9sriqqGoSjuE8UDGt6XYGFwi+bDlAhB+8h8/oUhvezU+EePhReRoQpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KnNdd/2H; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e9380add2so3051184e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 12:00:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720033183; x=1720637983; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IohLYANlTWt9Y373TRe3rnVr5G7ZnH8yifT/Euy+kEI=;
-        b=FJpW1Ve97mp61jKTII0vegvRmrdETxX8aZhKcsFBcupwcWLC/+rIVd0ON7MzXeN0Mp
-         nb+SVAPxxAox9y6etNSJ/wRam8ikxtEJ44KOuUMuY4iqyM4dxZoGL1zzyx4FmYdpXEvm
-         bKbkvOl35sYTzCV+a4ztAAobTv2h6ufKvRMMFuKHTwfdhCkOxCOOWN3xFVfS0tVsnUiW
-         RBKh4dZFl0/gwHosCo4z6ylMMbJSt7QnC5X5XYMV9XEHTW3dKy7sBYoaXjrD/QmWOeC6
-         5rXwuYeyM1/TcUIheP60TTo+F1vnIXOM24YncGgSVeS9XyVQv+JfGCzgtsOuBJGXcBfc
-         T/4Q==
+        d=linux-foundation.org; s=google; t=1720033253; x=1720638053; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AwbTD1jwFh01l2fYaG95Vp8QD2DPYGRJu95WiulxKsI=;
+        b=KnNdd/2HC1g8PPW8ysWVmTO3XHICeitMIeENaaNdC1dvDWlj7Sv7dPRX1vx9PtZqP3
+         2unL0/Q0p53VLHX+jthB91yRBRPHrPChbR8Tcft1vXtCvxGPTDb3FQwEJmS+mt2fjCSJ
+         DKpxzFIIh0AXpdiSQ8Bi93vH3mLHUdMXUr93g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720033183; x=1720637983;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IohLYANlTWt9Y373TRe3rnVr5G7ZnH8yifT/Euy+kEI=;
-        b=SdaZ93M03ch+uocSgELhNQ74I/Xb/W11a90uxnbPc5cBc6ipOJSR/Y45FbrGFGLafX
-         mBFLpiJqanQVi4prhWfEUbhaNU2VHwPCIQuSEbypdXJng9iCuJteVPwQglG4KqodIu2b
-         lnlPumTXbSWlNB7/4onFstqM+o9OnCOS881ZRuWDUN6Gw6hQvT1xjtWEjOOonWhUWQbQ
-         l/l/G/6xYbuBPnjpBFXa3ccwzvq92gl5oajntAHnY0aNxpyGVUnebwXIP8kgt+xbCo0v
-         eJmHNpYSHfrhcbjFyURchV3olOKk1qjmfzYeNQbX9GiU/Ct8VbC0ZcHyShea96pPkViY
-         2wmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaaFM9R4otqfSe/VsbKSNm8R9Gt8A6GD3RLLSZGtYbWj5D8F/rJmq1Ul7YH4NFo+fkMmP6FKywYRLGIbL9tNI8I3Dcc0RRNp2PS90aBAVSK/HH50BixKTXuhJi1Ldc0YZJcMpzhA==
-X-Gm-Message-State: AOJu0YwwH0NAn9sw/Dk8ciG2pcXJLJmTam1YiiE6k8cXrHbGnQj+MBR1
-	RUNVTdly/Zsp2dqW5pGXGtAmh6SzJeyAbtiPb8lTDDaFZm4onqxA
-X-Google-Smtp-Source: AGHT+IEbEaBFtEXU4deGZ4B50xeYx5XmQJjG8Ta1vR2LiGo/9hMeoxcCltD4gV69DA99e8ul9Ktm4g==
-X-Received: by 2002:a17:902:f543:b0:1f9:9b6d:e3f9 with SMTP id d9443c01a7336-1fb1a0c6d7dmr40739135ad.29.1720033183131;
-        Wed, 03 Jul 2024 11:59:43 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb0c2e10dasm25676355ad.223.2024.07.03.11.59.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 11:59:42 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 3 Jul 2024 08:59:41 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cgroup: Protect css->cgroup write under css_set_lock
-Message-ID: <ZoWfnS6NvEoNckGO@slm.duckdns.org>
-References: <20240703185229.1849423-1-longman@redhat.com>
+        d=1e100.net; s=20230601; t=1720033253; x=1720638053;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AwbTD1jwFh01l2fYaG95Vp8QD2DPYGRJu95WiulxKsI=;
+        b=Wj0gZVVJ+ChR9k2n2WraKEUdZkyyhKaY34MbLuTcMkVmjeecYGzjFEEoxPajyjSA+V
+         IVwOsNUkYSO4CA2+ndEW1eVVS970AI8v8MC5mnirJc6rszpwHizXRGaY6cC64GTkBFvY
+         hoG/rHnJ9cg5IyZ4MdQq749vt3krvv/QALwUxFLuSENrzIRRlEFEFoO2muhhlO6MboH5
+         u7wpu1xqiKUD90uNEbw+fTlan859Y0J873pJFAk4nuQTNb9E5vRiuImNbhmw5wT3X6ZL
+         kHqtFpNReF22mnJii3h38Ye2kcZvJn0XillF48vpANayYFCwHBSDA3SSpcavSg95j86V
+         xk1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ0Q0czMb7sLjqdXDMoPl3Ov5AT5JgUYytRi/7FLFQvGgwei4HLgA6kxKVpLaDX3+MH1YKb0q419y7x37VxKw7Vv80eQ4LrzMp3NPr
+X-Gm-Message-State: AOJu0YzVupLjeiBl1oHxY75BzFHKwQm9erFZhetlx0LRtbvQC3W7J/c+
+	xatjkdr2bzdGRqoEIUcjPpWecZmlY3K0J+DBMoAwgOZD5nKISFqBPzxFEWWa5/BTNN+wXr+VNQ6
+	xOAWztg==
+X-Google-Smtp-Source: AGHT+IGg0a5xNiO/KxWqvn7A/J1FITVV34tA9Q91b/3JUi2dI/g+LpQV9Vlk1N+qC3lFb4eFLOmVGw==
+X-Received: by 2002:a05:6512:3d1e:b0:52c:9ae0:beed with SMTP id 2adb3069b0e04-52e82705d17mr12117514e87.52.1720033251534;
+        Wed, 03 Jul 2024 12:00:51 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab0bab5sm2207080e87.13.2024.07.03.12.00.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 12:00:50 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so30843861fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 12:00:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCURMHs/zA8Wi3PMUA2vAUSvo08gf2WnfHbZ9cReOwVnid/7laGZHO3Oaf37wVAHVL6tuoLwgHdNXFGgxo/jVmYEB79Bio1pDRvTbOs/
+X-Received: by 2002:a2e:a7c9:0:b0:2ec:56b9:258b with SMTP id
+ 38308e7fff4ca-2ee5e6f60femr110934241fa.33.1720033250138; Wed, 03 Jul 2024
+ 12:00:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703185229.1849423-1-longman@redhat.com>
+References: <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+ <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+ <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com> <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
+ <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
+ <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
+ <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
+ <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site>
+ <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
+ <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com> <20240703-begossen-extrem-6ed55a165113@brauner>
+In-Reply-To: <20240703-begossen-extrem-6ed55a165113@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 3 Jul 2024 12:00:33 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgCttiyp+3BBzhqKv+uXuUr-fzw2QbmH8kXwO+sB+FAaQ@mail.gmail.com>
+Message-ID: <CAHk-=wgCttiyp+3BBzhqKv+uXuUr-fzw2QbmH8kXwO+sB+FAaQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+To: Christian Brauner <brauner@kernel.org>
+Cc: Xi Ruoyao <xry111@xry111.site>, libc-alpha@sourceware.org, 
+	"Andreas K. Huettel" <dilfridge@gentoo.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Huacai Chen <chenhuacai@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 03, 2024 at 02:52:29PM -0400, Waiman Long wrote:
-> The writing of css->cgroup associated with the cgroup root in
-> rebind_subsystems() is currently protected only by cgroup_mutex.
-> However, the reading of css->cgroup in both proc_cpuset_show() and
-> proc_cgroup_show() is protected just by css_set_lock. That makes the
-> readers susceptible to racing problems like data tearing or caching.
-> It is also a problem that can be reported by KCSAN.
-> 
-> This can be fixed by using READ_ONCE() and WRITE_ONCE() to access
-> css->cgroup. Alternatively, the writing of css->cgroup can be moved
-> under css_set_lock as well which is done by this patch.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
+On Wed, 3 Jul 2024 at 11:14, Christian Brauner <brauner@kernel.org> wrote:
+>
+> In any case, which one of these does a new architecture have to add for
+> reasonable backward compatibility:
+>
+> fstat()
+> fstat64()
+> fstatat64()
+>
+> lstat()
+> lstat64()
+>
+> stat()
+> stat64()
+> statx()
+>
+> newstat()
+> newlstat()
+> newfstat()
+> newfstatat()
 
-Applied to cgroup/for-6.10-fixes.
+Well, I do think that a *new* architecture should indeed add all of
+those, but make the 'struct stat' for all of them be the same.
 
-Thanks.
+So then if people do the system call rewriting thing - or just do the
+manual system call thing with
 
--- 
-tejun
+    syscall(__NR_xyz, ...)
+
+it is all available, but it ends up being all the same code.
+
+Wouldn't that be lovely?
+
+Of course, I also happen to think that "new architecture" and "32-bit"
+is just crazy to begin with, so honestly, I don't even care. 32-bit
+architectures aren't really relevant for any new development, and I
+think we should just codify that.
+
+And on 64-bit architectures, the standard 'stat' works fine.
+
+            Linus
 
