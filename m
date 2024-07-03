@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-240015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D319267EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:14:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506939267EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D4D1C245C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:14:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEC02B25745
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCFB18734B;
-	Wed,  3 Jul 2024 18:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185EE1862BA;
+	Wed,  3 Jul 2024 18:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tbu1VoO+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="R5qskGcP"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9828567D;
-	Wed,  3 Jul 2024 18:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E067A186E33
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 18:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720030463; cv=none; b=mXD1qy0xWhBECBx0x3z7H8xKHL+YPCWY7xCSrpnK/9GqWe5+RiWn0CxwhulfUqEykSI7nULOuwH8P/dBIj/xpOmBIyjHzU5WBG/kC77RecfCKn0rBWl4yqaJpU7OrsCeq+S/9xHkaafWYRwFMla31CBpeS5WGPSeAvxXx1ScsdQ=
+	t=1720030509; cv=none; b=GTpRHilgPrsS/YJk/ZSbLQceXlzkjEEwywqP9LPRG0CVgskQsQG0DA6mUGIZxJh1Dh8WiQ3isGjx2HLPt1uYzhSiG7bmYsszT/GvpEJvC+pRvlkBGHG+CZa2Z0nPQAF0JK01rmehdWr7aJpCDq4qevwIgSGDr8Q2+Il5r9N2bjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720030463; c=relaxed/simple;
-	bh=aEWNQfcAo8WRJMfVN4BvVW8uDGskRb/1yU46rHnsxkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RCzjkfNvISmW0Lgr02l5RDyPkg0dCbXQUZRtjdkK32z4+gR9vKlwrLYLBIPbnjN6kgJdWFSc7evOYz0x6aCSKPQce49Vmud2DuePjanBuIcOAiZq+66ZgfGoyk/As5PbYysI5kK5PFc5EXKHTraC8Y/Il4HjuFZWZMrstmuIgjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tbu1VoO+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCEB4C2BD10;
-	Wed,  3 Jul 2024 18:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720030463;
-	bh=aEWNQfcAo8WRJMfVN4BvVW8uDGskRb/1yU46rHnsxkQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tbu1VoO+YiHnHKaKj71CsFr7PqpFGKIEkwb5qyPwGHSdWT3Db8sAW9c6/U4yDu3Pb
-	 jKhKD27P9feuhoeSZ+Y6BXM1X1rBeJMl3QF6UWn46Z9FJ0G3H94SAl75WTMeYqDPQy
-	 i21KUIVY17skBqM7wAkrlvGEnUq+WmSqntaS++i8EzYRr13fo63pc74FgzujkyEa0i
-	 vh00LlxYJJxIdeRhPw/eiJy1O2G89kYMRmtYD5hK9kREYORvyCO4zTZf0P/288rulp
-	 SuU5MJ+WYp/+dAY1auoicQGzzP0zO+p7K19gqEc9rlbcbkZKgfRs073YxD76MEKvVU
-	 C4F9N33uSRZ1Q==
-Date: Wed, 3 Jul 2024 20:14:15 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Xi Ruoyao <xry111@xry111.site>, libc-alpha@sourceware.org, 
-	"Andreas K. Huettel" <dilfridge@gentoo.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Huacai Chen <chenhuacai@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	loongarch@lists.linux.dev
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-Message-ID: <20240703-begossen-extrem-6ed55a165113@brauner>
-References: <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
- <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
- <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
- <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
- <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
- <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
- <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
- <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site>
- <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
- <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com>
+	s=arc-20240116; t=1720030509; c=relaxed/simple;
+	bh=5w0rmOxDyTDGXnUFXKzhdRIw+XWWxtkh3O1pqRnHB/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MsQt+AGfMlYJ8V4BUvmCue/CnFmPKVy/qfRlqKLdeXQgRup+JiytVs0gmFjihBhbbisT5B0ZfKCI1JTdcgdx2kO7yG8SoT3DLOX9dZHgzO9uZjp0riR2RynD70N4iIu16Z92Z8gQ3bVfPwYL5jhObY1vwVoCWwB9opTLtgV0Ga0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=R5qskGcP; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-424ad991c1cso50716555e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 11:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720030506; x=1720635306; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ZbbSn7dO/LHkMEuGVIUAESb1k8ru9Rr/nw1cfojTtc=;
+        b=R5qskGcPeg3Z3N+2YA71vYISetWyMJIQQUSUfjNBvb1hytC1irK3edjnDW39qXCVdG
+         2xdGmQh0rNsyS9/QAR3/ozNWDd8Nx/9tWuVdHc+bn8a5huZptHXgsl3cjMHXy9+i/E21
+         SId1UuF+jW8iiGnB3W2O9iW4iSCpnc+feGdXjteNk0PwLDK8TIN88TN00hXMhf0MbSRY
+         WvwvxF7PXDOxRtFjQtc9zwHFnQiYH/9msQCio4VfvWRB5+HiW3XjT7PkHIvIhCV4u7Nw
+         x8NyKP/CfPckZrg2vSy6MEGQ2WGh5CB2dFvmZaJCVNvAgDA4wqr286jxWanxpomtRTKm
+         u3fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720030506; x=1720635306;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3ZbbSn7dO/LHkMEuGVIUAESb1k8ru9Rr/nw1cfojTtc=;
+        b=NVXQL2hqTUyZ2kxIxMIZOOJxVg18+9aHYM5jaEOkIA5P13ukaQWZ5anRq5oiQisJzr
+         AdH04Gcbg8C9Zsb6stWEQ9quaQMKv8J05b7Ai6QWAcI0myoF+um6zIV7Wvpd/qfxOoih
+         7GgNcTj79bJaNvC9tpJNWVvIFHbrhvaOa9WqpozW8HNgdBnasloyZVcL73R6sm6jNUXu
+         N6iAWNRUwEQF4HR45hrXb0aJNs1g0470BSw0HxYMhaGdJHG1luwM4R2wqhqwTgw/Pddt
+         WiKKs28mxmJy+zyzfKomeD/mabj7OFyoLP6KVsYcboSFxqv1FGYDb04djHlxM2QVA8yc
+         U88A==
+X-Forwarded-Encrypted: i=1; AJvYcCWd7sw0nSrBiF0W8GJiFe+PenMkuMyTwHSaYvATdjx6siiVpRu9HI5/sKBCcyVwavwdD4FfPpauinVDQM6ORCKy+s7W4Z1KQpKP6eLO
+X-Gm-Message-State: AOJu0YzSLS2/W/OHhpy3PJK5w2h3WfogAKZnAnKOVFdGZxUbJTGGvM89
+	LZvR2gHcUiPXHd65zqo0f4q6nwuCvgHCeVi8zBOQFAmh2NXeL3Us+RTqCmDAQV4=
+X-Google-Smtp-Source: AGHT+IHA959VcQ8zkd43QwM/hU+7N7JRWUGVEs+OSBw7vjjt+p+1E1CwFCIhhJ7Up42Xt55D1kCxtw==
+X-Received: by 2002:a05:600c:3286:b0:425:6927:5f4e with SMTP id 5b1f17b1804b1-4257a0270d5mr108482685e9.37.1720030506233;
+        Wed, 03 Jul 2024 11:15:06 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:c37f:195e:538f:bf06])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0c0f26sm245178845e9.39.2024.07.03.11.15.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 11:15:05 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH net-next v3 0/2] net: stmmac: qcom-ethqos: enable 2.5G ethernet on sa8775p-ride
+Date: Wed,  3 Jul 2024 20:14:57 +0200
+Message-ID: <20240703181500.28491-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 03, 2024 at 10:54:53AM GMT, Linus Torvalds wrote:
-> On Wed, 3 Jul 2024 at 10:40, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Oh wow. Shows just *how* long ago that was - and how long ago I looked
-> > at 32-bit code. Because clearly, I was wrong.
-> 
-> Ok, so clearly any *new* 32-bit architecture should use 'struct statx'
-> as 'struct stat', and at least avoid the conversion pain.
-> 
-> Of course, if using <asm-generic/stat.h> like loongarch does, that is
-> very much not what happens. You get those old models with just 'long'.
-> 
-> So any architecture that didn't do that 'stat == statx' and has
-> binaries with old stat models should just continue to have them.
-> 
-> It's not like we can get rid of the kernel side code for that all _anyway_.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Fwiw, the original motivation for that whole "let's do NULL with
-AT_EMPTY_PATH" (somewhat independent from the generic use of it) that
-somehow morphed into this discussion was that the Chrome Sandbox has
-rewrites fstatat() system calls to fstat() via SECCOMP_RET_TRAP:
+Here are the changes required to enable 2.5G ethernet on sa8775p-ride.
+As advised by Andrew Lunn and Russell King, I am reusing the existing
+stmmac infrastructure to enable the SGMII loopback and so I dropped the
+patches adding new callbacks to the driver core. I also added more
+details to the commit message and made sure the workaround is only
+enabled on Rev 3 of the board (with AQR115C PHY). Also: dropped any
+mentions of the OCSGMII mode.
 
-  if (args.nr == __NR_fstatat_default) {
-    if (*reinterpret_cast<const char*>(args.args[1]) == '\0' &&
-        args.args[3] == static_cast<uint64_t>(AT_EMPTY_PATH)) {
-      return syscall(__NR_fstat_default, static_cast<int>(args.args[0]),
-                     reinterpret_cast<default_stat_struct*>(args.args[2]));
-    }
+Changes since v2:
+- only apply the SGMII loopback quirk on Rev 3 of the sa8775p-ride board
+- extend the commit message in patch 2 to explain the situation in detail
+Link to v2: https://lore.kernel.org/netdev/20240627113948.25358-1-brgl@bgdev.pl/
 
-while also disabling statx() completely because they can't (easily)
-rewrite it and don't want to allow it unless we have NULL for
-AT_EMPTY_PATH (which we'll have soon ofc).
+Changes since v1:
+- split out the stmmac patches into their own series
+- don't add new callbacks to the stmmac core, reuse existing
+  infrastructure instead
+- don't try to add a new PHY mode (OCSGMII) but reuse 2500BASEX instead
+Link to v1: https://lore.kernel.org/linux-arm-kernel/20240619184550.34524-1-brgl@bgdev.pl/T/
 
-In any case in [1] I proposed they add back fstat()/fstatat64() which
-should get that problem solved because they can rewrite that thing.
+Bartosz Golaszewski (2):
+  net: stmmac: qcom-ethqos: add support for 2.5G BASEX mode
+  net: stmmac: qcom-ethqos: enable SGMII loopback during DMA reset on
+    sa8775p-ride-r3
 
-In any case, which one of these does a new architecture have to add for
-reasonable backward compatibility:
+ .../stmicro/stmmac/dwmac-qcom-ethqos.c        | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-fstat()
-fstat64()
-fstatat64()
+-- 
+2.43.0
 
-lstat()
-lstat64()
-
-stat()
-stat64()
-statx()
-
-newstat()
-newlstat()
-newfstat()
-newfstatat()
-
-Because really that's a complete mess and we have all sorts of overflow
-issues and odd failures in the varioius variants. And the userspace
-ifdefery in libcs is just as bad if not very much worse.
-
-[1]: https://lore.kernel.org/lkml/20240226-altmodisch-gedeutet-91c5ba2f6071@brauner
 
