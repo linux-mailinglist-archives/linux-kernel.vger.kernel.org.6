@@ -1,255 +1,278 @@
-Return-Path: <linux-kernel+bounces-240145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4F1926994
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:31:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F132B926995
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32E361C22207
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:31:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9036288A61
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BA4190469;
-	Wed,  3 Jul 2024 20:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89718191F6A;
+	Wed,  3 Jul 2024 20:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MaQELECc"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tasPHS4G";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+jD0jxRZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE644964E;
-	Wed,  3 Jul 2024 20:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD9A18E769
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 20:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720038686; cv=none; b=u1UADqc2ZdNwFiwGAAOLGypPul9r5l6Kq7peDmsoemTKnZrFOzoj/m1oJYf6vD3/5oPnm43l1HWlnu4RPmr70wPghdTznHbiwuVRDReZkl08gYzi4lZxIwZ9RtjfMjcJzMwG2Au6Mgy/i3WEZZsu093FkK3tTkc6vQrGdyqi4W4=
+	t=1720038688; cv=none; b=Y2+5zNC+fT3KXp6rxd6VJzc76tZEPknWLlIb06htpZjNndf/OviSVHH936K8m9klUQqQh9WwWGNlwP4Pr2WPU1KxmnUx/L5dCGhZyaZ5FsWlbYW9MazL6yU/CbExg2TD6DPv/wKsbFKam+WmSy84viyOFJExh5Dh6oL2Qi0h1PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720038686; c=relaxed/simple;
-	bh=28CwKUBpxn29hreka2jtVxsXjE9DWJUpeBMm2mXFMKw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WxMehRX6BpJgLVFtTxVdUWa0PibeCWsEbzuhuXm3K2SzRF6cg7qK6ynYHnLlvFirSm4iTIGbrdwbXqsjXHVByF1vgk8N8OUVrqW+sTz3jhGlkrkKReIDvb8xzN8ujmdLBLcrmFsUXufOVHYwZwBV0bR5CDp7VpAjajSSrbNV8Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MaQELECc; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso56989731fa.3;
-        Wed, 03 Jul 2024 13:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720038683; x=1720643483; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AxQPKIQ3HTrHnNwff3QYIMoIek786yjRZFVT1LlX/d8=;
-        b=MaQELECcLuYYVx1UGpfAkc+CKhlnd5tL1AglJStZMt4q+ADz05JgyTFyVDwJgjbkJo
-         NdNNpEw8i56rTqYBP1qU6QsbMEUPwZrj9ifh6t95Btzs06Gx60EP2bxz15K+UMYGOKCp
-         PyM/5NpgZhCJZ0NP8BXobiTXjisJ6HKysD03mdYbGkwH8fIw2xX7BHFgBzjYJX5TfCCJ
-         QATi7pko7yWAtocsCi2oCKXk90THGoQDpAAVwl7cBA4HpKD79oP7RAT3AQgnGcXyXyET
-         tv/GdJaEtd3Z6YxeDhl0pTmqcBGfc5IR3/dOXRx+fxaqH6i/ftu83TmyuLl5o7lgi06N
-         OtpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720038683; x=1720643483;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AxQPKIQ3HTrHnNwff3QYIMoIek786yjRZFVT1LlX/d8=;
-        b=O23I+/dtbRmEVbpzNnsqWIKN9mIBXxyTGwQ0wPshy/s+seo5UW1mfIRCeVRQxnRiNC
-         vMziWChmJwV67A+/M9kZJ+WqjWqfdjaegFh5oqhvT6AARKgA/FOwnLU8bKALsmbcvt6F
-         xN5EykndcIvti/UR9Wd83diuadj3YGWAugavNTlEzjB1y/eKmDV513CZgdILXsLrfPR/
-         /kKZdeXAjry8+dZDjiVtyjWyDtOEYsYGYNKUBHAZdBTTOJuZkOoF7vM5XVuyHHA5Cslg
-         k3cDq6IFn+XjQX7VfDu+xQGRCo8Q3I62diR/Hv8SasGbYtZCQXeAT+oU3F9AOgCWP3Ev
-         NhhA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6IZn/ZgWSKsTzNh5EMCZvJZLcnfg4w6TP0vXvo905JPmNnhGMp29fhoWLUr7sRlXHeYnUWz0M3dS7qNauvVzIsOZ6vVWy7JtvTrOWW5o79WiK6xd/EIMQLQflWyFFH+jFhFxE
-X-Gm-Message-State: AOJu0YzUD5hVt/064lwUg1rBu85DkQ0OZkJ9tD/ROFSXasOh2ZVHptCp
-	Ea/R1yTdBpnc4jNi9e0d6Pc09Ay8IyWCNL8oWYsR7HJGrQtqsMTbsLqpp87NkuQaf1K16aGLP2P
-	4av6J5vUfkFlR9HJ0LNtmenihHKdXUmKk
-X-Google-Smtp-Source: AGHT+IFoeK/j/BiQlJ84Hk5d+C/64MO9ULJ/NDXv9h23TkeLVAeFB9gn8BRnxA72N8BTWVLsxHFnRxw/4FSKuI6Qdkg=
-X-Received: by 2002:a2e:a78a:0:b0:2ee:5ed4:792f with SMTP id
- 38308e7fff4ca-2ee5ed47fcbmr98080471fa.2.1720038682299; Wed, 03 Jul 2024
- 13:31:22 -0700 (PDT)
+	s=arc-20240116; t=1720038688; c=relaxed/simple;
+	bh=5fv8l9O4A2MphWSqKSmb1GWSd/cHEoAMK/fXSGu+joY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Lu6JdavHuu2ZgkJ6uXO01pH5nH3bTBNHPPmfqQHd9fun+rvusilRpL83bI/Q6840ORVyPJBKYUA7wY3bv2svCdMSvCye+nygURKqdxpBkHZ1aj5wkGWYbtGs9gPVlun60qPrJg/PuDIFVTAtdDhfSjO+M84hXXhucU7NBFtwBT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tasPHS4G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+jD0jxRZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720038685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vjYhz0CfgpUPF4SvozOlgcJFnE5KhXTKsUxMrTVXDfY=;
+	b=tasPHS4G2fQSeHyNi/Aal+V5DfJsvLqVRtm5i2TSApd3+r7ujz1YbVYCEsAl032R+cbXjq
+	toevnRdq2KEFBungpJYOCeLgNS8ETK1Ut35eSh20SRnMjrnbt1rXtqcASNphEe4K2nsFLj
+	tXpUTc5SeUJzuuMICCllcQ+EF6HuXuNKs87NUHBclGNSUtxl3KVmLbP3G+YCwYyBSpB1JM
+	I5h5r1RunOovADM4c9NT3g3r4wM++0pntADyq6KpWSZVlIyqPoI06g1J9vYI4QFFUc/S9m
+	lTgWDRhOR4fulAmMZVYXmd6gUgtt45WdZyq5+HvuaPkB18Z7SNTe6ta1SmnKUg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720038685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vjYhz0CfgpUPF4SvozOlgcJFnE5KhXTKsUxMrTVXDfY=;
+	b=+jD0jxRZncxk9Zi4gdqfKtoSFIFH6AszmToFXpq/YJzPYlz7se+xv5LiEZtLF6oLOH/nhy
+	SXS9JgU4ER2Ca2Dg==
+To: Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: [PATCH v4 6/8] timers/migration: Rename childmask by groupmask to make naming more obvious
+Date: Wed,  3 Jul 2024 22:31:15 +0200
+Message-Id: <20240703203115.9028-1-anna-maria@linutronix.de>
+In-Reply-To: <20240701-tmigr-fixes-v3-6-25cd5de318fb@linutronix.de>
+References: <20240701-tmigr-fixes-v3-6-25cd5de318fb@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aa5ffa9a-62cc-4a79-9368-989f5684c29c@alliedtelesis.co.nz>
- <CACRpkdbF-OsV_jUp42yttvdjckqY0MsLg4kGxTr3JDnjGzLRsA@mail.gmail.com>
- <CAJq09z6dN0TkxxjmXT6yui8ydRUPTLcpFHyeExq_41RmSDdaHg@mail.gmail.com> <b15b15ce-ae24-4e04-83ab-87017226f558@alliedtelesis.co.nz>
-In-Reply-To: <b15b15ce-ae24-4e04-83ab-87017226f558@alliedtelesis.co.nz>
-From: Luiz Angelo Daros de Luca <luizluca@gmail.com>
-Date: Wed, 3 Jul 2024 17:31:10 -0300
-Message-ID: <CAJq09z5EWps3j1jZPj2J+j=hmzmpvF8QdUJpKADz6nQ_jJEjGw@mail.gmail.com>
-Subject: Re: net: dsa: Realtek switch drivers
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "alsi@bang-olufsen.dk" <alsi@bang-olufsen.dk>, 
-	Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
-	"olteanv@gmail.com" <olteanv@gmail.com>, =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
-	"ericwouds@gmail.com" <ericwouds@gmail.com>, David Miller <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"justinstitt@google.com" <justinstitt@google.com>, 
-	"rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>, netdev <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"sander@svanheule.net" <sander@svanheule.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Em seg., 1 de jul. de 2024, 23:09, Chris Packham
-<chris.packham@alliedtelesis.co.nz> escreveu:
->
->
-> On 15/06/24 09:36, Luiz Angelo Daros de Luca wrote:
-> > Hello Chris and Linus,
-> >
-> >>> I'm starting to look at some L2/L3 switches with Realtek silicon. I see
-> >>> in the upstream kernel there are dsa drivers for a couple of simple L2
-> >>> switches. While openwrt has support for a lot of the more advanced
-> >>> silicon. I'm just wondering if there is a particular reason no-one has
-> >>> attempted to upstream support for these switches?
-> >> It began with the RTL8366RB ("RTL8366 revision B") which I think is
-> >> equivalent to RTL8366S as well, but have not been able to test.
-> >>
-> >> Then Luiz and Alvin jumped in and fixed up the RTL8365MB family.
-> >>
-> >> So the support is pretty much what is stated in the DT bindings
-> >> in Documentation/devicetree/bindings/net/dsa/realtek.yaml:
-> >>
-> >> properties:
-> >>    compatible:
-> >>      enum:
-> >>        - realtek,rtl8365mb
-> >>        - realtek,rtl8366rb
-> >>      description: |
-> >>        realtek,rtl8365mb:
-> >>          Use with models RTL8363NB, RTL8363NB-VB, RTL8363SC, RTL8363SC-VB,
-> >>          RTL8364NB, RTL8364NB-VB, RTL8365MB, RTL8366SC, RTL8367RB-VB, RTL8367S,
-> >>          RTL8367SB, RTL8370MB, RTL8310SR
-> >>        realtek,rtl8366rb:
-> >>          Use with models RTL8366RB, RTL8366S
-> >>
-> >> It may look like just RTL8365 and RTL8366 on the surface but the sub-version
-> >> is detected at runtime.
-> >>
-> >>> If I were to start
-> >>> grabbing drivers from openwrt and trying to get them landed would that
-> >>> be a problem?
-> >> I think the base is there, when I started with RTL8366RB it was pretty
-> >> uphill but the kernel DSA experts (Vladimir & Andrew especially) are super
-> >> helpful so eventually we have arrived at something that works reasonably.
-> >>
-> >> The RTL8356MB-family driver is more advanced and has a lot more features,
-> >> notably it supports all known RTL8367 variants.
-> > I played with RTL8367R. It mostly works with rtl8365mb driver but I
-> > wasn't able to enable the CPU tagging. Although
-> >
-> >> The upstream OpenWrt in target/linux/generic/files/drivers/net/phy
-> >> has the following drivers for the old switchdev:
-> >> -rw-r--r--. 1 linus linus 25382 Jun  7 21:44 rtl8306.c
-> >> -rw-r--r--. 1 linus linus 40268 Jun  7 21:44 rtl8366rb.c
-> >> -rw-r--r--. 1 linus linus 33681 Jun  7 21:44 rtl8366s.c
-> >> -rw-r--r--. 1 linus linus 36324 Jun  7 21:44 rtl8366_smi.c
-> >> -rw-r--r--. 1 linus linus  4838 Jun  7 21:44 rtl8366_smi.h
-> >> -rw-r--r--. 1 linus linus 58021 Jun 12 18:50 rtl8367b.c
-> >> -rw-r--r--. 1 linus linus 59612 Jun 12 18:50 rtl8367.c
-> >>
-> >> As far as I can tell we cover all but RTL8306 with the current in-tree
-> >> drivers, the only reason these are still in OpenWrt would be that some
-> >> boards are not migrated to DSA.
-> > These drivers you listed are mostly found in old or low spec devices.
-> > There is little incentive to invest too much time to migrate them. For
-> > rtl8365mb, it still lacks support for vlan and forwarding offload. So,
-> > the swconfig driver still makes sense.
-> > There is also a performance problem with checksum offloading. These
-> > switches are used with non-realtek SoC, which might lead to:
-> >
-> > "Checksum offload should work with category 1 and 2 taggers when the
-> > DSA conduit driver declares NETIF_F_HW_CSUM in vlan_features and looks
-> > at csum_start and csum_offset. For those cases, DSA will shift the
-> > checksum start and offset by the tag size. If the DSA conduit driver
-> > still uses the legacy NETIF_F_IP_CSUM or NETIF_F_IPV6_CSUM in
-> > vlan_features, the offload might only work if the offload hardware
-> > already expects that specific tag (perhaps due to matching vendors).
-> > DSA user ports inherit those flags from the conduit, and it is up to
-> > the driver to correctly fall back to software checksum when the IP
-> > header is not where the hardware expects. If that check is
-> > ineffective, the packets might go to the network without a proper
-> > checksum (the checksum field will have the pseudo IP header sum). For
-> > category 3, when the offload hardware does not already expect the
-> > switch tag in use, the checksum must be calculated before any tag is
-> > inserted (i.e. inside the tagger). Otherwise, the DSA conduit would
-> > include the tail tag in the (software or hardware) checksum
-> > calculation. Then, when the tag gets stripped by the switch during
-> > transmission, it will leave an incorrect IP checksum in place."
-> > See: https://docs.kernel.org/networking/dsa/dsa.html
-> >
-> >> But maybe I missed something?
-> > I guess Chris is talking about the realtek target that uses Realtek
-> > SoC (target/linux/realtek/files-5.15/). That is a completely different
-> > beast. Although it might share some (or a lot) logic with current
-> > upstream drivers, it is way more complex. It might require a
-> > multi-function device driver. Anyway, the current realtek SoC/target
-> > drivers need some love, like using regmap, implement functions using
-> > an abstraction layer (and not if model a inside the code), get rid of
-> > all magic numbers and replace them with meaningful macros, create a
-> > proper tagger (and not translate a generic one just before forwarding
-> > it). In OpenWrt, a code that gets things done might be acceptable but
-> > the upstream kernel requires something more maintainable. So, if you
-> > want to upstream those drivers, you can start by improving them in the
-> > openwrt.
->
-> So now got access to the Realtek docs and I've been pouring over them
-> and the openwrt code (I'm avoiding looking at the Realtek SDK for now,
-> just to make sure I don't submit something I don't have the rights to).
->
-> If someone were to look at the block diagram in the brief datasheet
-> they'd probably come away with the impression that it very much fits the
-> DSA model. There's a SoC portion with the CPU, peripherals and a "NIC".
-> That NIC is connected to the CPU MAC in the switch block. All seems like
-> a pretty standard DSA type design and that's what the openwrt code
-> implements a ethernet/rtl838x_eth.c driver for the Ethernet NIC and a
-> dsa/rtl83xx driver for the DSA switch.
->
-> But when you start digging into the detail you find that the registers
-> for the NIC are scattered through the address space for the switch. Same
-> for the MDIO related registers. There is a more detailed block diagram
-> in the CPU and Peripherals datasheet that shows the NIC and switch as
-> part of the same IP block. The openwrt implementation does things that I
-> think would be frowned upon upstream like calling from the Ethernet
-> driver into the switch driver to access registers.
+childmask in the group reflects the mask that is required to 'reference'
+this group in the parent. When reading childmask, this might be confusing,
+as this suggests, that this is the mask of the child of the group.
 
-Wouldn't that be a case for Multi-Function Device driver? From docs,
-"A typical MFD can be:
-- A mixed signal ASIC on an external bus, sometimes a PMIC (Power
-Management Integrated Circuit) that is manufactured in a lower
-technology node (rough silicon) that handles analog drivers for things
-like audio amplifiers, LED drivers, level shifters, PHY (physical
-interfaces to things like USB or ethernet), regulators etc.
-- A range of memory registers containing "miscellaneous system
-registers" also known as a system controller "syscon" or any other
-memory range containing a mix of unrelated hardware devices."
+Clarify this by renaming childmask in the tmigr_group and tmc_group by
+groupmask.
 
-Vladimir Oltean was the first to suggest to me the use of MFD for DSA
-switches as they commonly need two drivers: DSA and the user mii bus
-driver. The Realtek SoC just seems to make it more needed as we have
-other functions registers scattered.
-https://lore.kernel.org/netdev/20231211143513.n6ms3dlp6rrcqya6@skbuf/
-
-The OpenWrt driver does work and I think it can be incrementally
-improved up to upstream status. It is a bit messy but you could start
-untangling it there, trying to decouple (the non-existing) tagger,
-ethernet, phy and DSA drivers (and whatever else shares the same
-register space). The upstream realtek drivers use a common
-code+subdrivers model while the Realtek SoC DSA driver in OpenWrt uses
-a single driver with lots of ifs inside each function. I don't know if
-they can be merged into a single driver tree, sharing as much as
-possible, or Realtek SoC will require a completely duplicated tree.
-
-> This leads me to conclude that what Realtek call the "NIC" is actually
-> just the DMA interface for packets sent from or trapped to the CPU.
-> Rather than trying to make this fit the DSA model I should be looking at
-> using switchdev directly (I can still probably leverage a lot of code
-> from the openwrt drivers because the switch tables are the same either way).
->
-> What would I be loosing if I don't use the DSA infrastructure? I got
-> kind of hung up at the point where it really wanted a CPU port and I
-> just couldn't provide a nice discrete NIC.
-
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 ---
-     Luiz Angelo Daros de Luca
-            luizluca@gmail.com
+ include/trace/events/timer_migration.h |  4 ++--
+ kernel/time/timer_migration.c          | 24 ++++++++++++------------
+ kernel/time/timer_migration.h          | 15 +++++++--------
+ 3 files changed, 21 insertions(+), 22 deletions(-)
+
+diff --git a/include/trace/events/timer_migration.h b/include/trace/events/timer_migration.h
+index 79f19e76a80b..f1a447f43f72 100644
+--- a/include/trace/events/timer_migration.h
++++ b/include/trace/events/timer_migration.h
+@@ -52,7 +52,7 @@ TRACE_EVENT(tmigr_connect_child_parent,
+ 		__entry->lvl		= child->parent->level;
+ 		__entry->numa_node	= child->parent->numa_node;
+ 		__entry->num_children	= child->parent->num_children;
+-		__entry->childmask	= child->childmask;
++		__entry->childmask	= child->groupmask;
+ 	),
+ 
+ 	TP_printk("group=%p childmask=%0x parent=%p lvl=%d numa=%d num_children=%d",
+@@ -81,7 +81,7 @@ TRACE_EVENT(tmigr_connect_cpu_parent,
+ 		__entry->lvl		= tmc->tmgroup->level;
+ 		__entry->numa_node	= tmc->tmgroup->numa_node;
+ 		__entry->num_children	= tmc->tmgroup->num_children;
+-		__entry->childmask	= tmc->childmask;
++		__entry->childmask	= tmc->groupmask;
+ 	),
+ 
+ 	TP_printk("cpu=%d childmask=%0x parent=%p lvl=%d numa=%d num_children=%d",
+diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+index 1fb930537f33..9ff61f9912da 100644
+--- a/kernel/time/timer_migration.c
++++ b/kernel/time/timer_migration.c
+@@ -495,7 +495,7 @@ static bool tmigr_check_lonely(struct tmigr_group *group)
+  *			outcome is a CPU which might wake up a little early.
+  * @evt:		Pointer to tmigr_event which needs to be queued (of idle
+  *			child group)
+- * @childmask:		childmask of child group
++ * @childmask:		groupmask of child group
+  * @remote:		Is set, when the new timer path is executed in
+  *			tmigr_handle_remote_cpu()
+  * @basej:		timer base in jiffies
+@@ -535,7 +535,7 @@ static void __walk_groups(up_f up, struct tmigr_walk *data,
+ 
+ 		child = group;
+ 		group = group->parent;
+-		data->childmask = group->childmask;
++		data->childmask = group->groupmask;
+ 	} while (group);
+ }
+ 
+@@ -669,7 +669,7 @@ static void __tmigr_cpu_activate(struct tmigr_cpu *tmc)
+ {
+ 	struct tmigr_walk data;
+ 
+-	data.childmask = tmc->childmask;
++	data.childmask = tmc->groupmask;
+ 
+ 	trace_tmigr_cpu_active(tmc);
+ 
+@@ -1049,7 +1049,7 @@ void tmigr_handle_remote(void)
+ 	if (tmigr_is_not_available(tmc))
+ 		return;
+ 
+-	data.childmask = tmc->childmask;
++	data.childmask = tmc->groupmask;
+ 	data.firstexp = KTIME_MAX;
+ 
+ 	/*
+@@ -1057,7 +1057,7 @@ void tmigr_handle_remote(void)
+ 	 * in tmigr_handle_remote_up() anyway. Keep this check to speed up the
+ 	 * return when nothing has to be done.
+ 	 */
+-	if (!tmigr_check_migrator(tmc->tmgroup, tmc->childmask)) {
++	if (!tmigr_check_migrator(tmc->tmgroup, tmc->groupmask)) {
+ 		/*
+ 		 * If this CPU was an idle migrator, make sure to clear its wakeup
+ 		 * value so it won't chase timers that have already expired elsewhere.
+@@ -1150,7 +1150,7 @@ bool tmigr_requires_handle_remote(void)
+ 		return ret;
+ 
+ 	data.now = get_jiffies_update(&jif);
+-	data.childmask = tmc->childmask;
++	data.childmask = tmc->groupmask;
+ 	data.firstexp = KTIME_MAX;
+ 	data.tmc_active = !tmc->idle;
+ 	data.check = false;
+@@ -1310,7 +1310,7 @@ static u64 __tmigr_cpu_deactivate(struct tmigr_cpu *tmc, u64 nextexp)
+ 	struct tmigr_walk data = { .nextexp = nextexp,
+ 				   .firstexp = KTIME_MAX,
+ 				   .evt = &tmc->cpuevt,
+-				   .childmask = tmc->childmask };
++				   .childmask = tmc->groupmask };
+ 
+ 	/*
+ 	 * If nextexp is KTIME_MAX, the CPU event will be ignored because the
+@@ -1388,7 +1388,7 @@ u64 tmigr_quick_check(u64 nextevt)
+ 	if (WARN_ON_ONCE(tmc->idle))
+ 		return nextevt;
+ 
+-	if (!tmigr_check_migrator_and_lonely(tmc->tmgroup, tmc->childmask))
++	if (!tmigr_check_migrator_and_lonely(tmc->tmgroup, tmc->groupmask))
+ 		return KTIME_MAX;
+ 
+ 	do {
+@@ -1551,7 +1551,7 @@ static void tmigr_connect_child_parent(struct tmigr_group *child,
+ 	raw_spin_lock_nested(&parent->lock, SINGLE_DEPTH_NESTING);
+ 
+ 	child->parent = parent;
+-	child->childmask = BIT(parent->num_children++);
++	child->groupmask = BIT(parent->num_children++);
+ 
+ 	raw_spin_unlock(&parent->lock);
+ 	raw_spin_unlock_irq(&child->lock);
+@@ -1582,7 +1582,7 @@ static void tmigr_connect_child_parent(struct tmigr_group *child,
+ 	 *   the new childmask and parent to subsequent walkers through this
+ 	 *   @child. Therefore propagate active state unconditionally.
+ 	 */
+-	data.childmask = child->childmask;
++	data.childmask = child->groupmask;
+ 
+ 	/*
+ 	 * There is only one new level per time (which is protected by
+@@ -1648,7 +1648,7 @@ static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
+ 			raw_spin_lock_irq(&group->lock);
+ 
+ 			tmc->tmgroup = group;
+-			tmc->childmask = BIT(group->num_children++);
++			tmc->groupmask = BIT(group->num_children++);
+ 
+ 			raw_spin_unlock_irq(&group->lock);
+ 
+@@ -1711,7 +1711,7 @@ static int tmigr_cpu_prepare(unsigned int cpu)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (tmc->childmask == 0)
++	if (tmc->groupmask == 0)
+ 		return -EINVAL;
+ 
+ 	timerqueue_init(&tmc->cpuevt.nextevt);
+diff --git a/kernel/time/timer_migration.h b/kernel/time/timer_migration.h
+index 494f68cc13f4..154accc7a543 100644
+--- a/kernel/time/timer_migration.h
++++ b/kernel/time/timer_migration.h
+@@ -51,9 +51,8 @@ struct tmigr_event {
+  * @num_children:	Counter of group children to make sure the group is only
+  *			filled with TMIGR_CHILDREN_PER_GROUP; Required for setup
+  *			only
+- * @childmask:		childmask of the group in the parent group; is set
+- *			during setup and will never change; can be read
+- *			lockless
++ * @groupmask:		mask of the group in the parent group; is set during
++ *			setup and will never change; can be read lockless
+  * @list:		List head that is added to the per level
+  *			tmigr_level_list; is required during setup when a
+  *			new group needs to be connected to the existing
+@@ -69,7 +68,7 @@ struct tmigr_group {
+ 	unsigned int		level;
+ 	int			numa_node;
+ 	unsigned int		num_children;
+-	u8			childmask;
++	u8			groupmask;
+ 	struct list_head	list;
+ };
+ 
+@@ -89,7 +88,7 @@ struct tmigr_group {
+  *			hierarchy
+  * @remote:		Is set when timers of the CPU are expired remotely
+  * @tmgroup:		Pointer to the parent group
+- * @childmask:		childmask of tmigr_cpu in the parent group
++ * @groupmask:		mask of tmigr_cpu in the parent group
+  * @wakeup:		Stores the first timer when the timer migration
+  *			hierarchy is completely idle and remote expiry was done;
+  *			is returned to timer code in the idle path and is only
+@@ -102,7 +101,7 @@ struct tmigr_cpu {
+ 	bool			idle;
+ 	bool			remote;
+ 	struct tmigr_group	*tmgroup;
+-	u8			childmask;
++	u8			groupmask;
+ 	u64			wakeup;
+ 	struct tmigr_event	cpuevt;
+ };
+@@ -118,8 +117,8 @@ union tmigr_state {
+ 	u32 state;
+ 	/**
+ 	 * struct - split state of tmigr_group
+-	 * @active:	Contains each childmask bit of the active children
+-	 * @migrator:	Contains childmask of the child which is migrator
++	 * @active:	Contains each mask bit of the active children
++	 * @migrator:	Contains mask of the child which is migrator
+ 	 * @seq:	Sequence counter needs to be increased when an update
+ 	 *		to the tmigr_state is done. It prevents a race when
+ 	 *		updates in the child groups are propagated in changed
+-- 
+2.39.2
+
 
