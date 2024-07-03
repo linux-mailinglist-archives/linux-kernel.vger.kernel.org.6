@@ -1,149 +1,126 @@
-Return-Path: <linux-kernel+bounces-239749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A9D9264DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:31:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB286926530
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12FE81C2217C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677CC284B16
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E6D180A9C;
-	Wed,  3 Jul 2024 15:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834B1181BB4;
+	Wed,  3 Jul 2024 15:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OV1ak5Tv"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HClMsL6s"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9EE522F;
-	Wed,  3 Jul 2024 15:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F76217DE01
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720020700; cv=none; b=ZFPk8LnoOk7y5MtGV7nFoZx2N5ZblYx54IAfoHmuC8+QfCc23eKv04JkMrGBJscdf5jdjF9hfMlwFCwcAZlMm7VkhvjiLTZeFiQPxjYk5VOBx+SyFL+jffmi1Ik6qvcLWU/ePdLFb9/z2CNwD9hVea1zJkkXLTIqpI1vnn+HKDs=
+	t=1720021471; cv=none; b=mPLwCY7KE6x9jfLOJjywOGdAobhFnX7ozOT9WdnkhlXKVVi88X6XqsAYGp/yV+CranPYYNKyU6MDS7zyfDNptvoWrjLOe3lzegKl+UIin3l9RThAYoARmRi1PbPFkio+8RMi+M1Y7EOQHZHt1yCvhlprmeMrmSZ9f8QP5PbGTt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720020700; c=relaxed/simple;
-	bh=W6d779gQlWaYtbc9wFUlOaJBpHXd3o1tMTSodUuObKg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dXsXWnjgsnLCglYdxXgALTVGH1TuROWlq6wsmceACyxDsUXtxzA+a1ZgizIP396Gx71Mw8g85rzHSUT5ahGFftfGt7z0XpwP2SYt36NKVg/ueyMTlynIr1NjcVPsfDEcWibp+oaZ1t8LMA+eEiIqveWGu0n7Q0F/DpY8tmDU+b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OV1ak5Tv; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ed5ac077f5so66433911fa.1;
-        Wed, 03 Jul 2024 08:31:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720020697; x=1720625497; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oGl8r8h2GWzUcRtvAkjsagE5Fs/gKmnMGkSQ5k3nUdw=;
-        b=OV1ak5TvHZbew0FtvSQmfBJ9ufyyPygUAlzLe3P/6JNShgJohPkAkb+OEz+vNjHQpR
-         yhDBsrOgnYLH6XnB79V3vBUI478smQa6veuBoiCth+p2k2Gsw2Qr87FJG3vMDqJxxRk1
-         L7npVRMBiBhdW5lHvFtfYWUlcJ3VZdwuZ1ZzK7hncOr8qWMX5soN8n3qm2i/17JwEl3r
-         gjeIXaGu2cANxdJ4wfYxYsfwZZESdQqfH4x+ViIgrwtNHO8Ly08daTKIGch+8npqrlUR
-         B5yR8bacLtbSv3+3yBPD3MmW37nWyRrgN1S8wLxMTuaky74SRASuhSbjlSNkSdQKU6HL
-         v7nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720020697; x=1720625497;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oGl8r8h2GWzUcRtvAkjsagE5Fs/gKmnMGkSQ5k3nUdw=;
-        b=AQWS7uWu2EMjd86GscYnGv0DmMaMmg5OCnaOySn4Rtyb+D5gt9wDP2qh179Q1uEDCk
-         2586jQ6E2gsWAOoUcoxiXYG0sJwXCFpRkYLfikivLRpL6KQqljCc0T3E5cKZ/1Y7Y6Q7
-         dJwKrdOXa1gBv0d9/FoRK8rIepOHuwFPs8DKEaMSMUEY21I0Ire7yLAwMn0S5n1pxI86
-         lrCHzvZ2v+aUTJg0UpW/Ms4oXPkE2XPIkmOirDoLVGfyA0A8zHB6x65l9itdl7y/9Zia
-         Y9Wkpk/E64N5Az3fNUa1JjGG0NPPoTOzqNcpqRK4k40WR+mfxEgujn2IbX3iifdSRupP
-         /FnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUs2q8ezuDY9UZlScTAZzzkQaXgCYdv7OuX6B+Jdj6U36Kha34nB6hk8wbsvLvWVIKuprz8jiEt2EUyZNYfwv32KDkfxVRSpknn8YnC1OJmqdeQXxXOyILBEFsWfC+Ugu8qAiuITz8439dPh+YVqsfT+tsslTbkJuzn1ZLXmzksqqt6lVKz
-X-Gm-Message-State: AOJu0YztjByMSoK/kZxRXLMe9p4c3FdGENDy9XlHhM+R0v1JG+ECS1tP
-	MD8qVOcFhyTI1bahPQiUcVeKhiY00PNNPbwilBXZqTTvC5FKa0us
-X-Google-Smtp-Source: AGHT+IEN6ACOKucYGCCELlsOgPL2NGmIpamNDcedLgopqiZwApy/KcRgIey9drUN5OhzEXUMB4f6/w==
-X-Received: by 2002:a2e:9a11:0:b0:2ee:89a5:95d4 with SMTP id 38308e7fff4ca-2ee89a596femr5948591fa.6.1720020696997;
-        Wed, 03 Jul 2024 08:31:36 -0700 (PDT)
-Received: from krava ([176.105.156.1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42573c55ff4sm219598615e9.46.2024.07.03.08.31.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 08:31:36 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 3 Jul 2024 17:31:32 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
-Message-ID: <ZoVu1MKUZKtPJ7Am@krava>
-References: <20240701164115.723677-1-jolsa@kernel.org>
- <20240701164115.723677-2-jolsa@kernel.org>
- <20240702130408.GH11386@noisy.programming.kicks-ass.net>
- <ZoQmkiKwsy41JNt4@krava>
- <CAEf4BzYz-4eeNb1621LugDtm7NFshGJUgPzrVL7p4Wg+mq4Aqg@mail.gmail.com>
+	s=arc-20240116; t=1720021471; c=relaxed/simple;
+	bh=M9eUlAni9FkUNboMsSyX0Mz7X9vOCnEmjMuBMJuBZDs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BuTM4m91od9KiVsfkW9q8J8E2W3LTtOiG/H/9zJ+jvhbpLTupF4MLN5qC1dcnpPTpbyQ3NOOucWU15fHnVxveIAcnx006q1C9Q2saQJ3rHUCdONIcNTrH5UXpedSjs5RyTWD1cDNbUROrKmWl3R2dIYyZhbeTdgXrXunFcFxcPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HClMsL6s; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720021469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=s2erXypPFS96oGxgCOnNdx6e4GIHP7kCcJ5ryjq/x4k=;
+	b=HClMsL6sSttiQZGf0IVEdsk0jWFQp7fONU7SE5mRK4gwSwycabMSzwPUgCnGG2EVLYIHsE
+	k/XICJ5AxndLjtcUqttmzYqM5F7BHMD0V0VgBW4SqhWDao00ywMWKMEVA+M6uBVikOTn8p
+	h1Sy5r7GjBt5Io2Adcp2hWILaqL4uxM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-577-wbBm45VNMgidjIZZQ62NHw-1; Wed,
+ 03 Jul 2024 11:44:26 -0400
+X-MC-Unique: wbBm45VNMgidjIZZQ62NHw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D06DE1954206;
+	Wed,  3 Jul 2024 15:44:22 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.39.193.208])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 599BD1955BC0;
+	Wed,  3 Jul 2024 15:44:17 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	"Bjorn Roy Baron" <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	Danilo Krummrich <dakr@redhat.com>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [PATCH 0/4] drm/panic: Add a qr_code panic screen
+Date: Wed,  3 Jul 2024 17:33:57 +0200
+Message-ID: <20240703154309.426867-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzYz-4eeNb1621LugDtm7NFshGJUgPzrVL7p4Wg+mq4Aqg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Tue, Jul 02, 2024 at 01:52:38PM -0700, Andrii Nakryiko wrote:
-> On Tue, Jul 2, 2024 at 9:11 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> >
-> > On Tue, Jul 02, 2024 at 03:04:08PM +0200, Peter Zijlstra wrote:
-> > > On Mon, Jul 01, 2024 at 06:41:07PM +0200, Jiri Olsa wrote:
-> > >
-> > > > +static void
-> > > > +uprobe_consumer_account(struct uprobe *uprobe, struct uprobe_consumer *uc)
-> > > > +{
-> > > > +   static unsigned int session_id;
-> > > > +
-> > > > +   if (uc->session) {
-> > > > +           uprobe->sessions_cnt++;
-> > > > +           uc->session_id = ++session_id ?: ++session_id;
-> > > > +   }
-> > > > +}
-> > >
-> > > The way I understand this code, you create a consumer every time you do
-> > > uprobe_register() and unregister makes it go away.
-> > >
-> > > Now, register one, then 4g-1 times register+unregister, then register
-> > > again.
-> > >
-> > > The above seems to then result in two consumers with the same
-> > > session_id, which leads to trouble.
-> > >
-> > > Hmm?
-> >
-> > ugh true.. will make it u64 :)
-> >
-> > I think we could store uprobe_consumer pointer+ref in session_consumer,
-> > and that would make the unregister path more interesting.. will check
-> 
-> More interesting how? It's actually a great idea, uprobe_consumer
+This series adds a new panic screen, with the kmsg data embedded in a QR-code.
 
-nah, got confused ;-)
+The main advantage of QR-code, is that you can copy/paste the debug data to a bug report.
 
-> pointer itself is a unique ID and 64-bit. We can still use lowest bit
-> for RC (see my other reply).
+The QR-code encoder is written in rust, and is very specific to drm_panic.
+The reason is that it is called in a panic handler, and thus can't allocate memory, or use locking.
+The rust code uses a few rust core API, and provides only two C entry points.
+There is no particular reason to do it in rust, I just wanted to learn rust, and see if it can work in the kernel.
 
-I used pointers in the previous version, but then I thought what if the
-consumer gets free-ed and new one created (with same address.. maybe not
-likely but possible, right?) before the return probe is hit
+If you want to see what it looks like, I've put a few screenshots here:
+https://github.com/kdj0c/panic_report/issues/1
 
-jirka
+-- 
+
+Jocelyn
+
+
+Jocelyn Falempe (4):
+  drm/panic: Add integer scaling to blit()
+  drm/rect: add drm_rect_overlap()
+  drm/panic: simplify logo handling
+  drm/panic: Add a qr_code panic screen
+
+ drivers/gpu/drm/Kconfig         |  29 +
+ drivers/gpu/drm/Makefile        |   1 +
+ drivers/gpu/drm/drm_drv.c       |   3 +
+ drivers/gpu/drm/drm_panic.c     | 338 +++++++++--
+ drivers/gpu/drm/drm_panic_qr.rs | 989 ++++++++++++++++++++++++++++++++
+ include/drm/drm_panic.h         |   4 +
+ include/drm/drm_rect.h          |  15 +
+ 7 files changed, 1340 insertions(+), 39 deletions(-)
+ create mode 100644 drivers/gpu/drm/drm_panic_qr.rs
+
+
+base-commit: 3f5ea7ed705e8effe9cfabf912e769ccb6b7d389
+-- 
+2.45.2
+
 
