@@ -1,128 +1,130 @@
-Return-Path: <linux-kernel+bounces-240189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B0D926A0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:12:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE966926A13
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6611C216CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:12:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EAD91F223AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB95191F67;
-	Wed,  3 Jul 2024 21:12:37 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A280191F69;
+	Wed,  3 Jul 2024 21:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="lbAFnwpk"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791EA2BB13
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 21:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E499719005F
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 21:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720041157; cv=none; b=KboIhX8mzgYvZjpnQSrNRfE9oxI4y8AcfixHsVhIEEZH6NxQ1FEBb1fO9VrK8cGnfT/K+vKpapCxprZaBLLkAAHqvUUgYncEPk5v0UgdeDHU8e0IssS8EZbsOSKXHjll0OxXbgcb1WmjLP0he9zEkXm8bF8n4U72w4I57GhHDaU=
+	t=1720041291; cv=none; b=YEInAz6XQmgnA4Og2BaXaMPY4WQJHHgDG7PUl+Oy2AoJU1zbBXk01sj/VIzhk+m3wKYfRg0/KMQyByqOSNtpv1Jo9XmpLelBtXyAR+9NnF35T45pqD0Ur4MvQ/HENhD7g9rSFt/Yx9wgZzIXHNYC4PMLIVrAXu5ZVV9jfR0dwSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720041157; c=relaxed/simple;
-	bh=yd6M+ZDcYM9C11Y36IJGtzA/KIGidYoe/KhiIb0ULjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=pdQjeWuaMJh5qcgpsoaHk0EDGMEySbNpnv6pxzTIRrkFletm7r81tGBBQSadGNECHrdGKubLLAf4foDPCsEuFPwr1rKyl8YOg4GYoXobrOX1ryfWkk+S9jOJrrhHBpIv3gD4bqDXOsTciXZLWrt31QFWfsb08Mc7lxs3WDcfMpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 574C9C2BD10;
-	Wed,  3 Jul 2024 21:12:36 +0000 (UTC)
-Date: Wed, 3 Jul 2024 17:12:35 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [GIT PULL] tracing: Fix ioctl conflict with memmapped ring buffer
- ioctl
-Message-ID: <20240703171235.68d02755@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720041291; c=relaxed/simple;
+	bh=voYrdbPdDbhbmyIRqBPJntYOUm0DARjxPxAKwX76mmY=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=Q6tAP8hxjIPj6/ZXTLn1KwdTKiJ3bi4g/yWDiUoW5uMg/javE0hqPTFsm/iYs+lrj1LxnP2Ok4tYBYmFPK8Lk48LavkJ7H/wmL30Tq2I5f6CKZxd6hp857OIUcuNr+a4b2505zIsNjTMvrkS3D6KEUQMWIZ+T3kKxExprxXDrkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=lbAFnwpk; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
+	by cmsmtp with ESMTPS
+	id Ojf2snuIdjfBAP7JKs51sL; Wed, 03 Jul 2024 21:14:42 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id P7JIsMGn8Doe7P7JJskBMZ; Wed, 03 Jul 2024 21:14:41 +0000
+X-Authority-Analysis: v=2.4 cv=Gq1E+F1C c=1 sm=1 tr=0 ts=6685bf41
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=dM-kR4knkKEf_V6v5WMA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/aQwcjusGogKCbZOLVYA3pnyiVRW4FVkyjTbotPvRUU=; b=lbAFnwpkySI/+O1dIHLGZzLlEl
+	PiahoqkFhxJAvLRB6k4z+kcZC+ugWbbxIj1I+9y7PMxFxqBkhx0QxPCNgKjxX9ljsvq8T/fPskKBk
+	V27mo2vKwM4e8fNhdNMTI5TQqow5MeXKJrSV8MARKdSB+uAY5vxFF9H0CtWrBsN8wcuSYBESdBvry
+	X6kaDkHeCJcnOfNE/VG2jI62uxCieY3XtFOompEZHVghDPXjU69Lpu0tSnOrCY1AM6utw+u+As3yQ
+	on2p/u6wS1AahO+p+Hu7OBoaCdmmZsRJtTI7RlDR7/0DilpNZtJxiyp2huQcnChRhv5V6fM01kl6/
+	qcZw2zQA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:46966 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sP7JD-003a5K-2X;
+	Wed, 03 Jul 2024 15:14:35 -0600
+Subject: Re: [PATCH 6.9 000/222] 6.9.8-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240702170243.963426416@linuxfoundation.org>
+In-Reply-To: <20240702170243.963426416@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <e0dbcee2-747b-7e83-f552-a2e8b07bcacc@w6rz.net>
+Date: Wed, 3 Jul 2024 14:14:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1sP7JD-003a5K-2X
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:46966
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 4
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfDyX8mqDvPhTxT3fZXv7XAf8QXljRj1D1EUk1vzroQ3h2o+COuH62Ko/d8GPK5Hvkfpj++NqYNAAjWRV/tAKrI9yS4lchyx0005W9SMibeXiRWcwGq6v
+ aE1ICCTPRXFw3x0wjzJbs7scFYTLT1TnkREVtIgsrBpvB63+xKdDjYKjhYSndgHvfHOUfS+0Ke6bIdtaiBnGHhvFt51s2TUzqLo=
 
+On 7/2/24 10:00 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.8 release.
+> There are 222 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 04 Jul 2024 17:01:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.8-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Linus,
+Tested-by: Ron Economos <re@w6rz.net>
 
-tracing: Fix ioctl conflict with memmapped ring buffer ioctl
-
-It was reported that the ioctl() number used to update the ring buffer
-memory mapping conflicted with the TCGETS ioctl causing strace to report:
-
-  $ strace -e ioctl stty
-  ioctl(0, TCGETS or TRACE_MMAP_IOCTL_GET_READER, {c_iflag=ICRNL|IXON, c_oflag=NL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=B38400|CS8|CREAD, c_lflag=ISIG|ICANON|ECHO|ECHOE|ECHOK|IEXTEN|ECHOCTL|ECHOKE, ...}) = 0
-
-Since this ioctl hasn't been in a full release yet, change it from "T", 0x1
-to "R" 0x20, and also reserve 0x20-0x2F for future ioctl commands, as
-some more are being worked on for the future.
-
-
-Please pull the latest trace-v6.10-rc6 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-v6.10-rc6
-
-Tag SHA1: 944abfe5775e0d509546ed6b586d8c32df37c263
-Head SHA1: 4ecaf7e98a3ae0c843d67c76649ecc694232834b
-
-
-Steven Rostedt (Google) (1):
-      tracing: Have memmapped ring buffer use ioctl of "R" range 0x20-2F
-
-----
- Documentation/userspace-api/ioctl/ioctl-number.rst | 1 +
- include/uapi/linux/trace_mmap.h                    | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
----------------------------
-commit 4ecaf7e98a3ae0c843d67c76649ecc694232834b
-Author: Steven Rostedt (Google) <rostedt@goodmis.org>
-Date:   Tue Jul 2 15:33:54 2024 -0400
-
-    tracing: Have memmapped ring buffer use ioctl of "R" range 0x20-2F
-    
-    To prevent conflicts with other ioctl numbers to allow strace to have an
-    idea of what is happening, add the range of ioctls for the trace buffer
-    mapping from _IO("T", 0x1) to the range of "R" 0x20 - 0x2F.
-    
-    Link: https://lore.kernel.org/linux-trace-kernel/20240630105322.GA17573@altlinux.org/
-    Link: https://lore.kernel.org/linux-trace-kernel/20240630213626.GA23566@altlinux.org/
-    
-    Cc: Jonathan Corbet <corbet@lwn.net>
-    Fixes: cf9f0f7c4c5bb ("tracing: Allow user-space mapping of the ring-buffer")
-    Link: https://lore.kernel.org/20240702153354.367861db@rorschach.local.home
-    Reported-by: "Dmitry V. Levin" <ldv@strace.io>
-    Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-    Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index a141e8e65c5d..9a97030c6c8d 100644
---- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-+++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -186,6 +186,7 @@ Code  Seq#    Include File                                           Comments
- 'Q'   all    linux/soundcard.h
- 'R'   00-1F  linux/random.h                                          conflict!
- 'R'   01     linux/rfkill.h                                          conflict!
-+'R'   20-2F  linux/trace_mmap.h
- 'R'   C0-DF  net/bluetooth/rfcomm.h
- 'R'   E0     uapi/linux/fsl_mc.h
- 'S'   all    linux/cdrom.h                                           conflict!
-diff --git a/include/uapi/linux/trace_mmap.h b/include/uapi/linux/trace_mmap.h
-index bd1066754220..c102ef35d11e 100644
---- a/include/uapi/linux/trace_mmap.h
-+++ b/include/uapi/linux/trace_mmap.h
-@@ -43,6 +43,6 @@ struct trace_buffer_meta {
- 	__u64	Reserved2;
- };
- 
--#define TRACE_MMAP_IOCTL_GET_READER		_IO('T', 0x1)
-+#define TRACE_MMAP_IOCTL_GET_READER		_IO('R', 0x20)
- 
- #endif /* _TRACE_MMAP_H_ */
 
