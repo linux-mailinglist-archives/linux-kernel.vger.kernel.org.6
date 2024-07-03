@@ -1,86 +1,82 @@
-Return-Path: <linux-kernel+bounces-240029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A150926825
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:26:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A58C926827
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98EDF1C23121
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:26:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD65BB26584
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E6318A93F;
-	Wed,  3 Jul 2024 18:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE2B187543;
+	Wed,  3 Jul 2024 18:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AU4yiZl9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FhLI4RBW"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329D1186E2D;
-	Wed,  3 Jul 2024 18:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E72E185095
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 18:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720031185; cv=none; b=MLZdW3NHgJzQMusLSbJbxhyM0t60XGv4ueCyiBW6rWKOr7nSBStH35IxJ9xDgHbRyhKTyeSQqh02xdjvitVMiq8fAEtyuXlVz0BpHxqL/bjsokitUS/qC3b2sOb3qleBnst9F5+oU8L7IUMXItQ+umjJPRcvUdx261Zqo9CjeIs=
+	t=1720031295; cv=none; b=Uwe/aI5J5QbTVEH3HGDchgGUzfo2Fo/goqH9QYZA6EbknbjGohhB55g5JUlvxfM1N4B5aBD0n+Kw8rg4CBUCUjSLhjYX8eShoOX3Ah2Qp6zLD/HGGuIUacIZIRiueV6rrx2CLb7gJK/hXjSFLo+XrI2BfRGfo7RCPP5sPFSRNO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720031185; c=relaxed/simple;
-	bh=kDiFr3LS44KFV/bUqmFkypl2ccLtwWG6zvp6fckmWZ8=;
+	s=arc-20240116; t=1720031295; c=relaxed/simple;
+	bh=6tsXGpthgUBuugRs7v2nm2gS/0/cfVBFms+/0Jeqjv8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m64lMhmwDx49HseU/bYsysze01YIWWo6jEMKzrTHe3mGrvk/3PTa1HSyqaPBeb4BXaJcufjYPK3pIo+AbTfQektsBC+CCiDPDt/FHpPWsiOz/X1iY0otTXWLpGgPaQBtxEnsT1WKqQMZneUjzURLrutXw66zOHQdyKIo7C0I0VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AU4yiZl9; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720031184; x=1751567184;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kDiFr3LS44KFV/bUqmFkypl2ccLtwWG6zvp6fckmWZ8=;
-  b=AU4yiZl96ZkgKR2yWc80IiEXEIUXIw9/ssco4u9EJ3Hjy91mLNMS9FSn
-   f/8RwlCcKkmlh0wo8DheVVRUWlAJx7JW7VBd+/mA4uhBGIQ71hfciSHtN
-   +1x565CznNDoTmm0aBP11OEU5WUeH8uCGz7q6PunCoc/oh3cKhoHY0hLk
-   yXkrJBunlh9WKBmGVuuC7gA5wS7OhdmO0yXudGxXQWWIp/Q2+y3O5mzre
-   RwUqTcLwDA7Kz5YK6udLy4U78VIPImzhEcCzLt9FevKJI1mBv6foSMWMJ
-   YxHUVEOxYLyM65scqJvnh/O1z+RutLr+M+QJFjsB22AVHI3GaPt55HGq1
-   A==;
-X-CSE-ConnectionGUID: Gv6glxa6TbeuNUyg08EKfw==
-X-CSE-MsgGUID: s/GOw0sqRcKUE9Yxqyz1/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="27883917"
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="27883917"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 11:26:22 -0700
-X-CSE-ConnectionGUID: S8eQpLGDQcyLlK/0K00Vkg==
-X-CSE-MsgGUID: nJter5zjQjmYULtEa4dLAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="51201072"
-Received: from plborg-mobl.amr.corp.intel.com (HELO desk) ([10.209.72.65])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 11:26:21 -0700
-Date: Wed, 3 Jul 2024 11:26:13 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [PATCH PATCH v2 9/9] x86/rfds: Exclude P-only parts from the
- RFDS affected list
-Message-ID: <20240703182613.4vfaoxl344mdanxn@desk>
-References: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com>
- <20240627-add-cpu-type-v2-9-f927bde83ad0@linux.intel.com>
- <20240703010433.2ymzh5g7osth5ch5@treble>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YjstpoJzo5cyVlJQbM//fjxtG/TX0RU5pUUxvlM/dkLO66cvSXpgFzwIi+IHmzGOVfnezNdpeGgCTMuVXBbC0jF2TIxVcuS6j/XvT9x8CNRkqE6iltwzo20Or+hNzisEr+/DKZMwOsLl6RMjOTNjmy2bZ2hCmegAkU5iGWv8XEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FhLI4RBW; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-754d2b05db5so1387278a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 11:28:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720031294; x=1720636094; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=40SsS8n7KKyG4ofXQIno3NG75myhezZa7l0i78+zzxI=;
+        b=FhLI4RBWxCSQiNY1soiMaI011qgxiB1jrZV2E+xUP6E1bX2CbDGrXApxvjbPTeP7xm
+         zBFkwkOpPuV7M/OIqYxgKoBHATBiA0Ofx76Nrb7NZCNIcmlX2B+uNdtaTADWgjVhf8uM
+         5QxRxUp50A8Mam79508bMSwPwUP7KsO7mwgmNvhyOaIiOV4iJpt+FmE4zibyZFN57EmN
+         yHu5f4ixDAQjlGxOhxygb0zd/uzsKk1Fhl5TOHTVLSfEcbVYDq9MSKwYqNft0gkENhKd
+         ayKNRgAeaWmxZigmRWyUz9b/oL+A33XSIqHfmZoR/jnW6jsFoPm5bhB/R5KjWE4u9P8U
+         6iPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720031294; x=1720636094;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=40SsS8n7KKyG4ofXQIno3NG75myhezZa7l0i78+zzxI=;
+        b=FmM4BGeSwD6l45oss3gAzokhEATae6ibgKdOpMHE53HWRa9mGN30KmmsBNFIvzrSNN
+         a4/GwHvWw8HrLKp4gAldT8rlTNg7N2rk77tjOKlwqwWCLMnrwYMR0I/FqsWelyahpA43
+         5b9y4yb1QiRLCVYqEGfz2pGX0bVnNlmqmZWJtH+lWQc+x5dmYImYwRId+cQZZwkO6/Gv
+         /272j1QxqRlz0E0FCAiVOv0a+8JASHUWvn5Z5VWMj42v3Lk+iHFjy98N6FN38+whhhA5
+         0Y1BEXtySq5yxZ4PgDHswDG6vt38+1OHe98r8h6pAsJ7V/UPmblYfGD/h0xNWso8sVlm
+         EqIw==
+X-Gm-Message-State: AOJu0YyLv3VvrRu7pXsZklPoYQJhJ/kPm14sodbUk6jzd1mOSz9+1CGV
+	QKFfDEIZ3Xk1Keg9ghezA5gyxgsugtxXZ5L+XVWL8+CM2Q1ekB19sq9XJA==
+X-Google-Smtp-Source: AGHT+IFyixljs2L7AYRlMCxe0rYHSiUNiXGb3nvMHBLfww3FJxD6LZX0kKWz1W1KCzmeUYB5SmbYdQ==
+X-Received: by 2002:a05:6a20:748a:b0:1be:c753:dc65 with SMTP id adf61e73a8af0-1bef613f465mr13102454637.18.1720031293546;
+        Wed, 03 Jul 2024 11:28:13 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1535cbdsm106932925ad.134.2024.07.03.11.28.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 11:28:13 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 3 Jul 2024 08:28:12 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Lai Jiangshan <jiangshan.ljs@antgroup.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 2/6] workqueue: Protect wq_unbound_cpumask with
+ wq_pool_attach_mutex in init_rescuer()
+Message-ID: <ZoWYPMGVIvOV4o8x@slm.duckdns.org>
+References: <20240703033855.3373-1-jiangshanlai@gmail.com>
+ <20240703033855.3373-3-jiangshanlai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,119 +85,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240703010433.2ymzh5g7osth5ch5@treble>
+In-Reply-To: <20240703033855.3373-3-jiangshanlai@gmail.com>
 
-On Tue, Jul 02, 2024 at 06:04:33PM -0700, Josh Poimboeuf wrote:
-> On Thu, Jun 27, 2024 at 01:44:55PM -0700, Pawan Gupta wrote:
-> > @@ -1255,9 +1260,7 @@ static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
-> >  	VULNBL_INTEL(TIGERLAKE,			GDS),
-> >  	VULNBL_INTEL(LAKEFIELD,			MMIO | MMIO_SBDS | RETBLEED),
-> >  	VULNBL_INTEL(ROCKETLAKE,		MMIO | RETBLEED | GDS),
-> > -	VULNBL_INTEL(ALDERLAKE,			RFDS),
-> >  	VULNBL_INTEL(ALDERLAKE_L,		RFDS),
-> > -	VULNBL_INTEL(RAPTORLAKE,		RFDS),
-> >  	VULNBL_INTEL(RAPTORLAKE_P,		RFDS),
-> >  	VULNBL_INTEL(RAPTORLAKE_S,		RFDS),
-> >  	VULNBL_INTEL(ATOM_GRACEMONT,		RFDS),
-> > @@ -1271,6 +1274,8 @@ static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
-> >  	/* Match more than Vendor/Family/Model */
-> >  	VULNBL_INTEL_STEPPINGS(COMETLAKE_L,	X86_STEPPINGS(0x0, 0x0),	MMIO | RETBLEED),
-> >  	VULNBL_INTEL	      (COMETLAKE_L,					MMIO | MMIO_SBDS | RETBLEED | GDS),
-> > +	VULNBL_INTEL_TYPE     (ALDERLAKE,	ATOM,				RFDS),
-> > +	VULNBL_INTEL_TYPE     (RAPTORLAKE,	ATOM,				RFDS),
-> 
-> Same comment here, these should be inline with the main list.  Maybe
-> there's some way to structure the indentations so they align better
-> vertically with the STEPPINGS/TYPE variants.
+Hello, Lai.
 
-This is how it is turning out to be:
+On Wed, Jul 03, 2024 at 11:38:51AM +0800, Lai Jiangshan wrote:
+> @@ -5533,6 +5533,9 @@ static int init_rescuer(struct workqueue_struct *wq)
+>  		return ret;
+>  	}
+>  
+> +	/* lock wq_pool_attach_mutex for wq_unbound_cpumask */
+> +	mutex_lock(&wq_pool_attach_mutex);
+> +
+>  	wq->rescuer = rescuer;
+>  	if (wq->flags & WQ_UNBOUND)
+>  		kthread_bind_mask(rescuer->task, wq_unbound_cpumask);
+> @@ -5540,6 +5543,8 @@ static int init_rescuer(struct workqueue_struct *wq)
+>  		kthread_bind_mask(rescuer->task, cpu_possible_mask);
+>  	wake_up_process(rescuer->task);
+>  
+> +	mutex_unlock(&wq_pool_attach_mutex);
+> +
 
----
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 151c2377df21..75bbdf0cf8ae 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1237,45 +1237,43 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
- #define RFDS		BIT(7)
- 
- static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
--	VULNBL_INTEL(IVYBRIDGE,			SRBDS),
--	VULNBL_INTEL(HASWELL,			SRBDS),
--	VULNBL_INTEL(HASWELL_L,			SRBDS),
--	VULNBL_INTEL(HASWELL_G,			SRBDS),
--	VULNBL_INTEL(HASWELL_X,			MMIO),
--	VULNBL_INTEL(BROADWELL_D,		MMIO),
--	VULNBL_INTEL(BROADWELL_G,		SRBDS),
--	VULNBL_INTEL(BROADWELL_X,		MMIO),
--	VULNBL_INTEL(BROADWELL,			SRBDS),
--	VULNBL_INTEL(SKYLAKE_X,			MMIO | RETBLEED | GDS),
--	VULNBL_INTEL(SKYLAKE_L,			MMIO | RETBLEED | GDS | SRBDS),
--	VULNBL_INTEL(SKYLAKE,			MMIO | RETBLEED | GDS | SRBDS),
--	VULNBL_INTEL(KABYLAKE_L,		MMIO | RETBLEED | GDS | SRBDS),
--	VULNBL_INTEL(KABYLAKE,			MMIO | RETBLEED | GDS | SRBDS),
--	VULNBL_INTEL(CANNONLAKE_L,		RETBLEED),
--	VULNBL_INTEL(ICELAKE_L,			MMIO | MMIO_SBDS | RETBLEED | GDS),
--	VULNBL_INTEL(ICELAKE_D,			MMIO | GDS),
--	VULNBL_INTEL(ICELAKE_X,			MMIO | GDS),
--	VULNBL_INTEL(COMETLAKE,			MMIO | MMIO_SBDS | RETBLEED | GDS),
--	VULNBL_INTEL(TIGERLAKE_L,		GDS),
--	VULNBL_INTEL(TIGERLAKE,			GDS),
--	VULNBL_INTEL(LAKEFIELD,			MMIO | MMIO_SBDS | RETBLEED),
--	VULNBL_INTEL(ROCKETLAKE,		MMIO | RETBLEED | GDS),
--	VULNBL_INTEL(ALDERLAKE_L,		RFDS),
--	VULNBL_INTEL(RAPTORLAKE_P,		RFDS),
--	VULNBL_INTEL(RAPTORLAKE_S,		RFDS),
--	VULNBL_INTEL(ATOM_GRACEMONT,		RFDS),
--	VULNBL_INTEL(ATOM_TREMONT,		MMIO | MMIO_SBDS | RFDS),
--	VULNBL_INTEL(ATOM_TREMONT_D,		MMIO | RFDS),
--	VULNBL_INTEL(ATOM_TREMONT_L,		MMIO | MMIO_SBDS | RFDS),
--	VULNBL_INTEL(ATOM_GOLDMONT,		RFDS),
--	VULNBL_INTEL(ATOM_GOLDMONT_D,		RFDS),
--	VULNBL_INTEL(ATOM_GOLDMONT_PLUS,	RFDS),
--
--	/* Match more than Vendor/Family/Model */
--	VULNBL_INTEL_STEPPINGS(COMETLAKE_L,	X86_STEPPINGS(0x0, 0x0),	MMIO | RETBLEED),
--	VULNBL_INTEL	      (COMETLAKE_L,					MMIO | MMIO_SBDS | RETBLEED | GDS),
--	VULNBL_INTEL_TYPE     (ALDERLAKE,	ATOM,				RFDS),
--	VULNBL_INTEL_TYPE     (RAPTORLAKE,	ATOM,				RFDS),
-+	VULNBL_INTEL(		IVYBRIDGE,		SRBDS),
-+	VULNBL_INTEL(		HASWELL,		SRBDS),
-+	VULNBL_INTEL(		HASWELL_L,		SRBDS),
-+	VULNBL_INTEL(		HASWELL_G,		SRBDS),
-+	VULNBL_INTEL(		HASWELL_X,		MMIO),
-+	VULNBL_INTEL(		BROADWELL_D,		MMIO),
-+	VULNBL_INTEL(		BROADWELL_G,		SRBDS),
-+	VULNBL_INTEL(		BROADWELL_X,		MMIO),
-+	VULNBL_INTEL(		BROADWELL,		SRBDS),
-+	VULNBL_INTEL(		SKYLAKE_X,		MMIO | RETBLEED | GDS),
-+	VULNBL_INTEL(		SKYLAKE_L,		MMIO | RETBLEED | GDS | SRBDS),
-+	VULNBL_INTEL(		SKYLAKE,		MMIO | RETBLEED | GDS | SRBDS),
-+	VULNBL_INTEL(		KABYLAKE_L,		MMIO | RETBLEED | GDS | SRBDS),
-+	VULNBL_INTEL(		KABYLAKE,		MMIO | RETBLEED | GDS | SRBDS),
-+	VULNBL_INTEL(		CANNONLAKE_L,		RETBLEED),
-+	VULNBL_INTEL(		ICELAKE_L,		MMIO | MMIO_SBDS | RETBLEED | GDS),
-+	VULNBL_INTEL(		ICELAKE_D,		MMIO | GDS),
-+	VULNBL_INTEL(		ICELAKE_X,		MMIO | GDS),
-+	VULNBL_INTEL(		COMETLAKE,		MMIO | MMIO_SBDS | RETBLEED | GDS),
-+	VULNBL_INTEL_STEPPINGS(	COMETLAKE_L,	X86_STEPPINGS(0x0, 0x0),	MMIO | RETBLEED),
-+	VULNBL_INTEL(		COMETLAKE_L,		MMIO | MMIO_SBDS | RETBLEED | GDS),
-+	VULNBL_INTEL(		TIGERLAKE_L,		GDS),
-+	VULNBL_INTEL(		TIGERLAKE,		GDS),
-+	VULNBL_INTEL(		LAKEFIELD,		MMIO | MMIO_SBDS | RETBLEED),
-+	VULNBL_INTEL(		ROCKETLAKE,		MMIO | RETBLEED | GDS),
-+	VULNBL_INTEL_TYPE(	ALDERLAKE,	ATOM,	RFDS),
-+	VULNBL_INTEL(		ALDERLAKE_L,		RFDS),
-+	VULNBL_INTEL_TYPE(	RAPTORLAKE,	ATOM,	RFDS),
-+	VULNBL_INTEL(		RAPTORLAKE_P,		RFDS),
-+	VULNBL_INTEL(		RAPTORLAKE_S,		RFDS),
-+	VULNBL_INTEL(		ATOM_GRACEMONT,		RFDS),
-+	VULNBL_INTEL(		ATOM_TREMONT,		MMIO | MMIO_SBDS | RFDS),
-+	VULNBL_INTEL(		ATOM_TREMONT_D,		MMIO | RFDS),
-+	VULNBL_INTEL(		ATOM_TREMONT_L,		MMIO | MMIO_SBDS | RFDS),
-+	VULNBL_INTEL(		ATOM_GOLDMONT,		RFDS),
-+	VULNBL_INTEL(		ATOM_GOLDMONT_D,	RFDS),
-+	VULNBL_INTEL(		ATOM_GOLDMONT_PLUS,	RFDS),
- 
- 	VULNBL_AMD(0x15, RETBLEED),
- 	VULNBL_AMD(0x16, RETBLEED),
+Isn't that just protecting the reads on wq_unbound_cpumask? I don't
+understand what this protects against. Shouldn't the interlocking be
+something like "either new rescuer reads the updated cpumask or the
+workqueue is already on the workqueue list"?
+
+Thanks.
+
+-- 
+tejun
 
