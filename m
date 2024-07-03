@@ -1,267 +1,106 @@
-Return-Path: <linux-kernel+bounces-239506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5217992610E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:03:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE5D926162
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5AB21F23C53
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42751F217C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37C117B43C;
-	Wed,  3 Jul 2024 13:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC2F178CEE;
+	Wed,  3 Jul 2024 13:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AZVK1BI1"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W8bMvv4G"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F5117083F;
-	Wed,  3 Jul 2024 13:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04137136986;
+	Wed,  3 Jul 2024 13:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720011743; cv=none; b=NRvFpY1oI+G8GHIn/y9jODLuP9/WYVreqT1lS5Hba1Xs+bm4TNA7YmuPZ437q841oSxSQdFipYZNY9FF+mhPBp6AuylJAvR1iSEFZa380EHjy6EgNHkc3vhyPm24BCxOy4NP5+L1bl4JtX+2wzTk6da3F+xSudw+ygaZkRZx22E=
+	t=1720011869; cv=none; b=h82V59a5GN/6+sRGqhMnl6TnBoPnZhPMJhLO2cIMX8qVQxbBpW/5DaTv5Ae6/j40fiTOW17SMzd0QtQy2j7/8cU5lIrJNksOSLM/EP5Z9XSUDCtGTonIk3yjb2DRL9JWSINxOFo2uYMtNhTGGfy1dABrhYtFKIltKeXOQ5ncGNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720011743; c=relaxed/simple;
-	bh=+M9F+vfRgYjR1PTmjDTzGuhYqKbDAqfPRpyWcUy5ijE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lh7CPI9JI39KmljQpguJPyvVXZKI+tgA3pA6HRV5PW0qemFW8zLbUV5iLfVR7Am0kGp254R14rP2JuLiNWGmiBvcTQqAkdn/F0Ks6IjFtYqhLnHf3B65C0KifdI2xC7nqdHd4RFjc/CLAPK3pOrDQ0fltbDOiNo/9nQ8x/89lQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AZVK1BI1; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720011739;
-	bh=+M9F+vfRgYjR1PTmjDTzGuhYqKbDAqfPRpyWcUy5ijE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AZVK1BI1q5Tlke9vsKCXWn1a/Q8FYm05+J+Ctu2qKMtSf5R4mF8cw6zM4+0TwTNpP
-	 GFhKc+E+2IXyP9gCCCGPzxJTIhHEkKn1vf1lduVyPYFj/nU0cT5vyNZEZ88IFE7g4b
-	 +JqJKNu7ibsbruibslyRHUZtIt+8XEGqSg6Zx4tZGxML4flykmcCbQlXug2g6kpDzz
-	 xiuNZ6JFATtrfN7tTLmwxKe/NKN8pOkqjSJeoTxoibGaznwXBIKVgPAUuTpuPtC9Od
-	 6tuXTwdFFYYdgbQhB6q/aVpgnp8I/XohqpzqzXur0zAaXnI+rPfugaWQjtyzTzzLI6
-	 TG88tDjFpPgdg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0AC0037821CD;
-	Wed,  3 Jul 2024 13:02:18 +0000 (UTC)
-Message-ID: <65b422fe-ecc1-4f57-bb72-f2fef3a5af28@collabora.com>
-Date: Wed, 3 Jul 2024 15:02:18 +0200
+	s=arc-20240116; t=1720011869; c=relaxed/simple;
+	bh=oatb/h0wiAkJxZ0BcqIZuCcpxjldh9yKP555vVf00uI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WlS5vovUcpkUTqZo3ZBjV+ObVfhreFxgm/C1k/4Ywjw1A63c39Badw6mxzv3Dz/jFplRmIoxcCMtCQRRWyLZrpnQHC5RVxRBDq51i8hZ1mYA4l5qTt1ftqPw89ANO79pl6DCbmmcdWm9SjzNHLiJLioOejoA6c7pa8RBSA4o3QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W8bMvv4G; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720011868; x=1751547868;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oatb/h0wiAkJxZ0BcqIZuCcpxjldh9yKP555vVf00uI=;
+  b=W8bMvv4GtxYvco+H3E4IG+VS4oJ9Mi9o5hqcjJ4tjtrCkd0lzFidpH7A
+   8ChxRTAduxpQ6UDzsm3gsujeAKxyj0JbK5gAwegDbFFYQjAGXZK8BM/jt
+   8BodI7oaS9UY01/sD86hm05pM9mE2xpPDhLEg9Ue2b3QY1fExjQon+Bv3
+   yiFRUIPxd4jzdssHx60S+Ahm7Dk6DLuC6bFvWWSDSjXkBcGGpFEwi6ugl
+   SIbZdxLQgCAnOw3a3ro7FjCS2j4pSjJ6NsvVQJVC18I7RrYc4ikYoPULU
+   SbdA++VR4HuCeqox8+najKc4b3H5gelw3P7hXNxj/FBkC99NIyUVS+K+X
+   w==;
+X-CSE-ConnectionGUID: UekKHiaHRiWEkk+6hfq6nw==
+X-CSE-MsgGUID: kiA0hPb8TNC5b98xN9/CyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="27855320"
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="27855320"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 06:04:26 -0700
+X-CSE-ConnectionGUID: jWlEzqgwRcO16/X/cv05kw==
+X-CSE-MsgGUID: CQBcOgWnQb6uiJtQhpQfTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="50557465"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 03 Jul 2024 06:04:24 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 0FFE2194; Wed, 03 Jul 2024 16:04:22 +0300 (EEST)
+Date: Wed, 3 Jul 2024 16:04:22 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCHv5 3/4] x86/tdx: Dynamically disable SEPT violations from
+ causing #VEs
+Message-ID: <oujihwk2ghwpobsuivxlgflalwxigctjp6nld2jdtz4cbwoqnp@7v3s7ap4ul6u>
+References: <20240624114149.377492-1-kirill.shutemov@linux.intel.com>
+ <20240624114149.377492-4-kirill.shutemov@linux.intel.com>
+ <05d0b24a-2e21-48c0-85b7-a9dd935ac449@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] soc: mediatek: pwrap: Use
- devm_clk_get_[optional_]enabled()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- matthias.bgg@gmail.com, fparent@baylibre.com, fchiby@baylibre.com,
- s.hauer@pengutronix.de
-Cc: linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <cover.1719652155.git.christophe.jaillet@wanadoo.fr>
- <07b3745819c8ba818d4508ed12e93f14f29b80a2.1719652155.git.christophe.jaillet@wanadoo.fr>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <07b3745819c8ba818d4508ed12e93f14f29b80a2.1719652155.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <05d0b24a-2e21-48c0-85b7-a9dd935ac449@suse.com>
 
-Il 29/06/24 11:19, Christophe JAILLET ha scritto:
-> Use devm_clk_get_enabled() and devm_clk_get_optional_enabled() to simplify
-> the code and to make sure that clk_disable_unprepare() is called if the
-> driver is unloaded.
-> 
-> Fixes: 55924157da8c ("soc: mediatek: pwrap: add support for sys & tmr clocks")
-> Fixes: 1f022d84bd19 ("soc: mediatek: Add PMIC wrapper for MT8135 and MT8173 SoCs")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only
-> ---
->   drivers/soc/mediatek/mtk-pmic-wrap.c | 85 ++++++++--------------------
->   1 file changed, 25 insertions(+), 60 deletions(-)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> index d57553486383..6981d6a1ab93 100644
-> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> @@ -1366,10 +1366,6 @@ struct pmic_wrapper {
->   	struct regmap *regmap;
->   	const struct pmic_wrapper_type *master;
->   	const struct pwrap_slv_type *slave;
-> -	struct clk *clk_spi;
-> -	struct clk *clk_wrap;
-> -	struct clk *clk_sys;
-> -	struct clk *clk_tmr;
->   	struct reset_control *rstc;
->   
->   	struct reset_control *rstc_bridge;
-> @@ -2471,6 +2467,7 @@ static int pwrap_probe(struct platform_device *pdev)
->   {
->   	int ret, irq;
->   	u32 mask_done;
-> +	struct clk *clk;
->   	struct pmic_wrapper *wrp;
->   	struct device_node *np = pdev->dev.of_node;
->   	const struct of_device_id *of_slave_id = NULL;
-> @@ -2521,50 +2518,34 @@ static int pwrap_probe(struct platform_device *pdev)
->   		}
->   	}
->   
-> -	wrp->clk_spi = devm_clk_get(wrp->dev, "spi");
-> -	if (IS_ERR(wrp->clk_spi)) {
-> +	clk = devm_clk_get_enabled(wrp->dev, "spi");
+On Wed, Jul 03, 2024 at 02:39:09PM +0300, Nikolay Borisov wrote:
+> > diff --git a/arch/x86/include/asm/shared/tdx.h b/arch/x86/include/asm/shared/tdx.h
+> > index 7e12cfa28bec..fecb2a6e864b 100644
+> > --- a/arch/x86/include/asm/shared/tdx.h
+> > +++ b/arch/x86/include/asm/shared/tdx.h
+> > @@ -19,9 +19,17 @@
+> >   #define TDG_VM_RD			7
+> >   #define TDG_VM_WR			8
+> > -/* TDCS fields. To be used by TDG.VM.WR and TDG.VM.RD module calls */
+> > +/* TDX TD-Scope Metadata. To be used by TDG.VM.WR and TDG.VM.RD */
+> > +#define TDCS_CONFIG_FLAGS		0x1110000300000016
+> 0x9110000300000016
+> > +#define TDCS_TD_CTLS			0x1110000300000017
+> 0x9110000300000017
 
-Uhm... in this case, it might be worth using devm_clk_bulk_get_all_enable()
-instead... as anyway we're never turning off those clocks during operation.
+Setting bit 63 in these field id is regression in new TDX spec and TDX
+module. It is going to be fixed in next version. Both versions of field
+ids are going to be valid.
 
-I checked the devicetrees and the clocks are ordered the right way, but then
-we can also consider the fact that the bindings are enforcing the clock order
-so that's.. golden.
-
-Practically, by using devm_clk_bulk_get_all_enable(), you're removing even
-more lines from this driver, as those four clocks (and four times error checking)
-will be reduced to just one call.....!
-
-Thanks for cleaning up this driver, btw!
-
-Cheers,
-Angelo
-
-
-> +	if (IS_ERR(clk)) {
->   		dev_dbg(wrp->dev, "failed to get clock: %ld\n",
-> -			PTR_ERR(wrp->clk_spi));
-> -		return PTR_ERR(wrp->clk_spi);
-> +			PTR_ERR(clk));
-> +		return PTR_ERR(clk);
->   	}
->   
-> -	wrp->clk_wrap = devm_clk_get(wrp->dev, "wrap");
-> -	if (IS_ERR(wrp->clk_wrap)) {
-> +	clk = devm_clk_get_enabled(wrp->dev, "wrap");
-> +	if (IS_ERR(clk)) {
->   		dev_dbg(wrp->dev, "failed to get clock: %ld\n",
-> -			PTR_ERR(wrp->clk_wrap));
-> -		return PTR_ERR(wrp->clk_wrap);
-> +			PTR_ERR(clk));
-> +		return PTR_ERR(clk);
->   	}
->   
-> -	wrp->clk_sys = devm_clk_get_optional(wrp->dev, "sys");
-> -	if (IS_ERR(wrp->clk_sys)) {
-> -		return dev_err_probe(wrp->dev, PTR_ERR(wrp->clk_sys),
-> +	clk = devm_clk_get_optional_enabled(wrp->dev, "sys");
-> +	if (IS_ERR(clk)) {
-> +		return dev_err_probe(wrp->dev, PTR_ERR(clk),
->   				     "failed to get clock: %pe\n",
-> -				     wrp->clk_sys);
-> +				     clk);
->   	}
->   
-> -	wrp->clk_tmr = devm_clk_get_optional(wrp->dev, "tmr");
-> -	if (IS_ERR(wrp->clk_tmr)) {
-> -		return dev_err_probe(wrp->dev, PTR_ERR(wrp->clk_tmr),
-> +	clk = devm_clk_get_optional_enabled(wrp->dev, "tmr");
-> +	if (IS_ERR(clk)) {
-> +		return dev_err_probe(wrp->dev, PTR_ERR(clk),
->   				     "failed to get clock: %pe\n",
-> -				     wrp->clk_tmr);
-> +				     clk);
->   	}
->   
-> -	ret = clk_prepare_enable(wrp->clk_spi);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = clk_prepare_enable(wrp->clk_wrap);
-> -	if (ret)
-> -		goto err_out1;
-> -
-> -	ret = clk_prepare_enable(wrp->clk_sys);
-> -	if (ret)
-> -		goto err_out2;
-> -
-> -	ret = clk_prepare_enable(wrp->clk_tmr);
-> -	if (ret)
-> -		goto err_out3;
-> -
->   	/* Enable internal dynamic clock */
->   	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_DCM)) {
->   		pwrap_writel(wrp, 1, PWRAP_DCM_EN);
-> @@ -2579,7 +2560,7 @@ static int pwrap_probe(struct platform_device *pdev)
->   		ret = pwrap_init(wrp);
->   		if (ret) {
->   			dev_dbg(wrp->dev, "init failed with %d\n", ret);
-> -			goto err_out4;
-> +			return ret;
->   		}
->   	}
->   
-> @@ -2592,8 +2573,7 @@ static int pwrap_probe(struct platform_device *pdev)
->   
->   	if (!(pwrap_readl(wrp, PWRAP_WACS2_RDATA) & mask_done)) {
->   		dev_dbg(wrp->dev, "initialization isn't finished\n");
-> -		ret = -ENODEV;
-> -		goto err_out4;
-> +		return -ENODEV;
->   	}
->   
->   	/* Initialize watchdog, may not be done by the bootloader */
-> @@ -2622,42 +2602,27 @@ static int pwrap_probe(struct platform_device *pdev)
->   		pwrap_writel(wrp, wrp->master->int1_en_all, PWRAP_INT1_EN);
->   
->   	irq = platform_get_irq(pdev, 0);
-> -	if (irq < 0) {
-> -		ret = irq;
-> -		goto err_out2;
-> -	}
-> +	if (irq < 0)
-> +		return irq;
->   
->   	ret = devm_request_irq(wrp->dev, irq, pwrap_interrupt,
->   			       IRQF_TRIGGER_HIGH,
->   			       "mt-pmic-pwrap", wrp);
->   	if (ret)
-> -		goto err_out4;
-> +		return ret;
->   
->   	wrp->regmap = devm_regmap_init(wrp->dev, NULL, wrp, wrp->slave->regops->regmap);
-> -	if (IS_ERR(wrp->regmap)) {
-> -		ret = PTR_ERR(wrp->regmap);
-> -		goto err_out2;
-> -	}
-> +	if (IS_ERR(wrp->regmap))
-> +		return PTR_ERR(wrp->regmap);
->   
->   	ret = of_platform_populate(np, NULL, NULL, wrp->dev);
->   	if (ret) {
->   		dev_dbg(wrp->dev, "failed to create child devices at %pOF\n",
->   				np);
-> -		goto err_out4;
-> +		return ret;
->   	}
->   
->   	return 0;
-> -
-> -err_out4:
-> -	clk_disable_unprepare(wrp->clk_tmr);
-> -err_out3:
-> -	clk_disable_unprepare(wrp->clk_sys);
-> -err_out2:
-> -	clk_disable_unprepare(wrp->clk_wrap);
-> -err_out1:
-> -	clk_disable_unprepare(wrp->clk_spi);
-> -
-> -	return ret;
->   }
->   
->   static struct platform_driver pwrap_drv = {
-
-
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
