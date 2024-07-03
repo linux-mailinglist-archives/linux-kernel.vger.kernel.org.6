@@ -1,155 +1,151 @@
-Return-Path: <linux-kernel+bounces-240213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28FE926A4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:31:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005FF926A60
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DADDB21C55
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:31:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8007BB222C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750D3191F90;
-	Wed,  3 Jul 2024 21:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D94191F7C;
+	Wed,  3 Jul 2024 21:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MGzNe3u+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zoDtJQyt"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB0213DBB1
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 21:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4972BD19
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 21:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720042228; cv=none; b=tHKulscmcchULDFC3tdVzyo/mTqZ1Cr5IV7dHY24HFsFwEq7iUfQ5s7y6xvK8H+ic8Xosw7Xf/DrAWhnQK5mX/2xGl+qmpsVYVNSo1Bn941Tw8mlWUdrHYKeJ2u/dOxclxLc2peVs+9TIkUA5RDZIZiMcVBe8OhNsMOlU1nWPAU=
+	t=1720042596; cv=none; b=T+W4Am4+nNfudTd0mHG1oyXlpW7+Ql6BSs57ves4i+Zk/lC4LF+hBppJa9pR9n4e3pa6CWzuFJF/5FuOi6Kj6vWKwB0/OqkQuPAnXhIHep2ushU7aohkq9NKjSI+UAraKHDPjs1DKh15QoW4ncZhD460CxPqfLapNt4EM8YJpgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720042228; c=relaxed/simple;
-	bh=ItEwuW5FSpRgCqnKb7RkC8tFGprMzA77PgMMdX9re00=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=usdZQRp3q9HvQyySBiBES4CAJJdCNcPJpE1tYyuL5e8WP/RvII03LLgV4jgTTH+RQL1QNgles2KgdXFiKtpfQHZC+dryE7dlL6QVxs/XZxRN157zkXSN4SoaaDbB0o7Q+LmEUDsl6MYrFUoCCoNV+3ofcIoLHSOBPQX8P2XOcA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MGzNe3u+; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720042227; x=1751578227;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ItEwuW5FSpRgCqnKb7RkC8tFGprMzA77PgMMdX9re00=;
-  b=MGzNe3u+MPb1cf+nArcrfgCLaE+I4861YqXjXpwA3MqEXdsaa56HVrBg
-   TqGzrP5DORVmmQjXlWmgewfuJVyizDWk6Top172NqpoQDyHlAfXYBylnZ
-   mzNn7VJWHs3m2uVnoTq8I51qsehgG+a2ZOe7YZ2QrvdKP4nmldeUnnQ75
-   L590IOqELaUz+kTKWEmFxR1kS0X0U75OU9Xu2gdAuMY2RpQAUHwrxVBiL
-   mWh/+F8arNmrBEtbLiaYlm35ZTdSplJZ6UtoI9WZNrkfl13Bp63RxrB1L
-   qV2iRbyY1WGYcv6KmG3YDipEVS4b0lbmzZs48ZR1G0Nlwknd+uD9tVerv
-   A==;
-X-CSE-ConnectionGUID: Ai48KkXASXuMh2KCE9/5CQ==
-X-CSE-MsgGUID: OxTwi5NJRn+9D/IocYL1xA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="17432711"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="17432711"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 14:30:26 -0700
-X-CSE-ConnectionGUID: 6Q02YzsqSby+QTuhpHgV+w==
-X-CSE-MsgGUID: MWG1LX3gRTWV0L9D/kg+MA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="46173348"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 14:30:26 -0700
-Date: Wed, 3 Jul 2024 14:35:39 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin
- Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian
- <kevin.tian@intel.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v3 1/2] iommu/vt-d: Add helper to flush caches for
- context change
-Message-ID: <20240703143539.7ea1fac5@jacob-builder>
-In-Reply-To: <1a2f66a2-a867-4203-8a76-dbced80bfeff@linux.intel.com>
-References: <20240701112317.94022-1-baolu.lu@linux.intel.com>
-	<20240701112317.94022-2-baolu.lu@linux.intel.com>
-	<20240701214128.5523a1ea@jacob-builder>
-	<28ade99a-13ad-4b01-aff2-711c006856fd@linux.intel.com>
-	<20240702085749.2e2bbea5@jacob-builder>
-	<1a2f66a2-a867-4203-8a76-dbced80bfeff@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720042596; c=relaxed/simple;
+	bh=nBEsWAwQ8bVtUAg33CAax9OvnECUXvitIjR3Wwy8RSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rp+RTPnU564/uAs5BBlhavMS8AiGY2uSEzlT6Nn3EL5EawgKNAon+s80DdtpNEYLJkSVIhQEIurr/3Br9Ucr8MYMxkaseZtW+oaFACPeFUsLddbpQeGv77lnu07qljb1C9vRuuKdDWuoi69k24LHie3+JYTt9iuH8YE1JkqqDJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zoDtJQyt; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a77abe5c709so61579066b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 14:36:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720042592; x=1720647392; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S2mSSOU6idQMZOTqlLlnSJzLAYRvC2mcLjXu7OsvByI=;
+        b=zoDtJQytXx+ge+/Ufuv/oa1Q9cJMOD7nTbOb418+ywnCTZdXxrussremWWwd4pkIyN
+         lxldQiEotigt93dRdZH6YM+Ic/Fdkf+To+nsZKoAKon4egwTs2VPFEj3i9WFbrfSG588
+         64xk8gVSTAvzgr+i2wkJ2AsRibrpNuyWcZUpNiRqo8eHoI6/HQmGEvhSQLvhYNjCPkIs
+         iA/7obNVtsWNMEQxHSBa7o71+TIj5CPpHFsVNx5SiuQkVDBSTuz/DOz2XKcnt2EGTRDb
+         y9qZ8Mti5UR5k7kved5ZzXzs3psa/vtsKES8MabvHTfbbrRJgDE6d6EhjwKTGxV5B7Rr
+         Tw1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720042592; x=1720647392;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S2mSSOU6idQMZOTqlLlnSJzLAYRvC2mcLjXu7OsvByI=;
+        b=dCC3CAX1/3EgQA2Sa3w9TVkp5H5dPEs1Vs+5akzqty3QfpA6GB6gb66AWGUmYNrlwM
+         pq52GAE+EkmAYBGeeAEHCryPuy2p9pjmFyaVE7/DijB8CnIlVj6vMGw/odhwd91Ga/36
+         Er4/IROkF2xPnGjfHAt9FyaSOPbszi68bRMI5ZHT8PLUvUj1reO61g8G2u5qj4PMdCgY
+         mhqJWDlvXNYJ7SHiF8OatgjXVe46ztM7llH3tBX0l/zNQAcWb5y1Ik/tcsuyJ27ok1j4
+         yNU+huw2HE6DYkNN3s33AwztXM8QScjugwuv79RAYlXA/1nkTFAMEg/tYDQpjYAznmmG
+         RGCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUV+XJC3P7CLS9BKTxIOrLAZ8/RnNQ/EF7Ct8h5FbnCcL3NiBTPTQJBrgtMNyiTDXkN3sa8M9kdmbVqPOqUse7H6YOoW83Lxdqe/A45
+X-Gm-Message-State: AOJu0YxqEQSF8lvW8VHnJECy+C0iHjq/b8sZVFNUuWMnk7ZyKiKjAfyN
+	TA+72zxO6oBnMFGVSmdmHCTZALNkr1KPb8C69ezGX52LLWHCWoHrkQonK51P/BNTPBMZSq2517g
+	wjR8=
+X-Google-Smtp-Source: AGHT+IFrl2ba2wAsE8SzZxibKzeeEqiqoL6Imr1Fl/L8lCNwDk7OyCd2sZpxWmXNTa7aMXXAfMY64g==
+X-Received: by 2002:a17:907:1c95:b0:a75:3c9a:2fe9 with SMTP id a640c23a62f3a-a753c9a30admr491530466b.68.1720042591520;
+        Wed, 03 Jul 2024 14:36:31 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:5696:f293:6e5e:98bf])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77ae5bfcddsm35518866b.173.2024.07.03.14.36.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 14:36:20 -0700 (PDT)
+Date: Wed, 3 Jul 2024 23:36:14 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Nicolas Pitre <nico@fluxnic.net>, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v2 2/2] mul_u64_u64_div_u64: basic sanity test
+Message-ID: <yforvmqwgvkuulicbkbzf4htlcssvo5pz4s6ieksa57whj4smi@lgdnfo2svceq>
+References: <20240703033552.906852-1-nico@fluxnic.net>
+ <20240703033552.906852-3-nico@fluxnic.net>
+ <20240703103529.2283c3c4683c60f1ae50a152@linux-foundation.org>
+ <n92q9p5r-9o9r-prp3-s256-110322s5n233@syhkavp.arg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qpomt6w55ypakcsd"
+Content-Disposition: inline
+In-Reply-To: <n92q9p5r-9o9r-prp3-s256-110322s5n233@syhkavp.arg>
 
 
-On Wed, 3 Jul 2024 10:49:19 +0800, Baolu Lu <baolu.lu@linux.intel.com>
-wrote:
+--qpomt6w55ypakcsd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 7/2/24 11:57 PM, Jacob Pan wrote:
-> > On Tue, 2 Jul 2024 12:43:41 +0800, Baolu Lu<baolu.lu@linux.intel.com>
-> > wrote:
-> >   
-> >> On 2024/7/2 12:41, Jacob Pan wrote:  
-> >>> On Mon,  1 Jul 2024 19:23:16 +0800, Lu Baolu<baolu.lu@linux.intel.com>
-> >>> wrote:
-> >>>      
-> >>>> +	if (flush_domains) {
-> >>>> +		/*
-> >>>> +		 * If the IOMMU is running in scalable mode and
-> >>>> there might
-> >>>> +		 * be potential PASID translations, the caller
-> >>>> should hold
-> >>>> +		 * the lock to ensure that context changes and cache
-> >>>> flushes
-> >>>> +		 * are atomic.
-> >>>> +		 */
-> >>>> +		assert_spin_locked(&iommu->lock);
-> >>>> +		for (i = 0; i < info->pasid_table->max_pasid; i++) {
-> >>>> +			pte = intel_pasid_get_entry(info->dev, i);
-> >>>> +			if (!pte || !pasid_pte_is_present(pte))
-> >>>> +				continue;  
-> >>> Is it worth going through 1M PASIDs just to skip the PASID cache
-> >>> invalidation? Or just do the flush on all used DIDs unconditionally.  
-> >> Currently we don't track all domains attached to a device. If such
-> >> optimization is necessary, perhaps we can add it later.  
-> > I think it is necessary, because without tracking domain IDs, the code
-> > above would have duplicated invalidations.
-> > For example: a device PASID table has the following entries
-> > 	PASID	DomainID
-> > -------------------------
-> > 	100	1
-> > 	200	1
-> > 	300	2
-> > -------------------------
-> > When a present context entry changes, we need to do:
-> > qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);
-> > qi_flush_pasid_cache(iommu, 2, QI_PC_ALL_PASIDS, 0);
-> > 
-> > With this code, we do
-> > qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);
-> > qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);//duplicated!
-> > qi_flush_pasid_cache(iommu, 2, QI_PC_ALL_PASIDS, 0);  
-> 
-> Yes, this is likely. But currently enabling and disabling PRI happens in
-> driver's probe and release paths. Therefore such duplicate is not so
-> critical.
-> 
-> For long term, I have a plan to abstract the domain id into an object so
-> that domains attached to different PASIDs of a device could share a
-> domain id. With that done, we could improve this code by iterating the
-> domain id objects for a device and performing cache invalidation
-> directly.
+Hello Andrew,
 
-Sounds good. It might be helpful to add a comment to clarify for others who
-might wonder about the duplicates.
+On Wed, Jul 03, 2024 at 01:47:10PM -0400, Nicolas Pitre wrote:
+> On Wed, 3 Jul 2024, Andrew Morton wrote:
+>=20
+> > On Tue,  2 Jul 2024 23:34:09 -0400 Nicolas Pitre <nico@fluxnic.net> wro=
+te:
+> >=20
+> > > Verify that edge cases produce proper results, and some more.
+> >=20
+> > Awesome, thanks.
+> >=20
+> > Do you know of any situations in which the present implementation
+> > causes issues?
+>=20
+> Uwe could probably elaborate further, but the example given in the=20
+> first commit log is causing trouble for a driver he's working on.
 
-Reviewed-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Actually the example was a constructed one. I became aware of
+mul_u64_u64_div_u64() being only an approximation while reviewing a pwm
+driver by Biju Das:
 
-Thanks,
+https://lore.kernel.org/linux-pwm/TYCPR01MB1126992DD51F714AEDADF0A4F868DA@T=
+YCPR01MB11269.jpnprd01.prod.outlook.com
 
-Jacob
+mul_u64_u64_div_u64 is used in various pwm drivers, but in practise the
+periods used are small enough to not be problematic for the status quo
+implementation since commit 8c86fb68ffcb ("mul_u64_u64_div_u64: increase
+precision by conditionally swapping a and b"). At least I think Biju
+(added to Cc:) only hit this problem during testing, and not in a real
+world application.
+
+I intend to do a performance test of Nico's code. I hope I get to that
+tomorrow.
+
+Best regards
+Uwe
+
+--qpomt6w55ypakcsd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaFxEsACgkQj4D7WH0S
+/k4Enwf+NNk6u5SSrkTA+7pl7fNYbbsJKAtqI6xvoQwXg+smLpdxOUFTqVymeyxW
+iAn1cYOI5yaRpiBYKywqiGqdUIUvwsdzAihII1xHdTAcDCc1eue6f8PFV8JBSAvh
+iCyi4LzZg5dTwsByC+21n9ZcmiD0yV8d747vwXh9xeWZz44D3kAKHyD47+yuHp9V
+dBslXQHr31Q5/LQgMsIAbFB9f7BoALDArUsywCDwZxe8bZ5V8XpKewtyNqo49o49
+8b2S2/R5VVvFT6EVbvTNS2NYLPfjikxj6hh7i/6nMv2rLQSUDTsdAW/ec8C6Sv67
+EyjxGbVm/94O/oCilNSEVehJT4rj0A==
+=25j9
+-----END PGP SIGNATURE-----
+
+--qpomt6w55ypakcsd--
 
