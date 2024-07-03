@@ -1,100 +1,122 @@
-Return-Path: <linux-kernel+bounces-240123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC9292694F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:08:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B61E926953
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B97AB25FB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:08:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5201C2587E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A82318C33E;
-	Wed,  3 Jul 2024 20:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE4C1849EB;
+	Wed,  3 Jul 2024 20:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UoW7V4S/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uanslunZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4154613DBB1;
-	Wed,  3 Jul 2024 20:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BB013DBB1;
+	Wed,  3 Jul 2024 20:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720037325; cv=none; b=R5EISxwv9fTpUs77PhHeYPW8BZO50qHMp40h+EYvGTODFlQ8DJJCMd3+zmbK3uNkIyF9lWgt+2bCILHCzG7NXZeR8UMBnd/0W6rKFpI1PhyvmkwYcKBls+/SKG5LUKnwExJquQSnWWQ77xO1FuO3FNLKGDdb6Pse+HiHcUQPVz0=
+	t=1720037343; cv=none; b=pjhP4o9lzB1l5tw+FNeGyojDgp6JUR0Ehdw3ba59Ybg1cZ04kE0q87pEymxZSbD0ZUb4JrQuOEt/UsdX5K08N0Ig/BBEOzsQzQBhpAPkr4jUnEtdsvYCOmC81ZaJJrZfDMlFyvQkFs8TwivLRhatgLsu8QdrCI7C5Mkj08+NxjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720037325; c=relaxed/simple;
-	bh=/nseoorglFV3LVGoTmjXsLh5khxwk400OmG3i+R4mhM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=HKkG2KpWeWHwRCrteqig3Lpp9Yarh4wu/fgFlz3WrkJg/GYSvpoSgHIH5dj7LmQpf67X9F5ceUgZJmwfTK2Q+FOzSyqnSCsuj0j4O5Z4P42ssBzTcgL9zRfQXh2MQ+DmDxvQAFWDs/99l6XeuQdp62qnPVFxa2UYeAb3FMZY2zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UoW7V4S/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 745B1C4AF0A;
-	Wed,  3 Jul 2024 20:08:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1720037324;
-	bh=/nseoorglFV3LVGoTmjXsLh5khxwk400OmG3i+R4mhM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UoW7V4S/nCaVBYgHOxvfMlrMwvWOGPfTLT+WOrNnDWySJZyr7vx3w5NV04RWylcMV
-	 YuZFg17gdN6R3mN2irJOIoMeNNtPBPsKXAZKd7aM8GkhNr2hra/pYSaVGFjVG7jLKk
-	 Mk9FTPNWl9BM0shtiiooAW0jUQfWePyQWKfjGgL4=
-Date: Wed, 3 Jul 2024 13:08:43 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: yangge1116@126.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, 21cnbao@gmail.com, david@redhat.com,
- baolin.wang@linux.alibaba.com, aneesh.kumar@linux.ibm.com,
- liuzixing@hygon.cn
-Subject: Re: [PATCH V3] mm/gup: Clear the LRU flag of a page before adding
- to LRU batch
-Message-Id: <20240703130843.ad421344a0f3f05564a7f706@linux-foundation.org>
-In-Reply-To: <1720008153-16035-1-git-send-email-yangge1116@126.com>
-References: <1720008153-16035-1-git-send-email-yangge1116@126.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720037343; c=relaxed/simple;
+	bh=aYbHslMbo5658qwdT3gkCNxpaGZS1ogTj90k1s36n8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H18Olbz8VO4W5D6xbhPDjD7UBcJPAs5EYETYxr2VwtKK1jOcwn0rILvn2t+iwGe0yZrsHFp02gVbO+naS0z7suK4qLjTEu8rkMxvpdNFbYFVfG59IRmcEE8CeoMU3UpcoLhVhY5M0TS8GyB6OkHcmWJL61KfUOWP3I8KfABYQ7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uanslunZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 094EEC2BD10;
+	Wed,  3 Jul 2024 20:08:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720037342;
+	bh=aYbHslMbo5658qwdT3gkCNxpaGZS1ogTj90k1s36n8M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uanslunZzMpUHeaPZtIAM39fLDSvTd1CwE9fVzu8B5nqpbjKgU/SQ6b4DISEy0yZb
+	 HVsZ6IZqzBzpihZE6wCzy66hurceQj89cdo2PwEnzzIi6e81l3wD3jBOTbTEWWbtFW
+	 x73RPVSKxoZAQ5zuJ/RYb2hXnPQ/Zawg73DdTJ/IGrkJKk6BfkCQ7ZtnhA2sDgWXHK
+	 b2uF/7ZT9VU1EjQBv6zVkvTjoHuHLkHO1fmjZMmEjgU3FeUokuJzkbhFc+o3W/Ma1M
+	 phQOwB5xuCdI8w1NdngTACZWbgrimvWNgToTe2IDDWybFRRGgDJnPPPGi59YvZD+wz
+	 MbJDpsWIJZ4HA==
+From: Conor Dooley <conor@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v4 0/2] PCI: microchip: support using either instance 1 or 2
+Date: Wed,  3 Jul 2024 21:08:44 +0100
+Message-ID: <20240703-stand-ferocity-bac033ac70b1@spud>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1728; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=nUAy4lu9tNjB0mh9nOJJDmgdT1HtV+a+iNjY3WPTG04=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGmt66/+UGL/e0tL6N9S2cu/zXy/nQg/95Eh/U36NvX85 NjPT06zd5SyMIhxMMiKKbIk3u5rkVr/x2WHc89bmDmsTCBDGLg4BWAiMxcwMjxI2bTLN+DissjL GY3fwsR/2cj7hPZJz53Udn/2xj8v9aYzMjxtEBFIXfByd+4iR5XPHKxrrVOmLDO0yZq97CH3Aa+ HfzkB
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed,  3 Jul 2024 20:02:33 +0800 yangge1116@126.com wrote:
+From: Conor Dooley <conor.dooley@microchip.com>
 
-> From: yangge <yangge1116@126.com>
-> 
-> If a large number of CMA memory are configured in system (for example, the
-> CMA memory accounts for 50% of the system memory), starting a virtual
-> virtual machine with device passthrough, it will
-> call pin_user_pages_remote(..., FOLL_LONGTERM, ...) to pin memory.
-> Normally if a page is present and in CMA area, pin_user_pages_remote()
-> will migrate the page from CMA area to non-CMA area because of
-> FOLL_LONGTERM flag. But the current code will cause the migration failure
-> due to unexpected page refcounts, and eventually cause the virtual machine
-> fail to start.
-> 
-> If a page is added in LRU batch, its refcount increases one, remove the
-> page from LRU batch decreases one. Page migration requires the page is not
-> referenced by others except page mapping. Before migrating a page, we
-> should try to drain the page from LRU batch in case the page is in it,
-> however, folio_test_lru() is not sufficient to tell whether the page is
-> in LRU batch or not, if the page is in LRU batch, the migration will fail.
-> 
-> To solve the problem above, we modify the logic of adding to LRU batch.
-> Before adding a page to LRU batch, we clear the LRU flag of the page so
-> that we can check whether the page is in LRU batch by folio_test_lru(page).
-> Seems making the LRU flag of the page invisible a long time is no problem,
-> because a new page is allocated from buddy and added to the lru batch,
-> its LRU flag is also not visible for a long time.
-> 
+The current driver and binding for PolarFire SoC's PCI controller assume
+that the root port instance in use is instance 1. The second reg
+property constitutes the region encompassing both "control" and "bridge"
+registers for both instances. In the driver, a fixed offset is applied to
+find the base addresses for instance 1's "control" and "bridge"
+registers. The BeagleV Fire uses root port instance 2, so something must
+be done so that software can differentiate. This series splits the
+second reg property in two, with dedicated "control" and "bridge"
+entries so that either instance can be used.
 
-Thanks.
+Cheers,
+Conor.
 
-I'll add this to the mm-hotfixes branch for additional testing.  Please
-continue to work with David on the changelog enhancements.
+v4:
+- fix a cocci warning reported off list about an inconsistent variable
+  used between IS_ERR() and PTR_ERR() calls.
 
-In mm-hotfixes I'd expect to send it to Linus next week.  I could move
-it into mm-unstable (then mm-stable) for merging into 6.11-rc1.  This
-is for additional testing time - it will still be backported into
-earlier kernels.  We can do this with any patch.
+v3:
+- rename a variable in probe s/axi/apb/
+
+v2:
+- try the new reg format before the old one to avoid warnings in the
+  good case
+- reword $subject for 2/2
+
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+CC: Krzysztof Wilczyński <kw@linux.com>
+CC: Rob Herring <robh@kernel.org>
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Conor Dooley <conor+dt@kernel.org>
+CC: linux-pci@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-riscv@lists.infradead.org
+
+Conor Dooley (2):
+  dt-bindings: PCI: microchip,pcie-host: fix reg properties
+  PCI: microchip: rework reg region handing to support using either
+    instance 1 or 2
+
+ .../bindings/pci/microchip,pcie-host.yaml     |  10 +-
+ drivers/pci/controller/pcie-microchip-host.c  | 155 +++++++++---------
+ 2 files changed, 79 insertions(+), 86 deletions(-)
+
+-- 
+2.43.0
+
 
