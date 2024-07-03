@@ -1,126 +1,148 @@
-Return-Path: <linux-kernel+bounces-240070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B434F9268D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:05:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DFFC9268D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53F61C20FAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:05:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7691F2402A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D5818C35D;
-	Wed,  3 Jul 2024 19:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4552D18F2DF;
+	Wed,  3 Jul 2024 19:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IWKJMU35"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2UtngxE"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C75187570
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 19:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E0B18C327
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 19:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720033527; cv=none; b=l8ZIsYcEbyzJFDoEBiS9Gx9HRodqL9mhuN0VmUKS6XA1PZLjlKjGjNNpxvtUpx8kmltj30IMzGL2IfjX5wn5dDe8LK1TICLhqJRt/hhokfrsG5qdrG1yeS1k+PWzYA357+OPMhSz6wXZlggk9NuNPFdL8Dad/XzISAytIrWQG9E=
+	t=1720033528; cv=none; b=kp6Bpcg/QpbaF7CF3Ow15swh3fS+7A5hP4xQz6Z8F+evagwIEz9kvrwBYCAp0Y/SzIIg5wAht1T/ZVj9awxlTlc731jchgJOE2lwM5plxx7LAtBFqC+zul2VBUH0U2l8G8jhpiNi73oGZR7jwhCUVKdrAywei5XmPzMzVI2UcHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720033527; c=relaxed/simple;
-	bh=yBaVYEswZrvbgKnS47fptzlPQ1fF8FvBjoGLyqFPLwk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ahk0Kd7Zr6XAaKgfUQqw3b5LR6vgY7S95yHGSfuR3yuhqF90kJXHDADdXxbGdyD8t4lcKpewNWVZSSl073gJMT+A87OA7YcUSZ/D0nHoLIPjrJtHnVGpqh5rK02OufFLJA2LZCj6Y+NfZBHa4evGF69tu6nG4Qn/0Rc7QuA+vTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IWKJMU35; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so3719963a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 12:05:24 -0700 (PDT)
+	s=arc-20240116; t=1720033528; c=relaxed/simple;
+	bh=y3XlyxbnkcplVPdGQCd/lloyXAdcHjseRVqFWan6jeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dKJreAG4EC1XB7C6dTB2cAtLpqvITB7JwZ+0r1F65k3SoxodGxaAiGWqMEsPnfPSaLRpZHHAmSB2RQX5MkaoJ/nxVgaGeJkNnSa8BMvmolQZt6gI9zjOSnWtKwSLW0bwJtUL9GosWv/5/Y3xa2TZUmY/F1R0to1sPij1TV6Qb3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e2UtngxE; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-71871d5e087so3744522a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 12:05:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1720033522; x=1720638322; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Kf3K019bVOQK2OWkQy5jBzht4Y9Q+WIcCF0i+S26bo=;
-        b=IWKJMU35MMgb8R4OuqhG7VgWgClKuBrGhGHzUQ7LoSnJ1/UjZIk1wcr4U/gUoIXFlq
-         SDfU109SwKweM98JxM2ICEdthPW/c1PrBrJBA5rKKHSRw1LRpNsbWu2lGvsylMIgn8vu
-         j75gwUWpTpKhY9fGDEdyVlYqwFObKjdaioIfg=
+        d=gmail.com; s=20230601; t=1720033526; x=1720638326; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ybjxOawFNELGcCsAimw/UPMNpYUyGYyi73rUoZ617jE=;
+        b=e2UtngxElfEIzVmWKyaXZEfYWdVj+IsWoL5hLCGce73hBJQRafIaVyzULZQGDSda0k
+         4aPNq0gOZRMjY8TVsf9bQKbOGsYCpRHwOMY4GQMtI2jDATkrkHQ+oAZTnvG2zJ6bJTig
+         GYdvyf9Y9Zv6DDTui3t5BTirsjU+ajOcMk7TLAce/zJwLwkfgic/zwIx0NSK1Ec7eAZB
+         nX6NgZjh8l2r94O1bXVfgR2Wc5F6OBcAqil/2v6WGJCW3+e4sLjvtaAMtWZlKxuyhvzP
+         BuTjip/CZrP3EOOaLXiGm8eGNgTdMk9SLscrOYFghBrLfwFSIO72M1TaIS0b1YRO2dVm
+         MJhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720033522; x=1720638322;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/Kf3K019bVOQK2OWkQy5jBzht4Y9Q+WIcCF0i+S26bo=;
-        b=ATmTQ8x+g6YXJ6tnN7+YPFEt60/v17bLZQr4igQzhVK47/eIhn+DFfYkN4eS5jIJDy
-         K37agVjXNjWxhBTTisoSDG64jRR96dYhjtBopWRGZVr9qSXRy+tabWitV+ouAQ0pgFKz
-         UWa49sVizPXl+dNTMIwv+9pflrcfZ2MOU6qFWRHIqMh7XnbxzKcyjDCbvAhBgunvb+5M
-         AQB2T6qUE0u4q2obgP81P5jJD96wrlNJyiWmeb8HipJC7vwLmE6FdfWkLkJrrZBooJAx
-         sEd6oavOrBrBkZVp814APMNxBgu32yhct0ldNfJxqlAgpz85nwGB//JZWMIxMjO7sK4g
-         JOiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLkwJWfveaP6YeWUDYzIAahmQ1L7V/CEc6i/nq/fOTOvRXlieYnlcEOX7f9qHEp/+JBraL8iHpwf7n147bg2zepZPjyE62o/O5rd8X
-X-Gm-Message-State: AOJu0Ywrxt0/E8uJC9l9i8NRBjF5T0ZgibZx9wbeN9SIpt00FQTDi2f9
-	oOeEZgxMKwghalgg+U62BW5uhoC908r1rDnonQi0dPfZSw/Ivs3ebNKh6aPR3DjpKe4U+pTf57v
-	hfsJHcg==
-X-Google-Smtp-Source: AGHT+IG/9xdA2N6T2NJsp8fJQs8mvgD/j5HQPQZ6IDpGPt7OAEy/585NkhkaRnLl6rPn1lcyzmKaEw==
-X-Received: by 2002:a17:906:ae58:b0:a6f:ddb3:bf2b with SMTP id a640c23a62f3a-a751449f19bmr824715966b.41.1720033522601;
-        Wed, 03 Jul 2024 12:05:22 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a754425f2c7sm159410566b.162.2024.07.03.12.05.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 12:05:21 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a77b550128dso1359566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 12:05:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVkq/6B0jqUGHy335IaIB/TbBvV3/LJKktYdZygmQf2cawokaUVqk7hD+41qFxAp/+kuhv7Z1XKuDx9B7km4abKEnUDyZQBqxDedUVk
-X-Received: by 2002:a17:907:2daa:b0:a6f:6721:b065 with SMTP id
- a640c23a62f3a-a751448a5a1mr1186982066b.32.1720033521063; Wed, 03 Jul 2024
- 12:05:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720033526; x=1720638326;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ybjxOawFNELGcCsAimw/UPMNpYUyGYyi73rUoZ617jE=;
+        b=Pi3VBYryW6g9RgW85/bm/4H1AHE54VXkhDvPc/LA/GTly7cY98+umzvzeqewdDnnfK
+         UbWZKGWbjVw8oW8qMNg5HZmIxhvALH4W0YQ6Ih2glaWXcet2Wcfxjr/v5JVaq9SHZ4Rb
+         KP9QgvV02oM9Pa/xwGcqwhsO48UHKzX/21dXmUUP8onbJKAhzNwHOMdB5ZtFBcwduFMY
+         aEJluFYH/EaLkY4pNC527vjkWH38L3EHMd9P2+EDgApKBaqwu4tdDo0M3rq67WrcjmEi
+         kashNB+3r1gjTljlIrD0xnhB8536a90bFacSBAy9A/VTHTnHAbFDnYS11Xb0BMzBtIKI
+         v9EA==
+X-Gm-Message-State: AOJu0YzbvOph4YWUa3M14ahygEKtuPpfqqwAXp2MXkItUPBz/UJqofUv
+	EMy3sq/b/oL2q1l8AjsDNNXIMYpx5vGnDXdkulgH/GkQH+b0hfAV
+X-Google-Smtp-Source: AGHT+IEWExlHJ6YcRgB1FnHrCD65xeaB0PHoZ4C3jjZ/sFKHcpNiVlJ/OXG0JsLNvNldJZ+zI0g3kw==
+X-Received: by 2002:a05:6a21:7885:b0:1be:4c54:b891 with SMTP id adf61e73a8af0-1bef61ed341mr16085739637.47.1720033526270;
+        Wed, 03 Jul 2024 12:05:26 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:6993:3d0b:ab92:3a8d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10e3311sm106699175ad.79.2024.07.03.12.05.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 12:05:25 -0700 (PDT)
+Date: Wed, 3 Jul 2024 12:05:23 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] mfd: timberdale: attach device properties to tsc2007 board
+ info
+Message-ID: <ZoWg89A8C4gylTGX@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
- <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
- <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
- <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
- <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
- <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com> <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
- <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com> <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
- <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
- <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
- <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
- <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site>
- <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
- <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com> <e40b8edeea1d3747fe79a4f9f932ea4a8d891db0.camel@xry111.site>
-In-Reply-To: <e40b8edeea1d3747fe79a4f9f932ea4a8d891db0.camel@xry111.site>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 3 Jul 2024 12:05:04 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiJh1egNXJN7AsqpE76D4LCkUQTj+RboO7O=3AFeLGesw@mail.gmail.com>
-Message-ID: <CAHk-=wiJh1egNXJN7AsqpE76D4LCkUQTj+RboO7O=3AFeLGesw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Christian Brauner <brauner@kernel.org>, libc-alpha@sourceware.org, 
-	"Andreas K. Huettel" <dilfridge@gentoo.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Huacai Chen <chenhuacai@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
-	Jens Axboe <axboe@kernel.dk>, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 3 Jul 2024 at 11:48, Xi Ruoyao <xry111@xry111.site> wrote:
->
-> Fortunately LoongArch ILP32 ABI is not finalized yet (there's no 32-bit
-> kernel and 64-bit kernel does not support 32-bit userspace yet) so we
-> can still make it happen to use struct statx as (userspace) struct
-> stat...
+Switch over to using software nodes/properties to describe the
+touchscreen instead of using the legacy platform data. This will
+allow to drop support for the platform data from tsc2007 driver
+and rely solely on the generic driver properties.
 
-Oh, no problem then. If there are no existing binaries, then yes,
-please do that,
+Note: "model" is not part of defined device propertioes and is not
+used by the tsc2007 driver, so it can be safely dropped.
 
-It avoids the compat issues too.
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/mfd/timberdale.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-I think 'struct statx' is a horrid bloated thing (clearing those extra
-"spare" words is a pain, and yes, the user copy for _regular_ 'stat()'
-already shows up in profiles), but for some new 32-bit platform it's
-definitely worth the pain just to avoid the compat code or new
-structure definitions.
+diff --git a/drivers/mfd/timberdale.c b/drivers/mfd/timberdale.c
+index 07e5aa10a146..2fb8e850a81e 100644
+--- a/drivers/mfd/timberdale.c
++++ b/drivers/mfd/timberdale.c
+@@ -12,6 +12,7 @@
+ #include <linux/module.h>
+ #include <linux/pci.h>
+ #include <linux/mfd/core.h>
++#include <linux/property.h>
+ #include <linux/slab.h>
+ 
+ #include <linux/timb_gpio.h>
+@@ -25,7 +26,6 @@
+ #include <linux/spi/max7301.h>
+ #include <linux/spi/mc33880.h>
+ 
+-#include <linux/platform_data/tsc2007.h>
+ #include <linux/platform_data/media/timb_radio.h>
+ #include <linux/platform_data/media/timb_video.h>
+ 
+@@ -49,16 +49,21 @@ struct timberdale_device {
+ 
+ /*--------------------------------------------------------------------------*/
+ 
+-static struct tsc2007_platform_data timberdale_tsc2007_platform_data = {
+-	.model = 2003,
+-	.x_plate_ohms = 100
++static const struct property_entry timberdale_tsc2007_properties[] = {
++	PROPERTY_ENTRY_U32("ti,x-plate-ohms", 100),
++	{ }
++};
++
++static const struct software_node timberdale_tsc2007_node = {
++	.name = "tsc2007",
++	.properties = timberdale_tsc2007_properties,
+ };
+ 
+ static struct i2c_board_info timberdale_i2c_board_info[] = {
+ 	{
+ 		I2C_BOARD_INFO("tsc2007", 0x48),
+-		.platform_data = &timberdale_tsc2007_platform_data,
+-		.irq = IRQ_TIMBERDALE_TSC_INT
++		.irq = IRQ_TIMBERDALE_TSC_INT,
++		.swnode = &timberdale_tsc2007_node,
+ 	},
+ };
+ 
+-- 
+2.45.2.803.g4e1b14247a-goog
 
-              Linus
+
+-- 
+Dmitry
 
