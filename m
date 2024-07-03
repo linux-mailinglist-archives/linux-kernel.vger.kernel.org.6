@@ -1,149 +1,253 @@
-Return-Path: <linux-kernel+bounces-238597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E37924C98
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:07:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 260A3924CA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC30D283522
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:07:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499E31C20D3D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FC310E3;
-	Wed,  3 Jul 2024 00:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49632646;
+	Wed,  3 Jul 2024 00:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Au6rlGAJ"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lvr/ZTaY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D520621;
-	Wed,  3 Jul 2024 00:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6418F376;
+	Wed,  3 Jul 2024 00:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719965223; cv=none; b=D/f6lC+S7WHuw8rIiTUWRGNuCA9Z6cxRAd2r4ZMrlZXTBJs+pkquA8mia77Ws/83P3zPUO+WYmJMwXDthLHfzpvYzsT2LS3b+ln7zEPZ3GsTEXFjgVcv1ZYX09jb2tf1HecPwybtVzHcSCrm9LyFy4XLXcdMC02QxBUrmCn6nLc=
+	t=1719965346; cv=none; b=cO90wK6UWI/Lliq8FHagd3A9B1ipkdNKzbEyJBR6mLt/BMAFtcX4eDyt/vrFHbXhAicbFeSzsypZ/4aQf7AqniFvxY1d0STubpr7TPOHEtisBGEywrxHRrZH0818XOE/adU+4pnJ1EzaxnN5mTQq2s+QO8y1/j7A/mpS3oQ59tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719965223; c=relaxed/simple;
-	bh=KOjkQB3I1BkmOGdUI7hd+tydhVz2TLsy35U2esSLVOw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DzRbyv/+iv+9+GMbnGDfASMnT7qwB5vI6D2arbI5w0022MStFzE8NZSnoWciIJU3fHbj4ldQSM2an/GPTo3xaqueqhF+TDr2+7f0JWmmEgaMstvJLZnT5WJwlC+nj74+mTvOXgKrCgfFtQdhrsGzRmD7M4wWXJuxh0HQMv7hUDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Au6rlGAJ; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e03a8955ae3so400553276.1;
-        Tue, 02 Jul 2024 17:07:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719965221; x=1720570021; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ZvRNv/JZDDTRdI18aBXSlRlEYxDmftdVdHUvCCc4C4=;
-        b=Au6rlGAJQDXOY0zMuhMvhWU/ZLzgBMfOnfailO8ydHSWGiiGX3e52rAoa1kzmKlmu4
-         UY5nHPyZhLNaRnKaaZw6yXuLSuCZQEe51j4Yyvs97s1MQzXOyAxEoH+ECkyX0A1YBHwH
-         s8snUuFVE6PsrW6umxRQe24M+PIqELnyf6OGLetQxYtzm5Nhl1PipmXxgVFedzz7fnvV
-         eM/WvbrkxJFQP6673lNxiWvsMBL+VO/0hF5RSszshmh0Led4h9+WWkxKt0MKut8yXOB7
-         XiLISOmGX+mEmr6G5TXlJmp/KoWc0XmYeXMzbbpCiNJ0KcVxN3MdnLJPAY6kzxlf5M4y
-         UFEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719965221; x=1720570021;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6ZvRNv/JZDDTRdI18aBXSlRlEYxDmftdVdHUvCCc4C4=;
-        b=DC6Spkn1IzYr1/6HqO2JfmUFDlIxURDaRmA+YQdKMM7zUdb0GM0kVozYSvFQq+b3Un
-         hx4kXfUVzjjsv5TNwTjOOtwjSn9DXkKS8Voi/2T26W+cL4Ac7jhDxRf0bLo5iX1X3qws
-         Tnsy8gpC6IJEXwI7KF3y+Bnzv8/FvBUAEntl5sp+0DfJPBVBD37Vav1APGBx4M7h/OP8
-         X/2EI15DJHFjCvqd67y4tRA5p/sFzEWGzTW9fJIvqzTFDazWFhVyv1a0ZxP50nH2Gknk
-         XtwH9O30vZI5Fa9aeFsWNbBCGENJFmW31PZ74sI1R5Yx+9g8gSN8O5BRZAEKLlXcnn87
-         5Pzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZfCHkNuJ7AORBQA6Wukr8yEoy4WOC/B0GYcXUgQA4CJeUhC9pgDGmWEfteBUtdyUHj1h/wbGl3ClJFr5UpedFWGV2N0xK4vp3OrSV
-X-Gm-Message-State: AOJu0Ywhz7+7ywyaqOnwevc8M4gUh+eKhjTLvnbfWzryv2pnTr1kDPit
-	dcjwRUo2FbWo0FxUQ6oboVgVtade42QGdUk4ZLK0WxB8euD/cJUp
-X-Google-Smtp-Source: AGHT+IFvnDviwYP2MMWVIyiZGWuWfw8Pha6PWftZA89tPNoEvhz68eBNpCbXiLVaSfSolspbTBiLpw==
-X-Received: by 2002:a81:a50a:0:b0:643:fd49:2db6 with SMTP id 00721157ae682-64c7123b008mr112444957b3.1.1719965221531;
-        Tue, 02 Jul 2024 17:07:01 -0700 (PDT)
-Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9a23bae7sm19621077b3.42.2024.07.02.17.07.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 17:07:01 -0700 (PDT)
-From: Pei Li <peili.dev@gmail.com>
-Date: Tue, 02 Jul 2024 17:07:00 -0700
-Subject: [PATCH v2] Fix WARNING in __ext4_ioctl
+	s=arc-20240116; t=1719965346; c=relaxed/simple;
+	bh=ePBM8uzJRxVTZEWmIyligoS+xxnug3U4PYJjOKa/19E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0ez0ggNSXZH6cEM9X0IePtpzXOLqjzjGG4sYcBx0NtOBSRDzNLWAApj5lzq2TJ0YarFfzPHrVX5TiYDL9BZqPNtA+qtI7s2niQANdMEu47TjQvi1cJRuKSmsYYqNuyuEb2FBQJMSBqrCV6rWy+ABTdC7nbBQGqBYCoYsYn+9RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lvr/ZTaY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6506EC2BD10;
+	Wed,  3 Jul 2024 00:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719965345;
+	bh=ePBM8uzJRxVTZEWmIyligoS+xxnug3U4PYJjOKa/19E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lvr/ZTaYVRJ9GFS+EgvLaekvn6pqKwXp0nujszy9uerwf5WHRSz1q8pNStd+G6zgR
+	 1AXAX+uAkpReldOxNUA8QVK8HII6G9PNo37nU7fOaSUCb72zfU5epPkholCk/PxcMb
+	 AQ5EeU3tHlW6SuaSzE+HKyf5r/6/ol5tucZIl2wr69tIrnle4FAcHF5ByNXWyYqHeD
+	 /bteuTjUV6iEnDX3uvIhuqFv+2PvDNuO/Lh6zvyWz433gv7Zt78Y0nlgYyO7v9wDdU
+	 4hzQWdRqhM3wiR70fyiOhKvctoTGnsNig5xGK+7bFtWAUGso0ijRVyk0lFSWalqSbA
+	 TlslREdQXBrBQ==
+Date: Tue, 2 Jul 2024 17:09:03 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+	irogers@google.com, segher@kernel.crashing.org,
+	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com,
+	disgoel@linux.vnet.ibm.com
+Subject: Re: [PATCH V5 03/17] tools/perf: Update TYPE_STATE_MAX_REGS to
+ include max of regs in powerpc
+Message-ID: <ZoSWn0q8YCxxbylS@google.com>
+References: <20240701043430.66666-1-atrajeev@linux.vnet.ibm.com>
+ <20240701043430.66666-4-atrajeev@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240702-bug8-v2-1-be675f490db1@gmail.com>
-X-B4-Tracking: v=1; b=H4sIACOWhGYC/13MQQ7CIBCF4as0sxYDAwpx5T1MF4hAJ7HFgBJNw
- 93FLl3+Ly/fCsVn8gVOwwrZVyqUlh64G8BNdome0a03IEfFj2jY9RUN00FzbhGNUxb69ZF9oPf
- GXMbeE5Vnyp9NreK3/gFVMMGU0D4cpHNWynOcLd33Ls0wtta+AGDL1ZgAAAA=
-To: Theodore Ts'o <tytso@mit.edu>, 
- Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
- skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com, 
- linux-kernel-mentees@lists.linuxfoundation.org, 
- syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com, 
- Pei Li <peili.dev@gmail.com>
-X-Mailer: b4 0.15-dev-13183
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719965220; l=1799;
- i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
- bh=KOjkQB3I1BkmOGdUI7hd+tydhVz2TLsy35U2esSLVOw=;
- b=PCjjmgpOOOYcDd86Cde/YaT+V68Ga0Vs4zKgw6YZC7RbX1jiHDk/V1rwonT4uNkeJ0EkvlnOv
- nTJOcIdwcM9AGEL1bQy6u3HPgDrwEjXy+pIFdcQGnFEu5wxQ39Dv93o
-X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
- pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240701043430.66666-4-atrajeev@linux.vnet.ibm.com>
 
-Specify the size of s_volume_name in strscpy_pad() to avoid buffer
-overflow.
+On Mon, Jul 01, 2024 at 10:04:16AM +0530, Athira Rajeev wrote:
+> Add TYPE_STATE_MAX_REGS_X86 and TYPE_STATE_MAX_REGS_PPC. Define
+> TYPE_STATE_MAX_REGS to be 32 which is max size of the array. While
+> checking if reg is valid using has_reg_type, use the max value
+> depending on the architecture. For x86, use TYPE_STATE_MAX_REGS_X86
+> since max number of regs is 16. Update has_reg_type to
+> pass "struct arch" also as one of the parameters.
+> 
+> Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
+> ---
+>  tools/perf/arch/x86/annotate/instructions.c | 20 ++++++++++----------
+>  tools/perf/util/annotate-data.c             | 13 +++++++++----
+>  tools/perf/util/annotate-data.h             |  6 ++++--
+>  3 files changed, 23 insertions(+), 16 deletions(-)
+> 
+> diff --git a/tools/perf/arch/x86/annotate/instructions.c b/tools/perf/arch/x86/annotate/instructions.c
+> index 7b7d462c6c6b..ea1dc686e7b4 100644
+> --- a/tools/perf/arch/x86/annotate/instructions.c
+> +++ b/tools/perf/arch/x86/annotate/instructions.c
+> @@ -263,14 +263,14 @@ static void update_insn_state_x86(struct type_state *state,
+>  		struct map_symbol *ms = dloc->ms;
+>  		u64 ip = ms->sym->start + dl->al.offset;
+>  
+> -		if (!has_reg_type(state, dst->reg1))
+> +		if (!has_reg_type(state, dst->reg1, dloc->arch))
+>  			return;
+>  
+>  		tsr = &state->regs[dst->reg1];
+>  
+>  		if (src->imm)
+>  			imm_value = src->offset;
+> -		else if (has_reg_type(state, src->reg1) &&
+> +		else if (has_reg_type(state, src->reg1, dloc->arch) &&
+>  			 state->regs[src->reg1].kind == TSR_KIND_CONST)
+>  			imm_value = state->regs[src->reg1].imm_value;
+>  		else if (src->reg1 == DWARF_REG_PC) {
+> @@ -321,7 +321,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  
+>  	/* Case 1. register to register or segment:offset to register transfers */
+>  	if (!src->mem_ref && !dst->mem_ref) {
+> -		if (!has_reg_type(state, dst->reg1))
+> +		if (!has_reg_type(state, dst->reg1, dloc->arch))
+>  			return;
+>  
+>  		tsr = &state->regs[dst->reg1];
+> @@ -374,7 +374,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  			return;
+>  		}
+>  
+> -		if (!has_reg_type(state, src->reg1) ||
+> +		if (!has_reg_type(state, src->reg1, dloc->arch) ||
+>  		    !state->regs[src->reg1].ok) {
+>  			tsr->ok = false;
+>  			return;
+> @@ -392,7 +392,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  	if (src->mem_ref && !dst->mem_ref) {
+>  		int sreg = src->reg1;
+>  
+> -		if (!has_reg_type(state, dst->reg1))
+> +		if (!has_reg_type(state, dst->reg1, dloc->arch))
+>  			return;
+>  
+>  		tsr = &state->regs[dst->reg1];
+> @@ -427,7 +427,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  			pr_debug_type_name(&tsr->type, tsr->kind);
+>  		}
+>  		/* And then dereference the pointer if it has one */
+> -		else if (has_reg_type(state, sreg) && state->regs[sreg].ok &&
+> +		else if (has_reg_type(state, sreg, dloc->arch) && state->regs[sreg].ok &&
+>  			 state->regs[sreg].kind == TSR_KIND_TYPE &&
+>  			 die_deref_ptr_type(&state->regs[sreg].type,
+>  					    src->offset, &type_die)) {
+> @@ -464,7 +464,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  			pr_debug_type_name(&type_die, tsr->kind);
+>  		}
+>  		/* And check percpu access with base register */
+> -		else if (has_reg_type(state, sreg) &&
+> +		else if (has_reg_type(state, sreg, dloc->arch) &&
+>  			 state->regs[sreg].kind == TSR_KIND_PERCPU_BASE) {
+>  			u64 ip = dloc->ms->sym->start + dl->al.offset;
+>  			u64 var_addr = src->offset;
+> @@ -473,7 +473,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  			if (src->multi_regs) {
+>  				int reg2 = (sreg == src->reg1) ? src->reg2 : src->reg1;
+>  
+> -				if (has_reg_type(state, reg2) && state->regs[reg2].ok &&
+> +				if (has_reg_type(state, reg2, dloc->arch) && state->regs[reg2].ok &&
+>  				    state->regs[reg2].kind == TSR_KIND_CONST)
+>  					var_addr += state->regs[reg2].imm_value;
+>  			}
+> @@ -504,7 +504,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  			}
+>  		}
+>  		/* And then dereference the calculated pointer if it has one */
+> -		else if (has_reg_type(state, sreg) && state->regs[sreg].ok &&
+> +		else if (has_reg_type(state, sreg, dloc->arch) && state->regs[sreg].ok &&
+>  			 state->regs[sreg].kind == TSR_KIND_POINTER &&
+>  			 die_get_member_type(&state->regs[sreg].type,
+>  					     src->offset, &type_die)) {
+> @@ -543,7 +543,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  	}
+>  	/* Case 3. register to memory transfers */
+>  	if (!src->mem_ref && dst->mem_ref) {
+> -		if (!has_reg_type(state, src->reg1) ||
+> +		if (!has_reg_type(state, src->reg1, dloc->arch) ||
+>  		    !state->regs[src->reg1].ok)
+>  			return;
+>  
+> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+> index 7a48c3d72b89..fac9d3cdd318 100644
+> --- a/tools/perf/util/annotate-data.c
+> +++ b/tools/perf/util/annotate-data.c
+> @@ -131,9 +131,14 @@ static void pr_debug_location(Dwarf_Die *die, u64 pc, int reg)
+>  	}
+>  }
+>  
+> -bool has_reg_type(struct type_state *state, int reg)
+> +bool has_reg_type(struct type_state *state, int reg, struct arch *arch)
+>  {
+> -	return (unsigned)reg < ARRAY_SIZE(state->regs);
+> +	if (arch__is(arch, "x86"))
+> +		return (unsigned)reg < TYPE_STATE_MAX_REGS_x86;
+> +	else if (arch__is(arch, "powerpc"))
+> +		return (unsigned)reg < TYPE_STATE_MAX_REGS_PPC;
+> +	else
+> +		return (unsigned)reg < ARRAY_SIZE(state->regs);
+>  }
+>  
+>  static void init_type_state(struct type_state *state, struct arch *arch)
+> @@ -707,7 +712,7 @@ static void update_var_state(struct type_state *state, struct data_loc_info *dlo
+>  			pr_debug_dtp("var [%"PRIx64"] -%#x(stack)",
+>  				     insn_offset, -var->offset + fb_offset);
+>  			pr_debug_type_name(&mem_die, TSR_KIND_TYPE);
+> -		} else if (has_reg_type(state, var->reg) && var->offset == 0) {
+> +		} else if (has_reg_type(state, var->reg, dloc->arch) && var->offset == 0) {
+>  			struct type_state_reg *reg;
+>  
+>  			reg = &state->regs[var->reg];
+> @@ -943,7 +948,7 @@ static int check_matching_type(struct type_state *state,
+>  			if (dloc->op->reg2 == reg)
+>  				reg2 = dloc->op->reg1;
+>  
+> -			if (has_reg_type(state, reg2) && state->regs[reg2].ok &&
+> +			if (has_reg_type(state, reg2, dloc->arch) && state->regs[reg2].ok &&
+>  			    state->regs[reg2].kind == TSR_KIND_CONST)
+>  				var_addr += state->regs[reg2].imm_value;
+>  		}
+> diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
+> index 6fe8ee8b8410..4d8682cdc53c 100644
+> --- a/tools/perf/util/annotate-data.h
+> +++ b/tools/perf/util/annotate-data.h
+> @@ -189,7 +189,9 @@ struct type_state_stack {
+>  };
+>  
+>  /* FIXME: This should be arch-dependent */
+> -#define TYPE_STATE_MAX_REGS  16
+> +#define TYPE_STATE_MAX_REGS  32
+> +#define TYPE_STATE_MAX_REGS_x86	16
+> +#define TYPE_STATE_MAX_REGS_PPC	32
 
-strscpy_pad() by default takes the size of destination string as the
-size to be read from source string. However, as s_volume_name is only
-declared as an array of size EXT4_LABEL_MAX, we are reading 1 byte more
-than expected.
+How about this?
 
-Reported-by: syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=2cab87506a0e7885f4b9
-Fixes: 744a56389f73 ("ext4: replace deprecated strncpy with alternatives")
-Signed-off-by: Pei Li <peili.dev@gmail.com>
----
-strscpy_pad() by default takes the size of destination string as the
-size to be read from source string. However, as s_volume_name is only
-declared as an array of size EXT4_LABEL_MAX, we are reading 1 byte more
-than expected.
+#ifdef __powerpc__  // or something
+# define TYPE_STATE_MAX_REGS  32
+#else
+# define TYPE_STATE_MAX_REGS  16
+#endif
 
-Specify the size of s_volume_name in strscpy_pad() to avoid buffer
-overflow.
----
-Changes in v2:
-- Add fixes label
-- Move workaround into commit log
-- Link to v1: https://lore.kernel.org/r/20240628-bug8-v1-1-417ef53cca33@gmail.com
----
- fs/ext4/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
+Namhyung
 
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index dab7acd49709..0c4fb579757a 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -1151,7 +1151,7 @@ static int ext4_ioctl_getlabel(struct ext4_sb_info *sbi, char __user *user_label
- 	BUILD_BUG_ON(EXT4_LABEL_MAX >= FSLABEL_MAX);
- 
- 	lock_buffer(sbi->s_sbh);
--	strscpy_pad(label, sbi->s_es->s_volume_name);
-+	strscpy_pad(label, sbi->s_es->s_volume_name, EXT4_LABEL_MAX);
- 	unlock_buffer(sbi->s_sbh);
- 
- 	if (copy_to_user(user_label, label, sizeof(label)))
-
----
-base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
-change-id: 20240628-bug8-7f700a228c4a
-
-Best regards,
--- 
-Pei Li <peili.dev@gmail.com>
-
+>  
+>  /*
+>   * State table to maintain type info in each register and stack location.
+> @@ -224,7 +226,7 @@ void global_var_type__tree_delete(struct rb_root *root);
+>  
+>  int hist_entry__annotate_data_tty(struct hist_entry *he, struct evsel *evsel);
+>  
+> -bool has_reg_type(struct type_state *state, int reg);
+> +bool has_reg_type(struct type_state *state, int reg, struct arch *arch);
+>  struct type_state_stack *findnew_stack_state(struct type_state *state,
+>  						int offset, u8 kind,
+>  						Dwarf_Die *type_die);
+> -- 
+> 2.43.0
+> 
 
