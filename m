@@ -1,151 +1,132 @@
-Return-Path: <linux-kernel+bounces-239450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8123D926021
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:21:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0BE926040
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBE56286358
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:21:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35579B2D1A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29C5176AB4;
-	Wed,  3 Jul 2024 12:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hEy79cb8"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A404173348
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03CB17967A;
+	Wed,  3 Jul 2024 12:22:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DD2170836;
+	Wed,  3 Jul 2024 12:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720009276; cv=none; b=iFdmVn8l8hHNP2VlwWldquzciVC71UeyZiQS2ifwX6AxLT0vV8EMoAY8C5FbBF6d/zuVdWhX7tlznNVacYNNeD5j7egLur6eQ2vFspffca6zdfhqgDN5L6Hx4zbU0tlkMdMhWOzt0yuvr8A+VFeGOMvId6Ncvu40WGkkshoR3RM=
+	t=1720009326; cv=none; b=U6zj5KqprfpY+EhQNyENymP5dybWeSALcuqCGXECz2LvBPEdlBn7Lhc7wrA52+RdqGpAJCBZVbXZotCi8NDmtQw2qdCoXt7V7aPICn75dMfebsd2WwbPL2gsrSmydJwPEcSsq/40P3D5EAayjXZr+BMsJE2/Cs+8eq/VwfZnIQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720009276; c=relaxed/simple;
-	bh=cubV7PSPhJbJ+Qx4nqp+Dd4OkcCI8xjyljP7mHG1qOg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LlY6HogA75Oh8EmImy67TE+X6kz6hHJDMOBGeAW7LO4pq1gIC8sDWwHvgSAd3+lgrYo9DSuwODy0eHZ2Z0yLLLk0frvi+fXF04G/DQzuwUMS4s+PUXwRjGsrt4LvHeE9xIOnCk1yLn2pzBWe5sGbNcdgNiBweoJZqxatvEFSfmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hEy79cb8; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52cdcd26d61so5949360e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 05:21:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720009273; x=1720614073; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+m8M3n1qsYckd6mSAf4YNSgVy1Uh2copyKJHcyhOiQ4=;
-        b=hEy79cb8yCJ8LpfHgReutG402o3o3xLWz7STVx0R/B3rn65FjszZrjBQxYYH3MrhTE
-         DQhYL/cXr7YJ6HOicYRPOEu1X7fR3qYTDxEMWg/Er2X2Ob59fqs24HQiHNBLyP/rnjPt
-         l0kCQk9Rl2UtTp4wn4/AAoJNth0A1gayb2k8W7JhFus7uoivwhOMaaeF2J3m2b4R58NY
-         rnWDwkUxkWij2fN4xabWLO8ff5qLOMZEvDFlir+T4A4DtlVFvkEslEvumD9Vljre0s3i
-         yJeDMj9yfHLdbcXSB0KzPGUKBGOpc8hCHTz0hqwZB6yKnS5q64Ib4Y6DXZnwemvHgNgZ
-         rX4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720009273; x=1720614073;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+m8M3n1qsYckd6mSAf4YNSgVy1Uh2copyKJHcyhOiQ4=;
-        b=H3BrxBmcHTBCGrSdBZqMrEeQkkbKx9phufr2gjxC60T24wZhjqiCga5KAXBEePFdWF
-         bPJmGDyuMv4FwJkQv4poB/4rja7Q/9tKytt8lKhVW3hocVtdTd20fjzVzQkj4KPvI3EE
-         bALSNx6S+21zN47yHeIpLs+tamyBurlKlLNwndrip3ZXoXXjWD2ox+HD9gLCwAo2peQL
-         GA50k9728dEkaZ8eooyXqQDIk4NjLbuL6yQ/pdo4fatkUGyCKcfpP5XRAzbGMjDYFKLN
-         YuhuL97KeMDZ6ffLLxsp8bWAnk6dV5m0+MbySpz4ngYyYmF0sXxusW39ETmAvNJiw2xS
-         CtHQ==
-X-Gm-Message-State: AOJu0YxR+Z2OOIAROLIl/LYScWtAa5VVqgLlkRLEe6hNP5qZoazmEjbN
-	LK8CeRhQHqeLtvZ4ia2G0/OL6+zoiYzoD8Qx1fe8jzykly58i3wzl9bR4C9FrB7w/cyfOPNbIBp
-	6
-X-Google-Smtp-Source: AGHT+IGoCrWnpI4H3vkYZIW4U5GwbaIxS3AV0bKKM6IK+U0+ym4oAlShp5iDrd+SuM0Al6aqGSLjKA==
-X-Received: by 2002:a05:6512:3988:b0:52c:f2e0:db23 with SMTP id 2adb3069b0e04-52e826886a0mr8508503e87.40.1720009272232;
-        Wed, 03 Jul 2024 05:21:12 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4256b0c19eesm243158405e9.45.2024.07.03.05.21.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 05:21:11 -0700 (PDT)
-Message-ID: <47440afc-1b76-4dff-8c72-427103d7184a@linaro.org>
-Date: Wed, 3 Jul 2024 14:21:10 +0200
+	s=arc-20240116; t=1720009326; c=relaxed/simple;
+	bh=vYuco9/NSRpqebQ4mYUp/0sTq0aoO3JjDyeQJOZxcqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gN4fa1LmimKXZFyT08WDq5IiYMVETjeD5FN2cHTaNzwFEEZMNCHVkMeiI7KIYO69opxr6IbBsQXPZm82YepUvxJXVYtPIlCDZiE2Py3/TPb1gQJUWZ0fHU6a9vhXpk4Aw3kKlGPTg8e/+CCCsPDF9bZ2RS21TN1u6z3STXs8aiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0FA3367;
+	Wed,  3 Jul 2024 05:22:27 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 079283F766;
+	Wed,  3 Jul 2024 05:21:54 -0700 (PDT)
+Date: Wed, 3 Jul 2024 13:21:52 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>, Saravana
+ Kannan <saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Tony Lindgren <tony@atomide.com>, Bjorn Andersson
+ <andersson@kernel.org>, Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan
+ Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Richard
+ Leitner <richard.leitner@linux.dev>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
+ <naveen.n.rao@linux.ibm.com>, Damien Le Moal <dlemoal@kernel.org>, "Peng
+ Fan (OSS)" <peng.fan@oss.nxp.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, llvm@lists.linux.dev,
+ linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-usb@vger.kernel.org, patches@opensource.cirrus.com,
+ linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 04/20] clk: sunxi: clk-simple-gates: convert to
+ of_property_for_each_u32_new()
+Message-ID: <20240703132152.6c306a48@donnerap.manchester.arm.com>
+In-Reply-To: <20240703-of_property_for_each_u32-v1-4-42c1fc0b82aa@bootlin.com>
+References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
+	<20240703-of_property_for_each_u32-v1-4-42c1fc0b82aa@bootlin.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND][PATCH v1 4/5] thermal: imx: Drop critical trip check
- from imx_set_trip_temp()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>, Shawn Guo <shawnguo@kernel.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Thara Gopinath <thara.gopinath@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-wireless@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <1890956.tdWV9SEqCh@rjwysocki.net>
- <2272035.iZASKD2KPV@rjwysocki.net>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <2272035.iZASKD2KPV@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 02/07/2024 16:43, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, 03 Jul 2024 12:36:48 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+
+> Simplify code using of_property_for_each_u32_new() as the two additional
+> parameters in of_property_for_each_u32() are not used here.
 > 
-> Because the IMX thermal driver does not flag its critical trip as
-> writable, imx_set_trip_temp() will never be invoked for it and so the
-> critical trip check can be dropped from there.
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-And as a rule of thumb, we should not allow writing the critical trip 
-point temperature in the thermal core code.
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cheers,
+Andre
+
 > ---
->   drivers/thermal/imx_thermal.c |    9 ---------
->   1 file changed, 9 deletions(-)
+>  drivers/clk/sunxi/clk-simple-gates.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> Index: linux-pm/drivers/thermal/imx_thermal.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/imx_thermal.c
-> +++ linux-pm/drivers/thermal/imx_thermal.c
-> @@ -335,21 +335,12 @@ static int imx_set_trip_temp(struct ther
->   			     int temp)
->   {
->   	struct imx_thermal_data *data = thermal_zone_device_priv(tz);
-> -	struct thermal_trip trip;
->   	int ret;
->   
->   	ret = pm_runtime_resume_and_get(data->dev);
->   	if (ret < 0)
->   		return ret;
->   
-> -	ret = __thermal_zone_get_trip(tz, trip_id, &trip);
-> -	if (ret)
-> -		return ret;
-> -
-> -	/* do not allow changing critical threshold */
-> -	if (trip.type == THERMAL_TRIP_CRITICAL)
-> -		return -EPERM;
-> -
->   	/* do not allow passive to be set higher than critical */
->   	if (temp < 0 || temp > trips[IMX_TRIP_CRITICAL].temperature)
->   		return -EINVAL;
+> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
+> index 0399627c226a..a30d14937e0b 100644
+> --- a/drivers/clk/sunxi/clk-simple-gates.c
+> +++ b/drivers/clk/sunxi/clk-simple-gates.c
+> @@ -21,11 +21,9 @@ static void __init sunxi_simple_gates_setup(struct device_node *node,
+>  {
+>  	struct clk_onecell_data *clk_data;
+>  	const char *clk_parent, *clk_name;
+> -	struct property *prop;
+>  	struct resource res;
+>  	void __iomem *clk_reg;
+>  	void __iomem *reg;
+> -	const __be32 *p;
+>  	int number, i = 0, j;
+>  	u8 clk_bit;
+>  	u32 index;
+> @@ -47,7 +45,7 @@ static void __init sunxi_simple_gates_setup(struct device_node *node,
+>  	if (!clk_data->clks)
+>  		goto err_free_data;
+>  
+> -	of_property_for_each_u32(node, "clock-indices", prop, p, index) {
+> +	of_property_for_each_u32_new(node, "clock-indices", index) {
+>  		of_property_read_string_index(node, "clock-output-names",
+>  					      i, &clk_name);
+>  
 > 
-> 
-> 
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
 
