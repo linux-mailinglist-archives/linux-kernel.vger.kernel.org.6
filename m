@@ -1,309 +1,116 @@
-Return-Path: <linux-kernel+bounces-238648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54D4924D66
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:00:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA1B924D69
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0129C1C2204D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:00:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C86CC1F233EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C344C96;
-	Wed,  3 Jul 2024 02:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230064683;
+	Wed,  3 Jul 2024 02:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdceNgMQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="nEF6TY86"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888E44A2D;
-	Wed,  3 Jul 2024 02:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC71E4A2D;
+	Wed,  3 Jul 2024 02:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719972038; cv=none; b=rwunNUMdwrCS4+jtIUPg8ZY9CFxv3YE9MBGxRdnYT0FmIK+qT5SZi5wcEr5PZqyddkDNvQGPmnRo/GYw35+zU4Z/g32HJyBMs+Z0gbZlH3GRwNl2bWUvICLE5sfUvffzLak5QPHnAM4w5W94KmpCg9Mln99M4Jlzu4FLlv/5GHc=
+	t=1719972112; cv=none; b=lkZ5TFO9VOQcl5hGITWSvVTq8iEh3m8Wb0DF3q0ljR2oP29yaYP2ufmYP2UH6J8k1TWuFO3jJNZIKNoHwP+xtOw1rPp50oliy/ux4k05ukJiURacXYnnC5O4ce8v5DSLr20hkAxcJ4l0p2XIC0PmNYn43uiggHk0rOQz/HnCDOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719972038; c=relaxed/simple;
-	bh=PBS/IZZg00mOz6DJKccmHVP3hwHiuKcrdM2hpmKjJg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ROWdHjY6ttfuV2Jm3fCZFN5dd2t3GscEwFRKxl+b59vsICn8P62GXxCYrbxtP5yCyhgANKWc/86OQYbJO4Zppn0ub0TE5jdPlYaNehcjVapZeIxPw1K2qmgCQyCTMILlAlwHDAfBwEXdNS7qm8dNBtGlrcHv5DGGtcW3lvb2MHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdceNgMQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81802C116B1;
-	Wed,  3 Jul 2024 02:00:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719972038;
-	bh=PBS/IZZg00mOz6DJKccmHVP3hwHiuKcrdM2hpmKjJg0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tdceNgMQ7s3P+PXRA7B19VLQUFYno2o2f9pwJEyK+5MseaOUdj6QRPh7SsLnVg+IG
-	 +qMyXrxBrOIHZFMRFTt8M2661XpaiiMj1v1NDDY6frkXaP5d22GTPsOT3YJHl/HJO4
-	 nEJ+LXbZgPeTo6pnGWiXTw4ZmHQo6u6KKPcFrNwYcgV0vK+zgPMy70dJFAB5c1p5Ah
-	 ZWeW08IFowoXrsatwMIWhu+pccx+NXNxKZ8WQkUrXkN69iqaVJrfthTiNdd9hUOrFe
-	 490fgy6skY5nGAzrNkDoMcvwBjz6W7niZlHK+Nqs7rZ6s21ahUXHIFgIq/OQLaVb8x
-	 Jzva+UVHHPRzw==
-Date: Tue, 2 Jul 2024 19:00:36 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
-	irogers@google.com, segher@kernel.crashing.org,
-	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com,
-	disgoel@linux.vnet.ibm.com
-Subject: Re: [PATCH V5 16/17] tools/perf: Add support for global_die to
- capture name of variable in case of register defined variable
-Message-ID: <ZoSwxHC3cpGa1UqM@google.com>
-References: <20240701043430.66666-1-atrajeev@linux.vnet.ibm.com>
- <20240701043430.66666-17-atrajeev@linux.vnet.ibm.com>
+	s=arc-20240116; t=1719972112; c=relaxed/simple;
+	bh=GyxW1LSGZfvU4XebzR5XrdIfOtKNClSFJWryvQ2oIUw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WgWrdY1yxR7eHRwVNDZvayPEvIM4bj+Cn5WkHypdwRYGYzMUO1jBVwWVn0q5ogI6DtsPRQFIqEqeU5R8GajFlhxra2h3nLTdcxBqVUMsucNEoL1XJxwtj+NBqMc9if/pdB0USXqPo58V/lKhAeCX2ppPPpnGioJIHDLzHyvZ57E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=nEF6TY86; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5295e488248so6309787e87.2;
+        Tue, 02 Jul 2024 19:01:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1719972109; x=1720576909; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZimzjAy3hV40iaFntS7nCwCZ/3PORpa1R7y0lBfvhK4=;
+        b=nEF6TY86X84ogUM/bx+52YwZ4Mu4Xit4XSs+rWqmhpRVLfZzG9MCPhyDH1D0bLP9WX
+         o3eUWX/vqTgMPnw8vtHmzFWD+mB1e6MRAv/pEuqJgMuKjy5qktMaHefXCcg0C86MKfiu
+         s+4pPxO5WBfmTMzJ6QVe38cChVeTeQSk5xsq5PxuV97hfqadUWXjc92irzjG5UQhNoV6
+         vBjudI1PAYDvFcZq6IMxtETPGNFkWozXgcPXRQsFckhj7WJ6CMdMhPb0dNRorPRLQafo
+         2raEfwruBdQ2WFcK0N499YMI9x3d/6yfR3dx3bFnu2Y4Jvrak54e6Jt0bz36MzyRxwvy
+         P5OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719972109; x=1720576909;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZimzjAy3hV40iaFntS7nCwCZ/3PORpa1R7y0lBfvhK4=;
+        b=Xd8w+9mxwPKGIN9Y+cv6b/r3R8IxVlQIOANhnkWVdnbdAb3uJI4vuCRMyRBO/P6eFW
+         ScP2+ul1C6pfhdftAcihbumk2MLTtLBggin73moPASQmkQLA5kzReHHWxtsMRPcYAVJy
+         yDaKXzTO0vifAaTT3PLVaPVraqr0ERDK69HL9GeTbhwK3/pgVwZxwgauHTS3DzE/5IlA
+         8f+vBDoxdqM/iVq5oRkHA3qALFPl0Ngnpkrx+NTg2qKkBTIf6ESlg/rnOzPZA4lEZj/Q
+         k+nS2u1fzE8gP+PUPSk/f2rq37vjx9BFmwGxljVZcwHxGJn/aMj4htKM6IR/k221TMWV
+         gNhg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbR9ptK2U0WxDCL951gTvjd7MU7BOlSD35gKVWAYduD5mgRX7/2BWDF9CaW8aJS4f6a7lu2TNjtH8JIt/DpIPlvSrexQSGhUTknSR+t1bqr+sgYvqbJuh1Osmyl4oxzfbPXqRc
+X-Gm-Message-State: AOJu0YwZwmDx2dAcrQTsnNoMVlCXVBAqm0NklTkyMpOAnLtHgiz6O0u9
+	FOePXAIap8fvMXg1eC02GklGxRAcMsJdXSuvR4kXofqhn4WyH1WIlia8Hok=
+X-Google-Smtp-Source: AGHT+IHfhfrPY8oWGWypTj48byXcQCaGINoKBU+zHiwUjmYNFr9TAJEGGv8pRIRMNDJg2zzJWLUbmQ==
+X-Received: by 2002:a05:6512:3b81:b0:52c:dc25:d706 with SMTP id 2adb3069b0e04-52e8270172cmr6797187e87.52.1719972108756;
+        Tue, 02 Jul 2024 19:01:48 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4fd5.dip0.t-ipconnect.de. [91.43.79.213])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b061095sm207739955e9.23.2024.07.02.19.01.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 19:01:47 -0700 (PDT)
+Message-ID: <c88b2b98-a1a7-4397-b646-cd75b112dba1@googlemail.com>
+Date: Wed, 3 Jul 2024 04:01:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240701043430.66666-17-atrajeev@linux.vnet.ibm.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.1 000/128] 6.1.97-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240702170226.231899085@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240702170226.231899085@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 01, 2024 at 10:04:29AM +0530, Athira Rajeev wrote:
-> In case of register defined variable (found using
-> find_data_type_global_reg), if the type of variable happens to be base
-> type (example, long unsigned int), perf report captures it as:
-> 
->     12.85%  long unsigned int  long unsigned int +0 (no field)
-> 
-> The above data type is actually referring to samples captured while
-> accessing "r1" which represents current stack pointer in powerpc.
-> register void *__stack_pointer asm("r1");
-> 
-> The dwarf debug contains this as:
-> 
-> <<>>
->  <1><18dd772>: Abbrev Number: 129 (DW_TAG_variable)
->     <18dd774>   DW_AT_name        : (indirect string, offset: 0x11ba): current_stack_pointer
->     <18dd778>   DW_AT_decl_file   : 51
->     <18dd779>   DW_AT_decl_line   : 1468
->     <18dd77b>   DW_AT_decl_column : 24
->     <18dd77c>   DW_AT_type        : <0x18da5cd>
->     <18dd780>   DW_AT_external    : 1
->     <18dd780>   DW_AT_location    : 1 byte block: 51    (DW_OP_reg1 (r1))
-> 
->  where 18da5cd is:
-> 
->  <1><18da5cd>: Abbrev Number: 47 (DW_TAG_base_type)
->     <18da5ce>   DW_AT_byte_size   : 8
->     <18da5cf>   DW_AT_encoding    : 7   (unsigned)
->     <18da5d0>   DW_AT_name        : (indirect string, offset: 0x55c7): long unsigned int
-> <<>>
-> 
-> To make it more clear to the user, capture the DW_AT_name of the
-> variable and save it as part of Dwarf_Global. Dwarf_Global is used so
-> that it can be used and retrieved while presenting the result.
-> 
-> Update "dso__findnew_data_type" function to set "var_name" if
-> variable name is set as part of Dwarf_Global. Updated
-> "hist_entry__typeoff_snprintf" to print var_name if it is set.
-> With the changes, along with "long unsigned int" report also says the
-> variable name as current_stack_pointer
-> 
-> Snippet of result:
-> 
->     12.85%  long unsigned int  long unsigned int +0 (current_stack_pointer)
+Am 02.07.2024 um 19:03 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.1.97 release.
+> There are 128 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-But I'm afraid it'd contain other (global) unsigned int type accesses
-also.  Currently data_type_cmp() only compares size and type name so it
-cannot distinguish two different int variables.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-I thought it's ok since we care about types, but we might want to see
-global variables (in the same type) - not only register variables -
-separately.  Then I think we should compare variable names after type
-name (if exists).
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
+Beste Grüße,
+Peter Schneider
 
->      4.68%  struct paca_struct  struct paca_struct +2312 (__current)
->      4.57%  struct paca_struct  struct paca_struct +2354 (irq_soft_mask)
-> 
-> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> ---
->  tools/perf/util/annotate-data.c | 30 ++++++++++++++++++++++++------
->  tools/perf/util/dwarf-aux.c     |  1 +
->  tools/perf/util/dwarf-aux.h     |  1 +
->  tools/perf/util/sort.c          |  7 +++++--
->  4 files changed, 31 insertions(+), 8 deletions(-)
-> 
-> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
-> index c919b2259f54..a6d6cf69dbab 100644
-> --- a/tools/perf/util/annotate-data.c
-> +++ b/tools/perf/util/annotate-data.c
-> @@ -273,23 +273,32 @@ static void delete_members(struct annotated_member *member)
->  }
->  
->  static struct annotated_data_type *dso__findnew_data_type(struct dso *dso,
-> -							  Dwarf_Die *type_die)
-> +							  Dwarf_Die *type_die, Dwarf_Global *global_die)
->  {
->  	struct annotated_data_type *result = NULL;
->  	struct annotated_data_type key;
->  	struct rb_node *node;
->  	struct strbuf sb;
-> +	struct strbuf sb_var_name;
->  	char *type_name;
-> +	char *var_name = NULL;
->  	Dwarf_Word size;
->  
->  	strbuf_init(&sb, 32);
-> +	strbuf_init(&sb_var_name, 32);
->  	if (die_get_typename_from_type(type_die, &sb) < 0)
->  		strbuf_add(&sb, "(unknown type)", 14);
-> +	if (global_die->name) {
-> +		strbuf_addstr(&sb_var_name, global_die->name);
-> +		var_name = strbuf_detach(&sb_var_name, NULL);
-> +	}
->  	type_name = strbuf_detach(&sb, NULL);
->  	dwarf_aggregate_size(type_die, &size);
->  
->  	/* Check existing nodes in dso->data_types tree */
->  	key.self.type_name = type_name;
-> +	if (global_die->name)
-> +		key.self.var_name = var_name;
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-Maybe you can set it unconditionally as it's NULL by default.
-But you need to free the var_name if rb_find() returns an existing
-node.  I think it should be done after you allocate the result.
-
-
->  	key.self.size = size;
->  	node = rb_find(&key, dso__data_types(dso), data_type_cmp);
->  	if (node) {
-> @@ -306,6 +315,8 @@ static struct annotated_data_type *dso__findnew_data_type(struct dso *dso,
->  	}
->  
->  	result->self.type_name = type_name;
-> +	if (global_die->name)
-> +		result->self.var_name = var_name;
-
-Here.
-
-Thanks,
-Namhyung
-
-
->  	result->self.size = size;
->  	INIT_LIST_HEAD(&result->self.children);
->  
-> @@ -1183,7 +1194,7 @@ static int find_data_type_block(struct data_loc_info *dloc,
->   * cu_die and match with reg to identify data type die.
->   */
->  static int find_data_type_global_reg(struct data_loc_info *dloc, int reg, Dwarf_Die *cu_die,
-> -		Dwarf_Die *type_die)
-> +		Dwarf_Die *type_die, Dwarf_Global *global_die)
->  {
->  	Dwarf_Die vr_die;
->  	int ret = -1;
-> @@ -1195,8 +1206,11 @@ static int find_data_type_global_reg(struct data_loc_info *dloc, int reg, Dwarf_
->  			if (dwarf_offdie(dloc->di->dbg, var_types->die_off, &vr_die)) {
->  				if (die_get_real_type(&vr_die, type_die) == NULL) {
->  					dloc->type_offset = 0;
-> +					global_die->name = var_types->name;
->  					dwarf_offdie(dloc->di->dbg, var_types->die_off, type_die);
->  				}
-> +				global_die->die_offset = (long)dwarf_dieoffset(type_die);
-> +				global_die->cu_offset = (long)dwarf_dieoffset(cu_die);
->  				pr_debug_type_name(type_die, TSR_KIND_TYPE);
->  				ret = 0;
->  				pr_debug_dtp("found by CU for %s (die:%#lx)\n",
-> @@ -1212,7 +1226,8 @@ static int find_data_type_global_reg(struct data_loc_info *dloc, int reg, Dwarf_
->  }
->  
->  /* The result will be saved in @type_die */
-> -static int find_data_type_die(struct data_loc_info *dloc, Dwarf_Die *type_die)
-> +static int find_data_type_die(struct data_loc_info *dloc, Dwarf_Die *type_die,
-> +		Dwarf_Global *global_die)
->  {
->  	struct annotated_op_loc *loc = dloc->op;
->  	Dwarf_Die cu_die, var_die;
-> @@ -1226,6 +1241,8 @@ static int find_data_type_die(struct data_loc_info *dloc, Dwarf_Die *type_die)
->  	u64 pc;
->  	char buf[64];
->  
-> +	memset(global_die, 0, sizeof(Dwarf_Global));
-> +
->  	if (dloc->op->multi_regs)
->  		snprintf(buf, sizeof(buf), "reg%d, reg%d", dloc->op->reg1, dloc->op->reg2);
->  	else if (dloc->op->reg1 == DWARF_REG_PC)
-> @@ -1259,7 +1276,7 @@ static int find_data_type_die(struct data_loc_info *dloc, Dwarf_Die *type_die)
->  		     dwarf_diename(&cu_die), (long)dwarf_dieoffset(&cu_die));
->  
->  	if (loc->reg_type == DWARF_REG_GLOBAL) {
-> -		ret = find_data_type_global_reg(dloc, reg, &cu_die, type_die);
-> +		ret = find_data_type_global_reg(dloc, reg, &cu_die, type_die, global_die);
->  		if (!ret)
->  			goto out;
->  	}
-> @@ -1395,6 +1412,7 @@ struct annotated_data_type *find_data_type(struct data_loc_info *dloc)
->  	struct annotated_data_type *result = NULL;
->  	struct dso *dso = map__dso(dloc->ms->map);
->  	Dwarf_Die type_die;
-> +	Dwarf_Global global_die;
->  
->  	dloc->di = debuginfo__new(dso__long_name(dso));
->  	if (dloc->di == NULL) {
-> @@ -1410,10 +1428,10 @@ struct annotated_data_type *find_data_type(struct data_loc_info *dloc)
->  
->  	dloc->fbreg = -1;
->  
-> -	if (find_data_type_die(dloc, &type_die) < 0)
-> +	if (find_data_type_die(dloc, &type_die, &global_die) < 0)
->  		goto out;
->  
-> -	result = dso__findnew_data_type(dso, &type_die);
-> +	result = dso__findnew_data_type(dso, &type_die, &global_die);
->  
->  out:
->  	debuginfo__delete(dloc->di);
-> diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-> index 44ef968a7ad3..9e61ff326651 100644
-> --- a/tools/perf/util/dwarf-aux.c
-> +++ b/tools/perf/util/dwarf-aux.c
-> @@ -1610,6 +1610,7 @@ static int __die_collect_vars_cb(Dwarf_Die *die_mem, void *arg)
->  	vt->reg = reg_from_dwarf_op(ops);
->  	vt->offset = offset_from_dwarf_op(ops);
->  	vt->next = *var_types;
-> +	vt->name = dwarf_diename(die_mem);
->  	*var_types = vt;
->  
->  	return DIE_FIND_CB_SIBLING;
-> diff --git a/tools/perf/util/dwarf-aux.h b/tools/perf/util/dwarf-aux.h
-> index 24446412b869..406a5b1e269b 100644
-> --- a/tools/perf/util/dwarf-aux.h
-> +++ b/tools/perf/util/dwarf-aux.h
-> @@ -146,6 +146,7 @@ struct die_var_type {
->  	u64 addr;
->  	int reg;
->  	int offset;
-> +	const char *name;
->  };
->  
->  /* Return type info of a member at offset */
-> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-> index cd39ea972193..535ca19a23fd 100644
-> --- a/tools/perf/util/sort.c
-> +++ b/tools/perf/util/sort.c
-> @@ -2305,9 +2305,12 @@ static int hist_entry__typeoff_snprintf(struct hist_entry *he, char *bf,
->  	char buf[4096];
->  
->  	buf[0] = '\0';
-> -	if (list_empty(&he_type->self.children))
-> +	if (list_empty(&he_type->self.children)) {
->  		snprintf(buf, sizeof(buf), "no field");
-> -	else
-> +		if (he_type->self.var_name)
-> +			strcpy(buf, he_type->self.var_name);
-> +
-> +	} else
->  		fill_member_name(buf, sizeof(buf), &he_type->self,
->  				 he->mem_type_off, true);
->  	buf[4095] = '\0';
-> -- 
-> 2.43.0
-> 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
