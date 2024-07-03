@@ -1,154 +1,191 @@
-Return-Path: <linux-kernel+bounces-239398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0C7925F28
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:52:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC82925F36
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090E81F258A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:52:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EC2B1F27373
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B65116EC0F;
-	Wed,  3 Jul 2024 11:52:13 +0000 (UTC)
-Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A039817335C;
+	Wed,  3 Jul 2024 11:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IRLkTuVO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YedSxPgE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631E713D61B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58E3171E72;
+	Wed,  3 Jul 2024 11:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720007533; cv=none; b=SW5nao5Wd4j8fSsbHyRZWurB640tUfhrAomQBJ7lL82rJ6eJybiiT1GnEKFDXiDqazSkoScijTEKXb8RfYh/1bKmV6Dkzwp1kkEjwlMuJd1sFqUISGQgFf3/7OryMxoufrVV0fsiyjoeN7WI7sIO0GI9iMNnOEsmmaYj05DKoes=
+	t=1720007580; cv=none; b=eAac+Qgg/cAVfFQKzAlQO89hlgIPMh7naBOG5HdUM9OpDeupKWvTd6z3uXUN/9djEjC50mtTPlpgyL5KR6YXtoUQZNUUO3Qa1wrgggiLCZxyhb0O7a2LNzLUp3omDDgsLeltu/PBHuPx4CvtEEgf2OZNekw0J0/neipGHLex/oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720007533; c=relaxed/simple;
-	bh=WYjyN31nvOPQorDg4MwuaO39knfNAiEVUYUmWPo3/s0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kV2SxLgXNRu0hzIBEuUXSkK8kY0Z4Qy+cqKlHtAj5R9t7MIjvJj4c4ocJCoqwOeN6IcMOuVFBXqCaiWDKZeI409lxvdd7qKzZRDR2gAmu52xiVfM1x8gPXPm8bGtN5E2rXfSX98IOCpF09r+fg5Fad4OYVvrLR/oYI2S90XGSwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.64.67])
-	by sina.com (10.185.250.23) with ESMTP
-	id 66853B3B000058DB; Wed, 3 Jul 2024 19:51:25 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 6931968913445
-X-SMAIL-UIID: 4B0436BF9FEB440284964CB5AE262EC2-20240703-195125-1
-From: Hillf Danton <hdanton@sina.com>
-To: Tom Parkin <tparkin@katalix.com>
-Cc: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	James Chapman <jchapman@katalix.com>,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
-Date: Wed,  3 Jul 2024 19:51:13 +0800
-Message-Id: <20240703115113.2928-1-hdanton@sina.com>
-In-Reply-To: <ZoU1Aa/JJ+60FZla@katalix.com>
-References: 
+	s=arc-20240116; t=1720007580; c=relaxed/simple;
+	bh=4vyCU6ANbjrw1Mvh+Q7mHa7DTpcwVfqc+heLSYWaXoo=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=A3AdzQiH2IfgvZFtyKoL+OOpTRAYx03g5ycIz+WTxM3aOVwW72ul0nZrFdDybQtF0nz3L1KVEXN6lmtPxLIyTkSozJuGZgasNTMxdOgLITdG2txUh8qptRIFqiiXUla+c0gsXKKek1Pn9KUtkSN+MaiHgsAlixq8WlRZufI/yec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IRLkTuVO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YedSxPgE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 03 Jul 2024 11:52:49 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720007570;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F1P2TWzsZWnnZZh4FZTxVWZUPrceOOvWG4Mci481hOw=;
+	b=IRLkTuVOiDSjujWowBfwlngBQsPyJ1ptrbAiztE1k0B2ey4c0pYLMBIhyPAYdxxDYf2/NZ
+	879RwIbTkzD7FAAp9c+Bk9pDPxv6LU31Dn6LtYGjoprMhoDub9pGRlC9bBlJt+5c7sIApn
+	KnEY5ksFn1MxtnIpPiJrdK+C6P3Kr+u9SEVphgEze8y1W77FyObNNGnrliCg3h2RxYtIej
+	++Ef5hBuROv88odwQ6liJ6WS4LMhad9CK63TxpHIfMiCpibsjjWdXpyHEaKVbOqCLP/2J9
+	tnmA8njiVdGJVTYMQYJB3oYz5WCkHUVB+3y0P6PLO+Vt9ktz7HqB86Vz/RueYA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720007570;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F1P2TWzsZWnnZZh4FZTxVWZUPrceOOvWG4Mci481hOw=;
+	b=YedSxPgEBZld3dIf80kywfarhFiy5VIkslR/2GcDmpClvhgNaDvFfuvcYZrC32N55O0O9v
+	N/DLS/nOpPhQwnDA==
+From: "tip-bot2 for Alexandre Chartre" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/bhi: Avoid warning in #DB handler due to BHI mitigation
+Cc: Suman Maity <suman.m.maity@oracle.com>,
+ Alexandre Chartre <alexandre.chartre@oracle.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240524070459.3674025-1-alexandre.chartre@oracle.com>
+References: <20240524070459.3674025-1-alexandre.chartre@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <172000756979.2215.11589165897193201369.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, 3 Jul 2024 12:24:49 +0100 Tom Parkin <tparkin@katalix.com>
-> 
-> [-- Attachment #1.1: Type: text/plain, Size: 379 bytes --]
-> 
-> On  Tue, Jun 25, 2024 at 06:25:23 -0700, syzbot wrote:
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    185d72112b95 net: xilinx: axienet: Enable multicast by def..
-> > git tree:       net-next
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1062bd46980000
-> 
-> #syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git  185d72112b95
-> 
-> [-- Attachment #1.2: 0001-l2tp-fix-possible-UAF-when-cleaning-up-tunnels.patch --]
-> [-- Type: text/x-diff, Size: 3275 bytes --]
-> 
-> From 31321b7742266c4e58355076c19d8d490fa005d2 Mon Sep 17 00:00:00 2001
-> From: James Chapman <jchapman@katalix.com>
-> Date: Tue, 2 Jul 2024 12:49:07 +0100
-> Subject: [PATCH] l2tp: fix possible UAF when cleaning up tunnels
-> 
-> syzbot reported a UAF caused by a race when the L2TP work queue closes a
-> tunnel at the same time as a userspace thread closes a session in that
-> tunnel.
-> 
-> Tunnel cleanup is handled by a work queue which iterates through the
-> sessions contained within a tunnel, and closes them in turn.
-> 
-> Meanwhile, a userspace thread may arbitrarily close a session via
-> either netlink command or by closing the pppox socket in the case of
-> l2tp_ppp.
-> 
-> The race condition may occur when l2tp_tunnel_closeall walks the list
-> of sessions in the tunnel and deletes each one.  Currently this is
-> implemented using list_for_each_safe, but because the list spinlock is
-> dropped in the loop body it's possible for other threads to manipulate
-> the list during list_for_each_safe's list walk.  This can lead to the
-> list iterator being corrupted, leading to list_for_each_safe spinning.
-> One sequence of events which may lead to this is as follows:
-> 
->  * A tunnel is created, containing two sessions A and B.
->  * A thread closes the tunnel, triggering tunnel cleanup via the work
->    queue.
->  * l2tp_tunnel_closeall runs in the context of the work queue.  It
->    removes session A from the tunnel session list, then drops the list
->    lock.  At this point the list_for_each_safe temporary variable is
->    pointing to the other session on the list, which is session B, and
->    the list can be manipulated by other threads since the list lock has
->    been released.
->  * Userspace closes session B, which removes the session from its parent
->    tunnel via l2tp_session_delete.  Since l2tp_tunnel_closeall has
->    released the tunnel list lock, l2tp_session_delete is able to call
->    list_del_init on the session B list node.
->  * Back on the work queue, l2tp_tunnel_closeall resumes execution and
->    will now spin forever on the same list entry until the underlying
->    session structure is freed, at which point UAF occurs.
-> 
-> The solution is to iterate over the tunnel's session list using
-> list_first_entry_not_null to avoid the possibility of the list
-> iterator pointing at a list item which may be removed during the walk.
-> 
-> ---
->  net/l2tp/l2tp_core.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
-> index 64f446f0930b..afa180b7b428 100644
-> --- a/net/l2tp/l2tp_core.c
-> +++ b/net/l2tp/l2tp_core.c
-> @@ -1290,13 +1290,14 @@ static void l2tp_session_unhash(struct l2tp_session *session)
->  static void l2tp_tunnel_closeall(struct l2tp_tunnel *tunnel)
->  {
->  	struct l2tp_session *session;
-> -	struct list_head *pos;
-> -	struct list_head *tmp;
->  
->  	spin_lock_bh(&tunnel->list_lock);
->  	tunnel->acpt_newsess = false;
-> -	list_for_each_safe(pos, tmp, &tunnel->session_list) {
-> -		session = list_entry(pos, struct l2tp_session, list);
-> +	for (;;) {
-> +		session = list_first_entry_or_null(&tunnel->session_list,
-> +						   struct l2tp_session, list);
-> +		if (!session)
-> +			break;
+The following commit has been merged into the x86/urgent branch of tip:
 
-WTF difference could this patch make wrt closing the race above?
+Commit-ID:     ac8b270b61d48fcc61f052097777e3b5e11591e0
+Gitweb:        https://git.kernel.org/tip/ac8b270b61d48fcc61f052097777e3b5e11591e0
+Author:        Alexandre Chartre <alexandre.chartre@oracle.com>
+AuthorDate:    Fri, 24 May 2024 09:04:59 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 03 Jul 2024 13:26:30 +02:00
 
->  		list_del_init(&session->list);
->  		spin_unlock_bh(&tunnel->list_lock);
->  		l2tp_session_delete(session);
+x86/bhi: Avoid warning in #DB handler due to BHI mitigation
+
+When BHI mitigation is enabled, if SYSENTER is invoked with the TF flag set
+then entry_SYSENTER_compat() uses CLEAR_BRANCH_HISTORY and calls the
+clear_bhb_loop() before the TF flag is cleared. This causes the #DB handler
+(exc_debug_kernel()) to issue a warning because single-step is used outside the
+entry_SYSENTER_compat() function.
+
+To address this issue, entry_SYSENTER_compat() should use CLEAR_BRANCH_HISTORY
+after making sure the TF flag is cleared.
+
+The problem can be reproduced with the following sequence:
+
+  $ cat sysenter_step.c
+  int main()
+  { asm("pushf; pop %ax; bts $8,%ax; push %ax; popf; sysenter"); }
+
+  $ gcc -o sysenter_step sysenter_step.c
+
+  $ ./sysenter_step
+  Segmentation fault (core dumped)
+
+The program is expected to crash, and the #DB handler will issue a warning.
+
+Kernel log:
+
+  WARNING: CPU: 27 PID: 7000 at arch/x86/kernel/traps.c:1009 exc_debug_kernel+0xd2/0x160
+  ...
+  RIP: 0010:exc_debug_kernel+0xd2/0x160
+  ...
+  Call Trace:
+  <#DB>
+   ? show_regs+0x68/0x80
+   ? __warn+0x8c/0x140
+   ? exc_debug_kernel+0xd2/0x160
+   ? report_bug+0x175/0x1a0
+   ? handle_bug+0x44/0x90
+   ? exc_invalid_op+0x1c/0x70
+   ? asm_exc_invalid_op+0x1f/0x30
+   ? exc_debug_kernel+0xd2/0x160
+   exc_debug+0x43/0x50
+   asm_exc_debug+0x1e/0x40
+  RIP: 0010:clear_bhb_loop+0x0/0xb0
+  ...
+  </#DB>
+  <TASK>
+   ? entry_SYSENTER_compat_after_hwframe+0x6e/0x8d
+  </TASK>
+
+  [ bp: Massage commit message. ]
+
+Fixes: 7390db8aea0d ("x86/bhi: Add support for clearing branch history at syscall entry")
+Reported-by: Suman Maity <suman.m.maity@oracle.com>
+Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Andrew Cooper <andrew.cooper3@citrix.com>
+Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Link: https://lore.kernel.org/r/20240524070459.3674025-1-alexandre.chartre@oracle.com
+---
+ arch/x86/entry/entry_64_compat.S | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+index 11c9b8e..ed0a5f2 100644
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -89,10 +89,6 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
+ 
+ 	cld
+ 
+-	IBRS_ENTER
+-	UNTRAIN_RET
+-	CLEAR_BRANCH_HISTORY
+-
+ 	/*
+ 	 * SYSENTER doesn't filter flags, so we need to clear NT and AC
+ 	 * ourselves.  To save a few cycles, we can check whether
+@@ -116,6 +112,16 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
+ 	jnz	.Lsysenter_fix_flags
+ .Lsysenter_flags_fixed:
+ 
++	/*
++	 * CPU bugs mitigations mechanisms can call other functions. They
++	 * should be invoked after making sure TF is cleared because
++	 * single-step is ignored only for instructions inside the
++	 * entry_SYSENTER_compat function.
++	 */
++	IBRS_ENTER
++	UNTRAIN_RET
++	CLEAR_BRANCH_HISTORY
++
+ 	movq	%rsp, %rdi
+ 	call	do_SYSENTER_32
+ 	jmp	sysret32_from_system_call
 
