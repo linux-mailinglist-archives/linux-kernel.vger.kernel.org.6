@@ -1,128 +1,94 @@
-Return-Path: <linux-kernel+bounces-239971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E181926768
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:47:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A4E3926764
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC27C283E84
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:47:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BBED1C22E52
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D71B1862B6;
-	Wed,  3 Jul 2024 17:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEAE18509A;
+	Wed,  3 Jul 2024 17:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y3aHrPsx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="W8/vxQRy";
+	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="rph9gUe1"
+Received: from pb-smtp1.pobox.com (pb-smtp1.pobox.com [64.147.108.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18F017C7AB;
-	Wed,  3 Jul 2024 17:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A071C68D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 17:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720028837; cv=none; b=Lg8rM27poiKhaiJeAZEKzYOq9KEKDhyBLzN3auoJPF4mUQ+ZBTtztp00XozU18sMei7SK74wcvXx5sQ7iDjEe2HV+fSDvdravJE0MQTBfO8HmVYz7HGIel2RLWBEAp+O+6pNyjee7OE/mUOL/1cTiO912Vlm5BZS2zOSd0ykyhk=
+	t=1720028836; cv=none; b=ClCPuhHYLjeyjoHuzsEmrZ/N98do1EyDJedKDVTRTUkxwV+03VzqDY6wNL57Pjt/3cM1hDUgt9XZ/r+ofIFaLf8UvZJr0HVO6HwGrt4MlbZacyg+b1Egu6+I3EAAj8LxdKGeF6zuASrCpPrT3/0Ewka8oyhfdWBrjSNSdpWfRyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720028837; c=relaxed/simple;
-	bh=0BOoSN/vwKF5iPbUzVkATDPa38qHBiYNj4pLU49zhPs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=QVEfhMnJfFPh6VfnozlAK2VBJKr1V/5bPLffD4ZK+4EMtLML5BaXezZnDZ5N+OhfAGbFH3ttvdh0WWyj0BF3V+jQnnh/cgDqvOQx7poxvyOVgR9wOtvGoVn3BDCx0hkzx0TsdwH3XqANhVQh8Ej5Nktxtf/B9tOVEZYWez7c9xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y3aHrPsx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 463Ec3eS023282;
-	Wed, 3 Jul 2024 17:47:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	K8kXkUMRuS5ZJkoOu4J5Www9AwgUv/jNADsGdmLz0Q0=; b=Y3aHrPsx9irOOfYH
-	IHk9HNyLrCH8FqWyhimSTUQjWhPKx93NlkUgNGTLeBG0pMccoS1aiChgkpEWyfT+
-	SEQT3I2l6A1hfXk+czHC/bc1hld1tfy86XBgL+CyQrjEB9fZnXQoS+PA+N93BT25
-	9hpZOxMZYSi79tZx0fhRNZS2Tr41Nf4duqaEuKsKIvGrZaCKtsR6EkLhRF200Xf8
-	8dqgA3U0y8j4OSWBmvXLOjQGV2IgPynZT/lyW22kgu4Ts+hpzUw+CtqwKj/EkfOw
-	537cHsc/0hmuf+v8jxMOWeSvQiLmXocwEi2dlawpIA8QT68IH/wR8YEawRaXJEIe
-	3+cagg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4050cy9qk8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Jul 2024 17:47:11 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 463HlAFU021100
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Jul 2024 17:47:10 GMT
-Received: from [10.216.27.55] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
- 10:47:04 -0700
-Message-ID: <8b19c43e-6b13-4b09-9498-ee0b24749d3f@quicinc.com>
-Date: Wed, 3 Jul 2024 23:17:01 +0530
+	s=arc-20240116; t=1720028836; c=relaxed/simple;
+	bh=1OP7oD0MYlGpUSHVkGMiEc/aaQyhmSsxyzlIOGxDBeg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=au5eeA9RLZAnk8dwviOmn04Tgv5GWESD354JBAeSy9tIT7R3Lo+tdmzQa1/+iz4HWkNgA7bEyIxZHi9S83JHmVYxxAE7JjylFkSEDqy0RcEDQAabWZQSJCNCDA5ly86I3ZcdjBVpSXG7FnWYF3hMFcF6Gkorm5naS1jgmyqnxTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=W8/vxQRy; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=rph9gUe1; arc=none smtp.client-ip=64.147.108.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
+Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
+	by pb-smtp1.pobox.com (Postfix) with ESMTP id B4D702B7CB;
+	Wed,  3 Jul 2024 13:47:12 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
+	:to:cc:subject:in-reply-to:message-id:references:mime-version
+	:content-type; s=sasl; bh=1OP7oD0MYlGpUSHVkGMiEc/aaQyhmSsxyzlIOG
+	xDBeg=; b=W8/vxQRyV/y3HFvdlO3ktGiQiG2YfPfXZfI5GRPLHcLfgdy2r8Nlpz
+	WYjPmFIyRotzB/89i1wf9M2yG8NG6h6hkqQK8Fq7ZZMi9OwPoafZkTj7GbFbTwlW
+	G/WApze9wa1J3D2afB2mzlAdmORlZVcw/c6njDFafIy42bNu3nJ+4=
+Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
+	by pb-smtp1.pobox.com (Postfix) with ESMTP id AC56F2B7CA;
+	Wed,  3 Jul 2024 13:47:12 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
+ h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=1OP7oD0MYlGpUSHVkGMiEc/aaQyhmSsxyzlIOGxDBeg=; b=rph9gUe10opNZccRphBJ1MF3srMViR5iOuz117UOn9ueOJxbm0BoFNb2OVi1qrQpKFInw/BdXpzueju02un+GqfSIOWOaWb4N8UAb123Pg3cjDUQyzB9elypp+PC8RBjzggqgFBiR1aCD+fmVhkRmGrfqv2ldEqJDwuI2p+2yXo=
+Received: from yoda.fluxnic.net (unknown [184.162.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 1269D2B7C9;
+	Wed,  3 Jul 2024 13:47:12 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 007A3D324C0;
+	Wed,  3 Jul 2024 13:47:11 -0400 (EDT)
+Date: Wed, 3 Jul 2024 13:47:10 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] mul_u64_u64_div_u64: basic sanity test
+In-Reply-To: <20240703103529.2283c3c4683c60f1ae50a152@linux-foundation.org>
+Message-ID: <n92q9p5r-9o9r-prp3-s256-110322s5n233@syhkavp.arg>
+References: <20240703033552.906852-1-nico@fluxnic.net> <20240703033552.906852-3-nico@fluxnic.net> <20240703103529.2283c3c4683c60f1ae50a152@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] clk: qcom: Add support for Display clock Controllers
- on SA8775P
-From: Taniya Das <quic_tdas@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_jkona@quicinc.com>, <quic_imrashai@quicinc.com>
-References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
- <20240612-sa8775p-mm-clock-controllers-v1-6-db295a846ee7@quicinc.com>
- <37bbd466-742a-4a23-b3f7-97f8da109608@linaro.org>
- <053e047b-7594-48bc-ac1b-2368c0c8f1cc@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <053e047b-7594-48bc-ac1b-2368c0c8f1cc@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8H2dPhFn5YhAlR8i7vPvW68GStYIusos
-X-Proofpoint-ORIG-GUID: 8H2dPhFn5YhAlR8i7vPvW68GStYIusos
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_12,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- mlxlogscore=955 priorityscore=1501 adultscore=0 mlxscore=0 impostorscore=0
- spamscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407030132
+Content-Type: text/plain; charset=US-ASCII
+X-Pobox-Relay-ID:
+ 46E89FB6-3964-11EF-B387-5B6DE52EC81B-78420484!pb-smtp1.pobox.com
 
+On Wed, 3 Jul 2024, Andrew Morton wrote:
 
-
-On 6/21/2024 10:03 AM, Taniya Das wrote:
->> Please merge this into one to save on boilerplate, take a look
->> at dispcc-sc8280xp.c
->>
+> On Tue,  2 Jul 2024 23:34:09 -0400 Nicolas Pitre <nico@fluxnic.net> wrote:
 > 
-> I did take a look at the dispcc for SC8280XP before posting the series, 
-> but it kind of looked tricky to add fixes for a particular dispcc.
-> Debugging could also be difficult in my opinion.
-> Though I understand that we are trying to optimize by re-using few 
-> common structures/probe but from clocks side they are all redefined.
-> That was the reason to keep them separate.
+> > Verify that edge cases produce proper results, and some more.
+> 
+> Awesome, thanks.
+> 
+> Do you know of any situations in which the present implementation
+> causes issues?
 
-Konrad, are you good with the proposal to keep the two instance of 
-display clock controllers as separate drivers? As I looking to post
-the next patch series, please let me know your comments.
+Uwe could probably elaborate further, but the example given in the 
+first commit log is causing trouble for a driver he's working on.
 
--- 
-Thanks & Regards,
-Taniya Das.
+
+Nicolas
 
