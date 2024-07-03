@@ -1,141 +1,95 @@
-Return-Path: <linux-kernel+bounces-240023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1719192680A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:23:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D056F92680F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44BEE1C22B7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:23:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 884481F21025
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98CB186E53;
-	Wed,  3 Jul 2024 18:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24909187556;
+	Wed,  3 Jul 2024 18:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lBRsj8KC"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VvKDuqd8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C12017B4E8
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 18:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8011849EB;
+	Wed,  3 Jul 2024 18:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720031006; cv=none; b=LC9tN1Qm/SYErhGywSZsy4lyzH6zkvNeJWmy97td4PlK53velWCMcdb87QXBBr21X8U7NA5rMQmUQaUcTBU1aCOrMYZhgOZ5fulMfws3F74Uip0AhV7mrOVTiqWKtmYN1BYDq+PTiRck7OX6GLMqCxptUseAaRX3FRy6zNvYzxE=
+	t=1720031103; cv=none; b=F46Ew8qnUaKjpqdd9C6pRfd4rMxe1H7u/jamldguu186OUVPFBaz6+1S9mj+fs3cRN/ddPAW857HWGO5Byfrc9413l4kF93ogT047VCs4ugJlJOfMMGPKsGlgfKSXRLpnhJ3Vl7XuLWCn7zUmKZ78qPDH5sYZyo4Yfv3AX1n9DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720031006; c=relaxed/simple;
-	bh=qc8HN7KszPEJQ2QhBoSNcT7hbmyYFHAwuyB0gpcFzbA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KJzkueSh/bl61Nl9fxtCUb4C9X3iQAXeRcCoDzJXh6oZM7oEqR41dGRlxTPT3SJ8rJedmPXAMCNFMx6pUJ7C/BgPx+KcMj2OtD6sUJC7hPjmYi5oKqlviVXAkQrDvc7vK1wYJ6Z4kaqGJWlH/ENj653TipnLDeOAb1U1laV7LSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lBRsj8KC; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-64789495923so50415047b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 11:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720031003; x=1720635803; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qc8HN7KszPEJQ2QhBoSNcT7hbmyYFHAwuyB0gpcFzbA=;
-        b=lBRsj8KC8k/tfk/lthvfTEuDqACsXR5jKHx0Qa9noohnwYI9v+7O1r0ZG3uGsNOh3s
-         aEXZ04Nus/Na5cNHQ5dNzyVHtKqT5l0upXXip2ACL1pb5n7C7F+6x4+ul9BOCOt0kknK
-         nVhQ9zIs91QmEkMEEa9mZ6hMeIKt6Lv/oRcnnRkpg5BNbZ6hNKUt8PZRU+tr7bhy0KIr
-         cdlB+Gy8AEz98aiNwMpAmewdfAq5Jj4DalfHpzP0kn6bz3V+Ya2Ab7yvWBs39+4KogRe
-         Das864zs1U4EJ5R44IrVZ22GxEK2h2cm/a4sWfVtZCizUFl40mlAWjwD60iwbTNoaTCA
-         A+vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720031003; x=1720635803;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qc8HN7KszPEJQ2QhBoSNcT7hbmyYFHAwuyB0gpcFzbA=;
-        b=kIcQvxrg+1czy8FV2LQ/Vfm1a4tBstI3m/zWpn+jcSj8lpUExUNlJHMLzjXODlPYY0
-         MrtPqXxh59MlycinB497OUChg7uiEGZSFf+y2Xc0MWM6LY0MtoiLSBsAq1+d/4UDj29G
-         VXCxCNX3hzL+okWVk08rrdFRIqaBIuiaKFXwfc8wOnchyacA7qszRL+h0R1yKwnqiWV/
-         UZ+o4yTY5UMptNlaBWRT7iBw6QummUS8T3SsB8Dd1aT9HWq/myhrJCDqF5ZPzhQAh56i
-         WAaEJRRHRh1vs75KaYoW1f9yWv3pKYGLRxNl484/5pPHf5AhkIFdqv2EFfnMVM4SViod
-         QJ9w==
-X-Forwarded-Encrypted: i=1; AJvYcCX6F1f3skfZEJ/56i4n1QTmYh/VkyUqZYGFFRjUCk5b2EuTe668izoIVb94MnnnvFKeUfuXruyi8WPrBeN/ZoH8+LI3HoeDpJlbfud1
-X-Gm-Message-State: AOJu0YyhTE06KSe6UDJbG1mDXg4XQDvDJBoUz1fpSudTiPqJjGJvqvI6
-	X/rj2SJSRSGvAnptJQYwFt0GCSCRTpB1ghlxduscfV5ZOA0d2d9j8DBzZ/YcJYaHp573vwffgxh
-	gYVKej8KD3MiW81lTbadc0sgFTJ2Uza+7C6Zs
-X-Google-Smtp-Source: AGHT+IFc7eakTdb1sT9ybcjBjJRqy5HtZcNocS/fzf0TDpETCZ8IP/lxfLXGQy+D1/2a5N51LZukvKLo5kiFg+6a57I=
-X-Received: by 2002:a05:690c:20a2:b0:650:9d94:7982 with SMTP id
- 00721157ae682-6509d947c87mr47977057b3.46.1720031003362; Wed, 03 Jul 2024
- 11:23:23 -0700 (PDT)
+	s=arc-20240116; t=1720031103; c=relaxed/simple;
+	bh=P2JpZ39cO/wbzKDmrY/CH7fJrTG/jmJHZd2265VeCfo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VS6vVqPREc2dx8OCJ1cqSHpI9qQF7RCFwAnp2MyY3NG3zj6s6MU3evub/GidQCV4nD0N2NrbgbLwgJkUSznceMmNeosOR8sYYSKJI7SsgLJihXI1+VL05KPYIhVZ/ROeiJ08P224t7rLkykrD38fELVXOxBawwZGkXuFuH1Uzjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VvKDuqd8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5138BC2BD10;
+	Wed,  3 Jul 2024 18:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720031102;
+	bh=P2JpZ39cO/wbzKDmrY/CH7fJrTG/jmJHZd2265VeCfo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VvKDuqd8aLd5fjX4UMNMkoHkqTzjFglHX24jmhqH6eavPxWNLvtZCtoGRc8D5TWJ+
+	 yPUNKtcj0juyMeARoM7VwF28hFqqcbnvFSzaOlwILfMyfHs4Pvmr4V6lqxjE3cwFBQ
+	 gbrIIv76Q3SyG1Pq1ePmhu2wcBaVBmpywzAuYqRHYzCkFRl/Ho8kRaybxyMA6YkfBL
+	 2cvLLN5eSem9sAuQQwsVcJb67PhS/Eq0KBDMFz0Fvhr2umI/cLXfZBakKKBBnAGzV6
+	 X2aYrEybi4kz+3GPBnd9TE/Kkbyv+/WRuxQiv7G8oer1Lfa+DGs5XWQOqcSK0zF2Kn
+	 vneMiWQOSJpaQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] Address !chip->auth
+Date: Wed,  3 Jul 2024 21:24:47 +0300
+Message-ID: <20240703182453.1580888-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628173247.3507846-1-surenb@google.com> <20240629131247.GA6138@redhat.com>
- <CAJuCfpGh9EBqij+Ru_D4ieEHTVx7_a0N8odaOLCPYt3g0iVCQA@mail.gmail.com> <20240703164836.GC28444@redhat.com>
-In-Reply-To: <20240703164836.GC28444@redhat.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 3 Jul 2024 11:23:10 -0700
-Message-ID: <CAJuCfpFiirzUwUwgoxvWY=sMCS_r5BwAmjv2gQ0RQ8sZOJdPhw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] signal: on exit skip waiting for an ack from the
- tracer if it is frozen
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: akpm@linux-foundation.org, mhocko@suse.com, brauner@kernel.org, 
-	tandersen@netflix.com, bigeasy@linutronix.de, vincent.whitchurch@axis.com, 
-	ardb@kernel.org, linux-kernel@vger.kernel.org, 
-	Martin Liu <liumartin@google.com>, Minchan Kim <minchan@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 3, 2024 at 9:50=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wrot=
-e:
->
-> Suren, I am sorry for the late reply,
->
-> On 06/30, Suren Baghdasaryan wrote:
-> >
-> > > I think it would better to simply change ptrace_stop() to check TIF_M=
-EMDIE
-> > > along with __fatal_signal_pending() and return in this case.
-> >
-> > I think this would not fix the case we are experiencing. In our case
-> > the tracee is killed from the userspace (TIF_MEMDIE is not set yet),
->
-> OK, I misunderstood the problem.
->
-> > gets stuck in ptrace_stop() waiting for an ack from the tracer and
-> > then is picked up by OOM-killer with the abovementioned consequences.
->
-> and __task_will_free_mem() returns true if SIGNAL_GROUP_EXIT is set...
-> Nevermind.
->
-> > > Of course, this won't fix all problems.
-> >
-> > As I mentioned, I'm not an expert in ptrace, so I'll gladly try any
-> > better solution if one is proposed.
->
-> I do not see any solution, sorry.
+Unless tpm2_sessions_init() is called, then chip->auth ends up being a null
+pointer, which is ignored by authenticated sessions code. These patches aim
+to fully address the bug, and hopefully still make into 6.10-rc7.
 
-Ok, in any case, thanks for the feedback!
+Tested on x86-64 with:
 
-Do you think if I resolve the race you mentioned (what if
-try_to_freeze_tasks() does freeze_task(tracee->parent) right after the
-check in ptrace_stop()) and replace cgroup_task_frozen() with
-frozen(), this solution would be acceptable?
-Your question about a tracer being traced itself and its tracer being
-frozen *I think* would be quite rare. I don't think it's a common
-pattern to trace a process which in turn is tracing another one. Or am
-I wrong?
-Thanks,
-Suren.
+- TCG_TPM2_HMAC disabled.
+- TCG_TPM2_HMAC enabled.
+- TCG_TPM2_HMAC enabled, and "/* rc = tpm2_sessions_init(chip); */".
 
->
-> ptrace doesn't allow to intercept/nack SIGKILL, but at the same time it
-> happily allows the killed tracee to sleep in PTRACE_EVENT_EXIT. And even
-> another SIGKILL/whatever can't wake the tracee up.
->
-> This is historical behaviour, I do not see how can we change it. Any
-> change will break something.
->
-> Oleg.
->
+v2:
+- Rebase to commit 8a9c6c40432e ("Merge tag 'io_uring-6.10-20240703' of git://git.kernel.dk/linux").
+- Couple of cosmetic fixes.
+
+Jarkko Sakkinen (3):
+  tpm: Address !chip->auth in tpm2_*_auth_session()
+  tpm: Address !chip->auth in tpm_buf_append_name()
+  tpm: Address !chip->auth in tpm_buf_append_hmac_session*()
+
+ drivers/char/tpm/Makefile        |   2 +-
+ drivers/char/tpm/tpm2-sessions.c | 400 +++++++++++++++++--------------
+ include/linux/tpm.h              |  75 ++----
+ 3 files changed, 245 insertions(+), 232 deletions(-)
+
+-- 
+2.45.2
+
 
