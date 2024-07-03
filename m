@@ -1,116 +1,157 @@
-Return-Path: <linux-kernel+bounces-239711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE0EA926449
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2000A92644C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C0DF1C21866
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:06:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 448A81C223A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC1F17DE09;
-	Wed,  3 Jul 2024 15:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CAD17DA06;
+	Wed,  3 Jul 2024 15:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="dQPIwRs2"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TloX3NYB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECB717C21F;
-	Wed,  3 Jul 2024 15:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224191DFEA;
+	Wed,  3 Jul 2024 15:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720019158; cv=none; b=adC/WdsG6WdjE/TLS+xB/d5D16H9AOx57oTY0D0WN2KTjAEg42I3B4dwP2h5GoZ1kU+x9B7o3ne8jS966fjN5bECgTtE6PdAI0SDZNb/gx4tgGE/5YqPek00rYYLaZCDAp3XgLzstZZ9zjiK0YO/mbj3VekQ6AAN7q4HZH0Dz/4=
+	t=1720019211; cv=none; b=tETA/2dmUcbRPtR84L4tseC93lB0E/bvwx3TNynlTUdd3xhGBSIPzOvS6P4tUGyjWBNHQOUECPfZZjd5KTZS7Oz/4ln61UAmP9Q1dFWBRtF+Ll2MoRN1i7U/brVRPDVM7s+DIXOFmKqwqMJdmP9UDMGoF8sSvaSW80oMCqytWhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720019158; c=relaxed/simple;
-	bh=B6sujYJQENgveO7tnjCvpEBvHp1f2ksX/jbI4qsbw3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=evDCUaIZLlgEubRbYL+OjQqt1LoSb+Fk1nMv+NN8a0Siz9pUKl0DIioamCJvb4UkrFlB7nNrIiXFYNLHDkgb3vFd3SA/FuR6+eHNSYfYaZMvvuy3kFLrU7tWKxNdolJQ7rXPyuiDc3NGIu6q6PsfgUyF0Fzvqaz6W+eQx5b2OJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=dQPIwRs2; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7541fad560so251192666b.0;
-        Wed, 03 Jul 2024 08:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1720019156; x=1720623956; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OUv04gNK+axs6Kwx3JUMSuV2/tPCNKiXFLMvPtB/z+s=;
-        b=dQPIwRs2isjSKGHHL2SnKitMtQZVraeh8YoUOfKUmB5Gvbp0y4OrYrsCyrTfabyEKK
-         6B/voeUT5ooNjn/23+iioVAYPLsVKQEzBU8+l3tKVyZyMDxHbKbaSET2RClBwfmKjQpy
-         74N7xS5XKa+HEI3bSqpsHPN+wjxUBB7D46E4jlrtwbSBl4XQghkVSuYVwMvfw+PL2Ybd
-         5wyU0iV6xRJu5JeNA8YFsxIiGKRFrSKJ9R8Qp4ggvz2aouH59OU9Xf3+DoGnhyJcs7Lp
-         IrsEI9M9c///R5dKETftl0dGgeQpBsXRnaSbb6YUfTOBV1LOUWhtGkRNxatDdmovZthQ
-         VgKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720019156; x=1720623956;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OUv04gNK+axs6Kwx3JUMSuV2/tPCNKiXFLMvPtB/z+s=;
-        b=FnRblQKXvrTqYBjqzX8wh7xIT6zped6nAaPnfXt59WN3aKSENoVRHdVp+Vw77egY2a
-         W6YcPgiC0vN1mdt+zWrKrPH6A4lewQc5gC/2ibm+Ybxj32VJwf9uzKD4y9JhpPO/dcSR
-         HT9IRdTOMgbC+4Q3XGVwiaUdytlLWT2HEUJI1VBRiHGZlo2zE1RyWLVsGQYpQOzP9zyU
-         V5w42ous3NmASPjJ353rD+IacU8t0NWsD2A4s3X+VfVaekVQLSAAgI6EP+c+uhnwdvnr
-         9VGZ0xK/yipsyTSVbm/07iBNaZjvwnidCY0QFPLy3QT8Qgkx7CyQcXHXKzNzlAoxpbjf
-         Vj1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsBBwC7c2BTEAPL4eWkm6L/lrU/cSbLjoyUoRTpN1F5ZsRwtIBBB9JGGAVMkWfGm9yFGfX1SsCd4QbwLfnIbBr62x07GxeIk1r2xWkh0HK10zBVl8Cogp93ySbpp9I2itz9ZD1
-X-Gm-Message-State: AOJu0YyMm1v3QPNQbOIQJqgQILICPEQgl9j8uwkFl00eKK70iVEjcrja
-	H4QW81iD3SuWU/PJywZQfGidpYH2S7hnGl/OiEIivKRk4Rm/Lk4=
-X-Google-Smtp-Source: AGHT+IHpMD6EDrrI/Wl0zM/QLJIENWXXXmfuMXLQ3fiJHPvoOk3BXQjywm+JvONRLzyxl9UjFiF7hQ==
-X-Received: by 2002:a17:906:f88f:b0:a6f:e19:6fb2 with SMTP id a640c23a62f3a-a751443ba6fmr814949866b.29.1720019155086;
-        Wed, 03 Jul 2024 08:05:55 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b4597.dip0.t-ipconnect.de. [91.43.69.151])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf63dfbsm513147866b.84.2024.07.03.08.05.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 08:05:54 -0700 (PDT)
-Message-ID: <e6c07abb-d202-4851-9e33-265e3ab51dc6@googlemail.com>
-Date: Wed, 3 Jul 2024 17:05:52 +0200
+	s=arc-20240116; t=1720019211; c=relaxed/simple;
+	bh=lWgvOJsIZ4/bJxVBfwUE/UX/ucolbg5OmVYl569WP38=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a8Yzha+GfXvUKQsNSamDNZa35/r/XOUR9LIvL328UV+33h/LJlnC11Kav4fX7WCNlGya35H8r60oZrl2TynsDd3YVr9yIKM1Ncafi9GMxPE+NyAFo+NaFiJxbWNuzMPe6zQB4peIxDuKeIW7Sb9HIon+N/5rMcJVfxfdHBFzjRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TloX3NYB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDD88C2BD10;
+	Wed,  3 Jul 2024 15:06:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720019210;
+	bh=lWgvOJsIZ4/bJxVBfwUE/UX/ucolbg5OmVYl569WP38=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TloX3NYBBchfWZHi9mvv8wwdsc3RK8IQvZsudlwoZR0wt3MnR0IqCCRfPvp+CskYt
+	 az7g3Gyn9vrmfTtUGSpW6/N5dRmI+CeGhD7v+askbLVqvEGa3HDXDFSgAk4QgVvUNs
+	 4I/26HKPN/nbSsmjnuaiZ3qXesEFRoIUSxv4SArUImn8EPWXecadr6/wQcfqh3/duR
+	 bwI2dVZFLdl4Aah046slwmkc3w5sXFXMXUCGVOKr3x1mHFvMefmJaouHmmHc6L7ivl
+	 fEGseLSlOtfcN+/SlRCgx6ptTKPlA+aBQk+rQG36SSHzme6UgxWg58ZqfPEwlDd04m
+	 laOI1GqZfq0GQ==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso61551851fa.0;
+        Wed, 03 Jul 2024 08:06:50 -0700 (PDT)
+X-Gm-Message-State: AOJu0YyG0d8kC6irPK9JUQ25ob6LGhw4d31Bq7YfswRlss2Rx5jRUT4Z
+	oFh1t1/Oc10uxG0ePPK2A/uA3PVfLnY+VaYV9MGGbLu/nUZlPOOrJnX/VCKsOspj1/w627qBYQA
+	WW1SeMbpJpCwsAyCxMx6WxkACjkA=
+X-Google-Smtp-Source: AGHT+IHj8XtRItm4LQERDRV7H96c+A6CCUe7Pf0sqV8VB+4HbDimdRyvmwJD4sNqq0BrGfLDQrDJsd4+C1UIJAiHES0=
+X-Received: by 2002:a05:651c:160e:b0:2ee:80b2:1ea4 with SMTP id
+ 38308e7fff4ca-2ee8684890cmr12491611fa.26.1720019209436; Wed, 03 Jul 2024
+ 08:06:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/163] 6.6.37-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240702170233.048122282@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240702170233.048122282@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240702180332.398978-1-masahiroy@kernel.org> <20240702180332.398978-2-masahiroy@kernel.org>
+In-Reply-To: <20240702180332.398978-2-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 4 Jul 2024 00:06:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASQvNVq_hrbZo3SXoFvke3EENVC6tfxiN11dOk4O54C6w@mail.gmail.com>
+Message-ID: <CAK7LNASQvNVq_hrbZo3SXoFvke3EENVC6tfxiN11dOk4O54C6w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] kbuild: deb-pkg: remove support for "name <email>"
+ form for DEBEMAIL
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, riku.voipio@iki.fi, Ben Hutchings <ben@decadent.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 02.07.2024 um 19:01 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.37 release.
-> There are 163 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
++CC
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-Beste Grüße,
-Peter Schneider
+On Wed, Jul 3, 2024 at 3:03=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.or=
+g> wrote:
+>
+> Commit d5940c60e057 ("kbuild: deb-pkg improve maintainer address
+> generation") supported the "name <email>" form for DEBEMAIL, with
+> behavior slightly different from devscripts.
+>
+> In Kbuild, if DEBEMAIL has the form "name <email>", it will be used
+> as-is for debian/changelog. DEBFULLNAME will be ignored.
+>
+> In contrast, debchange takes the name from DEBFULLNAME (or NAME) if set,
+> as described in 'man debchange':
+>
+>   If this variable has the form "name <email>", then the maintainer name
+>   will also be taken from here if neither DEBFULLNAME nor NAME is set.
+>
+> This commit removes support for the "name <email> form for DEBEMAIL,
+> as the current behavior is already different from debchange, and the
+> Debian manual suggests setting the email address and name separately in
+> DEBEMAIL and DEBFULLNAME. [1]
+>
+> If there are any complaints about this removal, we can re-add it,
+> with better alignment with the debchange implementation. [2]
+>
+> [1]: https://www.debian.org/doc/manuals/debmake-doc/ch03.en.html#email-se=
+tup
+> [2]: https://salsa.debian.org/debian/devscripts/-/blob/v2.23.7/scripts/de=
+bchange.pl#L802
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>
+> Changes in v2:
+>  - New patch
+>
+>  scripts/package/mkdebian | 20 +++++++-------------
+>  1 file changed, 7 insertions(+), 13 deletions(-)
+>
+> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+> index 589f92b88c42..83c6636fadb8 100755
+> --- a/scripts/package/mkdebian
+> +++ b/scripts/package/mkdebian
+> @@ -125,21 +125,15 @@ gen_source ()
+>  rm -rf debian
+>  mkdir debian
+>
+> -email=3D${DEBEMAIL}
+> -
+> -# use email string directly if it contains <email>
+> -if echo "${email}" | grep -q '<.*>'; then
+> -       maintainer=3D${email}
+> +user=3D${KBUILD_BUILD_USER-$(id -nu)}
+> +name=3D${DEBFULLNAME-${user}}
+> +if [ "${DEBEMAIL:+set}" ]; then
+> +       email=3D${DEBEMAIL}
+>  else
+> -       # or construct the maintainer string
+> -       user=3D${KBUILD_BUILD_USER-$(id -nu)}
+> -       name=3D${DEBFULLNAME-${user}}
+> -       if [ -z "${email}" ]; then
+> -               buildhost=3D${KBUILD_BUILD_HOST-$(hostname -f 2>/dev/null=
+ || hostname)}
+> -               email=3D"${user}@${buildhost}"
+> -       fi
+> -       maintainer=3D"${name} <${email}>"
+> +       buildhost=3D${KBUILD_BUILD_HOST-$(hostname -f 2>/dev/null || host=
+name)}
+> +       email=3D"${user}@${buildhost}"
+>  fi
+> +maintainer=3D"${name} <${email}>"
+>
+>  if [ "$1" =3D --need-source ]; then
+>         gen_source
+> --
+> 2.43.0
+>
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+--=20
+Best Regards
+Masahiro Yamada
 
