@@ -1,63 +1,50 @@
-Return-Path: <linux-kernel+bounces-238892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D752C9252D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:14:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C439252DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15D281C22D1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC351C23BBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291B34965C;
-	Wed,  3 Jul 2024 05:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dPXa+X0X"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CAA4CB2B;
+	Wed,  3 Jul 2024 05:16:24 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51452A1BB;
-	Wed,  3 Jul 2024 05:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC74C2C95;
+	Wed,  3 Jul 2024 05:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719983684; cv=none; b=T7fw7GoRABcZl93QCT9xHXpE50IGadtLVQzIzfdex2n1FHGWuUM/b2u9J476gFD9xhV61lTJkcRF10gtQmw6/A2jZCmNtChQj/995/mRc8ax0i3MdhTUEGz6joE9Ftd6g0slG4G7L3poMaXP885pSU2CAadC2lQIubxKCVILXO4=
+	t=1719983784; cv=none; b=g9+HKZvK5V61+fVvFV5/5bD7ZHdo9pVwBRaAseGZI9LxGGvpEbFqzpMjwc1X6BsGZE0/IA0GTp8EjHNeZi0uenvBCH+4ZUmLXDUb9ujgfuNX+AG9fu3+vNJjJUK1tuUGmIq1MPJfE6OLnoPNC4R+D+7bOG5I6ouY78uNesy0k7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719983684; c=relaxed/simple;
-	bh=yQ/jgB5w8ykRthzCo3lkYnR7JWtrYJyHftPr8n9Rj1M=;
+	s=arc-20240116; t=1719983784; c=relaxed/simple;
+	bh=zBM/OwFTXglD9n4ThuEV7Jg/PFbcp1z2kFMxyIINViY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CJZOpcc3KPUIyiY24LhRMjHyJDiARII0qb8eorC/dTJ1ClOM4g5ONuYXfO46+XNtlZd4EgcXZH9XVJZAbslcTWHm8tVIw9paWfdHHKjd5MsoRYdbD0O3GATBaszbHbaANiiyw9nbdUSWFmExThpn10iAeC4OjdHyX7crs9z8nKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dPXa+X0X; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MxOCgRV33b3vLulrz5mCfJi9I59uWLFDz4ZlEWWk6Sw=; b=dPXa+X0X0JPPlydiKMqdDXASIX
-	poHqYH0GsftCbbZTV44/6n0otNyGqenAK70n2+te59m+ftba8pi7A9SB0WuRKAkXR5AgqvYkarH3d
-	wpCGZvBdACRjqEkmGlCHp2gjTE6Ix88t71YSYpuFSXHJcFnDGSOzGZCzDtYRlkpl1eWKqUQvdKcCs
-	qRmPo9+QMnUM0aHSDKZy/3poMxhcVq4cPwAmUPmbtbIwIIkPRWwiTZY/f/ONDgBY1hD0sy4lu8DbU
-	63vC1sOtMWYejOpcR/q+VvQBJDJGHT0f9J8Bb5Dcg0K+1MafNkZyAah9gmY8xhdF+Q3v0gojDXYcY
-	+baxh3Ew==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOsKD-000000091py-2oJy;
-	Wed, 03 Jul 2024 05:14:37 +0000
-Date: Tue, 2 Jul 2024 22:14:37 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@infradead.org>, alexjlzheng@gmail.com,
-	chandan.babu@oracle.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	alexjlzheng@tencent.com
-Subject: Re: [PATCH v3 2/2] xfs: make xfs_log_iovec independent from
- xfs_log_vec and free it early
-Message-ID: <ZoTePWuRKxHXofGF@infradead.org>
-References: <20240626044909.15060-1-alexjlzheng@tencent.com>
- <20240626044909.15060-3-alexjlzheng@tencent.com>
- <ZoH9gVVlwMkQO1dm@dread.disaster.area>
- <ZoI1P1KQzQVVUzny@infradead.org>
- <ZoSQ5BAhpwoYN4Dz@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ow67PN11BS41GgdP3CaWMU6gN7Pr0EYE8p9TBgSrL1Wm5RrVfOpjA/0GUB+5CJUxRv3iN7XYDWCL5QT30oosDL4ZBknP6L0ZJZwWtXnee6S7lPYMd0NmRR51fhMTBB9jOgJeQyYs6C7rxo1aHJo6PAKW4zMnnGNsyG429RRcGk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 788DD227A87; Wed,  3 Jul 2024 07:16:16 +0200 (CEST)
+Date: Wed, 3 Jul 2024 07:16:16 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@lst.de>,
+	david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
+	brauner@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
+Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs >
+ system page size
+Message-ID: <20240703051616.GA25052@lst.de>
+References: <20240625114420.719014-1-kernel@pankajraghav.com> <20240625114420.719014-7-kernel@pankajraghav.com> <20240702074203.GA29410@lst.de> <20240702101556.jdi5anyr3v5zngnv@quentin> <20240702120250.GA17373@lst.de> <20240702140123.emt2gz5kbigth2en@quentin> <20240702154216.GA1037@lst.de> <20240702161329.i4w6ipfs7jg5rpwx@quentin> <ZoQwKlYkI5oik32m@casper.infradead.org> <20240702171014.reknnw3smasylbtc@quentin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,22 +53,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZoSQ5BAhpwoYN4Dz@dread.disaster.area>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240702171014.reknnw3smasylbtc@quentin>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Jul 03, 2024 at 09:44:36AM +1000, Dave Chinner wrote:
-> Ah, ok, my bad. I missed that because the xfs_log_iovec is not the
-> data buffer - it is specifically just the iovec array that indexes
-> the data buffer. Everything in the commit message references the
-> xfs_log_iovec, and makes no mention of the actual logged metadata
-> that is being stored, and I didn't catch that the submitter was
-> using xfs_log_iovec to mean something different to what I understand
-> it to be from looking at the code. That's why I take the time to
-> explain my reasoning - so that people aren't in any doubt about how
-> I interpretted the changes and can easily point out where I've gone
-> wrong. :) 
+On Tue, Jul 02, 2024 at 05:10:14PM +0000, Pankaj Raghav (Samsung) wrote:
+> > > Yes, I will rename it to ZERO_PAGE_SZ_64K as you suggested.
+> > 
+> > No.  It needs a symbolic name that doesn't include the actual size.
+> > Maybe ZERO_PAGE_IO_MAX.  Christoph suggested using SZ_64K to define
+> > it, not to include it in the name.
+> 
+> Initially I kept the name as ZERO_FSB_PAGE as it is used to do sub-block
+> zeroing. But I know John from Oracle is already working on using it for
+> rt extent zeroing. So I will just go with ZERO_PAGE_IO_MAX for now.
+> Understood about the SZ_64K part. Thanks for the clarification.
 
-And throw in the xfs_log_vec vs xfs_log_iovec naming that keeps
-confusing me after all these years..
+IOMAP_ZERO_PAGE_SIZE ?
 
+(I kind regret not going for just adding zero page as originally
+suggested, but then we'd keep arguing about the nr_vecs sizing and
+naming :))
 
