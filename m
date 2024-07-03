@@ -1,152 +1,176 @@
-Return-Path: <linux-kernel+bounces-239395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70905925EDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:42:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79F4925F04
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FCD02A4822
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:41:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E1681F23965
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA07016F8FA;
-	Wed,  3 Jul 2024 11:40:20 +0000 (UTC)
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AA91741C0;
+	Wed,  3 Jul 2024 11:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m+DFD4NI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB63143879;
-	Wed,  3 Jul 2024 11:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E7D172798;
+	Wed,  3 Jul 2024 11:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720006820; cv=none; b=F/0AbeYT7/XdgNSq7mmpzoU199Jeuul/2G7HeKVb09c+mWrZaOyg59Rtcpt4Fny+SHrnv/XgazJmilhTbXSq+M6/pL/UsJQ2Q7dPLrlmH29j9je0sR4D5immTaA7U/0EfUCNf/gdjR81V+sPbAlkaqWwR4FaciuPrU4AkHOL9mI=
+	t=1720007193; cv=none; b=EU6QqED3E/vIDtsKqS9E4MAHEIudcC4OyW43UqbGfI1WUTKsiS/hZu/o/E6SQk0grNSgR8EV2AIyrdYrTZM7Vn/9H/thgJprxhz+/79bevO7IQzxE+ZeiRq1YR2pQG0KdKzrB6AognkNG+2HzJtSHR7h5lLR6URivrXnLrbl8Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720006820; c=relaxed/simple;
-	bh=cf5FUF1pxBoZp2lEvP3kxfAmlx2YPkL72Aajcv3udiY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=owPP5VZ9Tof/yjzzPTFEEWwKNGCuFciePctg6nxeLa4rA73ISLtn6QcdLgl+O5TWPpUbhHI3Dpe2HfLsqXCh1muE+Egw0NysMMr8hndvWPZ5oNX26jwBRBZSqCO3U/tczBLL+XDB68t/zcXX6ZK0onVH6w3NIjBwIEhYVlhXDkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b5db7936b3so7228726d6.1;
-        Wed, 03 Jul 2024 04:40:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720006817; x=1720611617;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=93e6dTwFtrGIp7dWWNReuZoDgeAQuDgZQ4EBP6wdeKg=;
-        b=tmRUFiDwhcggVGvJGUV3fU9FvDB+3DKToLh4o2gJWz/qGu+WUncAme/00CGBZv9M/e
-         Kq6Uj/ZYaYru8HU2C4JwMMBUS4iKkWUCET2GkOlwEKsJAvpdjtX4g+p+IcQrjBFfFMM5
-         cn24uiHudzKf/Vy3d6Cm7P6b3MNK5eJMFt0Wb5gB8IdTb1r6sOcnobtxCSMSB2giZeP+
-         BaD5qKSDRc2ZXZu8JrslRbKRPN20IdGrNXHZM8hU+e4N2t2ninRPHJVodcZaXZxcCf52
-         16NhGd7dc3k0VbpqA4SpE1gdgDZlDkOjxEphdDKRpp2exrACl6143iwiMp1rTsQC0hcN
-         1hZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKafpnrKgXJcJmn+U+3Y2t6+3UW/KmKwo+OVBBwKQoCv2jvvcR7zgSCfWgS8ByqeDKYucMcAPR+zffY3G/yvHGiSSVxmASmWnE1EnQqSbhmbScZPgD6eblvZBBm2pa2y6Ujt6EVwedvIv9Ycii
-X-Gm-Message-State: AOJu0YyS8ueJKIRuZDv12jYxyAZYNrmHIcz7MCByP0V6Sw5/2PH+YfkJ
-	eQK1y+jZYXB79GInXKdA6cMTrmpan2w4Loa4oZZeaABXxD4O0Z+f
-X-Google-Smtp-Source: AGHT+IGXf6u2pEOGNTaTkt5wzo4SMKQq3gEuUu4qmCFjToxzeAw5evOv3eE+jO3ZFKELvMcgWIDXeg==
-X-Received: by 2002:a05:6214:226b:b0:6b5:e1fb:68ee with SMTP id 6a1803df08f44-6b5e1fb6b8bmr16735356d6.25.1720006817646;
-        Wed, 03 Jul 2024 04:40:17 -0700 (PDT)
-Received: from tofu.cs.purdue.edu ([128.210.0.165])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e5f2b77sm52921566d6.92.2024.07.03.04.40.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 04:40:17 -0700 (PDT)
-From: Sungwoo Kim <iam@sung-woo.kim>
-To: 
-Cc: daveti@purdue.edu,
-	benquike@gmail.com,
-	Sungwoo Kim <iam@sung-woo.kim>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: hci: fix null-ptr-deref in hci_read_supported_codecs
-Date: Wed,  3 Jul 2024 07:39:37 -0400
-Message-Id: <20240703113936.228226-1-iam@sung-woo.kim>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720007193; c=relaxed/simple;
+	bh=ccSSB5ntIgvLAQBJKwo1I+LWZkPdt11bRXA2in5N+ak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BQwPpo1zeMrzaEiiFzW3T19Cmoe/gUR4jo79NafI3YOuS8KYBsxRcJLhUu4uYV0yOLogYUqjc7K6b2RK34NidtdOexmtpBrGTmvOhpj74L5NdOBj3JSPT/uX2cVjYzP2ZVcZIA8zuSkpUaGKnnPpU84JVmUHaYxPE5dBr9vZitI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m+DFD4NI; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720007191; x=1751543191;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ccSSB5ntIgvLAQBJKwo1I+LWZkPdt11bRXA2in5N+ak=;
+  b=m+DFD4NIfTIgHK4nnF6s9z2b2GVPz+6mKi1CNMQMgaD6Z4D6hAaKTl60
+   24IqFDpLSVQioAdFg2wTtvNajS8g8f2MrftAr4yy9LGDyzuU3AjuCLWz8
+   /ahsb8g1Tnddng5tioSQshI9xqUIhXzh2xNs9qxaVyHw4PF+gJN3g5d7k
+   H7kFJwTNV8ASSdglrWonxOygvzPl+rrv/lYftXVBspY4XPyjRirwtltUy
+   gwEwtZbR00XBwmMxTI0Lb0yJaNbOPt5QGKpqCNXv8ZH3KDE+Jx3sv9ThW
+   ZnpVOI4m3NsW57+o+OW7j0yxO4Vy2v+NJAoY7IptC3aUAh+pLbDi1CS91
+   g==;
+X-CSE-ConnectionGUID: bSIGfMeZSpaj80t7/M1w7A==
+X-CSE-MsgGUID: UVtjcWXWRu2aqiR+P8l5/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="34679636"
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="34679636"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 04:46:31 -0700
+X-CSE-ConnectionGUID: 1DbAtIMHT7i9igPX/tAdng==
+X-CSE-MsgGUID: EIT9haWkTTKqfKMieYH4tg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="76963793"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by orviesa002.jf.intel.com with ESMTP; 03 Jul 2024 04:46:28 -0700
+Received: from [10.246.34.68] (mwajdecz-MOBL.ger.corp.intel.com [10.246.34.68])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id F409A284FE;
+	Wed,  3 Jul 2024 12:46:24 +0100 (IST)
+Message-ID: <10c3d9b8-bf5b-42c1-9c87-36828f5c995c@intel.com>
+Date: Wed, 3 Jul 2024 13:46:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the drm
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie
+ <airlied@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Mark Brown <broonie@kernel.org>, DRI <dri-devel@lists.freedesktop.org>,
+ =?UTF-8?Q?Piotr_Pi=C3=B3rkowski?= <piotr.piorkowski@intel.com>,
+ buildfailureaftermergeofthedrmtree@sirena.org.uk,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <Zn7s611xnutUFxR0@sirena.org.uk>
+ <20240703123643.5b4dc83f@canb.auug.org.au>
+Content-Language: en-US
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+In-Reply-To: <20240703123643.5b4dc83f@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
-CPU: 1 PID: 2000 Comm: kworker/u9:5 Not tainted 6.9.0-ga6bcb805883c-dirty #10
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue: hci7 hci_power_on
-RIP: 0010:hci_read_supported_codecs+0xb9/0x870 net/bluetooth/hci_codec.c:138
-Code: 08 48 89 ef e8 b8 c1 8f fd 48 8b 75 00 e9 96 00 00 00 49 89 c6 48 ba 00 00 00 00 00 fc ff df 4c 8d 60 70 4c 89 e3 48 c1 eb 03 <0f> b6 04 13 84 c0 0f 85 82 06 00 00 41 83 3c 24 02 77 0a e8 bf 78
-RSP: 0018:ffff888120bafac8 EFLAGS: 00010212
-RAX: 0000000000000000 RBX: 000000000000000e RCX: ffff8881173f0040
-RDX: dffffc0000000000 RSI: ffffffffa58496c0 RDI: ffff88810b9ad1e4
-RBP: ffff88810b9ac000 R08: ffffffffa77882a7 R09: 1ffffffff4ef1054
-R10: dffffc0000000000 R11: fffffbfff4ef1055 R12: 0000000000000070
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff88810b9ac000
-FS:  0000000000000000(0000) GS:ffff8881f6c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6ddaa3439e CR3: 0000000139764003 CR4: 0000000000770ef0
-PKRU: 55555554
-Call Trace:
- <TASK>
- hci_read_local_codecs_sync net/bluetooth/hci_sync.c:4546 [inline]
- hci_init_stage_sync net/bluetooth/hci_sync.c:3441 [inline]
- hci_init4_sync net/bluetooth/hci_sync.c:4706 [inline]
- hci_init_sync net/bluetooth/hci_sync.c:4742 [inline]
- hci_dev_init_sync net/bluetooth/hci_sync.c:4912 [inline]
- hci_dev_open_sync+0x19a9/0x2d30 net/bluetooth/hci_sync.c:4994
- hci_dev_do_open net/bluetooth/hci_core.c:483 [inline]
- hci_power_on+0x11e/0x560 net/bluetooth/hci_core.c:1015
- process_one_work kernel/workqueue.c:3267 [inline]
- process_scheduled_works+0x8ef/0x14f0 kernel/workqueue.c:3348
- worker_thread+0x91f/0xe50 kernel/workqueue.c:3429
- kthread+0x2cb/0x360 kernel/kthread.c:388
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
++ Rodrigo for help
 
-Fixes: 8961987f3f5f ("Bluetooth: Enumerate local supported codec and cache details")
-Fixes: 9ae664028a9e ("Bluetooth: Add support for Read Local Supported Codecs V2")
+On 03.07.2024 04:36, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Fri, 28 Jun 2024 18:03:39 +0100 Mark Brown <broonie@kernel.org> wrote:
+>>
+>> After merging the drm tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c: In function 'pf_get_threshold':
+>> /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c:1788:27: error: unused variable 'xe' [-Werror=unused-variable]
+>>  1788 |         struct xe_device *xe = gt_to_xe(gt);
+>>       |                           ^~
+>> cc1: all warnings being treated as errors
+>>
+>> Caused by commit
+>>
+>>   629df234bfe73d ("drm/xe/pf: Introduce functions to configure VF thresholds")
+>>
+>> I have used the tree from 20240627 instead.
+> 
+> I am still seeing that build failure.
+> 
 
-Signed-off-by: Sungwoo Kim <iam@sung-woo.kim>
----
- net/bluetooth/hci_codec.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+as explained before, this additional var is not present in
+drm-xe/drm-xe-next
 
-diff --git a/net/bluetooth/hci_codec.c b/net/bluetooth/hci_codec.c
-index 3cc135bb1..5c98eec2c 100644
---- a/net/bluetooth/hci_codec.c
-+++ b/net/bluetooth/hci_codec.c
-@@ -74,6 +74,9 @@ static void hci_read_codec_capabilities(struct hci_dev *hdev, __u8 transport,
- 
- 			skb = __hci_cmd_sync_sk(hdev, HCI_OP_READ_LOCAL_CODEC_CAPS,
- 						sizeof(*cmd), cmd, 0, HCI_CMD_TIMEOUT, NULL);
-+
-+			if (!skb)
-+				skb = ERR_PTR(-EINVAL);
- 			if (IS_ERR(skb)) {
- 				bt_dev_err(hdev, "Failed to read codec capabilities (%ld)",
- 					   PTR_ERR(skb));
-@@ -129,6 +132,8 @@ void hci_read_supported_codecs(struct hci_dev *hdev)
- 	skb = __hci_cmd_sync_sk(hdev, HCI_OP_READ_LOCAL_CODECS, 0, NULL,
- 				0, HCI_CMD_TIMEOUT, NULL);
- 
-+	if (!skb)
-+		skb = ERR_PTR(-EINVAL);
- 	if (IS_ERR(skb)) {
- 		bt_dev_err(hdev, "Failed to read local supported codecs (%ld)",
- 			   PTR_ERR(skb));
-@@ -198,6 +203,8 @@ void hci_read_supported_codecs_v2(struct hci_dev *hdev)
- 	skb = __hci_cmd_sync_sk(hdev, HCI_OP_READ_LOCAL_CODECS_V2, 0, NULL,
- 				0, HCI_CMD_TIMEOUT, NULL);
- 
-+	if (!skb)
-+		skb = ERR_PTR(-EINVAL);
- 	if (IS_ERR(skb)) {
- 		bt_dev_err(hdev, "Failed to read local supported codecs (%ld)",
- 			   PTR_ERR(skb));
--- 
-2.34.1
+AFAICS this additional var comes from the drm/drm-next and is applied to
+drm-tip as something like:
+
+
+commit fa60cd98341b3a176de428a182e13ebd7a5ea4b7 (from
+fb625bf6187d97c3cd28d680b14bf80f84207e5a)
+Merge: f733fce76fff fb625bf6187d
+Author: Thomas Zimmermann <tzimmermann@suse.de>
+Date:   Wed Jul 3 10:12:05 2024 +0200
+
+    Merge remote-tracking branch 'drm/drm-next' into drm-tip
+
+    # Conflicts:
+    #       drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c
+    #       drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_init.c
+    #       drivers/gpu/drm/amd/pm/swsmu/inc/smu_types.h
+    #       drivers/gpu/drm/xe/xe_gt_idle.c
+    #       drivers/gpu/drm/xe/xe_guc_pc.c
+
+diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
+b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
+index 694671497f6e..a5c9dfa1077c 100644
+--- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
++++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
+@@ -1785,6 +1785,7 @@ static int pf_get_threshold(struct xe_gt *gt,
+unsigned int vfid,
+                            enum xe_guc_klv_threshold_index index)
+ {
+        struct xe_gt_sriov_config *config = pf_pick_vf_config(gt, vfid);
++       struct xe_device *xe = gt_to_xe(gt);
+
+        return config->thresholds[index];
+ }
+
+
+and later drm-tip removes that by merging fixup from the topic branch:
+
+commit 1179bb6a96b57c1584497920768ac9c40c7874e4 (from
+29a62552d265091cd444bf819f4e4fd3fa7f471c)
+Merge: 29a62552d265 428c3ef38ef5
+Author: Thomas Zimmermann <tzimmermann@suse.de>
+Date:   Wed Jul 3 10:12:10 2024 +0200
+
+    Merge remote-tracking branch 'drm-xe/topic/xe-for-CI' into drm-tip
+
+diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
+b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
+index c8936aae7f43..db6c213da847 100644
+--- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
++++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
+@@ -1785,7 +1785,6 @@ static int pf_get_threshold(struct xe_gt *gt,
+unsigned int vfid,
+                            enum xe_guc_klv_threshold_index index)
+ {
+        struct xe_gt_sriov_config *config = pf_pick_vf_config(gt, vfid);
+-       struct xe_device *xe = gt_to_xe(gt);
+
+        return config->thresholds[index];
+ }
 
 
