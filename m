@@ -1,110 +1,107 @@
-Return-Path: <linux-kernel+bounces-239956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F59692673E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:34:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB00926740
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98B1BB21208
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:34:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4031B1C22CAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD50618509E;
-	Wed,  3 Jul 2024 17:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD0318508C;
+	Wed,  3 Jul 2024 17:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="huhcvFMs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MjVIJBBm"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0F3183086;
-	Wed,  3 Jul 2024 17:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59205567D;
+	Wed,  3 Jul 2024 17:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720028033; cv=none; b=BhtV4Tr0Ca6xCd6k8P5KkoLX/pTJuXq8zW6Zx2L09arTZQWe5Fvo15m2HjIwbt9vA5G1zTHsdEZ6MH4WVvCK1B9P0QrtAempazzZOwxAlMFDAH32FoSwCTqnHMhyOJsVZ85snPZspHbfB5OZ5csk0RpZILEFBiAKeAaYwD4KuDg=
+	t=1720028075; cv=none; b=kSD6DLmBB2ePNR6TZmohGHrK8/sZlJLVHlUjRC4xhXSc8DPzc3Xt/+w4qeY+gsnoZ8gDbNwSnoEwZ5CW+i45SAEQ7fi3XbaHVGH/0Sm5CATv6T7TMRNigYfQth+ekCatMLAOXBTycXnP2Hco4B24tNFO/19clJfwBdLpoEw8mug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720028033; c=relaxed/simple;
-	bh=ZOEqHxW3PvtIUqCf88aR5sTRlrjOZ4x6nVLtKB663/0=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=bpJKtOUahi80gPCu/GaBHjdFUrrvnjNfWCXBbGuJY9wO3xr/QAWWRYAdqPGLvL5vSWIrXIHJ5NHuz1J9tIZS9CdzhYPVxTQ5ezgUnwxN25inBAUswZMY/ThlTHHA7cte0pDv0OzZJabjma0WkVYc8ccorY3Vev9HAKA6Fb56NQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=huhcvFMs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3922FC2BD10;
-	Wed,  3 Jul 2024 17:33:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720028032;
-	bh=ZOEqHxW3PvtIUqCf88aR5sTRlrjOZ4x6nVLtKB663/0=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=huhcvFMs3qGOIiWMNlbEPTGD8zgZnOlHRuc155lQ8N65KJjTdZgX8RaQPTLjVSQII
-	 mOjt+mUA7rUev6Ye9k603HgDnNhP0M7bqNLCiS2hZA9s4CzFkRZaFyblITxbqcmOuC
-	 wLSmVfzqyXKCOYI5wAUK1AqEeHn8uybq8Aa96CrOMgNK6M6XGOm6KESSi1076qf3j+
-	 v5bOnkc8glCjn3fXjRuMwpHLxXY+ragabJWH53zlkAqp6IR0bBfZuQlemYkY6WLLum
-	 seNZ2ujWEtWnfoOysn/LonA8oXpsTetAowVUFkQ7N2e2NX9hyvAb8nPkePFakvXvgL
-	 Oex/mQBixUS1w==
-Date: Wed, 03 Jul 2024 11:33:51 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1720028075; c=relaxed/simple;
+	bh=HBfXZt3Bf8zxygFvg78qE7ukYKUD8Sl6MAHex3YzU3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HiZdJKeongX5gP46gOKUO5VjCxKGn9T8XM4Y6jKBSub/gmGGJ9KU/wJFvQYf+hScn8GUwJnq4+pafWmOv20lGH8ETNZY8PouA4S8XvZPp41FFmXsZJp60Bbp7I6/AIlKcjC6fn4VfqdBvS2gBV8Q6voqhuMpD+GbHOQsew+ctG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MjVIJBBm; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-25d9d15ad5aso2860634fac.0;
+        Wed, 03 Jul 2024 10:34:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720028073; x=1720632873; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jFSLghJkWyAsKPrXhIlT2kVU3RtK5nBNiBfKX5CoJ+Q=;
+        b=MjVIJBBmMmSmsR9zkDKfuxXDVbiB+HBKVUUPSHjnIDUrgzSeXNhNoDqNVaNOGfKrBs
+         dl3QStBd+/Rnast5848bxei9UIYZUoNGTngv81JH2mWJwjJEfmVp8x218Cl/4l1I7IFx
+         4Vbd0oCx8w3bSAMmFanBWNONR81FcukzV1XAApCIGg/dlCrhZ4JwugMoL5R0VCHgobEs
+         tYqlcYNWQUYsqdwqqaTjsZcKSrA9a3Gef5OLbytbERExlC43Lbbf/0XhzrsHRsShWwUs
+         kvjxbAWtn2aiW4zfVYi4ji2ziWEfBMi/YlucAReK8cOyb5qxQm4VMCp2jT3hjHaEARwG
+         udsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720028073; x=1720632873;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jFSLghJkWyAsKPrXhIlT2kVU3RtK5nBNiBfKX5CoJ+Q=;
+        b=hw00TtXYZsAjp93xxD+vUxnEosOSjvaSG0G7MB7L+9mjx8LYuu6lew/T8KxR1wxKx6
+         q/Qs9TnGyfUTgbZUssRKrZ+ZV8pYBIpPkLs6CCyY3HGubJxsLs+5PdD2j9f7QVHNH5uu
+         gfkUU3pE+JCVcVsg7niKy068el4HcS3a+2PRbVmfikrV3NFFAoYf4gkOcLdOZ5zw5HjL
+         anmknUAxyH00HcByXipoc7PVMC70FkMWmc93dgifHfvF+7tCdPnMvAI98Vj6y1kFq+zK
+         P7ZCr/hkajDp1ajyLXzf6fzCOh809wXxhVL/o47I4sGsj4vBI/QzkM2Adw9YSl4QwcFV
+         YlkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG4hdBa4EbI6vxmWcG4Plm7irt55z5GnGoujnKAnAt2gTioEyZl39X9+j5Mx8rp2szvZIh9GcsDRO7Kx5hhU803mPwwFtihDlBHmZvI0GkxhMT5LDTJMRHuGiqj45wsaa2EBaHUg==
+X-Gm-Message-State: AOJu0YzBQqLoXxxPXrgWabPqgcJTtPf+aFvfi+JwLvDR8vfL/pGL6rrN
+	06ySvYLS3iP+IgOnfzaQzt4XEeGco9hLuuhqkbjkucIO1G8OjHnzevHAuw==
+X-Google-Smtp-Source: AGHT+IG3KY742s11iWtD+QX4oRlKKP/6ei+voU5mt+2FCxPfMnuoN5inCoJBt+zHp4NlRZbO0WvkVw==
+X-Received: by 2002:a05:6871:589f:b0:254:bca4:d9e8 with SMTP id 586e51a60fabf-25db33bd0c9mr10974784fac.18.1720028071247;
+        Wed, 03 Jul 2024 10:34:31 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080295961fsm10998393b3a.93.2024.07.03.10.34.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 10:34:30 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 3 Jul 2024 07:34:29 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Xavier <xavier_qy@163.com>, longman@redhat.com, mkoutny@suse.com,
+	lizefan.x@bytedance.com, hannes@cmpxchg.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH-cpuset v9 0/2] Add Union-Find and use it to optimize
+ cpuset
+Message-ID: <ZoWLpTmZlw9a8gDU@slm.duckdns.org>
+References: <ZoMXN3G72xtCLjgp@slm.duckdns.org>
+ <20240702105010.253933-1-xavier_qy@163.com>
+ <ZoRThI4lcZLxBlwc@slm.duckdns.org>
+ <20240702173137.4987350c977529cc554d9632@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Jonathan Cameron <jic23@kernel.org>, 
- Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
- Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-In-Reply-To: <20240703160535.2277871-6-olivier.moysan@foss.st.com>
-References: <20240703160535.2277871-1-olivier.moysan@foss.st.com>
- <20240703160535.2277871-6-olivier.moysan@foss.st.com>
-Message-Id: <172002803113.1236256.3525407174044863174.robh@kernel.org>
-Subject: Re: [PATCH v3 5/8] dt-bindings: iio: add backend support to sd
- modulator
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702173137.4987350c977529cc554d9632@linux-foundation.org>
 
+Hello,
 
-On Wed, 03 Jul 2024 18:05:30 +0200, Olivier Moysan wrote:
-> The legacy sd modulator driver registers the sigma delta modulator as
-> an IIO channel provider. This implementation is not convenient when the
-> SD modulator has to be cascaded with another IIO device. The scaling
-> information is distributed across devices, which makes it difficult to
-> report consistent scaling data on IIO devices.
-> 
-> The solution is to expose these cascaded IIO devices as an aggregate
-> device, which report global scaling information.
-> Add IIO backend support to SD modulator to allow scaling information
-> management.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> ---
->  .../iio/adc/sigma-delta-modulator.yaml        | 24 +++++++++++++++++--
->  1 file changed, 22 insertions(+), 2 deletions(-)
-> 
+On Tue, Jul 02, 2024 at 05:31:37PM -0700, Andrew Morton wrote:
+> OK by me.  cpuset patches live in the cgroup tree, no?
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Yeah, so, if the cpuset conversion part looks okay, it'd make the sense to
+route it through the cgroup tree. Otherwise, we can also route the cpuset
+conversion through -mm too. Either way sounds fine to me.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml:38:5: [warning] wrong indentation: expected 6 but found 4 (indentation)
+Thanks.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.example.dtb: /example-0/ads1201_0: failed to match any schema with compatible: ['ti,ads1201']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240703160535.2277871-6-olivier.moysan@foss.st.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+tejun
 
