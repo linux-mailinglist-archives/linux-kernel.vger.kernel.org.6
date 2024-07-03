@@ -1,115 +1,114 @@
-Return-Path: <linux-kernel+bounces-240148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B2D92699F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:33:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C078C9269A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A98281607
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:33:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DAA0288DAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8702F1891C6;
-	Wed,  3 Jul 2024 20:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E4E191460;
+	Wed,  3 Jul 2024 20:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="f5M/j25j"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XctAR0tp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F574964E;
-	Wed,  3 Jul 2024 20:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373D51428F8;
+	Wed,  3 Jul 2024 20:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720038816; cv=none; b=J03Z78AxQvrRgmBy+rVXo6x9aL5QY9mRCaUFvpmwd3xdMh5H+tcD4JVlpQ8iyJTIRyp+DTiei0MaNLaPwRHoIieDTNqYYcKFKwFGgSxMLQGk8i8aQB88PYitQkdC/j5B0nf15iwpVmGVFYImwUbcsqRMLEcQaXZhZK2dpoCSIuo=
+	t=1720038980; cv=none; b=aePGjmLkJcrVmC9nFJUkG+27zRqnnmxQO3RhaJAiWpcf+i/6AqlEeedvZXO0tF+Y2+0dpUx33wFJNrEHq26qMFBHo/GKmGWjs94R5ChfKokXbFTIsQJypYc4p3Pj6vv2D+dHdzDC2b11B58BOBJqYblrE5f70YMyNhOhTaireZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720038816; c=relaxed/simple;
-	bh=tuQHLlAouSdPultBMPgeE6K1xRkwyTQxSL/YLzuM72w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G9wpA+AcTHG1cHcB9mTyRbZLiFbId92GFwCnJPk8LVjVGWdBlIAvYfQfNk+yFSfTENHZFImtbrfOPTSmLolNyR55ioKCTxj7DPid24BlUHVTPRqT+L53eUaWyL4lB+9CXGNgvUjOqcJBwQbiODfR2kYgeRo+vW4rvD6ymcslltU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=f5M/j25j; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
-	Resent-Message-ID:In-Reply-To:References;
-	bh=XS+zrxZS8FCD/qmlRLlhjAGXk4ayWalj57MX2RYOszQ=; t=1720038811; x=1721248411; 
-	b=f5M/j25jmYqonaR6dqoHobJOIyUTZugCv6As4wMCbEDdj+ynjjiMqPkMcky824V/IFATkEXSn7e
-	QL27fPs697/wC1waixG5UPg52FkTTBkB0aeSAr1yPuf2vQXOz2eIfOTZGoWWdjM2J72hwjM60JgRk
-	fxuOSd5uajVQTAFfjkNB40LalWsLoS/hIRdH40o8OdH0tlHkNN8F1CKh/IIt9x3uO8eNCe4TCt23D
-	ziZZ4gAOYLXQvvltesDrUrze4XmF63zzNY4gFRaWdmJ/g6JAXkqLZTZe8nlwEkq+opyMNdKRWKi23
-	UPur0XKAWbmHGBlN1mFEUk1TbwjIyaxquk0Q==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1sP6fP-0000000ANj1-1WMW;
-	Wed, 03 Jul 2024 22:33:27 +0200
-From: Johannes Berg <johannes@sipsolutions.net>
-To: linux-arch@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] asm-generic/iomap.h: don't check for readq/writeq
-Date: Wed,  3 Jul 2024 22:33:26 +0200
-Message-ID: <20240703223325.6832892b5f70.Ib536e07baa98b5bf760424eaf984d79284343f05@changeid>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720038980; c=relaxed/simple;
+	bh=Oqyd5Kxbfv5QZ3nFmSgn8SiH41r1XTO0pZscPfXtn+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mBU7V4lrOegrjPr2zxkY2Qqm58ZH4zfjiGboicaJv9CiYH0OxlXF5yWbcV20iznzjuay7AcWaQdVKbuIx41XdySg/7Hv4voqa85pUWWH2FSkgzTF/mL191tPSJJu4K+erZHxjARRrLTX5+HKQik3OAgtkWfJfhxh6MxgicsX/Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XctAR0tp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03342C2BD10;
+	Wed,  3 Jul 2024 20:36:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720038980;
+	bh=Oqyd5Kxbfv5QZ3nFmSgn8SiH41r1XTO0pZscPfXtn+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XctAR0tpA5fSdH3KeTgwqMs6oXubiLg+dYNI4FhoGZLMEUI+XQrKw0gc5Zu3gPy2O
+	 fQC+FwT6a1N5CEaMUUGyjC0cURMt1uW6r0zhFIJsD1lRb3s8M+RuqLtEXstglJBpxJ
+	 Wpo7LfsGKUx4AuPHciKLKWArR+R+x/TBggAbdIImsYz4pOI1r8l06FpyDjeggUGjv2
+	 A6stN2mitkepEKs36Bs/9eTHCs9Aj23wDrZnV9rMHwragqlQgOY0tvUjyjdvx6u3et
+	 gEJ8LzNvYfxn3O/cg7pMwmQHB2JRhfNbsP09KmcJkr+gfBQiKVOtZpsD3HjarLgv90
+	 lUnrDJQ7HWTuA==
+Date: Wed, 3 Jul 2024 13:36:19 -0700
+From: Kees Cook <kees@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <jolsa@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
+Message-ID: <202407031330.F9016C60B@keescook>
+References: <20240701164115.723677-1-jolsa@kernel.org>
+ <20240701164115.723677-2-jolsa@kernel.org>
+ <CAEf4BzZaTNTDauJYaES-q40UpvcjNyDSfSnuU+DkSuAPSuZ8Qw@mail.gmail.com>
+ <20240703081042.GM11386@noisy.programming.kicks-ass.net>
+ <CAEf4BzY9zi7pKmSmrCAqJ2GowZmCZ0EnZfA5f8YvxHRk2Pj8Zw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzY9zi7pKmSmrCAqJ2GowZmCZ0EnZfA5f8YvxHRk2Pj8Zw@mail.gmail.com>
 
-At least on ARCH=um, the generic implementations of
-readq/writeq from asm-generic/io.h are used, but it
-may also use GENERIC_IOMAP. In this case, io.h will
-include iomap.h before readq/writeq are defined and
-as a result, iomap.h never declares iowrite64_lo_hi
-and friends, causing compiler/warnings errors when
-they're then implemented in iomap.c, also making it
-impossible to actually use them.
+On Wed, Jul 03, 2024 at 11:31:11AM -0700, Andrii Nakryiko wrote:
+> On Wed, Jul 3, 2024 at 1:10 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Tue, Jul 02, 2024 at 01:51:28PM -0700, Andrii Nakryiko wrote:
+> > > > +static size_t ri_size(int sessions_cnt)
+> > > > +{
+> > > > +       struct return_instance *ri __maybe_unused;
+> > > > +
+> > > > +       return sizeof(*ri) + sessions_cnt * sizeof(ri->sessions[0]);
+> > >
+> > > just use struct_size()?
+> >
+> > Yeah, lets not. This is readable, struct_size() is not.
+> 
+> This hack with __maybe_unused is more readable than the standard
+> struct_size() helper that was added specifically for cases like this,
+> really?
+> 
+> I wonder if Kees agrees and whether there are any downsides to using
+> struct_size()
+> 
+> struct_size(struct return_instance, sessions, sessions_cnt) seems
+> readable enough to me, in any case.
 
-Fix this by simply defining all the 64-bit versions
-always and always only on 64-bit platforms, without
-regard to readq/writeq.
+Yes, please use struct_size_t(). This is exactly what it was designed for.
 
-Normally, 64-bit platforms will have them anyway,
-and if they neither have it nor use asm-generic/io.h
-then iomap.c will simply not have the functions (the
-ifdef remains there) and the link will fail (rather
-than compilation).
+Though with only 2 instances of ri_size(), maybe just use struct_size()
+directly?
 
-Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
----
- include/asm-generic/iomap.h | 6 ------
- 1 file changed, 6 deletions(-)
+Also, please annotate struct return_instance with __counted_by:
 
-diff --git a/include/asm-generic/iomap.h b/include/asm-generic/iomap.h
-index 196087a8126e..e3c0d4a85800 100644
---- a/include/asm-generic/iomap.h
-+++ b/include/asm-generic/iomap.h
-@@ -34,9 +34,6 @@ extern unsigned int ioread32be(const void __iomem *);
- #ifdef CONFIG_64BIT
- extern u64 ioread64(const void __iomem *);
- extern u64 ioread64be(const void __iomem *);
--#endif
--
--#ifdef readq
- #define ioread64_lo_hi ioread64_lo_hi
- #define ioread64_hi_lo ioread64_hi_lo
- #define ioread64be_lo_hi ioread64be_lo_hi
-@@ -55,9 +52,6 @@ extern void iowrite32be(u32, void __iomem *);
- #ifdef CONFIG_64BIT
- extern void iowrite64(u64, void __iomem *);
- extern void iowrite64be(u64, void __iomem *);
--#endif
--
--#ifdef writeq
- #define iowrite64_lo_hi iowrite64_lo_hi
- #define iowrite64_hi_lo iowrite64_hi_lo
- #define iowrite64be_lo_hi iowrite64be_lo_hi
++	int			sessions_cnt;
++	struct session_consumer	sessions[] __counted_by(sessions_cnt);
+
+
 -- 
-2.45.2
-
+Kees Cook
 
