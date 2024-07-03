@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-239763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87DD7926514
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:39:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A59E2926516
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A686F1C21863
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:39:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7B241C22769
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336271849C0;
-	Wed,  3 Jul 2024 15:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8CF1849FF;
+	Wed,  3 Jul 2024 15:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fx5xu0ZV"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mvtCIXjH"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69D7181CE6
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3A018309B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720021084; cv=none; b=IvxltRd/inY8Wl3SBNqYHuGyJDp5AdazdSGLjsm72RnR1VQXdIbUJdfZnUJC+AbqbYh079Bw3jobJldII8Sbm1yrgNyCA+2lvUuUVdRU6XGCB6uF5Q3UbGnfQQD+musnZAF7W/a33AY0fdaudKpzCtc4VRfp64sfYs+3TGdjccE=
+	t=1720021085; cv=none; b=DcLDDMEOERXvMIuAFYceqZrmK2Kwn59yg3P2gw/3NwKLyeIfYwzIw63KJv4/DphfO0ZPIuwyFdHUx/qhnk1VIQfEgDXkYx4b44AWc1KJ2WvzYDsWmn8EQ58n7Am8vE9yHDax95dQr/HfWg2T2ZBHln2YsW2dEnAEmMZOiHAi3KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720021084; c=relaxed/simple;
-	bh=enRHrVnnv2v5OSTzZ1elKgS5KbJVuE9GP9SdZn7OqTU=;
+	s=arc-20240116; t=1720021085; c=relaxed/simple;
+	bh=A8h6qBLOlBAO4Nf5Z1u5nWAte8uqhP5kHvTzaAaJZ+g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F6qcBhXd1e0uvtInNOMW5JgPB4rKIiusk05+oJVsg430/U+ehdNQc4XrINZtZXQgPTg5izExPKkvL+4/+dDG/UwoGNn65XA2v+VFiuw3NHCOqLikwLQZu+L/8fIZbV793Jms0+SvNbcRHrco/HnDfHdEQU1JH8XNdVr0e/JA4PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fx5xu0ZV; arc=none smtp.client-ip=209.85.208.51
+	 In-Reply-To:To:Cc; b=oiRgaQ0aYgqM2keIOHeIFMTbv1Hs8DLAYVLmmrZXEZYtM604fC6Psau5qsMQi5ZIojCyQ4FK0/ng/njFapDuIHTF/sIctDxu1ay6Hf0mdm7Ny0e0JxWO+PGTlADd/yRDH16fGBZiaogEdvq5HTCxGpZQSk/duOKb4fgF18QpHns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mvtCIXjH; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58b447c5112so2695327a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 08:38:02 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a724cd0e9c2so563203266b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 08:38:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720021081; x=1720625881; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720021082; x=1720625882; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xOF3cIT6fgv4yx2bUJ2liLgQLjKC8cJY9QXkjtPW8ps=;
-        b=fx5xu0ZVhJ4gAau8m8L+F4RmA9FmRDSkd2Ywjxya5ZC8ce3bd6LsPbUx7uvvzBV9xw
-         EOrb93ZvU0dvUedneCuouueDIz2K7AhcCituNenNvvrAh+FBTg9BscWIK86mq7K2g4XC
-         oLJFERh73PqM/SukOMeiwWZheIhgK1IapzY0hHfWFUNxJ6Tn2LlAF0nOcryaQCSEbOQB
-         PzAgWv49dJTLS40KLtSlcBT0KE1NRP0L6xBBBXTVgWJtH4FoimsxOXFNxfRTeoMGDnJY
-         gjnxv82pJfFl9MwfMdKJN2bVCc4gWjcW5Y8xk/WE36m33IdZDSTeC+t/Pb+t4TeDOwfN
-         jwWw==
+        bh=1DvuUcSFwNO6KhZ/DbrjWlR0SnoFpdvXYRD32tmG/+Y=;
+        b=mvtCIXjHcoeuPC2tvfkZLQwcuiKSFxa446IOmHeZ7HE9kk32KI7TwWaSGV6jxQlb3k
+         /sVAsQUioYhR5UxOYY6rFPwwhtivgdfpIbHHhWm2CMy7vHBbo0mPobqtMqBFkkgyLSUA
+         TWcWGjcDqKoHd/ahs1NJejtW8paxPA9ULGLk5xza6PxyhMSfHO42LdsafbF8WR/J6fmI
+         C/BxZ3pORx6OZJVvXl4x8b8C9wSNjLJ8rArE0wM9mfVQ/AQIqPnTz2gV7hBPIBKJRVdg
+         jSWB2SMYvZu2+dYqqYPUWXRkbdeTGEgy3Wd+JlNK485PsDh5F/E/xsG+2292SXUieptY
+         ixZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720021081; x=1720625881;
+        d=1e100.net; s=20230601; t=1720021082; x=1720625882;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xOF3cIT6fgv4yx2bUJ2liLgQLjKC8cJY9QXkjtPW8ps=;
-        b=l014dBHrnzfevR6TBBcBaEeK1NA27sBtXCJtE7BKXtlSVQJKvMeb3CaIAcBbfp3D52
-         ReDfJXkfeAO8Re7kfxH/FJHR0eeu/6SS17iW4N4m8dg5BjdTuak7Kdtay9xLIreOYTCF
-         m+AsUUS+ZNP42VVPU/VExRM5JnL2hGBgi5vPQCRZYroSRQ1Xcl2EYbw4Q8hlKXqtC69T
-         oY5VSL1o4RrsIbgfYGMgobTCeX7nX6RM8WQZ5Z4PZEz4MkvPBvZodgtGYxkjNiM66N3h
-         QKfIA1HVc65dW/TiIVwFulgFnQjPsALWrRl1Iz5AZ41H03QvVDLcSMgbR6VKx1HBQJli
-         /d+A==
-X-Gm-Message-State: AOJu0Yyr63yYKVgID62b4TIBFP+xcX3ZmaHV5SdRIZowkX9eAe9BA+IQ
-	nrRVb/WLRLg1DqFFMlguujuc3VMIac7ukMLEtyBj2pgim39GAgoW
-X-Google-Smtp-Source: AGHT+IGSE4aEWfxmeppRozJV+rmVgbv6IME6lttf+K58LZUqL3dz1V1l21Nou6E9t0oENUhRbHfj0g==
-X-Received: by 2002:a05:6402:2711:b0:57d:788:aaa3 with SMTP id 4fb4d7f45d1cf-5879eed8ea5mr8336189a12.8.1720021081125;
-        Wed, 03 Jul 2024 08:38:01 -0700 (PDT)
+        bh=1DvuUcSFwNO6KhZ/DbrjWlR0SnoFpdvXYRD32tmG/+Y=;
+        b=HTFEx+RfQXd33hIn57QbjlYkoz9ybP8DMJWaKkF5ZdBr3pMXDm3Q4eIg+HEqwroXeW
+         6x3ZJwq993QCJPfvQdVUevFxCDgb21dc3IR3QjQqnem8Q42LMJ2AjoVVSrZ44strA1qU
+         NqDoL3shWjOgLUPUXAyX65NBW+eIVA9RyexVkEtxBjJShls2MFBherGdYQzW62lgJfLg
+         UHNW9sI+8L/6ptGmU+9AEekW53b/ud5Furwt31MoupCnVERs5tpTJbxwodrDgEncuIb6
+         JwTR7MXTwN+RUnLqYL3mh8Go+7bKLFaH3eCP/tO0+EQk7f8+wzkB7w5YviaEjDF+p/k4
+         fFiA==
+X-Gm-Message-State: AOJu0YzG8ZjbeK7SOwytvrmjI2nyBMJ9clq/V9yZNp9hVxi8c/lhIChN
+	JxB3Z1RrGU1y7mrl+w2ONn+YH7T8t7wLZDQH0mgl6PjyVvY9Tf6/
+X-Google-Smtp-Source: AGHT+IHCQ80mEv1/7hzgKtXN4Pxvcf2tTNEkA8d6/nsYXqmAct+j4z6C6IBojaFFHMQaQ4EikNbPxQ==
+X-Received: by 2002:a17:907:2d1f:b0:a6f:48b2:aac5 with SMTP id a640c23a62f3a-a751441f052mr926878266b.15.1720021082289;
+        Wed, 03 Jul 2024 08:38:02 -0700 (PDT)
 Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861503b4c5sm7119512a12.93.2024.07.03.08.38.00
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861503b4c5sm7119512a12.93.2024.07.03.08.38.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 08:38:00 -0700 (PDT)
+        Wed, 03 Jul 2024 08:38:01 -0700 (PDT)
 From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Wed, 03 Jul 2024 17:37:37 +0200
-Subject: [PATCH 4/7] mfd: wcd934x: Constify struct regmap_config
+Date: Wed, 03 Jul 2024 17:37:38 +0200
+Subject: [PATCH 5/7] mfd: tps6105x: Constify struct regmap_config
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240703-mfd-const-regmap_config-v1-4-aa6cd00a03bd@gmail.com>
+Message-Id: <20240703-mfd-const-regmap_config-v1-5-aa6cd00a03bd@gmail.com>
 References: <20240703-mfd-const-regmap_config-v1-0-aa6cd00a03bd@gmail.com>
 In-Reply-To: <20240703-mfd-const-regmap_config-v1-0-aa6cd00a03bd@gmail.com>
 To: Support Opensource <support.opensource@diasemi.com>, 
@@ -90,35 +90,35 @@ Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org, 
  Javier Carrasco <javier.carrasco.cruz@gmail.com>
 X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720021075; l=720;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720021075; l=722;
  i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=enRHrVnnv2v5OSTzZ1elKgS5KbJVuE9GP9SdZn7OqTU=;
- b=QbgK/RJ2y1AYAvxFVQHd2CneM97DgD16f6V7hHZQ2LSL3bcRTs6LL4tfSPiuQQedys5isuUHj
- DiMaxpsYltFDLjKM0vuY1pxsrjgg9vn8yRsJjrNWK6Wn57TY+mMo+dC
+ bh=A8h6qBLOlBAO4Nf5Z1u5nWAte8uqhP5kHvTzaAaJZ+g=;
+ b=0aDXAOV2yQ6SgDy74o9G2xuTzpilnDRzguPUcMJe60B7GRpVMf+4+PYXAUexv6XzXyTNSv5Ts
+ n/Qk2O/94yEBgZU2mES9qotIgWXd8xKOvX/z05dIzLdMlcrOHx57PXt
 X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
  pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-`wcd934x_regmap_config` is not modified and can be declared as const
+`tps6105x_regmap_config` is not modified and can be declared as const
 to move its data to a read-only section.
 
 Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 ---
- drivers/mfd/wcd934x.c | 2 +-
+ drivers/mfd/tps6105x.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/wcd934x.c b/drivers/mfd/wcd934x.c
-index 7b9873b72c37..fcd182d51981 100644
---- a/drivers/mfd/wcd934x.c
-+++ b/drivers/mfd/wcd934x.c
-@@ -109,7 +109,7 @@ static const struct regmap_range_cfg wcd934x_ranges[] = {
- 	},
- };
+diff --git a/drivers/mfd/tps6105x.c b/drivers/mfd/tps6105x.c
+index 0da1cecb5af6..e2f6858d101e 100644
+--- a/drivers/mfd/tps6105x.c
++++ b/drivers/mfd/tps6105x.c
+@@ -23,7 +23,7 @@
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/tps6105x.h>
  
--static struct regmap_config wcd934x_regmap_config = {
-+static const struct regmap_config wcd934x_regmap_config = {
- 	.reg_bits = 16,
+-static struct regmap_config tps6105x_regmap_config = {
++static const struct regmap_config tps6105x_regmap_config = {
+ 	.reg_bits = 8,
  	.val_bits = 8,
- 	.cache_type = REGCACHE_MAPLE,
+ 	.max_register = TPS6105X_REG_3,
 
 -- 
 2.40.1
