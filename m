@@ -1,133 +1,228 @@
-Return-Path: <linux-kernel+bounces-239581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A429262BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:00:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21C69262C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B7581F2154B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:00:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7B34281950
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3A61DA32;
-	Wed,  3 Jul 2024 14:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBC117B425;
+	Wed,  3 Jul 2024 14:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w1o63krl"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DKFLUPBN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504181DDD6
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 14:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720015236; cv=none; b=LXHz6qEfyPoOEPTMC/iMr/ALpzBr+sO+yzfhSt/5YmXEFQ65h+SvKsLwi2LDcEidXx1Qfr1k6I7ScVHFWP25KxFyP+fJD9jc5SyGVT5Rr5ZM96PLA41lS9guiZSs2hUiDqMKBs8+EyQZUYBajm3CHsJk0kBi40l2y6HzSRjC5Gg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720015236; c=relaxed/simple;
-	bh=gtHg+fhWTCT5t00ym5mQRgobrrouh6//u8ADJqModEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ldf+hMbqmoJOIW8t/9oynIyqs6s+yAVp5w+O2k2erb2etHzBFIv6kr9Wjb+eHNs/a8FtNV98oUWjDT/7vNDO5HTCmggLgrKYhWk+HTn3ZFkDm8lLSbVBK5Cs48I37pfuT0kHb+57F30g77/qWgRrEpkRaI+lmWIHWzfho7oXyLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w1o63krl; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42565670e20so4520475e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 07:00:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720015234; x=1720620034; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Umv9yiRU+omL+0ilB9pN8nKbjgKXfIcuYwrR5A3ZEYc=;
-        b=w1o63krlvTm/JG9KTaGNTeIyYlEWaFFpMSxLsGZRh64YuDC0UBJRi80+wYJ5HrgQOO
-         QraLHQkVWFA2OZlILXXnOkjlEX2FPRX0D0SM/ThGuuHvaKsODr+j751AXpc+hurIehKC
-         J0II9MJMY/URFxJ+tEb0SEISwXCnD24+OJp+n0fCYJ+9gbbIu0AnwrffPbNC5d7Rh8Om
-         hKEdP2t7DSWVGGLmWshyvLqfhwqH7cR/J1OwqsA61W1xwXQqUcmrxe5m8F6HBQzwISOJ
-         UsTmvTJuiE6wLoUn3Cwi09m8k7j0wslf0QNpKmIO/ptUNDA5J4iYofdBShMQGGpBEhDb
-         /Tsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720015234; x=1720620034;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Umv9yiRU+omL+0ilB9pN8nKbjgKXfIcuYwrR5A3ZEYc=;
-        b=VVvA7mD8DZsI3iAJBdRtnHTpHGmTsxuG7Z/8QwjlnM987qfA8wbmMgwgjJR8SaqzdY
-         1XobgpI4CsAwLT40WkF4TXkyz7pBursqrUCPtnI9pj8R8+x6QvUl4CDcUiVw4a2bz5SL
-         waEhujkQl7nX61CkfSGOdIDztyMBhhhbtB0wIo9oHCIAKs68V9vVoxKBvAmVxsq9t2Zw
-         m3vB5blK+v+/ZKo9bOZfN3apPRHuL1x5ykzaRgKrx1cItVTP/n51HDtQ9z1aIzI7pzu0
-         RRzZGUjaoxFbRF6lWdZtB3bPuSYjusSIxpVhjP7ZFMVLAd9zBGbCM95CBqai+Mxi3xXt
-         QBgg==
-X-Gm-Message-State: AOJu0Yy2khO5/7VzxxRT5RztGkOWsv8LCbel3WULfUzrzUP0GsXttwiP
-	Q2zIglRzFHrbKmAx/xzW3sYkmlRqRULH6zpT+Cxd94KFepZsyGelV8X/ULlnFPk=
-X-Google-Smtp-Source: AGHT+IGMQ9qtNvPvtq/beeHsghJ67tCO2WfXdsV6AnqIVKFFGTng3VkPBI3s0SPGnhqQieqd24h1WA==
-X-Received: by 2002:a5d:4705:0:b0:367:9048:e952 with SMTP id ffacd0b85a97d-367947a3744mr1454176f8f.18.1720015233635;
-        Wed, 03 Jul 2024 07:00:33 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3675a0cd6e5sm16003812f8f.4.2024.07.03.07.00.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 07:00:33 -0700 (PDT)
-Message-ID: <15b67ce6-3238-435d-ad28-7c06efbe9153@linaro.org>
-Date: Wed, 3 Jul 2024 16:00:32 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6BA1EB3E;
+	Wed,  3 Jul 2024 14:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720015290; cv=fail; b=Jq3y6PEzSwYV57hu8GDk1dos9BsspZeP80WWGsrjYzANaB2CUq8DpsIl8LWG5xBGLDWOkBRkKy0qmQYnVZTMcsNsd8o+V+8JNvcKeH3jKM0mYRJ9sYpmtlDywhrf3cKfX4HBNrqWCDpXkt+0zt450MhZPrXU5E06p9hDF3S9Id8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720015290; c=relaxed/simple;
+	bh=LrXwVJtihEB16LiVvdfaOtHcNi8LufsAUsFokC4dwIg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hZmSvraD0JUKYVlo10qxahmf+8NbI9uYswqh20vS+tY+KvLjrNqWsD2Hco/0sW67Bo3MmPcml6R8hpDH8d6hWJVaQChMpIrNVR97noDG1QgEd6nyJ7KbYzPt4hb79xeWUSMPeLZ+Im6qDbzGzuwLHAio3y8ofyiqp+fmOOVkPnI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DKFLUPBN; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720015289; x=1751551289;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=LrXwVJtihEB16LiVvdfaOtHcNi8LufsAUsFokC4dwIg=;
+  b=DKFLUPBNC/Bi5GwqcWABQcZ80JUBhNmtgFGGIfbi7snzly4PwKlJ4v8J
+   Dw+PRQj0yJFV7EYwIkS7kLq6hlLNeg0b9LP9+cQwFeySUyM/8H7DMU97x
+   bEv6LQkao7gjcE6yWl/D+AdIHMTp2oeiT6bi48ZdavzYPUMgGYl9zJEp4
+   wuGi2XwEmpkYHHR5BXjkg9R15rgpl3KNDVIgilIDrF5ZbT33+fksLUaQ0
+   FBom9Jv0yYHycn6VriNkeVXNZCoMXmOumBnuniUKE96xzEXPPPJdDHDMs
+   FFEg9PrTpX5mPkzhrFAq14OEWD7akjZvZTdSQWc9iMdZeCYUMYOvAJJL6
+   g==;
+X-CSE-ConnectionGUID: bwiV0gjcQge5Qed+CBloeA==
+X-CSE-MsgGUID: KGGZtIeJTY6H6rEHr49KqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="28636755"
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="28636755"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 07:01:27 -0700
+X-CSE-ConnectionGUID: U58XQPxGQWqwU4y7br8w/Q==
+X-CSE-MsgGUID: uelKlhvBRNSrDIL/g/R7iA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="46184054"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Jul 2024 07:01:27 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 3 Jul 2024 07:01:26 -0700
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 3 Jul 2024 07:01:26 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 3 Jul 2024 07:01:26 -0700
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.43) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 3 Jul 2024 07:01:25 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=atomTelW6Wbzhj9czdHSlj/KpQokZgo+N3DeJxwQCcBr6mobE01yWVf216n2DWP7k1dXkiJmZzFPORjxk4WDYXhFCz5y9zrCwIMp19MvIlkzZ3tvnJkt6xbMWvDqb2/v8nW6e/HTHU7QyxJUC7f9LcqwSdgvqTXjeNEY6IkEpDDlstywG22QjHMzlc9SFjnc/omsglQaRig+nTABgemIMAMBh4ZCVYihAL/FasCvIomjo9+MiOHwxewyy8TrGwTiwKFI1NW/Q6HaBtExcjBph8pg2ytOIQC1KR91DwxMDjq+A0HqheL0aUzWoCGEgqrdBT7bPBExjZNFsR3vxGd8NQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v3InscnY14+XtjhcI0HD06EWq0AnSaz5nM2omgYIzcs=;
+ b=XOmiCpzDAFTsKi+sgv6a490o9ZyCWbM12cG+e3tzwOipVIvZd+p6vLJGVxLSV/OyECuccLBmLYDsvEjEoyMHeR9Er7tsoBOtX74Kp+uUr5lYBNgoRjLfzCPttw0tKRT7ujeHzHTJulS0iqWmSA6o6ZkfrSDoGaOVnUorQ6IpRx7WDwKUJ5tJOPIYNbXcOQjFU3eHphf9gVUZSpbC609VOHFRWDKPO4qHX2aVo+Q6j8nGslnZdYRZuKJJyF1UdObHkoX2kVyXuMO+dX9gtSEBip8202jCeuU/9YoeF5NcWdTPSBo+lCd1nr3oGfIIMMu36oSsXc+ri0HhH+QQPAD7wQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH0PR11MB5782.namprd11.prod.outlook.com (2603:10b6:510:147::11)
+ by PH7PR11MB6932.namprd11.prod.outlook.com (2603:10b6:510:207::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Wed, 3 Jul
+ 2024 14:01:22 +0000
+Received: from PH0PR11MB5782.namprd11.prod.outlook.com
+ ([fe80::9696:a886:f70a:4e01]) by PH0PR11MB5782.namprd11.prod.outlook.com
+ ([fe80::9696:a886:f70a:4e01%7]) with mapi id 15.20.7698.038; Wed, 3 Jul 2024
+ 14:01:22 +0000
+Date: Wed, 3 Jul 2024 16:01:13 +0200
+From: Michal Kubiak <michal.kubiak@intel.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+CC: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>, Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Woojung
+ Huh" <woojung.huh@microchip.com>, Arun Ramadoss
+	<arun.ramadoss@microchip.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, Yuiko Oshino
+	<yuiko.oshino@microchip.com>, <kernel@pengutronix.de>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<UNGLinuxDriver@microchip.com>
+Subject: Re: [PATCH net v1 2/2] net: phy: microchip: lan87xx: do not report
+ SQI if no link
+Message-ID: <ZoVZqVQNSyRVW+wh@localhost.localdomain>
+References: <20240703132801.623218-1-o.rempel@pengutronix.de>
+ <20240703132801.623218-2-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240703132801.623218-2-o.rempel@pengutronix.de>
+X-ClientProxiedBy: VI1PR07CA0146.eurprd07.prod.outlook.com
+ (2603:10a6:802:16::33) To PH0PR11MB5782.namprd11.prod.outlook.com
+ (2603:10b6:510:147::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] thermal: core: Call monitor_thermal_zone() if zone
- temperature is invalid
-To: neil.armstrong@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <2764814.mvXUDI8C0e@rjwysocki.net>
- <2ed4c630-204a-4f80-a37f-f2ca838eb455@linaro.org>
- <8d91a3c1-018f-495b-83be-979b795b5548@linaro.org>
- <12c5c133-9519-4a26-b9a3-2da1d3466e94@linaro.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <12c5c133-9519-4a26-b9a3-2da1d3466e94@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR11MB5782:EE_|PH7PR11MB6932:EE_
+X-MS-Office365-Filtering-Correlation-Id: 565ee054-ab94-45d9-87b7-08dc9b689eac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?XwQM84qiFkcwou5lJN1/AUO/gVmNbSNpxRxNTtnR508Mpl5Bqv0Py+I9NzqM?=
+ =?us-ascii?Q?9hNtI6SMZiDHt55qjGb9dGcshx4+4viDOayEol6X6QCdA5RK4jrNCufXf7V3?=
+ =?us-ascii?Q?kKD0wSL0EDdL5HXEGboqnXm9NPORk3bCI4eSKfQFtTJm+KhR61sk+Y7O9QIX?=
+ =?us-ascii?Q?QFRd5WJ5LEe9f+1jORYMTCKcHZdae5SmwBV5miaVzuXQMSJewMLKm81QoG57?=
+ =?us-ascii?Q?5HVTWkMzIbHeiGrfNGYjxuqt496PbOVpC0HMaUXbUAmg3+wfNeTa10S57227?=
+ =?us-ascii?Q?QTOu7Dx+x3DAbyquvrgJU8Q43FnkhgmbTpLwqvyiQtrfCA13ZBtk1DfQq4hz?=
+ =?us-ascii?Q?uoszyhV1443YVjrttO0XWo6cNqTbeLdaKT5crTvIbpvfPijojX6XMmKxjHs3?=
+ =?us-ascii?Q?U+dd/WpX2CLQYwx5p53oaJ3ufgldwEiixmGcNXWJ4jhms5Qf7gFZ383txI/R?=
+ =?us-ascii?Q?M/BfIMXB45Tp5Ly9fZiY9kbZF670Xi++2EJrMFlpv680Gf7zq8LuUihhX3i7?=
+ =?us-ascii?Q?b3XfDDpg76sP8b8OParrCTNi8ef8D5uWleVsUnR94CG196Kf1I+YGK0UcdtE?=
+ =?us-ascii?Q?9j2OVzP40Q+PEPVmH6A8B1ngjf4tS8/tXLlUQoLtSJuweEBIOdEASb16wR6P?=
+ =?us-ascii?Q?QVoZn+cLQvxqDBW6pqQwAA80pCXSJc5vNt/AKUGMf3he0ea0Gbemmx2zFg1q?=
+ =?us-ascii?Q?+SUYgQODZH3SGTZQrK0MPkq/+fYXUR7n8m2SvM02UXwzF3eu6xqCTijFOoAS?=
+ =?us-ascii?Q?ZZR3UaEO37Kii1exsT1MsMap2aHyelqMzItHFhx3Go+rETOvgWLG4c9dPdpN?=
+ =?us-ascii?Q?iRe41t2YKP738Jld9QsJkuwETEgxMFuwDo3c7zft1dOBbb1P4zeoegc3wrWF?=
+ =?us-ascii?Q?svDVARD0koHz1t96TS0Eum+g8G6neqo0FZc7/R3HDsE0wu3fO3uWjeQ2tARI?=
+ =?us-ascii?Q?4ACVDZECSbwlG2hoAdnVbk79649ToEcIzU7k/vHOvHM0+GEKbul6GnPsi1r8?=
+ =?us-ascii?Q?/ATFmo088zSdOfcULltMjPKd2Fm8g1+rwVutK6SiRa3g0tQVYX4DUBsWWs/G?=
+ =?us-ascii?Q?S9DzQB3R68fLyx18hdTETnK8o/2jAGQ5VCG5HkMI+VQo9PYSW09KlQ15bXFK?=
+ =?us-ascii?Q?C8tsMk6ILyFqL1HWjI+GqxsnxD/dnN1E6iczs2TLyz8M2oPK3tGwpyVDy0t3?=
+ =?us-ascii?Q?a/rSsmH5ZQFTyGKnDS32NpoJU5spfqAexJ0hCWjDaEMI+nBYsOtywrn6CKsv?=
+ =?us-ascii?Q?sJ0Fhx3TBJ1e6AxrRXlnybXt3NEW2BakmEFP9vZkDtjqDYeoX2qDwA2I4Ar1?=
+ =?us-ascii?Q?jy6YYgo6CyDtVzU9SOv6TV1NHwdNLRVIcbMJIJLPkp7Obg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5782.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DWkCvODnn6ZeGgTplZrSaBSTrC9LGs5+3JWlSF268l5u/dboLH41zZTE1e2o?=
+ =?us-ascii?Q?7X62QmbF25uqwN03248xUFMo1GQuniO2WnmudUlGbu9rPqt2KSSkJjuWZxGJ?=
+ =?us-ascii?Q?yNrNoFeL0FB2t+rZsdVU3KuFce+0enKwQA4yHKHcE41v41wMky/P5oQlDPQ1?=
+ =?us-ascii?Q?IfaPMOk37SblawH1nr3CEjAzoQYiCMZxlhq4UcdBqjbf8J6dbF/tvKy4/LjE?=
+ =?us-ascii?Q?zG+/hrDwt9TEF1HZ4IvbDNbLCabJuVaXCfR0PMxps+UIsfscNC64baqfro2u?=
+ =?us-ascii?Q?QSmIWnQevIsJpO7tJNZNIhcng+X80X6km6RwvfuCBcs/JlBefW8thE7NnVuJ?=
+ =?us-ascii?Q?DPOt6XvAGC0jR6dE7qOy334+W/2QfDjfT97qvdbwt4lhyOehmFuCTBz9us/Z?=
+ =?us-ascii?Q?LNw6vxhDBfpAaaHoY89DpfBFW4nFXxccuf6A+WmGM6JZT8hwawfN37cN5YCt?=
+ =?us-ascii?Q?o4k7/xi6pS6wXZGesZouy9wf2GQgBzT564+3kH63koJim2YEMHrzBwcTQG0O?=
+ =?us-ascii?Q?0Kc9opCw2PGRcAPuHz+X4Jh/Sm50Yz2WOrXfG/XQznrKI7L6gPTFQjPUVvfG?=
+ =?us-ascii?Q?PZNCXQm2h+CuXtuREQGFBP1eteAyDv+7kaAwROZnuGCw/tcD+1r8hoqsTiEk?=
+ =?us-ascii?Q?kz+cbcN48iPmk70vyD/U6Mc2lO+yGTeUx6pMfwzNy6cp5cQbeY+QNPWER5P1?=
+ =?us-ascii?Q?+fHzM4hVYlKRMwGxn4mJrHg7d0Org23OKd+QrcUAnDrvOJALqvK58iv6VGkw?=
+ =?us-ascii?Q?j6Eyhj2fh6wfdqQTZGKuBzYK+ZfUh7kie8mPLyIodU5fjJES5ZRihp/+rClM?=
+ =?us-ascii?Q?QJoX1phPEO4dgYYr2tK4AloBh9yRTGhuNPMvkQsPn6uuDYJM6P+aCHmNP7Cj?=
+ =?us-ascii?Q?jsTERJKFlDssorPm3e2YTg+Xq1M1ErkFRP8Hoylco0fqetN33HkV5FMXWwQ2?=
+ =?us-ascii?Q?bFwbOCD65UWXY2F637E1tpbvCiplAoiK2UvhRyhyr5AGlHPvddwFEMJZ3bur?=
+ =?us-ascii?Q?xMLkz2TrooVINgHHNsopt1m6GqB41gZ5unFuCTfux05epg5IOrSf3e98IeX1?=
+ =?us-ascii?Q?/DpjnSzqzWoB2kD0X2KGO3/xUrEZ637hi9daioSGaVoucvVugXSlPdPrp0Sg?=
+ =?us-ascii?Q?ExZUAgrH9JYtHorXb6OO8M7UVgDYSTYVG0vBCRss8kDbFpPXVUzAeoVe5oX+?=
+ =?us-ascii?Q?bR/33YUfKWvWBQLCtCLnbbS1QhIQjAUM2BV7294+qrc+V5IFstSWn0yCyuAK?=
+ =?us-ascii?Q?hIUOpozdHoxP11RrW+yptCrOGaWQRunhLJGTC1zd7ghiu7BtF7HpEbEbEnEQ?=
+ =?us-ascii?Q?ewJW8dc3hUItWzSaDFXE6gz2MueyeC9JZPB25CfAkNa2VoTPV1Ri3yKhOIRy?=
+ =?us-ascii?Q?nUvBPthI5jg7gZEeBltF+07IHHYSExKxppnrd46gzO0viLaP/pRkDKhe8paL?=
+ =?us-ascii?Q?l0G0276aOR7GqzKmH+JGtPfZ1sZzfmHBVODLnVrr26iJkMgmfdBPduT8RWfs?=
+ =?us-ascii?Q?82uxDaOVuZHqCFRSaRUdFz99sTVtMlRP8SbMp7Whpd48XUhfIv9hlVUmflXZ?=
+ =?us-ascii?Q?QOvO7VKhPE0uCTNOuASeL+9pS5FEzuFQywIoXxrkV2+alM5gznpHruA4/loV?=
+ =?us-ascii?Q?bA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 565ee054-ab94-45d9-87b7-08dc9b689eac
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5782.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 14:01:22.2232
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1RWdCv6a6mUxPyO3fTx1bkVdE2tmVJ4qudn+UjMBxUgwjBXt46lLMqGJINjgEyfHw+awOSrfJGI5f6xfa6nOTw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6932
+X-OriginatorOrg: intel.com
 
-On 03/07/2024 14:43, neil.armstrong@linaro.org wrote:
-> Hi,
+On Wed, Jul 03, 2024 at 03:28:01PM +0200, Oleksij Rempel wrote:
+> Do not report SQI if no link is detected. Otherwise ethtool will show
+> non zero value even if no cable is attached.
 > 
-> On 03/07/2024 14:25, Daniel Lezcano wrote:
->>
->> Hi Neil,
->>
->> it seems there is something wrong with the driver actually.
->>
->> There can be a moment where the sensor is not yet initialized for 
->> different reason, so reading the temperature fails. The routine will 
->> just retry until the sensor gets ready.
->>
->> Having these errors seem to me that the sensor for this specific 
->> thermal zone is never ready which may be the root cause of your issue. 
->> The change is spotting this problem IMO.
+> Fixes: b649695248b15 ("net: phy: LAN87xx: add ethtool SQI support")
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  drivers/net/phy/microchip_t1.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Probably, but it gets printed every second until system shutdown, but 
-> only for a single thermal_zone.
+> diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
+> index a35528497a576..22530a5b76365 100644
+> --- a/drivers/net/phy/microchip_t1.c
+> +++ b/drivers/net/phy/microchip_t1.c
+> @@ -840,6 +840,9 @@ static int lan87xx_get_sqi(struct phy_device *phydev)
+>  	u8 sqi_value = 0;
+>  	int rc;
+>  
+> +	if (!phydev->link)
+> +		return 0;
+> +
+>  	rc = access_ereg(phydev, PHYACC_ATTR_MODE_WRITE,
+>  			 PHYACC_ATTR_BANK_DSP, T1_COEF_RW_CTL_CFG, 0x0301);
+>  	if (rc < 0)
+> -- 
+> 2.39.2
 > 
-> Using v1 of Rafael's patch makes the message disappear completely.
+> 
 
-Yes, because you have probably the thermal zone polling delay set to 
-zero, thus it fails the first time and does no longer try to set it up 
-again. The V1 is an incomplete fix.
-
-Very likely the problem is in the sensor platform driver, or in the 
-thermal zone description in the device tree which describes a non 
-functional thermal zone.
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Thanks,
+Reviewed-by: Michal Kubiak <michal.kubiak@intel.com>
 
