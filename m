@@ -1,265 +1,149 @@
-Return-Path: <linux-kernel+bounces-239221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9ABC925825
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:16:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91364925822
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B25B28D0E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4D061C21CA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1866B172BC9;
-	Wed,  3 Jul 2024 10:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF4015CD7A;
+	Wed,  3 Jul 2024 10:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5AAsqgY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Em1HEjWf"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3602015B97C;
-	Wed,  3 Jul 2024 10:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B410D15CD55
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720001563; cv=none; b=RFxO0Rqai6vJRmhzCL2VGco13jZyMkf7bdRdUiyP6Qf7qOAYTsf1Ymk6/qFqJwG4xWxOrTHsxiz31iLhlKXL8THF5GAyXTyhxDc69QqCtv4w0svfK7Dxs/3mlN8+yWJtHbfQ296SPm6h1dUSXXhpH50MvJUsWK2rsHT3MWpEuAw=
+	t=1720001660; cv=none; b=QQ9D0nWSHLVZ6s24wzpguFGYLawMhhYT5PZFm7wlIok91dtp5qS+WcHJzhh16mxY9UVEIZAXMmiB4owiYHqNbL435dGNUY0VkGGVlUF/B07bhL0Y6PtSA0h/04echwk5e0skfn2BkZ+U+nW0B2Zyd88eo96aF2PyhbdGM2wRZJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720001563; c=relaxed/simple;
-	bh=AeBjaLoROEWvvXY7IoIQZpq4ONuupJph5GFWwkgjmFw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WHQQjLzRD+06rW2PFZqmTocKW+139NlQ1X8V72TXakCfE2D/RNERXb0iLdb5LsbYvhTAgjlS7BIEGrAtierZwsEs1oieC2Nby9/1MHnLJsijWjZXO//tgVP/xrdEDK9koNTCKHa/+HuvuQLj+I/Ia/THvKzUlIHQnAYquKwD9iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5AAsqgY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9439CC2BD10;
-	Wed,  3 Jul 2024 10:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720001563;
-	bh=AeBjaLoROEWvvXY7IoIQZpq4ONuupJph5GFWwkgjmFw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T5AAsqgYwDg72Lp+eI8rT56dChOdUrJa7DzCPNG7zOjIpB10dLqHUL8veNj0CIvVX
-	 dWrrm8pU66zs8GyCbfUYvunvPLYKh05FAX6nuuJ25iy2x13QxaR+HpdkSCjLWvH8kH
-	 u1PXe1Ef2pLOmllNmPYCraqSE9og0DUR+ICAiWb8Fap/XLiIHF/3PDAWKtKdCBmCeR
-	 yO8u/QW4BfFodq5FsScyapl8mYzgN88QpFFzo5o+h8s0DpkbOg8Q8I7tOedRtNe+Wf
-	 WxxtU/MeMMIzECQEHJdhjbJ68V8aZ2YO/a++EzGWw3Z80AWicJeAAcMJsMeM+HK07t
-	 5+d1eXvDc4vhQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Guo Ren <guoren@kernel.org>
-Subject: [PATCH v12 19/19] fgraph: Skip push operation if no retfunc is registered
-Date: Wed,  3 Jul 2024 19:12:37 +0900
-Message-Id: <172000155761.63468.18000309430070229697.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <172000134410.63468.13742222887213469474.stgit@devnote2>
-References: <172000134410.63468.13742222887213469474.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1720001660; c=relaxed/simple;
+	bh=ADx1HAS6y74RN3UyCopkFwtjf4z/7PUQw7RSzAaLWSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MtxwmI67hVkfHk9nU4vuj4VBClEZFvB1L8sMYGmIe+tWYiBvJa4FxlBE6y9cAfujsc4eXvgblh+lVNGXC7dZVgX9a/NYl84PkJ/YVh7m5y46/3BMBMdHBiZV6KXbUIk6UX19FtY4Uigi6w5SoYFsax+94BglU++rs3F9qqpIMc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Em1HEjWf; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52cdc4d221eso5779223e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:14:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720001657; x=1720606457; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=35ft6uX0wzoy3SKCI7eehotUWy3KQA7aKuUBsAEd3w0=;
+        b=Em1HEjWfh149WDBk3CZqcv2ntr9XlgV6dlSGHDtHMrPXE4QElYlz3tJOoZ9GKqH1vo
+         Scx4EOI2JIhUp4+hBUxc95GV0NtLf+3BIzVbdiGfr6TJhlCGPMB3J5d5f8En5GUtktgH
+         aDWc5V8Q/Gk1O5+JCkt2jGk/LsFpiHPQU1CZNvxQr4oI4OVTFKC/Ka5WXrOM+V4R1nWH
+         iC4etrreWDUfAHnpOjkmsqnh0PUvX838TV6BJKkmoOre/ylgNEGfZQ21CmaGOTAJe846
+         hlpL+a20UeFIYvPsxBcjZan6tyaXSCnNk25f3WGjBhnFRJImex/jNYIAGTWQ6efuGwfb
+         1hNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720001657; x=1720606457;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=35ft6uX0wzoy3SKCI7eehotUWy3KQA7aKuUBsAEd3w0=;
+        b=KGKxgPVXrPV8YRQAmNhqLCK86dnOw6OSwODXfu395+a4BFhlvORszhDqLQMc3xoYTi
+         JHg3wHMfZq1IkDjT/ZDVv5qI6DD51D2lfWg7+fYUYNF2cZ1C5YpyvX5/lBbCMHQJ9T+2
+         TzrT2L6g5lbqMsA12wEm6OUJoQTdByXCTmGNEjGYa5zkqwwK5cwG2peqXE5KJ6T8oG8I
+         fndT99+nuqSzOY92VK7xXPFAsQSY3tLkAAGrj16DN2gCbNldArKz2sQP81bltDLBCCDJ
+         krnhr6yAJjtN98mo5yRV/V7k9XwgOLEimdVPME6k9z+snvB7ss3KQl3nQBpIHj1W2hqT
+         qxIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH1mg3uP9BhkV7Arobp46TtRjUhJp3JbzZKBUsQ5Q0Ha/9paYMt9s8LlKtk4hRe7jesQ5dpaJSo7PPxNFPacwi1U5OJN0gxAawOEbT
+X-Gm-Message-State: AOJu0YxxPsbBxATPZI56hwH1bYsE7nOpLl/BJAzmaouGN4v75rnlHBEw
+	hD218l3R2Mj0kmHXsnCbaT7zGyJjp3I3YBICoJL1J3ybPGgAgmL2/0jzUDYVw+4=
+X-Google-Smtp-Source: AGHT+IHM6seix3s7EN57/yRY5Hq6wvZsORJlQs2WavMTMhJlDE9cOI+tfgp2pF9fgXlOFZudF9NgcQ==
+X-Received: by 2002:a05:6512:114b:b0:52c:e556:b7e4 with SMTP id 2adb3069b0e04-52e82664eddmr8875018e87.15.1720001656901;
+        Wed, 03 Jul 2024 03:14:16 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2ebacsm2117098e87.210.2024.07.03.03.14.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 03:14:16 -0700 (PDT)
+Date: Wed, 3 Jul 2024 13:14:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 4/6] dt-bindings: clock: qcom: Add SM8150 camera clock
+ controller
+Message-ID: <b6nci7iepcoxtdqnrkp3ti3xnm3fxr37q22kqy5wvwapssm3vo@twsyw3cjsruw>
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-4-4baf54ec7333@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702-camcc-support-sm8150-v2-4-4baf54ec7333@quicinc.com>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Tue, Jul 02, 2024 at 09:20:42PM GMT, Satya Priya Kakitapalli wrote:
+> Add device tree bindings for the camera clock controller on
+> Qualcomm SM8150 platform.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  .../bindings/clock/qcom,sm8150-camcc.yaml          |  77 ++++++++++++
+>  include/dt-bindings/clock/qcom,sm8150-camcc.h      | 135 +++++++++++++++++++++
+>  2 files changed, 212 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8150-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8150-camcc.yaml
+> new file mode 100644
+> index 000000000000..8fc27ba4be4b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8150-camcc.yaml
+> @@ -0,0 +1,77 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm8150-camcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Camera Clock & Reset Controller on SM8150
+> +
+> +maintainers:
+> +  - Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> +
+> +description: |
+> +  Qualcomm camera clock control module provides the clocks, resets and
+> +  power domains on SM8150.
+> +
+> +  See also:: include/dt-bindings/clock/qcom,sm8150-camcc.h
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sm8150-camcc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: Camera AHB clock from GCC
 
-Skip push operation only when there is no fgraph_ops which sets retfunc.
+No sleep clock?
 
-This is for optimizing performance of fprobe on fgraph. Since the major
-use case of fprobe is putting a probe on function entry and another
-probe on exit. Since these probes are independent, if user only uses
-fprobe on function entry, we don't need to push a frame information on
-shadow stack.
+> +
 
-Here is the performance improvement results;
 
-Without this:
-kprobe-multi   :    6.265 ± 0.033M/s
-kretprobe-multi:    4.758 ± 0.009M/s
-
-With this:
-kprobe-multi   :    6.377 ± 0.054M/s	+1.79%
-kretprobe-multi:    4.815 ± 0.007M/s	+1.20%
-
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- include/linux/ftrace.h |    1 +
- kernel/trace/fgraph.c  |   33 +++++++++++++++++++++++++--------
- kernel/trace/fprobe.c  |   25 ++++++++++++++++++++++++-
- 3 files changed, 50 insertions(+), 9 deletions(-)
-
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index fabf1a0979d4..d08e5e6e725f 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -1220,6 +1220,7 @@ unsigned long *fgraph_get_task_var(struct fgraph_ops *gops);
- #define FTRACE_RETFUNC_DEPTH 50
- #define FTRACE_RETSTACK_ALLOC_SIZE 32
- 
-+void ftrace_graph_update_flags(void);
- extern int register_ftrace_graph(struct fgraph_ops *ops);
- extern void unregister_ftrace_graph(struct fgraph_ops *ops);
- 
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index cf3ae59a436e..3a23d4e5738c 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -175,6 +175,7 @@ int ftrace_graph_active;
- static struct fgraph_ops *fgraph_array[FGRAPH_ARRAY_SIZE];
- static unsigned long fgraph_array_bitmask;
- static bool fgraph_skip_timestamp;
-+static bool fgraph_skip_all;
- 
- /* LRU index table for fgraph_array */
- static int fgraph_lru_table[FGRAPH_ARRAY_SIZE];
-@@ -349,6 +350,9 @@ void *fgraph_reserve_data(int idx, int size_bytes)
- 	int curr_ret_stack = current->curr_ret_stack;
- 	int data_size;
- 
-+	if (unlikely(fgraph_skip_all))
-+		return NULL;
-+
- 	if (size_bytes > FGRAPH_MAX_DATA_SIZE)
- 		return NULL;
- 
-@@ -632,9 +636,11 @@ int function_graph_enter_regs(unsigned long ret, unsigned long func,
- 	trace.func = func;
- 	trace.depth = ++current->curr_ret_depth;
- 
--	offset = ftrace_push_return_trace(ret, func, frame_pointer, retp, 0);
--	if (offset < 0)
--		goto out;
-+	if (likely(!fgraph_skip_all)) {
-+		offset = ftrace_push_return_trace(ret, func, frame_pointer, retp, 0);
-+		if (offset < 0)
-+			goto out;
-+	}
- 
- #ifdef CONFIG_HAVE_STATIC_CALL
- 	if (static_branch_likely(&fgraph_do_direct)) {
-@@ -665,6 +671,8 @@ int function_graph_enter_regs(unsigned long ret, unsigned long func,
- 				current->curr_ret_stack = save_curr_ret_stack;
- 		}
- 	}
-+	if (unlikely(fgraph_skip_all))
-+		goto out;
- 
- 	if (!bitmap)
- 		goto out_ret;
-@@ -1254,6 +1262,7 @@ static void ftrace_graph_disable_direct(bool disable_branch)
- 
- static void update_fgraph_skip_timestamp(void)
- {
-+	bool skip_all = true, skip_ts = true;
- 	int i;
- 
- 	for (i = 0; i < FGRAPH_ARRAY_SIZE; i++) {
-@@ -1262,12 +1271,20 @@ static void update_fgraph_skip_timestamp(void)
- 		if (gops == &fgraph_stub)
- 			continue;
- 
--		if (!gops->skip_timestamp) {
--			fgraph_skip_timestamp = false;
--			return;
--		}
-+		if (!gops->skip_timestamp)
-+			skip_ts = false;
-+		if (gops->retfunc)
-+			skip_all = false;
- 	}
--	fgraph_skip_timestamp = true;
-+	fgraph_skip_timestamp = skip_ts;
-+	fgraph_skip_all = skip_all;
-+}
-+
-+void ftrace_graph_update_flags(void)
-+{
-+	mutex_lock(&ftrace_lock);
-+	update_fgraph_skip_timestamp();
-+	mutex_unlock(&ftrace_lock);
- }
- 
- int register_ftrace_graph(struct fgraph_ops *gops)
-diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-index b108d26d7ee5..188a38ac3153 100644
---- a/kernel/trace/fprobe.c
-+++ b/kernel/trace/fprobe.c
-@@ -42,6 +42,9 @@ static struct hlist_head fprobe_table[FPROBE_TABLE_SIZE];
- static struct hlist_head fprobe_ip_table[FPROBE_IP_TABLE_SIZE];
- static DEFINE_MUTEX(fprobe_mutex);
- 
-+/* Count the number of fprobe which has the exit_handler. */
-+static int fprobe_nr_exit_handlers;
-+
- /*
-  * Find first fprobe in the hlist. It will be iterated twice in the entry
-  * probe, once for correcting the total required size, the second time is
-@@ -344,11 +347,18 @@ NOKPROBE_SYMBOL(fprobe_return);
- 
- static struct fgraph_ops fprobe_graph_ops = {
- 	.entryfunc	= fprobe_entry,
--	.retfunc	= fprobe_return,
-+	/* retfunc is set only if any fprobe.exit_handler is set. */
- 	.skip_timestamp = true,
- };
- static int fprobe_graph_active;
- 
-+static void fprobe_graph_switch_retfunc(bool enable)
-+{
-+	fprobe_graph_ops.retfunc = enable ? fprobe_return : NULL;
-+	if (fprobe_graph_active)
-+		ftrace_graph_update_flags();
-+}
-+
- /* Add @addrs to the ftrace filter and register fgraph if needed. */
- static int fprobe_graph_add_ips(unsigned long *addrs, int num)
- {
-@@ -480,6 +490,8 @@ static int fprobe_init(struct fprobe *fp, unsigned long *addrs, int num)
- 	size = ALIGN(fp->entry_data_size, sizeof(long));
- 	if (size > MAX_FPROBE_DATA_SIZE)
- 		return -E2BIG;
-+	if (!fp->exit_handler && size)
-+		return -EINVAL;
- 	fp->entry_data_size = size;
- 
- 	hlist_array = kzalloc(struct_size(hlist_array, array, num), GFP_KERNEL);
-@@ -564,6 +576,11 @@ int register_fprobe_ips(struct fprobe *fp, unsigned long *addrs, int num)
- 
- 	mutex_lock(&fprobe_mutex);
- 
-+	if (fp->exit_handler) {
-+		fprobe_nr_exit_handlers++;
-+		if (fprobe_nr_exit_handlers == 1)
-+			fprobe_graph_switch_retfunc(true);
-+	}
- 	hlist_array = fp->hlist_array;
- 	ret = fprobe_graph_add_ips(addrs, num);
- 	if (!ret) {
-@@ -653,6 +670,12 @@ int unregister_fprobe(struct fprobe *fp)
- 	}
- 	del_fprobe_hash(fp);
- 
-+	if (fp->exit_handler) {
-+		fprobe_nr_exit_handlers--;
-+		if (!fprobe_nr_exit_handlers)
-+			fprobe_graph_switch_retfunc(false);
-+	}
-+
- 	if (count)
- 		fprobe_graph_remove_ips(addrs, count);
- 
-
+-- 
+With best wishes
+Dmitry
 
