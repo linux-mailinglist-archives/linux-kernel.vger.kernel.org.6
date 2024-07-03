@@ -1,132 +1,146 @@
-Return-Path: <linux-kernel+bounces-239452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0BE926040
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:26:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27CC2926054
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35579B2D1A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:22:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8FDDB2FFE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03CB17967A;
-	Wed,  3 Jul 2024 12:22:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DD2170836;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BE5178360;
+	Wed,  3 Jul 2024 12:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4w1z5JB"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561CC85298;
 	Wed,  3 Jul 2024 12:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720009326; cv=none; b=U6zj5KqprfpY+EhQNyENymP5dybWeSALcuqCGXECz2LvBPEdlBn7Lhc7wrA52+RdqGpAJCBZVbXZotCi8NDmtQw2qdCoXt7V7aPICn75dMfebsd2WwbPL2gsrSmydJwPEcSsq/40P3D5EAayjXZr+BMsJE2/Cs+8eq/VwfZnIQE=
+	t=1720009324; cv=none; b=ZmVKXxRGNaqgXTnW8FeX4wq/fLW7ce9ASS0r5ecsQb74PL3GZYbs1P7gj69vI++f+/FmbNHjE0Onq7qKSUIT7p0AKDcGVJQKwFuC4dg378rijYkQUfiA+cf9daGBJwvI6iaYMM+vxYs+N/3focGqSwZKfn9lTrXWvtJ6kNBwkYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720009326; c=relaxed/simple;
-	bh=vYuco9/NSRpqebQ4mYUp/0sTq0aoO3JjDyeQJOZxcqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gN4fa1LmimKXZFyT08WDq5IiYMVETjeD5FN2cHTaNzwFEEZMNCHVkMeiI7KIYO69opxr6IbBsQXPZm82YepUvxJXVYtPIlCDZiE2Py3/TPb1gQJUWZ0fHU6a9vhXpk4Aw3kKlGPTg8e/+CCCsPDF9bZ2RS21TN1u6z3STXs8aiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0FA3367;
-	Wed,  3 Jul 2024 05:22:27 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 079283F766;
-	Wed,  3 Jul 2024 05:21:54 -0700 (PDT)
-Date: Wed, 3 Jul 2024 13:21:52 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>, Saravana
- Kannan <saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Tony Lindgren <tony@atomide.com>, Bjorn Andersson
- <andersson@kernel.org>, Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Krzysztof Kozlowski
- <krzk@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas
- Gleixner <tglx@linutronix.de>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan
- Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Richard
- Leitner <richard.leitner@linux.dev>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
- <naveen.n.rao@linux.ibm.com>, Damien Le Moal <dlemoal@kernel.org>, "Peng
- Fan (OSS)" <peng.fan@oss.nxp.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, llvm@lists.linux.dev,
- linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-usb@vger.kernel.org, patches@opensource.cirrus.com,
- linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 04/20] clk: sunxi: clk-simple-gates: convert to
- of_property_for_each_u32_new()
-Message-ID: <20240703132152.6c306a48@donnerap.manchester.arm.com>
-In-Reply-To: <20240703-of_property_for_each_u32-v1-4-42c1fc0b82aa@bootlin.com>
-References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
-	<20240703-of_property_for_each_u32-v1-4-42c1fc0b82aa@bootlin.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1720009324; c=relaxed/simple;
+	bh=m4n82d0J3T8685flgzkuvY6d+GsiP8d6MyWa3RazyGM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ot4GJiiZQz2A2XFhqX1gUyqtzU/EAl9e205fOCVxdIn/TCZ+FxEXC99uaLiTAS0j76lA1mmI7ubZocQuMknUKHnkRTsiwJchIAocnSMUc0y6N6G+0qdp08UU+sJC6EpLPDd5U3aKOoXXTmpUyYzqBNa+tJt74+Ouev5nEjotShw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j4w1z5JB; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-1fa2ea1c443so40291015ad.0;
+        Wed, 03 Jul 2024 05:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720009322; x=1720614122; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KUmNJmYy7NJ6Dze7UhH2LVbEnF29e+6mD1oyuBQ6Egk=;
+        b=j4w1z5JB8ICqmeD0b4W3tMu5KHTVtlts4AS48fpMdz84uceQsGSLfZjDDOHj68uoOY
+         8xF5aDRsZO/wQWNE/jnf+U7slrHK7R0IMdLIVcEkDpWGT7tjmJm3jR04diLRxXkjgfR6
+         T7mMJPPDAK2z7YhWbXXpQyP6p/ItJ3mPeCyrDgl+IabzDTLuhlSKJP35IeaCBDufQ5Ss
+         FxKcfovhWJQLCm5wkl72TDvIUzn/1shInoO7/33dz36vdRGTVXxeI33vQ5qIkecoamhL
+         A38M9M6tBZhmk5AiBCLph4UqR0pUb0gaqEohTELUvHGZUMuU8fLoVtN1Y+GVlQriM6ml
+         bp4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720009322; x=1720614122;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KUmNJmYy7NJ6Dze7UhH2LVbEnF29e+6mD1oyuBQ6Egk=;
+        b=lmJjWjzU/Ox+S/1p3GF8buD+ZbkULg18J+FYWro4PbKYxzeKitjTPU30PSq9KhPpNH
+         WHy6ZY7/vBUpIDF39EIXRlviqu3TzXW6jF/DNON+FCm6KQav1MUpw19EKMzAxUNMp1LS
+         JTs1l0oBGL5zt3djaG0bRt/iuIrCFIe5coo2ek7mWwaNaBwdS7P2tl6nqV+SMElHmSEM
+         nss21FuOJq2KoGPJIV73/afyMAYmszghzwvLL/RybGtb/ZwqFNIIp46wD0Zwv8Wb53wi
+         RwKEAK4Xin4e0CEfV+vmdTQvJl8qK6D5yfevYXhYq2qU74aKKPQNUUzotFsJLBzlHVD4
+         3rSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWsGz9fX1ueOw4Qkzk2jYUkvt7g45T+7XmVJ9KcPI5jfboUriEQf8qkJper26/y8zU8iRBdwOBrYi5Jw5OllQmIPRk3YyeMDCRC3u4/kaqMrGODm/d1zSwRHFQyM2Jgfsr1bTqchWb3AYd4GfzQeIjiTj0+z6+uRUS
+X-Gm-Message-State: AOJu0YwmWSEA6ZKpa4AwViZB/zZzNDZjTNgjuRbi1EIq3hVMIC4fl4sJ
+	NuWnUbu0NhgwMNAKilDem5rufldJhMAR15QHUZrR9Nik/Z3fy/EQ
+X-Google-Smtp-Source: AGHT+IHFhpUsM+UjoIZsvc9abfXBBwVr4Pvy2R6DexEfQuaMWZGPVsyFvMSpNFqyTQepijGjgMqDtw==
+X-Received: by 2002:a17:903:18d:b0:1fa:f9e1:5d33 with SMTP id d9443c01a7336-1faf9e15e0amr32122215ad.50.1720009322425;
+        Wed, 03 Jul 2024 05:22:02 -0700 (PDT)
+Received: from localhost.localdomain ([240e:604:203:6020:9d53:3114:91d1:7a47])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb24fbd598sm3616985ad.199.2024.07.03.05.21.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 05:22:01 -0700 (PDT)
+From: Fred Li <dracodingfly@gmail.com>
+To: pabeni@redhat.com
+Cc: aleksander.lobakin@intel.com,
+	andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	davem@davemloft.net,
+	dracodingfly@gmail.com,
+	edumazet@google.com,
+	haoluo@google.com,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@weissschuh.net,
+	martin.lau@linux.dev,
+	mkhalfella@purestorage.com,
+	nbd@nbd.name,
+	netdev@vger.kernel.org,
+	sashal@kernel.org,
+	sdf@google.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	herbert@gondor.apana.org.au
+Subject: Re: [PATCH v2 1/2] net: Fix skb_segment when splitting gso_size mangled skb having linear-headed frag_list whose head_frag=true
+Date: Wed,  3 Jul 2024 20:21:53 +0800
+Message-Id: <20240703122153.25381-1-dracodingfly@gmail.com>
+X-Mailer: git-send-email 2.32.1 (Apple Git-133)
+In-Reply-To: <fd44c91884d0ebf3625ac85a1049679a987f8f79.camel@redhat.com>
+References: <fd44c91884d0ebf3625ac85a1049679a987f8f79.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 03 Jul 2024 12:36:48 +0200
-Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+> I must admit I more than a bit lost in the many turns of skb_segment(),
+> but the above does not look like the correct solution, as it will make
+> the later BUG_ON() unreachable/meaningless.
 
-> Simplify code using of_property_for_each_u32_new() as the two additional
-> parameters in of_property_for_each_u32() are not used here.
+Sorry, the subsequent BUG_ON maybe should be removed in this patch, because
+for skb_headlen(list_skb) > len, it will continue splitting as commit 13acc94eff122 
+(net: permit skb_segment on head_frag frag_list skb) does.
+
 > 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-
-Cheers,
-Andre
-
-> ---
->  drivers/clk/sunxi/clk-simple-gates.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> Do I read correctly that when the BUG_ON() triggers:
 > 
-> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
-> index 0399627c226a..a30d14937e0b 100644
-> --- a/drivers/clk/sunxi/clk-simple-gates.c
-> +++ b/drivers/clk/sunxi/clk-simple-gates.c
-> @@ -21,11 +21,9 @@ static void __init sunxi_simple_gates_setup(struct device_node *node,
->  {
->  	struct clk_onecell_data *clk_data;
->  	const char *clk_parent, *clk_name;
-> -	struct property *prop;
->  	struct resource res;
->  	void __iomem *clk_reg;
->  	void __iomem *reg;
-> -	const __be32 *p;
->  	int number, i = 0, j;
->  	u8 clk_bit;
->  	u32 index;
-> @@ -47,7 +45,7 @@ static void __init sunxi_simple_gates_setup(struct device_node *node,
->  	if (!clk_data->clks)
->  		goto err_free_data;
->  
-> -	of_property_for_each_u32(node, "clock-indices", prop, p, index) {
-> +	of_property_for_each_u32_new(node, "clock-indices", index) {
->  		of_property_read_string_index(node, "clock-output-names",
->  					      i, &clk_name);
->  
+> list_skb->len is 125
+> len is 75
+> list_skb->frag_head is true
+>
+
+yes, it's correct.
+list_skb->len is 125
+gso_size is 75, also the len in the BUG_ON conditon
+list_skb->head_frag is true
+ 
+> It looks like skb_segment() is becoming even and ever more complex to
+> cope with unexpected skb layouts, only possibly when skb_segment() is
+> called by some BPF helpers.
 > 
+> Thanks,
+> 
+> Paolo
+
+I'll wait for more suggestions from others.
+
+Thanks
+
+Fred Li
+
 
 
