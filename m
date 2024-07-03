@@ -1,272 +1,158 @@
-Return-Path: <linux-kernel+bounces-239022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9319254FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:59:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9800D9254FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42774284076
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:59:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13D101F25F20
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BFB139D0B;
-	Wed,  3 Jul 2024 07:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k30EFauw"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D200813958C;
+	Wed,  3 Jul 2024 07:59:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F1B137C34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E3C13791F
 	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719993545; cv=none; b=BzvqLrReIhZ3+Q4nt65i0JmDvZ0U/K9LaIgMyJ/BdLDCYVI2v9lIKU3XEOpS+HeTLR73TZ9pOdXG5uQjUqsAxeohnQlTBNiKe9PjPqQ8fBBvseBoRifgTJGdqacwfIe/uO9oPBZIxNhCMqV1KrMU7EwvBUQ7Gb05jM8gq99b0fU=
+	t=1719993545; cv=none; b=mn8iW8QSfmtLrZIiQBsEITVP6wHiehqHkhNl9Qp8q2tY+TFMv/aKknWUeqc5T2QgUuu1Pp6Y1RloCkh+KjWL0LbFKG8byfYqxSYXwXMLjRRANmEaVdGHx32tzziAiLrUDZl29keBgdlu3S6sX9KcHE8BiX5Pq8fg96VfI+613Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719993545; c=relaxed/simple;
-	bh=h7Yrb6B/9WCz9wGWvlJ65Yk1BK6g7vMoqfDKwnLoCxc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=icnnT6GOw59zdmEr8aq5jkV3G6zowQE9zOQtNnUA5MNs751cAegu2crQv7hCcYTxiORD8J6LemrKiOO9wQzNJED4Y+B/JSGjVQoC+sUY6RGgDj+ckencHEbzOcX+9zKBIZKmH18/x4g825yGjWcUYiChfW0DAdM6mU8e86nrna4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k30EFauw; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-48f4709e146so1905391137.1
+	bh=ctwAXw63syGVsiHuw0ufkQ8ZHLQHFEJy8pvxsdX9RdQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EuxXjtfMW+HSkSKWZNgQVG5BdODzr3YTtj8MHkAzeNne+74eg1hsByif250G5VR5iuRieYuW7TF5eLmQYAbemTSftNpsqV9Z+wTeveFREguSHO303eNU8uD7O19ABc02ib+oyumv3oju/XnKu4HhWqsITLjJAU9rGyxrxKAvmIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f3d2fd6ad6so580682139f.1
         for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 00:59:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719993543; x=1720598343; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7oOEaDaVIDbOn6sqUGIDZZUmg9qCJEMQzuMTK1E7NRU=;
-        b=k30EFauwH2SJ9QTVNwnwu0IDARw/RaTL0CM6MTBmFbD1Q+BoF3h3COcmzKbJCrfwNs
-         YqkUZB3ifOkq1HABQcMu7Ecjv3FeUP/18gyyUKVk7JxLMmuzG3AGGjF2WgIwEO2ry1ut
-         g2H2lsd1uayURfnRPztM3qkzSn8OpVl0e6dOOflJZIyk6iSKZ9bgatvABOPIRiUWiqmh
-         V4efZFFl7YYXPoXqDj7+QOkxcjKLi6o5r9zwe5sen6Qu/4mEzO2aK8q9o9hsR1zyvOsr
-         rftYsqPgEZt3HUKLgQU2J4MRNBWTTvTG7U2fa/MHKoh/t2QwG7MCS6QhigZH9ZoAf1nK
-         rpVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1719993543; x=1720598343;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7oOEaDaVIDbOn6sqUGIDZZUmg9qCJEMQzuMTK1E7NRU=;
-        b=lQntHI5skxkQo98s7rCM4DsTzJ1FPgTXpsW0xm7d9zfVEbbNwEiBEwXGjfH8zccYFT
-         O3/Z4PFnmDfWjWBSPQsyEYyW9HKsosU/K80TugR+TdvPASSCkynF5/gjvaklaJQT2Sgz
-         lS6aUeW6euHsemBWZ9asuYG4mJsJJ2YKZZuobNlhOfoJcVhaPFL1paLEuI4r+QNZVaZE
-         YVY/7rUelIxos3+14UfQtcNMTOo06vxRFsw2QVoHEL/jmt5lm/Poe4YAhSUOxsDe7ajL
-         RiJLB68FyEkvgMXygYNaoajG39GnkCZBrE7G4Hdvw/qPsGkk1blC5C5K4ERe9cf3AUTq
-         BVMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvMdFHiNsQlAbmXRZYbe8Q0Wghs/wtRLBIGznq+EKQnfwMaNRJrCnyEoga+WN/5n16ultMFn1HUZ2+6vIlwiJTQRrRfWbNCmJ+D8u4
-X-Gm-Message-State: AOJu0YzxgyEupk/kQSiCXGdah1n1y4XPFILZBnk+xAZH5uyAddvx343+
-	pbMZpAR8IzfVfVn/18VZT4H0PHt35qGCRBT/Xhri5bcVnIqa6evfxVTD2z3TtTttFRUa0dO0GC8
-	Iil62anvmfWRRdSdjR/CVNnDw0n8=
-X-Google-Smtp-Source: AGHT+IFXK/irsf1uyNZnKDY/lrCaJrz0BT6iTgx6f00MO63ps1kd7o0Ttcd9faPqG3PichjEok0Gg9NILYA+BGinlJc=
-X-Received: by 2002:a67:f486:0:b0:48f:4778:929d with SMTP id
- ada2fe7eead31-48faf140af3mr12914156137.27.1719993542664; Wed, 03 Jul 2024
- 00:59:02 -0700 (PDT)
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g5sRen1boiDRBnVM1/vjjXqoEqZQkJQ//9Z2zKOkZLg=;
+        b=lB49JFVw52oHNiF+fm1SNZvLRt7/Pm/FFjkA7Wmf8PJLQj1W3LpgaLYnOUViyinHyQ
+         pP+l4+ZWjIxlzqGfn2BnxSwnYcd6mnowtuow6Zwy+TAnQMJOn/6sJqLhFSzOsFr1A6Il
+         be8zKODt7b1GaTVwBsvUAatTo/2QS4MvcgRDzOaTuVu3Saw3JMYJre8r92nQYEa8TS74
+         q2zvEYsv1Kd9jFw3CME9BKsVa1XfjaSXImz6hitz37+4ZLPJIOwuF1tlLG7NsM95vH/V
+         M5+9Z2kJkrrQez3Ijj3Kzh8+icpMcwf9um9WAHDbFenR1BYvWRMs3WXxYrEVtaxxBpu4
+         Omfw==
+X-Gm-Message-State: AOJu0YymCbg1yDhyTuT5TBCEgJGLvFoIF8oBpkmo+L2AYo1s74hDLTaj
+	tzkJABpgWBRZa8K5GCNY2nWu9y0twU57rBtXUfVu+q7TMkjFKn2YFZ86fybyTSO1IkoRLphYrBV
+	7KNgpHw0oL7oJfacPb3r6N0AEBWCNJPCHKSFWON2sZp71NosXPK2loDE=
+X-Google-Smtp-Source: AGHT+IEyQ0jo0NZZ7/qwzTXqOTitt7dSWt7El2ekAvOYCjV8jYSaUF5fiWKx+mPo2NBzj7Vo4omBba8aMNt8+hevCeEOyCXvh6K0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240629111010.230484-1-21cnbao@gmail.com> <87ikxnj8az.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87ikxnj8az.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 3 Jul 2024 19:58:51 +1200
-Message-ID: <CAGsJ_4y7=b9gzKynXnT7rKd4nJ+m+POhMhmGMPKz37o_knpu6g@mail.gmail.com>
-Subject: Re: [PATCH RFC v4 0/2] mm: support mTHP swap-in for zRAM-like swapfile
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org, 
-	david@redhat.com, hannes@cmpxchg.org, kasong@tencent.com, 
-	linux-kernel@vger.kernel.org, mhocko@suse.com, nphamcs@gmail.com, 
-	ryan.roberts@arm.com, shy828301@gmail.com, surenb@google.com, 
-	kaleshsingh@google.com, hughd@google.com, v-songbaohua@oppo.com, 
-	willy@infradead.org, xiang@kernel.org, yosryahmed@google.com, 
-	baolin.wang@linux.alibaba.com, shakeel.butt@linux.dev, 
-	senozhatsky@chromium.org, minchan@kernel.org
+X-Received: by 2002:a05:6602:1614:b0:7f3:d924:8618 with SMTP id
+ ca18e2360f4ac-7f62ed69089mr70984039f.0.1719993542917; Wed, 03 Jul 2024
+ 00:59:02 -0700 (PDT)
+Date: Wed, 03 Jul 2024 00:59:02 -0700
+In-Reply-To: <20240703072541.643035-2-radoslaw.zielonek@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000244dcc061c53341e@google.com>
+Subject: Re: [syzbot] [bpf?] [mm?] INFO: rcu detected stall in sys_clone (8)
+From: syzbot <syzbot+c4c6c3dc10cc96bcf723@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, radoslaw.zielonek@gmail.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 3, 2024 at 6:33=E2=80=AFPM Huang, Ying <ying.huang@intel.com> w=
-rote:
->
+Hello,
 
-Ying, thanks!
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: rcu detected stall in pipe_write
 
-> Barry Song <21cnbao@gmail.com> writes:
->
-> > From: Barry Song <v-songbaohua@oppo.com>
-> >
-> > In an embedded system like Android, more than half of anonymous memory =
-is
-> > actually stored in swap devices such as zRAM. For instance, when an app
-> > is switched to the background, most of its memory might be swapped out.
-> >
-> > Currently, we have mTHP features, but unfortunately, without support
-> > for large folio swap-ins, once those large folios are swapped out,
-> > we lose them immediately because mTHP is a one-way ticket.
->
-> No exactly one-way ticket, we have (or will have) khugepaged.  But I
-> admit that it may be not good enough for you.
+rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { 0-...D } 2685 jiffies s: 1749 root: 0x1/.
+rcu: blocking rcu_node structures (internal RCU debug):
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 5372 Comm: syz-executor.0 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:32 [inline]
+RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:67 [inline]
+RIP: 0010:arch_local_irq_save arch/x86/include/asm/irqflags.h:103 [inline]
+RIP: 0010:lock_acquire+0x17e/0x530 kernel/locking/lockdep.c:5750
+Code: 4c 89 fb 48 c1 eb 03 42 80 3c 2b 00 74 08 4c 89 ff e8 d6 a7 86 00 48 c7 84 24 80 00 00 00 00 00 00 00 9c 8f 84 24 80 00 00 00 <42> 80 3c 2b 00 74 08 4c 89 ff e8 c3 a6 86 00 48 8d 5c 24 60 4c 8b
+RSP: 0018:ffffc90000007b20 EFLAGS: 00000046
+RAX: 0000000000000000 RBX: 1ffff92000000f74 RCX: ffffffff8171b8f4
+RDX: 0000000000000000 RSI: ffffffff8bfec3a0 RDI: ffffffff8bfec360
+RBP: ffffc90000007c68 R08: ffffffff8f8638ef R09: 1ffffffff1f0c71d
+R10: dffffc0000000000 R11: fffffbfff1f0c71e R12: 1ffff92000000f6c
+R13: dffffc0000000000 R14: 0000000000000000 R15: ffffc90000007ba0
+FS:  0000555559d06480(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c0000ab000 CR3: 000000004ddde000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <IRQ>
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ advance_sched+0xab/0xca0 net/sched/sch_taprio.c:924
+ __run_hrtimer kernel/time/hrtimer.c:1692 [inline]
+ __hrtimer_run_queues+0x595/0xd00 kernel/time/hrtimer.c:1756
+ hrtimer_interrupt+0x396/0x990 kernel/time/hrtimer.c:1818
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
+ __sysvec_apic_timer_interrupt+0x107/0x3a0 arch/x86/kernel/apic/apic.c:1049
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1043
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:finish_task_switch+0x1ea/0x870 kernel/sched/core.c:5284
+Code: c9 50 e8 c9 cc 0b 00 48 83 c4 08 4c 89 f7 e8 1d 38 00 00 0f 1f 44 00 00 4c 89 f7 e8 b0 ec 13 0a e8 db 58 36 00 fb 48 8b 5d c0 <48> 8d bb f0 15 00 00 48 89 f8 48 c1 e8 03 49 be 00 00 00 00 00 fc
+RSP: 0018:ffffc90004d9f608 EFLAGS: 00000286
+RAX: 0cc8c24fa40d4e00 RBX: ffff88807b770000 RCX: ffffffff944ba603
+RDX: dffffc0000000000 RSI: ffffffff8baac1e0 RDI: ffffffff8bfec3c0
+RBP: ffffc90004d9f650 R08: ffffffff8f8638ef R09: 1ffffffff1f0c71d
+R10: dffffc0000000000 R11: fffffbfff1f0c71e R12: 1ffff11017287e17
+R13: dffffc0000000000 R14: ffff8880b943e340 R15: ffff8880b943f0b8
+ context_switch kernel/sched/core.c:5413 [inline]
+ __schedule+0x17db/0x4a20 kernel/sched/core.c:6737
+ preempt_schedule_common+0x84/0xd0 kernel/sched/core.c:6916
+ preempt_schedule+0xe1/0xf0 kernel/sched/core.c:6940
+ preempt_schedule_thunk+0x1a/0x30 arch/x86/entry/thunk_64.S:12
+ __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+ _raw_spin_unlock_irqrestore+0x130/0x140 kernel/locking/spinlock.c:194
+ spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
+ __wake_up_common_lock+0x18c/0x1e0 kernel/sched/wait.c:108
+ pipe_write+0x128d/0x1a40 fs/pipe.c:602
+ call_write_iter include/linux/fs.h:2108 [inline]
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa84/0xcb0 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_64+0xfb/0x240
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+RIP: 0033:0x7f1049e7cbef
+Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 b9 80 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 0c 81 02 00 48
+RSP: 002b:00007ffd35cde690 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f1049e7cbef
+RDX: 000000000000000c RSI: 00007ffd35cde780 RDI: 00000000000000f8
+RBP: 00007ffd35cde71c R08: 0000000000000000 R09: 00007f104ab390b0
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000032
+R13: 0000000000017c34 R14: 0000000000017c2c R15: 0000000000000004
+ </TASK>
 
-That's right. From what I understand, khugepaged currently only supports PM=
-D THP
-till now?
-Moreover, I have concerns that khugepaged might not be suitable for
-all mTHPs for
-the following reasons:
 
-1. The lifecycle of mTHP might not be that long. We paid the cost for
-the collapse,
-but it could swap-out just after that. We expect THP to be durable and
-not become
-obsolete quickly, given the significant amount of money we spent on it.
+Tested on:
 
-2. mTHP's size might not be substantial enough for a collapse. For
-example, if we can
-find an effective method, such as Yu's TAO or others, we can achieve a
-high success
-rate in mTHP allocations at a minimal cost rather than depending on
-compaction/collapse.
+commit:         fe46a7dd Merge tag 'sound-6.9-rc1' of git://git.kernel..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=12b491be980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2bf01fac005fe0a9
+dashboard link: https://syzkaller.appspot.com/bug?extid=c4c6c3dc10cc96bcf723
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12de23c6980000
 
-3. It could be a significant challenge to manage the collapse - unmap,
-and map processes
-in relation to the power consumption of phones considering the number
-of mTHP could
-be much larger than PMD-mapped THP. This behavior could be quite often.
-
->
-> > This is unacceptable and reduces mTHP to merely a toy on systems
-> > with significant swap utilization.
->
-> May be true in your systems.  May be not in some other systems.
-
-I agree that this isn't a concern for systems without significant
-swapout and swapin activity.
-However, on Android, where we frequently switch between applications
-like YouTube,
-Chrome, Zoom, WeChat, Alipay, TikTok, and others, swapping could occur
-throughout the
-day :-)
-
->
-> > This patch introduces mTHP swap-in support. For now, we limit mTHP
-> > swap-ins to contiguous swaps that were likely swapped out from mTHP as
-> > a whole.
-> >
-> > Additionally, the current implementation only covers the SWAP_SYNCHRONO=
-US
-> > case. This is the simplest and most common use case, benefiting million=
-s
->
-> I admit that Android is an important target platform of Linux kernel.
-> But I will not advocate that it's MOST common ...
-
-Okay, I understand that there are still many embedded systems similar
-to Android, even if
-they are not Android :-)
-
->
-> > of Android phones and similar devices with minimal implementation
-> > cost. In this straightforward scenario, large folios are always exclusi=
-ve,
-> > eliminating the need to handle complex rmap and swapcache issues.
-> >
-> > It offers several benefits:
-> > 1. Enables bidirectional mTHP swapping, allowing retrieval of mTHP afte=
-r
-> >    swap-out and swap-in.
-> > 2. Eliminates fragmentation in swap slots and supports successful THP_S=
-WPOUT
-> >    without fragmentation. Based on the observed data [1] on Chris's and=
- Ryan's
-> >    THP swap allocation optimization, aligned swap-in plays a crucial ro=
-le
-> >    in the success of THP_SWPOUT.
-> > 3. Enables zRAM/zsmalloc to compress and decompress mTHP, reducing CPU =
-usage
-> >    and enhancing compression ratios significantly. We have another patc=
-hset
-> >    to enable mTHP compression and decompression in zsmalloc/zRAM[2].
-> >
-> > Using the readahead mechanism to decide whether to swap in mTHP doesn't=
- seem
-> > to be an optimal approach. There's a critical distinction between pagec=
-ache
-> > and anonymous pages: pagecache can be evicted and later retrieved from =
-disk,
-> > potentially becoming a mTHP upon retrieval, whereas anonymous pages mus=
-t
-> > always reside in memory or swapfile. If we swap in small folios and ide=
-ntify
-> > adjacent memory suitable for swapping in as mTHP, those pages that have=
- been
-> > converted to small folios may never transition to mTHP. The process of
-> > converting mTHP into small folios remains irreversible. This introduces
-> > the risk of losing all mTHP through several swap-out and swap-in cycles=
-,
-> > let alone losing the benefits of defragmentation, improved compression
-> > ratios, and reduced CPU usage based on mTHP compression/decompression.
->
-> I understand that the most optimal policy in your use cases may be
-> always swapping-in mTHP in highest order.  But, it may be not in some
-> other use cases.  For example, relative slow swap devices, non-fault
-> sub-pages swapped out again before usage, etc.
->
-> So, IMO, the default policy should be the one that can adapt to the
-> requirements automatically.  For example, if most non-fault sub-pages
-> will be read/written before being swapped out again, we should swap-in
-> in larger order, otherwise in smaller order.  Swap readahead is one
-> possible way to do that.  But, I admit that this may not work perfectly
-> in your use cases.
->
-> Previously I hope that we can start with this automatic policy that
-> helps everyone, then check whether it can satisfy your requirements
-> before implementing the optimal policy for you.  But it appears that you
-> don't agree with this.
->
-> Based on the above, IMO, we should not use your policy as default at
-> least for now.  A user space interface can be implemented to select
-> different swap-in order policy similar as that of mTHP allocation order
-> policy.  We need a different policy because the performance characters
-> of the memory allocation is quite different from that of swap-in.  For
-> example, the SSD reading could be much slower than the memory
-> allocation.  With the policy selection, I think that we can implement
-> mTHP swap-in for non-SWAP_SYNCHRONOUS too.  Users need to know what they
-> are doing.
-
-Agreed. Ryan also suggested something similar before.
-Could we add this user policy by:
-
-/sys/kernel/mm/transparent_hugepage/hugepages-<size>/swapin_enabled
-which could be 0 or 1, I assume we don't need so many "always inherit
-madvise never"?
-
-Do you have any suggestions regarding the user interface?
-
->
-> > Conversely, in deploying mTHP on millions of real-world products with t=
-his
-> > feature in OPPO's out-of-tree code[3], we haven't observed any signific=
-ant
-> > increase in memory footprint for 64KiB mTHP based on CONT-PTE on ARM64.
-> >
-> > [1] https://lore.kernel.org/linux-mm/20240622071231.576056-1-21cnbao@gm=
-ail.com/
-> > [2] https://lore.kernel.org/linux-mm/20240327214816.31191-1-21cnbao@gma=
-il.com/
-> > [3] OnePlusOSS / android_kernel_oneplus_sm8550
-> > https://github.com/OnePlusOSS/android_kernel_oneplus_sm8550/tree/oneplu=
-s/sm8550_u_14.0.0_oneplus11
-> >
->
-> [snip]
->
-> --
-> Best Regards,
-> Huang, Ying
-
-Thanks
-Barry
 
