@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-238745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28659924F79
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:24:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9820924F7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D496F28652D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:24:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7462428C142
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9725B49655;
-	Wed,  3 Jul 2024 03:19:51 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40F97E59A;
+	Wed,  3 Jul 2024 03:19:56 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ABF3B298
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 03:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A9F61FEB
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 03:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719976791; cv=none; b=D1JSd6rBoOr3gRNNgmkECpKLa9/Op2Fv30FIULTO0mQ4TDATTOgyHRq/NE/137p98/uYp+QnBsRDUmHKtu2WLT0zmob5JM61eANiCM2IY4ALpPq/wil6X/Vk6B/lwvhPuTjWHbwvW2dnZO1RWsuFw4LG8zxBXFfCf8revBRIxak=
+	t=1719976796; cv=none; b=p867pECSz8AfWv8leNrvRWe2rE2jlMW7sG9+u9sCkwFGmeBCT8f+JUvS+9q5x4GAGTaQA/PewiZC/9SNBv9Po6PVh1P+yAXB9Pnzw6Qfo9WRAg1OtboexYDYEic0cgcopPY/oGDTRWsnPT+vCv9cPbXlimJD1o8lHKNT1MGLP8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719976791; c=relaxed/simple;
-	bh=+Fg0EpTU/dsZtDLluZ/U+IGeSTNF6TLM5CzbgMNvRjQ=;
+	s=arc-20240116; t=1719976796; c=relaxed/simple;
+	bh=RatMWj2BUFUCGlW5BmkZlB2amBhxKVbF+t41AJ4GYE8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AUSxKdmhVIwVagygPRXfXwSJo9kVBhy1AoHcgxnO+hs+De/uUUnE3d0jjmhh4S9o+mrZRqHqI2dFbj+7tMGAvcnoLesd41puZglDI71NxlK/N12kRZ1wqs5fNzFZgf9MyIPEQwxS6ytxyzdMfSIeToKrC/s+/FALGA+X19AfdAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=BgLoqR2mJTzw6XSSJ9sy9VrwomxlRQY02CoMpsnABJ15cZiuPcY7j2lek4I6P69kyymTzpihOfojBeTa6HauTY62XtXw6XLrOVyKx7tkrDOMnJj/rKEMLxkeNsfovWvLoC9OrZpXfZ7LNp2wwlxyjqWFCqjyU5TQ0Ej4iVh8vic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WDQ4N5z5Zz4f3l11
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:19:32 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WDQ4Q5T9Bz4f3jcs
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:19:34 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 549A31A0572
+	by mail.maildlp.com (Postfix) with ESMTP id F21AB1A0185
 	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:19:45 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.103.91])
-	by APP2 (Coremail) with SMTP id Syh0CgBn0YZHw4Rm+T8VBA--.56302S7;
+	by APP2 (Coremail) with SMTP id Syh0CgBn0YZHw4Rm+T8VBA--.56302S8;
 	Wed, 03 Jul 2024 11:19:45 +0800 (CST)
 From: Yang Yingliang <yangyingliang@huaweicloud.com>
 To: linux-kernel@vger.kernel.org
@@ -54,9 +54,9 @@ Cc: mingo@redhat.com,
 	tim.c.chen@linux.intel.com,
 	yangyingliang@huawei.com,
 	liwei391@huawei.com
-Subject: [PATCH 3/4] sched/core: Introduce sched_set_rq_on/offline() helper
-Date: Wed,  3 Jul 2024 11:16:09 +0800
-Message-Id: <20240703031610.587047-4-yangyingliang@huaweicloud.com>
+Subject: [PATCH 4/4] sched/core: fix unbalance set_rq_online/offline() in sched_cpu_deactivate()
+Date: Wed,  3 Jul 2024 11:16:10 +0800
+Message-Id: <20240703031610.587047-5-yangyingliang@huaweicloud.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240703031610.587047-1-yangyingliang@huaweicloud.com>
 References: <20240703031610.587047-1-yangyingliang@huaweicloud.com>
@@ -67,114 +67,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBn0YZHw4Rm+T8VBA--.56302S7
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF1xur1rJr17AF13WryUZFb_yoW8Kr1Upw
-	srZr45KrW5tF42934Yqr48GrW3uwn3Jry7ZF4fG3yrAF15C39Yyr18X3WaqrWjg3s5uFW3
-	ArykKrWIga1DJaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbHa0PUUUUU==
+X-CM-TRANSID:Syh0CgBn0YZHw4Rm+T8VBA--.56302S8
+X-Coremail-Antispam: 1UD129KBjvdXoW7GFyfWw43tw1fXFWrZw4fXwb_yoW3Awc_X3
+	W5WF1kJr95A3WI9r9xWF4fWryFva4UuF4FkrW7CFy7AFy5K39rtwn8KFyrurn8Grs3WFy2
+	vF1vqa1qvw1DCjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbSxYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
+	0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+	Y2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+	v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
+	wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
+	WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
+	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUoeOJUUUUU
 X-CM-SenderInfo: 51dqw5xlqjzxhdqjqx5xdzvxpfor3voofrz/
 
 From: Yang Yingliang <yangyingliang@huawei.com>
 
-Introduce sched_set_rq_on/offline() helper, so it can be called
-in normal or error path simply. No functional changed.
+If cpuset_cpu_inactive() fails, set_rq_online() need be called to rollback.
 
+Fixes: 120455c514f7 ("sched: Fix hotplug vs CPU bandwidth control")
 Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 ---
- kernel/sched/core.c | 40 ++++++++++++++++++++++++++--------------
- 1 file changed, 26 insertions(+), 14 deletions(-)
+ kernel/sched/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 5cff01046685..2e114bce517a 100644
+index 2e114bce517a..01172d8bfe02 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -9604,6 +9604,30 @@ void set_rq_offline(struct rq *rq)
- 	}
- }
- 
-+static inline void sched_set_rq_online(struct rq *rq, int cpu)
-+{
-+	struct rq_flags rf;
-+
-+	rq_lock_irqsave(rq, &rf);
-+	if (rq->rd) {
-+		BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
-+		set_rq_online(rq);
-+	}
-+	rq_unlock_irqrestore(rq, &rf);
-+}
-+
-+static inline void sched_set_rq_offline(struct rq *rq, int cpu)
-+{
-+	struct rq_flags rf;
-+
-+	rq_lock_irqsave(rq, &rf);
-+	if (rq->rd) {
-+		BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
-+		set_rq_offline(rq);
-+	}
-+	rq_unlock_irqrestore(rq, &rf);
-+}
-+
- /*
-  * used to mark begin/end of suspend/resume:
-  */
-@@ -9673,7 +9697,6 @@ static inline void sched_smt_present_dec(int cpu)
- int sched_cpu_activate(unsigned int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
--	struct rq_flags rf;
- 
- 	/*
- 	 * Clear the balance_push callback and prepare to schedule
-@@ -9702,12 +9725,7 @@ int sched_cpu_activate(unsigned int cpu)
- 	 * 2) At runtime, if cpuset_cpu_active() fails to rebuild the
- 	 *    domains.
- 	 */
--	rq_lock_irqsave(rq, &rf);
--	if (rq->rd) {
--		BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
--		set_rq_online(rq);
--	}
--	rq_unlock_irqrestore(rq, &rf);
-+	sched_set_rq_online(rq, cpu);
- 
- 	return 0;
- }
-@@ -9715,7 +9733,6 @@ int sched_cpu_activate(unsigned int cpu)
- int sched_cpu_deactivate(unsigned int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
--	struct rq_flags rf;
- 	int ret;
- 
- 	/*
-@@ -9746,12 +9763,7 @@ int sched_cpu_deactivate(unsigned int cpu)
- 	 */
- 	synchronize_rcu();
- 
--	rq_lock_irqsave(rq, &rf);
--	if (rq->rd) {
--		BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
--		set_rq_offline(rq);
--	}
--	rq_unlock_irqrestore(rq, &rf);
-+	sched_set_rq_offline(rq, cpu);
- 
- 	/*
- 	 * When going down, decrement the number of cores with SMT present.
+@@ -9781,6 +9781,7 @@ int sched_cpu_deactivate(unsigned int cpu)
+ 	ret = cpuset_cpu_inactive(cpu);
+ 	if (ret) {
+ 		sched_smt_present_inc(cpu);
++		sched_set_rq_online(rq, cpu);
+ 		balance_push_set(cpu, false);
+ 		set_cpu_active(cpu, true);
+ 		sched_update_numa(cpu, true);
 -- 
 2.25.1
 
