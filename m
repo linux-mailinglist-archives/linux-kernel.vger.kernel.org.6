@@ -1,129 +1,147 @@
-Return-Path: <linux-kernel+bounces-239376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A9F925DFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:33:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888A1925E5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55301C230AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:33:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 517D02A08B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71084178360;
-	Wed,  3 Jul 2024 11:25:23 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2725317B42A;
+	Wed,  3 Jul 2024 11:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O9nWnPWe"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AAE176ADB;
-	Wed,  3 Jul 2024 11:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA40F17B410;
+	Wed,  3 Jul 2024 11:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720005923; cv=none; b=j1NDOW0jJ+boLjgKbuL/YP1k5n1dXfGlQAL7Z+Sz/eCFfZYellaUqNxMeN+rwW98+o/aPLXYhIAKk1J9xEJ6zqRfDzTnZIc7eqmI1y0xL8KyyS/SlerSalcMNfQrslZIUbYC8hKNyo8IUAD23JK8l8kZOwrBX1tbF9Ke8fs1Ck4=
+	t=1720005978; cv=none; b=Y4s0uA9bnXfSUi6u+yTclyqY1ZRVmEk8rwEQ87V0GEtMf2k40XQadon7h8DkKkCzPOol6C0xWujtuCcwge2UZxDPzQDlSAl3jHnQ2Q9EHvZ4Flscc0qGbJ5VpaffKGW4CkwQkBJWy+17eQcnHGJUNYgPi1mvrNwgxIVyeXouyTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720005923; c=relaxed/simple;
-	bh=V8JyUCSg0gsZSWCO61bmxtCZLrVxKe40nDSLvdZ1wJQ=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=obiRolbk0hjkj74QJ32MOzTXxG5KfEKCGh/P5g4kKZBxUtlR81Heo/qjH927q8+bIJK4ls2ZhruF/k1IqvwIvxxkX8wqOKEaYX/yNcpkY4dDJBiiAtm2bBHvMMIB/fn0lxWpxIDsKZuA/WQvCz31OY/cNs8dMvbVCzv5lx/pgPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WDcrX2cW3znZ3G;
-	Wed,  3 Jul 2024 19:25:00 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 48681180088;
-	Wed,  3 Jul 2024 19:25:17 +0800 (CST)
-Received: from [10.69.30.204] (10.69.30.204) by dggpemf200006.china.huawei.com
- (7.185.36.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Jul
- 2024 19:25:17 +0800
-Subject: Re: [PATCH net-next v9 03/13] mm: page_frag: use initial zero offset
- for page_frag_alloc_align()
-To: Alexander Duyck <alexander.duyck@gmail.com>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
- <20240625135216.47007-4-linyunsheng@huawei.com>
- <8e80507c685be94256e0e457ee97622c4487716c.camel@gmail.com>
- <01dc5b5a-bddf-bd2d-220c-478be6b62924@huawei.com>
- <CAKgT0Ud-q-Z-ri0FQxdsHQegf1daVATEg3bKhs0cavQBcxwieg@mail.gmail.com>
-From: Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <5b385269-bcf0-6bba-e2cf-e714fbd2b334@huawei.com>
-Date: Wed, 3 Jul 2024 19:25:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+	s=arc-20240116; t=1720005978; c=relaxed/simple;
+	bh=8JndRnspM5RDjpsWE9ZsbTjXeCN5YcBE71YC4B5qx14=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jy6yhb9Gw2jOyY4VCfcCyGlhf+1QnThclPljDzCR3t5cz9EOb+31/3s5nERXRd7X+tBVEhRqbb5qDOsQZ1wZUDVi26Spbgiu8f/sKLk7v7HW3CfUtGwM9JGBcIHZV5OMv2rdFxuM72oGgveFSxH6WILzI+cqWEOyB62Z3x7BsrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O9nWnPWe; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so53910481fa.3;
+        Wed, 03 Jul 2024 04:26:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720005975; x=1720610775; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A+2MqGa7e9k/H+mBR0AcQlM4kYrNvHVCP7g1hxy4Qxw=;
+        b=O9nWnPWetj2jYCRNCve3MSUmtOshfK9DxV5k9eGQYY/Phlsl46jLB4W1ypQ7BOFV+o
+         xAJFlD32six0VgJUZaGa3gFWBGfNuEecSst0h8x3N9II+ZtyI+fa+IJHWP8AOhaS5BiE
+         KTbO5XxNpFmvfDBUfLkmODGM/uHILaTtKDuN+XU8P/5rzvRK8TALrd0t+ro+vrFfKprP
+         fToogKHPse/D59eWlOv2SmAPnNwe8WQgQanHGeP3T2rXwZhXBR73dcw/qpiSZ4wbUvzY
+         nBz6n8sYR1lYKasLAk15y63k5Xq2XGdMo+2omCVy1lpNdE2CmSuboajhMJUe4ttBEf04
+         tkig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720005975; x=1720610775;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A+2MqGa7e9k/H+mBR0AcQlM4kYrNvHVCP7g1hxy4Qxw=;
+        b=jzbM/EC160R9/4nsvucZ1QWHSwar9+UayUubsx+EZz4dvRH5HnqCzSLl14xKuZ3R1C
+         3rztAoBbjgA7HoH4h0V+Fpp1HqneTsJulTGlI/9H7ONHleHt2aLTDPVVQYd8qp3iv0mV
+         VIiN30Dxnq1+YHajlgH2H8YfOXzWlZVXoPHQia5/svgOGTmhj9XJFGhbVlBj6JoUfoTO
+         P8ObD88EE7Zgsm8yh3WRYYvtC7sGaoR2971w9F83c0RHzE/UTo+xbO8nd5WCXoZgB+em
+         msgIdh/V2vtTFjr+wXh/8fUu8nj6R5I84y5Z6LW9iaPerW2JQbNcoFVnGp6PZw0bv7yS
+         R37w==
+X-Forwarded-Encrypted: i=1; AJvYcCXUkSRCRN+L4W3boHITs0fKfJroCyeiJa5iKODJPy7zdkgzEYX//uUB6Mggu1JevQqiYXbbKYuXRmPaP38UqtL/RvFT8FKthFU3WxX0
+X-Gm-Message-State: AOJu0Yxl+VRdLRnDxGMWC8v70knFQHeck2SoUbnz0FQnJhvQ4kf+6wk0
+	bknVrU6BfhnSai5e4ucF0MSJKBkMqcIPcoSoCEshvpKP8fuxiJ2m
+X-Google-Smtp-Source: AGHT+IEJXFekNY3fsB5tfjE9fQZRtx+cCV4tRGUY0n2mFuccdc2QjvzsFIB813RbvbxYXhi1K/b+xw==
+X-Received: by 2002:a2e:2409:0:b0:2ee:4d91:3d88 with SMTP id 38308e7fff4ca-2ee5e39e5e2mr64257721fa.16.1720005974635;
+        Wed, 03 Jul 2024 04:26:14 -0700 (PDT)
+Received: from eichest-laptop.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af37828sm242351875e9.9.2024.07.03.04.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 04:26:14 -0700 (PDT)
+From: Stefan Eichenberger <eichest@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	cniedermaier@dh-electronics.com,
+	stefan.eichenberger@toradex.com,
+	l.sanfilippo@kunbus.com,
+	tglx@linutronix.de,
+	rickaran@axis.com,
+	francesco.dolcini@toradex.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v1] serial: imx: only set receiver level if it is zero
+Date: Wed,  3 Jul 2024 13:25:40 +0200
+Message-ID: <20240703112543.148304-1-eichest@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0Ud-q-Z-ri0FQxdsHQegf1daVATEg3bKhs0cavQBcxwieg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Transfer-Encoding: 8bit
 
-On 2024/7/3 0:00, Alexander Duyck wrote:
+From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 
-...
+With commit a81dbd0463ec ("serial: imx: set receiver level before
+starting uart") we set the receiver level to its default value. This
+caused a regression when using SDMA, where the receiver level is 9
+instead of 8 (default). This change will first check if the receiver
+level is zero and only then set it to the default. This still avoids the
+interrupt storm when the receiver level is zero.
 
->>>> +
->>>> +    offset = __ALIGN_KERNEL_MASK(nc->offset, ~align_mask);
->>>> +    if (unlikely(offset + fragsz > size)) {
->>>
->>> The fragsz check below could be moved to here.
->>>
->>>>              page = virt_to_page(nc->va);
->>>>
->>>>              if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
->>>> @@ -99,17 +100,13 @@ void *__page_frag_alloc_align(struct page_frag_cache *nc,
->>>>                      goto refill;
->>>>              }
->>>>
->>>> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
->>>> -            /* if size can vary use size else just use PAGE_SIZE */
->>>> -            size = nc->size;
->>>> -#endif
->>>>              /* OK, page count is 0, we can safely set it */
->>>>              set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
->>>>
->>>>              /* reset page count bias and offset to start of new frag */
->>>>              nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
->>>> -            offset = size - fragsz;
->>>> -            if (unlikely(offset < 0)) {
->>>> +            offset = 0;
->>>> +            if (unlikely(fragsz > PAGE_SIZE)) {
->>>
->>> Since we aren't taking advantage of the flag that is left after the
->>> subtraction we might just want to look at moving this piece up to just
->>> after the offset + fragsz check. That should prevent us from trying to
->>> refill if we have a request that is larger than a single page. In
->>> addition we could probably just drop the 3 PAGE_SIZE checks above as
->>> they would be redundant.
->>
->> I am not sure I understand the 'drop the 3 PAGE_SIZE checks' part and
->> the 'redundant' part, where is the '3 PAGE_SIZE checks'? And why they
->> are redundant?
-> 
-> I was referring to the addition of the checks for align > PAGE_SIZE in
-> the alloc functions at the start of this diff. I guess I had dropped
-> them from the first half of it with the "...". Also looking back
-> through the patch you misspelled "avoid" as "aovid".
-> 
-> The issue is there is a ton of pulling things forward that don't
-> necessarily make sense into these diffs. Now that I have finished
-> looking through the set I have a better idea of why those are there
-> and they might make sense. It is just difficult to review since code
-> is being added for things that aren't applicable to the patch being
-> reviewed.
+Fixes: a81dbd0463ec ("serial: imx: set receiver level before starting uart")
+Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+---
+ drivers/tty/serial/imx.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-As you mentioned in other thread, perhaps the 'remaining' changing does
-need to be incorporated into this patch.
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index f4f40c9373c2f..e22be8f45c93e 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -120,6 +120,7 @@
+ #define UCR4_OREN	(1<<1)	/* Receiver overrun interrupt enable */
+ #define UCR4_DREN	(1<<0)	/* Recv data ready interrupt enable */
+ #define UFCR_RXTL_SHF	0	/* Receiver trigger level shift */
++#define UFCR_RXTL_MASK	0x3F	/* Receiver trigger 6 bits wide */
+ #define UFCR_DCEDTE	(1<<6)	/* DCE/DTE mode select */
+ #define UFCR_RFDIV	(7<<7)	/* Reference freq divider mask */
+ #define UFCR_RFDIV_REG(x)	(((x) < 7 ? 6 - (x) : 6) << 7)
+@@ -1933,7 +1934,7 @@ static int imx_uart_rs485_config(struct uart_port *port, struct ktermios *termio
+ 				 struct serial_rs485 *rs485conf)
+ {
+ 	struct imx_port *sport = (struct imx_port *)port;
+-	u32 ucr2;
++	u32 ucr2, ufcr;
+ 
+ 	if (rs485conf->flags & SER_RS485_ENABLED) {
+ 		/* Enable receiver if low-active RTS signal is requested */
+@@ -1953,7 +1954,10 @@ static int imx_uart_rs485_config(struct uart_port *port, struct ktermios *termio
+ 	/* Make sure Rx is enabled in case Tx is active with Rx disabled */
+ 	if (!(rs485conf->flags & SER_RS485_ENABLED) ||
+ 	    rs485conf->flags & SER_RS485_RX_DURING_TX) {
+-		imx_uart_setup_ufcr(sport, TXTL_DEFAULT, RXTL_DEFAULT);
++		/* If the receiver trigger is 0, set it to a default value */
++		ufcr = imx_uart_readl(sport, UFCR);
++		if ((ufcr & UFCR_RXTL_MASK) == 0)
++			imx_uart_setup_ufcr(sport, TXTL_DEFAULT, RXTL_DEFAULT);
+ 		imx_uart_start_rx(port);
+ 	}
+ 
+-- 
+2.43.0
 
-> .
-> 
 
