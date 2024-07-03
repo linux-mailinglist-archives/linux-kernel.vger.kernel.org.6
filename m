@@ -1,125 +1,179 @@
-Return-Path: <linux-kernel+bounces-239682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C8F79263ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:55:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 996209263F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BF9281798
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:55:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 409F01F22CE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036B917DE01;
-	Wed,  3 Jul 2024 14:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUN6WLpH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0364917D8A9;
+	Wed,  3 Jul 2024 14:56:40 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0D817DA1A;
-	Wed,  3 Jul 2024 14:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBB91EB48;
+	Wed,  3 Jul 2024 14:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720018505; cv=none; b=ame5Z36vBI7ewAcys8dhHpGBbEtvlvF3TbnAyLxPE1i9r3tX96/d/pqvpKKxSAaxEpu1VdLqi6t2CBBwy/tTdeBMZAT76ZOWX9XB1bqYEygJhk8/NCMg2DTr5+YqTaXmpH9YX5YsLsjD5yySvQzlBjxxdgFMGszBC5nDyqbT5Nc=
+	t=1720018599; cv=none; b=aPjCj+Tctg18C8AqtlCVWzRuCwf1ryKfyDxmFMyYf8ixOQPyOm5YHuo17+ziofQCkF8mn9n9500kChMBkUToyPI9alUitJgWKJdI2pVAQ7zcusMXqQ/k/wGlAP6oAxEc/tyRzB+P/gr3tJzRgSBD/TjFdHNSVMmS/e76tLdPCNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720018505; c=relaxed/simple;
-	bh=lw6ZRckzdBzfG4AbAAVALv4Knp+zmoL9nUwuQvkR7gc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NXlxm61r03jmhogHwMHUw3X8SDE2OYnV1QPLUNS8DVq2cMcZN3YHhsSIWYOnwoWkqwohB3+DtewgfyhgJPbRS0Eb61/wITbaVd4VRBcR+GXGUkHRec/mkCm0Z2MqsO5Lj8iajnwpttnk+3gNKjJS1vLZXlyRdGa3DuXc2tUpNqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SUN6WLpH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF9DDC3277B;
-	Wed,  3 Jul 2024 14:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720018504;
-	bh=lw6ZRckzdBzfG4AbAAVALv4Knp+zmoL9nUwuQvkR7gc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SUN6WLpHTpEq5lcVSXIt9XDdB1ESww2bIH+/t/XGqyBKtdyUQXsjt/DgIEao4EUrQ
-	 at33AvqXIMjoAsUFlTtxBFxGr6qvGg5yN06Ff5d12BXyK3e2pRxXh2YNMCwlOuPPre
-	 4i9ASAA+XiSMmDGofphA/IUcbsdz0j7OhXYK9SCrZ12q3N7bm5y5KnKqj8foU4F9zr
-	 mmKTDOIGL7otHbNWOA/FV12Fk6na7meb8RltSt7g4ijknDrskwM+I8B8BUgyp/y/Kn
-	 LZE4zPCml8KPujJTNsSbzUtvK8BLgJqUDzg++iZpw/7TofPrNuZeSoVz1LXQi8Qxn3
-	 9RZExRSFpMKIw==
-Date: Wed, 3 Jul 2024 15:55:00 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	marius.cristea@microchip.com
-Subject: Re: [PATCH 0/2] iio: adc: add support for pac1921
-Message-ID: <20240703-zebra-choosy-7f34a02b0c7d@spud>
-References: <20240703-iio-pac1921-v1-0-54c47d9180b6@gmail.com>
+	s=arc-20240116; t=1720018599; c=relaxed/simple;
+	bh=NwPx3nsi9Frt9F3UqrolqP4cPwi7Q+jktVDtLsEkNUs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SyCZL8pGGf6+nW/ofq49b54SkQ+trhRyPjfsNjts647hCyQl9E9JQHw5+HXBPEKUid/OAFTtHqeP1BlEDCNyYxlMrKkIV8SrUmH4v51IhuJKC5jalQ1cmCI6TyO6b2dYL92VOK2JJa5cM8JBWQUq+8GO6TUK61knZ6Tr7QazfLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Yixun Lan <dlan@gentoo.org>
+Subject: [PATCH v3 00/11] riscv: add initial support for SpacemiT K1
+Date: Wed, 03 Jul 2024 14:55:03 +0000
+Message-Id: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LsEp9HjQoNvjCCAz"
-Content-Disposition: inline
-In-Reply-To: <20240703-iio-pac1921-v1-0-54c47d9180b6@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEdmhWYC/13MQQrDIBCF4auEWXeKmmqgq96jZGHMxAyFWFSkJ
+ Xj32kA3Xf4P3rdDosiU4NrtEKlw4rC16E8duNVunpDn1qCEugijDD4kComTTexwziit7SURTW5
+ W0E7PSAu/DvA+tl455RDfh1/Ud/1Rwz9VFAp0Thg3aK0XMdw8bTmEc4gexlrrB0Oo7vutAAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Anup Patel <anup@brainfault.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org, 
+ Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
+ Meng Zhang <zhangmeng.kevin@spacemit.com>, Yangyu Chen <cyy@cyyself.name>, 
+ Yixun Lan <dlan@gentoo.org>, Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4318; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=NwPx3nsi9Frt9F3UqrolqP4cPwi7Q+jktVDtLsEkNUs=;
+ b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBmhWZ0HOav0H0NHzSndaIJgQRth3C/Xo4ktKzdn
+ 3fML2AcfpiJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZoVmdF8UgAAAAAAuAChp
+ c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
+ CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277ZvAD/9q3jxF1uPzaRjIT2
+ uJ72pkyE2r8LAfLjsTAbPexyz/OQZfWG0ITZJSDtukOJVOwyH+924ozLF+7zCXmzmExJGMJ51CX
+ 7viL8GXJRxZWMWMIBam/ZcE98zrLmlu6gzT7i8zuR5s/OmuVImdoqePXSNg+IH8QiV8lGlGVOQQ
+ FjNg/qRjhxEXiIWMoE3oXw6FXl1ZbcmVtqbhKIL9rByoT0Zmx00rbCDzEjdDi8xqCsTaJ9ftc2X
+ BgQEpQUAOP7UlRp9ExUvEP5CfMxHoquTVc00BEdfqVWjCqMkqxqTcRGWqHcO43BJx56uZZDO696
+ +DExF//8oV2OMM4bwACUAqcVEd/LIAv2Fq2Bgi0nS8+20m+BDqDELItTa3OyxrTUqe+ZsWOzlkY
+ t/bmwRleCkugSWFWXe7G0ddY/cn7IPFYP+RbShSbrIGU3BJAF+DqIaqp6Lu1PM6OTVbS+zYCPz9
+ x5BxzkH45c+HQ63mXYEPkrWsFNZK0VhtnbIQsQ5QsMbFNsSF1d/unhfohlv1NgkiC4d4DC3QjKN
+ bMiEdPcgid02XHxJ+rjxK30LkheQVZZ25GvarL6932RXv+gzu7Kxd01vt49NeSkTfaGl8psrofK
+ /VEucX+AlmM7AYmDhoOAV96vi/5eR8Rge+3gLaaaalDW4FG4lkLpmB/nlEdwikTBg4WQ==
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
+SpacemiT K1 is an ideal chip for some new extension such as RISC-V Vector
+1.0 and Zicond evaluation now. Add initial support for it to allow more
+people to participate in building drivers to mainline for it.
 
---LsEp9HjQoNvjCCAz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This kernel has been tested upon Banana Pi BPI-F3 board on vendor U-Boot
+bootflow generated by Armbian SDK[1] and patched OpenSBI[2] to enable
+Zicboz, which does not in the vendor dts on its U-Boot. Then successfully
+booted to busybox on initrd with this log[3].
 
-On Wed, Jul 03, 2024 at 03:34:34PM +0200, Matteo Martelli wrote:
-> Add iio driver and DT binding for the Microchip PAC1921 Current/Power
-> monitor.
->=20
-> Implemented most of the features with few limitations listed in the
-> driver commit message.
->=20
-> Tested with a Pine64 host board connected to a PAC1921 click board [1]
-> via I2C. The PAC1921 click board embeds the Microchip PAC1921 device
-> and a 10 mOhms shunt resistor. The PAC1921 datasheet is at [2].
->=20
-> [1]: https://www.mikroe.com/pac1921-click
-> [2]: https://ww1.microchip.com/downloads/en/DeviceDoc/PAC1921-Data-Sheet-=
-DS20005293E.pdf
->=20
-> Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+As previous discussion in patch v1[4], maintainer expect more basic drivers
+ready before really merging it, which would be fine. For other follow-up patches, 
+that are clk, pinctrl/gpio, reset.. My current goal would target at a headless
+system including SD card, emmc, and ethernet.
 
-Marius, could you take a look at this driver/binding?
+P.S: talked to Yangyu, I will help and take care of this patch series, thanks
+---
+Changes in v3:
+ - fix dt_binding_check error
+ - fix plic compatible
+ - fix uart node name
+ - add uart1 dts node
+ - collect tags
+ - Link to v2: https://lore.kernel.org/r/20240627-k1-01-basic-dt-v2-0-cc06c7555f07@gentoo.org
 
-> ---
-> Matteo Martelli (2):
->       dt-bindings: iio: adc: add binding for pac1921
->       iio: adc: add support for pac1921
->=20
->  .../ABI/testing/sysfs-bus-iio-adc-pac1921          |   45 +
->  .../bindings/iio/adc/microchip,pac1921.yaml        |   79 ++
->  MAINTAINERS                                        |    7 +
->  drivers/iio/adc/Kconfig                            |   10 +
->  drivers/iio/adc/Makefile                           |    1 +
->  drivers/iio/adc/pac1921.c                          | 1033 ++++++++++++++=
-++++++
->  6 files changed, 1175 insertions(+)
-> ---
-> base-commit: 529d2e1900642eba6df28307e26e19793e227546
-> change-id: 20240606-iio-pac1921-77fa0fa3ac11
->=20
-> Best regards,
-> --=20
-> Matteo Martelli <matteomartelli3@gmail.com>
->=20
+Changes in v2:
+ - fix timebase-frequency according to current setting
+ - add other uart dt nodes, fix input frequency
+ - introduce new uart compatible for K1 SoC
+ - add 'k1' prefix to bananapi-f3.dts
+ - fix k1-clint compatible
+ - fix some typos
+ - Link to v1: https://lore.kernel.org/r/tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com
 
---LsEp9HjQoNvjCCAz
-Content-Type: application/pgp-signature; name="signature.asc"
+Link: https://github.com/BPI-SINOVOIP/armbian-build/tree/v24.04.30 [1]
+Link: https://gist.github.com/cyyself/a07096e6e99c949ed13f8fa16d884402 [2]
+Link: https://gist.github.com/cyyself/a2201c01f5c8955a119641f97b7d0280 [3]
+Link: https://lore.kernel.org/r/20240618-hardwood-footrest-ab5ec5bce3cf@wendy [4]
 
------BEGIN PGP SIGNATURE-----
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+To: Paul Walmsley <paul.walmsley@sifive.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+To: Albert Ou <aou@eecs.berkeley.edu>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+To: Samuel Holland <samuel.holland@sifive.com>
+To: Anup Patel <anup@brainfault.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+To: Lubomir Rintel <lkundrak@v3.sk>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-serial@vger.kernel.org
+Cc: Inochi Amaoto <inochiama@outlook.com>
+Cc: Icenowy Zheng <uwu@icenowy.me>
+Cc: Meng Zhang <zhangmeng.kevin@spacemit.com>
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoVmRAAKCRB4tDGHoIJi
-0oLTAP9MlOAZ+cX8P1cLqF8Xrw27ZjgJiqQKNNkgA4QimI09BgEAvvxfi99aSdog
-XMtwu3ST9LmUZuRxQzysSh7D/HLEAwk=
-=zbyz
------END PGP SIGNATURE-----
+Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
 
---LsEp9HjQoNvjCCAz--
+---
+Yangyu Chen (9):
+      dt-bindings: vendor-prefixes: add spacemit
+      dt-bindings: riscv: Add SpacemiT X60 compatibles
+      dt-bindings: riscv: add SpacemiT K1 bindings
+      dt-bindings: timer: Add SpacemiT K1 CLINT
+      dt-bindings: interrupt-controller: Add SpacemiT K1 PLIC
+      riscv: add SpacemiT SoC family Kconfig support
+      riscv: dts: add initial SpacemiT K1 SoC device tree
+      riscv: dts: spacemit: add Banana Pi BPI-F3 board device tree
+      riscv: defconfig: enable SpacemiT SoC
+
+Yixun Lan (2):
+      dt-bindings: serial: 8250: Add SpacemiT K1 uart compatible
+      riscv: dts: spacemit: add uart1 node for K1 SoC
+
+ .../interrupt-controller/sifive,plic-1.0.0.yaml    |   1 +
+ Documentation/devicetree/bindings/riscv/cpus.yaml  |   1 +
+ .../devicetree/bindings/riscv/spacemit.yaml        |  28 ++
+ Documentation/devicetree/bindings/serial/8250.yaml |   4 +-
+ .../devicetree/bindings/timer/sifive,clint.yaml    |   1 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ arch/riscv/Kconfig.socs                            |   5 +
+ arch/riscv/boot/dts/Makefile                       |   1 +
+ arch/riscv/boot/dts/spacemit/Makefile              |   2 +
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    |  19 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi               | 386 +++++++++++++++++++++
+ arch/riscv/configs/defconfig                       |   1 +
+ 12 files changed, 450 insertions(+), 1 deletion(-)
+---
+base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
+change-id: 20240626-k1-01-basic-dt-1aa31eeebcd2
+
+Best regards,
+-- 
+Yixun Lan <dlan@gentoo.org>
+
 
