@@ -1,159 +1,149 @@
-Return-Path: <linux-kernel+bounces-238596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C82A924C96
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:06:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E37924C98
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0CAD1C21F52
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC30D283522
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DEC1361;
-	Wed,  3 Jul 2024 00:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FC310E3;
+	Wed,  3 Jul 2024 00:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kt9kvy54"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Au6rlGAJ"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A70C376;
-	Wed,  3 Jul 2024 00:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D520621;
+	Wed,  3 Jul 2024 00:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719965188; cv=none; b=GdGFeFWrqU2D6xQDMtQPgTh6yffOdLfe5JhfSHLBOOR0hHug586Mf+47PUzPRjiaF5nrnm/jz780sqBr56ooIy4dfQ6ZYcZC/mQPygNvHAWZAiVgl3EiTPFYKk3EgcWle0ZsFpMY9gs2AKkvJzhfVngWDeGvdtmcy40beUurPBA=
+	t=1719965223; cv=none; b=D/f6lC+S7WHuw8rIiTUWRGNuCA9Z6cxRAd2r4ZMrlZXTBJs+pkquA8mia77Ws/83P3zPUO+WYmJMwXDthLHfzpvYzsT2LS3b+ln7zEPZ3GsTEXFjgVcv1ZYX09jb2tf1HecPwybtVzHcSCrm9LyFy4XLXcdMC02QxBUrmCn6nLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719965188; c=relaxed/simple;
-	bh=iLySQHSzUBPABd8UEtGLypSLAhlfTYLP6knK4mQMZUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mi/om9N8HoqO6ExqSatnNxa125kxZ8/BZST5+ppM3O+CgiHrt5nQuSkWssZXW+CtBfexGNeVG6yopY27nJFHxDADpoCSKgi5uDgWHGQV/RUKfGwVcCIp9aafNRmNgyhiRuMgcEbl6mf5zeyiueVNVz3MpNcNh3nKtNrGQOCCYA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kt9kvy54; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1719965223; c=relaxed/simple;
+	bh=KOjkQB3I1BkmOGdUI7hd+tydhVz2TLsy35U2esSLVOw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DzRbyv/+iv+9+GMbnGDfASMnT7qwB5vI6D2arbI5w0022MStFzE8NZSnoWciIJU3fHbj4ldQSM2an/GPTo3xaqueqhF+TDr2+7f0JWmmEgaMstvJLZnT5WJwlC+nj74+mTvOXgKrCgfFtQdhrsGzRmD7M4wWXJuxh0HQMv7hUDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Au6rlGAJ; arc=none smtp.client-ip=209.85.219.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70699b6afddso3281272b3a.1;
-        Tue, 02 Jul 2024 17:06:26 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e03a8955ae3so400553276.1;
+        Tue, 02 Jul 2024 17:07:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719965186; x=1720569986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/N9kQ3oCI3jCbzKISRrCZxbj25Bb5h+emAQTUEwDQOk=;
-        b=Kt9kvy54jUkY8lkwjv6Q8Vm1K/dduqXmx9fZ7eXE9qqDhGt1d1R6bQ0JkaheVM8HtJ
-         M8pxh9pBBvHESS7pPaNV+l76DMFpyiIETCzP+7iyCv/6dmjhisBnkykWooE4vh4K5LSm
-         VuQgtnPvMtH2LsiDxnt1iR4IN/xrIDAKWBeNwrH41ArlP0q/E2Ph5gIwcvCQn9W/eRDk
-         2WlUIfP8EWvUys2HCEenZjdO3XsgOjZ1ZOK/oBfN+GfAysqyF8rBeRYGakABtfj+FMXx
-         QQldd3Ez68ZYLuOVOqq0vzGahiVeD1MyMmffOY4SQBWSePna00xXm1DHyDiwWTKFUnca
-         a1wg==
+        d=gmail.com; s=20230601; t=1719965221; x=1720570021; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6ZvRNv/JZDDTRdI18aBXSlRlEYxDmftdVdHUvCCc4C4=;
+        b=Au6rlGAJQDXOY0zMuhMvhWU/ZLzgBMfOnfailO8ydHSWGiiGX3e52rAoa1kzmKlmu4
+         UY5nHPyZhLNaRnKaaZw6yXuLSuCZQEe51j4Yyvs97s1MQzXOyAxEoH+ECkyX0A1YBHwH
+         s8snUuFVE6PsrW6umxRQe24M+PIqELnyf6OGLetQxYtzm5Nhl1PipmXxgVFedzz7fnvV
+         eM/WvbrkxJFQP6673lNxiWvsMBL+VO/0hF5RSszshmh0Led4h9+WWkxKt0MKut8yXOB7
+         XiLISOmGX+mEmr6G5TXlJmp/KoWc0XmYeXMzbbpCiNJ0KcVxN3MdnLJPAY6kzxlf5M4y
+         UFEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719965186; x=1720569986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/N9kQ3oCI3jCbzKISRrCZxbj25Bb5h+emAQTUEwDQOk=;
-        b=I308suFurGWwlxxWzQLcUXZbYYGVaS6QOBvmtxFbE4w38TxwWuln4teCkOzN5g1YfQ
-         iPD36zDaNtrgDAx559yDrsFIkekmYcRb7o5TwG/rRA22Bco3dxEsixBkxQ0yYEuugpZW
-         45KehInKRJuH2zDI2EpNJzAdcKdgfqKuS46Id0kU07CgLnILzTP1ZHGP9/IPUnJKHBOT
-         cdQI7iZQh/iSaY6DYyhy543jZI8yp9zdsDWNTe5RgPW2hG2M+eR34bxOhpjazw5pvrC2
-         0/K6xN4aCZ5Pk+ruhipAMA7lBdLeRnRq22giXhsZRJgxL7T9JVwS1KxKIL7YNb8/DRBI
-         r/lA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3AsyUmGWiiyL28h3U6qkg3ZU+ejmThJvCt1mLlP+Gps8GtHHQ+V8yuj1nnvxYj6m5ZZUwNSoHrxr7x/Zyei9p8ofBdU+hKtgBhk3KeKC2ZY9wdTEToADhbxqaszBTWA9aYtz110wk7xggzXCV4KW1nN0zmFbnLfmBO8jSjar6N0z6o0Ayg9UxIC1snRMqhfVw57y668vMFc1TJhf2K44y61x3RFxC4A==
-X-Gm-Message-State: AOJu0Yw9aP4C/NOwxfX9UkIYYHc/RY7NadVrV2cxEzmIOcM1npWQrueh
-	Xs0XLynjtNtoc850VmqD4Mhzln3tOhjo9CtVCVdfWVYywK+x1pOaZiMyXfD0XTx1WjvyQrqZ2by
-	PSAcl381nozQy4QvUfTjj5Z8kgTw=
-X-Google-Smtp-Source: AGHT+IEt2I99EiAmj3hGz/7iKIEOkBWscqSINfAgiYEzd5JTnR+pwhpKuTwdsTPLb+v8l7Q2zGlQHTCRAm1XB3bHhFs=
-X-Received: by 2002:a05:6a00:3c8b:b0:705:d8b8:682d with SMTP id
- d2e1a72fcca58-70aaaf2523amr9689557b3a.22.1719965186231; Tue, 02 Jul 2024
- 17:06:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719965221; x=1720570021;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6ZvRNv/JZDDTRdI18aBXSlRlEYxDmftdVdHUvCCc4C4=;
+        b=DC6Spkn1IzYr1/6HqO2JfmUFDlIxURDaRmA+YQdKMM7zUdb0GM0kVozYSvFQq+b3Un
+         hx4kXfUVzjjsv5TNwTjOOtwjSn9DXkKS8Voi/2T26W+cL4Ac7jhDxRf0bLo5iX1X3qws
+         Tnsy8gpC6IJEXwI7KF3y+Bnzv8/FvBUAEntl5sp+0DfJPBVBD37Vav1APGBx4M7h/OP8
+         X/2EI15DJHFjCvqd67y4tRA5p/sFzEWGzTW9fJIvqzTFDazWFhVyv1a0ZxP50nH2Gknk
+         XtwH9O30vZI5Fa9aeFsWNbBCGENJFmW31PZ74sI1R5Yx+9g8gSN8O5BRZAEKLlXcnn87
+         5Pzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZfCHkNuJ7AORBQA6Wukr8yEoy4WOC/B0GYcXUgQA4CJeUhC9pgDGmWEfteBUtdyUHj1h/wbGl3ClJFr5UpedFWGV2N0xK4vp3OrSV
+X-Gm-Message-State: AOJu0Ywhz7+7ywyaqOnwevc8M4gUh+eKhjTLvnbfWzryv2pnTr1kDPit
+	dcjwRUo2FbWo0FxUQ6oboVgVtade42QGdUk4ZLK0WxB8euD/cJUp
+X-Google-Smtp-Source: AGHT+IFvnDviwYP2MMWVIyiZGWuWfw8Pha6PWftZA89tPNoEvhz68eBNpCbXiLVaSfSolspbTBiLpw==
+X-Received: by 2002:a81:a50a:0:b0:643:fd49:2db6 with SMTP id 00721157ae682-64c7123b008mr112444957b3.1.1719965221531;
+        Tue, 02 Jul 2024 17:07:01 -0700 (PDT)
+Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9a23bae7sm19621077b3.42.2024.07.02.17.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 17:07:01 -0700 (PDT)
+From: Pei Li <peili.dev@gmail.com>
+Date: Tue, 02 Jul 2024 17:07:00 -0700
+Subject: [PATCH v2] Fix WARNING in __ext4_ioctl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702171858.187562-1-andrii@kernel.org> <20240702233554.slj6kh7dn2mc2w4n@treble>
- <20240702233902.p42gfhhnxo2veemf@treble>
-In-Reply-To: <20240702233902.p42gfhhnxo2veemf@treble>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 2 Jul 2024 17:06:14 -0700
-Message-ID: <CAEf4BzZ1GexY6uhO2Mwgbd7DgUnpMeTR2R37G5_5vdchQUAvjA@mail.gmail.com>
-Subject: Re: [PATCH v2] perf,x86: avoid missing caller address in stack traces
- captured in uprobe
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org, 
-	x86@kernel.org, mingo@redhat.com, tglx@linutronix.de, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, rihams@fb.com, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240702-bug8-v2-1-be675f490db1@gmail.com>
+X-B4-Tracking: v=1; b=H4sIACOWhGYC/13MQQ7CIBCF4as0sxYDAwpx5T1MF4hAJ7HFgBJNw
+ 93FLl3+Ly/fCsVn8gVOwwrZVyqUlh64G8BNdome0a03IEfFj2jY9RUN00FzbhGNUxb69ZF9oPf
+ GXMbeE5Vnyp9NreK3/gFVMMGU0D4cpHNWynOcLd33Ls0wtta+AGDL1ZgAAAA=
+To: Theodore Ts'o <tytso@mit.edu>, 
+ Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com, 
+ linux-kernel-mentees@lists.linuxfoundation.org, 
+ syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com, 
+ Pei Li <peili.dev@gmail.com>
+X-Mailer: b4 0.15-dev-13183
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719965220; l=1799;
+ i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
+ bh=KOjkQB3I1BkmOGdUI7hd+tydhVz2TLsy35U2esSLVOw=;
+ b=PCjjmgpOOOYcDd86Cde/YaT+V68Ga0Vs4zKgw6YZC7RbX1jiHDk/V1rwonT4uNkeJ0EkvlnOv
+ nTJOcIdwcM9AGEL1bQy6u3HPgDrwEjXy+pIFdcQGnFEu5wxQ39Dv93o
+X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
+ pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
 
-On Tue, Jul 2, 2024 at 4:39=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org>=
- wrote:
->
-> On Tue, Jul 02, 2024 at 04:35:56PM -0700, Josh Poimboeuf wrote:
-> > On Tue, Jul 02, 2024 at 10:18:58AM -0700, Andrii Nakryiko wrote:
-> > > When tracing user functions with uprobe functionality, it's common to
-> > > install the probe (e.g., a BPF program) at the first instruction of t=
-he
-> > > function. This is often going to be `push %rbp` instruction in functi=
-on
-> > > preamble, which means that within that function frame pointer hasn't
-> > > been established yet. This leads to consistently missing an actual
-> > > caller of the traced function, because perf_callchain_user() only
-> > > records current IP (capturing traced function) and then following fra=
-me
-> > > pointer chain (which would be caller's frame, containing the address =
-of
-> > > caller's caller).
-> > >
-> > > So when we have target_1 -> target_2 -> target_3 call chain and we ar=
-e
-> > > tracing an entry to target_3, captured stack trace will report
-> > > target_1 -> target_3 call chain, which is wrong and confusing.
-> > >
-> > > This patch proposes a x86-64-specific heuristic to detect `push %rbp`
-> > > (`push %ebp` on 32-bit architecture) instruction being traced. Given
-> > > entire kernel implementation of user space stack trace capturing work=
-s
-> > > under assumption that user space code was compiled with frame pointer
-> > > register (%rbp/%ebp) preservation, it seems pretty reasonable to use
-> > > this instruction as a strong indicator that this is the entry to the
-> > > function. In that case, return address is still pointed to by %rsp/%e=
-sp,
-> > > so we fetch it and add to stack trace before proceeding to unwind the
-> > > rest using frame pointer-based logic.
-> > >
-> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> >
-> > Should it also check for ENDBR64?
-> >
+Specify the size of s_volume_name in strscpy_pad() to avoid buffer
+overflow.
 
-Sure, I can add a check for endbr64 as well. endbr64 probably can be
-used not just at function entry, is that right? So it might be another
-case of false positive (which I think is ok, see below).
+strscpy_pad() by default takes the size of destination string as the
+size to be read from source string. However, as s_volume_name is only
+declared as an array of size EXT4_LABEL_MAX, we are reading 1 byte more
+than expected.
 
-> > When compiled with -fcf-protection=3Dbranch, the first instruction of t=
-he
-> > function will almost always be ENDBR64.  I'm not sure about other
-> > distros, but at least Fedora compiles its binaries like that.
->
-> BTW, there are some cases (including leaf functions and some stack
-> alignment sequences) where a "push %rbp" can happen inside a function.
-> Then it would presumably add a bogus trace entry.  Are such false
-> positives ok?
+Reported-by: syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=2cab87506a0e7885f4b9
+Fixes: 744a56389f73 ("ext4: replace deprecated strncpy with alternatives")
+Signed-off-by: Pei Li <peili.dev@gmail.com>
+---
+strscpy_pad() by default takes the size of destination string as the
+size to be read from source string. However, as s_volume_name is only
+declared as an array of size EXT4_LABEL_MAX, we are reading 1 byte more
+than expected.
 
-I think such cases should be rare. People mostly seem to trace user
-function entry/exit, rarely if ever they trace something within the
-function, except for USDT cases, where it will be a nop instruction
-that they trace.
+Specify the size of s_volume_name in strscpy_pad() to avoid buffer
+overflow.
+---
+Changes in v2:
+- Add fixes label
+- Move workaround into commit log
+- Link to v1: https://lore.kernel.org/r/20240628-bug8-v1-1-417ef53cca33@gmail.com
+---
+ fs/ext4/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In general, even with false positives, I think it's overwhelmingly
-better to get correct entry stack trace 99.9% of the time, and in the
-rest 0.01% cases it's fine having one extra bogus entry (but the rest
-should still be correct), which should be easy for humans to recognize
-and filter out, if necessary.
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index dab7acd49709..0c4fb579757a 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -1151,7 +1151,7 @@ static int ext4_ioctl_getlabel(struct ext4_sb_info *sbi, char __user *user_label
+ 	BUILD_BUG_ON(EXT4_LABEL_MAX >= FSLABEL_MAX);
+ 
+ 	lock_buffer(sbi->s_sbh);
+-	strscpy_pad(label, sbi->s_es->s_volume_name);
++	strscpy_pad(label, sbi->s_es->s_volume_name, EXT4_LABEL_MAX);
+ 	unlock_buffer(sbi->s_sbh);
+ 
+ 	if (copy_to_user(user_label, label, sizeof(label)))
 
->
-> --
-> Josh
+---
+base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
+change-id: 20240628-bug8-7f700a228c4a
+
+Best regards,
+-- 
+Pei Li <peili.dev@gmail.com>
+
 
