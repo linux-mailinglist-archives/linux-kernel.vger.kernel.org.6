@@ -1,83 +1,159 @@
-Return-Path: <linux-kernel+bounces-239643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C24F926379
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:34:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C58592637C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F4271C21A92
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D739D1F233F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A159E17B424;
-	Wed,  3 Jul 2024 14:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF4F17BB13;
+	Wed,  3 Jul 2024 14:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OOlfFPNn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiQH8xQ/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79CA170854;
-	Wed,  3 Jul 2024 14:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C576173339;
+	Wed,  3 Jul 2024 14:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720017252; cv=none; b=T20Z98tJebTVYTYSqjQmplgAv0Iil8veDK5qzYqbkm0++s02pABmnnrTwRBCQkPsRkEX4H+nGfjWNjhQjhnZn4fMJKJK+OppxKEfIUdMjdXRepPXlfVL2HM/BaB7t6qx8M9PctYm78nA39x9ldpCLMxsMoSv96auN6/mFTC3RsE=
+	t=1720017296; cv=none; b=X1OfqjQn4X5pg8jSSCWRwT9Fny2nXiY3MgnNUd72OahzsEdSm7v6kjbzHf1R0cdR/k1sNqWH9pNMV+NgrVl7M5eE6v807TkKXwtdV9INNQ695E1pPZXn9RvXiVxnBVUqE50HhWRqAmLsbZzUExW032ks/NlA4Hb5XHP/DntxWcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720017252; c=relaxed/simple;
-	bh=LLMX3jjXZxqGijzK4Yb8leC6X2Okra+Heoqx62+HtPI=;
+	s=arc-20240116; t=1720017296; c=relaxed/simple;
+	bh=danotnRKesFCKkZY2EXb3ZHi5zeeS6hT/AIJoxLeFpc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SlV1TcsJny9QehpOQsF6aMUxl0cYeHMhepkypLC0uhBX7KrnlbQLt9r1ff6cbKciBVGtc8sfxuUZpTQJXwP7aQo76bGQyqK+8juYj5tm+IUR3hoW8scwAufaYr5fQ1Zb0Jio36FjOLzxUEnBUYpEo0qauomI0dKEB/FTjntz3vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OOlfFPNn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA2D8C2BD10;
-	Wed,  3 Jul 2024 14:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720017251;
-	bh=LLMX3jjXZxqGijzK4Yb8leC6X2Okra+Heoqx62+HtPI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBTIOctvRQWRTXfoV0ml5NYB4HiSY+Q0VS0GO/TwDgRD8dpjZAJBLF4A6GWApsheFPSk3cQDJv92Kdweg2btMgVWYBfpRNUXoATiN7fonh3rYFJlq0slt7OcePy8KSrJYAyh0hWV/IqAQh6gJ6SbfOEDlE4yJrjzT6A/pR9b/T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NiQH8xQ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDBC6C2BD10;
+	Wed,  3 Jul 2024 14:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720017296;
+	bh=danotnRKesFCKkZY2EXb3ZHi5zeeS6hT/AIJoxLeFpc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OOlfFPNnLzV7nWg3ygWFBK5cCsOyGCdWEAXodxWJJQLsXTTOY5m3IVT8Cd7TKJMlh
-	 IbX08KnYyJVnwu2KuoQXLREiSOfvvgYAmPmqvk1CDJOQwvZcV47t+sSQYvLz5W8inC
-	 OlYtc60ni6tQ7OavBtI6ATzVwohfTIdpLMbR7a0Y=
-Date: Wed, 3 Jul 2024 16:34:08 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, arnd@arndb.de, will@kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Dragan Cvetic <dragan.cvetic@xilinx.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2 0/2] misc: vcpu_stall_detector: Add a PPI interrupt
-Message-ID: <2024070357-henna-dubiously-bc1f@gregkh>
-References: <20240613141335.1134341-1-sebastianene@google.com>
- <86tthwki93.wl-maz@kernel.org>
- <Zmsh53PnONKG23MC@google.com>
+	b=NiQH8xQ/BQLiiBHlSGRzFcZ5FH19iX4IK/7/p5kSDkITPsE77NNOAwDYhqvwH3nA3
+	 m6TvQdvM0hg9p/wxTqtN0QikfpspckRk3IbHsi0wPkeLqC2NIFztB12KYv4SGWdtyh
+	 dPXJIkrQLloE2o6aXcR1U/bb5D/iokG6ixfq0qsD4Uddj20WYM5eLCv/q9DzeJ9vDJ
+	 X5tQKo/wi/krwXgj3BJauUXPGLdc8kfKcH5lkw6Y8Z7ZZGHi7l8GjOh0QxiPkC8WMV
+	 3Ftw8ekdpHSgD+OOlNu5cUhPr8NFwm/usyVcpS3Pt2PCKJpBlYSQBHgNz+8tF2w4Zr
+	 jJs0jZwIrlKAg==
+Date: Wed, 3 Jul 2024 16:34:49 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Yu Ma <yu.ma@intel.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, mjguzik@gmail.com, 
+	edumazet@google.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v3 1/3] fs/file.c: remove sanity_check and add
+ likely/unlikely in alloc_fd()
+Message-ID: <20240703-ketchup-aufteilen-3e4c648b20c8@brauner>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240703143311.2184454-1-yu.ma@intel.com>
+ <20240703143311.2184454-2-yu.ma@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zmsh53PnONKG23MC@google.com>
+In-Reply-To: <20240703143311.2184454-2-yu.ma@intel.com>
 
-On Thu, Jun 13, 2024 at 04:44:23PM +0000, Sebastian Ene wrote:
-> On Thu, Jun 13, 2024 at 03:52:08PM +0100, Marc Zyngier wrote:
-> > On Thu, 13 Jun 2024 15:13:33 +0100,
-> > Sebastian Ene <sebastianene@google.com> wrote:
-> > > 
-> > > Hello,
-> > > 
-> > > I respined the v2 version to address an issue previously found here:
-> > > https://lore.kernel.org/all/202406132132.FBKSWFav-lkp@intel.com/
-> > 
-> > So is this v2 or v3? Having two v2s on the list is... confusing.
-> > 
-> > 	M.
-> > 
+On Wed, Jul 03, 2024 at 10:33:09AM GMT, Yu Ma wrote:
+> alloc_fd() has a sanity check inside to make sure the struct file mapping to the
+> allocated fd is NULL. Remove this sanity check since it can be assured by
+> exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
+> likely/unlikely and expand_file() call avoidance to reduce the work under
+> file_lock.
 > 
-> There is a small change in the patch 2/2 so you are right it should be v3,
-> sorry for the confusion.
+> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Signed-off-by: Yu Ma <yu.ma@intel.com>
+> ---
+>  fs/file.c | 38 ++++++++++++++++----------------------
+>  1 file changed, 16 insertions(+), 22 deletions(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index a3b72aa64f11..5178b246e54b 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -515,28 +515,29 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+>  	if (fd < files->next_fd)
+>  		fd = files->next_fd;
+>  
+> -	if (fd < fdt->max_fds)
+> +	if (likely(fd < fdt->max_fds))
+>  		fd = find_next_fd(fdt, fd);
+>  
+> +	error = -EMFILE;
+> +	if (unlikely(fd >= fdt->max_fds)) {
+> +		error = expand_files(files, fd);
+> +		if (error < 0)
+> +			goto out;
+> +		/*
+> +		 * If we needed to expand the fs array we
+> +		 * might have blocked - try again.
+> +		 */
+> +		if (error)
+> +			goto repeat;
+> +	}
 
-Please send a new version, nothing we can do with duplicate series on
-the lists...
+So this ends up removing the expand_files() above the fd >= end check
+which means that you can end up expanding the files_struct even though
+the request fd is past the provided end. That seems odd. What's the
+reason for that reordering?
+
+> +
+>  	/*
+>  	 * N.B. For clone tasks sharing a files structure, this test
+>  	 * will limit the total number of files that can be opened.
+>  	 */
+> -	error = -EMFILE;
+> -	if (fd >= end)
+> -		goto out;
+> -
+> -	error = expand_files(files, fd);
+> -	if (error < 0)
+> +	if (unlikely(fd >= end))
+>  		goto out;
+>  
+> -	/*
+> -	 * If we needed to expand the fs array we
+> -	 * might have blocked - try again.
+> -	 */
+> -	if (error)
+> -		goto repeat;
+> -
+>  	if (start <= files->next_fd)
+>  		files->next_fd = fd + 1;
+>  
+> @@ -546,13 +547,6 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+>  	else
+>  		__clear_close_on_exec(fd, fdt);
+>  	error = fd;
+> -#if 1
+> -	/* Sanity check */
+> -	if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
+> -		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
+> -		rcu_assign_pointer(fdt->fd[fd], NULL);
+> -	}
+> -#endif
+>  
+>  out:
+>  	spin_unlock(&files->file_lock);
+> @@ -618,7 +612,7 @@ void fd_install(unsigned int fd, struct file *file)
+>  		rcu_read_unlock_sched();
+>  		spin_lock(&files->file_lock);
+>  		fdt = files_fdtable(files);
+> -		BUG_ON(fdt->fd[fd] != NULL);
+> +		WARN_ON(fdt->fd[fd] != NULL);
+>  		rcu_assign_pointer(fdt->fd[fd], file);
+>  		spin_unlock(&files->file_lock);
+>  		return;
+> -- 
+> 2.43.0
+> 
 
