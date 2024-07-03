@@ -1,169 +1,153 @@
-Return-Path: <linux-kernel+bounces-239085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 852CD9255F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:55:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F05F9255FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 062701F24106
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:55:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24B42B20C8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B082013D523;
-	Wed,  3 Jul 2024 08:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB15F3BBEA;
+	Wed,  3 Jul 2024 08:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="RtTNXEpB"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fsx8idnL"
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FD213B5A1
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FF7136986
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719996913; cv=none; b=uhR7a6HrfpQdajI+Fn2C7ZZvLToJNMiSYx9wwWiJsUudfgBTEAgL1HVVAYzYEEKFKO4cK1OmDuAwtsSwY7HdvJ+LugMJ7fOIUiD6818Fnd17pfTL98XSkDpBe5DxW0D2aNqIkyhpguggzwe4tKHMm9w+kn2+oMQ9bgA+vJyFzjQ=
+	t=1719997035; cv=none; b=Cv3pFH9dS8b9NVGA41VF4aFHmKnn3f9nJjyULx2dzU1olfFwVNMX/bDh1KUmqbfHU0LfiRF1mKifChF1BkUUitr9QGu4otI5Vh0+WCEyruadbno+VHijv9C8XQT1vy2ckXkUjCPLXE4NRAHqAu/a40u9hUrZbtp12CiYe7SFQRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719996913; c=relaxed/simple;
-	bh=kdikNib9x+eTgS5GaTuz0ap4G90ilWCwk8wef1VJOOQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I/fjJ0QgKexqk1p1HqiYALIHMMcaH/crzC9wD6wugOY3a++Wlzg7ynAS7q8Hn+QVPHLY2bGrEigPl9nTP8M500gM71nAprFN/T7k6is22gtqGfE1140yMBlYb13KznlOU7pjIwkmfq23FUHOfSHep0guD3VlRZ07si/jqykjlnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=RtTNXEpB; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 4638sQ1A274819
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 3 Jul 2024 01:54:34 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4638sQ1A274819
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1719996874;
-	bh=Ko+FE7nG9WBnR7O9m6WOO/3Vh122gx7NsoMXFF+ciuI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RtTNXEpBkHFfKjaLaqu7V8zjxdM8U+AwvSJ12KTjjGK2DSCiYsKg/IiiGGfz2/hNf
-	 b4IUHgoRAMu65YQBkKdRjn7oOtgeO35pb9NuZ/XQCVbzJ+61YNi9rRl4G4Vi8b2mcc
-	 f3e6x2k0b/paIvlnlqbYbqhNVwdvWYnHXF2EGMq3yIxSk5/Deb/bKi1n3UCjjLNzQe
-	 Nnv/rzo9vGe8tVIArLjN+ns5B03Y/O00vMYzGHuaWrX7rEVyd9cQR7ljcnk0u6kGJO
-	 +NgTpmQuGW1sr9fyhrcN2ME8Q88HRs2nZroddv9GN6nsDifKnRDsXFYKVZ/n/eed3J
-	 gaOGn0svYavYA==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org
-Cc: hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
-        andrew.cooper3@citrix.com, nik.borisov@suse.com,
-        houwenlong.hwl@antgroup.com
-Subject: [PATCH v1 4/4] x86/fred: Enable FRED right after init_mem_mapping()
-Date: Wed,  3 Jul 2024 01:54:26 -0700
-Message-ID: <20240703085426.274801-5-xin@zytor.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240703085426.274801-1-xin@zytor.com>
-References: <20240703085426.274801-1-xin@zytor.com>
+	s=arc-20240116; t=1719997035; c=relaxed/simple;
+	bh=9P6gVWhaXfdGANh8cYupR+qgTAfXCsxjmt6x8vMHMpg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bKXPRhBYjuaQGy+G0w1NKzJYaO6mmwtefY2cFVhfB0AVSvg+WOVvNk5Gh2DuI1CeuSacHeDVinQh7oHQTCEmSTN9flnOUbFbXWWad2x6nKkyDz3Npf70qbpRnng6EWq8dYAoEWJkT/rp4a5Ee/DNWfy1Gj4cHt6Jc9S/ax6IlAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fsx8idnL; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-81022501a12so41703241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 01:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719997032; x=1720601832; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0XEWnCj/mm3W7EIrD6z86rzpuQbyYOSDTNQl49iY71I=;
+        b=fsx8idnLP4bPFk8NM87V+KyMSUBNZnzAjsrjFWjThoQga3vI28v7W6Enk8d7lGEbap
+         IM47muNUKtfvi5BCOW0f8VpUNh7T1+T6wsC5ci3oXxrUPm3f/wwDwmwALFOlXtQnAPJT
+         vL3IntqdNIJNU8oNJWtPgsoQtUvjlQBSI2H9joEI6SDUrWV9Ph/OAz+Fp0Gw2z6ALiFR
+         LS0kD/ge0Sm+HbLbOCMXPa0RcAa3NCVx6Y96mLK8VHREl4RGn+Uh2s7qGKpZp79YM8i1
+         qZtml49l2Er8SMuosQEd1pas4sTXD8VaJDL1F+N3GpBEvUtWY0VrtZCge/QVdZ3yNXLk
+         Xl6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719997032; x=1720601832;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0XEWnCj/mm3W7EIrD6z86rzpuQbyYOSDTNQl49iY71I=;
+        b=sQy6gMMUMnglcgtXRDbAWld2jaj8nmb2Q9dY5m6s7fYBxP2RWVXD7NuV/mZKi05tBQ
+         JQKBbg58oNFYpOoT2I+x3vcvDQWdiK+terJgA6n0M2UN/RKoXTCVSzq485b3U9BtBao8
+         dW/YjBTzyh2uD4kiV8DxHMoCRtqokXemqnjRa238rmLL9RxJhXPWAazoSgHiVR+dkNs1
+         Dy3X8EDroSPuUimU2lyphz37ngSYGwBLmHSnWI45+gA3GAkas7qpAiZI4uYeFxWrcuxq
+         4Dc6aGqHKY3xlxNF/eGZEcm9gwWRe+R/bxMfsuhiZz7xB0OKQnHun8do4lVP4RNERDSo
+         iMJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVoYE8ENejFiln4e624LOLECp1YG4ee54Vm83m5+MQ673y+LPNS8a62zEdgTpbm8GHxxJB9uzNSF1Zm1JvAfVf5JRrPVFCxWOl683zT
+X-Gm-Message-State: AOJu0YxZpVO/ngo8MoraNdqL2vQ9jci82tZkEmXPoHY5kDCseeZlDYCP
+	LTuW2HsslBmfgXHWMH6nA102bhaFEZkSpkD15zSfbIdKZmB3PyhjIH3F6SwPRZUqoIvRwTDSo7Y
+	XcQ1VYtisB4h8wYoJ1ORxWHlb5kqV2k6E/CqHYA==
+X-Google-Smtp-Source: AGHT+IHbkTRDyG2HvcG78gWTpQrxuOu/Y619sixvhYwI9yjX/IBnZ5qIyumvtHGWox7D6ggwzTkyRtApm42tixwUx2M=
+X-Received: by 2002:a67:bd07:0:b0:48f:b5c1:7269 with SMTP id
+ ada2fe7eead31-48fdeb0acc6mr352839137.0.1719997032251; Wed, 03 Jul 2024
+ 01:57:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240702170233.048122282@linuxfoundation.org>
+In-Reply-To: <20240702170233.048122282@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 3 Jul 2024 14:27:00 +0530
+Message-ID: <CA+G9fYs=KkeYFMS01s3VZmeSYd1zJphinPFCk1G2AJ7LZ=+8=A@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/163] 6.6.37-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Enable FRED right after init_mem_mapping() to avoid #PF handler,
-exc_page_fault(), fetching its faulting address from the stack
-before FRED is enabled.
+On Tue, 2 Jul 2024 at 22:48, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.37 release.
+> There are 163 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 04 Jul 2024 17:01:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.37-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Fixes: 14619d912b65 ("x86/fred: FRED entry/exit and dispatch code")
-Reported-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+The following powerpc builds failed on stable-rc 6.6.
+
+powerpc:
+ - gcc-13-defconfig
+ - clang-18-defconfig
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Build log:
+---------
+arch/powerpc/net/bpf_jit_comp.c: In function 'bpf_int_jit_compile':
+arch/powerpc/net/bpf_jit_comp.c:208:17: error: ignoring return value
+of 'bpf_jit_binary_lock_ro' declared with attribute
+'warn_unused_result' [-Werror=unused-result]
+  208 |                 bpf_jit_binary_lock_ro(bpf_hdr);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+
+
+Steps to reproduce:
 ---
- arch/x86/kernel/cpu/common.c | 6 +-----
- arch/x86/kernel/setup.c      | 7 ++++++-
- arch/x86/kernel/smpboot.c    | 6 ++++++
- arch/x86/kernel/traps.c      | 4 ++++
- 4 files changed, 17 insertions(+), 6 deletions(-)
+ tuxmake --runtime podman --target-arch powerpc --toolchain gcc-13
+--kconfig defconfig
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 022ae4ba7997..8d454b6f7def 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -2195,12 +2195,8 @@ void cpu_init_exception_handling(void)
- 	/* GHCB needs to be setup to handle #VC. */
- 	setup_ghcb();
- 
--	if (cpu_feature_enabled(X86_FEATURE_FRED)) {
--		cpu_init_fred_exceptions();
--		cpu_init_fred_rsps();
--	} else {
-+	if (!cpu_feature_enabled(X86_FEATURE_FRED))
- 		load_current_idt();
--	}
- }
- 
- /*
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 728927e4ba51..d866136a89ff 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -39,6 +39,7 @@
- #include <asm/coco.h>
- #include <asm/cpu.h>
- #include <asm/efi.h>
-+#include <asm/fred.h>
- #include <asm/gart.h>
- #include <asm/hypervisor.h>
- #include <asm/io_apic.h>
-@@ -1040,7 +1041,11 @@ void __init setup_arch(char **cmdline_p)
- 
- 	init_mem_mapping();
- 
--	idt_setup_early_pf();
-+	/* Switch to FRED from early IDT ASAP */
-+	if (cpu_feature_enabled(X86_FEATURE_FRED))
-+		cpu_init_fred_exceptions();
-+	else
-+		idt_setup_early_pf();
- 
- 	/*
- 	 * Update mmu_cr4_features (and, indirectly, trampoline_cr4_features)
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 0c35207320cb..0d83377f9dcd 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -64,6 +64,7 @@
- #include <asm/acpi.h>
- #include <asm/cacheinfo.h>
- #include <asm/desc.h>
-+#include <asm/fred.h>
- #include <asm/nmi.h>
- #include <asm/irq.h>
- #include <asm/realmode.h>
-@@ -248,6 +249,11 @@ static void notrace start_secondary(void *unused)
- 
- 	cpu_init_exception_handling();
- 
-+	if (cpu_feature_enabled(X86_FEATURE_FRED)) {
-+		cpu_init_fred_exceptions();
-+		cpu_init_fred_rsps();
-+	}
-+
- 	/*
- 	 * Load the microcode before reaching the AP alive synchronization
- 	 * point below so it is not part of the full per CPU serialized
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 6afb41e6cbbb..81648bd07576 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -1407,6 +1407,10 @@ void __init trap_init(void)
- 	/* Init cpu_entry_area before IST entries are set up */
- 	setup_cpu_entry_areas();
- 
-+	/* FRED RSPs pointing to memory from CPU entry areas */
-+	if (cpu_feature_enabled(X86_FEATURE_FRED))
-+		cpu_init_fred_rsps();
-+
- 	/* Init GHCB memory pages when running as an SEV-ES guest */
- 	sev_es_init_vc_handling();
- 
--- 
-2.45.2
 
+Build log, Build configs and build details,
+-------------
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.36-164-gca32fab2f2f9/testrun/24498135/suite/build/test/gcc-13-defconfig/log
+ - https://storage.tuxsuite.com/public/linaro/lkft/builds/2ihU8SlMSZyrWYYdCJrskJS7cLd/
+ - https://storage.tuxsuite.com/public/linaro/lkft/builds/2ihU8SlMSZyrWYYdCJrskJS7cLd/config
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.36-164-gca32fab2f2f9/testrun/24498135/suite/build/test/gcc-13-defconfig/details/
+
+metadata:
+------
+* kernel: 6.6.37-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* git commit: ca32fab2f2f9ffc305606cc41fe02e41bce06dd6
+* git describe: v6.6.36-164-gca32fab2f2f9
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.36-164-gca32fab2f2f9
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
