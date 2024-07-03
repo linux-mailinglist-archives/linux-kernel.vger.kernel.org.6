@@ -1,146 +1,377 @@
-Return-Path: <linux-kernel+bounces-240320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4256D926C23
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF99926C25
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40BA21C21A96
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:56:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C57B1C21C81
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30E81946B4;
-	Wed,  3 Jul 2024 22:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64960194A68;
+	Wed,  3 Jul 2024 22:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XXYwWVqc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYmeMSxb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070DA191F6E;
-	Wed,  3 Jul 2024 22:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A85194A48;
+	Wed,  3 Jul 2024 22:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720047402; cv=none; b=XbrgqbNc1sNIBLodAtNA5hC09v/Fg2CPbfzy9M9iRCW1yAsmVcmQAqzZ5lMRHkj4cQOfGcneoxaYmXSvVpGV+TycDL9SkZeuQ9Uocog9fPsI10V3rL0iA1197PAXZvrt1I6YkpBL9LUYp0loNFXp7DJrTBG4JJ0z5HmeQkGRKG0=
+	t=1720047403; cv=none; b=M1/O/pbPX+JgJhcW8/gvYz85bAm9aw7TQtBEQQix1aR9LOmuit7vaLNI/kn4FV6h7x2aanC7rHIr2pUKeuy+nVcbqT0iheUwG/5oUxRWJ002w800VO+fUiFbM395yATB/sSzliJd+lO6OWt9EbE8xRHMvf8JRXjpRz6ux3v0pO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720047402; c=relaxed/simple;
-	bh=Yat0dK/GhlDCw3tceD2Z/jjY0MWRMnghoD2FZYxbUcA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HdnEJ4P1vwC+Hkq8Rxv/h2/yXSecHUZesumoM48IhYmkuqqiZjMLq61AlNrN2BAOKhLXBV8MxIZcHRyWjgvYSqnMVpTo42Xj70KowBKORC/eyN9xUedXcDiItNg/nN8XJ08YTX17+YWzttMldV5+ddZGMiNYEV+G8mB77GuHW6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XXYwWVqc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D60C2BD10;
-	Wed,  3 Jul 2024 22:56:40 +0000 (UTC)
+	s=arc-20240116; t=1720047403; c=relaxed/simple;
+	bh=YoX0UyhmtGUXrU8PsCeGIJBdgk+p1V3F6yLw/yVYcXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cy4CgQgIWG7thu3UfKiJJF1wHg7zhsxaQ9Djq26RDLV6cOYCHwy1Gspt9QWXhSJiy5GZvwIObUO1KmqUg2QMD8Q0tQIq8Zc7JLodwXF7L59u7hCVjLuP6ydyxTccQrdXcnpoxi0x11ADi2lGLMWuoDzgTpM2qtoRzI3L8qEqCEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYmeMSxb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D317BC2BD10;
+	Wed,  3 Jul 2024 22:56:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720047401;
-	bh=Yat0dK/GhlDCw3tceD2Z/jjY0MWRMnghoD2FZYxbUcA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XXYwWVqc3CV0XkQTLD4cWmjKk0wybWM5sGbLpuQhSvQ3bIot1RH1W2lVcT720kwPR
-	 6gyQSNFj8vyx66ztit/JwRPYaBk6ZFYvp37tClSqpNRLkAzYwcJTteIp/2ovY7T+Zm
-	 4QdEicx1aEjbCC1dPU55prGCONCM92aewgc02/hhjPg4bck9Q1YCkPBqtB79t9Zep/
-	 FgyUn4ke0RDsrMYFOG3A/y2pBBpoErW9kEtp8t1UY8GeBu3nNUYUJ3Bv2MCYw4GDzK
-	 zES3yr87WT37H8E7ZIPCNoZBEI0ZTcpbJebiqryqdfqVxhaq+tEBjn5Wkx6bezb8zT
-	 Zpi+RT5U+DelA==
-From: SeongJae Park <sj@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>
-Subject: Re: [PATCH 0/7] Make core VMA operations internal and testable
-Date: Wed,  3 Jul 2024 15:56:36 -0700
-Message-Id: <20240703225636.90190-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <1a41caa5-561e-415f-85f3-01b52b233506@lucifer.local>
-References: 
+	s=k20201202; t=1720047403;
+	bh=YoX0UyhmtGUXrU8PsCeGIJBdgk+p1V3F6yLw/yVYcXE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kYmeMSxbjfylKFK/THvmaZ5GtrJKziiHPcMtT9VegGQVBZEGM7s6pblU7ej18LNNQ
+	 ewUPYQqJUOTmM4FzI1dLOPo0rr4w84aTnrV7d7G/0g7KwF/oczc98vtMUe0aYQVNp5
+	 oycEF5AmuXVcl8zz/BxPk0vbSNoJyoUAKD+0MNzTxIDq8VnCRzSwKg8HJY8BpKl+vC
+	 l6MSPbfUcB88SePsq8phlLvkf11BF2sjzJYS4fqKLWR9PdCalnImHtglblwzIRPTiT
+	 f45JqcNMd2ew4fHV2T3EuByCCaK+OZvcheKrny+9r+7+W7RDizSZHSxa9w5ATQNHQK
+	 3zZHef+U85iSQ==
+Date: Thu, 4 Jul 2024 00:56:40 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: [PATCH 11/11 v2] rcu/nocb: Simplify (de-)offloading state machine
+Message-ID: <ZoXXKHzaV9Xof4G+@lothringen>
+References: <20240530134552.5467-1-frederic@kernel.org>
+ <20240530134552.5467-12-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530134552.5467-12-frederic@kernel.org>
 
-On Wed, 3 Jul 2024 21:33:00 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+Now that the (de-)offloading process can only apply to offline CPUs,
+there is no more concurrency between rcu_core and nocb kthreads. Also
+the mutation now happens on empty queues.
 
-> On Wed, Jul 03, 2024 at 01:26:53PM GMT, Andrew Morton wrote:
-> > On Wed,  3 Jul 2024 12:57:31 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-> >
-> > > Kernel functionality is stubbed and shimmed as needed in tools/testing/vma/
-> > > which contains a fully functional userland vma_internal.h file and which
-> > > imports mm/vma.c and mm/vma.h to be directly tested from userland.
-> >
-> > Cool stuff.
-> 
-> Thanks :)
-> 
-> >
-> > Now we need to make sure that anyone who messes with vma code has run
-> > the tests.  And has added more testcases, if appropriate.
-> >
-> > Does it make sense to execute this test under selftests/ in some
-> > fashion?  Quite a few people appear to be running the selftest code
-> > regularly and it would be good to make them run this as well.
-> 
-> I think it will be useful to do that, yes, but as the tests are currently a
-> skeleton to both provide the stubbing out and to provide essentially an
-> example of how you might test (though enough that it'd now be easy to add a
-> _ton_ of tests), it's not quite ready to be run just yet.
+Therefore the state machine can be reduced to a single bit called
+SEGCBLIST_OFFLOADED. Simplify the transition as follows:
 
-If we will eventually move the files under selftests/, why dont' we place the
-files there from the beginning?  Is there a strict rule saying files that not
-really involved with running tests or not ready cannot be added there?  If so,
-could adding the files after the tests are ready to be run be an option?
-Cc-ing Shuah since I think she might have a comment.
+* Upon offloading: queue the rdp to be added to the rcuog list and
+  wait for the rcuog kthread to set the SEGCBLIST_OFFLOADED bit. Unpark
+  rcuo kthread.
 
-Also, I haven't had enough time to read the patches in detail but just the
-cover letter a little bit.  My humble impression from that is that this might
-better to eventually be kunit tests.  I know there was a discussion with Kees
-on RFC v1 [1] which you kindly explained why you decide to implement this in
-user space.  To my understanding, at least some of the problems are not real
-problems.  For two things as examples,
+* Upon de-offloading: Park rcuo kthread. Queue the rdp to be removed
+  from the rcuog list and wait for the rcuog kthread to clear the
+  SEGCBLIST_OFFLOADED bit.
 
-1. I understand that you concern the test speed [2].  I think Kunit could be
-slower than the dedicated user space tests, but to my experience, it's not that
-bad when using the default UML-based execution.
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ include/linux/rcu_segcblist.h |   4 +-
+ kernel/rcu/rcu_segcblist.c    |  11 ---
+ kernel/rcu/rcu_segcblist.h    |   2 +-
+ kernel/rcu/tree_nocb.h        | 131 ++++++++++++++++------------------
+ 4 files changed, 62 insertions(+), 86 deletions(-)
 
-2. My next humble undrestanding is that you want to test functions that you
-don't want to export [2,3] to kernel modules.  To my understanding it's not
-limited on Kunit.  I'm testing such DAMON functions using KUnit by including
-test code in the c file but protecting it via a config.  For an example, please
-refer to DAMON_KUNIT_TEST.
+diff --git a/include/linux/rcu_segcblist.h b/include/linux/rcu_segcblist.h
+index 1ef1bb54853d..2fdc2208f1ca 100644
+--- a/include/linux/rcu_segcblist.h
++++ b/include/linux/rcu_segcblist.h
+@@ -185,9 +185,7 @@ struct rcu_cblist {
+  *  ----------------------------------------------------------------------------
+  */
+ #define SEGCBLIST_ENABLED	BIT(0)
+-#define SEGCBLIST_LOCKING	BIT(1)
+-#define SEGCBLIST_KTHREAD_GP	BIT(2)
+-#define SEGCBLIST_OFFLOADED	BIT(3)
++#define SEGCBLIST_OFFLOADED	BIT(1)
+ 
+ struct rcu_segcblist {
+ 	struct rcu_head *head;
+diff --git a/kernel/rcu/rcu_segcblist.c b/kernel/rcu/rcu_segcblist.c
+index 1693ea22ef1b..298a2c573f02 100644
+--- a/kernel/rcu/rcu_segcblist.c
++++ b/kernel/rcu/rcu_segcblist.c
+@@ -260,17 +260,6 @@ void rcu_segcblist_disable(struct rcu_segcblist *rsclp)
+ 	rcu_segcblist_clear_flags(rsclp, SEGCBLIST_ENABLED);
+ }
+ 
+-/*
+- * Mark the specified rcu_segcblist structure as offloaded (or not)
+- */
+-void rcu_segcblist_offload(struct rcu_segcblist *rsclp, bool offload)
+-{
+-	if (offload)
+-		rcu_segcblist_set_flags(rsclp, SEGCBLIST_LOCKING | SEGCBLIST_OFFLOADED);
+-	else
+-		rcu_segcblist_clear_flags(rsclp, SEGCBLIST_OFFLOADED);
+-}
+-
+ /*
+  * Does the specified rcu_segcblist structure contain callbacks that
+  * are ready to be invoked?
+diff --git a/kernel/rcu/rcu_segcblist.h b/kernel/rcu/rcu_segcblist.h
+index 7a0962dfee86..259904075636 100644
+--- a/kernel/rcu/rcu_segcblist.h
++++ b/kernel/rcu/rcu_segcblist.h
+@@ -89,7 +89,7 @@ static inline bool rcu_segcblist_is_enabled(struct rcu_segcblist *rsclp)
+ static inline bool rcu_segcblist_is_offloaded(struct rcu_segcblist *rsclp)
+ {
+ 	if (IS_ENABLED(CONFIG_RCU_NOCB_CPU) &&
+-	    rcu_segcblist_test_flags(rsclp, SEGCBLIST_LOCKING))
++	    rcu_segcblist_test_flags(rsclp, SEGCBLIST_OFFLOADED))
+ 		return true;
+ 
+ 	return false;
+diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+index 24daf606de0c..c8fc2f37c9ed 100644
+--- a/kernel/rcu/tree_nocb.h
++++ b/kernel/rcu/tree_nocb.h
+@@ -604,37 +604,33 @@ static void call_rcu_nocb(struct rcu_data *rdp, struct rcu_head *head,
+ 	}
+ }
+ 
+-static int nocb_gp_toggle_rdp(struct rcu_data *rdp)
++static void nocb_gp_toggle_rdp(struct rcu_data *rdp_gp, struct rcu_data *rdp)
+ {
+ 	struct rcu_segcblist *cblist = &rdp->cblist;
+ 	unsigned long flags;
+-	int ret;
+ 
+-	rcu_nocb_lock_irqsave(rdp, flags);
+-	if (rcu_segcblist_test_flags(cblist, SEGCBLIST_OFFLOADED) &&
+-	    !rcu_segcblist_test_flags(cblist, SEGCBLIST_KTHREAD_GP)) {
++	/*
++	 * Locking orders future de-offloaded callbacks enqueue against previous
++	 * handling of this rdp. Ie: Make sure rcuog is done with this rdp before
++	 * deoffloaded callbacks can be enqueued.
++	 */
++	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
++	if (!rcu_segcblist_test_flags(cblist, SEGCBLIST_OFFLOADED)) {
+ 		/*
+ 		 * Offloading. Set our flag and notify the offload worker.
+ 		 * We will handle this rdp until it ever gets de-offloaded.
+ 		 */
+-		rcu_segcblist_set_flags(cblist, SEGCBLIST_KTHREAD_GP);
+-		ret = 1;
+-	} else if (!rcu_segcblist_test_flags(cblist, SEGCBLIST_OFFLOADED) &&
+-		   rcu_segcblist_test_flags(cblist, SEGCBLIST_KTHREAD_GP)) {
++		list_add_tail(&rdp->nocb_entry_rdp, &rdp_gp->nocb_head_rdp);
++		rcu_segcblist_set_flags(cblist, SEGCBLIST_OFFLOADED);
++	} else {
+ 		/*
+ 		 * De-offloading. Clear our flag and notify the de-offload worker.
+ 		 * We will ignore this rdp until it ever gets re-offloaded.
+ 		 */
+-		rcu_segcblist_clear_flags(cblist, SEGCBLIST_KTHREAD_GP);
+-		ret = 0;
+-	} else {
+-		WARN_ON_ONCE(1);
+-		ret = -1;
++		list_del(&rdp->nocb_entry_rdp);
++		rcu_segcblist_clear_flags(cblist, SEGCBLIST_OFFLOADED);
+ 	}
+-
+-	rcu_nocb_unlock_irqrestore(rdp, flags);
+-
+-	return ret;
++	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
+ }
+ 
+ static void nocb_gp_sleep(struct rcu_data *my_rdp, int cpu)
+@@ -841,14 +837,7 @@ static void nocb_gp_wait(struct rcu_data *my_rdp)
+ 	}
+ 
+ 	if (rdp_toggling) {
+-		int ret;
+-
+-		ret = nocb_gp_toggle_rdp(rdp_toggling);
+-		if (ret == 1)
+-			list_add_tail(&rdp_toggling->nocb_entry_rdp, &my_rdp->nocb_head_rdp);
+-		else if (ret == 0)
+-			list_del(&rdp_toggling->nocb_entry_rdp);
+-
++		nocb_gp_toggle_rdp(my_rdp, rdp_toggling);
+ 		swake_up_one(&rdp_toggling->nocb_state_wq);
+ 	}
+ 
+@@ -1018,16 +1007,11 @@ void rcu_nocb_flush_deferred_wakeup(void)
+ }
+ EXPORT_SYMBOL_GPL(rcu_nocb_flush_deferred_wakeup);
+ 
+-static int rdp_offload_toggle(struct rcu_data *rdp,
+-			       bool offload, unsigned long flags)
+-	__releases(rdp->nocb_lock)
++static int rcu_nocb_queue_toggle_rdp(struct rcu_data *rdp)
+ {
+-	struct rcu_segcblist *cblist = &rdp->cblist;
+ 	struct rcu_data *rdp_gp = rdp->nocb_gp_rdp;
+ 	bool wake_gp = false;
+-
+-	rcu_segcblist_offload(cblist, offload);
+-	rcu_nocb_unlock_irqrestore(rdp, flags);
++	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&rdp_gp->nocb_gp_lock, flags);
+ 	// Queue this rdp for add/del to/from the list to iterate on rcuog
+@@ -1041,9 +1025,25 @@ static int rdp_offload_toggle(struct rcu_data *rdp,
+ 	return wake_gp;
+ }
+ 
++static bool rcu_nocb_rdp_deoffload_wait_cond(struct rcu_data *rdp)
++{
++	unsigned long flags;
++	bool ret;
++
++	/*
++	 * Locking makes sure rcuog is done handling this rdp before deoffloaded
++	 * enqueue can happen. Also it keeps the SEGCBLIST_OFFLOADED flag stable
++	 * while the ->nocb_lock is held.
++	 */
++	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
++	ret = !rcu_segcblist_test_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
++	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
++
++	return ret;
++}
++
+ static int rcu_nocb_rdp_deoffload(struct rcu_data *rdp)
+ {
+-	struct rcu_segcblist *cblist = &rdp->cblist;
+ 	unsigned long flags;
+ 	int wake_gp;
+ 	struct rcu_data *rdp_gp = rdp->nocb_gp_rdp;
+@@ -1059,48 +1059,34 @@ static int rcu_nocb_rdp_deoffload(struct rcu_data *rdp)
+ 	rcu_nocb_lock_irqsave(rdp, flags);
+ 	WARN_ON_ONCE(rcu_cblist_n_cbs(&rdp->nocb_bypass));
+ 	WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
++	rcu_nocb_unlock_irqrestore(rdp, flags);
+ 
+-	wake_gp = rdp_offload_toggle(rdp, false, flags);
++	wake_gp = rcu_nocb_queue_toggle_rdp(rdp);
+ 
+ 	mutex_lock(&rdp_gp->nocb_gp_kthread_mutex);
+ 	if (rdp_gp->nocb_gp_kthread) {
+ 		if (wake_gp)
+ 			wake_up_process(rdp_gp->nocb_gp_kthread);
+ 
+-		swait_event_exclusive(rdp->nocb_state_wq,
+-				      !rcu_segcblist_test_flags(cblist,
+-								SEGCBLIST_KTHREAD_GP));
+ 		if (rdp->nocb_cb_kthread)
+ 			kthread_park(rdp->nocb_cb_kthread);
++
++		swait_event_exclusive(rdp->nocb_state_wq,
++				      rcu_nocb_rdp_deoffload_wait_cond(rdp));
+ 	} else {
+ 		/*
+ 		 * No kthread to clear the flags for us or remove the rdp from the nocb list
+ 		 * to iterate. Do it here instead. Locking doesn't look stricly necessary
+ 		 * but we stick to paranoia in this rare path.
+ 		 */
+-		rcu_nocb_lock_irqsave(rdp, flags);
+-		rcu_segcblist_clear_flags(&rdp->cblist, SEGCBLIST_KTHREAD_GP);
+-		rcu_nocb_unlock_irqrestore(rdp, flags);
++		raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
++		rcu_segcblist_clear_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
++		raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
+ 
+ 		list_del(&rdp->nocb_entry_rdp);
+ 	}
+-	mutex_unlock(&rdp_gp->nocb_gp_kthread_mutex);
+ 
+-	/*
+-	 * Lock one last time to acquire latest callback updates from kthreads
+-	 * so we can later handle callbacks locally without locking.
+-	 */
+-	rcu_nocb_lock_irqsave(rdp, flags);
+-	/*
+-	 * Theoretically we could clear SEGCBLIST_LOCKING after the nocb
+-	 * lock is released but how about being paranoid for once?
+-	 */
+-	rcu_segcblist_clear_flags(cblist, SEGCBLIST_LOCKING);
+-	/*
+-	 * Without SEGCBLIST_LOCKING, we can't use
+-	 * rcu_nocb_unlock_irqrestore() anymore.
+-	 */
+-	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
++	mutex_unlock(&rdp_gp->nocb_gp_kthread_mutex);
+ 
+ 	return 0;
+ }
+@@ -1129,10 +1115,20 @@ int rcu_nocb_cpu_deoffload(int cpu)
+ }
+ EXPORT_SYMBOL_GPL(rcu_nocb_cpu_deoffload);
+ 
+-static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
++static bool rcu_nocb_rdp_offload_wait_cond(struct rcu_data *rdp)
+ {
+-	struct rcu_segcblist *cblist = &rdp->cblist;
+ 	unsigned long flags;
++	bool ret;
++
++	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
++	ret = rcu_segcblist_test_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
++	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
++
++	return ret;
++}
++
++static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
++{
+ 	int wake_gp;
+ 	struct rcu_data *rdp_gp = rdp->nocb_gp_rdp;
+ 
+@@ -1152,20 +1148,14 @@ static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
+ 	WARN_ON_ONCE(rcu_cblist_n_cbs(&rdp->nocb_bypass));
+ 	WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
+ 
+-	/*
+-	 * Can't use rcu_nocb_lock_irqsave() before SEGCBLIST_LOCKING
+-	 * is set.
+-	 */
+-	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
+-
+-	wake_gp = rdp_offload_toggle(rdp, true, flags);
++	wake_gp = rcu_nocb_queue_toggle_rdp(rdp);
+ 	if (wake_gp)
+ 		wake_up_process(rdp_gp->nocb_gp_kthread);
+ 
+-	kthread_unpark(rdp->nocb_cb_kthread);
+-
+ 	swait_event_exclusive(rdp->nocb_state_wq,
+-			      rcu_segcblist_test_flags(cblist, SEGCBLIST_KTHREAD_GP));
++			      rcu_nocb_rdp_offload_wait_cond(rdp));
++
++	kthread_unpark(rdp->nocb_cb_kthread);
+ 
+ 	return 0;
+ }
+@@ -1340,8 +1330,7 @@ void __init rcu_init_nohz(void)
+ 		rdp = per_cpu_ptr(&rcu_data, cpu);
+ 		if (rcu_segcblist_empty(&rdp->cblist))
+ 			rcu_segcblist_init(&rdp->cblist);
+-		rcu_segcblist_offload(&rdp->cblist, true);
+-		rcu_segcblist_set_flags(&rdp->cblist, SEGCBLIST_KTHREAD_GP);
++		rcu_segcblist_set_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
+ 	}
+ 	rcu_organize_nocb_kthreads();
+ }
+-- 
+2.34.1
 
-I understand above are only small parts of the reason for your decision, and
-some of those would really unsupported by Kunit.  In the case, I think adding
-this user space tests as is is good.  Nonetheless, I think it would be good to
-hear some comments from Kunit developers.  IMHO, letting them know the
-limitations will hopefully help setting their future TODO items.  Cc-ing
-Brendan, David and Rae for that.
-
-To recap, I have no strong opinions about this patch, but I think knowing how
-Selftests and KUnit developers think could be helpful.
-
-
-[1] https://lore.kernel.org/202406270957.C0E5E8057@keescook
-[2] https://lore.kernel.org/5zuowniex4sxy6l7erbsg5fiirf4d4f5fbpz2upay2igiwa2xk@vuezoh2wbqf4
-[3] https://lore.kernel.org/f005a7b0-ca31-4d39-b2d5-00f5546d610a@lucifer.local
-
-
-Thanks,
-SJ
-
-[...]
 
