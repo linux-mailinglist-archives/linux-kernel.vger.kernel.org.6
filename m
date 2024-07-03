@@ -1,65 +1,79 @@
-Return-Path: <linux-kernel+bounces-239057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489CD925588
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:38:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8410A9255D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F34281F2271F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E05028978F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C78413B584;
-	Wed,  3 Jul 2024 08:38:36 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2728513B5A1;
+	Wed,  3 Jul 2024 08:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UWECwGZK"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF8913A402
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48E2136986;
+	Wed,  3 Jul 2024 08:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719995915; cv=none; b=fjr9L3s5wbXFGCMAoZCFKdioW6s7lvJvq0GYAZuVHqh22M2Gqrc90CG0oBxT3iE/uTHfm85OeGTZnII140deqSNXZdnqR0Rrt8nnQIooXuqeirM7RgEJy3NmaXXdHBkK0rlcykEOA1l7vyDiyKpT3m0D0Vh4PezYp9kMiE3EGnU=
+	t=1719996544; cv=none; b=LTvAv8hVfyfwLSKprITi0jC9c+pUW054i8Gyrvix8dzF1onvmilz+tyBKAQy1sK0yvtJBzRU3xzoMuF4RKX0QkCXbVdrPFeKbuP/43Iwo060BdMCf4mFDwkupOOfgEUuWf31CKZU2LlEhEmg4xEE6htFeR13S6DmDTlwVXtT5Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719995915; c=relaxed/simple;
-	bh=4niLNORaUtdS1dketsmiqg/K/6iBR51KHyuu0zlNR9Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UmKpymyMdWj4gd3sN5Yna86qcVKU0Op9OLn9BkhNSsa8yFxtpLEpvuHA3YOLE2jjX+gXp6sh9RqFNWSc3uiuDZG+caHfLm+/73ilu47SmluzYzLasG80AlKpPyRDwl8knhqvrUZMuAoHVcMZM75oobh7V04aepaturw7rd6hFec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sOvVO-0006sk-QT; Wed, 03 Jul 2024 10:38:22 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sOvVN-006oCm-6M; Wed, 03 Jul 2024 10:38:21 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sOvVN-00DE0d-0P;
-	Wed, 03 Jul 2024 10:38:21 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: [PATCH net-next v1 1/1] net: dsa: microchip: lan937x: Add error handling in lan937x_setup
-Date: Wed,  3 Jul 2024 10:38:20 +0200
-Message-Id: <20240703083820.3152100-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1719996544; c=relaxed/simple;
+	bh=g37GRHeA4FUQFNxW+0fC++R9p/fzKvH6Aw3qjaPXR2s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sBBuWrKOH/CtrXCyOOSurXUbUVJj3gBJa/aP645u9OtTxxT6n6q+CCDXVJc3QOZ9Nui5tm/gMgjNPm0ADEpVRpUFXd9PNk+mAQj1S34KbbjcO4pbQrTzINcl0BxKsy3F1IuvujKpdf9n47l8a7OeMH7trdBWBDepgt61sGRRm2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UWECwGZK; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e72224c395so58593671fa.3;
+        Wed, 03 Jul 2024 01:49:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719996541; x=1720601341; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1AjhbvJGW65lucbNOKyGKt16wc5zILo5usSblQaXEvc=;
+        b=UWECwGZKPjJT1+8eI0oYyy75gqW7RUUl84kmfZI+DyTjFXVF1sPEUQmt0ESp2qNtps
+         ZZ+CCXNiP3E6RZmRma07EmP4rCbxxaKEsNC1CsHomm9UX2t/2tGN3Oypb6GmcxgJTfqk
+         JZWSVhCqKQwpb1+nNzVdG7gWn6/9VtHH8oMBjPxKzGL6QCmJixGNhmsumaIsM5J3ScMh
+         RQbR0cNyrCp+w1xcKEgcRI8x+VQi0jaSkNAkrCyfEsBzrHkFPCvSK1PLjXkW8hS053Sr
+         JiicFvPwxnWFHPp87Y3jgaq/KojPsHUpoQbAPZfj+BrhzyQ/V74CIcL5Sk35pkBfm3nG
+         f5qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719996541; x=1720601341;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1AjhbvJGW65lucbNOKyGKt16wc5zILo5usSblQaXEvc=;
+        b=qOR/fZMFRf6cZKNNzCI6qm/Uju0z3SFWYJyRC8e9CSE0nNzZc7pYFB4OZFg4zMAEwp
+         avcAjqXUf24dn59ylAP+uzkKkRsfT4G+mPPmxB6qimWp1a59rLWWN1vM66yIZPhMVgG7
+         yJzMiS2JcZvUeUGvL6cAdWIu/ZXylq/mh39I6ipDdCpuyFkjnOr4ebvF6vAgbU85xdWC
+         kTWXKPzzw9LFGmrF2CC9xsmvi18o0vUcziWd+mV5giMP7wb130oNyVSgqIdqTbjxPLLo
+         JnNQaoA6G0F06l/Bhu5Va6AKUdYqzONcOKrAiW/IULI7q2WtwL6+DwVioV1VIyG4N65A
+         oQEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVr8I2kqL/jceI1FuCqRFmv4dv9avfanstW5l2eeOhepHdwpIMVnr1WwtMbvgJb5z5J776b4X3bWQmfu5OkYJtIQ9g+54+gxe7o8lLNlAgfWqftuYu+jR8CBfw0TOOd4wYZLv4F1mfyGQ==
+X-Gm-Message-State: AOJu0YxEIH3xEqvEDgPpo070HpAVohxHRe0hYav5TjZ4jh+N9tw4YECg
+	LrIFqjY+WuqmsDlYWAiVjGFpd1SD5BCssXW38tfOZTAx9zO/WPpXgAzbgq8S
+X-Google-Smtp-Source: AGHT+IGWtoPrU8lRR2/crvMe7zAwVRwVnjmZHiO2S/eMWKnrVKssX59sxbWyLLLr048lbdCvIMR7zg==
+X-Received: by 2002:a2e:309:0:b0:2ec:59d8:a7e6 with SMTP id 38308e7fff4ca-2ee5e381f18mr69568041fa.30.1719996540582;
+        Wed, 03 Jul 2024 01:49:00 -0700 (PDT)
+Received: from qamajeed.Home ([39.45.165.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b065316sm226126115e9.26.2024.07.03.01.48.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 01:48:59 -0700 (PDT)
+From: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+Subject: [PATCH v3] Updating a deprecated use of strcpy.
+Date: Wed,  3 Jul 2024 13:41:25 +0500
+Message-Id: <20240703084124.11530-1-qasim.majeed20@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,69 +81,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Introduce error handling for lan937x_cfg function calls in lan937x_setup.
-This change ensures that if any lan937x_cfg or ksz_rmw32 calls fails, the
-function will return the appropriate error code.
+Replacing strcpy with strscpy.
+strcpy is a deprecated function.
+It should be removed from the kernel source.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Link: https://github.com/KSPP/linux/issues/88
+
+Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+
+> Replacing strcpy with strscpy and memory bound the copy.
+
+> Why?  In this particular case, it is not fundamentally necessary.
+
+> strcpy is a deprecated function. It should be removed from the kernel source.
+
+> If the goal is to get rid of all strcpy() calls from the kernel
+> because using it is generally unsafe, just say so in the changelog and
+> it will be fine.
+changelog has been updated.
+
+> So is it necessary to use the size argument here and below?
+Size argument is not necessary as destination is an array of 40 bytes. Patch has been updated.
+
+> for that to work, shouldn't the size of the *destination* buffer be
+> passed, instead of the length of the string we want to copy?
+Yes, size of the destination should be passed.
+
+> Not tested, but the 3rd argument of strscpy () is optional.
+> (https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/string.h#L87),
+> so maybe just:
+
+>        strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
+Thank you for sharing the reference, this suggestion will do the work and accomodated in the patch.
+
 ---
- drivers/net/dsa/microchip/lan937x_main.c | 27 +++++++++++++++---------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+	v2 -> v3: Changelog has been updated. size argument has been removed.
 
-diff --git a/drivers/net/dsa/microchip/lan937x_main.c b/drivers/net/dsa/microchip/lan937x_main.c
-index 0606796b14856..83ac33fede3f5 100644
---- a/drivers/net/dsa/microchip/lan937x_main.c
-+++ b/drivers/net/dsa/microchip/lan937x_main.c
-@@ -374,26 +374,33 @@ int lan937x_setup(struct dsa_switch *ds)
- 	ds->vlan_filtering_is_global = true;
+ drivers/acpi/acpi_video.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 1fda30388297..8274a17872ed 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1128,8 +1128,8 @@ static int acpi_video_bus_get_one_device(struct acpi_device *device, void *arg)
+ 		return -ENOMEM;
+ 	}
  
- 	/* Enable aggressive back off for half duplex & UNH mode */
--	lan937x_cfg(dev, REG_SW_MAC_CTRL_0,
--		    (SW_PAUSE_UNH_MODE | SW_NEW_BACKOFF | SW_AGGR_BACKOFF),
--		    true);
-+	ret = lan937x_cfg(dev, REG_SW_MAC_CTRL_0, (SW_PAUSE_UNH_MODE |
-+						   SW_NEW_BACKOFF |
-+						   SW_AGGR_BACKOFF), true);
-+	if (ret < 0)
-+		return ret;
+-	strcpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
+-	strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
++	strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
++	strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
  
- 	/* If NO_EXC_COLLISION_DROP bit is set, the switch will not drop
- 	 * packets when 16 or more collisions occur
- 	 */
--	lan937x_cfg(dev, REG_SW_MAC_CTRL_1, NO_EXC_COLLISION_DROP, true);
-+	ret = lan937x_cfg(dev, REG_SW_MAC_CTRL_1, NO_EXC_COLLISION_DROP, true);
-+	if (ret < 0)
-+		return ret;
+ 	data->device_id = device_id;
+ 	data->video = video;
+@@ -2010,8 +2010,8 @@ static int acpi_video_bus_add(struct acpi_device *device)
+ 	}
  
- 	/* enable global MIB counter freeze function */
--	lan937x_cfg(dev, REG_SW_MAC_CTRL_6, SW_MIB_COUNTER_FREEZE, true);
-+	ret = lan937x_cfg(dev, REG_SW_MAC_CTRL_6, SW_MIB_COUNTER_FREEZE, true);
-+	if (ret < 0)
-+		return ret;
+ 	video->device = device;
+-	strcpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
+-	strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
++	strscpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
++	strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
+ 	device->driver_data = video;
  
- 	/* disable CLK125 & CLK25, 1: disable, 0: enable */
--	lan937x_cfg(dev, REG_SW_GLOBAL_OUTPUT_CTRL__1,
--		    (SW_CLK125_ENB | SW_CLK25_ENB), true);
-+	ret = lan937x_cfg(dev, REG_SW_GLOBAL_OUTPUT_CTRL__1,
-+			  (SW_CLK125_ENB | SW_CLK25_ENB), true);
-+	if (ret < 0)
-+		return ret;
- 
- 	/* Disable global VPHY support. Related to CPU interface only? */
--	ksz_rmw32(dev, REG_SW_CFG_STRAP_OVR, SW_VPHY_DISABLE, SW_VPHY_DISABLE);
--
--	return 0;
-+	return ksz_rmw32(dev, REG_SW_CFG_STRAP_OVR, SW_VPHY_DISABLE,
-+			 SW_VPHY_DISABLE);
- }
- 
- void lan937x_teardown(struct dsa_switch *ds)
+ 	acpi_video_bus_find_cap(video);
 -- 
-2.39.2
+2.34.1
 
 
