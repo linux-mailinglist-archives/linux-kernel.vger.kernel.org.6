@@ -1,126 +1,90 @@
-Return-Path: <linux-kernel+bounces-239938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09415926703
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:23:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A42A92670A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86498B2237B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:23:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CFE1B22C0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631D21849DF;
-	Wed,  3 Jul 2024 17:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF76C185096;
+	Wed,  3 Jul 2024 17:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GbVyliTS"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmdtdkn8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C97E17A920
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 17:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2062C17A920;
+	Wed,  3 Jul 2024 17:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720027410; cv=none; b=OxWBBjvxRMItljyplvViU4N082ruUIOg0FEkXV+MsQZKTj4pHhASO9BVlHwJbwcVzZVM6cuSh2GxbRJTuzjiFfpN+U5kY8kbpGUeSCqSkpGKONb2mTD0U9UvqTFI2sKdGnuJLMFH+yalk8ZBS9lnbQcjBVpCGGDl0znvjTQXc80=
+	t=1720027470; cv=none; b=k1TjQoFAL9hIpdrrcP9O8uvDfPZtp3LcstsHx14fDGBKJRylZZ2dvTGGw70aIpA7FlEYCKGOKcGur5wPL3iGvaLnens+011MnIqww8qQcMi3bSiKso0Cz+gwKF36+Gt9h16oi2etswiSUJhA4rWFMFEZh7AgrB4pNMa2pQggoIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720027410; c=relaxed/simple;
-	bh=9Qs5ol2ze5oiR2DbW9m/2gue58457PaRyAxDKiR93+w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H2B93R2cPwgCkypQv8e/QbfVAPw3Q3syaVplatZT3x/kNetueue4lYdQen4ArZ+eZFP38yYNhy2JvhDbAK334uCmPCR3JH6ZC7JevD9aRKC4yQXEXo1Og8aQwvTmZ9IA8KsO2eUwc5otDn02mPt5u+Atc+tpLdYVwWv5X5mIKYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GbVyliTS; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-651815069f8so7776967b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 10:23:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720027408; x=1720632208; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ti6v24oTe1MEKhNZLLn/dVPsQr2JQWNo5ls87iglapk=;
-        b=GbVyliTSjri3Z8wDJnvtQpOKytk5jbQ0VqJHqZFPAHLIPjl9znCibr2/63VkyCp2AJ
-         UJmORX/TNLyVRnYRX/SUJt4pS23iIHL5jia8sBnwHaREU2MdIAxx03jU/17zKBMqZ3Aj
-         kJoI91/P1CnD7Wh4LVQg5OR3HdmQWTip55NlpEJxiwV1Xdz5S5fcCrJwlnYF3fsHeU7E
-         4ncT/WghMvKAusuLNIiSsmL0tLcmhn0+wWPy+XbzrTbz/kdPFOvZ4ojjsrrNE4R2upUK
-         GN546AFcnjgLWVOIKiIm1wbzgX3zaLLurOq4wNbV8+sO3vY+jWuJ+MgrtOaACi7ij846
-         LnNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720027408; x=1720632208;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ti6v24oTe1MEKhNZLLn/dVPsQr2JQWNo5ls87iglapk=;
-        b=diwpbN5sSVAX9AaYPIT79WlbjOjh+f8/wrLHGXALuws0wb6hn4a1G2x+vq4YfQMEz+
-         FGHAXh2Hb2mWjeVB266N3MdDtRrF6rzkrt744nFJKIGsL4vEDIYLZClbUIRNQbIMVs6W
-         Ow+Y04fyLBDBjDilu1vDj9C7OC5VMjI5kckLjUKASSFMiGkUY35JW+q/ZjLCZTtFVAwV
-         UYTZzcrqajHFe0HBRNuJK7DM8bfyFxUjwaPQk6y+wiITKbhQ95xpTpTh9KWJARGr/MOK
-         7Vafkh4HftIdPSjveSZmiUZ2l5ISSpRORwB16J8NouPLFieDRcxVXxnbFfu+KX+fmTW1
-         mUpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRr3zJQFs7Fi09RinA1JhKYoWr7xcnZl7C7f55cK9Qyh6qpJUouEY84/kSBcZ7YgOJ76Mn4sTWcVbEWsWOSLllLnzP0sXrljdKnDgG
-X-Gm-Message-State: AOJu0YxZr+KfuDAAcJRWWNXERnW3dywpmu1wyk8ulB40y2Ohaj+HYsDu
-	adlX56fZIdxhlrHDg1K/Zpyzb336PzweqHimBwVDMCHOKvyczWe2TQYy5XVCWeeGmrxCWncw1Xg
-	5gVruEo536weeSTPFDaePxO/9w1m5Z2QREwM=
-X-Google-Smtp-Source: AGHT+IFWOydMbN6BlWi7lFEJsFqVYPn/wQrhz+LemE/ooLfbb7YSNlm3inzv1ZHEE/FXcdtbKBxpbSiueYfE+CJjO98=
-X-Received: by 2002:a0d:ebcb:0:b0:61a:e557:6ce1 with SMTP id
- 00721157ae682-651800ecdddmr15155807b3.1.1720027408329; Wed, 03 Jul 2024
- 10:23:28 -0700 (PDT)
+	s=arc-20240116; t=1720027470; c=relaxed/simple;
+	bh=iuBZisjNdWYlQ9wx+QgfvIlstiZiWQefpRZWHhmW+I0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=G/KLIQocIMNlJvBVIzu70fDYztFkGwU+xsDdWE35yfuMZzdatqM4BLNV4nKaJU3z6waO7HFZsf+abFFJc8FYGXz7s+sbUCTCaVY/AepoTd/4uQKkykKZwt4R4+40w/fhRskYIu1eDOfKZiC9X16snUmpB5QYva/LxxqjaTFjt/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmdtdkn8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1850FC2BD10;
+	Wed,  3 Jul 2024 17:24:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720027470;
+	bh=iuBZisjNdWYlQ9wx+QgfvIlstiZiWQefpRZWHhmW+I0=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=nmdtdkn8mOlr1tXHqHfwLxD4nyX69ommK2D2v59ifgA7Pm/dJRbeLpruVEYUDoJY+
+	 SwLkqmjNcSkRvY+b/Mytpp22d3V+glQwtk2joScw5ErXgG5PmWqBWOKvJ9Yu1tUg8G
+	 z2WkY0UG2hvgJXlC4Aw0vZh1N0TzTDsXygoTV382+/kkLMNV533GnbyC4gw2UMfME/
+	 wKWT/QSslqX+qEdFIGtWzdQRYD6N3MjuBvVjWxGlxP7ikh0fXFjypD3I8nPt5pCy92
+	 iqaHOrVMjYI+rxOij/QFRS6yfCTGbYc8CbW+ijD/YoRqlq+02aq2C303wP6NZD5Icx
+	 nqmkI0JjvSeRg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240616203231.43724-1-av2082000@gmail.com> <d6cd7441-53f2-4c88-a361-729e3abe81c1@marliere.net>
- <CAPMW_r+sPGF5=+=edLY81X+Cd4bMWKFJw3sDd0mzaZEM9b75BQ@mail.gmail.com> <f64523f0-db39-4e3a-85a6-1a3cb07e2d08@marliere.net>
-In-Reply-To: <f64523f0-db39-4e3a-85a6-1a3cb07e2d08@marliere.net>
-From: Amit Vadhavana <av2082000@gmail.com>
-Date: Wed, 3 Jul 2024 22:53:17 +0530
-Message-ID: <CAPMW_rKV1BkBbrhcKNkMvhSatoHRNk58O8m8m8GHCN1Jb2V-8Q@mail.gmail.com>
-Subject: Re: [PATCH v2] slimbus: Fix struct and documentation alignment in stream.c
-To: "Ricardo B. Marliere" <ricardo@marliere.net>
-Cc: srinivas.kandagatla@linaro.org, alsa-devel@alsa-project.org, 
-	linux-kernel@vger.kernel.org, rbmarliere@gmail.com, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 03 Jul 2024 20:24:25 +0300
+Message-Id: <D2G2UL8ED69K.2CY96NBKMJPWD@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, <linux-integrity@vger.kernel.org>
+Cc: <stable@vger.kernel.org>, "Stefan Berger" <stefanb@linux.ibm.com>,
+ "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>, "James
+ Bottomley" <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, <linux-kernel@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Limit TCG_TPM2_HMAC to known good drivers
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240703003033.19057-1-jarkko@kernel.org>
+ <D2FHYVV7GNCV.3G1XOEUI3LZFB@kernel.org>
+In-Reply-To: <D2FHYVV7GNCV.3G1XOEUI3LZFB@kernel.org>
 
-On Thu, 20 Jun 2024 at 18:00, Ricardo B. Marliere <ricardo@marliere.net> wrote:
+On Wed Jul 3, 2024 at 4:02 AM EEST, Jarkko Sakkinen wrote:
+> On Wed Jul 3, 2024 at 3:30 AM EEST, Jarkko Sakkinen wrote:
+> > +	depends on TCG_CRB || TCG_TIS_CORE
 >
-> Hi Amit,
+> Needs to be "depends on !TCG_IBMVTPM":
 >
-> On 19 Jun 24 23:28, Amit Vadhavana wrote:
-> > Hi Ricardo,
-> >
-> > I have rebuilt it again, and there are no any warnings or errors.
->
-> Thanks for checking, FWIW:
->
-> Reviewed-by: Ricardo B. Marliere <ricardo@marliere.net>
->
-> BTW, I received this message plus another two empty ones. Please check
-> your settings. Also, make sure not to top-post [1].
->
-> Best regards,
-> -       Ricardo.
->
->
-> [1] https://en.wikipedia.org/wiki/Posting_style#Top-posting
->
->
->
-> >
-> > Thanks
-> > Amit v
+> https://lore.kernel.org/linux-integrity/D2FHWYEXITS4.1GNXEB8V6KJM7@kernel=
+.org/
 
-Hi Srinivas,
+This ended up such a mess to fix with any fast path so I made a
+proper fix for the core issue in the hmac authentication patch
+set:
 
-I hope you are well. I am following up on a patch I submitted on 19
-Jun regarding a kernel document and Ricardo reviewed the patch.
-I understand you have a busy schedule, but if you could find some time
-to review the patch, I would greatly appreciate it.
-Your feedback would be invaluable in helping to improve the quality of
-this contribution.
-If there are any changes needed or additional steps I should take,
-please let me know.
+https://lore.kernel.org/linux-integrity/20240703170815.1494625-1-jarkko@ker=
+nel.org/
 
-Thanks
-Amit V
+The problem is that tpm_crb and tpm_tis_core are the *only*
+drivers, which call tpm_chip_bootstrap() so it is better not to
+take any possible risks with this. I'm still aiming to get these
+fixes into 6.10.
+
+BR, Jarkko
 
