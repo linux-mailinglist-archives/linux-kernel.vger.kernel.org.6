@@ -1,190 +1,92 @@
-Return-Path: <linux-kernel+bounces-240316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 272BF926BBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:46:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4F2926BAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91359B21AC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49D641F2295A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30E1192B8B;
-	Wed,  3 Jul 2024 22:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1668A191F6D;
+	Wed,  3 Jul 2024 22:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQsZnf5n"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Hh8ILOF2"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8587914265C;
-	Wed,  3 Jul 2024 22:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC5B13C8EE;
+	Wed,  3 Jul 2024 22:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720046788; cv=none; b=m2uKW/aXyJH7DHXrmC4P0pY8IAswNNBK3GBEsJ7mpeA3J4nrTSQ7BlThUf98J7ZdO0ek37y0QOB86b/e4KjynK9hJgzUtcI+3f69aZGGvkLiUEzWfgNlIF5ZTwmb0SnoKlmNYDcp0xb217CYzA7+LXXfDLozjQi2IN9IKf9UKEc=
+	t=1720046735; cv=none; b=RX42gvkdmeYKH0hM9wzl9HHO6GQ4/mCp8NXMH7MRsV4brwLWtc1653iLohUvCqmXGfbLn1x4Z6iQmpYvTAntgu0RlJL5EvA2XW9uuep4muWHOX6muT5ZkhGJPDEWoea0B2E4dOYqQVcBDJmMBArigUnZsmOu9eOtHi1s+lTByRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720046788; c=relaxed/simple;
-	bh=gA7+VliSMoQlSbs6CV2YV/4Xrx/0Iq+N6gm0gQ63NHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fkGla/nFyxl6ey/qj9RnBo9N9Qdc9W2x9O30sBMQHlDLqO+fBC7KTC9saN5n0Ee/iHKjmj93nqrM9uCZqCeUpX2B20FUAIGCO2IMgy1oSb0v1jwKckNs6v5SvVqDsGfqTjZJu1d49IVcaGJp8jqbgn4MLFMpjQWMh/V1NSLvfnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQsZnf5n; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e0360f8901aso17751276.2;
-        Wed, 03 Jul 2024 15:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720046785; x=1720651585; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1NR1sr/ZbZPbIrygTH2/gqn6qhtATWX6EGzQmK9ZnLY=;
-        b=AQsZnf5nn6QOrMol5ZSHJ4Kw6BdQ5UicPwEajIqgq/eWkMKHBKPcscs1DHmxv+1I5r
-         bRQ66I/GaoPrGOJ+uVKs8AhsAOUJW4c888X9zSyCq3hsN/8rWo2qTKtUhlFHUBf+VbYn
-         SAopT4cVTs1OwTBjn0zn6l329KSIF8IgcPuSPErdsrthMNpyejH2zTjZdMAnbNDvec4Q
-         +OkQTVfI+N7jXQoHrN1A4E36q0+EQYkcvzW+vXHulsioY5YGXgCbWOud/6I2YX8yWVEb
-         waelb6xsxrmPR+FLmUdjyu6h1H4RkxEPNtf9iRkCLgFXke0JZ4/vy48mlfK1NvfW1Cnt
-         mvIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720046785; x=1720651585;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1NR1sr/ZbZPbIrygTH2/gqn6qhtATWX6EGzQmK9ZnLY=;
-        b=YK1uDPf8dHRgvb/IoiirrNHXGzu2GNi6EPi2JSggW9ReCQ0eF/bMGK7l+oUfVym6Bl
-         r+HyfOipMrAl9EB9AaHdcpUyutb4Q88Obhlhu61PHUPtrT4iFJ7fXRRn4/06LdUj+L1g
-         bsQn+KdFD6hLNFN6uxsXiXSOjEEwAm28I2F9X7h/tFJIa8XftpAXb3ScCjhfzenVT0ma
-         oAxqvqeoHOYlH2W7XlZCH8Lpc2weA5CR8l8eN4789xggenRQOXgCfnWKB+Z1g2stBuBO
-         Mi+tRVrP0+5Bx8J/QEZ7l54InsfDteGuvRPPR+4qDOKWn0KJlDqyx0Uk2wTFHNO8Zp5m
-         gJhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXHorNZoXITf39x5ZzsZR5VfWV9TN6eY9FRvTQGhaiFW+rNYyjlIjnzZd1RcubfdjQuHRyr9nqzL+TRuVUnGNOHfoAQu98TdjZJw==
-X-Gm-Message-State: AOJu0Yx3jGkmJcy9JcgEJ/QXVxakPZ62nAGTNF98s6CoeWPpI9t1ywTt
-	Y+qBZSAfKQ28TDKvILMM1lQpzax5Th2QCrN7Btvdyw7lSeBdQ9F0
-X-Google-Smtp-Source: AGHT+IExAkct7vzhEMm0LI1KfE/PTZcCuuE2jma8x+8BFnYcDnOqpOFLAlcFxtmKBISUNpLtKW1JMg==
-X-Received: by 2002:a25:a8a:0:b0:e03:a168:f132 with SMTP id 3f1490d57ef6-e03a168f33fmr5910295276.31.1720046785489;
-        Wed, 03 Jul 2024 15:46:25 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5dfc92d45sm11585156d6.142.2024.07.03.15.46.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 15:46:24 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id B79191200043;
-	Wed,  3 Jul 2024 18:46:23 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 03 Jul 2024 18:46:23 -0400
-X-ME-Sender: <xms:v9SFZrx_XtbK-YmDyDOjoYWTmPxohWsAuEywVmy5C-q_289ELl4w6Q>
-    <xme:v9SFZjRnRT4ueTFnC9qKpR5Fb8BM3TqB46E8Gga1ITXXr14zkm5D88g46Rn-NfQGQ
-    n1-TaXpQJoicXn6rg>
-X-ME-Received: <xmr:v9SFZlUBlhEfZhkrGHuLpSP3qpqH706ahknh5UQGSz2NMC3NJlO4xqvKlmhzQg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekgddufecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
-    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
-    htvghrnhepleeuvdehjeehledvtdegveefleejleegtdelkefgkedttdekhedvheegvdei
-    tdetnecuffhomhgrihhnpehshiiikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmpdhkvg
-    hrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeile
-    dvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgt
-    ohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:v9SFZlhbUHcdPHmwNFdklla1dY5XdKiopnYKyq0vQl86-zVmW1c4Tw>
-    <xmx:v9SFZtC4q8BNcRAanbiCDL67mnwaPba5DcF7L6EHNSiH2kAYd2fPuw>
-    <xmx:v9SFZuIsz5HmwPC3G9SO38xRuLPynuOJUpAqjymzrMvEwEJ9FtBldQ>
-    <xmx:v9SFZsC5fgbK0kDTUbMdZYkhic74F-huTbKFQsZRb9P1prA8cGpt2w>
-    <xmx:v9SFZpxjiGRpDeCj2_rfeNL_DXy_C7cthYJKNFF-K6NDGkj4bqri8eEs>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Jul 2024 18:46:23 -0400 (EDT)
-Date: Wed, 3 Jul 2024 15:45:21 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: botta633 <bottaawesome633@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, linux-ext4@vger.kernel.org,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	syzkaller@googlegroups.com, "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] Forcing subclasses to have same name pointer as their
- parent class
-Message-ID: <ZoXUgdUkD-GtKfKJ@boqun-archlinux>
-References: <20240704003224.22832-1-bottaawesome633@gmail.com>
+	s=arc-20240116; t=1720046735; c=relaxed/simple;
+	bh=fNMayVtc/Uc85z5+2aY88Dp4v3+e6dcT6NuOkFfetOQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gln6XAUyV7T83yah44oGau8v6M9pdKrnEGbu1yEwlbIOYq35qefbH6zPjb62/bCwitKxrtR/8OnMJFMeyygDaqgVMkZNMHpF3sVrWAiEGoPqP4gRRSUj3hw09NJy4AWvYVdt1NdRWsOfPF0sQ8Oswxg5g7fHoZ26weRgmZyu01Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Hh8ILOF2; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1BD584189E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1720046731; bh=uFWhK3aDyzozkwTo58fIzcrGNoSCUI7ocMsW/Sf0duk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Hh8ILOF29WdbXTVT0gqn5ghjTXibp8yUHv7SRPUaN5wIOaXiNGINNu0sbvXgvuiOy
+	 dCVvO89UJm26X81OKE/Z2h45g0lp44Y8wSzEKvHNBiFgx0vU9CjCL5afa/fTpCvmlh
+	 Ac73SgKXCJHXJpPVYiS4tBHv06WrZHVzmwAXiolg1FTWHSdmHpf6+4TK/jMnOml6Gz
+	 IlcNFhZ/6DMWJqjflelFqctNoPWNH6bFtKP6auakuoXjSl/b0tE58WdIlqHvdSDyor
+	 3aZDNVApgaH5lx9Jym/lRYIkAQS6/ohCU2AYFSKx5XR1HyW+CShhGSCp5AmbXyLnoH
+	 846u086m/eZNw==
+Received: from localhost (c-24-9-249-71.hsd1.co.comcast.net [24.9.249.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 1BD584189E;
+	Wed,  3 Jul 2024 22:45:31 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>, Yanteng
+ Si <siyanteng@loongson.cn>, Dongliang Mu <dzm91@hust.edu.cn>, Konstantin
+ Ryabitsev <konstantin@linuxfoundation.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] docs/zh_CN: add process/researcher-guidelines
+ Chinese translation
+In-Reply-To: <20240614032211.241899-1-dzm91@hust.edu.cn>
+References: <20240614032211.241899-1-dzm91@hust.edu.cn>
+Date: Wed, 03 Jul 2024 16:45:30 -0600
+Message-ID: <875xtmt7qt.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704003224.22832-1-bottaawesome633@gmail.com>
+Content-Type: text/plain
 
-Hi,
+Dongliang Mu <dzm91@hust.edu.cn> writes:
 
-On Thu, Jul 04, 2024 at 03:32:24AM +0300, botta633 wrote:
-> Preventing Lockdep_set_subclass from creating a new instance of the 
-> string literal. Hence, we will always have the class->name. This
-> prevents kernel panics when locking up a lock class while comparing
-> class locks and class names.
-
-Good catch! Thanks.
-
-> 
-> 
-
-Please remove the extra blank line here.
-
-> Signed-off-by: botta633 <bottaawesome633@gmail.com>
-
-Do you mind putting your real name here? Besides, IIUC, this is fixing:
-
-	https://syzkaller.appspot.com/bug?extid=7f4a6f7f7051474e40ad		
-
-, right? If so, there are some more things:
-
-*	Copy ext4 and syzkaller people, so that you could get more
-	tests.
-
-*	Since this is a bug fix, could you please figure out which
-	commit introduces the issue, so that you can put a correct
-	"Fixes:" tag along with your signed-off-by?
-
-*	Since the issue was reported by syzkaller, you should put their
-	"Reported-by" tag, they have an example in the website I paste
-	above.
-
-*	Please also Cc stable mail list so that the fix can be
-	backported, you can find the information on "Cc: stable" tag at:
-
-		https://docs.kernel.org/process/stable-kernel-rules.html
-
-*	Last but not the least, could you try to add a test case in
-	lib/locking-selftest.c to ensure the issue you fixed won't
-	happen again? This could be tricky, since you will need to fight
-	against the compiler to generate two string literals with the
-	same content.
-
-[Cc ext4 and syzkaller]
-
-Regards,
-Boqun
-
+> Finish the translation of researcher-guidelines and add it to the
+> index file.
+>
+> Update to commit 27103dddc2da ("Documentation: update mailing list
+> addresses")
+>
+> Reviewed-by: Alex Shi <alexs@kernel.org>
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 > ---
->  include/linux/lockdep.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-> index 08b0d1d9d78b..df8fa5929de7 100644
-> --- a/include/linux/lockdep.h
-> +++ b/include/linux/lockdep.h
-> @@ -173,7 +173,7 @@ static inline void lockdep_init_map(struct lockdep_map *lock, const char *name,
->  			      (lock)->dep_map.lock_type)
->  
->  #define lockdep_set_subclass(lock, sub)					\
-> -	lockdep_init_map_type(&(lock)->dep_map, #lock, (lock)->dep_map.key, sub,\
-> +	lockdep_init_map_type(&(lock)->dep_map, (lock)->dep_map.name, (lock)->dep_map.key, sub,\
->  			      (lock)->dep_map.wait_type_inner,		\
->  			      (lock)->dep_map.wait_type_outer,		\
->  			      (lock)->dep_map.lock_type)
-> -- 
-> 2.45.2
-> 
+> v2->v3: modify _cn_submittingpatches to _cn_researcherguidelines
+>         according to jon
+> v1->v2: Revise description suggested by Alex Shi
+>         Add a commit id to keep track of the translation status
+>         Add a new line at the end of researcher-guidelines.rst
+>  .../translations/zh_CN/process/index.rst      |   2 +-
+>  .../zh_CN/process/researcher-guidelines.rst   | 129 ++++++++++++++++++
+>  2 files changed, 130 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/translations/zh_CN/process/researcher-guidelines.rst
+
+Applied, thanks.
+
+jon
 
