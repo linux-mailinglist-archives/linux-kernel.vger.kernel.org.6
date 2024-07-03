@@ -1,175 +1,130 @@
-Return-Path: <linux-kernel+bounces-239828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0574C9265D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:18:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158779265D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 294C21C21831
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:18:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97B6CB2079A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457E4181CEB;
-	Wed,  3 Jul 2024 16:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F20181CEB;
+	Wed,  3 Jul 2024 16:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="Zu3I/VYo"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjC3hL3H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D3A15B54A
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6955180A86
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720023511; cv=none; b=abAFou+nt38LLiJprMSIcwT2PRPIx6bzfTsAA2sJnno19b2PdYiO3cqKamez2G5Z0Pluip2HO+JZ5ty/ArsmyXJGOu4LQ28UyjyzRiRq7jc2QD9d9PGE2AqBuM9xuIyFaJcCeZB2iq0GI0dsUn/diqGGPxRCUh4su6cIDKf7gyE=
+	t=1720023531; cv=none; b=DGoqTYcGCSdHPImkvS2xHbxqXbzRImEOs4NFfA3ZfdSugYtPHI0/UaMHOio/YZfNaNKlW+4/g/zsYN0OarsE1jBJjFFnVLrnhbqmUvSMerO+8KXTSITj8orazl+rRMeLYzjr/96vFLHXuGqotIZVYvq2EJ428UjAt5PT7XtduF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720023511; c=relaxed/simple;
-	bh=wRzQdtHQ2GH075TAFpjh+hhxENB4+JymjYxdAKcwJ+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l3GToWbqc9RkFfg/e7EKqlktmz8X8umjNcxq6YC4eezdHoRtmS2qCcYWQrxmis8Ri4BV7Iy0zAchp8etQXJs6UFBQrfgMBFeAQ+XkNbZq7uJwdv9hTXU9cqhVB9C64Uz/mZLar+mbUgZ19poKbdW+clmAMCwYy65mIdIhwhZWnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=Zu3I/VYo; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-79c05c19261so327636985a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1720023509; x=1720628309; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=3n2iUFhLhUbZmzmfAMb3RaI/QxJffyFxVoypOZ8Es98=;
-        b=Zu3I/VYoTaPw4eUSi8Wer/l7aLmHceoOdFarCKeL7mLR3Fq525FHyg5pd5F2q914c0
-         ZF1pgblzgjzxEef6ojMkQYQCDe06N1Ajtw68gyaLOQo+x3KA0Ai4/iBJ3vuqu8oQwFj7
-         25Yz22kLHrCAaQuaViZIwsAfSxeDA7kyZ6eSs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720023509; x=1720628309;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3n2iUFhLhUbZmzmfAMb3RaI/QxJffyFxVoypOZ8Es98=;
-        b=OTq8z3BOf3NsaeTTQPisyepxqnWwM5SE0HIJI+hIrqym+UshUozuK2HtpJvIH0+khS
-         m74q3/8amj2nZiT1/9Pko2p95+pUMPtwf1venNUmQwBWAen4Cc/5t3sES9Zy1J4BV2Np
-         eb2Ae1yM5iS6nYs4fSP1zzNaLMlRr+aXLZT6ke4DZqyl4YIs3w3Jxa/YYH22vcLasbNA
-         VgbtsZJQbkena3k5F+dPRdp4H7OVQpIAs2OOuOI8S1A0ujH+/nJApW4+EcHWLMod9el1
-         ApJ1SMxLh5929LH/WZXq2zOqe/Q/ljratUZa4aEPKPWyMhTvPigt2MuMynuha8oMBDJ3
-         qSrg==
-X-Forwarded-Encrypted: i=1; AJvYcCV85MC/VisMkeykzft75c4LR2DsDdHz/J35FaQyMk0ZXHtSNtfekOzHCrHbMSSESuL9TqpUh7bevO9FLi7NWxyeOgqqFZulrJ37oNZo
-X-Gm-Message-State: AOJu0Yw+3SF5AOS3q7ZQF3GTg/mO+GJUKMHDlLfxN28uDEnQ8Y+LdTN8
-	64/GEt9INE7Au4IOCyggZwX/Ky1TOnKM2YLWdSa+se8WEqzFvE3+6HKeTIC7NeY=
-X-Google-Smtp-Source: AGHT+IHD5yP7vgFQBi0e61QPiXdLtqtfXLfVTA+H2lyd95I8IHueVfmwljbX4VCSJOKSxnYrPV1Z/g==
-X-Received: by 2002:ae9:e512:0:b0:79d:7473:f976 with SMTP id af79cd13be357-79d7b9de421mr1231082285a.23.1720023508908;
-        Wed, 03 Jul 2024 09:18:28 -0700 (PDT)
-Received: from [10.125.226.166] ([185.25.67.249])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d69308bd1sm580275585a.120.2024.07.03.09.18.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 09:18:27 -0700 (PDT)
-Message-ID: <56909a1e-b360-4090-945e-cf6ec623cccc@citrix.com>
-Date: Wed, 3 Jul 2024 17:18:24 +0100
+	s=arc-20240116; t=1720023531; c=relaxed/simple;
+	bh=wDY4dzUjuFNgWvrWu9xz/YezEpR2SIY2gTCh/9kkw7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fISx2Qasup+9/fVAS9Lr2+f31CjTwr1KpLqoKWZ1QuupPqa/YZMR4IszuBE9ICR+7pIO6VIKG1tjgqpOqDJh0ByIYB6j+4zPBtS1tC2dwi74naXjFPa5pTzgYXgZ1K1KSHlLadfQm/u80Rxn7pAvtwlQ1xMc8kkEQw98mdau5d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjC3hL3H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C6C8C4AF17
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:18:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720023531;
+	bh=wDY4dzUjuFNgWvrWu9xz/YezEpR2SIY2gTCh/9kkw7U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bjC3hL3HGssDk9BZUfPBx7h8XsqbPX4A2RNcUJi9/KKuhBl/2+8SeUuoXifO3mje7
+	 HIvZk8z/NNEbZ5fOtGBm0jqmWPn51qsK3UFBp+o8cxIUKZx3gomf6DzRmI3CbOdWUG
+	 AicM0Ku6h7wOzR6zQJrHXOs5iahWBaF3T+aGdippWQ72B1mt/JNmZgLJ/uyl9DE+aB
+	 pO8Z5UBqOgbvFR6kz2AeZgm0Welq66ff0N+EpU5ZJA4i5jtS/hyz/bT/2KQAwlGdEc
+	 r9wLeN/W0D8pyzz8ibpNwPJ1MNRETI72xWn68t4i8vi5WxRGq5AzGnddVIS6p6gfCx
+	 CGFZIVWrdudDg==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ee8911b451so5756471fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:18:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWlCcOodBsN7RjVnteOFshRuH427cfkJW/Coqd5vfw0fkq4vJbhSPoxBB1r1OB0QvDG5sk4XdY8dSNjbg/A9aO8slDev6gI3WcryxIS
+X-Gm-Message-State: AOJu0YyQkBnqUn1cU9OO7v4dnvz8IiB1NbHNmjzf6XNLUx058k3k/M+U
+	sEmFYpwkUUncPQc9SDiq4YOEiFjsykvOSIOgccrvX06Wrc7eSc37baWbX6tIce0lL4/JGEaBEYN
+	vq/YbRw/K9UvXaYSX5A8Tn5JqTE8=
+X-Google-Smtp-Source: AGHT+IGbQWkBsxv/alxBDjjzj7+cn+FOi1M+Hvwzus9EGhPfpAoHhOCTvKhYIeUStBIozycnF22T8PwdtW59EawNXAg=
+X-Received: by 2002:a05:651c:b21:b0:2ee:4ab4:f752 with SMTP id
+ 38308e7fff4ca-2ee5e6cd8d4mr86825091fa.49.1720023529217; Wed, 03 Jul 2024
+ 09:18:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
-To: "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
- dave.hansen@intel.com
-Cc: xin@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
- mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
- peterz@infradead.org, nik.borisov@suse.com, houwenlong.hwl@antgroup.com
-References: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com>
- <172002205406.3280081.14523962650685954182@Ubuntu-2204-jammy-amd64-base>
- <15f56e6a-6edd-43d0-8e83-bb6430096514@citrix.com>
- <AD99CE51-62B3-494D-9107-7C9093126138@zytor.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- xsFNBFLhNn8BEADVhE+Hb8i0GV6mihnnr/uiQQdPF8kUoFzCOPXkf7jQ5sLYeJa0cQi6Penp
- VtiFYznTairnVsN5J+ujSTIb+OlMSJUWV4opS7WVNnxHbFTPYZVQ3erv7NKc2iVizCRZ2Kxn
- srM1oPXWRic8BIAdYOKOloF2300SL/bIpeD+x7h3w9B/qez7nOin5NzkxgFoaUeIal12pXSR
- Q354FKFoy6Vh96gc4VRqte3jw8mPuJQpfws+Pb+swvSf/i1q1+1I4jsRQQh2m6OTADHIqg2E
- ofTYAEh7R5HfPx0EXoEDMdRjOeKn8+vvkAwhviWXTHlG3R1QkbE5M/oywnZ83udJmi+lxjJ5
- YhQ5IzomvJ16H0Bq+TLyVLO/VRksp1VR9HxCzItLNCS8PdpYYz5TC204ViycobYU65WMpzWe
- LFAGn8jSS25XIpqv0Y9k87dLbctKKA14Ifw2kq5OIVu2FuX+3i446JOa2vpCI9GcjCzi3oHV
- e00bzYiHMIl0FICrNJU0Kjho8pdo0m2uxkn6SYEpogAy9pnatUlO+erL4LqFUO7GXSdBRbw5
- gNt25XTLdSFuZtMxkY3tq8MFss5QnjhehCVPEpE6y9ZjI4XB8ad1G4oBHVGK5LMsvg22PfMJ
- ISWFSHoF/B5+lHkCKWkFxZ0gZn33ju5n6/FOdEx4B8cMJt+cWwARAQABzSlBbmRyZXcgQ29v
- cGVyIDxhbmRyZXcuY29vcGVyM0BjaXRyaXguY29tPsLBegQTAQgAJAIbAwULCQgHAwUVCgkI
- CwUWAgMBAAIeAQIXgAUCWKD95wIZAQAKCRBlw/kGpdefoHbdD/9AIoR3k6fKl+RFiFpyAhvO
- 59ttDFI7nIAnlYngev2XUR3acFElJATHSDO0ju+hqWqAb8kVijXLops0gOfqt3VPZq9cuHlh
- IMDquatGLzAadfFx2eQYIYT+FYuMoPZy/aTUazmJIDVxP7L383grjIkn+7tAv+qeDfE+txL4
- SAm1UHNvmdfgL2/lcmL3xRh7sub3nJilM93RWX1Pe5LBSDXO45uzCGEdst6uSlzYR/MEr+5Z
- JQQ32JV64zwvf/aKaagSQSQMYNX9JFgfZ3TKWC1KJQbX5ssoX/5hNLqxMcZV3TN7kU8I3kjK
- mPec9+1nECOjjJSO/h4P0sBZyIUGfguwzhEeGf4sMCuSEM4xjCnwiBwftR17sr0spYcOpqET
- ZGcAmyYcNjy6CYadNCnfR40vhhWuCfNCBzWnUW0lFoo12wb0YnzoOLjvfD6OL3JjIUJNOmJy
- RCsJ5IA/Iz33RhSVRmROu+TztwuThClw63g7+hoyewv7BemKyuU6FTVhjjW+XUWmS/FzknSi
- dAG+insr0746cTPpSkGl3KAXeWDGJzve7/SBBfyznWCMGaf8E2P1oOdIZRxHgWj0zNr1+ooF
- /PzgLPiCI4OMUttTlEKChgbUTQ+5o0P080JojqfXwbPAyumbaYcQNiH1/xYbJdOFSiBv9rpt
- TQTBLzDKXok86M7BTQRS4TZ/ARAAkgqudHsp+hd82UVkvgnlqZjzz2vyrYfz7bkPtXaGb9H4
- Rfo7mQsEQavEBdWWjbga6eMnDqtu+FC+qeTGYebToxEyp2lKDSoAsvt8w82tIlP/EbmRbDVn
- 7bhjBlfRcFjVYw8uVDPptT0TV47vpoCVkTwcyb6OltJrvg/QzV9f07DJswuda1JH3/qvYu0p
- vjPnYvCq4NsqY2XSdAJ02HrdYPFtNyPEntu1n1KK+gJrstjtw7KsZ4ygXYrsm/oCBiVW/OgU
- g/XIlGErkrxe4vQvJyVwg6YH653YTX5hLLUEL1NS4TCo47RP+wi6y+TnuAL36UtK/uFyEuPy
- wwrDVcC4cIFhYSfsO0BumEI65yu7a8aHbGfq2lW251UcoU48Z27ZUUZd2Dr6O/n8poQHbaTd
- 6bJJSjzGGHZVbRP9UQ3lkmkmc0+XCHmj5WhwNNYjgbbmML7y0fsJT5RgvefAIFfHBg7fTY/i
- kBEimoUsTEQz+N4hbKwo1hULfVxDJStE4sbPhjbsPCrlXf6W9CxSyQ0qmZ2bXsLQYRj2xqd1
- bpA+1o1j2N4/au1R/uSiUFjewJdT/LX1EklKDcQwpk06Af/N7VZtSfEJeRV04unbsKVXWZAk
- uAJyDDKN99ziC0Wz5kcPyVD1HNf8bgaqGDzrv3TfYjwqayRFcMf7xJaL9xXedMcAEQEAAcLB
- XwQYAQgACQUCUuE2fwIbDAAKCRBlw/kGpdefoG4XEACD1Qf/er8EA7g23HMxYWd3FXHThrVQ
- HgiGdk5Yh632vjOm9L4sd/GCEACVQKjsu98e8o3ysitFlznEns5EAAXEbITrgKWXDDUWGYxd
- pnjj2u+GkVdsOAGk0kxczX6s+VRBhpbBI2PWnOsRJgU2n10PZ3mZD4Xu9kU2IXYmuW+e5KCA
- vTArRUdCrAtIa1k01sPipPPw6dfxx2e5asy21YOytzxuWFfJTGnVxZZSCyLUO83sh6OZhJkk
- b9rxL9wPmpN/t2IPaEKoAc0FTQZS36wAMOXkBh24PQ9gaLJvfPKpNzGD8XWR5HHF0NLIJhgg
- 4ZlEXQ2fVp3XrtocHqhu4UZR4koCijgB8sB7Tb0GCpwK+C4UePdFLfhKyRdSXuvY3AHJd4CP
- 4JzW0Bzq/WXY3XMOzUTYApGQpnUpdOmuQSfpV9MQO+/jo7r6yPbxT7CwRS5dcQPzUiuHLK9i
- nvjREdh84qycnx0/6dDroYhp0DFv4udxuAvt1h4wGwTPRQZerSm4xaYegEFusyhbZrI0U9tJ
- B8WrhBLXDiYlyJT6zOV2yZFuW47VrLsjYnHwn27hmxTC/7tvG3euCklmkn9Sl9IAKFu29RSo
- d5bD8kMSCYsTqtTfT6W4A3qHGvIDta3ptLYpIAOD2sY3GYq2nf3Bbzx81wZK14JdDDHUX2Rs
- 6+ahAA==
-In-Reply-To: <AD99CE51-62B3-494D-9107-7C9093126138@zytor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240520183633.1457687-1-steve.wahl@hpe.com> <20240613152826.GKZmsQGnO3OthLH3Vu@fat_crate.local>
+ <ZmsbZCF9rFzuB3rO@swahl-home.5wahls.com> <20240616202533.GDZm9KPZtpDKw5aXWX@fat_crate.local>
+ <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com> <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
+ <ZnmNKAE5qT48yhrI@swahl-home.5wahls.com> <20240701142704.GGZoK8uDt-2VVtclHl@fat_crate.local>
+ <20240702174425.GHZoQ8edlTfB1falcO@fat_crate.local> <CAMj1kXGsjU5CpF655me1XNA8-5nbk3020vT2Bu5ZoFY25igovg@mail.gmail.com>
+ <20240703154301.GEZoVxhREtHjk0vtaL@fat_crate.local>
+In-Reply-To: <20240703154301.GEZoVxhREtHjk0vtaL@fat_crate.local>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 3 Jul 2024 18:18:38 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGjHFarKyeT8jyan=pX58CeLisOqSnU_0V+2j04RC00Rg@mail.gmail.com>
+Message-ID: <CAMj1kXGjHFarKyeT8jyan=pX58CeLisOqSnU_0V+2j04RC00Rg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
+To: Borislav Petkov <bp@alien8.de>
+Cc: Steve Wahl <steve.wahl@hpe.com>, Ashish Kalra <ashish.kalra@amd.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-kernel@vger.kernel.org, Pavin Joseph <me@pavinjoseph.com>, 
+	Eric Hagberg <ehagberg@gmail.com>, Simon Horman <horms@verge.net.au>, 
+	Eric Biederman <ebiederm@xmission.com>, Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>, 
+	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>, 
+	Hou Wenlong <houwenlong.hwl@antgroup.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/07/2024 5:06 pm, H. Peter Anvin wrote:
-> On July 3, 2024 9:00:53 AM PDT, Andrew Cooper <andrew.cooper3@citrix.com> wrote:
->> On 03/07/2024 4:54 pm, Borislav Petkov wrote:
->>> Dave Hansen <dave.hansen@intel.com> wrote:
->>>> On 7/3/24 01:54, Xin Li (Intel) wrote:
->>>> &gt; Do FRED MSR writes with wrmsrns() rather than wrmsrl().
->>>>
->>>> A longer changelog would be appreciated here.  The wrmsrns() is
->>>> presumably to avoid the WRMSR serialization overhead and the CR4 write
->>>> provides all of the serialization that we need.
->>> Also, all those wrmsrns() writes better be behind a CPUID check.
->> They're not, in Linux.
->>
->> For the $N'th time, here is the primitive that Linux wants to stea^w
->> borrow for this to be sane.
->>
->> /* Non-serialising WRMSR, when available.  Falls back to a serialising
->> WRMSR. */
->> static inline void wrmsrns(uint32_t msr, uint32_t lo, uint32_t hi)
->> {
->>     /*
->>      * WRMSR is 2 bytes.  WRMSRNS is 3 bytes.  Pad WRMSR with a redundant CS
->>      * prefix to avoid a trailing NOP.
->>      */
->>     alternative_input(".byte 0x2e; wrmsr",
->>                       ".byte 0x0f,0x01,0xc6", X86_FEATURE_WRMSRNS,
->>                       "c" (msr), "a" (lo), "d" (hi));
->> }
->>
->> ~Andrew
-> I believe tglx declared to use them unconditionally since FRED depends on WRMSRNS (and the kernel enforces that.)
+On Wed, 3 Jul 2024 at 18:15, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Tue, Jul 02, 2024 at 08:32:22PM +0200, Ard Biesheuvel wrote:
+> > For kexec on a 64-bit system, I would expect the high-level support
+> > code to be capable of simply mapping all of DRAM 1:1, rather than
+> > playing these games with #PF handlers and on-demand mapping.
+>
+> Yeah, apparently we can't do that on SGI, as Steve said.
+>
+> I like the aspect that the #PF handler won't fire in the first kernel because
+> of EFI mapping all RAM. That's good.
+>
 
-I know that Linux has chosen to have this as a software-enforced
-requirement.
+It won't fire because the code where this handler is being added is
+never even called by EFI boot - it decompresses the kernel from the
+EFI stub and jumps straight to its entrypoint.
 
-The dependency does not exist architecturally, and just because it
-happens to be true on Intel processors doesn't mean it's true of other
-implementations.
 
-~Andrew
+> So we could try to wire in a #PF handler in stage1, see below.
+>
+
+Looks fine to me from EFI boot pov, for the reasons given above.
+
+> Steve, I don't have a good idea how to test that. Maybe some of those
+> reporters you were talking about, would be willing to...
+>
+> ---
+> diff --git a/arch/x86/boot/compressed/idt_64.c b/arch/x86/boot/compressed/idt_64.c
+> index d100284bbef4..a258587c8949 100644
+> --- a/arch/x86/boot/compressed/idt_64.c
+> +++ b/arch/x86/boot/compressed/idt_64.c
+> @@ -32,6 +32,7 @@ void load_stage1_idt(void)
+>  {
+>         boot_idt_desc.address = (unsigned long)boot_idt;
+>
+> +       set_idt_entry(X86_TRAP_PF, boot_page_fault);
+>
+>         if (IS_ENABLED(CONFIG_AMD_MEM_ENCRYPT))
+>                 set_idt_entry(X86_TRAP_VC, boot_stage1_vc);
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
 
