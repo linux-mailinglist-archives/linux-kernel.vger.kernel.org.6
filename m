@@ -1,110 +1,158 @@
-Return-Path: <linux-kernel+bounces-239963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19F192674A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:40:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B0792674D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1DEB1F255C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:40:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C79284793
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7CA185096;
-	Wed,  3 Jul 2024 17:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9481185E43;
+	Wed,  3 Jul 2024 17:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGs8i1Ny"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkBspzo3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5249D1849CD
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 17:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8B31849EB;
+	Wed,  3 Jul 2024 17:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720028411; cv=none; b=OlW2d1Ct3GNCrP0e9N7X+Ej+6oEUll4mocvOWsHOH7fuMaWPJ4+nf/4gRCElGjron/RE+FcPuE1fWbNq5TiZBM8FXDsTBOwazchmh4mImN7sCXVR57mG5PeWlWnSp9KjGQ5I+hh4C2bZ+ZFAG1aEOZm/dMyWOkZXFxFyjoRu2Ho=
+	t=1720028433; cv=none; b=nltE7cSLOD8xNUBpx43pUSaE06S1R1ZO8gC8Ya5L6CKJWPXHTB6xNIcun/RzUwkz0rnLo67AALONsBjiVf7riMAqeOENQ48gwnw/BAQhtW2KIE/qiVXWr4bUPJ0Jr096sNfTnqblV+LwPOi/nYGvWVE0LYThEj3AztrCkN1OCHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720028411; c=relaxed/simple;
-	bh=mY+L9pga72cufYsEQi1xkPpdfeeTEyf1uoa0m9YigyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PT1Xng3PeHOY25GGNT9P+JOGCvGROrdJm+E+rpGhzotE9qMifZpI6+ooHWJpDPF0Rw36g8RsNY5nkht7i3fajSMHs0/qaqQ4BAuJamtcgLoit1E85b++WpGGxq9+CC4mT6pDiUm9BqdxUB7hXbPul2X5NSl42KPyeT14dS5dXNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGs8i1Ny; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-6e7b121be30so3380841a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 10:40:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720028409; x=1720633209; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PDVeegF78+GeXrZMlW86GKy4m59D0Ry1r9RVMcOx9nY=;
-        b=FGs8i1Ny0J2SxfOTZr3ehqxmKoLKpdApWEuBLBWAlQPF9fhe2jgZnDsfyfmeTGbw9Z
-         6gGrUrvgWbHJ9CEpJrtNfbH4CcT8u+KImUsJUnVuX1SjAk6YmYLU9Zat1tTNsS8nKzGE
-         CtW7yEXqeJZDrGfipeRsiNIJy1utHDM79hO5xtTBaWGYsN41VWURWJhAUQJasyf/i43S
-         k6eTn4ZDjrLieZ8WL5wc+2RwFM60wJrEQYJWwKR6lU5ph07jBuA4L79MIsEsAeOB7pVV
-         vLRamltJ1sr5Upm+7iqtjn7uvDkoAP12CDZKrFOkYd1+DvI+HFLUwI5Kx9wX2VFMy98L
-         fV4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720028409; x=1720633209;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PDVeegF78+GeXrZMlW86GKy4m59D0Ry1r9RVMcOx9nY=;
-        b=noG0CE3VX13iU4W5BBSsYcNsM3DlZcBCrE2yWeFi2jrb01afKQVCgLpAVshCQR+cps
-         cqJQfit+BXZG3uxsqveE9k9FxJgk7HYpUqOP5dYtjjAw2h4XsRR3BMZJq9JeuYHj/2ky
-         0aFMdTiy9/p6tIwAfhEagWxPLhPGqtVss/OPKzuBen8FVbRqzR2PjqjKzeCTJan0+rVy
-         9+eZUi+7MNFs73pi/DI3m+jZDtoeSIsBdoPHVbvpY+M2bw29Ci+w+Vd0/EKHoGytOJnK
-         m+IqF9pZ2zpsjLwO3AO/owONWVibZFwz30pWvrGjsRWr2MNqW0VXFfZnEIlFZ2sbfMtG
-         A7rg==
-X-Gm-Message-State: AOJu0Yyl2aunKUGlHouw0J6bMfvxJ/ggubR2uUuIZtsa42h2DqMMlIow
-	VrEYQUH7Kgx/8p2HtSiUX86GF+cYin4pW0v8Ns/b6rtiNxaS8isuUOFlTg==
-X-Google-Smtp-Source: AGHT+IF6hnCeho4ipCsPgKLJ3o6RcNl/lJ18SiXa2ummAzZPSzAMBCyDunOaCS+AXwnyvLrUqIwFcA==
-X-Received: by 2002:a05:6a20:d494:b0:1be:f090:7ccb with SMTP id adf61e73a8af0-1bef62283b7mr12460210637.59.1720028409381;
-        Wed, 03 Jul 2024 10:40:09 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c93bb05d23sm3239986a91.1.2024.07.03.10.40.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 10:40:09 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 3 Jul 2024 07:40:07 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Lai Jiangshan <jiangshan.ljs@antgroup.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH] workqueue: Always queue work items to the newest PWQ for
- order workqueues
-Message-ID: <ZoWM9_D0sxDNC9fW@slm.duckdns.org>
-References: <20240703092741.22997-1-jiangshanlai@gmail.com>
+	s=arc-20240116; t=1720028433; c=relaxed/simple;
+	bh=Nn2FMijYKUabIY309YC1P/hU0iL7IcPu9UOCPevQ0RA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cZWAPjgbcxmOUdwxnt5e2mmu7kuoIhK/b3blUySTlEvgKR7oxmKG2dkZWujtp/WdHa7Q+nzJAWK5BlwjsCSFyT3yPL7AZQjkOuIgNOvrNqvx0kxnh4F6APWcxlNHkBtykT+7MAOZNtp9YXLsFTKsR+/S83F15fHnE7lwJnSumhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkBspzo3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDC14C2BD10;
+	Wed,  3 Jul 2024 17:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720028432;
+	bh=Nn2FMijYKUabIY309YC1P/hU0iL7IcPu9UOCPevQ0RA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YkBspzo3Vi3Fu3k3yF1Q0os8jkV73+f16Exv/urMrCW0R+5ePjHdIUQnot+Z28c4q
+	 y+1Y0Zm+J7iz4ss7PcjIWvMB8MY+J4ijMPPoljSTTInV4snas0EjCtoVmC6/CCDnZG
+	 wBugU74imArWUMOvSzGFFA7C5dC8kxOszwEW36itxqmbUG5F+nQHubE2/EvWsJE0UW
+	 ssx5KtnWFW+FyYk3cl7u1xl6YSt2OTMLyhFWq/IZEPy3DMrs9kwqhpgXd9Hegd3ct1
+	 uGBPhsZyLPOUQe2fp70dXtzu2Tv9me7cd6VaNZJw8jNjh27oLFBKTbE/oHFT+/WfHE
+	 w7+dLuahSpt/Q==
+Message-ID: <6c6b2b8f-93dd-42f5-9879-99e24deb5880@kernel.org>
+Date: Wed, 3 Jul 2024 19:40:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703092741.22997-1-jiangshanlai@gmail.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v2] selftests: mptcp: always close input's FD if opened
+To: Liu Jing <liujing@cmss.chinamobile.com>
+Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ martineau@kernel.org, geliang@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org
+References: <20240702040518.11058-1-liujing@cmss.chinamobile.com>
+Content-Language: en-GB
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20240702040518.11058-1-liujing@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 03, 2024 at 05:27:41PM +0800, Lai Jiangshan wrote:
-> From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+Hi Liu,
+
+On 02/07/2024 06:05, Liu Jing wrote:
+> in main_loop_s function, when the open(cfg_input, O_RDONLY) function is run,
+
+Please see my previous message: the commit description should have lines
+of maximum ~72 chars.
+
+> the last fd is not closed if the "--cfg_repeat > 0" branch is not taken.
 > 
-> To ensure non-reentrancy, __queue_work() attempts to enqueue a work
-> item to the pool of the currently executing worker. This is not only
-> unnecessary for an ordered workqueue, where order inherently suggests
-> non-reentrancy, but it could also disrupt the sequence if the item is
-> not enqueued on the newest PWQ.
+> Fixes: 05be5e273c84("selftests: mptcp: add disconnect tests").
+
+There should be a space after the commit ID, not dot at the end, and no
+blank line between git tags ("Fixes:", "Signed-off-by", etc.).
+
 > 
-> Just queue it to the newest PWQ and let order management guarantees
-> non-reentrancy.
-> 
-> Fixes: 4c065dbce1e8("workqueue: Enable unbound cpumask update on ordered workqueues")
-> Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+> Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+> ---
+> Changes from v1
+> - add close function in main_loop_s function
 
-Applied to wq/for-6.10-fixes w/ stable cc added.
+It looks like you didn't change the code as I suggested: moving...
 
-Thanks.
+  if (cfg_input)
+          close(fd);
 
+before 'if (--cfg_repeat > 0)'.
+
+Anyway, I just applied your patch in our tree (fixes for -net) with all
+the modifications mentioned above. We will send it to netdev later with
+other patches.
+
+New patches for t/upstream-net and t/upstream:
+- d2657c3f784a: selftests: mptcp: always close input's FD if opened
+- Results: a9e719ce2340..fa4c0289d475 (export-net)
+- Results: b49e920db095..dcc28bf9bc6a (export)
+
+Tests are now in progress:
+
+- export-net:
+https://github.com/multipath-tcp/mptcp_net-next/commit/fa397dbd31963500c42d31a4892e0b9c7e4c9ff9/checks
+- export:
+https://github.com/multipath-tcp/mptcp_net-next/commit/ff673f57b4479a78dd9eb18af3c8c0fe73bf958b/checks
+
+Cheers,
+Matt
 -- 
-tejun
+Sponsored by the NGI0 Core fund.
+
 
