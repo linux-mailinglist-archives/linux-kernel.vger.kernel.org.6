@@ -1,240 +1,87 @@
-Return-Path: <linux-kernel+bounces-239649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1825E926388
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:36:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E97926394
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9821C217A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:36:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94F521C218DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3021C13AA2D;
-	Wed,  3 Jul 2024 14:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsDGwI8X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F87E18C08;
-	Wed,  3 Jul 2024 14:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2184117D340;
+	Wed,  3 Jul 2024 14:38:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DF517D892;
+	Wed,  3 Jul 2024 14:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720017404; cv=none; b=gvFmZJvQJRX+TzXduJHEWQYcCDC12QpYaKJDLYD/MYpb0tYRbbTUoRx15a2Qe1pkf4vxDRoKVNCX7fem4JRZTuS+EJSOe7y3dfJ8H8iHQIem0aMcmElkYqFKKK4wsIXIKVIt9aUFKvDsvgC1D0rBldA5nhltiVVJyNzeGy7CeRQ=
+	t=1720017492; cv=none; b=U0yY6M4k4I6FX4pveYSeaENQshYnNkJCqs98qSkR92bhVOruZCDhk8Z/hN424RXHpiGWRhWzNbETEKEIIq2JVvjvkMMg4WDpvKJILOAIaOga0BIVNUqCjz504Gqxr35G36CjU6RSUq/zlB/M0HdUN8Ig5mjP97ZE7dR/3/Hv9Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720017404; c=relaxed/simple;
-	bh=QwO5Ixp2SXTbYSsPHvTxoG6lPzclCKAikOcW0vCg3XE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HdmEaR7CAHtkOLC4bc6m0dUxhxYq8sjFC/FU/T9MWkKb1mWp4HyfIpB779yNIOl6FQQEENPXG9LNXUdxDARoEK1MfK/rzvTxrpX1tgU4dZBT2w64lOgma8CVU7fsQLSvVjPoReDKs8Pir1cKE0vK7ERhlIdJu1vh4EFQx6lJQG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsDGwI8X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC7FC2BD10;
-	Wed,  3 Jul 2024 14:36:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720017403;
-	bh=QwO5Ixp2SXTbYSsPHvTxoG6lPzclCKAikOcW0vCg3XE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=OsDGwI8Xd/mKysyizFePmoWtuDKVvlwX3xJn4Upq3jB6orK91KOxlztOTzDW+UL8T
-	 aKHwXWEWsl8jx6RRBSLq66YtKZgeXEKE4kw2iBe8eoE3RsvyMDzlh7X8mXlA3yhfoU
-	 YZpHaQTotuIaX8BOaDdHXn+q1kLv3mvkQ2KUkPBfAJ3ihwxNyMFVJQMl1k66hRQ5jB
-	 /s0F83MjAv4JudRu1Zo2poZR7WJ5QmyZ/58HO+7/Jqgcko0IVooxZabC45obJ2t1A8
-	 3LFwFUyV6vqGY9akcbQ7ZIarSnPayLff0txVcrMu6MUcqmsenwk+fScxnoBTIhxZSF
-	 rOXOh2e6RPojg==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, peterz@infradead.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
- jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
- kan.liang@linux.intel.com, dev.mbstr@gmail.com, samuel.holland@sifive.com,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-Cc: ruanjinjie@huawei.com
-Subject: Re: [PATCH v2] riscv: stacktrace: Add USER_STACKTRACE support
-In-Reply-To: <20240604034729.841930-1-ruanjinjie@huawei.com>
-References: <20240604034729.841930-1-ruanjinjie@huawei.com>
-Date: Wed, 03 Jul 2024 16:36:41 +0200
-Message-ID: <87wmm2y22u.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1720017492; c=relaxed/simple;
+	bh=4M58wVwOJr5zFxSIDGKpKL2tVO/BB694v2hfvz1uXJA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S7PUosGRpdM5VINAFEyyhTlH7y7wrYKVpTNBxyJ/CgACGjb17e2fvWwCtsuz1iiQX8pVdScci6f6Bkk6b1vkmz8fxEe7BvMbMWcl7gcgzgHiZnF35hFGRRb5N1jUrk7xw+kienAztRHtS+xn88Km4xm9vQGWRSr/868z7Oymv2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45579367;
+	Wed,  3 Jul 2024 07:38:34 -0700 (PDT)
+Received: from thinkcentre-m93p.cambridge.arm.com (thinkcentre-m93p.cambridge.arm.com [10.1.197.43])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 63F503F766;
+	Wed,  3 Jul 2024 07:38:08 -0700 (PDT)
+From: Luke Parkin <luke.parkin@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	cristian.marussi@arm.com,
+	Luke Parkin <luke.parkin@arm.com>
+Subject: [PATCH v2 0/4] Add Per-transport SCMI debug statistics
+Date: Wed,  3 Jul 2024 15:37:34 +0100
+Message-Id: <20240703143738.2007457-1-luke.parkin@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Jinjie Ruan <ruanjinjie@huawei.com> writes:
+Hi,
 
-> Currently, userstacktrace is unsupported for riscv. So use the
-> perf_callchain_user() code as blueprint to implement the
-> arch_stack_walk_user() which add userstacktrace support on riscv.
-> Meanwhile, we can use arch_stack_walk_user() to simplify the implementati=
-on
-> of perf_callchain_user().
->
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202406012109.PDAjXm2i-lkp@i=
-ntel.com/
+This series adds support for tracking Arm SCMI statistics [Patch 2/3]
+A config option to enable this [Patch 2]
+Cleans up a unneeded call to handle_scmi_info [Patch 1]
+And in [Patch 4] a selection of new debugfs entries to present these statistics
 
-For future reference: The LTP tags shouldn't be used when you're
-spinning a new version.
+Based on v6.9, Tested on Arm Juno [1]
 
-> ---
-> v2:
-> - Fix the cocci warning, !A || A && B is equivalent to !A || B.
-> ---
->  arch/riscv/Kconfig                 |  1 +
->  arch/riscv/kernel/perf_callchain.c | 46 ++----------------------------
->  arch/riscv/kernel/stacktrace.c     | 43 ++++++++++++++++++++++++++++
->  3 files changed, 47 insertions(+), 43 deletions(-)
+Thanks,
+Luke
 
-[...]
+[1]: https://www.arm.com/products/development-tools/development-boards/juno-arm-dev-platform
 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 0525ee2d63c7..6ed96d935b8f 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -193,6 +193,7 @@ config RISCV
->  	select THREAD_INFO_IN_TASK
->  	select TRACE_IRQFLAGS_SUPPORT
->  	select UACCESS_MEMCPY if !MMU
-> +	select USER_STACKTRACE_SUPPORT
->  	select ZONE_DMA32 if 64BIT
->=20=20
->  config CLANG_SUPPORTS_DYNAMIC_FTRACE
-> diff --git a/arch/riscv/kernel/perf_callchain.c b/arch/riscv/kernel/perf_=
-callchain.c
-> index 3348a61de7d9..c7468af77c66 100644
-> --- a/arch/riscv/kernel/perf_callchain.c
-> +++ b/arch/riscv/kernel/perf_callchain.c
-> @@ -6,37 +6,9 @@
->=20=20
->  #include <asm/stacktrace.h>
->=20=20
-> -/*
-> - * Get the return address for a single stackframe and return a pointer t=
-o the
-> - * next frame tail.
-> - */
-> -static unsigned long user_backtrace(struct perf_callchain_entry_ctx *ent=
-ry,
-> -				    unsigned long fp, unsigned long reg_ra)
-> +static bool fill_callchain(void *entry, unsigned long pc)
->  {
-> -	struct stackframe buftail;
-> -	unsigned long ra =3D 0;
-> -	unsigned long __user *user_frame_tail =3D
-> -		(unsigned long __user *)(fp - sizeof(struct stackframe));
-> -
-> -	/* Check accessibility of one struct frame_tail beyond */
-> -	if (!access_ok(user_frame_tail, sizeof(buftail)))
-> -		return 0;
-> -	if (__copy_from_user_inatomic(&buftail, user_frame_tail,
-> -				      sizeof(buftail)))
-> -		return 0;
-> -
-> -	if (reg_ra !=3D 0)
-> -		ra =3D reg_ra;
-> -	else
-> -		ra =3D buftail.ra;
-> -
-> -	fp =3D buftail.fp;
-> -	if (ra !=3D 0)
-> -		perf_callchain_store(entry, ra);
-> -	else
-> -		return 0;
-> -
-> -	return fp;
-> +	return perf_callchain_store(entry, pc) =3D=3D 0;
->  }
->=20=20
->  /*
-> @@ -56,19 +28,7 @@ static unsigned long user_backtrace(struct perf_callch=
-ain_entry_ctx *entry,
->  void perf_callchain_user(struct perf_callchain_entry_ctx *entry,
->  			 struct pt_regs *regs)
->  {
-> -	unsigned long fp =3D 0;
-> -
-> -	fp =3D regs->s0;
-> -	perf_callchain_store(entry, regs->epc);
-> -
-> -	fp =3D user_backtrace(entry, fp, regs->ra);
-> -	while (fp && !(fp & 0x3) && entry->nr < entry->max_stack)
-> -		fp =3D user_backtrace(entry, fp, 0);
-> -}
-> -
-> -static bool fill_callchain(void *entry, unsigned long pc)
-> -{
-> -	return perf_callchain_store(entry, pc) =3D=3D 0;
-> +	arch_stack_walk_user(fill_callchain, entry, regs);
->  }
->=20=20
->  void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
-> diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrac=
-e.c
-> index 528ec7cc9a62..9685a2baa5d9 100644
-> --- a/arch/riscv/kernel/stacktrace.c
-> +++ b/arch/riscv/kernel/stacktrace.c
-> @@ -161,3 +161,46 @@ noinline void arch_stack_walk(stack_trace_consume_fn=
- consume_entry, void *cookie
->  {
->  	walk_stackframe(task, regs, consume_entry, cookie);
->  }
-> +
-> +/*
-> + * Get the return address for a single stackframe and return a pointer t=
-o the
-> + * next frame tail.
-> + */
-> +static unsigned long unwind_user_frame(stack_trace_consume_fn consume_en=
-try,
-> +				       void *cookie, unsigned long fp,
-> +				       unsigned long reg_ra)
-> +{
-> +	struct stackframe buftail;
-> +	unsigned long ra =3D 0;
-> +	unsigned long __user *user_frame_tail =3D
-> +		(unsigned long __user *)(fp - sizeof(struct stackframe));
-> +
-> +	/* Check accessibility of one struct frame_tail beyond */
-> +	if (!access_ok(user_frame_tail, sizeof(buftail)))
-> +		return 0;
-> +	if (__copy_from_user_inatomic(&buftail, user_frame_tail,
-> +				      sizeof(buftail)))
-> +		return 0;
-> +
-> +	ra =3D reg_ra ? : buftail.ra;
-> +
-> +	fp =3D buftail.fp;
-> +	if (!ra || !consume_entry(cookie, ra))
-> +		return 0;
-> +
-> +	return fp;
-> +}
-> +
-> +void arch_stack_walk_user(stack_trace_consume_fn consume_entry, void *co=
-okie,
-> +			  const struct pt_regs *regs)
-> +{
-> +	unsigned long fp =3D 0;
-> +
-> +	fp =3D regs->s0;
-> +	if (!consume_entry(cookie, regs->epc))
-> +		return;
-> +
-> +	fp =3D unwind_user_frame(consume_entry, cookie, fp, regs->ra);
-> +	while (fp && !(fp & 0x3))
+V1->V2
+Add a minor fix removing an unneeded call to handle_to_scmi_info
+Use new scmi_log_stats op/no-op rather than if(IS_ENABLED)
+Drop unneeded atomic_set's
+Use a helper function for stats debugfs creation
 
-Just an observation that the "entry->nr < entry->max_stack" check was
-removed in this generalization, but that's OK since it's checked in
-perf_callchain_store().
+Luke Parkin (4):
+  firmware: arm_scmi: Remove superfluous handle_to_scmi_info
+  firmware: arm_scmi: Add support for tracking statistics
+  firmware: arm_scmi: Track basic SCMI statistics
+  firmware: arm_scmi: Create debugfs files for statistics
 
-Not really part of your change, but shouldn't the check be 0x7 (checking
-for 16B sp/fp alignment), rather than 0x3?
+ drivers/firmware/arm_scmi/Kconfig  | 11 ++++++
+ drivers/firmware/arm_scmi/common.h |  9 +++++
+ drivers/firmware/arm_scmi/driver.c | 62 ++++++++++++++++++++++++++----
+ 3 files changed, 74 insertions(+), 8 deletions(-)
 
+-- 
+2.34.1
 
-Bj=C3=B6rn
 
