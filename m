@@ -1,165 +1,211 @@
-Return-Path: <linux-kernel+bounces-238858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758A7925238
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:28:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA22925232
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 254E7282ABC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:28:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B67D290439
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17125130AC8;
-	Wed,  3 Jul 2024 04:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BB7136E37;
+	Wed,  3 Jul 2024 04:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AQo9Ti6A"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHxvaJlI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F98CBA2D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 04:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C4161FE1;
+	Wed,  3 Jul 2024 04:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719980475; cv=none; b=CAYyv25H4ea+xQG2yWDnqB0Pd/NunjAP4psmqYnhrjtuEFHY+2F5kKVLI/H8YDpUG3jQ0YbUUZSiiBZ9Oc49yL22qB/nKvNQLawRhVVH5z4Z8K7T5quQvS5IDb5OMxOUyoAdIDw0JAE6pnEJ1EqoiizkzCA7TFrGrj74wJhnecs=
+	t=1719980430; cv=none; b=VyoVyF3n35ojHJ0dbeE8rwhfGjAY50M7N/RGbijaAPWYRi2My+aEf44QplO0fvtWexvZ7SHgXJpVAaCTQES1ljwM1tqZVi3/7JeEm4qQsWkU56Xfp5n3IRLP7AhQi94rBGALFkvXWVzg1gAVNUEbKjC9U6sQSjy8jNc5r/oQe24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719980475; c=relaxed/simple;
-	bh=afFBUcRiUw/uSnUuZOl4J32FjnbvltPxLHc8UdKHsoc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=eg9Mekhbi9AG8sHu0ftXACKLdQvODvF4W/EUglz/vIlryB6/nbCLS8vmtaVDnypaeqw+ZcuSnaqj2XdMN6zlZbQf4+Jwbk/Zg6PB0JQ27VMP6YDU0X70+9KaxEpTXEnJNlT3P0kvmnMZRYhxCSt4gl+FOfSu35BgRt3xxQj/sZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AQo9Ti6A; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4634JoKv086081;
-	Tue, 2 Jul 2024 23:19:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719980390;
-	bh=htFylJICkiDuwB5yYHq2LC3E7cQvuIoGFvuuR013PkU=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To;
-	b=AQo9Ti6AXUmkJWvbZMYVNuj2fotDM1alb3Js9vGLtNaImA5uoHJaw9mHazZ+3vGP3
-	 tP58YT7W5ES6hBWQSCK6LweEHYr9+uaMUTesoPo9qX1MhrzR05J+7gWSCjNd+gpiH2
-	 sNGP4lWzVS948zUBOWNrIVzPXbz8tuTi01RtZ/Ok=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4634JoUY121890
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 2 Jul 2024 23:19:50 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 2
- Jul 2024 23:19:49 -0500
-Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
- DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
- 15.01.2507.023; Tue, 2 Jul 2024 23:19:49 -0500
-From: "Ding, Shenghao" <shenghao-ding@ti.com>
-To: Mark Brown <broonie@kernel.org>
-CC: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz"
-	<perex@perex.cz>,
-        "pierre-louis.bossart@linux.intel.com"
-	<pierre-louis.bossart@linux.intel.com>,
-        "13916275206@139.com"
-	<13916275206@139.com>,
-        "zhourui@huaqin.com" <zhourui@huaqin.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "Salazar, Ivan"
-	<i-salazar@ti.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "Chadha, Jasjot Singh" <j-chadha@ti.com>,
-        "liam.r.girdwood@intel.com" <liam.r.girdwood@intel.com>,
-        "Yue, Jaden"
-	<jaden-yue@ti.com>,
-        "yung-chuan.liao@linux.intel.com"
-	<yung-chuan.liao@linux.intel.com>,
-        "Rao, Dipa" <dipa@ti.com>, "yuhsuan@google.com" <yuhsuan@google.com>,
-        "Lo, Henry" <henry.lo@ti.com>, "tiwai@suse.de" <tiwai@suse.de>,
-        "Xu, Baojun" <baojun.xu@ti.com>, "soyer@irl.hu" <soyer@irl.hu>,
-        "Baojun.Xu@fpt.com" <Baojun.Xu@fpt.com>,
-        "judyhsiao@google.com" <judyhsiao@google.com>,
-        "Navada Kanyana, Mukund"
-	<navada@ti.com>,
-        "cujomalainey@google.com" <cujomalainey@google.com>,
-        "Kutty,
- Aanya" <aanya@ti.com>,
-        "Mahmud, Nayeem" <nayeem.mahmud@ti.com>,
-        "savyasanchi.shukla@netradyne.com" <savyasanchi.shukla@netradyne.com>,
-        "flaviopr@microsoft.com" <flaviopr@microsoft.com>,
-        "Ji, Jesse"
-	<jesse-ji@ti.com>,
-        "darren.ye@mediatek.com" <darren.ye@mediatek.com>
-Subject: RE: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add name_prefix as the
- prefix name of DSP firmwares and calibrated data files
-Thread-Topic: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add name_prefix as the
- prefix name of DSP firmwares and calibrated data files
-Thread-Index: AQHaygy3zqcBdt6oi0KleesuzWGEKLHiIqwA///EuhCAAIolgIAB+XEg
-Date: Wed, 3 Jul 2024 04:19:49 +0000
-Message-ID: <c53c1f597e6c43e3874f4bbe1b467d24@ti.com>
-References: <20240629101112.628-1-shenghao-ding@ti.com>
- <8245d8e7-3ff0-4f05-9f99-666e9693603f@sirena.org.uk>
- <664b818a177f4403bd60c3d4cd0bf4d1@ti.com>
- <7a44a36c-6f95-4c5b-a86d-044f9ad13ac1@sirena.org.uk>
-In-Reply-To: <7a44a36c-6f95-4c5b-a86d-044f9ad13ac1@sirena.org.uk>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1719980430; c=relaxed/simple;
+	bh=Cxg67S+/b4PFpqD8c8jDsQk7LHaaGLk2W+TlIyPL5KA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=P13t/XiuxiLnVQA1yajhS90c7jmBgpgCq5Bs2t6KozRMrEVY4sxtTdQJKEFY8ji6Xm7HvoAO3fRLLPgzl05WH2PxC9w0bIAT2i03UyVqqfEN8IV6hJ+M7jWYosbUxfWLm3M69s4Sp01aRs6NhT4jH7T3bfC7bV35jJnpm5HA0Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHxvaJlI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D42F9C4AF10;
+	Wed,  3 Jul 2024 04:20:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719980429;
+	bh=Cxg67S+/b4PFpqD8c8jDsQk7LHaaGLk2W+TlIyPL5KA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=cHxvaJlIRTeIEa5yxQbgJRndGUYihRVgVhEjwwd0BmcxEKGvhwTuUhe4kOSC/0Zns
+	 EEF3V5+lYu5qldErNDgWMl1McUQVjNs8W/j/DKDtR4Q80pz9RHzOcDy4KRwTVjL9wa
+	 77YeEaVeCA0mBr8iPmJJGE6+4f7GL0RHfeSS9xscpsLKjEIyqTqJkgVmDkKn4h3SBT
+	 i0eMZKAi8e2+OOwCXTYTNNPmt6wmHID+6PXE0VoxqfHdQm8KnEU/Ml4gRYKaut8elu
+	 jkFBzpGnoOLr8//pE0zPeRU4T6CAsxs3jiDBmGaHxGmTQK+D0voIqP3B9mDvUo2foU
+	 WQ3YkURFBJ12Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AD173C41677;
+	Wed,  3 Jul 2024 04:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 00/47] arm64: qcom: dts: add QCS9100 support
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171998042970.21654.12559535993133117436.git-patchwork-notify@kernel.org>
+Date: Wed, 03 Jul 2024 04:20:29 +0000
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+In-Reply-To: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, djakov@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, jassisinghbrar@gmail.com,
+ herbert@gondor.apana.org.au, davem@davemloft.net,
+ manivannan.sadhasivam@linaro.org, will@kernel.org, joro@8bytes.org,
+ conor@kernel.org, tglx@linutronix.de, amitk@kernel.org,
+ thara.gopinath@gmail.com, linus.walleij@linaro.org, wim@linux-watchdog.org,
+ linux@roeck-us.net, rafael@kernel.org, viresh.kumar@linaro.org,
+ vkoul@kernel.org, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, robimarko@gmail.com, quic_gurus@quicinc.com,
+ bartosz.golaszewski@linaro.org, kishon@kernel.org, quic_wcheng@quicinc.com,
+ alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+ agross@kernel.org, gregkh@linuxfoundation.org, quic_tdas@quicinc.com,
+ robin.murphy@arm.com, daniel.lezcano@linaro.org, rui.zhang@intel.com,
+ lukasz.luba@arm.com, quic_rjendra@quicinc.com, ulf.hansson@linaro.org,
+ quic_sibis@quicinc.com, otto.pflueger@abscue.de, quic_rohiagar@quicinc.com,
+ luca@z3ntu.xyz, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+ bhupesh.sharma@linaro.org, alexandre.torgue@foss.st.com,
+ peppe.cavallaro@st.com, joabreu@synopsys.com, netdev@vger.kernel.org,
+ lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+ ahalaney@redhat.com, krzysztof.kozlowski@linaro.org,
+ u.kleine-koenig@pengutronix.de, dmitry.baryshkov@linaro.org,
+ quic_cang@quicinc.com, danila@jiaxyga.com, quic_nitirawa@quicinc.com,
+ mantas@8devices.com, athierry@redhat.com, quic_kbajaj@quicinc.com,
+ quic_bjorande@quicinc.com, quic_msarkar@quicinc.com,
+ quic_devipriy@quicinc.com, quic_tsoni@quicinc.com, quic_rgottimu@quicinc.com,
+ quic_shashim@quicinc.com, quic_kaushalk@quicinc.com,
+ quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com,
+ srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, kernel@quicinc.com
 
-Hi Brown
-Thanks for your comment. Feedback is inline.
-> -----Original Message-----
-> From: Mark Brown <broonie@kernel.org>
-> Sent: Tuesday, July 2, 2024 1:06 AM
-> To: Ding, Shenghao <shenghao-ding@ti.com>
-> Cc: andriy.shevchenko@linux.intel.com; lgirdwood@gmail.com;
-> perex@perex.cz; pierre-louis.bossart@linux.intel.com;
-> 13916275206@139.com; zhourui@huaqin.com; alsa-devel@alsa-project.org;
-> Salazar, Ivan <i-salazar@ti.com>; linux-kernel@vger.kernel.org; Chadha,
-> Jasjot Singh <j-chadha@ti.com>; liam.r.girdwood@intel.com; Yue, Jaden
-> <jaden-yue@ti.com>; yung-chuan.liao@linux.intel.com; Rao, Dipa
-> <dipa@ti.com>; yuhsuan@google.com; Lo, Henry <henry.lo@ti.com>;
-> tiwai@suse.de; Xu, Baojun <baojun.xu@ti.com>; soyer@irl.hu;
-> Baojun.Xu@fpt.com; judyhsiao@google.com; Navada Kanyana, Mukund
-> <navada@ti.com>; cujomalainey@google.com; Kutty, Aanya
-> <aanya@ti.com>; Mahmud, Nayeem <nayeem.mahmud@ti.com>;
-> savyasanchi.shukla@netradyne.com; flaviopr@microsoft.com; Ji, Jesse
-> <jesse-ji@ti.com>; darren.ye@mediatek.com
-> Subject: Re: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add name_prefix as
-> the prefix name of DSP firmwares and calibrated data files
->=20
-> On Mon, Jul 01, 2024 at 02:00:13PM +0000, Ding, Shenghao wrote:
->=20
-> > > I'll apply this but I do wonder if it's worth falling back to trying
-> > > to load the unprefixed name if we fail to load the prefixed one.
->=20
-> > If fail to load dsp firmware, the driver won't load unprefixed name
-> > firmware, but switch tas2563/tas2781 to bypass-dsp mode automatically.
-> > In this mode, smartamp become simple amp.
-> > These day, I met a case from one of my customers, they put 2 pieces of
-> > tas2563, and 2 pieces of tas2781 in the same i2c bus. In order to
-> > identify tas2563 and tas2781, I think name_prefix is a good solution fo=
-r this
-> case.
-> > Looking forward to your comment. Thanks.
->=20
-> Yes, the name_prefix is a good idea and probably people want things
-> specifically tuned for the DSP - I was thinking about error handling or
-> upgrade cases where wrong calibration might work better.  Bypass mode
-> means the device will still function at least.
-In bypass mode, tas2563/tas2781 can still work without speaker protection o=
-r audio acoustic function.
-In case of only dsp firnmware loading without calibrated data, tas2563/tas2=
-781 still can work with
-default calibrated data and default audio acoustic parameter.
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 3 Jul 2024 10:58:03 +0800 you wrote:
+> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+> While the QCS9100 platform is still in the early design stage, the
+> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+> mounts the QCS9100 SoC instead of the SA8775p SoC.
+> 
+> The QCS9100 SoC DTSI was directly renamed from the SA8775p SoC DTSI. In
+> the upcoming weeks, Nikunj Kela will develop a new device tree related
+> to SA8775p, specifically supporting the SCMI resource firmware solution
+> for the SA8775p platform. If you're already familiar with the
+> background, feel free to skip part[2], which provides a detailed
+> explanation.
+> 
+> [...]
+
+Here is the summary with links:
+  - [01/47] dt-bindings: arm: qcom: Document QCS9100 SoC and RIDE board
+    (no matching commit)
+  - [02/47] arm64: dts: qcom: qcs9100: Introduce QCS9100 SoC dtsi
+    (no matching commit)
+  - [03/47] arm64: dts: qcom: qcs9100: Introduce QCS9100 PMIC dtsi
+    https://git.kernel.org/netdev/net-next/c/df18948d331e
+  - [04/47] arm64: dts: qcom: qcs9100: Add QCS9100 RIDE board dts
+    (no matching commit)
+  - [05/47] dt-bindings: firmware: qcom,scm: document SCM on QCS9100 SoC
+    (no matching commit)
+  - [06/47] dt-bindings: interconnect: qcom: document the interconnect compatibles for QCS9100
+    (no matching commit)
+  - [07/47] dt-bindings: clock: document QCS9100 GCC compatible
+    (no matching commit)
+  - [08/47] dt-bindings: mailbox: qcom-ipcc: Document the QCS9100 IPCC
+    (no matching commit)
+  - [09/47] dt-bindings: phy: Add QMP UFS PHY comptible for QCS9100
+    (no matching commit)
+  - [10/47] dt-bindings: crypto: ice: Document QCS9100 inline crypto engine
+    (no matching commit)
+  - [11/47] dt-bindings: crypto: qcom,prng: document QCS9100
+    (no matching commit)
+  - [12/47] dt-bindings: phy: qcom,usb-snps-femto-v2: Add bindings for QCS9100
+    (no matching commit)
+  - [13/47] dt-bindings: ufs: qcom: document QCS9100 UFS
+    (no matching commit)
+  - [14/47] dt-bindings: phy: qcom,qmp-usb: Add QCS9100 USB3 PHY
+    (no matching commit)
+  - [15/47] dt-bindings: usb: dwc3: Add QCS9100 compatible
+    (no matching commit)
+  - [16/47] dt-bindings: clock: qcom: describe the GPUCC clock for QCS9100
+    (no matching commit)
+  - [17/47] dt-bindings: arm-smmu: Document QCS9100 GPU SMMU
+    (no matching commit)
+  - [18/47] dt-bindings: phy: describe the Qualcomm SGMII PHY for QCS9100
+    (no matching commit)
+  - [19/47] dt-bindings: cache: qcom,llcc: Add QCS9100 description
+    (no matching commit)
+  - [20/47] dt-bindings: interrupt-controller: qcom,pdc: document pdc on QCS9100
+    (no matching commit)
+  - [21/47] dt-bindings: thermal: qcom-tsens: document the QCS9100 Temperature Sensor
+    (no matching commit)
+  - [22/47] dt-bindings: soc: qcom,aoss-qmp: Document the QCS9100 AOSS channel
+    (no matching commit)
+  - [23/47] dt-bindings: pinctrl: add qcs9100-tlmm compatible
+    (no matching commit)
+  - [24/47] dt-bindings: soc: qcom: add qcom,qcs9100-imem compatible
+    (no matching commit)
+  - [25/47] dt-bindings: watchdog: qcom-wdt: document QCS9100
+    (no matching commit)
+  - [26/47] dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings for QCS9100
+    (no matching commit)
+  - [27/47] dt-bindings: cpufreq: cpufreq-qcom-hw: Add QCS9100 compatibles
+    (no matching commit)
+  - [28/47] dt-bindings: power: qcom,rpmpd: document the QCS9100 RPMh Power Domains
+    (no matching commit)
+  - [29/47] dt-bindings: net: qcom,ethqos: add description for qcs9100
+    (no matching commit)
+  - [30/47] dt-bindings: PCI: Document compatible for QCS9100
+    (no matching commit)
+  - [31/47] dt-bindings: PCI: qcom-ep: Add support for QCS9100 SoC
+    (no matching commit)
+  - [32/47] dt-bindings: phy: qcom,qmp: Add qcs9100 QMP PCIe PHY
+    (no matching commit)
+  - [33/47] interconnect: qcom: add driver support for qcs9100
+    (no matching commit)
+  - [34/47] clk: qcom: add the GCC driver support for QCS9100
+    (no matching commit)
+  - [35/47] phy: qcom-qmp-ufs: Add QCS9100 support
+    (no matching commit)
+  - [36/47] phy: qcpm-qmp-usb: Add support for QCS9100
+    (no matching commit)
+  - [37/47] clk: qcom: add the GPUCC driver support for QCS9100
+    (no matching commit)
+  - [38/47] phy: qcom: add the SGMII SerDes PHY driver support
+    (no matching commit)
+  - [39/47] soc: qcom: llcc: Add llcc configuration support for the QCS9100 platform
+    (no matching commit)
+  - [40/47] pinctrl: qcom: add the tlmm driver support for qcs9100 platform
+    (no matching commit)
+  - [41/47] clk: qcom: rpmh: Add support for QCS9100 rpmh clocks
+    (no matching commit)
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
