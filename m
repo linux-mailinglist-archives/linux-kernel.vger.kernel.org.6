@@ -1,217 +1,112 @@
-Return-Path: <linux-kernel+bounces-240135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D38926977
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:21:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F8392697D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52C65B25E99
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:21:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E2A289416
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD7818FC81;
-	Wed,  3 Jul 2024 20:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCAB18FDD6;
+	Wed,  3 Jul 2024 20:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnACx6JV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sk3J19kL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD22130A7C;
-	Wed,  3 Jul 2024 20:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9A4185095;
+	Wed,  3 Jul 2024 20:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720038064; cv=none; b=r34E4m6frZB23x9ov3NN99SHxwIRTsf43dTn80u+04Q1x5FGslS5GOXSPHI9S5aJK7J+8Th5koQpw5F5E8tgmZxOHMMQvMwvBSk4VvgVMMqb1EW6phJNYYT/V6WTnAkfCHLBRqWju2mg8DmIPwGMb+PU8AyWphrgw9BSjiJIgYI=
+	t=1720038079; cv=none; b=mmT5c3l9oVCDVv6I/Tqxvnt9zEfELJzkL7SIC3h5KIxFhiQ7r0oCqSzSKcQpRXimFE+mT0ua4yryc4WO9wkNHdCuspk//zhwcuPt3z3c+3hR1SwglhTbLZmyRP6Q8tmQcKfnyAVmQ9Djom0dNgRpc8D6dpl5TLmQUOZmo8PIWMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720038064; c=relaxed/simple;
-	bh=+YVbne63B3Ojv7G4YC3B73DUyIP921gl3Am3ty/VfXE=;
+	s=arc-20240116; t=1720038079; c=relaxed/simple;
+	bh=rPvIWW2IUaIr2Cw4CK82UCHdJ+i1JMw6S82PykL7SKg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OXmmf4XMTUujI3Kml2BGRGj+o4YqkyTUQUym0ZhNEBGQIyjZjB+m1XB+s8u2e+w69j1RcIiiL2JUpyW87ZNS4OlccYDWsvyznwONoj9/CB8rsABALbfh/f8zBTxpyBPCmtBQQLUhyW0+fsOTRZiDwr2HrpkmBjqBaytYOWHTPl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnACx6JV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A739EC4AF07;
-	Wed,  3 Jul 2024 20:21:04 +0000 (UTC)
+	 To:Cc:Content-Type; b=CCT/cBt1U4So/EJh42o7zjEfk9zP/MJf7ills+3HRacJfSZ1YLOvgrYMp739ZQAm2wb21f1gl4Hn2E6qtpTX7iY2kI0IgEqt5XCcbeK9M8mLIQHZlP64eh+SBFmKywWujgsIUpxaPRGd5/+qKDtWNPtNMBnrXYrMtFLVx65GXR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sk3J19kL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E06C4AF0A;
+	Wed,  3 Jul 2024 20:21:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720038064;
-	bh=+YVbne63B3Ojv7G4YC3B73DUyIP921gl3Am3ty/VfXE=;
+	s=k20201202; t=1720038078;
+	bh=rPvIWW2IUaIr2Cw4CK82UCHdJ+i1JMw6S82PykL7SKg=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rnACx6JVh3IOa2V5pWbNDEuRU9O7sOgYK2XHiYUhkrj+lQG2h5uElFPaHbuK5Z95Z
-	 hndbeTKazsC3HLy5Oh+kJSaYIXB3ChoYxEvjk5Q2AgIrDYYYUgAICv5iF+p/F8r9ow
-	 krushYb/FxyqAWUHXfXzZADwC5+WV/KMuv+izqSaVI9TN8TfYxZGC8xqe6Vx3tEx9+
-	 Ms10wScIKuTPDlahKwGxM32baj+ik+/zz1lvKRohF8FXCFO/rI2Rqxu/n1k6iKwP7S
-	 N/uBxQ27XrC/nhsKBjnmvVdSMw6SP/B9gKNZEZXlTjPZoh+ez+0HQWWIkUnR728bRk
-	 dTKfFlNG3Yjeg==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5c47282edfdso23111eaf.1;
-        Wed, 03 Jul 2024 13:21:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXWXUKLwlLmIKX08B3hWrU09pu2DgXTbCmre0PAWClzZmvM/bmBTBvdbDH0Rab1iELl2H+vba12RWr660XgTRUypM7cYT2no8khcBL3nL+4ix7eUua2E8yw0ftKnjAPzWEbiXNGhZQ=
-X-Gm-Message-State: AOJu0YzWXJ/Dz2IVijef0joa9aRm4gqsRVQdOVQscfMXbEj6XDnhXmOL
-	q9a8jdDY8Ji8r9kIySKYqXjlZwTbuQrtTHCuKGqms2sGiP8cs7FCaJu7iCEpRnmqVzxlyq6Kx3L
-	GAwaOcva+Sbq074bvc+pDfflPcbI=
-X-Google-Smtp-Source: AGHT+IG4+4miXEL5h2jhi5yeBJF0jxUhmlh9XbF3dAZynNpqgT25mhwR8vZWa7advZfvenAXl1JtUzocdtKGEUCRO34=
-X-Received: by 2002:a4a:ba84:0:b0:5c4:24e0:26cd with SMTP id
- 006d021491bc7-5c43902eff0mr12566330eaf.1.1720038063912; Wed, 03 Jul 2024
- 13:21:03 -0700 (PDT)
+	b=sk3J19kLZOWas8QOHSZltgbRvBLXaonPTXwU1DEW39b1yG0gY34KfKMbtMI3bHEU1
+	 yeDKp6QnUxPm3/Z9GWCo7kB4Ri/cTf3ZhDN4eiV4giODeRAp/WrziyOI/mWGY5WEUH
+	 QPjPFjd9PBsruzq9WOnYZhAcj7D3yCuS8PMYP3+ImqxuFGFW+36Kx2K7/KLav44qGO
+	 CXnQH/lPtIwJa6I/5yccS8fWOgCtWTs1JAQx0zta7B/V8BeBAFKpl3gTLTjkaJkUT+
+	 2GyaYA2LOPbL/ggBA3dEyBsFePpVS89NsBo3P6q3vgvCssmhucVEaxI3esqUJh9Oxd
+	 xSy/8kohjfzJw==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e764bb3fbso7754719e87.3;
+        Wed, 03 Jul 2024 13:21:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXUKo5xSAu/tkT4Yx5S+tBlEE6b+5vreVeSxcFDPSL8sCuGbStRQS4AYGsyH9S5L+5XlquOKBuIfWyBmAF6oytEemNtP5yu32XNry93swzxOr44mS7B8WoIUVYKIu6QMvHrV2nAetqzDCsPfgTbdoLmDqn6frh4NgquA6Cyf/h8d+c4PgWqBJMOO96vVTqJUaUXxTYxvtsaP9o/VqGNkYtoywtnX+E22M4u2GkK63NEvbB+/a2kNjSFnuvvvUgDyTxkobsZFgjfTEmD1/Ew+rbefH2LTVW2
+X-Gm-Message-State: AOJu0Yy3ATx1at4QujPJmsFbVBsO1Jf3oIMZTDJfBbOWcZSgyRm2CAgD
+	agkFdkQFxkPepklK4q3lBXBCBGy/u0fwOrmiNHIhWnePNUflNokNtPpzSFsAWGGDwm29flbWl0g
+	Mf6j1g0mZ/MksRe8w2Ok/tYUObQ==
+X-Google-Smtp-Source: AGHT+IHkJyLufysSPAp6OLlmdgVCxJhhtA7jCjroJG4RfWGCFjmvlqKevKnTA5kF72TY71LMsM29/tv7IaZgzL2wT8U=
+X-Received: by 2002:a05:6512:33d1:b0:52c:e3af:7c5c with SMTP id
+ 2adb3069b0e04-52e82686b63mr8472949e87.34.1720038076812; Wed, 03 Jul 2024
+ 13:21:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702-power-allocator-null-trip-max-v1-1-47a60dc55414@collabora.com>
- <18b1724c-9bab-4501-b956-278896324e55@collabora.com>
-In-Reply-To: <18b1724c-9bab-4501-b956-278896324e55@collabora.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 3 Jul 2024 22:20:52 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jvsCCFFLPd7Rnrssf+WccKMjHX3NJEW5hdbLTriD6Rgg@mail.gmail.com>
-Message-ID: <CAJZ5v0jvsCCFFLPd7Rnrssf+WccKMjHX3NJEW5hdbLTriD6Rgg@mail.gmail.com>
-Subject: Re: [PATCH] thermal: gov_power_allocator: Return early in manage if
- trip_max is null
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Nikita Travkin <nikita@trvn.ru>, kernel@collabora.com, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240701151231.29425-1-kyarlagadda@nvidia.com>
+ <20240701151231.29425-5-kyarlagadda@nvidia.com> <20240701174227.GA148633-robh@kernel.org>
+ <hqlckp6hxvxwkkbiagdb5pm4eo5efu55hwuupdal6lojxj2xu5@5zibskqdbdju>
+In-Reply-To: <hqlckp6hxvxwkkbiagdb5pm4eo5efu55hwuupdal6lojxj2xu5@5zibskqdbdju>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 3 Jul 2024 14:21:04 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+hzbHKeKM9UnJ=VK8_rKs5HJpZRGH2YYWAvjtf9SbPRw@mail.gmail.com>
+Message-ID: <CAL_Jsq+hzbHKeKM9UnJ=VK8_rKs5HJpZRGH2YYWAvjtf9SbPRw@mail.gmail.com>
+Subject: Re: [RFC PATCH V2 04/12] dt-bindings: misc: tegra-i2c: config settings
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Krishna Yarlagadda <kyarlagadda@nvidia.com>, linux-tegra@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jonathanh@nvidia.com, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, corbet@lwn.net, andi.shyti@kernel.org, 
+	wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org, 
+	adrian.hunter@intel.com, digetx@gmail.com, ldewangan@nvidia.com, 
+	mkumard@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 3, 2024 at 11:03=E2=80=AFAM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+On Tue, Jul 2, 2024 at 4:29=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
+.com> wrote:
 >
-> Il 02/07/24 23:24, N=C3=ADcolas F. R. A. Prado ha scritto:
-> > Commit da781936e7c3 ("thermal: gov_power_allocator: Allow binding
-> > without trip points") allowed the governor to bind even when trip_max
-> > is null. This allows a null pointer dereference to happen in the manage
-> > callback. Add an early return to prevent it, since the governor is
-> > expected to not do anything in this case.
+> On Mon, Jul 01, 2024 at 11:42:27AM GMT, Rob Herring wrote:
+> > On Mon, Jul 01, 2024 at 08:42:22PM +0530, Krishna Yarlagadda wrote:
+> > > I2C interface timing registers are configured using config setting
+> > > framework. List available field properties for Tegra I2C controllers.
 > >
-> > Fixes: da781936e7c3 ("thermal: gov_power_allocator: Allow binding witho=
-ut trip points")
-> > Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> > ---
-> > This issue was noticed by KernelCI during a boot test on the
-> > mt8195-cherry-tomato-r2 platform with the config in [1]. The stack trac=
-e
-> > is attached below.
-> >
-> > [1] http://0x0.st/XaON.txt
-> >
-> > [    4.015786] Unable to handle kernel NULL pointer dereference at virt=
-ual address 0000000000000000
-> > [    4.015791] Mem abort info:
-> > [    4.015793]   ESR =3D 0x0000000096000004
-> > [    4.015796]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-> > [    4.015799]   SET =3D 0, FnV =3D 0
-> > [    4.015802]   EA =3D 0, S1PTW =3D 0
-> > [    4.015804]   FSC =3D 0x04: level 0 translation fault
-> > [    4.015807] Data abort info:
-> > [    4.015809]   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
-> > [    4.015811]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-> > [    4.015814]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> > [    4.015818] user pgtable: 4k pages, 48-bit VAs, pgdp=3D0000000109809=
-000
-> > [    4.015821] [0000000000000000] pgd=3D0000000000000000, p4d=3D0000000=
-000000000
-> > [    4.015835] Modules linked in: mt8195_mt6359(+) mt6577_auxadc snd_so=
-c_mt8195_afe mtk_scp_ipi snd_sof_utils mtk_wdt(+)
-> > [    4.015852] CPU: 2 PID: 13 Comm: kworker/u32:1 Not tainted 6.10.0-rc=
-6 #1 c5d519ae8e7fec6bbe67cb8c50bfebcb89dfa54e
-> > [    4.015859] Hardware name: Acer Tomato (rev2) board (DT)
-> > [    4.015862] Workqueue: events_unbound deferred_probe_work_func
-> > [    4.015875] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BT=
-YPE=3D--)
-> > [    4.015880] pc : power_allocator_manage+0x110/0x6a0
-> > [    4.015888] lr : __thermal_zone_device_update+0x1dc/0x400
-> > [    4.015893] sp : ffff8000800eb800
-> > [    4.015895] x29: ffff8000800eb810 x28: 0000000000000001 x27: 0000000=
-000000001
-> > [    4.015903] x26: aaaaaaaaaaaaaaab x25: ffff07a0461c15a0 x24: ffffb58=
-530ca67c0
-> > [    4.015911] x23: 0000000000000000 x22: ffff07a04098fcc0 x21: ffffb58=
-532eec848
-> > [    4.015918] x20: ffff8000800eb920 x19: ffff07a0461c1000 x18: 0000000=
-000000b4b
-> > [    4.015926] x17: 5359534255530031 x16: ffffb585310352e4 x15: 0000000=
-000000020
-> > [    4.015933] x14: 0000000000000000 x13: ffffffff00000000 x12: 0000000=
-000000040
-> > [    4.015940] x11: 0101010101010101 x10: ffffffffffffffff x9 : ffffb58=
-530ca8d78
-> > [    4.015948] x8 : 0101010101010101 x7 : 7f7f7f7f7f7f7f7f x6 : 0000000=
-000001388
-> > [    4.015955] x5 : 0000000000000000 x4 : 0000000000000384 x3 : 0000000=
-000000000
-> > [    4.015962] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000=
-000000000
-> > [    4.015970] Call trace:
-> > [    4.015972]  power_allocator_manage+0x110/0x6a0
-> > [    4.015978]  __thermal_zone_device_update+0x1dc/0x400
-> > [    4.015983]  thermal_zone_device_set_mode+0x7c/0xa0
-> > [    4.015987]  thermal_zone_device_enable+0x1c/0x28
-> > [    4.015991]  thermal_of_zone_register+0x43c/0x498
-> > [    4.015996]  devm_thermal_of_zone_register+0x6c/0xb8
-> > [    4.016001]  gadc_thermal_probe+0x140/0x214
-> > [    4.016007]  platform_probe+0x70/0xc4
-> > [    4.016012]  really_probe+0x140/0x270
-> > [    4.016018]  __driver_probe_device+0xfc/0x114
-> > [    4.016024]  driver_probe_device+0x44/0x100
-> > [    4.016029]  __device_attach_driver+0x64/0xdc
-> > [    4.016035]  bus_for_each_drv+0xb4/0xdc
-> > [    4.016041]  __device_attach+0xdc/0x16c
-> > [    4.016046]  device_initial_probe+0x1c/0x28
-> > [    4.016052]  bus_probe_device+0x44/0xac
-> > [    4.016057]  deferred_probe_work_func+0xb0/0xc4
-> > [    4.016063]  process_scheduled_works+0x114/0x330
-> > [    4.016070]  worker_thread+0x1c0/0x20c
-> > [    4.016076]  kthread+0xf8/0x108
-> > [    4.016081]  ret_from_fork+0x10/0x20
-> > [    4.016090] Code: d1030294 17ffffdd f94012c0 f9401ed7 (b9400000)
-> > [    4.016095] ---[ end trace 0000000000000000 ]---
-> > ---
-> >   drivers/thermal/gov_power_allocator.c | 3 +++
-> >   1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/go=
-v_power_allocator.c
-> > index 45f04a25255a..1b2345a697c5 100644
-> > --- a/drivers/thermal/gov_power_allocator.c
-> > +++ b/drivers/thermal/gov_power_allocator.c
-> > @@ -759,6 +759,9 @@ static void power_allocator_manage(struct thermal_z=
-one_device *tz)
-> >               return;
-> >       }
-> >
-> > +     if (!params->trip_max)
-> > +             return;
-> > +
+> > How is I2C bus timing parameters specific to NVIDIA? Just because you
+> > have more controls? No. That's no reason to invent a whole new way to
+> > specify parameters. Extend what's already there and make it work for
+> > anyone.
 >
-> I'm not sure that this is the right thing to do.
+> This may be applicable to a subset of this, and yes, maybe we can find
+> generalizations for some of these parameters.
 >
-> If you do that, allocate_power() will never be called, so the entire algo=
- doesn't
-> work, making binding this completely useless (as it's going to be a noop.=
-.!).
->
-> Check what get_governor_trips() says in the documentation:
->
->   * If there is only one trip point, then that's considered to be the
->   * "maximum desired temperature" trip point and the governor is always
->   * on.  If there are no passive or active trip points, then the
->   * governor won't do anything.  In fact, its throttle function
->   * won't be called at all.
->
-> ....and it looks like you're aware of that, as you said that in the commi=
-t
-> description as well.
+> However, we're also looking for feedback specifically on these config
+> nodes that go beyond individual timing parameters. For example in the
+> case of I2C, how should parameters for different operating modes be
+> described?
 
-IIUC, the problematic commit allowed the power allocator governor to
-bind to a tripless thermal zone in order to prevent failing the entire
-thermal zone registration.
+Like what? It all looks like timing to me.
 
-Yes, it will be a noop in this case because in the absence of any
-trips there will be nothing to do for it.  Still, user space can check
-the zone temperature via sysfs.
+> Would you agree with something along the lines provided in this series?
 
-Adding a NULL pointer check before the place where the pointer in
-question is dereferenced is not a bad idea at all.
+When there are multiple users/vendors of it, maybe.
+
+In general, it goes against the DT design of properties for foo go in
+foo's node. This looks more like how ACPI does things where it's add
+another table for this new thing we need.
+
+Rob
 
