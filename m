@@ -1,170 +1,69 @@
-Return-Path: <linux-kernel+bounces-239562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1DC492622B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:49:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F112D926227
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E89BB28D0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:48:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC4728529C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64ADD18130E;
-	Wed,  3 Jul 2024 13:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3161817BB2F;
+	Wed,  3 Jul 2024 13:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kps1hx/k"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AGj3r5lk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C2A180A77
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667F817B4F7;
+	Wed,  3 Jul 2024 13:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720014422; cv=none; b=e1JTrk3X/sI5HN80ROke6kBd61iqvdlOyNZWFIqU70TaLO91rjkDNsMqJo4xgVgY3+K4PxtHzYb4T9jzMsIRynY//cuTFd9RON0Z6K5RWhS4R2AIApjauPrAfy7QCdJ+Mzi2rNF7F6OJqs/sJ+Y7ggI6kfehLYjaSHra7r8evos=
+	t=1720014432; cv=none; b=XhWCkmV6byex+/dffTf6tthtqOg4Qzynf/7krP+wO2wEUiCWvMgWgauchrUk/6CJ2oBDLlf/RtCf75mjLlsg0ZtTPsfU2Zrqi+5SDaATtRkxypfQF5t0tibE3M2GCI+MZDtT3TZBKT3TOqh5dmJh3J/Uw0hKdFhWrIkooD8j2Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720014422; c=relaxed/simple;
-	bh=5WVExtaEHDKto3KKgolPo6JtDfTL/rQ7o/bxZ1uFyC4=;
+	s=arc-20240116; t=1720014432; c=relaxed/simple;
+	bh=8ZnzcfNK3UH+1XPyWcjQwMJ96TI+DcIZPyiqo3RE3Yo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BoTUs6WAPwvALRqXaKbLWvoVxozzKK1Usx2CWiYZeBDOJGPBmFtLw3LpDp9H/Ais5o7DuRTxQNYgJ0PDa4ENuSwH4yLG+zdtU/77CexDqPVzM7q8/CBK47DBoKqAdefCYR11qPtV3TLanyEkZbcTYeO6pF3WlDerYVEBYgcMy/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kps1hx/k; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fa2ea1c443so41170435ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 06:47:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720014420; x=1720619220; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sw99LfshwrAWELMzadgmDLcrDXjQox7eX5nx5nWqw9o=;
-        b=kps1hx/kD7aJwWFXDox2Hn3yGWMyczEMJTzLqFVMaapKLrJVfohSqfsmyUC3Imm8t4
-         hVBx/7u3pRuVISegmbo7Uv6B26A4ydCfl+7mKZiQJYjssknPp23Oc7+kBf3bbxyqBqei
-         e6Gqh0Pcqez/X/YLEbl6cGJ7+HZUi7KNocX5x1WxJKZVrNjpWIZhZcBJ8u4MhNixr/nz
-         4loK3XNBTLDTSOnWshXCawl7qvnmFlSJSMlGtLi3y8cP3I/u/ayaEL1B4jMum+/tw53L
-         IOfTR3fnvuKmtWCbJ61Ao7pNKmmb3FGRWfd+NNoU4cmS58msXR5uR8a2NVtghaK+DkVu
-         jvgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720014420; x=1720619220;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sw99LfshwrAWELMzadgmDLcrDXjQox7eX5nx5nWqw9o=;
-        b=mKT4Jknj9swaHvaentcvVMIPR+oN4xb8IvULGFkxJ+m5PJKBL8YhP1uPnFuAUYEnxf
-         QHYrLjM6XSeKvJTi+vzHqufl6e2otjU/GddkZCHuTJsniq6bY+ao3JzFUWu2CQD9Whw0
-         7ogkMjZ/YQ3z0Y+WXN67fPLI7sQB+u83a8iBxqnV+EEZqxm0dtvQY4lI94NN3WqJcewi
-         zdbY8BqlcP83s0scnbFxSG6gUj8ug+L3GtAXdRxTbwT7/jAy9ckZdA7N1X3AL8SMk7kG
-         zcqI3/E42pgsnQDc4yh5Px/BWu8VDbOGoR1+3w82ReUV1uQKfCR7KjdS3oqFk4SR/BKn
-         a2Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1BHoklSV1iMFg6oBs5ihlv1TRAMHnkbdXHbAh0mxZlWJJKHx37nKa/f2hw22UYkuPdWEO4KS5y9W7RXWDHatQGwzuckHYDyOuJrQx
-X-Gm-Message-State: AOJu0YwMYv6M0dKlVeryZsp/0COLxFg0erkWNlHclEKA6JuvFcV5H37/
-	5l1hjklJ+BMzP5DmKldPS/2sGq4+5zwLqH9IFmO7EWhSVL4VankvDwgzrAsmGQ==
-X-Google-Smtp-Source: AGHT+IE4BSW435CJ7S1sExcvff+VTjaUh0Rva08TLajdYQovnLK0ErBFW3QyOK8Bt86yYhlFMSktsA==
-X-Received: by 2002:a17:90b:1294:b0:2c7:c6c4:1693 with SMTP id 98e67ed59e1d1-2c93d71f47emr10181146a91.21.1720014420134;
-        Wed, 03 Jul 2024 06:47:00 -0700 (PDT)
-Received: from thinkpad ([220.158.156.98])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce43303sm10740716a91.17.2024.07.03.06.46.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 06:46:59 -0700 (PDT)
-Date: Wed, 3 Jul 2024 19:16:55 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Slark Xiao <slark_xiao@163.com>
-Cc: loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
-	johannes@sipsolutions.net, quic_jhugo@quicinc.com,
-	netdev@vger.kernel.org, mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] net: wwan: mhi: make default data link id
- configurable
-Message-ID: <20240703134655.GD4342@thinkpad>
-References: <20240701021216.17734-1-slark_xiao@163.com>
- <20240701021216.17734-3-slark_xiao@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e+v0xzYFCNJLm2gj4T143Iz8DvNfb+sSr6vJZeekAq7V85fmC96urnhi82MkZI8fMI5o+3Ls1WThXMa9JQHcjPSj0O5jF7Drp9heJKy845kD5ItZhxmaD1kvC2FYSXCmS2QdWeg0qsHNi02lBPNQTAAwpKdf5Mae7Yumcm90N/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AGj3r5lk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F89FC32781;
+	Wed,  3 Jul 2024 13:47:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720014432;
+	bh=8ZnzcfNK3UH+1XPyWcjQwMJ96TI+DcIZPyiqo3RE3Yo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AGj3r5lkZvD0O7EyMDg1fMtmzOiYAVveGLRNLlohNSQwmKJiq4VaH1A6Omrtpm3vv
+	 FdG9UCQlAvq6FH5p37xcLKjKl8sjnDDUjcq8Y+pHwfTKo0rMXDoo6UkapK+TAX0fgB
+	 CvabU+ra8V7amwLKOxKR+SUyYXbzgtsiso5VgV7c=
+Date: Wed, 3 Jul 2024 15:47:09 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] USB-serial device ids for 6.10-rc6
+Message-ID: <2024070301-shaping-degraded-869d@gregkh>
+References: <Zn6F8mJteD81GsMV@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240701021216.17734-3-slark_xiao@163.com>
+In-Reply-To: <Zn6F8mJteD81GsMV@hovoldconsulting.com>
 
-On Mon, Jul 01, 2024 at 10:12:16AM +0800, Slark Xiao wrote:
-> For SDX72 MBIM mode, it starts data mux id from 112 instead of 0.
-> This would lead to device can't ping outside successfully.
-> Also MBIM side would report "bad packet session (112)". In order
-> to fix this issue, we decide to use the device name of MHI
-> controller to do a match in wwan side. Then wwan driver could
-> set a corresponding mux_id value according to the MHI product.
+On Fri, Jun 28, 2024 at 11:44:18AM +0200, Johan Hovold wrote:
+> The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
 > 
-> Signed-off-by: Slark Xiao <slark_xiao@163.com>
-
-Applied to mhi-next with Jakub's ACK!
-
-- Mani
-
-> ---
-> v2: Remove Fix flag
-> v3: Use name match solution instead of use mux_id
-> ---
->  drivers/net/wwan/mhi_wwan_mbim.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
+>   Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
 > 
-> diff --git a/drivers/net/wwan/mhi_wwan_mbim.c b/drivers/net/wwan/mhi_wwan_mbim.c
-> index 3f72ae943b29..e481ced496d8 100644
-> --- a/drivers/net/wwan/mhi_wwan_mbim.c
-> +++ b/drivers/net/wwan/mhi_wwan_mbim.c
-> @@ -42,6 +42,8 @@
->  #define MHI_MBIM_LINK_HASH_SIZE 8
->  #define LINK_HASH(session) ((session) % MHI_MBIM_LINK_HASH_SIZE)
->  
-> +#define WDS_BIND_MUX_DATA_PORT_MUX_ID 112
-> +
->  struct mhi_mbim_link {
->  	struct mhi_mbim_context *mbim;
->  	struct net_device *ndev;
-> @@ -93,6 +95,15 @@ static struct mhi_mbim_link *mhi_mbim_get_link_rcu(struct mhi_mbim_context *mbim
->  	return NULL;
->  }
->  
-> +static int mhi_mbim_get_link_mux_id(struct mhi_controller *cntrl)
-> +{
-> +	if (strcmp(cntrl->name, "foxconn-dw5934e") == 0 ||
-> +	    strcmp(cntrl->name, "foxconn-t99w515") == 0)
-> +		return WDS_BIND_MUX_DATA_PORT_MUX_ID;
-> +
-> +	return 0;
-> +}
-> +
->  static struct sk_buff *mbim_tx_fixup(struct sk_buff *skb, unsigned int session,
->  				     u16 tx_seq)
->  {
-> @@ -596,7 +607,7 @@ static int mhi_mbim_probe(struct mhi_device *mhi_dev, const struct mhi_device_id
->  {
->  	struct mhi_controller *cntrl = mhi_dev->mhi_cntrl;
->  	struct mhi_mbim_context *mbim;
-> -	int err;
-> +	int err, link_id;
->  
->  	mbim = devm_kzalloc(&mhi_dev->dev, sizeof(*mbim), GFP_KERNEL);
->  	if (!mbim)
-> @@ -617,8 +628,11 @@ static int mhi_mbim_probe(struct mhi_device *mhi_dev, const struct mhi_device_id
->  	/* Number of transfer descriptors determines size of the queue */
->  	mbim->rx_queue_sz = mhi_get_free_desc_count(mhi_dev, DMA_FROM_DEVICE);
->  
-> +	/* Get the corresponding mux_id from mhi */
-> +	link_id = mhi_mbim_get_link_mux_id(cntrl);
-> +
->  	/* Register wwan link ops with MHI controller representing WWAN instance */
-> -	return wwan_register_ops(&cntrl->mhi_dev->dev, &mhi_mbim_wwan_ops, mbim, 0);
-> +	return wwan_register_ops(&cntrl->mhi_dev->dev, &mhi_mbim_wwan_ops, mbim, link_id);
->  }
->  
->  static void mhi_mbim_remove(struct mhi_device *mhi_dev)
-> -- 
-> 2.25.1
+> are available in the Git repository at:
 > 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.10-rc6
 
--- 
-மணிவண்ணன் சதாசிவம்
+Pulled and pushed out, thnaks.
+
+greg k-h
 
