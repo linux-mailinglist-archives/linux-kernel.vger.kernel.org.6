@@ -1,164 +1,309 @@
-Return-Path: <linux-kernel+bounces-239863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3CB926632
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:32:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B98926594
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18331C209A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:32:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F55E1F22161
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC867181D0A;
-	Wed,  3 Jul 2024 16:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6593A18306F;
+	Wed,  3 Jul 2024 16:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="ZToUQMJI"
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMkudysf"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C4917C9EE
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82798181B90
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720024347; cv=none; b=iXAGKTP9VieljaB8lSZl7EpYS6rn3QRkOMlL1FdZ1TPmlaOUPCJwwYE5fT8aiOhcoINhzhGAU+oWjV258ficlqFj+TWWOZBNDy9TeKx+3eB0GDjDSS50CMSuVw4gQ+TrSWq8/MiJ5KjhUfn5FINBV/edZyNUfzW95itebDjLLQ4=
+	t=1720022898; cv=none; b=TqIVM2/JE4njgZ40dlAAHZ4448WQ6GRPV4n8OwKZ04jOTqUs6nNlNs4j2TQyfmmUB3cMhaHiw0Daaw87ldU3IIOOQcSwlAqeE5FpJOljJuGc+MvD2eKxm6WW/vvQ9TSLOpNoRpH3FhKb+RKZnSuJ8RG9MzjTC21EjBf6r/o4lq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720024347; c=relaxed/simple;
-	bh=6fg4dcswb0DQev8Wi78l8xEElSEY+gN/LTKix/A82Lc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bL3AgkZRZlDGSO5Ill37zdVs74V9EXJViXwVsgx1dHsTNi8238gdFqG9XhrBpwQ2QSmBtkb1BAwUCY//soaQmw8572iqr8+TOB9L9fXE6f45cTsdGGc4AfBVPYFvggZhmOKYZgXAZQPko/ZT6LPqFlK5aSuFRxI2UB5MqoKaCbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=ZToUQMJI; arc=none smtp.client-ip=98.142.107.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1iV7tm49eSCwyOVyED7fSFNlOEYvfAvEQ0ypI3kf1ww=; b=ZToUQMJIkNIBcrEMx7cD61NJ1C
-	CRLtbX8YtyICn2iPpXnFdBluNcb3O7trvfhI8lbbQompEgpt5nVz6U0yV0s/6US+rKOn/CQiIfwIK
-	1vgPG/H95XfvzWUcALaAsd5f+wtwQeFsQMRq7SM5HRMCIoCNIF7Uv2BVddA87xCG2AgYyAqPIt92M
-	6Zpo1kZEzmG05YFIdANCyZMe7/cfmbzhU4TRLcE4Ri3HV6+icVNVWWVpuZyQgitbgUHqOX9UMkkNq
-	md4YhLdIHoxfnvQy8c0TcyKfMAECjnGb37ZFjDW9AfDvV3fZg5X4J/wHShcFTPtGjTH/+IJauX3a/
-	lpOB8aUQ==;
-Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:40114 helo=[192.168.0.142])
-	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <david@lechnology.com>)
-	id 1sP2YG-0007NE-1u;
-	Wed, 03 Jul 2024 12:07:38 -0400
-Message-ID: <3f4e9dfa-6373-4b34-8097-48c870e69daa@lechnology.com>
-Date: Wed, 3 Jul 2024 11:07:35 -0500
+	s=arc-20240116; t=1720022898; c=relaxed/simple;
+	bh=fHaG0KS+blzEttrnz11qtCcQu+PPMX0SMJVA6VT34o0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uvevrz0Lylagw9LAmXvKwLnAZffbF/EQZg2LE+PmHOFOocuA/e2jjsSVK9hF3qpKplg9WH7h0A61b+/DQrqqWupEtuslIr49GZV08ANPAfSKxSktbAb10Lyks/KTfQKNU6JWkKqVO1LKD0DsagrixTG4ySfPieDwrrsPqccMzKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMkudysf; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7252bfe773so588227566b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720022895; x=1720627695; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b2pdxtnt1FgHWWmn6kO+dZg+GShFc0xP2wGWgU3fL8M=;
+        b=RMkudysfLlxdJ+z3adfoQWeHYIT01bXLqQnN3oKHkMdqw1GMNW9mgcIdHg0ATSke8n
+         wQ6V6i17uvX9JZ4Ow6K+B98zrISsbPN3+mz7mPifE8BlDwABSjxFutXEsyiDgntSEMvJ
+         Og0Lg/C9ukf+faeuOMEZtwGBaseGE19FcDYWfEQmkwFD3EjhaaVPQjmLvugLVnlwMMOy
+         3YzfeDu8AqzSyuveGNDvdG2cnwcbORfajUkQAMadT07oryLZnBV9oZBKdV8PJmDLJFIc
+         UP7KCa3UBcVdrsdvhiwUQWeYgH1ajdQlp3vwdFOeDwbgh+werG1f4cQkvnc51bTA8Mu7
+         Pnhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720022895; x=1720627695;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b2pdxtnt1FgHWWmn6kO+dZg+GShFc0xP2wGWgU3fL8M=;
+        b=ebvHZg/77kWah+DcJs2SBSAPuW9/kXANofAVY9ElhC4O0Pqg00l04T1pHBaiUNgTOR
+         dCSpBipKfpG2ofjeuiIRGpy4b6vgzr/amK6cIWti7aXQ/D3d9r53MFmhdNJomX4B+zBU
+         z5FZkQ/pD3JlYMoRK+XhrZRXBmuJofb2uQDyJbp9zyBlSDwB/WfHkNlblZS6/RN12FCk
+         x47VxDT+uTUmsdpNi+Ii8D2v1FT7PBVq8Q7pxdkYj2hCuihKG/qK31x8m0RRU1tOElOc
+         8XoHt29bh6smr2Rg/xM0pf1Xl/dA3JTrQiKFOfzZ8vq9iDjOiUbt5yBs5FPjFEIWLUMX
+         v5bA==
+X-Forwarded-Encrypted: i=1; AJvYcCW367OommWI/gTqK/vN6sGarFYqlag0K8RRlvXHIOCrm8N4PJPmiUJuZeZkFYsvAgS1Te3rbZBlxIWzD0RtSMELwTYxwDcIHwJZIUa2
+X-Gm-Message-State: AOJu0Yxtb/BHOXsL+jw7Z9yqXmI32AOk1POY37sc2jXtBcOFN5ILHUAZ
+	MSlgu+xdQ/swWAPjovLi6c9q35/2k3JAbIFRnyeOupsLNhLADPwsnZJKpTS2oBwGa9dhEMT3z64
+	sMtKJ45iMnBC+JoLM4erciEtWqpA=
+X-Google-Smtp-Source: AGHT+IFhUYFRhbui+Csdt7xE9fVsW4u4K1V66lh8/QMfBbE5wBLTgGo+YtsbsKo4CbCgHrVoXI0iXOKehgKEPUsuL/M=
+X-Received: by 2002:a17:906:1749:b0:a72:5226:331d with SMTP id
+ a640c23a62f3a-a751445fa4amr765061966b.70.1720022894556; Wed, 03 Jul 2024
+ 09:08:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] drm/tiny: Add support for Sitronix ST7539
-To: Christian Eggers <ceggers@arri.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20240703140504.8518-1-ceggers@arri.de>
-Content-Language: en-US
-From: David Lechner <david@lechnology.com>
-Autocrypt: addr=david@lechnology.com; keydata=
- xsFNBFFxkZ8BEADXzbnj9t8XSZYxKJGHdHqYgEBVzRElb3+f11qhDZKzVCMsn1+AN+PlHqC7
- VrCWLsWTSY7WsHB2fW3aXaoidtac5FYoX2IXAun1Sbv15NcBdapImkMv6zxhAyWz6LqPfdCp
- QV+3x6qwUPFeLHdmew8mkSq56qTFgDQr9oQhsrXKHkXFD7aIAf5bM6janQCHgGTVDraRDfEO
- rV9rj7Wu/SfjUCVSCvW/SuWBa3IXTLNgbrNwBfo7Pl/tHuto0jxkVCIJ6J3xa85BKMw1WjA+
- jKzh12S6KWrLUfhEUt64G9WJHiZOnVAjxgCR7TUahVM2OQHcp49ouG/JZsGNniulXH4ErA2O
- Wt6seUEx8XQIm48H96RWgKrwKJ+1WoLEmUcYOJDZUcguMZVc3Astx8aSaRjf6IRBO8XlJSJV
- OorkguvrTQBZJfjoicuFx7VlpdMggMZayv0cqEvzZMSHUt8DCUG74rLhtab9LCg/9wdCwqyE
- JEi/8jaV7JWxwiCmzVpw0mHn1DiUlp5kapZT+Hart0Gc1WW915psA4G6KneisFM5DJe+S5mn
- dUJb5IttTOx37jQQi2igwlSBdSC/M+Zy3sb+DXYJUVjVxK56RGAnlSvjHUx/TkID6Vb6HXvm
- Fgm9vQamTEf+C3XzlY2v1YaMMX8yQjfrzQSoGfB0+9zaD9J/cwARAQABzSREYXZpZCBMZWNo
- bmVyIDxkYXZpZEBsZWNobm9sb2d5LmNvbT7CwXgEEwECACIFAlFxkZ8CGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheAAAoJEB+K+IyC93wDdcMQALkIsjA/nWJZY+Z6AkpL9HfeyYA6D2LK
- LFwWQ5fPok9G5wArvf+yHnbnVvtlZKPEdUAzbBacaATeLGRC0Kzei1asDgb/IR5YXQRMdshj
- 5Bd+DutTbT270p6jrzI3p7r1K7AycFcpfgSpOUQY7Wde7AT7KHCHaDjsy/a4d8EVjEhKZBg1
- wgBr8L+2lVgjQP4x/tuj4KrWKygcCNiombhKW4iz2uR7EspoS18D+9MD8vLVrOqDKBWGswes
- cDblcjMv8FXIc7JR8x6ZbubFODoRzAs4MAlOgGT8FBAK/DUD63gMHTtKJrVghjoDNe77pmW1
- zQK0P0zu9zciPg4h3AE+ENsJxqHoOEwCvJMQbhliFVYL4O0tM648V6K0o1btt4Ps0FEFASfX
- ZDa7uO30YZG+uqevP4wp6bfPpiHEUku32tSKZstbxljprLe0wDwYFSgXvVYUDUD6G3N1e3p0
- xDXo+Oj/8yoZaPrOzMbqL66uSVghVTya7FjgT2aG1HfzH19NfO7SN+BQ4ld94gnDL2wWjA6h
- pddm+me8Aqa/xp0Wfhzs77/tyYd2FhV8RRs/tt1RN/8COblLnFGpNjtHCtpUuPCMTPN04+hg
- fEQVsW03//yRgt4teDogaklG+mYSbpkANMjyMN1LKVWM3YJTQcKIgpT8HvZwdrYBjB8CMHLb
- K2zgzsFNBFFxkZ8BEADSVjyceG8Up24FFXwv5YmV7yX520kM97N11e1RJVMI1RSU+Na3Xo9J
- 1BW6EFMAdibD6hH8PiMmToKxBrfYSLStLh2MbHA2T/3zqicU1nuk376LMyrAuoV/fl8/7Jld
- wh1c9AADaYXNQfZ84R6nyaTRjy4fqcc/dG2kw5ZMln909SMKZc3HdVynmo9pLT2HBOnXu2d3
- bIGmzuDnDXzh1X8+ods4gViuvB31xU1WiANr4TbhaNU+/LmEVfvhS+34Cmz3U5Xs5x7nWdpM
- 6fFfDOSz2sIYXOGAcaV3oJ121Uul2U2bMTsXxiwdbjmZP9jrzEfvhD5KIOutX+0OzdtM9QVB
- 70QQOEh3maW/FwGdL5stYcadsBiEEI6Y2ymVpBgzrPS6HzC+UZLUShOE+aLx+SYBYAuypikM
- PvG9W3MqWHCsXXEfyp2mCeorKb7PafyaBO/E5REjPmYUpkGMNZH1lGV3jegE9WdOBfXW9xvC
- wf0UefoFaVhjsjtzvl8lMQndrDBdKPpJ7zIIG6FGSsUYmCtvE+JAk83tfpUpSZKDSzsqtLTI
- 8GE2fQzEuZcBqm6Yk2V1+u6rjUjmqEBIzunyeUupaUc+p00JiwNE8v/wcx7UbD5m+PGOkNoL
- MLe0ti0O7nFlY8avZzy3eLBQenu4WsJjPVYeQGeGB3oLvCGIhT9/WwARAQABwsFfBBgBAgAJ
- BQJRcZGfAhsMAAoJEB+K+IyC93wDC44P/0bAjHgFUPHl7jG5CrWGwgdTNN8NrjpmIxSk37kI
- uKMzcwP9BWhFF0mx6mCUEaxvGdAQ9Va/uXB2TOyhLCGXhlf8uCwxcIyrOlhi2bK6ZIwwovyj
- jh7GCRnm8cP8ohDCJlDUpHkOpmU4tcapbZiBrFaFAahxPMjwK9GJ3JY0lx63McgCEIwm6txN
- cMnVX5Y3HeW5Wo8DtmeM3XajJLFaBXIhEfoNHMfDON6UGiXFeR8S9W8dpaX8XEwzPUjZyOG2
- LvOMAEPXx+kB9mZPTogong8LekL1HZHSY4OYffzQy5fVE+woHAMADkrmuosGkTRCP4IQHXOa
- goax/Dox01lKTLnlUL1iWWQjfRaFXVKxEc2PF1RZUpoO/IQYFB1twcaF2ibT3TlGolbmb3qU
- YBo/Apl5GJUj/xOWwrbikD+Ci+vx8yuFUlulbS9Ht+3z1dFjBUDbtZ4Bdy/1heNpA9xORiRs
- +M4GyTil33pnBXEZp29nh7ev4VJ96sVvnQFzls3motvG+pq/c37Ms1gYayeCzA2iCDuKx6Zk
- ybHg7IzNEduqZQ4bkaBpnEt+vwE3Gg5l4dAUFWAs9qY13nyBANQ282FNctziEHCUJZ/Map6T
- dzHWO6hU1HuvmlwcJSFCOey8yhkt386E6KfVYzrIhwTtabg+DLyMZK40Rop1VcU7Nx0M
-In-Reply-To: <20240703140504.8518-1-ceggers@arri.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20240628104926.34209-1-libang.li@antgroup.com>
+ <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com> <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
+ <516aa6b3-617c-4642-b12b-0c5f5b33d1c9@arm.com> <597ac51e-3f27-4606-8647-395bb4e60df4@redhat.com>
+ <6f68fb9d-3039-4e38-bc08-44948a1dae4d@arm.com> <992cdbf9-80df-4a91-aea6-f16789c5afd7@redhat.com>
+ <2e0a1554-d24f-4d0d-860b-0c2cf05eb8da@arm.com> <06c74db8-4d10-4a41-9a05-776f8dca7189@redhat.com>
+ <429f2873-8532-4cc8-b0e1-1c3de9f224d9@arm.com> <7a0bbe69-1e3d-4263-b206-da007791a5c4@redhat.com>
+ <CAHbLzkrv2U39oOFuuHpmcfvDOuMayjwdgXLshxtDSSPGPzOkJQ@mail.gmail.com> <2450e4f8-236f-49ce-8bd3-b30a6d8c5e57@arm.com>
+In-Reply-To: <2450e4f8-236f-49ce-8bd3-b30a6d8c5e57@arm.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Wed, 3 Jul 2024 09:08:01 -0700
+Message-ID: <CAHbLzkponjBbtYo6F0+QJ_tmoUFa8i2VPCX7MGX758sAmyLtpQ@mail.gmail.com>
+Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous shmem
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: David Hildenbrand <david@redhat.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Bang Li <libang.li@antgroup.com>, hughd@google.com, akpm@linux-foundation.org, 
+	wangkefeng.wang@huawei.com, ziy@nvidia.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/3/24 9:05 AM, Christian Eggers wrote:
-> Based on the existing ST7586 driver. But the ST7539 ...
-> - is monochrome only
-> - has 8 VERTICAL pixels per byte
-> - doesn't support any MIPI DCS commands
-> - has (a few) 16 bit commands
-> - doesn't support setting a clipping rect when writing to the RAM
-> - doesn't support rotation (only mirroring of X and/or Y axis)
-> 
-> Questions/TODO:
+On Tue, Jul 2, 2024 at 1:24=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com> =
+wrote:
+>
+> On 01/07/2024 19:20, Yang Shi wrote:
+> > On Mon, Jul 1, 2024 at 3:23=E2=80=AFAM David Hildenbrand <david@redhat.=
+com> wrote:
+> >>
+> >> On 01.07.24 12:16, Ryan Roberts wrote:
+> >>> On 01/07/2024 10:17, David Hildenbrand wrote:
+> >>>> On 01.07.24 11:14, Ryan Roberts wrote:
+> >>>>> On 01/07/2024 09:57, David Hildenbrand wrote:
+> >>>>>> On 01.07.24 10:50, Ryan Roberts wrote:
+> >>>>>>> On 01/07/2024 09:48, David Hildenbrand wrote:
+> >>>>>>>> On 01.07.24 10:40, Ryan Roberts wrote:
+> >>>>>>>>> On 01/07/2024 09:33, Baolin Wang wrote:
+> >>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> On 2024/7/1 15:55, Ryan Roberts wrote:
+> >>>>>>>>>>> On 28/06/2024 11:49, Bang Li wrote:
+> >>>>>>>>>>>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support =
+for
+> >>>>>>>>>>>> anonymous shmem"), we can configure different policies throu=
+gh
+> >>>>>>>>>>>> the multi-size THP sysfs interface for anonymous shmem. But
+> >>>>>>>>>>>> currently "THPeligible" indicates only whether the mapping i=
+s
+> >>>>>>>>>>>> eligible for allocating THP-pages as well as the THP is PMD
+> >>>>>>>>>>>> mappable or not for anonymous shmem, we need to support sema=
+ntics
+> >>>>>>>>>>>> for mTHP with anonymous shmem similar to those for mTHP with
+> >>>>>>>>>>>> anonymous memory.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Signed-off-by: Bang Li <libang.li@antgroup.com>
+> >>>>>>>>>>>> ---
+> >>>>>>>>>>>>       fs/proc/task_mmu.c      | 10 +++++++---
+> >>>>>>>>>>>>       include/linux/huge_mm.h | 11 +++++++++++
+> >>>>>>>>>>>>       mm/shmem.c              |  9 +--------
+> >>>>>>>>>>>>       3 files changed, 19 insertions(+), 11 deletions(-)
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> >>>>>>>>>>>> index 93fb2c61b154..09b5db356886 100644
+> >>>>>>>>>>>> --- a/fs/proc/task_mmu.c
+> >>>>>>>>>>>> +++ b/fs/proc/task_mmu.c
+> >>>>>>>>>>>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m,=
+ void *v)
+> >>>>>>>>>>>>       {
+> >>>>>>>>>>>>           struct vm_area_struct *vma =3D v;
+> >>>>>>>>>>>>           struct mem_size_stats mss =3D {};
+> >>>>>>>>>>>> +    bool thp_eligible;
+> >>>>>>>>>>>>             smap_gather_stats(vma, &mss, 0);
+> >>>>>>>>>>>>       @@ -882,9 +883,12 @@ static int show_smap(struct seq_f=
+ile *m, void
+> >>>>>>>>>>>> *v)
+> >>>>>>>>>>>>             __show_smap(m, &mss, false);
+> >>>>>>>>>>>>       -    seq_printf(m, "THPeligible:    %8u\n",
+> >>>>>>>>>>>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
+> >>>>>>>>>>>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_AL=
+L));
+> >>>>>>>>>>>> +    thp_eligible =3D !!thp_vma_allowable_orders(vma, vma->v=
+m_flags,
+> >>>>>>>>>>>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_=
+ORDERS_ALL);
+> >>>>>>>>>>>> +    if (vma_is_anon_shmem(vma))
+> >>>>>>>>>>>> +        thp_eligible =3D
+> >>>>>>>>>>>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
+> >>>>>>>>>>>> +                            vma, vma->vm_pgoff, thp_eligibl=
+e);
+> >>>>>>>>>>>
+> >>>>>>>>>>> Afraid I haven't been following the shmem mTHP support work a=
+s much as I
+> >>>>>>>>>>> would
+> >>>>>>>>>>> have liked, but is there a reason why we need a separate func=
+tion for
+> >>>>>>>>>>> shmem?
+> >>>>>>>>>>
+> >>>>>>>>>> Since shmem_allowable_huge_orders() only uses shmem specific l=
+ogic to
+> >>>>>>>>>> determine
+> >>>>>>>>>> if huge orders are allowable, there is no need to complicate t=
+he
+> >>>>>>>>>> thp_vma_allowable_orders() function by adding more shmem relat=
+ed logic,
+> >>>>>>>>>> making
+> >>>>>>>>>> it more bloated. In my view, providing a dedicated helper
+> >>>>>>>>>> shmem_allowable_huge_orders(), specifically for shmem, simplif=
+ies the logic.
+> >>>>>>>>>
+> >>>>>>>>> My point was really that a single interface (thp_vma_allowable_=
+orders)
+> >>>>>>>>> should be
+> >>>>>>>>> used to get this information. I have no strong opinon on how th=
+e
+> >>>>>>>>> implementation
+> >>>>>>>>> of that interface looks. What you suggest below seems perfectly=
+ reasonable
+> >>>>>>>>> to me.
+> >>>>>>>>
+> >>>>>>>> Right. thp_vma_allowable_orders() might require some care as dis=
+cussed in
+> >>>>>>>> other
+> >>>>>>>> context (cleanly separate dax and shmem handling/orders). But th=
+at would be
+> >>>>>>>> follow-up cleanups.
+> >>>>>>>
+> >>>>>>> Are you planning to do that, or do you want me to send a patch?
+> >>>>>>
+> >>>>>> I'm planning on looking into some details, especially the interact=
+ion with large
+> >>>>>> folios in the pagecache. I'll let you know once I have a better id=
+ea what
+> >>>>>> actually should be done :)
+> >>>>>
+> >>>>> OK great - I'll scrub it from my todo list... really getting things=
+ done today :)
+> >>>>
+> >>>> Resolved the khugepaged thiny already? :P
+> >>>>
+> >>>> [khugepaged not active when only enabling the sub-size via the 2M fo=
+lder IIRC]
+> >>>
+> >>> Hmm... baby brain?
+> >>
+> >> :)
+> >>
+> >> I think I only mentioned it in a private mail at some point.
+> >>
+> >>>
+> >>> Sorry about that. I've been a bit useless lately. For some reason it =
+wasn't on
+> >>> my list, but its there now. Will prioritise it, because I agree it's =
+not good.
+> >>
+> >>
+> >> IIRC, if you do
+> >>
+> >> echo never > /sys/kernel/mm/transparent_hugepage/enabled
+> >> echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/ena=
+bled
+> >>
+> >> khugepaged will not get activated.
+> >
+> > khugepaged is controlled by the top level knob.
+>
+> What do you mean by "top level knob"? I assume
+> /sys/kernel/mm/transparent_hugepage/enabled ?
 
-To start with, I would suggest reading [1]. This patch is really hard to
-read because it isn't properly formatted. If you don't change the patch,
-you can resend it as [RFC PATCH RESEND] using `git send-email`, or if you
-do change the patch before re-sending, e.g. because you fixed checkpatch
-style issues, just call it v2.
+Yes.
 
-[1]: https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+>
+> If so, that's not really a thing in its own right; its just the legacy PM=
+D-size
+> THP control, and we only take any notice of it if a per-size control is s=
+et to
+> "inherit". So if we have:
+>
+> # echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enab=
+led
+>
+> Then by design, /sys/kernel/mm/transparent_hugepage/enabled should be ign=
+ored.
+>
+> > But the above setting
+> > sounds confusing, can we disable the top level knob, but enable it on
+> > a per-order basis? TBH, it sounds weird and doesn't make too much
+> > sense to me.
+>
+> Well that's the design and that's how its documented. It's done this way =
+for
+> back-compat. All controls are now per-size. But at boot, we default all p=
+er-size
+> controls to "never" except for the PMD-sized control, which is defaulted =
+to
+> "inherit". That way, an unenlightened user-space can still control PMD-si=
+zed THP
+> via the legacy (top-level) control. But enlightened apps can directly con=
+trol
+> per-size.
 
-> - should drivers for such old displays be mainlined?
+OK, good to know.
 
-If it is actually going to be used and you are willing to maintain it,
-then yes.
+>
+> I'm not sure how your way would work, because you would have 2 controls
+> competing to do the same thing?
 
-> - shall I use mipi_dbi_ although the display doesn't implement MIPI DCS
-> (and has some 16 bit commands)?
-> - can the conversion to 8 vertical pixels/byte (taken from
-> solomon/ssd130x.c) be avoided / simplified / made more efficient?
-> - how to implement setting of the display contrast (required by my
-> application)?
+I don't see how they compete if they are 2-level knobs. And I failed
+to see how it achieved back-compat. For example, memcached reads
+/sys/kernel/mm/transparent_hugepage/enabled to determine whether it
+should manage memory in huge page (2M) granularity. If the setting is
+set to :
 
-I see that ssd130x_update_bl() is using brightness to control
-contrast. Don't know if it that is the best way though.
+# echo never > /sys/kernel/mm/transparent_hugepage/enabled
+# echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enable=
+d
 
-> - add device tree binding
-> 
-> Signed-off-by: Christian Eggers <ceggers@arri.de>
-> ---
+memcached will manage memory in 4K granularity, but 2M THP is actually
+enabled unless memcached checks the per-order knobs.
+
+If we use 2-level mode, memcached doesn't need check per-order setting
+at all in order to know whether THP is enabled or not. And it actually
+doesn't care about what orders are enabled, it assumes THP size is 2M
+(or PMD size). Even though 2M is not enabled but lower orders are
+enabled, memcached still can fully utilize the mTHP since the memory
+chunk managed by memcached is still 2M aligned in this setting. So
+unenlightened applications still can work well. Jemalloc should do the
+similar thing if I remember correctly.
+
+>
+> >
+> >>
+> >> --
+> >> Cheers,
+> >>
+> >> David / dhildenb
+> >>
+> >>
+>
 
