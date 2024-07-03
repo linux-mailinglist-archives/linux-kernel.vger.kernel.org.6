@@ -1,99 +1,126 @@
-Return-Path: <linux-kernel+bounces-239367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C424925D70
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0E9925D8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0D341C20310
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C41D2942E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32CC1822F5;
-	Wed,  3 Jul 2024 11:19:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDF51822DB;
-	Wed,  3 Jul 2024 11:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8731B1850AE;
+	Wed,  3 Jul 2024 11:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="eF/9XAEK"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92371849EE;
+	Wed,  3 Jul 2024 11:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720005571; cv=none; b=DnVOdYX1U/0E3bcH7GpIIFw2/HXT3ScQjnzkFXYZSp/Dckge1+8GcDTnqFMPh/JENUUrVty0zxCMOjH7TuJFNxtW9wIz8B7OVUwZI+rQ8RJcHlV0IjKOpyK0Sk7rv8BvYZO6x3Owh+mWV+n6/hYFU0Hby8Hzg2y5+6EmlelGWPo=
+	t=1720005636; cv=none; b=Eos317FleKe83ehjtSIArWnUF3+nFTHrtRoopnzvjOPP9Kov4lGww2nIYIv/Hout1xhECQEnjmjilmEED897nCwVetjGkW1ugUnEbvwX24ULjUfUta0obJ7n5sn8Kd9sO68GwsUtm4c3Bwd3/bthXRA79TMNwc898snuXGW8kJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720005571; c=relaxed/simple;
-	bh=hukUt079kxdkjx7jrbgnYLZNHSKQOWaV9uP2j/uAXiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rA++yYQfx9qIiua1TC02HiA3ucdEHtq+ikrx90aaI43pvb/iFl1CLXiUlb/DAcTJfcUIGpD4tFyM8fq3MIeKeQRhbaPEUdfLlcUOCNW6plUKG6GdMVl2MDR0RSqrGkvAXXMbrc2Q1igI+z71iTDpQyiIfSj+Oh1+0Zq2EI9OZvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BEA6367;
-	Wed,  3 Jul 2024 04:19:47 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 524863F762;
-	Wed,  3 Jul 2024 04:19:19 -0700 (PDT)
-Date: Wed, 3 Jul 2024 12:17:50 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
- <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Vladimir
- Zapolskiy <vz@mleia.com>, Bjorn Andersson <andersson@kernel.org>, Chen-Yu
- Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, Michal Simek <michal.simek@amd.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 09/10] clk: sunxi-ng r40: Constify struct regmap_config
-Message-ID: <20240703121750.0dc2eb3a@donnerap.manchester.arm.com>
-In-Reply-To: <20240703-clk-const-regmap-v1-9-7d15a0671d6f@gmail.com>
-References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
-	<20240703-clk-const-regmap-v1-9-7d15a0671d6f@gmail.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1720005636; c=relaxed/simple;
+	bh=1Y3oThU8WEMtPQE4Icgyd7HJ0E3q3OIkiapFylm/uxQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Gony8sFAEbtTsvN3iqrVsyO54QSbIejZzGtoN4z92uJEk6AVs9SlnZXci8JnlDNdb1sEgIHKKi98Uv19Oz4x/97WfO7UEr0wiN+2QUiYeqEDb/AQlkcVmGVTv10KgR8CIT6RocryUDub0K1ojJ8X5mqB6kvIm94bqU/HfTeV/DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=eF/9XAEK; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 06999100005;
+	Wed,  3 Jul 2024 14:20:14 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1720005614; bh=K75l601GXn6E9TrKu7conNPQF0Wy//xLGLL2PiLxfyI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=eF/9XAEKbupoEYJ5IUipM8yaJz0qzvL6IJXbrlZ6J8ItCp4TmqFbg1YZbltNX8Cdk
+	 7WMVbOuSC2WCan4ab3rWFPc9psWxmHxdI4Fe2vKVYQbqRNUjengeilGkdqMYgtBRN4
+	 sTrUG8ziNg1Kc43ZSjCpqYqGxtulswnI21EGBd2inukJD8NPk0doN+qw+iJc2xOXN5
+	 yMbuynbg6YRV6DOTjV/29m056ErvRTJNa2tAcTQufbK9PiOHsH7dgi0JWEXwjmamT1
+	 REoRYbgkXlmTc6hUAtGEnt9kftartUTUMo6lGcERJ4h1y+NiAtN+QonrEnG3l0emzo
+	 OJSreh3XO73Xg==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Wed,  3 Jul 2024 14:18:46 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 14:18:26 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Daejun Park <daejun7.park@samsung.com>, <stable@vger.kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Bart Van Assche
+	<bvanassche@acm.org>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K.
+ Petersen" <martin.petersen@oracle.com>, Can Guo <cang@codeaurora.org>, Bean
+ Huo <beanhuo@micron.com>, <linux-scsi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH 6.1] scsi: ufs: ufshpb: Fix NULL deallocation in ufshpb_pre_req_mempool_destroy()
+Date: Wed, 3 Jul 2024 14:17:51 +0300
+Message-ID: <20240703111751.23377-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186303 [Jul 03 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;t-argos.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/03 07:47:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/03 06:16:00 #25818842
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Wed, 03 Jul 2024 11:50:22 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+No upstream commit exists for this commit.
 
-> `sun8i_r40_ccu_regmap_config` is not modified and can be declared as
-> const to move its data to a read-only section.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+The issue was introduced with commit 41d8a9333cc9 ("scsi: ufs: ufshpb:
+Add HPB 2.0 support").
 
-Looks alright, we indeed don't change it, and the only user takes a const
-pointer. Also the compiler seems happy.
+In ufshpb_pre_req_mempool_destroy() __free_page() is called only if pointer
+contains NULL value.
+Fix this bug by modifying check condition.
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Upstream branch code has been significantly refactored and can't be
+backported directly.
 
-Cheers,
-Andre
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-> ---
->  drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-> index 984ad3f76b18..2f51ceab8016 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-> @@ -1292,7 +1292,7 @@ static bool sun8i_r40_ccu_regmap_accessible_reg(struct device *dev,
->  	return false;
->  }
->  
-> -static struct regmap_config sun8i_r40_ccu_regmap_config = {
-> +static const struct regmap_config sun8i_r40_ccu_regmap_config = {
->  	.reg_bits	= 32,
->  	.val_bits	= 32,
->  	.reg_stride	= 4,
-> 
+Fixes: 41d8a9333cc9 ("scsi: ufs: ufshpb: Add HPB 2.0 support")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/ufs/core/ufshpb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/ufs/core/ufshpb.c b/drivers/ufs/core/ufshpb.c
+index b7f412d0f301..c649e8a10a23 100644
+--- a/drivers/ufs/core/ufshpb.c
++++ b/drivers/ufs/core/ufshpb.c
+@@ -2120,7 +2120,7 @@ static void ufshpb_pre_req_mempool_destroy(struct ufshpb_lu *hpb)
+ 	for (i = 0; i < hpb->throttle_pre_req; i++) {
+ 		pre_req = hpb->pre_req + i;
+ 		bio_put(hpb->pre_req[i].bio);
+-		if (!pre_req->wb.m_page)
++		if (pre_req->wb.m_page)
+ 			__free_page(hpb->pre_req[i].wb.m_page);
+ 		list_del_init(&pre_req->list_req);
+ 	}
+-- 
+2.30.2
 
 
