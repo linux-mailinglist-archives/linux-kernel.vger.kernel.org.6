@@ -1,181 +1,256 @@
-Return-Path: <linux-kernel+bounces-238957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3B59253E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:45:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DFD39253E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A591C21228
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:45:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAD41C209AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0485F135A6F;
-	Wed,  3 Jul 2024 06:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B234134415;
+	Wed,  3 Jul 2024 06:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=miraclelinux-com.20230601.gappssmtp.com header.i=@miraclelinux-com.20230601.gappssmtp.com header.b="lKAU4BMf"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XNN9UU8u"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775F83BBEA
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 06:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDF11DA336;
+	Wed,  3 Jul 2024 06:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719989117; cv=none; b=YLbrg6KV3VdF86+nzdaZv3Rdj3sa0m3Tyamzs6bOnfoDFtrdq5pa40YbWrREm4TeBtXk7XfI1UX4IHP32jUpiFN3qkRL2PCMIptqx9Nz4rYIILSdYHnHneg7tQ9g/ufYGY6doLR7fKc4kjnOyz+KnfEZvNO8awqNB8FfwkT4iVU=
+	t=1719989225; cv=none; b=tp0NFmtWVPCs4CyjzGt22RrUR/6dTzLcCVOZ86sN8II2zLwxoIwSMtwFmdPKQTwyOPQ/dsz1XsxW9UtPVshru4fgH0aQxW9Auvdl2XYLqya1HTKDXnRxbztrtttKq/AfB1JZF2Eo0V5yj77tIgcGWfhdF1nVu/N4oPidS+pW93E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719989117; c=relaxed/simple;
-	bh=HOW/lQWRUIc7FWyhXic28qmTL1KJ+uCJ8pZQSUHfiyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XDRWNidVvO8SejfPwgkY8Y9H/Zu7kx0rrv3S99LUEdEMT/uBxCllp11N52qtlqUw9QqaiPMf9xx/wPbRLvB/hBRqpIJPw1qFxZI4ZUsIcEafcw6zfOEjOQTC8iUvalVX5/0zFftiMKr8ZN+1oxYF2B0rGnpaFzSwY+5VcIutmOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=miraclelinux.com; spf=pass smtp.mailfrom=miraclelinux.com; dkim=pass (2048-bit key) header.d=miraclelinux-com.20230601.gappssmtp.com header.i=@miraclelinux-com.20230601.gappssmtp.com header.b=lKAU4BMf; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=miraclelinux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=miraclelinux.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d566d5eda9so2232904b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 23:45:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1719989112; x=1720593912; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5J4ADRk7D+11TLpLEN1TYzNIFMfFCzUMHNjAgN/k+zM=;
-        b=lKAU4BMfbAe0qxUY8KTAXuNH5Qh0wQw8a5XQ+1Uco1SUksCI9E6oO+qlGpzYczRim/
-         ec4GDHFtU5pyNJPYl7SDllVQtu6zqIxm1zbQV2w9ltSrTdduYcijHxIDRAyx6JhJawXs
-         IHojPQtAwAUejCe/cXUZ2XauNXtRht/lEAdc4k63t/khd5dFZOUOFuzS5lwhzl5gucHd
-         KmDHyoB0io723XtFobYVk8njJd2ju2GiAbnQq9WIUx/JLBz5CaUa5Ro0XwLGH2oyUy++
-         Flw4ueMQhs59ZhCfMgZNm1sIfBeYYPcZaaR5v55Gum7E56EeEvb41eykbSM/E+dDohhB
-         W9Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719989112; x=1720593912;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5J4ADRk7D+11TLpLEN1TYzNIFMfFCzUMHNjAgN/k+zM=;
-        b=QyaKT30vQP9iERjAWSGZgbWnM+CtUXlFcmBhinlL1a1tBhbQ0s7H5hwYiFoAXEHSQm
-         T7pIyxkuBoxjiMRo73aX0kHM7vg9SfM5dogTTk6y2DPoKmDpYw64bT6HPT1rlNS28aa6
-         4Ntwr2c6T8YxHG3rtfn8g6LKij8lj/NE2E5nL5JjLRO8RIIz8p8eYS1qQ24a6rFyiNZt
-         f854u3e7Cp8i1EkaTNnMeTjTSFx1F44ic0rBwDhAIt4ZNM566eKjRu3ZPlPzxos6jzHr
-         LuZZEecn7GIVXYicXs+0lQw3uqiRIfdPsBoFalBO8aZOZ4OoiCMHaWdtvEr8cbbgechQ
-         o9ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVt2ra3aDm5Zvn/eagiPrZUmO9rYG0RMsiC5ngZZwbEIbFkaEh6gZjMC9Lrm7u6CTa8Gkd0vzqEPXGIisDqIlw/m7IWPgGlr+/15TA4
-X-Gm-Message-State: AOJu0Ywm2UoGedhIZsSJJg6SbdFZYk9G17qbHqXaFT7q1CZDrgc7WB13
-	aJn54ABTAN23siJRGhaGFA6FiXQHuheiTSql/yuo2YlOjGsSnGLDUwYnjlecsH0=
-X-Google-Smtp-Source: AGHT+IF2I90yAYvAiJm3WaMT8wMepKHclm7yHSVey+ikNh+Ehd5cKcb+Hq7+IhSBo2k3Q39f/lSqxA==
-X-Received: by 2002:a05:6808:1493:b0:3d2:2585:bc5d with SMTP id 5614622812f47-3d6b4de2f3cmr15227720b6e.45.1719989112457;
-        Tue, 02 Jul 2024 23:45:12 -0700 (PDT)
-Received: from ?IPV6:240d:1a:ea3:6c00:3019:6089:f0ff:7c49? ([240d:1a:ea3:6c00:3019:6089:f0ff:7c49])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804a96ac5sm9615690b3a.211.2024.07.02.23.45.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 23:45:11 -0700 (PDT)
-Message-ID: <dffd88ff-57c8-40b1-a02e-499d71f2986c@miraclelinux.com>
-Date: Wed, 3 Jul 2024 15:45:09 +0900
+	s=arc-20240116; t=1719989225; c=relaxed/simple;
+	bh=sRH4XX/SpITUzgyYllUEYXThKOpItqyK7CjS72POQzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BLAfjRSBvlO0eTWGtxgqiQBbvuXQjRZ2vR5/88ZY9RiEhrt/ALwg5n5dOIMV+pMtwBOjV0ciq+zgZKnmsCgMGgmlzDVELU1A9iW+vOMi8+0oVmhu84/hVESDvmVGrP5PzDifmeK4KO0zv4KNXt+l1pRAqudDRsPCD+ptwfv4x4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XNN9UU8u; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (117.145-247-81.adsl-dyn.isp.belgacom.be [81.247.145.117])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AAB1B4CA;
+	Wed,  3 Jul 2024 08:46:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1719989192;
+	bh=sRH4XX/SpITUzgyYllUEYXThKOpItqyK7CjS72POQzg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XNN9UU8usnqMY4/3ZXVWKp3aiBDKyQiPE8/EamYRk1ELogAERnOVeQrnMasGaUN4k
+	 lXjMKq2mM63KP6uMwB80FbEDMMpDreKwjVuGoP8hPvG8muYKgbplq2K/8Yff2Ncl+V
+	 fXa+1D1gEK3/RQta7EPj0VxLg4yJWqEQ2lluwu7M=
+Date: Wed, 3 Jul 2024 09:46:39 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+Cc: linux-kernel@vger.kernel.org, paul.elder@ideasonboard.com,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	"open list:ROCKCHIP ISP V1 DRIVER" <linux-media@vger.kernel.org>,
+	"open list:ROCKCHIP ISP V1 DRIVER" <linux-rockchip@lists.infradead.org>,
+	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] media: rkisp1: Adapt to different SoCs having
+ different size limits
+Message-ID: <20240703064639.GA19586@pendragon.ideasonboard.com>
+References: <20240315230245.1385902-1-megi@xff.cz>
+ <5jbzvsoxtm7er6dwjcbswyu7xuaeqnlkbes3sue2hfrsps3ea3@znr2vugn52sq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 1/3] ipv6: annotate some data-races around
- sk->sk_prot
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: netdev@vger.kernel.org, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org, hiraku.toyooka@miraclelinux.com,
- Eric Dumazet <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>
-References: <20230417165348.26189-1-kazunori.kobayashi@miraclelinux.com>
- <20230417165348.26189-2-kazunori.kobayashi@miraclelinux.com>
- <2024070241-equivocal-dismantle-5dd2@gregkh>
-Content-Language: en-US
-From: Kazunori Kobayashi <kazunori.kobayashi@miraclelinux.com>
-In-Reply-To: <2024070241-equivocal-dismantle-5dd2@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5jbzvsoxtm7er6dwjcbswyu7xuaeqnlkbes3sue2hfrsps3ea3@znr2vugn52sq>
 
-On 2024/07/02 18:42, Greg KH wrote:
-> On Mon, Apr 17, 2023 at 04:53:46PM +0000, Kazunori Kobayashi wrote:
->> From: Eric Dumazet <edumazet@google.com>
->>
->> commit 086d49058cd8471046ae9927524708820f5fd1c7 upstream.
->>
->> IPv6 has this hack changing sk->sk_prot when an IPv6 socket
->> is 'converted' to an IPv4 one with IPV6_ADDRFORM option.
->>
->> This operation is only performed for TCP and UDP, knowing
->> their 'struct proto' for the two network families are populated
->> in the same way, and can not disappear while a reader
->> might use and dereference sk->sk_prot.
->>
->> If we think about it all reads of sk->sk_prot while
->> either socket lock or RTNL is not acquired should be using READ_ONCE().
->>
->> Also note that other layers like MPTCP, XFRM, CHELSIO_TLS also
->> write over sk->sk_prot.
->>
->> BUG: KCSAN: data-race in inet6_recvmsg / ipv6_setsockopt
->>
->> write to 0xffff8881386f7aa8 of 8 bytes by task 26932 on cpu 0:
->>   do_ipv6_setsockopt net/ipv6/ipv6_sockglue.c:492 [inline]
->>   ipv6_setsockopt+0x3758/0x3910 net/ipv6/ipv6_sockglue.c:1019
->>   udpv6_setsockopt+0x85/0x90 net/ipv6/udp.c:1649
->>   sock_common_setsockopt+0x5d/0x70 net/core/sock.c:3489
->>   __sys_setsockopt+0x209/0x2a0 net/socket.c:2180
->>   __do_sys_setsockopt net/socket.c:2191 [inline]
->>   __se_sys_setsockopt net/socket.c:2188 [inline]
->>   __x64_sys_setsockopt+0x62/0x70 net/socket.c:2188
->>   do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->>   do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
->>   entry_SYSCALL_64_after_hwframe+0x44/0xae
->>
->> read to 0xffff8881386f7aa8 of 8 bytes by task 26911 on cpu 1:
->>   inet6_recvmsg+0x7a/0x210 net/ipv6/af_inet6.c:659
->>   ____sys_recvmsg+0x16c/0x320
->>   ___sys_recvmsg net/socket.c:2674 [inline]
->>   do_recvmmsg+0x3f5/0xae0 net/socket.c:2768
->>   __sys_recvmmsg net/socket.c:2847 [inline]
->>   __do_sys_recvmmsg net/socket.c:2870 [inline]
->>   __se_sys_recvmmsg net/socket.c:2863 [inline]
->>   __x64_sys_recvmmsg+0xde/0x160 net/socket.c:2863
->>   do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->>   do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
->>   entry_SYSCALL_64_after_hwframe+0x44/0xae
->>
->> value changed: 0xffffffff85e0e980 -> 0xffffffff85e01580
->>
->> Reported by Kernel Concurrency Sanitizer on:
->> CPU: 1 PID: 26911 Comm: syz-executor.3 Not tainted 5.17.0-rc2-syzkaller-00316-g0457e5153e0e-dirty #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->>
->> Reported-by: syzbot <syzkaller@googlegroups.com>
->> Signed-off-by: Eric Dumazet <edumazet@google.com>
->> Signed-off-by: David S. Miller <davem@davemloft.net>
->> Signed-off-by: Kazunori Kobayashi <kazunori.kobayashi@miraclelinux.com>
-> This backport didn't apply at all, are you sure you made it against the
-> proper tree?
->
-> The original commit does seem to apply properly, so I'll go apply that
-> one instead...
->
-> greg k-h
+Hi Ondřej,
 
-I assumed the following commit is the latest version for 5.15 stable and 
-based the patch on this.
-Is there any difference from your expectation?
+On Wed, Jun 12, 2024 at 02:58:02PM +0200, Ondřej Jirman wrote:
+> On Sat, Mar 16, 2024 at 12:02:41AM GMT, megi xff wrote:
+> > From: Ondrej Jirman <megi@xff.cz>
+> > 
+> > - RK3399 has input/output limit of main path 4416 x 3312
+> > - PX30 has input/output limit of main path 3264 x 2448
+> > - i.MX8MP has input/output limit of main path 4096 x 3072
+> > 
+> > Use rkisp1_info struct to encode the limits.
+> 
+> It would be nice to get this merged. It's reviewed and ready.
 
-commit 4878aadf2d1519f3731ae300ce1fef78fc63ee30 (tag: v5.15.161, 
-origin/linux-5.15.y, li
-nux-5.15.y)
-Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Sun Jun 16 13:40:01 2024 +0200
+All my apologies for the delay. I'm catching up with my patch queue.
+Thanks for the ping, and thanks for upstreaming this change.
 
-     Linux 5.15.161
+> > Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> > ---
+> > v2:
+> > - adapt to i.MX8MP merged for v6.9
+> > 
+> >  drivers/media/platform/rockchip/rkisp1/rkisp1-common.h  | 6 ++++--
+> >  drivers/media/platform/rockchip/rkisp1/rkisp1-csi.c     | 5 +++--
+> >  drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c     | 6 ++++++
+> >  drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c     | 9 +++++----
+> >  drivers/media/platform/rockchip/rkisp1/rkisp1-resizer.c | 4 ++--
+> >  5 files changed, 20 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> > index 26573f6ae575..b4c958b93629 100644
+> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> > @@ -34,8 +34,6 @@ struct regmap;
+> >  #define RKISP1_ISP_SD_SINK			BIT(1)
+> >  
+> >  /* min and max values for the widths and heights of the entities */
 
+It's the min only now. I'll update this comment in my tree to
 
-Regards,
+/*
+ * Minimum values for the width and height of entities. The maximum values are
+ * model-specific and stored in the rkisp1_info structure.
+ */
 
-Kazunori
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and queued.
+
+> > -#define RKISP1_ISP_MAX_WIDTH			4032
+> > -#define RKISP1_ISP_MAX_HEIGHT			3024
+> >  #define RKISP1_ISP_MIN_WIDTH			32
+> >  #define RKISP1_ISP_MIN_HEIGHT			32
+> >  
+> > @@ -140,6 +138,8 @@ enum rkisp1_feature {
+> >   * @isr_size: number of entries in the @isrs array
+> >   * @isp_ver: ISP version
+> >   * @features: bitmask of rkisp1_feature features implemented by the ISP
+> > + * @max_width: maximum input frame width
+> > + * @max_height: maximum input frame height
+> >   *
+> >   * This structure contains information about the ISP specific to a particular
+> >   * ISP model, version, or integration in a particular SoC.
+> > @@ -151,6 +151,8 @@ struct rkisp1_info {
+> >  	unsigned int isr_size;
+> >  	enum rkisp1_cif_isp_version isp_ver;
+> >  	unsigned int features;
+> > +	unsigned int max_width;
+> > +	unsigned int max_height;
+> >  };
+> >  
+> >  /*
+> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-csi.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-csi.c
+> > index 4202642e0523..841e58c20f7f 100644
+> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-csi.c
+> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-csi.c
+> > @@ -307,6 +307,7 @@ static int rkisp1_csi_set_fmt(struct v4l2_subdev *sd,
+> >  			      struct v4l2_subdev_state *sd_state,
+> >  			      struct v4l2_subdev_format *fmt)
+> >  {
+> > +	struct rkisp1_csi *csi = to_rkisp1_csi(sd);
+> >  	const struct rkisp1_mbus_info *mbus_info;
+> >  	struct v4l2_mbus_framefmt *sink_fmt, *src_fmt;
+> >  
+> > @@ -326,10 +327,10 @@ static int rkisp1_csi_set_fmt(struct v4l2_subdev *sd,
+> >  
+> >  	sink_fmt->width = clamp_t(u32, fmt->format.width,
+> >  				  RKISP1_ISP_MIN_WIDTH,
+> > -				  RKISP1_ISP_MAX_WIDTH);
+> > +				  csi->rkisp1->info->max_width);
+> >  	sink_fmt->height = clamp_t(u32, fmt->format.height,
+> >  				   RKISP1_ISP_MIN_HEIGHT,
+> > -				   RKISP1_ISP_MAX_HEIGHT);
+> > +				   csi->rkisp1->info->max_height);
+> >  
+> >  	fmt->format = *sink_fmt;
+> >  
+> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > index bb0202386c70..0535ce57e862 100644
+> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > @@ -510,6 +510,8 @@ static const struct rkisp1_info px30_isp_info = {
+> >  	.features = RKISP1_FEATURE_MIPI_CSI2
+> >  		  | RKISP1_FEATURE_SELF_PATH
+> >  		  | RKISP1_FEATURE_DUAL_CROP,
+> > +	.max_width = 3264,
+> > +	.max_height = 2448,
+> >  };
+> >  
+> >  static const char * const rk3399_isp_clks[] = {
+> > @@ -531,6 +533,8 @@ static const struct rkisp1_info rk3399_isp_info = {
+> >  	.features = RKISP1_FEATURE_MIPI_CSI2
+> >  		  | RKISP1_FEATURE_SELF_PATH
+> >  		  | RKISP1_FEATURE_DUAL_CROP,
+> > +	.max_width = 4416,
+> > +	.max_height = 3312,
+> >  };
+> >  
+> >  static const char * const imx8mp_isp_clks[] = {
+> > @@ -551,6 +555,8 @@ static const struct rkisp1_info imx8mp_isp_info = {
+> >  	.isp_ver = RKISP1_V_IMX8MP,
+> >  	.features = RKISP1_FEATURE_MAIN_STRIDE
+> >  		  | RKISP1_FEATURE_DMA_34BIT,
+> > +	.max_width = 4096,
+> > +	.max_height = 3072,
+> >  };
+> >  
+> >  static const struct of_device_id rkisp1_of_match[] = {
+> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> > index e45a213baf49..f787a7e91e3e 100644
+> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> > @@ -517,6 +517,7 @@ static int rkisp1_isp_enum_frame_size(struct v4l2_subdev *sd,
+> >  				      struct v4l2_subdev_state *sd_state,
+> >  				      struct v4l2_subdev_frame_size_enum *fse)
+> >  {
+> > +	struct rkisp1_isp *isp = to_rkisp1_isp(sd);
+> >  	const struct rkisp1_mbus_info *mbus_info;
+> >  
+> >  	if (fse->pad == RKISP1_ISP_PAD_SINK_PARAMS ||
+> > @@ -539,9 +540,9 @@ static int rkisp1_isp_enum_frame_size(struct v4l2_subdev *sd,
+> >  		return -EINVAL;
+> >  
+> >  	fse->min_width = RKISP1_ISP_MIN_WIDTH;
+> > -	fse->max_width = RKISP1_ISP_MAX_WIDTH;
+> > +	fse->max_width = isp->rkisp1->info->max_width;
+> >  	fse->min_height = RKISP1_ISP_MIN_HEIGHT;
+> > -	fse->max_height = RKISP1_ISP_MAX_HEIGHT;
+> > +	fse->max_height = isp->rkisp1->info->max_height;
+> >  
+> >  	return 0;
+> >  }
+> > @@ -772,10 +773,10 @@ static void rkisp1_isp_set_sink_fmt(struct rkisp1_isp *isp,
+> >  
+> >  	sink_fmt->width = clamp_t(u32, format->width,
+> >  				  RKISP1_ISP_MIN_WIDTH,
+> > -				  RKISP1_ISP_MAX_WIDTH);
+> > +				  isp->rkisp1->info->max_width);
+> >  	sink_fmt->height = clamp_t(u32, format->height,
+> >  				   RKISP1_ISP_MIN_HEIGHT,
+> > -				   RKISP1_ISP_MAX_HEIGHT);
+> > +				   isp->rkisp1->info->max_height);
+> >  
+> >  	/*
+> >  	 * Adjust the color space fields. Accept any color primaries and
+> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-resizer.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-resizer.c
+> > index 6f3931ca5b51..e22cc2db24cf 100644
+> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-resizer.c
+> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-resizer.c
+> > @@ -494,10 +494,10 @@ static void rkisp1_rsz_set_sink_fmt(struct rkisp1_resizer *rsz,
+> >  
+> >  	sink_fmt->width = clamp_t(u32, format->width,
+> >  				  RKISP1_ISP_MIN_WIDTH,
+> > -				  RKISP1_ISP_MAX_WIDTH);
+> > +				  rsz->rkisp1->info->max_width);
+> >  	sink_fmt->height = clamp_t(u32, format->height,
+> >  				   RKISP1_ISP_MIN_HEIGHT,
+> > -				   RKISP1_ISP_MAX_HEIGHT);
+> > +				   rsz->rkisp1->info->max_height);
+> >  
+> >  	/*
+> >  	 * Adjust the color space fields. Accept any color primaries and
 
 -- 
-Kazunori Kobayashi
-Cybertrust Japan Co., Ltd.
-https://www.cybertrust.co.jp/
+Regards,
 
+Laurent Pinchart
 
