@@ -1,160 +1,76 @@
-Return-Path: <linux-kernel+bounces-239016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F3B9254EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:47:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309679254EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F008A2846B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:47:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2195B2131F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E86B137936;
-	Wed,  3 Jul 2024 07:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="X6lkPr0L"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64ACC137936;
+	Wed,  3 Jul 2024 07:48:15 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA174963C
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59023D0A9
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719992847; cv=none; b=sFbkO34q6sWCn0cO/C8KB2ZRgR+m1ec0HcZOmccE2bOhFgwK88vSRXrwlgESTRMEV4SjaROO5spdx4dz1Hjs4Uz+RUIQcYHAlPWbE6GmBur2BvTw34akFh/686SUef5ILYJc5Kfhnx9/+xH1MwduixEoyP0iFHEeKMznzR8jN00=
+	t=1719992895; cv=none; b=XyQJiy+ORKgeeXJHAKjLHj3Y7lVrzR2EnKq44LKyskN5rZXftEtGPrugwh6R4Ir71XpKQEmGCupEQ/PuDeQyD4KegNBI6Q+5deENY2S9OJ0ldRrn7FY6IENeEE6BOQUKaFIvcycY3knvaYb1PqSlbD6VGDCkaX9DC5xLrKlQJNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719992847; c=relaxed/simple;
-	bh=oEHIX0th9QXZc3XHaPcLu7VA1oCHGRcgmIY4LU+gPY4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PEnRwAYqZSep5xzHtFuhkEtGSiWDbdPOxN4WGpb6bqx8UFOJfYiqFS5sBrNahwVWDPEBKyL1VgMXKICT1D0iRBtSGSiuHyvF8XPAxqKl8uysm0g3vBXOeDmn37zmhJh2NX5stXsLDtDTJgHfnfdv0CzQnB/Xm5AQ4MGnKGNugx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=X6lkPr0L; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
-	Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=U8wqaFZL1Wv5rPR7nebfPA7ewssLN2UKabsH+ryj9yM=; b=X6lkPr0LzuBYsZbI9vLcKe9l5z
-	kZA8soXqSJABJbd6JnPH5y4RGEPGEwWOT9GbnKh2ZzQTguL5NRX/8kc72zu0nQAp7pdCcvc6zwVyZ
-	XhLtO7vT4qiU+vU+NrByWc/GucqgwwHK4tnWw+Q/0HtHWy6MEBxdk3RKlC0C9zc+HqkoqvIUx/tcf
-	G8oyiCyy5ojv+h2YeXnQTk74L28a9rMzxvmbQ8/WxgZEIe8PcnAEz8cVQDYe6Al36Lx+FIfZxGXMB
-	r49Wpyp5jQGC8po+YLSvisUEqn04GJpeYkboMnXvfw6HnZapTHNVZvlVFnkeZKupvasCSKf4JomlW
-	Pm2bHyIw==;
-Received: from [84.69.19.168] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sOuhw-00AbWA-Tx; Wed, 03 Jul 2024 09:47:16 +0200
-Message-ID: <ec5460f2-83bf-4467-899e-eb7b47c91a23@igalia.com>
-Date: Wed, 3 Jul 2024 08:47:15 +0100
+	s=arc-20240116; t=1719992895; c=relaxed/simple;
+	bh=Y9AYcDafw84WaELcKZx/PZ9PJ1afHDDZ6L47ZLGt0nE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CGj7M/o7LVRPWo/DsVt9gy5wDIQhH1BdW7kf2BE4TpDYkHf45gQkGQjWfLCbuE1hrj+ms9V0SRyReOwqqKQOsy4fCTaYDerZFswheJof9cP96SLK9JICr9ddfT+mEvWF/fJl2m14wYnJiWfT2SaCPCPmAs5ZSRrydvQKgP+PlMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f61da2de1eso537794839f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 00:48:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719992893; x=1720597693;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TPhZX+e268RTxrzgISskdKBK5rBuPGfbhsJHkVcoNH4=;
+        b=Xa8T9A0ra7Jk24A8yA5zDiMZGXmZw0ImnshgLpf61Hx1o5j6Zo85LjPQFsfn8Sa3W8
+         zMHu9na5ZTOvUf5/avWE0H0EFHQfYl6HE4BLyuToaEhVdW7DyozfmnXLksEh8SMenI0h
+         c8sKKrgdLWA4of+B+LuJQfshimUFc/13qweINQ/92ADlN+xXVnx8ozgZ5Uj8vIDgfUeE
+         O2ta9HdpIa8N7gaB0X9jeE4wPxaHeahq9Wx8XdbfyBa8sGMphYvCfVwUDeI7u31SDeWK
+         jSJ5azU5Xj79ZmeQmXj3IHkCbO8yVQ/fGMFooK16WznCbEkKxT59EVKouwP+ChtajcVI
+         myIg==
+X-Gm-Message-State: AOJu0Yz/1jwhcgaYEgACabaK7DlJXHlqqWmbhEududcDlCJtnCv9ac9K
+	KwCqUCgfdLtJlgHhrTq9Z1Fv922Xt3sRG4HFk4eCSdt4K3wuKXPjALgRqFJx3kPjyaQYhbgMpBz
+	NURIlXkkzjEJcpVtPJQwrbEKisJ+wvWE9ja974PFP/EKkg+bGpXfn/Oc=
+X-Google-Smtp-Source: AGHT+IF6+Zf2aKtTMT94eTxz2yQT5QEWTNulrvcvwJ69wQfkfJileHxw1k30FiWL1J0MbziDNZ17rHqNhrFcEOtG2mOS9mMI5pst
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] numa: Add simple generic NUMA emulation
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Tvrtko Ursulin <tursulin@igalia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com, =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-References: <20240625125803.38038-1-tursulin@igalia.com>
- <20240625125803.38038-2-tursulin@igalia.com>
- <2024062627-curler-unlucky-51e0@gregkh>
- <679a9dda-8e8a-4428-8d57-30b0c60f28ce@igalia.com>
-Content-Language: en-GB
-In-Reply-To: <679a9dda-8e8a-4428-8d57-30b0c60f28ce@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:6c04:b0:7f4:10e3:1671 with SMTP id
+ ca18e2360f4ac-7f62ed6878cmr57945939f.0.1719992892836; Wed, 03 Jul 2024
+ 00:48:12 -0700 (PDT)
+Date: Wed, 03 Jul 2024 00:48:12 -0700
+In-Reply-To: <000000000000e55d2005fd59d6c9@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000064defc061c530d94@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Hi Greg,
+***
 
-Gentle reminder on the opens from this thread. Let me re-summarise the 
-question below:
+Subject: 
+Author: bottaawesome633@gmail.com
 
-On 26/06/2024 12:47, Tvrtko Ursulin wrote:
-> 
-> Hi Greg,
-> 
-> On 26/06/2024 08:38, Greg Kroah-Hartman wrote:
->> On Tue, Jun 25, 2024 at 01:58:02PM +0100, Tvrtko Ursulin wrote:
->>> From: Maíra Canal <mcanal@igalia.com>
->>>
->>> Add some common code for splitting the memory into N emulated NUMA 
->>> memory
->>> nodes.
->>>
->>> Individual architecture can then enable selecting this option and use 
->>> the
->>> existing numa=fake=<N> kernel argument to enable it.
->>>
->>> Memory is always split into equally sized chunks.
->>>
->>> Signed-off-by: Maíra Canal <mcanal@igalia.com>
->>> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->>> Co-developed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Will Deacon <will@kernel.org>
->>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>> Cc: “Rafael J. Wysocki" <rafael@kernel.org>
->>> ---
->>>   drivers/base/Kconfig          |  7 ++++
->>>   drivers/base/Makefile         |  1 +
->>>   drivers/base/arch_numa.c      |  6 ++++
->>>   drivers/base/numa_emulation.c | 67 +++++++++++++++++++++++++++++++++++
->>>   drivers/base/numa_emulation.h | 21 +++++++++++
->>
->> Why not just properly describe the numa topology in your bootloader or
->> device tree and not need any such "fake" stuff at all?
->>
->> Also, you are now asking me to maintain these new files, not something
->> I'm comfortable doing at all sorry.
-> 
-> Mostly because ae3c107cd8be ("numa: Move numa implementation to common 
-> code") and existing common code in drivers/base/arch_numa.c it appeared 
-> it could be acceptable to add the simple NUMA emulation into the common 
-> code too. Then building upon the same concept as on x86 where no need 
-> for firmware changes is needed for experimenting with different 
-> configurations.
-> 
-> Would folding into arch_numa.c so no new files are added address your 
-> concern, or your main issue is the emulation in general?
-
-Re-iterating and slightly re-formulating this question I see three options:
-
-a)
-Fold the new simple generic code into the existing arch_numa.c, 
-addressing the "no new files" objection, if that was the main objection.
-
-b)
-Move completely into arch code - aka you don't want to see it under 
-drivers/base at all, ever, regardless of how simple the new code is, or 
-that common NUMA code is already there.
-
-c)
-Strong nack for either a) or b) - so "do it in the firmware" comment.
-
-Trying to understand your position so we can progress this.
-
-Thanks,
-
-Tvrtko
-
-> 
->  >> +    if (str_has_prefix(opt, "fake="))
->  >> +        return numa_emu_cmdline(opt + 5);
->  >
->  > You did not document this at all :(
-> 
-> That was indeed an oversight. Just need to "copy with edits" some stuff 
-> from Documentation/arch/x86/x86_64/boot-options.rst.
-> 
-> Regards,
-> 
-> Tvrtko
+#syz test
 
