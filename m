@@ -1,187 +1,232 @@
-Return-Path: <linux-kernel+bounces-239666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661BE9263B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:45:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7229C9263BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89DF71C212D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:45:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E635286181
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFA5172BCE;
-	Wed,  3 Jul 2024 14:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F91917D889;
+	Wed,  3 Jul 2024 14:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="jY2K7oHc"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2110.outbound.protection.outlook.com [40.107.22.110])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXDSquPE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A77F4409;
-	Wed,  3 Jul 2024 14:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.110
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720017927; cv=fail; b=s6K/N26FgC7mBSgPTb6HYEF4JI8gRUKcVdCsO5uTOr1TakgvIlVD7WuqImqQ5SS5fjjFdrSXhehrGeUvxeckjgrr10XFuLu1ikKE6stM4qZHoUd/rYauYzf7LDQlb/eFfIEK0p+V9s0xfq1sl2t3+PEeZf/Ev3ZkKP0z83ZZ0ec=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720017927; c=relaxed/simple;
-	bh=kK6ZI9vb2xBZ+RAn++Wy2FP2U5E1bBY48508pYyg+Ms=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EwjjmMBIQ1a+apfnv+tIhvqDEk6C+89e6cJnN4xvXooSQ2zYtEbbDsqD0Rrh20ivTLScvOWxxSz9jRbXwei8EWFH+r4E4zadGX0upy8nFEyunnnTWeUTAIM8ywyrMEtx3ul/xDISn9bDzpXthzn4zX92O6TB2vJ6XlhPbSW8sNE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=jY2K7oHc; arc=fail smtp.client-ip=40.107.22.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OLhd9u5lJIeJGMZ7B0HbnoDKiQD/+PUAK7g2Lupg5DB9+PpO15c6bREQ1Amn57Vwh/BLVxLDj/CdQmKn7VDjs1aFg8pbqu8c/XQkTeh4wye9sRh3n8HCbERF4aWV3AF8JpG62uxrGdgupQmDTi5rW7mc7WrAeiY1BnwyRRtjtz/h3e8d6XNILThL8t/7wlQLLUqJwm2sWpP862eMWwpaWQrUhF9uU7LG9NzkXseFG5wIJKTr+nyqvakZqlbXlr+cmpw75uMMRnzfB1/jhxULYKtfS5RgSUabc4BCP2ZiL+bFQpPzz5Erpe945Hd8frwwksr/zwhOabXRKAjWmSAKPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bu9y3oGSJcTGETs8YBKPpUHzBc3Yr93WGVlWsPtLMMY=;
- b=T0O8rJ7GrQLSJnsoqf5Ji9xzS2uAuhKWJl7r1nWnoRCEgopLdU5zKqSgRM63C9EcfceBKWWvrBEV9oc17r1lEu2QRRvXTEL5Cp7uaEo5HtNfF1gsJltGuIVQREwjRtIMK0qntt5qqrMkWz4VJ9UM07A8Rfu2qbTY2wa8cRkm4X1z3dBz73IZXCQ1svYkzMU1dzGpZcDO5sijFm4V7VnlFV1hJHYTASWWNF7P0beBFS5GqSs4FABY0aqI3NEOs44iEhQH3r6gn2f5QXBpsth+9Q+YSY6Zwd4x1zhuaD1rrd1/Qd07TX6J7wy31uy+z+v5S2UqLXGzNSvIJlDHarHP6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bu9y3oGSJcTGETs8YBKPpUHzBc3Yr93WGVlWsPtLMMY=;
- b=jY2K7oHczLnntReizYXgJGmCzPxRqcCfcB1SicHN/1l6Jbzh8g9Gy2rKbaBYikiJiCb3TqwjWFrHUMTkNGg6KZ0Nvc1pHRz0cLZLmo0Mlf9ZElObnIt87wnp0UMthBUaOTZdFZ7RsrfJKgbtXTIUoWc8lKWwxtv6YKC9ITBnVz0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com (2603:10a6:102:c4::9)
- by AM0PR04MB7187.eurprd04.prod.outlook.com (2603:10a6:208:196::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.23; Wed, 3 Jul
- 2024 14:45:22 +0000
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af]) by PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af%4]) with mapi id 15.20.7741.017; Wed, 3 Jul 2024
- 14:45:21 +0000
-Message-ID: <62bb269f-8348-4887-bc36-e9bb57810203@cherry.de>
-Date: Wed, 3 Jul 2024 16:45:19 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/11] hwmon: (amc2821) Use BIT() and GENMASK()
-To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Farouk Bouabid <farouk.bouabid@cherry.de>
-References: <20240701212348.1670617-1-linux@roeck-us.net>
- <20240701212348.1670617-8-linux@roeck-us.net>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20240701212348.1670617-8-linux@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA2P291CA0046.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1f::15) To PA4PR04MB7982.eurprd04.prod.outlook.com
- (2603:10a6:102:c4::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EDE1DA319;
+	Wed,  3 Jul 2024 14:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720017942; cv=none; b=RGun/P4DXydytLDiia5RQIubb6gRldpXIMDoBIqLovP0MCiZofC/qIpeO0x6HJMtgkcEiqR8dr6ic3TgJPXMz8FNXdTb0Hsgy+IInGDs9tGusHg13PKqseSDS+0sGssAOIOX7Pg2bQ/Dp1tA8z1/RYW6zLl6r0M4YvVgCiljmhg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720017942; c=relaxed/simple;
+	bh=C1hp5OtfWDo1NBDzAqh5+Ao0b/WXKrQiv4nSCpB7aeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bxSZCEy/9lsunk/87g6MsUx/l1oIywq2l1F2z8PiC9eNL8tBtA8l4cYlHvSJNqI82QlA7aQK6KunnBwNZdmH241CY1aoV1nTUgDJnR6JAuaml+FSoxsyOnTgKqfVvkbX69Iqat/FRi5k7g3WdqZZnA+TJQ5vmTNt358rgCCTJuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXDSquPE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BB48C2BD10;
+	Wed,  3 Jul 2024 14:45:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720017942;
+	bh=C1hp5OtfWDo1NBDzAqh5+Ao0b/WXKrQiv4nSCpB7aeQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OXDSquPEbH6E4gDpXPNceVYk4NfgJjjkKf6lhWPGRFtINzlja+3o/dlPjKO22lgbl
+	 pN+AYHT9jvepE37qVi7RnVGDaBXfFdJ3uC5dxUiQX5dbmARy4L5jnuSwRgwv9Dj/vq
+	 myLjqdbjqHB+E5NcsFEnQhC60ylLQMlvZAJL6WHy4rjh0LTwB7w9aDhkB2O20oqiWi
+	 4Xro31n6wMCPEu7tp+NJNg1w/94PefmUE7VCkmhMyxslzEvFuFKL/Ev0mkWHYr2l/0
+	 k4yHnFYajhU8/jw94qxL4qJMIu1XKmaelBZSK6wgkIpXcxloeFMHBBDM39RvxozyCb
+	 Nw03sDXp7mbNA==
+Date: Wed, 3 Jul 2024 15:45:37 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: Serge Semin <fancer.lancer@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] riscv: dts: thead: add basic spi node
+Message-ID: <20240703-juice-refreeze-62c468a56ea5@spud>
+References: <20240701121355.262259-2-kanakshilledar@gmail.com>
+ <20240701121355.262259-5-kanakshilledar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7982:EE_|AM0PR04MB7187:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42b9e284-97d7-43dc-933d-08dc9b6ec3e4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TjJYSmpuUTYxUFpzSjdVQmMxazhjWmoydVhKLzB2Q0xUSzhxZFBzVWxYbGlD?=
- =?utf-8?B?amhzeE1VdEdJWVNCWjMvSGlNdTFWQUkrV1gwM3ovUEdvVHRkSmdHZkpoczRP?=
- =?utf-8?B?ekc2K2ZYZEtjV20remh3OE51Mm53MHZBL04xRzVCZGpEYWdWUTVUa0JRcjJy?=
- =?utf-8?B?OVdYUS9raGVIaFNDUVpUTWdGR0NhWW54VDh3ZGlJcmdKUEZNdUhLanVERFVa?=
- =?utf-8?B?cnpXM3hoK0NBZGZTOWdRVkNqMmJCRkIrWFQzeDh1clduckhmcmQxR3JxR1Jo?=
- =?utf-8?B?R0ViNnRSUDZLejdRTmRycUJxMEM4S1RwV2tJaUNDdXpJZnlkVEN3cmorRi94?=
- =?utf-8?B?QlZpNnhRT1hKVVlmb00xeDhsaWI1N1NCVUpzK2t5NG15K3ErenhvU0tWd3hD?=
- =?utf-8?B?a3oxdkRneEszQ1RmTDVtRmJxcGhJTVJQdjFpRWRRNVBhUS82d3RuN1hPUU90?=
- =?utf-8?B?WFdFbXB1OG9KeDQ3U25WSE9Wb0lscnBLS1QrQWFqRjVBSFhEV0JwM3N1TW1z?=
- =?utf-8?B?SWtYNnIyWk9DdVZqZjBsb3BFQTdKWXVVNWFEOGw4ZHM1ai9NakM2TTZPcUZ1?=
- =?utf-8?B?UjR4VktLQkh2Mjg4U29Ecjd6NzU4czgyVWlINWxQRXNTM0ordUNBVEVNbzM2?=
- =?utf-8?B?UmQxZUZON3ExOTUvTmdtNHVGQ1Q4aE1tSGlJYy9uMFB3TDR3T3dnOVlIWjJi?=
- =?utf-8?B?U24rWnUwMldrSUhrQ3lIZDlhenMvSGJZUlI5US9meWY4NjlWUmZVMzRwbHQv?=
- =?utf-8?B?UWp1ZTNxakpxVjNyQllWVWdDeFFqeGJVQXUvVFFPMS9CM3MrbUs0NXVpZ0JB?=
- =?utf-8?B?YWxQK1lqNlB0MTZFaXdzZUR5OEZyK2tVckNKeDZ5TmgzQVQ5S2pETUxGK0Fm?=
- =?utf-8?B?a2ZjeVlaemRpb2JqczZXT3BkWHNOS2FqNGN0aHBjeExHamVveTZQemFlUnVv?=
- =?utf-8?B?dVdseDdzWlhXNnptZWtCTGFGbU0wL1hXMTF2TE50RzA4YmpOekIrUnhBS0lK?=
- =?utf-8?B?bWxYUnVTbFFyc1FLSEQwZ1FGclpNNmFibG5mWjBLYVBOT0RqcC8vMTFPZFlH?=
- =?utf-8?B?K3V4UkNkNFpGS1UxR1hDQ2RGYXA2ZUdBTEx2d2NqUzdzY2EvR2RjV2cvczJk?=
- =?utf-8?B?MzVDNWZlbERiMzJFT0p6R0s2RVNsYldDYU9VZnVZdytSSVUyTkkzdThtdkwr?=
- =?utf-8?B?QTNTU1pWblhiU1hTVitXZGdITm0vcFBuWFNzV1hIcys2Sk9lT2Z5VmpKZ2RU?=
- =?utf-8?B?aGpZaCt6OFg1Y3B1ajVvcmk5S25kcDYzYmZRMlFGNE5UK0gyUDRNOEE2N3RI?=
- =?utf-8?B?VjJLbnlKSGY2RWRIZzJKREdnUTBIck9nRTk4WmwwWURuMUhma2sxaGtnczJS?=
- =?utf-8?B?bFd2dEQzSUpyNWpId0tKYUNkdkpTRExSRW5NcHNvTGVVek5HcThxekpjZ1VF?=
- =?utf-8?B?RnR2WW9lL1pIMG1Xcyt6RkRuMUdJbVBja1dEZnJEUDd5R0o4ai91SUhDUUNq?=
- =?utf-8?B?NWYxN1VTdFFPT2VEbHA3ekpTaFR0YjhncTR4MWk4QlpUellwVWZkM25YTU1U?=
- =?utf-8?B?aXpoSktZV2h6LzFrUnV4dEVNNDBHdEhlR2phT29mQWVkcTdvQUwzQ2g5cDUz?=
- =?utf-8?B?WFFJTEgxazBOM1RHaGs2Rk1hdndpc2UvT1RqUjdldVFqM1Q5ZjRlcEJqY3Fa?=
- =?utf-8?B?TnJRTkZsMEpJNzNiU3NvaUt0NDFtK2xQN2FKb3pJWGRhTkMwVVlobjVaNUc2?=
- =?utf-8?B?akE3QUV0UzVseXJYQ1FGRXN1NHA3aTRpQ2huak4ra1ZlMFNOZWVTSlhldG5w?=
- =?utf-8?B?NlFQZVBtUmFGc1c3aE1zQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7982.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SGozbXlPQVdGT2dtdEVSY2libXQyTEFqdzRKK0xWVWhJdHc4emEvLzY3a1dR?=
- =?utf-8?B?aHVadXFnYnlDQUVZeHpTNENZdW9LOCtreU5tcURyRDIwZUE3c1pwcHI2cnFC?=
- =?utf-8?B?ai9ycVo4aEFjeUtlcU56OER3eHFnK0cvVGNDMllnTGkrNGhicGhCM1F6Ukxl?=
- =?utf-8?B?QmNtalZrSXI0ZUkxc2FMaDl2M2xuYmpGc1IxdTMrbVlqc0xIa1prMGhYcHps?=
- =?utf-8?B?OVdObkV6NFNVOVlKaE53cUwzbEJWQndrN3BFZjZuaUcwVk1zVnB1S21qZ2N4?=
- =?utf-8?B?eDBPdW1iaGU0QWt4dnYxMHlMd0U2SjVZN0RPVTdMQkU0dkh4bzBiZGc0UWZr?=
- =?utf-8?B?TDhLa1JrYksxbkxiemNBai9KMVlSNExWZkJSZG0xY1MyNElkTkI3Q1BBNlNG?=
- =?utf-8?B?ajZkWUFIZ2V4WEtSYmFmRXNacHlleERqYjVIbmVvU2czOHdZV1ZJbHhMNFY0?=
- =?utf-8?B?YUlCS3krMUZWbStxZTBCNzdKL2ZvYll0RVhHenJVNkhOVTZKWUVOTmk5UHZs?=
- =?utf-8?B?MVlhZTVCYnprTWRtTTV6NWpCaDQwRkJ2M3FsNHRaa3ZzY2JBTDF3Mi96Y0dD?=
- =?utf-8?B?QWFXSkJvb2hlUkhvazllMkZFeVRjb1JqWS9IWXY0dndjd2dkNHVoR2luTHVO?=
- =?utf-8?B?eklJMzZETjVJQXp0UkFiVmJzbEw4aSswSlMxcVBmZXVxZWdteEg5S0lRQkt4?=
- =?utf-8?B?bjQwckZ0MHRvR01rTjY3N3FoY0JGYkJGZEhFdERIdjNuNWN2cktYQlU3OXk3?=
- =?utf-8?B?c1U0T1owOGUxU0VUL3kvZ056MHdBTkYwcXA1SWxMZS9TZW9jZll1RVA2cWxW?=
- =?utf-8?B?VlJMNVJHVVFRcDVnWVR1b3JTbWpjUnlzSDVQN1VGdTdCYjd1c0hFUEdING40?=
- =?utf-8?B?UGdrZmZwQVozc1F1bktLbFpJaDJvbTlGQXg1eitEWDk1UllwTTFaN0JyZTJ4?=
- =?utf-8?B?eEgwSG1pMnlvQU9YaUhzMjhMNjl4YnhRdkh2QzV3VU9udXlEUThFMENYUVli?=
- =?utf-8?B?TzNJU3E1bEpyQXdjUURadkd3VXdDS0JPL2dGUDB2b3dMeGsvUit3SDIxeVor?=
- =?utf-8?B?N2VnbTF2WlRCb0N3WTVmN2NwTWJsUUpZamFzd09YWkw1ZkpmaUJzTTd2VURR?=
- =?utf-8?B?QTE2R05nZWdRR0o5bWRJRmR0eWlXNHloOHFnb25wTld2NCtoRVpiNmFSR09N?=
- =?utf-8?B?N3ZmR1lyaWh4b0hjaGI2ajJTbnNkZnh4a0RSckJrZm1uQVI0N2dvc3A5TFFT?=
- =?utf-8?B?YjFVUjBMRmNVMnpvZFJ1Tk5pdkdJWHRqNXN0bHdYbEkvelFjYktxWkpNb2hI?=
- =?utf-8?B?VzBzSThIdE5nKzFFM3BseFZSQlBjQm5pczRKdmthUFpCOGxsMSsrYzVpaEEy?=
- =?utf-8?B?NG9BRUc1UHRHdlI2R2hwYnA2ZTV3SGNhck52djd5SEtkcXkycEpPUkVTVStW?=
- =?utf-8?B?L1krOVNLL3kzOXhoZVU3VVMrdmF0aDg2a1JyUkU4aFVva1Jjb3dZM2hEb1p0?=
- =?utf-8?B?d21Sb1hVblVnRmdiUW5mZUhBZytRUnpzWTJkdTEyeWlBUlA3ZVMxa1lCZFpS?=
- =?utf-8?B?WDdkcmYzT3VnS2tKd3VyVVdxTjl5UWNqSXprQnhVamFndC9aS05RSGc0MXdQ?=
- =?utf-8?B?VzNqWDdDakI0RlhPWTZ1U0syNVVRQjluM2tQM2xBeWEwZzN5NFFSZTRmNksv?=
- =?utf-8?B?SkN0bUZXaFZobXZhNDZVRkJrOGQrNGJ2ZjlpN2RBN3VBajF1V1VYcUtJekFr?=
- =?utf-8?B?bzZjTXM4ZkhjUC9PRjhOOWh4NHJXNG1LTHBIQnUyQUxFbUVVcXEzQVNDcUdH?=
- =?utf-8?B?enhaWUNFblFEbW8rK2g4TUk2N2J0ZnNqVTA3djNEOWk0Y0Jhd2pwY21yOHVJ?=
- =?utf-8?B?bml6S2JNZDZYd2FWWXdsZVFoRnJJNXZkRFZCZlQ4b1hSTXlCT0pGeWtIR0hP?=
- =?utf-8?B?dThwOWxoSTc4RWh4Rm0vb0srdWxpRmZFbjluZXpVck5qQ1pDOHFFSkluR092?=
- =?utf-8?B?L3V5ck1xQjhITUh5WklydUNqc28zd1Y0ZzZ2dXRPSFVodC9TdTl5YnVYb081?=
- =?utf-8?B?VnIrUVV2a3BreGF2QmdXcm5TVlRpTFZTZXdLaVh4dWhRZmVSVS91eDZzNGI2?=
- =?utf-8?B?bnhGelNtVjhITWhsVkpLWU9hRDNWZjB6c25GVXp6WlpVUHZJTUFzTkp6b3Mv?=
- =?utf-8?B?OVE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42b9e284-97d7-43dc-933d-08dc9b6ec3e4
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7982.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 14:45:21.7103
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IHrlzc3ckmJDuOrEoSNtiN8SxbI+qJXCA9UbpBHAmYoOT9z+9J6COWPy0TBlSpPtwksGX8tQT8Gk/N0fBNs6kjOcoEvg60iuR1O3HYO0RyI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7187
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="f3zpqVYbQthFURc0"
+Content-Disposition: inline
+In-Reply-To: <20240701121355.262259-5-kanakshilledar@gmail.com>
 
-Hi Guenter,
 
-On 7/1/24 11:23 PM, Guenter Roeck wrote:
-> Use BIT() and GENMASK() for bit and mask definitions
-> to help distinguish bit and mask definitions from other
-> defines and to make the code easier to read.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+--f3zpqVYbQthFURc0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+Kanak, Drew,
 
-Thanks!
-Quentin
+On Mon, Jul 01, 2024 at 05:43:54PM +0530, Kanak Shilledar wrote:
+> created spi0 node with fixed clock. the spi0 node
+> uses synopsis designware driver and has the following
+> compatible "snps,dw-apb-ssi". the spi0 node is connected
+> to a SPI NOR flash pad which is left unpopulated on the back
+> side of the board.
+>=20
+> Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+> ---
+> Changes in v2:
+> - Separated from a single patch file
+> ---
+>  .../boot/dts/thead/th1520-beaglev-ahead.dts      |  9 +++++++++
+>  .../boot/dts/thead/th1520-lichee-module-4a.dtsi  |  4 ++++
+>  .../riscv/boot/dts/thead/th1520-lichee-pi-4a.dts |  5 +++++
+
+Didn't you say there was a flash on one of these two boards?
+
+>  arch/riscv/boot/dts/thead/th1520.dtsi            | 16 ++++++++++++++++
+>  4 files changed, 34 insertions(+)
+>=20
+> diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/ri=
+scv/boot/dts/thead/th1520-beaglev-ahead.dts
+> index d9b4de9e4757..3103b74e0288 100644
+> --- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
+> +++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
+> @@ -17,6 +17,7 @@ aliases {
+>  		gpio1 =3D &gpio1;
+>  		gpio2 =3D &gpio2;
+>  		gpio3 =3D &gpio3;
+> +		spi0 =3D &spi0;
+
+"spi" would sort after "serial".
+
+>  		serial0 =3D &uart0;
+>  		serial1 =3D &uart1;
+>  		serial2 =3D &uart2;
+> @@ -52,6 +53,10 @@ &sdhci_clk {
+>  	clock-frequency =3D <198000000>;
+>  };
+> =20
+> +&spi_clk {
+> +	clock-frequency =3D <396000000>;
+> +};
+
+I'm pretty sceptical about adding more of these fixed clocks, rather
+than waiting for the clock driver. Drew, what do you think? Should we
+just add one more to your fixup list or would you rather delay? Guess it
+depends on how long more you think that clock driver is likely to take.
+
+Thanks,
+Conor.
+
+> +
+>  &uart_sclk {
+>  	clock-frequency =3D <100000000>;
+>  };
+> @@ -79,3 +84,7 @@ &sdio0 {
+>  &uart0 {
+>  	status =3D "okay";
+>  };
+> +
+> +&spi0 {
+> +	status =3D "okay";
+> +};
+> diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/arc=
+h/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+> index 1365d3a512a3..6939bd36560c 100644
+> --- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+> +++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+> @@ -33,6 +33,10 @@ &sdhci_clk {
+>  	clock-frequency =3D <198000000>;
+>  };
+> =20
+> +&spi_clk {
+> +	clock-frequency =3D <396000000>;
+> +};
+> +
+>  &uart_sclk {
+>  	clock-frequency =3D <100000000>;
+>  };
+> diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/ris=
+cv/boot/dts/thead/th1520-lichee-pi-4a.dts
+> index 9a3884a73e13..14b06dd81a9a 100644
+> --- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
+> +++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
+> @@ -14,6 +14,7 @@ aliases {
+>  		gpio1 =3D &gpio1;
+>  		gpio2 =3D &gpio2;
+>  		gpio3 =3D &gpio3;
+> +		spi0 =3D &spi0;
+>  		serial0 =3D &uart0;
+>  		serial1 =3D &uart1;
+>  		serial2 =3D &uart2;
+> @@ -30,3 +31,7 @@ chosen {
+>  &uart0 {
+>  	status =3D "okay";
+>  };
+> +
+> +&spi0 {
+> +	status =3D "okay";
+> +};
+> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/=
+thead/th1520.dtsi
+> index d2fa25839012..f962de663e7e 100644
+> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> @@ -140,6 +140,12 @@ apb_clk: apb-clk-clock {
+>  		#clock-cells =3D <0>;
+>  	};
+> =20
+> +	spi_clk: spi-clock {
+> +		compatible =3D "fixed-clock";
+> +		clock-output-names =3D "spi_clk";
+> +		#clock-cells =3D <0>;
+> +	};
+> +
+>  	uart_sclk: uart-sclk-clock {
+>  		compatible =3D "fixed-clock";
+>  		clock-output-names =3D "uart_sclk";
+> @@ -183,6 +189,16 @@ clint: timer@ffdc000000 {
+>  					      <&cpu3_intc 3>, <&cpu3_intc 7>;
+>  		};
+> =20
+> +		spi0: spi@ffe700c000 {
+> +			compatible =3D "thead,th1520-spi", "snps,dw-apb-ssi";
+> +			reg =3D <0xff 0xe700c000 0x0 0x1000>;
+> +			interrupts =3D <54 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&spi_clk>;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +			status =3D "disabled";
+> +		};
+> +
+>  		uart0: serial@ffe7014000 {
+>  			compatible =3D "snps,dw-apb-uart";
+>  			reg =3D <0xff 0xe7014000 0x0 0x100>;
+> --=20
+> 2.45.2
+>=20
+
+--f3zpqVYbQthFURc0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoVkEAAKCRB4tDGHoIJi
+0mHfAQCerPGg22qWoM5kYr+419re8jFmyoGLS+eSi9/YXhbT0gD/Y/yGqGxidgOR
+7mT2z8ntFGYVKwI8bpNr47Z0pS29hw0=
+=uqCy
+-----END PGP SIGNATURE-----
+
+--f3zpqVYbQthFURc0--
 
