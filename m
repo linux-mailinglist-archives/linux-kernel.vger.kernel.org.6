@@ -1,237 +1,224 @@
-Return-Path: <linux-kernel+bounces-240154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF0E9269B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:48:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C0A9269B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDC4F1F21BD3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:48:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5387BB21795
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BE11862B3;
-	Wed,  3 Jul 2024 20:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F69318FDCC;
+	Wed,  3 Jul 2024 20:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ftzkMUl9"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VRzmlE5k"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B107017BA9;
-	Wed,  3 Jul 2024 20:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720039684; cv=none; b=S8NFGqqXVXr2r7wy3esvxlJrk2WDFfEwYWJDJvlYkuJ8VRK3h6FwTubNyyDAGpOYcxtHXaw0Ok7rxHlZqhxHInhV1wHIx2XgXsbabKWXme28lnm5jCNtpOxFH7qUCubPLFdAOhvD4h2Tz405ocE81zLVTtKTyChC1IyFXUdVJwE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720039684; c=relaxed/simple;
-	bh=u8YPpJdPyMZVfJLy680hGenzCrQDiYthznjL49J9LFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B5NZxGJ0TBZ05bxZLPjRzZNbFXgWR5Yx1BavQjhtaW+/5JmT9hjLSQ3m/k3og61nEW9kertb9AQNWKnFpe2Sva+Jnbqf5R/GRLOadE6G00+XIv86/D5is8URTHAWln14ixlXRuXv7UNaNEhwgul0AG7u3fhqxjuaWa0WmY92gqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ftzkMUl9; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c8517aab46so4410730a91.1;
-        Wed, 03 Jul 2024 13:48:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720039682; x=1720644482; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NIcDf4piwkhYNsahWQ3l1k++fvU3yvR9XMWeHyb7fys=;
-        b=ftzkMUl9NlmbNtuPl/tE6j2iyVdRZrbNgcjIBWyWCXwTwO/aSQqxqN4ZYgEVnOwEzZ
-         547CfbleP4eoJTi6I5LTMt4PJVP1U8rZ2Sow46Fq1ZeTLSLHZIA8lA3UaTjmjtLYw8jF
-         RBODC9Wm/fLps1cBV9FH+3ouoht4n0UehX64EeejchVn7zMqOIPTWc2H/tEKZjbTCg0h
-         uO7xr04qVlbCd6LEtu7bVR7wbc/rwigM/RK+ftdcdyMxsDLhnaoeSeWgrQKO/RIQouko
-         qXkVa9HOUGHYvbXEqGXAGmDGjS3XT5I/C6qR1xnt8m90TIS7zjNi8Tsr2wrVz8Nhm8eJ
-         7iuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720039682; x=1720644482;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NIcDf4piwkhYNsahWQ3l1k++fvU3yvR9XMWeHyb7fys=;
-        b=d6USMfZIV/v2GxZqSet9u53Qcvl8+cBiu5QOtnQ68nsD2+zyxKEnmJN/RiEEHWvB28
-         yQaqWQOih8gRbpeh+GOZNFPvuGQbnjNsj0AZ447+3rXBHP9l654k32ja0BUuM+kgisCQ
-         eHrspwzXkwupbt8E7xR1UryWZ9StR35UeBwqiuHnylYnJ6k8lGoH3pKFO6N9ov5btKKH
-         b1kpzOUfbELWKS52eZxpjeiCiPAVRXbP6z2f322wRl637QU8beGhST79AJSiywDUFp94
-         fUGSC4yuoDtDRvDCUWDVW7EZ3NJx2Xvi8s+oK6E4T3VvFe3bAezjIajrJnJcucd1Ny85
-         n2BA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqh7iGP/CfnbkAUuK9jz08b1ty/VbOAp0NozORVW+AhqlGfgqiphRWomZib+SQ0jZPBLn6C31DJGaG19nNY4ofyWLlOK/POO2mIzjQ/hh3bqJ6TL689BoJg/V9MKwOvGUC5CCva0SuRRIkHAiw3Yy15bsNBivAjoV9NnUOfUg6XqRG3Lcm
-X-Gm-Message-State: AOJu0YxNJePS+dw+Lwh2zkoDIv/tiMa4EgswGoWkZCHubOWvvGBKg656
-	WT9FRAW3d68C1zEPtX3/nlWOiSA2EQygqc0oOob61p2NMccDtdHe
-X-Google-Smtp-Source: AGHT+IFh1NzH6dHZL2J6Kj03C4hvF4fw5PPKK/V0yHEjgGjY7xzuOZN7HP86d/c6sH3NvCwj375yyg==
-X-Received: by 2002:a17:90a:ec05:b0:2c9:9199:bf44 with SMTP id 98e67ed59e1d1-2c99199c40dmr696020a91.19.1720039681804;
-        Wed, 03 Jul 2024 13:48:01 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:dd06:1fb8:e932:1ed8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c97cf8fc68sm1773684a91.36.2024.07.03.13.48.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 13:48:01 -0700 (PDT)
-Date: Wed, 3 Jul 2024 13:47:58 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Charles Wang <charles.goodix@gmail.com>
-Cc: dan.carpenter@linaro.org, conor@kernel.org, robh@kernel.org,
-	dianders@chromium.org, krzk+dt@kernel.org, jikos@kernel.org,
-	bentiss@kernel.org, hbarnor@chromium.org,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] HID: hid-goodix: Add Goodix HID-over-SPI driver
-Message-ID: <ZoW4_hctu_cSiKA5@google.com>
-References: <20240618084455.1451461-1-charles.goodix@gmail.com>
- <20240618084455.1451461-2-charles.goodix@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA16E17BA9
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 20:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720039858; cv=fail; b=UTh3vrzpsd/0uXComcD9EdTW2EobIeXDBSE9oMJpVlr2ECR3iDRz7MgmfB4fSlhN3e3xNs7gAcXOJOQAsGkkzca3P8A/oJxTK1cLoX1aPALelXIhbDl2vXOfCz/hc1KNVtInsn/lYAyHEtIIRxrNru3LmyH03UMSftkJiXZNjSQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720039858; c=relaxed/simple;
+	bh=uWXyz4miDTm/0k4oHCFMb5yRjmhMFio9QWB11sX0JTM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ot6dZAlblh2/+5rBrCBIV7WjCDLLSHtaawSm/xWZpXCLeZ15JuG5pqPTvmiEAsN4nH27Sd61fFKjHxLBxuHsgE6tHIlMaalDwvuFMCNTPdrfbzWc/CZU8TuUw4OiI77gw9KmzX4vUD3PSqKA/tGHGbbwK5AjuXyrxRPYXO3NnWs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VRzmlE5k; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720039856; x=1751575856;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=uWXyz4miDTm/0k4oHCFMb5yRjmhMFio9QWB11sX0JTM=;
+  b=VRzmlE5kcjuoTPGUps7FxmnaQUvjuiihj+6cAmnus5w+IixwlR4n6r4l
+   rdpichtVUUI9/xJcVRuBx5IVTkx55cLWSg919wl5kvdazI5cCSoC9+H/q
+   p+gELRTiEE2EJyNPZFQirl662OstFyX/CAYrJaa9BfJ/ujJ2EN1+/MjLn
+   4D9ieZ/RrBiW7lC0oYendOOVGJ39NXbih0OJbmtOzYMitS95vA5TTm6th
+   yJ4NLEYvJc/gl3IWmQr/MxjHZwucJZY7a/anYHbcZ9lnibKi63GtnalG9
+   H5M21h84x+kZZSGeB1RZtIlFYTDTSNP1W+XHw0vIbXIrgFpnt0dY71N4Y
+   A==;
+X-CSE-ConnectionGUID: RdRHY7U+S8WwB6mxrFjfjA==
+X-CSE-MsgGUID: vZ91/gNhQDycO2PUwu+IvQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="17133249"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="17133249"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 13:50:55 -0700
+X-CSE-ConnectionGUID: +k8M+T9oSUKKKunjrSJU+A==
+X-CSE-MsgGUID: wXXzXXZzTQuNzx/l5Dmyhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="50826081"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Jul 2024 13:50:54 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 3 Jul 2024 13:50:53 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 3 Jul 2024 13:50:53 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 3 Jul 2024 13:50:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GbMoOeTjM5ZtaUDmdL5pF8V4ISYoNKDdsurx7mVZ1WwPUQ4UyNOgB+Rf+YIAOV0yDs/QO94dkoDGuktAkiSEBck6gyJs7b2AjLfhU3jsNPfrqCeIk5wSVDtc7jxo/wCP9xpw66wccJ1g5zVY6IfypUzY6f46lsHUmcuFTWG+9xW2nXG5kyYo1a7owla2b+UO68bJt0OpOta7G7CQ6it3ODwrnNOSpuKvPTmTL0b048Y5xROwG+RnfKkmP50JfVaDGSJDrRbsa4lqPDvB4YIeMSXZId6wPqrZxEkkG3Ae5a+5UPs1QH0fu/aZCDK8xDw29MsyIGiiIQgSOxV8ITbkXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+0tk1ULg9DH2YhxweVnW9hctG7PqWAccCxZeJUWPJqQ=;
+ b=XCzSPVFPz5Dh8LMoN68Kiij1aicnCq4tGyge/iGp9TyroLRplLIk3fv+J2/9POsZf+Exk9mTs8KCEJpwuzbG2C/TTogGXMLHbpo7aVPBY4mgDLwSvPip40rWLML+H7U+tZOnrs9+pYPT69okkhaIhpYDYy2/hmo9X/OPuFyw69Zw1Kj3DVN27Z8a7eptVC925k8GdYtJga/I9KuRPOl709IwJC8sy90JpUFneSx2xalpFusR+o5NRt3PbH5ZR8LSsm58pj5DzyQVbbRBclchh1LK3tNJUUuWKv9zo2GUk8i238w3aPiXZWgWaH9B0it8/J2/eBkYq85D4lapOHFdFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB5262.namprd11.prod.outlook.com (2603:10b6:5:389::10)
+ by CY8PR11MB7033.namprd11.prod.outlook.com (2603:10b6:930:53::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Wed, 3 Jul
+ 2024 20:50:51 +0000
+Received: from DM4PR11MB5262.namprd11.prod.outlook.com
+ ([fe80::19d3:28f4:c53f:8431]) by DM4PR11MB5262.namprd11.prod.outlook.com
+ ([fe80::19d3:28f4:c53f:8431%4]) with mapi id 15.20.7741.017; Wed, 3 Jul 2024
+ 20:50:50 +0000
+Date: Wed, 3 Jul 2024 13:50:37 -0700
+From: Ashok Raj <ashok.raj@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: "Chang S. Bae" <chang.seok.bae@intel.com>, <linux-kernel@vger.kernel.org>,
+	<x86@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <tony.luck@intel.com>, Yan Hua Wu
+	<yanhua1.wu@intel.com>, William Xie <william.xie@intel.com>, Ashok Raj
+	<ashok.raj@intel.com>
+Subject: Re: [PATCH 1/1] arch/x86/microcode/intel: Remove unnecessary cache
+ writeback and invalidation
+Message-ID: <ZoWZG75hFpfK6kkv@a4bf019067fa.jf.intel.com>
+References: <20240701212012.21499-1-chang.seok.bae@intel.com>
+ <20240701212012.21499-2-chang.seok.bae@intel.com>
+ <0aa05063-c9ed-465d-a7d2-e5fa0bc6379a@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <0aa05063-c9ed-465d-a7d2-e5fa0bc6379a@intel.com>
+X-ClientProxiedBy: SJ0PR05CA0180.namprd05.prod.outlook.com
+ (2603:10b6:a03:339::35) To DM4PR11MB5262.namprd11.prod.outlook.com
+ (2603:10b6:5:389::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618084455.1451461-2-charles.goodix@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB5262:EE_|CY8PR11MB7033:EE_
+X-MS-Office365-Filtering-Correlation-Id: 72ff7841-10de-40fd-7953-08dc9ba1d295
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?hfqhoJR1YTulhHmZ6aODGjWYC5p5krXL7cejj1BNldv5KiP1zrZE9KD8I2zD?=
+ =?us-ascii?Q?LPBT+ysBhEOvJw77QkRJky0qXlStr1RJx6OT49MjClZfNvgYQEfOjezsWSSK?=
+ =?us-ascii?Q?tME9yuYjUFM/+4I73dw61Fd4ftc3pd4qbWuS03vD4ESS/x9nBlMyNuepHdk0?=
+ =?us-ascii?Q?Q4kwHEP3eaysr2gbPmnwxMcCdOl0uOa+AKD70IxLk2QwBskdAwsz+sMzg/sg?=
+ =?us-ascii?Q?NNZb0cUoMYHxCYYdTNdOOKCFVENPHL1zRaO3vxfiitsAz+6KFPaNnWEeqCBK?=
+ =?us-ascii?Q?uUo0EuhoQ8i0POfOF/++43XMy/t3FYkfw547DsVRvs/s+/1n0FVj2rBCzht7?=
+ =?us-ascii?Q?8LpYA43z/pS3HLHW5VeDJSI8i84/QyIT0cCbJoc4Tgx+0x8uctLvIH7tKXWd?=
+ =?us-ascii?Q?mL3/Npnv+kXbF1TOCzF+bThHoCdSmeG7RzNdOLmf9Lhp66Or+j36CwXtiDyI?=
+ =?us-ascii?Q?qSmM2vQhXT3z4C5xj3lsbJxRQxINoKdzpSxjzOeQq9SkFkPYU6lrsBEVGFXF?=
+ =?us-ascii?Q?9vlPuu+V/YqsPJgsQ1ZD9wqpiXcbe5Y2PkPl4uhjJNIzv5DqaH0CGRf2f7wd?=
+ =?us-ascii?Q?nqN08P3HOPsoOvhsXw9Cn2VphRKimyVlQbasXG5WJLojsrsgiNE7ainwQoKs?=
+ =?us-ascii?Q?DVqx1687f0Oz1OUAN/E1Ya//zqxNMnw8/m+HVhvwjKMQXpQI2qgs0xrD/uDZ?=
+ =?us-ascii?Q?o45myAqIA2XRD7yHIBPJwY+CyHygLy5XJ9PmDLsVHSwUh1kLvLy2zRKsBFU2?=
+ =?us-ascii?Q?ldXrvP1UxImF07gZQK14aYIbrMuSmSEnPBVcsvy8yqpQbkmQa+d0N4UkAwcN?=
+ =?us-ascii?Q?jm3ra3vG1Ew6yaYNW9S0zhArEqLAkGBYSIAL/SRQL/Twqi6S/nNq5Q6p6KiZ?=
+ =?us-ascii?Q?AMyxIS76Uy/asO5jxGWGJ2cS2xGb6qLqPp2AIcIhWfTp4+FflIeHOQMWzctT?=
+ =?us-ascii?Q?/VLC1A+c50QQjgVWUdKK05e70y8hTw1dCVwz0U/IBVeIKYOuxHSO6zkj5fFP?=
+ =?us-ascii?Q?KJxjAx04PPIRlSEyqWPv6Uhg9wguFL2IgZ86dyjYq+N3PB9xJ+xat3XqL55s?=
+ =?us-ascii?Q?o/E/9mZvbeizo9WMfxF8FtN5Gr/z1rAIXq1vXhCNtJSiCYV/Ff4XSCsFZHmS?=
+ =?us-ascii?Q?cTTI34Uc6ZP7JiOFVO0bxOACecuC3vWh6MzeZtsIF67tufCfu9edVz1B5FZK?=
+ =?us-ascii?Q?4AscFQuy29fSu17nzMkBZq0nOebyezP//JwmliPRKbHxH3MdCawAKk/IOyAv?=
+ =?us-ascii?Q?g8OlYk9h1Uor2qJ/XihUK/swr3pWxYD/b6QGfylkfW3/+/daRn5EklHyBu+w?=
+ =?us-ascii?Q?4ns=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5262.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cM14oBiWnSPb8OVmHH+UQswc6YcoPx4BKAMgUEIDKGElmKe/IYbvlmgmCLsZ?=
+ =?us-ascii?Q?nPLpTfwZYy5+XDQoK9fBnfFKhIhVGicnOFykDlm5pogepnO1JrjCqDWneNxZ?=
+ =?us-ascii?Q?RDnzbngCeWhZ8iu8DizpwYqeZkcF/uWJTMqTbLjVZliNiOrSNgow2FXFnmAf?=
+ =?us-ascii?Q?XpXAFxa0dBQrPq4Kzw7raB5BfKQCs4G8jpfBQQyEvDAWpAwga8K+66ASpKr3?=
+ =?us-ascii?Q?WKp0BG/eKoyMwE+xpyOzEyXbscQ3r4y19ufEx4dN40n1vmi0FEEnEYYRXvBP?=
+ =?us-ascii?Q?10eFjNJ4lKTKO2T2Vuoq6LflPSHGj5ZqL5j8sjnhTNkjXPP4qx6Xw5Cc6HoR?=
+ =?us-ascii?Q?H8XzegcLboczTHEh0kVJHE6P07PVkfJ9K/4qJgvtxlh5d/G4/sZ80y/UjBPF?=
+ =?us-ascii?Q?4xqHQe7qPjfh7ZvReutE3TlVPhouAz6fEilak37VDmfWei3MaAUjQva7f1cF?=
+ =?us-ascii?Q?y0QY2h550pKGLk/GMjg6KNLKG/XuwQdpUWwtDjj+ReVg2k/BkVSUoT2Z3fIV?=
+ =?us-ascii?Q?cuBDSPpVGsHvQO7cQji2CmXKO6YTAwv/aqC3E6SnURVy0qkrV8aZC5e8LoJU?=
+ =?us-ascii?Q?oX3xRqkeo6sk8Vpx8HFjyjC4WlUrS3MDwbqcAwYPAYyU3rod6p2uh7Ous56j?=
+ =?us-ascii?Q?TqfBaHUApJeObZhZlYHTx7JE55cWx5bDyjUiuzFu1A7Z94hZSr0C601Yr5LU?=
+ =?us-ascii?Q?ETsEacrFr6Xz8h7hHH1NyyfhwKq9V2t7g5yWjdBZUK/QQ+17ch9CINNs6qFw?=
+ =?us-ascii?Q?XA012IzpkWpy+8smwWVmnlEPYEkloHeR2KqVmChGO1xgISTy7jX1BHJp+ySs?=
+ =?us-ascii?Q?QEz4BxzkdYUqSerf2iNZhhmHDYuvx7e9CAdueCG44pY5szRAicCwOA8rFF/I?=
+ =?us-ascii?Q?Brek5AqzQnL8pLATaqHikRqvLU7SW2KNVYa46Oxcq4JPmWLwrw68vXGOP84c?=
+ =?us-ascii?Q?zU1YnWWs0s0DoKCOukvkVgUO+vS4C4ieryeQEyq0zG9ETfQWaoN/bxF67tU2?=
+ =?us-ascii?Q?UMwod3G8rQpXEbzg+8tPUPAmXDgfUE3tbEzYWBCry0OPhcz6nU5DgvbG6P3d?=
+ =?us-ascii?Q?9Lyhair9EpsbcRccPpIeebLyZJb+zusol2UXwL4zyd9jjnNHSABOmr9rci68?=
+ =?us-ascii?Q?xpnFz/whQTMncPcqp5tvgERObwOXK15yw6/bb11S4jqXe/LAta65cBsMx8Jr?=
+ =?us-ascii?Q?sDzUGQUaURQu0/ATjP7dl9hYcM9ncyvWUIw/ne6P+nhyRDY0IA8Dn4FERG4v?=
+ =?us-ascii?Q?ey8ynYiI04UL52Inxbd6KYdb2gQ1yoCSx2VBK7EBs2fF60Dq+hBNc8pnyKdR?=
+ =?us-ascii?Q?CY65pUrk4bdfK1XF/+DKyHtXOOV0I+QW7MiAR2EFsSmZFZMBoRxm/wQUGLHR?=
+ =?us-ascii?Q?6oPshNkhhkF96940D+dWmfC+cHAEve3GZnLffB7w/+4BoLtHHnXzIRqlY/Bc?=
+ =?us-ascii?Q?8ZjMajmIacOd65AU0mkfBY/1cIkFcdP90yQgNKqt94RWtytOGf2LpOfqtGuF?=
+ =?us-ascii?Q?dOvNA8ZUx3kEBhfxIiDDmZhzGXiK5mG6gxKb+009hRw6kwrPAUIX6qS7DL1c?=
+ =?us-ascii?Q?fmtP8PyJrBvsvEdNqJC580wjbdxAqbrJu6YTBAHf?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72ff7841-10de-40fd-7953-08dc9ba1d295
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5262.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 20:50:50.6097
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YvYcnHsRLKelVDsoDYWJmdH3Na73+dZPZha47etzqmKo9wRx92DMd74K4Hgc3MWzWU4uXfGbYQ0pgM195+Tgqw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7033
+X-OriginatorOrg: intel.com
 
-Hi Charles,
-
-On Tue, Jun 18, 2024 at 04:44:53PM +0800, Charles Wang wrote:
-> This patch introduces a new driver to support the Goodix GT7986U
-> touch controller. This device is not compatible with Microsoft's
-> HID-over-SPI protocol and therefore needs to implement its own
-> flavor. The data reported is packaged according to the HID
-> protocol but uses SPI for communication to improve speed. This
-> enables the device to transmit not only coordinate data but also
-> corresponding raw data that can be accessed by user-space programs
-> through the hidraw interface. The raw data can be utilized for
-> functions like palm rejection, thereby improving the touch experience.
+On Mon, Jul 01, 2024 at 03:56:20PM -0700, Dave Hansen wrote:
+> On 7/1/24 14:20, Chang S. Bae wrote:
+> ...> Remove native_wbinvd() and update the erratum name to align with the
+> > latest errata documentation.
 > 
-> Key features:
-> - Device connection confirmation and initialization
-> - IRQ-based event reporting to the input subsystem
-> - Support for HIDRAW operations (GET_REPORT and SET_REPORT)
+> I'm all for simplifying this code and also for removing any WBINVDs that
+> we possibly can.  But it also makes me a wee bit nervous that this could
+> have been hiding any _new_ issues (like the Broadwell one) had they
+> crept in.
+> 
+> I'm tentatively in favor of this, but it's definitely the kind of thing
+> we want to apply early and get maximum testing on.
+> 
+> I'd also appreciate an ack from Ashok on this one.
 
-This looks reasonable good, so:
+Thanks Dave. At the time when wbinvd() was added, there was no
+confirmation that we didn't have any other products that slipped. This was
+also during the meltdown timeframe, so big hammer was choosen for safety.
 
-Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+We attempted to remove them during the minrev rework.
 
-A couple of suggestions/nits below:
+https://lore.kernel.org/lkml/20230130213955.6046-9-ashok.raj@intel.com/
 
-> +static int goodix_spi_probe(struct spi_device *spi)
-> +{
-> +	struct device *dev = &spi->dev;
-> +	struct goodix_ts_data *ts;
-> +	int error;
-> +
-> +	/* init spi_device */
-> +	spi->mode            = SPI_MODE_0;
-> +	spi->bits_per_word   = 8;
-> +	error = spi_setup(spi);
-> +	if (error)
-> +		return error;
-> +
-> +	ts = devm_kzalloc(dev, sizeof(*ts), GFP_KERNEL);
-> +	if (!ts)
-> +		return -ENOMEM;
-> +
+Agree that we must get wider testing. Only caveat is that you should find a
+newer microcode to apply, which might be difficult for all products. Unless
+there is a debug option to reload force the same rev in case you don't have
+a newer ucode to test. Its good to get this in to reduce the big hammer
+effect.
 
-If you do:
-
-	ts->event_buf = devm_kmalloc(dev, <some nominal size>, GFP_KERNEL);
-
-here and use devm_krealloc() once you figure the true size of event
-buffer you can stop calling kfree() by hand on remove.
-
-> +	mutex_init(&ts->hid_request_lock);
-> +	spi_set_drvdata(spi, ts);
-> +	ts->spi = spi;
-> +	ts->dev = dev;
-> +	ts->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(ts->reset_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(ts->reset_gpio),
-> +				     "failed to request reset gpio\n");
-> +
-> +	error = device_property_read_u32(dev, "goodix,hid-report-addr",
-> +					 &ts->hid_report_addr);
-> +	if (error)
-> +		return dev_err_probe(dev, error,
-> +				     "failed get hid report addr\n");
-> +
-> +	error = goodix_dev_confirm(ts);
-> +	if (error)
-> +		return error;
-> +
-> +	/* Waits 150ms for firmware to fully boot */
-> +	msleep(GOODIX_NORMAL_RESET_DELAY_MS);
-> +
-> +	error = goodix_hid_init(ts);
-> +	if (error) {
-> +		dev_err(dev, "failed init hid device");
-> +		return error;
-> +	}
-> +
-> +	error = devm_request_threaded_irq(&ts->spi->dev, ts->spi->irq,
-> +					  NULL, goodix_hid_irq, IRQF_ONESHOT,
-> +					  "goodix_spi_hid", ts);
-> +	if (error) {
-> +		dev_err(ts->dev, "could not register interrupt, irq = %d, %d",
-> +			ts->spi->irq, error);
-> +		goto err_destroy_hid;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_destroy_hid:
-> +	hid_destroy_device(ts->hid);
-> +	return error;
-> +}
-> +
-> +static void goodix_spi_remove(struct spi_device *spi)
-> +{
-> +	struct goodix_ts_data *ts = spi_get_drvdata(spi);
-> +
-> +	disable_irq(spi->irq);
-> +	hid_destroy_device(ts->hid);
-> +	kfree(ts->event_buf);
-> +}
-> +
-> +static void goodix_spi_shutdown(struct spi_device *spi)
-> +{
-> +	struct goodix_ts_data *ts = spi_get_drvdata(spi);
-> +
-> +	disable_irq(spi->irq);
-> +	hid_destroy_device(ts->hid);
-
-Do we really need shutdown() method? It is very rarely that it is
-needed.
-
-> +}
-> +
-> +static int goodix_spi_set_power(struct goodix_ts_data *ts, int power_state)
-> +{
-> +	u8 power_control_cmd[] = {0x00, 0x00, 0x00, 0x87, 0x02, 0x00, 0x08};
-> +	int error;
-> +
-> +	/* value 0 for power on, 1 for power sleep */
-> +	power_control_cmd[5] = power_state;
-> +
-> +	guard(mutex)(&ts->hid_request_lock);
-> +	error = goodix_spi_write(ts, ts->hid_report_addr, power_control_cmd,
-> +				 sizeof(power_control_cmd));
-> +	if (error) {
-> +		dev_err(ts->dev, "failed set power mode: %s",
-> +			power_state == GOODIX_SPI_POWER_ON ? "on" : "sleep");
-> +		return error;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int goodix_spi_suspend(struct device *dev)
-> +{
-> +	struct goodix_ts_data *ts = dev_get_drvdata(dev);
-> +	int error;
-> +
-> +	error = goodix_spi_set_power(ts, GOODIX_SPI_POWER_SLEEP);
-> +	disable_irq(ts->spi->irq);
-
-Can disable_irq() be called first?
-
-Thanks.
+Acked by: Ashok Raj <ashok.raj@intel.com>
 
 -- 
-Dmitry
+Cheers,
+Ashok
 
