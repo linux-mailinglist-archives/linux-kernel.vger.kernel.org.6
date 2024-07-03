@@ -1,121 +1,86 @@
-Return-Path: <linux-kernel+bounces-239865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B8C926636
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:34:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18D4926637
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2650D283BA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:34:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 102481C22919
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B9E1822EC;
-	Wed,  3 Jul 2024 16:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZYqVMuf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2671822CA;
+	Wed,  3 Jul 2024 16:35:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AC2178CE4;
-	Wed,  3 Jul 2024 16:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE62282E1
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720024456; cv=none; b=ltLlZn7QvMPtrVhq5wdjzPOQe0mUEgL/P1ICnpiF+YXphS6NALEjuavSZL7dZerTnNcCe+sOnYfv6G3msxkCaVhDvG5w9o/uPbgjF2ZNkt6NqOf9CUZGsYDfWcO+mVhnuoErSsL7t8K1TL8cn39Tm5VvLTp9I7cc4L4VCefAMb0=
+	t=1720024505; cv=none; b=jmhtF46IVelGtJWQKnxf2JH62hWnemnyyQMEzE+fCf/ZseCzNLfuq5OOghfmeV9BkOa3foLoZwFCdUrRFuBlgucVqoerZMLQFg77esvPxcccTaoy6NMqyY50DzZcwfjZndQnAlsU5iaBGmj27UkF5zF1MB6P+i8e0+34+DV6ip4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720024456; c=relaxed/simple;
-	bh=UsH0uyFFJuWMRA8h4UVWxmUODotXvc/FJav4ihKlVOU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=StHC2vDAiJkoNufLYgcfMdgsVsG8HPikf1uFJoKKgVEXp0xs8UPZcJl4DDfTxWNLT753p/ySinnBbwy7gF5nBgT34x20/mlWprgDPIhL4HBSXSRONEjYZmmlchOA9JPkCdttJ8TEB3xts34ZQ+P+LGdwvwRJ1my35JDSDM1GoWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZYqVMuf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5487CC4AF0C;
-	Wed,  3 Jul 2024 16:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720024456;
-	bh=UsH0uyFFJuWMRA8h4UVWxmUODotXvc/FJav4ihKlVOU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JZYqVMufvh99j8ThjCupNDbAJORlRC3Q89+5Blws8LCNnJwJJ7cCUwnBAJt2Uwe1o
-	 IMMDQamSOCfBC7d8G+cJ+T02notAkIZv5DMQk6pDr4+9Gc9HwR3rBHWQ6fvWXQ8ajm
-	 Kq263ijCO6x/V2FqFQMOLZ3K3hRbfoG9HeeOUBUOXrJy2ndAVQrZvw3ECKrfZsDq7y
-	 P3S67QYRrg7GKcxDhRywNFOx4YFbNFe+qdJ7C/33vqefP1OISTgGU4+FWs3sT7FL+s
-	 1nXZ4Dxl8nqI0OydKEVkGZepXUEpZ/ItUjRjfP5+p9DSa7sajOqw8gSltIKg4XlS/o
-	 9vrFLaQOMrUkw==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so68528391fa.3;
-        Wed, 03 Jul 2024 09:34:16 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzKd36v5jpiDXyKz6IvkpGo0ufTQd6Xo4OWSv6axsQtuD11WRU2
-	i5R4QSOSouKMHV0J9h+n62kSj8MnlJmx8A2hAKBsiaz1HCefwsggIgDwNM+zjiWGm2XPBc0WhE2
-	5j88grAfAq4scdBnuDhJO4F9jck0=
-X-Google-Smtp-Source: AGHT+IE/s7Hv5eS6S99soa6W1JF08EOjFSL7T15BweSOghruoKv0ZG+qomq0Gfo5/efe3sTnf7lt1FcO9Nkb7u7rhuo=
-X-Received: by 2002:a2e:a989:0:b0:2ec:54ec:1741 with SMTP id
- 38308e7fff4ca-2ee5e36d166mr97983931fa.18.1720024454985; Wed, 03 Jul 2024
- 09:34:14 -0700 (PDT)
+	s=arc-20240116; t=1720024505; c=relaxed/simple;
+	bh=RI9DYKu0WW1C1pqK0a4fBEw4ONiX24bqZwgmNzFG4bc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IPICtM8vFkdiCfzeiYeM28MrWwDWcvNDqTzyr6Va41avR7EwTGl7mWtaVOTjFNLohtkUY376JNF5CMftPuC2rPOiudje9TlyXwJQDJ007bhTppOzOYL9P/3RpJxDLLShPzLDYR2+j4MxP7fxOXQN1oFwZxtEulBTtUE9auqlAfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-37623e47362so59436435ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:35:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720024503; x=1720629303;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PTLj3Ze9F+5U+jABUgXbcdjSflxf/7EknWUvcqcZGzY=;
+        b=UZTQm55Y6HKGsnv1F+oR6y8YOcKAM6SKr2NPbK6vtOAhsXiNHjOaUMTSQY4zgLEsdZ
+         XzgGtm7IQGcDi8oMqwH7+IXVjTrdwmEixF4p3QSVtVD2bdGbydsbJvEB/NBAcW+EW4EJ
+         Nxm2b4JCafLayxhYFdFTY2NIdI+1bm/DmIyctIRnB7XrocMaDkDDMvCCTURBuGgdY744
+         Y/Oigxu7TCWZiFWiEWfo7VA0mUkT0rEpcjKG+EI0v/7+68n+rGa1/9KY1dIlUIvvEksg
+         90+D8X14dP5Bn0/48FilP4oszy4H5bW+6V08GgNXImJdduaUc/NMLkyrdKKDBmcHl379
+         uSdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXoz25KtWrydKI5gviXBkb5LfIZgf3VbS+vpcYY3rEl8lkV2ZJeDKDUG/u8arHFo2Ee4AbPyn2ib73l4wQj+7GrmgCMuqmkO2kVPR+k
+X-Gm-Message-State: AOJu0YxWd2jT1gCvkrOIaJGqI3KYkhKwC/ue+kkyd2mxcXyB1lDXeh12
+	ZYbaSMh9vGzgBI53qhIWpsmRiusX8B5dDh19N6V+cDyhURBsIM074p1cYKGsIWW2X/xEUKbdvWH
+	KQeDwugsQY92dyBvTS/mBk1H/p8IzTrhIG+X/622RD8Sv63qdu13X8TE=
+X-Google-Smtp-Source: AGHT+IGHAOihxU5uOBrIMA8bcHwiGoaXfReNWmiiEwiKoWuwTkFQwcnPLUAUplJcY+nHewgGCLw1RaRDI/UjkztL1tbOEkeK/BrW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702180332.398978-1-masahiroy@kernel.org>
-In-Reply-To: <20240702180332.398978-1-masahiroy@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 4 Jul 2024 01:33:38 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASw=_hbZ3LfyfRpdD=igBJxAm5kh1A8_Fv2XvNjGA9_6w@mail.gmail.com>
-Message-ID: <CAK7LNASw=_hbZ3LfyfRpdD=igBJxAm5kh1A8_Fv2XvNjGA9_6w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] kbuild: deb-pkg: remove support for EMAIL
- environment variable
-To: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, riku.voipio@iki.fi, Ben Hutchings <ben@decadent.org.uk>
+X-Received: by 2002:a05:6e02:1d95:b0:37a:653b:3ba6 with SMTP id
+ e9e14a558f8ab-37cd358d008mr10827885ab.5.1720024502892; Wed, 03 Jul 2024
+ 09:35:02 -0700 (PDT)
+Date: Wed, 03 Jul 2024 09:35:02 -0700
+In-Reply-To: <20240703155153.83500-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000800cd1061c5a6914@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in team_del_slave (3)
+From: syzbot <syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-+CC
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Wed, Jul 3, 2024 at 3:03=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.or=
-g> wrote:
->
-> Commit edec611db047 ("kbuild, deb-pkg: improve maintainer
-> identification") added the EMAIL and NAME environment variables.
->
-> Commit d5940c60e057 ("kbuild: deb-pkg improve maintainer address
-> generation") removed support for NAME, but kept support for EMAIL.
->
-> The EMAIL and NAME environment variables are still supported by some
-> tools (see 'man debchange'), but not by all.
->
-> We should support both of them, or neither of them. We should not stop
-> halfway.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
->
-> Changes in v2:
->  - New patch
->
->  scripts/package/mkdebian | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> index b9a5b789c655..589f92b88c42 100755
-> --- a/scripts/package/mkdebian
-> +++ b/scripts/package/mkdebian
-> @@ -125,7 +125,7 @@ gen_source ()
->  rm -rf debian
->  mkdir debian
->
-> -email=3D${DEBEMAIL-$EMAIL}
-> +email=3D${DEBEMAIL}
->
->  # use email string directly if it contains <email>
->  if echo "${email}" | grep -q '<.*>'; then
-> --
-> 2.43.0
->
->
+Reported-and-tested-by: syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com
 
+Tested on:
 
---=20
-Best Regards
-Masahiro Yamada
+commit:         e9d22f7a Merge tag 'linux_kselftest-fixes-6.10-rc7' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14125485980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=864caee5f78cab51
+dashboard link: https://syzkaller.appspot.com/bug?extid=705c61d60b091ef42c04
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1489b399980000
+
+Note: testing is done by a robot and is best-effort only.
 
