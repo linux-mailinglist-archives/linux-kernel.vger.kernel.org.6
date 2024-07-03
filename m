@@ -1,154 +1,157 @@
-Return-Path: <linux-kernel+bounces-239660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3F39263A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:43:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4509263AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C176B288B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 978E128222D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8303217C9E8;
-	Wed,  3 Jul 2024 14:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A834B17C22D;
+	Wed,  3 Jul 2024 14:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YMWpgNuk"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACOkvD4B"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2972D17BB35
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 14:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A9E171679;
+	Wed,  3 Jul 2024 14:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720017756; cv=none; b=WoqCfFA3RnMmwlV0QhnskKboUHPwzIDHYWww3++d8TzTHe4qISi8Hbo1zsxQ99MSSCNtRAA7e4bQAcNrh3M7ZXs8iOPlCI1colOgTfCBzMG8bfaYufyDfl41FvSWtGj7J7emduWvUXHwXwBHjBd0UQ0/+aFM/qdpcWPrwDfrZVY=
+	t=1720017816; cv=none; b=fO5rfJlJHsUzvgF0mM9QjFuZRAZj3v0yp3uPID+YHl8rirmIuUbI1CfltPE92klqvytbiefenmR2c2s/zVoGia9xUsmXAV54JQBRCqwIQJmnofP/8eZLQ1E3HjkmSJnsyTM+IUW7N0hOvHsKB0ec3HxVJxi4o4o0/qH/HrGNHoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720017756; c=relaxed/simple;
-	bh=C15t/sdBdK2pqoieRzfm0iDE3WaqQ1vxRVz4kCxIp70=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=T68cYmP0nCoAF8fBTBf10/8qucRrxnSQ21bozI+fbLM/9rVfT+v9Ackk09D47fW8Yh5rvBOZWE0xBDe3gbHsGZzaB9fCBorThhdOKQy7kKDebkB5FLGe5xZF+mH7biGDdY5LN22tOFW3QXgd8Yz00vIIaTgDxJA1fskF28m5WV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YMWpgNuk; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ee4ae13aabso57828741fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 07:42:34 -0700 (PDT)
+	s=arc-20240116; t=1720017816; c=relaxed/simple;
+	bh=JCedJ2dy+bCxmrURA/4uvroV2Nju6rmF/YqUDZ01XCM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OIKL6Y4r4VCH72Vuce/jm55hS9yP7e2sUurPTogwtw6wH2wv3ecNSlAAKBBG7J04OYnhoKIB25Qq2gfNWqN8rAo2+/2OyjT8wdeA/Ijr/rgHcMrPo/lR3apGBf6dvr3gAcSZdOhWHxcU5WKX17lEdZ59304lTmYAki4cIULEatA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ACOkvD4B; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ee794ec046so17817301fa.2;
+        Wed, 03 Jul 2024 07:43:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720017753; x=1720622553; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WUiYUTX4uw6YTF8+5ehB1MO6FQf/YNFuHtJtecY3i88=;
-        b=YMWpgNukH3mZw0v9TaDNg6ZT7ky7eNtSP28Si7gUuNaEOjOjulRwI7u1O6VGmr8LJO
-         /gY5lSe7L6D2ZqLWJvwP5sdL8k8wOI8Q5OOsamhGAO/90rTqk++4Zc1SgbxbhEIm+prb
-         CZgSpa2/5Oa0kiC8LyNNxIXNTkxjBG2adaDgGQZenRRdbDna4MzJ7Qs4DFonCKp5q6mM
-         M+25FHq7CO/lCCwwFefgxcXo7mpSRqmNHRmf/7H5cP/9jb/SZMocwOWRbepb5+zVvP4I
-         Se5lncJ/OLC2BQvhW6Hyj+ihWRNlEQLJ54AeuUqVBIEWQEP7XNgyEB15cbXE3J9C5ugf
-         E5BA==
+        d=gmail.com; s=20230601; t=1720017812; x=1720622612; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m3HHbPMKL3WNij7DmW7SMt6gomhfzwDIxl+H2uk7UN0=;
+        b=ACOkvD4BwQmn6DgbsMdU6AsmtP0rXO8gO0XY1C6VHFfgiqp1WKHMLjTvCDTOobVYn/
+         YyT8nHXpYdvi+zID3YIRXPKcLeOkVN32pUdMfOQTtd+SdhdhUoSid9E2QPxUdja/YbiP
+         1VXp2dQPFNYzgmzhObh8ZP+dAVQyGuaSvtTe6gz040tYqqAelR4Z4VbTefiIcrUjdRNq
+         Yp/CHE2t1eUODVfB+4ctxHqc6uKf5G36OB7kwFY0AJ0u64r88QkR/GKysSePvsrfEkt2
+         kV/jsQqmoViOkQXifQdNQiEOEPFUPIRKkFIZxEdJ1Li6qkV25A8yjVE4TLq+ynZhcWdg
+         LQ9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720017753; x=1720622553;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WUiYUTX4uw6YTF8+5ehB1MO6FQf/YNFuHtJtecY3i88=;
-        b=vswZWrbbsnRUprhr/+RgNYaJBGxHE4longwQ3cTyjOGc1i823RUo5I6TURSrJmTMUJ
-         FgQcNwIwZvfasTk2ttRn4P88qBTdP5+ibDnW3nABjlYF34fa97WTO6OmGJXxC8uY2m0r
-         l+PlYXgkAkcV68VRVDgYvHDJdy+jjeRb57AR2XIcyLDt8uUEICyDROh68acYI8Tf9hJj
-         c7AqWau0qDo032b6I90ceProluvKmHNSCHsV9wGKW78bjNnvH+2tqycFFg228DityvqV
-         s9SwsPzCugO+cvCJBEMUXRXVx/lapeiVvllU69ao+RHT2TTRNviwqSHSTkgLzbhKGKO0
-         jS0g==
-X-Gm-Message-State: AOJu0YxbfDdZk8PazZlDFFY+s0pKo1KiYohR6pyO4BXqW79bsJqwVfqi
-	sESs0biWqzKKgBhoxS491mmcdNS1b2znQyfwhUCsMcVeHwXnwVmncYcZA9tW+ms=
-X-Google-Smtp-Source: AGHT+IHBzq9dEW29kEqNN4LDlotId1dB+PxWXtoeJ6QEnDFpAhjD/42H7fT4DP7lT+3GUim7ec21Uw==
-X-Received: by 2002:a05:651c:49b:b0:2eb:d9a3:2071 with SMTP id 38308e7fff4ca-2ee5e6c9cd8mr65401681fa.50.1720017750942;
-        Wed, 03 Jul 2024 07:42:30 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:ef03:73b5:7503:ee71? ([2a01:e0a:982:cbb0:ef03:73b5:7503:ee71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b068e93sm241883765e9.24.2024.07.03.07.42.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 07:42:30 -0700 (PDT)
-Message-ID: <ce6c2e8a-65a7-4cb2-a91d-fbcaeef6edc1@linaro.org>
-Date: Wed, 3 Jul 2024 16:42:29 +0200
+        d=1e100.net; s=20230601; t=1720017812; x=1720622612;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m3HHbPMKL3WNij7DmW7SMt6gomhfzwDIxl+H2uk7UN0=;
+        b=Yc+cmFaaYFQZ/c25FKeWTBmuH2s8xXYCzxJn4NIYEj3lwW2BpDt3/ZXPIDxrTjhGwI
+         Bj6T4mvIdZqjNp1eakxEhyZCTAMofzoJ2NFkDLB7ePzfbV2crJuKhUV97rXbISje7yNw
+         t2n5cWyJxDptvrnv5FNLOnmn1ukC2thuRh5/7VU1Fp/pPkHdKkDljaMTL/Evg/H/TJXX
+         JZc7XofwDb1JIMkWqEpsoaFEosjcL/J38oxNVbDzTRI4eE9hjf0/4ErL1VMlMIqKMVJ/
+         7Yia8WFw4XnGI21xxXrhnscP9s6B9fRruSWz+9qhe8/YCG7649bDzaRLamRqkfA1xQxb
+         +3bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYsY1HoiW6x4Nm6B8P5v1rygDNCWiyc5/6DV4JYPvrCXv4ggz9+F1gE1ZWWBtn7+BuF82P/vnY8OLPErB6RWbf5nDoqK+JJfhCA8pI/MYRe71+r5L0Owl5gQUPz0Cacsz/HzBmo5LUPfwQlEBR7WW+r16VP2LRrFF1nBT0MmT9
+X-Gm-Message-State: AOJu0YxVhAeqexdoQdHCQc6kp8CnGE6tDIpob3xtDgd9NSSCqUti+1in
+	620lknLFxrLrm9VeaFCi4u1C8oUExm08DXAKgVFwWLViTTFzgc5l
+X-Google-Smtp-Source: AGHT+IH0WrGBa4Zh+77cHbvKIKdlVlFNpd3eqtxLFlpSO/J4CvZAMFTPNa7djzYt0xpU2vOvZHukOg==
+X-Received: by 2002:a05:651c:2229:b0:2ec:637a:c212 with SMTP id 38308e7fff4ca-2ee5e6e7256mr85801971fa.39.1720017812064;
+        Wed, 03 Jul 2024 07:43:32 -0700 (PDT)
+Received: from krava ([176.105.156.1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d9f9dsm16025724f8f.41.2024.07.03.07.43.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 07:43:31 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 3 Jul 2024 16:43:28 +0200
+To: Brian Norris <briannorris@chromium.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Masahiro Yamada <masahiroy@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] tools build: Avoid circular .fixdep-in.o.cmd
+ issues
+Message-ID: <ZoVjkIG83Bk2QWPE@krava>
+References: <20240702215854.408532-1-briannorris@chromium.org>
+ <20240702215854.408532-3-briannorris@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2] thermal: core: Call monitor_thermal_zone() if zone
- temperature is invalid
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <2764814.mvXUDI8C0e@rjwysocki.net>
- <2ed4c630-204a-4f80-a37f-f2ca838eb455@linaro.org>
- <8d91a3c1-018f-495b-83be-979b795b5548@linaro.org>
- <12c5c133-9519-4a26-b9a3-2da1d3466e94@linaro.org>
- <15b67ce6-3238-435d-ad28-7c06efbe9153@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <15b67ce6-3238-435d-ad28-7c06efbe9153@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702215854.408532-3-briannorris@chromium.org>
 
-On 03/07/2024 16:00, Daniel Lezcano wrote:
-> On 03/07/2024 14:43, neil.armstrong@linaro.org wrote:
->> Hi,
->>
->> On 03/07/2024 14:25, Daniel Lezcano wrote:
->>>
->>> Hi Neil,
->>>
->>> it seems there is something wrong with the driver actually.
->>>
->>> There can be a moment where the sensor is not yet initialized for different reason, so reading the temperature fails. The routine will just retry until the sensor gets ready.
->>>
->>> Having these errors seem to me that the sensor for this specific thermal zone is never ready which may be the root cause of your issue. The change is spotting this problem IMO.
->>
->> Probably, but it gets printed every second until system shutdown, but only for a single thermal_zone.
->>
->> Using v1 of Rafael's patch makes the message disappear completely.
+On Tue, Jul 02, 2024 at 02:58:38PM -0700, Brian Norris wrote:
+> The 'fixdep' tool is used to post-process dependency files for various
+> reasons, and it runs after every object file generation command. This
+> even includes 'fixdep' itself.
 > 
-> Yes, because you have probably the thermal zone polling delay set to zero, thus it fails the first time and does no longer try to set it up again. The V1 is an incomplete fix.
+> In Kbuild, this isn't actually a problem, because it uses a single
+> command to generate fixdep (a compile-and-link command on fixdep.c), and
+> afterward runs the fixdep command on the accompanying .fixdep.cmd file.
 > 
-> Very likely the problem is in the sensor platform driver, or in the thermal zone description in the device tree which describes a non functional thermal zone.
+> In tools/ builds (which notably is maintained separately from Kbuild),
+> fixdep is generated in several phases:
 > 
+>  1. fixdep.c -> fixdep-in.o
+>  2. fixdep-in.o -> fixdep
+> 
+> Thus, fixdep is not available in the post-processing for step 1, and
+> instead, we generate .cmd files that look like:
+> 
+>   ## from tools/objtool/libsubcmd/.fixdep.o.cmd
+>   # cannot find fixdep (/path/to/linux/tools/objtool/libsubcmd//fixdep)
+>   [...]
+> 
+> These invalid .cmd files are benign in some respects, but cause problems
+> in others (such as the linked reports).
+> 
+> Because the tools/ build system is rather complicated in its own right
+> (and pointedly different than Kbuild), I choose to simply open-code the
+> rule for building fixdep, and avoid the recursive-make indirection that
+> produces the problem in the first place.
+> 
+> Link: https://lore.kernel.org/all/Zk-C5Eg84yt6_nml@google.com/
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+> 
+> (no changes since v1)
+> 
+>  tools/build/Makefile | 11 ++---------
+>  1 file changed, 2 insertions(+), 9 deletions(-)
+> 
+> diff --git a/tools/build/Makefile b/tools/build/Makefile
+> index 17cdf01e29a0..fea3cf647f5b 100644
+> --- a/tools/build/Makefile
+> +++ b/tools/build/Makefile
+> @@ -43,12 +43,5 @@ ifneq ($(wildcard $(TMP_O)),)
+>  	$(Q)$(MAKE) -C feature OUTPUT=$(TMP_O) clean >/dev/null
+>  endif
+>  
+> -$(OUTPUT)fixdep-in.o: FORCE
+> -	$(Q)$(MAKE) $(build)=fixdep
+> -
+> -$(OUTPUT)fixdep: $(OUTPUT)fixdep-in.o
+> -	$(QUIET_LINK)$(HOSTCC) $(KBUILD_HOSTLDFLAGS) -o $@ $<
+> -
+> -FORCE:
+> -
+> -.PHONY: FORCE
+> +$(OUTPUT)fixdep: $(srctree)/tools/build/fixdep.c
+> +	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTLDFLAGS) -o $@ $<
 
-It was at 0 but the delay was removed recently:
-https://lore.kernel.org/all/20240510-topic-msm-polling-cleanup-v2-0-436ca4218da2@linaro.org/
+ok, looks like that will make things easier, also we won't need tools/build/Build
 
-That doesn't explain it because only the last platforms have this error message printed.
-
-Neil
-
+thanks,
+jirka
 
