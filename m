@@ -1,266 +1,167 @@
-Return-Path: <linux-kernel+bounces-239610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C3D492630B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:14:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C855C92630E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A4241C217C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:14:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0B22B2427A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3074192B67;
-	Wed,  3 Jul 2024 14:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F03B1849FF;
+	Wed,  3 Jul 2024 14:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oQWQtM8n"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/ZaJTbm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EDD190058;
-	Wed,  3 Jul 2024 14:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813A7184101;
+	Wed,  3 Jul 2024 14:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720015713; cv=none; b=G1kLBpkQOLX/Nr0iMm3E0eLIZJwA5Ui50v1pVD69bEwY9G3ZCxPdZOrdLLdc0nQOY+wW1L2WxP2eo5jPgz6P0JHaPIkwL9ImDQKJLAt16FT+IJcJBM+3sWzdUyAlImUkh/BOB52hEYumCKcuL3AQ4XgWAF/ucc73H5MJQFeGTNU=
+	t=1720015702; cv=none; b=AXipp6iH+zMY2frcu8TDf+sOvjt0FYHxjW/KlHIIXGuzioC7SNbvBIKIJyuUSI7hcxYUcpNPqqI8prLEA7bkNwdKX6I1acRmyoEl/Q7LZ4UiNMgIMx+3l7tEtW5jsD+L6LhFKedhhDdtfM0Ld2R0Uc+6/bqyABdoDB+1nMvMhvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720015713; c=relaxed/simple;
-	bh=11HUKtdu5nf8dXlo0I+m7D7y0peZe+n1YGDK/mWGHCw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fFUszHzgIXaT0W5iO4zMIOe51aNVBrE6SkQMZYT4crAiebbLB6u5KJKHFy1MOo8cp5WS9Pyn7mYdgzPt7Cb9K7Zx7PYOHiZidR3bHv1zWhzp+J5KszMEcJdiNsVK6t2+aUBWDxyuIAnAJgtRLas7eE4/W+AoEJoLEDqe393yzls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oQWQtM8n; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 21E1DE000E;
-	Wed,  3 Jul 2024 14:08:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720015710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cYisgHBQn6Ei5SDwRIfbTe2s/fVQHpEC/6anLCKKdeI=;
-	b=oQWQtM8nS0g4iyiyEwNxyRdYUijyx6M7MRq6gXgfN9AI27Og2r/1V6JgJjLaOswUNFJxNj
-	ARqDarcP717WPJc5wBE9ySklDu9xqPR9YsN5BqB8W3GkGWDvu9sE0+U5NEoiTxCX5uItmb
-	PNxVkZ1bP9pyZ3lKOGtWzpWBAiSuRF4GEGOsP6btwjgJ0gvJqiB5mARojb0P9/b4gpMZwt
-	yjZOD4dndroxQEngGS64G6TlO2QGeuJ7olv7eN8d1acO/VT9nUByIfPXVriC7VS8tq/RuS
-	xURy8a53+AMoM1tyHTmpc7P/rP3ta1BIr6UInEYYpqxycZL6mUvC3NBjHhU8kQ==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	mwojtas@chromium.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH net-next v15 14/14] Documentation: networking: document phy_link_topology
-Date: Wed,  3 Jul 2024 16:08:04 +0200
-Message-ID: <20240703140806.271938-15-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240703140806.271938-1-maxime.chevallier@bootlin.com>
-References: <20240703140806.271938-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1720015702; c=relaxed/simple;
+	bh=ML2AEriOnHqO1QXh0j87+85SYqypaQr6iAt1xf7pymA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KCSjpPAKfjMYH6b2NmfoGpnQRdSrQE/fZPMV5hN7b1aGp5hGRH7x9fFaB88gXninCZwXa0iAt4NHFKh4YpS5FDjUMvfmMEbh+SMKCFDkElPAXfC/ulmXDF5mqW9hCzg8A+XEy6Nozxm8E4vFVhO05e1ubyGePrfo2zOR4cwXSkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/ZaJTbm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0017CC4AF19;
+	Wed,  3 Jul 2024 14:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720015702;
+	bh=ML2AEriOnHqO1QXh0j87+85SYqypaQr6iAt1xf7pymA=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=j/ZaJTbm+XyN1fiRowPjnCzjA8P+hve726cRrUseYOEkgBjpelsI5ibpyPttVZ3OW
+	 HpwMEWhCGSiwXbCvEt0HLD9C4BbKd7NEv7ZRBxI6tgTE9U0MYM5sdEjLbY60WoBFiK
+	 2jAE4eGWYIiACmVjNg+ChMF5uHKQgNnSHuZ9uj4MdGyFtKwsy8bblIan0RD0c6FW4f
+	 LvuptEzgd4pQG2+jq4VTCG3shuKFMoSvoHf+yLVMBJNzxyiysNzLHSKJflJWvEBHuN
+	 SEDU8uRP8JxJuWHwS84dpBxkHQP/Guwe2IOXjTdl2JYSt8MbghBSsxIxm/k2teMl8x
+	 SB5MUAOFRTdWQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 93CF5CE0BC3; Wed,  3 Jul 2024 07:08:21 -0700 (PDT)
+Date: Wed, 3 Jul 2024 07:08:21 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
+	mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com,
+	bpf@vger.kernel.org, jolsa@kernel.org, clm@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
+ and per-CPU RW semaphore
+Message-ID: <6b728325-b628-488f-aabf-dbd9afa388fb@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240701223935.3783951-1-andrii@kernel.org>
+ <20240702102353.GG11386@noisy.programming.kicks-ass.net>
+ <20240702115447.GA28838@noisy.programming.kicks-ass.net>
+ <CAEf4BzaQUzQdba2=F2NoV7=Th98fxz2EN62QX2Ej92bazt1GAg@mail.gmail.com>
+ <20240702191857.GJ11386@noisy.programming.kicks-ass.net>
+ <fd1d8b71-2a42-4649-b7ba-1b2e88028a20@paulmck-laptop>
+ <20240703075057.GK11386@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703075057.GK11386@noisy.programming.kicks-ass.net>
 
-The newly introduced phy_link_topology tracks all ethernet PHYs that are
-attached to a netdevice. Document the base principle, internal and
-external APIs. As the phy_link_topology is expected to be extended, this
-documentation will hold any further improvements and additions made
-relative to topology handling.
+On Wed, Jul 03, 2024 at 09:50:57AM +0200, Peter Zijlstra wrote:
+> On Tue, Jul 02, 2024 at 04:56:53PM -0700, Paul E. McKenney wrote:
+> 
+> > > Paul, isn't this the RCU flavour you created to deal with
+> > > !rcu_is_watching()? The flavour that never should have been created in
+> > > favour of just cleaning up the mess instead of making more.
+> > 
+> > My guess is that you are instead thinking of RCU Tasks Rude, which can
+> > be eliminated once all architectures get their entry/exit/deep-idle
+> > functions either inlined or marked noinstr.
+> 
+> Would it make sense to disable it for those architectures that have
+> already done this work?
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- Documentation/networking/ethtool-netlink.rst  |   3 +
- Documentation/networking/index.rst            |   1 +
- .../networking/phy-link-topology.rst          | 121 ++++++++++++++++++
- 3 files changed, 125 insertions(+)
- create mode 100644 Documentation/networking/phy-link-topology.rst
+It might well.  Any architectures other than x86 at this point?
 
-diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
-index 40fb2abf4220..8fbaad879eff 100644
---- a/Documentation/networking/ethtool-netlink.rst
-+++ b/Documentation/networking/ethtool-netlink.rst
-@@ -2124,10 +2124,13 @@ Retrieve information about a given Ethernet PHY sitting on the link. The DO
- operation returns all available information about dev->phydev. User can also
- specify a PHY_INDEX, in which case the DO request returns information about that
- specific PHY.
-+
- As there can be more than one PHY, the DUMP operation can be used to list the PHYs
- present on a given interface, by passing an interface index or name in
- the dump request.
- 
-+For more information, refer to :ref:`phy_link_topology`
-+
- Request contents:
- 
-   ====================================  ======  ==========================
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index d1af04b952f8..c71b87346178 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -91,6 +91,7 @@ Contents:
-    operstates
-    packet_mmap
-    phonet
-+   phy-link-topology
-    pktgen
-    plip
-    ppp_generic
-diff --git a/Documentation/networking/phy-link-topology.rst b/Documentation/networking/phy-link-topology.rst
-new file mode 100644
-index 000000000000..4dec5d7d6513
---- /dev/null
-+++ b/Documentation/networking/phy-link-topology.rst
-@@ -0,0 +1,121 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. _phy_link_topology:
-+
-+=================
-+PHY link topology
-+=================
-+
-+Overview
-+========
-+
-+The PHY link topology representation in the networking stack aims at representing
-+the hardware layout for any given Ethernet link.
-+
-+An Ethernet interface from userspace's point of view is nothing but a
-+:c:type:`struct net_device <net_device>`, which exposes configuration options
-+through the legacy ioctls and the ethtool netlink commands. The base assumption
-+when designing these configuration APIs were that the link looks something like ::
-+
-+  +-----------------------+        +----------+      +--------------+
-+  | Ethernet Controller / |        | Ethernet |      | Connector /  |
-+  |       MAC             | ------ |   PHY    | ---- |    Port      | ---... to LP
-+  +-----------------------+        +----------+      +--------------+
-+  struct net_device               struct phy_device
-+
-+Commands that needs to configure the PHY will go through the net_device.phydev
-+field to reach the PHY and perform the relevant configuration.
-+
-+This assumption falls apart in more complex topologies that can arise when,
-+for example, using SFP transceivers (although that's not the only specific case).
-+
-+Here, we have 2 basic scenarios. Either the MAC is able to output a serialized
-+interface, that can directly be fed to an SFP cage, such as SGMII, 1000BaseX,
-+10GBaseR, etc.
-+
-+The link topology then looks like this (when an SFP module is inserted) ::
-+
-+  +-----+  SGMII  +------------+
-+  | MAC | ------- | SFP Module |
-+  +-----+         +------------+
-+
-+Knowing that some modules embed a PHY, the actual link is more like ::
-+
-+  +-----+  SGMII   +--------------+
-+  | MAC | -------- | PHY (on SFP) |
-+  +-----+          +--------------+
-+
-+In this case, the SFP PHY is handled by phylib, and registered by phylink through
-+its SFP upstream ops.
-+
-+Now some Ethernet controllers aren't able to output a serialized interface, so
-+we can't directly connect them to an SFP cage. However, some PHYs can be used
-+as media-converters, to translate the non-serialized MAC MII interface to a
-+serialized MII interface fed to the SFP ::
-+
-+  +-----+  RGMII  +-----------------------+  SGMII  +--------------+
-+  | MAC | ------- | PHY (media converter) | ------- | PHY (on SFP) |
-+  +-----+         +-----------------------+         +--------------+
-+
-+This is where the model of having a single net_device.phydev pointer shows its
-+limitations, as we now have 2 PHYs on the link.
-+
-+The phy_link topology framework aims at providing a way to keep track of every
-+PHY on the link, for use by both kernel drivers and subsystems, but also to
-+report the topology to userspace, allowing to target individual PHYs in configuration
-+commands.
-+
-+API
-+===
-+
-+The :c:type:`struct phy_link_topology <phy_link_topology>` is a per-netdevice
-+resource, that gets initialized at netdevice creation. Once it's initialized,
-+it is then possible to register PHYs to the topology through :
-+
-+:c:func:`phy_link_topo_add_phy`
-+
-+Besides registering the PHY to the topology, this call will also assign a unique
-+index to the PHY, which can then be reported to userspace to refer to this PHY
-+(akin to the ifindex). This index is a u32, ranging from 1 to U32_MAX. The value
-+0 is reserved to indicate the PHY doesn't belong to any topology yet.
-+
-+The PHY can then be removed from the topology through
-+
-+:c:func:`phy_link_topo_del_phy`
-+
-+These function are already hooked into the phylib subsystem, so all PHYs that
-+are linked to a net_device through :c:func:`phy_attach_direct` will automatically
-+join the netdev's topology.
-+
-+PHYs that are on a SFP module will also be automatically registered IF the SFP
-+upstream is phylink (so, no media-converter).
-+
-+PHY drivers that can be used as SFP upstream need to call :c:func:`phy_sfp_attach_phy`
-+and :c:func:`phy_sfp_detach_phy`, which can be used as a
-+.attach_phy / .detach_phy implementation for the
-+:c:type:`struct sfp_upstream_ops <sfp_upstream_ops>`.
-+
-+UAPI
-+====
-+
-+There exist a set of netlink commands to query the link topology from userspace,
-+see ``Documentation/networking/ethtool-netlink.rst``.
-+
-+The whole point of having a topology representation is to assign the phyindex
-+field in :c:type:`struct phy_device <phy_device>`. This index is reported to
-+userspace using the ``ETHTOOL_MSG_PHY_GET`` ethtnl command. Performing a DUMP operation
-+will result in all PHYs from all net_device being listed. The DUMP command
-+accepts either a ``ETHTOOL_A_HEADER_DEV_INDEX`` or ``ETHTOOL_A_HEADER_DEV_NAME``
-+to be passed in the request to filter the DUMP to a single net_device.
-+
-+The retrieved index can then be passed as a request parameter using the
-+``ETHTOOL_A_HEADER_PHY_INDEX`` field in the following ethnl commands :
-+
-+* ``ETHTOOL_MSG_STRSET_GET`` to get the stats string set from a given PHY
-+* ``ETHTOOL_MSG_CABLE_TEST_ACT`` and ``ETHTOOL_MSG_CABLE_TEST_ACT``, to perform
-+  cable testing on a given PHY on the link (most likely the outermost PHY)
-+* ``ETHTOOL_MSG_PSE_SET`` and ``ETHTOOL_MSG_PSE_GET`` for PHY-controlled PoE and PSE settings
-+* ``ETHTOOL_MSG_PLCA_GET_CFG``, ``ETHTOOL_MSG_PLCA_SET_CFG`` and ``ETHTOOL_MSG_PLCA_GET_STATUS``
-+  to set the PLCA (Physical Layer Collision Avoidance) parameters
-+
-+Note that the PHY index can be passed to other requests, which will silently
-+ignore it if present and irrelevant.
--- 
-2.45.1
+But this is still used in common code, so let's see...  In that case,
+synchronize_rcu_tasks_rude() becomes a no-op, call_rcu_tasks_rude() can be
+a wrapper around something like queue_work(), and rcu_barrier_tasks_rude()
+can be a wrapper around something like flush_work().
 
+Except that call_rcu_tasks_rude() and rcu_barrier_tasks_rude() are not
+actually used outside of testing, so maybe they can be dropped globally.
+
+Let me see what happens when I do this:
+
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 7d18b90356fd..5c8492a054f5 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -936,8 +936,8 @@ static struct rcu_torture_ops tasks_rude_ops = {
+ 	.deferred_free	= rcu_tasks_rude_torture_deferred_free,
+ 	.sync		= synchronize_rcu_tasks_rude,
+ 	.exp_sync	= synchronize_rcu_tasks_rude,
+-	.call		= call_rcu_tasks_rude,
+-	.cb_barrier	= rcu_barrier_tasks_rude,
++	// .call		= call_rcu_tasks_rude,
++	// .cb_barrier	= rcu_barrier_tasks_rude,
+ 	.gp_kthread_dbg	= show_rcu_tasks_rude_gp_kthread,
+ 	.get_gp_data	= rcu_tasks_rude_get_gp_data,
+ 	.cbflood_max	= 50000,
+
+It should be at least mildly amusing...
+
+> > > > I will
+> > > > ultimately use it anyway to avoid uprobe taking unnecessary refcount
+> > > > and to protect uprobe->consumers iteration and uc->handler() calls,
+> > > > which could be sleepable, so would need rcu_read_lock_trace().
+> > > 
+> > > I don't think you need trace-rcu for that. SRCU would do nicely I think.
+> > 
+> > From a functional viewpoint, agreed.
+> > 
+> > However, in the past, the memory-barrier and array-indexing overhead
+> > of SRCU has made it a no-go for lightweight probes into fastpath code.
+> > And these cases were what motivated RCU Tasks Trace (as opposed to RCU
+> > Tasks Rude).
+> 
+> I'm thinking we're growing too many RCU flavours again :/ I suppose I'll
+> have to go read up on rcu/tasks.* and see what's what.
+
+Well, you are in luck.  I am well along with the task of putting together
+the 2024 LWN RCU API article, which will include RCU Tasks Trace.  ;-)
+
+And I do sympathize with discomfort with lots of RCU flavors.  After all,
+hhad you told me 30 years ago that there would be more than one flavor,
+I would have been quite surprised.  Of course, I would also have been
+surprised by a great many other things (just how many flavors of locking
+and reference counting???), so maybe having three flavors (four if we
+cannot drop RCU Tasks RUDE) is not so bad.
+
+Oh, and no one is yet using srcu_down_read() and srcu_up_read(), so
+if they stay unused for another year or so...
+
+> > The other rule for RCU Tasks Trace is that although readers are permitted
+> > to block, this blocking can be for no longer than a major page fault.
+> > If you need longer-term blocking, then you should instead use SRCU.
+> 
+> I think this would render it unsuitable for uprobes. The whole point of
+> having a sleepable handler is to be able to take faults.
+
+???
+
+I said "longer than a major page fault", so it is OK to take a fault,
+just not one that potentially blocks forever.  (And those faulting onto
+things like NFS filesystems have enough other problems that this would
+be in the noise for them, right?)
+
+And yes, RCU Tasks Trace is specialized.  I would expect that unexpected
+new uses would get serious scrutiny by those currently using it.
+
+							Thanx, Paul
 
