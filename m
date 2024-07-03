@@ -1,123 +1,177 @@
-Return-Path: <linux-kernel+bounces-239628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DCC92634B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:23:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD21926348
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F18EB273A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:22:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF90D1C2130D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60F917B51B;
-	Wed,  3 Jul 2024 14:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gS9lErmN"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B56217B432;
+	Wed,  3 Jul 2024 14:22:20 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B8017965E;
-	Wed,  3 Jul 2024 14:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597C21EA90;
+	Wed,  3 Jul 2024 14:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720016569; cv=none; b=Cb9RliE8vro+kD170LSsHg7UHfixaI8rTTSiNGwdmvmUD/KryzS8XldF2nSazun77hN/8ajFKsTF9D87xG3XpJzgmzjx+zEa5DVLenlN+zIA1KdGis0Rg18m65N3dwHJqQn3G/F8KyZKjAF+spf+fge+mi8HZycZQfKiRHZGtXo=
+	t=1720016539; cv=none; b=BuBdtig0WIc3TBPLB8CknGRtuKWmWLJEfnGUz/Smj1BltBGxWP3PS3gqySHBVdkPHD8cv/Vwq6Ft/mb/G8i+A7IFHJEdC2ZNO+KQjpA+ssZPU2exDukGmsOXBrCkpoUK1Sp4GXN8HFezmOYOv6KloXxSadwn7PrjvzpJlvCoBzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720016569; c=relaxed/simple;
-	bh=T4yKvc+lELzYxYMsH81tgHi+E5UPTZWagiGiUK6QmX8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=k5tL2YAAEytcqR16jBAMkDeh6cULN28lLmgiDWNnsxuZr+yQd7JD6QFtVs7Qfuzp/uqpCFBiukD729oWzxndXDCjhAT8zDWy4twsgKgWZyAyIsIuk3ZpK1l9DHQRJEQ7mUsybOgi9GwlHmfHP6uGrMclDCMDiER0MVRyJxlfjRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gS9lErmN; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720016532; x=1720621332; i=markus.elfring@web.de;
-	bh=c5lTrDrm1hXARYh2GRtk5/VrYRUhLUaho/B5U9nuKNA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=gS9lErmNl5vam2RQWajiqIHwn5LvqfFI56M/NAfvGJbbpQU1GOZ5fs9FBYHJ3lyR
-	 EVZrtz1DIrHVM3nU4YO6RE2Y7x2e755Yy4PKtEobECQbILq90ImSNbuZCk3zqpfyu
-	 RUv/mu18/giUs0ZfHUIa6cc2LY7Y2XM1ecowvs/b6dxYRxWAyNKYXU0TF+IXdLFXN
-	 t6dbMLfm1JxqD0ItcaFVqDjNqIYFrNGnU8PteBo9NWpEaSE7y150aDut5lUDky9UO
-	 ZsaYrg0NvorFAuSk4spEfoPp6ZuTNJmWhK4+FE8WEUEjiyNLQNmSIWbyGqh98P7KU
-	 H3HsIn54KwrYhtUU7w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MdfCN-1rpg7Z1p7B-00otu0; Wed, 03
- Jul 2024 16:22:12 +0200
-Message-ID: <20e989df-0a63-4a07-b164-f213405d62b3@web.de>
-Date: Wed, 3 Jul 2024 16:21:57 +0200
+	s=arc-20240116; t=1720016539; c=relaxed/simple;
+	bh=f4NbyDhmUMSoMc3JreD102aM4vkKTbicMQZs0rsnIK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=okgw7DhXql/selLDY7rI35IFLm7IQXyRs5Y/DXY+ASa2uah/cp+qQVaLRMxEsI2sfi+4CakE5ISlg2jT/omZrRh/zRnejlWQMUxtOzwRNwrwESbwqGDZbBhSkJ8nQ6XEORlDaI8LmTwM1qKd6r0EckRMUUsg8Eb3z7sEyZcS044=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Wed, 3 Jul 2024 14:22:13 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>,
+	Yangyu Chen <cyy@cyyself.name>
+Subject: Re: [PATCH v2 08/10] riscv: dts: add initial SpacemiT K1 SoC device
+ tree
+Message-ID: <20240703142213.GA2734247@ofsar>
+References: <20240627-k1-01-basic-dt-v2-0-cc06c7555f07@gentoo.org>
+ <20240627-k1-01-basic-dt-v2-8-cc06c7555f07@gentoo.org>
+ <CAJM55Z9jeAQTsVjRiLeofDm1RyMWCuHXC0a-pdKtpUiTkSjJCA@mail.gmail.com>
+ <20240702012847.GA2447193@ofsar>
+ <IA1PR20MB4953C031CB453AA0E51657B3BBDC2@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <20240702-appease-attire-6afbe758bf0f@spud>
+ <20240703094049.GB2676251@ofsar>
+ <CAJM55Z9AdOq_yd7sK_VhkutokK+-QKscdq9i759H3N1UKVwJkQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Junlin Li <make24@iscas.ac.cn>, linux-media@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Antti Palosaari <crope@iki.fi>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240702175023.3921-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] drivers: media: dvb-frontends/rtl2830: fix an
- out-of-bounds write error
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240702175023.3921-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:EoluFemJE7z7gOT0PW5yGSaUvKc7zIT6Nwvg7Mzwt2EVM+EpL44
- QXmEbT/ymdcqnp4zolFzN1/ugkzO4CPc9ZnKga7zp4c4D0OvtjJMMd1q9exeKCJvQWKjtnt
- WljoNs0e52U+VlBrG/u5WtHZi936iMWhpU6pDqfP/B45pp0top74x2h5Po1wjF9NY0+beaV
- fjKBhIn/dLqYZB48g0fzg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OuVp94A9e5Q=;ZLsMdpoS4/jKg+kBdB3ynJpdNhq
- q8mwd6McDAAOLmo1yoI1HRYOMPCeLOhvaFBXqtOUzv75yFFaHBPUz9Awj4lGZLlGOC2Q89K1x
- PODOlRFumlqQIUF+AC5AqJoDz3ca5azTf7ZIQTCz63kVivQIUcsizbbxENmh+f7PqDaE3aPXO
- WKf6fi/kjT4psu+esjwYMI6yNyKrcjJiShAsrAPxWGzMdWmVdxOH04rEp+zCbidyrLO2GDYMP
- wgGXVafHecnFOQMlnk4+IpuI9ILFlXrFR61UiUHODDVSwe/z487fHlwr8HbMex1Udw0mlfbER
- JzINidaFwTB1UfqJFPyWpeTfhFYLEu5Wjj40GYNxdFIjT1TKnzti4JrMXG/ddiu8yEpPSucCC
- JS2k2CRd4BoV0yGnDZOUdanKGF1yIPgvd0mh4ysJ8/9Lv/HqoayJL6o7acScb/l5I1/KW2iPt
- L4lyOvn79kUZsJm2YlRvrcagCTNl/Ioa1AEyYUWrN9Lnb1mBtUWF8fVick3UZ5/26A8vIywR5
- K+2vUq4vfGNgaCI0bDP+CO43Z+4c1LivjrEV1zweHqPriCfpmpAkMakav2kGeTQM7m5I57meE
- ZI//98fblCbYAPrE68juynDd588hw3TLdj9E8jSd1tW5q7/9ZLWdqHOQpACp+FMCkjV2Sv2hm
- scdUSfgXJLRhMNgW+VRzIAvSQ3lForVQKdXYINRdGEc79zNWabtZ6iidDB4rIyKn9ZDpEV/IG
- PW8hHutX/YO10M7KM7tAit+t86Z+/8J9Y2j2miPd/842zuU5Gf+OPDkJHzaG2zD8S4DgyBL9E
- jwCvUb2c6krlLknzdy4aMQSOW1U5+v8woDwHaEe0jucEM=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJM55Z9AdOq_yd7sK_VhkutokK+-QKscdq9i759H3N1UKVwJkQ@mail.gmail.com>
 
-> Ensure index in rtl2830_pid_filter
-> does not exceed 31 to prevent out-of-bounds access.
-=E2=80=A6
+On 04:22 Wed 03 Jul     , Emil Renner Berthing wrote:
+> Yixun Lan wrote:
+> > Hi Conor:
+> >
+> > On 16:25 Tue 02 Jul     , Conor Dooley wrote:
+> > > On Tue, Jul 02, 2024 at 09:35:45AM +0800, Inochi Amaoto wrote:
+> > > > On Tue, Jul 02, 2024 at 01:28:47AM GMT, Yixun Lan wrote:
+> > > > > On 12:49 Mon 01 Jul     , Emil Renner Berthing wrote:
+> > > > > > Yixun Lan wrote:
+> > > > > > > From: Yangyu Chen <cyy@cyyself.name>
+> > > > > > >
+> > > > > > > Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
+> > > > > > >
+> > > > > > > Key features:
+> > > > > > > - 4 cores per cluster, 2 clusters on chip
+> > > > > > > - UART IP is Intel XScale UART
+> > > > > > >
+> > > > > > > Some key considerations:
+> > > > > > > - ISA string is inferred from vendor documentation[2]
+> > > > > > > - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
+> > > > > > > - No coherent DMA on this board
+> > > > > > >     Inferred by taking vendor ethernet and MMC drivers to the mainline
+> > > > > > >     kernel. Without dma-noncoherent in soc node, the driver fails.
+> > > > > > > - No cache nodes now
+> > > > > > >     The parameters from vendor dts are likely to be wrong. It has 512
+> > > > > > >     sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
+> > > > > > >     When the size of the cache line is 64B, it is a directly mapped
+> > > > > > >     cache rather than a set-associative cache, the latter is commonly
+> > > > > > >     used. Thus, I didn't use the parameters from vendor dts.
+> > > > > > >
+> > > > > > > Currently only support booting into console with only uart, other
+> > > > > > > features will be added soon later.
+> > > > > > >
+> > > > > ...
+> > > > >
+> > > > > > > +		clint: timer@e4000000 {
+> > > > > > > +			compatible = "spacemit,k1-clint", "sifive,clint0";
+> > > > > > > +			reg = <0x0 0xe4000000 0x0 0x10000>;
+> > > > > > > +			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>,
+> > > > > > > +					      <&cpu1_intc 3>, <&cpu1_intc 7>,
+> > > > > > > +					      <&cpu2_intc 3>, <&cpu2_intc 7>,
+> > > > > > > +					      <&cpu3_intc 3>, <&cpu3_intc 7>,
+> > > > > > > +					      <&cpu4_intc 3>, <&cpu4_intc 7>,
+> > > > > > > +					      <&cpu5_intc 3>, <&cpu5_intc 7>,
+> > > > > > > +					      <&cpu6_intc 3>, <&cpu6_intc 7>,
+> > > > > > > +					      <&cpu7_intc 3>, <&cpu7_intc 7>;
+> > > > > > > +		};
+> > > > > > > +
+> > > > > > > +		uart0: serial@d4017000 {
+> > > > > > > +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> > > > > > > +			reg = <0x0 0xd4017000 0x0 0x100>;
+> > > > > > > +			interrupts = <42>;
+> > > > > > > +			clock-frequency = <14857000>;
+> > > > > > > +			reg-shift = <2>;
+> > > > > > > +			reg-io-width = <4>;
+> > > > > > > +			status = "disabled";
+> > > > > > > +		};
+> > > > > > > +
+> > > > > > > +		/* note: uart1 skipped */
+> > > > > >
+> > > > > > The datasheet page you link to above says "-UART (×10)", but here you're
+> > > > > > skipping one of them. Why? I can see the vendor tree does the same, but it
+> > > > > > would be nice with an explanation of what's going on.
+> > > > > >
+> > > > > /* note: uart1 in 0xf0612000, reserved for TEE usage */
+> > > > > I would put something like this, does this sound ok to you?
+> > > > >
+> > > > > more detail, iomem range from 0xf000,0000 - 0xf080,0000 are dedicated for TEE purpose,
+> > > > > It won't be exposed to Linux once TEE feature is enabled..
+> > > > >
+> > > > > skipping uart1 may make people confused but we are trying to follow datasheet..
+> > > >
+> > > > Instead of skipping it, I suggest adding this to reserved-memory area,
+> > > > which make all node visible and avoid uart1 being touched by mistake.
+> > >
+> > > No, don't make it reserved-memory - instead add it as
+> > > status = "reserved"; /* explanation for why */
+> > Ok, got
+> >
+> > > Also, I'd appreciate if the nodes were sorted by unit address in the
+> > > dtsi.
+> > so I would move "plic, clint" after node of uart9 as this suggestion
+> >
+> > for uart1, its unit-address is 0xf0610000, it should be moved to after clint
+> > (once unit-address sorted), if we follow this rule strictly.
+> > but it occur to me this is not very intuitive, if no objection, I would put
+> > it between uart0 and uart2 (thus slightly break the rule..)
+> 
+> No, please order nodes by their address as Conor said. It actually says so in
+> the DTS coding style:
+> 
+> https://docs.kernel.org/devicetree/bindings/dts-coding-style.html
+> 
+I was thinking about grouping all same type devices (uart here) together
+according to "1. Order of Nodes", but after reconsideration, I'd just follow
+yours and Conor's suggestion, thus it will be more straightforward, also match
+more well with datasheet[1] if we have to add more "reserved" nodes in the future.
 
-Please adjust the word wrapping.
-You may occasionally put more than 51 characters into text lines
-of such a change description.
+Link: https://developer.spacemit.com/#/documentation?token=LzJyw97BCipK1dkUygrcbT0NnMg [1]
 
-
-=E2=80=A6
-> Signed-off-by: Junlin Li <make24@iscas.ac.cn>
-
-I find it interesting that another personal name is presented here.
-
-* How many contributors (besides the names =E2=80=9CHaoxiang Li=E2=80=9D a=
-nd =E2=80=9CMa Ke=E2=80=9D)
-  are connected with such an email address so far?
-
-* How will requirements be resolved better for the Developer's Certificate=
- of Origin?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
-
-
-Would you like to omit the text =E2=80=9Cdrivers: =E2=80=9D from the subsy=
-stem specification?
-
-Regards,
-Markus
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
