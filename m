@@ -1,86 +1,100 @@
-Return-Path: <linux-kernel+bounces-238619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D01924CEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:00:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822E7924CEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B7531C21576
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:00:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A381B22E6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDAD2564;
-	Wed,  3 Jul 2024 01:00:04 +0000 (UTC)
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BC32563;
+	Wed,  3 Jul 2024 01:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbWxUkCl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018081373;
-	Wed,  3 Jul 2024 01:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F911645;
+	Wed,  3 Jul 2024 01:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719968404; cv=none; b=Ioe1ZGgDlK7m7I7e+zF86JDuTfeyWNHoqthS/q/4oqO/E7QJ3jQ9MZvVFZnIloZ38rG9dOEMhqdJSJaTxpQZFD+77fznXOZHv6AhjoindsiOlDxDSENOrzxSZ8n0XXn1NCwbh/RKgSEzbxCRyGPv2fq5JnOWzAv39GOPLqJn8Q8=
+	t=1719968411; cv=none; b=e6BHIK3mrglmccmoNV/r6nLER1yNJVh3uFtb49dmzYeukdRIf746B4skd7BblbfKnK4bTQD356Hlrvn0SrEa9XRDywQW9xPLGodYi1HkYSeChE1V9xUndXPC8TTvlU1EunPIjSK+z85+PKFqa2m0gtxL8EbfG8l4A+byeQjZGKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719968404; c=relaxed/simple;
-	bh=4/ok6FYh3Y1KvnVpgaAOy5hhwMjG6Ts+SeLcbCbQI48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqxmG7kXs3z58aoO+QsHkcUE3Q6uE8112YCyQ00plceJ7jqbr784h8AQW8+TPqaSvggpJj8aORw3ssZM2nZt1mohjwRHuiZpgZbOKpu9nLUSKDmDvXVB/iEONnHJ9NI0jdj3Z3o0AXU5DBBrbo+hbykVh9ii0x47BmmYppF2Q1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3d561d685e7so3362827b6e.1;
-        Tue, 02 Jul 2024 18:00:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719968402; x=1720573202;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z+QDVDPryOtBIHWupkn8RFbJbvX8vqSQWsza45FhNfM=;
-        b=Ga2F/UWKMf0Bme5g1N+C6zzyLxFqugCCcU3THav5nJzz7qzhAnoahWLO5MSbd64w29
-         65R+z3FoJqsWArazsdxCRdQ89+0S5AKJAM9vtxwmPyJQSpHGKVhSmTBUEE+yZeDNt83b
-         JyqJo6RKYXTqI1qnhT58KxJSR/ZvqTB+VM77wqp+fMk5Bn7fnpfy56KuwpVZRtRLDuRO
-         Vx/yK604tcyJ92KA/3u+uns/UxypU1ld+yckFczVfi4jCKOjjzmYJQ9fx9DJGRgUeIF1
-         e55Kuacaxy/6UZqZiiHd6t203Q8M4+BUYO3CFIDr1Kq+n+IR3Cds6ceGRtEudejtXNY9
-         RrPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3ciCRzWw/wd7jJnGQrNOD1CDJG1chcBBp4JOlOh+4l0wqZFCt1LX6CpfXxuWR+nh/rsUXizwPZsCs9QdugoelqtQIkan0lVk0ba2jrOiNa6JX4uMdMXpPjx0criPn8BdVqCzF0n1P3Q==
-X-Gm-Message-State: AOJu0YyWOlbupdO7pkGZSfvxVS6JTNfrop6JFXrBIdFbRJo6Kty4sHhJ
-	Qcg2J5eVbGJkClahJPTEUXPGEAHlPc7XtqzgfO2Uow6hGjhmah2AO/wPOaCZ
-X-Google-Smtp-Source: AGHT+IG2jepsnH1O+TW9oT8SdXRcbhlDe0GQgRMpprpz3qpC4jyruP1SPQgPV3dCZxlhk+3gPppKWA==
-X-Received: by 2002:a05:6808:1284:b0:3d2:308b:9bb4 with SMTP id 5614622812f47-3d6b4de1fbbmr15041145b6e.43.1719968401976;
-        Tue, 02 Jul 2024 18:00:01 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6d41655fsm7156351a12.92.2024.07.02.18.00.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 18:00:01 -0700 (PDT)
-Date: Wed, 3 Jul 2024 09:59:59 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the pci tree
-Message-ID: <20240703005959.GA3160262@rocinante>
-References: <20240703104512.59dfc264@canb.auug.org.au>
+	s=arc-20240116; t=1719968411; c=relaxed/simple;
+	bh=lFjYUrOF7VxhaDL6M2zQYg/d02i9zQFo7I3m20cFD2g=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=YRFQeBM1GU1umRXye8sy2U4koXrhFIHcC3YRptu15y8WPDo2gBYq5jfpjrgBqU3fRT9HnNiuevKsb7Q/Wz3C2jgdS0HnmbvtCNpVBizdmY6KlT0o4jlYnYBEjPTANgGGYgV3PSwUM42iurhhGqsXyd9wpv+5mcGjb7qH+0JUhEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbWxUkCl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41ECFC116B1;
+	Wed,  3 Jul 2024 01:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719968410;
+	bh=lFjYUrOF7VxhaDL6M2zQYg/d02i9zQFo7I3m20cFD2g=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=sbWxUkCl1dM3JNyZi5jytbVt6B9yMS0pJ63BT+ZfxKLVM0TZEqxdVEkQuONE+UJqB
+	 +uRxZpd/QyF2zzT1cENI36TkIi4EzZl/bLY1+9aHkuL/AH2wChOJF8GFj5kcVx2ypv
+	 2BFdkSJsMtxVBrVeWq8rDiLEzVlsUk9R58R/ih9N9wUFJUHD4bpPlmskwMSdNrsPbi
+	 +xBIj8tgmC6CdYB7ACpD73k4Ccm4k0DsdV/tT839nsKKxauxOTok+vnnlc8OHJPhDi
+	 NsMhjiQ1bckpSpKOcuacVAzaMdvroNnQsBiAoMcW8aIbhm5HI4rsEjwjzodp4UJyma
+	 slYJ9ruaQuP5A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703104512.59dfc264@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 03 Jul 2024 04:00:07 +0300
+Message-Id: <D2FHWYEXITS4.1GNXEB8V6KJM7@kernel.org>
+Cc: <naveen.n.rao@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
+ session support
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Jarkko Sakkinen"
+ <jarkko.sakkinen@iki.fi>, "Stefan Berger" <stefanb@linux.ibm.com>, "Linux
+ regressions mailing list" <regressions@lists.linux.dev>
+X-Mailer: aerc 0.17.0
+References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+ <9e167f3e-cd81-45ab-bd34-939f516b05a4@linux.ibm.com>
+ <55e8331d-4682-40df-9a1b-8a08dc5f6409@leemhuis.info>
+ <9f86a167074d9b522311715c567f1c19b88e3ad4.camel@kernel.org>
+ <53d96a8b-26ef-46a3-9b68-3d791613e47c@linux.ibm.com>
+ <D2EFNJTR80JS.1RW91OVY1UH1N@iki.fi>
+ <e7db74a0-cd5c-4394-b87e-c31ea0861ea1@linux.ibm.com>
+ <b7559dbb323d16fb334f8f8f35b8fda3fb6e481c.camel@iki.fi>
+ <85f882ff079554c41a73d8ad4275072c5229f716.camel@iki.fi>
+ <D2FHD82R8YAC.YBL9FAIVMBWL@iki.fi> <D2FHNOGO624G.HX2SKHYFXU4L@kernel.org>
+In-Reply-To: <D2FHNOGO624G.HX2SKHYFXU4L@kernel.org>
 
-Hello,
+On Wed Jul 3, 2024 at 3:48 AM EEST, Jarkko Sakkinen wrote:
+> On Wed Jul 3, 2024 at 3:34 AM EEST, Jarkko Sakkinen wrote:
+> > https://lore.kernel.org/linux-integrity/20240703003033.19057-1-jarkko@k=
+ernel.org/T/#u
+> >
+> > There's also bunch of other drivers than tpm_ibmvtpm so better
+> > to limit it to known good drivers.
+> >
+> > I can take at the actual issue in August and will review any
+> > possible patches then. This one I'll send after my current PR
+> > for TPM has been merged.
+>
+> After this patch has been merged to mainline, you can send your change
+> as a feature patch for tpm_ibmvtpm and replace Kconfig line with
+> "depends on ... || TCG_IBMVTPM".
+>
+> This zeros the risk other drivers than tpm_tis, tpm_crb and tpm_ibmvtpm,
+> and thus is the only possible solution that I'm willing to accept in
+> *fast phase*". I.e. the most conservative and guaranteed route, like
+> anyone with sane mind should really.
 
-> Commit
-> 
->   1ee61ee40d2b ("PCI: endpoint: Introduce 'epc_deinit' event and notify the EPF drivers")
-> 
-> is missing a Signed-off-by from its committer.
+Ouch, that won't obviously work so please ignore this! :-) Sorry.
+It really needs to be !TCG_IBMVTPM because otherwise TCG_TIS_CORE
+or TCG_CRB would leak the code over there.
 
-Should be fixed now.  Thank you!
-
-	Krzysztof
+BR, Jarkko
 
