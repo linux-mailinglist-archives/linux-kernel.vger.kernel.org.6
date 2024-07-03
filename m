@@ -1,125 +1,126 @@
-Return-Path: <linux-kernel+bounces-239756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287909264FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:37:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063E19264FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB804281DC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:37:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A195B1F2167D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F182618133A;
-	Wed,  3 Jul 2024 15:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6875C181D00;
+	Wed,  3 Jul 2024 15:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="onk8DFpu"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ncXIeeVq"
 Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09AF17BB3E
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38072181B9A
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720021063; cv=none; b=ZRsYKO40dbUz3In6z5D2r/dA1bZDd/hTZWTzj3168jYKKHzC1GaJHOqziGrlWr9eRVPrxMtEEh147Mm7IuUXPuA8WYHG/sdRWNO7mODJkl1N+N1UA/22B5YH5l34C5wdDzNQNWsZgPeZxtIrRBzN3JKpTYVXCa5seQs5pFjR9mU=
+	t=1720021065; cv=none; b=PTEtTR/CTfRs1aSBkVFViUArlM+laOdMc6YTSHwE5COfIB6eUC8q2r6EAFEHvJtfuyyhLOQA/lpMxdFuvmvkOeXSNdfT7L97owljrSPY5WGUlaPJ5SBliEIkfHEQDglpTkjt73f6u9uCUOzwXO9vF4tx/7oIWZ0+DgKMUpSqMNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720021063; c=relaxed/simple;
-	bh=UuuWaa0tC3y7wOOJIpWxBS3gznzmQGKFf0mmHMtUpgQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Ui35J0r1ERktCzPI3px8Dr7sh+DJETk58MXx60ka1WCSAbInPXJAxFbKnpv4m2dmowaNCFSVexOhlCCMz/feWqJa9Zr4/sD/cOgACeK7V2fje2ueUa2oKAc7WzY0yfVDdjIz0n9Q/u0VTj6YRJOixeKo/EE6/i/uM5SN2MCdewY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=onk8DFpu; arc=none smtp.client-ip=209.85.128.73
+	s=arc-20240116; t=1720021065; c=relaxed/simple;
+	bh=4tm4poGH1Qp2f/Ekw2ZcGWDQwJwexwXTaGlBJ4EKROU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MMSgHXnL437ZbtCC3/EpFuMuykDR3SGIZFZK8VFuHT/9hqiwZ1QKegkeTfCPfu2UIIfTferPtF2HnepRGhOv7eFvTgfK72i9H+sWWVuJIAtsh/qLfRI6/+a6wi9wxt6cz9vTO/Catb8hCnIyo4xEK3IV+JtWxzu6ub+/BPo+zM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ncXIeeVq; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-42566e8a995so41112105e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 08:37:41 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-424a5a5f024so36337695e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 08:37:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720021060; x=1720625860; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sXHeYBx1feIyYBvodN+uyHwwuOXvCzbpoETmGReNpnA=;
-        b=onk8DFpuxdpJCUTbcDyJLQ+/+EmgXGSU3ufTfhqv0porDu7dZgV6wlwbT+MqeMGhnB
-         6v9YztyRSbn4feCJQYKfHcmtXiXNjBHkxsr5w/LdYJ6apiVWe+Mcp56sd5VZt/uy8/zL
-         EzbmKlbYf3IoaTKSEXvEQWqXMUs0tE2FCSLonA1x0iLwsZ8JPGFTZxiLmfkH1GZBwSqr
-         M0jzEsAVHkPir3BiqlFiUjl6b2g6ICZEOn8mmEbrAew0f9C5F9b+BUWL02sd2avW9hUw
-         ZlgaojMSutc8k1v1R4HtpTSnYom9vWxdf5t0IL3S0H81/AgcORiEKFd5yaGYx/tPPTNM
-         rLIg==
+        d=google.com; s=20230601; t=1720021063; x=1720625863; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QXlYYR1UR9cqAQ1pIZHR6lAQLRa2deLFoE8lo+c+kks=;
+        b=ncXIeeVqNqg88UIN/ehLAdSxkKC+IvoAmhuPMGRtbM5tpCyMVrEUK5qCz+J44iPXgi
+         lz43z066uLCtJBcbSrskIi00U/2eGxkfKoyY5TaV4RTBs79l1Ib16TrCj3H32TOwxEKI
+         1ElkXZdegGxdElyW5AVymiAOvBNRZfPf7/176/LFG10SyxnVumd75lCb9xPzEwR2Lhry
+         vKQEM7qW4/iZ391d9kXxb4ev0TMTcdKcUiVxMqgW0uEjyMzP2PCtTswCJOP1nwT/Xvt4
+         E7iC8Xm8QBOUqt41xBew9Q1TVCxlAZDjnaM46XIEiBg8rNlkh4Z+g1s2mHSoL7jP+tmU
+         ln4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720021060; x=1720625860;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sXHeYBx1feIyYBvodN+uyHwwuOXvCzbpoETmGReNpnA=;
-        b=XGaO1bPCrsM4kzO6ZRU23/aSt2USgkJu5wWbjUt1Gqlbj3e1YZb6aDWGidv8I0H66i
-         ZOiWq5ecJaqJffbf1NGBat2Dr6kLwOfYK+du8m/5QqRKSirWRgKsnKu4jrvr9Cjy3+vu
-         MW+MKsUQoiTs6erCzb0YOgw4sEpwSG7fWOFVGdyJO0q/osIGfKaY744ojnqEbzEw6oqW
-         Q1ozhoOdMO8lyBnIIQgQsmxyyQKLIPITT9SYVBLXjMeqpc4YXkonjm6WE/g0C8X0f7Uq
-         ez1DMU+P+wULMHPnSZi4nT89w1bHazNSr1qYv3gTOXUlK5ck07zO3h+YrxhkGsSEkTyu
-         CFRw==
-X-Gm-Message-State: AOJu0Yy0bF4ud6eDdO5S9cyNX57YtBecELJYkbUpv+Bnm1PlFV+CMtkH
-	bHUd9UU7DOkPKsKKvaZFJbpDcpG6xtXEj2Ph6HSf3Q/UmZLLZjxsY6iVHbFUGMcI3SNV7YS6/bt
-	NrSe6Bn7l+JTlyBAy3F592kGWYg==
-X-Google-Smtp-Source: AGHT+IGSiEEFTCajMYHomHUZhVpXcTcBj4lQBmYUjRjnpTt9U/W1MKTV3Bdokpkt0CdvJgVhHM+9bzWcmGA7t0/TMvg=
+        d=1e100.net; s=20230601; t=1720021063; x=1720625863;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QXlYYR1UR9cqAQ1pIZHR6lAQLRa2deLFoE8lo+c+kks=;
+        b=xQ7sEIo0SipBUUjQOOMXf+h6hXcqDp2dsh3bsNBfCuJMDXhH2ee/wlao1pOC2eEQ14
+         4VFM9Cp+xX9GNfSkchJZRZcLgVbLpN+NJBy32d0OddxeKV1COqTcF2raKyAtDcdO51rJ
+         tiXpWv0v1y1dPU68egr4nqQtXoMqvxWE5UMF2OJwCgDo0DAlf2qQ3yNybs6WKK7AuM2D
+         qRLpqUcyo24rVy0BW771iB0K99g/zFb2PI77X01CgSQskv0hwy91Vym/selD2VrassJb
+         nyL1FbiElNei7kBeQ5favWXjdsx+A7vsqxrZ00KxA9Umg/0G6uMGIz7iXY4J8LaE46Qg
+         q6VQ==
+X-Gm-Message-State: AOJu0YxerfXRPDWK8o3zus6FPVoTAoKiCBI2UDpzE/2r1w/P1Z63LE+Z
+	Q2PYjSRZ9c5/rCuSi3qFw6C6bIwi0QBClekhh3eoZEl+/h8TTzTNRxZhJn7I7Sfsbh4x6hGB94j
+	Sux/e2oW2wdQVZZqNEZX3STwWkg==
+X-Google-Smtp-Source: AGHT+IFK31UsAzUApygH4p1vn9PaZfFSeq5R9qd5sAlUzx8hcFcelv/46dvTQSMU89/uRNfJ9fru0q36VeOeQRptLhU=
 X-Received: from sebkvm.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:cd5])
- (user=sebastianene job=sendgmr) by 2002:a5d:6d8a:0:b0:367:4e17:3ec6 with SMTP
- id ffacd0b85a97d-3677569d1e4mr17528f8f.2.1720021060119; Wed, 03 Jul 2024
- 08:37:40 -0700 (PDT)
-Date: Wed,  3 Jul 2024 15:37:30 +0000
+ (user=sebastianene job=sendgmr) by 2002:a05:600c:3ba6:b0:425:6c3d:36cd with
+ SMTP id 5b1f17b1804b1-42579fed62cmr919245e9.0.1720021062606; Wed, 03 Jul 2024
+ 08:37:42 -0700 (PDT)
+Date: Wed,  3 Jul 2024 15:37:31 +0000
+In-Reply-To: <20240703153732.3214238-1-sebastianene@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240703153732.3214238-1-sebastianene@google.com>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240703153732.3214238-1-sebastianene@google.com>
-Subject: [PATCH v3 0/2] misc: vcpu_stall_detector: Add a PPI interrupt
+Message-ID: <20240703153732.3214238-2-sebastianene@google.com>
+Subject: [PATCH v3 1/2] dt-bindings: vcpu_stall_detector: Add a PPI interrupt
+ to the virtual device
 From: Sebastian Ene <sebastianene@google.com>
 To: arnd@arndb.de, gregkh@linuxfoundation.org, will@kernel.org, maz@kernel.org, 
 	Rob Herring <robh+dt@kernel.org>, Dragan Cvetic <dragan.cvetic@xilinx.com>, 
 	Guenter Roeck <linux@roeck-us.net>
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	kernel-team@android.com, Sebastian Ene <sebastianene@google.com>
+	kernel-team@android.com, Sebastian Ene <sebastianene@google.com>, 
+	Conor Dooley <conor.dooley@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+The vcpu stall detector allows the host to monitor the availability of a
+guest VM. Introduce a PPI interrupt which can be injected from the host
+into the virtual gic to let the guest reboot itself.
 
-I am re-spinning the patches as last time I accidentally sent v2 twice
-without bumping the version.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Sebastian Ene <sebastianene@google.com>
+---
+ .../devicetree/bindings/misc/qemu,vcpu-stall-detector.yaml  | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-This is a small update of the previously introduced vcpu stall detector
-which adds an interrupt to the virtual device to notify the guest VM in
-case it stalls. This lets the guest VM to handle the reboot and to
-panic in case it expires. 
-
-Changelog:
-
-v2 -> current:
-* fixed the build error reported by the Intel robot
-  (https://lore.kernel.org/all/202406132132.FBKSWFav-lkp@intel.com/)
-* v2 was sent mistakenly on the list without bumping the version to v3. v3
-  should be the correct version of this patch.
-
-v1 -> v2:
-* 1/2 : collected the Ack from Conor Dooley, thank you Conor !
-* 2/2 : applied the feedback received from Conor and used
-	platform_get_irq_optional. Removed the error messages during
-	probe
-
-Link to v2:
-https://lore.kernel.org/all/20240611110136.2003137-2-sebastianene@google.com/
-
-Link to v1:
-https://lore.kernel.org/all/20240523160413.868830-1-sebastianene@google.com/
-
-Thanks, 
-
-Sebastian Ene (2):
-  dt-bindings: vcpu_stall_detector: Add a PPI interrupt to the virtual
-    device
-  misc: Register a PPI for the vcpu stall detection virtual device
-
- .../misc/qemu,vcpu-stall-detector.yaml        |  6 ++++
- drivers/misc/vcpu_stall_detector.c            | 31 +++++++++++++++++--
- 2 files changed, 35 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/misc/qemu,vcpu-stall-detector.yaml b/Documentation/devicetree/bindings/misc/qemu,vcpu-stall-detector.yaml
+index 1aebeb696ee0..e12d80be00cd 100644
+--- a/Documentation/devicetree/bindings/misc/qemu,vcpu-stall-detector.yaml
++++ b/Documentation/devicetree/bindings/misc/qemu,vcpu-stall-detector.yaml
+@@ -29,6 +29,9 @@ properties:
+       Defaults to 10 if unset.
+     default: 10
+ 
++  interrupts:
++    maxItems: 1
++
+   timeout-sec:
+     description: |
+       The stall detector expiration timeout measured in seconds.
+@@ -43,9 +46,12 @@ additionalProperties: false
+ 
+ examples:
+   - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
+     vmwdt@9030000 {
+       compatible = "qemu,vcpu-stall-detector";
+       reg = <0x9030000 0x10000>;
+       clock-frequency = <10>;
+       timeout-sec = <8>;
++      interrupts = <GIC_PPI 15 IRQ_TYPE_EDGE_RISING>;
+     };
 -- 
 2.45.2.803.g4e1b14247a-goog
 
