@@ -1,128 +1,97 @@
-Return-Path: <linux-kernel+bounces-239781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46A392653C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:47:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2C6926537
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5C7F1C22D3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:47:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AC5AB278C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F801DA319;
-	Wed,  3 Jul 2024 15:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB11B17DA2E;
+	Wed,  3 Jul 2024 15:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="BP4wdYBK"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DQ+TqpKz"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FC7442C;
-	Wed,  3 Jul 2024 15:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0201DA313
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720021640; cv=none; b=HG24GmT4rR0RFR5qDNqSQPFV+h62fE+nebWS5htTxeMTWqAOpWWRwsv1Fun61KLJ6Kpw/qHmYDjymGKaZhQLl/bV8fKa8LIFE7Z3lhdO9NLg+u0wSDZjYdMJFJ+KcRAudBkiT8dVyTUccSZ1maaIpUD0VQopzabQt5Fo44NIUn4=
+	t=1720021568; cv=none; b=YbqWqrErsgzXa5gz7tH2UQ7t0lxbSeXGU848gWc/GOdMA1S2Kckw6X7Y7ETp9sOnkhx9l3jmGnKZscEVFLDobXjy0cM2QhTXZGXtlbMo3RD+L9uhe/H/UNC995rhKQjm5lb1cGm4SUcPvfOceEnDoe6qormu6XjrRQxLOIP/PMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720021640; c=relaxed/simple;
-	bh=Q8Xt/8YnnP3LTXdqSBkCU3Ipwti9fbiabN+rpCqT3cg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KWjBkqe/dVp+//I4Nhb5qRruueead9SYjIghOe9lTiCT+QZKs9IIUOBqUlVeJ9SoqJAksGrZaxXaZgcOqVJVcTVHUunnBgieFGehuth4ZN2AdHvSkur+6SaXNQrtMbjOVT3R3xw+HOGUC+x/TGl3orC+q5QCS7jhKyxcDuNe+Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=BP4wdYBK; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 39C38100004;
-	Wed,  3 Jul 2024 18:46:55 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1720021615; bh=aaAtfu0bay8K56ozdAui+ro4SrSIeYspj4YS0cWnXTk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=BP4wdYBK4iQ+N8gE7rk2ZDgJNwrIPpgCAi4uledt8oN9WTRG6s7zzVq2ZvS462k8u
-	 TCvEP0bNZ3Zx/cLNeJV82cv0YBvomQZYfO0gB9Sn3/QZeCnpceQaQbF7WxmhylLARq
-	 PW1Sk/LfpFLLzj9kWKg4eXgBL4YapDMv04BKhD7XknXnWtzTPNSrQmK5If6f89y321
-	 m8u0B/fY6Jws9bM3R1c+lz82lwrXYzq+jHBYPvW5G4SNrQ6vLja0azfh1hgsImE3ZQ
-	 R+5G///N7vM6Yi+xrRlQrs0Fh6uYk41aKzq4LKSvp7FH3f/01TLFF5Ts2tZkxsB2At
-	 JiaPVpdlwJzZg==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Wed,  3 Jul 2024 18:45:53 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
- 18:45:33 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Michael Hennerich <Michael.Hennerich@analog.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Lars-Peter Clausen
-	<lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Datta Shubhrajyoti <shubhrajyoti@ti.com>,
-	<linux-iio@vger.kernel.org>, <linux-staging@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Dan Carpenter
-	<dan.carpenter@linaro.org>
-Subject: [PATCH v2] staging: iio: frequency: ad9834: Validate frequency parameter value
-Date: Wed, 3 Jul 2024 18:45:06 +0300
-Message-ID: <20240703154506.25584-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240703104734.12034-1-amishin@t-argos.ru>
-References: 
+	s=arc-20240116; t=1720021568; c=relaxed/simple;
+	bh=rby6cMYX9h9HE3RYZ5fbbMR6VNsM8xy3EgH2Q9E2mew=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jWP/f8NvPdLnoj/F+7BXqvnBO5L5SaST/DYORtMx8hxASB2BkOGr8xCiLiPe2BLKmmM3whr7lEGSdK5CeZocUftFHvhhy72JZyCPD1/kXIcKyhdIzUi7RZba1UccC1jAwP7gPwAt9tpUVyTPTH6zEE148lgo6Nq1DbRz+x88hSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DQ+TqpKz; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720021560;
+	bh=rby6cMYX9h9HE3RYZ5fbbMR6VNsM8xy3EgH2Q9E2mew=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DQ+TqpKz2ADxSXkJmHHiavyyDGAw/1wrZEkgaGYnU/O690nfcO1jrMBcEYigXtKF+
+	 R6W1XLXnVow8Rp1LazP3YgKyeOLzpvq/cg3CIamxpTmQpZVfmAWF5AD10vVcA/RMfU
+	 5+/mR5dmmOlwr2xE9J6E2u2XF5lTLGDHY/i0YPPwtWrv+2BUhG9VmMz1NWoeCagq6r
+	 +GtJwiCFPw+jzQ0F1w9WWZdpq93j/wyVtAJWOIbh/V82P90rFiG/414/Wy59OHxddH
+	 Xlg8Gh8foMSDOq4o8DJAemZADRa99dSPMRBeVgmO/wixFM8faEZ8D+AH4B35Y41RiY
+	 +ujL6+KDDqCDA==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id F37113782039;
+	Wed,  3 Jul 2024 15:45:59 +0000 (UTC)
+Date: Wed, 3 Jul 2024 17:45:58 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>, Liviu
+ Dudau <liviu.dudau@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/7] Support fdinfo runtime and memory stats on
+ Panthor
+Message-ID: <20240703174558.36387dc8@collabora.com>
+In-Reply-To: <157b20fa-078a-479c-bb40-017d16d55c21@arm.com>
+References: <20240606005416.1172431-1-adrian.larumbe@collabora.com>
+	<ae1ec268-fd76-48b5-94f9-761565153e12@arm.com>
+	<uzsqh2b3j7hp6z3zcjcsxxudt2sucgutzwof5bhsvjjaeusigy@wvfhibqtyz4y>
+	<157b20fa-078a-479c-bb40-017d16d55c21@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186312 [Jul 03 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/03 14:53:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/03 06:16:00 #25818842
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-In ad9834_write_frequency() clk_get_rate() can return 0. In such case
-ad9834_calc_freqreg() call will lead to division by zero. Checking
-'if (fout > (clk_freq / 2))' doesn't protect in case of 'fout' is 0.
-ad9834_write_frequency() is called from ad9834_write(), where fout is
-taken from text buffer, which can contain any value.
+On Wed, 3 Jul 2024 16:29:00 +0100
+Steven Price <steven.price@arm.com> wrote:
 
-Modify parameters checking.
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index 79ffcbc41d78..42929e147107 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -2926,6 +2926,7 @@ queue_run_job(struct drm_sched_job *sched_job)
+>                         pm_runtime_get(ptdev->base.dev);
+>                         sched->pm.has_ref = true;
+>                 }
+> +               panthor_devfreq_record_busy(sched->ptdev);
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Oops, we're definitely lacking a busy event if all groups were idle but
+still assigned a FW slot. Mind sending this as separate fix?
 
-Fixes: 12b9d5bf76bf ("Staging: IIO: DDS: AD9833 / AD9834 driver")
-Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
-v1->v2: Check if clk_freq == 0 directly instead of fout == 0
- as suggested by Dan
-
- drivers/staging/iio/frequency/ad9834.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/iio/frequency/ad9834.c b/drivers/staging/iio/frequency/ad9834.c
-index a7a5cdcc6590..47e7d7e6d920 100644
---- a/drivers/staging/iio/frequency/ad9834.c
-+++ b/drivers/staging/iio/frequency/ad9834.c
-@@ -114,7 +114,7 @@ static int ad9834_write_frequency(struct ad9834_state *st,
- 
- 	clk_freq = clk_get_rate(st->mclk);
- 
--	if (fout > (clk_freq / 2))
-+	if (!clk_freq || fout > (clk_freq / 2))
- 		return -EINVAL;
- 
- 	regval = ad9834_calc_freqreg(clk_freq, fout);
--- 
-2.30.2
-
+>         }
+>  
+>         done_fence = dma_fence_get(job->done_fence);
 
