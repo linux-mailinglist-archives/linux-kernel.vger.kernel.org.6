@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-239275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7047A9258BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:34:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C57C9258AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C3A290F89
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:34:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03E961F28020
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A1A16C448;
-	Wed,  3 Jul 2024 10:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E04917A5A8;
+	Wed,  3 Jul 2024 10:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Wldcbtw6"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hxvC0SL5"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E151176FA0;
-	Wed,  3 Jul 2024 10:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7831741CF;
+	Wed,  3 Jul 2024 10:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720002614; cv=none; b=BSXXbrUvlfi4mMgQBYvXUiLeqVMAjrLkz6wRl90iCe9clVXIpOL/hRUehwiuN+cuwCYx0w5xf0yp+cRKahgBU+NxfZeRvy0SfCtVf1rBozJQSRrNBJ21dyyGSEvhQ6MMIE9Q/QgwBwti97bXQuORqlKT04bMkY9/FR9NbnU6oew=
+	t=1720002562; cv=none; b=plng3GkSr3yBU9G0kBHQd56Z3YQb4MJEO1jODnc9lTfiHw8fIW+DZUBoRdRmgYu4dQ7OKiu9V6OE3wCVaz+CteiuFpTefpLPyoRLoTP34kFQkdczDzTsiRYN2vy8fliYFNMsBLiseuV8KuNO53rnl2T0TlGZcwdwMUb5mWcxAKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720002614; c=relaxed/simple;
-	bh=8i5Z2KfBYTZAJwGXyHoxcKMWI4cBoFSSa/Wp6ippfD0=;
+	s=arc-20240116; t=1720002562; c=relaxed/simple;
+	bh=flQEluk5hLljQfPymWhZA5C4pdYlqlYSYYtSaCbnjQ8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D1qJ9gJwQDqhyzWBP+ezFaax9+FeSVUrcf4ZFCBKOmesnjErgxg0jO3evbEgY78VKbv3Bh5rR6UfU6pHioU/dFnlJjbeR6F2Bjm1+nyAjxElGuwREfxDDzXj0qjpdSd3/Z/2SCeG6yoUx3PWgUhErs59RTuBEkWP2gBRv5nNi1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Wldcbtw6; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=GLzJ4RfoVfw/DzkMkLjTO+YRK0vULr8UKAU1crXo1wwNxblpHYfRQkQWHvibFBsgtHB1NslFhj1MDAJO3ZKJKmfG+p2wQIfhRn1vLXaeisLgdxCcUNBZmcO45xX8Ggy3hLWpe4Zb3azi0RcGdMHsxmgIXFD2U7ncf3i0WtQtkKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hxvC0SL5; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1720002613; x=1751538613;
+  t=1720002562; x=1751538562;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=8i5Z2KfBYTZAJwGXyHoxcKMWI4cBoFSSa/Wp6ippfD0=;
-  b=Wldcbtw6Iec00tl8VArPbQgqOkfbLgXcCFJlnxKxTO3EFEriO42rZols
-   voecWQASntRhv0udOIMhXqw/JBDwH7KuXxE34G6h3LNMeqGt0EVXBZMwL
-   LnDjdOBzCLqAv2gWZAcU5sBFAi/Gmkg3HX7EgD9YXcGuON28UXWnJCNwQ
-   TfwSu0dLAZx5rRZDDSFQ6Wm0Rkd/p+krbn/KU7IcJ3HjFiuUkDyMYSrlH
-   QJTJQINdVfeb3iOeZbps1eoUxLmC1udJcDDBrawEh8QtR2kOVMO0yVRtQ
-   06H06smCbRayqbKLoNaVJyliL2HwTG3uRUKzqXBNkU28EG5XRveKdXiQJ
-   w==;
-X-CSE-ConnectionGUID: hLLhwY7cQcOyno5TMnxZqQ==
-X-CSE-MsgGUID: vS98msG8QLSgNJkd/SwUsQ==
+  bh=flQEluk5hLljQfPymWhZA5C4pdYlqlYSYYtSaCbnjQ8=;
+  b=hxvC0SL5ERbvpzes7OtZdVWSR+R488fSPeb/fjD/nIQM7UTxwQ1QNsdr
+   ZXUDSfQHfH5I2K0N9k1kb2PUgxH1IbwD5X1d4xZvauqhebd50cVihpM7A
+   lofzAzn5FMFpds6+RJaxUjQbHyHraohuapRxgZdCmvlQtrhMib10h01D0
+   7GozbrjVRRl8921Lsb14WzaPsi2C0ysmC3FWyI8Lr6/vOecIv69dLRZnK
+   LTVdFNaTcSks6ReW1u0MlmDLyE06wBINPB/9JC9TsH0brhtJ93z5h1Gc7
+   hAXJiER1I3ppQ6aa0NEHE9K3fwIS5cAMAgwXjCPmEG1trvHrd5TJgPd1y
+   A==;
+X-CSE-ConnectionGUID: oB4ZDQLAQnSdyIMLfIgWpQ==
+X-CSE-MsgGUID: GC0AUHZYTDqJd9oYsIyo5Q==
 X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
-   d="scan'208";a="29441574"
+   d="scan'208";a="259682246"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Jul 2024 03:30:12 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Jul 2024 03:29:21 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 3 Jul 2024 03:29:02 -0700
+ 15.1.2507.35; Wed, 3 Jul 2024 03:29:09 -0700
 Received: from che-lt-i67070.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 3 Jul 2024 03:28:57 -0700
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 3 Jul 2024 03:29:04 -0700
 From: Varshini Rajendran <varshini.rajendran@microchip.com>
-To: <p.zabel@pengutronix.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
+To: <claudiu.beznea@tuxon.dev>, <sre@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <linux-pm@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>
 CC: <varshini.rajendran@microchip.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v5 21/27] dt-bindings: reset: atmel,at91sam9260-reset: add sam9x7
-Date: Wed, 3 Jul 2024 15:58:54 +0530
-Message-ID: <20240703102854.196354-1-varshini.rajendran@microchip.com>
+	<krzysztof.kozlowski@linaro.org>, Sebastian Reichel
+	<sebastian.reichel@collabora.com>
+Subject: [PATCH v5 22/27] dt-bindings: power: reset: atmel,sama5d2-shdwc: add sam9x7
+Date: Wed, 3 Jul 2024 15:59:02 +0530
+Message-ID: <20240703102902.196403-1-varshini.rajendran@microchip.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240703102011.193343-1-varshini.rajendran@microchip.com>
 References: <20240703102011.193343-1-varshini.rajendran@microchip.com>
@@ -80,30 +81,29 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add documentation for SAM9X7 reset controller.
+Add shutdown controller DT bindings.
 
 Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- .../devicetree/bindings/reset/atmel,at91sam9260-reset.yaml    | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/power/reset/atmel,sama5d2-shdwc.yaml   | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/atmel,at91sam9260-reset.yaml b/Documentation/devicetree/bindings/reset/atmel,at91sam9260-reset.yaml
-index 98465d26949e..c3b33bbc7319 100644
---- a/Documentation/devicetree/bindings/reset/atmel,at91sam9260-reset.yaml
-+++ b/Documentation/devicetree/bindings/reset/atmel,at91sam9260-reset.yaml
-@@ -26,6 +26,10 @@ properties:
-       - items:
-           - const: atmel,sama5d3-rstc
-           - const: atmel,at91sam9g45-rstc
+diff --git a/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.yaml b/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.yaml
+index 8c58e12cdb60..0735ceb7c103 100644
+--- a/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.yaml
++++ b/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.yaml
+@@ -22,6 +22,9 @@ properties:
+       - enum:
+           - atmel,sama5d2-shdwc
+           - microchip,sam9x60-shdwc
 +      - items:
-+          - enum:
-+              - microchip,sam9x7-rstc
-+          - const: microchip,sam9x60-rstc
++          - const: microchip,sam9x7-shdwc
++          - const: microchip,sam9x60-shdwc
  
    reg:
-     minItems: 1
+     maxItems: 1
 -- 
 2.25.1
 
