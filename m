@@ -1,126 +1,149 @@
-Return-Path: <linux-kernel+bounces-239748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6539264DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:30:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A9D9264DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BEC2840A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:30:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12FE81C2217C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67F517B4ED;
-	Wed,  3 Jul 2024 15:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E6D180A9C;
+	Wed,  3 Jul 2024 15:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q1P8l0nZ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OV1ak5Tv"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1FE522F;
-	Wed,  3 Jul 2024 15:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9EE522F;
+	Wed,  3 Jul 2024 15:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720020636; cv=none; b=qaVH3Ef9w86BM4cL7HCJVRadzH4S2sZsUrzAY91f9vlMXcJTmF+g0HBSHXA2bvgwAcSDXJ0DYe812Y3VU1GFVfLuSwe+oT6BNBfMsHVhchuFr9gXdt2EzoBMhAmmAGTdZukUDj3yLmzFhu1FOO+1sX6IqkcHDJoQgFahk4DsSAg=
+	t=1720020700; cv=none; b=ZFPk8LnoOk7y5MtGV7nFoZx2N5ZblYx54IAfoHmuC8+QfCc23eKv04JkMrGBJscdf5jdjF9hfMlwFCwcAZlMm7VkhvjiLTZeFiQPxjYk5VOBx+SyFL+jffmi1Ik6qvcLWU/ePdLFb9/z2CNwD9hVea1zJkkXLTIqpI1vnn+HKDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720020636; c=relaxed/simple;
-	bh=8bOWBHkjVoAwGSn9nwmSK86pe9A0lVwAvovb0StNCrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KRE95CSMgR7m+ie17uAbxxt+WZrOCKRM8Qr6aGxWGrlw3Njl8gBNW7XfMsq6mS0xht7hJIFu4RNkMNj0CLJLq+xXc1RMmeAqFsihr4MNyGc7gL59GHY5IT4l+iXAS4+72OZIYste/PL/ySf46IB/tYmMqIu3SBoHN0TMdtW59eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q1P8l0nZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zcWcmvAw1YBOX10IyvPiRZDRC1NoT/GGhdbFumF76t8=; b=q1P8l0nZvZ3ZmyRQoh8eXHd0q5
-	PJpP/d/AHm+OZzKEk3EBSEiTplw+g1aR16vRroiIu/rYYIK4TOy8lKQw86u2zMSW09B98jrdfEEa/
-	J5KqfqN1ymmEeEJGLvzWuGRiL3rsWTNFSI7EHLkMG9mPgfEDYSYtqaEyACOCNbqbxcqxFrIK+6EAB
-	2pWyVoglf5KX7KFDrRHC7Hos8JdK8FupCU9J/GuTJEOImpoCY1nqqIpdfXcaYkqOOY+K2VssQp23c
-	Fk2qNKG7+6SZ029q1b6dxBkVSltpv5zsBMDrMT6Ol9UoiDYa0cKrDokq20G8a11jZgndsqx+6XbR/
-	w6aqeyYQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sP1wH-0000000AgNa-49ZW;
-	Wed, 03 Jul 2024 15:30:34 +0000
-Date: Wed, 3 Jul 2024 08:30:33 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
-	Sami Tolvanen <samitolvanen@google.com>, Song Liu <song@kernel.org>,
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jikos@kernel.org, joe.lawrence@redhat.com, nathan@kernel.org,
-	morbo@google.com, justinstitt@google.com,
-	thunder.leizhen@huawei.com, kees@kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH] kallsyms, livepatch: Fix livepatch with CONFIG_LTO_CLANG
-Message-ID: <ZoVumd-b4CaRu5nW@bombadil.infradead.org>
-References: <20240605032120.3179157-1-song@kernel.org>
- <alpine.LSU.2.21.2406071458531.29080@pobox.suse.cz>
- <CAPhsuW5th55V3PfskJvpG=4bwacKP8c8DpVYUyVUzt70KC7=gw@mail.gmail.com>
- <alpine.LSU.2.21.2406281420590.15826@pobox.suse.cz>
- <Zn70rQE1HkJ_2h6r@bombadil.infradead.org>
- <ZoKrWU7Gif-7M4vL@pathway.suse.cz>
- <20240703055641.7iugqt6it6pi2xy7@treble>
+	s=arc-20240116; t=1720020700; c=relaxed/simple;
+	bh=W6d779gQlWaYtbc9wFUlOaJBpHXd3o1tMTSodUuObKg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXsXWnjgsnLCglYdxXgALTVGH1TuROWlq6wsmceACyxDsUXtxzA+a1ZgizIP396Gx71Mw8g85rzHSUT5ahGFftfGt7z0XpwP2SYt36NKVg/ueyMTlynIr1NjcVPsfDEcWibp+oaZ1t8LMA+eEiIqveWGu0n7Q0F/DpY8tmDU+b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OV1ak5Tv; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ed5ac077f5so66433911fa.1;
+        Wed, 03 Jul 2024 08:31:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720020697; x=1720625497; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oGl8r8h2GWzUcRtvAkjsagE5Fs/gKmnMGkSQ5k3nUdw=;
+        b=OV1ak5TvHZbew0FtvSQmfBJ9ufyyPygUAlzLe3P/6JNShgJohPkAkb+OEz+vNjHQpR
+         yhDBsrOgnYLH6XnB79V3vBUI478smQa6veuBoiCth+p2k2Gsw2Qr87FJG3vMDqJxxRk1
+         L7npVRMBiBhdW5lHvFtfYWUlcJ3VZdwuZ1ZzK7hncOr8qWMX5soN8n3qm2i/17JwEl3r
+         gjeIXaGu2cANxdJ4wfYxYsfwZZESdQqfH4x+ViIgrwtNHO8Ly08daTKIGch+8npqrlUR
+         B5yR8bacLtbSv3+3yBPD3MmW37nWyRrgN1S8wLxMTuaky74SRASuhSbjlSNkSdQKU6HL
+         v7nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720020697; x=1720625497;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oGl8r8h2GWzUcRtvAkjsagE5Fs/gKmnMGkSQ5k3nUdw=;
+        b=AQWS7uWu2EMjd86GscYnGv0DmMaMmg5OCnaOySn4Rtyb+D5gt9wDP2qh179Q1uEDCk
+         2586jQ6E2gsWAOoUcoxiXYG0sJwXCFpRkYLfikivLRpL6KQqljCc0T3E5cKZ/1Y7Y6Q7
+         dJwKrdOXa1gBv0d9/FoRK8rIepOHuwFPs8DKEaMSMUEY21I0Ire7yLAwMn0S5n1pxI86
+         lrCHzvZ2v+aUTJg0UpW/Ms4oXPkE2XPIkmOirDoLVGfyA0A8zHB6x65l9itdl7y/9Zia
+         Y9Wkpk/E64N5Az3fNUa1JjGG0NPPoTOzqNcpqRK4k40WR+mfxEgujn2IbX3iifdSRupP
+         /FnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUs2q8ezuDY9UZlScTAZzzkQaXgCYdv7OuX6B+Jdj6U36Kha34nB6hk8wbsvLvWVIKuprz8jiEt2EUyZNYfwv32KDkfxVRSpknn8YnC1OJmqdeQXxXOyILBEFsWfC+Ugu8qAiuITz8439dPh+YVqsfT+tsslTbkJuzn1ZLXmzksqqt6lVKz
+X-Gm-Message-State: AOJu0YztjByMSoK/kZxRXLMe9p4c3FdGENDy9XlHhM+R0v1JG+ECS1tP
+	MD8qVOcFhyTI1bahPQiUcVeKhiY00PNNPbwilBXZqTTvC5FKa0us
+X-Google-Smtp-Source: AGHT+IEN6ACOKucYGCCELlsOgPL2NGmIpamNDcedLgopqiZwApy/KcRgIey9drUN5OhzEXUMB4f6/w==
+X-Received: by 2002:a2e:9a11:0:b0:2ee:89a5:95d4 with SMTP id 38308e7fff4ca-2ee89a596femr5948591fa.6.1720020696997;
+        Wed, 03 Jul 2024 08:31:36 -0700 (PDT)
+Received: from krava ([176.105.156.1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42573c55ff4sm219598615e9.46.2024.07.03.08.31.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 08:31:36 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 3 Jul 2024 17:31:32 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
+Message-ID: <ZoVu1MKUZKtPJ7Am@krava>
+References: <20240701164115.723677-1-jolsa@kernel.org>
+ <20240701164115.723677-2-jolsa@kernel.org>
+ <20240702130408.GH11386@noisy.programming.kicks-ass.net>
+ <ZoQmkiKwsy41JNt4@krava>
+ <CAEf4BzYz-4eeNb1621LugDtm7NFshGJUgPzrVL7p4Wg+mq4Aqg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240703055641.7iugqt6it6pi2xy7@treble>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzYz-4eeNb1621LugDtm7NFshGJUgPzrVL7p4Wg+mq4Aqg@mail.gmail.com>
 
-On Tue, Jul 02, 2024 at 10:56:41PM -0700, Josh Poimboeuf wrote:
-> On Mon, Jul 01, 2024 at 03:13:23PM +0200, Petr Mladek wrote:
-> > So, you suggest to search the symbols by a hash. Do I get it correctly?
-
-I meant, that in the Rust world the symbols go over the allowed limit,
-and so an alternative for them is to just use a hash. What I'm
-suggesting is for a new kconfig option where that world is the
-new one, so that they have to also do the proper userspace tooling
-for it. Without that, I don't see it as properly tested or scalable.
-And if we're gonna have that option for Rust for modules, then it begs
-the question if this can be used by other users.
-
-> > Well, it might bring back the original problem. I mean
-> > the commit 8b8e6b5d3b013b0 ("kallsyms: strip ThinLTO hashes from
-> > static functions") added cleanup_symbol_name() so that user-space
-> > tool do not need to take care of the "unstable" suffix.
+On Tue, Jul 02, 2024 at 01:52:38PM -0700, Andrii Nakryiko wrote:
+> On Tue, Jul 2, 2024 at 9:11 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Tue, Jul 02, 2024 at 03:04:08PM +0200, Peter Zijlstra wrote:
+> > > On Mon, Jul 01, 2024 at 06:41:07PM +0200, Jiri Olsa wrote:
+> > >
+> > > > +static void
+> > > > +uprobe_consumer_account(struct uprobe *uprobe, struct uprobe_consumer *uc)
+> > > > +{
+> > > > +   static unsigned int session_id;
+> > > > +
+> > > > +   if (uc->session) {
+> > > > +           uprobe->sessions_cnt++;
+> > > > +           uc->session_id = ++session_id ?: ++session_id;
+> > > > +   }
+> > > > +}
+> > >
+> > > The way I understand this code, you create a consumer every time you do
+> > > uprobe_register() and unregister makes it go away.
+> > >
+> > > Now, register one, then 4g-1 times register+unregister, then register
+> > > again.
+> > >
+> > > The above seems to then result in two consumers with the same
+> > > session_id, which leads to trouble.
+> > >
+> > > Hmm?
+> >
+> > ugh true.. will make it u64 :)
+> >
+> > I think we could store uprobe_consumer pointer+ref in session_consumer,
+> > and that would make the unregister path more interesting.. will check
 > 
-> Are symbol names really considered user ABI??  That's already broken by
-> design.  Even without LTO, the toolchain can mangle them for a variety
-> of reasons.
-> 
-> If a user space tool doesn't want the suffixes, surely it can figure out
-> a way to deal with that on their own?
-> 
-> > So, it seems that we have two use cases:
-> > 
-> >    1. Some user-space tools want to ignore the extra suffix. I guess
-> >       that it is in the case when the suffix is added only because
-> >       the function was optimized.
-> > 
-> >       It can't work if there are two different functions of the same
-> >       name. Otherwise, the user-space tool would not know which one
-> >       they are tracing.
-> > 
-> > 
-> >    2. There are other use-cases, including livepatching, where we
-> >       want to be 100% sure that we match the right symbol.
-> > 
-> >       They want to match the full names. They even need to distinguish
-> >       symbols with the same name.
-> > 
-> > 
-> > IMHO, we need a separate API for each use-case.
-> 
-> We should just always link with -zunique-symbols so the duplicate
-> symbols no longer exist.  That would solve a lot of problems.
+> More interesting how? It's actually a great idea, uprobe_consumer
 
-While it might solve this other issue, it doesn't solve the rust module
-long symbol name issue.
+nah, got confused ;-)
 
-  Luis
+> pointer itself is a unique ID and 64-bit. We can still use lowest bit
+> for RC (see my other reply).
+
+I used pointers in the previous version, but then I thought what if the
+consumer gets free-ed and new one created (with same address.. maybe not
+likely but possible, right?) before the return probe is hit
+
+jirka
 
