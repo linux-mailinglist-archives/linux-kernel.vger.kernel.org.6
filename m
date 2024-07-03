@@ -1,87 +1,105 @@
-Return-Path: <linux-kernel+bounces-239378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A6BD925E0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:34:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC6B925E39
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C2DC1C238BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:34:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F5E02A2E10
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3686173323;
-	Wed,  3 Jul 2024 11:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xs/PWpUn"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B3F17BB1E;
+	Wed,  3 Jul 2024 11:26:45 +0000 (UTC)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D550C1DFC7
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042CE17B50A;
+	Wed,  3 Jul 2024 11:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720005967; cv=none; b=Kiqs0/6uvRZK6ajb6l2J0cgsyLbCCvTlplPqwkq/eUwkCp58p5sbNpXFwA/qK3OcWitoUSDymdwxPoIMILCraIchOMCN4DmvMIoM52OXmy+h7hNjqlnOJDi60KZOGhk59LV3osU6C8bRBjMS1FYM+X5W6w92LHOxK14p7peIuPk=
+	t=1720006004; cv=none; b=oePtXoB0rXsyhHNda8n6ClJq5iNykn2NblHfPCCRbd1c3BwMGufwcZHJdLe1f1bUQDYs8jBiYT8kQGxMqs3scjDyknjsEZFeqRT89r78sRjobVNKmkCXvRjvl3vguIqs+5acBho4HIeD+IF4CEOvR2JYBW/TueCdwoWnANpQMHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720005967; c=relaxed/simple;
-	bh=XRYe6k301hVMrjUu3bWA/ITB1UE99EqwDnjHlWIAJ5k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tCePeefuQz8Ym+CdL1YhLi9DssDEZu/Ji0ixr2WEHTzoBX3q+OJIQYMj0OhkmgKMhTvDIfvPYlorUTqh/JnZvQStM5b4+szm/o2Wm0+0A/GKAnGr8nqitwPfpElu3YA4vtwb2/ZZgtrLXk8O03NS0UN9/Mo4P9HUxBMgIy9E9GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xs/PWpUn; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1720006004; c=relaxed/simple;
+	bh=NAwTmEHqJI/g5QC50U8AQivwoiPQ/FxFK+E4TqhVNPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fqi2sqIq0HBAj9Zp0Cf1etfHQc73EC/GVg4za4SwiYy9hh4cNJ0PxUzzqxOsbAdqz6nU52Gau/3CvupsiP2u5Ennh+vCUaYMgIXb4VpHTpPsP7ywWVne8tjQ0iUfEhFbBTeE87dg2L3CYtZ1hvbIN7+4S+pZBNysvcfFVmJxqjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d846f43632so1118610b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 04:26:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720005965; x=1720610765; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XRYe6k301hVMrjUu3bWA/ITB1UE99EqwDnjHlWIAJ5k=;
-        b=Xs/PWpUnO8eabG88le2ru+a6lEE87PznR4NtcU7jNoeRYJMwRSFe1du+FbN8IvUjQt
-         vmGpjZVNPqx3pU4HfwYnTNVqJwECBKU2jLErcIcpID4cCKHQy14LKWGn6U6TN9iKPmtU
-         kIw2LSUx0g9bhTFUsjL6TCyTE+9P3501N0LEQAQjd2Bb1Q/Aciom6jWrzRbFlGVKwfD2
-         11qwxFbmt0QDRehz2JCSZR6rN3j/Zp4JJKwLIgtVxYdfVwhgcusrYjCLLWa4ROZCDqev
-         zxYyDsMDXOP7tmI/uxTjQoOHgtQuwMGSpOgwCb6uE1HL6qwjjvxps9k3Gk6YlVaow8/+
-         hdaA==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52e7693c369so7174202e87.3;
+        Wed, 03 Jul 2024 04:26:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720005965; x=1720610765;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XRYe6k301hVMrjUu3bWA/ITB1UE99EqwDnjHlWIAJ5k=;
-        b=YFkAeJiaxVmLzJsThl2ZqCFjR32wviYovaOd9nOBAv/msv05//7kzOce/lyiltTALW
-         pIKfbADnBCu0CzBjPktDilHL/yzR8h03j/Mveh9loBv4XvOmltYHsTXQdJbufwBDAW6m
-         ylYPWskbmruYFsT+iu78RATAnMG5JXQipzA+0G/g+rJyRmEMxRxJHeizA/0lOoyzzLVM
-         q4cTckO2+MjH4f0X6pDzzIZ/mjnfy6cVegNEkc293r2VHbfCg8gf/TQi5KL9sszCvAzS
-         v2ms2H7x7hI5hPs29BLlxyEmIAN2s9UIEGaGHGH5FlzfcYBSdP+v0DrckyvAbHKpKGRs
-         Oebw==
-X-Gm-Message-State: AOJu0YxL/AnEMSY+iOKzZqOGYdKjp2MdE7mx8LVEcLP9z1X+kgfDCkmA
-	AhoZ51ybXKy7rdXpV140/nvUKvUNXlQ6FsaFgtzWUwTR6+3fDxXk
-X-Google-Smtp-Source: AGHT+IHacDzbtTbr32QLqx8IHI1vNzkn4uDv5STPcl0/7fwJz9xPvDR1+JO4LCwb9jKDwTHI2UGFjQ==
-X-Received: by 2002:a05:6808:16a8:b0:3d8:4603:e7c0 with SMTP id 5614622812f47-3d84603ea8cmr6940672b6e.21.1720005964732;
-        Wed, 03 Jul 2024 04:26:04 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080256afaasm10194544b3a.81.2024.07.03.04.26.03
+        d=1e100.net; s=20230601; t=1720006001; x=1720610801;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i6Pb8eWYjG/lUAtf/dpDbWcNlsXUZ5c2rnoW11IR3JM=;
+        b=wbctDzPIt4JNpmEypYhvsTnMZt5SNSG50iLYdX24tr1Vs+tE55AqzDS60igJ8NGmD/
+         doCILuyAzXov32Y+Xctfhs/Cq8V8TXSKym4snvL395Dp/AxO3XtD6BRRtTpI5idr01UI
+         e+gGx9hil4iS3Jv9ZhMSAYoMqEfpM4uSfEv52HeQnNZTgaqcO2Fo8NSw7e6VadkDdxll
+         zXtl6YP25Pa3AJgzLuH83zlZ1EC3zt/e2MI6JbjAFyWB8O9VJq3ErcsH/tObJXypFYPi
+         Jwfgf3b8gAibnoXdzHWRYpQfWthoprLmk0Dz39m8bxIph34EMk3XjGtVbnAd92p4e6XU
+         wBlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVdXboL1NZjCcg//+LAlixOHSTC+j25xKlTsdKHYMKKkLnCXzoey8CeYCR6DC1J9A8/nU7/4BSQa6BTQ4uEL3+pMtJtnXZC7Ml7crDFBUSGG15F6a43LxiW9/mxsWa+hTbPbFeq8dCYlPR8DUz+FH1Fy9Z4ES/D9MknwGyohWClkBk
+X-Gm-Message-State: AOJu0Yy74Wj8SkFIbaKQKmG7FQ+qU+Wc8NzGZHIJhT8CKhRCaV8yVNsh
+	qe/a7qHODPTayBCpui0+feWoNX0Bc//AF//E0CE3/BuOJ29ceY2t2LGNAg==
+X-Google-Smtp-Source: AGHT+IEbAQ8nFW0BsPbyiOwXt/vQdxbqW/1IV4VaU6x/l7d9vtN8XdicV2zAwUK37aIl/GyFuMd2lA==
+X-Received: by 2002:a05:6512:3b91:b0:52e:7f87:4e66 with SMTP id 2adb3069b0e04-52e826ee70amr8624122e87.49.1720006000901;
+        Wed, 03 Jul 2024 04:26:40 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-005.fbsv.net. [2a03:2880:30ff:5::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c8368esm6843735a12.19.2024.07.03.04.26.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 04:26:04 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] possible deadlock in team_del_slave (3)
-Date: Wed,  3 Jul 2024 20:25:59 +0900
-Message-Id: <20240703112559.65375-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <000000000000ffc5d80616fea23d@google.com>
-References: <000000000000ffc5d80616fea23d@google.com>
+        Wed, 03 Jul 2024 04:26:40 -0700 (PDT)
+Date: Wed, 3 Jul 2024 04:26:38 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Gaurav Jain <gaurav.jain@nxp.com>
+Cc: "kuba@kernel.org" <kuba@kernel.org>,
+	Horia Geanta <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [EXT] [PATCH net-next v3 4/4] crypto: caam: Unembed net_dev
+ structure in dpaa2
+Message-ID: <ZoU1bh79jugMaRty@gmail.com>
+References: <20240702185557.3699991-1-leitao@debian.org>
+ <20240702185557.3699991-5-leitao@debian.org>
+ <AM0PR04MB600485850F153B6792CA8C0DE7DD2@AM0PR04MB6004.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM0PR04MB600485850F153B6792CA8C0DE7DD2@AM0PR04MB6004.eurprd04.prod.outlook.com>
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Hello Gaurav,
+
+On Wed, Jul 03, 2024 at 05:45:23AM +0000, Gaurav Jain wrote:
+
+> > @@ -5096,15 +5109,23 @@ static int __cold dpaa2_dpseci_setup(struct
+> > fsl_mc_device *ls_dev)
+> >                         priv->rx_queue_attr[j].fqid,
+> >                         priv->tx_queue_attr[j].fqid);
+> >
+> > -               ppriv->net_dev.dev = *dev;
+> > -               INIT_LIST_HEAD(&ppriv->net_dev.napi_list);
+
+> napi_list is not needed anymore? There is no mention in commit.
+
+Good question. This allocation is now done in the alloc_netdev_dummy()
+path. This is the code path:
+
+alloc_netdev_dummy()->alloc_netdev()->alloc_netdev_mqs() which calls:
+
+	INIT_LIST_HEAD(&dev->napi_list);
+
+So, napi_list is initialized when the net_device interface is allocated.
 
