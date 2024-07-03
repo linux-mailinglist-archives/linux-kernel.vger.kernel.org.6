@@ -1,119 +1,230 @@
-Return-Path: <linux-kernel+bounces-239474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4332592608B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:39:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D36F0926097
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A10D287D2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:39:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44DA28745A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E00178360;
-	Wed,  3 Jul 2024 12:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BC6178374;
+	Wed,  3 Jul 2024 12:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RPVe0fdv"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC5A176ADE
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="GnZFnWrg"
+Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9A0171E60;
+	Wed,  3 Jul 2024 12:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720010347; cv=none; b=KQVuT52+g5NBjh57YyuNTTYHJAEokpnyVaXcXhYe782r49sGvokaZWwoP6a0W31VxE07XO3SdDG44R0LVVb+yqn6fEHQBCtQ0rC6qbJ4qAF8svvjkdj7CAYMmGkuBznYTjt7XKn9cFD7zQqmCd6F80PrKVxrHKGMqRwsaSVZCts=
+	t=1720010368; cv=none; b=BOY2CigUgKZaIVhS6TaJoofiBirXj3l8UC5l4ZvRbnW94ikO2OurHrHfLy3h52pyac+GkEc1y4J6hseINISKZoIc3/xQyC0L2OwQ9e8RTi3MzJk84erB2xaUl5U7UNxVe2T7HxTodEFkolI9ybsBp2w0IVLFjg/1HPaMrQectVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720010347; c=relaxed/simple;
-	bh=KIKwYU58rsJ1T9IBinHX1xe/hBk/3PpX2oCC4eEavbw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F2+HYlBmmpXqjhlwDTe6QHzFDuWEKtLry+mG3KSuYB81o7mT/KfG2Ry9FjD6Gyhq5aYNZtitjw4ii2M2oCVVz97YZLoBM9nbLaYPrnPtjnL1Yn491ihOtE4S0zuOKSqaM/IR0nTQ1Xb00fjWm1nK+jWKERBuDzON/MXaIlS6+fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RPVe0fdv; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e0360f890a1so493714276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 05:39:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720010345; x=1720615145; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sxc0I0zpiwPou1XOXc6rXOn/i1v3KiOE8O+RryADI0Y=;
-        b=RPVe0fdv56UR9MGfbDw+5xeFw9RKWIjW5v0xWdZ+e3Xldkhi28M+eyK+GMTellp2P0
-         TLuNz9oKXbgZJvO1TBUwA+jnqxVPO2tMK5p/5Rdps9BdoD9HGVskD2teFP2prHdAjOnE
-         qT0nhqHc4lLu81ySDj9DP1Vt8CiK2XTDMTpln1T18cLc8E1/hCHEM4JAoBA40pVspN1m
-         Uwev7d7TtRLR+PFDc4YpTT4UjvlbvoLSZOScYzqKdc0O85aECJWbpL/W8ECdBDeYzufz
-         0ZGTYDcjJIQHsGj9TZTvUS5vuoYIp7OF8NZievb7IVRQThWg1dG9nKN7dcC8nILVXnuc
-         MoEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720010345; x=1720615145;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sxc0I0zpiwPou1XOXc6rXOn/i1v3KiOE8O+RryADI0Y=;
-        b=ZqsUsmStqeG7MOoppVJBbQ6tR5i3/dbAU8LOU9rkskDh4qRfH2ONpACGyKUsnKrJTT
-         7uYcEJPjyRL2VT2ym0YxaD1nJaqWsL378Cb/x+9iTWX/ebjZjKHo+EugnJoG8kPv9rpX
-         dtjuVEHD7bqJwRfNdyA4q5jcmdol7AENmUxwJli3/zd1GKi6zpGBj1PqExDzDf8FzKXz
-         VpMSDtcqgMFa6t6aAxKBQ6vj0mqfXp48Cocncezn63YUHNKUYIkSdT6abdtqcwVTQmog
-         I8A7ScKQ6kTR0Qb9lJ0BU1AZ6YvH3+u3Olyfu7mJSgl1CWOv7AUHK9rpRVP8LWiGXrdd
-         7lUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXuH3RAlKLQwV0ig7X6M7KvZ/U8TNSnvM5y9+nt5uboL/j3YI1qZaMHKjYadhrKlNov+gogDLXZqcx1xJKM9odVC7ZG+gyI5OHk3cZ5
-X-Gm-Message-State: AOJu0YxukA9hNLa8Odz46f6Y/E9M7PyiJuv19zi7FqvDZroiL/c2Q3LC
-	YM3ogeo3kYc2Q/rXmLcLDxGTI9CnrtB8ol6mPLVNTIrdxb9CLS6g/cd50HK6U3Sm7tw49L2fgzD
-	0dO9GxDNLO0U+CofBJJ3co3unVJTk8dzzcvPu8g==
-X-Google-Smtp-Source: AGHT+IErCXkheRkAn8ztkA/4kbD3Vv8IgTYgskL5ABtY5Vnv1K9cr9jJhnKN+uszLloHhOBi6LlCRBFwVa1CpPDfSNk=
-X-Received: by 2002:a5b:2c7:0:b0:e02:b68e:177a with SMTP id
- 3f1490d57ef6-e03ad95ec1emr913514276.27.1720010345301; Wed, 03 Jul 2024
- 05:39:05 -0700 (PDT)
+	s=arc-20240116; t=1720010368; c=relaxed/simple;
+	bh=4KS0NOSTe916DVS2ghPWA1bcCCr8Xm00pZgHtyhX8Kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tCOo2xYLbwJgP/j7Zn7GvcnZPn/Kx/FqnyJRortqE01nD5dnJv6srrq0AO/8gEdQI5dOD3mDwiKv5rnFk9WzbRA8ppVVsbvxmZ6hXLctlIhSqXF54WkTlntIkIz2kxo+Jg5OVSIrcY+umXXCKFNEGMyk6M2fU44SWJqZbHvj3to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=GnZFnWrg; arc=none smtp.client-ip=3.9.82.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
+Received: from localhost (unknown [IPv6:2a02:8012:909b:0:1e90:7398:2278:75e2])
+	(Authenticated sender: tom)
+	by mail.katalix.com (Postfix) with ESMTPSA id 11FDB7D76D;
+	Wed,  3 Jul 2024 13:39:26 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
+	t=1720010366; bh=4KS0NOSTe916DVS2ghPWA1bcCCr8Xm00pZgHtyhX8Kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Disposition:In-Reply-To:From;
+	z=Date:=20Wed,=203=20Jul=202024=2013:39:25=20+0100|From:=20Tom=20Pa
+	 rkin=20<tparkin@katalix.com>|To:=20Hillf=20Danton=20<hdanton@sina.
+	 com>|Cc:=20syzbot=20<syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspot
+	 mail.com>,=0D=0A=09linux-kernel@vger.kernel.org,=20netdev@vger.ker
+	 nel.org,=0D=0A=09James=20Chapman=20<jchapman@katalix.com>,=0D=0A=0
+	 9syzkaller-bugs@googlegroups.com|Subject:=20Re:=20[syzbot]=20[net?
+	 ]=20KASAN:=20slab-use-after-free=20Write=20in=0D=0A=20l2tp_session
+	 _delete|Message-ID:=20<ZoVGfR6Gx7PLbnn1@katalix.com>|References:=2
+	 0<ZoU1Aa/JJ+60FZla@katalix.com>=0D=0A=20<20240703115113.2928-1-hda
+	 nton@sina.com>|MIME-Version:=201.0|Content-Disposition:=20inline|I
+	 n-Reply-To:=20<20240703115113.2928-1-hdanton@sina.com>;
+	b=GnZFnWrgLUYiTr5NbJYMtRCj0TOpeqxDrAybnef27jT4/ntNTFLn3lnCdCKA8pSHN
+	 ToSADbbWTU7JvvcPiW54YKlE9mORbjbR0E7urB0jxhjr2Et1UPI6+1YErEeG6SEo5O
+	 bqwzsKFoLOXDaXGDU85xoa/Iju+zix6wx4jFA5QIi2dNxEyAD4z4bzmyBE6RVfdguK
+	 k4K22t7PEUtY3w30DAINd6ZA0vjLtoY26cSAY+HbO7sQxRToX3T4dOnpkP2ZWjDtim
+	 QeCj4o3sMHt+HmznJ0UyNOsrPVpYxJQj6Ikpu60HvjimxFVIS5px2HkRNkqT3//OWq
+	 mmLLJ2gtUfALQ==
+Date: Wed, 3 Jul 2024 13:39:25 +0100
+From: Tom Parkin <tparkin@katalix.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	James Chapman <jchapman@katalix.com>,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in
+ l2tp_session_delete
+Message-ID: <ZoVGfR6Gx7PLbnn1@katalix.com>
+References: <ZoU1Aa/JJ+60FZla@katalix.com>
+ <20240703115113.2928-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
-In-Reply-To: <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 3 Jul 2024 14:38:52 +0200
-Message-ID: <CACRpkdZf033WftaRXpE2=dzs8cyuMfKVqGqoM6y3+EoqWG8Y-A@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mmio: do not calculate bgpio_bits via "ngpios"
-To: Shiji Yang <yangshiji66@outlook.com>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, Asmaa Mnebhi <asmaa@nvidia.com>, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, linux-kernel@vger.kernel.org, 
-	Mark Mentovai <mark@mentovai.com>, Jonas Gorski <jonas.gorski@gmail.com>, 
-	=?UTF-8?B?TMOzcsOhbmQgSG9ydsOhdGg=?= <lorand.horvath82@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OWXArNVFVWFs/V+O"
+Content-Disposition: inline
+In-Reply-To: <20240703115113.2928-1-hdanton@sina.com>
+
+
+--OWXArNVFVWFs/V+O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 3:22=E2=80=AFAM Shiji Yang <yangshiji66@outlook.com=
-> wrote:
+Hi Hillf,
 
-> bgpio_bits must be aligned with the data bus width. For example, on a
-> 32 bit big endian system and we only have 16 GPIOs. If we only assume
-> bgpio_bits=3D16 we can never control the GPIO because the base address
-> is the lowest address.
+On  Wed, Jul 03, 2024 at 19:51:13 +0800, Hillf Danton wrote:
+> On Wed, 3 Jul 2024 12:24:49 +0100 Tom Parkin <tparkin@katalix.com>
+> >=20
+> > [-- Attachment #1.1: Type: text/plain, Size: 379 bytes --]
+> >=20
+> > On  Tue, Jun 25, 2024 at 06:25:23 -0700, syzbot wrote:
+> > > syzbot found the following issue on:
+> > >=20
+> > > HEAD commit:    185d72112b95 net: xilinx: axienet: Enable multicast b=
+y def..
+> > > git tree:       net-next
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1062bd469=
+80000
+> >=20
+> > #syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-ne=
+xt.git  185d72112b95
+> >=20
+> > [-- Attachment #1.2: 0001-l2tp-fix-possible-UAF-when-cleaning-up-tunnel=
+s.patch --]
+> > [-- Type: text/x-diff, Size: 3275 bytes --]
+> >=20
+> > From 31321b7742266c4e58355076c19d8d490fa005d2 Mon Sep 17 00:00:00 2001
+> > From: James Chapman <jchapman@katalix.com>
+> > Date: Tue, 2 Jul 2024 12:49:07 +0100
+> > Subject: [PATCH] l2tp: fix possible UAF when cleaning up tunnels
+> >=20
+> > syzbot reported a UAF caused by a race when the L2TP work queue closes a
+> > tunnel at the same time as a userspace thread closes a session in that
+> > tunnel.
+> >=20
+> > Tunnel cleanup is handled by a work queue which iterates through the
+> > sessions contained within a tunnel, and closes them in turn.
+> >=20
+> > Meanwhile, a userspace thread may arbitrarily close a session via
+> > either netlink command or by closing the pppox socket in the case of
+> > l2tp_ppp.
+> >=20
+> > The race condition may occur when l2tp_tunnel_closeall walks the list
+> > of sessions in the tunnel and deletes each one.  Currently this is
+> > implemented using list_for_each_safe, but because the list spinlock is
+> > dropped in the loop body it's possible for other threads to manipulate
+> > the list during list_for_each_safe's list walk.  This can lead to the
+> > list iterator being corrupted, leading to list_for_each_safe spinning.
+> > One sequence of events which may lead to this is as follows:
+> >=20
+> >  * A tunnel is created, containing two sessions A and B.
+> >  * A thread closes the tunnel, triggering tunnel cleanup via the work
+> >    queue.
+> >  * l2tp_tunnel_closeall runs in the context of the work queue.  It
+> >    removes session A from the tunnel session list, then drops the list
+> >    lock.  At this point the list_for_each_safe temporary variable is
+> >    pointing to the other session on the list, which is session B, and
+> >    the list can be manipulated by other threads since the list lock has
+> >    been released.
+> >  * Userspace closes session B, which removes the session from its parent
+> >    tunnel via l2tp_session_delete.  Since l2tp_tunnel_closeall has
+> >    released the tunnel list lock, l2tp_session_delete is able to call
+> >    list_del_init on the session B list node.
+> >  * Back on the work queue, l2tp_tunnel_closeall resumes execution and
+> >    will now spin forever on the same list entry until the underlying
+> >    session structure is freed, at which point UAF occurs.
+> >=20
+> > The solution is to iterate over the tunnel's session list using
+> > list_first_entry_not_null to avoid the possibility of the list
+> > iterator pointing at a list item which may be removed during the walk.
+> >=20
+> > ---
+> >  net/l2tp/l2tp_core.c | 9 +++++----
+> >  1 file changed, 5 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
+> > index 64f446f0930b..afa180b7b428 100644
+> > --- a/net/l2tp/l2tp_core.c
+> > +++ b/net/l2tp/l2tp_core.c
+> > @@ -1290,13 +1290,14 @@ static void l2tp_session_unhash(struct l2tp_ses=
+sion *session)
+> >  static void l2tp_tunnel_closeall(struct l2tp_tunnel *tunnel)
+> >  {
+> >  	struct l2tp_session *session;
+> > -	struct list_head *pos;
+> > -	struct list_head *tmp;
+> > =20
+> >  	spin_lock_bh(&tunnel->list_lock);
+> >  	tunnel->acpt_newsess =3D false;
+> > -	list_for_each_safe(pos, tmp, &tunnel->session_list) {
+> > -		session =3D list_entry(pos, struct l2tp_session, list);
+> > +	for (;;) {
+> > +		session =3D list_first_entry_or_null(&tunnel->session_list,
+> > +						   struct l2tp_session, list);
+> > +		if (!session)
+> > +			break;
+>=20
+> WTF difference could this patch make wrt closing the race above?
 >
-> low address                          high address
-> -------------------------------------------------
-> |   byte3   |   byte2   |   byte1   |   byte0   |
-> -------------------------------------------------
-> |    NaN    |    NaN    |  gpio8-15 |  gpio0-7  |
-> -------------------------------------------------
->
-> Fixes: 55b2395e4e92 ("gpio: mmio: handle "ngpios" properly in bgpio_init(=
-)")
-> Fixes: https://github.com/openwrt/openwrt/issues/15739
-> Reported-by: Mark Mentovai <mark@mentovai.com>
-> Signed-off-by: Shiji Yang <yangshiji66@outlook.com>
-> Suggested-By: Mark Mentovai <mark@mentovai.com>
-> Reviewed-by: Jonas Gorski <jonas.gorski@gmail.com>
-> Tested-by: L=C3=B3r=C3=A1nd Horv=C3=A1th <lorand.horvath82@gmail.com>
 
-I'm convinced this is the right thing to do. (By Jonas Gorski.)
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Sorry if the commit message isn't clear :-(
 
-Bart, can you apply it for fixes?
-(Or for -next if you wanna be really careful.)
+The specific UAF that syzbot hits is due to the list node that the
+list_for_each_safe temporary variable points to being modified while
+the list_for_each_safe walk is in process.
 
-Yours,
-Linus Walleij
+This is possible due to l2tp_tunnel_closeall dropping the spin lock
+that protects the list mid way through the list_for_each_safe loop.
+This opens the door for another thread to call list_del_init on the
+node that list_for_each_safe is planning to process next, causing
+l2tp_tunnel_closeall to repeatedly iterate on that node forever.
+
+In the context of l2tp_ppp, this eventually leads to UAF because the
+session structure itself is freed when the pppol2tp socket is
+destroyed and the pppol2tp sk_destruct handler unrefs the session
+structure to zero.
+
+So to avoid the UAF, the list can safely be processed using a loop
+which accesses the first entry in the tunnel session list under
+spin lock protection, removing that entry, then dropping the lock
+to call l2tp_session_delete.
+
+FWIW, I note that syzbot has bisected this UAF to d18d3f0a24fc ("l2tp:
+replace hlist with simple list for per-tunnel session list") which
+changes l2tp_tunnel_closeall from a similar pattern of repeatedly
+grabbing the list head under spin lock projection, to the current code
+in net-next.
+
+> >  		list_del_init(&session->list);
+> >  		spin_unlock_bh(&tunnel->list_lock);
+> >  		l2tp_session_delete(session);
+
+--OWXArNVFVWFs/V+O
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEsUkgyDzMwrj81nq0lIwGZQq6i9AFAmaFRnkACgkQlIwGZQq6
+i9D4MQgAlIrC9CzRSg+P0UVnqtS/PLhm/PeRB4C6jo0u0H9ikWTDgNC0oM1Rxc18
+jxt1yHHMUxdwKIdZGsY2i07WaA9ZAgpGfZk3w07GFDpa1Mub449igzOBPK9XwaYa
+J6gjgMMQmiQ3b3ag0VZkhreMuN3uPUERi2r2gxWfsqQq7Z8AZmsUkbWirM+VxnLE
+1jwVrQmqxFvJB0S9nIq81srJcpr/LlE6KtzB7g1RXGBJtY/veJ58yRH66i9I51KA
+Y5AHKm0vVgTlFVzb1XKio97dH0pPBFwleJkYGEFNDn+MN06br7b/XHzUidBJGVZ+
+oNOJrb+SfoRbisG2s5ElFcDdi7WckQ==
+=XdNU
+-----END PGP SIGNATURE-----
+
+--OWXArNVFVWFs/V+O--
 
