@@ -1,136 +1,196 @@
-Return-Path: <linux-kernel+bounces-239867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D871E92663B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:35:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D704292663D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 160511C2145C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:35:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524A91F227CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5439E183078;
-	Wed,  3 Jul 2024 16:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E7D18307D;
+	Wed,  3 Jul 2024 16:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VV/sSubh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D907282E1;
-	Wed,  3 Jul 2024 16:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="logI4Hsv"
+Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3554D282E1;
+	Wed,  3 Jul 2024 16:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720024551; cv=none; b=MoP/vA3xnROtpzTWHJc1tsA3uFlgNtmw0+kTgxhWOx0cJ2ldArJNz3Zq0nw7L+UFBh0Yg48vjMt8InwqGT9Cs2a36WPgUmRTzc+aCQJdCLPdx4annIMhZIPTB642jg4sttqKdRg+Ps5ckCq7eXTvqGl8Qzx2YOhMlZj+YvPsvx4=
+	t=1720024635; cv=none; b=Cm8C/FpAEr4Uc2RW3+GxiqMG8yjMgiHfixoKUabFEJtj9Rm41Cms1xQJpvqsbB7tY+T3RI2VBJ0KwzZwK3cwSSqANBlPBBN1CcyVs+dTMANMINBqbdAgHaKV+Id7HxAWTq14vdyKcQEHuu5ZlPm3HKeo2y2aHJ4n+Ur8osUSXXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720024551; c=relaxed/simple;
-	bh=EsZFpXIeoKQfJgd3H/gVXC/Yil62xZKPu1DKpUkp0KI=;
+	s=arc-20240116; t=1720024635; c=relaxed/simple;
+	bh=2y8Ioe1+2tFcUJ6XUBHrn0SZoz2c6uK9QgFNxcnIyu0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b20YuyKuTFoZDzeU7EsMvzsBp5s7x5wG424kczOr+taUEVBY20WcX3CIRdNDTTOPlljn6f481BrsslJFiGtFbqJQ2qkhB58fHUcpoXxFKeljx9hilgJHr8tvVvj1zPZmNYeMkKjQa7O6iAp3xxPV1If2ACB2Nsfph8pDBSWXvhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VV/sSubh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD1C9C2BD10;
-	Wed,  3 Jul 2024 16:35:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720024551;
-	bh=EsZFpXIeoKQfJgd3H/gVXC/Yil62xZKPu1DKpUkp0KI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VV/sSubhL1eBS8FI6ROC7JQcM1lKWt5DwFTWPemUVCAEuMKj6azjnJWXySnw/GNwQ
-	 Dxj/kMweubAsj+KHDmF5TESGvvVT8oFnqv/FzmKq6l8rVmlQbPPTeyDfyQ9KjdPc88
-	 xVtTKLt6Qtypx58B6SUlXcE4Io9sjWiKHxkFOC1FauHOGWvx7Dn1NmK3XO2b7GMzKZ
-	 u8XTFz27YDQ/klavQLp9LJNl5fFKxihR8jIJjeH4mwMTg2XZP/Afxydau8wW9++k2F
-	 no/VjV+MZ8C7ARZWZx87s8EE82YTFEBDzV2nC5wS2zarGLSxOuuDi8I/q54fB/vjMr
-	 uNEhpqrtY5/ow==
-Date: Wed, 3 Jul 2024 18:35:43 +0200
-From: Matthias Brugger <matthias.bgg@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yangyu Chen <cyy@cyyself.name>,
-	Inochi Amaoto <inochiama@outlook.com>, linux-serial@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Meng Zhang <zhangmeng.kevin@spacemit.com>
-Subject: Re: [PATCH v3 03/11] dt-bindings: riscv: add SpacemiT K1 bindings
-Message-ID: <ZoV93-NzW2fqxQmN@ziggy.stardust>
-References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
- <20240703-k1-01-basic-dt-v3-3-12f73b47461e@gentoo.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YI/0qtRg6Jyv5HYmlSz3vqgpxVIS9ovmhOWzfZHRGsBdglK+zMgPM6T13l2d4GkiHSthnIL4lcenaBpoFSww2yT3hxb1mX+O3wCXDCBPnTbwo3fZlHcnrxz4S5GTBVs6y5G1vcsH1SxXgA6dUhuVR/jzcHQiouVEk+bIfgPTgp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=logI4Hsv; arc=none smtp.client-ip=3.9.82.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
+Received: from localhost (unknown [IPv6:2a02:8012:909b:0:1e90:7398:2278:75e2])
+	(Authenticated sender: tom)
+	by mail.katalix.com (Postfix) with ESMTPSA id 2C91E7D57F;
+	Wed,  3 Jul 2024 17:37:12 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
+	t=1720024632; bh=2y8Ioe1+2tFcUJ6XUBHrn0SZoz2c6uK9QgFNxcnIyu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Disposition:In-Reply-To:From;
+	z=Date:=20Wed,=203=20Jul=202024=2017:37:11=20+0100|From:=20Tom=20Pa
+	 rkin=20<tparkin@katalix.com>|To:=20syzbot=20<syzbot+c041b4ce3a6dfd
+	 1e63e2@syzkaller.appspotmail.com>|Cc:=20linux-kernel@vger.kernel.o
+	 rg,=20netdev@vger.kernel.org,=0D=0A=09syzkaller-bugs@googlegroups.
+	 com|Subject:=20Re:=20[syzbot]=20[net?]=20KASAN:=20slab-use-after-f
+	 ree=20Write=20in=0D=0A=20l2tp_session_delete|Message-ID:=20<ZoV+N1
+	 lcTs1ztvay@katalix.com>|References:=20<0000000000008405e0061bb6d4d
+	 5@google.com>|MIME-Version:=201.0|Content-Disposition:=20inline|In
+	 -Reply-To:=20<0000000000008405e0061bb6d4d5@google.com>;
+	b=logI4HsveAitLm2sLrWYknNbtNAbKK0ljzlC+AMu3SJviFW5WIVos3DE+UPKCcCZ7
+	 MxL3YRe8dErL+PQmV8ONQ8iaFSmlZ8XovYIskuGzvlKAewhSzfyG2MtnM5TE6ez5ii
+	 sSs4PruZUg7/v2LbYWBh5rAcRnFprWUKI7gl3uDYH7c0G36SIhJcBuFvMP8HYwvwYV
+	 4eO8Ik6mJxzc1iUOs3dAIW3mpBprT2fYKU6bPtAYvW2jQx7GSUPl4KlI7sFRf2DFAI
+	 u6ZDKXW0dR1m60d7HN2dcP9etpz+T3vIKgbXztpayXKNStgHMJowP02mOsDKfKeNCu
+	 9cOoiXoe43vXg==
+Date: Wed, 3 Jul 2024 17:37:11 +0100
+From: Tom Parkin <tparkin@katalix.com>
+To: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in
+ l2tp_session_delete
+Message-ID: <ZoV+N1lcTs1ztvay@katalix.com>
+References: <0000000000008405e0061bb6d4d5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xgA555V3jkRH7ho/"
 Content-Disposition: inline
-In-Reply-To: <20240703-k1-01-basic-dt-v3-3-12f73b47461e@gentoo.org>
+In-Reply-To: <0000000000008405e0061bb6d4d5@google.com>
 
-On Wed, Jul 03, 2024 at 02:55:06PM +0000, Yixun Lan wrote:
-> From: Yangyu Chen <cyy@cyyself.name>
-> 
-> Add DT binding documentation for the SpacemiT K1 SoC[1] and the Banana
-> Pi BPi-F3 board[2] which used it.
-> 
-> Link: https://www.spacemit.com/en/spacemit-key-stone-2/ [1]
-> Link: https://docs.banana-pi.org/en/BPI-F3/BananaPi_BPI-F3 [2]
-> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
 
-Reviewed-by: Matthias Brugger <matthias.bgg@kernel.org>
+--xgA555V3jkRH7ho/
+Content-Type: multipart/mixed; boundary="NltMTb9tJT1zWXBQ"
+Content-Disposition: inline
 
-> ---
->  .../devicetree/bindings/riscv/spacemit.yaml        | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/riscv/spacemit.yaml b/Documentation/devicetree/bindings/riscv/spacemit.yaml
-> new file mode 100644
-> index 0000000000000..52e55077af1ae
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/riscv/spacemit.yaml
-> @@ -0,0 +1,28 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/riscv/spacemit.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SpacemiT SoC-based boards
-> +
-> +maintainers:
-> +  - Yangyu Chen <cyy@cyyself.name>
-> +  - Yixun Lan <dlan@gentoo.org>
-> +
-> +description:
-> +  SpacemiT SoC-based boards
-> +
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - bananapi,bpi-f3
-> +          - const: spacemit,k1
-> +
-> +additionalProperties: true
-> +
-> +...
-> 
-> -- 
-> 2.45.2
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+--NltMTb9tJT1zWXBQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On  Tue, Jun 25, 2024 at 06:25:23 -0700, syzbot wrote:
+> syzbot found the following issue on:
+>=20
+> HEAD commit:    185d72112b95 net: xilinx: axienet: Enable multicast by de=
+f..
+> git tree:       net-next
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1062bd46980000
+
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.g=
+it  185d72112b95
+
+--NltMTb9tJT1zWXBQ
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-l2tp-fix-possible-UAF-when-cleaning-up-tunnels.patch"
+Content-Transfer-Encoding: quoted-printable
+
+=46rom 6bc347af14eba3b37f9e8f0831a53ef1aae4c203 Mon Sep 17 00:00:00 2001
+=46rom: Tom Parkin <tparkin@katalix.com>
+Date: Wed, 3 Jul 2024 17:32:00 +0100
+Subject: [PATCH] l2tp: fix possible UAF when cleaning up tunnels
+
+syzbot reported a UAF caused by a race when the L2TP work queue closes a
+tunnel at the same time as a userspace thread closes a session in that
+tunnel.
+
+Tunnel cleanup is handled by a work queue which iterates through the
+sessions contained within a tunnel, and closes them in turn.
+
+Meanwhile, a userspace thread may arbitrarily close a session via
+either netlink command or by closing the pppox socket in the case of
+l2tp_ppp.
+
+The race condition may occur when l2tp_tunnel_closeall walks the list
+of sessions in the tunnel and deletes each one.  Currently this is
+implemented using list_for_each_safe, but because the list spinlock is
+dropped in the loop body it's possible for other threads to manipulate
+the list during list_for_each_safe's list walk.  This can lead to the
+list iterator being corrupted, leading to list_for_each_safe spinning.
+One sequence of events which may lead to this is as follows:
+
+ * A tunnel is created, containing two sessions A and B.
+ * A thread closes the tunnel, triggering tunnel cleanup via the work
+   queue.
+ * l2tp_tunnel_closeall runs in the context of the work queue.  It
+   removes session A from the tunnel session list, then drops the list
+   lock.  At this point the list_for_each_safe temporary variable is
+   pointing to the other session on the list, which is session B, and
+   the list can be manipulated by other threads since the list lock has
+   been released.
+ * Userspace closes session B, which removes the session from its parent
+   tunnel via l2tp_session_delete.  Since l2tp_tunnel_closeall has
+   released the tunnel list lock, l2tp_session_delete is able to call
+   list_del_init on the session B list node.
+ * Back on the work queue, l2tp_tunnel_closeall resumes execution and
+   will now spin forever on the same list entry until the underlying
+   session structure is freed, at which point UAF occurs.
+
+The solution is to iterate over the tunnel's session list using
+list_first_entry_not_null to avoid the possibility of the list
+iterator pointing at a list item which may be removed during the walk.
+---
+ net/l2tp/l2tp_core.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
+index be4bcbf291a1..afa180b7b428 100644
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1290,13 +1290,14 @@ static void l2tp_session_unhash(struct l2tp_session=
+ *session)
+ static void l2tp_tunnel_closeall(struct l2tp_tunnel *tunnel)
+ {
+ 	struct l2tp_session *session;
+-	struct list_head __rcu *pos;
+-	struct list_head *tmp;
+=20
+ 	spin_lock_bh(&tunnel->list_lock);
+ 	tunnel->acpt_newsess =3D false;
+-	list_for_each_safe(pos, tmp, &tunnel->session_list) {
+-		session =3D list_entry(pos, struct l2tp_session, list);
++	for (;;) {
++		session =3D list_first_entry_or_null(&tunnel->session_list,
++						   struct l2tp_session, list);
++		if (!session)
++			break;
+ 		list_del_init(&session->list);
+ 		spin_unlock_bh(&tunnel->list_lock);
+ 		l2tp_session_delete(session);
+--=20
+2.34.1
+
+
+--NltMTb9tJT1zWXBQ--
+
+--xgA555V3jkRH7ho/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEsUkgyDzMwrj81nq0lIwGZQq6i9AFAmaFfjMACgkQlIwGZQq6
+i9DG5Af/czXZIGyxcypF5ucerzC/KmZqLog1ZIQSe4C9YYAjQQDPEz3n6gI/jdsC
+3OlWbiSwdCK88je5FL4XLQ/QG73OOtI0v/jwXwinnUwEbBZY1s/JsjGqVlKF73Hm
+HVCIC+6TrL1D1jgZLnOWiOc8P2mXBNu/CpYOGlJOFZ9EgWF144K+AOgVPGZHFyNS
+iqWilTZSHi8CrQDewnqgsbTw1VDTGooX9BGAkj2JvTM0yr2YdEKFTdtie36hZavD
+9O8++vaPHJMWOCrQDoNXx7/dUySpGead7ARYFLjjeDhhjZI+fVFXmaORFeNxTnyS
+qIB0myjp3kop4sQWmgvnp28HTuob/A==
+=l3VA
+-----END PGP SIGNATURE-----
+
+--xgA555V3jkRH7ho/--
 
