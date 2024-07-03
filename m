@@ -1,122 +1,129 @@
-Return-Path: <linux-kernel+bounces-238634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27251924D2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:24:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73937924D2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6FA11F23501
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:24:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE2A1F238ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9509623C9;
-	Wed,  3 Jul 2024 01:24:49 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFD7442C;
+	Wed,  3 Jul 2024 01:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XC6nxYXd"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D59E623;
-	Wed,  3 Jul 2024 01:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806224409;
+	Wed,  3 Jul 2024 01:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719969889; cv=none; b=U84cIIO50++bhtdHaUk1jp4VFQ+mFZ2QMEof7rggngpLdAvi5CBzHidzv4iCRn0d0GEhQyDNWmSIgkAXsyKKZETQCen4AnSUkINe4hvOYHopKpxaBMLj12q5h3OkxaAU/Rj1ACrcEPM/xFVM1OvvJauEePbgB3SfL3qUu8V4Z7w=
+	t=1719970185; cv=none; b=jVozjarE1eH6ofE1iLrsgpiM00BrR32fdd/1cw5YO97mdjOIe+y0s+mizQ4sjU8fp6d2t5xiARMJlCw0XW8UgZYf3hznLEEomRK4XK/yAdf1k2vDpe9/HPqEOTdBhULMnYTTmalzJ2uT9LBlaW4ItB8aFyD/OweaB0bSlctYWK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719969889; c=relaxed/simple;
-	bh=hVJFtsQLStwaNgFureVv0oR1O+Ev1bYFBNSi90GSxpI=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aDmJdRMK1+dzRu58YmwL4sWN+UCU1ZbL5yjHDTPzOjBcZo/XLm6Efo6djy8bZ2o9Z29FDioCGoa7Wx6qiW2pU/jaHy0tv+p+Zg/rLLJNX8cSP4bHlrptnwGv9AlcwEUNwXdwS4XatLV+ch81rpxJoiSmMJxEB+rtwaMR61dXxts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WDMQm2k5xzxTbX;
-	Wed,  3 Jul 2024 09:20:16 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6FD191402CE;
-	Wed,  3 Jul 2024 09:24:43 +0800 (CST)
-Received: from [10.174.179.80] (10.174.179.80) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 3 Jul 2024 09:24:42 +0800
-Subject: Re: [PATCH v2] Fix WARNING in __ext4_ioctl
-To: Pei Li <peili.dev@gmail.com>
-CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<skhan@linuxfoundation.org>, <syzkaller-bugs@googlegroups.com>,
-	<linux-kernel-mentees@lists.linuxfoundation.org>,
-	<syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com>, Theodore Ts'o
-	<tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>
-References: <20240702-bug8-v2-1-be675f490db1@gmail.com>
-From: Zhang Yi <yi.zhang@huawei.com>
-Message-ID: <154c52ab-2452-df90-a8d8-5b786f46041b@huawei.com>
-Date: Wed, 3 Jul 2024 09:24:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1719970185; c=relaxed/simple;
+	bh=g+XXyHOzir2A2nh4K4ouH8PO9d/BcCXBpfaXdmkAeN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AhDjg/fliRWFownExQmTCR8lP/2u/8ifzReP+VG6d6EvbqoNxtMKSL5izRbpD6A4NkY99+HL+TeWAnC0XMx8tfn5KFMV00ePCPOyb/h9pQqBj9Rn8h2ps/Ubs88pETfEAjd1J7EMuwjZLZKvbwkXyFgKmnsBmNTqZv+USLhGjrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XC6nxYXd; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1719970179;
+	bh=nIM5iPvChSeqRiNksJ2bd1KdDzBJoaJC7afh/m1jadA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=XC6nxYXdzsXwAtOUKw73d5PjyMc7HeX7ZJoT1mjy60zHjNwsaENQxUKfuBro+MEUV
+	 RA3vOaLPjOxVQ69UAkQteAu/lvlSXd2Qoi8zW9aQBaRAhpnnlAboZhUc6eGaz4ReYL
+	 RuLfJpIkn0DO6NTkhM7M5Z7f46ieoyqjzBB750gApxSKQAJtv1cdsEAmahXow2fJuc
+	 Nd3qqvhw5o7a/pwVi0eGXLUuXb6KYtC/Qx05Aoy+aeJOFbAiK7wOjvNxhgwQbepP4l
+	 kjbFLinaKFVnU2EbfaHnue+nf/0C/56GOQkUIS0BnFyEROTMLa6kPtL44EMwzyZkuL
+	 MFe3s2Thub0WQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WDMdZ5cJnz4wc1;
+	Wed,  3 Jul 2024 11:29:37 +1000 (AEST)
+Date: Wed, 3 Jul 2024 11:29:36 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Jiawen Wu
+ <jiawenwu@trustnetic.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20240703112936.483c1975@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240702-bug8-v2-1-be675f490db1@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+Content-Type: multipart/signed; boundary="Sig_/_UeR91GFvX0uJsm9Y8KOSP1";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 2024/7/3 8:07, Pei Li wrote:
-> Specify the size of s_volume_name in strscpy_pad() to avoid buffer
-> overflow.
-> 
-> strscpy_pad() by default takes the size of destination string as the
-> size to be read from source string. However, as s_volume_name is only
-> declared as an array of size EXT4_LABEL_MAX, we are reading 1 byte more
-> than expected.
-> 
-> Reported-by: syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=2cab87506a0e7885f4b9
-> Fixes: 744a56389f73 ("ext4: replace deprecated strncpy with alternatives")
-> Signed-off-by: Pei Li <peili.dev@gmail.com>
+--Sig_/_UeR91GFvX0uJsm9Y8KOSP1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the fix, it looks good to me.
+Hi all,
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+Today's linux-next merge of the net-next tree got a conflict in:
 
-> ---
-> strscpy_pad() by default takes the size of destination string as the
-> size to be read from source string. However, as s_volume_name is only
-> declared as an array of size EXT4_LABEL_MAX, we are reading 1 byte more
-> than expected.
-> 
-> Specify the size of s_volume_name in strscpy_pad() to avoid buffer
-> overflow.
-> ---
-> Changes in v2:
-> - Add fixes label
-> - Move workaround into commit log
-> - Link to v1: https://lore.kernel.org/r/20240628-bug8-v1-1-417ef53cca33@gmail.com
-> ---
->  fs/ext4/ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> index dab7acd49709..0c4fb579757a 100644
-> --- a/fs/ext4/ioctl.c
-> +++ b/fs/ext4/ioctl.c
-> @@ -1151,7 +1151,7 @@ static int ext4_ioctl_getlabel(struct ext4_sb_info *sbi, char __user *user_label
->  	BUILD_BUG_ON(EXT4_LABEL_MAX >= FSLABEL_MAX);
->  
->  	lock_buffer(sbi->s_sbh);
-> -	strscpy_pad(label, sbi->s_es->s_volume_name);
-> +	strscpy_pad(label, sbi->s_es->s_volume_name, EXT4_LABEL_MAX);
->  	unlock_buffer(sbi->s_sbh);
->  
->  	if (copy_to_user(user_label, label, sizeof(label)))
-> 
-> ---
-> base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
-> change-id: 20240628-bug8-7f700a228c4a
-> 
-> Best regards,
-> 
+  drivers/net/ethernet/wangxun/libwx/wx_hw.c
+
+between commit:
+
+  bd07a9817846 ("net: txgbe: remove separate irq request for MSI and INTx")
+
+from the net tree and commit:
+
+  b501d261a5b3 ("net: txgbe: add FDIR ATR support")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/ethernet/wangxun/libwx/wx_hw.c
+index d1b682ce9c6d,44cd7a5866c1..000000000000
+--- a/drivers/net/ethernet/wangxun/libwx/wx_hw.c
++++ b/drivers/net/ethernet/wangxun/libwx/wx_hw.c
+@@@ -1959,7 -1977,7 +1977,8 @@@ int wx_sw_init(struct wx *wx
+  	}
+ =20
+  	bitmap_zero(wx->state, WX_STATE_NBITS);
+ +	wx->misc_irq_domain =3D false;
++ 	bitmap_zero(wx->flags, WX_PF_FLAGS_NBITS);
+ =20
+  	return 0;
+  }
+
+--Sig_/_UeR91GFvX0uJsm9Y8KOSP1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaEqYAACgkQAVBC80lX
+0GyYZAf8DxYgI5fhkZtmy+Uwo+WcOxg8hYCNADg8Ozmw0ZpfyWjjaemX75sVac8P
+AV58qTSoA98P+ktBpOlJrZVgmd3vOasBB3HqIWp6HiS8oVySYqxxW5zboNC3uUut
+/X3tzuUBlkggYIHZElnmyDUWJCXs7rDhUihBEkU04dOdFyTI5OhwL6Vp5M7069bY
+zluk5SjeM23y0hn9WswmzOJZw7OUE6ELKCPaen+fSqKTpadDSDHLm8VuaSmlKPtc
+hr3nyvPSR/SsPufnOLO30crCz8bomm5y6ashou7OPNAV3IKAOpU7QvW4k8R3w8/r
+ChJtUFF6DShtJAY9KjQM2t5RthSRkg==
+=HcsQ
+-----END PGP SIGNATURE-----
+
+--Sig_/_UeR91GFvX0uJsm9Y8KOSP1--
 
