@@ -1,130 +1,205 @@
-Return-Path: <linux-kernel+bounces-240194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901E5926A1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A11CF926A22
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1F8F1C21C79
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:19:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43051C22022
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1A618FC90;
-	Wed,  3 Jul 2024 21:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50742191F6C;
+	Wed,  3 Jul 2024 21:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="RQ4Goyh9"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGBKI8ib"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA8B2BB13
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 21:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0B22BB13;
+	Wed,  3 Jul 2024 21:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720041587; cv=none; b=VfhXHvwAjno3ZN9XyAcgTXbdTkrCaaMlzJZ9Bf0T07acZauU71SQVAHR0K8Vet+RvVsuRQjVQh8jPs40j3PlC7Wy7PXuPRrqLdF/srJv4XyGQmAOcKpaepM8HTImbkuxzzO++6nQMM6ItfdaeT/50avlVmZ+TAbggUY9zNNu1Yc=
+	t=1720041792; cv=none; b=UWT4sVsXmjdkvtIbtkgW1UhaJdJUrIz/7q7PMYuOTw3ct2pbUX1CsX1YmOV40A7Bfg9oTPgccUOYOS0tehuXgf6/lsAyKT7g9cLyIaBqPX6DVSBkGJibzNu9ELtFByg/6csENg8HSw0+mo8ASA8foKFd0FqgvHUY8P+z1dHmbsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720041587; c=relaxed/simple;
-	bh=Vc6PHCXoH8EsVqwOstz2jsom7VF7LYZCtdJ14PifpZE=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=VKsuvJcvUQLrCJz2DDpB65hLZfM0xoKFgGGTFE9SBfPAhknh/6i6cB3JRKKKHDIS6JF915qPhqnNCO1gNjwB24jSlog6npzxjbO2KtykArhQ3ft4RF5suEjyKWGncSkUwuNwxAA3RKwhd6hozvu+nlNQeFFh/BYJF+i7Tx7Agn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=RQ4Goyh9; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
-	by cmsmtp with ESMTPS
-	id P6SvsZiCvAidIP7ODsklOc; Wed, 03 Jul 2024 21:19:45 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id P7OCsF03vQNxpP7OCsBqw4; Wed, 03 Jul 2024 21:19:44 +0000
-X-Authority-Analysis: v=2.4 cv=IZaBW3qa c=1 sm=1 tr=0 ts=6685c070
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=dM-kR4knkKEf_V6v5WMA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=4hxvPqnDIHOP+GOeNYXRp8lB9lTRiCyQRC8A48PGWHo=; b=RQ4Goyh9UNX9EamkU6uNB9/e3S
-	duH6in440eS4uurshUR52k0XyiizimXgVflijo4KtAaYoVsZfe62C24FJI56Uvme1JXIaA0stPmAS
-	W9Xw1CSxnHVhBmdgRQE2v/QBgAT0/zMmEB5WcPw+6Glx8jK2aBttO8FmScc43AIeDme7Y2HBhF+yw
-	EwyT6yNYwm2cjtvZK1kz1OYOSgqx5ThSTZx/EYJL7gaAEgAWQz4RBhFyQ1CPbu6qrEkvoWsVKHrR4
-	gmVcuyMc6oWhBWGKLLR1oetrt8IoNZu74mongvL8TK1+zUN45wLVP6tiAr4MmtFEc8+k+cYYHwYF+
-	MHcmjLkA==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:46978 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sP7O7-003dBL-2n;
-	Wed, 03 Jul 2024 15:19:39 -0600
-Subject: Re: [PATCH 6.1 000/128] 6.1.97-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240702170226.231899085@linuxfoundation.org>
-In-Reply-To: <20240702170226.231899085@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <5279532e-fddb-cb67-271c-f91ebb752ba5@w6rz.net>
-Date: Wed, 3 Jul 2024 14:19:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1720041792; c=relaxed/simple;
+	bh=2ieoZ2IlCs+IyedLZuRseH/oLdEXmhc7vi+zgmr5NVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jd6roVsLa47BwlV4SD+CwLEnbcP0t8ck+oJ6zY88XoDih4uet17VOC0T2ARki8w+3j2enuSvAqE/nZNJTZNZBkVvRizbj5u9G6Ffra2A4lgeXe1h2jkyWwEtJR0PrTAqCGzkGo6YOED1AsUQDAudKMuBPHNXWOivl4H2Zy0KNrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGBKI8ib; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E08BC2BD10;
+	Wed,  3 Jul 2024 21:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720041792;
+	bh=2ieoZ2IlCs+IyedLZuRseH/oLdEXmhc7vi+zgmr5NVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GGBKI8ib5cnvhX/bvlSxYcgnO+YYsZKX7N7OSjy1XJ3glGy+5UzyI6OxXYLr4WRdl
+	 S+7L33X6rlYouoHHrV+AnR64KShEKFLh5ge6KdxUPxVDrLdineoj0NMzFCqZtW84xE
+	 fXhfxBsoKRis985us7/H+lN3MQwDst17PTe6j0DyyPI+gRceicUNdmy+EWy8kBQVLk
+	 MHsz07T4Vz4vUBQfNZObIN9FIMq94SAXGJQF9N52eEIPaKhU2NuNSp1n5KtKpK6j+9
+	 T2HsmSjLi065UDWmiNiUywdaTNYVyzhZrqpIVx2MBUibQYF+Dgl32n2Yli9Aea1Him
+	 S2HcnNGydyFGA==
+Date: Wed, 3 Jul 2024 14:23:10 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@arm.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] perf test: Display number of remaining tests
+Message-ID: <ZoXBPrw0kOtgLu98@google.com>
+References: <20240701044236.475098-1-irogers@google.com>
+ <20240701044236.475098-3-irogers@google.com>
+ <ZoTIDCXKZw0bnthC@google.com>
+ <CAP-5=fUAeVL57Q14hL=girAeNev-xjgz0Wv5Vpc_OMwXoouoTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sP7O7-003dBL-2n
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:46978
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 42
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfNIzH+uQaQCXV8ZgQbFOG2hxqYnQCVn2cSRwp9fQ9JpkGUj5S4tq6TQjGfWotPuC/zXakFIRurC0oCeT7CtWVmJLzMFQzTAGIgCCgEStK0glVKThGOoi
- BJuZ5Shbs/d+5DoZWes9ZK7+G7Z2j/lYZsnbmmrYVVBgFFR3e+Piq55DWirh4yf9BNCi2+ZsrKvY2P2ugixXKs2gK2unxntUA90=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUAeVL57Q14hL=girAeNev-xjgz0Wv5Vpc_OMwXoouoTQ@mail.gmail.com>
 
-On 7/2/24 10:03 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.97 release.
-> There are 128 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 04 Jul 2024 17:01:55 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.97-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, Jul 02, 2024 at 09:30:44PM -0700, Ian Rogers wrote:
+> On Tue, Jul 2, 2024 at 8:40 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Sun, Jun 30, 2024 at 09:42:36PM -0700, Ian Rogers wrote:
+> > > Before polling or sleeping to wait for a test to complete, print out
+> > > ": Running (<num> remaining)" where the number of remaining tests is
+> > > determined by iterating over the remaining tests and seeing which
+> > > return true for check_if_command_finished. After the delay, erase the
+> > > line and either update it with the new number of remaining tests, or
+> > > print the test's result. This allows a user to know a test is running
+> > > and in parallel mode (default) how many of the tests are waiting to
+> >
+> > It's not default anymore. :)
+> >
+> >
+> > > complete. If color mode is disabled then avoid displaying the
+> > > "Running" message.
+> > >
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > ---
+> > >  tools/perf/tests/builtin-test.c | 77 ++++++++++++++++++++++-----------
+> > >  tools/perf/util/color.h         |  1 +
+> > >  2 files changed, 53 insertions(+), 25 deletions(-)
+> > >
+> > > diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+> > > index c3d84b67ca8e..23be9139f229 100644
+> > > --- a/tools/perf/tests/builtin-test.c
+> > > +++ b/tools/perf/tests/builtin-test.c
+> > > @@ -241,7 +241,10 @@ static int run_test_child(struct child_process *process)
+> > >       return -err;
+> > >  }
+> > >
+> > > -static int print_test_result(struct test_suite *t, int i, int subtest, int result, int width)
+> > > +#define TEST_RUNNING -3
+> > > +
+> > > +static int print_test_result(struct test_suite *t, int i, int subtest, int result, int width,
+> > > +                          int remaining)
+> > >  {
+> > >       if (has_subtests(t)) {
+> > >               int subw = width > 2 ? width - 2 : width;
+> > > @@ -251,6 +254,9 @@ static int print_test_result(struct test_suite *t, int i, int subtest, int resul
+> > >               pr_info("%3d: %-*s:", i + 1, width, test_description(t, subtest));
+> > >
+> > >       switch (result) {
+> > > +     case TEST_RUNNING:
+> > > +             color_fprintf(stderr, PERF_COLOR_YELLOW, " Running (%d remaining)\n", remaining);
+> > > +             break;
+> > >       case TEST_OK:
+> > >               pr_info(" Ok\n");
+> > >               break;
+> > > @@ -272,13 +278,15 @@ static int print_test_result(struct test_suite *t, int i, int subtest, int resul
+> > >       return 0;
+> > >  }
+> > >
+> > > -static int finish_test(struct child_test *child_test, int width)
+> > > +static int finish_test(struct child_test **child_tests, int running_test, int child_test_num,
+> > > +                    int width)
+> > >  {
+> > > +     struct child_test *child_test = child_tests[running_test];
+> > >       struct test_suite *t = child_test->test;
+> > >       int i = child_test->test_num;
+> > >       int subi = child_test->subtest;
+> > >       int err = child_test->process.err;
+> > > -     bool err_done = err <= 0;
+> > > +     bool err_done = false;
+> > >       struct strbuf err_output = STRBUF_INIT;
+> > >       int ret;
+> > >
+> > > @@ -293,7 +301,7 @@ static int finish_test(struct child_test *child_test, int width)
+> > >        * Busy loop reading from the child's stdout/stderr that are set to be
+> > >        * non-blocking until EOF.
+> > >        */
+> > > -     if (!err_done)
+> > > +     if (err > 0)
+> > >               fcntl(err, F_SETFL, O_NONBLOCK);
+> > >       if (verbose > 1) {
+> > >               if (has_subtests(t))
+> > > @@ -307,29 +315,48 @@ static int finish_test(struct child_test *child_test, int width)
+> > >                         .events = POLLIN | POLLERR | POLLHUP | POLLNVAL,
+> > >                       },
+> > >               };
+> > > -             char buf[512];
+> > > -             ssize_t len;
+> > > -
+> > > -             /* Poll to avoid excessive spinning, timeout set for 100ms. */
+> > > -             poll(pfds, ARRAY_SIZE(pfds), /*timeout=*/100);
+> > > -             if (!err_done && pfds[0].revents) {
+> > > -                     errno = 0;
+> > > -                     len = read(err, buf, sizeof(buf) - 1);
+> > > -
+> > > -                     if (len <= 0) {
+> > > -                             err_done = errno != EAGAIN;
+> > > -                     } else {
+> > > -                             buf[len] = '\0';
+> > > -                             if (verbose > 1)
+> > > -                                     fprintf(stdout, "%s", buf);
+> > > -                             else
+> > > +             if (perf_use_color_default) {
+> > > +                     int tests_in_progress = running_test;
+> > > +
+> > > +                     for (int y = running_test; y < child_test_num; y++) {
+> > > +                             if (check_if_command_finished(&child_tests[y]->process))
+> > > +                                     tests_in_progress++;
+> > > +                     }
+> > > +                     print_test_result(t, i, subi, TEST_RUNNING, width,
+> > > +                                       child_test_num - tests_in_progress);
+> > > +             }
+> > > +
+> > > +             err_done = true;
+> > > +             if (err <= 0) {
+> > > +                     /* No child stderr to poll, sleep for 10ms for child to complete. */
+> > > +                     usleep(10 * 1000);
+> > > +             } else {
+> > > +                     /* Poll to avoid excessive spinning, timeout set for 100ms. */
+> > > +                     poll(pfds, ARRAY_SIZE(pfds), /*timeout=*/100);
+> >
+> > When I tested this patch, I saw it refreshes too often in parallel mode.
+> > Maybe 100ms is too short?  I don't know if it's from usleep (10ms) or
+> > here.
+> 
+> It's usually the poll and I suspect it is the test writing a lot of
+> output. I agree it can look a little flickery but it is also
+> responsive in terms of not waiting too long before moving to the next
+> test. I think it is possible to improve on the code here, the main
+> thing I was after was making the output writing self contained and not
+> split between start test and finish test, as that won't work well in
+> the parallel case.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Is it possible to skip the rewriting if nothing is changed?
 
-Tested-by: Ron Economos <re@w6rz.net>
+Thanks,
+Namhyung
 
 
