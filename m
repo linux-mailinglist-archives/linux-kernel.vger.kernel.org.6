@@ -1,186 +1,121 @@
-Return-Path: <linux-kernel+bounces-240337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B76926C56
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:11:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E412926C5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 206F41F22B1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:11:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18777284EC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B83194A61;
-	Wed,  3 Jul 2024 23:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8107C194A65;
+	Wed,  3 Jul 2024 23:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hqHMl/tq"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5A31DA313
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 23:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kIoazDM6"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E28B1DA313;
+	Wed,  3 Jul 2024 23:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720048263; cv=none; b=bCC7NprIthTXAdgDQ3VloeI9FUrB+souMmLNBgu0vY8zlZmSsSYyWhzy0XHFr4262W2eahv5Bwsq6OFe5MM4q3Nucs55fXpoi7HAj3TSZX0+HHBStK1M8aT7iInu0IIseUsrC2UrjGsCwPVEeFP3s5GCr/P7RSInO54lHRjp4R4=
+	t=1720048428; cv=none; b=jWVwWG/u/YLICMLRHqFmx+x4UcMDhbCSWjaf/AqwNgS4qtuDlYkeIAkLXjh9QLnIeEfgznMXU4BU5hiJzNInaEnLRdi8ch2kVw5ByT9we79hs3ZkszIuWRMNIdXHtvKUm0aX8FsQvdwEwNJAw+t+W5nBPJTJ+tH1NeBMDoS8Z9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720048263; c=relaxed/simple;
-	bh=r0uAG+k85KUhnmC0RU/sPMM+jlY/KvzKUPnko0MwoA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=afal8G8U+LmcDrCA0+XfOusHCd4KcsdbZkzcCrK4G+VDCq8wGsgMqNvu6wLSAsH/inIotUSSZMHcxVgVek7ahm5No3HzBv2GbB+4zy4ghaXa3cTMgEu4StLldIjX3jXJnXDZEmdlWngPGkGEcVPRRb1+a4McL9GYJDPWEGEeJPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hqHMl/tq; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7f3ce5b48f2so260939f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 16:11:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720048260; x=1720653060; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OMhBfo2AqOtt3z+XF5sqTNNiKJEZsUksgQMqNwJunyk=;
-        b=hqHMl/tqGCSeepVnEPVjW4Topdg6qeJkbrXcLs5KHPtJJmf+RWvBH+b89Qw8Skorpf
-         RoDlmU/QSzf6guikqhveHqwjjH8U3yDVsBZAprIYsdOP/wsWStwAKpkMm4CwBsXnSBty
-         nZziRgAG5Wb6V4mPhU0O4g/O8J7+JgmUeqy3s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720048260; x=1720653060;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OMhBfo2AqOtt3z+XF5sqTNNiKJEZsUksgQMqNwJunyk=;
-        b=AgpABUmolJPA2/WC3CzYCJyztjF5enwzPvH7B2SRMfmkbJfX19ymHCZRCg8XIgVk1Z
-         2qrTULmkz+2QRLBNf9qNG6hVHeRVkj0Li2GImRID0+ngkDb7Wb/TkPjfgRD+mabNardn
-         4zIDKggqgD6pHt0NYfGYy3DRRdqCOuj9rVer4NXLA3oFHxyYg8Puar9TFKpsKACl99xo
-         nBq3u066IFCsESvGTG7/7DG/sNKNqVzn+pCrEkzCdFgRKMRXamKjZ2wo7YmzPiDBHR/V
-         HrRH6IAnRhcF2011oN7TdB3TAdfGFGInjmCIqYj3MWi1i/9mNd7hkz8JJE+vbRBSGEtP
-         Z5gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWH1f3KfuLhD9Q+weJoJJNJ8Sg+Iuodekrx/OI/6ey7kh5Lg5jynMS6xxXA/184Rws7etsNbuaxFzjZMqMUl4SsiFL9MpVB4MCUtHJQ
-X-Gm-Message-State: AOJu0Ywm83eKYcSUL0Q5reRanhwuiF6rpO810sqxc651Sr/N9IYv0nHs
-	/b4CbHIPnoVByqKkJPAl0GgUGwxjx24LwBrmig29lyANBRz2344MfN+2wdE6w30=
-X-Google-Smtp-Source: AGHT+IHcxNy4vvenn7jpiCsub8VWCATTgFQTQRQ7tQQa38oCzlQJbrAUv/99P7AbqgB/f4Iku057YA==
-X-Received: by 2002:a6b:fe05:0:b0:7f3:ccee:7436 with SMTP id ca18e2360f4ac-7f66dee0b66mr12164939f.2.1720048260238;
-        Wed, 03 Jul 2024 16:11:00 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4beeea701e4sm142588173.2.2024.07.03.16.10.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 16:10:59 -0700 (PDT)
-Message-ID: <6b2bca6d-61e8-40f6-b3b1-3a81dfb2b397@linuxfoundation.org>
-Date: Wed, 3 Jul 2024 17:10:59 -0600
+	s=arc-20240116; t=1720048428; c=relaxed/simple;
+	bh=tkAEnZTdufIPBg19mfhsTyGDEWte7diQWj8XaWSicxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EusRgFFcZsjZ20H4FG3mmQgGM2fND/OFM0lJhPbcbnot7/a7xaWNcA4upgJsw+f9wwEJa4ibeW4EqELtj0J0eonQm01HXznx/BC+VzBfhLML+msqCB5+3qfRm/6WcBzqF5SnRAba20mybI45xYSY4FMr3hmEpWXmkLHdAuXoYF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kIoazDM6; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from DESKTOP-4OLSCEK. (c-76-135-27-212.hsd1.wa.comcast.net [76.135.27.212])
+	by linux.microsoft.com (Postfix) with ESMTPSA id BCECB20B7001;
+	Wed,  3 Jul 2024 16:13:46 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BCECB20B7001
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1720048426;
+	bh=8TjyHg4R4+V1DoSvmceU1FyPFi2X1MteEWpxLXoSgCQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kIoazDM6qEM5gOtwqev3UjD1UibJY8Hr2zDei3VYuYcss91JR0XbKWbR6Fl4kXCnZ
+	 WaWazl73kDl3vF8BZqzsFGTTV/xfw14feKzgTeAMrxNeTR7GU22xgUronbPTqGh/IP
+	 I5tuoGPYcMpNojHZLqk/MfZycYKEtbZcYwwJbSNA=
+Date: Wed, 3 Jul 2024 16:13:43 -0700
+From: Beau Belgrave <beaub@linux.microsoft.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: rostedt@goodmis.org, mhiramat@kernel.org, corbet@lwn.net,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH] Documentation: Document user_events ioctl code
+Message-ID: <20240703231343.GA408-beaub@linux.microsoft.com>
+References: <20240703222501.1547-1-beaub@linux.microsoft.com>
+ <ZoXXe8Tl9pRD6-dd@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] selftests/watchdog: limit ping loop and allow
- configuring the number of pings
-To: Laura Nao <laura.nao@collabora.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, shuah@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <818d06c2-c5d6-4559-a8c9-9bf9e21c30f6@linuxfoundation.org>
- <20240703144855.89747-1-laura.nao@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240703144855.89747-1-laura.nao@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZoXXe8Tl9pRD6-dd@localhost.localdomain>
 
-On 7/3/24 08:48, Laura Nao wrote:
-> On 6/27/24 20:48, Shuah Khan wrote:
->> On 5/6/24 05:13, Laura Nao wrote:
->>> In order to run the watchdog selftest with the kselftest runner, the
->>> loop responsible for pinging the watchdog should be finite. This
->>> change limits the loop to 5 iterations by default and introduces a new
->>> '-c' option to adjust the number of pings as needed.
->>
->> This patch makes the test run finite in all cases changing the bevavior
->> to run it forever?
+On Wed, Jul 03, 2024 at 06:58:03PM -0400, Mathieu Desnoyers wrote:
+> On 03-Jul-2024 10:25:01 PM, Beau Belgrave wrote:
+> > The user events trace subsystem uses the 0x2A/'*' code for ioctls. These
+> > are published via the uapi/linux/user_events.h header file.
+> > 
+> > Add a line indicating user events as the owner of the 0x2A/'*' code and the
+> > current sequence numbers that are in use (00-02).
+> > 
+> > Signed-off-by: Beau Belgrave <beaub@linux.microsoft.com>
+> > ---
+> >  Documentation/userspace-api/ioctl/ioctl-number.rst | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> > index a141e8e65c5d..191609fe4593 100644
+> > --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> > +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> > @@ -97,6 +97,8 @@ Code  Seq#    Include File                                           Comments
+> >  '%'   00-0F  include/uapi/linux/stm.h                                System Trace Module subsystem
+> >                                                                       <mailto:alexander.shishkin@linux.intel.com>
+> >  '&'   00-07  drivers/firewire/nosy-user.h
+> > +'*'   00-02  uapi/linux/user_events.h                                User Events Subsystem
 > 
-> Correct.
+> You may want to consider reserving a wider sequence number range to plan
+> ahead for future extensions to user events. This way you won't end up
+> having to jump over sequence numbers eventually reserved by others
+> within the '*' code.
 > 
->>>
->>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->>> ---
->>>    tools/testing/selftests/watchdog/watchdog-test.c | 16 ++++++++++++++--
->>>    1 file changed, 14 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c
->>> b/tools/testing/selftests/watchdog/watchdog-test.c
->>> index bc71cbca0dde..786cc5a26206 100644
->>> --- a/tools/testing/selftests/watchdog/watchdog-test.c
->>> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
->>> @@ -24,16 +24,18 @@
->>>    #include <linux/watchdog.h>
->>>    #define DEFAULT_PING_RATE    1
->>> +#define DEFAULT_PING_COUNT    5
->>>    int fd;
->>>    const char v = 'V';
->>> -static const char sopts[] = "bdehp:st:Tn:NLf:i";
->>> +static const char sopts[] = "bdehp:c:st:Tn:NLf:i";
->>>    static const struct option lopts[] = {
->>>        {"bootstatus",          no_argument, NULL, 'b'},
->>>        {"disable",             no_argument, NULL, 'd'},
->>>        {"enable",              no_argument, NULL, 'e'},
->>>        {"help",                no_argument, NULL, 'h'},
->>>        {"pingrate",      required_argument, NULL, 'p'},
->>> +    {"pingcount",     required_argument, NULL, 'c'},
->>>        {"status",              no_argument, NULL, 's'},
->>>        {"timeout",       required_argument, NULL, 't'},
->>>        {"gettimeout",          no_argument, NULL, 'T'},
->>> @@ -90,6 +92,8 @@ static void usage(char *progname)
->>>        printf(" -h, --help\t\tPrint the help message\n");
->>>        printf(" -p, --pingrate=P\tSet ping rate to P seconds (default
->>> %d)\n",
->>>               DEFAULT_PING_RATE);
->>> +    printf(" -c, --pingcount=C\tSet number of pings to C (default
->>> %d)\n",
->>> +           DEFAULT_PING_COUNT);
->>>        printf(" -t, --timeout=T\tSet timeout to T seconds\n");
->>>        printf(" -T, --gettimeout\tGet the timeout\n");
->>>        printf(" -n, --pretimeout=T\tSet the pretimeout to T seconds\n");
->>> @@ -172,6 +176,7 @@ int main(int argc, char *argv[])
->>>    {
->>>        int flags;
->>>        unsigned int ping_rate = DEFAULT_PING_RATE;
->>> +    unsigned int ping_count = DEFAULT_PING_COUNT;
->>>        int ret;
->>>        int c;
->>>        int oneshot = 0;
->>> @@ -248,6 +253,12 @@ int main(int argc, char *argv[])
->>>                    ping_rate = DEFAULT_PING_RATE;
->>>                printf("Watchdog ping rate set to %u seconds.\n",
->>> ping_rate);
->>>                break;
->>> +        case 'c':
->>> +            ping_count = strtoul(optarg, NULL, 0);
->>> +            if (!ping_count)
->>> +                ping_count = DEFAULT_PING_COUNT;
->>> +            printf("Number of pings set to %u.\n", ping_count);
->>> +            break;
->>>            case 's':
->>>                flags = 0;
->>>                oneshot = 1;
->>> @@ -336,9 +347,10 @@ int main(int argc, char *argv[])
->>>        signal(SIGINT, term);
->>> -    while (1) {
->>> +    while (ping_count > 0) {
->>>            keep_alive();
->>>            sleep(ping_rate);
->>> +        ping_count--;
->>
->> So this test no longer runs forever?
->>
+> Thanks,
 > 
-> That's correct, with this patch applied the test no longer runs forever.
-> I understand you prefer the current behavior - how about keeping the
-> keep_alive() loop infinite by default and only making it finite when the
-> -c argument is passed? Would that be reasonable?
-> 
+> Mathieu
 
-Yes. I am open to taking the patch if the default behavior doesn't change.
+Yeah, I thought about that, but really didn't know how greedy we could
+be. At first I had all, but then thought we would never use all of that
+sequence. We'll likely want a few more for libside integration.
 
-thanks,
--- Shuah
+Maybe I'll grab the first 16, that should leave a lot for others and
+give us quite bit of growing room.
 
+How many do you think we'll need for libside? I think we'd only need 2-3
+personally.
+
+Thanks,
+-Beau
+
+> 
+> 
+> > +                                                                     <mailto:linux-trace-kernel@vger.kernel.org>
+> >  '1'   00-1F  linux/timepps.h                                         PPS kit from Ulrich Windl
+> >                                                                       <ftp://ftp.de.kernel.org/pub/linux/daemons/ntp/PPS/>
+> >  '2'   01-04  linux/i2o.h
+> > -- 
+> > 2.34.1
+> > 
+> 
+> -- 
+> Mathieu Desnoyers
+> EfficiOS Inc.
+> http://www.efficios.com
 
