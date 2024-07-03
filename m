@@ -1,201 +1,161 @@
-Return-Path: <linux-kernel+bounces-239792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2414A92655D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:58:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933AE926577
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 480C11C2273A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:58:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B67EF1C24BD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B31181BA2;
-	Wed,  3 Jul 2024 15:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8085A181CF0;
+	Wed,  3 Jul 2024 15:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YhwRz5tk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Q+JBxIpK"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F0379E1;
-	Wed,  3 Jul 2024 15:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EDC181BAE
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720022282; cv=none; b=LLSe+mCWpwZNMpii/6UN7Y6BnUu1hQz7zQlFbD4jzvI+G6/8M4mHm//VeOBfqKDGwPFEPARQrmYSoS4JzmJCovwKPs+KD2mwAa2Fin88/C48dDcBHRwsZqtPpBOwAJkUArj/IDSaGNuC0YpjYy2HiQRY6NlXXlJuZTYltwWd1F0=
+	t=1720022393; cv=none; b=A+gaz0QpClax83luqVhkftN+uchzXH4TDsbf0z/BaD3piOKtlHWfY172Wjv4JcXvPRHH7PDpKFSvTnynUrvGsIRjkGOVNRzXrBvjqTP5Sxj0nB7U/Rfql22jmCRVDodGQ/WuOQnJ8d/FpeqqKJlw8K9RU8y6/t6mq6pKLkAnCeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720022282; c=relaxed/simple;
-	bh=vaoHRBhxVzMrqcPHfIlXaZpl2H6yjNa8PFuuXHUPE60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RZvvWF/kUxpCkMkXVa9ui1tciuztOtuM5/1XD/gu3mcV3TG8kHm/2Swd4RXKjorGJVdmwj2e4Ohky+H88e4FO+y4Sv3fW9sLGDyFwFzfJhj5rL3LvYi6y6kwLm1a1hWCKR4lgIMNcGcva8tKUxsp6nDvyxViw4p7qzwgCXhdjAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YhwRz5tk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3761DC3277B;
-	Wed,  3 Jul 2024 15:57:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720022281;
-	bh=vaoHRBhxVzMrqcPHfIlXaZpl2H6yjNa8PFuuXHUPE60=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YhwRz5tkzZMPgR7+lR/po+T8mPQBk7UyMasMN0Wem8hnzG5bK1QrMTODr3054rif6
-	 yZgDNnUEHNkdBjquFdvimSUDbFG7IHnT0AUdspdsBsuGpE7LBJQ2wixgIvLwnzOyOh
-	 HxqNGgfv6uQ9dqLFBBMvMq6fVsewnQgluNHsqVJD0D0EsR6DB4n3KsWAwuBy5OtwaX
-	 VJx044o6EDT/Qn1WxH4pQkj10r20ZrEqcLRjUURAtsPruCmAcsT2Vw4HX9ckkPDYll
-	 /dhAy/ZLZEXpX0WdJ0H8YblfPtjFSJF0k2hH7FoBhx1F5GJd0xIz57iDTZWv1jHq8p
-	 hU2B7CIUF98oA==
-Date: Wed, 3 Jul 2024 16:57:57 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Agarwal, Utsav" <Utsav.Agarwal@analog.com>
-Cc: "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Artamonovs, Arturs" <Arturs.Artamonovs@analog.com>,
-	"Bimpikas, Vasileios" <Vasileios.Bimpikas@analog.com>,
-	"Gaskell, Oliver" <Oliver.Gaskell@analog.com>
-Subject: Re: [PATCH v5 3/3] dt-bindings: input: Update dtbinding for adp5588
-Message-ID: <20240703-mandate-hardy-281ddd048b40@spud>
-References: <20240703-adp5588_gpio_support-v5-0-49fcead0d390@analog.com>
- <20240703-adp5588_gpio_support-v5-3-49fcead0d390@analog.com>
- <20240703-safehouse-flame-0b751b853623@spud>
- <SJ0PR03MB63432316EE8382033A4396369BDD2@SJ0PR03MB6343.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1720022393; c=relaxed/simple;
+	bh=FNRprOWq8ldQpxWHTTdhVGM9NaiNYj8i5iZmJH/dIhY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ULKMPtiUrGil4dz4cj1YaMmKkNETnvp5WNk/GldS0PTm3nPWy95wYMb3bkrs7h8+abqCs9OOlV8QuxdV3b61dZzdyeWZVktdYjYHz21zLyCK7CKuxwLM1/qpbdilVVqtV04WWfvevMZ20jYspA6oLhxCkGjgfe9q3IqAocjOzT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Q+JBxIpK; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+X-Virus-Scanned: SPAM Filter at disroot.org
+From: Yao Zi <ziyao@disroot.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1720022382; bh=FNRprOWq8ldQpxWHTTdhVGM9NaiNYj8i5iZmJH/dIhY=;
+	h=From:To:Cc:Subject:Date;
+	b=Q+JBxIpKF4lEYSy9NZ201G1vVCb6o4Nb3wbVRUw10LWkcCnJXVM8GxqHQyW989FME
+	 PI10wJm/FAIJUTlLDpbFvFddyt4TsqHPvrebgRFADHBVTDv6pLiO494v3wSbug9Xpd
+	 /xSFLlzswHlt4jaV3N6jpyQs5VZMoVrYPPEE9Disgs2jtk7e/lSuWs11/qZlkZGs3V
+	 MrOdvcL3NPUIG2t6HrkUaaZWUaFfUVBuckFJhT4jxRg9sBdKvrXDXYjOcK2XXsUzpb
+	 Q2ibE8NtHn7I94XO9JZdYmExIuixmdKD5ieHLsQD/A4GR3qUYF6hxYGkEH8dpRxbVC
+	 geNOweXQvDlkQ==
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Maxime Jourdan <mjourdan@baylibre.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH] drm/meson: fix canvas release in bind function
+Date: Wed,  3 Jul 2024 15:58:27 +0000
+Message-ID: <20240703155826.10385-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XwjIM0gNUPc/PA4a"
-Content-Disposition: inline
-In-Reply-To: <SJ0PR03MB63432316EE8382033A4396369BDD2@SJ0PR03MB6343.namprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
+Allocated canvases may not be released on the error exit path of
+meson_drv_bind_master(), leading to resource leaking. Rewrite exit path
+to release canvases on error.
 
---XwjIM0gNUPc/PA4a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 2bf6b5b0e374 ("drm/meson: exclusively use the canvas provider module")
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
+ drivers/gpu/drm/meson/meson_drv.c | 37 +++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 19 deletions(-)
 
-On Wed, Jul 03, 2024 at 03:55:11PM +0000, Agarwal, Utsav wrote:
-> Hi Conor,
->=20
-> Thank you for your feedback.
-> > -----Original Message-----
-> > From: Conor Dooley <conor@kernel.org>
-> > Sent: Wednesday, July 3, 2024 4:20 PM
-> > To: Agarwal, Utsav <Utsav.Agarwal@analog.com>
-> > Cc: Hennerich, Michael <Michael.Hennerich@analog.com>; Dmitry Torokhov
-> > <dmitry.torokhov@gmail.com>; Rob Herring <robh@kernel.org>; Krzysztof
-> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Sa,
-> > Nuno <Nuno.Sa@analog.com>; linux-input@vger.kernel.org;
-> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Artamonovs,
-> > Arturs <Arturs.Artamonovs@analog.com>; Bimpikas, Vasileios
-> > <Vasileios.Bimpikas@analog.com>; Gaskell, Oliver
-> > <Oliver.Gaskell@analog.com>
-> > Subject: Re: [PATCH v5 3/3] dt-bindings: input: Update dtbinding for ad=
-p5588
-> >=20
-> > On Wed, Jul 03, 2024 at 11:58:16AM +0100, Utsav Agarwal via B4 Relay
-> > wrote:
-> > > From: Utsav Agarwal <utsav.agarwal@analog.com>
-> > >
-> > > Updating dt bindings for adp5588. Since the device can now function i=
-n a
-> > > purely gpio mode, the following keypad specific properties are now ma=
-de
-> > > optional:
-> > > 	- interrupts
-> > > 	- keypad,num-rows
-> > > 	- keypad,num-columns
-> > > 	- linux,keymap
-> > >
-> > > However since the above properties are required to be specified when
-> > > configuring the device as a keypad, dependencies have been added
-> > > such that specifying either one would require the remaining as well.
-> > >
-> > > Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
-> > > ---
-> > >  .../devicetree/bindings/input/adi,adp5588.yaml     | 33
-> > ++++++++++++++++++----
-> > >  1 file changed, 28 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-> > b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-> > > index 26ea66834ae2..6c06464f822b 100644
-> > > --- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-> > > +++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-> > > @@ -49,7 +49,10 @@ properties:
-> > >    interrupt-controller:
-> > >      description:
-> > >        This property applies if either keypad,num-rows lower than 8 or
-> > > -      keypad,num-columns lower than 10.
-> > > +      keypad,num-columns lower than 10. This property does not apply=
- if
-> > > +      keypad,num-rows or keypad,num-columns are not specified since =
-the
-> > > +      device then acts as gpio only, during which interrupts are not
-> > > +      utilized.
-> > >
-> > >    '#interrupt-cells':
-> > >      const: 2
-> > > @@ -65,13 +68,15 @@ properties:
-> > >      minItems: 1
-> > >      maxItems: 2
-> > >
-> > > +dependencies:
-> > > +  keypad,num-rows: ["keypad,num-columns"]
-> > > +  keypad,num-cols: ["keypad,num-rows"]
-> > > +  linux,keymap: ["keypad,num-rows"]
-> >=20
-> > Is what you've got here sufficient? Adding "keypad,num-rows" won't
-> > mandate "linux,keymap" which I think is wrong. I think all 3 entries
-> > here need to contain both of the other two.
-> >=20
->=20
-> Ah, I can see the issue, thank you for pointing it out - I will be correc=
-ting that.
->=20
-> > > +  interrupts: ["linux,keymap"]
-> >=20
-> > I still don't understand why interrupts are only allowed when the keymap
-> > is present. I'd cover the interrupts with something like
-> >=20
-> > if:
-> >   required:
-> >     - linux,keymap
-> >   then:
-> >     required:
-> >       - interrupts
-> >=20
-> > so that interrupts can be used while not in keypad mode. Unless of
-> > course there's something (unmentioned in this patch) that prevents that.
->=20
-> In case when the device is not in keypad mode, i.e, is purely using gpio =
-- it doesn't trigger the interrupt.
-> Due to this, I had restricted the same to keypad mode only(as a requireme=
-nt). This was mentioned=20
-> here:
-> https://lore.kernel.org/all/d4661ddc1d253678fd62be4c7e19eb0cff4174f6.came=
-l@gmail.com/
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index 17a5cca007e2..4bd0baa2a4f5 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -250,29 +250,20 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	if (ret)
+ 		goto free_drm;
+ 	ret = meson_canvas_alloc(priv->canvas, &priv->canvas_id_vd1_0);
+-	if (ret) {
+-		meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
+-		goto free_drm;
+-	}
++	if (ret)
++		goto free_canvas_osd1;
+ 	ret = meson_canvas_alloc(priv->canvas, &priv->canvas_id_vd1_1);
+-	if (ret) {
+-		meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
+-		meson_canvas_free(priv->canvas, priv->canvas_id_vd1_0);
+-		goto free_drm;
+-	}
++	if (ret)
++		goto free_canvas_vd1_0;
+ 	ret = meson_canvas_alloc(priv->canvas, &priv->canvas_id_vd1_2);
+-	if (ret) {
+-		meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
+-		meson_canvas_free(priv->canvas, priv->canvas_id_vd1_0);
+-		meson_canvas_free(priv->canvas, priv->canvas_id_vd1_1);
+-		goto free_drm;
+-	}
++	if (ret)
++		goto free_canvas_vd1_1;
+ 
+ 	priv->vsync_irq = platform_get_irq(pdev, 0);
+ 
+ 	ret = drm_vblank_init(drm, 1);
+ 	if (ret)
+-		goto free_drm;
++		goto free_canvas_vd1_2;
+ 
+ 	/* Assign limits per soc revision/package */
+ 	for (i = 0 ; i < ARRAY_SIZE(meson_drm_soc_attrs) ; ++i) {
+@@ -288,11 +279,11 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	 */
+ 	ret = drm_aperture_remove_framebuffers(&meson_driver);
+ 	if (ret)
+-		goto free_drm;
++		goto free_canvas_vd1_2;
+ 
+ 	ret = drmm_mode_config_init(drm);
+ 	if (ret)
+-		goto free_drm;
++		goto free_canvas_vd1_2;
+ 	drm->mode_config.max_width = 3840;
+ 	drm->mode_config.max_height = 2160;
+ 	drm->mode_config.funcs = &meson_mode_config_funcs;
+@@ -307,7 +298,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	if (priv->afbcd.ops) {
+ 		ret = priv->afbcd.ops->init(priv);
+ 		if (ret)
+-			goto free_drm;
++			goto free_canvas_vd1_2;
+ 	}
+ 
+ 	/* Encoder Initialization */
+@@ -371,6 +362,14 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ exit_afbcd:
+ 	if (priv->afbcd.ops)
+ 		priv->afbcd.ops->exit(priv);
++free_canvas_vd1_2:
++	meson_canvas_free(priv->canvas, priv->canvas_id_vd1_2);
++free_canvas_vd1_1:
++	meson_canvas_free(priv->canvas, priv->canvas_id_vd1_1);
++free_canvas_vd1_0:
++	meson_canvas_free(priv->canvas, priv->canvas_id_vd1_0);
++free_canvas_osd1:
++	meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
+ free_drm:
+ 	drm_dev_put(drm);
+ 
+-- 
+2.45.2
 
-This says "not required", not "not functional". How come generating
-interrupts becomes impossible when not in keypad mode? That's what needs
-to be explained.
-
-Thanks,
-Conor.
-
---XwjIM0gNUPc/PA4a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoV1BAAKCRB4tDGHoIJi
-0gZ/AQCocR5s2n2LQQcgVf0GR8TGB1H/GaQqjtTuC5GHSHUgLwD9EeOgp3dr75O7
-9GLGurj7mSCsdm7wiy6ZJrtPAX9AsQo=
-=2XxC
------END PGP SIGNATURE-----
-
---XwjIM0gNUPc/PA4a--
 
