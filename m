@@ -1,199 +1,165 @@
-Return-Path: <linux-kernel+bounces-239837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C886B9265E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:21:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024BA92660C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83EFD281AD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:21:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 778BD1F22955
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BDE1836EB;
-	Wed,  3 Jul 2024 16:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C3F18308D;
+	Wed,  3 Jul 2024 16:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pnC0Xcyb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WDC+4P6r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1618181CF0;
-	Wed,  3 Jul 2024 16:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FB618308B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720023664; cv=none; b=Ki6VE5FLUVSQsLVWLLCdGFfOw/16+Bcn2xHfVv7Q7r4yGyxB1go6VfHXQMxnFKNa55NmtYMX43hMrVpWOZChom64nHTIdaY8E40fSTSW5wraSfonDcBkZk7BGqeAMPVX+mQh+6xI9kxPWqaOk5pWYe7KOXBTJkYRtZub2Tqj5/w=
+	t=1720023704; cv=none; b=T94MTGAlOxnf6rwQa4K568BP+2Hdye25yESGytZr1w5CcUeyqCMOiQDlBeKXMYh/5IkXOp7CEW/lntlSeWcP9RurA6/PfE+GU66UKZ/x8MftHG6KDlKZFZIUCC4n1Otv8RxJpMgaqf7HiOB/b815/ICv8TCJ2XHRZhvn47hZucQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720023664; c=relaxed/simple;
-	bh=zkiWcHGjz2TNHSSYj3gAD/6JOpE4e7eGlFo4E4j9CV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AgaYlt0WRHCDlNFAl10Hz72U7XsII59l2o0GbM8Ko7X5aRpLA3nELpt3pEdZPAGW64igf/vWIPnlcDFKnPv3X9H1hgxlu0rW1k7fKcfnc0+LdbqC01ZpfiIVzD+E9T6YrMU22edVN9sxUF/swDc7ZhfYcXedoodyJOw9PTDbgKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pnC0Xcyb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2C6AC2BD10;
-	Wed,  3 Jul 2024 16:21:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720023664;
-	bh=zkiWcHGjz2TNHSSYj3gAD/6JOpE4e7eGlFo4E4j9CV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pnC0XcybrNw8kq5EQFs2KpYnKSi040lgXtZeLJiDjT7GxhejsiXllO0FTUP/XL+33
-	 sDZph1BuSJ++L4Hr68CtXODMyflU5qMl1jT2CLtmnW4ymaBKU6XE0s0W53mKMZAoPe
-	 EN9vkKcAJVtrWgFLUDdLTZ0A7rUFjlVIhILBZ5IiCliBXiXQ/7VsqRqti6/KdNAFYJ
-	 ndvUrqf7SFsnx5/3DMsNGfKPVenUC+6xdvdFrxdtCfkMAD20CZJQ2/XFFppZx2Wz1d
-	 5GR+53bE3Axfp+UoVZsMuOnm61fEPNraydb0ohMVqd40oMEHeNAdJ3wIoaMpF6H2xL
-	 PN2cGVWDUTaAg==
-Date: Wed, 3 Jul 2024 18:21:01 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Leonardo Bras <leobras@redhat.com>,
-	Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH rcu 6/9] rcu: Add rcutree.nocb_patience_delay to reduce
- nohz_full OS jitter
-Message-ID: <ZoV6bTj0xvGopEao@localhost.localdomain>
-References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
- <20240604222355.2370768-6-paulmck@kernel.org>
+	s=arc-20240116; t=1720023704; c=relaxed/simple;
+	bh=TcS0Nab4P1uInJHhXVtq4QA+KS6M5rJkuPOwVobX3GA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jdfvIZ/Vyb5c0hC/3FDna0dBtbiEZodKxgej2BbZBVGaX3E776OLANEAi22cfRfjgYZT4JnU8e4vYjP7WXU0lSLEeB3WIiNfDPUdspiFqlFSHchsXv80/t1cg+bmSDvSANLTwaMx63vMAH/OW1KPAhc6bvsJYm8BmVxXS50tvBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WDC+4P6r; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720023702;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RvzgALGPKTw1bigvFfaZyijkP2+PzdDyQ0IADPOqqJg=;
+	b=WDC+4P6rwcRBfL8dkIamiRLfjO2nWdq4OQjBJeX1Y2VfgCi91/kM9kXD5zUfpfMVVxONft
+	BdSPc5r9wlxWX8giwEVKLckmQTLOm3G/Gl/eiBRpqHZSAMZvJrXJDz1SiSf5Ww5VQR6ytN
+	LhsPyllVrI418Gjj8BJKTmD2makerbU=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-515-32aPcIEaM_2M8DXbCRgGQQ-1; Wed, 03 Jul 2024 12:21:40 -0400
+X-MC-Unique: 32aPcIEaM_2M8DXbCRgGQQ-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-58b3fcf235dso1772966a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:21:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720023699; x=1720628499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RvzgALGPKTw1bigvFfaZyijkP2+PzdDyQ0IADPOqqJg=;
+        b=fJXeNIg8P5BvJifI6WqSKtI6F8maDx19UnnL8Pvre+thBpyjjw0X9raJmf313Z+JEd
+         vOxy+qeM8m7qyLu/sDGMxmiSGLIm+fhyG1YFZMm7jz7pHcKqwcPAaLoMd0nWGEacjeAW
+         iJpL8dXjCYXaK3HO/e3oHWXZg0TSLE7BjWYJMrbMv49vbCvGQL8c1ucaOFOJzLS7dUfo
+         AJWpvreNWDtV0yGWR+Zoy5l5f3qn0jeDYDkNhQ5fWxGam6bASc0Zx+OrjG6rnSK7E0zq
+         fsf11my/Zw5A+gYfE8Av245zVKwB4HZbHGOCaKRgPN12lpXa0zRWN+pzkSKk9l6ji6cG
+         G6Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCVecQFE8L+QJOpzB/zOTbQYcS/2Xil0ABR26U/rGtv/ApBF3kNahsw0bshqFcjo2rjLT55YcyEb+lXKCUDxaKMUjlFpP8BpQB1jaVOR
+X-Gm-Message-State: AOJu0YzUwQyhIEZqKWATn8f/DNmIkpZnaZJtHLsg/mGNeU23oT4GRt4U
+	Q2xX6DwKC/UyFjIH+obssRiun0m7LyFuwgquU0le1DOSS9HZ8Su9nYDAIasqJc+Jxpq0rSlvubT
+	M1MLysf2qGop07Mf+UW7aC891ZGHW9tgvUa+k668ITxQd0ZQXw2iTxCDN9p5CgnkjXogvh/AnA0
+	JEnM1BW/RxDmVl2NclaT5rr1pp+hg47tNzkSKZ
+X-Received: by 2002:a05:6402:2113:b0:57a:2ccb:b3f2 with SMTP id 4fb4d7f45d1cf-5879f59bc0dmr8314472a12.16.1720023699465;
+        Wed, 03 Jul 2024 09:21:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFLrQmfzqoCkSKEjGQCytFKKt1qFveCCZLiKDvdyFB5I6punigduS2DoMmXGBJNBjrgv6P7Ec5gPWUP4aOKX74=
+X-Received: by 2002:a05:6402:2113:b0:57a:2ccb:b3f2 with SMTP id
+ 4fb4d7f45d1cf-5879f59bc0dmr8314456a12.16.1720023699020; Wed, 03 Jul 2024
+ 09:21:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240604222355.2370768-6-paulmck@kernel.org>
+References: <20240626-stage-vdpa-vq-precreate-v2-0-560c491078df@nvidia.com> <20240626-stage-vdpa-vq-precreate-v2-16-560c491078df@nvidia.com>
+In-Reply-To: <20240626-stage-vdpa-vq-precreate-v2-16-560c491078df@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 3 Jul 2024 18:21:01 +0200
+Message-ID: <CAJaqyWdK4u0Y2EbgyWsYupLvybuBK=waf_qhUqne2q9wHvuEqA@mail.gmail.com>
+Subject: Re: [PATCH vhost v2 16/24] vdpa/mlx5: Accept Init -> Ready VQ
+ transition in resume_vq()
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
+	Cosmin Ratiu <cratiu@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Tue, Jun 04, 2024 at 03:23:52PM -0700, Paul E. McKenney a écrit :
-> If a CPU is running either a userspace application or a guest OS in
-> nohz_full mode, it is possible for a system call to occur just as an
-> RCU grace period is starting.  If that CPU also has the scheduling-clock
-> tick enabled for any reason (such as a second runnable task), and if the
-> system was booted with rcutree.use_softirq=0, then RCU can add insult to
-> injury by awakening that CPU's rcuc kthread, resulting in yet another
-> task and yet more OS jitter due to switching to that task, running it,
-> and switching back.
-> 
-> In addition, in the common case where that system call is not of
-> excessively long duration, awakening the rcuc task is pointless.
-> This pointlessness is due to the fact that the CPU will enter an extended
-> quiescent state upon returning to the userspace application or guest OS.
-> In this case, the rcuc kthread cannot do anything that the main RCU
-> grace-period kthread cannot do on its behalf, at least if it is given
-> a few additional milliseconds (for example, given the time duration
-> specified by rcutree.jiffies_till_first_fqs, give or take scheduling
-> delays).
-> 
-> This commit therefore adds a rcutree.nocb_patience_delay kernel boot
-> parameter that specifies the grace period age (in milliseconds)
-> before which RCU will refrain from awakening the rcuc kthread.
-> Preliminary experiementation suggests a value of 1000, that is,
-> one second.  Increasing rcutree.nocb_patience_delay will increase
-> grace-period latency and in turn increase memory footprint, so systems
-> with constrained memory might choose a smaller value.  Systems with
-> less-aggressive OS-jitter requirements might choose the default value
-> of zero, which keeps the traditional immediate-wakeup behavior, thus
-> avoiding increases in grace-period latency.
-> 
-> [ paulmck: Apply Leonardo Bras feedback.  ]
-> 
-> Link: https://lore.kernel.org/all/20240328171949.743211-1-leobras@redhat.com/
-> 
-> Reported-by: Leonardo Bras <leobras@redhat.com>
-> Suggested-by: Leonardo Bras <leobras@redhat.com>
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Reviewed-by: Leonardo Bras <leobras@redhat.com>
+On Wed, Jun 26, 2024 at 12:28=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.co=
+m> wrote:
+>
+> Until now resume_vq() was used only for the suspend/resume scenario.
+> This change also allows calling resume_vq() to bring it from Init to
+> Ready state (VQ initialization).
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+
 > ---
->  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
->  kernel/rcu/tree.c                               | 10 ++++++++--
->  kernel/rcu/tree_plugin.h                        | 10 ++++++++++
->  3 files changed, 26 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 500cfa7762257..2d4a512cf1fc6 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -5018,6 +5018,14 @@
->  			the ->nocb_bypass queue.  The definition of "too
->  			many" is supplied by this kernel boot parameter.
->  
-> +	rcutree.nocb_patience_delay= [KNL]
-> +			On callback-offloaded (rcu_nocbs) CPUs, avoid
-> +			disturbing RCU unless the grace period has
-> +			reached the specified age in milliseconds.
-> +			Defaults to zero.  Large values will be capped
-> +			at five seconds.  All values will be rounded down
-> +			to the nearest value representable by jiffies.
-> +
->  	rcutree.qhimark= [KNL]
->  			Set threshold of queued RCU callbacks beyond which
->  			batch limiting is disabled.
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 35bf4a3736765..408b020c9501f 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -176,6 +176,9 @@ static int gp_init_delay;
->  module_param(gp_init_delay, int, 0444);
->  static int gp_cleanup_delay;
->  module_param(gp_cleanup_delay, int, 0444);
-> +static int nocb_patience_delay;
-> +module_param(nocb_patience_delay, int, 0444);
-> +static int nocb_patience_delay_jiffies;
->  
->  // Add delay to rcu_read_unlock() for strict grace periods.
->  static int rcu_unlock_delay;
-> @@ -4344,11 +4347,14 @@ static int rcu_pending(int user)
->  		return 1;
->  
->  	/* Is this a nohz_full CPU in userspace or idle?  (Ignore RCU if so.) */
-> -	if ((user || rcu_is_cpu_rrupt_from_idle()) && rcu_nohz_full_cpu())
-> +	gp_in_progress = rcu_gp_in_progress();
-> +	if ((user || rcu_is_cpu_rrupt_from_idle() ||
-> +	     (gp_in_progress &&
-> +	      time_before(jiffies, READ_ONCE(rcu_state.gp_start) + nocb_patience_delay_jiffies))) &&
-> +	    rcu_nohz_full_cpu())
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 24 ++++++++++++++++++++++--
+>  1 file changed, 22 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.c
+> index 0a62ce0b4af8..adcc4d63cf83 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -1557,11 +1557,31 @@ static void suspend_vqs(struct mlx5_vdpa_net *nde=
+v)
+>
+>  static void resume_vq(struct mlx5_vdpa_net *ndev, struct mlx5_vdpa_virtq=
+ueue *mvq)
+>  {
+> -       if (!mvq->initialized || !is_resumable(ndev))
+> +       if (!mvq->initialized)
+>                 return;
+>
+> -       if (mvq->fw_state !=3D MLX5_VIRTIO_NET_Q_OBJECT_STATE_SUSPEND)
+> +       switch (mvq->fw_state) {
+> +       case MLX5_VIRTIO_NET_Q_OBJECT_STATE_INIT:
+> +               /* Due to a FW quirk we need to modify the VQ fields firs=
+t then change state.
+> +                * This should be fixed soon. After that, a single comman=
+d can be used.
+> +                */
+> +               if (modify_virtqueue(ndev, mvq, 0))
+> +                       mlx5_vdpa_warn(&ndev->mvdev,
+> +                               "modify vq properties failed for vq %u\n"=
+, mvq->index);
+> +               break;
+> +       case MLX5_VIRTIO_NET_Q_OBJECT_STATE_SUSPEND:
+> +               if (!is_resumable(ndev)) {
+> +                       mlx5_vdpa_warn(&ndev->mvdev, "vq %d is not resuma=
+ble\n", mvq->index);
+> +                       return;
+> +               }
+> +               break;
+> +       case MLX5_VIRTIO_NET_Q_OBJECT_STATE_RDY:
+>                 return;
+> +       default:
+> +               mlx5_vdpa_warn(&ndev->mvdev, "resume vq %u called from ba=
+d state %d\n",
+> +                              mvq->index, mvq->fw_state);
+> +               return;
+> +       }
+>
+>         if (modify_virtqueue_state(ndev, mvq, MLX5_VIRTIO_NET_Q_OBJECT_ST=
+ATE_RDY))
+>                 mlx5_vdpa_warn(&ndev->mvdev, "modify to resume failed for=
+ vq %u\n", mvq->index);
+>
+> --
+> 2.45.1
+>
 
-The rcu_nohz_full_cpu() test should go before anything in order to benefit from
-the static key in tick_nohz_full_cpu().
-
-And since it only applies to nohz_full, should it be called
-nohz_full_patience_delay ?
-
-Or do we want to generalize it to all nocb uses
-(which means only rely on rcu_is_cpu_rrupt_from_idle() if not nohz_full). Not
-sure if that would make sense...
-
-Thanks.
-
->  		return 0;
->  
->  	/* Is the RCU core waiting for a quiescent state from this CPU? */
-> -	gp_in_progress = rcu_gp_in_progress();
->  	if (rdp->core_needs_qs && !rdp->cpu_no_qs.b.norm && gp_in_progress)
->  		return 1;
->  
-> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> index 340bbefe5f652..31c539f09c150 100644
-> --- a/kernel/rcu/tree_plugin.h
-> +++ b/kernel/rcu/tree_plugin.h
-> @@ -93,6 +93,16 @@ static void __init rcu_bootup_announce_oddness(void)
->  		pr_info("\tRCU debug GP init slowdown %d jiffies.\n", gp_init_delay);
->  	if (gp_cleanup_delay)
->  		pr_info("\tRCU debug GP cleanup slowdown %d jiffies.\n", gp_cleanup_delay);
-> +	if (nocb_patience_delay < 0) {
-> +		pr_info("\tRCU NOCB CPU patience negative (%d), resetting to zero.\n", nocb_patience_delay);
-> +		nocb_patience_delay = 0;
-> +	} else if (nocb_patience_delay > 5 * MSEC_PER_SEC) {
-> +		pr_info("\tRCU NOCB CPU patience too large (%d), resetting to %ld.\n", nocb_patience_delay, 5 * MSEC_PER_SEC);
-> +		nocb_patience_delay = 5 * MSEC_PER_SEC;
-> +	} else if (nocb_patience_delay) {
-> +		pr_info("\tRCU NOCB CPU patience set to %d milliseconds.\n", nocb_patience_delay);
-> +	}
-> +	nocb_patience_delay_jiffies = msecs_to_jiffies(nocb_patience_delay);
->  	if (!use_softirq)
->  		pr_info("\tRCU_SOFTIRQ processing moved to rcuc kthreads.\n");
->  	if (IS_ENABLED(CONFIG_RCU_EQS_DEBUG))
-> -- 
-> 2.40.1
-> 
-> 
 
