@@ -1,303 +1,144 @@
-Return-Path: <linux-kernel+bounces-239127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD0A9256CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:30:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F4F9256D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8DD28B978
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:30:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6473A1F22C40
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C2713D610;
-	Wed,  3 Jul 2024 09:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A132D13D60A;
+	Wed,  3 Jul 2024 09:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="viXDdSoJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QlnNxEpZ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="viXDdSoJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QlnNxEpZ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vmt1uvqK"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BBBC8C0;
-	Wed,  3 Jul 2024 09:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD2D1304B0
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 09:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719998997; cv=none; b=JXYxuLvj244aX1aNlw7ndVT3gJR0vj41cy2gzmDT3w/0H9QfmzcQV+lvrE0sQYTZ/pQYJKJghZelrtJMysNBRR+5ECtxBsZpHiGIS/qOnCpghMAgGrwP7csqzw3OBqZHM7xeipIw1ZC5r8I6bvPap8wW+tZPitk9OiZqEC2etOY=
+	t=1719999141; cv=none; b=IHZ4I4LxYmzJO6ULSpQGpTpvD59PHWPhwK/hs8faOnN5Ulp7wvc8p6CwizaVG9xNNDhsrIjIWeaYDkPWdl3OKfb5qvPkifaj0G6X13eX8icqKi/pk9xh1B+7hB6tTjqFntfY5UZOEYQ4n4S/E1g58Ptb0gk2lTzgB6zFyZ+uNRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719998997; c=relaxed/simple;
-	bh=qXA/0XP0mErSdEsbkFeZbc5iGqHB95UjydhxaE87ZEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gW00G7VVXeFxn3aWHPfvaHP1igR2uB1mqD0LAXkafPr5IaACKKwzf861RkpEPA5sN+ySosAtHE48xRlA9jeCV0lOX+KtoEt4RGNYtAz2+7hxam3aOkgBX5221rrWtXHTDNhES21NSb8hj9BGy+svRlSpixzWwWXnObmoJ0sBoJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=viXDdSoJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QlnNxEpZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=viXDdSoJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QlnNxEpZ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8DA7C219B2;
-	Wed,  3 Jul 2024 09:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719998993; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qg8fh3E4O+gBZ3kQmrW77tAHA8+NQCdrYIWs4bWJwlM=;
-	b=viXDdSoJiqYK7gDJfD5W4Ze7AfmYhmd9OaozC6pN+oibJobaYKs5V4hU6z4wqBtB3NX2ET
-	7N8yJ3HpbaP8UxB0kEGg5ikBtHNITx+HB0z+qLUMjVKjXfEewheE972kvtGm8iBGlFEK19
-	RlkRdCGYLvBeYrlKZEM66RQ5xRWdBNs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719998993;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qg8fh3E4O+gBZ3kQmrW77tAHA8+NQCdrYIWs4bWJwlM=;
-	b=QlnNxEpZR6vXjpcp/ZwPhiVBmbh8Bjyi4EkIj5MWtDnEhLpC7zwtH372TP3Gozg9GOgGNG
-	c/jGN70OKSfoYsCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=viXDdSoJ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QlnNxEpZ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719998993; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qg8fh3E4O+gBZ3kQmrW77tAHA8+NQCdrYIWs4bWJwlM=;
-	b=viXDdSoJiqYK7gDJfD5W4Ze7AfmYhmd9OaozC6pN+oibJobaYKs5V4hU6z4wqBtB3NX2ET
-	7N8yJ3HpbaP8UxB0kEGg5ikBtHNITx+HB0z+qLUMjVKjXfEewheE972kvtGm8iBGlFEK19
-	RlkRdCGYLvBeYrlKZEM66RQ5xRWdBNs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719998993;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qg8fh3E4O+gBZ3kQmrW77tAHA8+NQCdrYIWs4bWJwlM=;
-	b=QlnNxEpZR6vXjpcp/ZwPhiVBmbh8Bjyi4EkIj5MWtDnEhLpC7zwtH372TP3Gozg9GOgGNG
-	c/jGN70OKSfoYsCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C7A013974;
-	Wed,  3 Jul 2024 09:29:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id H9lbHhEahWaIVgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 03 Jul 2024 09:29:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 2BB5CA08A9; Wed,  3 Jul 2024 11:29:53 +0200 (CEST)
-Date: Wed, 3 Jul 2024 11:29:53 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	Baokun Li <libaokun1@huawei.com>,
-	syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com,
-	stable@kernel.org
-Subject: Re: [PATCH 1/2] ext4: check dot and dotdot of dx_root before making
- dir indexed
-Message-ID: <20240703092953.j53in72xzn4vheca@quack3>
-References: <20240702132349.2600605-1-libaokun@huaweicloud.com>
- <20240702132349.2600605-2-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1719999141; c=relaxed/simple;
+	bh=wxNTZ9QPmv/pOHH5Udq9kaG7vGTr4w1mp6WoX2yWyRo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sBQzkRkdn1P4UTfE1RGeZ+xeN72INfUFq6vxFx2p/N0cCIt9s/aE2zpcMYC9ijUaNmkRy2vhz3DwoyAIG7RuFJ1YP5rbNdOdXG9o/HVtDvSeybHZQx6Rc2L5ynI+anYQwrkkzeTBAEl5T1wASTnEzS8yHpT1DWG94RySo4cgAlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vmt1uvqK; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ebe6495aedso56106551fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 02:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719999137; x=1720603937; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RZAn7gmriISgeIoJJsOcj52E6C/GbJNEpwWf2THjDNo=;
+        b=vmt1uvqKCg6aw4oUA0C+i2JpAChj2UPu8860Ye/iyo8CXKVCU82AxC5gTzbo44E6KW
+         cxZwSeUl+e6EKI5MWF15S7d4gmEOS1tnLuosvIkjbj1qa2/bbo+O35DMQfqUFWfQ36m+
+         Zg++/qyV2eQCy1DeBJ2mpLKrzuEjAQampW1AHVkXA0500s7Jcd2oa4DqR4YW24Acy3gz
+         FnWXaH8Jku5u2ynBJq0lGP5E0+zeU7ar9EKGbbFMnZ8AUteUGqya70ozKcKnA69e9wub
+         NxisPSPyv9aCAupn9yCT2FrBwMGqHJP8GYAfhGC+C5Nnhnx2RKjUQo+38g7qMoFS/s5T
+         lJgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719999137; x=1720603937;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RZAn7gmriISgeIoJJsOcj52E6C/GbJNEpwWf2THjDNo=;
+        b=GJGG9c2o4nFK13VmBSBhDG5FcYtU9Ytiwf84FAb8uSqNJwt/yhF9+C/vXtpzq4bPfa
+         zRp4m7IGrcSlp8PSOCv24qw0GYFJW3IYZ13hpT/Ufgr451uc9DMMTx5NEOOvV0DJ3QDG
+         AFGsuysVsfqgH3k6VGO9RwjYg9sMSghMPrgUJMJBmRdmtHkAeTBxojS0Q6jsxoR2DQPn
+         R5h7+k0gsTvIvkfqUolWLug8DjuO63qI8wY6nluOG0HEZKN7ldE5gEL/7rJNFeUNf+Y1
+         Lj8QusibgVAo+0+Cnzi4KZbPgeBUB2cpdbrGkfSn3o4Mr64LODDIdiKL04oWhn0S79B5
+         Q85Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUj3Ol6cm3T1T2tTOgRKz0PB/6ExXSAecY1ylKBouDPAbG/OQZpXOkthe/s8rU7eQ2rM/1/U/fKCcw/LkEsgRnB/IdoQFaJeplZfUDN
+X-Gm-Message-State: AOJu0Yznh4crY/CIC0kIwpP1EV44Hys8VWAioHTGswT13ygnJ1s41e4v
+	ZfxssRgVKvhJ5MOPvdaMHqnuF+x+fltRSI0BAOH8XWysGvG19hTHlEjhZMUkts3VN07whXH/+7z
+	+hy7czXA2phkXDz2jfKTvDGKU9ogidOrVeh+LTqdvNIymkE8RZrU=
+X-Google-Smtp-Source: AGHT+IHP41wi4C+FB8VM4BV/A8lqsduH/pzzkvBBD5gkvGC7yWBrX1owIGvGiTiPL5Irzwb3wJnVgKJK7S7IeZ1QTNo=
+X-Received: by 2002:a2e:a5cb:0:b0:2eb:e258:717f with SMTP id
+ 38308e7fff4ca-2ee5e6e01b1mr75953791fa.42.1719999136936; Wed, 03 Jul 2024
+ 02:32:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702132349.2600605-2-libaokun@huaweicloud.com>
-X-Rspamd-Queue-Id: 8DA7C219B2
-X-Spam-Score: -2.51
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[ae688d469e36fb5138d0];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com,syzkaller.appspotmail.com,kernel.org];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,huawei.com:email,suse.com:email]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+References: <20240703091535.3531-1-spasswolf@web.de>
+In-Reply-To: <20240703091535.3531-1-spasswolf@web.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 3 Jul 2024 11:32:05 +0200
+Message-ID: <CAMRc=Md=PnpHVGGO6Nb_efVZ0a3cMxWbLvYmkka5Wznks70drw@mail.gmail.com>
+Subject: Re: [PATCH] pci: bus: only call of_platform_populate() if CONFIG_OF
+ is defined
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, caleb.connolly@linaro.org, 
+	bhelgaas@google.com, amit.pundir@linaro.org, neil.armstrong@linaro.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 02-07-24 21:23:48, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Syzbot reports a issue as follows:
-> ============================================
-> BUG: unable to handle page fault for address: ffffed11022e24fe
-> PGD 23ffee067 P4D 23ffee067 PUD 0
-> Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
-> CPU: 0 PID: 5079 Comm: syz-executor306 Not tainted 6.10.0-rc5-g55027e689933 #0
-> Call Trace:
->  <TASK>
->  make_indexed_dir+0xdaf/0x13c0 fs/ext4/namei.c:2341
->  ext4_add_entry+0x222a/0x25d0 fs/ext4/namei.c:2451
->  ext4_rename fs/ext4/namei.c:3936 [inline]
->  ext4_rename2+0x26e5/0x4370 fs/ext4/namei.c:4214
-> [...]
-> ============================================
-> 
-> The immediate cause of this problem is that there is only one valid dentry
-> for the block to be split during do_split, so split==0 results in out of
-> bounds accesses to the map triggering the issue.
-> 
->     do_split
->       unsigned split
->       dx_make_map
->        count = 1
->       split = count/2 = 0;
->       continued = hash2 == map[split - 1].hash;
->        ---> map[4294967295]
-> 
-> The maximum length of a filename is 255 and the minimum block size is 1024,
-> so it is always guaranteed that the number of entries is greater than or
-> equal to 2 when do_split() is called.
-> 
-> But syzbot's crafted image has no dot and dotdot in dir, and the dentry
-> distribution in dirblock is as follows:
-> 
->   bus     dentry1          hole           dentry2           free
-> |xx--|xx-------------|...............|xx-------------|...............|
-> 0   12 (8+248)=256  268     256     524 (8+256)=264 788     236     1024
-> 
-> So when renaming dentry1 increases its name_len length by 1, neither hole
-> nor free is sufficient to hold the new dentry, and make_indexed_dir() is
-> called.
-> 
-> In make_indexed_dir() it is assumed that the first two entries of the
-> dirblock must be dot and dotdot, so bus and dentry1 are left in dx_root
-> because they are treated as dot and dotdot, and only dentry2 is moved
-> to the new leaf block. That's why count is equal to 1.
-> 
-> Therefore add the ext4_check_dx_root() helper function to add more sanity
-> checks to dot and dotdot before starting the conversion to avoid the above
-> issue.
-> 
-> Reported-by: syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=ae688d469e36fb5138d0
-> Fixes: ac27a0ec112a ("[PATCH] ext4: initial copy of files from ext3")
-> Cc: stable@kernel.org
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-
-Thanks! The patch looks good to me. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On Wed, Jul 3, 2024 at 11:15=E2=80=AFAM Bert Karwatzki <spasswolf@web.de> w=
+rote:
+>
+> If of_platform_populate() is called when CONFIG_OF is not defined this
+> leads to spurious error messages of the following type:
+>  pci 0000:00:01.1: failed to populate child OF nodes (-19)
+>  pci 0000:00:02.1: failed to populate child OF nodes (-19)
+>
+> Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF no=
+des of the port node")
+> Signed-off-by: Bert Karwatzki <spasswolf@web.de>
 > ---
->  fs/ext4/namei.c | 56 ++++++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 51 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-> index e6769b97a970..35881e3dd880 100644
-> --- a/fs/ext4/namei.c
-> +++ b/fs/ext4/namei.c
-> @@ -2172,6 +2172,52 @@ static int add_dirent_to_buf(handle_t *handle, struct ext4_filename *fname,
->  	return err ? err : err2;
+>  drivers/pci/bus.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> index e4735428814d..b363010664cd 100644
+> --- a/drivers/pci/bus.c
+> +++ b/drivers/pci/bus.c
+> @@ -350,6 +350,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+>
+>         pci_dev_assign_added(dev, true);
+>
+> +#ifdef CONFIG_OF
+>         if (pci_is_bridge(dev)) {
+>                 retval =3D of_platform_populate(dev->dev.of_node, NULL, N=
+ULL,
+>                                               &dev->dev);
+> @@ -357,6 +358,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+>                         pci_err(dev, "failed to populate child OF nodes (=
+%d)\n",
+>                                 retval);
+>         }
+> +#endif
 >  }
->  
-> +static bool ext4_check_dx_root(struct inode *dir, struct dx_root *root)
-> +{
-> +	struct fake_dirent *fde;
-> +	const char *error_msg;
-> +	unsigned int rlen;
-> +	unsigned int blocksize = dir->i_sb->s_blocksize;
-> +	char *blockend = (char *)root + dir->i_sb->s_blocksize;
-> +
-> +	fde = &root->dot;
-> +	if (unlikely(fde->name_len != 1)) {
-> +		error_msg = "invalid name_len for '.'";
-> +		goto corrupted;
-> +	}
-> +	if (unlikely(strncmp(root->dot_name, ".", fde->name_len))) {
-> +		error_msg = "invalid name for '.'";
-> +		goto corrupted;
-> +	}
-> +	rlen = ext4_rec_len_from_disk(fde->rec_len, blocksize);
-> +	if (unlikely((char *)fde + rlen >= blockend)) {
-> +		error_msg = "invalid rec_len for '.'";
-> +		goto corrupted;
-> +	}
-> +
-> +	fde = &root->dotdot;
-> +	if (unlikely(fde->name_len != 2)) {
-> +		error_msg = "invalid name_len for '..'";
-> +		goto corrupted;
-> +	}
-> +	if (unlikely(strncmp(root->dotdot_name, "..", fde->name_len))) {
-> +		error_msg = "invalid name for '..'";
-> +		goto corrupted;
-> +	}
-> +	rlen = ext4_rec_len_from_disk(fde->rec_len, blocksize);
-> +	if (unlikely((char *)fde + rlen >= blockend)) {
-> +		error_msg = "invalid rec_len for '..'";
-> +		goto corrupted;
-> +	}
-> +
-> +	return true;
-> +
-> +corrupted:
-> +	EXT4_ERROR_INODE(dir, "Corrupt dir, %s, running e2fsck is recommended",
-> +			 error_msg);
-> +	return false;
-> +}
-> +
->  /*
->   * This converts a one block unindexed directory to a 3 block indexed
->   * directory, and adds the dentry to the indexed directory.
-> @@ -2206,17 +2252,17 @@ static int make_indexed_dir(handle_t *handle, struct ext4_filename *fname,
->  		brelse(bh);
->  		return retval;
->  	}
-> +
->  	root = (struct dx_root *) bh->b_data;
-> +	if (!ext4_check_dx_root(dir, root)) {
-> +		brelse(bh);
-> +		return -EFSCORRUPTED;
-> +	}
->  
->  	/* The 0th block becomes the root, move the dirents out */
->  	fde = &root->dotdot;
->  	de = (struct ext4_dir_entry_2 *)((char *)fde +
->  		ext4_rec_len_from_disk(fde->rec_len, blocksize));
-> -	if ((char *) de >= (((char *) root) + blocksize)) {
-> -		EXT4_ERROR_INODE(dir, "invalid rec_len for '..'");
-> -		brelse(bh);
-> -		return -EFSCORRUPTED;
-> -	}
->  	len = ((char *) root) + (blocksize - csum_size) - (char *) de;
->  
->  	/* Allocate new block for the 0th block's dirents */
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>  EXPORT_SYMBOL_GPL(pci_bus_add_device);
+>
+> --
+> 2.45.2
+>
+> The mentioned error message occur on systems without CONFIG_OF, i.e.
+> x86_64. The call to of_platform_depopulate() in drivers/pci/remove.c
+> does not need #ifdef CONFIG_OF as the return value is not checked (it
+> will most likely be optimized away on platforms witout OF where the
+> of_platform_{de,}populate() functions just return -ENODEV)
+>
+> Please CC me when replying, I'm not subscribed to the lists.
+>
+> Bert Karwatzki
+
+There's a better (less ifdeffery) fix on the list that I'll pick up
+later today[1].
+
+Bart
+
+[1] https://lore.kernel.org/lkml/20240702180839.71491-1-superm1@kernel.org/=
+T/
 
