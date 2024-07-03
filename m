@@ -1,243 +1,202 @@
-Return-Path: <linux-kernel+bounces-239040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B47925550
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:24:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA2A925551
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CFA91C22AAC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C9A1F23830
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6B8137C34;
-	Wed,  3 Jul 2024 08:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVe8deiB"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160A713957B;
+	Wed,  3 Jul 2024 08:24:33 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9D713A24A;
-	Wed,  3 Jul 2024 08:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2551F13049E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719995037; cv=none; b=JrG+tj3NbBsFTWQ/6kk0cSaOfECNnD4ky9WZgOTgbpn8XgoXWFl+YAPoZ45M0htgv7R3n37rvloUrLBAEOhbajO2wPeqJaNyqzCchw+btGAFmRUJaSOJ/IHmzRfWSW6pa0i+HT5c7e75CvESVp+qcLZKninB9XZsS21I8kkPGp0=
+	t=1719995072; cv=none; b=IOvJVL633J3+HiYi4FobWiyqSjLFuAb+0GDDzhhX3bErt+tfdE56u+P0OTVqQAX3TDJQA5i/3pWt9eTTuNqPT6DAHbXAPD9QX63ytJmFM1AsJEHBeb52ctLxWzZudlQCS+OghDO8tNgryNTW0BF6U1fguh4ppL96h2N6UpdgOAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719995037; c=relaxed/simple;
-	bh=6705XkaLy00URbcsdcKue3vH2h024J9S4iLZqDyTKCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=feoAJOwh3m801bBoPjaj/td62AqJb9KAkyA109YKQbaAD1gg5pQiDVso/ZGIVO8xBYcdtbbQFjxnAfysOq5qAwfDCgB7zjHJpAPO42avWatS3lWr9pKL47vvdqSBE8AWpjZGtyJY1w/w9RvVkn7uw//Yz9P5DtiZFvsvk4Bujjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVe8deiB; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6fe617966fso457261566b.1;
-        Wed, 03 Jul 2024 01:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719995033; x=1720599833; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zCMYXJXadwK61w5sdXjhb6LXfr4ZtVK+ganCBejHY3k=;
-        b=QVe8deiBkV/3KEq2IP9CW+FtvLS+PXWuJoAQwOrWbv07BQI/x5Jx52+mpJjtktlWQD
-         1GJSdYw2IezAj/qG0dHMPqF3ABVHgA8JVpLBXQv+rXgFUwOetJdXjspIwlEfW9PC1kaR
-         fgxsCG3exAP5RtXyThBfFQs3KOMyI4YZJEDWZPW7VcT8Ywn8NqW5bC7Z9HnDxLt7alYs
-         uvyRD2GPKSxTKAc0PG9k1F5qaE3MVVSp/P/orpezU4jKZq4kIoyi7IPtyt3Jsf9d369v
-         lgRYdOOY8rUT2bk+5JT7W3MQ0T2YiTl/SUhN2v7UJOK/tT4UxWMdWDlYhGC8YiZFDzgz
-         nKDA==
+	s=arc-20240116; t=1719995072; c=relaxed/simple;
+	bh=eTYaV7oZ2E95tlvrLrsoSOWgUjAMgF615yrlhLfI7kU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uSiDvIpM9Q3RhXts7lVqeS6VSMkyPW0Sx2Oa3P4IPydr/l0D/ETuxpThmvJ8rVZhuutGqO35DWyH6TkamoLQfQxrFSAi2H4wFzHD+PqAVfwqAa9gOeQ1JYRmmX+WqV5Ef2cnG3x0eMNyyDh87WBDkgHG0VstK2bjDa4F38OZ+AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f3c9711ce9so511806539f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 01:24:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719995033; x=1720599833;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zCMYXJXadwK61w5sdXjhb6LXfr4ZtVK+ganCBejHY3k=;
-        b=AfK9cK5QoUdUxMaAl5a0BsFD9B/hgOAuKX0vt29vUAVRHvMkq+v7F10/70gUVDnDXQ
-         MJXB2qWiUdmFr8gVosqh4Z9/N3aUO6ZBYQ20yZPe4fN8eH7t5G4rW2DT8+1bGKY9e/gg
-         dhmdRiiyDkla0ysxMOQdzqn6/6HS6sMgMpM+5PpUf+dLpyHUR1+cb+AbNNfD66gFzHT0
-         hHUR7uZhmpHY/qOJ0b3FPKe+QkYhZ+MJAYQkv/nWKJQHiCyqV3Pf4msE/sGsLTtVLwf4
-         Pbhcqg/lRBHNg+NSb/snyaDMMiQ7cCGoMd2ib2hEdrsQ2ynX+4kA/CnEcdTGyip7st/X
-         HbKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpNMdPCl08IdV8Uq3LuxWTQuNuxrTSmR5fifR2RS0t1PGVZAFNorE+mRuEBQDT/ng7NL6VUOwtvcFRm7PHPUFI/kNfE6h420aIauOfT9PnxbjLJxIaxOMS//HO25k5UUojvuEiWgomyA==
-X-Gm-Message-State: AOJu0YxX9MS25otjiy2JZLgaWp89xR/s7qQMCriw3EdNcrgmcipBkgXg
-	Y+VPRf5RROakOMkkj3La6zfC3Q9tOj8Til7E1knSRgwEbRkywSH+wMfL4PLQmnbjVHCMfPHDR8p
-	JHCsj5/tNq87yIv9MhNv8vtYsKg==
-X-Google-Smtp-Source: AGHT+IELcZTIilt/NDQQO1QrB9EIggXdx7nlZ6ejwLcXZXR9gSKZjLqipfoOr74YTbP8BXrqr93Wpl4wY+4zDdSTw8s=
-X-Received: by 2002:a17:907:84d:b0:a75:29ea:283f with SMTP id
- a640c23a62f3a-a7529ea28d3mr540210566b.66.1719995033305; Wed, 03 Jul 2024
- 01:23:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719995070; x=1720599870;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uJ+o/tRaMmxdvn6Nd6toDO6r4cJWyw5N9DgT/7A9dX8=;
+        b=xIZ9KvaF05Wtr6OBWuJLl7fnA5yhSPpc8koJKOdg7bzD8AhIA+2rdpjcRNyi8+gJOA
+         HVHDljtFMD1ztq7ZR7SxpDczVYKNLVP1hqXDPxdpTQ70XWWVEQ5sb+sTT0M0QL6f1hZK
+         vv97d93RPVFIfK8fHlWqDhBYEiBcxLUPc4jZjDidt1EzrmnowId5sbVgsaizMm8i6h7x
+         UK8+2e1SC/P2+r0Nch92ZOsaKrF4vgGMAHk9ZTLx+aoYPx+EgLvLEt1czjp/XApFdk2q
+         taTZt0olOiOMQlWHhacGa4bAGr+ezX+HrCZC2xTfZg4nJQSMbvYdRknPVwVcpcdmpGgB
+         nIbQ==
+X-Gm-Message-State: AOJu0YzkBlbjKXldRpsBugvZPHvChaYq0lkJVJ+0ccckDdBIG5QhONcG
+	OBKVLSbjnd2YrucqhQqGCekvQysUr2w60t3ltIRZkMkv3TqeVhoWIs9qY6QBbCnhPgLqjb5IvJw
+	ILUSLnhofjvTva4a3m8hFn6PtkUUbkGrYdqG1LNhGNKmFZ7/p2BhJHrI=
+X-Google-Smtp-Source: AGHT+IH6a20tY2u3TJpDNoT3PdJnOCit+ZdkdmNBjw9RGTdHskPaVHUTDWd0GyGJwMCmGB5I0aiLDOnPX3cW+c3ouiI3SQTiFRiu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240629103914.161530-1-erezgeva@nwtime.org> <20240629103914.161530-4-erezgeva@nwtime.org>
- <1c457520-07b7-4bde-b040-e8bca959a4f5@linaro.org> <CANeKEMOODBNZA6efh0E0Ga_KaVs5Y3WLcUftRhNwYHhnXO=GNw@mail.gmail.com>
- <CANeKEMO42rJt5Ob4_HDcZ3eEMvuMOPvRaFaLwL8SA65NtxSV7A@mail.gmail.com>
- <1d56c3b2-7adf-45b9-a509-956340f3f17b@linaro.org> <CANeKEMMe-Onpn7xWQHgWz1Ps_uQPEMa7HrKA00HpoKjG+DCJNQ@mail.gmail.com>
- <3bafcbea-6aa5-43ca-9d12-3916be3fe03d@linaro.org> <CANeKEMM02-Jvb8Pd0fZJFnRg-hsAW+hckYWm11tZZXNMPSPJ=w@mail.gmail.com>
- <9b45cc73-2251-4085-af95-7ccd00dd6d3b@linaro.org>
-In-Reply-To: <9b45cc73-2251-4085-af95-7ccd00dd6d3b@linaro.org>
-From: Erez <erezgeva2@gmail.com>
-Date: Wed, 3 Jul 2024 10:23:16 +0200
-Message-ID: <CANeKEMP+mRefYZNb+TuBmOD7dC6=7Rg7D1EcfnjJoiaeaV28SQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] dt-bindings: mtd: macronix,mx25l12833f: add
- SPI-NOR chip
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Jaime Liao <jaimeliao@mxic.com.tw>, leoyu@mxic.com.tw, 
-	Alvin Zhou <alvinzhou@mxic.com.tw>, Julien Su <juliensu@mxic.com.tw>, 
-	Esben Haabendal <esben@geanix.com>, Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
-	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+X-Received: by 2002:a05:6e02:1314:b0:381:a678:c558 with SMTP id
+ e9e14a558f8ab-381a678c70dmr514365ab.0.1719995070163; Wed, 03 Jul 2024
+ 01:24:30 -0700 (PDT)
+Date: Wed, 03 Jul 2024 01:24:30 -0700
+In-Reply-To: <0000000000000a13ee06183e4464@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002c3ca3061c538f83@google.com>
+Subject: Re: [syzbot] Test
+From: syzbot <syzbot+a941018a091f1a1f9546@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 3 Jul 2024 at 09:12, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
->
->
-> On 7/3/24 12:16 AM, Erez wrote:
-> > On Tue, 2 Jul 2024 at 07:00, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
-> >>
-> >>
-> >>
-> >> On 7/1/24 6:08 PM, Erez wrote:
-> >>> On Mon, 1 Jul 2024 at 12:15, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 7/1/24 10:46 AM, Erez wrote:
-> >>>>> When using mx25l12805d, we do not read SFDP.
-> >>>>> As it uses the no-SFDP flags.
-> >>>>> When using mx25l12833f hardware with mx25l12805d driver, it did not
-> >>>>> try to read the SFDP.
-> >>>>> Yet mx25l12833f does have SFDP, when I remove the no-SFDP flags, the
-> >>>>> driver fetch the SFDP.
-> >>>>>
-> >>>>> Secondly SFDP does not contain OTP information.
-> >>>>>
-> >>>>> mx25l12805d has two OTP regions of 128 KiB and 384 KiB (yes asymmetric).
-> >>>>> While mx25l12833f has two OTP regions of 512 KiB.
-> >>>>>
-> >>>>> How do we handle it?
-> >>>>
-> >>>> You would first try to parse SFDP and initialize the flash based on
-> >>>> SFDP. If there's no SFDP then you fallback to the flags declared at
-> >>>> flash declaration. Esben had a try recently, see [1]. I don't know if
-> >>>> there's any progress in that direction.
-> >>>>
-> >>>> Also, you haven't mentioned anything about the testing. Do you have the
-> >>>> flash?
-> >>>>
-> >>>> [1]
-> >>>> https://lore.kernel.org/linux-mtd/20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com/
-> >>>
-> >>> Looking at "mtd: spi-nor: macronix: workaround for device id re-use"
-> >>> I guess it can be applied to all Macronix devices.
-> >>
-> >> No, no, we're going to do it individually just where it's needed.
-> >> Issuing unsupported commands is not that great.
-> >
-> > Would be nice if we could ask Macronix directly.
->
-> we did. They said it's not ideal, but it's okay.
-> >
-> > Looking on their web site and reading some spec. and status reports.
-> > Using the IDs with  'no_sfdp_flags' in drivers/mtd/spi-nor/macronix.c
-> > I did not search for new chips reusing IDs of chips at end of life.
-> > But we found 3 already:
-> > MX25U51245G appears in the table with the same ID as MX66U51235F.
->
-> is there an extension ID that differentiate the two?
->
-> > Esben Haabendal found MX25L3233F which reuses  MX25L3205D ID.
-> > And I found MX25L12833F reuses MX25L12805D ID.
->
-> Yes. And we already have a plan for these. We need someone that cares
-> about them to implement it.
->
-> > Chips that are not in end of life do support SFDP, at least the new
-> > versions of the chips according to their spec.
-> > It seems quite systematic.
-> >
->
-> maybe
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I check the public spec of all chips, but one, which are in the
-Macronix driver table and are still in production.
-They all support SFDP. I do not understand the "maybe".
-As for the chips in end of life, we found 3 new chips that reuse the
-ID, we can find the rest.
+***
 
->
-> > By the way, the chip MX25L2005A part number is 'MX25L2005' without the 'A'.
->
-> feel free to propose a patch
->
-> >
-> > We can support Macronix chips that are not in the table, just by
-> > reading the SFDP.
-> > In that case we can name them like "mx-szNN".
->
-> We don't care about the flash name.
+Subject: Test
+Author: radoslaw.zielonek@gmail.com
 
-Agree.
+#syz test 
 
->
-> If all the flash settings that we care about can be discovered by SFDP
-> then one won't need to declare a flash entry at all, and instead rely on
-> the driver to setup the flash settings solely based on the SFDP tables.
-> See spi-nor-generic handling.
+---
+ include/linux/sched.h |  7 +++++++
+ kernel/sched/core.c   |  1 +
+ kernel/sched/rt.c     | 26 +++++++++++++++++++++++---
+ kernel/signal.c       |  9 +++++++++
+ 4 files changed, 40 insertions(+), 3 deletions(-)
 
-Excellent feature!
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 17cb0761ff65..123bc16ad3d0 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1121,6 +1121,13 @@ struct task_struct {
+ 	size_t				sas_ss_size;
+ 	unsigned int			sas_ss_flags;
+ 
++	/*
++	 * Number of signals received by an RT task between scheduling ticks.
++	 * This counter is used to throttle RT tasks when too many signals
++	 * (e.g., POSIX timers) are sent to the task, which can cause an RCU stall.
++	 */
++	atomic_t rt_signals_recv_count; /* used outside of the rq lock */
++
+ 	struct callback_head		*task_works;
+ 
+ #ifdef CONFIG_AUDIT
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index d44efa0d0611..9def826bd35f 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4779,6 +4779,7 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
+ 			p->policy = SCHED_NORMAL;
+ 			p->static_prio = NICE_TO_PRIO(0);
+ 			p->rt_priority = 0;
++			atomic_set(&p->rt_signals_recv_count, 0);
+ 		} else if (PRIO_TO_NICE(p->static_prio) < 0)
+ 			p->static_prio = NICE_TO_PRIO(0);
+ 
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 3261b067b67e..9b22d67d1746 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -24,6 +24,15 @@ int sysctl_sched_rt_period = 1000000;
+  */
+ int sysctl_sched_rt_runtime = 950000;
+ 
++/*
++ * To avoid an RCU stall due to a large number of signals received by RT tasks
++ * (e.g., POSIX timers), the RT task needs to be throttled.
++ * When the number of signals received by an RT task during a scheduling
++ * tick period exceeds the threshold, the RT task will be throttled.
++ * The value of 100 has not been thoroughly tested and may need adjustment.
++ */
++#define RT_RECV_SGINAL_THROTTLE_THRESHOLD 100
++
+ #ifdef CONFIG_SYSCTL
+ static int sysctl_sched_rr_timeslice = (MSEC_PER_SEC * RR_TIMESLICE) / HZ;
+ static int sched_rt_handler(struct ctl_table *table, int write, void *buffer,
+@@ -951,7 +960,7 @@ static inline int rt_se_prio(struct sched_rt_entity *rt_se)
+ 	return rt_task_of(rt_se)->prio;
+ }
+ 
+-static int sched_rt_runtime_exceeded(struct rt_rq *rt_rq)
++static int sched_rt_runtime_exceeded(struct rt_rq *rt_rq, int rt_signal_recv)
+ {
+ 	u64 runtime = sched_rt_runtime(rt_rq);
+ 
+@@ -966,7 +975,15 @@ static int sched_rt_runtime_exceeded(struct rt_rq *rt_rq)
+ 	if (runtime == RUNTIME_INF)
+ 		return 0;
+ 
+-	if (rt_rq->rt_time > runtime) {
++	/*
++	 * When a large number of signals are sent to this task (e.g., POSIX timers)
++	 * the delta time deviates significantly from real time due to the overhead
++	 * of handling signals. For RT tasks, this can cause an RCU stall.
++	 * To avoid this, throttle the task when the number of signals received
++	 * exceeds a certain threshold.
++	 */
++	if (rt_rq->rt_time > runtime ||
++		rt_signal_recv >= RT_RECV_SGINAL_THROTTLE_THRESHOLD) {
+ 		struct rt_bandwidth *rt_b = sched_rt_bandwidth(rt_rq);
+ 
+ 		/*
+@@ -1021,7 +1038,9 @@ static void update_curr_rt(struct rq *rq)
+ 		if (sched_rt_runtime(rt_rq) != RUNTIME_INF) {
+ 			raw_spin_lock(&rt_rq->rt_runtime_lock);
+ 			rt_rq->rt_time += delta_exec;
+-			exceeded = sched_rt_runtime_exceeded(rt_rq);
++			exceeded = sched_rt_runtime_exceeded(
++						rt_rq,
++						atomic_read(&curr->rt_signals_recv_count));
+ 			if (exceeded)
+ 				resched_curr(rq);
+ 			raw_spin_unlock(&rt_rq->rt_runtime_lock);
+@@ -1029,6 +1048,7 @@ static void update_curr_rt(struct rq *rq)
+ 				do_start_rt_bandwidth(sched_rt_bandwidth(rt_rq));
+ 		}
+ 	}
++	atomic_set(&curr->rt_signals_recv_count, 0);
+ }
+ 
+ static void
+diff --git a/kernel/signal.c b/kernel/signal.c
+index bdca529f0f7b..d58e0ba9336c 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -629,6 +629,15 @@ int dequeue_signal(struct task_struct *tsk, sigset_t *mask,
+ 	bool resched_timer = false;
+ 	int signr;
+ 
++	/*
++	 * To prevent an RCU stall due to receiving too many signals by RT tasks,
++	 * count all signals regardless of their type.
++	 * Based on this counter, the RT scheduler will decide whether the task
++	 * should be throttled or not.
++	 */
++	if (tsk->policy == SCHED_FIFO || tsk->policy == SCHED_RR)
++		atomic_inc(&tsk->rt_signals_recv_count);
++
+ 	/* We only dequeue private signals from ourselves, we don't let
+ 	 * signalfd steal them
+ 	 */
+-- 
+2.43.0
 
->
-> >
-> > The table below uses fixed width characters.
-> >
-> > ID      Part.         Size              Status          SFDP status
-> > according to spec.
-> >                                                         New chip with
-> > SFDP for EOL
-> > c22012  MX25L2005(A)  SZ_256K =  2Mb    EOL             MX25L2006E
-> > c22532  MX25U2033E    SZ_256K =  2Mb    EOL
-> > c22013  MX25L4005A    SZ_512K =  4Mb    EOL
-> > c22533  MX25U4035     SZ_512K =  4Mb    EOL
-> > c22534  MX25U8035     SZ_1M   =  8Mb    EOL
-> > c22016  MX25L3205D    SZ_4M   =  32Mb   EOL             MX25L3233F
-> > c29e16  MX25L3255E    SZ_4M   =  32Mb   EOL
-> > c22017  MX25L6405D    SZ_8M   =  64Mb   EOL
-> > c22018  MX25L12805D   SZ_16M  =  128Mb  EOL             MX25L12833F
-> > c22538  MX25U12835F   SZ_16M  =  128Mb  EOL
-> > c2253a  MX66U51235F   SZ_64M  =  512Mb  EOL             MX25U51245G
-> > c22010  MX25L512E     SZ_64K  =  512Kb  NO_REC          Have-SFDP!
-> > c22015  MX25L1606E    SZ_2M   =  16Mb   NO_REC          Have-SFDP!
-> > c22536  MX25U3235F    SZ_4M   =  32Mb   NO_REC          Have-SFDP!
-> > c22816  MX25R3235F    SZ_4M   =  32Mb   NO_REC          Have-SFDP!
-> > c22537  MX25U6435F    SZ_8M   =  64Mb   NO_REC          Have-SFDP!
-> > c22019  MX25L25635E   SZ_32M  =  256Mb  NO_REC          Have-SFDP!
-> > c22539  MX25U25635F   SZ_32M  =  256Mb  NO_REC          Have-SFDP!
-> > c2201a  MX66L51235F   SZ_64M  =  512Mb  NO_REC          Have-SFDP!
-> > c2261b  MX66L1G55G    SZ_128M =  1Gb    NO_REC          Spec. is not public
-> > c22314  MX25V8035F    SZ_1M   =  8Mb    PROD            Have-SFDP!
-> > c22815  MX25R1635F    SZ_2M   =  16Mb   PROD            Have-SFDP!
-> > c2201b  MX66L1G45G    SZ_128M =  1Gb    PROD            Have-SFDP!
-> > c2253c  MX66U2G45G    SZ_256M =  2Gb    PROD            Have-SFDP!
-> > c2253a  MX25U51245G   SZ_64M  =  512Mb  PROD            Have-SFDP!
-> >
-> > EOL     End of Life
-> > PROD    Normal Production
-> > NO_REC  Not recommend for new design
-> >
-> >
->
-> not sure what you want me to do with these.
-
-That we can read SFDP for all chips from Macronix.
-Only old chips before 2010 do not have SFDP.
-
-Erez
-
->
-> Cheers,
-> ta
 
