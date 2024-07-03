@@ -1,159 +1,117 @@
-Return-Path: <linux-kernel+bounces-238969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411DF92544B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:00:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5C192544D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED364289CD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:00:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48A211F21C21
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC97136E35;
-	Wed,  3 Jul 2024 06:59:50 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E373135A4B;
+	Wed,  3 Jul 2024 07:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="FLdAN1GZ"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA9A8C1F;
-	Wed,  3 Jul 2024 06:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DA233D5
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719989990; cv=none; b=C8Dd5Dl/XM6kYcRBWGkCErkT0E7T2Eibo/1vffZOzn6YEYL/3LzYJ3Vkbm8+id5MC1Z+j+JKReZ2nXgbfnTDpp34csdLIujMN79lLUrRJjxy+qwqOtos1OnzEuXSCtUFjm5RqvIWOnsR7Kjbdey82t8RROaKIyqIIpPNnoPJj6g=
+	t=1719990068; cv=none; b=Ne+Ztm5I5l3lU1t4+GW5D7UbOSnI8s8sD933bQlFGGgw9sptDsz8TirUJ0cTg2P2BZeL+SCxF4xHgV/GI8maLBQk4mT5HlzrEBGPnzw/7NtFphysv+wr15ezpEuFUnJh87CY6kXF1/HI+0CGfRCE4VzMyq/oShU2Sy45m8Wvo8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719989990; c=relaxed/simple;
-	bh=tjyRyXbufFPhr/lFjnNJDv2W/ycWAuiK315JZC9AUJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=epzInP0A5nbUsW6cM/YLpo/SIWgK9HmBHeWQGLEZm8EdVfC3GdSd/1BULn3eqlXObULANq2u2NwlQizamWfE8a2jxQKmNntCgEh3PCtwymish+3002JhZD1CqfhCoSRy9Tb28wjBN3V6xtfYKTxrh1uPnzgOV3RZbslRjnRC6po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WDVs40pyCzZhDG;
-	Wed,  3 Jul 2024 14:55:04 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 64494140156;
-	Wed,  3 Jul 2024 14:59:37 +0800 (CST)
-Received: from [10.67.110.112] (10.67.110.112) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 3 Jul 2024 14:59:37 +0800
-Message-ID: <f124ce60-196e-2392-c4a9-11cdcacf9927@huawei.com>
-Date: Wed, 3 Jul 2024 14:59:36 +0800
+	s=arc-20240116; t=1719990068; c=relaxed/simple;
+	bh=f8D+Z2J34BSelEP0cWYV2FJmD9VvHWhRwMSvzZIllKE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XMCTeRgNfT9IVAmaXXJM8BMxK2SRtr3+OkAzUAYiQFtsGb23kYFMSft/5+1mkEk7QcgJNOAfuGP6LoZt7iM88XN/kWf49aUAFAZyW8PnFmGN1cPj00ZYajz6LSYkIh8FepQmb2K2ES5MMAbD/2h7dQAy0+EQ7LuBtQV5AGqueiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=FLdAN1GZ; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58b3fee65d8so2205196a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 00:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1719990065; x=1720594865; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vwPCi5kZraK7fZ9+mWsGUSaE4NoFQJJBy15JehrMQY=;
+        b=FLdAN1GZqccAhEDnoeYQHzuBTcicPagpHC0GiCkoRtdgE9rWl7z5djmOpdjB7QmZAf
+         97MWkRlWwD2mydGhdK+/YnlyaFUvteegsxQQ2bLV1kidkUa7jPvbdMlFkYSIEog1j7QL
+         AGEHROUV5G4IkswrrHZKMn7EgMHr8SgvJMZrxL/y7ays/u20S0cXk4HhTD2tuf4KjnGs
+         SRNDt+AKeJHFKUIJxzLc22deMBToVLSGhMvrP1XUYz116MGYvX6bzktkOHbuVF3Fm0Hs
+         cdx+n7LuGk6FuZQnv8mmXtH6/QMNC8wiQjzwFoRUQeSqjx2E+Kc4djsL1Kc4ZkcwOZke
+         oSNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719990065; x=1720594865;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+vwPCi5kZraK7fZ9+mWsGUSaE4NoFQJJBy15JehrMQY=;
+        b=cznErAemgYAceNx/rMcAirK6YP4ivSZipJsQ+S6eRpQbPTELTt3UflCmDQf/mqMric
+         Cu29cTtoshZFNbG7wQLwn47kEowNsNQxxR3xHP1gznGOpnsJTHoCj7Zpcg69AxjGO2Eq
+         sDLmTVOxGNU9tZbt1efYQJ3WCgW/xxtqHngqUOmkB7nH+TvWjHSgXxHmUJT6jpIm8yvv
+         UPehem83Zaf0CQ4A4U4XwJsqoQUS/ul8pjdwiP65Pc7lMA509RqQciv4foYoZzkJaI4U
+         QAxmWB/Au6RENX33OEthB4NSuqt3GaP24Nm+05eNIjUVAF2DLU7drOXAovp2BECPWhwy
+         tykQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/Q6ZPKRNk/httJGkKTXtyY0E1+aXkTZgitCIaHEGjS0C9LpuoqqbJVkMfocZ9MzvNJnAwFrXMIJtNNRJ7F272K6CW+PQ2CdaTGZMz
+X-Gm-Message-State: AOJu0Yw/iTj+q7gfe9n0YuJuzzeb3aZTH8GI+aYaJ37yc3fdtiz4qLtd
+	AzYVJRNMw1/GQ2OSSVebjxIu2i3aLtx8HNUd0WCjar8Ys1dG/+LabqUgwXoYHYM=
+X-Google-Smtp-Source: AGHT+IF+hNjOQ8pgB+LTiDmZIsDCqWlOmR/DaW18R//nPEntEnY4XXHH2GvdOuB2r4getznFqqVE+A==
+X-Received: by 2002:a05:6402:13c5:b0:57c:c171:2fb4 with SMTP id 4fb4d7f45d1cf-587a0635d6cmr7965226a12.30.1719990064937;
+        Wed, 03 Jul 2024 00:01:04 -0700 (PDT)
+Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c8371dsm6632834a12.9.2024.07.03.00.01.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 00:01:04 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Date: Wed, 03 Jul 2024 09:01:03 +0200
+Subject: [PATCH] soc: qcom: socinfo: Add PM6350 PMIC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v5 2/5] cgroup/pids: Make event counters hierarchical
-Content-Language: en-US
-To: =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-	<cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-CC: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, Johannes
- Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan
-	<shuah@kernel.org>, Muhammad Usama Anjum <usama.anjum@collabora.com>
-References: <20240521092130.7883-1-mkoutny@suse.com>
- <20240521092130.7883-3-mkoutny@suse.com>
-From: xiujianfeng <xiujianfeng@huawei.com>
-In-Reply-To: <20240521092130.7883-3-mkoutny@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240703-socinfo-pm6350-v1-1-e12369af3ed6@fairphone.com>
+X-B4-Tracking: v=1; b=H4sIAC73hGYC/x3MQQqAIBBA0avErBMmLYWuEi1qHGsWaShEEN09a
+ fkW/z9QOAsXGJsHMl9SJMWKrm2A9iVurMRXg0bdo0OjSiKJIanzsGZARdpR8KhptRZqdGYOcv/
+ DaX7fD16LoKBgAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.0
 
+Add the ID for the PM6350 PMIC found on e.g. SM7225 Fairphone 4.
 
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+ drivers/soc/qcom/socinfo.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 2024/5/21 17:21, Michal Koutný wrote:
-> The pids.events file should honor the hierarchy, so make the events
-> propagate from their origin up to the root on the unified hierarchy. The
-> legacy behavior remains non-hierarchical.
-> 
-> Signed-off-by: Michal Koutný <mkoutny@suse.com>
-> --
-[...]
-> diff --git a/kernel/cgroup/pids.c b/kernel/cgroup/pids.c
-> index a557f5c8300b..c09b744d548c 100644
-> --- a/kernel/cgroup/pids.c
-> +++ b/kernel/cgroup/pids.c
-> @@ -238,6 +238,34 @@ static void pids_cancel_attach(struct cgroup_taskset *tset)
->  	}
->  }
->  
-> +static void pids_event(struct pids_cgroup *pids_forking,
-> +		       struct pids_cgroup *pids_over_limit)
-> +{
-> +	struct pids_cgroup *p = pids_forking;
-> +	bool limit = false;
-> +
-> +	for (; parent_pids(p); p = parent_pids(p)) {
-> +		/* Only log the first time limit is hit. */
-> +		if (atomic64_inc_return(&p->events[PIDCG_FORKFAIL]) == 1) {
-> +			pr_info("cgroup: fork rejected by pids controller in ");
-> +			pr_cont_cgroup_path(p->css.cgroup);
-> +			pr_cont("\n");
-> +		}
-> +		cgroup_file_notify(&p->events_file);
-> +
-> +		if (!cgroup_subsys_on_dfl(pids_cgrp_subsys) ||
-> +		    cgrp_dfl_root.flags & CGRP_ROOT_PIDS_LOCAL_EVENTS)
-> +			break;
-> +
-> +		if (p == pids_over_limit)
-> +			limit = true;
-> +		if (limit)
-> +			atomic64_inc(&p->events[PIDCG_MAX]);
-> +
-> +		cgroup_file_notify(&p->events_file);
+diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+index beb23e292323..d7359a235e3c 100644
+--- a/drivers/soc/qcom/socinfo.c
++++ b/drivers/soc/qcom/socinfo.c
+@@ -116,6 +116,7 @@ static const char *const pmic_models[] = {
+ 	[50] = "PM8350B",
+ 	[51] = "PMR735A",
+ 	[52] = "PMR735B",
++	[54] = "PM6350",
+ 	[55] = "PM4125",
+ 	[58] = "PM8450",
+ 	[65] = "PM8010",
 
-Hi Michal,
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240703-socinfo-pm6350-c27cfd02cb66
 
-I have doubts about this code. To better illustrate the problem, I am
-posting the final code here.
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
-static void pids_event(struct pids_cgroup *pids_forking,
-                       struct pids_cgroup *pids_over_limit)
-{
-...
-        cgroup_file_notify(&p->events_local_file);
-        if (!cgroup_subsys_on_dfl(pids_cgrp_subsys) ||
-            cgrp_dfl_root.flags & CGRP_ROOT_PIDS_LOCAL_EVENTS)
-                return;
-
-        for (; parent_pids(p); p = parent_pids(p)) {
-                if (p == pids_over_limit) {
-                        limit = true;
-                        atomic64_inc(&p->events_local[PIDCG_MAX]);
-                        cgroup_file_notify(&p->events_local_file);
-                }
-                if (limit)
-                        atomic64_inc(&p->events[PIDCG_MAX]);
-
-                cgroup_file_notify(&p->events_file);
-        }
-}
-
-Consider this scenario: there are 4 groups A, B, C,and D. The
-relationships are as follows, the latter is the child of the former:
-
-root->A->B->C->D
-
-Then the user is polling on C.pids.events. When a process in D forks and
-fails due to B.max restrictions(pids_forking is D, and pids_over_limit
-is B), the user is awakened. However, when the user reads C.pids.events,
-he will find that the content has not changed. because the 'limit' is
-set to true started from B, and C.pids.events shows as below:
-
-seq_printf(sf, "max %lld\n", (s64)atomic64_read(&events[PIDCG_MAX]));
-
-Wouldn't this behavior confuse the user? Should the code to be changed
-to this?
-
-if (limit) {
-      atomic64_inc(&p->events[PIDCG_MAX]);
-      cgroup_file_notify(&p->events_file);
-}
 
