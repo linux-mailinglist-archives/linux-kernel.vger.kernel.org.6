@@ -1,94 +1,211 @@
-Return-Path: <linux-kernel+bounces-239565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100E3926231
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:50:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EFA926233
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFE821F2194B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A27EB281B1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C747C17B417;
-	Wed,  3 Jul 2024 13:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B03E17967E;
+	Wed,  3 Jul 2024 13:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4JW+mEh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XLHTD7SP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBA33CF73;
-	Wed,  3 Jul 2024 13:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833B23CF73;
+	Wed,  3 Jul 2024 13:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720014605; cv=none; b=ISUbD1Ies+S7vY1EZQiGa2KMRloCYccmDbNgbwlP0+39QBDUIIAgy52dXCmvibKf74mdl3kDzFcmssa1pn/n+ewTzl8/rfDO9/U9ufsB2zJQgf7tBOBtBW5zqxRKIHC3F8e/meJW4k8RJSSViLMWypDqVDI/8jJsb+lWDfj5p8o=
+	t=1720014647; cv=none; b=dZATCGo3l4fDWfU1PCni+KkpjpDLCXcjZqzej6/g/RBtxGNq7iWl7zV1bRICQ0Nj6oANWg7SuF6/ECr89PE9B+2LXSezll5zJ5IhnyAVsnWWzYZan3c7bXSJHyb2G2mbhANBt4RLoUkfnfiNuj40ciGxCy91Ti3MKoA0fiEEvLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720014605; c=relaxed/simple;
-	bh=TYYrulL72xGPd06hOb7IJr0N/E4cRIN0SurAKhyIFws=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=KD6B9UldyKrOMpih+wRZcV3DnhVLKkeH47V73jyftbXrKFQQ6l9UOliM+Vduk22DjlyPkeUvf8eo/B05egKL0TRhzADIi9tJKKT5HBVCVkidMs4v4JG75KNM+WWjrYoYrFvKlIcgor2F4FO8GWhbIHXNQlxFKCbE16tC2axuRwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4JW+mEh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35A84C3277B;
-	Wed,  3 Jul 2024 13:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720014604;
-	bh=TYYrulL72xGPd06hOb7IJr0N/E4cRIN0SurAKhyIFws=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=f4JW+mEh1o4xwRKF3EububZchS8cA7pxn/e6cLmXdaU9rYrDZ5pKULsdL+JoYsjJY
-	 4IQPAo+mJTpdbbFOaxlaoA9+MtP/qKThar2Igqy/936seBj/1rsre9Cl2MB5Y5a3uO
-	 aaSKCdH2HIEy5p1eHD2cF+Z+9ZL4aeOzyX0msMcE80nfYeCe94Uz61WQgk3AsG7AJW
-	 5yrBbLKSTe+VnxU2E9J4xy8WvSpcqs/4eUdup7ZI9wZc1FT3WJN/jWFJzgS0IohNgM
-	 zd/guBvUKpPnxXVARKa9SpStsABPK8N3OvQutf+Bq6evnmxfSCRWa+xIEMPDjqB/99
-	 aaZCQfTXx4O7w==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720014647; c=relaxed/simple;
+	bh=rZw/x5DNDmlgq/YRxFmk4A1MkbVCzgR5o46weJUGkB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vEE4BOfDfMs2n6Mcrei/fuJjBVqBeYAXPoHpavZ78ychYWO86Vp1eQ4Zt9J6VrxO9CfIFbLCnzrkqFhK1YqwZSBILF5ZDCDA/kFc77xANRUrayjg/aHIrh5dW7HXWUyKoDb32fMBqshiHEh4LWp0uCAK8Pas28htAJcU6EZ8qX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XLHTD7SP; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720014645; x=1751550645;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=rZw/x5DNDmlgq/YRxFmk4A1MkbVCzgR5o46weJUGkB0=;
+  b=XLHTD7SPrJUm0URnoGNQptovd8/S42KM4oGhkhFoGK13NlI62LLJVYzl
+   UQi6i1Zu8myYetrd1PwLauRXa7xJo3XRSsgcOmkFUxyUiFaUnIOP1SiH1
+   RKhdcF1lGVnx7m8O2oTyWe8ordKH4HFdVycSwe9ai2UV+Rnn3eCcV0ziT
+   SC6wK6Ljc4jqd3916E4dGi49iwmnnqxbaqmM9Sij+//KqNUMYT5BoHSA1
+   thaHEikOIfGHZ1slQv5ZxYxSs/82vn/mXkrJCCLDH7NFwiqh7/9a1AjGn
+   iZXup1rCjfI2jef5+k0bk/vRfdh/GKUwJrvAxnlHYR0st/OSyZVc3x/W1
+   g==;
+X-CSE-ConnectionGUID: lzDxt+VVTHa55YAvsQQwDg==
+X-CSE-MsgGUID: lUIQQwBkT8SlRMasc0RCew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="39761677"
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="39761677"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 06:50:45 -0700
+X-CSE-ConnectionGUID: m82/40P5QFmdWB6TJmB5xg==
+X-CSE-MsgGUID: CVkFQwDISqmVo7nByYeJaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="51109870"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 06:50:45 -0700
+Received: from [10.209.189.42] (kliang2-mobl1.ccr.corp.intel.com [10.209.189.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 5A939201A797;
+	Wed,  3 Jul 2024 06:50:43 -0700 (PDT)
+Message-ID: <8b511e2b-defa-491e-af06-2de85377ba97@linux.intel.com>
+Date: Wed, 3 Jul 2024 09:50:42 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] perf topdown: Correct leader selection with
+ sample_read enabled
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yanfei Xu <yanfei.xu@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240702224037.343958-1-dapeng1.mi@linux.intel.com>
+ <20240702224037.343958-2-dapeng1.mi@linux.intel.com>
+ <d9c26690-5147-4a4a-815b-fb5d46d043c6@linux.intel.com>
+ <5223c6bb-a05b-4a8c-a625-2011db190631@linux.intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <5223c6bb-a05b-4a8c-a625-2011db190631@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH wireless] wifi: wilc1000: fix ies_len type in connect path
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240701-wilc_fix_ies_data-v1-1-7486cbacf98a@bootlin.com>
-References: <20240701-wilc_fix_ies_data-v1-1-7486cbacf98a@bootlin.com>
-To: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Cc: linux-wireless@vger.kernel.org, Ajay Singh <ajay.kathat@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, Jozef Hopko <jozef.hopko@altana.com>,
- =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172001460150.3313435.9699200902279507680.kvalo@kernel.org>
-Date: Wed,  3 Jul 2024 13:50:03 +0000 (UTC)
 
-Alexis Lothoré <alexis.lothore@bootlin.com> wrote:
 
-> From: Jozef Hopko <jozef.hopko@altana.com>
+
+On 2024-07-02 10:46 p.m., Mi, Dapeng wrote:
 > 
-> Commit 205c50306acf ("wifi: wilc1000: fix RCU usage in connect path")
-> made sure that the IEs data was manipulated under the relevant RCU section.
-> Unfortunately, while doing so, the commit brought a faulty implicit cast
-> from int to u8 on the ies_len variable, making the parsing fail to be
-> performed correctly if the IEs block is larger than 255 bytes. This failure
-> can be observed with Access Points appending a lot of IEs TLVs in their
-> beacon frames (reproduced with a Pixel phone acting as an Access Point,
-> which brough 273 bytes of IE data in my testing environment).
+> On 7/3/2024 12:05 AM, Liang, Kan wrote:
+>>
+>> On 2024-07-02 6:40 p.m., Dapeng Mi wrote:
+>>> Addresses an issue where, in the absence of a topdown metrics event
+>>> within a sampling group, the slots event was incorrectly bypassed as
+>>> the sampling leader when sample_read was enabled.
+>>>
+>>> perf record -e '{slots,branches}:S' -c 10000 -vv sleep 1
+>>>
+>>> In this case, the slots event should be sampled as leader but the
+>>> branches event is sampled in fact like the verbose output shows.
+>>>
+>>> perf_event_attr:
+>>>   type                             4 (cpu)
+>>>   size                             168
+>>>   config                           0x400 (slots)
+>>>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+>>>   read_format                      ID|GROUP|LOST
+>>>   disabled                         1
+>>>   sample_id_all                    1
+>>>   exclude_guest                    1
+>>> ------------------------------------------------------------
+>>> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
+>>> ------------------------------------------------------------
+>>> perf_event_attr:
+>>>   type                             0 (PERF_TYPE_HARDWARE)
+>>>   size                             168
+>>>   config                           0x4 (PERF_COUNT_HW_BRANCH_INSTRUCTIONS)
+>>>   { sample_period, sample_freq }   10000
+>>>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+>>>   read_format                      ID|GROUP|LOST
+>>>   sample_id_all                    1
+>>>   exclude_guest                    1
+>>>
+>>> The sample period of slots event instead of branches event is reset to
+>>> 0.
+>>>
+>>> This fix ensures the slots event remains the leader under these
+>>> conditions.
+>>>
+>>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>>> ---
+>>>  tools/perf/arch/x86/util/topdown.c | 16 ++++++++++++++--
+>>>  1 file changed, 14 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+>>> index 3f9a267d4501..5d7b78eb7516 100644
+>>> --- a/tools/perf/arch/x86/util/topdown.c
+>>> +++ b/tools/perf/arch/x86/util/topdown.c
+>>> @@ -1,6 +1,7 @@
+>>>  // SPDX-License-Identifier: GPL-2.0
+>>>  #include "api/fs/fs.h"
+>>>  #include "util/evsel.h"
+>>> +#include "util/evlist.h"
+>>>  #include "util/pmu.h"
+>>>  #include "util/pmus.h"
+>>>  #include "util/topdown.h"
+>>> @@ -41,11 +42,22 @@ bool topdown_sys_has_perf_metrics(void)
+>>>   */
+>>>  bool arch_topdown_sample_read(struct evsel *leader)
+>>>  {
+>>> +	struct evsel *event;
+>>> +
+>>>  	if (!evsel__sys_has_perf_metrics(leader))
+>>>  		return false;
+>>>  
+>>> -	if (leader->core.attr.config == TOPDOWN_SLOTS)
+>>> -		return true;
+>>> +	if (leader->core.attr.config != TOPDOWN_SLOTS)
+>>> +		return false;
+>>> +
+>>> +	/*
+>>> +	 * If slots event as leader event but no topdown metric events in group,
+>>> +	 * slots event should still sample as leader.
+>>> +	 */
+>>> +	evlist__for_each_entry(leader->evlist, event) {
+>>> +		if (event != leader && strcasestr(event->name, "topdown"))
+>> User may uses the RAW format. It may not be good enough to just check
+>> the event name.
+>>
+>> I recall you have a complete support for this in the previous patch. Why
+>> drop it?
 > 
-> Fix IEs parsing by removing this undesired implicit cast.
 > 
-> Fixes: 205c50306acf ("wifi: wilc1000: fix RCU usage in connect path")
-> Signed-off-by: Jozef Hopko <jozef.hopko@altana.com>
-> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
-> Acked-by: Ajay Singh <ajay.kathat@microchip.com>
+> Oh, I ignored the RAW format case. Yes, there is a complete comparison in
+> previous patch, but I originally thought it's over-complicated, so I just
+> simplified it (refer other helpers to compare the name).  If we need to
+> consider the RAW format, it may be not correct for the comparisons in the
+> helpers arch_evsel__must_be_in_group() and arch_evlist__cmp() as well.
+>
 
-Patch applied to wireless.git, thanks.
+Right, those need to be fixed as well.
 
-39ab8fff6230 wifi: wilc1000: fix ies_len type in connect path
+> If we want to fix the issue thoroughly, we may have to expose two helpers
+> which check if an event is topdown slots or metrics event and use these two
+> helpers to replace current name comparison.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240701-wilc_fix_ies_data-v1-1-7486cbacf98a@bootlin.com/
+Yes, you may have to add an extra patch to introduce the two helper
+functions and replace the existing function.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Thanks,
+Kan
+> 
+>>
+>> Thanks,
+>> Kan
+>>
+>>> +			return true;
+>>> +	}
+>>>  
+>>>  	return false;
+>>>  }
 
