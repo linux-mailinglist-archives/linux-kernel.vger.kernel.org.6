@@ -1,93 +1,269 @@
-Return-Path: <linux-kernel+bounces-238782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E31924FDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:42:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F74A924FEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46CB5285AE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:42:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC57CB21096
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158EC28684;
-	Wed,  3 Jul 2024 03:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC551B978;
+	Wed,  3 Jul 2024 03:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kome2z1F"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwECEQm9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C338628379;
-	Wed,  3 Jul 2024 03:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924D4FC12;
+	Wed,  3 Jul 2024 03:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719978012; cv=none; b=NAWuUPRTIfJAjQz/jMRiMCcaD2rSh/ab4+ot29PDhYOpjlse/e+ZQLnOi13nbMouwnK/zNOxsXye6uu3m7TVuRPBlawkKunJkULsE3Sz5gFR5cRqv1WycQJq/8UEcuJaPARiziNB8ak1XY3o8oQCQ9X7/qs/3zm1IKBxqj3k6Iw=
+	t=1719977999; cv=none; b=SYNV9zUPl92O0jHyDuTpG/hgGQmpPCChUntqJKaNQ5SUAlBp+RJAJIYIe7bGklpaoAPocS1EKqgvql6QYJOo/MnI0PL6q4sv59VTKhxgl8ouz3499rODGyAeoY/iBqFKgU8S16pNeAynlaTocm4usUBNOQltgTWZWoS/o9u+Kx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719978012; c=relaxed/simple;
-	bh=M3gsERjcbjsNq/Gxcdwyw4WmdX/3lkdL6b5Mc9WmBOc=;
+	s=arc-20240116; t=1719977999; c=relaxed/simple;
+	bh=XHjEpxo6pYX52KNc9v2EQAaK5Y5dA48r1Bk6OC1VTc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cJr6CQBOSOw973ueYu0Kl0yu1gDSHW6cnsfoaeIlXCj3/kcdss3N+w/zYnKaWncqBHgP3p8dxjzKbrzismVcI9DfgmqR5QLK0pO37nE4rPFz729aBuTt4JMMuYQ+c1RPYPSmseM/YFhSckIT7lxtpmg9zAtoiw+SryP1qQHuBXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kome2z1F; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=TATpo3rifH1vuYMWqwmPHFaKqfkHrmIpDNZEDdKjNX0=; b=kome2z1FuUYJlJbL2/gYIegsHG
-	12xvgR78xHCIZAO61Qn9kFMcsJf+3jHmUXGNX1zRDxDeJi5cTRh9SICXZ6o36sI1p9f/MqqaowT+A
-	Pgv8Q1qEsiCD/5yftsO8i159uaHp8qVgL0PX9p62dkuVE/BaJRI58FZP05uAPKuDE4pI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sOqqT-001ghu-GH; Wed, 03 Jul 2024 05:39:49 +0200
-Date: Wed, 3 Jul 2024 05:39:49 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: Luiz Angelo Daros de Luca <luizluca@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	"alsi@bang-olufsen.dk" <alsi@bang-olufsen.dk>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"olteanv@gmail.com" <olteanv@gmail.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	"ericwouds@gmail.com" <ericwouds@gmail.com>,
-	David Miller <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"justinstitt@google.com" <justinstitt@google.com>,
-	"rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>,
-	netdev <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"sander@svanheule.net" <sander@svanheule.net>
-Subject: Re: net: dsa: Realtek switch drivers
-Message-ID: <65566aaa-ba49-4ad9-ab3f-9d49780a809b@lunn.ch>
-References: <aa5ffa9a-62cc-4a79-9368-989f5684c29c@alliedtelesis.co.nz>
- <CACRpkdbF-OsV_jUp42yttvdjckqY0MsLg4kGxTr3JDnjGzLRsA@mail.gmail.com>
- <CAJq09z6dN0TkxxjmXT6yui8ydRUPTLcpFHyeExq_41RmSDdaHg@mail.gmail.com>
- <b15b15ce-ae24-4e04-83ab-87017226f558@alliedtelesis.co.nz>
- <c19eb8d0-f89b-4909-bf14-dfffcdc7c1a6@lunn.ch>
- <c8132fc9-37e2-42c3-8e6b-fbe88cc2d633@alliedtelesis.co.nz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y6TpJf+3VZ8zqq13d3/nDzHvXowjHjW6SMHgBWRi+5Ls/vga8sxO1ZPJlAKfWdCTXqlpm/6pQj/pQQdcDDF2/PGkyrM3PIK6qJ6sUIjgvbJKw+qgqB+2Z42BOT5Gc0ohsLv7QMnE0F56iGbADF9goK0ythgUcsuLMmQriETquMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwECEQm9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3432C116B1;
+	Wed,  3 Jul 2024 03:39:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719977999;
+	bh=XHjEpxo6pYX52KNc9v2EQAaK5Y5dA48r1Bk6OC1VTc4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QwECEQm9j1NRqRCtVf/o5qfAqMTP7Gd2Yv2mw0dQ4ZEijnRZKGw/1k3wCDapvZFED
+	 aNMmuuHuyYPfyh34vrIAyX/QmgAVQFCbha9zMepEGb97GHbSEx1pbBphHcZgxO0Ptr
+	 E6j35r9+hxUn7lnayFaM4jkUWkAT4mxe1JsWeCrndKfomieMNiDy+aNU7LZUnCVTwC
+	 5pgAUICXoZXxeykyPTbo/EBMVrjQXFKjxQx6+kf0WGGYFVykoYB9BoNEWfMZMCUNfq
+	 gg+oT4+Ez1YQmdPrL962CzhFPvHjiPcL3CsbBSU8+s/Vxh/cXdvndjv85aYR4BrUcu
+	 Y9riT/xVxlJ8w==
+Date: Tue, 2 Jul 2024 20:39:56 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@arm.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] perf test: Display number of remaining tests
+Message-ID: <ZoTIDCXKZw0bnthC@google.com>
+References: <20240701044236.475098-1-irogers@google.com>
+ <20240701044236.475098-3-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c8132fc9-37e2-42c3-8e6b-fbe88cc2d633@alliedtelesis.co.nz>
+In-Reply-To: <20240701044236.475098-3-irogers@google.com>
 
-> One reason for using DSAI've just found is that in theory the RTL930x
-> supports a CPU disabled mode where you do connect it to an external CPU and
-> the data travels over SGMII like you'd get with a traditional DSA design.
-> It's not a mode I'm planning on supporting anytime soon but it might come up
-> when I get round to submitting some patches.
+On Sun, Jun 30, 2024 at 09:42:36PM -0700, Ian Rogers wrote:
+> Before polling or sleeping to wait for a test to complete, print out
+> ": Running (<num> remaining)" where the number of remaining tests is
+> determined by iterating over the remaining tests and seeing which
+> return true for check_if_command_finished. After the delay, erase the
+> line and either update it with the new number of remaining tests, or
+> print the test's result. This allows a user to know a test is running
+> and in parallel mode (default) how many of the tests are waiting to
 
-You might want to look at ocelot, which is both a pure switchdev and a
-DSA driver. Its design is not great because it became dual later in
-its life. I suspect it would be designed differently if this has been
-considered at the beginning.
+It's not default anymore. :)
 
-	   Andrew
+
+> complete. If color mode is disabled then avoid displaying the
+> "Running" message.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/tests/builtin-test.c | 77 ++++++++++++++++++++++-----------
+>  tools/perf/util/color.h         |  1 +
+>  2 files changed, 53 insertions(+), 25 deletions(-)
+> 
+> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+> index c3d84b67ca8e..23be9139f229 100644
+> --- a/tools/perf/tests/builtin-test.c
+> +++ b/tools/perf/tests/builtin-test.c
+> @@ -241,7 +241,10 @@ static int run_test_child(struct child_process *process)
+>  	return -err;
+>  }
+>  
+> -static int print_test_result(struct test_suite *t, int i, int subtest, int result, int width)
+> +#define TEST_RUNNING -3
+> +
+> +static int print_test_result(struct test_suite *t, int i, int subtest, int result, int width,
+> +			     int remaining)
+>  {
+>  	if (has_subtests(t)) {
+>  		int subw = width > 2 ? width - 2 : width;
+> @@ -251,6 +254,9 @@ static int print_test_result(struct test_suite *t, int i, int subtest, int resul
+>  		pr_info("%3d: %-*s:", i + 1, width, test_description(t, subtest));
+>  
+>  	switch (result) {
+> +	case TEST_RUNNING:
+> +		color_fprintf(stderr, PERF_COLOR_YELLOW, " Running (%d remaining)\n", remaining);
+> +		break;
+>  	case TEST_OK:
+>  		pr_info(" Ok\n");
+>  		break;
+> @@ -272,13 +278,15 @@ static int print_test_result(struct test_suite *t, int i, int subtest, int resul
+>  	return 0;
+>  }
+>  
+> -static int finish_test(struct child_test *child_test, int width)
+> +static int finish_test(struct child_test **child_tests, int running_test, int child_test_num,
+> +		       int width)
+>  {
+> +	struct child_test *child_test = child_tests[running_test];
+>  	struct test_suite *t = child_test->test;
+>  	int i = child_test->test_num;
+>  	int subi = child_test->subtest;
+>  	int err = child_test->process.err;
+> -	bool err_done = err <= 0;
+> +	bool err_done = false;
+>  	struct strbuf err_output = STRBUF_INIT;
+>  	int ret;
+>  
+> @@ -293,7 +301,7 @@ static int finish_test(struct child_test *child_test, int width)
+>  	 * Busy loop reading from the child's stdout/stderr that are set to be
+>  	 * non-blocking until EOF.
+>  	 */
+> -	if (!err_done)
+> +	if (err > 0)
+>  		fcntl(err, F_SETFL, O_NONBLOCK);
+>  	if (verbose > 1) {
+>  		if (has_subtests(t))
+> @@ -307,29 +315,48 @@ static int finish_test(struct child_test *child_test, int width)
+>  			  .events = POLLIN | POLLERR | POLLHUP | POLLNVAL,
+>  			},
+>  		};
+> -		char buf[512];
+> -		ssize_t len;
+> -
+> -		/* Poll to avoid excessive spinning, timeout set for 100ms. */
+> -		poll(pfds, ARRAY_SIZE(pfds), /*timeout=*/100);
+> -		if (!err_done && pfds[0].revents) {
+> -			errno = 0;
+> -			len = read(err, buf, sizeof(buf) - 1);
+> -
+> -			if (len <= 0) {
+> -				err_done = errno != EAGAIN;
+> -			} else {
+> -				buf[len] = '\0';
+> -				if (verbose > 1)
+> -					fprintf(stdout, "%s", buf);
+> -				else
+> +		if (perf_use_color_default) {
+> +			int tests_in_progress = running_test;
+> +
+> +			for (int y = running_test; y < child_test_num; y++) {
+> +				if (check_if_command_finished(&child_tests[y]->process))
+> +					tests_in_progress++;
+> +			}
+> +			print_test_result(t, i, subi, TEST_RUNNING, width,
+> +					  child_test_num - tests_in_progress);
+> +		}
+> +
+> +		err_done = true;
+> +		if (err <= 0) {
+> +			/* No child stderr to poll, sleep for 10ms for child to complete. */
+> +			usleep(10 * 1000);
+> +		} else {
+> +			/* Poll to avoid excessive spinning, timeout set for 100ms. */
+> +			poll(pfds, ARRAY_SIZE(pfds), /*timeout=*/100);
+
+When I tested this patch, I saw it refreshes too often in parallel mode.
+Maybe 100ms is too short?  I don't know if it's from usleep (10ms) or
+here.
+
+Thanks,
+Namhyung
+
+
+> +			if (pfds[0].revents) {
+> +				char buf[512];
+> +				ssize_t len;
+> +
+> +				len = read(err, buf, sizeof(buf) - 1);
+> +
+> +				if (len > 0) {
+> +					err_done = false;
+> +					buf[len] = '\0';
+>  					strbuf_addstr(&err_output, buf);
+> +				}
+>  			}
+>  		}
+> +		if (err_done)
+> +			err_done = check_if_command_finished(&child_test->process);
+> +
+> +		if (perf_use_color_default) {
+> +			/* Erase "Running (.. remaining)" line printed before poll/sleep. */
+> +			fprintf(debug_file(), PERF_COLOR_DELETE_LINE);
+> +		}
+>  	}
+>  	/* Clean up child process. */
+>  	ret = finish_command(&child_test->process);
+> -	if (verbose == 1 && ret == TEST_FAIL) {
+> +	if (verbose > 1 || (verbose == 1 && ret == TEST_FAIL)) {
+>  		/* Add header for test that was skipped above. */
+>  		if (has_subtests(t))
+>  			pr_info("%3d.%1d: %s:\n", i + 1, subi + 1, test_description(t, subi));
+> @@ -338,7 +365,7 @@ static int finish_test(struct child_test *child_test, int width)
+>  		fprintf(stderr, "%s", err_output.buf);
+>  	}
+>  	strbuf_release(&err_output);
+> -	print_test_result(t, i, subi, ret, width);
+> +	print_test_result(t, i, subi, ret, width, /*remaining=*/0);
+>  	if (err > 0)
+>  		close(err);
+>  	return 0;
+> @@ -354,7 +381,7 @@ static int start_test(struct test_suite *test, int i, int subi, struct child_tes
+>  		pr_debug("--- start ---\n");
+>  		err = test_function(test, subi)(test, subi);
+>  		pr_debug("---- end ----\n");
+> -		print_test_result(test, i, subi, err, width);
+> +		print_test_result(test, i, subi, err, width, /*remaining=*/0);
+>  		return 0;
+>  	}
+>  
+> @@ -379,7 +406,7 @@ static int start_test(struct test_suite *test, int i, int subi, struct child_tes
+>  	err = start_command(&(*child)->process);
+>  	if (err || !sequential)
+>  		return  err;
+> -	return finish_test(*child, width);
+> +	return finish_test(child, /*running_test=*/0, /*child_test_num=*/1, width);
+>  }
+>  
+>  #define for_each_test(j, k, t)					\
+> @@ -464,7 +491,7 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
+>  	}
+>  	for (i = 0; i < child_test_num; i++) {
+>  		if (!sequential) {
+> -			int ret  = finish_test(child_tests[i], width);
+> +			int ret  = finish_test(child_tests, i, child_test_num, width);
+>  
+>  			if (ret)
+>  				return ret;
+> diff --git a/tools/perf/util/color.h b/tools/perf/util/color.h
+> index 01f7bed21c9b..4b9f8d5d4439 100644
+> --- a/tools/perf/util/color.h
+> +++ b/tools/perf/util/color.h
+> @@ -22,6 +22,7 @@
+>  #define MIN_GREEN	0.5
+>  #define MIN_RED		5.0
+>  
+> +#define PERF_COLOR_DELETE_LINE	"\033[A\33[2K\r"
+>  /*
+>   * This variable stores the value of color.ui
+>   */
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
 
