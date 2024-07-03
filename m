@@ -1,109 +1,138 @@
-Return-Path: <linux-kernel+bounces-239677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4389E9263DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:52:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224879263E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA881F232BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE322832E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143A917DA06;
-	Wed,  3 Jul 2024 14:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA5917DA03;
+	Wed,  3 Jul 2024 14:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="J6mfbvdE"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="wNFCYmoN"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17384409;
-	Wed,  3 Jul 2024 14:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FEA17625D;
+	Wed,  3 Jul 2024 14:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720018330; cv=none; b=CYJqV3SaVUMWidFjJCdWXBYlZ6mp7xICcOyAInW0xumB1GsUKwI88li5kkj4xjIb1t75SR2M1vqTY1/0UPbyJXQcQb4E5LjOUpq24+R2mnraZfVCB14nu1a509o6xUtCPgkVZpbzKui9Ui+lpaLnvIWLnHpZg8awx27V4CjTjYE=
+	t=1720018350; cv=none; b=pvL8cgFYPObsU+dZQpRO4yM63oGwBH/Y70f0kgzDuqadKTZ2poraqvGxOcdwT5U+/4wXxIfHv3lP2TOkwVFOoEz1+lDmSNJABhWZOcIxlgJA6O++ZMSNUTVkoIeeYvhg4YaughB0sy1s6lUBwMOykNQpyFXIuUl66EklmwBYmBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720018330; c=relaxed/simple;
-	bh=opuYPOBO3CpJ/UR87r0PwPENZCJ5lJ2kN2zlHDHZooc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=mrHGoO1AhQ623ubAnCvm83DAYbZxOUhNW+zhKC2l481wD++98ysOSWoKFZMWLDgqgebHMCmBgcrCj6wdonMA9FQqerMC+P6TUxFATbvvJRS3/8K9pscweJlK6sovdZGin+WG1D4DPTd6R938I0kOZJHhh1/7eTCZRtMMBZfTcvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=J6mfbvdE; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 72851240008;
-	Wed,  3 Jul 2024 14:52:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720018326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=opuYPOBO3CpJ/UR87r0PwPENZCJ5lJ2kN2zlHDHZooc=;
-	b=J6mfbvdEQcsGLS3MQ/y3pHy6zksWvA521a7dcQT+652pasbVLH3I7a8WdzbA5AwaYd7hIK
-	gu//wwGdPcqBgYvQpLSP5Mw4tDjWK9OF6wxGptBb+QhhGm1nCDvODbj1gjHOpmWb4kgBap
-	yN/gW2Ddu8sWw0uqQLrIK4HgKpH5Jjklwzk2/V9texg7lXB9TRy/nqDYlPKjSXNo9fz0SV
-	NPmUFQzKo1+1EzTTOAgqWBwVSSXMr0zFdXoLoy6ELWg57skFitEUDF2TiMOJ9LYKKv1ypV
-	MEZzSRFCwj23ChOLs4fVVw9CW1osH7vceBjXpU2+I1lGOi2RIW2HPt5eD7bv7g==
+	s=arc-20240116; t=1720018350; c=relaxed/simple;
+	bh=p0/k9VQeW/IATPVXcdui0lUXFvcsx8iSSa/S+24EuLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n1ZOG/aeajZcdYeOKK8LapasmsI72FrT8WTYEuP80uue/5mWyfMnsQsg2A13cDNl3soZHOOQnq4lLQycjozDbw4AZW0I8vV3eIlT5TKl/ZCMtHdOVFH1DaU+R4BgYBucvp+sdRLw1jceLZB2Z+tdz+phejk+YN7td8yRXomIQq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=wNFCYmoN; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GJQEvoz0wIDeZIENvMBRDSvSZb0uYILKO4p51jsjWXc=; b=wNFCYmoNy49f91CpMZqn4/Iq1L
+	KPLRCCAc3T61tv7x98xHEt73VD10OoEeAz/OADbqdIBgmLSCisoT/x0g4rwlJ2yTinMIW4sWg4McX
+	7yPiHZWXr4wSWbyyKFsYPCSEaHlbv1ADF6sXlyJuKGsmRNQjsP7NEZStkLQZKPyduho3PWhOWINdc
+	s5I/O1CUgzZgTZ5G4S4I4p0rtN3sLCeZVO+qYelKXUwCucRMAzqaeBEf+VLNT223H+5dIq1mArn2M
+	rZ/nkoUeGzLHVwBEnRYSjjzQ64S6/TiuoILQo1YXS+1AQ+G1ZD3qS6AqpcL+e60LxqLDDCDj9L9OR
+	sFxc4Tkw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50572)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sP1LC-0005hs-1a;
+	Wed, 03 Jul 2024 15:52:14 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sP1LA-00030B-8H; Wed, 03 Jul 2024 15:52:12 +0100
+Date: Wed, 3 Jul 2024 15:52:12 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH net-next v15 07/14] net: ethtool: Introduce a command to
+ list PHYs on an interface
+Message-ID: <ZoVlnLkXuJ0J/da3@shell.armlinux.org.uk>
+References: <20240703140806.271938-1-maxime.chevallier@bootlin.com>
+ <20240703140806.271938-8-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Jul 2024 16:52:04 +0200
-Message-Id: <D2FZLXUX4HHW.1R8U2P6JBH758@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH 0/3] MIPS: Add Mobileye EyeQ OLB system-controller
-Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-X-Mailer: aerc 0.17.0-0-g6ea74eb30457
-References: <20240628-mbly-mips-v1-0-f53f5e4c422b@bootlin.com>
- <ZoVhry8VFRx8x3w/@alpha.franken.de>
-In-Reply-To: <ZoVhry8VFRx8x3w/@alpha.franken.de>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703140806.271938-8-maxime.chevallier@bootlin.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hello Thomas,
+On Wed, Jul 03, 2024 at 04:07:57PM +0200, Maxime Chevallier wrote:
+> +static int
+> +ethnl_phy_fill_reply(const struct ethnl_req_info *req_base, struct sk_buff *skb)
+> +{
+> +	struct phy_req_info *req_info = PHY_REQINFO(req_base);
+> +	struct phy_device_node *pdn = req_info->pdn;
+> +	struct phy_device *phydev = pdn->phy;
+> +	enum phy_upstream ptype;
+> +
+> +	ptype = pdn->upstream_type;
+> +
+> +	if (nla_put_u32(skb, ETHTOOL_A_PHY_INDEX, phydev->phyindex) ||
+> +	    nla_put_string(skb, ETHTOOL_A_PHY_NAME, dev_name(&phydev->mdio.dev)) ||
+> +	    nla_put_u32(skb, ETHTOOL_A_PHY_UPSTREAM_TYPE, ptype) ||
+> +	    nla_put_u32(skb, ETHTOOL_A_PHY_ID, phydev->phy_id))
+> +		return -EMSGSIZE;
 
-On Wed Jul 3, 2024 at 4:35 PM CEST, Thomas Bogendoerfer wrote:
-> On Fri, Jun 28, 2024 at 06:11:49PM +0200, Th=C3=A9o Lebrun wrote:
-> > This is a new iteration on the Mobileye system-controller series [0].
-> > It has been split into separate series to facilitate merging.
-> >=20
-> > This series contains a dt-bindings defining the system-controller
-> > (called OLB) used on EyeQ5, EyeQ6L and EyeQ6H. It then modifies the
-> > EyeQ5 devicetree to exploit that system-controller.
->
-> just to be sure, this replaces the v3 series ? And it's the only
-> series, which should go through the MIPS tree ?
+I'm really not sure that it is a good idea to export phydev->phy_id
+through this API.
 
-Sorry it was not clear enough. I confirm this replaces the V3.
-It is the only series that should go through the MIPS tree.
+Clause 45-only PHYs don't have a phy_id, they have a whole bunch of
+IDs (actually, two per MMD - a device ID and a package ID. I think
+the package ID is supposed to be the same for all MMDs, but in
+practice it isn't.
 
-The remaining three series have had their V2 sent a few minutes ago.
-Each series contains the removal of the old dt-bindings and the three
-clk/reset/pinctrl drivers.
+For example, 88x3310 uses:
 
-https://lore.kernel.org/lkml/20240703-mbly-clk-v2-0-fe8c6199a579@bootlin.co=
-m/
-https://lore.kernel.org/lkml/20240703-mbly-reset-v2-0-3fe853d78139@bootlin.=
-com/
-https://lore.kernel.org/lkml/20240703-mbly-pinctrl-v2-0-eab5f69f1b01@bootli=
-n.com/
+MMD	devid		pkgid
+1	002b09aa	002b09aa
+3	002b09aa	002b09aa
+4	01410daa	01410daa
+7	002b09aa	002b09aa
 
-Thanks,
+So, if we want to report the ID of the PHY, then really we need to
+report the clause 22 ID, and at least all the devids of each MMD in
+a clause 45 PHY. Alternatively, we may decide it isn't worth the
+effort of reporting any of these IDs.
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+However, reporting just the clause 22 ID would be a design error
+IMHO.
 
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
