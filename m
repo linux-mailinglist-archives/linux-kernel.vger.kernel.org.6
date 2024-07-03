@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-239932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678969266F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:21:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25729266FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 987631C22134
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:21:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6EB1F23813
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC74F1849CF;
-	Wed,  3 Jul 2024 17:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457631862B6;
+	Wed,  3 Jul 2024 17:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OD9XWGHh"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Se5z1rIF"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9763518308A
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 17:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115C0185084
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 17:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720027287; cv=none; b=TtPOtR5wv/VO4atEeGP/IWGDjp7m1+sJQfk03GOW50KLCJJHx432Z6oz3mWwjGrI2t7vdBG/T9fpke4b6fHm0ZrhZdYjdSvezTbeRz8Dy3XdHixAWe+FQu1AKRRUf+l3T4/bnhXOMaT2R3M30orXyP8qZmFodFBWKxvLQDf6h7o=
+	t=1720027289; cv=none; b=QmK+wZzlYql3FxeIbll6G9cquDYdAWXSVRR39eIdIXtaCMac74Z8qP6CJbM4k/k90tSHZY6fBtp0P243p94KoeIyvqXSAAzNldUrzi28+VnfWEdLD8B93zm2s90HhM6phKe+oj8GyIQMumEvfNhBnPocCi/YY3vyYINrq/Rp+rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720027287; c=relaxed/simple;
-	bh=XSLtNpQyYpFfkguGPVVIRjjiBCkd6K/LCJ4NTdjR/E8=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=MGXIMXryeP5gF+TJ6TANgiz2qlq5sEOnkGFLRL47nKRVPTv+DofJf23MFHLw8ectBHBKN71L5wFh5cAS7bClsulg1TT+bGRT4q23IFs0kvtEFTfKZCSNfdXtTZjRypgk8r+pxoO0Xgd50JesajmqLVlOrAlteOxLirr1ANJ+PgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OD9XWGHh; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1720027289; c=relaxed/simple;
+	bh=FLT+4gnVINf7KJ4R59I14FmcEQjfh9jmHIWgHUoNFp8=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Content-Type; b=Jd5r6KayKxB+cfPPRjabrR5j88mEvnJ5kfBLgopZuShc3m5a90ul38fDvml1c7FsTGd3GfsOKYgT8iP0bV+XpIUAVXZGI2o8bTmIeFm/YHqnibucO+yObm78UWGisDxX6QLZoo482VQAqKGWMx/ayae23xCy1xlrqJsMaNg/6+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Se5z1rIF; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6502e4c5aafso9078887b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 10:21:25 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e033e353528so8589503276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 10:21:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720027284; x=1720632084; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=O6DICyukWO//hDnJTxN/2aPKt92AdYPiZHqQbb+7vPI=;
-        b=OD9XWGHhhMPHEVGWrmlRhfoDbz7rSOnPRMDu9h3+lvu12+COAXXiDah5k3ggnG3kW7
-         YoZhA7q4qMmmPDZJ3Z6NGsoJa/NYH+k1Ntp+RUWjUE70h0wqpX5++riCEoH/WS+XWQwV
-         Qy5eDfwhOqbYAN5ZUjFP1GP34R0gtUShemRnbp5Td21ukDB25ogv4LFIC+DbXQ90Qlb8
-         AMr43m0dQSBgJQLCVIexCy1DKRiu8b9SgQ843XRfqsrb1jvYhxvjTIN9oafE7XuNXet/
-         YSjGbPN7JxeQ3ES9j5HqmYeqQYy08Nf9kE1opxJs+X9sVPY1ma+Xt8cdA3M7oVZKLVFU
-         4fYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720027284; x=1720632084;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+        d=google.com; s=20230601; t=1720027287; x=1720632087; darn=vger.kernel.org;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=O6DICyukWO//hDnJTxN/2aPKt92AdYPiZHqQbb+7vPI=;
-        b=oYUr/vm84Nu64gNSOUmyMNZ7fQye8vAguXr9O+ezw2+pF+y0TnBToeb21lY9bEwQd9
-         6eOqW4S/5P5fj79qAeGOH317h9oOzH2azeUB3oOoeWUw0kCsBIQCqcuojcQ76r7seFhZ
-         /TcFa7yBbIxcHJGGYVQb0+34vmBFPVUTX6la7NQ/6tPE5mV3Lw+EPLYcr3cFugQKf/VV
-         CMQ51uVl0DEC2EQ2/5NrAyz9bWhihfzDjzCpA5aN7BHRbUY0U+9FK2GDC15uxjz6VPNQ
-         NpAAZBQEvvva3L1YCIypoTnHcNv3eURlkKMU3m95LMuaMX0V02SU278bZPmdewECqsfe
-         hWdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxJ+lmO+h8tI2UkPMe0HPOBoH2RTgiAedSWDuJsojtB4Ki9muzuiW4VvMxIbyjTjjjIXEG9AaekF5SAlQALF3lYS22BhZ79PEsxso+
-X-Gm-Message-State: AOJu0Yz644UGw7lnpYlB8MvXodbb97Ay3RdclsJgTInqzek/t79m441N
-	MXypnoHi1/SxnNsMSOvQppaPtevfMwM93stFbYZveM1dsvk9FPBonSO8VD8zc4gTyRsTxXMW/ZK
-	fWu+vkg==
-X-Google-Smtp-Source: AGHT+IGv2CIYh9To76MKX40LCNyELwQzrEHoDJAI0BU1AT3bkehsbRkH7SSJrQqkR9ENVbfP0BoApbYrhh6S
+        bh=aKtmGrW1KJvIQ629mFQxU63SX5o3BneZ2oyJxXNdreU=;
+        b=Se5z1rIFwHsSvZ5yMsKBNUYByHpppybNEo8O0tgV9EKzTFAdf4OQ1/UlnmG8fLY4gV
+         qORiAgT3tBOb0pk6cfG3OIJfcYe7hD8QzpBjTnGkAOSHDz5TbKsy6fPlrjnIrX90fR6Z
+         TvJHhr6GjMJeSs5Wf/WCSwZO1F/aLcEWe+mq6VknhzWLgnAHffJDfjnAehjvG3useSlH
+         Rbdv9XrNcxaaUjzOaezlKA9b+Feyq1S/hOv+9dgwyfydqxCm5IuJoNC5swnklu+q0F66
+         y5e7hIGIQ4Df7ZlOPxjJx9Hc6BpTLo179wWMKqmYDeLl4jdlRkFEAGQBllw5WzbpHAxU
+         5tQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720027287; x=1720632087;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aKtmGrW1KJvIQ629mFQxU63SX5o3BneZ2oyJxXNdreU=;
+        b=nflGyi5YYLqrmMo25up2l7ay2A0qPl9hX2I33Nv0TTbCQ0Ukoh1gquQYFGlZnnW8vc
+         lj+UvdmLlh5JRcBHBmMDCzeH5ybBRwhzgJ5f6pDGXK3icRZ7eqgWQ7x5KNDFNN6jOOI2
+         Xf4LjrSXCb0GIXoIVQbDrzzEtoIpjNw3pftdzhZCmJEQz/7EdlVDIiADlKRvYnCWwNl0
+         n2DPghhwaNBHuYXKojYp33HrrMmZfX/UOKcT7GfPirDmgsVFV1irtxFDlDy+XiCBr/qv
+         RhTR5QVplfMAYmGhi28rDz0pjKu4uYZtDKROGJSk11PKMlGXHt3A0mMXmKiqJrmZgkQm
+         jxKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsNKEehNYzX6TM4cVUW05qxW89rLK8LONZ0vkmvh6rj3KYtJZ4z/TVHr4syMPnPHapSuflie6bp9Z5wP9ui6qvHgpTZlmfr1NeI2Xh
+X-Gm-Message-State: AOJu0YwGJYwYdmfZiPnV2yYL8hkCFmHXbIyQWbbcYOo12mMKWfdD76w1
+	Lwl2hGB2laSfGaSkjSeSSNk+/3lZAIp63C4vEYdhdXDCFCcVAOSIp+2aS5CvhxItgGKhK4C0wHo
+	UP+Llbw==
+X-Google-Smtp-Source: AGHT+IHCpYgI1BZEzBCU2eJZ/7hopipDE9WsWDyt5JVynM2pswdESfEjBC6p1Zsq9sgn9+jXRngYeqpBdgyf
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:bdc2:f28d:3877:f0f2])
- (user=irogers job=sendgmr) by 2002:a05:690c:c0a:b0:618:5009:cb71 with SMTP id
- 00721157ae682-651818f0323mr197937b3.5.1720027284599; Wed, 03 Jul 2024
- 10:21:24 -0700 (PDT)
-Date: Wed,  3 Jul 2024 10:21:15 -0700
-Message-Id: <20240703172117.810918-1-irogers@google.com>
+ (user=irogers job=sendgmr) by 2002:a05:6902:1501:b0:dfd:a911:5722 with SMTP
+ id 3f1490d57ef6-e036ec2dc31mr24953276.8.1720027287156; Wed, 03 Jul 2024
+ 10:21:27 -0700 (PDT)
+Date: Wed,  3 Jul 2024 10:21:16 -0700
+In-Reply-To: <20240703172117.810918-1-irogers@google.com>
+Message-Id: <20240703172117.810918-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240703172117.810918-1-irogers@google.com>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Subject: [PATCH v1 0/2] Try to avoid some qsorts
+Subject: [PATCH v1 1/2] perf comm str: Avoid sort during insert
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -83,24 +86,61 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Steinar Gunderson <sesse@google.com>, Matt Fleming <matt@readmodwrite.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Reference count checking doesn't work well with rbtree due to the need
-for counts on each child and parent edge. As such the reference count
-checking changes removed rbtree and replaced them with sorted
-arrays. There have been instances where sorting has been shown to be a
-regression:
-https://lore.kernel.org/lkml/20240521165109.708593-1-irogers@google.com/
+The array is sorted, so just move the elements and insert in order.
 
-These patches address a further 2 cases in comm and dsos, avoiding a
-sort when the array is already sorted at the cost of an O(n) memmove.
-
-Ian Rogers (2):
-  perf comm str: Avoid sort during insert
-  perf dsos: When adding a dso into sorted dsos maintain the sort order
-
+Reported-by: Matt Fleming <matt@readmodwrite.com>
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
  tools/perf/util/comm.c | 29 ++++++++++++++++++-----------
- tools/perf/util/dsos.c | 26 +++++++++++++++++++++-----
- 2 files changed, 39 insertions(+), 16 deletions(-)
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
+diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
+index 233f2b6edf52..49b79cf0c5cc 100644
+--- a/tools/perf/util/comm.c
++++ b/tools/perf/util/comm.c
+@@ -86,14 +86,6 @@ static struct comm_str *comm_str__new(const char *str)
+ 	return result;
+ }
+ 
+-static int comm_str__cmp(const void *_lhs, const void *_rhs)
+-{
+-	const struct comm_str *lhs = *(const struct comm_str * const *)_lhs;
+-	const struct comm_str *rhs = *(const struct comm_str * const *)_rhs;
+-
+-	return strcmp(comm_str__str(lhs), comm_str__str(rhs));
+-}
+-
+ static int comm_str__search(const void *_key, const void *_member)
+ {
+ 	const char *key = _key;
+@@ -169,9 +161,24 @@ static struct comm_str *comm_strs__findnew(const char *str)
+ 		}
+ 		result = comm_str__new(str);
+ 		if (result) {
+-			comm_strs->strs[comm_strs->num_strs++] = result;
+-			qsort(comm_strs->strs, comm_strs->num_strs, sizeof(struct comm_str *),
+-			      comm_str__cmp);
++			int low = 0, high = comm_strs->num_strs - 1;
++			int insert = comm_strs->num_strs; /* Default to inserting at the end. */
++
++			while (low <= high) {
++				int mid = low + (high - low) / 2;
++				int cmp = strcmp(comm_str__str(comm_strs->strs[mid]), str);
++
++				if (cmp < 0) {
++					low = mid + 1;
++				} else {
++					high = mid - 1;
++					insert = mid;
++				}
++			}
++			memmove(&comm_strs->strs[insert + 1], &comm_strs->strs[insert],
++				(comm_strs->num_strs - insert) * sizeof(struct comm_str *));
++			comm_strs->num_strs++;
++			comm_strs->strs[insert] = result;
+ 		}
+ 	}
+ 	up_write(&comm_strs->lock);
 -- 
 2.45.2.803.g4e1b14247a-goog
 
