@@ -1,114 +1,115 @@
-Return-Path: <linux-kernel+bounces-239045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98E81925562
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:31:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 895F0925565
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C4791F23977
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:31:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2542BB2426D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7230B13B280;
-	Wed,  3 Jul 2024 08:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5EE13B5AC;
+	Wed,  3 Jul 2024 08:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yCJFGlJN"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="De8x6DGF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC392629C
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533374D584;
+	Wed,  3 Jul 2024 08:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719995461; cv=none; b=isnrTOV7XcrzScqG2vpQwGEV4plvFBxrWis6vqHIwpYTNtp4eI34zE8SVdkvl0fniiiaJH6ysC/f6TmxoF9hsq8JkIjD4FE6iQ3mOlJ30nrHhV/LHGwK6z8Bin/LxL1FZPhoSr/UDQZuSJucwUtEWPLYxG1S5RK5KBmqEHyi7mA=
+	t=1719995474; cv=none; b=OcGVfzFeUZmjly9XhlWbNRYmrqZH4XVC9TPoIrEzER3xsQEtOkG+dMeTJq9YPG8v+e/GZnj7GjYhNMFMqRhOajWyEws56GvvluFbDU2faLAGmfm+YosKAvY7rc7qrb0gkExNOSwZu2cqzrcLxiwlxsXWTthcqufByun/m16WUZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719995461; c=relaxed/simple;
-	bh=Y4rDUf52JWPZ9MeShgIRd+f9mgpzSlHQnn1AWb2aU+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dx0bSISlvuIkwGCqN2pKmEKdQf7h07mnRLKjtL7XNhLLfj4s/9ft9VvVDkyORTn2z/9FzTYMxfuMg/h2YdTCvIZfb8VqGKqkA1OVupKKKCF57fvr31BAOD18U9pIlf1dU6L4eEYZuMxUFgifAFOcmIOgSP6LyRRKrkXgDmyQLCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yCJFGlJN; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42565697036so2084575e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 01:30:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719995458; x=1720600258; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=I2Vordpgq08V3AOsjjIdK4cHDDX5qouIu99HjhhGPw8=;
-        b=yCJFGlJN+iE6+tlmIJk9CIpYuBd+9FWiXdq6E2YtUWQbbAftWB2EonVhXNzNdUap9H
-         Zm/KPktlsg9Y9qBE25y2/N0mxTKGKth40QiSjozEiuGvlJMZgofvlW0+npmP9mkYTQNf
-         ntN3JQnWSpwnxtR+ZHvFpCFk6CrmJ/Jiz5BeapIlcMUVDhoDTFvhn96AdIESPvLMAvIB
-         b54qu6+fplj/HvuLmChhor2fJv7/QRpEEcWrHTW/td5xYgA5tZv4oMypnCRQdEZkxUJ1
-         N+ZgfXsP6MI+zQZ8Z5zqirxl3zW//X2jB0NUjioE7S0EtPKZnX1uhlNjX/TDgUJrJw/G
-         hEJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719995458; x=1720600258;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I2Vordpgq08V3AOsjjIdK4cHDDX5qouIu99HjhhGPw8=;
-        b=LbPr+VlrN4lyJLqjKhtJoCz5ZevFFYz8sWk6F2CXqmmsZE8NBlCLiZJEE+FkKle2Kw
-         4ikVNMPP/s21EhvFZ68gaY0m8iI9nm0Lwe855NrU+zfrnHUI0Aajb9yRd4Hk8siCrFaC
-         N3UU0MhiKeqf++bRQW+m7b3fuPMJEa+o9Kwcy61hMevz+fInxMOA5HDSG4+pFU3UXMAq
-         7JbBi8QUHDQ/5J5LXVUeVgviDTUja/BVhLaswe2Kra3XOJHqVqPHp5pGSlWaeFIH2AmZ
-         YNeINitnlO7jXpcW1ZnxkLW7qOo5CA2hTv0mBnZ0/ZaJGGMRlqDtLbty/qhA9++1ikID
-         iF2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXv/JsW7PNuzfWVyPcbvebluUfaD0giX3DHoyhvQ6Xr5WWrhCJnQQCvBpiA1TUTsdPwFchL0G1lHTaspB73B3Q0hI3QT6ViD+HN1ZCl
-X-Gm-Message-State: AOJu0YweWvZHjZM/NGzhWt8L6k5ZFYx554SgM/pJ1v+zxZJRyjj/vGdt
-	+A/Yc4XuNwha7ie0B517bxdPY8AeFrqkSMf0IBi68/AW4Rl1V7eiRqvUXBbK5EA=
-X-Google-Smtp-Source: AGHT+IEO0qOMucq0/Dkxhbd3FQ73eQMSmyuAD2YjjnYf5q6PoaQe0ZZMFP4WVE2UsDcDNDtS+2Ienw==
-X-Received: by 2002:adf:f202:0:b0:35f:314a:229c with SMTP id ffacd0b85a97d-367947b319fmr762548f8f.28.1719995458595;
-        Wed, 03 Jul 2024 01:30:58 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd623sm15302768f8f.16.2024.07.03.01.30.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 01:30:58 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] cxl/acpi: simplify returning pointer without cleanup
+	s=arc-20240116; t=1719995474; c=relaxed/simple;
+	bh=YDu++FQvyBbQ5q007YIq1M9txqwp9dKc/o3S30ODOmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DbrKV8gy6iitBNvUKGUjc4B3Kua+Gj0Rr+n3y6f327gF5PIzQ9hOHgAM5sPWx0YpHal8YpQ1jyOxuQWBw9wSDePPPo/kEkQWPFErvXeBnlJunGuFHM+irBMg8JohH/SqdK6ISxLT+e80rZbD6IJ9QIRcw+jUyKPZwChw5DOH8gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=De8x6DGF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10385C2BD10;
+	Wed,  3 Jul 2024 08:31:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719995473;
+	bh=YDu++FQvyBbQ5q007YIq1M9txqwp9dKc/o3S30ODOmA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=De8x6DGFGSuDGJ9Fd92iKUb2XW3pL8/ay7jtZOpHAFu4EkQkGXk28CEzWBY4zqQqQ
+	 LLulSEHgAtRsvUkG9EEaO0z2E8Xfuvp9Cn1fxSrqqqp8Zh1tw9rKGyGd9uUEq3kyTR
+	 zx34zQ/4yOkCJN3JvLEF1niGnZ6jxyiUFbUs3OJZnjwdCI5pGdblQXuG/TAbWoArdm
+	 wFpKbtbXyvlbOcF3TAJs/1N59b6RSSUPF4H3h3s0jkbtbNRoFP1+J8CijKpRxtSnRN
+	 ac/3TBDqVqZP5959YIKjEOFe8++Ca088D8KzNsHGUPbz7OknTrs1BDL+R1C97f7jBv
+	 1olW5FUw/KFrQ==
+From: Christian Brauner <brauner@kernel.org>
+To: netfs@lists.linux.dev,
+	dhowells@redhat.com,
+	jlayton@kernel.org,
+	libaokun@huaweicloud.com
+Cc: Christian Brauner <brauner@kernel.org>,
+	jefflexu@linux.alibaba.com,
+	zhujia.zj@bytedance.com,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yangerkun@huawei.com,
+	houtao1@huawei.com,
+	yukuai3@huawei.com,
+	wozizhi@huawei.com,
+	Baokun Li <libaokun1@huawei.com>,
+	Gao Xiang <xiang@kernel.org>
+Subject: Re: (subset) [PATCH v3 0/9] cachefiles: random bugfixes
 Date: Wed,  3 Jul 2024 10:30:55 +0200
-Message-ID: <20240703083055.95864-1-krzysztof.kozlowski@linaro.org>
+Message-ID: <20240703-miene-ausziehen-1f6a167a1020@brauner>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240628062930.2467993-1-libaokun@huaweicloud.com>
+References: <20240628062930.2467993-1-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1761; i=brauner@kernel.org; h=from:subject:message-id; bh=YDu++FQvyBbQ5q007YIq1M9txqwp9dKc/o3S30ODOmA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS18rjf3fhdbtn9SEFvTZZnEz+xLrC75lD5Y5eYyue8b dxcivmTOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYiWcLwP6uI7eHCSFXlg75t rWt2T3IR4O2avGpbrV3qB34jcxXOg4wMF1LX5YReTFgbvXaLVebEdxEV+Tm63+IWzv58u+m8crY yLwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Use 'return_ptr' helper for returning a pointer without cleanup for
-shorter code.
+On Fri, 28 Jun 2024 14:29:21 +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> Hi all!
+> 
+> This is the third version of this patch series, in which another patch set
+> is subsumed into this one to avoid confusing the two patch sets.
+> (https://patchwork.kernel.org/project/linux-fsdevel/list/?series=854914)
+> 
+> [...]
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/cxl/acpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-index 571069863c62..1e4bed8a933e 100644
---- a/drivers/cxl/acpi.c
-+++ b/drivers/cxl/acpi.c
-@@ -339,7 +339,7 @@ static struct resource *alloc_cxl_resource(resource_size_t base,
- 	if (!res->name)
- 		return NULL;
- 
--	return no_free_ptr(res);
-+	return_ptr(res);
- }
- 
- static int add_or_reset_cxl_resource(struct resource *parent, struct resource *res)
--- 
-2.43.0
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[4/9] cachefiles: propagate errors from vfs_getxattr() to avoid infinite loop
+      https://git.kernel.org/vfs/vfs/c/b688bd1735e7
+[5/9] cachefiles: stop sending new request when dropping object
+      https://git.kernel.org/vfs/vfs/c/32eb47eab833
+[6/9] cachefiles: cancel all requests for the object that is being dropped
+      https://git.kernel.org/vfs/vfs/c/2f47569feef0
+[7/9] cachefiles: wait for ondemand_object_worker to finish when dropping object
+      https://git.kernel.org/vfs/vfs/c/343ce8c52dd0
+[8/9] cachefiles: cyclic allocation of msg_id to avoid reuse
+      https://git.kernel.org/vfs/vfs/c/5e6c8a1ed5ba
+[9/9] cachefiles: add missing lock protection when polling
+      https://git.kernel.org/vfs/vfs/c/5fcb2094431b
 
