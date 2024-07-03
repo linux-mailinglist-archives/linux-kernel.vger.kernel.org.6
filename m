@@ -1,197 +1,207 @@
-Return-Path: <linux-kernel+bounces-240202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91833926A3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:29:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6DF926A3D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D36A2B21E4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:29:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4DB41F22CB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DAD191F91;
-	Wed,  3 Jul 2024 21:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E206191F97;
+	Wed,  3 Jul 2024 21:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lP1O+RU/"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KGfamF6d"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08E6181CEC;
-	Wed,  3 Jul 2024 21:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB50191F83
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 21:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720042147; cv=none; b=eDRqRYSN3lo7ycTMyBMrU7y1xzX9WOeDTe4AIIMPRLs4AFEtdphVaoKizMMzw9QGSDmVJOor9ix3W3IQQFuyo+apFVsTNHU/NlppCNUoT0/d53Np79PLVFgrbnlFTIVQ8HeKKIBmx69DAv0ATn6H6KDUrjCpZzninddbQdzTIfg=
+	t=1720042168; cv=none; b=LPVrDk7cCUGX1jM6cwffN6+uR84j3S5/zISU31BygFwcms36H46BSxRnFwR+4DGmymiP2HL/1UpzAwY2ceD7Ceo/M20I6mq0AZpb18LdhwdKuPZKCOon1YMiPVuVeg3RqYzEULcPgzfVTJ+pW/h5XOeQukpwCZySwqp9UDHwORQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720042147; c=relaxed/simple;
-	bh=tR09rMdaXRzSOZJlbbwDCYT3+wz1Ju26+n0RaMRBw0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uLPvk6hLjSVUxj+BMuBVe2BsSoFN7puWbKCdsfD8X6zwCZzDTk87P4VvhFSFPc6+bCJmk8WlA0ttdPxlJYZ3HkekxtbFj0qRdRDT/6iXWQ+s/hFhC4+BxHb90CMdP8s4EvNSx9o6B5IrHDHyQNDW+NBPIR2JUIV+TgWsee0Wb24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lP1O+RU/; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f4a5344ec7so98145ad.1;
-        Wed, 03 Jul 2024 14:29:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720042145; x=1720646945; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=MQHG/jePXaqUQxyIwx4IFdiaoRRMKbDkq0isirmyfIc=;
-        b=lP1O+RU/pD5+9BvtEJTVlO/VUOKLXdhlBndAtFtLG5NZGSnMXN/uC4HZnFp7fiRuL6
-         ln1MONaETB7mIQCHatlcYSz6PrSWMRNowT5CsldSOuV0P5ZBJdBD+nCX6bar1Dtprksn
-         rgrwhFo7cKjHo8Tj+t0buISxWwcahWqTXLjWWggDTj+bHO10etrI+sg00+L9WxkoPL+x
-         2zMXkZ0O0MCQZnPmvvtHe3zVH+EXQ/KK6DOSq8GDxCzHJU9FEsALSS6g1UpGsJ9udR9t
-         TxYH6xEew7pJmuccOi6QHXPLyaoKl2rnEfqiok47uXWTWGyKgi0puYxT5D39c6f83FR7
-         FnSQ==
+	s=arc-20240116; t=1720042168; c=relaxed/simple;
+	bh=k9cYfSlX1eysxnScf8B+a2GY0V103T8Wi3ZGJ9gn9HE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jNWVpOJBPw2TkYJDb/Pd+rsdl9HsI/MkQ4faXpDPpAADWlW9jrYzDRw1tzmUx3abVJgz6TMRWtAcMLkL5M3U9DlfMdw1GQT0tgjIBWoBAyZ07kJLSNpeVHFjfP55PCZaClAjUt8MY7VvHHRoHeXdLTxT0RE4VsUn9w/of+ghMpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KGfamF6d; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720042164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=O2GbkT3IfNneZLzmTfXKMGxGoFvHWp+ovSbzv55/oNo=;
+	b=KGfamF6dFkUrkj1hvsK6jKvMlVzTszRSGWYoFltwquF6hkfW8i6qCIKPN8BzTnmdXou6TI
+	on1Ijvb1GUD6n4QIwQ3GE/xv/ZhuVNGE0U0WWfCMcJOknL0o1/PuN7gS0GZ0FU1c5Kp6Ko
+	DF4uwGkDXwrRxPPAxt6NERhTsZlU2QQ=
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
+ [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-457-XeyYqCKgMpG58BT-67pkpg-1; Wed, 03 Jul 2024 17:29:23 -0400
+X-MC-Unique: XeyYqCKgMpG58BT-67pkpg-1
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-48f42df4597so502102137.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 14:29:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720042145; x=1720646945;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MQHG/jePXaqUQxyIwx4IFdiaoRRMKbDkq0isirmyfIc=;
-        b=tXnp5ydGX6FNPWWh5PR1ZMm5QzboF4zkrZGUwzR+Lj3vI8RK3HfSqn6hCx9K5OWAqN
-         PEEP3EsY+paKPZPPMoqR//eUQrmrVLgwP76LEgRgcpV/wruFf0Et2t7u9JMhCn0CzJbE
-         WHrXOX4e4fqGzXgyN5wubFN1WsVgQXXOOwG2YnjCDi5qoK+I/6nK3QUHq5clveFeL8xn
-         e+hAlUGormndSxuDDV+FNHXmIyzzef9Z61WfRukW5UiTRtmYMIxOsiNoS4qxnbe20Yw0
-         jteXxQGObvle2k6siGOljk2/5icuJxxV5CtGkXcrRFjxTzahR8Kf2OcaqJZi/PEvD8Mv
-         MXzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxS0gqrtwg2ziBMZXEf6HVfDCXS+twHf3+tcWiUMgNCdpizpS9hzr4dh9fZ7ZKFK6nNT/XbJ5RPOMOYuBz2fGZnrOji63wZKpZCMo=
-X-Gm-Message-State: AOJu0Yzw8tH1YCOC0mVhsu2Cu6BGaxZqXcSx/gAd69OhwNPx+tIUm+Oq
-	0FjbB1oJsUbtbnZJDBxqJZwa50Ed0NLmtjVug8D9MeYUK3u7FU2stEtCnQ==
-X-Google-Smtp-Source: AGHT+IFExeFjZxBVywRNDCGExJCTAn96L/t6bgM405RZKaBaFgE0upQ/cynVux5Rczsbsz0/YQVKrg==
-X-Received: by 2002:a17:902:dad1:b0:1f9:f6c5:b483 with SMTP id d9443c01a7336-1fb1a0d1fedmr43299825ad.27.1720042144893;
-        Wed, 03 Jul 2024 14:29:04 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb1a3d25f1sm18274265ad.139.2024.07.03.14.29.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 14:29:03 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <38a76df3-61f1-4e40-b318-d2afe3a39445@roeck-us.net>
-Date: Wed, 3 Jul 2024 14:29:02 -0700
+        d=1e100.net; s=20230601; t=1720042162; x=1720646962;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O2GbkT3IfNneZLzmTfXKMGxGoFvHWp+ovSbzv55/oNo=;
+        b=e2nc2vW9KemRsoF40zzN2Mma7VTD/Tm+3Hgq1TeuCt1wrG5BMLG5UraqJ/GKz9+0Pr
+         xQ14jxs/FLB/xG13PhGjYAXFTX6SLjwRnyCrR7SJq16gZjWCjmlz17BFBDDn7A1VKpDc
+         f14EbciE0qbjmKn6meZLSGkQcdJH5vwmai34AJwjzZBw2IlEPj7c3oHSjDHGiwd6q8Lb
+         /mwIixE36ABoASJjKeqMCReloztCJ14fsB9zzBLy16qKHMljqP7/TLa4yT03Dz2zSVu2
+         +RtThR9LeLVTkBPyeT+Ldat7EaUuy1jLjfuxFigpK3kn/Dz6STgKRBdbzOu4hoPGUn/X
+         Z+jA==
+X-Gm-Message-State: AOJu0YzTZ2y8rS3wVQ2AbyapevPktg01B2T57pSNZsb6NhT0n/OAXMDA
+	AJfa8CBdmfmzls1T2cq6bMrwe2KIJ3kYn/tMXb7QA7oExmKLpJvnn+IUl/ymlOLPyJaKL6giIWN
+	Fiu5BVyF3+72QoWeWZk798MsexcLW+qRifuWcnHwTYchvOwaqam6bKY8ik57F9+9V56ACY/ge+M
+	5ncvYh4FJbEbdgSEzMdjae7Q4oWZDmBLgsm17J93H1PaI=
+X-Received: by 2002:a05:6122:221d:b0:4ec:ef42:a7a2 with SMTP id 71dfb90a1353d-4f2a56b62b8mr11877048e0c.1.1720042161927;
+        Wed, 03 Jul 2024 14:29:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFVxFROGUHiFRpsdTx4NqsAs9vB+SYw6qbXBu8UHMAgFYonw5PPnwd/CcFF1S+TO8MfCwLRIA==
+X-Received: by 2002:a05:6122:221d:b0:4ec:ef42:a7a2 with SMTP id 71dfb90a1353d-4f2a56b62b8mr11876994e0c.1.1720042161205;
+        Wed, 03 Jul 2024 14:29:21 -0700 (PDT)
+Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4465143eb1csm54337481cf.57.2024.07.03.14.29.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 14:29:20 -0700 (PDT)
+From: Peter Xu <peterx@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Dave Jiang <dave.jiang@intel.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Rik van Riel <riel@surriel.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Huang Ying <ying.huang@intel.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	"Kirill A . Shutemov" <kirill@shutemov.name>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	peterx@redhat.com,
+	Hugh Dickins <hughd@google.com>,
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 0/8] mm/mprotect: Fix dax puds
+Date: Wed,  3 Jul 2024 17:29:10 -0400
+Message-ID: <20240703212918.2417843-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.45.0
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/11] hwmon: (amc6821) Add support for pwm1_mode
- attribute
-To: Quentin Schulz <quentin.schulz@cherry.de>, linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Farouk Bouabid <farouk.bouabid@cherry.de>
-References: <20240701212348.1670617-1-linux@roeck-us.net>
- <20240701212348.1670617-12-linux@roeck-us.net>
- <135535d2-f400-4ca8-8362-526b47ae8362@cherry.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <135535d2-f400-4ca8-8362-526b47ae8362@cherry.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 7/3/24 08:28, Quentin Schulz wrote:
-> Hi Guenter,
-> 
-> On 7/1/24 11:23 PM, Guenter Roeck wrote:
->> AMC6821 supports configuring if a fan is DC or PWM controlled.
->> Add support for the pwm1_mode attribute to make it runtime configurable.
->>
->> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->> ---
->> v2: New patch
->>
->>   Documentation/hwmon/amc6821.rst |  1 +
->>   drivers/hwmon/amc6821.c         | 16 +++++++++++++++-
->>   2 files changed, 16 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/hwmon/amc6821.rst b/Documentation/hwmon/amc6821.rst
->> index 96e604c5ea8e..dbd544cd1160 100644
->> --- a/Documentation/hwmon/amc6821.rst
->> +++ b/Documentation/hwmon/amc6821.rst
->> @@ -58,6 +58,7 @@ pwm1_enable        rw    regulator mode, 1=open loop, 2=fan controlled
->>                   remote-sensor temperature,
->>                   4=fan controlled by target rpm set with
->>                   fan1_target attribute.
->> +pwm1_mode        rw    Fan duty control mode (0=DC, 1=PWM)
->>   pwm1_auto_channels_temp ro    1 if pwm_enable==2, 3 if pwm_enable==3
->>   pwm1_auto_point1_pwm    ro    Hardwired to 0, shared for both
->>                   temperature channels.
->> diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
->> index 5a3c089ae06f..98a45fe529e0 100644
->> --- a/drivers/hwmon/amc6821.c
->> +++ b/drivers/hwmon/amc6821.c
->> @@ -317,6 +317,12 @@ static int amc6821_pwm_read(struct device *dev, u32 attr, long *val)
->>               break;
->>           }
->>           return 0;
->> +    case hwmon_pwm_mode:
->> +        err = regmap_read(regmap, AMC6821_REG_CONF2, &regval);
->> +        if (err)
->> +            return err;
->> +        *val = !!(regval & AMC6821_CONF2_TACH_MODE);
->> +        return 0;
->>       case hwmon_pwm_auto_channels_temp:
->>           err = regmap_read(regmap, AMC6821_REG_CONF1, &regval);
->>           if (err)
->> @@ -372,6 +378,13 @@ static int amc6821_pwm_write(struct device *dev, u32 attr, long val)
->>           return regmap_update_bits(regmap, AMC6821_REG_CONF1,
->>                         AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1,
->>                         mode);
->> +    case hwmon_pwm_mode:
->> +        if (val < 0 || val > 1)
->> +            return -EINVAL;
->> +        return regmap_update_bits(regmap, AMC6821_REG_CONF1,
-> 
-> Wrong register here, should be AMC6821_REG_CONF2.
-> 
+[Based on mm-unstable, commit 31334cf98dbd, July 2nd]
 
-Oops. I had a bug in my test script, and thanks to that it failed to report the problem.
+v2:
+- Added tags
+- Fix wrong pmd helper used in powerpc
+- Added patch "mm/x86: arch_check_zapped_pud()" [Rick]
+- Do proper dirty bit shifts for shadow stack on puds [Dave]
+- Add missing page_table_check hooks in pudp_establish() [Dave]
 
-Thanks for noticing!
-Guenter
+v1: https://lore.kernel.org/r/20240621142504.1940209-1-peterx@redhat.com
+
+Dax supports pud pages for a while, but mprotect on puds was missing since
+the start.  This series tries to fix that by providing pud handling in
+mprotect().  The goal is to add more types of pud mappings like hugetlb or
+pfnmaps.  This series paves way for it by fixing known pud entries.
+
+Considering nobody reported this until when I looked at those other types
+of pud mappings, I am thinking maybe it doesn't need to be a fix for stable
+and this may not need to be backported.  I would guess whoever cares about
+mprotect() won't care 1G dax puds yet, vice versa.  I hope fixing that in
+new kernels would be fine, but I'm open to suggestions.
+
+There're a few small things changed to teach mprotect work on PUDs. E.g. it
+will need to start with dropping NUMA_HUGE_PTE_UPDATES which may stop
+making sense when there can be more than one type of huge pte.  OTOH, we'll
+also need to push the mmu notifiers from pmd to pud layers, which might
+need some attention but so far I think it's safe.  For such details, please
+refer to each patch's commit message.
+
+The mprotect() pud process should be straightforward, as I kept it as
+simple as possible.  There's no NUMA handled as dax simply doesn't support
+that.  There's also no userfault involvements as file memory (even if work
+with userfault-wp async mode) will need to split a pud, so pud entry
+doesn't need to yet know userfault's existance (but hugetlb entries will;
+that's also for later).
+
+Tests
+=====
+
+What I did test:
+
+- cross-build tests that I normally cover [1]
+
+- smoke tested on x86_64 the simplest program [2] on dev_dax 1G PUD
+  mprotect() using QEMU's nvdimm emulations [3] and ndctl to create
+  namespaces with proper alignments, which used to throw "bad pud" but now
+  it'll run through all fine.  I checked sigbus happens if with illegal
+  access on protected puds.
+
+What I didn't test:
+
+- fsdax: I wanted to also give it a shot, but only until then I noticed it
+  doesn't seem to be supported (according to dax_iomap_fault(), which will
+  always fallback on PUD_ORDER).  I did remember it was supported before, I
+  could miss something important there.. please shoot if so.
+
+- userfault wp-async: I also wanted to test userfault-wp async be able to
+  split huge puds (here it's simply a clear_pud.. though), but it won't
+  work for devdax anyway due to not allowed to do smaller than 1G faults in
+  this case. So skip too.
+
+- Power, as no hardware on hand.
+
+Thanks,
+
+[1] https://gitlab.com/peterx/lkb-harness/-/blob/main/config.json
+[2] https://github.com/xzpeter/clibs/blob/master/misc/dax.c
+[3] https://github.com/qemu/qemu/blob/master/docs/nvdimm.txt
+
+Peter Xu (8):
+  mm/dax: Dump start address in fault handler
+  mm/mprotect: Remove NUMA_HUGE_PTE_UPDATES
+  mm/mprotect: Push mmu notifier to PUDs
+  mm/powerpc: Add missing pud helpers
+  mm/x86: Make pud_leaf() only cares about PSE bit
+  mm/x86: arch_check_zapped_pud()
+  mm/x86: Add missing pud helpers
+  mm/mprotect: fix dax pud handlings
+
+ arch/powerpc/include/asm/book3s/64/pgtable.h |  3 +
+ arch/powerpc/mm/book3s64/pgtable.c           | 20 ++++++
+ arch/x86/include/asm/pgtable.h               | 68 +++++++++++++++---
+ arch/x86/mm/pgtable.c                        | 18 +++++
+ drivers/dax/device.c                         |  6 +-
+ include/linux/huge_mm.h                      | 24 +++++++
+ include/linux/pgtable.h                      |  7 ++
+ include/linux/vm_event_item.h                |  1 -
+ mm/huge_memory.c                             | 56 ++++++++++++++-
+ mm/mprotect.c                                | 74 ++++++++++++--------
+ mm/vmstat.c                                  |  1 -
+ 11 files changed, 233 insertions(+), 45 deletions(-)
+
+-- 
+2.45.0
 
 
