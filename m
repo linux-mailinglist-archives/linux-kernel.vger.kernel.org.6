@@ -1,157 +1,127 @@
-Return-Path: <linux-kernel+bounces-239511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66D1926174
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:10:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E623D926176
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14AD21C22A27
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:10:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 245331C2298F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A24217A580;
-	Wed,  3 Jul 2024 13:09:57 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FC117967E;
+	Wed,  3 Jul 2024 13:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oy2yvwqr"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D546A17996;
-	Wed,  3 Jul 2024 13:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE0118EB8
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720012197; cv=none; b=WqUpMWXgVsEQTZs9CE7mZ3DhngjqO75/tpoYGjOUJTphgxMb1032szhxGsBq3gG5lfmch9Cu5fPVng1RqvYno7aHztGulTdCHrrlTl6Se6m9viUV+aKOG+ubed9JjvwuTr0LEnXMbWGRO5hqyIWFXelsPDLU8MAoDyiT5LDhkcQ=
+	t=1720012224; cv=none; b=WpSyUcbuCw+EYeCkSJxNqLuVEh5JQ0+G/5ygY7Y9YPpxK5YHp8Zyd9GdBIu5/MMnjnADsq2+tYzX/VFPGyi+LG7MxWLYgoQOHbTW/IWTRHAYfMZj5S3hOIR4dw+vLD+3e0nyH+tsZ3aF6sHJiAlSqzke3PUTVnhhfWuIYSwpyXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720012197; c=relaxed/simple;
-	bh=4knqHiokeW7MXs2sFDlxEP0aOTgB/CsZK7QCpjNnAyU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aZxQhvVZx6ar66ZG1m1TLHWMJbyvH4Cj4mlAlpXptKBRazNTtJl5pi6Vy3bqqcv7zqgrivphBWx4O+Kvq/Q4i3A8Tf5F19aafEAVPkYyF8AsyskgzCUVlNqiDN/E/oZJ/QGr/8M0rbDifXjbBBZTQ3x2CihS+eryYFMQ5ZnQ4pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EADF61FCE4;
-	Wed,  3 Jul 2024 13:09:51 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 27E8713974;
-	Wed,  3 Jul 2024 13:09:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /cQxB59NhWYUJgAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Wed, 03 Jul 2024 13:09:51 +0000
-Message-ID: <055fe06c-58c3-42ad-a33e-c39de21f59b1@suse.de>
-Date: Wed, 3 Jul 2024 16:09:46 +0300
+	s=arc-20240116; t=1720012224; c=relaxed/simple;
+	bh=+6hclvf7yvoRrs1xdE0WelBIDAexx3qJiuVoLAxjsGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jCiQRw6KzsrYafq+1OcNZAHMPBC/r0WNDtncJOMSynoD+eYZIv4CxxR4wBn+whRXfIm6x38/0fX/96WEHbMP/wzlzmHQTYk1JGz/DP/RbbaxxmnGT6Rt+nZPeRhqFMRLxMQDNKSG2y0liXU8d+gVyTCvAHwtJ38SnA8/vPvOxvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oy2yvwqr; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ee794ec046so16554581fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 06:10:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720012221; x=1720617021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fYNKyC7r0lY93w+1DA2lEanB3Pazmm2DrUBGKs4HZ0o=;
+        b=oy2yvwqrAK6JETmusojCN8LJu+CSRqHzg9I7tCVJy2scyEXGLGun+RRv3Zt55lmvzi
+         68rnZPg9WScq8Oq24if+t5a/OFt3M6NITyFibdlGhGOfO0za7F5eA1OpeBmQxeH/pyzJ
+         N2eGW2+FzlaTifudBzgdl0/tkdjU2Buo15NK+XVgI9ID6XvI11M9stO6F6Hvvj5xLi9t
+         y5+Fagd2y2npas6DsDReBmAoEKWT9zdmUJRZzIafPAsR1Z9v+3SSjq3Cef2mO996MwTH
+         ONFXM7M5tcylYTVGAilCzMvDU1L7UNxZTCNYTvJkCjn7kq9Xd5YP8DewFZ/jHlzMWK7V
+         a7Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720012221; x=1720617021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fYNKyC7r0lY93w+1DA2lEanB3Pazmm2DrUBGKs4HZ0o=;
+        b=NjK1jnzr+M3KN4IMHSDnbsClbakC3r8W32be+TMZrnUoXdabjnZYNB2hNWgl0erfb2
+         28qIyF0GEfgbBq7CMteeWOA8opuaVBnOWaFmhh/UGbc6b1R60YkMK2fCHuIupiaqmU4I
+         ZK7TH4FZVR0qEgJjWwaKLtxnoNDevmHqAm6CVf+KdmpqpwbwBG9jnk9DlmhnTISCaab6
+         DXOJFKAKAeymDuA4FOWVlBXQr4KAr/tmwA8CC1kH23YHagqhh3Ve5JX7k/btmjRpU3eZ
+         5FswBJ7BuxlUKwUoCi7MDVP3ARFffATc55VUYOQkjRziiCwRSoSihqS52IglcB0burc/
+         jBpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUs/8Yky4w3p/y6yS2L/3CXNAVPhL98AT172MtPTRAgO0a2zywvswQKikblEdiTyH8W1XnwoQ55AxevdPD/AhqNRxzwIdctwpZROQdF
+X-Gm-Message-State: AOJu0YwADJ7gfBXcMm12848fnWMStzv8bMg1kjgNau/qgUnlQubOa9sY
+	dPmcjHCXgY25Yjpnc0JO3kaeQrH4UJfLushPYPB3maE46Oqlvz/dbosgrXt3MES9xs98Q993lXe
+	JnwpOSBJlg/G+yYLJ3p4eJE33Tsi/m4MhYbbTxQ==
+X-Google-Smtp-Source: AGHT+IF2tkib/oC3Qiv+r3vhOaGqxlEBIzZGIynLySjW51phBdlrQV9rmjY1VJWS6M/DGM6KhRIAswSjPmSVX6S2YU4=
+X-Received: by 2002:a2e:b5cb:0:b0:2ee:8555:473e with SMTP id
+ 38308e7fff4ca-2ee85556516mr7890711fa.46.1720012221282; Wed, 03 Jul 2024
+ 06:10:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/8] PCI: brcmstb: Use bridge reset if available
-To: Jim Quinlan <james.quinlan@broadcom.com>,
- Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com,
- jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240628205430.24775-1-james.quinlan@broadcom.com>
- <20240628205430.24775-4-james.quinlan@broadcom.com>
- <48a3b910-e2c8-4faf-a8f0-d53b5ddcd5fe@suse.de>
- <CA+-6iNw3QziFzGuqrwzb8QsgY-B3uL9Z3z1rcTCBFG=6BW9MRQ@mail.gmail.com>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <CA+-6iNw3QziFzGuqrwzb8QsgY-B3uL9Z3z1rcTCBFG=6BW9MRQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Queue-Id: EADF61FCE4
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+References: <20240702130138.2543711-1-yangcong5@huaqin.corp-partner.google.com>
+ <20240702130138.2543711-3-yangcong5@huaqin.corp-partner.google.com>
+In-Reply-To: <20240702130138.2543711-3-yangcong5@huaqin.corp-partner.google.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 3 Jul 2024 15:10:09 +0200
+Message-ID: <CACRpkdY+nuSWz7rnVVUpF_mZOfDUb_6fgoJpnG2Pt-+AGLqt0g@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] drm/panel: jd9365da: Support for Melfas
+ lmfbx101117480 MIPI-DSI panel
+To: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
+	dianders@chromium.org, swboyd@chromium.org, airlied@gmail.com, 
+	dmitry.baryshkov@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
+	robh+dt@kernel.org, conor+dt@kernel.org, 
+	lvzhaoxiong@huaqin.corp-partner.google.com, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jim,
+On Tue, Jul 2, 2024 at 3:02=E2=80=AFPM Cong Yang
+<yangcong5@huaqin.corp-partner.google.com> wrote:
 
-On 7/2/24 21:36, Jim Quinlan wrote:
-> On Tue, Jul 2, 2024 at 8:59 AM Stanimir Varbanov <svarbanov@suse.de> wrote:
->>
->>
->>
->> On 6/28/24 23:54, Jim Quinlan wrote:
->>> The 7712 SOC has a bridge reset which can be described in the device tree.
->>> If it is present, use it. Otherwise, continue to use the legacy method to
->>> reset the bridge.
->>>
->>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
->>> ---
->>>  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
->>>  1 file changed, 19 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
->>> index c2eb29b886f7..4104c3668fdb 100644
->>> --- a/drivers/pci/controller/pcie-brcmstb.c
->>> +++ b/drivers/pci/controller/pcie-brcmstb.c
->>> @@ -265,6 +265,7 @@ struct brcm_pcie {
->>>       enum pcie_type          type;
->>>       struct reset_control    *rescal;
->>>       struct reset_control    *perst_reset;
->>> +     struct reset_control    *bridge;
->>>       int                     num_memc;
->>>       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
->>>       u32                     hw_rev;
->>> @@ -732,12 +733,19 @@ static void __iomem *brcm7425_pcie_map_bus(struct pci_bus *bus,
->>>
->>>  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
->>>  {
->>> -     u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
->>> -     u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
->>> +     if (pcie->bridge) {
->>> +             if (val)
->>> +                     reset_control_assert(pcie->bridge);
->>> +             else
->>> +                     reset_control_deassert(pcie->bridge);
->>
->> Please check reset_control_assert/deassert() calls for error. This might
->> need to change the definition of brcm_pcie_bridge_sw_init_set_generic()
->> to return error.
-> 
-> Hi Stan,
-> 
-> Do you really think this is necessary?  If you look at
-> "drivers/reset/reset-brcmstb.c"  there is no way for either of these
-> calls to fail and I don't see that changing because it is just writing
-> a bit into a register.
+> The Melfas lmfbx101117480 is a 10.1" WXGA TFT-LCD panel, use jd9365da
+> controller, which fits in nicely with the existing panel-jadard-jd9365da-=
+h3
+> driver. Hence, we add a new compatible with panel specific config.
+>
+> Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
 
-yes, I think there are kernel rules which we have to follow. We use
-generic reset-control interface in pcie driver and we cannot rely on the
-low-level implementation of this particular reset-controller driver
-(reset-brcmstb.c).
+This is certainly OK
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-regards,
-~Stan
+> +static int melfas_lmfbx101117480_init_cmds(struct jadard *jadard)
+> +{
+> +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D jadard->dsi =
+};
+> +
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe0, 0x00);
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe1, 0x93);
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe2, 0x65);
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe3, 0xf8);
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0x03);
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe0, 0x01);
+
+Until this point *all* displays have the same init sequence, what about
+a follow-up patch that start to break things that are always the
+same into helper functions?
+
+These sequences all have a lot of the same magic bytes, so if
+you guys have a datasheet for this display controller then start
+adding gradually some #defines for the e0, e1, e2 etc commands
+please.
+
+Yours,
+Linus Walleij
 
