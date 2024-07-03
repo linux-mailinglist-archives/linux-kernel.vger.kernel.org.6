@@ -1,104 +1,190 @@
-Return-Path: <linux-kernel+bounces-240314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6331D926BAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:41:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 272BF926BBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E78E1F22766
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:41:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91359B21AC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5268E1940A2;
-	Wed,  3 Jul 2024 22:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30E1192B8B;
+	Wed,  3 Jul 2024 22:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwmglolh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQsZnf5n"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B651747F;
-	Wed,  3 Jul 2024 22:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8587914265C;
+	Wed,  3 Jul 2024 22:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720046464; cv=none; b=anQjKRQ06VG8+XqyacAoqz/vm1uoEAo9NNRpHbGQ7WI3luwOQBzA4RCuBxLgG5H7zKS4aOADy5HefBqhv7t+CqLuV55gt9M+HzTJ9VBogaAdpd8kKzhyKsODZWg8rfMOJBydDSTUmkdLrboK9RiJPjkVXGc88h0uLLGVWzu0QYM=
+	t=1720046788; cv=none; b=m2uKW/aXyJH7DHXrmC4P0pY8IAswNNBK3GBEsJ7mpeA3J4nrTSQ7BlThUf98J7ZdO0ek37y0QOB86b/e4KjynK9hJgzUtcI+3f69aZGGvkLiUEzWfgNlIF5ZTwmb0SnoKlmNYDcp0xb217CYzA7+LXXfDLozjQi2IN9IKf9UKEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720046464; c=relaxed/simple;
-	bh=c4HcoAL5OGlqvu44M2cW9EqVDsE9T7akesnEeOLwWmM=;
+	s=arc-20240116; t=1720046788; c=relaxed/simple;
+	bh=gA7+VliSMoQlSbs6CV2YV/4Xrx/0Iq+N6gm0gQ63NHs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJUTi9Csw0HnNe0yBM/CSB944TwmJId/oJUCN5tA0yLy+euTjJCMgQQLxA7loJOkUMOsdlbQmP2QNFpmfj6d2/ypbp+LQR8hLBryjVHNJqA2C6/9vUJqMquDMZ6EZJ6x3pnVDfx4CtDzYlXBJdwew7b8HNTvWYf6oyORHC6dBgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwmglolh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84136C2BD10;
-	Wed,  3 Jul 2024 22:41:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720046464;
-	bh=c4HcoAL5OGlqvu44M2cW9EqVDsE9T7akesnEeOLwWmM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pwmglolhVpLNfs0ZBftSKiiOYy+9lkPvyaGMwiLqTLTXfHyXWdU0MJWDS4L4Pr4mE
-	 jua7AgBjYqSnPW1hKfrqRXyQF7gp44u6zWZ/sTV13ECTJiqbe5aBJpuUtuLe43t+tI
-	 j0ZKy4bCpocob3tFDKlA9mN0fevvSNjSuX+hkBfwqG2Q+Xud1D6qQvTTbi1/CafxiD
-	 Ubb0C6PpOBucKKMIQ+bjrmKZuLeyHgxu5j4C+tluDyH7AIue5mxQrtU4z/NCBdnq8j
-	 +4W1KZd7IMfGSawxT1LiA7S9+ZEdNdwfTL0tU/P2qsdT11q6f9ltyW1lrheeFVsKQo
-	 VBbqssdmOlqEQ==
-Date: Wed, 3 Jul 2024 15:41:01 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
-	x86@kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, rihams@fb.com,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2] perf,x86: avoid missing caller address in stack
- traces captured in uprobe
-Message-ID: <20240703224101.36r32g7j2atskidg@treble>
-References: <20240702171858.187562-1-andrii@kernel.org>
- <20240702233554.slj6kh7dn2mc2w4n@treble>
- <20240702233902.p42gfhhnxo2veemf@treble>
- <CAEf4BzZ1GexY6uhO2Mwgbd7DgUnpMeTR2R37G5_5vdchQUAvjA@mail.gmail.com>
- <20240703011153.jfg6jakxaiedyrom@treble>
- <CAEf4BzbzsKLtzPUOhby0ZOM3FskE0q4bYx-o5bB4P=dVBVPSNw@mail.gmail.com>
- <20240703061119.iamshulwf3qzsdu3@treble>
- <CAEf4Bza6YdQ5HCcuPozOwVx75UrcyZL_1DGnYrJ=2pz=DxJpPQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fkGla/nFyxl6ey/qj9RnBo9N9Qdc9W2x9O30sBMQHlDLqO+fBC7KTC9saN5n0Ee/iHKjmj93nqrM9uCZqCeUpX2B20FUAIGCO2IMgy1oSb0v1jwKckNs6v5SvVqDsGfqTjZJu1d49IVcaGJp8jqbgn4MLFMpjQWMh/V1NSLvfnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQsZnf5n; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e0360f8901aso17751276.2;
+        Wed, 03 Jul 2024 15:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720046785; x=1720651585; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1NR1sr/ZbZPbIrygTH2/gqn6qhtATWX6EGzQmK9ZnLY=;
+        b=AQsZnf5nn6QOrMol5ZSHJ4Kw6BdQ5UicPwEajIqgq/eWkMKHBKPcscs1DHmxv+1I5r
+         bRQ66I/GaoPrGOJ+uVKs8AhsAOUJW4c888X9zSyCq3hsN/8rWo2qTKtUhlFHUBf+VbYn
+         SAopT4cVTs1OwTBjn0zn6l329KSIF8IgcPuSPErdsrthMNpyejH2zTjZdMAnbNDvec4Q
+         +OkQTVfI+N7jXQoHrN1A4E36q0+EQYkcvzW+vXHulsioY5YGXgCbWOud/6I2YX8yWVEb
+         waelb6xsxrmPR+FLmUdjyu6h1H4RkxEPNtf9iRkCLgFXke0JZ4/vy48mlfK1NvfW1Cnt
+         mvIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720046785; x=1720651585;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1NR1sr/ZbZPbIrygTH2/gqn6qhtATWX6EGzQmK9ZnLY=;
+        b=YK1uDPf8dHRgvb/IoiirrNHXGzu2GNi6EPi2JSggW9ReCQ0eF/bMGK7l+oUfVym6Bl
+         r+HyfOipMrAl9EB9AaHdcpUyutb4Q88Obhlhu61PHUPtrT4iFJ7fXRRn4/06LdUj+L1g
+         bsQn+KdFD6hLNFN6uxsXiXSOjEEwAm28I2F9X7h/tFJIa8XftpAXb3ScCjhfzenVT0ma
+         oAxqvqeoHOYlH2W7XlZCH8Lpc2weA5CR8l8eN4789xggenRQOXgCfnWKB+Z1g2stBuBO
+         Mi+tRVrP0+5Bx8J/QEZ7l54InsfDteGuvRPPR+4qDOKWn0KJlDqyx0Uk2wTFHNO8Zp5m
+         gJhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXHorNZoXITf39x5ZzsZR5VfWV9TN6eY9FRvTQGhaiFW+rNYyjlIjnzZd1RcubfdjQuHRyr9nqzL+TRuVUnGNOHfoAQu98TdjZJw==
+X-Gm-Message-State: AOJu0Yx3jGkmJcy9JcgEJ/QXVxakPZ62nAGTNF98s6CoeWPpI9t1ywTt
+	Y+qBZSAfKQ28TDKvILMM1lQpzax5Th2QCrN7Btvdyw7lSeBdQ9F0
+X-Google-Smtp-Source: AGHT+IExAkct7vzhEMm0LI1KfE/PTZcCuuE2jma8x+8BFnYcDnOqpOFLAlcFxtmKBISUNpLtKW1JMg==
+X-Received: by 2002:a25:a8a:0:b0:e03:a168:f132 with SMTP id 3f1490d57ef6-e03a168f33fmr5910295276.31.1720046785489;
+        Wed, 03 Jul 2024 15:46:25 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5dfc92d45sm11585156d6.142.2024.07.03.15.46.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 15:46:24 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id B79191200043;
+	Wed,  3 Jul 2024 18:46:23 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Wed, 03 Jul 2024 18:46:23 -0400
+X-ME-Sender: <xms:v9SFZrx_XtbK-YmDyDOjoYWTmPxohWsAuEywVmy5C-q_289ELl4w6Q>
+    <xme:v9SFZjRnRT4ueTFnC9qKpR5Fb8BM3TqB46E8Gga1ITXXr14zkm5D88g46Rn-NfQGQ
+    n1-TaXpQJoicXn6rg>
+X-ME-Received: <xmr:v9SFZlUBlhEfZhkrGHuLpSP3qpqH706ahknh5UQGSz2NMC3NJlO4xqvKlmhzQg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekgddufecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
+    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
+    htvghrnhepleeuvdehjeehledvtdegveefleejleegtdelkefgkedttdekhedvheegvdei
+    tdetnecuffhomhgrihhnpehshiiikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmpdhkvg
+    hrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeile
+    dvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgt
+    ohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:v9SFZlhbUHcdPHmwNFdklla1dY5XdKiopnYKyq0vQl86-zVmW1c4Tw>
+    <xmx:v9SFZtC4q8BNcRAanbiCDL67mnwaPba5DcF7L6EHNSiH2kAYd2fPuw>
+    <xmx:v9SFZuIsz5HmwPC3G9SO38xRuLPynuOJUpAqjymzrMvEwEJ9FtBldQ>
+    <xmx:v9SFZsC5fgbK0kDTUbMdZYkhic74F-huTbKFQsZRb9P1prA8cGpt2w>
+    <xmx:v9SFZpxjiGRpDeCj2_rfeNL_DXy_C7cthYJKNFF-K6NDGkj4bqri8eEs>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 3 Jul 2024 18:46:23 -0400 (EDT)
+Date: Wed, 3 Jul 2024 15:45:21 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: botta633 <bottaawesome633@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, linux-ext4@vger.kernel.org,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	syzkaller@googlegroups.com, "Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH] Forcing subclasses to have same name pointer as their
+ parent class
+Message-ID: <ZoXUgdUkD-GtKfKJ@boqun-archlinux>
+References: <20240704003224.22832-1-bottaawesome633@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEf4Bza6YdQ5HCcuPozOwVx75UrcyZL_1DGnYrJ=2pz=DxJpPQ@mail.gmail.com>
+In-Reply-To: <20240704003224.22832-1-bottaawesome633@gmail.com>
 
-On Wed, Jul 03, 2024 at 01:23:39PM -0700, Andrii Nakryiko wrote:
-> > >  [0] https://docs.google.com/presentation/d/1k10-HtK7pP5CMMa86dDCdLW55fHOut4co3Zs5akk0t4
-> >
-> > I don't seem to have permission to open it.
-> >
+Hi,
+
+On Thu, Jul 04, 2024 at 03:32:24AM +0300, botta633 wrote:
+> Preventing Lockdep_set_subclass from creating a new instance of the 
+> string literal. Hence, we will always have the class->name. This
+> prevents kernel panics when locking up a lock class while comparing
+> class locks and class names.
+
+Good catch! Thanks.
+
 > 
-> Argh, sorry, it's under my corporate account which doesn't allow
-> others to view it. Try this, I "published" it, let me know if that
-> still doesn't work:
 > 
->   [0] https://docs.google.com/presentation/d/e/2PACX-1vRgL3UPbkrznwtNPKn-sSjvan7tFeMqOrIyZAFSSEPYiWG20JGSP80jBmZqGwqMuBGVmv9vyLU4KRTx/pub
 
-The new link doesn't work either :-)
+Please remove the extra blank line here.
 
-> > > Few questions, while we are at it. Does it mean that
-> > > perf_callchain_user() will support working from sleepable context and
-> > > will wait for data to be paged in? Is anyone already working on this?
-> > > Any pointers?
-> >
-> > I had a prototype here:
-> >
-> >   https://lkml.kernel.org/lkml/cover.1699487758.git.jpoimboe@kernel.org
-> >
-> > Hopefully I can get started on v2 soon.
+> Signed-off-by: botta633 <bottaawesome633@gmail.com>
+
+Do you mind putting your real name here? Besides, IIUC, this is fixing:
+
+	https://syzkaller.appspot.com/bug?extid=7f4a6f7f7051474e40ad		
+
+, right? If so, there are some more things:
+
+*	Copy ext4 and syzkaller people, so that you could get more
+	tests.
+
+*	Since this is a bug fix, could you please figure out which
+	commit introduces the issue, so that you can put a correct
+	"Fixes:" tag along with your signed-off-by?
+
+*	Since the issue was reported by syzkaller, you should put their
+	"Reported-by" tag, they have an example in the website I paste
+	above.
+
+*	Please also Cc stable mail list so that the fix can be
+	backported, you can find the information on "Cc: stable" tag at:
+
+		https://docs.kernel.org/process/stable-kernel-rules.html
+
+*	Last but not the least, could you try to add a test case in
+	lib/locking-selftest.c to ensure the issue you fixed won't
+	happen again? This could be tricky, since you will need to fight
+	against the compiler to generate two string literals with the
+	same content.
+
+[Cc ext4 and syzkaller]
+
+Regards,
+Boqun
+
+> ---
+>  include/linux/lockdep.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Ok, so you are going to work on this. Please cc me on future revisions
-> then. Thanks!
-
-Will do!
-
--- 
-Josh
+> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+> index 08b0d1d9d78b..df8fa5929de7 100644
+> --- a/include/linux/lockdep.h
+> +++ b/include/linux/lockdep.h
+> @@ -173,7 +173,7 @@ static inline void lockdep_init_map(struct lockdep_map *lock, const char *name,
+>  			      (lock)->dep_map.lock_type)
+>  
+>  #define lockdep_set_subclass(lock, sub)					\
+> -	lockdep_init_map_type(&(lock)->dep_map, #lock, (lock)->dep_map.key, sub,\
+> +	lockdep_init_map_type(&(lock)->dep_map, (lock)->dep_map.name, (lock)->dep_map.key, sub,\
+>  			      (lock)->dep_map.wait_type_inner,		\
+>  			      (lock)->dep_map.wait_type_outer,		\
+>  			      (lock)->dep_map.lock_type)
+> -- 
+> 2.45.2
+> 
 
