@@ -1,133 +1,76 @@
-Return-Path: <linux-kernel+bounces-239592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1729262E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:08:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0772926377
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF3D01C21A8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:08:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 869231F2328E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760C7180A68;
-	Wed,  3 Jul 2024 14:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7C11791EF;
+	Wed,  3 Jul 2024 14:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OPzep+Ir"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cs+z83tV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2F617FABD;
-	Wed,  3 Jul 2024 14:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AE94C7D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 14:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720015646; cv=none; b=OPHdQnT8fPHoN5aBPHZFqb+EJNCD7Ns68pz7mF/1AdR4AfN001eoJvLPkk6LVgQXESHCOGjBZ9ekrUrtRhX9B8zpnDr34BCv6hgg1xxznpgJMsAkpMnKabLC+isxx+7jKBwN7DVpHfHKG3V30iKMe3OuWfkHmQ0hQlNBeg+5TYo=
+	t=1720017210; cv=none; b=L8HQiODTlPyXPoxdxoYt3pGmwxzPzifdJCD1oOZgbHitK/kHnPIlh/0HGplgR6qaLleJm2QTkRSv6SQS/oWF+yM98DqkY+1bnYbU3RvNpkBDDSd3/pEzFNE2a01mUlwpf6kWqvwyi2jdFG058sSdUrEjDyJaBd8aYs/P/tj5jnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720015646; c=relaxed/simple;
-	bh=L4N3eNb+hTwnRqOC9zrQnPwJrLZ4wp6PpFdHRrO6tkU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CB+TpC+k3yQnLeAg3DZPf1DEFldXoWdNQP/DnRJ5qU/IyHu39fE3iumQwci1kool33PrqVWoYXimQkFbDCOGNyddrLt2ota3xxok7dBQ9VaQa5OW2FUgp7ZwsR/JZ0u9/TqF21g1RZxA0YigPz4GhEkJcL+UmNfQy3ASk2Qu8mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OPzep+Ir; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720015646; x=1751551646;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=L4N3eNb+hTwnRqOC9zrQnPwJrLZ4wp6PpFdHRrO6tkU=;
-  b=OPzep+Ir+doochKpEDrcqT1JZoPWQDB3bV6reFOaERd7S78yctGt1zv8
-   9a+SL6LwtkwptFeBo5SB4OurgncPZ+NmMLBeWb6EEle1BrNqASIxTC6U0
-   1haZtdtl0N0qi7gqkP/xCQCOkYKzKKs+WsvTkjbVoKnnezVgl5mFsKIMW
-   5W/ZVWG0pF8Xh1pz20/BBZWaKL1pbTm70z4PLjri5kdpWupcaDCg4jWbv
-   veD6Q+UrJg+Flz5DCNR/vGRfqk2Al0NDdRk72x0qzlH69fKcxeb8TiFtT
-   /ISt+z+7xmS2xUw5ShG41SUjmgLaEmqR11u6wHErZpjevcBrCc6J17vxU
-   A==;
-X-CSE-ConnectionGUID: sUSNJtu0Q2CXUWw8/6PWfA==
-X-CSE-MsgGUID: Kg3WhDsxQ1mf51F+SnBBjQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="16900731"
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="16900731"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 07:07:25 -0700
-X-CSE-ConnectionGUID: mTsZkbyJTsapUGliTg5XdQ==
-X-CSE-MsgGUID: h119Mf75TQOy7vvAYg3Iaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="46693515"
-Received: from linux-pnp-server-16.sh.intel.com ([10.239.177.152])
-  by orviesa006.jf.intel.com with ESMTP; 03 Jul 2024 07:07:22 -0700
-From: Yu Ma <yu.ma@intel.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mjguzik@gmail.com,
-	edumazet@google.com
-Cc: yu.ma@intel.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pan.deng@intel.com,
-	tianyou.li@intel.com,
-	tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
-Date: Wed,  3 Jul 2024 10:33:11 -0400
-Message-ID: <20240703143311.2184454-4-yu.ma@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240703143311.2184454-1-yu.ma@intel.com>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240703143311.2184454-1-yu.ma@intel.com>
+	s=arc-20240116; t=1720017210; c=relaxed/simple;
+	bh=K4tGBXDyHG3s64xGn8nQEFFL2XRCDQHevLpd4H+cf6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQ1cf35y/GhTRwsZd6Y/i5Hbv/igOaXUUCVvnMFFTTHipBrVzao8YNMC+C8Z5uWo+cNB5rRBxBxa1DOTrRaV4ADI89B4cW/KWkoqvdwmwsnEuyVvv/sE+3Ynm5ohxamQpPjiEH8jCxezTAn+O5AtMKRCrKKKmpI8R4q0GXmxFhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cs+z83tV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 962A2C2BD10;
+	Wed,  3 Jul 2024 14:33:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720017210;
+	bh=K4tGBXDyHG3s64xGn8nQEFFL2XRCDQHevLpd4H+cf6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cs+z83tVby1gFRgdgV3hxmn+1e2+/K6H5+LK6Ev/xD9puUuoS1WnRXMdRSIwNQgD6
+	 oHRTmsVR4+4ljE7LIYLDepLyf558JUhQtCD1S6F24U/h64lqlZidH0O8hZyzVN05li
+	 Z379oGymd0gfzZpeeCPwIt3CwX0RU7i/HchXtj1U=
+Date: Wed, 3 Jul 2024 16:33:27 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vamsi Attunuru <vattunuru@marvell.com>
+Cc: arnd@arndb.de, jerinj@marvell.com, schalla@marvell.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 1/1] misc: mrvl-cn10k-dpi: add Octeon CN10K DPI
+ administrative driver
+Message-ID: <2024070333-matchless-batch-57ec@gregkh>
+References: <c43e2c24-cd5b-44c2-a997-5f324f58746c@app.fastmail.com>
+ <20240619132109.3168940-1-vattunuru@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619132109.3168940-1-vattunuru@marvell.com>
 
-There is available fd in the lower 64 bits of open_fds bitmap for most cases
-when we look for an available fd slot. Skip 2-levels searching via
-find_next_zero_bit() for this common fast path.
+On Wed, Jun 19, 2024 at 06:21:09AM -0700, Vamsi Attunuru wrote:
+> +struct dpi_mps_mrrs_cfg {
+> +	__u16 max_read_req_sz; /* Max read request size */
+> +	__u16 max_payload_sz;  /* Max payload size */
+> +	__u16 port; /* Ebus port */
+> +	__u16 rsvd; /* Reserved */
 
-Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
-free slot is available there, as:
-(1) The fd allocation algorithm would always allocate fd from small to large.
-Lower bits in open_fds bitmap would be used much more frequently than higher
-bits.
-(2) After fdt is expanded (the bitmap size doubled for each time of expansion),
-it would never be shrunk. The search size increases but there are few open fds
-available here.
-(3) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
-searching.
+Please spell out "reserved" you have plenty of characters to use.
 
-As suggested by Mateusz Guzik <mjguzik gmail.com> and Jan Kara <jack@suse.cz>,
-update the fast path from alloc_fd() to find_next_fd(). With which, on top of
-patch 1 and 2, pts/blogbench-1.1.0 read is improved by 13% and write by 7% on
-Intel ICX 160 cores configuration with v6.10-rc6.
+Anyway, you NEVER check this, so you just made it so it can never be
+used.  Please read the documentation in the kernel for how to add new
+ioctls, it goes through the reasoning why you must check this for 0 now.
 
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Yu Ma <yu.ma@intel.com>
----
- fs/file.c | 5 +++++
- 1 file changed, 5 insertions(+)
+thanks,
 
-diff --git a/fs/file.c b/fs/file.c
-index a15317db3119..f25eca311f51 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -488,6 +488,11 @@ struct files_struct init_files = {
- 
- static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
- {
-+	unsigned int bit;
-+	bit = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
-+	if (bit < BITS_PER_LONG)
-+		return bit;
-+
- 	unsigned int maxfd = fdt->max_fds; /* always multiple of BITS_PER_LONG */
- 	unsigned int maxbit = maxfd / BITS_PER_LONG;
- 	unsigned int bitbit = start / BITS_PER_LONG;
--- 
-2.43.0
-
+greg k-h
 
