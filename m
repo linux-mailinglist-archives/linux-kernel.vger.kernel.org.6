@@ -1,77 +1,79 @@
-Return-Path: <linux-kernel+bounces-239043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF1B92555D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:30:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9548925560
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B635B1F2353D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:30:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0041F238E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE2C13A402;
-	Wed,  3 Jul 2024 08:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6256E13B5A6;
+	Wed,  3 Jul 2024 08:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QDKXnheg"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yak2zSTk"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2642629C
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2221B2629C
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719995446; cv=none; b=OCNF5kOtl7ELoN8rScqHG3LYWm4AkJ3Rm4XGqYC/CKYAPgHWFxBHInZZvotX2ftA4oJV/UvPgi/x7y24ACwq2RYGyOmaTctfhX3OSEQcCmLj32EDZ9GH7XxIqQceys7Kk3fjCFtXb6NLSMTqYtuZLgMfPYURLJav1eDCBIOU3AY=
+	t=1719995452; cv=none; b=IpipHPX4ToLHtKAr6tqymme6TBwPjr6BflHIsNgT1OXgsLG2zdLfgCQs5OTS8w7u/SV6wN4qEBvKolX4TlMS2I7zAwu8SddCqn41n3z+XnNUwwS2D7TVtrajdkq8sh5MbMzQV4H8Sfqc0GXfUbQiAs8LYveebl42vpHMfPeV89Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719995446; c=relaxed/simple;
-	bh=kpSp09z9l65LGLeoiNxvNF9tKw48UToBsdik82/pzXM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NOzotxg9M2wQiz6zrEL7jCDH2dqMPd63o8sfHz8+0HzGTtBeFu/7dsikGAYdKF+XtXQkqurRuemYmJGO9XvGxjPAIxf93Y3dB8HQETpLjic0xXIPbW7BY3moMlnfCzaXBe0Gl1tDsH30Xdzd4VNg8t2jAnxdsCFoK4fcaPjMkYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QDKXnheg; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1719995452; c=relaxed/simple;
+	bh=YCkB2dsIQT9Mudg5Bi946hYIraOO22Qh7YEirjNCxZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LBx4HGJMgZxkA03csFq+9gQivEo2uBP9dcBjcOK+LzleXFd9OtmAmcxCZdoIO/PiZFpxf4dfnKI1CISJvtMjf8BIYEpwsH1K7g2Q1J9abzGE/Vpx9ye4/x+sw1aLlNcG/zB8U02GPMhdkIhtelcgHNyXLfVvoD0ZJlPGL+DnGOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yak2zSTk; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-356c4e926a3so2971483f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 01:30:43 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-36740e64749so3116780f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 01:30:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719995442; x=1720600242; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719995449; x=1720600249; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TDi8IaRkk+Cjp4SeIDuRWKdtZkOON6mpqHjWnbp/CVs=;
-        b=QDKXnhegixBB0rRq5jMQ+O+9wOHPypYDiv2WXlORUmpQOHwuwv1KSyZelUA8VCR76c
-         viwHFjtBBBs59yRX0sfssZtLsOkFTNGH1d/xH4GAxVhJ3yAOyyZhw4323wPEewS+Jm7B
-         F2j1dry0tBb0YmmYkiQhKfr/ubW2MwQqPXrcJqZC44m4QpJXVvsNb2dd5sKn11u3V3RR
-         teyCAvfBuHwa5LBhFbsjEwQWjhHK1hZ3MblOboE0EbbhbBzNKYHCBe2qO477OvDwN2m4
-         M0xZdRpwCH1mIxs4MDheKbut+Wg+zAny3l1V4uelXrlBSuXB2gKoDZm4fOSqLe+9XFT4
-         Eydw==
+        bh=1J3Shn5KUyZXIeL5OTQ6GxMPgh/rauLT5ymDaJi6mGg=;
+        b=yak2zSTk8d3cgvenqLFke++LshGRiNTIZj+oXpx2dnBspjjKY8hrKVhCLRbyKcyBtE
+         +2V6TwGmbQI3qRbZ9mgK+7k2Rwl6px8Ca7l0k+ANkISNDDKdT2kbGj1j4j247oq3Ta5B
+         DhzcHunWIy/2sKtJvUpFjQvTmM4rkEV3zPDdJgwUfhE7TB3dJmlrVgNf8UqjIthre6o6
+         BKt8ipE7kqMvrjoBxZm35zXdJSYj9YhA3q67y2iELwiKTrgH/VD8iv4dMFMYw05ws2vs
+         9l+2zrOCnzBO0xnZSD4vAt0CSSggVVpWNMXXwRahOJgRO3RMMc0Nqb8lgz3cZGBGOkba
+         NCRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719995442; x=1720600242;
+        d=1e100.net; s=20230601; t=1719995449; x=1720600249;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TDi8IaRkk+Cjp4SeIDuRWKdtZkOON6mpqHjWnbp/CVs=;
-        b=PhVXA8RH+B/S0sHefiYT63LV/UAE3nZJDgtCOVRJcmnLNSJD3IkJypUFvY2vL5LKR3
-         UnWlNMuDJwmuaprcAuPDXIa9BN4/5fiw9Z/eiPIhCRVD9LWroj15Oz4FmemkWSSz2A1U
-         bdIh3oqG9T8Xd9mXoQanYw0nAI/9B8j7EA8v/oHmtKXSqs8yOhMximM4d2At9MLYY8jP
-         k5S7jEVLMNYzC9UijiJDXaFj/JpyldmO1Ey0v3E/SUhd7XvSx32XzvL44CyXIyDpvVYw
-         bJVBi2qK/FjQJAYsdFzLuPYwD2/tDI4V7n0jfnphIy/75p/6Lh2057HZ+J89m0m5ByPa
-         2bjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwxKmooiX7lhHGrIon9U1OT2TFIbBVVpCf32uIsQiNwFqfZ9N1M5vSzVzsI1UZpn2JQ8ZE8TFo74qiY4qd81BWXvTof80AQM5pIv3E
-X-Gm-Message-State: AOJu0YzjDXgGyKZMUohJ0k6ZKQcG3M3PJ0gr2dwEa7HMdJtZRGIyaeEF
-	OsCtXxG00M87kfTH2qtCYgMKvojLVR48p2rUYUhfiYxoiY9SR8dwTdhGi1ATuV0=
-X-Google-Smtp-Source: AGHT+IFmuVW/1p7lFLWxtwEKJATmACtFZc9wUEgKR4WTWUJsCZsXt2d8FtH8L/lbl9nCjbyd+7L/Jw==
-X-Received: by 2002:a5d:6c66:0:b0:366:e991:b9ac with SMTP id ffacd0b85a97d-367756a3423mr6929835f8f.14.1719995442214;
-        Wed, 03 Jul 2024 01:30:42 -0700 (PDT)
+        bh=1J3Shn5KUyZXIeL5OTQ6GxMPgh/rauLT5ymDaJi6mGg=;
+        b=G2VbHK3KVVYEYyDo2Kid4XLaK6vt85EqJmxH9cOnIFxKV057+xzE4goKA7E/7khrsb
+         WnR9wcFP2UwM+9kESPimZDbAVb48EnxnZo63pg/1lgjyxHFv9ECw0HSvcZCBKXrmBexq
+         iHKm0xnF7N9KNHYO6Am4MXoze12Kp/UlG7QwDGUR2YfaozrpkwcnzH32krrPVZtyUcrd
+         CKnv8HaPoff9eDp6H4eHhcNfnutxehjod30q1IvQPN+N9cUy9lksQ1LQafuo/iinbiLJ
+         3yL8h2m96+diDNuqTCwNaQsF+lI+bQQ3jPRl6rl9It+h1D5m0Lx1U7U8jRiZFpOb8pg2
+         lgvw==
+X-Forwarded-Encrypted: i=1; AJvYcCU686Nhkwf69intkzUPI/ZrZfhSIVk0+N36U6dB4r8wMBBk9S/mNL0TF/b9OJ7bolRb3GPVJjRtyOs2ZDYnoIIdOO+hBfZlwxhGfGaW
+X-Gm-Message-State: AOJu0YzGrgd6mXfXmeR5NfTabL+fVhnbamYzzxh4xXYsZVSzztquF1lh
+	/QCkmalARzKPOmCxywYZ1nLeVnWGSuxbEUzgXkM6LX69jUozM216SVyON52MG38=
+X-Google-Smtp-Source: AGHT+IHer7ee56Fmd869NcOdtgPYFnjBCVgs6cGvJocrrFO7JUrE7QjB3F7bv8jEaMcSiAAloCBkXA==
+X-Received: by 2002:a05:6000:1fa8:b0:366:e9b8:784f with SMTP id ffacd0b85a97d-367756c6fabmr7767670f8f.32.1719995449539;
+        Wed, 03 Jul 2024 01:30:49 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8daasm15127345f8f.30.2024.07.03.01.30.41
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36794e6863dsm814652f8f.50.2024.07.03.01.30.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 01:30:41 -0700 (PDT)
+        Wed, 03 Jul 2024 01:30:49 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-pm@vger.kernel.org,
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] power: sequencing: simplify returning pointer without cleanup
-Date: Wed,  3 Jul 2024 10:30:38 +0200
-Message-ID: <20240703083038.95777-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] firmware: qcom: tzmem: simplify returning pointer without cleanup
+Date: Wed,  3 Jul 2024 10:30:46 +0200
+Message-ID: <20240703083046.95811-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,21 +88,21 @@ shorter code.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/power/sequencing/core.c | 2 +-
+ drivers/firmware/qcom/qcom_tzmem.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/power/sequencing/core.c b/drivers/power/sequencing/core.c
-index 9e606c9f6f04..9c32b07a55e7 100644
---- a/drivers/power/sequencing/core.c
-+++ b/drivers/power/sequencing/core.c
-@@ -687,7 +687,7 @@ struct pwrseq_desc *pwrseq_get(struct device *dev, const char *target)
- 		/* No device matched. */
- 		return ERR_PTR(-EPROBE_DEFER);
+diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+index 5d526753183d..ab156ab3a6b4 100644
+--- a/drivers/firmware/qcom/qcom_tzmem.c
++++ b/drivers/firmware/qcom/qcom_tzmem.c
+@@ -242,7 +242,7 @@ qcom_tzmem_pool_new(const struct qcom_tzmem_pool_config *config)
+ 		}
+ 	}
  
--	return no_free_ptr(desc);
-+	return_ptr(desc);
+-	return no_free_ptr(pool);
++	return_ptr(pool);
  }
- EXPORT_SYMBOL_GPL(pwrseq_get);
+ EXPORT_SYMBOL_GPL(qcom_tzmem_pool_new);
  
 -- 
 2.43.0
