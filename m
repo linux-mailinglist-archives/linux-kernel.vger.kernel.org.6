@@ -1,280 +1,176 @@
-Return-Path: <linux-kernel+bounces-238720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 435AD924ED5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:11:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5EAF924F12
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DA4BB29E4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:11:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3451D1F21438
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F286C1386C0;
-	Wed,  3 Jul 2024 03:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8361B964;
+	Wed,  3 Jul 2024 03:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eo/+LqZl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/oFHSCo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E33D137928
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 03:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D6DCA6F;
+	Wed,  3 Jul 2024 03:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719975952; cv=none; b=TjQ8JcDJKHHwimg6IGKdN+mt4kgsgAm2rumMcLzmD9uR5EiDjHmIKCZxWUor2A2bfO3w7YbvafofZz9BGRivPpy//Lc4Tks7kFcSYimN46FUhiFEMTD0EZ9EJ4LFUeAnwe1nVMMpE1zt4+m3uu5qDmKg2vOAGkkh6yAUr0dX+cE=
+	t=1719976090; cv=none; b=suqEZBHaoD1+h/Ocua2JvN8BVF0u1nwhS8JJ9YjRQb5cGR24MeF1kZAadbZuoBbxrANX8aA0owqgPW1PU1mHvLid0EQB+p7Lt3G0/Pk9cvVKiuRCNqsMObv0AH+Pze7SQ/9JCMVmgnLw5Row8OEx44wjZyBHu0o4LeIY/yjM4PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719975952; c=relaxed/simple;
-	bh=LJk9pr2g8g8FrWYXtES2jZLsiV269z5KjBsGWcEhqjE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A0PREJ6Tx2QtXUXemi1jzciTJJr86yNspkVb6VAO49Kxgf3uhOU5JVCdxK4BmwnPt/p45mz61IYVexA2fN9zJJN4tZuMGMcXErF7j2X1yrOwF6QL4qRQ2HLVgY2McAZIJUsJLOIaa3sotpY5VUwNxcTVWP31ATkY+kfdOouKUgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eo/+LqZl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719975949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hbpsMIfwo1VWDCEr89nfCNVNZVG9S11BYTZpdTNzjko=;
-	b=eo/+LqZlXN6OnN+WrAeu57rIaTZ3tgzphaHWw1WcGIW6qcWwnh9pZp0QscAIiopjLQt6Cv
-	iX9qlIpCvAs/NJOMemvYEXoxacTSnp2eELo+uXnMtGb/r6aYXH/0RLJvGFACH3TMdYabjj
-	lCIhMuMQtwbxLnEoiuHifeTPdIZIty0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-192-izNr66g_P9KT77dw1uSCow-1; Tue,
- 02 Jul 2024 23:05:44 -0400
-X-MC-Unique: izNr66g_P9KT77dw1uSCow-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5CEE619560AB;
-	Wed,  3 Jul 2024 03:05:42 +0000 (UTC)
-Received: from [10.22.32.29] (unknown [10.22.32.29])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 055381955E74;
-	Wed,  3 Jul 2024 03:05:39 +0000 (UTC)
-Message-ID: <22061c0a-d60d-4a04-9192-3e58f892deab@redhat.com>
-Date: Tue, 2 Jul 2024 23:05:38 -0400
+	s=arc-20240116; t=1719976090; c=relaxed/simple;
+	bh=dwDIrNX1cXKYArj3wRoS4iZ6/Bs4bEiF2Y8U9tZ8r6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R2t3zdtA4QK22ehSysXZ47LzAUpOhqj5jXE3SMwoshP6hpq0qMVdsoBflq8Rs87edUrr9BV7+99ImgmAeTo07g0fivJpk/Ey/61jKi+NnadRfASShIPt5gFTiVTT/PEmm2qmHbZhxhdfUrEMJ0DHColshYSifkRitKtQQNWTp/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/oFHSCo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CD17C116B1;
+	Wed,  3 Jul 2024 03:08:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719976089;
+	bh=dwDIrNX1cXKYArj3wRoS4iZ6/Bs4bEiF2Y8U9tZ8r6c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H/oFHSCoJEnDLxJkAZ6Onvt0Es6AN7qxhTaONKom9VEl5sLem3MUXycwMJ6bSoMNn
+	 QpvA2xc6tastla97sPLDnW32LOLBXN2TFeTUFmxfKS378dD4RgZZgUD40HlcIwtZaJ
+	 3hJxkOlFhbfhGxx0Zl6wNdUo8kibm2PhwCyUhG9g+lrO2RD1SIZvH0lqJIvgygj4sE
+	 t9jpjovm2eX5wbMVggfBnfOaQNEW6mG8iQBNXeTn6J+jkb9+6epgmxBN6HD7rn+xno
+	 AFZAkg7wV/QWK+tRsIpPh6+9pq3eJvQbChjhzMY+LUMHD+t53SJq+mj454LyL09G+M
+	 8tlT8vnDjkBDw==
+Date: Tue, 2 Jul 2024 22:08:05 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+	Vikash Garodia <quic_vgarodia@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Gross <agross@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>
+Subject: Re: [PATCH V7 3/5] clk: qcom: gdsc: Add set and get hwmode callbacks
+ to switch GDSC mode
+Message-ID: <7mzxt3h3pohxczatfsvqxtxvptdy6ooq76mq7ylywzkqncjkvs@aap4wnoo6j3p>
+References: <20240624044809.17751-1-quic_jkona@quicinc.com>
+ <20240624044809.17751-4-quic_jkona@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH-cpuset v9 2/2] cpuset: use Union-Find to optimize the
- merging of cpumasks
-To: Xavier <xavier_qy@163.com>, tj@kernel.org
-Cc: mkoutny@suse.com, lizefan.x@bytedance.com, hannes@cmpxchg.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org
-References: <ZoMXN3G72xtCLjgp@slm.duckdns.org>
- <20240702105010.253933-1-xavier_qy@163.com>
- <20240702105010.253933-3-xavier_qy@163.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240702105010.253933-3-xavier_qy@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624044809.17751-4-quic_jkona@quicinc.com>
 
-On 7/2/24 06:50, Xavier wrote:
-> The process of constructing scheduling domains
->   involves multiple loops and repeated evaluations, leading to numerous
->   redundant and ineffective assessments that impact code efficiency.
->
-> Here, we use Union-Find to optimize the merging of cpumasks. By employing
-> path compression and union by rank, we effectively reduce the number of
-> lookups and merge comparisons.
->
-> Signed-off-by: Xavier <xavier_qy@163.com>
+On Mon, Jun 24, 2024 at 10:18:07AM GMT, Jagadeesh Kona wrote:
+> Some GDSC client drivers require the GDSC mode to be switched dynamically
+> to HW mode at runtime to gain the power benefits. Typically such client
+> drivers require the GDSC to be brought up in SW mode initially to enable
+> the required dependent clocks and configure the hardware to proper state.
+> Once initial hardware set up is done, they switch the GDSC to HW mode to
+> save power. At the end of usecase, they switch the GDSC back to SW mode
+> and disable the GDSC.
+> 
+> Introduce HW_CTRL_TRIGGER flag to register the set_hwmode_dev and
+> get_hwmode_dev callbacks for GDSC's whose respective client drivers
+> require the GDSC mode to be switched dynamically at runtime using
+> dev_pm_genpd_set_hwmode() API.
+> 
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Taniya Das <quic_tdas@quicinc.com>
+
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+
+Regards,
+Bjorn
+
 > ---
->   kernel/cgroup/cpuset.c | 95 ++++++++++++++++--------------------------
->   1 file changed, 36 insertions(+), 59 deletions(-)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index fe76045aa5..4d32cd1407 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -45,6 +45,7 @@
->   #include <linux/cgroup.h>
->   #include <linux/wait.h>
->   #include <linux/workqueue.h>
-> +#include <linux/union_find.h>
->   
->   DEFINE_STATIC_KEY_FALSE(cpusets_pre_enable_key);
->   DEFINE_STATIC_KEY_FALSE(cpusets_enabled_key);
-> @@ -172,9 +173,6 @@ struct cpuset {
->   	 */
->   	int attach_in_progress;
->   
-> -	/* partition number for rebuild_sched_domains() */
-> -	int pn;
-> -
->   	/* for custom sched domain */
->   	int relax_domain_level;
->   
-> @@ -208,6 +206,9 @@ struct cpuset {
->   
->   	/* Remote partition silbling list anchored at remote_children */
->   	struct list_head remote_sibling;
+>  drivers/clk/qcom/gdsc.c | 41 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/gdsc.h |  1 +
+>  2 files changed, 42 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index df9618ab7eea..fa5fe4c2a2ee 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -363,6 +363,43 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>  	return 0;
+>  }
+>  
+> +static int gdsc_set_hwmode(struct generic_pm_domain *domain, struct device *dev, bool mode)
+> +{
+> +	struct gdsc *sc = domain_to_gdsc(domain);
+> +	int ret;
 > +
-> +	/* Used to merge intersecting subsets for generate_sched_domains*/
-> +	struct uf_node node;
->   };
->   
->   /*
-> @@ -1007,7 +1008,7 @@ static int generate_sched_domains(cpumask_var_t **domains,
->   	struct cpuset *cp;	/* top-down scan of cpusets */
->   	struct cpuset **csa;	/* array of all cpuset ptrs */
->   	int csn;		/* how many cpuset ptrs in csa so far */
-> -	int i, j, k;		/* indices for partition finding loops */
-> +	int i, j;		/* indices for partition finding loops */
->   	cpumask_var_t *doms;	/* resulting partition; i.e. sched domains */
->   	struct sched_domain_attr *dattr;  /* attributes for custom domains */
->   	int ndoms = 0;		/* number of sched domains in result */
-> @@ -1015,6 +1016,7 @@ static int generate_sched_domains(cpumask_var_t **domains,
->   	struct cgroup_subsys_state *pos_css;
->   	bool root_load_balance = is_sched_load_balance(&top_cpuset);
->   	bool cgrpv2 = cgroup_subsys_on_dfl(cpuset_cgrp_subsys);
-> +	int nslot_update;
->   
->   	doms = NULL;
->   	dattr = NULL;
-> @@ -1102,31 +1104,25 @@ static int generate_sched_domains(cpumask_var_t **domains,
->   	if (root_load_balance && (csn == 1))
->   		goto single_root_domain;
->   
-> -	for (i = 0; i < csn; i++)
-> -		csa[i]->pn = i;
-> -	ndoms = csn;
-> -
-> -restart:
-> -	/* Find the best partition (set of sched domains) */
-> -	for (i = 0; i < csn; i++) {
-> -		struct cpuset *a = csa[i];
-> -		int apn = a->pn;
-> +	if (!cgrpv2) {
-> +		for (i = 0; i < csn; i++)
-> +			uf_node_init(&csa[i]->node);
->   
-> -		for (j = 0; j < csn; j++) {
-> -			struct cpuset *b = csa[j];
-> -			int bpn = b->pn;
-> -
-> -			if (apn != bpn && cpusets_overlap(a, b)) {
-> -				for (k = 0; k < csn; k++) {
-> -					struct cpuset *c = csa[k];
-> -
-> -					if (c->pn == bpn)
-> -						c->pn = apn;
-> -				}
-> -				ndoms--;	/* one less element */
-> -				goto restart;
-> +		/* Merge overlapping cpusets */
-> +		for (i = 0; i < csn; i++) {
-> +			for (j = i + 1; j < csn; j++) {
-> +				if (cpusets_overlap(csa[i], csa[j]))
-> +					uf_union(&csa[i]->node, &csa[j]->node);
->   			}
->   		}
+> +	ret = gdsc_hwctrl(sc, mode);
+> +	if (ret)
+> +		return ret;
 > +
-> +		/* Count the total number of domains */
-> +		for (i = 0; i < csn; i++) {
-> +			if (csa[i]->node.parent == &csa[i]->node)
-> +				ndoms++;
-> +		}
-> +	} else {
-> +		ndoms = csn;
->   	}
->   
->   	/*
-> @@ -1159,44 +1155,25 @@ static int generate_sched_domains(cpumask_var_t **domains,
->   	}
->   
->   	for (nslot = 0, i = 0; i < csn; i++) {
-> -		struct cpuset *a = csa[i];
-> -		struct cpumask *dp;
-> -		int apn = a->pn;
-> -
-> -		if (apn < 0) {
-> -			/* Skip completed partitions */
-> -			continue;
-> -		}
-> -
-> -		dp = doms[nslot];
-> -
-> -		if (nslot == ndoms) {
-> -			static int warnings = 10;
-> -			if (warnings) {
-> -				pr_warn("rebuild_sched_domains confused: nslot %d, ndoms %d, csn %d, i %d, apn %d\n",
-> -					nslot, ndoms, csn, i, apn);
-> -				warnings--;
-> -			}
-> -			continue;
-> -		}
-> -
-> -		cpumask_clear(dp);
-> -		if (dattr)
-> -			*(dattr + nslot) = SD_ATTR_INIT;
-> +		nslot_update = 0;
->   		for (j = i; j < csn; j++) {
-> -			struct cpuset *b = csa[j];
-> -
-> -			if (apn == b->pn) {
-> -				cpumask_or(dp, dp, b->effective_cpus);
-> +			if (uf_find(&csa[j]->node) == &csa[i]->node) {
-> +				struct cpumask *dp = doms[nslot];
+> +	/*
+> +	 * Wait for the GDSC to go through a power down and
+> +	 * up cycle. If we poll the status register before the
+> +	 * power cycle is finished we might read incorrect values.
+> +	 */
+> +	udelay(1);
 > +
-> +				if (i == j) {
-> +					nslot_update = 1;
-> +					cpumask_clear(dp);
-> +					if (dattr)
-> +						*(dattr + nslot) = SD_ATTR_INIT;
-> +				}
-> +				cpumask_or(dp, dp, csa[j]->effective_cpus);
->   				cpumask_and(dp, dp, housekeeping_cpumask(HK_TYPE_DOMAIN));
->   				if (dattr)
-> -					update_domain_attr_tree(dattr + nslot, b);
-> -
-> -				/* Done with this partition */
-> -				b->pn = -1;
-> +					update_domain_attr_tree(dattr + nslot, csa[j]);
->   			}
->   		}
-> -		nslot++;
-> +		if (nslot_update)
-> +			nslot++;
->   	}
->   	BUG_ON(nslot != ndoms);
->   
-
-The code change looks OK to me. However, the following comment above 
-generate_sched_domains() describes the generation process.
-
-  * Finding the best partition (set of domains):
-  *      The triple nested loops below over i, j, k scan over the
-  *      load balanced cpusets (using the array of cpuset pointers in
-  *      csa[]) looking for pairs of cpusets that have overlapping
-  *      cpus_allowed, but which don't have the same 'pn' partition
-  *      number and gives them in the same partition number.  It keeps
-  *      looping on the 'restart' label until it can no longer find
-  *      any such pairs.
-  *
-  *      The union of the cpus_allowed masks from the set of
-  *      all cpusets having the same 'pn' value then form the one
-  *      element of the partition (one sched domain) to be passed to
-  *      partition_sched_domains().
-
-This part is no longer correct with your patch. Would you mind updating 
-it to match what your new patch is doing?
-
-BTW, please also incorporate the Andrew's suggestion about the kernel 
-convention of writing comments.
-
-Thanks,
-Longman
-
+> +	/*
+> +	 * When the GDSC is switched to HW mode, HW can disable the GDSC.
+> +	 * When the GDSC is switched back to SW mode, the GDSC will be enabled
+> +	 * again, hence we need to poll for GDSC to complete the power up.
+> +	 */
+> +	if (!mode)
+> +		return gdsc_poll_status(sc, GDSC_ON);
+> +
+> +	return 0;
+> +}
+> +
+> +static bool gdsc_get_hwmode(struct generic_pm_domain *domain, struct device *dev)
+> +{
+> +	struct gdsc *sc = domain_to_gdsc(domain);
+> +	u32 val;
+> +
+> +	regmap_read(sc->regmap, sc->gdscr, &val);
+> +
+> +	return !!(val & HW_CONTROL_MASK);
+> +}
+> +
+>  static int gdsc_init(struct gdsc *sc)
+>  {
+>  	u32 mask, val;
+> @@ -451,6 +488,10 @@ static int gdsc_init(struct gdsc *sc)
+>  		sc->pd.power_off = gdsc_disable;
+>  	if (!sc->pd.power_on)
+>  		sc->pd.power_on = gdsc_enable;
+> +	if (sc->flags & HW_CTRL_TRIGGER) {
+> +		sc->pd.set_hwmode_dev = gdsc_set_hwmode;
+> +		sc->pd.get_hwmode_dev = gdsc_get_hwmode;
+> +	}
+>  
+>  	ret = pm_genpd_init(&sc->pd, NULL, !on);
+>  	if (ret)
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 803512688336..1e2779b823d1 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -67,6 +67,7 @@ struct gdsc {
+>  #define ALWAYS_ON	BIT(6)
+>  #define RETAIN_FF_ENABLE	BIT(7)
+>  #define NO_RET_PERIPH	BIT(8)
+> +#define HW_CTRL_TRIGGER	BIT(9)
+>  	struct reset_controller_dev	*rcdev;
+>  	unsigned int			*resets;
+>  	unsigned int			reset_count;
+> -- 
+> 2.43.0
+> 
 
