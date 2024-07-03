@@ -1,129 +1,106 @@
-Return-Path: <linux-kernel+bounces-239550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E68926204
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:45:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB55926206
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18D511F23BC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7C31C2178C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C0017A59B;
-	Wed,  3 Jul 2024 13:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B13178CF5;
+	Wed,  3 Jul 2024 13:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FzxXWZtE"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=frelon.se header.i=@frelon.se header.b="lfMTdvme"
+Received: from smtp.outgoing.loopia.se (smtp.outgoing.loopia.se [93.188.3.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E306B1E891
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06E417A59B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.3.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720014285; cv=none; b=XM8G7CjDq6wLby90U6wkYZftHIkiMPObElueVcYEEg4SU0sat0TN/rxcsT365iCfisn+frRs5FKD4W0vH5GxWJwXVSrU2GjoZm0ePr9k0nUOHy8HCS7GeRLNPbDp1VHx8IKZIM7PFqwEnYYFHszOHsN5vMX6vLNkc614Ccyd/Tc=
+	t=1720014312; cv=none; b=WW19jOrtX4cNql8j3cO7rJ72mf4EcVxxzbGXfKSqJWmCDHxNiww/9CSOoLUfRGQTOa9YENUjECo/sRwslnxHPDcINmJyTwZEjPpBow77Wqt4xz0BnKu8UcpkGytH9mPJBbtXSireMINqyd9OfCwoOs8FZJaKF9ygMLbHCgKyZGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720014285; c=relaxed/simple;
-	bh=ScdAqoAeBuQD3KpHmD6W7NyYl4A1XiSIi4GlwH1InU0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gIQWoPysFpCBtPMHWh6cAChDCNo7u6utOeylZF4djX6mGRpuLOpOqcF5W0nHm3EhIyS9yp1lKFf5SjeKc1THjl8K/jPnI0f62Auh2XZh51NU/Ahd3Ymhy/bLdq7mPs73XrIapQSqzxh62Fyw3lfzrsYOgJrggMjPMKHV4fSnfjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FzxXWZtE; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-382458be75bso2851555ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 06:44:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720014283; x=1720619083; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LyvT7a3XWBg4WM1pfJF6b3xvjEPXEA/26ZU9sblubv8=;
-        b=FzxXWZtE4N4MFY7IvOhR3jniL9RoK5K1YjvFeLnGUnjn9Q9GXbol/cBHLPnXz6pR4W
-         7KOq3lHmoJylXBKsyJb+4MkYG5RGqlRvtgHaqXBgWf/Qz7fcyHsUagxpeEKEhNuXPheT
-         C/X+aGXsBbHiUafT/IglO5RXUqhmJoInchc95OI6vZzbr/QkESoV19GWfpn3P8xy7Ynk
-         Q9CF9qyAFtRJF2WyLNMoFwlHgDutlt+NRldKXUA5PJQwEnQkJLlgbsJx6gvvoMzjvntI
-         2IKlL3D+fFhc3zv4gnIXtZrlAzZP7PFFtjEgVBwWzNNQDoaOlyioQUupDAg7XKabFaza
-         z4Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720014283; x=1720619083;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LyvT7a3XWBg4WM1pfJF6b3xvjEPXEA/26ZU9sblubv8=;
-        b=ZYWpmvdOFzgct6b00z/PU6zFVChxvm7FBVh57nlttZJnAFyYefX7gqXeNqksvPChsJ
-         niSH/E1S5tQdNl9lRvmQDwE83p/CH1YZJP0CO0vugUE2pE5tCrLsDITyb6KtUT8pXCvH
-         6+hgm+8FddvoXMNaW6/Xn40ILw57LgLHPOVpCOfb8QKZcXFOLAq9rXyvnLb2bATzf+6F
-         U2NQcIjI2Ksk5kv3DCrp9+R3nPtgZ/gClwLie/ac6Vf+Bw4Y97lmSJN5Jc+H2sY6ll62
-         NSsQxeS9yS3u5FWSBuRV67Jm72qPuWVtD6UFvNKoaInoV26SLCTDLs+fugyuCimb+P4b
-         Jxvw==
-X-Gm-Message-State: AOJu0Yw57CeiQ48QNWKfC04/v8yOpm2j/nX4baDYs4sXlVx2gqYixXid
-	SzIyOqAzd43qV1/R+uFvGxkJ1fMw5bzzHcZ3SAy2EPMPczXA/1Okalnl+nD05BA=
-X-Google-Smtp-Source: AGHT+IF99FX2Y9TiFXZLf+MxEHYr5IDR9qE5B5BxjDF3BIN2ryHqTGeeoCGGWOPVDIDiTrklk5AY/w==
-X-Received: by 2002:a05:6e02:1a82:b0:382:586d:c113 with SMTP id e9e14a558f8ab-382586dc332mr14268145ab.2.1720014283027;
-        Wed, 03 Jul 2024 06:44:43 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6a8deff2sm6873399a12.37.2024.07.03.06.44.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 06:44:42 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] possible deadlock in team_del_slave (3)
-Date: Wed,  3 Jul 2024 22:44:39 +0900
-Message-Id: <20240703134439.79904-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <000000000000ffc5d80616fea23d@google.com>
-References: <000000000000ffc5d80616fea23d@google.com>
+	s=arc-20240116; t=1720014312; c=relaxed/simple;
+	bh=z/PohDnoI6AtSuLHfAV4Bz4K6RLhnwV8d03C9CWrYU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YIG8XqxP8IrckfetE8Meby0gmAjZlae1+D44e+n+X5Dy8N5iAWxtY5NNlGg2/PpECOdBvFiYmqdQZ3/3t+Z/UlLJ4IipP8Obk70KOpkbwQqmgdI5xpdmbayGFzzRdEOQNIw2j4PG9hcE3ZieJNAOzQ4soimhHoL/LFNOhS8F5es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=frelon.se; spf=pass smtp.mailfrom=frelon.se; dkim=pass (2048-bit key) header.d=frelon.se header.i=@frelon.se header.b=lfMTdvme; arc=none smtp.client-ip=93.188.3.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=frelon.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=frelon.se
+Received: from s807.loopia.se (localhost [127.0.0.1])
+	by s807.loopia.se (Postfix) with ESMTP id 0867C301F755
+	for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 15:45:00 +0200 (CEST)
+Received: from s980.loopia.se (unknown [172.22.191.5])
+	by s807.loopia.se (Postfix) with ESMTP id EC2EC2E2957F;
+	Wed, 03 Jul 2024 15:44:59 +0200 (CEST)
+Received: from s471.loopia.se (unknown [172.22.191.6])
+	by s980.loopia.se (Postfix) with ESMTP id EA06922015F9;
+	Wed, 03 Jul 2024 15:44:59 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at amavis.loopia.se
+X-Spam-Flag: NO
+X-Spam-Score: -1.2
+X-Spam-Level:
+Authentication-Results: s471.loopia.se (amavisd-new); dkim=pass (2048-bit key)
+ header.d=frelon.se
+Received: from s981.loopia.se ([172.22.191.5])
+ by s471.loopia.se (s471.loopia.se [172.22.190.35]) (amavisd-new, port 10024)
+ with LMTP id n1Za47ZELwDk; Wed,  3 Jul 2024 15:44:59 +0200 (CEST)
+X-Loopia-Auth: user
+X-Loopia-User: fredrik@frelon.se
+X-Loopia-Originating-IP: IPv6:2001:2042:34bd:7800:4e1d:96ff:fe79:894d
+Received: from carbon.stuxie.se (unknown [IPv6:2001:2042:34bd:7800:4e1d:96ff:fe79:894d])
+	(Authenticated sender: fredrik@frelon.se)
+	by s981.loopia.se (Postfix) with ESMTPSA id 56F3222B170C;
+	Wed, 03 Jul 2024 15:44:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=frelon.se;
+	s=loopiadkim1707342414; t=1720014299;
+	bh=tBZC8CpWlHR7m9iCwiMFOPFQO67wLgiBqnPE94Zdhfw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=lfMTdvmeyT9r1Kflw03bHBBs9FiGt+TE3/9KGKRVzEwFpE6j2tQIsIMw2+Nady93d
+	 Q2QPVLD/tY5NSYufVt+HeRRkmrjFXjJ+qkzaLlad0RMeEptkSQ2bIesIa1mF9WlxET
+	 OuG9Xw9zPHniNuK/WsMT2sPpVeptYJbIVNdo+bEReTPbTB42OtL3ZmIGi/Ivsm84hh
+	 8T4+njy0oV+eWWsm+RNRpZoum6JY82auGzfATve8wZ5BjVBkqq9AjulrL2sXnWF4pQ
+	 6F1rJv3oqALxf7lOwbGH1mGer/sRf2IZvq2Mg0CPdOXSjnot8euP5im+vvvHmerSBU
+	 heRxEDC9uDNjA==
+Date: Wed, 3 Jul 2024 15:44:51 +0200
+From: Fredrik =?utf-8?Q?L=C3=B6nnegren?= <fredrik@frelon.se>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Kalle Valo <kvalo@kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] wifi: rtlwifi: fix default typo
+Message-ID: <ZoVV0ynwsWKZ7QrV@carbon.stuxie.se>
+References: <20240703070627.135328-1-fredrik@frelon.se>
+ <afdfd27b079d460c8a064d91d1aa99e2@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <afdfd27b079d460c8a064d91d1aa99e2@realtek.com>
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+On Wed, Jul 03, 2024 at 07:13:05AM +0000, Ping-Ke Shih wrote:
+> Fredrik Lönnegren <fredrik@frelon.se> wrote:
+> > Subject: [PATCH] wifi: rtlwifi: fix default typo
+> 
+> Generally subject of v2 patch should be "[PATCH v2]" and need a changelog.
+> But no need resend for this patch. 
 
----
- drivers/net/team/team_core.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+Thank you, I will keep that in mind!
 
-diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
-index ab1935a4aa2c..3ac82df876b0 100644
---- a/drivers/net/team/team_core.c
-+++ b/drivers/net/team/team_core.c
-@@ -1970,11 +1970,12 @@ static int team_add_slave(struct net_device *dev, struct net_device *port_dev,
-                          struct netlink_ext_ack *extack)
- {
-        struct team *team = netdev_priv(dev);
--       int err;
-+       int err, locked;
- 
--       mutex_lock(&team->lock);
-+       locked = mutex_trylock(&team->lock);
-        err = team_port_add(team, port_dev, extack);
--       mutex_unlock(&team->lock);
-+       if (locked)
-+               mutex_unlock(&team->lock);
- 
-        if (!err)
-                netdev_change_features(dev);
-@@ -1985,11 +1986,12 @@ static int team_add_slave(struct net_device *dev, struct net_device *port_dev,
- static int team_del_slave(struct net_device *dev, struct net_device *port_dev)
- {
-        struct team *team = netdev_priv(dev);
--       int err;
-+       int err, locked;
- 
--       mutex_lock(&team->lock);
-+       locked = mutex_trylock(&team->lock);
-        err = team_port_del(team, port_dev);
--       mutex_unlock(&team->lock);
-+       if (locked)
-+               mutex_unlock(&team->lock);
- 
-        if (err)
-                return err;
---
+> 
+> > 
+> > Change 'defult' to 'default' in comments in several rtlwifi drivers.
+> > 
+> > Signed-off-by: Fredrik Lönnegren <fredrik@frelon.se>
+> 
+> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+> 
 
