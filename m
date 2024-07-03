@@ -1,195 +1,298 @@
-Return-Path: <linux-kernel+bounces-239634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9019C92635D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:26:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A1792635F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4658D2898E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:26:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3E01F216B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0464C17BB39;
-	Wed,  3 Jul 2024 14:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C7E17B51B;
+	Wed,  3 Jul 2024 14:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFdEzpU1"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPb2tkXF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781CD17BB17;
-	Wed,  3 Jul 2024 14:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2CA1DFD1;
+	Wed,  3 Jul 2024 14:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720016745; cv=none; b=QZeINkVQYakpPHjy+NBSuRlJ8qEttIa/gp7MSaWUHN5n5N0/xBr21igAjLTgmTpHBXQKNwP62Prhgj2KdmklK5LgK33EmPmmA6/z75mjKijx0MuLnonYXoCBHYsU7Tux5HEzjlCpA4It9e98LAajoJbQFgpq+3HUXZD2guBckro=
+	t=1720016828; cv=none; b=Fb1wjClvJ0GtG0kR3ispL1WLQ/J32PAfILG0+qsr4L8+jaTl+r1vTC0j/8PDL0QAKKfbBtbGb6aj4teA8OjiIlCiyy8qLTPnHbl/9rkajsh4c7r2xvoqtffSotf+ZlXwFsQwANOv1TNyFTv50a2qRTkae+gxZhQm4e3Io+YwdnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720016745; c=relaxed/simple;
-	bh=RLBDeWJJnciluhpKNeNW05gnO5DYZt8QYueK8TTf1XQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aMj6BEnx/Hf08di/9KF6HW7u7iVGpd2cXoK9uuK9X1N5MM2sTKVyxmnkMRixHVlEIdllcCrZ2u6vD+yWOPtv2IgYmNfWsAsLq+0cbkvGQQpj5OymUqD7G/q7hW3axNrB54cOHicTyszuZQlr8ViaABpU+AlLbsKaf3FyTuLS3C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFdEzpU1; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec408c6d94so56373721fa.3;
-        Wed, 03 Jul 2024 07:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720016741; x=1720621541; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a1/QGpys67tuMelSYVoj+4DsPH18BLPCFczi/cUE7E4=;
-        b=LFdEzpU1ac/h/uKu8lS3O12jc4p4YXmWZ0jTWKL1yhrOKd+15MpjLGUl8AdItVVqVm
-         TROHjdFJpJ4sI2ad4wtEY+U1LUdBiQdAQ61tMFJCV5gwfa7ZNbqSj/uDaP+Ljvd3y/LZ
-         XoE3Bhuo66EAHbAjjJrreIji09PQx/qwWCkCbhrQ5pFGDxaqty2ng//zEcZTv5N/g6GW
-         LXrdqiWKibcKOl9ng1TdeMXq/C0XRvFBhCVN1T1CixOg7Sc3Qr4lQpd91qTMQIND+vNZ
-         PJ/4771f3+dYxKdpLwJXElcqxvM1Wp7kEsgYjoX0zpL4gBNZZa7Ua0KjHLPgOsY48tab
-         fpdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720016741; x=1720621541;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a1/QGpys67tuMelSYVoj+4DsPH18BLPCFczi/cUE7E4=;
-        b=dDCecg5+rFWj6FsQMnp7BG6Gozgtu+tzTOQqL/mng7f+laQfDqkoVTxr+NYEDg1Eck
-         LyGqSNqz9z7fg1oKUpzBHlGbQ2dnlKvuq0D50CdlWbynMtnxFzdJvrVAu2fwnM/TPSks
-         yDXlxnRxe1exL7elu4s3ivOAG2NFRn73k1QEldID6UojADhO9p9IwW6sCpQpCQp4fT78
-         N01S20ydBb01WogQYttCHbH1TBrfNnNrvzZjbRLHDSca7gjCdkXfOhsMzaDlYiROcqPe
-         QtJCg2cjwfeHWBfy7qtmBqyOJter6benz8WfMDHk9fWGgbqOIG542ZsRBzN+jfDJ+rIP
-         ly0A==
-X-Forwarded-Encrypted: i=1; AJvYcCV6thoMcjWu2pWphfLuIVC6nbJJ1onRvs+uYqnMnv+7BZ1ELkeWkXG4L0RXX5WkBxLd7fZ2yq5YkwTMfrVxX60HUZ0vpa+vVHQgZlcHjQDe2nZf0W/9gTElfEsR5YdA86Kii+7Tj9MtZFWUESxl
-X-Gm-Message-State: AOJu0YzsYaK6J2ZacUEtN4JpSi2IbNe4/uC+TweIXpoWPtw7eksNqboZ
-	QqsH8jSsbnJfMofZd50xSvMcFQxtl5OjayUL/eE62EgBmxs2QTyAzOAQ0+TJavKaptuqgOGCHu/
-	rk+C3FGCnusBenmA2VpD/agmxB7U=
-X-Google-Smtp-Source: AGHT+IGGxoob76qWvpX08mtOXO1RKDafeqXegfSyr0+CJ4sRJU9QMdm8JZnmPY7OQFK7MeDbnwskN6oMntcPd0IPNnQ=
-X-Received: by 2002:a2e:a786:0:b0:2ec:56ce:d51f with SMTP id
- 38308e7fff4ca-2ee5e3adc1dmr91206141fa.20.1720016741337; Wed, 03 Jul 2024
- 07:25:41 -0700 (PDT)
+	s=arc-20240116; t=1720016828; c=relaxed/simple;
+	bh=TJURJXGngOL9PD0ltgboq2lLewTI1qesdsitguvVPjY=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=e1NUwBFaGvtSXRB4m5e8ZT7lRlmp1lXzWsxYw525ilJFlYIwCNi196LrhHuU0dDcjw1LSZVioyuCu+emtj1MTAMnBtCIGu5KfxL3OBZm8MtnoNEBUQz08G4AQECUQTiYQmST5g9wb7s4Fd5k3qoTBvC8Wcq5z1d5KkHJGLn586w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPb2tkXF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 805BDC2BD10;
+	Wed,  3 Jul 2024 14:27:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720016827;
+	bh=TJURJXGngOL9PD0ltgboq2lLewTI1qesdsitguvVPjY=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=gPb2tkXFosgJNzWvm8+eCQE0v+kbdPIHsPkNWasGxDAW7q6BuSvOUoGcGlln/JyNr
+	 JvEcJpL0ROtGDZk0Q4UBFyoK3dA/83mY+0VHYnjJ3NCbcWemYtotWM6YKhnI96yg/b
+	 Zhk6Z9/7UEB5IJerMiPvUjqSeA/c0xsNZEkouMrrwr71x6SzxXqbvaFOAeE3WHTbcB
+	 nvFHLSbJlP+rWBDm9vfeNA6z3t7Ijc52Xcce4LyU0hZOpma+71oJk5ps2iC56hiKNo
+	 qxaUHpEgrY6R3wTfRj03VOXIoKbHjf3w4fUR2sXmineiZGSxVaJjpMmJw+iD/1Uy7K
+	 ZuAn/MXF7lQ3g==
+Date: Wed, 03 Jul 2024 08:27:06 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240703113936.228226-1-iam@sung-woo.kim>
-In-Reply-To: <20240703113936.228226-1-iam@sung-woo.kim>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Wed, 3 Jul 2024 10:25:27 -0400
-Message-ID: <CABBYNZJBmbjB6ZwT7JogaABE3d0-vWwNQq4NwUGCHsmgNuKXLA@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci: fix null-ptr-deref in hci_read_supported_codecs
-To: Sungwoo Kim <iam@sung-woo.kim>
-Cc: daveti@purdue.edu, benquike@gmail.com, 
-	Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frieder Schrempf <frieder@fris.de>
+Cc: imx@lists.linux.dev, Hiago De Franco <hiago.franco@toradex.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Tim Harvey <tharvey@gateworks.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Alexander Stein <alexander.stein@ew.tq-group.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Marco Felsch <m.felsch@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, 
+ Frieder Schrempf <frieder.schrempf@kontron.de>, 
+ Markus Niebel <Markus.Niebel@ew.tq-group.com>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
+ Gregor Herburger <gregor.herburger@ew.tq-group.com>, 
+ Li Yang <leoyang.li@nxp.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org, 
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>
+In-Reply-To: <20240702154413.968044-1-frieder@fris.de>
+References: <20240702154413.968044-1-frieder@fris.de>
+Message-Id: <172001675704.274653.3614631597140557643.robh@kernel.org>
+Subject: Re: [PATCH 0/3] Add support for Kontron OSM-S i.MX8MP SoM and
+ carrier boards
 
-Hi,
 
-On Wed, Jul 3, 2024 at 7:40=E2=80=AFAM Sungwoo Kim <iam@sung-woo.kim> wrote=
-:
->
-> KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
-> CPU: 1 PID: 2000 Comm: kworker/u9:5 Not tainted 6.9.0-ga6bcb805883c-dirty=
- #10
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
-1/2014
-> Workqueue: hci7 hci_power_on
-> RIP: 0010:hci_read_supported_codecs+0xb9/0x870 net/bluetooth/hci_codec.c:=
-138
-> Code: 08 48 89 ef e8 b8 c1 8f fd 48 8b 75 00 e9 96 00 00 00 49 89 c6 48 b=
-a 00 00 00 00 00 fc ff df 4c 8d 60 70 4c 89 e3 48 c1 eb 03 <0f> b6 04 13 84=
- c0 0f 85 82 06 00 00 41 83 3c 24 02 77 0a e8 bf 78
-> RSP: 0018:ffff888120bafac8 EFLAGS: 00010212
-> RAX: 0000000000000000 RBX: 000000000000000e RCX: ffff8881173f0040
-> RDX: dffffc0000000000 RSI: ffffffffa58496c0 RDI: ffff88810b9ad1e4
-> RBP: ffff88810b9ac000 R08: ffffffffa77882a7 R09: 1ffffffff4ef1054
-> R10: dffffc0000000000 R11: fffffbfff4ef1055 R12: 0000000000000070
-> R13: 0000000000000000 R14: 0000000000000000 R15: ffff88810b9ac000
-> FS:  0000000000000000(0000) GS:ffff8881f6c00000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f6ddaa3439e CR3: 0000000139764003 CR4: 0000000000770ef0
-> PKRU: 55555554
-> Call Trace:
->  <TASK>
->  hci_read_local_codecs_sync net/bluetooth/hci_sync.c:4546 [inline]
->  hci_init_stage_sync net/bluetooth/hci_sync.c:3441 [inline]
->  hci_init4_sync net/bluetooth/hci_sync.c:4706 [inline]
->  hci_init_sync net/bluetooth/hci_sync.c:4742 [inline]
->  hci_dev_init_sync net/bluetooth/hci_sync.c:4912 [inline]
->  hci_dev_open_sync+0x19a9/0x2d30 net/bluetooth/hci_sync.c:4994
->  hci_dev_do_open net/bluetooth/hci_core.c:483 [inline]
->  hci_power_on+0x11e/0x560 net/bluetooth/hci_core.c:1015
->  process_one_work kernel/workqueue.c:3267 [inline]
->  process_scheduled_works+0x8ef/0x14f0 kernel/workqueue.c:3348
->  worker_thread+0x91f/0xe50 kernel/workqueue.c:3429
->  kthread+0x2cb/0x360 kernel/kthread.c:388
->  ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->
-> Fixes: 8961987f3f5f ("Bluetooth: Enumerate local supported codec and cach=
-e details")
-> Fixes: 9ae664028a9e ("Bluetooth: Add support for Read Local Supported Cod=
-ecs V2")
->
-> Signed-off-by: Sungwoo Kim <iam@sung-woo.kim>
-> ---
->  net/bluetooth/hci_codec.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/net/bluetooth/hci_codec.c b/net/bluetooth/hci_codec.c
-> index 3cc135bb1..5c98eec2c 100644
-> --- a/net/bluetooth/hci_codec.c
-> +++ b/net/bluetooth/hci_codec.c
-> @@ -74,6 +74,9 @@ static void hci_read_codec_capabilities(struct hci_dev =
-*hdev, __u8 transport,
->
->                         skb =3D __hci_cmd_sync_sk(hdev, HCI_OP_READ_LOCAL=
-_CODEC_CAPS,
->                                                 sizeof(*cmd), cmd, 0, HCI=
-_CMD_TIMEOUT, NULL);
-> +
-> +                       if (!skb)
-> +                               skb =3D ERR_PTR(-EINVAL);
->                         if (IS_ERR(skb)) {
->                                 bt_dev_err(hdev, "Failed to read codec ca=
-pabilities (%ld)",
->                                            PTR_ERR(skb));
-> @@ -129,6 +132,8 @@ void hci_read_supported_codecs(struct hci_dev *hdev)
->         skb =3D __hci_cmd_sync_sk(hdev, HCI_OP_READ_LOCAL_CODECS, 0, NULL=
-,
->                                 0, HCI_CMD_TIMEOUT, NULL);
->
-> +       if (!skb)
-> +               skb =3D ERR_PTR(-EINVAL);
->         if (IS_ERR(skb)) {
->                 bt_dev_err(hdev, "Failed to read local supported codecs (=
-%ld)",
->                            PTR_ERR(skb));
-> @@ -198,6 +203,8 @@ void hci_read_supported_codecs_v2(struct hci_dev *hde=
-v)
->         skb =3D __hci_cmd_sync_sk(hdev, HCI_OP_READ_LOCAL_CODECS_V2, 0, N=
-ULL,
->                                 0, HCI_CMD_TIMEOUT, NULL);
->
-> +       if (!skb)
-> +               skb =3D ERR_PTR(-EINVAL);
->         if (IS_ERR(skb)) {
->                 bt_dev_err(hdev, "Failed to read local supported codecs (=
-%ld)",
->                            PTR_ERR(skb));
+On Tue, 02 Jul 2024 17:43:18 +0200, Frieder Schrempf wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> 
+> Patch 1: board DT bindings
+> Patch 2: OSM-S i.MX8MP SoM and BL carrier board devicetrees
+> Patch 3: i.MX8MP SMARC module and eval carrier board devicetrees
+> 
+> Frieder Schrempf (3):
+>   dt-bindings: arm: fsl: Add Kontron i.MX8MP OSM-S based boards
+>   arm64: dts: Add support for Kontron OSM-S i.MX8MP SoM and BL carrier
+>     board
+>   arm64: dts: Add support for Kontron i.MX8MP SMARC module and eval
+>     carrier
+> 
+>  .../devicetree/bindings/arm/fsl.yaml          |  13 +
+>  arch/arm64/boot/dts/freescale/Makefile        |   6 +
+>  .../dts/freescale/imx8mp-kontron-bl-osm-s.dts | 307 ++++++
+>  .../boot/dts/freescale/imx8mp-kontron-dl.dtso | 112 +++
+>  .../dts/freescale/imx8mp-kontron-osm-s.dtsi   | 908 ++++++++++++++++++
+>  .../imx8mp-kontron-smarc-eval-carrier.dts     | 224 +++++
+>  .../dts/freescale/imx8mp-kontron-smarc.dtsi   | 271 ++++++
+>  7 files changed, 1841 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-dl.dtso
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-osm-s.dtsi
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dts
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc.dtsi
+> 
 > --
-> 2.34.1
+> 2.45.2
+> 
+> 
+> 
 
 
-There is something that doesn't quite add here, we don't return NULL
-on __hci_cmd_sync_sk, if there is an error it will always return
-ERR_PTR or perhaps this is the result of rsp_skb being NULL in which
-case we shall check it and actually return ERR_PTR directly from
-__hci_cmd_sync_sk but Id like to understand under what circumstances
-does rsp_skb can be NULL.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
 
 
---=20
-Luiz Augusto von Dentz
+New warnings running 'make CHECK_DTBS=y freescale/imx8mp-kontron-bl-osm-s.dtb freescale/imx8mp-kontron-smarc-eval-carrier.dtb' for 20240702154413.968044-1-frieder@fris.de:
+
+arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: eeprom@50: compatible: 'oneOf' conditional failed, one must be fixed:
+arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: eeprom@50: compatible: 'oneOf' conditional failed, one must be fixed:
+		'onnn,n24s64b' does not match 'c00$'
+		'onnn,n24s64b' does not match 'c01$'
+		'onnn,n24s64b' does not match 'cs01$'
+		'onnn,n24s64b' does not match 'c02$'
+		'onnn,n24s64b' does not match 'cs02$'
+		'onnn,n24s64b' does not match 'mac402$'
+		'onnn,n24s64b' does not match 'mac602$'
+		'onnn,n24s64b' does not match 'c04$'
+		'onnn,n24s64b' does not match 'cs04$'
+		'onnn,n24s64b' does not match 'c08$'
+		'onnn,n24s64b' does not match 'cs08$'
+		'onnn,n24s64b' does not match 'c16$'
+		'onnn,n24s64b' does not match 'cs16$'
+		'onnn,n24s64b' does not match 'c32$'
+		'onnn,n24s64b' does not match 'cs32$'
+		'onnn,n24s64b' does not match 'c64$'
+		'onnn,n24s64b' does not match 'cs64$'
+		'onnn,n24s64b' does not match 'c128$'
+		'onnn,n24s64b' does not match 'cs128$'
+		'onnn,n24s64b' does not match 'c256$'
+		'onnn,n24s64b' does not match 'cs256$'
+		'onnn,n24s64b' does not match 'c512$'
+		'onnn,n24s64b' does not match 'cs512$'
+		'onnn,n24s64b' does not match 'c1024$'
+		'onnn,n24s64b' does not match 'cs1024$'
+		'onnn,n24s64b' does not match 'c1025$'
+		'onnn,n24s64b' does not match 'cs1025$'
+		'onnn,n24s64b' does not match 'c2048$'
+		'onnn,n24s64b' does not match 'cs2048$'
+		'onnn,n24s64b' does not match 'spd$'
+		'atmel,24c64' does not match 'c00$'
+		'atmel,24c64' does not match 'c01$'
+		'atmel,24c64' does not match 'cs01$'
+		'atmel,24c64' does not match 'c02$'
+		'atmel,24c64' does not match 'cs02$'
+		'atmel,24c64' does not match 'mac402$'
+		'atmel,24c64' does not match 'mac602$'
+		'atmel,24c64' does not match 'c04$'
+		'atmel,24c64' does not match 'cs04$'
+		'atmel,24c64' does not match 'c08$'
+		'atmel,24c64' does not match 'cs08$'
+		'atmel,24c64' does not match 'c16$'
+		'atmel,24c64' does not match 'cs16$'
+		'atmel,24c64' does not match 'c32$'
+		'atmel,24c64' does not match 'cs32$'
+		'atmel,24c64' does not match 'cs64$'
+		'atmel,24c64' does not match 'c128$'
+		'atmel,24c64' does not match 'cs128$'
+		'atmel,24c64' does not match 'c256$'
+		'atmel,24c64' does not match 'cs256$'
+		'atmel,24c64' does not match 'c512$'
+		'atmel,24c64' does not match 'cs512$'
+		'atmel,24c64' does not match 'c1024$'
+		'atmel,24c64' does not match 'cs1024$'
+		'atmel,24c64' does not match 'c1025$'
+		'atmel,24c64' does not match 'cs1025$'
+		'atmel,24c64' does not match 'c2048$'
+		'atmel,24c64' does not match 'cs2048$'
+		'atmel,24c64' does not match 'spd$'
+	['onnn,n24s64b', 'atmel,24c64'] is too long
+	'onnn,n24s64b' does not match '^(atmel|catalyst|microchip|nxp|ramtron|renesas|rohm|st),(24(c|cs|lc|mac)[0-9]+|spd)$'
+	'belling,bl24c16a' was expected
+	'onnn,n24s64b' is not one of ['rohm,br24g01', 'rohm,br24t01']
+	'onnn,n24s64b' is not one of ['nxp,se97b', 'renesas,r1ex24002']
+	'onnn,n24s64b' is not one of ['onnn,cat24c04', 'onnn,cat24c05', 'rohm,br24g04']
+	'renesas,r1ex24016' was expected
+	'giantec,gt24c32a' was expected
+	'onnn,n24s64b' is not one of ['renesas,r1ex24128', 'samsung,s524ad0xd1']
+	'onnn,n24s64b' does not match '^atmel,24c(32|64)d-wl$'
+	'atmel,24c16' was expected
+	'atmel,24c01' was expected
+	'atmel,24c02' was expected
+	'atmel,24c04' was expected
+	'atmel,24c32' was expected
+	'atmel,24c128' was expected
+	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: eeprom@50: Unevaluated properties are not allowed ('compatible' was unexpected)
+	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: /soc@0/bus@30800000/i2c@30ad0000/eeprom@50: failed to match any schema with compatible: ['onnn,n24s64b', 'atmel,24c64']
+arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: eeprom@50: compatible: 'oneOf' conditional failed, one must be fixed:
+arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: eeprom@50: compatible: 'oneOf' conditional failed, one must be fixed:
+		'onnn,n24s64b' does not match 'c00$'
+		'onnn,n24s64b' does not match 'c01$'
+		'onnn,n24s64b' does not match 'cs01$'
+		'onnn,n24s64b' does not match 'c02$'
+		'onnn,n24s64b' does not match 'cs02$'
+		'onnn,n24s64b' does not match 'mac402$'
+		'onnn,n24s64b' does not match 'mac602$'
+		'onnn,n24s64b' does not match 'c04$'
+		'onnn,n24s64b' does not match 'cs04$'
+		'onnn,n24s64b' does not match 'c08$'
+		'onnn,n24s64b' does not match 'cs08$'
+		'onnn,n24s64b' does not match 'c16$'
+		'onnn,n24s64b' does not match 'cs16$'
+		'onnn,n24s64b' does not match 'c32$'
+		'onnn,n24s64b' does not match 'cs32$'
+		'onnn,n24s64b' does not match 'c64$'
+		'onnn,n24s64b' does not match 'cs64$'
+		'onnn,n24s64b' does not match 'c128$'
+		'onnn,n24s64b' does not match 'cs128$'
+		'onnn,n24s64b' does not match 'c256$'
+		'onnn,n24s64b' does not match 'cs256$'
+		'onnn,n24s64b' does not match 'c512$'
+		'onnn,n24s64b' does not match 'cs512$'
+		'onnn,n24s64b' does not match 'c1024$'
+		'onnn,n24s64b' does not match 'cs1024$'
+		'onnn,n24s64b' does not match 'c1025$'
+		'onnn,n24s64b' does not match 'cs1025$'
+		'onnn,n24s64b' does not match 'c2048$'
+		'onnn,n24s64b' does not match 'cs2048$'
+		'onnn,n24s64b' does not match 'spd$'
+		'atmel,24c64' does not match 'c00$'
+		'atmel,24c64' does not match 'c01$'
+		'atmel,24c64' does not match 'cs01$'
+		'atmel,24c64' does not match 'c02$'
+		'atmel,24c64' does not match 'cs02$'
+		'atmel,24c64' does not match 'mac402$'
+		'atmel,24c64' does not match 'mac602$'
+		'atmel,24c64' does not match 'c04$'
+		'atmel,24c64' does not match 'cs04$'
+		'atmel,24c64' does not match 'c08$'
+		'atmel,24c64' does not match 'cs08$'
+		'atmel,24c64' does not match 'c16$'
+		'atmel,24c64' does not match 'cs16$'
+		'atmel,24c64' does not match 'c32$'
+		'atmel,24c64' does not match 'cs32$'
+		'atmel,24c64' does not match 'cs64$'
+		'atmel,24c64' does not match 'c128$'
+		'atmel,24c64' does not match 'cs128$'
+		'atmel,24c64' does not match 'c256$'
+		'atmel,24c64' does not match 'cs256$'
+		'atmel,24c64' does not match 'c512$'
+		'atmel,24c64' does not match 'cs512$'
+		'atmel,24c64' does not match 'c1024$'
+		'atmel,24c64' does not match 'cs1024$'
+		'atmel,24c64' does not match 'c1025$'
+		'atmel,24c64' does not match 'cs1025$'
+		'atmel,24c64' does not match 'c2048$'
+		'atmel,24c64' does not match 'cs2048$'
+		'atmel,24c64' does not match 'spd$'
+	['onnn,n24s64b', 'atmel,24c64'] is too long
+	'onnn,n24s64b' does not match '^(atmel|catalyst|microchip|nxp|ramtron|renesas|rohm|st),(24(c|cs|lc|mac)[0-9]+|spd)$'
+	'belling,bl24c16a' was expected
+	'onnn,n24s64b' is not one of ['rohm,br24g01', 'rohm,br24t01']
+	'onnn,n24s64b' is not one of ['nxp,se97b', 'renesas,r1ex24002']
+	'onnn,n24s64b' is not one of ['onnn,cat24c04', 'onnn,cat24c05', 'rohm,br24g04']
+	'renesas,r1ex24016' was expected
+	'giantec,gt24c32a' was expected
+	'onnn,n24s64b' is not one of ['renesas,r1ex24128', 'samsung,s524ad0xd1']
+	'onnn,n24s64b' does not match '^atmel,24c(32|64)d-wl$'
+	'atmel,24c16' was expected
+	'atmel,24c01' was expected
+	'atmel,24c02' was expected
+	'atmel,24c04' was expected
+	'atmel,24c32' was expected
+	'atmel,24c128' was expected
+	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: eeprom@50: Unevaluated properties are not allowed ('compatible' was unexpected)
+	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: /soc@0/bus@30800000/i2c@30ad0000/eeprom@50: failed to match any schema with compatible: ['onnn,n24s64b', 'atmel,24c64']
+arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: /usbc: failed to match any schema with compatible: ['linux,extcon-usb-gpio']
+arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: /usbc: failed to match any schema with compatible: ['linux,extcon-usb-gpio']
+
+
+
+
+
 
