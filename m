@@ -1,144 +1,175 @@
-Return-Path: <linux-kernel+bounces-239980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A37926784
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:59:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CEF8926791
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3E11F233D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F1741C21443
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A92F1862B1;
-	Wed,  3 Jul 2024 17:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A073C18732D;
+	Wed,  3 Jul 2024 18:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pDjsQj/p"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rdkJI5WT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712BD1862B6
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 17:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEE117995;
+	Wed,  3 Jul 2024 18:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720029552; cv=none; b=HKdPznQlXbpEQ1svppoJSIsGd4R7lrLX/uE5Ex4tSE82AHytmhAuJhMbnOY/6pvBEUWCQfIH9xXbHz3HlCAZ1kFazlRw+XBAirAFqiMNBk4lESvaXJ98ZAmUbHZI2kHynU8mmFlK/xnlvTGAyF6zzxpZB5bWZD+nD59ay/2bkCI=
+	t=1720029672; cv=none; b=H/MKdj/drNNOp1OFEVvNNYYnItrmigABwgr1+X5ROIIdNn5qwdXzNdOvZlZR0it1RlDyz1KwDb4MXtqMyZAVscUuiPboMjQ0PcW93u9MryOJE+Dr+Fc3x/vy7dB3unEN690iYzWz/0YCyaQD4qYOjKpsaCZXZ6muBtC3d+JL9ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720029552; c=relaxed/simple;
-	bh=k8MRUbhHkjOhILYB9mNRHhZKXLPJOg91tgWozGH8p2w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iU27e9ieo9zYEvK/3rrBRHy6WRT2bKsLERkZdF/AcU5ar1tt2kDMR98VjDz1zQuKAiC8AIPjciJGpMGuBcbqDO63+hC/cJG0TSR5FIyFt3pRz8x+Y1M6Cgp0pG2KnS3h9DQqxxIoV45+d9ItDldvn1mtRkD/UMrD1bg3sqi/1Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pDjsQj/p; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70af0dff5c5so498203b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 10:59:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720029549; x=1720634349; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AHTcN0faUMJUQ+dWhhUWTakw8XF64osRGcEYZrolzvg=;
-        b=pDjsQj/paezW0GvrcXT+9tv5pGCrRphgek26RkKVUKu3ZW6FXmbo3gxRltl1lwUq5n
-         o6dnupfFF/HWzY7oqiZGuItGtE1KUI1bE+MlS2QDHbntHKO2Sutnuv5BMCuk1yqmUnSA
-         K0DNzfTsvx3ESp+4t9dR8cvFmqDm4JXEaj1SWsg2v9OuUz6+P5Z+QCazjlMWgzGyLLuR
-         SeJhMbwE04uMwwQBOJiBV0mKwfS/1CT66jHsnlPOPx9cLqk30Epzxxchs4wNFUDi4V2K
-         6XjU1LK82k7kCHDxl4WexWpU0HOvlw9W18j6SkYlG9vg1FxM3soveZER6KycYtKE1Y3S
-         jRFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720029549; x=1720634349;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AHTcN0faUMJUQ+dWhhUWTakw8XF64osRGcEYZrolzvg=;
-        b=GRxlPxtWKfac6kFhqi9FEj5s3epHEF2p30bPNLbA7tbBPo7QmfoOeYR1RYaaschGBU
-         IAje5OKT8/bSULt+4FyL2oQYgDn4pSoPiPvaCAF3p02kthwwL51UhKYYdJYzSnQehsHn
-         OZ5u/6FkVLrnpA11aQ3z8S+5mznAH+yatTbOnrSG4M1I956hGazBvrpogpGkBszGJISR
-         Zj9MFIzp72It6UrtZX5KDEH4Cs3b6fIeSfjUZ/oGJkVOrfadaSvdhBhOG281+knIuLxK
-         /FEAN/NRVL4bZBoCqWltrkHRNgiT5FReIcT3sCjK+lAa2aawdamvjVhq0VmjSuds5OEj
-         Q1lg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbFk43rJ16KFTc0cnZ1oDgQYFg9E8Wztadzs/nstkeNCfY2RzPK68Qoq+8cP+NAYsEU++65cDKMD8KIneA7oEHEmm8eqw8p+PakfDQ
-X-Gm-Message-State: AOJu0YzPP/C9tQXzOgAxp6HPiCxWHobVaKYxRUvBpzZU+mwHmOLJtVw/
-	2VFX5ax2S1LqTjveYqXI9+1wWkxgHEbw0HB3fSINJtpEF0uAF5AKF9CiiAtKKuHk3IXYacvG32N
-	BaJJ0AhDUWFhYWVAjcwLOHA==
-X-Google-Smtp-Source: AGHT+IGqZmv+oabNfIyY7QWOxNI78RRfONrhA60hWQ/B6RYAgC+XSxWmus+o7V2NbSDMiKdF9hyi3nBkP/5YqnHE+Q==
-X-Received: from yuting.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:317f])
- (user=yutingtseng job=sendgmr) by 2002:a05:6a00:1913:b0:706:6b52:4392 with
- SMTP id d2e1a72fcca58-70aaaf0c089mr616345b3a.3.1720029548542; Wed, 03 Jul
- 2024 10:59:08 -0700 (PDT)
-Date: Wed,  3 Jul 2024 10:58:46 -0700
-In-Reply-To: <CAN5Drs06fbditeSaVLc6i6wEY+A47HHzQmhCS1rzJgacNs1Tjw@mail.gmail.com>
+	s=arc-20240116; t=1720029672; c=relaxed/simple;
+	bh=Zf7O3ePlvok3MwLuehq8buoZy5+PWBs/kgvIKrrVIKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j1BiRYs8nSWl9SipKYexNvOZVG1bdzlgpRba+SAT/A3bwL+HBK/h+HAu5b5mfmKCMzD38XN1Go10OMlowf/NGzsskv5NR0B9ABwR+1I4+/xpG9GEbA7e0y5ug0jXPP8KPSzXaqivwPtU6SO0MieQtKDQkCIpp9hbg+53p8GIEhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rdkJI5WT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF3A5C2BD10;
+	Wed,  3 Jul 2024 18:01:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720029672;
+	bh=Zf7O3ePlvok3MwLuehq8buoZy5+PWBs/kgvIKrrVIKA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rdkJI5WT7xR8B3hhsVMq+7XqeIkJEsIaADXyaLtB4dJe9NXrYcxikXDJ/5KktssvA
+	 7etBQGsm2VyizVMZQmA9ihpwtZYUhvkMhDqqm7DZaL9YJ8uOiDoPSmPVoICg9OuK8h
+	 kf2w10dmNI2g0dOA0U+6i+Cgm8jgljOb/gfgRYI1OPkrO1v+GfL/rY1cUvohqOzaun
+	 TOkDyEhrJNtkGWe8cABu77lnRtMdZJu1H5b2xga3Mp3ipQTM+FMCsdeacpzsjDre6d
+	 /YbhzFbSXtxBcBUyDKr/EWUY3kR0SbLGgb2vJo3YUT8TlNsacvEqcfVsQLO/+01IoD
+	 8zVzREV5iKd4A==
+Date: Wed, 3 Jul 2024 12:01:11 -0600
+From: Rob Herring <robh@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Tony Lindgren <tony@atomide.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jonathan Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Richard Leitner <richard.leitner@linux.dev>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	llvm@lists.linux.dev, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+	patches@opensource.cirrus.com, linux-sound@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 20/20] of: deprecate and rename of_property_for_each_u32()
+Message-ID: <20240703180111.GA1245093-robh@kernel.org>
+References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
+ <20240703-of_property_for_each_u32-v1-20-42c1fc0b82aa@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAN5Drs06fbditeSaVLc6i6wEY+A47HHzQmhCS1rzJgacNs1Tjw@mail.gmail.com>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240703175843.3639568-6-yutingtseng@google.com>
-Subject: [PATCH v6 2/2] binder: frozen notification binder_features flag
-From: Yu-Ting Tseng <yutingtseng@google.com>
-To: cmllamas@google.com, tkjos@google.com, gregkh@linuxfoundation.org
-Cc: arve@android.com, maco@android.com, joel@joelfernandes.org, 
-	brauner@kernel.org, surenb@google.com, aliceryhl@google.com, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Yu-Ting Tseng <yutingtseng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703-of_property_for_each_u32-v1-20-42c1fc0b82aa@bootlin.com>
 
-Add a flag to binder_features to indicate that the freeze notification
-feature is available.
+On Wed, Jul 03, 2024 at 12:37:04PM +0200, Luca Ceresoli wrote:
+> of_property_for_each_u32() is meant to disappear. All the call sites not
+> using the 3rd and 4th arguments have already been replaced by
+> of_property_for_each_u32_new().
+> 
+> Deprecate the old macro. Also rename it to minimize the number of new
+> usages and encourage conversion to the of_property_for_each_u32_new() macro
+> in not(-yet)-upstream code.
+> 
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> 
+> ---
+> 
+> Notes:
+> 
+>  * The following files have not been build-tested simply because I haven't
+>    managed to have a config that enables them so far:
+> 
+>      drivers/irqchip/irq-pic32-evic.c
+>      drivers/pinctrl/pinctrl-k210.c
+> 
+>  * These have not been converted yet as they are not trivial, and they will
+>    need to use a more specific function that does the lookup they need and
+>    returns the result:
+> 
+>      drivers/clk/clk-si5351.c
 
-Signed-off-by: Yu-Ting Tseng <yutingtseng@google.com>
-Acked-by: Carlos Llamas <cmllamas@google.com>
----
- drivers/android/binderfs.c                                | 8 ++++++++
- .../selftests/filesystems/binderfs/binderfs_test.c        | 1 +
- 2 files changed, 9 insertions(+)
+I would do something like this:
 
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 3001d754ac36..ad1fa7abc323 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -58,6 +58,7 @@ enum binderfs_stats_mode {
- struct binder_features {
- 	bool oneway_spam_detection;
- 	bool extended_error;
-+	bool freeze_notification;
- };
- 
- static const struct constant_table binderfs_param_stats[] = {
-@@ -74,6 +75,7 @@ static const struct fs_parameter_spec binderfs_fs_parameters[] = {
- static struct binder_features binder_features = {
- 	.oneway_spam_detection = true,
- 	.extended_error = true,
-+	.freeze_notification = true,
- };
- 
- static inline struct binderfs_info *BINDERFS_SB(const struct super_block *sb)
-@@ -608,6 +610,12 @@ static int init_binder_features(struct super_block *sb)
- 	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
- 
-+	dentry = binderfs_create_file(dir, "freeze_notification",
-+				      &binder_features_fops,
-+				      &binder_features.freeze_notification);
-+	if (IS_ERR(dentry))
-+		return PTR_ERR(dentry);
-+
- 	return 0;
- }
- 
-diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-index 5f362c0fd890..319567f0fae1 100644
---- a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-+++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-@@ -65,6 +65,7 @@ static int __do_binderfs_test(struct __test_metadata *_metadata)
- 	static const char * const binder_features[] = {
- 		"oneway_spam_detection",
- 		"extended_error",
-+		"freeze_notification",
- 	};
- 
- 	change_mountns(_metadata);
--- 
-2.45.2.803.g4e1b14247a-goog
+	sz = of_property_read_variable_u32_array(np, "silabs,pll-source", array, 2, 4);
+	if (sz >= 2)
+		pdata->pll_src[array[0]] = val_to_src(array[1]);
+	if (sz >= 4)
+		pdata->pll_src[array[2]] = val_to_src(array[3]);
 
+
+>      drivers/clk/clk.c
+
+Wouldn't this work:
+
+8<------------------------------------------------------
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8cca52be993f..33a8cc193556 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -5371,6 +5371,7 @@ const char *of_clk_get_parent_name(const struct device_node *np, int index)
+        int rc;
+        int count;
+        struct clk *clk;
++       bool found = false;
+ 
+        rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
+                                        &clkspec);
+@@ -5383,15 +5384,16 @@ const char *of_clk_get_parent_name(const struct device_node *np, int index)
+        /* if there is an indices property, use it to transfer the index
+         * specified into an array offset for the clock-output-names property.
+         */
+-       of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
++       of_property_for_each_u32_new(clkspec.np, "clock-indices", pv) {
+                if (index == pv) {
+                        index = count;
++                       found = true;
+                        break;
+                }
+                count++;
+        }
+        /* We went off the end of 'clock-indices' without finding it */
+-       if (prop && !vp)
++       if (of_property_present(clkspec.np, "clock-indices") && !found)
+                return NULL;
+ 
+        if (of_property_read_string_index(clkspec.np, "clock-output-names",
 
