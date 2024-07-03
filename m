@@ -1,130 +1,203 @@
-Return-Path: <linux-kernel+bounces-239829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158779265D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 524F29265D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97B6CB2079A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:18:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B74EBB23220
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F20181CEB;
-	Wed,  3 Jul 2024 16:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40822181CF9;
+	Wed,  3 Jul 2024 16:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjC3hL3H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5+fHgwL"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6955180A86
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEBC180A86;
+	Wed,  3 Jul 2024 16:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720023531; cv=none; b=DGoqTYcGCSdHPImkvS2xHbxqXbzRImEOs4NFfA3ZfdSugYtPHI0/UaMHOio/YZfNaNKlW+4/g/zsYN0OarsE1jBJjFFnVLrnhbqmUvSMerO+8KXTSITj8orazl+rRMeLYzjr/96vFLHXuGqotIZVYvq2EJ428UjAt5PT7XtduF8=
+	t=1720023539; cv=none; b=GBx0pXQueI1UJkPF+FC07qax0JbALYBgkmJz92qORzI52lFBIrbgLqX6XselhBFqmrZN6lmu0+/Jfmg1ipYG/w9SXssvv50DCOSEJkFVRimI2ETBmkAA9Vbk66Yql0rK3uLHuZUhwDjliDaPOPT5bUixRUvqiNozUTZ7sACWJAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720023531; c=relaxed/simple;
-	bh=wDY4dzUjuFNgWvrWu9xz/YezEpR2SIY2gTCh/9kkw7U=;
+	s=arc-20240116; t=1720023539; c=relaxed/simple;
+	bh=gsbxeyzBgRva3YUtYUEpVxn4Ojk5LKZtDO81mCspOh8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fISx2Qasup+9/fVAS9Lr2+f31CjTwr1KpLqoKWZ1QuupPqa/YZMR4IszuBE9ICR+7pIO6VIKG1tjgqpOqDJh0ByIYB6j+4zPBtS1tC2dwi74naXjFPa5pTzgYXgZ1K1KSHlLadfQm/u80Rxn7pAvtwlQ1xMc8kkEQw98mdau5d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjC3hL3H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C6C8C4AF17
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:18:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720023531;
-	bh=wDY4dzUjuFNgWvrWu9xz/YezEpR2SIY2gTCh/9kkw7U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bjC3hL3HGssDk9BZUfPBx7h8XsqbPX4A2RNcUJi9/KKuhBl/2+8SeUuoXifO3mje7
-	 HIvZk8z/NNEbZ5fOtGBm0jqmWPn51qsK3UFBp+o8cxIUKZx3gomf6DzRmI3CbOdWUG
-	 AicM0Ku6h7wOzR6zQJrHXOs5iahWBaF3T+aGdippWQ72B1mt/JNmZgLJ/uyl9DE+aB
-	 pO8Z5UBqOgbvFR6kz2AeZgm0Welq66ff0N+EpU5ZJA4i5jtS/hyz/bT/2KQAwlGdEc
-	 r9wLeN/W0D8pyzz8ibpNwPJ1MNRETI72xWn68t4i8vi5WxRGq5AzGnddVIS6p6gfCx
-	 CGFZIVWrdudDg==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ee8911b451so5756471fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:18:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWlCcOodBsN7RjVnteOFshRuH427cfkJW/Coqd5vfw0fkq4vJbhSPoxBB1r1OB0QvDG5sk4XdY8dSNjbg/A9aO8slDev6gI3WcryxIS
-X-Gm-Message-State: AOJu0YyQkBnqUn1cU9OO7v4dnvz8IiB1NbHNmjzf6XNLUx058k3k/M+U
-	sEmFYpwkUUncPQc9SDiq4YOEiFjsykvOSIOgccrvX06Wrc7eSc37baWbX6tIce0lL4/JGEaBEYN
-	vq/YbRw/K9UvXaYSX5A8Tn5JqTE8=
-X-Google-Smtp-Source: AGHT+IGbQWkBsxv/alxBDjjzj7+cn+FOi1M+Hvwzus9EGhPfpAoHhOCTvKhYIeUStBIozycnF22T8PwdtW59EawNXAg=
-X-Received: by 2002:a05:651c:b21:b0:2ee:4ab4:f752 with SMTP id
- 38308e7fff4ca-2ee5e6cd8d4mr86825091fa.49.1720023529217; Wed, 03 Jul 2024
- 09:18:49 -0700 (PDT)
+	 To:Cc:Content-Type; b=m5We2pS6ssQDwSP+/UUHvbk+Hf7gdDZRPkXvOEAiuapT9mDjwMssbva1hNZbYYBZgxaPYgFft/aWBHBRTIwol9gWSfkqmGVwvRqUCO7gB8CqepWxOzZkPcHkW0sop+AbqQESpUaMdhoh2S+uR9SwrjXr9ANxLTlsm4j+R4aVq/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5+fHgwL; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-58b0dddab63so4130103a12.3;
+        Wed, 03 Jul 2024 09:18:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720023536; x=1720628336; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=esD+x2zV0b2HUw6HwJUTrpl5r5TD37X0+FbuUmt4lJo=;
+        b=l5+fHgwLgTbW/rklc0uxKu5E3EKuEB85AUGRXKUPNDAIpp7Y/xsAY2aczUEoRlgGI2
+         amrIU3fEqvRbJvoBjc0ADVuqMoCVKnY3AQTzivTJK8hl/VM9CF6AtLaCUsGMWvI+f3H2
+         lrSpQKwERSDi/XlXqH3nLHIBbpe46oglbP109US4FN6e5pCJD7TTPlkkDkTkULk9xjBi
+         lNDzDzt6Z4XyhVpDA/1FX1YQvaSeq10DChx7EPYjaMOPKUhqjQn650UcAqEKWJuBVUXM
+         Uz30HlAg5H9aKye7HkD8jZy1J+SY9QGuuTP5mBpglqkXQEtYqZxB1zgbCzNYY2v4N9cw
+         zvpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720023536; x=1720628336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=esD+x2zV0b2HUw6HwJUTrpl5r5TD37X0+FbuUmt4lJo=;
+        b=T1UtzYRnzTfGPbknVvxw+GGFP9fPY98fSizHV9hOe1S78EFLdti4RXUK7vbCmaMEdw
+         rD6LkLwBvuQl8c9WOUSMiwgji3ohu1QRCIhYEmYreo0y0mYFl4DoABaAz+Ut8N2/CsWQ
+         k94Kg4kCjAqoQn9mMdw6X4md02ncRFGQ+kyF6ewUHjGWuPl90lEGwwJUR+8rvZ8KZF3x
+         J8cV5hBH5JI2opKa8/t1jBXkYYKPOYLO7dnPSNPvcy47lXsRvF0MOQlLBULFmJQMyasX
+         ZvS788/fqfrENtJ+SsuTHnfrdSH8RMguceXZe1lAsy0k6L8J5UDbywRpwLGDIiwPjxWR
+         7YIw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+2Aoay+aL+Gn3tbbcqIQeN6AKTqyed6JCR5BcF4mnZx8tK3KVa3dQpluZNeqFnn4SQclyoDW0sB2E7c7onFS7T/tStp0dVCOFh7AHz8AKmCAOxIFhcVudESmX8QtYNcb2yS8F+CCnH475LA==
+X-Gm-Message-State: AOJu0Yy5qlLvoQh0o6/J6VVvNAuZp5wLiG6YBa6c9pDnyvBKCK8GHWIA
+	Ek/jH7lZjXEvZjfdilqpQNPUdza6OA/fSreIydLez6HgkRhare/ARrnM9t/coviCtJIvQS2DKk6
+	OIgHnntTcLS6x8G5o1XWrRlETInc=
+X-Google-Smtp-Source: AGHT+IFrxgGuzaRNyApPFpENAxOnyEk7yjeXF5TSrqyg43Iliri20si+kBcM7kVZGYcFuq65U5baHs//egURPR5OvQI=
+X-Received: by 2002:a50:e705:0:b0:57c:fa44:7a04 with SMTP id
+ 4fb4d7f45d1cf-587a0bfeb3bmr7434340a12.39.1720023535793; Wed, 03 Jul 2024
+ 09:18:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520183633.1457687-1-steve.wahl@hpe.com> <20240613152826.GKZmsQGnO3OthLH3Vu@fat_crate.local>
- <ZmsbZCF9rFzuB3rO@swahl-home.5wahls.com> <20240616202533.GDZm9KPZtpDKw5aXWX@fat_crate.local>
- <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com> <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
- <ZnmNKAE5qT48yhrI@swahl-home.5wahls.com> <20240701142704.GGZoK8uDt-2VVtclHl@fat_crate.local>
- <20240702174425.GHZoQ8edlTfB1falcO@fat_crate.local> <CAMj1kXGsjU5CpF655me1XNA8-5nbk3020vT2Bu5ZoFY25igovg@mail.gmail.com>
- <20240703154301.GEZoVxhREtHjk0vtaL@fat_crate.local>
-In-Reply-To: <20240703154301.GEZoVxhREtHjk0vtaL@fat_crate.local>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 3 Jul 2024 18:18:38 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGjHFarKyeT8jyan=pX58CeLisOqSnU_0V+2j04RC00Rg@mail.gmail.com>
-Message-ID: <CAMj1kXGjHFarKyeT8jyan=pX58CeLisOqSnU_0V+2j04RC00Rg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-To: Borislav Petkov <bp@alien8.de>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	linux-kernel@vger.kernel.org, Pavin Joseph <me@pavinjoseph.com>, 
-	Eric Hagberg <ehagberg@gmail.com>, Simon Horman <horms@verge.net.au>, 
-	Eric Biederman <ebiederm@xmission.com>, Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>, 
-	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>, 
-	Hou Wenlong <houwenlong.hwl@antgroup.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>
+References: <20240626204033.255813-1-robdclark@gmail.com> <20240626204033.255813-2-robdclark@gmail.com>
+ <20240703150205.GA6012@willie-the-truck>
+In-Reply-To: <20240703150205.GA6012@willie-the-truck>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 3 Jul 2024 09:18:43 -0700
+Message-ID: <CAF6AEGsgN8O2eJGqcJm1UaPzV2rWSXskAc+A8uk0mVbsj8Wm8A@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] iommu/io-pgtable-arm: Add way to debug pgtable walk
+To: Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	Robin Murphy <robin.murphy@arm.com>, Rob Clark <robdclark@chromium.org>, 
+	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, Steven Price <steven.price@arm.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Kevin Tian <kevin.tian@intel.com>, 
+	Joao Martins <joao.m.martins@oracle.com>, 
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 3 Jul 2024 at 18:15, Borislav Petkov <bp@alien8.de> wrote:
+On Wed, Jul 3, 2024 at 8:02=E2=80=AFAM Will Deacon <will@kernel.org> wrote:
 >
-> On Tue, Jul 02, 2024 at 08:32:22PM +0200, Ard Biesheuvel wrote:
-> > For kexec on a 64-bit system, I would expect the high-level support
-> > code to be capable of simply mapping all of DRAM 1:1, rather than
-> > playing these games with #PF handlers and on-demand mapping.
+> Hi Rob,
 >
-> Yeah, apparently we can't do that on SGI, as Steve said.
+> On Wed, Jun 26, 2024 at 01:40:26PM -0700, Rob Clark wrote:
+> > From: Rob Clark <robdclark@chromium.org>
+> >
+> > Add an io-pgtable method to walk the pgtable returning the raw PTEs tha=
+t
+> > would be traversed for a given iova access.
+> >
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > ---
+> >  drivers/iommu/io-pgtable-arm.c | 34 +++++++++++++++++++++++++---------
+> >  include/linux/io-pgtable.h     | 16 ++++++++++++++++
+> >  2 files changed, 41 insertions(+), 9 deletions(-)
 >
-> I like the aspect that the #PF handler won't fire in the first kernel because
-> of EFI mapping all RAM. That's good.
->
+> Non-technical question, but with patch 2/2 being drm-specific, how do
+> you plan to get this merged this once it's finalised? I can take this
+> part via the IOMMU tree?
 
-It won't fire because the code where this handler is being added is
-never even called by EFI boot - it decompresses the kernel from the
-EFI stub and jumps straight to its entrypoint.
+I guess if need be, I could merge the drm part only after the iommu
+part lands.  We've lived with an earlier iteration of these series as
+downstream patches in the CrOS kernel for this long, it isn't the end
+of the world if it takes a bit longer
 
+> > +static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
+> > +                                      unsigned long iova)
+> > +{
+> > +     struct arm_lpae_io_pgtable *data =3D io_pgtable_ops_to_data(ops);
+> > +     struct io_pgtable_walk_data wd =3D {};
+> > +     int ret, lvl;
+> > +
+> > +     ret =3D arm_lpae_pgtable_walk(ops, iova, &wd);
+> > +     if (ret)
+> > +             return 0;
+> > +
+> > +     lvl =3D wd.level + data->start_level;
+>
+> nit, but the level is architectural so I think we should initialise
+> wd.level to data->start_level instead.
 
-> So we could try to wire in a #PF handler in stage1, see below.
->
+Hmm, I wanted to use wd.level to get the index of the last entry in
+wd.ptes.  Perhaps I should just call it something other than 'level'
+instead?
 
-Looks fine to me from EFI boot pov, for the reasons given above.
+> >
+> > -found_translation:
+> >       iova &=3D (ARM_LPAE_BLOCK_SIZE(lvl, data) - 1);
+> > -     return iopte_to_paddr(pte, data) | iova;
+> > +     return iopte_to_paddr(wd.ptes[wd.level - 1], data) | iova;
+> >  }
+> >
+> >  static void arm_lpae_restrict_pgsizes(struct io_pgtable_cfg *cfg)
+> > @@ -804,6 +819,7 @@ arm_lpae_alloc_pgtable(struct io_pgtable_cfg *cfg)
+> >               .map_pages      =3D arm_lpae_map_pages,
+> >               .unmap_pages    =3D arm_lpae_unmap_pages,
+> >               .iova_to_phys   =3D arm_lpae_iova_to_phys,
+> > +             .pgtable_walk   =3D arm_lpae_pgtable_walk,
+> >       };
+> >
+> >       return data;
+> > diff --git a/include/linux/io-pgtable.h b/include/linux/io-pgtable.h
+> > index 86cf1f7ae389..4d696724c7da 100644
+> > --- a/include/linux/io-pgtable.h
+> > +++ b/include/linux/io-pgtable.h
+> > @@ -171,12 +171,26 @@ struct io_pgtable_cfg {
+> >       };
+> >  };
+> >
+> > +/**
+> > + * struct io_pgtable_walk_data - information from a pgtable walk
+> > + *
+> > + * @ptes:     The recorded PTE values from the walk
+> > + * @level:    The level of the last PTE
+> > + *
+> > + * @level also specifies the last valid index in @ptes
+> > + */
+> > +struct io_pgtable_walk_data {
+> > +     u64 ptes[4];
+> > +     int level;
+> > +};
+>
+> I wonder if we can do better than hardcoding the '4' here? I wouldn't be
+> surprised if this doesn't work, but could we do something along the
+> lines of:
+>
+> struct io_pgtable_walk_data {
+>         int level;
+>         int num_levels;
+>         u64 ptes[] __counted_by(num_levels);
+> };
+>
+> and then have the Arm (LPAE)-specific code wrap that in a private
+> structure:
+>
+> struct arm_lpae_io_pgtable_walk_data {
+>         struct io_pgtable_walk_data data;
+>         u64 ptes[ARM_LPAE_MAX_LEVELS];
+> };
+>
+> which is used by the walker?
 
-> Steve, I don't have a good idea how to test that. Maybe some of those
-> reporters you were talking about, would be willing to...
->
-> ---
-> diff --git a/arch/x86/boot/compressed/idt_64.c b/arch/x86/boot/compressed/idt_64.c
-> index d100284bbef4..a258587c8949 100644
-> --- a/arch/x86/boot/compressed/idt_64.c
-> +++ b/arch/x86/boot/compressed/idt_64.c
-> @@ -32,6 +32,7 @@ void load_stage1_idt(void)
->  {
->         boot_idt_desc.address = (unsigned long)boot_idt;
->
-> +       set_idt_entry(X86_TRAP_PF, boot_page_fault);
->
->         if (IS_ENABLED(CONFIG_AMD_MEM_ENCRYPT))
->                 set_idt_entry(X86_TRAP_VC, boot_stage1_vc);
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> https://people.kernel.org/tglx/notes-about-netiquette
+I guess we could just make the walk_data fxn ptr arg a void* and
+rename io_pgtable_walk_data -> io_lpae_pgtable_walk_data?  I'm not
+sure how hard to try to make this interface generic when I think it is
+probably only going to be used by code that knows what pgtable format
+is used.  It's kinda the same question about what type to use for the
+pte.  Maybe the answer is just "it's pgtable format dependent"?
+
+BR,
+-R
 
