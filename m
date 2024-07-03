@@ -1,95 +1,163 @@
-Return-Path: <linux-kernel+bounces-238612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBFF924CD9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:48:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F15C924CDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D7DD1C222FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:48:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 717C41C2220D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4AD1C2E;
-	Wed,  3 Jul 2024 00:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECB91C2E;
+	Wed,  3 Jul 2024 00:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2g0L0rv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQ72qP6L"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B7639B;
-	Wed,  3 Jul 2024 00:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27691361;
+	Wed,  3 Jul 2024 00:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719967684; cv=none; b=GHb9xjilZURM89ie0oe4/oiZghDQdhnpob986MMAPAkmeAgwVrfFXagxHlFpqgKxVKAVtklPMVEuMNbgjf1zVM0mY5I8EBBPpybkjfAs4sai+lHd+EW80o1nESfjD3cWBRvSJNKUIbX3rEJRRm1gbNCEaao63a5IJbrVwQ2Et+o=
+	t=1719967711; cv=none; b=noVRyG36B21hXmI0vhxYGZfOgJW69HybDtdukTnZ/tZUbydzsBDQvQmSC/sz461W5lLpeoBnH1TfDqBdxaG1P6wOQcVuW4lFYdKM7FqYWEdKVlivz3KbwhctQNvJqyOan0GXDCwGDF+thlqDa558gPibleWDU0mJcC+Q2/Rh0xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719967684; c=relaxed/simple;
-	bh=1VcpuV2FfStRLvavkaB9W9ZVWw/27dwvy043xnumcIc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=uaanynbjK1W9bZlWnjmye5OfK7Qfyl+1igj5is7xcAas5qzZn/p95sL5urSEdeOcg4V0V13eIOcU6eB90rWJL/a6nbdphyzQrAYN2Ot+ZMfj/QA8ER5M9+Xo/+YcSQuK90jaTVkr6H9r7v2yd7t/ZyO1k0O+2H4xaQdUCILyDJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2g0L0rv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F7F6C116B1;
-	Wed,  3 Jul 2024 00:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719967683;
-	bh=1VcpuV2FfStRLvavkaB9W9ZVWw/27dwvy043xnumcIc=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=a2g0L0rvVlxqdwklQXrG7T3zapsQCIE77XX7VS/r0l1V/+mAsmadiMH1Uq3lWcmxH
-	 hWcdoRIvHB/MMrSrmTRfyUMgixKmG4rTR2GV5eUMqnMDrhmpM5bZdq0LJKmqM0nf0n
-	 NGiBpM+b+jVABKkhQzQ4mRM4BfeCV+Yx0jaQ7loTLtebnLI2AdcFvvnRzZsV8YEoEM
-	 9wNSjye4IeQSSaATeL6d9OjTvDQW5XXymsNtVfnpAIVSqDHd34bCmqjMAM1zUoPDUX
-	 ijyfomfEI68bKFWKz7+1qla1knFgX6YYLz7JAN/4EpjABEd5oAyZNeLFCJfPmr+Mnm
-	 f/lm4JJ4qPUOA==
+	s=arc-20240116; t=1719967711; c=relaxed/simple;
+	bh=oWYSMtuZp1pdNBxCN7ttoYHwMtat4dDaIgcJ9Igj9CU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hyC30FdYXQoobYY66zhp9UylVJ5jtEEnPAD2l36ZYWAhSaETEjpSlCARe8SZumYNlleqkVkPoLXjhEqJlrKsH86CF/mJ/OjTJGEtdtTyiwKgCW7Gli/WHOy8mD3Uk3RDziPyDpsBnEgPZMCQWpgaRLjFRpv95jEiTGLCPxLTThU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQ72qP6L; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7021dffc628so1032943a34.2;
+        Tue, 02 Jul 2024 17:48:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719967709; x=1720572509; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Li3K3Uue/qNEmAx8woj0qwPhTqO5rT3fVLroOQjerg=;
+        b=jQ72qP6Lk4gGXhJVBbiy/VBm2zc0oOfXDO2b92UzG+QjTtBkKKYGbAukx+32h2p2kH
+         4fNjy6I2/9v+o46FmQh6x/RK2/V5IvSDC+wNXWj/z7yTAbxZ5n/AaFs6e6N6AoYb5qpQ
+         d/tMq6Dr9X94osTuVEP9XfoRKPU8971oO3VkBd9ZC5N3WS+zBrBLv9nWHwE+cY8oEekD
+         mjqHzmOyFo//+nPpqg6uwUai4usUJK1NsiWLOO2SJeVoqu6nP2yEF3IX8vtLxDCVZMUv
+         VKyQ8Zt52OKnokfprUDzc3b9SMS8iJZUQNlU7yfGXtpknfdOAvJobXg32790+dbpQn3+
+         0vLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719967709; x=1720572509;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5Li3K3Uue/qNEmAx8woj0qwPhTqO5rT3fVLroOQjerg=;
+        b=LF5nCczfaemnsVXAkDBe5UuiIT5kbMxW34L3Speu+tL9MpKWg3KNwftQCprDUKMWSk
+         5R3GZPvJv9qcB2E2DySucalT5rTiniYfGfCz+Lt4GW32O4UjvFJS2gdRcpsXQH08/REh
+         ssDeZgDcSxNJWIByA3Bvb/CWazyHWLcScFPguggir4S9XM/PjQb3XnyrlgkO9KHF9T0g
+         kQemoPugobGPmgL14Jzmx7K5YGXP07haN6AfWBso7/RLiTtQJIHLXSlnPAEHIszBuIrB
+         YOHH8gUycA+w4t+SZzj9k3oelFRGdmA8Qr4ed2ztEcIipcTdZmLJel/v7XPlUAv9wCF7
+         2uVw==
+X-Forwarded-Encrypted: i=1; AJvYcCX77KztmkwAY5eumN43RmmuHh/WY2W9eyXFsCLj/le3U+CdY5pdEgwopMWAviQF+q/3r+gyq01FyQCzYux7mXiAqiKN3uaMjP9OYhRq
+X-Gm-Message-State: AOJu0Ywhq/xF8yA8W0At4hL0rEWmqyAcBJV/YG53ZrOkgdW7gR5I+PxC
+	XeTWa8n9gC8/xZwBqZqMMHZc3EHMY7Peqvq8K9qbAc9/IxUig4OZ
+X-Google-Smtp-Source: AGHT+IGE37cgZq3LE0NZaCz+m7LS6PUY2cEAveg7UCUE4CXD/YmIbu7cgbbVm4lju8pbSA4JGkdBDA==
+X-Received: by 2002:a05:6830:2056:b0:702:1de0:9a4a with SMTP id 46e09a7af769-7021de0a7f6mr5366692a34.29.1719967708719;
+        Tue, 02 Jul 2024 17:48:28 -0700 (PDT)
+Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70208090725sm1273321a34.39.2024.07.02.17.48.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 17:48:28 -0700 (PDT)
+From: Pei Li <peili.dev@gmail.com>
+Date: Tue, 02 Jul 2024 17:48:27 -0700
+Subject: [PATCH] io_uring: Fix WARNING in io_cqring_event_overflow
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Jul 2024 03:48:00 +0300
-Message-Id: <D2FHNOGO624G.HX2SKHYFXU4L@kernel.org>
-Cc: <naveen.n.rao@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
- <linux-integrity@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
- session support
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>, "Stefan Berger"
- <stefanb@linux.ibm.com>, "Linux regressions mailing list"
- <regressions@lists.linux.dev>
-X-Mailer: aerc 0.17.0
-References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
- <9e167f3e-cd81-45ab-bd34-939f516b05a4@linux.ibm.com>
- <55e8331d-4682-40df-9a1b-8a08dc5f6409@leemhuis.info>
- <9f86a167074d9b522311715c567f1c19b88e3ad4.camel@kernel.org>
- <53d96a8b-26ef-46a3-9b68-3d791613e47c@linux.ibm.com>
- <D2EFNJTR80JS.1RW91OVY1UH1N@iki.fi>
- <e7db74a0-cd5c-4394-b87e-c31ea0861ea1@linux.ibm.com>
- <b7559dbb323d16fb334f8f8f35b8fda3fb6e481c.camel@iki.fi>
- <85f882ff079554c41a73d8ad4275072c5229f716.camel@iki.fi>
- <D2FHD82R8YAC.YBL9FAIVMBWL@iki.fi>
-In-Reply-To: <D2FHD82R8YAC.YBL9FAIVMBWL@iki.fi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240702-bug9-v1-1-475cb52d3ee6@gmail.com>
+X-B4-Tracking: v=1; b=H4sIANqfhGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcwMj3aTSdEvdxBSLRGMzMwvDVKMUJaDSgqLUtMwKsDHRsbW1AN+eV1p
+ WAAAA
+To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com, 
+ linux-kernel-mentees@lists.linuxfoundation.org, 
+ syzbot+f7f9c893345c5c615d34@syzkaller.appspotmail.com, 
+ Pei Li <peili.dev@gmail.com>
+X-Mailer: b4 0.15-dev-13183
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719967707; l=2240;
+ i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
+ bh=oWYSMtuZp1pdNBxCN7ttoYHwMtat4dDaIgcJ9Igj9CU=;
+ b=2CTRcQ59Jslvl+23lIw2OKiISOO9WIwUSDXNtWtmPaj+xHfnXlASeBeCMeVeuBYShg9TeHBp2
+ jWp00+/6ZKGBVpFs/19fR+hino0mbkb7//PSP31OjHtZ5912tcbwIQR
+X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
+ pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
 
-On Wed Jul 3, 2024 at 3:34 AM EEST, Jarkko Sakkinen wrote:
-> https://lore.kernel.org/linux-integrity/20240703003033.19057-1-jarkko@ker=
-nel.org/T/#u
->
-> There's also bunch of other drivers than tpm_ibmvtpm so better
-> to limit it to known good drivers.
->
-> I can take at the actual issue in August and will review any
-> possible patches then. This one I'll send after my current PR
-> for TPM has been merged.
+Acquire ctx->completion_lock in io_add_aux_cqe().
 
-After this patch has been merged to mainline, you can send your change
-as a feature patch for tpm_ibmvtpm and replace Kconfig line with
-"depends on ... || TCG_IBMVTPM".
+syzbot reports a warning message in io_cqring_event_overflow(). We were
+supposed to hold ctx->completion_lock before entering this function, but
+instead we did not.
 
-This zeros the risk other drivers than tpm_tis, tpm_crb and tpm_ibmvtpm,
-and thus is the only possible solution that I'm willing to accept in
-*fast phase*". I.e. the most conservative and guaranteed route, like
-anyone with sane mind should really.
+This patch acquires and releases ctx->completion_lock when entering and
+exiting io_add_aux_cqe().
 
-BR, Jarkko
+Fixes: f33096a3c99c ("io_uring: add io_add_aux_cqe() helper")
+Reported-by: syzbot+f7f9c893345c5c615d34@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=f7f9c893345c5c615d34
+Signed-off-by: Pei Li <peili.dev@gmail.com>
+---
+syzbot reports a warning message in io_cqring_event_overflow(). We were
+supposed to hold ctx->completion_lock before entering this function, but
+instead we did not.
+
+The call stack is as follows:
+
+Call Trace:
+ <TASK>
+ __io_post_aux_cqe io_uring/io_uring.c:816 [inline]
+ io_add_aux_cqe+0x27c/0x320 io_uring/io_uring.c:837
+ io_msg_tw_complete+0x9d/0x4d0 io_uring/msg_ring.c:78
+ io_fallback_req_func+0xce/0x1c0 io_uring/io_uring.c:256
+ process_one_work kernel/workqueue.c:3224 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3305
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3383
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:144
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+In io_add_aux_cqe(), we should acquire this lock beforehead.
+
+This patch acquires and releases ctx->completion_lock when entering and
+exiting io_add_aux_cqe().
+---
+ io_uring/io_uring.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 4e2836c9b7bf..0f62332e95ff 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -834,8 +834,10 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
+  */
+ void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
+ {
++	io_cq_lock(ctx);
+ 	__io_post_aux_cqe(ctx, user_data, res, cflags);
+ 	ctx->submit_state.cq_flush = true;
++	io_cq_unlock_post(ctx);
+ }
+ 
+ /*
+
+---
+base-commit: 74564adfd3521d9e322cfc345fdc132df80f3c79
+change-id: 20240702-bug9-ad8a36681e2d
+
+Best regards,
+-- 
+Pei Li <peili.dev@gmail.com>
+
 
