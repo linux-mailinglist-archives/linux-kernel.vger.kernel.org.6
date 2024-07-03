@@ -1,73 +1,100 @@
-Return-Path: <linux-kernel+bounces-239662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8189263AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:44:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2FD926382
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEA5B1C21CD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:43:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 323591F233D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EACD17D8A9;
-	Wed,  3 Jul 2024 14:43:43 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757FE17C9E8;
-	Wed,  3 Jul 2024 14:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A4517C223;
+	Wed,  3 Jul 2024 14:35:42 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605251791EF;
+	Wed,  3 Jul 2024 14:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720017823; cv=none; b=h1VYPEsM5tn5ipc8FUhCaQm+IU34EGM3rkb6HsbqsvLgmbCftT/1dbUPbSDtr9+e5LfZvCAqxS+PJejzTtsd1s1wFw1C+/NVryug13aD9OxdPy+oOewqj4DhLzI9kvIrnhqnfOjf+yhe4bwA7UJEOpqJ0VJBzCjIH5o19DsTImk=
+	t=1720017342; cv=none; b=V9lUQLrQi7kCpzCzhICdxawP6BfZFJSHaOYzM9+60otS0mVL32hxXIb+lmU70q04moAxeceYHWc7QO3xzEE2pag2rCz9PRBqaW7KxY8eviVh8dNCLMTrmb9wEwa5BvAbI40flnUeyG6BRR8RbOs+0+eDzQNcbeyZPx4Aj9ypya8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720017823; c=relaxed/simple;
-	bh=6i1GPb5W4C4z6CIP+KMnQBlUCdjbW33+ABJqX7Spv0M=;
+	s=arc-20240116; t=1720017342; c=relaxed/simple;
+	bh=fG/bQbz4zGDzjdtmGG4BM/JphqsFn64XCAczIMZFNZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mPdVrvRBIvbYsxzursj+C/+7I4wZtiNZD46FIv5jCDnWCUhgeYReYas/7Bde78ZTGOIpFqUBQ6V/zw/X+VuXUKLMxThAUBkHg/GcmKUW7ZMtWN+QgNOSbec5QGnxztQEAZ9DjY+N08iyaXo/holgc/4PGYbJvUVXlJ/Q/MbiyJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sP1Cc-0008NK-00; Wed, 03 Jul 2024 16:43:22 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 3FE70C0120; Wed,  3 Jul 2024 16:35:27 +0200 (CEST)
-Date: Wed, 3 Jul 2024 16:35:27 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-Subject: Re: [PATCH 0/3] MIPS: Add Mobileye EyeQ OLB system-controller
-Message-ID: <ZoVhry8VFRx8x3w/@alpha.franken.de>
-References: <20240628-mbly-mips-v1-0-f53f5e4c422b@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U7LjuSEBzTdyPb8CBvlmxKn3yxR4lLUXcpzd4CuPcBHt97C2SV1+k1RKPgoeBCkhnoGLz1Zos+0CHV8FctdgGBx8VC8lpkmHQNO7C5jjZmPQUgaGcyDBafYUbadJBjiODn2/R29jyxzNo6ERsOqpDiDyZJwhLVtwG0TQHDahIiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D1D0E68AFE; Wed,  3 Jul 2024 16:35:30 +0200 (CEST)
+Date: Wed, 3 Jul 2024 16:35:30 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Keith Busch <kbusch@kernel.org>, "Zeng, Oak" <oak.zeng@intel.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
+Message-ID: <20240703143530.GA30857@lst.de>
+References: <cover.1719909395.git.leon@kernel.org> <20240703054238.GA25366@lst.de> <20240703105253.GA95824@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240628-mbly-mips-v1-0-f53f5e4c422b@bootlin.com>
+In-Reply-To: <20240703105253.GA95824@unreal>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Fri, Jun 28, 2024 at 06:11:49PM +0200, Théo Lebrun wrote:
-> This is a new iteration on the Mobileye system-controller series [0].
-> It has been split into separate series to facilitate merging.
+On Wed, Jul 03, 2024 at 01:52:53PM +0300, Leon Romanovsky wrote:
+> On Wed, Jul 03, 2024 at 07:42:38AM +0200, Christoph Hellwig wrote:
+> > I just tried to boot this on my usual qemu test setup with emulated
+> > nvme devices, and it dead-loops with messages like this fairly late
+> > in the boot cycle:
+> > 
+> > [   43.826627] iommu: unaligned: iova 0xfff7e000 pa 0x000000010be33650 size 0x1000 min_pagesz 0x1000
+> > [   43.826982] dma_mapping_error -12
+> > 
+> > passing intel_iommu=off instead of intel_iommu=on (expectedly) makes
+> > it go away.
 > 
-> This series contains a dt-bindings defining the system-controller
-> (called OLB) used on EyeQ5, EyeQ6L and EyeQ6H. It then modifies the
-> EyeQ5 devicetree to exploit that system-controller.
+> Can you please share your kernel command line and qemu?
+> On my and Chaitanya setups it works fine.
 
-just to be sure, this replaces the v3 series ? And it's the only
-series, which should go through the MIPS tree ?
+qemu-system-x86_64 \
+        -nographic \
+	-enable-kvm \
+	-m 6g \
+	-smp 4 \
+	-cpu host \
+	-M q35,kernel-irqchip=split \
+	-kernel arch/x86/boot/bzImage \
+	-append "root=/dev/vda console=ttyS0,115200n8 intel_iommu=on" \
+        -device intel-iommu,intremap=on \
+	-device ioh3420,multifunction=on,bus=pcie.0,id=port9-0,addr=9.0,chassis=0 \	
+        -blockdev driver=file,cache.direct=on,node-name=root,filename=/home/hch/images/bookworm.img \
+	-blockdev driver=host_device,cache.direct=on,node-name=test,filename=/dev/nvme0n1p4 \
+	-device virtio-blk,drive=root \
+	-device nvme,drive=test,serial=1234
 
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
 
