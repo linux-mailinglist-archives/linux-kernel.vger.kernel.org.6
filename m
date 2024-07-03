@@ -1,48 +1,71 @@
-Return-Path: <linux-kernel+bounces-239335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC90925ACB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:04:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE86925AE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D8151C21765
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:04:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8678D1F2143F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4350817CA1B;
-	Wed,  3 Jul 2024 10:52:26 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51876180A86;
+	Wed,  3 Jul 2024 10:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYd4RQLP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703F117C9E8;
-	Wed,  3 Jul 2024 10:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB9717E8EE;
+	Wed,  3 Jul 2024 10:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720003945; cv=none; b=NukmpLtzoLyt8GCIqOdpYYuplywOMSa8V+mHHgeQh8J0DKV4UaXuiJvgf/h1GGCwWAaCrAhwhCccifRQfeLgeznJH0IcXoj/98OE7qFGIH1vfObfemi/q4O+FCquufCfYdbjOwvuGNrOGiLyepP8SlET4R1qadwBbVC+Us/drBk=
+	t=1720003978; cv=none; b=YOFF6x3j98aXgJyBC4HChTdc6evgc8WhOvRQvU0db/P30oRMVqi096cBcm9ulaW/bnxL5jdp7RFlbgopCe0eK0IWQa14ImB+pRu+TVv2GnfL+n6X5XQFGHfA3LtP/Ng2xJZ/XF6ShlHi8Ths8pwxfQEN9JKXEXOdFdYt5huy/Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720003945; c=relaxed/simple;
-	bh=WF4dYoXfQmXQ/KbPoJjm7XmgLWMMQrwDNEFvcWgVF58=;
+	s=arc-20240116; t=1720003978; c=relaxed/simple;
+	bh=pPz+aKLXZOghQ7VtjQHusi+fj+NpFq4VHkcVX8X3bH8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/PlrlBMjvQgNrSJe8uXkin2fE6TaKv0vkNc3omD7Qd6cBCTljPybzdBBM7NHuX4MlIece++Gp1oFwkmY5eh7fNupI5EiM91Bot/NuUepPrwF1IdxAh6wgHcMvTFTbXe6EBXWun4w066baSJE3HcxovCuYOiRAgVrj/vniFv5rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1sOxax-0007PL-VY; Wed, 03 Jul 2024 12:52:15 +0200
-Date: Wed, 3 Jul 2024 12:52:15 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Hillf Danton <hdanton@sina.com>
-Cc: Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com
-Subject: Re: [PATCH nf] netfilter: nf_tables: unconditionally flush pending
- work before notifier
-Message-ID: <20240703105215.GA26857@breakpoint.cc>
-References: <20240702140841.3337-1-fw@strlen.de>
- <20240703103544.2872-1-hdanton@sina.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Olzs6C01dW/uyLIQV4DMxyTT65UVUaSAuBCPjmND+aZomXLHdK94+hCxwYIXM99Yw0R4Qz+NnZKoTGZ5NQxAhAgeedsVEDSEKiZ8eAp2XgRnLKPZqDnCS55f/vFlpcPNX6XR4KUQ3tMKdhbw9PBrFRMCDsLP0dT9y0j3qfLuxY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYd4RQLP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 836CAC4AF0B;
+	Wed,  3 Jul 2024 10:52:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720003978;
+	bh=pPz+aKLXZOghQ7VtjQHusi+fj+NpFq4VHkcVX8X3bH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nYd4RQLPNWY78pIbNAILafDzME2V0q1JxD04RIMzYEVRTvt89jlLKvJriZcMCuH2T
+	 w96uRRv/Q4LrMA7qbS+tVVzGZ8TbYD4a7uxMEPOOXtyhfAZjqiLtWvl7qwC+YZD5Ba
+	 v6Hluy8LaijXySSMoswEpGvrCLN3gkwpFP2bG31B2uIuuhMWFdHvJ6hmi9njK5bywp
+	 geNwo4OuHZBuA495qG+lQBMrzBgxPLYgn8KinCmvDBq9hmAZenc9g0C6DeVOsibSX2
+	 IVVgir3Al85xqpIrwp6ua76xZvzC0FWDuHMKCBDh5k2QhOV31v4/Nqa/LhITpDNtHG
+	 1wsaj+G6o4oiw==
+Date: Wed, 3 Jul 2024 13:52:53 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Keith Busch <kbusch@kernel.org>,
+	"Zeng, Oak" <oak.zeng@intel.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
+Message-ID: <20240703105253.GA95824@unreal>
+References: <cover.1719909395.git.leon@kernel.org>
+ <20240703054238.GA25366@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,12 +74,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240703103544.2872-1-hdanton@sina.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240703054238.GA25366@lst.de>
 
-Hillf Danton <hdanton@sina.com> wrote:
-> Given trans->table goes thru the lifespan of trans, your proposal is a bandaid
-> if trans outlives table.
+On Wed, Jul 03, 2024 at 07:42:38AM +0200, Christoph Hellwig wrote:
+> I just tried to boot this on my usual qemu test setup with emulated
+> nvme devices, and it dead-loops with messages like this fairly late
+> in the boot cycle:
+> 
+> [   43.826627] iommu: unaligned: iova 0xfff7e000 pa 0x000000010be33650 size 0x1000 min_pagesz 0x1000
+> [   43.826982] dma_mapping_error -12
+> 
+> passing intel_iommu=off instead of intel_iommu=on (expectedly) makes
+> it go away.
 
-trans must never outlive table.
+Can you please share your kernel command line and qemu?
+On my and Chaitanya setups it works fine.
+
+Thanks
 
