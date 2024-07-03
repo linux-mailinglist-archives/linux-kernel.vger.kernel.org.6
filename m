@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-238695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E520924DF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7192D924DFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09FDC287DE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:46:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D6C5285AC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23E28F49;
-	Wed,  3 Jul 2024 02:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D77E7464;
+	Wed,  3 Jul 2024 02:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SeeO0IUu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VLlKJKBj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF2E522F;
-	Wed,  3 Jul 2024 02:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FA46AA7
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 02:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719974784; cv=none; b=MlbYQNSRAOK1Xow8hEJVhztzioCagcCyHymQX+AZxGWkSJ/iBJlX2As4f36smgdrUl6GW4NnF80F+cKtKiHHjpolZudxuqulf/MfPkpe+yR+4t7xDeefHv9p1RWhq68NNGAkWvTg2V7Ts2cemVdk8i4V8GtbP7X/QFJavBK8eec=
+	t=1719975128; cv=none; b=H4ufrH7yRcpwx3vzlB3cyPPruNiTQyUj2Fr6faSuUZzxSpJYeHHREh3IiG/h53bj2+uXc+j90RpVXyuD4KAOYUXHRoxIlhcoLR0fgdrBybsjOhcsW+WCF2Zz0c1KCDZT74kgo0eC3/SFr2JcLD+t0I/qcjxyAfsCjZkPd+IT8vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719974784; c=relaxed/simple;
-	bh=HlBx1gRF97fkG+5OJH0WLfFyY+EZd8AUjrhOyXD9IHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d0rdro+C+jRiX8m0ItI8rls7rIZceYfT/jJa9bTSDhd8lIgLPVel3gfgLaXcm7cIKnb/RqNP7nr6hTsWNnt+zpOL5O4KWthBsBbVSvNTOUTvwKM2WgEANR5Q+dsZhOBkoDgq3y1y/4gpecZU1Ypn2XvSmghBQdjfMDUJpgFSGvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SeeO0IUu; arc=none smtp.client-ip=192.198.163.13
+	s=arc-20240116; t=1719975128; c=relaxed/simple;
+	bh=NFD4UwPkMJlbGSUZ3lEdU4F/FGE0YyiIOPRe6GgX/xY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=U4yNiIzqN1tqQ4Rje/C93efH/agRVlCdzPpQOaFCX0A5SCWzG0ffJBLiH9uIBGl+q1L4cXG+HTBepY29kG6uk5gXcDxiVSc9oSbb6zSFztt+pTxCoPHVWO1mC/7gCIFCTbhU+F74hL7p6gx+zlgvDqGGEColNYVsjMM++7y3GXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VLlKJKBj; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719974782; x=1751510782;
-  h=message-id:date:mime-version:subject:to:cc:references:
+  t=1719975126; x=1751511126;
+  h=message-id:date:mime-version:cc:subject:to:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=HlBx1gRF97fkG+5OJH0WLfFyY+EZd8AUjrhOyXD9IHU=;
-  b=SeeO0IUuF3q/Jr1n1pWX+5lZmUu8rw8ammJBhJNNxCHR5reF+UqOL7/3
-   7Pb0nfHPUkpNbrFj+A5K2tsLpypIyYcOdXdqQUPNHy8AsWwBBjcwMxmEd
-   IPU279k3YsSVwIQFHU4WC+W5SP8GnAAhkq+BgF1VzdfnOMA5y+GVGI6HI
-   8Uv7jOI1bt8TpPkrv1H10i3g9XlmzveIG4LFLNhm3DDc+rEA4bcT5yryN
-   Etm/E0kw83/epLU4p49uNDtDYA/laBszMSDluk4RvQjxEWUmx0RfkE6rY
-   0gTDtx5FlPAlMJn6QlSRcPT7795NQPmgSDqxGAHhABQ9ytfp8wC1KftCN
-   Q==;
-X-CSE-ConnectionGUID: /krxXrNdRE+m2djhTf8oBA==
-X-CSE-MsgGUID: h0mH8gJZQGyveLWSGThoNg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="20085091"
+  bh=NFD4UwPkMJlbGSUZ3lEdU4F/FGE0YyiIOPRe6GgX/xY=;
+  b=VLlKJKBjlfCN9VP89rSkNAB9SIl3aqhLfSEHBY9SSV7rP1M5cj1oQprD
+   9CBtECsiPTT4wT783Dkej9rPzopYBoPqwoZ0IVpaGtJgbwbGdiMNVNZ20
+   9FTpgNWtIejJhruQFmSCnF+1B0ZhdA8Uv3W/C0Zvx15MXvMCaRa4WkwML
+   Prnoj3U22Oq0c60+g/FphEJA0mgURbCh09sqKHVpmT5D6fxknlpV580u1
+   xu+WseATugQIQnP8IShJ4G9iJy+CrGi1BxIAiiIpOesmV5czhvlS2nUHx
+   dbAz395c6EbvGhfRo66+YAgsSvmGMvOyKuIE3VaNSEaGutIFJ2m/zl9hW
+   w==;
+X-CSE-ConnectionGUID: JkORxL/DRtORQ0jz61b2BA==
+X-CSE-MsgGUID: U6Fvq23oTyqSLjndE/Z9ug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="21054671"
 X-IronPort-AV: E=Sophos;i="6.09,180,1716274800"; 
-   d="scan'208";a="20085091"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 19:46:21 -0700
-X-CSE-ConnectionGUID: ikPRfOyQQ3yLwz1UcfQKjQ==
-X-CSE-MsgGUID: fgek1npPSHuNlfeeOekFdw==
+   d="scan'208";a="21054671"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 19:52:05 -0700
+X-CSE-ConnectionGUID: kjENvLodTu28YyGtLdNaSA==
+X-CSE-MsgGUID: ArDfYqUZReOr4+DLjt/LdQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,180,1716274800"; 
-   d="scan'208";a="45881129"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.225.1]) ([10.124.225.1])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 19:46:18 -0700
-Message-ID: <5223c6bb-a05b-4a8c-a625-2011db190631@linux.intel.com>
-Date: Wed, 3 Jul 2024 10:46:15 +0800
+   d="scan'208";a="50556300"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa005.fm.intel.com with ESMTP; 02 Jul 2024 19:52:03 -0700
+Message-ID: <1a2f66a2-a867-4203-8a76-dbced80bfeff@linux.intel.com>
+Date: Wed, 3 Jul 2024 10:49:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,127 +66,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] perf topdown: Correct leader selection with
- sample_read enabled
-To: "Liang, Kan" <kan.liang@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yanfei Xu <yanfei.xu@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240702224037.343958-1-dapeng1.mi@linux.intel.com>
- <20240702224037.343958-2-dapeng1.mi@linux.intel.com>
- <d9c26690-5147-4a4a-815b-fb5d46d043c6@linux.intel.com>
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] iommu/vt-d: Add helper to flush caches for context
+ change
+To: Jacob Pan <jacob.jun.pan@linux.intel.com>
+References: <20240701112317.94022-1-baolu.lu@linux.intel.com>
+ <20240701112317.94022-2-baolu.lu@linux.intel.com>
+ <20240701214128.5523a1ea@jacob-builder>
+ <28ade99a-13ad-4b01-aff2-711c006856fd@linux.intel.com>
+ <20240702085749.2e2bbea5@jacob-builder>
 Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <d9c26690-5147-4a4a-815b-fb5d46d043c6@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240702085749.2e2bbea5@jacob-builder>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 7/2/24 11:57 PM, Jacob Pan wrote:
+> On Tue, 2 Jul 2024 12:43:41 +0800, Baolu Lu<baolu.lu@linux.intel.com>
+> wrote:
+> 
+>> On 2024/7/2 12:41, Jacob Pan wrote:
+>>> On Mon,  1 Jul 2024 19:23:16 +0800, Lu Baolu<baolu.lu@linux.intel.com>
+>>> wrote:
+>>>    
+>>>> +	if (flush_domains) {
+>>>> +		/*
+>>>> +		 * If the IOMMU is running in scalable mode and there
+>>>> might
+>>>> +		 * be potential PASID translations, the caller should
+>>>> hold
+>>>> +		 * the lock to ensure that context changes and cache
+>>>> flushes
+>>>> +		 * are atomic.
+>>>> +		 */
+>>>> +		assert_spin_locked(&iommu->lock);
+>>>> +		for (i = 0; i < info->pasid_table->max_pasid; i++) {
+>>>> +			pte = intel_pasid_get_entry(info->dev, i);
+>>>> +			if (!pte || !pasid_pte_is_present(pte))
+>>>> +				continue;
+>>> Is it worth going through 1M PASIDs just to skip the PASID cache
+>>> invalidation? Or just do the flush on all used DIDs unconditionally.
+>> Currently we don't track all domains attached to a device. If such
+>> optimization is necessary, perhaps we can add it later.
+> I think it is necessary, because without tracking domain IDs, the code
+> above would have duplicated invalidations.
+> For example: a device PASID table has the following entries
+> 	PASID	DomainID
+> -------------------------
+> 	100	1
+> 	200	1
+> 	300	2
+> -------------------------
+> When a present context entry changes, we need to do:
+> qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);
+> qi_flush_pasid_cache(iommu, 2, QI_PC_ALL_PASIDS, 0);
+> 
+> With this code, we do
+> qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);
+> qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);//duplicated!
+> qi_flush_pasid_cache(iommu, 2, QI_PC_ALL_PASIDS, 0);
 
-On 7/3/2024 12:05 AM, Liang, Kan wrote:
->
-> On 2024-07-02 6:40 p.m., Dapeng Mi wrote:
->> Addresses an issue where, in the absence of a topdown metrics event
->> within a sampling group, the slots event was incorrectly bypassed as
->> the sampling leader when sample_read was enabled.
->>
->> perf record -e '{slots,branches}:S' -c 10000 -vv sleep 1
->>
->> In this case, the slots event should be sampled as leader but the
->> branches event is sampled in fact like the verbose output shows.
->>
->> perf_event_attr:
->>   type                             4 (cpu)
->>   size                             168
->>   config                           0x400 (slots)
->>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
->>   read_format                      ID|GROUP|LOST
->>   disabled                         1
->>   sample_id_all                    1
->>   exclude_guest                    1
->> ------------------------------------------------------------
->> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
->> ------------------------------------------------------------
->> perf_event_attr:
->>   type                             0 (PERF_TYPE_HARDWARE)
->>   size                             168
->>   config                           0x4 (PERF_COUNT_HW_BRANCH_INSTRUCTIONS)
->>   { sample_period, sample_freq }   10000
->>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
->>   read_format                      ID|GROUP|LOST
->>   sample_id_all                    1
->>   exclude_guest                    1
->>
->> The sample period of slots event instead of branches event is reset to
->> 0.
->>
->> This fix ensures the slots event remains the leader under these
->> conditions.
->>
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> ---
->>  tools/perf/arch/x86/util/topdown.c | 16 ++++++++++++++--
->>  1 file changed, 14 insertions(+), 2 deletions(-)
->>
->> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
->> index 3f9a267d4501..5d7b78eb7516 100644
->> --- a/tools/perf/arch/x86/util/topdown.c
->> +++ b/tools/perf/arch/x86/util/topdown.c
->> @@ -1,6 +1,7 @@
->>  // SPDX-License-Identifier: GPL-2.0
->>  #include "api/fs/fs.h"
->>  #include "util/evsel.h"
->> +#include "util/evlist.h"
->>  #include "util/pmu.h"
->>  #include "util/pmus.h"
->>  #include "util/topdown.h"
->> @@ -41,11 +42,22 @@ bool topdown_sys_has_perf_metrics(void)
->>   */
->>  bool arch_topdown_sample_read(struct evsel *leader)
->>  {
->> +	struct evsel *event;
->> +
->>  	if (!evsel__sys_has_perf_metrics(leader))
->>  		return false;
->>  
->> -	if (leader->core.attr.config == TOPDOWN_SLOTS)
->> -		return true;
->> +	if (leader->core.attr.config != TOPDOWN_SLOTS)
->> +		return false;
->> +
->> +	/*
->> +	 * If slots event as leader event but no topdown metric events in group,
->> +	 * slots event should still sample as leader.
->> +	 */
->> +	evlist__for_each_entry(leader->evlist, event) {
->> +		if (event != leader && strcasestr(event->name, "topdown"))
-> User may uses the RAW format. It may not be good enough to just check
-> the event name.
->
-> I recall you have a complete support for this in the previous patch. Why
-> drop it?
+Yes, this is likely. But currently enabling and disabling PRI happens in
+driver's probe and release paths. Therefore such duplicate is not so
+critical.
 
+For long term, I have a plan to abstract the domain id into an object so
+that domains attached to different PASIDs of a device could share a
+domain id. With that done, we could improve this code by iterating the
+domain id objects for a device and performing cache invalidation
+directly.
 
-Oh, I ignored the RAW format case. Yes, there is a complete comparison in
-previous patch, but I originally thought it's over-complicated, so I just
-simplified it (refer other helpers to compare the name).  If we need to
-consider the RAW format, it may be not correct for the comparisons in the
-helpers arch_evsel__must_be_in_group() and arch_evlist__cmp() as well.
-
-If we want to fix the issue thoroughly, we may have to expose two helpers
-which check if an event is topdown slots or metrics event and use these two
-helpers to replace current name comparison.
-
->
-> Thanks,
-> Kan
->
->> +			return true;
->> +	}
->>  
->>  	return false;
->>  }
+Thanks,
+baolu
 
