@@ -1,79 +1,99 @@
-Return-Path: <linux-kernel+bounces-239730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01B4926499
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:14:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDE892649C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 142D5B22716
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:14:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0922B1C223A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68688180A86;
-	Wed,  3 Jul 2024 15:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAA2181B9C;
+	Wed,  3 Jul 2024 15:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AuLmbNGA"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAydLkCH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD74F183082
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E45180A92;
+	Wed,  3 Jul 2024 15:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720019595; cv=none; b=p2lHLhWjCWzh56I9+6GJ0wHhHitN4w7f6MSo5U4pdHQ/YxBwUCFUebNmR3QjUBfBY1G4Ak5SRC6p93n9G1aHRVgu1VE9LhzbQtbuNMWE35ByS9YTTV7IG3CggMQ/dWQd//QUbkhimg2YQjBo00R7KTosA+1GhzSgr5lrp8MFXIs=
+	t=1720019613; cv=none; b=Sd/wx4z2l5BW/38MgmIFJngrc1KNag0NRBIPD3kuhGnCiAG/PVNBcW6Ad08jjNCJc3tYM3x4HSr3ZJCGXtr+XTZjxDwCsDUT8OaIXXIcZXtzqwegvZqJI8EEhlk/yCsUg5c+T3ztj33HhgZCknsA9zwm/9ESNEyx0AvXe7hwZdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720019595; c=relaxed/simple;
-	bh=kLGvhvJ1BFft2q2WOkw9CwoHgbOSnnQs8kam5fxr0Mk=;
+	s=arc-20240116; t=1720019613; c=relaxed/simple;
+	bh=Q5QXeckq+uzJ3iLBFgmqaQoU67PR7ujYRkejbXOVseI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WyBauP0GGYU1Et/0ztEqbM4RTlbwDm0yUjtuy3L8Ggcz7VP8McGZIONnPLhzfGkZlxuU1uvl0QvjIqdiNZ1ivzOEdYhGYAz5wqBvKvV6GAvqY8XlpoeBQi5kGwqq1tOCSU91F7m6GmPc+7Ju9pozwHNRFzcGo/6jyd/yXLM1LCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AuLmbNGA; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: roman.gushchin@linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720019591;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2TVE147ScDSXAmnCz3k5fBC3GoQlHqoQWlOxSgb5OB8=;
-	b=AuLmbNGAMf4yG3Jk68vJ+bYxrqV0hI0CutcX+SBzxEC4grXWogPM9/wL8oRFDF99n/BV7O
-	2kuPDiHIq3jVmpOaKn1j87bYkZx2fA+D+07pxVy2+O0vV7CyF9Ji/cM56Zn786xjYqIEKr
-	2pHWLR8womthhItsflOaPVo5MxsfXig=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: muchun.song@linux.dev
-Date: Wed, 3 Jul 2024 08:13:07 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Muchun Song <muchun.song@linux.dev>
-Subject: Re: [PATCH v1 7/9] mm: memcg: guard memcg1-specific members of
- struct mem_cgroup_per_node
-Message-ID: <36ale2uu2krtis2uzya3pmpye4kaidkftm232cybqlsvovkj5z@xz4uowv5ajbm>
-References: <20240628210317.272856-1-roman.gushchin@linux.dev>
- <20240628210317.272856-8-roman.gushchin@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rbvv0hEEMbCxhLYtSIqkfKphOpwCKomctFOCjOjLIU6pF3J0qeaBsPQS+J/RTqITZDF2gBTcZYBQVEjJvQamKUsCcyrrd6Ptihz7a9QGK//R3VoBFLdCgcW0PM4RldYFqlca4UmT1+px62IGf1wm5C2F5RRwB5p5rFM7IGDGuoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAydLkCH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BE1FC2BD10;
+	Wed,  3 Jul 2024 15:13:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720019612;
+	bh=Q5QXeckq+uzJ3iLBFgmqaQoU67PR7ujYRkejbXOVseI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SAydLkCH7NrYcx7tFvUrYpuTzMcsfxFcNISyOv+2XofNGe2yNefXoRYIqJ8wGFOsF
+	 TicYHRmZUvr0renf29m/uEhpOR93NZxaaroVR0vfH5Dz/TaWJ04l9DBvCZaTEwKYtZ
+	 /W2BQ3pCdOrN+rglgAg1nN1bVBdO9X7pBkxkLsC8X7KtfXMjld+mD2+UM6odySF8gY
+	 ZYLE/TMxtu+8Uk4fi/NhEKrnfAxY8RECBx4s6GlUiM/GefgZQqKPhkE1mDIxyrrD6F
+	 p+y01eh8ppyE8VacHvta5AxWAEwO6XQSGIqzvtof9w3Od9CxZlGV/THnnXhYw8gjmz
+	 u7qq3+cd/dDkg==
+Date: Wed, 3 Jul 2024 16:13:28 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: timer: sprd-timer: convert to YAML
+Message-ID: <20240703-slogan-reawake-413f7db2d065@spud>
+References: <ZoU95lBgoyF/8Md3@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Gv8gm/4CVXynuw1q"
+Content-Disposition: inline
+In-Reply-To: <ZoU95lBgoyF/8Md3@standask-GA-A55M-S2HP>
+
+
+--Gv8gm/4CVXynuw1q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240628210317.272856-8-roman.gushchin@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 28, 2024 at 09:03:15PM GMT, Roman Gushchin wrote:
-> Put memcg1-specific members of struct mem_cgroup_per_node under the
-> CONFIG_MEMCG_V1 config option.
-> 
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+On Wed, Jul 03, 2024 at 02:02:46PM +0200, Stanislav Jakubek wrote:
+> Convert the Spreadtrum SC9860 timer bindings to DT schema.
+>=20
+> Changes during conversion:
+>   - rename file to match compatible
+>   - add sprd,sc9860-suspend-timer which was previously undocumented
+>   - minor grammar fix in description
+>=20
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+--Gv8gm/4CVXynuw1q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoVqmAAKCRB4tDGHoIJi
+0kSWAP0ZO7U4OqQw/vPrqmpiEs+BI1Cu4br9uvcpBJMvdGtZywEAvBvbrvTkSB7s
+6qble3XTWwW/zR2cchpH+LC6Dz515Q4=
+=v6j4
+-----END PGP SIGNATURE-----
+
+--Gv8gm/4CVXynuw1q--
 
