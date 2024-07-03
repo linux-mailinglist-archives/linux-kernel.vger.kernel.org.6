@@ -1,174 +1,110 @@
-Return-Path: <linux-kernel+bounces-239522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB358926196
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:15:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876059261AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6421F21BC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:15:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9C68B22C54
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AEC17A5A3;
-	Wed,  3 Jul 2024 13:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D5E16F827;
+	Wed,  3 Jul 2024 13:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZleCWzZ"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7U2+HaH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4383177981;
-	Wed,  3 Jul 2024 13:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164FA170858
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720012382; cv=none; b=Ju+ANW0Rx0PrU5+4J9FoyRl24I0eiDYUreO9j5eCouJVj3nDt0NVxi10YtukHff+CO4Vzpc9Lh363GnIMr3HY3EUTCGF5E/ZJRIAAmCVs9N3jKKOpM98fvPXmYP1633kkJm/N0SeLyqKYAiBdu6atWSBMuodue5DhCp6emGrr44=
+	t=1720012675; cv=none; b=nDa9qldKSrLBE+XMyxclxMscV+rylchh6cu4E+pXWCpkfaNCc9oy+vmLa136fhTodyEG8QI8xncEzPDJdFp2MRn2R9j2whpuoOBAi881DLK4deqo273gJePJoO5N5FWIUNkr8jCQTeHe/v/6SqTzegFh04DSZWFFtQI/4Jf98DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720012382; c=relaxed/simple;
-	bh=XQh38zj8YkxwoSpU2bVUlQPlOmTJ8dlkgb/XN2Vm+8U=;
+	s=arc-20240116; t=1720012675; c=relaxed/simple;
+	bh=mcGItjPIizmSbcFM9bKM4HyIZ/49XolntPHiDMcp9ag=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d7/ynRjEH3iYh7cJ1ao4x7+o8LF+pfdD2GS81QvU+yildr6dLlyHesFVmgkZOi9jmq0RFMxBN1r0xSzU0tPovugiJ2bVV3561iUfjqORLentLk8MHdr7JTm/EUOPs7vY9tz7IVNcSd0CawpWwkZvbJQit8XkGbMnSaGRwvyc/cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZleCWzZ; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52cdea1387eso5905450e87.0;
-        Wed, 03 Jul 2024 06:13:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720012379; x=1720617179; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0NKJh1yZ1elVP56CeXKI4BwpSL1VRHDS3kGX7TjqJRc=;
-        b=VZleCWzZoG/PAxSg9zswvytDN2eirOyt9v8nI4xBNP5TPberfif92C8nocRDulTti7
-         uYWgvDDHdjN9TmiQAxJXMxxFP0cQuTWJro8MKhYCSqikdUQMyQazIydibGNsolZgsiR2
-         dgF0lDfP5ZQ0r8wutj/0Tjg30am5P1K7vGO5ASFkyV3nUsU77LwQqIuaY5H1qJgvE8xD
-         KQuDjRB6CilRHuhNqxVIpWp3XIEdsUWomKgXWUQiAsTU/1S5zZsybYYwS+RW9eCyf7vG
-         Kj7gWe++j/gZ+5CKZujsUsMmXC0uCbKxkGCb803x1j4cjemGT129RmMYwebDGqYeWKOy
-         ni0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720012379; x=1720617179;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0NKJh1yZ1elVP56CeXKI4BwpSL1VRHDS3kGX7TjqJRc=;
-        b=D4+Xu/s8uiHraa/ZVVF4lnSab14CGuE1KYV5UyKdbTu30BzBo3+/kRH8+npIBAzfVA
-         mOUhKCMG56rWw3yetz01OawmgwkSMX+rZPQy5YlsVmSNVD+He4sfJoZUKohOMlww4zt/
-         JywB4asciyr2ir9tx9Rqh+SpTsNlYlX0J3cuUY8Mg8MU364pS7U6FxIcMawZNGDM+H0j
-         IU/Awl6XH7JYV9TiRYWw1ghDaNFY4tVZnH+K73bghE0L+X9kaeVnhL2CIsqZyMBTuhUv
-         m4qANu8jfo9wUs61545KZPTYtMN3BvV6HLoOODjxci92xhodm7upswye1bzpED3AOsOs
-         nqPg==
-X-Forwarded-Encrypted: i=1; AJvYcCULRCb5RwA66aToxYI415m/jEIgk3iTqBF6dAcBxxDyNjuw1gTeWCWsU9RsLRQ/aDT0wsZrweboghwW0HhU3wP2VM6juTv4BawXGORZ+ZtYQsX+y0JOHo4kFNKuvGNS3oem5hHPdvNfacyykA6t2NaAVz3XwWP8Eu2wKc5Rpexuie8nfA==
-X-Gm-Message-State: AOJu0Ywv/Z0TotpGx/EC8/0Af5jwp5sqK44VYfd88/DOIYp+e7TELvoq
-	mq9ABv8QN/dJCpvMO4ANBGghpQ5ALrAwG/+iM8AWKinkit1gjG6Xi7C0pIkacQbV5g8hz2YieEn
-	3E7pBMyms9UzJNs37Ot86E28X3wuz9TOZ
-X-Google-Smtp-Source: AGHT+IEKCloal0IFPzdNkFkI2Hak2EZ742ax7plHna9yjqGCtPy3jRYVNeZ8SGON8Mm/M4XafoTTnS7CcgCDH0A9M9M=
-X-Received: by 2002:a05:6512:60c:b0:52e:9b92:4999 with SMTP id
- 2adb3069b0e04-52e9b924c0cmr234740e87.2.1720012378657; Wed, 03 Jul 2024
- 06:12:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=F+glL+Q/T73HySDkezRK+ecsaZu6+T5WzCOh/EsQiSRnnKSZpPBbb6w65JOp4JSIJxiTeTFUIdBxaGPZUW+qPEy4F9N/Mgr7Vm5eo4lXxfj2mmTZaolyvDdUNdUxBbLtAo973LDGyHUIAODeivwckCUnRgmOmsPOk+XEp/BcL6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7U2+HaH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA1CAC4AF0E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:17:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720012674;
+	bh=mcGItjPIizmSbcFM9bKM4HyIZ/49XolntPHiDMcp9ag=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=d7U2+HaHLLuKXsswaZjzdSc1oogrs0c0Jy30AkHmEV+xoOnGtLoFSs/mbyTqfQV7k
+	 g+QrE0AIO46YFDGztlttR0idTIcN77TJ+clHU3AsODzo0WyFhsVhEK+wyzRBu4ag+5
+	 psrjRGh3Txk1abGu17rQ8BRpGUu0BdhU5v+0iy1/k/skjbVtsTG6X6Qp278IL6Vnk3
+	 8DMqbpb0OvMi1y+tFoQXHzgU5QZ61VoFGmSFrPbqrZ1kX7H7ZadmiAc2eMHQ63FhQc
+	 U8p6TMP23mdkTfIDuuDWO3Isr4zBwz2SYlo0cyZH7Bebl81f8yoQa/vhhL1ZzC5+6o
+	 fu1DwBrfq54tQ==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ee8911b451so2996901fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 06:17:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVD15Ziv5Xkh2kcdEHULpZ85Q6Ojinq7knmhOnK2QjqbFAuGgObmMifb7bwARro0XZ0sjs2+PALw9TvW8IbxDTgydRZCJVr2K1+0eED
+X-Gm-Message-State: AOJu0YxEp5YCYrh5MefliNogvpVuWBkOR+zKlPyosdsyQ/B1U+LHLs1l
+	epKbljt/euK4VivyUO37d3dVleCo1D7G2yqDCu+WXmfnOKQsDxrPwtKg2iUXM2suSVkiRtKzrnU
+	L2AfZ0Ubc9eu4rBbZR2BpH3mLXFo=
+X-Google-Smtp-Source: AGHT+IGxiMiHuZepoOYlg+kJEX/q3PKXT9+A8fl7xUC9BzW4sDICAOJ+wx0eiQ+SRsbDaZpa/81iQUr99dGxeEc+zT4=
+X-Received: by 2002:a2e:a802:0:b0:2ec:56ce:d50e with SMTP id
+ 38308e7fff4ca-2ee5e337926mr107347521fa.3.1720012673010; Wed, 03 Jul 2024
+ 06:17:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701121355.262259-2-kanakshilledar@gmail.com>
- <20240701121355.262259-4-kanakshilledar@gmail.com> <f8604c68-8866-447b-a874-562bdad1df79@sifive.com>
- <23gvjkszxvf6zehiqetjfmtf67nlpnnfmhgx234jnxwrtmbdpr@4yv64sz2kpcs> <20240703-garbage-explicit-bd95f8deb716@wendy>
-In-Reply-To: <20240703-garbage-explicit-bd95f8deb716@wendy>
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-Date: Wed, 3 Jul 2024 18:42:46 +0530
-Message-ID: <CAGLn_=tieSCGWix-0mGC7n8MnD46WPxuWh9xhtB6r+YZry463g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] spi: dw-mmio: update dw_spi_mmio_of_match struct
- with thead
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Serge Semin <fancer.lancer@gmail.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
+References: <20240702064835.120541-1-ebiggers@kernel.org> <20240702064835.120541-8-ebiggers@kernel.org>
+ <CAMj1kXFE45J9fDJ9XtMyJiUP1F-odZUmH0zLKkuZeWL_bLdDZQ@mail.gmail.com> <20240702171640.GA1049704@google.com>
+In-Reply-To: <20240702171640.GA1049704@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 3 Jul 2024 15:17:41 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXF2iCVboRR=6_2OnKYVf4+d3XHvgfwz21mWccxCVnOxeQ@mail.gmail.com>
+Message-ID: <CAMj1kXF2iCVboRR=6_2OnKYVf4+d3XHvgfwz21mWccxCVnOxeQ@mail.gmail.com>
+Subject: Re: [PATCH 7/7] dm-verity: hash blocks with shash import+finup when possible
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: dm-devel@lists.linux.dev, Alasdair Kergon <agk@redhat.com>, 
+	Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, linux-kernel@vger.kernel.org, 
+	Sami Tolvanen <samitolvanen@google.com>, Bart Van Assche <bvanassche@acm.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
-So, I will drop this patch.
-In the next version (i.e. v2) of this patchset, do I need to include
-the dt-binding patch as it is already in for-next.
-I am waiting for comments on the devicetree files before sending the
-v2 (if required).
-
-Thanks and Regards,
-Kanak Shilledar
-
-On Wed, Jul 3, 2024 at 12:59=E2=80=AFPM Conor Dooley <conor.dooley@microchi=
-p.com> wrote:
+On Tue, 2 Jul 2024 at 19:16, Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> On Mon, Jul 01, 2024 at 09:57:20PM +0300, Serge Semin wrote:
-> > Hi folks
-> >
-> > On Mon, Jul 01, 2024 at 08:17:29AM -0500, Samuel Holland wrote:
-> > > Hi Kanak,
+> Hi Ard,
+>
+> On Tue, Jul 02, 2024 at 09:41:19AM +0200, Ard Biesheuvel wrote:
+> > >  int verity_hash(struct dm_verity *v, struct dm_verity_io *io,
+> > >                 const u8 *data, size_t len, u8 *digest, bool may_sleep)
+> > >  {
+> > > -       struct ahash_request *req = verity_io_hash_req(v, io);
+> > >         int r;
+> > > -       struct crypto_wait wait;
+> > > -
+> > > -       r = verity_hash_init(v, req, &wait, may_sleep);
+> > > -       if (unlikely(r < 0))
+> > > -               goto out;
 > > >
-> > > On 2024-07-01 7:13 AM, Kanak Shilledar wrote:
-> > > > updated the struct of_device_id dw_spi_mmio_of_match to include
-> > > > the updated compatible value for TH1520 SoC ("thead,th1520-spi")
-> > > > to initialize with dw_spi_pssi_init().
-> > > >
-> > > > Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
-> > > > ---
-> > > > Changes in v2:
-> > > > - Separated from a single patch file.
-> > > > ---
-> > > >  drivers/spi/spi-dw-mmio.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-> > > > index 819907e332c4..39e3d46ebf5d 100644
-> > > > --- a/drivers/spi/spi-dw-mmio.c
-> > > > +++ b/drivers/spi/spi-dw-mmio.c
-> > > > @@ -419,6 +419,7 @@ static const struct of_device_id dw_spi_mmio_of=
-_match[] =3D {
-> > > >   { .compatible =3D "microchip,sparx5-spi", dw_spi_mscc_sparx5_init=
-},
-> > > >   { .compatible =3D "canaan,k210-spi", dw_spi_canaan_k210_init},
-> > > >   { .compatible =3D "amd,pensando-elba-spi", .data =3D dw_spi_elba_=
-init},
-> > > > + { .compatible =3D "thead,th1520-spi", .data =3D dw_spi_pssi_init}=
-,
-> > >
-> > > Your binding requires snps,dw-apb-ssi as a fallback compatible string=
-, which is
-> > > already supported by this driver and uses the same match data. So you=
- don't need
-> > > this patch; its only effect is to make the kernel larger.
+> > > -       r = verity_hash_update(v, req, data, len, &wait);
+> > > -       if (unlikely(r < 0))
+> > > -               goto out;
+> > > +       if (static_branch_unlikely(&ahash_enabled) && !v->shash_tfm) {
 > >
-> > Agree with Samuel comment. Indeed there is no point in adding the
-> > vendor-specific device-name supported in the driver if the fallback
-> > compatible works as-is.
->
-> FWIW, Mark picked up the binding alone so I think there's nothing for
-> Kanak to do here & the driver patch should just be forgotten about :)
->
-> > >From that perspective we shouldn't have merged in the patch adding the
-> > Renesas RZN1 SPI device name support, since the generic fallback
-> > compatible works for it. On the contrary the Microsemi Ocelot/Jaguar2
-> > SoC SPI DT-bindings shouldn't have been defined with the generic
-> > fallback compatible since should the device be bound via the generic
-> > name it won't work as expected.
+> > Is the static key really worth the hassle? Couldn't this just be
 > >
-> > Although, it's better to hear out what Rob, Conor or Krzysztof think
-> > about this.
+> > if (unlikely(!v->shash_tfm)) {
+> >
+> > so that the ahash logic is moved to the cold path? We need to
+> > dereference v->shash_tfm right away in any case, and if it is never
+> > NULL, the branch predictor should be able to remember that.
 >
-> I agree with what you've written. If the fallback works identically, then
-> the specific compatible shouldn't be added here. And if the fallback
-> will cause the device to misbehave (or not behave at all), then it
-> should not have been added.
-> I'm not sure if the Microsemi stuff is in the "won't work {,properly}"
-> camp or in the "will work in a limited fashion" camp. The latter would
-> be suitable for a fallback, the former not.
+> The value of the static key is indeed marginal.  I included it because of the
+> precedent of dm-verity's existing use_bh_wq_enabled static key, which exists for
+> a similar purpose.  As long as we're going through the trouble of doing that, I
+> think it makes sense to use the same pattern for ahash too.  It's another rarely
+> needed option that can be patched in in the very rare case that it's needed.
 >
-> Cheers,
-> Conor.
->
+
+If it's an existing pattern, fair enough.
 
