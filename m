@@ -1,54 +1,77 @@
-Return-Path: <linux-kernel+bounces-240142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0587E92698B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:27:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B90A926991
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37AB11C25985
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:27:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAA4D1F24488
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992DE190056;
-	Wed,  3 Jul 2024 20:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE7B190058;
+	Wed,  3 Jul 2024 20:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tz5D54gt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BW4YyhxP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D739D18FC82;
-	Wed,  3 Jul 2024 20:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60454136678;
+	Wed,  3 Jul 2024 20:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720038437; cv=none; b=MBOeJUn7qZLDH8sd56242e3HIlZoxf2xNb3BaXS/6WDRs7TTZ5xRIZxy6VFrZZ7Eqyg8c10/vLwlL6dCU9CuBY/1hgwmAiWR5JuqQZfGPj/YykLy36hpJoOoHu+49WBfVgwvJs+8/mDpzQy619b+L29Z8qRu5nemolhgTr9QIJ8=
+	t=1720038519; cv=none; b=SqLn0V9d5+M4lcPP70clq3JmxE77EwpzjZEJ6E1efSg/0Vp64D9NO3t32xDBhyj60chSZPVdTvW6sBcNOAIygqlc9HRcpsr9MZGwmIRzfzkfAHy3UrznxtLIDJ4/uZb4Olq8Kaxz4zkUg7sJhRjmWjoIbwEhVjefZFWWIuSWMQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720038437; c=relaxed/simple;
-	bh=PBcTwQazTXxN3vJLe6dTXyZcwIjt4BiOfPqGEsTN/zs=;
+	s=arc-20240116; t=1720038519; c=relaxed/simple;
+	bh=rWOY/eZHQ6NmW7nwT3ZK+FVd8KVqf6h8wNDPai7bkt8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dh35IsoflcMcLKkzq0l4cyjma5j+F43+bAPsDG+Fny1yxAg66ZzmUX2f88AywjR97epmrVbEKi1+TeRC9Y1EY+7VkiZ0KJWi+LKngS5pHvK4RV+JsKbl4BpuarKxkAnK+9vPAqPPSDMC+QftAyibCACq482ot30CuV2VHsUHO8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tz5D54gt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01D52C2BD10;
-	Wed,  3 Jul 2024 20:27:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=haUe80xRSfL2Wg/enH9mUVgT/5/zhLYnhDv58KMIbqYrcOOcGW0Mcu+/AWLfLhvNheNUpdowRJD++tUK+DKxx27kkXoyUG5/0VjB4fcnGRi02QvUUITOt18J4yM4LEFilvyn4Vhu4FsSl4Rgrk9v/mQQvtIG57AUPMUFq2GeNf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BW4YyhxP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD64FC2BD10;
+	Wed,  3 Jul 2024 20:28:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720038436;
-	bh=PBcTwQazTXxN3vJLe6dTXyZcwIjt4BiOfPqGEsTN/zs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tz5D54gt8BA9EpYZxEhBR8qDT+9suJQCZbvnn5LOIQihHHWwqxljPEYQlP5u0/c4a
-	 r9JELjidYnoQGBzvZa1UbhwCOvyQ/Kb+QPDuNnLqQljbnl1JWXdFCIp+ZlDZh3WY3/
-	 dPLTeMTuXx0Gaio0Fv1EJlsKDL9YNHio+Ue6RozA/pAWRZReRHV1L+6bd5eTr9YlHP
-	 gtDfZQrh9midRBcAXpSpXAU8EONEBqfTWKLIsgCwTa40EyRe6RAdBZ0Bdj1AhgC6aT
-	 d+z4X/GiBCnotCaUQy0JFK6WC8uLXPJCXTgugR7M9ZNNvSRTmaoBU5ecHEaKidjrwA
-	 BPb3VAHoexFnA==
-Date: Wed, 3 Jul 2024 22:27:12 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, 
-	Dirk Behme <dirk.behme@de.bosch.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] i2c: rcar: bring hardware to known state when probing
-Message-ID: <g6mthbu3bbg2vl3aobci2gx7lbfy4qbiy7cy43v7wwgjldauc3@qv4yrctu2bmf>
-References: <20240703071625.5389-1-wsa+renesas@sang-engineering.com>
+	s=k20201202; t=1720038518;
+	bh=rWOY/eZHQ6NmW7nwT3ZK+FVd8KVqf6h8wNDPai7bkt8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=BW4YyhxPLFzfu81I5dST6ulSzXWgpJu2KCnP4Iw+8bLOXS7wdQSYotQCs8rzcD3/Q
+	 vb+cn3KEsgIg6IXXKBElT22JcGij+Iqn6DMfIV3C+Ar/+EPQGo1p7N6tjzI6IlhcV9
+	 zOAS6ZZNQlcLWPB2WgJP6maKJ2Lk91Fk6tIe42gxoHtaG52p/uh/LH+fQ3W1t7+k0F
+	 heOcYOlRaV9uIQy5dvHA1LQyrf2WCBvPueVIGD/miZbmxrPaCz2t6LapUW2xA2NB1u
+	 5Xxb+PW9JTP2Ha9PCUHyjsCdeeL59hI9+N1dDbLa34bCec4Qk3WaL2R8f5oJ8kbPwy
+	 hSmTTJXrozlFw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 4F5D3CE0BC3; Wed,  3 Jul 2024 13:28:38 -0700 (PDT)
+Date: Wed, 3 Jul 2024 13:28:38 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>, linux-arch@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+	Puranjay Mohan <puranjay@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: Add the dedicated maillist info for LKMM
+Message-ID: <eb163e7c-6c1a-4691-bf23-c8603d4d426b@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240703162616.78278-1-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,39 +80,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240703071625.5389-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20240703162616.78278-1-boqun.feng@gmail.com>
 
-Hi Wolfram,
-
-On Wed, Jul 03, 2024 at 09:12:03AM GMT, Wolfram Sang wrote:
-> Probably due to a lot of refactorization, the hardware was not brought
-> into a known state in probe. This may be a problem when a hypervisor
-> restarts Linux without resetting the hardware, leaving an old state
-> running. Make sure the hardware gets initialized, especially interrupts
-> should be cleared and disabled.
+On Wed, Jul 03, 2024 at 09:26:16AM -0700, Boqun Feng wrote:
+> A dedicated mail list is created for Linux kernel memory model
+> discussion, and this could help more people to track down memory model
+> related discussion, since oftentimes memory model discussions would
+> involve a broader audience. Hence add the list information into the
+> maintainers entry of LKMM.
 > 
-> Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Closes: https://lore.kernel.org/r/20240702045535.2000393-1-dirk.behme@de.bosch.com
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 
-Do we need the Fixes tag here?
+Queued for v6.12, thank you!
+
+							Thanx, Paul
 
 > ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Here is my proposal to fix the issue reported by Dirk. Build tested.
-> I can do proper testing on HW only tomorrow. But so you know already...
-
-Looks reasonable. If testing is fine I can queue this up for this
-week's pull request.
-
-> It is strange to add another "_slave" function to the driver while I
-> work on removing such language from I2C somewhere else. "Consistency" is
-> the answer here. The driver will be converted as well. But then as a
-> whole.
-
-Ack!
-
-Thanks,
-Andi
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3f2047082073..a77bd8a49cd9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12796,6 +12796,7 @@ R:	Daniel Lustig <dlustig@nvidia.com>
+>  R:	Joel Fernandes <joel@joelfernandes.org>
+>  L:	linux-kernel@vger.kernel.org
+>  L:	linux-arch@vger.kernel.org
+> +L:	lkmm@lists.linux.dev
+>  S:	Supported
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev
+>  F:	Documentation/atomic_bitops.txt
+> -- 
+> 2.39.3 (Apple Git-146)
+> 
 
