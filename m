@@ -1,126 +1,135 @@
-Return-Path: <linux-kernel+bounces-239504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFBE92610A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61EC092610D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC05F1F23356
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:02:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A632870DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946DD17A5AB;
-	Wed,  3 Jul 2024 13:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168CC17B410;
+	Wed,  3 Jul 2024 13:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXJon6l6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VabEia4W"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CAC142649;
-	Wed,  3 Jul 2024 13:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39EA17B401;
+	Wed,  3 Jul 2024 13:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720011736; cv=none; b=RcflIjgO1kNSd2UtTLpAjeH7YV+YAPr1JIhHDjj99dV1plHO/XIFcFvlhY8evvpMt4YQNz/d5v1xhmZJA9Ix2vZz9VYLSYE5pagRxUr80PmtowcMIXI9151vyEcl2iAUQs+aJw1XgK2D8UDhwCaUjkdouD/R//YZyA7dQqnYmmw=
+	t=1720011741; cv=none; b=QfVHpaKgod/uzhZPBLsZkn0Uv7lPWXY8Kxsak67QRtQ91NaixOzgnPIczINCOcJ/KdlLaAmFyYFdA/Wkbj5DALpj3Yzw/hxBOzid229gwVRTBxxEY2VpNCI2bMbSobtx4Dg4cRqeHktxwt6jtyrjWya15B3FO5uWtf44ruWjeco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720011736; c=relaxed/simple;
-	bh=RmFrPvIZPGCspcDcWKrZAiJYo6HnrUaXiJpp47Mrxl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W8dnrwkjKD8lwn1THKqNz2Ltg9/wF20ctR6Nuy3VF/qzMdCFWamxquvFZTFSbq0feG0D2UNsLYd2BBNSqS1INEUzaXUy15MlfMgw19kLUwCPedC3Ix0MidIJVRQWwhZnE2My323PaiCLQ/jjPhfrd8kqrvRH9CVWMYFdjhJxww4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tXJon6l6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6208C4AF0B;
-	Wed,  3 Jul 2024 13:02:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720011736;
-	bh=RmFrPvIZPGCspcDcWKrZAiJYo6HnrUaXiJpp47Mrxl4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tXJon6l69U6RjRQz46pZmCrfd+qp2EZ6KI6qZrhHIicv/xon1GYx1RhZWBEkbs7Zf
-	 38e+on76S/0BcyKrMCHMysTb2Ws2NQkv4t6QnboRkvODhvUCoOzfUYhaKXAcEcZ0SK
-	 zneAl7LGGtMMd3F2kCcwnI1XXNKtWUkC1Sf55m5HyX+InHswiNDPH2ZV+e5PWd9mjV
-	 mtPkrI8RQL+HRo01x95byFkgBAWQja9qsi0ZYMyDNWlewWAGQf5ef/BC+M9YmdaOaS
-	 mwA9poHdt09SsLiZ++IlA8Eiz4SOOar8sjb0iispsh9z2ARLWQxizmOxfc2eJCmx1G
-	 /CcBdk9KL3L9w==
-Date: Wed, 3 Jul 2024 14:02:10 +0100
-From: Will Deacon <will@kernel.org>
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, robdclark@gmail.com,
-	robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca,
-	jsnitsel@redhat.com, robh@kernel.org,
-	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com,
-	konrad.dybcio@linaro.org, iommu@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 4/6] iommu/arm-smmu: add ACTLR data and support for
- SM8550
-Message-ID: <20240703130209.GA5750@willie-the-truck>
-References: <20240628140435.1652374-1-quic_bibekkum@quicinc.com>
- <20240628140435.1652374-5-quic_bibekkum@quicinc.com>
- <ueuhu5xfzp2rnuxzeqqd6cho476adidztgx7oq2tbiufauv6h4@obblpxvqwnno>
- <6da77880-2ba4-4b02-8b3e-cb0fbd0a9daf@quicinc.com>
+	s=arc-20240116; t=1720011741; c=relaxed/simple;
+	bh=U7o86Tzjl5rNpCoW+Rril6FhOJHsZrYDpqqOuEg+aL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uDUxZzE9mT8X7fK83ck/SRYkqX+56umlYqn6nNCMtMQVC3Xt4Z6iDXqrXfsHO0RmKnaiHPmk0DRduJkAPvEAEMcUTMyiNK8qoLX8H4ie0jxHUm2Ao2a+oCyYSfsq1tXIccwNFrYVYvWTyLwiY+BTUwXl45owIH7KvdfB5HuCSn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VabEia4W; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720011738;
+	bh=U7o86Tzjl5rNpCoW+Rril6FhOJHsZrYDpqqOuEg+aL8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VabEia4WzYXeIl+dydiNkvL7svyzEy6Kvg26UTjdNAD9lXvGZtbFsPX0NCzCERqDp
+	 0H7CYL8ft1eyBkmxtcMzpF0bqvo0OYHlfA+jAnDtiEzO6XovgmiO2Q4ceuuNTMZuG4
+	 6id5pHEIg6UjAw6ODPThkMw/cm2iebkxSehoOpNcOokB4l3HMrHqHsXXNkKBePpZ2c
+	 a/n7zTyzTysGIx9Co7F7D7cUo2/Hu9LCQxD3Fk9zsk1o0ZrZwOeqhc2kjRNtB3N9aY
+	 V3jXVYhwONBmxs7e/PUb54NRM9XAnc8yEciFwc8KehIZjSZrHiVO7GWbIWQb++SkQe
+	 FbqblFX7cIIxg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id ACBBE3782194;
+	Wed,  3 Jul 2024 13:02:17 +0000 (UTC)
+Message-ID: <c85ed66d-6a9f-43e3-9ab3-740551f34f7c@collabora.com>
+Date: Wed, 3 Jul 2024 15:02:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6da77880-2ba4-4b02-8b3e-cb0fbd0a9daf@quicinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] soc: mediatek: pwrap: Constify struct
+ pmic_wrapper_type
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ matthias.bgg@gmail.com, fparent@baylibre.com, fchiby@baylibre.com,
+ s.hauer@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <cover.1719652155.git.christophe.jaillet@wanadoo.fr>
+ <ee3160978ac6564663d044815f24cf79e2e0744e.1719652155.git.christophe.jaillet@wanadoo.fr>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <ee3160978ac6564663d044815f24cf79e2e0744e.1719652155.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 03, 2024 at 05:45:23PM +0530, Bibek Kumar Patro wrote:
+Il 29/06/24 11:19, Christophe JAILLET ha scritto:
+> 'struct pmic_wrapper_type' is not modified in this driver.
 > 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
 > 
-> On 7/2/2024 12:04 AM, Dmitry Baryshkov wrote:
-> > On Fri, Jun 28, 2024 at 07:34:33PM GMT, Bibek Kumar Patro wrote:
-> > > Add ACTLR data table for SM8550 along with support for
-> > > same including SM8550 specific implementation operations.
-> > > 
-> > > Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-> > > ---
-> > >   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 89 ++++++++++++++++++++++
-> > >   1 file changed, 89 insertions(+)
-> > > 
-> > > diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> > > index 77c9abffe07d..b4521471ffe9 100644
-> > > --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> > > +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> > > @@ -23,6 +23,85 @@
-> > > 
-> > >   #define CPRE			(1 << 1)
-> > >   #define CMTLB			(1 << 0)
-> > > +#define PREFETCH_SHIFT		8
-> > > +#define PREFETCH_DEFAULT	0
-> > > +#define PREFETCH_SHALLOW	(1 << PREFETCH_SHIFT)
-> > > +#define PREFETCH_MODERATE	(2 << PREFETCH_SHIFT)
-> > > +#define PREFETCH_DEEP		(3 << PREFETCH_SHIFT)
-> > > +
-> > > +static const struct actlr_config sm8550_apps_actlr_cfg[] = {
-> > > +	{ 0x18a0, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> > > +	{ 0x18e0, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> > > +	{ 0x0800, 0x0020, PREFETCH_DEFAULT | CMTLB },
-> > > +	{ 0x1800, 0x00c0, PREFETCH_DEFAULT | CMTLB },
-> > > +	{ 0x1820, 0x0000, PREFETCH_DEFAULT | CMTLB },
-> > > +	{ 0x1860, 0x0000, PREFETCH_DEFAULT | CMTLB },
-> > > +	{ 0x0c01, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> > 
-> > - Please keep the list sorted
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>    45336	   8724	     16	  54076	   d33c	drivers/soc/mediatek/mtk-pmic-wrap.o
 > 
-> Sure Dmitry, will sort this list in reverse-christmas-tree order
-> in next iteration. Thanks for this input.
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>    45528	   8532	     16	  54076	   d33c	drivers/soc/mediatek/mtk-pmic-wrap.o
 > 
-> > - Please comment, which devices use these settings.
-> 
-> As discussed in earlier versions of this patch, these table entries
-> are kind of just blind values for SMMU device, where SMMU do not have
-> idea on which SID belong to which client. During probe time when the
-> clients' Stream-ID has corresponding ACTLR entry then the driver would
-> set value in register.
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-I'm still firmly of the opinion that this stuff needs a higher-level
-description in the device-tree and should not be hard-coded in the driver
-like this. It's not just a list of opaque values; it describes
-SoC-specific topological information that should not be this rigid.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Will
+> ---
+> Compile tested-only
+> ---
+>   drivers/soc/mediatek/mtk-pmic-wrap.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> index efd9cae212dc..0da0cdec5050 100644
+> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
+> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> @@ -2397,7 +2397,7 @@ static const struct pmic_wrapper_type pwrap_mt8183 = {
+>   	.init_soc_specific = pwrap_mt8183_init_soc_specific,
+>   };
+>   
+> -static struct pmic_wrapper_type pwrap_mt8195 = {
+> +static const struct pmic_wrapper_type pwrap_mt8195 = {
+>   	.regs = mt8195_regs,
+>   	.type = PWRAP_MT8195,
+>   	.arb_en_all = 0x777f, /* NEED CONFIRM */
+> @@ -2423,7 +2423,7 @@ static const struct pmic_wrapper_type pwrap_mt8365 = {
+>   	.init_soc_specific = NULL,
+>   };
+>   
+> -static struct pmic_wrapper_type pwrap_mt8516 = {
+> +static const struct pmic_wrapper_type pwrap_mt8516 = {
+>   	.regs = mt8516_regs,
+>   	.type = PWRAP_MT8516,
+>   	.arb_en_all = 0xff,
+> @@ -2435,7 +2435,7 @@ static struct pmic_wrapper_type pwrap_mt8516 = {
+>   	.init_soc_specific = NULL,
+>   };
+>   
+> -static struct pmic_wrapper_type pwrap_mt8186 = {
+> +static const struct pmic_wrapper_type pwrap_mt8186 = {
+>   	.regs = mt8186_regs,
+>   	.type = PWRAP_MT8186,
+>   	.arb_en_all = 0xfb27f,
+
+
+
 
