@@ -1,90 +1,91 @@
-Return-Path: <linux-kernel+bounces-240292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C615926B68
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:20:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E93926B6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4652E1F23466
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 121E01F2346B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E0A18E746;
-	Wed,  3 Jul 2024 22:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBFD1940B9;
+	Wed,  3 Jul 2024 22:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nnh53Lae"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="siIf+619"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1D3181B88
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 22:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791B1192B8B;
+	Wed,  3 Jul 2024 22:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720045218; cv=none; b=CP/e+qjBDVm8ddqAaIlUKCOEBGMv1ylb9R2DHnZ+lXc5CsQu3cxV3xUVCPJenqhb8TGt4zOCRqOoikERLA7JMVN+rOboWZDLzBRhuON3kj76/Flh8AOHjc0puhGFKLPAMcXGkI60e1DdIxHmvxPda6enKTZfKPrVUPWxE/A0um4=
+	t=1720045224; cv=none; b=jM+Gg1PToiFnQs4pNIwN91cliJVDzLfq9tGzhEDtSKunK/fse1cbD9E+xNpuVJMwXWKnZmIjCDs9cnCibG0RlSuQg0XKhzkxkgX3cIX3pw0m4DjWp5+tkK0mPCNTwUlbrvNi70zpcnc1wBXi7GzT2VXNNcv6MRDdONa2rOeNVxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720045218; c=relaxed/simple;
-	bh=WyWB7pFN1LZQcUUuyvXiMth2n5FqHFKEaZIKYIVgJMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YqN7bBErAhiwfmoZqwLHEOqaRtF5Xo7xTwsemYsCB5ta+X8c77wZV5lT4hSX/xlGN6n3x7rdAFAumSgVAXvm0rY3L5Tk7WedFn6VCazk3E6muaXNRPam6bZW0uL9bHJeTJgQ8HgWC9LK23WH8Z7a9POL/H0Phe3Xej2z37w2ocE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nnh53Lae; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC237C2BD10;
-	Wed,  3 Jul 2024 22:20:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720045217;
-	bh=WyWB7pFN1LZQcUUuyvXiMth2n5FqHFKEaZIKYIVgJMg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nnh53Lae99jCRj6hCpNVUvCuhraVw4AtWrvQH1j7gb0PUwKjylnWjaR3lFHpGuMYn
-	 P8DLqfaY7ohj0LrqISazkJcc/+Bm54QmAYWwk0c7I3t0TVpAweiI9s+6MdUoq8Wuyg
-	 IezcVW7lpIPXyMXrqkTkzjEtLg3GZT1lSy/S+rE5raRb0Hm2JHgFwIhrngmKAcRWRu
-	 HWqStNTqIMu95zQB16CPs3Vtsppe6+WdNIN+Z2JnCHePMcUq0kAC9KPHqfjgPZBihI
-	 0J6BNnT+iHW9ixMu/04W6N0mDlE7u4o2fJd3X3qfsxTNsdwDqMqG12ecQcPMU9B/2M
-	 YXkkkLZXGwDqg==
-Date: Wed, 3 Jul 2024 15:20:17 -0700
-From: Kees Cook <kees@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>, Tejun Heo <tj@kernel.org>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/53] workqueue: Introduce the create*_workqueue2()
- macros
-Message-ID: <202407031518.7320BBC9E3@keescook>
-References: <20240630222904.627462-1-bvanassche@acm.org>
- <20240630222904.627462-2-bvanassche@acm.org>
- <CAJhGHyCsypVP7VgsNKdQ=rn0hqiJOzSS9p_OGio6k-S2idaLtA@mail.gmail.com>
- <3302014f-6ee0-452a-a6a5-dea6fcc37542@acm.org>
- <202407031249.F9EB68A@keescook>
- <f0333b86-212e-40e6-b41d-b393c312153f@acm.org>
+	s=arc-20240116; t=1720045224; c=relaxed/simple;
+	bh=hcPIFbainurPpTAFoI4UPkBI6xrcioZq8/qiC6q7334=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Uez3WggjQQKoQlThLpnK2DBAdw3xS7PRXZ6jw+xcAtWXRWh1wEmexWnCaXwYbjq+COs4rBdpsVb+nO+T14XZZRHgQa5RQAPXyvjWObVxugumCHyPXRhYXRzbJabjlYXJ+hti2+LVXiuqvcR1GY6BBEmyEopymtkp2xFNAqGcvjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=siIf+619; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A7E3E4189E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1720045222; bh=OtfBMzDwoTAjncrqEtY71x8y8FIwAWmDwFzR5bHhNaY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=siIf+619bTrPmOauGDWFK/OWw9H6/FE3EGxoC9ZA3Fa3zmsPAlIwbtdjDTt9tVWYc
+	 DmDQXu7lx7LDORdMtPqRP9O/JwJW9CjNtsn5QzqRNJqM+ywlBcPYTJndGZOkFvFZzs
+	 7ODiCOB/wjehAhOk16g8YIvRWmIQhlmABeu3BqaKs6x3GyQC6zmubv9xs8p+kZvk5G
+	 D3lyEV3gC/H9L4u1G50F8qop4CCEsBL45F3wWBjRnBrnLf4o2jTlQEjFdyBrHUrb8C
+	 CdAy6qg5fpPFRnZzQFl/XL4gUh3ngAnwC4Yp1ZVlZeUMaoyIjSPFrsKZswDEhkVJlN
+	 alrq7fp4L9AAA==
+Received: from localhost (c-24-9-249-71.hsd1.co.comcast.net [24.9.249.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id A7E3E4189E;
+	Wed,  3 Jul 2024 22:20:22 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: SeongJae Park <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>, Kent Overstreet
+ <kent.overstreet@linux.dev>, Suren Baghdasaryan <surenb@google.com>,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Docs/mm: rename legacy docs to unsorted docs
+In-Reply-To: <20240701190512.49379-1-sj@kernel.org>
+References: <20240701190512.49379-1-sj@kernel.org>
+Date: Wed, 03 Jul 2024 16:20:21 -0600
+Message-ID: <87jzi2t8wq.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f0333b86-212e-40e6-b41d-b393c312153f@acm.org>
+Content-Type: text/plain
 
-On Wed, Jul 03, 2024 at 02:28:34PM -0700, Bart Van Assche wrote:
-> On 7/3/24 1:24 PM, Kees Cook wrote:
-> > This can be done with the preprocessor to detect how many arguments
-> > are being used, so then there is no need to do the renaming passes and
-> > conversions can land via subsystems:
-> 
-> Thanks Kees, this is very useful feedback.
-> 
-> As one can see here, Tejun requested not to add support for a format
-> string in the create*_workqueue() macros:
-> https://lore.kernel.org/linux-kernel/ZoMF1ZydZUusxRcf@slm.duckdns.org/
+SeongJae Park <sj@kernel.org> writes:
 
-Ah! I should have read the thread more fully. :)
+> The work for changing the memory mangement documentation outline has
+> started from 2022.  For that, old documents have placed under new
+> chapter, "Legacy Documentations".  The plan is to eventually move all
+> old documentations into new outline, while asking new documents to be
+> added on the new outline from the beginning.
+>
+> However, it is unclear where on the new outline each document should be
+> placed for some cases.  Meanwhile, the name ("legacy") makes readers
+> feel the documents under the chapter might be outdated or not actively
+> maintained.  The absence of clear criteria for new outline also makes
+> new documents difficult to find where those should be placed.  A new
+> document was put on the bottom of the new outline recently, apparently
+> not based on a clear guideline but just because it is the bottom of the
+> list.
+>
+> Rename the "Legagy Documentation" chapter to "Unsorted Documentations"
+> with minor fixups.
 
-> Hence a different approach for the SCSI create*_workqueue() macros:
-> https://lore.kernel.org/linux-scsi/20240702215228.2743420-1-bvanassche@acm.org/
+Series applied, thanks.
 
-Gotcha. Okay, well, that's a lot of flags to open-code, but I guess
-that's fine? :P
-
--- 
-Kees Cook
+jon
 
