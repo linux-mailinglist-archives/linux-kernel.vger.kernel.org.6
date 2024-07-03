@@ -1,209 +1,122 @@
-Return-Path: <linux-kernel+bounces-239537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1AF89261D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:29:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88D8A9261DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3D571C20FE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:29:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 158211F21870
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA31017C7AB;
-	Wed,  3 Jul 2024 13:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5C617C9F2;
+	Wed,  3 Jul 2024 13:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vh3rUtmm"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MlVdVK6/"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E7617BB13
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5983217CA1D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720013307; cv=none; b=mXEP520y7BdNGgEUxEXuZ5sDLrukWfPm3M4tV5yOex9cKB/jy69kOpBKs6DP2ln/vdfrDp2ynZQ1Grtxm9PLJMLqazG4dv1OsTEKHZ4AzBM9uel0EMSNmAUMFsFCmd9uelunkt6k0l/KQ9+Mp1qnhrtT7uw0TMXjk31gu424zjE=
+	t=1720013311; cv=none; b=KUSL5EEpXV5zB6BdoGIEyor7yH/oOK385QtjYMNVRvM6o6ri7lTR6flsBS3JPJX1DEIXmouAwAPBZCxnigU8Hvk5+MRLC6QNXo9i3JjndbZVDPhfXbacQAORYj7oUukF/mWKIO/9kb8g5JHL1etKSjEHvocXxe25YN7Avr+kH7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720013307; c=relaxed/simple;
-	bh=tpnBZGHozvIvo/13Y7whqzVlbGgfm6DdOHnFbtutDFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R5FwJf0vYAW8hOxLSLFvlbbZkELHOhgrBPqmiuQYPcx4UB7mPchx1dsQj9TOnsSu2zeefeAIVZM4/yO0FWeph36NTs4c1IU1YgCApK+DBOOBlUr3N40RsSteT9swsQjcVx5vkmVo9ZcSjQn6KZxsbQtzH63lGSKPOHx1UboVF4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vh3rUtmm; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-70df2135426so3092141a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 06:28:24 -0700 (PDT)
+	s=arc-20240116; t=1720013311; c=relaxed/simple;
+	bh=eXeh+odNiG8x4cyW9ttyv7RVPgMeH+bDRXBp/ntb5AQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nxpvXQU04tb4UXS/Dsc2CKsEQatkRJJYMl/GR7AdjnQfT5ljeDo968yLw2U7dMWz4AjO0L86U9p590tx/rIQciXglxaPF1G1Z9Kfp4YeR9mPA/a7rjNV49HBAquBU1mPACmQsya4NeHc98vu2YfPqrad982tnXBRSoHwWMG7RZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MlVdVK6/; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ee7a1ad286so16344871fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 06:28:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720013304; x=1720618104; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rdkiZRSMI+iDCKKPaGVtyVAOwgzU2h9uBT7MdiDgcgg=;
-        b=vh3rUtmmO71pRYmwnHTm0jUBV/e2kN9UGI1dY+389u0jIWTV06SiuCcu0r6poBqML3
-         RaN8gzbQ1lwx28EEQBpv4fhSlkYJGNjzff6YaalrA69EWleG9pPQVSxKcYrlPFJ5tjj1
-         VEpePh5mPCQS3JKoSkHq0BggXcJgi+kEB4IjGWt6VT0VlhVvZgBTxJgLftFX0yOEYjlD
-         THg/HoXwzdoQmYExE5CFx7Ajb7SHqDqdzpDqzuio6BgDofKLLERNimCXHcEsbSRj3qAs
-         FIXyV0azsPTa+EWTbbi868L9AlS+Y0IsVMRtCnl/4KNvf0Y/uQjoiz6rf4zteDSUnATZ
-         LtOw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720013307; x=1720618107; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XH47RNmUX1AGSr0QbImyT9elpUv6h36gp7mCFp6MkqA=;
+        b=MlVdVK6/beA4npbdCAzgMv39IjfvLx8k+mcrNqaXj3Us5koXQIDlN/i+hVkL1qiXTU
+         rO/b9EO5NbZte2k3jZKftE/UzZbzF1RXW18eXm8YFjjoSMX7dAfobuHeFFH8gcJLlqnC
+         p87YjnNp4vtpBQPaAC3/AgyCZjxCmqsG+zvCKeeBU9b8bk6bdomaqud/b3KJNj10xo1N
+         fzdOIir+XJxnfulwj4jUEF6rFk146Y5SCYRtBN/hgh4afvOcYeDupeIrv+Ch3KtovCls
+         15Sa5v4hFj8OGjhAWdCTW6Zin+os6ED6ma19gYGMSfZv2upGyxC7CbT5PDcs0rUDIMto
+         1EIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720013304; x=1720618104;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rdkiZRSMI+iDCKKPaGVtyVAOwgzU2h9uBT7MdiDgcgg=;
-        b=XWJPNXvesUEZZ/ms59rpiuMlZv4BrCJkfqkmxlKyQRqJSx4N6vUYOOZkVSpuKBMwh1
-         n459a6EqaDw7HdNIEz89nfzt3QpsvM/HWkfYlKUbX4szebz7Q+H2LzCq+XsM0S5GHBwg
-         chiQ94Vh8dToLzIA9GbQm6xpJictuBNA4si1es6MXFKy5LCBTHShD5aD+xqB5KiCdLr6
-         nK6j/LAoeIyZxc/TBqsssFxrFN01OZu4Mq9fCoKLcuMBaMJVmn7b+5mRrDxvkphIRl2A
-         hnsuhDxLHv8A6pFoO1qDRWnsUD1yUfxsbWlARmrWai2I673NN6m98WAMYb7CzDAgEKHi
-         4KPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxf1LGhfSLQmdrlj8KBMZq5Wp7ck6ECgcAuuqJCxm35YGW+d39BPuWT8Uz7w3gxPHq1W5Skjjb0oo3NmA2VqK4bZQQydRQmZ+udFxS
-X-Gm-Message-State: AOJu0YzhZuhkxmtH27eFcW8baHscw0F5AMB5XEMN01HFxyYwk4xTyyFt
-	NTJvaYrvR4qXRaIaimUP3skx3a03pucz2tvNxA+SFp7z4K8a62jzEAwhTx/HaQ==
-X-Google-Smtp-Source: AGHT+IFnNm+vMtCK3Yp65be/YsX5bllZfe6RwxOWz/1G+jPzJyCYGnW9HxLNT/hKV+v73WnI/scHLg==
-X-Received: by 2002:a05:6a20:12c3:b0:1be:bff2:b1b5 with SMTP id adf61e73a8af0-1bef60fedf7mr9222938637.15.1720013303748;
-        Wed, 03 Jul 2024 06:28:23 -0700 (PDT)
-Received: from thinkpad ([220.158.156.98])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10c7067sm103413965ad.51.2024.07.03.06.28.21
+        d=1e100.net; s=20230601; t=1720013307; x=1720618107;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XH47RNmUX1AGSr0QbImyT9elpUv6h36gp7mCFp6MkqA=;
+        b=E/rITlEC7YOy60vbGDZAd0k4tZXEfW3T+aSZvHILvZj4hq+iRXJz2cR8BZaR2tN6v0
+         tIUlUvG/e/bxx0zy3xKdVPyLwoc5o/JsnthYiiWSdlL/sWbjucPauBR+lNGcrSr7CRL7
+         GNU3VWindbwGHtcgPzWTVQDy241kAFUsFk/5MXBGt9tXNAHXRyI1oX2VFs2dlwl716Ld
+         NxRk+GrEg4jvzmnIztR/QKzLNu9Y3RcQ7iTE+A2YEWRXJ5/iTjs+P1LzzBnihVjXjeuV
+         UxrMxdRLewwQi65BqK94E0A5qVrifvdFs5EBxuhq+iZXOIpuPLgyw/sO26P5WRF2C0Ni
+         M7jA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQOzy3Q4aLOnsp72RupjwSbm9zevXeML9UOKRIz2QVvDygcrHrW7GQrQAfRkanlaujW4au2JKux4EMB+6JtyCdKaT+A03psccdSl1m
+X-Gm-Message-State: AOJu0Yz5pttXUitBugqRhDY86ryerr6uMY35MD3cd8I+dq9V7v7T97MU
+	5HOrnhg5HrzW2zxcQXmlZocHUaiBzOcVATo2cNrL6H1gJ7WJq3V0gW3P24tmzEw=
+X-Google-Smtp-Source: AGHT+IF8+t0W+Jxcef2zPEJhg/UHQYLfiKh8V3SIvq9COfdpuCwDUDYiE5vlgZ1/wChFAeIeucnstg==
+X-Received: by 2002:a2e:9d44:0:b0:2ec:57c7:c737 with SMTP id 38308e7fff4ca-2ee5e6e60fbmr73030221fa.40.1720013307158;
+        Wed, 03 Jul 2024 06:28:27 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:c37f:195e:538f:bf06])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4258036d034sm137144915e9.43.2024.07.03.06.28.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 03 Jul 2024 06:28:23 -0700 (PDT)
-Date: Wed, 3 Jul 2024 18:58:19 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Slark Xiao <slark_xiao@163.com>
-Cc: loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
-	johannes@sipsolutions.net, quic_jhugo@quicinc.com,
-	netdev@vger.kernel.org, mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v4 1/3] bus: mhi: host: Add Foxconn SDX72 related
- support
-Message-ID: <20240703132819.GA4342@thinkpad>
-References: <20240701021216.17734-1-slark_xiao@163.com>
- <20240701162523.GC133366@thinkpad>
- <c156594.626c.190722739f2.Coremail.slark_xiao@163.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	Shiji Yang <yangshiji66@outlook.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Asmaa Mnebhi <asmaa@nvidia.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Mark Mentovai <mark@mentovai.com>,
+	Jonas Gorski <jonas.gorski@gmail.com>,
+	=?UTF-8?q?L=C3=B3r=C3=A1nd=20Horv=C3=A1th?= <lorand.horvath82@gmail.com>
+Subject: Re: [PATCH] gpio: mmio: do not calculate bgpio_bits via "ngpios"
+Date: Wed,  3 Jul 2024 15:28:20 +0200
+Message-ID: <172001329822.19609.1796927408061216237.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
+References: <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c156594.626c.190722739f2.Coremail.slark_xiao@163.com>
 
-On Tue, Jul 02, 2024 at 02:34:51PM +0800, Slark Xiao wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Tue, 25 Jun 2024 09:19:49 +0800, Shiji Yang wrote:
+> bgpio_bits must be aligned with the data bus width. For example, on a
+> 32 bit big endian system and we only have 16 GPIOs. If we only assume
+> bgpio_bits=16 we can never control the GPIO because the base address
+> is the lowest address.
 > 
-> At 2024-07-02 00:25:23, "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org> wrote:
-> >On Mon, Jul 01, 2024 at 10:12:14AM +0800, Slark Xiao wrote:
-> >> Align with Qcom SDX72, add ready timeout item for Foxconn SDX72.
-> >> And also, add firehose support since SDX72.
-> >> 
-> >> Signed-off-by: Slark Xiao <slark_xiao@163.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> >> ---
-> >> v2: (1). Update the edl file path and name (2). Set SDX72 support
-> >> trigger edl mode by default
-> >> v3: Divide into 2 parts for Foxconn sdx72 platform
-> >> ---
-> >>  drivers/bus/mhi/host/pci_generic.c | 43 ++++++++++++++++++++++++++++++
-> >>  1 file changed, 43 insertions(+)
-> >> 
-> >> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> >> index 35ae7cd0711f..1fb1c2f2fe12 100644
-> >> --- a/drivers/bus/mhi/host/pci_generic.c
-> >> +++ b/drivers/bus/mhi/host/pci_generic.c
-> >> @@ -399,6 +399,8 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
-> >>  	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
-> >>  	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
-> >>  	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
-> >> +	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
-> >> +	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
-> >>  	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
-> >>  	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
-> >>  };
-> >> @@ -419,6 +421,16 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
-> >>  	.event_cfg = mhi_foxconn_sdx55_events,
-> >>  };
-> >>  
-> >> +static const struct mhi_controller_config modem_foxconn_sdx72_config = {
-> >> +	.max_channels = 128,
-> >> +	.timeout_ms = 20000,
-> >> +	.ready_timeout_ms = 50000,
-> >> +	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx55_channels),
-> >> +	.ch_cfg = mhi_foxconn_sdx55_channels,
-> >> +	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
-> >> +	.event_cfg = mhi_foxconn_sdx55_events,
-> >
-> >Weird. Why this modem is using all SDX55 configs? Reusing is fine, but it is
-> >strange to see only this SDX72 modem using different config than the others
-> >added below.
-> >
-> >- Mani
-> >
+> low address                          high address
+> -------------------------------------------------
+> |   byte3   |   byte2   |   byte1   |   byte0   |
+> -------------------------------------------------
+> |    NaN    |    NaN    |  gpio8-15 |  gpio0-7  |
+> -------------------------------------------------
 > 
-> There is a settings ".ready_timeout_ms = 50000," for SDX72/SDX75 only.
-> It aligns with Qcom SDX72/SDX75 in case of timeout issue.
-> 
-> >> +};
-> >> +
-> >>  static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
-> >>  	.name = "foxconn-sdx55",
-> >>  	.fw = "qcom/sdx55m/sbl1.mbn",
-> >> @@ -488,6 +500,28 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
-> >>  	.sideband_wake = false,
-> >>  };
-> >>  
-> >> +static const struct mhi_pci_dev_info mhi_foxconn_t99w515_info = {
-> >> +	.name = "foxconn-t99w515",
-> >> +	.edl = "fox/sdx72m/edl.mbn",
-> >> +	.edl_trigger = true,
-> >> +	.config = &modem_foxconn_sdx72_config,
-> >> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> >> +	.dma_data_width = 32,
-> >> +	.mru_default = 32768,
-> >> +	.sideband_wake = false,
-> >> +};
-> >> +
-> >> +static const struct mhi_pci_dev_info mhi_foxconn_dw5934e_info = {
-> >> +	.name = "foxconn-dw5934e",
-> >> +	.edl = "fox/sdx72m/edl.mbn",
-> >> +	.edl_trigger = true,
-> >> +	.config = &modem_foxconn_sdx72_config,
-> >> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> >> +	.dma_data_width = 32,
-> >> +	.mru_default = 32768,
-> >> +	.sideband_wake = false,
-> >> +};
-> >> +
-> >>  static const struct mhi_channel_config mhi_mv3x_channels[] = {
-> >>  	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 64, 0),
-> >>  	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 64, 0),
-> >> @@ -720,6 +754,15 @@ static const struct pci_device_id mhi_pci_id_table[] = {
-> >>  	/* DW5932e (sdx62), Non-eSIM */
-> >>  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0f9),
-> >>  		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5932e_info },
-> >> +	/* T99W515 (sdx72) */
-> >> +	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe118),
-> >> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w515_info },
-> >> +	/* DW5934e(sdx72), With eSIM */
-> >> +	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11d),
-> >> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5934e_info },
-> >> +	/* DW5934e(sdx72), Non-eSIM */
-> >> +	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11e),
-> >> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5934e_info },
-> >>  	/* MV31-W (Cinterion) */
-> >>  	{ PCI_DEVICE(PCI_VENDOR_ID_THALES, 0x00b3),
-> >>  		.driver_data = (kernel_ulong_t) &mhi_mv31_info },
-> >> -- 
-> >> 2.25.1
-> >> 
-> >
-> >-- 
-> >மணிவண்ணன் சதாசிவம்
+> [...]
 
+Applied, thanks!
+
+[1/1] gpio: mmio: do not calculate bgpio_bits via "ngpios"
+      commit: f07798d7bb9c46d17d80103fb772fd2c75d47919
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
