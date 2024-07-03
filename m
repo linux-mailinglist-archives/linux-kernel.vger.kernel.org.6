@@ -1,156 +1,126 @@
-Return-Path: <linux-kernel+bounces-239747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0AD9264DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:30:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D6539264DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDAB81C21064
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BEC2840A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E36179641;
-	Wed,  3 Jul 2024 15:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67F517B4ED;
+	Wed,  3 Jul 2024 15:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dpolakovic.space header.i=@dpolakovic.space header.b="Ff6ayhG2"
-Received: from m1-out-mua-14.websupport.sk (m1-out-mua-14.websupport.sk [45.13.137.23])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q1P8l0nZ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0980417CA1D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.13.137.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1FE522F;
+	Wed,  3 Jul 2024 15:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720020614; cv=none; b=ZPao4B7OZBe6W4/nWCAuwtKIsZp+W5vYDlOZaXBYas58ZPy/Q4Eis68QlHjho8y/CrVUdArI8BE4+biBaBlaBjGA5GzJnbZgewmeIfSZh9XQpqwKXcB+4/LOYf4fvdestznCH1Ho1upORJ/PRST9ZzAYblyFvo4/DHLFBK1uDCo=
+	t=1720020636; cv=none; b=qaVH3Ef9w86BM4cL7HCJVRadzH4S2sZsUrzAY91f9vlMXcJTmF+g0HBSHXA2bvgwAcSDXJ0DYe812Y3VU1GFVfLuSwe+oT6BNBfMsHVhchuFr9gXdt2EzoBMhAmmAGTdZukUDj3yLmzFhu1FOO+1sX6IqkcHDJoQgFahk4DsSAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720020614; c=relaxed/simple;
-	bh=y+y08AM3f5TOY4c9E78hb87lm+/c2eOErjtpjPBqmEM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mmLWAul8exrqtF53IFxSMgu/hZXuc47rA5DV31WSk8YdZzxUeaoIj2Cff1gSJS6mPAUkjsrNO4oMDYPPVtOt3yoVDj6Sg2Y0vCQFrZ0uiBPHO4lekv8T8dHNuakN0E+YLl0J/7eCZXDhsXEM6BbirPaGhtQ7S7CyyUvX5nRCJRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dpolakovic.space; spf=pass smtp.mailfrom=dpolakovic.space; dkim=pass (2048-bit key) header.d=dpolakovic.space header.i=@dpolakovic.space header.b=Ff6ayhG2; arc=none smtp.client-ip=45.13.137.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dpolakovic.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dpolakovic.space
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dpolakovic.space;
-	s=mail; t=1720020601;
-	bh=y+y08AM3f5TOY4c9E78hb87lm+/c2eOErjtpjPBqmEM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ff6ayhG25KPL0NT5fYLPKokke6QeJPAHBQcXVN8yVMs6VHllQ8ixPv5WdS900oMLz
-	 1+P2vbYa9vnJWX8SBPb2neRg/XkMlU4s0sS7YjYgAQ3izxfcmc1AYjl4KgY1bNWbra
-	 VfVgBncEhHOqBiHnbMFYx2uZ84a2CXtc2pesqKeYrNbLT99STVVdykqJv5n+AIUtEg
-	 4EOKXaMmEIagCpUyypIdqT0O+E9eueT0HCS6vJCl+tBz9RtXWimcWV1v9seXcYhzm2
-	 6PbJuu/t5mB8/lEI5g2UvXFZpt3X+Hhcuu8KVVpsbH0VHZduKfUvVvmAF8/4yXpaEC
-	 eqtlCe3Jb/Irw==
-Received: from m1-u7-ing.websupport.sk (unknown [10.30.7.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by m1-out-mua-14.websupport.sk (Postfix) with ESMTPS id 4WDkHF6RSCz1wrg;
-	Wed,  3 Jul 2024 17:30:01 +0200 (CEST)
-X-Authenticated-Sender: email@dpolakovic.space
-Authentication-Results: m1-u7-ing.websupport.sk;
-	auth=pass smtp.auth=email@dpolakovic.space smtp.mailfrom=email@dpolakovic.space
-Received: from [192.168.0.54] (dev190.net181.ip-net.sk [46.227.181.190])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: email@dpolakovic.space)
-	by m1-u7-ing.websupport.sk (Postfix) with ESMTPSA id 4WDkHD0NqPzmhkX;
-	Wed,  3 Jul 2024 17:29:59 +0200 (CEST)
-Message-ID: <d88861a6-ccd9-3fe5-67e0-b50a72ca1e51@dpolakovic.space>
-Date: Wed, 3 Jul 2024 17:29:58 +0200
+	s=arc-20240116; t=1720020636; c=relaxed/simple;
+	bh=8bOWBHkjVoAwGSn9nwmSK86pe9A0lVwAvovb0StNCrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KRE95CSMgR7m+ie17uAbxxt+WZrOCKRM8Qr6aGxWGrlw3Njl8gBNW7XfMsq6mS0xht7hJIFu4RNkMNj0CLJLq+xXc1RMmeAqFsihr4MNyGc7gL59GHY5IT4l+iXAS4+72OZIYste/PL/ySf46IB/tYmMqIu3SBoHN0TMdtW59eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q1P8l0nZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zcWcmvAw1YBOX10IyvPiRZDRC1NoT/GGhdbFumF76t8=; b=q1P8l0nZvZ3ZmyRQoh8eXHd0q5
+	PJpP/d/AHm+OZzKEk3EBSEiTplw+g1aR16vRroiIu/rYYIK4TOy8lKQw86u2zMSW09B98jrdfEEa/
+	J5KqfqN1ymmEeEJGLvzWuGRiL3rsWTNFSI7EHLkMG9mPgfEDYSYtqaEyACOCNbqbxcqxFrIK+6EAB
+	2pWyVoglf5KX7KFDrRHC7Hos8JdK8FupCU9J/GuTJEOImpoCY1nqqIpdfXcaYkqOOY+K2VssQp23c
+	Fk2qNKG7+6SZ029q1b6dxBkVSltpv5zsBMDrMT6Ol9UoiDYa0cKrDokq20G8a11jZgndsqx+6XbR/
+	w6aqeyYQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sP1wH-0000000AgNa-49ZW;
+	Wed, 03 Jul 2024 15:30:34 +0000
+Date: Wed, 3 Jul 2024 08:30:33 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
+	Sami Tolvanen <samitolvanen@google.com>, Song Liu <song@kernel.org>,
+	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jikos@kernel.org, joe.lawrence@redhat.com, nathan@kernel.org,
+	morbo@google.com, justinstitt@google.com,
+	thunder.leizhen@huawei.com, kees@kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] kallsyms, livepatch: Fix livepatch with CONFIG_LTO_CLANG
+Message-ID: <ZoVumd-b4CaRu5nW@bombadil.infradead.org>
+References: <20240605032120.3179157-1-song@kernel.org>
+ <alpine.LSU.2.21.2406071458531.29080@pobox.suse.cz>
+ <CAPhsuW5th55V3PfskJvpG=4bwacKP8c8DpVYUyVUzt70KC7=gw@mail.gmail.com>
+ <alpine.LSU.2.21.2406281420590.15826@pobox.suse.cz>
+ <Zn70rQE1HkJ_2h6r@bombadil.infradead.org>
+ <ZoKrWU7Gif-7M4vL@pathway.suse.cz>
+ <20240703055641.7iugqt6it6pi2xy7@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: proposition for fixing Y292B bug
-To: Alexander Lobakin <aleksander.lobakin@intel.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Theodore Ts'o <tytso@mit.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Alexander Lobakin <alexandr.lobakin@intel.com>,
- Jakub Kicinski <kuba@kernel.org>
-References: <3be3235a-dea7-a5ca-b5ea-4047bdeb695d@dpolakovic.space>
- <ZoFgga45QCh2uA0i@archie.me>
- <9e3b638d-76f2-8520-2a24-7de0cd0bc149@dpolakovic.space>
- <ZoJx5GaBDHg7nayw@archie.me> <cef39a6f-426d-4c4d-950e-edbbe5e95acf@intel.com>
-Content-Language: en-US
-From: David Polakovic <email@dpolakovic.space>
-In-Reply-To: <cef39a6f-426d-4c4d-950e-edbbe5e95acf@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Out-Rspamd-Queue-Id: 4WDkHD0NqPzmhkX
-X-Out-Spamd-Result: default: False [-0.10 / 1000.00];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_ZERO(0.00)[0];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_TO(0.00)[intel.com,gmail.com];
-	ASN(0.00)[asn:56349, ipnet:46.227.176.0/21, country:SK];
-	ARC_NA(0.00)[];
-	HAS_X_AS(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	GENERIC_REPUTATION(0.00)[-0.49974851024184]
-X-Out-Rspamd-Server: m1-rspamd-out-5
-X-Rspamd-Action: no action
-Feedback-ID: m1:dpolakovic.spac
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703055641.7iugqt6it6pi2xy7@treble>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On 7/1/24 15:31, Alexander Lobakin wrote:
-> From: Bagas Sanjaya <bagasdotme@gmail.com>
-> Date: Mon, 1 Jul 2024 16:07:48 +0700
->
->> On Sun, Jun 30, 2024 at 05:27:24PM +0200, David Polakovic wrote:
->>> Thanks for reply.
->> Please don't top-post on LKML, reply inline with appropriate context
->> instead.
->>
->>> My proposed solution was to create this BigInt datatype, which
->>> stores the value in array. The functions for division, multiplication,
->>> addition, subtraction and comparison could be stored in separate
->>> ".h" library for manipulation with BigInt datatype. The paper speaks
->>> more in detail.
-> IRRC there is big integer type somewhere in either lib/ or crypto/,
-> I don't remember exactly. It's used only for crypto tho.
->
->>> And yes, this truly is an userspace solution, but for kernel space
->>> implementation I have zero to none experience. Therefore I wrote
->>> here.
->> There was a proposal for adding 128-bit unsigned integer (see [1]).
->> The signed counterpart should be analogous.
-> I have generic 128-bit integer API/infra for the kernel in my internal
-> repo. I've been planning to upstream it for a couple years already, but
-> every time couldn't find a slot to do that.
-> I can upload it to my open GitHub, so that maybe someone else who needs
-> it could pick it up?
->
->> Thanks.
->>
->> [1]: https://lore.kernel.org/lkml/20220722145514.767592-1-alexandr.lobakin@intel.com/
-> Thanks,
-> Olek
+On Tue, Jul 02, 2024 at 10:56:41PM -0700, Josh Poimboeuf wrote:
+> On Mon, Jul 01, 2024 at 03:13:23PM +0200, Petr Mladek wrote:
+> > So, you suggest to search the symbols by a hash. Do I get it correctly?
 
+I meant, that in the Rust world the symbols go over the allowed limit,
+and so an alternative for them is to just use a hash. What I'm
+suggesting is for a new kconfig option where that world is the
+new one, so that they have to also do the proper userspace tooling
+for it. Without that, I don't see it as properly tested or scalable.
+And if we're gonna have that option for Rust for modules, then it begs
+the question if this can be used by other users.
 
-I am not sure if I don't understand your solution, but extending the
-memory designation from 64 to 128 bits, is another temporary
-solution, which will again overflow one day.
+> > Well, it might bring back the original problem. I mean
+> > the commit 8b8e6b5d3b013b0 ("kallsyms: strip ThinLTO hashes from
+> > static functions") added cleanup_symbol_name() so that user-space
+> > tool do not need to take care of the "unstable" suffix.
+> 
+> Are symbol names really considered user ABI??  That's already broken by
+> design.  Even without LTO, the toolchain can mangle them for a variety
+> of reasons.
+> 
+> If a user space tool doesn't want the suffixes, surely it can figure out
+> a way to deal with that on their own?
+> 
+> > So, it seems that we have two use cases:
+> > 
+> >    1. Some user-space tools want to ignore the extra suffix. I guess
+> >       that it is in the case when the suffix is added only because
+> >       the function was optimized.
+> > 
+> >       It can't work if there are two different functions of the same
+> >       name. Otherwise, the user-space tool would not know which one
+> >       they are tracing.
+> > 
+> > 
+> >    2. There are other use-cases, including livepatching, where we
+> >       want to be 100% sure that we match the right symbol.
+> > 
+> >       They want to match the full names. They even need to distinguish
+> >       symbols with the same name.
+> > 
+> > 
+> > IMHO, we need a separate API for each use-case.
+> 
+> We should just always link with -zunique-symbols so the duplicate
+> symbols no longer exist.  That would solve a lot of problems.
 
-The sole reason why I was proposing the new "BigInt" type was to
-store each digit of the time_c as separate element of array, which
-could be resized (added one digit) as needed. The only limit would
-then be the physical amount of memory in the machine.
+While it might solve this other issue, it doesn't solve the rust module
+long symbol name issue.
 
-dpo
-
+  Luis
 
