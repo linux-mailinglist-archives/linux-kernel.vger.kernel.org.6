@@ -1,101 +1,163 @@
-Return-Path: <linux-kernel+bounces-240335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43966926C50
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:08:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26321926C42
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED71D1F21015
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:08:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6EB42849E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F056E194AC7;
-	Wed,  3 Jul 2024 23:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2759C194A57;
+	Wed,  3 Jul 2024 23:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="U7Fz61pW"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FcVc/46K"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DF5194A75;
-	Wed,  3 Jul 2024 23:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D944964E;
+	Wed,  3 Jul 2024 23:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720048065; cv=none; b=Y5hWTrmjnyqlOCIgf4GU7kYFlPB+OmTQ0A6iMG5w+AN7MFoxCuHpHhL46r5cg269UzMnbPv3aNbuMn3uL8xnthWvNwqEbobXmvsSr/0xQMPxMwLOZW5rCwpCW2Coi0uLMOqIoHNYQDgIU5JlpOLnkO52INeZPFi/u2Yiqy+khSA=
+	t=1720047940; cv=none; b=i3fVFPa4fOGSUJlOZ5iTNacV8H0hgSaEQEToQ6wk66qtnA9lwd4j8q4AupX8w+BQUWwws+wXYHGGKl38GtihOvs3UHRCeLiwioLOUEWYnjRhNePOpJY5Di2bh3vMtUnxYSg78Q2fJ1naF6mepEtlmBms4mKZ5yHIHQ79tmA9sOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720048065; c=relaxed/simple;
-	bh=o3PpDOsEbzGibzhF30rXzP7FichK/a1O2xk7xk5hZG0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ezlISfaQOYeWrvH486TTLfIeR1ghhMS2AEDwwtQkkgRZ/gp/mvZlG7MoyziHkmwPGmeG8s9KEmIz/D+BwLhMY8RAaAdDeDHVLx1Ram529/T0JyUmQZjw7DJEAu8BdnALc5qQ7kM+1nFgkfik8SCuYH+sGst5Ldet+3vbRpKkO4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=U7Fz61pW; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E16304189E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1720048061; bh=q/1IKlg8o5G9b5vyFjZhcZ1c3e6Ub6TvBAIZ4vVsB7g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=U7Fz61pWWGfSbsTXy2+7VmnASFUymlsleQTlPqoOwfvPXuxwOWkisr+z6tYbHfk8R
-	 QHvk5oty2UzbeMcllyPM4WOyjiFncmH7CiXuLiNyLBy5HOYyi55DZKtBR2yXdYhpNS
-	 aDrM4lHTHAd5bw4/7T2ZOyqpiIBKdbXywqbyfMTEBsfiDAnecCnk4v2uqmsAWCi/Ki
-	 4w/98cgRmpnhB5Vzh16UDJNvKnaLe+AH0RaNjdTFOlWdP+XBCVb/WCse6/ZJimf2R/
-	 Ia4AgaLOZZBpyKM5+2ag9uJK0XS7a65LHo2ESlOuO3QDuFkzXGIcU8ZvK1jTeJUWgH
-	 hSN6ln8sTURww==
-Received: from localhost (c-24-9-249-71.hsd1.co.comcast.net [24.9.249.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id E16304189E;
-	Wed,  3 Jul 2024 23:07:40 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Tao Zou <wodemia@linux.alibaba.com>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>
-Cc: Tao Zou <wodemia@linux.alibaba.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] zh_CN/admin-guide: Add
- zh_CN/admin-guide/numastat.rst translation document
-In-Reply-To: <20240701064153.62303-1-wodemia@linux.alibaba.com>
-References: <20240701064153.62303-1-wodemia@linux.alibaba.com>
-Date: Wed, 03 Jul 2024 17:07:40 -0600
-Message-ID: <87v81mrs5f.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1720047940; c=relaxed/simple;
+	bh=ib2MQP1+VFmSLV17Wu7+aGnrGqFHS1DAxRVpfizpWaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h+B5gH9E2tcAMNiMHqJdL0BmOlAp+M3h4xAxPxfCHw03919QVvS0dmUwAbzOUTpVDzwwRF/Yu/XTuB3++D67kVb6InNuva7Cf3E4zSqnklnD6VV2z5xeEBbGAVOxYNWfAXQKIdvirVBylZhmjbLLv8B/a4T4c9TUZ1oZwWJW0HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FcVc/46K; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720047939; x=1751583939;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ib2MQP1+VFmSLV17Wu7+aGnrGqFHS1DAxRVpfizpWaw=;
+  b=FcVc/46KZ+7kqlsDhvWbkV1ekFo7JsbkdbD3BF1AqblINE0ICWlmG6vf
+   ttWDentozdiUG1CoxXp2lv4hHfmGo+LgI1iT5v1mCjm2Xo9JP6yy43cZC
+   65uRwMZ1cfxsl0dpEONFeyVbyRtbAVA6pe+iv+8G68QFL9hYKTDaRNXFu
+   z4/nK4cPl/IEiG/ZYR/x6ilJqfaN8iHUMe9kt/hekAZxePKuo6wlSqPn5
+   +CIJ+KHqfPnNbQ8iBUezWk6t8Edety/ieFozA5rl2Zy5YtFdzzLX8/1Db
+   Smj8omCY5eRvhOuROibjZ0Y6Alyf56BHliJhsxac2OGtyGLTY9Ap1RsMW
+   A==;
+X-CSE-ConnectionGUID: Ekg7IIQLRU6RGNmQ3ZulPA==
+X-CSE-MsgGUID: hiDsGiCGRT+IQ9viRRGPjg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="17259836"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="17259836"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 16:05:39 -0700
+X-CSE-ConnectionGUID: qdl4Jy95Qx+NMw2anMUn9A==
+X-CSE-MsgGUID: BXzv9cMDQseBkyjPW6b29w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="46544441"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 16:05:38 -0700
+Date: Wed, 3 Jul 2024 16:10:51 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: Xin Li <xin@zytor.com>
+Cc: X86 Kernel <x86@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Xin Li
+ <xin3.li@intel.com>, linux-perf-users@vger.kernel.org, Peter Zijlstra
+ <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, Tony Luck
+ <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
+ kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>, "Mehta,
+ Sohil" <sohil.mehta@intel.com>, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v3 04/11] x86/irq: Factor out common NMI handling code
+Message-ID: <20240703161051.3fb87920@jacob-builder>
+In-Reply-To: <889c06bc-6577-4fac-b61e-b2d30e99bbfb@zytor.com>
+References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
+	<20240628201839.673086-5-jacob.jun.pan@linux.intel.com>
+	<889c06bc-6577-4fac-b61e-b2d30e99bbfb@zytor.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Tao Zou <wodemia@linux.alibaba.com> writes:
 
-> Add translation zh_CN/admin-guide/numastat.rst and link it to
-> zh_CN/admin-guide/index.rst while clean its todo entry.
->
-> commit 77691ee92d4a ("Documentation: update numastat explanation")
->
-> Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
-> Reviewed-by: Yanteng Si <siyanteng@loongson.cn>
-> Reviewed-by: Alex Shi <alexs@kernel.org>
-> ---
-> v4->v5: fix one typo error
-> v3->v4: replace "=E5=9C=A8=E6=9C=89=E6=97=A0=E5=86=85=E5=AD=98=E8=8A=82=
-=E7=82=B9" with "=E5=9C=A8=E5=8C=85=E5=90=AB=E6=97=A0=E5=86=85=E5=AD=98=E8=
-=8A=82=E7=82=B9"
-> v2->v3: add space in origin commit tag
-> v1->v2: drop the useless label "+.. _cn_numastat:" and unnecessary "=3D",
-> 	add a commit tag of origin document in commit description
->
->  .../translations/zh_CN/admin-guide/index.rst  |  2 +-
->  .../zh_CN/admin-guide/numastat.rst            | 48 +++++++++++++++++++
->  2 files changed, 49 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/translations/zh_CN/admin-guide/numastat=
-.rst
+On Fri, 28 Jun 2024 17:31:50 -0700, Xin Li <xin@zytor.com> wrote:
 
-So I had applied v4 - it seems I neglected to send an email saying so,
-apologies for that.  So if there is an additional change to make, can
-you send me a separate patch?
+> On 6/28/2024 1:18 PM, Jacob Pan wrote:
+> > In preparation for handling NMIs with explicit source reporting, factor
+> > out common code for reuse.
+> >   
+> 
+> My read is that this patch has no functional change, right?
+> 
+> If yes, please add "No functional change intended."
+will do.
+
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > ---
+> >   arch/x86/kernel/nmi.c | 28 ++++++++++++++++------------
+> >   1 file changed, 16 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
+> > index 1ebe93edba7a..639a34e78bc9 100644
+> > --- a/arch/x86/kernel/nmi.c
+> > +++ b/arch/x86/kernel/nmi.c
+> > @@ -135,6 +135,20 @@ static void nmi_check_duration(struct nmiaction
+> > *action, u64 duration) action->handler, duration, decimal_msecs);
+> >   }
+> >   
+> > +static inline int do_handle_nmi(struct nmiaction *a, struct pt_regs
+> > *regs, unsigned int type) +{
+> > +	int thishandled;
+> > +	u64 delta;
+> > +
+> > +	delta = sched_clock();
+> > +	thishandled = a->handler(type, regs);
+> > +	delta = sched_clock() - delta;
+> > +	trace_nmi_handler(a->handler, (int)delta, thishandled);
+> > +	nmi_check_duration(a, delta);
+> > +
+> > +	return thishandled;
+> > +}
+> > +
+> >   static int nmi_handle(unsigned int type, struct pt_regs *regs)
+> >   {
+> >   	struct nmi_desc *desc = nmi_to_desc(type);
+> > @@ -149,18 +163,8 @@ static int nmi_handle(unsigned int type, struct
+> > pt_regs *regs)
+> >   	 * can be latched at any given time.  Walk the whole list
+> >   	 * to handle those situations.
+> >   	 */
+> > -	list_for_each_entry_rcu(a, &desc->head, list) {
+> > -		int thishandled;
+> > -		u64 delta;
+> > -
+> > -		delta = sched_clock();
+> > -		thishandled = a->handler(type, regs);
+> > -		handled += thishandled;
+> > -		delta = sched_clock() - delta;
+> > -		trace_nmi_handler(a->handler, (int)delta, thishandled);
+> > -
+> > -		nmi_check_duration(a, delta);
+> > -	}
+> > +	list_for_each_entry_rcu(a, &desc->head, list)
+> > +		handled += do_handle_nmi(a, regs, type);
+> >   
+> >   	rcu_read_unlock();
+> >     
+> 
+> As this is a preparation patch, better move it earlier before any actual 
+> NMI source changes, maybe the first patch of this series.
+This preparatory patch is utilized immediately by the subsequent patch,
+enhancing the narrative flow, in my opinion.
 
 Thanks,
 
-jon
+Jacob
 
