@@ -1,80 +1,89 @@
-Return-Path: <linux-kernel+bounces-239112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 894D6925674
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:20:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF1E925643
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACEE01C22015
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:20:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0F8B1C22F95
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31922155A39;
-	Wed,  3 Jul 2024 09:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5936D13C9D4;
+	Wed,  3 Jul 2024 09:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FThbjMgu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JQjCJc/q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC23143C51;
-	Wed,  3 Jul 2024 09:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA69913BC0E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 09:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719998331; cv=none; b=Q4uZs84SLhmj45GGsDudSPBQu7y4n0mYvh0Qx0jABsphLu5xOzg4VapEA2+KTrMJ1kvG90xZi23yCvk5WTJOqkAyfFId4lqWnzFGaFRKswC2KSDPn6FnaDhElOWGUIwJIeF01GHv4KSAvt9ROL+boH9h4kpEuGi6KZLFUS0W5mQ=
+	t=1719998239; cv=none; b=GrfsqglbqIDV6Ya8TnnRKKdVzyZQEOZkA97CM2XAcNiGFUh/XMtGoO6TpJ/wajQ6P5/EfQoBW2hs64YTP2uHaZf3kk/WTZuZGt2Q0MS6uVJeHolcPe621ZRnXgcFZ4WqRZwLgjPMLk3mEABz1AnszjJBFmz8qygIiO5hfoQFIyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719998331; c=relaxed/simple;
-	bh=vTXIrNYgk07+cxh35MCsCkhSCeDYcKWZX/J/zDxpexc=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cg8PoNqm9LDYfFs1WKhYmaCF0XeRyOFq5M4pHtGim1yEJDoQN8m8I4HUiDwaU2RLW+RBzqvJEHpxBePxlhVbu6a8xcIurvhEumlGgiavpA1LKH0bttfwcCjFeMV10NPYkSigbdNegezhRvLg6Apbozf2IoAsCEaXnJUshRc0Jm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FThbjMgu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4634MYLo026743;
-	Wed, 3 Jul 2024 09:18:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UbNoBFUcYXq8XZ6EildizcebXv7aqsBqo6JPgoSiu6w=; b=FThbjMguHvnFwcgo
-	CBAWk1MC20n+cA1Bnk8srv0vzRff5LE52XtDOUG+lnkcWiI9iyUXJOzW+64xfWer
-	+E1GDfzH1KQNhMIvnhuNrtTbB4NpkC7Uw8j508Os3jOe2JrbExUq/TSLvGPKLsnS
-	0VqAzddII4jKjm23r3SHS/RgR5k8jOpx5v4WNprCujaW8nKTOXS2bvZxy4C/+06m
-	8tZqsEPFiMPQJnfryBTJgcltihnkgZI7EsgIGosQUdzgadOEnXinVrElyZ+OcHvL
-	RpuE5qrIxCalnVCpsx5YLF/5QyVPY6NVFb7MWXiP8iFs2tqvr/t2kM5Q3C2O08l7
-	mTfyoQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404yjhrn02-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Jul 2024 09:18:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4639IWm0019094
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Jul 2024 09:18:32 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 3 Jul 2024 02:18:23 -0700
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <vireshk@kernel.org>, <nm@ti.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <ilia.lin@kernel.org>, <rafael@kernel.org>, <ulf.hansson@linaro.org>,
-        <quic_sibis@quicinc.com>, <quic_rjendra@quicinc.com>,
-        <quic_rohiagar@quicinc.com>, <abel.vesa@linaro.org>,
-        <otto.pflueger@abscue.de>, <danila@jiaxyga.com>,
-        <quic_varada@quicinc.com>, <quic_ipkumar@quicinc.com>,
-        <luca@z3ntu.xyz>, <stephan.gerhold@kernkonzept.com>, <nks@flawful.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH v4 08/10] soc: qcom: cpr3: Add IPQ9574 definitions
-Date: Wed, 3 Jul 2024 14:46:49 +0530
-Message-ID: <20240703091651.2820236-9-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240703091651.2820236-1-quic_varada@quicinc.com>
-References: <20240703091651.2820236-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1719998239; c=relaxed/simple;
+	bh=wS7lzFAGRGSUQzBCLpUo66s379++n6EjhtsAvlkoypo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TJySCv+eFbbojpqVcZ+scAnacAxNcYQLLSRowYXZ0apa5ZfLGnPTOTmnwzXALHsj69jqhJHWmbR2cjqnR1nurhMTyG1z5vNHwrUw5SW+bhndzWBUjzevIO+Y0ML7DwLQ+Eyl4kUfPS+Kon+mUqpNbFE5Am/16/xDKLmtrDHQMRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JQjCJc/q; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719998236;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=nDRjbFmP01KxOsB0eGxpZsCd+/+50ehZGov31ZZvomA=;
+	b=JQjCJc/qEfpIZurxWrcolY2DMkNqSVcop560FuFkUskIJLikL9MTqmYhK6XKestU7SICSO
+	iOHvi2CQXUNjah3iC9DSmMFtTg1P8t4Wfsnnj05r3EldH1ZvWBHj08wEmHFVqEeoB4dpXJ
+	Oe3qZA0WvWV9hxzgYMOMJ2w12ToB7e0=
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
+ [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-680-RQi_8HrFNe6Zruhg5fphAg-1; Wed, 03 Jul 2024 05:17:15 -0400
+X-MC-Unique: RQi_8HrFNe6Zruhg5fphAg-1
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-255112df14aso3892559fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 02:17:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719998234; x=1720603034;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nDRjbFmP01KxOsB0eGxpZsCd+/+50ehZGov31ZZvomA=;
+        b=GGfGRAOy4fD44tqHn857pSWJVKSTCtvhY+FO4RNsWYGiM53+uqiVbmJB2d2m85Ya6M
+         cRiKm2vkoTb0eBKxtTqQJnmMdAJPIFHZrlR+PmgWWU3n4DN5uUhLpxzNZAKvVxI6pvAA
+         A5LHqvstZZDziU8e3AyOJ4NCZ5qHuasXYpf+/QfDRAr5/vlA+7aqKMhiXTN7PcZMd3KN
+         7lvdCRAF2F7KxCVZke+6vNRPkqmwvNr4zck2+AkvgrGt0fM0USyrO9iCNcthg+N9s3mm
+         kdESsUKSJAw0TFnZRoHhDjsspSir5AQZHbrDKcDBDp9i5UEvYR7SI9std235jhPenq8W
+         lQRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSqAjth5TP6a+1MZ9dcMIvLbAjOkrUlaJBqLMyrPrWuSMBYrlQ6foAugOGTXvgdvCy7/SmUSS9Xv8j9x3ZrWj4x9CLo8JzIg3rrhwU
+X-Gm-Message-State: AOJu0YzC2ObpxcZCZAwJlUhqKo9jBFciL9UNgJg/qzdkTldmAqJG1CBp
+	hQUuIUMMnKezcVLY7hPeYa5q05+RY+WKuFmEVOj0bDv99hb8jjkzHGNndOhtERFc2p78YKsZN0X
+	wL5qQ+Ld806I2x2Ac2eAgLhWVLvG9cSlGgbp6c8hvnOX/SupIGj/hWcb8hZ/0NQ==
+X-Received: by 2002:a05:6870:1493:b0:25d:5024:4fae with SMTP id 586e51a60fabf-25db35c0336mr10443993fac.45.1719998234665;
+        Wed, 03 Jul 2024 02:17:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEplzfCQnzMujnj6tcN/ISofTFNlDfMRPdQLw63q83nhzqBWn2jkHc0Ih43zLVejope70KeaQ==
+X-Received: by 2002:a05:6870:1493:b0:25d:5024:4fae with SMTP id 586e51a60fabf-25db35c0336mr10443982fac.45.1719998234343;
+        Wed, 03 Jul 2024 02:17:14 -0700 (PDT)
+Received: from ryzen.. ([240d:1a:c0d:9f00:ca7f:54ff:fe01:979d])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080205a180sm10257626b3a.18.2024.07.03.02.17.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 02:17:14 -0700 (PDT)
+From: Shigeru Yoshida <syoshida@redhat.com>
+To: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shigeru Yoshida <syoshida@redhat.com>,
+	syzkaller <syzkaller@googlegroups.com>
+Subject: [PATCH net] inet_diag: Initialize pad field in struct inet_diag_req_v2
+Date: Wed,  3 Jul 2024 18:16:49 +0900
+Message-ID: <20240703091649.111773-1-syoshida@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,221 +91,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4uUcRhMzhtHWxy4ac1lRVZLza9rCyPpV
-X-Proofpoint-ORIG-GUID: 4uUcRhMzhtHWxy4ac1lRVZLza9rCyPpV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_05,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- mlxlogscore=999 clxscore=1015 lowpriorityscore=0 suspectscore=0
- malwarescore=0 mlxscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407030068
 
-From: Praveenkumar I <quic_ipkumar@quicinc.com>
+KMSAN reported uninit-value access in raw_lookup() [1]. Diag for raw
+sockets uses the pad field in struct inet_diag_req_v2 for the
+underlying protocol. This field corresponds to the sdiag_raw_protocol
+field in struct inet_diag_req_raw.
 
-* Add thread, scaling factor, CPR descriptor defines to enable
-  CPR on IPQ9574.
+inet_diag_get_exact_compat() converts inet_diag_req to
+inet_diag_req_v2, but leaves the pad field uninitialized. So the issue
+occurs when raw_lookup() accesses the sdiag_raw_protocol field.
 
-* Skip 'acc' usage since IPQ9574 does not have acc
+Fix this by initializing the pad field in
+inet_diag_get_exact_compat(). Also, do the same fix in
+inet_diag_dump_compat() to avoid the similar issue in the future.
 
-Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+[1]
+BUG: KMSAN: uninit-value in raw_lookup net/ipv4/raw_diag.c:49 [inline]
+BUG: KMSAN: uninit-value in raw_sock_get+0x657/0x800 net/ipv4/raw_diag.c:71
+ raw_lookup net/ipv4/raw_diag.c:49 [inline]
+ raw_sock_get+0x657/0x800 net/ipv4/raw_diag.c:71
+ raw_diag_dump_one+0xa1/0x660 net/ipv4/raw_diag.c:99
+ inet_diag_cmd_exact+0x7d9/0x980
+ inet_diag_get_exact_compat net/ipv4/inet_diag.c:1404 [inline]
+ inet_diag_rcv_msg_compat+0x469/0x530 net/ipv4/inet_diag.c:1426
+ sock_diag_rcv_msg+0x23d/0x740 net/core/sock_diag.c:282
+ netlink_rcv_skb+0x537/0x670 net/netlink/af_netlink.c:2564
+ sock_diag_rcv+0x35/0x40 net/core/sock_diag.c:297
+ netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+ netlink_unicast+0xe74/0x1240 net/netlink/af_netlink.c:1361
+ netlink_sendmsg+0x10c6/0x1260 net/netlink/af_netlink.c:1905
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x332/0x3d0 net/socket.c:745
+ ____sys_sendmsg+0x7f0/0xb70 net/socket.c:2585
+ ___sys_sendmsg+0x271/0x3b0 net/socket.c:2639
+ __sys_sendmsg net/socket.c:2668 [inline]
+ __do_sys_sendmsg net/socket.c:2677 [inline]
+ __se_sys_sendmsg net/socket.c:2675 [inline]
+ __x64_sys_sendmsg+0x27e/0x4a0 net/socket.c:2675
+ x64_sys_call+0x135e/0x3ce0 arch/x86/include/generated/asm/syscalls_64.h:47
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xd9/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ raw_sock_get+0x650/0x800 net/ipv4/raw_diag.c:71
+ raw_diag_dump_one+0xa1/0x660 net/ipv4/raw_diag.c:99
+ inet_diag_cmd_exact+0x7d9/0x980
+ inet_diag_get_exact_compat net/ipv4/inet_diag.c:1404 [inline]
+ inet_diag_rcv_msg_compat+0x469/0x530 net/ipv4/inet_diag.c:1426
+ sock_diag_rcv_msg+0x23d/0x740 net/core/sock_diag.c:282
+ netlink_rcv_skb+0x537/0x670 net/netlink/af_netlink.c:2564
+ sock_diag_rcv+0x35/0x40 net/core/sock_diag.c:297
+ netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+ netlink_unicast+0xe74/0x1240 net/netlink/af_netlink.c:1361
+ netlink_sendmsg+0x10c6/0x1260 net/netlink/af_netlink.c:1905
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x332/0x3d0 net/socket.c:745
+ ____sys_sendmsg+0x7f0/0xb70 net/socket.c:2585
+ ___sys_sendmsg+0x271/0x3b0 net/socket.c:2639
+ __sys_sendmsg net/socket.c:2668 [inline]
+ __do_sys_sendmsg net/socket.c:2677 [inline]
+ __se_sys_sendmsg net/socket.c:2675 [inline]
+ __x64_sys_sendmsg+0x27e/0x4a0 net/socket.c:2675
+ x64_sys_call+0x135e/0x3ce0 arch/x86/include/generated/asm/syscalls_64.h:47
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xd9/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable req.i created at:
+ inet_diag_get_exact_compat net/ipv4/inet_diag.c:1396 [inline]
+ inet_diag_rcv_msg_compat+0x2a6/0x530 net/ipv4/inet_diag.c:1426
+ sock_diag_rcv_msg+0x23d/0x740 net/core/sock_diag.c:282
+
+CPU: 1 PID: 8888 Comm: syz-executor.6 Not tainted 6.10.0-rc4-00217-g35bb670d65fc #32
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40 04/01/2014
+
+Fixes: 432490f9d455 ("net: ip, diag -- Add diag interface for raw sockets")
+Reported-by: syzkaller <syzkaller@googlegroups.com>
+Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
 ---
-v4: s/silver//, s/cprh/cpr4/
-    Skip 'acc' related code as IPQ9574 does not have acc
+ net/ipv4/inet_diag.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v3: Fix patch author
-    Included below information in cover letter
-v2: Fix Signed-off-by order
-Depends:
-	[1] https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org/T/
-	[2] https://github.com/quic-varada/cpr/commits/konrad/
----
- drivers/pmdomain/qcom/cpr3.c | 143 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 141 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pmdomain/qcom/cpr3.c b/drivers/pmdomain/qcom/cpr3.c
-index 6ceb7605f84d..abd890cc4d9e 100644
---- a/drivers/pmdomain/qcom/cpr3.c
-+++ b/drivers/pmdomain/qcom/cpr3.c
-@@ -2056,6 +2056,142 @@ static const struct cpr_acc_desc msm8998_cpr_acc_desc = {
- 	.cpr_desc = &msm8998_cpr_desc,
- };
+diff --git a/net/ipv4/inet_diag.c b/net/ipv4/inet_diag.c
+index 7adace541fe2..9712cdb8087c 100644
+--- a/net/ipv4/inet_diag.c
++++ b/net/ipv4/inet_diag.c
+@@ -1383,6 +1383,7 @@ static int inet_diag_dump_compat(struct sk_buff *skb,
+ 	req.sdiag_family = AF_UNSPEC; /* compatibility */
+ 	req.sdiag_protocol = inet_diag_type2proto(cb->nlh->nlmsg_type);
+ 	req.idiag_ext = rc->idiag_ext;
++	req.pad = 0;
+ 	req.idiag_states = rc->idiag_states;
+ 	req.id = rc->id;
  
-+static const int ipq9574_scaling_factor[][CPR3_RO_COUNT] = {
-+	/* Fuse Corner 0 */
-+	{
-+		2383, 2112, 2250, 1502, 2269, 2055, 2046, 1949,
-+		2128, 1945, 2282, 2061, 2010, 2216, 2054, 2332
-+	},
-+	/* Fuse Corner 1 */
-+	{
-+		2383, 2112, 2250, 1502, 2269, 2055, 2046, 1949,
-+		2128, 1945, 2282, 2061, 2010, 2216, 2054, 2332
-+	},
-+	/* Fuse Corner 2 */
-+	{
-+		2383, 2112, 2250, 1502, 2269, 2055, 2046, 1949,
-+		2128, 1945, 2282, 2061, 2010, 2216, 2054, 2332
-+	},
-+	/* Fuse Corner 3 */
-+	{
-+		2383, 2112, 2250, 1502, 2269, 2055, 2046, 1949,
-+		2128, 1945, 2282, 2061, 2010, 2216, 2054, 2332
-+	},
-+};
-+
-+static const struct cpr_thread_desc ipq9574_thread = {
-+	.controller_id = 0,
-+	.hw_tid = 0,
-+	.ro_scaling_factor = ipq9574_scaling_factor,
-+	.sensor_range_start = 0,
-+	.sensor_range_end = 6,
-+	.init_voltage_step = 10000,
-+	.init_voltage_width = 6,
-+	.step_quot_init_min = 0,
-+	.step_quot_init_max = 15,
-+	.num_fuse_corners = 4,
-+	.fuse_corner_data = (struct fuse_corner_data[]){
-+		/* fuse corner 0 */
-+		{
-+			.ref_uV = 725000,
-+			.max_uV = 725000,
-+			.min_uV = 725000,
-+			.range_uV = 0,
-+			.volt_cloop_adjust = 0,
-+			.volt_oloop_adjust = 0,
-+			.max_volt_scale = 4,
-+			.max_quot_scale = 10,
-+			.quot_offset = 0,
-+			.quot_scale = 1,
-+			.quot_adjust = 0,
-+			.quot_offset_scale = 5,
-+			.quot_offset_adjust = 0,
-+		},
-+		/* fuse corner 1 */
-+		{
-+			.ref_uV = 862500,
-+			.max_uV = 862500,
-+			.min_uV = 725000,
-+			.range_uV = 0,
-+			.volt_cloop_adjust = 0,
-+			.volt_oloop_adjust = 0,
-+			.max_volt_scale = 500,
-+			.max_quot_scale = 800,
-+			.quot_offset = 0,
-+			.quot_scale = 1,
-+			.quot_adjust = 0,
-+			.quot_offset_scale = 5,
-+			.quot_offset_adjust = 0,
-+		},
-+		/* fuse corner 2 */
-+		{
-+			.ref_uV = 987500,
-+			.max_uV = 987500,
-+			.min_uV = 787500,
-+			.range_uV = 0,
-+			.volt_cloop_adjust = 0,
-+			.volt_oloop_adjust = 0,
-+			.max_volt_scale = 280,
-+			.max_quot_scale = 650,
-+			.quot_offset = 0,
-+			.quot_scale = 1,
-+			.quot_adjust = 0,
-+			.quot_offset_scale = 5,
-+			.quot_offset_adjust = 0,
-+
-+		},
-+		/* fuse corner 3 */
-+		{
-+			.ref_uV = 1062500,
-+			.max_uV = 1062500,
-+			.min_uV = 850000,
-+			.range_uV = 0,
-+			.volt_cloop_adjust = 0,
-+			.volt_oloop_adjust = 0,
-+			.max_volt_scale = 430,
-+			.max_quot_scale = 800,
-+			.quot_offset = 0,
-+			.quot_scale = 1,
-+			.quot_adjust = 0,
-+			.quot_offset_scale = 5,
-+			.quot_offset_adjust = 0,
-+		},
-+	},
-+};
-+
-+static const struct cpr_desc ipq9574_cpr_desc = {
-+	.cpr_type = CTRL_TYPE_CPR4,
-+	.num_threads = 1,
-+	.apm_threshold = 850000,
-+	.apm_crossover = 880000,
-+	.apm_hysteresis = 0,
-+	.cpr_base_voltage = 700000,
-+	.cpr_max_voltage = 1100000,
-+	.timer_delay_us = 5000,
-+	.timer_cons_up = 0,
-+	.timer_cons_down = 0,
-+	.up_threshold = 2,
-+	.down_threshold = 2,
-+	.idle_clocks = 15,
-+	.count_mode = CPR3_CPR_CTL_COUNT_MODE_ALL_AT_ONCE_MIN,
-+	.count_repeat = 1,
-+	.gcnt_us = 1,
-+	.vreg_step_fixed = 12500,
-+	.vreg_step_up_limit = 1,
-+	.vreg_step_down_limit = 1,
-+	.vdd_settle_time_us = 34,
-+	.corner_settle_time_us = 6,
-+	.reduce_to_corner_uV = true,
-+	.hw_closed_loop_en = false,
-+	.threads = (const struct cpr_thread_desc *[]) {
-+		&ipq9574_thread,
-+	},
-+};
-+
-+static const struct cpr_acc_desc ipq9574_cpr_acc_desc = {
-+	.cpr_desc = &ipq9574_cpr_desc,
-+};
-+
- static const int sdm630_gold_scaling_factor[][CPR3_RO_COUNT] = {
- 	/* Same RO factors for all fuse corners */
- 	{
-@@ -2676,7 +2812,8 @@ static int cpr_probe(struct platform_device *pdev)
- 	desc = data->cpr_desc;
+@@ -1398,6 +1399,7 @@ static int inet_diag_get_exact_compat(struct sk_buff *in_skb,
+ 	req.sdiag_family = rc->idiag_family;
+ 	req.sdiag_protocol = inet_diag_type2proto(nlh->nlmsg_type);
+ 	req.idiag_ext = rc->idiag_ext;
++	req.pad = 0;
+ 	req.idiag_states = rc->idiag_states;
+ 	req.id = rc->id;
  
- 	/* CPRh disallows MEM-ACC access from the HLOS */
--	if (!data->acc_desc && desc->cpr_type < CTRL_TYPE_CPRH)
-+	if (!data->acc_desc && desc->cpr_type < CTRL_TYPE_CPRH &&
-+	    !of_device_is_compatible(dev->of_node, "qcom,ipq9574-cpr4"))
- 		return -EINVAL;
- 
- 	drv = devm_kzalloc(dev, sizeof(*drv), GFP_KERNEL);
-@@ -2703,7 +2840,8 @@ static int cpr_probe(struct platform_device *pdev)
- 
- 	mutex_init(&drv->lock);
- 
--	if (desc->cpr_type < CTRL_TYPE_CPRH) {
-+	if (desc->cpr_type < CTRL_TYPE_CPRH &&
-+	    !of_device_is_compatible(dev->of_node, "qcom,ipq9574-cpr4")) {
- 		np = of_parse_phandle(dev->of_node, "qcom,acc", 0);
- 		if (!np)
- 			return -ENODEV;
-@@ -2828,6 +2966,7 @@ static void cpr_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id cpr3_match_table[] = {
-+	{ .compatible = "qcom,ipq9574-cpr4", .data = &ipq9574_cpr_acc_desc },
- 	{ .compatible = "qcom,msm8998-cprh", .data = &msm8998_cpr_acc_desc },
- 	{ .compatible = "qcom,sdm630-cprh", .data = &sdm630_cpr_acc_desc },
- 	{ }
 -- 
-2.34.1
+2.45.2
 
 
