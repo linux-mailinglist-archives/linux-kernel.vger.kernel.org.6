@@ -1,94 +1,86 @@
-Return-Path: <linux-kernel+bounces-239336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE86925AE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:04:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F29925B12
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8678D1F2143F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:04:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B56E61C20F45
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51876180A86;
-	Wed,  3 Jul 2024 10:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYd4RQLP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5AF181CEC;
+	Wed,  3 Jul 2024 10:54:04 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB9717E8EE;
-	Wed,  3 Jul 2024 10:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6FE181BA6
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720003978; cv=none; b=YOFF6x3j98aXgJyBC4HChTdc6evgc8WhOvRQvU0db/P30oRMVqi096cBcm9ulaW/bnxL5jdp7RFlbgopCe0eK0IWQa14ImB+pRu+TVv2GnfL+n6X5XQFGHfA3LtP/Ng2xJZ/XF6ShlHi8Ths8pwxfQEN9JKXEXOdFdYt5huy/Dc=
+	t=1720004044; cv=none; b=OfguTypSZF1Q+9MxawuXmKA2DUbYV80QpyzTNgBlM5ziRgl3FeGPvuFFSY5t77vmcTB97LYqMFAbVuMfMwgvs6LYtMuNSaAs4Y7Fo/AFYPez0J4RIWG+QTvSuUMWoVB55HKP8PbjwlryiTXz1LxEIEH9Li5+4SPgfq5eED3uUUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720003978; c=relaxed/simple;
-	bh=pPz+aKLXZOghQ7VtjQHusi+fj+NpFq4VHkcVX8X3bH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Olzs6C01dW/uyLIQV4DMxyTT65UVUaSAuBCPjmND+aZomXLHdK94+hCxwYIXM99Yw0R4Qz+NnZKoTGZ5NQxAhAgeedsVEDSEKiZ8eAp2XgRnLKPZqDnCS55f/vFlpcPNX6XR4KUQ3tMKdhbw9PBrFRMCDsLP0dT9y0j3qfLuxY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYd4RQLP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 836CAC4AF0B;
-	Wed,  3 Jul 2024 10:52:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720003978;
-	bh=pPz+aKLXZOghQ7VtjQHusi+fj+NpFq4VHkcVX8X3bH8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nYd4RQLPNWY78pIbNAILafDzME2V0q1JxD04RIMzYEVRTvt89jlLKvJriZcMCuH2T
-	 w96uRRv/Q4LrMA7qbS+tVVzGZ8TbYD4a7uxMEPOOXtyhfAZjqiLtWvl7qwC+YZD5Ba
-	 v6Hluy8LaijXySSMoswEpGvrCLN3gkwpFP2bG31B2uIuuhMWFdHvJ6hmi9njK5bywp
-	 geNwo4OuHZBuA495qG+lQBMrzBgxPLYgn8KinCmvDBq9hmAZenc9g0C6DeVOsibSX2
-	 IVVgir3Al85xqpIrwp6ua76xZvzC0FWDuHMKCBDh5k2QhOV31v4/Nqa/LhITpDNtHG
-	 1wsaj+G6o4oiw==
-Date: Wed, 3 Jul 2024 13:52:53 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Keith Busch <kbusch@kernel.org>,
-	"Zeng, Oak" <oak.zeng@intel.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
-Message-ID: <20240703105253.GA95824@unreal>
-References: <cover.1719909395.git.leon@kernel.org>
- <20240703054238.GA25366@lst.de>
+	s=arc-20240116; t=1720004044; c=relaxed/simple;
+	bh=Naj/cUPG2ndqgbzqQJDsmcxziMwyUESt4XQZCadAC3o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PIpYhfbM2L1zsjHI/2udknqbPigmZNZ2YDhKRhiCWtHdE9GYbI6FworlV5p+BnPbwxapIZxQxjZU0oCBwAnOeiFVVJaqiUrT5zsrgml/PaxkjyvWQCmayDXsmNvg0rBNut+YZ4ANmJst3ryeLDpc50eO0671WG0yaP453iVgyGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7eb01189491so581101139f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:54:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720004042; x=1720608842;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aYRFe9dL2+ykql17/2JEEiE0CmhFS1oOV4+xDTgvMZ8=;
+        b=VAPSrK17JpT17kuKJPNDmrIDFXKUNLOyUBFI+iqqyPGsrYx129Bo3PhX+xC1WEGezw
+         CvjsGF1CLn0ifj0YyCw0mz109/Lzs9iFbQpjZ0LueFgAMQp9g2HWVcLxep22NF/b+2YB
+         26VVuvd7pYxX9+sXCeNEPLwRNkvwlPpKwZiAtwTMCbArml5nATCtBKICxZWK+w+DNesg
+         bJjfyGKFfRFpIUt1wt+T9vaONIOKYiVtNA/mIohwX0+F4uazK34dHaXlrgf/KE70SxCg
+         hWelUAslG7hfrKwHI4lsQbnYF1UWCWA/mIvB4Ua85UkgQjHDDQHN+AXKWenNlqDx6StT
+         xgYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUm6oJEG4u3xqvg3s24EkZK7gThvb8ce9QTrOcxviE05ZVCkveeA5oKV2O3Rji59DQLxm2UPCLtsez4iQiMGBpKi6h2oz7QdpFXpXIO
+X-Gm-Message-State: AOJu0Yx4TMwXpUEhDVckOUUrMw27nux08OLQxSOGvLy4thMtn6dXySBc
+	SXgFe8EHpvJeLIvJHwvqbrL/1uxf3ZAW5T1CjCY/FUp2uRrdtdYSaHuasilJmQKLcPCK+ErKLvF
+	s6W6ANEN9ydq/DeXRV9Gv+2K+IizBz4EzLvu2+M9ignx8zqVAo3A9k4A=
+X-Google-Smtp-Source: AGHT+IFgzYR9oFHrJXjGsCo1/UWzNkDEs+GEYbtl7qRFlUFWsYq0YC4ATMAhDvcJpJOSBMXZ+eG66NYB7nqrKEPw7LaaBhDrA0bk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703054238.GA25366@lst.de>
+X-Received: by 2002:a05:6638:9806:b0:4b9:6637:4913 with SMTP id
+ 8926c6da1cb9f-4bbb6e52facmr698222173.3.1720004042361; Wed, 03 Jul 2024
+ 03:54:02 -0700 (PDT)
+Date: Wed, 03 Jul 2024 03:54:02 -0700
+In-Reply-To: <20240703102633.2821-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f51ec8061c55a5d5@google.com>
+Subject: Re: [syzbot] [bluetooth?] possible deadlock in touch_wq_lockdep_map
+From: syzbot <syzbot+91dbdfecdd3287734d8e@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 03, 2024 at 07:42:38AM +0200, Christoph Hellwig wrote:
-> I just tried to boot this on my usual qemu test setup with emulated
-> nvme devices, and it dead-loops with messages like this fairly late
-> in the boot cycle:
-> 
-> [   43.826627] iommu: unaligned: iova 0xfff7e000 pa 0x000000010be33650 size 0x1000 min_pagesz 0x1000
-> [   43.826982] dma_mapping_error -12
-> 
-> passing intel_iommu=off instead of intel_iommu=on (expectedly) makes
-> it go away.
+Hello,
 
-Can you please share your kernel command line and qemu?
-On my and Chaitanya setups it works fine.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thanks
+Reported-and-tested-by: syzbot+91dbdfecdd3287734d8e@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         73461051 Merge tag 'erofs-for-6.10-rc7-fixes' of git:/..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1627f269980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=de2d4dc103148cd6
+dashboard link: https://syzkaller.appspot.com/bug?extid=91dbdfecdd3287734d8e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1323109e980000
+
+Note: testing is done by a robot and is best-effort only.
 
