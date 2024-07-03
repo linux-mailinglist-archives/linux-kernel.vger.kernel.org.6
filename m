@@ -1,160 +1,134 @@
-Return-Path: <linux-kernel+bounces-239279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865C29258F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:38:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D459258FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D89E286EDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:35:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3045B27DBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351E81741D2;
-	Wed,  3 Jul 2024 10:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37C91741C8;
+	Wed,  3 Jul 2024 10:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="jlRa9r4L"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tTSCYIFC"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B221A16F8FA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF410171E57
 	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720002797; cv=none; b=JF3+9lSE3hPS9hiB1PyVKm2C0aBZCJrxVyPQfLvWS4u0dk5pNhNmeb/pfh0VOX3zmWYFwYQg2FTOZcZCzZM+r2cWPb1XD6m2sLELD9iPgHwFv9ck7705cAMqLmmC68CzBfK/0PvIt6Q3rPkUxWoybdHDwrcTP5ykFWvFNyM3p/0=
+	t=1720002797; cv=none; b=lVsaHsR8prOTjU3QwdugBN7RdYHWE8izgAOJ1DhRcf1zW1NEXrt1ek4w/R7dDREsHaBLhyjvN2MS6n3dZEVVyv25SmR1QbO14+wUI8xRGCsOA6K7yzoLAMk57vL28/09x1GC1hPFCj8yI76Zr0pBASYi/m5DgMUtd5QO5QGGII8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720002797; c=relaxed/simple;
-	bh=S7OczQykOEVFXRxXRFk38EQDCKYFTVsN3+PhRpDjOvo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EPQ+UYnZzXSZnqnYpuYBnmdxYPHKfXYt7hH1RdS39kgj0TnU0ka8uMEEV1P3edeYWeEb4P83z15fGVcWl6Bb7XHsnwbcoB5AMoRXOEzKIGSrgqWO5qO3O5qyFmfnEuDKQDnzg84BQVrx88gZBslr8wuotrmSM4dx4oUgxBIAzeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=jlRa9r4L; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: a55aca48392711ef99dc3f8fac2c3230-20240703
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=iQeVTtzgmCg1R84emw3yEtPy2VOguvtZOSyCu6KYw3k=;
-	b=jlRa9r4LK6NO99wen73Bb47Bc6UmIr3rg1havqcFyP+22nVlO3nxtRpef9jHSllAQZe7kriAKJMnAoZVn5TlwQoCzimXBQoyH20SRS6F/oktefvq6ofxYYObcShJheMCFk2thJf4tdgxV7wlsF/VaNH/qTRexMHlBtP1ohEppgI=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.40,REQID:6a03a49b-30af-4dbc-9c5c-f9c2726f5bd1,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:ba885a6,CLOUDID:0f64dc44-a117-4f46-a956-71ffeac67bfa,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: a55aca48392711ef99dc3f8fac2c3230-20240703
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1780038264; Wed, 03 Jul 2024 18:33:11 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 3 Jul 2024 18:33:09 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 3 Jul 2024 18:33:09 +0800
-From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>, Singo Chang
-	<singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jeffrey Kardatzke
-	<jkardatzke@google.com>
-Subject: [PATCH] drm/mediatek: Fix missing configuration flags in mtk_crtc_ddp_config()
-Date: Wed, 3 Jul 2024 18:33:08 +0800
-Message-ID: <20240703103308.10198-1-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	bh=4H5haDE7k64EWfuCw7wYQ8GiPFESg0dfVMdT8ZwOa9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kXR10wZrA1enZGjDxmvy3u3jHKGCtTYL6L8TBwmkhyKXx/B74Efe4g1iv8qTeQ02mub6LwrpUAqR32BXoa1BiOgrtgLhMU9lsM+nn5shb/RKnDfVHxnsEKwSkOI3Yg6Ey+nYNPntRYZuT20G/e3QHqHPIrOt1p+vastyPIQ5WXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tTSCYIFC; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so58192591fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720002793; x=1720607593; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TrB2TnPNBgt+WbBBIM4+5QWbIuhtFAqbg6qcHUZxaco=;
+        b=tTSCYIFCM9x8KJGViFEBb8Yb5gQu4qmjLgpYZIcAL+qddS7kr1YwE08ziXob92ubaN
+         jxwD7gNYXoEj3AeZROLmWOwijpOpfqfBXc2P+7Dht3CxYPwt5vhIgE43AFlyaK07WbxK
+         TRFYQ9/ANP7dDnvh5t9BZ8XTSbhu29pRLUA1RiRPZ/iCaFwjuCpzi4/1zo+lFAlUc2K3
+         plULoOR7vKDyLMKkjdHppqmbIhlsuapIo/NEcwnCqu+RY+Bo5OoBm/6++/W4tCQbVgfv
+         Q6iUhl4RNXmOAskcjO2HChzJOSHudruVGwoOSq7Fu0Ib6liCFbyS3zkuviBR0ja5g3iz
+         n4XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720002793; x=1720607593;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TrB2TnPNBgt+WbBBIM4+5QWbIuhtFAqbg6qcHUZxaco=;
+        b=ftdoqH+1lUI4m3p8J/RzZCXr+NoBZpuBG74Vw3CrOl2UrTr4Uu3NltAr0E0UAMNC0s
+         uyl641bYaLVJHJzCev1BCjXxNw4AUpNe6C8QavO/hyW4IEnPnEq4VTB9Yg1BlYcYU7mN
+         TEb/hwwdpDcZYBt+GxfYTQ19kyus0EIXypgrNUbPq5mCbmy2QBcbQ7Dn4n8LQ7qoLTd0
+         exTnpaSUS0Xkez6A1F7RWBvq+lLrpu6qaQseNAtgabW+4G7HyodFIcPZtsYeRBJj/61D
+         Az0w7NQccsjoENFfAT3OTHq7SNU25f/ig2SP0ECC+aEQkwmPOuPfeUaTnvPbku1jKaW1
+         i8Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCXS9vZGdZY4V9D+ZoVnkPU8m/dIHOIvQ9Kh8ocM3gOkTz1gYuPWg6NRE5LM38zRd+efsYIwYv77BXcDVz7uNHNWA1/KGaAKs4t7FtC2
+X-Gm-Message-State: AOJu0Yxd8r3Kq2NvqYTN6yWpFnTFiIWDRk64lSIx467PRDh8ZF+PPjoX
+	bCtI2NaHaNBq6xnbNV3CwLab0WAVQkO6/D1jl7Lvnv9std3B78ZHaz4bA4WrgiM=
+X-Google-Smtp-Source: AGHT+IEgLYgf/SDysaV48RHAuwJ+VgK2M5e2XinMD5byEgw07GiQwTlTQD6QPmY0VgdHWS5AezImMg==
+X-Received: by 2002:a05:651c:49b:b0:2eb:d9a3:2071 with SMTP id 38308e7fff4ca-2ee5e6c9cd8mr61398201fa.50.1720002792033;
+        Wed, 03 Jul 2024 03:33:12 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee51696991sm18684511fa.136.2024.07.03.03.33.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 03:33:11 -0700 (PDT)
+Date: Wed, 3 Jul 2024 13:33:09 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, djakov@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, jassisinghbrar@gmail.com, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, manivannan.sadhasivam@linaro.org, will@kernel.org, 
+	joro@8bytes.org, conor@kernel.org, tglx@linutronix.de, amitk@kernel.org, 
+	thara.gopinath@gmail.com, linus.walleij@linaro.org, wim@linux-watchdog.org, 
+	linux@roeck-us.net, rafael@kernel.org, viresh.kumar@linaro.org, vkoul@kernel.org, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com, 
+	robimarko@gmail.com, quic_gurus@quicinc.com, bartosz.golaszewski@linaro.org, 
+	kishon@kernel.org, quic_wcheng@quicinc.com, alim.akhtar@samsung.com, 
+	avri.altman@wdc.com, bvanassche@acm.org, agross@kernel.org, 
+	gregkh@linuxfoundation.org, quic_tdas@quicinc.com, robin.murphy@arm.com, 
+	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
+	quic_rjendra@quicinc.com, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
+	otto.pflueger@abscue.de, quic_rohiagar@quicinc.com, luca@z3ntu.xyz, 
+	neil.armstrong@linaro.org, abel.vesa@linaro.org, bhupesh.sharma@linaro.org, 
+	alexandre.torgue@foss.st.com, peppe.cavallaro@st.com, joabreu@synopsys.com, 
+	netdev@vger.kernel.org, lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com, 
+	ahalaney@redhat.com, krzysztof.kozlowski@linaro.org, u.kleine-koenig@pengutronix.de, 
+	quic_cang@quicinc.com, danila@jiaxyga.com, quic_nitirawa@quicinc.com, 
+	mantas@8devices.com, athierry@redhat.com, quic_kbajaj@quicinc.com, 
+	quic_bjorande@quicinc.com, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, 
+	quic_tsoni@quicinc.com, quic_rgottimu@quicinc.com, quic_shashim@quicinc.com, 
+	quic_kaushalk@quicinc.com, quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, 
+	srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-crypto@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel@quicinc.com
+Subject: Re: [PATCH 00/47] arm64: qcom: dts: add QCS9100 support
+Message-ID: <43nktnqp6mthafojiph7ouzfchmudtht634gtxwg7gmutb5l7y@a5j27mpl7d23>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+ <20240703035735.2182165-1-quic_tengfan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703035735.2182165-1-quic_tengfan@quicinc.com>
 
-In mtk_crtc_ddp_config(), mtk_crtc will use some configuration flags to
-generate instructions to cmdq_handle, such as:
-  state->pending_config
-  mtk_crtc->pending_planes
-  plane_state->pending.config
-  mtk_crtc->pending_async_planes
-  plane_state->pending.async_config
+On Wed, Jul 03, 2024 at 11:56:48AM GMT, Tengfei Fan wrote:
+> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+> While the QCS9100 platform is still in the early design stage, the
+> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+> mounts the QCS9100 SoC instead of the SA8775p SoC.
 
-These configuration flags may be set to false when a GCE IRQ comes calling
-ddp_cmdq_cb(). This may result in missing prepare instructions,
-especially if mtk_crtc_update_config() with the flase need_vblank (no need
-to wait for vblank) cases.
+Your patch series includes a second copy of your patches, wich have
+different Message-IDs:
 
-Therefore, use the mtk_crtc->config_updating flag set at the beginning of
-mtk_crtc_update_config() to ensure that these configuration flags won't be
-changed when the mtk_crtc_ddp_config() is preparing instructions.
+20240703035735.2182165-1-quic_tengfan@quicinc.com vs
+20240703025850.2172008-1-quic_tengfan@quicinc.com
 
-Fixes: 7f82d9c43879 ("drm/mediatek: Clear pending flag when cmdq packet is done")
-Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_crtc.c | 34 +++++++++++++++--------------
- 1 file changed, 18 insertions(+), 16 deletions(-)
+Please consider switching to the b4 tool or just
+checking what is being sent.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediatek/mtk_crtc.c
-index 6f34f573e127..bc3bf0c3edd9 100644
---- a/drivers/gpu/drm/mediatek/mtk_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
-@@ -314,30 +314,32 @@ static void ddp_cmdq_cb(struct mbox_client *cl, void *mssg)
- 
- 	state = to_mtk_crtc_state(mtk_crtc->base.state);
- 
--	state->pending_config = false;
-+	if (!mtk_crtc->config_updating) {
-+		state->pending_config = false;
- 
--	if (mtk_crtc->pending_planes) {
--		for (i = 0; i < mtk_crtc->layer_nr; i++) {
--			struct drm_plane *plane = &mtk_crtc->planes[i];
--			struct mtk_plane_state *plane_state;
-+		if (mtk_crtc->pending_planes) {
-+			for (i = 0; i < mtk_crtc->layer_nr; i++) {
-+				struct drm_plane *plane = &mtk_crtc->planes[i];
-+				struct mtk_plane_state *plane_state;
- 
--			plane_state = to_mtk_plane_state(plane->state);
-+				plane_state = to_mtk_plane_state(plane->state);
- 
--			plane_state->pending.config = false;
-+				plane_state->pending.config = false;
-+			}
-+			mtk_crtc->pending_planes = false;
- 		}
--		mtk_crtc->pending_planes = false;
--	}
- 
--	if (mtk_crtc->pending_async_planes) {
--		for (i = 0; i < mtk_crtc->layer_nr; i++) {
--			struct drm_plane *plane = &mtk_crtc->planes[i];
--			struct mtk_plane_state *plane_state;
-+		if (mtk_crtc->pending_async_planes) {
-+			for (i = 0; i < mtk_crtc->layer_nr; i++) {
-+				struct drm_plane *plane = &mtk_crtc->planes[i];
-+				struct mtk_plane_state *plane_state;
- 
--			plane_state = to_mtk_plane_state(plane->state);
-+				plane_state = to_mtk_plane_state(plane->state);
- 
--			plane_state->pending.async_config = false;
-+				plane_state->pending.async_config = false;
-+			}
-+			mtk_crtc->pending_async_planes = false;
- 		}
--		mtk_crtc->pending_async_planes = false;
- 	}
- 
- 	mtk_crtc->cmdq_vblank_cnt = 0;
 -- 
-2.18.0
-
+With best wishes
+Dmitry
 
