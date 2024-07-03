@@ -1,255 +1,152 @@
-Return-Path: <linux-kernel+bounces-239394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6DD925EC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:40:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70905925EDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D02C31C25C21
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FCD02A4822
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CCF176AB0;
-	Wed,  3 Jul 2024 11:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="brKdN12S"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA07016F8FA;
+	Wed,  3 Jul 2024 11:40:20 +0000 (UTC)
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B9B172BCF
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB63143879;
+	Wed,  3 Jul 2024 11:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720006758; cv=none; b=Feqd7XiYEyLIwXLTC1IB4ym1JifQXLu6+Uz3CXLCfmZyYUBYwrFKHRcLGxHp/lZ2f7RTZTnHqAvNcImwXYZLXjr4w8cafT/uScjNvmBKvKlqdby4cazd/cNV9DDlcCh3H3LvcQR7E1E6mJSwg7n0RxTbmSvoBuXdo/i4vhDiZco=
+	t=1720006820; cv=none; b=F/0AbeYT7/XdgNSq7mmpzoU199Jeuul/2G7HeKVb09c+mWrZaOyg59Rtcpt4Fny+SHrnv/XgazJmilhTbXSq+M6/pL/UsJQ2Q7dPLrlmH29j9je0sR4D5immTaA7U/0EfUCNf/gdjR81V+sPbAlkaqWwR4FaciuPrU4AkHOL9mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720006758; c=relaxed/simple;
-	bh=xM+Xs/O0bLLEev58CiCCL/RgCfgNjFzsbVPVrcEZ8M0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aasdN+fxF3pQHxdnMPPfgjlSEmln5On0AO1TY3dNMgasOUJQ8tc7XzPYeTuaFIcA5b7M2qh9MCc51sZXZ2TcBONcwx+9kWwhxDvMUN5vc2K5BmxRcAnOBFzawOoOqB3HY5h21ND6aLxisqQIhO6jeriMoUw7cYpPfaqMnfkG6TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=brKdN12S; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-361785bfa71so3639187f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 04:39:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1720006752; x=1720611552; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H9Mr0geIZFa+syumwo+K6Slsk1HPoK/hxQsISbhV0KQ=;
-        b=brKdN12SNYXMNwXyNyEHNL+0emoJCTxSMVWpDhwrLbnKUBgH6M9sT2brHqv7AOyltm
-         9saJWuw/1AqLu/CVtISmi/cWGBbZ5cQxn6s2G8sZIrrou3QgaH1zlt2caY9Q8ggbB9lC
-         PCXvTh6oWX7PDruZwiBIJlg7ukLWRKmSVAw+7CuAvvoovPnA7QtjAqsIEY04A6FUvIQ5
-         WEQ5EFfqDiogNwUsQjtgxr7GW31XFm01LOnWidVjUNdBHeKMN0ilCNDJYYy7iB3okdvV
-         tQaxzHLPwYxRtJsjR6hNFLG+QIHdGo4Xca37LJG622UNODhNa8GX1QQGDsdMzPeuhHNX
-         8s3g==
+	s=arc-20240116; t=1720006820; c=relaxed/simple;
+	bh=cf5FUF1pxBoZp2lEvP3kxfAmlx2YPkL72Aajcv3udiY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=owPP5VZ9Tof/yjzzPTFEEWwKNGCuFciePctg6nxeLa4rA73ISLtn6QcdLgl+O5TWPpUbhHI3Dpe2HfLsqXCh1muE+Egw0NysMMr8hndvWPZ5oNX26jwBRBZSqCO3U/tczBLL+XDB68t/zcXX6ZK0onVH6w3NIjBwIEhYVlhXDkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b5db7936b3so7228726d6.1;
+        Wed, 03 Jul 2024 04:40:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720006752; x=1720611552;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H9Mr0geIZFa+syumwo+K6Slsk1HPoK/hxQsISbhV0KQ=;
-        b=O2eqIqcsWNWYSZxXBGyw24SXwJOryw8GsWwOsjaXA7zAoJ3iWagvizD/zSVVcby24X
-         JKVMaSr8Jt4CteHDtvez/yQnAmvg8tePd8/+YHtvJ85a9GohUA3eZ4RAj9nu9uKEGIJa
-         iXncL72PbjUOOs1+tFDghwOSgGEXnB68jpu7xVNAJWezxwRNw2oTYIDHKoO35GU4Jtik
-         cfGBlJUEEdhpIwrkzvssConqFQrhr68+Kdv0vE3sP/VOdGQcx7d/imuEI2syXeadXTgp
-         vcehHL1hQe/buxu5DOQ/y7NB7tPk3H8B/vZICL6sUkOxNOO5GiBckVFXw1cmfxxM3LzJ
-         1vFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZZ5dYuZcC++9fKtSFcsszfqWaQyaffIvlXDh0xya2UWp4Z8Um3Coe9pxTPZI7W/x794JGc6WDn6Jt7uh1eTWVLJ53pF80DcHnG7zq
-X-Gm-Message-State: AOJu0YwYNRfI+LPcb9Q8kY7Klra8HUNXHcrjqRC70Hs4O/PLG+OhtpoE
-	QZOpNKZmRYjEjVtA+sUpFRRRU2OZWsW0aFeDZPgsbNXdJOQrh1hjUHHCEwbMeHQ=
-X-Google-Smtp-Source: AGHT+IF9bUonTx6Qi/+WkiXqdze4hvoZYrS0c+X5zrYn9/a52y1TrmwyPD7ieagysH13jDZunzhpDQ==
-X-Received: by 2002:a5d:6b8e:0:b0:367:9769:35a5 with SMTP id ffacd0b85a97d-36797693993mr271738f8f.7.1720006751689;
-        Wed, 03 Jul 2024 04:39:11 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:757f:69b1:bdb0:82db:8b8b? ([2a10:bac0:b000:757f:69b1:bdb0:82db:8b8b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb92fsm15784226f8f.88.2024.07.03.04.39.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 04:39:11 -0700 (PDT)
-Message-ID: <05d0b24a-2e21-48c0-85b7-a9dd935ac449@suse.com>
-Date: Wed, 3 Jul 2024 14:39:09 +0300
+        d=1e100.net; s=20230601; t=1720006817; x=1720611617;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=93e6dTwFtrGIp7dWWNReuZoDgeAQuDgZQ4EBP6wdeKg=;
+        b=tmRUFiDwhcggVGvJGUV3fU9FvDB+3DKToLh4o2gJWz/qGu+WUncAme/00CGBZv9M/e
+         Kq6Uj/ZYaYru8HU2C4JwMMBUS4iKkWUCET2GkOlwEKsJAvpdjtX4g+p+IcQrjBFfFMM5
+         cn24uiHudzKf/Vy3d6Cm7P6b3MNK5eJMFt0Wb5gB8IdTb1r6sOcnobtxCSMSB2giZeP+
+         BaD5qKSDRc2ZXZu8JrslRbKRPN20IdGrNXHZM8hU+e4N2t2ninRPHJVodcZaXZxcCf52
+         16NhGd7dc3k0VbpqA4SpE1gdgDZlDkOjxEphdDKRpp2exrACl6143iwiMp1rTsQC0hcN
+         1hZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKafpnrKgXJcJmn+U+3Y2t6+3UW/KmKwo+OVBBwKQoCv2jvvcR7zgSCfWgS8ByqeDKYucMcAPR+zffY3G/yvHGiSSVxmASmWnE1EnQqSbhmbScZPgD6eblvZBBm2pa2y6Ujt6EVwedvIv9Ycii
+X-Gm-Message-State: AOJu0YyS8ueJKIRuZDv12jYxyAZYNrmHIcz7MCByP0V6Sw5/2PH+YfkJ
+	eQK1y+jZYXB79GInXKdA6cMTrmpan2w4Loa4oZZeaABXxD4O0Z+f
+X-Google-Smtp-Source: AGHT+IGXf6u2pEOGNTaTkt5wzo4SMKQq3gEuUu4qmCFjToxzeAw5evOv3eE+jO3ZFKELvMcgWIDXeg==
+X-Received: by 2002:a05:6214:226b:b0:6b5:e1fb:68ee with SMTP id 6a1803df08f44-6b5e1fb6b8bmr16735356d6.25.1720006817646;
+        Wed, 03 Jul 2024 04:40:17 -0700 (PDT)
+Received: from tofu.cs.purdue.edu ([128.210.0.165])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e5f2b77sm52921566d6.92.2024.07.03.04.40.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 04:40:17 -0700 (PDT)
+From: Sungwoo Kim <iam@sung-woo.kim>
+To: 
+Cc: daveti@purdue.edu,
+	benquike@gmail.com,
+	Sungwoo Kim <iam@sung-woo.kim>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: hci: fix null-ptr-deref in hci_read_supported_codecs
+Date: Wed,  3 Jul 2024 07:39:37 -0400
+Message-Id: <20240703113936.228226-1-iam@sung-woo.kim>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv5 3/4] x86/tdx: Dynamically disable SEPT violations from
- causing #VEs
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240624114149.377492-1-kirill.shutemov@linux.intel.com>
- <20240624114149.377492-4-kirill.shutemov@linux.intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <20240624114149.377492-4-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
+CPU: 1 PID: 2000 Comm: kworker/u9:5 Not tainted 6.9.0-ga6bcb805883c-dirty #10
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: hci7 hci_power_on
+RIP: 0010:hci_read_supported_codecs+0xb9/0x870 net/bluetooth/hci_codec.c:138
+Code: 08 48 89 ef e8 b8 c1 8f fd 48 8b 75 00 e9 96 00 00 00 49 89 c6 48 ba 00 00 00 00 00 fc ff df 4c 8d 60 70 4c 89 e3 48 c1 eb 03 <0f> b6 04 13 84 c0 0f 85 82 06 00 00 41 83 3c 24 02 77 0a e8 bf 78
+RSP: 0018:ffff888120bafac8 EFLAGS: 00010212
+RAX: 0000000000000000 RBX: 000000000000000e RCX: ffff8881173f0040
+RDX: dffffc0000000000 RSI: ffffffffa58496c0 RDI: ffff88810b9ad1e4
+RBP: ffff88810b9ac000 R08: ffffffffa77882a7 R09: 1ffffffff4ef1054
+R10: dffffc0000000000 R11: fffffbfff4ef1055 R12: 0000000000000070
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff88810b9ac000
+FS:  0000000000000000(0000) GS:ffff8881f6c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6ddaa3439e CR3: 0000000139764003 CR4: 0000000000770ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ hci_read_local_codecs_sync net/bluetooth/hci_sync.c:4546 [inline]
+ hci_init_stage_sync net/bluetooth/hci_sync.c:3441 [inline]
+ hci_init4_sync net/bluetooth/hci_sync.c:4706 [inline]
+ hci_init_sync net/bluetooth/hci_sync.c:4742 [inline]
+ hci_dev_init_sync net/bluetooth/hci_sync.c:4912 [inline]
+ hci_dev_open_sync+0x19a9/0x2d30 net/bluetooth/hci_sync.c:4994
+ hci_dev_do_open net/bluetooth/hci_core.c:483 [inline]
+ hci_power_on+0x11e/0x560 net/bluetooth/hci_core.c:1015
+ process_one_work kernel/workqueue.c:3267 [inline]
+ process_scheduled_works+0x8ef/0x14f0 kernel/workqueue.c:3348
+ worker_thread+0x91f/0xe50 kernel/workqueue.c:3429
+ kthread+0x2cb/0x360 kernel/kthread.c:388
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
+Fixes: 8961987f3f5f ("Bluetooth: Enumerate local supported codec and cache details")
+Fixes: 9ae664028a9e ("Bluetooth: Add support for Read Local Supported Codecs V2")
 
-On 24.06.24 г. 14:41 ч., Kirill A. Shutemov wrote:
-> Memory access #VE's are hard for Linux to handle in contexts like the
-> entry code or NMIs.  But other OSes need them for functionality.
-> There's a static (pre-guest-boot) way for a VMM to choose one or the
-> other.  But VMMs don't always know which OS they are booting, so they
-> choose to deliver those #VE's so the "other" OSes will work.  That,
-> unfortunately has left us in the lurch and exposed to these
-> hard-to-handle #VEs.
-> 
-> The TDX module has introduced a new feature.  Even if the static
-> configuration is "send nasty #VE's", the kernel can dynamically request
-> that they be disabled.
-> 
-> Check if the feature is available and disable SEPT #VE if possible.
-> 
-> If the TD allowed to disable/enable SEPT #VEs, the ATTR_SEPT_VE_DISABLE
-> attribute is no longer reliable. It reflects the initial state of the
-> control for the TD, but it will not be updated if someone (e.g. bootloader)
-> changes it before the kernel starts. Kernel must check TDCS_TD_CTLS bit to
-> determine if SEPT #VEs are enabled or disabled.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Fixes: 373e715e31bf ("x86/tdx: Panic on bad configs that #VE on "private" memory access")
-> Cc: stable@vger.kernel.org
-> ---
->   arch/x86/coco/tdx/tdx.c           | 76 ++++++++++++++++++++++++-------
->   arch/x86/include/asm/shared/tdx.h | 10 +++-
->   2 files changed, 69 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-> index 08ce488b54d0..ba3103877b21 100644
-> --- a/arch/x86/coco/tdx/tdx.c
-> +++ b/arch/x86/coco/tdx/tdx.c
-> @@ -78,7 +78,7 @@ static inline void tdcall(u64 fn, struct tdx_module_args *args)
->   }
->   
->   /* Read TD-scoped metadata */
-> -static inline u64 __maybe_unused tdg_vm_rd(u64 field, u64 *value)
-> +static inline u64 tdg_vm_rd(u64 field, u64 *value)
->   {
->   	struct tdx_module_args args = {
->   		.rdx = field,
-> @@ -193,6 +193,62 @@ static void __noreturn tdx_panic(const char *msg)
->   		__tdx_hypercall(&args);
->   }
->   
-> +/*
-> + * The kernel cannot handle #VEs when accessing normal kernel memory. Ensure
-> + * that no #VE will be delivered for accesses to TD-private memory.
-> + *
-> + * TDX 1.0 does not allow the guest to disable SEPT #VE on its own. The VMM
-> + * controls if the guest will receive such #VE with TD attribute
-> + * ATTR_SEPT_VE_DISABLE.
-> + *
-> + * Newer TDX module allows the guest to control if it wants to receive SEPT
-> + * violation #VEs.
-> + *
-> + * Check if the feature is available and disable SEPT #VE if possible.
-> + *
-> + * If the TD allowed to disable/enable SEPT #VEs, the ATTR_SEPT_VE_DISABLE
-> + * attribute is no longer reliable. It reflects the initial state of the
-> + * control for the TD, but it will not be updated if someone (e.g. bootloader)
-> + * changes it before the kernel starts. Kernel must check TDCS_TD_CTLS bit to
-> + * determine if SEPT #VEs are enabled or disabled.
-> + */
-> +static void disable_sept_ve(u64 td_attr)
-> +{
-> +	const char *msg = "TD misconfiguration: SEPT #VE has to be disabled";
-> +	bool debug = td_attr & ATTR_DEBUG;
-> +	u64 config, controls;
-> +
-> +	/* Is this TD allowed to disable SEPT #VE */
-> +	tdg_vm_rd(TDCS_CONFIG_FLAGS, &config);
-> +	if (!(config & TDCS_CONFIG_FLEXIBLE_PENDING_VE)) {
-> +		/* No SEPT #VE controls for the guest: check the attribute */
-> +		if (td_attr & ATTR_SEPT_VE_DISABLE)
-> +			return;
-> +
-> +		/* Relax SEPT_VE_DISABLE check for debug TD for backtraces */
-> +		if (debug)
-> +			pr_warn("%s\n", msg);
-> +		else
-> +			tdx_panic(msg);
-> +		return;
-> +	}
-> +
-> +	/* Check if SEPT #VE has been disabled before us */
-> +	tdg_vm_rd(TDCS_TD_CTLS, &controls);
-> +	if (controls & TD_CTLS_PENDING_VE_DISABLE)
-> +		return;
-> +
-> +	/* Keep #VEs enabled for splats in debugging environments */
-> +	if (debug)
-> +		return;
-> +
-> +	/* Disable SEPT #VEs */
-> +	tdg_vm_wr(TDCS_TD_CTLS, TD_CTLS_PENDING_VE_DISABLE,
-> +		  TD_CTLS_PENDING_VE_DISABLE);
-> +
-> +	return;
-> +}
-> +
->   static void tdx_setup(u64 *cc_mask)
->   {
->   	struct tdx_module_args args = {};
-> @@ -218,24 +274,12 @@ static void tdx_setup(u64 *cc_mask)
->   	gpa_width = args.rcx & GENMASK(5, 0);
->   	*cc_mask = BIT_ULL(gpa_width - 1);
->   
-> +	td_attr = args.rdx;
-> +
->   	/* Kernel does not use NOTIFY_ENABLES and does not need random #VEs */
->   	tdg_vm_wr(TDCS_NOTIFY_ENABLES, 0, -1ULL);
->   
-> -	/*
-> -	 * The kernel can not handle #VE's when accessing normal kernel
-> -	 * memory.  Ensure that no #VE will be delivered for accesses to
-> -	 * TD-private memory.  Only VMM-shared memory (MMIO) will #VE.
-> -	 */
-> -	td_attr = args.rdx;
-> -	if (!(td_attr & ATTR_SEPT_VE_DISABLE)) {
-> -		const char *msg = "TD misconfiguration: SEPT_VE_DISABLE attribute must be set.";
-> -
-> -		/* Relax SEPT_VE_DISABLE check for debug TD. */
-> -		if (td_attr & ATTR_DEBUG)
-> -			pr_warn("%s\n", msg);
-> -		else
-> -			tdx_panic(msg);
-> -	}
-> +	disable_sept_ve(td_attr);
->   }
->   
->   /*
-> diff --git a/arch/x86/include/asm/shared/tdx.h b/arch/x86/include/asm/shared/tdx.h
-> index 7e12cfa28bec..fecb2a6e864b 100644
-> --- a/arch/x86/include/asm/shared/tdx.h
-> +++ b/arch/x86/include/asm/shared/tdx.h
-> @@ -19,9 +19,17 @@
->   #define TDG_VM_RD			7
->   #define TDG_VM_WR			8
->   
-> -/* TDCS fields. To be used by TDG.VM.WR and TDG.VM.RD module calls */
-> +/* TDX TD-Scope Metadata. To be used by TDG.VM.WR and TDG.VM.RD */
-> +#define TDCS_CONFIG_FLAGS		0x1110000300000016
-0x9110000300000016
-> +#define TDCS_TD_CTLS			0x1110000300000017
-0x9110000300000017
->   #define TDCS_NOTIFY_ENABLES		0x9100000000000010
->   
-> +/* TDCS_CONFIG_FLAGS bits */
-> +#define TDCS_CONFIG_FLEXIBLE_PENDING_VE	BIT_ULL(1)
-> +
-> +/* TDCS_TD_CTLS bits */
-> +#define TD_CTLS_PENDING_VE_DISABLE	BIT_ULL(0)
-> +
->   /* TDX hypercall Leaf IDs */
->   #define TDVMCALL_MAP_GPA		0x10001
->   #define TDVMCALL_GET_QUOTE		0x10002
+Signed-off-by: Sungwoo Kim <iam@sung-woo.kim>
+---
+ net/bluetooth/hci_codec.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/net/bluetooth/hci_codec.c b/net/bluetooth/hci_codec.c
+index 3cc135bb1..5c98eec2c 100644
+--- a/net/bluetooth/hci_codec.c
++++ b/net/bluetooth/hci_codec.c
+@@ -74,6 +74,9 @@ static void hci_read_codec_capabilities(struct hci_dev *hdev, __u8 transport,
+ 
+ 			skb = __hci_cmd_sync_sk(hdev, HCI_OP_READ_LOCAL_CODEC_CAPS,
+ 						sizeof(*cmd), cmd, 0, HCI_CMD_TIMEOUT, NULL);
++
++			if (!skb)
++				skb = ERR_PTR(-EINVAL);
+ 			if (IS_ERR(skb)) {
+ 				bt_dev_err(hdev, "Failed to read codec capabilities (%ld)",
+ 					   PTR_ERR(skb));
+@@ -129,6 +132,8 @@ void hci_read_supported_codecs(struct hci_dev *hdev)
+ 	skb = __hci_cmd_sync_sk(hdev, HCI_OP_READ_LOCAL_CODECS, 0, NULL,
+ 				0, HCI_CMD_TIMEOUT, NULL);
+ 
++	if (!skb)
++		skb = ERR_PTR(-EINVAL);
+ 	if (IS_ERR(skb)) {
+ 		bt_dev_err(hdev, "Failed to read local supported codecs (%ld)",
+ 			   PTR_ERR(skb));
+@@ -198,6 +203,8 @@ void hci_read_supported_codecs_v2(struct hci_dev *hdev)
+ 	skb = __hci_cmd_sync_sk(hdev, HCI_OP_READ_LOCAL_CODECS_V2, 0, NULL,
+ 				0, HCI_CMD_TIMEOUT, NULL);
+ 
++	if (!skb)
++		skb = ERR_PTR(-EINVAL);
+ 	if (IS_ERR(skb)) {
+ 		bt_dev_err(hdev, "Failed to read local supported codecs (%ld)",
+ 			   PTR_ERR(skb));
+-- 
+2.34.1
+
 
