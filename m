@@ -1,126 +1,120 @@
-Return-Path: <linux-kernel+bounces-238784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2756D924FE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E158A924FEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D4F1C225FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3209281C28
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EB417BCA;
-	Wed,  3 Jul 2024 03:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A28218AE4;
+	Wed,  3 Jul 2024 03:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="eIzh4JOJ"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OgtJ3KLz"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A390117C60;
-	Wed,  3 Jul 2024 03:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354D917BA2;
+	Wed,  3 Jul 2024 03:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719978267; cv=none; b=fqaqV0mIhI728+oOLuYZiq3JFhJA81AG3uEBM+sUC8DWDOU27zvw7SSRIpNgZ95WMWyYqKkcHrdGhg3dr4icxMHoF9TFfb69jsJmn9z/mwdQCk8Wsmj8iqFckkeZYVKHA6WlAJ+/FUIPDcFDZ0LWtuLHIXOnyJSOni52JjrauDw=
+	t=1719978466; cv=none; b=DQ33ou6US1BZJRVVw3zJGD8rqi+a+d7HkMBqsbaWz7b2kMIWk+e9k9YjgAiNYhKV4o27ZRveAdAMFtHhYQyzbov4Ei+z+1xDrjX4LO3VtkqING158wVxRY5oXT/k+ax7lw9EoHPWa4NXuJb3VLTV6l7muzmgMlyf27H+Ec3mieo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719978267; c=relaxed/simple;
-	bh=bSWZY5KWhs4pwbuKUAh+EkDN2bROG4myn3eDtiD0mrE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FeJx2LAlPIVfrdNPuVYZNLosPku9f8ByrVtyrt9+UuDcWy9FS0OapXY3cjmm01kJndNgrdcsmeJxzaUtEwOCH4Y197SFqX4slCOZsim4sDbTHaE3JRdXaoim4HAPoKe3UODz0i7K++ls6+wicvmTH5VwOsVGOgVXzT7gJnUFI14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=eIzh4JOJ; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 872bc36c38ee11ef99dc3f8fac2c3230-20240703
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=0919Eg9JUothln0+V1EUy9kX5BQowYtQJF09dFwlQ+Q=;
-	b=eIzh4JOJmNhqQfZg3FffbYTrdBgiSvYozra/EbJ01xc9WcPN/1QGLK7MyYvK/Cpxs61ehbLh9TuhiNyoXE1Kc1nNBhVbUSIq0xO/+k3Wk6cTdWB1dFusFzoDt8BtrwYaYwNTQA/WeQ9yYEmAGi3vM/hm3LoqL0plDvvHN92dQqM=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.40,REQID:f6a74159-9ce3-4de6-ac21-4f873f4c9204,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:ba885a6,CLOUDID:16d2d744-a117-4f46-a956-71ffeac67bfa,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 872bc36c38ee11ef99dc3f8fac2c3230-20240703
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <jason-ch.chen@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2116597845; Wed, 03 Jul 2024 11:44:19 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 3 Jul 2024 11:44:17 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 3 Jul 2024 11:44:17 +0800
-From: Jason Chen <Jason-ch.Chen@mediatek.com>
-To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Jason Chen <Jason-ch.Chen@mediatek.com>
-Subject: [PATCH] remoteproc: mediatek: Increase MT8188/MT8195 SCP core0 DRAM size
-Date: Wed, 3 Jul 2024 11:44:09 +0800
-Message-ID: <20240703034409.698-1-Jason-ch.Chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1719978466; c=relaxed/simple;
+	bh=Mfta5ZS+DFrKrihafOnOYbWhIpfl5aAsXUrw+M+i3gs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z1ya6l9Ae/ESFWeKF2pxkjyiZnriTuW5vJ67i8EaT3+rcjQmuUUtD6FyjkDAA6iV/LU8ywBODrVehdo0oYsRsP2bAQIIEwjrKjfpO5ulUov5rfcJScEAIrCPEpkO5oUNPW0PJIXd/HtEhVYw8WkAyioKImfWTpgxWXcw5OhIt7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OgtJ3KLz; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5c45d13e658so119963eaf.0;
+        Tue, 02 Jul 2024 20:47:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719978464; x=1720583264; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iURdNYcFvmNwVS0VrudWTADWoeH5iatB5JmIJP1JiW4=;
+        b=OgtJ3KLzFHcZr4Fua1/eirYcSrZm04c5OvJKxKxa2FW5zoT9izqRWnSnAI6LGdHOdp
+         sJs49zlEoUX2/D7BRQnxi0kuTakOLs/E76iAHYy7SCQWoHgEh+d1W3v3msvMEv7nCE+p
+         tUdzut+3GpYAlT/UT8YFp35yl9H2bZv9MB4iYdCcsB7ilUuaEVwsTCfxCfdL7NXK1fPq
+         hSLa5I798CwZtE4d1xUDJb8uRbcj5FIg+NMIZ2BH1gbWR6YDBWqVDzhNjyjrLneOsxkC
+         tRqoiz2dCwTFZNhiDyy+kXVlBipf2ZIqcNG25MIZ3UcnWRjui+hiiaalT3VUTaaeYbRp
+         D+7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719978464; x=1720583264;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iURdNYcFvmNwVS0VrudWTADWoeH5iatB5JmIJP1JiW4=;
+        b=FCOgJSlBvJmpzfI9a4D1StFbmHNeMUiNoP7e1m/5OMKT7yY7v/4/hHYgKFbnZh5KRe
+         OzCs4XsyUCSR9cSFibDd2UDcsTOLaA8bKt8hHqvpeLTFxm6ymQ523lm2iEg91hKkCyiX
+         yWDp2q8g01aTvxWXJx19dkp/WD31Dnr6ttFvvqn+8PeonohqLcfeVFPZlgRFjTXgxN3v
+         2ho+RDoB6c8Q69rnQaJ9Z0ihvQE0RJpng5g1bYQ5LOte85Jp+85hq8crm65CkYzpgp+f
+         nU2l/djErZH36JN0PfeNO8MnX08rtXuHHyUHMRH1ZAkms7l9QJlUd/XUzv+vwrE+8lMC
+         23wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNXyJPxSRBC2I+C7KI9JA4ihZF5VWmOvU1f2jgJSM82LEJdIWLXk5BNy0KH16S1HaRJMX26/ttyvXv3838clHMNeMaEjuS/6i7gC4lF54NzXlhdrfmSaRY3+UZx4qp8OcSkAilL+YTa3AepiFJEOw0+A9aZJnvl0UM6N0XBbpT
+X-Gm-Message-State: AOJu0YwJ+wedWbW1yWAUxIH6fUCvd1gAYlYhrxmVruziw9JmRatTBCSA
+	hjD29/hw4A2puopH3n+Q/63ERfcq9r9I13CEdJ5UVooWJozcQzrqzacEggF+9bOyapMA6EfvpSC
+	4o/Qwf5MRWh8ymCmq5z2FeImTqIVNjqTS
+X-Google-Smtp-Source: AGHT+IH9mV18ddvbPMOjO69mQKYvtVbSuEbdxsNxUPnnlevChXiRSAL5m0HPo8/1V3nADp29+AIMupKUjk0kntlFAos=
+X-Received: by 2002:a05:6871:24d6:b0:259:8bf7:99dc with SMTP id
+ 586e51a60fabf-25e1034361fmr261237fac.8.1719978464216; Tue, 02 Jul 2024
+ 20:47:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+References: <20240701100329.93531-1-linux.amoon@gmail.com> <20240702184220.306d8085@kernel.org>
+In-Reply-To: <20240702184220.306d8085@kernel.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 3 Jul 2024 09:17:28 +0530
+Message-ID: <CANAwSgTfHhFwGtMMGUOpoNo7SGnVyOt87puXt1HJE3_d7OiHqw@mail.gmail.com>
+Subject: Re: [PATCH-next v1] r8152: Convert tasklet API to new bottom half
+ workqueue mechanism
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, linux-usb@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Allen Pais <allen.lkml@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The current DRAM size is insufficient for the HEVC feature, which
-requires more memory for proper functionality. This change ensures the
-feature has the necessary resources.
+Hi Jakub,
 
-Signed-off-by: Jason Chen <Jason-ch.Chen@mediatek.com>
----
- drivers/remoteproc/mtk_scp.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Thanks for this review's comments.
++ Allen Pais
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index b17757900cd7..e744c07507ee 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -1388,7 +1388,7 @@ static const struct mtk_scp_sizes_data default_scp_sizes = {
- };
- 
- static const struct mtk_scp_sizes_data mt8188_scp_sizes = {
--	.max_dram_size = 0x500000,
-+	.max_dram_size = 0x800000,
- 	.ipi_share_buffer_size = 600,
- };
- 
-@@ -1397,6 +1397,11 @@ static const struct mtk_scp_sizes_data mt8188_scp_c1_sizes = {
- 	.ipi_share_buffer_size = 600,
- };
- 
-+static const struct mtk_scp_sizes_data mt8195_scp_sizes = {
-+	.max_dram_size = 0x800000,
-+	.ipi_share_buffer_size = 288,
-+};
-+
- static const struct mtk_scp_of_data mt8183_of_data = {
- 	.scp_clk_get = mt8183_scp_clk_get,
- 	.scp_before_load = mt8183_scp_before_load,
-@@ -1474,7 +1479,7 @@ static const struct mtk_scp_of_data mt8195_of_data = {
- 	.scp_da_to_va = mt8192_scp_da_to_va,
- 	.host_to_scp_reg = MT8192_GIPC_IN_SET,
- 	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
--	.scp_sizes = &default_scp_sizes,
-+	.scp_sizes = &mt8195_scp_sizes,
- };
- 
- static const struct mtk_scp_of_data mt8195_of_data_c1 = {
--- 
-2.34.1
+On Wed, 3 Jul 2024 at 07:12, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> On Mon,  1 Jul 2024 15:33:27 +0530 Anand Moon wrote:
+> > Migrate tasklet APIs to the new bottom half workqueue mechanism. It
+> > replaces all occurrences of tasklet usage with the appropriate workqueue
+> > APIs throughout the alteon driver. This transition ensures compatibility
+> > with the latest design and enhances performance
+>
+> alteon ?
 
+Ok copy past the committee message, I will fix this in the next patch.
+
+This patch is just follow-up on work done by Allen Pais
+[1] https://lore.kernel.org/all/20240621183947.4105278-14-allen.lkml@gmail.com/
+
+>
+> > -             tasklet_enable(&tp->tx_tl);
+> > +             enable_and_queue_work(system_bh_wq, &tp->tx_work);
+>
+> This is not obviously correct. Please explain why in the commit message
+> if you're sure this is right.
+
+Ok, I will gather all the feedback and work on these changes.
+And update this patch.
+
+> --
+> pw-bot: cr
+
+Thanks
+-Anand
 
