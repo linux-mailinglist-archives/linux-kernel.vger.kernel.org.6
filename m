@@ -1,82 +1,84 @@
-Return-Path: <linux-kernel+bounces-239409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11717925F5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24AEF925F60
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3572D1C22A14
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:58:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4967C1C226A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88E91741D2;
-	Wed,  3 Jul 2024 11:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE4E174EF7;
+	Wed,  3 Jul 2024 11:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="J7nZmoD3";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="P6ZTGnGB"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MTG6AF+M";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="t0Wx9uJ+"
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F2317279B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25672171E72;
 	Wed,  3 Jul 2024 11:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720007890; cv=fail; b=JG8Zj0VaKHDnGYlICRC22HKGWmeBc6rixRz/iYtUik22AZ2xegUgwxfarUb8qdV9tOYi2DY4HskziacF7BC/8nbQSTYZUEuHrB6ffybAwO5sd6NYvT2aDeqMOMCFj/KrKcHZhni0OFIgi1QwvMs6HicTpXKcDgFBSC/8uaegvUM=
+	t=1720007891; cv=fail; b=dIh6BpNUpAHKFDZTBt71gJ8L+DWT41kUU3seQIkc9vvBX11X+4c3Rpt9L1evhZ6hfbuXPvzP6TtfpUXmkaJAy33UusmKBrUtuqxrrUajPuh/grI3uVZvmqDAAJ5AVvoV5vZ9FfciA2p7Kyygoi1RbfOSh13Mw7sF7Yg+p8Skq0I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720007890; c=relaxed/simple;
-	bh=joovCA6tTf/WC/LyaZ4ASW+6cdUfuERHk/jN617EfcQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=kakd3WBR+W21okxk8s3pjxobZq99lEOuPtd1xkA03HW/wc9H5NRJS7PuxiS2gslR58JmLHcvIsOHclHe2dqXtCGEuJgNiu78aO437hj5aJ/pP/svd8U3fi3//7w8JaUP3M9YE3ukqy3DXQYgYTHCVPRV0xJxP1dTljGBme+ZRJ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=J7nZmoD3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=P6ZTGnGB; arc=fail smtp.client-ip=205.220.165.32
+	s=arc-20240116; t=1720007891; c=relaxed/simple;
+	bh=nde+r7ZZvLCwI9OIF1UM27sBtlkT/gLVXn3TCYpzno4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZjXx/Cr+bxcZ23WiNPVdWouTW9S6W1sNssPeSgw+DNbGFet0GOLa5jo9Zx1AVVS6AVpEc/AanUI3nMA1Qc97qPoU516q8/FoS3X+rs2vXUb8YehYisFeOsN0DPpD/g/PXiHVVw335Tc44Nj1SVlnw7rmDkqlA4oUDzhUvAUOCuk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MTG6AF+M; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=t0Wx9uJ+; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4638ObPv009722;
-	Wed, 3 Jul 2024 11:57:53 GMT
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4638OLQL016018;
+	Wed, 3 Jul 2024 11:57:56 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:content-transfer-encoding
-	:content-type:mime-version; s=corp-2023-11-20; bh=dPhy+DmQ+ZERY/
-	aul5Y8xk7n5JKx9bKAeWSWEH5zfAY=; b=J7nZmoD3lOGdzd4eHIHJMHdgdg1rHH
-	X1fnYDghfC9oTPIc/pRYpbUFhJAiY4al0LlJoTvMiT9wD5GLkeCNLNoxMQyzlUsj
-	ucM73fXxIRniHsyeEwzlVFYC2J3TnB5YYmEqQZKM1CS9DUzIRihF54XUr72qxa7h
-	4uOXFhdF2rsiLmNWJQyKwd9bNsYSJqo7XoRKwdWZb5+EPYt4XTnL1tdWgn/+o77X
-	JuYd67yPDQn9g9MSCBbs+no/SWeHwKhmH4FZlWI3NPHjtG8F4uNLi2eI8hI18c8F
-	ffkO1WBno1d1TsIU1UiFtGTg2vMXAP5Q4/wvsWj6HKs+mnpB3UYK6f9A==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4028v0r1ts-1
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:content-transfer-encoding:content-type:mime-version; s=
+	corp-2023-11-20; bh=22hILCM5X9sMn9gY63YTPAbD4zPS0lb7vfJ+lyUfogw=; b=
+	MTG6AF+MN+yYFGgv+m0nAAY70WHkhn8K+0+KewXyhTBf7AN4sY/fDIVfbQsBw3q0
+	RWGFDrc2HX0GYoXNM0eaK5iE4nFKKOG39bRmwH3cje6Tak/K+BS6i3wk7jeiqCr+
+	jxyojl7PZTQs25ngmuPTTiuWAEYh1qOHbtg87xKfDrrr42bRB9yT+vt7tb1C/O9/
+	wQGM1dWW79v8WZzn9kerCtES9J7SL/UfJa1Ww37pigiuUBVaDc8tYFYgKt+J4yKc
+	BCNR8YehNRLr9wepyHiNk6R+ScMxb/lHz8dqpNTtUmR6hOvDD0adD3KHmwQW47zv
+	9y1/QYmZbQ2hM+F/H3q1yA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 402a597t1w-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 03 Jul 2024 11:57:52 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 463BJVaq023511;
-	Wed, 3 Jul 2024 11:57:51 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2040.outbound.protection.outlook.com [104.47.66.40])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 404n101e98-1
+	Wed, 03 Jul 2024 11:57:55 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 463BIOex010195;
+	Wed, 3 Jul 2024 11:57:54 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2174.outbound.protection.outlook.com [104.47.55.174])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4028qfekkr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 03 Jul 2024 11:57:51 +0000
+	Wed, 03 Jul 2024 11:57:54 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jrjalrJK332FyHXlFWzOOs2H56dXsqOy5LaRackN9No2EKcRhjsQeEbg+pZ0hGvb73gDX21SqDBnSWgJFt1o1AD8XAyBimtyEY7+vmQ+lcJjVRlxNARXOAV8wi6GZFfXtJRAnIX1fKT9JIwDVeDlyLJ/7LGA3NJ2y7/B2FpAQEhuSLCJF1ZpxmYVrhgqLZTOyEbVX/yf5VZ80sBVPbSsf9UtTOhR8QCHvqHELfut4nfLtyzlSm6Ma08Aw7nFMBNf/tV0MnpMNWMAOU3dovU/ZukZpkBL3eZV+zIpYolcaapu9SQKtU0Ly2iiCvLWa4W/nTXKqdSm/a8BnGIOIshyTg==
+ b=bRSf3U/THjv65AJQlUQQ5/d9UlPu5haKC2ys7OpRauN7LwvgQTta3bDjVT7Eg2nADTxGSAgLqs3S/XMSjt0AOPB0L0p/kn1UoaWeUqbq5wZDqJYlNVE+QepO2G5rDGW90EPNukRaIirVW04iJaoBB4tnTva2ZXwNS10rjAKXOp/A1RX8vkvIw1gYGbfsHG873P8EK/zvWojMFhaOpK9D+l/3zQHFLAmZ80UMg5beXnjjUkVTd0q6boIRllw28k8IWPbl6LCAmKMd7n6BelL6ZoQa7AC+eowbNDq471zjgdxCPmpII4CptRuQorXHRb3ZacOFLn1j+tPOB7eDNLwvpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dPhy+DmQ+ZERY/aul5Y8xk7n5JKx9bKAeWSWEH5zfAY=;
- b=QinOHFPmj53H+TaEy1n67rl7hmuGA8ygdpfMLxGt6bT0UGIwQGUtymcuu+jY8gho6PZJRUHClfv8oBFbEsjPq2tzLnQI4CwDhWHDGu81jcz2nywgamY20kuC5Vte1duyuXDUrw+x7IdxZQCyr+ggz3MEMkVLCDGN0n9u5DDApKYKQ12FuZ3fAMS0R7ecQ2jwofP+UzFfomDA7B8Yw0Vn9RWGD5dJ+lsRn7rzXtkc5PNskdPUApAoQ56lb144xVDvN4i0ln+uchqB+upvruvbKWOHHKAUppc/ZBKKfBX7/mpTf+FkiUao3yxBSaB7Unyu7SZd9sfRr8nOo1gRddboAA==
+ bh=22hILCM5X9sMn9gY63YTPAbD4zPS0lb7vfJ+lyUfogw=;
+ b=ZhFTqCKwFZdoOMDPBbZ/wFv1i/WL/JuuUxjD4uuOunwriXZBLJKY8xuxxbtmjf02fjsi6HDyci1vvF8YIbS5u5GxCG3ewLFbBS7XJxvVFGNQvFa+iY6j42Hr1c8a+lUhXB6UYBA8r7ErxGFDDOXn7LrpQhiDuSt2lcMskuDATIH8TqKUagULwg8v1pwOzxWT5lrOWzemY2Xmp++fwJJfWcY0nC/EV5SVEWho9YP/iiCb5OPK3Xl9xP5PK+yR9q7dt/ust3c1k7vb9kZbMstP/hJDIdj349wuLksgJ/X9vhGFzbnJxeVRx4k0BIqBDZH0DvYttHotQ7q5+VjMOibnnw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dPhy+DmQ+ZERY/aul5Y8xk7n5JKx9bKAeWSWEH5zfAY=;
- b=P6ZTGnGB5wcljpzN0lTY2bBj6rspVN7726Skvnmo3YAEw0uMRazwKYI6YlvjOoSWSS454VR3l9vbL16l6TJf7iooA5iDFC2BIlfzz/cpt3w/VtIW06L+JCXSafCObHeVpk4Qtksn7VXhaqxkRMxd1pauD6enfTCT5Jfv3LEh4go=
+ bh=22hILCM5X9sMn9gY63YTPAbD4zPS0lb7vfJ+lyUfogw=;
+ b=t0Wx9uJ+PqppaNjo8MpJS0T5rlWEF7dYLCJpYZR73zpFXccBe9wNZ7lO3JE8VFFX9hugXI4huFjdTK5vVf4uZ3sc/UOCqkd9EkxDLCLzmbJdFNSAGyvB2TWr0pgQtZ7zza9jfytIVQaUdtUYQIEw/ystZKIzdhicS+PcxayTR5s=
 Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
  by SA1PR10MB7832.namprd10.prod.outlook.com (2603:10b6:806:3a9::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Wed, 3 Jul
- 2024 11:57:46 +0000
+ 2024 11:57:51 +0000
 Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
  ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
  ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7741.025; Wed, 3 Jul 2024
- 11:57:46 +0000
+ 11:57:51 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -86,14 +88,16 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
         Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
         Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH 0/7] Make core VMA operations internal and testable
-Date: Wed,  3 Jul 2024 12:57:31 +0100
-Message-ID: <cover.1720006125.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH 1/7] userfaultfd: move core VMA manipulation logic to mm/userfaultfd.c
+Date: Wed,  3 Jul 2024 12:57:32 +0100
+Message-ID: <8a1516b4c3266a35ab156841a12b3ebe9c7e2751.1720006125.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1720006125.git.lorenzo.stoakes@oracle.com>
+References: <cover.1720006125.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0038.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ac::6) To SJ0PR10MB5613.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO4P265CA0111.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c3::11) To SJ0PR10MB5613.namprd10.prod.outlook.com
  (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -103,256 +107,557 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|SA1PR10MB7832:EE_
-X-MS-Office365-Filtering-Correlation-Id: 03bbe9fa-aa82-4d0f-0b39-08dc9b575a67
+X-MS-Office365-Filtering-Correlation-Id: deacc99d-d1dd-4677-4377-08dc9b575d86
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?SvYNSScwCRd90JlxoaBhVjoA4U/3/bWHhX3Ak4ULNJVx4T+s7UFF+NJxcdNl?=
- =?us-ascii?Q?dLcNiykkTtG13tlJq+6GzkY0X274BW3yH0kSzZIndio4rlGlMJaJYZv4PY39?=
- =?us-ascii?Q?jsR77u6e/6hnvcHcawOpzOP60EivIcrg56l0oZi9Y1VqkyEuod7MTckZRVOq?=
- =?us-ascii?Q?sJKbAjmqkXhMoGDUzPnGBNL9WmcQNmgzJOw9Mw6CYE4+XZgQppWJxD6P0j6k?=
- =?us-ascii?Q?ud3jupHvXQtYPzNRD7Iqak7M39k1GSXqp40TVFt/KcLUj/WKeTJInuq73WQP?=
- =?us-ascii?Q?J88zbIR97g+XyIaaP2+yBdcMPDXqV5FuVjIQcoEfBGC4FdK1f4CeNg6lhhyr?=
- =?us-ascii?Q?sYyyQI5d1O/SaJ3HVCIcu7z0MySFQMzVNgpDWR/rtca3jLCP4MeFUFLkyJZC?=
- =?us-ascii?Q?qStzNJJxDXLQYM/JR4PEb+ITY9LGE0mLBBOAGAlhc2XT8wmsEvj8tN0LYa/H?=
- =?us-ascii?Q?MKo6WIrj3vz22qoaxAw0QVpkbigFzqj0bmJJWvRGZaGAIi3rVzo6XnF8ANuu?=
- =?us-ascii?Q?VCPKFhheS+g+OjhtxNcgoMk6XPtCkKMnRlr6025V6w9uPIvUi47sEE2YcXJ0?=
- =?us-ascii?Q?eZlMkX4rGEICgmJPVMzYybJlAfnvU9JnZlEW4BsSfuJCwWIdFzkyvTQRiEQG?=
- =?us-ascii?Q?EaL4pcVVPBT3dWwVtRGY2VGsPiib0LYkxyHgR1Z5/+qbVTCBQyPSpXg/boSA?=
- =?us-ascii?Q?zVzuQuxYY9M70dVXHdXPHMJ6PcMYaj8R0jsVZETCB8GzNNRA5lAIw+RVXh6z?=
- =?us-ascii?Q?2h/5/hZsAenKVacWdzgIO8WpL0nZrA7PcPhPK0tBPZi8/zivj9m33EUFNuUL?=
- =?us-ascii?Q?tjXIzAgVhGhgXVXgoccNg7ylnWY4LOO1fKGAIPHrjeJ8Tg9Ubc5MoonNxRzU?=
- =?us-ascii?Q?0MjT8fSJF2clvTLabUa74N/VrxDdGwQvGh+8uPsL3tNTfw76zG5O3BS7x6+N?=
- =?us-ascii?Q?02zXQJWGP/U2EG/Od4DCP2eF7UED8RpvhtnVIEduSlmuWNilaAGDc4qRR0HQ?=
- =?us-ascii?Q?qLkgg7uBnsHr+MWitR3P0CS/0PFc6pdIz0PxvCW9yK8sxlIgmqcsRTcuex1i?=
- =?us-ascii?Q?MyiN7suraLRQsRLlha5KmrwFha7Xg69wCeVGgrwqQt7WjpY1RbViE4xXNJXe?=
- =?us-ascii?Q?4m2+R5Vyf5WMTfQ1ezaP0lCG8HBguP/dl5QPJZoYtNnytAXyTARgHFN61yuH?=
- =?us-ascii?Q?+qADvAGj9v+el4SFKChqmUFSB9hhangrVwUg6VMOIBkJ4cqf9QLr3Gx87uSQ?=
- =?us-ascii?Q?v5A3fZMepjUE/vsBYvdrhsHwZb9T9qJofCRVmUFFzLnyN8Iz1b5MWZ7d9ejJ?=
- =?us-ascii?Q?XwME4hXcKSfwB4PHeSo4Gd8H?=
+	=?us-ascii?Q?S/X5aizMM+LdiqhsibKH1SSXn8zxyrDvXiBZy6ZMxFxJoraXm59gNK3jjRTH?=
+ =?us-ascii?Q?3COm3Cp2INkDFfpH76ZtKSDWjF6MfTnqKEgioyn609Pao1DSWPt+MY9RalW3?=
+ =?us-ascii?Q?m17WJDKrQov95qWd3QtDmqwgcmwbSmkmyEORzEJjUvjrK/aI4YABIj0IdBgw?=
+ =?us-ascii?Q?26NavgAVKrZwgzPCH3vKG9E/BZxoiI56zGceAtyIjDCH9qDrxPsU8c3Dh4KY?=
+ =?us-ascii?Q?wxX6fI2JCs0cMKb95I8yp3saJfX5yxYE36WTrrjyqgLCDAGIF6hf9Sqkox6j?=
+ =?us-ascii?Q?djkpA6ny6IAF8GziI/77vLqy+kOWfG25cG8XNc2JkrMiMXVvrxEhep7uohmF?=
+ =?us-ascii?Q?bxOHGH4iG7+amN9n29X4GpJ1X0JhY1VoAAAv1iL9JXs7Rxa/ZvDcdT0FLfoR?=
+ =?us-ascii?Q?KbuKP63POfEt5CZCCos6mILzxHOuy6QsmIe+JCMqR2yos1643UVsfndf/5zN?=
+ =?us-ascii?Q?og9wkzDhc++S+ZXC7NP57ozzT6BN7kLx2ePLdBaZ0wpIalOH3JqlHObkGkM4?=
+ =?us-ascii?Q?lmwc15F/JltxMbjMgFwlhGt0AwNUSp99O/M7AzIMZQOA8s0smP+y8aZYXLI/?=
+ =?us-ascii?Q?N/6O49pv73b+ny+hwyX/eQ7oMge4rdEtTZ38lyUVL0dONfuF/miFzXVwLAJL?=
+ =?us-ascii?Q?8rrByhs8uOYmXi2o4w+QBO91beRXiaToIUQ4LcQ10vJWaVyCwh8YYIy8XFP2?=
+ =?us-ascii?Q?YlQHPOs2Rx1WMwCtnxY4fuZBJHMs2J6nz4x9B215vgsu9ekg/6KVuFJE77Ez?=
+ =?us-ascii?Q?Md3PJRelyt2AWthOkhipienKv1BfTAN36ZzCaJQR6HJOYgMVqcKf8wXIpG6m?=
+ =?us-ascii?Q?xGyh3o2GojVF+LPakXjYc6SFJWqVULWHxtupdpIxtikya6VuHnp1FuCQu0wu?=
+ =?us-ascii?Q?DWY0iCIXWqPVeLTdCSelkkd/cxq5ntLc9yDL6LBjQ/AX5wVIXkmCEpaSEkio?=
+ =?us-ascii?Q?q7mp3hTIac9JA2TUCne/voQBPQPPDbuaK+WnaiwGT4yHzOclZ0NuiElQqPix?=
+ =?us-ascii?Q?a/VvNU78fcH1rCVoG4Ae3Y7636EMHIKsLfLSqGn4nn6yFUkk7YBXoURcnI0d?=
+ =?us-ascii?Q?iBRkUyVk62SeqNC7So3rJ39rXgnTiioCPgB/6HmO2T2dUn30utp6LXjKg+sH?=
+ =?us-ascii?Q?X26esoAM91ejXgxBw7dUQT720HjMwOczNH5d5GwpJ81zhtF6LPUtoc9Ue2CN?=
+ =?us-ascii?Q?/mQq/U1sMtZ0WxUdqrYNI8ldVJ2Vra6rqCFC56ZQT9ZAOdMMfc0DEhcPFUK6?=
+ =?us-ascii?Q?QSB5YgXbEstUrlrL9IygoEetLelWAN/gzj+Ve4GteMsII5EITC+enj48acra?=
+ =?us-ascii?Q?tbuJexWjmLUsj1mwBaCyiy1MVbyC9cPwB9OuNhVPhQeLcA=3D=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?k9o4vHc0MG7Nk18pyRqMU4G8OMy/jpf3bn9M/WRi8SmDdzTaia7hDyNAVTEX?=
- =?us-ascii?Q?qOpuT30nuie684Da3PNLOb6FeH0WhGFZP4IN/SwbH6rpoHk/F3f1d/ddBHjK?=
- =?us-ascii?Q?DlQDH8rl+oW6m/eGx0D6T2iLEEGGTarFlvqVWCmJ1FBfWwDKzbWGIqt5Lsv7?=
- =?us-ascii?Q?pxBch1iqXRx5Lf+PdrseKMvKOCOYgVrfM4sMVFYrKIoMeNlmwjNcXw7yI/j1?=
- =?us-ascii?Q?eMk6yjMY19BJ9d2LVNhTwdstJIZpzK3wD8F2L77yo4cBUI7Yp1tkCrO5Grqw?=
- =?us-ascii?Q?cFUZe1jq+MCDOSMtKFiMldhrecSz8ZN1So46vYPgKrApAB9nQO/O3PHFY6HP?=
- =?us-ascii?Q?0ulZMfvEQNd6vN7d2qTKTNSLqDAn5ILC20V2OJwE7lWdM2yvtDJBwW+e53Mj?=
- =?us-ascii?Q?/X2Yy4VuHSFzOyDhOlC/IOgeJJbGOaERLsTzWuoSNeM36vvb9RRafYKo4AZX?=
- =?us-ascii?Q?Wi2uovXubO3rJh9r7bYagetCBNIan19CDuDyr1m6pjde2WwyGl92YseY3sDA?=
- =?us-ascii?Q?NKnXn54Pc5u7T8L11K8jZv3+GBGsR1/P0Y6/H5XIYA9jO3YWBI4+rW3MUdt7?=
- =?us-ascii?Q?mVeS83j3Mmq2Rli2jCqvfF64o8P9xvi8prh5QhSGbMz+30O+J1AEUhF6Q0Nf?=
- =?us-ascii?Q?oALFiJ66l0Q7ToMm1rbbZsbb1JZniQSJh9ldH72mHz9MNbxt0L3CyA3Rch+a?=
- =?us-ascii?Q?R/+fjdVlzNkHd7QQRDoE+D2ItxfvxQsnqJDZzKwVTzep+DrI4+A8sxmmad7u?=
- =?us-ascii?Q?Tw4WCy5C6FUsbKLdKR0gxm4mBNQlMOF3pr1dxFJf3ET6cRUwjBpjX09+PNFc?=
- =?us-ascii?Q?LZubffQJB2dGDNGayVzMW+LWucspB4PhtHku22VnnHniWxuFsQ8ZDwJztVi/?=
- =?us-ascii?Q?aK+PjhA+G5uNwLF9LSKGTq73+A4dqr5AYtNR0nXcTWs9DU6OsfIVKvVFbHc+?=
- =?us-ascii?Q?VwFZyvcDlLMzZh8q4mR1Z0ADqLQoaeaA35UJYys2oLlB09wzdxrDPoENckSx?=
- =?us-ascii?Q?WyOYgqRYE8Hq5v1akQ6GukIE3VGRiIdL6yHpQebQ3q+6MV4WD5KjCj+iRzi6?=
- =?us-ascii?Q?nmem42TpNwe8lHMr6wknQKQiIq1bRBLaceUlF3Z8EMRoadVAW4t6M+iuxUc7?=
- =?us-ascii?Q?bVrZy/OVbPz8H5myQnKvw4DFkkuad/HZYqWQbKdPN2nFdOiJP7pkGxbgGGUb?=
- =?us-ascii?Q?Pw1VhQu31CNbGpYv8bn7jex9LoK0VJojr3uC2OLG3PKJEAG1QGMha367R5pC?=
- =?us-ascii?Q?ogWuZl9TWQo4dCitKdv67xIVAveLqQA4HWMX+9no6syEOlzmhELusFrYrJDN?=
- =?us-ascii?Q?c57eXXASWflLkEzwOV1UHlIlhG9RdayyLMi3xwfqLhN/LAXwFSWbwiCj8S4e?=
- =?us-ascii?Q?MYyPCOcChyoybOpPb9MQpDqYaNNPzWFSsyHt/01X5KjH0dhUBNIX4wjuumi7?=
- =?us-ascii?Q?m8lkMivS3LJMoiGSRfsVUhs4xDX4ZoCk4rTCvzVm+LBPxfJEIeCw6SFvPCFw?=
- =?us-ascii?Q?t9MUn4f8vJtJN3LHyJw32LatCAJ1UappcaeEghpoqvXnyE5rNzWWmMwRt/Re?=
- =?us-ascii?Q?7qSZvwWBLM2xhEOaEjdzCjNV9qOMXXecbIWXv+KKx2NrRc2ykMXRMwg+wiea?=
- =?us-ascii?Q?Tg=3D=3D?=
+	=?us-ascii?Q?Rr99wHzPz5H6tXbXznYfSjre3RuHNj7Kf2Bzg6qrj3tn+qkVpltZt98GBVOu?=
+ =?us-ascii?Q?SbzvuFjhixxO6gOngPLuzIPe+befOGbpTpFnIxam5YzwRYwr6PDzlXeOLz85?=
+ =?us-ascii?Q?syOaKhbbevpzqf0Yg+XUwcq09L7fTTzJrkPQfuvuTw+/MnQBt0FtwnzWsyev?=
+ =?us-ascii?Q?ZeAtpwiasfhUXoLSxxnX/tvWU7ZVeOUHDDiyuvjxBWna7PR1B1nX9ZfvZzwe?=
+ =?us-ascii?Q?j9Y2JG0vBHubZckIeNUsA+InPbc3dMkhCIWjQ0Kf7YWH/VttLB/DiB5bLX4f?=
+ =?us-ascii?Q?fqplpEAG8T+9JrLAFRDAA5nSo+Sg6cDNTGAliRIFqU7HOhbtCXW1Kho6+VMU?=
+ =?us-ascii?Q?7VycN84jbmIvkg+QDuHQbAqsTmoyDPuByVrgbGKtvRhER+bW91FDStvUxKZ4?=
+ =?us-ascii?Q?isFRAA1ppEatgbFypJIN64hlkGB5hpyxx4vzcnosfHRQu9jY935sPOpB2aww?=
+ =?us-ascii?Q?ZNluZ9L0T/P7Sed894XrCLBXutZu8Fk8951Khi6A51JjlgNzmQnlZwvFqmHo?=
+ =?us-ascii?Q?5baNIrpIu0Ta89o6s20lkMBKyTQWJIaH2ID2Mhy1mcl5lKRvhHJNiA48ESVs?=
+ =?us-ascii?Q?70QqbsbnnNSNXAJJLI09Qgj9l0zbxfO80XA09BJnwnStiWw3elrW7fVIFjU/?=
+ =?us-ascii?Q?LjqheBvAn8WTlHowKa2Zu26u8w+NjpN00sgnXDqTVqilNvyyjJ5wKXQDI+mD?=
+ =?us-ascii?Q?MnzScDGwnmUgyP+cF70V1DyI8nmOhCoAulHSkTnITdk3D2mAfrsHL/hE/EON?=
+ =?us-ascii?Q?dhAcKUHpwV4BD3IQNdORRXVUt5AoqMtl8vSXy9TA5NFkyrCui3sXLL7Jzwv2?=
+ =?us-ascii?Q?Ex61AcAPF2lXEIHVzEY2zIDdGr7zOsS1URg6ZBTQJBWbk7L25OOfEVGgbsF+?=
+ =?us-ascii?Q?Osxb7s59nwCbADWbCn5Yvth7/piFfySgD/tT/PL5uigYRy60CAfGsh8L42WX?=
+ =?us-ascii?Q?r6EF8NVkvg81uydQ//7dxHB8WoaQCXkLaL9EAONuu3i93trDMOISxWkfSCV5?=
+ =?us-ascii?Q?f3b1OQWXZz7GDs5DbOGVL9UTr3pwxXqMMQaXUxWyjUfHif0Bt6RhQKYJ9/Fr?=
+ =?us-ascii?Q?uBVGpo4NivsEgILYxsvXsNexnfv5okj9egk6LxpggHmZ269yDHRiH5vx0PjS?=
+ =?us-ascii?Q?0yS8QNIjKJHipvdw0+g53iBxRsg+t2Ri5ZPpXI5ceAhqjvMTUZ7vp5eWjhJl?=
+ =?us-ascii?Q?F5uFiwGoSigG3pPdm7yHAf/zh6OxZMC6AV1sV+WeCntZyYsNhBQoBBTjgdl7?=
+ =?us-ascii?Q?cQ5Ehhrmb5J5ry282NHp+0eJumArX+pIXQR9rbRPIb1ljORAUMlz8hYm9GBZ?=
+ =?us-ascii?Q?QAi/AwZe341oNwkr4OihmTmjB1q2xaNBPNjqK2NcB0Bkmc1U7sNn3OQG8YSW?=
+ =?us-ascii?Q?CBWry4Ljbu83q3OaHTagjM9JxeqewjQ0B+iRWSy9wHVzmS6svQJ1939bMbWD?=
+ =?us-ascii?Q?tpQo1TIeBSRUGEeMSK6rhukdRYkTAV7znGL5tMBBgDfg44QKc/75/kNn4fsP?=
+ =?us-ascii?Q?P3z5OVqzygCrzYWmW3OatXnfFnEvmQ/83PCQj+Uy3poQ7d/OvOZPYuTDrAn7?=
+ =?us-ascii?Q?NVK/+1KspInGF4pcCk6/ZeIQ+QJN3ITQ37U60XSxiJ2PGfV/FlHykBYoRdVq?=
+ =?us-ascii?Q?9g=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	6Ll+aiNJLjMp2+QXDfcZR4ie9zkmwmU6srcrT3fhuKjX5VEvLotqFHpx5KD9bNRp8FeUaXfr8zBn/5SozRJk1ZvH1IAa7Zb9oBH8SPlSsD+eFl3eLfGMm2lkR2qYxNXeTer9VBM9QLuXoSZaGkhrSeCeQydfQhcEbN3Di0TLMomnPf5pFs21gmh1mH32VqshHo5TbnEJ4YHa9A7I59rA6fFThilozAyeEeF9U/tEchZqr1AsBIZ5nnTAY8jpZluKOB1iQOR49ud4eU4mcBzz7V11Z6J72+D+AhDi74Wt9K3bhQ4C49hobVr56mttmE9nbclHnFNXGWzCZqZyfkUqCkBA4Zs6Wu9WRBYHDbQLzN2oRqfycBA8OT8ILlsExFG8zf8yskqyGyTVZbqq7YvcCK1upJsGO1CATG378V7xQ8UFDyssj048RkqIbGVUVxkvxRzNU3TWouVu41stKxRFS6Bi1weMFvaV5aHqE3uLe2roaYG+c9HxSZPgrOPp9ZBVcQupGjPCatCks91nIAQ7l/QHkqn7tPOJuOW0hsKUjkt06547AxVcKOQcdtBKuTcT9j4jR1DlImH71c0c7NWk8YozfoQ4WiTeGJRp//Xj8h4=
+	qWxbyioY2QLjmgmu3VU15o8wKUMCXQLStGRFbrdngEF6cMqNCKr1xmP839iLjR+1Qm7Bv1g99S/Lb7zJDpbmEvEfiYWrex3knUyRNGVq24gxvdk0ZoSs9e7d++VCntsBTXkqyuRxK002oMIMoFmnu3bW+Df+fDD289j0kUgVEEI57Wy48mg/+9vizbqG4Z2go6P4Aejqlg8MTYwg0wpRpAvM8w/zpqxXLTdFriseRWdW8Dxfb3XRsSw5qEaRSOloFRSFUUnSkT5iQtMeJK4T2ll1BGJZ4WYgUCUaDjJ66p7opaGn25hC61OEa/wfGCDvB4d5+FLwCagoIXvEymqGTD7043lna/ul8VMvCWTlpMn5lAMy4KHKbEDF9J6BTyb3A0n4UvmStBc3syuMnUdq5aVI8TGSLzAB45QnXZN63gCYz0CFIBIllriWfp+wSV0vMV1rPV8T7uHQzIzEGKdvWe+NUUzo5FmhKDon7jgYZzB7UBDrvVhnfUsuuPjtWB4R3xDkTNzKQVgEBZTkTOBzrHvkooHdLrNlq1LpCLc0iFP6ABPAQCfEwlSv8jwQy2+QSjiNmLKAQq8rVxubILgYe/bLGoJA2Ekpi0qnDVM7N1M=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03bbe9fa-aa82-4d0f-0b39-08dc9b575a67
+X-MS-Exchange-CrossTenant-Network-Message-Id: deacc99d-d1dd-4677-4377-08dc9b575d86
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 11:57:46.3188
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 11:57:51.6109
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UZSwpXb2a/FXN/nq8IE7iPcI9hB1Luv3E6UPR5SzQKdt9u8QimmrQNx4JXhqD3uKGvx85qSf/CQnCmvGS7DdAO7Ieo4BwyM2RtSEBNqJ+WI=
+X-MS-Exchange-CrossTenant-UserPrincipalName: qRWBMxIV8CvWags7aoS0pk9n3AUBX/SjNzQIA4SGwFtQjM2R8IfmESLE/dKLJmNDziV3iRQ9OQdA9117+yQNQIbBY1pitVJgqZOqLK4NkU8=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB7832
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-03_07,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- bulkscore=0 adultscore=0 malwarescore=0 spamscore=0 suspectscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 mlxlogscore=999 phishscore=0 spamscore=0
  mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2406180000 definitions=main-2407030087
-X-Proofpoint-ORIG-GUID: d5RRhL8xSGopcWELNi7TF76TZEShdpnw
-X-Proofpoint-GUID: d5RRhL8xSGopcWELNi7TF76TZEShdpnw
+X-Proofpoint-GUID: XhJhYS21yl49mRi6_Und3UB3TYxQ_DUW
+X-Proofpoint-ORIG-GUID: XhJhYS21yl49mRi6_Und3UB3TYxQ_DUW
 
-There are a number of "core" VMA manipulation functions implemented in
-mm/mmap.c, notably those concerning VMA merging, splitting, modifying,
-expanding and shrinking, which logically don't belong there.
+This patch forms part of a patch series intending to separate out VMA logic
+and render it testable from userspace, which requires that core
+manipulation functions be exposed in an mm/-internal header file.
 
-More importantly this functionality represents an internal implementation
-detail of memory management and should not be exposed outside of mm/
-itself.
+In order to do this, we must abstract APIs we wish to test, in this
+instance functions which ultimately invoke vma_modify().
 
-This patch series isolates core VMA manipulation functionality into its own
-file, mm/vma.c, and provides an API to the rest of the mm code in mm/vma.h.
+This patch therefore moves all logic which ultimately invokes vma_modify()
+to mm/userfaultfd.c, trying to transfer code at a functional granularity
+where possible.
 
-Importantly, it also carefully implements mm/vma_internal.h, which
-specifies which headers need to be imported by vma.c, leading to the very
-useful property that vma.c depends only on mm/vma.h and mm/vma_internal.h.
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+ fs/userfaultfd.c              | 160 +++-----------------------------
+ include/linux/userfaultfd_k.h |  19 ++++
+ mm/userfaultfd.c              | 168 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 198 insertions(+), 149 deletions(-)
 
-This means we can then re-implement vma_internal.h in userland, adding
-shims for kernel mechanisms as required, allowing us to unit test internal
-VMA functionality.
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 27a3e9285fbf..b3ed7207df7e 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -104,21 +104,6 @@ bool userfaultfd_wp_unpopulated(struct vm_area_struct *vma)
+ 	return ctx->features & UFFD_FEATURE_WP_UNPOPULATED;
+ }
 
-This testing is useful as opposed to an e.g. kunit implementation as this
-way we can avoid all external kernel side-effects while testing, run tests
-VERY quickly, and iterate on and debug problems quickly.
+-static void userfaultfd_set_vm_flags(struct vm_area_struct *vma,
+-				     vm_flags_t flags)
+-{
+-	const bool uffd_wp_changed = (vma->vm_flags ^ flags) & VM_UFFD_WP;
+-
+-	vm_flags_reset(vma, flags);
+-	/*
+-	 * For shared mappings, we want to enable writenotify while
+-	 * userfaultfd-wp is enabled (see vma_wants_writenotify()). We'll simply
+-	 * recalculate vma->vm_page_prot whenever userfaultfd-wp changes.
+-	 */
+-	if ((vma->vm_flags & VM_SHARED) && uffd_wp_changed)
+-		vma_set_page_prot(vma);
+-}
+-
+ static int userfaultfd_wake_function(wait_queue_entry_t *wq, unsigned mode,
+ 				     int wake_flags, void *key)
+ {
+@@ -615,22 +600,7 @@ static void userfaultfd_event_wait_completion(struct userfaultfd_ctx *ctx,
+ 	spin_unlock_irq(&ctx->event_wqh.lock);
 
-Excitingly this opens the door to, in the future, recreating precise
-problems observed in production in userland and very quickly debugging
-problems that might otherwise be very difficult to reproduce.
+ 	if (release_new_ctx) {
+-		struct vm_area_struct *vma;
+-		struct mm_struct *mm = release_new_ctx->mm;
+-		VMA_ITERATOR(vmi, mm, 0);
+-
+-		/* the various vma->vm_userfaultfd_ctx still points to it */
+-		mmap_write_lock(mm);
+-		for_each_vma(vmi, vma) {
+-			if (vma->vm_userfaultfd_ctx.ctx == release_new_ctx) {
+-				vma_start_write(vma);
+-				vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+-				userfaultfd_set_vm_flags(vma,
+-							 vma->vm_flags & ~__VM_UFFD_FLAGS);
+-			}
+-		}
+-		mmap_write_unlock(mm);
+-
++		userfaultfd_release_new(release_new_ctx);
+ 		userfaultfd_ctx_put(release_new_ctx);
+ 	}
 
-This patch series takes advantage of existing shim logic and full userland
-maple tree support contained in tools/testing/radix-tree/ and
-tools/include/linux/, separating out shared components of the radix tree
-implementation to provide this testing.
+@@ -662,9 +632,7 @@ int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
+ 		return 0;
 
-Kernel functionality is stubbed and shimmed as needed in tools/testing/vma/
-which contains a fully functional userland vma_internal.h file and which
-imports mm/vma.c and mm/vma.h to be directly tested from userland.
+ 	if (!(octx->features & UFFD_FEATURE_EVENT_FORK)) {
+-		vma_start_write(vma);
+-		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+-		userfaultfd_set_vm_flags(vma, vma->vm_flags & ~__VM_UFFD_FLAGS);
++		userfaultfd_reset_ctx(vma);
+ 		return 0;
+ 	}
 
-A simple, skeleton testing implementation is provided in
-tools/testing/vma/vma.c as a proof-of-concept, asserting that simple VMA
-merge, modify (testing split), expand and shrink functionality work
-correctly.
+@@ -749,9 +717,7 @@ void mremap_userfaultfd_prep(struct vm_area_struct *vma,
+ 		up_write(&ctx->map_changing_lock);
+ 	} else {
+ 		/* Drop uffd context if remap feature not enabled */
+-		vma_start_write(vma);
+-		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+-		userfaultfd_set_vm_flags(vma, vma->vm_flags & ~__VM_UFFD_FLAGS);
++		userfaultfd_reset_ctx(vma);
+ 	}
+ }
 
-v1:
-* Fix test_simple_modify() to specify correct prev.
-* Improve vma test Makefile so it picks up dependency changes correctly.
-* Rename relocate_vma() to relocate_vma_down().
-* Remove shift_arg_pages() and invoked relocate_vma_down() directly from
-  setup_arg_pages().
-* MAINTAINERS fixups.
+@@ -870,53 +836,13 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
+ {
+ 	struct userfaultfd_ctx *ctx = file->private_data;
+ 	struct mm_struct *mm = ctx->mm;
+-	struct vm_area_struct *vma, *prev;
+ 	/* len == 0 means wake all */
+ 	struct userfaultfd_wake_range range = { .len = 0, };
+-	unsigned long new_flags;
+-	VMA_ITERATOR(vmi, mm, 0);
 
-RFC v2:
-* Reword commit messages.
-* Replace vma_expand() / vma_shrink() wrappers with relocate_vma().
-* Make move_page_tables() internal too.
-* Have internal.h import vma.h.
-* Use header guards to more cleanly implement userland testing code.
-* Rename main.c to vma.c.
-* Update mm/vma_internal.h to have fewer superfluous comments.
-* Rework testing logic so we count test failures, and output test results.
-* Correct some SPDX license prefixes.
-* Make VM_xxx_ON() debug asserts forward to xxx_ON() macros.
-* Update VMA tests to correctly free memory, and re-enable ASAN leak
-  detection.
-https://lore.kernel.org/all/cover.1719584707.git.lstoakes@gmail.com/
+ 	WRITE_ONCE(ctx->released, true);
 
-RFC v1:
-https://lore.kernel.org/all/cover.1719481836.git.lstoakes@gmail.com/
+-	if (!mmget_not_zero(mm))
+-		goto wakeup;
+-
+-	/*
+-	 * Flush page faults out of all CPUs. NOTE: all page faults
+-	 * must be retried without returning VM_FAULT_SIGBUS if
+-	 * userfaultfd_ctx_get() succeeds but vma->vma_userfault_ctx
+-	 * changes while handle_userfault released the mmap_lock. So
+-	 * it's critical that released is set to true (above), before
+-	 * taking the mmap_lock for writing.
+-	 */
+-	mmap_write_lock(mm);
+-	prev = NULL;
+-	for_each_vma(vmi, vma) {
+-		cond_resched();
+-		BUG_ON(!!vma->vm_userfaultfd_ctx.ctx ^
+-		       !!(vma->vm_flags & __VM_UFFD_FLAGS));
+-		if (vma->vm_userfaultfd_ctx.ctx != ctx) {
+-			prev = vma;
+-			continue;
+-		}
+-		/* Reset ptes for the whole vma range if wr-protected */
+-		if (userfaultfd_wp(vma))
+-			uffd_wp_range(vma, vma->vm_start,
+-				      vma->vm_end - vma->vm_start, false);
+-		new_flags = vma->vm_flags & ~__VM_UFFD_FLAGS;
+-		vma = vma_modify_flags_uffd(&vmi, prev, vma, vma->vm_start,
+-					    vma->vm_end, new_flags,
+-					    NULL_VM_UFFD_CTX);
+-
+-		vma_start_write(vma);
+-		userfaultfd_set_vm_flags(vma, new_flags);
+-		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
++	userfaultfd_release_all(mm, ctx);
 
+-		prev = vma;
+-	}
+-	mmap_write_unlock(mm);
+-	mmput(mm);
+-wakeup:
+ 	/*
+ 	 * After no new page faults can wait on this fault_*wqh, flush
+ 	 * the last page faults that may have been already waiting on
+@@ -1293,14 +1219,14 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+ 				unsigned long arg)
+ {
+ 	struct mm_struct *mm = ctx->mm;
+-	struct vm_area_struct *vma, *prev, *cur;
++	struct vm_area_struct *vma, *cur;
+ 	int ret;
+ 	struct uffdio_register uffdio_register;
+ 	struct uffdio_register __user *user_uffdio_register;
+-	unsigned long vm_flags, new_flags;
++	unsigned long vm_flags;
+ 	bool found;
+ 	bool basic_ioctls;
+-	unsigned long start, end, vma_end;
++	unsigned long start, end;
+ 	struct vma_iterator vmi;
+ 	bool wp_async = userfaultfd_wp_async_ctx(ctx);
 
-Lorenzo Stoakes (7):
-  userfaultfd: move core VMA manipulation logic to mm/userfaultfd.c
-  mm: move vma_modify() and helpers to internal header
-  mm: move vma_shrink(), vma_expand() to internal header
-  mm: move internal core VMA manipulation functions to own file
-  MAINTAINERS: Add entry for new VMA files
-  tools: separate out shared radix-tree components
-  tools: add skeleton code for userland testing of VMA logic
+@@ -1428,57 +1354,8 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+ 	} for_each_vma_range(vmi, cur, end);
+ 	BUG_ON(!found);
 
- MAINTAINERS                                   |   14 +
- fs/exec.c                                     |   81 +-
- fs/userfaultfd.c                              |  160 +-
- include/linux/atomic.h                        |    2 +-
- include/linux/mm.h                            |  112 +-
- include/linux/mmzone.h                        |    3 +-
- include/linux/userfaultfd_k.h                 |   19 +
- mm/Makefile                                   |    2 +-
- mm/internal.h                                 |  167 +-
- mm/mmap.c                                     | 2069 ++---------------
- mm/mmu_notifier.c                             |    2 +
- mm/userfaultfd.c                              |  168 ++
- mm/vma.c                                      | 1766 ++++++++++++++
- mm/vma.h                                      |  362 +++
- mm/vma_internal.h                             |   52 +
- tools/testing/radix-tree/Makefile             |   68 +-
- tools/testing/radix-tree/maple.c              |   14 +-
- tools/testing/radix-tree/xarray.c             |    9 +-
- tools/testing/shared/autoconf.h               |    2 +
- tools/testing/{radix-tree => shared}/bitmap.c |    0
- tools/testing/{radix-tree => shared}/linux.c  |    0
- .../{radix-tree => shared}/linux/bug.h        |    0
- .../{radix-tree => shared}/linux/cpu.h        |    0
- .../{radix-tree => shared}/linux/idr.h        |    0
- .../{radix-tree => shared}/linux/init.h       |    0
- .../{radix-tree => shared}/linux/kconfig.h    |    0
- .../{radix-tree => shared}/linux/kernel.h     |    0
- .../{radix-tree => shared}/linux/kmemleak.h   |    0
- .../{radix-tree => shared}/linux/local_lock.h |    0
- .../{radix-tree => shared}/linux/lockdep.h    |    0
- .../{radix-tree => shared}/linux/maple_tree.h |    0
- .../{radix-tree => shared}/linux/percpu.h     |    0
- .../{radix-tree => shared}/linux/preempt.h    |    0
- .../{radix-tree => shared}/linux/radix-tree.h |    0
- .../{radix-tree => shared}/linux/rcupdate.h   |    0
- .../{radix-tree => shared}/linux/xarray.h     |    0
- tools/testing/shared/maple-shared.h           |    9 +
- tools/testing/shared/maple-shim.c             |    7 +
- tools/testing/shared/shared.h                 |   34 +
- tools/testing/shared/shared.mk                |   68 +
- .../testing/shared/trace/events/maple_tree.h  |    5 +
- tools/testing/shared/xarray-shared.c          |    5 +
- tools/testing/shared/xarray-shared.h          |    4 +
- tools/testing/vma/.gitignore                  |    6 +
- tools/testing/vma/Makefile                    |   16 +
- tools/testing/vma/errors.txt                  |    0
- tools/testing/vma/generated/autoconf.h        |    2 +
- tools/testing/vma/linux/atomic.h              |   12 +
- tools/testing/vma/linux/mmzone.h              |   38 +
- tools/testing/vma/vma.c                       |  207 ++
- tools/testing/vma/vma_internal.h              |  882 +++++++
- 51 files changed, 3914 insertions(+), 2453 deletions(-)
- create mode 100644 mm/vma.c
- create mode 100644 mm/vma.h
- create mode 100644 mm/vma_internal.h
- create mode 100644 tools/testing/shared/autoconf.h
- rename tools/testing/{radix-tree => shared}/bitmap.c (100%)
- rename tools/testing/{radix-tree => shared}/linux.c (100%)
- rename tools/testing/{radix-tree => shared}/linux/bug.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/cpu.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/idr.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/init.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/kconfig.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/kernel.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/kmemleak.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/local_lock.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/lockdep.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/maple_tree.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/percpu.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/preempt.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/radix-tree.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/rcupdate.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/xarray.h (100%)
- create mode 100644 tools/testing/shared/maple-shared.h
- create mode 100644 tools/testing/shared/maple-shim.c
- create mode 100644 tools/testing/shared/shared.h
- create mode 100644 tools/testing/shared/shared.mk
- create mode 100644 tools/testing/shared/trace/events/maple_tree.h
- create mode 100644 tools/testing/shared/xarray-shared.c
- create mode 100644 tools/testing/shared/xarray-shared.h
- create mode 100644 tools/testing/vma/.gitignore
- create mode 100644 tools/testing/vma/Makefile
- create mode 100644 tools/testing/vma/errors.txt
- create mode 100644 tools/testing/vma/generated/autoconf.h
- create mode 100644 tools/testing/vma/linux/atomic.h
- create mode 100644 tools/testing/vma/linux/mmzone.h
- create mode 100644 tools/testing/vma/vma.c
- create mode 100644 tools/testing/vma/vma_internal.h
+-	vma_iter_set(&vmi, start);
+-	prev = vma_prev(&vmi);
+-	if (vma->vm_start < start)
+-		prev = vma;
+-
+-	ret = 0;
+-	for_each_vma_range(vmi, vma, end) {
+-		cond_resched();
+-
+-		BUG_ON(!vma_can_userfault(vma, vm_flags, wp_async));
+-		BUG_ON(vma->vm_userfaultfd_ctx.ctx &&
+-		       vma->vm_userfaultfd_ctx.ctx != ctx);
+-		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
+-
+-		/*
+-		 * Nothing to do: this vma is already registered into this
+-		 * userfaultfd and with the right tracking mode too.
+-		 */
+-		if (vma->vm_userfaultfd_ctx.ctx == ctx &&
+-		    (vma->vm_flags & vm_flags) == vm_flags)
+-			goto skip;
+-
+-		if (vma->vm_start > start)
+-			start = vma->vm_start;
+-		vma_end = min(end, vma->vm_end);
+-
+-		new_flags = (vma->vm_flags & ~__VM_UFFD_FLAGS) | vm_flags;
+-		vma = vma_modify_flags_uffd(&vmi, prev, vma, start, vma_end,
+-					    new_flags,
+-					    (struct vm_userfaultfd_ctx){ctx});
+-		if (IS_ERR(vma)) {
+-			ret = PTR_ERR(vma);
+-			break;
+-		}
+-
+-		/*
+-		 * In the vma_merge() successful mprotect-like case 8:
+-		 * the next vma was merged into the current one and
+-		 * the current one has not been updated yet.
+-		 */
+-		vma_start_write(vma);
+-		userfaultfd_set_vm_flags(vma, new_flags);
+-		vma->vm_userfaultfd_ctx.ctx = ctx;
+-
+-		if (is_vm_hugetlb_page(vma) && uffd_disable_huge_pmd_share(vma))
+-			hugetlb_unshare_all_pmds(vma);
+-
+-	skip:
+-		prev = vma;
+-		start = vma->vm_end;
+-	}
++	ret = userfaultfd_register_range(ctx, vma, vm_flags, start, end,
++					 wp_async);
 
+ out_unlock:
+ 	mmap_write_unlock(mm);
+@@ -1519,7 +1396,6 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+ 	struct vm_area_struct *vma, *prev, *cur;
+ 	int ret;
+ 	struct uffdio_range uffdio_unregister;
+-	unsigned long new_flags;
+ 	bool found;
+ 	unsigned long start, end, vma_end;
+ 	const void __user *buf = (void __user *)arg;
+@@ -1622,27 +1498,13 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+ 			wake_userfault(vma->vm_userfaultfd_ctx.ctx, &range);
+ 		}
+
+-		/* Reset ptes for the whole vma range if wr-protected */
+-		if (userfaultfd_wp(vma))
+-			uffd_wp_range(vma, start, vma_end - start, false);
+-
+-		new_flags = vma->vm_flags & ~__VM_UFFD_FLAGS;
+-		vma = vma_modify_flags_uffd(&vmi, prev, vma, start, vma_end,
+-					    new_flags, NULL_VM_UFFD_CTX);
++		vma = userfaultfd_clear_vma(&vmi, prev, vma,
++					    start, vma_end);
+ 		if (IS_ERR(vma)) {
+ 			ret = PTR_ERR(vma);
+ 			break;
+ 		}
+
+-		/*
+-		 * In the vma_merge() successful mprotect-like case 8:
+-		 * the next vma was merged into the current one and
+-		 * the current one has not been updated yet.
+-		 */
+-		vma_start_write(vma);
+-		userfaultfd_set_vm_flags(vma, new_flags);
+-		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+-
+ 	skip:
+ 		prev = vma;
+ 		start = vma->vm_end;
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index 05d59f74fc88..6355ed5bd34b 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -264,6 +264,25 @@ extern void userfaultfd_unmap_complete(struct mm_struct *mm,
+ extern bool userfaultfd_wp_unpopulated(struct vm_area_struct *vma);
+ extern bool userfaultfd_wp_async(struct vm_area_struct *vma);
+
++extern void userfaultfd_reset_ctx(struct vm_area_struct *vma);
++
++extern struct vm_area_struct *userfaultfd_clear_vma(struct vma_iterator *vmi,
++						    struct vm_area_struct *prev,
++						    struct vm_area_struct *vma,
++						    unsigned long start,
++						    unsigned long end);
++
++int userfaultfd_register_range(struct userfaultfd_ctx *ctx,
++			       struct vm_area_struct *vma,
++			       unsigned long vm_flags,
++			       unsigned long start, unsigned long end,
++			       bool wp_async);
++
++extern void userfaultfd_release_new(struct userfaultfd_ctx *ctx);
++
++extern void userfaultfd_release_all(struct mm_struct *mm,
++				    struct userfaultfd_ctx *ctx);
++
+ #else /* CONFIG_USERFAULTFD */
+
+ /* mm helpers */
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index e54e5c8907fa..3b7715ecf292 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -1760,3 +1760,171 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
+ 	VM_WARN_ON(!moved && !err);
+ 	return moved ? moved : err;
+ }
++
++static void userfaultfd_set_vm_flags(struct vm_area_struct *vma,
++				     vm_flags_t flags)
++{
++	const bool uffd_wp_changed = (vma->vm_flags ^ flags) & VM_UFFD_WP;
++
++	vm_flags_reset(vma, flags);
++	/*
++	 * For shared mappings, we want to enable writenotify while
++	 * userfaultfd-wp is enabled (see vma_wants_writenotify()). We'll simply
++	 * recalculate vma->vm_page_prot whenever userfaultfd-wp changes.
++	 */
++	if ((vma->vm_flags & VM_SHARED) && uffd_wp_changed)
++		vma_set_page_prot(vma);
++}
++
++static void userfaultfd_set_ctx(struct vm_area_struct *vma,
++				struct userfaultfd_ctx *ctx,
++				unsigned long flags)
++{
++	vma_start_write(vma);
++	vma->vm_userfaultfd_ctx = (struct vm_userfaultfd_ctx){ctx};
++	userfaultfd_set_vm_flags(vma,
++				 (vma->vm_flags & ~__VM_UFFD_FLAGS) | flags);
++}
++
++void userfaultfd_reset_ctx(struct vm_area_struct *vma)
++{
++	userfaultfd_set_ctx(vma, NULL, 0);
++}
++
++struct vm_area_struct *userfaultfd_clear_vma(struct vma_iterator *vmi,
++					     struct vm_area_struct *prev,
++					     struct vm_area_struct *vma,
++					     unsigned long start,
++					     unsigned long end)
++{
++	struct vm_area_struct *ret;
++
++	/* Reset ptes for the whole vma range if wr-protected */
++	if (userfaultfd_wp(vma))
++		uffd_wp_range(vma, start, end - start, false);
++
++	ret = vma_modify_flags_uffd(vmi, prev, vma, start, end,
++				    vma->vm_flags & ~__VM_UFFD_FLAGS,
++				    NULL_VM_UFFD_CTX);
++
++	/*
++	 * In the vma_merge() successful mprotect-like case 8:
++	 * the next vma was merged into the current one and
++	 * the current one has not been updated yet.
++	 */
++	if (!IS_ERR(ret))
++		userfaultfd_reset_ctx(vma);
++
++	return ret;
++}
++
++/* Assumes mmap write lock taken, and mm_struct pinned. */
++int userfaultfd_register_range(struct userfaultfd_ctx *ctx,
++			       struct vm_area_struct *vma,
++			       unsigned long vm_flags,
++			       unsigned long start, unsigned long end,
++			       bool wp_async)
++{
++	VMA_ITERATOR(vmi, ctx->mm, start);
++	struct vm_area_struct *prev = vma_prev(&vmi);
++	unsigned long vma_end;
++	unsigned long new_flags;
++
++	if (vma->vm_start < start)
++		prev = vma;
++
++	for_each_vma_range(vmi, vma, end) {
++		cond_resched();
++
++		BUG_ON(!vma_can_userfault(vma, vm_flags, wp_async));
++		BUG_ON(vma->vm_userfaultfd_ctx.ctx &&
++		       vma->vm_userfaultfd_ctx.ctx != ctx);
++		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
++
++		/*
++		 * Nothing to do: this vma is already registered into this
++		 * userfaultfd and with the right tracking mode too.
++		 */
++		if (vma->vm_userfaultfd_ctx.ctx == ctx &&
++		    (vma->vm_flags & vm_flags) == vm_flags)
++			goto skip;
++
++		if (vma->vm_start > start)
++			start = vma->vm_start;
++		vma_end = min(end, vma->vm_end);
++
++		new_flags = (vma->vm_flags & ~__VM_UFFD_FLAGS) | vm_flags;
++		vma = vma_modify_flags_uffd(&vmi, prev, vma, start, vma_end,
++					    new_flags,
++					    (struct vm_userfaultfd_ctx){ctx});
++		if (IS_ERR(vma))
++			return PTR_ERR(vma);
++
++		/*
++		 * In the vma_merge() successful mprotect-like case 8:
++		 * the next vma was merged into the current one and
++		 * the current one has not been updated yet.
++		 */
++		userfaultfd_set_ctx(vma, ctx, vm_flags);
++
++		if (is_vm_hugetlb_page(vma) && uffd_disable_huge_pmd_share(vma))
++			hugetlb_unshare_all_pmds(vma);
++
++skip:
++		prev = vma;
++		start = vma->vm_end;
++	}
++
++	return 0;
++}
++
++void userfaultfd_release_new(struct userfaultfd_ctx *ctx)
++{
++	struct mm_struct *mm = ctx->mm;
++	struct vm_area_struct *vma;
++	VMA_ITERATOR(vmi, mm, 0);
++
++	/* the various vma->vm_userfaultfd_ctx still points to it */
++	mmap_write_lock(mm);
++	for_each_vma(vmi, vma) {
++		if (vma->vm_userfaultfd_ctx.ctx == ctx)
++			userfaultfd_reset_ctx(vma);
++	}
++	mmap_write_unlock(mm);
++}
++
++void userfaultfd_release_all(struct mm_struct *mm,
++			     struct userfaultfd_ctx *ctx)
++{
++	struct vm_area_struct *vma, *prev;
++	VMA_ITERATOR(vmi, mm, 0);
++
++	if (!mmget_not_zero(mm))
++		return;
++
++	/*
++	 * Flush page faults out of all CPUs. NOTE: all page faults
++	 * must be retried without returning VM_FAULT_SIGBUS if
++	 * userfaultfd_ctx_get() succeeds but vma->vma_userfault_ctx
++	 * changes while handle_userfault released the mmap_lock. So
++	 * it's critical that released is set to true (above), before
++	 * taking the mmap_lock for writing.
++	 */
++	mmap_write_lock(mm);
++	prev = NULL;
++	for_each_vma(vmi, vma) {
++		cond_resched();
++		BUG_ON(!!vma->vm_userfaultfd_ctx.ctx ^
++		       !!(vma->vm_flags & __VM_UFFD_FLAGS));
++		if (vma->vm_userfaultfd_ctx.ctx != ctx) {
++			prev = vma;
++			continue;
++		}
++
++		vma = userfaultfd_clear_vma(&vmi, prev, vma,
++					    vma->vm_start, vma->vm_end);
++		prev = vma;
++	}
++	mmap_write_unlock(mm);
++	mmput(mm);
++}
 --
 2.45.2
 
