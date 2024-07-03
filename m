@@ -1,122 +1,215 @@
-Return-Path: <linux-kernel+bounces-239472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A444292607C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 081CB926084
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD281F2204E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:36:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C13C1F237E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CABE178CE7;
-	Wed,  3 Jul 2024 12:36:21 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74364176FBD;
+	Wed,  3 Jul 2024 12:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eTst2Ck8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="//RW5yhK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eTst2Ck8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="//RW5yhK"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778A316EC0F;
-	Wed,  3 Jul 2024 12:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0EC1428F8;
+	Wed,  3 Jul 2024 12:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720010181; cv=none; b=S3MAagJoOdAnh5+1UVbx1S7/ihJagyLnZxLa89AQX3lgd9xg/ei6twciW9WXFYxebxLXAQ4gbf8O+CBJ72rjKt/LB3csBoM/DfwsDM08j390bKTsm8I7CJgxJuHfDJ3abTBozJPPgxoa7UtqaOSbWxdeUj8FnnDtPxaky9/5k/g=
+	t=1720010303; cv=none; b=KA5cqN67bq/55zCb1R0gImP5g5HiNiiqZkINa9KHOquRhERQWzIIghuK987OUoz563pwCjb4R9gFj2K10EWpUI6xR4T0SONao35yu2Vs3gMMze5BVY2pbSwF4aiZL1MnVq7rKtL7DdeD/NjP5kC07UDDdog1d6WBSe4J9h8TZP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720010181; c=relaxed/simple;
-	bh=uMXn3Tgos8fGdrRn6yNxIH22isFtg2IbdQ5k7ajZXjc=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FSOlh7f5704JrkX3vnaN8YHSOX8BZQO9K6AlWtsjGN1GvJ3NbScwzCq/W5LUV/QqjfzboBPak8u3Rx/UiX0Mw4HBbur8kToawJL2lP9rZa+nZoZx6ii1LJIWu22dnieuIulkGyY6OQpZsGpJcob5H4Jixa3OlMTS6uCp88nRNoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WDfLP0v47zQk7Y;
-	Wed,  3 Jul 2024 20:32:29 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5B65A180087;
-	Wed,  3 Jul 2024 20:36:17 +0800 (CST)
-Received: from [10.69.30.204] (10.69.30.204) by dggpemf200006.china.huawei.com
- (7.185.36.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Jul
- 2024 20:36:17 +0800
-Subject: Re: [PATCH net-next v9 09/13] net: introduce the
- skb_copy_to_va_nocache() helper
-To: Alexander H Duyck <alexander.duyck@gmail.com>, <davem@davemloft.net>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Eric Dumazet
-	<edumazet@google.com>
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
- <20240625135216.47007-10-linyunsheng@huawei.com>
- <16f0d900bff994c1e23fe3862c3953819bf6a63a.camel@gmail.com>
-From: Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <d2e4d25d-33d8-22d9-c5e0-16be802ad39a@huawei.com>
-Date: Wed, 3 Jul 2024 20:36:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+	s=arc-20240116; t=1720010303; c=relaxed/simple;
+	bh=f+qR685pbhcyKQMkLuPoyqsahB0cvtIGZxL6oXcyKm4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hw/Atd1Jk9f38Ny2e6W928f3ffrOTzZIN0u1W/qA/SGI/mP9tT3WUGcLeYJP92u6msZpZYUxxqZb9SKo5FcbQl777+Q9rSbu+G0RWjdkMcvLNawQB9Z+pwe3xqYdoSAFNYt+A/dGTUtgMeQmH8pK+cXaf3SCltAwU40gmH1NFtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eTst2Ck8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=//RW5yhK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eTst2Ck8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=//RW5yhK; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 03410211A2;
+	Wed,  3 Jul 2024 12:38:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720010300; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ptMAAIn4sgaMZbUvdt3ovM6Pv3+HJopjDCBtTl8iZQI=;
+	b=eTst2Ck8ScDdPo17eR9/IHq9IlNroSbvCJA24/R2DyFkeOLh0uZZ7C+5kpXwEKBEn7dAPF
+	ngeYrNSzv8P9zxUUwOW7tF/vYdUS4fPT/PpweBeLIog6+c4qh/DvGHzHANyznHilJqpqtG
+	oktSx+eVQw9J+qoNP+3GPjX0vJSHmek=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720010300;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ptMAAIn4sgaMZbUvdt3ovM6Pv3+HJopjDCBtTl8iZQI=;
+	b=//RW5yhKy1p6BN+ZG+2wgoMV/sui7BLVmX5S/kl7rE/80IGLAM2vRRw2ZuxAwIL8Wg17E/
+	Y9S2xMUaVCl1caAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=eTst2Ck8;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="//RW5yhK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720010300; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ptMAAIn4sgaMZbUvdt3ovM6Pv3+HJopjDCBtTl8iZQI=;
+	b=eTst2Ck8ScDdPo17eR9/IHq9IlNroSbvCJA24/R2DyFkeOLh0uZZ7C+5kpXwEKBEn7dAPF
+	ngeYrNSzv8P9zxUUwOW7tF/vYdUS4fPT/PpweBeLIog6+c4qh/DvGHzHANyznHilJqpqtG
+	oktSx+eVQw9J+qoNP+3GPjX0vJSHmek=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720010300;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ptMAAIn4sgaMZbUvdt3ovM6Pv3+HJopjDCBtTl8iZQI=;
+	b=//RW5yhKy1p6BN+ZG+2wgoMV/sui7BLVmX5S/kl7rE/80IGLAM2vRRw2ZuxAwIL8Wg17E/
+	Y9S2xMUaVCl1caAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2BF4313889;
+	Wed,  3 Jul 2024 12:38:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TYdBCDtGhWZ0HAAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Wed, 03 Jul 2024 12:38:19 +0000
+Message-ID: <cc6cb49c-a76a-4d0d-94b5-c6213016d90d@suse.de>
+Date: Wed, 3 Jul 2024 15:38:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <16f0d900bff994c1e23fe3862c3953819bf6a63a.camel@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 6/8] PCI: brcmstb: Don't conflate the reset rescal with
+ phy ctrl
+To: Jim Quinlan <james.quinlan@broadcom.com>,
+ Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com,
+ jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240628205430.24775-1-james.quinlan@broadcom.com>
+ <20240628205430.24775-7-james.quinlan@broadcom.com>
+ <c4633d7a-11a4-4c1c-954b-45f631cb2563@suse.de>
+ <CA+-6iNwmqq1YnmzeD0=kniPSmKLDwY_KZ322ZUM7GpTvE9Zv6Q@mail.gmail.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <CA+-6iNwmqq1YnmzeD0=kniPSmKLDwY_KZ322ZUM7GpTvE9Zv6Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 03410211A2
+X-Spam-Score: -4.50
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,google.com,arm.com,debian.org,broadcom.com,gmail.com,linux.com,lists.infradead.org];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On 2024/7/2 23:52, Alexander H Duyck wrote:
-> On Tue, 2024-06-25 at 21:52 +0800, Yunsheng Lin wrote:
->> introduce the skb_copy_to_va_nocache() helper to avoid
->> calling virt_to_page() and skb_copy_to_page_nocache().
+
+
+On 7/2/24 20:59, Jim Quinlan wrote:
+> On Tue, Jul 2, 2024 at 9:10 AM Stanimir Varbanov <svarbanov@suse.de> wrote:
 >>
->> CC: Alexander Duyck <alexander.duyck@gmail.com>
->> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->> ---
->>  include/net/sock.h | 15 +++++++++++++++
->>  1 file changed, 15 insertions(+)
 >>
->> diff --git a/include/net/sock.h b/include/net/sock.h
->> index cce23ac4d514..7ad235465485 100644
->> --- a/include/net/sock.h
->> +++ b/include/net/sock.h
->> @@ -2201,6 +2201,21 @@ static inline int skb_copy_to_page_nocache(struct sock *sk, struct iov_iter *fro
->>  	return 0;
->>  }
->>  
->> +static inline int skb_copy_to_va_nocache(struct sock *sk, struct iov_iter *from,
->> +					 struct sk_buff *skb, char *va, int copy)
->> +{
->> +	int err;
->> +
->> +	err = skb_do_copy_data_nocache(sk, skb, from, va, copy, skb->len);
->> +	if (err)
->> +		return err;
->> +
->> +	skb_len_add(skb, copy);
->> +	sk_wmem_queued_add(sk, copy);
->> +	sk_mem_charge(sk, copy);
->> +	return 0;
->> +}
->> +
->>  /**
->>   * sk_wmem_alloc_get - returns write allocations
->>   * @sk: socket
-> 
-> One minor nit. Rather than duplicate skb_copy_to_page_nocache you would
-> be better served to implement this one before it, and then just update
-> skb_copy_to_page_nocache to be:
-> 	return skb_copy_to_va_nocache(sk, from, skb,
-> 				      page_address(page) + off, copy);
-> 
-> We can save ourselves at least a few lines of code that way and it
-> creates one spot to do any changes.
+>>
+>> On 6/28/24 23:54, Jim Quinlan wrote:
+>>> We've been assuming that if an SOC has a "rescal" reset controller that we
+>>> should automatically invoke brcm_phy_cntl(...).  This will not be true in
+>>> future SOCs, so we create a bool "has_phy" and adjust the cfg_data
+>>> appropriately (we need to give 7216 its own cfg_data structure instead of
+>>> sharing one).
+>>>
+>>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+>>> ---
+>>>  drivers/pci/controller/pcie-brcmstb.c | 17 ++++++++++++++---
+>>>  1 file changed, 14 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
 
-Looking at more closely, it seems we may be able to just rename
-skb_copy_to_page_nocache() to skb_copy_to_va_nocache() as there
-is no caller for skb_copy_to_page_nocache() after this patchset.
+<cut>
 
-> 				
-> .
+>>>
+>>> +static const struct pcie_cfg_data bcm7216_cfg = {
+>>> +     .offsets        = pcie_offset_bcm7278,
+>>> +     .type           = BCM7278,
+>>
+>> This "type" field is confusing, maybe it would be good to rename it to
+>> "family"? For example BCM72XX family.
 > 
+> Hi Stanimir,
+> 
+> I'm open for another name but "family" would present problems with Broadcom STB.
+> For example, we call 7216b0 a "family" as there are a number of
+> derivative products based off
+
+OK, sorry I'm not familiar with STB families. Then, it makes sense.
+
+> of this general design.  Second, having something like "BCM72XX" won't work;
+> we have 7211 which is something altogether different from the 7216.
+> Note that we only
+> introduce a new "type" when we need to; if the behavior is the same as
+> a previously declared
+> "type" we do not introduce new ones.
+> 
+> But if you wanted to change "type" to "model" then I have no problem with that.
+> 
+
+"model" sounds good to me. We might need to document this in kernel doc
+style comment in struct pcie_cfg_data as a separate patch.
+
+> Regards,
+> Jim Quinlan
+
+thanks
+~Stan
 
