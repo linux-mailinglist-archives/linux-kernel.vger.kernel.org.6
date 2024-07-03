@@ -1,103 +1,266 @@
-Return-Path: <linux-kernel+bounces-238599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBAF924CA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:13:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12038924CAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D1AA1C21E7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37B601C21E52
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503EE635;
-	Wed,  3 Jul 2024 00:13:04 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A9110E3;
-	Wed,  3 Jul 2024 00:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0D210F7;
+	Wed,  3 Jul 2024 00:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvUOzMmz"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A860391;
+	Wed,  3 Jul 2024 00:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719965583; cv=none; b=XWvJGsIBfeoaEWHD8PomMbk2gkcZ5UJq6tLHXtfhJ1Rb4mlk31Fctv9nlogp3SYrUYOWW6h0CFDdfO17hZJY8sBU25YlCmahY06iSagAwtmW0CBj5Bin6nkhfGUeEtgCnloDD9djyDd7MaA6wL3Qjafyqo5bVtYpIuXNJcFiFSU=
+	t=1719965637; cv=none; b=qmgeOeHZ73OrUOsL/2oWYvIBBYzjyfSXBcFrI5iF/TUDH2n0OzIOvcKxMqsklM11X6UWgbacAAH2+1Z9p1gOmB6+RDK2/o/tGXiYdbhobWlF7YAt58zC/rdoeY0bm6ZFgMGow56lcwiIA/jjooK4NfPNZbSoJR5b1HhcgPeYfik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719965583; c=relaxed/simple;
-	bh=XTzWuLlWI1vnmXFpCrALo1hSI5hOjBF96hPZLbjaPrk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Cq44SGXcQKZswmuaOdpa9P/xogc2Kk+oP+vpfQUIMbW098JTBceZD7lLbAUJfHlkLzkr2wpf6eigsSGM9aUVeOMB8FonFsqiyNhN+B1xrIDELu4JtMUQ32X8Ypdr3f/muXLRJPNVK/HUPXPGKT/bqiembXDqF8Qtxne16SPuPAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id CA9B392009D; Wed,  3 Jul 2024 02:12:52 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id C5D4A92009B;
-	Wed,  3 Jul 2024 01:12:52 +0100 (BST)
-Date: Wed, 3 Jul 2024 01:12:52 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Arnd Bergmann <arnd@arndb.de>, "Paul E. McKenney" <paulmck@kernel.org>, 
-    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-    Arnd Bergmann <arnd@kernel.org>, linux-alpha@vger.kernel.org, 
-    Richard Henderson <richard.henderson@linaro.org>, 
-    Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-    Matt Turner <mattst88@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org, 
-    Michael Cree <mcree@orcon.net.nz>, Frank Scheiner <frank.scheiner@web.de>
-Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
-In-Reply-To: <CAHk-=wihNu+_bGwD8F107ds7Lv1Z6ODTwvYYvXeW3im1=4R65w@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.2407020219040.38148@angie.orcam.me.uk>
-References: <20240503081125.67990-1-arnd@kernel.org> <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de> <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk> <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
- <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk> <4bb50dc0-244a-4781-85ad-9ebc5e59c99a@app.fastmail.com> <CAHk-=wimJ2hQhKSq7+4O1EHtkg7eFBwY+fygxD+6sjWqgyDMTQ@mail.gmail.com> <alpine.DEB.2.21.2406302009480.43454@angie.orcam.me.uk>
- <CAHk-=wihNu+_bGwD8F107ds7Lv1Z6ODTwvYYvXeW3im1=4R65w@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1719965637; c=relaxed/simple;
+	bh=Cy70R95d0TTPnsSurPVknJaO+cLRlCLzRchC6vAVzf4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oqspU2D5JrkuK2F+aMCHwH9RxtLyNXSWrULxMZMueiIKqBNeXt28iypBJLYFS+XeUgE3nsUu68dDOUyVa+nKHl7X9tU+uGp1RJ6ZOgXJdmsK5KcmreXWhRmJW67Vyr70EfItJlk7PlKLz73mfFcOXCD94kBRlgQKHtGVdm7nU24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvUOzMmz; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a729d9d7086so17608666b.0;
+        Tue, 02 Jul 2024 17:13:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719965634; x=1720570434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9207vgNzRRpHmlo3+0pYZ1A8z8WeUNjVTxG9yx+nqJM=;
+        b=CvUOzMmzMz4C3Tpx1iu8/ASWqLMSJ5v0w0d5V+1C00wtQufRdJW+o/8WVynE7aPDKx
+         cqAXp67ntY9ZJcwDP7WBgFYqLW8TaEzU1vVrgEwHovnAO2jR/oyGcdZu0daqVxPDX2EZ
+         aqZLVo6C1sMY/gPCnlDuf6UnHNGRX5gzFexvMhRbth4kYR+VZmt7yuWURg4JMTjTz5xF
+         /fcp1kQVRucEY/RcJo0xhs5/aHu0k6SvnfDeE4c+EU7ofa7FRbgtb6EFwmYGw2PpcabF
+         wfd+HyDl/lc0gWemGFyobpqPZgNGewdYJJWCcD+vmHZzo4Au7k29X1YMKK9rZ9H3nK4Q
+         E2XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719965634; x=1720570434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9207vgNzRRpHmlo3+0pYZ1A8z8WeUNjVTxG9yx+nqJM=;
+        b=O/0+tpiexdHrHFTiQO0/h3o68UjlSugPWJ0h0vaqKB8tDX+tgGonnk4lH2wxZqc/G+
+         xyEC3lky1BmCynEjCDVnmDUJO+eP+Ugs1+OArKC2UCtvYjlW9kcPOKnCnP6irlB+GXb9
+         XI381hK41sH1jWe+D/UoZL6eLzKNRLht6lvTcLbnZTxQoapmDMNFNk2PcAEXDI0oEZab
+         mkQOkxgxeBO1sihXwYVf34mzEA89qh25cWkNJb+xCxIOEcUF0qegWMMuHG67qlF/WNEd
+         8bXgyJjU5LK3Us7kseBimx8DfIi9l3CNf7Jp0Xd0sgwHw1D4G8MrCJwVmuLpsZo8I8ri
+         Qlfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBI6gY3xgQKGXKeFDdOPUlhIRH9ZokuFUdPuRYChr47zWKzMEC58k+jfWWQnGiuHAROwAnFngmePkoQay9atd9VjgaRzYAjilDTxXpeQI3TnOscYaU7WoGXqmaNV+MWDw/TzMXSHuPm0PUjW+YKG5hAZvn+bGDrQmkGLca0saGIIiN9o3v
+X-Gm-Message-State: AOJu0Yza3wVKGH1X/BJqzIKFovMawa0S6nsvFk8JApE0IMxh9ikhIfbx
+	0QU/MfHBeJbWcd3/wrmgWvH0Yl8xNckU7/9cGd6TlXhgh3KOG7uWFqe98IfGbdCNxtY2yX/kls6
+	UgB9Y89/nJX14XZbcdMHgMg31sj70Ow==
+X-Google-Smtp-Source: AGHT+IENVPFB5EcHI1lAyIZKBEFqVrSjPCTSgsm/mC6F0RVndoB0s/2XOFfWi9TsW9akZ+oLPXBF8KeFqp7kkKAEkWw=
+X-Received: by 2002:a17:906:230f:b0:a6f:6df5:a264 with SMTP id
+ a640c23a62f3a-a77a2411d9dmr9151466b.1.1719965633249; Tue, 02 Jul 2024
+ 17:13:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240701164115.723677-1-jolsa@kernel.org> <20240701164115.723677-2-jolsa@kernel.org>
+ <20240703085533.820f90544c3fc42edf79468d@kernel.org>
+In-Reply-To: <20240703085533.820f90544c3fc42edf79468d@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 2 Jul 2024 17:13:38 -0700
+Message-ID: <CAEf4Bzbn+jky3hb+tUwmDCUgUmgCBxL5Ru_9G5SO3=uTWpi=kA@mail.gmail.com>
+Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 1 Jul 2024, Linus Torvalds wrote:
+On Tue, Jul 2, 2024 at 4:55=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.or=
+g> wrote:
+>
+> Hi Jiri,
+>
+> On Mon,  1 Jul 2024 18:41:07 +0200
+> Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> > Adding support for uprobe consumer to be defined as session and have
+> > new behaviour for consumer's 'handler' and 'ret_handler' callbacks.
+> >
+> > The session means that 'handler' and 'ret_handler' callbacks are
+> > connected in a way that allows to:
+> >
+> >   - control execution of 'ret_handler' from 'handler' callback
+> >   - share data between 'handler' and 'ret_handler' callbacks
+> >
+> > The session is enabled by setting new 'session' bool field to true
+> > in uprobe_consumer object.
+> >
+> > We keep count of session consumers for uprobe and allocate session_cons=
+umer
+> > object for each in return_instance object. This allows us to store
+> > return values of 'handler' callbacks and data pointers of shared
+> > data between both handlers.
+> >
+> > The session concept fits to our common use case where we do filtering
+> > on entry uprobe and based on the result we decide to run the return
+> > uprobe (or not).
+> >
+> > It's also convenient to share the data between session callbacks.
+> >
+> > The control of 'ret_handler' callback execution is done via return
+> > value of the 'handler' callback. If it's 0 we install and execute
+> > return uprobe, if it's 1 we do not.
+> >
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  include/linux/uprobes.h     |  16 ++++-
+> >  kernel/events/uprobes.c     | 129 +++++++++++++++++++++++++++++++++---
+> >  kernel/trace/bpf_trace.c    |   6 +-
+> >  kernel/trace/trace_uprobe.c |  12 ++--
+> >  4 files changed, 144 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> > index f46e0ca0169c..903a860a8d01 100644
+> > --- a/include/linux/uprobes.h
+> > +++ b/include/linux/uprobes.h
+> > @@ -34,15 +34,18 @@ enum uprobe_filter_ctx {
+> >  };
+> >
+> >  struct uprobe_consumer {
+> > -     int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs=
+);
+> > +     int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs=
+, __u64 *data);
+> >       int (*ret_handler)(struct uprobe_consumer *self,
+> >                               unsigned long func,
+> > -                             struct pt_regs *regs);
+> > +                             struct pt_regs *regs, __u64 *data);
+> >       bool (*filter)(struct uprobe_consumer *self,
+> >                               enum uprobe_filter_ctx ctx,
+> >                               struct mm_struct *mm);
+> >
+> >       struct uprobe_consumer *next;
+> > +
+> > +     bool                    session;        /* marks uprobe session c=
+onsumer */
+> > +     unsigned int            session_id;     /* set when uprobe_consum=
+er is registered */
+>
+> Hmm, why this has both session and session_id?
 
-> The architecture was wrong 30 years ago. It's not that it "became"
-> wrong in hindsight. It was wrong originally, and it's just that people
-> hadn't thought things through enough to realize how wrong it was.
-> 
-> The only way it's not wrong is if you say "byte accesses do not
-> matter". That's a very Cray way of looking at things - Cray 1 had a
-> 64-bit "char" in C, because there were no byte accesses.
-> 
-> That's fine if your only goal in life is to do HPC.
-> 
-> So if you simply don't care about bytes, and you *only* work with
-> words and quad-words, then alpha looks ok.
-> 
-> But honestly, that's basically saying "in a different universe, alpha
-> is not a mis-design".
+session is caller's request to establish session semantics. Jiri, I
+think it's better to move it higher next to
+handler/ret_handler/filter, that's the part of uprobe_consumer struct
+which has read-only caller-provided data (I'm adding offset and
+ref_ctr_offset there as well).
 
- Precisely my point!  We got so used to think in multiples of 8 bits that 
-other approaches seem ridiculous.
+> I also think we can use the address of uprobe_consumer itself as a unique=
+ id.
 
- The PDP-10 operated on 36-bit quantities and strings were essentially 
-clusters of 6-bit characters packed into 6-packs (which is also allegedly 
-where the C language's original limitation of using at most six characters 
-for identifiers came from -- so that the PDP-10 could compare a pair with 
-a single machine instruction).
++1
 
- So there was already legacy of doing things this way at DEC back in ~1990 
-and I can envisage engineers there actually thought that to have a machine 
-that in C terms has 32-bit shorts and ints, 64-bit longs and pointers, and 
-strings as clusters of 8-bit characters packed into 4-packs or 8-packs was 
-not at all unreasonable.  Or maybe just plain 32-bit characters.  After 
-all you don't absolutely *have* to use data types of 8 or 16 bits exactly 
-in width for anything, do you?  NB for strings nowadays we have Unicode 
-and we could just use UTF-32 if not to waste memory.
+>
+> Also, if we can set session enabled by default, and skip ret_handler by h=
+andler's
+> return value, it is more simpler. (If handler returns a specific value, s=
+kip ret_handler)
 
- And even now ISO C is very flexible on data type widths and only requires 
-the character data type to be at least 8 bits wide, and 16-bit and 24-bit 
-examples are actually given in the standard itself.  Yes, POSIX requires 
-the character data type to be 8 bits wide exactly now, but POSIX.1-1988 
-deferred to ANSI C AFAICT.
+you mean derive if it's a session or not by both handler and
+ret_handler being set? I guess this works fine for BPF side, because
+there we never had them both set. If this doesn't regress others, I
+think it's OK. We just need to make sure we don't unnecessarily
+allocate session state for consumers that don't set both handler and
+ret_handler. That would be a waste.
 
-  Maciej
+>
+> >  };
+> >
+> >  #ifdef CONFIG_UPROBES
+> > @@ -80,6 +83,12 @@ struct uprobe_task {
+> >       unsigned int                    depth;
+> >  };
+> >
+> > +struct session_consumer {
+> > +     __u64           cookie;
+>
+> And this cookie looks not scalable. If we can pass a data to handler, I w=
+ould like to
+> reuse it to pass the target function parameters to ret_handler as kretpro=
+be/fprobe does.
+>
+>         int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs=
+, void *data);
+>
+> uprobes can collect its uc's required sizes and allocate the memory (shad=
+ow stack frame)
+> at handler_chain().
+
+The goal here is to keep this simple and fast. I'd prefer to keep it
+small and fixed size, if possible. I'm thinking about caching and
+reusing return_instance as one of the future optimizations, so if we
+can keep this more or less fixed (assuming there is typically not more
+than 1 or 2 consumers per uprobe, which seems realistic), this will
+provide a way to avoid excessive memory allocations.
+
+>
+> > +     unsigned int    id;
+> > +     int             rc;
+> > +};
+> > +
+> >  struct return_instance {
+> >       struct uprobe           *uprobe;
+> >       unsigned long           func;
+> > @@ -88,6 +97,9 @@ struct return_instance {
+> >       bool                    chained;        /* true, if instance is n=
+ested */
+> >
+> >       struct return_instance  *next;          /* keep as stack */
+> > +
+> > +     int                     sessions_cnt;
+> > +     struct session_consumer sessions[];
+>
+> In that case, we don't have this array, but
+>
+>         char data[];
+>
+> And decode data array, which is a slice of variable length structure;
+>
+> struct session_consumer {
+>         struct uprobe_consumer *uc;
+>         char data[];
+> };
+>
+> The size of session_consumer is uc->session_data_size + sizeof(uc).
+>
+> What would you think?
+>
+> Thank you,
+>
+> >  };
+> >
+> >  enum rp_check {
+> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > index 2c83ba776fc7..4da410460f2a 100644
+> > --- a/kernel/events/uprobes.c
+> > +++ b/kernel/events/uprobes.c
+> > @@ -63,6 +63,8 @@ struct uprobe {
+> >       loff_t                  ref_ctr_offset;
+> >       unsigned long           flags;
+> >
+> > +     unsigned int            sessions_cnt;
+
+[...]
 
