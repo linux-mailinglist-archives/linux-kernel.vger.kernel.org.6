@@ -1,388 +1,155 @@
-Return-Path: <linux-kernel+bounces-240354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED507926C99
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:52:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9E7926CB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9506A2816F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:52:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56C50281E14
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A81194A5C;
-	Wed,  3 Jul 2024 23:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12F44C76;
+	Thu,  4 Jul 2024 00:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPVHHq3L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="M+lS2mKo"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CEC13BAFE;
-	Wed,  3 Jul 2024 23:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14351802
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 00:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720050730; cv=none; b=cOSH5ycMa7fXTjIt71daqK6/wRYa2k3rDliEmLl7zVKDD8yC8nsr099k56EPDm4T8aNfAWLThy35Tmny9WX0DGwn/+jhLnzHwU8uPrck7ZfTXAMQQ31h0dVoavG/n/hmAmfJ4irNke/R0XwEjxShE5E7R4eVYynpVa8kvarTxNM=
+	t=1720052460; cv=none; b=fekkx/fiT0a0g4FGALLFSTEDyGtvI4l/gw6UUjNZfq9CFU/8g4DuRLreTNdpkBFW4e6uMZhEtENU2ckda86hpsWdF8Hgv5Vl5Mlcp/v73VxFyMEmjPNSE1kf1CMyDVUBPrb9Vl0kIx37w+hfkiLdlsSdNXW6cHme6EpfDzI1i2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720050730; c=relaxed/simple;
-	bh=w2C8oG4imrYJdTvt4fzYReat0FAaKPnLY6mKtDCxE00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FVLq0lMvCFnLoJ78OgkVSE7vWOH18dJjL0gqZM+v6GEJR+6+lEgYgWd/L7dcEzLGhMjaDLzrosnH+46CbVr+pjr4Ze2RyWlsBGC7M3eFpB7v7QyZ9v6Bya6lVat6NAFZf0oHnHQTuLeI5uT8A9Xe5koYt0Mkbgp0AwYShIPoF0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPVHHq3L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECDB8C2BD10;
-	Wed,  3 Jul 2024 23:52:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720050730;
-	bh=w2C8oG4imrYJdTvt4fzYReat0FAaKPnLY6mKtDCxE00=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=LPVHHq3LAK+I5skt64e9TYsjAc/MzkYJz+lrA0jOvQpDye2p3CTgCGcr7evGiUP2d
-	 nIfo42Vmn/E+nTAVpzhvpUUH5LUCSgMYoIbhXqhvNjR++KbBvrtoaNN7tFJkoc+l3k
-	 xaT8QQnBhHv4CulBZY3tY7Df27n7jlajMsNh20E0Wewh4ZXwUdd8hfO7ohIQ/JEGkf
-	 l3B59k3Ra4US5BqAAXEo0YUweG3y79aLZv288Scb13vx7r+g/IDf+aUPTEVHixBQM6
-	 yNP6P36DTAwYQtfiPS4y8UjTNTTVDi3OMJvYOgmTP2fNCAfIjKaIYMHt73QWJndjat
-	 6mHihlv72fgdw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 93161CE0BC6; Wed,  3 Jul 2024 16:52:09 -0700 (PDT)
-Date: Wed, 3 Jul 2024 16:52:09 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 11/11 v2] rcu/nocb: Simplify (de-)offloading state machine
-Message-ID: <0ec35213-6bd0-467c-86fd-59db1d8b6ad9@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240530134552.5467-1-frederic@kernel.org>
- <20240530134552.5467-12-frederic@kernel.org>
- <ZoXXKHzaV9Xof4G+@lothringen>
+	s=arc-20240116; t=1720052460; c=relaxed/simple;
+	bh=6KK7oTY/cTJHENP66oVTWy9znLaOryTeOiG1rRIYNcU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jen0hqP7mb6rzK6+2QSKftjGQyyyRVII2YRuns+i4f3uCXgBdcDvA13uGKRKtI2sBW82aI8bHtdeHqO0tLMwHo+fjDFbpZE1Hj64YZkp3/aISS4JJ7YNmy5KUwfJnQuz1wg6SYbCXS4vp0k1Y2lh2M12lroo1aUttwGhickNcMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=M+lS2mKo; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 463Mm4C21070766
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 3 Jul 2024 15:48:05 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 463Mm4C21070766
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024061501; t=1720046886;
+	bh=Mt7iDqDbKs8II8sIWBE5dbgK5jzEx5l8Qan/TPvdsXc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=M+lS2mKo5BsSrDDfOvlbWHP8CSfO5g3C7HHm03HUBcxP3driqF7d2WLbbuG2sARjy
+	 GOcwkdMI6pmTXU4d7m1BTkrJKjAKXm3sZ3ZM8f1HicJ3mz1auHXlulMuppkdVzEL3v
+	 VUvmsPIMOT/FNlMcp0Gs/Tv8xx187luETD1GbWO6hpaJYHIPGOn9Rb2PQKUc/xgGHY
+	 /Zl88IBRIx0ugVIV+Fc1M1+b+4w/zy9bl65p2wNWIu2m+CDL+CDzKDM6R69zlSZ7Xd
+	 cWxYB8VE71E2Gzo57VyOfHKcY6bozAQWrOkRrLA73YD0sB0GXl0nI7xbVQ1Ed9HuJS
+	 iazqfRZTcTaOQ==
+Message-ID: <c5f3a503-ac48-4d4d-9ef1-cddc5c7d0ab8@zytor.com>
+Date: Wed, 3 Jul 2024 15:48:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZoXXKHzaV9Xof4G+@lothringen>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
+To: Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
+        nik.borisov@suse.com, houwenlong.hwl@antgroup.com
+References: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com>
+ <172002205406.3280081.14523962650685954182@Ubuntu-2204-jammy-amd64-base>
+ <15f56e6a-6edd-43d0-8e83-bb6430096514@citrix.com>
+ <AD99CE51-62B3-494D-9107-7C9093126138@zytor.com>
+ <dc1b2c50-6172-46a1-98a8-cec729afff38@intel.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <dc1b2c50-6172-46a1-98a8-cec729afff38@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 04, 2024 at 12:56:40AM +0200, Frederic Weisbecker wrote:
-> Now that the (de-)offloading process can only apply to offline CPUs,
-> there is no more concurrency between rcu_core and nocb kthreads. Also
-> the mutation now happens on empty queues.
+On 7/3/2024 9:43 AM, Dave Hansen wrote:
+> On 7/3/24 09:06, H. Peter Anvin wrote:
+>> I believe tglx declared to use them unconditionally since FRED> depends on WRMSRNS (and the kernel enforces that.)
 > 
-> Therefore the state machine can be reduced to a single bit called
-> SEGCBLIST_OFFLOADED. Simplify the transition as follows:
+> Ahh, I forgot about:
 > 
-> * Upon offloading: queue the rdp to be added to the rcuog list and
->   wait for the rcuog kthread to set the SEGCBLIST_OFFLOADED bit. Unpark
->   rcuo kthread.
+> static const struct cpuid_dep cpuid_deps[] = {
+> 	...
+>          { X86_FEATURE_FRED,                     X86_FEATURE_WRMSRNS   },
 > 
-> * Upon de-offloading: Park rcuo kthread. Queue the rdp to be removed
->   from the rcuog list and wait for the rcuog kthread to clear the
->   SEGCBLIST_OFFLOADED bit.
+> So, yeah, Xin's patch here is quite safe and when Boris said:
 > 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+>> Also, all those wrmsrns() writes better be behind a CPUID check.
+> 
+> ... it *is* behind a CPUID check, but it's an implicit one.
+>
 
-I have reverted the earlier patch and queued this one, thank you both!
-If testing goes well, I will put the stack onto the nocb branch in
-preparation for pushing it into the upcoming merge window.
+Right!
 
-							Thanx, Paul
+Otherwise typically there will be two feature checks in a line in the 
+source code (the run time code is binary patched):
 
-> ---
->  include/linux/rcu_segcblist.h |   4 +-
->  kernel/rcu/rcu_segcblist.c    |  11 ---
->  kernel/rcu/rcu_segcblist.h    |   2 +-
->  kernel/rcu/tree_nocb.h        | 131 ++++++++++++++++------------------
->  4 files changed, 62 insertions(+), 86 deletions(-)
-> 
-> diff --git a/include/linux/rcu_segcblist.h b/include/linux/rcu_segcblist.h
-> index 1ef1bb54853d..2fdc2208f1ca 100644
-> --- a/include/linux/rcu_segcblist.h
-> +++ b/include/linux/rcu_segcblist.h
-> @@ -185,9 +185,7 @@ struct rcu_cblist {
->   *  ----------------------------------------------------------------------------
->   */
->  #define SEGCBLIST_ENABLED	BIT(0)
-> -#define SEGCBLIST_LOCKING	BIT(1)
-> -#define SEGCBLIST_KTHREAD_GP	BIT(2)
-> -#define SEGCBLIST_OFFLOADED	BIT(3)
-> +#define SEGCBLIST_OFFLOADED	BIT(1)
->  
->  struct rcu_segcblist {
->  	struct rcu_head *head;
-> diff --git a/kernel/rcu/rcu_segcblist.c b/kernel/rcu/rcu_segcblist.c
-> index 1693ea22ef1b..298a2c573f02 100644
-> --- a/kernel/rcu/rcu_segcblist.c
-> +++ b/kernel/rcu/rcu_segcblist.c
-> @@ -260,17 +260,6 @@ void rcu_segcblist_disable(struct rcu_segcblist *rsclp)
->  	rcu_segcblist_clear_flags(rsclp, SEGCBLIST_ENABLED);
->  }
->  
-> -/*
-> - * Mark the specified rcu_segcblist structure as offloaded (or not)
-> - */
-> -void rcu_segcblist_offload(struct rcu_segcblist *rsclp, bool offload)
-> -{
-> -	if (offload)
-> -		rcu_segcblist_set_flags(rsclp, SEGCBLIST_LOCKING | SEGCBLIST_OFFLOADED);
-> -	else
-> -		rcu_segcblist_clear_flags(rsclp, SEGCBLIST_OFFLOADED);
-> -}
-> -
->  /*
->   * Does the specified rcu_segcblist structure contain callbacks that
->   * are ready to be invoked?
-> diff --git a/kernel/rcu/rcu_segcblist.h b/kernel/rcu/rcu_segcblist.h
-> index 7a0962dfee86..259904075636 100644
-> --- a/kernel/rcu/rcu_segcblist.h
-> +++ b/kernel/rcu/rcu_segcblist.h
-> @@ -89,7 +89,7 @@ static inline bool rcu_segcblist_is_enabled(struct rcu_segcblist *rsclp)
->  static inline bool rcu_segcblist_is_offloaded(struct rcu_segcblist *rsclp)
->  {
->  	if (IS_ENABLED(CONFIG_RCU_NOCB_CPU) &&
-> -	    rcu_segcblist_test_flags(rsclp, SEGCBLIST_LOCKING))
-> +	    rcu_segcblist_test_flags(rsclp, SEGCBLIST_OFFLOADED))
->  		return true;
->  
->  	return false;
-> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-> index 24daf606de0c..c8fc2f37c9ed 100644
-> --- a/kernel/rcu/tree_nocb.h
-> +++ b/kernel/rcu/tree_nocb.h
-> @@ -604,37 +604,33 @@ static void call_rcu_nocb(struct rcu_data *rdp, struct rcu_head *head,
->  	}
->  }
->  
-> -static int nocb_gp_toggle_rdp(struct rcu_data *rdp)
-> +static void nocb_gp_toggle_rdp(struct rcu_data *rdp_gp, struct rcu_data *rdp)
->  {
->  	struct rcu_segcblist *cblist = &rdp->cblist;
->  	unsigned long flags;
-> -	int ret;
->  
-> -	rcu_nocb_lock_irqsave(rdp, flags);
-> -	if (rcu_segcblist_test_flags(cblist, SEGCBLIST_OFFLOADED) &&
-> -	    !rcu_segcblist_test_flags(cblist, SEGCBLIST_KTHREAD_GP)) {
-> +	/*
-> +	 * Locking orders future de-offloaded callbacks enqueue against previous
-> +	 * handling of this rdp. Ie: Make sure rcuog is done with this rdp before
-> +	 * deoffloaded callbacks can be enqueued.
-> +	 */
-> +	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
-> +	if (!rcu_segcblist_test_flags(cblist, SEGCBLIST_OFFLOADED)) {
->  		/*
->  		 * Offloading. Set our flag and notify the offload worker.
->  		 * We will handle this rdp until it ever gets de-offloaded.
->  		 */
-> -		rcu_segcblist_set_flags(cblist, SEGCBLIST_KTHREAD_GP);
-> -		ret = 1;
-> -	} else if (!rcu_segcblist_test_flags(cblist, SEGCBLIST_OFFLOADED) &&
-> -		   rcu_segcblist_test_flags(cblist, SEGCBLIST_KTHREAD_GP)) {
-> +		list_add_tail(&rdp->nocb_entry_rdp, &rdp_gp->nocb_head_rdp);
-> +		rcu_segcblist_set_flags(cblist, SEGCBLIST_OFFLOADED);
-> +	} else {
->  		/*
->  		 * De-offloading. Clear our flag and notify the de-offload worker.
->  		 * We will ignore this rdp until it ever gets re-offloaded.
->  		 */
-> -		rcu_segcblist_clear_flags(cblist, SEGCBLIST_KTHREAD_GP);
-> -		ret = 0;
-> -	} else {
-> -		WARN_ON_ONCE(1);
-> -		ret = -1;
-> +		list_del(&rdp->nocb_entry_rdp);
-> +		rcu_segcblist_clear_flags(cblist, SEGCBLIST_OFFLOADED);
->  	}
-> -
-> -	rcu_nocb_unlock_irqrestore(rdp, flags);
-> -
-> -	return ret;
-> +	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
->  }
->  
->  static void nocb_gp_sleep(struct rcu_data *my_rdp, int cpu)
-> @@ -841,14 +837,7 @@ static void nocb_gp_wait(struct rcu_data *my_rdp)
->  	}
->  
->  	if (rdp_toggling) {
-> -		int ret;
-> -
-> -		ret = nocb_gp_toggle_rdp(rdp_toggling);
-> -		if (ret == 1)
-> -			list_add_tail(&rdp_toggling->nocb_entry_rdp, &my_rdp->nocb_head_rdp);
-> -		else if (ret == 0)
-> -			list_del(&rdp_toggling->nocb_entry_rdp);
-> -
-> +		nocb_gp_toggle_rdp(my_rdp, rdp_toggling);
->  		swake_up_one(&rdp_toggling->nocb_state_wq);
->  	}
->  
-> @@ -1018,16 +1007,11 @@ void rcu_nocb_flush_deferred_wakeup(void)
->  }
->  EXPORT_SYMBOL_GPL(rcu_nocb_flush_deferred_wakeup);
->  
-> -static int rdp_offload_toggle(struct rcu_data *rdp,
-> -			       bool offload, unsigned long flags)
-> -	__releases(rdp->nocb_lock)
-> +static int rcu_nocb_queue_toggle_rdp(struct rcu_data *rdp)
->  {
-> -	struct rcu_segcblist *cblist = &rdp->cblist;
->  	struct rcu_data *rdp_gp = rdp->nocb_gp_rdp;
->  	bool wake_gp = false;
-> -
-> -	rcu_segcblist_offload(cblist, offload);
-> -	rcu_nocb_unlock_irqrestore(rdp, flags);
-> +	unsigned long flags;
->  
->  	raw_spin_lock_irqsave(&rdp_gp->nocb_gp_lock, flags);
->  	// Queue this rdp for add/del to/from the list to iterate on rcuog
-> @@ -1041,9 +1025,25 @@ static int rdp_offload_toggle(struct rcu_data *rdp,
->  	return wake_gp;
->  }
->  
-> +static bool rcu_nocb_rdp_deoffload_wait_cond(struct rcu_data *rdp)
-> +{
-> +	unsigned long flags;
-> +	bool ret;
-> +
-> +	/*
-> +	 * Locking makes sure rcuog is done handling this rdp before deoffloaded
-> +	 * enqueue can happen. Also it keeps the SEGCBLIST_OFFLOADED flag stable
-> +	 * while the ->nocb_lock is held.
-> +	 */
-> +	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
-> +	ret = !rcu_segcblist_test_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
-> +	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
-> +
-> +	return ret;
-> +}
-> +
->  static int rcu_nocb_rdp_deoffload(struct rcu_data *rdp)
->  {
-> -	struct rcu_segcblist *cblist = &rdp->cblist;
->  	unsigned long flags;
->  	int wake_gp;
->  	struct rcu_data *rdp_gp = rdp->nocb_gp_rdp;
-> @@ -1059,48 +1059,34 @@ static int rcu_nocb_rdp_deoffload(struct rcu_data *rdp)
->  	rcu_nocb_lock_irqsave(rdp, flags);
->  	WARN_ON_ONCE(rcu_cblist_n_cbs(&rdp->nocb_bypass));
->  	WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
-> +	rcu_nocb_unlock_irqrestore(rdp, flags);
->  
-> -	wake_gp = rdp_offload_toggle(rdp, false, flags);
-> +	wake_gp = rcu_nocb_queue_toggle_rdp(rdp);
->  
->  	mutex_lock(&rdp_gp->nocb_gp_kthread_mutex);
->  	if (rdp_gp->nocb_gp_kthread) {
->  		if (wake_gp)
->  			wake_up_process(rdp_gp->nocb_gp_kthread);
->  
-> -		swait_event_exclusive(rdp->nocb_state_wq,
-> -				      !rcu_segcblist_test_flags(cblist,
-> -								SEGCBLIST_KTHREAD_GP));
->  		if (rdp->nocb_cb_kthread)
->  			kthread_park(rdp->nocb_cb_kthread);
-> +
-> +		swait_event_exclusive(rdp->nocb_state_wq,
-> +				      rcu_nocb_rdp_deoffload_wait_cond(rdp));
->  	} else {
->  		/*
->  		 * No kthread to clear the flags for us or remove the rdp from the nocb list
->  		 * to iterate. Do it here instead. Locking doesn't look stricly necessary
->  		 * but we stick to paranoia in this rare path.
->  		 */
-> -		rcu_nocb_lock_irqsave(rdp, flags);
-> -		rcu_segcblist_clear_flags(&rdp->cblist, SEGCBLIST_KTHREAD_GP);
-> -		rcu_nocb_unlock_irqrestore(rdp, flags);
-> +		raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
-> +		rcu_segcblist_clear_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
-> +		raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
->  
->  		list_del(&rdp->nocb_entry_rdp);
->  	}
-> -	mutex_unlock(&rdp_gp->nocb_gp_kthread_mutex);
->  
-> -	/*
-> -	 * Lock one last time to acquire latest callback updates from kthreads
-> -	 * so we can later handle callbacks locally without locking.
-> -	 */
-> -	rcu_nocb_lock_irqsave(rdp, flags);
-> -	/*
-> -	 * Theoretically we could clear SEGCBLIST_LOCKING after the nocb
-> -	 * lock is released but how about being paranoid for once?
-> -	 */
-> -	rcu_segcblist_clear_flags(cblist, SEGCBLIST_LOCKING);
-> -	/*
-> -	 * Without SEGCBLIST_LOCKING, we can't use
-> -	 * rcu_nocb_unlock_irqrestore() anymore.
-> -	 */
-> -	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
-> +	mutex_unlock(&rdp_gp->nocb_gp_kthread_mutex);
->  
->  	return 0;
->  }
-> @@ -1129,10 +1115,20 @@ int rcu_nocb_cpu_deoffload(int cpu)
->  }
->  EXPORT_SYMBOL_GPL(rcu_nocb_cpu_deoffload);
->  
-> -static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
-> +static bool rcu_nocb_rdp_offload_wait_cond(struct rcu_data *rdp)
->  {
-> -	struct rcu_segcblist *cblist = &rdp->cblist;
->  	unsigned long flags;
-> +	bool ret;
-> +
-> +	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
-> +	ret = rcu_segcblist_test_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
-> +	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
-> +{
->  	int wake_gp;
->  	struct rcu_data *rdp_gp = rdp->nocb_gp_rdp;
->  
-> @@ -1152,20 +1148,14 @@ static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
->  	WARN_ON_ONCE(rcu_cblist_n_cbs(&rdp->nocb_bypass));
->  	WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
->  
-> -	/*
-> -	 * Can't use rcu_nocb_lock_irqsave() before SEGCBLIST_LOCKING
-> -	 * is set.
-> -	 */
-> -	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
-> -
-> -	wake_gp = rdp_offload_toggle(rdp, true, flags);
-> +	wake_gp = rcu_nocb_queue_toggle_rdp(rdp);
->  	if (wake_gp)
->  		wake_up_process(rdp_gp->nocb_gp_kthread);
->  
-> -	kthread_unpark(rdp->nocb_cb_kthread);
-> -
->  	swait_event_exclusive(rdp->nocb_state_wq,
-> -			      rcu_segcblist_test_flags(cblist, SEGCBLIST_KTHREAD_GP));
-> +			      rcu_nocb_rdp_offload_wait_cond(rdp));
-> +
-> +	kthread_unpark(rdp->nocb_cb_kthread);
->  
->  	return 0;
->  }
-> @@ -1340,8 +1330,7 @@ void __init rcu_init_nohz(void)
->  		rdp = per_cpu_ptr(&rcu_data, cpu);
->  		if (rcu_segcblist_empty(&rdp->cblist))
->  			rcu_segcblist_init(&rdp->cblist);
-> -		rcu_segcblist_offload(&rdp->cblist, true);
-> -		rcu_segcblist_set_flags(&rdp->cblist, SEGCBLIST_KTHREAD_GP);
-> +		rcu_segcblist_set_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
->  	}
->  	rcu_organize_nocb_kthreads();
->  }
-> -- 
-> 2.34.1
-> 
+	if (cpu_feature_enabled(X86_FEATURE_FRED)) {
+		if (cpu_feature_enabled(X86_FEATURE_WRMSRNS))
+			wrmsrns(MSR_IA32_FRED_RSP0, ...);
+		else
+			wrmsrl(MSR_IA32_FRED_RSP0, ...);
+	}
+
+
+Yes, Andrew's idea to use alternative_input() is a clean approach that
+everyone has agreed.  However there is a more fundamental problem with
+how WRMSR instruction is being used in the existing code:
+   https://lore.kernel.org/lkml/87y1h81ht4.ffs@tglx/.
+
+My rough understanding is that first we want something like:
+	alternative_input("call paravirt_write_msr", "wrmsr", X86_FEATURE_XENPV);
+to get PVOPS out of the picture, and then apply alternative_input() as
+Andrew proposed.
+
+I thought about giving it a shot, but it never comes to the top of my
+task list.
+
+Thanks!
+     Xin
 
