@@ -1,237 +1,181 @@
-Return-Path: <linux-kernel+bounces-238982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364C6925471
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799FF9254A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 591D21C24EA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E8F288462
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4131369A1;
-	Wed,  3 Jul 2024 07:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAD6137745;
+	Wed,  3 Jul 2024 07:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Xl+RwvpZ"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MBUtLZ/x"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5D6135A72
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807944C6C
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719990829; cv=none; b=WvdqKgj0HTjXlT+9ZMAg0vOcftUz4PYZmrQa1ACfvy/8YI8RBR604dpE8468cTT5H2D/dmX/35h8H+gjTp/GvOF4RqgWwtCcBsVSb4977bSslVxRSvCtB7IVz0xxhCBROLVmDkNIIpwyknh5xzLfPI5f0T1p57ImfG1ftt83lRM=
+	t=1719991847; cv=none; b=Gtks2XP7d1GPAefCsVV8vh5QE0XoldnZ6Kc2UvnQUFWo/BfJbKJbbTB6KaLApcksaznAe4egvN8JbYXhK9BUWYGbA+E8FAFfpNKDb51DZQ7JB4FnTMpLuD/EH7LHwk13n+8yuomUurxknw+OrXAdszxJ2gTIRRg+cBaxbwCrmns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719990829; c=relaxed/simple;
-	bh=hw+ZymsrKMSb49jSECjMf0BKlJxnEXQtbyHFUJnj1+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p4jVXngyEUb/USTFhYqp9ND6HoinCJwmJK5wiwHEmgtfmEQPnACjOl+U/Q3mXv/r/uMXSnqyvY2ZdWlav38j/2SqERHMzcKBiAubWQjmNqdDYjaFYz1gFSRCtUVfdRS5/i/D7oA8tgeHkrKDHJGODXTGWzpjW/MXM8ejWFHEqeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Xl+RwvpZ; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee699b0552so2839581fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 00:13:47 -0700 (PDT)
+	s=arc-20240116; t=1719991847; c=relaxed/simple;
+	bh=oZYcvFZ7As80ohieZdjCQTQp3MfgLDla5R2j6Hq+kf4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n+Xp3VEFm3ExHfGw9L7c7DHf9edaNMrMLNGJv0tyLULYh5v9f9V/mXwz57j4zLrh6E4agG92yHcoWX4UbttnbW/CM1lBXfJX59gddxpMwBkdiybwvKqMz4Da9JpxAqn6yhNk5nhwBhANlbKkKMDbRPhdYeqHhi7T6DR8MrwRmOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MBUtLZ/x; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3d84546a05bso1341519b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 00:30:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719990826; x=1720595626; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KN2K7tgPnaRdMlkcJsecCmouFwytLiuseqebs8rLJVU=;
-        b=Xl+RwvpZ0/yaSZX87BiVybPBof/hA0BzwmmfurFrgVcjzQezHljohEEx4suygYKsGr
-         JtBr4M6KLwYPSqNJaWiJA37MjhcQcA02oOXsyhSZDVyUVzDxGc3q61jBuA4AQbAL6HnW
-         wJy2EQtVdbIvQ3wFo+zMCfhiLiKwdubYTTy02xbdgNoZMDDkw0IlgG2Qc0FbMMo/vquQ
-         3c6HwOvmRGVm6svNQCS27nq2CNLXh63AHWUwfIiQ0E2SiTU0RJu7J/3fdgNns3z39ED8
-         KFIJHFGMSf3qB83w+u8K6opH2JnphhG/sAv59f5iVu+CrVTi+OebOGxf/ZBwkB5WjR9f
-         flkA==
+        d=linaro.org; s=google; t=1719991843; x=1720596643; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MZIEVlk+UkNAqnX2wpUNniG3hQvOJEhSruLUcJglBqY=;
+        b=MBUtLZ/xn9HYmMKgFT4tes9cJbuhMugaG5r2uH+0DrxbiG9jgIo9B4cjn2yvwtSyVO
+         2XnVH+flNX1LVYzIknmUsHos6ejdq5zE3M1IpBzit1NxgSxkLF173tkkWXJD7EVwpGhC
+         Bg0z9sXbZf/yQew8nQwEpN4+8dPMFZ+3A94E6RPp8EpAEl42y5Xt97BysGj+aw5DiMHE
+         P3sT5Q3WunV/y1/tr/UAwR0/OUk9Mc0QNSCh/oIf9iHzPGErZEFWhyXyB4fxai436wbE
+         fS5ufh3xRsJnT6CTMkZZ4YnaHbmojtyMMBZphZvV7sK5XiwRO32xjJYlR7f6aKknYkyB
+         ss1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719990826; x=1720595626;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KN2K7tgPnaRdMlkcJsecCmouFwytLiuseqebs8rLJVU=;
-        b=QVUGLFKEUhnXB90lF+duLLfV+ynerQfUHzjTqTdO0DGPKdpELJwGbPIUH3l97Kk27i
-         QCF8ludJ/2PkbK862Z3XQyn2dV5YNJ7IJ3mr2T7tP+8OAHa755BIO/BsulWVHiyOOFT3
-         cKi9zNiT+43tRaZcPnlBxqI+g3hOuJc7j6TKaEdIDwQbhTpNYu0hiNuWCWhx34Nv2YJJ
-         O79astekY9uFAFF7OtX1EZjTajYmYCrUvVwiaq9dcVPJWsfcP8T44CRruSNFtsaDVBYc
-         r0Sd/2Uhl99GG4NW+jOtIIcVXAZ0smHDEcyDiOlHLABwQg+DOaBxeWCgofMyBR3MsW9W
-         U9CA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzbHXaesbz0Gd0wSm1mOT/pQ/nImgVPU5NlpF+Q3VRAcQFKhTKr+X6OUG5bzUsmPaVeGaLp4fkY0KjDP1wyxvMgQY/JTK4iKdx69fb
-X-Gm-Message-State: AOJu0YyzfkMn0UqvgEAMYfPbFAbZ3yKlmoGtmBy+UA29v844sD29bUrW
-	odAdjvGJ/G2QQVusNc8oFz+TsocSjcX5iy21Q9rcbypEKHLu9fn6/G7JdXJz8Dg=
-X-Google-Smtp-Source: AGHT+IFFfAg0I5+WBGdENPKRIjqEUI5N8ZPdcwFhG3jl2OApcULLU4fNNmCI6KI3zwI9td0RSLoRcA==
-X-Received: by 2002:a05:651c:1053:b0:2ec:4399:9be1 with SMTP id 38308e7fff4ca-2ee5e2a8b15mr62962181fa.0.1719990824955;
-        Wed, 03 Jul 2024 00:13:44 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4258036d034sm124160185e9.43.2024.07.03.00.13.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 00:13:44 -0700 (PDT)
-Message-ID: <af3152b6-adf7-40fa-b2a1-87e66eec45b0@rivosinc.com>
-Date: Wed, 3 Jul 2024 09:13:42 +0200
+        d=1e100.net; s=20230601; t=1719991843; x=1720596643;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MZIEVlk+UkNAqnX2wpUNniG3hQvOJEhSruLUcJglBqY=;
+        b=HwlRui+jw8w0nc+ZTMZioiePiw9WRslYJUx5fQ73wDINYc6rsH7Uzuw0QPtzhGfK54
+         KC7REgZ7u+zLo5SV0lwowqtvNneRK0ddSc9ognVdH3YpgXZjOKfQ+FmPAPSuLOpMLRc0
+         lydwnw4DGgtHuwJt1NBYJi6vxmTRL2Bv04CZN2JINcO628+1pdP+UFVTX2wKu/dRtmYJ
+         rCKVZgptKkw2LLpb1vqPT4QubjHh9tJ85fQMzHChAhkDr8bZt8cdJomx1cOZJ0f38vda
+         vWp9Rkj01l9ojk+FBXcOg2qgOGJoXrtPp/YwWbznY2jSdQNA8K7gDF1Rw2UhiBcbKxg1
+         RHLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXs5MDITzcr9rVVQ/aFte1nPbPDvmgWAWMSlj9iQn80H5P2ne+lOjPUbzRuAsJ3Ag40XmLm04BB2RhK9psBQaXOgitIksxVxowPk8pQ
+X-Gm-Message-State: AOJu0Ywk+cA2Cqjek5XrguoEzoSXIvdH9V0e2Ndv9qqlifaTxcFimeVS
+	9Eda7f0oHWTWzbMnEOAywJayJ3qn5WF4dYpI/Guq8CWbiSZ/NGoLMcwRaEeMCwU=
+X-Google-Smtp-Source: AGHT+IEJLAIWsUinHPjVKyb8d+XMIc7IndPbH5xlUDWwh8Z4IkshorjmgwkDUcVsSqsOAzPzpTQ9sg==
+X-Received: by 2002:a05:6808:1823:b0:3d6:2f50:5517 with SMTP id 5614622812f47-3d6b2b24e68mr14703941b6e.1.1719991842923;
+        Wed, 03 Jul 2024 00:30:42 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044b0b61sm10057686b3a.176.2024.07.03.00.30.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 00:30:42 -0700 (PDT)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	=?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH V3 0/8] Rust bindings for cpufreq and OPP core + sample driver
+Date: Wed,  3 Jul 2024 12:44:25 +0530
+Message-Id: <cover.1719990273.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/8] RISC-V: Check Zicclsm to set unaligned access
- speed
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Jesse Taube <jesse@rivosinc.com>,
- linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Evan Green <evan@rivosinc.com>, Andrew Jones <ajones@ventanamicro.com>,
- Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>,
- Eric Biggers <ebiggers@google.com>, Greentime Hu <greentime.hu@sifive.com>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
- Heiko Stuebner <heiko@sntech.de>, Costa Shulyupin <costa.shul@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
- Anup Patel <apatel@ventanamicro.com>, Zong Li <zong.li@sifive.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- Ben Dooks <ben.dooks@codethink.co.uk>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Erick Archer <erick.archer@gmx.com>, Joel Granados <j.granados@samsung.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240625005001.37901-1-jesse@rivosinc.com>
- <20240625005001.37901-5-jesse@rivosinc.com>
- <20240626-march-abreast-83414e844250@spud> <Zn3XrLRl/yazsoZe@ghost>
- <43941f48-9905-4b25-89ef-6ad75bf1a123@rivosinc.com>
- <20240701-ajar-italicize-9e3d9b8a0264@spud>
- <ef639748-3979-4236-b48d-c0c44e2d5ad2@rivosinc.com> <ZoR9swwgsGuGbsTG@ghost>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <ZoR9swwgsGuGbsTG@ghost>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Hello,
+
+This RFC adds initial rust bindings for two subsystems, cpufreq and operating
+performance points (OPP). The bindings are provided for most of the interface
+these subsystems expose.
+
+This series also provides a sample cpufreq driver rcpufreq-dt, which is a
+duplicate of the merged cpufreq-dt driver (A generic platform agnostic device
+tree based cpufreq driver) used on most of the ARM platforms.
+
+This is tested with the help of QEMU for now and frequency transitions, various
+configurations, driver binding/unbinding work as expected. No performance
+measurement is done with this.
+
+These patches (along with few other dependencies) are pushed here for anyone to
+give them a try:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/linux.git rust/cpufreq-dt
 
 
-On 03/07/2024 00:22, Charlie Jenkins wrote:
-> On Mon, Jul 01, 2024 at 04:20:15PM +0200, Clément Léger wrote:
->>
->>
->> On 01/07/2024 15:58, Conor Dooley wrote:
->>> On Mon, Jul 01, 2024 at 09:15:09AM +0200, Clément Léger wrote:
->>>>
->>>>
->>>> On 27/06/2024 23:20, Charlie Jenkins wrote:
->>>>> On Wed, Jun 26, 2024 at 03:39:14PM +0100, Conor Dooley wrote:
->>>>>> On Mon, Jun 24, 2024 at 08:49:57PM -0400, Jesse Taube wrote:
->>>>>>> Check for Zicclsm before checking for unaligned access speed. This will
->>>>>>> greatly reduce the boot up time as finding the access speed is no longer
->>>>>>> necessary.
->>>>>>>
->>>>>>> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
->>>>>>> ---
->>>>>>> V2 -> V3:
->>>>>>>  - New patch split from previous patch
->>>>>>> ---
->>>>>>>  arch/riscv/kernel/unaligned_access_speed.c | 26 ++++++++++++++--------
->>>>>>>  1 file changed, 17 insertions(+), 9 deletions(-)
->>>>>>>
->>>>>>> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
->>>>>>> index a9a6bcb02acf..329fd289b5c8 100644
->>>>>>> --- a/arch/riscv/kernel/unaligned_access_speed.c
->>>>>>> +++ b/arch/riscv/kernel/unaligned_access_speed.c
->>>>>>> @@ -259,23 +259,31 @@ static int check_unaligned_access_speed_all_cpus(void)
->>>>>>>  	kfree(bufs);
->>>>>>>  	return 0;
->>>>>>>  }
->>>>>>> +#else /* CONFIG_RISCV_PROBE_UNALIGNED_ACCESS */
->>>>>>> +static int check_unaligned_access_speed_all_cpus(void)
->>>>>>> +{
->>>>>>> +	return 0;
->>>>>>> +}
->>>>>>> +#endif
->>>>>>>  
->>>>>>>  static int check_unaligned_access_all_cpus(void)
->>>>>>>  {
->>>>>>> -	bool all_cpus_emulated = check_unaligned_access_emulated_all_cpus();
->>>>>>> +	bool all_cpus_emulated;
->>>>>>> +	int cpu;
->>>>>>> +
->>>>>>> +	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICCLSM)) {
->>>>>>> +		for_each_online_cpu(cpu) {
->>>>>>> +			per_cpu(misaligned_access_speed, cpu) = RISCV_HWPROBE_MISALIGNED_FAST;
->>>>>>
->>>>>> - const: zicclsm
->>>>>>   description:
->>>>>>     The standard Zicclsm extension for misaligned support for all regular
->>>>>>     load and store instructions (including scalar and vector) but not AMOs
->>>>>>     or other specialized forms of memory access. Defined in the
->>>>>>     RISC-V RVA Profiles Specification. 
->>>>>>
->>>>>> Doesn't, unfortunately, say anywhere there that they're actually fast :(
->>>>>
->>>>> Oh no! That is unfortunate that the ISA does not explicitly call that
->>>>> out, but I think that acceptable.
->>>>>
->>>>> If a vendor puts Zicclsm in their isa string, they should expect
->>>>> software to take advantage of misaligned accesses. FAST is our signal to
->>>>> tell software that they should emit misaligned accesses.
->>>>
->>>> AFAIK, Zicclsm is not even an ISA extension, simply a profile
->>>> specification which means that only the execution environment which
->>>> provides the profile support misaligned accesses (cf
->>>> https://lists.riscv.org/g/tech-profiles/message/56).
->>>
->>> I dunno, the specification status page used to describe it as an
->>> extension:
->>> https://wiki.riscv.org/display/HOME/Specification+Status+-+Historical
->>> My understanding was that these could be considered extensions, just
->>> like we are considering svade to be one.
->>>
->>>> . I don't think we
->>>> can extrapolate that the misaligned accesses will be fast at all.
->>>
->>> That is my opinion on it too. If it doesn't say "fast" and give a
->>> definition for what that means in the binding, then we can't assume that
->>> it is fast. I'm also wary of extending definitions of extensions in the
->>> binding, because a) I am 90% sure that people writing devicetrees don't
->>> care and b) it'd be a potential difference between DT and ACPI without a
->>> real justification (unlike the zkr or svade/svadu situations).
->>
->> BTW, the profile spec [1] has a note that states the following for Zicclsm:
->>
->> "Even though mandated, misaligned loads and stores might execute
->> extremely slowly. Standard software distributions should assume their
->> existence only for correctness, not for performance."
->>
->> Which was also quoted in patch 1, so I guess that settles it.
-> 
-> The intention here was to allow vendors to configure an option to skip
-> the probing. This extension does not seem useful as it is written! A way
-> around this would be to add a kernel arg to set the access speed but
-> maybe it doesn't matter. For the sake of this patch, it looks like we
-> should get rid of this Zicclsm check.
+This depends on basic bindings for few other modules: device/driver, platform
+driver, OF, clk, and cpumask. I am not looking to upstream a full fledged
+support for them yet.
 
-I think a parameter could be appropriate for vendors that want to skip
-the probing and gain a bit of time on boot time. Other options already
-exists to force specific settings so, why not !
+Based on staging/rust-device from the Rust tree (which is based over v6.10-rc1).
 
-Thanks,
+V2->V3:
+- Rebased on latest rust-device changes, which removed `Data` and so few changes
+  were required to make it work.
+- use srctree links (Alice Ryhl).
+- Various changes the OPP creation APIs, new APIs: from_raw_opp() and
+  from_raw_opp_owned() (Alice Ryhl).
+- Inline as_raw() helpers (Alice Ryhl).
+- Add new interface (`OPP::Token`) for dynamically created OPPs.
+- Add Reviewed-by tag from Manos.
+- Modified/simplified cpufreq registration structure / method a bit.
 
-Clément
+V1->V2:
+- Create and use separate bindings for OF, clk, cpumask, etc (not included in
+  this patchset but pushed to the above branch). This helped removing direct
+  calls from the driver.
+- Fix wrong usage of Pinning + Vec.
+- Use Token for OPP Config.
+- Use Opaque, transparent and Aref for few structures.
+- Broken down into smaller patches to make it easy for reviewers.
+- Based over staging/rust-device.
 
-> 
-> - Charlie
-> 
->>
->> Thanks,
->>
->> Clément
->>
->> Link:
->> https://github.com/riscv/riscv-profiles/blob/main/src/profiles.adoc?plain=1#L524
->> [1]
->>
->>>
->>>>> This allows for a generic kernel, like the one a distro would compile, to
->>>>> skip the probing when booting on a system that explicitly called out
->>>>> that the hardware supports misaligned accesses.
+Thanks.
+
+
+*** BLURB HERE ***
+
+Viresh Kumar (8):
+  rust: Add initial bindings for OPP framework
+  rust: Extend OPP bindings for the OPP table
+  rust: Extend OPP bindings for the configuration options
+  rust: Add initial bindings for cpufreq framework
+  rust: Extend cpufreq bindings for policy and driver ops
+  rust: Extend cpufreq bindings for driver registration
+  rust: Extend OPP bindings with CPU frequency table
+  cpufreq: Add Rust based cpufreq-dt driver
+
+ drivers/cpufreq/Kconfig         |   12 +
+ drivers/cpufreq/Makefile        |    1 +
+ drivers/cpufreq/rcpufreq_dt.rs  |  225 +++++++
+ rust/bindings/bindings_helper.h |    2 +
+ rust/helpers.c                  |   15 +
+ rust/kernel/cpufreq.rs          | 1041 +++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |    4 +
+ rust/kernel/opp.rs              |  918 +++++++++++++++++++++++++++
+ 8 files changed, 2218 insertions(+)
+ create mode 100644 drivers/cpufreq/rcpufreq_dt.rs
+ create mode 100644 rust/kernel/cpufreq.rs
+ create mode 100644 rust/kernel/opp.rs
+
+-- 
+2.31.1.272.g89b43f80a514
+
 
