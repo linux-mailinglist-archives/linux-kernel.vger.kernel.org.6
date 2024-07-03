@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-239419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31F1925F81
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:01:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86426925F89
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0C51F2585D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:01:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0C51F25AAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B6613776F;
-	Wed,  3 Jul 2024 12:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A35178398;
+	Wed,  3 Jul 2024 12:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="moZKxYPC"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZPRv2AE3"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318B71799F
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2864917334E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720008066; cv=none; b=ZAKbvwZNsy8/vkUgvgvYYVBEXnuY/NXH+ptXFbtMjY9p3+o14zY6WShdiA7uUfXsErtFA3vHuUhYWJBTS/LOCohVqOJvbul5a3oNFz3lnMVuniGVysReplTzd510ef1t/EAX6jM0+CdboRvCaKHt9A7FBodp5o3gx7BPqSV/oAg=
+	t=1720008070; cv=none; b=W0U8YAfUdZzRiiwmmy/xTev6Wvhf8iz1sQ8np9vipU/YyfPC2qc9zDsJ8i1S4ebvLFSMvS7+PGWa3XoRShqkFCgcd3uPj5MuozZxpIqBO9WJegBGFfRVNHVlcqYm+VQ9ovOM+zrBgvvv6npgAEO+t6kwYCsZlmQQNx7YnuE4ETI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720008066; c=relaxed/simple;
-	bh=PJNqnHRNjbAmcodtqFt2m8PjSDxf+QLuaASGsAPclzY=;
+	s=arc-20240116; t=1720008070; c=relaxed/simple;
+	bh=WVoOWKdcGRpJmlwiUNs9E6wXwdQlHYh3gSaBku0hJWk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sYJtE0PUBnhP2GuSTcr5Fn9ImaXlWlbGTn3nXvs+b2ZsX/le+1QaateBUB1qhe3sLVrdHo54vKZsx5Bha0tcOHOk2+E1ntAqNrf5uIygaDkTOn8I3MVx/PbV9zwrUZmhhO0wlEZlpatFhCNHCkZmY3wTzErzl8UTnEVMf7edvD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=moZKxYPC; arc=none smtp.client-ip=115.124.30.111
+	 MIME-Version; b=X5agHCl0t8Ue/Exk6OAx7ACEQpbsNDlaaX7XKbWkpW13MbJ55z+t7dghif3AUdVgTLcELoW7wBDWh1yzrhIYhH7KtDHRA5EKF8faLVJwRHYDggIs1WVUalg1s1eXnDvvRGNfigElbRPgSDSD425HMkPf32E6PCApCuoY1jIBM6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZPRv2AE3; arc=none smtp.client-ip=115.124.30.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1720008058; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=1i4erAiWQKdAm3mPcp8cVYibLOdhqUaMMMiBWx4rFII=;
-	b=moZKxYPC8BMLnMGSCI+5N3ZXrj7DXrKxLLXLZETzsKTwkYoKvaZXg09n6y5BVQeLsSynLc5co1Kr1AXZKQQqkWTIQrNOmwVwZiAi+5YAZsmTP69b2EPXt1gGVRbv0+5ibD8KoQsvZjnceartTrsM6IwW9qoX4MjQIEMQWw8OmOc=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0W9mSOML_1720008057;
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W9mSOML_1720008057)
+	t=1720008059; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=OzCqu1lyuJFA8btdlv52F8u+PmYpJe3BF+hgo4L6GXc=;
+	b=ZPRv2AE3CxekfLy82uS2YhiIU0izsbjcnH5jYc8ybiO69zLWPiNiVtH5KUYnhpJFxnc3gwpN8S1h0j3B5yyvDPz+OpHJoWhLkRfssoxdjMDU02LkURhLvNuN36gBQEqGnLOiyC7cHeWVV0ygbXSx+JD2n71AkCidaqCWXp3vCd0=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045220184;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0W9mSOMh_1720008058;
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W9mSOMh_1720008058)
           by smtp.aliyun-inc.com;
-          Wed, 03 Jul 2024 20:00:58 +0800
+          Wed, 03 Jul 2024 20:00:59 +0800
 From: Gao Xiang <hsiangkao@linux.alibaba.com>
 To: linux-erofs@lists.ozlabs.org
 Cc: LKML <linux-kernel@vger.kernel.org>,
 	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH 2/4] erofs: convert z_erofs_read_fragment() to folios
-Date: Wed,  3 Jul 2024 20:00:49 +0800
-Message-ID: <20240703120051.3653452-2-hsiangkao@linux.alibaba.com>
+Subject: [PATCH 3/4] erofs: teach z_erofs_scan_folios() to handle multi-page folios
+Date: Wed,  3 Jul 2024 20:00:50 +0800
+Message-ID: <20240703120051.3653452-3-hsiangkao@linux.alibaba.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20240703120051.3653452-1-hsiangkao@linux.alibaba.com>
 References: <20240703120051.3653452-1-hsiangkao@linux.alibaba.com>
@@ -57,65 +57,211 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Just a straight-forward conversion.  No logic changes.
+Previously, a folio just contains one page.  In order to enable large
+folios, z_erofs_scan_folios() needs to handle multi-page folios.
+
+First, this patch eliminates all gotos.  Instead, the new loop deal
+with multiple parts in each folio.  It's simple to handle the parts
+which belong to unmapped extents or fragment extents; but for encoded
+extents, the page boundaries needs to be considered for `tight` and
+`split` to keep inplace I/Os work correctly: when a part crosses the
+page boundary, they needs to be reseted properly.
+
+Besides, simplify `tight` derivation since Z_EROFS_PCLUSTER_HOOKED
+has been removed for quite a while.
 
 Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
- fs/erofs/zdata.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ fs/erofs/zdata.c | 167 +++++++++++++++++++++++------------------------
+ 1 file changed, 82 insertions(+), 85 deletions(-)
 
 diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 14cf96fcefe4..4b1715d8c122 100644
+index 4b1715d8c122..cb017ca2c7e3 100644
 --- a/fs/erofs/zdata.c
 +++ b/fs/erofs/zdata.c
-@@ -925,7 +925,7 @@ static void z_erofs_pcluster_end(struct z_erofs_decompress_frontend *fe)
- 	fe->pcl = NULL;
+@@ -950,100 +950,97 @@ static int z_erofs_read_fragment(struct super_block *sb, struct folio *folio,
+ 	return 0;
  }
  
--static int z_erofs_read_fragment(struct super_block *sb, struct page *page,
-+static int z_erofs_read_fragment(struct super_block *sb, struct folio *folio,
- 			unsigned int cur, unsigned int end, erofs_off_t pos)
+-static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *fe,
++static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *f,
+ 			      struct folio *folio, bool ra)
  {
- 	struct inode *packed_inode = EROFS_SB(sb)->packed_inode;
-@@ -938,14 +938,13 @@ static int z_erofs_read_fragment(struct super_block *sb, struct page *page,
- 
- 	buf.mapping = packed_inode->i_mapping;
- 	for (; cur < end; cur += cnt, pos += cnt) {
--		cnt = min_t(unsigned int, end - cur,
--			    sb->s_blocksize - erofs_blkoff(sb, pos));
-+		cnt = min(end - cur, sb->s_blocksize - erofs_blkoff(sb, pos));
- 		src = erofs_bread(&buf, pos, EROFS_KMAP);
- 		if (IS_ERR(src)) {
- 			erofs_put_metabuf(&buf);
- 			return PTR_ERR(src);
- 		}
--		memcpy_to_page(page, cur, src, cnt);
-+		memcpy_to_folio(folio, cur, src, cnt);
- 	}
- 	erofs_put_metabuf(&buf);
- 	return 0;
-@@ -959,7 +958,7 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *fe,
+-	struct inode *const inode = fe->inode;
+-	struct erofs_map_blocks *const map = &fe->map;
++	struct inode *const inode = f->inode;
++	struct erofs_map_blocks *const map = &f->map;
  	const loff_t offset = folio_pos(folio);
- 	const unsigned int bs = i_blocksize(inode), fs = folio_size(folio);
- 	bool tight = true, exclusive;
--	unsigned int cur, end, len, split;
-+	unsigned int cur, end, split;
- 	int err = 0;
+-	const unsigned int bs = i_blocksize(inode), fs = folio_size(folio);
+-	bool tight = true, exclusive;
+-	unsigned int cur, end, split;
+-	int err = 0;
++	const unsigned int bs = i_blocksize(inode);
++	unsigned int end = folio_size(folio), split = 0, cur, pgs;
++	bool tight, excl;
++	int err;
  
++	tight = (bs == PAGE_SIZE);
  	z_erofs_onlinefolio_init(folio);
-@@ -989,9 +988,9 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *fe,
- 	if (map->m_flags & EROFS_MAP_FRAGMENT) {
- 		erofs_off_t fpos = offset + cur - map->m_la;
+-	split = 0;
+-	end = fs;
+-repeat:
+-	if (offset + end - 1 < map->m_la ||
+-	    offset + end - 1 >= map->m_la + map->m_llen) {
+-		z_erofs_pcluster_end(fe);
+-		map->m_la = offset + end - 1;
+-		map->m_llen = 0;
+-		err = z_erofs_map_blocks_iter(inode, map, 0);
+-		if (err)
+-			goto out;
+-	}
+-
+-	cur = offset > map->m_la ? 0 : map->m_la - offset;
+-	/* bump split parts first to avoid several separate cases */
+-	++split;
+-
+-	if (!(map->m_flags & EROFS_MAP_MAPPED)) {
+-		folio_zero_segment(folio, cur, end);
+-		tight = false;
+-		goto next_part;
+-	}
+-
+-	if (map->m_flags & EROFS_MAP_FRAGMENT) {
+-		erofs_off_t fpos = offset + cur - map->m_la;
++	do {
++		if (offset + end - 1 < map->m_la ||
++		    offset + end - 1 >= map->m_la + map->m_llen) {
++			z_erofs_pcluster_end(f);
++			map->m_la = offset + end - 1;
++			map->m_llen = 0;
++			err = z_erofs_map_blocks_iter(inode, map, 0);
++			if (err)
++				break;
++		}
  
--		len = min_t(unsigned int, map->m_llen - fpos, end - cur);
--		err = z_erofs_read_fragment(inode->i_sb, &folio->page, cur,
--			cur + len, EROFS_I(inode)->z_fragmentoff + fpos);
-+		err = z_erofs_read_fragment(inode->i_sb, folio, cur,
-+				cur + min(map->m_llen - fpos, end - cur),
-+				EROFS_I(inode)->z_fragmentoff + fpos);
- 		if (err)
- 			goto out;
- 		tight = false;
+-		err = z_erofs_read_fragment(inode->i_sb, folio, cur,
+-				cur + min(map->m_llen - fpos, end - cur),
+-				EROFS_I(inode)->z_fragmentoff + fpos);
+-		if (err)
+-			goto out;
+-		tight = false;
+-		goto next_part;
+-	}
++		cur = offset > map->m_la ? 0 : map->m_la - offset;
++		pgs = round_down(cur, PAGE_SIZE);
++		/* bump split parts first to avoid several separate cases */
++		++split;
++
++		if (!(map->m_flags & EROFS_MAP_MAPPED)) {
++			folio_zero_segment(folio, cur, end);
++			tight = false;
++		} else if (map->m_flags & EROFS_MAP_FRAGMENT) {
++			erofs_off_t fpos = offset + cur - map->m_la;
++
++			err = z_erofs_read_fragment(inode->i_sb, folio, cur,
++					cur + min(map->m_llen - fpos, end - cur),
++					EROFS_I(inode)->z_fragmentoff + fpos);
++			if (err)
++				break;
++			tight = false;
++		} else {
++			if (!f->pcl) {
++				err = z_erofs_pcluster_begin(f);
++				if (err)
++					break;
++				f->pcl->besteffort |= !ra;
++			}
+ 
+-	if (!fe->pcl) {
+-		err = z_erofs_pcluster_begin(fe);
+-		if (err)
+-			goto out;
+-		fe->pcl->besteffort |= !ra;
+-	}
++			pgs = round_down(end - 1, PAGE_SIZE);
++			/*
++			 * Ensure this partial page belongs to this submit chain
++			 * rather than other concurrent submit chains or
++			 * noio(bypass) chains since those chains are handled
++			 * asynchronously thus it cannot be used for inplace I/O
++			 * or bvpage (should be processed in the strict order.)
++			 */
++			tight &= (f->mode >= Z_EROFS_PCLUSTER_FOLLOWED);
++			excl = false;
++			if (cur <= pgs) {
++				excl = (split <= 1) || tight;
++				cur = pgs;
++			}
+ 
+-	/*
+-	 * Ensure the current partial folio belongs to this submit chain rather
+-	 * than other concurrent submit chains or the noio(bypass) chain since
+-	 * those chains are handled asynchronously thus the folio cannot be used
+-	 * for inplace I/O or bvpage (should be processed in a strict order.)
+-	 */
+-	tight &= (fe->mode > Z_EROFS_PCLUSTER_FOLLOWED_NOINPLACE);
+-	exclusive = (!cur && ((split <= 1) || (tight && bs == fs)));
+-	if (cur)
+-		tight &= (fe->mode >= Z_EROFS_PCLUSTER_FOLLOWED);
+-
+-	err = z_erofs_attach_page(fe, &((struct z_erofs_bvec) {
+-					.page = &folio->page,
+-					.offset = offset - map->m_la,
+-					.end = end,
+-				  }), exclusive);
+-	if (err)
+-		goto out;
+-
+-	z_erofs_onlinefolio_split(folio);
+-	if (fe->pcl->pageofs_out != (map->m_la & ~PAGE_MASK))
+-		fe->pcl->multibases = true;
+-	if (fe->pcl->length < offset + end - map->m_la) {
+-		fe->pcl->length = offset + end - map->m_la;
+-		fe->pcl->pageofs_out = map->m_la & ~PAGE_MASK;
+-	}
+-	if ((map->m_flags & EROFS_MAP_FULL_MAPPED) &&
+-	    !(map->m_flags & EROFS_MAP_PARTIAL_REF) &&
+-	    fe->pcl->length == map->m_llen)
+-		fe->pcl->partial = false;
+-next_part:
+-	/* shorten the remaining extent to update progress */
+-	map->m_llen = offset + cur - map->m_la;
+-	map->m_flags &= ~EROFS_MAP_FULL_MAPPED;
+-
+-	end = cur;
+-	if (end > 0)
+-		goto repeat;
++			err = z_erofs_attach_page(f, &((struct z_erofs_bvec) {
++				.page = folio_page(folio, pgs >> PAGE_SHIFT),
++				.offset = offset + pgs - map->m_la,
++				.end = end - pgs, }), excl);
++			if (err)
++				break;
+ 
+-out:
++			z_erofs_onlinefolio_split(folio);
++			if (f->pcl->pageofs_out != (map->m_la & ~PAGE_MASK))
++				f->pcl->multibases = true;
++			if (f->pcl->length < offset + end - map->m_la) {
++				f->pcl->length = offset + end - map->m_la;
++				f->pcl->pageofs_out = map->m_la & ~PAGE_MASK;
++			}
++			if ((map->m_flags & EROFS_MAP_FULL_MAPPED) &&
++			    !(map->m_flags & EROFS_MAP_PARTIAL_REF) &&
++			    f->pcl->length == map->m_llen)
++				f->pcl->partial = false;
++		}
++		/* shorten the remaining extent to update progress */
++		map->m_llen = offset + cur - map->m_la;
++		map->m_flags &= ~EROFS_MAP_FULL_MAPPED;
++		if (cur <= pgs) {
++			split = cur < pgs;
++			tight = (bs == PAGE_SIZE);
++		}
++	} while ((end = cur) > 0);
+ 	z_erofs_onlinefolio_end(folio, err);
+ 	return err;
+ }
 -- 
 2.43.5
 
