@@ -1,113 +1,86 @@
-Return-Path: <linux-kernel+bounces-238618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B391C924CE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:53:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D01924CEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2ADA1C2224E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:53:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B7531C21576
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BD41FAA;
-	Wed,  3 Jul 2024 00:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ep8+u2kW"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDAD2564;
+	Wed,  3 Jul 2024 01:00:04 +0000 (UTC)
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A802F39B;
-	Wed,  3 Jul 2024 00:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018081373;
+	Wed,  3 Jul 2024 01:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719967996; cv=none; b=btX/91yEzg57e/CS7Mla4z0czezFjxHxDDPIgy5qUc19ZPPGSMtfX0BztY12hRNLaUfgU+yEuLq5UIZQTq7gdTzcP92nK8DxtL1KiD120y/VUk8m4XtTtU1DFIlCZxAZCQZKCS5EloT9+VKFz3mJacse9RefMX6sxoQ4Ipee0To=
+	t=1719968404; cv=none; b=Ioe1ZGgDlK7m7I7e+zF86JDuTfeyWNHoqthS/q/4oqO/E7QJ3jQ9MZvVFZnIloZ38rG9dOEMhqdJSJaTxpQZFD+77fznXOZHv6AhjoindsiOlDxDSENOrzxSZ8n0XXn1NCwbh/RKgSEzbxCRyGPv2fq5JnOWzAv39GOPLqJn8Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719967996; c=relaxed/simple;
-	bh=aBf6kYW43wmtYKnp4/vtMVB2VMSMGvp39uDJh4OR09A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q972NSyCrRYPk1UDdsGivc2xqfl9zTnO9+9pLrWUW6hSZ65qranlyQhEzrEm/Jm1Ud1t3kFvz6Rt9FkZe0fgcRLE01uCtpRSd6sfXJ0hrfwHPOwW/tV2Nxy66giOslI1bCVQ4krDPFNUm7Ip8ee/SBXBodXLOr6exooQ3XOTdyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ep8+u2kW; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1719968404; c=relaxed/simple;
+	bh=4/ok6FYh3Y1KvnVpgaAOy5hhwMjG6Ts+SeLcbCbQI48=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqxmG7kXs3z58aoO+QsHkcUE3Q6uE8112YCyQ00plceJ7jqbr784h8AQW8+TPqaSvggpJj8aORw3ssZM2nZt1mohjwRHuiZpgZbOKpu9nLUSKDmDvXVB/iEONnHJ9NI0jdj3Z3o0AXU5DBBrbo+hbykVh9ii0x47BmmYppF2Q1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-79d5e61704eso293003185a.3;
-        Tue, 02 Jul 2024 17:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719967994; x=1720572794; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aBf6kYW43wmtYKnp4/vtMVB2VMSMGvp39uDJh4OR09A=;
-        b=ep8+u2kWzNLhzc5fmCC3Q/ItRmIuZ72k9aCFs3e/um1sOHk8NCrVzETvWaIXMCBoo9
-         LAQvNYVz4s4m64osgn8q1DKvRnnvAtee+GEO3vH6uHtlR1qchNP/JAZXZ/XBw5wzqhpt
-         plJ7nbsGuSUa99tG698bVkqcQbIAYp82P4ML+1hMdc9772yj6rHLLDxgU1EDBJERNkKF
-         t07Cb3MiSR17aCTpSDMPkwM00s2ILVLVHZgaSDZc7UTglWkdKfVfnB/ngyWf1qwsf+M3
-         WDwCUeIv2P7bMg5ac6zxJEb+pETUk2/z9CARrqZtwZQy3v7FIxdbjlljRLgFRZfdut67
-         ykFg==
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3d561d685e7so3362827b6e.1;
+        Tue, 02 Jul 2024 18:00:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719967994; x=1720572794;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aBf6kYW43wmtYKnp4/vtMVB2VMSMGvp39uDJh4OR09A=;
-        b=b+KEVQOhJPVXtB6FyQURVB/dC88GpkWhohivfgja0zpmpEBDbFSavwPc0gaNo6UxSm
-         tQoWOlve3mupEtLyZadQVKFAzjX0gdbhJ3KgDDla5OHIJvUjYqpOpgLauSnmRrGP2ILu
-         SDcGAeZGcN0qNEOU7ZVdc3zv6BKCNfJhpdHIROv6EhTW+Lj/fRHDMneg0UqvQXKQE03t
-         j/nCNIllu//GX0XtxFyzFsk+zva6vsSFPJtjqapU37tpdGJlhEG3Wbp2/qLtLNyddZ/E
-         Rqv1m5BfvGuD2k8VbMsYCdRO3gdoOMZn0UrcHpIoRVQkUl/BsrGbG96xi/LT/PTZ1ywC
-         aAFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNuylQIAaiF5YYYcnSAkLX81grac923Yh79T4qMMcoh5jbfGg2d0d/s67IZemdaly5HqCaC0Wj1BU1NJ+9LE0wawdxc4ecrkuwwV5dZiSUalamNQh2yqUbmGkKfDEYUi0xObj7hX1/Sg==
-X-Gm-Message-State: AOJu0YyK++wu7XBJr4SY/68ptGnJ/pMXWyD9MWdOAJ07bo6MA3CmcsLL
-	sQMqq50AiK2PumRmNX2j/DAtv176wyKnpYjk4emZLA33rzclpchgQzG6qqVXRBqwNiL1Fw5IVWP
-	+3AVGdj1aAqbiqbVrgz57GqiRtW4=
-X-Google-Smtp-Source: AGHT+IGKB0TLT+t0w5QSBMZabpd2h/895P0ReYUirZgWMt68DyeN1EUL3/SR4Kp8gQ6Dq2SCe4lpf6y5S8nghoDBQrk=
-X-Received: by 2002:a05:620a:468c:b0:79e:e3b0:436d with SMTP id
- af79cd13be357-79ee3b04ad2mr6046185a.52.1719967993653; Tue, 02 Jul 2024
- 17:53:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719968402; x=1720573202;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z+QDVDPryOtBIHWupkn8RFbJbvX8vqSQWsza45FhNfM=;
+        b=Ga2F/UWKMf0Bme5g1N+C6zzyLxFqugCCcU3THav5nJzz7qzhAnoahWLO5MSbd64w29
+         65R+z3FoJqsWArazsdxCRdQ89+0S5AKJAM9vtxwmPyJQSpHGKVhSmTBUEE+yZeDNt83b
+         JyqJo6RKYXTqI1qnhT58KxJSR/ZvqTB+VM77wqp+fMk5Bn7fnpfy56KuwpVZRtRLDuRO
+         Vx/yK604tcyJ92KA/3u+uns/UxypU1ld+yckFczVfi4jCKOjjzmYJQ9fx9DJGRgUeIF1
+         e55Kuacaxy/6UZqZiiHd6t203Q8M4+BUYO3CFIDr1Kq+n+IR3Cds6ceGRtEudejtXNY9
+         RrPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3ciCRzWw/wd7jJnGQrNOD1CDJG1chcBBp4JOlOh+4l0wqZFCt1LX6CpfXxuWR+nh/rsUXizwPZsCs9QdugoelqtQIkan0lVk0ba2jrOiNa6JX4uMdMXpPjx0criPn8BdVqCzF0n1P3Q==
+X-Gm-Message-State: AOJu0YyWOlbupdO7pkGZSfvxVS6JTNfrop6JFXrBIdFbRJo6Kty4sHhJ
+	Qcg2J5eVbGJkClahJPTEUXPGEAHlPc7XtqzgfO2Uow6hGjhmah2AO/wPOaCZ
+X-Google-Smtp-Source: AGHT+IG2jepsnH1O+TW9oT8SdXRcbhlDe0GQgRMpprpz3qpC4jyruP1SPQgPV3dCZxlhk+3gPppKWA==
+X-Received: by 2002:a05:6808:1284:b0:3d2:308b:9bb4 with SMTP id 5614622812f47-3d6b4de1fbbmr15041145b6e.43.1719968401976;
+        Tue, 02 Jul 2024 18:00:01 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6d41655fsm7156351a12.92.2024.07.02.18.00.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 18:00:01 -0700 (PDT)
+Date: Wed, 3 Jul 2024 09:59:59 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pci tree
+Message-ID: <20240703005959.GA3160262@rocinante>
+References: <20240703104512.59dfc264@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702164403.29067-1-afd@ti.com>
-In-Reply-To: <20240702164403.29067-1-afd@ti.com>
-From: Robert Nelson <robertcnelson@gmail.com>
-Date: Tue, 2 Jul 2024 19:52:47 -0500
-Message-ID: <CAOCHtYhX8if3c8=qOz+qx=ss+Yya9Ta5xFbW+NmG-tOQco2s-g@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/3] Add generic Overlay for Grove Sunlight Sensor
-To: Andrew Davis <afd@ti.com>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andrew Lunn <andrew@lunn.ch>, Vaishnav M A <vaishnav@beagleboard.org>, 
-	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Michael Walle <mwalle@kernel.org>, 
-	Jason Kridner <jkridner@beagleboard.org>, Ayush Singh <ayush@beagleboard.org>, 
-	Ayush Singh <ayushdevel1325@gmail.com>, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703104512.59dfc264@canb.auug.org.au>
 
-On Tue, Jul 2, 2024 at 11:44=E2=80=AFAM Andrew Davis <afd@ti.com> wrote:
->
-> Hello all,
->
-> A new attempt at solving the long standing "add-on board" problem was
-> recently posted[0]. The current out-of-tree solutions usually involve
-> Device Tree Overlays. Recently, Overlays have started being accepted into
-> the kernel repo, this makes now the perfect time to solve this issue.
-> Here is my attempt at a generic solution.
+Hello,
 
-Thanks Andrew for taking some time to look into this. I really like
-the individual modules and how you can connect each overlay for
-multiple combinations.
+> Commit
+> 
+>   1ee61ee40d2b ("PCI: endpoint: Introduce 'epc_deinit' event and notify the EPF drivers")
+> 
+> is missing a Signed-off-by from its committer.
 
-I will play with/commit this in our current 6.6.x branches.
+Should be fixed now.  Thank you!
 
-Regards,
-
---=20
-Robert Nelson
-https://rcn-ee.com/
+	Krzysztof
 
