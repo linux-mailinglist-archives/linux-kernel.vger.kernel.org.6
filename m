@@ -1,144 +1,127 @@
-Return-Path: <linux-kernel+bounces-239497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38ED29260EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:54:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685909260F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34BD1F22A88
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:54:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 998251C216A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9085A178CEA;
-	Wed,  3 Jul 2024 12:54:00 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B336F179970;
+	Wed,  3 Jul 2024 12:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="ZtnmC/Ab"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BC61E4A9
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4338A178360
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720011240; cv=none; b=M1QXXG35uEDIvZzkvkuSWGR2XvVfI/cjbdb+tWkgC+uHzy0ypXqY7b8kcFfGa/flTL4u1CJX6u9W/IKESu7po5PQPV3LOjeTg/gn5NIS8wC5tl5GFTm/O2ter1SGfTzssEfFx+CXhEr3Y6LaZovRRVd7GeBRM93yPL7ryEcSEO8=
+	t=1720011246; cv=none; b=KMjN2wkQrG076PDlO1CTDYYKd0HsICVG3tzFI99WKDtlhKuj+7zz6xPah/orvGWfCn34ZONA/T00iNMqJyabBIXRkWJfe+sHVFAyZ7GC0RbAbyukyd/nip7AfXaiKka0326YyUtFfYZh3LI21Kcv2CQlczTQohmi3ilZGaRUxfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720011240; c=relaxed/simple;
-	bh=n1cEwfR8I7CRyZ+5H3Xv/AAmOTFiTl3HAZE4oztJFHM=;
-	h=Date:Message-ID:Mime-Version:From:To:Subject:Content-Type; b=MtJ/INcLfQOH5wVCHMLvx42UZ9XkY7A+/NstGBLTPhH+BjZGQFv5QoNrPDqx2ZoaVi65O48/1NmdbDacopoh4/v6/el/FEUWDxZ1p6son8gqFfi0ljgfnTRzebHbv1TET+OvbDpRrxyneEz8QXUHQMLrEFH0uUXsyAJ3/mK89Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxde.zte.com.cn (unknown [10.35.20.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4WDfpw2t34z1DyM
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 20:53:44 +0800 (CST)
-Received: from mxhk.zte.com.cn (unknown [192.168.250.137])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4WDfpq6cY4z54hQs
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 20:53:39 +0800 (CST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4WDfpZ5hRhz8XrS6;
-	Wed,  3 Jul 2024 20:53:26 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 463CrLBx081404;
-	Wed, 3 Jul 2024 20:53:22 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 3 Jul 2024 20:53:25 +0800 (CST)
-Date: Wed, 3 Jul 2024 20:53:25 +0800 (CST)
-X-Zmail-TransId: 2af9668549c5ffffffff869-a44e6
-X-Mailer: Zmail v1.0
-Message-ID: <202407032053257877vuVsFfB1hh0DKSowPd8p@zte.com.cn>
+	s=arc-20240116; t=1720011246; c=relaxed/simple;
+	bh=icdGIhylB0lXVqhQ0Oq7EE1+CLenXFSI1YMAf1lrq+w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=awB3DKzC0L1/1jHGw2C+OA9fktgqqPNp+H81WKLYd8aGpcICmep4McrFDioz72tmkh6/cxXeliy5IMtx7lPFwtu+++XYa5ETrXuwp5YqJU/z4ihD8cOJDIrW5MW+ps/Hf+/7FmAuBN42jrvYAakTYBzLtNTLpk9ideUMbr8P2Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=ZtnmC/Ab; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-367975543a8so186880f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 05:54:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1720011243; x=1720616043; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yzx9VHlc/8h9m6p3SRKEm1Y4xLQisswwlqQ+JvkCTDE=;
+        b=ZtnmC/AbZzQDFm3e+qe1qL7U9It+RJ0V9zshhUBc9BGDawvbKrGpVuWVLsVFo7WjjF
+         is8/hqshXxPt/nHmfx5CBBLHdSWMyX+9krMVsPu+yL76Qwc3+pJa35SpZqWYWw093bdW
+         2smyX5BENKzeuRB4hwUG3wGRil1yz6OzPxpasZRFH9k6JL+m5zERzv5+jISBsyBiny/x
+         P1l69+zPmXeOfyaa+4qkaa47WEccm038Quq/lLNiIftiACAfCb5/wvdXe2kJiIIBuV3N
+         JOXw258OKl2OQtAi3b5NriUN0f3lL8lrwNrCWn1G/2pAN8TZR4RCL3k27IhB1lMTgbwo
+         StmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720011243; x=1720616043;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yzx9VHlc/8h9m6p3SRKEm1Y4xLQisswwlqQ+JvkCTDE=;
+        b=jRrESS488m97mCqx09BiCCsFu8yUFgPe1r8fw78YUt6mUXu3WDmnyhetX4YaGScPOX
+         +D6yGA7vImb90jf/MfeCr8saKWvPSlfKoGQkjIJJPBs8MjxL7CSxA4sC4OLMjAOyktWn
+         1CVGKqDHAU0XKm42RvYv35mPSccs/LOuEn8et9bXVnlqlXrKC/dNkQ37rlGESJAK1NIW
+         ffk4eNmLw9BFWMPX2U1sv/9f6IiVi241DtePA99CB2Qq1DSjxdMnINWnknxYWoClgcU6
+         6D7qMqTozgb/BLVvtTx+JRybo3eo80XhP1w/0a+0fjl9zvx8BuWNEOqUBMpAeq3sf1LY
+         ucmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUM37lsHCzh6UaQwinO88DimyAVnVtofR1UixjnyUrrRud6nFZCXPmMTjm/BQEvMeGxARhTl1LW0SAHXNwMKxKkoC7csU+xrM4oa/n
+X-Gm-Message-State: AOJu0Yxz+W7pdMrRQbxsKTLCC98JJEVY1egCvh3+LHl5mZAqlfrj7E1Z
+	j/iNWw/wtTUJdWARCC7rdtQmnvfKLQ2N7iE+0v+7mdbSgxkqa8QimbeyUXk0Jl0=
+X-Google-Smtp-Source: AGHT+IHKkT/F7VYwbLXQnp0PsjNCbmpL2tzMJ16ri/aVmQvC719AC9zQFGR8qEFOdoj3yqk4lIc+HQ==
+X-Received: by 2002:a5d:648f:0:b0:366:ee84:6a73 with SMTP id ffacd0b85a97d-36775696c16mr8572598f8f.10.1720011242537;
+        Wed, 03 Jul 2024 05:54:02 -0700 (PDT)
+Received: from localhost ([82.150.214.1])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3675a0d8daasm15703542f8f.30.2024.07.03.05.54.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 05:54:02 -0700 (PDT)
+From: David Gstir <david@sigma-star.at>
+To: sigma star Kernel Team <upstream+dcp@sigma-star.at>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	David Oberhollenzer <david.oberhollenzer@sigma-star.at>,
+	Richard Weinberger <richard@nod.at>
+Cc: linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Gstir <david@sigma-star.at>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH 1/2] KEYS: trusted: fix DCP blob payload length assignment
+Date: Wed,  3 Jul 2024 14:53:52 +0200
+Message-ID: <20240703125353.46115-1-david@sigma-star.at>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-        <vincent.guittot@linaro.org>, <ietmar.eggemann@arm.com>,
-        <ostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-        <bristot@redhat.com>, <he.peilin@zte.com.cn>, <yang.yang29@zte.com.cn>,
-        <tu.qiang35@zte.com.cn>, <jiang.kun2@zte.com.cn>,
-        <zhang.yunkai@zte.com.cn>, <liu.chun2@zte.com.cn>,
-        <fan.yu9@zte.com.cn>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgdjJdIHNjaGVkL2NvcmU6IEFkZCBXQVJOKCkgdG8gY2hlY2sgb3ZlcmZsb3cgaW4gbWlncmF0ZV9kaXNhYmxlKCk=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 463CrLBx081404
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 668549D7.000/4WDfpw2t34z1DyM
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Peilin He <he.peilin@zte.com.cn>
+The DCP trusted key type uses the wrong helper function to store
+the blob's payload length which can lead to the wrong byte order
+being used in case this would ever run on big endian architectures.
 
-Background
-==========
-When repeated migrate_disable() calls are made with missing the
-corresponding migrate_enable() calls, there is a risk of
-'migration_disabled' going upper overflow because
-'migration_disabled' is a type of unsigned short whose max value is
-65535.
+Fix by using correct helper function.
 
-In PREEMPT_RT kernel, if 'migration_disabled' goes upper overflow, it may
-make the migrate_disable() ineffective within local_lock_irqsave(). This
-is because, during the scheduling procedure, the value of
-'migration_disabled' will be checked, which can trigger CPU migration.
-Consequently, the count of 'rcu_read_lock_nesting' may leak due to
-local_lock_irqsave() and local_unlock_irqrestore() occurring on different
-CPUs.
-
-Usecase
-========
-For example, When I developed a driver, I encountered a warning like
-"WARNING: CPU: 4 PID: 260 at kernel/rcu/tree_plugin.h:315
-rcu_note_context_switch+0xa8/0x4e8" warning. It took me half a month
-to locate this issue. Ultimately, I discovered that the lack of upper
-overflow detection mechanism in migrate_disable() was the root cause,
-leading to a significant amount of time spent on problem localization.
-
-If the upper overflow detection mechanism was added to migrate_disable(),
-the root cause could be very quickly and easily identified.
-
-Effect
-======
-Using WARN() to check if 'migration_disabled' is upper overflow can help
-developers identify the issue quickly.
-
-Signed-off-by: Peilin He<he.peilin@zte.com.cn>
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
-Reviewed-by: Yunkai Zhang <zhang.yunkai@zte.com.cn>
-Reviewed-by: Qiang Tu <tu.qiang35@zte.com.cn>
-Reviewed-by: Kun Jiang <jiang.kun2@zte.com.cn>
-Reviewed-by: Fan Yu <fan.yu9@zte.com.cn>
-Cc: Yang Yang <yang.yang29@zte.com.cn>
-Cc: Liu Chun <liu.chun2@zte.com.cn>
+Signed-off-by: David Gstir <david@sigma-star.at>
+Suggested-by: Richard Weinberger <richard@nod.at>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202405240610.fj53EK0q-lkp@intel.com/
+Fixes: 2e8a0f40a39c ("KEYS: trusted: Introduce NXP DCP-backed trusted keys")
 ---
-v1->v2:
-Some fixes according to:
-https://lore.kernel.org/all/20240702124334.762dbd5a@rorschach.local.home/
-1.Merge if conditions into WARN().
-2.Remove the newline character '\n'. Right, we don't need the redundant \n.
+ security/keys/trusted-keys/trusted_dcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- kernel/sched/core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8cc4975d6b2b..327010af6ce9 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2259,6 +2259,7 @@ void migrate_disable(void)
- 	struct task_struct *p = current;
-
- 	if (p->migration_disabled) {
-+		WARN(p->migration_disabled == USHRT_MAX, "migration_disabled has encountered an overflow.");
- 		p->migration_disabled++;
- 		return;
+diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trusted-keys/trusted_dcp.c
+index b5f81a05be36..b0947f072a98 100644
+--- a/security/keys/trusted-keys/trusted_dcp.c
++++ b/security/keys/trusted-keys/trusted_dcp.c
+@@ -222,7 +222,7 @@ static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)
+ 		return ret;
  	}
+ 
+-	b->payload_len = get_unaligned_le32(&p->key_len);
++	put_unaligned_le32(p->key_len, &b->payload_len);
+ 	p->blob_len = blen;
+ 	return 0;
+ }
 -- 
-2.17.1
+2.35.3
+
 
