@@ -1,246 +1,356 @@
-Return-Path: <linux-kernel+bounces-238960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B13F9253EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:50:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A3E9253EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E60BC287B9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:50:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0136B23DBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6626134406;
-	Wed,  3 Jul 2024 06:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i7rcX5Nr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7229C135A4B;
+	Wed,  3 Jul 2024 06:51:26 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12732E400;
-	Wed,  3 Jul 2024 06:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719989450; cv=fail; b=sS0eYMhLEJtkrdFtbTG1pgmBj30La5JWGxeNm036v1DfmufykaqOmeIzwUnJgnnZxxcJjE+EBWZ9WIh7a3XJCtSmBqFOA6VwpRrppnt0AAYh6ewnt201VRMhIXz8FLdZJ5M5bSqfYkpos1H9+LAX+j4Q/yTE5FItztozUDu0tAY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719989450; c=relaxed/simple;
-	bh=OIRsygT3k3ok6h1NvZ2evymonrKDnt6jsJe6r4e7YhU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aESqqdmCwYnjXVvfZv5Thvj0M21DiNUulLlA6oQMSslTyGU8zG4p8Yg8ovpS6vTGyW7X4jr67JhANeD7FdxEe+gYyz3XY85Q5OkRf86y9+dHCdqogKq6ftGrTcPOBj3v3OH5Mg5oAMxfSGp7tY7Kk8X9ZMTS4eKijUQAWiHZHY4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i7rcX5Nr; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719989449; x=1751525449;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=OIRsygT3k3ok6h1NvZ2evymonrKDnt6jsJe6r4e7YhU=;
-  b=i7rcX5Nrvkg5zHNupWvceqX6AOLGG6qM+NAt8qbSFLX8VjxWf7Ksb3Ek
-   j4l38LoUd0Rv54BZjo8wPXDwLgMRAK2pDi4mSV+3fZFsRECiHFnD3rK9S
-   JS+Y6djzCIC8PlmOroM4NwyM4i/mB+UWmCbSllqYDwAVUr3F+lfiCrnbD
-   chQPd2irqrvjTqWSK3RieZTgNU3/wu5eDtBxnncqSvBpCldQBeQWhQWht
-   tyEWcv/36rz1lYYhX+NkCv4aL6KyImMA5sKglmWJrE6Fj89kVvMDLNiDz
-   Ksy5EjUk9GEGIxnQx7aMcZmbpwPsr0knyuFSRlTKl1EUBcK3QTNay1h3Y
-   A==;
-X-CSE-ConnectionGUID: Jcl2qg3eQy6sRts+YIQ72w==
-X-CSE-MsgGUID: QWEaElpCS02Paot2S8EjwA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="28593396"
-X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
-   d="scan'208";a="28593396"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 23:50:48 -0700
-X-CSE-ConnectionGUID: Tcv644YYQ/WcjhUy8G1lnQ==
-X-CSE-MsgGUID: pG/m7a17RoKS9Gjkc9W9nA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
-   d="scan'208";a="46129833"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Jul 2024 23:50:47 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 2 Jul 2024 23:50:46 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 2 Jul 2024 23:50:45 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 2 Jul 2024 23:50:45 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.48) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 2 Jul 2024 23:50:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gnm3GBupdQBhlQoUcPzEaUMg463/+RUCGU8kh9PFiLeWct6n2WxPdipG7vsrxo8HVVNR27pffKAk4KlmePDgM5pah2iNom1UdZrfuyOpZp+HMEvYlq2A2iRTni3IX8BwvXlUyQE+513rqaQHXIqcRlUzeTK31dEMNgBV7uln+jgoWzBAb9qlrEOr0wFR3PLWapsgEaMaPileLN/AOY6dg7z4iwdQalnDHGHU74tJ1PCOlJcNwf14jjt3DUZEy9f/t9yory7CMB4Q6/uAeeJBPp/odXDxutcLf/KD1530KI8oHYb8SK+4yUyF8k6pDCkYd7mC2JLla6pqEkmoUSg1tA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8X76pqlHFUGBSk/HeyieInC+t1oO71l9V25ELDrMTbo=;
- b=a9EfWknfMf/u46xxs7rgTmF7ptt1x4gul6OyeNgddF8eKuzUMXH9Q2vNOQTXaTk9gJJPXcJuEpQkUY+q4q4tIOG9x51cexg3CFBpwrWbGQ4Cg7/H6K1uAZabg+LjQcVXZeGqD8SFJlikXdl6CTJPYlXoxCgp0WXmqXKym5uyk2xig8O3GFbbI7j+AaXxPtzRojqQAhb17cccPoNB0n7UNY/hzRkVBmjgrIMKsZNGxDWOXoqPYjaJpliBFsU/23sFCsRM/AGgrOfDJhMYLBVwjINjPUID9qGZtTdPWJEXN5JF6qH1moItdzKgsSDUwuRJFzn8JUSJnq+ZsEJa6HxQSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com (2603:10b6:208:3c4::15)
- by BL3PR11MB6361.namprd11.prod.outlook.com (2603:10b6:208:3b4::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Wed, 3 Jul
- 2024 06:50:43 +0000
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4]) by MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4%3]) with mapi id 15.20.7741.017; Wed, 3 Jul 2024
- 06:50:43 +0000
-Date: Wed, 3 Jul 2024 08:50:27 +0200
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-CC: "shuah@kernel.org" <shuah@kernel.org>, "Chatre, Reinette"
-	<reinette.chatre@intel.com>, "Yu, Fenghua" <fenghua.yu@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH v3 2/2] selftests/resctrl: Adjust SNC support messages
-Message-ID: <evds3zyrwl3tgs7l6ppcg3bnvlxaewcetacuppek4uevx5i7lb@rj7ciugpp5u3>
-References: <cover.1719842207.git.maciej.wieczor-retman@intel.com>
- <484aef5f10e2a13a7c4f575f4a0b3eb726271277.1719842207.git.maciej.wieczor-retman@intel.com>
- <SJ1PR11MB6083D0D8AF9D1A7864084F0EFCD32@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SJ1PR11MB6083D0D8AF9D1A7864084F0EFCD32@SJ1PR11MB6083.namprd11.prod.outlook.com>
-X-ClientProxiedBy: DUZPR01CA0087.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:46a::18) To MN0PR11MB6231.namprd11.prod.outlook.com
- (2603:10b6:208:3c4::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C449132C3B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 06:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719989485; cv=none; b=rXpGfls39RRzybLoQPXIouK3PRWIvtJWDL5QMuqhm6RptUhg0QVnt762nK2WdY9uhE0/400hORO9SdGrfzSteqLux5Mycj1WXhb97obyXN6//fdWjJzvL5tcVWxBgk5HX4aHVTjuGPzIgGiNpcQaIBf7ewrbhU1lj5NvaRjRivc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719989485; c=relaxed/simple;
+	bh=0gxrIwBfgOkLA2MP1w3dmuq7b4IMVgpEWB0Tft9c1ds=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XncNrS9NXB97TkBwrdvBJ0F7yTCht8GUma0+bde2c3/PAviFFVmcBJzyxdMPJWGRu7gRd6Pb2tvA97/gALHIgiLjBy5heSehoizCb8y9std4qZDiwjEM1Lv6Mu5oYPHuDTSigWSo6kyQJZeFVW+M737GJQV/4JSn3aay2Z9UfB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f6530b381bso169365239f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 23:51:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719989483; x=1720594283;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fOF3J9cxgd9Au7XFZ/LO/dwUzye9hanqe/SeaAyRY7s=;
+        b=n2WiC6Na9QFZrITA5/hW1ZJtXqrHg8OaSmlDDS+1P2ARWhvLX5Bc64qaRvrxYnvxmG
+         dhAWr7njI6Aka4ke8xS8Kpyczty3/tiJbnvNMkJxhD0n3HLFX5999a4xiuDHXDgTXW77
+         TCPah/tNeYf3NaPkdtxKJXMO+CgRQDJWP2+x46UvJOpFRfnbOkYM/qQlnyYgl7E27ncD
+         fLAs/TVSazHNDuVURf6IRlR1fo5gEL1Xs88OO7yY6cpdawar5qmKY3AeCwrgWJTUUyOj
+         Nuga+ayJcP/4Tp2NDN7kaqOsfJ9ukap9dowryF0cp2ILjyKf7u0ixkRQ5XPaxsrP9nJH
+         9tVg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/Ff6zBfEQ2FTPRtn2zaPBsrqbP5tVgXegS7V8xCTe8Qpm2srbGDHCtVWGfT/Ts2aSXgZDLU73tEc1+mgNxw2qpFan6sCDkMVzvHgr
+X-Gm-Message-State: AOJu0Yxv084GpER0Np0QL35Q/3OVWDvwiHM4avwBMfNoVaCdglpOvU8T
+	ax4dEHuEbfD+7WbGKel6/KPeoQBqMrypq0H+1jvO/1nJPfFAN+jUgmlVADck1jQwMJxCKs1gJue
+	KaPD61JMqfJlUeOcZBEOhaZcYUZ584gRVqlEm9qI6W0Yj2IZpfBWNwrA=
+X-Google-Smtp-Source: AGHT+IECSfEjDrXbtBJ9FCaenHfbUjIvw4kNa09QyQOkAQZADOciYzv8+Oo7y50sfKTYsJM7NKdcNGg0LXqVie3be6qvwMGW369t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6231:EE_|BL3PR11MB6361:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0641d694-d96d-426d-76f3-08dc9b2c7569
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?aLD6xIJQKTZ3sx8ULV/3AHltAtjvlCxSMN8PEj9EE6Zi0ZeQwECy7WVyOs?=
- =?iso-8859-1?Q?Y2k6vpL2p+NXkIMFJS+1UsKKVwxN+zeBU7jai2Z0KOZKqE8Kj6XYjarCH9?=
- =?iso-8859-1?Q?e2mbmxL2mXSve0KcoYXN0kiy4G3ecozjzl4ldaC4xXNzTKDEJlc1f7Fcro?=
- =?iso-8859-1?Q?bQ3k5UxCQujJZfX4qOenaVp7mt5Tqz54BjuhHQ+ZgZeFn3aH9LGYrzpkw8?=
- =?iso-8859-1?Q?/Gm53b8L+6d/AgkMjksCCpBBQzmWmT07W4h7/kA3vWG2jNFYzOV5P72XCA?=
- =?iso-8859-1?Q?HV1z9sgV9mVGUTsvcKpbBxrQtXhT5wWcn4PesS4SOReK47P6HlU3u4nyG8?=
- =?iso-8859-1?Q?o23GeU38oNnPe9zdOjz5A0iq4leQt2xq4WdoV3OGfqFeqHe9Nw50/QD2Ca?=
- =?iso-8859-1?Q?4B7hdofGyE3jeyQeiFQNPaYKvm9gLsV6qEIucoe4aKKnzj6Y/i1eD7NH6B?=
- =?iso-8859-1?Q?ntXxkeMniWRfRC6OYVFiLmwCjL6VY+RWnnuZlFCPGhmQLr58/5H+SIZL4y?=
- =?iso-8859-1?Q?L65CrP49uRdq5EicY6YuglHdNbh0iPcsEHcu63Mr2gCQyX4qosYuCwLGF6?=
- =?iso-8859-1?Q?wFsJTKYwcVHQZDmExiF9wTA9G2grluNGdsyoJuSQPn149VHS7nCLMev11o?=
- =?iso-8859-1?Q?RkY+LFSb62n8vG9+UEi78ASphXrGuLzlxS+rZL/EnaJHbPLcEblFOr1MdO?=
- =?iso-8859-1?Q?vYGfXtv3dSRuSk8//unz+miPzcOvIcah6abxsWHO8W1LbPZKxO3ZqpEQwv?=
- =?iso-8859-1?Q?LiiaLQgfqecdrJ16+2QzQW8/2w8DD5eKfBDKcEF4ubzyfUDxTSO0js/gSd?=
- =?iso-8859-1?Q?Yjosf3hw2OBeF78ur8t/LOZbGkH0cZWlsGHzt6XPmrxot4WGxMisX+1o3u?=
- =?iso-8859-1?Q?Oi9T6LgGKhVuT9aUb9Y6s7fbAQF8bbSlxqZWfBq6rpoZWURmAihhFD8UyV?=
- =?iso-8859-1?Q?EgyJF+WVDWPdbmLnECSIEBVYi9Uwmz+a1sH98miE4aTYNgRhVgUuHLeJpQ?=
- =?iso-8859-1?Q?g+7JoqRKqF+SQgP5NdVsCD+rXNOjF6GBA2SOhjvpwhk35VeiQXmWOv/hww?=
- =?iso-8859-1?Q?HqbY6lYP/4byHRRcvfT6EB9KpdfvEKSKezB6RDA01dOj5F+4inluf0HvBj?=
- =?iso-8859-1?Q?/zep5x6aP4wBi3CFXhK487u478csfjWLLqPSXmX4zUax+Z/XlW3Zun7ykr?=
- =?iso-8859-1?Q?PaZFGyW1qCAvWbYbhacpndFTwpeycwllBwh/zoVlFxim62fmr/ff2YtGEZ?=
- =?iso-8859-1?Q?+h09Cr1LEtujzhytwMVMCFdjjwR1wsoM0olUQi2nQmrDkPCierY/abWt7s?=
- =?iso-8859-1?Q?58ZF3/bG/jmFd9AigGVB0Zai6+mD0txw3DpRFgtc5/GE8qe0HCVwjp6jci?=
- =?iso-8859-1?Q?X9Do2dK41nDRbvtOFuU6/QPXnyqottxA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6231.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?5vq0Z62YDq7vzJFyBgF7abQtJQ0s18CoNVFHp8fsv9yCJQeGQuN3uffZjX?=
- =?iso-8859-1?Q?zxSCJbgkvAhGDj5nfRkdUN16OE+dwypDRTEIuuVBY1qF/+2/KdRMlJ6p3W?=
- =?iso-8859-1?Q?OZqzg+gA0LBM1okTznlVUxDx0hzaB3RWdvWBFkf3/Hi1uccXRADk+Sw1mL?=
- =?iso-8859-1?Q?QB/uYrF+oZhi/5QkmFAsxcWcAo8WbmyoUS5ZukwbVUDjxSgO+m1r0gIXRz?=
- =?iso-8859-1?Q?j/bkTatCPkZxrj/DsxSD+OfAoNjVp1W5Yq7JVDBvf/jW5pxGZvkxppTQ5Y?=
- =?iso-8859-1?Q?KK25Dkq4PP1GsP+j1abtCP8AAxPhcPFN/5Mz4KQxt8GIbUHA2EUu8iNQDd?=
- =?iso-8859-1?Q?gcU2NlVFzpIqGKfplRyZ9luooVsAWPgt83VhSFZjtd+4YwMZZQ4CNQhhmB?=
- =?iso-8859-1?Q?ple+MObNbhXEnuLvKDMDtNzcgFCoxwfkNC9c69KA+y2VAA3SUeYCMIqk7b?=
- =?iso-8859-1?Q?69DwJsuSfwpXjA6Z0mS2FPPOcdJEx39TyRagf1thgnUOrPtMAsbgRj7cZ5?=
- =?iso-8859-1?Q?hubfI9CI/xv3sFst6Kk8urMniBdsMGTRkfzMK6xnCeIeZarVODzd/mOd06?=
- =?iso-8859-1?Q?tpDa2tH+GXksFQJMU1m7SIOWzq/XgMjiytt++QNn+dt0u3ChsS0bNBF07k?=
- =?iso-8859-1?Q?TeibQI23uTCtxIV5D8Hrn62ZWLORqwVF9OXPq7YKuEzbDX3eDaFYHDg1gi?=
- =?iso-8859-1?Q?a0w3uG4ZJRRAK7VnzJ0URFOsSeW52U3E36L47YTTOwxFN5oQIpEkar6c9l?=
- =?iso-8859-1?Q?WIr8AQQjK+tmguaw+wr2aJa6goz5rCYEnXJA9Gt9tr2kE2pY/Eix0iBrEq?=
- =?iso-8859-1?Q?sps6npT7Qb4P1GNM3B5vBBUHXyNseuoZmK+ixBBHdVS8pIqMfQSDo2rHc+?=
- =?iso-8859-1?Q?+XGctQbtbIUt8xVbeywNdFF9wLis1iZ9llE0fy87oTkQpMQRoD1wuLd8wI?=
- =?iso-8859-1?Q?mqKFnschaA/6bEqzaEJ2QgEr7tJTbB3kv2uFmDJ5XIiwh1A6zYZeS3ZEOM?=
- =?iso-8859-1?Q?p9ECwpAOWen65mPptafhxZ/2mFBuD8LGtJciig8gf/YTDMOtZvsg0OhuGr?=
- =?iso-8859-1?Q?4cu8oVpFzgAGf3mBSq23T2/qkxhfFjbImeWiAjfqIotAj16fyZuAfaXrLM?=
- =?iso-8859-1?Q?E6nIil5piJK1szMPTs/vbJKBnDzcHhCY50hLFrb2hzfRZe6Cb9pglM84TF?=
- =?iso-8859-1?Q?ej3pyBsuLJat0WnGaV+7y1TPgzP04DII0MmguPwbNvMPTMPGbomQKlD1f0?=
- =?iso-8859-1?Q?aBeQFKymjwvTfhseA23v8KK0hBWpNND0gG8AVUzIOvyrlxc3PrYxqNSJyJ?=
- =?iso-8859-1?Q?Z8hUb4jlzqO1Y3DosP0T/8nXZLor8OzKEd9XUWHzCrXjqgfvWUnDjU+ERN?=
- =?iso-8859-1?Q?BuZEvVQqTI27e8xLsdSUkogE12huWXZv06AltWHFD5vysp2lJC3i+zaBA7?=
- =?iso-8859-1?Q?2apjDZR+a6rI4LJfsHfgsMXy19O7nS4Ak4QKJMJiNoy2ZqoF8lBQgIyNyT?=
- =?iso-8859-1?Q?CVaUe7iLtvI/92TaNI9MwxAst1s872ol3fZAW7sPKAJ3tfcR+15TnLJUsL?=
- =?iso-8859-1?Q?58p6Yl9fQsg7mATqxIYy1YVNNvVEOdVJiEMQamtt+DtZ/eQpTa2Leh7JfA?=
- =?iso-8859-1?Q?WONK/2y2kfmDSZL2gTeULBtqQQZ/WiuZZ4UQb8qbRCo+woicMAW4IhOzq0?=
- =?iso-8859-1?Q?UX9alnw2f3cQKg+VyaI=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0641d694-d96d-426d-76f3-08dc9b2c7569
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6231.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 06:50:43.1709
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BPQz3kbnFE/SKB+MOj5APnHyEYBJscLY05sxaCkerReHPUTrJTqhMHd92yQarKak87YBc/jQ4ti4Q04tfS2B3URNR+BTQnwxB6iRr2ZIuHI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6361
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6638:264f:b0:488:75e3:f3c5 with SMTP id
+ 8926c6da1cb9f-4bbb6b40185mr883235173.0.1719989482802; Tue, 02 Jul 2024
+ 23:51:22 -0700 (PDT)
+Date: Tue, 02 Jul 2024 23:51:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000023e1ce061c524270@google.com>
+Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_direct_write
+From: syzbot <syzbot+1bad52f1790df954e281@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks for the review,
+Hello,
 
-On 2024-07-01 at 18:04:00 +0200, Luck, Tony wrote:
->+static bool cpus_offline_empty(void)
->+{
->+	char offline_cpus_str[64];
->+	FILE *fp;
->+
->+	fp = fopen("/sys/devices/system/cpu/offline", "r");
->
->Check for fp == NULL before using it.
+syzbot found the following issue on:
 
-Thanks, will add it.
+HEAD commit:    de0a9f448633 Merge tag 'riscv-for-linus-6.10-rc6' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=141718be980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=67463c0717b8d4ca
+dashboard link: https://syzkaller.appspot.com/bug?extid=1bad52f1790df954e281
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
->
->+	if (fscanf(fp, "%s", offline_cpus_str) < 0) {
->
->fscanf() seems like a heavy hammer.
->
->	if (fgets(offline_cpus_str, sizeof(offline_cpus_str), fp) == NULL) {
->+		if (!errno) {
->
->Don't need an errno check (seems dubious mixing errno with stdio).
+Unfortunately, I don't have any reproducer for this issue yet.
 
-fscanf() returns "-1" when nothing was read as well as if there was an error.
-But when nothing was read the errno is "0" instead of some error code so I could
-differentiate the cases that way. The fgetc() you settled on shouldn't have this
-problem.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f3b0731376e4/disk-de0a9f44.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/64cc7704ba12/vmlinux-de0a9f44.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dd03addcf685/bzImage-de0a9f44.xz
 
->
->+			fclose(fp);
->+			return 1;
->
->			return true;
->
->+		}
->+		ksft_perror("Could not read offline CPUs file!");
->+	}
->+
->+	fclose(fp);
->+
->+	return 0;
->
->	return false;
->+}
->
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1bad52f1790df954e281@syzkaller.appspotmail.com
 
--- 
-Kind regards
-Maciej Wieczór-Retman
+INFO: task syz.1.13:5198 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc5-syzkaller-00253-gde0a9f448633 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.13        state:D stack:14448 pid:5198  tgid:5197  ppid:5082   flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
+ inode_lock include/linux/fs.h:791 [inline]
+ bch2_direct_write+0x243/0x3050 fs/bcachefs/fs-io-direct.c:598
+ bch2_write_iter+0x206/0x2840 fs/bcachefs/fs-io-buffered.c:1135
+ do_iter_readv_writev+0x5a4/0x800
+ vfs_writev+0x395/0xbe0 fs/read_write.c:971
+ do_pwritev fs/read_write.c:1072 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1131 [inline]
+ __se_sys_pwritev2+0x1ca/0x2d0 fs/read_write.c:1122
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f73b9175b99
+RSP: 002b:00007f73b9fcf048 EFLAGS: 00000246 ORIG_RAX: 0000000000000148
+RAX: ffffffffffffffda RBX: 00007f73b9303fa0 RCX: 00007f73b9175b99
+RDX: 0000000000000001 RSI: 0000000020000100 RDI: 0000000000000005
+RBP: 00007f73b91f677e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f73b9303fa0 R15: 00007fff0b9b3f38
+ </TASK>
+INFO: task syz.1.13:5245 blocked for more than 144 seconds.
+      Not tainted 6.10.0-rc5-syzkaller-00253-gde0a9f448633 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.13        state:D stack:27392 pid:5245  tgid:5197  ppid:5082   flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
+ inode_lock include/linux/fs.h:791 [inline]
+ bch2_fallocate_dispatch+0x295/0x3810 fs/bcachefs/fs-io.c:774
+ vfs_fallocate+0x564/0x6c0 fs/open.c:330
+ ksys_fallocate fs/open.c:353 [inline]
+ __do_sys_fallocate fs/open.c:361 [inline]
+ __se_sys_fallocate fs/open.c:359 [inline]
+ __x64_sys_fallocate+0xbd/0x110 fs/open.c:359
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f73b9175b99
+RSP: 002b:00007f73b9f8d048 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 00007f73b9304150 RCX: 00007f73b9175b99
+RDX: 0000000000004000 RSI: 0000000000000008 RDI: 0000000000000005
+RBP: 00007f73b91f677e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000001000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f73b9304150 R15: 00007fff0b9b3f38
+ </TASK>
+INFO: task syz.1.13:5247 blocked for more than 144 seconds.
+      Not tainted 6.10.0-rc5-syzkaller-00253-gde0a9f448633 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.13        state:D stack:24120 pid:5247  tgid:5197  ppid:5082   flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
+ inode_lock include/linux/fs.h:791 [inline]
+ process_measurement+0x43c/0x1fb0 security/integrity/ima/ima_main.c:250
+ ima_file_check+0xf2/0x170 security/integrity/ima/ima_main.c:572
+ security_file_post_open+0x6d/0xa0 security/security.c:2982
+ do_open fs/namei.c:3652 [inline]
+ path_openat+0x28f6/0x3280 fs/namei.c:3807
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_openat fs/open.c:1436 [inline]
+ __se_sys_openat fs/open.c:1431 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f73b9175b99
+RSP: 002b:00007f73b9f6c048 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f73b9304228 RCX: 00007f73b9175b99
+RDX: 000000000006b142 RSI: 0000000020004400 RDI: ffffffffffffff9c
+RBP: 00007f73b91f677e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f73b9304228 R15: 00007fff0b9b3f38
+ </TASK>
+INFO: task syz.1.13:5251 blocked for more than 145 seconds.
+      Not tainted 6.10.0-rc5-syzkaller-00253-gde0a9f448633 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.13        state:D stack:19360 pid:5251  tgid:5197  ppid:5082   flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
+ inode_lock include/linux/fs.h:791 [inline]
+ process_measurement+0x43c/0x1fb0 security/integrity/ima/ima_main.c:250
+ ima_file_check+0xf2/0x170 security/integrity/ima/ima_main.c:572
+ security_file_post_open+0x6d/0xa0 security/security.c:2982
+ do_open fs/namei.c:3652 [inline]
+ path_openat+0x28f6/0x3280 fs/namei.c:3807
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_open fs/open.c:1428 [inline]
+ __se_sys_open fs/open.c:1424 [inline]
+ __x64_sys_open+0x225/0x270 fs/open.c:1424
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f73b9175b99
+RSP: 002b:00007f73b9f4b048 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f73b9304300 RCX: 00007f73b9175b99
+RDX: 0000000000000000 RSI: 0000000000141042 RDI: 0000000020000100
+RBP: 00007f73b91f677e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f73b9304300 R15: 00007fff0b9b3f38
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
+2 locks held by getty/4840:
+ #0: ffff88802adec0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900031432f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2211
+2 locks held by syz.1.13/5198:
+ #0: ffff888063c74420 (sb_writers#14){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2854 [inline]
+ #0: ffff888063c74420 (sb_writers#14){.+.+}-{0:0}, at: vfs_writev+0x2d9/0xbe0 fs/read_write.c:969
+ #1: ffff888061739788 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
+ #1: ffff888061739788 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: bch2_direct_write+0x243/0x3050 fs/bcachefs/fs-io-direct.c:598
+3 locks held by syz.1.13/5241:
+ #0: ffff88802bf6d4c8 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0x24e/0x310 fs/file.c:1191
+ #1: ffff888063c74420 (sb_writers#14){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2854 [inline]
+ #1: ffff888063c74420 (sb_writers#14){.+.+}-{0:0}, at: vfs_write+0x227/0xc90 fs/read_write.c:586
+ #2: ffff888061739788 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
+ #2: ffff888061739788 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: bch2_direct_write+0x243/0x3050 fs/bcachefs/fs-io-direct.c:598
+2 locks held by syz.1.13/5245:
+ #0: ffff888063c74420 (sb_writers#14){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2854 [inline]
+ #0: ffff888063c74420 (sb_writers#14){.+.+}-{0:0}, at: vfs_fallocate+0x4d3/0x6c0 fs/open.c:329
+ #1: ffff888061739788 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
+ #1: ffff888061739788 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: bch2_fallocate_dispatch+0x295/0x3810 fs/bcachefs/fs-io.c:774
+1 lock held by syz.1.13/5247:
+ #0: ffff888061739788 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
+ #0: ffff888061739788 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: process_measurement+0x43c/0x1fb0 security/integrity/ima/ima_main.c:250
+1 lock held by syz.1.13/5251:
+ #0: ffff888061739788 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
+ #0: ffff888061739788 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: process_measurement+0x43c/0x1fb0 security/integrity/ima/ima_main.c:250
+1 lock held by syz-executor/6973:
+ #0: ffffffff8e339338 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:323 [inline]
+ #0: ffffffff8e339338 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x451/0x830 kernel/rcu/tree_exp.h:939
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 30 Comm: khungtaskd Not tainted 6.10.0-rc5-syzkaller-00253-gde0a9f448633 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xfde/0x1020 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 5671 Comm: syz-executor Not tainted 6.10.0-rc5-syzkaller-00253-gde0a9f448633 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:check_preemption_disabled+0x19/0x120 lib/smp_processor_id.c:14
+Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 41 57 41 56 41 54 53 48 83 ec 10 65 48 8b 04 25 28 00 00 00 48 89 44 24 08 <65> 8b 1d 6c 90 86 74 65 8b 05 61 90 86 74 a9 ff ff ff 7f 74 26 65
+RSP: 0018:ffffc900049af328 EFLAGS: 00000286
+RAX: 210125f3d94ac900 RBX: 0000000000000001 RCX: ffffffff817266c4
+RDX: 0000000000000000 RSI: ffffffff8c1f1760 RDI: ffffffff8c1f1720
+RBP: ffffc900049af4d0 R08: ffffffff8fac242f R09: 1ffffffff1f58485
+R10: dffffc0000000000 R11: fffffbfff1f58486 R12: 1ffff92000935e78
+R13: dffffc0000000000 R14: 0000000000000000 R15: ffffc900049af820
+FS:  0000555570538500(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005628575020e0 CR3: 00000000591e0000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ rcu_dynticks_curr_cpu_in_eqs include/linux/context_tracking.h:122 [inline]
+ rcu_is_watching+0x15/0xb0 kernel/rcu/tree.c:724
+ trace_lock_acquire include/trace/events/lock.h:24 [inline]
+ lock_acquire+0xe3/0x550 kernel/locking/lockdep.c:5725
+ rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ percpu_ref_put_many include/linux/percpu-refcount.h:330 [inline]
+ percpu_ref_put+0x36/0x180 include/linux/percpu-refcount.h:351
+ __mem_cgroup_uncharge_folios+0xdf/0x1c0 mm/memcontrol.c:7737
+ mem_cgroup_uncharge_folios include/linux/memcontrol.h:721 [inline]
+ folios_put_refs+0x932/0xa60 mm/swap.c:1023
+ folio_batch_release include/linux/pagevec.h:101 [inline]
+ shmem_undo_range+0x6de/0x1df0 mm/shmem.c:1005
+ shmem_truncate_range mm/shmem.c:1114 [inline]
+ shmem_evict_inode+0x29b/0xa60 mm/shmem.c:1242
+ evict+0x2a8/0x630 fs/inode.c:667
+ __dentry_kill+0x20d/0x630 fs/dcache.c:603
+ dput+0x19f/0x2b0 fs/dcache.c:845
+ __fput+0x68c/0x8b0 fs/file_table.c:430
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x360 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f985a97579b
+Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+RSP: 002b:00007ffe27dfe6b0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 00007f985a97579b
+RDX: 0000000000000000 RSI: 0000000000004c01 RDI: 0000000000000003
+RBP: 00007ffe27dfe75c R08: 0000000000000000 R09: 00007ffe27dfe457
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000032
+R13: 0000000000038870 R14: 0000000000037a0b R15: 00007ffe27dfe7c0
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
