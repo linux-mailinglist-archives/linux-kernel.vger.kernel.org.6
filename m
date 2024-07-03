@@ -1,1261 +1,206 @@
-Return-Path: <linux-kernel+bounces-239545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691669261F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:37:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911859261F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71CD6B24E1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:36:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2262D1F23A07
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430D217A58A;
-	Wed,  3 Jul 2024 13:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4271817A58A;
+	Wed,  3 Jul 2024 13:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NH4ic1D2"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HsbIPUyl"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2053.outbound.protection.outlook.com [40.107.94.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D94417B4F8;
-	Wed,  3 Jul 2024 13:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720013754; cv=none; b=jbQFUtCIglUFftS4OFuN9FKOzxuOhHXUShjqaraxEf5wrYrryJhwQfNdGX0QFJzFVU4uRdMU85ZdqCyCabodzaRXt880d/S1vVa5bjbzm87E7y4hZBpZtYcBRN33EtvJHGwS9h90IeLyWlZrix2NFL1zqz0elF60FruxQ+7Z+bU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720013754; c=relaxed/simple;
-	bh=Jcc36SyEbju6WY7VB+fAnHCWc2eV8I08s5pNJQBm6bs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eQ9CicHA6DtVYpsW0pO0ohtXjcU+8TsrwDWF3seIdmfYEl/1OmaoNGpD7AFv1CaA+v5bOM6hH7EbJ+zE3h35gguo/n669rlWX3m1DXKoR7cUA5ZVF6XwppkD3S/nPeQSyBfzNXOI4twXVOKI0k17cUOP3IMm9YZhmIX8ojQroqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NH4ic1D2; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-36798779d75so97356f8f.3;
-        Wed, 03 Jul 2024 06:35:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720013750; x=1720618550; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZPUomRq1jDasCKQIrgG3QwfXuveFLXrMWXGr4ttuNko=;
-        b=NH4ic1D2r3vknAULM4vJKqd5MC3lf+JLbMtrswDaCGe3vY+SQgYGm54V0VYeRqsfzL
-         ig19ysMtvLQ2KdS2TfaEjf7GYNVIJP2pDN638TKu57iD/R5HU0xy12q9UqsvyDOrldJe
-         Cwp2JPKcDaNf99yzPV6x38c8oBytO/c/k6rFxtqHhgqJuMLcHoujysFWO9vphPdAGb7L
-         pbLsbvaCyv9cWLQPaUIZPHH/NY0xltY2ARgklFaqbW5tDy4/SatS352uqf1cNEefXjRo
-         O9pko6tGrB7Ed/hNWU2Vt66POzNpQHa08rOX0T2XNdFH01KB8tqEeCkKB4V3XKUbP6iw
-         SFMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720013750; x=1720618550;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZPUomRq1jDasCKQIrgG3QwfXuveFLXrMWXGr4ttuNko=;
-        b=Bjhiy1JfW0tegfaZ200BCb0ugpKz7uch/IJbSZBTnHYU0WvLH3oW6ndKSSyXY8HCKK
-         +odJiGp6NPo28+sSY6AjwZB3gJm/V0kLj4JNhUEycHvByHcWQSo9ddX+e5YZZjRHEOSV
-         YiipowL1kX1HGrAkA8+F2J6s+/q+ET2egd7fkEDSGu9WRVaDB5ASTLTRqSREXLBq9kSx
-         NhbV3IcE+5/OtgP2HMgheokff/y+JaOb4Gk9nRkt8U3KzjUbnnZyLxp4OL7LMrIAX0FF
-         KUN7Z+GKV2Xcii4XNxLfl9HqzWf6y7A3w6dy350CMby26sXjgi+RVmyv7InGejjYISvm
-         3B7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUVuzp1LZREu7HFopisRAf/UVNTm2qBFPbSdcTjGEfMS9/uIPaxCOMhUGZ1ZIpLlkEOgsI7WVJoAoggMkByy65y7iE/OliO+1eQXFGvEHpFCHvcI/lknZ0/W+hDVhL6UhLX0Z5C5xeUew==
-X-Gm-Message-State: AOJu0YwiewCeEcf6gizJLWyzs9oBT8v5SaVmoY2KRmwC4kmALb23HoJz
-	mVAtco6gefMpuYxlG9dLLEUmKd17pIs4lmNR4yCnBblY/OlsDjhMWC31p29W
-X-Google-Smtp-Source: AGHT+IEuyNgF6YJhBKxHlfwoo8k687dDLAAPLj7f8AtpUE3ES4CiPX4U2QzzgIfesRlDl5YF8GS56g==
-X-Received: by 2002:adf:e25c:0:b0:367:8e68:4472 with SMTP id ffacd0b85a97d-3678e6844e9mr2841916f8f.34.1720013749331;
-        Wed, 03 Jul 2024 06:35:49 -0700 (PDT)
-Received: from localhost (host-79-55-57-217.retail.telecomitalia.it. [79.55.57.217])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36796bae9ecsm908481f8f.38.2024.07.03.06.35.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 06:35:48 -0700 (PDT)
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Date: Wed, 03 Jul 2024 15:34:36 +0200
-Subject: [PATCH 2/2] iio: adc: add support for pac1921
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B23C1741DD
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720014025; cv=fail; b=jcUYuWpj76ypSbNM/Ius6vx/wUDOILghb1Q57kcolGE1KPgUN2Sof3BcbXY5LCwoYksfhWyVc1p2wS5SzrFP01jZ780UQ+jduSGDjXHP/Uepayg/02/wydFfYrCxYnt5jht5tNx0ZOVoDpjYIepdpbxVSBpYYJE6dB5jSQlfuvs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720014025; c=relaxed/simple;
+	bh=QxWzvIVtuyVWh1VQnH2GnTpDzQBmnr8i9d7ILSL9XJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FkrGLNjDHkq0JuIl9wIgizOsV35RuXmToLwIDKz3AlM+W4VgyFvsl8HAPyxfgxgqwtDYcLeMXjioADeg6mjE3EpY6HV/wHTWdI0QYcFui/Xpc/22CLOmnUDpLoyZ0a9aa4VQtFSyGQ/F7+T59fjigv+zKcshjPGBPplKOMydW04=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HsbIPUyl; arc=fail smtp.client-ip=40.107.94.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SgoOeH/595L2xjt8rCv64vs3ivgE3d24ZZXGWX36cIIxVx9ZfwzcZgNpl/4EsmN83wHDVG4+IuEhqkzALDvaRMxt019ZBYsTWg0ZeAgdbTqTPEz8OJFj7YNG0ueZM7DyT1dF/SjuUUsaWp4ASXzv1SjHPZA80Z8HFHRSXoZuJ0Dtc1NzIfF6Hhemg1z5g/xlYS1Ci5wfEE6BPsBuwXWfkCPM5iY3sQo3MyCPoNXMLbzw1aoBKIgAQigX93oZM+wns59jNxEbwCsdrM3RsQsknkHt8sBsKWyX5yQmnW3ojxugeamNphSGdC3L1PWXKa5o98p0MTmANKyqhnw9xONLzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XSI1329oCwQx6IcHF8T527BDaFNrXHbbJlWG0CbIMnQ=;
+ b=k0SM2W2vL5nm/Jr/8hPJ78/og6RAh/3rufFyqrPs6nPen3Q6Qc+4BVyv9Co4t+Eb7FSiWLUWqLDkkYdFNMfOegTbC4bov7yjsofBcyjqn/oLFKL+0Cfd7pmFmE3FHfE84HpDCSwcRMleF2TDuIPrNzsWWyp9EX4qM1A/9l1V5M396GPcYTgRAUwyhn9aBQZG9xWAPeAoo2sfpOQ9p809crq3PuEKBHDNma0GWsbVMikZbO/GYk7a1W4fWVL3aFanoSCyeJ2Kw+3MI3winRiB5vKQ0ejghz/pU0gUD4q82I70ZvQ3FWWAsY9iLw1nbUOVqmYRoVZxb7mAV5rbMalDGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmx.de smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XSI1329oCwQx6IcHF8T527BDaFNrXHbbJlWG0CbIMnQ=;
+ b=HsbIPUylmV3BBL9qRJGnFtWI/OqBtwkGXEsAmzYNoIQDMdWxuaZrbePbCAnZCbBbItHfbIfgS5LQZfObu2FRgKXT4zf8FwzmWf4IHiaDn///XErPkaTP0zUHcXD8F7d0mpZOgyMIamHbZwad+zSPz/FToqmrraAQnaW+JBXcf4s=
+Received: from BN8PR12CA0013.namprd12.prod.outlook.com (2603:10b6:408:60::26)
+ by CH0PR12MB8579.namprd12.prod.outlook.com (2603:10b6:610:182::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Wed, 3 Jul
+ 2024 13:40:17 +0000
+Received: from BN1PEPF0000468A.namprd05.prod.outlook.com
+ (2603:10b6:408:60:cafe::a6) by BN8PR12CA0013.outlook.office365.com
+ (2603:10b6:408:60::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25 via Frontend
+ Transport; Wed, 3 Jul 2024 13:40:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF0000468A.mail.protection.outlook.com (10.167.243.135) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7741.18 via Frontend Transport; Wed, 3 Jul 2024 13:40:17 +0000
+Received: from [10.136.18.229] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 3 Jul
+ 2024 08:40:12 -0500
+Message-ID: <8c4f0bf2-0e8e-b94e-070b-47dbd407b70d@amd.com>
+Date: Wed, 3 Jul 2024 19:10:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH 1/2] sched/fair: Record the average duration of a task
+Content-Language: en-US
+To: Mike Galbraith <efault@gmx.de>, Chen Yu <yu.c.chen@intel.com>
+CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, Tim Chen <tim.c.chen@intel.com>, Yujie Liu
+	<yujie.liu@intel.com>, K Prateek Nayak <kprateek.nayak@amd.com>, "Gautham R .
+ Shenoy" <gautham.shenoy@amd.com>, Chen Yu <yu.chen.surf@gmail.com>,
+	<linux-kernel@vger.kernel.org>
+References: <cover.1719295669.git.yu.c.chen@intel.com>
+ <338ec61022d4b5242e4af6d156beac53f20eacf2.1719295669.git.yu.c.chen@intel.com>
+ <d922f7bf3965f4eaef5028177b886e2e1861742d.camel@gmx.de>
+ <ZoFY/n2S7rMp6ypn@chenyu5-mobl2>
+ <db81ba7fba622e2a1b7186e66471cfb9ad8490fd.camel@gmx.de>
+ <ZoLDxQlTR7fxoXWs@chenyu5-mobl2>
+ <683663e3-cef0-bb45-e1c7-5bf1cf44209c@amd.com>
+ <4e28fd17d7a2f7146aae10a76982f0e58b22befb.camel@gmx.de>
+From: Raghavendra K T <raghavendra.kt@amd.com>
+In-Reply-To: <4e28fd17d7a2f7146aae10a76982f0e58b22befb.camel@gmx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240703-iio-pac1921-v1-2-54c47d9180b6@gmail.com>
-References: <20240703-iio-pac1921-v1-0-54c47d9180b6@gmail.com>
-In-Reply-To: <20240703-iio-pac1921-v1-0-54c47d9180b6@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Matteo Martelli <matteomartelli3@gmail.com>
-X-Mailer: b4 0.13.0
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF0000468A:EE_|CH0PR12MB8579:EE_
+X-MS-Office365-Filtering-Correlation-Id: ab3ea10e-c719-44c3-8b9e-08dc9b65acc5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VkxEb2J1dkh1eEZ3azB3SHFTSitTVmpQQ09YaUZQbmZkSWFSb1lOVXN6cllu?=
+ =?utf-8?B?RjdWNmJPY3ZQNWM3aktIV2dqZmFhRmNMNXNtL1MwekJ2ckptTTdVS3RLMTVB?=
+ =?utf-8?B?L2NpdVVjdytzL2NMZXdiVVJIcVBOT0Z4U1BMcStjWHRldWNOeThFWnhNcUtV?=
+ =?utf-8?B?R0Rlb1RFS2xHK1NrWk05eWVySE00QmZrRG1kd0tEajNiZ0xRc0VDWTBZWGZJ?=
+ =?utf-8?B?NzVwamg5UExQK3dXcjBESzM2QVVYemVhNjlJOWNpTnpLcWxpNVJUdkQySGY3?=
+ =?utf-8?B?d0MvUHRaaVdxdlJjaVlPZ2NoWkRSbWc3aXp5UGdFNHIrZ3V5NVE5em12UzI0?=
+ =?utf-8?B?ZVg1bFZlU2hlZitJc05PYjN2R3RQZGtyU1p4aHFvYVhsTmdLeDF2M05wcU4v?=
+ =?utf-8?B?MXNFVTZhamNxOWlyNlNkL3lQMHdxU2lBaHM1RWI0bGVNa2V5WmxwZUdCdUlS?=
+ =?utf-8?B?RkNTRVFYYVhmUG12Szh5OWNXRzFUSGY2U0tDNm5XaTZYZ0U3aXVPVU1YeXJT?=
+ =?utf-8?B?ZVNxRGNuUUdCUWVJT2hwLzJyU090c1FUSWlMcmNFNkU0c3NDY1AxYnpLMlBk?=
+ =?utf-8?B?SEd3TEp5bDBzbi94RUxTTDY3YldwRmVDMGFXeTBtQ2tReTBFeDdJV0xaL04y?=
+ =?utf-8?B?ZnNLb3ZZeDVzb0s0dkxacDArWUhxWlJBSTBQVE53eVQwM1JLdGdGb2pjMzc1?=
+ =?utf-8?B?TzRuQ0dlM2dJWC9VaUI3QU9tQS84bCtOU25KWmNqQk1oSDdWbXB4anMyOVB4?=
+ =?utf-8?B?OVZZYnBxS1F5ZVRMbHJ5cTVpdFFXWnE1c09ieUZ0NEo5QS9EVzBrM2V1cnFZ?=
+ =?utf-8?B?WGtOY2xienZJZTdMZU84M2Y2R2I3SmV2cHdMbzRVazVaaTZhQ2F6VjBOR1RG?=
+ =?utf-8?B?dlgxUnp1eWZuM0d1WVBNdVBuazJGNWxLZ05obm83KzUxOC9aM1RqTGs1UEox?=
+ =?utf-8?B?MVFobDgwZklwbzZQS2g3bXNKSlZPMlNUc3g5aVVIaC96dWNwOCtLMnFKRUo5?=
+ =?utf-8?B?YWhlQWxZRk1vQlRNVnJpdDM0S1VaNmxmV0g0aFBGYW1nZnBqNFlZci9NNFF2?=
+ =?utf-8?B?Q3BNd01TaWJVQlNtd1lJNnAvWFVBVUhXYTNMaHFVVlY2WlJoWnJGUzRxSDlp?=
+ =?utf-8?B?WlZycnJNZVhoVnNBR0RiWEhPTEhWM2xPa3RtWjB2WnZXSXFxSXpycEVjSkd5?=
+ =?utf-8?B?L3hxcGFmSEthbzVWd0ZCb3A5d1FWVi81c0dob1gzUlJubHNYTlVQWHhnZG1N?=
+ =?utf-8?B?S1pLR01CWEVTUUVEenJidGJtT0pGTmdobUcyUFcrb0h3aVJCNUtpU2hVdmZX?=
+ =?utf-8?B?K0lLTktLZnkzbm51eFFLdkhPeUprZ0hHV3pBWHltdVlUdldDNEY1SG1HUWs1?=
+ =?utf-8?B?c0tDWTVscSsvamp0eVdOdTVmdzlSa0VSU25wWVZVVkkvTW90VUhDMTg1SkFI?=
+ =?utf-8?B?c2o1Um1CZXFjZ2x0cThOdFBIODhNUGFCODNiQjA1TVQzNHI5by9mWWwySkZy?=
+ =?utf-8?B?S0Y2Z0QyQ3JNajlGVS81UlNFa1lSOWxaVU9mS1pWa1RERVV6ZlY5TWpCUHdI?=
+ =?utf-8?B?ZWVCVXNpam5MamowdFUxR2VTTWkvMlFkcEswVkxJU2tJVFk2TndORkU5ZXhi?=
+ =?utf-8?B?cHcrNmtMSWt6NWV6RW5iUHpxWi9XOU14NnRITEVVV1dCbFNqUnB5MnMyVGdn?=
+ =?utf-8?B?T1loVVlHdG5OOUhOUkRrWjVLSTN0VUp0WlkwL1lqeDM4T3BRbUN5dnNTSHBW?=
+ =?utf-8?B?eGlLQW9vT1JBbjhxV2VqYmlkaXBRalNhdXJ4bzhWY0tYVzU4N05xZTRXN3Nv?=
+ =?utf-8?B?TVJDYXRsZnVIRndiRW96NmgxS2dwL3JyOGpCb21QVmNSaFJYZEhSN3Z1SGl2?=
+ =?utf-8?B?UDhqRm1oWDZodWxLR1Bocm5TNjhEVENRWHRVQ1FOTi9QQjRGT0hkNlZiVGJO?=
+ =?utf-8?Q?x/u1S4llJTh/AD14jMZpoefZWqISIWFK?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 13:40:17.1772
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab3ea10e-c719-44c3-8b9e-08dc9b65acc5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF0000468A.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8579
 
-Add support for Microchip PAC1921 Power/Current monitor.
 
-Implemented features:
-* capture of bus voltage, sense voltage, current and power measurements
-  in free-run integration mode
-* support for both raw and triggered buffer reading
-* support for overflow events
-* userspace controls for voltage and current gains, measurement
-  resolution, integration samples and filters enabling/disabling
-* simple power management support
 
-Limitations:
-* operation mode fixed to free-run integration
-* measurement resolution and filters controls are applied to both VSENSE
-  and VBUS measurements
+On 7/3/2024 5:27 PM, Mike Galbraith wrote:
+> On Wed, 2024-07-03 at 14:04 +0530, Raghavendra K T wrote:
+>>
+>>
+>> On 7/1/2024 8:27 PM, Chen Yu wrote:
+>>>
+>>> A thought occurred to me that one possible method to determine if the waker
+>>> and wakee share data could be to leverage the NUMA balance's numa_group data structure.
+>>> As numa balance periodically scans the task's VMA space and groups tasks accessing
+>>> the same physical page into one numa_group, we can infer that if the waker and wakee
+>>> are within the same numa_group, they are likely to share data, and it might be
+>>> appropriate to place the wakee on top of the waker.
+>>>
+>>> CC Raghavendra here in case he has any insights.
+>>>
+>>
+>> Agree with your thought here,
+>>
+>> So I imagine two possible things to explore here.
+>>
+>> 1) Use task1, task2 numa_group and check if they belong to same
+>> numa_group, also check if there is a possibility of M:N relationship
+>> by checking if t1/t2->numa_group->nr_tasks > 1 etc
+>>
+>> 2) Given a VMA we can use vma_numab_state pids_active[] if task1, task2
+>> (threads) possibly interested in same VMA.
+>> Latter one looks to be practically difficult because we don't want to
+>> sweep across VMAs perhaps..
+> 
+> Oooh dear.. as soon as you mention threads, the question of who's
+> wheelhouse is this in springs to mind, ie should the kernel be
+> overriding userspace by targeting bits of threaded programs for forced
+> serialization?
+> 
 
-Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
----
- .../ABI/testing/sysfs-bus-iio-adc-pac1921          |   45 +
- MAINTAINERS                                        |    7 +
- drivers/iio/adc/Kconfig                            |   10 +
- drivers/iio/adc/Makefile                           |    1 +
- drivers/iio/adc/pac1921.c                          | 1033 ++++++++++++++++++++
- 5 files changed, 1096 insertions(+)
+Yes.. There is no ROI on this option (mentioned only for completeness).
+also we are not looking beyond process. Rather than "Practically
+  difficult" I should have rephrased as Practically not an option.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1921 b/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1921
-new file mode 100644
-index 000000000000..4a32e2d4207b
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1921
-@@ -0,0 +1,45 @@
-+What:		/sys/bus/iio/devices/iio:deviceX/resolution_bits
-+KernelVersion:	6.10
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		ADC measurement resolution. Can be either 11 bits or 14 bits
-+		(default). The driver sets the same resolution for both VBUS and
-+		VSENSE measurements even if the hardware could be configured to
-+		measure VBUS and VSENSE with different resolutions.
-+		This attribute affects the integration time: with 14 bits
-+		resolution the integration time is increased by a factor of
-+		1.9 (the driver considers a factor of 2). See Table 4-5 in
-+		device datasheet for details.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/resolution_bits_available
-+KernelVersion:	6.10
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		List all possible ADC measurement resolutions: "11 14"
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/integration_samples
-+KernelVersion:	6.10
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Number of samples taken during a full integration period. Can be
-+		set to any power of 2 value from 1 (default) to 2048.
-+		This attribute affects the integration time: higher the number
-+		of samples, longer the integration time. See Table 4-5 in device
-+		datasheet for details.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/integration_samples_available
-+KernelVersion:	6.10
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		List all possible numbers of integration samples:
-+		"1 2 4 8 16 32 64 128 256 512 1024 2048"
-+
-+What:		/sys/bus/iio/devices/iio:devices/filters_en
-+KernelVersion:	6.10
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Attribute to enable/disable ADC post filters. Enabled by
-+		default.
-+		This attribute affects the integration time: with filters
-+		enabled the integration time is increased by 50%. See Table 4-5
-+		in device datasheet for details.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0cbeb03847f5..a737dc00e29c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14793,6 +14793,13 @@ F:	Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
- F:	drivers/nvmem/microchip-otpc.c
- F:	include/dt-bindings/nvmem/microchip,sama7g5-otpc.h
- 
-+MICROCHIP PAC1921 POWER/CURRENT MONITOR DRIVER
-+M:	Matteo Martelli <matteomartelli3@gmail.com>
-+L:	linux-iio@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/iio/adc/microchip,pac1921.yaml
-+F:	drivers/iio/adc/pac1921.c
-+
- MICROCHIP PAC1934 POWER/ENERGY MONITOR DRIVER
- M:	Marius Cristea <marius.cristea@microchip.com>
- L:	linux-iio@vger.kernel.org
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index f60fe85a30d5..b56e494da970 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -991,6 +991,16 @@ config NPCM_ADC
- 	  This driver can also be built as a module. If so, the module
- 	  will be called npcm_adc.
- 
-+config PAC1921
-+	tristate "Microchip Technology PAC1921 driver"
-+	depends on I2C
-+	help
-+	  Say yes here to build support for Microchip Technology's PAC1921
-+	  High-Side Power/Current Monitor with Analog Output.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called pac1921.
-+
- config PAC1934
- 	tristate "Microchip Technology PAC1934 driver"
- 	depends on I2C
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index d370e066544e..5af30eeff262 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -90,6 +90,7 @@ obj-$(CONFIG_MP2629_ADC) += mp2629_adc.o
- obj-$(CONFIG_MXS_LRADC_ADC) += mxs-lradc-adc.o
- obj-$(CONFIG_NAU7802) += nau7802.o
- obj-$(CONFIG_NPCM_ADC) += npcm_adc.o
-+obj-$(CONFIG_PAC1921) += pac1921.o
- obj-$(CONFIG_PAC1934) += pac1934.o
- obj-$(CONFIG_PALMAS_GPADC) += palmas_gpadc.o
- obj-$(CONFIG_QCOM_PM8XXX_XOADC) += qcom-pm8xxx-xoadc.o
-diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
-new file mode 100644
-index 000000000000..2d11dcfe0e03
---- /dev/null
-+++ b/drivers/iio/adc/pac1921.c
-@@ -0,0 +1,1033 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * IIO driver for PAC1921 High-Side Power/Current Monitor
-+ *
-+ * Copyright (C) 2024 Matteo Martelli <matteomartelli3@gmail.com>
-+ */
-+
-+#include <linux/i2c.h>
-+#include <linux/iio/events.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/trigger_consumer.h>
-+#include <linux/iio/triggered_buffer.h>
-+#include <linux/regmap.h>
-+
-+/* pac1921 registers */
-+#define PAC1921_REG_GAIN_CFG		0x00
-+#define PAC1921_REG_INT_CFG		0x01
-+#define PAC1921_REG_CONTROL		0x02
-+#define PAC1921_REG_VBUS		0x10
-+#define PAC1921_REG_VSENSE		0x12
-+#define PAC1921_REG_OVERFLOW_STS	0x1C
-+#define PAC1921_REG_VPOWER		0x1D
-+
-+/* pac1921 gain configuration bits */
-+#define PAC1921_GAIN_I_RES		BIT(7)
-+#define PAC1921_GAIN_V_RES		BIT(6)
-+#define PAC1921_GAIN_DI_GAIN_SHIFT	3
-+#define PAC1921_GAIN_DI_GAIN_MASK	GENMASK(5, PAC1921_GAIN_DI_GAIN_SHIFT)
-+#define PAC1921_GAIN_DI_GAIN_MAX	7
-+#define PAC1921_GAIN_DV_GAIN_SHIFT	0
-+#define PAC1921_GAIN_DV_GAIN_MASK	GENMASK(2, PAC1921_GAIN_DV_GAIN_SHIFT)
-+#define PAC1921_GAIN_DV_GAIN_MAX	5
-+
-+/* pac1921 integration configuration bits */
-+#define PAC1921_INT_CFG_SMPL_SHIFT	4
-+#define PAC1921_INT_CFG_SMPL_MASK	GENMASK(7, PAC1921_INT_CFG_SMPL_SHIFT)
-+#define PAC1921_INT_CFG_SMPL_MAX	11
-+#define PAC1921_INT_CFG_VSFEN		BIT(3)
-+#define PAC1921_INT_CFG_VBFEN		BIT(2)
-+#define PAC1921_INT_CFG_RIOV		BIT(1)
-+#define PAC1921_INT_CFG_INTEN		BIT(0)
-+
-+/* pac1921 control bits */
-+#define PAC1921_CONTROL_MXSL_SHIFT	6
-+enum pac1921_mxsl {
-+	PAC1921_MXSL_VPOWER_PIN = 0,
-+	PAC1921_MXSL_VSENSE_FREE_RUN = 1,
-+	PAC1921_MXSL_VBUS_FREE_RUN = 2,
-+	PAC1921_MXSL_VPOWER_FREE_RUN = 3,
-+};
-+#define PAC1921_CONTROL_SLEEP		BIT(2)
-+
-+/* pac1921 overflow status bits */
-+#define PAC1921_OVERFLOW_VSOV		BIT(2)
-+#define PAC1921_OVERFLOW_VBOV		BIT(1)
-+#define PAC1921_OVERFLOW_VPOV		BIT(0)
-+
-+/* pac1921 constants */
-+#define PAC1921_MAX_VSENSE_MV		100
-+#define PAC1921_MAX_VBUS_V		32
-+#define PAC1921_RES_RESOLUTION		1023 /* Result registers resolution */
-+
-+/* pac1921 defaults */
-+#define PAC1921_DEFAULT_DV_GAIN		0 /* 2^(value): 1x gain */
-+#define PAC1921_DEFAULT_DI_GAIN		0 /* 2^(value): 1x gain */
-+#define PAC1921_DEFAULT_HIGH_RES	true /* 14-bit measurement resolution */
-+#define PAC1921_DEFAULT_NUM_SAMPLES	0 /* 2^(value): 1 sample */
-+#define PAC1921_DEFAULT_FILTERS_ENABLED true
-+
-+/* pac1921 tables to create iio available parameters */
-+static const unsigned int pac1921_di_gains[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
-+static const unsigned int pac1921_dv_gains[] = { 1, 2, 4, 8, 16, 32 };
-+enum pac1921_meas_resolution_idx {
-+	PAC1921_MEAS_RESOLUTION_IDX_LOW = 0,
-+	PAC1921_MEAS_RESOLUTION_IDX_HIGH,
-+};
-+static const char *const pac1921_meas_resolutions[] = { "11", "14" };
-+static const char *const pac1921_integr_num_samples[] = {
-+	"1",  "2",   "4",   "8",   "16",   "32",
-+	"64", "128", "256", "512", "1024", "2048"
-+};
-+
-+/* pac1921 regmap configuration */
-+static const struct regmap_range pac1921_regmap_wr_ranges[] = {
-+	regmap_reg_range(PAC1921_REG_GAIN_CFG, PAC1921_REG_CONTROL),
-+};
-+static const struct regmap_access_table pac1921_regmap_wr_table = {
-+	.yes_ranges = pac1921_regmap_wr_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(pac1921_regmap_wr_ranges),
-+};
-+static const struct regmap_range pac1921_regmap_rd_ranges[] = {
-+	regmap_reg_range(PAC1921_REG_GAIN_CFG, PAC1921_REG_CONTROL),
-+	regmap_reg_range(PAC1921_REG_VBUS, PAC1921_REG_VPOWER + 1),
-+};
-+static const struct regmap_access_table pac1921_regmap_rd_table = {
-+	.yes_ranges = pac1921_regmap_rd_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(pac1921_regmap_rd_ranges),
-+};
-+static const struct regmap_config pac1921_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.rd_table = &pac1921_regmap_rd_table,
-+	.wr_table = &pac1921_regmap_wr_table,
-+};
-+
-+enum pac1921_channels {
-+	PAC1921_CHAN_VBUS = 0,
-+	PAC1921_CHAN_VSENSE = 1,
-+	PAC1921_CHAN_CURRENT = 2,
-+	PAC1921_CHAN_POWER = 3,
-+};
-+#define PAC1921_NUM_MEAS_CHANS 4
-+
-+struct pac1921_priv {
-+	struct i2c_client *client;
-+	struct regmap *regmap;
-+	struct iio_info iio_info;
-+
-+	/* Synchronize access to private members, and ensure atomicity of
-+	 * consecutive regmap operations.
-+	 */
-+	struct mutex lock;
-+
-+	u32 rshunt; /* uOhm */
-+	bool high_res;
-+	u8 dv_gain;
-+	u8 di_gain;
-+	u8 n_samples;
-+	bool filters_en;
-+	u8 prev_ovf_flags;
-+
-+	bool first_integr_started;
-+	bool first_integr_done;
-+	unsigned long integr_start_time; /* jiffies */
-+	unsigned int integr_period; /* usecs */
-+
-+	struct {
-+		u16 chan[PAC1921_NUM_MEAS_CHANS];
-+		s64 timestamp __aligned(8);
-+	} scan;
-+};
-+
-+/* The integration period depends on the configuration of number of integration
-+ * samples, measurement resolution and post filters. The following array
-+ * contains integration periods, in microsecs unit, based on table 4-5 from
-+ * datasheet considering power integration mode, 11-Bit resolution and post
-+ * filters off. Each index corresponds to a specific number of samples from 1
-+ * to 2048.
-+ */
-+static const unsigned int pac1921_integr_periods_us[] = {
-+	930,   1460,  2410,   4320,   8050,   16100,
-+	32100, 64200, 128300, 257000, 513000, 1026000
-+};
-+
-+/* Calculate and update the integration period
-+ *
-+ * The base integration period is retrieved from pac1921_integr_periods_us
-+ * array, then doubled if 14-Bit resolution is used (even if the actual
-+ * increase factor is about 1.9) and increased by 50% if post filters are
-+ * enabled.
-+ *
-+ * Must be called with lock held.
-+ */
-+static int pac1921_update_integr_period(struct pac1921_priv *priv)
-+{
-+	if (WARN_ON_ONCE(priv->n_samples >=
-+			 ARRAY_SIZE(pac1921_integr_periods_us)))
-+		return -EINVAL;
-+
-+	priv->integr_period = pac1921_integr_periods_us[priv->n_samples];
-+	if (priv->high_res)
-+		priv->integr_period *= 2;
-+	if (priv->filters_en)
-+		priv->integr_period += priv->integr_period / 2;
-+
-+	return 0;
-+}
-+
-+/* Check if first integration after configuration update has completed.
-+ *
-+ * Must be called with lock held.
-+ */
-+static bool pac1921_data_ready(struct pac1921_priv *priv)
-+{
-+	if (!priv->first_integr_started)
-+		return false;
-+
-+	if (!priv->first_integr_done) {
-+		unsigned long t_ready = priv->integr_start_time +
-+					usecs_to_jiffies(priv->integr_period);
-+		if (time_before(jiffies, t_ready))
-+			/* First integration not completed: data not ready */
-+			return false;
-+
-+		priv->first_integr_done = true;
-+	}
-+
-+	return true;
-+}
-+
-+/* Check if overflow occurred and if so, push the corresponding events.
-+ *
-+ * Must be called with lock held.
-+ */
-+static int pac1921_check_push_overflow(struct iio_dev *indio_dev, s64 timestamp)
-+{
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+	unsigned int flags;
-+
-+	int ret = regmap_read(priv->regmap, PAC1921_REG_OVERFLOW_STS, &flags);
-+	if (ret)
-+		return ret;
-+
-+	if (flags & PAC1921_OVERFLOW_VBOV &&
-+	    !(priv->prev_ovf_flags & PAC1921_OVERFLOW_VBOV)) {
-+		iio_push_event(indio_dev,
-+			       IIO_UNMOD_EVENT_CODE(
-+				       IIO_VOLTAGE, PAC1921_CHAN_VBUS,
-+				       IIO_EV_TYPE_THRESH, IIO_EV_DIR_RISING),
-+			       timestamp);
-+	}
-+	if (flags & PAC1921_OVERFLOW_VSOV &&
-+	    !(priv->prev_ovf_flags & PAC1921_OVERFLOW_VSOV)) {
-+		iio_push_event(indio_dev,
-+			       IIO_UNMOD_EVENT_CODE(
-+				       IIO_VOLTAGE, PAC1921_CHAN_VSENSE,
-+				       IIO_EV_TYPE_THRESH, IIO_EV_DIR_RISING),
-+			       timestamp);
-+		iio_push_event(indio_dev,
-+			       IIO_UNMOD_EVENT_CODE(
-+				       IIO_CURRENT, PAC1921_CHAN_CURRENT,
-+				       IIO_EV_TYPE_THRESH, IIO_EV_DIR_RISING),
-+			       timestamp);
-+	}
-+	if (flags & PAC1921_OVERFLOW_VPOV &&
-+	    !(priv->prev_ovf_flags & PAC1921_OVERFLOW_VPOV)) {
-+		iio_push_event(indio_dev,
-+			       IIO_UNMOD_EVENT_CODE(
-+				       IIO_POWER, PAC1921_CHAN_POWER,
-+				       IIO_EV_TYPE_THRESH, IIO_EV_DIR_RISING),
-+			       timestamp);
-+	}
-+
-+	priv->prev_ovf_flags = (u8)flags;
-+
-+	return 0;
-+}
-+
-+/* Read the value from a result register
-+ *
-+ * Result registers contain the most recent averaged values of Vbus, Vsense and
-+ * Vpower. Each value is 10 bits wide and spread across two consecutive 8 bit
-+ * registers, with 6 bit LSB zero padding.
-+ */
-+static int pac1921_read_res(struct pac1921_priv *priv, unsigned long reg,
-+			    int *val)
-+{
-+	u8 val_buf[2];
-+
-+	int ret = regmap_bulk_read(priv->regmap, (unsigned int)reg, &val_buf,
-+				   sizeof(val_buf));
-+	if (ret)
-+		return ret;
-+
-+	*val = (val_buf[0] << 8 | val_buf[1]) >> 6;
-+
-+	return 0;
-+}
-+
-+/* Get the Vsense LSB in nV
-+ *
-+ * Used to calculate scale factors for current and power measurements
-+ */
-+static inline int pac1921_vsense_lsb(u8 di_gain)
-+{
-+	int max = (PAC1921_MAX_VSENSE_MV * 1000000) >> (int)di_gain;
-+
-+	return DIV_ROUND_CLOSEST(max, PAC1921_RES_RESOLUTION);
-+}
-+
-+static int pac1921_read_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *chan, int *val,
-+			    int *val2, long mask)
-+{
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW: {
-+		guard(mutex)(&priv->lock);
-+
-+		if (!pac1921_data_ready(priv))
-+			return -EBUSY;
-+
-+		s64 ts = iio_get_time_ns(indio_dev);
-+
-+		int ret = pac1921_check_push_overflow(indio_dev, ts);
-+		if (ret)
-+			return ret;
-+
-+		ret = pac1921_read_res(priv, chan->address, val);
-+		if (ret)
-+			return ret;
-+
-+		return IIO_VAL_INT;
-+	}
-+	case IIO_CHAN_INFO_SCALE:
-+		switch (chan->channel) {
-+		case PAC1921_CHAN_VBUS: {
-+			/* Vbus scale factor in mV:
-+			 * max_vbus (mV) / vgain / resolution
-+			 */
-+			guard(mutex)(&priv->lock);
-+
-+			*val = PAC1921_MAX_VBUS_V * 1000;
-+			*val2 = PAC1921_RES_RESOLUTION << (int)priv->dv_gain;
-+
-+			return IIO_VAL_FRACTIONAL;
-+		}
-+		case PAC1921_CHAN_VSENSE: {
-+			/* Vsense voltage scale factor in mV:
-+			 * max_vsense (mV) / igain / resolution
-+			 */
-+			guard(mutex)(&priv->lock);
-+
-+			*val = PAC1921_MAX_VSENSE_MV;
-+			*val2 = PAC1921_RES_RESOLUTION << (int)priv->di_gain;
-+
-+			return IIO_VAL_FRACTIONAL;
-+		}
-+		case PAC1921_CHAN_CURRENT: {
-+			/* Current scale factor in mA:
-+			 * Vsense LSB (nV) / shunt (uOhm)
-+			 */
-+			guard(mutex)(&priv->lock);
-+
-+			*val = pac1921_vsense_lsb(priv->di_gain);
-+			*val2 = (int)priv->rshunt;
-+
-+			return IIO_VAL_FRACTIONAL;
-+		}
-+		case PAC1921_CHAN_POWER: {
-+			/* Power scale factor in mW:
-+			 * Vsense LSB (nV) * max_vbus (V) / vgain / shunt (uOhm)
-+			 */
-+			guard(mutex)(&priv->lock);
-+
-+			*val = pac1921_vsense_lsb(priv->di_gain) *
-+			       (PAC1921_MAX_VBUS_V >> (int)priv->dv_gain);
-+			*val2 = (int)priv->rshunt;
-+
-+			return IIO_VAL_FRACTIONAL;
-+		}
-+		default:
-+			return -EINVAL;
-+		}
-+		break;
-+
-+	case IIO_CHAN_INFO_HARDWAREGAIN:
-+		switch (chan->channel) {
-+		case PAC1921_CHAN_VBUS: {
-+			guard(mutex)(&priv->lock);
-+			*val = 1 << (int)priv->dv_gain;
-+			return IIO_VAL_INT;
-+		}
-+		case PAC1921_CHAN_VSENSE:
-+		case PAC1921_CHAN_CURRENT: {
-+			guard(mutex)(&priv->lock);
-+			*val = 1 << (int)priv->di_gain;
-+			return IIO_VAL_INT;
-+		}
-+		default:
-+			return -EINVAL;
-+		}
-+
-+	case IIO_CHAN_INFO_INT_TIME: {
-+		/* Integration time is read only: it depends on the number of
-+		 * integration samples, measurement resolution and post filters
-+		 */
-+		*val2 = 1000000; /* From usecs to fractional secs */
-+		guard(mutex)(&priv->lock);
-+		*val = (int)priv->integr_period;
-+		return IIO_VAL_FRACTIONAL;
-+	}
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+/* Perform configuration update sequence: set the device into read state, then
-+ * write the config register and set the device back into integration state.
-+ * Also reset integration start time and mark first integration to be yet
-+ * completed.
-+ *
-+ * Must be called with lock held.
-+ */
-+static int pac1921_update_cfg_reg(struct pac1921_priv *priv, unsigned int reg,
-+				  unsigned int mask, unsigned int val)
-+{
-+	/* Enter READ state before configuration */
-+	int ret = regmap_update_bits(priv->regmap, PAC1921_REG_INT_CFG,
-+				     PAC1921_INT_CFG_INTEN, 0);
-+	if (ret)
-+		return ret;
-+
-+	/* Update configuration value */
-+	ret = regmap_update_bits(priv->regmap, reg, mask, val);
-+	if (ret)
-+		return ret;
-+
-+	/* Re-enable integration and reset start time */
-+	ret = regmap_update_bits(priv->regmap, PAC1921_REG_INT_CFG,
-+				 PAC1921_INT_CFG_INTEN, PAC1921_INT_CFG_INTEN);
-+	if (ret)
-+		return ret;
-+
-+	priv->integr_start_time = jiffies;
-+	priv->first_integr_done = false;
-+
-+	return 0;
-+}
-+
-+static inline bool pac1921_gain_param_valid(unsigned int gain, unsigned int max)
-+{
-+	return (gain > 0 && gain <= (1U << max) && is_power_of_2(gain));
-+}
-+
-+static int pac1921_update_gain(struct pac1921_priv *priv,
-+			       struct iio_chan_spec const *chan, int val)
-+{
-+	unsigned int max;
-+	unsigned int mask;
-+	unsigned int shift;
-+	u8 *priv_val;
-+
-+	switch (chan->channel) {
-+	case PAC1921_CHAN_VBUS:
-+		max = PAC1921_GAIN_DV_GAIN_MAX;
-+		mask = PAC1921_GAIN_DV_GAIN_MASK;
-+		shift = PAC1921_GAIN_DV_GAIN_SHIFT;
-+		priv_val = &priv->dv_gain;
-+		break;
-+	case PAC1921_CHAN_VSENSE:
-+	case PAC1921_CHAN_CURRENT:
-+		max = PAC1921_GAIN_DI_GAIN_MAX;
-+		mask = PAC1921_GAIN_DI_GAIN_MASK;
-+		shift = PAC1921_GAIN_DI_GAIN_SHIFT;
-+		priv_val = &priv->di_gain;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	unsigned int gain_param = (unsigned int)val;
-+
-+	if (!pac1921_gain_param_valid(gain_param, max))
-+		return -EINVAL;
-+
-+	u8 gain = (u8)ilog2(gain_param);
-+
-+	guard(mutex)(&priv->lock);
-+
-+	if (*priv_val == gain)
-+		return 0;
-+
-+	int ret = pac1921_update_cfg_reg(priv, PAC1921_REG_GAIN_CFG, mask,
-+					 gain << shift);
-+	if (ret)
-+		return ret;
-+
-+	*priv_val = gain;
-+
-+	return 0;
-+}
-+
-+static int pac1921_write_raw(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan, int val,
-+			     int val2, long mask)
-+{
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_HARDWAREGAIN:
-+		return pac1921_update_gain(priv, chan, val);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int pac1921_read_avail(struct iio_dev *indio_dev,
-+			      struct iio_chan_spec const *chan,
-+			      const int **vals, int *type, int *length,
-+			      long mask)
-+{
-+	switch (mask) {
-+	case IIO_CHAN_INFO_HARDWAREGAIN:
-+		switch (chan->channel) {
-+		case PAC1921_CHAN_VBUS:
-+			*length = ARRAY_SIZE(pac1921_dv_gains);
-+			*vals = pac1921_dv_gains;
-+			*type = IIO_VAL_INT;
-+			return IIO_AVAIL_LIST;
-+
-+		case PAC1921_CHAN_VSENSE:
-+		case PAC1921_CHAN_CURRENT:
-+			*length = ARRAY_SIZE(pac1921_di_gains);
-+			*vals = pac1921_di_gains;
-+			*type = IIO_VAL_INT;
-+			return IIO_AVAIL_LIST;
-+		default:
-+			return -EINVAL;
-+		}
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int pac1921_read_label(struct iio_dev *indio_dev,
-+			      struct iio_chan_spec const *chan, char *label)
-+{
-+	switch (chan->channel) {
-+	case PAC1921_CHAN_VBUS:
-+		return sprintf(label, "vbus\n");
-+	case PAC1921_CHAN_VSENSE:
-+		return sprintf(label, "vsense\n");
-+	case PAC1921_CHAN_CURRENT:
-+		return sprintf(label, "current\n");
-+	case PAC1921_CHAN_POWER:
-+		return sprintf(label, "power\n");
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct iio_info pac1921_iio = {
-+	.read_raw = pac1921_read_raw,
-+	.write_raw = pac1921_write_raw,
-+	.read_avail = pac1921_read_avail,
-+	.read_label = pac1921_read_label,
-+};
-+
-+static int pac1921_get_resolution(struct iio_dev *indio_dev,
-+				  const struct iio_chan_spec *chan)
-+{
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+
-+	guard(mutex)(&priv->lock);
-+
-+	if (priv->high_res)
-+		return PAC1921_MEAS_RESOLUTION_IDX_HIGH;
-+
-+	return PAC1921_MEAS_RESOLUTION_IDX_LOW;
-+}
-+
-+static int pac1921_set_resolution(struct iio_dev *indio_dev,
-+				  const struct iio_chan_spec *chan,
-+				  unsigned int val)
-+{
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+	bool high_res;
-+
-+	switch (val) {
-+	case PAC1921_MEAS_RESOLUTION_IDX_LOW:
-+		high_res = false;
-+		break;
-+	case PAC1921_MEAS_RESOLUTION_IDX_HIGH:
-+		high_res = true;
-+		break;
-+	default:
-+		WARN_ON_ONCE(1);
-+		return -EINVAL;
-+	}
-+
-+	guard(mutex)(&priv->lock);
-+
-+	if (priv->high_res == high_res)
-+		return 0;
-+
-+	unsigned int mask = PAC1921_GAIN_I_RES | PAC1921_GAIN_V_RES;
-+	unsigned int bits = high_res ?
-+			    0 : PAC1921_GAIN_I_RES | PAC1921_GAIN_V_RES;
-+
-+	int ret = pac1921_update_cfg_reg(priv, PAC1921_REG_GAIN_CFG,
-+					 mask, bits);
-+	if (ret)
-+		return ret;
-+
-+	priv->high_res = high_res;
-+
-+	return pac1921_update_integr_period(priv);
-+}
-+
-+static int pac1921_get_int_num_samples(struct iio_dev *indio_dev,
-+				       const struct iio_chan_spec *chan)
-+{
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+
-+	guard(mutex)(&priv->lock);
-+
-+	return priv->n_samples;
-+}
-+
-+static int pac1921_set_int_num_samples(struct iio_dev *indio_dev,
-+				       const struct iio_chan_spec *chan,
-+				       unsigned int val)
-+{
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+
-+	if (WARN_ON_ONCE(val > PAC1921_INT_CFG_SMPL_MAX))
-+		return -EINVAL;
-+
-+	guard(mutex)(&priv->lock);
-+
-+	if (priv->n_samples == val)
-+		return 0;
-+
-+	int ret = pac1921_update_cfg_reg(priv, PAC1921_REG_INT_CFG,
-+					 PAC1921_INT_CFG_SMPL_MASK,
-+					 val << PAC1921_INT_CFG_SMPL_SHIFT);
-+	if (ret)
-+		return ret;
-+
-+	priv->n_samples = (u8)val;
-+
-+	return pac1921_update_integr_period(priv);
-+}
-+
-+static ssize_t pac1921_read_filters_enabled(struct iio_dev *indio_dev,
-+					    uintptr_t private,
-+					    const struct iio_chan_spec *chan,
-+					    char *buf)
-+{
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+	bool enabled;
-+
-+	scoped_guard(mutex, &priv->lock) {
-+		enabled = priv->filters_en;
-+	}
-+	return sysfs_emit(buf, "%d\n", enabled);
-+}
-+
-+static ssize_t pac1921_write_filters_enabled(struct iio_dev *indio_dev,
-+					     uintptr_t private,
-+					     const struct iio_chan_spec *chan,
-+					     const char *buf, size_t len)
-+{
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+	bool enabled;
-+
-+	int ret = kstrtobool(buf, &enabled);
-+	if (ret)
-+		return ret;
-+
-+	guard(mutex)(&priv->lock);
-+
-+	if (priv->filters_en == enabled)
-+		return 0;
-+
-+	unsigned int mask = PAC1921_INT_CFG_VSFEN | PAC1921_INT_CFG_VBFEN;
-+	unsigned int bits = enabled ?
-+			    PAC1921_INT_CFG_VSFEN | PAC1921_INT_CFG_VBFEN : 0;
-+
-+
-+	ret = pac1921_update_cfg_reg(priv, PAC1921_REG_INT_CFG, mask, bits);
-+	if (ret)
-+		return ret;
-+
-+	priv->filters_en = enabled;
-+
-+	ret = pac1921_update_integr_period(priv);
-+	if (ret)
-+		return ret;
-+
-+	return len;
-+}
-+
-+static const struct iio_enum pac1921_resolution_enum = {
-+	.items = pac1921_meas_resolutions,
-+	.num_items = ARRAY_SIZE(pac1921_meas_resolutions),
-+	.get = pac1921_get_resolution,
-+	.set = pac1921_set_resolution,
-+};
-+static const struct iio_enum pac1921_int_num_samples_enum = {
-+	.items = pac1921_integr_num_samples,
-+	.num_items = ARRAY_SIZE(pac1921_integr_num_samples),
-+	.get = pac1921_get_int_num_samples,
-+	.set = pac1921_set_int_num_samples,
-+};
-+static const struct iio_chan_spec_ext_info pac1921_ext_info[] = {
-+	IIO_ENUM("resolution_bits", IIO_SHARED_BY_ALL,
-+		 &pac1921_resolution_enum),
-+	IIO_ENUM_AVAILABLE("resolution_bits", IIO_SHARED_BY_ALL,
-+			   &pac1921_resolution_enum),
-+	IIO_ENUM("integration_samples", IIO_SHARED_BY_ALL,
-+		 &pac1921_int_num_samples_enum),
-+	IIO_ENUM_AVAILABLE("integration_samples", IIO_SHARED_BY_ALL,
-+			   &pac1921_int_num_samples_enum),
-+	{
-+		.name = "filters_en",
-+		.read = pac1921_read_filters_enabled,
-+		.write = pac1921_write_filters_enabled,
-+		.shared = IIO_SHARED_BY_ALL,
-+	},
-+	{},
-+};
-+
-+static const struct iio_event_spec pac1921_overflow_event[] = {
-+	{
-+		.type = IIO_EV_TYPE_THRESH,
-+		.dir = IIO_EV_DIR_RISING,
-+	},
-+};
-+
-+static const struct iio_chan_spec pac1921_channels[] = {
-+	{
-+		.type = IIO_VOLTAGE,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE) |
-+				      BIT(IIO_CHAN_INFO_HARDWAREGAIN),
-+		.info_mask_separate_available = BIT(IIO_CHAN_INFO_HARDWAREGAIN),
-+		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
-+		.channel = PAC1921_CHAN_VBUS,
-+		.address = PAC1921_REG_VBUS,
-+		.scan_index = PAC1921_CHAN_VBUS,
-+		.scan_type = {
-+			.sign = 'u',
-+			.realbits = 10,
-+			.storagebits = 16,
-+			.endianness = IIO_CPU
-+		},
-+		.indexed = 1,
-+		.event_spec = pac1921_overflow_event,
-+		.num_event_specs = ARRAY_SIZE(pac1921_overflow_event),
-+		.ext_info = pac1921_ext_info,
-+	},
-+	{
-+		.type = IIO_VOLTAGE,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE) |
-+				      BIT(IIO_CHAN_INFO_HARDWAREGAIN),
-+		.info_mask_separate_available = BIT(IIO_CHAN_INFO_HARDWAREGAIN),
-+		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
-+		.channel = PAC1921_CHAN_VSENSE,
-+		.address = PAC1921_REG_VSENSE,
-+		.scan_index = PAC1921_CHAN_VSENSE,
-+		.scan_type = {
-+			.sign = 'u',
-+			.realbits = 10,
-+			.storagebits = 16,
-+			.endianness = IIO_CPU
-+		},
-+		.indexed = 1,
-+		.event_spec = pac1921_overflow_event,
-+		.num_event_specs = ARRAY_SIZE(pac1921_overflow_event),
-+		.ext_info = pac1921_ext_info,
-+	},
-+	{
-+		.type = IIO_CURRENT,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE) |
-+				      BIT(IIO_CHAN_INFO_HARDWAREGAIN),
-+		.info_mask_separate_available = BIT(IIO_CHAN_INFO_HARDWAREGAIN),
-+		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
-+		.channel = PAC1921_CHAN_CURRENT,
-+		.address = PAC1921_REG_VSENSE,
-+		.scan_index = PAC1921_CHAN_CURRENT,
-+		.scan_type = {
-+			.sign = 'u',
-+			.realbits = 10,
-+			.storagebits = 16,
-+			.endianness = IIO_CPU
-+		},
-+		.event_spec = pac1921_overflow_event,
-+		.num_event_specs = ARRAY_SIZE(pac1921_overflow_event),
-+		.ext_info = pac1921_ext_info,
-+	},
-+	{
-+		.type = IIO_POWER,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE),
-+		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
-+		.channel = PAC1921_CHAN_POWER,
-+		.address = PAC1921_REG_VPOWER,
-+		.scan_index = PAC1921_CHAN_POWER,
-+		.scan_type = {
-+			.sign = 'u',
-+			.realbits = 10,
-+			.storagebits = 16,
-+			.endianness = IIO_CPU
-+		},
-+		.event_spec = pac1921_overflow_event,
-+		.num_event_specs = ARRAY_SIZE(pac1921_overflow_event),
-+		.ext_info = pac1921_ext_info,
-+	},
-+	IIO_CHAN_SOFT_TIMESTAMP(PAC1921_NUM_MEAS_CHANS),
-+};
-+
-+static irqreturn_t pac1921_trigger_handler(int irq, void *p)
-+{
-+	struct iio_poll_func *pf = p;
-+	struct iio_dev *idev = pf->indio_dev;
-+	struct pac1921_priv *priv = iio_priv(idev);
-+
-+	guard(mutex)(&priv->lock);
-+
-+	if (!pac1921_data_ready(priv))
-+		goto done;
-+
-+	int ret = pac1921_check_push_overflow(idev, pf->timestamp);
-+	if (ret)
-+		goto done;
-+
-+	memset(&priv->scan, 0, sizeof(priv->scan));
-+
-+	int bit, ch = 0;
-+	for_each_set_bit(bit, idev->active_scan_mask, idev->masklength) {
-+		int val;
-+
-+		ret = pac1921_read_res(priv, idev->channels[ch].address, &val);
-+		if (ret)
-+			goto done;
-+
-+		priv->scan.chan[ch++] = (u16)val;
-+	}
-+
-+	iio_push_to_buffers_with_timestamp(idev, &priv->scan, pf->timestamp);
-+
-+done:
-+	iio_trigger_notify_done(idev->trig);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int pac1921_init(struct pac1921_priv *priv)
-+{
-+	/* Enter READ state before configuration */
-+	int ret = regmap_update_bits(priv->regmap, PAC1921_REG_INT_CFG,
-+				 PAC1921_INT_CFG_INTEN, 0);
-+	if (ret)
-+		return ret;
-+
-+	/* Configure gains and measurements resolution */
-+	unsigned int val = priv->di_gain << PAC1921_GAIN_DI_GAIN_SHIFT |
-+			   priv->dv_gain << PAC1921_GAIN_DV_GAIN_SHIFT;
-+	if (!priv->high_res)
-+		val |= PAC1921_GAIN_I_RES | PAC1921_GAIN_V_RES;
-+	ret = regmap_write(priv->regmap, PAC1921_REG_GAIN_CFG, val);
-+	if (ret)
-+		return ret;
-+
-+	/* Configure integration:
-+	 * - num of integration samples, filters enabled/disabled
-+	 * - set READ/INT pin override (RIOV) to control operation mode via
-+	 *   register instead of pin
-+	 */
-+	val = priv->n_samples << PAC1921_INT_CFG_SMPL_SHIFT |
-+	      PAC1921_INT_CFG_RIOV;
-+	if (priv->filters_en)
-+		val |= PAC1921_INT_CFG_VSFEN | PAC1921_INT_CFG_VBFEN;
-+	ret = regmap_write(priv->regmap, PAC1921_REG_INT_CFG, val);
-+	if (ret)
-+		return ret;
-+
-+	/* Init control register:
-+	 * - VPower free run integration mode
-+	 * - OUT pin full scale range: 3V (HW detault)
-+	 * - no timeout, no sleep, no sleep override, no recalc (HW defaults)
-+	 */
-+	val = PAC1921_MXSL_VPOWER_FREE_RUN << PAC1921_CONTROL_MXSL_SHIFT;
-+	ret = regmap_write(priv->regmap, PAC1921_REG_CONTROL, val);
-+	if (ret)
-+		return ret;
-+
-+	/* Enable integration */
-+	ret = regmap_update_bits(priv->regmap, PAC1921_REG_INT_CFG,
-+				 PAC1921_INT_CFG_INTEN, PAC1921_INT_CFG_INTEN);
-+	if (ret)
-+		return ret;
-+
-+	priv->first_integr_started = true;
-+	priv->integr_start_time = jiffies;
-+
-+	return pac1921_update_integr_period(priv);
-+}
-+
-+static int pac1921_suspend(struct device *dev)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+
-+	guard(mutex)(&priv->lock);
-+
-+	priv->first_integr_started = false;
-+	priv->first_integr_done = false;
-+
-+	int ret = regmap_update_bits(priv->regmap, PAC1921_REG_INT_CFG,
-+				     PAC1921_INT_CFG_INTEN, 0);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_update_bits(priv->regmap, PAC1921_REG_CONTROL,
-+				  PAC1921_CONTROL_SLEEP, PAC1921_CONTROL_SLEEP);
-+}
-+
-+static int pac1921_resume(struct device *dev)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+
-+	guard(mutex)(&priv->lock);
-+
-+	return pac1921_init(priv);
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(pac1921_pm_ops, pac1921_suspend,
-+				pac1921_resume);
-+
-+static int pac1921_parse_properties(struct pac1921_priv *priv)
-+{
-+	struct device *dev = &priv->client->dev;
-+	u32 prop;
-+
-+	int ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
-+					   &prop);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Cannot read shunt resistor property\n");
-+	if (prop == 0 || prop > INT_MAX)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "Invalid shunt resistor: %u\n", prop);
-+	priv->rshunt = prop;
-+
-+	if (!device_property_read_u32(dev, "microchip,dv-gain", &prop)) {
-+		if (!pac1921_gain_param_valid(prop, PAC1921_GAIN_DV_GAIN_MAX))
-+			return dev_err_probe(dev, -EINVAL,
-+					     "Invalid dv_gain: %u\n", prop);
-+
-+		priv->dv_gain = (u8)ilog2(prop);
-+	}
-+	if (!device_property_read_u32(dev, "microchip,di-gain", &prop)) {
-+		if (!pac1921_gain_param_valid(prop, PAC1921_GAIN_DI_GAIN_MAX))
-+			return dev_err_probe(dev, -EINVAL,
-+					     "Invalid di_gain: %u\n", prop);
-+
-+		priv->di_gain = (u8)ilog2(prop);
-+	}
-+	return 0;
-+}
-+
-+static int pac1921_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct pac1921_priv *priv;
-+
-+	struct iio_dev *indio_dev = devm_iio_device_alloc(dev, sizeof(*priv));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	priv = iio_priv(indio_dev);
-+	priv->client = client;
-+	i2c_set_clientdata(client, indio_dev);
-+
-+	priv->regmap = devm_regmap_init_i2c(client, &pac1921_regmap_config);
-+	if (IS_ERR(priv->regmap))
-+		dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
-+			      "Cannot initialize register map\n");
-+
-+	mutex_init(&priv->lock);
-+
-+	priv->dv_gain = PAC1921_DEFAULT_DV_GAIN;
-+	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
-+	priv->high_res = PAC1921_DEFAULT_HIGH_RES;
-+	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
-+	priv->filters_en = PAC1921_DEFAULT_FILTERS_ENABLED;
-+
-+	int ret = pac1921_parse_properties(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = pac1921_init(priv);
-+	if (ret)
-+		return ret;
-+
-+	priv->iio_info = pac1921_iio;
-+
-+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
-+
-+	indio_dev->name = id->name;
-+	indio_dev->info = &priv->iio_info;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->channels = pac1921_channels;
-+	indio_dev->num_channels = ARRAY_SIZE(pac1921_channels);
-+
-+	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
-+					      &iio_pollfunc_store_time,
-+					      &pac1921_trigger_handler, NULL);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Cannot setup IIO triggered buffer\n");
-+
-+	ret = devm_iio_device_register(dev, indio_dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Cannot register IIO device\n");
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id pac1921_id[] = {
-+	{ .name = "pac1921", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, pac1921_id);
-+
-+static const struct of_device_id pac1921_of_match[] = {
-+	{ .compatible = "microchip,pac1921" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, pac1921_of_match);
-+
-+static struct i2c_driver pac1921_driver = {
-+	.driver	 = {
-+		.name = "pac1921",
-+		.pm = pm_sleep_ptr(&pac1921_pm_ops),
-+		.of_match_table = pac1921_of_match,
-+	},
-+	.probe = pac1921_probe,
-+	.id_table = pac1921_id,
-+};
-+
-+module_i2c_driver(pac1921_driver);
-+
-+MODULE_AUTHOR("Matteo Martelli <matteomartelli3@gmail.com>");
-+MODULE_DESCRIPTION("IIO driver for PAC1921 High-Side Power/Current Monitor");
-+MODULE_LICENSE("GPL");
-
--- 
-2.45.1
-
+> Bah, think I'll just bugger off and let you guys have a go at making
+> this stacking business do less harm than good.
+> 
+> 	-Mike
 
