@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-239686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B0A9263FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:57:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F3E926400
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA41282CDD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C79A7282DE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8225E17DA0E;
-	Wed,  3 Jul 2024 14:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADD6180A92;
+	Wed,  3 Jul 2024 14:56:59 +0000 (UTC)
 Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6F417D889;
-	Wed,  3 Jul 2024 14:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE54D17B51B;
+	Wed,  3 Jul 2024 14:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720018612; cv=none; b=eg7N18xYoYm8S8o+7eZjENLkQ8/ps9OgrvvofOfMzsE1sdI2i3vb/r93NCzdOeMMQ+DL3C0m4ck2nTusJSZM7oqVSorCxNw+IYHEhMRzZV5A2nKPeZHkp8+A4Swk/oWGX2cvW3tAXfcEwjTbvvp3fYLxS7l/JE+sk6fAH6q40xA=
+	t=1720018619; cv=none; b=A1Zd/nz0KqVciFTm+9A8Vcy37hP3BnzyU6lu0safaf4x0+Y3CsWIsTJUaCRQDwO5wkLCcAfCDZR9ZmHWp2OOv5/ZVE4Ap0yHNpX8H6ivMU97ujddDtPcr4ZFEHNujRkFWfs+6nPQOiz331IxtC+4YIL0mwhwcT6YmBdTgxPN3oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720018612; c=relaxed/simple;
-	bh=72bJnK5OkxGeVX2TtnufaHxre6755qvj76r1a1oE7nQ=;
+	s=arc-20240116; t=1720018619; c=relaxed/simple;
+	bh=xC7pEPT1owxzQR4k3RbfRKoPX9pym4wvJhcF0pFnpVM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fUOs5Q+0ff3jLE4BORfTj9iOgeyiMC2JQ7lwoh9t8VACBmuIYg3C0pi3CcuUdoZpXxtCx5JeO6Qz5so3v15JijKCQrj7y1J9tq6EJSRKuvX+o1IHRykIt6XRqnMPfK3BJKFy/ayFnbPJAk4Ife9W5DB63RfetOLxwdGY8i7GQBA=
+	 In-Reply-To:To:Cc; b=u1AvCjpViuHzmCo/kn4LMSEAuKLQzwMSbwA5gC07cIVwvBnl3MteL+N0bJIO9wRRQ6Qx2RHR22SGT7HDbkM8JNTDcLdeYobv+fjr/Cw/79AGQ/9plzwVKU3AVpsuEqyptbVIlcw+6ebJrpzvr9B9frQ/gqABk+DH6tOKB/kd1rg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
 From: Yixun Lan <dlan@gentoo.org>
-Date: Wed, 03 Jul 2024 14:55:05 +0000
-Subject: [PATCH v3 02/11] dt-bindings: riscv: Add SpacemiT X60 compatibles
+Date: Wed, 03 Jul 2024 14:55:06 +0000
+Subject: [PATCH v3 03/11] dt-bindings: riscv: add SpacemiT K1 bindings
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,7 +39,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240703-k1-01-basic-dt-v3-2-12f73b47461e@gentoo.org>
+Message-Id: <20240703-k1-01-basic-dt-v3-3-12f73b47461e@gentoo.org>
 References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
 In-Reply-To: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -56,51 +56,73 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org, 
  Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
  Meng Zhang <zhangmeng.kevin@spacemit.com>, Yangyu Chen <cyy@cyyself.name>, 
- Yixun Lan <dlan@gentoo.org>, Conor Dooley <conor.dooley@microchip.com>
+ Yixun Lan <dlan@gentoo.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=904; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=93gTwTFhHhqvEXaieSxNaeTfBJ+zIc4/WjCpYTUJ8uU=;
- b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBmhWZ6BOWdLH/QLc/royb5wev72rML7G+Ho7uFl
- ROY8K15QEuJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZoVmel8UgAAAAAAuAChp
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1330; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=K5sE2wVpJR7k92B9EpfKt0IR4hvNzMMCnPoGl9Y98+Y=;
+ b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBmhWZ+lA3bVNp6ejY1YajOTksXj5zgdJtwC4MDA
+ WGfpR1mlVWJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZoVmfl8UgAAAAAAuAChp
  c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
- CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277aNLD/wIfqDJLqXrGyCjcv
- DIR6Gl8JStyWL4TYkpc8T/hIfXyubsyfvFb0KYM9IDwgAiituHgIFk8faTZVxi45CXxwipZCfj+
- kTJ/BquGC6ycknuig3AqjKY+UcIxE+mfQrQtez1VPqh/CVY03Cswk3a+85NpaWUUkPaq1z8JHYD
- JV2CMsf6fZAx3K5cQx0fICNU6gtHLCJFGyQwi4vzO7dqhx9WOtl0lLsKL6iaqJwqqL/Vw7iYiNj
- 8boll3lynP7TFkUM3imeZJLtoviIwl8DcvMr4ffqNUvFBgcCoYRcd7EhrLrKCFSZso3n/qetVhg
- 3bwdgVvEWvFFEIuG2HIn/H1YCYjHnwQ9z0EnkbDgoHW4TabapjOCctdEvi+EtOqunJ1+OOMZV02
- 5oSLLpHhfgQ7A8tMAUNZOoqjEM5MzCz1ev95mhlMKbXub27pHcaBQpWggb30usubOZ5ymcnMT1h
- zmqpsp/ChcvId6BPhIkVoEKfpSsjxhxpWFwb3Sccd5DhrEKV9K6IRc2q09aw6wxWAWFmkqIio2F
- CAHuzvEIpSVMXhp+M/AWm1jJQZK/DX+7cwjzo6X3pQP4PehXOzVlU3weN/Wu8Y8UFREZCVtUWXx
- txKQLH7s39LfyBbViP9/09KYC1lQxOuiEPnzjM93OWZPapbfVIklgLSAL8REWMe2nGDw==
+ CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277bDrD/9dRvIZRevTSGjiMB
+ f5SU42FLX05TrUTE0a8KDI/DiBNNBLulm2y58uZ1vaywc83gTMA/Cujk5JSAfBIvFjnfkq2+8TO
+ MpPemOQ/5AbOOffTXDJ7Bi53Mz0hWHtQc0QU1If6Dkr15Sup9uf0hYRHZg1YgcPC/jnB+lpulbG
+ SJmx7E4TEFN9VBYSlxfbmZkkpx67Ppg6yNVjCtZeXhSVRvW4Q6ikpW4RB3afLm+VgVKMyAYdCIR
+ ZNZPi4SkqSD8KyVbTEQm9qgN2tE6vDFkCiTiZlieTJThBWc+0nzwKoTjQST8RsJPK8/6XwPk7dt
+ lSb8Ql+vOwnURXhtzPNGtYqsVmkZLACCEKiWU2UAVbYtw+spIOYuenCRhtKBUYRLzdiPCouemZ9
+ LDjG+7CJmRtZcqAIdw08vy+VVJBX/F78e0vhSHRkNqevGP6EOnYQyjtzrMmwNMYi2uYiftGnLAU
+ U03XCHOT3wPpyEhysW3otWxaY8i4ukF9gyJOJvDf8lLd4C8sXXo7/zMsEBiFordvYlTQKnK9hGS
+ UPHZM7fDpz6YiQMuZcQjMxFSSjW8Xa9t0qVSw5kK1+VGAVYEJVr8w1Sexe0BSO0LfdPTz8hmbj7
+ 3aiNCZAb2mnv1/Zyv9YT9vBIm6Bv2R7J1AVmraK41dYyBh9/Y699Wwp5zSU2uq5Am9Uw==
 X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
  fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
 From: Yangyu Chen <cyy@cyyself.name>
 
-The X60 is RISC-V CPU cores from SpacemiT and currently used in their K1
-SoC.
+Add DT binding documentation for the SpacemiT K1 SoC[1] and the Banana
+Pi BPi-F3 board[2] which used it.
 
-Link: https://www.spacemit.com/en/spacemit-x60-core/
+Link: https://www.spacemit.com/en/spacemit-key-stone-2/ [1]
+Link: https://docs.banana-pi.org/en/BPI-F3/BananaPi_BPI-F3 [2]
 Signed-off-by: Yangyu Chen <cyy@cyyself.name>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Yixun Lan <dlan@gentoo.org>
 ---
- Documentation/devicetree/bindings/riscv/cpus.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/riscv/spacemit.yaml        | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
-index d87dd50f1a4b5..5ad9cb4103356 100644
---- a/Documentation/devicetree/bindings/riscv/cpus.yaml
-+++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
-@@ -46,6 +46,7 @@ properties:
-               - sifive,u7
-               - sifive,u74
-               - sifive,u74-mc
-+              - spacemit,x60
-               - thead,c906
-               - thead,c910
-               - thead,c920
+diff --git a/Documentation/devicetree/bindings/riscv/spacemit.yaml b/Documentation/devicetree/bindings/riscv/spacemit.yaml
+new file mode 100644
+index 0000000000000..52e55077af1ae
+--- /dev/null
++++ b/Documentation/devicetree/bindings/riscv/spacemit.yaml
+@@ -0,0 +1,28 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/riscv/spacemit.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: SpacemiT SoC-based boards
++
++maintainers:
++  - Yangyu Chen <cyy@cyyself.name>
++  - Yixun Lan <dlan@gentoo.org>
++
++description:
++  SpacemiT SoC-based boards
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - bananapi,bpi-f3
++          - const: spacemit,k1
++
++additionalProperties: true
++
++...
 
 -- 
 2.45.2
