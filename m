@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-240007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581359267DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CE59267DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 141DF28A1E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:12:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 818D028A42B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FAA187567;
-	Wed,  3 Jul 2024 18:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190851891D9;
+	Wed,  3 Jul 2024 18:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Vg38uojI"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Ik5ysb32"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D571862A4
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 18:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8332186E22
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 18:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720030310; cv=none; b=sdq/pZKJOFog1/dh2rbpXWnUskN5zErhI+t3sCrEB/c9bhBKixBPCxMiuNtrLdbPxuOTD7qmdwFeakiW8IR5ZBD5OR4kGVL40AX9bQ9JPDLwNWkdhVZAYYFar5Z3WqDaMN8hTxj3rKnGNrhXYHPkc39bEPpmBf7CE2UO/K2JsyA=
+	t=1720030311; cv=none; b=JHmICs8fwjrVIJejMYrd2IjRs4F00DpGInF744piBFYJ2wSM1Q2Wr0oOscZGAkY2uG9b35TPoHsVGbKp4PD0j4Qavc7lA2H9lcY+UPhIYtbKFXYLtsp1N3xWl3OdpRlwpEGGmUyV4uAFKEEuyFZlvy/kHSecWNF+wlMw+BFdZoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720030310; c=relaxed/simple;
-	bh=jWXm5HXtzueAdOKs0xkvy0vrctXsPXlYa1NTbuL8g2g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BGVLdSa6uh9R01mTNgq8WzoNkNxA0jpiNbu2Qu1LHE0ghyQL44c/6kWa/XgC0aqvT79nGCaX+QGYB7k2FstiSi0k0OGUspV/9YqtxTn+eB7JXw8pvqV11xrfCxCpC3OpZOtkGTnyyjqf8JMcZl/xTUHhvb4g3cZCKbiUrhM7csg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Vg38uojI; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1720030311; c=relaxed/simple;
+	bh=Ya7JRuOpvI1mc23hT3kq5HyKGwwymGLsHGeOErmvRQA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=S3kpxLIkGrwek9R/yEuEmRAPdhaBQRNs0YilemsFFLhgT2flO867KUbmfmu5BEmuh88QKWooFX9C1/DnUlNov2chwpQ8MRJQZcHVtvV50Dv6kxmgAucjPZzd73dc4E1x3BJIQPNtdKVEOFhwjThUmhvq1aeN5rSK6FRlPeTmgjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Ik5ysb32; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4257a390a4eso31782425e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 11:11:46 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4256f102e89so38969325e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 11:11:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720030305; x=1720635105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0kBFfRtBXCq9sa5mQ7/2X3hV4yzjNzYCR4JfLOEXbOQ=;
-        b=Vg38uojIkMxSSdm9JsrvkHn6xfHJzBYRR/lXSJqlE5NFUUShcDzV7S4K2tHPTQaF/h
-         Xav27pnZim9poviIcQECwbxrxcl0teOI/RpOuCib1r+Z6P8iSYkXojdUNenZ0YzaI9NE
-         zzu7C16ZuIc80xxqck4TSCcJLZTb9ulXougxwxGxEbt92aTDhiqHQfio9ikCtZ+lkpiF
-         s2b5bCOCeSYRnRRYUhlxVJoUWyLT1DJ5XbMMrIjWn2IxKV7JhgPodCG0B3yVEBL+XOsT
-         thOSXeQb2YxMSBswrjCIHDlADMa223B6T4mn6FpIkqcynZhPO+rnF8njFLMj3YaZCi2Q
-         fKeA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720030307; x=1720635107; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L0QRgM6fvt7mWflQHel1qsIOJCVNJNaGUQC7xIWGyMo=;
+        b=Ik5ysb32mOl0oXNfXsMaGpmiIGVI98ZJQ+6ckvjkrwcJ8lrvUW03ee8CH+BR4k+ICh
+         l1P+5GSbDpcgt6Wku1PP5cH9MjWJcw1MH/G2rygUbXwyec4rdP55fD7z32Iybl5HKGMn
+         Z/0hlgLW8jFr5cWmrlo6Qii+I/ASP8l8V0Y9istyTl+MdDdxp26+Lm3umWi4QPrGozXS
+         v0a4hOKeE3z6EOC7w+OAUvKLeWX4nVOfPEWPJpO7+FitiVu7A0HAsIKvNwIRXEjT286A
+         QoQzFbyDlxziZX0SfcKYRoIcVpMTK2aIRF7y4gd8CV5n0BWMlGoo6ahvZJ1bsbTC8kNT
+         +7jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720030305; x=1720635105;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0kBFfRtBXCq9sa5mQ7/2X3hV4yzjNzYCR4JfLOEXbOQ=;
-        b=HrqEOb/p5hyMo3nb77wwR8fr6GmLSUDv3wnLx9COCiJSpq6ma4jdUJaCDMTdeDBQSJ
-         XFnZVWOWZGhkClGZk3+tBJrJQ2RVYW1LoOIERcsOqmByiiRTHCv79R2RXEHB3ID59uoG
-         l0s+BNJWJrfvhVAqpsnCHx7QVtk7gKZkraA2az3g6i8LaHdGd2lDbjajjH9l5SK0dmVw
-         NFuX4MJbKrvsIRXqZ3DxtYV2NI2yEzm9W1B+dBaGjT8V+8A8CuBE7KaqE4PgJSXsxxRA
-         pe49C7FBpbaYUWpVycyNEUkj5D/7GVdkdHBGhlS0BeAAhaAcMCqmioggeELRJEOVdPZT
-         xYUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwGAX4i16w0eEhGsdVFINq00uILx3KIEpspq3RbT4SYFi2cvoghRrfZIDFoiE7suF1ezuFDACeRWedwRSXuiFFM7ulP1tzxvWtsjxU
-X-Gm-Message-State: AOJu0YylwctB3sIulfyxBOWjolZcyDhBlk8fxtHR26ciCm/xeAKy0Blw
-	PF/vfrcKzCTukU44meIs65qffi+01us1FuaMwIXzf6K3CpJr3OcerSlDKbaENvs=
-X-Google-Smtp-Source: AGHT+IHM+xqXXphyV0243nkSSyEh8redY5/z5ZwzWVJUApzS2y/iFov786LLxvohO46F5A7aYXHiYw==
-X-Received: by 2002:a05:600c:22cb:b0:424:a48f:4fe0 with SMTP id 5b1f17b1804b1-4257a02122amr89775755e9.26.1720030305343;
-        Wed, 03 Jul 2024 11:11:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720030307; x=1720635107;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L0QRgM6fvt7mWflQHel1qsIOJCVNJNaGUQC7xIWGyMo=;
+        b=l2U/55GQWhKvG+rZlWfMU/XKxpMaGpxda5ZbAGRotgYg1yn42vGpLyu8nNUV/ZirJt
+         ZbbF29gD67Y5uw/gjrBU375P4GN+Ekoj21fGYXaQi998/Ax5umKHPSfMNjMkHozwj6a9
+         n9Akfs2HYaUi6+GEnRN7BC7ZKMTX1/Knbuw/39EcgUTlyUbAVtrPzMRXbN04xJEBNwWs
+         zSBG6iMMxcxpSdIkFWPc1JvI/ENS4w476rN7tjl3yeKP4SXIonH7XSEqeRm28B9+ROyz
+         HT2/MwlLntSFKoFfOfsULOJcxJeJ0DELY+DWSz/vytxfYLoJVEiylOATHJaSzLKe2VQZ
+         t1eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJGrdfIE44AoZQS87y9Rryo2zsotDersiMttjh4jyT8GE9k3QSODl3gGO4B+iQlmoMUpQ5VA/U8ntesWhxSemN327BbUvV5rSgTZ9X
+X-Gm-Message-State: AOJu0YyHbYizf+dAAq6wNwa6gcb3NmVLbfIRmjbIE6vP9tnyPqU4oPgN
+	hDesB0+RDyWeSpTNM5DiDVw11jl/4icW8L5q0SkdAmp7c3RXjfedp2OHrk1EDd8=
+X-Google-Smtp-Source: AGHT+IE9ecYh0TynIiGek+n1mnz5lEz375vFlXm+NaSRncFsOuV60WslfeQFIDqe0ZUtBf/d5YRwVA==
+X-Received: by 2002:a05:600c:54cc:b0:425:849c:86fd with SMTP id 5b1f17b1804b1-425849c8732mr60047875e9.14.1720030306764;
+        Wed, 03 Jul 2024 11:11:46 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:c37f:195e:538f:bf06])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af37828sm255295965e9.9.2024.07.03.11.11.44
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af37828sm255295965e9.9.2024.07.03.11.11.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 11:11:44 -0700 (PDT)
+        Wed, 03 Jul 2024 11:11:45 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Andrew Lunn <andrew@lunn.ch>,
 	Heiner Kallweit <hkallweit1@gmail.com>,
@@ -75,10 +77,12 @@ To: Andrew Lunn <andrew@lunn.ch>,
 Cc: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH net-next v3 0/4] net: phy: aquantia: enable support for aqr115c
-Date: Wed,  3 Jul 2024 20:11:27 +0200
-Message-ID: <20240703181132.28374-1-brgl@bgdev.pl>
+Subject: [PATCH net-next v3 1/4] net: phy: aquantia: rename and export aqr107_wait_reset_complete()
+Date: Wed,  3 Jul 2024 20:11:28 +0200
+Message-ID: <20240703181132.28374-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240703181132.28374-1-brgl@bgdev.pl>
+References: <20240703181132.28374-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,43 +93,58 @@ Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-This series addesses two issues with the aqr115c PHY on Qualcomm
-sa8775p-ride-r3 board and adds support for this PHY to the aquantia driver.
+This function is quite generic in this driver and not limited to aqr107.
+We will use it outside its current compilation unit soon so rename it
+and declare it in the header.
 
-While the manufacturer calls the 2.5G PHY mode OCSGMII, we reuse the existing
-2500BASEX mode in the kernel to avoid extending the uAPI.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/net/phy/aquantia/aquantia.h      | 1 +
+ drivers/net/phy/aquantia/aquantia_main.c | 6 +++---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-It took me a while to resend because I noticed an issue with the PHY coming
-out of suspend with no possible interfaces listed and tracked it to the
-GLOBAL_CFG registers for different modes returning 0. A workaround has been
-added to the series. Unfortunately the HPG doesn't mention a proper way of
-doing it or even mention any such issue at all.
-
-Changes since v2:
-- add a patch that addresses an issue with GLOBAL_CFG registers returning 0
-- reuse aqr113c_config_init() for aqr115c
-- improve commit messages, give more details on the 2500BASEX mode reuse
-Link to v2: https://lore.kernel.org/lkml/Zn4Nq1QvhjAUaogb@makrotopia.org/T/
-
-Changes since v1:
-- split out the PHY patches into their own series
-- don't introduce new mode (OCSGMII) but use existing 2500BASEX instead
-- split the wait-for-FW patch into two: one renaming and exporting the
-  relevant function and the second using it before checking the FW ID
-Link to v1: https://lore.kernel.org/linux-arm-kernel/20240619184550.34524-1-brgl@bgdev.pl/T/
-
-Bartosz Golaszewski (4):
-  net: phy: aquantia: rename and export aqr107_wait_reset_complete()
-  net: phy: aquantia: wait for FW reset before checking the vendor ID
-  net: phy: aquantia: wait for the GLOBAL_CFG to start returning real
-    values
-  net: phy: aquantia: add support for aqr115c
-
- drivers/net/phy/aquantia/aquantia.h          |  1 +
- drivers/net/phy/aquantia/aquantia_firmware.c |  4 ++
- drivers/net/phy/aquantia/aquantia_main.c     | 40 ++++++++++++++++++--
- 3 files changed, 41 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquantia/aquantia.h
+index b8502793962e..2465345081f8 100644
+--- a/drivers/net/phy/aquantia/aquantia.h
++++ b/drivers/net/phy/aquantia/aquantia.h
+@@ -201,5 +201,6 @@ int aqr_phy_led_hw_control_set(struct phy_device *phydev, u8 index,
+ int aqr_phy_led_active_low_set(struct phy_device *phydev, int index, bool enable);
+ int aqr_phy_led_polarity_set(struct phy_device *phydev, int index,
+ 			     unsigned long modes);
++int aqr_wait_reset_complete(struct phy_device *phydev);
+ 
+ #endif /* AQUANTIA_H */
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index 6c14355744b7..974795bd0860 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -441,7 +441,7 @@ static int aqr107_set_tunable(struct phy_device *phydev,
+  * The chip also provides a "reset completed" bit, but it's cleared after
+  * read. Therefore function would time out if called again.
+  */
+-static int aqr107_wait_reset_complete(struct phy_device *phydev)
++int aqr_wait_reset_complete(struct phy_device *phydev)
+ {
+ 	int val;
+ 
+@@ -494,7 +494,7 @@ static int aqr107_config_init(struct phy_device *phydev)
+ 	WARN(phydev->interface == PHY_INTERFACE_MODE_XGMII,
+ 	     "Your devicetree is out of date, please update it. The AQR107 family doesn't support XGMII, maybe you mean USXGMII.\n");
+ 
+-	ret = aqr107_wait_reset_complete(phydev);
++	ret = aqr_wait_reset_complete(phydev);
+ 	if (!ret)
+ 		aqr107_chip_info(phydev);
+ 
+@@ -522,7 +522,7 @@ static int aqcs109_config_init(struct phy_device *phydev)
+ 	    phydev->interface != PHY_INTERFACE_MODE_2500BASEX)
+ 		return -ENODEV;
+ 
+-	ret = aqr107_wait_reset_complete(phydev);
++	ret = aqr_wait_reset_complete(phydev);
+ 	if (!ret)
+ 		aqr107_chip_info(phydev);
+ 
 -- 
 2.43.0
 
