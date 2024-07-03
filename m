@@ -1,579 +1,203 @@
-Return-Path: <linux-kernel+bounces-240269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F23926B02
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:54:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ACC6926AD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C40901C21702
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:54:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E2801F213B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4CB194AE4;
-	Wed,  3 Jul 2024 21:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9688A194AC7;
+	Wed,  3 Jul 2024 21:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="brKOHcOp"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2044.outbound.protection.outlook.com [40.107.101.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcTyJI6t"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAD8194AC2;
-	Wed,  3 Jul 2024 21:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720043488; cv=fail; b=Zy2rF1Gj8fH378W39YjOlzu9R4yy4zYVEK+S3k+DnXf3WgQj7beAUKTlY1U4njEIzU87nW3ZtkEIZ25IarUBxDnDeXaqJ5CyjjILvRWCR6zUkJBcCf0NLNh4+S/NdsLXK5AZE4idtf8yZzoToCZOCVT/WuplazZsj/Gi+ICCRUQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720043488; c=relaxed/simple;
-	bh=ez74uEXJQjDKAjZWTWltz6AlHYKJQpaISZMoBnjzZeI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B6FNj2wIImf5tyZvfB97G67iReZDnqjuepmzsRoujoDOFO/gmhmV7TkMciYQi1c+SgZhRRECLRVsct5u+w3gaG0j3KSmIr1jZkHtXr8HXmcwEvKHI5ruuTOQtEgCnoTs7/8U3WOQ4cSC4PNQT1l7VGQBqOlYPhgQQmUCrSu4smw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=brKOHcOp; arc=fail smtp.client-ip=40.107.101.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oPssGzH4q+oo0QeZURJUiRUOLUBh1ASA8aXySC7Po72a+WbQNwenHDaFMOJ+7Az5wkJ98HIf8b0r9qPWmnDEiEY+l0uM8OTH9fyh6Ni6ATIOmZB9NlCzoO5n7id1++QCfKwwH8bErEwYhYuXWzi1gy2Qyz1MQz2pahxnHA1PdEPeWiDywyKpaE5NV5v0/ItjmIkfm5H22jZNpgF3UL5LU8I6GB7vBakO8vYRQExblkN6PiFQ1XOKHRJ8hOW1ebq+ghv88fPWUbvqDTht5m/yeo10Gf+Bi7s812VAPKm8Pi9RDypZg/11Ahpudemqu5QNN+dqOrcQNlnE5jRvty1J9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rK+E7FmSud0CYmjxuahPKNHj4bNImm5Ncs4Rdp8g2Js=;
- b=ZxKpCqvJpnnwlj4z8SMMzTLUWoGF+Ef1H6eOhPCkQdXYtXu9gPF3TGW5d0KoHu9kI99006/i1h3Bln3h7dH63qf0MnffXvvtNuSa//M/fYb6IeaDkShvYPpvFfn1+ZXzhv1pA88sxb/yGVfgOrMC10GkOoWwEmho5fTnAiMRS5MH5083qhlAgVvSw1e590l62lUUgDROAGID5JqUmff2Jlylw+W0XGrJKh5gqF4QmDGZtRtpCvvaiuJINJn4iRuFYo7MsSITs5YX1Gdx5lhy4s4znNCdgsEPjt00fIJxVvDpL52yDc69ELYzw3EmRRHB+SCgHSbX/A+p72o8rbSLig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rK+E7FmSud0CYmjxuahPKNHj4bNImm5Ncs4Rdp8g2Js=;
- b=brKOHcOpFQEGyqzFAzQ25J0nXSbPSmnbq7wVICzTS55Ymk7rKyB8jSpCZqkICP4UDGiN9wlNm64K2+OlKz9vlknWdYkMjMuRDgTbd1OYCKzqzf2P/6EcubOoX3yrVAJrAIQSbHmJlqiEri0mUygIxUZwpVk0OfrBswFNy8h6nfQ=
-Received: from SN7PR18CA0026.namprd18.prod.outlook.com (2603:10b6:806:f3::18)
- by CH0PR12MB8505.namprd12.prod.outlook.com (2603:10b6:610:193::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Wed, 3 Jul
- 2024 21:51:23 +0000
-Received: from SN1PEPF0002BA4C.namprd03.prod.outlook.com
- (2603:10b6:806:f3:cafe::82) by SN7PR18CA0026.outlook.office365.com
- (2603:10b6:806:f3::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25 via Frontend
- Transport; Wed, 3 Jul 2024 21:51:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF0002BA4C.mail.protection.outlook.com (10.167.242.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7741.18 via Frontend Transport; Wed, 3 Jul 2024 21:51:23 +0000
-Received: from bmoger-ubuntu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 3 Jul
- 2024 16:51:21 -0500
-From: Babu Moger <babu.moger@amd.com>
-To: <corbet@lwn.net>, <fenghua.yu@intel.com>, <reinette.chatre@intel.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>
-CC: <x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
-	<rdunlap@infradead.org>, <tj@kernel.org>, <peterz@infradead.org>,
-	<yanjiewtw@gmail.com>, <babu.moger@amd.com>, <kim.phillips@amd.com>,
-	<lukas.bulwahn@gmail.com>, <seanjc@google.com>, <jmattson@google.com>,
-	<leitao@debian.org>, <jpoimboe@kernel.org>, <rick.p.edgecombe@intel.com>,
-	<kirill.shutemov@linux.intel.com>, <jithu.joseph@intel.com>,
-	<kai.huang@intel.com>, <kan.liang@linux.intel.com>,
-	<daniel.sneddon@linux.intel.com>, <pbonzini@redhat.com>,
-	<sandipan.das@amd.com>, <ilpo.jarvinen@linux.intel.com>,
-	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<eranian@google.com>, <james.morse@arm.com>
-Subject: [PATCH v5 20/20] x86/resctrl: Introduce interface to modify assignment states of the groups
-Date: Wed, 3 Jul 2024 16:48:31 -0500
-Message-ID: <49aa5321f6e81825a0e9e44cef06c243634e341a.1720043311.git.babu.moger@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1720043311.git.babu.moger@amd.com>
-References: <cover.1720043311.git.babu.moger@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEC6194A43;
+	Wed,  3 Jul 2024 21:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720043334; cv=none; b=O8S2exSKhzmlUMJUJ/WST4uO0SpK0maQ2rZv8n/Z9RjiSRU5hkQQQICcd7rQPT+jzLc1UefP/W9Wg1IApDqJo/apGLC1tatxRbWQxPzi5xz+pjMGi4+vZPa2oNT/7Lv3mmZ1Tmqid7byFi9iRELx1mUYogHEyjTDND1XIKHXzeA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720043334; c=relaxed/simple;
+	bh=N32NDO0/HIEfM/TdFnBQODUZPnPhe+ICVnHfYxYC2Pw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n4yprDvNZ72VfdKCy1l32ntLjTK3BQthnNe5+3WTpZSyrPiMqIRumGZcHSOiroOfocTxuNAm8fH+PzIZ9hcrkDNR2kfKE83jPY5wEQ4e08UV9GrNBUmf19rAZDFFYrnWMEXvTkJmixSPF3hthHEnxhUF0Pkix+oazJamf5I7cOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcTyJI6t; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7201cb6cae1so3414490a12.2;
+        Wed, 03 Jul 2024 14:48:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720043332; x=1720648132; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=IZJelXmMaiDFYpGA+bEfG1CdOh8nPHcs/JLTHgefJjY=;
+        b=LcTyJI6t1VNd9f3ETNKg33Sfd+us3dWy+/Qa7dqGTR8bmoxqRUOHl97d474NP8ebuu
+         NFszWyJwZAdcwGB4+CzFEeg8SA6oTlwyKgZ+4u6lkEvmR5DUUhR9JmRgMWM6gPXcWHlW
+         zL//qXq+nNbgiW2cdGaWjQ/dNrhSeaxUD/w4FIFbCaikwLUm/dLFaBZlHGCupNk0EEUd
+         H93KQ9ROQjvH4X4fl76c1YPdbrUXfBOs/tBNd/X32ml1sJf9E1bQm5ZjdOVZF1ZXkaZR
+         1WyhMiB1rq6G9ZY289KklAsjh3SRJdEY7Nz0PuzRYBVLCuXOJ3nddfX2na93kGVJPyma
+         qjpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720043332; x=1720648132;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IZJelXmMaiDFYpGA+bEfG1CdOh8nPHcs/JLTHgefJjY=;
+        b=lzc4MIICe2633chRvTxAZlTbNPBoQmVA3zOGrMtmdvTAKdfU0ePbcv7dYCa/1EPvU1
+         ecsC1Bchbs5p+cVA3NOMZwLrvjVY3bYxM0K9PiNIpniKFLjB0RB8T9nXxEmpJPoTMIXi
+         USw17A0FA5k5l2aJWj7pb2XK4xW96zvFfUivFwzH+TcJXeH3wfmynWIGQ7P/PwJTQOr4
+         FgsUXnxk6oToTjc+j0VA6JkntfiB8WnLGwuc4UXig4LpiTknwR6O/P3hNXDZptR7xGLE
+         oZUVO/p1TOrBlbRvoRCO+ckYAJ1upSlDFy4wasqZMedQzETDoG3kcuK3Wo2SNEZEukww
+         RArA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVrTovC1vhK6klNJVHoMn1CYgIn8KT/8EpVPikwlMxsRte5RshBAh5BQYrmPkfqNLc6bNdfkLiXwYIsoQJqzYGozSpTy5b9K3RdKQ=
+X-Gm-Message-State: AOJu0Yxa6pn+2SUxt08bYDAVNpx0EKQcUGaOayi/hyDkdzHN4P+5tXeu
+	OVinaEHRjiKPMkXNlNjl6ib6fqciueyrYEbYhijYBDOSm/udd7yxqtZmdg==
+X-Google-Smtp-Source: AGHT+IHiPJNadjh+TVTY7XFT0j1N1EnDTIJVqAoAtkqY6ONufJLxOEQjzp6TODM14IP9y392wr3cQw==
+X-Received: by 2002:a05:6a20:a124:b0:1bd:1df4:bd43 with SMTP id adf61e73a8af0-1bef6275a5dmr12677224637.54.1720043332343;
+        Wed, 03 Jul 2024 14:48:52 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb1a3d25f1sm18428625ad.139.2024.07.03.14.48.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 14:48:51 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <8cb9dc38-499e-4f10-93a4-c07898a776b4@roeck-us.net>
+Date: Wed, 3 Jul 2024 14:48:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/11] hwmon: (amc6821) Make reading and writing fan
+ speed limits consistent
+To: Quentin Schulz <quentin.schulz@cherry.de>, linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Farouk Bouabid <farouk.bouabid@cherry.de>
+References: <20240701212348.1670617-1-linux@roeck-us.net>
+ <20240701212348.1670617-3-linux@roeck-us.net>
+ <750d28c7-4d90-4bd6-a910-4d5e73828e55@cherry.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <750d28c7-4d90-4bd6-a910-4d5e73828e55@cherry.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4C:EE_|CH0PR12MB8505:EE_
-X-MS-Office365-Filtering-Correlation-Id: a76bcd91-069a-409f-f117-08dc9baa47fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SK5um9buvovfPlPI73cUG9iNP+2RP1QjrJNSVElH2oc1Xc5+A7HC1JtUGqS8?=
- =?us-ascii?Q?N4ranF3wsUZftd+Rr6M7DsNlpJPcV4ELaqpPg59Uv7YjtHPKddwtjb09uoZA?=
- =?us-ascii?Q?uFdpRI/+kmND/nK42CjKbRJTQo/9ufCA7/EhmsVGyC9/yTY+KTN+Y5RUnrlg?=
- =?us-ascii?Q?exuOQSm0iVH+w+mR2+2enp4+mvqtE8U6CB5H21qPTR9nfjsal68Tz0ulEEyh?=
- =?us-ascii?Q?Zs6ULmcSnRVzKakgD0Aa/+YV/FlwpufmhCWnXXAv9qK08TXlYn7AanPzgro3?=
- =?us-ascii?Q?RF2SnBf+Dd8THvrgpSso972qs/DWnC5XfL1zEMRm1WRIimU5WcprUvHCdBPm?=
- =?us-ascii?Q?Qe0ywiwIMZiPpo2ZAg1nO1+aTP320KDhnssP09PKhu1o27tpYLeu8az6fv1e?=
- =?us-ascii?Q?1BmvDAtekLJNHFLwk82EqLd/53taM3Crt1R2OyzjdA229+sREhkpPiX1pRxB?=
- =?us-ascii?Q?jgaT8E3TUNgx8/pvLBvm4Rntw3b1/QB8z+QWwtmr859Dtj9DZKQfTYHzlQlZ?=
- =?us-ascii?Q?8GIDqmNaMLazG0Ov8fjcPib5fwG3mC1MofLdsCuEniq4KqsRVRJ1qcq0zvHu?=
- =?us-ascii?Q?ATY0bsiDOTDjV4xhpRV4d5CNJQoR8Vu/1wcrW7A1fqsRU3M5PnLL84YY2U77?=
- =?us-ascii?Q?NngGv9Xh/S5f3fEsfmxty5dsIBo6g8ywcFIQ6r76v5xFkysfZKPP6J47tyNB?=
- =?us-ascii?Q?Di9dHIrTv1mVlYIV8qxTgRsOOoHZTxF0rYl3kigIY1RvQBZD1PUv5gl6R3aT?=
- =?us-ascii?Q?GE1XtVCpOmpuw9ilU55tRMNvpCBNW4KoJEOAS/ZLxHZoFMybNxQb0cHA7uda?=
- =?us-ascii?Q?cVLrcf/tFj66qmOPwpSBkT8aUJNajMkKtUqX3fj/g2H6gLNZvznOlDq3xxEy?=
- =?us-ascii?Q?bO1o6YmCoZzMwXgs7ZtWJVqF9M2fYXT0SCHP+8ciyvY0hQY2EtgDNa8CS9p+?=
- =?us-ascii?Q?VS32aqb+mgwC/qtLG+yqiowxetl/6yrvl3c/eJAtGSY9VwrowsmodRYHDdYv?=
- =?us-ascii?Q?xsipcnbBoYIGN1EfyBM2ZMWQSto+VsgIFq6oS11MATJGpTYRsh/KKPPMGzZT?=
- =?us-ascii?Q?tA1iuoBxNL/W8eJDoAwmPilaEa9GezvnfzKsEYo2R//9oYVFfs/T0Cqc5Elq?=
- =?us-ascii?Q?Vfz+2uYKIZ11x7noj/sg/tBdCmircx/nBwRZ9QnbIA66zzm3QE/OwtX7tLzP?=
- =?us-ascii?Q?gnYmXaMN4yDpV7X1nin/YYp5U5gVHxtOSy6rEXPgbavM/Rq7P2njnqlOUxsN?=
- =?us-ascii?Q?DynMh7QkreEP3KNpklTd+CCDkJrTWppzNlwoUiB7fdfBR/YR8LUaSoKckcN/?=
- =?us-ascii?Q?w2/pvXRjppMX0DhDvPRRRFD8I7Ekq5ZyeBwu7BVxIu3iqQd2GHBnbUiYziuV?=
- =?us-ascii?Q?40jfqB/I/1FPQV01nO9WJyThCMU99sb2vDMS9tfhOA+Hjid0DQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 21:51:23.3556
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a76bcd91-069a-409f-f117-08dc9baa47fd
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA4C.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8505
 
-Introduce the interface to enable events in ABMC mode.
+On 7/3/24 07:35, Quentin Schulz wrote:
+> Hi Guenter,
+> 
+> On 7/1/24 11:23 PM, Guenter Roeck wrote:
+>> The default value of the maximum fan speed limit register is 0,
+>> essentially translating to an unlimited fan speed. When reading
+>> the limit, a value of 0 is reported in this case. However, writing
+>> a value of 0 results in writing a value of 0xffff into the register,
+>> which is inconsistent.
+>>
+>> To solve the problem, permit writing a limit of 0 for the maximim fan
+>> speed, effectively translating to "no limit". Write 0 into the register
+>> if a limit value of 0 is written. Otherwise limit the range to
+>> <1..6000000> and write 1..0xffff into the register. This ensures that
+>> reading and writing from and to a limit register return the same value
+>> while at the same time not changing reported values when reading the
+>> speed or limits.
+>>
+>> While at it, restrict fan limit writes to non-negative numbers; writing
+>> a negative limit does not make sense and should be reported instead of
+>> being corrected.
+>>
+>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>> ---
+>> v2: Do not accept negative fan speed values
+>>      Display fan speed and speed limit as 0 if register value is 0
+>>      (instead of 6000000), as in original code.
+>>      Only permit writing 0 (unlimited) for the maximum fan speed.
+>>
+>>   drivers/hwmon/amc6821.c | 13 +++++++++----
+>>   1 file changed, 9 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
+>> index eb2d5592a41a..9c19d4d278ec 100644
+>> --- a/drivers/hwmon/amc6821.c
+>> +++ b/drivers/hwmon/amc6821.c
+>> @@ -617,15 +617,20 @@ static ssize_t fan_store(struct device *dev, struct device_attribute *attr,
+>>   {
+>>       struct amc6821_data *data = dev_get_drvdata(dev);
+>>       struct i2c_client *client = data->client;
+>> -    long val;
+>> +    unsigned long val;
+>>       int ix = to_sensor_dev_attr(attr)->index;
+>> -    int ret = kstrtol(buf, 10, &val);
+>> +    int ret = kstrtoul(buf, 10, &val);
+>>       if (ret)
+>>           return ret;
+>> -    val = 1 > val ? 0xFFFF : 6000000/val;
+>> +
+>> +    /* The minimum fan speed must not be unlimited (0) */
+>> +    if (ix == IDX_FAN1_MIN && !val)
+>> +        return -EINVAL;
+>> +
+>> +    val = val > 0 ? 6000000 / clamp_val(val, 1, 6000000) : 0;
+> 
+> I'm wondering if we shouldn't check !val for min after this line instead? Otherwise we allow 6000001+RPM speeds... which is technically unlimited.
+> 
 
-Events can be enabled or disabled by writing to file
-/sys/fs/resctrl/info/L3_MON/mbm_control
+If ix == IDX_FAN1_MIN, val must be positive because of the check above.
+The expression "6000000 / clamp_val(val, 1, 6000000)" is therefore always
+positive as well because val is clamped. Its minimum result would be
+6000000/6000000 = 1. The alternate case of the ternary expression would
+never hit because it is guaranteed that val > 0. Am I missing something ?
 
-Format is similar to the list format with addition of op-code for the
-assignment operation.
- "<CTRL_MON group>/<MON group>/<op-code><flags>"
-
-Format for specific type of groups:
-
- * Default CTRL_MON group:
-         "//<domain_id><op-code><flags>"
-
- * Non-default CTRL_MON group:
-         "<CTRL_MON group>//<domain_id><op-code><flags>"
-
- * Child MON group of default CTRL_MON group:
-         "/<MON group>/<domain_id><op-code><flags>"
-
- * Child MON group of non-default CTRL_MON group:
-         "<CTRL_MON group>/<MON group>/<domain_id><op-code><flags>"
-
-Op-code can be one of the following:
-
- = Update the assignment to match the flags
- + enable a new state
- - disable a new state
-
-Assignment flags can be one of the following:
- t  MBM total event is enabled
- l  MBM local event is enabled
- tl Both total and local MBM events are enabled
- _  None of the MBM events are enabled. Valid only with '=" opcode.
-
-Signed-off-by: Babu Moger <babu.moger@amd.com>
----
-v5: Interface name changed from mbm_assign_control to mbm_control.
-    Fixed opcode and flags combination.
-    '=_" is valid.
-    "-_" amd "+_" is not valid.
-    Minor message update.
-    Renamed the function with prefix - rdtgroup_.
-    Corrected few documentation mistakes.
-    Rebase related changes after SNC support.
-
-v4: Added domain specific assignments. Fixed the opcode parsing.
-
-v3: New patch.
-    Addresses the feedback to provide the global assignment interface.
-    https://lore.kernel.org/lkml/c73f444b-83a1-4e9a-95d3-54c5165ee782@intel.com/
----
- Documentation/arch/x86/resctrl.rst     |  81 +++++++-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 250 ++++++++++++++++++++++++-
- 2 files changed, 329 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/arch/x86/resctrl.rst
-index 05fee779e109..5a621235eb2b 100644
---- a/Documentation/arch/x86/resctrl.rst
-+++ b/Documentation/arch/x86/resctrl.rst
-@@ -331,7 +331,7 @@ with the following files:
- 	 t  MBM total event is enabled.
- 	 l  MBM local event is enabled.
- 	 tl Both total and local MBM events are enabled.
--	 _  None of the MBM events are enabled.
-+	 _  None of the MBM events are enabled. Only works with opcode '=' for write.
- 
- 	Examples:
- 	::
-@@ -358,6 +358,85 @@ with the following files:
- 
- 	 /child_default_mon_grp/ - This is a child monitor group of default CTRL_MON group.
- 
-+	Assignment state can be updated by writing to the interface.
-+
-+	Format is similar to the list format with addition of op-code for the
-+	assignment operation.
-+
-+		"<CTRL_MON group>/<MON group>/<op-code><flags>"
-+
-+	Format for each type of groups:
-+
-+        * Default CTRL_MON group:
-+                "//<domain_id><op-code><flags>"
-+
-+        * Non-default CTRL_MON group:
-+                "<CTRL_MON group>//<domain_id><op-code><flags>"
-+
-+        * Child MON group of default CTRL_MON group:
-+                "/<MON group>/<domain_id><op-code><flags>"
-+
-+        * Child MON group of non-default CTRL_MON group:
-+                "<CTRL_MON group>/<MON group>/<domain_id><op-code><flags>"
-+
-+	Op-code can be one of the following:
-+	::
-+
-+	 = Update the assignment to match the flags.
-+	 + Add a new state.
-+	 - delete a new state.
-+
-+	Examples:
-+	::
-+
-+	  Initial group status:
-+	  # cat /sys/fs/resctrl/info/L3_MON/mbm_control
-+	  non_default_ctrl_mon_grp//0=tl;1=tl;
-+	  non_default_ctrl_mon_grp/child_non_default_mon_grp/0=tl;1=tl;
-+	  //0=tl;1=tl;
-+	  /child_default_mon_grp/0=tl;1=tl;
-+
-+	  To update the default group to enable only total event on domain 0:
-+	  # echo "//0=t" > /sys/fs/resctrl/info/L3_MON/mbm_control
-+
-+	  Assignment status after the update:
-+	  # cat /sys/fs/resctrl/info/L3_MON/mbm_control
-+	  non_default_ctrl_mon_grp//0=tl;1=tl;
-+	  non_default_ctrl_mon_grp/child_non_default_mon_grp/0=tl;1=tl;
-+	  //0=t;1=tl;
-+	  /child_default_mon_grp/0=tl;1=tl;
-+
-+	  To update the MON group child_default_mon_grp to remove total event on domain 1:
-+	  # echo "/child_default_mon_grp/1-t" > /sys/fs/resctrl/info/L3_MON/mbm_control
-+
-+	  Assignment status after the update:
-+	  $ cat /sys/fs/resctrl/info/L3_MON/mbm_control
-+	  non_default_ctrl_mon_grp//0=tl;1=tl;
-+	  non_default_ctrl_mon_grp/child_non_default_mon_grp/0=tl;1=tl;
-+	  //0=t;1=tl;
-+	  /child_default_mon_grp/0=tl;1=l;
-+
-+	  To update the MON group non_default_ctrl_mon_grp/child_non_default_mon_grp to
-+	  remove both local and total events on domain 1:
-+	  # echo "non_default_ctrl_mon_grp/child_non_default_mon_grp/1=_" >
-+			/sys/fs/resctrl/info/L3_MON/mbm_control
-+
-+	  Assignment status after the update:
-+	  non_default_ctrl_mon_grp//0=tl;1=tl;
-+	  non_default_ctrl_mon_grp/child_non_default_mon_grp/0=tl;1=_;
-+	  //0=t;1=tl;
-+	  /child_default_mon_grp/0=tl;1=l;
-+
-+	  To update the default group to add a local event domain 0.
-+	  # echo "//0+l" > /sys/fs/resctrl/info/L3_MON/mbm_control
-+
-+	  Assignment status after the update:
-+	  # cat /sys/fs/resctrl/info/L3_MON/mbm_control
-+	  non_default_ctrl_mon_grp//0=tl;1=tl;
-+	  non_default_ctrl_mon_grp/child_non_default_mon_grp/0=tl;1=_;
-+	  //0=tl;1=tl;
-+	  /child_default_mon_grp/0=tl;1=l;
-+
- "max_threshold_occupancy":
- 		Read/write file provides the largest value (in
- 		bytes) at which a previously used LLC_occupancy
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 0de9f23d5389..84c0874d7872 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -1068,6 +1068,253 @@ static int rdtgroup_mbm_control_show(struct kernfs_open_file *of,
- 	return 0;
- }
- 
-+static int rdtgroup_str_to_mon_state(char *flag)
-+{
-+	int i, mon_state = 0;
-+
-+	for (i = 0; i < strlen(flag); i++) {
-+		switch (*(flag + i)) {
-+		case 't':
-+			mon_state |= ASSIGN_TOTAL;
-+			break;
-+		case 'l':
-+			mon_state |= ASSIGN_LOCAL;
-+			break;
-+		case '_':
-+			mon_state = ASSIGN_NONE;
-+			break;
-+		default:
-+			mon_state = ASSIGN_NONE;
-+			break;
-+		}
-+	}
-+
-+	return mon_state;
-+}
-+
-+static struct rdtgroup *rdtgroup_find_grp(enum rdt_group_type rtype, char *p_grp, char *c_grp)
-+{
-+	struct rdtgroup *rdtg, *crg;
-+
-+	if (rtype == RDTCTRL_GROUP && *p_grp == '\0') {
-+		return &rdtgroup_default;
-+	} else if (rtype == RDTCTRL_GROUP) {
-+		list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list)
-+			if (!strcmp(p_grp, rdtg->kn->name))
-+				return rdtg;
-+	} else if (rtype == RDTMON_GROUP) {
-+		list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-+			if (!strcmp(p_grp, rdtg->kn->name)) {
-+				list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
-+						    mon.crdtgrp_list) {
-+					if (!strcmp(c_grp, crg->kn->name))
-+						return crg;
-+				}
-+			}
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
-+static int rdtgroup_process_flags(enum rdt_group_type rtype, char *p_grp, char *c_grp, char *tok)
-+{
-+	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
-+	int op, mon_state, assign_state, unassign_state;
-+	char *dom_str, *id_str, *op_str;
-+	struct rdt_mon_domain *d;
-+	struct rdtgroup *rdtgrp;
-+	unsigned long dom_id;
-+	int ret, found = 0;
-+
-+	rdtgrp = rdtgroup_find_grp(rtype, p_grp, c_grp);
-+
-+	if (!rdtgrp) {
-+		rdt_last_cmd_puts("Not a valid resctrl group\n");
-+		return -EINVAL;
-+	}
-+
-+next:
-+	if (!tok || tok[0] == '\0')
-+		return 0;
-+
-+	/* Start processing the strings for each domain */
-+	dom_str = strim(strsep(&tok, ";"));
-+
-+	op_str = strpbrk(dom_str, "=+-");
-+
-+	if (op_str) {
-+		op = *op_str;
-+	} else {
-+		rdt_last_cmd_puts("Missing operation =, +, -, _ character\n");
-+		return -EINVAL;
-+	}
-+
-+	id_str = strsep(&dom_str, "=+-");
-+
-+	if (!id_str || kstrtoul(id_str, 10, &dom_id)) {
-+		rdt_last_cmd_puts("Missing domain id\n");
-+		return -EINVAL;
-+	}
-+
-+	/* Verify if the dom_id is valid */
-+	list_for_each_entry(d, &r->mon_domains, hdr.list) {
-+		if (d->hdr.id == dom_id) {
-+			found = 1;
-+			break;
-+		}
-+	}
-+	if (!found) {
-+		rdt_last_cmd_printf("Invalid domain id %ld\n", dom_id);
-+		return -EINVAL;
-+	}
-+
-+	mon_state = rdtgroup_str_to_mon_state(dom_str);
-+
-+	assign_state = 0;
-+	unassign_state = 0;
-+
-+	switch (op) {
-+	case '+':
-+		if (mon_state == ASSIGN_NONE) {
-+			rdt_last_cmd_puts("Invalid assign opcode\n");
-+			goto out_fail;
-+		}
-+		assign_state = mon_state;
-+		break;
-+	case '-':
-+		if (mon_state == ASSIGN_NONE) {
-+			rdt_last_cmd_puts("Invalid assign opcode\n");
-+			goto out_fail;
-+		}
-+		unassign_state = mon_state;
-+		break;
-+	case '=':
-+		assign_state = mon_state;
-+		unassign_state = (ASSIGN_TOTAL | ASSIGN_LOCAL) & ~assign_state;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	if (assign_state & ASSIGN_TOTAL)
-+		ret = resctrl_arch_assign_cntr(d, QOS_L3_MBM_TOTAL_EVENT_ID,
-+					       rdtgrp->mon.rmid,
-+					       rdtgrp->mon.cntr_id[0],
-+					       rdtgrp->closid, 1);
-+	if (ret)
-+		goto out_fail;
-+
-+	if (assign_state & ASSIGN_LOCAL)
-+		ret = resctrl_arch_assign_cntr(d, QOS_L3_MBM_LOCAL_EVENT_ID,
-+					       rdtgrp->mon.rmid,
-+					       rdtgrp->mon.cntr_id[1],
-+					       rdtgrp->closid, 1);
-+
-+	if (ret)
-+		goto out_fail;
-+
-+	if (unassign_state & ASSIGN_TOTAL)
-+		ret = resctrl_arch_assign_cntr(d, QOS_L3_MBM_TOTAL_EVENT_ID,
-+					       rdtgrp->mon.rmid,
-+					       rdtgrp->mon.cntr_id[0],
-+					       rdtgrp->closid, 0);
-+
-+	if (ret)
-+		goto out_fail;
-+
-+	if (unassign_state & ASSIGN_LOCAL)
-+		ret = resctrl_arch_assign_cntr(d, QOS_L3_MBM_LOCAL_EVENT_ID,
-+					       rdtgrp->mon.rmid,
-+					       rdtgrp->mon.cntr_id[1],
-+					       rdtgrp->closid, 0);
-+	if (ret)
-+		goto out_fail;
-+
-+	goto next;
-+
-+out_fail:
-+
-+	return -EINVAL;
-+}
-+
-+static ssize_t rdtgroup_mbm_control_write(struct kernfs_open_file *of,
-+					  char *buf, size_t nbytes,
-+					  loff_t off)
-+{
-+	struct rdt_resource *r = of->kn->parent->priv;
-+	char *token, *cmon_grp, *mon_grp;
-+	struct rdt_hw_resource *hw_res;
-+	int ret;
-+
-+	hw_res = resctrl_to_arch_res(r);
-+	if (!hw_res->abmc_enabled)
-+		return -EINVAL;
-+
-+	/* Valid input requires a trailing newline */
-+	if (nbytes == 0 || buf[nbytes - 1] != '\n')
-+		return -EINVAL;
-+
-+	buf[nbytes - 1] = '\0';
-+	rdt_last_cmd_clear();
-+
-+	cpus_read_lock();
-+	mutex_lock(&rdtgroup_mutex);
-+
-+	while ((token = strsep(&buf, "\n")) != NULL) {
-+		if (strstr(token, "//")) {
-+			/*
-+			 * The CTRL_MON group processing:
-+			 * default CTRL_MON group: "//<flags>"
-+			 * non-default CTRL_MON group: "<CTRL_MON group>//flags"
-+			 * The CTRL_MON group will be empty string if it is a
-+			 * default group.
-+			 */
-+			cmon_grp = strsep(&token, "//");
-+
-+			/*
-+			 * strsep returns empty string for contiguous delimiters.
-+			 * Make sure check for two consicutive delimiters and
-+			 * advance the token.
-+			 */
-+			mon_grp = strsep(&token, "//");
-+			if (*mon_grp != '\0') {
-+				rdt_last_cmd_printf("Invalid CTRL_MON group format %s\n", token);
-+				ret = -EINVAL;
-+				break;
-+			}
-+
-+			ret = rdtgroup_process_flags(RDTCTRL_GROUP, cmon_grp, mon_grp, token);
-+			if (ret)
-+				break;
-+		} else if (strstr(token, "/")) {
-+			/*
-+			 * MON group processing:
-+			 * MON_GROUP inside default CTRL_MON group: "/<MON group>/<flags>"
-+			 * MON_GROUP within CTRL_MON group: "<CTRL_MON group>/<MON group>/<flags>"
-+			 */
-+			cmon_grp = strsep(&token, "/");
-+
-+			/* Extract the MON_GROUP. It cannot be empty string */
-+			mon_grp = strsep(&token, "/");
-+			if (*mon_grp == '\0') {
-+				rdt_last_cmd_printf("Invalid MON_GROUP format %s\n", token);
-+				ret = -EINVAL;
-+				break;
-+			}
-+
-+			ret = rdtgroup_process_flags(RDTMON_GROUP, cmon_grp, mon_grp, token);
-+			if (ret)
-+				break;
-+		}
-+	}
-+
-+	mutex_unlock(&rdtgroup_mutex);
-+	cpus_read_unlock();
-+
-+	return ret ?: nbytes;
-+}
-+
- #ifdef CONFIG_PROC_CPU_RESCTRL
- 
- /*
-@@ -2282,9 +2529,10 @@ static struct rftype res_common_files[] = {
- 	},
- 	{
- 		.name		= "mbm_control",
--		.mode		= 0444,
-+		.mode		= 0644,
- 		.kf_ops		= &rdtgroup_kf_single_ops,
- 		.seq_show	= rdtgroup_mbm_control_show,
-+		.write		= rdtgroup_mbm_control_write,
- 	},
- 	{
- 		.name		= "cpus_list",
--- 
-2.34.1
+Thanks,
+Guenter
 
 
