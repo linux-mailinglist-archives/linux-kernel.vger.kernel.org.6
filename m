@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-239396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74CFD925FD3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:12:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE62925FFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AC79B23848
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:46:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 280F1B260E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD3716F827;
-	Wed,  3 Jul 2024 11:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9BB16EC0F;
+	Wed,  3 Jul 2024 11:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="HX+U0qEG"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k++e98Sv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F83213B5B2
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE2213D61B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720007189; cv=none; b=bDxPsGVcZ4KJTZjaTVQ4hH7fMItFE8JXSapexYry6jJla5XtjopLTnLiKDi+6Mv4Ot/Oz7+IewE7kR0T63U5UcoxuMjRSsEdkm2oJunjigD/IGyR8wy6Rd8SOHDcAFiS5KD7ewNqii2HjXkpt0e1cnaNplttE5bFi2HdRXfwfiI=
+	t=1720007577; cv=none; b=mKmhI6C5x0PW761QnpAybEE5DFzbwf+kx+qzsO5NWKKfK0v+kUgnttv+ER2AQ01q6xMpUwr9JxVPzXPbt23XSwi3MH7B0DU6+cYR9HAgPZID4I50PCyg0QOYegDK9baFIPX727KekRJN/xelNBStvsCjSvbp0QH5DkkIykmLZIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720007189; c=relaxed/simple;
-	bh=NVka7LdFhNak7mWiqRSHdImmzu3VSO08Qioh0A1K68M=;
+	s=arc-20240116; t=1720007577; c=relaxed/simple;
+	bh=EpdJkfBmRQKg1jeirUfiq32WPAAoiCKsPGk8hCr+s6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dqh8cs24pwd9x9NY4J4oTpq/4zcW1lxxULKszjSWn0uRX7bNZUAIS+fWZnibmeDS5cBpabpjtlPciDbdI+ZzvgLUVT/UiXlF8NLsjCI7l2+q6jlNwobpooGbb1Rxiug83oIA5SmiyT/Ki4dXEsTA0dMXxKrWLpco2BZjcw1s6vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=HX+U0qEG; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52e9944764fso509167e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 04:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1720007185; x=1720611985; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RD61GeZNS1NUH4+36WhC2nBOz/+c8ob3A4yfUrlEwiA=;
-        b=HX+U0qEG48JoIFXazX9CrAPHb8b2CfUinMR6kIZlwTAw+VreX4tkJDACIRu+6mkb2/
-         vT+R3fjz0Z5RoMA2Ein3o8IRrYpIpTi9bUtLpjFDyCWLUVd/WwOgH/LEcXEgODxOnBvl
-         /iRdlRYJqSsa+V0EjRbsflugf6qNwbZYXKZtHRtqMouVP56ohMVWzdj1C6RAqTgX5k2C
-         Unhbz2bcmn+4h/CgxE84ikLW4eJd9PT+ZkVjN2Vs0P3qJt1QAnVppRSKWyfGQXlxVZL9
-         1h8W9AlkZnAn8GyNygjyBwny6e7alC8SGP81lTiBnQKUt0CSXei7ox38S6GiRiTHqNZO
-         IHbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720007185; x=1720611985;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RD61GeZNS1NUH4+36WhC2nBOz/+c8ob3A4yfUrlEwiA=;
-        b=oM4o2ICJ1kNMIjgw6KFZ5buyIzO6iJL8eVNcm8LmK+OGVgy5niZKOl9/srq/gnbFvm
-         q9G5iiFKTiqAIYZl59eldnjCDTMhLYiPOhvtenMnMnXe/foOuAkGE72JhZDg8OpAbuJO
-         jZ8qk4OiGoLjet/twlzpkNT/1f+/EwHLj0Kl2c8G7q2hSxNgraU1RToiM70TL72SdAKa
-         E//5JSh2h0vq68cm8aDS4WFHQlkqRmkw6tVV0iW+TPmqmuw05yAE7n91qh6bnUNvjjaP
-         fJ69P1OxLrd5MQDu0li1UL4txBlCM/L7kY1KMfhey5r26qan53qrEMNBztV47Sbvh1QV
-         Hh/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXeUiZQJ6aO8uDiP31eOhsIgGI+vuqBZ/xIeihDwZrqmqVMNpzYUY4c1GGcikXdvlk0nGo9Kraj8hI4RT4+nAPuWRORB5JgNws8gHQ3
-X-Gm-Message-State: AOJu0YyMmWEq6kMVEAaw2QpLUs+YR83lLL2t9Hc6UXgJhVl5KX0GLuND
-	AmEZJzDH8OKSCzgUdzeH06X9ITD1Rlg57UXsIZ3bN65+98eQTrJzZytKBUTzq3U=
-X-Google-Smtp-Source: AGHT+IEgElY0USQhWi09GiNFlgNu9bIuDIBzJHExs+cE+oIBcdpUxWBHzzbv9tDKsriVdm3zAvQwag==
-X-Received: by 2002:a05:6512:10d4:b0:52c:890e:e8e7 with SMTP id 2adb3069b0e04-52e8270e724mr7211144e87.50.1720007184879;
-        Wed, 03 Jul 2024 04:46:24 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36790a40391sm2100391f8f.54.2024.07.03.04.46.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 04:46:24 -0700 (PDT)
-Date: Wed, 3 Jul 2024 12:46:23 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	christian.loehle@arm.com, vincent.donnefort@arm.com,
-	ke.wang@unisoc.com, di.shen@unisoc.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] sched/fair: Use actual_cpu_capacity everywhere in
- util_fits_cpu()
-Message-ID: <20240703114623.g7damgahld47kiah@airbuntu>
-References: <20240624082011.4990-1-xuewen.yan@unisoc.com>
- <20240624082011.4990-3-xuewen.yan@unisoc.com>
- <20240628012832.37swdtxr4ds2kkp7@airbuntu>
- <CAB8ipk-p_vT3mq4+BD0AxzgsLiRxpAnHJ1QaTWr1t619JeaL+w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cJpxwLypkSQwMhEe3qVGl6x77hleCbvFl8YdMvki9jYIGU9heepZpObK9MWpZ0P7/v/tuiT+lpDF8AXFWHOV1yirP9RYI+8PZ7MpapJlvRxiFNt1h1Zx9O/ukqhsTTaEFgatl2Qrnz2fed8fPw+eXKLngg+fFLrqQin4ZG7l3AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k++e98Sv; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720007576; x=1751543576;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=EpdJkfBmRQKg1jeirUfiq32WPAAoiCKsPGk8hCr+s6c=;
+  b=k++e98Svz1pe27wKdkkCtLiGNH3zqKd/onHOJSs1ssdQ9VPvTdJPswHi
+   YWlQAx5mmz0LrCZ5MkGx9Rk8hBSXlGGzPtfbDYAbHp+lyoMrfAuuoPTCr
+   3MA+lHT1R++tb7tE6HYI3qcPnDirN+ft31QT5mb052lYw2K2qHuah0r/N
+   VAmUVPpoSSxtYkGUVISv2vig5jibfgJJVs1BFLFNNrVKDkN9ux6XsPdTQ
+   EsT5GcnxpUWHbJIvGop78fJPBcOG2bqO7gti57Pb5K4y3zLIp31xCY26K
+   6QMjTONPDq7+HO9Y+0t46ooGaKSk1XOvw/i7ff50PqxKoDl9bUszyjGNa
+   g==;
+X-CSE-ConnectionGUID: ustaz7xlQs6XUkMjqSxftw==
+X-CSE-MsgGUID: 2QwnNcR+SDOJyjyRC8+1Gw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="17440569"
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="17440569"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 04:52:55 -0700
+X-CSE-ConnectionGUID: RPKwiF2YT5uq5i+JYJQ79g==
+X-CSE-MsgGUID: 3q321IkRR06QRpPPf4qnAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="46205175"
+Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.74])
+  by fmviesa008.fm.intel.com with SMTP; 03 Jul 2024 04:52:50 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 03 Jul 2024 14:52:49 +0300
+Date: Wed, 3 Jul 2024 14:52:49 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: jim.cromie@gmail.com
+Cc: daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
+	jani.nikula@intel.com, jbaron@akamai.com,
+	gregkh@linuxfoundation.org, ukaszb@chromium.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, linux@rasmusvillemoes.dk,
+	joe@perches.com, mcgrof@kernel.org
+Subject: Re: [PATCH v9 30/52] drm-dyndbg: adapt drm core to use dyndbg
+ classmaps-v2
+Message-ID: <ZoU7kR2aYwVDvd_G@intel.com>
+References: <20240702215804.2201271-1-jim.cromie@gmail.com>
+ <20240702215804.2201271-31-jim.cromie@gmail.com>
+ <ZoSOMClB0MeWeokU@intel.com>
+ <CAJfuBxzsZUpO-Q_uAfMhzXs0WHYMTnj1F8ju7af-kQZKQjLvNQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,54 +83,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAB8ipk-p_vT3mq4+BD0AxzgsLiRxpAnHJ1QaTWr1t619JeaL+w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJfuBxzsZUpO-Q_uAfMhzXs0WHYMTnj1F8ju7af-kQZKQjLvNQ@mail.gmail.com>
+X-Patchwork-Hint: comment
 
-On 07/01/24 20:13, Xuewen Yan wrote:
-
-> > >        *
-> > >        * Only exception is for HW or cpufreq pressure since it has a direct impact
-> > >        * on available OPP of the system.
-> > > @@ -5011,7 +5011,7 @@ static inline int util_fits_cpu(unsigned long util,
-> > >        * For uclamp_max, we can tolerate a drop in performance level as the
-> > >        * goal is to cap the task. So it's okay if it's getting less.
-> > >        */
-> > > -     capacity_orig = arch_scale_cpu_capacity(cpu);
-> > > +     capacity_actual = get_actual_cpu_capacity(cpu);
-> > >
-> > >       /*
-> > >        * We want to force a task to fit a cpu as implied by uclamp_max.
-> > > @@ -5039,7 +5039,7 @@ static inline int util_fits_cpu(unsigned long util,
-> > >        *     uclamp_max request.
-> > >        *
-> > >        *   which is what we're enforcing here. A task always fits if
-> > > -      *   uclamp_max <= capacity_orig. But when uclamp_max > capacity_orig,
-> > > +      *   uclamp_max <= capacity_actual. But when uclamp_max > capacity_actual,
-> > >        *   the normal upmigration rules should withhold still.
-> > >        *
-> > >        *   Only exception is when we are on max capacity, then we need to be
-> > > @@ -5050,8 +5050,8 @@ static inline int util_fits_cpu(unsigned long util,
-> > >        *     2. The system is being saturated when we're operating near
-> > >        *        max capacity, it doesn't make sense to block overutilized.
-> > >        */
-> > > -     uclamp_max_fits = (capacity_orig == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
-> > > -     uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_orig);
-> > > +     uclamp_max_fits = (capacity_actual == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
+On Tue, Jul 02, 2024 at 08:34:39PM -0600, jim.cromie@gmail.com wrote:
+> On Tue, Jul 2, 2024 at 5:33 PM Ville Syrjälä
+> <ville.syrjala@linux.intel.com> wrote:
 > >
-> > We should use capacity_orig here. We are checking if the CPU is the max
-> > capacity CPU.
+> > On Tue, Jul 02, 2024 at 03:57:20PM -0600, Jim Cromie wrote:
+> > > dyndbg's CLASSMAP-v1 api was broken; DECLARE_DYNDBG_CLASSMAP tried to
+> > > do too much.  Its replaced by DRM_CLASSMAP_DEFINE, which creates &
+> > > EXPORTs the classmap when CONFIG_DRM_USE_DYNAMIC_DEBUG=y, for direct
+> > > reference by drivers.
+> > >
+> > > The drivers still use DECLARE_DYNDBG_CLASSMAP for now, so they still
+> > > redundantly re-declare the classmap, but we can convert the drivers
+> > > later to DYNDBG_CLASSMAP_USE
+> > >
+> > > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/drm_print.c | 25 +++++++++++++------------
+> > >  include/drm/drm_print.h     |  8 ++++++++
+> > >  2 files changed, 21 insertions(+), 12 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
+> > > index 699b7dbffd7b..4a5f2317229b 100644
+> > > --- a/drivers/gpu/drm/drm_print.c
+> > > +++ b/drivers/gpu/drm/drm_print.c
+> > > @@ -55,18 +55,19 @@ MODULE_PARM_DESC(debug, "Enable debug output, where each bit enables a debug cat
+> > >  #if !defined(CONFIG_DRM_USE_DYNAMIC_DEBUG)
+> > >  module_param_named(debug, __drm_debug, ulong, 0600);
+> > >  #else
+> > > -/* classnames must match vals of enum drm_debug_category */
+> > > -DECLARE_DYNDBG_CLASSMAP(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS, 0,
+> > > -                     "DRM_UT_CORE",
+> > > -                     "DRM_UT_DRIVER",
+> > > -                     "DRM_UT_KMS",
+> > > -                     "DRM_UT_PRIME",
+> > > -                     "DRM_UT_ATOMIC",
+> > > -                     "DRM_UT_VBL",
+> > > -                     "DRM_UT_STATE",
+> > > -                     "DRM_UT_LEASE",
+> > > -                     "DRM_UT_DP",
+> > > -                     "DRM_UT_DRMRES");
+> > > +/* classnames must match value-symbols of enum drm_debug_category */
+> > > +DRM_CLASSMAP_DEFINE(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS,
+> > > +                 DRM_UT_CORE,
+> > > +                 "DRM_UT_CORE",
+> > > +                 "DRM_UT_DRIVER",
+> > > +                 "DRM_UT_KMS",
+> > > +                 "DRM_UT_PRIME",
+> > > +                 "DRM_UT_ATOMIC",
+> > > +                 "DRM_UT_VBL",
+> > > +                 "DRM_UT_STATE",
+> > > +                 "DRM_UT_LEASE",
+> > > +                 "DRM_UT_DP",
+> > > +                 "DRM_UT_DRMRES");
+> >
+> > Looks like this stuff just ends up in an array, so presumably
+> > it should be possible to use designated initializers to make this
+> > less fragile?
 > 
-> Maybe we could remove the uclamp_max_fits = (capacity_orig ==
-> SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
-> and just judge the uclamp_max <= capacity_actual?
+> Im not sure I got your whole point, but:
+
+I mean using
+ [DRM_UT_CORE] = "DRM_UT_CORE"
+instead of
+ "DRM_UT_CORE"
+so there is no chance of screwing up the order.
+Or maybe the order doesn't even matter here?
+
+Could also stringify to avoid accidental of typos.
+
 > 
-> -     uclamp_max_fits = (capacity_orig == SCHED_CAPACITY_SCALE) &&
-> (uclamp_max == SCHED_CAPACITY_SCALE);
-> -     uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_orig);
-> +     uclamp_max_fits =  (uclamp_max <= capacity_actual);
+> the fragility is the repetitive re-statement of the map,
+> in those un-modified DECLARE_s,
+> once replaced, the USEs just ref the struct built by the _DEFINE
+> (once, and exported)
+> 
+> I dont really like the _DEFINEs restatement of the enum-values: DRM_UT_*
+> especially as "strings".
+> I can automate the stringification with an APPLY_FN_(__stringify, ...)
+> but the enum-list DRM_UT_* (w.o quotes) is still needed as args.
+> 
+> unless there is something C can do thats like Enum.values() ?
+> 
+> 
+> 
+> >
+> > --
+> > Ville Syrjälä
+> > Intel
 
-If capacity_orig = 1024, capacity_actual = 1024, uclamp_max = 1024 (which is
-the common case), then overutilized will never trigger for big CPU, no?
-
-We can't 'force' fit a task on the biggest core, and fits_capacity() should be
-our sole judge here if we fit or not.
+-- 
+Ville Syrjälä
+Intel
 
