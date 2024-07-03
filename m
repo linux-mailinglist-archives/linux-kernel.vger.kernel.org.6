@@ -1,50 +1,70 @@
-Return-Path: <linux-kernel+bounces-239355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3338925C5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:17:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7677925F7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D1EF1F21108
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:17:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07376B3A619
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D67180A8D;
-	Wed,  3 Jul 2024 11:05:55 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7F217F51A;
-	Wed,  3 Jul 2024 11:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01F9190042;
+	Wed,  3 Jul 2024 11:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LfoeD012"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE8C17966F;
+	Wed,  3 Jul 2024 11:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720004755; cv=none; b=Sq+m+xopqvB0zfKhtsOyX2wlI6dlDB65ha0SQ01YtWeIQt6OGldrnDmGJlatZBXNQtwZ+nhjyO7mCv6IRzgez5ncmBYZNYu+wLDNf0r5C8NBNjYIXFKSMa9/daY+K8EZro6LqKgP6KZI0sl7CS54qqchkOCjzl+D9wMstbxnhUE=
+	t=1720004891; cv=none; b=YKJMv5+m7mibKgHiqfxmbcWp9Yr4rvm3+sxp/ihNp4sKRu3V2RcIW5w3UtPBpLuoyN6jMmaxiceBo0FnYDuOkzUdNUmR2rEHlYXO2pJFvaT7UV8q5PJ6Pq7ajc+jNrkojDqeo73+52Rft/At8JxB82rSVIkl6FGXsTji6jwTrcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720004755; c=relaxed/simple;
-	bh=Nt6ZuaCko+BArRXXU7JkXLT2e8uK2t+eKVQDm+MzM0c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r7TD7wTA9dXspNTUx95qjCvgYqV7rxLLXbDD6bvWcpjhc6SSO6P8tBcvzkS23zkY+R5Fo0RdXzd6D/DQ2gSWrGG0qrqwlDvABsm8jY0RWSAlieyzTXE2JLx15oq+rH4MomzGNtBQUjGg/M0WoDv8aUwHUgtZz4rv2//fhjGQkO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [112.22.233.190])
-	by gateway (Coremail) with SMTP id _____8Cx_vCPMIVmaX8AAA--.1818S3;
-	Wed, 03 Jul 2024 19:05:51 +0800 (CST)
-Received: from lvm.. (unknown [112.22.233.190])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxfceMMIVmHIU5AA--.3488S2;
-	Wed, 03 Jul 2024 19:05:50 +0800 (CST)
-From: WANG Rui <wangrui@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	Xi Ruoyao <xry111@xry111.site>,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	loongarch@lists.linux.dev,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	loongson-kernel@lists.loongnix.cn,
-	WANG Rui <wangrui@loongson.cn>
-Subject: [PATCH] LoongArch: rust: Use rustc option -Zdirect-access-external-data
-Date: Wed,  3 Jul 2024 19:06:24 +0800
-Message-ID: <20240703110624.1301830-1-wangrui@loongson.cn>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720004891; c=relaxed/simple;
+	bh=aAHcNpB1IgwcUueaEiNMzohiIzC+NF8WBCUgS5jLNsQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZAgqwPWAsUE7RSNhq3VfBV+lcglvlutTXb3r4o23HjzBtlOxmxrKC5r6/29yyJFLhPu6fc1TQpGUKRH1JvqB3OFdgsxVK0rOLjLwqUt+ioYuia54QPzjUu9T+5PSXU5pCPqDZFJu1BjS/t+Kn4isYPVKMUkCXeKm4zRX1xVx7yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LfoeD012; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4632V650028807;
+	Wed, 3 Jul 2024 11:08:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=OWQnYlzEmKvztF5hGmcsCG
+	k86Zr1SRLYRcSYeQnokE0=; b=LfoeD0120dDRx0lxahbziBRdMh1rByTWw5vmHM
+	OKBQLO+Y2p+bv4aDKXD0dmCEqIqWKJMGxi/uVRmfiqLW58MTp8j2svlGoemfKYOq
+	rGTNFab+bRJp6PfayhAhb0sSqG2RIKxVCOBptxVrE5hV9zxSM00oNLyqV+Rua0T9
+	bIz2jAu0b+9gSWBbwH42k9FpCSt+6Ye+tc0iK6NTtjCPQ6PWiUp5KEFyWDHebTra
+	QWhHjCAMNAuFwJzeg0ITai7SfN/VO/Acv9UZMK3zJB4xcnBSv4arIXYeJ/waE/Ax
+	j+vQzvb/pvJ2lVwqdlMkYiY1yKXlU1Vf9Podv7DE4qMlHR3A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404kctjus0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 11:08:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 463B7xWu002896
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Jul 2024 11:07:59 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 3 Jul 2024 04:07:55 -0700
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <ulf.hansson@linaro.org>, <sudeep.holla@arm.com>,
+        <cristian.marussi@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
+        <quic_sibis@quicinc.com>, <johan@kernel.org>
+Subject: [PATCH] pmdomain: arm: Fix debugfs node creation failure
+Date: Wed, 3 Jul 2024 16:37:41 +0530
+Message-ID: <20240703110741.2668800-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,52 +72,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8DxfceMMIVmHIU5AA--.3488S2
-X-CM-SenderInfo: pzdqw2txl6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj9xXoWruF48WF1rJFyrJr48Ww15trc_yoWkCrX_Wa
-	13Jw48Ka1rWrs0va15Zr1rGrn7C348JF4fZF1vqr9xJryYgry5trZrGw1fZrnaq3y2grs5
-	GF4xZasrZr1UtosvyTuYvTs0mTUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUb7kYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_MaUUUUU
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Cv0fOm5Kl8mxrnMeudx36UyMankDpKtK
+X-Proofpoint-ORIG-GUID: Cv0fOm5Kl8mxrnMeudx36UyMankDpKtK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_06,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ bulkscore=0 mlxlogscore=673 priorityscore=1501 impostorscore=0
+ suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1011 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407030082
 
--Zdirect-access-external-data is a new Rust compiler option added
-in Rust 1.78, which we use to optimize the access of external data
-in the Linux kernel's Rust code. This patch modifies the Rust code
-in vmlinux to directly access externa data, using PC-REL instead of
-GOT. However, Rust code whithin modules is constrained by the PC-REL
-addressing range and is explicitly set to use an indirect method.
+The domain attributes returned by the perf protocol can end up
+reporting identical names across domains, resulting in debugfs
+node creation failure. Fix this duplication by appending the
+domain-id to the domain name.
 
-Signed-off-by: WANG Rui <wangrui@loongson.cn>
+Logs:
+debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+
+Fixes: 2af23ceb8624 ("pmdomain: arm: Add the SCMI performance domain")
+Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 ---
- arch/loongarch/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pmdomain/arm/scmi_perf_domain.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-index 8674e7e24c4a..ae3f80622f4c 100644
---- a/arch/loongarch/Makefile
-+++ b/arch/loongarch/Makefile
-@@ -105,7 +105,8 @@ KBUILD_CFLAGS			+= -fno-jump-tables
- endif
+diff --git a/drivers/pmdomain/arm/scmi_perf_domain.c b/drivers/pmdomain/arm/scmi_perf_domain.c
+index d7ef46ccd9b8..0af5dc941349 100644
+--- a/drivers/pmdomain/arm/scmi_perf_domain.c
++++ b/drivers/pmdomain/arm/scmi_perf_domain.c
+@@ -18,6 +18,7 @@ struct scmi_perf_domain {
+ 	const struct scmi_perf_proto_ops *perf_ops;
+ 	const struct scmi_protocol_handle *ph;
+ 	const struct scmi_perf_domain_info *info;
++	char domain_name[SCMI_MAX_STR_SIZE];
+ 	u32 domain_id;
+ };
  
- KBUILD_RUSTFLAGS		+= --target=loongarch64-unknown-none-softfloat
--KBUILD_RUSTFLAGS_MODULE		+= -Crelocation-model=pic
-+KBUILD_RUSTFLAGS_KERNEL		+= -Zdirect-access-external-data=yes
-+KBUILD_RUSTFLAGS_MODULE		+= -Zdirect-access-external-data=no
- 
- ifeq ($(CONFIG_RELOCATABLE),y)
- KBUILD_CFLAGS_KERNEL		+= -fPIE
+@@ -123,7 +124,12 @@ static int scmi_perf_domain_probe(struct scmi_device *sdev)
+ 		scmi_pd->domain_id = i;
+ 		scmi_pd->perf_ops = perf_ops;
+ 		scmi_pd->ph = ph;
+-		scmi_pd->genpd.name = scmi_pd->info->name;
++
++		/* Domain attributes can report identical names across domains */
++		snprintf(scmi_pd->domain_name, sizeof(scmi_pd->domain_name), "%s-%d",
++			 scmi_pd->info->name, scmi_pd->domain_id);
++
++		scmi_pd->genpd.name = scmi_pd->domain_name;
+ 		scmi_pd->genpd.flags = GENPD_FLAG_ALWAYS_ON |
+ 				       GENPD_FLAG_OPP_TABLE_FW;
+ 		scmi_pd->genpd.set_performance_state = scmi_pd_set_perf_state;
 -- 
-2.45.2
+2.34.1
 
 
