@@ -1,96 +1,108 @@
-Return-Path: <linux-kernel+bounces-240295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FA9926B71
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:21:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF62926B6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95592B20F69
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:21:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F96E1F23014
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE8C191F9B;
-	Wed,  3 Jul 2024 22:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511C918C35D;
+	Wed,  3 Jul 2024 22:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IWZBrYsD"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Re8ZOA5l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CDF13D638;
-	Wed,  3 Jul 2024 22:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9470B13D638;
+	Wed,  3 Jul 2024 22:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720045293; cv=none; b=bGZXLMTyBfMUnvpnrW+HTHRL2Mg8WRvrMSqcrXGRKMgZ54+Tc4D5cuqsgMiV+6z87A+sx/88gsfRIIMpTt8WV3RF2gisFzwML9+DyoC0tU8yjPKKrGWm1Ohr7sMiZR5NMDQ/LJuKx4ZexsF3tjXFoh7A2/pYrLV5vvjOC88nNUE=
+	t=1720045267; cv=none; b=FIbNVBlL+VzMTJIIusm8dWpY2YZicNEGuCwS5vrqt7GvJEvdOv9x2XFpZR5C07KdbH5prnGFGgSPMqULUejOe3Y4fYX5FfviTaQsGxrUXAowbnh31yXJA8oVla4lchyKZgFOtI73FQ2X9hA7qsAcAnVOi+KRMxcgQWyjbSeY868=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720045293; c=relaxed/simple;
-	bh=qzUnn7OULqI4PPdR5CslAgQmY67Olz1L9cTNx/GdJMU=;
+	s=arc-20240116; t=1720045267; c=relaxed/simple;
+	bh=XS9/SidMjh9Kd2T3+k4yeCAqwsKugEYswV4ero2y9vA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TztYcywmrii8mwVkmH4nPWfYmCFV76OBxsyBwZFieg4y4+efF+el91G/SobKzwIMrZopV/xkpLNQK675qv7ainiW7UvoZtRts8fD4jYFazwdVq50OhXLxRhvu+a7pRw3GPVuN/rIfV8b2AyvCkKyoGNV5elkXXGk9T9nz+K3VDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IWZBrYsD; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=8q9zES3+zTRSwBcBDNrOTV1zjiXViyGhReGb+fJ4Fpo=; b=IWZBrYsD2j71YtY44VQeBpXYEC
-	7TnuKsoqMTaPuelBlItQgCSPeQdljmwpisJtHO9hq/HAw1dMfPgtVay2Vg46R0ZdjBfAGZF2IzatK
-	1Y3hVLJ+5EM60H6DscRNcQflJdlgTEwgohD0jma3HnnvWODWDGBDEvGiL1T/Tz9We+sM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sP8LX-001lt8-SR; Thu, 04 Jul 2024 00:21:03 +0200
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKwcfVfjUwx0Hv1W5DPyN9Dva28sRch9d+8cRqhHyxUKuj+H4HXkaDaC1VTsKtonk7NTJzMTcl5rGEXJg+RxCUzJrpZNKHzQbsmODWhYMTv6Bw+5Qkbyk6/tl6fqglmu4/hZB6Sp+yJ9j34jbeABxV+y4ZT9OXIdBLCERKh8OKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Re8ZOA5l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71488C2BD10;
+	Wed,  3 Jul 2024 22:21:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720045267;
+	bh=XS9/SidMjh9Kd2T3+k4yeCAqwsKugEYswV4ero2y9vA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Re8ZOA5lyb2svk5I+bE8qWBABVLZwOP8/Z4CrZIL4L53IBxaL4mtf7seZ5Ph1papn
+	 q+66589596DEQQ2qFrrUNbHpCL5o+fggArKSgQxeXYcIJNLi9vJHJycSarG/C4m/xr
+	 uSumfkrOFAcFVbsqGSJytwjRmtM/I7dkASR4oUvTVvKpZjasQumsMY3sx+3BHlysD6
+	 VrZDzPCxlCzPQxe+QOsHH47nKw9anXhuPhi3pRvIH8n4T16hbjiaDnAL3mv0BVKCqU
+	 ZPfE9v/1uDc5fJ677h7u/C5QlT2Z0J0kx+QqmwArOYSDDyG5NIWR4xWuTNdKNeIf22
+	 5+gMmWsQMhIAA==
 Date: Thu, 4 Jul 2024 00:21:03 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com,
-	Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] Add interconnect support for stmmac driver.\
-Message-ID: <72c55623-8d62-4346-8f04-506d0eaed867@lunn.ch>
-References: <20240703-icc_bw_voting_from_ethqos-v3-0-8f9148ac60a3@quicinc.com>
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Cc: Vladimir Zapolskiy <vz@mleia.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch v6] i2c: pnx: Fix potential deadlock warning from
+ del_timer_sync() call in isr
+Message-ID: <cvpj5q2laopscchvwvndrl247tlkgyw7tw7nnpuevcs4g5qf52@hpruhtety5lt>
+References: <20240628152543.281105-1-piotr.wojtaszczyk@timesys.com>
+ <dudh4jdce3yxwv5yw345gw23diwparhwvsl4jrpsyzpv3sgge3@ojtdgsdgwcor>
+ <CAG+cZ06sqDuOer=fBcGhQkTUgWt9XqaLkAW0cmT8g=EJ+e8pWA@mail.gmail.com>
+ <otsopuw5pqpe637mywdoecnv5xhfhcny5xsxnwoyxhy7gj5yy6@3s43zn2udeei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240703-icc_bw_voting_from_ethqos-v3-0-8f9148ac60a3@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <otsopuw5pqpe637mywdoecnv5xhfhcny5xsxnwoyxhy7gj5yy6@3s43zn2udeei>
 
-On Wed, Jul 03, 2024 at 03:15:20PM -0700, Sagar Cheluvegowda wrote:
-> Interconnect is a software framework to access NOC bus topology
-> of the system, this framework is designed to provide a standard
-> kernel interface to control the settings of the interconnects on
-> an SoC.
-> The interconnect support is now being added to the stmmac driver
-> so that any vendors who wants to use this feature can just
-> define corresponging dtsi properties according to their
-> NOC bus topologies. 
+Hi Piotr,
+
+On Thu, Jul 04, 2024 at 12:19:38AM GMT, Andi Shyti wrote:
+> Hi Piotr,
 > 
-> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+> On Tue, Jul 02, 2024 at 11:13:06AM GMT, Piotr Wojtaszczyk wrote:
+> > On Tue, Jul 2, 2024 at 1:01 AM Andi Shyti <andi.shyti@kernel.org> wrote:
+> > > > @@ -653,7 +624,10 @@ static int i2c_pnx_probe(struct platform_device *pdev)
+> > > >       alg_data->adapter.algo_data = alg_data;
+> > > >       alg_data->adapter.nr = pdev->id;
+> > > >
+> > > > -     alg_data->timeout = I2C_PNX_TIMEOUT_DEFAULT;
+> > > > +     alg_data->timeout = msecs_to_jiffies(I2C_PNX_TIMEOUT_DEFAULT);
+> > > > +     if (alg_data->timeout <= 1)
+> > > > +             alg_data->timeout = 2;
+> > >
+> > > I don't see the need for this check. The default timeout is
+> > > defined as 10.
+> > >
+> > > Thanks,
+> > > Andi
+> > 
+> > That's the timeout value which was in the previous timer in i2c_pnx_arm_timer(),
+> > without this I had time out events.
+> 
+> I meant the if() statement. We are sure timeout is not <= 1 at
+> this point.
+> 
+> Anyway, it doesn't matter. I applied the patch in
+> i2c/i2c-host-next.
 
-Thanks for the rework.
+Sorry, applied to i2c/i2c-host-fixes on
 
-It is normal to have a user of a new feature. Please could you patch a
-few .dts files with these new properties.
+git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git
 
-Thanks
-	Andrew
----
-pw-bot: cr
+Thank you,
+Andi
+
+Patches applied
+===============
+[1/1] i2c: pnx: Fix potential deadlock warning from del_timer_sync() call in isr
+      commit: f63b94be6942ba82c55343e196bd09b53227618e
 
