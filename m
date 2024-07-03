@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-239772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2DB926527
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4CE92652D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0931C2104E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:44:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEBB01C211EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B771D1822E0;
-	Wed,  3 Jul 2024 15:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F01D181CF0;
+	Wed,  3 Jul 2024 15:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XnjBzekh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XN/8Du6H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389E41822CA
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF50181BB3;
+	Wed,  3 Jul 2024 15:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720021432; cv=none; b=rRWmIxyB0WqZWSjxCVg83rYbdqDSvGBuPYlb0hvz4PtGskQsun9CTyV4oM5B+V2uKGVTyGcEHqfYyxj8gXpuWq3cIBJVV6dzyH+X3lmeKfN3Dl6mBLq2McmQ3E4DzzzdJCt2SkDNv4lEuw5fxkPVNgXO7bydeuX6Obr9nJhKUDo=
+	t=1720021457; cv=none; b=MX3wIWOgLkTwJ6z+B1whOXtyA2AbrIMNSLsAQZjiM4SHtZeSAWBPlEszBsysNhLMuGPH2SqVD494oR2ke0eRuWp9mh141iMntfgnCiXH4/2D5hgri8dYp7qXe+NeRJU6pS6kHJsnT6ZXqj066W6ievJAiVI9rCEv13TSAuPCCx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720021432; c=relaxed/simple;
-	bh=MFb+PibBbk+BVgIAEpjdgeCiHjDQ5kYCeGDOHVkgJDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZ7ZiE2572MH2bu9+XJ4Fef8S4RGPu9b/ehVfArsoR5lF//PDzWwSeIpYNkVTPV1K107DDoTfafNx/W9vwzWY/a0IFBfpc0HpAqghNVtVQ2YPhFN4iJ8SEGYbX5Zydiy9ZC+9nXZffaSeir1JhjVqqEj4amkAF2jqqqf2+GmbUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XnjBzekh; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720021430; x=1751557430;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MFb+PibBbk+BVgIAEpjdgeCiHjDQ5kYCeGDOHVkgJDs=;
-  b=XnjBzekhe5Trk7wQ3xLyHR9uYkt8OSwxkOVeKetrb0et4zWtq9j0N1dF
-   rcU+PaLPGVy7LTROsD2TTkObz3CW+mZPOCKjER4JZ7EJCkGUX0CJNlwc0
-   D+S0NJWuAh/VxQ71n1RekuE7FjkaUru44on7nSZClOa/NPlJgFRy8Me3O
-   m7v3AvOWM2kwcnkuWVR1x8yrFsskjKB9+e9jqyzpV7Y+eFaQd9RgpLu8I
-   bPMid2LU/fE777oaaFd+IKSAoXu8PWFFkFwkV1nhC9V1llRC3Eyu7nh9I
-   KDdItpdhPaDkmIxWOpGaB7N0CWYfFbS3kuiff9clERTinARfhzhsVwz9c
-   A==;
-X-CSE-ConnectionGUID: CpDr5yrHTAWtLvqYtWIr1w==
-X-CSE-MsgGUID: 0yA/ml0qRaOgnSttny3eNw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="12377602"
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="12377602"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 08:43:49 -0700
-X-CSE-ConnectionGUID: 8f+yW37+RTKnuvXO+yWXqA==
-X-CSE-MsgGUID: o0Gl0/PuRN6eOOacOKNYGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="47046174"
-Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.223.221]) ([10.124.223.221])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 08:43:49 -0700
-Message-ID: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com>
-Date: Wed, 3 Jul 2024 08:43:46 -0700
+	s=arc-20240116; t=1720021457; c=relaxed/simple;
+	bh=jYmjQiqQpad3hkViZYZAMJQKoWXm0SiaRxoFOzHBIkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aCS/QPVmZyL6um7saYv4rA9g8Sit8LQ0ngjrBP5rclwhDihJQ4QawTxhWY6ued99maT6k3krZvESwmRNOZQE6g8cT/m7rNs6r5lK4Zza/BdcwW3B3UIMxIW8/EsJF7j6XR5jn5DkgbUMKqK7Y/wd1zTUHXKq6ORDAsP4C30xjaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XN/8Du6H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A0FC2BD10;
+	Wed,  3 Jul 2024 15:44:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720021456;
+	bh=jYmjQiqQpad3hkViZYZAMJQKoWXm0SiaRxoFOzHBIkI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XN/8Du6HCu0Gdq60W5VRZIsiUC75cPPDb1SqJ71UnLu5D/FuILg5+f1ffm/OPABTX
+	 UXpH7GXqZBV1Ud3d6BxKH8xViZ1NltX8TFiwETF8F3DqQou2Xf6IITWZpnw1Bs4oST
+	 eYLL2ZmBdYkUcdUSS3hSNlaNnStaDj3BDtBwQAP59T4yaIRx4N5RxKhdY9CdzWLQyo
+	 MyNMGBn9r+gkEFKA7NberWi8XPb5M1aFQLOh/WP9xZ6VjkdInS0U3ZNygmv2t6DAq5
+	 xbSdSmT1I4e3VqzDwXWRTxYSRx6sy8ruDWf9XXreCz18zkZCNaAjgHj4DQsjzO5Vjx
+	 dcrcBY19oBXuw==
+Date: Wed, 3 Jul 2024 16:44:09 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Varshini Rajendran <varshini.rajendran@microchip.com>
+Cc: radu_nicolae.pirea@upb.ro, richard.genoud@bootlin.com,
+	gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, linux-kernel@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 03/27] dt-bindings: serial: atmel,at91-usart: add
+ compatible for sam9x7.
+Message-ID: <20240703-turbulent-geologic-fdcb698a4b55@spud>
+References: <20240703102011.193343-1-varshini.rajendran@microchip.com>
+ <20240703102640.195431-1-varshini.rajendran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
-To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org
-Cc: hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
- andrew.cooper3@citrix.com, nik.borisov@suse.com, houwenlong.hwl@antgroup.com
-References: <20240703085426.274801-1-xin@zytor.com>
- <20240703085426.274801-3-xin@zytor.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240703085426.274801-3-xin@zytor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="HPDmH2zYVKMCfEhh"
+Content-Disposition: inline
+In-Reply-To: <20240703102640.195431-1-varshini.rajendran@microchip.com>
 
-On 7/3/24 01:54, Xin Li (Intel) wrote:
-> Do FRED MSR writes with wrmsrns() rather than wrmsrl().
 
-A longer changelog would be appreciated here.  The wrmsrns() is
-presumably to avoid the WRMSR serialization overhead and the CR4 write
-provides all of the serialization that we need.
+--HPDmH2zYVKMCfEhh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm also not clear how this fits into the series other than being FRED
-related.
+On Wed, Jul 03, 2024 at 03:56:40PM +0530, Varshini Rajendran wrote:
+> Add sam9x7 compatible to DT bindings documentation.
+>=20
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> ---
+> Changes in v5:
+> - Corrected the order of bindings.
+> - sam9x60 bindings in the dts and dt documentation in future series.
+> ---
+>  .../devicetree/bindings/serial/atmel,at91-usart.yaml     | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/serial/atmel,at91-usart.ya=
+ml b/Documentation/devicetree/bindings/serial/atmel,at91-usart.yaml
+> index eb2992a447d7..f466c38518c4 100644
+> --- a/Documentation/devicetree/bindings/serial/atmel,at91-usart.yaml
+> +++ b/Documentation/devicetree/bindings/serial/atmel,at91-usart.yaml
+> @@ -23,13 +23,20 @@ properties:
+>            - const: atmel,at91sam9260-dbgu
+>            - const: atmel,at91sam9260-usart
+>        - items:
+> -          - const: microchip,sam9x60-usart
+> +          - enum:
+> +              - microchip,sam9x60-usart
+> +              - microchip,sam9x7-usart
+>            - const: atmel,at91sam9260-usart
+>        - items:
+>            - const: microchip,sam9x60-dbgu
+>            - const: microchip,sam9x60-usart
+>            - const: atmel,at91sam9260-dbgu
+>            - const: atmel,at91sam9260-usart
+> +      - items:
+> +          - const: microchip,sam9x7-dbgu
+> +          - const: atmel,at91sam9260-dbgu
 
-> No functional change intended.
+> +          - const: microchip,sam9x7-usart
 
-I think I know what this was trying to convey, but I'm not sure this
-phrase is appropriate to use here.  Sure, WRMSR and WRMSRNS have the
-same general purpose, but I'd never say they are functionally equivalent.
+I still think that this particular compatible shouldn't be here, but I
+did say I would accept this version.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Thanks,
+Conor.
+
+> +          - const: atmel,at91sam9260-usart
+> =20
+>    reg:
+>      maxItems: 1
+> --=20
+> 2.25.1
+>=20
+
+--HPDmH2zYVKMCfEhh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoVxyQAKCRB4tDGHoIJi
+0lMdAQC9IlgMexaIHRE/kzioxuHqnOOQ4p5nqh5Iwz7U7KIhAwD/VwBipX8VhBQg
+Sb9kTKARv8FnQcLhLcFDHHwB1UA99g0=
+=0ChQ
+-----END PGP SIGNATURE-----
+
+--HPDmH2zYVKMCfEhh--
 
