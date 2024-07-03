@@ -1,123 +1,115 @@
-Return-Path: <linux-kernel+bounces-239066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6997A9255B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:45:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC0A9255BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211AE1F2355D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:45:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0988B1C24946
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD687D3E8;
-	Wed,  3 Jul 2024 08:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCD113C3EE;
+	Wed,  3 Jul 2024 08:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0Wx03H80"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kE8GJLEk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6C328684
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6324113B5B6;
+	Wed,  3 Jul 2024 08:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719996329; cv=none; b=F0q2ipjVXBMikOAkyvZ/qDnSquU5lStjDAdLTuVDRsVfm/UcdPt5wt9NOPFQW4uOk1UfnZl0sE53sInBHrdgBg8HYdVFI1vo+g/se9xwryTEuvWXyF/0lXKJ8/noLeCBHOSHsHn5GkWSz35QBesIQaln3B6iRDAmUJtxBDLC7ig=
+	t=1719996366; cv=none; b=LcUF0Vmto2h0rtB/E2HfYtbRhGMdMIr8+7UYGs7G7nUwwfkg50e9p9EJg9aTPdPX1m5gwjK8uJKTMDkP9/f6wNIxtazuV/N9WmefSy6r2QJyV7/zYQ4ti1Zie6RHoRPnPsO5CHHwXuclsvlnLKGRAQ4W6PIKgXTDD9lmpIsv1KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719996329; c=relaxed/simple;
-	bh=1/78X+s0pwLYqNvet2Tcy5BBn4d0W8hkbGlv0yYIueY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pUMz+ysDE0VAshyIWkHD7WUdPBkP1TdjNwXLV8xKZ+Th7eoICChgset64RUeyRbEi51SwEjB2iU8G0wsDuzBtzLXOMw6Md2aLjn5+PubbzcaKTXSafjrl5gZkq+6KWMV1jE0oS2fhp/RtO5GmxBCArgdkOXTHyWWEWGWchjcL3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0Wx03H80; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso57140361fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 01:45:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719996325; x=1720601125; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tnVZx57sQWGSbnJ3zKpnLdMuefpCU4Ga5SRMPYlDzsY=;
-        b=0Wx03H80EQc74/PdjBeqLLJWkyt2wzJBTncu1h3lBfdmdC1cJeEGjY9BD/qDIvg2l0
-         uilVxTPYaNEByY9uKABiFi3sTDD0ymcf6yMySxgmIUH1oBHm2osgh0mR6TS0bf0sbamJ
-         aVxPvpuZscq9t3UdFiulRCGro2KO66xOe1DHQgD1byqYAeFu11vxCNHqtgF2MxAIW3Ha
-         rqMh0XdN3+48/Exj9zmqJIMC7tRr/nqZO9amK52tc+pjVGb72JV/mN/qQ1POmLJIBZcP
-         acShnn3JcKiEm+6D9rp9b/I1FDDhqCe4YuiekmNXY8+TLhib9gzG56011m+24+dFnmzp
-         QWNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719996325; x=1720601125;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tnVZx57sQWGSbnJ3zKpnLdMuefpCU4Ga5SRMPYlDzsY=;
-        b=byVODJISZ4HMoFqDrGMSkmvzF9/oETsV1j3iWafW/pD5wfDKraH5+DtJHDFGV18nQh
-         X5csll/0gkg+ePL5mqz7uFuYuMa7rDw2gzXcPguZk9qT1w0c+TMmTWtAI+U5DB1HY6Dj
-         5ZNlvkA7f6wvoo1FCzy3DxiOeVhx+yoWT3rVafSxlXc0B884R023H/QQsU2XCxHpriNM
-         OcY1Y0vg2XrcarkKy8OtuK4GOgP5Cm5A3ZzS4VubdZrwwJIdHfoL2kbq64lhoVj/TAzQ
-         IEwdYQPqb/zQ36W2rmAvw7b4fK7KIAjt8ot9hKLCf9esnKgdGb2qZdIFRmi8Cq3s8w15
-         J0Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCWyL10MBmq72Bl3yoryJzjxfhhBWIEzaDF/7eCuC3aXU8tKr0bCWX/mNJhZs7T+Rp+VoOloh46WG8FRVynVXJRTFVuMlZh2nz1Ik2JD
-X-Gm-Message-State: AOJu0YwW+T4vp0GgIWzqx49zqH/OiHXoO7hkxPpjrfD4wnyiGO0kBs2r
-	Oj2S5zhnukMeV/MU/OqBfR23y6tM/dQNheZuaEIEEMa5pbjPxldx2LhOks+rt2iLJcApbw2wLBM
-	KdnaXxcqS3jGOdZpOScd/1Kjlts20QYcJGN1OOw==
-X-Google-Smtp-Source: AGHT+IFDOft8KfHB385vJiuHxLREIXeKetDDnVDU4joFIwEfhZmdo3TLOETTixZXyQ8sBTgvse4OPp+ty0rpbAhQjKU=
-X-Received: by 2002:a2e:be13:0:b0:2ee:4ec2:8232 with SMTP id
- 38308e7fff4ca-2ee5e3c35e6mr75111591fa.25.1719996325489; Wed, 03 Jul 2024
- 01:45:25 -0700 (PDT)
+	s=arc-20240116; t=1719996366; c=relaxed/simple;
+	bh=8tTWBbIfp4RYs5ggHus8UpXXenBA9tpsSLsvXgNGsZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DDZab4N8U4S2dPIlys643h6hvQ87nXQTElAr9w7cdTuwVbk2VwALwgujvX1TLaeXDl8AvNgcq76VFiV42xjvC8OMFSevC/X2J+vaT3v01YbdjojS2L0E3E0BIR4rqgdDMBkOPLqt2HDC2rstcEBCiDuTVbTwNIFP4IRzVHUs9ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kE8GJLEk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B96C32781;
+	Wed,  3 Jul 2024 08:46:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719996366;
+	bh=8tTWBbIfp4RYs5ggHus8UpXXenBA9tpsSLsvXgNGsZQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kE8GJLEkwyiU5152Sq7Jpo1DYYerGfjeXJWRpgzMb4/alcXywnbLHoRK5OgfNpXvi
+	 G1xd8DjWipYSfC+3LxEwSUc1cCUzxfB19fZ3FU81vf6Er1duJ1jVyH17rj1jnfILpg
+	 K9AAQMcJK8FC0I+iU7VodNwBvzCmvo3ircRgo9nmU3c6UlDocCEJJkF7Sjxu8ck6pn
+	 e8M2XE6lcSogOTBmKiIbfHPlxrUbZdhQz48DyLvUmgSxnvyeZ6jS18za2WiRyPVXKj
+	 NX2md3uunssvvPgsUMnm/SyXSTnr/AN0bVLlUsjWVtRZ6ga12XfLXH7QGgNq2FTLw8
+	 PL3o3v+43P/6Q==
+Date: Wed, 3 Jul 2024 10:45:57 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Xi Ruoyao <xry111@xry111.site>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+Message-ID: <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
+References: <20240625110029.606032-1-mjguzik@gmail.com>
+ <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+ <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+ <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+ <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240703083046.95811-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240703083046.95811-1-krzysztof.kozlowski@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 3 Jul 2024 10:45:14 +0200
-Message-ID: <CAMRc=MeW2ztyYkftJBy_ac30H+w0LinR9BFAmHMdsfQXa1EgFA@mail.gmail.com>
-Subject: Re: [PATCH] firmware: qcom: tzmem: simplify returning pointer without cleanup
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
 
-On Wed, Jul 3, 2024 at 10:31=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Use 'return_ptr' helper for returning a pointer without cleanup for
-> shorter code.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/firmware/qcom/qcom_tzmem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/q=
-com_tzmem.c
-> index 5d526753183d..ab156ab3a6b4 100644
-> --- a/drivers/firmware/qcom/qcom_tzmem.c
-> +++ b/drivers/firmware/qcom/qcom_tzmem.c
-> @@ -242,7 +242,7 @@ qcom_tzmem_pool_new(const struct qcom_tzmem_pool_conf=
-ig *config)
->                 }
->         }
->
-> -       return no_free_ptr(pool);
-> +       return_ptr(pool);
->  }
->  EXPORT_SYMBOL_GPL(qcom_tzmem_pool_new);
->
-> --
-> 2.43.0
->
->
+On Tue, Jul 02, 2024 at 07:06:53PM GMT, Arnd Bergmann wrote:
+> On Tue, Jul 2, 2024, at 17:36, Huacai Chen wrote:
+> > On Mon, Jul 1, 2024 at 7:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >> On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
+> >> > On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
+> >> >> >
+> >> >> > Yes, both Linus and Christian hates introducing a new AT_ flag for
+> >> >> > this.
+> >> >> >
+> >> >> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
+> >> >> > like
+> >> >> > statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the
+> >> >> > performance
+> >> >> > issue and it's also audit-able by seccomp BPF.
+> >> >> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
+> >> >> even if statx() becomes audit-able, it is still blacklisted now.
+> >> >
+> >> > Then patch the sandbox to allow it.
+> >> >
+> >> > The sandbox **must** be patched anyway or it'll be broken on all 32-bit
+> >> > systems after 2037.  [Unless they'll unsupport all 32-bit systems before
+> >> > 2037.]
+> >>
+> >> More importantly, the sandbox won't be able to support any 32-bit
+> >> targets that support running after 2037, regardless of how long
+> >> the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
+> >> in order to be sure those don't get called by accident, the
+> >> fallback is immediately broken.
+> > Would you mind if I restore newstat for LoongArch64 even if this patch exist?
+> 
+> I still prefer not add newstat back: it's easier to
+> get applications to correctly implement the statx() code
+> path if there are more architectures that only have that.
 
-I'm not a big fan of this one. Same with any macro affecting flow
-control statements.
+I agree.
 
-But since it's there and the patch is not wrong:
-
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+We've now added AT_EMPTY_PATH support with NULL names because we want to
+allow that generically. But I clearly remember that this was requested
+to make statx() work with these sandboxes. So the kernel has done its
+part. Now it's for the sandbox to allow statx() with NULL paths and
+AT_EMPTY_PATH but certainly not for the kernel to start reenabling old
+system calls.
 
