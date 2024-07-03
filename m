@@ -1,203 +1,104 @@
-Return-Path: <linux-kernel+bounces-239822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590119265C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:12:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CAD59265CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF4D81F23525
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:12:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6AA21F23282
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E57181CEF;
-	Wed,  3 Jul 2024 16:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2898181D00;
+	Wed,  3 Jul 2024 16:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hk4ZyBnx"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hsIpIff1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D398442C
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C18442C;
+	Wed,  3 Jul 2024 16:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720023120; cv=none; b=c48/qd49qjODlPQphriYg1z+5uooGvPZGcwJwcfA/w8yiWy5moB1ZzXJcv/0yxgdruMcHRD6KkzXpkVl+Dlr3zUs9ytct7ZYBxtL2u0WN6D7vSNbUhTXHPVuOqISmLlc4Qbbe6F9+OUI7EO5PDgfCEu8oEktp+QwLbEfJrTEvHM=
+	t=1720023229; cv=none; b=Wu+cnN7HlbQSf+JHF/xElWB2IsNcOXT3Csx/Nshu5N45oQkwVE8/rN2GYmAV7mT+yYIXlJkzBCS8lSpUgvfjM/k/z7I6fOsiNLdHwcrXvaOsQ2YKNEDpzt1ZkgGaYck9H8X5u3/E3e0wrsGBzy7mm5MI+mHBnpITjJZelkf7VT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720023120; c=relaxed/simple;
-	bh=Vq2WviJPzU9+t4YbTs8q1YmTVcOSzsA58Ukn6pilCeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cpANKEeKHDLOVQi2efYY5B6AcWnOJBL4oxz9dBfHBluscY6VQjOFQqwIaGdUv5zmYOMSbLfSgpGZOtBKBI0spRc+T+vk142vL8lteuyyFu8yjltxdPZ+YX+JbB6QZAcYJnkMQGfTjcK96YXImBKr1WrXWe0ZXKjgfYMYMogxNNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hk4ZyBnx; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7021702f3f1so2194676a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720023118; x=1720627918; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3/dH8jV/d+x/FI16gAcv4uydOAqFjUfOw8j20FTynlU=;
-        b=hk4ZyBnxmBbfcIYTT+95kuyZfKtEndK20EM0LaKcBw8pb/AS/X3pnCkz3PtCjB7MZi
-         nSiWDUpJX/AXgpSN1kZOVLAFyZX52hARCrmPdY4cJI7bXTwWA971PNsoiZItE9PvsQ1I
-         /riD89cr3k+eRK9HRAsHIwJzp1tELKEIPziUgd/1y7xG1mOrlFucQzPcg79xmVzdKiO0
-         z35+lCC9nCb2kDPIgylp/x4vOfP+Rm1t+I/RlM4Uo4IajvAaACbHwKaiq56if5wp7rRj
-         n5w2x+ZkWriJ/D6NWs4aLnGf7+zPL3Lq5KM4HA6j9bewVVlDZHFJfm4UZNIuKaXlZ+qq
-         lO/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720023118; x=1720627918;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3/dH8jV/d+x/FI16gAcv4uydOAqFjUfOw8j20FTynlU=;
-        b=m99hyeGbWqfiMlKSEFRZiGzq9ZdKRnUOOeClvyn/3IRlN5RWE5IWkBB+msp2kZNXws
-         n9FMpKCiT6qe8xvNcij5XK3MqMuD2pS3dEAhxj8blv/XUzMYgvoeYp9dy2XM3BDnU/tK
-         UsPh4rr8jqX5Mmd7cj5APaRgWwx8ztdYyladkR+1Nw6wklf8pNhU5Wn8E7DJe/oHk5n6
-         T1zxG5hP/3FQqnJ9bDUyPap3c0utK2iUYGIfDaKLW/BSeysRD2FKROkbSC51QyO7q3uY
-         4RB5cERqWo9CLZp93E+oJbzd0imCBVcTLtPCGDQi+M/BU0iAmz3V3iIEKMLsUP0/Hut1
-         rjcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSxQ9c/SK2RG4IMDDeOkHZSG6yhlHcnixahEaDJHB0m3RnE7vFKxC6dXlr1g20CEDXT1hLnfBW2D5UYPc/jv6+NWSA6YPRL5wRWKfE
-X-Gm-Message-State: AOJu0Yx3KV7dRPeTrZgruUsgaxb7BGsdibl9Gs4ol9b0xY92NXqKmICf
-	ftCwA2/SUihxYzo/6mfDnOYCETp4yLQunv2KvSfO7CA26o8xPAxUfTuGL2poleGgSPzfMbt5upD
-	/anOO8s6C6IXYVdDwlcaIWKchop8=
-X-Google-Smtp-Source: AGHT+IHHyVJ7tvgjX6YNT5yXxjT4ZfaP2CSlRVqBQQ9Svv1tUxG/jN+Xkt79kJWNOKN+ENdTMdSGcTnRp+qX6KDNUkc=
-X-Received: by 2002:a05:6808:1909:b0:3d5:5e58:528b with SMTP id
- 5614622812f47-3d6b2b24045mr15706235b6e.1.1720023118007; Wed, 03 Jul 2024
- 09:11:58 -0700 (PDT)
+	s=arc-20240116; t=1720023229; c=relaxed/simple;
+	bh=CP0YPCf3KiiDCDFmDjQwYPh5LIGF7oMy05isbiaBdvI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p4hecpgvVmWyTGw9e9hAlXbzq5cwZM45KlSc+aaWlsWxh3UvQSi2VtzgLWg2doLH+xMYsnfjey51mbpKZ6JHmnsBJHfTSuhwB2Y9v/zsmqg4YyQ0CI/cLSVPkbepIhenUNj7qvf+jvEHhDqo43ARzuTIEnJ61m4AV57pQC+ncv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hsIpIff1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85110C2BD10;
+	Wed,  3 Jul 2024 16:13:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720023229;
+	bh=CP0YPCf3KiiDCDFmDjQwYPh5LIGF7oMy05isbiaBdvI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hsIpIff1ACJ8p1LzszqupWfvZaJyDhY34HeSOhNtDdu9T2qizwTRdMmm3kl34gKq6
+	 8NcDd/+CbLaR7/hAysCTBBD2TXXuOgY/+5gPlkYM4xcY8Uc3IGZdQbSfwHHSCoEnGV
+	 GCS/Nbjicnh1s5INkPX8Iz/zc5auxcx8qjVfeCJKXNjSfO7xc4oyp5HYBlePnx4IXk
+	 f0i05er1aF6x2a6N0jHfU19thskg4IqmfmE9GK+aXp0xp1bGLKR52DEdS/MNNTCSfV
+	 h01r4SA7Zee5b5qH11RpIetEHQwSJOh3T4LmF0/qe0EmJWwI0AO44D8tq2EYnUb3HK
+	 AuCQH1HtTA+DQ==
+From: Will Deacon <will@kernel.org>
+To: Joerg Roedel <joro@8bytes.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] [PULL REQUEST] Intel IOMMU updates for v6.11
+Date: Wed,  3 Jul 2024 17:13:36 +0100
+Message-Id: <172002116723.1869749.5235762901047952982.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20240702130839.108139-1-baolu.lu@linux.intel.com>
+References: <20240702130839.108139-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702215804.2201271-1-jim.cromie@gmail.com>
- <20240702215804.2201271-31-jim.cromie@gmail.com> <ZoSOMClB0MeWeokU@intel.com>
- <CAJfuBxzsZUpO-Q_uAfMhzXs0WHYMTnj1F8ju7af-kQZKQjLvNQ@mail.gmail.com> <ZoU7kR2aYwVDvd_G@intel.com>
-In-Reply-To: <ZoU7kR2aYwVDvd_G@intel.com>
-From: jim.cromie@gmail.com
-Date: Wed, 3 Jul 2024 10:11:31 -0600
-Message-ID: <CAJfuBxwVWbJ9TdgH0ARmxUy+_DfNVKrTewjkqWKmCQtfOKQEAg@mail.gmail.com>
-Subject: Re: [PATCH v9 30/52] drm-dyndbg: adapt drm core to use dyndbg classmaps-v2
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
-	jani.nikula@intel.com, jbaron@akamai.com, gregkh@linuxfoundation.org, 
-	ukaszb@chromium.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
-	intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
-	linux@rasmusvillemoes.dk, joe@perches.com, mcgrof@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Got it.
-I had some mental block about passing designated intializers as macro args.
-it just worked, I needed to eyeball the .i file just to be sure.
-thanks.
-I have a fixup patch.
-whats the best thing to do with it, squash it in for later ? send in
-reply here ?
+On Tue, 02 Jul 2024 21:08:32 +0800, Lu Baolu wrote:
+> The following changes have been queued for v6.11-rc1. They are all about
+> small refactoring, including:
+> 
+>  - Use READ_ONCE to read volatile descriptor status
+>  - Remove support for handling Execute-Requested requests
+>  - Downgrade warning for pre-enabled interrupt remapping
+>  - Remove calling iommu_domain_alloc()
+>  - Refactor the PRI enable/disable flows
+>  - Cleanups
+> 
+> [...]
 
-On Wed, Jul 3, 2024 at 5:52=E2=80=AFAM Ville Syrj=C3=A4l=C3=A4
-<ville.syrjala@linux.intel.com> wrote:
->
-> On Tue, Jul 02, 2024 at 08:34:39PM -0600, jim.cromie@gmail.com wrote:
-> > On Tue, Jul 2, 2024 at 5:33=E2=80=AFPM Ville Syrj=C3=A4l=C3=A4
-> > <ville.syrjala@linux.intel.com> wrote:
-> > >
-> > > On Tue, Jul 02, 2024 at 03:57:20PM -0600, Jim Cromie wrote:
-> > > > dyndbg's CLASSMAP-v1 api was broken; DECLARE_DYNDBG_CLASSMAP tried =
-to
-> > > > do too much.  Its replaced by DRM_CLASSMAP_DEFINE, which creates &
-> > > > EXPORTs the classmap when CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy, for dir=
-ect
-> > > > reference by drivers.
-> > > >
-> > > > The drivers still use DECLARE_DYNDBG_CLASSMAP for now, so they stil=
-l
-> > > > redundantly re-declare the classmap, but we can convert the drivers
-> > > > later to DYNDBG_CLASSMAP_USE
-> > > >
-> > > > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-> > > > ---
-> > > >  drivers/gpu/drm/drm_print.c | 25 +++++++++++++------------
-> > > >  include/drm/drm_print.h     |  8 ++++++++
-> > > >  2 files changed, 21 insertions(+), 12 deletions(-)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_prin=
-t.c
-> > > > index 699b7dbffd7b..4a5f2317229b 100644
-> > > > --- a/drivers/gpu/drm/drm_print.c
-> > > > +++ b/drivers/gpu/drm/drm_print.c
-> > > > @@ -55,18 +55,19 @@ MODULE_PARM_DESC(debug, "Enable debug output, w=
-here each bit enables a debug cat
-> > > >  #if !defined(CONFIG_DRM_USE_DYNAMIC_DEBUG)
-> > > >  module_param_named(debug, __drm_debug, ulong, 0600);
-> > > >  #else
-> > > > -/* classnames must match vals of enum drm_debug_category */
-> > > > -DECLARE_DYNDBG_CLASSMAP(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_=
-BITS, 0,
-> > > > -                     "DRM_UT_CORE",
-> > > > -                     "DRM_UT_DRIVER",
-> > > > -                     "DRM_UT_KMS",
-> > > > -                     "DRM_UT_PRIME",
-> > > > -                     "DRM_UT_ATOMIC",
-> > > > -                     "DRM_UT_VBL",
-> > > > -                     "DRM_UT_STATE",
-> > > > -                     "DRM_UT_LEASE",
-> > > > -                     "DRM_UT_DP",
-> > > > -                     "DRM_UT_DRMRES");
-> > > > +/* classnames must match value-symbols of enum drm_debug_category =
-*/
-> > > > +DRM_CLASSMAP_DEFINE(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS=
-,
-> > > > +                 DRM_UT_CORE,
-> > > > +                 "DRM_UT_CORE",
-> > > > +                 "DRM_UT_DRIVER",
-> > > > +                 "DRM_UT_KMS",
-> > > > +                 "DRM_UT_PRIME",
-> > > > +                 "DRM_UT_ATOMIC",
-> > > > +                 "DRM_UT_VBL",
-> > > > +                 "DRM_UT_STATE",
-> > > > +                 "DRM_UT_LEASE",
-> > > > +                 "DRM_UT_DP",
-> > > > +                 "DRM_UT_DRMRES");
-> > >
-> > > Looks like this stuff just ends up in an array, so presumably
-> > > it should be possible to use designated initializers to make this
-> > > less fragile?
-> >
-> > Im not sure I got your whole point, but:
->
-> I mean using
->  [DRM_UT_CORE] =3D "DRM_UT_CORE"
-> instead of
->  "DRM_UT_CORE"
-> so there is no chance of screwing up the order.
-> Or maybe the order doesn't even matter here?
->
-> Could also stringify to avoid accidental of typos.
->
-> >
-> > the fragility is the repetitive re-statement of the map,
-> > in those un-modified DECLARE_s,
-> > once replaced, the USEs just ref the struct built by the _DEFINE
-> > (once, and exported)
-> >
-> > I dont really like the _DEFINEs restatement of the enum-values: DRM_UT_=
-*
-> > especially as "strings".
-> > I can automate the stringification with an APPLY_FN_(__stringify, ...)
-> > but the enum-list DRM_UT_* (w.o quotes) is still needed as args.
-> >
-> > unless there is something C can do thats like Enum.values() ?
-> >
-> >
-> >
-> > >
-> > > --
-> > > Ville Syrj=C3=A4l=C3=A4
-> > > Intel
->
-> --
-> Ville Syrj=C3=A4l=C3=A4
-> Intel
+Applied to iommu (intel/vt-d), thanks!
+
+[1/7] iommu/vt-d: Handle volatile descriptor status read
+      https://git.kernel.org/iommu/c/b5e86a95541c
+[2/7] iommu/vt-d: Remove comment for def_domain_type
+      https://git.kernel.org/iommu/c/5fbf97371dc0
+[3/7] iommu/vt-d: Remove control over Execute-Requested requests
+      https://git.kernel.org/iommu/c/e995fcde6070
+[4/7] iommu/vt-d: Downgrade warning for pre-enabled IR
+      https://git.kernel.org/iommu/c/804f98e224e4
+[5/7] iommu/vt-d: Add helper to allocate paging domain
+      https://git.kernel.org/iommu/c/2b989ab9bc89
+[6/7] iommu/vt-d: Add helper to flush caches for context change
+      https://git.kernel.org/iommu/c/f90584f4beb8
+[7/7] iommu/vt-d: Refactor PCI PRI enabling/disabling callbacks
+      https://git.kernel.org/iommu/c/3753311c9190
+
+Cheers,
+-- 
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
