@@ -1,75 +1,61 @@
-Return-Path: <linux-kernel+bounces-239891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987A692667E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:56:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB13926681
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493221F24352
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:56:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4416B24103
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B408218410F;
-	Wed,  3 Jul 2024 16:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4A7184139;
+	Wed,  3 Jul 2024 16:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hy6rwH0+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E44y8ZhS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF411822CA;
-	Wed,  3 Jul 2024 16:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B581426C;
+	Wed,  3 Jul 2024 16:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720025750; cv=none; b=tmlxng1dMBkOOVSXv6/yn5sYyg9ofRwzOF6lFGUCrbv9eBpe1RmzP6m+A1KNlR8Hm3/eXohni54udDm6nDLYHO60A/QdgVTCfsuO5yuETxCU8lkOwC4Lb3JC+j5Gp64DQf7ddOjip3bbW5+SAd1ODWUh031qmkLbkmRjpW4ePwc=
+	t=1720025763; cv=none; b=EAbafeOx2NfAEyw4CGbpq//6BuVd/e3NDIzXy7Ktg0sc4SoiGU0P2iA+cAcmZSL/CdkbnZ9JLXF+94Cb9nVFSP3QR+6L9J4EpwHiNuCe5joe8A199cQrIKUEVWWQjaLQy1Dp2BFlfx61lpMFDLPov0T7rGZRdoCUnp18vL6Zub4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720025750; c=relaxed/simple;
-	bh=vZUBlhySW0RHV3fvklmfKPM6YDzdvbxtH19w5yjdr/0=;
+	s=arc-20240116; t=1720025763; c=relaxed/simple;
+	bh=C0GzLM3tgj2e/l7UjLWTgeesEvyPFQmncedX40xjN0U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uuDgeyueYz7dAtFqMzKo6/uSC+MXijuEsq8SktdGinI+Ylgz0V2c5btGitfEKo0EbMV+nnW/CmCTk4v37Zuj2nxi/sLkAVJaBo1zz8kTKExBmrAje0iIaEFN6f2ZHaIFGVIDOOuse+NFCRpf+WZUlKAwPpnonpUYCUkP7tXj4Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hy6rwH0+; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720025748; x=1751561748;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vZUBlhySW0RHV3fvklmfKPM6YDzdvbxtH19w5yjdr/0=;
-  b=hy6rwH0+XTtK7Y2iQL6ex0qILrrsqr2Y64eMRb62NUQcMs9W+EZiG5kN
-   9IJU3h8muJmK+9foCSllxL+4vnIWB6iSZZl1lqeXo0ke6KVTsgg4DBPXc
-   4Jkn/9Phjmo8u6jek8kZ6IpLiyTzrDootRSTldB82CKsO4loh/xcdAGMM
-   XRH+HwSwjfl4EWvbuh0HVnRvMg37i2G5vxg0VKHfkscnYqUv4y7v+x3L8
-   MgU5lVa8NFzwpXCpbmB1rZtf2ULKX6bMCCrUf2yCyXlnjR8IRomHalC8A
-   zgwOT2ocj2PtaobcO1j0LUXbOTTHr/gdn1LUk5swGQ9H6VU77vnmXtKK7
-   w==;
-X-CSE-ConnectionGUID: Gg6HiygLT4isIZuFmHl1Ug==
-X-CSE-MsgGUID: k33UORmWT2OGt0cbW2flRg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="34809455"
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="34809455"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 09:55:43 -0700
-X-CSE-ConnectionGUID: gzS9zEpwQbK2l8ws/JgXsw==
-X-CSE-MsgGUID: oz3RIjf6QTqbYfGQBOMT0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="50912361"
-Received: from mrlemay-mobl.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.55.113])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 09:55:42 -0700
-Date: Wed, 3 Jul 2024 09:55:40 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cxl/acpi: simplify returning pointer without cleanup
-Message-ID: <ZoWCjAHSOKQLDkF2@aschofie-mobl2>
-References: <20240703083055.95864-1-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YSLF1rxRg+SZs2Yw+ymvdNrZcGyXN7wxqtKrv3n1Wxo/I5EmA3TJ1xSZdhGLW13h6ZRbBhAEJb8uvq1GuRgGkuX2LMDcyFjsLowmWGg4JUj5Mu8Zo+Z/ehBlw8YPkqNw6hPDzHOXIFlh915JtMtpIWzo8lvQXdnTh/pmh0sv3OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E44y8ZhS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8799FC2BD10;
+	Wed,  3 Jul 2024 16:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720025762;
+	bh=C0GzLM3tgj2e/l7UjLWTgeesEvyPFQmncedX40xjN0U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E44y8ZhSurerADhgbUiohUu8lcGyVfTtr1VBOncrpQxFCZgRMO/iKHN/c9LriZC/H
+	 QUPMD/+Hd3GLV0rRKwhR+YfKTlxjyOIXY0pEVBT6eDzW318qPqU26atz5yMzQvUbva
+	 8IfOqtZZziM2NCxnki4nj0EEUOdpIW2EHnfE/77PXo3tBLTX1vBpSrnDfQkhbhz07G
+	 DSZjly4MSAhIMhKQSkN8E85eG/+gxFCEHnMTNr9A2J1r5nAKHP9NiLa3OSYkgTxwoI
+	 Lf6AFvFkm085sM44I0L+79yZ2gKSsuqTsP6y2bk6m+YZQdOFNQk2jCSNzyqOx9a4TL
+	 1XTj8mjuWSV5A==
+Date: Wed, 3 Jul 2024 17:55:58 +0100
+From: Simon Horman <horms@kernel.org>
+To: Aaron Conole <aconole@redhat.com>
+Cc: netdev@vger.kernel.org, dev@openvswitch.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Pravin B Shelar <pshelar@ovn.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	=?utf-8?Q?Adri=C3=A1n?= Moreno <amorenoz@redhat.com>
+Subject: Re: [PATCH net-next 3/3] selftests: openvswitch: Be more verbose
+ with selftest debugging.
+Message-ID: <20240703165558.GU598357@kernel.org>
+References: <20240702132830.213384-1-aconole@redhat.com>
+ <20240702132830.213384-4-aconole@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,45 +64,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240703083055.95864-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240702132830.213384-4-aconole@redhat.com>
 
-On Wed, Jul 03, 2024 at 10:30:55AM +0200, Krzysztof Kozlowski wrote:
-> Use 'return_ptr' helper for returning a pointer without cleanup for
-> shorter code.
+On Tue, Jul 02, 2024 at 09:28:30AM -0400, Aaron Conole wrote:
+> The openvswitch selftest is difficult to debug for anyone that isn't
+> directly familiar with the openvswitch module and the specifics of the
+> test cases.  Many times when something fails, the debug log will be
+> sparsely populated and it takes some time to understand where a failure
+> occured.
 > 
-
-My first thought on this was that I prefer the explicitness
-of pairing __free(kfree) with no_free_ptr as was done here.
-
-cleanup.h defines this: 
-#define return_ptr(p)   return no_free_ptr(p)
-
-I did read the comments and am still confused. I see you posted a
-handful of no_free_ptr to return_ptr patches. What is your selection
-process for changing these?
-
---Alison
-
-
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/cxl/acpi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Increase the amount of details logged to the debug log by trapping all
+> 'info' logs, and all 'ovs_sbx' commands.
 > 
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index 571069863c62..1e4bed8a933e 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -339,7 +339,7 @@ static struct resource *alloc_cxl_resource(resource_size_t base,
->  	if (!res->name)
->  		return NULL;
->  
-> -	return no_free_ptr(res);
-> +	return_ptr(res);
->  }
->  
->  static int add_or_reset_cxl_resource(struct resource *parent, struct resource *res)
-> -- 
-> 2.43.0
-> 
+> Signed-off-by: Aaron Conole <aconole@redhat.com>
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
