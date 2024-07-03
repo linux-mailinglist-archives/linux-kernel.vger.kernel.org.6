@@ -1,62 +1,53 @@
-Return-Path: <linux-kernel+bounces-239123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940B09256B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:25:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F779256A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81A21C215D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:25:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F352286787
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B51D13DDBA;
-	Wed,  3 Jul 2024 09:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD00713D2B2;
+	Wed,  3 Jul 2024 09:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Oe2cRC9o"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="GkUbEEI4"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B12613B592;
-	Wed,  3 Jul 2024 09:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F43513B592;
+	Wed,  3 Jul 2024 09:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719998729; cv=none; b=aVXjQuR1Phj3XnWFO63o/5xRJxOHeNPsiu4RoNKHsQHb8IbPsHaDsdo9d08Ln4rUxKoKxtjK+uqkCc+QhPXIZ2r7587v47HXIfC4Er8s7zEp4DSwtxeXFhsEugN8TWM7kq5mcBiDk2UvlbFQHpqnPc/1C3+jglkiXrfnv7JEoZM=
+	t=1719998617; cv=none; b=l0oZfhSFzGTNFFSPG3OWJDMPhRsIizZZUdY4bk+LF4XDeHuNkRpkvDl7Nlwe8IrsPHguTAmKlXsLHw7G/aRqCgMDoLXjW3DK7+s/O6eT2im4QMDESM+if5uST2u3XnWJTsDvndsNcKhaAjJEzTxWSWAzTorbTqkruBBvUvTlivU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719998729; c=relaxed/simple;
-	bh=yHi/W05KtGps9FCz0/UywsRMv24OU50aXsjHAR4YmrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NRMX3UVYyq2QfTDEUOCYJLOhxePEXuFa78AJQt5083AxbiYauKPVu5QV6tPgTyir5qICCdxict4s7DEr2U5MT9rm96HHBR9L+CQ+ZJhtqcE7ijVRAjcSZ2G+8fOF4w8lRIGrZWhpLivd4CboMGMWerqUYb33KyEIYcXjtbniQl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Oe2cRC9o; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4635J5OC023311;
-	Wed, 3 Jul 2024 09:23:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NhWuFqAPuEIZttAM2h+ngzLqj84AMotQeV7cBgLDekI=; b=Oe2cRC9oUcmZXNcW
-	hM3w/0u5nLB0Cx5k+dKOSTo08Bic13lHg4TYTCcdLxKFEKRi/0rsrn94Fv9iOUEt
-	QfGED7rITsH1a5n9umtbWCS2jiC/JnQQvm5LbiK0tAmrOx/oAMoX6xYDOINMy0yg
-	axaSv6uQvKmFIprMlyD0JQq5RC5kaFDxGiI4W/f12i6EakqOh1K6N392FGzTuTwH
-	IIdppbm37Qm6/0eUlRTEsjn8ZqW2SHKz7E6D7/IeAecYk7jfzVUcSonLFvi7IImV
-	MJNvKIzVl3hvD9D674f9Be5xEGzMh1Uqp10dnBgethkZ9qm5oh7h6AygfaPmgXWE
-	+9RWTg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4050cy8k8x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Jul 2024 09:23:33 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4639NV8c020645
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Jul 2024 09:23:31 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
- 02:23:10 -0700
-Message-ID: <bc135b67-a2e4-4b17-96c0-767bcb94d876@quicinc.com>
-Date: Wed, 3 Jul 2024 17:23:08 +0800
+	s=arc-20240116; t=1719998617; c=relaxed/simple;
+	bh=TBGC9Dan9vGqetl5WATjTdps3EQfpzzfRQi+UrwaeVw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oGsaQd/rdLoHHns7mtw1ZYvOL8PFd28JMy074ydjl8EwZesChI9doz4ZvgfAhGSo0FB78L6JyTFofnh72CCL6bn5dfxdq72ntirvKxwnldE8LNx8nnZ2OghgCdQZXXMgNbwUQsD9Q0SlIyoEBtKIUGNnR6jZ6GWwYGmmB0vv7nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=GkUbEEI4; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 4639N8KS289555
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 3 Jul 2024 02:23:08 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4639N8KS289555
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024061501; t=1719998589;
+	bh=j4XLOK1g+Fi+APGrWOjI5bHBPtCrnTFiV/z2Z8mj4p4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GkUbEEI41cONifmgA3Ovr+k+ZvTNwp7iNNvvMDzmbKg9NbQIm0lyhIUZ7nlzOMboy
+	 fkjkwQWwPmqKwENWM9Kwdi28BBo7/rMz840FhJg6qynsyUDuQEvqyPaLato+v4Htxq
+	 KaRl59VBwuzBFM0igvRGNHCm05jszwAw9m8KUA+5UDunSbcXYopi50VXENarkjH6So
+	 /4OkaSm3Axsb77n94O4WnzB1YMV2F7J6v+EwWnZAgIPsajsBeY3UdSDlqIJ3CbjByy
+	 ov92bUtoCzdmHxwBXRxMNI9Tvi98WONPEJ0F9ZP7ttdUCHFApKWygl5OyvuXpNmQ2r
+	 QgBgyYDfToq4g==
+Message-ID: <8744fbf0-46b9-4df9-951c-4f1ddafd7b36@zytor.com>
+Date: Wed, 3 Jul 2024 02:23:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,161 +55,184 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/47] arm64: dts: qcom: qcs9100: Introduce QCS9100 SoC
- dtsi
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <djakov@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <manivannan.sadhasivam@linaro.org>, <will@kernel.org>,
-        <joro@8bytes.org>, <conor@kernel.org>, <tglx@linutronix.de>,
-        <amitk@kernel.org>, <thara.gopinath@gmail.com>,
-        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
-        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>
-CC: <robimarko@gmail.com>, <bartosz.golaszewski@linaro.org>,
-        <kishon@kernel.org>, <quic_wcheng@quicinc.com>,
-        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <agross@kernel.org>, <gregkh@linuxfoundation.org>,
-        <quic_tdas@quicinc.com>, <robin.murphy@arm.com>,
-        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <quic_rjendra@quicinc.com>,
-        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
-        <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>,
-        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
-        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
-        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
-        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <bhelgaas@google.com>, <ahalaney@redhat.com>,
-        <krzysztof.kozlowski@linaro.org>, <u.kleine-koenig@pengutronix.de>,
-        <dmitry.baryshkov@linaro.org>, <quic_cang@quicinc.com>,
-        <danila@jiaxyga.com>, <quic_nitirawa@quicinc.com>,
-        <mantas@8devices.com>, <athierry@redhat.com>,
-        <quic_kbajaj@quicinc.com>, <quic_bjorande@quicinc.com>,
-        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <quic_tsoni@quicinc.com>, <quic_rgottimu@quicinc.com>,
-        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-        <linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
-References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
- <20240703025850.2172008-3-quic_tengfan@quicinc.com>
- <8593db2e-8a69-418f-b00e-8fafe434dd30@kernel.org>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <8593db2e-8a69-418f-b00e-8fafe434dd30@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jA8I-qqzAQ-FOzamwuZ3_GO9PajOhc6b
-X-Proofpoint-ORIG-GUID: jA8I-qqzAQ-FOzamwuZ3_GO9PajOhc6b
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_05,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- mlxlogscore=901 priorityscore=1501 adultscore=0 mlxscore=0 impostorscore=0
- spamscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407030069
+Subject: Re: [PATCH v4 2/4] x86/cpufeatures: Generate a feature mask header
+ based on build config
+To: Nikolay Borisov <nik.borisov@suse.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        will@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
+        acme@kernel.org, namhyung@kernel.org, brgerst@gmail.com,
+        andrew.cooper3@citrix.com
+References: <20240628174544.3118826-1-xin@zytor.com>
+ <20240628174544.3118826-3-xin@zytor.com>
+ <df5b3001-e79b-4bfd-a2a1-c63111feba8a@suse.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <df5b3001-e79b-4bfd-a2a1-c63111feba8a@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 7/3/2024 12:40 PM, Krzysztof Kozlowski wrote:
-> On 03/07/2024 04:58, Tengfei Fan wrote:
->> Introduce QCS9100 SoC dtsi, QCS9100 is mainly used in IoT products.
->> QCS9100 is drived from SA8775p.
->> The current QCS9100 SoC dtsi is directly renamed from the SA8775p SoC
->> dtsi.
->> The QCS9100 platform is currently in the early design stage. Currently,
->> Both the QCS9100 platform and SA8775p platform use non-SCMI resources,
->> In the future, the SA8775p platform will transition to using SCMI
->> resources and it will have new sa8775p-related device tree.
->> This QCS9100 SoC dtsi remains consistent with the current SA8775p SoC
->> dtsi, except for updating the following sa8775p-related compatible names
->> to the qcs9100-related compatible name:
->>    - qcom,sa8775p-clk-virt
->>    - qcom,sa8775p-mc-virt
->>    - qcom,sa8775p-adsp-pas
->>    - qcom,sa8775p-cdsp-pas
->>    - qcom,sa8775p-cdsp1-pas
->>    - qcom,sa8775p-gpdsp0-pas
->>    - qcom,sa8775p-gpdsp1-pas
->>    - qcom,sa8775p-gcc
->>    - qcom,sa8775p-ipcc
->>    - qcom,sa8775p-config-noc
->>    - qcom,sa8775p-system-noc
->>    - qcom,sa8775p-aggre1-noc
->>    - qcom,sa8775p-aggre2-noc
->>    - qcom,sa8775p-pcie-anoc
->>    - qcom,sa8775p-gpdsp-anoc
->>    - qcom,sa8775p-mmss-noc
->>    - qcom,sa8775p-trng
->>    - qcom,sa8775p-ufshc
->>    - qcom,sa8775p-qmp-ufs-phy
->>    - qcom,sa8775p-qce
->>    - qcom,sa8775p-lpass-ag-noc
->>    - qcom,sa8775p-usb-hs-phy
->>    - qcom,sa8775p-dc-noc
->>    - qcom,sa8775p-gem-noc
->>    - qcom,sa8775p-dwc3
->>    - qcom,sa8775p-qmp-usb3-uni-phy
->>    - qcom,sa8775p-gpucc
->>    - qcom,sa8775p-smmu-500
->>    - qcom,sa8775p-dwmac-sgmii-phy
->>    - qcom,sa8775p-llcc-bwmon
->>    - qcom,sa8775p-cpu-bwmon
->>    - qcom,sa8775p-llcc
->>    - qcom,sa8775p-videocc
->>    - qcom,sa8775p-camcc
->>    - qcom,sa8775p-dispcc0
->>    - qcom,sa8775p-pdc
->>    - qcom,sa8775p-aoss-qmp
->>    - qcom,sa8775p-tlmm
->>    - qcom,sa8775p-imem
->>    - qcom,sa8775p-smmu-500
->>    - qcom,sa8775p-rpmh-clk
->>    - qcom,sa8775p-rpmhpd
->>    - qcom,sa8775p-cpufreq-epss
->>    - qcom,sa8775p-dispcc1
->>    - qcom,sa8775p-ethqos
->>    - qcom,sa8775p-nspa-noc
->>    - qcom,sa8775p-nspb-noc
->>    - qcom,sa8775p-qmp-gen4x2-pcie-phy
->>    - qcom,sa8775p-qmp-gen4x4-pcie-phy
->>
->> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->> ---
->>   .../dts/qcom/{sa8775p.dtsi => qcs9100.dtsi}   | 112 +++++++++---------
->>   1 file changed, 56 insertions(+), 56 deletions(-)
->>   rename arch/arm64/boot/dts/qcom/{sa8775p.dtsi => qcs9100.dtsi} (97%)
->>
+On 7/1/2024 3:44 AM, Nikolay Borisov wrote:
 > 
-> How do any things compile at this point? Please squash the patches. Your
-> patchset must be bisectable at build level (dtschema validation does not
-> have to).
 > 
-> Best regards,
-> Krzysztof
+> On 28.06.24 г. 20:45 ч., Xin Li (Intel) wrote:
+
+> Overall it's better I still have some minor comments which can be 
+> addressed only if you are going to make another submission.
+
+I can send a v4A for this patch.
+
+> 
+>> diff --git a/arch/x86/tools/featuremasks.awk 
+>> b/arch/x86/tools/featuremasks.awk
+>> new file mode 100755
+>> index 000000000000..351d5a4c7d64
+>> --- /dev/null
+>> +++ b/arch/x86/tools/featuremasks.awk
+>> @@ -0,0 +1,85 @@
+>> +#!/usr/bin/awk
+>> +#
+>> +# Convert cpufeatures.h to a list of compile-time masks
+>> +# Note: this blithly assumes that each word has at least one
+>> +# feature defined in it; if not, something else is wrong!
+>> +#
+>> +
+>> +BEGIN {
+>> +    printf "#ifndef _ASM_X86_FEATUREMASKS_H\n";
+>> +    printf "#define _ASM_X86_FEATUREMASKS_H\n\n";
+>> +
+>> +    file = 0
+>> +}
+>> +
+>> +BEGINFILE {
+>> +    switch (++file) {
+>> +    case 1:            # cpufeatures.h
+>> +        FPAT = "#[ \t]*[a-z]+|[A-Za-z0-9_]+|[^ \t]";
+>> +        break;
+>> +    case 2:            # .config
+>> +        FPAT = "CONFIG_[A-Z0-9_]+|is not set|[yn]";
+>> +        break;
+>> +    }
+>> +}
+>> +
+>> +# Create a dictionary of sorts, containing all defined feature bits
+>> +file == 1 && $1 ~ /^#[ \t]*define$/ && $2 ~ /^X86_FEATURE_/ &&
+>> +$3 == "(" && $5 == "*" && $7 == "+" && $9 == ")" {
+>> +    nfeat = $4 * $6 + $8;
+>> +    feat = $2;
+>> +    sub(/^X86_FEATURE_/, "", feat);
+>> +    feats[nfeat] = feat;
+>> +}
+>> +file == 1 && $1 ~ /^#[ \t]*define$/ && $2 == "NCAPINTS" {
+>> +    ncapints = strtonum($3);
+>> +}
+>> +
+>> +# Create a dictionary featstat[REQUIRED|DISABLED, FEATURE_NAME] = on 
+>> | off
+>> +file == 2 && $1 ~ /^CONFIG_X86_[A-Z]*_FEATURE_/ {
+>> +    on = ($2 == "y");
+>> +    if (split($1, fs, "CONFIG_X86_|_FEATURE_") == 3)
+>> +        featstat[fs[2], fs[3]] = on;
+> 
+> nit: 'on' here will either be 0 or 1 (awk doesn't have a separate 
+> boolean type).
+
+No change proposed here, right?
+
+> 
+>> +}
+>> +
+>> +END {
+>> +    sets[1] = "REQUIRED";
+>> +    sets[2] = "DISABLED";
+>> +
+>> +    for (ns in sets) {
+>> +        s = sets[ns];
+> nit: 's' -> 'state', though is 'state' the most appropriate word here?
+
+'s' is the tag string, "REQUIRED" or "DISABLED".
+
+> 
+>> +
+>> +        printf "/*\n";
+>> +        printf " * %s features:\n", s;
+>> +        printf " *\n";
+>> +        fstr = "";
+>> +        for (i = 0; i < ncapints; i++) {
+>> +            mask = 0;
+>> +            for (j = 0; j < 32; j++) {
+>> +                nfeat = i*32 + j;
+>> +                feat = feats[nfeat];
+>> +                if (feat) {
+>> +                    st = !!featstat[s, feat];
+> 
+> No point in doing the !! dance here, the value written there is already 
+> true or false since it comes as a result from the earlier check. Just 
+> drop the !! also what's with the 1 or 2 letter variables. 'st'-> 
+> 'enabled' then the check reads 'if (enabled) { foo }'
+
+Sounds reasonable, I can make the change.
+
+> 
+>> +                    if (st) {
+>> +                        nfstr = fstr " " feat;
+>> +                        if (length(nfstr) > 72) {
+>> +                            printf " *   %s\n", fstr;
+>> +                            nfstr = " " feat;
+>> +                        }
+>> +                        fstr = nfstr;
+>> +                        mask += (2 ^ j);
+>> +                    }
+>> +                }
+>> +            }
+>> +            masks[i] = mask;
+>> +        }
+>> +        printf " *   %s\n */\n", fstr;
+>> +
+>> +        for (i = 0; i < ncapints; i++)
+>> +            printf "#define %s_MASK%d\t0x%08xU\n", s, i, masks[i];
+>> +
+>> +        printf "#define %s_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 
+>> %d)\n\n", s, ncapints;
+>> +    }
+>> +
+>> +    printf "#endif /* _ASM_X86_FEATUREMASKS_H */\n";
+>> +}
 > 
 
-The compilation issue indeed arises when applying only this single 
-patch. In the new version patch series, I plan to consolidate the three 
-patches that rename sa8775p.dtsi to qcs9100.dtsi, sa8775p-pmics.dtsi to 
-qcs9100-pmics.dtsi, and sa87750-ride.dts to qcs9100-ride.dts into a 
-single patch.
-
--- 
-Thx and BRs,
-Tengfei Fan
 
