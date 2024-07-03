@@ -1,174 +1,238 @@
-Return-Path: <linux-kernel+bounces-239212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A56792580C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:12:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 413D392580D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAADAB21A90
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:12:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F181928F5BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9EB16EBEA;
-	Wed,  3 Jul 2024 10:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC1E16F0FB;
+	Wed,  3 Jul 2024 10:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDbit/uz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OLwFSHIp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8F014430D;
-	Wed,  3 Jul 2024 10:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DC214430D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720001485; cv=none; b=FZ68S/kHzKdIR0G4aRWQx7HIWF9DrTz9C+k+o/fYk43Q5vQGnRJCv+LgnkagOM6+NOKHBOJAzYwC2bHGa/9p8is0hb84Og1Gp2/uCbgZ0PuCOVTHP/W0PGdPEbxbI4VQdUmZgRDl/uncTXYpaiz4lLU38kc3pqk2JJFSxZtBP1A=
+	t=1720001493; cv=none; b=TLAFR64VPF9Sy8I4LfevUMYEJf5Hs8Oq7N7GC0pmLi39YLe75NQLnkHLoaseSS8vX+aUFHx6wHnc/fYVPG0e6zUJ3+bS4Lh0Ies7z9o2zdnUwKunFRDarg+a0GEHHJ8vvHe86iO/rqJzUt3viMsPFRmNCbMYYqaAP3Xj9DtuxxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720001485; c=relaxed/simple;
-	bh=1IbI7RJHmpJJegihE9ll7LfxD0xRdkv6aiTgyLl3LiE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jWpu04Tc82zeAgO+txv1gJXZLmhA3zR0TTMTlp6R1pkZYL0+7WEvwisA5WR9tNdOxImyUs4w4O3C0frf/NUqHENiBUYCuW8BAQ/TseT+AELWlKFJjfH5dYw/NU3j4B/ekkHh4oyWOkWYPq8t9iTl6qawotVmlqUAMc1vmAKtyyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDbit/uz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BDAEC2BD10;
-	Wed,  3 Jul 2024 10:11:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720001484;
-	bh=1IbI7RJHmpJJegihE9ll7LfxD0xRdkv6aiTgyLl3LiE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VDbit/uzGZt/D2zOhiN1Iu8AGpBVYcGLwm5SGUS3g7fuMdRVn6+XTEtHsIRblnk1/
-	 J7838pScw23vPD9lmUKxEF4/50vcA5YiwdN5mWgSMDYhHEDAei1Mcezyffa9AK2I6q
-	 /sa02hzJe4MOyGtY6SmmcJRmeOtaewUYL6fGj6spZA6eiG0CukGPpougrygfc8vd8X
-	 ZDbLoWRPUuV/hFGergCnBOz92a6efu5G5tid4tkJDj1sHuiXNds3/oA8iKvOg3tnsJ
-	 Pwjpw4eRSmAz9n/ycyLsXcT6w6d/JW7DeUQ7vOSfcfVUndNtImoh6U4Ak5FneqDjoi
-	 MP5GQyhTjsnew==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Guo Ren <guoren@kernel.org>
-Subject: [PATCH v12 12/19] ftrace: Add CONFIG_HAVE_FTRACE_GRAPH_FUNC
-Date: Wed,  3 Jul 2024 19:11:18 +0900
-Message-Id: <172000147804.63468.702379908247713770.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <172000134410.63468.13742222887213469474.stgit@devnote2>
-References: <172000134410.63468.13742222887213469474.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1720001493; c=relaxed/simple;
+	bh=b+ONelJc/4dyl3e3w6S6cUzGM85bd0ABoCS5DPvYzIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uk5uEW1fne3vYt8ozxfbV/RjsnqcN8sjOk2jFtMB/iTfcBYs1kl7VpwYD28J8ttei/F192VIpkf3NAORao9IrAH3atx6sg72fq9ZI4yeo1su+6YIsqcWP3nESMPx4qFaKu3XAag1DN/9riY8RniXupNO1GRWT9Ipvb/M8rFP/Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OLwFSHIp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720001490;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VIW4O9cjcARid8kd3x3WmxH/dYq1njX/nUJ6yIxU7Lw=;
+	b=OLwFSHIpbbqZn/6LGl231jXhlM1U/N43FeHWY1UUZ/ifugdt149LRijsg30gNyUR5Jxo/g
+	gtqenqKvJwObQe5DMrqXFJyGmKnlHzhH3fHChdX2q8DXiWT3veLRWdrd8sIjN4InD3Z6/b
+	crvf+JloRYAXRL5w4vIoPo4VQnZtXjk=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-664-AS3i45hCPwea53CR5pgy2g-1; Wed, 03 Jul 2024 06:11:29 -0400
+X-MC-Unique: AS3i45hCPwea53CR5pgy2g-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3642cc54bbfso3129318f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:11:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720001488; x=1720606288;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VIW4O9cjcARid8kd3x3WmxH/dYq1njX/nUJ6yIxU7Lw=;
+        b=AZBAIkteJ4GdzORzTEYGNSN9mC27XenDs6CmukgTqehLWFmyuOZWYElQNUxi9EMchA
+         up46GbccFqiji5pTFC+uU0yjmPoexzZWXUnxEOR26/Gt2Bzlq7yj2C+n/P+L4bzMIEZS
+         DLmXpfWLZRYbASuTebTwL1V+K5h62VfGW5nqeFTtQ+Au+vfrnKrV1DZIMepjzVUc6YSc
+         XzhC/+eLKCwVUYvtsW1PY4O+2CO694g6zojHXKvwJuydWT7S4KIWmIbwCZ9d1XyVdloi
+         pcoghcXRFd68yy9/I37daw7wJQbC0nYp2JrAOyxEoY2Nd2JeRBH2mtE5CXxl3joBq095
+         t3Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCXu9JIY4j8v280VcfJXZETBj40FXvwnGHOfzpWAiFHgZJpC7sbKTkJBQ7dbN5aDlwH5Wd2+DKT1shkT4XJDshxFloOpWPuaoGqBvJTz
+X-Gm-Message-State: AOJu0YwI3Un5MTP1lmafGjgkb9qu3YWhmQdIGyOQdZ5UHAE+oD+cNWw4
+	3ArEpC6qW3zNueINVElhSR+OUNjfZbapYA4aYRxo4AdDU/So4NWiyteS4FOfpH2h2LjNYQ1zML/
+	ynzCg3Q6GatG9b0qVi2kybw14KyGQyDecjdfJ4rYezWnOC0L0c8hA59BRzlOY4g==
+X-Received: by 2002:a05:6000:1052:b0:367:947d:ddce with SMTP id ffacd0b85a97d-367947dde8cmr692148f8f.68.1720001488338;
+        Wed, 03 Jul 2024 03:11:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEq8kV0b9MR8S15SlDw9DVYj4k79XzLEYDyI2d9sDxNAZ4qmp8L1kzIHrav+ZPmtwzXoxBAyg==
+X-Received: by 2002:a05:6000:1052:b0:367:947d:ddce with SMTP id ffacd0b85a97d-367947dde8cmr692128f8f.68.1720001487885;
+        Wed, 03 Jul 2024 03:11:27 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c709:3400:5126:3051:d630:92ee? (p200300cbc709340051263051d63092ee.dip0.t-ipconnect.de. [2003:cb:c709:3400:5126:3051:d630:92ee])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8ed0sm15514574f8f.28.2024.07.03.03.11.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 03:11:27 -0700 (PDT)
+Message-ID: <79910a02-7767-4f70-9248-319aba79fb45@redhat.com>
+Date: Wed, 3 Jul 2024 12:11:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable
+ compound pages
+To: ran xiaokai <ranxiaokai627@163.com>
+Cc: akpm@linux-foundation.org, baohua@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, peterx@redhat.com, ran.xiaokai@zte.com.cn,
+ ryan.roberts@arm.com, svetly.todorov@memverge.com, vbabka@suse.cz,
+ willy@infradead.org, ziy@nvidia.com
+References: <1fddf73d-577f-4b4c-996a-818dd99eb489@redhat.com>
+ <20240703092023.76749-1-ranxiaokai627@163.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240703092023.76749-1-ranxiaokai627@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On 03.07.24 11:20, ran xiaokai wrote:
+>> On 26.06.24 04:49, ran xiaokai wrote:
+>>> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+>>>
+>>> KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
+>>> pages, which means of any order, but KPF_THP should only be set
+>>> when the folio is a 2M pmd mappable THP. Since commit 19eaf44954df
+>>
+>> "should only be set" -- who says that? :)
+>>
+>> The documentation only talks about "Contiguous pages which construct
+>> transparent hugepages". Sure, when it was added there were only PMD ones.
+>>
+>>
+>>> ("mm: thp: support allocation of anonymous multi-size THP"),
+>>> multiple orders of folios can be allocated and mapped to userspace,
+>>> so the folio_test_large() check is not sufficient here,
+>>> replace it with folio_test_pmd_mappable() to fix this.
+>>>
+>>
+>> A couple of points:
+>>
+>> 1) If I am not daydreaming, ever since we supported non-PMD THP in the
+>>     pagecache (much longer than anon mTHP), we already indicate KPF_THP
+>>     for them here. So this is not anon specific? Or am I getting the
+>>     PG_lru check all wrong?
+>>
+>> 2) Anon THP are disabled as default. If some custom tool cannot deal
+>>     with that "extension" we did with smaller THP, it shall be updated if
+>>     it really has to special-case PMD-mapped THP, before enabled by the
+>>     admin.
+>>
+>>
+>> I think this interface does exactly what we want, as it is right now.
+>> Unless there is *good* reason, we should keep it like that.
+>>
+>> So I suggest
+>>
+>> a) Extend the documentation to just state "THP of any size and any
+>> mapping granularity" or sth like that.
+>>
+>> b) Maybe using folio_test_large_rmappable() instead of "(k & (1 <<
+>>     PG_lru)) || is_anon", so even isolated-from-LRU THPs are indicated
+>>     properly.
+> 
+> Hi, David,
+> 
+> The "is_anon" check was introduced to also include page vector cache
+> pages, but now large folios are added to lru list directly, bypassed
+> the pagevec cache. So the is_anon check seems unnecessary here.
+> As now pagecache also supports large folios, the is_anon check seems
+> unsufficient here.
+> 
+> Can i say that for userspace memory,
+> folio_test_large_rmappable() == folio_test_large()?
+> if that is true, except the "if ((k & (1 << PG_lru)) || is_anon)"
+> check, we can also remove the folio_test_large() check,
+> like this:
+> 
+> else if (folio_test_large_rmappable(folio)) {
+>          u |= 1 << KPF_THP;
+>      else if (is_huge_zero_folio(folio)) {
+>          u |= 1 << KPF_ZERO_PAGE;
+>          u |= 1 << KPF_THP;
+>      }
+> } else if (is_zero_pfn(page_to_pfn(page)))
+> 
+> This will also include the isolated folios.
 
-Add CONFIG_HAVE_FTRACE_GRAPH_FUNC kconfig in addition to ftrace_graph_func
-macro check. This is for the other feature (e.g. FPROBE) which requires to
-access ftrace_regs from fgraph_ops::entryfunc() can avoid compiling if
-the fgraph can not pass the valid ftrace_regs.
+You'll have to keep the folio_test_large() check, 
+folio_test_large_rmappable() wants us to check that ahead of time.
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v8:
-  - Newly added.
----
- arch/arm64/Kconfig     |    1 +
- arch/loongarch/Kconfig |    1 +
- arch/powerpc/Kconfig   |    1 +
- arch/riscv/Kconfig     |    1 +
- arch/x86/Kconfig       |    1 +
- kernel/trace/Kconfig   |    5 +++++
- 6 files changed, 10 insertions(+)
+Something like
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 8691683d782e..e99a3fd53efd 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -207,6 +207,7 @@ config ARM64
- 	select HAVE_SAMPLE_FTRACE_DIRECT_MULTI
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	select HAVE_GUP_FAST
-+	select HAVE_FTRACE_GRAPH_FUNC
- 	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_TRACER
- 	select HAVE_FUNCTION_ERROR_INJECTION
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 0f1b2057507b..f1439c42c46a 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -126,6 +126,7 @@ config LOONGARCH
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS if !ARCH_STRICT_ALIGN
- 	select HAVE_EXIT_THREAD
- 	select HAVE_GUP_FAST
-+	select HAVE_FTRACE_GRAPH_FUNC
- 	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_ARG_ACCESS_API
- 	select HAVE_FUNCTION_ERROR_INJECTION
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index c88c6d46a5bc..910118faedaa 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -239,6 +239,7 @@ config PPC
- 	select HAVE_EBPF_JIT
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	select HAVE_GUP_FAST
-+	select HAVE_FTRACE_GRAPH_FUNC
- 	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_ARG_ACCESS_API
- 	select HAVE_FUNCTION_DESCRIPTORS	if PPC64_ELF_ABI_V1
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 1904393bc399..83e8c8c64b99 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -130,6 +130,7 @@ config RISCV
- 	select HAVE_DYNAMIC_FTRACE if !XIP_KERNEL && MMU && (CLANG_SUPPORTS_DYNAMIC_FTRACE || GCC_SUPPORTS_DYNAMIC_FTRACE)
- 	select HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
- 	select HAVE_DYNAMIC_FTRACE_WITH_ARGS if HAVE_DYNAMIC_FTRACE
-+	select HAVE_FTRACE_GRAPH_FUNC
- 	select HAVE_FTRACE_MCOUNT_RECORD if !XIP_KERNEL
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_GRAPH_FREGS
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index d4655b72e6d7..7213e27b5b2b 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -228,6 +228,7 @@ config X86
- 	select HAVE_EXIT_THREAD
- 	select HAVE_GUP_FAST
- 	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
-+	select HAVE_FTRACE_GRAPH_FUNC		if HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_GRAPH_FREGS	if HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_GRAPH_TRACER	if X86_32 || (X86_64 && DYNAMIC_FTRACE)
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 4a3dd81f749b..a1fa9cba0ef3 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -34,6 +34,11 @@ config HAVE_FUNCTION_GRAPH_TRACER
- config HAVE_FUNCTION_GRAPH_FREGS
- 	bool
- 
-+config HAVE_FTRACE_GRAPH_FUNC
-+	bool
-+	help
-+	  True if ftrace_graph_func() is defined.
-+
- config HAVE_DYNAMIC_FTRACE
- 	bool
- 	help
+...
+else if (folio_test_large(folio) && folio_test_large_rmappable(folio)) {
+	/* Note: we indicate any THPs here, not just PMD-sized ones */
+	u |= 1 << KPF_THP;
+} else if (is_huge_zero_folio(folio)) {
+	u |= 1 << KPF_ZERO_PAGE;
+	u |= 1 << KPF_THP
+} else if (is_zero_pfn(page_to_pfn(page))) {
+	u |= 1 << KPF_ZERO_PAGE;
+}
+
+Would likely work and keep the existing behavior (+ include isolated ones).
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
