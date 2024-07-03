@@ -1,54 +1,94 @@
-Return-Path: <linux-kernel+bounces-239063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9A59255A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:44:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C95259255A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69C0285E58
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:44:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B6A1F23423
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E543D13B586;
-	Wed,  3 Jul 2024 08:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A4B13B29F;
+	Wed,  3 Jul 2024 08:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jGqlSTsH"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iVnoTUj5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QLWIqNHv";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iVnoTUj5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QLWIqNHv"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86B285624;
-	Wed,  3 Jul 2024 08:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2000B13B280
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719996238; cv=none; b=YgNDpt1Tu8QkK1dR3zKuhg0mtYA2Mk74Pemm9/fqszs/5ctvOaC0vMniMPKExbb++RP6bNTRjLxnhJOTvY///iTRziKGeTzusoYqfhb2FFIHad+BdGFgTuHQ0/RL89d6ODKPD+pg8VY9vFS2FASJbjRx/4Gq5vFjDb3nIDwv6wA=
+	t=1719996226; cv=none; b=Ttl1UoI4dcVqwaFBhh/SVIqyCEV3ZGURLFFXyFNmAyjd0NsM6ZdqNo4EkTcvgERnG6nuN8ZeE87Z4X9t8mO5bWkK5XN77tvPdDex8BcyL+aF0HEjeq4jggBSJMXI6roTpuJmMwyy3LbLESwERezUCErQTYKI4M2WUQOUM2lJP00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719996238; c=relaxed/simple;
-	bh=lptLyrtomP510MDSTWJ1xyCDrn5Oh0FzBQfkqNjbmS8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Mh1VeXKSI8pWUTTpAzuLkanA9VyLaow5ElKXJIBfMAyNDArYqujZRz+VwBaoP/BM4k1+GOfkKDzMHP4KjaFaTONWH9E4iUhdB9FHaG2dXGHjGbnpqGpx1Egzly0NMSCPhG4WM4/ZEzL9EsBZ6jpJ+AMuRqIWCx3S1lljOv6hqMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jGqlSTsH; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719996223; x=1720601023; i=markus.elfring@web.de;
-	bh=lptLyrtomP510MDSTWJ1xyCDrn5Oh0FzBQfkqNjbmS8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=jGqlSTsHwTwtnWX//MppUHEXvabftsGca6m/4IKclXqVfuhSgDjQOger9aJmZ0M8
-	 lUGbbpxyYFKXRfRNzrioP8snBn1DgGcTJLW2BCfkszr1h5EDK66qoWGSCOykiQxzA
-	 +T1UHNaKT83wbaCKwvDJy23zSzFtw+4X3OFC2pWYNiorAzo+3l7WhwHQ8aYIg0sL/
-	 wD1PrtVxK5sEGncZMInsLlGXX+UB/bk5EFnMUHP+IormV43B8lh020tFgxKe7Qnka
-	 so1L6/bMr0va3zDIIrGZC7pLRG2XecJT695coTNvv1htBKAQ9zUv9I64tBtW+PX3D
-	 1ZCaCctyM5gfMADN9Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MOlwp-1smN5E14UJ-00VtyI; Wed, 03
- Jul 2024 10:43:43 +0200
-Message-ID: <8c69a0dc-8178-44fc-86c1-da67109ddd39@web.de>
-Date: Wed, 3 Jul 2024 10:43:31 +0200
+	s=arc-20240116; t=1719996226; c=relaxed/simple;
+	bh=WEdpR6bmVi1yZMdLUQ7mI9VlHFxK2cACfl9b7wLh27I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g8tYstQkzdgSdpM0ofIRMQJnws7/+v/k0UNznzOP+egx/GFscRGIbyimRhEB4jVDKHz9O1hRr2OPhamOfVdeXqCMMvCz8+0CfTR6Vq66er0UoGhrIjy6ot6gLJ07PggbS0XiJZ4wLEPY8FVb7U8U1VuAzMYUSxDurSFIDflMeWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iVnoTUj5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QLWIqNHv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iVnoTUj5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QLWIqNHv; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2F7A321B14;
+	Wed,  3 Jul 2024 08:43:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719996223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=M5mPImjflznCvU8v6E0k5Lt065ivRLse5XN+jzBNIO4=;
+	b=iVnoTUj5f0euGbehg8dw/9Q9yb7hHPAu/SBwWQsYv6ZvjQDFdtsIJnuxvYshWnHDK+xEQT
+	0Z0lhiGx9aijMrkv5AdFG1m8arWqRCAIZiGRSx6uF19i3wazuDOjqfmEqKdLy1ZTmNU9v5
+	Xjxea8AnSstjT6hgQH+At7+WHf4HmUI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719996223;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=M5mPImjflznCvU8v6E0k5Lt065ivRLse5XN+jzBNIO4=;
+	b=QLWIqNHvuDfq8ERGNK2F83+0J0Fw3L9nRVA5kQxE2BpVaiSMszJWHQKtv4SLQYtshpfVbz
+	9bWwHqKwJ41iwiBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719996223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=M5mPImjflznCvU8v6E0k5Lt065ivRLse5XN+jzBNIO4=;
+	b=iVnoTUj5f0euGbehg8dw/9Q9yb7hHPAu/SBwWQsYv6ZvjQDFdtsIJnuxvYshWnHDK+xEQT
+	0Z0lhiGx9aijMrkv5AdFG1m8arWqRCAIZiGRSx6uF19i3wazuDOjqfmEqKdLy1ZTmNU9v5
+	Xjxea8AnSstjT6hgQH+At7+WHf4HmUI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719996223;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=M5mPImjflznCvU8v6E0k5Lt065ivRLse5XN+jzBNIO4=;
+	b=QLWIqNHvuDfq8ERGNK2F83+0J0Fw3L9nRVA5kQxE2BpVaiSMszJWHQKtv4SLQYtshpfVbz
+	9bWwHqKwJ41iwiBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E7F9713889;
+	Wed,  3 Jul 2024 08:43:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NsJeNz4PhWYJSAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 03 Jul 2024 08:43:42 +0000
+Message-ID: <7efdb950-5da8-4a31-93de-9b9981aaefbf@suse.de>
+Date: Wed, 3 Jul 2024 10:43:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,106 +96,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: libfdt: check return value of fdt_num_mem_rsv() in fdt_pack()
-To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
- devicetree@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, David Gibson <dgibson@redhat.com>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-References: <20240701215441.54353-1-heinrich.schuchardt@canonical.com>
- <8b083a48-5e56-493a-b235-60afaf794fd7@web.de>
- <530a2dcf-82ad-4e59-a162-5d3080766e6c@canonical.com>
-Content-Language: en-GB
-In-Reply-To: <530a2dcf-82ad-4e59-a162-5d3080766e6c@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:trxH/ooywfNEfiZjB42Chz5zq7Z08mVhiBmMoxtxWU8Xw6QjQho
- gRd5Ugnc5dqJzXq3W8cHAgcbrD7TJLnjm6usCNWxyJGyK+6kng69oaOvQqB7N/IFFJZsEqg
- t4AHvpB2XUP0Dn7Ag6oSZBZNB8DGO1FEKmAhap+lYq4aUqT2Gb1jws/uq0S8L2cOc7K9pK9
- oo9HrS+7L48flbb5rQAkw==
+Subject: Re: [PATCH v3 2/6] drm/radeon: remove load callback from kms_driver
+To: Wu Hoi Pok <wuhoipok@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240630165949.117634-1-wuhoipok@gmail.com>
+ <20240630165949.117634-3-wuhoipok@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20240630165949.117634-3-wuhoipok@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[amd.com,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:uK+DYHt/GOU=;S0s7pwr8tzqwOQ2zE+xMW4qaNMX
- WIy//oKgW6cIr3msWPKex8mNjDGuCLWpXJbOx0yUWtsDtrus92a95uj+GlEL7lYv9+Qgsc+Rm
- ReLERiFrYWQ1ApM4IdLESJLAZEmBz5h3ZsFd8wdScemjxprnNUb2YpcRP7xerzF6II8IVzYkZ
- L5X9oVX2MRJC1TC52m4zJqY5jsVrL5kr8ZwIQdRBwVjXqxG0Ndx9+vff3g13fctsh5avAnEYU
- r6ahEoEhMnO3YbHBPrzsVi900UT3FOBI7uVGV0lO+pRDfF8z1zWlt8GRDuDjGxhYul5YXK4l8
- 4Pdt5oUOarrWrrIOFdo0MjjINksP7WIiWjLzVJDFj7RbY3d7b2bHDVaq2YHPAKfRjw3KCVhWB
- 6CwnDpS3Y7F5RAavZVKQjvY1DxWFbLdvPnK9AyRBW4i+CoeVd+on0LdjoC8q2ugoDPVfja2NX
- WUPBFXKaup79/lg8kdsos4ALNy4HRj/nRghGdaPaekTsoWa//yKBXgBDsJWYNX9MD2AIgDMRR
- T7nHZc4UfyR7UpAKATj0sKzQ9qnLP3RhKxgYupWUJOJThxNi9tWF5K9yyVmlmEZBpVX6vkJvG
- 9Y/7poDt8DUs56bM+vfCJVdbuvxPYJajW7klrxqFJf05ZjhFBb7CcP5SGtwa5d40CnVTkuUPa
- qZg25KPjTcs/YgilqG3v7/xot5uDj8pBZizR9w+E27cCmcGALNRu7tNjmhLXN3/VBqkFiLsPz
- kLrCX9JJyaz4X60GoyAlld5vJw9bLUe7sDlUHpdUM633UxGfDeCX8FQdGYwxzJ1JWm0bAay54
- uUI0lPLpaaJzeUYkP1j/VjHSwS/4YsX4UGhDB43DLrYN4=
+X-Spam-Score: -4.29
+X-Spam-Level: 
 
->>> fdt_num_mem_rsv() may return -FDT_ERR_TRUNCATED.
->>> In this case fdt_pack() should propagate the error code.
->>
->> 1. Please choose imperative wordings for an improved change description=
-.
->> =C2=A0=C2=A0=C2=A0https://git.kernel.org/pub/scm/linux/kernel/git/torva=
-lds/linux.git/tree/Documentation/process/submitting-patches.rst?h=3Dv6.10-=
-rc6#n94
+
+
+Am 30.06.24 um 18:59 schrieb Wu Hoi Pok:
+> The ".load" callback in "struct drm_driver" is deprecated. In order to remove
+> the callback, we have to manually call "radeon_driver_load_kms" instead.
 >
-> The current subject is an imperative?
+> Signed-off-by: Wu Hoi Pok <wuhoipok@gmail.com>
 
-Yes.
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+Tested-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-The requirement for =E2=80=9Cimperative mood=E2=80=9D affects mostly the c=
-ommit message (or =E2=80=9Cchangelog=E2=80=9D),
-doesn't it?
-
-
->> 2. Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=
-=80=9CCc=E2=80=9D)?
+> ---
+>   drivers/gpu/drm/radeon/radeon_drv.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
 >
-> d5db5382c5e5 ("libfdt: Safer access to memory reservations") introduced =
-the check that returns the error code. But before that we could simply ove=
-rrun the buffer.
+> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+> index 739bb1da9dcc..88d3de2a79f8 100644
+> --- a/drivers/gpu/drm/radeon/radeon_drv.c
+> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
+> @@ -310,6 +310,10 @@ static int radeon_pci_probe(struct pci_dev *pdev,
+>   
+>   	pci_set_drvdata(pdev, ddev);
+>   
+> +	ret = radeon_driver_load_kms(ddev, flags);
+> +	if (ret)
+> +		goto err_agp;
+> +
+>   	ret = drm_dev_register(ddev, ent->driver_data);
+>   	if (ret)
+>   		goto err_agp;
+> @@ -569,7 +573,6 @@ static const struct drm_ioctl_desc radeon_ioctls_kms[] = {
+>   static const struct drm_driver kms_driver = {
+>   	.driver_features =
+>   	    DRIVER_GEM | DRIVER_RENDER | DRIVER_MODESET,
+> -	.load = radeon_driver_load_kms,
+>   	.open = radeon_driver_open_kms,
+>   	.postclose = radeon_driver_postclose_kms,
+>   	.unload = radeon_driver_unload_kms,
 
-Would an other commit be a more appropriate reference?
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-
-> I would not know which patch to blame.
-
-Please take another look at a corresponding information source:
-https://github.com/dgibson/dtc/blame/main/libfdt/fdt_rw.c#L487-L500
-
-Update candidate:
-libfdt: Handle v16 and re-ordered trees for r/w
-2007-11-01
-https://github.com/dgibson/dtc/commit/a041dcdc48453f26b76bccdb5e2a1ebb3a0e=
-a987#diff-1a98f2be127ff35ab7183bdae1e010189c9992b3bd6e6779fa7b7e451bf72ac4=
-R382
-
-
-> Whom do you want to Cc?
-
-I suggest to take another look at corresponding information sources.
-
-* https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/stable-kernel-rules.rst?h=3Dv6.10-rc6#n34
-
-* https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n458
-
-
->> 3. How do you think about to use a summary phrase like =E2=80=9CComplet=
-e error handling
->> =C2=A0=C2=A0=C2=A0in fdt_pack()=E2=80=9D?
->
-> Why should I choose a less specific subject?
-
-You would like to improve the error detection and corresponding exception =
-handling another bit,
-wouldn't you?
-
-* https://cwe.mitre.org/data/definitions/252.html
-
-* https://wiki.sei.cmu.edu/confluence/display/c/EXP12-C.+Do+not+ignore+val=
-ues+returned+by+functions
-
-
-Regards,
-Markus
 
