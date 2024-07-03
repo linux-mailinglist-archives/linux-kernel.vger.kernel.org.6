@@ -1,143 +1,149 @@
-Return-Path: <linux-kernel+bounces-239345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE92925B64
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:08:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75505925BBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EA821C20F2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D8FC1F29145
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C44E18509C;
-	Wed,  3 Jul 2024 10:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A510019D8A5;
+	Wed,  3 Jul 2024 10:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UBYGrw1B"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+cyatzg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B72173348
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C960E1891B6;
+	Wed,  3 Jul 2024 10:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720004137; cv=none; b=ZmmntEEHyEz9LFo4o19w76cPUxC+NdrHifSZxdWyi5pwjjEL/UdK1zoOUS1IOzcSMTD488ce4RmrRpzXKFWh6NBXI4NngZf/+UilMPSS7lKiWm64+D88knXqgJTdHDgBOOze++NLUBwNHvkidOEIIP6Dvdomt8DapvRasKejTZk=
+	t=1720004302; cv=none; b=uv/6DfvW6elaP3vRfbR9RrvfHFTFyxHt03lkQaxml08GBLrHSFykGvntjUYf70Jp856b9XiC7AQa6T0DlkQggnDbxd4UA7JnE4QNpAYBq63VYSfYXadJibuuXZF38HyVGAkV0SK5M1mZSJ96+pdjMj29/tbry/cc3VBzxag1SqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720004137; c=relaxed/simple;
-	bh=KZXdDsuzF69Blsa8jgtRkrogPbhEQ2Tn9c8T5iBeH/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nyGQ5jvyI4phAYqMzKAaoFh7RtdD6wsTAZmk9ZTvi35o8YC71i82dQ65XCaFK32W3hofwZNvKRmqA49Fz/OOVEMjzDHe90YHGf+DKd17J4IPKDWdqoNNnPIkBYSADRdKtz0etAP5h3V47QSfcyUnSCrC6epexWMF98nzNR3iNw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UBYGrw1B; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8B645E0002;
-	Wed,  3 Jul 2024 10:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720004127;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bn2Cag/x6QwhxcuWMLlARpck1D5imG3lqhwCJXtBb98=;
-	b=UBYGrw1BorDccFxJQqPhIZZgl2ydgiV3scqGR6xvB9f5euzieAsMksDTX7pCdxuY/gARP0
-	2OWcvS5PIYeIvdDZdErWz3wmn0y4FstyDRsas83EH7Rae8UeGre5lvNQPRchk54ud3osH8
-	x12cyfmGSPaCgqB7+O4ApEX5I1hdFFuBcMlT7TQUym9P59HISxWvKX/uMJqF9u4WiYy/GB
-	DCVmQZD4RjoYp8kOyUqTdqOJ1oa0BAATQJasvAbWQqIZC81s6SAOoRr7r8+7XPFisc4JVI
-	J1wnLze+kK3WhhC2ucId2rVsUG5am1mFefGL6hn427zaoTCVZlFrFFPMe8x4iQ==
-Date: Wed, 3 Jul 2024 12:55:27 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>
-Cc: linux@armlinux.org.uk, nicolas.ferre@microchip.com,
-	claudiu.beznea@tuxon.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 05/27] ARM: at91: pm: add sam9x7 SoC init config
-Message-ID: <20240703105527c859341b@mail.local>
-References: <20240703102011.193343-1-varshini.rajendran@microchip.com>
- <20240703102702.195564-1-varshini.rajendran@microchip.com>
+	s=arc-20240116; t=1720004302; c=relaxed/simple;
+	bh=ZKBZXqTb3GYcej9sBFGWNtjDUyV0Rn3CMeoWjdQoMDA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HDZztUYC2Lya2+G0UwdxpltO2/TVuSRCl7XuxGTWBX0sh4jK5cskLLvBtYJsa67xIymxz7nJtkGGKCXLAz4ZG4mORW42/eqL05YYRuWD+N5iRWz2w6ZwNFpNIbvUxlmPLafbkYinn61akp3E5qQf1dbmR6uF2TDKjBnCcc0xaJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+cyatzg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 907E1C32781;
+	Wed,  3 Jul 2024 10:58:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720004302;
+	bh=ZKBZXqTb3GYcej9sBFGWNtjDUyV0Rn3CMeoWjdQoMDA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=I+cyatzgwZSzFZqgft1lCda9R3boMN5wwvPMQl0eLu0p0JyFqixrZ2wRNjopEmK0k
+	 lMA1bTcgG0eoiR5QQMHOlWN3oykSPpCHKujOIMWWwgDCrD1K5nTIRBnkQO9gd0OJsx
+	 0d7jxY/7ToA6rHZdoGHqn0iVMxDmuoTqTOV7ddfwHmXhYw6KTULh54Uj43np3GN8IL
+	 hnAtcIA5efKhKhRUGnkpCqihGX9X3jhptYk7IAACPNLPAYuiNXNx1DObUwVnw6JHZC
+	 XPago3eB5gQBYHb+hr/UIwLhrJRUlWQQELxFjzH07/TdEptwGXlzQWa2X8HYIwRHmU
+	 Tjl46bQeytIMA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FBBC31D97;
+	Wed,  3 Jul 2024 10:58:22 +0000 (UTC)
+From: Utsav Agarwal via B4 Relay <devnull+utsav.agarwal.analog.com@kernel.org>
+Subject: [PATCH v5 0/3] adp5588-keys: Support for dedicated gpio operation
+Date: Wed, 03 Jul 2024 11:58:13 +0100
+Message-Id: <20240703-adp5588_gpio_support-v5-0-49fcead0d390@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703102702.195564-1-varshini.rajendran@microchip.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMUuhWYC/4WNQQ6DIBBFr2JmXRokQ6tdeY/GGBDUSVogYEkb4
+ 91LvUCX7yX//Q2SjWQT3KoNos2UyLsC8lTBuCg3W0amMAgukF95zZQJUjbNMAfyQ3qF4OPKLtJ
+ ooY2oVTtBmYZoJ3of2XtfeKG0+vg5XjL+7J9gRsYZotaKI0rb8k459fDzefRP6Pd9/wJQTla4u
+ QAAAA==
+To: Utsav Agarwal <utsav.agarwal@analog.com>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Arturs Artamonovs <arturs.artamonovs@analog.com>, 
+ Vasileios Bimpikas <vasileios.bimpikas@analog.com>, 
+ Oliver Gaskell <oliver.gaskell@analog.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720004298; l=2339;
+ i=utsav.agarwal@analog.com; s=20240701; h=from:subject:message-id;
+ bh=ZKBZXqTb3GYcej9sBFGWNtjDUyV0Rn3CMeoWjdQoMDA=;
+ b=F5tQpXuKWFwC+womE91xcSEaMlAf2+LITtvgdoV2FfCwSH+UNmP1DrAbVZZpGx9lHkr8+ioKN
+ HZ+kRE5RfHnAIUoFTjct16dDojVUrrAb5whPZduEy9pRdP1N7DJe+M2
+X-Developer-Key: i=utsav.agarwal@analog.com; a=ed25519;
+ pk=mIG5Dmd3TO5rcICwTsixl2MoUcf/i2u+jYqifd7+fmI=
+X-Endpoint-Received: by B4 Relay for utsav.agarwal@analog.com/20240701 with
+ auth_id=178
+X-Original-From: Utsav Agarwal <utsav.agarwal@analog.com>
+Reply-To: utsav.agarwal@analog.com
 
-On 03/07/2024 15:57:02+0530, Varshini Rajendran wrote:
-> Add SoC init config for sam9x7 family.
-> 
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-> ---
-> Changes in v5:
-> - Removed unnecessary header file.
-> - Added a space in the return type for clarity.
-> ---
->  arch/arm/mach-at91/Makefile |  1 +
->  arch/arm/mach-at91/sam9x7.c | 33 +++++++++++++++++++++++++++++++++
->  2 files changed, 34 insertions(+)
->  create mode 100644 arch/arm/mach-at91/sam9x7.c
-> 
-> diff --git a/arch/arm/mach-at91/Makefile b/arch/arm/mach-at91/Makefile
-> index 794bd12ab0a8..7d8a7bc44e65 100644
-> --- a/arch/arm/mach-at91/Makefile
-> +++ b/arch/arm/mach-at91/Makefile
-> @@ -7,6 +7,7 @@
->  obj-$(CONFIG_SOC_AT91RM9200)	+= at91rm9200.o
->  obj-$(CONFIG_SOC_AT91SAM9)	+= at91sam9.o
->  obj-$(CONFIG_SOC_SAM9X60)	+= sam9x60.o
-> +obj-$(CONFIG_SOC_SAM9X7)	+= sam9x7.o
->  obj-$(CONFIG_SOC_SAMA5)		+= sama5.o sam_secure.o
->  obj-$(CONFIG_SOC_SAMA7)		+= sama7.o
->  obj-$(CONFIG_SOC_SAMV7)		+= samv7.o
-> diff --git a/arch/arm/mach-at91/sam9x7.c b/arch/arm/mach-at91/sam9x7.c
-> new file mode 100644
-> index 000000000000..e1ff30b5b09b
-> --- /dev/null
-> +++ b/arch/arm/mach-at91/sam9x7.c
-> @@ -0,0 +1,33 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Setup code for SAM9X7.
-> + *
-> + * Copyright (C) 2023 Microchip Technology Inc. and its subsidiaries
-> + *
-> + * Author: Varshini Rajendran <varshini.rajendran@microchip.com>
-> + */
-> +
-> +#include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +
-> +#include <asm/mach/arch.h>
-> +
-> +#include "generic.h"
-> +
-> +static void __init sam9x7_init(void)
-> +{
-> +	of_platform_default_populate(NULL, NULL, NULL);
+Current state of the driver for the ADP5588/87 only allows partial
+I/O to be used as GPIO. This support was previously present as a
+separate gpio driver, which was dropped with the commit
+5ddc896088b0 ("gpio: gpio-adp5588: drop the driver") since the
+functionality was deemed to have been merged with adp5588-keys.
 
-Can you check whether this call is actually needed to boot the platform?
+This series of patches re-enables this support by allowing the driver to 
+relax the requirement for registering a keymap and enable pure GPIO 
+operation. 
 
-> +
-> +	sam9x7_pm_init();
-> +}
-> +
-> +static const char * const sam9x7_dt_board_compat[] __initconst = {
-> +	"microchip,sam9x7",
-> +	NULL
-> +};
-> +
-> +DT_MACHINE_START(sam9x7_dt, "Microchip SAM9X7")
-> +	/* Maintainer: Microchip */
-> +	.init_machine	= sam9x7_init,
-> +	.dt_compat	= sam9x7_dt_board_compat,
-> +MACHINE_END
-> -- 
-> 2.25.1
-> 
+Changelog
+==========
 
+V2: 
+	-  Changed gpio_only from a local variable to a member of struct
+	adp5588_kpad
+	-  Removed condition from adp5588_probe() to skip adp5588_fw_parse() if 
+	gpio-only specified. adp558_fw_parse() now handles and returns
+	0 if gpio-only has been specified.
+	-  Added a check in adp5588_fw_parse() to make sure keypad 
+	properties(keypad,num-columns and keypad,num-rows) were not defined when 
+	gpio-only specified
+
+V3:
+	-  Moved device_property_present() for reading "gpio-only" into 
+	adp558_fw_parse()
+	-  Added print statements in case of error
+
+V4:
+	- Added dt-bindings patch
+
+Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+---
+V5:
+	- Removed extra property "gpio-only", now pure gpio mode is
+	  detected via the adbsence of keypad specific properties.
+	- Added dependencies for keypad properties to preserve
+	  the original requirements in case a pure gpio mode is not
+	  being used.
+	- Added additional description for why the "interrupts" property
+	  was made optional
+	- Rebased current work based on https://lore.kernel.org/linux-input/ZoLt_qBCQS-tG8Ar@google.com/
+- Link to v4: https://lore.kernel.org/r/20240701-adp5588_gpio_support-v4-0-44bba0445e90@analog.com
+
+---
+Dmitry Torokhov (1):
+      iInput: adp5588-keys - use guard notation when acquiring mutexes
+
+Utsav Agarwal (2):
+      Input: adp5588-keys - add support for pure gpio
+      dt-bindings: input: Update dtbinding for adp5588
+
+ .../devicetree/bindings/input/adi,adp5588.yaml     | 33 ++++++++--
+ drivers/input/keyboard/adp5588-keys.c              | 70 ++++++++++++----------
+ 2 files changed, 66 insertions(+), 37 deletions(-)
+---
+base-commit: 1c52cf5e79d30ac996f34b64284f2c317004d641
+change-id: 20240701-adp5588_gpio_support-65db2bd21a9f
+
+Best regards,
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Utsav Agarwal <utsav.agarwal@analog.com>
+
+
 
