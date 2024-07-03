@@ -1,120 +1,148 @@
-Return-Path: <linux-kernel+bounces-240042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44B7926852
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:34:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE9A926854
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7991F228C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7951C25DC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749C4188CBC;
-	Wed,  3 Jul 2024 18:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A21188CA5;
+	Wed,  3 Jul 2024 18:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZlFinWsa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Rdq7jBNi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GN8sl4++"
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07431DA313;
-	Wed,  3 Jul 2024 18:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5577017BB27;
+	Wed,  3 Jul 2024 18:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720031667; cv=none; b=PxpMPbRiGhSxFfFKgfGfPM1gTXQnFvjgQ7pqcDDN0goJqhJ0GVXPjK/s/4xTc8dCOwOI3a3ws2IqisHyZMaAUS9B5V7HxpWaSXlO2ccUn5tBeOO7q1W8cinwcH5DFIN5qsxoEYf55kJNlPt91xmCRpFdccWLXsOs5RKNU7s743k=
+	t=1720031703; cv=none; b=SqjI3ecn7ZDeUVj+Bu4kVMPdzU3j51p32RDlD6bh45vpvph+LZxxdp7PM8DwT5seDQIOSEYW/cb5FgT0xW8ipqkuW6STBTLCWngorJSmZvdPjRV9f/WH9juc10KvS2Xo4paF3FIVuqGapPfYvE2wRCUd6OeFINnsR+w0QAXimxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720031667; c=relaxed/simple;
-	bh=75LWJFdF9aagmw6N/35Fph3+fUpWNs+Pce1uKbQYf3Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=E+LvTszF2Bx6YM1Hm/rv2Phwm44jQpr81VVSLOE7ybfySN7j+Pq2vWrfcpjyu/anYLuVcJ+xRxuqDGThfWSfWAJL9GlDxeg0b0Nrbx8HGKs3ysttU9dpE4AOw80CJ93bQky18a0z6wHDYcxZydytGcEef5kABYUGlogE4Fvclrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZlFinWsa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2A33C32781;
-	Wed,  3 Jul 2024 18:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720031667;
-	bh=75LWJFdF9aagmw6N/35Fph3+fUpWNs+Pce1uKbQYf3Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ZlFinWsaNVrvGmZiNySxfxWG2sUm9QrY1MBykONGigKwpKDeYa0FHi8EKqXBxZJuy
-	 dsflTJ9guyvawMQH4J1OX8SDt6pj/rPiloc86OspDM0jkQK1cBoz0J5RU4hVJuPezI
-	 CxquH0GajkhBQ43C66pl/D4BpsQuO4oK6BJzmIk3bxrvEYxl+E7/rrW/ibS20Z5D+1
-	 QhDpUu0gZi0lZ2J1k67ownG6xVGF9InQMeJANT7C9A6eWg+rvGibhwl1BRtmgFcE9/
-	 isSK/HbjmPbXNIDWpfEzxypfSCP5E0ajN4t952uOuWjePgJBMzBYLMKLskq5hIwcaS
-	 /WaETrjuuBkiQ==
-From: Mark Brown <broonie@kernel.org>
-To: David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Paul Cercueil <paul@crapouillou.net>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mips@vger.kernel.org, linux-arm-msm@vger.kernel.org
-In-Reply-To: <20240703-sound-const-regmap_config-v1-0-2e379b0446a7@gmail.com>
-References: <20240703-sound-const-regmap_config-v1-0-2e379b0446a7@gmail.com>
-Subject: Re: [PATCH 0/9] ASoC: Constify struct regmap_config
-Message-Id: <172003166452.103730.17308665420530881641.b4-ty@kernel.org>
-Date: Wed, 03 Jul 2024 19:34:24 +0100
+	s=arc-20240116; t=1720031703; c=relaxed/simple;
+	bh=i+jRm2XNt/nOtiImd2nWAhMZWwOiZlZAQYviO67O+e0=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=Vj7UJfYSSK4Gv8z9rH/TCJdW2HFXeZTWwzMYNAFZWNFGusHTshEJ6Y3yQnUfkG5HKriOfb/YSl6uJleg27/9BhEq6rqFe1pe2LapcwZGt1D4deaJpx/ua0nFDY+eqfRhcdESUZuUKqoUhBX74VbSzEy8MmAnF0JpVWwU3LMX8EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Rdq7jBNi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GN8sl4++; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 735F711401B8;
+	Wed,  3 Jul 2024 14:35:00 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 03 Jul 2024 14:35:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1720031700; x=1720118100; bh=zVR+UXlWh3
+	a8IJF25NtOCZOCNR0BcDT+mApZ1Nc8rYU=; b=Rdq7jBNiS9VB3CQyFzhPEMLhOv
+	mWE1K8KS/0NNqC+3EWK2FbUi3/4T1udk1isTfKh7ja3Mfrzqz3mayByj4UObNlRj
+	WBZtCrFiVSqbor+/bMNEM0T6zvayffy+45hcUxxFvhb8hB1Mp3FLLRh3hBGU/7GN
+	nNF36VVhhpp/gL4t+bvFtGWTXIfS6PTTgUT1CGEAtKGRkQ0YVEsY1MnOZyXYiZRG
+	FP1JKDgeTVJa4fXpnur+u8PVtbdMfcKIWL4dg2dr7lXuI76wQblpicCFpXBhwPeg
+	s0wGcAiVkf4OdMhyzeWkR+1O8i0INvAXP4wzdGQP5Gyj9yITh2UUMVvilOYQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720031700; x=1720118100; bh=zVR+UXlWh3a8IJF25NtOCZOCNR0B
+	cDT+mApZ1Nc8rYU=; b=GN8sl4++eKex9iLDz6JVsigVkb1GWiiUN8Fs6Jn68S1/
+	pgDT5ZOgq0tlxTAwgh1Rmnd6KtRPhLyv3GCjz5CCpEWWp19RFo8j+KpbIZ5yAbJb
+	mY1tMfw72+0YZ0BBLDjK5+Ehmc2qjnU7gNGOd7iISakoWMKuVo4DXv12PFZmhHGx
+	pgfE9ARPyJLpqD8R0+CInADHiCsfEkYd+SwR27dGcTDKI9NfsnfNpXyqzkVt9/E9
+	1aJ2S0sGB5MjPOl3Jar3v044AQ2zOF+o52si/sN61OBk58AGKT239ImoaK6Yo5KT
+	3c5XrTXhP6vp8m/0+WdfuR8aK49oAtZv9CBdqNn+ZA==
+X-ME-Sender: <xms:05mFZogN7rNVUk-2LnFvSw56FsY-9T3imXtgBSW7XS_Eesi13ug0oA>
+    <xme:05mFZhAP2i2LVw-6-HQFYZdwuF-QJrtZjiXz2CzWrX3J7teHD93BXDajs2k_Y64DN
+    CKwB5Lw2NFw1PWv-Ic>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejgdduvdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:05mFZgEigSnbpgcXMfA16OGO7rftdydzZJ0l0C062sVvxcYH6vZacA>
+    <xmx:05mFZpTMVyyiHF20nRE4vlkeXXNXR9oyW7bzaWBUvKZ_ZG20ySK_mA>
+    <xmx:05mFZlzX4u901GkaLckrDekIz1F6B2RDj1N0Y2gxc80BF8xxg6muzA>
+    <xmx:05mFZn72yMIMWLkdJfkf5Xkh_YiVT4fKvrN0yIoGeIYLGSBd4Dw0ZA>
+    <xmx:1JmFZqgYjo0kGNViMI3VOeHp0IIXUCWwqf2R_dkzeewquZRzbKsBFGzn>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 1C3C8B6008D; Wed,  3 Jul 2024 14:34:59 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Message-Id: <72ddde27-e2e2-4a46-a2ab-4d20a7a9424f@app.fastmail.com>
+In-Reply-To: 
+ <CA+G9fYvAkELSdWF1EYyjS=d_jvCJD0O=aPnZFHUGnhYy6c1VCg@mail.gmail.com>
+References: <20240703102841.492044697@linuxfoundation.org>
+ <CA+G9fYvAkELSdWF1EYyjS=d_jvCJD0O=aPnZFHUGnhYy6c1VCg@mail.gmail.com>
+Date: Wed, 03 Jul 2024 20:34:38 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Guenter Roeck" <linux@roeck-us.net>, shuah <shuah@kernel.org>,
+ patches@kernelci.org, lkft-triage@lists.linaro.org,
+ "Pavel Machek" <pavel@denx.de>, "Jon Hunter" <jonathanh@nvidia.com>,
+ "Florian Fainelli" <f.fainelli@gmail.com>,
+ "Sudip Mukherjee" <sudipm.mukherjee@gmail.com>, srw@sladewatkins.net,
+ rwarsow@gmx.de, "Conor Dooley" <conor@kernel.org>,
+ Allen <allen.lkml@gmail.com>, "Mark Brown" <broonie@kernel.org>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Anders Roxell" <anders.roxell@linaro.org>,
+ "Linux-sh list" <linux-sh@vger.kernel.org>, "Rich Felker" <dalias@libc.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>
+Subject: Re: [PATCH 5.4 000/189] 5.4.279-rc1 review
+Content-Type: text/plain
 
-On Wed, 03 Jul 2024 18:20:56 +0200, Javier Carrasco wrote:
-> This series adds the const modifier to the remaining regmap_config
-> structs under sound/soc that are effectively used as const (i.e., only
-> read after their declaration), but kept as writtable data.
-> 
-> 
+On Wed, Jul 3, 2024, at 19:45, Naresh Kamboju wrote:
+> On Wed, 3 Jul 2024 at 16:20, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-Applied to
+> arch/sh/kernel/sys_sh32.c:68:1: error: macro "__MAP3" requires 4
+> arguments, but only 2 given
+>    68 |                 SC_ARG64(nbytes), unsigned int, flags)
+>       | ^
+> In file included from arch/sh/kernel/sys_sh32.c:11:
+> include/linux/syscalls.h:110: note: macro "__MAP3" defined here
+>   110 | #define __MAP3(m,t,a,...) m(t,a), __MAP2(m,__VA_ARGS__)
+>       |
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+This is caused by the backport of  my patch 30766f1105d6
+("sh: rework sync_file_range ABI"), which uses the
+SC_ARG64() that in turn was introduced in linux-5.12 commit
+2ca408d9c749 ("fanotify: Fix sys_fanotify_mark() on native
+x86-32").
 
-Thanks!
+We can't backport the entire fanotify patch to stable
+kernels, but it would be fairly easy to just extract
+the two macros from it, or to open-code them in the
+backport of my patch.
 
-[1/9] ASoC: cs35l34: Constify struct regmap_config
-      commit: cb148180125ef88a4c1c20ecf25337f1e45657bb
-[2/9] ASoC: cs35l35: Constify struct regmap_config
-      commit: 306e0317bddfbb6bea1ad31c3daeecaec0304295
-[3/9] ASoC: cs35l36: Constify struct regmap_config
-      commit: 0271df05e6fe92b7000dcce5058a0ed6af127ef6
-[4/9] ASoC: cs53l30: Constify struct regmap_config
-      commit: 52f0aa5fb9437013f7f35d61426de497a8927891
-[5/9] ASoC: jz4760: Constify struct regmap_config
-      commit: 8d9c0ede48f29c9fccd095952d657fc5696da9ac
-[6/9] ASoC: jz4770: Constify struct regmap_config
-      commit: 7abfa29ba6a43c5e25622de1ba1f1846b9c9b5e8
-[7/9] ASoC: wsa881x: Constify struct regmap_config
-      commit: 5ffab1d3f3f3281869b894070fe4438f307759ec
-[8/9] ASoC: wsa883x: Constify struct regmap_config
-      commit: 22c361dc7ce4d4d6a688febee57d6e4b130b96b3
-[9/9] ASoC: wsa884x: Constify struct regmap_config
-      commit: e15cc906b9c5af5414bb6002b6a036550bca6bd8
+For the moment, I'd suggest dropping my 30766f1105d6
+patch from 5.10 and earlier LTS kernels to avoid the
+build regression.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Rich and Adrian, let me know if you would submit a
+tested backport stable@vger.kernel.org yourself, if you
+want help backporting my patch, or if we should just
+leave the existing state in the LTS kernels.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+      Arnd
 
