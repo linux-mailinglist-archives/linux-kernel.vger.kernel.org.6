@@ -1,144 +1,146 @@
-Return-Path: <linux-kernel+bounces-238645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0932A924D5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:55:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6F4924D5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67FCCB21465
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:55:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D934284D23
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688D82107;
-	Wed,  3 Jul 2024 01:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2137A1FB4;
+	Wed,  3 Jul 2024 01:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="3CUBSsGX"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="12Jf0vNh"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC31B39B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 01:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9256138E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 01:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719971698; cv=none; b=BPI9nrjhUQzheo4P82iUBoT9LKeaFF0HPU+nKKnJ9Mm4hcOEfSCrRHqICu3QeQIimhbKrAn1G0eC4r4Pvi9HCg+O3GHyiQaRcFOaUY0l3qAFG8EwO6uszdIPDts0MHD7DvOy78YmN5hGG/+ZbBaGa4HKzRVtLxa4MfEPxGJPVOE=
+	t=1719971901; cv=none; b=s5euKhrRwt+Hvu8GTAGgTyN/cSPmtoQmLEX2EicUMg6dJ9vEKFpR0LduzS9TFR6fLodWfAPo6dH1guXfoDWu1/a0V3lcUai8WTY5ZO/Z7n/Mi2JXD9q9hE4hgGNshxyBOOfx7gPQZKG9t+N1tYes1qsjvyd+eTqYdi6iZG9hjpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719971698; c=relaxed/simple;
-	bh=p1H3bMXP1kaxiJKEHWQp3wxLk1lndgbgCIxUehTD7eM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F1ndOO07B/u4fW4KbKrSezWXqQFMES2NZ9UIAWGwp8D46n9UPEBR643I2v93qn+nuH7L5YLLCH7OKd9zt9lOXvJVjTtGn3F0W2WASeWFmznt7NsoS0GfAtbb7cNF+5qcIAbv2d0VIFD59uw8iIxY/C7ddVLPQr2MeiXiuGRQJdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=3CUBSsGX; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-706b14044cbso3648322b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 18:54:56 -0700 (PDT)
+	s=arc-20240116; t=1719971901; c=relaxed/simple;
+	bh=uk0GJoRHfWkj7+H1v6+2c9m8FurjseDBIprPtk/NzQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QSKAEzcQy2HzPdYf2ewH1ghdST00FkZZmgNARAJuQIA50Wv+yBqjkaF/jqFm1JTgA6bRekNRN+W9BhtmbLnJ0NWWe3pdFI3vhmxixvyV4HS1uYcjCvbns1aeol4aO+R8feTYNbhhT0e1E2fgJYtr5RbaK9TWrFsBdhjxI4QXqTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=12Jf0vNh; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-64b29539d86so43293677b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 18:58:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719971696; x=1720576496; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tHnHE2GTnxtpKeQVqGKu23WsWDVRXJprmZQx/8LwZ9Y=;
-        b=3CUBSsGXjvkopxredwBGgF3tj7cNZEfJOrbuB1H+WSMx8Pn+2ZbaHW2VF2TjQdIYSx
-         tEh+xxQxxKaE7KX3EzBHJtK0vSB8NtNPP0xnc9E7hZpJ0zvC5C0y2xWAoZcl1d/XkCAv
-         0axEEgqtelOW6rE27YnBgQzxKJWt1MNmFWlnI8PJZ2wr9Xdpl8yFPwIMGxiWImxEkqLW
-         zgMHhlXouA0tG45KDQ6N3rIGIvXcLyMLUjdvFn9RXuazOw5Rg09RGhhDPMzHzLGOEroH
-         tExbjEYDEd/O5XFW5U85XBpjRlo1FAicNv/XacGVb1HZWpCtgZV3YUf6WV2ELA+6OIst
-         JbBA==
+        d=google.com; s=20230601; t=1719971899; x=1720576699; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uk0GJoRHfWkj7+H1v6+2c9m8FurjseDBIprPtk/NzQo=;
+        b=12Jf0vNhmSuK2f6lLZGuyiXxOOSsx+9+j+GMJSevEdb/djqJRAZnChNbxEbxZCfMF5
+         gchs7yhxPN9UBNugBub9XFzwgTM7cTzqzFgOtuKAfng4o1eBnYyNFB5lMjY9Xd9Lf4Cu
+         7A4bcU/Yr9DOIsWddRaVMRo6ML1yQ3qjCa5lUxt+XdZln4Y9xzH8PWLTwoUJ0KE7Uwxx
+         5SvXjIpCb/0CAM9vbuQHvki+TAvkwFEBCzKROTGQJ4mdax+xElw8Kf5nnL+xKYeMqygh
+         CZV/r3qNiRHt7qLQGxPSBut2+8G7mShG3NVKaDN0iPWHc5ScPb5taRvfbXqoeJQniFT2
+         hkRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719971696; x=1720576496;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tHnHE2GTnxtpKeQVqGKu23WsWDVRXJprmZQx/8LwZ9Y=;
-        b=RQ0/7CxD/GIOYeJDLgm+KRT/q3WgQhgHr8eCl8dfDiagDC0I+nhilrFFwWCOYfzNNj
-         E9jIIMHEAVZNVRqb3JHDMQpOPH1uK2Ge+Is6LW3f7ak10QFon22NWFQ53rDmNeX8KR8I
-         cWFN7/+sJSZbfymNnEhAyWYz57H2fbLXQYfdijTSqDDoYhOvPWK7IQL1AYoETlNa7W+g
-         pbLK9qD//LkTCQ5Ttw6Gpbe5RvB0PC206WjdWsCRg1owczFjCnKm8ZbyzjidmBEEaYcs
-         8Q9AM5fqaKN8U2SiV6ML09kdEzuibE6dBsnMNXQtyZ3hDwoIygD2Ojdpe508gdzfJWT+
-         FCAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGVNzdPyeauW866cUaEQ9vr3ueWbEqwftkj+U4MNnWbt6p7MuDNU8t3luZ+AGVt0GhR91zRq4oggBpYPAm+a8vFk/utlaJZVtvB5FQ
-X-Gm-Message-State: AOJu0YyEcpD8iF/0Jy4IS6tCi8h8zTIuAqLUOeZQX7ZQnSC39KNT36K4
-	NKiqGwblkPbgJO920c3aDpM0LzS7D0pGhn+Zy2Yv4lp0HLe1AuLA8uEwSJw+wzuZ/KxVcWGsQqg
-	o
-X-Google-Smtp-Source: AGHT+IHVaTNrEQj0UhlgCk9T6SwsM+7KULs8BJil9oMO9HLDbJD9EPjpJtrlGWIGB2o/chZZ3qmuiQ==
-X-Received: by 2002:a05:6a20:8922:b0:1bd:d7:6942 with SMTP id adf61e73a8af0-1bef627701amr7103130637.60.1719971695758;
-        Tue, 02 Jul 2024 18:54:55 -0700 (PDT)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8a70sm90881235ad.118.2024.07.02.18.54.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 18:54:55 -0700 (PDT)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Tue, 02 Jul 2024 18:54:48 -0700
-Subject: [PATCH] riscv: selftests: Fix vsetivli args for clang
+        d=1e100.net; s=20230601; t=1719971899; x=1720576699;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uk0GJoRHfWkj7+H1v6+2c9m8FurjseDBIprPtk/NzQo=;
+        b=TWX1QLqhzvDbsKlB6IELnW585wBBSDrue9Vb6bvK31t3Ufk1BbMRLpXAA3JoOkdkuL
+         ReK9ub6hyHPTT8LBVFX+FjmzEVH4iNgOul+MbOondvUiZpIOMsq14PNZavpQRCtZIpDW
+         0+f/znYR6e/62y2VeCXq3EtnDFFZFXpKZAdhPOEUgQccuwZF5LWcQ+B4n4ytTUAl5izl
+         cVAQn//8AvGW31JA60QSTDFPbJQjPwwd+0/FJeGBUXtpbSwlCAMymtR/D9NOvhahdKxb
+         ooCzHB9B2in/nb6AVYtcnnHAzg9ScEvL+DUWXrRDKBakMOhUsRBK3pcsspQpjE5s4ziR
+         RVQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOSrz5spa6kN66HVy6nXC2IfUJ8HVNz5rzB/ytS0736uRfubfGpeNOluzGp5DhoLs04JjNXwatpKR05tkIbkfGpI1rPiD0jEjry5p7
+X-Gm-Message-State: AOJu0Yxy8IlQUYlVGzszZeVYaEC6/3jPjbsZviP6WRWNAyhndCjq/xMH
+	BHW7eoRyGwd0nkFVh1sb5qZYGP2FqCFsgkj/wNB4IVC98U5a1bRhRwpcaHGQ8q3lx3wVRE6MnWR
+	PrguQIfmUtuNtZrgeGUfujCjOR23NjpqvbW9X
+X-Google-Smtp-Source: AGHT+IE8CJ8oZ/bFRW+PT5mM0jYJyPu79xaWWoRxA+P2hfKfYSP71RYPrsSK3I1bMf+QJ/tWAKxB6EBa4neIA7TmBoM=
+X-Received: by 2002:a81:ae18:0:b0:650:a40c:acb1 with SMTP id
+ 00721157ae682-650a40cadb0mr29215107b3.28.1719971898541; Tue, 02 Jul 2024
+ 18:58:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240702-fix_sigreturn_test-v1-1-485f88a80612@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIAGevhGYC/x2MQQqAIBAAvxJ7TtAKjb4SIZGb7cVi1yKI/p50H
- JiZBwSZUGCoHmC8SGhPBUxdwbLNKaKiUBga3XTaaaNWur1QZMwnJ59RsupccNq289KjhRIejMX
- 6p+P0vh+S2H4YZAAAAA==
-To: Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Andy Chiu <andy.chiu@sifive.com>, 
- =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-kselftest@vger.kernel.org, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719971694; l=1692;
- i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
- bh=p1H3bMXP1kaxiJKEHWQp3wxLk1lndgbgCIxUehTD7eM=;
- b=THxzHTU66KhNxRU98J3d0MKiSdJbtlJEQVuKgH/hJ0MUkrz504ey4G+CHt1Zj7NvRbhmk2SXm
- 6JUG+aLMJ25AzycCjlzsfdAzISKI0z2xA994yPLwJ3CwbrrRrvPdDZ2
-X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
- pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
+References: <20240614225951.3845577-1-surenb@google.com> <18a30d5c-abf3-4ceb-a7fd-2edfd8bee2a8@suse.cz>
+ <CAJuCfpFPDAjE5aNYxTngxzAusz_9QkOdnELSRNadi2Sxb4O=oA@mail.gmail.com>
+ <bb4214ca-fada-4aa9-af40-008182ea4006@suse.cz> <CAJuCfpGr237=zQb58Zd6E-NmpBfvq-6_LQ58nsiwgx9S1KE0pQ@mail.gmail.com>
+In-Reply-To: <CAJuCfpGr237=zQb58Zd6E-NmpBfvq-6_LQ58nsiwgx9S1KE0pQ@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 2 Jul 2024 18:58:05 -0700
+Message-ID: <CAJuCfpG5R54jOq1psZKY5FKLKZNnVGCqo2bkyT3v=GX_ikozVw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm/slab: fix 'variable obj_exts set but not used' warning
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, 
+	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Clang does not support implicit LMUL in the vset* instruction sequences.
-Introduce an explicit LMUL in the vsetivli instruction.
+On Tue, Jul 2, 2024 at 8:16=E2=80=AFAM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+>
+> On Tue, Jul 2, 2024 at 9:31=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
+rote:
+> >
+> > On 6/30/24 9:20 PM, Suren Baghdasaryan wrote:
+> > > On Mon, Jun 17, 2024 at 3:04=E2=80=AFAM Vlastimil Babka <vbabka@suse.=
+cz> wrote:
+> > >>
+> > >> On 6/15/24 12:59 AM, Suren Baghdasaryan wrote:
+> > >> > slab_post_alloc_hook() uses prepare_slab_obj_exts_hook() to obtain
+> > >> > slabobj_ext object. Currently the only user of slabobj_ext object =
+in
+> > >> > this path is memory allocation profiling, therefore when it's not =
+enabled
+> > >> > this object is not needed. This also generates a warning when comp=
+iling
+> > >> > with CONFIG_MEM_ALLOC_PROFILING=3Dn. Move the code under this conf=
+iguration
+> > >> > to fix the warning. If more slabobj_ext users appear in the future=
+, the
+> > >> > code will have to be changed back to call prepare_slab_obj_exts_ho=
+ok().
+> > >> >
+> > >> > Fixes: 4b8736964640 ("mm/slab: add allocation accounting into slab=
+ allocation and free paths")
+> > >> > Reported-by: kernel test robot <lkp@intel.com>
+> > >> > Closes: https://lore.kernel.org/oe-kbuild-all/202406150444.F6neSai=
+y-lkp@intel.com/
+> > >> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > >>
+> > >> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> > >>
+> > >> But it seems to me we could remove the whole #ifdef if current->allo=
+c_tag
+> > >> (which doesn't exist with !MEM_ALLOC_PROFILING) had an access helper=
+, or
+> > >> there was a alloc_tag_add_current() variant?
+> > >
+> > > Hmm. I'll check if current->alloc_tag is the only reason for this
+> > > ifdef. If so then you are correct and we can simplify this code.
+> >
+> > The fix is now in mm-hotfixes-stable but we can cleanup for the future =
+as a
+> > non-hotfix.
+>
+> Yes, it's on my TODO list now. Thanks!
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-Fixes: 9d5328eeb185 ("riscv: selftests: Add signal handling vector tests")
----
-There is one more error that occurs when the test cases for riscv are
-compiled with llvm:
+obj_exts->ref was also undefined when !MEM_ALLOC_PROFILING, so I moved
+that call into a separate hook. It's posted at
+https://lore.kernel.org/all/20240703015354.3370503-1-surenb@google.com/
+Thanks,
+Suren.
 
-ld.lld: error: undefined symbol: putchar
->>> referenced by crt.h:69 (./../../../../include/nolibc/crt.h:69)
->>>               /tmp/v_initval_nolibc-5b14c8.o:(dump)
->>> referenced by crt.h:67 (./../../../../include/nolibc/crt.h:67)
->>>               /tmp/v_initval_nolibc-5b14c8.o:(dump)
-
-This is fixed in my rework of the vector tests in a different series [1]
-
-Link: https://patchwork.kernel.org/project/linux-riscv/patch/20240619-xtheadvector-v3-12-bff39eb9668e@rivosinc.com/ [1]
----
- tools/testing/selftests/riscv/sigreturn/sigreturn.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/riscv/sigreturn/sigreturn.c b/tools/testing/selftests/riscv/sigreturn/sigreturn.c
-index 62397d5934f1..ed351a1cb917 100644
---- a/tools/testing/selftests/riscv/sigreturn/sigreturn.c
-+++ b/tools/testing/selftests/riscv/sigreturn/sigreturn.c
-@@ -51,7 +51,7 @@ static int vector_sigreturn(int data, void (*handler)(int, siginfo_t *, void *))
- 
- 	asm(".option push				\n\
- 		.option		arch, +v		\n\
--		vsetivli	x0, 1, e32, ta, ma	\n\
-+		vsetivli	x0, 1, e32, m1, ta, ma	\n\
- 		vmv.s.x		v0, %1			\n\
- 		# Generate SIGSEGV			\n\
- 		lw		a0, 0(x0)		\n\
-
----
-base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
-change-id: 20240701-fix_sigreturn_test-47d7063ac8e6
--- 
-- Charlie
-
+>
+> >
 
