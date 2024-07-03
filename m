@@ -1,187 +1,170 @@
-Return-Path: <linux-kernel+bounces-240130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7AC892696B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:15:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA08192696E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06EC9B274F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:15:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A1F71C2319E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684BC19005B;
-	Wed,  3 Jul 2024 20:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E91C18F2C7;
+	Wed,  3 Jul 2024 20:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AhcD5zA/"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2080.outbound.protection.outlook.com [40.107.236.80])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="FsKj0PrA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PTFaLboR"
+Received: from flow5-smtp.messagingengine.com (flow5-smtp.messagingengine.com [103.168.172.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C601850A8;
-	Wed,  3 Jul 2024 20:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720037707; cv=fail; b=kgC+3G+gTFQuoeuVB4XuHdGe0FQ3q2bOesqKNEdHiHA/oNX54H4EM0p3/WrCHko+AjSklaiFfd2hMwYehZL5NIAkPoUAWaF6u9lLuegetSix+Xav8L7HR44nCvGWcpzt6IzmjjwVd8HV34RbyG1UN3DAONdEx6eQT/Cf6/ZGqsQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720037707; c=relaxed/simple;
-	bh=en8+2vZeWKj9Hq4W91uLvdCst4Qygn20jzbH7Xi2rUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ELe4KxOzDxLXRaR/tV9eIGG0EeitWwc+MvEniLKJcQoYiY4aCD/xQWx5IXZgbnsIhNXH5eilKrk0lH8GDqzDjWOJvZBQJMi/VDl0tUxev6aZu6FNIcANR1DiMzEH3TZVV7W9faHgJTeSjE5wkovmYClcj/VCQwC13RJuCXucH38=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AhcD5zA/; arc=fail smtp.client-ip=40.107.236.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dNHm4AuupeZegBmjuAAlqTraNh+XQY701iditxDI5gznD3B+piJuGjVqoV50aKWneTJr611XyJeZUVfuEdCm1YpCtPKXq8asuEE83HEoeZf2NftoZQLsI2Bye7kzHC29jMQ7UOmyM0eSecTYNb/xWo3vtpBSVebG7R9BXd29onq5jLUv13UIue7h6a6VNqngKXz8FVq9w9TCL7iUrpjIc0uoOgYMufNncgN2sjEWPQBc79/0qduCUtqp1gpiaWI2i5dDYbOteDyF8qISGaHEgEwTmJ0x/J3IYedOoWvq/yCuHIt4JlP7lNghxRQeHLRsJ/MS83MUB69jMzzxpYAImA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5WkaLcMd5JGORXN0Zz/0eofCrSvTW/ZsmtdtsYwsZws=;
- b=XAc0uOlqQNV0HmrjKyl2usNjiY51m3O+ZH9ftR/a5I9hjbyu83YPXKoKcOc1eoXAwGU+RQ1bdTYqfnSHFmunWnZj/bIYyjTeuM1t7AGvhsJ5EE+uz65uPKnwvVaZaJsD6PFSJZAoh2TXoctqpsmw0z/5urauMsccP2kGvOUxcDRNB01WrOhBrN77bLvxgneu/yj3QlPMp/9AE0DqBLVC4X7dlzNJJ9VDVJfbb8t6P3QUt7IIeN4aYstX+NULIC0+9Op0CwRh05SsHZwbvm9kSAP/L/l/p/Zj8Rlzm7rtConcCPUEeAzriUpzDinEmzskR/9AMOF9Z7oKiOWkhtJqcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5WkaLcMd5JGORXN0Zz/0eofCrSvTW/ZsmtdtsYwsZws=;
- b=AhcD5zA/pD681kCCbXNftVLfjzb9gkdDDmDeahjUP8vdtZ6JlJbbID5pl6RH4llGbUeC7FeUfib8mgeOI/e2idt41rEOGgfNOjhT7XXOoYIG01VguainNAVAP5RyZk/f6z11wLJE6dFX+z20s9PUjKUlN42TyAjOTkeaouRlDMo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com (2603:10b6:208:39b::20)
- by BY5PR12MB4244.namprd12.prod.outlook.com (2603:10b6:a03:204::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Wed, 3 Jul
- 2024 20:15:01 +0000
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::7298:510:d37d:fa92]) by BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::7298:510:d37d:fa92%5]) with mapi id 15.20.7741.017; Wed, 3 Jul 2024
- 20:15:01 +0000
-Date: Wed, 3 Jul 2024 15:14:53 -0500
-From: John Allen <john.allen@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: rafael@kernel.org, lenb@kernel.org, yazen.ghannam@amd.com,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] RAS/AMD/ATL: Translate normalized to system
- physical addresses using PRM
-Message-ID: <ZoWxPR+A3xjV1Y/j@AUS-L1-JOHALLEN.amd.com>
-References: <20240506174721.72018-1-john.allen@amd.com>
- <20240506174721.72018-3-john.allen@amd.com>
- <20240628074522.GDZn5qEkTXG0EvQ4Lv@fat_crate.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240628074522.GDZn5qEkTXG0EvQ4Lv@fat_crate.local>
-X-ClientProxiedBy: BY5PR04CA0018.namprd04.prod.outlook.com
- (2603:10b6:a03:1d0::28) To BL1PR12MB5995.namprd12.prod.outlook.com
- (2603:10b6:208:39b::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADB04C6C;
+	Wed,  3 Jul 2024 20:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720037760; cv=none; b=aHzX7JpsQZMtYoPg7mj8pBtsQ9+lAqVZ2617YuC8SsSL7y/PkIlq3qUi2ZpXPx5b9Fgw6rsU6GXN4cBm0l7mo54FD65kUe8nvj/cDIR8t64Jxy6cVWIpt4zN3ffWkKKDwmvRmeoTyMyVMGGUHamzKg1XGo/T+0b8cpudnzGWJyc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720037760; c=relaxed/simple;
+	bh=P5wNJ9gsyoEKAcFfUB01DuXV2qGlNcanG72NtYGP7D0=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=Y9JGxS2V5xPJH8vmFR+nLL1IWZYsg4f6JRtVO4d+cz6bEozLOqeDPNDsYlUTeStevO8IBNeodgil2qxDJUE2rRfg5E4KHTVLqGIcMitxHEuNJ6mHjnFcrBLhdqwwKKR5q5WmICms58oFMQwMnkDr6SgYLDaqOHnLW75aU46bhow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=FsKj0PrA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PTFaLboR; arc=none smtp.client-ip=103.168.172.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailflow.nyi.internal (Postfix) with ESMTP id 16DA02004F9;
+	Wed,  3 Jul 2024 16:15:58 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Wed, 03 Jul 2024 16:15:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1720037758;
+	 x=1720044958; bh=HSAxzquXwRyiEDZ1fHQ9wErG/hRJ0VszrFLvyboz7pM=; b=
+	FsKj0PrAQdMspVUqpD508lLSglz0iLYOgBTBSrM7fWFhnALm/407EOascTQelCsF
+	cVSJMh9v71IC7mJ24JOobMW3XjGzaWmWssqgR7qg6PCwmMY3tJMJhXkaEI95oU1h
+	xyfluu6S7wsZf/p/PjGgC6Ayu4MwJlE4Fdr3EfWYp0pn0d95PHl6MiG0bLIHbVU5
+	9OLK61yI5iiv1HqvyYuqfECcmZJWVz4zV4h8/1zPhgY+Em55MWPFYaKiUm+VUlev
+	zfKSnLFNuf4LmMtA4q5qkDNrp9uia/hpk0FPwarh61oTTgMouqj39jv5HAqNQOao
+	hpATt8sTcodwkiLze5wOdQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=ifd894703.fm2; t=
+	1720037758; x=1720044958; bh=HSAxzquXwRyiEDZ1fHQ9wErG/hRJ0VszrFL
+	vyboz7pM=; b=PTFaLboRWbeKSMCZKRiBvGtQMhtn6alstkDy9HZwIeZMBzJAntf
+	8gEsQ3gP6CHKe2uawnWM6wwkQ0aWlDQOw7e4ylsHlpZDK6dyRdq/5fdMI5nRtTc+
+	Ss6KR/iG1UDCbblpkBYxhA+QElW8KZuKjd2zbhKCZG8ial9iwwoqxtOky9JYQfG4
+	YqWSm0omEgHgIbAAV9Uf5YFZCw/qOhqEY45BMDa5n6oFRW0VPzNab9egcwXrmP1A
+	HQ49ryL6/2n1qRfxPtxFSL03OKBknv0Zws5h2B7Q0Np5yQrjEHYShjpVYb5WuVQ3
+	uHcfC/27zr5Zk15xo609dWFqG9wy2uZXYiQ==
+X-ME-Sender: <xms:fbGFZoaRwMIc9S9DAGnzzFGZ0INzuWfX0FQsVQPud9BQcGpflI1JAw>
+    <xme:fbGFZjZ2OpLVmzv4Pc5mRMOcPH4AjZg65tVlud_l7NUXLcW0L0wJJAADI1Qa3cFqv
+    JPKlzBNDojWOxPJdwU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejgddugeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
+    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
+    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:fbGFZi8xQY5CAiTowXYdV8rr12CSDweSU11YOXFJkJ9GUOUZ7HWJYw>
+    <xmx:frGFZiqXKYLbMzPz2nUj8ybvGsUx6cbzMoZgJ6lsrtRPc0jI8AnySg>
+    <xmx:frGFZjrdgMwax36NjNOrtdJ8KsTO4XmE5YJRLM8i_0usSsLwyqus1g>
+    <xmx:frGFZgTq_pcyW5Mww6MkOX9JNOSI4wtQUQrJ6eK2Nmf5zYcjTqL9ww>
+    <xmx:frGFZjrNFmRMHJBUhYorFqSLVZPTMVqkgXm4jbOI_E4KB_tJFP0NBLY_>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id DC33436A0074; Wed,  3 Jul 2024 16:15:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5995:EE_|BY5PR12MB4244:EE_
-X-MS-Office365-Filtering-Correlation-Id: ce0b9c05-5d75-430a-9d4d-08dc9b9cd175
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kwrrzGKVvyJPi8tOwhOgsVqBVBG4gbeyCGhsKmRctYnSXJ1sS0FE6erprOCt?=
- =?us-ascii?Q?dfPmYEf1gtYFRg4qF7Fq22Zu2wZVM+MwCaiVNJDlP33pwYCrhI/+zYhBmyLi?=
- =?us-ascii?Q?7SIBGXDD5eYymj46dD6YYAcFYl2Qts3fLyOdWhBZJjfjwPSAwDIstjEb31CQ?=
- =?us-ascii?Q?7FDFLV5ZU3imNoCdaDhIERRfYaKtCffUIsdDk7k2CEbVJ1z5JPxJnm4PU+FF?=
- =?us-ascii?Q?UPkqIdc/5lzHqU/ZqthefTzDXNhR9ajew1tbq8ZnW7Re0KICCGTrF+EJxBC0?=
- =?us-ascii?Q?5lvVf7c8tnd2TLgbh7MksgKIbBWLzG4PON7AG5dDeDAprt4frE7kcM2k1l6S?=
- =?us-ascii?Q?U3myEYVWfZ0Ib/a9EzsvAwzL6CBiwfBIw/0YMuIhXJyHDP1/CBFLl1gmIAT9?=
- =?us-ascii?Q?MLJDq4dBuDNcH4gsrt13ZJq/TUz6gejkRCVOOerEM6rkbxDuKEDLgSSQz5I3?=
- =?us-ascii?Q?UpJQUlX6VvAxOY1wTP0lCyxPRSE2dGEP6e7ymnkDQd4kTfCOwmKo2uLWduTi?=
- =?us-ascii?Q?mUcyaNo15Be2oBLlHkUZltBGHVTwb7LTOgtsTSWXT4QouvkkfIgkuIN53h+P?=
- =?us-ascii?Q?UMZMApasIAm03YxextcxMrV/yecVyx4HIYq6U4Etbh42J0uqhHpXtLkXQXl1?=
- =?us-ascii?Q?vatDmDfD55B7ZgxLrxWjaLAV8qegDy/biNffIK5xA5iD6dfnoJ9Ntez/W+wH?=
- =?us-ascii?Q?3fc3JLfTRE+gMHSCMoYRKdOHxNn7ZvE+ZajNd+IGbYQHf/Xt5yQX37kkwc1+?=
- =?us-ascii?Q?PdzG/I6wCQmxlOD2QC3tptD2eHUDEltZvdm0YKPni+7K/4vUwOKqnBohJ4Uh?=
- =?us-ascii?Q?O0G35iorkoK23+lvT6LGLcdQG72vi67SbSCFpvEdUsT+O++GaX4kifcdTg34?=
- =?us-ascii?Q?FTPXOMTNr819VkZHB1eEOMP26NRFNyPDecdtO3QB5NSQ8fAveabQjFRdsy5O?=
- =?us-ascii?Q?D7IHp5opn1b/Zd/F1qSm0GhhLpcKRsAviBt4z1pah5L7TLKPATO+MAyg0dVD?=
- =?us-ascii?Q?Ev1xnQMOGNg5g2BIjNmJ/sxmuNqA5mWEpuydAnr2FNhOH9QF9dUFIN9Xm2WX?=
- =?us-ascii?Q?5c7mtG/nF6X9dS9goXGyhOM0a0sz6o+9ondbYlBV9cRwUjy0SBElR4OWlk2h?=
- =?us-ascii?Q?bLlor6iBJNDTBOrTppaESfrM6YB/Wt+xHrqcklEhWtvrWiJRzI9RCaR+zou2?=
- =?us-ascii?Q?lecPLfl6rY3jb46/sYy2Mpx3YuKKx9yYWRr5dYHUU5GdA+FG0CLzPFb3cJur?=
- =?us-ascii?Q?DCKMGn8FRQxm3QHvFcdI07mVZnP2kFljmNS9sv6P/B1ua8zgMy6UNUd0EUrp?=
- =?us-ascii?Q?EEKaxC3yViyloXocEBa0nkhdbf7OY/aLIN2XBeFM7s27Vw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5995.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xWWa0NQ3s0MzU7o9yQYmydeCiVMgdDgRffpH+OCyisn+GfQo2oeLQSt/ktlN?=
- =?us-ascii?Q?dEheBcFSHY+gNB1IiiFn3xNifJaT9rwKOGe2ByRPDb7iFGKn1FNDtjnvkR04?=
- =?us-ascii?Q?NMqa4NSsN6PkENAmDedSuE/9XLOAd5/X+8I+GNh/l19oaygSq29GwkLWitjs?=
- =?us-ascii?Q?4oDEm3hwIAv/Uofcj+GybvyRMK+Scg3gwEO/ZMMbK680IRhianPSIa1nBJSg?=
- =?us-ascii?Q?OXQRfD9IMRJtFflpdw8TJS3dr0dRJXlPLw73Z4aVNr8oMhMDWeU4JLAmGim/?=
- =?us-ascii?Q?kfE5YeM/F/R2IDc5BI3T0QwdaRU8cwz4+5h3JGmJxKRx2Od6zWVsIudfsD8o?=
- =?us-ascii?Q?HVLio9m8q7OkVP/KZ1SC/jiAByTfJXEdsB2oYTiOWD2GR1F4aQCP/r1SpDm6?=
- =?us-ascii?Q?w0wEDcS4Esg1haNfGwD1ATTEroMFOmTG/r0JMzGqahf0P60Qjjq0aXM3998F?=
- =?us-ascii?Q?+VOGT1qg0kq/ywhh3lToLixIiw5EQW37syoZdMw8CjKY0DizRC00Wovv3IEn?=
- =?us-ascii?Q?CpqwAEf1tJ0fP3ScvCTyFm0fAZNdhYAIcoqjIQ3vwKHWEI6xlhtmX8YEmCUp?=
- =?us-ascii?Q?0bc8bY3K3NcKbX4bD0PgIw0fWZ0/tlGFcEdSHDDkp5w5P76m/Sl963uBmNLF?=
- =?us-ascii?Q?HEoSVEBEoR+vVgQRkqWBorZdyW2in58TPnB+cUKbNqm0Q6eiXNsbdLJw22BI?=
- =?us-ascii?Q?uyiOfMc8O8v3etqjtApXXrJANEWhhQ7tBHN/PQfJfr13Kwltl5Z+3bo9saBL?=
- =?us-ascii?Q?ApMbqHbf9XH+V9LVC4hzI8yzohI4pmK9tj3zHw8/dxxl8wpAOwXEN3VQGAlL?=
- =?us-ascii?Q?sqaAAa67ZsTa4GQ/nFNoUMUP2dom85XlL2tXHccX+SuxOb7CVGM506R6t/+r?=
- =?us-ascii?Q?pBVA8SYJ6t+IL1UOsKAUhlGibpLvzjDfB7gMTMPk1j9jQEa7bFQIUvrDKyzw?=
- =?us-ascii?Q?zw/gWFplehECsamxQf90a9hmE41/3lx2EXwu1cJzSdOPWnkWiOpWFqvx7eec?=
- =?us-ascii?Q?Rt3SNdSvimkl4tdwRC7bNX51l293/FlqKRPwCYEal3XDR9BLhqbZe1zzcbBv?=
- =?us-ascii?Q?6UDqSW5/9+qmdZ0yEdZfoDKqDmCht0II0v3mNTysAD6ZJANP+rpgIKFPeLv/?=
- =?us-ascii?Q?U+y+F0+UeLXYrnPmBZyZvKXPWBYvgDn5Zhr2jmgMOxcBOUoeXOYVCvM+DxIz?=
- =?us-ascii?Q?D1mrSqp3f+FY07Qk8NF5uHCLkrBJNnT8i+T0Gkz+cdYPeTLawrw52JOZO8m4?=
- =?us-ascii?Q?DPuaC6tIUIOp7ZbCV+26y01lPJiD0jdbShBC+dm1xZL5MpXW7IEbx2HyRJPi?=
- =?us-ascii?Q?9yBx1KxX9gvo5GRu0QTRSfRNmcmJQca58AajiDG0isvikDsgL3BCidBgEWAA?=
- =?us-ascii?Q?WLkBvFYJE9y4u1Vo7fGvl+SUHB2SITFpOjk8uGRlWDZLmjXaa8tvFmKBYNok?=
- =?us-ascii?Q?jXCYKTTAe1SCtiw6MohuZ5E0+PzbaSaNtWoNHm6o7uvLvW+U8MmWtRl93mqq?=
- =?us-ascii?Q?XxXFXlkeynW4MNZtRoKcSCTxqIIKChde1AO5s50CnLkvrq2lW1GilEKvNoOW?=
- =?us-ascii?Q?Yriy0JWEUDDYUCwf6XWtGgLJKryHGBVXDNT4IfoC?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce0b9c05-5d75-430a-9d4d-08dc9b9cd175
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5995.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 20:15:01.3193
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lFbv9VpbJGwyAdVdLfHf58jfHMGe4P9oUjQ+Uc8ntF5K+tlQPVQgRz9UwepYY0q/Ij0kc00QV6NQE4lraRlVSQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4244
+Message-Id: <7a822a33-dd67-4827-bbd0-01e75e203951@app.fastmail.com>
+In-Reply-To: <ZoVokcDYqZnuqd2X@alpha.franken.de>
+References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com>
+ <20240616-b4-mips-ipi-improvements-v1-1-e332687f1692@flygoat.com>
+ <ZoVokcDYqZnuqd2X@alpha.franken.de>
+Date: Thu, 04 Jul 2024 04:15:21 +0800
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "Florian Fainelli" <florian.fainelli@broadcom.com>,
+ "Broadcom internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Serge Semin" <fancer.lancer@gmail.com>,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] MIPS: smp: Make IPI interrupts scalable
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 28, 2024 at 09:45:22AM +0200, Borislav Petkov wrote:
-> On Mon, May 06, 2024 at 05:47:21PM +0000, John Allen wrote:
-> > +#include "internal.h"
-> > +
-> > +#if defined(CONFIG_ACPI_PRMT)
-> 
-> Instead of that ifdeffery you could do:
-> 
-> config AMD_ATL_PRM
-> 	depends on AMD_ATL && ACPI_PRMT
-> 
-> and it'll get enabled automatically and then you don't need the empty
-> stub either.
 
-I'm not sure this works the way we need it to. If ACPI_PRMT is not
-enabled, then the norm to sys translation function will be referenced by
-the base AMD ATL, but will the symbol will not be found since the the
-PRM file doesn't get compiled.
 
-I added the AMD_ATL_PRM config and added the following to the ATL
-Makefile:
-amd_atl-$(CONFIG_AMD_ATL_PRM) += prm.o
+=E5=9C=A82024=E5=B9=B47=E6=9C=883=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
+=8D=8811:04=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
+> On Sun, Jun 16, 2024 at 10:03:05PM +0100, Jiaxun Yang wrote:
+>> Define enum ipi_message_type as other architectures did to
+>> allow easy extension to number of IPI interrupts, fiddle
+>> around platform IPI code to adopt to the new infra, add
+>> extensive BUILD_BUG_ON on IPI numbers to ensure future
+>> extensions won't break existing platforms.
+>>=20
+>> IPI related stuff are pulled to asm/ipi.h to avoid include
+>> linux/interrupt.h in asm/smp.h.
+>>=20
+>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>> ---
+>>  arch/mips/cavium-octeon/smp.c   | 109 ++++++++++++------------------=
+-----
+>>  arch/mips/include/asm/ipi.h     |  34 +++++++++++
+>>  arch/mips/include/asm/smp-ops.h |   8 +--
+>>  arch/mips/include/asm/smp.h     |  42 ++++++--------
+>>  arch/mips/kernel/smp-bmips.c    |  43 +++++++-------
+>>  arch/mips/kernel/smp-cps.c      |   1 +
+>>  arch/mips/kernel/smp.c          | 124 ++++++++++++++++++++----------=
+----------
+>>  arch/mips/loongson64/smp.c      |  51 +++++++++--------
+>>  arch/mips/mm/c-octeon.c         |   2 +-
+>>  arch/mips/sgi-ip27/ip27-smp.c   |  15 +++--
+>>  arch/mips/sgi-ip30/ip30-smp.c   |  15 +++--
+>>  arch/mips/sibyte/bcm1480/smp.c  |  19 +++---
+>>  arch/mips/sibyte/sb1250/smp.c   |  13 +++--
+>>  13 files changed, 236 insertions(+), 240 deletions(-)
+>
+> you are touching a lot of platforms, how many did you test ?
 
-instead of:
+As mentioned in cover letter:
 
-amd_atl-y		+= prm.o
+```
+It has been tested on MIPS Boston I6500, malta SOC-It, Loongson-2K,
+Cavium CN7130 (EdgeRouter 4), and an unannounced interaptiv UP MT
+platform with EIC.
 
-Is there another way you had in mind to make the additional config
-option work as expected?
+I don't really know broadcom platforms and SGI platforms well so
+changes to those platforms are kept minimal (no functional change).
+```
 
-Thanks,
-John
+Thanks
+- Jiaxun
+
+>
+> Thomas.
+>
+> --=20
+> Crap can work. Given enough thrust pigs will fly, but it's not necessa=
+rily a
+> good idea.                                                [ RFC1925, 2=
+.3 ]
+
+--=20
+- Jiaxun
 
