@@ -1,162 +1,240 @@
-Return-Path: <linux-kernel+bounces-239648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D447E926386
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:36:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1825E926388
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A55E1F23003
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:36:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9821C217A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94B417BB16;
-	Wed,  3 Jul 2024 14:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3021C13AA2D;
+	Wed,  3 Jul 2024 14:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XedO6SOC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsDGwI8X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF8118C08;
-	Wed,  3 Jul 2024 14:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F87E18C08;
+	Wed,  3 Jul 2024 14:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720017389; cv=none; b=Y46P7DHjy3XcqDLA3jRyeL52GNU4fOMTc9IGaX5o+9Bg+5/7ptJYBLwdx+dvnoQCeMMnA/wB9n+ygpSIhXRkhG3DeljcMREwxB323yDHrt+lUOjDTGy1s6tFYWog+o7ZBv+qiM06+C929AoecanFUjjuacgvCENr67d5gghtq94=
+	t=1720017404; cv=none; b=gvFmZJvQJRX+TzXduJHEWQYcCDC12QpYaKJDLYD/MYpb0tYRbbTUoRx15a2Qe1pkf4vxDRoKVNCX7fem4JRZTuS+EJSOe7y3dfJ8H8iHQIem0aMcmElkYqFKKK4wsIXIKVIt9aUFKvDsvgC1D0rBldA5nhltiVVJyNzeGy7CeRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720017389; c=relaxed/simple;
-	bh=0FRQ/R/L7Gbr+E5NMPB583fDoSDZ+fMcFqkwqezzyfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m6dkUzR6YPa4UZ6QDJCF5Qt3/X8WkS6dPm3bdusbc/hXyeFmF193/O4oCQrsSgZQnYaz0IpPfq86h3feeZv45luXqdcY913OE+uoJXf1ROu2Ihlxuf33/fpKzB+HIDE9GB4G3qnQovp9u76uvI67GFLhqHTQK+bD4pEstHcxut0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XedO6SOC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72812C2BD10;
-	Wed,  3 Jul 2024 14:36:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720017388;
-	bh=0FRQ/R/L7Gbr+E5NMPB583fDoSDZ+fMcFqkwqezzyfk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XedO6SOC064WlD2AAR0roKkRMad5NWj+aUN3DQmnvW/HYoyZmxgXCAzgtENP6rlhI
-	 85KCzyuwI7Fb/du6Ne9/B2/MTPHqnCOALJxyz3ST1/fVmJDyqFIYNZcs/af/Sk4g6K
-	 MI7YjtLkcJMsJPUlPk464hFjVNW3y8eHxn7/GYb0=
-Date: Wed, 3 Jul 2024 16:36:25 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Roman Kagan <rkagan@amazon.de>
-Cc: linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Fares Mehanna <faresx@amazon.de>, Alexander Graf <graf@amazon.de>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	linux-kselftest@vger.kernel.org, nh-open-source@amazon.com,
-	linux-mm@kvack.org, David Woodhouse <dwmw@amazon.co.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH RFC 3/3] drivers/misc: add test driver and selftest for
- proclocal allocator
-Message-ID: <2024070305-dining-giggly-587b@gregkh>
-References: <20240621201501.1059948-1-rkagan@amazon.de>
- <20240621201501.1059948-4-rkagan@amazon.de>
+	s=arc-20240116; t=1720017404; c=relaxed/simple;
+	bh=QwO5Ixp2SXTbYSsPHvTxoG6lPzclCKAikOcW0vCg3XE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HdmEaR7CAHtkOLC4bc6m0dUxhxYq8sjFC/FU/T9MWkKb1mWp4HyfIpB779yNIOl6FQQEENPXG9LNXUdxDARoEK1MfK/rzvTxrpX1tgU4dZBT2w64lOgma8CVU7fsQLSvVjPoReDKs8Pir1cKE0vK7ERhlIdJu1vh4EFQx6lJQG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsDGwI8X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC7FC2BD10;
+	Wed,  3 Jul 2024 14:36:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720017403;
+	bh=QwO5Ixp2SXTbYSsPHvTxoG6lPzclCKAikOcW0vCg3XE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=OsDGwI8Xd/mKysyizFePmoWtuDKVvlwX3xJn4Upq3jB6orK91KOxlztOTzDW+UL8T
+	 aKHwXWEWsl8jx6RRBSLq66YtKZgeXEKE4kw2iBe8eoE3RsvyMDzlh7X8mXlA3yhfoU
+	 YZpHaQTotuIaX8BOaDdHXn+q1kLv3mvkQ2KUkPBfAJ3ihwxNyMFVJQMl1k66hRQ5jB
+	 /s0F83MjAv4JudRu1Zo2poZR7WJ5QmyZ/58HO+7/Jqgcko0IVooxZabC45obJ2t1A8
+	 3LFwFUyV6vqGY9akcbQ7ZIarSnPayLff0txVcrMu6MUcqmsenwk+fScxnoBTIhxZSF
+	 rOXOh2e6RPojg==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+ jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+ kan.liang@linux.intel.com, dev.mbstr@gmail.com, samuel.holland@sifive.com,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+Cc: ruanjinjie@huawei.com
+Subject: Re: [PATCH v2] riscv: stacktrace: Add USER_STACKTRACE support
+In-Reply-To: <20240604034729.841930-1-ruanjinjie@huawei.com>
+References: <20240604034729.841930-1-ruanjinjie@huawei.com>
+Date: Wed, 03 Jul 2024 16:36:41 +0200
+Message-ID: <87wmm2y22u.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621201501.1059948-4-rkagan@amazon.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 10:15:01PM +0200, Roman Kagan wrote:
-> Introduce a simple driver for functional and stress testing of proclocal
-> kernel allocator.  The driver exposes a device node /dev/proclocal-test,
-> which allows userland programs to request creation of proclocal areas
-> and to obtain their addresses as seen by the kernel, and in addition to
-> read and write kernel memory at arbitrary address content (simplified
-> /dev/kmem good enough to access proclocal allocations under selftest
-> responsibility).
-> 
-> The driver is not meant for use with production kernels, as it exposes
-> internal kernel pointers and data.
+Jinjie Ruan <ruanjinjie@huawei.com> writes:
 
-Then you MUST taint the kernel and throw up huge warnings whenever it is
-loaded, otherwise distros will build this in and end up running it.
+> Currently, userstacktrace is unsupported for riscv. So use the
+> perf_callchain_user() code as blueprint to implement the
+> arch_stack_walk_user() which add userstacktrace support on riscv.
+> Meanwhile, we can use arch_stack_walk_user() to simplify the implementati=
+on
+> of perf_callchain_user().
+>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406012109.PDAjXm2i-lkp@i=
+ntel.com/
 
+For future reference: The LTP tags shouldn't be used when you're
+spinning a new version.
 
-> 
-> Also add a basic selftest that uses this driver.
-> 
-> Signed-off-by: Roman Kagan <rkagan@amazon.de>
 > ---
->  drivers/misc/Makefile                         |   1 +
->  tools/testing/selftests/proclocal/Makefile    |   6 +
->  drivers/misc/proclocal-test.c                 | 200 ++++++++++++++++++
->  .../selftests/proclocal/proclocal-test.c      | 150 +++++++++++++
->  drivers/misc/Kconfig                          |  15 ++
->  tools/testing/selftests/proclocal/.gitignore  |   1 +
->  6 files changed, 373 insertions(+)
->  create mode 100644 tools/testing/selftests/proclocal/Makefile
->  create mode 100644 drivers/misc/proclocal-test.c
->  create mode 100644 tools/testing/selftests/proclocal/proclocal-test.c
->  create mode 100644 tools/testing/selftests/proclocal/.gitignore
-> 
-> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> index 153a3f4837e8..33c244cee92d 100644
-> --- a/drivers/misc/Makefile
-> +++ b/drivers/misc/Makefile
-> @@ -69,3 +69,4 @@ obj-$(CONFIG_TMR_INJECT)	+= xilinx_tmr_inject.o
->  obj-$(CONFIG_TPS6594_ESM)	+= tps6594-esm.o
->  obj-$(CONFIG_TPS6594_PFSM)	+= tps6594-pfsm.o
->  obj-$(CONFIG_NSM)		+= nsm.o
-> +obj-$(CONFIG_PROCLOCAL_TEST)	+= proclocal-test.o
-> diff --git a/tools/testing/selftests/proclocal/Makefile b/tools/testing/selftests/proclocal/Makefile
-> new file mode 100644
-> index 000000000000..b93baecee762
-> --- /dev/null
-> +++ b/tools/testing/selftests/proclocal/Makefile
-> @@ -0,0 +1,6 @@
-> +# SPDX-License-Identifier: GPL-2.0
+> v2:
+> - Fix the cocci warning, !A || A && B is equivalent to !A || B.
+> ---
+>  arch/riscv/Kconfig                 |  1 +
+>  arch/riscv/kernel/perf_callchain.c | 46 ++----------------------------
+>  arch/riscv/kernel/stacktrace.c     | 43 ++++++++++++++++++++++++++++
+>  3 files changed, 47 insertions(+), 43 deletions(-)
+
+[...]
+
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 0525ee2d63c7..6ed96d935b8f 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -193,6 +193,7 @@ config RISCV
+>  	select THREAD_INFO_IN_TASK
+>  	select TRACE_IRQFLAGS_SUPPORT
+>  	select UACCESS_MEMCPY if !MMU
+> +	select USER_STACKTRACE_SUPPORT
+>  	select ZONE_DMA32 if 64BIT
+>=20=20
+>  config CLANG_SUPPORTS_DYNAMIC_FTRACE
+> diff --git a/arch/riscv/kernel/perf_callchain.c b/arch/riscv/kernel/perf_=
+callchain.c
+> index 3348a61de7d9..c7468af77c66 100644
+> --- a/arch/riscv/kernel/perf_callchain.c
+> +++ b/arch/riscv/kernel/perf_callchain.c
+> @@ -6,37 +6,9 @@
+>=20=20
+>  #include <asm/stacktrace.h>
+>=20=20
+> -/*
+> - * Get the return address for a single stackframe and return a pointer t=
+o the
+> - * next frame tail.
+> - */
+> -static unsigned long user_backtrace(struct perf_callchain_entry_ctx *ent=
+ry,
+> -				    unsigned long fp, unsigned long reg_ra)
+> +static bool fill_callchain(void *entry, unsigned long pc)
+>  {
+> -	struct stackframe buftail;
+> -	unsigned long ra =3D 0;
+> -	unsigned long __user *user_frame_tail =3D
+> -		(unsigned long __user *)(fp - sizeof(struct stackframe));
+> -
+> -	/* Check accessibility of one struct frame_tail beyond */
+> -	if (!access_ok(user_frame_tail, sizeof(buftail)))
+> -		return 0;
+> -	if (__copy_from_user_inatomic(&buftail, user_frame_tail,
+> -				      sizeof(buftail)))
+> -		return 0;
+> -
+> -	if (reg_ra !=3D 0)
+> -		ra =3D reg_ra;
+> -	else
+> -		ra =3D buftail.ra;
+> -
+> -	fp =3D buftail.fp;
+> -	if (ra !=3D 0)
+> -		perf_callchain_store(entry, ra);
+> -	else
+> -		return 0;
+> -
+> -	return fp;
+> +	return perf_callchain_store(entry, pc) =3D=3D 0;
+>  }
+>=20=20
+>  /*
+> @@ -56,19 +28,7 @@ static unsigned long user_backtrace(struct perf_callch=
+ain_entry_ctx *entry,
+>  void perf_callchain_user(struct perf_callchain_entry_ctx *entry,
+>  			 struct pt_regs *regs)
+>  {
+> -	unsigned long fp =3D 0;
+> -
+> -	fp =3D regs->s0;
+> -	perf_callchain_store(entry, regs->epc);
+> -
+> -	fp =3D user_backtrace(entry, fp, regs->ra);
+> -	while (fp && !(fp & 0x3) && entry->nr < entry->max_stack)
+> -		fp =3D user_backtrace(entry, fp, 0);
+> -}
+> -
+> -static bool fill_callchain(void *entry, unsigned long pc)
+> -{
+> -	return perf_callchain_store(entry, pc) =3D=3D 0;
+> +	arch_stack_walk_user(fill_callchain, entry, regs);
+>  }
+>=20=20
+>  void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+> diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrac=
+e.c
+> index 528ec7cc9a62..9685a2baa5d9 100644
+> --- a/arch/riscv/kernel/stacktrace.c
+> +++ b/arch/riscv/kernel/stacktrace.c
+> @@ -161,3 +161,46 @@ noinline void arch_stack_walk(stack_trace_consume_fn=
+ consume_entry, void *cookie
+>  {
+>  	walk_stackframe(task, regs, consume_entry, cookie);
+>  }
 > +
-> +TEST_GEN_PROGS := proclocal-test
-> +CFLAGS += -O2 -g -Wall $(KHDR_INCLUDES)
-> +
-> +include ../lib.mk
-> diff --git a/drivers/misc/proclocal-test.c b/drivers/misc/proclocal-test.c
-> new file mode 100644
-> index 000000000000..9b3d0ed9b2f9
-> --- /dev/null
-> +++ b/drivers/misc/proclocal-test.c
-> @@ -0,0 +1,200 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (C) 2024 Amazon.com, Inc. or its affiliates. All rights reserved.
-> + * Author: Roman Kagan <rkagan@amazon.de>
-> + *
-> + * test driver for proclocal memory allocator
+> +/*
+> + * Get the return address for a single stackframe and return a pointer t=
+o the
+> + * next frame tail.
 > + */
+> +static unsigned long unwind_user_frame(stack_trace_consume_fn consume_en=
+try,
+> +				       void *cookie, unsigned long fp,
+> +				       unsigned long reg_ra)
+> +{
+> +	struct stackframe buftail;
+> +	unsigned long ra =3D 0;
+> +	unsigned long __user *user_frame_tail =3D
+> +		(unsigned long __user *)(fp - sizeof(struct stackframe));
 > +
-> +#include <linux/compat.h>
-> +#include <linux/miscdevice.h>
-> +#include <linux/module.h>
-> +#include <linux/workqueue.h>
-> +#include <linux/file.h>
-> +#include <linux/secretmem.h>
+> +	/* Check accessibility of one struct frame_tail beyond */
+> +	if (!access_ok(user_frame_tail, sizeof(buftail)))
+> +		return 0;
+> +	if (__copy_from_user_inatomic(&buftail, user_frame_tail,
+> +				      sizeof(buftail)))
+> +		return 0;
 > +
-> +struct proclocal_test_alloc {
-> +	u64 size;
-> +	u64 ptr;
-
-This structure is not defined properly to cross the user/kernel boundry :(
-
-> +};
+> +	ra =3D reg_ra ? : buftail.ra;
 > +
-> +#define PROCLOCAL_TEST_ALLOC _IOWR('A', 0x10, struct proclocal_test_alloc)
-
-ioctl definitions belong in a .h file for userspace to be able to see
-them.
-
+> +	fp =3D buftail.fp;
+> +	if (!ra || !consume_entry(cookie, ra))
+> +		return 0;
 > +
-> +#define BOUNCE_BUF_SIZE PAGE_SIZE
+> +	return fp;
+> +}
+> +
+> +void arch_stack_walk_user(stack_trace_consume_fn consume_entry, void *co=
+okie,
+> +			  const struct pt_regs *regs)
+> +{
+> +	unsigned long fp =3D 0;
+> +
+> +	fp =3D regs->s0;
+> +	if (!consume_entry(cookie, regs->epc))
+> +		return;
+> +
+> +	fp =3D unwind_user_frame(consume_entry, cookie, fp, regs->ra);
+> +	while (fp && !(fp & 0x3))
 
-Then why not just use PAGE_SIZE everywhere?  Less characters and we all
-know what that is.
+Just an observation that the "entry->nr < entry->max_stack" check was
+removed in this generalization, but that's OK since it's checked in
+perf_callchain_store().
 
-Stopped reviewing here, sorry.
+Not really part of your change, but shouldn't the check be 0x7 (checking
+for 16B sp/fp alignment), rather than 0x3?
 
-greg k-h
+
+Bj=C3=B6rn
 
