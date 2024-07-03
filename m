@@ -1,83 +1,95 @@
-Return-Path: <linux-kernel+bounces-240141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C23926988
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:27:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0587E92698B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 921031F2396E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:27:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37AB11C25985
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4061518FDCC;
-	Wed,  3 Jul 2024 20:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992DE190056;
+	Wed,  3 Jul 2024 20:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GvoV2t2Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tz5D54gt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A1A136678;
-	Wed,  3 Jul 2024 20:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D739D18FC82;
+	Wed,  3 Jul 2024 20:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720038415; cv=none; b=ib9C0rqYBO1wwzQhIsWkOLz/BmQr2cRVSzbpqCGrmScJoY3n95phDR1kfowL+iYyUgikdJ1j4qGhSLUP/QrL1y6WOfRT17tT2itZGh7QHV1xpnVykxYnT3fvjNZ8MuMGlZ5NIy27+ggmtFlxRjcN3zyYsq6JnAkBSxDB5Uo1ny0=
+	t=1720038437; cv=none; b=MBOeJUn7qZLDH8sd56242e3HIlZoxf2xNb3BaXS/6WDRs7TTZ5xRIZxy6VFrZZ7Eqyg8c10/vLwlL6dCU9CuBY/1hgwmAiWR5JuqQZfGPj/YykLy36hpJoOoHu+49WBfVgwvJs+8/mDpzQy619b+L29Z8qRu5nemolhgTr9QIJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720038415; c=relaxed/simple;
-	bh=s6DsFyZn/wW3Wj6FhmgTr6w6StdImQV4cUTcdZC4Htk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=TTO96H3LRweJoDA3oKWxCOzFkchnnzOqjjiYDHtLJsRHJr4g5uURj0TVRuwXS1kxWJAI8f1hFL62CKVOnNby5DVArZJ7Pofaw96pBIl7w2dQbdjHZh8MDiD5YlBuMXcYxNWrJTAz2ny/jXjKu3PmkmDaf4bBXGIXrQ6x2uI3+Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GvoV2t2Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84A5EC2BD10;
-	Wed,  3 Jul 2024 20:26:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1720038415;
-	bh=s6DsFyZn/wW3Wj6FhmgTr6w6StdImQV4cUTcdZC4Htk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GvoV2t2YT98ecQnFA6y4k1+dwQvEQ8iWrM0rR/NBRFpElWfmHhCPHCfzZ8EbKar+W
-	 RgQGtLo0xqk31pieNZboOLUWdI9heRReCSxpWjtOQJEW5EMyjA49VBStVsBvGtSX5O
-	 lKug6BZs4YXVKJ3MwiR7o8Yozb8le21YXkWHpQT0=
-Date: Wed, 3 Jul 2024 13:26:53 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil
- Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>, Kees Cook
- <kees@kernel.org>, Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH 0/7] Make core VMA operations internal and testable
-Message-Id: <20240703132653.3cb26750f5ff160d6b698cae@linux-foundation.org>
-In-Reply-To: <cover.1720006125.git.lorenzo.stoakes@oracle.com>
-References: <cover.1720006125.git.lorenzo.stoakes@oracle.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720038437; c=relaxed/simple;
+	bh=PBcTwQazTXxN3vJLe6dTXyZcwIjt4BiOfPqGEsTN/zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dh35IsoflcMcLKkzq0l4cyjma5j+F43+bAPsDG+Fny1yxAg66ZzmUX2f88AywjR97epmrVbEKi1+TeRC9Y1EY+7VkiZ0KJWi+LKngS5pHvK4RV+JsKbl4BpuarKxkAnK+9vPAqPPSDMC+QftAyibCACq482ot30CuV2VHsUHO8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tz5D54gt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01D52C2BD10;
+	Wed,  3 Jul 2024 20:27:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720038436;
+	bh=PBcTwQazTXxN3vJLe6dTXyZcwIjt4BiOfPqGEsTN/zs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tz5D54gt8BA9EpYZxEhBR8qDT+9suJQCZbvnn5LOIQihHHWwqxljPEYQlP5u0/c4a
+	 r9JELjidYnoQGBzvZa1UbhwCOvyQ/Kb+QPDuNnLqQljbnl1JWXdFCIp+ZlDZh3WY3/
+	 dPLTeMTuXx0Gaio0Fv1EJlsKDL9YNHio+Ue6RozA/pAWRZReRHV1L+6bd5eTr9YlHP
+	 gtDfZQrh9midRBcAXpSpXAU8EONEBqfTWKLIsgCwTa40EyRe6RAdBZ0Bdj1AhgC6aT
+	 d+z4X/GiBCnotCaUQy0JFK6WC8uLXPJCXTgugR7M9ZNNvSRTmaoBU5ecHEaKidjrwA
+	 BPb3VAHoexFnA==
+Date: Wed, 3 Jul 2024 22:27:12 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, 
+	Dirk Behme <dirk.behme@de.bosch.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] i2c: rcar: bring hardware to known state when probing
+Message-ID: <g6mthbu3bbg2vl3aobci2gx7lbfy4qbiy7cy43v7wwgjldauc3@qv4yrctu2bmf>
+References: <20240703071625.5389-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703071625.5389-1-wsa+renesas@sang-engineering.com>
 
-On Wed,  3 Jul 2024 12:57:31 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+Hi Wolfram,
 
-> Kernel functionality is stubbed and shimmed as needed in tools/testing/vma/
-> which contains a fully functional userland vma_internal.h file and which
-> imports mm/vma.c and mm/vma.h to be directly tested from userland.
+On Wed, Jul 03, 2024 at 09:12:03AM GMT, Wolfram Sang wrote:
+> Probably due to a lot of refactorization, the hardware was not brought
+> into a known state in probe. This may be a problem when a hypervisor
+> restarts Linux without resetting the hardware, leaving an old state
+> running. Make sure the hardware gets initialized, especially interrupts
+> should be cleared and disabled.
+> 
+> Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Closes: https://lore.kernel.org/r/20240702045535.2000393-1-dirk.behme@de.bosch.com
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Cool stuff.
+Do we need the Fixes tag here?
 
-Now we need to make sure that anyone who messes with vma code has run
-the tests.  And has added more testcases, if appropriate.
+> ---
+> 
+> Here is my proposal to fix the issue reported by Dirk. Build tested.
+> I can do proper testing on HW only tomorrow. But so you know already...
 
-Does it make sense to execute this test under selftests/ in some
-fashion?  Quite a few people appear to be running the selftest code
-regularly and it would be good to make them run this as well.
+Looks reasonable. If testing is fine I can queue this up for this
+week's pull request.
 
->  51 files changed, 3914 insertions(+), 2453 deletions(-)
+> It is strange to add another "_slave" function to the driver while I
+> work on removing such language from I2C somewhere else. "Consistency" is
+> the answer here. The driver will be converted as well. But then as a
+> whole.
 
-eep.  The best time for me to merge this is late in the -rc cycle so
-the large skew between mainline and mm.git doesn't spend months
-hampering ongoing development.  But that merge time is right now.
+Ack!
+
+Thanks,
+Andi
 
