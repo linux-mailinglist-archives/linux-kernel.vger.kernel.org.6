@@ -1,81 +1,78 @@
-Return-Path: <linux-kernel+bounces-239951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD63D92672F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:31:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B98926733
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83A2C1F2340F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:31:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 818A01C21616
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707BE1849CD;
-	Wed,  3 Jul 2024 17:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D894C18509A;
+	Wed,  3 Jul 2024 17:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ShsxNzFu"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791BB18C38;
-	Wed,  3 Jul 2024 17:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mMuq6typ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26664442C;
+	Wed,  3 Jul 2024 17:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720027868; cv=none; b=sEcqc/oObsq9eiRekyXsRx0LYUVqUItAFiDBZT3hTuecMh8EtQTtyNqopo8W/3rTJK84tLx0q4kdBMUl/OnHC+M7pm2FlzcHU1EOpApMiBDAZfHhmLDSwNvcS2J4YwTLkZ3PEKoq/SuYTG0jz7rFSNh5/v2AxDFRDblVB+gzIqM=
+	t=1720027921; cv=none; b=HzhyS/j8hc45W+AvkSYC43WQNydIV2OD9nquj8sJEuls63o+3wRtqrYihsiS8x3uqibor4Eyvu79ekaMCYW1Phme7l5jcMWSJ1NJjHrRMDsrcTWsL3rqif8T9uV3JBPuJ00AZuJDJ4O/ZvRPt1jGqkjvZwpht8BqL1G82XrfmjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720027868; c=relaxed/simple;
-	bh=wDCqZSRi531JRw8a+n4+ozCCMHbVnX4O3eiA/AX12YQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k21BOsu1C6pPKKcupZrK4kIdx2yeCA+vicvL0vZLEKh3dCwAcF8rcCtG3kxzKA/mmH7s8aK+WcDRc15VIcFllrA+CZnKQmviGyZ1fXQTI2DAX0f7g/gUkVZbBxP/rZloCgCzfNH2fRQVO2+jtq9O+pny2TOxjubT2dndgnLOuIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ShsxNzFu; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1131)
-	id 15BD920B7004; Wed,  3 Jul 2024 10:31:07 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 15BD920B7004
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1720027867;
-	bh=rIfQcz3PfC6/Q/TEVzslq14IojDQNP4Rv6kQPYbRs10=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ShsxNzFuLoeoNfInXXcR/PKC34y2ccth55d5SvxyAscncJtI7AvHrpo61zoEmUQrR
-	 bgJPUJv0hgXz2dgqFYj+2jUqr9HxnQzOsUOL2Dfnyq25T5GHPRnSouzyIfsJavrAyD
-	 6befyINENMgrLDFVyQu/T6Y7HTgh/ay1RpVdNOfY=
-Date: Wed, 3 Jul 2024 10:31:07 -0700
-From: Kelsey Steele <kelseysteele@linux.microsoft.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.6 000/163] 6.6.37-rc1 review
-Message-ID: <20240703173107.GB11716@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20240702170233.048122282@linuxfoundation.org>
+	s=arc-20240116; t=1720027921; c=relaxed/simple;
+	bh=sYXHaX+15K59MMK0uVJfSI0yCKpmdQZEQxHcnj0FQYM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=UyLyH+B2RERoEkPNPhipAkNAGAB8rfkGIX9mOzBrpDYwZdDUJoyluj7LEJI4C4zwC5/gILvLgEHMO0PJB62ueIMfq1SFPmCS7EEUK+DjI9/nXUEMjxVJd/tt9mWxgg7gDH4GJp6ce9EhR2Y0hBDJdGu0u6O7rCJqkz/3znbqSZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mMuq6typ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 061D0C32781;
+	Wed,  3 Jul 2024 17:32:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720027921;
+	bh=sYXHaX+15K59MMK0uVJfSI0yCKpmdQZEQxHcnj0FQYM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=mMuq6typnK4D7ZDznR4MO7xdJVwD2W0c9iJ0uIgylBcpHyDj8+nYFLNsLrhMrT3f7
+	 7dh4eYdI26TPSZ4uuKw70pv0jQXp/P1GZOA3uEPJvaafMvI1b528S1cQKux8QL+R4K
+	 jDlH6rhNufZxPqq6BNufLTXI87nSNQa1YDSSbzEYvR2EbdamfnLdkXHBzdD7awEwDX
+	 O4wUf0bipTB6CFhehlSVRrcGFhHF0vTyN409qLMYWJ+ALKUD4ksVk/1mq/MbvHXIFZ
+	 71ATsbmCtwm4zFIXJP6NSPL688D9wgwmSoIF6L2KbA8XkQTick/VR+NnFiCK76eY1J
+	 /YLulf8/9NIbg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E9238C43446;
+	Wed,  3 Jul 2024 17:32:00 +0000 (UTC)
+Subject: Re: [GIT PULL for v6.10-rc7] media fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240703082329.20b1bc37@coco.lan>
+References: <20240703082329.20b1bc37@coco.lan>
+X-PR-Tracked-List-Id: <linux-media.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240703082329.20b1bc37@coco.lan>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.10-3
+X-PR-Tracked-Commit-Id: fd404435d44b453d62afe77545b9252c2cc72c8a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4a0929b0062a6b04207a414be9be97eb22965bc1
+Message-Id: <172002792094.9712.10706294622449045136.pr-tracker-bot@kernel.org>
+Date: Wed, 03 Jul 2024 17:32:00 +0000
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702170233.048122282@linuxfoundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Tue, Jul 02, 2024 at 07:01:54PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.37 release.
-> There are 163 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 04 Jul 2024 17:01:55 +0000.
-> Anything received after that time might be too late.
-> 
-No regressions found on WSL (x86 and arm64).
+The pull request you sent on Wed, 3 Jul 2024 08:23:29 +0200:
 
-Built, booted, and reviewed dmesg.
+> git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.10-3
 
-Thank you. :)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4a0929b0062a6b04207a414be9be97eb22965bc1
 
-Tested-by: Kelsey Steele <kelseysteele@linux.microsoft.com> 
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
