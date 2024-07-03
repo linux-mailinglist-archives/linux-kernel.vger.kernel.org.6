@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-240327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00B25926C3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:04:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C73CB926C40
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320351C21343
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:04:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66EF0B2185C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2CC194A62;
-	Wed,  3 Jul 2024 23:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CDD194A56;
+	Wed,  3 Jul 2024 23:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="foN6g2Aw"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ab/w6AWR"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B35C4964E;
-	Wed,  3 Jul 2024 23:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD6C17B425
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 23:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720047870; cv=none; b=hX9UZIsGafgUqX2cWM6DhAp2BGYIY01eMBSc7MOB7aEbCRLN59T86fDxUmrrat8Ta3J8vTAlx8A8xEIn1om5tOkZd6sbe1YWSEtZunXiw4XweLJfKh+Bz10yFDLWW/U6w5UTLp1VL9cQ90VdTiY0bt5Bm+BA7yMn2dH2pXuCFe8=
+	t=1720047889; cv=none; b=qqwOFrygDvaY2sK0jj1YSq/m1yhfeaUp/X1zmcpgP4WXszY8qEcNd1oZarVMESaINqH6c0OrY/5my8HMIuM5kjIn/NB7PxHH7gp9e6sVHtnImNBe9QoQ4G851F+eNepOb+cFf06KtQMVvLR7z947P95TrWuKNH39bWSOcDsDmoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720047870; c=relaxed/simple;
-	bh=sjUlk2dyanMoOOvqU/NU0Qw0qLzZxQECvFTWbr3HFx0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KKXsP4fWYkH08g9DBDWpZo7IPn97T8Ssf6ClQQG4RHi/1aCwA2/qLoEQhsZ9BuaA+gWxDYBvqlmV51+dBuvp6QAC9dQ54u9W6qokIxnAeNX+HW8U8bxtCeBCJ2qOOfMbUcITksxeBY04PvXszawaTKm654MkubFVGKA5Qw3hgPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=foN6g2Aw; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 491D74189E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1720047868; bh=YTLOx/1o2O6vgLftzil18tbHX7AAy8OKyo+xBns4TL8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=foN6g2Awy5eiKZju1LPimmtXOR26SvHVLj3GQfBqu75Gzkyb2rCX4/C9CLU0E9Scn
-	 25gOIiHYzDk+1wKQFy24VU/7F1d0eBMctpd+BfpUBJ9X5Uk4xIH87HaczPT4wLhjDE
-	 2kA2efk/k+pm4mvDW2bffK229qejCmKvk3CseEWzwSg2V6BKe674vCJepuzP7OXUHB
-	 ALwDATik/GzfLBsi1VIVIuNhfVBQqN2jrQerInqOxDPBJnNp0t/bVeUn80NIQsONG3
-	 VSAiHzfOqEYvarluqY1xD6t5yh+JcBhpWnwt0sB3R9JSUkBctTWBx+huc1oueKTEFu
-	 6FHk79eTvoCIg==
-Received: from localhost (c-24-9-249-71.hsd1.co.comcast.net [24.9.249.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 491D74189E;
-	Wed,  3 Jul 2024 23:04:28 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>, Carlos Bilbao
- <carlos.bilbao.osdev@gmail.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Konstantin Ryabitsev
- <konstantin@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>,
- ksummit@lists.linux.dev
-Subject: Re: [PATCH v2 0/2] Documentation: update information for mailing lists
-In-Reply-To: <20240619-docs-patch-msgid-link-v2-0-72dd272bfe37@linuxfoundation.org>
-References: <20240619-docs-patch-msgid-link-v2-0-72dd272bfe37@linuxfoundation.org>
-Date: Wed, 03 Jul 2024 17:04:27 -0600
-Message-ID: <87y16irsas.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1720047889; c=relaxed/simple;
+	bh=XAbTDSCiuix+leu4nt20ZGL6CGC5tq+OVyQUmfdwLc4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u93IP/rlMQQZtNNCFFdcf/M/r0FnCuc+xCNcI78kcoc3gjkxgwMUd0lV4hkvGSIKEKNsCK8ISN5qCXXNBFdg3jgYAOKzXYbQF6jyc2hi5KcKcBvPpWX1rDsVfdKGiClvrt/ul4LBXYndmksTWQ0al1ze9KsonqDhEkOlZRMp6jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ab/w6AWR; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3745eb24ffaso36465ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 16:04:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1720047887; x=1720652687; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B1Gw0ZjNIkvjLQEAJl32qrbP+mBtuKKDlcaDQhvoYrY=;
+        b=ab/w6AWRETOw5I0eBH0tEUfrBOvsTjXko/GRjDB6kIDA5RlnSRbt3TX10+UAaMPZ3o
+         OdA9hdw5ZkkDjnVO2wDYnkveUIjfnS7ERl3W6dH8UsUSOzOqULjC5/YQVLJt7A2mNKhD
+         xWbKeWs4TGRSJI4jPtA43JbHtvhT+PZLayQC4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720047887; x=1720652687;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B1Gw0ZjNIkvjLQEAJl32qrbP+mBtuKKDlcaDQhvoYrY=;
+        b=o6zYfWdAtqjK8eAlFPBLCjhEn5YnDoDbj4+qmgiEFw69Ze/SZaKoWn2WEh0lIoFnQa
+         unp0XjHm2Uk+VmAA+z2bteVnrA1bJvW6MbyE5obHQRnjDuoJysehQpnhINATJvfEvC+9
+         eR7rYu17mTALCuPrHLYVHh0rbEytpDLfPyNZK96PVZuVVgBWSPPAFtwAQKNL+NXOpqLE
+         ON7lOiIU1CqVXtmozSIBe2+ScAzdgJ/P/+FfrDkDR89OoVI9QmlO8kiQyLIQofqhLqNW
+         SEekkY8kcYs8n/sCXpHGx7TjRo5/1wNEVxe14wxWkr0nFLbvOBxNMAwsPCnRLwy96bfa
+         4FFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVT56hI23xCfNQfYZ0efqtI0pq4qbXXRqUNoub81Pl0JLf1OwD7B+Rfo/9BHSNbSSevhSvcXoBW3uwTbOa9XtqAyT9IaVXZR3OpdD75
+X-Gm-Message-State: AOJu0YycWLqGmWCZ3RU10k5HGPM+4EcVrDWQphpBZkAzTurLVKQOnYvj
+	flVHUk/OF3gd3cta2gpVfs2/ob6ye2/HvwezD9+zqBMVWjCYsc8etdCOi9/ySYw=
+X-Google-Smtp-Source: AGHT+IFDVsmppcbGL+gnyzISDited4s3wOkjFHvBfz84LQnxxLISKA0y1gljgdxrjb0h8+8a01JC5Q==
+X-Received: by 2002:a92:c144:0:b0:383:17f9:6223 with SMTP id e9e14a558f8ab-3839a0339b7mr882935ab.2.1720047887367;
+        Wed, 03 Jul 2024 16:04:47 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3838f132c29sm342175ab.5.2024.07.03.16.04.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 16:04:46 -0700 (PDT)
+Message-ID: <c8721a72-17c5-4619-9128-9260214ad0d5@linuxfoundation.org>
+Date: Wed, 3 Jul 2024 17:04:45 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.4 000/189] 5.4.279-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240703102841.492044697@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240703102841.492044697@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Konstantin Ryabitsev <konstantin@linuxfoundation.org> writes:
+On 7/3/24 04:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.279 release.
+> There are 189 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 05 Jul 2024 10:28:06 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.279-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-> There have been some important changes to the mailing lists hosted at
-> kernel.org, most importantly that vger.kernel.org was migrated from
-> majordomo+zmailer to mlmmj and is now being served from the unified
-> mailing list platform called "subspace" [1].
->
-> This series updates many links pointing at obsolete locations, but also
-> makes the following changes:
->
-> - drops the recommendation to use /r/ subpaths in lore.kernel.org links
-> (it has been unnecessary for a number of years)
-> - adds some detail on how to reference specific Link trailers from
-> inside the commit message
->
-> Some of these changes are the result of discussions on the ksummit
-> mailing list [2].
->
-> Link: https://subspace.kernel.org # [1]
-> Link: https://lore.kernel.org/20240617-arboreal-industrious-hedgehog-5b84ae@meerkat/ # [2]
-> Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-> ---
-> Changes in v2:
-> - Minor wording changes to text and commit messages based on feedback.
-> - Link to v1: https://lore.kernel.org/r/20240618-docs-patch-msgid-link-v1-0-30555f3f5ad4@linuxfoundation.org
->
-So I have gone ahead and applied this.  There are some important changes
-here that shouldn't miss the merge window, and we can argue about the #
-marking with it in-tree.
+Compiled and booted on my test system. No dmesg regressions.
 
-I am rather amused, though, that b4 added a few extra tag lines:
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-> Link: https://example.com/somewhere.html  optional-other-stuff
-> Signed-off-by: Random Developer <rdevelop@company.com>
->      [ Fixed formatting ]
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-I do believe I'll amend the changelog before pushing this one :)
-
-Thanks,
-
-jon
+thanks,
+-- Shuah
 
