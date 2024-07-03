@@ -1,145 +1,224 @@
-Return-Path: <linux-kernel+bounces-239119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D1E9256A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:23:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 940B09256B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D73CF1F22E3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:23:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81A21C215D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BB513D502;
-	Wed,  3 Jul 2024 09:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B51D13DDBA;
+	Wed,  3 Jul 2024 09:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQyQgr6v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Oe2cRC9o"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F62442A80;
-	Wed,  3 Jul 2024 09:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B12613B592;
+	Wed,  3 Jul 2024 09:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719998569; cv=none; b=tsZOY4u8cNycf+x91st0pqKb2MnGBruWLRRAirLTaa47PaxB8XwQYu0Z0V76/49Kt8kV9GIJvPjJX0MtXTvPHvbOAEeLX3q9aoEz5UJginxkrZ9U4Twk6bykBsNab6Ydjm2ico7SxdsofjGNX7af3WBc7fsOvtVD1fMmg07T610=
+	t=1719998729; cv=none; b=aVXjQuR1Phj3XnWFO63o/5xRJxOHeNPsiu4RoNKHsQHb8IbPsHaDsdo9d08Ln4rUxKoKxtjK+uqkCc+QhPXIZ2r7587v47HXIfC4Er8s7zEp4DSwtxeXFhsEugN8TWM7kq5mcBiDk2UvlbFQHpqnPc/1C3+jglkiXrfnv7JEoZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719998569; c=relaxed/simple;
-	bh=VcMNyqxa/OyWVttyD2gJnZf2GezIMVfmTMgIXg2wyBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J9n6aNiWIhZVOgaukacnkvns6h2qoD0rknnWq1CVOI9hkLm8JmInrMYR3Wp5CGnaeLsGE35habqRlTIkUWUBmVywF4JJgVR3/g9Wt3YFQK3I8hINSW3sxsXA+frDPvFgBOQ4LzOMa74aRi4D8Gwg1WciF6U781U1VBkG9X50V9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQyQgr6v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BEEFC32781;
-	Wed,  3 Jul 2024 09:22:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719998569;
-	bh=VcMNyqxa/OyWVttyD2gJnZf2GezIMVfmTMgIXg2wyBg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vQyQgr6vGRZYJ5CilNJD/htgWr0SkybCXRRAQkAxdx3pJaCx9l6tqy0zdS9W/lp5q
-	 9h7qIrqIVHw4Tv82ptMGpb3ehq8vlb/Jc/9iKUxC+lAiK66z1P7CsB9h71UaWdEAYq
-	 c0jnCb3SHrSA3783TJs4rLLIZtewYR9kDw+9nwGluD+knloOc4jLLQK5U+h4qQQgLm
-	 eVzwEXzba7/SKtqtfKqf+k8OHAhd/fnPYmEM7d52YAXDS6/mN8oJ6B9FvvIKQ1zows
-	 niZ1oenDlYM8Ghr88JTX42sfSXtJnSg3y+4HBA4DKrZ6YX6gOtppsl+ApDBgJvxp1d
-	 8I//4FZMA1q0Q==
-Date: Wed, 3 Jul 2024 11:22:43 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alexander Larsson <alexl@redhat.com>, Ian Kent <ikent@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
-	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk, raven@themaw.net, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Eric Chanudet <echanude@redhat.com>
-Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
-Message-ID: <20240703-mahnung-bauland-ffcacea4101e@brauner>
-References: <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
- <20240627115418.lcnpctgailhlaffc@quack3>
- <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
- <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
- <20240628-gelingen-erben-0f6e14049e68@brauner>
- <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
- <97cf3ef4-d2b4-4cb0-9e72-82ca42361b13@redhat.com>
- <20240701-zauber-holst-1ad7cadb02f9@brauner>
- <CAL7ro1FOYPsN3Y18tgHwpg+VB=rU1XB8Xds9P89Mh4T9N98jyA@mail.gmail.com>
- <20240701-treue-irrtum-e695ee5efe83@brauner>
+	s=arc-20240116; t=1719998729; c=relaxed/simple;
+	bh=yHi/W05KtGps9FCz0/UywsRMv24OU50aXsjHAR4YmrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NRMX3UVYyq2QfTDEUOCYJLOhxePEXuFa78AJQt5083AxbiYauKPVu5QV6tPgTyir5qICCdxict4s7DEr2U5MT9rm96HHBR9L+CQ+ZJhtqcE7ijVRAjcSZ2G+8fOF4w8lRIGrZWhpLivd4CboMGMWerqUYb33KyEIYcXjtbniQl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Oe2cRC9o; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4635J5OC023311;
+	Wed, 3 Jul 2024 09:23:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NhWuFqAPuEIZttAM2h+ngzLqj84AMotQeV7cBgLDekI=; b=Oe2cRC9oUcmZXNcW
+	hM3w/0u5nLB0Cx5k+dKOSTo08Bic13lHg4TYTCcdLxKFEKRi/0rsrn94Fv9iOUEt
+	QfGED7rITsH1a5n9umtbWCS2jiC/JnQQvm5LbiK0tAmrOx/oAMoX6xYDOINMy0yg
+	axaSv6uQvKmFIprMlyD0JQq5RC5kaFDxGiI4W/f12i6EakqOh1K6N392FGzTuTwH
+	IIdppbm37Qm6/0eUlRTEsjn8ZqW2SHKz7E6D7/IeAecYk7jfzVUcSonLFvi7IImV
+	MJNvKIzVl3hvD9D674f9Be5xEGzMh1Uqp10dnBgethkZ9qm5oh7h6AygfaPmgXWE
+	+9RWTg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4050cy8k8x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 09:23:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4639NV8c020645
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Jul 2024 09:23:31 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 02:23:10 -0700
+Message-ID: <bc135b67-a2e4-4b17-96c0-767bcb94d876@quicinc.com>
+Date: Wed, 3 Jul 2024 17:23:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240701-treue-irrtum-e695ee5efe83@brauner>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/47] arm64: dts: qcom: qcs9100: Introduce QCS9100 SoC
+ dtsi
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <djakov@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <manivannan.sadhasivam@linaro.org>, <will@kernel.org>,
+        <joro@8bytes.org>, <conor@kernel.org>, <tglx@linutronix.de>,
+        <amitk@kernel.org>, <thara.gopinath@gmail.com>,
+        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
+        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>
+CC: <robimarko@gmail.com>, <bartosz.golaszewski@linaro.org>,
+        <kishon@kernel.org>, <quic_wcheng@quicinc.com>,
+        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <agross@kernel.org>, <gregkh@linuxfoundation.org>,
+        <quic_tdas@quicinc.com>, <robin.murphy@arm.com>,
+        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <quic_rjendra@quicinc.com>,
+        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
+        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
+        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
+        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <ahalaney@redhat.com>,
+        <krzysztof.kozlowski@linaro.org>, <u.kleine-koenig@pengutronix.de>,
+        <dmitry.baryshkov@linaro.org>, <quic_cang@quicinc.com>,
+        <danila@jiaxyga.com>, <quic_nitirawa@quicinc.com>,
+        <mantas@8devices.com>, <athierry@redhat.com>,
+        <quic_kbajaj@quicinc.com>, <quic_bjorande@quicinc.com>,
+        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <quic_tsoni@quicinc.com>, <quic_rgottimu@quicinc.com>,
+        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
+        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
+        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+ <20240703025850.2172008-3-quic_tengfan@quicinc.com>
+ <8593db2e-8a69-418f-b00e-8fafe434dd30@kernel.org>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <8593db2e-8a69-418f-b00e-8fafe434dd30@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jA8I-qqzAQ-FOzamwuZ3_GO9PajOhc6b
+X-Proofpoint-ORIG-GUID: jA8I-qqzAQ-FOzamwuZ3_GO9PajOhc6b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_05,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ mlxlogscore=901 priorityscore=1501 adultscore=0 mlxscore=0 impostorscore=0
+ spamscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407030069
 
-On Mon, Jul 01, 2024 at 02:10:31PM GMT, Christian Brauner wrote:
-> On Mon, Jul 01, 2024 at 10:41:40AM GMT, Alexander Larsson wrote:
-> > On Mon, Jul 1, 2024 at 7:50 AM Christian Brauner <brauner@kernel.org> wrote:
-> > >
-> > > > I always thought the rcu delay was to ensure concurrent path walks "see" the
-> > > >
-> > > > umount not to ensure correct operation of the following mntput()(s).
-> > > >
-> > > >
-> > > > Isn't the sequence of operations roughly, resolve path, lock, deatch,
-> > > > release
-> > > >
-> > > > lock, rcu wait, mntput() subordinate mounts, put path.
-> > >
-> > > The crucial bit is really that synchronize_rcu_expedited() ensures that
-> > > the final mntput() won't happen until path walk leaves RCU mode.
-> > >
-> > > This allows caller's like legitimize_mnt() which are called with only
-> > > the RCU read-lock during lazy path walk to simple check for
-> > > MNT_SYNC_UMOUNT and see that the mnt is about to be killed. If they see
-> > > that this mount is MNT_SYNC_UMOUNT then they know that the mount won't
-> > > be freed until an RCU grace period is up and so they know that they can
-> > > simply put the reference count they took _without having to actually
-> > > call mntput()_.
-> > >
-> > > Because if they did have to call mntput() they might end up shutting the
-> > > filesystem down instead of umount() and that will cause said EBUSY
-> > > errors I mentioned in my earlier mails.
-> > 
-> > But such behaviour could be kept even without an expedited RCU sync.
-> > Such as in my alternative patch for this:
-> > https://www.spinics.net/lists/linux-fsdevel/msg270117.html
-> > 
-> > I.e. we would still guarantee the final mput is called, but not block
-> > the return of the unmount call.
+
+
+On 7/3/2024 12:40 PM, Krzysztof Kozlowski wrote:
+> On 03/07/2024 04:58, Tengfei Fan wrote:
+>> Introduce QCS9100 SoC dtsi, QCS9100 is mainly used in IoT products.
+>> QCS9100 is drived from SA8775p.
+>> The current QCS9100 SoC dtsi is directly renamed from the SA8775p SoC
+>> dtsi.
+>> The QCS9100 platform is currently in the early design stage. Currently,
+>> Both the QCS9100 platform and SA8775p platform use non-SCMI resources,
+>> In the future, the SA8775p platform will transition to using SCMI
+>> resources and it will have new sa8775p-related device tree.
+>> This QCS9100 SoC dtsi remains consistent with the current SA8775p SoC
+>> dtsi, except for updating the following sa8775p-related compatible names
+>> to the qcs9100-related compatible name:
+>>    - qcom,sa8775p-clk-virt
+>>    - qcom,sa8775p-mc-virt
+>>    - qcom,sa8775p-adsp-pas
+>>    - qcom,sa8775p-cdsp-pas
+>>    - qcom,sa8775p-cdsp1-pas
+>>    - qcom,sa8775p-gpdsp0-pas
+>>    - qcom,sa8775p-gpdsp1-pas
+>>    - qcom,sa8775p-gcc
+>>    - qcom,sa8775p-ipcc
+>>    - qcom,sa8775p-config-noc
+>>    - qcom,sa8775p-system-noc
+>>    - qcom,sa8775p-aggre1-noc
+>>    - qcom,sa8775p-aggre2-noc
+>>    - qcom,sa8775p-pcie-anoc
+>>    - qcom,sa8775p-gpdsp-anoc
+>>    - qcom,sa8775p-mmss-noc
+>>    - qcom,sa8775p-trng
+>>    - qcom,sa8775p-ufshc
+>>    - qcom,sa8775p-qmp-ufs-phy
+>>    - qcom,sa8775p-qce
+>>    - qcom,sa8775p-lpass-ag-noc
+>>    - qcom,sa8775p-usb-hs-phy
+>>    - qcom,sa8775p-dc-noc
+>>    - qcom,sa8775p-gem-noc
+>>    - qcom,sa8775p-dwc3
+>>    - qcom,sa8775p-qmp-usb3-uni-phy
+>>    - qcom,sa8775p-gpucc
+>>    - qcom,sa8775p-smmu-500
+>>    - qcom,sa8775p-dwmac-sgmii-phy
+>>    - qcom,sa8775p-llcc-bwmon
+>>    - qcom,sa8775p-cpu-bwmon
+>>    - qcom,sa8775p-llcc
+>>    - qcom,sa8775p-videocc
+>>    - qcom,sa8775p-camcc
+>>    - qcom,sa8775p-dispcc0
+>>    - qcom,sa8775p-pdc
+>>    - qcom,sa8775p-aoss-qmp
+>>    - qcom,sa8775p-tlmm
+>>    - qcom,sa8775p-imem
+>>    - qcom,sa8775p-smmu-500
+>>    - qcom,sa8775p-rpmh-clk
+>>    - qcom,sa8775p-rpmhpd
+>>    - qcom,sa8775p-cpufreq-epss
+>>    - qcom,sa8775p-dispcc1
+>>    - qcom,sa8775p-ethqos
+>>    - qcom,sa8775p-nspa-noc
+>>    - qcom,sa8775p-nspb-noc
+>>    - qcom,sa8775p-qmp-gen4x2-pcie-phy
+>>    - qcom,sa8775p-qmp-gen4x4-pcie-phy
+>>
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>>   .../dts/qcom/{sa8775p.dtsi => qcs9100.dtsi}   | 112 +++++++++---------
+>>   1 file changed, 56 insertions(+), 56 deletions(-)
+>>   rename arch/arm64/boot/dts/qcom/{sa8775p.dtsi => qcs9100.dtsi} (97%)
+>>
 > 
-> That's fine but the patch as sent doesn't work is my point. It'll cause
-> exactly the issues described earlier, no? So I'm confused why this
-> version simply ended up removing synchronize_rcu_expedited() when
-> the proposed soluton seems to have been to use queue_rcu_work().
+> How do any things compile at this point? Please squash the patches. Your
+> patchset must be bisectable at build level (dtschema validation does not
+> have to).
 > 
-> But anyway, my concern with this is still that this changes the way
-> MNT_DETACH behaves when you shut down a non-busy filesystem with
-> MNT_DETACH as outlined in my other mail.
+> Best regards,
+> Krzysztof
 > 
-> If you find a workable version I'm not entirely opposed to try this but
-> I wouldn't be surprised if this causes user visible issues for anyone
-> that uses MNT_DETACH on a non-used filesystem.
 
-Correction: I misremembered that umount_tree() is called with
-UMOUNT_SYNC only in the case that umount() isn't called with MNT_DETACH.
-I mentioned this yesterday in the thread but just in case you missed it
-I want to spell it out in detail as well.
+The compilation issue indeed arises when applying only this single 
+patch. In the new version patch series, I plan to consolidate the three 
+patches that rename sa8775p.dtsi to qcs9100.dtsi, sa8775p-pmics.dtsi to 
+qcs9100-pmics.dtsi, and sa87750-ride.dts to qcs9100-ride.dts into a 
+single patch.
 
-This is relevant because UMOUNT_SYNC will raise MNT_SYNC_UMOUNT on all
-mounts it unmounts. And that ends up being checked in legitimize_mnt()
-to ensure that legitimize_mnt() doesn't call mntput() during path lookup
-and risking EBUSY for a umount(..., 0) + mount() sequence for the same
-filesystem.
-
-But for umount(.., MNT_DETACH) UMOUNT_SYNC isn't passed and so
-MNT_SYNC_UMOUNT isn't raised on the mount and so legitimize_mnt() may
-end up doing the last mntput() and cleaning up the filesystem.
-
-In other words, a umount(..., MNT_DETACH) caller needs to be prepared to
-deal with EBUSY for a umount(..., MNT_DETACH) + mount() sequence.
-
-So I think we can certainly try this as long as we make it via
-queue_rcu_work() to handle the other mntput_no_expire() grace period
-dependency we discussed upthread.
-
-Thanks for making take a closer look.
+-- 
+Thx and BRs,
+Tengfei Fan
 
