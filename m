@@ -1,205 +1,111 @@
-Return-Path: <linux-kernel+bounces-240083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA129268F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:20:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AEE09268F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B94F2285DF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:20:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238DC281C72
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868D418E776;
-	Wed,  3 Jul 2024 19:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D87218F2C6;
+	Wed,  3 Jul 2024 19:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="RPoRTLfc"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I86QyVMY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7PY0MxsU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A295E28379
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 19:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF5828379;
+	Wed,  3 Jul 2024 19:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720034394; cv=none; b=d/SWIZEhZBJdEL+MLjzRuiV9R96ozKBj8Y5mv2vfnJJapSrJ92MX+kD3QDdBfvDKgtqcXhC4PFcJi4ICmuAKL9Wm3ubmy1W8+lMMts73jSUl7gl+wtOBaTdRWiRtkpQJH2TQ2XMjUOyH8nhPu0V6ybYyxbNpwYNjkG5GyerNe6M=
+	t=1720034483; cv=none; b=KHZkzpjz7/tAK8lxN83JoblM3U8+TSEd17SQsKZDby53VEVsaEpTJNfoEbAy/f/ddWHPY9Fhsc7emOH2KBoHXYY5fw6GIZ95jShojTlqxZ1k/6JyTBstHGHOHFAt1GJMks8SZIbf6qCUXRtVl2ThLaN/L306f5k9tMmGJjvxcXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720034394; c=relaxed/simple;
-	bh=BJ6RC6onlGGX/XDQEkORvB1LJgrzC5L7WRNwulU/o9o=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CQSsulLnkXQBD23AEyKw+zyWY4/a8pB8aLcsS7kIJEQS0hWojCLSljhPCDDWyw9TTc0ilHnW9zpa1VgjW4OhhvY+O4MeuqqsrjzYtcNZd5OOoaWCJn/N6P517iGfP207OC/vBqadSwnyVU7RPgTnzyJSPqc8i/6VBiQLwFkqk28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=RPoRTLfc; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8DF293FE1B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 19:19:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1720034384;
-	bh=4AL8Q8t5GvaSDcDlTv2xvRzLk0BHc20eWebGxrnXzHw=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=RPoRTLfcfq+jMTLG2h1dXkBX7EkZr/zBB9s0Wx7ItaVrUSzDGfjsoPk9tIErmTrpf
-	 dBm5nyYhLD1rXf9gQ/ob0at+cgEacw/C0gI4/aQqrhLhHHY5zG5GygvCagZXOjs0Ic
-	 C2C5MrIMPbIFWsWciFn+aPiMpRfFjwcQJnd2v4agOFMdRi9YpOVHDCcaoZx/om/Nla
-	 druJi5bYPGfSKL3LzI4LBd8W2Zogw1z/OaaIihiqC/c7D4zcBtoJWeVY93GJZWf6W9
-	 DmkrCFAq1uxR+Qutq5SGHgAEv8Ijwsjmm+JXtH4Z4nQns+68MjKF7d/Yp17U8YdTyb
-	 yOUZaHpRBNJWA==
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-44668469cefso48469761cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 12:19:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720034383; x=1720639183;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4AL8Q8t5GvaSDcDlTv2xvRzLk0BHc20eWebGxrnXzHw=;
-        b=S1skAIZ6iFwdgxNgt6vk9iQiaM0AUUDPQ6pZ733W4HFmuc280QIQ99dF8Pbf26PMx6
-         7V+RIzzKqJvZ6bXpdP4ss62fscoQpUf2d7UpAUISU3S32JjC4Ui43laKyFIPls4BEheO
-         aitDj/APROS3lF7Bh6omrFziYMKYBcPIFDGqYCep9CbXYiSweFhYXR9R0N+oxypxtAFH
-         AJVztt5KNlxoD5dJs020ElXZR3jZNE5s9OVBHwx1VnzfFurtPyetnLgEmdRIZpz61nM6
-         8DNN4tm/PhD2wAdBd/TQ9jXtcUA4rurBKFWIqhA9nH6XAZgrwOWBnQw+gjN8DeUYiMTy
-         BEiA==
-X-Gm-Message-State: AOJu0Yx7EP6MnAWnmaFP1ZByKHnBZZ+I61P6TPty/kG8iSoEiDryNfie
-	FAD3yJDA9PjUqxoxLCtbBSDdy8odbcgrqHLRaXMEP/IoPbnzNkznZA+eYCSv4p7FZLXIxoNmwD1
-	AZH7A4yFc5GOf+8oQsXrYQGCSx8fYEeNi0L+d41Erncw4wv6X78Q75o25wmctlCePz9P0RFt5vF
-	c16O/Y4Pe1pdwN61mKVaPXkefYIU+kTM5x3oFtDsmAkbANSt1TTTDS
-X-Received: by 2002:a05:622a:4c6:b0:441:58c7:92fb with SMTP id d75a77b69052e-44662e48d9fmr131261181cf.47.1720034382939;
-        Wed, 03 Jul 2024 12:19:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGac9ZwuaiHgni0ADiKooLH8mMTml1Wkk3i3pPQYN7kaucLcuApVxgidfFEb5Qy7OVYNbEL6OKn20MHspRgJho=
-X-Received: by 2002:a05:622a:4c6:b0:441:58c7:92fb with SMTP id
- d75a77b69052e-44662e48d9fmr131260881cf.47.1720034382502; Wed, 03 Jul 2024
- 12:19:42 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 3 Jul 2024 12:19:41 -0700
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20240703135303.GA56155-robh@kernel.org>
-References: <20240103132852.298964-1-emil.renner.berthing@canonical.com>
- <20240103132852.298964-2-emil.renner.berthing@canonical.com>
- <20240115173657.GA999912-robh@kernel.org> <CAJM55Z9xF6_WCcg02xJJfu=UCOj=4m64BXvJTaV4vX09WLhc0w@mail.gmail.com>
- <20240703135303.GA56155-robh@kernel.org>
+	s=arc-20240116; t=1720034483; c=relaxed/simple;
+	bh=jbfswEjE098uwifNuTZ2TUhmUNT+QU+FOSpeU/E5/58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XITPQhtW0JrDq8LCLfJZ2oGo0oaq6pDRZYSwsWRLVKWxryC1MXEaCFlhKr0Nu4nttsUSsLzVrSRKROu6W7zpvMeXLwAzxSbRPcU9WxrD9/GqXgxDuOC4g0LbTGt5080Ho6BtS70x5whGGFN9B9FPtBYceBArwj8UowAkaow4wRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I86QyVMY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7PY0MxsU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 3 Jul 2024 21:21:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720034480;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jbfswEjE098uwifNuTZ2TUhmUNT+QU+FOSpeU/E5/58=;
+	b=I86QyVMYcQquWhKfSLZXZRMN2bvlXC98lDY+PRXMJbP20Wl2V3B42EYtOQSivUxI6Mu6pw
+	WCDC0jLEtPa/WJUTYQb0MTfnlD5h9VZOGGOlSiv648mRp2V7hmRZM8A8gxX3r8OdSXA+x3
+	Y/h9yzh2ZLBmWx87D/5W9EGcpiNFzZdT60tUS5K2qcXV0x7S5atrupuFvZw3djExbXlvWQ
+	YbGovgiLg/8mQSWHs2R8swm+aI1c7ZO7DidffIEw0ocjiBVUXh+KSPh3J4W/sTpIEhJ8aJ
+	Ht5tMcxLLmdTcKgbtlTAAzB/7PJ0o+SCRXL5vlO9u4iwRoJHlahpk427WcG11A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720034480;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jbfswEjE098uwifNuTZ2TUhmUNT+QU+FOSpeU/E5/58=;
+	b=7PY0MxsUjPmTkB+jYWiulmfRCv39xKX4xKDIFKERYgrAuUPNXyRHe/zzCxHOkNXA9zLmnZ
+	SXxEQe0dyCkBj8DA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: syzbot <syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com>,
+	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com,
+	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com,
+	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
+	song@kernel.org, syzkaller-bugs@googlegroups.com,
+	yonghong.song@linux.dev
+Subject: Re: [PATCH net-net] tun: Assign missing bpf_net_context.
+Message-ID: <20240703192118.RIqHj9kS@linutronix.de>
+References: <000000000000adb970061c354f06@google.com>
+ <20240702114026.1e1f72b7@kernel.org>
+ <20240703122758.i6lt_jii@linutronix.de>
+ <20240703120143.43cc1770@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Wed, 3 Jul 2024 12:19:41 -0700
-Message-ID: <CAJM55Z-ntP55uaTQob_=P-8ud43YNh7Gy0XgUfQ7-O8zPpuGxg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] dt-bindings: pinctrl: Add thead,th1520-pinctrl bindings
-To: Rob Herring <robh@kernel.org>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Drew Fustini <dfustini@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240703120143.43cc1770@kernel.org>
 
-Rob Herring wrote:
-> On Fri, May 17, 2024 at 07:48:17AM -0500, Emil Renner Berthing wrote:
-> > Rob Herring wrote:
-> > > On Wed, Jan 03, 2024 at 02:28:38PM +0100, Emil Renner Berthing wrote:
-> > > > Add bindings for the pin controllers on the T-Head TH1520 RISC-V SoC.
-> > > >
-> > > > Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > > > ---
-> > > >  .../pinctrl/thead,th1520-pinctrl.yaml         | 372 ++++++++++++++++++
-> > > >  1 file changed, 372 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..d3ad7a7cfdd1
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-> > > > @@ -0,0 +1,372 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/pinctrl/thead,th1520-pinctrl.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: T-Head TH1520 SoC pin controller
-> > > > +
-> > > > +maintainers:
-> > > > +  - Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > > > +
-> > > > +description: |
-> > > > +  Pinmux and pinconf controller in the T-Head TH1520 RISC-V SoC.
-> > > > +
-> > > > +  The TH1520 has 3 groups of pads each controlled from different memory ranges.
-> > > > +  Confusingly the memory ranges are named
-> > > > +    PADCTRL_AOSYS  -> PAD Group 1
-> > > > +    PADCTRL1_APSYS -> PAD Group 2
-> > > > +    PADCTRL0_APSYS -> PAD Group 3
-> > > > +
-> > > > +  Each pad can be muxed individually to up to 6 different functions. For most
-> > > > +  pads only a few of those 6 configurations are valid though, and a few pads in
-> > > > +  group 1 does not support muxing at all.
-> > > > +
-> > > > +  Pinconf is fairly regular except for a few pads in group 1 that either can't
-> > > > +  be configured or has some special functions. The rest have configurable drive
-> > > > +  strength, input enable, schmitt trigger, slew rate, pull-up and pull-down in
-> > > > +  addition to a special strong pull up.
-> > > > +
-> > > > +  Certain pads in group 1 can be muxed to AUDIO_PA0 - AUDIO_PA30 functions and
-> > > > +  are then meant to be used by the audio co-processor. Each such pad can then
-> > > > +  be further muxed to either audio GPIO or one of 4 functions such as UART, I2C
-> > > > +  and I2S. If the audio pad is muxed to one of the 4 functions then pinconf is
-> > > > +  also configured in different registers. All of this is done from a different
-> > > > +  AUDIO_IOCTRL memory range and is left to the audio co-processor for now.
-> > >
-> > > It is still not clear to me if each instance is a different programming
-> > > model or the same with just different connections. The latter should
-> > > be the same compatible string. That needs to be answered in *this*
-> > > patch, not a reply.
-> >
-> > Hi Rob,
-> >
-> > Sorry for the late response. I honestly don't know exactly what you mean by
-> > differenty programming models and what the difference is, so I'll need a bit of
-> > help with what you want me to write here.
->
-> Is the register interface of each instance the same? Looks like it is
-> from the driver. So normally that's 3 instances of the same compatible.
->
-> > Any driver for the TH1520 SoC (not just Linux) would need some way to discern
-> > between the 3 pin controllers so they know how many pins to control and what
-> > pinmux settings are valid. Basically they'd need the data in the three
-> > th1520_group{1,2,3}_pins arrays in the driver and a way to know which of them
-> > to use.
-> >
-> > https://lore.kernel.org/linux-riscv/20240103132852.298964-3-emil.renner.berthing@canonical.com/
->
-> Why do you need to know how many pins? The DT says configure a pin and
-> you just configure it. It's not the kernel's job to validate that the DT
-> is correct.
->
-> Aren't the pin names globally unique? So you just look up the pin name
-> across all the arrays. Or you can just look up one pin from each
-> instance to find which th1520_groupN_pins array goes with the instance.
-> Or just have 1 array.
+On 2024-07-03 12:01:43 [-0700], Jakub Kicinski wrote:
+> On Wed, 3 Jul 2024 14:27:58 +0200 Sebastian Andrzej Siewior wrote:
+> > During the introduction of struct bpf_net_context handling for
+> > XDP-redirect, the tun driver has been missed.
+> >=20
+> > Set the bpf_net_context before invoking BPF XDP program within the TUN
+> > driver.
+>=20
+> Sorry if I'm missing the point but I think this is insufficient.
+> You've covered the NAPI-like entry point to the Rx stack in your
+> initial work, but there's also netif_receive_skb() which drivers=20
+> may call outside of NAPI, simply disabling BH before the call.
 
-Just to be clear, do you mean to add just one node for all 3 instances like
-this?
+Ah okay. I've been looking at a few callers and they ended up in NAPI
+but if you say and I also noticed the one in TUN=E2=80=A6
 
-padctrl: pinctrl@ffe7f3c000 {
-    compatible = "thead,th1520-pinctrl";
-    reg = <0xff 0xe7f3c000 0x0 0x1000>,
-          <0xff 0xec007000 0x0 0x1000>,
-          <0xff 0xfff4a000 0x0 0x2000>;
-    reg-names = "group2", "group3", "group1";
-    clocks = <&apb_clk>, <&apb_clk>, <&aonsys_clk>;
-    clock-names = "group2", "group3", "group1";
-};
+> The only concern in that case is that we end up in do_xdp_generic(),
+> and there's no bpf_net_set_ctx() anywhere on the way. So my intuition
+> would be to add the bpf_net_set_ctx() inside the if(xdp_prog) in
+> do_xdp_generic(). "XDP generic" has less stringent (more TC-like)=20
+> perf requirements, so setting context once per packet should be fine.
+> And it will also cover drivers like TUN which use both
+> netif_receive_skb() and call do_xdp_generic(), in a single place.
 
-That will work since we can then register all pins at the same time. But I
-can't see how it will work when keeping the 3 different nodes since each
-instance needs to register the pins they control at probe time. So there will
-need to be some way to tell the 3 different nodes apart.
+Yeah, sounds good. I would remove the wrapper in tun_get_user() and then
+add one to do_xdp_generic().
 
-/Emil
+Sebastian
 
