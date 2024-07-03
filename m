@@ -1,240 +1,138 @@
-Return-Path: <linux-kernel+bounces-239135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5FA9256F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:36:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACF79256F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1007F2881A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CDA72815E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3699113D630;
-	Wed,  3 Jul 2024 09:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA2D13D612;
+	Wed,  3 Jul 2024 09:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TJIU7Oxp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NM8Gf7Qm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TJIU7Oxp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NM8Gf7Qm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="gvDd2HZ/"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8167D42A80;
-	Wed,  3 Jul 2024 09:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C026D42A80
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 09:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719999393; cv=none; b=YZGf6yarKwysSV4T4ReKWtC6J0eU7wQ6mgRyLqfq1jtg6l1sKcuodCK486F8Q9fLf4azuCoJV1a/uaEvuqPMBuWN5WH912v//b/v2q4dbAHGppTzn+5nlpxwyqALpEIiJbmNMVGaXojDBoDJtgoHbQEJ+uYBQNvwyC1fF0R+ohQ=
+	t=1719999490; cv=none; b=LV+smWFX04ROP3pkTYNuD5fycUYJNGqb0Vo4KlAO++X6/zCr7iVByR0BCht+d7Q9j+nRh7fJKo2v7Ni8lQQ36z/UwfiqwFIwrmKmmLlfH+pcW46+iRyJcXzZVJg/Aotpv8sZNBgWtqz6qeeX68/ENpumX4okTC/rr7yujb4/Y3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719999393; c=relaxed/simple;
-	bh=+Jz+X/tSnZUB2y+eECrqNMH2FT3yrdCKHvGBxxA5DxQ=;
+	s=arc-20240116; t=1719999490; c=relaxed/simple;
+	bh=WqW5N5vhce1BJCwQssaorgX8o1WWx0esUvxlticDErY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=azFg65C0pGSNzxi8diTNPEfZzhgj8x8ZYoU0OhOxOtF9nlFiWXpwCESRb2K5K46BjHXp3Smq4HrNNaitNgQOI7LppAxF+sDWhP5XaESx+Bk0rF8btG75dA1QlRA22UiiB2oARZZrtlmxNc27dydAsU8V8wrTAu/sh3SlZxer+yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TJIU7Oxp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NM8Gf7Qm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TJIU7Oxp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NM8Gf7Qm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 71EC51F747;
-	Wed,  3 Jul 2024 09:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719999389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ODDMJ5syjKC3m2Ep3RdDH/u/12tFlatinKlaGEJi1YY=;
-	b=TJIU7OxpI5SYgftyTpfk0vSgGDmeqcx3AVDIjO86t7jXERT6a//U32FfO30r9o4OPaxoA0
-	QtbaHp/vb8i+6a5Pfz3ibBKylN6FL8MaEFHrFE4A5kXzf6FuUFxPnSTsULlEpKk+F1MOho
-	xBCzm0vKP0YZVso6wEysxpe39/vaJaI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719999389;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ODDMJ5syjKC3m2Ep3RdDH/u/12tFlatinKlaGEJi1YY=;
-	b=NM8Gf7Qmz4NwASdeQDOSeiYtFNpR8ThDSo2qmQY1a4GuKfwGa1Sh0uZPolKmUS6/21RalM
-	uHaOGcH49yAldECA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TJIU7Oxp;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=NM8Gf7Qm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719999389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ODDMJ5syjKC3m2Ep3RdDH/u/12tFlatinKlaGEJi1YY=;
-	b=TJIU7OxpI5SYgftyTpfk0vSgGDmeqcx3AVDIjO86t7jXERT6a//U32FfO30r9o4OPaxoA0
-	QtbaHp/vb8i+6a5Pfz3ibBKylN6FL8MaEFHrFE4A5kXzf6FuUFxPnSTsULlEpKk+F1MOho
-	xBCzm0vKP0YZVso6wEysxpe39/vaJaI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719999389;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ODDMJ5syjKC3m2Ep3RdDH/u/12tFlatinKlaGEJi1YY=;
-	b=NM8Gf7Qmz4NwASdeQDOSeiYtFNpR8ThDSo2qmQY1a4GuKfwGa1Sh0uZPolKmUS6/21RalM
-	uHaOGcH49yAldECA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 626D913974;
-	Wed,  3 Jul 2024 09:36:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KfICGJ0bhWaBWAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 03 Jul 2024 09:36:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 17E43A08A9; Wed,  3 Jul 2024 11:36:29 +0200 (CEST)
-Date: Wed, 3 Jul 2024 11:36:29 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	Baokun Li <libaokun1@huawei.com>,
-	syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com,
-	stable@kernel.org
-Subject: Re: [PATCH 2/2] ext4: make sure the first directory block is not a
- hole
-Message-ID: <20240703093629.bm32twullwiqmkmp@quack3>
-References: <20240702132349.2600605-1-libaokun@huaweicloud.com>
- <20240702132349.2600605-3-libaokun@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jd3hdFVHBojgbcvyKzdAbkYRU3cVtd5erwrYIgBwAWS5A5BJn2oVhpBT5uwpMghS2POh1xMVTVIOlDUBxhBIRT+qGQfMemGcPbe9+xvcv+z678KSgHLhNE7aYduDwHYOjYtHQLAiWjjGQF8I6Wu1PQwIzD63ibRtnBwcR7Cv2hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=gvDd2HZ/; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=WqW5
+	N5vhce1BJCwQssaorgX8o1WWx0esUvxlticDErY=; b=gvDd2HZ/2SeBygE6JOH1
+	nRQc3sMwzm+XfHiMArZEIRNmCV9U2icBeHkTYKcMs1P2va+IB1zKnLojExgV4jUm
+	e6J1iUSOYo5Z9hpg59o3M5FOd/xOUZlOSXC8fHYkSfvrVB++HZkIxJSSKVA8loch
+	OXXDyfVmUgc3fYQyxKzKf4Cr9tkkp2Mh0ucNJcMEkVQr3RmArevrM1Iadv6emjbs
+	IK3gDBoWWKm6k+i+6U8q4/nQF08MQOEoVQzjQr70Lmzdj5ppi60wPZ+RnzunAT//
+	YJfhFVe3nYg4dA0yIjvNwkaIYi+oVBKZCr5dWX1In11S4jRRdvuEcbs7iQJh5bz8
+	GQ==
+Received: (qmail 2757245 invoked from network); 3 Jul 2024 11:38:06 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Jul 2024 11:38:06 +0200
+X-UD-Smtp-Session: l3s3148p1@NstlllQcishehhrb
+Date: Wed, 3 Jul 2024 11:38:06 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: mmc: renesas,sdhi: Document
+ RZ/V2H(P) support
+Message-ID: <ZoUb_olfaVapoYBi@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240626132341.342963-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240626132341.342963-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iPwmJwlsopKq/aKH"
+Content-Disposition: inline
+In-Reply-To: <20240626132341.342963-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+
+--iPwmJwlsopKq/aKH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240702132349.2600605-3-libaokun@huaweicloud.com>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[ae688d469e36fb5138d0];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com,syzkaller.appspotmail.com,kernel.org];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,syzkaller.appspot.com:url,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,huaweicloud.com:email,appspotmail.com:email,suse.com:email]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 71EC51F747
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
-X-Spam-Level: 
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 02-07-24 21:23:49, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> The syzbot constructs a directory that has no dirblock but is non-inline,
-> i.e. the first directory block is a hole. And no errors are reported when
-> creating files in this directory in the following flow.
-> 
->     ext4_mknod
->      ...
->       ext4_add_entry
->         // Read block 0
->         ext4_read_dirblock(dir, block, DIRENT)
->           bh = ext4_bread(NULL, inode, block, 0)
->           if (!bh && (type == INDEX || type == DIRENT_HTREE))
->           // The first directory block is a hole
->           // But type == DIRENT, so no error is reported.
-> 
-> After that, we get a directory block without '.' and '..' but with a valid
-> dentry. This may cause some code that relies on dot or dotdot (such as
-> make_indexed_dir()) to crash.
-> 
-> Therefore when ext4_read_dirblock() finds that the first directory block
-> is a hole report that the filesystem is corrupted and return an error to
-> avoid loading corrupted data from disk causing something bad.
-> 
-> Reported-by: syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=ae688d469e36fb5138d0
-> Fixes: 4e19d6b65fb4 ("ext4: allow directory holes")
-> Cc: stable@kernel.org
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+On Wed, Jun 26, 2024 at 02:23:39PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to that
+> of the R-Car Gen3, but it has some differences:
+> - HS400 is not supported.
+> - It supports the SD_IOVS bit to control the IO voltage level.
+> - It supports fixed address mode.
+>=20
+> To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a09g057'
+> compatible string is added.
+>=20
+> A 'vqmmc-regulator' object is introduced to handle the power enable (PWEN)
+> and voltage level switching for the SD/MMC.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Looks good to me. Feel free to add:
+Can we have an example here? I can read DTS snippets better than YAML
+code :/ Also wondering about the "regulator-compatible" property but
+maybe the example makes the problem clear?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
 
-								Honza
+--iPwmJwlsopKq/aKH
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> ---
->  fs/ext4/namei.c | 17 ++++++-----------
->  1 file changed, 6 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-> index 35881e3dd880..6a95713f9193 100644
-> --- a/fs/ext4/namei.c
-> +++ b/fs/ext4/namei.c
-> @@ -151,10 +151,11 @@ static struct buffer_head *__ext4_read_dirblock(struct inode *inode,
->  
->  		return bh;
->  	}
-> -	if (!bh && (type == INDEX || type == DIRENT_HTREE)) {
-> +	/* The first directory block must not be a hole. */
-> +	if (!bh && (type == INDEX || type == DIRENT_HTREE || block == 0)) {
->  		ext4_error_inode(inode, func, line, block,
-> -				 "Directory hole found for htree %s block",
-> -				 (type == INDEX) ? "index" : "leaf");
-> +				 "Directory hole found for htree %s block %u",
-> +				 (type == INDEX) ? "index" : "leaf", block);
->  		return ERR_PTR(-EFSCORRUPTED);
->  	}
->  	if (!bh)
-> @@ -3084,10 +3085,7 @@ bool ext4_empty_dir(struct inode *inode)
->  		EXT4_ERROR_INODE(inode, "invalid size");
->  		return false;
->  	}
-> -	/* The first directory block must not be a hole,
-> -	 * so treat it as DIRENT_HTREE
-> -	 */
-> -	bh = ext4_read_dirblock(inode, 0, DIRENT_HTREE);
-> +	bh = ext4_read_dirblock(inode, 0, EITHER);
->  	if (IS_ERR(bh))
->  		return false;
->  
-> @@ -3529,10 +3527,7 @@ static struct buffer_head *ext4_get_first_dir_block(handle_t *handle,
->  		struct ext4_dir_entry_2 *de;
->  		unsigned int offset;
->  
-> -		/* The first directory block must not be a hole, so
-> -		 * treat it as DIRENT_HTREE
-> -		 */
-> -		bh = ext4_read_dirblock(inode, 0, DIRENT_HTREE);
-> +		bh = ext4_read_dirblock(inode, 0, EITHER);
->  		if (IS_ERR(bh)) {
->  			*retval = PTR_ERR(bh);
->  			return NULL;
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaFG/4ACgkQFA3kzBSg
+KbYbLA//c2KrKF77eSjgTiTSPmk4F2q+Y96EIf24uY4NzA1O6sHvuXDAIiHS9IkN
+V6kgK8UpUG4nhaW1dv5CTOV0jQZlqI1nrKgS5nwWppDv2JqrPtt3+nfJ6gXLnIts
+ote7Bldb0ahFEwZnnQ78Z1WV6cjCBi0ixGM6IXPcNldzU/gtRC/GbisQgZRXiYUV
+G0li7NnOmXkIkBujEQxH5yv2ejDgs9JokjpTqa0XGold9ICZ1ZxJ8/nhfM4Tqq0h
+zcjaZVECGVI+tYp53UgzRWtqpYW24J4AtLe2Gm3X3sppqq5Eeu9c9wxGQdkgLxCl
+n/tve9stOv0VxKughkb9dsglJ87EFi1IKYmvw4FG3v115AM3G8MnZVWmKGs9pLpN
+mdp1Ob4PcnUsnfa6zyVKQFBIxnhksooEv8pMn4VI4xMp/e7Yk0ij+VdEiuIbD8xh
+6dufK++JzEHs1auGh3JTSduB0HgHT3WaxK80uvBGG/zwDKOooMAKOEloqqIg+Lhq
+EBXoKh5laiZCiVjB1DJDVVAUszOzCGQgrZrLZ3eFu64uXQiAnxjpFjwW+J/WpWdL
+iB/lPSMwsok+v3cBK3s4cFAnMQIHqsgADskIHxUZixpnkyspnDCkDb/kQW17od/x
+/TzgbIkhG0B3FTDyfP37BloYqTidaExNJBXVpk3sn04WqI7x9Ak=
+=yYhE
+-----END PGP SIGNATURE-----
+
+--iPwmJwlsopKq/aKH--
 
