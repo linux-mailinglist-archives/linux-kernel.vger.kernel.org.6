@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-239635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A1792635F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:27:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57830926366
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3E01F216B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:27:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD54828F2BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C7E17B51B;
-	Wed,  3 Jul 2024 14:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2529217C7A0;
+	Wed,  3 Jul 2024 14:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPb2tkXF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qauGSJ+f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2CA1DFD1;
-	Wed,  3 Jul 2024 14:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41BC17BB27;
+	Wed,  3 Jul 2024 14:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720016828; cv=none; b=Fb1wjClvJ0GtG0kR3ispL1WLQ/J32PAfILG0+qsr4L8+jaTl+r1vTC0j/8PDL0QAKKfbBtbGb6aj4teA8OjiIlCiyy8qLTPnHbl/9rkajsh4c7r2xvoqtffSotf+ZlXwFsQwANOv1TNyFTv50a2qRTkae+gxZhQm4e3Io+YwdnE=
+	t=1720016830; cv=none; b=hxHFz5c0RV0AN1PyrUrvQL/Ivg/74d8pTYlCKkUaSysV1fnJMFlKrTw6oyRewOJiJfl5ErsayvXpHJULxT65InD2TlNfJUstZvMokaTF4akyUwZPGvUp0M/SGhmmOPbbx8ZGygjqj6B3mdZ2x8WI2cSy1cJY+hBh8As3CGgHGw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720016828; c=relaxed/simple;
-	bh=TJURJXGngOL9PD0ltgboq2lLewTI1qesdsitguvVPjY=;
+	s=arc-20240116; t=1720016830; c=relaxed/simple;
+	bh=qpbgv23Hv6YaTHHKOMnAEx6ivMHeJJRztP7r02797XE=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=e1NUwBFaGvtSXRB4m5e8ZT7lRlmp1lXzWsxYw525ilJFlYIwCNi196LrhHuU0dDcjw1LSZVioyuCu+emtj1MTAMnBtCIGu5KfxL3OBZm8MtnoNEBUQz08G4AQECUQTiYQmST5g9wb7s4Fd5k3qoTBvC8Wcq5z1d5KkHJGLn586w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPb2tkXF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 805BDC2BD10;
-	Wed,  3 Jul 2024 14:27:07 +0000 (UTC)
+	 Message-Id:Subject; b=OWWjFaQl5AwQkXFhp/oyhMz4x/cMgE1e8qYHS1Cof6WuzySK+JtI3EvEmtfgzPkO1VuhOdhAZhzgeBEZ6KySMGvcQDWXK5OuYpUtkqpTFtSW+dKsfbjOBRZ9LXw20OUlZkOb+TXWUSPcFKMB6IFS5vH7qFM7mwPqURTchwJlzvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qauGSJ+f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18555C2BD10;
+	Wed,  3 Jul 2024 14:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720016827;
-	bh=TJURJXGngOL9PD0ltgboq2lLewTI1qesdsitguvVPjY=;
+	s=k20201202; t=1720016830;
+	bh=qpbgv23Hv6YaTHHKOMnAEx6ivMHeJJRztP7r02797XE=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=gPb2tkXFosgJNzWvm8+eCQE0v+kbdPIHsPkNWasGxDAW7q6BuSvOUoGcGlln/JyNr
-	 JvEcJpL0ROtGDZk0Q4UBFyoK3dA/83mY+0VHYnjJ3NCbcWemYtotWM6YKhnI96yg/b
-	 Zhk6Z9/7UEB5IJerMiPvUjqSeA/c0xsNZEkouMrrwr71x6SzxXqbvaFOAeE3WHTbcB
-	 nvFHLSbJlP+rWBDm9vfeNA6z3t7Ijc52Xcce4LyU0hZOpma+71oJk5ps2iC56hiKNo
-	 qxaUHpEgrY6R3wTfRj03VOXIoKbHjf3w4fUR2sXmineiZGSxVaJjpMmJw+iD/1Uy7K
-	 ZuAn/MXF7lQ3g==
-Date: Wed, 03 Jul 2024 08:27:06 -0600
+	b=qauGSJ+fHzsCMYTDzUc7AdO+QA9jijSznfoGILlrtdlU/Nk7tKbu1pSjwfYjaysOp
+	 ZQzVJEKQ7i87tKpoZnv2S3H2xE1dr29opGXibUmtgYdy4TUAcMCrbmz197kp1urpLD
+	 Oe1Rj75k9TUOaUTBFxr4nzuAjn1TMmo90MPYQOqPpw/WYOkBB0IKTHZ108tBvfmPwL
+	 OYyBfH1Vnuh7AxT0co8GKeAog69NPBgQ+cibqx+ZW+KUlYnJCfHBdd54cdf/gYcz1Y
+	 f56dtvzqUJZKCpXCtMV0B3Q4ltjDySLBYoMZWvAyf65mhQUGTbeZuT3BY+9HiNpzBO
+	 UpQffA39bUFyg==
+Date: Wed, 03 Jul 2024 08:27:09 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,61 +50,175 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frieder Schrempf <frieder@fris.de>
-Cc: imx@lists.linux.dev, Hiago De Franco <hiago.franco@toradex.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Tim Harvey <tharvey@gateworks.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Alexander Stein <alexander.stein@ew.tq-group.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Francesco Dolcini <francesco.dolcini@toradex.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, 
- Marco Felsch <m.felsch@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, 
- Frieder Schrempf <frieder.schrempf@kontron.de>, 
- Markus Niebel <Markus.Niebel@ew.tq-group.com>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
- Gregor Herburger <gregor.herburger@ew.tq-group.com>, 
- Li Yang <leoyang.li@nxp.com>, Bjorn Helgaas <bhelgaas@google.com>, 
- Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org, 
- Joao Paulo Goncalves <joao.goncalves@toradex.com>
-In-Reply-To: <20240702154413.968044-1-frieder@fris.de>
-References: <20240702154413.968044-1-frieder@fris.de>
-Message-Id: <172001675704.274653.3614631597140557643.robh@kernel.org>
-Subject: Re: [PATCH 0/3] Add support for Kontron OSM-S i.MX8MP SoM and
- carrier boards
+To: Varshini Rajendran <varshini.rajendran@microchip.com>
+Cc: linux-clk@vger.kernel.org, linux@armlinux.org.uk, 
+ alexandre.belloni@bootlin.com, andrei.simion@microchip.com, 
+ gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, sre@kernel.org, 
+ p.zabel@pengutronix.de, mturquette@baylibre.com, mpe@ellerman.id.au, 
+ conor+dt@kernel.org, linux-pm@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, claudiu.beznea@tuxon.dev, 
+ krzk+dt@kernel.org, dharma.b@microchip.com, akpm@linux-foundation.org, 
+ richard.genoud@bootlin.com, linux-spi@vger.kernel.org, 
+ geert+renesas@glider.be, radu_nicolae.pirea@upb.ro, arnd@arndb.de, 
+ devicetree@vger.kernel.org, sboyd@kernel.org, nicolas.ferre@microchip.com, 
+ linux-serial@vger.kernel.org, rdunlap@infradead.org, 
+ mihai.sain@microchip.com, jirislaby@kernel.org, tglx@linutronix.de, 
+ durai.manickamkr@microchip.com
+In-Reply-To: <20240703102011.193343-1-varshini.rajendran@microchip.com>
+References: <20240703102011.193343-1-varshini.rajendran@microchip.com>
+Message-Id: <172001675806.274724.11565183611251810294.robh@kernel.org>
+Subject: Re: [PATCH v5 00/27] Add support for sam9x7 SoC family
 
 
-On Tue, 02 Jul 2024 17:43:18 +0200, Frieder Schrempf wrote:
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On Wed, 03 Jul 2024 15:50:11 +0530, Varshini Rajendran wrote:
+> This patch series adds support for the new SoC family - sam9x7.
+>  - The device tree, configs and drivers are added
+>  - Clock driver for sam9x7 is added
+>  - Support for basic peripherals is added
+>  - Target board SAM9X75 Curiosity is added
 > 
-> Patch 1: board DT bindings
-> Patch 2: OSM-S i.MX8MP SoM and BL carrier board devicetrees
-> Patch 3: i.MX8MP SMARC module and eval carrier board devicetrees
+>  Changes in v5:
+>  --------------
 > 
-> Frieder Schrempf (3):
->   dt-bindings: arm: fsl: Add Kontron i.MX8MP OSM-S based boards
->   arm64: dts: Add support for Kontron OSM-S i.MX8MP SoM and BL carrier
->     board
->   arm64: dts: Add support for Kontron i.MX8MP SMARC module and eval
->     carrier
+>  - Addressed all the review comments in the patches
+>  - Picked up all Acked-by and Reviewed-by tags
+>  - Dropped applied patches from the series
+>  - Addressed the ABI breakage reported in the IRQ patch
+>  - All the specific changes are captured in the corresponding patches
 > 
->  .../devicetree/bindings/arm/fsl.yaml          |  13 +
->  arch/arm64/boot/dts/freescale/Makefile        |   6 +
->  .../dts/freescale/imx8mp-kontron-bl-osm-s.dts | 307 ++++++
->  .../boot/dts/freescale/imx8mp-kontron-dl.dtso | 112 +++
->  .../dts/freescale/imx8mp-kontron-osm-s.dtsi   | 908 ++++++++++++++++++
->  .../imx8mp-kontron-smarc-eval-carrier.dts     | 224 +++++
->  .../dts/freescale/imx8mp-kontron-smarc.dtsi   | 271 ++++++
->  7 files changed, 1841 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-dl.dtso
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-osm-s.dtsi
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dts
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc.dtsi
+>  Changes in v4:
+>  --------------
+> 
+>  - Addressed all the review comments in the patches
+>  - Picked up all Acked-by and Reviewed-by tags
+>  - Dropped applied patches from the series
+>  - Added pwm node and related dt binding documentation
+>  - Added support for exporting some clocks to DT
+>  - Dropped USB related patches and changes. See NOTE.
+>  - All the specific changes are captured in the corresponding patches
+> 
+>  NOTE: Owing to the discussion here
+>  https://lore.kernel.org/linux-devicetree/CAL_JsqJ9PrX6fj-EbffeJce09MXs=B7t+KS_kOinxaRx38=WxA@mail.gmail.com/
+>  the USB related changes are dropped from this series in order to enable
+>  us to work on the mentioned issues before adding new compatibles as
+>  said. The issues/warnings will be addressed in subsequent patches.
+>  After which the USB related support for sam9x7 SoCs will be added. Hope
+>  this works out fine.
+> 
+>  Changes in v3:
+>  --------------
+> 
+>  - Fixed the DT documentation errors pointed out in v2.
+>  - Dropped Acked-by tag in tcb DT doc patch as it had to be adapted
+>    according to sam9x7 correctly.
+>  - Picked by the previously missed tags.
+>  - Dropped this patch "dt-bindings: usb: generic-ehci: Document clock-names
+>    property" as the warning was not found while validating DT-schema for
+>    at91-sam9x75_curiosity.dtb.
+>  - Dropped redundant words in the commit message.
+>  - Fixed the CHECK_DTBS warnings validated against
+>    at91-sam9x75_curiosity.dtb.
+>  - Renamed dt nodes according to naming convention.
+>  - Dropped unwanted status property in dts.
+>  - Removed nodes that are not in use from the board dts.
+>  - Removed spi DT doc patch from the series as it was already applied
+>    and a fix patch was applied subsequently. Added a patch to remove the
+>    compatible to adapt sam9x7.
+>  - Added sam9x7 compatibles in usb dt documentation.
+> 
+> 
+>  Changes in v2:
+>  --------------
+> 
+>  - Added sam9x7 specific compatibles in DT with fallbacks
+>  - Documented all the newly added DT compatible strings
+>  - Added device tree for the target board sam9x75 curiosity and
+>    documented the same in the DT bindings documentation
+>  - Removed the dt nodes that are not supported at the moment
+>  - Removed the configs added by previous version that are not supported
+>    at the moment
+>  - Fixed all the corrections in the commit message
+>  - Changed all the instances of copyright year to 2023
+>  - Added sam9x7 flag in PIT64B configuration
+>  - Moved macro definitions to header file
+>  - Added another divider in mck characteristics in the pmc driver
+>  - Fixed the memory leak in the pmc driver
+>  - Dropped patches that are no longer needed
+>  - Picked up Acked-by and Reviewed-by tags
+> 
+> 
+> Varshini Rajendran (27):
+>   dt-bindings: atmel-sysreg: add sam9x7
+>   dt-bindings: atmel-ssc: add microchip,sam9x7-ssc
+>   dt-bindings: serial: atmel,at91-usart: add compatible for sam9x7.
+>   ARM: at91: pm: add support for sam9x7 SoC family
+>   ARM: at91: pm: add sam9x7 SoC init config
+>   ARM: at91: add support in SoC driver for new sam9x7
+>   dt-bindings: clocks: atmel,at91sam9x5-sckc
+>   dt-bindings: clocks: atmel,at91rm9200-pmc
+>   clk: at91: clk-sam9x60-pll: re-factor to support individual core freq
+>     outputs
+>   clk: at91: sam9x7: add support for HW PLL freq dividers
+>   clk: at91: sama7g5: move mux table macros to header file
+>   dt-bindings: clock: at91: Allow PLLs to be exported and referenced in
+>     DT
+>   clk: at91: sam9x7: add sam9x7 pmc driver
+>   dt-bindings: interrupt-controller: Add support for sam9x7 aic
+>   dt-bindings: interrupt-controller: Document the property
+>     microchip,nr-irqs
+>   irqchip/atmel-aic5: Add support to get nr_irqs from DT for sam9x60 &
+>     sam9x7
+>   ARM: dts: at91: sam9x60: Add nirqs property in the dt node
+>   power: reset: at91-poweroff: lookup for proper pmc dt node for sam9x7
+>   power: reset: at91-reset: add reset support for sam9x7 SoC
+>   power: reset: at91-reset: add sdhwc support for sam9x7 SoC
+>   dt-bindings: reset: atmel,at91sam9260-reset: add sam9x7
+>   dt-bindings: power: reset: atmel,sama5d2-shdwc: add sam9x7
+>   ARM: at91: Kconfig: add config flag for SAM9X7 SoC
+>   ARM: configs: at91: enable config flags for sam9x7 SoC family
+>   ARM: dts: at91: sam9x7: add device tree for SoC
+>   dt-bindings: arm: add sam9x75 curiosity board
+>   ARM: dts: microchip: sam9x75_curiosity: add sam9x75 curiosity board
+> 
+>  .../devicetree/bindings/arm/atmel-at91.yaml   |    6 +
+>  .../devicetree/bindings/arm/atmel-sysregs.txt |    7 +-
+>  .../bindings/clock/atmel,at91rm9200-pmc.yaml  |    2 +
+>  .../bindings/clock/atmel,at91sam9x5-sckc.yaml |    4 +-
+>  .../interrupt-controller/atmel,aic.yaml       |   28 +-
+>  .../devicetree/bindings/misc/atmel-ssc.txt    |    1 +
+>  .../power/reset/atmel,sama5d2-shdwc.yaml      |    3 +
+>  .../reset/atmel,at91sam9260-reset.yaml        |    4 +
+>  .../bindings/serial/atmel,at91-usart.yaml     |    9 +-
+>  arch/arm/boot/dts/microchip/Makefile          |    3 +
+>  .../dts/microchip/at91-sam9x75_curiosity.dts  |  312 +++++
+>  arch/arm/boot/dts/microchip/sam9x60.dtsi      |    1 +
+>  arch/arm/boot/dts/microchip/sam9x7.dtsi       | 1226 +++++++++++++++++
+>  arch/arm/configs/at91_dt_defconfig            |    1 +
+>  arch/arm/mach-at91/Kconfig                    |   22 +-
+>  arch/arm/mach-at91/Makefile                   |    1 +
+>  arch/arm/mach-at91/generic.h                  |    2 +
+>  arch/arm/mach-at91/pm.c                       |   29 +
+>  arch/arm/mach-at91/sam9x7.c                   |   33 +
+>  drivers/clk/at91/Makefile                     |    1 +
+>  drivers/clk/at91/clk-sam9x60-pll.c            |   42 +-
+>  drivers/clk/at91/pmc.h                        |   18 +
+>  drivers/clk/at91/sam9x60.c                    |    7 +
+>  drivers/clk/at91/sam9x7.c                     |  946 +++++++++++++
+>  drivers/clk/at91/sama7g5.c                    |   42 +-
+>  drivers/irqchip/irq-atmel-aic5.c              |    8 +-
+>  drivers/power/reset/Kconfig                   |    4 +-
+>  drivers/power/reset/at91-sama5d2_shdwc.c      |    1 +
+>  drivers/soc/atmel/soc.c                       |   23 +
+>  drivers/soc/atmel/soc.h                       |    9 +
+>  include/dt-bindings/clock/at91.h              |    4 +
+>  31 files changed, 2750 insertions(+), 49 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
+>  create mode 100644 arch/arm/boot/dts/microchip/sam9x7.dtsi
+>  create mode 100644 arch/arm/mach-at91/sam9x7.c
+>  create mode 100644 drivers/clk/at91/sam9x7.c
 > 
 > --
-> 2.45.2
+> 2.25.1
 > 
 > 
 > 
@@ -124,172 +238,55 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y freescale/imx8mp-kontron-bl-osm-s.dtb freescale/imx8mp-kontron-smarc-eval-carrier.dtb' for 20240702154413.968044-1-frieder@fris.de:
+New warnings running 'make CHECK_DTBS=y microchip/at91-sam9x75_curiosity.dtb' for 20240703102011.193343-1-varshini.rajendran@microchip.com:
 
-arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: eeprom@50: compatible: 'oneOf' conditional failed, one must be fixed:
-arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: eeprom@50: compatible: 'oneOf' conditional failed, one must be fixed:
-		'onnn,n24s64b' does not match 'c00$'
-		'onnn,n24s64b' does not match 'c01$'
-		'onnn,n24s64b' does not match 'cs01$'
-		'onnn,n24s64b' does not match 'c02$'
-		'onnn,n24s64b' does not match 'cs02$'
-		'onnn,n24s64b' does not match 'mac402$'
-		'onnn,n24s64b' does not match 'mac602$'
-		'onnn,n24s64b' does not match 'c04$'
-		'onnn,n24s64b' does not match 'cs04$'
-		'onnn,n24s64b' does not match 'c08$'
-		'onnn,n24s64b' does not match 'cs08$'
-		'onnn,n24s64b' does not match 'c16$'
-		'onnn,n24s64b' does not match 'cs16$'
-		'onnn,n24s64b' does not match 'c32$'
-		'onnn,n24s64b' does not match 'cs32$'
-		'onnn,n24s64b' does not match 'c64$'
-		'onnn,n24s64b' does not match 'cs64$'
-		'onnn,n24s64b' does not match 'c128$'
-		'onnn,n24s64b' does not match 'cs128$'
-		'onnn,n24s64b' does not match 'c256$'
-		'onnn,n24s64b' does not match 'cs256$'
-		'onnn,n24s64b' does not match 'c512$'
-		'onnn,n24s64b' does not match 'cs512$'
-		'onnn,n24s64b' does not match 'c1024$'
-		'onnn,n24s64b' does not match 'cs1024$'
-		'onnn,n24s64b' does not match 'c1025$'
-		'onnn,n24s64b' does not match 'cs1025$'
-		'onnn,n24s64b' does not match 'c2048$'
-		'onnn,n24s64b' does not match 'cs2048$'
-		'onnn,n24s64b' does not match 'spd$'
-		'atmel,24c64' does not match 'c00$'
-		'atmel,24c64' does not match 'c01$'
-		'atmel,24c64' does not match 'cs01$'
-		'atmel,24c64' does not match 'c02$'
-		'atmel,24c64' does not match 'cs02$'
-		'atmel,24c64' does not match 'mac402$'
-		'atmel,24c64' does not match 'mac602$'
-		'atmel,24c64' does not match 'c04$'
-		'atmel,24c64' does not match 'cs04$'
-		'atmel,24c64' does not match 'c08$'
-		'atmel,24c64' does not match 'cs08$'
-		'atmel,24c64' does not match 'c16$'
-		'atmel,24c64' does not match 'cs16$'
-		'atmel,24c64' does not match 'c32$'
-		'atmel,24c64' does not match 'cs32$'
-		'atmel,24c64' does not match 'cs64$'
-		'atmel,24c64' does not match 'c128$'
-		'atmel,24c64' does not match 'cs128$'
-		'atmel,24c64' does not match 'c256$'
-		'atmel,24c64' does not match 'cs256$'
-		'atmel,24c64' does not match 'c512$'
-		'atmel,24c64' does not match 'cs512$'
-		'atmel,24c64' does not match 'c1024$'
-		'atmel,24c64' does not match 'cs1024$'
-		'atmel,24c64' does not match 'c1025$'
-		'atmel,24c64' does not match 'cs1025$'
-		'atmel,24c64' does not match 'c2048$'
-		'atmel,24c64' does not match 'cs2048$'
-		'atmel,24c64' does not match 'spd$'
-	['onnn,n24s64b', 'atmel,24c64'] is too long
-	'onnn,n24s64b' does not match '^(atmel|catalyst|microchip|nxp|ramtron|renesas|rohm|st),(24(c|cs|lc|mac)[0-9]+|spd)$'
-	'belling,bl24c16a' was expected
-	'onnn,n24s64b' is not one of ['rohm,br24g01', 'rohm,br24t01']
-	'onnn,n24s64b' is not one of ['nxp,se97b', 'renesas,r1ex24002']
-	'onnn,n24s64b' is not one of ['onnn,cat24c04', 'onnn,cat24c05', 'rohm,br24g04']
-	'renesas,r1ex24016' was expected
-	'giantec,gt24c32a' was expected
-	'onnn,n24s64b' is not one of ['renesas,r1ex24128', 'samsung,s524ad0xd1']
-	'onnn,n24s64b' does not match '^atmel,24c(32|64)d-wl$'
-	'atmel,24c16' was expected
-	'atmel,24c01' was expected
-	'atmel,24c02' was expected
-	'atmel,24c04' was expected
-	'atmel,24c32' was expected
-	'atmel,24c128' was expected
-	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: eeprom@50: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: /soc@0/bus@30800000/i2c@30ad0000/eeprom@50: failed to match any schema with compatible: ['onnn,n24s64b', 'atmel,24c64']
-arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: eeprom@50: compatible: 'oneOf' conditional failed, one must be fixed:
-arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: eeprom@50: compatible: 'oneOf' conditional failed, one must be fixed:
-		'onnn,n24s64b' does not match 'c00$'
-		'onnn,n24s64b' does not match 'c01$'
-		'onnn,n24s64b' does not match 'cs01$'
-		'onnn,n24s64b' does not match 'c02$'
-		'onnn,n24s64b' does not match 'cs02$'
-		'onnn,n24s64b' does not match 'mac402$'
-		'onnn,n24s64b' does not match 'mac602$'
-		'onnn,n24s64b' does not match 'c04$'
-		'onnn,n24s64b' does not match 'cs04$'
-		'onnn,n24s64b' does not match 'c08$'
-		'onnn,n24s64b' does not match 'cs08$'
-		'onnn,n24s64b' does not match 'c16$'
-		'onnn,n24s64b' does not match 'cs16$'
-		'onnn,n24s64b' does not match 'c32$'
-		'onnn,n24s64b' does not match 'cs32$'
-		'onnn,n24s64b' does not match 'c64$'
-		'onnn,n24s64b' does not match 'cs64$'
-		'onnn,n24s64b' does not match 'c128$'
-		'onnn,n24s64b' does not match 'cs128$'
-		'onnn,n24s64b' does not match 'c256$'
-		'onnn,n24s64b' does not match 'cs256$'
-		'onnn,n24s64b' does not match 'c512$'
-		'onnn,n24s64b' does not match 'cs512$'
-		'onnn,n24s64b' does not match 'c1024$'
-		'onnn,n24s64b' does not match 'cs1024$'
-		'onnn,n24s64b' does not match 'c1025$'
-		'onnn,n24s64b' does not match 'cs1025$'
-		'onnn,n24s64b' does not match 'c2048$'
-		'onnn,n24s64b' does not match 'cs2048$'
-		'onnn,n24s64b' does not match 'spd$'
-		'atmel,24c64' does not match 'c00$'
-		'atmel,24c64' does not match 'c01$'
-		'atmel,24c64' does not match 'cs01$'
-		'atmel,24c64' does not match 'c02$'
-		'atmel,24c64' does not match 'cs02$'
-		'atmel,24c64' does not match 'mac402$'
-		'atmel,24c64' does not match 'mac602$'
-		'atmel,24c64' does not match 'c04$'
-		'atmel,24c64' does not match 'cs04$'
-		'atmel,24c64' does not match 'c08$'
-		'atmel,24c64' does not match 'cs08$'
-		'atmel,24c64' does not match 'c16$'
-		'atmel,24c64' does not match 'cs16$'
-		'atmel,24c64' does not match 'c32$'
-		'atmel,24c64' does not match 'cs32$'
-		'atmel,24c64' does not match 'cs64$'
-		'atmel,24c64' does not match 'c128$'
-		'atmel,24c64' does not match 'cs128$'
-		'atmel,24c64' does not match 'c256$'
-		'atmel,24c64' does not match 'cs256$'
-		'atmel,24c64' does not match 'c512$'
-		'atmel,24c64' does not match 'cs512$'
-		'atmel,24c64' does not match 'c1024$'
-		'atmel,24c64' does not match 'cs1024$'
-		'atmel,24c64' does not match 'c1025$'
-		'atmel,24c64' does not match 'cs1025$'
-		'atmel,24c64' does not match 'c2048$'
-		'atmel,24c64' does not match 'cs2048$'
-		'atmel,24c64' does not match 'spd$'
-	['onnn,n24s64b', 'atmel,24c64'] is too long
-	'onnn,n24s64b' does not match '^(atmel|catalyst|microchip|nxp|ramtron|renesas|rohm|st),(24(c|cs|lc|mac)[0-9]+|spd)$'
-	'belling,bl24c16a' was expected
-	'onnn,n24s64b' is not one of ['rohm,br24g01', 'rohm,br24t01']
-	'onnn,n24s64b' is not one of ['nxp,se97b', 'renesas,r1ex24002']
-	'onnn,n24s64b' is not one of ['onnn,cat24c04', 'onnn,cat24c05', 'rohm,br24g04']
-	'renesas,r1ex24016' was expected
-	'giantec,gt24c32a' was expected
-	'onnn,n24s64b' is not one of ['renesas,r1ex24128', 'samsung,s524ad0xd1']
-	'onnn,n24s64b' does not match '^atmel,24c(32|64)d-wl$'
-	'atmel,24c16' was expected
-	'atmel,24c01' was expected
-	'atmel,24c02' was expected
-	'atmel,24c04' was expected
-	'atmel,24c32' was expected
-	'atmel,24c128' was expected
-	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: eeprom@50: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: /soc@0/bus@30800000/i2c@30ad0000/eeprom@50: failed to match any schema with compatible: ['onnn,n24s64b', 'atmel,24c64']
-arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: /usbc: failed to match any schema with compatible: ['linux,extcon-usb-gpio']
-arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: /usbc: failed to match any schema with compatible: ['linux,extcon-usb-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /ahb/mmc@80000000: failed to match any schema with compatible: ['microchip,sam9x7-sdhci', 'microchip,sam9x60-sdhci']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /ahb/mmc@80000000: failed to match any schema with compatible: ['microchip,sam9x7-sdhci', 'microchip,sam9x60-sdhci']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /ahb/mmc@90000000: failed to match any schema with compatible: ['microchip,sam9x7-sdhci', 'microchip,sam9x60-sdhci']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /ahb/mmc@90000000: failed to match any schema with compatible: ['microchip,sam9x7-sdhci', 'microchip,sam9x60-sdhci']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/dma-controller@f0008000: failed to match any schema with compatible: ['microchip,sam9x7-dma', 'atmel,sama5d4-dma']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/dma-controller@f0008000: failed to match any schema with compatible: ['microchip,sam9x7-dma', 'atmel,sama5d4-dma']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ssc@f0010000: failed to match any schema with compatible: ['microchip,sam9x7-ssc', 'atmel,at91sam9g45-ssc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ssc@f0010000: failed to match any schema with compatible: ['microchip,sam9x7-ssc', 'atmel,at91sam9g45-ssc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0028000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0028000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0040000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0040000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: timer@f8008000: compatible:0: 'microchip,sam9x7-tcb' is not one of ['atmel,at91rm9200-tcb', 'atmel,at91sam9x5-tcb', 'atmel,sama5d2-tcb']
+	from schema $id: http://devicetree.org/schemas/soc/microchip/atmel,at91rm9200-tcb.yaml#
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: timer@f8008000: compatible:1: 'simple-mfd' was expected
+	from schema $id: http://devicetree.org/schemas/soc/microchip/atmel,at91rm9200-tcb.yaml#
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: timer@f8008000: compatible:2: 'syscon' was expected
+	from schema $id: http://devicetree.org/schemas/soc/microchip/atmel,at91rm9200-tcb.yaml#
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: timer@f8008000: compatible: ['microchip,sam9x7-tcb', 'atmel,sama5d2-tcb', 'simple-mfd', 'syscon'] is too long
+	from schema $id: http://devicetree.org/schemas/soc/microchip/atmel,at91rm9200-tcb.yaml#
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f8008000: failed to match any schema with compatible: ['microchip,sam9x7-tcb', 'atmel,sama5d2-tcb', 'simple-mfd', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/sfr@f8050000: failed to match any schema with compatible: ['microchip,sam9x7-sfr', 'microchip,sam9x60-sfr', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/sfr@f8050000: failed to match any schema with compatible: ['microchip,sam9x7-sfr', 'microchip,sam9x60-sfr', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/matrix@ffffde00: failed to match any schema with compatible: ['microchip,sam9x7-matrix', 'atmel,at91sam9x5-matrix', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/matrix@ffffde00: failed to match any schema with compatible: ['microchip,sam9x7-matrix', 'atmel,at91sam9x5-matrix', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ecc-engine@ffffe000: failed to match any schema with compatible: ['microchip,sam9x7-pmecc', 'atmel,at91sam9g45-pmecc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ecc-engine@ffffe000: failed to match any schema with compatible: ['microchip,sam9x7-pmecc', 'atmel,at91sam9g45-pmecc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/mpddrc@ffffe800: failed to match any schema with compatible: ['microchip,sam9x7-ddramc', 'atmel,sama5d3-ddramc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/mpddrc@ffffe800: failed to match any schema with compatible: ['microchip,sam9x7-ddramc', 'atmel,sama5d3-ddramc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/smc@ffffea00: failed to match any schema with compatible: ['microchip,sam9x7-smc', 'atmel,at91sam9260-smc', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/smc@ffffea00: failed to match any schema with compatible: ['microchip,sam9x7-smc', 'atmel,at91sam9260-smc', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400: failed to match any schema with compatible: ['microchip,sam9x7-pinctrl', 'microchip,sam9x60-pinctrl', 'simple-mfd']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400: failed to match any schema with compatible: ['microchip,sam9x7-pinctrl', 'microchip,sam9x60-pinctrl', 'simple-mfd']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffff400: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffff400: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffff400: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffff600: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffff600: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffff600: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffff800: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffff800: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffff800: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffffa00: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffffa00: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400/gpio@fffffa00: failed to match any schema with compatible: ['microchip,sam9x7-gpio', 'microchip,sam9x60-gpio', 'atmel,at91rm9200-gpio']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/syscon@fffffe60: failed to match any schema with compatible: ['microchip,sam9x7-gpbr', 'atmel,at91sam9260-gpbr', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/syscon@fffffe60: failed to match any schema with compatible: ['microchip,sam9x7-gpbr', 'atmel,at91sam9260-gpbr', 'syscon']
 
 
 
