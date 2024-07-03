@@ -1,338 +1,180 @@
-Return-Path: <linux-kernel+bounces-238682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCBFA924DC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:29:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2F0924DD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 299AAB25023
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60ECD1C214F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A435523A;
-	Wed,  3 Jul 2024 02:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E41C522F;
+	Wed,  3 Jul 2024 02:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="TJkbWmvZ"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2043.outbound.protection.outlook.com [40.107.117.43])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="FxeIv/iR"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2108.outbound.protection.outlook.com [40.92.22.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CE8804;
-	Wed,  3 Jul 2024 02:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68154C6C;
+	Wed,  3 Jul 2024 02:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.108
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719973732; cv=fail; b=j8mLH3ytONOMYPGeM0f4zGoeoBelDc3NUPsCXnYi1aPC94ntNS2PRmjX8rMj8EHcU2iFWKM5OhNDJU8QGeQsM89jcrWq59/zxIGcdtwziWHciMUCU7x3MgwpEYLev1ouYU5RDpw0ymXO/NrN9d2NjHrxHkYGNGFIhaICLMnapfw=
+	t=1719973835; cv=fail; b=Lurc8PguPwsbRclGCFxRaHZdPrAQTAiLmb5ER5QWXTfvqqShdIhBaaMDrHU6ZI0kT+dCV+t+MHi8IzYu4UP0KAfuQ9M+jQ58yJf5lC6B7i2oAwdQYyIHw2ERq5qy4tykn+gZ0kgx1TDFM5glRV2ekllp9FCkId2BzIOuxlR68d4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719973732; c=relaxed/simple;
-	bh=icj+onM5WOEwnUpqdZSQ4ZVHKxRo1OFk7q/M1yfxLWw=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=nbmaUAeiF/dT5banWINVWsuPh6LUFEqk6QVTCI6I48VO3SD5e4tAZP1H80MUjnFQDMPcwGm3cZskKBR8hbEKvNbXnzxUSzi7zJUzduiMY80+6R0IDiKgLE7szwd6Iiu0OpzUjpuMoMaUjM/QabU6g52gK1b8ztnaWC82OBGqojQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=TJkbWmvZ; arc=fail smtp.client-ip=40.107.117.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	s=arc-20240116; t=1719973835; c=relaxed/simple;
+	bh=5BxT9AALqA7SJtYI+41/2eWeDak6ASvt7WIbAHr3uL4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jpSn7CyVimv0JlYFFY9p0USyl+6aj8mwpimA09jNw5zPYQr8W6+illabP6MTMYadpe0zxfoYNG4wuKkCrzuJHJ3TexE9canB29nOod4oRHzvKy1erTd5GoV3r/rTZdETdvX6z4Cnd/s0C9+ZCx2GVcimqfN80LHN0jyr4qVoENw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=FxeIv/iR; arc=fail smtp.client-ip=40.92.22.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GYct3jjeXMk38VhTGhg4bPX3LkZ616g4udbuyvpS+G9iCrhpbK3i/+J5kJVrF8+xV34ZO/N0AVybS1OTrDNSXnCaep5vt0HRD+ugijtwrlwZLj1WOtxPcI4hC6QtuBw/eiYpYLTdLNYaXVNsmrCOKvSnF+hEXCGCJCpfgxQR+BJ8unAUqSbdouIPUIHclR8gA/dztSKTwHTzBqWgS9+TnfL09HED3i6QjpaL1atLQEtCXEdUFEA9YpaTcIwKpTuimwq7p7iPQXLht8p0tKJOmDZwHMJXoKkAzNMXp6Lp7nDZ1PQEKuW66RJWOm6xb912DREZMYG1F8BF+tAfcIZuyg==
+ b=e4zoS3ej+y6YDEtlSTzv0vgDYeWJSKMpBjfJtheGkkV+WqLjs1Y5kzG3vShLBVRTQ+KESiZhVGIyhxxtqR4TzVVct95+saeUKDTdgBcoRUha2rZIeXQ8DiQfemSLadCu6g0GvNH+s03n5klEEt9UnIXdhxUm3/GybK3PjDnSvuIT7hBaE2NOwxi9i1/x8UHZBhvfDDRJ351SrL86fg12z2FPGXIff0paJzQXBTW3b92GrX/nuWYDfVTEc1VTqdnOe0EVZs72CBa0u5N9rXsg0bc9EQNjCesK4/WSAzdJR/rAgM8aMIZycPAXJ/S23eiyWuOjS6Wh4vOLkRP2LGTDqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tlxofn9u635vJjVcDIgFVkW1Swp6Sv5vpIO4GtVQdqU=;
- b=Ryy8VHU9ymno1Gt/TTL/FVdzQ3XtfFcEUh37PP0Jx4qfiTFzGPO7zsDQN6ugWBn3WfuodL1ufePR6DIRvtjkzkU8w0AVFBLbgc2XXfSQOlXw/MqKHK4xHSDXyOzug1ZKQu+oKV0fpVj5bknbQ7Sz1gYAmZdP+9NDCXgHlknl0Z/TOLbJbSEXhkVHpj9ZTqqn+tB/QE8YwvKZT+8idZB4jepEmIJq9n3Vf/eFutjkbG8KbAbAzAee1Yg3FegDtuK29eankqXggLdoBOhgDSmOqOENikKw5jBCp4h8EetXZ/zYxkOYqsfUwRRIn4D8CA+NS7xg0takm3Zoev4VNfCsIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ bh=4ISUeGXmwJ6IuwsxJi2G6i+ge6aGslKvxRZ0ox0zhnY=;
+ b=KjDLjx+WbHXEuYQ5j/zmyBGAPBKb1eZJC56jVCrg/LhwYE4W6h8QnYDRRdIe1NoVNMDGrBUD2fuic/KIOgTeuFevuIvAPnLtO4W3SRs5KWTEiGvHMqodHJ+TDpjKAoPwTEYu62M6EJ2/DCJJpo5E7qN6B0IxbfSn++HiGbIn9eIucx8un1C0RuNGwE07s/SB4bMi4wwlUXMv9H/OZgX3PIaWFDvi2ai0VWDq/9vDKgMKrqPkfDSV7zERym3yztiNe6lo4GR3PnaUezyICPz95f0CExTTuS3iWfpGZt6ZOVIBrSeyPkxApxWRmUb9HcZoBRn1EENOXg/vYFi8xuLncg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tlxofn9u635vJjVcDIgFVkW1Swp6Sv5vpIO4GtVQdqU=;
- b=TJkbWmvZFYT+yPBguHraVBjanB7RC6j0W+Zr7ieQU3WdeOaFhRd0P+V7yweuBHn+mT2bhCFhje/RPXDzhRoVQVnROvXdXY8svU4WfybQo5aHyuZZ7trirbuPvBHWK1E2BqdRTo1aF3YFXl0Sm9Nm1KRwZZUqeC5UWNu4GU2kEoCDbVtjH29r3xYd71BjJdsfJpKWQHAwRsCvyNsd8ILocmHSQX8k7bz9fXXVouG51Snk+M449Npb8Hd6FHIUkQsNGY44UwNQR2kF+nqKQ+Mzv/2OxcPu8ar541Z//Df+2Z6dZjlG8S3V9iWizm2UWQfg11EOx0S1gM3pDs78pWT2+g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com (2603:1096:820:146::12)
- by JH0PR06MB6800.apcprd06.prod.outlook.com (2603:1096:990:39::13) with
+ bh=4ISUeGXmwJ6IuwsxJi2G6i+ge6aGslKvxRZ0ox0zhnY=;
+ b=FxeIv/iRquzVMpqxvB6fP9QvcU64UEEpSupp9aj5pxAqelQWOCatBNIUEfGj/UlI/bWDOASs6ib7rJ7hFTV6kT1+EYEco6weeTln+gpCaUp5Wsqu6z3oqf12hO+xTIvPK5cqy9eBpe0cahUcTtzUBXnSy1dP3NSH6/fdozLX3TKKRV2hDVmgAwagB8QXGUEs72vPddewqDszb3l2gURsb+99BXcr5O0Wlmqc55JarTqx5o2ZkhUOASd0NA8919IytJD7caQuPkhQLrb2sJ0bYTrTyULqO0Wr3MTDio8P8w/9dJGtUZpvjyxiFyCnSe1uyt7h8Cq7CC6/n8ZmZrbUIA==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by SN7PR20MB5580.namprd20.prod.outlook.com (2603:10b6:806:29b::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Wed, 3 Jul
- 2024 02:28:47 +0000
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e]) by KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e%4]) with mapi id 15.20.7719.029; Wed, 3 Jul 2024
- 02:28:47 +0000
-From: Yang Yang <yang.yang@vivo.com>
-To: Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yang Yang <yang.yang@vivo.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.28; Wed, 3 Jul
+ 2024 02:30:30 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%6]) with mapi id 15.20.7719.028; Wed, 3 Jul 2024
+ 02:30:29 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: [PATCH v5] sbitmap: fix io hung due to race on sbitmap_word::cleared
-Date: Wed,  3 Jul 2024 10:28:03 +0800
-Message-Id: <20240703022807.642115-1-yang.yang@vivo.com>
-X-Mailer: git-send-email 2.34.1
+	linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v6 0/2]  riscv: sophgo: Add SG2042 external hardware monitor support
+Date: Wed,  3 Jul 2024 10:29:58 +0800
+Message-ID:
+ <IA1PR20MB4953967EA6AF3A6EFAE6AB10BBDD2@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.45.2
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0220.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c5::20) To KL1PR06MB7401.apcprd06.prod.outlook.com
- (2603:1096:820:146::12)
+X-TMN: [PkEo834EUFRaaM7fr27GZAtJkbQ3/zhtx8BctliPzpc=]
+X-ClientProxiedBy: TYCPR01CA0118.jpnprd01.prod.outlook.com
+ (2603:1096:405:4::34) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <20240703022959.272629-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB7401:EE_|JH0PR06MB6800:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b692122-26c5-4dc0-7b4b-08dc9b07de31
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SN7PR20MB5580:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59201867-908d-4e0d-e4d6-08dc9b081abd
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|52116014|366016|38350700014;
+	BCL:0;ARA:14566002|8060799006|461199028|3412199025|4302099013|440099028|1602099012|1710799026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?94BoMaJWUktji4GSQ6I6ba5jdcM8y2K5uJ0e19Jx0VCVAaCcPDXaaL5z+wto?=
- =?us-ascii?Q?g7BuIx9jE7EHECnSoKSf2z0Q6DOo2xMVUzQ4jG6A7he4p0f6N77VTLSbQ54F?=
- =?us-ascii?Q?8G6rbPQVuUDWbNHBf/HpY5DJ6w2i6mxJwEwWtzR6Z3J+0aRyT16Og0dDtbtd?=
- =?us-ascii?Q?kDrc79ZYQLlgLbvEzO2HzfKQ0gvtxDsh/H7dZ8w98y+qRayC3cUgODMSzGKt?=
- =?us-ascii?Q?4QpwhvaLZ3Ca5K2LGoYrr3XwwKCGIe81AtrB0KOtzyq9hIqGfl6g2t6qKxpi?=
- =?us-ascii?Q?hbxI395lrpgVP7NXfhWL/L58iL1cSphOCKEG1l0t1JZCsF0MudJygow8rxee?=
- =?us-ascii?Q?QQHjwLLhU+2IGLb48ZfhPz7TgmrGEKyqmLgU2LTLOOq7gH6MgYZB7uFYmh3p?=
- =?us-ascii?Q?GyDuskcPkHz6ddM64rIaM7FdeschBF+TnsqXTPTXzP8oF1pUDpSL14t6bSbe?=
- =?us-ascii?Q?6Q7DL94SWham5PlJAZmmlWGIOV74xKNj4K+gnbLcu27gDlFPydZA6mEvSDPk?=
- =?us-ascii?Q?OxDH/hiR2SB9YiJdPPb602OuggtCZ4fYK5BtwqKCi7f2Oha/EcfsnugY7dct?=
- =?us-ascii?Q?3XEBUY20RyDeE0ImC4Olwlb+v6wSkbm3f4hXyUSaJ88g+JFbZz5uaoiOWnp7?=
- =?us-ascii?Q?oKYUv+RtVe50gl1L//VLWONJGQsdMU1Eyvr7Ivbp6YouyCaKEms6U7YR319J?=
- =?us-ascii?Q?apIoYBb414i+eFK+TP0ZHdzP5HjY4dSpzZM7CKhImUpLIexjtif+bXvVs3tJ?=
- =?us-ascii?Q?+LYSasyUmgrL2lOAO4FyJz70b+s1ew14eGCEw0qxtPMqF+1eYUtdyCHIV8lt?=
- =?us-ascii?Q?Y6V8YxuIQ22TycMRIAIIN777pscLuOD0XdaO00x10q2NdAtnNM1OoE7bV7FY?=
- =?us-ascii?Q?t7e16vnY6+fWK2go5aA31aXCWQKUo9kKvrCWGqc3ikaMLwKpLipzp2CIU+04?=
- =?us-ascii?Q?o3sb1s+oY+jKnFs5CwPDlKK+XQPp7W9sSsYBLyUr8Rtr5kAGvMfawsB7q1FM?=
- =?us-ascii?Q?7xQFULp/5gwPOG5rlkuK1JWrTlfbIDeSWxuFq/HPO46rZK4YW1ljNCt1i094?=
- =?us-ascii?Q?x0hV68Efs0gh9yhIxSQPllS6r5TA2Mx/bhKVePUkmkBfJa+e/MIGKdaikdNj?=
- =?us-ascii?Q?24UPhkFWfkQkJAeERer9GvckvswNMV33TWzckYNqGF7+QB20QXdcQMtfnh2Q?=
- =?us-ascii?Q?BYU2b7vF2h/NuMX4RP292s53nFcTpozUJKOvm99GFDMQ0pySstV40jH5G71d?=
- =?us-ascii?Q?zC1dez7+MRCmsXrA8EABs++Fr7RE04fVauX4CGhQZriBAds/fbeayXHvb6WG?=
- =?us-ascii?Q?wwt2auISmH6GXEBjln99LXI4LX6TM62I3KehDxeUCr4j2R1MGXzP0waMJarm?=
- =?us-ascii?Q?NExobUUEixivNQEh6YivLuYN171BmmGV3Z1r9nHVMbu1ok5P/A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB7401.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+	slh+K1vRVEtu1oM2P5Z1kgdNan25zeVKwTrKrXhBiH/e/59R/nkBp3snv7io5NPf4Ged7gstA4I8CJ+/QD3G6Jy5O6zVq0dSdpUhe3PdPe0yfXSInJNVPEfeiWrU65LoLhDts6wXxFKjUZSt6wXgA0SRyQx5q8BGj4DDh+YsqzBRVP2UsGPYV+yNYFjH64cvHquR0GIxRQCn+N1xkDe3xmqsw1KEc8SQkocgyrf9z2WBvoUzA5fLSBy0yXXkJ0+rq2X9yZG/I+fIQhqkQOzZUvORh5Y0Y+LrzVqnveGYpiLQccQoMv+97EB+5RWx4ungMIpmd3MBf3dBrU2jkILp7FPErf2c2PYLeh+a+MZ3piB0nfTas/p4X0cBYVCUVt7foPjaabVfTpcltqh5p0YHNbRokeolPkF4R8aUV0prkt+r8VDg7NcdU08dvt5YSX+E0p8kOnff+nQ0oLlujnCV8d+8Rb2Qx4E6S/HjnSNRsmm7HKHQAhaYR8NwU/QbsFFhDsznrsL3XUZzKb0cFL+l5hk3dceE6+Ur+7UatcoKHm1frOLBbOha0NJcrDx07+HxHJExouo9wYehnWRuMfzvULOT6D/ZCMiqvX/wnXVBEJ+wvQY0EnOlQxMpy5i5vFf9joTfM41sY1+RLnq5U+W37IRJZgu50QjJyQ4d6qxSkxF18VaQl2H6uviCufr6JnkHflcI8eRcISCO07CqlzkpiakI7vCkMtsfMKVbRB/Y44ONeDWbokpZfRC5FWgzSOIE
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sKdcA77a9T1/9awRe6XuTlmu322wfjXwewFLNxA16Phj2+c8yn0p2TBz2ajQ?=
- =?us-ascii?Q?zo+7FE4m1UzT8YLt9sovDoZBYIO3SOZadHazv9ZRumLABU6JemWQSE6m4h8Z?=
- =?us-ascii?Q?eve/f5XWgN3U95c2ZJb+UzgeK47TZ5aLOrZ9PA3dXNNbfLK6NJUcVZjxwNy2?=
- =?us-ascii?Q?xrxxKlYkTu3VZsR9tST23jZojiJ1breCZbqpgoMFr54PqtFWi7MicWO/qU9V?=
- =?us-ascii?Q?fhDITaL0vZ3pXXe3kUZ37VT0Kf4i3hEknKdbOrPMJMZosjIJjBa2jmDSQ2Hz?=
- =?us-ascii?Q?y0hXCdhYGulB1WPLkRIpLiRKDNYhccJbQ2rRnRtnIEKPCEOtWJUi553Fj36q?=
- =?us-ascii?Q?O1i9SZEaqvdyTs14I4ZYXyPXeRypfSPBvtayQqqzcQyTzSTQu3t/LplnQFKD?=
- =?us-ascii?Q?iALl6e1+jwIQhnopo/jDmDE95NnDqHwcIcD6C+Pzx3e2ITaL2JrHqPRb8gEa?=
- =?us-ascii?Q?BIheZ7ACu+nbK1XR+J7nl9j+MS0emO0OVPgRNe0aqcnzqRTLj+HtJIF3ySwS?=
- =?us-ascii?Q?wDSmucndhJURumnlaWlTYbCBwXbBDn+cwmhXDFoX0iVbvCdqZmTRCzaR7Job?=
- =?us-ascii?Q?gee920QtSlTTs1zlcWUWgz3DVDIT5ea4EvH2LGy/g6e4sj+6d/sJqaWOT0oh?=
- =?us-ascii?Q?Qe/XT+kSoB5A7Y08mzAnFc/13262yPsLfJjuHtC3NsJ0+6ogo4WH+eCQ91do?=
- =?us-ascii?Q?xha9b4+C166xhNF3ooqP3wXqMqP+R8/DHT7cNVbFa4F0zP058/44oP/gUTi+?=
- =?us-ascii?Q?QBAYttogCYfBoP1LAag7l7cYRLIuiaNWTwOF2o9GrRgea/QnsiZ7Jwm5mlWM?=
- =?us-ascii?Q?UmiToRHVb0mWoEdxxNh2MBEiYEja9hzsMrTWAsFhJZ+Xq88XQSz21o031NOW?=
- =?us-ascii?Q?WVaNUc7IQSHpwkqcJGbJlIVlALavmjaoGRf45gUMSa5xlkdc2U9x3+2pex/o?=
- =?us-ascii?Q?O1jJw4vKteeLWjHehphzl325l80VvKW+YqNdSixTTGA1JcOAU/NbTjVRtwQb?=
- =?us-ascii?Q?11cA3eV0HNZGYPkl+v5N7/o46RMwH6Jj1lnQu3HHD8OqYj6XM4yOA040uu56?=
- =?us-ascii?Q?P3g/CjQlgO+y/gAmu0lUxL6t1/DJKOoG5wgEIkOB2I5mU9Y1axaJ5/zzErWo?=
- =?us-ascii?Q?g+djhUwU4P269Qf0fabI06DQK9nWbhoBKA1JUPu/R1yNGiPU3rGP/NVt4GT/?=
- =?us-ascii?Q?eNK00/SzYJT+CuQ1VWCB6SHekfbkN/H6+LOfox7S5kf6KeeTXqRNiyhExMEv?=
- =?us-ascii?Q?a/oBCaciJ2Go8g3UaGna1kaVqYQ3A5LBy9UVBRkTR2ErdtKiO+PefVgHDGsu?=
- =?us-ascii?Q?SoXB4OmufQfLXk17/g/cli6nFXBdbtseD67jmJsZxJjcx/uDj6X0abq/Jcuq?=
- =?us-ascii?Q?Cp3zQq3z5FbBeftEhCTJoeyLh8xZsomfQpaJJPvNBFOkTZIBdG5t97rCn/Tp?=
- =?us-ascii?Q?Yu+GJRymNQcebIaMIsck33nRx7JyGeRyHOhPYCNKkeMZpR428kQYUgp1Q7Ff?=
- =?us-ascii?Q?Q4ZukcDs5hjJHatjoarcxV287HTGuX5Ln93Otif5rSejBz1kHWWUcC2qd+yP?=
- =?us-ascii?Q?T4NvxXVOics5N0ymBm9rdzrFxCiAGhLjBFHVnQzi?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b692122-26c5-4dc0-7b4b-08dc9b07de31
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB7401.apcprd06.prod.outlook.com
+	=?us-ascii?Q?/HzLOfjhe13ZIP2WDcoDzTqmeXgwtyWntG0ItHhwiqm7K6ELwhkhG9ffw/sz?=
+ =?us-ascii?Q?qERTGVgDplaHC5aAYRUpw20qAnHweidOT7jo6HtMe3ApFqoUB0mTPE17bbOu?=
+ =?us-ascii?Q?A97pcpRIJtHZ2VzTO3hLNN12agaNvyC9nKp87RAHSxvVBunMcI59J6nKnITb?=
+ =?us-ascii?Q?890D3P+E8gc/3B/FY+9icqWlXKbuzLX+PhTV69eODXbyUpxIhhBAcr0mzvr3?=
+ =?us-ascii?Q?Sw8fLJB98E9MOvIE3JLy1DZ7Pev2oI0qxY7nO1a7zdvUD9DLSF+oP421aFLE?=
+ =?us-ascii?Q?T/4DmsD89u/wTPp+hCAAG5nEA3nYjE5PD8/76C/DCWr1Prn/hnUivurlgtkU?=
+ =?us-ascii?Q?iCterfzCJbD2su4ds0puGvjsFSpJJ9ieVECUQwHR0e8C3/m0R1gaJLbQk1uj?=
+ =?us-ascii?Q?atnls7CFYfFWUviLP4XXPpgVHKR9xzKiHiCv5DehZ7MitbEoU3SweCBTAhps?=
+ =?us-ascii?Q?WQjRjYqWOqpiX9Wv6CbZBrgMEWeGmx/S1fO+727BL3DqpQyxEJMTyJKY2nty?=
+ =?us-ascii?Q?TaHamDrmsqQXby6CTCOn3Gyih9pqfojtFCjPYudgLS8sH0i9Oba26LkPedhw?=
+ =?us-ascii?Q?JWczlsN558IlI8+YpdVrjvpQuIhKBLIvh1TOKZ7AN5g43Sg+P0NYZo/X0yH+?=
+ =?us-ascii?Q?3a34W4gp5a+enayDePBnp4XZni4XfVDMyjKsNfW7eSl2qx0nB/w6jYqRELOS?=
+ =?us-ascii?Q?rA7DfHetjkefCYmvwlnidiaNIBkRngqNGR1LVR1LDR5QR4s/MRVx07DoIXzC?=
+ =?us-ascii?Q?aSav4cG+FSCVk+JAvaX7tgDWDNJix90XWSO5V2XcRN4aNI7KjF3yYlJbaCc0?=
+ =?us-ascii?Q?gFXoJsrsNCVvVRuJp66Lg73K8w0A2A48J4S61GWwwWfdjz+sJQvcvq1hRGZf?=
+ =?us-ascii?Q?yMm6ngsY6anJptWGzKXxUm7gfy78TN1WW55UgXGWCVSTyI1kNV/OXEE2LuUL?=
+ =?us-ascii?Q?ixXZzouZ4Bv90/YZgon8YSIq5fjA5KL8TzKAcjg8saDEn6MABdAXn/VLfK2q?=
+ =?us-ascii?Q?9tcd72ln9RMqjcTt4luza89B+QAoPHFw3TkmKCl4bM4ZRHb5Be7qLgbpPBSH?=
+ =?us-ascii?Q?H5+U51T3ue4s5VnOkNYHBE6a0AZugXcWiVwupZlxleyxfm9mHEmRG8tXWRwS?=
+ =?us-ascii?Q?PgY7lXXkO4QUpxA9utL8Ewi2bu12lrFWzygVOeyo4gq3FEGV7z/9chmSZR4J?=
+ =?us-ascii?Q?no4n3J/vyiwxgqS/YyvkGN+s9JSm7T4K/7XvcknmjqtmHJh9LklulvNVuNr+?=
+ =?us-ascii?Q?o3eFugViJHFP9AblehGu?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59201867-908d-4e0d-e4d6-08dc9b081abd
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 02:28:47.5837
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 02:30:29.4210
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Lj7MWHfK5n6Ywt/2SbwgVXHGr0CcySE2F7akyVLhlhUtfycZ+ccmcH8gVqZRL9J+5LLRPrE/EjSRiV3iX4wlwg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6800
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR20MB5580
 
-Configuration for sbq:
-  depth=64, wake_batch=6, shift=6, map_nr=1
+Add support for the onboard hardware monitor for SG2042.
 
-1. There are 64 requests in progress:
-  map->word = 0xFFFFFFFFFFFFFFFF
-2. After all the 64 requests complete, and no more requests come:
-  map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
-3. Now two tasks try to allocate requests:
-  T1:                                       T2:
-  __blk_mq_get_tag                          .
-  __sbitmap_queue_get                       .
-  sbitmap_get                               .
-  sbitmap_find_bit                          .
-  sbitmap_find_bit_in_word                  .
-  __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
-  sbitmap_deferred_clear                    __sbitmap_queue_get
-  /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
-    if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
-      return false;                         __sbitmap_get_word -> nr=-1
-    mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
-    atomic_long_andnot()                    /* map->cleared=0 */
-                                              if (!(map->cleared))
-                                                return false;
-                                     /*
-                                      * map->cleared is cleared by T1
-                                      * T2 fail to acquire the tag
-                                      */
+Related SBI patch:
+https://lists.infradead.org/pipermail/opensbi/2024-April/006849.html
 
-4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
-up due to the wake_batch being set at 6. If no more requests come, T1
-will wait here indefinitely.
+Changed from v5:
+1. rename driver name to sgmcu as it will support more sophgo chip.
+2. move some attr to debugfs.
+3. add standard crit_hyst support
+4. add documentation
 
-This patch achieves two purposes:
-1. Check on ->cleared and update on both ->cleared and ->word need to
-be done atomically, and using spinlock could be the simplest solution.
-So revert commit 661d4f55a794 ("sbitmap: remove swap_lock"), which
-may cause potential race.
+Changed from v4:
+1. use fix patch for binding ref.
+2. use unevaluatedProperties instead of additionalProperties for binding
 
-2. Add extra check in sbitmap_deferred_clear(), to identify whether
-->word has free bits.
+Changed from v3:
+1. add thermal-sensor check.
+2. change node type from syscon to hwmon
 
-Fixes: 661d4f55a794 ("sbitmap: remove swap_lock")
-Signed-off-by: Yang Yang <yang.yang@vivo.com>
+Changed from v2:
+1. fix bindings id path.
 
----
-Changes from v4:
-  - Add some comments according to suggestion
-Changes from v3:
-  - Add more arguments to sbitmap_deferred_clear(), for those who
-    don't care about the return value, just pass 0
-  - Consider the situation when using sbitmap_get_shallow()
-  - Consider the situation when ->round_robin is true
-  - Modify commit message
-Changes from v2:
-  - Modify commit message by suggestion
-  - Add extra check in sbitmap_deferred_clear() by suggestion
-Changes from v1:
-  - simply revert commit 661d4f55a794 ("sbitmap: remove swap_lock")
----
- include/linux/sbitmap.h |  5 +++++
- lib/sbitmap.c           | 46 ++++++++++++++++++++++++++++++++++-------
- 2 files changed, 43 insertions(+), 8 deletions(-)
+Changed from v1:
+1. Move patch from soc to hwmon.
+2. Fix typo.
 
-diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
-index d662cf136021..ec0b0e73c906 100644
---- a/include/linux/sbitmap.h
-+++ b/include/linux/sbitmap.h
-@@ -36,6 +36,11 @@ struct sbitmap_word {
- 	 * @cleared: word holding cleared bits
- 	 */
- 	unsigned long cleared ____cacheline_aligned_in_smp;
-+
-+	/**
-+	 * @swap_lock: Held while swapping word <-> cleared
-+	 */
-+	spinlock_t swap_lock;
- } ____cacheline_aligned_in_smp;
- 
- /**
-diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-index 1e453f825c05..22d6e86ba87f 100644
---- a/lib/sbitmap.c
-+++ b/lib/sbitmap.c
-@@ -60,12 +60,35 @@ static inline void update_alloc_hint_after_get(struct sbitmap *sb,
- /*
-  * See if we have deferred clears that we can batch move
-  */
--static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
-+static inline bool sbitmap_deferred_clear(struct sbitmap_word *map,
-+		unsigned int depth, unsigned int alloc_hint, bool wrap)
- {
--	unsigned long mask;
-+	unsigned long mask, flags, word_mask;
-+	bool ret = false;
- 
--	if (!READ_ONCE(map->cleared))
--		return false;
-+	spin_lock_irqsave(&map->swap_lock, flags);
-+
-+	if (!map->cleared) {
-+		if (depth > 0) {
-+			word_mask = (~0UL) >> (BITS_PER_LONG - depth);
-+			/*
-+			 * The current behavior is to always retry after moving
-+			 * ->cleared to word, and we change it to retry in case
-+			 * of any free bits. To avoid dead loop, we need to take
-+			 * wrap & alloc_hint into account. Without this, a soft
-+			 * lockup was detected in our test environment.
-+			 */
-+			if (!wrap && alloc_hint)
-+				word_mask &= ~((1UL << alloc_hint) - 1);
-+
-+			if ((READ_ONCE(map->word) & word_mask) == word_mask)
-+				ret = false;
-+			else
-+				ret = true;
-+		}
-+
-+		goto out_unlock;
-+	}
- 
- 	/*
- 	 * First get a stable cleared mask, setting the old mask to 0.
-@@ -77,7 +100,10 @@ static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
- 	 */
- 	atomic_long_andnot(mask, (atomic_long_t *)&map->word);
- 	BUILD_BUG_ON(sizeof(atomic_long_t) != sizeof(map->word));
--	return true;
-+	ret = true;
-+out_unlock:
-+	spin_unlock_irqrestore(&map->swap_lock, flags);
-+	return ret;
- }
- 
- int sbitmap_init_node(struct sbitmap *sb, unsigned int depth, int shift,
-@@ -85,6 +111,7 @@ int sbitmap_init_node(struct sbitmap *sb, unsigned int depth, int shift,
- 		      bool alloc_hint)
- {
- 	unsigned int bits_per_word;
-+	int i;
- 
- 	if (shift < 0)
- 		shift = sbitmap_calculate_shift(depth);
-@@ -116,6 +143,9 @@ int sbitmap_init_node(struct sbitmap *sb, unsigned int depth, int shift,
- 		return -ENOMEM;
- 	}
- 
-+	for (i = 0; i < sb->map_nr; i++)
-+		spin_lock_init(&sb->map[i].swap_lock);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(sbitmap_init_node);
-@@ -126,7 +156,7 @@ void sbitmap_resize(struct sbitmap *sb, unsigned int depth)
- 	unsigned int i;
- 
- 	for (i = 0; i < sb->map_nr; i++)
--		sbitmap_deferred_clear(&sb->map[i]);
-+		sbitmap_deferred_clear(&sb->map[i], 0, 0, 0);
- 
- 	sb->depth = depth;
- 	sb->map_nr = DIV_ROUND_UP(sb->depth, bits_per_word);
-@@ -179,7 +209,7 @@ static int sbitmap_find_bit_in_word(struct sbitmap_word *map,
- 					alloc_hint, wrap);
- 		if (nr != -1)
- 			break;
--		if (!sbitmap_deferred_clear(map))
-+		if (!sbitmap_deferred_clear(map, depth, alloc_hint, wrap))
- 			break;
- 	} while (1);
- 
-@@ -496,7 +526,7 @@ unsigned long __sbitmap_queue_get_batch(struct sbitmap_queue *sbq, int nr_tags,
- 		unsigned int map_depth = __map_depth(sb, index);
- 		unsigned long val;
- 
--		sbitmap_deferred_clear(map);
-+		sbitmap_deferred_clear(map, 0, 0, 0);
- 		val = READ_ONCE(map->word);
- 		if (val == (1UL << (map_depth - 1)) - 1)
- 			goto next;
--- 
-2.34.1
+Inochi Amaoto (2):
+  dt-bindings: hwmon: Add Sophgo SG2042 external hardware monitor
+    support
+  drivers: hwmon: sophgo: Add SG2042 external hardware monitor support
+
+ .../hwmon/sophgo,sg2042-hwmon-mcu.yaml        |  43 ++
+ Documentation/hwmon/index.rst                 |   1 +
+ Documentation/hwmon/sgmcu.rst                 |  44 ++
+ drivers/hwmon/Kconfig                         |  11 +
+ drivers/hwmon/Makefile                        |   1 +
+ drivers/hwmon/sgmcu.c                         | 585 ++++++++++++++++++
+ 6 files changed, 685 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml
+ create mode 100644 Documentation/hwmon/sgmcu.rst
+ create mode 100644 drivers/hwmon/sgmcu.c
+
+--
+2.45.2
 
 
