@@ -1,281 +1,129 @@
-Return-Path: <linux-kernel+bounces-238962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031109253EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:52:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1048692543F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5D22878C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9B3288B8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D438135414;
-	Wed,  3 Jul 2024 06:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEB2135A6C;
+	Wed,  3 Jul 2024 06:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gec/Cd32"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I8fKhS/P"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9AB130A58;
-	Wed,  3 Jul 2024 06:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A033C6BA;
+	Wed,  3 Jul 2024 06:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719989539; cv=none; b=oRaMZKUkU/oJYw6Cn9tnufTBD/Uq6bYIZzedSewJPxny7febs8PW2RFEbfLxdMmC8NrClk6l7w6sT+PxQikRB7rb+NU4sjSpe7sFfy+EkUNHtAJmhPknybNBPPSeYkMHobzzmCuKeDjjMVthGxTxkZ5EQqL1QU76HT5jBTWj4wY=
+	t=1719989724; cv=none; b=lL9VGMBLBd0HV6UieAOgvcCERUCxi1c3Cx6pVgWaNdADbaLYfJ96Q5mlqu/ZpqTwuyfpNwXdC0iEuPSz1zDwCRhXbt2NQV5sTE4hi7idBtNS9OqRjL7B8esP7kHopSra+HP4ABwBn1Vk2kXVflgF+ck1Vu3rDzdZD8j0byXEHF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719989539; c=relaxed/simple;
-	bh=gRzmry4Nw/CpDwGJRDR1p8S2E8ZQW8+Rw8U5Tp1WxQ0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XKhsT0wWg5EyXmNuunakU2mVDnwZQ0fvrAB3jK8pH259/nXA+nfBwSeeG2DApSNYDldc0kEttcb5fUrlnGK6BCLOCxv+4EQjy/fgHrYhJVaeZnM45z5rgfQdzPvZZQl5nknSvp4m9pTPPOXEOnoNTXJM4xocnCIBs8spk2hsemg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gec/Cd32; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4634MfdL026782;
-	Wed, 3 Jul 2024 06:52:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Wey2gPnwmY2OcGa3q4Houy
-	XyhxUKSTaDIT7MKTAE7NA=; b=gec/Cd32rz5RRbsNViBwgs54gRDbjSqfVPcmSL
-	Z5ryHaIW/m8lOVobjpB89gtJfFicusqaBtLqD4G4eRotb5XxitQ32AeXRPGnkOhK
-	M/Fll5PTIq1EQdM0bOZTqL5ADFrUxcPODvp111v4j4J+VWm7sY0KbusX9+uWXjvf
-	yqwhSFkagYzLEM3HC0qO9LMTD2Mn3icIzVzAsewOi0zESSRxCib9LOS5MxqymyHC
-	bO1SRJxgUJiZSy41DpNbYRFU62kydxMO1MTeJHa2lThJxiMt2erCyPMjTwE9g8Y3
-	4EzeJSJuCsrLscVsCyddpYbx3btsp5bZuQ/KpD974GHD53wg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404yjhr8yx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Jul 2024 06:52:12 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4636qBYE014152
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Jul 2024 06:52:11 GMT
-Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 2 Jul 2024 23:52:08 -0700
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>
-Subject: [PATCH v1] misc: fastrpc: Add support for multiple PD from one process
-Date: Wed, 3 Jul 2024 12:22:00 +0530
-Message-ID: <20240703065200.1438145-1-quic_ekangupt@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719989724; c=relaxed/simple;
+	bh=2GfBsRxrZDH/TfdgmHX2/PhCbLhSEw5SNB0zMATiQrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qFaMowh5SH5mJQdIj/C1HZoquSiFRNwi7S2Hgx1U870nKR/04PQjZYreFdq+wgy3ZRFcvT1qf+EfiIZuz5lmkcrS/zYL8MUJM9W5XKJZIlks2/JwaQt7RNqbSp2FTrSkcnwLY0GSAIQgqi1vIA8qsplSeM7GZm0HF6z9OXzDsgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I8fKhS/P; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6359BE0005;
+	Wed,  3 Jul 2024 06:55:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719989718;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+112STnSmnBq9WUzd+MMzssxIWtDa9bVrOCWUEJOUuc=;
+	b=I8fKhS/PeXcxlVYKe8GK5xsSrkRKJFif/5MORW6V/qT3DUtUbQ9kbnfUxbs4tbbS/DJzEV
+	jPFWvgvEggNfffM640DrSbT0+fBra+dREqbHrZL1s7PhHeOvzA+cbriDYePT27AvLxbCj7
+	dqShxFxthmywaX1xvnXswUsV5D+iOhzHLHD4fc3CbgihqrODEomTMVS8TQ03Nls/1YiRaj
+	0hIINbX8JRqqt2Vf5TSazRnCf4I2dzk08SaXQP3p58mcqUjzQS6CwkJmhcqtrV03iDnXBk
+	NJvtlrNmJCUffYMxJG9sxt14dS+SlK/CtM06Rm/yl5SlDMh8KtQ+/m5ZCjQZcw==
+Date: Wed, 3 Jul 2024 08:55:15 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Simon Horman <horms@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
+ <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
+ <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, mwojtas@chromium.org, Nathan Chancellor
+ <nathan@kernel.org>, Antoine Tenart <atenart@kernel.org>, Marc Kleine-Budde
+ <mkl@pengutronix.de>
+Subject: Re: [PATCH net-next v14 12/13] net: ethtool: strset: Allow querying
+ phy stats by index
+Message-ID: <20240703085515.25dab47c@fedora-2.home>
+In-Reply-To: <20240702105411.GF598357@kernel.org>
+References: <20240701131801.1227740-1-maxime.chevallier@bootlin.com>
+	<20240701131801.1227740-13-maxime.chevallier@bootlin.com>
+	<20240702105411.GF598357@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4ooK7fRs93bP16MVvvShFI6DBLsBI6ke
-X-Proofpoint-ORIG-GUID: 4ooK7fRs93bP16MVvvShFI6DBLsBI6ke
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_03,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- mlxlogscore=999 clxscore=1015 lowpriorityscore=0 suspectscore=0
- malwarescore=0 mlxscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407030049
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Memory intensive applications(which requires more tha 4GB) that wants
-to offload tasks to DSP might have to split the tasks to multiple
-user PD to make the resources available. For every call to DSP,
-fastrpc driver passes the process tgid which works as an identifier
-for the DSP to enqueue the tasks to specific PD. With current design,
-if any process opens device node more than once and makes PD init
-request, same tgid will be passed to DSP which will be considered a
-bad request and this will result in failure as the same identifier
-cannot be used for multiple DSP PD. Allocate and pass an effective
-pgid to DSP which would be allocated during device open and will have
-a lifetime till the device is closed. This will allow the same process
-to open the device more than once and spawn multiple dynamic PD for
-ease of processing.
+Hello Simon,
 
-Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
----
- drivers/misc/fastrpc.c | 48 ++++++++++++++++++++++++++++++++++--------
- 1 file changed, 39 insertions(+), 9 deletions(-)
+On Tue, 2 Jul 2024 11:54:11 +0100
+Simon Horman <horms@kernel.org> wrote:
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 5204fda51da3..7250e30aa93f 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -105,6 +105,10 @@
- 
- #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device, miscdev)
- 
-+#define MAX_DSP_PD	64
-+#define MIN_FRPC_PGID	1000
-+#define MAX_FRPC_PGID	(MIN_FRPC_PGID + MAX_DSP_PD)
-+
- static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
- 						"sdsp", "cdsp"};
- struct fastrpc_phy_page {
-@@ -268,6 +272,7 @@ struct fastrpc_channel_ctx {
- 	struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
- 	spinlock_t lock;
- 	struct idr ctx_idr;
-+	struct ida dsp_pgid_ida;
- 	struct list_head users;
- 	struct kref refcount;
- 	/* Flag if dsp attributes are cached */
-@@ -299,6 +304,7 @@ struct fastrpc_user {
- 	struct fastrpc_buf *init_mem;
- 
- 	int tgid;
-+	int dsp_pgid;
- 	int pd;
- 	bool is_secure_dev;
- 	/* Lock for lists */
-@@ -462,6 +468,7 @@ static void fastrpc_channel_ctx_free(struct kref *ref)
- 	struct fastrpc_channel_ctx *cctx;
- 
- 	cctx = container_of(ref, struct fastrpc_channel_ctx, refcount);
-+	ida_destroy(&cctx->dsp_pgid_ida);
- 
- 	kfree(cctx);
- }
-@@ -1114,7 +1121,7 @@ static int fastrpc_invoke_send(struct fastrpc_session_ctx *sctx,
- 	int ret;
- 
- 	cctx = fl->cctx;
--	msg->pid = fl->tgid;
-+	msg->pid = fl->dsp_pgid;
- 	msg->tid = current->pid;
- 
- 	if (kernel)
-@@ -1292,7 +1299,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
- 		}
- 	}
- 
--	inbuf.pgid = fl->tgid;
-+	inbuf.pgid = fl->dsp_pgid;
- 	inbuf.namelen = init.namelen;
- 	inbuf.pageslen = 0;
- 	fl->pd = USER_PD;
-@@ -1394,7 +1401,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
- 		goto err;
- 	}
- 
--	inbuf.pgid = fl->tgid;
-+	inbuf.pgid = fl->dsp_pgid;
- 	inbuf.namelen = strlen(current->comm) + 1;
- 	inbuf.filelen = init.filelen;
- 	inbuf.pageslen = 1;
-@@ -1503,7 +1510,7 @@ static int fastrpc_release_current_dsp_process(struct fastrpc_user *fl)
- 	int tgid = 0;
- 	u32 sc;
- 
--	tgid = fl->tgid;
-+	tgid = fl->dsp_pgid;
- 	args[0].ptr = (u64)(uintptr_t) &tgid;
- 	args[0].length = sizeof(tgid);
- 	args[0].fd = -1;
-@@ -1528,6 +1535,9 @@ static int fastrpc_device_release(struct inode *inode, struct file *file)
- 	list_del(&fl->user);
- 	spin_unlock_irqrestore(&cctx->lock, flags);
- 
-+	if (fl->dsp_pgid != -1)
-+		ida_free(&cctx->dsp_pgid_ida, fl->dsp_pgid);
-+
- 	if (fl->init_mem)
- 		fastrpc_buf_free(fl->init_mem);
- 
-@@ -1554,6 +1564,19 @@ static int fastrpc_device_release(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
-+static int fastrpc_pgid_alloc(struct fastrpc_channel_ctx *cctx)
-+{
-+	int ret = -1;
-+
-+	/* allocate unique id between MIN_FRPC_PGID and MAX_FRPC_PGID */
-+	ret = ida_alloc_range(&cctx->dsp_pgid_ida, MIN_FRPC_PGID,
-+					MAX_FRPC_PGID, GFP_ATOMIC);
-+	if (ret < 0)
-+		return -1;
-+
-+	return ret;
-+}
-+
- static int fastrpc_device_open(struct inode *inode, struct file *filp)
- {
- 	struct fastrpc_channel_ctx *cctx;
-@@ -1582,6 +1605,12 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
- 	fl->cctx = cctx;
- 	fl->is_secure_dev = fdevice->secure;
- 
-+	fl->dsp_pgid = fastrpc_pgid_alloc(cctx);
-+	if (fl->dsp_pgid == -1) {
-+		dev_dbg(&cctx->rpdev->dev, "too many fastrpc clients, max %u allowed\n", MAX_DSP_PD);
-+		return -EUSERS;
-+	}
-+
- 	fl->sctx = fastrpc_session_alloc(cctx);
- 	if (!fl->sctx) {
- 		dev_err(&cctx->rpdev->dev, "No session available\n");
-@@ -1646,7 +1675,7 @@ static int fastrpc_dmabuf_alloc(struct fastrpc_user *fl, char __user *argp)
- static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
- {
- 	struct fastrpc_invoke_args args[1];
--	int tgid = fl->tgid;
-+	int tgid = fl->dsp_pgid;
- 	u32 sc;
- 
- 	args[0].ptr = (u64)(uintptr_t) &tgid;
-@@ -1802,7 +1831,7 @@ static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *
- 	int err;
- 	u32 sc;
- 
--	req_msg.pgid = fl->tgid;
-+	req_msg.pgid = fl->dsp_pgid;
- 	req_msg.size = buf->size;
- 	req_msg.vaddr = buf->raddr;
- 
-@@ -1888,7 +1917,7 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
- 		return err;
- 	}
- 
--	req_msg.pgid = fl->tgid;
-+	req_msg.pgid = fl->dsp_pgid;
- 	req_msg.flags = req.flags;
- 	req_msg.vaddr = req.vaddrin;
- 	req_msg.num = sizeof(pages);
-@@ -1978,7 +2007,7 @@ static int fastrpc_req_mem_unmap_impl(struct fastrpc_user *fl, struct fastrpc_me
- 		return -EINVAL;
- 	}
- 
--	req_msg.pgid = fl->tgid;
-+	req_msg.pgid = fl->dsp_pgid;
- 	req_msg.len = map->len;
- 	req_msg.vaddrin = map->raddr;
- 	req_msg.fd = map->fd;
-@@ -2031,7 +2060,7 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
- 		return err;
- 	}
- 
--	req_msg.pgid = fl->tgid;
-+	req_msg.pgid = fl->dsp_pgid;
- 	req_msg.fd = req.fd;
- 	req_msg.offset = req.offset;
- 	req_msg.vaddrin = req.vaddrin;
-@@ -2375,6 +2404,7 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
- 	INIT_LIST_HEAD(&data->invoke_interrupted_mmaps);
- 	spin_lock_init(&data->lock);
- 	idr_init(&data->ctx_idr);
-+	ida_init(&data->dsp_pgid_ida);
- 	data->domain_id = domain_id;
- 	data->rpdev = rpdev;
- 
--- 
-2.34.1
+> On Mon, Jul 01, 2024 at 03:17:58PM +0200, Maxime Chevallier wrote:
+> > The ETH_SS_PHY_STATS command gets PHY statistics. Use the phydev pointer
+> > from the ethnl request to allow query phy stats from each PHY on the
+> > link.
+> > 
+> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> > ---
+> >  net/ethtool/strset.c | 24 +++++++++++++++++-------
+> >  1 file changed, 17 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/net/ethtool/strset.c b/net/ethtool/strset.c  
+> 
+> ...
+> 
+> > @@ -279,6 +280,8 @@ static int strset_prepare_data(const struct ethnl_req_info *req_base,
+> >  	const struct strset_req_info *req_info = STRSET_REQINFO(req_base);
+> >  	struct strset_reply_data *data = STRSET_REPDATA(reply_base);
+> >  	struct net_device *dev = reply_base->dev;
+> > +	struct nlattr **tb = info->attrs;  
+> 
+> Hi Maxime,
+> 
+> Elsewhere in this function it is assumed that info may be NULL.
+> But here it is dereferenced unconditionally.
 
+Hmm in almst all netlink commands we do dereference the genl_info *info
+pointer without checks.
+
+I've looked into net/netlink/genetlink.c to backtrack call-sites and it
+looks to be that indeed info can't be NULL (either populated from
+genl_start() or genl_family_rcv_msg_doit(). Maybe Jakub can confirm
+this ?
+
+If what I say above is correct, I can include a small patch to remove
+the un-necessary check that makes smatch think the genl_info pointer can
+be NULL.
+
+Thanks for the report,
+
+Maxime
 
