@@ -1,64 +1,53 @@
-Return-Path: <linux-kernel+bounces-239510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88577926170
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:09:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66D1926174
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAAE41C22085
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:09:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14AD21C22A27
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D0617A5B5;
-	Wed,  3 Jul 2024 13:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Rj5CV6gj"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A24217A580;
+	Wed,  3 Jul 2024 13:09:57 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2482B13DDA6;
-	Wed,  3 Jul 2024 13:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D546A17996;
+	Wed,  3 Jul 2024 13:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720012168; cv=none; b=nv7MEfG3FNCOvPbqzTVUwEgyghlZVtsMysLpL3piHkRemeXN5sJ1tCOX4hnnhvFxqhe0k83Dodi+BS1h44qpmNT2xrdkArfhaR6Ix7573N4sPpToFh4foNitjEJhThlngUsqXYS65ncUntsCzSFOUqEfRuO52fvw9WnEqSP582c=
+	t=1720012197; cv=none; b=WqUpMWXgVsEQTZs9CE7mZ3DhngjqO75/tpoYGjOUJTphgxMb1032szhxGsBq3gG5lfmch9Cu5fPVng1RqvYno7aHztGulTdCHrrlTl6Se6m9viUV+aKOG+ubed9JjvwuTr0LEnXMbWGRO5hqyIWFXelsPDLU8MAoDyiT5LDhkcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720012168; c=relaxed/simple;
-	bh=W8KnSELxoOeLFO4Bkg8ypBzvhOg9ofBU1heW/xaRe4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KUhXTWIBUcGJyrpGl9mRkHUag8woUY3otXdtjRNvvabYEdY73vcDJFBl9fA5XE6aFhbD2PrzCDHV6YWjq+3eFALhAP5PAzno3U2KyHs+nA2KruyiT3S8xqQIqoXyOGO7HSJLYrEnTXLOlP0GiTNkrw03jVXoNrDDzfwqmEgEo7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Rj5CV6gj; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1720012167; x=1751548167;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=W8KnSELxoOeLFO4Bkg8ypBzvhOg9ofBU1heW/xaRe4k=;
-  b=Rj5CV6gjA7bdouczrb90jR05EmC8s1gMOWvzhsKmCBE2E7JT4vVZzOdS
-   uBUAswn6AJt3J0nSb+5FoxsxGyLZ8Qjxbfu2zmiNjjSxvu3WcD7WYWqAw
-   oaL948Izy4XK6SU6PNJj+gGWNskvdmGM16iSYixj+uE9bizQTgIeC96WQ
-   jjhud9EqkR3dkpschvbXGcx6IIodTZym3NgjEus87t6wVzF7FWhj8WJbu
-   N9q0TBlMOh7Imj2TJnnXptonwil+6DUI/YFI1Gcz2Bxy0O0NlYYzOOR1K
-   jJPxapoEb0zIRrd1OwkSQ3tjgKtWYGanpCYw+DuuPYiytBf/vuZz1EKfX
-   Q==;
-X-CSE-ConnectionGUID: EqW5S7eWRE2aTexdHZiS+A==
-X-CSE-MsgGUID: NasQoXC7S5Kaxo5UL3Vsag==
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="28777735"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Jul 2024 06:09:24 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 3 Jul 2024 06:09:03 -0700
-Received: from [10.180.116.202] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 3 Jul 2024 06:08:46 -0700
-Message-ID: <a8cc31a9-d58f-4a4e-98fb-a7ba47bc744e@microchip.com>
-Date: Wed, 3 Jul 2024 15:09:07 +0200
+	s=arc-20240116; t=1720012197; c=relaxed/simple;
+	bh=4knqHiokeW7MXs2sFDlxEP0aOTgB/CsZK7QCpjNnAyU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aZxQhvVZx6ar66ZG1m1TLHWMJbyvH4Cj4mlAlpXptKBRazNTtJl5pi6Vy3bqqcv7zqgrivphBWx4O+Kvq/Q4i3A8Tf5F19aafEAVPkYyF8AsyskgzCUVlNqiDN/E/oZJ/QGr/8M0rbDifXjbBBZTQ3x2CihS+eryYFMQ5ZnQ4pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EADF61FCE4;
+	Wed,  3 Jul 2024 13:09:51 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 27E8713974;
+	Wed,  3 Jul 2024 13:09:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /cQxB59NhWYUJgAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Wed, 03 Jul 2024 13:09:51 +0000
+Message-ID: <055fe06c-58c3-42ad-a33e-c39de21f59b1@suse.de>
+Date: Wed, 3 Jul 2024 16:09:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,86 +55,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/20] irqchip/atmel-aic: convert to
- of_property_for_each_u32_new()
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Miguel Ojeda
-	<ojeda@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan
-	<saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Tony
- Lindgren <tony@atomide.com>, Bjorn Andersson <andersson@kernel.org>,
-	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>, Chen-Yu Tsai
-	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
-	<samuel@sholland.org>, Krzysztof Kozlowski <krzk@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Florian
- Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
- list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij
-	<linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan
- Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Richard
- Leitner <richard.leitner@linux.dev>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Damien Le Moal <dlemoal@kernel.org>
-CC: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thomas Petazzoni
-	<thomas.petazzoni@bootlin.com>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <llvm@lists.linux.dev>,
-	<linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-	<linux-pwm@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>, <patches@opensource.cirrus.com>,
-	<linux-sound@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-riscv@lists.infradead.org>
-References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
- <20240703-of_property_for_each_u32-v1-11-42c1fc0b82aa@bootlin.com>
-Content-Language: en-US, fr-FR
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <20240703-of_property_for_each_u32-v1-11-42c1fc0b82aa@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v1 3/8] PCI: brcmstb: Use bridge reset if available
+To: Jim Quinlan <james.quinlan@broadcom.com>,
+ Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com,
+ jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240628205430.24775-1-james.quinlan@broadcom.com>
+ <20240628205430.24775-4-james.quinlan@broadcom.com>
+ <48a3b910-e2c8-4faf-a8f0-d53b5ddcd5fe@suse.de>
+ <CA+-6iNw3QziFzGuqrwzb8QsgY-B3uL9Z3z1rcTCBFG=6BW9MRQ@mail.gmail.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <CA+-6iNw3QziFzGuqrwzb8QsgY-B3uL9Z3z1rcTCBFG=6BW9MRQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Queue-Id: EADF61FCE4
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On 03/07/2024 at 12:36, Luca Ceresoli wrote:
-> Simplify code using of_property_for_each_u32_new() as the two additional
-> parameters in of_property_for_each_u32() are not used here.
-> 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Hi Jim,
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+On 7/2/24 21:36, Jim Quinlan wrote:
+> On Tue, Jul 2, 2024 at 8:59 AM Stanimir Varbanov <svarbanov@suse.de> wrote:
+>>
+>>
+>>
+>> On 6/28/24 23:54, Jim Quinlan wrote:
+>>> The 7712 SOC has a bridge reset which can be described in the device tree.
+>>> If it is present, use it. Otherwise, continue to use the legacy method to
+>>> reset the bridge.
+>>>
+>>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+>>> ---
+>>>  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
+>>>  1 file changed, 19 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+>>> index c2eb29b886f7..4104c3668fdb 100644
+>>> --- a/drivers/pci/controller/pcie-brcmstb.c
+>>> +++ b/drivers/pci/controller/pcie-brcmstb.c
+>>> @@ -265,6 +265,7 @@ struct brcm_pcie {
+>>>       enum pcie_type          type;
+>>>       struct reset_control    *rescal;
+>>>       struct reset_control    *perst_reset;
+>>> +     struct reset_control    *bridge;
+>>>       int                     num_memc;
+>>>       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
+>>>       u32                     hw_rev;
+>>> @@ -732,12 +733,19 @@ static void __iomem *brcm7425_pcie_map_bus(struct pci_bus *bus,
+>>>
+>>>  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
+>>>  {
+>>> -     u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+>>> -     u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+>>> +     if (pcie->bridge) {
+>>> +             if (val)
+>>> +                     reset_control_assert(pcie->bridge);
+>>> +             else
+>>> +                     reset_control_deassert(pcie->bridge);
+>>
+>> Please check reset_control_assert/deassert() calls for error. This might
+>> need to change the definition of brcm_pcie_bridge_sw_init_set_generic()
+>> to return error.
+> 
+> Hi Stan,
+> 
+> Do you really think this is necessary?  If you look at
+> "drivers/reset/reset-brcmstb.c"  there is no way for either of these
+> calls to fail and I don't see that changing because it is just writing
+> a bit into a register.
 
-> ---
->   drivers/irqchip/irq-atmel-aic-common.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-atmel-aic-common.c b/drivers/irqchip/irq-atmel-aic-common.c
-> index 072bd227b6c6..543ea249df53 100644
-> --- a/drivers/irqchip/irq-atmel-aic-common.c
-> +++ b/drivers/irqchip/irq-atmel-aic-common.c
-> @@ -111,8 +111,6 @@ static void __init aic_common_ext_irq_of_init(struct irq_domain *domain)
->          struct device_node *node = irq_domain_get_of_node(domain);
->          struct irq_chip_generic *gc;
->          struct aic_chip_data *aic;
-> -       struct property *prop;
-> -       const __be32 *p;
->          u32 hwirq;
-> 
->          gc = irq_get_domain_generic_chip(domain, 0);
-> @@ -120,7 +118,7 @@ static void __init aic_common_ext_irq_of_init(struct irq_domain *domain)
->          aic = gc->private;
->          aic->ext_irqs |= 1;
-> 
-> -       of_property_for_each_u32(node, "atmel,external-irqs", prop, p, hwirq) {
-> +       of_property_for_each_u32_new(node, "atmel,external-irqs", hwirq) {
->                  gc = irq_get_domain_generic_chip(domain, hwirq);
->                  if (!gc) {
->                          pr_warn("AIC: external irq %d >= %d skip it\n",
-> 
-> --
-> 2.34.1
-> 
+yes, I think there are kernel rules which we have to follow. We use
+generic reset-control interface in pcie driver and we cannot rely on the
+low-level implementation of this particular reset-controller driver
+(reset-brcmstb.c).
 
+regards,
+~Stan
 
