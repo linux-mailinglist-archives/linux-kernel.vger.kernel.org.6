@@ -1,95 +1,64 @@
-Return-Path: <linux-kernel+bounces-239070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8C79255C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:47:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 029B29255DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97190284A7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B134828A0C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19A7136E1A;
-	Wed,  3 Jul 2024 08:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7813B13D50E;
+	Wed,  3 Jul 2024 08:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="F54+j/EV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eueX/tUo";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="F54+j/EV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eueX/tUo"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eLPu0Xf2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F0A25760
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9827B13CA95;
+	Wed,  3 Jul 2024 08:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719996432; cv=none; b=uPmn7G8uKx6epcmadXou/WHpriQj5GQVIt13jvboN8/1ZZOoregKrA+Dh8kgpljCxr0WzwEx14B2K96oKh7/m+XdlR9pD0bXrsoYsHjALI9vW43uigweyCIRiWJP+ChRlE3rQbLoxSUHTnJ3eK6nbyPvJtKtMIxTVyECIEpSr14=
+	t=1719996569; cv=none; b=c6T2m0z2EpfEgrXKHxlUE0cQ/vYTC8YAlrD+PvS9PDsxasjAID3HWG0FYFt99j+Ss974EUqfcrgkg5YPD4Afs9gtgX9psQbJFRNAZcJrDBinaqF4G9TJ9GjkGUFOXa+pCOxegVQRw5WeBK8snVr9OGSGyBGdXrFBkOfMnwROae0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719996432; c=relaxed/simple;
-	bh=lOvUz95Kf66caudaAmYcJ8eHBiv3waD9gIRd6Q25+I8=;
+	s=arc-20240116; t=1719996569; c=relaxed/simple;
+	bh=3dltHtCt2kO8qiiW2Npq9piciE3gykOkQi65SIBblgk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oG8LE/2UoJtflDWmW40qHLIdLeOcp1uJEQYk8QIk18PIbEib+0r9oLP71ENlvV12PcdCnzaQJl6MDOyA1OAOQ9Ev97y7eI2ZrzdzmYCUIWQRNbm67Mtq83mzV4LZ10S2PAI9lBwVpA7V1lHkNk6a+G2yMUK2TK32/kEQinCrDJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=F54+j/EV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eueX/tUo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=F54+j/EV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eueX/tUo; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 36D4D21B97;
-	Wed,  3 Jul 2024 08:47:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719996428; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T6LPjluvy4Yz+kj/Evbi4y5Uu1VH0X+xtPFjfSSd5x8=;
-	b=F54+j/EVVd/xrnxY3ylQ5DmfMC4JK7405U1QyG1J+u4KbujjdxSbhl9cFQaghMUGQDUSLb
-	NqIhFJXQqbh6SmRXiUO5Y4fssC71sjIkbU6prQIpjwoaREsvz/JGrX0qSrVVClnD+VcSAv
-	pNaLFeg94eN+d1z5id2jeqhCaMKjS2g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719996428;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T6LPjluvy4Yz+kj/Evbi4y5Uu1VH0X+xtPFjfSSd5x8=;
-	b=eueX/tUoTiGCXg5oW2cEJiczSehbrwOEbYB9sLIkrL+TDHkAXSi3TxYc1m7m1rDnKjFlN7
-	5GErsA3eHWmDdZCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="F54+j/EV";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="eueX/tUo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719996428; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T6LPjluvy4Yz+kj/Evbi4y5Uu1VH0X+xtPFjfSSd5x8=;
-	b=F54+j/EVVd/xrnxY3ylQ5DmfMC4JK7405U1QyG1J+u4KbujjdxSbhl9cFQaghMUGQDUSLb
-	NqIhFJXQqbh6SmRXiUO5Y4fssC71sjIkbU6prQIpjwoaREsvz/JGrX0qSrVVClnD+VcSAv
-	pNaLFeg94eN+d1z5id2jeqhCaMKjS2g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719996428;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T6LPjluvy4Yz+kj/Evbi4y5Uu1VH0X+xtPFjfSSd5x8=;
-	b=eueX/tUoTiGCXg5oW2cEJiczSehbrwOEbYB9sLIkrL+TDHkAXSi3TxYc1m7m1rDnKjFlN7
-	5GErsA3eHWmDdZCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DC7B913889;
-	Wed,  3 Jul 2024 08:47:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bhSlNAsQhWY1SQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 03 Jul 2024 08:47:07 +0000
-Message-ID: <3ecb6fb4-ff60-4c49-8199-b76b4f297ecf@suse.de>
-Date: Wed, 3 Jul 2024 10:47:07 +0200
+	 In-Reply-To:Content-Type; b=XP/djhjAh/6lm6zcGJah2T12JEzxyxicV3NAzSg/iosJe7ijorV4X6x1quv9T+RSX4Y1DZb6MohYTt4JPqMVKSYBWGAWkJhf/AblEd1Tt0v11B189fH7fzGbEk0tEvk1S9g+7g5ARGGtMkxtauE6YD207idfQDY7SDnpCEX6vvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eLPu0Xf2; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719996568; x=1751532568;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3dltHtCt2kO8qiiW2Npq9piciE3gykOkQi65SIBblgk=;
+  b=eLPu0Xf2naHbJd3R4joRUOUgNK3W2MA1oSEj37nm+cuw53rBBa7TkYlb
+   ty9mawMntTaCP8FCdNHSuCm38JhME3BFDOy7rdJqCZOBMp+NUImeWj3SS
+   7CwkT1Zb0f1r5leXIr58BN7uwZ0uawBqgBmpJ4bix2Rj3oYXEqXBsSaaE
+   ETK4RWk2zGfPpPPyLpkcrRRe40h8hWDh8pMURMDk5WVlyFuCz+WmG2iqd
+   gZ0NboSlqYDNaUJn1cYFxYtcbFzP//PWaSbPYvUjB6jkVmteYLICDBT3b
+   ezp5lKhBpbiT1A7I+5mz05uZckVX9fsp2efiZUEwigQJzWTSH10xR7F2J
+   g==;
+X-CSE-ConnectionGUID: oYCxL8rqTa2lulKecwpiNA==
+X-CSE-MsgGUID: yW6Da1KhTBGBRtDsJzH2zA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="17166459"
+X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
+   d="scan'208";a="17166459"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 01:49:27 -0700
+X-CSE-ConnectionGUID: hspAsi3VQOKExlrUFYcLFw==
+X-CSE-MsgGUID: 2ivefynxTxGERJHTPJ/Mqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
+   d="scan'208";a="50501023"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO [10.245.246.242]) ([10.245.246.242])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 01:49:21 -0700
+Message-ID: <70bf10a7-7f87-4fd1-bd44-1733d3b2b15e@linux.intel.com>
+Date: Wed, 3 Jul 2024 10:49:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,201 +66,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] drm/radeon: change drm_dev_alloc to
- devm_drm_dev_alloc
-To: Wu Hoi Pok <wuhoipok@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240630165949.117634-1-wuhoipok@gmail.com>
- <20240630165949.117634-7-wuhoipok@gmail.com>
+Subject: Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB
+To: Wesley Cheng <quic_wcheng@quicinc.com>,
+ =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
+ robh@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
+ alsa-devel@alsa-project.org
+References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
+ <20240610235808.22173-33-quic_wcheng@quicinc.com>
+ <5be51e1f-70c9-4bbc-96fa-1e50e441bd35@linux.intel.com>
+ <408d9e8e-0f40-7e66-54be-2f8d2c0783a3@quicinc.com>
+ <ca1e1063-e1bd-4e03-a7cd-91985e9954e9@linux.intel.com>
+ <096d59a0-5e18-092c-c9ae-d98130226f06@quicinc.com>
+ <368d9019-2c96-468e-b472-7e1127f76213@linux.intel.com>
+ <eb6370ea-47a0-3659-3c10-cb7f95e3e520@quicinc.com>
+ <510468c7-b181-48d0-bf2d-3e478b2f2aca@linux.intel.com>
+ <c7a95157-1b71-1489-3657-8fe67f9acb4e@quicinc.com>
+ <90463a4e-c2e7-4b59-9a79-23533b4acd1e@linux.intel.com>
+ <fd8f1eb0-4b21-4697-8175-a61bc3858852@quicinc.com>
+ <f982842a-1804-420b-a539-a609ecf8fb8a@linux.intel.com>
+ <3c358604-6926-4f90-8fc8-8139c68c3418@quicinc.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240630165949.117634-7-wuhoipok@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[amd.com,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 36D4D21B97
-X-Spam-Flag: NO
-X-Spam-Score: -4.50
-X-Spam-Level: 
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <3c358604-6926-4f90-8fc8-8139c68c3418@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
 
-Am 30.06.24 um 18:59 schrieb Wu Hoi Pok:
-> "drm_dev_alloc" is deprecated, in order to use the newer "devm_drm_dev_alloc",
-> the "drm_device" is stored inside "radeon_device", by changing "rdev_to_drm(rdev)"
-> other functions still gain access to the member "drm_device". Also, "devm_drm_dev_alloc"
-> is now allocating "radeon_device", allocation inside "radeon_driver_load_kms" has to be
-> removed.
->
-> In "radeon_device_init", it originally assigned "rdev->dev" etc. However it is already
-> done right after "devm_drm_dev_alloc" as you can see down below. It is better remove them.
->
-> Signed-off-by: Wu Hoi Pok <wuhoipok@gmail.com>
+>>>> There are really multiple layers to deal with
+>>>>
+>>>> a) is the controller able to support the offload path? IIRC this is
+>>>> embedded in an obscure XHCI property, it would make sense to expose it
+>>>> as a control, or component string, of the USB card.
+>>> If a component string/tag is desired, I already have some way of doing that.  I can add it to the USB card.
+>>>
+>>>> b) is there a companion card capable of dealing with the offload path?
+>>>> Since the presence of this card may depend on driver probe, there should
+>>>> be a control on the USB card. userspace could detect changes to this
+>>>> control and detect if that path is or is no longer enabled.
+>>> So currently, the "USB Offload Playback Capable Card" kcontrol (on the USB card) will determine if there is an offload path.  However, this differs than what Amadeusz is suggesting, in that he wants a single kcontrol created for EACH USB card identified (per USB audio device), and a simple enable/disable control to determine if the offload path is enabled for that card/pcm stream.
+>>>
+>>> It would be a simpler approach for the userspace, and if the card that handles the offload card isn't present, then these enable/disable control will be set to "disabled," and even if users attempt to set the control, it won't go through.
+>> Not following. Are you suggesting userspace would modify the
+>> enable/disable status?
+> 
+> Yes, this is the suggestion.  One writeable kcontrol on the USB SND audio device that will control if that USB audio device is going to be offloaded.  If the kcontrol reads back "enabled" (or 1) then userspace knows that the offload path is active.  Else, if it reads "disabled" (or 0) after the attempt to set the kcontrol, then the offload path was unsuccessfully enabled, ie maybe due to no available offload streams.
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-Tested-by: Thomas Zimmermann <tzimmermann@suse.de>
+It's a bit over-engineered IMHO.
 
+My alternate suggestion is a read-only control reporting that offload is
+possible. Then userspace attempts to open a PCM device on the ASoC card,
+any failures due to resources would be handled at that point.
 
-> ---
->   drivers/gpu/drm/radeon/radeon.h        |  4 ++--
->   drivers/gpu/drm/radeon/radeon_device.c |  3 ---
->   drivers/gpu/drm/radeon/radeon_drv.c    | 12 +++++++++---
->   drivers/gpu/drm/radeon/radeon_kms.c    |  8 +-------
->   4 files changed, 12 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/gpu/drm/radeon/radeon.h b/drivers/gpu/drm/radeon/radeon.h
-> index ae35c102a487..fd8a4513025f 100644
-> --- a/drivers/gpu/drm/radeon/radeon.h
-> +++ b/drivers/gpu/drm/radeon/radeon.h
-> @@ -2297,7 +2297,7 @@ typedef void (*radeon_wreg_t)(struct radeon_device*, uint32_t, uint32_t);
->   
->   struct radeon_device {
->   	struct device			*dev;
-> -	struct drm_device		*ddev;
-> +	struct drm_device		ddev;
->   	struct pci_dev			*pdev;
->   #ifdef __alpha__
->   	struct pci_controller		*hose;
-> @@ -2478,7 +2478,7 @@ void cik_mm_wdoorbell(struct radeon_device *rdev, u32 index, u32 v);
->   
->   static inline struct drm_device *rdev_to_drm(struct radeon_device *rdev)
->   {
-> -	return rdev->ddev;
-> +	return &rdev->ddev;
->   }
->   
->   /*
-> diff --git a/drivers/gpu/drm/radeon/radeon_device.c b/drivers/gpu/drm/radeon/radeon_device.c
-> index 32851632643d..554b236c2328 100644
-> --- a/drivers/gpu/drm/radeon/radeon_device.c
-> +++ b/drivers/gpu/drm/radeon/radeon_device.c
-> @@ -1285,9 +1285,6 @@ int radeon_device_init(struct radeon_device *rdev,
->   	bool runtime = false;
->   
->   	rdev->shutdown = false;
-> -	rdev->dev = &pdev->dev;
-> -	rdev->ddev = ddev;
-> -	rdev->pdev = pdev;
->   	rdev->flags = flags;
->   	rdev->family = flags & RADEON_FAMILY_MASK;
->   	rdev->is_atom_bios = false;
-> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-> index 7b8aa8406751..f36aa71c57c7 100644
-> --- a/drivers/gpu/drm/radeon/radeon_drv.c
-> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
-> @@ -260,6 +260,7 @@ static int radeon_pci_probe(struct pci_dev *pdev,
->   {
->   	unsigned long flags = 0;
->   	struct drm_device *ddev;
-> +	struct radeon_device *rdev;
->   	int ret;
->   
->   	if (!ent)
-> @@ -300,9 +301,14 @@ static int radeon_pci_probe(struct pci_dev *pdev,
->   	if (ret)
->   		return ret;
->   
-> -	ddev = drm_dev_alloc(&kms_driver, &pdev->dev);
-> -	if (IS_ERR(ddev))
-> -		return PTR_ERR(ddev);
-> +	rdev = devm_drm_dev_alloc(&pdev->dev, &kms_driver, typeof(*rdev), ddev);
-> +	if (IS_ERR(rdev))
-> +		return PTR_ERR(rdev);
-> +
-> +	rdev->dev = &pdev->dev;
-> +	rdev->pdev = pdev;
-> +	ddev = rdev_to_drm(rdev);
-> +	ddev->dev_private = rdev;
->   
->   	ret = pci_enable_device(pdev);
->   	if (ret)
-> diff --git a/drivers/gpu/drm/radeon/radeon_kms.c b/drivers/gpu/drm/radeon/radeon_kms.c
-> index a16590c6247f..645e33bf7947 100644
-> --- a/drivers/gpu/drm/radeon/radeon_kms.c
-> +++ b/drivers/gpu/drm/radeon/radeon_kms.c
-> @@ -104,15 +104,9 @@ void radeon_driver_unload_kms(struct drm_device *dev)
->   int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags)
->   {
->   	struct pci_dev *pdev = to_pci_dev(dev->dev);
-> -	struct radeon_device *rdev;
-> +	struct radeon_device *rdev = dev->dev_private;
->   	int r, acpi_status;
->   
-> -	rdev = kzalloc(sizeof(struct radeon_device), GFP_KERNEL);
-> -	if (rdev == NULL) {
-> -		return -ENOMEM;
-> -	}
-> -	dev->dev_private = (void *)rdev;
-> -
->   #ifdef __alpha__
->   	rdev->hose = pdev->sysdata;
->   #endif
+>> I would just have a read-only control that reports what the hardware can
+>> do and which other card can deal with offload. It's up to userspace to
+>> select the offloaded PCM device or not.
+>>
+> That is what I have implemented in the previous patch series.  One USB SND kcontrol within each USB audio device, which points to the ASoC platform card that supports offloading:
+> 
+> "USB Offload Playback Capable Card" --> returns the card index to the ASoC platform card
+> 
+>>From there the offloading control is all within the ASoC platform card.  This is opposite to what Amaduesz suggested in that, the offload control of which USB device to offload should be within USB SND (not ASoC)
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+It's very hard to follow, I don't understand what userspace needs to
+'control' - in the modify sense. What userspace needs is a place to read
+from, and then select the PCM device and follow usual ALSA configuration
+with hw_params.
 
+>>>> c) which PCM device is actually offloaded? This could be plural for some
+>>>> implementations. The mapping between PCM devices exposed by the USB
+>>>> card, and those exposed by the companion card, should be known to
+>>>> userspace. I am not sure how this would be done though, a variable
+>>>> number of controls is a sure way to confuse userspace.
+>>> Expanding on Amadeusz's suggestion, my idea is to have an enable/disable kcontrol per USB stream.  For example, one USB card could have multiple PCM devices (USB streams).  So we would have something like:
+>>>
+>>> PCM Offload Playback Enable Stream#0  enable/disable
+>>>
+>>> PCM Offload Playback Enable Stream#1  enable/disable
+>>>
+>>> ....
+>> are those read-only or not?
+> 
+> No, writable and readable.
+
+The writable part introduces a complicated error handling, e.g. what
+happens if you have an offloaded stream and then this control is changed
+with amixer while streaming?
+
+>>> So we'd know which USB card and PCM device is selected for USB SND.  However, I see what you're getting at in case there are multiple supported streams, because userspace needs to know which ASoC card/pcm combination corresponds to which USB device/combination.
+>> I don't understand how this would help map the two parts? There's got to
+>> be an additional mapping...
+> It won't help with the mapping.  That is something which we'd need to add, suggestion below.
+>>> What do you think about having a USB card kcontrol to display the mapped ASoC card and PCM indexes?
+>>>
+>>> PCM Offload Playback Enable Stream Mapping#0  0, 1 (ASoC card#0, PCM device#1)
+>>>
+>>> To summarize, if we did this, I'd plan to remove all the kcontrols in ASoC card, and have the following in the USB card for an USB audio device that supports one USB stream:
+>>>
+>>> PCM Offload Playback Enable Stream#0  enable/disable
+>>>
+>>> PCM Offload Playback Enable Stream Mapping#0  0, 1 (ASoC card#0, PCM device#1)
+>> ... which is suggested here.
+>>
+>> Assuming these are read-only controls, we would need to know which PCM
+>> device on the USB card can be optimized with the use of which PCM device
+>> on the ASoC card. That means a set of three values. You would also want
+>> a number of streams to make the guesswork on controls less painful.
+> 
+> OK, so now to just figuring out something that both you and Amadeusz can agree on before I put time implementing it.  So I've implemented the "enable/disable" path that Amadeusz suggested, which is highlighted in my previous response, for evaluation purposes.  The overall question is which layer should control the devices that will be offloaded.  In my submissions up until now, the control was given to the ASoC platform card to determine which USB device to offload.  Amadeusz mentioned that it might be beneficial to move the control to the USB SND devices, because what if the offloading is NOT backed by ASoC. (highlighted in [1])  However, IMO the current implementation assumes there is ASoC involved, which should mean that there is some platform "card" that is backing the offload path.  Please let me know if my understanding is incorrect, @Amadeusz. 
+
+I still fundamentally don't get why userspace would try and modify any
+controls, this makes the flows more complicated IMHO since you also have
+the PCM open/hw_params stages.
+I really think it'd be more than enough if the USB card exposed
+read-only values showing that offload is possible and which card/device
+to map to. Then userspace uses the ASoC PCM device and errors are
+handled at that level.
 
