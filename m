@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-239968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E1E092675D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:45:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 430A8926760
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 870431C22F29
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:45:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DC311C22B41
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB17F18509D;
-	Wed,  3 Jul 2024 17:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC9D186E31;
+	Wed,  3 Jul 2024 17:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H9gK+6gN"
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pfX2WZcY"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AC31C68D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 17:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D882F17F511
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 17:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720028732; cv=none; b=sVdLKrTsNydl0ipLG6j8tujGxkKjPskow1WBI0Nqpu384O6/LDzt8sCc7nlrDupfp/Sdr6j+plzOhB2w8yW8vsGaHB8dQR8+Bwd8d53ZGWjwfIuvs0az2HEXuRHpfCd5xpxuQjClYZ8BojelyqvHSibXNiC2aPSjjrQXVXq9QwA=
+	t=1720028738; cv=none; b=B/ZvREK9iv64e+rP6Z1AXYl5vebTFgI3e1agF4RxNGXxHGv0XlXS9fYzZz1I6rDJZygZt3DtNeTEvBLuEyxXH3tPJHBZQFo6xEKq+Q21f6Tc3fSZat03s04qB3A2zVjD/lTMDf8HrdMQS1QRdXSl01Kil8DogwRNVHGjVUjA+II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720028732; c=relaxed/simple;
-	bh=sewsy2PNlhAHTIAwKUo9Yw0nLuZyn06JcxUxF2qHRro=;
+	s=arc-20240116; t=1720028738; c=relaxed/simple;
+	bh=ZFx/AckbAn6Lg2bbrC5Gs3Kyo9xcbmBm8MnNgPXHVZ4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tf+/kBw5qrQwp/f/3hTPR1eJPIzk3MNWRNCe5dK9QUW8LQECFLXG6QbJLGYJ0XVkdcig01xaob5eLn7gU3n6iHwzsJws2CF9QOHD9H3qQy+uow6SOKNKz49gNONOvZojdFzXUScCCbNN5nmyyuhK58h2hStTUVI6Ql4L14JKlDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H9gK+6gN; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-48f42bfb6c4so411055137.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 10:45:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=JSI3j83zZojnXgiteLwCEvDmwVyN0SNCynKaIEnciy83e9AAs/oeRMbOTdssewwh7Yxx/37tJSjdn3qqPLSJuy9MkG6XlP2h5HbKFKiTxJcUivnggsdfjgEOrd/DMJ64PdxkZ1mMo42FsxSWq9Qx9FoiScMzch0dcGDbfW55e9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pfX2WZcY; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-650469f59d7so20121247b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 10:45:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720028728; x=1720633528; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5cDuIQ1SVOlntwrCaUKDE4lSKPTpSufh+g8wiE4Zb5w=;
-        b=H9gK+6gNFkNif9f5Om3r1qahSVWzvUjj7YOCaB2G5TSAmczwjcSRC3c0eYVgwKkB5k
-         9SqxqzxtxeXcsXUcklE8R05cGum005axMuCX49I/0AORAnRf32NM/GnqA2EkaWaZnKXF
-         qHuLp1CzmfR28usCALTRLhFGxfINJLozIQZQrUrIAL/BCGNB6qfbaR6oR4IomlXkej6x
-         Ns2dkG0YwqIhyJRrAa3EB6qGpw7kQOfpdLkf7aO/TmpY6uMpMM4Z3QhF9E9kNNTeuhuK
-         qfYyW8K/SQSBtpoEA3215+L3QlPCjKGmmPp+rTKw4alNHCh1VVNNLt2GJa9BRHdxjOMS
-         lBLQ==
+        d=google.com; s=20230601; t=1720028736; x=1720633536; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GhxR4AnmOLb2e8qgt4elcn3tmPYz1HfQBknaKkg9ViY=;
+        b=pfX2WZcYWJxW8EgUYeR4iqpcFNMNlk2PI1rHa3mDFv12nL0Z4Hmjhj8bLu8y5zU59V
+         jsjXr6CgtAiXyNT5r/U2nj1ASKZ0BKqoP3MB5nP2UwN5EAVncegani8pyuOt2Y3HFue5
+         66gZ3L9qTBwJZ0vO8jlKqCzyN315Yky/gBTOsT3lf6mXv/PED2CWMyQKMgSSoDvtbKqZ
+         XduELPVoftWrGyFVUPfOZao1XpLQ9DmZ4QlickrZ1M3jdO5FqXqeRv6YyXP0aMtADNUb
+         SxsMs5m/4WqPJwzRVUM9+BnjWtXeeGQjEKl6KeHVkcNIJgRg7AFy7eb9czZP8//Xb6Hd
+         zVXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720028728; x=1720633528;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5cDuIQ1SVOlntwrCaUKDE4lSKPTpSufh+g8wiE4Zb5w=;
-        b=bw+ZeHUD3HNeG5EudNnrHiLHquj9rspIdeIY9xr/0f+KveuXU10Tm8qYp33/n8Ktu4
-         bj8LI4iwHuuCzolm7+LZsTqpr/12368SsmsGfz4EabAPkDvi+b0AAeNo5xdBFTZOiLJI
-         6DvQxnmjPd2Ls3x2e/6gzKj499dclpFkOi3PTfrUonLzcp7IYrhJ8IrMBFg+oC/GGG/s
-         HAnMvqwl9+9JMJCCDzjFSTzAJw/X/kpHOc2Dp1GwvlxWEi0enJmgBwWLrrHyW83mtSxH
-         JktnYxu8u9LTyJpjwbZ1g9tx2HsfVWQZ2aP4m5dl3p9rFGtX+PBB8rOHbolJLfE8LBoH
-         ILRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWh0Ha6i96DKpDEtW5ClOrYYBQDikIPsdUUfpif+ls7GU7GZpeHieXPonG3uMeHMCkjpF0tFQMY3YfCH+sOXRGpar0L2Ztap8cXTtjT
-X-Gm-Message-State: AOJu0YwqO7cyfdsAb/SAmTCswE4fAVLwF+F+eRNeQWS8gV9qsgMezYrI
-	JmRZyGulKKrI9zXU0+b3jKeBdBHBHe5pN4aglZR8Z1+p5YRcQ7SXntkgxzif8Qlba6Bo+iMP9r/
-	0/5ZpEZOnxLqsBhQKqcM1+cphn+W4iXK/l1HkPA==
-X-Google-Smtp-Source: AGHT+IF+f1WlbG8vYxx3JDKGgZzmMKhXtY8j4lhiNmTEhtO8JGWtHRi31ETtlSqGO8zmmaqnZauCj6D8pDnZbW6J8iA=
-X-Received: by 2002:a67:f447:0:b0:48d:a4aa:35f9 with SMTP id
- ada2fe7eead31-48fdec17e8amr1799967137.4.1720028728227; Wed, 03 Jul 2024
- 10:45:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720028736; x=1720633536;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GhxR4AnmOLb2e8qgt4elcn3tmPYz1HfQBknaKkg9ViY=;
+        b=cgiCT69b0c5Id4QBm+zoQ9Exa8z9FIx107NoO2vALFi7CaQb2dF/s8ANu2gATy4kEZ
+         rZVGL5w64GvOqt4eHq8GzuoVma2Hn2+umwwjAcrHdoBi7k8vis6KW++at6rATRsEoUAR
+         44UwdTXLX94BdNIiccPRfhLxRrizAiMXVh8gwwg4Qtrf+laFjTV6aW2nTZoQFkAb0Dvs
+         ZpNxS5ytVF5YNZx+sdiMUaACKF4CUcAfjJ37PhX6vg9FL5T8ZRbOn5qKNJrU2iKlW/Os
+         IBQ6s9aVLLwkSehhXATlQbPSH4zr3EpYiS0o83n2D7o2JFElxD/AeKusmBk8CqukCExS
+         imug==
+X-Forwarded-Encrypted: i=1; AJvYcCUbKgh1blhiN7ehDpLuAwnDY3/NfpJnL1ozRSz4PkGS01+dssB0rIXcfSeQhQiiVcybZGL1MuUMYyOYl/TGzOdoGcbPi52sXZaNfmVO
+X-Gm-Message-State: AOJu0YyIIwpJ++HW44jf0BecQeF1V1m8r+AwLe8mO9h5crz4TcHrupA2
+	9ofae3y2E0A/IdrKXp9ydyR933yOOVfSSYdfaD+B5KegefaN9yT+yicjuZG18XzPrCGzmkBP5iK
+	i2VMdjmlCq72HIVyXKUA7j+/BLLueEyUxr+a3Wl4Ty0h0aNBV2X3t
+X-Google-Smtp-Source: AGHT+IGhOytUB8CaG/gAFJEC68exEInJu4ze08dBFswC7EHqqNiHxCYGfnPatnT8gPM2A0u1TbA00DVz/5EvCS/GRV4=
+X-Received: by 2002:a81:7c54:0:b0:646:25c7:178e with SMTP id
+ 00721157ae682-64c7123c013mr127129437b3.5.1720028735529; Wed, 03 Jul 2024
+ 10:45:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240703102841.492044697@linuxfoundation.org>
-In-Reply-To: <20240703102841.492044697@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 3 Jul 2024 23:15:16 +0530
-Message-ID: <CA+G9fYvAkELSdWF1EYyjS=d_jvCJD0O=aPnZFHUGnhYy6c1VCg@mail.gmail.com>
-Subject: Re: [PATCH 5.4 000/189] 5.4.279-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
-	Linux-sh list <linux-sh@vger.kernel.org>
+References: <20240630011215.42525-1-thorsten.blum@toblux.com>
+ <20240701232634.0bddb542ddea123b48dcabdf@linux-foundation.org>
+ <20240702064017.GA24838@lst.de> <e0f384b0-6913-4224-a3ea-bdae784f5dab@amd.com>
+ <20240702003357.6bfd1d918c56d536bb664c37@linux-foundation.org> <CAJuCfpFCiUfpa45rG74zd-KoQcaA2fwgUw86iSF2CDiFrXCOdA@mail.gmail.com>
+In-Reply-To: <CAJuCfpFCiUfpa45rG74zd-KoQcaA2fwgUw86iSF2CDiFrXCOdA@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 3 Jul 2024 10:45:21 -0700
+Message-ID: <CAJuCfpHJPtduJwOyxTFT9RVmWZCcWULWhUN4ZPEt6earHp=MXA@mail.gmail.com>
+Subject: Re: [PATCH] dma-buf: Remove unnecessary kmalloc() cast
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Christoph Hellwig <hch@lst.de>, Thorsten Blum <thorsten.blum@toblux.com>, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, Sumit Semwal <sumit.semwal@linaro.org>, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 3 Jul 2024 at 16:20, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Tue, Jul 2, 2024 at 8:15=E2=80=AFAM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
 >
-> This is the start of the stable review cycle for the 5.4.279 release.
-> There are 189 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On Tue, Jul 2, 2024 at 7:34=E2=80=AFAM Andrew Morton <akpm@linux-foundati=
+on.org> wrote:
+> >
+> > On Tue, 2 Jul 2024 09:13:35 +0200 Christian K=C3=B6nig <christian.koeni=
+g@amd.com> wrote:
+> >
+> > > yes that is
+> > > intentionally a define and not an inline function.
+> > >
+> > > See this patch here which changed that:
+> > >
+> > > commit 2c321f3f70bc284510598f712b702ce8d60c4d14
+> > > Author: Suren Baghdasaryan <surenb@google.com>
+> > > Date:   Sun Apr 14 19:07:31 2024 -0700
+> > >
+> > >      mm: change inlined allocation helpers to account at the call sit=
+e
+> >
+> > Dang, yes, that was a regrettable change.  But hardly the end of the
+> > world.  I do think each such alteration should have included a comment
+> > to prevent people from going and cleaning them up.
 >
-> Responses should be made by Fri, 05 Jul 2024 10:28:06 +0000.
-> Anything received after that time might be too late.
+> Sorry I missed this discussion. Yes, the definition was intentional
+> and I will add comments for all the cases which were changed this way.
+
+Posted https://lore.kernel.org/all/20240703174225.3891393-1-surenb@google.c=
+om/
+adding clarifying comments.
+Thanks,
+Suren.
+
+> Thanks,
+> Suren.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.279-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
-
-The sh builds failed on stable-rc 5.4.279-rc1 due to following
-build warnings / errors.
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Regressions found on sh:
-
-  - gcc-11-defconfig
-  - gcc-11-dreamcast_defconfig
-  - gcc-8-dreamcast_defconfig
-  - gcc-11-tinyconfig
-  - gcc-8-defconfig
-  - gcc-8-allnoconfig
-  - gcc-11-shx3_defconfig
-  - gcc-11-allnoconfig
-  - gcc-8-tinyconfig
-  - gcc-8-shx3_defconfig
-
-Build log:
-------
-arch/sh/kernel/sys_sh32.c:68:1: error: macro "__MAP3" requires 4
-arguments, but only 2 given
-   68 |                 SC_ARG64(nbytes), unsigned int, flags)
-      | ^
-In file included from arch/sh/kernel/sys_sh32.c:11:
-include/linux/syscalls.h:110: note: macro "__MAP3" defined here
-  110 | #define __MAP3(m,t,a,...) m(t,a), __MAP2(m,__VA_ARGS__)
-      |
-
-Build log link,
- [1] https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.4.y/build/v5.4.278-190-gccd91126c63d/testrun/24510005/suite/build/test/gcc-11-shx3_defconfig/log
- [2] https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.4.y/build/v5.4.278-190-gccd91126c63d/testrun/24510005/suite/build/test/gcc-11-shx3_defconfig/details/
-
-Build config url:
-  config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ijXtbqe6slPmKG8dbt7I6JJ7eg/config
-  download_url:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2ijXtbqe6slPmKG8dbt7I6JJ7eg/
-
-metadata:
-  git_describe: v5.4.278-190-gccd91126c63d
-  git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-  git_short_log: ccd91126c63d ("Linux 5.4.279-rc1")
-  build_name: gcc-11-shx3_defconfig
-  toolchain: gcc-11
-  arch: sh
-
---
-Linaro LKFT
-https://lkft.linaro.org
+> >
+> >
 
