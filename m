@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-238951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F119253CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:40:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B0B29253D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F589B2410E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:40:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EF601C2197C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608D8132135;
-	Wed,  3 Jul 2024 06:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A6F133402;
+	Wed,  3 Jul 2024 06:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Px2C1HOT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YO+GqNBU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14C9130A68;
-	Wed,  3 Jul 2024 06:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233AA130A68;
+	Wed,  3 Jul 2024 06:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719988807; cv=none; b=MT0f/MupyGoZsYFzGkKLwrdGJLYxMS5lnYURp1M796Qap6W2UuQw/aGpkt1TMUBU1nOM1aOZbdXgeaCrtZ9Ooexwytr1exhGyBGsk5U2FRTt+SyUT8u1X4Q+GsCkowcwKLDjwDLl/IoCpPQqW39yFKMcbGSTJBfqz3yE1qiJyzo=
+	t=1719988905; cv=none; b=gmQ/FoGYM7Wq8qcla1n0Lsqbr8kBKjLDdbJ+TGQ7X65hSSTQOltQ2ZFUMNuFr9SRHeVkUhZD6nLUgkjq4+/b5qAX4+SBD1epqs5JuyQhc6En+Xhct88XLpD+ctI5jy4PRYs6MpawBl2SkB/luvXZ4khDmM0xvngmrGYNpB6atLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719988807; c=relaxed/simple;
-	bh=Ux893/LfPQMGZoqAxPyx5lXQ3NSGVgFeJDL8OiKVL/A=;
+	s=arc-20240116; t=1719988905; c=relaxed/simple;
+	bh=unHk9c2klYNcQdPtTDkh8snTMmh7p6P9rHw8h6t5XW0=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=csZ9HCYClUmFesKO0ekfghFhg+/Af9z3cKLaJMUZ2ZOFx4L4674XjXSX+bc/FBgzFMTM9+kSNJpBEVds4mhYrDgZAr4xtxx6loOuAr/VQrg0+GJOhhGqBmGgDunTa1C1a4yQot4Q7qdefUmZZizQD7AmYCD1wkfCQvHYQT5TByg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Px2C1HOT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36713C32781;
-	Wed,  3 Jul 2024 06:40:07 +0000 (UTC)
+	 MIME-Version:Content-Type; b=sr9nk76PQqi5onUN4/ZTw6bsa29absDz110WEa6YZfdn48ihEQLJMN239B3nGsGx7TkLh+KbJjUZe/p6rPSe65BKmM4Dqg8UkRXcu6gRIoGKkRwsFXOx5f/6+h5djVDLXLrj3bpUrD9m/oHA7C2rWtsDVzonMfplnCQCnzdzCgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YO+GqNBU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99FB3C32781;
+	Wed,  3 Jul 2024 06:41:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719988807;
-	bh=Ux893/LfPQMGZoqAxPyx5lXQ3NSGVgFeJDL8OiKVL/A=;
+	s=k20201202; t=1719988904;
+	bh=unHk9c2klYNcQdPtTDkh8snTMmh7p6P9rHw8h6t5XW0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Px2C1HOTaqXMYo0VdDmewLSiwB7i1m10Vlt+LBbRIhR340b0/dGOe1RqnQvjmwTuZ
-	 6xSzfAYswueo/Dkgc0Xrb2Q+KQ4TK6ZugK7ddsS0BQi5PgPDkfSuP84S/bRqAghbCu
-	 Yvqeoz+T24fTg9zaXDlzdWY5uQVMr3Tz5Bjd4ZVNEeCA7s2dPDME1eJfNpbwAowmY/
-	 vbAz936nzuwUz/xKc53MdNrJza41khM+Kj+0lQIyDjYszBLI1SwKVgV/AajJKTvk0K
-	 04qlTxjWBGHWkUynIF/h6qO0iT/USRK63WkejtJyDFoqN7lzOwASVxndGdcAaOEYL4
-	 W9PimwG1PFtjw==
+	b=YO+GqNBUXIWmHyxjOQWFMk9d9W2rgMujkPe3Cf6NJcLgsve3AB+UFK2DgPcD2N4zO
+	 mpwnwPChvjvfhZ9ujcwZVftURSwtw8oMh0wfiOJ9//L4k2dhV388wquif2HATiJoJJ
+	 5vliNUTys+MmAB9jfJZ1aGjmBMGkmGDH8yjyVT0geOnjt375J0Lg0vjMDPvLah1X/S
+	 glZLeY2+QeOuYuCMSU5DaIlF8wvTKTro0hRMstIJQV0kJOEGb7XzpFp/x6XYteB8xS
+	 IadPXuO6eTu5k9RQ/LDUrC7IaI7uZdRf93SaH6558pdChOF3pwWLo5La4P2gGpYbxV
+	 4razzXO3al5eg==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
 	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.95)
 	(envelope-from <maz@kernel.org>)
-	id 1sOteu-009LMB-Vq;
-	Wed, 03 Jul 2024 07:40:05 +0100
-Date: Wed, 03 Jul 2024 07:40:04 +0100
-Message-ID: <86cynv9dx7.wl-maz@kernel.org>
+	id 1sOtgU-009LO3-CY;
+	Wed, 03 Jul 2024 07:41:42 +0100
+Date: Wed, 03 Jul 2024 07:41:42 +0100
+Message-ID: <86bk3f9duh.wl-maz@kernel.org>
 From: Marc Zyngier <maz@kernel.org>
 To: Christian Zigotzky <chzigotzky@xenosoft.de>
 Cc: Rob Herring <robh@kernel.org>,
@@ -62,12 +62,10 @@ Cc: Rob Herring <robh@kernel.org>,
  <darren@stevens-zone.net>,
 	Christian Zigotzky <info@xenosoft.de>
 Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives after the of/irq updates 2024-05-29
-In-Reply-To: <f150eb06-b796-48be-9373-544ca8948ab6@xenosoft.de>
+In-Reply-To: <5e44f1be-f626-4bcb-b1b0-583462c1a930@xenosoft.de>
 References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
-	<861q4bizxc.wl-maz@kernel.org>
-	<68b7988d-eaaa-4713-99c3-525a34c5b322@xenosoft.de>
-	<5a6166f107ae31536665d42f410d314d@kernel.org>
-	<f150eb06-b796-48be-9373-544ca8948ab6@xenosoft.de>
+	<86zfqzhgys.wl-maz@kernel.org>
+	<5e44f1be-f626-4bcb-b1b0-583462c1a930@xenosoft.de>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -77,75 +75,64 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 X-SA-Exim-Connect-IP: 185.219.108.64
 X-SA-Exim-Rcpt-To: chzigotzky@xenosoft.de, robh@kernel.org, apatel@ventanamicro.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, madskateman@gmail.com, rtd2@xtra.co.nz, matthew@a-eon.biz, darren@stevens-zone.net, info@xenosoft.de
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, 03 Jul 2024 04:11:55 +0100,
+On Wed, 03 Jul 2024 04:27:37 +0100,
 Christian Zigotzky <chzigotzky@xenosoft.de> wrote:
->=20
+> 
 > Hello Marc,
->=20
-> On 02.07.24 21:49, Marc Zyngier wrote:
-> > On 2024-07-02 18:55, Christian Zigotzky wrote:
-> >> Hello Marc,
-> >>=20
-> >> Thank you for your reply.
-> >>=20
-> >> On 02.07.24 17:19, Marc Zyngier wrote:
-> >>> Please provide the device tree for your platform. It isn't possible to
-> >>> debug this without it, no matter how many pictures you provide. If it
-> >>> doesn't exist in source form, you can dump it using:
-> >>>=20
-> >>> # dtc -I dtb /sys/firmware/fdt
-> >>>=20
-> >>> and posting the full output.
-> >>>=20
-> >>> Additionally, a full dmesg of both working and non working boots would
-> >>> be useful.
-> >>>=20
-> >>> Thanks,
-> >>>=20
-> >>> =C2=A0=C2=A0=C2=A0=C2=A0M.
-> >>>=20
-> >> The device tree of the Nemo board and further information:
-> >> https://forum.hyperion-entertainment.com/viewtopic.php?p=3D54406#p54406
-> >=20
-> > Please post these things on the list. I have no interest in
-> > fishing things on a random forum, and this information is
-> > useful for everyone.
-> >=20
-> > Thanks,
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 M.
->=20
-> Sorry, here you are:
->=20
-> Device tree of the Nemo board (Hardinfo):
->=20
-> -Device Tree-
-> Summary
-> Maps
-> /
-> /sdc@fc000000
-> /sdc@fc000000/openpic@fc000000
-> /sdc@fc000000/mdio@0
+> 
+> On 02.07.24 18:54, Marc Zyngier wrote:
+> > On Sun, 30 Jun 2024 11:21:55 +0100,
+> > Christian Zigotzky <chzigotzky@xenosoft.de> wrote:
+> >> Hello,
+> >> 
+> >> There is an issue with the identification of ATA drives with our
+> >> P.A. Semi Nemo boards [1] after the
+> >> commit "of/irq: Factor out parsing of interrupt-map parent
+> >> phandle+args from of_irq_parse_raw()" [2].
+> > [snip]
+> > 
+> > My earlier request for valuable debug information still stands. But
+> > while you're at it, can you please give the following hack a go?
+> > 
+> > 	M.
+> > 
+> > --- a/drivers/of/irq.c
+> > +++ b/drivers/of/irq.c
+> > @@ -282,8 +282,10 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
+> >     			oldimap = imap;
+> >   			imap = of_irq_parse_imap_parent(oldimap, imaplen, out_irq);
+> > -			if (!imap)
+> > -				goto fail;
+> > +			if (!imap) {
+> > +				match = 0;
+> > +				break;
+> > +			}
+> >     			match &= of_device_is_available(out_irq->np);
+> >   			if (match)
+> > 
+> > This may not be the final workaround even if it solves your boot
+> > problem, but will at least give us a hint at what is going wrong.
+> > 
+> > I have the fuzzy feeling that we may be able to lob this broken system
+> > as part of the of_irq_imap_abusers[] array, which would solve things
+> > pretty "neatly".
+> > 
+> > 	M.
+> > 
+> I saw that you may already have a solution. Do you still need the test
+> with this patch?
 
-[...]
-
-This isn't a DTS. This is a listing of all the nodes, not something I
-can use to feed the kernel. I explained how to generate it.
-
-> Download the compiled device tree for the Nemo board:
-> http://www.xenosoft.de/fdt-nemo-board.zip
-
-No, thank you.
+Both this patch and the other one, together with Rob's request to run
+the current state with of/irq.c in DEBUG mode are useful.
 
 	M.
 
---=20
+-- 
 Without deviation from the norm, progress is not possible.
 
