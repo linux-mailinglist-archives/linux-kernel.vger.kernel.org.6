@@ -1,85 +1,143 @@
-Return-Path: <linux-kernel+bounces-238607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF91924CCC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:31:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80613924CCE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE1CB284EAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:31:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D82C1F2394C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1DB2905;
-	Wed,  3 Jul 2024 00:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056DC2905;
+	Wed,  3 Jul 2024 00:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="e64O4V5h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="Hwzk1ORC"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AAA1FAA;
-	Wed,  3 Jul 2024 00:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719966699; cv=none; b=Fzo1ZCFh7DovVOQsyu3Yo5iBfMEj6L80qRtHe9wECVl9tFRFVmG7Bb+qGDJhTuOgVtgtjHRq7eDRgQw+x+2ai+flnyBoBLtej/sCqFk0iQ6svNrugHpxHafi2ul6MShv1glVbPe6LCKgppHMldyqFxr3t2ED/iCMh5g8K+rSfHQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719966699; c=relaxed/simple;
-	bh=kaZ4gZM7STzbP93BGnqy4GZN9nFQNMc0En0mwXOqhkM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=P9E6q28pi71rRYCHMGzWaRqaHzpoudpS5Zi8nASupRa7rtVzIXz4ERtkbJ5HG/4wgVyGe8iUc5c5peMmAHtQIuZFSlEEwMJ4qQ1amw5PhY5dW4f8M9/sSFxQ1oTxe2M8vGTeL+bvQSTisHlrYTolWRKfUTka8Sg6sFIpaPu0uO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=e64O4V5h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B08C116B1;
-	Wed,  3 Jul 2024 00:31:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1719966698;
-	bh=kaZ4gZM7STzbP93BGnqy4GZN9nFQNMc0En0mwXOqhkM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e64O4V5hkoECY8056JW+tufu3D4bcz45kk26yQeSJs73e3wSkg/6wyPPSDif2rVQD
-	 2tYF8poTdc442XfDRuSPq8G1SYEDWixN4K3SwTFI12JQMsEMFN7z6y9NGUf1hICN7s
-	 3Tnfn3p2bpxayt04dAn0wBXRkv4Qzsftzf15gDJo=
-Date: Tue, 2 Jul 2024 17:31:37 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Xavier <xavier_qy@163.com>, longman@redhat.com, mkoutny@suse.com,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: [PATCH-cpuset v9 0/2] Add Union-Find and use it to optimize
- cpuset
-Message-Id: <20240702173137.4987350c977529cc554d9632@linux-foundation.org>
-In-Reply-To: <ZoRThI4lcZLxBlwc@slm.duckdns.org>
-References: <ZoMXN3G72xtCLjgp@slm.duckdns.org>
-	<20240702105010.253933-1-xavier_qy@163.com>
-	<ZoRThI4lcZLxBlwc@slm.duckdns.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1AB1FB4;
+	Wed,  3 Jul 2024 00:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719966865; cv=pass; b=A2sGz7aPH2iuvow8MAZRI/qKiZN0T7DzZOym0tMZuKDQTt1sfpj1n5rSy/r2VZ97wjL6CvDNX9GWN5pYwLRyeo50mOrcIkahxiQR8VBDPHXGETjR2Veq1SCrEKmVzc9iGCNOHfaJfQD2bkBfDFsixFE024wEr6IcQdTOFkuQJ/U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719966865; c=relaxed/simple;
+	bh=ywzEqGjjGM7mIn1VawbrZuz00V7sB9FTsYmYjFiztFQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=QqOjblOdkwK45AqFsxGu86Bz/lPnHFECfgH5AKXXsXelLS4pms6nm3kYK4/01p71eQojwlgABCdM+mH/SWjwY0ePuIVhDlsHMZmem5Yu2pHVihhJ5en50/2KEvm15cwHkEvHoeazDl2J8lMhf34+yu8V87BQoSnx60WAGbQJzHM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=Hwzk1ORC; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from localhost (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WDLPn43c7z49PwY;
+	Wed,  3 Jul 2024 03:34:21 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1719966861;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GaV4tuk1WbugWdGR34mCTzuCrF1HR/X8Zy5U2pP20mY=;
+	b=Hwzk1ORCDLDo+ZiLXJZ9VZDcBs7xVnOnpn2RghTPQxZfI25659jdF6jLTsfX00r63/BfUK
+	4LJpl2qkg+FsZzTi6qEj7aJZ+qm+T3Q8QG08lI9lpRhGYIid5OcV9mk9dhF5fKgG5cAb+r
+	fOJEmy8yHRDQ23Vo27z6NynYLgwq3IUaJkTe7bAw4ek5Qe/33BCx2b2pveBwT/BVLlChT+
+	SRxjiCB9EixM2pioAv2iotHdA1II0Mt9DbC4uGjOW/vyoPOM2mUUykK7UJIhSr7WzrAqF4
+	vIvoYYMuxgqWZ/0OmKOUJElMv3Hc1HTYrq3uBKU1m+Qj0+zfJSR+r5JjUG1Fww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1719966861;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GaV4tuk1WbugWdGR34mCTzuCrF1HR/X8Zy5U2pP20mY=;
+	b=r0a24xe0CGr61iBcz2UuPxJCeXSNlnpKlc2FHYz2NFz2gAk1FYG+s7W0I+0Vyyo4Y9gDBX
+	sE/pwlTG1yW3ijfHKJI6XsbchMT68iiEDm1djjK4WI2XX2EWsztLDnsqKgCnxd0oed7BOU
+	FMH2F9TXYvdseY0vdsxthj5JIXYUhOUr3PkgACLFE80nMRaXnGzwmu8fNeGUZPdd+1fm41
+	six+W33Kc1zTdF76mrSrF4ErWJHJ1pd0C4nqzmwmNeEgBXnQYeOTUOskUFN3LeTuZQxQMI
+	PKTkAcTtfQuHdyAMiDbtuiAha0SUQQs0lMrgUWfHFAW5/hn3Q+D1/xx7/2bQlQ==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1719966861; a=rsa-sha256;
+	cv=none;
+	b=Vu1Tcl6h9Orp81BbUjw627PbKr6gMUDh/2r3b4xEIAn2hDle019jRr3F6WBTIPEv3lah3I
+	6/0AdEeDW2sxRnvNFbE6UP90xd21TXSR4dPWn0HN3fU8ejGP826iWNmDmsei6oxby5Y058
+	kLk/cSbUN2JukeWIZHt5qZiZFRHd8WqMG04T2WD7KvlMaEKBRixgP2RZYav3GztbSwg8L8
+	2vOY25jM8l5yC90/mvjOYiojzXDbi4Qy5gnko3qORWiEc/HuBk7T591AvyE00GoUGANF4D
+	yfD+D3zH1zV3mHH2JEOW19bV3R1I8s7BXPooVyDvdzuBWY++Kl8DY9EuSLWKUw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 03 Jul 2024 03:34:21 +0300
+Message-Id: <D2FHD82R8YAC.YBL9FAIVMBWL@iki.fi>
+Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
+ session support
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>, "Stefan Berger"
+ <stefanb@linux.ibm.com>, "Linux regressions mailing list"
+ <regressions@lists.linux.dev>
+Cc: <naveen.n.rao@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
+X-Mailer: aerc 0.17.0
+References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+ <9e167f3e-cd81-45ab-bd34-939f516b05a4@linux.ibm.com>
+ <55e8331d-4682-40df-9a1b-8a08dc5f6409@leemhuis.info>
+ <9f86a167074d9b522311715c567f1c19b88e3ad4.camel@kernel.org>
+ <53d96a8b-26ef-46a3-9b68-3d791613e47c@linux.ibm.com>
+ <D2EFNJTR80JS.1RW91OVY1UH1N@iki.fi>
+ <e7db74a0-cd5c-4394-b87e-c31ea0861ea1@linux.ibm.com>
+ <b7559dbb323d16fb334f8f8f35b8fda3fb6e481c.camel@iki.fi>
+ <85f882ff079554c41a73d8ad4275072c5229f716.camel@iki.fi>
+In-Reply-To: <85f882ff079554c41a73d8ad4275072c5229f716.camel@iki.fi>
 
-On Tue, 2 Jul 2024 09:22:44 -1000 Tejun Heo <tj@kernel.org> wrote:
+On Wed Jul 3, 2024 at 2:57 AM EEST, Jarkko Sakkinen wrote:
+> On Wed, 2024-07-03 at 02:48 +0300, Jarkko Sakkinen wrote:
+> > On Mon, 2024-07-01 at 15:14 -0400, Stefan Berger wrote:
+> > > Applying it is probably the better path forward than restricting HMAC=
+ to=20
+> > > x86_64 now and enabling it on a per-architecture basis afterwards ...
+> >=20
+> > Why is this here and not in the associated patch?
+> >=20
+> > Any, what argue against is already done for v6.10.
+> >=20
+> > The actual bug needs to be fixed before anything
+> > else.
+> >=20
+> > I can look at the patch when in August (back from
+> > holiday) but please response to the correct patch
+> > next time, thanks.
+>
+> Next steps forward:
+>
+> 1  Comment out sessions_init().
+> 2. See what happens on x86 in QEMU.
+> 3. All errors were some sort size errors, so look into failing
+>    sites and fixup the use of hmac shenanigans.
 
-> On Tue, Jul 02, 2024 at 06:50:08PM +0800, Xavier wrote:
-> > Hi Tejun,
-> > 
-> > Thank you for thoroughly reviewing the code and pointing out the issues.
-> > I have made the necessary changes to the code, comments, and documentation
-> > based on your suggestions.
-> 
-> Looks fine to me. Once Waiman is okay with it, I can carry it through the
-> cgroup tree. Andrew, any objections? Xavier, it'd really great if you can do
-> more conversions so that it's not a single use thing.
-> 
+For anything "fast" or "quick" I think this really the only
+possible sane thing to do right now:
 
-OK by me.  cpuset patches live in the cgroup tree, no?
+https://lore.kernel.org/linux-integrity/20240703003033.19057-1-jarkko@kerne=
+l.org/T/#u
 
-Nit: if there is to be another spin
+There's also bunch of other drivers than tpm_ibmvtpm so better
+to limit it to known good drivers.
 
-	/* please do this */
-	/*and not this*/
+I can take at the actual issue in August and will review any
+possible patches then. This one I'll send after my current PR
+for TPM has been merged.
 
-
+BR, Jarkko
 
