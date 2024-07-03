@@ -1,82 +1,97 @@
-Return-Path: <linux-kernel+bounces-240238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 252AA926AAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:46:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18808926AB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55ED21C232D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:46:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6F511F23A78
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D88192B8B;
-	Wed,  3 Jul 2024 21:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06161922D9;
+	Wed,  3 Jul 2024 21:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gdc7iCkV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A992136660;
-	Wed,  3 Jul 2024 21:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2421891B6;
+	Wed,  3 Jul 2024 21:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720043052; cv=none; b=hJdbzRblR990HnsXAJQdhcBnsgRc3IIjE05dUzpzCzJiuPhgfEQVX/odwdY71opACfiUVR+2cNKmmTLcRSptKZmhr0AQCkVNDNEOU8JMhCq8u5wYDhHXiJ6tvdnlVxhv4ffzYNGFLaX7cmnwbu6VUKQ/ytmKeCWUxL2548qfC4U=
+	t=1720043179; cv=none; b=Rw5hFsYbr56gqlDDIlxdE2HxCdidyhHghViDjIPXL+gFKvX1P8OrFZWrweOZxNM38H/uRT1fltskwtqQgrDDJb8+DgTd6cJ9SAJNJ8OEqkPdma/CXRpJQleRMUn8/q1It7VMHz/I1qO8vztggsoSJRbUTMsXkVFdV0Mjl5xORio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720043052; c=relaxed/simple;
-	bh=XciLH2BvLZX+43hDP99uSAJVZsp+okYTl4PoGg/jKsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Se7lzvLjvXbAma7sWljnuoRne7hQgwRwiRqyHt6RzPJC6arcei9TobR378AVeNBft3a6QPXmCKFKLWCmuPlrr7kA8Jwd2xAesRViuta2V+iTH2kImB65FXGPfJMiR/7MSed8R5olO0dwNSoCb3xpwLn2WN3MzffwuAYls/ee29c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F9B6C2BD10;
-	Wed,  3 Jul 2024 21:44:11 +0000 (UTC)
-Date: Wed, 3 Jul 2024 17:44:10 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ring-buffer: Limit time with disabled interrupts in
- rb_check_pages()
-Message-ID: <20240703174410.099e8784@rorschach.local.home>
-In-Reply-To: <20240703075314.23511-1-petr.pavlu@suse.com>
-References: <20240703075314.23511-1-petr.pavlu@suse.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720043179; c=relaxed/simple;
+	bh=agN1VFzDdSLqPGLpdAw2jOT8E3vfw5rnSDl00bt8rXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCdOnbBHWoqueKtfgWblCI3ghCqf80qV05M1c6xPQCXDLJibx1kYIObALZtD09NdTKDUeiA+DiIJZqAHueZpvIC0SRNAMp0W7lgpwnNz7/EI+vlJSIe9VAmdSkx9exk3AZbULDJvqgPiqIT8SW0FxJAJ1/orCC15K4ER6kYBJ0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gdc7iCkV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA479C2BD10;
+	Wed,  3 Jul 2024 21:46:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720043178;
+	bh=agN1VFzDdSLqPGLpdAw2jOT8E3vfw5rnSDl00bt8rXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gdc7iCkVppWzHjS83RRYkXW6FN+Klufs1dzRzyc9iBQccC1qZk/dInQeqwp9c/1e2
+	 266xKCpOzDfPvwJ64pLeZZqohLscOLhoj+OUPmRqbDBMa1DugtSBjV7ZADOsytNSxv
+	 vEPXRi/knskr5XNWEhazzUbmOqvMv89on6hlw44+/tkpeViDSOa5+vBIJEo4IkTIa4
+	 7/AgfsDYwwTyyFYg3/HgvEFhGQc82TtnPfUoKxWUgl8eN0IPKDEFwRPd0l6cmLJehY
+	 Iqmfom11DJyQ7KUeVQkQz/3o+wsSRgtbvqnqZImJ46ivLyAwSPpAXGzzmYwCYN/k8J
+	 NfzFepA9Z/v7w==
+Date: Wed, 3 Jul 2024 23:46:14 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: gupt21@gmail.com, jikos@kernel.org, bentiss@kernel.org, 
+	Jonathan.Cameron@huawei.com, matt@ranostay.sg, linux-i2c@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: mcp2221: Remove unneeded semicolon
+Message-ID: <mqqatbuibseyxxtz44wialt2tlzihosdvlv2ajhh3y5jcfe3qj@gdsj6baftv5f>
+References: <20240701071639.846169-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701071639.846169-1-nichen@iscas.ac.cn>
 
-On Wed,  3 Jul 2024 09:53:14 +0200
-Petr Pavlu <petr.pavlu@suse.com> wrote:
+On Mon, Jul 01, 2024 at 03:16:39PM GMT, Chen Ni wrote:
+> Remove unneeded semicolon.
 
-> The function rb_check_pages() validates the integrity of a specified
-> per-CPU tracing ring buffer. It does so by traversing the underlying
-> linked list and checking its next and prev links.
+Please be a bit more precise: "Remove unnecessary semicolon at
+the end of the switch statement"
+
+> This is detected by coccinelle.
 > 
-> To guarantee that the list isn't modified during the check, a caller
-> typically needs to take cpu_buffer->reader_lock. This prevents the check
-> from running concurrently, for example, with a potential reader which
-> can make the list temporarily inconsistent when swapping its old reader
-> page into the buffer.
-> 
-> A problem with this approach is that the time when interrupts are
-> disabled is non-deterministic, dependent on the ring buffer size. This
-> particularly affects PREEMPT_RT because the reader_lock is a raw
-> spinlock which doesn't become sleepable on PREEMPT_RT kernels.
-> 
-> Modify the check so it still attempts to traverse the entire list, but
-> gives up the reader_lock between checking individual pages. Introduce
-> for this purpose a new variable ring_buffer_per_cpu.pages_era which is
+> Fixes: 960f9df7c620 ("HID: mcp2221: add ADC/DAC support via iio subsystem")
 
-I'm dumb. What's an "era"?
+No need for the Fixes tag here.
 
--- Steve
+Andi
 
-> bumped any time the list is modified. The value is used by
-> rb_check_pages() to detect such a change and restart the check.
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>  drivers/hid/hid-mcp2221.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> diff --git a/drivers/hid/hid-mcp2221.c b/drivers/hid/hid-mcp2221.c
+> index da5ea5a23b08..0f93c22a479f 100644
+> --- a/drivers/hid/hid-mcp2221.c
+> +++ b/drivers/hid/hid-mcp2221.c
+> @@ -1048,7 +1048,7 @@ static int mcp_iio_channels(struct mcp2221 *mcp)
+>  			break;
+>  		default:
+>  			continue;
+> -		};
+> +		}
+>  
+>  		chan->type = IIO_VOLTAGE;
+>  		chan->indexed = 1;
+> -- 
+> 2.25.1
+> 
 
