@@ -1,148 +1,145 @@
-Return-Path: <linux-kernel+bounces-240043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE9A926854
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:35:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5076B92685E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7951C25DC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:35:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06F421F23C0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A21188CA5;
-	Wed,  3 Jul 2024 18:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C20188CDB;
+	Wed,  3 Jul 2024 18:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Rdq7jBNi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GN8sl4++"
-Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzOXONpn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5577017BB27;
-	Wed,  3 Jul 2024 18:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02ABE1DA313;
+	Wed,  3 Jul 2024 18:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720031703; cv=none; b=SqjI3ecn7ZDeUVj+Bu4kVMPdzU3j51p32RDlD6bh45vpvph+LZxxdp7PM8DwT5seDQIOSEYW/cb5FgT0xW8ipqkuW6STBTLCWngorJSmZvdPjRV9f/WH9juc10KvS2Xo4paF3FIVuqGapPfYvE2wRCUd6OeFINnsR+w0QAXimxg=
+	t=1720031987; cv=none; b=PqB/VqA/8CR5DJ1QJUctEUC8qQi4iuX+o+1veSjAU9+qK4DIXJPJxRWvgOe4LUxkUX+DaMVkB/l83vUNou1zy2G5R3sGCNNmVXenHMOXjMblIXLPR9va/PdXJVCm7pe2XiyGh+DgmtbmaE6W3vDyZXZSh54DsL78tDl4vjhFcho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720031703; c=relaxed/simple;
-	bh=i+jRm2XNt/nOtiImd2nWAhMZWwOiZlZAQYviO67O+e0=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Vj7UJfYSSK4Gv8z9rH/TCJdW2HFXeZTWwzMYNAFZWNFGusHTshEJ6Y3yQnUfkG5HKriOfb/YSl6uJleg27/9BhEq6rqFe1pe2LapcwZGt1D4deaJpx/ua0nFDY+eqfRhcdESUZuUKqoUhBX74VbSzEy8MmAnF0JpVWwU3LMX8EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Rdq7jBNi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GN8sl4++; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 735F711401B8;
-	Wed,  3 Jul 2024 14:35:00 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 03 Jul 2024 14:35:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1720031700; x=1720118100; bh=zVR+UXlWh3
-	a8IJF25NtOCZOCNR0BcDT+mApZ1Nc8rYU=; b=Rdq7jBNiS9VB3CQyFzhPEMLhOv
-	mWE1K8KS/0NNqC+3EWK2FbUi3/4T1udk1isTfKh7ja3Mfrzqz3mayByj4UObNlRj
-	WBZtCrFiVSqbor+/bMNEM0T6zvayffy+45hcUxxFvhb8hB1Mp3FLLRh3hBGU/7GN
-	nNF36VVhhpp/gL4t+bvFtGWTXIfS6PTTgUT1CGEAtKGRkQ0YVEsY1MnOZyXYiZRG
-	FP1JKDgeTVJa4fXpnur+u8PVtbdMfcKIWL4dg2dr7lXuI76wQblpicCFpXBhwPeg
-	s0wGcAiVkf4OdMhyzeWkR+1O8i0INvAXP4wzdGQP5Gyj9yITh2UUMVvilOYQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720031700; x=1720118100; bh=zVR+UXlWh3a8IJF25NtOCZOCNR0B
-	cDT+mApZ1Nc8rYU=; b=GN8sl4++eKex9iLDz6JVsigVkb1GWiiUN8Fs6Jn68S1/
-	pgDT5ZOgq0tlxTAwgh1Rmnd6KtRPhLyv3GCjz5CCpEWWp19RFo8j+KpbIZ5yAbJb
-	mY1tMfw72+0YZ0BBLDjK5+Ehmc2qjnU7gNGOd7iISakoWMKuVo4DXv12PFZmhHGx
-	pgfE9ARPyJLpqD8R0+CInADHiCsfEkYd+SwR27dGcTDKI9NfsnfNpXyqzkVt9/E9
-	1aJ2S0sGB5MjPOl3Jar3v044AQ2zOF+o52si/sN61OBk58AGKT239ImoaK6Yo5KT
-	3c5XrTXhP6vp8m/0+WdfuR8aK49oAtZv9CBdqNn+ZA==
-X-ME-Sender: <xms:05mFZogN7rNVUk-2LnFvSw56FsY-9T3imXtgBSW7XS_Eesi13ug0oA>
-    <xme:05mFZhAP2i2LVw-6-HQFYZdwuF-QJrtZjiXz2CzWrX3J7teHD93BXDajs2k_Y64DN
-    CKwB5Lw2NFw1PWv-Ic>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejgdduvdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:05mFZgEigSnbpgcXMfA16OGO7rftdydzZJ0l0C062sVvxcYH6vZacA>
-    <xmx:05mFZpTMVyyiHF20nRE4vlkeXXNXR9oyW7bzaWBUvKZ_ZG20ySK_mA>
-    <xmx:05mFZlzX4u901GkaLckrDekIz1F6B2RDj1N0Y2gxc80BF8xxg6muzA>
-    <xmx:05mFZn72yMIMWLkdJfkf5Xkh_YiVT4fKvrN0yIoGeIYLGSBd4Dw0ZA>
-    <xmx:1JmFZqgYjo0kGNViMI3VOeHp0IIXUCWwqf2R_dkzeewquZRzbKsBFGzn>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1C3C8B6008D; Wed,  3 Jul 2024 14:34:59 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1720031987; c=relaxed/simple;
+	bh=ejwNsfavbbibHuM6+4Aoodi8uXxLq1+tHWb1BLL3xp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RhfGUkMZlVM4nqa+rE5NwpoAoGuYMW53NzdFvIg2r8LlpfCW6n4AIe5epOhBWnnFJpR43vDpommcWKmshf7KJssXU2O9RYRsM1sj1rpotIAWGTaByVSFYapM1k+YlHb3q1nK5MK5SCZ44ueyyF2FnRgnjbAkO0ySXXpK76SFDCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzOXONpn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07893C2BD10;
+	Wed,  3 Jul 2024 18:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720031986;
+	bh=ejwNsfavbbibHuM6+4Aoodi8uXxLq1+tHWb1BLL3xp8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BzOXONpnwzAdkOCUuIYyptRBW+BNttayZXybFSt6HZk8NFgu08CyVHX5LkcNLSq0X
+	 WVoLWkr4aZ2ppEzY9JyGWZNu4+REqVMmT2WEzPE6OlMNbxTOgDBDiZQ2eGyJzDyPF3
+	 HrgH/uqvWEpXa9rGTl9skW6YUuqzNa3ccBrRyLDi1bBZjmpdPInf2LTzFfxE7oMAJ2
+	 itIWEeTyvSH1sUZRCoW1XnCPtMJyHXJC25gFel3VfiwX3QshKfMP4S9lq1p9WZSKtg
+	 6At8txdSFtRiS017wXzVNeiZy5eVWI1/o24vpmfXiwdZGTQQwmIJmfpITMyhxXdU/m
+	 7WwRBNzCDITxQ==
+Date: Wed, 3 Jul 2024 20:39:39 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Xi Ruoyao <xry111@xry111.site>, libc-alpha@sourceware.org, 
+	"Andreas K. Huettel" <dilfridge@gentoo.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Huacai Chen <chenhuacai@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
+	loongarch@lists.linux.dev
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+Message-ID: <20240703-zusagen-allzu-214f7651ecfd@brauner>
+References: <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+ <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
+ <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
+ <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
+ <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
+ <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
+ <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site>
+ <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
+ <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com>
+ <20240703-begossen-extrem-6ed55a165113@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <72ddde27-e2e2-4a46-a2ab-4d20a7a9424f@app.fastmail.com>
-In-Reply-To: 
- <CA+G9fYvAkELSdWF1EYyjS=d_jvCJD0O=aPnZFHUGnhYy6c1VCg@mail.gmail.com>
-References: <20240703102841.492044697@linuxfoundation.org>
- <CA+G9fYvAkELSdWF1EYyjS=d_jvCJD0O=aPnZFHUGnhYy6c1VCg@mail.gmail.com>
-Date: Wed, 03 Jul 2024 20:34:38 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Guenter Roeck" <linux@roeck-us.net>, shuah <shuah@kernel.org>,
- patches@kernelci.org, lkft-triage@lists.linaro.org,
- "Pavel Machek" <pavel@denx.de>, "Jon Hunter" <jonathanh@nvidia.com>,
- "Florian Fainelli" <f.fainelli@gmail.com>,
- "Sudip Mukherjee" <sudipm.mukherjee@gmail.com>, srw@sladewatkins.net,
- rwarsow@gmx.de, "Conor Dooley" <conor@kernel.org>,
- Allen <allen.lkml@gmail.com>, "Mark Brown" <broonie@kernel.org>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Linux-sh list" <linux-sh@vger.kernel.org>, "Rich Felker" <dalias@libc.org>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>
-Subject: Re: [PATCH 5.4 000/189] 5.4.279-rc1 review
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240703-begossen-extrem-6ed55a165113@brauner>
 
-On Wed, Jul 3, 2024, at 19:45, Naresh Kamboju wrote:
-> On Wed, 3 Jul 2024 at 16:20, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On Wed, Jul 03, 2024 at 08:14:15PM GMT, Christian Brauner wrote:
+> On Wed, Jul 03, 2024 at 10:54:53AM GMT, Linus Torvalds wrote:
+> > On Wed, 3 Jul 2024 at 10:40, Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > >
+> > > Oh wow. Shows just *how* long ago that was - and how long ago I looked
+> > > at 32-bit code. Because clearly, I was wrong.
+> > 
+> > Ok, so clearly any *new* 32-bit architecture should use 'struct statx'
+> > as 'struct stat', and at least avoid the conversion pain.
+> > 
+> > Of course, if using <asm-generic/stat.h> like loongarch does, that is
+> > very much not what happens. You get those old models with just 'long'.
+> > 
+> > So any architecture that didn't do that 'stat == statx' and has
+> > binaries with old stat models should just continue to have them.
+> > 
+> > It's not like we can get rid of the kernel side code for that all _anyway_.
+> 
+> Fwiw, the original motivation for that whole "let's do NULL with
+> AT_EMPTY_PATH" (somewhat independent from the generic use of it) that
+> somehow morphed into this discussion was that the Chrome Sandbox has
+> rewrites fstatat() system calls to fstat() via SECCOMP_RET_TRAP:
+> 
+>   if (args.nr == __NR_fstatat_default) {
+>     if (*reinterpret_cast<const char*>(args.args[1]) == '\0' &&
+>         args.args[3] == static_cast<uint64_t>(AT_EMPTY_PATH)) {
+>       return syscall(__NR_fstat_default, static_cast<int>(args.args[0]),
+>                      reinterpret_cast<default_stat_struct*>(args.args[2]));
+>     }
+> 
+> while also disabling statx() completely because they can't (easily)
+> rewrite it and don't want to allow it unless we have NULL for
+> AT_EMPTY_PATH (which we'll have soon ofc).
+> 
+> In any case in [1] I proposed they add back fstat()/fstatat64() which
+> should get that problem solved because they can rewrite that thing.
+> 
+> In any case, which one of these does a new architecture have to add for
+> reasonable backward compatibility:
 
-> arch/sh/kernel/sys_sh32.c:68:1: error: macro "__MAP3" requires 4
-> arguments, but only 2 given
->    68 |                 SC_ARG64(nbytes), unsigned int, flags)
->       | ^
-> In file included from arch/sh/kernel/sys_sh32.c:11:
-> include/linux/syscalls.h:110: note: macro "__MAP3" defined here
->   110 | #define __MAP3(m,t,a,...) m(t,a), __MAP2(m,__VA_ARGS__)
->       |
+Going by riscv added in 2017 it would be:
 
-This is caused by the backport of  my patch 30766f1105d6
-("sh: rework sync_file_range ABI"), which uses the
-SC_ARG64() that in turn was introduced in linux-5.12 commit
-2ca408d9c749 ("fanotify: Fix sys_fanotify_mark() on native
-x86-32").
+newstat()
+newlstat()
+newfstat()
+newfstatat()
+statx()
 
-We can't backport the entire fanotify patch to stable
-kernels, but it would be fairly easy to just extract
-the two macros from it, or to open-code them in the
-backport of my patch.
-
-For the moment, I'd suggest dropping my 30766f1105d6
-patch from 5.10 and earlier LTS kernels to avoid the
-build regression.
-
-Rich and Adrian, let me know if you would submit a
-tested backport stable@vger.kernel.org yourself, if you
-want help backporting my patch, or if we should just
-leave the existing state in the LTS kernels.
-
-      Arnd
+> 
+> fstat()
+> fstat64()
+> fstatat64()
+> 
+> lstat()
+> lstat64()
+> 
+> stat()
+> stat64()
+> statx()
+> 
+> newstat()
+> newlstat()
+> newfstat()
+> newfstatat()
+> 
+> Because really that's a complete mess and we have all sorts of overflow
+> issues and odd failures in the varioius variants. And the userspace
+> ifdefery in libcs is just as bad if not very much worse.
+> 
+> [1]: https://lore.kernel.org/lkml/20240226-altmodisch-gedeutet-91c5ba2f6071@brauner
 
