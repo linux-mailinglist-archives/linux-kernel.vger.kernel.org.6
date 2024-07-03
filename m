@@ -1,121 +1,143 @@
-Return-Path: <linux-kernel+bounces-240338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E412926C5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:13:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84197926C5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18777284EC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:13:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078F11F221B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8107C194A65;
-	Wed,  3 Jul 2024 23:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E998191F63;
+	Wed,  3 Jul 2024 23:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kIoazDM6"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E28B1DA313;
-	Wed,  3 Jul 2024 23:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bp/WzDVC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444A8136643;
+	Wed,  3 Jul 2024 23:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720048428; cv=none; b=jWVwWG/u/YLICMLRHqFmx+x4UcMDhbCSWjaf/AqwNgS4qtuDlYkeIAkLXjh9QLnIeEfgznMXU4BU5hiJzNInaEnLRdi8ch2kVw5ByT9we79hs3ZkszIuWRMNIdXHtvKUm0aX8FsQvdwEwNJAw+t+W5nBPJTJ+tH1NeBMDoS8Z9U=
+	t=1720048709; cv=none; b=ARbKkRWCRoxIY0F3ny5ExUXsCVRZmtTvZgAlGpnqF4hKJmoXZTY5/5z7Y+miCV+eXiPJXWdoa+Vz76H5LMA32mb5svz2qkLRC3qjwyM7bIFXXH+paw7/uE5YOYIuHmRIq9Gg4PWS+fr/eHPfd3xucgRc01Ly9m27j0JP8blOisk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720048428; c=relaxed/simple;
-	bh=tkAEnZTdufIPBg19mfhsTyGDEWte7diQWj8XaWSicxA=;
+	s=arc-20240116; t=1720048709; c=relaxed/simple;
+	bh=leq8VNyokdvpQStEdxb0BGwQSSksYqqYCuQZSbBzsQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EusRgFFcZsjZ20H4FG3mmQgGM2fND/OFM0lJhPbcbnot7/a7xaWNcA4upgJsw+f9wwEJa4ibeW4EqELtj0J0eonQm01HXznx/BC+VzBfhLML+msqCB5+3qfRm/6WcBzqF5SnRAba20mybI45xYSY4FMr3hmEpWXmkLHdAuXoYF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kIoazDM6; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from DESKTOP-4OLSCEK. (c-76-135-27-212.hsd1.wa.comcast.net [76.135.27.212])
-	by linux.microsoft.com (Postfix) with ESMTPSA id BCECB20B7001;
-	Wed,  3 Jul 2024 16:13:46 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BCECB20B7001
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1720048426;
-	bh=8TjyHg4R4+V1DoSvmceU1FyPFi2X1MteEWpxLXoSgCQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=JlqkcyPNbIkHWR9ZzpeNpRY3NZpldwRzl552R2HQKvK7gCrS+CTDBB15FDSLzAtDBPwR9PizIom8EeCOVcrMiwQLUyTo5AIGtazfPBuhIqiO3oTL9ztfvn/hpTdfDtBHjOS70JtAV4ab5c+gICwLBSmYVjNZ/+Tgdl2wMcjiFlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bp/WzDVC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F0EAC2BD10;
+	Wed,  3 Jul 2024 23:18:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720048708;
+	bh=leq8VNyokdvpQStEdxb0BGwQSSksYqqYCuQZSbBzsQ4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kIoazDM6qEM5gOtwqev3UjD1UibJY8Hr2zDei3VYuYcss91JR0XbKWbR6Fl4kXCnZ
-	 WaWazl73kDl3vF8BZqzsFGTTV/xfw14feKzgTeAMrxNeTR7GU22xgUronbPTqGh/IP
-	 I5tuoGPYcMpNojHZLqk/MfZycYKEtbZcYwwJbSNA=
-Date: Wed, 3 Jul 2024 16:13:43 -0700
-From: Beau Belgrave <beaub@linux.microsoft.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: rostedt@goodmis.org, mhiramat@kernel.org, corbet@lwn.net,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH] Documentation: Document user_events ioctl code
-Message-ID: <20240703231343.GA408-beaub@linux.microsoft.com>
-References: <20240703222501.1547-1-beaub@linux.microsoft.com>
- <ZoXXe8Tl9pRD6-dd@localhost.localdomain>
+	b=Bp/WzDVC4BdTUPn2o2qlmwUR55Hld+30vDvwX7VrDHWNYUeDB+bvBPG+OpCn1W8su
+	 0C6In+U+QOJra838+j9XuCsk0SNM4tMBV7aQ8L8xTK5JxSGUnEoOwu5+hyNcStpns7
+	 p9usbd70QPW0pzUVHK1F6LlZDZ4+HImnLM7JN8uXjXksLExKUbAoRSPkLp2ty8VCTz
+	 0rojh20k7YeJjpEydGkG78SVu/uWoWNvE+Sek6dWoC8koBT2KsN0xX2xY78rWLkSNE
+	 2BzIhr0e+nrVgM6ZEZJ7YUNqVJQWCt62Dk5UgwvOEvvDzcDPt+94agNEM50NHxjsFX
+	 WpBaoDWtfZ4uQ==
+Date: Wed, 3 Jul 2024 16:18:26 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Changbin Du <changbin.du@huawei.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Hui Wang <hw.huiwang@huawei.com>
+Subject: Re: [PATCH v5 8/8] perf buildid-cache: recognize vdso when adding
+ files
+Message-ID: <ZoXcQunHBf0Z1JIW@google.com>
+References: <20240702041837.5306-1-changbin.du@huawei.com>
+ <20240702041837.5306-9-changbin.du@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZoXXe8Tl9pRD6-dd@localhost.localdomain>
+In-Reply-To: <20240702041837.5306-9-changbin.du@huawei.com>
 
-On Wed, Jul 03, 2024 at 06:58:03PM -0400, Mathieu Desnoyers wrote:
-> On 03-Jul-2024 10:25:01 PM, Beau Belgrave wrote:
-> > The user events trace subsystem uses the 0x2A/'*' code for ioctls. These
-> > are published via the uapi/linux/user_events.h header file.
-> > 
-> > Add a line indicating user events as the owner of the 0x2A/'*' code and the
-> > current sequence numbers that are in use (00-02).
-> > 
-> > Signed-off-by: Beau Belgrave <beaub@linux.microsoft.com>
-> > ---
-> >  Documentation/userspace-api/ioctl/ioctl-number.rst | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > index a141e8e65c5d..191609fe4593 100644
-> > --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > @@ -97,6 +97,8 @@ Code  Seq#    Include File                                           Comments
-> >  '%'   00-0F  include/uapi/linux/stm.h                                System Trace Module subsystem
-> >                                                                       <mailto:alexander.shishkin@linux.intel.com>
-> >  '&'   00-07  drivers/firewire/nosy-user.h
-> > +'*'   00-02  uapi/linux/user_events.h                                User Events Subsystem
+Hello,
+
+On Tue, Jul 02, 2024 at 12:18:37PM +0800, Changbin Du wrote:
+> Identify vdso by file name matching. The vdso objects have name
+> as vdso[32,64].so[.dbg].
 > 
-> You may want to consider reserving a wider sequence number range to plan
-> ahead for future extensions to user events. This way you won't end up
-> having to jump over sequence numbers eventually reserved by others
-> within the '*' code.
+> $ perf buildid-cache -a /work/linux/arch/x86/entry/vdso/vdso64.so.dbg
 > 
-> Thanks,
-> 
-> Mathieu
+> Without this change, adding vdso using above command actually will never
+> be used.
 
-Yeah, I thought about that, but really didn't know how greedy we could
-be. At first I had all, but then thought we would never use all of that
-sequence. We'll likely want a few more for libside integration.
-
-Maybe I'll grab the first 16, that should leave a lot for others and
-give us quite bit of growing room.
-
-How many do you think we'll need for libside? I think we'd only need 2-3
-personally.
+Can we handle /tmp/perf-vdso.so-XXXXXX too?
 
 Thanks,
--Beau
+Namhyung
 
 > 
+> Signed-off-by: Changbin Du <changbin.du@huawei.com>
+> ---
+>  tools/perf/builtin-buildid-cache.c | 26 +++++++++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
 > 
-> > +                                                                     <mailto:linux-trace-kernel@vger.kernel.org>
-> >  '1'   00-1F  linux/timepps.h                                         PPS kit from Ulrich Windl
-> >                                                                       <ftp://ftp.de.kernel.org/pub/linux/daemons/ntp/PPS/>
-> >  '2'   01-04  linux/i2o.h
-> > -- 
-> > 2.34.1
-> > 
-> 
+> diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
+> index b0511d16aeb6..8edea9044a65 100644
+> --- a/tools/perf/builtin-buildid-cache.c
+> +++ b/tools/perf/builtin-buildid-cache.c
+> @@ -172,6 +172,30 @@ static int build_id_cache__add_kcore(const char *filename, bool force)
+>  	return 0;
+>  }
+>  
+> +static bool filename_is_vdso(const char *filename)
+> +{
+> +	char *fname, *bname;
+> +	static const char * const vdso_names[] = {
+> +		"vdso.so", "vdso32.so", "vdso64.so", "vdsox32.so"
+> +	};
+> +
+> +	fname = strdup(filename);
+> +	if (!fname) {
+> +		pr_err("no mememory\n");
+> +		return false;
+> +	}
+> +
+> +	bname = basename(fname);
+> +	if (!bname)
+> +		return false;
+> +
+> +	for (unsigned int i = 0; i < ARRAY_SIZE(vdso_names); i++) {
+> +		if (!strncmp(bname, vdso_names[i], strlen(vdso_names[i])))
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+>  static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
+>  {
+>  	char sbuild_id[SBUILD_ID_SIZE];
+> @@ -189,7 +213,7 @@ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
+>  
+>  	build_id__sprintf(&bid, sbuild_id);
+>  	err = build_id_cache__add_s(sbuild_id, filename, nsi,
+> -				    false, false);
+> +				    false, filename_is_vdso(filename));
+>  	pr_debug("Adding %s %s: %s\n", sbuild_id, filename,
+>  		 err ? "FAIL" : "Ok");
+>  	return err;
 > -- 
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> http://www.efficios.com
+> 2.34.1
+> 
 
