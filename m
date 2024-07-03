@@ -1,129 +1,118 @@
-Return-Path: <linux-kernel+bounces-238963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1048692543F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:55:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DB9925440
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9B3288B8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:55:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9F42811C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEB2135A6C;
-	Wed,  3 Jul 2024 06:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5653D1353FF;
+	Wed,  3 Jul 2024 06:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I8fKhS/P"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0qoxDM9"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A033C6BA;
-	Wed,  3 Jul 2024 06:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4359545025
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 06:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719989724; cv=none; b=lL9VGMBLBd0HV6UieAOgvcCERUCxi1c3Cx6pVgWaNdADbaLYfJ96Q5mlqu/ZpqTwuyfpNwXdC0iEuPSz1zDwCRhXbt2NQV5sTE4hi7idBtNS9OqRjL7B8esP7kHopSra+HP4ABwBn1Vk2kXVflgF+ck1Vu3rDzdZD8j0byXEHF8=
+	t=1719989886; cv=none; b=kbXBqjamT+HgSqXS1MT0RaR0AvQjEGZndZe4ABXopGqDl9b1H5QlSFj9u3PYVyy1h4sLwhTaJxuF/39VgrrY9X9qS2NKOfbtY4ibRI6DQEY7EYxM+3fXs+OHp4L9LMC8dJUhH2FBaaVgiRsBYhFR+Ik9F+Ms8TEGfmzhHvV3qA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719989724; c=relaxed/simple;
-	bh=2GfBsRxrZDH/TfdgmHX2/PhCbLhSEw5SNB0zMATiQrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qFaMowh5SH5mJQdIj/C1HZoquSiFRNwi7S2Hgx1U870nKR/04PQjZYreFdq+wgy3ZRFcvT1qf+EfiIZuz5lmkcrS/zYL8MUJM9W5XKJZIlks2/JwaQt7RNqbSp2FTrSkcnwLY0GSAIQgqi1vIA8qsplSeM7GZm0HF6z9OXzDsgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I8fKhS/P; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6359BE0005;
-	Wed,  3 Jul 2024 06:55:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719989718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+112STnSmnBq9WUzd+MMzssxIWtDa9bVrOCWUEJOUuc=;
-	b=I8fKhS/PeXcxlVYKe8GK5xsSrkRKJFif/5MORW6V/qT3DUtUbQ9kbnfUxbs4tbbS/DJzEV
-	jPFWvgvEggNfffM640DrSbT0+fBra+dREqbHrZL1s7PhHeOvzA+cbriDYePT27AvLxbCj7
-	dqShxFxthmywaX1xvnXswUsV5D+iOhzHLHD4fc3CbgihqrODEomTMVS8TQ03Nls/1YiRaj
-	0hIINbX8JRqqt2Vf5TSazRnCf4I2dzk08SaXQP3p58mcqUjzQS6CwkJmhcqtrV03iDnXBk
-	NJvtlrNmJCUffYMxJG9sxt14dS+SlK/CtM06Rm/yl5SlDMh8KtQ+/m5ZCjQZcw==
-Date: Wed, 3 Jul 2024 08:55:15 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Simon Horman <horms@kernel.org>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
- <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
- Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, mwojtas@chromium.org, Nathan Chancellor
- <nathan@kernel.org>, Antoine Tenart <atenart@kernel.org>, Marc Kleine-Budde
- <mkl@pengutronix.de>
-Subject: Re: [PATCH net-next v14 12/13] net: ethtool: strset: Allow querying
- phy stats by index
-Message-ID: <20240703085515.25dab47c@fedora-2.home>
-In-Reply-To: <20240702105411.GF598357@kernel.org>
-References: <20240701131801.1227740-1-maxime.chevallier@bootlin.com>
-	<20240701131801.1227740-13-maxime.chevallier@bootlin.com>
-	<20240702105411.GF598357@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1719989886; c=relaxed/simple;
+	bh=vqJ5b2/WJ3+vwS6pNAqbMT4p93GIk+s0raaiaNJeG6s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E5RzM6KZ5aVFqAQtoGpb+NiU/Buuw7Dop0lvfliN7YdMLRHIPRSQ2arR0O5V0uIcaC+pU+69qetG+zfHQGoGhOomFRjY/IuWntzHxQriRsu7WOI77BZKKIrTsDheD6F+SNyhyPNZ7JS3GJNfnhFefyrYZ7RKxKseaKAH1qYdfWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b0qoxDM9; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5c46e01c9cdso497276eaf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 23:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719989884; x=1720594684; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bQSIvRZB4ThXT5i8fNb92L+40n3G/83l+7oX5ck0BKg=;
+        b=b0qoxDM9oveR+jQHdw4KTrFk7U8rJmVkzHg/20Cp74LCGCjyQgjVZ7gCxMyAvdPgL7
+         fs42PDtZzP4W2c7n3ridax2a6MV+qx+21Y73eaH6Lb3YMdvPjCBXVWLDTYLSGvJ2VJ2k
+         QYeFIRPP3BG646XBDNK0rHehD7YjiVQQPB4OlxlK0MIqbqhkK5XG3DoTgcww1ySUQcyX
+         VvtUc7bcV5TppkPf1aAbCypzwMF7Ou5t7xJyUg3qZAbyn7sUI6rEZOg/Obz3ZyjZ7Xde
+         S94GgXP2c+QIb5mUFjBYZ+za8+j1ZVLXxQCxKx/Z4qB2fLzmUlYPEkB2TJ8dNVb7JRO9
+         27Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719989884; x=1720594684;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bQSIvRZB4ThXT5i8fNb92L+40n3G/83l+7oX5ck0BKg=;
+        b=SPNt/ONe+JBS19hs3AZ3u+OGPvtvsoJH7ft45cq4X+1drpQoRq5Obboahe1wI4ibrT
+         FccYnu3NNcI5uGgp2GDV12IqUKMv53RggardBhtCNLgxW0jjPMJkqGuhBZPHx7yICpRi
+         UZkb5Hsh7NoRliwi3m/9UHyhQSdrej/0cTkvwSKnENu97Fuy9/ucixmcA4PX60CK7pgR
+         i8JEsf/GYwp5U7YsNnwveRmXhdPSqj8c3w7a11u1oaEyhNm5tgoc3/VLsCsElxif2J5j
+         bf2JkYMtBnbmKsld5Hw3kvXSElU04Ij/7uIcPtzAy4wo/7uNwDmaQq6fOigt5VZwNDob
+         Lr4w==
+X-Forwarded-Encrypted: i=1; AJvYcCW6PNIpJ09fDweoESIAOPLS1vRnscEQ+oxhoysvrJU7fP/X+ItS9YbdDeJ1xhDI/J83ncEEESKQBxZIPykxF0OuXVrSJkxbjld3MEl2
+X-Gm-Message-State: AOJu0YwQQ8A2XGcBsLsYyu4+IpSOyyNh+kB/4b0STdrs+icVHqIjuhbG
+	VRUcPbaNWQLnDeyNcW8J1ToPdhwiz5OsSV+mcFFDAliG5ITe3gV2
+X-Google-Smtp-Source: AGHT+IFxXXOs08IU3yvr3Dw27u84engVs9yE22hON8vp/HhkHuM1WNJTyKgg6TJgbQSNuhxiAoUubA==
+X-Received: by 2002:a05:6358:7e49:b0:1a4:ab44:7632 with SMTP id e5c5f4694b2df-1a6acbd7376mr950041655d.5.1719989884191;
+        Tue, 02 Jul 2024 23:58:04 -0700 (PDT)
+Received: from kousik.local ([2405:201:c006:312d:258c:c06c:76e7:dba9])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3e818asm9973921a91.51.2024.07.02.23.57.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 23:58:03 -0700 (PDT)
+From: Kousik Sanagavarapu <five231003@gmail.com>
+To: Julia Lawall <julia.lawall@inria.fr>,
+	Nishanth Menon <nm@ti.com>,
+	Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>
+Cc: Shuah Khan <skhan@linuxfoundation.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Kousik Sanagavarapu <five231003@gmail.com>
+Subject: [PATCH v2 0/3] Do device node auto cleanup in drivers/soc/ti/
+Date: Wed,  3 Jul 2024 12:25:25 +0530
+Message-ID: <20240703065710.13786-1-five231003@gmail.com>
+X-Mailer: git-send-email 2.45.2.561.g66ac6e4bcd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hello Simon,
+Do "struct device_node" auto cleanup in soc/ti/.  This patch series takes
+care of all the cases where this is possible.
 
-On Tue, 2 Jul 2024 11:54:11 +0100
-Simon Horman <horms@kernel.org> wrote:
+v1:
 
-> On Mon, Jul 01, 2024 at 03:17:58PM +0200, Maxime Chevallier wrote:
-> > The ETH_SS_PHY_STATS command gets PHY statistics. Use the phydev pointer
-> > from the ethnl request to allow query phy stats from each PHY on the
-> > link.
-> > 
-> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> > ---
-> >  net/ethtool/strset.c | 24 +++++++++++++++++-------
-> >  1 file changed, 17 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/net/ethtool/strset.c b/net/ethtool/strset.c  
-> 
-> ...
-> 
-> > @@ -279,6 +280,8 @@ static int strset_prepare_data(const struct ethnl_req_info *req_base,
-> >  	const struct strset_req_info *req_info = STRSET_REQINFO(req_base);
-> >  	struct strset_reply_data *data = STRSET_REPDATA(reply_base);
-> >  	struct net_device *dev = reply_base->dev;
-> > +	struct nlattr **tb = info->attrs;  
-> 
-> Hi Maxime,
-> 
-> Elsewhere in this function it is assumed that info may be NULL.
-> But here it is dereferenced unconditionally.
+	https://lore.kernel.org/linux-arm-kernel/20240510071432.62913-1-five231003@gmail.com/
 
-Hmm in almst all netlink commands we do dereference the genl_info *info
-pointer without checks.
+Changes since v1:
+- Refactor code so that it the scope of the pointers touched is reduced,
+  making the code look more clean.
+- The above also the side-effect of fixing the errors that clang emitted
+  (but my local version of gcc didn't) for PATCH 2/3 during v1.
 
-I've looked into net/netlink/genetlink.c to backtrack call-sites and it
-looks to be that indeed info can't be NULL (either populated from
-genl_start() or genl_family_rcv_msg_doit(). Maybe Jakub can confirm
-this ?
+Sorry for sending the v2 so late.  I was busy with my semester exams.
 
-If what I say above is correct, I can include a small patch to remove
-the un-necessary check that makes smatch think the genl_info pointer can
-be NULL.
+Kousik Sanagavarapu (3):
+  soc: ti: pruss: do device_node auto cleanup
+  soc: ti: knav_qmss_queue: do device_node auto cleanup
+  soc: ti: pm33xx: do device_node auto cleanup
 
-Thanks for the report,
+ drivers/soc/ti/knav_qmss_queue.c |  85 +++++++++-------
+ drivers/soc/ti/pm33xx.c          |  20 ++--
+ drivers/soc/ti/pruss.c           | 168 ++++++++++++++-----------------
+ 3 files changed, 131 insertions(+), 142 deletions(-)
 
-Maxime
+-- 
+2.45.2.561.g66ac6e4bcd
+
 
