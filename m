@@ -1,305 +1,123 @@
-Return-Path: <linux-kernel+bounces-239976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B634692677B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:54:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FAEA92677F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D850C1C2268F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:54:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0EB5281ED1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FAF185E42;
-	Wed,  3 Jul 2024 17:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B259186285;
+	Wed,  3 Jul 2024 17:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="tR8B/hG/"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2082.outbound.protection.outlook.com [40.92.103.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dRFkz+PV"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695C51C68D;
-	Wed,  3 Jul 2024 17:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720029257; cv=fail; b=HKOBL1o1z0Scg0DfaJNx2bnRMVKlkDivBumYXAKouP5KRo9yV5eRgbk9hErakyt8l1hPwK8AcaTmV5nCvKhCC2wsT4oIF3yNZsqDxM6raH7ga4mg7V/S3L5RkqIzEN2dUOv8ELVcMIWq88O6bLE8UBSi96ySGtuvJLyNQFIxsjE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720029257; c=relaxed/simple;
-	bh=aco4mPPSRohab+cV20WYOO+XoF9AA3K1TTtGneE7Gt0=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TT1wzR7pdDE2e116Sy/nJBGJDc3eQM1sO58YCydWKlro/LV0eVpt5twpdrTQwp9be9moBO/+pvp1GBY/2Z1TTPdS2y0HB2WS5NRssf3IGcwkEW+mijFHgjL8LGUSleiQW7UXWgsdO9ylpa7dSNivPO/yA05qhMMF/AwxA2hJmec=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=tR8B/hG/; arc=fail smtp.client-ip=40.92.103.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SdqIh5K7KXzk5qWj0kivJYLT3cXJ6x5cdE5mlQTVqgIVXgX/C/+p/+mcWrkAs7nq/e2d6lRyYKSdivnYu91M6bSHZDUAyX+rzjftCPoxS6LwimOosLQH0Yus60OylGlulj8kh9zu70iBCKB128OJIn7gQal7V2cMfGkfGa8ByscXBz1iIMC41YDZfkOcrDdwA1L7Th/gk5iaUlc0yGtAlItsqro5sFVRT+ciIcD2tVPz8vbeJylcpTfMzMOGSQbZquxwmSpaLihOrU1EBQAHgv6TKhwhKHnOrnAvyBxgqIn9Fudt+ENFvYbvxvHw6Aan6zmtuAQ0fN/aPCwzu16YEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y5W9ENJRaSzEX7lhMUr+hH+k+9V4I3//vRcVIzNI314=;
- b=nwEx0qP4J522cqabi7HW6r9kbiNzHAcCOBuK4YAKsJm5N76UpWH2gAu1QNEJ1Da2aYcmlhxbi8EAtWXNtf6vxsVBihVfnUaZVktx0NwtAm25T3PswYhNjNZBF4RUYw/jE7A1qojHNEB8xHizzLcPcQSy10VE2XLb7efb7txN15PaRMov2myP1WkLplW2jMzeWRvG3FyTUImT7fF+x6eDLOBReV/HBHTbgXZ60nXTSmxWfJx4BCw4vi4jIDXo28vaJ2WaOTCDnBuXPuFQSLVwEiaG4Xkqb+Zk+VQ/hJv0bPJMp2BO7NZCbSmRwIvusERZFdY0OQfXisU77c9Vbv2IYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y5W9ENJRaSzEX7lhMUr+hH+k+9V4I3//vRcVIzNI314=;
- b=tR8B/hG//O9ubASiwvPmKqrI6Bs7ciLRuB8EJ/vQN+jt86KhXOYECeK1ipja77/2ierHAqvo6/S4TDmSfytK+RKGFu0qVcwO8r/WL69X5Zs/cFs21QlX7LvGho9rQZBwSHPNKuVg5yN0DZDFDpSjGufxjSOSoBScrzyCK3VpvoYTQ8UmI/VY4ZFuzmOADm9kL61YM5YKDBOdpkFTejQmgQ4s94nm+CFzSukFCnX9xCT4oCEawZ4FYX3JPOIH+3y3VgnNFpyjjzwvCXuUDa9L1zhij3WNR8c/JUCJ2xcOYw1xmyIBhtYW8q/KQiu5/1AqKQGIYi/EZ9J1bAno7RVAiw==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN0P287MB0946.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:146::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7741.25; Wed, 3 Jul 2024 17:54:11 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7741.027; Wed, 3 Jul 2024
- 17:54:11 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "bentiss@kernel.org" <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
-CC: Orlando Chamberlain <orlandoch.dev@gmail.com>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3] HID: apple: Add support for magic keyboard backlight on T2
- Macs
-Thread-Topic: [PATCH v3] HID: apple: Add support for magic keyboard backlight
- on T2 Macs
-Thread-Index: AQHazXICmHZBGt6CaEqkFC67h4stsQ==
-Date: Wed, 3 Jul 2024 17:54:11 +0000
-Message-ID: <E1D444EA-7FD0-42DA-B198-50B0F03298FB@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn: [N8OYFk7oh9jX2t6QK4A4K+poWhcbtf/ehxA2qWCeHD5Ent7xVuSv81zMpK0v6mkp]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN0P287MB0946:EE_
-x-ms-office365-filtering-correlation-id: f3b1ac8f-e6b4-46fa-e983-08dc9b8924fe
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|461199028|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- qON4KzdSyO4P/jJQ+HMf+ivde6nHjl62ttAzDVHFQSCaSpXz4Q1bSZSf04//jcJRQQmtheGhcbYp6omNPsvc8j/ZVaRCKRZEF6Hinr4cmt2aojJC2NKerywPFuE/3v2d0QbS+yhkUKiDOHZNn4EOiCj2a+x48AleUB/yYaJa0PvFKm8HZI06mNSuGFX3KGqv+2dZ3s4p44w5df/oJnSry2wVCV1ICtt6BlXQ76Pvy7YfYENjMDv/pBm961QYcH+/nJboUQDaWXyFQ0rDWwZyL+cZBWIefEBpqEcOECkwXQDfKozpkybaMZO3lmO8GuaLMDRSIpLgb5xiWdgDKdxUVGxfdazj6+0k8u0qSnA14+onz1MlSuiO2rGQEWjUyFsnGN6UDYOj++DnLm2wKJ34WYsIXl2oEMJayPpnYf4q7j6PPr+/yHit2tYAwmgF1D0qd8+8/rCRW85H3AlvGfdIAFE2p3JzMiA/hT5wKcP71LD1iotjTb+6TeENDQvAo3Ww8uW8HUMV8eNzatMj2B64Mwa2aZAyzhZuK/qcig0GHfbSQMw1tfeWhmjZQ19ikRYe5zrNpmatSV0CB1tT+F5umSPDV2STMmPw6BOTh+o5yBeaa3z2Hcsoe6phZNisbDY7
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?1eBXEsJm5zkTs9Qkbig+VAlT1+zptoNPcvPvrwD3tQ1hZ9nYxw0SOUFuY+e2?=
- =?us-ascii?Q?5dVIgiQ4J1DKhqNAL5dWZCvQIXDV3Z8Kv2dmoSUGP7sOAjDwInXu4udaFiX5?=
- =?us-ascii?Q?VUTB3HT7dmswMG45alwYvY+kEN++a78jAX42wFrYXBQml9xfKLK/67erGjNl?=
- =?us-ascii?Q?HezFvSQhkCzQkL2T85sMbYpo58G5ApChl3hf/uipdM1I++sWL+/oc2ezOckq?=
- =?us-ascii?Q?Qs3CoNhZoYDfWYeKNINZYwINGQzw7j2qaEua0bbbOBcBEpz1mUd05bId7xkb?=
- =?us-ascii?Q?gLvlOpHFuCPy8DXWZnrfhgtbBwGoiRqvef1Mbr+vmcAJ3URaSgldzg8HxxHi?=
- =?us-ascii?Q?7mL7sfFE5f7MG/vaI4wj7MTA7Cr8LN6VkRNQ9Vfarng0Bdm1c7bhDcb81DOI?=
- =?us-ascii?Q?aHbCvf5raOxaZmzrgaABCBrgVpjA6lykF1gL4w97Zzdq+x8y2eXWdMmscMOo?=
- =?us-ascii?Q?PTQ4eWssoryWvAuQ9cw7l0utG+TnBxwgzb+RERT/VRGwl4O5cS5FreUYcHED?=
- =?us-ascii?Q?rlYvq34vlUMykSxben4WRvyAbR1E44V6mzTdPjFm9O1x+fubEKc8V0IHNcMM?=
- =?us-ascii?Q?VeM9cvACOi4mxh3tslKvoerIBDpsse/0WQHNj/cmlVcm70Z4qY4H9+3Z4aaS?=
- =?us-ascii?Q?c0LyCGW4tJdRSQZbI7j41S3+pZCSErU2hHpTKwji9z14v/gxYQmdr6W2w9Ze?=
- =?us-ascii?Q?BNpVwwPA0+wmF8m7C2yie6CblO4e2AJuesaE9Yo/BLY53NyVVPdYbcbk3vF/?=
- =?us-ascii?Q?0ucVWKUpfbSE9iue1ZKGaOtuyVKWd2imdRfYXo/4vb+jPhpDEJwhJmic5Iq2?=
- =?us-ascii?Q?eYYhen5EQcMCHuMMezmpri88JK+/LeE3HjJP/iLnMpS6OkX3X68OxtyMxCVf?=
- =?us-ascii?Q?/eeGEJ+mgVt+Y6eSO+72Q6AJ2jLSYunZveZ9aEyiL22rhb7t3EEjmpxrwhhs?=
- =?us-ascii?Q?dU6+ARG93RaL3ZqJOW8XEKDFMVkDuRvMkXOrZ7LRCCrT/IjTA/zsr22Dz8Mf?=
- =?us-ascii?Q?NrchTQH/zxNkvWb3eSKtMqYl/rp3VsFyL8a9FdpRRluqwOTChrKZga49p6gM?=
- =?us-ascii?Q?pKuU6mL9a9khszZA8PEORWo57jHPOoEmfcdmg8RqVRTJwflmwS3d6cU7fhUW?=
- =?us-ascii?Q?xkTkty5zka++ExGWx4O330e2VjaEOqIns5NeR+r77gz5xtxozigxE+fCD0KD?=
- =?us-ascii?Q?9H9+nyfuLh4U8gQSrK69SEscDXtuzbPVM5RiCwsHh+T1Ec6Wa3DTX5KKJZBW?=
- =?us-ascii?Q?HWBumGLT1ahe5I5Zui8Sbt6Fv33x/A2AZ6TpOei6TpLBH6SJYoK/ptqfbDDb?=
- =?us-ascii?Q?Sv/gQKVsSNYmPRn6EiFts9RK?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <98795E3215ABC74FA7548F83C1BB16E8@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4BE17F511
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 17:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720029314; cv=none; b=mxroFrY0ZtdC2AbDn7swIOvmqa5NvmpAXMavZIshAluhI/8y4uufoZcaYYIWWst5m3wR8bgLaMcXB9KrLgQkZlFlYcx8mqU8WJBNm3sFgCzXd/oFQv4VjLPslwqR7vXVFjcR0UQ/MTPpaOnb+xuB5MnjIGK9BvSncGwb7CpmnZI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720029314; c=relaxed/simple;
+	bh=7f1Jw4HvKMPAz77zJdFLUyAdloZi7jiFu3rAdtPOMZE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YI73nuvzLaY1H1pxiDiS+6lBSllyn1hv7G/Gl+Lm/OzsLBPmRdpQ5bOKkyCGm+YG0RXyGAM8m6e96yoYpLtGase3N4atc9NnePfdB1aWn3XslvjdLTLPo0gpp5qodgRzCHuuEbv8CcHjbp2nvGFgXhoaLQchj1rvaHx1qxyHqKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dRFkz+PV; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a724b3a32d2so672040066b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 10:55:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1720029311; x=1720634111; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jBLAgZolniuYLkImL+HV9eymQn/u6hu6ZNMnsLo1ncg=;
+        b=dRFkz+PVNNxOiWhMAVJ9mtzjL02jXuLf9B2nWBsrLdLnZS+tEw0kK665dewopzR5B/
+         CbeUi8LtlcnnEDWRBX2MO9N3yHMgWmj8EsoL7rYgtbRbblaaxK0urKfy7rJi6v4BtSxV
+         2WO/uKUjq2flvMTlh7q9iZXJ4QWCd5SG56DTM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720029311; x=1720634111;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jBLAgZolniuYLkImL+HV9eymQn/u6hu6ZNMnsLo1ncg=;
+        b=qelLv6bm0qX0xD41mZIdSci6P3605Xb31+97PC2O61QXGHLHjtLI3R94U9+NSJN66C
+         acf9PUmNf7oU6byUqFWqkMgTWdnYA3Iwo4WdzlsPlGYs45xom+3xvZpZj7MPB9Sh5zPw
+         j2hELrAzTLoKhlp0A7ITwDHTOfKHnBJpNmAW0BI0HUT7aT/3FfnyQCUL2oIGF4QYJCXI
+         tOnrkJIbunM8FCFC5SYF2HrNK04Gx6ALezHNWvq9kfONVbPFK2T8SOEZIM6X+tWza0Pr
+         XvgeKTWlye4t+pMNCHbllSYlbM+o19xJREReYSYynT50TGhO/8dazadqXF5Mo7xMWpZM
+         CkIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUREDfOCWd9kWx6f84i0xlsdtClNCsccpYUQq5jveG/s0sHYHfoOVSRAOa2xvnFpZRt+im7/y7kdfKTM28ryEuasUTzEnzHfrJoPyAO
+X-Gm-Message-State: AOJu0Yy5D9+JZ8nuK/sJykYemlMC7shd9z3SA7zZ7zPkA24FQNBnybNf
+	yPcZfv7dGuuFJH4YgFFvjywJBsQMW6hG06CHI9UkO0UsG+hAjk3CxE8PJ3375rxKawMS/ZbCX5W
+	pgDQ5Qg==
+X-Google-Smtp-Source: AGHT+IHUZudqnH6aOZVCK2TIuPEtTOaLMPGGZPgXPEuKJ9sFdnefHSUB+P2OtZ84KQvnOH0KrOBbDw==
+X-Received: by 2002:a17:907:3ea8:b0:a6f:3155:bb89 with SMTP id a640c23a62f3a-a75145127cemr1004537866b.70.1720029310817;
+        Wed, 03 Jul 2024 10:55:10 -0700 (PDT)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77b2b3a412sm9420966b.204.2024.07.03.10.55.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 10:55:10 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a72988749f0so846666566b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 10:55:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWgphF5CGJhjA8gOgf9mJ8dSvzqiQ71CAmCQAevGP3GVWx79USg/lanCjCiEs0WTaQSbC1TaYT1/zNcu0wjcmUQPBoQ4qNf7VrBLzOO
+X-Received: by 2002:a17:906:7d2:b0:a72:4b31:13b5 with SMTP id
+ a640c23a62f3a-a75144f61a2mr779219566b.54.1720029309600; Wed, 03 Jul 2024
+ 10:55:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3b1ac8f-e6b4-46fa-e983-08dc9b8924fe
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jul 2024 17:54:11.2686
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB0946
+References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+ <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com> <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+ <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com> <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
+ <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
+ <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
+ <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
+ <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site> <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 3 Jul 2024 10:54:53 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com>
+Message-ID: <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Christian Brauner <brauner@kernel.org>, libc-alpha@sourceware.org, 
+	"Andreas K. Huettel" <dilfridge@gentoo.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Huacai Chen <chenhuacai@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-From: Orlando Chamberlain <orlandoch.dev@gmail.com>
+On Wed, 3 Jul 2024 at 10:40, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Oh wow. Shows just *how* long ago that was - and how long ago I looked
+> at 32-bit code. Because clearly, I was wrong.
 
-Unlike T2 Macs with Butterfly keyboard, who have their keyboard backlight
-on the USB device the T2 Macs with Magic keyboard have their backlight on
-the Touchbar backlight device (05ac:8102).
+Ok, so clearly any *new* 32-bit architecture should use 'struct statx'
+as 'struct stat', and at least avoid the conversion pain.
 
-Support for Butterfly keyboards has already been added in 9018eacbe623
-("HID: apple: Add support for keyboard backlight on certain T2 Macs.").
-This patch adds support for the Magic keyboards.
+Of course, if using <asm-generic/stat.h> like loongarch does, that is
+very much not what happens. You get those old models with just 'long'.
 
-Co-developed-by: Aditya Garg <gargaditya08@live.com>
-Signed-off-by: Orlando Chamberlain <orlandoch.dev@gmail.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/hid-apple.c | 87 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
+So any architecture that didn't do that 'stat == statx' and has
+binaries with old stat models should just continue to have them.
 
-diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-index bd022e004..6dedb84d7 100644
---- a/drivers/hid/hid-apple.c
-+++ b/drivers/hid/hid-apple.c
-@@ -8,6 +8,8 @@
-  *  Copyright (c) 2006-2007 Jiri Kosina
-  *  Copyright (c) 2008 Jiri Slaby <jirislaby@gmail.com>
-  *  Copyright (c) 2019 Paul Pawlowski <paul@mrarm.io>
-+ *  Copyright (c) 2023 Orlando Chamberlain <orlandoch.dev@gmail.com>
-+ *  Copyright (c) 2024 Aditya Garg <gargaditya08@live.com>
-  */
-=20
- /*
-@@ -23,6 +25,7 @@
- #include <linux/timer.h>
- #include <linux/string.h>
- #include <linux/leds.h>
-+#include <dt-bindings/leds/common.h>
-=20
- #include "hid-ids.h"
-=20
-@@ -38,12 +41,17 @@
- #define APPLE_RDESC_BATTERY	BIT(9)
- #define APPLE_BACKLIGHT_CTL	BIT(10)
- #define APPLE_IS_NON_APPLE	BIT(11)
-+#define APPLE_MAGIC_BACKLIGHT	BIT(12)
-=20
- #define APPLE_FLAG_FKEY		0x01
-=20
- #define HID_COUNTRY_INTERNATIONAL_ISO	13
- #define APPLE_BATTERY_TIMEOUT_MS	60000
-=20
-+#define HID_USAGE_MAGIC_BL			0xff00000f
-+#define APPLE_MAGIC_REPORT_ID_POWER		3
-+#define APPLE_MAGIC_REPORT_ID_BRIGHTNESS	1
-+
- static unsigned int fnmode =3D 3;
- module_param(fnmode, uint, 0644);
- MODULE_PARM_DESC(fnmode, "Mode of fn key on Apple keyboards (0 =3D disable=
-d, "
-@@ -81,6 +89,12 @@ struct apple_sc_backlight {
- 	struct hid_device *hdev;
- };
-=20
-+struct apple_magic_backlight {
-+	struct led_classdev cdev;
-+	struct hid_report *brightness;
-+	struct hid_report *power;
-+};
-+
- struct apple_sc {
- 	struct hid_device *hdev;
- 	unsigned long quirks;
-@@ -822,6 +836,66 @@ static int apple_backlight_init(struct hid_device *hde=
-v)
- 	return ret;
- }
-=20
-+static void apple_magic_backlight_report_set(struct hid_report *rep, s32 v=
-alue, u8 rate)
-+{
-+	rep->field[0]->value[0] =3D value;
-+	rep->field[1]->value[0] =3D 0x5e; /* Mimic Windows */
-+	rep->field[1]->value[0] |=3D rate << 8;
-+
-+	hid_hw_request(rep->device, rep, HID_REQ_SET_REPORT);
-+}
-+
-+static void apple_magic_backlight_set(struct apple_magic_backlight *backli=
-ght,
-+				     int brightness, char rate)
-+{
-+	apple_magic_backlight_report_set(backlight->power, brightness ? 1 : 0, ra=
-te);
-+	if (brightness)
-+		apple_magic_backlight_report_set(backlight->brightness, brightness, rate=
-);
-+}
-+
-+static int apple_magic_backlight_led_set(struct led_classdev *led_cdev,
-+					 enum led_brightness brightness)
-+{
-+	struct apple_magic_backlight *backlight =3D container_of(led_cdev,
-+			struct apple_magic_backlight, cdev);
-+
-+	apple_magic_backlight_set(backlight, brightness, 1);
-+	return 0;
-+}
-+
-+static int apple_magic_backlight_init(struct hid_device *hdev)
-+{
-+	struct apple_magic_backlight *backlight;
-+	struct hid_report_enum *report_enum;
-+
-+	/*
-+	 * Ensure this usb endpoint is for the keyboard backlight, not touchbar
-+	 * backlight.
-+	 */
-+	if (hdev->collection[0].usage !=3D HID_USAGE_MAGIC_BL)
-+		return -ENODEV;
-+
-+	backlight =3D devm_kzalloc(&hdev->dev, sizeof(*backlight), GFP_KERNEL);
-+	if (!backlight)
-+		return -ENOMEM;
-+
-+	report_enum =3D &hdev->report_enum[HID_FEATURE_REPORT];
-+	backlight->brightness =3D report_enum->report_id_hash[APPLE_MAGIC_REPORT_=
-ID_BRIGHTNESS];
-+	backlight->power =3D report_enum->report_id_hash[APPLE_MAGIC_REPORT_ID_PO=
-WER];
-+
-+	if (!backlight->brightness || !backlight->power)
-+		return -ENODEV;
-+
-+	backlight->cdev.name =3D ":white:" LED_FUNCTION_KBD_BACKLIGHT;
-+	backlight->cdev.max_brightness =3D backlight->brightness->field[0]->logic=
-al_maximum;
-+	backlight->cdev.brightness_set_blocking =3D apple_magic_backlight_led_set=
-;
-+
-+	apple_magic_backlight_set(backlight, 0, 0);
-+
-+	return devm_led_classdev_register(&hdev->dev, &backlight->cdev);
-+
-+}
-+
- static int apple_probe(struct hid_device *hdev,
- 		const struct hid_device_id *id)
- {
-@@ -860,7 +934,18 @@ static int apple_probe(struct hid_device *hdev,
- 	if (quirks & APPLE_BACKLIGHT_CTL)
- 		apple_backlight_init(hdev);
-=20
-+	if (quirks & APPLE_MAGIC_BACKLIGHT) {
-+		ret =3D apple_magic_backlight_init(hdev);
-+		if (ret)
-+			goto out_err;
-+	}
-+
- 	return 0;
-+
-+out_err:
-+	del_timer_sync(&asc->battery_timer);
-+	hid_hw_stop(hdev);
-+	return ret;
- }
-=20
- static void apple_remove(struct hid_device *hdev)
-@@ -1073,6 +1158,8 @@ static const struct hid_device_id apple_devices[] =3D=
- {
- 		.driver_data =3D APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATT=
-ERY },
- 	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYB=
-OARD_NUMPAD_2021),
- 		.driver_data =3D APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_TOUCHBAR_BACKLI=
-GHT),
-+		.driver_data =3D APPLE_MAGIC_BACKLIGHT },
-=20
- 	{ }
- };
---=20
-2.43.0
+It's not like we can get rid of the kernel side code for that all _anyway_.
 
+             Linus
 
