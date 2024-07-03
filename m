@@ -1,328 +1,191 @@
-Return-Path: <linux-kernel+bounces-238601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04801924CAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:15:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2225924CB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28B7B1C21E36
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:15:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E0A1C21F6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFA01361;
-	Wed,  3 Jul 2024 00:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D33184E;
+	Wed,  3 Jul 2024 00:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Tu1ywZoZ"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2138.outbound.protection.outlook.com [40.107.243.138])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="gPNxC/Wp"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2096.outbound.protection.outlook.com [40.92.102.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DC3635
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 00:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DED2621;
+	Wed,  3 Jul 2024 00:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.96
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719965733; cv=fail; b=OkUhqJJofHGhmnxWGyakhhSYjbZBFPCsnHkXXhuqsNxw62jo/B9HhPb0saXpLuEdQs4JFtv/ufUjvqLSAbG8XzxlBk+O0xdJWux/h12rbSq3bqfWtqIC4UjTws0hZQpVQ0x6IQ9XYiDJgTuOird2knCwqiHUKWzTmvRR39sOBW8=
+	t=1719965920; cv=fail; b=CXM1zm7CtPah6hRC65ERcygUHS3ebUlD7+eJxxWXmEcjhWoGn6E6v5bMkIUAElsPInZ787wxqEXJPB082UlULJoUOZUCMJv9yVzhS7ddCidtoZ9GN1vQ65Hy/Lxb+9C0OASlxhY89HawsZttNgcU0g/AQnTp+xuQ5oWoJSG/aJY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719965733; c=relaxed/simple;
-	bh=ieafX6g0JnlCqiMbbDzdZKvXR3zjqh+Y0j15anLG16M=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uuC6Kr7I7jPQt/j9SWX/uF8jnVMm/NZh8I1DkVOJ8QAY175HF75hkZOQMbC9d7+UDaJcKpq2hh2zOViHHt2RlmlZYAIYLqXkHArd+f8fiyfRYiepiEKQk3sue/QMmAIpE07NNrj0q7kMbrrWMzAXx1Jj473bVGfsMtB+dqbqZVY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Tu1ywZoZ; arc=fail smtp.client-ip=40.107.243.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1719965920; c=relaxed/simple;
+	bh=tELbtsTPF3ZujpVIHo5w1q6EfTBF1FPIeLNIp4BHWs0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pOCde8WrND2AHWekXMmSsIAWm3iSgcf2oZ4eHApUrha3W+et7EDKlHgkwGJ0VRnG01W4nkvhUusYc2A5GbYkW3TI1vVoW98tsyUhLhxwCFy84x5P0exp/yfDYfCW/CIyQNV/bPSpioVhTuNLfpcnu/Kj1EIUoMIwTOGlafWq5nA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=gPNxC/Wp; arc=fail smtp.client-ip=40.92.102.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=O2dqJyHyalArfPYH+0hfzL2to4Jo5Otc5wA+dDFVg1EpRGC5pAkzXQ18uvUcwkrZs3kB/BsgZ9CSEbyQSMtX1r0re0PLchbpc2Dz8ilo9Np9MsopcyDHSQPPNhqEHQUvULvzxuySJ6V7f0JlZbxcHfE3/ec+aCIeuZ3ZsKju5WpXKWMPHtLH/x0u+KIOw5s8Ecx9zXQD7g9iQuAv82yTUKZ7YQzAWQiZ5B61GipyLQNAzfSOGkYJREin5NxKs0kcvxolFrH3ki5GvuPdX7QVmbH5Ou4uyBZogFGe4/YhSxyVUj5OdqUVZOh3EoXVDcFpEqD9Jy2WK687/lyDqKUHZA==
+ b=aAB8wnig5zbxtFhaXJoPKGwas2F8/ZovERkSiKhSW2wz2PVtnCgsxWPqd2Wi6vaDO8voZSWqxf51SS4VmcQCfPbhClL/WttGiCZoqlpVayl7qn5wsUArOIJexePSCD/3v+4i9mNGZwiQ3K98Jm1E8jVAMfs0Z03/DCMuNbf245Y+4vZOwIdTnxqsPH3Kvt0/mwvZuKdHv786/fuiEYPyQBKIR/36YyGkX07gbMvNFmj6yIQHauI/ev4vF1FPZh6o2QTK2+IQNcuVzSVgtSRzbbgGkBYIExZeXZ4/2lHQn8KMfT5xHejBqWPFeGuhNTZ8j+IXOANlnWvj7GNOgTpEng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H6B0y5tUUxi/asF+i7CCcX1QQ0CbODK08+zOeen+v+A=;
- b=LI76g0apZd2OeyZA8RV0GQ3nckUpCiNHYnCMIHO47aOTEBnWQi1DdbMGwNC+nRhbVFKAV7PS0V2eAkwEQbhy1P6uac+eOopgDty2q9XlOsNv1A8pWCAmhqeHzN8brhkjk+xWSyXLtUgR3QpIJl1LPdLhuP5Nzbz1vxOcGK/cVZUavjlI3FdFK9sLddql47fErWdgsOwFDAEjFk9EXFYraCLo1hBFpRmG0ktpBZhi4vsnkBS1ofz54oFkPxKM3wITnTtH5xppFxDzMow8aqede7cdhnK/HdN8pYu3KpbYeUQEQal1wphvISfoSp+DYK2wph/SggudT1WrybayWTkMyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
+ bh=coZ61vzd69LhhCu9qdITtdW5+b4E6lfGCWU9drL0pNM=;
+ b=fXjacyHk5C/CVioyQ8xwTmArwQH2Siiauvwr2Qp5o4CDPp60bzPwRwTKkykAwfDMqkbNQc/Mf1WHNDKj7/VX+al+sKNUVx5ZpQqp2A7K+Oz4vwZCJpDuqRyvphswhbvyVEBaXzAbUFuoM8DeSN3l4Ag7fxAwMsBVFUu8alQS+b84N2H2hu3HSjLl3PnXauD2qVqxkST8cgbihh3HKutnbI/ioxhPpQVo5c/gjvd4HIvP1J2Wtt/bgBCak2t6/E/MHlcPDC+evpwR8zFYM9fm5nXv7syXLDMFhkYJzvf6QjQfbylR7vzrwwm/T1MWVIJ77Q4cGbaztFAjTy7Mr9RjKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H6B0y5tUUxi/asF+i7CCcX1QQ0CbODK08+zOeen+v+A=;
- b=Tu1ywZoZfjv/PunAGaF1HdKIio/vbMBTDH5ZiXc2tus1+QE5qaSh8rBZHmvnxLHwr1Pp/2nZ2v7MsM5WxOqWx+RoQlF6haiJ/VTLSHDE0gT8Qem7iEP49N29NszqFaF+1wLAgHs0qh8wIVfdcRn4jOZTR5zEAr9x7u7//srHTw0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from BYAPR01MB5463.prod.exchangelabs.com (2603:10b6:a03:11b::20) by
- SA0PR01MB6154.prod.exchangelabs.com (2603:10b6:806:e5::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7719.32; Wed, 3 Jul 2024 00:15:27 +0000
-Received: from BYAPR01MB5463.prod.exchangelabs.com
- ([fe80::4984:7039:100:6955]) by BYAPR01MB5463.prod.exchangelabs.com
- ([fe80::4984:7039:100:6955%4]) with mapi id 15.20.7719.029; Wed, 3 Jul 2024
- 00:15:27 +0000
-Message-ID: <546bf8d4-3680-4af3-8d4d-af2d7c192d04@os.amperecomputing.com>
-Date: Tue, 2 Jul 2024 17:15:12 -0700
+ bh=coZ61vzd69LhhCu9qdITtdW5+b4E6lfGCWU9drL0pNM=;
+ b=gPNxC/WpuOHsSt6PVjXoDNYshBUeGhvAIIW/dD+g9EsXwzXjtv/vV2TEg4txNp4s1DkH6crXlg01oZoq+ekjEeYuvzkbuYY5dBUIjeI2xx+xTPdJWJtCJgnRTSSeBe9Sp9G+CQv1uMwgdvAYS32BJGd57NNrGGdngXPVvH9oc2SFvJxTWzDSfD9qZT7HcN+D3Pi5b2OHHMUcJemb40Z8nzZwp3ti/wZS/ypxG4YMhs+jCSHleOGL/iAp/bTtUG6Tql4f4U4NoeQeP5NkxYTf1rukPchBC04hxgKDCZoyHRkSG3uoBG0tGEyGFqb6cxHvJkSgL9F6ORSXfhgvZNmnLQ==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN2P287MB2064.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1c7::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Wed, 3 Jul
+ 2024 00:18:31 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.7741.017; Wed, 3 Jul 2024
+ 00:18:30 +0000
+Message-ID:
+ <MA0P287MB282240D38A2D9B0F2D1ED186FEDD2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Wed, 3 Jul 2024 08:18:27 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hugetlbfs: add MTE support
-From: Yang Shi <yang@os.amperecomputing.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: muchun.song@linux.dev, will@kernel.org, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240625233717.2769975-1-yang@os.amperecomputing.com>
- <ZoPz14fYSqVyvRTw@arm.com>
- <7a4a60af-e471-484b-a4a3-ed31daaca30b@os.amperecomputing.com>
-Content-Language: en-US
-In-Reply-To: <7a4a60af-e471-484b-a4a3-ed31daaca30b@os.amperecomputing.com>
+Subject: Re: [PATCH 2/3] iio: adc: sophgo-saradc: Add driver for Sophgo SARADC
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20240702-sg2002-adc-v1-0-ac66e076a756@bootlin.com>
+ <20240702-sg2002-adc-v1-2-ac66e076a756@bootlin.com>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20240702-sg2002-adc-v1-2-ac66e076a756@bootlin.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CH2PR19CA0024.namprd19.prod.outlook.com
- (2603:10b6:610:4d::34) To BYAPR01MB5463.prod.exchangelabs.com
- (2603:10b6:a03:11b::20)
+Content-Transfer-Encoding: 7bit
+X-TMN: [9YuLmH2OZDwm4w62j6QQ09I14yfT6nEM]
+X-ClientProxiedBy: SI1PR02CA0042.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::17) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <0d1dbf4c-e3d1-4577-b9a1-b299da80ca68@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR01MB5463:EE_|SA0PR01MB6154:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4969dc94-b60a-436e-4498-08dc9af53dc6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN2P287MB2064:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d4ba0e6-fb3c-4526-dff4-08dc9af5aaf4
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|8060799006|3412199025|440099028;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aEhPc3p1QzVvNnAxdWRKVjE1VjZkL0hhODB6dGtxYm84YTlsVG5pYVhrZkNV?=
- =?utf-8?B?R0ROb0wvNlJjYUE3T3VaZkpwQjJLOHRsVi9aNVN4WElmK2VtYkVXUXN5UE9H?=
- =?utf-8?B?Z2ZIUTRjYnhTSzlrTHpKaCt6aStIcXV5bzZhbGhZOFc2S0tIYlgvQ1ZYSGZl?=
- =?utf-8?B?SnNtVC9KQW1sYjlnMkFNM3NsdHlEWTdpWDJjeXQzM2hmcS81OHlsL1BlYWxT?=
- =?utf-8?B?WlBFWmtmN1VGRjVaMjMxZU1Od2FMaDJnUFRCYW5xOVh2OExPZXZVL0lYV0hM?=
- =?utf-8?B?TDBSN1V1UG1xQ3QxWUQ0bFgycnVsWXhzbW5nb0Z5VFNkaXZYWVBQeVIzWGMz?=
- =?utf-8?B?WDljYmlSMWQ2TzdSWHlBTVRVSFRPbnVZVVBDWk1FQVVYdFZiYytaVnhHVHo1?=
- =?utf-8?B?TFVGdE1RZnJxNEVFM2xwTXdPZzlmSVJHL0p3YXptZjFsbDl6Z1kzcXhUcTNy?=
- =?utf-8?B?MzQ0SDdoS1dzSnFRY1B3V0FERjF5Q0ZYWHlVWDl3bEVPSTZxV1pQT0tOcjBR?=
- =?utf-8?B?bkxmZ1Z3R1c3WUQ4a20vbGtyZzhTRkpsOHNKNWk0Njc2bVRRakpEc1YrWEJI?=
- =?utf-8?B?b3VRdlI0MW4vN21RTjZQUHh0aVZmNmk2MzNTdkwzTm9NdjlhbzUrOHYxZEk0?=
- =?utf-8?B?TkREa090UHZ6Zy91U3VXMHpIY3pyaVpnQjduZDE0TXZmcjZOR3FOb0syeWVL?=
- =?utf-8?B?cDYyem5wUG1ETStPZE0ycGNKUUxzQ09lOCtIV0EzQlM1dU13SzFuVWZhQUE2?=
- =?utf-8?B?blZWeXJiakQ5WDY4WGJiNVZsOGF5MTArQmVneVJtUWJTbGFOOENKaUhkaXZz?=
- =?utf-8?B?SmNSQkhwTWRBWXlEYXFxNDgyejB4ZVllUVR4QmxkNmZqRms3NHBxLzhUK3B2?=
- =?utf-8?B?cThWMWJ4eHZRYUxXdW5sRmVDbzlZajdmai80SGV2cTJOWDFxK1JoaVNJY1M0?=
- =?utf-8?B?ekl2UmlUMEtDYW1yM3k3dEFIT1h4aXo3TG4yS01TNHppUTVLRjhPK1FuOWo3?=
- =?utf-8?B?dzREYW0xQkY4aWhyZEROS0ttdVhnKzl0SVlXVEdFQSsxSCtXZ0dMdzRCY1J2?=
- =?utf-8?B?OVdpQ1drWmNQZDZNTGpsb2pjQzdoZThEakJlT2JqSWFLM2VndUFMWFZyWEl6?=
- =?utf-8?B?d3lGNm9Gb21CT0V2VjJJeTFBdEpCUHBvMis0eGZ3WVAzODdCMy9xb2NJUW92?=
- =?utf-8?B?Q1FMRVloaEtXSnY3RmozbUxlOEF1T3lMNkpOa0xjdXorbjNQY0JNNm1xVzVy?=
- =?utf-8?B?ZDR1ZmdHRHFVcUorVFBHaWlVSTNzbnlYOTRiLzdNRmtmMVRJSFE3V25rR2wy?=
- =?utf-8?B?WXVBTHhiOW5WMXAzd3BESXpDU2cwRWo1bzdYL3I0SGZnM2JyMzNiYk5Nak9C?=
- =?utf-8?B?ZnNEYlFuZVdXNVNGQkQ5TXNsem12QmxlTkdQbVozdnJkeEY0ZjFpeDVIcWV1?=
- =?utf-8?B?cUFKMkx5d0xWbDN4dFBwWG5EL3NNby94and3bC91OGlNTHF3blBsRGR6b2hX?=
- =?utf-8?B?cGRHVGRab0ZvaDlzWGFDSSsvRGNIOXc4N3AvWjduVm0vbG83MmlEMmNaZm02?=
- =?utf-8?B?alozZldyWW5MVFlPa0o0cyt3WWN0SkpWREZkVXdZSFpTWFAyTzJTMmRUOTJl?=
- =?utf-8?B?aW9RZUQ3cVhjcUtaYThtcUYxcGVUMld0TTE1bENOeXRreEFVZTVEVndBemVZ?=
- =?utf-8?B?SWNuWHUrOXFMQm5tazI0TU45ZzNnUk85SGhnWGpRVFZ6ek12RGt3Zis1Nk9i?=
- =?utf-8?B?L3BLK3hpK2RKL2J0ZDdqK1FnNytZTWREeFEyMmVrMUo4S2VLUWpWUDh3SzNQ?=
- =?utf-8?B?cExJRHk4WHRWMVhrZWFaQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR01MB5463.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
+	UdyozPnMFko5MOMu/43eobMwPJnDIqlCY9grhvGEvg5G7PIwjT7YdjHxM/Mc01mIZJUJFQnEPKpDKJzvnYEo30kI7Cl1VKpWvgXVowkwCYYCkHs4CfnYFWQPHiYDf5jpQ/SpI+kZan+4w/7yAqfRhmfLvH+1BWp+tnsjmNfurXsGkoADjafjT2JAPVnubdFC1fVpQkwcYCw7hcgVkrW6ioCw6AYCC5/9FcQHN026QgKzgtaNxqIVlfKX/fGLXjr25lAY1/2xLJBs4HcGbottIBLPt77iY39ZaCaOLokX4tnVeBM/0noWcIq6ht2fzGdFBxsIJEAwRcDe5UrZyil9c0V3i3+heoko+wLcjO6ZkU1TJhQeyo8YhDDNAjHRGBoHJCvMs6OSfW/fadieZnAa0fhyegOsDt2WcZbPRNl8mykYy6C5aIb1opW/SaGpRtJLzHF6lpunPMGOWTPPdMXcHOVj8BWD1KPG902bzRc/5fsFa+/SVbREnSKAmFTIgC2jVkEyq5UbX/wyZe9w3GLIDK6/ZT3vVUGDt8KkP7XRcydnBVqSZ55ejGW3BrMiOTJPDmov6m2/OgEOI6R3ZSmTmPqH0Ce5zcDZauWAIZ0atZI=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c0dDaFNOZnNvZFp0YUM1SDBsQUxYVnBaeEdYVldzbjBkeGZqMjdzOTFSU0JM?=
- =?utf-8?B?SXgwdjM2YTZ4S3JZQkl4NDA1R2QxSHpKYi95eXVvcmRhUVpNM3BYMkhlNEtO?=
- =?utf-8?B?M3NmR3ZDQWg4bFdOWlNNWDVZZm11RVMvSlAvMFpTWlk3SDVOR3E5ckdnNjRD?=
- =?utf-8?B?MlRRZmdXZXdOczIrOXVXWldlY0h5elFqeU1lVDFaRkhnbU8zcm0zbE1INEkz?=
- =?utf-8?B?bGNkM2o0Y1lIRC9BTlVsSVVZcGY5VjduSENZYUtnRkc3ZG1TVVdkVnNCWDI1?=
- =?utf-8?B?WUN6R2dwSjRMR29vOHZqVEdQV3lxczhGQ1VadWkrY296RlE0MGRTUkQ5elF4?=
- =?utf-8?B?UXQ0V3N6Nm5rL0svUmE4VlJJOERWZjR4bWhqdHVQemw2bVlwSzNrZ29zUG92?=
- =?utf-8?B?c2c1VEF3OERIQjNXdFAxWEc0Wm53V2N6bkV5aXgwQTRyU3E2dG9rQjYySno5?=
- =?utf-8?B?aTlKL29SWFhJS1FhbVR1VEpGYUFrWXc0bG15Nnl1eURyeGVONkZLKzVxVzlM?=
- =?utf-8?B?c3E0R2dSbHUwQ3A0NElrVHpaamZKanUvbHVaNkJpdmRuY2FvMnJQMFJuVjhJ?=
- =?utf-8?B?aElqM0dCb3dxdlU1elhxelhhbElUd1lhaU1PR1BxSjZydGpkZ3BpL1E4TFU1?=
- =?utf-8?B?WlgwRFVYd0ZqNVBmemJFMVU2WHdteFpHdlJKQ2hRK2Q1eUdCSTcvSitWQUxF?=
- =?utf-8?B?ZTFlQ05ENHd1MVRSdUxOb1VVODA4Q2RlRG9EOWpjdXZNYkx2bmRBNW5zamtk?=
- =?utf-8?B?cHBVc052VERlOE51SGh4N25XbTNmYVNGbHJ2YnhYWEdBN3JHWmpPeHRrREpu?=
- =?utf-8?B?V1craGFTZlMweUlnVFNGclplKzJEUjJsbjViSVRlVlFjaUEzbkJMMWp6MXFz?=
- =?utf-8?B?QXVEVUNUd0o4bmlkZzhSU3p3d1RtTWhyMHg2UFBnSEVMV3FHOUp3eFBQdE5i?=
- =?utf-8?B?TWc4Sk8xeWNzYXhFRjN0TXBSNFFWTGY5U3FyaS9BWjlwbThZUEVNSCtacVpG?=
- =?utf-8?B?SU8xMDBOSXlFeVlENnlVUGJDN01JNG8vZXVaNE9pTXorR1dWU2plYmE5ZzN5?=
- =?utf-8?B?Smt1dS9TOTRxOEVrck5aN2VrQ2YrNjFwcnMxdC9MMXJPN3dqMDhvZ1A5cmk3?=
- =?utf-8?B?Q011bE1kc0tuUHpJM3o5SEZwdTFYUXdYOXJEZVp2TGEybGdiNzNuSUE4TVY2?=
- =?utf-8?B?dFNIWXpVK1VtbUtOeUhxMzNFelhWSWZCSmxCcmRqT3ExNXlsOUZ3Mm15RGJS?=
- =?utf-8?B?VERENGR3MktmTjhHWEtxN2s1eWZmSERsamF4M0k4L1lqM0tVTU50MDF2WGsr?=
- =?utf-8?B?ZWNYUnRtYitURkVad3J6QlVIT2ZTK21yWHBYVjFualhJWDdmblRQZkVQenJV?=
- =?utf-8?B?dU90ZUxtaXNSSDRxK2VEVGR1ZEQ0TS9mQ2oxL1lCa2VKeG9ReERIMW9FMUUv?=
- =?utf-8?B?by9kYlNiNFFIdXczZEY4YVliaXBWejNhbEFZb21EY3dDb1hqbTk2U2wvS3J1?=
- =?utf-8?B?cmwxSmwxYUtpTHpRajYwRGhDVjRVdU55SUFYT0htM0JJMUMrQW05cGhWeTJa?=
- =?utf-8?B?OFBNUU5ISmszb1NlMzFFRlpGdk1aNzRtQytXcDhwMkw3aTk0ZjFSSG1MKytM?=
- =?utf-8?B?emJnbEZTWmVTUnZOcGlqdThyT2xsc1NnOHg3bmJTTWhScVFoV2MrajBmTVhM?=
- =?utf-8?B?YXF1TUk5Yi9CUWVVU0pndm9pVHI5Ymo4RDY4N2FpN1FzUWJQVW5ybjNlNkFH?=
- =?utf-8?B?cG1DbXV2M0QyRXBZaXJNbDU0ejQxb2FhL1NXQWdzS3UydDJBWG81WlBuN254?=
- =?utf-8?B?YUFNT3N3ZWV0eVozQVNNMUtFaVhVc0ZCcnlYTWFuVGtyN2xQMjhPdE1TS0NN?=
- =?utf-8?B?K2pjS25JZjdDMnlMUS9vUzRVTG1FN3dRZFo1a09IVGlJUFEvKzI3N0RKVDlo?=
- =?utf-8?B?Y1Vzd3RaSmtTdWJXVjk5RlZOQTB5R2xLZks1NUxYWFRWamJKNkJZQms0VVVr?=
- =?utf-8?B?NjBvTXhKUjFJN3FsVFZxSXQ4MmR6elhwczZud0NqTHpFUEMzMnRxbnRLSzRV?=
- =?utf-8?B?bW5LVWNvcHlVb3c4UlVFaGxET1U4TjJOaWV4ajRvTVZEdVRrQWRzS0t0Qzkz?=
- =?utf-8?B?aXlmRzNEUG5oQ0V0emZjY3lxMFhqdzJBL1I2cEpYTTZ4dEYwUnE5ZjZVZ0Jl?=
- =?utf-8?Q?GNIzAXYpiVZBCvHBrYhQrH0=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4969dc94-b60a-436e-4498-08dc9af53dc6
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR01MB5463.prod.exchangelabs.com
+	=?utf-8?B?N0pqZm9FZXA0SERmaDNrRDc1WU1LakNBSGlIQ3BwQ1ZjK1IyZmg5SjJLT2hm?=
+ =?utf-8?B?V0VqL05WU0FxM0g0endPZUhJUUJmRWl6TkVMbEhDVS90UG4vdE9tSEU5by9N?=
+ =?utf-8?B?VkJORWtidDVTbEtHUERHb0c4S3c4Rm42NDdzNXgvZ0I4VDA5azRNV1N3cU9X?=
+ =?utf-8?B?UHlPNk5QVE55MmlmMUlubU5OSU9uV0FkNnNWZW82azB1WkMwenN6M2pKU3pS?=
+ =?utf-8?B?aXNKLyt6WkV5WDBnRWhibk0yNkZyUXJrdEtvaFk5VHphbVp1d21RbndBTkR4?=
+ =?utf-8?B?VVZOOS9nTEtUNTRVdVIrajgwV2czeHlubmNFL0JYc290SzRWVUlGN0pwVDMw?=
+ =?utf-8?B?b2JUMFcxMFlscXg4cTUzRDhUTVpRT1lQb3cwaGtuRHJBTFljTEFkZXBqQWJW?=
+ =?utf-8?B?dEczVDZwdFVSWE5RWXFnWjRoOXlBSW9tTGxQWjZMbVRlTUNwTHcwNytVd3kx?=
+ =?utf-8?B?RkMvM3Zxd09QTkFoV056VVg4WnRZRXFKZzFWSkcvRzhNMVFkSldHRXhDMHBk?=
+ =?utf-8?B?bzEwTERza3J5WExzeVQ4WkppTThsYURlemRtckdrUnMxNU5XSnl4cmxZcUFO?=
+ =?utf-8?B?d1JKV010UDFDSnRWU2dJU3dvZzBNdEdBL0pYVkJZSTBRaWNWeFlzWVFGMzha?=
+ =?utf-8?B?WWx2Q2VTU3lDNlRVenpxTEpHTVJ6ZDZlWExJQTE2MDRvNDRrMjdJUzhia3h5?=
+ =?utf-8?B?VlJGSHh2bWxUbkFMQXdhZ1FRUXV0NFVNUThGU1cydFdDVDhhTnlJT2NZU09m?=
+ =?utf-8?B?YzVBRno1dG92Y0ZnOTRLUjRaaU9mV1VZS0F4cGJYUjBsYVFlV2VwT3BoZWJm?=
+ =?utf-8?B?NUIwRWk3VTUzb1B3NUQ1eTBYczUyMCtUM1k0RWJ6dWcxenplZ0xLWmVmUmg1?=
+ =?utf-8?B?aEJwZEsrdmxpeFlLc0phUzJPZHVkUTJSL3dVQ2dkOC9xNWZaV1BQK1VrcWRP?=
+ =?utf-8?B?Y2NmbzdCbTE3MUJIZkhkZVN6Q3V2QUZvRXVyYWpyQWRZZHlyOHdhZzI4Nm1l?=
+ =?utf-8?B?YUREdmJrbFNSSmtFc0RSb21hWFJST0hQSGhVdUZzQTlsVDQrUHcwWGdqTTdW?=
+ =?utf-8?B?QzhoY0hYZXB6S2ZXWWRSVkxsek0rWUU3Z0NqcGN1RnFSSDZZbm1RbFBSYUcv?=
+ =?utf-8?B?dTZ6endqcDJzV3ZyQXU5N0ZDVE5uMHR4NXBVN0JqNnNwcTZxT0llRlhiSHJo?=
+ =?utf-8?B?N0FpRVRFWmFlZWwrSXdMUHhMeEVNSnk3eTR6UWtGT3pKZFJGVVkxRXNER2dk?=
+ =?utf-8?B?QXVYeEE0UldRVDhOWXhjY01VR0hmR2JIWVNyUTRzNEFWOUcwWDNxeGM4cHdP?=
+ =?utf-8?B?ZjVIVHF0enp5VkpMZTNQVnF4cFpNWTlRbkZYTDBjem9VdlA1MEpSYzFOYS92?=
+ =?utf-8?B?TVJETUFJNlpzbkRuM1FwKytBajBiVjhFTENIRGxocmtac2JVSFdibm9IOHhz?=
+ =?utf-8?B?TmhXSkYwbDNkYjlKUTZRUFhNR0ZaR3VWMkJTK1FIRXczaEwyMkgzVkQxczU4?=
+ =?utf-8?B?OWFwY3QzNUViaDN0NVVLUFF5aUR5OUlORVJoTXFYaXFzYUFvM1N6VlRjTDdK?=
+ =?utf-8?B?Uk5KeGNXQjBITjNyK1RSajdLYmx1QTFmU0NTeFoyc1hMUjlEYTFXN0lPOGtM?=
+ =?utf-8?B?SGZoajJ4OUFlcGNTdE5KNmxRNURDVmhFSEVkcWVlM1VaQnM2OHNhQUErMWNL?=
+ =?utf-8?Q?y9ZPnyXngc63417PLrlP?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d4ba0e6-fb3c-4526-dff4-08dc9af5aaf4
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 00:15:27.5082
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 00:18:30.7790
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: axKO1CpKtHEyG/ISHtLwDOcWiYP2rmeBLxnyaNfyjIR5C9e95+VpfNkdPVQ8m1ey4FF5nqJ/jKy9YhaLHysGiVNI4pGaIyjB+a5OBXATAcg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR01MB6154
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB2064
 
 
+On 2024/7/2 19:52, Thomas Bonnefille wrote:
 
-On 7/2/24 5:04 PM, Yang Shi wrote:
->
->
-> On 7/2/24 5:34 AM, Catalin Marinas wrote:
->> On Tue, Jun 25, 2024 at 04:37:17PM -0700, Yang Shi wrote:
->>> MTE can be supported on ram based filesystem. It is supported on tmpfs.
->>> There is use case to use MTE on hugetlbfs as well, adding MTE support.
->>>
->>> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
->>> ---
->>>   fs/hugetlbfs/inode.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
->>> index ecad73a4f713..c34faef62daf 100644
->>> --- a/fs/hugetlbfs/inode.c
->>> +++ b/fs/hugetlbfs/inode.c
->>> @@ -110,7 +110,7 @@ static int hugetlbfs_file_mmap(struct file 
->>> *file, struct vm_area_struct *vma)
->>>        * way when do_mmap unwinds (may be important on powerpc
->>>        * and ia64).
->>>        */
->>> -    vm_flags_set(vma, VM_HUGETLB | VM_DONTEXPAND);
->>> +    vm_flags_set(vma, VM_HUGETLB | VM_DONTEXPAND | VM_MTE_ALLOWED);
->>>       vma->vm_ops = &hugetlb_vm_ops;
->> Last time I checked, about a year ago, this was not sufficient. One
->> issue is that there's no arch_clear_hugetlb_flags() implemented by your
->> patch, leaving PG_arch_{2,3} set on a page. The other issue was that I
->> initially tried to do this only on the head page but this did not go
->> well with the folio_copy() -> copy_highpage() which expects the
->> PG_arch_* flags on each individual page. The alternative was for
->> arch_clear_hugetlb_flags() to iterate over all the pages in a folio.
->
-> Thanks for pointing this out. I did miss this point. I took a quick 
-> look at when the PG_ flags are set. IIUC, it is set by 
-> post_alloc_hook() for order-0 anonymous folio (clearing page and tags) 
-> and set_ptes() for others (just clear tags), for example, THP and 
-> hugetlb.
->
-> I can see THP does set the PG_mte_tagged flag for each sub pages. But 
-> it seems it does not do it for hugetlb if I read the code correctly. 
-> The call path is:
->
-> hugetlb_fault() ->
->   hugetlb_no_page->
->     set_huge_pte_at ->
->       __set_ptes() ->
->         __sync_cache_and_tags() ->
->
->
-> The __set_ptes() is called in a loop:
->
-> if (!pte_present(pte)) {
->         for (i = 0; i < ncontig; i++, ptep++, addr += pgsize)
->             __set_ptes(mm, addr, ptep, pte, 1);
->         return;
->     }
->
-> The ncontig and pgsize are returned by num_contig_ptes(). For example, 
-> 2M hugetlb, ncontig is 1 and pgsize is 2M IIUC. So it means actually 
-> just the head page has PG_mte_tagged set. If so the copy_highpage() 
-> will just copy the old head page's flag to the new head page, and the 
-> tag. All the sub pages don't have PG_mte_tagged set.
->
->
-> Is it expected behavior? I'm supposed we need tags for every sub pages 
-> too, right?
+[......]
 
-We should need something like the below to have tags and page flag set 
-up for each sub page:
+>   SOUND
+>   M:	Jaroslav Kysela <perex@perex.cz>
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 8db68b80b391..826871a2e61a 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -1122,6 +1122,15 @@ config SC27XX_ADC
+>   	  This driver can also be built as a module. If so, the module
+>   	  will be called sc27xx_adc.
+>   
+> +config SOPHGO_ADC
+> +	tristate "Sophgo ADC"
+> +	depends on ARCH_SOPHGO || COMPILE_TEST
+> +	help
+> +	  Say yes here to build support for the ADC integrated in Sophgo SoCs.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called sophgo_adc.
+> +
 
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index 3f09ac73cce3..528164deef27 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -228,9 +228,12 @@ void set_huge_pte_at(struct mm_struct *mm, unsigned 
-long addr,
-         int ncontig;
-         unsigned long pfn, dpfn;
-         pgprot_t hugeprot;
-+       unsigned long nr = sz >> PAGE_SHIFT;
+I believe this adc driver is only for sophgo cv18xx, sophgo has other 
+soc chipset, such as sg2024 etc., so it's better use add more limitation 
+for this.
 
-         ncontig = num_contig_ptes(sz, &pgsize);
+>   config SPEAR_ADC
+>   	tristate "ST SPEAr ADC"
+>   	depends on PLAT_SPEAR || COMPILE_TEST
+> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> index edb32ce2af02..106a83d50d01 100644
+> --- a/drivers/iio/adc/Makefile
+> +++ b/drivers/iio/adc/Makefile
+> @@ -102,6 +102,7 @@ obj-$(CONFIG_ROCKCHIP_SARADC) += rockchip_saradc.o
+>   obj-$(CONFIG_RICHTEK_RTQ6056) += rtq6056.o
+>   obj-$(CONFIG_RZG2L_ADC) += rzg2l_adc.o
+>   obj-$(CONFIG_SC27XX_ADC) += sc27xx_adc.o
+> +obj-$(CONFIG_SOPHGO_ADC) += sophgo-adc.o
+>   obj-$(CONFIG_SPEAR_ADC) += spear_adc.o
+>   obj-$(CONFIG_SUN4I_GPADC) += sun4i-gpadc-iio.o
+>   obj-$(CONFIG_SUN20I_GPADC) += sun20i-gpadc-iio.o
+> diff --git a/drivers/iio/adc/sophgo-adc.c b/drivers/iio/adc/sophgo-adc.c
 
-+       __sync_cache_and_tags(pte, nr);
-+
-         if (!pte_present(pte)) {
-                 for (i = 0; i < ncontig; i++, ptep++, addr += pgsize)
-                         __set_ptes(mm, addr, ptep, pte, 1);
+As I mentioned upon, soghgo has many other product code, and 
+"sophgo-cv18xx-adc.c" should be more accurate.
 
->
->>
->> I'd also like to see some tests added to
->> tools/testing/selftest/arm64/mte to exercise MAP_HUGETLB with PROT_MTE:
->> write/read tags, a series of mman+munmap (mostly to check if old page
->> flags are still around), force some copy on write. I don't think we
->> should merge the patch without proper tests.
->>
->> An untested hunk on top of your changes:
->>
->> diff --git a/arch/arm64/include/asm/hugetlb.h 
->> b/arch/arm64/include/asm/hugetlb.h
->> index 3954cbd2ff56..5357b00b9087 100644
->> --- a/arch/arm64/include/asm/hugetlb.h
->> +++ b/arch/arm64/include/asm/hugetlb.h
->> @@ -20,7 +20,19 @@ extern bool 
->> arch_hugetlb_migration_supported(struct hstate *h);
->>     static inline void arch_clear_hugetlb_flags(struct folio *folio)
->>   {
->> -    clear_bit(PG_dcache_clean, &folio->flags);
->> +    unsigned long i, nr_pages = folio_nr_pages(folio);
->> +    const unsigned long clear_flags = BIT(PG_dcache_clean) |
->> +        BIT(PG_arch_2) | BIT(PG_arch_3);
->> +
->> +    if (!system_supports_mte()) {
->> +        clear_bit(PG_dcache_clean, &folio->flags);
->> +        return;
->> +    }
->> +
->> +    for (i = 0; i < nr_pages; i++) {
->> +        struct page *page = folio_page(folio, i);
->> +        page->flags &= ~clear_flags;
->> +    }
->>   }
->>   #define arch_clear_hugetlb_flags arch_clear_hugetlb_flags
->>   diff --git a/arch/arm64/include/asm/mman.h 
->> b/arch/arm64/include/asm/mman.h
->> index 5966ee4a6154..304dfc499e68 100644
->> --- a/arch/arm64/include/asm/mman.h
->> +++ b/arch/arm64/include/asm/mman.h
->> @@ -28,7 +28,8 @@ static inline unsigned long 
->> arch_calc_vm_flag_bits(unsigned long flags)
->>        * backed by tags-capable memory. The vm_flags may be 
->> overridden by a
->>        * filesystem supporting MTE (RAM-based).
->>        */
->> -    if (system_supports_mte() && (flags & MAP_ANONYMOUS))
->> +    if (system_supports_mte() &&
->> +        (flags & (MAP_ANONYMOUS | MAP_HUGETLB)))
->>           return VM_MTE_ALLOWED;
->
-> Do we really need this change? IIRC, the mmap_region() will call 
-> hugetlbfs's mmap and set VM_MTE_ALLOWED in vma->vm_flags, then update 
-> vma->vm_page_prot with the new vma->vm_flags.
->
-> If this is needed, MTE for tmpfs won't work, right?
->
->>         return 0;
->>
->
+[......]
 
 
