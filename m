@@ -1,105 +1,199 @@
-Return-Path: <linux-kernel+bounces-239742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504D49264C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:25:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE479264BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF38BB23E01
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DAB71C20F36
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFA218132E;
-	Wed,  3 Jul 2024 15:24:56 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF94181319;
-	Wed,  3 Jul 2024 15:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C0C180A9B;
+	Wed,  3 Jul 2024 15:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qb3wrzoZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A951DFD1;
+	Wed,  3 Jul 2024 15:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720020295; cv=none; b=lAlzX54T7DrKrR2z1i9UWCGssjvaccx4Iv5/3H7hI4xl7WlwI8ueiB2jrIPE3WFYB/rCbnGyL4MSqNCBVfPHeDTghUEQ9hDaQXmA6QYeL30JZ5+INfdU8mXd2T1Ys7MChatS64qbtzXKinpIReubqbLx7jH25pxwt5yFcpGRmBc=
+	t=1720020026; cv=none; b=iGKoZB3wTD5B6BmfoQHesmJalFQkurKUzAmW0VK8YoQ0327BWYrVNsWYJ62Ex5DE1ZWemVlJyScBwr30DHi17X0d0QuqJx3iBp+JNHBLFT/4e6If9L90EGY6MhBDVRmlAdr8sE/5Ad0ReDPzdf8ob3vtZlf1gv7ljq2tD5cgAWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720020295; c=relaxed/simple;
-	bh=SDUShQ1tbUOslI0LcTwer3v9PI7e3+86m5hJM9hWDYQ=;
+	s=arc-20240116; t=1720020026; c=relaxed/simple;
+	bh=rRgZmzWkq1RNfqzPXVEsRA4y3AQD9TvNW/JDpsjuBvY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eAsxsRiRTSUMv1t7IT/DeaLg3wb84V+OiOBXQNrJpYjtm/ApchApNH4i4BfC6Braryce4207PskgbZL78FJgZJo/41epFVygEsFQmL/yDmeQ5h0TSmd5jpkN5G+kTz8EVaVvkdWMHm9wLBFTENT4El4Ffp2GDKJfic9v/rU2b/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sP1qd-0000He-00; Wed, 03 Jul 2024 17:24:43 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 41B13C0411; Wed,  3 Jul 2024 17:19:14 +0200 (CEST)
-Date: Wed, 3 Jul 2024 17:19:14 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-Subject: Re: [PATCH 0/3] MIPS: Add Mobileye EyeQ OLB system-controller
-Message-ID: <ZoVr8g3B7nUwRujO@alpha.franken.de>
-References: <20240628-mbly-mips-v1-0-f53f5e4c422b@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QcQcTjlvDY56PCeaHnZRi2Y6txuZLzIbd3cibFg7Qdf6m2oXbO071Vs587u6jj1aaIimG0RFwm0ruHX/WwkgcdDwK28uWjrUcWTGsqcJOViB29gl7Ljge3113h3ek4ZZwSdkBuSowZPMyUijnSRn8b+cUwGtjm0GS4RISjiW7Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qb3wrzoZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3887CC2BD10;
+	Wed,  3 Jul 2024 15:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720020025;
+	bh=rRgZmzWkq1RNfqzPXVEsRA4y3AQD9TvNW/JDpsjuBvY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qb3wrzoZ684EOWe4U72NdJKqewE7FfZIPbGzwqTgVY0uE9PJqtmB4FAPAWEwfoS+B
+	 S7pdvYDJujZFb79nVPifQVYifpGU4qlSgykhhEAimfHP8fUp2Wp/Kx6uBoo82ITB/j
+	 gSrsS9+kKoXjP4DrG5wfWkNjm6DPFyVPYjKJTBB1eq8sGFTtQ+knbHjL4iF0w8X53q
+	 ZlO5CZA4UPETFDUaQ9by21HOA3IcupbAR/8TstTAFfEWxhC+7quXTROq6MGJFNFzVO
+	 B1sQ9wPDIIetiX40oSC70SeLJlrTMD4iugM0CoetpTmVPgW2hpR15clArhBfp6FlgH
+	 CFlT/qsgHlaAw==
+Date: Wed, 3 Jul 2024 16:20:21 +0100
+From: Conor Dooley <conor@kernel.org>
+To: utsav.agarwal@analog.com
+Cc: Michael Hennerich <michael.hennerich@analog.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Arturs Artamonovs <arturs.artamonovs@analog.com>,
+	Vasileios Bimpikas <vasileios.bimpikas@analog.com>,
+	Oliver Gaskell <oliver.gaskell@analog.com>
+Subject: Re: [PATCH v5 3/3] dt-bindings: input: Update dtbinding for adp5588
+Message-ID: <20240703-safehouse-flame-0b751b853623@spud>
+References: <20240703-adp5588_gpio_support-v5-0-49fcead0d390@analog.com>
+ <20240703-adp5588_gpio_support-v5-3-49fcead0d390@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="I265JjUt3ALiy5BD"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240628-mbly-mips-v1-0-f53f5e4c422b@bootlin.com>
+In-Reply-To: <20240703-adp5588_gpio_support-v5-3-49fcead0d390@analog.com>
 
-On Fri, Jun 28, 2024 at 06:11:49PM +0200, Théo Lebrun wrote:
-> This is a new iteration on the Mobileye system-controller series [0].
-> It has been split into separate series to facilitate merging.
-> 
-> This series contains a dt-bindings defining the system-controller
-> (called OLB) used on EyeQ5, EyeQ6L and EyeQ6H. It then modifies the
-> EyeQ5 devicetree to exploit that system-controller.
-> 
-> The last patch adds entries in MAINTAINERS for all related files. This
-> is done in a single commit to avoid conflicts across trees.
-> 
-> Related series are targeted at clk [1], reset [2] and pinctrl [3].
-> 
-> Have a nice day,
-> Théo
-> 
-> [0]: https://lore.kernel.org/lkml/20240620-mbly-olb-v3-0-5f29f8ca289c@bootlin.com/
-> [1]: https://lore.kernel.org/lkml/20240628-mbly-clk-v1-0-edb1e29ea4c1@bootlin.com/
-> [2]: https://lore.kernel.org/lkml/20240628-mbly-reset-v1-0-2a8294fd4392@bootlin.com/
-> [3]: https://lore.kernel.org/lkml/20240628-mbly-pinctrl-v1-0-c878192d6b0a@bootlin.com/
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+
+--I265JjUt3ALiy5BD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jul 03, 2024 at 11:58:16AM +0100, Utsav Agarwal via B4 Relay wrote:
+> From: Utsav Agarwal <utsav.agarwal@analog.com>
+>=20
+> Updating dt bindings for adp5588. Since the device can now function in a
+> purely gpio mode, the following keypad specific properties are now made
+> optional:
+> 	- interrupts
+> 	- keypad,num-rows
+> 	- keypad,num-columns
+> 	- linux,keymap
+>=20
+> However since the above properties are required to be specified when
+> configuring the device as a keypad, dependencies have been added
+> such that specifying either one would require the remaining as well.
+>=20
+> Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
 > ---
-> Changes since OLB v3 [0]:
->  - MAINTAINERS: Move changes into a separate commit to avoid merge
->    conflicts. This commit is in the present series.
->  - dt-bindings: Take Reviewed-by: Rob Herring.
-> 
-> ---
-> Théo Lebrun (3):
->       dt-bindings: soc: mobileye: add EyeQ OLB system controller
->       MIPS: mobileye: eyeq5: add OLB system-controller node
->       MAINTAINERS: Mobileye: add OLB drivers and dt-bindings
-> 
->  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 374 +++++++++++++++++++++
->  MAINTAINERS                                        |   5 +
->  .../{eyeq5-fixed-clocks.dtsi => eyeq5-clocks.dtsi} |  54 +--
->  arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi        | 125 +++++++
->  arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  22 +-
->  5 files changed, 541 insertions(+), 39 deletions(-)
+>  .../devicetree/bindings/input/adi,adp5588.yaml     | 33 ++++++++++++++++=
+++----
+>  1 file changed, 28 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.yaml b/D=
+ocumentation/devicetree/bindings/input/adi,adp5588.yaml
+> index 26ea66834ae2..6c06464f822b 100644
+> --- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> +++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> @@ -49,7 +49,10 @@ properties:
+>    interrupt-controller:
+>      description:
+>        This property applies if either keypad,num-rows lower than 8 or
+> -      keypad,num-columns lower than 10.
+> +      keypad,num-columns lower than 10. This property does not apply if
+> +      keypad,num-rows or keypad,num-columns are not specified since the
+> +      device then acts as gpio only, during which interrupts are not
+> +      utilized.
+> =20
+>    '#interrupt-cells':
+>      const: 2
+> @@ -65,13 +68,15 @@ properties:
+>      minItems: 1
+>      maxItems: 2
+> =20
+> +dependencies:
+> +  keypad,num-rows: ["keypad,num-columns"]
+> +  keypad,num-cols: ["keypad,num-rows"]
+> +  linux,keymap: ["keypad,num-rows"]
 
-series applied to mips-next.
+Is what you've got here sufficient? Adding "keypad,num-rows" won't
+mandate "linux,keymap" which I think is wrong. I think all 3 entries
+here need to contain both of the other two.
 
-Thomas.
+> +  interrupts: ["linux,keymap"]
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+I still don't understand why interrupts are only allowed when the keymap
+is present. I'd cover the interrupts with something like
+
+if:
+  required:
+    - linux,keymap
+  then:
+    required:
+      - interrupts
+
+so that interrupts can be used while not in keypad mode. Unless of
+course there's something (unmentioned in this patch) that prevents that.
+
+Thanks,
+Conor.
+
+> +
+>  required:
+>    - compatible
+>    - reg
+> -  - interrupts
+> -  - keypad,num-rows
+> -  - keypad,num-columns
+> -  - linux,keymap
+> =20
+>  unevaluatedProperties: false
+> =20
+> @@ -108,4 +113,22 @@ examples:
+>              >;
+>          };
+>      };
+> +
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/input/input.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    i2c {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +        gpio@34 {
+> +            compatible =3D "adi,adp5588";
+> +            reg =3D <0x34>;
+> +
+> +            #gpio-cells =3D <2>;
+> +            gpio-controller;
+> +            };
+> +        };
+> +
+>  ...
+>=20
+> --=20
+> 2.34.1
+>=20
+>=20
+
+--I265JjUt3ALiy5BD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoVsNQAKCRB4tDGHoIJi
+0qIjAP9FGMpejmxLN4Q2htHtCSRLXqXsNGQOcfGQBKOdfwL57QEAonj/PljB6JDy
+SZFCvkBKNqPyyxLazAzjnuzX+3V2lAk=
+=Eqf2
+-----END PGP SIGNATURE-----
+
+--I265JjUt3ALiy5BD--
 
