@@ -1,120 +1,157 @@
-Return-Path: <linux-kernel+bounces-239574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B06F926250
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:54:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395F6926260
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4C81C23002
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:54:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0F04B2B4E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366C3181B90;
-	Wed,  3 Jul 2024 13:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6906717BB11;
+	Wed,  3 Jul 2024 13:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZmEWP9j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrqbGcY3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7559117B432;
-	Wed,  3 Jul 2024 13:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD8217A59A;
+	Wed,  3 Jul 2024 13:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720014722; cv=none; b=r2z9BYjQM2ys0eoSmw/2sIhoBmhEysgsWySs5AkXw50+FVyiq74Z3cwrcqj8dIG0Y7AZYRSnI92oPLlTg7oOZ4RIx09phty8RrBHh+mv7CheBjqEDVrWj6SV4g0X9W58yjaKwIYigyVRrefgmpTfUuB5d03YmBxniqQdjQQ6goo=
+	t=1720014784; cv=none; b=aNU/nJ0Hg8cEqeOn7iKYIYXtldFClqQmu5GV+jR6onquK52yajkLtVtL5W/H9SgDIJg8ZhqiRUpbnGoSK4WGZcCsJXxlZobfGcnvoUzYAas4TOO1Dkf51CO4xbry/pWQqZu/+1I2TfD0PAgY+8ZBKonM0CWuNCiv5S11Zos2OR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720014722; c=relaxed/simple;
-	bh=8OS3EQTA1nsQoBdqA3J8k7Fv9Yb5rZa160z2POCWKtk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D9LkQ5PTGQSeeqHARcotRpLMzxYdwMCPLa8L82lBgexmCQdi88kRKaAKhzx6i77DSpgO+xQEIYpGbhQ7PyCjrLFkC3mixdJG6PY0wjijY5Rspum63fmaiTgfnpF1nCye3/XqBPyVBSSoF2cGxgu3qiA0LC00oPNuLdOCBkVGpKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZmEWP9j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91CEDC3277B;
-	Wed,  3 Jul 2024 13:51:58 +0000 (UTC)
+	s=arc-20240116; t=1720014784; c=relaxed/simple;
+	bh=9N8yVPzno2N9d24Snv1GHc+eDBmXHT41IhW0UTd1FJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o/l/nbY/fqO3iEFm6y8cwyVHuKWEmpF+2zy+d48R4rXgXiS3nSvMNqhdZA4T5EWbrELzV/Zhv4Qs6vTWk6up3QzotAG1tWZH8fDTOm4aQoWYc4qqdptYwdPQzqCIygWKBTZCtwqZhTNuCLxcaloS/pPcYdxRvEIdjCBPIY9Vg9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrqbGcY3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C281C2BD10;
+	Wed,  3 Jul 2024 13:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720014722;
-	bh=8OS3EQTA1nsQoBdqA3J8k7Fv9Yb5rZa160z2POCWKtk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=aZmEWP9jyupuCkzheaevVIXB2nm4yGoDXZwPomP9xyF9P8+YIfWrq+ozDe4NRjBL2
-	 Pib2KO37Qv1EcHUS9dOkLI6+mgkUx69AHIluXHeFXQxs825uzsGr/YrWFDiV4J8bmg
-	 qekDTuhS8VPDFOexJ+cZF8xQ6dXeLLh6AjEBhKpUwWieHDQmFRtbJ7jJJN5ddZLO5y
-	 wtfM/GrYA3jpIrdf5zGsKZvgY4ZXpQRQlfGU1xnbaqruIQO9Hxe2VqnJn/9ZOTa+Ja
-	 yh6g20GRkBEGHODExhGFz+dUF7/LpMeFpO+4wmDVlVXpcAX7kX1WKRoI3QlZro78OC
-	 mDKHteIm2Bj6w==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Wed, 03 Jul 2024 16:51:37 +0300
-Subject: [PATCH net-next v3 6/6] net: ethernet: ti: am65-cpsw: setup
- priority to flow mapping
+	s=k20201202; t=1720014784;
+	bh=9N8yVPzno2N9d24Snv1GHc+eDBmXHT41IhW0UTd1FJY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZrqbGcY3PeLUqWFqLP2gHFfZQA13YUIpyeXzzFEC527S9yHYTXpj7UrJ03Qr6BOVj
+	 VBobvRhHTBQIKsICEEbwdFeW6uAjLdXE0Joi+VMxUsgIO0nKeU1oi6uEd3vaJfHdzq
+	 G2EaD/EVYqXIuTJDbnvdZLNJ/39FmVAUpPoYy9zWM637U6qgZsEFiWCUlEF5DmLU1+
+	 zPbP6jgYhL8mXfAlW4v7ysfqpNYDQHDcKb+s0aQ8otboVeJ3esWgKULvFi3Ak2dVuQ
+	 /lhsTRxvFHKDePcBeE9Cb2HFwDm4amrtJ5+iimlQNSIgenNmvc9DiJkZrTot1g/izx
+	 M7x41TvzJ60dg==
+Date: Wed, 3 Jul 2024 07:53:03 -0600
+From: Rob Herring <robh@kernel.org>
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Drew Fustini <dfustini@baylibre.com>
+Subject: Re: [PATCH v2 1/8] dt-bindings: pinctrl: Add thead,th1520-pinctrl
+ bindings
+Message-ID: <20240703135303.GA56155-robh@kernel.org>
+References: <20240103132852.298964-1-emil.renner.berthing@canonical.com>
+ <20240103132852.298964-2-emil.renner.berthing@canonical.com>
+ <20240115173657.GA999912-robh@kernel.org>
+ <CAJM55Z9xF6_WCcg02xJJfu=UCOj=4m64BXvJTaV4vX09WLhc0w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240703-am65-cpsw-multi-rx-v3-6-f11cd860fd72@kernel.org>
-References: <20240703-am65-cpsw-multi-rx-v3-0-f11cd860fd72@kernel.org>
-In-Reply-To: <20240703-am65-cpsw-multi-rx-v3-0-f11cd860fd72@kernel.org>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Siddharth Vadapalli <s-vadapalli@ti.com>, 
- Julien Panis <jpanis@baylibre.com>
-Cc: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
- srk@ti.com, vigneshr@ti.com, danishanwar@ti.com, 
- pekka Varis <p-varis@ti.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
- Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1075; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=8OS3EQTA1nsQoBdqA3J8k7Fv9Yb5rZa160z2POCWKtk=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBmhVdm+OKRJdx9lr33jldo0NJ4kivOse5Ni9dtr
- cCQFZvK+tqJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZoVXZgAKCRDSWmvTvnYw
- k7tsEAC9Haw1DbVbwvt7Bfx397ddS5mrCZVd/3k0XTwOxBmM4cpkitCv1f/iuqL4rDDHlI+wPaT
- F8Do25w8YK7xBZDErXxmWTwDVM3CEv1Xv5sPlW4El+UPrWKma32XJEMAmVJ9cgwAgy0iB6+mBLG
- qfqMc0sRwwV5vhR++Vw8n1fP9H4QL4uZkjvVUMAgRg2wFIYjh7FGn0dK8ENwfSl+MFrexALhX3N
- lvatdFMb3kUfJOZ+S0g6JXHfPGHDFI3o4AwCc0dIFHaSVDC/+7ryaCV9n69OuJYkcdOxcXhf9+E
- x9V3IDX8m54rk4uo5kkV4wUFISD8lkLdgsMAwnTaFbDpTtZggcsH4/RSC1ElQw/5ToyGFGaVrfx
- 9+Gnuy6XDpoeaTqe1FlmfNpDIXIsMUtOznW9hWnUTr+cVHT04vsD2d6Qw1vd8qAL0cCES+dlK76
- h8/aD60HO7gxI/m/4moZpZACzn0uTRerW1V7Mi8Tugesh1IxiHLNFs2ZXJPTtkfKVH95M2WaSXP
- O1GCr2Man+LQ+a3rVg682qoX4sYvAUpPah0liiNksmDPZtUAV3evrHkmHRthMqS08s7civtVsYH
- J3hKTEGrCPKU9S/QqgqAR9LA+93eg8vrOhM4OPoaoAv944KNXVb7n+SBw0DAn/0mExtaRNAkos9
- qTBmB3J2I2IklAA==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJM55Z9xF6_WCcg02xJJfu=UCOj=4m64BXvJTaV4vX09WLhc0w@mail.gmail.com>
 
-Now that we support multiple RX queues, enable default priority
-to flow mapping so that higher priority packets come on higher
-channels (flows).
+On Fri, May 17, 2024 at 07:48:17AM -0500, Emil Renner Berthing wrote:
+> Rob Herring wrote:
+> > On Wed, Jan 03, 2024 at 02:28:38PM +0100, Emil Renner Berthing wrote:
+> > > Add bindings for the pin controllers on the T-Head TH1520 RISC-V SoC.
+> > >
+> > > Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> > > ---
+> > >  .../pinctrl/thead,th1520-pinctrl.yaml         | 372 ++++++++++++++++++
+> > >  1 file changed, 372 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
+> > > new file mode 100644
+> > > index 000000000000..d3ad7a7cfdd1
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
+> > > @@ -0,0 +1,372 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/pinctrl/thead,th1520-pinctrl.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: T-Head TH1520 SoC pin controller
+> > > +
+> > > +maintainers:
+> > > +  - Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> > > +
+> > > +description: |
+> > > +  Pinmux and pinconf controller in the T-Head TH1520 RISC-V SoC.
+> > > +
+> > > +  The TH1520 has 3 groups of pads each controlled from different memory ranges.
+> > > +  Confusingly the memory ranges are named
+> > > +    PADCTRL_AOSYS  -> PAD Group 1
+> > > +    PADCTRL1_APSYS -> PAD Group 2
+> > > +    PADCTRL0_APSYS -> PAD Group 3
+> > > +
+> > > +  Each pad can be muxed individually to up to 6 different functions. For most
+> > > +  pads only a few of those 6 configurations are valid though, and a few pads in
+> > > +  group 1 does not support muxing at all.
+> > > +
+> > > +  Pinconf is fairly regular except for a few pads in group 1 that either can't
+> > > +  be configured or has some special functions. The rest have configurable drive
+> > > +  strength, input enable, schmitt trigger, slew rate, pull-up and pull-down in
+> > > +  addition to a special strong pull up.
+> > > +
+> > > +  Certain pads in group 1 can be muxed to AUDIO_PA0 - AUDIO_PA30 functions and
+> > > +  are then meant to be used by the audio co-processor. Each such pad can then
+> > > +  be further muxed to either audio GPIO or one of 4 functions such as UART, I2C
+> > > +  and I2S. If the audio pad is muxed to one of the 4 functions then pinconf is
+> > > +  also configured in different registers. All of this is done from a different
+> > > +  AUDIO_IOCTRL memory range and is left to the audio co-processor for now.
+> >
+> > It is still not clear to me if each instance is a different programming
+> > model or the same with just different connections. The latter should
+> > be the same compatible string. That needs to be answered in *this*
+> > patch, not a reply.
+> 
+> Hi Rob,
+> 
+> Sorry for the late response. I honestly don't know exactly what you mean by
+> differenty programming models and what the difference is, so I'll need a bit of
+> help with what you want me to write here.
 
-The Classifier checks for PCP/DSCP priority in the packet and
-routes them to the appropriate flow.
+Is the register interface of each instance the same? Looks like it is 
+from the driver. So normally that's 3 instances of the same compatible.
 
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
-Changelog:
-v3:
-- added Reviewed-by Simon Horman
----
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 3 +++
- 1 file changed, 3 insertions(+)
+> Any driver for the TH1520 SoC (not just Linux) would need some way to discern
+> between the 3 pin controllers so they know how many pins to control and what
+> pinmux settings are valid. Basically they'd need the data in the three
+> th1520_group{1,2,3}_pins arrays in the driver and a way to know which of them
+> to use.
+> 
+> https://lore.kernel.org/linux-riscv/20240103132852.298964-3-emil.renner.berthing@canonical.com/
 
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index deb8e39e4648..4db03010d234 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -2497,6 +2497,9 @@ static int am65_cpsw_nuss_init_rx_chns(struct am65_cpsw_common *common)
- 		}
- 	}
- 
-+	/* setup classifier to route priorities to flows */
-+	cpsw_ale_classifier_setup_default(common->ale, common->rx_ch_num_flows);
-+
- err:
- 	i = devm_add_action(dev, am65_cpsw_nuss_free_rx_chns, common);
- 	if (i) {
+Why do you need to know how many pins? The DT says configure a pin and 
+you just configure it. It's not the kernel's job to validate that the DT 
+is correct.
 
--- 
-2.34.1
+Aren't the pin names globally unique? So you just look up the pin name 
+across all the arrays. Or you can just look up one pin from each 
+instance to find which th1520_groupN_pins array goes with the instance. 
+Or just have 1 array.
 
+Rob
 
