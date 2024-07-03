@@ -1,154 +1,155 @@
-Return-Path: <linux-kernel+bounces-240048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0037B926882
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:45:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69FFF926884
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABAFD285177
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:45:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3FC01C22708
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0495B18E776;
-	Wed,  3 Jul 2024 18:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8458188CB4;
+	Wed,  3 Jul 2024 18:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="uQ4YFtuj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="henDsDRR"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DLfBixoZ"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911711891CA;
-	Wed,  3 Jul 2024 18:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6853A17A5B0;
+	Wed,  3 Jul 2024 18:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720032314; cv=none; b=DY2BNmIC7IDCF/j+IRTWNlYTM7o/ntdn8qg4A4Fmng/cu44qmYtAR2ORoKBJjdCgnfMPrjd0Etn5pnfYI+1kAfaduPeNVGK+xj+yzdybRgNZrvlMT78NWw48onvsjxUVbsOt1d8IL51eIVIXI3AcV8KwkysXZabP8PgoJMBpM3Q=
+	t=1720032373; cv=none; b=utBiooD3ITGPss6/rUKiWrphNBwSFMKpTyuurOC5U8slCPQJLOMAe3lhS21vLaXgTsLu95qyJ+NBGukKuJ6kQTQbWZGcvYn3OuKoH7t48H5rwydy37vuzvTjmOf/lu4KpQzhSCXWB+Z1dFT5yyE+ayTbBrxNuz1WMd/oSvwoE3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720032314; c=relaxed/simple;
-	bh=1HAUPmxyK03Kz683iTuisW6s29R1cGrirF7oFDboFUA=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=jm4xodiS8tXrqnGT3U3yq9AFRE5Y3uSaw0gaB4ASiuom+F2Jab48UalaplWHAWV7SbqIjBSrsdopvoqQIOa04erw8s/gxGZ/OKeOKHUOdrE3mvmXvJ0V9/Oh0TJLFlePxiZzTPadcsL4tSWAnrPc77JE8b+2vaE5PAjtey6mX9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=uQ4YFtuj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=henDsDRR; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id C074213800AE;
-	Wed,  3 Jul 2024 14:45:11 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 03 Jul 2024 14:45:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1720032311; x=1720118711; bh=EFR6lVRiOK
-	NkSmgerDmIGmryUFpvxrTuGj4sDMv6LuM=; b=uQ4YFtujx0iAMZbEkSSPfBw//w
-	Aur1tTE1Qbso8Qh56qTd1bnaFbQo+kmB/NGJqeOI2XV8HsRJMG7843ABjamNxMnj
-	M4ovl7iWTLqMKDf2Q+1qH4ds7PtTS1k4dWr7lrJAGnaAp0nzlTRdMwTZJ3bSuQwv
-	XWrABZJ5x5z4SfnBbh9+UXQ9KBDGVU6Wkx0r2n4+7EjwdxE7NNrlH3uFbdX8xl3Q
-	UdD0H4f5JegElE8jF7PD8GeN0dBo9laTfrXToPEAEHuw8+0lWgZU1n+bC8lSzNDx
-	U7ZoLL4eBDJIlXyEXratlmB4J0ydxZwMErKZKG/kyRXNsl2E0/j8dx8madKA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720032311; x=1720118711; bh=EFR6lVRiOKNkSmgerDmIGmryUFpv
-	xrTuGj4sDMv6LuM=; b=henDsDRR8/F745TtI0Y1tC5+Nc6H9jEggKnNn3OHRM2r
-	3OHlEMBEmZwhK6LSWkqi/LCQQ4dvYVESR5RBf+wOQwG8WBmlISDBJHj9lf3SRNDk
-	9gs+9SvVRgEvuhkmt/SnNwvVLztalAClHlseHc2xI0lBg1pps36ss01EQogXAmmF
-	CX7dTP3DChLjFm1OIVXZPxe/bSuSeB1CoAQiu8PdhCujII+9uVULHQxu2z4FGDaQ
-	hh8pCxPRm/e2WoKoEJGoyiOz6z90bOKiR90BdsH9jlFQJx9dNrY2uyM/jcCtAQi1
-	L6MfDNZmczYPctWOZkIEkQbAHTJhwySVDK2zduwLPA==
-X-ME-Sender: <xms:NpyFZg30A3MeOPyKrPuwUoDeB_OwRpWC0ZPGHwnSiy0tomE1Obxvxw>
-    <xme:NpyFZrGz5A-UGfdmxRnxGjaKhoRAhYhMw_NYH6Ptfv_AX1Sj6_SElDYfRwip5yYoe
-    JJ6j3aIscbLsUHB9pw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejgdduvdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:N5yFZo7gXVqAPjDWi2QezGkWDZ2JL7YakJk7qiYZAatQt3Mf8YykSw>
-    <xmx:N5yFZp2cgz1mDDb_W-9hY_89kt1J6cHgOLxKUz_iuwSS59Ky8wmm8g>
-    <xmx:N5yFZjGBvjIJ4JC0EC-Qz0j5pahLu5UN_rIwi9cuwG1W-dh58T8CpA>
-    <xmx:N5yFZi-kQdsbAyW1IUXnOJVEnbrhBfq45fG0m2QElEAoAFPPUsiWNg>
-    <xmx:N5yFZjEeYshha2BPTAgTbkxpsLLtlhc8Dpb-_paLn8_GKVyj3ZuaN4n6>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id E5373B6008D; Wed,  3 Jul 2024 14:45:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1720032373; c=relaxed/simple;
+	bh=kPIX61siZctF08qrEZVgtqzW6Cn2xm9fmIbovyzSQkY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=qo59QUuSzbKX671IAFDm7NWJgPKaHB4hZCUmIOWFrVH3Vb5AzK5Hv6spK26KGKEtymkaieDc8QetrhwUcbC9Pnwze091NIMgcYr9N7fxfJid/av08bL3721ojPBLD+Sm7uNBq++0tzEOxSAsZ9v107eehb0mHwN5w5E3HG0/INI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DLfBixoZ; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720032342; x=1720637142; i=markus.elfring@web.de;
+	bh=Mp/RJoiuH5JiTbBnMyafiYmkXjelrGaI3F8h2g29e0c=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=DLfBixoZfSzfhAqQhaJRZxKMEWBeWNTs/I4tZy8GLj92Uz4CuoE5BaMRKt0w8YB2
+	 kdfa2rSjMsn+COXpIqnbYMeODqSvQ0ghCP/51fvflpO4HKp2XtTlPWFZ+u8ELzDZq
+	 U/2lhOAG4vjFLanfW9RDCFQyCqFYAw6ywSq6kiV2LQodarS/jfks/cQdRlirzCyVQ
+	 3l0pZS3yOlct3FokXtKQbWK/2q/g6L5xsTQtoHuGQfwc7CDDVZbHY9UbBWkw3A3rn
+	 NWcpF3SK5EAur9DKh3eOzvl5ZSl0Z80JDR9pMPRlewAEMU+p+mVBngtvZcV/q1NvT
+	 xUi05W/X9Dzmk4hO1g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MCGWe-1sYSv93Y2s-003ArN; Wed, 03
+ Jul 2024 20:45:41 +0200
+Message-ID: <f90b597d-1e0f-497f-b092-3cb4d5f9602d@web.de>
+Date: Wed, 3 Jul 2024 20:45:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <a30ac1fe-07ac-4b09-9ede-c9360a34a103@app.fastmail.com>
-In-Reply-To: 
- <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
-References: <20240625110029.606032-1-mjguzik@gmail.com>
- <20240625110029.606032-3-mjguzik@gmail.com>
- <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
- <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
- <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
- <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
- <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
- <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
- <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
- <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
- <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
- <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
- <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
- <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site>
- <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
-Date: Wed, 03 Jul 2024 20:44:50 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Xi Ruoyao" <xry111@xry111.site>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Xi Ruoyao" <libc-alpha@sourceware.org>,
- "Andreas K Huettel" <dilfridge@gentoo.org>,
- "Huacai Chen" <chenhuacai@kernel.org>, "Mateusz Guzik" <mjguzik@gmail.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, "Jens Axboe" <axboe@kernel.dk>,
- loongarch@lists.linux.dev
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>,
+ Cyril Brulebois <kibi@debian.org>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Stanimir Varbanov <svarbanov@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>
+References: <20240628205430.24775-3-james.quinlan@broadcom.com>
+Subject: Re: [PATCH 2/8] PCI: brcmstb: Use "clk_out" error path label
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240628205430.24775-3-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:36kGwr4RXLOs7Zyisb/7KuH3H8Liv9r7JcDTXD8/jLwpnjgF0hH
+ ol9kafgktAzGSLXOI3u5n7KJwetN6a6FrYF/Jlck0Kaqr7ZIa3D2cxTdXotpITGEgELkEbx
+ Ok9BtNlxZWTd7R5H4q8//sqNHFG5vJ+9F0lZSo/ZhRSfhcGi+DcEVOrSsy1m/UXQsdITxE3
+ 7yGSt0qlFVPzxzuxYp49g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dIV3an7U1FA=;Q2jgiRBuBnX9GKqS3FEqNVzp5+N
+ C/B5fQgLI3Dq6OBVYywgdc8zmgY8Tbshr6GC5ABogV2TiRu8LV0IoWb0qODMaFmZHeP3SElDo
+ Odz6hJ2XS6X9ej5kETmc7DSstPmdOzjaFe4YhElbJkzqXogvXPbXcRc0X/RjhLmiyRoDBA3MD
+ zwS7xgsGla/hcSKFgCZ2hA0NX+Uxc6BfG9TW3zZ+kQ//UvoIyrajsDg2j8ZqMk+bqxEeO0x9d
+ RPxru1IVjrJAJPij7i0nkk9qx1zviVPBKUBZNErlY9PG3sRs3jl8AksGvqpd67Ot3IFrDPJTb
+ NBa/Xv87Go/P5Xciu9GsVtOtkWxExZj5NLJKMBulNQLKd1oVTUXVwLCunBrR9p005jy18W9D5
+ 81Yb/H2X1B3IV8/fH3eziMG4ZMIfQ984jZhbUIWazfg90CNdW8VON+/a5RTpGRMiBYqUghlZA
+ /JPMw062527JCKPcHS/Dj2MUlue883ilzlStgUNlzwa1G1lVv6KtxQ0fBV0cmqc5MLb6tizhK
+ DdsowquqwXFn1wp7VYm72yz3wE8E+DOz7lQ8nx+xW55t4DKl55Mstitt9wr4WCauuOCcDBBqh
+ gmx1dz3aans2fVrAjZZV/H70EmV/AcAefhFkf1aUYRYj7GRSOWPAb+0gfi/RLzDnGgND34ij1
+ fif0V37vWJMlWk6oOE2Bz72qsDziw3125EIwPx7d7Y5koPLphLLTnyFIBOQ/+yBy7poCCYMsw
+ JLZKnjDxWCSYGzBakul3szcE1vDTYjql48Cpu7xXeo7K47FqIA8TmavQvsLFZnGYNUnpBToMh
+ sQmL+nRzgiuBMOIc6HDaTdEUfhU5vBdLOEMm2fCkk7C9s=
 
-On Wed, Jul 3, 2024, at 19:40, Linus Torvalds wrote:
-> On Wed, 3 Jul 2024 at 10:30, Xi Ruoyao <xry111@xry111.site> wrote:
->>
->> struct stat64 {
->>
->> // ...
->>
->>     int     st_atime;   /* Time of last access.  */
+> [-- Attachment #1: Type: text/plain, Size: 1600 bytes --]
+
+Can improved adjustments be provided as regular diff data (without an extr=
+a attachment)?
+
+
+> Instead of invoking "clk_disable_unprepare(pcie->clk)" in
+> a number of error paths.
+
+* Can a wording approach (like the following) be a better change descripti=
+on?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n45
+
+  Add a jump target so that a bit of exception handling can be better reus=
+ed
+  at the end of this function implementation.
+
+* How do you think about to use a summary phrase like
+  =E2=80=9CUse more common error handling code in brcm_pcie_probe()=E2=80=
+=9D?
+
+
+
+=E2=80=A6
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+=E2=80=A6
+>  	ret =3D reset_control_reset(pcie->rescal);
+> -	if (ret)
+> +	if (ret) {
+>  		dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
+> +		goto clk_out;
+> +	}
 >
-> Oh wow. Shows just *how* long ago that was - and how long ago I looked
-> at 32-bit code. Because clearly, I was wrong.
+>  	ret =3D brcm_phy_start(pcie);
+=E2=80=A6
+
+Does this software update complete the exception handling?
+
+Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=9C=
+Cc=E2=80=9D) accordingly?
+
+
+=E2=80=A6
+> @@ -1676,6 +1677,9 @@ static int brcm_pcie_probe(struct platform_device =
+*pdev)
 >
-> I guess it shows how nobody actually cares about 32-bit any more, at
-> least in the 2037 sense.
+>  	return 0;
 >
-> The point stands, though - statx isn't a replacement for existing binaries.
+> +clk_out:
+> +	clk_disable_unprepare(pcie->clk);
+> +	return ret;
+>  fail:
+=E2=80=A6
 
-We had long discussions about adding another stat()/fstat()
-variant with 64-bit timestamps from 2012 to 2017, the result
-was that we mandated that a libc implementation with 64-bit
-time_t must only use statx() and not fall back to the time32
-syscalls on kernels that are new enough to have statx().
-This is both for architectures that were introduced after
-time64 support was added (riscv32 and the glibc port for
-arc), and for userspace builds that are explicitly using
-time64 syscalls only.
+I suggest to add a blank line before the second label.
 
-That may have been a mistake in hindsight, or it may have
-been the right choice, but the thing is that if we now decide
-that 32-bit userspace can not rely on statx() to be available,
-then we need to introduce one or two new system calls.
-
-    Arnd
+Regards,
+Markus
 
