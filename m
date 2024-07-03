@@ -1,158 +1,121 @@
-Return-Path: <linux-kernel+bounces-239964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B0792674D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:40:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C02B926751
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C79284793
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:40:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD220B21B95
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9481185E43;
-	Wed,  3 Jul 2024 17:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C06186E53;
+	Wed,  3 Jul 2024 17:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkBspzo3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="b3lMPF8r"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8B31849EB;
-	Wed,  3 Jul 2024 17:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50B818411C
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 17:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720028433; cv=none; b=nltE7cSLOD8xNUBpx43pUSaE06S1R1ZO8gC8Ya5L6CKJWPXHTB6xNIcun/RzUwkz0rnLo67AALONsBjiVf7riMAqeOENQ48gwnw/BAQhtW2KIE/qiVXWr4bUPJ0Jr096sNfTnqblV+LwPOi/nYGvWVE0LYThEj3AztrCkN1OCHA=
+	t=1720028456; cv=none; b=OJKLl/yIN0/xm/H069bxV+Ki9Cz/FS1T0s4p06tTLO8x1jUCEeTwVLoHuMVchJlgFeLCl18+hNpMLcC5yFKnRiBU04Q8+Mid64aweuqEuCriUxv+4seExhxb5CSeRwiVBXJGxq4eBuYruRL2Om/FoNM1HGCwSAbdWWMcQACMysU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720028433; c=relaxed/simple;
-	bh=Nn2FMijYKUabIY309YC1P/hU0iL7IcPu9UOCPevQ0RA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cZWAPjgbcxmOUdwxnt5e2mmu7kuoIhK/b3blUySTlEvgKR7oxmKG2dkZWujtp/WdHa7Q+nzJAWK5BlwjsCSFyT3yPL7AZQjkOuIgNOvrNqvx0kxnh4F6APWcxlNHkBtykT+7MAOZNtp9YXLsFTKsR+/S83F15fHnE7lwJnSumhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkBspzo3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDC14C2BD10;
-	Wed,  3 Jul 2024 17:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720028432;
-	bh=Nn2FMijYKUabIY309YC1P/hU0iL7IcPu9UOCPevQ0RA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YkBspzo3Vi3Fu3k3yF1Q0os8jkV73+f16Exv/urMrCW0R+5ePjHdIUQnot+Z28c4q
-	 y+1Y0Zm+J7iz4ss7PcjIWvMB8MY+J4ijMPPoljSTTInV4snas0EjCtoVmC6/CCDnZG
-	 wBugU74imArWUMOvSzGFFA7C5dC8kxOszwEW36itxqmbUG5F+nQHubE2/EvWsJE0UW
-	 ssx5KtnWFW+FyYk3cl7u1xl6YSt2OTMLyhFWq/IZEPy3DMrs9kwqhpgXd9Hegd3ct1
-	 uGBPhsZyLPOUQe2fp70dXtzu2Tv9me7cd6VaNZJw8jNjh27oLFBKTbE/oHFT+/WfHE
-	 w7+dLuahSpt/Q==
-Message-ID: <6c6b2b8f-93dd-42f5-9879-99e24deb5880@kernel.org>
-Date: Wed, 3 Jul 2024 19:40:27 +0200
+	s=arc-20240116; t=1720028456; c=relaxed/simple;
+	bh=OmJgZmMNMA+vqsqmuMadaQXQgXYtB0kLJuTl566s2uI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F14/771q07sACr6IAmcIEf/4QPLb4lUD6JwJlPiNGX36cXzgKx/+zVYK7A4Otq+YjzRSctDwLLqMCvoMfJ5j/W7DFENbRP8CBOiwdZMvlXRJP05Omjc52nxGJOAfqC8be4TqAXN2cCLH926sD8FY1Y08qeXWIfF23SSdkv2xg50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=b3lMPF8r; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so69435661fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 10:40:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1720028453; x=1720633253; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kNRq2xwEntheuQ6TeaPDnSkqCd5DNGo6bKIeeb/W6x4=;
+        b=b3lMPF8rmDP6HzT1KqUaa4AIyeGODUdFmdFEe930WkPhjt+zguvrUa2VKj2HsgTZwS
+         8xXbvZsX03DuveKTJdU/TATdffxAFCDBl9gw3Sn6trOqCZJFJhMdV4v/205EzKG0rMVt
+         nX1noVjepoTyqstn5ResANwLuH/7GJ9/t7SqI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720028453; x=1720633253;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kNRq2xwEntheuQ6TeaPDnSkqCd5DNGo6bKIeeb/W6x4=;
+        b=fycvEghhNVoDEjCZSUtQsmROzhL5TcV6xZFFcqcroYyehUnin7oTt4I8zqFxUBiiay
+         eEKDcPA47rXGQyUtGrnoFllf8sfs8eWmzN2CWLbYv5f5KWTqF9s8HVdZbgVVr1ujM0JS
+         X9wb3/uvO/QI6dFhn/M1Tdyf0+B76RsnNvA0DRQGEUqvwBJ05ZVxN2bvEahLw00CcTxz
+         lZL60CAcloMFcoCsDe6FhMUfNCa1hOKgFDxj4Gd+inU38ob4RC3p6mzfndqAYSVUd2Bh
+         qQpqHBhVPlFWGIbVhw6tcaPy1pyL3XBRex8My2f7gFiTcEGZeh7TWT8UHxds44tI4EHh
+         QE7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXOrm08sUzntekm0bzLME66grheKLsS+OIVBNZ9iQigDLzo5oi9y6itquHu5ShWsktOdZQFFuUOiefZtLH5M18GgGT7+vnjhpdOf8Ff
+X-Gm-Message-State: AOJu0YyDkTbLUqMQD3AnoDM7bt92JbhUlO/yOoXZC7ZL+zD7KYiNPxsA
+	lSvH4E2o44/x2YFgmziyUrl139DUpuEtVKgIh4nuyAjAWKi0w88R6IEWlsjYqqP5K7jqUneIRB3
+	gUtsAVA==
+X-Google-Smtp-Source: AGHT+IHzlQ7W+2YV0g60NBy0164g66x433anP4Q+w1jSdUOrTSnFFMBchDsRcWdJNwtotlijdBipPg==
+X-Received: by 2002:a05:6512:1056:b0:52c:8596:5976 with SMTP id 2adb3069b0e04-52e82701398mr8400278e87.55.1720028451982;
+        Wed, 03 Jul 2024 10:40:51 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2f77dsm2211062e87.229.2024.07.03.10.40.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 10:40:51 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so63907971fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 10:40:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW/3KWE+r/Xu8u5qlbT0Ib6vNpeKYLkX/9uBlWP1m/3pnAsbwja+sDXHejOU0f01hSHgqhSD2/OlHNY27GsOPBhrdPzdfY+1gAspqBg
+X-Received: by 2002:a05:6512:ac6:b0:52c:d90d:d482 with SMTP id
+ 2adb3069b0e04-52e827459a3mr8256135e87.66.1720028450692; Wed, 03 Jul 2024
+ 10:40:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v2] selftests: mptcp: always close input's FD if opened
-To: Liu Jing <liujing@cmss.chinamobile.com>
-Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- martineau@kernel.org, geliang@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org
-References: <20240702040518.11058-1-liujing@cmss.chinamobile.com>
-Content-Language: en-GB
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20240702040518.11058-1-liujing@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+ <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com> <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+ <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com> <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
+ <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
+ <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
+ <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com> <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site>
+In-Reply-To: <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 3 Jul 2024 10:40:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
+Message-ID: <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Christian Brauner <brauner@kernel.org>, libc-alpha@sourceware.org, 
+	"Andreas K. Huettel" <dilfridge@gentoo.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Huacai Chen <chenhuacai@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Liu,
+On Wed, 3 Jul 2024 at 10:30, Xi Ruoyao <xry111@xry111.site> wrote:
+>
+> struct stat64 {
+>
+> // ...
+>
+>     int     st_atime;   /* Time of last access.  */
 
-On 02/07/2024 06:05, Liu Jing wrote:
-> in main_loop_s function, when the open(cfg_input, O_RDONLY) function is run,
+Oh wow. Shows just *how* long ago that was - and how long ago I looked
+at 32-bit code. Because clearly, I was wrong.
 
-Please see my previous message: the commit description should have lines
-of maximum ~72 chars.
+I guess it shows how nobody actually cares about 32-bit any more, at
+least in the 2037 sense.
 
-> the last fd is not closed if the "--cfg_repeat > 0" branch is not taken.
-> 
-> Fixes: 05be5e273c84("selftests: mptcp: add disconnect tests").
+The point stands, though - statx isn't a replacement for existing binaries.
 
-There should be a space after the commit ID, not dot at the end, and no
-blank line between git tags ("Fixes:", "Signed-off-by", etc.).
-
-> 
-> Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
-> ---
-> Changes from v1
-> - add close function in main_loop_s function
-
-It looks like you didn't change the code as I suggested: moving...
-
-  if (cfg_input)
-          close(fd);
-
-before 'if (--cfg_repeat > 0)'.
-
-Anyway, I just applied your patch in our tree (fixes for -net) with all
-the modifications mentioned above. We will send it to netdev later with
-other patches.
-
-New patches for t/upstream-net and t/upstream:
-- d2657c3f784a: selftests: mptcp: always close input's FD if opened
-- Results: a9e719ce2340..fa4c0289d475 (export-net)
-- Results: b49e920db095..dcc28bf9bc6a (export)
-
-Tests are now in progress:
-
-- export-net:
-https://github.com/multipath-tcp/mptcp_net-next/commit/fa397dbd31963500c42d31a4892e0b9c7e4c9ff9/checks
-- export:
-https://github.com/multipath-tcp/mptcp_net-next/commit/ff673f57b4479a78dd9eb18af3c8c0fe73bf958b/checks
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+             Linus
 
