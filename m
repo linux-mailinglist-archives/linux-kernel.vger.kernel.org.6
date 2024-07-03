@@ -1,144 +1,123 @@
-Return-Path: <linux-kernel+bounces-240065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77639268C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:01:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90ED69268C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71F091F22819
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B2B628D51E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B346188CAE;
-	Wed,  3 Jul 2024 19:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFD31891C9;
+	Wed,  3 Jul 2024 19:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KnNdd/2H"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQoLYDjc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D9A41A81
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 19:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A66178367;
+	Wed,  3 Jul 2024 19:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720033257; cv=none; b=a0gpxy+WEf6P1APCNS/klRhykTbMqbLiIaE2PSkkiVD1TSG85FRCQ6485Qw7StFYv75sNWKu+7BSonPRRJ9qeuGyMLQyfU52C260nVBINNvd2/PmSa26CK+/OAYYJPvJT7jnXYQJ+TIh6qoDSStoite8PgaYIcfNQu/042o6I0Y=
+	t=1720033354; cv=none; b=Lla3riHaN+KpdK9064tHtQRBshO6xOmFDA22E6FLmiJU6S3IdwbKKfq2yg23T1R5eTa34GCwsbfLDIHDgU5zIttkh9XfGPJwiJaPuPu2K0tgquIMoDOX740xjYp0avlTxQwaKGrihccNHn6Ls4Y5GRWEgKV3GpHQ6MLx1yogvok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720033257; c=relaxed/simple;
-	bh=UYxPNFpMcGneQ/ECP3GOas6d4yYi/uC/3SPT66tF62M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DHnOleFtAaok7fnfmV2LZfL1eZ2czulxzqLiDeJE5qkLTVvXNOdkObcU7fAFQh8O7Mxojk+zmuEZ2Ci/MYAMUtl2BPrnOg9SCJJjpXhm0mDwTOx3dLr+9sriqqGoSjuE8UDGt6XYGFwi+bDlAhB+8h8/oUhvezU+EePhReRoQpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KnNdd/2H; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e9380add2so3051184e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 12:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1720033253; x=1720638053; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AwbTD1jwFh01l2fYaG95Vp8QD2DPYGRJu95WiulxKsI=;
-        b=KnNdd/2HC1g8PPW8ysWVmTO3XHICeitMIeENaaNdC1dvDWlj7Sv7dPRX1vx9PtZqP3
-         2unL0/Q0p53VLHX+jthB91yRBRPHrPChbR8Tcft1vXtCvxGPTDb3FQwEJmS+mt2fjCSJ
-         DKpxzFIIh0AXpdiSQ8Bi93vH3mLHUdMXUr93g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720033253; x=1720638053;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AwbTD1jwFh01l2fYaG95Vp8QD2DPYGRJu95WiulxKsI=;
-        b=Wj0gZVVJ+ChR9k2n2WraKEUdZkyyhKaY34MbLuTcMkVmjeecYGzjFEEoxPajyjSA+V
-         IVwOsNUkYSO4CA2+ndEW1eVVS970AI8v8MC5mnirJc6rszpwHizXRGaY6cC64GTkBFvY
-         hoG/rHnJ9cg5IyZ4MdQq749vt3krvv/QALwUxFLuSENrzIRRlEFEFoO2muhhlO6MboH5
-         u7wpu1xqiKUD90uNEbw+fTlan859Y0J873pJFAk4nuQTNb9E5vRiuImNbhmw5wT3X6ZL
-         kHqtFpNReF22mnJii3h38Ye2kcZvJn0XillF48vpANayYFCwHBSDA3SSpcavSg95j86V
-         xk1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ0Q0czMb7sLjqdXDMoPl3Ov5AT5JgUYytRi/7FLFQvGgwei4HLgA6kxKVpLaDX3+MH1YKb0q419y7x37VxKw7Vv80eQ4LrzMp3NPr
-X-Gm-Message-State: AOJu0YzVupLjeiBl1oHxY75BzFHKwQm9erFZhetlx0LRtbvQC3W7J/c+
-	xatjkdr2bzdGRqoEIUcjPpWecZmlY3K0J+DBMoAwgOZD5nKISFqBPzxFEWWa5/BTNN+wXr+VNQ6
-	xOAWztg==
-X-Google-Smtp-Source: AGHT+IGg0a5xNiO/KxWqvn7A/J1FITVV34tA9Q91b/3JUi2dI/g+LpQV9Vlk1N+qC3lFb4eFLOmVGw==
-X-Received: by 2002:a05:6512:3d1e:b0:52c:9ae0:beed with SMTP id 2adb3069b0e04-52e82705d17mr12117514e87.52.1720033251534;
-        Wed, 03 Jul 2024 12:00:51 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab0bab5sm2207080e87.13.2024.07.03.12.00.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 12:00:50 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so30843861fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 12:00:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCURMHs/zA8Wi3PMUA2vAUSvo08gf2WnfHbZ9cReOwVnid/7laGZHO3Oaf37wVAHVL6tuoLwgHdNXFGgxo/jVmYEB79Bio1pDRvTbOs/
-X-Received: by 2002:a2e:a7c9:0:b0:2ec:56b9:258b with SMTP id
- 38308e7fff4ca-2ee5e6f60femr110934241fa.33.1720033250138; Wed, 03 Jul 2024
- 12:00:50 -0700 (PDT)
+	s=arc-20240116; t=1720033354; c=relaxed/simple;
+	bh=71g2nqc6FxOk/YKMFvTXoevyN3+HuT2J8B/us81Ujck=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iv7vL2XBC3L0bIOk7uQChv2nkBOxppgz2XUjzbxOxNEVjC9ShIVKJaUeYUZzcH0t9wZ+Z0tekXoQsNNupPH2AVnpKT6dXZYJh37hmQf93RB5NFFe0ljKawGPFPqqc0f7XcYNy3P6c9FPftWlkg/9mviZsUr5BTf7M4uLfsZyGXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQoLYDjc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C256FC2BD10;
+	Wed,  3 Jul 2024 19:02:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720033354;
+	bh=71g2nqc6FxOk/YKMFvTXoevyN3+HuT2J8B/us81Ujck=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XQoLYDjcQ2TtN25XS4Ipa0DRq52rIW9iJ75Ux5oqdj1gS8/BK2EffIqsXs1P8tDrM
+	 riuygMI4RCB6LBq2FaCd8Q0dD5SXkqrYev/sVbxrJWzHAwu+wpGiAPDEdAd5yi25+y
+	 FWXNT0wz9JnF0euwY+0yP3oZUW3Xeut6HqyJB4pG/SbuZlPyqAWYNV0bbKqTdfLjnJ
+	 XJy21QbGt7EVyIytH3aYvk3u6Vu7S2QWJzoFN9hqXNtxoa8uERRlk+CJb2FJ+R64pB
+	 KDHMO2phYJ/JTGktOZ7FmjqR0RuubrPdUWJ9Y/8iJSjCX81IzebutlVMnfYOy0blO3
+	 EXlKvMiY7TuVA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: dm-devel@lists.linux.dev,
+	Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v2] dm-verity: provide dma_alignment limit in io_hints
+Date: Wed,  3 Jul 2024 12:01:41 -0700
+Message-ID: <20240703190141.5943-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
- <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
- <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com> <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
- <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
- <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
- <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
- <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site>
- <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
- <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com> <20240703-begossen-extrem-6ed55a165113@brauner>
-In-Reply-To: <20240703-begossen-extrem-6ed55a165113@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 3 Jul 2024 12:00:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgCttiyp+3BBzhqKv+uXuUr-fzw2QbmH8kXwO+sB+FAaQ@mail.gmail.com>
-Message-ID: <CAHk-=wgCttiyp+3BBzhqKv+uXuUr-fzw2QbmH8kXwO+sB+FAaQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-To: Christian Brauner <brauner@kernel.org>
-Cc: Xi Ruoyao <xry111@xry111.site>, libc-alpha@sourceware.org, 
-	"Andreas K. Huettel" <dilfridge@gentoo.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Huacai Chen <chenhuacai@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
-	Jens Axboe <axboe@kernel.dk>, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 3 Jul 2024 at 11:14, Christian Brauner <brauner@kernel.org> wrote:
->
-> In any case, which one of these does a new architecture have to add for
-> reasonable backward compatibility:
->
-> fstat()
-> fstat64()
-> fstatat64()
->
-> lstat()
-> lstat64()
->
-> stat()
-> stat64()
-> statx()
->
-> newstat()
-> newlstat()
-> newfstat()
-> newfstatat()
+From: Eric Biggers <ebiggers@google.com>
 
-Well, I do think that a *new* architecture should indeed add all of
-those, but make the 'struct stat' for all of them be the same.
+Since Linux v6.1, some filesystems support submitting direct I/O that is
+aligned to only dma_alignment instead of the logical_block_size
+alignment that was required before.  I/O that is not aligned to the
+logical_block_size is difficult to handle in device-mapper targets that
+do cryptographic processing of data, as it makes the units of data that
+are hashed or encrypted possibly be split across pages, creating rarely
+used and rarely tested edge cases.
 
-So then if people do the system call rewriting thing - or just do the
-manual system call thing with
+As such, dm-crypt and dm-integrity have already opted out of this by
+setting dma_alignment to 'logical_block_size - 1'.
 
-    syscall(__NR_xyz, ...)
+Although dm-verity does have code that handles these cases (or at least
+is intended to do so), supporting direct I/O with such a low amount of
+alignment is not really useful on dm-verity devices.  So, opt dm-verity
+out of it too so that it's not necessary to handle these edge cases.
 
-it is all available, but it ends up being all the same code.
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
 
-Wouldn't that be lovely?
+v2: Added a comment, as requested by Christoph.
 
-Of course, I also happen to think that "new architecture" and "32-bit"
-is just crazy to begin with, so honestly, I don't even care. 32-bit
-architectures aren't really relevant for any new development, and I
-think we should just codify that.
+    Resending as a standalone patch since the series was already applied
+    to linux-dm/for-next.
+    
+ drivers/md/dm-verity-target.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-And on 64-bit architectures, the standard 'stat' works fine.
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index bb5da66da4c1..90a13548028a 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -1013,10 +1013,18 @@ static void verity_io_hints(struct dm_target *ti, struct queue_limits *limits)
+ 
+ 	if (limits->physical_block_size < 1 << v->data_dev_block_bits)
+ 		limits->physical_block_size = 1 << v->data_dev_block_bits;
+ 
+ 	blk_limits_io_min(limits, limits->logical_block_size);
++
++	/*
++	 * Similar to what dm-crypt does, opt dm-verity out of support for
++	 * direct I/O that is aligned to less than the traditional direct I/O
++	 * alignment requirement of logical_block_size.  This prevents dm-verity
++	 * data blocks from crossing pages, eliminating various edge cases.
++	 */
++	limits->dma_alignment = limits->logical_block_size - 1;
+ }
+ 
+ static void verity_dtr(struct dm_target *ti)
+ {
+ 	struct dm_verity *v = ti->private;
 
-            Linus
+base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
+-- 
+2.45.2
+
 
