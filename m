@@ -1,211 +1,221 @@
-Return-Path: <linux-kernel+bounces-239566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6EFA926233
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:50:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00D3926236
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A27EB281B1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:50:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6706B282623
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B03E17967E;
-	Wed,  3 Jul 2024 13:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469AA17B417;
+	Wed,  3 Jul 2024 13:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XLHTD7SP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iuQA7khL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833B23CF73;
-	Wed,  3 Jul 2024 13:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720014647; cv=none; b=dZATCGo3l4fDWfU1PCni+KkpjpDLCXcjZqzej6/g/RBtxGNq7iWl7zV1bRICQ0Nj6oANWg7SuF6/ECr89PE9B+2LXSezll5zJ5IhnyAVsnWWzYZan3c7bXSJHyb2G2mbhANBt4RLoUkfnfiNuj40ciGxCy91Ti3MKoA0fiEEvLI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720014647; c=relaxed/simple;
-	bh=rZw/x5DNDmlgq/YRxFmk4A1MkbVCzgR5o46weJUGkB0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vEE4BOfDfMs2n6Mcrei/fuJjBVqBeYAXPoHpavZ78ychYWO86Vp1eQ4Zt9J6VrxO9CfIFbLCnzrkqFhK1YqwZSBILF5ZDCDA/kFc77xANRUrayjg/aHIrh5dW7HXWUyKoDb32fMBqshiHEh4LWp0uCAK8Pas28htAJcU6EZ8qX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XLHTD7SP; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965578C1F;
+	Wed,  3 Jul 2024 13:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720014673; cv=fail; b=crKPVy+kJvpF9eXxVmGSQpuzAw5qLcgE5pgqnjqqlP3XyhQSF8ATeAPaIk7QiqdbgOEdCG0Bk3OSbi2LTH+Vf1tXQpx7VcbIl4ZGqaVQpeuJpWQngmyk/WON7Q0Sxysul5jm2dFZieXSeCqgfVmi++x9rZ2bOfsVj2TsBeI15ew=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720014673; c=relaxed/simple;
+	bh=uDXaiE6spkmeHTqQH7fdLxkpOLpw9ymhAX6UOlVstAU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=UWapRqI/PUl5S4UKSaVDAejPdX8RtWBnivM3WXlGq6iC1Ajc7zXDYtT+ayXvZbtKBpum2VFWGxCsPkDmAdLlUPZWJs8VhIF7Y4DlhERyuXnDRIKUJ6CsJPkcZGJnflG7aAU/GJkM4Tc2APh2D6kZvLEQnXOHqv1K6mnHjA11Vt8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iuQA7khL; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720014645; x=1751550645;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rZw/x5DNDmlgq/YRxFmk4A1MkbVCzgR5o46weJUGkB0=;
-  b=XLHTD7SPrJUm0URnoGNQptovd8/S42KM4oGhkhFoGK13NlI62LLJVYzl
-   UQi6i1Zu8myYetrd1PwLauRXa7xJo3XRSsgcOmkFUxyUiFaUnIOP1SiH1
-   RKhdcF1lGVnx7m8O2oTyWe8ordKH4HFdVycSwe9ai2UV+Rnn3eCcV0ziT
-   SC6wK6Ljc4jqd3916E4dGi49iwmnnqxbaqmM9Sij+//KqNUMYT5BoHSA1
-   thaHEikOIfGHZ1slQv5ZxYxSs/82vn/mXkrJCCLDH7NFwiqh7/9a1AjGn
-   iZXup1rCjfI2jef5+k0bk/vRfdh/GKUwJrvAxnlHYR0st/OSyZVc3x/W1
-   g==;
-X-CSE-ConnectionGUID: lzDxt+VVTHa55YAvsQQwDg==
-X-CSE-MsgGUID: lUIQQwBkT8SlRMasc0RCew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="39761677"
+  t=1720014672; x=1751550672;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=uDXaiE6spkmeHTqQH7fdLxkpOLpw9ymhAX6UOlVstAU=;
+  b=iuQA7khLgPhdo++Kc9SSMMVQWAAVokgXZRTZBuUzf2XrpcXEf60fLQM0
+   6HV5EFoP/bXI4SwFO9PvMV9bBPsKzAsPXE5vIHdSInSp/NjMentqUnhFE
+   zlyIu5BUaHJe3j+17cB8yQJD4QecnPspifL/qs2b+GjczBm8N2IYgWINW
+   SdXVA99vGasHy+efIcqsa/kppIvOkWwXlUKdJd5GIsLWFAefe/cyC4TNN
+   VFw+bB3MbRhETRtnJfGXT7hUzXsfbD3/4UVTxF13vxwBZdWpW/WDCNW8J
+   yFH3LLs01i+cmV1A48RdmpwjfLi1co/ufpqiO9JMymXFl1GlLOSMS0arL
+   Q==;
+X-CSE-ConnectionGUID: FGd4XlENRfqQEO17zTZMcQ==
+X-CSE-MsgGUID: LEjKvM8/RbWYuniBM0tjsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="17068443"
 X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="39761677"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 06:50:45 -0700
-X-CSE-ConnectionGUID: m82/40P5QFmdWB6TJmB5xg==
-X-CSE-MsgGUID: CVkFQwDISqmVo7nByYeJaQ==
+   d="scan'208";a="17068443"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 06:51:11 -0700
+X-CSE-ConnectionGUID: dWZGlWnWS7Csd+l63HakNg==
+X-CSE-MsgGUID: auAaJIRsT0eOfOQJlXHHmg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="51109870"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 06:50:45 -0700
-Received: from [10.209.189.42] (kliang2-mobl1.ccr.corp.intel.com [10.209.189.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 5A939201A797;
-	Wed,  3 Jul 2024 06:50:43 -0700 (PDT)
-Message-ID: <8b511e2b-defa-491e-af06-2de85377ba97@linux.intel.com>
-Date: Wed, 3 Jul 2024 09:50:42 -0400
+   d="scan'208";a="46689037"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Jul 2024 06:51:11 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 3 Jul 2024 06:51:10 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 3 Jul 2024 06:51:10 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 3 Jul 2024 06:51:10 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.49) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 3 Jul 2024 06:51:09 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FjqO7ge2XumAC2QakaKrx9+2niQG5/XGLn8gHRJ7oa+dgNkpHW/qNlvj0dcmRicS7lLbpYoI7qIKhyIUy4RDf74azKZe38wsCvRb5djpjP0i7cZGheAJ8pVBmC2HRMr9TyXjxVoZtBJ9Fs/YE4RoEWwch9o58KyGpTj4BhK0kIWAp/WKuRJ8ONiw21UHJfTTtG0ojqFgr80mEYt0gF/7ictAohysPCjZdtQ5CVl3J8kdYR5stGAAL8JlDBTHKVxr89hmTOeTHd6W3wEtrB7B7h83+Ybw1gcMduNXqFt9Px7eOGBSfd+2ArnY7BeAvZ1gkbRmEPfaURvSbbeg+6W8Tg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kEQLbtLFAzSTv20yOgxsMHZepHvD7QDckAcXQITgRhs=;
+ b=bgecQFVZAFSZYmDckIAagN4sD8/JBnLUqUgBuVlVDQMpjvLTvKtGQ48UL7wz0XQx2KWpkwVSUIqbtoX3n5D3tDx96OViyRb9UjrE85TgKZBBYjPkzZHewACjoYm8RIxig3vJkrJ+NCDIg3FnKcETk5jiPLxtOPXuhNV52Zub9jhKsfThYnaJe5soqrXm2Str6n5AlAu7nbvNMchmgEhSMYKQS9YCpa745jTcvvCh1BKRhqmnO/QDWjifyDGUgWkQjarzQ2F85f8tcPB700I2SoNxa+fqqwnvewBFAZwla7eYSBwVQPszhePoLtp1OJfkNjexSBJQJiuJW806ROkTaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH0PR11MB5782.namprd11.prod.outlook.com (2603:10b6:510:147::11)
+ by IA1PR11MB7342.namprd11.prod.outlook.com (2603:10b6:208:425::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.28; Wed, 3 Jul
+ 2024 13:51:04 +0000
+Received: from PH0PR11MB5782.namprd11.prod.outlook.com
+ ([fe80::9696:a886:f70a:4e01]) by PH0PR11MB5782.namprd11.prod.outlook.com
+ ([fe80::9696:a886:f70a:4e01%7]) with mapi id 15.20.7698.038; Wed, 3 Jul 2024
+ 13:51:04 +0000
+Date: Wed, 3 Jul 2024 15:50:53 +0200
+From: Michal Kubiak <michal.kubiak@intel.com>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <samuel.thibault@ens-lyon.org>, <tparkin@katalix.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] l2tp: Remove duplicate included header file
+ trace.h
+Message-ID: <ZoVXPZeO21VT8PEN@localhost.localdomain>
+References: <20240703061147.691973-2-thorsten.blum@toblux.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240703061147.691973-2-thorsten.blum@toblux.com>
+X-ClientProxiedBy: VI1P190CA0045.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:800:1bb::18) To PH0PR11MB5782.namprd11.prod.outlook.com
+ (2603:10b6:510:147::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] perf topdown: Correct leader selection with
- sample_read enabled
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yanfei Xu <yanfei.xu@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240702224037.343958-1-dapeng1.mi@linux.intel.com>
- <20240702224037.343958-2-dapeng1.mi@linux.intel.com>
- <d9c26690-5147-4a4a-815b-fb5d46d043c6@linux.intel.com>
- <5223c6bb-a05b-4a8c-a625-2011db190631@linux.intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <5223c6bb-a05b-4a8c-a625-2011db190631@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR11MB5782:EE_|IA1PR11MB7342:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e2cb923-4a78-44bb-27d6-08dc9b672e86
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ry1MHA1SCBEye//tq0X+rOV0w9craNoyA0S6kJYinYYf8LhDpqKXy1dvr8hB?=
+ =?us-ascii?Q?WKGDKzgpI0/edxTh1i2kaIVSOvh5OEJi/oRre+IgVJ9NwiZaTv7Fjk9Snx3z?=
+ =?us-ascii?Q?E5FR/1ZG2IQp3D0lCSHTWOHnqgwyxNh1YX3l+I4JhMZ51UjXHAl+6GbUab0s?=
+ =?us-ascii?Q?Kk3jfNqfSAVeJiGm0Ot1TbiwfbaCGMttSgU4ErlaFK1BncB51YC4x4+LixgN?=
+ =?us-ascii?Q?DGJ61rSYg3zXaJEn9cwHL3D+LmryTKTYXI//qsRr0uzX2J7IMc+ybQZbf2I6?=
+ =?us-ascii?Q?DMG/Tes/4IoB+NOijq1IRVfwQZLammnIc4v3y9m8SW8zKxQHMJ5p58HfrkPZ?=
+ =?us-ascii?Q?DxwWXT664w/Yh1z+Al//9uznvcpkvNvxK5PZ8bjQkzpNdbPARGVHk73NrRKd?=
+ =?us-ascii?Q?8qv8fjekePbb+pmSub0AbobQ1KlUTuQ66rUvOX5zqDxsOL+xRO1mbbFwutSB?=
+ =?us-ascii?Q?OFOzKhg6NbV/SOHGz0h5F0aiQ0ANGdftMvUii8reXdpCld1MpOCUhLYFsEKi?=
+ =?us-ascii?Q?FUMxCl5M4OV5rtSrIuU94OnI31a+Co/DN4mhPIs50VdsOZzK3NE6omBCEeZq?=
+ =?us-ascii?Q?yV9/NuqNSUV0u6AUN+tMe+krWoKIaYPCp1DSWmADqGdHSTEWwqvC72WTnPOQ?=
+ =?us-ascii?Q?cVJCg2sgTpztWZTbLnNg1UU5Dgjc/I+fToqw2v983qUHwKk5/Jsrxgh0Ht6P?=
+ =?us-ascii?Q?EAYzARtYYQ3QUshdYpenT4hCAhXx/3WLkolYKriTg7ROZiJG1lnmX+lPu6wN?=
+ =?us-ascii?Q?aT2pnFEWopQj6PxRA+c2yUjSDulRvDvCrDqhOXh2lSoY9xmE0fHzY8CVO0H0?=
+ =?us-ascii?Q?XNB4EsQDQ1G43Gv8vgx58c2+ilIDsUgzX8CFSITzVgBAhLMmJY3ArGTCB3oC?=
+ =?us-ascii?Q?FxFT/wz+LVhXjHX39vhj5dJAgWjWgUv3dCbtUCkmhtnpzp9jAXnUs3NlllFF?=
+ =?us-ascii?Q?VXbrfiYEqUTnH4nSgCIQqk94VD5NCnWMf+r6b3C3Pjh7E+V+y7iVOMZzBxwd?=
+ =?us-ascii?Q?5LON0MTLFiMUQIlEJLNe6Cun80fJ2aZca90RHEJI4oLjpe5sWGwiZfkCOBKi?=
+ =?us-ascii?Q?gIlLOyKKONbxx5KsuzdBOXJMKbuUb+LnkiwYSYl4sM090kpw2GiLxY3XDb3X?=
+ =?us-ascii?Q?wRAM4yAlBvdO/ShnJTnN4f+JXA+Dr1kJURjw0o96EnW1WYkEyJhi3uIhzoHk?=
+ =?us-ascii?Q?SyucOLdylj5unCGN0KFXNcCCmBmm41ErC5qSzP7qy0Jd7IFaz9LdSkWF9OEw?=
+ =?us-ascii?Q?76zrlbIqJjmL9lt3a+d7V9Sx98mng/owYwBx7Lv/NX08eVgy64AE+dMx4iZv?=
+ =?us-ascii?Q?C0Nho8GLZZDCWtt00xiT+FwLt41KqVIW3s0qQqcAr/He5w=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5782.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?NURM/SJW6zJ41eqRKkz1uPjuv8yZLFNW98gKk4QMh1nXO+//W0X/RTrcgH25?=
+ =?us-ascii?Q?QkxPQbTpOcJQzGjBuCV1V401KfIgMC2yqs1dlJc1f8YJKSnN87FddoU/R+wm?=
+ =?us-ascii?Q?z+dl3k84hNYdOas4JdmBXol6qNID5dgapdeSufgDI3dvsqxDf0XRSichIbC9?=
+ =?us-ascii?Q?h5vZRJqKmg++6fPdqXVJXGuWDEotyxwI9RlnsGywUXOn80v5sRHmvkUPHhhF?=
+ =?us-ascii?Q?oI7Xk9l5K7+ClZOTtYNlxa+9u8rOV3B+JAY5EKOEd7h7hokOKjyYvDa1LnpG?=
+ =?us-ascii?Q?Vk0/a5rOjLQvEC+/LPOag0YTMiwO5CaWLE9xt2UAI+PI0uerAXQ/MaDVk8E3?=
+ =?us-ascii?Q?fZDvRspw4bDzEkVGGsq/9QV9n0ScSxcPbgApCd2ihIQBlVNL/2yfgsY+uqoS?=
+ =?us-ascii?Q?huGqseJ+xNQ1e/HfizXWXbGLEGIOQh/jY/G8KE1SEtCtTFKBL7efhPZSNShH?=
+ =?us-ascii?Q?oMcwrP1CqaxPotIS6j+xg0VVUDcmFfToZ+f7LMPj8ZXYlduH1DdnGSf5lNwj?=
+ =?us-ascii?Q?+ZgA66WvHh39JREpKJkgfV21h5YKGBBrliZWeapuFu+Ovobt1YhxJ56hgHQW?=
+ =?us-ascii?Q?kHb14l+eXwE51H2vH/ucBRmS3IWUJE+e3aawCI1On6YrHvRjf0O6SQgkphdw?=
+ =?us-ascii?Q?pLzoXs28ANzbkgJ7TDuSiKpOQ7bXztP5CLxC5/kQz4fNkDLp7LWVv3slv/1A?=
+ =?us-ascii?Q?csoWiZo0QVpfpfGPYN2SOTzFHx6FFxOG9bK2sx9Fv28O63UG1J/i7PNkMQbp?=
+ =?us-ascii?Q?wfyxcQ7iY0/6zVN8f8YD06Cmr2esdU5x6OSTJnL0j8lBWoSKToi/Q46HGDKD?=
+ =?us-ascii?Q?0DYlIiYqmTXm5qzxltmUDFF5vQsZoG+XlLgIb3XA7hy5Oipg13qzokQMn9h8?=
+ =?us-ascii?Q?/k1g0bf9QRy3TC95z4ZtCq9G0y2aiwmmOKZuldxCKMsBltvgFv/z0kCrJjQb?=
+ =?us-ascii?Q?AGbBNQdNS8rRfvx05fayO7nE+IRHI9cjnGYBbkwC6V9BCV4XfnAJ1gCqiTGp?=
+ =?us-ascii?Q?s+kGtM4K/KAgn01l5OwPLMoceE959YCSbUFGtUKlaePEEqREFPshjBFBHkwz?=
+ =?us-ascii?Q?EQ3TjcnojhifBWJtnO4amXxMUV8LK/aosKkdudnzQj4JTuBeJzKGNC2yE4OY?=
+ =?us-ascii?Q?Ws7REcUJAie17IWlCBvOA1rvPGuKoOVasqGGJDcz7qMnZTlUF5Yrs7QphdwL?=
+ =?us-ascii?Q?u4h+mNK1eTtr82VXWG6AT92vyHWg2OjI0fgBhaLb/eymoai8C3EBnHY4nZLP?=
+ =?us-ascii?Q?wH0R/xatTefvfBBRwffI8929s+e99wNSz32YjF9yAgQ20mRgkgdvEZB3HNO8?=
+ =?us-ascii?Q?QLiK/qQMkwOhzMMne78+sxaiWYm9F7LzC+15im2kBo2WtkgWmLiDc6zxZWRm?=
+ =?us-ascii?Q?Roz4hW5FTs2YMqJ0VEhk4W83Azr92XTX1kU8f2/F7JHu8NuQxQyJPz+X47Ub?=
+ =?us-ascii?Q?yxUyxu5iQ1C72LrvsBBq4TqxLoRybHhC/WuKF26THAQ7hN+79zfvOXQcwwB9?=
+ =?us-ascii?Q?fvxtgpGg5i01dTXhkTjMUoDXl1CeAGLJgBqA3qIJx4xfq786gp68FJyoQB4S?=
+ =?us-ascii?Q?u1AHUWs17Fk/fKnbq8FLMg2YGCUHSKDWdeK6dpptgU6hB5tC3tH8M2vrg8px?=
+ =?us-ascii?Q?uQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e2cb923-4a78-44bb-27d6-08dc9b672e86
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5782.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 13:51:04.5584
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3IGyNSu4tbtitpggH6pUFe9y3a0jTPMVi4wOLDGXb578YVJw0GTcLyCy8j1GlZKFO8P3BdtWIaPWHH3ERmziKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7342
+X-OriginatorOrg: intel.com
 
-
-
-On 2024-07-02 10:46 p.m., Mi, Dapeng wrote:
+On Wed, Jul 03, 2024 at 08:11:48AM +0200, Thorsten Blum wrote:
+> Remove duplicate included header file trace.h and the following warning
+> reported by make includecheck:
 > 
-> On 7/3/2024 12:05 AM, Liang, Kan wrote:
->>
->> On 2024-07-02 6:40 p.m., Dapeng Mi wrote:
->>> Addresses an issue where, in the absence of a topdown metrics event
->>> within a sampling group, the slots event was incorrectly bypassed as
->>> the sampling leader when sample_read was enabled.
->>>
->>> perf record -e '{slots,branches}:S' -c 10000 -vv sleep 1
->>>
->>> In this case, the slots event should be sampled as leader but the
->>> branches event is sampled in fact like the verbose output shows.
->>>
->>> perf_event_attr:
->>>   type                             4 (cpu)
->>>   size                             168
->>>   config                           0x400 (slots)
->>>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
->>>   read_format                      ID|GROUP|LOST
->>>   disabled                         1
->>>   sample_id_all                    1
->>>   exclude_guest                    1
->>> ------------------------------------------------------------
->>> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
->>> ------------------------------------------------------------
->>> perf_event_attr:
->>>   type                             0 (PERF_TYPE_HARDWARE)
->>>   size                             168
->>>   config                           0x4 (PERF_COUNT_HW_BRANCH_INSTRUCTIONS)
->>>   { sample_period, sample_freq }   10000
->>>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
->>>   read_format                      ID|GROUP|LOST
->>>   sample_id_all                    1
->>>   exclude_guest                    1
->>>
->>> The sample period of slots event instead of branches event is reset to
->>> 0.
->>>
->>> This fix ensures the slots event remains the leader under these
->>> conditions.
->>>
->>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->>> ---
->>>  tools/perf/arch/x86/util/topdown.c | 16 ++++++++++++++--
->>>  1 file changed, 14 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
->>> index 3f9a267d4501..5d7b78eb7516 100644
->>> --- a/tools/perf/arch/x86/util/topdown.c
->>> +++ b/tools/perf/arch/x86/util/topdown.c
->>> @@ -1,6 +1,7 @@
->>>  // SPDX-License-Identifier: GPL-2.0
->>>  #include "api/fs/fs.h"
->>>  #include "util/evsel.h"
->>> +#include "util/evlist.h"
->>>  #include "util/pmu.h"
->>>  #include "util/pmus.h"
->>>  #include "util/topdown.h"
->>> @@ -41,11 +42,22 @@ bool topdown_sys_has_perf_metrics(void)
->>>   */
->>>  bool arch_topdown_sample_read(struct evsel *leader)
->>>  {
->>> +	struct evsel *event;
->>> +
->>>  	if (!evsel__sys_has_perf_metrics(leader))
->>>  		return false;
->>>  
->>> -	if (leader->core.attr.config == TOPDOWN_SLOTS)
->>> -		return true;
->>> +	if (leader->core.attr.config != TOPDOWN_SLOTS)
->>> +		return false;
->>> +
->>> +	/*
->>> +	 * If slots event as leader event but no topdown metric events in group,
->>> +	 * slots event should still sample as leader.
->>> +	 */
->>> +	evlist__for_each_entry(leader->evlist, event) {
->>> +		if (event != leader && strcasestr(event->name, "topdown"))
->> User may uses the RAW format. It may not be good enough to just check
->> the event name.
->>
->> I recall you have a complete support for this in the previous patch. Why
->> drop it?
+>   trace.h is included more than once
+> 
+> Compile-tested only.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  net/l2tp/l2tp_core.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
+> index 88a34db265d8..e45e38be1e7c 100644
+> --- a/net/l2tp/l2tp_core.c
+> +++ b/net/l2tp/l2tp_core.c
+> @@ -61,7 +61,6 @@
+>  #include <linux/atomic.h>
+>  
+>  #include "l2tp_core.h"
+> -#include "trace.h"
+>  
+>  #define CREATE_TRACE_POINTS
+>  #include "trace.h"
+> -- 
+> 2.45.2
 > 
 > 
-> Oh, I ignored the RAW format case. Yes, there is a complete comparison in
-> previous patch, but I originally thought it's over-complicated, so I just
-> simplified it (refer other helpers to compare the name).  If we need to
-> consider the RAW format, it may be not correct for the comparisons in the
-> helpers arch_evsel__must_be_in_group() and arch_evlist__cmp() as well.
->
 
-Right, those need to be fixed as well.
-
-> If we want to fix the issue thoroughly, we may have to expose two helpers
-> which check if an event is topdown slots or metrics event and use these two
-> helpers to replace current name comparison.
-
-Yes, you may have to add an extra patch to introduce the two helper
-functions and replace the existing function.
-
-Thanks,
-Kan
-> 
->>
->> Thanks,
->> Kan
->>
->>> +			return true;
->>> +	}
->>>  
->>>  	return false;
->>>  }
+Reviewed-by: Michal Kubiak <michal.kubiak@intel.com>
 
