@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-238931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F54925382
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:11:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4130C925383
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31BFAB219C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:11:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F021B283E1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CD812E1CE;
-	Wed,  3 Jul 2024 06:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9153762FF;
+	Wed,  3 Jul 2024 06:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4htRq5Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="ZM9TjA8n"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D891C1C69A;
-	Wed,  3 Jul 2024 06:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0D03B1BC
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 06:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719987082; cv=none; b=SCx/wGa512CgEmZZaqyU+ZPrkmaDwiikllyiFiAyH2YGsMhibwlrmZ6wkbl76Ei5t+QN4WIeNlyHayAXQ9pVKFSa/GO05xBJ6VJc9Zvl2xfm3Q87jTnltnfXXQDYbGSOMaoLR4pr0BYzjyVOAjy8GQ/QzGo8QyhnIO+f8jbJaIU=
+	t=1719987132; cv=none; b=udM8w3ULS5P8xUK7XQOPIM8bHefFTcaOyXXniuOTFpQIGYI0SRS6NLPXPBvaPMguf1ywTb0DaQaR9Ay461EBUr1DbKNwc2tIgqN2SYDH1OTx5xu2Sk9k89qSLWQf8rSx0n5vZju5QGsv5msdskBXy03I+OLXgmY9sWdfgZxZD2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719987082; c=relaxed/simple;
-	bh=dkrl4qdg1v7Cw1wOdAvDDj6CD1YkoPIloW0UtKmbjX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rZqGqPdYN1knf5gQZgZfBb/yvgk8Ftv50jhwhtrAXUu+Z0k0rD1meRRMI+UmEAKXKXJBY6dWDfiPFw6hcPgNAVtCaQqTb4aeNhj24a6tGuc1KVKuPKgD6y4x0faeYZBs47cCMnasXa2XuXGRymyzebUZeMqV799Gfh75FXASK6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4htRq5Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5B42C32781;
-	Wed,  3 Jul 2024 06:11:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719987081;
-	bh=dkrl4qdg1v7Cw1wOdAvDDj6CD1YkoPIloW0UtKmbjX8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s4htRq5YxeO43gwT/hyUFvB/tlmMH1ZoTto/N3dKJfBB61txf6cRt5GjbsZTVLWjs
-	 iMd0b9JLHM8/DGliEUPKVBVGps3qQJ4tjlTod8ZW/iWfG5riX3qvZy+437BLovvF30
-	 DGq11iy5J+1d/Q3LMds2EFb7crocRxclaWF5xQspNi7RH6ecGU22SZBN5mXb/z40tc
-	 4JQLWjzoOA6RsPjnjd4qGY9/pEtMJYeb4aJ5U6D3bT4duDhaGweaxpozgzK8STH0a5
-	 URbfNUWzAy5Usr+um9s5/HH/Zu5zt0oz88rkjMq7XYR4D8HUvKw1HCriimNoQOTRgo
-	 CNLy5pjNIKrYg==
-Date: Tue, 2 Jul 2024 23:11:19 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
-	x86@kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, rihams@fb.com,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2] perf,x86: avoid missing caller address in stack
- traces captured in uprobe
-Message-ID: <20240703061119.iamshulwf3qzsdu3@treble>
-References: <20240702171858.187562-1-andrii@kernel.org>
- <20240702233554.slj6kh7dn2mc2w4n@treble>
- <20240702233902.p42gfhhnxo2veemf@treble>
- <CAEf4BzZ1GexY6uhO2Mwgbd7DgUnpMeTR2R37G5_5vdchQUAvjA@mail.gmail.com>
- <20240703011153.jfg6jakxaiedyrom@treble>
- <CAEf4BzbzsKLtzPUOhby0ZOM3FskE0q4bYx-o5bB4P=dVBVPSNw@mail.gmail.com>
+	s=arc-20240116; t=1719987132; c=relaxed/simple;
+	bh=3J99y5+6OxbwcKwAHIcLAKi5CZ2ycbqsCw8ezkKjM80=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bVsRzdRoNHwekPjRa0mF2y9A74fsqveNFWReYpYiv+NuW2Nd5iER6yujarE/vzRhJeRt2YQJhHmJqe5u+YanoHEd1VqymoTFQVxyjGTXiEzAq8itaZmsIE6P0T7eg6D18hQt2EOX5ThDINYvRbI9Kmdh+xHG7Mm8U1d5aitNZb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=ZM9TjA8n; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso5197904276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 23:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1719987129; x=1720591929; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1YgzDReIaUyz8u4XHHLiy/BwQZOZxxkCv3LtW0SkUnc=;
+        b=ZM9TjA8nvdacXOC+i8jV18hP312AcUixvWRcDGa7PG288hGgq9BuqSACT7NHNFXAsx
+         bPZiy9qykcnRjP3Q8VVlO4YiizNsWwOgbl/Yx8WTNvdCFd1d7dGRMA++8aMZHonB8mpK
+         M4R01h7b3L1TBGLv1SAP5C+gjVtaRuOcZritfHoptPXih1SgVSnFT4H2Rju2QbSlcjFD
+         BbDpw5woDX+PVrKSpeoW7pdmAfB7Cj97YNScln1KcqC7LXgQcA4JuJuEveiUTRhgi7Ut
+         X6p6L3jvOc0St6SpkO6sQOYfOnvFB+SzGzudJH8GsuH9fmORQJqhZcTneeY4QnqMr/Kf
+         kMtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719987129; x=1720591929;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1YgzDReIaUyz8u4XHHLiy/BwQZOZxxkCv3LtW0SkUnc=;
+        b=bRT1U04rhCdnHT0nNZb6sjlaR6uekP4upkJIoamDwh+4QHBIqjDSXa6GMNcB0lsboc
+         JjCQUzgtriRNZCRmkQOI0OftXxjFXMyxq0JteJy823IfW0gdx1gq9hOOJfwUmxeutexk
+         Jl9TI4Wrna8Gvahrxo+KfMX3OmU1rVNY+S9XP/GvDERZr1uF7TY2M6ciOMIRLwuZozmw
+         2cIhirQLQSBpSdVSBsMlPEyYW4crkiM1UsqO1e9B62KIzpcZhkiKyxoZkx6uuOORE2PV
+         1UYh7EyYsh8r3cbGEFU5jHnmHtxe4qBWYMhZzT+Hp58yBHGNkHKSHFVFLRJxkUgE2nEd
+         9DaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEWVX4XrKyxX++WCYjk/NGU/TGu0hbNhmEPlW2dqvz9zo+Vr85n+KoFcTnZe3p9cY+qCG5KMp5eWnBxNV4b/X0NCOuUE/wt7ofMtpz
+X-Gm-Message-State: AOJu0Yz0ztw4qjK6gFmErpwfSdcZNuT0ZpoelH4Rd1Q80MrA7HuwruEg
+	hrYEXZwm6fFXnw858EIsPibt/a3HVKVDUpz8CsDlN87hF39sERmvZ/t1JTpzsxk=
+X-Google-Smtp-Source: AGHT+IEYwaFScpXSpfOjk0NDboyzDAX10kkBsDpozYzsFOW5+JJ9NVaivETucKRFmAX9S49/+mU4Bw==
+X-Received: by 2002:a5b:9cf:0:b0:e02:b7d6:c97 with SMTP id 3f1490d57ef6-e036eaf633emr12008074276.8.1719987129659;
+        Tue, 02 Jul 2024 23:12:09 -0700 (PDT)
+Received: from fedora.vc.shawcable.net (S0106c09435b54ab9.vc.shawcable.net. [24.85.107.15])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6a8dbdfdsm7531927a12.29.2024.07.02.23.12.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 23:12:09 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: samuel.thibault@ens-lyon.org,
+	tparkin@katalix.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH net-next] l2tp: Remove duplicate included header file trace.h
+Date: Wed,  3 Jul 2024 08:11:48 +0200
+Message-ID: <20240703061147.691973-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbzsKLtzPUOhby0ZOM3FskE0q4bYx-o5bB4P=dVBVPSNw@mail.gmail.com>
 
-On Tue, Jul 02, 2024 at 08:35:08PM -0700, Andrii Nakryiko wrote:
-> On Tue, Jul 2, 2024 at 6:11 PM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> > On Tue, Jul 02, 2024 at 05:06:14PM -0700, Andrii Nakryiko wrote:
-> > > In general, even with false positives, I think it's overwhelmingly
-> > > better to get correct entry stack trace 99.9% of the time, and in the
-> > > rest 0.01% cases it's fine having one extra bogus entry (but the rest
-> > > should still be correct), which should be easy for humans to recognize
-> > > and filter out, if necessary.
-> >
-> > Agreed, this is a definite improvement overall.
-> 
-> Cool, I'll incorporate that into v3 and send it soon.
-> 
-> >
-> > BTW, soon there will be support for sframes instead of frame pointers,
-> > at which point these checks should only be done for the frame pointer
-> > case.
-> 
-> Nice, this is one of the reasons I've been thinking about asynchronous
-> stack trace capture in BPF (see [0] from recent LSF/MM).
->  [0] https://docs.google.com/presentation/d/1k10-HtK7pP5CMMa86dDCdLW55fHOut4co3Zs5akk0t4
+Remove duplicate included header file trace.h and the following warning
+reported by make includecheck:
 
-I don't seem to have permission to open it.
+  trace.h is included more than once
 
-> Few questions, while we are at it. Does it mean that
-> perf_callchain_user() will support working from sleepable context and
-> will wait for data to be paged in? Is anyone already working on this?
-> Any pointers?
+Compile-tested only.
 
-I had a prototype here:
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ net/l2tp/l2tp_core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-  https://lkml.kernel.org/lkml/cover.1699487758.git.jpoimboe@kernel.org
-
-Hopefully I can get started on v2 soon.
-
+diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
+index 88a34db265d8..e45e38be1e7c 100644
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -61,7 +61,6 @@
+ #include <linux/atomic.h>
+ 
+ #include "l2tp_core.h"
+-#include "trace.h"
+ 
+ #define CREATE_TRACE_POINTS
+ #include "trace.h"
 -- 
-Josh
+2.45.2
+
 
