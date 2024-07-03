@@ -1,100 +1,78 @@
-Return-Path: <linux-kernel+bounces-238936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4B5925396
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:23:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0742A92539A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79F87B22DBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:23:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87D0AB23997
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01398130A58;
-	Wed,  3 Jul 2024 06:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3A6130AC8;
+	Wed,  3 Jul 2024 06:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQiebCqZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CuNCfp4U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439E31DA32B;
-	Wed,  3 Jul 2024 06:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAF212FB2F;
+	Wed,  3 Jul 2024 06:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719987814; cv=none; b=ZlEf4roZEwQhmu6+FHdDdJN2yQdLl25DlKMqaZeQatAjag//qpOk1PtzmsBl+WLH5hRzx2Dzfnj9s7evYC90lC33He0YLPcRRSFtko1H9xzx53tk4r6pc7F/JWyAoFwKKKCYomn/md2Y9pMyIRiSRykTsikC3P/RSln4QEUgQpw=
+	t=1719987897; cv=none; b=ISHUCxXRqbKwmFyPXqvR82fTXE6Ymh4T7xUi23BxlNJ7B/GYOarBsrR6xh3+SSIEKBBlWJGaLEXg9UIzgHDo36fsCmWgcGHU4mi4Ha8/SGYemp5sbS0cEpGFuubvhi+Wibpn1vq+ihHC7vqx0z6CDnBNK6LIVu9+w1y3KwHTWHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719987814; c=relaxed/simple;
-	bh=NOPpPrTT+XA1IWATtadthssEOsqUiYP+j/C0vhzv8g0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CHaUIz3YchxU5nH9G1OKFEsJcUBv2efWFDef8jHlyNcI8Sb6Ogc8humtu/MlYWH6iegHidmT7HTpl3w5h2+mwP20g/QNhjRr0+esMDG+oDMRjHvCfE+9ekbj8lW3YLpTaPQIRBtCf0fiWdPPaaiaW7aenfpzOHQaRNc/MJqLfKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQiebCqZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E554C32781;
-	Wed,  3 Jul 2024 06:23:32 +0000 (UTC)
+	s=arc-20240116; t=1719987897; c=relaxed/simple;
+	bh=gpVnu/Rr7w0UXXS2ukTjyVwS9ckAbMI6Cs8ZHqish5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dK5Wz1vyDVvE5KDSBTK+T3T7qHZ5nV3ARNHO6gXiFuLyeyj1td6miEKZEE45pNDDuonji4AiSrUZlx8v+ryDF/yBLvHqdeBQxviLjMFLCLQPLt3cBV5Gr3DICfVB9Io01El5Pki5RqLiuPOVcCQp3AnlESQ0LVmZC7fiSLOUexQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CuNCfp4U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABDEEC32781;
+	Wed,  3 Jul 2024 06:24:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719987813;
-	bh=NOPpPrTT+XA1IWATtadthssEOsqUiYP+j/C0vhzv8g0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=PQiebCqZnsPczUBd4x+hV5DJom1qOM5cp3+GmcTuKX5MXwpoENRZqrySFcQJ4BrOL
-	 Rrd3ROUE6esrQn2WSHKEYhklfM4ITlTEER3+2BqQjqGG8SWv012OSB58F5zJIQglED
-	 DaBXOOvArNt16+sBo2K64H/t4vwfPsQRbRtUSNeAOEGxwE5r5iEneu2zjRm88gRmzZ
-	 /iGfL6nU11Tf/1bDYmp+DB9qq6hOucbl9GqA6Xfh6v+SgnUcjdeJHV1WZOjjuYDvBd
-	 6QuOekWJP1w9O3nMSYU7R2X4l6YEsfwo1R0s5fH+cBIHH9IulF2Bu8PD2d6SkX/47O
-	 7rGDZgH6BSnZA==
-Date: Wed, 3 Jul 2024 08:23:29 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Linux Media Mailing List
- <linux-media@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL for v6.10-rc7] media fixes
-Message-ID: <20240703082329.20b1bc37@coco.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1719987897;
+	bh=gpVnu/Rr7w0UXXS2ukTjyVwS9ckAbMI6Cs8ZHqish5g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CuNCfp4UDt5L8b7EVQy2OLvYODcFrpoQhqpokUKQ8AtaiDZ6BxrC8hvdW82VwafcO
+	 YfQDFGT7It9eB2Ar4Qaw+hH7OmJuEo0EpT7SRf7Hztpv/urp3KoYJEFmqiEiWvARp0
+	 7xwFvjQGGIXdpxWILFzXs5lrtnVmYFDnfZWrd4LkGdkEaviE7hXZxltpj5bMGEAPFo
+	 GiO5plj++/KaziclCtd/1TsOkH40awMsdnBgZZwrywNauG7/Xe398uuTtOIa0kmvz6
+	 hM/pomSVeJkJVUZWbutqIk6QD4+avxrSPsQOWpFhAji1OXeG5Cj4l0K1Y2Ws3tNCLs
+	 RROVTfx1MlsIw==
+Date: Tue, 2 Jul 2024 23:24:55 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Alexandre Chartre <alexandre.chartre@oracle.com>
+Cc: x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	daniel.sneddon@linux.intel.com, pawan.kumar.gupta@linux.intel.com,
+	tglx@linutronix.de, konrad.wilk@oracle.com, peterz@infradead.org,
+	seanjc@google.com, andrew.cooper3@citrix.com,
+	dave.hansen@linux.intel.com, nik.borisov@suse.com,
+	kpsingh@kernel.org, longman@redhat.com, bp@alien8.de,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v2] x86/bhi: BHI mitigation can trigger warning in #DB
+ handler
+Message-ID: <20240703062455.ncak7idh2e3fv6sq@treble>
+References: <20240524070459.3674025-1-alexandre.chartre@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240524070459.3674025-1-alexandre.chartre@oracle.com>
 
-Hi Linus,
+On Fri, May 24, 2024 at 09:04:59AM +0200, Alexandre Chartre wrote:
+> When BHI mitigation is enabled, if sysenter is invoked with the TF flag
+> set then entry_SYSENTER_compat uses CLEAR_BRANCH_HISTORY and calls the
+> clear_bhb_loop() before the TF flag is cleared. This causes the #DB
+> handler (exc_debug_kernel) to issue a warning because single-step is
+> used outside the entry_SYSENTER_compat function.
 
-Please pull from:
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.10-3
+Reviewed-by: Josh Poimboeuf <jpoimboe@kernel.org>
 
-
-For some fixes related to the IPU6 driver.
-
-Regards,
-Mauro
-
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
-
-  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.10-3
-
-for you to fetch changes up to fd404435d44b453d62afe77545b9252c2cc72c8a:
-
-  media: ivsc: Depend on IPU_BRIDGE or not IPU_BRIDGE (2024-06-15 11:51:23 +0200)
-
-----------------------------------------------------------------
-media fixes for v6.10-rc7
-
-----------------------------------------------------------------
-Hao Ge (1):
-      media: intel/ipu6: Fix a null pointer dereference in ipu6_isys_query_stream_by_source
-
-Sakari Ailus (2):
-      media: ipu6: Use the ISYS auxdev device as the V4L2 device's device
-      media: ivsc: Depend on IPU_BRIDGE or not IPU_BRIDGE
-
- drivers/media/pci/intel/ipu6/ipu6-isys-video.c | 2 +-
- drivers/media/pci/intel/ipu6/ipu6-isys.c       | 2 +-
- drivers/media/pci/intel/ivsc/Kconfig           | 1 +
- 3 files changed, 3 insertions(+), 2 deletions(-)
-
+-- 
+Josh
 
