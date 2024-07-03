@@ -1,205 +1,175 @@
-Return-Path: <linux-kernel+bounces-240195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11CF926A22
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18091926A2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43051C22022
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2DF1C21DEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50742191F6C;
-	Wed,  3 Jul 2024 21:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15BE19412E;
+	Wed,  3 Jul 2024 21:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGBKI8ib"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nXfomUYn"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0B22BB13;
-	Wed,  3 Jul 2024 21:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94462191F73
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 21:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720041792; cv=none; b=UWT4sVsXmjdkvtIbtkgW1UhaJdJUrIz/7q7PMYuOTw3ct2pbUX1CsX1YmOV40A7Bfg9oTPgccUOYOS0tehuXgf6/lsAyKT7g9cLyIaBqPX6DVSBkGJibzNu9ELtFByg/6csENg8HSw0+mo8ASA8foKFd0FqgvHUY8P+z1dHmbsQ=
+	t=1720041809; cv=none; b=VhZto2Gjli4q5v/r/Hd+fqfIePbHKVUaq2bYbOzOd43iFcGJ3RpSQNup+oYUgThqGuD811dP0dqa7iMkV99ZntE/KSoALiiNKB5qHWSa2hxRUNK9SPnzUS4kI08/cALaxUmXSJpZw/KFDu5ffY0blwMEs8tWBqeoa50xWEky9qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720041792; c=relaxed/simple;
-	bh=2ieoZ2IlCs+IyedLZuRseH/oLdEXmhc7vi+zgmr5NVk=;
+	s=arc-20240116; t=1720041809; c=relaxed/simple;
+	bh=1yCUJShNVEleKhhq5ttC7d+C2KlI7KvONMEvrwhI5X0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jd6roVsLa47BwlV4SD+CwLEnbcP0t8ck+oJ6zY88XoDih4uet17VOC0T2ARki8w+3j2enuSvAqE/nZNJTZNZBkVvRizbj5u9G6Ffra2A4lgeXe1h2jkyWwEtJR0PrTAqCGzkGo6YOED1AsUQDAudKMuBPHNXWOivl4H2Zy0KNrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGBKI8ib; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E08BC2BD10;
-	Wed,  3 Jul 2024 21:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720041792;
-	bh=2ieoZ2IlCs+IyedLZuRseH/oLdEXmhc7vi+zgmr5NVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GGBKI8ib5cnvhX/bvlSxYcgnO+YYsZKX7N7OSjy1XJ3glGy+5UzyI6OxXYLr4WRdl
-	 S+7L33X6rlYouoHHrV+AnR64KShEKFLh5ge6KdxUPxVDrLdineoj0NMzFCqZtW84xE
-	 fXhfxBsoKRis985us7/H+lN3MQwDst17PTe6j0DyyPI+gRceicUNdmy+EWy8kBQVLk
-	 MHsz07T4Vz4vUBQfNZObIN9FIMq94SAXGJQF9N52eEIPaKhU2NuNSp1n5KtKpK6j+9
-	 T2HsmSjLi065UDWmiNiUywdaTNYVyzhZrqpIVx2MBUibQYF+Dgl32n2Yli9Aea1Him
-	 S2HcnNGydyFGA==
-Date: Wed, 3 Jul 2024 14:23:10 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@arm.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] perf test: Display number of remaining tests
-Message-ID: <ZoXBPrw0kOtgLu98@google.com>
-References: <20240701044236.475098-1-irogers@google.com>
- <20240701044236.475098-3-irogers@google.com>
- <ZoTIDCXKZw0bnthC@google.com>
- <CAP-5=fUAeVL57Q14hL=girAeNev-xjgz0Wv5Vpc_OMwXoouoTQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ocnN2ApkiVTKpgDQTxmQmyMt9TxqUb+YbcZOVenELhpZ+Ep1G0nVP7osHf3dIfPEnCMha+/f/NYwaF9ad1NhBMwHu6pMlkAOUZsikLGjOkd5Vyg9LaWCRaD14MeP60jAuo32rAwSGcacsOEpKE4Ny0fhzcreXh1uf1MB7Z9kNik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nXfomUYn; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a77abe5c709so60595666b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 14:23:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720041805; x=1720646605; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rmKjZalCS3qgqBNUJ2X1ny0z1S/+Ouz6++2zspqi0Zc=;
+        b=nXfomUYnbzj9LIVMPNRYyGPrGSgzQo3TYNnoG9X6sbtMdvka2gkBTWeWFH82v3YY6y
+         FpKutlnlUYALdpJAw5zXMSlyPvSu9EOBXKZO6nM48K2lmmuMVaihjB2V4N8NIAeLICoA
+         8Uu26Fln/UY28RYLPeehl3Nqzi8hopZLB4IgW8EaEqF9COvqp8YTsl4SWDtCjS2PFUzL
+         tygWBTwykzO88IpSKXeemkGeoic+DrezgiZcsHKtkACDRstfeu+ctDVlME2MjqdFZz+x
+         j8jWMtVy55HHvUxAKVW7SN1SWTLn/M5rn5xatBJuTs1sdL2Mq/8rTtvNj3n3KPEq2RrC
+         6LzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720041805; x=1720646605;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rmKjZalCS3qgqBNUJ2X1ny0z1S/+Ouz6++2zspqi0Zc=;
+        b=cRVQBHSlQVTKQimdOlndQzL38mzAXMLmoXOxao2RzsyNwpGlYvCc0EhhOaa5qYq1tb
+         IAWdolGWZCT3E9wnp542+GecyhksQGa+TXjF0hVadSF25iD5uyVF6Tp/k7DKyuhydSP8
+         zuGzvFeiEL7LNR44aepNXbAF/Sx8jsmKhGPlLA5L38gmHOXnC8lTHdX1hAoCPiCHBhXk
+         wiy502Gv+QLzS/QXFtQKeBdRKC+iN80eN3eaiAiojZ5ax8Ya0fPF1FQWI9ql86XHXpKO
+         YOLt/vQUX7yLv+NgwkIRUYp+jp75ggi561cud7Fkx9E3EPBbyF+yz0Zl+wtLrxmQJt9B
+         hzOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQy8pZiP81/MHZHy9K8Hs6edWZWLkJJ4Zl9fbjjg7DlbYbrKP2aJ326cDaZQsJQzGuWCJoN0l38Kxp1USknOAHFDx0Q+bpIefxDV0B
+X-Gm-Message-State: AOJu0YysP0iIxaaVACqwMVUoyLyKth2bDNB7SIs1vxP1xe8WH1JQBZOw
+	acLL/hmAxwSH90n004IGL02Na3r5h4BCtc3RvNrTl30+hpk7v8R0Epzh4QK/tBE=
+X-Google-Smtp-Source: AGHT+IEiDeirJZbiRR9WOgvKVRp5lPoOHJBTmQD67pQvhrzI/8nB0fQNgTn38F10sD2qUfAawYddVg==
+X-Received: by 2002:a17:907:1c15:b0:a72:883f:f3dd with SMTP id a640c23a62f3a-a75144a8a02mr1042146966b.56.1720041804879;
+        Wed, 03 Jul 2024 14:23:24 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:5696:f293:6e5e:98bf])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0651c0sm541105666b.123.2024.07.03.14.23.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 14:23:24 -0700 (PDT)
+Date: Wed, 3 Jul 2024 23:23:22 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Tony Lindgren <tony@atomide.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Richard Leitner <richard.leitner@linux.dev>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+	Damien Le Moal <dlemoal@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-usb@vger.kernel.org, patches@opensource.cirrus.com, linux-sound@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 13/20] pwm: samsung: convert to
+ of_property_for_each_u32_new()
+Message-ID: <l2xret6kx4qwee3c3abmmhz5uop7zuobxath2eou2utklztkgl@c7lskt3xk3wj>
+References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
+ <20240703-of_property_for_each_u32-v1-13-42c1fc0b82aa@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3uu6b6ybcnfri4lk"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUAeVL57Q14hL=girAeNev-xjgz0Wv5Vpc_OMwXoouoTQ@mail.gmail.com>
+In-Reply-To: <20240703-of_property_for_each_u32-v1-13-42c1fc0b82aa@bootlin.com>
 
-On Tue, Jul 02, 2024 at 09:30:44PM -0700, Ian Rogers wrote:
-> On Tue, Jul 2, 2024 at 8:40 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Sun, Jun 30, 2024 at 09:42:36PM -0700, Ian Rogers wrote:
-> > > Before polling or sleeping to wait for a test to complete, print out
-> > > ": Running (<num> remaining)" where the number of remaining tests is
-> > > determined by iterating over the remaining tests and seeing which
-> > > return true for check_if_command_finished. After the delay, erase the
-> > > line and either update it with the new number of remaining tests, or
-> > > print the test's result. This allows a user to know a test is running
-> > > and in parallel mode (default) how many of the tests are waiting to
-> >
-> > It's not default anymore. :)
-> >
-> >
-> > > complete. If color mode is disabled then avoid displaying the
-> > > "Running" message.
-> > >
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > ---
-> > >  tools/perf/tests/builtin-test.c | 77 ++++++++++++++++++++++-----------
-> > >  tools/perf/util/color.h         |  1 +
-> > >  2 files changed, 53 insertions(+), 25 deletions(-)
-> > >
-> > > diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-> > > index c3d84b67ca8e..23be9139f229 100644
-> > > --- a/tools/perf/tests/builtin-test.c
-> > > +++ b/tools/perf/tests/builtin-test.c
-> > > @@ -241,7 +241,10 @@ static int run_test_child(struct child_process *process)
-> > >       return -err;
-> > >  }
-> > >
-> > > -static int print_test_result(struct test_suite *t, int i, int subtest, int result, int width)
-> > > +#define TEST_RUNNING -3
-> > > +
-> > > +static int print_test_result(struct test_suite *t, int i, int subtest, int result, int width,
-> > > +                          int remaining)
-> > >  {
-> > >       if (has_subtests(t)) {
-> > >               int subw = width > 2 ? width - 2 : width;
-> > > @@ -251,6 +254,9 @@ static int print_test_result(struct test_suite *t, int i, int subtest, int resul
-> > >               pr_info("%3d: %-*s:", i + 1, width, test_description(t, subtest));
-> > >
-> > >       switch (result) {
-> > > +     case TEST_RUNNING:
-> > > +             color_fprintf(stderr, PERF_COLOR_YELLOW, " Running (%d remaining)\n", remaining);
-> > > +             break;
-> > >       case TEST_OK:
-> > >               pr_info(" Ok\n");
-> > >               break;
-> > > @@ -272,13 +278,15 @@ static int print_test_result(struct test_suite *t, int i, int subtest, int resul
-> > >       return 0;
-> > >  }
-> > >
-> > > -static int finish_test(struct child_test *child_test, int width)
-> > > +static int finish_test(struct child_test **child_tests, int running_test, int child_test_num,
-> > > +                    int width)
-> > >  {
-> > > +     struct child_test *child_test = child_tests[running_test];
-> > >       struct test_suite *t = child_test->test;
-> > >       int i = child_test->test_num;
-> > >       int subi = child_test->subtest;
-> > >       int err = child_test->process.err;
-> > > -     bool err_done = err <= 0;
-> > > +     bool err_done = false;
-> > >       struct strbuf err_output = STRBUF_INIT;
-> > >       int ret;
-> > >
-> > > @@ -293,7 +301,7 @@ static int finish_test(struct child_test *child_test, int width)
-> > >        * Busy loop reading from the child's stdout/stderr that are set to be
-> > >        * non-blocking until EOF.
-> > >        */
-> > > -     if (!err_done)
-> > > +     if (err > 0)
-> > >               fcntl(err, F_SETFL, O_NONBLOCK);
-> > >       if (verbose > 1) {
-> > >               if (has_subtests(t))
-> > > @@ -307,29 +315,48 @@ static int finish_test(struct child_test *child_test, int width)
-> > >                         .events = POLLIN | POLLERR | POLLHUP | POLLNVAL,
-> > >                       },
-> > >               };
-> > > -             char buf[512];
-> > > -             ssize_t len;
-> > > -
-> > > -             /* Poll to avoid excessive spinning, timeout set for 100ms. */
-> > > -             poll(pfds, ARRAY_SIZE(pfds), /*timeout=*/100);
-> > > -             if (!err_done && pfds[0].revents) {
-> > > -                     errno = 0;
-> > > -                     len = read(err, buf, sizeof(buf) - 1);
-> > > -
-> > > -                     if (len <= 0) {
-> > > -                             err_done = errno != EAGAIN;
-> > > -                     } else {
-> > > -                             buf[len] = '\0';
-> > > -                             if (verbose > 1)
-> > > -                                     fprintf(stdout, "%s", buf);
-> > > -                             else
-> > > +             if (perf_use_color_default) {
-> > > +                     int tests_in_progress = running_test;
-> > > +
-> > > +                     for (int y = running_test; y < child_test_num; y++) {
-> > > +                             if (check_if_command_finished(&child_tests[y]->process))
-> > > +                                     tests_in_progress++;
-> > > +                     }
-> > > +                     print_test_result(t, i, subi, TEST_RUNNING, width,
-> > > +                                       child_test_num - tests_in_progress);
-> > > +             }
-> > > +
-> > > +             err_done = true;
-> > > +             if (err <= 0) {
-> > > +                     /* No child stderr to poll, sleep for 10ms for child to complete. */
-> > > +                     usleep(10 * 1000);
-> > > +             } else {
-> > > +                     /* Poll to avoid excessive spinning, timeout set for 100ms. */
-> > > +                     poll(pfds, ARRAY_SIZE(pfds), /*timeout=*/100);
-> >
-> > When I tested this patch, I saw it refreshes too often in parallel mode.
-> > Maybe 100ms is too short?  I don't know if it's from usleep (10ms) or
-> > here.
-> 
-> It's usually the poll and I suspect it is the test writing a lot of
-> output. I agree it can look a little flickery but it is also
-> responsive in terms of not waiting too long before moving to the next
-> test. I think it is possible to improve on the code here, the main
-> thing I was after was making the output writing self contained and not
-> split between start test and finish test, as that won't work well in
-> the parallel case.
 
-Is it possible to skip the rewriting if nothing is changed?
+--3uu6b6ybcnfri4lk
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Namhyung
+Hello,
 
+On Wed, Jul 03, 2024 at 12:36:57PM +0200, Luca Ceresoli wrote:
+> Simplify code using of_property_for_each_u32_new() as the two additional
+> parameters in of_property_for_each_u32() are not used here.
+>=20
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+>  drivers/pwm/pwm-samsung.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+> index efb60c9f0cb3..fef02a0b023e 100644
+> --- a/drivers/pwm/pwm-samsung.c
+> +++ b/drivers/pwm/pwm-samsung.c
+> @@ -510,8 +510,6 @@ static int pwm_samsung_parse_dt(struct pwm_chip *chip)
+>  	struct samsung_pwm_chip *our_chip =3D to_samsung_pwm_chip(chip);
+>  	struct device_node *np =3D pwmchip_parent(chip)->of_node;
+>  	const struct of_device_id *match;
+> -	struct property *prop;
+> -	const __be32 *cur;
+>  	u32 val;
+> =20
+>  	match =3D of_match_node(samsung_pwm_matches, np);
+> @@ -520,7 +518,7 @@ static int pwm_samsung_parse_dt(struct pwm_chip *chip)
+> =20
+>  	memcpy(&our_chip->variant, match->data, sizeof(our_chip->variant));
+> =20
+> -	of_property_for_each_u32(np, "samsung,pwm-outputs", prop, cur, val) {
+> +	of_property_for_each_u32_new(np, "samsung,pwm-outputs", val) {
+>  		if (val >=3D SAMSUNG_PWM_NUM) {
+>  			dev_err(pwmchip_parent(chip),
+>  				"%s: invalid channel index in samsung,pwm-outputs property\n",
+>=20
+
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+
+Feel free to merge this together with the change from the first patch.
+
+Best regards
+Uwe
+
+--3uu6b6ybcnfri4lk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaFwUcACgkQj4D7WH0S
+/k6PuggAu8WCVFGH6QIMKU3X2rf+i2w61Hm9yGoz/E1JXjYYwhvN07D9QQrg3lFk
+uuvOlwgkdfuIHAsZupm4B503z6Cr+9e1c0yd2UsXZkR+Y5e5uAcWpFrqQPpsUjg6
+K4y5iO46KFiNdoyIw5vaEqa9r+2MGaV/6utEBzK71uNVzWWnYAxGJSrp9BXXUlRN
+ZUz4u7b3Yp+kmsIoFWF2SYjPB08bXS+XlNegSLFuhFLAklD1WtMgdfiyFyqVm20f
+wxAtUX4pOe9E7HV+9qcyWKkbxhOVOOD6iG1CnatgtZoAeRfvmcNx+o2M4x8H0qXK
+hetCnR7IsLL80SX5lvKiYYw2At4OEA==
+=UQNH
+-----END PGP SIGNATURE-----
+
+--3uu6b6ybcnfri4lk--
 
