@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-238965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14CB925441
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:58:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD365925442
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6687A283133
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:58:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B771F220C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8EC13440A;
-	Wed,  3 Jul 2024 06:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6651D135A71;
+	Wed,  3 Jul 2024 06:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVEO/jz9"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AkGCrcyk"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9281A45025
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 06:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22446134415
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 06:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719989892; cv=none; b=nD+djapCJgyzpd62ykGBZ3k6dJmRQHLJIbTHaJ+CQpTHg4mGvJWNTkzWWXYwCshhN+zaAeeZXkC9P9v1D8DItAMa5SIS99IQTVUQWue00uJMuqoUXcUNCwRzEQ/UwCJGqSYF9CgBZ7X8HKUHnaL2B4R8GADnYWnQv7DsNb32q5g=
+	t=1719989897; cv=none; b=V4aFEbJnSBoEYTjcXIh/B7PIxXOPl7iXXF4hPmsCfiGITwWSdWn/9Bwh9EZFAUVSU5cgV68/aGgCFlDK5QoIbvdkIY62cHp7w7KBNYxFkmX5LJtzOzfOoSYkE7yEN+E81FnB0LvYSy7hkejvXBk1Pk0Q9T5+aI4An9PUq0EKAO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719989892; c=relaxed/simple;
-	bh=Aat+8U0Q3IJAuf5l3+vmrAyh7Zy59LxP/ajakTChWQM=;
+	s=arc-20240116; t=1719989897; c=relaxed/simple;
+	bh=ZPs014jUeapXXCgzHtG44Q1FaQuSO5JnIUvqtly4tiY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YawFq5CzdWkd2o/zMRw+r2gz3Sp+vpQJslm6BoarBEe/fErOPKPd4j9vubLDagQrol9QYexffDZhgRuLv1EYrjYzE4hFBajzcD2hmNVDxGT7bMcpmzlcMrxE+VegQqYjuDND46Th8o8SAgeaoo3ZUlVuuEJHu7licC02VPIv0Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PVEO/jz9; arc=none smtp.client-ip=209.85.215.181
+	 MIME-Version; b=YGAhV64yKsq0MzRI6t0dhS4wFJpIOFRg3OR2xsnYUwbX79Jnp1aNnu2NPUzZ9yZJ3WKG6tzeREQYPg7njESbv57NT1yMO50rH5AaQOzNuDENweOaGDcwS6a4TKxab/ZnhwdzsHOKFBSzNAgETtmkDqnuFVi7VHf06JuRSS3l2QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AkGCrcyk; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7449fbfeb6bso2057167a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 23:58:10 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c8911c84daso3468505a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 23:58:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719989890; x=1720594690; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719989895; x=1720594695; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g5IB8/nq6DlwhVNyviTWwBZ2x7h3P9W/CW2Qn6PLl7I=;
-        b=PVEO/jz96KjYk3ECqRk8aBFVUi2apJupGsI/KoyBIloqKDS+zdAJzvETVs7ajy85Tl
-         zlFVXdscjzYGWhkNT5wL1eMit+QeFJ1oankhYXzDrIy+09Fc1XiQJG6az27C14WxWhLd
-         mHEJ+am5z/ianU3BMQWwfi5HR6k62IOB4z/zAMsdtABtVbB7KeRkbg46ZqAuONHIIact
-         oZfESiJJ3DRRJ27PI8MvL8QtWKCRetr0j3PTMGapjFOZicjTYUq0arAOW1i/jlSh7gNj
-         R0Ikff1qLz8H2/N7fhBdedxoZacsWMll6/9BdIw48zQyeFEGoC/Htc/oU7+cThQ9e4h8
-         JUQg==
+        bh=xzpdtG7l+61FZknCaY59u/tBtOIKZgOnyqq0sEG7wfc=;
+        b=AkGCrcykJlhpDOHQK+VLb2YXoUJBsrzcomXV5EgmOsWU4cWVVGPfd2OpGjDsb2ezoC
+         542jInNrf2mmEVxkiImLuf6n9bvtu5Wqu/THJIFH8Eo5iCsuhv+gUcERcjyQ5wzDIS9m
+         wS3Mx6OCQwPv0VLzxeYRWvHs5J8SdbtENkRCNPdKz/F0WILa13tj8GD2SXRG1An1PKtc
+         Wr6GI61T3dGK0TybEE1kkFYZCi0H36+sWUcylsf/I1B0FPnnzPJKaaaW5eT+gzB+c3o1
+         cgHqjTwDMa55cNiQT58nbzu/o+fY6EQFbaBQHJq1O5vxZuZB1wAc4OHTG6usmUTv2gZi
+         LGEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719989890; x=1720594690;
+        d=1e100.net; s=20230601; t=1719989895; x=1720594695;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g5IB8/nq6DlwhVNyviTWwBZ2x7h3P9W/CW2Qn6PLl7I=;
-        b=X6OqgvUeWQ6UMv3auQb3WJ7CAR+0CKhgZKLs+WWlkB0uyAynStb8UOKN4zmR7nzuLG
-         8n0k92ro+ykFqlJjulD6HHcPAbWgqOssr0SrJd8+DPscS1h1/B/lpE5xFStVlZbZTG+F
-         n+SzF3fjdpaCeePtCm4XeVlkbZKM9gM6mkvOg/66K8Y6mr7hrBVJV+iritbHYPqdrKXQ
-         urcJsjTjNrvYFgQh3o4E0kMJdqIQ1vjnoaJVWtoDtFtqdj78Qb6GtdGvMbSoReG/59le
-         FFdNpWTqO+JClk5YSZX7LrjcNbtHtp1EOz5hI58/EZbaPpy3AfbdWZWUlSO9NwATn4Vl
-         BOJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUVhzOJU/uFdOEFxjfeRacrBfI+UQHQ45A+YEX3XgN8ygVloBSUPrvDh6Nr4Ue7DhMxAr5S23MH4oO/ma06ePXDXQJXDxiwvyxBL05
-X-Gm-Message-State: AOJu0YznpKbvH6nvfEKhhh7ROi2yao8QO0kZ9pvxWb/r28V8FhhpVIkU
-	PkpVCNV/hhHwkNXqjfue39+fcG1QTEnLA04248sZm6NA2Wg5SV73
-X-Google-Smtp-Source: AGHT+IEY3rUCcx/kslsTq7Tjv7pevyUVOb+O1uxfTVwJ9nsCAKEHnyQPyUnwCmSJchrtKSBAnmdQ0A==
-X-Received: by 2002:a05:6a20:244c:b0:1be:c5c8:d1e2 with SMTP id adf61e73a8af0-1bef6198ccamr12807732637.35.1719989889627;
-        Tue, 02 Jul 2024 23:58:09 -0700 (PDT)
+        bh=xzpdtG7l+61FZknCaY59u/tBtOIKZgOnyqq0sEG7wfc=;
+        b=dDwyy+ppsYDIYfid1Ww3bCSi4PZX18cGjEnNWNB8FeGzIwCqTUvrWbmyltcOq47O5G
+         rdn7rz2lsAoIjO+0tgwOWrkD4KxraQzHfkQTH/XO4FMhCDg7IPhOws8FaVpRHLmWuNWF
+         6TZzLXFyy8f3PwgDm8GDMgp3DF7Cu9XvbVF4IwlpjONZXCjl75uZVrU06jH3iKxtS+XJ
+         bIYtDwJPPtcVlaatAbQVjDe2QEfS6o+5hLDaUhP3/peyJJAzPKG8Q+QlG6O3bv+L4j7X
+         lx8xyn/rU2Elep9Nm9VV7V4x+oy5uVMIaOYbq6dLJC3RmMetQxCFWdg5hoUqRohEavCU
+         7PbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMQa7JMsBkbR1PQEQZnKj0jTXCy628GHE8vlS1xiYJNXNa/5l4G7JMlRHmmiBMepKKR2l9LwFgDEY0lvWSD6rjFBpLdEL3V2hsJMjm
+X-Gm-Message-State: AOJu0Yw3G2lf62ipmzy/DbzBjYGN8ML7t1E1xpFshYfXL4ZRx/0zFq41
+	sEGMEDcUjw+IbDJ2WoffpNWoldX9Y9EXeC+STHXq+MAoALdkJzJg
+X-Google-Smtp-Source: AGHT+IFhTTaB1WupIMW6rfPpx8ReG1qfczZ5DxmoQdwGtfpjx5/6cHxOC3KlaEaxTWQ5ki3CPJyZXg==
+X-Received: by 2002:a17:90b:3a8b:b0:2c8:6308:ad78 with SMTP id 98e67ed59e1d1-2c93d7694abmr10642022a91.34.1719989895182;
+        Tue, 02 Jul 2024 23:58:15 -0700 (PDT)
 Received: from kousik.local ([2405:201:c006:312d:258c:c06c:76e7:dba9])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3e818asm9973921a91.51.2024.07.02.23.58.05
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3e818asm9973921a91.51.2024.07.02.23.58.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 23:58:09 -0700 (PDT)
+        Tue, 02 Jul 2024 23:58:14 -0700 (PDT)
 From: Kousik Sanagavarapu <five231003@gmail.com>
 To: Julia Lawall <julia.lawall@inria.fr>,
 	Nishanth Menon <nm@ti.com>,
@@ -77,9 +77,9 @@ Cc: Shuah Khan <skhan@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Kousik Sanagavarapu <five231003@gmail.com>
-Subject: [PATCH v2 1/3] soc: ti: pruss: do device_node auto cleanup
-Date: Wed,  3 Jul 2024 12:25:26 +0530
-Message-ID: <20240703065710.13786-2-five231003@gmail.com>
+Subject: [PATCH v2 2/3] soc: ti: knav_qmss_queue: do device_node auto cleanup
+Date: Wed,  3 Jul 2024 12:25:27 +0530
+Message-ID: <20240703065710.13786-3-five231003@gmail.com>
 X-Mailer: git-send-email 2.45.2.561.g66ac6e4bcd
 In-Reply-To: <20240703065710.13786-1-five231003@gmail.com>
 References: <20240703065710.13786-1-five231003@gmail.com>
@@ -91,252 +91,182 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use scope based cleanup instead of manual of_node_put() calls, hence
-simplifying the handling of error paths at various places.
+Use scope based cleanup, instead of manual of_node_put() calls, which
+automatically free()s "struct device_node".
 
-While at it, refactor the setup code for device node "memories", from
-pruss_probe() into a new function pruss_of_setup_memories().  It is
-worth noticing that this step is a direct consequence of trying to
-minimize the scope of the "struct device_node" pointer to make auto
-cleanup read more cleanly.
+While at it, refactor the code from knav_queue_probe() into the seperate
+functions to make auto cleanup look more neat.
+
+Doing the cleanup this way has the advantage of reducing the chance of
+memory leaks in case we need to read from new OF nodes in the future
+when we probe.
 
 Suggested-by: Julia Lawall <julia.lawall@inria.fr>
 Signed-off-by: Kousik Sanagavarapu <five231003@gmail.com>
 ---
- drivers/soc/ti/pruss.c | 168 +++++++++++++++++++----------------------
- 1 file changed, 78 insertions(+), 90 deletions(-)
+ drivers/soc/ti/knav_qmss_queue.c | 85 +++++++++++++++++---------------
+ 1 file changed, 46 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-index 24a42e0b645c..9767d129a8ea 100644
---- a/drivers/soc/ti/pruss.c
-+++ b/drivers/soc/ti/pruss.c
-@@ -381,38 +381,82 @@ static int pruss_clk_mux_setup(struct pruss *pruss, struct clk *clk_mux,
- static int pruss_clk_init(struct pruss *pruss, struct device_node *cfg_node)
- {
- 	const struct pruss_private_data *data;
--	struct device_node *clks_np;
- 	struct device *dev = pruss->dev;
- 	int ret = 0;
- 
- 	data = of_device_get_match_data(dev);
- 
--	clks_np = of_get_child_by_name(cfg_node, "clocks");
--	if (!clks_np) {
--		dev_err(dev, "%pOF is missing its 'clocks' node\n", cfg_node);
--		return -ENODEV;
--	}
-+	struct device_node *clks_np __free(device_node) =
-+			of_get_child_by_name(cfg_node, "clocks");
-+	if (!clks_np)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "%pOF is missing its 'clocks' node\n", cfg_node);
- 
- 	if (data && data->has_core_mux_clock) {
- 		ret = pruss_clk_mux_setup(pruss, pruss->core_clk_mux,
- 					  "coreclk-mux", clks_np);
--		if (ret) {
--			dev_err(dev, "failed to setup coreclk-mux\n");
--			goto put_clks_node;
--		}
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "failed to setup coreclk-mux\n");
- 	}
- 
- 	ret = pruss_clk_mux_setup(pruss, pruss->iep_clk_mux, "iepclk-mux",
- 				  clks_np);
--	if (ret) {
--		dev_err(dev, "failed to setup iepclk-mux\n");
--		goto put_clks_node;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to setup iepclk-mux\n");
- 
--put_clks_node:
--	of_node_put(clks_np);
-+	return 0;
-+}
- 
--	return ret;
-+static int pruss_of_setup_memories(struct device *dev, struct pruss *pruss)
-+{
-+	struct device_node *np = dev_of_node(dev);
-+	struct device_node *child __free(device_node) =
-+			of_get_child_by_name(np, "memories");
-+	int i;
-+
-+	if (!child)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "%pOF is missing its 'memories' node\n",
-+				     child);
-+
-+	for (i = 0; i < PRUSS_MEM_MAX; i++) {
-+		const struct pruss_private_data *data =
-+				of_device_get_match_data(dev);
-+		const char *mem_names[PRUSS_MEM_MAX] =
-+				{ "dram0", "dram1", "shrdram2" };
-+		struct resource res;
-+		int index;
-+
-+		/*
-+		 * On AM437x one of two PRUSS units don't contain Shared RAM,
-+		 * skip it
-+		 */
-+		if (data && data->has_no_sharedram && i == PRUSS_MEM_SHRD_RAM2)
-+			continue;
-+
-+		index = of_property_match_string(child, "reg-names",
-+						 mem_names[i]);
-+		if (index < 0)
-+			return index;
-+
-+		if (of_address_to_resource(child, index, &res))
-+			return -EINVAL;
-+
-+		pruss->mem_regions[i].va = devm_ioremap(dev, res.start,
-+							resource_size(&res));
-+		if (!pruss->mem_regions[i].va)
-+			return dev_err_probe(dev, -ENOMEM,
-+					     "failed to parse and map memory resource %d %s\n",
-+					     i, mem_names[i]);
-+		pruss->mem_regions[i].pa = res.start;
-+		pruss->mem_regions[i].size = resource_size(&res);
-+
-+		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n",
-+			mem_names[i], &pruss->mem_regions[i].pa,
-+			pruss->mem_regions[i].size, pruss->mem_regions[i].va);
-+	}
-+	return 0;
+diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+index 06fb5505c22c..767b9c49ea93 100644
+--- a/drivers/soc/ti/knav_qmss_queue.c
++++ b/drivers/soc/ti/knav_qmss_queue.c
+@@ -1076,14 +1076,20 @@ static const char *knav_queue_find_name(struct device_node *node)
  }
  
- static struct regmap_config regmap_conf = {
-@@ -424,26 +468,21 @@ static struct regmap_config regmap_conf = {
- static int pruss_cfg_of_init(struct device *dev, struct pruss *pruss)
+ static int knav_queue_setup_regions(struct knav_device *kdev,
+-					struct device_node *regions)
++				    struct device_node *node)
  {
- 	struct device_node *np = dev_of_node(dev);
--	struct device_node *child;
-+	struct device_node *child __free(device_node) =
-+			of_get_child_by_name(np, "cfg");
- 	struct resource res;
+ 	struct device *dev = kdev->dev;
++	struct device_node *regions __free(device_node) =
++			of_get_child_by_name(node, "descriptor-regions");
+ 	struct knav_region *region;
+ 	struct device_node *child;
+ 	u32 temp[2];
  	int ret;
  
--	child = of_get_child_by_name(np, "cfg");
--	if (!child) {
--		dev_err(dev, "%pOF is missing its 'cfg' node\n", child);
--		return -ENODEV;
--	}
-+	if (!child)
++	if (!regions)
 +		return dev_err_probe(dev, -ENODEV,
-+				     "%pOF is missing its 'cfg' node\n", child);
- 
--	if (of_address_to_resource(child, 0, &res)) {
--		ret = -ENOMEM;
--		goto node_put;
--	}
-+	if (of_address_to_resource(child, 0, &res))
-+		return -ENOMEM;
- 
- 	pruss->cfg_base = devm_ioremap(dev, res.start, resource_size(&res));
--	if (!pruss->cfg_base) {
--		ret = -ENOMEM;
--		goto node_put;
--	}
-+	if (!pruss->cfg_base)
-+		return -ENOMEM;
- 
- 	regmap_conf.name = kasprintf(GFP_KERNEL, "%pOFn@%llx", child,
- 				     (u64)res.start);
-@@ -452,34 +491,22 @@ static int pruss_cfg_of_init(struct device *dev, struct pruss *pruss)
- 	pruss->cfg_regmap = devm_regmap_init_mmio(dev, pruss->cfg_base,
- 						  &regmap_conf);
- 	kfree(regmap_conf.name);
--	if (IS_ERR(pruss->cfg_regmap)) {
--		dev_err(dev, "regmap_init_mmio failed for cfg, ret = %ld\n",
--			PTR_ERR(pruss->cfg_regmap));
--		ret = PTR_ERR(pruss->cfg_regmap);
--		goto node_put;
--	}
-+	if (IS_ERR(pruss->cfg_regmap))
-+		return dev_err_probe(dev, PTR_ERR(pruss->cfg_regmap),
-+				     "regmap_init_mmio failed for cfg\n");
- 
- 	ret = pruss_clk_init(pruss, child);
- 	if (ret)
--		dev_err(dev, "pruss_clk_init failed, ret = %d\n", ret);
-+		return dev_err_probe(dev, ret, "pruss_clk_init failed\n");
- 
--node_put:
--	of_node_put(child);
- 	return ret;
++				     "descriptor-regions not specified\n");
++
+ 	for_each_child_of_node(regions, child) {
+ 		region = devm_kzalloc(dev, sizeof(*region), GFP_KERNEL);
+ 		if (!region) {
+@@ -1306,10 +1312,16 @@ static int knav_setup_queue_range(struct knav_device *kdev,
  }
  
- static int pruss_probe(struct platform_device *pdev)
+ static int knav_setup_queue_pools(struct knav_device *kdev,
+-				   struct device_node *queue_pools)
++				  struct device_node *node)
  {
++	struct device_node *queue_pools __free(device_node) =
++			of_get_child_by_name(node, "queue-pools");
+ 	struct device_node *type, *range;
+ 
++	if (!queue_pools)
++		return dev_err_probe(kdev->dev, -ENODEV,
++				     "queue-pools not specified\n");
++
+ 	for_each_child_of_node(queue_pools, type) {
+ 		for_each_child_of_node(type, range) {
+ 			/* return value ignored, we init the rest... */
+@@ -1389,14 +1401,20 @@ static void __iomem *knav_queue_map_reg(struct knav_device *kdev,
+ }
+ 
+ static int knav_queue_init_qmgrs(struct knav_device *kdev,
+-					struct device_node *qmgrs)
++				 struct device_node *node)
+ {
+ 	struct device *dev = kdev->dev;
++	struct device_node *qmgrs __free(device_node) =
++			of_get_child_by_name(node, "qmgrs");
+ 	struct knav_qmgr_info *qmgr;
+ 	struct device_node *child;
+ 	u32 temp[2];
+ 	int ret;
+ 
++	if (!qmgrs)
++		return dev_err_probe(dev, -ENODEV,
++				     "queue manager info not specified\n");
++
+ 	for_each_child_of_node(qmgrs, child) {
+ 		qmgr = devm_kzalloc(dev, sizeof(*qmgr), GFP_KERNEL);
+ 		if (!qmgr) {
+@@ -1668,6 +1686,25 @@ static int knav_queue_start_pdsps(struct knav_device *kdev)
+ 	return 0;
+ }
+ 
++static int knav_queue_setup_pdsps(struct knav_device *kdev,
++				  struct device_node *node)
++{
++	struct device_node *pdsps __free(device_node) =
++			of_get_child_by_name(node, "pdsps");
++
++	if (pdsps) {
++		int ret;
++
++		ret = knav_queue_init_pdsps(kdev, pdsps);
++		if (ret)
++			return ret;
++		ret = knav_queue_start_pdsps(kdev);
++		if (ret)
++			return ret;
++	}
++	return 0;
++}
++
+ static inline struct knav_qmgr_info *knav_find_qmgr(unsigned id)
+ {
+ 	struct knav_qmgr_info *qmgr;
+@@ -1755,7 +1792,6 @@ MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
+ static int knav_queue_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
+-	struct device_node *qmgrs, *queue_pools, *regions, *pdsps;
  	struct device *dev = &pdev->dev;
--	struct device_node *np = dev_of_node(dev);
--	struct device_node *child;
- 	struct pruss *pruss;
--	struct resource res;
--	int ret, i, index;
--	const struct pruss_private_data *data;
--	const char *mem_names[PRUSS_MEM_MAX] = { "dram0", "dram1", "shrdram2" };
--
--	data = of_device_get_match_data(&pdev->dev);
-+	int ret;
+ 	u32 temp[2];
+ 	int ret;
+@@ -1799,39 +1835,17 @@ static int knav_queue_probe(struct platform_device *pdev)
+ 	kdev->num_queues = temp[1];
  
- 	ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
- 	if (ret) {
-@@ -494,48 +521,9 @@ static int pruss_probe(struct platform_device *pdev)
- 	pruss->dev = dev;
- 	mutex_init(&pruss->lock);
- 
--	child = of_get_child_by_name(np, "memories");
--	if (!child) {
--		dev_err(dev, "%pOF is missing its 'memories' node\n", child);
--		return -ENODEV;
+ 	/* Initialize queue managers using device tree configuration */
+-	qmgrs =  of_get_child_by_name(node, "qmgrs");
+-	if (!qmgrs) {
+-		dev_err(dev, "queue manager info not specified\n");
+-		ret = -ENODEV;
+-		goto err;
 -	}
--
--	for (i = 0; i < PRUSS_MEM_MAX; i++) {
--		/*
--		 * On AM437x one of two PRUSS units don't contain Shared RAM,
--		 * skip it
--		 */
--		if (data && data->has_no_sharedram && i == PRUSS_MEM_SHRD_RAM2)
--			continue;
--
--		index = of_property_match_string(child, "reg-names",
--						 mem_names[i]);
--		if (index < 0) {
--			of_node_put(child);
--			return index;
--		}
--
--		if (of_address_to_resource(child, index, &res)) {
--			of_node_put(child);
--			return -EINVAL;
--		}
--
--		pruss->mem_regions[i].va = devm_ioremap(dev, res.start,
--							resource_size(&res));
--		if (!pruss->mem_regions[i].va) {
--			dev_err(dev, "failed to parse and map memory resource %d %s\n",
--				i, mem_names[i]);
--			of_node_put(child);
--			return -ENOMEM;
--		}
--		pruss->mem_regions[i].pa = res.start;
--		pruss->mem_regions[i].size = resource_size(&res);
--
--		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n",
--			mem_names[i], &pruss->mem_regions[i].pa,
--			pruss->mem_regions[i].size, pruss->mem_regions[i].va);
--	}
--	of_node_put(child);
-+	ret = pruss_of_setup_memories(dev, pruss);
-+	if (ret < 0)
-+		goto rpm_put;
+-	ret = knav_queue_init_qmgrs(kdev, qmgrs);
+-	of_node_put(qmgrs);
++	ret = knav_queue_init_qmgrs(kdev, node);
+ 	if (ret)
+ 		goto err;
  
- 	platform_set_drvdata(pdev, pruss);
+ 	/* get pdsp configuration values from device tree */
+-	pdsps =  of_get_child_by_name(node, "pdsps");
+-	if (pdsps) {
+-		ret = knav_queue_init_pdsps(kdev, pdsps);
+-		if (ret)
+-			goto err;
+-
+-		ret = knav_queue_start_pdsps(kdev);
+-		if (ret)
+-			goto err;
+-	}
+-	of_node_put(pdsps);
++	ret = knav_queue_setup_pdsps(kdev, node);
++	if (ret)
++		goto err;
+ 
+ 	/* get usable queue range values from device tree */
+-	queue_pools = of_get_child_by_name(node, "queue-pools");
+-	if (!queue_pools) {
+-		dev_err(dev, "queue-pools not specified\n");
+-		ret = -ENODEV;
+-		goto err;
+-	}
+-	ret = knav_setup_queue_pools(kdev, queue_pools);
+-	of_node_put(queue_pools);
++	ret = knav_setup_queue_pools(kdev, node);
+ 	if (ret)
+ 		goto err;
+ 
+@@ -1853,14 +1867,7 @@ static int knav_queue_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err;
+ 
+-	regions = of_get_child_by_name(node, "descriptor-regions");
+-	if (!regions) {
+-		dev_err(dev, "descriptor-regions not specified\n");
+-		ret = -ENODEV;
+-		goto err;
+-	}
+-	ret = knav_queue_setup_regions(kdev, regions);
+-	of_node_put(regions);
++	ret = knav_queue_setup_regions(kdev, node);
+ 	if (ret)
+ 		goto err;
  
 -- 
 2.45.2.561.g66ac6e4bcd
