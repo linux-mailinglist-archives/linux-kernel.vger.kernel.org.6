@@ -1,369 +1,333 @@
-Return-Path: <linux-kernel+bounces-239833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E597F9265E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:20:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221339265D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB371F23399
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:20:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45F851C2338E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A329E1849C5;
-	Wed,  3 Jul 2024 16:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E801822D8;
+	Wed,  3 Jul 2024 16:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="REpniWAn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H6liQUpd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931FB1836D8
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D46D180A86
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720023569; cv=none; b=gbl+vLPL4R6aqZ2cfXnDG+kBk/nrzaiJt6XAr+yWH3j370kw6UAx+W12PRQS7L6MhiTNjBkTnWWW6lgxyEYXunq0Lun4JQSBL5cW0I6bduz+FOtQN30Ex3V15Ie3zKCS5SvuQRTYcjNWs97QFY5l1AcvSZL0shUMenPQLj+hy5A=
+	t=1720023552; cv=none; b=bmmSjuJT3Dle8by+MosTLWQuoLOscg5sow26r2hS6I5Kepx9eK7tdUqWC1APBqzBij/m+utIxryEAUM9zxIRmTK3hXUqy7Pxi/yCtogolSgqRPzKHooRAnS50OeCLihvtqFsz2vQ9Ok/SijY4FgvFwVpdQJdfFuaJFj/7D1dr4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720023569; c=relaxed/simple;
-	bh=XZQ2khpGw92ayYyOOjfsbAZCVbk4sLWNq5yArPaelbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HhtdNU5bgGSkX8Q3lPVpX8NTds6iq79uuE/57uQtIAj9WK671ySKQbeLYkVKSrBlTweWmQGZdzncXYFsEbjvm8MZfvKL3jGyqnFKOySgypw1PMkdgCcqKBCRAbpWT1WzlJmY8W3wAez6xj5FxN9w3IiN48t/jJBtAdEnRJfGFrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=REpniWAn; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1720023552; c=relaxed/simple;
+	bh=LaQiB/JN3iySPHNjIgHNBXZQnv+3kaaGI6eQNi02OwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OIYYunSPSYUUzj+uqfSOpNRmTfx9fxaUFzGIJh93+3ABtZXlTenXbi3BiLLHbst/SWF7pi+5PhfB/Jiv9lnPhnG9wzbcWm2qPiqfI7fgupGR6PqWVRyWLM044oHoz+GRPFWMB8dBXMXiVYn83kiToNPZDyY4It1JEOFz9kwnPRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H6liQUpd; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720023565;
+	s=mimecast20190719; t=1720023549;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c65T9aGcCrnJaJaWK+o0SC+aJQfT0XzRMaqMZ/EJDM4=;
-	b=REpniWAnG293xyof8cG3Xb72Tct2qn6jdZUPtH6+8lgkyXR2xRndj2EL4McZOW8dOv2anm
-	fxBDAc/f43GCHffgeUnY5pHikBZ/CGhjfX82ch0czigSrfUJYyus6LmDp7ZJEmxdXIRgft
-	Owj77v7fgwRCBm6hJhP2sZBDecupdoY=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=kBTef3Rb92KBup61SlBchk2oT3y8ZSkEqgAO4oEmAEU=;
+	b=H6liQUpdutztNcjr1EDvb+zcn+k5EUtQRt4tDRd8weY3rmr/5adVEngULF81nKn8DTdcIG
+	vdGdy60A7f47e1xyYbdp5If1keii9MoUWtGgFReFzoBxaUEOGPTKOapS5d4t8gwKN7JnKk
+	XG4c83Rb/rcxK3H/7EsayzNG3A0FyFk=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-250-wM-AH0WJOUelKoRZj4ptjg-1; Wed, 03 Jul 2024 12:19:24 -0400
-X-MC-Unique: wM-AH0WJOUelKoRZj4ptjg-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-57d3eca4bb7so1299360a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:19:24 -0700 (PDT)
+ us-mta-449-xhLOn2fpNrOCAXu-oEwnIQ-1; Wed, 03 Jul 2024 12:19:06 -0400
+X-MC-Unique: xhLOn2fpNrOCAXu-oEwnIQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42568f0cc18so39372835e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:19:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720023562; x=1720628362;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c65T9aGcCrnJaJaWK+o0SC+aJQfT0XzRMaqMZ/EJDM4=;
-        b=b/ZbRkBEXgfNbeKKYF2mh7gzmW2RSDMknMNrwrYkBMJSMy6sSJiYvTFgf2viiXkw1S
-         yblpEMKxs+CHg6enq2pNmo59Jc9dJdS5EKjTugcGJX/Y7yN6Eog8xvf/jicTgzIGw9LY
-         GpJmUl/cVzYlbbD5Aqnl1X7HxLw1JWtO/2i9Pct6UFeFF4D84Xk6WTriwQ4eoDqIY/aS
-         z2m2H+QQDWyxP/anT5i9efrJptRpXM4ETaFd8PqPR4oI43DoDoq+F7paOOeemrMzWzIW
-         AQG5XZGrE7sBabxf9K+hyXC6F4o+8ITDkRuJC6OILqBTm4/+RYENR5ZjOjTlXDbpnMgO
-         vDgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKTT9t6qrAC+jsvjwfLEwVnsYf8IHhuxZvgWECX5ymTszu8WWEhqE65nPHjvzZS4lOc4xvIBKEZx8fcLBCBZo+nV9BzJY1hiC9rJMq
-X-Gm-Message-State: AOJu0YwR5qq7P8le1yFzjKEK3/kFx8+lPE506wk6G0ux4YlUpqkaQEWL
-	kKaK7wlSq48pc/yTtazJCMXdQpPaRNUyWuiRVvuTzjUuS9YZRmXPzUxPpDmnxaFAjo8uFfnNyvr
-	8OkCevVqyUtVOQ9EWKPDAOyYyLadTH1Fki2/arsU2RgJf8Da8Gv0JtGx+An1SdYguZFcGn7U6Fv
-	5Ea5BYU0T8imGZGOFH5iE6MzsswHdEVA408dKkCskKrYUfrio=
-X-Received: by 2002:a05:6402:3591:b0:58c:b2b8:31b2 with SMTP id 4fb4d7f45d1cf-58ce5ef6ad8mr1719691a12.17.1720023562396;
-        Wed, 03 Jul 2024 09:19:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGOPm2RKAFqhIP4SkrsoOYtpsOdJlOeWv6pMlJEn55IU/y69hvTL9KLEEXmYY5vce/n+pf4qv0hzVawdzxulgw=
-X-Received: by 2002:a05:6402:3591:b0:58c:b2b8:31b2 with SMTP id
- 4fb4d7f45d1cf-58ce5ef6ad8mr1719679a12.17.1720023562050; Wed, 03 Jul 2024
- 09:19:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720023546; x=1720628346;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kBTef3Rb92KBup61SlBchk2oT3y8ZSkEqgAO4oEmAEU=;
+        b=tDYKN1k8lujepqfB3QBaR0M9rmUyTgsXijGAo9Nw79wAQPugory1UVynljNjykCYEC
+         AT2dsL+dRomTFvYbQ6kCqbfYN9ot+wZtrb2GvRGkOAs8iiAZPhT2pYWwWOkmw0RMlvU4
+         oMT48A5W4XzBBue02PtTak2BJHGCG5pN9RKQm5CfKb5xFO38ri36B/iOL3jNAt5N7dA5
+         uJQqrYbCWbiC2rJhEB552x3NOhZsKcttGbcKwkSCw8ufeftxRF8GCcJU2CoNvJYUnehF
+         l8xDNJZ3Tco4QkhGOb+4ORlxCf1pszh3RqcZw9PQZFNFjaV0R+5Lc/7HmiY2HqT5os2U
+         nslg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMheoHuGPY1dj+KhskSSpNuww6W0DfjRxJiRvPURFihr1u+L5+LTMmFQr8IqNxSyiVO96M1z3Ofv1pKZWhjMfhuyCAyygdb0Hj+Fft
+X-Gm-Message-State: AOJu0YxzSpC3p84Nf2lxtKgcgkPdD9rkTfNWNoNX73Q5VgO0Foy7aAAY
+	z6lPdywd6CgiVrz0ee+dNIW0ZdeVaeYrLhAkPE6C8vo192WNJolneIjkNoI8BSi+DIOJrnZAbty
+	ZbKsrrXjKgJV0waH9k80Wi9wLwCz7a60Zg+fc1tfBQED8epcv8XLMHYtzxb8fJg==
+X-Received: by 2002:a7b:c3d9:0:b0:424:acd2:40af with SMTP id 5b1f17b1804b1-4257a011a44mr85562775e9.24.1720023545737;
+        Wed, 03 Jul 2024 09:19:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IES3hCA3+99w5shoioL/LxHazJmda22GJdpocCDjjHmJ/NOVgxGc4qGdqMBjALowvpd1e8Wbg==
+X-Received: by 2002:a7b:c3d9:0:b0:424:acd2:40af with SMTP id 5b1f17b1804b1-4257a011a44mr85562515e9.24.1720023545136;
+        Wed, 03 Jul 2024 09:19:05 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c709:3400:5126:3051:d630:92ee? (p200300cbc709340051263051d63092ee.dip0.t-ipconnect.de. [2003:cb:c709:3400:5126:3051:d630:92ee])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af389efsm246725995e9.7.2024.07.03.09.19.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 09:19:04 -0700 (PDT)
+Message-ID: <3e2ebfd2-7a63-449b-901a-f559049473e4@redhat.com>
+Date: Wed, 3 Jul 2024 18:19:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626-stage-vdpa-vq-precreate-v2-0-560c491078df@nvidia.com> <20240626-stage-vdpa-vq-precreate-v2-15-560c491078df@nvidia.com>
-In-Reply-To: <20240626-stage-vdpa-vq-precreate-v2-15-560c491078df@nvidia.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Wed, 3 Jul 2024 18:18:44 +0200
-Message-ID: <CAJaqyWfEv9KLKDSZidiO=ZoJvKVLaHzHW3+ModPxfGEiu1xMUw@mail.gmail.com>
-Subject: Re: [PATCH vhost v2 15/24] vdpa/mlx5: Allow creation of blank VQs
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
-	Cosmin Ratiu <cratiu@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
+ shmem
+To: Yang Shi <shy828301@gmail.com>, Ryan Roberts <ryan.roberts@arm.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Bang Li <libang.li@antgroup.com>, hughd@google.com,
+ akpm@linux-foundation.org, wangkefeng.wang@huawei.com, ziy@nvidia.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240628104926.34209-1-libang.li@antgroup.com>
+ <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com>
+ <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
+ <516aa6b3-617c-4642-b12b-0c5f5b33d1c9@arm.com>
+ <597ac51e-3f27-4606-8647-395bb4e60df4@redhat.com>
+ <6f68fb9d-3039-4e38-bc08-44948a1dae4d@arm.com>
+ <992cdbf9-80df-4a91-aea6-f16789c5afd7@redhat.com>
+ <2e0a1554-d24f-4d0d-860b-0c2cf05eb8da@arm.com>
+ <06c74db8-4d10-4a41-9a05-776f8dca7189@redhat.com>
+ <429f2873-8532-4cc8-b0e1-1c3de9f224d9@arm.com>
+ <7a0bbe69-1e3d-4263-b206-da007791a5c4@redhat.com>
+ <CAHbLzkrv2U39oOFuuHpmcfvDOuMayjwdgXLshxtDSSPGPzOkJQ@mail.gmail.com>
+ <2450e4f8-236f-49ce-8bd3-b30a6d8c5e57@arm.com>
+ <CAHbLzkponjBbtYo6F0+QJ_tmoUFa8i2VPCX7MGX758sAmyLtpQ@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAHbLzkponjBbtYo6F0+QJ_tmoUFa8i2VPCX7MGX758sAmyLtpQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 26, 2024 at 12:28=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.co=
-m> wrote:
->
-> Based on the filled flag, create VQs that are filled or blank.
-> Blank VQs will be filled in later through VQ modify.
->
-> Downstream patches will make use of this to pre-create blank VQs at
-> vdpa device creation.
->
+On 03.07.24 18:08, Yang Shi wrote:
+> On Tue, Jul 2, 2024 at 1:24 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>
+>> On 01/07/2024 19:20, Yang Shi wrote:
+>>> On Mon, Jul 1, 2024 at 3:23 AM David Hildenbrand <david@redhat.com> wrote:
+>>>>
+>>>> On 01.07.24 12:16, Ryan Roberts wrote:
+>>>>> On 01/07/2024 10:17, David Hildenbrand wrote:
+>>>>>> On 01.07.24 11:14, Ryan Roberts wrote:
+>>>>>>> On 01/07/2024 09:57, David Hildenbrand wrote:
+>>>>>>>> On 01.07.24 10:50, Ryan Roberts wrote:
+>>>>>>>>> On 01/07/2024 09:48, David Hildenbrand wrote:
+>>>>>>>>>> On 01.07.24 10:40, Ryan Roberts wrote:
+>>>>>>>>>>> On 01/07/2024 09:33, Baolin Wang wrote:
+>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> On 2024/7/1 15:55, Ryan Roberts wrote:
+>>>>>>>>>>>>> On 28/06/2024 11:49, Bang Li wrote:
+>>>>>>>>>>>>>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
+>>>>>>>>>>>>>> anonymous shmem"), we can configure different policies through
+>>>>>>>>>>>>>> the multi-size THP sysfs interface for anonymous shmem. But
+>>>>>>>>>>>>>> currently "THPeligible" indicates only whether the mapping is
+>>>>>>>>>>>>>> eligible for allocating THP-pages as well as the THP is PMD
+>>>>>>>>>>>>>> mappable or not for anonymous shmem, we need to support semantics
+>>>>>>>>>>>>>> for mTHP with anonymous shmem similar to those for mTHP with
+>>>>>>>>>>>>>> anonymous memory.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Signed-off-by: Bang Li <libang.li@antgroup.com>
+>>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>>        fs/proc/task_mmu.c      | 10 +++++++---
+>>>>>>>>>>>>>>        include/linux/huge_mm.h | 11 +++++++++++
+>>>>>>>>>>>>>>        mm/shmem.c              |  9 +--------
+>>>>>>>>>>>>>>        3 files changed, 19 insertions(+), 11 deletions(-)
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>>>>>>>>>>>>>> index 93fb2c61b154..09b5db356886 100644
+>>>>>>>>>>>>>> --- a/fs/proc/task_mmu.c
+>>>>>>>>>>>>>> +++ b/fs/proc/task_mmu.c
+>>>>>>>>>>>>>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
+>>>>>>>>>>>>>>        {
+>>>>>>>>>>>>>>            struct vm_area_struct *vma = v;
+>>>>>>>>>>>>>>            struct mem_size_stats mss = {};
+>>>>>>>>>>>>>> +    bool thp_eligible;
+>>>>>>>>>>>>>>              smap_gather_stats(vma, &mss, 0);
+>>>>>>>>>>>>>>        @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void
+>>>>>>>>>>>>>> *v)
+>>>>>>>>>>>>>>              __show_smap(m, &mss, false);
+>>>>>>>>>>>>>>        -    seq_printf(m, "THPeligible:    %8u\n",
+>>>>>>>>>>>>>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>>>>>>>>>>>>>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
+>>>>>>>>>>>>>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>>>>>>>>>>>>>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
+>>>>>>>>>>>>>> +    if (vma_is_anon_shmem(vma))
+>>>>>>>>>>>>>> +        thp_eligible =
+>>>>>>>>>>>>>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
+>>>>>>>>>>>>>> +                            vma, vma->vm_pgoff, thp_eligible);
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Afraid I haven't been following the shmem mTHP support work as much as I
+>>>>>>>>>>>>> would
+>>>>>>>>>>>>> have liked, but is there a reason why we need a separate function for
+>>>>>>>>>>>>> shmem?
+>>>>>>>>>>>>
+>>>>>>>>>>>> Since shmem_allowable_huge_orders() only uses shmem specific logic to
+>>>>>>>>>>>> determine
+>>>>>>>>>>>> if huge orders are allowable, there is no need to complicate the
+>>>>>>>>>>>> thp_vma_allowable_orders() function by adding more shmem related logic,
+>>>>>>>>>>>> making
+>>>>>>>>>>>> it more bloated. In my view, providing a dedicated helper
+>>>>>>>>>>>> shmem_allowable_huge_orders(), specifically for shmem, simplifies the logic.
+>>>>>>>>>>>
+>>>>>>>>>>> My point was really that a single interface (thp_vma_allowable_orders)
+>>>>>>>>>>> should be
+>>>>>>>>>>> used to get this information. I have no strong opinon on how the
+>>>>>>>>>>> implementation
+>>>>>>>>>>> of that interface looks. What you suggest below seems perfectly reasonable
+>>>>>>>>>>> to me.
+>>>>>>>>>>
+>>>>>>>>>> Right. thp_vma_allowable_orders() might require some care as discussed in
+>>>>>>>>>> other
+>>>>>>>>>> context (cleanly separate dax and shmem handling/orders). But that would be
+>>>>>>>>>> follow-up cleanups.
+>>>>>>>>>
+>>>>>>>>> Are you planning to do that, or do you want me to send a patch?
+>>>>>>>>
+>>>>>>>> I'm planning on looking into some details, especially the interaction with large
+>>>>>>>> folios in the pagecache. I'll let you know once I have a better idea what
+>>>>>>>> actually should be done :)
+>>>>>>>
+>>>>>>> OK great - I'll scrub it from my todo list... really getting things done today :)
+>>>>>>
+>>>>>> Resolved the khugepaged thiny already? :P
+>>>>>>
+>>>>>> [khugepaged not active when only enabling the sub-size via the 2M folder IIRC]
+>>>>>
+>>>>> Hmm... baby brain?
+>>>>
+>>>> :)
+>>>>
+>>>> I think I only mentioned it in a private mail at some point.
+>>>>
+>>>>>
+>>>>> Sorry about that. I've been a bit useless lately. For some reason it wasn't on
+>>>>> my list, but its there now. Will prioritise it, because I agree it's not good.
+>>>>
+>>>>
+>>>> IIRC, if you do
+>>>>
+>>>> echo never > /sys/kernel/mm/transparent_hugepage/enabled
+>>>> echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+>>>>
+>>>> khugepaged will not get activated.
+>>>
+>>> khugepaged is controlled by the top level knob.
+>>
+>> What do you mean by "top level knob"? I assume
+>> /sys/kernel/mm/transparent_hugepage/enabled ?
+> 
+> Yes.
+> 
+>>
+>> If so, that's not really a thing in its own right; its just the legacy PMD-size
+>> THP control, and we only take any notice of it if a per-size control is set to
+>> "inherit". So if we have:
+>>
+>> # echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+>>
+>> Then by design, /sys/kernel/mm/transparent_hugepage/enabled should be ignored.
+>>
+>>> But the above setting
+>>> sounds confusing, can we disable the top level knob, but enable it on
+>>> a per-order basis? TBH, it sounds weird and doesn't make too much
+>>> sense to me.
+>>
+>> Well that's the design and that's how its documented. It's done this way for
+>> back-compat. All controls are now per-size. But at boot, we default all per-size
+>> controls to "never" except for the PMD-sized control, which is defaulted to
+>> "inherit". That way, an unenlightened user-space can still control PMD-sized THP
+>> via the legacy (top-level) control. But enlightened apps can directly control
+>> per-size.
+> 
+> OK, good to know.
+> 
+>>
+>> I'm not sure how your way would work, because you would have 2 controls
+>> competing to do the same thing?
+> 
+> I don't see how they compete if they are 2-level knobs. And I failed
+> to see how it achieved back-compat. For example, memcached reads
+> /sys/kernel/mm/transparent_hugepage/enabled to determine whether it
+> should manage memory in huge page (2M) granularity. If the setting is
+> set to :
+> 
+> # echo never > /sys/kernel/mm/transparent_hugepage/enabled
+> # echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+> 
+> memcached will manage memory in 4K granularity, but 2M THP is actually
+> enabled unless memcached checks the per-order knobs.
 
-s/Downstream/Later/ ?
+And you can still do it the old way and keep it all working with 
+existing software (compat mode as default).
 
-> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+It's just another option and some software might need updates to benefit 
+from it (just like if you would enable other folio sizes).
 
-Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+You can happily do
 
-> ---
->  drivers/vdpa/mlx5/net/mlx5_vnet.c | 85 +++++++++++++++++++++++++--------=
-------
->  1 file changed, 55 insertions(+), 30 deletions(-)
->
-> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
-x5_vnet.c
-> index a8ac542f30f7..0a62ce0b4af8 100644
-> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> @@ -158,7 +158,7 @@ static bool is_index_valid(struct mlx5_vdpa_dev *mvde=
-v, u16 idx)
->
->  static void free_fixed_resources(struct mlx5_vdpa_net *ndev);
->  static void mvqs_set_defaults(struct mlx5_vdpa_net *ndev);
-> -static int setup_vq_resources(struct mlx5_vdpa_net *ndev);
-> +static int setup_vq_resources(struct mlx5_vdpa_net *ndev, bool filled);
->  static void teardown_vq_resources(struct mlx5_vdpa_net *ndev);
->
->  static bool mlx5_vdpa_debug;
-> @@ -874,13 +874,16 @@ static bool msix_mode_supported(struct mlx5_vdpa_de=
-v *mvdev)
->                 pci_msix_can_alloc_dyn(mvdev->mdev->pdev);
->  }
->
-> -static int create_virtqueue(struct mlx5_vdpa_net *ndev, struct mlx5_vdpa=
-_virtqueue *mvq)
-> +static int create_virtqueue(struct mlx5_vdpa_net *ndev,
-> +                           struct mlx5_vdpa_virtqueue *mvq,
-> +                           bool filled)
->  {
->         int inlen =3D MLX5_ST_SZ_BYTES(create_virtio_net_q_in);
->         u32 out[MLX5_ST_SZ_DW(create_virtio_net_q_out)] =3D {};
->         struct mlx5_vdpa_dev *mvdev =3D &ndev->mvdev;
->         struct mlx5_vdpa_mr *vq_mr;
->         struct mlx5_vdpa_mr *vq_desc_mr;
-> +       u64 features =3D filled ? mvdev->actual_features : mvdev->mlx_fea=
-tures;
->         void *obj_context;
->         u16 mlx_features;
->         void *cmd_hdr;
-> @@ -898,7 +901,7 @@ static int create_virtqueue(struct mlx5_vdpa_net *nde=
-v, struct mlx5_vdpa_virtque
->                 goto err_alloc;
->         }
->
-> -       mlx_features =3D get_features(ndev->mvdev.actual_features);
-> +       mlx_features =3D get_features(features);
->         cmd_hdr =3D MLX5_ADDR_OF(create_virtio_net_q_in, in, general_obj_=
-in_cmd_hdr);
->
->         MLX5_SET(general_obj_in_cmd_hdr, cmd_hdr, opcode, MLX5_CMD_OP_CRE=
-ATE_GENERAL_OBJECT);
-> @@ -906,8 +909,6 @@ static int create_virtqueue(struct mlx5_vdpa_net *nde=
-v, struct mlx5_vdpa_virtque
->         MLX5_SET(general_obj_in_cmd_hdr, cmd_hdr, uid, ndev->mvdev.res.ui=
-d);
->
->         obj_context =3D MLX5_ADDR_OF(create_virtio_net_q_in, in, obj_cont=
-ext);
-> -       MLX5_SET(virtio_net_q_object, obj_context, hw_available_index, mv=
-q->avail_idx);
-> -       MLX5_SET(virtio_net_q_object, obj_context, hw_used_index, mvq->us=
-ed_idx);
->         MLX5_SET(virtio_net_q_object, obj_context, queue_feature_bit_mask=
-_12_3,
->                  mlx_features >> 3);
->         MLX5_SET(virtio_net_q_object, obj_context, queue_feature_bit_mask=
-_2_0,
-> @@ -929,17 +930,36 @@ static int create_virtqueue(struct mlx5_vdpa_net *n=
-dev, struct mlx5_vdpa_virtque
->         MLX5_SET(virtio_q, vq_ctx, queue_index, mvq->index);
->         MLX5_SET(virtio_q, vq_ctx, queue_size, mvq->num_ent);
->         MLX5_SET(virtio_q, vq_ctx, virtio_version_1_0,
-> -                !!(ndev->mvdev.actual_features & BIT_ULL(VIRTIO_F_VERSIO=
-N_1)));
-> -       MLX5_SET64(virtio_q, vq_ctx, desc_addr, mvq->desc_addr);
-> -       MLX5_SET64(virtio_q, vq_ctx, used_addr, mvq->device_addr);
-> -       MLX5_SET64(virtio_q, vq_ctx, available_addr, mvq->driver_addr);
-> -       vq_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATAVQ_GROUP]];
-> -       if (vq_mr)
-> -               MLX5_SET(virtio_q, vq_ctx, virtio_q_mkey, vq_mr->mkey);
-> -
-> -       vq_desc_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATAVQ_DESC_=
-GROUP]];
-> -       if (vq_desc_mr && MLX5_CAP_DEV_VDPA_EMULATION(mvdev->mdev, desc_g=
-roup_mkey_supported))
-> -               MLX5_SET(virtio_q, vq_ctx, desc_group_mkey, vq_desc_mr->m=
-key);
-> +                !!(features & BIT_ULL(VIRTIO_F_VERSION_1)));
-> +
-> +       if (filled) {
-> +               MLX5_SET(virtio_net_q_object, obj_context, hw_available_i=
-ndex, mvq->avail_idx);
-> +               MLX5_SET(virtio_net_q_object, obj_context, hw_used_index,=
- mvq->used_idx);
-> +
-> +               MLX5_SET64(virtio_q, vq_ctx, desc_addr, mvq->desc_addr);
-> +               MLX5_SET64(virtio_q, vq_ctx, used_addr, mvq->device_addr)=
-;
-> +               MLX5_SET64(virtio_q, vq_ctx, available_addr, mvq->driver_=
-addr);
-> +
-> +               vq_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATAVQ_GR=
-OUP]];
-> +               if (vq_mr)
-> +                       MLX5_SET(virtio_q, vq_ctx, virtio_q_mkey, vq_mr->=
-mkey);
-> +
-> +               vq_desc_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATA=
-VQ_DESC_GROUP]];
-> +               if (vq_desc_mr &&
-> +                   MLX5_CAP_DEV_VDPA_EMULATION(mvdev->mdev, desc_group_m=
-key_supported))
-> +                       MLX5_SET(virtio_q, vq_ctx, desc_group_mkey, vq_de=
-sc_mr->mkey);
-> +       } else {
-> +               /* If there is no mr update, make sure that the existing =
-ones are set
-> +                * modify to ready.
-> +                */
-> +               vq_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATAVQ_GR=
-OUP]];
-> +               if (vq_mr)
-> +                       mvq->modified_fields |=3D MLX5_VIRTQ_MODIFY_MASK_=
-VIRTIO_Q_MKEY;
-> +
-> +               vq_desc_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATA=
-VQ_DESC_GROUP]];
-> +               if (vq_desc_mr)
-> +                       mvq->modified_fields |=3D MLX5_VIRTQ_MODIFY_MASK_=
-DESC_GROUP_MKEY;
-> +       }
->
->         MLX5_SET(virtio_q, vq_ctx, umem_1_id, mvq->umem1.id);
->         MLX5_SET(virtio_q, vq_ctx, umem_1_size, mvq->umem1.size);
-> @@ -959,12 +979,15 @@ static int create_virtqueue(struct mlx5_vdpa_net *n=
-dev, struct mlx5_vdpa_virtque
->         kfree(in);
->         mvq->virtq_id =3D MLX5_GET(general_obj_out_cmd_hdr, out, obj_id);
->
-> -       mlx5_vdpa_get_mr(mvdev, vq_mr);
-> -       mvq->vq_mr =3D vq_mr;
-> +       if (filled) {
-> +               mlx5_vdpa_get_mr(mvdev, vq_mr);
-> +               mvq->vq_mr =3D vq_mr;
->
-> -       if (vq_desc_mr && MLX5_CAP_DEV_VDPA_EMULATION(mvdev->mdev, desc_g=
-roup_mkey_supported)) {
-> -               mlx5_vdpa_get_mr(mvdev, vq_desc_mr);
-> -               mvq->desc_mr =3D vq_desc_mr;
-> +               if (vq_desc_mr &&
-> +                   MLX5_CAP_DEV_VDPA_EMULATION(mvdev->mdev, desc_group_m=
-key_supported)) {
-> +                       mlx5_vdpa_get_mr(mvdev, vq_desc_mr);
-> +                       mvq->desc_mr =3D vq_desc_mr;
-> +               }
->         }
->
->         return 0;
-> @@ -1442,7 +1465,9 @@ static void dealloc_vector(struct mlx5_vdpa_net *nd=
-ev,
->                 }
->  }
->
-> -static int setup_vq(struct mlx5_vdpa_net *ndev, struct mlx5_vdpa_virtque=
-ue *mvq)
-> +static int setup_vq(struct mlx5_vdpa_net *ndev,
-> +                   struct mlx5_vdpa_virtqueue *mvq,
-> +                   bool filled)
->  {
->         u16 idx =3D mvq->index;
->         int err;
-> @@ -1471,7 +1496,7 @@ static int setup_vq(struct mlx5_vdpa_net *ndev, str=
-uct mlx5_vdpa_virtqueue *mvq)
->                 goto err_connect;
->
->         alloc_vector(ndev, mvq);
-> -       err =3D create_virtqueue(ndev, mvq);
-> +       err =3D create_virtqueue(ndev, mvq, filled);
->         if (err)
->                 goto err_vq;
->
-> @@ -2062,7 +2087,7 @@ static int change_num_qps(struct mlx5_vdpa_dev *mvd=
-ev, int newqps)
->         } else {
->                 ndev->cur_num_vqs =3D 2 * newqps;
->                 for (i =3D cur_qps * 2; i < 2 * newqps; i++) {
-> -                       err =3D setup_vq(ndev, &ndev->vqs[i]);
-> +                       err =3D setup_vq(ndev, &ndev->vqs[i], true);
->                         if (err)
->                                 goto clean_added;
->                 }
-> @@ -2558,14 +2583,14 @@ static int verify_driver_features(struct mlx5_vdp=
-a_dev *mvdev, u64 features)
->         return 0;
->  }
->
-> -static int setup_virtqueues(struct mlx5_vdpa_dev *mvdev)
-> +static int setup_virtqueues(struct mlx5_vdpa_dev *mvdev, bool filled)
->  {
->         struct mlx5_vdpa_net *ndev =3D to_mlx5_vdpa_ndev(mvdev);
->         int err;
->         int i;
->
->         for (i =3D 0; i < mvdev->max_vqs; i++) {
-> -               err =3D setup_vq(ndev, &ndev->vqs[i]);
-> +               err =3D setup_vq(ndev, &ndev->vqs[i], filled);
->                 if (err)
->                         goto err_vq;
->         }
-> @@ -2877,7 +2902,7 @@ static int mlx5_vdpa_change_map(struct mlx5_vdpa_de=
-v *mvdev,
->
->         if (teardown) {
->                 restore_channels_info(ndev);
-> -               err =3D setup_vq_resources(ndev);
-> +               err =3D setup_vq_resources(ndev, true);
->                 if (err)
->                         return err;
->         }
-> @@ -2888,7 +2913,7 @@ static int mlx5_vdpa_change_map(struct mlx5_vdpa_de=
-v *mvdev,
->  }
->
->  /* reslock must be held for this function */
-> -static int setup_vq_resources(struct mlx5_vdpa_net *ndev)
-> +static int setup_vq_resources(struct mlx5_vdpa_net *ndev, bool filled)
->  {
->         struct mlx5_vdpa_dev *mvdev =3D &ndev->mvdev;
->         int err;
-> @@ -2906,7 +2931,7 @@ static int setup_vq_resources(struct mlx5_vdpa_net =
-*ndev)
->         if (err)
->                 goto err_setup;
->
-> -       err =3D setup_virtqueues(mvdev);
-> +       err =3D setup_virtqueues(mvdev, filled);
->         if (err) {
->                 mlx5_vdpa_warn(mvdev, "setup_virtqueues\n");
->                 goto err_setup;
-> @@ -3000,7 +3025,7 @@ static void mlx5_vdpa_set_status(struct vdpa_device=
- *vdev, u8 status)
->                                 goto err_setup;
->                         }
->                         register_link_notifier(ndev);
-> -                       err =3D setup_vq_resources(ndev);
-> +                       err =3D setup_vq_resources(ndev, true);
->                         if (err) {
->                                 mlx5_vdpa_warn(mvdev, "failed to setup dr=
-iver\n");
->                                 goto err_driver;
->
-> --
-> 2.45.1
->
+echo always > /sys/kernel/mm/transparent_hugepage/enabled
+echo inherit > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+
+It's an admin choice.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
