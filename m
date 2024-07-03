@@ -1,127 +1,194 @@
-Return-Path: <linux-kernel+bounces-239734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078B69264A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:16:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8672926489
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90547B246A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:16:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 993F028DE5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656BE180A64;
-	Wed,  3 Jul 2024 15:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D404317DA23;
+	Wed,  3 Jul 2024 15:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="F/TChOj+"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jmKWp556"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84861DFD1;
-	Wed,  3 Jul 2024 15:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4845317DA2C
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720019783; cv=none; b=QCrQnAtL7taaLT51SuIEakJLz3dgBg/p6XSk9YwdOIirtG2FlL4Lz8jc4hQj/t/YQAt1zNnsys5K0zIuunA6qGH4W5GwFGTozeufwRDTKD9Jn3SU/05i9AtkvhfFbkPF0E89C2E5T/BUYCgJGMrmGpDaQBj/DrgPBplI/+xTppw=
+	t=1720019537; cv=none; b=gCpqFk8h4gYRxiD3T+hXNBLzKkqpzyjEiFUOgtMVYeYsYDEBrqvjDIljU9dld/EOKpc0zYXgzWMTsu0AwN6pUhURO85U2aCVw99jK1I+oP+prghLo/s15OqJ7rWJGNlbJXi+lVyBzadXang151MXUmWENosp8xSFmYRhTDREXno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720019783; c=relaxed/simple;
-	bh=7FMn/uRg0zYfw3DQH1Sz/pojM+8pV3loh/mbtGw+Fm4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QVqWVMyoiDEcA9dukxUg9euNOnbedMXdXIyUxt50r/VAuGQM8Un6UiFSDWGNNQnTXLlcxSlJnlLwh8CfEJYwrooY6rHZU7LueR7Gsol1479wxL/YUVlq28d1FFVaKLx750QsMearbtFPEF/yDL/LnOc416J7j6TewIr9xmtU4vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=F/TChOj+; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=6Pvtr4CL3nBCwnXoyeyqTuDH9oRlsRjo2dtNGYFj5Ks=; t=1720019779; x=1720624579; 
-	b=F/TChOj+kldVL4qjJxBxCohEnwgii6ad0clG+V8T0KJKorBpRTV5RRik+zLk/d4F9/r06SwwejT
-	xUdBzw57lCxjrIGtqTor+cXOzVgKMxKPeP5QNqeqxZH9Lhccit9gGlPEB8HW/KZdp5y8zlhfBKrh7
-	XAceUqDm9rvmSXmIaj7d0cOFAfuJeu6y7D3g3aVkHxAJo5iFs+j4J42N1JF3bgzEfw/stgyEki6l8
-	DphxZNmBP6Ws4Dmv0kJ/UejncXX8nk42U1kfIxi2atuCUtXPiFb2JG5rIBMtCKQsq62PoyhM+JWWx
-	noXj8xwkCXpLb4HuJsrfS8T3WPQ8Ic7ytXMg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1sP1eU-00000002G2P-0ZsP; Wed, 03 Jul 2024 17:12:10 +0200
-Received: from tmo-084-6.customers.d1-online.com ([80.187.84.6] helo=[172.20.10.3])
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1sP1eT-00000003lh1-3VTh; Wed, 03 Jul 2024 17:12:10 +0200
-Message-ID: <5473f57a21639724e6277c3e271fc46ea5f62ed3.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH] sh: push-switch: add missing MODULE_DESCRIPTION() macro
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Yoshinori Sato
-	 <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>
-Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Date: Wed, 03 Jul 2024 17:12:07 +0200
-In-Reply-To: <20240702-md-sh-arch-sh-drivers-v1-1-2c5d439a5479@quicinc.com>
-References: <20240702-md-sh-arch-sh-drivers-v1-1-2c5d439a5479@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1720019537; c=relaxed/simple;
+	bh=bvCK0w6pEBun5yXlbvybJvpOQqqTLo2EHx1hpAZm8Og=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fVeeFO9zr7QP5PzwbHYMiVB4GdtmwcW9lnC2pH36bPOr9X3sSgiacZ6XIKRDADOgVWBtBG9DD8gbY+fnNY7fR4+TX+BYihwoi6FsxdfZ3L0xr3AqqziLv1xeZZUhk3JcQDk4/Hr8ollA18f/z8ktOG5IKic965J+fzL8iOpZ1fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jmKWp556; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42641dec7c3so4047835e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 08:12:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720019533; x=1720624333; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=X1FBE/phOqlt/mt0C2kNHxxiftuxkoc0MD4S1IpTeCw=;
+        b=jmKWp556hMVckFahLA8tFWwthUd3Y6vHmcle06tL4r7saS2l01pDbaFrX+8iHH4TyR
+         SFuBcpcRH/q+hhBb7VEdIYbRG6xF5pzoPeCqM15/NtmbZeq7BHtbw68rS+EGXH33LgQ1
+         Jiq9k/fesZ1qG0+YjXjL0InMGr48AiH69xLXdo+aj5OXJlcQSYQ5ub7yIWvZUmb26gYd
+         Gr4t9cgN2u8PBEizhKYogeMc6iKsXgfJ6MjaZj5+b3FhsfOCvbNJKXv6knOzN8+8VEac
+         TTMT9giBelWNwm+d8/03PRIjheaRNBfEbL+woQMJWFEZKIDkEwq1M5ANc4Isdyc6ST5S
+         SRPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720019534; x=1720624334;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X1FBE/phOqlt/mt0C2kNHxxiftuxkoc0MD4S1IpTeCw=;
+        b=ACmSfO3bH6s1ezUQU/S2VSRefSyP5iaN/TfbPCg0dvdNppaNQAekSNDlaMVs2uHqAE
+         YqwQjcD4krl9uBoDl0NAfvUk846RzB7mf50E9UmNjbap0LGflEAiIk3ZQGj2kNLTGywx
+         sjdfwpaFHKUt05Cf8SDBqvze6NSHJ3fS16nBrJT+znlVJaBLMsIh4Z/da/Zo/Qt+6iFD
+         mEgKaLy9C4rx3d93rVQDvoTVLyoZE4aJlWONS4vWXWrQTNqRuMltpc0xtrZhU/FwrWO0
+         Q3DVA/dnBde019eLk4u7YbQBggPgTNKr3rejpNlswjMB+XunQpH+pPUkYV5KKdVi2A2A
+         atkQ==
+X-Gm-Message-State: AOJu0Yxndqu/CXuKW5WwjGdCrqKHB022j86/37Mcs/8C6I8+5KIkHiUy
+	H/3lENQkODdmXDEanNY/Hj9L+WRCZIOzCUMF71J5nYZ7WNLKX9eGoL0QaYdBk6E=
+X-Google-Smtp-Source: AGHT+IE7vw1r/9Y7G9J0ix6309xiLeagBgiZBiVv+LE/k4h7o5oLFCLiI/O9L56xF3fZG44ACc7p6g==
+X-Received: by 2002:adf:ef11:0:b0:367:9718:5792 with SMTP id ffacd0b85a97d-367971859f4mr786905f8f.18.1720019533577;
+        Wed, 03 Jul 2024 08:12:13 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367961a507csm1346306f8f.77.2024.07.03.08.12.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 08:12:13 -0700 (PDT)
+Message-ID: <0c4b401e-86b8-4169-af88-475433012d67@linaro.org>
+Date: Wed, 3 Jul 2024 17:12:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+To: neil.armstrong@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>,
+ linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <2764814.mvXUDI8C0e@rjwysocki.net>
+ <2ed4c630-204a-4f80-a37f-f2ca838eb455@linaro.org>
+ <8d91a3c1-018f-495b-83be-979b795b5548@linaro.org>
+ <12c5c133-9519-4a26-b9a3-2da1d3466e94@linaro.org>
+ <15b67ce6-3238-435d-ad28-7c06efbe9153@linaro.org>
+ <ce6c2e8a-65a7-4cb2-a91d-fbcaeef6edc1@linaro.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <ce6c2e8a-65a7-4cb2-a91d-fbcaeef6edc1@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Jeff,
+On 03/07/2024 16:42, neil.armstrong@linaro.org wrote:
+> On 03/07/2024 16:00, Daniel Lezcano wrote:
+>> On 03/07/2024 14:43, neil.armstrong@linaro.org wrote:
+>>> Hi,
+>>>
+>>> On 03/07/2024 14:25, Daniel Lezcano wrote:
+>>>>
+>>>> Hi Neil,
+>>>>
+>>>> it seems there is something wrong with the driver actually.
+>>>>
+>>>> There can be a moment where the sensor is not yet initialized for 
+>>>> different reason, so reading the temperature fails. The routine will 
+>>>> just retry until the sensor gets ready.
+>>>>
+>>>> Having these errors seem to me that the sensor for this specific 
+>>>> thermal zone is never ready which may be the root cause of your 
+>>>> issue. The change is spotting this problem IMO.
+>>>
+>>> Probably, but it gets printed every second until system shutdown, but 
+>>> only for a single thermal_zone.
+>>>
+>>> Using v1 of Rafael's patch makes the message disappear completely.
+>>
+>> Yes, because you have probably the thermal zone polling delay set to 
+>> zero, thus it fails the first time and does no longer try to set it up 
+>> again. The V1 is an incomplete fix.
+>>
+>> Very likely the problem is in the sensor platform driver, or in the 
+>> thermal zone description in the device tree which describes a non 
+>> functional thermal zone.
+>>
+> 
+> It was at 0 but the delay was removed recently:
+> https://lore.kernel.org/all/20240510-topic-msm-polling-cleanup-v2-0-436ca4218da2@linaro.org/
 
-On Tue, 2024-07-02 at 12:29 -0700, Jeff Johnson wrote:
-> With ARCH=3Dsh, make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/sh/drivers/push-sw=
-itch.o
->=20
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->=20
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> MODULE_DESCRIPTION copied from file prologue:
-> /*
->  * Generic push-switch framework
->  *
->  * Copyright (C) 2006  Paul Mundt
->  */
-> ---
->  arch/sh/drivers/push-switch.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/arch/sh/drivers/push-switch.c b/arch/sh/drivers/push-switch.=
-c
-> index 362e4860bf52..1dea43381b5a 100644
-> --- a/arch/sh/drivers/push-switch.c
-> +++ b/arch/sh/drivers/push-switch.c
-> @@ -131,4 +131,5 @@ module_exit(switch_exit);
-> =20
->  MODULE_VERSION(DRV_VERSION);
->  MODULE_AUTHOR("Paul Mundt");
-> +MODULE_DESCRIPTION("Generic push-switch framework");
->  MODULE_LICENSE("GPL v2");
->=20
-> ---
-> base-commit: 1dfe225e9af5bd3399a1dbc6a4df6a6041ff9c23
-> change-id: 20240702-md-sh-arch-sh-drivers-40af731eb66c
+Yes, these changes are because another change did:
 
-Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+commit 488164006a281986d95abbc4b26e340c19c4c85b
+Author: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Thanks for fixing this. Will pick this up later this week.
+     thermal/of: Assume polling-delay(-passive) 0 when absent
 
-Adrian
+diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+> That doesn't explain it because only the last platforms have this error 
+> message printed.
+
+Let me recap.
+
+It has been reported if a thermal-zone with zero delay fails to 
+initialize because the sensor returns an error, then there is no more 
+attempt to initialize it and the thermal zone won't be functional.
+
+The provided fix will periodically read the sensor temperature until 
+there is a valid temperature. When there is a valid temperature, then 
+the interrupts are set for the previous and the next temperature 
+thresholds. That leads to the end of the routine of initializing the 
+thermal zone and cancels the timer.
+
+The platforms you reported, the delay is zero (before and after the 
+'polling cleanup').
+
+My hypothesis is the following:
+
+The thermal-zone29 describes a sensor which does not operate.
+
+Before the patch:
+
+First attempt to initialize it, the temperature is invalid, then because 
+the delay is zero, the routine stops, and there is no more attempts to 
+initialize it. Nothing will happen to this thermal zone and it will stay 
+stuck silently. So at this point, the thermal zone is broken and you 
+don't notice it.
+
+After the patch:
+
+The initialization routine is constantly retrying to init the thermal zone.
+
+-------------------
+
+If you revert the fix and you try to read the thermal zone 29, it should 
+always fail to return an error.
+
+If I'm correct, then I suggest to identify what thermal zone is 29 (type 
+file), identify the node name in the DT, find the tsens channel and 
+double check if it really describes an existing sensor
+
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
