@@ -1,109 +1,152 @@
-Return-Path: <linux-kernel+bounces-240057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3749F9268A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:52:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A894A9268AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 699351C22DC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:52:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D72CB24F9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B4A1891D1;
-	Wed,  3 Jul 2024 18:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF2518F2DF;
+	Wed,  3 Jul 2024 18:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HmgQaGiS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJ5EHx3y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E335E187353
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 18:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DA81862A8;
+	Wed,  3 Jul 2024 18:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720032767; cv=none; b=g+LMAfM8UJOlVGuvLZ/51vUUTHv/WJ8jUa5+W0WEiCNj/cd6A1yij556YYSp86HcfIllYK6xilFgbvUMp2es8olXupbguMjo2kGWuEjB76lNpLiF5jrHgxLoxSNG+1rA9Clmk0qIZOSaccEFrOIbDPqLLM79qosbcS+9qVV51/A=
+	t=1720033091; cv=none; b=IWUe9uJs85ATphXpwutGc8Kk/SrOkMA3GB9J7p/BIYjHEY/Q9tKi1WhooPO8bL5sR2caDf1R6Y3ZgDA1kuKuYsuXNptVr+I4bX9pDh79cHA9WJ3hA2jdWJIMokqtt7r9c3SxWJf7Z3cP3UQ3awaMxu5BYFUIMCwj1eQDCn3FNPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720032767; c=relaxed/simple;
-	bh=nC4pF2dDJtE0z7GMPFXks2mAm01oErvd3B+jorED32c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GpEBzmW/R8+3cSApmCWT0N407/XOVogTUD/I1Zmt7x9zYjPJl1rzAffDKNT0EbN0MarWT0fOXi7sqrslr6JQPCYlz3RhoxjUlqKvPxvfqpMja9j5FPN+YDFqmsG+9CKP101R4xMD8vuyBhBCELAza5goDZI9d7mfIBTS5PSia3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HmgQaGiS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720032764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1JfQRXvykBxI0RLs6DOfqQW6hwbzPvCYWb+yNAuMeO8=;
-	b=HmgQaGiSG/++Rev1lq9HNl8mSoQWpYh4TWnvU+2HKhDlomgcJQmX9cLSoosMpHGvgb2FZL
-	rxDvBM+BGVxIU0Fu8h8i7JOVVfBe5L4Eg5XyPsL4cdfE9sdRGwE9yzBI1Wk9AyxGs9+gm0
-	wstwnBWiC94DZipVOOacr6rfpyLpMX4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-636-umOyin8RNW66VrNeYeXLgw-1; Wed,
- 03 Jul 2024 14:52:41 -0400
-X-MC-Unique: umOyin8RNW66VrNeYeXLgw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 131A51955BCB;
-	Wed,  3 Jul 2024 18:52:40 +0000 (UTC)
-Received: from llong.com (unknown [10.22.33.252])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 152F330000DD;
-	Wed,  3 Jul 2024 18:52:37 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] cgroup: Protect css->cgroup write under css_set_lock
-Date: Wed,  3 Jul 2024 14:52:29 -0400
-Message-Id: <20240703185229.1849423-1-longman@redhat.com>
+	s=arc-20240116; t=1720033091; c=relaxed/simple;
+	bh=bZ+FF7jFYurRxn42IBLLrS+aiNewIzNM9FuhK9vjhvE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OZaZqVbT7X3lp91FZB1GpfvycP5EJvAxaL4CMP4OcuVfMOTG7m+VrHQ5Y57l3efamRaa1TPO00Vj/OGc8/lJFcyOPFzJqUbDSzp5AfKf9MaWMiEjum0TLjyiwGJS0lJ4X3nCy9R6j7WAv1Yg6XSv49rC0Es2cDUkuvWESTwkT6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJ5EHx3y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94211C2BD10;
+	Wed,  3 Jul 2024 18:58:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720033090;
+	bh=bZ+FF7jFYurRxn42IBLLrS+aiNewIzNM9FuhK9vjhvE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=rJ5EHx3yT/x84MN+Y79yBSLQQNELfBNLtHaEYHbiSUUzTSZQMrBOcT+uTmQrwbsFf
+	 0x3Df2hpEDmwlR4w4+G664gH+Cu+cylyiWSQI5eyqEWz7avQ+1xPSUYcpOs+0mKv3v
+	 o/n2hvo/MMLhx8VwGxJmGPyeCQNn8sLhW7NdSQCKzrjfXSSl+5klcxvBk+wl5Im5+O
+	 ebm+IPIfvMc+1nnTS/786z02sMSYZcAWgutHH3MkERWQC/tRvk0FdDf0lyRXRLQITy
+	 DZXT+lagNZlVdmLeaUbK0jxDWZMqyLAsf+jOYB1XC/j1wRt1RS0AczYXDEVNKfY8CJ
+	 Ug2O35cngApWQ==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH bpf-next v3 0/3] selftests/bpf: new MPTCP subflow subtest
+Date: Wed, 03 Jul 2024 20:57:31 +0200
+Message-Id: <20240703-upstream-bpf-next-20240506-mptcp-subflow-test-v3-0-ebdc2d494049@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABufhWYC/5XPTQ6CMBAF4KuYrh1TSvlz5T2MCwpTaITStAUxh
+ LvbEDW6ZPnyku/NLMShVejI+bAQi5NyatAhxMcDqdpSNwiqDpkwyjhNaAqjcd5i2YMwEjTOHr5
+ Vb3xlwI1CdsMDPDoPskSZpgkXsoxJMI1FqeZt70o+ArmFplXOD/a5HTJFW/+Gs52bUwQUkIlK1
+ JIXeZJd7mg1dqfBNtvUxH75Yi/PAs8pzytW8Dw898ev6/oCEyic2lQBAAA=
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+ Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
+ Nicolas Rybowski <nicolas.rybowski@tessares.net>, 
+ Geliang Tang <tanggeliang@kylinos.cn>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2723; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=bZ+FF7jFYurRxn42IBLLrS+aiNewIzNM9FuhK9vjhvE=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmhZ89Fh6xY3cTrKVHLOr6Aa6xHeZRYzLbsRrCo
+ Db2pTuDwhqJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZoWfPQAKCRD2t4JPQmmg
+ c/FZEADRysYPl3rHZhHEBuq0fSIfrla7Q3hKwMXmNu8PrDmG2DfvVTqXVhZoau6S41G7uSKGk0l
+ wCDS9wL7ntMJwI/YwpbgvQUeMyBk0SL6hpZMLjHUlGlQ0uEUKaBP4mT9+Fe8Sovc1p8caIzueoD
+ 3WMvRJjske9O2S5yX69zEJmtfLBzNu7aCV+lqxMhDqeLeIcfJS15NCX5IzQ0Xv1/T7wfsRFk1+I
+ 6fm6pjlDmpXRYCL2f2htAYL2SPc++CTPRFyc/hssfWm4mDI2EpraSpTOWIbEGtE4ZLA3rW069l3
+ VNi9+F7jwsFaWIQYB1NemhRGzJz5mZTcQ2s4CZkOM0OJZWOs2R4H2zqRfuZF24e1/onVB5I3xbW
+ EOF0bkzTO2XBTs3EsJbVjJveqZGkz2DT7pw0wOekXrlVPxtY8g0ipfj+Z+GjCmMUSEaalfAaQII
+ 74W4smE416JXN63ywnisokX5dBKrtBHkiaf5O+Otov/3eXylD7wtplyKGtTqhb00QZafrfnP/F6
+ FFrb/cNdcV0yJdV9s95TQqFgYy2KE08j3CncyoRIGDOjzbxWjU/fxUpkpvLzAeBgS+b2v39nJw8
+ RmLozNWj7Ql0N8gc+MJ+iMNRfCt/twQwTyp3+/rnUzXVRD+39sN+SMBqesDk+oSeQ4+Atl3kTzv
+ vJ+W6whg0mG6mLw==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-The writing of css->cgroup associated with the cgroup root in
-rebind_subsystems() is currently protected only by cgroup_mutex.
-However, the reading of css->cgroup in both proc_cpuset_show() and
-proc_cgroup_show() is protected just by css_set_lock. That makes the
-readers susceptible to racing problems like data tearing or caching.
-It is also a problem that can be reported by KCSAN.
+In this series from Geliang, modifying MPTCP BPF selftests, we have:
 
-This can be fixed by using READ_ONCE() and WRITE_ONCE() to access
-css->cgroup. Alternatively, the writing of css->cgroup can be moved
-under css_set_lock as well which is done by this patch.
+- A new MPTCP subflow BPF program setting socket options per subflow: it
+  looks better to have this old test program in the BPF selftests to
+  track regressions and to serve as example.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
+  Note: Nicolas is no longer working for Tessares, but he did this work
+  while working for them, and his email address is no longer available.
+
+- A new symlink to MPTCP's pm_nl_ctl tool is added in BPF selftests, to
+  be able to use it instead of 'ip mptcp' which is not supported by the
+  BPF CI running IPRoute 5.5.0.
+
+- A new MPTCP BPF subtest validating the new BPF program added in the
+  first patch.
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 ---
- kernel/cgroup/cgroup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+- Sorry for the delay between v2 and v3, this series was conflicting
+  with the "add netns helpers", but it looks like it is on hold:
+  https://lore.kernel.org/cover.1715821541.git.tanggeliang@kylinos.cn
+- Patch 1/3 includes "bpf_tracing_net.h", introduced in between.
+- New patch 2/3: "selftests/bpf: Add mptcp pm_nl_ctl link".
+- Patch 3/3: use the tool introduced in patch 2/3 + SYS_NOFAIL() helper.
+- Link to v2: https://lore.kernel.org/r/20240509-upstream-bpf-next-20240506-mptcp-subflow-test-v2-0-4048c2948665@kernel.org
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index ff3c14fa62e6..c8e4b62b436a 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1842,9 +1842,9 @@ int rebind_subsystems(struct cgroup_root *dst_root, u16 ss_mask)
- 		RCU_INIT_POINTER(scgrp->subsys[ssid], NULL);
- 		rcu_assign_pointer(dcgrp->subsys[ssid], css);
- 		ss->root = dst_root;
--		css->cgroup = dcgrp;
- 
- 		spin_lock_irq(&css_set_lock);
-+		css->cgroup = dcgrp;
- 		WARN_ON(!list_empty(&dcgrp->e_csets[ss->id]));
- 		list_for_each_entry_safe(cset, cset_pos, &scgrp->e_csets[ss->id],
- 					 e_cset_node[ss->id]) {
+Changes in v2:
+- Previous patches 1/4 and 2/4 have been dropped from this series:
+  - 1/4: "selftests/bpf: Handle SIGINT when creating netns":
+    - A new version, more generic and no longer specific to MPTCP BPF
+      selftest will be sent later, as part of a new series. (Alexei)
+  - 2/4: "selftests/bpf: Add RUN_MPTCP_TEST macro":
+    - Removed, not to hide helper functions in macros. (Alexei)
+- The commit message of patch 1/2 has been clarified to avoid some
+  possible confusions spot by Alexei.
+- Link to v1: https://lore.kernel.org/r/20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-0-e2bcbdf49857@kernel.org
+
+---
+Geliang Tang (2):
+      selftests/bpf: Add mptcp pm_nl_ctl link
+      selftests/bpf: Add mptcp subflow subtest
+
+Nicolas Rybowski (1):
+      selftests/bpf: Add mptcp subflow example
+
+ MAINTAINERS                                       |   1 +
+ tools/testing/selftests/bpf/Makefile              |   3 +-
+ tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c     |   1 +
+ tools/testing/selftests/bpf/prog_tests/mptcp.c    | 104 ++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/mptcp_subflow.c |  59 ++++++++++++
+ 5 files changed, 167 insertions(+), 1 deletion(-)
+---
+base-commit: fd8db07705c55a995c42b1e71afc42faad675b0b
+change-id: 20240506-upstream-bpf-next-20240506-mptcp-subflow-test-faef6654bfa3
+
+Best regards,
 -- 
-2.39.3
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
