@@ -1,79 +1,132 @@
-Return-Path: <linux-kernel+bounces-238638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F8C924D38
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:42:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D8C924D3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDEF3B2326C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:42:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EA01B2140E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8210524C;
-	Wed,  3 Jul 2024 01:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DDD1DA315;
+	Wed,  3 Jul 2024 01:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhhrWUFD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hV1/ba8j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC6246B5;
-	Wed,  3 Jul 2024 01:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F251FAA;
+	Wed,  3 Jul 2024 01:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719970942; cv=none; b=dROPK6UR4bPTWGVnouTgZixHlR4JnOE2q8J1tdg+0/xqU7qIHxDmaqf/E3L+JM9vGA1FYU4xoKwdFNf145+TrNjFUANtrrwdOjWiCHVidokmq2rpEBC7vbv7/U/VLWs3IphCbaXF/rX6gMjn21bbr16kkH1eGd0wyxZegsosXUQ=
+	t=1719971065; cv=none; b=h7R3Ohr6DhOy4ZxhkkcsG37o9M7crK6slhFwaqPj1dyA55E3ss7zQc+VY7K7UkTIwphEjjGrxj9C2pyzKbMSIq7C/ycu3ErfLjSaViiPAWi8LV3h4BgxqKurUgq7Cov22TLGnPJ+vFFKIFr7jLVFD7MJWwL026W80XrqXYWuDyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719970942; c=relaxed/simple;
-	bh=UcxzuPrchx18jeTGp7Ek1IscH56sS0Ld5+/uuF2cChc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dpp7oe1TjDi9iV9BTcpHd/D0IabTvtmEytbwrZt+hmXHa8hPeAScOKKVBTJOGzVlY0/Gy8Dw1nSFD0yyVXtzL+TEBdbU9DSrCmMMSWafOmVfVJM6oFnTvQrpEHEfVM1uFXMUvRcP3NSWraetm8bzVeYdpr67hJTquRp0VkPnjDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JhhrWUFD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D78CC116B1;
-	Wed,  3 Jul 2024 01:42:21 +0000 (UTC)
+	s=arc-20240116; t=1719971065; c=relaxed/simple;
+	bh=42mTcGmLRkv0gLZBJggEWYL7CYdyKG+MNeqUzQmh2M0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HHn3OPogvY8dDl1tkmVn7Z/O5UVvAIhF51nktZLwHPBDNvsRzb1zjVzWGnTlXgQ7kDNLUQd/zl6izTeU8fPcwYMZuV8T7mbLP/LnVrDsoRthiTUvMLNcoXUoLrRCbPh1UE+slYmPwsJCfAp+zai7nz7WK5iZNHVCYAHwFTMIRSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hV1/ba8j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CDB5C116B1;
+	Wed,  3 Jul 2024 01:44:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719970941;
-	bh=UcxzuPrchx18jeTGp7Ek1IscH56sS0Ld5+/uuF2cChc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JhhrWUFDJAiIWRuEaTA+4eLHvJ9hIR7xIA+Hn7VxvLUy+4JqrI1B9EtoC/HUz6Kuy
-	 aCN6tE7o+rlRVHjLUxmxRcdSny6b72N4CrgwQ968PjDidqk4XRz6XtXdAobzXf7UXJ
-	 GL9eqi13dizn3hER88Sm4Z2ZJ4oQASs01Ctp2JggXuzhYZu14wfDx0wF5kWk4UiN9o
-	 MFff5KMzavS7KVqbZUJif/Fscr4OV9t0KwZArPo0bCYCDl1O8XeQ3FLNQi7pZeeOP4
-	 cYf0ZSoTaiAdlDZU9t8Sqq36hTJn/PBlGQTj8QQPst5yN3axPDOnqitHiMdkItWGWy
-	 lHwR4gkQAr2rg==
-Date: Tue, 2 Jul 2024 18:42:20 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- linux-usb@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH-next v1] r8152: Convert tasklet API to new bottom half
- workqueue mechanism
-Message-ID: <20240702184220.306d8085@kernel.org>
-In-Reply-To: <20240701100329.93531-1-linux.amoon@gmail.com>
-References: <20240701100329.93531-1-linux.amoon@gmail.com>
+	s=k20201202; t=1719971064;
+	bh=42mTcGmLRkv0gLZBJggEWYL7CYdyKG+MNeqUzQmh2M0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hV1/ba8jri4uW/hdq1fo1Phlp5vxHC/78G3R3PdGKXYzHBnF8euCPl6/bOSKb9mfW
+	 HBgHG/7/fv0Zs2+l/SdssQ8imeUfc96UW4vzGER2clro7QfwMlrRIIgXsLpltInN5f
+	 D7STOdUUHcN2nvgj5wa1MQHOKG0dUKOjHxFESIkfgL/kA3IFQ0yXZ0a6Ps9br1ZrZw
+	 NcODsZ4/UEVcz9RaMD4Qv5wmZF4Y9QLzBKQ+GXEHcKKgeUa9JKwQnuhWBr0nf4oItW
+	 EOQTskB+rW+R19sik+GPIbZjZCXSccho8FXnzBGafyH92BWn38zbpW84wHB7FodNDj
+	 59/+rJ72k9H9g==
+Date: Wed, 3 Jul 2024 10:44:16 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Scherer <T.Scherer@eckelmann.de>
+Subject: Re: [GIT PULL] Immutable branch between MFD and Counter due for the
+ v5.11 merge window
+Message-ID: <ZoSs8M3C72xAyG_J@ishi>
+References: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
+ <20240626151343.GA2504017@google.com>
+ <20240628142847.GN2532839@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cHosmM4QmEp1ldDc"
+Content-Disposition: inline
+In-Reply-To: <20240628142847.GN2532839@google.com>
 
-On Mon,  1 Jul 2024 15:33:27 +0530 Anand Moon wrote:
-> Migrate tasklet APIs to the new bottom half workqueue mechanism. It
-> replaces all occurrences of tasklet usage with the appropriate workqueue
-> APIs throughout the alteon driver. This transition ensures compatibility
-> with the latest design and enhances performance
 
-alteon ?
+--cHosmM4QmEp1ldDc
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> -		tasklet_enable(&tp->tx_tl);
-> +		enable_and_queue_work(system_bh_wq, &tp->tx_work);
+On Fri, Jun 28, 2024 at 03:28:47PM +0100, Lee Jones wrote:
+> Enjoy!
+>=20
+> The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfab=
+d0:
+>=20
+>   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags=
+/ib-mfd-counter-v5.11
+>=20
+> for you to fetch changes up to 304d02aa711369da89b4f8c01702bf1b5d1f7abc:
+>=20
+>   mfd: stm32-timers: Drop unused TIM_DIER_CC_IE (2024-06-26 16:09:58 +010=
+0)
+>=20
+> ----------------------------------------------------------------
+> Immutable branch between MFD and Counter due for the v5.11 merge window
+>=20
+> ----------------------------------------------------------------
+> Uwe Kleine-K=C3=B6nig (4):
+>       mfd: stm32-timers: Unify alignment of register definition
+>       mfd: stm32-timers: Add some register definitions with a parameter
+>       counter: stm32-timer-cnt: Use TIM_DIER_CCxIE(x) instead of TIM_DIER=
+_CCxIE(x)
+>       mfd: stm32-timers: Drop unused TIM_DIER_CC_IE
+>=20
+>  drivers/counter/stm32-timer-cnt.c |   4 +-
+>  include/linux/mfd/stm32-timers.h  | 179 ++++++++++++++++++++------------=
+------
+>  2 files changed, 96 insertions(+), 87 deletions(-)
+>=20
+> --=20
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
 
-This is not obviously correct. Please explain why in the commit message
-if you're sure this is right.
--- 
-pw-bot: cr
+Merged and pushed out to counter-next.
+
+Thanks,
+
+William Breathitt Gray
+
+--cHosmM4QmEp1ldDc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZoSs8AAKCRC1SFbKvhIj
+Ky8MAQCC9OFsKPs8E4VTmZK8Xqj6JXfh9iGdsN91Jg4gi36RXwEA0grMJ7WNXywX
+ZzM6pVG8xYYtcsMeyAz9psBr/wCtkQg=
+=1DWZ
+-----END PGP SIGNATURE-----
+
+--cHosmM4QmEp1ldDc--
 
