@@ -1,127 +1,125 @@
-Return-Path: <linux-kernel+bounces-238862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADF2925243
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:29:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D454F925247
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 097C31C23EE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:29:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FDA928423D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE1E288D1;
-	Wed,  3 Jul 2024 04:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823F539AC3;
+	Wed,  3 Jul 2024 04:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EGpd7bj7"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ezZOOk4+"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F132F61FE0;
-	Wed,  3 Jul 2024 04:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BBD2E646;
+	Wed,  3 Jul 2024 04:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719980761; cv=none; b=Uytod4oNkd3XIU1AOkVHVOv3p9iCNq60EStZFziSP1SNCZbHumttsz8H53mAu5w0rDp+DYL47RDHTQOkiyv1NQGLgsNOsI8C13vS2arm1LsZhL3qIiECxQm+CKFaY+YWOxTehJWCMwnx+zZUE/0bpPjBFe5EBUY72hkd56En9uk=
+	t=1719980912; cv=none; b=D13SDfzi9dANS5mIsnx1pQUTqHZ7Li90UgultAKVGshtxpS+7eLdGKzgGMDem24UMAg2KQfZVa8lVflp9u6W+QBA2rzzPAon2xpXEmZw7ryFZ5/bGBK7x0znAbEWFwVH66FmuOxe3/rf1oXbls8ZFLUFP5arwgTJYcZb8b9mD9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719980761; c=relaxed/simple;
-	bh=CTqwihBOux67otfyvZtz70kvvZA4Vo/MhZfFROMw1yw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=udfbtSnqYVxnu+2CBP53o2UAFi5TXTZWIvNrS0YSJ+KYUOSq0FWcz9YBBxFrFJJgLGSBTvJu9lMiGZFOaFyK4hpKnA5h8VcDj1Wb2vwp23vLOAhPpZXH0Gu6sGKxtNzSJRzezMWQIGSMgidaxZ/+OQtAb29Gxk/pG6sBQlym/5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EGpd7bj7; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fafc9e07f8so9468315ad.0;
-        Tue, 02 Jul 2024 21:25:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719980759; x=1720585559; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cBnaqUZYK96vUrgWPYxgC+5OHY9C7ZJqIA02ClmSNCQ=;
-        b=EGpd7bj7ErSyMJ3X3h4ine+6143TfgdZOLopzdCg9Za2v9D2XgWtKWvzg36sAzKtd8
-         Hh+wZ6po5d60Y/KvMlEImfwrn7n3E+Esn00OEYsVhzm6XC9SE1U6k0GoW/ZD7MX1icKr
-         /VZZ1SwaGtfvnW9zDuzixDDVgnX3LG8V33qF5H1g8Q1TbjeJvdanq1qHNqREH9HzewgZ
-         KszMt2DsMXjY1yEDDtiRBCQ0KgXgeSTXzfwVS4Ub3ovf2oyrZ2NE0juiKnUQFQM2ChAd
-         PJe1kycdaLDaxZlLGom8+t91wvL9mqvubi9zVFp3uWZnBEv8hb48OWWlwYsEXJXXu4Qs
-         2CzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719980759; x=1720585559;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cBnaqUZYK96vUrgWPYxgC+5OHY9C7ZJqIA02ClmSNCQ=;
-        b=LWdmCwX2hs9uaNqLps4UTctsKkPcI8lgr43UTeJm+8iyB/pwbhI4UHI38Zby9faDoz
-         lyZYTB9xWg3ctVTonxk1S7TDOJSaVxohJn0fD+1SHu0KbpnkJMqPI2xfjoYq7BonNX21
-         x9k1N19d6OsKMZ3OCFdxtxlKmXz2brIc/sQn8VndgDRveE32JPivCAgTPpEoT56hmbgd
-         x7BdecBRseLhu0VsfNXm2kSoVxj1tQ2Q1wjFI9MLAYKSvUT7jFNpQia1zlMRLTCF6+q7
-         NNlmZHjLuQrM/FPvCOLtBa2SmDYTEPnW2fm6YOxMDbLsskpDFZs6iGlPf4cxLf/tjW1D
-         597A==
-X-Forwarded-Encrypted: i=1; AJvYcCXY+GDzVVdvTFLfn9v4SlLgax1qIbhIY7H2Cf5wg2xBW1QJsaDdDGlPL4n5x824gE5LXRJHgYhK8Vn9jsr6bp0ojC+ML5KgSUlmrY9Pl64iy0VZELGLd/GZ2CklghDkfrM7hcFQ
-X-Gm-Message-State: AOJu0YxcctFzygX4DkBAa4gFYzpoa3McsGACQP0kWM5EH/yC9M/xgM0f
-	Mq9xDqiJKk08egN3rC2BForIP+el4r3ydoCCOzEin6EwVnrKo+YS
-X-Google-Smtp-Source: AGHT+IHUeV3QCOeOWx1/Vbhxgd3leWzYw8PWTNlqtzJ85bI+P6YvI5aKH2cmkg1+QJ/JlB4oC5AlvA==
-X-Received: by 2002:a17:902:f611:b0:1f7:1a31:fae8 with SMTP id d9443c01a7336-1fadbc85fc7mr122403305ad.26.1719980759067;
-        Tue, 02 Jul 2024 21:25:59 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10e2197sm92898705ad.63.2024.07.02.21.25.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 21:25:58 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id A567A185B99C8; Wed, 03 Jul 2024 11:25:56 +0700 (WIB)
-Date: Wed, 3 Jul 2024 11:25:56 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.9 000/222] 6.9.8-rc1 review
-Message-ID: <ZoTS1NEjgv1FoVfC@archie.me>
-References: <20240702170243.963426416@linuxfoundation.org>
+	s=arc-20240116; t=1719980912; c=relaxed/simple;
+	bh=Fkm5sdPkA6UYATDj0u0i/yFW61gUyzpjf3ngn0JwNgs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DaKFCyACfreHgs6HOo/r5pAgo2g1nGYVyK3ANrak9FzZGgfQwn0CqaKeLV0oE5SHcj6XYkA2JL1l8jeRyeQbRGLUZ1fhaDLHkje2WIyFNXJgvf/62CtWks9XV7pQHqglEFvMzffe7YzIl5LebugsOlB9Ap1O5CYt3T7jZ4kJa0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ezZOOk4+; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4634SCus060488;
+	Tue, 2 Jul 2024 23:28:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719980892;
+	bh=BTV7hM111key7GH2Su926BtfNkjbH/jr+oyyFeTWu74=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=ezZOOk4+vjUJqsT80/tFQFsLcv6ylzM4pJGte2pbEBBKSAcvJ1hqSEMdm8l160cQY
+	 vqpbcREIzmk29xxSwve3l0HSX7x2uB4yhu1N4w+Vtr43Ds3CV9vaXJ3iTIk/hU2KVy
+	 Yg5Rkl6+1gTKSoEMybbMP4/rbkp3o7HmabvPNyEw=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4634SCfZ126645
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 2 Jul 2024 23:28:12 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 2
+ Jul 2024 23:28:12 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 2 Jul 2024 23:28:12 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4634S8CR041726;
+	Tue, 2 Jul 2024 23:28:09 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andrejs Cainikovs
+	<andrejs.cainikovs@gmail.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        Andrejs Cainikovs
+	<andrejs.cainikovs@toradex.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] arm64: dts: k3-am625-verdin: enable nau8822 pll
+Date: Wed, 3 Jul 2024 09:58:06 +0530
+Message-ID: <171984950179.3152309.9767144134155266216.b4-ty@ti.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240418105730.120913-1-andrejs.cainikovs@gmail.com>
+References: <20240418105730.120913-1-andrejs.cainikovs@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="y20GA+L+N+D68gra"
-Content-Disposition: inline
-In-Reply-To: <20240702170243.963426416@linuxfoundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Hi Andrejs Cainikovs,
 
---y20GA+L+N+D68gra
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 18 Apr 2024 12:57:30 +0200, Andrejs Cainikovs wrote:
+> In current configuration, nau8822 codec on development carrier board
+> provides distorted audio output. This happens due to reference clock
+> is fixed to 25MHz and no PLL is enabled. Following is the calculation
+> of deviation error for different frequencies:
+> 
+> 44100Hz:
+> 
+> [...]
 
-On Tue, Jul 02, 2024 at 07:00:38PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.8 release.
-> There are 222 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-Successfully compiled and installed the kernel on my computer (Acer
-Aspire E15, Intel Core i3 Haswell). No noticeable regressions.
+[1/1] arm64: dts: k3-am625-verdin: enable nau8822 pll
+      commit: feebfe95a6654e991befca7dee45788979fd7f72
 
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
---=20
-An old man doll... just what I always wanted! - Clara
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---y20GA+L+N+D68gra
-Content-Type: application/pgp-signature; name="signature.asc"
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
------BEGIN PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZoTSzwAKCRD2uYlJVVFO
-oyEHAQCNKXYyjiaXYt1QH1Hl7jD8dw00fbeEs3uPj+bf7HmoWQEA0jcs3111Kssk
-96nRJRvfR2+2ZJa6T5eSZ4TMzMD7LAc=
-=lKUP
------END PGP SIGNATURE-----
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
---y20GA+L+N+D68gra--
 
