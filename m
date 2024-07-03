@@ -1,114 +1,108 @@
-Return-Path: <linux-kernel+bounces-240151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C078C9269A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:36:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFDC59269AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DAA0288DAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DDC41C20DBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E4E191460;
-	Wed,  3 Jul 2024 20:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4512E191460;
+	Wed,  3 Jul 2024 20:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XctAR0tp"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UJwRVIXd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373D51428F8;
-	Wed,  3 Jul 2024 20:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A4628379;
+	Wed,  3 Jul 2024 20:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720038980; cv=none; b=aePGjmLkJcrVmC9nFJUkG+27zRqnnmxQO3RhaJAiWpcf+i/6AqlEeedvZXO0tF+Y2+0dpUx33wFJNrEHq26qMFBHo/GKmGWjs94R5ChfKokXbFTIsQJypYc4p3Pj6vv2D+dHdzDC2b11B58BOBJqYblrE5f70YMyNhOhTaireZw=
+	t=1720039086; cv=none; b=bPnt9G3N+4GFWUIEmAradwOKFKB97hm/8iJpcRSnJ0zeC8f3yIx4s5+J/R5Ef3iuMs79iYNBiDTKOR91pRJsJm8h93c+mTJlcquMSxt1rd1LIxCTZJ/TeOxEqgE5cF/a3BZxG+H4bBg4bu4SMZXChVOwloQdliZpPuNdV7VeMF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720038980; c=relaxed/simple;
-	bh=Oqyd5Kxbfv5QZ3nFmSgn8SiH41r1XTO0pZscPfXtn+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mBU7V4lrOegrjPr2zxkY2Qqm58ZH4zfjiGboicaJv9CiYH0OxlXF5yWbcV20iznzjuay7AcWaQdVKbuIx41XdySg/7Hv4voqa85pUWWH2FSkgzTF/mL191tPSJJu4K+erZHxjARRrLTX5+HKQik3OAgtkWfJfhxh6MxgicsX/Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XctAR0tp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03342C2BD10;
-	Wed,  3 Jul 2024 20:36:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720038980;
-	bh=Oqyd5Kxbfv5QZ3nFmSgn8SiH41r1XTO0pZscPfXtn+8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XctAR0tpA5fSdH3KeTgwqMs6oXubiLg+dYNI4FhoGZLMEUI+XQrKw0gc5Zu3gPy2O
-	 fQC+FwT6a1N5CEaMUUGyjC0cURMt1uW6r0zhFIJsD1lRb3s8M+RuqLtEXstglJBpxJ
-	 Wpo7LfsGKUx4AuPHciKLKWArR+R+x/TBggAbdIImsYz4pOI1r8l06FpyDjeggUGjv2
-	 A6stN2mitkepEKs36Bs/9eTHCs9Aj23wDrZnV9rMHwragqlQgOY0tvUjyjdvx6u3et
-	 gEJ8LzNvYfxn3O/cg7pMwmQHB2JRhfNbsP09KmcJkr+gfBQiKVOtZpsD3HjarLgv90
-	 lUnrDJQ7HWTuA==
-Date: Wed, 3 Jul 2024 13:36:19 -0700
-From: Kees Cook <kees@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <jolsa@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
-Message-ID: <202407031330.F9016C60B@keescook>
-References: <20240701164115.723677-1-jolsa@kernel.org>
- <20240701164115.723677-2-jolsa@kernel.org>
- <CAEf4BzZaTNTDauJYaES-q40UpvcjNyDSfSnuU+DkSuAPSuZ8Qw@mail.gmail.com>
- <20240703081042.GM11386@noisy.programming.kicks-ass.net>
- <CAEf4BzY9zi7pKmSmrCAqJ2GowZmCZ0EnZfA5f8YvxHRk2Pj8Zw@mail.gmail.com>
+	s=arc-20240116; t=1720039086; c=relaxed/simple;
+	bh=+4Ks35xAf/yZ+g6UF74Pf5H+mbGc4Y8ntl+6RsPGyps=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=UXilvFGfZRWWlf4Nb+JZ/CCkURxXm9UN3hRZsJCvdzJOGCACkt35CfXd0yiSK+NRaOGdh8g+ucGb3l+FeunDJ218RqwohqUGddmfIQz8y9CY6z/Us8yXoOIJSokcHiu/GaWeKfNdQAyOIzruhg+PHD55rJjV2qdkOjYuZNw7uAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UJwRVIXd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 662BDC2BD10;
+	Wed,  3 Jul 2024 20:38:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1720039085;
+	bh=+4Ks35xAf/yZ+g6UF74Pf5H+mbGc4Y8ntl+6RsPGyps=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UJwRVIXdlKeVTnmQs9Qv9fgIH8QA7Cxi3P0TeMwE5JD2MhfR5HEgkmrBN8wJS7zUy
+	 DqY6Zz7Epo6y7LFeQw4E8StHutlFYDvqvWOUsz0WRp2LDN7MUzZRlahzHbS7nWM7+u
+	 N964EPbT4uJ0ubCmlZK5jS8MAEULJN5UyvkYQAFU=
+Date: Wed, 3 Jul 2024 13:38:04 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: xiujianfeng <xiujianfeng@huawei.com>
+Cc: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+ <corbet@lwn.net>, <cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, Sidhartha Kumar
+ <sidhartha.kumar@oracle.com>, Miaohe Lin <linmiaohe@huawei.com>, Baolin
+ Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH -next] mm/hugetlb_cgroup: introduce peak and rsvd.peak
+ to v2
+Message-Id: <20240703133804.1d8ddf90f738a7d546399b3b@linux-foundation.org>
+In-Reply-To: <6843023e-3e80-0c1c-6aab-b386ffebd668@huawei.com>
+References: <20240702125728.2743143-1-xiujianfeng@huawei.com>
+	<20240702185851.e85a742f3391857781368f6c@linux-foundation.org>
+	<6843023e-3e80-0c1c-6aab-b386ffebd668@huawei.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzY9zi7pKmSmrCAqJ2GowZmCZ0EnZfA5f8YvxHRk2Pj8Zw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 03, 2024 at 11:31:11AM -0700, Andrii Nakryiko wrote:
-> On Wed, Jul 3, 2024 at 1:10 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Tue, Jul 02, 2024 at 01:51:28PM -0700, Andrii Nakryiko wrote:
-> > > > +static size_t ri_size(int sessions_cnt)
-> > > > +{
-> > > > +       struct return_instance *ri __maybe_unused;
-> > > > +
-> > > > +       return sizeof(*ri) + sessions_cnt * sizeof(ri->sessions[0]);
-> > >
-> > > just use struct_size()?
-> >
-> > Yeah, lets not. This is readable, struct_size() is not.
+On Wed, 3 Jul 2024 10:45:56 +0800 xiujianfeng <xiujianfeng@huawei.com> wrote:
+
 > 
-> This hack with __maybe_unused is more readable than the standard
-> struct_size() helper that was added specifically for cases like this,
-> really?
 > 
-> I wonder if Kees agrees and whether there are any downsides to using
-> struct_size()
+> On 2024/7/3 9:58, Andrew Morton wrote:
+> > On Tue, 2 Jul 2024 12:57:28 +0000 Xiu Jianfeng <xiujianfeng@huawei.com> wrote:
+> > 
+> >> Introduce peak and rsvd.peak to v2 to show the historical maximum
+> >> usage of resources, as in some scenarios it is necessary to configure
+> >> the value of max/rsvd.max based on the peak usage of resources.
+> > 
+> > "in some scenarios it is necessary" is not a strong statement.  It
+> > would be helpful to fully describe these scenarios so that others can
+> > better understand the value of this change.
+> > 
 > 
-> struct_size(struct return_instance, sessions, sessions_cnt) seems
-> readable enough to me, in any case.
+> Hi Andrew,
+> 
+> Is the following description acceptable for you?
+> 
+> 
+> Since HugeTLB doesn't support page reclaim, enforcing the limit at
+> page fault time implies that, the application will get SIGBUS signal
+> if it tries to fault in HugeTLB pages beyond its limit. Therefore the
+> application needs to know exactly how many HugeTLB pages it uses before
+> hand, and the sysadmin needs to make sure that there are enough
+> available on the machine for all the users to avoid processes getting
+> SIGBUS.
+> 
+> When running some open-source software, it may not be possible to know
+> the exact amount of hugetlb it consumes, so cannot correctly configure
+> the max value. If there is a peak metric, we can run the open-source
+> software first and then configure the max based on the peak value.
+> In cgroup v1, the hugetlb controller provides the max_usage_in_bytes
+> and rsvd.max_usage_in_bytes interface to display the historical maximum
+> usage, so introduce peak and rsvd.peak to v2 to address this issue.
 
-Yes, please use struct_size_t(). This is exactly what it was designed for.
+Super, thanks for doing this.
 
-Though with only 2 instances of ri_size(), maybe just use struct_size()
-directly?
+It's getting late in the cycle, but the patch is simple so I'll add it
+to mm-unstable for additional exposure.  Hopefully some others can
+offer their thoughts on the desirability of this.
 
-Also, please annotate struct return_instance with __counted_by:
-
-+	int			sessions_cnt;
-+	struct session_consumer	sessions[] __counted_by(sessions_cnt);
-
-
--- 
-Kees Cook
 
