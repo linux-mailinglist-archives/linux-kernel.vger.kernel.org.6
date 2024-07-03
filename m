@@ -1,166 +1,137 @@
-Return-Path: <linux-kernel+bounces-239836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D783B9265E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:21:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A7B9265EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 995F8283858
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:21:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1F51C223AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E798183075;
-	Wed,  3 Jul 2024 16:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA38183098;
+	Wed,  3 Jul 2024 16:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CchXGZN7"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9UpOCTq"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B3D17C7C;
-	Wed,  3 Jul 2024 16:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DA0282E1;
+	Wed,  3 Jul 2024 16:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720023647; cv=none; b=bhfOkyHX6HW0vrxqLasJWeZaK6R5ToTx8FTK+Pac0fxzA2287u5/yc36DgSmmtfvqVPz7oH3VKVvzIG1W6/vParOJ9CG/zv3TvVh53bx3++4qK6UEGFvwePvl6eZwR2TrFLXTA/HHhhHK6Qd/myx9y7z2AxLLpwQX76PZpcUE24=
+	t=1720023676; cv=none; b=FBPIAsSe1JRVM6hGMeKSL+f19raZj55FEoFfCLD1+kDsWQVWnZPFTYHhSmalUH+AsCHgWR+pJoT2KH6oldBtHrHC1oZGqzL/yAOhdGLQhw/a06B4+rsD4fQllhmLOdCX43Jn8pCjHOE2xTswHSt0Q008BuR41YiCb/wA0u0KVVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720023647; c=relaxed/simple;
-	bh=wwFT+vz81q5073dVZ1ppSrdYkyQllN4uMfPUMuY8sGM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qOQNhZqMpGvdXIVMjmrQuLnfW+14vnVpXIe2ugZXTZLhOolrf10UR1UXphquuDUnGIm/osjAdfBptr8hcS8MrHYsqZysjeqOXi7kdzqJkTrGvs+8N6XKNxMdzFx1of5Q5t5Ti9qgp9H42MSnPQxED/uPPRNYk3ww9A9sIuowh/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CchXGZN7; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1720023676; c=relaxed/simple;
+	bh=2yfo3OvP/tnsTIp4VFs4rNirB845fNkFXJ45jxb/Y+c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IAGhzCZZL2dhIBZVuCMMv27Y/eJzBmkDAWxyiS+fmtep93OJjEPefpVcJS5wYUP+0EqH7L8B8iSNDlG/aUXGc7/me4ezPhWDdgwRTWz0SHjCNNh9uOviRYDXbq3CMENsQqi4GKABsytMzDW6vkmm8LoS4bVsEwAcHhGOx89Z3aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9UpOCTq; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ee7885aa5fso22132231fa.1;
-        Wed, 03 Jul 2024 09:20:45 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e97e5a84bso1344614e87.2;
+        Wed, 03 Jul 2024 09:21:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720023644; x=1720628444; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=v6l054JVIhkosfS6xjtkQ8TNQqgCYBV3oASoIl/CMIQ=;
-        b=CchXGZN7MISAzlRkgz12MQNdSA+bZKmvZwLlJIoaZcHzMsGv3EULtVKnC2uogj22tI
-         ZcjE3ey6TNHtziX+GKwSOcZsyo0YXG2QM7IgC/SI6TuIav5hbzJNQ/PMzlvSJrtkfYzY
-         uB/I7Pb26d5KzOIxxN5qENvfhJrfkEBPnxQzHbzowmGx2t6ZUAzP01CgSyTdWwk9M1Pz
-         4y+VHXwjJGWPZTkZ6uZg0UgEkHk6r2jaZ0MdiQMAfKSXfoyVtL5PE0XUf2XuB95KvJkv
-         TBMR2ohTuphXUsbvRuR0kzmdDKsL11DYAbrX+Q9++FIQ0VAW+GMLa7ap0fen0NSvJ65d
-         W4rQ==
+        d=gmail.com; s=20230601; t=1720023672; x=1720628472; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jsALFFHLFuxY5RQqYr6ygaK5HtrgJplgfhE1MyVzeTA=;
+        b=X9UpOCTqvwzSMicpDoZjII/jBw1qP7Fz7/PFgrzV43Lmlye2jku4YsSN5Ui+C9SHXl
+         RXVdz3Nnfalzgg5ER4GVS2AidGyFfCzuHAMRP+MdHpIDGWNuMbreucsyhduhr2u1+Lqz
+         ItsElKH+MwL0LEddrFjZRxJUyuV+fLplHFRSDUjVlyqaWWS52BJOGMKzNWNq9vatZ3NU
+         0dP+V7CneQrGnkb9BsOHjpgUl9oeox4MHf3gQtaEEO8+ywYCSsOV86fohpJp6TKzk7l1
+         vHQVEEUPU3s4YxrsZ3yNd1Ysn2BYVGkjokvpaRLRl/0CoQy1ww/LpKbd/VAINwANwW3p
+         luxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720023644; x=1720628444;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v6l054JVIhkosfS6xjtkQ8TNQqgCYBV3oASoIl/CMIQ=;
-        b=FTz+nnjMhd3WRJl7LdydpN0chm8E2smutsypzkHvW17jXGG9/IlRaOoTrc8Wrqneea
-         fOeNcFoq4i7iXyr5cG9qIJsvGxNU4b7OMgyxtjoY2RxVJYZ6UH2itf6UrZlInOd0oGjx
-         crcqyVKN4lzU80AKbCg3zk8cKT6Ox4Z3p1QIHleEOerfbWanWvDc/n/PB+x8qsm/OBFK
-         IXGsZdcnIxtMgAaG3Kae58VnRavdpgfXicF/ooKjUFQWgDvHs9tvK385l01oweiXRQW9
-         Do7RcjUlG1FFmw1BtqihnbZF1vhnx4DdITkuRz07npgo/t9qIIhu4L2HwvFPQkA2SGSG
-         GMdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNXwtxLPap6RjB1dKW51VNrAoSAvLWtIgliVhb/e3YeLm7Q9071emnbd/cXuEgmWQDlrZxVf7jX3akSHpMEdy8S5sBUnEnMfXJXVWCyLBIjjBLPoUW0pQ/pxIfSLqjhuk/WCOCAsL8A3RivcKZcwnEhFrCzKREcsgLwWYs4+VY8GgHAUvv
-X-Gm-Message-State: AOJu0YzoURcB43Ewepa7QtxXthWrojMi022nFJ+YXXGR7IlhtPOYaEuM
-	lKsGACVDv7AUdtTieyiiFJMONcB/TBom9VOoOTLvfR2j6X9dJquX
-X-Google-Smtp-Source: AGHT+IHF602ROVoMJ5i/7KWiAX0EbFAF1zyRWMZ68q+6idsjw7RsAzLr+FNYROMIa1HOy3OmGVqm1Q==
-X-Received: by 2002:a2e:bc19:0:b0:2eb:d924:43fb with SMTP id 38308e7fff4ca-2ee5e6bc6f7mr90705151fa.41.1720023643632;
-        Wed, 03 Jul 2024 09:20:43 -0700 (PDT)
-Received: from krava ([176.105.156.1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a073sm244278305e9.32.2024.07.03.09.20.41
+        d=1e100.net; s=20230601; t=1720023672; x=1720628472;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jsALFFHLFuxY5RQqYr6ygaK5HtrgJplgfhE1MyVzeTA=;
+        b=MWE7722Cgi58ZrzIcMbybpfMXMymRiy5qYLk3y5zq5zAjpTOYM8+cv+b4hxx3JWtdz
+         hq85IIwNkKSdIRHL4CyxSLfPIjLDTepQxJYYi0SceLKPazNuvfK7eiBrgkyUMdG7tVtD
+         iiQLN3HYruoOiHCZY+Gqo3vO6fIGxQjQskICVxvGvRIIPEtrF4fdPkOpKHpoasMS5J9G
+         XWDAQk0mO761OHxjuWHHuUChUzH3U02QeWAg27Otx6s32682/IR4/4EX7+Sx60RVR6LK
+         H6stX6k0PpGn2hnjDWKOCMFamfSYqk1o04KYpwBwJ5fGRPBXNPj5KL8YT5+RHE42Q3PQ
+         WPow==
+X-Forwarded-Encrypted: i=1; AJvYcCXyKUo6oe1EoXpkVjLHBGgxGaSHtxcnryH5Aiwz2yxFrGcKiqlAZVjXceTaYn9z+Bch8XrIaZZxFVppu0ralias3PuEequH2sNAEcBgJ/PxNqziKmdMjZhl7A6+XTT3/UQUsYEbOio8sF6FoN69AEOt8KgXhbDODs5fdW/0AgC1q+hTZv2Ypi5nXe52r5ZPbngpj9cNodYTLsxxzPRB8zEKZZzmRA==
+X-Gm-Message-State: AOJu0Yx8amQ6cwDN7xRXLBWmrAjgqwCDa/d8HQGADyC2dKjRjk9+jt7J
+	W0Xe7t/odEhiyudUUcv96RXP4YFS0+HC/QU1BBnzY2wOdUYtUhyiNdmPPaWV
+X-Google-Smtp-Source: AGHT+IEFbJZPNdKnbaS0tCECdKRbpFEUC6/kEynhmQGEQOtH15bPicM3fIy/tKjmK0CSUZrTfa6cCA==
+X-Received: by 2002:a05:6512:124a:b0:529:b718:8d00 with SMTP id 2adb3069b0e04-52e8264b5dfmr11354631e87.8.1720023670436;
+        Wed, 03 Jul 2024 09:21:10 -0700 (PDT)
+Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72b5abddaesm473075166b.140.2024.07.03.09.21.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 09:20:43 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 3 Jul 2024 18:20:36 +0200
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
-Message-ID: <ZoV6VK9PiryYZw2O@krava>
-References: <20240701164115.723677-1-jolsa@kernel.org>
- <20240701164115.723677-2-jolsa@kernel.org>
- <20240702130408.GH11386@noisy.programming.kicks-ass.net>
- <ZoQmkiKwsy41JNt4@krava>
- <CAEf4BzYz-4eeNb1621LugDtm7NFshGJUgPzrVL7p4Wg+mq4Aqg@mail.gmail.com>
- <ZoVu1MKUZKtPJ7Am@krava>
+        Wed, 03 Jul 2024 09:21:10 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/9] ASoC: Constify struct regmap_config
+Date: Wed, 03 Jul 2024 18:20:56 +0200
+Message-Id: <20240703-sound-const-regmap_config-v1-0-2e379b0446a7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZoVu1MKUZKtPJ7Am@krava>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGh6hWYC/x3MSwqEMBBF0a1IjS2Ivxbcikij5hlrYCIpbQRx7
+ 4YensG9NymiQKnLbor4iUrwCUWe0byO3oHFJlNpytq0pmINp7c8B68HR7ht3L8JizgubG2bz9S
+ iASj1e8Qi1//dD8/zAtML9wtrAAAA
+To: David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Paul Cercueil <paul@crapouillou.net>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>
+Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720023669; l=1329;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=2yfo3OvP/tnsTIp4VFs4rNirB845fNkFXJ45jxb/Y+c=;
+ b=2XXm7af+smGwzm0vmJjdGPs0OO7QoTlsUJ3ujwzB3P8Nu0wlrV/eudsRaas7fpkTWpXW772bV
+ IB2/agz33aMBtUVwjbgPWXgOTcE34sW54Hcm2J2XEj5ds6/20gz0XNB
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Wed, Jul 03, 2024 at 05:31:32PM +0200, Jiri Olsa wrote:
-> On Tue, Jul 02, 2024 at 01:52:38PM -0700, Andrii Nakryiko wrote:
-> > On Tue, Jul 2, 2024 at 9:11 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> > >
-> > > On Tue, Jul 02, 2024 at 03:04:08PM +0200, Peter Zijlstra wrote:
-> > > > On Mon, Jul 01, 2024 at 06:41:07PM +0200, Jiri Olsa wrote:
-> > > >
-> > > > > +static void
-> > > > > +uprobe_consumer_account(struct uprobe *uprobe, struct uprobe_consumer *uc)
-> > > > > +{
-> > > > > +   static unsigned int session_id;
-> > > > > +
-> > > > > +   if (uc->session) {
-> > > > > +           uprobe->sessions_cnt++;
-> > > > > +           uc->session_id = ++session_id ?: ++session_id;
-> > > > > +   }
-> > > > > +}
-> > > >
-> > > > The way I understand this code, you create a consumer every time you do
-> > > > uprobe_register() and unregister makes it go away.
-> > > >
-> > > > Now, register one, then 4g-1 times register+unregister, then register
-> > > > again.
-> > > >
-> > > > The above seems to then result in two consumers with the same
-> > > > session_id, which leads to trouble.
-> > > >
-> > > > Hmm?
-> > >
-> > > ugh true.. will make it u64 :)
-> > >
-> > > I think we could store uprobe_consumer pointer+ref in session_consumer,
-> > > and that would make the unregister path more interesting.. will check
-> > 
-> > More interesting how? It's actually a great idea, uprobe_consumer
-> 
-> nah, got confused ;-)
+This series adds the const modifier to the remaining regmap_config
+structs under sound/soc that are effectively used as const (i.e., only
+read after their declaration), but kept as writtable data.
 
-actually.. the idea was to store uprobe_consumer pointers in 'return_instance'
-and iterate them on return probe (not uprobe->consumers).. but that would
-require the unregister code to somehow remove them (replace with null)
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (9):
+      ASoC: cs35l34: Constify struct regmap_config
+      ASoC: cs35l35: Constify struct regmap_config
+      ASoC: cs35l36: Constify struct regmap_config
+      ASoC: cs53l30: Constify struct regmap_config
+      ASoC: jz4760: Constify struct regmap_config
+      ASoC: jz4770: Constify struct regmap_config
+      ASoC: wsa881x: Constify struct regmap_config
+      ASoC: wsa883x: Constify struct regmap_config
+      ASoC: wsa884x: Constify struct regmap_config
 
-but we wouldn't need to do the search for matching consumer with session_id
+ sound/soc/codecs/cs35l34.c | 2 +-
+ sound/soc/codecs/cs35l35.c | 2 +-
+ sound/soc/codecs/cs35l36.c | 2 +-
+ sound/soc/codecs/cs53l30.c | 2 +-
+ sound/soc/codecs/jz4760.c  | 2 +-
+ sound/soc/codecs/jz4770.c  | 2 +-
+ sound/soc/codecs/wsa881x.c | 2 +-
+ sound/soc/codecs/wsa883x.c | 2 +-
+ sound/soc/codecs/wsa884x.c | 2 +-
+ 9 files changed, 9 insertions(+), 9 deletions(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240703-sound-const-regmap_config-1d4d56b7e5ee
 
-also it probably regress current code, because we would execute only uprobe
-return consumers that were registered at the time the function entry was hit,
-whereas in current code the return uprobe executes all registered return
-consumers
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-jirka
-
-> 
-> > pointer itself is a unique ID and 64-bit. We can still use lowest bit
-> > for RC (see my other reply).
-> 
-> I used pointers in the previous version, but then I thought what if the
-> consumer gets free-ed and new one created (with same address.. maybe not
-> likely but possible, right?) before the return probe is hit
-> 
-> jirka
 
