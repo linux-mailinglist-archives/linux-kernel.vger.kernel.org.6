@@ -1,149 +1,78 @@
-Return-Path: <linux-kernel+bounces-238676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E651924DB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:19:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DDFF924DB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 913DF1C24E1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:19:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1B1CB25E54
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F301016426;
-	Wed,  3 Jul 2024 02:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638FC1426C;
+	Wed,  3 Jul 2024 02:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eRGN0T/G"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Yfj4eJYc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEF71426C;
-	Wed,  3 Jul 2024 02:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D2A1799F
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 02:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719972815; cv=none; b=MHVw9kdSbqCesg+F8Xze7cdc/rY4t7qfyVz2lw2XHLwJNVAqcZVWL1BQXvJsNwzQDjgxXvo7RqukFTIh3HD5n+3C+3bnmur4m3cMChvaDhP3OGN4uhORFlLtL+8T9c+uZxSknWZ3jl6KZYI0JOEaMA74TEIzzohxNhzLkIjcbF8=
+	t=1719972824; cv=none; b=lSGdsOAIRbFHC5KfutMDhWvHsSJfkNZNFYtv3NTX8MnkZbbSbQGQfw6rCOMxcarBimzkqUBAPBIPIUEoN/v8/T4zFnj/hhMiMezXsgj9RTFvrF3uD679JNUSTOl9XlMsuDUL+J/QSO6hAqnmG20PxtzkRBKOFYeBVNr4g7w3tVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719972815; c=relaxed/simple;
-	bh=aI65XLqfvR7yKM7kV8fh7r8wiyY/a5ItqUizG+26xA4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CQhUH1E5yizD1uIJGBPhfSxBqXA8Xe3PnBNYatRx7H+jzJpQSd9xlzFHM/atrKyeQZDCVJoKy2ZntMn7J6qMfA4ZzT5N7O77UZZZj4ZRR3oZZVi24STLgCBz6vkmnXLhBH2Orl7wRcwN/USScXtTwIAZ7kkuY/yBWzYC/HbYI50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eRGN0T/G; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719972814; x=1751508814;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=aI65XLqfvR7yKM7kV8fh7r8wiyY/a5ItqUizG+26xA4=;
-  b=eRGN0T/GwOBXiF6VN+5wAIMU47yJafrlShJZAGi0JBx89kknVmzFB5LB
-   at0/WVNnshzF3nke+XJWY3i82gWK6OobFJrni7sW4NNV44K16Oio/+byQ
-   S4VX46+gkvhNU7sYdTxHuvNx+i0bEu2mko/J6zgCK/1EQNrtUGVrpjvj9
-   Ii1IAUn6gnt57SShr5nSlZnhTDMBXgRvBW+MUYr1GREcrqZV3iATMe//a
-   3JMCd6dwoeNL9hHb1i6r8vpJQDSS8DOvxVvsKzqg2op0C7vKfvLULtmvR
-   P11G3ZC3yaipbdmnbtH2q8RC+6vcpYYTVOzsHI1OE0fg91B+8YkuSfhZT
-   Q==;
-X-CSE-ConnectionGUID: ermS6fmJS2iAItfLZ4fMWQ==
-X-CSE-MsgGUID: fqnJ9wpWSf620QPRuMUt4g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="20082387"
-X-IronPort-AV: E=Sophos;i="6.09,180,1716274800"; 
-   d="scan'208";a="20082387"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 19:13:33 -0700
-X-CSE-ConnectionGUID: fsy3HKLbR2KoJKS8+eSdwA==
-X-CSE-MsgGUID: XEJaAh17QC+B6FywrAK/jA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,180,1716274800"; 
-   d="scan'208";a="76832525"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 19:13:29 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: rick.p.edgecombe@intel.com,
-	kai.huang@intel.com,
-	isaku.yamahata@intel.com,
-	dmatlack@google.com,
-	sagis@google.com,
-	erdemaktas@google.com,
-	graf@amazon.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH v2 4/4] KVM: selftests: Test memslot move in memslot_perf_test with quirk disabled
-Date: Wed,  3 Jul 2024 10:12:19 +0800
-Message-ID: <20240703021219.13939-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240703020921.13855-1-yan.y.zhao@intel.com>
-References: <20240703020921.13855-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1719972824; c=relaxed/simple;
+	bh=0B0KJjCjfdjRJT2RpzY5cxrGHmC5KY/2taoV0OESIwo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=dBhoOs4oyOfzzya0J17v21YLVwz3lU78EHqHQPxSa2XPc8NRTxV81IpbEnTQ8b3a8fTKIN80Bo3iPW6MzfvuE1bsCCUyvrUIM9j9JVz5VafNoooEdetMRYSGzjAyVZBGZwNQDLq8k1xEiogLmdU5GLb3RNDQDU9cDnCbBwDbeps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Yfj4eJYc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D49F5C116B1;
+	Wed,  3 Jul 2024 02:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1719972824;
+	bh=0B0KJjCjfdjRJT2RpzY5cxrGHmC5KY/2taoV0OESIwo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Yfj4eJYcf3KuGPNGsqBNp1OHxXefeNQqns/2MujG3QWLJ40q/ROXkwA8vLBD3zHm/
+	 r0BjjfmJpELcv+SeCgNDEYKhPpD2xvPPP/r03A8FUGuGCUGT5/PKWrTP2Uj7AarXuQ
+	 C0Xjv0KUEgbq6zFdE2M1Yb8lYYqTP7J8/gCz/NBI=
+Date: Tue, 2 Jul 2024 19:13:43 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Hugh Dickins <hughd@google.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, Nhat Pham
+ <nphamcs@gmail.com>, Yang Shi <shy828301@gmail.com>, Zi Yan
+ <ziy@nvidia.com>, Barry Song <baohua@kernel.org>, Kefeng Wang
+ <wangkefeng.wang@huawei.com>, David Hildenbrand <david@redhat.com>, Matthew
+ Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [PATCH hotfix] mm: fix crashes from deferred split racing folio
+ migration
+Message-Id: <20240702191343.c3f0c0a8725bed7047f4926d@linux-foundation.org>
+In-Reply-To: <ec3a5d94-1985-f66d-1aa8-3783fe498f5a@google.com>
+References: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com>
+	<da6bad97-18b8-4cd0-9dcc-b60fb20b7a84@linux.alibaba.com>
+	<ec3a5d94-1985-f66d-1aa8-3783fe498f5a@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add a new user option to memslot_perf_test to allow testing memslot move
-with quirk KVM_X86_QUIRK_SLOT_ZAP_ALL disabled.
+On Tue, 2 Jul 2024 09:15:54 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
 
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- tools/testing/selftests/kvm/memslot_perf_test.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+> > 
+> > Anyway, I think this patch can still fix some possible races. Feel free to
+> > add:
+> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> 
+> Thanks, but I certainly don't want this to go into the tree if it's
+> still flawed as you suggest.
 
-diff --git a/tools/testing/selftests/kvm/memslot_perf_test.c b/tools/testing/selftests/kvm/memslot_perf_test.c
-index 579a64f97333..893366982f77 100644
---- a/tools/testing/selftests/kvm/memslot_perf_test.c
-+++ b/tools/testing/selftests/kvm/memslot_perf_test.c
-@@ -113,6 +113,7 @@ static_assert(ATOMIC_BOOL_LOCK_FREE == 2, "atomic bool is not lockless");
- static sem_t vcpu_ready;
- 
- static bool map_unmap_verify;
-+static bool disable_slot_zap_quirk;
- 
- static bool verbose;
- #define pr_info_v(...)				\
-@@ -578,6 +579,9 @@ static bool test_memslot_move_prepare(struct vm_data *data,
- 	uint32_t guest_page_size = data->vm->page_size;
- 	uint64_t movesrcgpa, movetestgpa;
- 
-+	if (disable_slot_zap_quirk)
-+		vm_enable_cap(data->vm, KVM_CAP_DISABLE_QUIRKS2, KVM_X86_QUIRK_SLOT_ZAP_ALL);
-+
- 	movesrcgpa = vm_slot2gpa(data, data->nslots - 1);
- 
- 	if (isactive) {
-@@ -896,6 +900,7 @@ static void help(char *name, struct test_args *targs)
- 	pr_info(" -h: print this help screen.\n");
- 	pr_info(" -v: enable verbose mode (not for benchmarking).\n");
- 	pr_info(" -d: enable extra debug checks.\n");
-+	pr_info(" -q: Disable memslot zap quirk during memslot move.\n");
- 	pr_info(" -s: specify memslot count cap (-1 means no cap; currently: %i)\n",
- 		targs->nslots);
- 	pr_info(" -f: specify the first test to run (currently: %i; max %zu)\n",
-@@ -954,7 +959,7 @@ static bool parse_args(int argc, char *argv[],
- 	uint32_t max_mem_slots;
- 	int opt;
- 
--	while ((opt = getopt(argc, argv, "hvds:f:e:l:r:")) != -1) {
-+	while ((opt = getopt(argc, argv, "hvdqs:f:e:l:r:")) != -1) {
- 		switch (opt) {
- 		case 'h':
- 		default:
-@@ -966,6 +971,11 @@ static bool parse_args(int argc, char *argv[],
- 		case 'd':
- 			map_unmap_verify = true;
- 			break;
-+		case 'q':
-+			disable_slot_zap_quirk = true;
-+			TEST_REQUIRE(kvm_check_cap(KVM_CAP_DISABLE_QUIRKS2) &
-+				     KVM_X86_QUIRK_SLOT_ZAP_ALL);
-+			break;
- 		case 's':
- 			targs->nslots = atoi_paranoid(optarg);
- 			if (targs->nslots <= 1 && targs->nslots != -1) {
--- 
-2.43.2
-
+I queued it for testing but I shall not send it unsrteam until we have
+sorted these things out.
 
