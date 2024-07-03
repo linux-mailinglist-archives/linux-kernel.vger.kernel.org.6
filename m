@@ -1,159 +1,179 @@
-Return-Path: <linux-kernel+bounces-239117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74AB92568C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:21:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78AA292569C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DFA5287F15
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAAE11F284B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E8E1DA317;
-	Wed,  3 Jul 2024 09:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF2713D89A;
+	Wed,  3 Jul 2024 09:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hiJmdn5/"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9C113C8EE;
-	Wed,  3 Jul 2024 09:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GP9s9iCj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9033F1A28C;
+	Wed,  3 Jul 2024 09:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719998490; cv=none; b=qAWlS6NbMak+iKcJ1lXlQu8vMCfez10vexgz9gzE3FvmKN2/41w8JByWMH65GrCS7n66vjx2snA0X2oDdrHYePXp5uWnuhkv0uTqHKGginD1AYTpbaTxr/L79Ijce116Rhcf0FXNtomATZqG7d13zZ3bAo8JFWczZV4X0sAjZp0=
+	t=1719998543; cv=none; b=tlH6gRd+zm5axu27LOhTCoP4gHs+6BNiAdH6MDrU/lNsIeV2Hf0SkaDu4j/MCYy41G+A9Tlz2HEDoDrANfT0saOdh5PaxL83M4qcyWvy8xlzE/AgXwi8JreG5ZRTiEDrUXcfucLNARyMx8gIb4o2WvDGf5qf1PRPs8BTulrTwQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719998490; c=relaxed/simple;
-	bh=LuBxYBzCQ3t5eskA78KO4HNCqbdC06CI70/S0+JsLj4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fcxiYRFDkbql+kB1QWnJvjATyxD+ddqA5uLQ3lOic46YMBNeFZ7vuizRLt0auvQAIuzZ3e+V8lLVIF2Qmsduuetsu/9s3ee0sqTH7s7motweSdgHFBiFDWewjzNS1uSqmlvK9ogcjKYOfCeIpklmvqnsWvKp3BaUGOjM4A6UiL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hiJmdn5/; arc=none smtp.client-ip=45.254.50.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=BTnss
-	Ax2cxCnOWayOPuWiQqj81ayGW11i7bWdYf4BJo=; b=hiJmdn5/r1tETI0cFNGMu
-	KP4M134fRLE3XF8DtHruRuzVy/vGGHGU9+fl/hNk9lCGVZc+0cb7s2kmVfYxOD5C
-	e93prtr44x+v7DiHu7iO1yBtl8dMg6t6007MYg9ffXBDU8QHfCH4yHMSczAL7kXf
-	9gf2Zm1KBJdOCAUvdDiBqo=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g0-0 (Coremail) with SMTP id _____wD3P3TXF4Vmr+vYBQ--.20081S4;
-	Wed, 03 Jul 2024 17:20:25 +0800 (CST)
-From: ran xiaokai <ranxiaokai627@163.com>
-To: david@redhat.com
-Cc: akpm@linux-foundation.org,
-	baohua@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	peterx@redhat.com,
-	ran.xiaokai@zte.com.cn,
-	ranxiaokai627@163.com,
-	ryan.roberts@arm.com,
-	svetly.todorov@memverge.com,
-	vbabka@suse.cz,
-	willy@infradead.org,
-	ziy@nvidia.com
-Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
-Date: Wed,  3 Jul 2024 09:20:23 +0000
-Message-Id: <20240703092023.76749-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <1fddf73d-577f-4b4c-996a-818dd99eb489@redhat.com>
-References: <1fddf73d-577f-4b4c-996a-818dd99eb489@redhat.com>
+	s=arc-20240116; t=1719998543; c=relaxed/simple;
+	bh=Q5OjPZbBpsarH3xfTmO4sLkv4LvQW3w5r57jZNR6d9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Z5yTWXljDZ0aNNubSs7oPL5zHyyZubUkEpYq0epkmkDkc9KoHPGY4RIW1nh3l2zrRMBBVXySverTiPF7Zs5Mpck/9a2kKUSZY0bH5gwZylzFFzbfhfysvpwh8gcw0kPawEC13QbaQSFdFy4ocWQQv7UNq8iQmkcYqwl8jPCcFXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GP9s9iCj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4638D1LB027444;
+	Wed, 3 Jul 2024 09:21:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zFayjh+1qzFNX/L8mf2pY/rdIsRlH8uG2GflD4xHDhY=; b=GP9s9iCjwlhtGabK
+	ji04H6MUw3QZ2THnZ8MnZmsgkMmwwt1SFfnCMHhSJWVMSNLsHGqj1sbicP/Y0wy+
+	Tlvx86VUUKy+J+eHegc+RNHmJGPmisqYFhLqQigoyoHHTk57KJo2whllN1BY7LJh
+	CvCvkmrHqU+7lrISb+5hEqoYIqIdyWVy+dFXq5SgFzT2fQh5Vg2HiiKkBvdTDuMH
+	uKDXIK+4+MRDGK1o20TcWBR1bhgJUWxcml1xHGD0q/F+wRpstDBvTfyzHvL7aisU
+	bFVa9apUSGJ5qm1MRVyAXMxadQT4eHVx3BF8wOG5lo/gmeWRxFXsh8ATVQZJHcG4
+	yqnVZw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4027mnrp2m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 09:21:35 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4639LXCm013350
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Jul 2024 09:21:33 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 02:21:11 -0700
+Message-ID: <fbeb5969-0b3a-455e-88eb-b83734bf2c50@quicinc.com>
+Date: Wed, 3 Jul 2024 17:21:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3P3TXF4Vmr+vYBQ--.20081S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAFyfAw17Xr15ZrWrXF48tFb_yoW5Cw15pF
-	WYkFyqyr4DG3sYyr1Ivw1qyry8Gr98ZayUta43Cr17uF9xJF92qrW0y3s8A3W3Ar4rZ3ZF
-	vFWUWF4qv3W5ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUN189UUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiqRIMTGVOBJWk7QABsJ
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/47] dt-bindings: arm: qcom: Document QCS9100 SoC and
+ RIDE board
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <djakov@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <manivannan.sadhasivam@linaro.org>, <will@kernel.org>,
+        <joro@8bytes.org>, <conor@kernel.org>, <tglx@linutronix.de>,
+        <amitk@kernel.org>, <thara.gopinath@gmail.com>,
+        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
+        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>
+CC: <robimarko@gmail.com>, <bartosz.golaszewski@linaro.org>,
+        <kishon@kernel.org>, <quic_wcheng@quicinc.com>,
+        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <agross@kernel.org>, <gregkh@linuxfoundation.org>,
+        <quic_tdas@quicinc.com>, <robin.murphy@arm.com>,
+        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <quic_rjendra@quicinc.com>,
+        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
+        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
+        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
+        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <ahalaney@redhat.com>,
+        <krzysztof.kozlowski@linaro.org>, <u.kleine-koenig@pengutronix.de>,
+        <dmitry.baryshkov@linaro.org>, <quic_cang@quicinc.com>,
+        <danila@jiaxyga.com>, <quic_nitirawa@quicinc.com>,
+        <mantas@8devices.com>, <athierry@redhat.com>,
+        <quic_kbajaj@quicinc.com>, <quic_bjorande@quicinc.com>,
+        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <quic_tsoni@quicinc.com>, <quic_rgottimu@quicinc.com>,
+        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
+        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
+        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+ <20240703025850.2172008-2-quic_tengfan@quicinc.com>
+ <665f6c8c-4f43-4d20-90e9-9e037a942066@kernel.org>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <665f6c8c-4f43-4d20-90e9-9e037a942066@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 5Ybf8r0PXG_XS31lxeN4m5yOCkbBXD5_
+X-Proofpoint-GUID: 5Ybf8r0PXG_XS31lxeN4m5yOCkbBXD5_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_05,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 mlxscore=0 suspectscore=0 clxscore=1015
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407030069
 
->On 26.06.24 04:49, ran xiaokai wrote:
->> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->> 
->> KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
->> pages, which means of any order, but KPF_THP should only be set
->> when the folio is a 2M pmd mappable THP. Since commit 19eaf44954df
->
->"should only be set" -- who says that? :)
->
->The documentation only talks about "Contiguous pages which construct 
->transparent hugepages". Sure, when it was added there were only PMD ones.
->
->
->> ("mm: thp: support allocation of anonymous multi-size THP"),
->> multiple orders of folios can be allocated and mapped to userspace,
->> so the folio_test_large() check is not sufficient here,
->> replace it with folio_test_pmd_mappable() to fix this.
->> 
->
->A couple of points:
->
->1) If I am not daydreaming, ever since we supported non-PMD THP in the
->    pagecache (much longer than anon mTHP), we already indicate KPF_THP
->    for them here. So this is not anon specific? Or am I getting the
->    PG_lru check all wrong?
->
->2) Anon THP are disabled as default. If some custom tool cannot deal
->    with that "extension" we did with smaller THP, it shall be updated if
->    it really has to special-case PMD-mapped THP, before enabled by the
->    admin.
->
->
->I think this interface does exactly what we want, as it is right now. 
->Unless there is *good* reason, we should keep it like that.
->
->So I suggest
->
->a) Extend the documentation to just state "THP of any size and any 
->mapping granularity" or sth like that.
->
->b) Maybe using folio_test_large_rmappable() instead of "(k & (1 <<
->    PG_lru)) || is_anon", so even isolated-from-LRU THPs are indicated
->    properly.
 
-Hi, David,
 
-The "is_anon" check was introduced to also include page vector cache
-pages, but now large folios are added to lru list directly, bypassed
-the pagevec cache. So the is_anon check seems unnecessary here.
-As now pagecache also supports large folios, the is_anon check seems
-unsufficient here.
+On 7/3/2024 12:38 PM, Krzysztof Kozlowski wrote:
+> On 03/07/2024 04:58, Tengfei Fan wrote:
+>> Document the QCS9100 SoC and RIDE board.
+>>
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>>   Documentation/devicetree/bindings/arm/qcom.yaml | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> index ec1c10a12470..f06543f96026 100644
+>> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> @@ -45,6 +45,7 @@ description: |
+>>           qcs8550
+>>           qcm2290
+>>           qcm6490
+>> +        qcs9100
+>>           qdu1000
+>>           qrb2210
+>>           qrb4210
+>> @@ -894,7 +895,9 @@ properties:
+>>   
+>>         - items:
+>>             - enum:
+>> +              - qcom,qcs9100-ride
+>>                 - qcom,sa8775p-ride
+>> +          - const: qcom,qcs9100
+> 
+> This changes existing compatible for sa8775p without any explanation in
+> commit msg.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Can i say that for userspace memory,
-folio_test_large_rmappable() == folio_test_large()?
-if that is true, except the "if ((k & (1 << PG_lru)) || is_anon)"
-check, we can also remove the folio_test_large() check,
-like this:
+In the next verion patch series, I will provide relevant explanatory 
+information in this patch commit message.
 
-else if (folio_test_large_rmappable(folio)) {
-        u |= 1 << KPF_THP;
-    else if (is_huge_zero_folio(folio)) {
-        u |= 1 << KPF_ZERO_PAGE;
-        u |= 1 << KPF_THP;
-    }
-} else if (is_zero_pfn(page_to_pfn(page)))
-
-This will also include the isolated folios.
-
->c) Whoever is interested in getting the folio size, use this flag along
->    with a scan for the KPF_COMPOUND_HEAD.
->
->
->I'll note that, scanning documentation, PAGE_IS_HUGE currently only 
->applies to PMD *mapped* THP. It doesn't consider PTE-mapped THP at all 
->(including PMD-ones). Likely, documentation should be updated to state 
->"PMD-mapped THP or any hugetlb page".
->
->> Also kpageflags is not only for userspace memory but for all valid pfn
->> pages,including slab pages or drivers used pages, so the PG_lru and
->> is_anon check are unnecessary here.
->
->I'm completely confused about that statements. We do have KPF_OFFLINE, 
->KPF_PGTABLE, KPF_SLAB, ... I'm missing something important.
-
+-- 
+Thx and BRs,
+Tengfei Fan
 
