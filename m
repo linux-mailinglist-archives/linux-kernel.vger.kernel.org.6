@@ -1,133 +1,125 @@
-Return-Path: <linux-kernel+bounces-240240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D815926AB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:46:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A26CE926AB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 497D0286FF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:46:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6291B28724B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42993194A42;
-	Wed,  3 Jul 2024 21:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E3D1922EA;
+	Wed,  3 Jul 2024 21:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rsqfLFoZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/UnTiZw"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85648191F80;
-	Wed,  3 Jul 2024 21:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A62918E74F;
+	Wed,  3 Jul 2024 21:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720043185; cv=none; b=sBc5Jn0wumLsATQkhUnfbw5sy5a+skTYOIjsUZA1+lWPV9JxNL0Qx/r/x+x5F91xLHMYyYt2SxwCtLlLndiM9H8PRtzRGu27L1iRsTJ5uN/2hmr9SASwiy/lYM127eeWozZ/O68kyetczXuu/o2CQ9qBbKnLVw098t1t1CrSLiw=
+	t=1720043210; cv=none; b=Q2R/USzNeLpQ0lNsHKLyJVcxJsy3vf6jQbU2VFlQQXVVgNcrYszIa68yi+Cxjx7Ye826N7EgGeLcu8hxo7Kzg5TcbKxNXQ1x1QE4Q+aCLyChSAsR3P38LxnZVJ7c7sx2OVywgIX3W/caq90WRAIpJHwZTRhF5iD+rUOiLngSSqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720043185; c=relaxed/simple;
-	bh=rzyAx0if7a3pooGOlXnjoWuU+FC+0U5nSUt348PlNAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M3Skrs8eDbKqEKqHeniGxKGTyhRi+r8l6Tzmkc/RTkcj8R3YaR5Td8OfLeJbtQPwluoW9FMgjoRaPqxmGEKeI2gI4Q/VmXg4x87aHRUgPLm3yYtDzCKE8EGS5QXPi0mhzN/Wn23QJ9CYEfbZVD9HmzLhtcHm3KyT1GjqQ6XgvMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rsqfLFoZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93248C2BD10;
-	Wed,  3 Jul 2024 21:46:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720043185;
-	bh=rzyAx0if7a3pooGOlXnjoWuU+FC+0U5nSUt348PlNAs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rsqfLFoZw8rAHMO83S5+aPRk86qaxyVJxqm6ZzAD9I29uqVRdWl/8l93Vqc1HJB8m
-	 ZoCNO4FTG4RE9XZaw3gTNb64lEuLP1WvWJB9gPH7jjRnaLzNIi/iEqH96VGUQNHAMZ
-	 EcAarZg1gS7wBJ6QqJLMsA7SGbtLS+rkY1+t65uRnV5iQLAjwUT4nxF+QfEvf5zlSA
-	 RmbC+Bk3iXlUU0kn0cq9cseB594kHYA6W6Bvvozgdg6ic6n3G9xbudTqNt3UxxJxt9
-	 h/oawc3s1IIyL+t65Ecivo7TlVm80JgtsAZ6IfVPBinhXAL7+SsdJ8M+jy7xZZmc++
-	 spzoY126CyoQQ==
-Date: Wed, 3 Jul 2024 14:46:23 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Steinar Gunderson <sesse@google.com>,
-	Matt Fleming <matt@readmodwrite.com>
-Subject: Re: [PATCH v1 2/2] perf dsos: When adding a dso into sorted dsos
- maintain the sort order
-Message-ID: <ZoXGr2skcDZTUb5U@google.com>
-References: <20240703172117.810918-1-irogers@google.com>
- <20240703172117.810918-3-irogers@google.com>
+	s=arc-20240116; t=1720043210; c=relaxed/simple;
+	bh=R7RUOpKxFR0kt7YIGnbpUIAx3fX39u3f3fnlbrS8Z7w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fye/PnV3szH20a0evf12zp+GAYRq343q1yYyMoRNNfrHJjisBKgmlP3dewhf8m/DC8PRUZ+IHHVc8deYc1BU+47itc0xyEX2hB4kB//3Dz/ncpvKgXBroR8b1CsEhdfnwWLkyc/HCxUhriUqQgv/iUk2gm2ImaOTxtDDqOM+7Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/UnTiZw; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-36796d2e5a9so5061f8f.3;
+        Wed, 03 Jul 2024 14:46:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720043207; x=1720648007; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FNCGvOqBa5Gzc1I8BSCA2IUK04BEtRznQJXQC8w03Do=;
+        b=E/UnTiZwKFKO9/Co2LzqbYkz8FdSf8Z9kwask6m9O3DU8TexAXZQxf+I1pT75ycv6w
+         /7u4GJo8yybApkwAT8I4ZnHX8HurchYLoUfOoqsGgJlpCqd5q8QhvCP1aTK1tnp86v+1
+         yD21vwSMUUFuenTUZxGg4SNvu3orLJ9/7RalUthoXZ1FWV1ofGllnY/QBxVXFtI9Ft6W
+         mkrb0i5YpFgpUc7hiBYl24MC0fG62TAXHNyRp3TiT878JOEWhyz4rSE4Ip8QEl9N8tby
+         IxS9gPOrfzzIHf3UtqjA272Va1iWRl5C0Vs0IcuDZRU/7wzeCC+prb6XwJWUqnMBL1sP
+         HcCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720043207; x=1720648007;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FNCGvOqBa5Gzc1I8BSCA2IUK04BEtRznQJXQC8w03Do=;
+        b=ctO4BdVKhQBQbbGRpDCqazoBxEG68JtUArmRxu8M9zjZ8FX/VgbZxKiUfjZo3VZtVa
+         4pwJtqRYexrEVgNJtJPUEDlx/BHlM4pjZ1dwgJzbFYoox2vr8UHiXXLEDNxLgpitu3mH
+         sK47ZZHNpwJqqRjciNdy1k9lmh4bglmFS3Fbij8G3IQlTtKNREwKVucAorWdKYpt8nLF
+         94jonlI6uBANzdrh/jcEDQrA0xnKaKjNfW+S+sP4WeGPOMJtj3GneFC1TVIO1n8V0lRz
+         PK2V4rRxk3sTHyi4RHNYEVOWzhJVUcmcu9uH4K5FLMi3Z4VioHHLk58/kwiW30dod96s
+         FXQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsHmyPcQZ802NwYGYp1xlIL1ApSGNmHIJB5X6nCegBgXJ4xqxLZYjJbEfn4+BE7jkPy9intas28NnL/joQcQ65n84QhxaGtqk57L6W
+X-Gm-Message-State: AOJu0YxsRgcLMZMBf+u0Beu04j2J/6bWQRYPw2NiOUIe4JsOqJLlDMS2
+	tJJy6b+cgxU2XTAOp23qpMsV21Bxi/IzaLjaV0E5aK99hZ+lrkLQ
+X-Google-Smtp-Source: AGHT+IEoq0PBihEbtJmQBKy8bfRT5DtacUrBxx0e4PXAHXB0vG6l5LA1YIJBD/5wo6vlrJ/azH8QeA==
+X-Received: by 2002:a05:6000:2c2:b0:366:ef16:2694 with SMTP id ffacd0b85a97d-367757258ddmr9175297f8f.48.1720043207324;
+        Wed, 03 Jul 2024 14:46:47 -0700 (PDT)
+Received: from [127.0.1.1] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3678fbe89cdsm3628068f8f.61.2024.07.03.14.46.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 14:46:46 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/4] net: constify struct regmap_bus/regmap_config
+Date: Wed, 03 Jul 2024 23:46:32 +0200
+Message-Id: <20240703-net-const-regmap-v1-0-ff4aeceda02c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240703172117.810918-3-irogers@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALjGhWYC/x3MQQqAIBBG4avErBtQi4KuEi3E/mwWaWhEEN49a
+ fkt3nspIwkyTc1LCbdkiaFCtw253QYPlrWajDK9GlXHARe7GPLFCf6wJ2unMfQwrlOWanYmbPL
+ 8y3kp5QOf0wZnYgAAAA==
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
+ Vladimir Oltean <olteanv@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720043205; l=1028;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=R7RUOpKxFR0kt7YIGnbpUIAx3fX39u3f3fnlbrS8Z7w=;
+ b=7LSdqVto16KqvEq6FFr+JjHprzru6ficc0Gkg1sk0fsOE1gRo+iulAg3MGSw6UOCYn1EzR+/h
+ 80JEFsyJ8JcDVoFdMjv0PqrHD7vxpaJ3Oq9HFJIDYL9AWEy0HHMcTUq
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Wed, Jul 03, 2024 at 10:21:17AM -0700, Ian Rogers wrote:
-> dsos__add would add at the end of the dso array possibly requiring a
-> later find to re-sort the array. Patterns of find then add were
-> becoming O(n*log n) due to the sorts. Change the add routine to be
-> O(n) rather than O(1) but to maintain the sorted-ness of the dsos
-> array so that later finds don't need the O(n*log n) sort.
-> 
-> Reported-by: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Ian Rogers <irogers@google.com>
+This series adds the const modifier to the remaining regmap_bus and
+regmap_config structs within the net subsystem that are effectively
+used as const (i.e., only read after their declaration), but kept as
+writtable data.
 
-It works well for me too!
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (4):
+      net: dsa: qca8k: constify struct regmap_config
+      net: ti: icss-iep: constify struct regmap_config
+      net: encx24j600: constify struct regmap_bus/regmap_config
+      net: dsa: ar9331: constify struct regmap_bus
 
-Tested-by: Namhyung Kim <namhyung@kernel.org>
+ drivers/net/dsa/qca/ar9331.c                       | 2 +-
+ drivers/net/dsa/qca/qca8k-8xxx.c                   | 2 +-
+ drivers/net/ethernet/microchip/encx24j600-regmap.c | 6 +++---
+ drivers/net/ethernet/ti/icssg/icss_iep.c           | 4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240703-net-const-regmap-1c1e64e2c30a
 
-Thanks,
-Namhyung
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-> ---
->  tools/perf/util/dsos.c | 26 +++++++++++++++++++++-----
->  1 file changed, 21 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/util/dsos.c b/tools/perf/util/dsos.c
-> index 5e5e05f86dd3..d4acdb37f046 100644
-> --- a/tools/perf/util/dsos.c
-> +++ b/tools/perf/util/dsos.c
-> @@ -206,11 +206,27 @@ int __dsos__add(struct dsos *dsos, struct dso *dso)
->  		dsos->dsos = temp;
->  		dsos->allocated = to_allocate;
->  	}
-> -	dsos->dsos[dsos->cnt++] = dso__get(dso);
-> -	if (dsos->cnt >= 2 && dsos->sorted) {
-> -		dsos->sorted = dsos__cmp_long_name_id_short_name(&dsos->dsos[dsos->cnt - 2],
-> -								 &dsos->dsos[dsos->cnt - 1])
-> -			<= 0;
-> +	if (!dsos->sorted) {
-> +		dsos->dsos[dsos->cnt++] = dso__get(dso);
-> +	} else {
-> +		int low = 0, high = dsos->cnt - 1;
-> +		int insert = dsos->cnt; /* Default to inserting at the end. */
-> +
-> +		while (low <= high) {
-> +			int mid = low + (high - low) / 2;
-> +			int cmp = dsos__cmp_long_name_id_short_name(&dsos->dsos[mid], &dso);
-> +
-> +			if (cmp < 0) {
-> +				low = mid + 1;
-> +			} else {
-> +				high = mid - 1;
-> +				insert = mid;
-> +			}
-> +		}
-> +		memmove(&dsos->dsos[insert + 1], &dsos->dsos[insert],
-> +			(dsos->cnt - insert) * sizeof(struct dso *));
-> +		dsos->cnt++;
-> +		dsos->dsos[insert] = dso__get(dso);
->  	}
->  	dso__set_dsos(dso, dsos);
->  	return 0;
-> -- 
-> 2.45.2.803.g4e1b14247a-goog
-> 
 
