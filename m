@@ -1,112 +1,115 @@
-Return-Path: <linux-kernel+bounces-239489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679449260D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:48:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 631869260D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A2C2898A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:48:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D657228B7A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0079176FD3;
-	Wed,  3 Jul 2024 12:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CCE17A59D;
+	Wed,  3 Jul 2024 12:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qXljRZKb"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P7QCLfwU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88003179954
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5771E179954
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720010925; cv=none; b=gPl8fSwqd6BpAOnndKDhWAh3hWEN0BPILECglKqlgkd6vsgjC/L5/BtusacziiVeaWwkkwVijrFrbgpYD6XqI6QnCQYel4u18tHH0WzuJwTwkAKkACztQF6Sj8WunwqzKfQs0dBS8dvOjp20Sh6JTViSK7AyaGHOI/j6sIIUYFc=
+	t=1720010929; cv=none; b=Yr4+oqyTedfD+DBGbFLZEAw1Z01owYVcPQO3lLIc583AQpZZpXMEIbXvn5EGiP8mKHveZGJCgy0C5HnYIGtGiCXqTWZLTkBXgzsTQEL5H2+Z8MlJmG2bKNRZQwGVvF/kktqk/mM4hyKWUKXUCz9vi/ZOje0GQtr/AEAwZS1R33w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720010925; c=relaxed/simple;
-	bh=3M92oo7D0GCuxKuFGIgzFo85A2FKnAzzgy4TTDdt9mA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YJCEsSuW4CvQU6/iFhU7PMKxIrtAsyHQ98Qk98qeT+CEzUFDn5uyoHQNt1P7IHkxsybRrhTG+L1gn9vyOm8+6LB5xZ0Fu6PjLLHBRH4e021llSnAWFGnkRGxsWX9QqUhdD32gUcDrIHhr7vCqhnjd7TXT3ssZOZ6kIXGgxryrvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qXljRZKb; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e02748b2402so5903270276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 05:48:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720010922; x=1720615722; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3M92oo7D0GCuxKuFGIgzFo85A2FKnAzzgy4TTDdt9mA=;
-        b=qXljRZKbNQHiwKrg2WVTeyJZpUOz8tXoJA75hdV6K2x6CcXKZeZ53JiIz+TEOvsENz
-         kMs63238uhuY9/bY/DwAjtc24QZs7Bysgy4IRsWzYW8YXpR3G2IWTIfTwnUev6Qgznro
-         aLj5+u/sasZwyHHrwtEiBeBy9qb6ju/4WUKQOC+sk3OYGV2Z9owggCQAFC6kKRpZWvun
-         cWOUfLjvESspaQBKipBlvxdeEHn/1Fao9lgkVi6FaCa34fY3So6Srtn+lF96wsnAJAiY
-         +qL7DiiHqeg+whlJpAbDQyLfF44qyLK5/fhMMnPHOy9af2FgWRBAkcFPoOX7oGwTAehG
-         46sg==
+	s=arc-20240116; t=1720010929; c=relaxed/simple;
+	bh=nOrLYdaQKWbCBzur09331cdOZ260WekYtYvlyXlVvNg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=M+Cgjvyn6uPP+e4WuY8s29uwKQ9SDYtDPayAceugkQfCeOqaf1ieuJh8RoVRr9LF980gVhxAIoFdwpICPP7oI4S2yKmrufQ+umw8xTlRzbZSsRyEMzFbMGzi+249GLyPMrqk/sJGvQXuIAI1tV3+dikWeG/4GZNrYHogfGalunw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P7QCLfwU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720010927;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2MEP5KBKlMKx9T4CmY7WwoI0xWCk7Wv3Ry4wWTTbIMQ=;
+	b=P7QCLfwUcz3mg2A5ElG0ooCZzvadMZYJQAY+KS5kE9t26MDPBMjQjMeIVsODzCMY0DCEJe
+	Ep41J0lxy3oVja+gVxtNGpFAqxAWuEZ+B4IoZ6kbPZ0+Ce8G1w7kNVvkv7sURdc29q/d8S
+	McbqP4YFFDZhyIzrpg868ivJMZwIMfI=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-408-I2vOr0gOPZaZMBRaq_jwlQ-1; Wed, 03 Jul 2024 08:48:46 -0400
+X-MC-Unique: I2vOr0gOPZaZMBRaq_jwlQ-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ec62b1fb18so56359471fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 05:48:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720010922; x=1720615722;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3M92oo7D0GCuxKuFGIgzFo85A2FKnAzzgy4TTDdt9mA=;
-        b=kVOl5gTHUDR5H5iaLbSUtht0T0+XLunPYL6iriPVrepMfLBF4pwMqUWLpY7GxPz0cH
-         51V4zkOHCDdy/XyG2owLBiv+N0I3sqAOOX0c9kKWUSkVI68R5Y51OusIqN8XE346m7Ng
-         /7f2Xo2j+/Wivf5rqvYrI1jgHYY2YnHcGnrBD8XwYxUZEDvagjoimNKFmZvPrbPBf6vP
-         2Kpte2YKJHpFUzIG1kpfVxFnD3/pa1s46QYrksFx5ihGg0S0A72ZR4/stXN91waiYxxn
-         LMCqtuQbqcrq1ME+HNoOkcg7FSkAXGYOfzVha6CBJC0CNaN1qHge2qN4JfLQn+/mBZbJ
-         6MiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAoyarNAXxX4vD2r8sgwJ5ExHh2OwhvKkANLEz2AwV98DA+aQ+p5p0+kIbI9oh3dmmJUkMNgZmEloOxp/UREpOB7yJ2e+umlO4nX0Y
-X-Gm-Message-State: AOJu0YzQw/U+jpae3o5mQ8CXFTZqR05uR3pHPtd1cAkZALkA9LJzwaHI
-	iyZC5M+EboY8wKL32kxxI6fwrcQgHDrqWQ9kND/EFQDpYrPR07gH4eBGH9tCG/f0aUCS47Nrl7Y
-	GmpNwzR8m1UJWvd7MxJqMKWjWsDFakW7Ia108DovdFbG4sos5
-X-Google-Smtp-Source: AGHT+IFjUoGWH3PFBnIYNiYrEoEkHea61nrLqNK8E7mLauuHE0kJwuMinNs3K6k/4bxMVi3XuQWPjA5JmPxbv0mcXkg=
-X-Received: by 2002:a25:b96:0:b0:e03:4d43:658f with SMTP id
- 3f1490d57ef6-e036ec6ceb5mr11316730276.53.1720010922580; Wed, 03 Jul 2024
- 05:48:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720010924; x=1720615724;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2MEP5KBKlMKx9T4CmY7WwoI0xWCk7Wv3Ry4wWTTbIMQ=;
+        b=pKO/5gPXc7BT+jE8ZiG/6kog4GiyWZrS68Gbh6P32tE7IfMAzhv9IVVME+XgySA2PB
+         D1XvQLCUiDyoOPF75tRVJGynvGBMmu0IVoBkCdp7mRh69ckZ/oR4jXgqPrzsyfT2JUIH
+         eK/wDLBbACjP7bJlHpxR7k7ukSNorkxD7oys62r15jCVMUxjhQcWVTiyP2Wc1YkJ2xPS
+         AH5H+EZF5A/Vl7e/14kbpUGRGCsWN4hkaoCntRx8ntrwNP8jrszDZR+MpDyXLczZzRIA
+         ZygQ9ngnCuhKkhvo9b1qMABahrR0fVlNfKa8JEcTc3n1KaE0C1BFmvPdRBx2mASUv/DB
+         uEiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXo9i8b95yZlwD23TLyB0RRtFp7k15fJQ0RYohNEOI0zHxctcB6OO0PIvSx1DKFRkd5h4LEgSqDWW6r/sNXUC7hqutg5JwffJfvGQBR
+X-Gm-Message-State: AOJu0YwnZASQ/XTYRj0lCxBngdL/vdmexBFzSvqI255/0LwmWG4CFkOr
+	hZA8n+MJbNzZM1k9EC06xPCe06GdhxBVqmE/fN1mdoZWyKzlwTUw6zjdlXy/S+ouOAKApMoGoux
+	mTcFP3BHnxpHOatpqVfqqDHmrfAtKyMYoNjkY+bNa8LNxKWqRIDaeETbRhsA9fQ==
+X-Received: by 2002:a2e:a7c2:0:b0:2ee:45f3:1d13 with SMTP id 38308e7fff4ca-2ee5e704e51mr78434041fa.47.1720010924682;
+        Wed, 03 Jul 2024 05:48:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFP5TqWKFAuIwTILcZtQfViw3L54aF8RKuLImctjrV+bIlLQQRnHKZJF7c8esvbcZCiclXd1w==
+X-Received: by 2002:a2e:a7c2:0:b0:2ee:45f3:1d13 with SMTP id 38308e7fff4ca-2ee5e704e51mr78433691fa.47.1720010924256;
+        Wed, 03 Jul 2024 05:48:44 -0700 (PDT)
+Received: from fedora (g2.ign.cz. [91.219.240.8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8cd8sm15773145f8f.27.2024.07.03.05.48.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 05:48:43 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Nicolas Saenz Julienne <nsaenz@amazon.com>, seanjc@google.com
+Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-arch@vger.kernel.org,
+ nsaenz@amazon.com, linux-trace-kernel@vger.kernel.org, graf@amazon.de,
+ dwmw2@infradead.org, pdurrant@amazon.co.uk, mlevitsk@redhat.com,
+ jgowans@amazon.com, corbet@lwn.net, decui@microsoft.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, amoorthy@google.com
+Subject: Re: [PATCH 00/18] Introducing Core Building Blocks for Hyper-V VSM
+ Emulation
+In-Reply-To: <D2FTASL4CXLN.32GYJ8QZH4OCR@amazon.com>
+References: <20240609154945.55332-1-nsaenz@amazon.com>
+ <D2FTASL4CXLN.32GYJ8QZH4OCR@amazon.com>
+Date: Wed, 03 Jul 2024 14:48:42 +0200
+Message-ID: <87ikxm63px.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624093934.17089-1-brgl@bgdev.pl>
-In-Reply-To: <20240624093934.17089-1-brgl@bgdev.pl>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 3 Jul 2024 14:48:30 +0200
-Message-ID: <CACRpkdZh1RU43Y2PHwdUPx-K12z5xd5pZ9+dFVMOUc+Ze7mJVg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] gpio: sim: lock simulated GPIOs as interrupts
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Jun 24, 2024 at 11:39=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
+Nicolas Saenz Julienne <nsaenz@amazon.com> writes:
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Hi Sean,
 >
-> I realized that the gpio-sim module doesn't lock the GPIOs as interrupts
-> when they are requested from the irq_sim. This leads to users being able
-> to change the direction of GPIOs that should remain as inputs to output.
-> This series extends the irq_sim interface and allows users to supply
-> callbacks that will be executed to inform users about interrupts being
-> requested and released so that they can act accordingly. The gpio-sim is
-> made to use this new API and lock GPIOs as interrupts when needed.
+> On Sun Jun 9, 2024 at 3:49 PM UTC, Nicolas Saenz Julienne wrote:
+>> This series introduces core KVM functionality necessary to emulate Hyper-V's
+>> Virtual Secure Mode in a Virtual Machine Monitor (VMM).
 >
-> Thomas: if this is fine with you, can you Ack it so that I can take it
-> through the GPIO tree for the next merge window?
+> Just wanted to make sure the series is in your radar.
 >
-> Changes since v1:
-> - drop the notifier in favor of specific callbacks
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Not Sean here but I was planning to take a look at least at Hyper-V
+parts of it next week.
 
-It sure seems consistent to me and in line with how I once
-thought about locking lines for IRQ.
+-- 
+Vitaly
 
-Yours,
-Linus Walleij
 
