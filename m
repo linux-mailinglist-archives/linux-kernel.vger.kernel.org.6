@@ -1,197 +1,441 @@
-Return-Path: <linux-kernel+bounces-239375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7871925DF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:32:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA259925E06
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57F821F2524E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:32:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27EE71F22871
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B7E194C61;
-	Wed,  3 Jul 2024 11:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="YqxfldAJ"
-Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470A116C688;
-	Wed,  3 Jul 2024 11:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADF517165D;
+	Wed,  3 Jul 2024 11:25:29 +0000 (UTC)
+Received: from mblankhorst.nl (lankhorst.se [141.105.120.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE59176ADB;
+	Wed,  3 Jul 2024 11:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720005894; cv=none; b=b3FbM5xGV+dykoc1l4vSgEM2Wg3yRMxAxvIjHqMvt9RWRX8SuRbRJLFdyRmcDYB3Ft3aUn+K7fnWFrwiIdqEzh4D1OgOzdPB0SHscasH/EgXXchEUettJMAHNDU6mx6MPriTSTDaEOMwnoNUN4drgtcW61nhDSkvdtC9Rl8oO38=
+	t=1720005928; cv=none; b=NZyaTsdYxs7KxoDUDsvsL8G0+48hKNgGIZgFFTXMLnBBv5cDUt1ZPgXMq0AgEK/jyS2krnd9IC7oLkmCCUzDqb8E+bGyP+dBdPcciwA5d3Zyf0+Eg6FHQQhQr/OT8uJQZQi6VRth7IQWVr7cgeC+RLEJOTfJPcBqI1mO0lWxgrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720005894; c=relaxed/simple;
-	bh=BE/sLoMBYTXAIc//RdgxDfWFFsqXiL6IEX26nDYHdFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jU816xAWdBTbHZv+6jRNd/66TzF1W1mypc2/t+bPDCOo5lKXExe62MIgY9e60FcmobKgtxUN+Eo5gkZFyu5WveZbogpQWH+M04zDNBDlq4CCxPqu6I9miZiv97hEL3mVCJ2JZw24ShkjvAjE3u8mtsdxLi6kcLiESv4h9jrXqdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=YqxfldAJ; arc=none smtp.client-ip=3.9.82.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
-Received: from localhost (unknown [IPv6:2a02:8012:909b:0:1e90:7398:2278:75e2])
-	(Authenticated sender: tom)
-	by mail.katalix.com (Postfix) with ESMTPSA id 20C2D7D76D;
-	Wed,  3 Jul 2024 12:24:51 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
-	t=1720005891; bh=BE/sLoMBYTXAIc//RdgxDfWFFsqXiL6IEX26nDYHdFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Disposition:In-Reply-To:From;
-	z=Date:=20Wed,=203=20Jul=202024=2012:24:49=20+0100|From:=20Tom=20Pa
-	 rkin=20<tparkin@katalix.com>|To:=20syzbot=20<syzbot+c041b4ce3a6dfd
-	 1e63e2@syzkaller.appspotmail.com>|Cc:=20linux-kernel@vger.kernel.o
-	 rg,=20netdev@vger.kernel.org,=0D=0A=09syzkaller-bugs@googlegroups.
-	 com|Subject:=20Re:=20[syzbot]=20[net?]=20KASAN:=20slab-use-after-f
-	 ree=20Write=20in=0D=0A=20l2tp_session_delete|Message-ID:=20<ZoU1Aa
-	 /JJ+60FZla@katalix.com>|References:=20<0000000000008405e0061bb6d4d
-	 5@google.com>|MIME-Version:=201.0|Content-Disposition:=20inline|In
-	 -Reply-To:=20<0000000000008405e0061bb6d4d5@google.com>;
-	b=YqxfldAJgFm7lw78xlwfeHP5DSazv9tjA1NEMUD3upFLwq2mhqQl7zlwcPOvcsb93
-	 JmXweicTtOrJxi7JMtRN+moAA2WDbghH7sBNoks4+8kMegAFs3km8hJ9BgN1Ff4WH+
-	 wbLbl4WpG7UV2ZAadf/5jox1BGO7wmt4Cqp/4byqz1ZmYu9MP0nX8EoNVYsrre2xS1
-	 swLnxw3qz6zGRP+Tctgtkf+kD67igcRUM6+AL6g4VVZ0ZNyX6GhiByQOwRfdaGFUFR
-	 nBXEMMxjgm4zytZP3hrmm2DXbpSAU8/anqSFa9Hemz6FKiA9TPRxD6ZjZ8kMrbyEvs
-	 lVCy+kvDgK/9w==
-Date: Wed, 3 Jul 2024 12:24:49 +0100
-From: Tom Parkin <tparkin@katalix.com>
-To: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in
- l2tp_session_delete
-Message-ID: <ZoU1Aa/JJ+60FZla@katalix.com>
-References: <0000000000008405e0061bb6d4d5@google.com>
+	s=arc-20240116; t=1720005928; c=relaxed/simple;
+	bh=DULQkwTUFgaq7UFleLz0dO/jFoGJBleTRQlMLec82ug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rfAgrWOjzrAqfOcKCdo1IjfC4fgnrQheK2YeXC5+zGUg8urAqToQxrrmTz5To9hZ1RNhv2OVWuiwfgo3JgzkcUN24xQJpsmPRpEj4+LzAneWXkFfG91/MgyOBq4hmsu4taPHF5dNXaUgpjxhMSQYsnrrpadOkpxaDUlE0VMlneA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=mblankhorst.nl; arc=none smtp.client-ip=141.105.120.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mblankhorst.nl
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>
+Cc: linux-kernel@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: [PATCH] mm/page_counter: Move calculating protection values to page_counter
+Date: Wed,  3 Jul 2024 13:25:10 +0200
+Message-ID: <20240703112510.36424-1-maarten.lankhorst@linux.intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="04wT6jxD1uvAzd26"
-Content-Disposition: inline
-In-Reply-To: <0000000000008405e0061bb6d4d5@google.com>
+Content-Transfer-Encoding: 8bit
 
+It's a lot of math, and there is nothing memcontrol specific about it.
+This makes it easier to use inside of the drm cgroup controller.
 
---04wT6jxD1uvAzd26
-Content-Type: multipart/mixed; boundary="alq3nTuPx/UEmRgh"
-Content-Disposition: inline
-
-
---alq3nTuPx/UEmRgh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On  Tue, Jun 25, 2024 at 06:25:23 -0700, syzbot wrote:
-> syzbot found the following issue on:
->=20
-> HEAD commit:    185d72112b95 net: xilinx: axienet: Enable multicast by de=
-f..
-> git tree:       net-next
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1062bd46980000
-
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.g=
-it  185d72112b95
-
---alq3nTuPx/UEmRgh
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-l2tp-fix-possible-UAF-when-cleaning-up-tunnels.patch"
-Content-Transfer-Encoding: quoted-printable
-
-=46rom 31321b7742266c4e58355076c19d8d490fa005d2 Mon Sep 17 00:00:00 2001
-=46rom: James Chapman <jchapman@katalix.com>
-Date: Tue, 2 Jul 2024 12:49:07 +0100
-Subject: [PATCH] l2tp: fix possible UAF when cleaning up tunnels
-
-syzbot reported a UAF caused by a race when the L2TP work queue closes a
-tunnel at the same time as a userspace thread closes a session in that
-tunnel.
-
-Tunnel cleanup is handled by a work queue which iterates through the
-sessions contained within a tunnel, and closes them in turn.
-
-Meanwhile, a userspace thread may arbitrarily close a session via
-either netlink command or by closing the pppox socket in the case of
-l2tp_ppp.
-
-The race condition may occur when l2tp_tunnel_closeall walks the list
-of sessions in the tunnel and deletes each one.  Currently this is
-implemented using list_for_each_safe, but because the list spinlock is
-dropped in the loop body it's possible for other threads to manipulate
-the list during list_for_each_safe's list walk.  This can lead to the
-list iterator being corrupted, leading to list_for_each_safe spinning.
-One sequence of events which may lead to this is as follows:
-
- * A tunnel is created, containing two sessions A and B.
- * A thread closes the tunnel, triggering tunnel cleanup via the work
-   queue.
- * l2tp_tunnel_closeall runs in the context of the work queue.  It
-   removes session A from the tunnel session list, then drops the list
-   lock.  At this point the list_for_each_safe temporary variable is
-   pointing to the other session on the list, which is session B, and
-   the list can be manipulated by other threads since the list lock has
-   been released.
- * Userspace closes session B, which removes the session from its parent
-   tunnel via l2tp_session_delete.  Since l2tp_tunnel_closeall has
-   released the tunnel list lock, l2tp_session_delete is able to call
-   list_del_init on the session B list node.
- * Back on the work queue, l2tp_tunnel_closeall resumes execution and
-   will now spin forever on the same list entry until the underlying
-   session structure is freed, at which point UAF occurs.
-
-The solution is to iterate over the tunnel's session list using
-list_first_entry_not_null to avoid the possibility of the list
-iterator pointing at a list item which may be removed during the walk.
-
+Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 ---
- net/l2tp/l2tp_core.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ include/linux/page_counter.h |   4 +
+ mm/memcontrol.c              | 154 +------------------------------
+ mm/page_counter.c            | 173 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 180 insertions(+), 151 deletions(-)
 
-diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
-index 64f446f0930b..afa180b7b428 100644
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1290,13 +1290,14 @@ static void l2tp_session_unhash(struct l2tp_session=
- *session)
- static void l2tp_tunnel_closeall(struct l2tp_tunnel *tunnel)
+diff --git a/include/linux/page_counter.h b/include/linux/page_counter.h
+index 8cd858d912c4..904c52f97284 100644
+--- a/include/linux/page_counter.h
++++ b/include/linux/page_counter.h
+@@ -81,4 +81,8 @@ static inline void page_counter_reset_watermark(struct page_counter *counter)
+ 	counter->watermark = page_counter_read(counter);
+ }
+ 
++void page_counter_calculate_protection(struct page_counter *root,
++				       struct page_counter *counter,
++				       bool recursive_protection);
++
+ #endif /* _LINUX_PAGE_COUNTER_H */
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 71fe2a95b8bd..9454e1a3120e 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -7316,122 +7316,6 @@ struct cgroup_subsys memory_cgrp_subsys = {
+ 	.early_init = 0,
+ };
+ 
+-/*
+- * This function calculates an individual cgroup's effective
+- * protection which is derived from its own memory.min/low, its
+- * parent's and siblings' settings, as well as the actual memory
+- * distribution in the tree.
+- *
+- * The following rules apply to the effective protection values:
+- *
+- * 1. At the first level of reclaim, effective protection is equal to
+- *    the declared protection in memory.min and memory.low.
+- *
+- * 2. To enable safe delegation of the protection configuration, at
+- *    subsequent levels the effective protection is capped to the
+- *    parent's effective protection.
+- *
+- * 3. To make complex and dynamic subtrees easier to configure, the
+- *    user is allowed to overcommit the declared protection at a given
+- *    level. If that is the case, the parent's effective protection is
+- *    distributed to the children in proportion to how much protection
+- *    they have declared and how much of it they are utilizing.
+- *
+- *    This makes distribution proportional, but also work-conserving:
+- *    if one cgroup claims much more protection than it uses memory,
+- *    the unused remainder is available to its siblings.
+- *
+- * 4. Conversely, when the declared protection is undercommitted at a
+- *    given level, the distribution of the larger parental protection
+- *    budget is NOT proportional. A cgroup's protection from a sibling
+- *    is capped to its own memory.min/low setting.
+- *
+- * 5. However, to allow protecting recursive subtrees from each other
+- *    without having to declare each individual cgroup's fixed share
+- *    of the ancestor's claim to protection, any unutilized -
+- *    "floating" - protection from up the tree is distributed in
+- *    proportion to each cgroup's *usage*. This makes the protection
+- *    neutral wrt sibling cgroups and lets them compete freely over
+- *    the shared parental protection budget, but it protects the
+- *    subtree as a whole from neighboring subtrees.
+- *
+- * Note that 4. and 5. are not in conflict: 4. is about protecting
+- * against immediate siblings whereas 5. is about protecting against
+- * neighboring subtrees.
+- */
+-static unsigned long effective_protection(unsigned long usage,
+-					  unsigned long parent_usage,
+-					  unsigned long setting,
+-					  unsigned long parent_effective,
+-					  unsigned long siblings_protected)
+-{
+-	unsigned long protected;
+-	unsigned long ep;
+-
+-	protected = min(usage, setting);
+-	/*
+-	 * If all cgroups at this level combined claim and use more
+-	 * protection than what the parent affords them, distribute
+-	 * shares in proportion to utilization.
+-	 *
+-	 * We are using actual utilization rather than the statically
+-	 * claimed protection in order to be work-conserving: claimed
+-	 * but unused protection is available to siblings that would
+-	 * otherwise get a smaller chunk than what they claimed.
+-	 */
+-	if (siblings_protected > parent_effective)
+-		return protected * parent_effective / siblings_protected;
+-
+-	/*
+-	 * Ok, utilized protection of all children is within what the
+-	 * parent affords them, so we know whatever this child claims
+-	 * and utilizes is effectively protected.
+-	 *
+-	 * If there is unprotected usage beyond this value, reclaim
+-	 * will apply pressure in proportion to that amount.
+-	 *
+-	 * If there is unutilized protection, the cgroup will be fully
+-	 * shielded from reclaim, but we do return a smaller value for
+-	 * protection than what the group could enjoy in theory. This
+-	 * is okay. With the overcommit distribution above, effective
+-	 * protection is always dependent on how memory is actually
+-	 * consumed among the siblings anyway.
+-	 */
+-	ep = protected;
+-
+-	/*
+-	 * If the children aren't claiming (all of) the protection
+-	 * afforded to them by the parent, distribute the remainder in
+-	 * proportion to the (unprotected) memory of each cgroup. That
+-	 * way, cgroups that aren't explicitly prioritized wrt each
+-	 * other compete freely over the allowance, but they are
+-	 * collectively protected from neighboring trees.
+-	 *
+-	 * We're using unprotected memory for the weight so that if
+-	 * some cgroups DO claim explicit protection, we don't protect
+-	 * the same bytes twice.
+-	 *
+-	 * Check both usage and parent_usage against the respective
+-	 * protected values. One should imply the other, but they
+-	 * aren't read atomically - make sure the division is sane.
+-	 */
+-	if (!(cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_RECURSIVE_PROT))
+-		return ep;
+-	if (parent_effective > siblings_protected &&
+-	    parent_usage > siblings_protected &&
+-	    usage > protected) {
+-		unsigned long unclaimed;
+-
+-		unclaimed = parent_effective - siblings_protected;
+-		unclaimed *= usage - protected;
+-		unclaimed /= parent_usage - siblings_protected;
+-
+-		ep += unclaimed;
+-	}
+-
+-	return ep;
+-}
+-
+ /**
+  * mem_cgroup_calculate_protection - check if memory consumption is in the normal range
+  * @root: the top ancestor of the sub-tree being checked
+@@ -7443,8 +7327,8 @@ static unsigned long effective_protection(unsigned long usage,
+ void mem_cgroup_calculate_protection(struct mem_cgroup *root,
+ 				     struct mem_cgroup *memcg)
  {
- 	struct l2tp_session *session;
--	struct list_head *pos;
--	struct list_head *tmp;
-=20
- 	spin_lock_bh(&tunnel->list_lock);
- 	tunnel->acpt_newsess =3D false;
--	list_for_each_safe(pos, tmp, &tunnel->session_list) {
--		session =3D list_entry(pos, struct l2tp_session, list);
-+	for (;;) {
-+		session =3D list_first_entry_or_null(&tunnel->session_list,
-+						   struct l2tp_session, list);
-+		if (!session)
-+			break;
- 		list_del_init(&session->list);
- 		spin_unlock_bh(&tunnel->list_lock);
- 		l2tp_session_delete(session);
---=20
-2.34.1
+-	unsigned long usage, parent_usage;
+-	struct mem_cgroup *parent;
++	bool recursive_protection =
++		cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_RECURSIVE_PROT;
+ 
+ 	if (mem_cgroup_disabled())
+ 		return;
+@@ -7452,39 +7336,7 @@ void mem_cgroup_calculate_protection(struct mem_cgroup *root,
+ 	if (!root)
+ 		root = root_mem_cgroup;
+ 
+-	/*
+-	 * Effective values of the reclaim targets are ignored so they
+-	 * can be stale. Have a look at mem_cgroup_protection for more
+-	 * details.
+-	 * TODO: calculation should be more robust so that we do not need
+-	 * that special casing.
+-	 */
+-	if (memcg == root)
+-		return;
+-
+-	usage = page_counter_read(&memcg->memory);
+-	if (!usage)
+-		return;
+-
+-	parent = parent_mem_cgroup(memcg);
+-
+-	if (parent == root) {
+-		memcg->memory.emin = READ_ONCE(memcg->memory.min);
+-		memcg->memory.elow = READ_ONCE(memcg->memory.low);
+-		return;
+-	}
+-
+-	parent_usage = page_counter_read(&parent->memory);
+-
+-	WRITE_ONCE(memcg->memory.emin, effective_protection(usage, parent_usage,
+-			READ_ONCE(memcg->memory.min),
+-			READ_ONCE(parent->memory.emin),
+-			atomic_long_read(&parent->memory.children_min_usage)));
+-
+-	WRITE_ONCE(memcg->memory.elow, effective_protection(usage, parent_usage,
+-			READ_ONCE(memcg->memory.low),
+-			READ_ONCE(parent->memory.elow),
+-			atomic_long_read(&parent->memory.children_low_usage)));
++	page_counter_calculate_protection(&root->memory, &memcg->memory, recursive_protection);
+ }
+ 
+ static int charge_memcg(struct folio *folio, struct mem_cgroup *memcg,
+diff --git a/mm/page_counter.c b/mm/page_counter.c
+index db20d6452b71..8ee49cbf71be 100644
+--- a/mm/page_counter.c
++++ b/mm/page_counter.c
+@@ -262,3 +262,176 @@ int page_counter_memparse(const char *buf, const char *max,
+ 
+ 	return 0;
+ }
++
++
++/*
++ * This function calculates an individual page counter's effective
++ * protection which is derived from its own memory.min/low, its
++ * parent's and siblings' settings, as well as the actual memory
++ * distribution in the tree.
++ *
++ * The following rules apply to the effective protection values:
++ *
++ * 1. At the first level of reclaim, effective protection is equal to
++ *    the declared protection in memory.min and memory.low.
++ *
++ * 2. To enable safe delegation of the protection configuration, at
++ *    subsequent levels the effective protection is capped to the
++ *    parent's effective protection.
++ *
++ * 3. To make complex and dynamic subtrees easier to configure, the
++ *    user is allowed to overcommit the declared protection at a given
++ *    level. If that is the case, the parent's effective protection is
++ *    distributed to the children in proportion to how much protection
++ *    they have declared and how much of it they are utilizing.
++ *
++ *    This makes distribution proportional, but also work-conserving:
++ *    if one counter claims much more protection than it uses memory,
++ *    the unused remainder is available to its siblings.
++ *
++ * 4. Conversely, when the declared protection is undercommitted at a
++ *    given level, the distribution of the larger parental protection
++ *    budget is NOT proportional. A counter's protection from a sibling
++ *    is capped to its own memory.min/low setting.
++ *
++ * 5. However, to allow protecting recursive subtrees from each other
++ *    without having to declare each individual counter's fixed share
++ *    of the ancestor's claim to protection, any unutilized -
++ *    "floating" - protection from up the tree is distributed in
++ *    proportion to each counter's *usage*. This makes the protection
++ *    neutral wrt sibling cgroups and lets them compete freely over
++ *    the shared parental protection budget, but it protects the
++ *    subtree as a whole from neighboring subtrees.
++ *
++ * Note that 4. and 5. are not in conflict: 4. is about protecting
++ * against immediate siblings whereas 5. is about protecting against
++ * neighboring subtrees.
++ */
++static unsigned long effective_protection(unsigned long usage,
++					  unsigned long parent_usage,
++					  unsigned long setting,
++					  unsigned long parent_effective,
++					  unsigned long siblings_protected,
++					  bool recursive_protection)
++{
++	unsigned long protected;
++	unsigned long ep;
++
++	protected = min(usage, setting);
++	/*
++	 * If all cgroups at this level combined claim and use more
++	 * protection than what the parent affords them, distribute
++	 * shares in proportion to utilization.
++	 *
++	 * We are using actual utilization rather than the statically
++	 * claimed protection in order to be work-conserving: claimed
++	 * but unused protection is available to siblings that would
++	 * otherwise get a smaller chunk than what they claimed.
++	 */
++	if (siblings_protected > parent_effective)
++		return protected * parent_effective / siblings_protected;
++
++	/*
++	 * Ok, utilized protection of all children is within what the
++	 * parent affords them, so we know whatever this child claims
++	 * and utilizes is effectively protected.
++	 *
++	 * If there is unprotected usage beyond this value, reclaim
++	 * will apply pressure in proportion to that amount.
++	 *
++	 * If there is unutilized protection, the cgroup will be fully
++	 * shielded from reclaim, but we do return a smaller value for
++	 * protection than what the group could enjoy in theory. This
++	 * is okay. With the overcommit distribution above, effective
++	 * protection is always dependent on how memory is actually
++	 * consumed among the siblings anyway.
++	 */
++	ep = protected;
++
++	/*
++	 * If the children aren't claiming (all of) the protection
++	 * afforded to them by the parent, distribute the remainder in
++	 * proportion to the (unprotected) memory of each cgroup. That
++	 * way, cgroups that aren't explicitly prioritized wrt each
++	 * other compete freely over the allowance, but they are
++	 * collectively protected from neighboring trees.
++	 *
++	 * We're using unprotected memory for the weight so that if
++	 * some cgroups DO claim explicit protection, we don't protect
++	 * the same bytes twice.
++	 *
++	 * Check both usage and parent_usage against the respective
++	 * protected values. One should imply the other, but they
++	 * aren't read atomically - make sure the division is sane.
++	 */
++	if (!recursive_protection)
++		return ep;
++
++	if (parent_effective > siblings_protected &&
++	    parent_usage > siblings_protected &&
++	    usage > protected) {
++		unsigned long unclaimed;
++
++		unclaimed = parent_effective - siblings_protected;
++		unclaimed *= usage - protected;
++		unclaimed /= parent_usage - siblings_protected;
++
++		ep += unclaimed;
++	}
++
++	return ep;
++}
++
++
++/**
++ * page_counter_calculate_protection - check if memory consumption is in the normal range
++ * @root: the top ancestor of the sub-tree being checked
++ * @memcg: the memory cgroup to check
++ * @recursive_protection: Whether to use memory_recursiveprot behavior.
++ *
++ * Calculates elow/emin thresholds for given page_counter.
++ *
++ * WARNING: This function is not stateless! It can only be used as part
++ *          of a top-down tree iteration, not for isolated queries.
++ */
++void page_counter_calculate_protection(struct page_counter *root,
++				       struct page_counter *counter,
++				       bool recursive_protection)
++{
++	unsigned long usage, parent_usage;
++	struct page_counter *parent = counter->parent;
++
++	/*
++	 * Effective values of the reclaim targets are ignored so they
++	 * can be stale. Have a look at mem_cgroup_protection for more
++	 * details.
++	 * TODO: calculation should be more robust so that we do not need
++	 * that special casing.
++	 */
++	if (root == counter)
++		return;
++
++	usage = page_counter_read(counter);
++	if (!usage)
++		return;
++
++	if (parent == root) {
++		counter->emin = READ_ONCE(counter->min);
++		counter->elow = READ_ONCE(counter->low);
++		return;
++	}
++
++	parent_usage = page_counter_read(parent);
++
++	WRITE_ONCE(counter->emin, effective_protection(usage, parent_usage,
++			READ_ONCE(counter->min),
++			READ_ONCE(parent->emin),
++			atomic_long_read(&parent->children_min_usage),
++			recursive_protection));
++
++	WRITE_ONCE(counter->elow, effective_protection(usage, parent_usage,
++			READ_ONCE(counter->low),
++			READ_ONCE(parent->elow),
++			atomic_long_read(&parent->children_low_usage),
++			recursive_protection));
++}
+-- 
+2.45.2
 
-
---alq3nTuPx/UEmRgh--
-
---04wT6jxD1uvAzd26
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEsUkgyDzMwrj81nq0lIwGZQq6i9AFAmaFNPkACgkQlIwGZQq6
-i9CJ1wf+IKvWllXWlabMHP/Fw1+D0e6LEqvI1CHE5kREGC8ag+eQ8pEs1fgs0dFs
-melLESrjallkY5MEnlxg2JTR3t5ZfeLiP0Ur7o0s2cYfOu+r7DCPdlDex05WT/BB
-qFk+wVEOLTt9jOgKQ+5MfLiou273TWTFwN1wUm9VZSyI1jgQSqVN62laRVzxe+sR
-Fp+6PpWigsPjHGhnJiS4Kva9UvBDC+EeM0sg6Yvbq9GCVJS7kB2xdiK4FFcIvUx3
-djTIT37mObkPnhUxJJYERAkpA0rH1FtbB4o4XRs1hsh0WkuXmgCKGJCJlXBxYT5D
-VP5vHZBgCs/GSnii5rkhbqI7MOUPrg==
-=7fnD
------END PGP SIGNATURE-----
-
---04wT6jxD1uvAzd26--
 
