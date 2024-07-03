@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-239908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622239266B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:05:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A649266B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDB8BB25206
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:05:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1454428410F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391271849C5;
-	Wed,  3 Jul 2024 17:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31DE1849C5;
+	Wed,  3 Jul 2024 17:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g5V4K8ru"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ByXDISKa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCAB181BA8;
-	Wed,  3 Jul 2024 17:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356A8170836;
+	Wed,  3 Jul 2024 17:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720026315; cv=none; b=M+DO7KDtM8QJPxKEJxmIG1ZAlJA8xPSTD8JJG/IU6NLoo6vailz0F6AJA0pRLslml6kwWfWb9wbJID2NelOCyE5p1wWc+eDPv3x+nTwGZYtM6Nq46sfaVeb7T/LrqW/U4yF+Y1db3L0kal8z8YWEH0SaBUDYHn/AIO/cesbmZx0=
+	t=1720026349; cv=none; b=smk0tDYVhqq4e6TJUVJghcBdLHn/Yqvb+azZsb812wY7CoIH504AewdzCPSmuHVjoKd+TguzcQZ3IG1f19TkLO9kVFj/EEUXPGccHwdxcjwk/e+8P8Y+rdxt/o3TIKI6llHVVQIq295uHPiAO4FuQi8lp22slKf/bcnBa/zociI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720026315; c=relaxed/simple;
-	bh=yJ93+dCFq/4j10dTn5kcHmVS7uht33yvrrfIJiaf3f4=;
+	s=arc-20240116; t=1720026349; c=relaxed/simple;
+	bh=0Di2M/LZ9WT/cOov7yHyC0zXiGG70ndJqTm1uwOP8fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xedck1zQlT6vETbqJGAaQPQbW0FxpK00P4uLZTXlRLHK3BT2BAki1WGocWu3a1+S6p0D09v+qjlI+XbX7zQ3hQIYFebIY49WqE4hUTrtDKHdRjGoWYbF+RBfGY43ze82lCZlTvsFtgsFqAGJlReF5PAmuvhZx6iUOHZUU9bbgBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g5V4K8ru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4181C2BD10;
-	Wed,  3 Jul 2024 17:05:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jEIA/2B3sQX25YD8AwtuS4EGXdF9wo4avZ8Yw4CJDqcvzwR85H7eVPSoryn4ZB5buK2OOgtXl7a6dR4rEFXrKbdzkuTJqwXVnOXUIwThUNpfF/hunsongcMd7l23DRPo6mbIj64tn4AghRnFx7z1qJ3/KjwmHoyh7oztjc3Duos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ByXDISKa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0B59C2BD10;
+	Wed,  3 Jul 2024 17:05:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720026315;
-	bh=yJ93+dCFq/4j10dTn5kcHmVS7uht33yvrrfIJiaf3f4=;
+	s=k20201202; t=1720026349;
+	bh=0Di2M/LZ9WT/cOov7yHyC0zXiGG70ndJqTm1uwOP8fw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g5V4K8ruPIxLfmKnZoUjyEb7QAcb8DCoyeJdn9B0fVV2N5RLyFNduXWB62L5io5Oo
-	 C/h3hE88/BFNtgMKflhuBOKdkRg9gwb8PbLFfg7Bp45YQ/D/7wtd2K9GvL93HxVJb5
-	 wvbXOP7T72p//IA85Cvdd3XFMEqwNLezJyJaXfKIzfPjK8Efl7fWO8465YTKdHYXIV
-	 k0PMPNy6AL1AfGt6HkdWs4CqpJzeOhcBe+3ltjd3x8xI9g4VF/sVOefILhePVDG+Oj
-	 9OFFJOpLCw9F/c+IBhNEmUOwYQafBoTaNzGdIx6YbBYbfllCMF+2X2ytQ56RiRxNr5
-	 JJR3NGumcVp5A==
-Date: Wed, 3 Jul 2024 18:05:10 +0100
+	b=ByXDISKabK8WI5PjhiQmPIV9XCbni6cBbULpTYJOCVvHnka/6a9koMf+AYTcSQBBC
+	 U4frj93DWadxWK3oYgcAB2UrWjOJ0NGrbgLZ3sHaWQCywBE9IhGxEd8RPILcxgIZIW
+	 aYfHPEoS9sGflTSehjDyp542AmteRTNqFcbJwQVNMEgN9IotaQcS/5bhnkWOfpwoDQ
+	 expx1B6L3LAGnL5f+9yjB2brZxBWShJcX9sMiwsAp1FaL0KcB4+Wndn1x3/sXXKtFl
+	 FxqKAQHZAdCMv0AW5aUmrgzJIEhLmIbDUdlOqYIbXegkg0dYcI+Ez7Wmv2qzdPnY7A
+	 HBvs71/gVFarA==
+Date: Wed, 3 Jul 2024 18:05:44 +0100
 From: Simon Horman <horms@kernel.org>
 To: Justin Lai <justinlai0215@realtek.com>
 Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
@@ -48,10 +48,11 @@ Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
 	netdev@vger.kernel.org, andrew@lunn.ch, jiri@resnulli.us,
 	rkannoth@marvell.com, jdamato@fastly.com, pkshih@realtek.com,
 	larry.chiu@realtek.com
-Subject: Re: [PATCH net-next v22 10/13] rtase: Implement ethtool function
-Message-ID: <20240703170510.GD598357@kernel.org>
+Subject: Re: [PATCH net-next v22 11/13] rtase: Add a Makefile in the rtase
+ folder
+Message-ID: <20240703170544.GE598357@kernel.org>
 References: <20240701115403.7087-1-justinlai0215@realtek.com>
- <20240701115403.7087-11-justinlai0215@realtek.com>
+ <20240701115403.7087-12-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,13 +61,10 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701115403.7087-11-justinlai0215@realtek.com>
+In-Reply-To: <20240701115403.7087-12-justinlai0215@realtek.com>
 
-On Mon, Jul 01, 2024 at 07:54:00PM +0800, Justin Lai wrote:
-> Implement the ethtool function to support users to obtain network card
-> information, including obtaining various device settings, Report whether
-> physical link is up, Report pause parameters, Set pause parameters,
-> Return extended statistics about the device.
+On Mon, Jul 01, 2024 at 07:54:01PM +0800, Justin Lai wrote:
+> Add a Makefile in the rtase folder to build rtase driver.
 > 
 > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
 
