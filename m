@@ -1,333 +1,932 @@
-Return-Path: <linux-kernel+bounces-239831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 221339265D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:19:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 198809265DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45F851C2338E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:19:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C575928454E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E801822D8;
-	Wed,  3 Jul 2024 16:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636421822D2;
+	Wed,  3 Jul 2024 16:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H6liQUpd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="c9ZdgZJI"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11022129.outbound.protection.outlook.com [52.101.66.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D46D180A86
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720023552; cv=none; b=bmmSjuJT3Dle8by+MosTLWQuoLOscg5sow26r2hS6I5Kepx9eK7tdUqWC1APBqzBij/m+utIxryEAUM9zxIRmTK3hXUqy7Pxi/yCtogolSgqRPzKHooRAnS50OeCLihvtqFsz2vQ9Ok/SijY4FgvFwVpdQJdfFuaJFj/7D1dr4E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720023552; c=relaxed/simple;
-	bh=LaQiB/JN3iySPHNjIgHNBXZQnv+3kaaGI6eQNi02OwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OIYYunSPSYUUzj+uqfSOpNRmTfx9fxaUFzGIJh93+3ABtZXlTenXbi3BiLLHbst/SWF7pi+5PhfB/Jiv9lnPhnG9wzbcWm2qPiqfI7fgupGR6PqWVRyWLM044oHoz+GRPFWMB8dBXMXiVYn83kiToNPZDyY4It1JEOFz9kwnPRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H6liQUpd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720023549;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kBTef3Rb92KBup61SlBchk2oT3y8ZSkEqgAO4oEmAEU=;
-	b=H6liQUpdutztNcjr1EDvb+zcn+k5EUtQRt4tDRd8weY3rmr/5adVEngULF81nKn8DTdcIG
-	vdGdy60A7f47e1xyYbdp5If1keii9MoUWtGgFReFzoBxaUEOGPTKOapS5d4t8gwKN7JnKk
-	XG4c83Rb/rcxK3H/7EsayzNG3A0FyFk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-449-xhLOn2fpNrOCAXu-oEwnIQ-1; Wed, 03 Jul 2024 12:19:06 -0400
-X-MC-Unique: xhLOn2fpNrOCAXu-oEwnIQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42568f0cc18so39372835e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:19:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720023546; x=1720628346;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kBTef3Rb92KBup61SlBchk2oT3y8ZSkEqgAO4oEmAEU=;
-        b=tDYKN1k8lujepqfB3QBaR0M9rmUyTgsXijGAo9Nw79wAQPugory1UVynljNjykCYEC
-         AT2dsL+dRomTFvYbQ6kCqbfYN9ot+wZtrb2GvRGkOAs8iiAZPhT2pYWwWOkmw0RMlvU4
-         oMT48A5W4XzBBue02PtTak2BJHGCG5pN9RKQm5CfKb5xFO38ri36B/iOL3jNAt5N7dA5
-         uJQqrYbCWbiC2rJhEB552x3NOhZsKcttGbcKwkSCw8ufeftxRF8GCcJU2CoNvJYUnehF
-         l8xDNJZ3Tco4QkhGOb+4ORlxCf1pszh3RqcZw9PQZFNFjaV0R+5Lc/7HmiY2HqT5os2U
-         nslg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMheoHuGPY1dj+KhskSSpNuww6W0DfjRxJiRvPURFihr1u+L5+LTMmFQr8IqNxSyiVO96M1z3Ofv1pKZWhjMfhuyCAyygdb0Hj+Fft
-X-Gm-Message-State: AOJu0YxzSpC3p84Nf2lxtKgcgkPdD9rkTfNWNoNX73Q5VgO0Foy7aAAY
-	z6lPdywd6CgiVrz0ee+dNIW0ZdeVaeYrLhAkPE6C8vo192WNJolneIjkNoI8BSi+DIOJrnZAbty
-	ZbKsrrXjKgJV0waH9k80Wi9wLwCz7a60Zg+fc1tfBQED8epcv8XLMHYtzxb8fJg==
-X-Received: by 2002:a7b:c3d9:0:b0:424:acd2:40af with SMTP id 5b1f17b1804b1-4257a011a44mr85562775e9.24.1720023545737;
-        Wed, 03 Jul 2024 09:19:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IES3hCA3+99w5shoioL/LxHazJmda22GJdpocCDjjHmJ/NOVgxGc4qGdqMBjALowvpd1e8Wbg==
-X-Received: by 2002:a7b:c3d9:0:b0:424:acd2:40af with SMTP id 5b1f17b1804b1-4257a011a44mr85562515e9.24.1720023545136;
-        Wed, 03 Jul 2024 09:19:05 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c709:3400:5126:3051:d630:92ee? (p200300cbc709340051263051d63092ee.dip0.t-ipconnect.de. [2003:cb:c709:3400:5126:3051:d630:92ee])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af389efsm246725995e9.7.2024.07.03.09.19.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 09:19:04 -0700 (PDT)
-Message-ID: <3e2ebfd2-7a63-449b-901a-f559049473e4@redhat.com>
-Date: Wed, 3 Jul 2024 18:19:03 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D57282E1;
+	Wed,  3 Jul 2024 16:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.129
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720023564; cv=fail; b=ELz5IzGwZYUyLMLtaICjDwFcNbgknZZLYbtkzgEavSkW1XU1UPQ+1cibbkKOfN3vPo6U6kclRMK3AruLOrAws+AO6BwqJVWKlhdr+spf/fez2KRjHZuTzEQ97WRnmiZVqGzaWyBF+s4H6uoSoZg9vdbdCi8jQJEqiumKer4CDFo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720023564; c=relaxed/simple;
+	bh=K0FuuqO7HEswnf5P7g9rZv9FumEIFEDGAjHq2yr6hAI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sjyjKUnyVhKkmxNQWtmZzoGwJUS7QGE6eoU4232t6+cwTIzaHmvOuV7g9gp27VG7YtT3NaVGmPkqItFQ2Vwx06QO2+K8yq2bFlhDA/RwpOOj1EkcMK0ids6JDslVBtKylvqskRzlLRHfJ/KNwpd4brAPzAMjYV/YvyuK94Tvj2Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=c9ZdgZJI; arc=fail smtp.client-ip=52.101.66.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Rfqz0JJbdMqMXrSm1wxdP2t3o+SOOLYLW+VMOnhvRfcmwjFU0W2HHgrNPRLhGsjhp7DVMGoprpBE9bVrW73xGJGBk2RPI7owyPW6VO8Yn93w41hJOGLiPppFA02HjVkrB5n6Czkr3HszUvTwaYwOHiGyMJCUQmadPd1lqlvr1rIY8ff+yFYssj4n/LlT4C47CnVpU4eFpbYgdxSQO4gWVNFua5k49GfVG9WHkjaNrAna/o8qxFm/0ujNjRsKYqh/EN6bFUh9mJ+5s0kPi9VNJ1vpOdyWHk6tA0G06bX4X9OTpn9cIN48OgO68gHCDpesOG+Tfwe/Nii8dCf/BSO5iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YHGxVbc+bT8OWe7ovM0g5M5Rz8RSWBmovLY6aOp9F4w=;
+ b=OZQzIhued+tTUP2AGSJHbjO7ROO3bUhhWrcGn7lAoYXxVGCAfYqVulORAdSWPj2eouFmWD34nbngbJcRetrHrPIiKtztb7N+5omKlRfgnGuz9/eXHPqqqcJPZHlTqmuqBor6+eV2vALOmYDu3Ql5XPbNhPjWOm01i5g9XbynH7xkpn1qu1PLNwqXXP6jhJHMty5CS9wA0HCtcfA8Q56zvzHtcrepR7mHvtRmkaX0591je79bUKQjhtC2bSyYv9wk9n9sMVyWChWigPwP+Zxyx7B8u/q8fONmx/cQSgNAy/daXAyl4Xfhs3zx98Ukt3OJVHDq/dve8IXzH7lE03cHbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YHGxVbc+bT8OWe7ovM0g5M5Rz8RSWBmovLY6aOp9F4w=;
+ b=c9ZdgZJIPQvGLveZ14Wrj2GWD3Pp6/1LxBi0cR1Xaf4NfPR4ARnIdPfXi/xj4pqtaGc18ju2bb0+tQyCQLc4Ib8BuZ0tg/nXaYggTbJo6Ce3CGNfm73/HSGyL6kI8iSvm4cEJlxINxeJDMCoXa1JVQlI0XZ+fLUoCQ96i5Mcmu4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from PA4PR04MB7982.eurprd04.prod.outlook.com (2603:10a6:102:c4::9)
+ by AM0PR04MB6770.eurprd04.prod.outlook.com (2603:10a6:208:187::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Wed, 3 Jul
+ 2024 16:19:17 +0000
+Received: from PA4PR04MB7982.eurprd04.prod.outlook.com
+ ([fe80::3c4:afd5:49ac:77af]) by PA4PR04MB7982.eurprd04.prod.outlook.com
+ ([fe80::3c4:afd5:49ac:77af%4]) with mapi id 15.20.7741.017; Wed, 3 Jul 2024
+ 16:19:17 +0000
+Message-ID: <015776ca-a9e0-470f-bbf5-39cec4147c6b@cherry.de>
+Date: Wed, 3 Jul 2024 18:19:15 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/11] hwmon: (amc6821) Convert to use regmap
+To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Farouk Bouabid <farouk.bouabid@cherry.de>
+References: <20240701212348.1670617-1-linux@roeck-us.net>
+ <20240701212348.1670617-10-linux@roeck-us.net>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20240701212348.1670617-10-linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: WA1P291CA0013.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:19::16) To PA4PR04MB7982.eurprd04.prod.outlook.com
+ (2603:10a6:102:c4::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
- shmem
-To: Yang Shi <shy828301@gmail.com>, Ryan Roberts <ryan.roberts@arm.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Bang Li <libang.li@antgroup.com>, hughd@google.com,
- akpm@linux-foundation.org, wangkefeng.wang@huawei.com, ziy@nvidia.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240628104926.34209-1-libang.li@antgroup.com>
- <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com>
- <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
- <516aa6b3-617c-4642-b12b-0c5f5b33d1c9@arm.com>
- <597ac51e-3f27-4606-8647-395bb4e60df4@redhat.com>
- <6f68fb9d-3039-4e38-bc08-44948a1dae4d@arm.com>
- <992cdbf9-80df-4a91-aea6-f16789c5afd7@redhat.com>
- <2e0a1554-d24f-4d0d-860b-0c2cf05eb8da@arm.com>
- <06c74db8-4d10-4a41-9a05-776f8dca7189@redhat.com>
- <429f2873-8532-4cc8-b0e1-1c3de9f224d9@arm.com>
- <7a0bbe69-1e3d-4263-b206-da007791a5c4@redhat.com>
- <CAHbLzkrv2U39oOFuuHpmcfvDOuMayjwdgXLshxtDSSPGPzOkJQ@mail.gmail.com>
- <2450e4f8-236f-49ce-8bd3-b30a6d8c5e57@arm.com>
- <CAHbLzkponjBbtYo6F0+QJ_tmoUFa8i2VPCX7MGX758sAmyLtpQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAHbLzkponjBbtYo6F0+QJ_tmoUFa8i2VPCX7MGX758sAmyLtpQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR04MB7982:EE_|AM0PR04MB6770:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1a5ae198-435c-4dff-2482-08dc9b7be305
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U2l4NlpNaGFkcDJtVzE1ZWd5dkg1N21qalRHa2Z2blYxa1AyYXcrQzBzMzFD?=
+ =?utf-8?B?Y2dCeEdoUUJsSzVnRWNCTFBPdDZLdERmdmpmVHhmS3loN253bDFMOWdRRUpM?=
+ =?utf-8?B?RHNYOHFDODVvb3NCWlEwWUlTOEE1SEp1ZmVkRzhwUk45bXVVY04veWNZZFU4?=
+ =?utf-8?B?WDFCWkxWSzRlbjNrS3lkd0pERDEzZEU0aFloYUkvVlhUNGZ3TkRjNVFnbWQ2?=
+ =?utf-8?B?ejdrLzlGM09vY3FhU3R5TUgveTZFNGw5MjY2Rk5uYlFlVlM2OTdHS2NpRGls?=
+ =?utf-8?B?UmVvVE42UGFEYytCM2xBcXVOb2dldFc2UWNqTzdGZ1V0SGp4VUJyY0drSm1p?=
+ =?utf-8?B?citNQmZCeHNyT2lLdFJyN29Gd1JMQVRwR0xpc005aVpJVmdPM2JhZDhYMExC?=
+ =?utf-8?B?N2tpUjRnVVVSWlo3MTZXY3UyQks4MXhLZ212QkZJMU5zd0lkcmVaT092VVRR?=
+ =?utf-8?B?eDRya3RhanJpTHNYVGxDME1rTnVzckJrekhlTHhqMkdRVnpPUE4xNUEzSVJS?=
+ =?utf-8?B?b29kaGhKamFBaytERzdhSTR4MnlTYUd0ekx1Tzk4U1ZYNCtNZnE2M050elp6?=
+ =?utf-8?B?eUxuS3dCRHp5WG5zWWNkU28xcGxEY1Z5dWVtalJNWHlYK3crVTNpeE5yeUdj?=
+ =?utf-8?B?Q0tKeGliRlRmMXFWdGRBcGZ3K3NuV3pieVBXOGN4OHFGb21DMGI1Q2tya0x5?=
+ =?utf-8?B?Z2RtdUVQV0JCTDA0N2FTdGNTUW4yeGM4c2EwQVFyNUtyeXN0dVFIbVo3cWxx?=
+ =?utf-8?B?YnZBUEk2dUUyV1hib2VZN0wzMzVTUDQ1WE0wOTVLV0RpRTZpY3RMUWUvKzBE?=
+ =?utf-8?B?bTgwa0ZVZUFxVjhwSitDN0pBN3RzaER5OENIc3QzaVJKQyt5VHdmdVp6Y2g5?=
+ =?utf-8?B?U0gzRlNlbGFld0xJRWJ4ejVlQXBEUnJMR2NmUFI0bEE5cVd1OTJtVVlJNEV3?=
+ =?utf-8?B?Ni8weEVBOFVSbHdKTHU0UWhYQXBYSFV5QUlPbGcyTmVIMFQydTRjYTlNa1B2?=
+ =?utf-8?B?cjhoZTgvd1VoV29XV2lFeUhwcGVtU0hNd2llQnFGRGdJS1Ivb1JDTTdISDQr?=
+ =?utf-8?B?enhoSXVkL3ZyMzZseXd1ZzNxM0tDRmFSR3V3eWhzSFduV2JhS3QrSUhhcTdU?=
+ =?utf-8?B?TmZRa2YzVCsxL2liZndzcjNieEhnVkladEt6WHp1NHFxaFJTZ3lzZVV0TnZi?=
+ =?utf-8?B?OXAyWklzQVppMTU1a2V5N1pqMDBnVUdYZ1ZVc0pWNFBJUm84WkJDbXZ5TXBR?=
+ =?utf-8?B?VENVZHlpdEQweldTblRzejA1dElQT1dhQkV0Z25TQVRjanIycitVWFd1REM0?=
+ =?utf-8?B?SmpoTzRtR2lnbk42Sm1UWWc1T212bm50MGZSbXo0enFWUEhseG15ejcvbDVn?=
+ =?utf-8?B?MnhIelM5UEdIUzU4RnVQMTlYMTU4NmRvTVZRT2Z1eHRTUXRERXV6b1NEdFJi?=
+ =?utf-8?B?VDJ1dlhFanAycEhWSkJnMG91SjZoeU12WmdXSEhHcHc0NEpsRHh6QklFL0wy?=
+ =?utf-8?B?Z3c1WW1xTHRYNXhzYk5TcXJLMG0vMi9JdGdQMkh3UXlvbXR3azZtTHpNU3lj?=
+ =?utf-8?B?emIxOU02cnN6NHg0a2dkT3VIczBYOTFNMzRONVV1SUNoVVdsdTNkK3Fha2pF?=
+ =?utf-8?B?NHVIbWJ2SUNGNHJqcWxsWWVtMXJHU1pTWlFwSk9jVTRBVTZKMkxwTkx2UHMx?=
+ =?utf-8?B?Nmw1eUFMajFmdnlOb0JyYlN6YTNiNENROERGRi8yTGl4UERiZEdqWjZDblo1?=
+ =?utf-8?B?VFJ5VzFHeFh6a0tRVkh1c240REE3eE0vcUpNQ2tZWHhPUDZMZzFYNFBBbmxy?=
+ =?utf-8?B?VU1HNmQ0UmZ0ZmxPSnVHZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7982.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YWFReFRicVdpU1MwR0hpYXhvRjl2RVVxYnFocGI4K3dnS3JBTWFNZGh5Wmp0?=
+ =?utf-8?B?YXJRL3p4OWpJRUV1dER2ZGdFSTg2UHZhQTN3K042V1FaazhIQXJsVWd1YW42?=
+ =?utf-8?B?L0RkOS9qdEdnY2JuZlFleGtjejZFZ1UzV0FTS1VTcU9lbXJ2czM5dFdkR1Fr?=
+ =?utf-8?B?cVdiRE9BNlBPOUJaQjJpMUV3MEZtMEc1bGdzVkxqVEVFNTBTSkNhUnVwZW5L?=
+ =?utf-8?B?WUl6cWdNWkpJaFB3cnFOM1puakd1azBONFNzNlQvSmZZWFpUWEJ2eGs2bmxB?=
+ =?utf-8?B?d05sM1Z4ZVhibEpUSjgxeGFvQUVtVlJ5b0RpQTZlaTc4T2w0QWtRcTdLWEZN?=
+ =?utf-8?B?MDlBNnNzbFlHUjhEaWVQSWU4TVB3RHpGT1Y3N1hvZ01oRzY0SGp1elEwQzR6?=
+ =?utf-8?B?bGV0WlUyWmk3bmJhSXIxRDRNQkJORGYyMlVGNkRQbEhQZ1Z1SlhnU2Z5NHlC?=
+ =?utf-8?B?dHYzNFhlWVZhTVpZSGlESGZIbHk0eEgrM0tBanl3VWxKKzdOY0VhWFJUalZQ?=
+ =?utf-8?B?M3BtUDA3RHBYcnFvZENSVlNEeGpUQzZKQzNvZUpxaSs3SHczNk52d09JVitY?=
+ =?utf-8?B?MVRQdXVrUklUT21zbThNaVV4QTVsajJqVlhpTlJORTQ2SStSSm4za0F0Nkk1?=
+ =?utf-8?B?YWNnbS9HU2l0a0NaZWlscmVQVC96aW9mVndpaEo4enpWQkh4NUtaSFVhZGdP?=
+ =?utf-8?B?YTJpaE9CQ2NlSG5XTnhqdW1jd3RzZnlTOWVzeWwvVC8xbXQ1VlA3YVNTdksr?=
+ =?utf-8?B?bk9XbVYyOGxBeTlmNm91M2ZmY1hDeEpxc21iN1ZjN0F1Wm1yQ0dwZ0MyajBm?=
+ =?utf-8?B?QWZpcHRuRXYzSE02NDM5TGo5cStySnlUNTZYT01VeThpdkRsQjZjeEMxTGVs?=
+ =?utf-8?B?RTliMStXRU5xZktDVmxUR0Vxc0xaTVRPNkJ3TUE2TVY2OFFlaGxydlZCTC9F?=
+ =?utf-8?B?eVV2cmVML014cUsyOGZ6cEpqbEdZU3hrS01xYVpUZkJ2SnF0Y1UwUkRPdS9D?=
+ =?utf-8?B?ODc5R3RBNmp4N3dEQWNsdzkvZ1pqWTMvcFhJNHhGYk9GUTcyUnUxTkcxVnU1?=
+ =?utf-8?B?N1V3MnNtUndrU1pFSENHUHZzUUVIbklpWEQwZklpZGpOUTVvWldrU0EyNnlT?=
+ =?utf-8?B?TTI3bzd4cUhXUzRLTUduQmIyV3d0SDMyZ1lKcE4rSDEyeWY4bjBWL1U5TjRZ?=
+ =?utf-8?B?NnkyNTZidisxNkN4aU5yaFhyRmRtRy9QTlZLZ1J3WERSeU5VQTlVdzJEVVg5?=
+ =?utf-8?B?N1lXL25hVmlXNzAzeWZjcGwzMFN4R0ZYK1VDTWJwSGRxUkg5WE1uYjJqTUNw?=
+ =?utf-8?B?c3JUN1RndDdOc2JjajgrUE1ETS9qTytuaEowWUFQK25aQmxGd2N2d2ZlNFJX?=
+ =?utf-8?B?VDNjdm5LT092SEVlZkxZNFNPUEJqaVcrZWh5MTNJbktlRTl5cDV6VzMxWmxw?=
+ =?utf-8?B?cHR6RlFPK29nYkx3b3Y4RHVVRFdVQU5zWS9tcWhVYVM3WGNSL252NVovZGdP?=
+ =?utf-8?B?aXltRlFaZDUrMGpBSlp2RitwbEt6ZCtqNENCUEVJWkIxRmlXckE2QmJXTGxE?=
+ =?utf-8?B?MnlsN3Q3ME9laGNEeklqRDNLUXc2REFXL2x1ZFg3eE9Tem1HQ09ybzlYMTYy?=
+ =?utf-8?B?Wk1nYUNRZm1DUDk3dytiMzBMN0VZM3VURmppT3VUamhySVJxUUZMaDNKM3Mr?=
+ =?utf-8?B?bitPa2F4b1lmYW9qZ2RISTI1TG1zV3Vka2RqTnZwZXJ1WGQydUJpT1FvVEF2?=
+ =?utf-8?B?b1YwY1BaMHhNTzlGNjFSZ0k4L0RSZWxzTTZ3RG1XRHdVUHBlK0RiRE5JSG1a?=
+ =?utf-8?B?KzZ5czJ3cWpFVVZXTXRTaTZ0a2ZQaFJHN3lRWFIxdXFDeDNQL3pERU5iL0dC?=
+ =?utf-8?B?Tmcxa056UEhxUURrMGl2dkhlUFFvZjgwTUFXWVNBcVMwWG5LcFVteXZzeVUr?=
+ =?utf-8?B?TUVaUEx1UitEbjZFN2o0MGVqSnpaV0FOVndpT0hVazN6cUhhajFMNFYyUG0z?=
+ =?utf-8?B?QU1ISFZNRFVFK0ZjTENiNlN4ODEzOVRMUmZEVTViRktPeHRSYkJDZTZ6ZFhZ?=
+ =?utf-8?B?YVc3QW4rMjcvU0xlbE52TE9yRTJ3MlVmT1E1VUEvSzFwY2ZpTG5VWWVyRHBq?=
+ =?utf-8?B?RnlFcnB0VllkY3MyeFYzYzE4TzArcW9CRC9XeVRKNk5NYlVYVlZNYjJRWWIv?=
+ =?utf-8?B?NHc9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a5ae198-435c-4dff-2482-08dc9b7be305
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7982.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 16:19:17.3033
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2wZmfjZ7Qoul8MT8csYliRegniML2iwjoe4Bcg5+/4QkKxRAkyZ6/9ES267NfEJe4AOlF9nIrJsL3UERlTivLrxiECNmFatHlOn2JfikuY8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6770
 
-On 03.07.24 18:08, Yang Shi wrote:
-> On Tue, Jul 2, 2024 at 1:24 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> On 01/07/2024 19:20, Yang Shi wrote:
->>> On Mon, Jul 1, 2024 at 3:23 AM David Hildenbrand <david@redhat.com> wrote:
->>>>
->>>> On 01.07.24 12:16, Ryan Roberts wrote:
->>>>> On 01/07/2024 10:17, David Hildenbrand wrote:
->>>>>> On 01.07.24 11:14, Ryan Roberts wrote:
->>>>>>> On 01/07/2024 09:57, David Hildenbrand wrote:
->>>>>>>> On 01.07.24 10:50, Ryan Roberts wrote:
->>>>>>>>> On 01/07/2024 09:48, David Hildenbrand wrote:
->>>>>>>>>> On 01.07.24 10:40, Ryan Roberts wrote:
->>>>>>>>>>> On 01/07/2024 09:33, Baolin Wang wrote:
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> On 2024/7/1 15:55, Ryan Roberts wrote:
->>>>>>>>>>>>> On 28/06/2024 11:49, Bang Li wrote:
->>>>>>>>>>>>>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
->>>>>>>>>>>>>> anonymous shmem"), we can configure different policies through
->>>>>>>>>>>>>> the multi-size THP sysfs interface for anonymous shmem. But
->>>>>>>>>>>>>> currently "THPeligible" indicates only whether the mapping is
->>>>>>>>>>>>>> eligible for allocating THP-pages as well as the THP is PMD
->>>>>>>>>>>>>> mappable or not for anonymous shmem, we need to support semantics
->>>>>>>>>>>>>> for mTHP with anonymous shmem similar to those for mTHP with
->>>>>>>>>>>>>> anonymous memory.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Signed-off-by: Bang Li <libang.li@antgroup.com>
->>>>>>>>>>>>>> ---
->>>>>>>>>>>>>>        fs/proc/task_mmu.c      | 10 +++++++---
->>>>>>>>>>>>>>        include/linux/huge_mm.h | 11 +++++++++++
->>>>>>>>>>>>>>        mm/shmem.c              |  9 +--------
->>>>>>>>>>>>>>        3 files changed, 19 insertions(+), 11 deletions(-)
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>>>>>>>>>>>>> index 93fb2c61b154..09b5db356886 100644
->>>>>>>>>>>>>> --- a/fs/proc/task_mmu.c
->>>>>>>>>>>>>> +++ b/fs/proc/task_mmu.c
->>>>>>>>>>>>>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
->>>>>>>>>>>>>>        {
->>>>>>>>>>>>>>            struct vm_area_struct *vma = v;
->>>>>>>>>>>>>>            struct mem_size_stats mss = {};
->>>>>>>>>>>>>> +    bool thp_eligible;
->>>>>>>>>>>>>>              smap_gather_stats(vma, &mss, 0);
->>>>>>>>>>>>>>        @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void
->>>>>>>>>>>>>> *v)
->>>>>>>>>>>>>>              __show_smap(m, &mss, false);
->>>>>>>>>>>>>>        -    seq_printf(m, "THPeligible:    %8u\n",
->>>>>>>>>>>>>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>>>>>>>>>>>>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
->>>>>>>>>>>>>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>>>>>>>>>>>>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
->>>>>>>>>>>>>> +    if (vma_is_anon_shmem(vma))
->>>>>>>>>>>>>> +        thp_eligible =
->>>>>>>>>>>>>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
->>>>>>>>>>>>>> +                            vma, vma->vm_pgoff, thp_eligible);
->>>>>>>>>>>>>
->>>>>>>>>>>>> Afraid I haven't been following the shmem mTHP support work as much as I
->>>>>>>>>>>>> would
->>>>>>>>>>>>> have liked, but is there a reason why we need a separate function for
->>>>>>>>>>>>> shmem?
->>>>>>>>>>>>
->>>>>>>>>>>> Since shmem_allowable_huge_orders() only uses shmem specific logic to
->>>>>>>>>>>> determine
->>>>>>>>>>>> if huge orders are allowable, there is no need to complicate the
->>>>>>>>>>>> thp_vma_allowable_orders() function by adding more shmem related logic,
->>>>>>>>>>>> making
->>>>>>>>>>>> it more bloated. In my view, providing a dedicated helper
->>>>>>>>>>>> shmem_allowable_huge_orders(), specifically for shmem, simplifies the logic.
->>>>>>>>>>>
->>>>>>>>>>> My point was really that a single interface (thp_vma_allowable_orders)
->>>>>>>>>>> should be
->>>>>>>>>>> used to get this information. I have no strong opinon on how the
->>>>>>>>>>> implementation
->>>>>>>>>>> of that interface looks. What you suggest below seems perfectly reasonable
->>>>>>>>>>> to me.
->>>>>>>>>>
->>>>>>>>>> Right. thp_vma_allowable_orders() might require some care as discussed in
->>>>>>>>>> other
->>>>>>>>>> context (cleanly separate dax and shmem handling/orders). But that would be
->>>>>>>>>> follow-up cleanups.
->>>>>>>>>
->>>>>>>>> Are you planning to do that, or do you want me to send a patch?
->>>>>>>>
->>>>>>>> I'm planning on looking into some details, especially the interaction with large
->>>>>>>> folios in the pagecache. I'll let you know once I have a better idea what
->>>>>>>> actually should be done :)
->>>>>>>
->>>>>>> OK great - I'll scrub it from my todo list... really getting things done today :)
->>>>>>
->>>>>> Resolved the khugepaged thiny already? :P
->>>>>>
->>>>>> [khugepaged not active when only enabling the sub-size via the 2M folder IIRC]
->>>>>
->>>>> Hmm... baby brain?
->>>>
->>>> :)
->>>>
->>>> I think I only mentioned it in a private mail at some point.
->>>>
->>>>>
->>>>> Sorry about that. I've been a bit useless lately. For some reason it wasn't on
->>>>> my list, but its there now. Will prioritise it, because I agree it's not good.
->>>>
->>>>
->>>> IIRC, if you do
->>>>
->>>> echo never > /sys/kernel/mm/transparent_hugepage/enabled
->>>> echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
->>>>
->>>> khugepaged will not get activated.
->>>
->>> khugepaged is controlled by the top level knob.
->>
->> What do you mean by "top level knob"? I assume
->> /sys/kernel/mm/transparent_hugepage/enabled ?
-> 
-> Yes.
-> 
->>
->> If so, that's not really a thing in its own right; its just the legacy PMD-size
->> THP control, and we only take any notice of it if a per-size control is set to
->> "inherit". So if we have:
->>
->> # echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
->>
->> Then by design, /sys/kernel/mm/transparent_hugepage/enabled should be ignored.
->>
->>> But the above setting
->>> sounds confusing, can we disable the top level knob, but enable it on
->>> a per-order basis? TBH, it sounds weird and doesn't make too much
->>> sense to me.
->>
->> Well that's the design and that's how its documented. It's done this way for
->> back-compat. All controls are now per-size. But at boot, we default all per-size
->> controls to "never" except for the PMD-sized control, which is defaulted to
->> "inherit". That way, an unenlightened user-space can still control PMD-sized THP
->> via the legacy (top-level) control. But enlightened apps can directly control
->> per-size.
-> 
-> OK, good to know.
-> 
->>
->> I'm not sure how your way would work, because you would have 2 controls
->> competing to do the same thing?
-> 
-> I don't see how they compete if they are 2-level knobs. And I failed
-> to see how it achieved back-compat. For example, memcached reads
-> /sys/kernel/mm/transparent_hugepage/enabled to determine whether it
-> should manage memory in huge page (2M) granularity. If the setting is
-> set to :
-> 
-> # echo never > /sys/kernel/mm/transparent_hugepage/enabled
-> # echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
-> 
-> memcached will manage memory in 4K granularity, but 2M THP is actually
-> enabled unless memcached checks the per-order knobs.
+Hi Guenter,
 
-And you can still do it the old way and keep it all working with 
-existing software (compat mode as default).
+On 7/1/24 11:23 PM, Guenter Roeck wrote:
+> Use regmap for register accesses and for most caching.
+> 
+> While at it, use sysfs_emit() instead of sprintf() to write sysfs
+> attribute data, and remove spurious debug messages which would
+> only be seen as result of a bug in the code.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> v2: Drop another spurious debug message in this patch instead of patch 10
+>      Add missing "select REGMAP_I2C" to Kconfig
+>      Change misleading variable name from 'mask' to 'mode'.
+>      Use sysfs_emit instead of sprintf everywhere
+> 
+>   drivers/hwmon/Kconfig   |   1 +
+>   drivers/hwmon/amc6821.c | 713 ++++++++++++++++++----------------------
+>   2 files changed, 329 insertions(+), 385 deletions(-)
+> 
+> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> index e14ae18a973b..a8fa87a96e8f 100644
+> --- a/drivers/hwmon/Kconfig
+> +++ b/drivers/hwmon/Kconfig
+> @@ -2127,6 +2127,7 @@ config SENSORS_ADS7871
+>   config SENSORS_AMC6821
+>   	tristate "Texas Instruments AMC6821"
+>   	depends on I2C
+> +	select REGMAP_I2C
+>   	help
+>   	  If you say yes here you get support for the Texas Instruments
+>   	  AMC6821 hardware monitoring chips.
+> diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
+> index 028998d3bedf..3fe0bfeac843 100644
+> --- a/drivers/hwmon/amc6821.c
+> +++ b/drivers/hwmon/amc6821.c
+> @@ -8,15 +8,16 @@
+>    * Copyright (C) 2007 Hans J. Koch <hjk@hansjkoch.de>
+>    */
+>   
+> +#include <linux/bitops.h>
+>   #include <linux/bits.h>
+>   #include <linux/err.h>
+>   #include <linux/hwmon.h>
+>   #include <linux/hwmon-sysfs.h>
+>   #include <linux/i2c.h>
+>   #include <linux/init.h>
+> -#include <linux/jiffies.h>
+>   #include <linux/module.h>
+>   #include <linux/mutex.h>
+> +#include <linux/regmap.h>
+>   #include <linux/slab.h>
+>   
+>   /*
+> @@ -44,6 +45,7 @@ module_param(init, int, 0444);
+>   #define AMC6821_REG_CONF4		0x04
+>   #define AMC6821_REG_STAT1		0x02
+>   #define AMC6821_REG_STAT2		0x03
+> +#define AMC6821_REG_TEMP_LO		0x06
+>   #define AMC6821_REG_TDATA_LOW		0x08
+>   #define AMC6821_REG_TDATA_HI		0x09
+>   #define AMC6821_REG_LTEMP_HI		0x0A
+> @@ -61,11 +63,8 @@ module_param(init, int, 0444);
+>   #define AMC6821_REG_DCY_LOW_TEMP	0x21
+>   
+>   #define AMC6821_REG_TACH_LLIMITL	0x10
+> -#define AMC6821_REG_TACH_LLIMITH	0x11
+>   #define AMC6821_REG_TACH_HLIMITL	0x12
+> -#define AMC6821_REG_TACH_HLIMITH	0x13
+>   #define AMC6821_REG_TACH_SETTINGL	0x1e
+> -#define AMC6821_REG_TACH_SETTINGH	0x1f
+>   
+>   #define AMC6821_CONF1_START		BIT(0)
+>   #define AMC6821_CONF1_FAN_INT_EN	BIT(1)
+> @@ -130,224 +129,169 @@ static const u8 fan_reg_low[] = {AMC6821_REG_TDATA_LOW,
+>   			AMC6821_REG_TACH_HLIMITL,
+>   			AMC6821_REG_TACH_SETTINGL, };
+>   
+> -static const u8 fan_reg_hi[] = {AMC6821_REG_TDATA_HI,
+> -			AMC6821_REG_TACH_LLIMITH,
+> -			AMC6821_REG_TACH_HLIMITH,
+> -			AMC6821_REG_TACH_SETTINGH, };
+> -
+>   /*
+>    * Client data (each client gets its own)
+>    */
+>   
+>   struct amc6821_data {
+> -	struct i2c_client *client;
+> +	struct regmap *regmap;
+>   	struct mutex update_lock;
+> -	bool valid; /* false until following fields are valid */
+> -	unsigned long last_updated; /* in jiffies */
+>   
+> -	/* register values */
+> -	int temp[TEMP_IDX_LEN];
+> -
+> -	u16 fan[FAN1_IDX_LEN];
+> -	u8 fan1_pulses;
+> -
+> -	u8 pwm1;
+>   	u8 temp1_auto_point_temp[3];
+>   	u8 temp2_auto_point_temp[3];
+> -	u8 pwm1_auto_point_pwm[3];
+> -	u8 pwm1_enable;
+> -	u8 pwm1_auto_channels_temp;
+> -
+> -	u8 stat1;
+> -	u8 stat2;
+>   };
+>   
+> -static struct amc6821_data *amc6821_update_device(struct device *dev)
+> +static int amc6821_init_auto_point_data(struct amc6821_data *data)
+>   {
+> -	struct amc6821_data *data = dev_get_drvdata(dev);
+> -	struct i2c_client *client = data->client;
+> -	int timeout = HZ;
+> -	u8 reg;
+> -	int i;
+> +	struct regmap *regmap = data->regmap;
+> +	u32 pwm, regval;
+> +	int err;
+>   
+> -	mutex_lock(&data->update_lock);
+> +	err = regmap_read(regmap, AMC6821_REG_DCY_LOW_TEMP, &pwm);
 
-It's just another option and some software might need updates to benefit 
-from it (just like if you would enable other folio sizes).
+I think this is incorrect logic.
 
-You can happily do
+amc6821_init_auto_point_data is only called once in init_client, in 
+probe. While we currently do not write to AMC6821_REG_DCY_LOW_TEMP, we 
+could in the future. But writing to it would desynchronise the 
+auto_point_temp values for the new value of the register.
 
-echo always > /sys/kernel/mm/transparent_hugepage/enabled
-echo inherit > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+I suggest we put the logic into a function and return the value for a 
+given temp_auto_point (1/2 currently) so that we are calling this 
+function instead of a member in the struct so that we are never caching 
+it unknowingly (regmap would do it for us in any case). It's a bit odd 
+anyway to have only **those** values be cached in the struct as members 
+and migrating everything else.
 
-It's an admin choice.
+> +	if (err)
+> +		return err;
+>   
+> -	if (time_after(jiffies, data->last_updated + timeout) ||
+> -			!data->valid) {
+> +	err = regmap_read(regmap, AMC6821_REG_PSV_TEMP, &regval);
+> +	if (err)
+> +		return err;
+> +	data->temp1_auto_point_temp[0] = regval;
+> +	data->temp2_auto_point_temp[0] = data->temp1_auto_point_temp[0];
+>   
+> -		for (i = 0; i < TEMP_IDX_LEN; i++)
+> -			data->temp[i] = (int8_t)i2c_smbus_read_byte_data(
+> -				client, temp_reg[i]);
+> +	err = regmap_read(regmap, AMC6821_REG_LTEMP_FAN_CTRL, &regval);
+> +	if (err)
+> +		return err;
+> +	data->temp1_auto_point_temp[1] = (regval & 0xF8) >> 1;
+>   
+> -		data->stat1 = i2c_smbus_read_byte_data(client,
+> -			AMC6821_REG_STAT1);
+> -		data->stat2 = i2c_smbus_read_byte_data(client,
+> -			AMC6821_REG_STAT2);
+> +	regval &= 0x07;
+> +	regval = 0x20 >> regval;
+> +	if (regval)
+> +		data->temp1_auto_point_temp[2] =
+> +			data->temp1_auto_point_temp[1] +
+> +			(255 - pwm) / regval;
+> +	else
+> +		data->temp1_auto_point_temp[2] = 255;
+>   
+> -		data->pwm1 = i2c_smbus_read_byte_data(client,
+> -			AMC6821_REG_DCY);
+> -		for (i = 0; i < FAN1_IDX_LEN; i++) {
+> -			data->fan[i] = i2c_smbus_read_byte_data(
+> -					client,
+> -					fan_reg_low[i]);
+> -			data->fan[i] += i2c_smbus_read_byte_data(
+> -					client,
+> -					fan_reg_hi[i]) << 8;
+> -		}
+> -		data->fan1_pulses = i2c_smbus_read_byte_data(client,
+> -			AMC6821_REG_CONF4);
+> -		data->fan1_pulses = data->fan1_pulses & AMC6821_CONF4_PSPR ? 4 : 2;
+> +	err = regmap_read(regmap, AMC6821_REG_RTEMP_FAN_CTRL, &regval);
+> +	if (err)
+> +		return err;
+>   
+> -		data->pwm1_auto_point_pwm[0] = 0;
+> -		data->pwm1_auto_point_pwm[2] = 255;
+> -		data->pwm1_auto_point_pwm[1] = i2c_smbus_read_byte_data(client,
+> -			AMC6821_REG_DCY_LOW_TEMP);
+> +	data->temp2_auto_point_temp[1] = (regval & 0xF8) >> 1;
+> +	regval &= 0x07;
+> +	regval = 0x20 >> regval;
+>   
+> -		data->temp1_auto_point_temp[0] =
+> -			i2c_smbus_read_byte_data(client,
+> -					AMC6821_REG_PSV_TEMP);
+> -		data->temp2_auto_point_temp[0] =
+> -				data->temp1_auto_point_temp[0];
+> -		reg = i2c_smbus_read_byte_data(client,
+> -			AMC6821_REG_LTEMP_FAN_CTRL);
+> -		data->temp1_auto_point_temp[1] = (reg & 0xF8) >> 1;
+> -		reg &= 0x07;
+> -		reg = 0x20 >> reg;
+> -		if (reg > 0)
+> -			data->temp1_auto_point_temp[2] =
+> -				data->temp1_auto_point_temp[1] +
+> -				(data->pwm1_auto_point_pwm[2] -
+> -				data->pwm1_auto_point_pwm[1]) / reg;
+> -		else
+> -			data->temp1_auto_point_temp[2] = 255;
+> +	if (regval)
+> +		data->temp2_auto_point_temp[2] =
+> +			data->temp2_auto_point_temp[1] +
+> +			(255 - pwm) / regval;
+> +	else
+> +		data->temp2_auto_point_temp[2] = 255;
+>   
+> -		reg = i2c_smbus_read_byte_data(client,
+> -			AMC6821_REG_RTEMP_FAN_CTRL);
+> -		data->temp2_auto_point_temp[1] = (reg & 0xF8) >> 1;
+> -		reg &= 0x07;
+> -		reg = 0x20 >> reg;
+> -		if (reg > 0)
+> -			data->temp2_auto_point_temp[2] =
+> -				data->temp2_auto_point_temp[1] +
+> -				(data->pwm1_auto_point_pwm[2] -
+> -				data->pwm1_auto_point_pwm[1]) / reg;
+> -		else
+> -			data->temp2_auto_point_temp[2] = 255;
+> -
+> -		reg = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF1);
+> -		reg = (reg >> 5) & 0x3;
+> -		switch (reg) {
+> -		case 0: /*open loop: software sets pwm1*/
+> -			data->pwm1_auto_channels_temp = 0;
+> -			data->pwm1_enable = 1;
+> -			break;
+> -		case 2: /*closed loop: remote T (temp2)*/
+> -			data->pwm1_auto_channels_temp = 2;
+> -			data->pwm1_enable = 2;
+> -			break;
+> -		case 3: /*closed loop: local and remote T (temp2)*/
+> -			data->pwm1_auto_channels_temp = 3;
+> -			data->pwm1_enable = 3;
+> -			break;
+> -		case 1: /*
+> -			 * semi-open loop: software sets rpm, chip controls
+> -			 * pwm1
+> -			 */
+> -			data->pwm1_auto_channels_temp = 0;
+> -			data->pwm1_enable = 4;
+> -			break;
+> -		}
+> -
+> -		data->last_updated = jiffies;
+> -		data->valid = true;
+> -	}
+> -	mutex_unlock(&data->update_lock);
+> -	return data;
+> +	return 0;
+>   }
+>   
+>   static ssize_t temp_show(struct device *dev, struct device_attribute *devattr,
+>   			 char *buf)
+>   {
+> -	struct amc6821_data *data = amc6821_update_device(dev);
+> +	struct amc6821_data *data = dev_get_drvdata(dev);
+>   	int ix = to_sensor_dev_attr(devattr)->index;
+> +	u32 regval;
+> +	int err;
+>   
+> -	return sprintf(buf, "%d\n", data->temp[ix] * 1000);
+> +	err = regmap_read(data->regmap, temp_reg[ix], &regval);
+> +	if (err)
+> +		return err;
+> +
+> +	return sysfs_emit(buf, "%d\n", sign_extend32(regval, 7) * 1000);
+>   }
+>   
+>   static ssize_t temp_store(struct device *dev, struct device_attribute *attr,
+>   			  const char *buf, size_t count)
+>   {
+>   	struct amc6821_data *data = dev_get_drvdata(dev);
+> -	struct i2c_client *client = data->client;
+>   	int ix = to_sensor_dev_attr(attr)->index;
+>   	long val;
+> +	int err;
+>   
+>   	int ret = kstrtol(buf, 10, &val);
+>   	if (ret)
+>   		return ret;
+>   	val = clamp_val(val / 1000, -128, 127);
+>   
+> -	mutex_lock(&data->update_lock);
+> -	data->temp[ix] = val;
+> -	if (i2c_smbus_write_byte_data(client, temp_reg[ix], data->temp[ix])) {
+> -		dev_err(&client->dev, "Register write error, aborting.\n");
+> -		count = -EIO;
+> -	}
+> -	mutex_unlock(&data->update_lock);
+> +	err = regmap_write(data->regmap, temp_reg[ix], val);
+> +	if (err)
+> +		return err;
+> +
+>   	return count;
+>   }
+>   
+>   static ssize_t temp_alarm_show(struct device *dev,
+>   			       struct device_attribute *devattr, char *buf)
+>   {
+> -	struct amc6821_data *data = amc6821_update_device(dev);
+> +	struct amc6821_data *data = dev_get_drvdata(dev);
+>   	int ix = to_sensor_dev_attr(devattr)->index;
+> -	u8 flag;
+> +	u32 regval, mask, reg;
+> +	int err;
+>   
+>   	switch (ix) {
+>   	case IDX_TEMP1_MIN:
+> -		flag = data->stat1 & AMC6821_STAT1_LTL;
+> +		reg = AMC6821_REG_STAT1;
+> +		mask = AMC6821_STAT1_LTL;
+>   		break;
+>   	case IDX_TEMP1_MAX:
+> -		flag = data->stat1 & AMC6821_STAT1_LTH;
+> +		reg = AMC6821_REG_STAT1;
+> +		mask = AMC6821_STAT1_LTH;
+>   		break;
+>   	case IDX_TEMP1_CRIT:
+> -		flag = data->stat2 & AMC6821_STAT2_LTC;
+> +		reg = AMC6821_REG_STAT2;
+> +		mask = AMC6821_STAT2_LTC;
+>   		break;
+>   	case IDX_TEMP2_MIN:
+> -		flag = data->stat1 & AMC6821_STAT1_RTL;
+> +		reg = AMC6821_REG_STAT1;
+> +		mask = AMC6821_STAT1_RTL;
+>   		break;
+>   	case IDX_TEMP2_MAX:
+> -		flag = data->stat1 & AMC6821_STAT1_RTH;
+> +		reg = AMC6821_REG_STAT1;
+> +		mask = AMC6821_STAT1_RTH;
+>   		break;
+>   	case IDX_TEMP2_CRIT:
+> -		flag = data->stat2 & AMC6821_STAT2_RTC;
+> +		reg = AMC6821_REG_STAT2;
+> +		mask = AMC6821_STAT2_RTC;
+>   		break;
+>   	default:
+> -		dev_dbg(dev, "Unknown attr->index (%d).\n", ix);
 
--- 
+Was this an intended removal? I think we can afford keeping it in?
+
+>   		return -EINVAL;
+>   	}
+> -	if (flag)
+> -		return sprintf(buf, "1");
+> -	else
+> -		return sprintf(buf, "0");
+> +	err = regmap_read(data->regmap, reg, &regval);
+> +	if (err)
+> +		return err;
+> +	return sysfs_emit(buf, "%d\n", !!(regval & mask));
+>   }
+>   
+>   static ssize_t temp2_fault_show(struct device *dev,
+>   				struct device_attribute *devattr, char *buf)
+>   {
+> -	struct amc6821_data *data = amc6821_update_device(dev);
+> -	if (data->stat1 & AMC6821_STAT1_RTF)
+> -		return sprintf(buf, "1");
+> -	else
+> -		return sprintf(buf, "0");
+> +	struct amc6821_data *data = dev_get_drvdata(dev);
+> +	u32 regval;
+> +	int err;
+> +
+> +	err = regmap_read(data->regmap, AMC6821_REG_STAT1, &regval);
+> +	if (err)
+> +		return err;
+> +
+> +	return sysfs_emit(buf, "%d\n", !!(regval & AMC6821_STAT1_RTF));
+>   }
+>   
+>   static ssize_t pwm1_show(struct device *dev, struct device_attribute *devattr,
+>   			 char *buf)
+>   {
+> -	struct amc6821_data *data = amc6821_update_device(dev);
+> -	return sprintf(buf, "%d\n", data->pwm1);
+> +	struct amc6821_data *data = dev_get_drvdata(dev);
+> +	u32 regval;
+> +	int err;
+> +
+> +	err = regmap_read(data->regmap, AMC6821_REG_DCY, &regval);
+> +	if (err)
+> +		return err;
+> +
+> +	return sysfs_emit(buf, "%d\n", regval);
+>   }
+>   
+>   static ssize_t pwm1_store(struct device *dev,
+> @@ -355,24 +299,43 @@ static ssize_t pwm1_store(struct device *dev,
+>   			  size_t count)
+>   {
+>   	struct amc6821_data *data = dev_get_drvdata(dev);
+> -	struct i2c_client *client = data->client;
+>   	u8 val;
+>   	int ret = kstrtou8(buf, 10, &val);
+>   	if (ret)
+>   		return ret;
+>   
+> -	mutex_lock(&data->update_lock);
+> -	data->pwm1 = val;
+> -	i2c_smbus_write_byte_data(client, AMC6821_REG_DCY, data->pwm1);
+> -	mutex_unlock(&data->update_lock);
+> +	ret = regmap_write(data->regmap, AMC6821_REG_DCY, val);
+> +	if (ret)
+> +		return ret;
+> +
+>   	return count;
+>   }
+>   
+>   static ssize_t pwm1_enable_show(struct device *dev,
+>   				struct device_attribute *devattr, char *buf)
+>   {
+> -	struct amc6821_data *data = amc6821_update_device(dev);
+> -	return sprintf(buf, "%d\n", data->pwm1_enable);
+> +	struct amc6821_data *data = dev_get_drvdata(dev);
+> +	int err;
+> +	u32 val;
+> +
+> +	err = regmap_read(data->regmap, AMC6821_REG_CONF1, &val);
+> +	if (err)
+> +		return err;
+> +	switch (val & (AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1)) {
+> +	case 0:
+> +		val = 1;	/* manual */
+> +		break;
+> +	case AMC6821_CONF1_FDRC0:
+> +		val = 4;	/* target rpm (fan1_target) controlled */
+> +		break;
+> +	case AMC6821_CONF1_FDRC1:
+> +		val = 2;	/* remote temp controlled */
+> +		break;
+> +	default:
+> +		val = 3;	/* max(local, remote) temp controlled */
+> +		break;
+> +	}
+> +	return sysfs_emit(buf, "%d\n", val);
+>   }
+>   
+>   static ssize_t pwm1_enable_store(struct device *dev,
+> @@ -380,49 +343,37 @@ static ssize_t pwm1_enable_store(struct device *dev,
+>   				 const char *buf, size_t count)
+>   {
+>   	struct amc6821_data *data = dev_get_drvdata(dev);
+> -	struct i2c_client *client = data->client;
+>   	long val;
+> -	int config = kstrtol(buf, 10, &val);
+> -	if (config)
+> -		return config;
+> +	u32 mode;
+> +	int err;
+>   
+> -	mutex_lock(&data->update_lock);
+> -	config = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF1);
+> -	if (config < 0) {
+> -			dev_err(&client->dev,
+> -			"Error reading configuration register, aborting.\n");
+> -			count = config;
+> -			goto unlock;
+> -	}
+> +	err = kstrtol(buf, 10, &val);
+> +	if (err)
+> +		return err;
+>   
+>   	switch (val) {
+>   	case 1:
+> -		config &= ~AMC6821_CONF1_FDRC0;
+> -		config &= ~AMC6821_CONF1_FDRC1;
+> +		mode = 0;
+>   		break;
+>   	case 2:
+> -		config &= ~AMC6821_CONF1_FDRC0;
+> -		config |= AMC6821_CONF1_FDRC1;
+> +		mode = AMC6821_CONF1_FDRC1;
+>   		break;
+>   	case 3:
+> -		config |= AMC6821_CONF1_FDRC0;
+> -		config |= AMC6821_CONF1_FDRC1;
+> +		mode = AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1;
+>   		break;
+>   	case 4:
+> -		config |= AMC6821_CONF1_FDRC0;
+> -		config &= ~AMC6821_CONF1_FDRC1;
+> +		mode = AMC6821_CONF1_FDRC0;
+>   		break;
+>   	default:
+> -		count = -EINVAL;
+> -		goto unlock;
+> +		return -EINVAL;
+>   	}
+> -	if (i2c_smbus_write_byte_data(client, AMC6821_REG_CONF1, config)) {
+> -			dev_err(&client->dev,
+> -			"Configuration register write error, aborting.\n");
+> -			count = -EIO;
+> -	}
+> -unlock:
+> -	mutex_unlock(&data->update_lock);
+> +
+> +	err = regmap_update_bits(data->regmap, AMC6821_REG_CONF1,
+> +				 AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1,
+> +				 mode);
+> +	if (err)
+> +		return err;
+> +
+>   	return count;
+>   }
+>   
+> @@ -430,26 +381,45 @@ static ssize_t pwm1_auto_channels_temp_show(struct device *dev,
+>   					    struct device_attribute *devattr,
+>   					    char *buf)
+>   {
+> -	struct amc6821_data *data = amc6821_update_device(dev);
+> -	return sprintf(buf, "%d\n", data->pwm1_auto_channels_temp);
+> +	struct amc6821_data *data = dev_get_drvdata(dev);
+> +	u32 val;
+> +	int err;
+> +
+> +	err = regmap_read(data->regmap, AMC6821_REG_CONF1, &val);
+> +	if (err)
+> +		return err;
+> +	switch (val & (AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1)) {
+> +	case 0:
+> +	case AMC6821_CONF1_FDRC0:
+> +		val = 0;	/* manual or target rpm controlled */
+> +		break;
+> +	case AMC6821_CONF1_FDRC1:
+> +		val = 2;	/* remote temp controlled */
+> +		break;
+> +	default:
+> +		val = 3;	/* max(local, remote) temp controlled */
+> +		break;
+> +	}
+> +
+> +	return sysfs_emit(buf, "%d\n", val);
+>   }
+>   
+>   static ssize_t temp_auto_point_temp_show(struct device *dev,
+>   					 struct device_attribute *devattr,
+>   					 char *buf)
+>   {
+> +	struct amc6821_data *data = dev_get_drvdata(dev);
+>   	int ix = to_sensor_dev_attr_2(devattr)->index;
+>   	int nr = to_sensor_dev_attr_2(devattr)->nr;
+> -	struct amc6821_data *data = amc6821_update_device(dev);
+> +
+>   	switch (nr) {
+>   	case 1:
+> -		return sprintf(buf, "%d\n",
+> -			data->temp1_auto_point_temp[ix] * 1000);
+> +		return sysfs_emit(buf, "%d\n",
+> +				  data->temp1_auto_point_temp[ix] * 1000);
+>   	case 2:
+> -		return sprintf(buf, "%d\n",
+> -			data->temp2_auto_point_temp[ix] * 1000);
+> +		return sysfs_emit(buf, "%d\n",
+> +				  data->temp2_auto_point_temp[ix] * 1000);
+>   	default:
+> -		dev_dbg(dev, "Unknown attr->nr (%d).\n", nr);
+
+Ditto.
+
+>   		return -EINVAL;
+>   	}
+>   }
+> @@ -458,44 +428,59 @@ static ssize_t pwm1_auto_point_pwm_show(struct device *dev,
+>   					struct device_attribute *devattr,
+>   					char *buf)
+>   {
+> +	struct amc6821_data *data = dev_get_drvdata(dev);
+>   	int ix = to_sensor_dev_attr(devattr)->index;
+> -	struct amc6821_data *data = amc6821_update_device(dev);
+> -	return sprintf(buf, "%d\n", data->pwm1_auto_point_pwm[ix]);
+> +	u32 val;
+> +	int err;
+> +
+> +	switch (ix) {
+> +	case 0:
+> +		val = 0;
+> +		break;
+> +	case 1:
+> +		err = regmap_read(data->regmap, AMC6821_REG_DCY_LOW_TEMP, &val);
+> +		if (err)
+> +			return err;
+> +		break;
+> +	default:
+> +		val = 255;
+> +		break;
+> +	}
+> +	return sysfs_emit(buf, "%d\n", val);
+>   }
+>   
+> -static inline ssize_t set_slope_register(struct i2c_client *client,
+> -		u8 reg,
+> -		u8 dpwm,
+> -		u8 *ptemp)
+> +static inline int set_slope_register(struct regmap *regmap,
+> +				     u8 reg, u8 *ptemp)
+>   {
+> -	int dt;
+> -	u8 tmp;
+> +	u8 tmp, dpwm;
+> +	int err, dt;
+> +	u32 pwm;
+>   
+> -	dt = ptemp[2]-ptemp[1];
+> +	err = regmap_read(regmap, AMC6821_REG_DCY_LOW_TEMP, &pwm);
+> +	if (err)
+> +		return err;
+> +
+> +	dpwm = 255 - pwm;
+> +
+> +	dt = ptemp[2] - ptemp[1];
+>   	for (tmp = 4; tmp > 0; tmp--) {
+>   		if (dt * (0x20 >> tmp) >= dpwm)
+>   			break;
+>   	}
+>   	tmp |= (ptemp[1] & 0x7C) << 1;
+> -	if (i2c_smbus_write_byte_data(client,
+> -			reg, tmp)) {
+> -		dev_err(&client->dev, "Register write error, aborting.\n");
+> -		return -EIO;
+> -	}
+> -	return 0;
+> +	return regmap_write(regmap, reg, tmp);
+>   }
+>   
+>   static ssize_t temp_auto_point_temp_store(struct device *dev,
+>   					  struct device_attribute *attr,
+>   					  const char *buf, size_t count)
+>   {
+> -	struct amc6821_data *data = amc6821_update_device(dev);
+> -	struct i2c_client *client = data->client;
+> +	struct amc6821_data *data = dev_get_drvdata(dev);
+>   	int ix = to_sensor_dev_attr_2(attr)->index;
+>   	int nr = to_sensor_dev_attr_2(attr)->nr;
+> +	struct regmap *regmap = data->regmap;
+>   	u8 *ptemp;
+>   	u8 reg;
+> -	int dpwm;
+>   	long val;
+>   	int ret = kstrtol(buf, 10, &val);
+>   	if (ret)
+> @@ -511,12 +496,10 @@ static ssize_t temp_auto_point_temp_store(struct device *dev,
+>   		reg = AMC6821_REG_RTEMP_FAN_CTRL;
+>   		break;
+>   	default:
+> -		dev_dbg(dev, "Unknown attr->nr (%d).\n", nr);
+
+Ditto.
+
+>   		return -EINVAL;
+>   	}
+>   
+>   	mutex_lock(&data->update_lock);
+> -	data->valid = false;
+>   
+>   	switch (ix) {
+>   	case 0:
+> @@ -525,13 +508,9 @@ static ssize_t temp_auto_point_temp_store(struct device *dev,
+>   		ptemp[0] = clamp_val(ptemp[0], 0,
+>   				     data->temp2_auto_point_temp[1]);
+>   		ptemp[0] = clamp_val(ptemp[0], 0, 63);
+> -		if (i2c_smbus_write_byte_data(
+> -					client,
+> -					AMC6821_REG_PSV_TEMP,
+> -					ptemp[0])) {
+> -				dev_err(&client->dev,
+> -					"Register write error, aborting.\n");
+> -				count = -EIO;
+> +		if (regmap_write(regmap, AMC6821_REG_PSV_TEMP, ptemp[0])) {
+> +			dev_err(dev, "Register write error, aborting.\n");
+> +			count = -EIO;
+>   		}
+>   		goto EXIT;
+>   	case 1:
+> @@ -543,12 +522,10 @@ static ssize_t temp_auto_point_temp_store(struct device *dev,
+>   		ptemp[2] = clamp_val(val / 1000, ptemp[1]+1, 255);
+>   		break;
+>   	default:
+> -		dev_dbg(dev, "Unknown attr->index (%d).\n", ix);
+
+Ditto.
+
+>   		count = -EINVAL;
+>   		goto EXIT;
+>   	}
+> -	dpwm = data->pwm1_auto_point_pwm[2] - data->pwm1_auto_point_pwm[1];
+> -	if (set_slope_register(client, reg, dpwm, ptemp))
+> +	if (set_slope_register(regmap, reg, ptemp))
+>   		count = -EIO;
+>   
+>   EXIT:
+> @@ -561,10 +538,11 @@ static ssize_t pwm1_auto_point_pwm_store(struct device *dev,
+>   					 const char *buf, size_t count)
+>   {
+>   	struct amc6821_data *data = dev_get_drvdata(dev);
+> -	struct i2c_client *client = data->client;
+> -	int dpwm;
+> +	struct regmap *regmap = data->regmap;
+>   	u8 val;
+> -	int ret = kstrtou8(buf, 10, &val);
+> +	int ret;
+> +
+> +	ret = kstrtou8(buf, 10, &val);
+
+Not sure this cosmetic change is worth it? Or maybe squash with an 
+earlier commit?
+
+>   	if (ret)
+>   		return ret;
+>   
+> @@ -572,27 +550,24 @@ static ssize_t pwm1_auto_point_pwm_store(struct device *dev,
+>   		return -EINVAL;
+>   
+>   	mutex_lock(&data->update_lock);
+> -	data->pwm1_auto_point_pwm[1] = val;
+> -	if (i2c_smbus_write_byte_data(client, AMC6821_REG_DCY_LOW_TEMP,
+> -			data->pwm1_auto_point_pwm[1])) {
+> -		dev_err(&client->dev, "Register write error, aborting.\n");
+> -		count = -EIO;
+> -		goto EXIT;
+> +	ret = regmap_write(regmap, AMC6821_REG_DCY_LOW_TEMP, val);
+> +	if (ret)
+
+I think we're missing a count = something here?
+
+> +		goto unlock;
+> +
+> +	ret = set_slope_register(regmap, AMC6821_REG_LTEMP_FAN_CTRL,
+> +				 data->temp1_auto_point_temp);
+> +	if (ret) {
+> +		count = ret;
+
+In some places, we replace set_slope_register return code with -EIO 
+(like it was) and sometimes we propagate it, like here. Is there some 
+reason for this or can we have some kind of consistency across the code 
+base here?
+
+Looks good to me otherwise.
+
 Cheers,
-
-David / dhildenb
-
+Quentin
 
