@@ -1,76 +1,101 @@
-Return-Path: <linux-kernel+bounces-240198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815DD926A32
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:26:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0698B926A3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A989285346
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BB661C22517
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E2B191F84;
-	Wed,  3 Jul 2024 21:26:27 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5536218F2CC;
-	Wed,  3 Jul 2024 21:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C68191F8F;
+	Wed,  3 Jul 2024 21:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="XyWEGsCm"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47405181CEC
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 21:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720041987; cv=none; b=I913rMYtH+BXc9D00AUVsSGT141qp5c0/1vHYANsMyyy9lT+EpNLo5cyHqw3w2TZO6NgnTd9x9KOKceFbkmwxp1vZ8VzWTfQTErZNHi2NiUOvGurc3LYW/UoPNfg5CZj1qExq4tNvxRfFUBc4w5Sy1sab5j1/jB0h8x1V0WmsWg=
+	t=1720042122; cv=none; b=DkHEDV/YsTchjt0izCUcHgfP5zPGOShkQZAigLs09P24VwNrtQeHV68s7gAYYrNRkvN141gYR1hBb2Isxowrmgwqo4PL0JS4IvDrrJUOJrj9pZMlSfHJ2L1LtM03y4p7fLgZ4cQH5wKFMo/Z9FwNLcFSLXC5/+PLmxvfHj8MUQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720041987; c=relaxed/simple;
-	bh=Fs6SHOQyWt/sTTN7ao19Ti4e/qXUBL66vJvUwotoTSU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ooh+YeMA/nrQddWUADlDL1B2fh7Cz8HqgR6BXvYckLjnBDq15GJZDJBPDnF57qQIyS/Oult1/Ml1qjDCpF9GF0lTc551TbblZiQGxsLUcCXqokB3+J5eZsCOdmqIk2Sw/HrrZlLx5uV891tzcmn0DLJdBjpQpbKUbyNcqVcr720=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 08E7892009C; Wed,  3 Jul 2024 23:26:21 +0200 (CEST)
+	s=arc-20240116; t=1720042122; c=relaxed/simple;
+	bh=pRizBzT6P+pExbFelF1chI1Qk2EFTL1cdCGgkVMzIXo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fhxKjjZKDiKNx7y1Tz6PPLILCRRrGS+qdr6NN25a99HI1ipZ2Le+WubpJvcG5l/0byhbc6qSEo588GB0+G6qvtDnINRgCkWKB1E6o+zgscoiEBrhvKUJeQL6uf2yEnn4WFAbJsQpOu9wHfJTBhe6p6lZo67p9lmp7YPxfNC4Hzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=XyWEGsCm; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id EFEFF92009B;
-	Wed,  3 Jul 2024 22:26:21 +0100 (BST)
-Date: Wed, 3 Jul 2024 22:26:21 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Florian Fainelli <florian.fainelli@broadcom.com>, 
-    Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-    Huacai Chen <chenhuacai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-    Serge Semin <fancer.lancer@gmail.com>, 
-    "paulburton@kernel.org" <paulburton@kernel.org>, 
-    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] MIPS: smp: Make IPI interrupts scalable
-In-Reply-To: <7a822a33-dd67-4827-bbd0-01e75e203951@app.fastmail.com>
-Message-ID: <alpine.DEB.2.21.2407032204331.38148@angie.orcam.me.uk>
-References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com> <20240616-b4-mips-ipi-improvements-v1-1-e332687f1692@flygoat.com> <ZoVokcDYqZnuqd2X@alpha.franken.de> <7a822a33-dd67-4827-bbd0-01e75e203951@app.fastmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WDtF458fxz6CmQyM;
+	Wed,  3 Jul 2024 21:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1720042118; x=1722634119; bh=pRizBzT6P+pExbFelF1chI1Q
+	k2EFTL1cdCGgkVMzIXo=; b=XyWEGsCmo5dBCGrnhGmXEkMqabMP/Jsfn/Y6Vwzk
+	H6p0U1qaLY5YGMCbP4v1O4aD6VFvsNdSIQ1wwiJDNoB9mZKfNE+Zlh0+cIHdIu2L
+	b4eMOn6Gvq1Ab24M7cnmEv/EPtXFBnT11y9Ettrp+hzTYtG4gxkR0QGogICTXJDy
+	uuW8WveVVLxhVeBKPx39T+nj7RCO1Jv+82kaA5h0Tl4Y3IGXrFjmq3xYcBdBaUvh
+	ohgldcAz88Oty0ZZmeCAOzVM6xKZz8aijGF+nrnfa0mVCAPj+Rn+cO4sMv4lcmye
+	EdwKOGKuzxkmkkPc8DUlCmUvxwlR+Ln44kHPG0mo62ibPQ==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id G0Nku-Q8zvu9; Wed,  3 Jul 2024 21:28:38 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WDtF10gQnz6Cnv3Q;
+	Wed,  3 Jul 2024 21:28:36 +0000 (UTC)
+Message-ID: <f0333b86-212e-40e6-b41d-b393c312153f@acm.org>
+Date: Wed, 3 Jul 2024 14:28:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/53] workqueue: Introduce the create*_workqueue2()
+ macros
+To: Kees Cook <kees@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>, Tejun Heo <tj@kernel.org>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ linux-kernel@vger.kernel.org
+References: <20240630222904.627462-1-bvanassche@acm.org>
+ <20240630222904.627462-2-bvanassche@acm.org>
+ <CAJhGHyCsypVP7VgsNKdQ=rn0hqiJOzSS9p_OGio6k-S2idaLtA@mail.gmail.com>
+ <3302014f-6ee0-452a-a6a5-dea6fcc37542@acm.org>
+ <202407031249.F9EB68A@keescook>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <202407031249.F9EB68A@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 4 Jul 2024, Jiaxun Yang wrote:
+On 7/3/24 1:24 PM, Kees Cook wrote:
+> This can be done with the preprocessor to detect how many arguments
+> are being used, so then there is no need to do the renaming passes and
+> conversions can land via subsystems:
 
-> It has been tested on MIPS Boston I6500, malta SOC-It, Loongson-2K,
+Thanks Kees, this is very useful feedback.
 
- SOC-it (or SOC-it 101 to be precise) is the name of a bus controller:
+As one can see here, Tejun requested not to add support for a format
+string in the create*_workqueue() macros:
+https://lore.kernel.org/linux-kernel/ZoMF1ZydZUusxRcf@slm.duckdns.org/
 
-System controller/revision =    MIPS SOC-it 101 OCP / 1.3   SDR-FW-4:1
+Hence a different approach for the SCSI create*_workqueue() macros:
+https://lore.kernel.org/linux-scsi/20240702215228.2743420-1-bvanassche@acm.org/
 
-used across numerous platforms from the M4K core onwards, UP, MT, or MP.  
-I think it would make sense if you revealed the processor type instead.
+Best regards,
 
-> I don't really know broadcom platforms and SGI platforms well so
-> changes to those platforms are kept minimal (no functional change).
-
- Technically I could run it on my SB1250, but I'm too overloaded now to 
-commit to any timescale.  Sorry.
-
-  Maciej
+Bart.
 
