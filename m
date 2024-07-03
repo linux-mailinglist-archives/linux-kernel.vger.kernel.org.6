@@ -1,139 +1,128 @@
-Return-Path: <linux-kernel+bounces-240281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E767B926B42
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:09:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C2A926B45
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A27E1F21F82
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F11BD281E7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74A4191F63;
-	Wed,  3 Jul 2024 22:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C99918F2EC;
+	Wed,  3 Jul 2024 22:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3OAl1Om"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CZ4G/26l"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC49140E5C;
-	Wed,  3 Jul 2024 22:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CE913BADF;
+	Wed,  3 Jul 2024 22:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720044533; cv=none; b=NrWPbJCSJm+dMREmel/sCQ4mVW7z1kU2rWYMfvZplMupqCbLiB44Oba2GJMMHFXV4qbp0DXaH/KNj5HszXCM7seCLXOhQgVvqXZr0XBsT1SaQjkd4DDFIgOVRVCwL9GSSkFwdIxoF79brOgnA4ZHEFNCtVlGKrC/Nm9M+tBajZw=
+	t=1720044751; cv=none; b=Pfia8MguUMWVTjXAxIb5Ycziw/izaqqDxGg8H3JGZuSqaqbFYRwnOXkFXP0/J5a+0yxUw4RtGHrPWBvik/84Mgk1g7+GQCgodkLK8PA7O4RrffsMWK7oTHmeipuACRXH3GdjME5SQRDooBNVbY0GfRqPFD4PLzh/pay42wrsuys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720044533; c=relaxed/simple;
-	bh=wdBdTiHCbF2qKOyMQ7xpVrnGVBj8A+wLtg7RDv7wIL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i0BnzXfSLfzCeaydQH81nB4sBfyqmZ4bejcxztz+1yYEG+DV2YGHw6dzeVMiGbR6XLujBco2xpnNNMoxwDVZL5NiYree+lFRGYUexD2/yJTGN2FPei6kMdiMuVpGcgR7nfiUdj6NReugd//w2uHdzIM85xTgCZUPJT6w9R/6Unw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M3OAl1Om; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D360CC2BD10;
-	Wed,  3 Jul 2024 22:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720044533;
-	bh=wdBdTiHCbF2qKOyMQ7xpVrnGVBj8A+wLtg7RDv7wIL8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M3OAl1OmWc4RtGGrrOmwYu8LWrgGbJc5D6QLLdJzwJpeATWYRhqScINvlT9cvpUtS
-	 L/96x5C2zsvU/nM8IfpRAG9j82Knov3dGMapncZMA60YDK6BZbH1kYW5PJShZdwijn
-	 3DvZep1BHEbYI3Y9YYi1VfaRcQ9OegxkVpFJ0qRnckouUDe33oWtpdQJ6d9M5QRZwR
-	 dDDURa6TbG2/dYhI7pet408KPn8mB5/sCv2EPDqbvgh6N3cgN6XdA8ue1cY3IIhpTe
-	 EOJ3QG+f12g7jioJooLkqt0WcBx73NacjLOBRGfnpIvudhiCUD9v2MM3labTo8Fp8f
-	 Kp9WXyFhVqaYw==
-Date: Wed, 3 Jul 2024 16:08:51 -0600
-From: Rob Herring <robh@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] dt-bindings: iio: add backend support to sd
- modulator
-Message-ID: <20240703220851.GA2075233-robh@kernel.org>
-References: <20240703160535.2277871-1-olivier.moysan@foss.st.com>
- <20240703160535.2277871-6-olivier.moysan@foss.st.com>
+	s=arc-20240116; t=1720044751; c=relaxed/simple;
+	bh=MZ0WvAunE6U8aGANnBGcIBYCu1MEtz1FEgY2uyX4Eo4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rmrshfUhgCHpu6UAnhJmqUbrTQTYcjRD79ibCqLEHMYBh6iTnQhX6rDp+LjOyapybE1SVUHwr2Do8+DpEaMp0+uAtkB1ef0UUgV/Y3a1XwFCfMEWpxMCjB9qo1c6xM8azQVmbTWK90lfLkCi117GCrFdV4VgHTkTtI3MUaHt3ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CZ4G/26l; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 463ENiZX011674;
+	Wed, 3 Jul 2024 22:12:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=pMCGGTUkS8c0/01CMRlNdv
+	Nzmn73YBwGygIb3R8HjI8=; b=CZ4G/26lnMPk05Bj6ISJNMyo4tN2DK0RpqZdVs
+	N6RTmHqys1vMtePUt3imKFRO19G/LOTMbJf00BUXYLpo6lCbyCHa+ZYHwvlDkONK
+	juUm4o8519ZfoBTUSwi83PQMQ+cUEufOQEeYEGWTNsTNSS6aMZDOUTwUeeGp8pAO
+	AQ+U7FthSpCidKp0gVKAIe9zItidCJ1hks715BdYkiXAO4F71D/kYzilDVhj/Ghl
+	vDzUs64eqLkuyiqSiNublxZjahIiTLUer1wVeenF7Rpod50UZInYgdgWKS95Re1n
+	oSDBxs38tItbHARv1nkoTMvuD3OZ1rgH3xBH5K+TnzgRF80Q==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404yr9a5vh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 22:12:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 463MCPcb009444
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Jul 2024 22:12:25 GMT
+Received: from hu-collinsd-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 3 Jul 2024 15:12:24 -0700
+From: David Collins <quic_collinsd@quicinc.com>
+To: Stephen Boyd <sboyd@kernel.org>, <linux-kernel@vger.kernel.org>
+CC: David Collins <quic_collinsd@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        "Dan
+ Carpenter" <dan.carpenter@linaro.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>
+Subject: [PATCH] spmi: pmic-arb: use correct node when adding irq domain
+Date: Wed, 3 Jul 2024 15:11:57 -0700
+Message-ID: <20240703221157.3640361-1-quic_collinsd@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703160535.2277871-6-olivier.moysan@foss.st.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: IR3GwurfXaz78LBw7FxNC2fvqcNF1Juc
+X-Proofpoint-ORIG-GUID: IR3GwurfXaz78LBw7FxNC2fvqcNF1Juc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_16,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
+ bulkscore=0 impostorscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ mlxlogscore=999 adultscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407030165
 
-On Wed, Jul 03, 2024 at 06:05:30PM +0200, Olivier Moysan wrote:
-> The legacy sd modulator driver registers the sigma delta modulator as
-> an IIO channel provider. This implementation is not convenient when the
-> SD modulator has to be cascaded with another IIO device. The scaling
-> information is distributed across devices, which makes it difficult to
-> report consistent scaling data on IIO devices.
-> 
-> The solution is to expose these cascaded IIO devices as an aggregate
-> device, which report global scaling information.
-> Add IIO backend support to SD modulator to allow scaling information
-> management.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> ---
->  .../iio/adc/sigma-delta-modulator.yaml        | 24 +++++++++++++++++--
->  1 file changed, 22 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
-> index cab0d425eaa4..e34aa560da63 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
-> @@ -18,18 +18,38 @@ properties:
->        - sd-modulator
->        - ads1201
->  
-> +  '#io-backend-cells':
-> +    const: 0
-> +
->    '#io-channel-cells':
->      const: 0
->  
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vref-supply:
-> +    description: Phandle to the vref input analog reference voltage.
-> +
->  required:
->    - compatible
-> -  - '#io-channel-cells'
-> +
-> +allOf:
+Pass a pointer to the SPMI bus subnode instead of the top-
+level PMIC arbiter node when calling irq_domain_add_tree().
+This ensures that consumer IRQ mappings can be found
+successfully at runtime.
 
-Don't need allOf
+Here is an example of a consumer device probe deferral that
+happens without this fix in place:
 
-> +  - anyOf:
-> +    - required: ['#io-backend-cells']
-> +    - required: ['#io-channel-cells']
->  
->  additionalProperties: false
->  
->  examples:
->    - |
-> -    ads1202: adc {
-> +    // Exemple1: SD modulator is an IIO backend device
-> +    ads1201_0 {
-> +      compatible = "ti,ads1201";
-> +      #io-backend-cells = <0>;
-> +    };
-> +
-> +    //Example2: SD modulator is an IIO channel provider
-> +    ads1201_1 {
->        compatible = "sd-modulator";
->        #io-channel-cells = <0>;
+[   18.197271] platform c42d000.spmi:qcom,pmk8550@0:pon_hlos@1300:pwrkey:
+  deferred probe pending: pm8941-pwrkey: IRQ index 0 not found
+[   18.197275] platform c42d000.spmi:qcom,pmk8550@0:pon_hlos@1300:resin:
+  deferred probe pending: pm8941-pwrkey: IRQ index 0 not found
 
-Don't you need some link between the nodes?
+Fixes: 02922ccbb330 ("spmi: pmic-arb: Register controller for bus instead of arbiter")
+Fixes: 979987371739 ("spmi: pmic-arb: Add multi bus support")
+Signed-off-by: David Collins <quic_collinsd@quicinc.com>
+---
+ drivers/spmi/spmi-pmic-arb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
->      };
-> -- 
-> 2.25.1
-> 
+diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+index 791cdc160c51..e6a4bf3abb1f 100644
+--- a/drivers/spmi/spmi-pmic-arb.c
++++ b/drivers/spmi/spmi-pmic-arb.c
+@@ -1737,8 +1737,7 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
+ 
+ 	dev_dbg(&pdev->dev, "adding irq domain for bus %d\n", bus_index);
+ 
+-	bus->domain = irq_domain_add_tree(dev->of_node,
+-					  &pmic_arb_irq_domain_ops, bus);
++	bus->domain = irq_domain_add_tree(node, &pmic_arb_irq_domain_ops, bus);
+ 	if (!bus->domain) {
+ 		dev_err(&pdev->dev, "unable to create irq_domain\n");
+ 		return -ENOMEM;
+-- 
+2.25.1
+
 
