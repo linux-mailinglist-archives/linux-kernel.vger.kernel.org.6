@@ -1,86 +1,177 @@
-Return-Path: <linux-kernel+bounces-239077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FFD69255DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:50:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E23119255F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B8781F266C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:50:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FC451C25501
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE7D13B592;
-	Wed,  3 Jul 2024 08:50:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1344E13B5B6;
+	Wed,  3 Jul 2024 08:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eHa7f4Zn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0A37D3E8
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3197A13B29F;
+	Wed,  3 Jul 2024 08:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719996604; cv=none; b=ECNIppZJ2fnhHtDaPHH+8w+4dw8AAG7zBmWNAo28zVgXZ1o4mCxz4C7sGfg6gVork3N2rfXDH2O3cItwuC8SRf91AilbnduYre/dOvsN3oIz9qYVjqSq7USXPz9mLTSmBb400DRW1h35Acg9REByT0thu/7T5tY4mZr407KC0cw=
+	t=1719996819; cv=none; b=ufIyrta4i+LHkw1BGIGQ/ygH8/tMMUr8POSnOn5A43eY02JW5vSqR1VGW0QgyfVDcmWMdUqDKQNrK+0MqyXNi5difZUMI6e5mhUqYAVsb07N80rJYWxhUmTygpGLYT8i/PeXl7Hbhs26dEt+Wo/JBNYTir/noBeRxYKqenmw/q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719996604; c=relaxed/simple;
-	bh=0KmqXJIwas465Pd6Ig+he0rI84A+feRQYx8yF/KG7UQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gLplcjux39jTd7bWHMDOtDLTeBUY3QcRhhEYjs2KauOAKZV820UVyNChPACnJAo2AOIL508EfuhfTc2R2NNIGLKk2jhPiV30WJuN+EQfUc8t6ohJZzwqVkCD2rkBGon1Yqb3u2aaotywDm7YdLCr/Ur4t32dxZtBzbxAC2cxJws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f3d5b154f5so548702439f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 01:50:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719996602; x=1720601402;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6EFT6GO8Fnbo/i8FyhNtvwKcBJKjbKjsOZb/mMNeoII=;
-        b=LCHwwkuA+MHvmHvw6Mpg6c2OvsnO4Nc9OpV7H32SJMQr+On9HG2TLGb/goEHNdrEHd
-         CfalHCGDJg2omc71HP4B55fqD0PWa5kdSp5barrPZilIF8G8Wx8EJbledo3jef3hgRPy
-         toKt4/l54q9fLDWVqM+JH6srHhBvrYKTIdi/Exbo3EisQa9R2fW9I2e88KnhXAAKOCxP
-         Oj7sqD6twAg9TLa5A/upshtZrS2rXz7bI7ZxlRuKOrd22RtNMt/VobV94IKCI5lHe3q0
-         yym418/1PbbyQhUB4zOOck3UjhFjL2DhhpQadNE7YWCaEfnZqO7mtzjvxCQ02wZ1Btk9
-         jKZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbqfmb0CAVPzXIFQoQ9WM7BSF3/H3r9eXgeHWSEVIGPu5gH8qKBekJO+kyMou2X0LbDP9bAwFiUIC4qUstQG1ZFP2qUOi1fulgXPax
-X-Gm-Message-State: AOJu0YyYWV3ZmskMwtfzpffkisSJOqQMgEc5CVx+4rwudN5ZK1n5ebGK
-	/gZCDC+YpIfPoRG8cZ66MjFqfs7tgUecGmrwy0jdgz0WZoh7C9oEo+o5weYVpglHXXuVX52m99K
-	O3Wt/b2v13cmGozR4LMAh5V+3IVzPo4RfrXG3b8DF2gLNylHrV1q9XhM=
-X-Google-Smtp-Source: AGHT+IG/FQ6e15TxuL2cn/sm4lmiOxZphSI5Cl7arOGZ8/cpm4rP3OBlA/YD+/9c+bnYARBVpaMTmq82175KXH8oq9eqAz/ULJ/4
+	s=arc-20240116; t=1719996819; c=relaxed/simple;
+	bh=uJy6npIbvFhICTmqeRyyXfHKUe2Xu5teyWK4mPdnf60=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=E3U5Y7+tlNYELH6EjJm4pdcPc3D8neyml+JOUUKOwGj0HHiZ2Z6XiUMtz44dh62kbpw6GOpEc1tQ7C/m0yEkAjT/tqYHiBWVfvwYgEL14xnyRoHTC6eqtyKqhalrGWNEW8GrEBNPLP03Xx00N5C6cd/YRNyZ5ZGPL4mUsyFBHBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eHa7f4Zn; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719996817; x=1751532817;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=uJy6npIbvFhICTmqeRyyXfHKUe2Xu5teyWK4mPdnf60=;
+  b=eHa7f4ZnhLALGa9tUV6UJHkwmnWMf0aDsTb+Xr4JAv1c9CW8DWGTKgny
+   k4All4eSziET0832k7b1Xq7luAHwcqigqhvg57Fci0h9hetf7+dGAjCvw
+   pBHuX/kqGhhbwJO+NEF1+qrAOgc0GyvV+zg/efBO9DBDXk+H++3aJ/xUN
+   lRorR9e7Zk7Q1uXrQ08TJjUkRcuJXoutq0K6FjPAvikO4mJzh2koaPpp8
+   P3Dbe+7Q4Go2RQ4TYQ9UPRTg/o+lvQo4dnNtzeJaPKh4+RGeCQAgux3GS
+   Gdv5bnyA+Nxsk9B4qTTZevQOC4YYgjI0W1EYdELlkEOOKtzVFpNdTrQp/
+   w==;
+X-CSE-ConnectionGUID: 7CGM4lhAS2a7NizhwIac+A==
+X-CSE-MsgGUID: dOitDEatTra5Z2Sra93a+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="27818576"
+X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
+   d="scan'208";a="27818576"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 01:53:36 -0700
+X-CSE-ConnectionGUID: TNLyrCPHR5SOEUdQfrNb3w==
+X-CSE-MsgGUID: b4l4Pq1yTnWXfVH4a1AjFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
+   d="scan'208";a="50633629"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 01:53:31 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: "Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev>,  Gregory Price
+ <gourry.memverge@gmail.com>,  <aneesh.kumar@linux.ibm.com>,
+  <mhocko@suse.com>,  <tj@kernel.org>,  <john@jagalactic.com>,  Eishan
+ Mirakhur <emirakhur@micron.com>,  Vinicius Tavares Petrucci
+ <vtavarespetr@micron.com>,  Ravis OpenSrc <Ravis.OpenSrc@micron.com>,
+  Alistair Popple <apopple@nvidia.com>,  Srinivasulu Thanneeru
+ <sthanneeru@micron.com>,  SeongJae Park <sj@kernel.org>,  "Rafael J.
+ Wysocki" <rafael@kernel.org>,  "Len Brown" <lenb@kernel.org>,  Andrew
+ Morton <akpm@linux-foundation.org>,  "Dave Jiang" <dave.jiang@intel.com>,
+  Dan Williams <dan.j.williams@intel.com>,  <linux-acpi@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,  "Ho-Ren (Jack)
+ Chuang" <horenc@vt.edu>,  "Ho-Ren (Jack) Chuang"
+ <horenchuang@bytedance.com>,  "Ho-Ren (Jack) Chuang"
+ <horenchuang@gmail.com>,  <linux-cxl@vger.kernel.org>,
+  <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v2 1/1] memory tier: consolidate the initialization of
+ memory tiers
+In-Reply-To: <20240702142535.00003dc0@Huawei.com> (Jonathan Cameron's message
+	of "Tue, 2 Jul 2024 14:25:35 +0100")
+References: <20240628060925.303309-1-horen.chuang@linux.dev>
+	<20240628060925.303309-2-horen.chuang@linux.dev>
+	<20240702142535.00003dc0@Huawei.com>
+Date: Wed, 03 Jul 2024 16:51:40 +0800
+Message-ID: <87a5iykgdf.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2103:b0:4b9:2092:c7c9 with SMTP id
- 8926c6da1cb9f-4bbb6fbf587mr687696173.5.1719996602576; Wed, 03 Jul 2024
- 01:50:02 -0700 (PDT)
-Date: Wed, 03 Jul 2024 01:50:02 -0700
-In-Reply-To: <CA+6bSaugC6skN9XBTqnfOZ4n8zep6+D44fwxYFE4Y0KbBREwSw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000831ef0061c53ea31@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING: locking bug in ext4_move_extents
-From: syzbot <syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com>
-To: bottaawesome633@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ascii
 
-Hello,
+Jonathan Cameron <Jonathan.Cameron@Huawei.com> writes:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On Fri, 28 Jun 2024 06:09:23 +0000
+> "Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev> wrote:
 
-Reported-and-tested-by: syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com
+[snip]
 
-Tested on:
+>> @@ -875,8 +886,7 @@ static int __meminit memtier_hotplug_callback(struct notifier_block *self,
+>>  
+>>  static int __init memory_tier_init(void)
+>>  {
+>> -	int ret, node;
+>> -	struct memory_tier *memtier;
+>> +	int ret;
+>>  
+>>  	ret = subsys_virtual_register(&memory_tier_subsys, NULL);
+>>  	if (ret)
+>> @@ -887,7 +897,8 @@ static int __init memory_tier_init(void)
+>>  				GFP_KERNEL);
+>>  	WARN_ON(!node_demotion);
+>>  #endif
+>> -	mutex_lock(&memory_tier_lock);
+>> +
+>> +	guard(mutex)(&memory_tier_lock);
+>
+> If this was safe to do without the rest of the change (I think so)
+> then better to pull that out as a trivial precursor so less noise
+> in here.
+>
+>>  	/*
+>>  	 * For now we can have 4 faster memory tiers with smaller adistance
+>>  	 * than default DRAM tier.
+>> @@ -897,29 +908,9 @@ static int __init memory_tier_init(void)
+>>  	if (IS_ERR(default_dram_type))
+>>  		panic("%s() failed to allocate default DRAM tier\n", __func__);
+>>  
+>> -	/*
+>> -	 * Look at all the existing N_MEMORY nodes and add them to
+>> -	 * default memory tier or to a tier if we already have memory
+>> -	 * types assigned.
+>> -	 */
+>> -	for_each_node_state(node, N_MEMORY) {
+>> -		if (!node_state(node, N_CPU))
+>> -			/*
+>> -			 * Defer memory tier initialization on
+>> -			 * CPUless numa nodes. These will be initialized
+>> -			 * after firmware and devices are initialized.
+>> -			 */
+>> -			continue;
+>> -
+>> -		memtier = set_node_memory_tier(node);
+>> -		if (IS_ERR(memtier))
+>> -			/*
+>> -			 * Continue with memtiers we are able to setup
+>> -			 */
+>> -			break;
+>> -	}
+>> -	establish_demotion_targets();
+>> -	mutex_unlock(&memory_tier_lock);
+>> +	/* Record nodes with memory and CPU to set default DRAM performance. */
+>> +	nodes_and(default_dram_nodes, node_states[N_MEMORY],
+>> +		  node_states[N_CPU]);
+>
+> There are systems where (for various esoteric reasons, such as describing an
+> association with some other memory that isn't DRAM where the granularity
+> doesn't match) the CPU nodes contain no DRAM but rather it's one node away.
+> Handling that can be a job for another day though.
+>
+> Why does this need to be computed here?  Why not do it in
+> hmat_set_default_dram_perf? Doesn't seem to be used anywhere else.
 
-commit:         e9d22f7a Merge tag 'linux_kselftest-fixes-6.10-rc7' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10ac84e1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4b7408f3dc4fedee
-dashboard link: https://syzkaller.appspot.com/bug?extid=7f4a6f7f7051474e40ad
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10a0a9c1980000
+IMO, which node is default dram node is a general concept instead of
+HMAT specific.  So, I think that it's better to decide that in the
+general code (memory-tiers.c).
 
-Note: testing is done by a robot and is best-effort only.
+>>  
+>>  	hotplug_memory_notifier(memtier_hotplug_callback, MEMTIER_HOTPLUG_PRI);
+>>  	return 0;
+
+--
+Best Regards,
+Huang, Ying
 
