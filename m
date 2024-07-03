@@ -1,176 +1,154 @@
-Return-Path: <linux-kernel+bounces-239397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79F4925F04
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:46:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0C7925F28
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E1681F23965
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:46:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090E81F258A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AA91741C0;
-	Wed,  3 Jul 2024 11:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m+DFD4NI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B65116EC0F;
+	Wed,  3 Jul 2024 11:52:13 +0000 (UTC)
+Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E7D172798;
-	Wed,  3 Jul 2024 11:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631E713D61B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720007193; cv=none; b=EU6QqED3E/vIDtsKqS9E4MAHEIudcC4OyW43UqbGfI1WUTKsiS/hZu/o/E6SQk0grNSgR8EV2AIyrdYrTZM7Vn/9H/thgJprxhz+/79bevO7IQzxE+ZeiRq1YR2pQG0KdKzrB6AognkNG+2HzJtSHR7h5lLR6URivrXnLrbl8Ss=
+	t=1720007533; cv=none; b=SW5nao5Wd4j8fSsbHyRZWurB640tUfhrAomQBJ7lL82rJ6eJybiiT1GnEKFDXiDqazSkoScijTEKXb8RfYh/1bKmV6Dkzwp1kkEjwlMuJd1sFqUISGQgFf3/7OryMxoufrVV0fsiyjoeN7WI7sIO0GI9iMNnOEsmmaYj05DKoes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720007193; c=relaxed/simple;
-	bh=ccSSB5ntIgvLAQBJKwo1I+LWZkPdt11bRXA2in5N+ak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BQwPpo1zeMrzaEiiFzW3T19Cmoe/gUR4jo79NafI3YOuS8KYBsxRcJLhUu4uYV0yOLogYUqjc7K6b2RK34NidtdOexmtpBrGTmvOhpj74L5NdOBj3JSPT/uX2cVjYzP2ZVcZIA8zuSkpUaGKnnPpU84JVmUHaYxPE5dBr9vZitI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m+DFD4NI; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720007191; x=1751543191;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ccSSB5ntIgvLAQBJKwo1I+LWZkPdt11bRXA2in5N+ak=;
-  b=m+DFD4NIfTIgHK4nnF6s9z2b2GVPz+6mKi1CNMQMgaD6Z4D6hAaKTl60
-   24IqFDpLSVQioAdFg2wTtvNajS8g8f2MrftAr4yy9LGDyzuU3AjuCLWz8
-   /ahsb8g1Tnddng5tioSQshI9xqUIhXzh2xNs9qxaVyHw4PF+gJN3g5d7k
-   H7kFJwTNV8ASSdglrWonxOygvzPl+rrv/lYftXVBspY4XPyjRirwtltUy
-   gwEwtZbR00XBwmMxTI0Lb0yJaNbOPt5QGKpqCNXv8ZH3KDE+Jx3sv9ThW
-   ZnpVOI4m3NsW57+o+OW7j0yxO4Vy2v+NJAoY7IptC3aUAh+pLbDi1CS91
-   g==;
-X-CSE-ConnectionGUID: bSIGfMeZSpaj80t7/M1w7A==
-X-CSE-MsgGUID: UVtjcWXWRu2aqiR+P8l5/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="34679636"
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="34679636"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 04:46:31 -0700
-X-CSE-ConnectionGUID: 1DbAtIMHT7i9igPX/tAdng==
-X-CSE-MsgGUID: EIT9haWkTTKqfKMieYH4tg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="76963793"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by orviesa002.jf.intel.com with ESMTP; 03 Jul 2024 04:46:28 -0700
-Received: from [10.246.34.68] (mwajdecz-MOBL.ger.corp.intel.com [10.246.34.68])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id F409A284FE;
-	Wed,  3 Jul 2024 12:46:24 +0100 (IST)
-Message-ID: <10c3d9b8-bf5b-42c1-9c87-36828f5c995c@intel.com>
-Date: Wed, 3 Jul 2024 13:46:23 +0200
+	s=arc-20240116; t=1720007533; c=relaxed/simple;
+	bh=WYjyN31nvOPQorDg4MwuaO39knfNAiEVUYUmWPo3/s0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kV2SxLgXNRu0hzIBEuUXSkK8kY0Z4Qy+cqKlHtAj5R9t7MIjvJj4c4ocJCoqwOeN6IcMOuVFBXqCaiWDKZeI409lxvdd7qKzZRDR2gAmu52xiVfM1x8gPXPm8bGtN5E2rXfSX98IOCpF09r+fg5Fad4OYVvrLR/oYI2S90XGSwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.64.67])
+	by sina.com (10.185.250.23) with ESMTP
+	id 66853B3B000058DB; Wed, 3 Jul 2024 19:51:25 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6931968913445
+X-SMAIL-UIID: 4B0436BF9FEB440284964CB5AE262EC2-20240703-195125-1
+From: Hillf Danton <hdanton@sina.com>
+To: Tom Parkin <tparkin@katalix.com>
+Cc: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	James Chapman <jchapman@katalix.com>,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
+Date: Wed,  3 Jul 2024 19:51:13 +0800
+Message-Id: <20240703115113.2928-1-hdanton@sina.com>
+In-Reply-To: <ZoU1Aa/JJ+60FZla@katalix.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the drm
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie
- <airlied@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Mark Brown <broonie@kernel.org>, DRI <dri-devel@lists.freedesktop.org>,
- =?UTF-8?Q?Piotr_Pi=C3=B3rkowski?= <piotr.piorkowski@intel.com>,
- buildfailureaftermergeofthedrmtree@sirena.org.uk,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <Zn7s611xnutUFxR0@sirena.org.uk>
- <20240703123643.5b4dc83f@canb.auug.org.au>
-Content-Language: en-US
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-In-Reply-To: <20240703123643.5b4dc83f@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-+ Rodrigo for help
-
-On 03.07.2024 04:36, Stephen Rothwell wrote:
-> Hi all,
+On Wed, 3 Jul 2024 12:24:49 +0100 Tom Parkin <tparkin@katalix.com>
 > 
-> On Fri, 28 Jun 2024 18:03:39 +0100 Mark Brown <broonie@kernel.org> wrote:
->>
->> After merging the drm tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c: In function 'pf_get_threshold':
->> /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c:1788:27: error: unused variable 'xe' [-Werror=unused-variable]
->>  1788 |         struct xe_device *xe = gt_to_xe(gt);
->>       |                           ^~
->> cc1: all warnings being treated as errors
->>
->> Caused by commit
->>
->>   629df234bfe73d ("drm/xe/pf: Introduce functions to configure VF thresholds")
->>
->> I have used the tree from 20240627 instead.
+> [-- Attachment #1.1: Type: text/plain, Size: 379 bytes --]
 > 
-> I am still seeing that build failure.
+> On  Tue, Jun 25, 2024 at 06:25:23 -0700, syzbot wrote:
+> > syzbot found the following issue on:
+> > 
+> > HEAD commit:    185d72112b95 net: xilinx: axienet: Enable multicast by def..
+> > git tree:       net-next
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1062bd46980000
 > 
+> #syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git  185d72112b95
+> 
+> [-- Attachment #1.2: 0001-l2tp-fix-possible-UAF-when-cleaning-up-tunnels.patch --]
+> [-- Type: text/x-diff, Size: 3275 bytes --]
+> 
+> From 31321b7742266c4e58355076c19d8d490fa005d2 Mon Sep 17 00:00:00 2001
+> From: James Chapman <jchapman@katalix.com>
+> Date: Tue, 2 Jul 2024 12:49:07 +0100
+> Subject: [PATCH] l2tp: fix possible UAF when cleaning up tunnels
+> 
+> syzbot reported a UAF caused by a race when the L2TP work queue closes a
+> tunnel at the same time as a userspace thread closes a session in that
+> tunnel.
+> 
+> Tunnel cleanup is handled by a work queue which iterates through the
+> sessions contained within a tunnel, and closes them in turn.
+> 
+> Meanwhile, a userspace thread may arbitrarily close a session via
+> either netlink command or by closing the pppox socket in the case of
+> l2tp_ppp.
+> 
+> The race condition may occur when l2tp_tunnel_closeall walks the list
+> of sessions in the tunnel and deletes each one.  Currently this is
+> implemented using list_for_each_safe, but because the list spinlock is
+> dropped in the loop body it's possible for other threads to manipulate
+> the list during list_for_each_safe's list walk.  This can lead to the
+> list iterator being corrupted, leading to list_for_each_safe spinning.
+> One sequence of events which may lead to this is as follows:
+> 
+>  * A tunnel is created, containing two sessions A and B.
+>  * A thread closes the tunnel, triggering tunnel cleanup via the work
+>    queue.
+>  * l2tp_tunnel_closeall runs in the context of the work queue.  It
+>    removes session A from the tunnel session list, then drops the list
+>    lock.  At this point the list_for_each_safe temporary variable is
+>    pointing to the other session on the list, which is session B, and
+>    the list can be manipulated by other threads since the list lock has
+>    been released.
+>  * Userspace closes session B, which removes the session from its parent
+>    tunnel via l2tp_session_delete.  Since l2tp_tunnel_closeall has
+>    released the tunnel list lock, l2tp_session_delete is able to call
+>    list_del_init on the session B list node.
+>  * Back on the work queue, l2tp_tunnel_closeall resumes execution and
+>    will now spin forever on the same list entry until the underlying
+>    session structure is freed, at which point UAF occurs.
+> 
+> The solution is to iterate over the tunnel's session list using
+> list_first_entry_not_null to avoid the possibility of the list
+> iterator pointing at a list item which may be removed during the walk.
+> 
+> ---
+>  net/l2tp/l2tp_core.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
+> index 64f446f0930b..afa180b7b428 100644
+> --- a/net/l2tp/l2tp_core.c
+> +++ b/net/l2tp/l2tp_core.c
+> @@ -1290,13 +1290,14 @@ static void l2tp_session_unhash(struct l2tp_session *session)
+>  static void l2tp_tunnel_closeall(struct l2tp_tunnel *tunnel)
+>  {
+>  	struct l2tp_session *session;
+> -	struct list_head *pos;
+> -	struct list_head *tmp;
+>  
+>  	spin_lock_bh(&tunnel->list_lock);
+>  	tunnel->acpt_newsess = false;
+> -	list_for_each_safe(pos, tmp, &tunnel->session_list) {
+> -		session = list_entry(pos, struct l2tp_session, list);
+> +	for (;;) {
+> +		session = list_first_entry_or_null(&tunnel->session_list,
+> +						   struct l2tp_session, list);
+> +		if (!session)
+> +			break;
 
-as explained before, this additional var is not present in
-drm-xe/drm-xe-next
+WTF difference could this patch make wrt closing the race above?
 
-AFAICS this additional var comes from the drm/drm-next and is applied to
-drm-tip as something like:
-
-
-commit fa60cd98341b3a176de428a182e13ebd7a5ea4b7 (from
-fb625bf6187d97c3cd28d680b14bf80f84207e5a)
-Merge: f733fce76fff fb625bf6187d
-Author: Thomas Zimmermann <tzimmermann@suse.de>
-Date:   Wed Jul 3 10:12:05 2024 +0200
-
-    Merge remote-tracking branch 'drm/drm-next' into drm-tip
-
-    # Conflicts:
-    #       drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c
-    #       drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_init.c
-    #       drivers/gpu/drm/amd/pm/swsmu/inc/smu_types.h
-    #       drivers/gpu/drm/xe/xe_gt_idle.c
-    #       drivers/gpu/drm/xe/xe_guc_pc.c
-
-diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
-b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
-index 694671497f6e..a5c9dfa1077c 100644
---- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
-+++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
-@@ -1785,6 +1785,7 @@ static int pf_get_threshold(struct xe_gt *gt,
-unsigned int vfid,
-                            enum xe_guc_klv_threshold_index index)
- {
-        struct xe_gt_sriov_config *config = pf_pick_vf_config(gt, vfid);
-+       struct xe_device *xe = gt_to_xe(gt);
-
-        return config->thresholds[index];
- }
-
-
-and later drm-tip removes that by merging fixup from the topic branch:
-
-commit 1179bb6a96b57c1584497920768ac9c40c7874e4 (from
-29a62552d265091cd444bf819f4e4fd3fa7f471c)
-Merge: 29a62552d265 428c3ef38ef5
-Author: Thomas Zimmermann <tzimmermann@suse.de>
-Date:   Wed Jul 3 10:12:10 2024 +0200
-
-    Merge remote-tracking branch 'drm-xe/topic/xe-for-CI' into drm-tip
-
-diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
-b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
-index c8936aae7f43..db6c213da847 100644
---- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
-+++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c
-@@ -1785,7 +1785,6 @@ static int pf_get_threshold(struct xe_gt *gt,
-unsigned int vfid,
-                            enum xe_guc_klv_threshold_index index)
- {
-        struct xe_gt_sriov_config *config = pf_pick_vf_config(gt, vfid);
--       struct xe_device *xe = gt_to_xe(gt);
-
-        return config->thresholds[index];
- }
-
+>  		list_del_init(&session->list);
+>  		spin_unlock_bh(&tunnel->list_lock);
+>  		l2tp_session_delete(session);
 
