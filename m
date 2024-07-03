@@ -1,145 +1,207 @@
-Return-Path: <linux-kernel+bounces-239851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A93926611
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:24:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB2E926618
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C701C240F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:24:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC101C23AD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA641822D8;
-	Wed,  3 Jul 2024 16:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480F0183090;
+	Wed,  3 Jul 2024 16:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="Gy2Siy32";
-	dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="XNCTpZau"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXmJMfix"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0533185093;
-	Wed,  3 Jul 2024 16:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720023793; cv=pass; b=HYFlADwqcPOhvqGDgVb8N/4g3LTNef+Sx5s8oWknqjWVNI+VBS0h1k84+jciqDSt27sQVOeOO+i5ZCIMT+j41R2E5LXMZXsVu+wn8NhYszI9deFsZWtsX9aVySDxHYcMNUnX3TUmxTQ0MifQPVEXEwN1t7O1grFWtqS2pqvOkho=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720023793; c=relaxed/simple;
-	bh=kHVkSU9bSnZ7p8Z0PSj2JpXNxtfluYvXtkY+97pv/OY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=djOj8yf9tb/P2+AUWfq4gzGlXGRguQz5HlIE6ho1qjgndnwlqUE3HZUC6Yv0pAwnjkPya1w1wTGr0CeEro2q3j0F5pld5e3IdCJicU2hwfizdxp7c33eCYxkG6Ne0RNNwVOR/KyhObMM0RGJyEc73pj2Tegdt0ig4UsHAS+MQYo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de; spf=none smtp.mailfrom=xenosoft.de; dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=Gy2Siy32; dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=XNCTpZau; arc=pass smtp.client-ip=85.215.255.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=xenosoft.de
-ARC-Seal: i=1; a=rsa-sha256; t=1720023757; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=VVORDbf2msCtWnL/pUXyiHuHFrAdVWz4sP9G4CxWWlzj1zgWlyQZcgZsNLKgRfHDgB
-    iUIaBCEtFlaRTlkKP6cHPtxGZqApiIdEpTrgM6PqY4XvqSvuG1FYbVoEWroNtlDfLyvk
-    XjaR831cZttF7l+SJ+l2HxyGa1Gm7SZKTchFp41+Vwsqn1z0K4+ltswfthwdDUVcA0u0
-    tE5TLbnFT6DmLOB+UrVCxLOVz3Da6m3hSWQFz0igCsTXcai/UDbrweCZGt7upjEXlOlM
-    zSetek/bJ2ZPtEUUn7QxO+lh+Iqml/rk6lid1dD7rGlRIz9HusaMDY1Ih77qauRi6dsZ
-    strg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1720023757;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Xefpm7kp1QKwRcK53B/u3dUPROD/z4fSpwFfZlUnT+g=;
-    b=Rk+2LGsv65JAMuSX49Rsm5StceZtRGYDQphIByXVtrzj3Chft+nhQYfFV+yBH6NJzH
-    zRUhRTGAfUqaD4m5BH1yw/wkgbnuYq0s3OqqdKh1DinQ/G8MgBhC5Ot8fXxFQg+V0stx
-    8y+vQQPmurrZDCFDwfmUe2nR2fZbD3mptY7fbeGGT7sXyJbv3jGMfSYLks0677f9e5Yj
-    WaHiFNmmQyRPkyzcVTHJphl6KNKtMtpFxo8QX+c1O6NFhjj/x3xpSBuxcQx/YLAB3MXI
-    pV4eUcwTJWT0howC366TUYEWWg5Xx9w87FJGwukXn62mz7XQO806ZO6ohL+kPStmXEV2
-    YwYQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1720023757;
-    s=strato-dkim-0002; d=xenosoft.de;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Xefpm7kp1QKwRcK53B/u3dUPROD/z4fSpwFfZlUnT+g=;
-    b=Gy2Siy32RcwgdZf5tB5Uj9bQMnetV5Sl2cX2/66Ss8FEXnqx5987dyz/oC31uhM+bI
-    dLLYN5VN8CdH2QQspkpypOWky7u4KrJH6qz/Dyau0dnyc/s9C412IrgwdAkb2OYU2Igs
-    eHCZk8/lSviFmAls+HGQ21LL0y+VsZKlunOTMEkwFzxxNhmqKSX8De84owH9dsraGS7p
-    MLhpdhD5tdybUBT1fX35u3Cj8XWZq6z3Q/0G7F3etYebt19IopXWHsR/M9+EgqAb7+px
-    8VehuSuapGUlAgf2fXZvdUtjxprmsShnY0DTjSWYOqwFS0WnzqoIxvEbF2SlNA6hUiMG
-    yn8g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1720023757;
-    s=strato-dkim-0003; d=xenosoft.de;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Xefpm7kp1QKwRcK53B/u3dUPROD/z4fSpwFfZlUnT+g=;
-    b=XNCTpZauLp8RFotnyZ1DbdXYQFNrHQ2YuynthNSaK3ibX4zCBTn4kpSyMKYocsfTnv
-    HE5EQqHZe1stoIy6kWBQ==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHvJzedR43J0mbSkY7T0LO5Dgwl/5WHn9PRLvYVKAUYGE"
-Received: from [IPV6:2a01:599:817:c09:f2fd:d497:aff:32c3]
-    by smtp.strato.de (RZmta 50.5.0 AUTH)
-    with ESMTPSA id e08389063GMZQ2I
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Wed, 3 Jul 2024 18:22:35 +0200 (CEST)
-Message-ID: <de910b52-4f46-47a5-896d-d60af85ae293@xenosoft.de>
-Date: Wed, 3 Jul 2024 18:23:12 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C521822EC;
+	Wed,  3 Jul 2024 16:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720023860; cv=none; b=odvsvwykGpGraeZv6WjagMgBBeaoRyfstlBa29PSWpCF0g2fwe8TbD2ENiy3+uZaS0fiIWPC3Shn14Vwh63fGKLB6Ip3o/QMvwmhJ9pTAT81MbbeL8FsOl1z1KAL4hGb+lx+TCMb0Z870xlRhvrCMupdgpnWvOw9Lw3MJF19Od0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720023860; c=relaxed/simple;
+	bh=2Hacc46nHYFvYqe1ib5XbS062I+YR3yn+g22MnTZjt0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rd3OZtXU5hKqQxkld/Z3SuK8HV6D8E19mmA+v0T7p9CDCidoBHdqM59Nrkz9vaQ852DWRlZnCJFM1mHflMUFT1M9jUk/fQ5SarRDw6Y3HCk0kclFy3M5iRQAHfqr52CM2DzuTnbSLRS2XtjxahVTKagB2j57E+kxKjWqMds51oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RXmJMfix; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-79c0b1eb94dso380243385a.1;
+        Wed, 03 Jul 2024 09:24:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720023858; x=1720628658; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LssWgT0rAbf2Zvr3wzcyKBmvblvua7M79zlMa0Rclsw=;
+        b=RXmJMfixNMUk5lM2QdP0+qV6m+CqR688cnRzOflSlpj4HgvdZCJt3yNAFZphLNVKAg
+         baJ78dPgtWafB52wXJwSR0gZRZD65XOlBmlhEQA7tPxW0iJrUEuzX3Lm+HHfLLuM8Cp6
+         dLZAl/PW0PmhEenSXQnv87xF0KpfDTxuQurnYhg2nlOhA8oG0CE85a6PIeWKLTgqqvbn
+         FNyGkzyaXINozpxi7zzIe+hbSnlIFrffrqVBcBXaVz8ru9UkDZN4Zix4emoH7mLFOO6N
+         2F8tY/k0A1hPvlPZ9wD34P5zYf8R5VMDfJtuh1BB3ZBrKf6Mt3YNNWWIQRTYh5DB5NXH
+         zCgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720023858; x=1720628658;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LssWgT0rAbf2Zvr3wzcyKBmvblvua7M79zlMa0Rclsw=;
+        b=I/+wOzBhOoRLMhn6lAXpWlHJGGwuW//OV5PElt714DGxYHaUYw0rrUqMro0ZjTv09/
+         1zusd0BPenY5e/7ARPumVaakZxBd24nrHnTgF8bTjq32SyyYLsQRkvwRgFQpXuGUIjtb
+         ifs/NV4lYX9O6ItPTkRpBNv6nQPcTVrDCxUrxHCrMJOuDOQGq9iP+0Q49ZgAlIVK68Cn
+         4sGE/3BtraE5jcLkaJMVY8twKQTnmCwqSP9OjiE0VyeBNqZSAUpYLaoQCqmGBT08dWnc
+         wlCJJm248mDjMnygTOwAT6E8KPfgfRMkvc6LMfbMoDPO0VrAdCpyi4qg2X3LPBgJPDzi
+         Ftyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxP6BicZexsIKZgHPwFfbqGWlB2OSoAtmL4FL1MhGYyddvSegSKFLNyJaUmI7hY1/fnXaf5Sie9YaPn9dLFRCY/P8qZbyKZp4hH5k8YgMfOGWNN+dW+V0ojiE0zNjXGtLYrT3uWMSKBAUJbg==
+X-Gm-Message-State: AOJu0Yxz8OI9YOUYfLpbVsmnxMvu84HGrXn1zK4lP/JjeQ3YekAY4r3x
+	YzTrHqVt9exA8eeH0F/J5JEl5PpZs2+/wxIbCUPXYJuudLZfnXTRVVBDnMQby31KQyNw8Xf4hEk
+	yMqq/v7qkawIDyrBl4Kac/LJu6QM=
+X-Google-Smtp-Source: AGHT+IFSvisVJYJa9uTwBqRJ9OsIwK0wr6BGtSTTpy/fAImCTth3S8Np7WJQfC/6zxRKPuXNVd23VUaQ7+Psd8sHNPM=
+X-Received: by 2002:a05:620a:a95:b0:79d:986a:9e8e with SMTP id
+ af79cd13be357-79d986aa061mr567225585a.67.1720023857744; Wed, 03 Jul 2024
+ 09:24:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives
- after the of/irq updates 2024-05-29
-To: Marc Zyngier <maz@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, apatel@ventanamicro.com,
- DTML <devicetree@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
- mad skateman <madskateman@gmail.com>, "R.T.Dickinson" <rtd2@xtra.co.nz>,
- Matthew Leaman <matthew@a-eon.biz>, Darren Stevens
- <darren@stevens-zone.net>, Christian Zigotzky <info@xenosoft.de>
-References: <86cynv9dx7.wl-maz@kernel.org>
- <B550D4C4-6F82-409E-B5A8-E7D123ACB93D@xenosoft.de>
- <86a5iyahbc.wl-maz@kernel.org>
-Content-Language: en-US
-From: Christian Zigotzky <chzigotzky@xenosoft.de>
-In-Reply-To: <86a5iyahbc.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240703010215.2013266-1-drosen@google.com> <315aef06-794d-478f-93a3-8a2da14ec18c@fastmail.fm>
+ <CAOQ4uxhYcNvQc-Y+ZZSGyX1Un8WCJuE-aeiRrgLm91HwJ48gWA@mail.gmail.com> <d98fefc9-fbb4-44b8-9050-61378176dcf1@fastmail.fm>
+In-Reply-To: <d98fefc9-fbb4-44b8-9050-61378176dcf1@fastmail.fm>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 3 Jul 2024 19:24:06 +0300
+Message-ID: <CAOQ4uxjHe6m1LUxTzrmOSFnbF=yZRuL0180V0gFH8qJTfcsNeQ@mail.gmail.com>
+Subject: Re: [PATCH 0/1] Fuse Passthrough cache issues
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Daniel Rosenberg <drosen@google.com>, Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03.07.24 12:41, Marc Zyngier wrote:
-> On Wed, 03 Jul 2024 11:26:17 +0100,
-> Christian Zigotzky <chzigotzky@xenosoft.de> wrote:
->> On 3. Jul 2024, at 08:40, Marc Zyngier <maz@kernel.org> wrote:
->>
->> This isn't a DTS. This is a listing of all the nodes, not something I
->> can use to feed the kernel. I explained how to generate it.
->>
->> Download the compiled device tree for the Nemo board:
->> http://www.xenosoft.de/fdt-nemo-board.zip
->>
->> No, thank you.
->>
->> ————————
->>
->> You know already the device tree: https://lists.ozlabs.org/pipermail/linuxppc-dev/2021-November/236587.html
-> Do you think I keep this sort of things from almost three years ago? I
-> have better things to do.
+On Wed, Jul 3, 2024 at 7:09=E2=80=AFPM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
 >
-> Now, either you provide the required information in the required form
-> or you don't. Either you test the proposed patches or you don't.
 >
-> If you do, great, and I'll do my best to help you. If you don't, also
-> great, because I can go back to the stuff I'm actually interested in
-> (i.e. not your machine).
 >
-> This is your call, and only yours.
+> On 7/3/24 16:41, Amir Goldstein wrote:
+> > On Wed, Jul 3, 2024 at 4:27=E2=80=AFPM Bernd Schubert
+> > <bernd.schubert@fastmail.fm> wrote:
+> >>
+> >>
+> >>
+> >> On 7/3/24 03:02, Daniel Rosenberg wrote:
+> >>> I've been attempting to recreate Android's usage of Fuse Passthrough =
+with the
+> >>> version now merged in the kernel, and I've run into a couple issues. =
+The first
+> >>> one was pretty straightforward, and I've included a patch, although I=
+'m not
+> >>> convinced that it should be conditional, and it may need to do more t=
+o ensure
+> >>> that the cache is up to date.
+> >>>
+> >>> If your fuse daemon is running with writeback cache enabled, writes w=
+ith
+> >>> passthrough files will cause problems. Fuse will invalidate attribute=
+s on
+> >>> write, but because it's in writeback cache mode, it will ignore the r=
+equested
+> >>> attributes when the daemon provides them. The kernel is the source of=
+ truth in
+> >>> this case, and should update the cached values during the passthrough=
+ write.
+> >>
+> >> Could you explain why you want to have the combination passthrough and
+> >> writeback cache?
+> >>
+> >> I think Amirs intention was to have passthrough and cache writes
+> >> conflicting, see fuse_file_passthrough_open() and
+> >> fuse_file_cached_io_open().
+> >
+> > Yes, this was an explicit design requirement from Miklos [1].
+> > I also have use cases to handle some read/writes from server
+> > and the compromise was that for the first version these cases should
+> > use FOPEN_DIRECT_IO, which does not conflict with FOPEN_PASSTHROUGH.
+> >
+> > I guess this is not good enough for Android applications opening photos
+> > that need the FUSE readahead cache for performance?
+> >
+> > In that case, a future BPF filter can decide whether to send the IO dir=
+ect
+> > to server or to backing inode.
+> >
+> > Or a future backing inode mapping API could map part of the file to
+> > backing inode
+> > and the metadata portion will not be mapped to backing inode will fall =
+back to
+> > direct IO to server.
+> >
+> > [1] https://lore.kernel.org/linux-fsdevel/CAJfpegtWdGVm9iHgVyXfY2mnR98X=
+J=3D6HtpaA+W83vvQea5PycQ@mail.gmail.com/
+> >
+> >>
+> >> Also in <libfuse>/example/passthrough_hp.cc in sfs_init():
+> >>
+> >>     /* Passthrough and writeback cache are conflicting modes */
+> >>
+> >>
+> >>
+> >> With that I wonder if either fc->writeback_cache should be ignored whe=
+n
+> >> a file is opened in passthrough mode, or if fuse_file_io_open() should
+> >> ignore FOPEN_PASSTHROUGH when fc->writeback_cache is set. Either of bo=
+th
+> >> would result in the opposite of what you are trying to achieve - which
+> >> is why I think it is important to understand what is your actual goal.
+> >>
+> >
+> > Is there no standard way for FUSE client to tell the server that the
+> > INIT response is invalid?
 >
-> 	M.
+> Problem is that at FUSE_INIT time it is already mounted. process_init_rep=
+ly()
+> can set an error state, but fuse_get_req*() will just result in ECONNREFU=
+SED.*
 >
-OK, here is the dts file: 
-https://github.com/chzigotzky/kernels/blob/main/dtb_src/X1000/nemo.dts
+> >
+> > Anyway, we already ignore  FUSE_PASSTHROUGH in INIT response
+> > for several cases, so this could be another case.
+> > Then FOPEN_PASSTHROUGH will fail with EIO (not be ignored).
+>
+> So basically this?
+>
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 573550e7bbe1..36c6dcd47a53 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1327,7 +1327,8 @@ static void process_init_reply(struct fuse_mount *f=
+m, struct fuse_args *args,
+>                         if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH) &&
+>                             (flags & FUSE_PASSTHROUGH) &&
+>                             arg->max_stack_depth > 0 &&
+> -                           arg->max_stack_depth <=3D FILESYSTEM_MAX_STAC=
+K_DEPTH) {
+> +                           arg->max_stack_depth <=3D FILESYSTEM_MAX_STAC=
+K_DEPTH &&
+> +                           !(flags & FUSE_WRITEBACK_CACHE)) {
+>                                 fc->passthrough =3D 1;
+>                                 fc->max_stack_depth =3D arg->max_stack_de=
+pth;
+>                                 fm->sb->s_stack_depth =3D arg->max_stack_=
+depth;
+>
+>
 
-Thanks for your help.
+Yap.
+Maybe add something to the comment, because the comment is
+about max_stack_depth and someone may assume that it also refers
+to FUSE_WRITEBACK_CACHE somehow.
 
+Thanks,
+Amir.
 
