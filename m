@@ -1,99 +1,263 @@
-Return-Path: <linux-kernel+bounces-239588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C919262DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:08:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61B992630F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB202B28566
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:07:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21A501F21A4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEB117BB1E;
-	Wed,  3 Jul 2024 14:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1098017FAAA;
+	Wed,  3 Jul 2024 14:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pozSQlOP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="qb3NIjXO"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC9917B51A;
-	Wed,  3 Jul 2024 14:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5920517BB20;
+	Wed,  3 Jul 2024 14:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720015632; cv=none; b=ueAIuVudK8DTBXjwsOTFlrw0TpIXFL2lBqis6uc9P4U8Ud8SR2tgXsbK3f3zKGTa9iegH+1+lj06tEyvfA4vd6LLHxpkhvcAySylfePD8M6nU2MbNS0momnN6uUKLOZHLaFBOSpJUc9fThWQyHzshs0+C4f+HnjYM16CIEgtMGM=
+	t=1720015749; cv=none; b=NuuK34YLdkq10MKKfvCDKXmG+niLSClmmg66E3404FTJyQyBStU7HLQveaAakAX+y1F3gTnqukIobkO9mhqQSda8KonDIOHvskjzGpiJeqXzioRwQso44PDBD2MOvhVZ6a+2pFiMUJyjRQtEiLqTWlGO1fJlryrX1jFgrqjYjYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720015632; c=relaxed/simple;
-	bh=cg4oQWa4mAvOE44mdOlcpdj6cbZ+HMPUwfv7SHiAbQ0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Y0+dVM8k/Wtc4sHT8orRQjxoiYkAsXV/+2x5OOFQmrp47qMlXQ4XkrO7ZzPYZUgIROZdjN3qDm/+z3/faZqGcrr4L7t6TOSmg8Nl1D4n4zxDwZ1eLSjOAmHBds7nzqYXwKGEMqe/n83UQl6kkzQP514pJ9DADa2a8T2CeBMz4JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pozSQlOP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5C45C4AF07;
-	Wed,  3 Jul 2024 14:07:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720015632;
-	bh=cg4oQWa4mAvOE44mdOlcpdj6cbZ+HMPUwfv7SHiAbQ0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=pozSQlOP0sdfd+dpy5AHIdtEZc2q59DrIN3Ite/3XX7RzlDpnJ0Zp8o4ocQSD1fWp
-	 5Vgp2/jRIfWDsgm9HsK2G1f8krds1YE8j4PCvvEqPSE7aEGyrT094SkcyPALUhHABc
-	 EC46aHoU3H6cft9nY3M6P+uN6NVuQGu6DpLttyw/q0gfWt90yllorgQKaEfSs5XlMg
-	 f1mKGCZi6Pj6Rk0DmnwSMaQaFxPIYdX41Y0/rcXI5nwLZm2ZXegGRAA6Yb9sRvVjgr
-	 657oKwd+BTXoxDK5TnzX8SV//1M6GHKg2ox9QJ9muwltAeUxaxsd7WDesk1TmVB1Yx
-	 Wc6S2OYm97T0g==
-From: Mark Brown <broonie@kernel.org>
-To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
- Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240702215402.839673-1-robh@kernel.org>
-References: <20240702215402.839673-1-robh@kernel.org>
-Subject: Re: [PATCH] ASoC: tas2781: Use of_property_read_reg()
-Message-Id: <172001563047.37877.18071249071920971995.b4-ty@kernel.org>
-Date: Wed, 03 Jul 2024 15:07:10 +0100
+	s=arc-20240116; t=1720015749; c=relaxed/simple;
+	bh=Bw4vY7jEjSOg6hMIE8OqvIBgzXuo4jFCd+M5ok113KI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g2MWX3eFwZD5Z/2vPkd+YbAIO21CjjIhOefDvevjdxuIdL8UAU6UOefi5zQ+gektqLxCvk0JW14Qr9x/NfVrpjkS+54SwnUwrxaj0PdkSJFiGSUiIxE+8NShOCzeFvt4lfbf1azV0o+CnFtKUwRs0pyZPsgLYTz6HoqbuPiQsjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=qb3NIjXO; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4634xaHm026216;
+	Wed, 3 Jul 2024 09:08:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=bVB0i4pNoq2fQu30
+	FpUkrcVgBx0xpMu1TujfbGuFeIw=; b=qb3NIjXOYfTGDwBoLoQwY2zOV3ql/wLk
+	hHOsSOcZnjMNd71YramZEb8TKr7sQOXJlSQLX+CM2hCOfQeDIshWlMZPgjYIJsE+
+	vbYraNDSiuA55GA3XhqbijJOp5VNB26CoeD4IDeEOLo/N767b6HJl5k1IBLZ5vHt
+	P9uR1oUkZAdItjNu/vxczaereSAdKhXVV6M58gxmBZ/qGGqjd0DUztn78eErMZzF
+	RYLFCiqIU7iOfyeKwkG1wfCBf53uTUWQlYRHt5ZaDSG6lmj14cYQHyN1o0BQMFSi
+	A/G3SH5ZWC+aiObCD8+9PSSMyAq4klFupGTNMqxWCG+OEBuspMTG3g==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 402fnxd5vu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 09:08:25 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 15:08:23 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Wed, 3 Jul 2024 15:08:23 +0100
+Received: from lonswws02.ad.cirrus.com (lonswws02.ad.cirrus.com [198.90.188.42])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 7A5FC820244;
+	Wed,  3 Jul 2024 14:08:23 +0000 (UTC)
+From: Stefan Binding <sbinding@opensource.cirrus.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        "Stefan
+ Binding" <sbinding@opensource.cirrus.com>
+Subject: [PATCH v1] ALSA: hda: cs35l41: Fix missing Speaker ID GPIO description in _DSD
+Date: Wed, 3 Jul 2024 15:07:28 +0100
+Message-ID: <20240703140802.27688-1-sbinding@opensource.cirrus.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: NQIdW6bR-EvdD0F1Gn5Cil1PY5TeSeum
+X-Proofpoint-ORIG-GUID: NQIdW6bR-EvdD0F1Gn5Cil1PY5TeSeum
+X-Proofpoint-Spam-Reason: safe
 
-On Tue, 02 Jul 2024 15:54:01 -0600, Rob Herring (Arm) wrote:
-> Replace the open-coded parsing of "reg" with of_property_read_reg().
-> The #ifdef is also easily replaced with IS_ENABLED().
-> 
-> 
+Laptop 10431A63 contains valid _DSD, but missing Speaker ID
+description. Add this discription, but keep the rest of the _DSD to
+ensure the correct firmware and tuning is loaded for this laptop.
 
-Applied to
+Signed-off-by: Stefan Binding <sbinding@opensource.cirrus.com>
+---
+ sound/pci/hda/cs35l41_hda.c          | 86 ++++++++++++++++------------
+ sound/pci/hda/cs35l41_hda.h          |  1 +
+ sound/pci/hda/cs35l41_hda_property.c | 15 +++++
+ 3 files changed, 65 insertions(+), 37 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: tas2781: Use of_property_read_reg()
-      commit: 31a45f9190b5b4f5cd8cdec8471babd5215eee04
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/sound/pci/hda/cs35l41_hda.c b/sound/pci/hda/cs35l41_hda.c
+index ee9f83b737de..4b411ed8c3fe 100644
+--- a/sound/pci/hda/cs35l41_hda.c
++++ b/sound/pci/hda/cs35l41_hda.c
+@@ -1753,38 +1753,14 @@ int cs35l41_get_speaker_id(struct device *dev, int amp_index, int num_amps, int
+ 	return speaker_id;
+ }
+ 
+-static int cs35l41_hda_read_acpi(struct cs35l41_hda *cs35l41, const char *hid, int id)
++int cs35l41_hda_parse_acpi(struct cs35l41_hda *cs35l41, struct device *physdev, int id)
+ {
+ 	struct cs35l41_hw_cfg *hw_cfg = &cs35l41->hw_cfg;
+ 	u32 values[HDA_MAX_COMPONENTS];
+-	struct acpi_device *adev;
+-	struct device *physdev;
+-	struct spi_device *spi;
+-	const char *sub;
+ 	char *property;
+ 	size_t nval;
+ 	int i, ret;
+ 
+-	adev = acpi_dev_get_first_match_dev(hid, NULL, -1);
+-	if (!adev) {
+-		dev_err(cs35l41->dev, "Failed to find an ACPI device for %s\n", hid);
+-		return -ENODEV;
+-	}
+-
+-	cs35l41->dacpi = adev;
+-	physdev = get_device(acpi_get_first_physical_node(adev));
+-
+-	sub = acpi_get_subsystem_id(ACPI_HANDLE(physdev));
+-	if (IS_ERR(sub))
+-		sub = NULL;
+-	cs35l41->acpi_subsystem_id = sub;
+-
+-	ret = cs35l41_add_dsd_properties(cs35l41, physdev, id, hid);
+-	if (!ret) {
+-		dev_info(cs35l41->dev, "Using extra _DSD properties, bypassing _DSD in ACPI\n");
+-		goto out;
+-	}
+-
+ 	property = "cirrus,dev-index";
+ 	ret = device_property_count_u32(physdev, property);
+ 	if (ret <= 0)
+@@ -1816,8 +1792,9 @@ static int cs35l41_hda_read_acpi(struct cs35l41_hda *cs35l41, const char *hid, i
+ 	/* To use the same release code for all laptop variants we can't use devm_ version of
+ 	 * gpiod_get here, as CLSA010* don't have a fully functional bios with an _DSD node
+ 	 */
+-	cs35l41->reset_gpio = fwnode_gpiod_get_index(acpi_fwnode_handle(adev), "reset", cs35l41->index,
+-						     GPIOD_OUT_LOW, "cs35l41-reset");
++	cs35l41->reset_gpio = fwnode_gpiod_get_index(acpi_fwnode_handle(cs35l41->dacpi), "reset",
++						     cs35l41->index, GPIOD_OUT_LOW,
++						     "cs35l41-reset");
+ 
+ 	property = "cirrus,speaker-position";
+ 	ret = device_property_read_u32_array(physdev, property, values, nval);
+@@ -1873,6 +1850,51 @@ static int cs35l41_hda_read_acpi(struct cs35l41_hda *cs35l41, const char *hid, i
+ 		hw_cfg->bst_type = CS35L41_EXT_BOOST;
+ 
+ 	hw_cfg->valid = true;
++
++	return 0;
++err:
++	dev_err(cs35l41->dev, "Failed property %s: %d\n", property, ret);
++	hw_cfg->valid = false;
++	hw_cfg->gpio1.valid = false;
++	hw_cfg->gpio2.valid = false;
++	acpi_dev_put(cs35l41->dacpi);
++
++	return ret;
++}
++
++static int cs35l41_hda_read_acpi(struct cs35l41_hda *cs35l41, const char *hid, int id)
++{
++	struct acpi_device *adev;
++	struct device *physdev;
++	struct spi_device *spi;
++	const char *sub;
++	int ret;
++
++	adev = acpi_dev_get_first_match_dev(hid, NULL, -1);
++	if (!adev) {
++		dev_err(cs35l41->dev, "Failed to find an ACPI device for %s\n", hid);
++		return -ENODEV;
++	}
++
++	cs35l41->dacpi = adev;
++	physdev = get_device(acpi_get_first_physical_node(adev));
++
++	sub = acpi_get_subsystem_id(ACPI_HANDLE(physdev));
++	if (IS_ERR(sub))
++		sub = NULL;
++	cs35l41->acpi_subsystem_id = sub;
++
++	ret = cs35l41_add_dsd_properties(cs35l41, physdev, id, hid);
++	if (!ret) {
++		dev_info(cs35l41->dev, "Using extra _DSD properties, bypassing _DSD in ACPI\n");
++		goto out;
++	}
++
++	ret = cs35l41_hda_parse_acpi(cs35l41, physdev, id);
++	if (ret) {
++		put_device(physdev);
++		return ret;
++	}
+ out:
+ 	put_device(physdev);
+ 
+@@ -1888,16 +1910,6 @@ static int cs35l41_hda_read_acpi(struct cs35l41_hda *cs35l41, const char *hid, i
+ 	}
+ 
+ 	return 0;
+-
+-err:
+-	dev_err(cs35l41->dev, "Failed property %s: %d\n", property, ret);
+-	hw_cfg->valid = false;
+-	hw_cfg->gpio1.valid = false;
+-	hw_cfg->gpio2.valid = false;
+-	acpi_dev_put(cs35l41->dacpi);
+-	put_device(physdev);
+-
+-	return ret;
+ }
+ 
+ int cs35l41_hda_probe(struct device *dev, const char *device_name, int id, int irq,
+diff --git a/sound/pci/hda/cs35l41_hda.h b/sound/pci/hda/cs35l41_hda.h
+index b0bebb778462..c730b3351589 100644
+--- a/sound/pci/hda/cs35l41_hda.h
++++ b/sound/pci/hda/cs35l41_hda.h
+@@ -104,5 +104,6 @@ int cs35l41_hda_probe(struct device *dev, const char *device_name, int id, int i
+ 		      struct regmap *regmap, enum control_bus control_bus);
+ void cs35l41_hda_remove(struct device *dev);
+ int cs35l41_get_speaker_id(struct device *dev, int amp_index, int num_amps, int fixed_gpio_id);
++int cs35l41_hda_parse_acpi(struct cs35l41_hda *cs35l41, struct device *physdev, int id);
+ 
+ #endif /*__CS35L41_HDA_H__*/
+diff --git a/sound/pci/hda/cs35l41_hda_property.c b/sound/pci/hda/cs35l41_hda_property.c
+index 51998d1c72ff..5860379a0412 100644
+--- a/sound/pci/hda/cs35l41_hda_property.c
++++ b/sound/pci/hda/cs35l41_hda_property.c
+@@ -428,6 +428,20 @@ static int lenovo_legion_no_acpi(struct cs35l41_hda *cs35l41, struct device *phy
+ 	return 0;
+ }
+ 
++static int missing_speaker_id_gpio2(struct cs35l41_hda *cs35l41, struct device *physdev, int id,
++				    const char *hid)
++{
++	int ret;
++
++	ret = cs35l41_add_gpios(cs35l41, physdev, -1, 2, -1, 2);
++	if (ret) {
++		dev_err(cs35l41->dev, "Error adding GPIO mapping: %d\n", ret);
++		return ret;
++	}
++
++	return cs35l41_hda_parse_acpi(cs35l41, physdev, id);
++}
++
+ struct cs35l41_prop_model {
+ 	const char *hid;
+ 	const char *ssid;
+@@ -501,6 +515,7 @@ static const struct cs35l41_prop_model cs35l41_prop_model_table[] = {
+ 	{ "CSC3551", "104317F3", generic_dsd_config },
+ 	{ "CSC3551", "10431863", generic_dsd_config },
+ 	{ "CSC3551", "104318D3", generic_dsd_config },
++	{ "CSC3551", "10431A63", missing_speaker_id_gpio2 },
+ 	{ "CSC3551", "10431A83", generic_dsd_config },
+ 	{ "CSC3551", "10431B93", generic_dsd_config },
+ 	{ "CSC3551", "10431C9F", generic_dsd_config },
+-- 
+2.43.0
 
 
