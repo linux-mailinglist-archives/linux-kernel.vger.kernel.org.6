@@ -1,115 +1,130 @@
-Return-Path: <linux-kernel+bounces-239046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895F0925565
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:31:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD8E925567
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2542BB2426D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CCF02850FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5EE13B5AC;
-	Wed,  3 Jul 2024 08:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6496613A3F7;
+	Wed,  3 Jul 2024 08:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="De8x6DGF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C9GnfByM"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533374D584;
-	Wed,  3 Jul 2024 08:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160601386DF
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719995474; cv=none; b=OcGVfzFeUZmjly9XhlWbNRYmrqZH4XVC9TPoIrEzER3xsQEtOkG+dMeTJq9YPG8v+e/GZnj7GjYhNMFMqRhOajWyEws56GvvluFbDU2faLAGmfm+YosKAvY7rc7qrb0gkExNOSwZu2cqzrcLxiwlxsXWTthcqufByun/m16WUZ4=
+	t=1719995497; cv=none; b=DwS0l6oUTnbt3wrRC3yymxTGFeuRMvgl+LFxl7+cx4FeMIjy/6j85sc+bMIXbuARW2ssCLOSthB7Ic2WnrTd5UIe60gAYmPt/kH5GUc8sdbVuOoQy5z3aMMpb+cbFG5Mewml8LnbhYo9gGOb7CeDmTXQ9Hq/rGg8DeV2Cg1C2qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719995474; c=relaxed/simple;
-	bh=YDu++FQvyBbQ5q007YIq1M9txqwp9dKc/o3S30ODOmA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DbrKV8gy6iitBNvUKGUjc4B3Kua+Gj0Rr+n3y6f327gF5PIzQ9hOHgAM5sPWx0YpHal8YpQ1jyOxuQWBw9wSDePPPo/kEkQWPFErvXeBnlJunGuFHM+irBMg8JohH/SqdK6ISxLT+e80rZbD6IJ9QIRcw+jUyKPZwChw5DOH8gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=De8x6DGF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10385C2BD10;
-	Wed,  3 Jul 2024 08:31:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719995473;
-	bh=YDu++FQvyBbQ5q007YIq1M9txqwp9dKc/o3S30ODOmA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=De8x6DGFGSuDGJ9Fd92iKUb2XW3pL8/ay7jtZOpHAFu4EkQkGXk28CEzWBY4zqQqQ
-	 LLulSEHgAtRsvUkG9EEaO0z2E8Xfuvp9Cn1fxSrqqqp8Zh1tw9rKGyGd9uUEq3kyTR
-	 zx34zQ/4yOkCJN3JvLEF1niGnZ6jxyiUFbUs3OJZnjwdCI5pGdblQXuG/TAbWoArdm
-	 wFpKbtbXyvlbOcF3TAJs/1N59b6RSSUPF4H3h3s0jkbtbNRoFP1+J8CijKpRxtSnRN
-	 ac/3TBDqVqZP5959YIKjEOFe8++Ca088D8KzNsHGUPbz7OknTrs1BDL+R1C97f7jBv
-	 1olW5FUw/KFrQ==
-From: Christian Brauner <brauner@kernel.org>
-To: netfs@lists.linux.dev,
-	dhowells@redhat.com,
-	jlayton@kernel.org,
-	libaokun@huaweicloud.com
-Cc: Christian Brauner <brauner@kernel.org>,
-	jefflexu@linux.alibaba.com,
-	zhujia.zj@bytedance.com,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	yukuai3@huawei.com,
-	wozizhi@huawei.com,
-	Baokun Li <libaokun1@huawei.com>,
-	Gao Xiang <xiang@kernel.org>
-Subject: Re: (subset) [PATCH v3 0/9] cachefiles: random bugfixes
-Date: Wed,  3 Jul 2024 10:30:55 +0200
-Message-ID: <20240703-miene-ausziehen-1f6a167a1020@brauner>
+	s=arc-20240116; t=1719995497; c=relaxed/simple;
+	bh=BlydWvEq+lJU50RG7ZzWFAhX9TQHOsK3+vDE1ICGSPQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KXmAOM8/D25i4ORe28tQwiWeNNIMdtO+khafQ4Oov8+Y0VMQKPcfFHKiM6A1z/tvUM7YwfBWqk7fZ5T4Nob+aCfAu/glzknfozRP0ijChnMqZVfdg19/HlatgSMq25YYcRguHU+RUVewzSb/Yx3QbMrWVhLdk5vJ+QrWTOIcAJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C9GnfByM; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42573d3f7e4so34077785e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 01:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719995494; x=1720600294; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6teWzjrPNMwyuUfB/rea1p/V9QpvkiuOZXrjhGxSXpQ=;
+        b=C9GnfByMAwJKHxiq6oFnAWIVtvAanOmlWP2z1RZky6vQREXLXGlf6RGRklI4OQJroj
+         Aunx+dIoRnVx5vMn/f3N9jhPQPjfvLQqzHcsmOJXplG84HChhCNCk77iA2J7hGFK/IzQ
+         lsGHPxjyf7nykPgOyhpFpsT7ch4djvthQWVtbGAvoJ8ugwTtzow/lWPv8wgjEPRv9HeX
+         RJeaDb1okwVS4s5QBBqGz44ov6GMQd43wtwTY9Eom+oDUDl1sREj97THdlgJzkDwOl6p
+         3bmxxsDT6rg5qHKRILXojS175MTB/pq3uG5i71D3plweiiwMEj+iMPVFhkXsUyd9w+lB
+         1Jog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719995494; x=1720600294;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6teWzjrPNMwyuUfB/rea1p/V9QpvkiuOZXrjhGxSXpQ=;
+        b=dnJWYMCpT42eVIoVeapL8jBH4ZWvk8U4tE/CSdHgHXZ6jbVVuVk8ZaMQGW/Xn5Y3nU
+         fx5cGKx7PvBTUw3OW9gXBPVexjwuZRZS12RtBKQvry2lADbH2vPTsaVY2yHHxhmVkNJs
+         +cL2xCx/jemL4PnjiO6n0pHgQh7E8LGz/umoNr/bIZuMePjWg8roDfhkvOqm2A5W3OGb
+         mePLtsYxhqcO1ipx567tLG+HDKzWY0yhdFhkh/TObpxnEVNJ+yjSOxMWfFovxLXRfhKC
+         s1ZmBEN3FnZmQtK5j6sSv2UAbvhQ4JpUwWXd10mVkUI7K2KAYuJfWpAGEdk8fYTRb62R
+         CeIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqyEf5/CuJCcabhFOtD6JYj2nanvW7zpNdb/hvciOz+PHloGeUZnEV90Ej5iViQldgHpRc01YfMEp3TV0wscNyjfdV0dRbJfIfdO96
+X-Gm-Message-State: AOJu0Yx2W7WAt/o8HZHdg9LWFeTbgA9cB23zdj9WMT/GK0vexhpTG1Zc
+	JsX3EnJKrq+P414fSyuO8ycZbPHKeJPOz9QMNWot4gOjsy/8OAo9d1x006EgS2Q=
+X-Google-Smtp-Source: AGHT+IE+U8mZtsBhfAXNgT4J9m0ilBbDh9pFD6F//fwXE1kVllDLT8bYH0ANRMJt41mdgBM0UxKcFg==
+X-Received: by 2002:a05:600c:5486:b0:424:a779:b5bf with SMTP id 5b1f17b1804b1-4257a03a561mr76732165e9.20.1719995494607;
+        Wed, 03 Jul 2024 01:31:34 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4258036d034sm126760385e9.43.2024.07.03.01.31.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 01:31:33 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] hwmon: (dell-smm) Simplify with cleanup.h
+Date: Wed,  3 Jul 2024 10:31:29 +0200
+Message-ID: <20240703083129.95955-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240628062930.2467993-1-libaokun@huaweicloud.com>
-References: <20240628062930.2467993-1-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1761; i=brauner@kernel.org; h=from:subject:message-id; bh=YDu++FQvyBbQ5q007YIq1M9txqwp9dKc/o3S30ODOmA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS18rjf3fhdbtn9SEFvTZZnEz+xLrC75lD5Y5eYyue8b dxcivmTOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYiWcLwP6uI7eHCSFXlg75t rWt2T3IR4O2avGpbrV3qB34jcxXOg4wMF1LX5YReTFgbvXaLVebEdxEV+Tm63+IWzv58u+m8crY yLwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Fri, 28 Jun 2024 14:29:21 +0800, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Hi all!
-> 
-> This is the third version of this patch series, in which another patch set
-> is subsumed into this one to avoid confusing the two patch sets.
-> (https://patchwork.kernel.org/project/linux-fsdevel/list/?series=854914)
-> 
-> [...]
+Allocate memory, which is being freed at end of the scope, to make the
+code a bit simpler.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/hwmon/dell-smm-hwmon.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
+index 0362a13f6525..e72e26db6e10 100644
+--- a/drivers/hwmon/dell-smm-hwmon.c
++++ b/drivers/hwmon/dell-smm-hwmon.c
+@@ -14,6 +14,7 @@
+ 
+ #include <linux/acpi.h>
+ #include <linux/capability.h>
++#include <linux/cleanup.h>
+ #include <linux/cpu.h>
+ #include <linux/ctype.h>
+ #include <linux/delay.h>
+@@ -1095,9 +1096,9 @@ static int dell_smm_init_cdev(struct device *dev, u8 fan_num)
+ 	struct thermal_cooling_device *cdev;
+ 	struct dell_smm_cooling_data *cdata;
+ 	int ret = 0;
+-	char *name;
+ 
+-	name = kasprintf(GFP_KERNEL, "dell-smm-fan%u", fan_num + 1);
++	char *name __free(kfree) = kasprintf(GFP_KERNEL, "dell-smm-fan%u",
++					     fan_num + 1);
+ 	if (!name)
+ 		return -ENOMEM;
+ 
+@@ -1115,8 +1116,6 @@ static int dell_smm_init_cdev(struct device *dev, u8 fan_num)
+ 		ret = -ENOMEM;
+ 	}
+ 
+-	kfree(name);
+-
+ 	return ret;
+ }
+ 
+-- 
+2.43.0
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[4/9] cachefiles: propagate errors from vfs_getxattr() to avoid infinite loop
-      https://git.kernel.org/vfs/vfs/c/b688bd1735e7
-[5/9] cachefiles: stop sending new request when dropping object
-      https://git.kernel.org/vfs/vfs/c/32eb47eab833
-[6/9] cachefiles: cancel all requests for the object that is being dropped
-      https://git.kernel.org/vfs/vfs/c/2f47569feef0
-[7/9] cachefiles: wait for ondemand_object_worker to finish when dropping object
-      https://git.kernel.org/vfs/vfs/c/343ce8c52dd0
-[8/9] cachefiles: cyclic allocation of msg_id to avoid reuse
-      https://git.kernel.org/vfs/vfs/c/5e6c8a1ed5ba
-[9/9] cachefiles: add missing lock protection when polling
-      https://git.kernel.org/vfs/vfs/c/5fcb2094431b
 
