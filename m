@@ -1,203 +1,369 @@
-Return-Path: <linux-kernel+bounces-239830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524F29265D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:19:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E597F9265E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B74EBB23220
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:19:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB371F23399
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40822181CF9;
-	Wed,  3 Jul 2024 16:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A329E1849C5;
+	Wed,  3 Jul 2024 16:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5+fHgwL"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="REpniWAn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEBC180A86;
-	Wed,  3 Jul 2024 16:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931FB1836D8
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720023539; cv=none; b=GBx0pXQueI1UJkPF+FC07qax0JbALYBgkmJz92qORzI52lFBIrbgLqX6XselhBFqmrZN6lmu0+/Jfmg1ipYG/w9SXssvv50DCOSEJkFVRimI2ETBmkAA9Vbk66Yql0rK3uLHuZUhwDjliDaPOPT5bUixRUvqiNozUTZ7sACWJAo=
+	t=1720023569; cv=none; b=gbl+vLPL4R6aqZ2cfXnDG+kBk/nrzaiJt6XAr+yWH3j370kw6UAx+W12PRQS7L6MhiTNjBkTnWWW6lgxyEYXunq0Lun4JQSBL5cW0I6bduz+FOtQN30Ex3V15Ie3zKCS5SvuQRTYcjNWs97QFY5l1AcvSZL0shUMenPQLj+hy5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720023539; c=relaxed/simple;
-	bh=gsbxeyzBgRva3YUtYUEpVxn4Ojk5LKZtDO81mCspOh8=;
+	s=arc-20240116; t=1720023569; c=relaxed/simple;
+	bh=XZQ2khpGw92ayYyOOjfsbAZCVbk4sLWNq5yArPaelbQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m5We2pS6ssQDwSP+/UUHvbk+Hf7gdDZRPkXvOEAiuapT9mDjwMssbva1hNZbYYBZgxaPYgFft/aWBHBRTIwol9gWSfkqmGVwvRqUCO7gB8CqepWxOzZkPcHkW0sop+AbqQESpUaMdhoh2S+uR9SwrjXr9ANxLTlsm4j+R4aVq/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5+fHgwL; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-58b0dddab63so4130103a12.3;
-        Wed, 03 Jul 2024 09:18:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720023536; x=1720628336; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=esD+x2zV0b2HUw6HwJUTrpl5r5TD37X0+FbuUmt4lJo=;
-        b=l5+fHgwLgTbW/rklc0uxKu5E3EKuEB85AUGRXKUPNDAIpp7Y/xsAY2aczUEoRlgGI2
-         amrIU3fEqvRbJvoBjc0ADVuqMoCVKnY3AQTzivTJK8hl/VM9CF6AtLaCUsGMWvI+f3H2
-         lrSpQKwERSDi/XlXqH3nLHIBbpe46oglbP109US4FN6e5pCJD7TTPlkkDkTkULk9xjBi
-         lNDzDzt6Z4XyhVpDA/1FX1YQvaSeq10DChx7EPYjaMOPKUhqjQn650UcAqEKWJuBVUXM
-         Uz30HlAg5H9aKye7HkD8jZy1J+SY9QGuuTP5mBpglqkXQEtYqZxB1zgbCzNYY2v4N9cw
-         zvpQ==
+	 To:Cc:Content-Type; b=HhtdNU5bgGSkX8Q3lPVpX8NTds6iq79uuE/57uQtIAj9WK671ySKQbeLYkVKSrBlTweWmQGZdzncXYFsEbjvm8MZfvKL3jGyqnFKOySgypw1PMkdgCcqKBCRAbpWT1WzlJmY8W3wAez6xj5FxN9w3IiN48t/jJBtAdEnRJfGFrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=REpniWAn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720023565;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c65T9aGcCrnJaJaWK+o0SC+aJQfT0XzRMaqMZ/EJDM4=;
+	b=REpniWAnG293xyof8cG3Xb72Tct2qn6jdZUPtH6+8lgkyXR2xRndj2EL4McZOW8dOv2anm
+	fxBDAc/f43GCHffgeUnY5pHikBZ/CGhjfX82ch0czigSrfUJYyus6LmDp7ZJEmxdXIRgft
+	Owj77v7fgwRCBm6hJhP2sZBDecupdoY=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-250-wM-AH0WJOUelKoRZj4ptjg-1; Wed, 03 Jul 2024 12:19:24 -0400
+X-MC-Unique: wM-AH0WJOUelKoRZj4ptjg-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-57d3eca4bb7so1299360a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:19:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720023536; x=1720628336;
+        d=1e100.net; s=20230601; t=1720023562; x=1720628362;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=esD+x2zV0b2HUw6HwJUTrpl5r5TD37X0+FbuUmt4lJo=;
-        b=T1UtzYRnzTfGPbknVvxw+GGFP9fPY98fSizHV9hOe1S78EFLdti4RXUK7vbCmaMEdw
-         rD6LkLwBvuQl8c9WOUSMiwgji3ohu1QRCIhYEmYreo0y0mYFl4DoABaAz+Ut8N2/CsWQ
-         k94Kg4kCjAqoQn9mMdw6X4md02ncRFGQ+kyF6ewUHjGWuPl90lEGwwJUR+8rvZ8KZF3x
-         J8cV5hBH5JI2opKa8/t1jBXkYYKPOYLO7dnPSNPvcy47lXsRvF0MOQlLBULFmJQMyasX
-         ZvS788/fqfrENtJ+SsuTHnfrdSH8RMguceXZe1lAsy0k6L8J5UDbywRpwLGDIiwPjxWR
-         7YIw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+2Aoay+aL+Gn3tbbcqIQeN6AKTqyed6JCR5BcF4mnZx8tK3KVa3dQpluZNeqFnn4SQclyoDW0sB2E7c7onFS7T/tStp0dVCOFh7AHz8AKmCAOxIFhcVudESmX8QtYNcb2yS8F+CCnH475LA==
-X-Gm-Message-State: AOJu0Yy5qlLvoQh0o6/J6VVvNAuZp5wLiG6YBa6c9pDnyvBKCK8GHWIA
-	Ek/jH7lZjXEvZjfdilqpQNPUdza6OA/fSreIydLez6HgkRhare/ARrnM9t/coviCtJIvQS2DKk6
-	OIgHnntTcLS6x8G5o1XWrRlETInc=
-X-Google-Smtp-Source: AGHT+IFrxgGuzaRNyApPFpENAxOnyEk7yjeXF5TSrqyg43Iliri20si+kBcM7kVZGYcFuq65U5baHs//egURPR5OvQI=
-X-Received: by 2002:a50:e705:0:b0:57c:fa44:7a04 with SMTP id
- 4fb4d7f45d1cf-587a0bfeb3bmr7434340a12.39.1720023535793; Wed, 03 Jul 2024
- 09:18:55 -0700 (PDT)
+        bh=c65T9aGcCrnJaJaWK+o0SC+aJQfT0XzRMaqMZ/EJDM4=;
+        b=b/ZbRkBEXgfNbeKKYF2mh7gzmW2RSDMknMNrwrYkBMJSMy6sSJiYvTFgf2viiXkw1S
+         yblpEMKxs+CHg6enq2pNmo59Jc9dJdS5EKjTugcGJX/Y7yN6Eog8xvf/jicTgzIGw9LY
+         GpJmUl/cVzYlbbD5Aqnl1X7HxLw1JWtO/2i9Pct6UFeFF4D84Xk6WTriwQ4eoDqIY/aS
+         z2m2H+QQDWyxP/anT5i9efrJptRpXM4ETaFd8PqPR4oI43DoDoq+F7paOOeemrMzWzIW
+         AQG5XZGrE7sBabxf9K+hyXC6F4o+8ITDkRuJC6OILqBTm4/+RYENR5ZjOjTlXDbpnMgO
+         vDgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKTT9t6qrAC+jsvjwfLEwVnsYf8IHhuxZvgWECX5ymTszu8WWEhqE65nPHjvzZS4lOc4xvIBKEZx8fcLBCBZo+nV9BzJY1hiC9rJMq
+X-Gm-Message-State: AOJu0YwR5qq7P8le1yFzjKEK3/kFx8+lPE506wk6G0ux4YlUpqkaQEWL
+	kKaK7wlSq48pc/yTtazJCMXdQpPaRNUyWuiRVvuTzjUuS9YZRmXPzUxPpDmnxaFAjo8uFfnNyvr
+	8OkCevVqyUtVOQ9EWKPDAOyYyLadTH1Fki2/arsU2RgJf8Da8Gv0JtGx+An1SdYguZFcGn7U6Fv
+	5Ea5BYU0T8imGZGOFH5iE6MzsswHdEVA408dKkCskKrYUfrio=
+X-Received: by 2002:a05:6402:3591:b0:58c:b2b8:31b2 with SMTP id 4fb4d7f45d1cf-58ce5ef6ad8mr1719691a12.17.1720023562396;
+        Wed, 03 Jul 2024 09:19:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOPm2RKAFqhIP4SkrsoOYtpsOdJlOeWv6pMlJEn55IU/y69hvTL9KLEEXmYY5vce/n+pf4qv0hzVawdzxulgw=
+X-Received: by 2002:a05:6402:3591:b0:58c:b2b8:31b2 with SMTP id
+ 4fb4d7f45d1cf-58ce5ef6ad8mr1719679a12.17.1720023562050; Wed, 03 Jul 2024
+ 09:19:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626204033.255813-1-robdclark@gmail.com> <20240626204033.255813-2-robdclark@gmail.com>
- <20240703150205.GA6012@willie-the-truck>
-In-Reply-To: <20240703150205.GA6012@willie-the-truck>
-From: Rob Clark <robdclark@gmail.com>
-Date: Wed, 3 Jul 2024 09:18:43 -0700
-Message-ID: <CAF6AEGsgN8O2eJGqcJm1UaPzV2rWSXskAc+A8uk0mVbsj8Wm8A@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] iommu/io-pgtable-arm: Add way to debug pgtable walk
-To: Will Deacon <will@kernel.org>
-Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	Robin Murphy <robin.murphy@arm.com>, Rob Clark <robdclark@chromium.org>, 
-	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, Steven Price <steven.price@arm.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Kevin Tian <kevin.tian@intel.com>, 
-	Joao Martins <joao.m.martins@oracle.com>, 
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
+References: <20240626-stage-vdpa-vq-precreate-v2-0-560c491078df@nvidia.com> <20240626-stage-vdpa-vq-precreate-v2-15-560c491078df@nvidia.com>
+In-Reply-To: <20240626-stage-vdpa-vq-precreate-v2-15-560c491078df@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 3 Jul 2024 18:18:44 +0200
+Message-ID: <CAJaqyWfEv9KLKDSZidiO=ZoJvKVLaHzHW3+ModPxfGEiu1xMUw@mail.gmail.com>
+Subject: Re: [PATCH vhost v2 15/24] vdpa/mlx5: Allow creation of blank VQs
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
+	Cosmin Ratiu <cratiu@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 3, 2024 at 8:02=E2=80=AFAM Will Deacon <will@kernel.org> wrote:
+On Wed, Jun 26, 2024 at 12:28=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.co=
+m> wrote:
 >
-> Hi Rob,
+> Based on the filled flag, create VQs that are filled or blank.
+> Blank VQs will be filled in later through VQ modify.
 >
-> On Wed, Jun 26, 2024 at 01:40:26PM -0700, Rob Clark wrote:
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > Add an io-pgtable method to walk the pgtable returning the raw PTEs tha=
-t
-> > would be traversed for a given iova access.
-> >
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > ---
-> >  drivers/iommu/io-pgtable-arm.c | 34 +++++++++++++++++++++++++---------
-> >  include/linux/io-pgtable.h     | 16 ++++++++++++++++
-> >  2 files changed, 41 insertions(+), 9 deletions(-)
+> Downstream patches will make use of this to pre-create blank VQs at
+> vdpa device creation.
 >
-> Non-technical question, but with patch 2/2 being drm-specific, how do
-> you plan to get this merged this once it's finalised? I can take this
-> part via the IOMMU tree?
 
-I guess if need be, I could merge the drm part only after the iommu
-part lands.  We've lived with an earlier iteration of these series as
-downstream patches in the CrOS kernel for this long, it isn't the end
-of the world if it takes a bit longer
+s/Downstream/Later/ ?
 
-> > +static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
-> > +                                      unsigned long iova)
-> > +{
-> > +     struct arm_lpae_io_pgtable *data =3D io_pgtable_ops_to_data(ops);
-> > +     struct io_pgtable_walk_data wd =3D {};
-> > +     int ret, lvl;
-> > +
-> > +     ret =3D arm_lpae_pgtable_walk(ops, iova, &wd);
-> > +     if (ret)
-> > +             return 0;
-> > +
-> > +     lvl =3D wd.level + data->start_level;
->
-> nit, but the level is architectural so I think we should initialise
-> wd.level to data->start_level instead.
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
 
-Hmm, I wanted to use wd.level to get the index of the last entry in
-wd.ptes.  Perhaps I should just call it something other than 'level'
-instead?
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-> >
-> > -found_translation:
-> >       iova &=3D (ARM_LPAE_BLOCK_SIZE(lvl, data) - 1);
-> > -     return iopte_to_paddr(pte, data) | iova;
-> > +     return iopte_to_paddr(wd.ptes[wd.level - 1], data) | iova;
-> >  }
-> >
-> >  static void arm_lpae_restrict_pgsizes(struct io_pgtable_cfg *cfg)
-> > @@ -804,6 +819,7 @@ arm_lpae_alloc_pgtable(struct io_pgtable_cfg *cfg)
-> >               .map_pages      =3D arm_lpae_map_pages,
-> >               .unmap_pages    =3D arm_lpae_unmap_pages,
-> >               .iova_to_phys   =3D arm_lpae_iova_to_phys,
-> > +             .pgtable_walk   =3D arm_lpae_pgtable_walk,
-> >       };
-> >
-> >       return data;
-> > diff --git a/include/linux/io-pgtable.h b/include/linux/io-pgtable.h
-> > index 86cf1f7ae389..4d696724c7da 100644
-> > --- a/include/linux/io-pgtable.h
-> > +++ b/include/linux/io-pgtable.h
-> > @@ -171,12 +171,26 @@ struct io_pgtable_cfg {
-> >       };
-> >  };
-> >
-> > +/**
-> > + * struct io_pgtable_walk_data - information from a pgtable walk
-> > + *
-> > + * @ptes:     The recorded PTE values from the walk
-> > + * @level:    The level of the last PTE
-> > + *
-> > + * @level also specifies the last valid index in @ptes
-> > + */
-> > +struct io_pgtable_walk_data {
-> > +     u64 ptes[4];
-> > +     int level;
-> > +};
+> ---
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 85 +++++++++++++++++++++++++--------=
+------
+>  1 file changed, 55 insertions(+), 30 deletions(-)
 >
-> I wonder if we can do better than hardcoding the '4' here? I wouldn't be
-> surprised if this doesn't work, but could we do something along the
-> lines of:
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.c
+> index a8ac542f30f7..0a62ce0b4af8 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -158,7 +158,7 @@ static bool is_index_valid(struct mlx5_vdpa_dev *mvde=
+v, u16 idx)
 >
-> struct io_pgtable_walk_data {
->         int level;
->         int num_levels;
->         u64 ptes[] __counted_by(num_levels);
-> };
+>  static void free_fixed_resources(struct mlx5_vdpa_net *ndev);
+>  static void mvqs_set_defaults(struct mlx5_vdpa_net *ndev);
+> -static int setup_vq_resources(struct mlx5_vdpa_net *ndev);
+> +static int setup_vq_resources(struct mlx5_vdpa_net *ndev, bool filled);
+>  static void teardown_vq_resources(struct mlx5_vdpa_net *ndev);
 >
-> and then have the Arm (LPAE)-specific code wrap that in a private
-> structure:
+>  static bool mlx5_vdpa_debug;
+> @@ -874,13 +874,16 @@ static bool msix_mode_supported(struct mlx5_vdpa_de=
+v *mvdev)
+>                 pci_msix_can_alloc_dyn(mvdev->mdev->pdev);
+>  }
 >
-> struct arm_lpae_io_pgtable_walk_data {
->         struct io_pgtable_walk_data data;
->         u64 ptes[ARM_LPAE_MAX_LEVELS];
-> };
+> -static int create_virtqueue(struct mlx5_vdpa_net *ndev, struct mlx5_vdpa=
+_virtqueue *mvq)
+> +static int create_virtqueue(struct mlx5_vdpa_net *ndev,
+> +                           struct mlx5_vdpa_virtqueue *mvq,
+> +                           bool filled)
+>  {
+>         int inlen =3D MLX5_ST_SZ_BYTES(create_virtio_net_q_in);
+>         u32 out[MLX5_ST_SZ_DW(create_virtio_net_q_out)] =3D {};
+>         struct mlx5_vdpa_dev *mvdev =3D &ndev->mvdev;
+>         struct mlx5_vdpa_mr *vq_mr;
+>         struct mlx5_vdpa_mr *vq_desc_mr;
+> +       u64 features =3D filled ? mvdev->actual_features : mvdev->mlx_fea=
+tures;
+>         void *obj_context;
+>         u16 mlx_features;
+>         void *cmd_hdr;
+> @@ -898,7 +901,7 @@ static int create_virtqueue(struct mlx5_vdpa_net *nde=
+v, struct mlx5_vdpa_virtque
+>                 goto err_alloc;
+>         }
 >
-> which is used by the walker?
+> -       mlx_features =3D get_features(ndev->mvdev.actual_features);
+> +       mlx_features =3D get_features(features);
+>         cmd_hdr =3D MLX5_ADDR_OF(create_virtio_net_q_in, in, general_obj_=
+in_cmd_hdr);
+>
+>         MLX5_SET(general_obj_in_cmd_hdr, cmd_hdr, opcode, MLX5_CMD_OP_CRE=
+ATE_GENERAL_OBJECT);
+> @@ -906,8 +909,6 @@ static int create_virtqueue(struct mlx5_vdpa_net *nde=
+v, struct mlx5_vdpa_virtque
+>         MLX5_SET(general_obj_in_cmd_hdr, cmd_hdr, uid, ndev->mvdev.res.ui=
+d);
+>
+>         obj_context =3D MLX5_ADDR_OF(create_virtio_net_q_in, in, obj_cont=
+ext);
+> -       MLX5_SET(virtio_net_q_object, obj_context, hw_available_index, mv=
+q->avail_idx);
+> -       MLX5_SET(virtio_net_q_object, obj_context, hw_used_index, mvq->us=
+ed_idx);
+>         MLX5_SET(virtio_net_q_object, obj_context, queue_feature_bit_mask=
+_12_3,
+>                  mlx_features >> 3);
+>         MLX5_SET(virtio_net_q_object, obj_context, queue_feature_bit_mask=
+_2_0,
+> @@ -929,17 +930,36 @@ static int create_virtqueue(struct mlx5_vdpa_net *n=
+dev, struct mlx5_vdpa_virtque
+>         MLX5_SET(virtio_q, vq_ctx, queue_index, mvq->index);
+>         MLX5_SET(virtio_q, vq_ctx, queue_size, mvq->num_ent);
+>         MLX5_SET(virtio_q, vq_ctx, virtio_version_1_0,
+> -                !!(ndev->mvdev.actual_features & BIT_ULL(VIRTIO_F_VERSIO=
+N_1)));
+> -       MLX5_SET64(virtio_q, vq_ctx, desc_addr, mvq->desc_addr);
+> -       MLX5_SET64(virtio_q, vq_ctx, used_addr, mvq->device_addr);
+> -       MLX5_SET64(virtio_q, vq_ctx, available_addr, mvq->driver_addr);
+> -       vq_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATAVQ_GROUP]];
+> -       if (vq_mr)
+> -               MLX5_SET(virtio_q, vq_ctx, virtio_q_mkey, vq_mr->mkey);
+> -
+> -       vq_desc_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATAVQ_DESC_=
+GROUP]];
+> -       if (vq_desc_mr && MLX5_CAP_DEV_VDPA_EMULATION(mvdev->mdev, desc_g=
+roup_mkey_supported))
+> -               MLX5_SET(virtio_q, vq_ctx, desc_group_mkey, vq_desc_mr->m=
+key);
+> +                !!(features & BIT_ULL(VIRTIO_F_VERSION_1)));
+> +
+> +       if (filled) {
+> +               MLX5_SET(virtio_net_q_object, obj_context, hw_available_i=
+ndex, mvq->avail_idx);
+> +               MLX5_SET(virtio_net_q_object, obj_context, hw_used_index,=
+ mvq->used_idx);
+> +
+> +               MLX5_SET64(virtio_q, vq_ctx, desc_addr, mvq->desc_addr);
+> +               MLX5_SET64(virtio_q, vq_ctx, used_addr, mvq->device_addr)=
+;
+> +               MLX5_SET64(virtio_q, vq_ctx, available_addr, mvq->driver_=
+addr);
+> +
+> +               vq_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATAVQ_GR=
+OUP]];
+> +               if (vq_mr)
+> +                       MLX5_SET(virtio_q, vq_ctx, virtio_q_mkey, vq_mr->=
+mkey);
+> +
+> +               vq_desc_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATA=
+VQ_DESC_GROUP]];
+> +               if (vq_desc_mr &&
+> +                   MLX5_CAP_DEV_VDPA_EMULATION(mvdev->mdev, desc_group_m=
+key_supported))
+> +                       MLX5_SET(virtio_q, vq_ctx, desc_group_mkey, vq_de=
+sc_mr->mkey);
+> +       } else {
+> +               /* If there is no mr update, make sure that the existing =
+ones are set
+> +                * modify to ready.
+> +                */
+> +               vq_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATAVQ_GR=
+OUP]];
+> +               if (vq_mr)
+> +                       mvq->modified_fields |=3D MLX5_VIRTQ_MODIFY_MASK_=
+VIRTIO_Q_MKEY;
+> +
+> +               vq_desc_mr =3D mvdev->mr[mvdev->group2asid[MLX5_VDPA_DATA=
+VQ_DESC_GROUP]];
+> +               if (vq_desc_mr)
+> +                       mvq->modified_fields |=3D MLX5_VIRTQ_MODIFY_MASK_=
+DESC_GROUP_MKEY;
+> +       }
+>
+>         MLX5_SET(virtio_q, vq_ctx, umem_1_id, mvq->umem1.id);
+>         MLX5_SET(virtio_q, vq_ctx, umem_1_size, mvq->umem1.size);
+> @@ -959,12 +979,15 @@ static int create_virtqueue(struct mlx5_vdpa_net *n=
+dev, struct mlx5_vdpa_virtque
+>         kfree(in);
+>         mvq->virtq_id =3D MLX5_GET(general_obj_out_cmd_hdr, out, obj_id);
+>
+> -       mlx5_vdpa_get_mr(mvdev, vq_mr);
+> -       mvq->vq_mr =3D vq_mr;
+> +       if (filled) {
+> +               mlx5_vdpa_get_mr(mvdev, vq_mr);
+> +               mvq->vq_mr =3D vq_mr;
+>
+> -       if (vq_desc_mr && MLX5_CAP_DEV_VDPA_EMULATION(mvdev->mdev, desc_g=
+roup_mkey_supported)) {
+> -               mlx5_vdpa_get_mr(mvdev, vq_desc_mr);
+> -               mvq->desc_mr =3D vq_desc_mr;
+> +               if (vq_desc_mr &&
+> +                   MLX5_CAP_DEV_VDPA_EMULATION(mvdev->mdev, desc_group_m=
+key_supported)) {
+> +                       mlx5_vdpa_get_mr(mvdev, vq_desc_mr);
+> +                       mvq->desc_mr =3D vq_desc_mr;
+> +               }
+>         }
+>
+>         return 0;
+> @@ -1442,7 +1465,9 @@ static void dealloc_vector(struct mlx5_vdpa_net *nd=
+ev,
+>                 }
+>  }
+>
+> -static int setup_vq(struct mlx5_vdpa_net *ndev, struct mlx5_vdpa_virtque=
+ue *mvq)
+> +static int setup_vq(struct mlx5_vdpa_net *ndev,
+> +                   struct mlx5_vdpa_virtqueue *mvq,
+> +                   bool filled)
+>  {
+>         u16 idx =3D mvq->index;
+>         int err;
+> @@ -1471,7 +1496,7 @@ static int setup_vq(struct mlx5_vdpa_net *ndev, str=
+uct mlx5_vdpa_virtqueue *mvq)
+>                 goto err_connect;
+>
+>         alloc_vector(ndev, mvq);
+> -       err =3D create_virtqueue(ndev, mvq);
+> +       err =3D create_virtqueue(ndev, mvq, filled);
+>         if (err)
+>                 goto err_vq;
+>
+> @@ -2062,7 +2087,7 @@ static int change_num_qps(struct mlx5_vdpa_dev *mvd=
+ev, int newqps)
+>         } else {
+>                 ndev->cur_num_vqs =3D 2 * newqps;
+>                 for (i =3D cur_qps * 2; i < 2 * newqps; i++) {
+> -                       err =3D setup_vq(ndev, &ndev->vqs[i]);
+> +                       err =3D setup_vq(ndev, &ndev->vqs[i], true);
+>                         if (err)
+>                                 goto clean_added;
+>                 }
+> @@ -2558,14 +2583,14 @@ static int verify_driver_features(struct mlx5_vdp=
+a_dev *mvdev, u64 features)
+>         return 0;
+>  }
+>
+> -static int setup_virtqueues(struct mlx5_vdpa_dev *mvdev)
+> +static int setup_virtqueues(struct mlx5_vdpa_dev *mvdev, bool filled)
+>  {
+>         struct mlx5_vdpa_net *ndev =3D to_mlx5_vdpa_ndev(mvdev);
+>         int err;
+>         int i;
+>
+>         for (i =3D 0; i < mvdev->max_vqs; i++) {
+> -               err =3D setup_vq(ndev, &ndev->vqs[i]);
+> +               err =3D setup_vq(ndev, &ndev->vqs[i], filled);
+>                 if (err)
+>                         goto err_vq;
+>         }
+> @@ -2877,7 +2902,7 @@ static int mlx5_vdpa_change_map(struct mlx5_vdpa_de=
+v *mvdev,
+>
+>         if (teardown) {
+>                 restore_channels_info(ndev);
+> -               err =3D setup_vq_resources(ndev);
+> +               err =3D setup_vq_resources(ndev, true);
+>                 if (err)
+>                         return err;
+>         }
+> @@ -2888,7 +2913,7 @@ static int mlx5_vdpa_change_map(struct mlx5_vdpa_de=
+v *mvdev,
+>  }
+>
+>  /* reslock must be held for this function */
+> -static int setup_vq_resources(struct mlx5_vdpa_net *ndev)
+> +static int setup_vq_resources(struct mlx5_vdpa_net *ndev, bool filled)
+>  {
+>         struct mlx5_vdpa_dev *mvdev =3D &ndev->mvdev;
+>         int err;
+> @@ -2906,7 +2931,7 @@ static int setup_vq_resources(struct mlx5_vdpa_net =
+*ndev)
+>         if (err)
+>                 goto err_setup;
+>
+> -       err =3D setup_virtqueues(mvdev);
+> +       err =3D setup_virtqueues(mvdev, filled);
+>         if (err) {
+>                 mlx5_vdpa_warn(mvdev, "setup_virtqueues\n");
+>                 goto err_setup;
+> @@ -3000,7 +3025,7 @@ static void mlx5_vdpa_set_status(struct vdpa_device=
+ *vdev, u8 status)
+>                                 goto err_setup;
+>                         }
+>                         register_link_notifier(ndev);
+> -                       err =3D setup_vq_resources(ndev);
+> +                       err =3D setup_vq_resources(ndev, true);
+>                         if (err) {
+>                                 mlx5_vdpa_warn(mvdev, "failed to setup dr=
+iver\n");
+>                                 goto err_driver;
+>
+> --
+> 2.45.1
+>
 
-I guess we could just make the walk_data fxn ptr arg a void* and
-rename io_pgtable_walk_data -> io_lpae_pgtable_walk_data?  I'm not
-sure how hard to try to make this interface generic when I think it is
-probably only going to be used by code that knows what pgtable format
-is used.  It's kinda the same question about what type to use for the
-pte.  Maybe the answer is just "it's pgtable format dependent"?
-
-BR,
--R
 
