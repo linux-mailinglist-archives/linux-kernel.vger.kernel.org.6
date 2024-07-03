@@ -1,136 +1,167 @@
-Return-Path: <linux-kernel+bounces-239875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99377926652
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:46:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B65F3926654
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CABFB1C2102A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:46:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 249F9B22591
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DE1183080;
-	Wed,  3 Jul 2024 16:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B0718307B;
+	Wed,  3 Jul 2024 16:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JoLgkaAB"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DKs7qNri"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9C01EB56
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D177E17E907
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 16:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720025203; cv=none; b=Nd03MF0bl0O7YGKeQjN9amJDde9mkptTQUhcIC64w5qZmWanwvEARNDIW4VyJnWKQSW820bESyFEFNlLpK8wkpLG2aZOYDXe4eyu54SHl5+FleQixltrRXSUbod1wD8ugtkuhXNFSpo+eEq4UpVpi39OJJ8zwpgjs0Igz4Hx38c=
+	t=1720025273; cv=none; b=VCT7Bts8bU2TSjxm1I43VX6XVgRztuSSkrTOuqsJTOaluRtCQ/NtiZOA82boyHhuXsITpGWV418qm6SPARibBcYbVbNduQRWHo6F3jTwvDrnViNigvAOViuytpNm0kHTBDSDy7ul4l269LgE9DBphNxZ3Hl3uyvEugZndB5OpzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720025203; c=relaxed/simple;
-	bh=HMpCFckabAc3rUFqu0pOABiEctF7GbrRYkZcXjBkkMo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VQFa+OYaN5ernC432L9COFrMSgdAmaKyIk2DjqfwQljtq66Pfh/m+0I2sWGjhP1aNKy5eMRwb9jbZdhgw3SbMpPDIEw2J/AYYvQCzmGqvcj3D7ULfZlqCO+MPQwyMggnmliP8j0Jstw4/xp8qXim1t5x6/ZgYxQcR1fwS7fkPAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zenghuchen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JoLgkaAB; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zenghuchen.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6520c7bd15cso7212327b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:46:42 -0700 (PDT)
+	s=arc-20240116; t=1720025273; c=relaxed/simple;
+	bh=lJ+oJjGSmPm7QGJbwvHUTgTAnkoXpzeERWyvbJICW+g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PYHUQ8syJCnD/fTqAoJKma97QXOk/YPwHwblQOC1atDEJcj24u+Da6dmg6iIm+xCqS9KZlqr9uO3g/VSJvuEQsqbMIVHh/6bW8TZhgtS9YGV2E9k6ASNVGbfC3g/CR368/6630Df7n2sSvWf0Yv5nzP339tsEy1JG1C+kypEA4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DKs7qNri; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-58b3fee65d8so3123267a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:47:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720025201; x=1720630001; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uGqHE0E7+SOnBS5UkqHAR0RRhXN6nF8kZmvFEId7fd0=;
-        b=JoLgkaABg2ll7SEyxYSxTuhHsIEvMrxmtMfE5aYRH5ZxeER7GxF0+z/tLXZxXc+Xyf
-         dukZWdQjIuoLbqESG3V44gH8kvuAJf82QwFDlscp158npRAf+XNFoXlVIyhil43FgNxY
-         0VX9xLfVHFE6YsY72/W/sIBMQW4jplc3LQuPXZlVNIhGOKasDrGKUqZaKjaTCzReStwb
-         0GH3RSyVcDborGWnXq8r7qQ9X+EPsYfxJHiwax6XnuywGVHZiB3gkJo28DiC/4W3F0si
-         Kbf/Numcn8wGTB+aEALZ0iQaEw2pHmifNI++maam4eRIuWinq1ZXVlqSliJaH8SFKdzF
-         7fsw==
+        d=linux-foundation.org; s=google; t=1720025270; x=1720630070; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DTEVlOEUHDwAOvpYSd+1fj7nxZG6XoxqWf/WJzx45vU=;
+        b=DKs7qNriwfjI/ITcS4HeWN83dVsOehD/tzOF8i8rwT9frEfUlvu0fvsPMIkhk+ChOM
+         20S1IfZz/urnsQ2LUaLry//cbU6PBt8pivQmcLlW6P85J6seBaddL4t6ghWDfKWSe1IO
+         SJ4k/2p0a2TmuOwmoc2knrObxhhXBEZG2qGcQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720025201; x=1720630001;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uGqHE0E7+SOnBS5UkqHAR0RRhXN6nF8kZmvFEId7fd0=;
-        b=R08Ix/VWdCa4Ct63yJ1usNB3pVjvXpqjvnC0TbVonBGeAB5V1P0OOZodh7PXG/zXBZ
-         350O1Sb/kG5GuKBD6pXgRejR1uwNSLAliuvaxNbVBzaMOaeDK8Fft6ctp8Fz/GWotVoQ
-         sRpweJHZ2pMgcpEv0DbweT45n7vVGsc0O4BFa6IOpr82IZPpSffPicZfWfd3y2ZbzAoK
-         inLqF/YhE9STcWM2CxSVM0iXF/IPm76RAhyT5U2wK19fz65c0brL4Q+3GMGZxpWyEhp5
-         8Qhng6r/PHk3HPN+V9vg/e01eut54maYw/ndfi4B9r4rbRfMMyM42oc9eFAHqoSOAl30
-         YS1A==
-X-Forwarded-Encrypted: i=1; AJvYcCX/F2xkuFntbnCfm2GOUPq3+3QWqiJn0XUOS8ftnw/qQXTt9XvMY35xJhU+CnKNzT00doLU4HQS2YVoGpCutws4ER20SHIhJ+eWRrg2
-X-Gm-Message-State: AOJu0YzZACJ2CitTkAuadgbudHJaXRa2JNqn0CnZ0gGfeuBTqZVlVcPI
-	gbITS5use9dhBT9VeBmlohb1fNpKYMVSQWBTMWSQt5HRn5DRdwrDGYs5lxtABDZ9iTlXtPIYry4
-	DLqSYXZBMRE//Xm/2RQ==
-X-Google-Smtp-Source: AGHT+IF1wZf4hV0nZ/4PthS9COJLLib7w2IS942hsqZTgV6x0+Nk7H+nmONt5S8eWkJgGD+PledWdgHvG0scLO2q
-X-Received: from zenghuchen.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:2448])
- (user=zenghuchen job=sendgmr) by 2002:a0d:ea83:0:b0:64b:7f7e:910f with SMTP
- id 00721157ae682-64c77cb5cbbmr309867b3.7.1720025201195; Wed, 03 Jul 2024
- 09:46:41 -0700 (PDT)
-Date: Wed,  3 Jul 2024 12:46:35 -0400
+        d=1e100.net; s=20230601; t=1720025270; x=1720630070;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DTEVlOEUHDwAOvpYSd+1fj7nxZG6XoxqWf/WJzx45vU=;
+        b=Fr5M/X56EL87d3vF3dNXsBiZt3orLVo4P5k+QpURKVDQPVOB9L8JEp3WzVnLB3i4Az
+         rQrbhBK9RlHJO44A9qd8RM8ZiWF56qg9Hn9qzWsSVI8fqhFdKsM2HbSGouLY/u6Vhvij
+         wmcqeDsDPGxcBE7PQ4sUPuclDIb5Ws74uObND6eApSsVfeIROGzV0qKU0tbQ0KwlwBqE
+         PgDISolxBXkaQ38ShaUQGcS7TtWcqU4RIfrtivpNSkXR6gdBsAcIwcGmQTACXMh2dIWe
+         OrFaPmSpUOiEqteZLBRVLyGCFzDpmx3OKI8UlSvnUNpOCc0cQAQkTqV40xijbxzdYqEg
+         41uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIh1OSc0WK1xbd7ATCztOBfVaTb7VbgAQ5DcKjYGLoCIWHTN20RUdcOJD3+75QScg1WkPtWivtPvZ6mCbT/uSToDkG9ZxpT7C5cj/h
+X-Gm-Message-State: AOJu0YzeQdTQvHBfuDreKtVed+fOU0bxsDYwBwHiLNpl8qd5JWLsxQGg
+	EsRey2QfT1tG+rZD4xRCjT1aErrft4JjbVHG0h0YkPahmfLYlwipfvdTV+qAREGluPsIBIzi/qc
+	yPVVqzA==
+X-Google-Smtp-Source: AGHT+IH+j42VoCuxRCadnRC02Et8hPfcDEDrVMJceDp8Nrwtt2g8YirzzncutMo6vUNLT5AmKxBJYA==
+X-Received: by 2002:a05:6402:5cd:b0:583:a39e:f469 with SMTP id 4fb4d7f45d1cf-5879f1c2589mr8072732a12.17.1720025270072;
+        Wed, 03 Jul 2024 09:47:50 -0700 (PDT)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c835c4sm7234720a12.11.2024.07.03.09.47.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 09:47:49 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57cb9a370ddso4104854a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 09:47:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWuppvF3mXaYRDyVfjr6y44eQkWzxn67/qsRsSXJNTjcAP/xFOA4ZOhf0urTA6m6bKwhp8/oVoacUNhObYyvTuLDXvSVhMCRcwg2sCX
+X-Received: by 2002:a17:906:794d:b0:a72:7603:49ef with SMTP id
+ a640c23a62f3a-a7514451ce8mr941408566b.35.1720025268507; Wed, 03 Jul 2024
+ 09:47:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240703164635.221203-1-zenghuchen@google.com>
-Subject: [PATCH] leds:lm3601x:calculate max_brightness and brightness properly
-From: Jack Chen <zenghuchen@google.com>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Vadim Pasternak <vadimp@nvidia.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jack Chen <zenghuchen@google.com>, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+MIME-Version: 1.0
+References: <CAHk-=wgnDSS7yqNbQQ9R6Zt7gzg6SKs6myW1AfkvhApXKgUg4A@mail.gmail.com>
+ <CAGudoHGuTP-nv=zwXdQs38OEqb=BD=i-vA-9xjZ0UOyvWuXP_w@mail.gmail.com>
+ <CAHk-=wgVzKtRnvDXAzueJTbgfo1o12Lw6DH97PzRe1cGA_b1oA@mail.gmail.com>
+ <CAGudoHH_z1a6MX8Z8Cqbz-jDTUoAjoxdV9KrQ6yvUkNszXO5aw@mail.gmail.com>
+ <CAGudoHHg-T+ZOTm0fSpW0Hztfxn=fpfnksz5Q3=3YeCeEPo7LQ@mail.gmail.com>
+ <CAHk-=wiBGSLNW6GGbnec-dCbn0kWvD+OXAa5VNXPBKLXYy5KOQ@mail.gmail.com>
+ <3g3arsrwnyvv562v2rsfv2ms4ht4mk45vwdkvssxkrjhfjtpdz@umyx5tl2du7o>
+ <CAHk-=wg6e8QMaBOyFaGon7pik_C1COrkmEz37mtUqpBoq=R44w@mail.gmail.com>
+ <6knlkefvujkry65gx6636u6e7rivqrn5kqjovs4ctjg7xtzrmo@2zd4wjx6zcym>
+ <CAHk-=whagTfq=EgwpuywUUu0ti7PPQuE_ftVjZOVrjnLwtS0Ng@mail.gmail.com> <du5vnvwygzbtal6qogmxckawwwxgbppuq5qi5aeqcs5unrlpz3@3k5degdvflzq>
+In-Reply-To: <du5vnvwygzbtal6qogmxckawwwxgbppuq5qi5aeqcs5unrlpz3@3k5degdvflzq>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 3 Jul 2024 09:47:32 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgJRoSW=RN=r=YGpG1nBa44=wkDLZ92SZnuuzA_6inJrA@mail.gmail.com>
+Message-ID: <CAHk-=wgJRoSW=RN=r=YGpG1nBa44=wkDLZ92SZnuuzA_6inJrA@mail.gmail.com>
+Subject: Re: [linux-next:master] [lockref] d042dae6ad: unixbench.throughput
+ -33.7% regression
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>, linux-kernel@vger.kernel.org, 
+	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
 Content-Type: text/plain; charset="UTF-8"
 
-1) check the range of torch_current_max,
-2) calcualtes max_brightness precisely,
-3) lm3601x torch brightness register starts from 0 (2.4 mA).
+On Wed, 3 Jul 2024 at 06:53, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>
+> Now I'm confused mate. Based on the convo so far I would expect you
+> would consider the xfs thing a no-go for the machinery.
+>
+> You were rightfully pointing out the relationship dentry<->inode is not
+> stable and care is needed to grab the pointer, and even then the pointer
+> may be wrong by the time one finishes the work.
+>
+> I presume you are also worried about callbacks not taking proper steps
+> when looking at the inode itself -- after all they can be racing with
+> teardown and have to handle it gracefully by returning an error.
 
-Tested: tested with a lm36011 and it can set its brightness to lowest
-value (2.4 mA)
-Signed-off-by: Jack Chen <zenghuchen@google.com>
----
- drivers/leds/flash/leds-lm3601x.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+No. I'm *assuming* the callbacks don't take proper steps.
 
-diff --git a/drivers/leds/flash/leds-lm3601x.c b/drivers/leds/flash/leds-lm3601x.c
-index 7e93c447fec5..fc4df904ea90 100644
---- a/drivers/leds/flash/leds-lm3601x.c
-+++ b/drivers/leds/flash/leds-lm3601x.c
-@@ -190,7 +190,7 @@ static int lm3601x_brightness_set(struct led_classdev *cdev,
- 		goto out;
- 	}
- 
--	ret = regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightness);
-+	ret = regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightness - 1);
- 	if (ret < 0)
- 		goto out;
- 
-@@ -341,8 +341,9 @@ static int lm3601x_register_leds(struct lm3601x_led *led,
- 
- 	led_cdev = &led->fled_cdev.led_cdev;
- 	led_cdev->brightness_set_blocking = lm3601x_brightness_set;
--	led_cdev->max_brightness = DIV_ROUND_UP(led->torch_current_max,
--						LM3601X_TORCH_REG_DIV);
-+	led_cdev->max_brightness = DIV_ROUND_UP(
-+			led->torch_current_max - LM3601X_MIN_TORCH_I_UA + 1,
-+			LM3601X_TORCH_REG_DIV);
- 	led_cdev->flags |= LED_DEV_CAP_FLASH;
- 
- 	init_data.fwnode = fwnode;
-@@ -386,6 +387,14 @@ static int lm3601x_parse_node(struct lm3601x_led *led,
- 		goto out_err;
- 	}
- 
-+	if (led->torch_current_max > LM3601X_MAX_TORCH_I_UA) {
-+		dev_warn(&led->client->dev,
-+			 "led-max-microamp cannot be higher than %d\n",
-+			 LM3601X_MAX_TORCH_I_UA);
-+		led->torch_current_max = LM3601X_MAX_TORCH_I_UA;
-+	}
-+
-+
- 	ret = fwnode_property_read_u32(child, "flash-max-microamp",
- 				&led->flash_current_max);
- 	if (ret) {
--- 
-2.45.2.803.g4e1b14247a-goog
+IOW,. the reason I think the callback model is the right model is
+exactly because I do not believe any user will reasonably understand
+and get all the RCU pathwalking rules right.
 
+So my mental picture of the callback model is that it is entirely
+speculative. It will *speculatively* fill in the stat data. And it
+obviously will *not* fill it in in user space - because you can't do
+user space accesses while in an RCU-locked region.
+
+So the stat callback would purely fill in a speculative kernel buffer.
+
+And then the path walking would confirm the sequence numbers *after*
+calling the callback, and override the return to ECHILD and finish the
+path walk non-speculatively if the sequence numbers don't match.
+
+> Inode changing identities adds potential trouble which does not need to
+> be there.
+
+I agree that the XFS stuff may be questionable, but I still don't see
+the problem wrt any stat callback. The sequence number tests would be
+EXACTLY THE SAME ones that we currently use for regular file open etc.
+If they are wrong for one case, they'd be wrong for another one.
+
+I think you are coming into this from a backgroudn that would do the
+stat buffer _without_ doing proper validation afterwards.
+
+> Suppose the inode got reused and is now representing a device, i_rdev is
+> some funky value.
+
+Tell me how the inode gets re-used with the sequence numbers still
+matching, and then tell me why regular path lookup doesn't have this
+issue.
+
+> There is also potential trouble with security modules as they
+> unfortunately have a hook for getattr.
+
+Oh, absolutel;y. The stat security callbacks would need fixing.
+Exactly the same way we had to fix 'permission()' for RCU lookup with
+the whole MAY_NOT_BLOCK thing, where they just say "I can't do that",
+and we'd have to fall back on the non-RCU case.
+
+And yes, filesystems might disable RCU stat - the same way filesystems
+can currently react to revalidate etc under RCU with -ECHILD.
+
+This is all *EXACTLY* why I think that "callback with error cases"
+makes sense. Because the callback may well say exactly "do the old
+thing" because it can't handle the RCU case, and it will depend on
+things that are outside the control of path walking or stat itself.
+
+                 Linus
 
