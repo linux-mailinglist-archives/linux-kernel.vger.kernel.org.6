@@ -1,122 +1,150 @@
-Return-Path: <linux-kernel+bounces-239733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C739D9264A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:14:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2749264A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 731371F2353D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:14:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CA341C208DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F55017FAD4;
-	Wed,  3 Jul 2024 15:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fjIsL6+4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85240181B9C;
+	Wed,  3 Jul 2024 15:16:26 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7231F17DA25
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9667180A92
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720019691; cv=none; b=sXirdzHB9jERhqNEsvhMH5xJqmltqiM5uH1SytkPy9PC3wkCc1v22WPv8JDDDY3NW2Pdsvg4OyUwvovPBLozQla5pSGtDtmDLSXGqdn2L+H7ODSBXf/TDdOKdPOUD1a678Lvb5VFnxaTDy2ygoJ+VFwvor8+s+Q7kfK0Dc42d8U=
+	t=1720019786; cv=none; b=HVj7a0p5Bv3l0xxg+aQ46OKAg2gr2vBX5PMPEHMXoTDETGFaRlTuYMSDgomxCwm3bBDRL3xKigtWgJRm2EJDD266oJD7x3hk0X9FCyTGzu1XzZ/lyp1iA7xROiMeb++8pYAw2XmJNrpKIpqGFAxvhScNKNTKjkwHLfHfdZyK8Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720019691; c=relaxed/simple;
-	bh=DVZoCgGNL/3QvR3GgyZlBB7wKE/Cuoc7qP2icJB8648=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=otC9iYRniAvjb5fHZNGGN1dBhasJ9/NO+hTqwv5p2tJhz2BHw99yl4J8yBfyCDY4VVCDKDXb6RJvUcmMizBVC863BbSDAsI4glQhgkZ7H1tTeALIVhwo5XMq1Cp+kixkdzX0Kx6QvthfRXIcPZXp5XDad0ld9jDQYq2LT/WKXfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fjIsL6+4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720019689;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tWUo3H7qkDAztkmmaCmdE2MO9pLRxkJhZ2WC3lZ6+9M=;
-	b=fjIsL6+4+M5EzoZD0CnYuDac20lgl6w+iuqvg7e7W7QHL24gv3c/raL1/yJcK6MQSGeJ9h
-	avk8O/d+VxhgoFzJ4WUDjpnYtfpyip7MdaHOVodmLne52F5nVR04aqLNpxlNFU+WRg6lon
-	O9hrz6uKQzaP53FZruoT2Rqc35NjfiA=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-OJYKiDLNPneTrgKnO966pw-1; Wed,
- 03 Jul 2024 11:14:47 -0400
-X-MC-Unique: OJYKiDLNPneTrgKnO966pw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B832619560A2;
-	Wed,  3 Jul 2024 15:14:46 +0000 (UTC)
-Received: from [10.22.33.252] (unknown [10.22.33.252])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8743C1955F21;
-	Wed,  3 Jul 2024 15:14:45 +0000 (UTC)
-Message-ID: <7b105f07-5c13-4f69-9834-05e7054ddb36@redhat.com>
-Date: Wed, 3 Jul 2024 11:14:44 -0400
+	s=arc-20240116; t=1720019786; c=relaxed/simple;
+	bh=823t3ZG9vkcftcwqMBGfKjM5kAW55T7HJ5obY8rbJts=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PgRyRWefdUR2FVqRqzbBZXFvhvEAgBrF43675OWSo0UPxsaF8NFU/ZsqYe7GzsPsA3SurDE9BQWeoB3vkVDyeY4We6kKyOk4Y4AVAIvIeBNlNniGmtbGIw/KolrFV+rgbWJnPGqLODVU6iFP9frqNzZsVbXWpBgq0QKc/vTNzBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f61fca8c40so572842939f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 08:16:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720019784; x=1720624584;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+1I6KYKQLxxIUvJsrKHo+sk76c12VVzV5Ztu8InShbo=;
+        b=oJREwl4NEk/hqvNPXIYPZpFW+Nbzs15Sds6FTX/jR12gD0NopksIKzsZT3oMxhr07c
+         0Xkuu9628/Esfo23M4Wa/KDiTTthW4xoTx+fGCprADpp15s5UBw1g/GNucMJ2jrtHErq
+         Dm6DI5BfYAeG90Qu2j//WytLjC7LcgEw2Liaq8goHIm0Ur+VwLbuWjSpuKGLFlk6sVNW
+         EvWIDoWG+YqeC7XTXIgVrFTyZPy/u8MkLgVjeoZ3GaftUUAiCgPIg8tveA9IXfNkPhPz
+         VuEq2ah1ayxd5ND6uiyLg3wImfS9PEkryuMlXR4JEvJ72W8tYka/hP+bpsNpouJMGTNf
+         Ns3A==
+X-Gm-Message-State: AOJu0YzntXyaimWsQzBGSrXVZf/eGXrtzJ3MBPUhOXYZ6JbAjErmLt9y
+	KhIlF/i0eFtjrXHGfDfp1uXeNY/7U3k9s4vJ7mFUXB0AjIz84gNU7q0AYfNHgfBnH8ZI0RHs7uq
+	UbXuV0PnLl43qWiZhvGPIQR0+4hZ7F/2v2ZNtNNd+oXQwzs6acOlAk6k=
+X-Google-Smtp-Source: AGHT+IE0gCGp9tmC8Q5+tEtrQAXBwMnfJYBie2SKXEkREjuacYegch52h+5Q3iHDc+IyekP0WQ1/X7uySUwoGYMZAJvkMQLC4sLJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] workqueue: Protect wq_unbound_cpumask with
- wq_pool_attach_mutex in init_rescuer()
-To: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>, Tejun Heo <tj@kernel.org>
-References: <20240703033855.3373-1-jiangshanlai@gmail.com>
- <20240703033855.3373-3-jiangshanlai@gmail.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240703033855.3373-3-jiangshanlai@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Received: by 2002:a05:6602:3f8a:b0:7eb:75e9:8f2b with SMTP id
+ ca18e2360f4ac-7f62ee6461bmr93474539f.2.1720019783958; Wed, 03 Jul 2024
+ 08:16:23 -0700 (PDT)
+Date: Wed, 03 Jul 2024 08:16:23 -0700
+In-Reply-To: <00000000000024894706196d697f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003ad3d1061c5950f0@google.com>
+Subject: Re: [syzbot] [syzbot] [wireless?] WARNING in __cfg80211_connect_result
+ (2)
+From: syzbot <syzbot+d6eb9cee2885ec06f5e3@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-On 7/2/24 23:38, Lai Jiangshan wrote:
-> From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
->
-> wq_unbound_cpumask can be possibly changed without wq_pool_attach_mutex
-> or wq_pool_mutex held in init_rescuer().
->
-> Use wq_pool_attach_mutex to protect it.
->
-> Fixes: 49584bb8ddbe("workqueue: Bind unbound workqueue rescuer to wq_unbound_cpumask")
-> Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
-> ---
->   kernel/workqueue.c | 5 +++++
->   1 file changed, 5 insertions(+)
->
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index c738b3024cc2..cf1a129eb547 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -5533,6 +5533,9 @@ static int init_rescuer(struct workqueue_struct *wq)
->   		return ret;
->   	}
->   
-> +	/* lock wq_pool_attach_mutex for wq_unbound_cpumask */
-> +	mutex_lock(&wq_pool_attach_mutex);
-> +
->   	wq->rescuer = rescuer;
->   	if (wq->flags & WQ_UNBOUND)
->   		kthread_bind_mask(rescuer->task, wq_unbound_cpumask);
-> @@ -5540,6 +5543,8 @@ static int init_rescuer(struct workqueue_struct *wq)
->   		kthread_bind_mask(rescuer->task, cpu_possible_mask);
->   	wake_up_process(rescuer->task);
->   
-> +	mutex_unlock(&wq_pool_attach_mutex);
-> +
->   	return 0;
->   }
->   
-Reviewed-by: Waiman Long <longman@redhat.com>
+***
 
-Thanks!
+Subject: [syzbot] [wireless?] WARNING in __cfg80211_connect_result (2)
+Author: en-wei.wu@canonical.com
+
+#syz test
+
+--- a/drivers/net/wireless/virtual/virt_wifi.c
++++ b/drivers/net/wireless/virtual/virt_wifi.c
+@@ -136,6 +136,9 @@ static struct ieee80211_supported_band band_5ghz = {
+ /* Assigned at module init. Guaranteed locally-administered and unicast. */
+ static u8 fake_router_bssid[ETH_ALEN] __ro_after_init = {};
+ 
++#define VIRT_WIFI_SSID_LEN 8
++#define VIRT_WIFI_SSID "VirtWifi"
++
+ static void virt_wifi_inform_bss(struct wiphy *wiphy)
+ {
+ 	u64 tsf = div_u64(ktime_get_boottime_ns(), 1000);
+@@ -146,8 +149,8 @@ static void virt_wifi_inform_bss(struct wiphy *wiphy)
+ 		u8 ssid[8];
+ 	} __packed ssid = {
+ 		.tag = WLAN_EID_SSID,
+-		.len = 8,
+-		.ssid = "VirtWifi",
++		.len = VIRT_WIFI_SSID_LEN,
++		.ssid = VIRT_WIFI_SSID,
+ 	};
+ 
+ 	informed_bss = cfg80211_inform_bss(wiphy, &channel_5ghz,
+@@ -213,6 +216,8 @@ struct virt_wifi_netdev_priv {
+ 	struct net_device *upperdev;
+ 	u32 tx_packets;
+ 	u32 tx_failed;
++	u32 connect_requested_ssid_len;
++	u8 connect_requested_ssid[IEEE80211_MAX_SSID_LEN];
+ 	u8 connect_requested_bss[ETH_ALEN];
+ 	bool is_up;
+ 	bool is_connected;
+@@ -224,11 +229,21 @@ static int virt_wifi_connect(struct wiphy *wiphy, struct net_device *netdev,
+ 			     struct cfg80211_connect_params *sme)
+ {
+ 	struct virt_wifi_netdev_priv *priv = netdev_priv(netdev);
++	u32 ssid_len;
+ 	bool could_schedule;
+ 
+ 	if (priv->being_deleted || !priv->is_up)
+ 		return -EBUSY;
+ 
++	if (!sme->ssid) {
++		wiphy_err(wiphy, "invalid SSID\n");
++		return -EINVAL;
++	}
++
++	ssid_len = min_t(u32, sme->ssid_len, IEEE80211_MAX_SSID_LEN);
++	priv->connect_requested_ssid_len = ssid_len;
++	memcpy(priv->connect_requested_ssid, sme->ssid, ssid_len);
++
+ 	could_schedule = schedule_delayed_work(&priv->connect, HZ * 2);
+ 	if (!could_schedule)
+ 		return -EBUSY;
+@@ -252,12 +267,15 @@ static void virt_wifi_connect_complete(struct work_struct *work)
+ 		container_of(work, struct virt_wifi_netdev_priv, connect.work);
+ 	u8 *requested_bss = priv->connect_requested_bss;
+ 	bool right_addr = ether_addr_equal(requested_bss, fake_router_bssid);
++	bool right_ssid = (priv->connect_requested_ssid_len == VIRT_WIFI_SSID_LEN ?
++			  !memcmp(priv->connect_requested_ssid, VIRT_WIFI_SSID,
++				  priv->connect_requested_ssid_len) : false);
+ 	u16 status = WLAN_STATUS_SUCCESS;
+ 
+ 	if (is_zero_ether_addr(requested_bss))
+ 		requested_bss = NULL;
+ 
+-	if (!priv->is_up || (requested_bss && !right_addr))
++	if (!priv->is_up || (requested_bss && !right_addr) || !right_ssid)
+ 		status = WLAN_STATUS_UNSPECIFIED_FAILURE;
+ 	else
+ 		priv->is_connected = true;
 
 
