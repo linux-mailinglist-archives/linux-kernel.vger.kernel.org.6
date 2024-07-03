@@ -1,599 +1,1116 @@
-Return-Path: <linux-kernel+bounces-240039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B998D92684A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:33:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32ED692684F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C935B256BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:33:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E08F228AC9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409BA191F8B;
-	Wed,  3 Jul 2024 18:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF7318C35D;
+	Wed,  3 Jul 2024 18:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="G4R7hq0t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NeEqiD0S"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA3D18509A;
-	Wed,  3 Jul 2024 18:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBB8181D0A;
+	Wed,  3 Jul 2024 18:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720031531; cv=none; b=E5RfCwRwsj5FlZTCE/N7+CdsJUE4Px6u/bXMrKbu9NwddS51oSeG/PVaneRc2epjWIiQJqrM/TJjtrHcA6PZHHLAvDxzCAAur5zr9boAMURMVzvGIhh7HdbmVWydbz1/T/NOX+Y5vYeIezp3pkHb/SL4O+9mE3EeHpz5m43ptTM=
+	t=1720031611; cv=none; b=Pdk8MPsDa+EVh2oCyMUKiwMsDhXm4jFPJvdSh+yBzD/pldXjndwZnZV/dNiITRC8zgwYjFiLPqYxEEyrl12Wa2pMhGZCDO9tdiyQShBN1Kp01yQyAfjn3OZ6tpnsMdW5WPpXnRubOtNrs+aDe+wcIyRS+f/AqMzATuqkOeEaIpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720031531; c=relaxed/simple;
-	bh=WlO1c69z+1VfvDEtT0E66MNBJIGlQPl6anecoB6uI4o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U/OjuwceSLv6NBQJ0GiO6V+Hn1b3ITcifqpWffJXro06zDss80tXwr0ZeC4tLgOnHIT4To/fLgsfr+34x+1nqe9sCUL+TSa5Ot/QBI62iDMMK31f7uEuWFhubfWfh5SColmvWBRsjMn44BTzPVCgvsfVD8280fd444acygM3LHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=G4R7hq0t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C80FC4AF0A;
-	Wed,  3 Jul 2024 18:32:09 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="G4R7hq0t"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1720031528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BBqqEC/LRLHybwsJOCYGax29ShdUGaaeOYWEFD/HOFs=;
-	b=G4R7hq0thZPEZ/FmGDeg2uqARvZtlxyJ/Dg4S9VShEWNU5nzZE9qOHMOJRauOpXO2kEN4r
-	SeG+BcSIXs4Ye6Lb85WpRoMQdb1KFYr1eacbn5bhUcvfwz+uOha6+1dg0fbp8pfl7v1xXI
-	WgnYX3ndLgAK24lZfWTxCkYnjkyRQVg=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 35a51631 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 3 Jul 2024 18:32:07 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	tglx@linutronix.de
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>,
-	Samuel Neves <sneves@dei.uc.pt>
-Subject: [PATCH v20 5/5] x86: vdso: Wire up getrandom() vDSO implementation
-Date: Wed,  3 Jul 2024 20:31:14 +0200
-Message-ID: <20240703183115.1075219-6-Jason@zx2c4.com>
-In-Reply-To: <20240703183115.1075219-1-Jason@zx2c4.com>
-References: <20240703183115.1075219-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1720031611; c=relaxed/simple;
+	bh=7V2JYzdOgXCXWFvoec8QR0Dd52ycphBn8B/DQ8YlItU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g4DCMhhOm96GghJvqRIDLKUZaHty/WeehGqfkY7Q6ZwKjzXFM6Jf0OH+0ntT7tdtMaodc2BwnoyjrJCFwRzb+UNEo10KpG+rrBUpL1luCJlfNpixU7uPT1A0yB1OVMZRQAxeUhYFZ0+ZlT2vjEo/rTZkT+lpKL2iRtuAMUNrdZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NeEqiD0S; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-58b3fee65d8so3259127a12.3;
+        Wed, 03 Jul 2024 11:33:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720031607; x=1720636407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=74i/qs7HRg9Ac07FIGM0Yw+2dhzQz8v4gQYVdVsl0WU=;
+        b=NeEqiD0SvTiB6LUaLlKojdWOHvLHKRL5AHX87p2KX7OeAZFbxZtei8/zqYKhzsW6kA
+         GFtUb2VPD7itzm1Yw7pMcOaAPOpvxBNPZMU4zEqVHsZKUh7m3vz2nwf5/meuen3upnOd
+         eNWBDf9htbwvXeSnHaNjsbaT0sjarr/K/BB/xnykMjVbkPeKCBWeNyii6gjWpbHB8Nks
+         JDos+CyCutLcIKuoe4bT1tQpWRynvTrYmSgKhO9V8XQbp1hOF2iPt7KRaoLksXzxrzry
+         qMfv+NpP3swso9lg8NTjk+T46m5aP2f5BDoNFRVSh/ZfabKD4KJ7ByKaMuYIhQEAbFWH
+         oNmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720031607; x=1720636407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=74i/qs7HRg9Ac07FIGM0Yw+2dhzQz8v4gQYVdVsl0WU=;
+        b=Cq3ngruRTZ/dNX2uY39KlfEkg68i5mCP9h+zHI/88AVI6qaRj3GQOBbCrCWf019YZw
+         lACe1h/OioCB3gYQ3OvPdeh3P+Iox5EnuLWYxdRofQBRs39vTcskMZ38J2fjIls9Mjpt
+         NzFGYNY0r5X99UKQsBbVmNQMIuqIoE3m8eymyMAGjVQcHnJu7S9o9HBdlSNthPSja/Fe
+         vlmZzJlDGY3Rl2Dmx8jx8l1t8BcXrwmZczNpP9NB/PNs0rFA9ChC+p6MwevyrfQ/hZDy
+         Yv7Qd95kVauzUINJAsminH1n6OeCa/6D78q/JPYut7PidNKVYs3qC+YFGC9E66+2w26V
+         2uJg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8F94bHbVtveWT3p6Mv/61Rp5uD4JzZVCrif3t/TkCu3rHx1eGZitFQ8VJrCMzpu63PflpeVjAsnQEQGcfkrR9aBgYlxv53eAdxGBmicPIaAOvTbMutT4xQz9lJk9u4seXPNQMBxTQtW98QPQgyhQKIGaqMZw/KDhVOXizOaAXMktUObv+1Y0=
+X-Gm-Message-State: AOJu0Yzw9hxvfxTJ93APRkhnsw49Tr2gCgnV0U7x9juJZhzo2tXj0Tgr
+	B8rgFC7PaNZz3X/y2fkxnHZTXO5juLcJXLtPNxwFDnVTyo9tNtPOy5YEFUjTK+xtmuQTnjPmPT8
+	UW1YEjpARAmY3uLiT1DMV0u6jNjcI0RdE
+X-Google-Smtp-Source: AGHT+IHT55zfRgWtk7mvtJmH4z1Zjwhpg0NjoO+gMZR8BWd/uCYfJBULnKS0wY4iLJBk5p9/CmLuDZ6QZTLN1IeJYzk=
+X-Received: by 2002:a05:6402:5cd:b0:583:a39e:f469 with SMTP id
+ 4fb4d7f45d1cf-5879f1c2589mr8245048a12.17.1720031606917; Wed, 03 Jul 2024
+ 11:33:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240703-yoga-slim7x-v1-0-7aa4fd5fdece@linaro.org> <20240703-yoga-slim7x-v1-2-7aa4fd5fdece@linaro.org>
+In-Reply-To: <20240703-yoga-slim7x-v1-2-7aa4fd5fdece@linaro.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 3 Jul 2024 11:33:14 -0700
+Message-ID: <CAF6AEGt+3LFP+GCcSwiSEymixVVkYD98iJX5RJ75NQDzZbPpcw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100: add Lenovo Thinkpad Yoga
+ slim 7x devicetree
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hook up the generic vDSO implementation to the x86 vDSO data page. Since
-the existing vDSO infrastructure is heavily based on the timekeeping
-functionality, which works over arrays of bases, a new macro is
-introduced for vvars that are not arrays.
+On Wed, Jul 3, 2024 at 10:17=E2=80=AFAM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
+>
+> Add an initial devicetree for the Lenovo Yoga slim 7x with support for
+> Display, usb, keyboard, touchscreen, PMICs, speaker audio, gpu, NVMe,
+> and remoteprocs.
+>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+>  .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  | 910 +++++++++++++++=
+++++++
+>  2 files changed, 911 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom=
+/Makefile
+> index e0babd642fa8..d7de2aea4748 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -261,4 +261,5 @@ dtb-$(CONFIG_ARCH_QCOM)     +=3D sm8650-mtp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        +=3D sm8650-qrd.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        +=3D x1e80100-asus-vivobook-s15.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        +=3D x1e80100-crd.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)        +=3D x1e80100-lenovo-yoga-slim7x.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        +=3D x1e80100-qcp.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/a=
+rch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+> new file mode 100644
+> index 000000000000..1d00119691bc
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+> @@ -0,0 +1,910 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserv=
+ed.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> +
+> +#include "x1e80100.dtsi"
+> +#include "x1e80100-pmics.dtsi"
+> +
+> +/ {
+> +       model =3D "Lenovo Yoga Slim 7x";
+> +       compatible =3D "lenovo,yoga-slim7x", "qcom,x1e80100";
+> +
+> +       pmic-glink {
+> +               compatible =3D "qcom,x1e80100-pmic-glink",
+> +                            "qcom,sm8550-pmic-glink",
+> +                            "qcom,pmic-glink";
+> +               #address-cells =3D <1>;
+> +               #size-cells =3D <0>;
+> +               orientation-gpios =3D <&tlmm 121 GPIO_ACTIVE_HIGH>,
+> +                                   <&tlmm 123 GPIO_ACTIVE_HIGH>,
+> +                                   <&tlmm 125 GPIO_ACTIVE_HIGH>;
+> +
+> +               /* Left-side rear port */
+> +               connector@0 {
+> +                       compatible =3D "usb-c-connector";
+> +                       reg =3D <0>;
+> +                       power-role =3D "dual";
+> +                       data-role =3D "dual";
+> +
+> +                       ports {
+> +                               #address-cells =3D <1>;
+> +                               #size-cells =3D <0>;
+> +
+> +                               port@0 {
+> +                                       reg =3D <0>;
+> +
+> +                                       pmic_glink_ss0_hs_in: endpoint {
+> +                                               remote-endpoint =3D <&usb=
+_1_ss0_dwc3_hs>;
+> +                                       };
+> +                               };
+> +
+> +                               port@1 {
+> +                                       reg =3D <1>;
+> +
+> +                                       pmic_glink_ss0_ss_in: endpoint {
+> +                                               remote-endpoint =3D <&usb=
+_1_ss0_qmpphy_out>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               /* Left-side front port */
+> +               connector@1 {
+> +                       compatible =3D "usb-c-connector";
+> +                       reg =3D <1>;
+> +                       power-role =3D "dual";
+> +                       data-role =3D "dual";
+> +
+> +                       ports {
+> +                               #address-cells =3D <1>;
+> +                               #size-cells =3D <0>;
+> +
+> +                               port@0 {
+> +                                       reg =3D <0>;
+> +
+> +                                       pmic_glink_ss1_hs_in: endpoint {
+> +                                               remote-endpoint =3D <&usb=
+_1_ss1_dwc3_hs>;
+> +                                       };
+> +                               };
+> +
+> +                               port@1 {
+> +                                       reg =3D <1>;
+> +
+> +                                       pmic_glink_ss1_ss_in: endpoint {
+> +                                               remote-endpoint =3D <&usb=
+_1_ss1_qmpphy_out>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               /* Right-side port */
+> +               connector@2 {
+> +                       compatible =3D "usb-c-connector";
+> +                       reg =3D <2>;
+> +                       power-role =3D "dual";
+> +                       data-role =3D "dual";
+> +
+> +                       ports {
+> +                               #address-cells =3D <1>;
+> +                               #size-cells =3D <0>;
+> +
+> +                               port@0 {
+> +                                       reg =3D <0>;
+> +
+> +                                       pmic_glink_ss2_hs_in: endpoint {
+> +                                               remote-endpoint =3D <&usb=
+_1_ss2_dwc3_hs>;
+> +                                       };
+> +                               };
+> +
+> +                               port@1 {
+> +                                       reg =3D <1>;
+> +
+> +                                       pmic_glink_ss2_ss_in: endpoint {
+> +                                               remote-endpoint =3D <&usb=
+_1_ss2_qmpphy_out>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +
+> +       reserved-memory {
+> +               linux,cma {
+> +                       compatible =3D "shared-dma-pool";
+> +                       size =3D <0x0 0x8000000>;
+> +                       reusable;
+> +                       linux,cma-default;
+> +               };
+> +       };
+> +
+> +       sound {
+> +               compatible =3D "qcom,x1e80100-sndcard";
+> +               model =3D "X1E80100-LENOVO-Yoga-Slim7x";
+> +               audio-routing =3D "WooferLeft IN", "WSA WSA_SPK1 OUT",
+> +                               "TwitterLeft IN", "WSA WSA_SPK2 OUT",
+> +                               "WooferRight IN", "WSA2 WSA_SPK2 OUT",
+> +                               "TwitterRight IN", "WSA2 WSA_SPK2 OUT";
+> +
+> +               wsa-dai-link {
+> +                       link-name =3D "WSA Playback";
+> +
+> +                       cpu {
+> +                               sound-dai =3D <&q6apmbedai WSA_CODEC_DMA_=
+RX_0>;
+> +                       };
+> +
+> +                       codec {
+> +                               sound-dai =3D <&left_woofer>, <&left_twee=
+ter>,
+> +                                           <&swr0 0>, <&lpass_wsamacro 0=
+>,
+> +                                           <&right_woofer>, <&right_twee=
+ter>,
+> +                                           <&swr3 0>, <&lpass_wsa2macro =
+0>;
+> +                       };
+> +
+> +                       platform {
+> +                               sound-dai =3D <&q6apm>;
+> +                       };
+> +               };
+> +
+> +               va-dai-link {
+> +                       link-name =3D "VA Capture";
+> +
+> +                       cpu {
+> +                               sound-dai =3D <&q6apmbedai VA_CODEC_DMA_T=
+X_0>;
+> +                       };
+> +
+> +                       codec {
+> +                               sound-dai =3D <&lpass_vamacro 0>;
+> +                       };
+> +
+> +                       platform {
+> +                               sound-dai =3D <&q6apm>;
+> +                       };
+> +               };
+> +       };
+> +
+> +       vph_pwr: vph-pwr-regulator {
+> +               compatible =3D "regulator-fixed";
+> +
+> +               regulator-name =3D "vph_pwr";
+> +               regulator-min-microvolt =3D <3700000>;
+> +               regulator-max-microvolt =3D <3700000>;
+> +
+> +               regulator-always-on;
+> +               regulator-boot-on;
+> +       };
+> +
+> +       vreg_edp_3p3: regulator-edp-3p3 {
+> +               compatible =3D "regulator-fixed";
+> +
+> +               regulator-name =3D "VREG_EDP_3P3";
+> +               regulator-min-microvolt =3D <3300000>;
+> +               regulator-max-microvolt =3D <3300000>;
+> +
+> +               gpio =3D <&tlmm 70 GPIO_ACTIVE_HIGH>;
+> +               enable-active-high;
+> +
+> +               pinctrl-0 =3D <&edp_reg_en>;
+> +               pinctrl-names =3D "default";
+> +
+> +               regulator-always-on;
+> +               regulator-boot-on;
+> +       };
+> +
+> +       vreg_nvme: regulator-nvme {
+> +               compatible =3D "regulator-fixed";
+> +
+> +               regulator-name =3D "VREG_NVME_3P3";
+> +               regulator-min-microvolt =3D <3300000>;
+> +               regulator-max-microvolt =3D <3300000>;
+> +
+> +               gpio =3D <&tlmm 18 GPIO_ACTIVE_HIGH>;
+> +               enable-active-high;
+> +
+> +               pinctrl-0 =3D <&nvme_reg_en>;
+> +               pinctrl-names =3D "default";
+> +       };
+> +};
+> +
+> +&apps_rsc {
+> +       regulators-0 {
+> +               compatible =3D "qcom,pm8550-rpmh-regulators";
+> +               qcom,pmic-id =3D "b";
+> +
+> +               vdd-bob1-supply =3D <&vph_pwr>;
+> +               vdd-bob2-supply =3D <&vph_pwr>;
+> +               vdd-l1-l4-l10-supply =3D <&vreg_s4c_1p8>;
+> +               vdd-l2-l13-l14-supply =3D <&vreg_bob1>;
+> +               vdd-l5-l16-supply =3D <&vreg_bob1>;
+> +               vdd-l6-l7-supply =3D <&vreg_bob2>;
+> +               vdd-l8-l9-supply =3D <&vreg_bob1>;
+> +               vdd-l12-supply =3D <&vreg_s5j_1p2>;
+> +               vdd-l15-supply =3D <&vreg_s4c_1p8>;
+> +               vdd-l17-supply =3D <&vreg_bob2>;
+> +
+> +               vreg_bob1: bob1 {
+> +                       regulator-name =3D "vreg_bob1";
+> +                       regulator-min-microvolt =3D <3008000>;
+> +                       regulator-max-microvolt =3D <3960000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_bob2: bob2 {
+> +                       regulator-name =3D "vreg_bob2";
+> +                       regulator-min-microvolt =3D <2504000>;
+> +                       regulator-max-microvolt =3D <3008000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l1b_1p8: ldo1 {
+> +                       regulator-name =3D "vreg_l1b_1p8";
+> +                       regulator-min-microvolt =3D <1800000>;
+> +                       regulator-max-microvolt =3D <1800000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l2b_3p0: ldo2 {
+> +                       regulator-name =3D "vreg_l2b_3p0";
+> +                       regulator-min-microvolt =3D <3072000>;
+> +                       regulator-max-microvolt =3D <3100000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l8b_3p0: ldo8 {
+> +                       regulator-name =3D "vreg_l8b_3p0";
+> +                       regulator-min-microvolt =3D <3072000>;
+> +                       regulator-max-microvolt =3D <3072000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l12b_1p2: ldo12 {
+> +                       regulator-name =3D "vreg_l12b_1p2";
+> +                       regulator-min-microvolt =3D <1200000>;
+> +                       regulator-max-microvolt =3D <1200000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l14b_3p0: ldo14 {
+> +                       regulator-name =3D "vreg_l14b_3p0";
+> +                       regulator-min-microvolt =3D <3072000>;
+> +                       regulator-max-microvolt =3D <3072000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l15b_1p8: ldo15 {
+> +                       regulator-name =3D "vreg_l15b_1p8";
+> +                       regulator-min-microvolt =3D <1800000>;
+> +                       regulator-max-microvolt =3D <1800000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +       };
+> +
+> +       regulators-1 {
+> +               compatible =3D "qcom,pm8550ve-rpmh-regulators";
+> +               qcom,pmic-id =3D "c";
+> +
+> +               vdd-l1-supply =3D <&vreg_s5j_1p2>;
+> +               vdd-l2-supply =3D <&vreg_s1f_0p7>;
+> +               vdd-l3-supply =3D <&vreg_s1f_0p7>;
+> +               vdd-s4-supply =3D <&vph_pwr>;
+> +
+> +               vreg_s4c_1p8: smps4 {
+> +                       regulator-name =3D "vreg_s4c_1p8";
+> +                       regulator-min-microvolt =3D <1856000>;
+> +                       regulator-max-microvolt =3D <2000000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l1c_1p2: ldo1 {
+> +                       regulator-name =3D "vreg_l1c_1p2";
+> +                       regulator-min-microvolt =3D <1200000>;
+> +                       regulator-max-microvolt =3D <1200000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l2c_0p8: ldo2 {
+> +                       regulator-name =3D "vreg_l2c_0p8";
+> +                       regulator-min-microvolt =3D <880000>;
+> +                       regulator-max-microvolt =3D <920000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l3c_0p8: ldo3 {
+> +                       regulator-name =3D "vreg_l3c_0p8";
+> +                       regulator-min-microvolt =3D <880000>;
+> +                       regulator-max-microvolt =3D <920000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +       };
+> +
+> +       regulators-2 {
+> +               compatible =3D "qcom,pmc8380-rpmh-regulators";
+> +               qcom,pmic-id =3D "d";
+> +
+> +               vdd-l1-supply =3D <&vreg_s1f_0p7>;
+> +               vdd-l2-supply =3D <&vreg_s1f_0p7>;
+> +               vdd-l3-supply =3D <&vreg_s4c_1p8>;
+> +               vdd-s1-supply =3D <&vph_pwr>;
+> +
+> +               vreg_l1d_0p8: ldo1 {
+> +                       regulator-name =3D "vreg_l1d_0p8";
+> +                       regulator-min-microvolt =3D <880000>;
+> +                       regulator-max-microvolt =3D <920000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l2d_0p9: ldo2 {
+> +                       regulator-name =3D "vreg_l2d_0p9";
+> +                       regulator-min-microvolt =3D <912000>;
+> +                       regulator-max-microvolt =3D <920000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l3d_1p8: ldo3 {
+> +                       regulator-name =3D "vreg_l3d_1p8";
+> +                       regulator-min-microvolt =3D <1800000>;
+> +                       regulator-max-microvolt =3D <1800000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +       };
+> +
+> +       regulators-3 {
+> +               compatible =3D "qcom,pmc8380-rpmh-regulators";
+> +               qcom,pmic-id =3D "e";
+> +
+> +               vdd-l2-supply =3D <&vreg_s1f_0p7>;
+> +               vdd-l3-supply =3D <&vreg_s5j_1p2>;
+> +
+> +               vreg_l2e_0p8: ldo2 {
+> +                       regulator-name =3D "vreg_l2e_0p8";
+> +                       regulator-min-microvolt =3D <880000>;
+> +                       regulator-max-microvolt =3D <920000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l3e_1p2: ldo3 {
+> +                       regulator-name =3D "vreg_l3e_1p2";
+> +                       regulator-min-microvolt =3D <1200000>;
+> +                       regulator-max-microvolt =3D <1200000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +       };
+> +
+> +       regulators-4 {
+> +               compatible =3D "qcom,pmc8380-rpmh-regulators";
+> +               qcom,pmic-id =3D "f";
+> +
+> +               vdd-l1-supply =3D <&vreg_s5j_1p2>;
+> +               vdd-l2-supply =3D <&vreg_s5j_1p2>;
+> +               vdd-l3-supply =3D <&vreg_s5j_1p2>;
+> +               vdd-s1-supply =3D <&vph_pwr>;
+> +
+> +               vreg_s1f_0p7: smps1 {
+> +                       regulator-name =3D "vreg_s1f_0p7";
+> +                       regulator-min-microvolt =3D <700000>;
+> +                       regulator-max-microvolt =3D <1100000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l1f_1p0: ldo1 {
+> +                       regulator-name =3D "vreg_l1f_1p0";
+> +                       regulator-min-microvolt =3D <1024000>;
+> +                       regulator-max-microvolt =3D <1024000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l2f_1p0: ldo2 {
+> +                       regulator-name =3D "vreg_l2f_1p0";
+> +                       regulator-min-microvolt =3D <1024000>;
+> +                       regulator-max-microvolt =3D <1024000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l3f_1p0: ldo3 {
+> +                       regulator-name =3D "vreg_l3f_1p0";
+> +                       regulator-min-microvolt =3D <1024000>;
+> +                       regulator-max-microvolt =3D <1024000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +       };
+> +
+> +       regulators-6 {
+> +               compatible =3D "qcom,pm8550ve-rpmh-regulators";
+> +               qcom,pmic-id =3D "i";
+> +
+> +               vdd-l1-supply =3D <&vreg_s4c_1p8>;
+> +               vdd-l2-supply =3D <&vreg_s5j_1p2>;
+> +               vdd-l3-supply =3D <&vreg_s1f_0p7>;
+> +               vdd-s1-supply =3D <&vph_pwr>;
+> +               vdd-s2-supply =3D <&vph_pwr>;
+> +
+> +               vreg_s1i_0p9: smps1 {
+> +                       regulator-name =3D "vreg_s1i_0p9";
+> +                       regulator-min-microvolt =3D <900000>;
+> +                       regulator-max-microvolt =3D <920000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_s2i_1p0: smps2 {
+> +                       regulator-name =3D "vreg_s2i_1p0";
+> +                       regulator-min-microvolt =3D <1000000>;
+> +                       regulator-max-microvolt =3D <1100000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l1i_1p8: ldo1 {
+> +                       regulator-name =3D "vreg_l1i_1p8";
+> +                       regulator-min-microvolt =3D <1800000>;
+> +                       regulator-max-microvolt =3D <1800000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l2i_1p2: ldo2 {
+> +                       regulator-name =3D "vreg_l2i_1p2";
+> +                       regulator-min-microvolt =3D <1200000>;
+> +                       regulator-max-microvolt =3D <1200000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l3i_0p8: ldo3 {
+> +                       regulator-name =3D "vreg_l3i_0p8";
+> +                       regulator-min-microvolt =3D <880000>;
+> +                       regulator-max-microvolt =3D <920000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +       };
+> +
+> +       regulators-7 {
+> +               compatible =3D "qcom,pm8550ve-rpmh-regulators";
+> +               qcom,pmic-id =3D "j";
+> +
+> +               vdd-l1-supply =3D <&vreg_s1f_0p7>;
+> +               vdd-l2-supply =3D <&vreg_s5j_1p2>;
+> +               vdd-l3-supply =3D <&vreg_s1f_0p7>;
+> +               vdd-s5-supply =3D <&vph_pwr>;
+> +
+> +               vreg_s5j_1p2: smps5 {
+> +                       regulator-name =3D "vreg_s5j_1p2";
+> +                       regulator-min-microvolt =3D <1256000>;
+> +                       regulator-max-microvolt =3D <1304000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l1j_0p8: ldo1 {
+> +                       regulator-name =3D "vreg_l1j_0p8";
+> +                       regulator-min-microvolt =3D <880000>;
+> +                       regulator-max-microvolt =3D <920000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l2j_1p2: ldo2 {
+> +                       regulator-name =3D "vreg_l2j_1p2";
+> +                       regulator-min-microvolt =3D <1200000>;
+> +                       regulator-max-microvolt =3D <1200000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +
+> +               vreg_l3j_0p8: ldo3 {
+> +                       regulator-name =3D "vreg_l3j_0p8";
+> +                       regulator-min-microvolt =3D <880000>;
+> +                       regulator-max-microvolt =3D <920000>;
+> +                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> +               };
+> +       };
+> +};
+> +
+> +&gpu {
+> +       status =3D "okay";
+> +
+> +       zap-shader {
+> +               firmware-name =3D "qcom/x1e80100/LENOVO/14Q8X9/qcdxkmsuc8=
+380.mbn";
 
-The vDSO function requires a ChaCha20 implementation that does not write
-to the stack, yet can still do an entire ChaCha20 permutation, so
-provide this using SSE2, since this is userland code that must work on
-all x86-64 processors. There's a simple test for this code as well.
+I ended up with:
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Samuel Neves <sneves@dei.uc.pt> # for vgetrandom-chacha.S
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- MAINTAINERS                                   |   2 +
- arch/x86/Kconfig                              |   1 +
- arch/x86/entry/vdso/Makefile                  |   3 +-
- arch/x86/entry/vdso/vdso.lds.S                |   2 +
- arch/x86/entry/vdso/vgetrandom-chacha.S       | 178 ++++++++++++++++++
- arch/x86/entry/vdso/vgetrandom.c              |  17 ++
- arch/x86/include/asm/vdso/getrandom.h         |  55 ++++++
- arch/x86/include/asm/vdso/vsyscall.h          |   2 +
- arch/x86/include/asm/vvar.h                   |  16 ++
- tools/testing/selftests/vDSO/.gitignore       |   1 +
- tools/testing/selftests/vDSO/Makefile         |  15 ++
- .../testing/selftests/vDSO/vdso_test_chacha.c |  43 +++++
- 12 files changed, 334 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/entry/vdso/vgetrandom-chacha.S
- create mode 100644 arch/x86/entry/vdso/vgetrandom.c
- create mode 100644 arch/x86/include/asm/vdso/getrandom.h
- create mode 100644 tools/testing/selftests/vDSO/vdso_test_chacha.c
+  firmware-name =3D "qcom/x1e80100/LENOVO/83ED/qcdxkmsuc8380.mbn";
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 798158329ad8..00cf0362482b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18749,6 +18749,8 @@ F:	drivers/char/random.c
- F:	drivers/virt/vmgenid.c
- F:	include/vdso/getrandom.h
- F:	lib/vdso/getrandom.c
-+F:	arch/x86/entry/vdso/vgetrandom*
-+F:	arch/x86/include/asm/vdso/getrandom*
- 
- RAPIDIO SUBSYSTEM
- M:	Matt Porter <mporter@kernel.crashing.org>
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1d7122a1883e..9c98b7a88cc2 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -287,6 +287,7 @@ config X86
- 	select HAVE_UNSTABLE_SCHED_CLOCK
- 	select HAVE_USER_RETURN_NOTIFIER
- 	select HAVE_GENERIC_VDSO
-+	select VDSO_GETRANDOM			if X86_64
- 	select HOTPLUG_PARALLEL			if SMP && X86_64
- 	select HOTPLUG_SMT			if SMP
- 	select HOTPLUG_SPLIT_STARTUP		if SMP && X86_32
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 215a1b202a91..c9216ac4fb1e 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -7,7 +7,7 @@
- include $(srctree)/lib/vdso/Makefile
- 
- # Files to link into the vDSO:
--vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o
-+vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o vgetrandom.o vgetrandom-chacha.o
- vobjs32-y := vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
- vobjs32-y += vdso32/vclock_gettime.o vdso32/vgetcpu.o
- vobjs-$(CONFIG_X86_SGX)	+= vsgx.o
-@@ -73,6 +73,7 @@ CFLAGS_REMOVE_vdso32/vclock_gettime.o = -pg
- CFLAGS_REMOVE_vgetcpu.o = -pg
- CFLAGS_REMOVE_vdso32/vgetcpu.o = -pg
- CFLAGS_REMOVE_vsgx.o = -pg
-+CFLAGS_REMOVE_vgetrandom.o = -pg
- 
- #
- # X32 processes use x32 vDSO to access 64bit kernel data.
-diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.lds.S
-index e8c60ae7a7c8..0bab5f4af6d1 100644
---- a/arch/x86/entry/vdso/vdso.lds.S
-+++ b/arch/x86/entry/vdso/vdso.lds.S
-@@ -30,6 +30,8 @@ VERSION {
- #ifdef CONFIG_X86_SGX
- 		__vdso_sgx_enter_enclave;
- #endif
-+		getrandom;
-+		__vdso_getrandom;
- 	local: *;
- 	};
- }
-diff --git a/arch/x86/entry/vdso/vgetrandom-chacha.S b/arch/x86/entry/vdso/vgetrandom-chacha.S
-new file mode 100644
-index 000000000000..bcba5639b8ee
---- /dev/null
-+++ b/arch/x86/entry/vdso/vgetrandom-chacha.S
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/frame.h>
-+
-+.section	.rodata, "a"
-+.align 16
-+CONSTANTS:	.octa 0x6b20657479622d323320646e61707865
-+.text
-+
-+/*
-+ * Very basic SSE2 implementation of ChaCha20. Produces a given positive number
-+ * of blocks of output with a nonce of 0, taking an input key and 8-byte
-+ * counter. Importantly does not spill to the stack. Its arguments are:
-+ *
-+ *	rdi: output bytes
-+ *	rsi: 32-byte key input
-+ *	rdx: 8-byte counter input/output
-+ *	rcx: number of 64-byte blocks to write to output
-+ */
-+SYM_FUNC_START(__arch_chacha20_blocks_nostack)
-+
-+.set	output,		%rdi
-+.set	key,		%rsi
-+.set	counter,	%rdx
-+.set	nblocks,	%rcx
-+.set	i,		%al
-+/* xmm registers are *not* callee-save. */
-+.set	temp,		%xmm0
-+.set	state0,		%xmm1
-+.set	state1,		%xmm2
-+.set	state2,		%xmm3
-+.set	state3,		%xmm4
-+.set	copy0,		%xmm5
-+.set	copy1,		%xmm6
-+.set	copy2,		%xmm7
-+.set	copy3,		%xmm8
-+.set	one,		%xmm9
-+
-+	/* copy0 = "expand 32-byte k" */
-+	movaps		CONSTANTS(%rip),copy0
-+	/* copy1,copy2 = key */
-+	movups		0x00(key),copy1
-+	movups		0x10(key),copy2
-+	/* copy3 = counter || zero nonce */
-+	movq		0x00(counter),copy3
-+	/* one = 1 || 0 */
-+	movq		$1,%rax
-+	movq		%rax,one
-+
-+.Lblock:
-+	/* state0,state1,state2,state3 = copy0,copy1,copy2,copy3 */
-+	movdqa		copy0,state0
-+	movdqa		copy1,state1
-+	movdqa		copy2,state2
-+	movdqa		copy3,state3
-+
-+	movb		$10,i
-+.Lpermute:
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$16,temp
-+	psrld		$16,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$12,temp
-+	psrld		$20,state1
-+	por		temp,state1
-+
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$8,temp
-+	psrld		$24,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$7,temp
-+	psrld		$25,state1
-+	por		temp,state1
-+
-+	/* state1[0,1,2,3] = state1[1,2,3,0] */
-+	pshufd		$0x39,state1,state1
-+	/* state2[0,1,2,3] = state2[2,3,0,1] */
-+	pshufd		$0x4e,state2,state2
-+	/* state3[0,1,2,3] = state3[3,0,1,2] */
-+	pshufd		$0x93,state3,state3
-+
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$16,temp
-+	psrld		$16,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$12,temp
-+	psrld		$20,state1
-+	por		temp,state1
-+
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$8,temp
-+	psrld		$24,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$7,temp
-+	psrld		$25,state1
-+	por		temp,state1
-+
-+	/* state1[0,1,2,3] = state1[3,0,1,2] */
-+	pshufd		$0x93,state1,state1
-+	/* state2[0,1,2,3] = state2[2,3,0,1] */
-+	pshufd		$0x4e,state2,state2
-+	/* state3[0,1,2,3] = state3[1,2,3,0] */
-+	pshufd		$0x39,state3,state3
-+
-+	decb		i
-+	jnz		.Lpermute
-+
-+	/* output0 = state0 + copy0 */
-+	paddd		copy0,state0
-+	movups		state0,0x00(output)
-+	/* output1 = state1 + copy1 */
-+	paddd		copy1,state1
-+	movups		state1,0x10(output)
-+	/* output2 = state2 + copy2 */
-+	paddd		copy2,state2
-+	movups		state2,0x20(output)
-+	/* output3 = state3 + copy3 */
-+	paddd		copy3,state3
-+	movups		state3,0x30(output)
-+
-+	/* ++copy3.counter */
-+	paddq		one,copy3
-+
-+	/* output += 64, --nblocks */
-+	addq		$64,output
-+	decq		nblocks
-+	jnz		.Lblock
-+
-+	/* counter = copy3.counter */
-+	movq		copy3,0x00(counter)
-+
-+	/* Zero out the potentially sensitive regs, in case nothing uses these again. */
-+	pxor		state0,state0
-+	pxor		state1,state1
-+	pxor		state2,state2
-+	pxor		state3,state3
-+	pxor		copy1,copy1
-+	pxor		copy2,copy2
-+	pxor		temp,temp
-+
-+	ret
-+SYM_FUNC_END(__arch_chacha20_blocks_nostack)
-diff --git a/arch/x86/entry/vdso/vgetrandom.c b/arch/x86/entry/vdso/vgetrandom.c
-new file mode 100644
-index 000000000000..52d3c7faae2e
---- /dev/null
-+++ b/arch/x86/entry/vdso/vgetrandom.c
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+#include <linux/types.h>
-+
-+#include "../../../../lib/vdso/getrandom.c"
-+
-+ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
-+
-+ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
-+{
-+	return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
-+}
-+
-+ssize_t getrandom(void *, size_t, unsigned int, void *, size_t)
-+	__attribute__((weak, alias("__vdso_getrandom")));
-diff --git a/arch/x86/include/asm/vdso/getrandom.h b/arch/x86/include/asm/vdso/getrandom.h
-new file mode 100644
-index 000000000000..b96e674cafde
---- /dev/null
-+++ b/arch/x86/include/asm/vdso/getrandom.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+#ifndef __ASM_VDSO_GETRANDOM_H
-+#define __ASM_VDSO_GETRANDOM_H
-+
-+#ifndef __ASSEMBLY__
-+
-+#include <asm/unistd.h>
-+#include <asm/vvar.h>
-+
-+/**
-+ * getrandom_syscall - Invoke the getrandom() syscall.
-+ * @buffer:	Destination buffer to fill with random bytes.
-+ * @len:	Size of @buffer in bytes.
-+ * @flags:	Zero or more GRND_* flags.
-+ * Returns:	The number of random bytes written to @buffer, or a negative value indicating an error.
-+ */
-+static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsigned int flags)
-+{
-+	long ret;
-+
-+	asm ("syscall" : "=a" (ret) :
-+	     "0" (__NR_getrandom), "D" (buffer), "S" (len), "d" (flags) :
-+	     "rcx", "r11", "memory");
-+
-+	return ret;
-+}
-+
-+#define __vdso_rng_data (VVAR(_vdso_rng_data))
-+
-+static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
-+{
-+	if (IS_ENABLED(CONFIG_TIME_NS) && __vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
-+		return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)&__vdso_data);
-+	return &__vdso_rng_data;
-+}
-+
-+/**
-+ * __arch_chacha20_blocks_nostack - Generate ChaCha20 stream without using the stack.
-+ * @dst_bytes:	Destination buffer to hold @nblocks * 64 bytes of output.
-+ * @key:	32-byte input key.
-+ * @counter:	8-byte counter, read on input and updated on return.
-+ * @nblocks:	Number of blocks to generate.
-+ *
-+ * Generates a given positive number of blocks of ChaCha20 output with nonce=0, and does not write
-+ * to any stack or memory outside of the parameters passed to it, in order to mitigate stack data
-+ * leaking into forked child processes.
-+ */
-+extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
-+
-+#endif /* !__ASSEMBLY__ */
-+
-+#endif /* __ASM_VDSO_GETRANDOM_H */
-diff --git a/arch/x86/include/asm/vdso/vsyscall.h b/arch/x86/include/asm/vdso/vsyscall.h
-index be199a9b2676..71c56586a22f 100644
---- a/arch/x86/include/asm/vdso/vsyscall.h
-+++ b/arch/x86/include/asm/vdso/vsyscall.h
-@@ -11,6 +11,8 @@
- #include <asm/vvar.h>
- 
- DEFINE_VVAR(struct vdso_data, _vdso_data);
-+DEFINE_VVAR_SINGLE(struct vdso_rng_data, _vdso_rng_data);
-+
- /*
-  * Update the vDSO data page to keep in sync with kernel timekeeping.
-  */
-diff --git a/arch/x86/include/asm/vvar.h b/arch/x86/include/asm/vvar.h
-index 183e98e49ab9..9d9af37f7cab 100644
---- a/arch/x86/include/asm/vvar.h
-+++ b/arch/x86/include/asm/vvar.h
-@@ -26,6 +26,8 @@
-  */
- #define DECLARE_VVAR(offset, type, name) \
- 	EMIT_VVAR(name, offset)
-+#define DECLARE_VVAR_SINGLE(offset, type, name) \
-+	EMIT_VVAR(name, offset)
- 
- #else
- 
-@@ -37,6 +39,10 @@ extern char __vvar_page;
- 	extern type timens_ ## name[CS_BASES]				\
- 	__attribute__((visibility("hidden")));				\
- 
-+#define DECLARE_VVAR_SINGLE(offset, type, name)				\
-+	extern type vvar_ ## name					\
-+	__attribute__((visibility("hidden")));				\
-+
- #define VVAR(name) (vvar_ ## name)
- #define TIMENS(name) (timens_ ## name)
- 
-@@ -44,12 +50,22 @@ extern char __vvar_page;
- 	type name[CS_BASES]						\
- 	__attribute__((section(".vvar_" #name), aligned(16))) __visible
- 
-+#define DEFINE_VVAR_SINGLE(type, name)					\
-+	type name							\
-+	__attribute__((section(".vvar_" #name), aligned(16))) __visible
-+
- #endif
- 
- /* DECLARE_VVAR(offset, type, name) */
- 
- DECLARE_VVAR(128, struct vdso_data, _vdso_data)
- 
-+#if !defined(_SINGLE_DATA)
-+#define _SINGLE_DATA
-+DECLARE_VVAR_SINGLE(640, struct vdso_rng_data, _vdso_rng_data)
-+#endif
-+
- #undef DECLARE_VVAR
-+#undef DECLARE_VVAR_SINGLE
- 
- #endif
-diff --git a/tools/testing/selftests/vDSO/.gitignore b/tools/testing/selftests/vDSO/.gitignore
-index 7dbfdec53f3d..30d5c8f0e5c7 100644
---- a/tools/testing/selftests/vDSO/.gitignore
-+++ b/tools/testing/selftests/vDSO/.gitignore
-@@ -7,3 +7,4 @@ vdso_test_gettimeofday
- vdso_test_getcpu
- vdso_standalone_test_x86
- vdso_test_getrandom
-+vdso_test_chacha
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index fd7c29d9814b..f828e0a9d498 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -3,6 +3,7 @@ include ../lib.mk
- 
- uname_M := $(shell uname -m 2>/dev/null || echo not)
- ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
-+SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
- 
- TEST_GEN_PROGS := $(OUTPUT)/vdso_test_gettimeofday $(OUTPUT)/vdso_test_getcpu
- TEST_GEN_PROGS += $(OUTPUT)/vdso_test_abi
-@@ -12,10 +13,18 @@ TEST_GEN_PROGS += $(OUTPUT)/vdso_standalone_test_x86
- endif
- TEST_GEN_PROGS += $(OUTPUT)/vdso_test_correctness
- TEST_GEN_PROGS += $(OUTPUT)/vdso_test_getrandom
-+ifeq ($(uname_M),x86_64)
-+ifneq ($(SODIUM),)
-+TEST_GEN_PROGS += $(OUTPUT)/vdso_test_chacha
-+endif
-+endif
- 
- CFLAGS := -std=gnu99
- CFLAGS_vdso_standalone_test_x86 := -nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector
- CFLAGS_vdso_test_getrandom := -isystem $(top_srcdir)/tools/include -isystem $(top_srcdir)/include/uapi
-+CFLAGS_vdso_test_chacha := $(SODIUM) -idirafter $(top_srcdir)/include -idirafter \
-+			   $(top_srcdir)/arch/$(ARCH)/include -idirafter include \
-+			   -D__ASSEMBLY__ -DBULID_VDSO -DCONFIG_FUNCTION_ALIGNMENT=0 -Wa,--noexecstack
- LDFLAGS_vdso_test_correctness := -ldl
- ifeq ($(CONFIG_X86_32),y)
- LDLIBS += -lgcc_s
-@@ -37,3 +46,9 @@ $(OUTPUT)/vdso_test_correctness: vdso_test_correctness.c
- 		$(LDFLAGS_vdso_test_correctness)
- $(OUTPUT)/vdso_test_getrandom: CFLAGS += $(CFLAGS_vdso_test_getrandom)
- $(OUTPUT)/vdso_test_getrandom: parse_vdso.c
-+$(OUTPUT)/vdso_test_chacha: CFLAGS += $(CFLAGS_vdso_test_chacha)
-+$(OUTPUT)/vdso_test_chacha: $(top_srcdir)/arch/$(ARCH)/entry/vdso/vgetrandom-chacha.S
-+$(OUTPUT)/vdso_test_chacha: include/asm/rwonce.h
-+include/asm/rwonce.h:
-+	mkdir -p include/asm
-+	touch $@
-diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-new file mode 100644
-index 000000000000..e38f44e5f803
---- /dev/null
-+++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+
-+#include <sodium/crypto_stream_chacha20.h>
-+#include <sys/random.h>
-+#include <string.h>
-+#include <stdint.h>
-+#include "../kselftest.h"
-+
-+extern void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes, const uint8_t *key, uint32_t *counter, size_t nblocks);
-+
-+int main(int argc, char *argv[])
-+{
-+	enum { TRIALS = 1000, BLOCKS = 128, BLOCK_SIZE = 64 };
-+	static const uint8_t nonce[8] = { 0 };
-+	uint32_t counter[2];
-+	uint8_t key[32];
-+	uint8_t output1[BLOCK_SIZE * BLOCKS], output2[BLOCK_SIZE * BLOCKS];
-+
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
-+	for (unsigned int trial = 0; trial < TRIALS; ++trial) {
-+		if (getrandom(key, sizeof(key), 0) != sizeof(key)) {
-+			printf("getrandom() failed!\n");
-+			return KSFT_SKIP;
-+		}
-+		crypto_stream_chacha20(output1, sizeof(output1), nonce, key);
-+		for (unsigned int split = 0; split < BLOCKS; ++split) {
-+			memset(output2, 'X', sizeof(output2));
-+			memset(counter, 0, sizeof(counter));
-+			if (split)
-+				__arch_chacha20_blocks_nostack(output2, key, counter, split);
-+			__arch_chacha20_blocks_nostack(output2 + split * BLOCK_SIZE, key, counter, BLOCKS - split);
-+			if (memcmp(output1, output2, sizeof(output1)))
-+				return KSFT_FAIL;
-+		}
-+	}
-+	ksft_test_result_pass("chacha: PASS\n");
-+	return KSFT_PASS;
-+}
--- 
-2.45.2
+my DMI string is:
 
+  DMI: LENOVO 83ED/LNVNB161216, BIOS NHCN36WW 05/23/2024
+
+idk if that is different for you?
+
+> +       };
+> +};
+> +
+> +&i2c0 {
+> +       clock-frequency =3D <400000>;
+> +
+> +       status =3D "okay";
+> +
+
+I also have this, which is working for me (sry about gmail butchering
+the formating):
+
+
+touchpad@2c {
+compatible =3D "hid-over-i2c";
+reg =3D <0x2c>;
+
+hid-descr-addr =3D <0x20>;
+interrupts-extended =3D <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
+
+pinctrl-0 =3D <&tpad_default>;
+pinctrl-names =3D "default";
+
+wakeup-source;
+};
+
+basically just uncommented the node from Xilin's tree, but seems to work fi=
+ne.
+
+BR,
+-R
+
+> +       keyboard@3a {
+> +               compatible =3D "hid-over-i2c";
+> +               reg =3D <0x3a>;
+> +
+> +               hid-descr-addr =3D <0x1>;
+> +               interrupts-extended =3D <&tlmm 67 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +               pinctrl-0 =3D <&kybd_default>;
+> +               pinctrl-names =3D "default";
+> +
+> +               wakeup-source;
+> +       };
+> +};
+> +
+> +&i2c8 {
+> +       clock-frequency =3D <400000>;
+> +
+> +       status =3D "okay";
+> +
+> +       touchscreen@14 {
+> +               compatible =3D "hid-over-i2c";
+> +               reg =3D <0x14>;
+> +
+> +               hid-descr-addr =3D <0x1>;
+> +               interrupts-extended =3D <&tlmm 51 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +               pinctrl-0 =3D <&ts0_default>;
+> +               pinctrl-names =3D "default";
+> +       };
+> +};
+> +
+> +&lpass_tlmm {
+> +       spkr_01_sd_n_active: spkr-01-sd-n-active-state {
+> +               pins =3D "gpio12";
+> +               function =3D "gpio";
+> +               drive-strength =3D <16>;
+> +               bias-disable;
+> +               output-low;
+> +       };
+> +
+> +       spkr_23_sd_n_active: spkr-23-sd-n-active-state {
+> +               pins =3D "gpio13";
+> +               function =3D "gpio";
+> +               drive-strength =3D <16>;
+> +               bias-disable;
+> +               output-low;
+> +       };
+> +};
+> +
+> +&lpass_vamacro {
+> +       pinctrl-0 =3D <&dmic01_default>, <&dmic23_default>;
+> +       pinctrl-names =3D "default";
+> +
+> +       vdd-micb-supply =3D <&vreg_l1b_1p8>;
+> +       qcom,dmic-sample-rate =3D <4800000>;
+> +};
+> +
+> +&mdss {
+> +       status =3D "okay";
+> +};
+> +
+> +&mdss_dp3 {
+> +       compatible =3D "qcom,x1e80100-dp";
+> +       /delete-property/ #sound-dai-cells;
+> +
+> +       status =3D "okay";
+> +
+> +       aux-bus {
+> +               panel {
+> +                       compatible =3D "edp-panel";
+> +                       power-supply =3D <&vreg_edp_3p3>;
+> +
+> +                       port {
+> +                               edp_panel_in: endpoint {
+> +                                       remote-endpoint =3D <&mdss_dp3_ou=
+t>;
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +
+> +       ports {
+> +               port@1 {
+> +                       reg =3D <1>;
+> +
+> +                       mdss_dp3_out: endpoint {
+> +                               data-lanes =3D <0 1 2 3>;
+> +                               link-frequencies =3D /bits/ 64 <162000000=
+0 2700000000 5400000000 8100000000>;
+> +
+> +                               remote-endpoint =3D <&edp_panel_in>;
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+> +&mdss_dp3_phy {
+> +       vdda-phy-supply =3D <&vreg_l3j_0p8>;
+> +       vdda-pll-supply =3D <&vreg_l2j_1p2>;
+> +
+> +       status =3D "okay";
+> +};
+> +
+> +&pcie4 {
+> +       status =3D "okay";
+> +};
+> +
+> +&pcie4_phy {
+> +       vdda-phy-supply =3D <&vreg_l3j_0p8>;
+> +       vdda-pll-supply =3D <&vreg_l3e_1p2>;
+> +
+> +       status =3D "okay";
+> +};
+> +
+> +&pcie6a {
+> +       perst-gpios =3D <&tlmm 152 GPIO_ACTIVE_LOW>;
+> +       wake-gpios =3D <&tlmm 154 GPIO_ACTIVE_LOW>;
+> +
+> +       vddpe-3v3-supply =3D <&vreg_nvme>;
+> +
+> +       pinctrl-0 =3D <&pcie6a_default>;
+> +       pinctrl-names =3D "default";
+> +
+> +       status =3D "okay";
+> +};
+> +
+> +&pcie6a_phy {
+> +       vdda-phy-supply =3D <&vreg_l1d_0p8>;
+> +       vdda-pll-supply =3D <&vreg_l2j_1p2>;
+> +
+> +       status =3D "okay";
+> +};
+> +
+> +&qupv3_0 {
+> +       status =3D "okay";
+> +};
+> +
+> +&qupv3_1 {
+> +       status =3D "okay";
+> +};
+> +
+> +&qupv3_2 {
+> +       status =3D "okay";
+> +};
+> +
+> +&remoteproc_adsp {
+> +       firmware-name =3D "qcom/x1e80100/LENOVO/14Q8X9/qcadsp8380.mbn",
+> +                       "qcom/x1e80100/LENOVO/14Q8X9/adsp_dtbs.elf";
+> +       status =3D "okay";
+> +};
+> +
+> +&remoteproc_cdsp {
+> +       firmware-name =3D "qcom/x1e80100/LENOVO/14Q8X9/qccdsp8380.mbn",
+> +                       "qcom/x1e80100/LENOVO/14Q8X9/cdsp_dtbs.elf";
+> +
+> +       status =3D "okay";
+> +};
+> +
+> +&smb2360_0_eusb2_repeater {
+> +       vdd18-supply =3D <&vreg_l3d_1p8>;
+> +       vdd3-supply =3D <&vreg_l2b_3p0>;
+> +};
+> +
+> +&smb2360_1_eusb2_repeater {
+> +       vdd18-supply =3D <&vreg_l3d_1p8>;
+> +       vdd3-supply =3D <&vreg_l14b_3p0>;
+> +};
+> +
+> +&smb2360_2_eusb2_repeater {
+> +       vdd18-supply =3D <&vreg_l3d_1p8>;
+> +       vdd3-supply =3D <&vreg_l8b_3p0>;
+> +};
+> +
+> +&swr0 {
+> +       status =3D "okay";
+> +
+> +       pinctrl-0 =3D <&wsa_swr_active>, <&spkr_01_sd_n_active>;
+> +       pinctrl-names =3D "default";
+> +
+> +       /* WSA8845, Left Woofer */
+> +       left_woofer: speaker@0,0 {
+> +               compatible =3D "sdw20217020400";
+> +               reg =3D <0 0>;
+> +               reset-gpios =3D <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
+> +               #sound-dai-cells =3D <0>;
+> +               sound-name-prefix =3D "WooferLeft";
+> +               vdd-1p8-supply =3D <&vreg_l15b_1p8>;
+> +               vdd-io-supply =3D <&vreg_l12b_1p2>;
+> +               qcom,port-mapping =3D <1 2 3 7 10 13>;
+> +       };
+> +
+> +       /* WSA8845, Left Tweeter */
+> +       left_tweeter: speaker@0,1 {
+> +               compatible =3D "sdw20217020400";
+> +               reg =3D <0 1>;
+> +               reset-gpios =3D <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
+> +               #sound-dai-cells =3D <0>;
+> +               sound-name-prefix =3D "TwitterLeft";
+> +               vdd-1p8-supply =3D <&vreg_l15b_1p8>;
+> +               vdd-io-supply =3D <&vreg_l12b_1p2>;
+> +               qcom,port-mapping =3D <4 5 6 7 11 13>;
+> +       };
+> +};
+> +
+> +
+> +&swr3 {
+> +       status =3D "okay";
+> +
+> +       pinctrl-0 =3D <&wsa2_swr_active>, <&spkr_23_sd_n_active>;
+> +       pinctrl-names =3D "default";
+> +
+> +       /* WSA8845, Right Woofer */
+> +       right_woofer: speaker@0,0 {
+> +               compatible =3D "sdw20217020400";
+> +               reg =3D <0 0>;
+> +               reset-gpios =3D <&lpass_tlmm 13 GPIO_ACTIVE_LOW>;
+> +               #sound-dai-cells =3D <0>;
+> +               sound-name-prefix =3D "WooferRight";
+> +               vdd-1p8-supply =3D <&vreg_l15b_1p8>;
+> +               vdd-io-supply =3D <&vreg_l12b_1p2>;
+> +               qcom,port-mapping =3D <1 2 3 7 10 13>;
+> +       };
+> +
+> +       /* WSA8845, Right Tweeter */
+> +       right_tweeter: speaker@0,1 {
+> +               compatible =3D "sdw20217020400";
+> +               reg =3D <0 1>;
+> +               reset-gpios =3D <&lpass_tlmm 13 GPIO_ACTIVE_LOW>;
+> +               #sound-dai-cells =3D <0>;
+> +               sound-name-prefix =3D "TwitterRight";
+> +               vdd-1p8-supply =3D <&vreg_l15b_1p8>;
+> +               vdd-io-supply =3D <&vreg_l12b_1p2>;
+> +               qcom,port-mapping =3D <4 5 6 7 11 13>;
+> +       };
+> +};
+> +
+> +&tlmm {
+> +       gpio-reserved-ranges =3D <34 2>, /* Unused */
+> +                              <44 4>, /* SPI (TPM) */
+> +                              <238 1>; /* UFS Reset */
+> +
+> +       edp_reg_en: edp-reg-en-state {
+> +               pins =3D "gpio70";
+> +               function =3D "gpio";
+> +               drive-strength =3D <16>;
+> +               bias-disable;
+> +       };
+> +
+> +       kybd_default: kybd-default-state {
+> +               pins =3D "gpio67";
+> +               function =3D "gpio";
+> +               bias-disable;
+> +       };
+> +
+> +       nvme_reg_en: nvme-reg-en-state {
+> +               pins =3D "gpio18";
+> +               function =3D "gpio";
+> +               drive-strength =3D <2>;
+> +               bias-disable;
+> +       };
+> +
+> +       pcie6a_default: pcie2a-default-state {
+> +               clkreq-n-pins {
+> +                       pins =3D "gpio153";
+> +                       function =3D "pcie6a_clk";
+> +                       drive-strength =3D <2>;
+> +                       bias-pull-up;
+> +               };
+> +
+> +               perst-n-pins {
+> +                       pins =3D "gpio152";
+> +                       function =3D "gpio";
+> +                       drive-strength =3D <2>;
+> +                       bias-pull-down;
+> +               };
+> +
+> +               wake-n-pins {
+> +                      pins =3D "gpio154";
+> +                      function =3D "gpio";
+> +                      drive-strength =3D <2>;
+> +                      bias-pull-up;
+> +              };
+> +       };
+> +
+> +       ts0_default: ts0-default-state {
+> +               int-n-pins {
+> +                       pins =3D "gpio51";
+> +                       function =3D "gpio";
+> +                       bias-disable;
+> +               };
+> +
+> +               reset-n-pins {
+> +                       pins =3D "gpio48";
+> +                       function =3D "gpio";
+> +                       output-high;
+> +                       drive-strength =3D <16>;
+> +               };
+> +       };
+> +
+> +};
+> +
+> +&usb_1_ss0_hsphy {
+> +       vdd-supply =3D <&vreg_l3j_0p8>;
+> +       vdda12-supply =3D <&vreg_l2j_1p2>;
+> +
+> +       phys =3D <&smb2360_0_eusb2_repeater>;
+> +
+> +       status =3D "okay";
+> +};
+> +
+> +&usb_1_ss0_qmpphy {
+> +       vdda-phy-supply =3D <&vreg_l3e_1p2>;
+> +       vdda-pll-supply =3D <&vreg_l1j_0p8>;
+> +
+> +       orientation-switch;
+> +
+> +       status =3D "okay";
+> +};
+> +
+> +&usb_1_ss0 {
+> +       status =3D "okay";
+> +};
+> +
+> +&usb_1_ss0_dwc3 {
+> +       dr_mode =3D "host";
+> +};
+> +
+> +&usb_1_ss0_dwc3_hs {
+> +       remote-endpoint =3D <&pmic_glink_ss0_hs_in>;
+> +};
+> +
+> +&usb_1_ss0_qmpphy_out {
+> +       remote-endpoint =3D <&pmic_glink_ss0_ss_in>;
+> +};
+> +
+> +&usb_1_ss1_hsphy {
+> +       vdd-supply =3D <&vreg_l3j_0p8>;
+> +       vdda12-supply =3D <&vreg_l2j_1p2>;
+> +
+> +       phys =3D <&smb2360_1_eusb2_repeater>;
+> +
+> +       status =3D "okay";
+> +};
+> +
+> +&usb_1_ss1_qmpphy {
+> +       vdda-phy-supply =3D <&vreg_l3e_1p2>;
+> +       vdda-pll-supply =3D <&vreg_l2d_0p9>;
+> +
+> +       orientation-switch;
+> +
+> +       status =3D "okay";
+> +};
+> +
+> +&usb_1_ss1 {
+> +       status =3D "okay";
+> +};
+> +
+> +&usb_1_ss1_dwc3 {
+> +       dr_mode =3D "host";
+> +};
+> +
+> +&usb_1_ss1_dwc3_hs {
+> +       remote-endpoint =3D <&pmic_glink_ss1_hs_in>;
+> +};
+> +
+> +&usb_1_ss1_qmpphy_out {
+> +       remote-endpoint =3D <&pmic_glink_ss1_ss_in>;
+> +};
+> +
+> +&usb_1_ss2_hsphy {
+> +       vdd-supply =3D <&vreg_l3j_0p8>;
+> +       vdda12-supply =3D <&vreg_l2j_1p2>;
+> +
+> +       phys =3D <&smb2360_2_eusb2_repeater>;
+> +
+> +       status =3D "okay";
+> +};
+> +
+> +&usb_1_ss2_qmpphy {
+> +       vdda-phy-supply =3D <&vreg_l3e_1p2>;
+> +       vdda-pll-supply =3D <&vreg_l2d_0p9>;
+> +
+> +       status =3D "okay";
+> +};
+> +
+> +&usb_1_ss2 {
+> +       status =3D "okay";
+> +};
+> +
+> +&usb_1_ss2_dwc3 {
+> +       dr_mode =3D "host";
+> +};
+> +
+> +&usb_1_ss2_dwc3_hs {
+> +       remote-endpoint =3D <&pmic_glink_ss2_hs_in>;
+> +};
+> +
+> +&usb_1_ss2_qmpphy_out {
+> +       remote-endpoint =3D <&pmic_glink_ss2_ss_in>;
+> +};
+>
+> --
+> 2.25.1
+>
+>
 
