@@ -1,145 +1,105 @@
-Return-Path: <linux-kernel+bounces-239383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AB9925E85
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:37:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E768D925EC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 365BB1C2308D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:37:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD8A2946E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CCF183097;
-	Wed,  3 Jul 2024 11:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D0418509C;
+	Wed,  3 Jul 2024 11:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="HU926B91"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYbxGRBa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D2316DEAC;
-	Wed,  3 Jul 2024 11:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D20178384;
+	Wed,  3 Jul 2024 11:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720006246; cv=none; b=WuRYQfBJIy/cW3vHWTlkhFaKJIqGV6sJRuNif/bdUdl2KjLDro5XNFAASrY2J45lDKcqobILcCZxj9KgART8m1q8UNO3ZTf1/90J6HBXRIDCzAROc8KMXVOahQ7g4703/Q5cE97zDF0b5UWpb/wOXrLHFo/UpDbT+ec5NbXKmQ8=
+	t=1720006289; cv=none; b=olo6PrzLKQhqyMjEFftrnYp+0h4iTSsIIWpz/2QcfInjMpiL3rGpKBwajryoPV2Cgolpwdk6jloe7g2TTGgsrJ9MPl37BKlkvprKsG9zoD60kk1ejDKAw6Vsn4u+n/nZja+3JxV/bh854kFhaBixAHPDxUkHidvkNSKsyjJHfRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720006246; c=relaxed/simple;
-	bh=hHU8qyvZllQ9YNTnZjbz56zaVVYuI4Ya3gnqfITbJTA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Do7yZWRz6QDCyL3aoaviOEXx/oh/oRVKWCux2TfjoizlOpOUWgct3p0M2RHmiv8zhvhgIGB3fIi/s+BWi1/UNWxrA5I2g0rqnX+SDKZ+twmN4/O/tPHjuHfllCRBhVfoUDBUZOI7oi9snjfiOtZAvg0W+lpKlc7L0MzmBPNOcqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=HU926B91; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1720006241;
-	bh=hBPfcphJy7Ev3mtEEvsbdYBglsS6/5WB3ZZqmCXJ/5Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=HU926B91N24lEUx6TCxkH/GKqKj/7NXDsOnGaHqcTfPaoG6/I5SNKLCA7y6EC/YeQ
-	 Sv7VirV9nzzOXJUHRJUwpvW5jRDXVbfY1JjEZ2WG7Lky05vbK7t6hWL6YTS5SD2BPO
-	 WU4rce17jT8OGRQVKayXyEqpl1haKHOJwR3xVzPYV3eEDvgISidfZSeiYVbUX60GM+
-	 2nxD9Hg7Mz+/zf0G78gfhx0LJ0U5vjdX48mJZneviZgO4CAG9xk00t9yknCn6TCGg4
-	 r7JUiWmxvtuHE72Un7pYAqzo3UweMNvJTlqrYIPGTBeJCiWSK43iHsGA7xrcbo3yMJ
-	 c6IozzeKGp3ww==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WDcz34b52z4xQd;
-	Wed,  3 Jul 2024 21:30:39 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Rob Herring <robh@kernel.org>, Marc Zyngier <maz@kernel.org>, Christian
- Zigotzky <chzigotzky@xenosoft.de>
-Cc: apatel@ventanamicro.com, DTML <devicetree@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, linuxppc-dev
- <linuxppc-dev@lists.ozlabs.org>, mad skateman <madskateman@gmail.com>,
- "R.T.Dickinson" <rtd2@xtra.co.nz>, Matthew Leaman <matthew@a-eon.biz>,
- Darren Stevens <darren@stevens-zone.net>, Christian Zigotzky
- <info@xenosoft.de>
-Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives
- after the of/irq updates 2024-05-29
-In-Reply-To: <CAL_Jsq+_QZHMJGHqw8vFA5CspuouvY_U=+NobYQ52DcwPQx-2w@mail.gmail.com>
-References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
- <86zfqzhgys.wl-maz@kernel.org>
- <CAL_Jsq+_QZHMJGHqw8vFA5CspuouvY_U=+NobYQ52DcwPQx-2w@mail.gmail.com>
-Date: Wed, 03 Jul 2024 21:30:38 +1000
-Message-ID: <87le2ik90h.fsf@mail.lhotse>
+	s=arc-20240116; t=1720006289; c=relaxed/simple;
+	bh=OOqX7HXKQvRZ8kJaMG1PBXsJYL3kB9aBJ4y7GrmT338=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AXiLRYSolPtGJTpjmemmarhPrjwi+5ohtLZpWp909Upfm6ObvNqIaLk8z03U0dRGOMhYZEtxk6gTnSepIxlcRmanbypJ7K/d3lFJ2r8ahxuOuoNeFXuGV7gbpm2ldBoaPgmhMaMqMcDQZmBIY3lusX2sF4e7Kc9ByjhBCKE8eaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYbxGRBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B480C4AF0E;
+	Wed,  3 Jul 2024 11:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720006289;
+	bh=OOqX7HXKQvRZ8kJaMG1PBXsJYL3kB9aBJ4y7GrmT338=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZYbxGRBaglXSZvrdwzgntW0V74f2TqoCGL+Vwbgw0ZqQuebO1HOJmOLvbOY+Xu+qO
+	 TJNpjMY/7U34DyJb0FgCUypHUCkvxV4LnsFOgmYPLnYYAA+C0+tjCkBoPxF9cPFw3c
+	 HBg87gg3TkQIsunfDw7CyASp9l1hNmmTq7PIFNtPhOhTgLUYgx25YbBVU4OnIqH9Ox
+	 0zD+MxC2fDX4pZNqOFpR37Hr0L2pl/UkE3sBg599P/OnAps9IcFoVbgUSRcZvlxVey
+	 7fvXwe3SEItT+qKg1+AvR5RQSw74QmgUxtzG6j160/jhoAgK9vTX+issGs400HYaI5
+	 gCgwDzLSyCznQ==
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3d56754a4ceso298058b6e.1;
+        Wed, 03 Jul 2024 04:31:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXvdhGcxc/9ZUqeGcNRGvCgIVy/qj0Wl+LCeoNZprEJtJd6M62BjNQ7x452Ied9vZzLMdxQAIM3BKmQfYlhOKY9eI7ay3ufq/ZINVzk5KgdSxUNsSUSK+sEf2U/K6wkMkkHIagLe35bQH/Z/JBEUoydCYbgcNWGh3kSpp0eAMMzLG7cfiwL2jUL0yslckA2+gW50XHxlKkdVFshI/YBB+y65Qr+
+X-Gm-Message-State: AOJu0YwGrn54YUWokqHEH6QkU50gnL7zFv9DVBTlS6ezMvwP4pAD2Sgt
+	jZu9MbMgLns8sqt3zeoE1pmo1J4NPNrnBmM/r7360gypjIYVw5f4T9ySaGbWs89AK7dKcxSsFur
+	Ahjn7yreCwwWuaheAJJQuZLxe8EI=
+X-Google-Smtp-Source: AGHT+IHjc7MTNZRLTBNE7mu4jABEZQGDjUj30z0WrDXIT7TlEe02wTsalj1wTZ4s4WUo3e9PxE2VMnph7z7hy9nYD4M=
+X-Received: by 2002:a05:6870:46a8:b0:25c:f5f8:a822 with SMTP id
+ 586e51a60fabf-25db33f8baamr12061362fac.1.1720006288688; Wed, 03 Jul 2024
+ 04:31:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <1890956.tdWV9SEqCh@rjwysocki.net> <8392906.T7Z3S40VBb@rjwysocki.net>
+ <c5fdac6f90b7b2191914f632dc89bac8b4701bdc.camel@sipsolutions.net>
+In-Reply-To: <c5fdac6f90b7b2191914f632dc89bac8b4701bdc.camel@sipsolutions.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 3 Jul 2024 13:31:17 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gdQtbJHsQ2LMQrgnaQxS3BybaCXLYKeF1sFh7wPW8Uuw@mail.gmail.com>
+Message-ID: <CAJZ5v0gdQtbJHsQ2LMQrgnaQxS3BybaCXLYKeF1sFh7wPW8Uuw@mail.gmail.com>
+Subject: Re: [RESEND][PATCH v1 3/5] thermal: trip: Pass trip pointer to
+ .set_trip_temp() thermal zone callback
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Thara Gopinath <thara.gopinath@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-wireless@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Rob Herring <robh@kernel.org> writes:
-> On Tue, Jul 2, 2024 at 10:54=E2=80=AFAM Marc Zyngier <maz@kernel.org> wro=
-te:
->>
->> On Sun, 30 Jun 2024 11:21:55 +0100,
->> Christian Zigotzky <chzigotzky@xenosoft.de> wrote:
->> >
->> > Hello,
->> >
->> > There is an issue with the identification of ATA drives with our
->> > P.A. Semi Nemo boards [1] after the
->> > commit "of/irq: Factor out parsing of interrupt-map parent
->> > phandle+args from of_irq_parse_raw()" [2].
->>
->> [snip]
->>
->> My earlier request for valuable debug information still stands. But
->> while you're at it, can you please give the following hack a go?
->>
->>         M.
->>
->> --- a/drivers/of/irq.c
->> +++ b/drivers/of/irq.c
->> @@ -282,8 +282,10 @@ int of_irq_parse_raw(const __be32 *addr, struct of_=
-phandle_args *out_irq)
->>
->>                         oldimap =3D imap;
->>                         imap =3D of_irq_parse_imap_parent(oldimap, imapl=
-en, out_irq);
->> -                       if (!imap)
->> -                               goto fail;
->> +                       if (!imap) {
->> +                               match =3D 0;
->> +                               break;
->> +                       }
+On Wed, Jul 3, 2024 at 10:43=E2=80=AFAM Johannes Berg <johannes@sipsolution=
+s.net> wrote:
 >
-> AFAICT reading the DT, I don't think this would fix it. imap should
-> only be null if malformed. This case to me looks like interrupt-map
-> has the correct cell sizes, but just never matches to do the mapping.
-> So maybe imaplen is off and that causes us to end up here, but if
-> there's an error I don't see it. A boot with DEBUG enabled in
-> drivers/of/irq.c would help.
+> You said in the cover letter this hasn't received much attention ... as
+> far as I can tell, the only wireless thing is this:
 >
->>
->>                         match &=3D of_device_is_available(out_irq->np);
->>                         if (match)
->>
->> This may not be the final workaround even if it solves your boot
->> problem, but will at least give us a hint at what is going wrong.
->>
->> I have the fuzzy feeling that we may be able to lob this broken system
->> as part of the of_irq_imap_abusers[] array, which would solve things
->> pretty "neatly".
+> > --- linux-pm.orig/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> > +++ linux-pm/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> > @@ -638,7 +638,7 @@ out:
+> >  }
+> >
+> >  static int iwl_mvm_tzone_set_trip_temp(struct thermal_zone_device *dev=
+ice,
+> > -                                    int trip, int temp)
+> > +                                    const struct thermal_trip *trip, i=
+nt temp)
+> >  {
+> >       struct iwl_mvm *mvm =3D thermal_zone_device_priv(device);
+> >       int ret;
 >
-> I think this would work and would consolidate the work-arounds. It
-> would need either "pasemi,rootbus" or "pa-pxp" added to the list.
+> which I guess looks totally fine :)
 
-Not sure if it helps, but there's already some code in arch/powerpc to
-"fixup" the nemo device tree at boot.
+Well, I would think so. :-)
 
-I'm not sure if it's actually the problem here, but it might be, it does
-renumber some interrupts. Or possibly it could be tweaked to fix
-whatever the issue is.
-
-The code is in fixup_device_tree_pasemi():
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/a=
-rch/powerpc/kernel/prom_init.c?h=3Dv6.10-rc5#n3114
-
-cheers
+Thanks!
 
