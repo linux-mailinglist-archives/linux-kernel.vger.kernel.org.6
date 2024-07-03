@@ -1,146 +1,166 @@
-Return-Path: <linux-kernel+bounces-239470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6789926075
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:36:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D7A92607A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26ECF2840F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:36:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 064631C224AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E8F178374;
-	Wed,  3 Jul 2024 12:36:02 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E91017A58A;
+	Wed,  3 Jul 2024 12:36:10 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF4213A25B;
-	Wed,  3 Jul 2024 12:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F3D176255;
+	Wed,  3 Jul 2024 12:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720010161; cv=none; b=SRFyfO5b/0C8fEYWgC4PFmVjLafN+bGAqRgH9ofWLUJAzbQpVlb72EcuaDAXjF7wVGDFLirvDiUVjoKqNkUcsbh+ffqFWTsBhOkXAC8mfVw+asp4MXr+5STCJVQpgt3MqaERxYBK86iiYuK7iF8ZsH96FeOjTIqyroNY07QMurY=
+	t=1720010169; cv=none; b=K9onwRaG6s/r1Us25VSbqtjLwm1wXEywIEAatbpiVl5UG95mQY/s+IyN1eT96TocKfvja31rOTztYoLunTcAzyI4ObgDk6XEHOQEI+7PfbDHls3yR0dJR9tI1vT9CInNmjcHgxq2I4eto5uKGjm0h3wa57Rq2Fdo2mKimrtCllo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720010161; c=relaxed/simple;
-	bh=onepRnVIoj8wYu4Zze0ForhgqtXoWegKGDXPt8UNkJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmmSAmu35j9/3CsTkuf6OswGL6c3NRJpmpZq/3huzN3apBZFToA0AGyUCi9qMoaPwB+/dKWQgiCDfY/2Cd8Pf0xSOUvHYM6u3eDJ3JmY3YpEx0SzgikjqQGp6vVI9d+My4wLvs/R9yFWVeU/RpWUwan9T0BeY108bYWc8SXvGJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Wed, 3 Jul 2024 14:35:54 +0200
-From: Guilherme Amadio <amadio@gentoo.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Thorsten Leemhuis <linux@leemhuis.info>, Leo Yan <leo.yan@arm.com>,
-	linux-perf-users@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/6] perf build: Conditionally add feature check flags
- for libtrace{event,fs}
-Message-ID: <ZoVFqiZdTXy1glLc@gentoo.org>
-References: <20240628202608.3273329-1-amadio@gentoo.org>
- <20240628203432.3273625-1-amadio@gentoo.org>
- <ZoSOR0ULxXLxLZvA@google.com>
+	s=arc-20240116; t=1720010169; c=relaxed/simple;
+	bh=yY64PjcKHGe2LA/qnYBJLLgIK2uJmMMYRq8Oig0HjkE=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=SLhYw0Ol6X4SYUXazdst3VqZujYp4dUtLT9+0ZOO385IJzM6UAYaHmHoHgvz0J84Y72kDtXquZRBfGC75l5Wr4x0maNyR6V8v6Z9KLs4zT5PMNtmmE6hHlzfSwLtVKNVcbZBbL1kNCal01Brj8PMX6EXVwHA2GiRlFPGmaVaDL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WDfL73ypgzQk7y;
+	Wed,  3 Jul 2024 20:32:15 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id C14EC18006C;
+	Wed,  3 Jul 2024 20:36:03 +0800 (CST)
+Received: from [10.69.30.204] (10.69.30.204) by dggpemf200006.china.huawei.com
+ (7.185.36.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Jul
+ 2024 20:36:03 +0800
+Subject: Re: [PATCH net-next v9 07/13] mm: page_frag: some minor refactoring
+ before adding new API
+To: Alexander H Duyck <alexander.duyck@gmail.com>, <davem@davemloft.net>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
+References: <20240625135216.47007-1-linyunsheng@huawei.com>
+ <20240625135216.47007-8-linyunsheng@huawei.com>
+ <ce969484bc8deee1438a019f19b97618937b0047.camel@gmail.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <3f816006-2949-e81a-be6f-b0b63322a1d5@huawei.com>
+Date: Wed, 3 Jul 2024 20:36:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZoSOR0ULxXLxLZvA@google.com>
+In-Reply-To: <ce969484bc8deee1438a019f19b97618937b0047.camel@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hello,
-
-On Tue, Jul 02, 2024 at 04:33:27PM -0700, Namhyung Kim wrote:
-> Hello,
+On 2024/7/2 23:30, Alexander H Duyck wrote:
+> On Tue, 2024-06-25 at 21:52 +0800, Yunsheng Lin wrote:
+>> Refactor common codes from __page_frag_alloc_va_align()
+>> to __page_frag_cache_refill(), so that the new API can
+>> make use of them.
+>>
+>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 > 
-> On Fri, Jun 28, 2024 at 10:34:27PM +0200, Guilherme Amadio wrote:
-> > This avoids reported warnings when the packages are not installed.
-> > 
-> > Fixes: 0f0e1f44569061e3dc590cd0b8cb74d8fd53706b
-> > Signed-off-by: Guilherme Amadio <amadio@gentoo.org>
-> 
-> Thanks for working on this.
-> 
-> > ---
-> >  tools/perf/Makefile.config | 28 +++++++++++++++-------------
-> >  1 file changed, 15 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> > index 5271a4c1d2b3..5387babb8f04 100644
-> > --- a/tools/perf/Makefile.config
-> > +++ b/tools/perf/Makefile.config
-> > @@ -182,13 +182,21 @@ endif
-> >  FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
-> >  FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
-> >  
-> > -# for linking with debug library, run like:
-> > -# make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
-> > -FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
-> > -FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
-> > -
-> > -FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
-> > -FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
-> > +ifneq ($(NO_LIBTRACEEVENT),1)
-> > +  ifeq ($(call get-executable,$(PKG_CONFIG)),)
-> > +  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
-> 
-> I know you just copied the code, but IIRC we wanted to remove this dummy
-> assignment before.
+> I am generally not a fan of the concept behind this patch. I really
+> think we should keep the page_frag_cache_refill function to just
+> allocating the page, or in this case the encoded_va and populating only
+> that portion of the struct.
 
-Sure, I will change this. I think we can also remove the "dummy :=" part and
-just do $(error Error: ...), like it's done in other places.
-
-> > +  endif
-> > +endif
-> > +ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent 2>&1 1>/dev/null; echo $$?),0)
-> > +  # for linking with debug library, run like:
-> > +  # make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
-> > +  FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
-> > +  FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
-> > +endif
-> > +ifeq ($(shell $(PKG_CONFIG) --exists libtracefs 2>&1 1>/dev/null; echo $$?),0)
-> > +  FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
-> > +  FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
-> 
-> I'm curious if we can redirect stderr to /dev/null to surpress the
-> output when pkg-config is not installed.  Then we don't need to check
-> the `ifeq`.
-
-I was wondering that myself when I added the check, if you prefer to redirect
-stderr to /dev/null, I will do it that way then when I submit v3.
-
-Thanks for the review.
-
-Best regards,
--Guilherme
+As my understanding, the above mainly depends on how you look at it,
+at least it seems odd to me that part of a struct is populated in
+one function and other part of the same struct is populated in other
+function.
 
 > 
-> Thanks,
-> Namhyung
+>> ---
+>>  mm/page_frag_cache.c | 61 ++++++++++++++++++++++----------------------
+>>  1 file changed, 31 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+>> index a3316dd50eff..4fd421d4f22c 100644
+>> --- a/mm/page_frag_cache.c
+>> +++ b/mm/page_frag_cache.c
+>> @@ -29,10 +29,36 @@ static void *page_frag_cache_current_va(struct page_frag_cache *nc)
+>>  static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+>>  					     gfp_t gfp_mask)
+>>  {
+>> -	struct page *page = NULL;
+>> +	struct encoded_va *encoded_va = nc->encoded_va;
+>>  	gfp_t gfp = gfp_mask;
+>>  	unsigned int order;
+>> +	struct page *page;
+>> +
+>> +	if (unlikely(!encoded_va))
+>> +		goto alloc;
+>> +
+>> +	page = virt_to_page(encoded_va);
+>> +	if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
+>> +		goto alloc;
+>> +
+>> +	if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
+>> +		VM_BUG_ON(compound_order(page) !=
+>> +			  encoded_page_order(encoded_va));
+>> +		free_unref_page(page, encoded_page_order(encoded_va));
+>> +		goto alloc;
+>> +	}
+>> +
+>> +	/* OK, page count is 0, we can safely set it */
+>> +	set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
 > 
+> Why not just make this block of code a function onto itself? You put an
+> if statement at the top that essentially is just merging two functions
+> into one. Perhaps this logic could be __page_frag_cache_recharge which
+> would return an error if the page is busy or the wrong type. Then
+> acting on that you could switch to the refill attempt.
 > 
-> > +endif
-> >  
-> >  FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
-> >  # include ARCH specific config
-> > @@ -208,12 +216,6 @@ ifeq ($(call get-executable,$(BISON)),)
-> >    $(error Error: $(BISON) is missing on this system, please install it)
-> >  endif
-> >  
-> > -ifneq ($(NO_LIBTRACEEVENT),1)
-> > -  ifeq ($(call get-executable,$(PKG_CONFIG)),)
-> > -  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
-> > -  endif
-> > -endif
-> > -
-> >  ifneq ($(OUTPUT),)
-> >    ifeq ($(shell expr $(shell $(BISON) --version | grep bison | sed -e 's/.\+ \([0-9]\+\).\([0-9]\+\).\([0-9]\+\)/\1\2\3/g') \>\= 371), 1)
-> >      BISON_FILE_PREFIX_MAP := --file-prefix-map=$(OUTPUT)=
-> > -- 
-> > 2.45.2
-> > 
+> Also thinking about it more the set_page_count in this function and
+> page_ref_add in the other can probably be merged into the recharge and
+> refill functions since they are acting directly on the encoded page and
+> not interacting with the other parts of the page_frag_cache.
+
+So we are agreed that the below is merged into __page_frag_cache_recharge()?
+set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
+nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
+
+The below is merged into __page_frag_cache_refill()?
+page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
+nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
+
+> 
+>> +
+>> +	/* reset page count bias and remaining of new frag */
+>> +	nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
+>> +	nc->remaining = page_frag_cache_page_size(encoded_va);
+> 
+> These two parts are more or less agnostic to the setup and could be
+> applied to refill or recharge. Also one thought occurs to me. You were
+> encoding "order" into the encoded VA. Why use that when your choices
+> are either PAGE_FRAG_CACHE_MAX_SIZE or PAGE_SIZE. It should be a single
+> bit and doesn't need to be a fully byte to store that. That would allow
+> you to reduce this down to just 2 bits, one for pfmemalloc and one for
+> max order vs order 0.
+
+I thought about the above and implemented it actually, but it turned out
+that it was not as good as encoding "order" into the encoded VA, at least
+for the generated asm code size, it didn't seem better. Using one bit,
+we need a checking to decide it is PAGE_FRAG_CACHE_MAX_SIZE or PAGE_SIZE.
+And we can use that to replace compound_order(page) when calling
+free_unref_page() too.
+
+> 
+>> +
+>> +	return page;
 
