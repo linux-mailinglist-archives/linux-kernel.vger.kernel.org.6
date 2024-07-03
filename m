@@ -1,105 +1,88 @@
-Return-Path: <linux-kernel+bounces-239380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FC6B925E39
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:35:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDA6925E6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F5E02A2E10
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:34:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D56E1C20A78
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B3F17BB1E;
-	Wed,  3 Jul 2024 11:26:45 +0000 (UTC)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646D31822CF;
+	Wed,  3 Jul 2024 11:30:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042CE17B50A;
-	Wed,  3 Jul 2024 11:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04E31822C1
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720006004; cv=none; b=oePtXoB0rXsyhHNda8n6ClJq5iNykn2NblHfPCCRbd1c3BwMGufwcZHJdLe1f1bUQDYs8jBiYT8kQGxMqs3scjDyknjsEZFeqRT89r78sRjobVNKmkCXvRjvl3vguIqs+5acBho4HIeD+IF4CEOvR2JYBW/TueCdwoWnANpQMHk=
+	t=1720006205; cv=none; b=eoL9KNU5yCjhvHvq+gOBGrnDbja1TkqfVxSJRi9qjztech5E3d5G0+NDs0WnjdzggCvSqzAN34RNVaA4kx31fCZVAjzyh3Kqyvc6t+RnThZPi6velHdrGR/Ms2FoK1ZJWjuvWY/48PGrlRqx/mYHkioG5X0tqqaRSqH5aXNwbas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720006004; c=relaxed/simple;
-	bh=NAwTmEHqJI/g5QC50U8AQivwoiPQ/FxFK+E4TqhVNPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fqi2sqIq0HBAj9Zp0Cf1etfHQc73EC/GVg4za4SwiYy9hh4cNJ0PxUzzqxOsbAdqz6nU52Gau/3CvupsiP2u5Ennh+vCUaYMgIXb4VpHTpPsP7ywWVne8tjQ0iUfEhFbBTeE87dg2L3CYtZ1hvbIN7+4S+pZBNysvcfFVmJxqjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52e7693c369so7174202e87.3;
-        Wed, 03 Jul 2024 04:26:42 -0700 (PDT)
+	s=arc-20240116; t=1720006205; c=relaxed/simple;
+	bh=BfBH17VJtXddypEgWxOTCDyxog3F+1OJeoRSo4XyS88=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XRmlA8hOsbhmi0oH6nDLBMxNoI2mpkPCWuQ2leF+33mAQx9SMF2N62iKTTUQlA6gmJhp0A3QdO7CHDFXWsMnn1FWiUYJxeUqlF1YyAfGjwALwtkwCFTZHbOLcpiP8PE2iH9oHD8RIZBOTbx4FWSxgusHfhYH4CLjLqpuWAeL/Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f3d2fd6ad6so597339539f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 04:30:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720006001; x=1720610801;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i6Pb8eWYjG/lUAtf/dpDbWcNlsXUZ5c2rnoW11IR3JM=;
-        b=wbctDzPIt4JNpmEypYhvsTnMZt5SNSG50iLYdX24tr1Vs+tE55AqzDS60igJ8NGmD/
-         doCILuyAzXov32Y+Xctfhs/Cq8V8TXSKym4snvL395Dp/AxO3XtD6BRRtTpI5idr01UI
-         e+gGx9hil4iS3Jv9ZhMSAYoMqEfpM4uSfEv52HeQnNZTgaqcO2Fo8NSw7e6VadkDdxll
-         zXtl6YP25Pa3AJgzLuH83zlZ1EC3zt/e2MI6JbjAFyWB8O9VJq3ErcsH/tObJXypFYPi
-         Jwfgf3b8gAibnoXdzHWRYpQfWthoprLmk0Dz39m8bxIph34EMk3XjGtVbnAd92p4e6XU
-         wBlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVdXboL1NZjCcg//+LAlixOHSTC+j25xKlTsdKHYMKKkLnCXzoey8CeYCR6DC1J9A8/nU7/4BSQa6BTQ4uEL3+pMtJtnXZC7Ml7crDFBUSGG15F6a43LxiW9/mxsWa+hTbPbFeq8dCYlPR8DUz+FH1Fy9Z4ES/D9MknwGyohWClkBk
-X-Gm-Message-State: AOJu0Yy74Wj8SkFIbaKQKmG7FQ+qU+Wc8NzGZHIJhT8CKhRCaV8yVNsh
-	qe/a7qHODPTayBCpui0+feWoNX0Bc//AF//E0CE3/BuOJ29ceY2t2LGNAg==
-X-Google-Smtp-Source: AGHT+IEbAQ8nFW0BsPbyiOwXt/vQdxbqW/1IV4VaU6x/l7d9vtN8XdicV2zAwUK37aIl/GyFuMd2lA==
-X-Received: by 2002:a05:6512:3b91:b0:52e:7f87:4e66 with SMTP id 2adb3069b0e04-52e826ee70amr8624122e87.49.1720006000901;
-        Wed, 03 Jul 2024 04:26:40 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-005.fbsv.net. [2a03:2880:30ff:5::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c8368esm6843735a12.19.2024.07.03.04.26.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 04:26:40 -0700 (PDT)
-Date: Wed, 3 Jul 2024 04:26:38 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Gaurav Jain <gaurav.jain@nxp.com>
-Cc: "kuba@kernel.org" <kuba@kernel.org>,
-	Horia Geanta <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [EXT] [PATCH net-next v3 4/4] crypto: caam: Unembed net_dev
- structure in dpaa2
-Message-ID: <ZoU1bh79jugMaRty@gmail.com>
-References: <20240702185557.3699991-1-leitao@debian.org>
- <20240702185557.3699991-5-leitao@debian.org>
- <AM0PR04MB600485850F153B6792CA8C0DE7DD2@AM0PR04MB6004.eurprd04.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1720006203; x=1720611003;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GtDOwAyHfaH7yyD0GH2aSXDr9A+JGdnxgQykaBHcXN0=;
+        b=HP8nLT/8HOoQMWm2O+P4JZBirejGVCCfl2VHIGIVmvVPri9lI0od1MuFbEPJFLDVHA
+         I0w/1idhKeuN6c2cGLRqatvJSdFry/FzWjXtdlwaqhqWR1Fjz4zNol+EvbX9cltog2Gn
+         hUVmskrRPxGtL8J7f2NrA6HC+T02cEpgIu46ebpbZkxmjd92oBBJtG2iUED4m/eO4rnJ
+         mrK0pISTTkW4MLO6s5ESyOzT0eLV/npq1/hmpU3gEx4V0zhasnskOthN9LL9obxlSbdZ
+         w5UMqP4jxFbOCaSUBI1UOTY/leUTJkXxFRjnKHjtqM91OBrMpUXBZ5U+VOtNQFbLffEp
+         UGYg==
+X-Gm-Message-State: AOJu0YxEGxoux2KNh+qM2rbY2wh4WR2/YI9QZPWv59m/w9nrhX8Ox+85
+	TefglU1n9nQtJlDzHI6KSYOF+7fL9iViGCusMD5qXNKPGd5rBXu2vaVNfxVVWBqhx/9EZnuxfg6
+	DUisXXz2NOZaM8XGYsa4qyPmvtjbCQ8ERJFWzBo5R4r+4+OCK0eoKaN0=
+X-Google-Smtp-Source: AGHT+IEIax5/D/dGA9BMfrVKPEvu7Yt1XPECp25e7JFAWps+K01mgYPk8aNZatnMgXBVhW/z5tyDzrI3AxSBWUzCt8yxku8lQpR7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM0PR04MB600485850F153B6792CA8C0DE7DD2@AM0PR04MB6004.eurprd04.prod.outlook.com>
+X-Received: by 2002:a05:6638:12c4:b0:488:9082:8dd0 with SMTP id
+ 8926c6da1cb9f-4bbb6892d94mr1132629173.0.1720006202854; Wed, 03 Jul 2024
+ 04:30:02 -0700 (PDT)
+Date: Wed, 03 Jul 2024 04:30:02 -0700
+In-Reply-To: <ZoU1Aa/JJ+60FZla@katalix.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bba661061c5626c5@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
+From: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tparkin@katalix.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Gaurav,
+Hello,
 
-On Wed, Jul 03, 2024 at 05:45:23AM +0000, Gaurav Jain wrote:
+syzbot tried to test the proposed patch but the build/boot failed:
 
-> > @@ -5096,15 +5109,23 @@ static int __cold dpaa2_dpseci_setup(struct
-> > fsl_mc_device *ls_dev)
-> >                         priv->rx_queue_attr[j].fqid,
-> >                         priv->tx_queue_attr[j].fqid);
-> >
-> > -               ppriv->net_dev.dev = *dev;
-> > -               INIT_LIST_HEAD(&ppriv->net_dev.napi_list);
+failed to apply patch:
+checking file net/l2tp/l2tp_core.c
+Hunk #1 FAILED at 1290.
+1 out of 1 hunk FAILED
 
-> napi_list is not needed anymore? There is no mention in commit.
 
-Good question. This allocation is now done in the alloc_netdev_dummy()
-path. This is the code path:
 
-alloc_netdev_dummy()->alloc_netdev()->alloc_netdev_mqs() which calls:
+Tested on:
 
-	INIT_LIST_HEAD(&dev->napi_list);
+commit:         185d7211 net: xilinx: axienet: Enable multicast by def..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
+dashboard link: https://syzkaller.appspot.com/bug?extid=c041b4ce3a6dfd1e63e2
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=177064e1980000
 
-So, napi_list is initialized when the net_device interface is allocated.
 
