@@ -1,122 +1,154 @@
-Return-Path: <linux-kernel+bounces-239998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF7519267BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:07:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BFE39267C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BBC12881E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:07:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC77C2886E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4361F18629B;
-	Wed,  3 Jul 2024 18:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AB3187549;
+	Wed,  3 Jul 2024 18:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HuTIkZCK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3bpvJgx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECAD567D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 18:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D201CF9D4;
+	Wed,  3 Jul 2024 18:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720029981; cv=none; b=oW80fCeeWpwCTBlkigUEFgVLG2O9JkPzJo0PtEuZzoIIaUDoWOqxs5eEZQZm5HCBqQ1xhWPoSaXVRlDNJ6tYaqY5X96tgcMrIdzGmkvvlySDCplRFpdKBGIWm3Wkc8kSR/U1xX1c0Qjs4ZTy9P+m6Lv4qZwr8L3Lu9Rqqsg25iQ=
+	t=1720030064; cv=none; b=i9XdwKQC4XV3xSPFlK/JYqpMJIbcTREXhPXjgN0PglgwgMJJxS/+FIgelBReg3LS8Wzr9omICAep/mLO8s/VRcYZWAgXPeH3ibLmzwNTHG0n6qRVW0wTQiJm72dFqXlMnCR8jdlYTenorftNIGnZvhQN6COL5MjlO98R8wLz1qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720029981; c=relaxed/simple;
-	bh=+MbLfYtEWFSDBMzZZxNrmUZXhuZHRSrqO8dsReyBC5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YdX4tpKGv3UlfRmfPyCS+GZE52QF7wBkY7dpkbQ4uJX3P/jEeZE5u7Jmtw+Ki2YWjjiNz9KsM74ACZbzflYdI5WtVYBfc+8s+G8tsIOO+etU+6xj58FI5IHh1+SOfrLQ9saegRQfBLPiQH9hQSgeIMXaMH/unQE3w759uQN/0jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HuTIkZCK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720029978;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KIEH1DQ5UkzdCEa2J+MChYeDbaqJXOVbALXQjkzbCEE=;
-	b=HuTIkZCKyNtO73Q76ZKe+V6uzaQUUGu7+5Y/clG4YaVNCqHZ7Wl8znJ6mmaselw6ytmyJB
-	sxhxFhIscWwXBFwm5dCDX68Ewsce4cYJhGlnPOx00VmXRLTcrRSn6AQxBtKlyL0zttS9z+
-	FBwRpRzbC3cXtiRXCzYtlpST2r68aJ0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-346-N_3O_f3IMGSL5DOyKqH24A-1; Wed,
- 03 Jul 2024 14:06:15 -0400
-X-MC-Unique: N_3O_f3IMGSL5DOyKqH24A-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4BD781954B0B;
-	Wed,  3 Jul 2024 18:06:14 +0000 (UTC)
-Received: from [10.22.33.252] (unknown [10.22.33.252])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 43A8C30000DD;
-	Wed,  3 Jul 2024 18:06:13 +0000 (UTC)
-Message-ID: <c9c9ed1c-116d-4deb-b54e-6e464c342f23@redhat.com>
-Date: Wed, 3 Jul 2024 14:06:12 -0400
+	s=arc-20240116; t=1720030064; c=relaxed/simple;
+	bh=7VkdfXXbnQAAagurnl0t1uowHfXXxqv6JWqV5yzvHyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CiMPUxASSVAdQ8N1jrJ4jlLETUK7VWDp3bpK1DeOHc+gim4rshy99CIXb9XQjsp7n9GbL6+VnGBgMdVXmLlMVfo34rFFswixa9gasJlyUYqZ0OkyMARPECxh1EncSIm+fCuZJJ8KcUj3zfgBnQWwkNnfSOHqyyF1gRKjH2P3384=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3bpvJgx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2346AC2BD10;
+	Wed,  3 Jul 2024 18:07:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720030063;
+	bh=7VkdfXXbnQAAagurnl0t1uowHfXXxqv6JWqV5yzvHyc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X3bpvJgxZPWMXNOzcyielDafYLsorlGeMfGsYxZsE3DcfgNG38u+IpqkFauqV7JBb
+	 5vrbm1WYc3A6PpB/BYRkykAD7OTF0Cj7mNGz1MOi0sa5ZMS/EgfduMIqZfBT2ojOEE
+	 bFo2aTY3NN6jY868V+Ef+HPG5nwsrIILcL4gaARoEmQ/3VJxlw8KNvls5K1NJbvrcL
+	 liQUqmGsYZrzJg5w0kk4/LvcK6Tdp62Zk7+kzOZ/GnWL+VAWuwzwfMk9DNJ/Cy73bN
+	 +KSVQC/fntqBgC8EoMj80EdF4hoVvz6Kgpa3QHWVeUvUPp8LsLtGUtLPC5Ip21htEj
+	 aLChwBO4AdEcA==
+Date: Wed, 3 Jul 2024 12:07:42 -0600
+From: Rob Herring <robh@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Tony Lindgren <tony@atomide.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jonathan Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Richard Leitner <richard.leitner@linux.dev>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	llvm@lists.linux.dev, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+	patches@opensource.cirrus.com, linux-sound@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 00/20] Simplify of_property_for_each_u32()
+Message-ID: <20240703180742.GB1245093-robh@kernel.org>
+References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] workqueue: Always queue work items to the newest PWQ for
- order workqueues
-To: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>, Tejun Heo <tj@kernel.org>
-References: <20240703092741.22997-1-jiangshanlai@gmail.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240703092741.22997-1-jiangshanlai@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
 
+On Wed, Jul 03, 2024 at 12:36:44PM +0200, Luca Ceresoli wrote:
+> [Note: to reduce the noise I have trimmed the get_maintainers list
+> manually. Should you want to be removed, or someone else added, to future
+> versions, just tell me. Sorry for the noise.]
+> 
+> This series aims at simplifying of_property_for_each_u32() as well as
+> making it more difficult to misuse it in the future.
+> 
+> The long-term goal is changing this pattern:
+> 
+>   struct property *prop;
+>   const __be32 *p;
+>   u32 val;
+>  
+>   of_property_for_each_u32(np, "xyz", prop, p, val) { ... }
+> 
+> to this:
+> 
+>   u32 val;
+> 
+>   of_property_for_each_u32(np, "xyz", val) { ... }
+> 
+> So, removing the 3rd and 4th arguments which are typically meant to be
+> internal. Those two parameters used to be unavoidable until the kernel
+> moved to building with the C11 standard unconditionally. Since then, it is
+> now possible to get rid of them. However a few users of
+> of_property_for_each_u32() do actually use those arguments, which
+> complicates the transition. For this reason this series does the following:
+> 
+>  * Add of_property_for_each_u32_new(), which does not have those two
+>    arguments (patch 1)
+>  * Convert _almost_ every usage to of_property_for_each_u32_new()
+>  * Rename of_property_for_each_u32() to of_property_for_each_u32_old() and
+>    deprecate it, as a incentive to code not (yet) in mainline to upgrade
+>    to the *_new() version (last patch)
 
-On 7/3/24 05:27, Lai Jiangshan wrote:
-> From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
->
-> To ensure non-reentrancy, __queue_work() attempts to enqueue a work
-> item to the pool of the currently executing worker. This is not only
-> unnecessary for an ordered workqueue, where order inherently suggests
-> non-reentrancy, but it could also disrupt the sequence if the item is
-> not enqueued on the newest PWQ.
->
-> Just queue it to the newest PWQ and let order management guarantees
-> non-reentrancy.
->
-> Fixes: 4c065dbce1e8("workqueue: Enable unbound cpumask update on ordered workqueues")
-> Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
-> ---
->   kernel/workqueue.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index c910f3c28664..d4fecd23ea44 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -2271,9 +2271,13 @@ static void __queue_work(int cpu, struct workqueue_struct *wq,
->   	 * If @work was previously on a different pool, it might still be
->   	 * running there, in which case the work needs to be queued on that
->   	 * pool to guarantee non-reentrancy.
-> +	 *
-> +	 * For ordered workqueue, work items must be queued on the newest pwq
-> +	 * for accurate order management.  Guaranteed order also guarantees
-> +	 * non-reentrancy.  See the comments above unplug_oldest_pwq().
->   	 */
->   	last_pool = get_work_pool(work);
-> -	if (last_pool && last_pool != pool) {
-> +	if (last_pool && last_pool != pool && !(wq->flags & __WQ_ORDERED)) {
->   		struct worker *worker;
->   
->   		raw_spin_lock(&last_pool->lock);
+I don't really see the point of introducing the _old variant. Let's get 
+this done in one step.
 
-Thanks for the fix again.
+> 
+> The plan for the next series is to additionally:
+> 
+>  * Convert the few remaining of_property_for_each_u32_old() instantes to
+>    of_property_for_each_u32_new()
+>  * Remove of_property_for_each_u32_old()
+>  * Rename of_property_for_each_u32_new() to of_property_for_each_u32()
 
-Acked-by: Waiman Long <longman@redhat.com>
+Honestly, I think there's few enough users we could just convert the 
+whole thing in one patch. It's all got to go thru 1 tree anyways. If 
+there's new cases in -next, then I'd be happy to send it to Linus at the 
+end of the merge window.
 
+Rob
 
