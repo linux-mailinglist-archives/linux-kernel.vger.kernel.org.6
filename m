@@ -1,136 +1,136 @@
-Return-Path: <linux-kernel+bounces-239116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB93925688
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:21:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4EB92563D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D97B1C2215C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:21:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D4528AE3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6114713DDA1;
-	Wed,  3 Jul 2024 09:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4202F13D2AF;
+	Wed,  3 Jul 2024 09:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="tcu9U6xc"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hEsdm09K"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF5613D52C;
-	Wed,  3 Jul 2024 09:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2710F1A28C;
+	Wed,  3 Jul 2024 09:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719998469; cv=none; b=ooENJ7JEfQdNZ82QouzjFz+Eja7/6cjt6zz5YMaOylsLCOmQvoy5cOuavh/2xlCEKsHajt/3aeqKadwP4q2YK2i5p1yzKR9IW/3FeMVlW9rj+L8DQzA4/G/S/NKbckoaFC6jcScXC1bglAa7h4/5lY9QYnettnQCneddEheKbbI=
+	t=1719998178; cv=none; b=Dokta0v6iCv5ZkrOVbkhauHXzjGT7rBhZlbCUL4j1IyKlyH5GQfMnaZEgw32cRcbLe/JWCV3/bzPiLXhky+LKyL6ZFO0eNy5JBDfff5tQKeh9F4DzBHI0eq67yfpw7vZIbRMLKotg5rVMVRqxjukwtg876dudniUao9VMikwbcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719998469; c=relaxed/simple;
-	bh=Wyl2SFGLVCY9I76VGiszxJyjpFrEkWUOFvTsPtE6pTc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gBRranUaUD9QBBWdZqNpkUX2/Jrf+hrawnoGWHMaAK1UYHbQ5ow+/AuGGURD9r2zeSyZaSeS9iyek+DBMbaDDuH1whr29UupLVFXroYNiUO8naPZUOMft0mZF0RuX8n7K5+66BPjLCCJeLDWkrt8g/HxgmnRlDOO8u77WAsM96U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=tcu9U6xc; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719998458; x=1720603258; i=spasswolf@web.de;
-	bh=oBQFmETLL7D3z7jRwHkLZHsWnUmcK0p0AK8DnuJD78w=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tcu9U6xckseNUP1+vBU5sqBou5tHz81TQZzdvDP2x/jWhFQZbLnRBsAtKPgzrAuS
-	 cs7NtYC9LTykXu/PKvI4JfiPScC2vF6wn7m8hPKTOc0hMUMcsnFWzF5rXGIfbXRBR
-	 gQqGsAlmpUO3un9spZUP7UKBvp68Wdh7iPf4tGTPbY0hnloKLH+D5OKh/OMyrFzeu
-	 ca6wumnhXPCHZA63DVCN9Ysv8KQxE9bTm1JZL0GZAPrU45/exT1VnuG5YIV9p8WLl
-	 CUqHzf4BzSAg6T3UA1bPMz5XplVW2BVdBcfrZmzsPu2RdaIccvyTP9QXilR3hvweH
-	 cV6VzsnP2qteDGIdnw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
- (mrweb106 [213.165.67.124]) with ESMTPSA (Nemesis) id
- 1M7Nmo-1sUQGE218u-00Elao; Wed, 03 Jul 2024 11:15:38 +0200
-From: Bert Karwatzki <spasswolf@web.de>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	caleb.connolly@linaro.org,
-	bhelgaas@google.com,
-	brgl@bgdev.pl,
-	amit.pundir@linaro.org,
-	neil.armstrong@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH] pci: bus: only call of_platform_populate() if CONFIG_OF is defined
-Date: Wed,  3 Jul 2024 11:15:30 +0200
-Message-ID: <20240703091535.3531-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: 20240612082019.19161-4-brgl@bgdev.pl
-References: 
+	s=arc-20240116; t=1719998178; c=relaxed/simple;
+	bh=EQ9ynuogKwqJotvG6/Q3XVZNpD2ItovSqDtXpxciwG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rC4yiXQEEQxHljiempUKD0+pmkDQQ2/Ja07iwCf4hPj6zK92YMrB8t3j5aYOEfFTbg80gjnk3xrkVFDVyaSGH6t8nHwwiLjof1y9PT8aBC2jzIe8CT2R/IMkXZTJwDWw5tIf6N9uKI0GsImZHoIiIgR0zNt6iVmtyLk6OGoxEyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hEsdm09K; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4637vq1W026223;
+	Wed, 3 Jul 2024 09:16:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+fdzPPy73AwcqGd0sFY2QX/hNI/YC7EvKY8Xe7GoW4k=; b=hEsdm09KrbeEZhsS
+	1yd1FWnMrM620d77NCNZRNWGYspn+hJmy0A8jpEAhUleEyJoxrsiJp6AbkHU18ND
+	8AoS+8Rd0puBwC0S6h6n3T9AhteumIwdAVdrWNosjN9/b8K21s24GP0iuH4gTT2N
+	H3BMVNg7T68uNtY7dAWvJbr0PbUB8pl/V4cxNUEO6Q8ETn+p006RM/3SttJsDdNJ
+	gF8c7U9alFSlW/2WxCLKaEK/5irtM0tI9O2AnfEBjNWZ3rt8HxWwlRB6G3mrpjRR
+	uG1TfXFrbL087P0vx+uYP4vndvMxEIDEG6aQwvqOOZ9UWGq20+ow/mFOEIcMG77e
+	64YKWg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4027mnrnep-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 09:16:12 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4639GBc8025021
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Jul 2024 09:16:11 GMT
+Received: from [10.218.10.146] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 02:16:06 -0700
+Message-ID: <ba7d12d3-c582-45ec-beed-e81182fe3252@quicinc.com>
+Date: Wed, 3 Jul 2024 14:46:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nyJcyHhsNSpkSUGZqbvy5cz1+qJWvtRYdbilKOrnaRbpkEucYDI
- OO6X9pZ8KS+LAvp0TY5pUBt13c5CZ5zj58Jvj7gRo7OtAEgAi64mW3/H5Q4f5PEAxJRvddj
- 19rlO8z708zo5053JsZrJq5n5fJsE/CHsT0KUTpAnn9hFrDqamw8Ed6svdI5bvXDv+wctVC
- B/p0EFClr8h/KIYSsBJZw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:20gnE9vcYAw=;5Vn92s0UDnCrY+dgvQFnS2uHqlE
- zJhJX+e4RvaJ0YxUVfTBGS9DpEFmWV17NOxuLmJjHvlA9l0n9M9/bXy8nsSsRtimB32ZA7bAp
- 2dZmY9SSnYrQVaOyMoRfP0VDudwq/YJs++W5FIIAM3nDqZ1C5hRhBh03cFR80R8CYj764VBso
- tO4eH7o56SGLLhtgYEGRFUMy7rl5zRQd6B5O497CRvkYecE6ZFh3SVOH5gTFKTwJYm7AYvNy7
- tqDZ/8xBFxkky9HST5qVSfKrVFy7k8oq/zAuT1CxTyyFyCt1hUSPQR4LL9t8rYSORUMntxQXC
- C4TEyB7o6aF4mCKZr6CbKVI/UkUqs98jwJxNYv+vUkAvLf6NAkGDUEtZnMHilS9dIDfTAf0EN
- GWsj/mgStCv7Trsd71WrZIJ55tjpoJfKCNnUczEUYHpF2dXFscNdFAgHkQGDCXVUMwz8hMRkA
- /+pBgsPxay08zCB+qc+Or1hes7b4uCi1khmkHD21t5WeBh4ghmnKYOQ+o1dPuKMV6t2F0c+iI
- GX2XhI0vW4Se6IElsiL32ATSDehuly8Jjw1DPJBVb6HvOpbZLgseHjqMYDx0YkpPg6kAciw92
- 3aLMlx9fQNQDrtIk5bTPNRkJdSodIndz8jucpl1FvrkGQSzDu3TcAWT4JzrBt23a4E9owVMg+
- OsEGNORflRBAJv8dK/uggUys80Q/HQrJgCmdQSXYbDBp+NFLkUz+hoHRP0mc48Fc+dOqeFcc8
- Vl9ovVrQxPzdg9nf/UVPnFAGpipd6tv5tLW+EibbfJCqM+6P333ufkZmKv10A1q/yX+5wrJpT
- 4tAAA5elsJMFlWsXYwXZWKmIdkdTieKOWI2jWiq1jIL2A=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm4450: add camera, display and
+ gpu clock controller
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>
+References: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
+ <20240611133752.2192401-9-quic_ajipan@quicinc.com>
+ <76f5e3c7-a90b-42d2-8169-e5e2211a14a1@linaro.org>
+Content-Language: en-US
+From: Ajit Pandey <quic_ajipan@quicinc.com>
+In-Reply-To: <76f5e3c7-a90b-42d2-8169-e5e2211a14a1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2tf3mFBe-TlOvC8mIgbvW5ozTFNDXz5l
+X-Proofpoint-GUID: 2tf3mFBe-TlOvC8mIgbvW5ozTFNDXz5l
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_05,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 mlxscore=0 suspectscore=0 clxscore=1011
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407030068
 
-If of_platform_populate() is called when CONFIG_OF is not defined this
-leads to spurious error messages of the following type:
- pci 0000:00:01.1: failed to populate child OF nodes (-19)
- pci 0000:00:02.1: failed to populate child OF nodes (-19)
 
-Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF nod=
-es of the port node")
-Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-=2D--
- drivers/pci/bus.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-index e4735428814d..b363010664cd 100644
-=2D-- a/drivers/pci/bus.c
-+++ b/drivers/pci/bus.c
-@@ -350,6 +350,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+On 6/13/2024 1:11 PM, Konrad Dybcio wrote:
+> 
+> 
+> On 6/11/24 15:37, Ajit Pandey wrote:
+>> Add device node for camera, display and graphics clock controller on
+>> Qualcomm SM4450 platform.
+>>
+>> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
+>> ---
+> 
+> None of these nodes reference a power domain (which would usually be
+> CX/MX/MMCX). This way, the RPMhPDs will never be scaled.
+> 
+> The current upstream implementation only allows one power domain to be
+> scaled, but that's better than none (see other DTs for recent SoCs).
+> 
+> Konrad
 
- 	pci_dev_assign_added(dev, true);
-
-+#ifdef CONFIG_OF
- 	if (pci_is_bridge(dev)) {
- 		retval =3D of_platform_populate(dev->dev.of_node, NULL, NULL,
- 					      &dev->dev);
-@@ -357,6 +358,7 @@ void pci_bus_add_device(struct pci_dev *dev)
- 			pci_err(dev, "failed to populate child OF nodes (%d)\n",
- 				retval);
- 	}
-+#endif
- }
- EXPORT_SYMBOL_GPL(pci_bus_add_device);
-
-=2D-
-2.45.2
-
-The mentioned error message occur on systems without CONFIG_OF, i.e.
-x86_64. The call to of_platform_depopulate() in drivers/pci/remove.c
-does not need #ifdef CONFIG_OF as the return value is not checked (it
-will most likely be optimized away on platforms witout OF where the
-of_platform_{de,}populate() functions just return -ENODEV)
-
-Please CC me when replying, I'm not subscribed to the lists.
-
-Bert Karwatzki
+SM4450 doesn't support MMCX and CX/MX domains will remain active so
+power-domains property is actually not required for SM4450 clock nodes.
+-- 
+Thanks, and Regards
+Ajit
 
