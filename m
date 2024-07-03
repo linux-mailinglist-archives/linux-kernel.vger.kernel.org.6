@@ -1,213 +1,244 @@
-Return-Path: <linux-kernel+bounces-239148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F10D925725
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:44:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA6092572D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB4A21F21329
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:44:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EF631C21052
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373F313F01A;
-	Wed,  3 Jul 2024 09:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A8B13F454;
+	Wed,  3 Jul 2024 09:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="BQwRYxZ1"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SvNujiS4"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C642213E03E
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 09:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7DE13541F;
+	Wed,  3 Jul 2024 09:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719999832; cv=none; b=jJZUIabiUrvp+IRn+OHy+duKj6XXph02vnx2J5rLwbhRC3vPn6cJGi9Pbf36M+/8J9ofGgltyT0eBYvSYZRyeK5SUkJAZxlOFrRUsCqIYKN36bFWsIKuze57/f9XgmuUAYtpmV/I0/i3legEEDkuj4o7/1W9CEFY76UUbUyAb0g=
+	t=1719999993; cv=none; b=dnZ31UyZPcmMBp4Mjtj/PUf1XAfcS3Gmhzy22PyrirtiYQX6ZdcfpZXnWLsHETLD+GzNVNUnbCIKtT6R60DtZqA+xElYvrQ47lquQUFImpwVjN4bl0SqG2gPIOAukkJne32bTN9X2sQwampfER8vuOQqTWUrFyedLpYHyzTcjq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719999832; c=relaxed/simple;
-	bh=Zki+hpjUZsWZjna36rff0M5qh30FEImaAGONn3NaeWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjCtzujjw5V+vx0JW7AQP+69gt7Z8qegPX9VaaMnQewtbTA4Y5ZtbzBlb1gIISba378KU0pJ0o9+12dR8+qSP3lc3ogdm6HDCwGut1ERe1c43xEC1at5z12fd8++6f/4qt138H2a1ORtg2BfVwnEPoZTpUrVOVmbOWfpc9Zarrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=BQwRYxZ1; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Kmmn
-	bAYL/eV1eyI324YSJygW4NEGkw6vs1mqy0L27a0=; b=BQwRYxZ1FquDTzIXmqEu
-	Pvk6NvxxP6/BZHXQAnkFmuE7ZDFizTLia/stfwIvf3oVju13PL20WAIMzQ8hHZZ5
-	xzcwkzdmoOXeSNy8PSnv5JEfGDHQKT4eeS+rdPmHFJWvDQhp9yXdY5U02AtUz5Ef
-	VwFbdJrVO4u1OS5QC/wg1h/2KlVZ+Om32LzIs3jdeYFjbDoecPlVAJUxKQf/cd8j
-	y3vjEfp2q8EuFsGw1gdoq8KV6JZjH3rsJMDcPEImlyaeIL51z6GgN8SMVYQJzZBV
-	mpPY1vtYUo7R+9XWLH2s+msI3dNsPcobhXp3k2uhwRdYUU5piPNihsi2pMBDtx9s
-	iw==
-Received: (qmail 2759060 invoked from network); 3 Jul 2024 11:43:47 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Jul 2024 11:43:47 +0200
-X-UD-Smtp-Session: l3s3148p1@lAG5qlQc+KFehhrb
-Date: Wed, 3 Jul 2024 11:43:47 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v4 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P) SoC
-Message-ID: <ZoUdUyrld2kZorvU@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240626132341.342963-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240626132341.342963-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1719999993; c=relaxed/simple;
+	bh=e4PmHOKCXsSy3VJhe4/b/xhQ5o/JWNWiodnpv89roh8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ab7jJgVj90VR3WVJI9HKM9dH65jX2umFbwqQc7Fd14gXFffT3z69KSL2RvysjxbKVyCQb9LclDEh6ARl1+d6TVm8BPO6HJq5HkAtJ6lUm7y4LJ0LY1qxwOq+kO5fZdQE4fMbbwSVA3EEbwpel5x7EpQOIDc3P+RxEjOgAp/a3xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SvNujiS4; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dfe43dca3bfso4867273276.0;
+        Wed, 03 Jul 2024 02:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719999990; x=1720604790; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VtEhPZzFC3WYUCzkzU+BMtXUO+QJbt1cXqLAXxOunD8=;
+        b=SvNujiS4PuXHHw9bvBiFbf/yngPA2t9Kc1qqE5ow1m+GxPItuxRtzQUxMtY4Wx0bET
+         126OM9JDT1g7B7Icpg+ZoN0VkcoLbukNzOqOuZYoj7vz30dHtP11+tkiRJo+8P7J+GQM
+         iacsakuAyUb57PJrrKm9mXnKMwz8rLr7OFRhQivewC5jU6n9KpF8UI+NOpFk4KXqDh+5
+         nxX64V4JpoFskBahpwR44mdGm3ZHG7JNjykOHaftdP8Ca+c6XSO52uJTuDJohHiSiax5
+         5/PJyGlUBN28JkGuvoj+vGRp0Fo/zo13UvEuqyjSF659ks0tVmHJWKpU3M8hbWtxEKO/
+         phHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719999990; x=1720604790;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VtEhPZzFC3WYUCzkzU+BMtXUO+QJbt1cXqLAXxOunD8=;
+        b=i0uPjgnOmUteLtFwtlWj8zw+1NtG9KOx6mg+OK1UF64wpw/Gecsjqbv+ru1jVySxzh
+         SXsYWGPNb8zlSWHTcmTZxRCBOXap/DdgnoTPsEy1HEOZ/FvfimbnrxlwjzQ1GzS5wTpa
+         UrG/hJ3pDDyZKTKXys1Qwz0vcKgIypeVjJ91sEf0t3fVujC/tMASCB6ACAVHC9+puU8t
+         lAwx9ThFO6poHDpGIwkAmgVlU2vLOSszV2AsRTu8QsAFzGHQhfn71LvdA9miub/j8qig
+         NMYjbHnPesOCK2aCF1O+fiFsdP6OZlWmXK0dmMnbEtF+xzItrM4azl1uHTaij7RMLhwv
+         CYFg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Nc0m9FAYtbC/YTUd4zbbg6qw6WbDGlLIsMIuZ/u1imSZuTSvtfBrROJjADbe52Jrj9UR8yjHSk+W/hAWcpQWUjPsf2f/YL7EKBrmmuSerWTVW/7jeVcY79J2zLsSFWYRoRrE
+X-Gm-Message-State: AOJu0YzTKJYA5cSl5oEe9H93095ykcREgESCWXuKbv+NyEKAr6d8IktF
+	fsT/tb9E5asSLYt0j2f4j9vJrhKdzLa/ls+ww2kB11IIE1cLFDEGxY9P2CFA7V05dZbhrLPvHf8
+	dXaGriLW2Z2y4Gt2JF/12mVklVeH7pw==
+X-Google-Smtp-Source: AGHT+IFN6fJQ9FxDMTyB8AfK32sF4RcKcTiuXHuahStmF3o94VAYMckaMoXyAs7LTUHzEjZuWyRrspjYyMGCS3OXBkA=
+X-Received: by 2002:a25:e089:0:b0:dff:338e:4f6 with SMTP id
+ 3f1490d57ef6-e036eaf9069mr10571411276.5.1719999990222; Wed, 03 Jul 2024
+ 02:46:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6vYa3c1o+yL1L4tm"
-Content-Disposition: inline
-In-Reply-To: <20240626132341.342963-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-
---6vYa3c1o+yL1L4tm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <1719038884-1903-1-git-send-email-yangge1116@126.com>
+In-Reply-To: <1719038884-1903-1-git-send-email-yangge1116@126.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 3 Jul 2024 21:46:19 +1200
+Message-ID: <CAGsJ_4yO5NJ4kSDPaS-QdRyKfw-A52HE+Jn38vQpbonFSE8ZoQ@mail.gmail.com>
+Subject: Re: [PATCH V2] mm/gup: Clear the LRU flag of a page before adding to
+ LRU batch
+To: yangge1116@126.com
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, david@redhat.com, 
+	baolin.wang@linux.alibaba.com, liuzixing@hygon.cn
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
+On Sat, Jun 22, 2024 at 6:48=E2=80=AFPM <yangge1116@126.com> wrote:
+>
+> From: yangge <yangge1116@126.com>
+>
+> If a large number of CMA memory are configured in system (for example, th=
+e
+> CMA memory accounts for 50% of the system memory), starting a virtual
+> virtual machine, it will call pin_user_pages_remote(..., FOLL_LONGTERM,
+> ...) to pin memory.  Normally if a page is present and in CMA area,
+> pin_user_pages_remote() will migrate the page from CMA area to non-CMA
+> area because of FOLL_LONGTERM flag. But the current code will cause the
+> migration failure due to unexpected page refcounts, and eventually cause
+> the virtual machine fail to start.
+>
+> If a page is added in LRU batch, its refcount increases one, remove the
+> page from LRU batch decreases one. Page migration requires the page is no=
+t
+> referenced by others except page mapping. Before migrating a page, we
+> should try to drain the page from LRU batch in case the page is in it,
+> however, folio_test_lru() is not sufficient to tell whether the page is
+> in LRU batch or not, if the page is in LRU batch, the migration will fail=
+.
+>
+> To solve the problem above, we modify the logic of adding to LRU batch.
+> Before adding a page to LRU batch, we clear the LRU flag of the page so
+> that we can check whether the page is in LRU batch by folio_test_lru(page=
+).
+> Seems making the LRU flag of the page invisible a long time is no problem=
+,
+> because a new page is allocated from buddy and added to the lru batch,
+> its LRU flag is also not visible for a long time.
+>
+> Cc: <stable@vger.kernel.org>
 
-On Wed, Jun 26, 2024 at 02:23:41PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> The SDHI/eMMC IPs found in the RZ/V2H(P) (a.k.a. r9a09g057) are very
-> similar to those found in R-Car Gen3. However, they are not identical,
-> necessitating an SoC-specific compatible string for fine-tuning driver
-> support.
->=20
-> Key features of the RZ/V2H(P) SDHI/eMMC IPs include:
-> - Voltage level control via the IOVS bit.
-> - PWEN pin support via SD_STATUS register.
-> - Lack of HS400 support.
-> - Fixed address mode operation.
->=20
-> internal regulator support is added to control the voltage levels of SD
-> pins via sd_iovs/sd_pwen bits in SD_STATUS register.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com> # on RZ/G3S
+you have Cced stable, what is the fixes tag?
+
+> Signed-off-by: yangge <yangge1116@126.com>
 > ---
-> v3->v4
-> - Dropped using 'renesas,sdhi-use-internal-regulator' property
-> - Now using of_device_is_available() to check if regulator is available a=
-nd enabled
-> - Dropped extra spaces during operations=20
-> - Included tested by tag from Claudiu
-> - Rebased patch on top of https://patchwork.kernel.org/project/linux-rene=
-sas-soc/patch/20240626085015.32171-2-wsa+renesas@sang-engineering.com/
->=20
-> v2->v3
-> - Moved regulator info to renesas_sdhi_of_data instead of quirks
-> - Added support to configure the init state of regulator
-> - Added function pointers to configure regulator
-> - Added REGULATOR_CHANGE_VOLTAGE mask
->=20
-> v1->v2
-> - Now controlling PWEN bit get/set_voltage
-> ---
->  drivers/mmc/host/renesas_sdhi.h               |  13 ++
->  drivers/mmc/host/renesas_sdhi_core.c          |  98 ++++++++++++
->  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 147 ++++++++++++++++++
->  drivers/mmc/host/tmio_mmc.h                   |   5 +
->  4 files changed, 263 insertions(+)
->=20
-> diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_s=
-dhi.h
-> index f12a87442338..cd509e7142ba 100644
-> --- a/drivers/mmc/host/renesas_sdhi.h
-> +++ b/drivers/mmc/host/renesas_sdhi.h
-> @@ -11,6 +11,8 @@
-> =20
->  #include <linux/dmaengine.h>
->  #include <linux/platform_device.h>
-> +#include <linux/regulator/driver.h>
-> +#include <linux/regulator/machine.h>
->  #include <linux/workqueue.h>
->  #include "tmio_mmc.h"
-> =20
-> @@ -36,6 +38,12 @@ struct renesas_sdhi_of_data {
->  	unsigned int max_blk_count;
->  	unsigned short max_segs;
->  	unsigned long sdhi_flags;
-> +	struct regulator_desc *rdesc;
-> +	struct regulator_init_data *reg_init_data;
-> +	bool regulator_init_state;
-> +	unsigned int regulator_init_voltage;
-> +	int (*regulator_force_endis)(struct regulator_dev *rdev, bool enable);
-> +	int (*regulator_force_voltage)(struct regulator_dev *rdev, unsigned int=
- voltage);
-
-I am open for discussing this but maybe here only
-
-+	struct renesas_sdhi_regulator *internal_regulator
-
-or something and create the new struct with the additions above?
-
-> +	int (*regulator_force_endis)(struct regulator_dev *rdev, bool enable);
-> +	int (*regulator_force_voltage)(struct regulator_dev *rdev, unsigned int=
- voltage);
-
-Do we need these functions because the regulator framework cannot force
-these actions because it caches the old state? I wonder if we can avoid
-these functions...
-
-And the questions from the other threads need further discussions as
-well.
-
-But in general, I still like this approach.
-
-Thank you,
-
-   Wolfram
-
-
---6vYa3c1o+yL1L4tm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaFHVMACgkQFA3kzBSg
-KbZKeg//RuvAaOY52J9b2ypJshdLJ8hsiM7BAg2MgeoSEzJo1LzLopyAvUmSNglR
-+whLrRNfg9/52+7CXEyvmCCpbBWLgPL5lAEECIsaDqnVsYCcMWX+XWhMG37YFTOE
-EUJy9XPg/6aBfXzYIHkDRAfskjorGX5hdU7sLStI3qazGKBIu16fkDxCN84oPuqe
-twnAKh+BaH5Dd1Dzwj7M1hSN//t/rCTuyLhfhfAiGJr+6UG5uTbOq5VKTbe8bEy8
-RqkjdixdrcuX4G8uapT02RTQKkV6+BlDT9Ei/+jK6Y3ue0FqkqmhyGP5YcFkMZOB
-AluYNbeVMOko+6/Tj71NMBAIpJ/oTDWK3zS9eg3HdZfD7z1WgKEH2tof3TSgGUjw
-9dx+2bAoL28dFW8vrtkE3IyaV9B+bppf+WU+1kdYBmRjeEh91pOT+0HYZiSk0s+F
-qv2yIOXbH4Bo7Z9q33LTTwq76AezNCiHNaHXHI7PhxWY44w3ZZnY11BUbTJmfZBT
-6onjaKJhQtbnwlyFFc+XIvHKlXyUR2Q0YxHNbSvi/nJNoku/L0+vSvX6bJmO4HnS
-DXgv9TSvxrTAfGmTx9yCmqLjYuBnZ099PsicibmIYIWF1Ff7vvw4jePxg48/EDPs
-F8+82SHYmQ/np1Yz8g/ltt01/FeeTmXORMIQKZbCqIYSFV0FbHU=
-=Z1FG
------END PGP SIGNATURE-----
-
---6vYa3c1o+yL1L4tm--
+>  mm/swap.c | 43 +++++++++++++++++++++++++++++++------------
+>  1 file changed, 31 insertions(+), 12 deletions(-)
+>
+> diff --git a/mm/swap.c b/mm/swap.c
+> index dc205bd..9caf6b0 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -211,10 +211,6 @@ static void folio_batch_move_lru(struct folio_batch =
+*fbatch, move_fn_t move_fn)
+>         for (i =3D 0; i < folio_batch_count(fbatch); i++) {
+>                 struct folio *folio =3D fbatch->folios[i];
+>
+> -               /* block memcg migration while the folio moves between lr=
+u */
+> -               if (move_fn !=3D lru_add_fn && !folio_test_clear_lru(foli=
+o))
+> -                       continue;
+> -
+>                 folio_lruvec_relock_irqsave(folio, &lruvec, &flags);
+>                 move_fn(lruvec, folio);
+>
+> @@ -255,11 +251,16 @@ static void lru_move_tail_fn(struct lruvec *lruvec,=
+ struct folio *folio)
+>  void folio_rotate_reclaimable(struct folio *folio)
+>  {
+>         if (!folio_test_locked(folio) && !folio_test_dirty(folio) &&
+> -           !folio_test_unevictable(folio) && folio_test_lru(folio)) {
+> +           !folio_test_unevictable(folio)) {
+>                 struct folio_batch *fbatch;
+>                 unsigned long flags;
+>
+>                 folio_get(folio);
+> +               if (!folio_test_clear_lru(folio)) {
+> +                       folio_put(folio);
+> +                       return;
+> +               }
+> +
+>                 local_lock_irqsave(&lru_rotate.lock, flags);
+>                 fbatch =3D this_cpu_ptr(&lru_rotate.fbatch);
+>                 folio_batch_add_and_move(fbatch, folio, lru_move_tail_fn)=
+;
+> @@ -352,11 +353,15 @@ static void folio_activate_drain(int cpu)
+>
+>  void folio_activate(struct folio *folio)
+>  {
+> -       if (folio_test_lru(folio) && !folio_test_active(folio) &&
+> -           !folio_test_unevictable(folio)) {
+> +       if (!folio_test_active(folio) && !folio_test_unevictable(folio)) =
+{
+>                 struct folio_batch *fbatch;
+>
+>                 folio_get(folio);
+> +               if (!folio_test_clear_lru(folio)) {
+> +                       folio_put(folio);
+> +                       return;
+> +               }
+> +
+>                 local_lock(&cpu_fbatches.lock);
+>                 fbatch =3D this_cpu_ptr(&cpu_fbatches.activate);
+>                 folio_batch_add_and_move(fbatch, folio, folio_activate_fn=
+);
+> @@ -700,6 +705,11 @@ void deactivate_file_folio(struct folio *folio)
+>                 return;
+>
+>         folio_get(folio);
+> +       if (!folio_test_clear_lru(folio)) {
+> +               folio_put(folio);
+> +               return;
+> +       }
+> +
+>         local_lock(&cpu_fbatches.lock);
+>         fbatch =3D this_cpu_ptr(&cpu_fbatches.lru_deactivate_file);
+>         folio_batch_add_and_move(fbatch, folio, lru_deactivate_file_fn);
+> @@ -716,11 +726,16 @@ void deactivate_file_folio(struct folio *folio)
+>   */
+>  void folio_deactivate(struct folio *folio)
+>  {
+> -       if (folio_test_lru(folio) && !folio_test_unevictable(folio) &&
+> -           (folio_test_active(folio) || lru_gen_enabled())) {
+> +       if (!folio_test_unevictable(folio) && (folio_test_active(folio) |=
+|
+> +           lru_gen_enabled())) {
+>                 struct folio_batch *fbatch;
+>
+>                 folio_get(folio);
+> +               if (!folio_test_clear_lru(folio)) {
+> +                       folio_put(folio);
+> +                       return;
+> +               }
+> +
+>                 local_lock(&cpu_fbatches.lock);
+>                 fbatch =3D this_cpu_ptr(&cpu_fbatches.lru_deactivate);
+>                 folio_batch_add_and_move(fbatch, folio, lru_deactivate_fn=
+);
+> @@ -737,12 +752,16 @@ void folio_deactivate(struct folio *folio)
+>   */
+>  void folio_mark_lazyfree(struct folio *folio)
+>  {
+> -       if (folio_test_lru(folio) && folio_test_anon(folio) &&
+> -           folio_test_swapbacked(folio) && !folio_test_swapcache(folio) =
+&&
+> -           !folio_test_unevictable(folio)) {
+> +       if (folio_test_anon(folio) && folio_test_swapbacked(folio) &&
+> +           !folio_test_swapcache(folio) && !folio_test_unevictable(folio=
+)) {
+>                 struct folio_batch *fbatch;
+>
+>                 folio_get(folio);
+> +               if (!folio_test_clear_lru(folio)) {
+> +                       folio_put(folio);
+> +                       return;
+> +               }
+> +
+>                 local_lock(&cpu_fbatches.lock);
+>                 fbatch =3D this_cpu_ptr(&cpu_fbatches.lru_lazyfree);
+>                 folio_batch_add_and_move(fbatch, folio, lru_lazyfree_fn);
+> --
+> 2.7.4
+>
 
