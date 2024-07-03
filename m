@@ -1,113 +1,191 @@
-Return-Path: <linux-kernel+bounces-239485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E733B9260BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:44:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4B6926046
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24BDE1C22488
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:44:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 574C9284AA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B2717A589;
-	Wed,  3 Jul 2024 12:44:05 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCD817556B;
+	Wed,  3 Jul 2024 12:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKhx1sjR"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B5217966F;
-	Wed,  3 Jul 2024 12:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EAD85298;
+	Wed,  3 Jul 2024 12:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720010644; cv=none; b=qz+x0zCVlKoBDK0VMiHd6sNxC3BjFlOrEzG32wDYcJLKsJlLfwoFf1sCLMQsUpz9Z1robKDhMPBXOYIKnZ9SEskHBeX9tJeKZCqajV5KY5PhlrEcmjgl7N5OyoH7aTscRALpV4aFykgPvjwreOziTcYljm7ThYc4VSPxyGWu9og=
+	t=1720009598; cv=none; b=YDsLg8N/8dffCOeErj6i8bCEm69OZSgNvDNJcQgX4dxb6Z7xV4vhLfy4ePyBJ2wY/vM13R2yZpdum4vQLH6loKIQT4zxBjmwJRHqDXelOC4yvVY+vCDkQGqUzsMmybRVabF7Q0Rtk47mvn3bpuvl4KVRsoz0UbqK0m/QxWMc4Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720010644; c=relaxed/simple;
-	bh=DW33uEh7lbKDEp+99mSXUnjmv+I8Iz/14mbPiuQxcHE=;
-	h=From:To:Subject:Date:Message-Id; b=uwmjkeW7HXo6vUXj0oSLRd0kAQ14tWJimy8V7HD30jdvAVK9c8w8ORr6BahCuXjmT2ZuSjM0wQmqN5ac89l1Y0Ix24699y4xy29d0GjxpfslqJ5m+uSWEJmMEum9ODFyduSy/XOdXuLnzKh/aT0zPmCpHLCwXfTW6pE403wlN54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3EC53200B6D;
-	Wed,  3 Jul 2024 14:44:01 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 05F45200AD5;
-	Wed,  3 Jul 2024 14:44:01 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 765F9180226C;
-	Wed,  3 Jul 2024 20:43:59 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	ckeepax@opensource.cirrus.com,
-	andriy.shevchenko@linux.intel.com,
-	heiko@sntech.de,
-	robh@kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shengjiu.wang@gmail.com
-Subject: [PATCH] ASoC: ak4458: remove "reset-gpios" property handler
-Date: Wed,  3 Jul 2024 20:26:15 +0800
-Message-Id: <1720009575-11677-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1720009598; c=relaxed/simple;
+	bh=h2LjxXC0OzDiJd2LZJkR6AgXeDFIt2ME+WnIdf3EMAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oWByK92Wr0PTl9gDWJK6mbTO95yQ3gsrJUdt5IKwPRDTF6MfEmeI8wA2wodQYdUZ3tX+MoroPxp/jE0iPl7rjFMAflHpJLqPxX9CdQs6PHZC7Zcx95stcNijVNtv3M5ydMs/ED4NMU5LDLIeMHKnQl0tq86rPWAPuSxGV1vh+Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iKhx1sjR; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4256f102e89so36167535e9.0;
+        Wed, 03 Jul 2024 05:26:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720009595; x=1720614395; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b7FAFQKiJKwdtByQPY9Z255c9YVtWF2910FResQyaq4=;
+        b=iKhx1sjR9CXgGTeerYy4JmNE/rD3ZgW+EN4OkEDuVf1r32WWaJtHEFpSbSeWrq2TcF
+         J0H2uQQDgYPOrV58G7XGXj1DQnvQyIFzrpKf/w2QN/5swnZabL5ovcWFpZihOAzvXldW
+         guRSi3fRoxYFzfH4teaDbBCh9OJvcoYFjb88tv+Wb/BbFQ8dqO1uJdCRhB1t3XA+BAn3
+         kdSTdMRsY3LIUU++58YcIl9lPX2F7KqU2oR/lFZ6EEEhY3aJGEoDHYUWaZszCArhuRv1
+         NPF6UEYsjQhGWyAXY4lx3IWFZFCUfFBq1cIjkGvJoNt4cWne0AteOYcMTrmqWsD1udZ6
+         a2mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720009595; x=1720614395;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b7FAFQKiJKwdtByQPY9Z255c9YVtWF2910FResQyaq4=;
+        b=xDOUj3kmYZGVrQwurJ3s6J/8U0lbnXqHx1AMWSFbz6d8rv1Ooq/YRQpMZJVPVY30DG
+         6neSS1D5plVB5bbeBS0yBlsUv0x+ZiJlXqjiJu2uNcjXT8IiU4hg0ujeLVLovHaiNth1
+         VDBOqInRIRBFNFBii3uNBYDX5dxc8NcoQLdW6Hj9j3XerEKGZgDBhEkMN6qFDOv2tXeF
+         VxSvqOUv0ZpVRR6KfFWNo+ZCA+qFTrTtqlGZ5mWsUJ9/+jtTYy+gUlvMP/Wffo6KVbGK
+         XHztK8bAezh3sJnKyg5jL78WlHUbKQiDJpqY+8bKS+nQiVlFePLNxo908rINULMRs096
+         9zMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoiTsMC/YfCQNoYZCtfQt1/G4aOGeaFiVlxRD7IklgUCiIij+aCj6WQt83SNTXpU5gQzjvBL7CG91LU3HQzumqO4ebyg+mAzMso1BkZBYySvpdUeWnKVPOPmMoopuIMfavCEx37F+pcA==
+X-Gm-Message-State: AOJu0YwWWqRhnBYrsE16VR68IKQjGUC1F05mHrzb8N8z6fSp45BN3hAM
+	7rwBUZFsbida6Jj+piW8/WXGXlAxJH8V+KpiHWCr8nd9r0nG53Z6z/bKxg==
+X-Google-Smtp-Source: AGHT+IEbC62WyVRYSYk89Jxzx2m+kO+O2DjKrDtUHxJi5KUMHCWNCu5CY/nLJuBq8xo7BP1Ckx/HeQ==
+X-Received: by 2002:a5d:64c5:0:b0:360:89a3:5293 with SMTP id ffacd0b85a97d-3677561fce9mr8359135f8f.0.1720009594435;
+        Wed, 03 Jul 2024 05:26:34 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e143csm15727240f8f.59.2024.07.03.05.26.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 05:26:33 -0700 (PDT)
+Date: Wed, 3 Jul 2024 14:26:32 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>, baolin.wang7@gmail.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: hwlock: sprd-hwspinlock: convert to YAML
+Message-ID: <ZoVDeHCUCTZu7AT/@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-commit c721f189e89c0 ("reset: Instantiate reset GPIO controller for
-shared reset-gpios") check if there is no "resets" property
-will fallback to "reset-gpios".
+Convert the Spreadtrum hardware spinlock bindings to DT schema.
 
-So don't need to handle "reset-gpios" separately in the driver,
-the "reset-gpios" handler is duplicated with "resets" control handler,
-remove it.
-
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 ---
- sound/soc/codecs/ak4458.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ .../bindings/hwlock/sprd,hwspinlock-r3p0.yaml | 55 +++++++++++++++++++
+ .../bindings/hwlock/sprd-hwspinlock.txt       | 23 --------
+ 2 files changed, 55 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml
+ delete mode 100644 Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
 
-diff --git a/sound/soc/codecs/ak4458.c b/sound/soc/codecs/ak4458.c
-index 32cb802ad635..d472d9952628 100644
---- a/sound/soc/codecs/ak4458.c
-+++ b/sound/soc/codecs/ak4458.c
-@@ -45,7 +45,6 @@ struct ak4458_priv {
- 	const struct ak4458_drvdata *drvdata;
- 	struct device *dev;
- 	struct regmap *regmap;
--	struct gpio_desc *reset_gpiod;
- 	struct reset_control *reset;
- 	struct gpio_desc *mute_gpiod;
- 	int digfil;	/* SSLOW, SD, SLOW bits */
-@@ -631,10 +630,7 @@ static struct snd_soc_dai_driver ak4497_dai = {
- 
- static void ak4458_reset(struct ak4458_priv *ak4458, bool active)
- {
--	if (ak4458->reset_gpiod) {
--		gpiod_set_value_cansleep(ak4458->reset_gpiod, active);
--		usleep_range(1000, 2000);
--	} else if (!IS_ERR_OR_NULL(ak4458->reset)) {
-+	if (!IS_ERR_OR_NULL(ak4458->reset)) {
- 		if (active)
- 			reset_control_assert(ak4458->reset);
- 		else
-@@ -758,11 +754,6 @@ static int ak4458_i2c_probe(struct i2c_client *i2c)
- 	if (IS_ERR(ak4458->reset))
- 		return PTR_ERR(ak4458->reset);
- 
--	ak4458->reset_gpiod = devm_gpiod_get_optional(ak4458->dev, "reset",
--						      GPIOD_OUT_LOW);
--	if (IS_ERR(ak4458->reset_gpiod))
--		return PTR_ERR(ak4458->reset_gpiod);
+diff --git a/Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml b/Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml
+new file mode 100644
+index 000000000000..b146b1c20edb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml
+@@ -0,0 +1,55 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwlock/sprd,hwspinlock-r3p0.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spreadtrum hardware spinlock
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  compatible:
++    const: sprd,hwspinlock-r3p0
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: enable
++
++  '#hwlock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#hwlock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/sprd,sc9860-clk.h>
++
++    soc {
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      hwlock@40500000 {
++        compatible  = "sprd,hwspinlock-r3p0";
++        reg = <0 0x40500000 0 0x1000>;
++        clocks = <&aon_gate CLK_SPLK_EB>;
++        clock-names = "enable";
++        #hwlock-cells = <1>;
++      };
++    };
++...
+diff --git a/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
+deleted file mode 100644
+index 581db9d941ba..000000000000
+--- a/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
++++ /dev/null
+@@ -1,23 +0,0 @@
+-SPRD Hardware Spinlock Device Binding
+--------------------------------------
 -
- 	ak4458->mute_gpiod = devm_gpiod_get_optional(ak4458->dev, "mute",
- 						     GPIOD_OUT_LOW);
- 	if (IS_ERR(ak4458->mute_gpiod))
+-Required properties :
+-- compatible : should be "sprd,hwspinlock-r3p0".
+-- reg : the register address of hwspinlock.
+-- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
+-	hwlock, so the number of cells should be <1> here.
+-- clock-names : Must contain "enable".
+-- clocks : Must contain a phandle entry for the clock in clock-names, see the
+-	common clock bindings.
+-
+-Please look at the generic hwlock binding for usage information for consumers,
+-"Documentation/devicetree/bindings/hwlock/hwlock.txt"
+-
+-Example of hwlock provider:
+-	hwspinlock@40500000 {
+-		compatible  = "sprd,hwspinlock-r3p0";
+-		reg = <0 0x40500000 0 0x1000>;
+-		#hwlock-cells = <1>;
+-		clock-names = "enable";
+-		clocks = <&clk_aon_apb_gates0 22>;
+-	};
 -- 
 2.34.1
 
