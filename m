@@ -1,132 +1,154 @@
-Return-Path: <linux-kernel+bounces-238639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D8C924D3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:44:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB358924D42
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EA01B2140E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37A59284CA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DDD1DA315;
-	Wed,  3 Jul 2024 01:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hV1/ba8j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1299F442C;
+	Wed,  3 Jul 2024 01:47:26 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F251FAA;
-	Wed,  3 Jul 2024 01:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1971039B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 01:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719971065; cv=none; b=h7R3Ohr6DhOy4ZxhkkcsG37o9M7crK6slhFwaqPj1dyA55E3ss7zQc+VY7K7UkTIwphEjjGrxj9C2pyzKbMSIq7C/ycu3ErfLjSaViiPAWi8LV3h4BgxqKurUgq7Cov22TLGnPJ+vFFKIFr7jLVFD7MJWwL026W80XrqXYWuDyo=
+	t=1719971245; cv=none; b=gzhDfE373AW35A6pt6gNmLNTR7nl0TAUk1wUWncp1rOIojsuk6A3WM4Ke8CrPSH/fhIRhIaVTT+T38P20EIfGnaRk4zSgWBZVdBqPA1dTUla9xICkC5dyG2vbadnt9fBFTt+cvSHj2G0ANPPInrHp6q0/+mL2KPvzc9laie1NlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719971065; c=relaxed/simple;
-	bh=42mTcGmLRkv0gLZBJggEWYL7CYdyKG+MNeqUzQmh2M0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HHn3OPogvY8dDl1tkmVn7Z/O5UVvAIhF51nktZLwHPBDNvsRzb1zjVzWGnTlXgQ7kDNLUQd/zl6izTeU8fPcwYMZuV8T7mbLP/LnVrDsoRthiTUvMLNcoXUoLrRCbPh1UE+slYmPwsJCfAp+zai7nz7WK5iZNHVCYAHwFTMIRSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hV1/ba8j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CDB5C116B1;
-	Wed,  3 Jul 2024 01:44:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719971064;
-	bh=42mTcGmLRkv0gLZBJggEWYL7CYdyKG+MNeqUzQmh2M0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hV1/ba8jri4uW/hdq1fo1Phlp5vxHC/78G3R3PdGKXYzHBnF8euCPl6/bOSKb9mfW
-	 HBgHG/7/fv0Zs2+l/SdssQ8imeUfc96UW4vzGER2clro7QfwMlrRIIgXsLpltInN5f
-	 D7STOdUUHcN2nvgj5wa1MQHOKG0dUKOjHxFESIkfgL/kA3IFQ0yXZ0a6Ps9br1ZrZw
-	 NcODsZ4/UEVcz9RaMD4Qv5wmZF4Y9QLzBKQ+GXEHcKKgeUa9JKwQnuhWBr0nf4oItW
-	 EOQTskB+rW+R19sik+GPIbZjZCXSccho8FXnzBGafyH92BWn38zbpW84wHB7FodNDj
-	 59/+rJ72k9H9g==
-Date: Wed, 3 Jul 2024 10:44:16 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Scherer <T.Scherer@eckelmann.de>
-Subject: Re: [GIT PULL] Immutable branch between MFD and Counter due for the
- v5.11 merge window
-Message-ID: <ZoSs8M3C72xAyG_J@ishi>
-References: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
- <20240626151343.GA2504017@google.com>
- <20240628142847.GN2532839@google.com>
+	s=arc-20240116; t=1719971245; c=relaxed/simple;
+	bh=u61DftUVQz151WIDun9uwfuzS1FTADIk6nzI9CWYOCk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BYXo4YHn7kgV4l/IrbGz5YBJe3XO6uxFk42O4DBDu6iON8CAjUqKXYNz6fEwnGd5PRy8jkM0mjxrNk1mnJoaGDL3ea21UykOTBxf0xEB44NOE6wNDIURxslHgLNQoyDnZr/lg0E5hRQCR1UY/Z6YAyRcJB+jbVEhh7FyXikXRz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f648151005so260959839f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 18:47:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719971243; x=1720576043;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jkeba/dbYPdpJ4NO4L1/wnos1F3m3o/DJjhyoISgjSQ=;
+        b=iljw77XFZws+uHzvQq3zir52WzzeLSmJQ78IT1YNb3Qe4pWtWGOje7ZEG3EDMJ7g73
+         7TalpAJ48FwRqrVrZWJsD6k9b4ChJKqp7RatH8gu6/Gd3cV6EqGLkbkI07PXQPVLZOiN
+         FVmPlpJFyp8zgjYK5VH15xDXFRynL5Zir7GZSF7UJ1UDr5Tfk2A38noQuElBHwMepPOG
+         adkB0TfzMu4efKtbmoyQNEHM/qlygtB5V+PKjxLLOmEU4qqvcdbd9og8+XSKnhAk75KK
+         PwAHjuzDb2PbzUHkJijbX1JZWDhmDR0JT624jhe9XH3XTd9Z9t4fqgXnhFamHS4wQUhv
+         wC2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXuwo4v5L+ruOWjE5Bkdzqxg8QQseTGC/X/YL0ziYRQ3HW03AgAgHUUa3iqe4DhOoTaYSUY6yMad3COs4CNq7cCoptKdKKwo/fxCbHk
+X-Gm-Message-State: AOJu0YxU925U4dW622GmpgRwGeC1sK5DRzlADNChD/flgyvddIAIGVRb
+	xipe2ng23D23IHCZSO7Vj4fe+TxTWy5QlNrb2cO0RJNvJB/SOtWIFA1qBHhQEz2WqeEyx2z9Xly
+	b7yNbI3Ee3EOuqUKpNynVw65TmZ82zMl00fy7E8VHSKZCT7SIXUovTVg=
+X-Google-Smtp-Source: AGHT+IGvAF21Ecy0r7MRL8sozef9gZaW+C1fiytyb0JJtI6NzIzJMNezSSTlDTSDgbzg605XJRi8lmC4cCYDAEh1ubvsjfClG7Aa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cHosmM4QmEp1ldDc"
-Content-Disposition: inline
-In-Reply-To: <20240628142847.GN2532839@google.com>
+X-Received: by 2002:a05:6638:2389:b0:4b9:e5b4:67fd with SMTP id
+ 8926c6da1cb9f-4bbb6ec54d2mr581759173.1.1719971243327; Tue, 02 Jul 2024
+ 18:47:23 -0700 (PDT)
+Date: Tue, 02 Jul 2024 18:47:23 -0700
+In-Reply-To: <0000000000004a975c0613c7f382@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fb901b061c4e0282@google.com>
+Subject: Re: [syzbot] [bluetooth?] possible deadlock in touch_wq_lockdep_map
+From: syzbot <syzbot+91dbdfecdd3287734d8e@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    734610514cb0 Merge tag 'erofs-for-6.10-rc7-fixes' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=151ea512980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=de2d4dc103148cd6
+dashboard link: https://syzkaller.appspot.com/bug?extid=91dbdfecdd3287734d8e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1424d281980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-73461051.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d390d5c7156f/vmlinux-73461051.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b56ef48ffa7e/bzImage-73461051.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+91dbdfecdd3287734d8e@syzkaller.appspotmail.com
+
+Bluetooth: hci0: hardware error 0x20
+Bluetooth: hci0: Opcode 0x0c03 failed: -110
+============================================
+WARNING: possible recursive locking detected
+6.10.0-rc6-syzkaller-00055-g734610514cb0 #0 Not tainted
+--------------------------------------------
+kworker/u33:1/4633 is trying to acquire lock:
+ffff88802b9cc148 ((wq_completion)hci0){+.+.}-{0:0}, at: touch_wq_lockdep_map+0x6e/0x120 kernel/workqueue.c:3895
+
+but task is already holding lock:
+ffff88802b9cc148 ((wq_completion)hci0){+.+.}-{0:0}, at: process_one_work+0x1277/0x1b40 kernel/workqueue.c:3223
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock((wq_completion)hci0);
+  lock((wq_completion)hci0);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+2 locks held by kworker/u33:1/4633:
+ #0: ffff88802b9cc148 ((wq_completion)hci0){+.+.}-{0:0}, at: process_one_work+0x1277/0x1b40 kernel/workqueue.c:3223
+ #1: ffffc90025177d80 ((work_completion)(&hdev->error_reset)){+.+.}-{0:0}, at: process_one_work+0x921/0x1b40 kernel/workqueue.c:3224
+
+stack backtrace:
+CPU: 2 PID: 4633 Comm: kworker/u33:1 Not tainted 6.10.0-rc6-syzkaller-00055-g734610514cb0 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: hci0 hci_error_reset
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_deadlock kernel/locking/lockdep.c:3062 [inline]
+ validate_chain kernel/locking/lockdep.c:3856 [inline]
+ __lock_acquire+0x20e6/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ touch_wq_lockdep_map+0x78/0x120 kernel/workqueue.c:3895
+ __flush_workqueue+0x129/0x1200 kernel/workqueue.c:3937
+ drain_workqueue+0x18f/0x3d0 kernel/workqueue.c:4101
+ destroy_workqueue+0xc2/0xaa0 kernel/workqueue.c:5817
+ hci_release_dev+0x14e/0x660 net/bluetooth/hci_core.c:2795
+ bt_host_release+0x6a/0xb0 net/bluetooth/hci_sysfs.c:94
+ device_release+0xa1/0x240 drivers/base/core.c:2581
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x1fa/0x5b0 lib/kobject.c:737
+ put_device+0x1f/0x30 drivers/base/core.c:3787
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3248
+ process_scheduled_works kernel/workqueue.c:3329 [inline]
+ worker_thread+0x6c8/0xf30 kernel/workqueue.c:3409
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
---cHosmM4QmEp1ldDc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jun 28, 2024 at 03:28:47PM +0100, Lee Jones wrote:
-> Enjoy!
->=20
-> The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfab=
-d0:
->=20
->   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
->=20
-> are available in the Git repository at:
->=20
->   ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags=
-/ib-mfd-counter-v5.11
->=20
-> for you to fetch changes up to 304d02aa711369da89b4f8c01702bf1b5d1f7abc:
->=20
->   mfd: stm32-timers: Drop unused TIM_DIER_CC_IE (2024-06-26 16:09:58 +010=
-0)
->=20
-> ----------------------------------------------------------------
-> Immutable branch between MFD and Counter due for the v5.11 merge window
->=20
-> ----------------------------------------------------------------
-> Uwe Kleine-K=C3=B6nig (4):
->       mfd: stm32-timers: Unify alignment of register definition
->       mfd: stm32-timers: Add some register definitions with a parameter
->       counter: stm32-timer-cnt: Use TIM_DIER_CCxIE(x) instead of TIM_DIER=
-_CCxIE(x)
->       mfd: stm32-timers: Drop unused TIM_DIER_CC_IE
->=20
->  drivers/counter/stm32-timer-cnt.c |   4 +-
->  include/linux/mfd/stm32-timers.h  | 179 ++++++++++++++++++++------------=
-------
->  2 files changed, 96 insertions(+), 87 deletions(-)
->=20
-> --=20
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-
-Merged and pushed out to counter-next.
-
-Thanks,
-
-William Breathitt Gray
-
---cHosmM4QmEp1ldDc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZoSs8AAKCRC1SFbKvhIj
-Ky8MAQCC9OFsKPs8E4VTmZK8Xqj6JXfh9iGdsN91Jg4gi36RXwEA0grMJ7WNXywX
-ZzM6pVG8xYYtcsMeyAz9psBr/wCtkQg=
-=1DWZ
------END PGP SIGNATURE-----
-
---cHosmM4QmEp1ldDc--
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
