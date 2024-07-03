@@ -1,136 +1,120 @@
-Return-Path: <linux-kernel+bounces-239317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B07925A3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:55:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D05F925A94
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4D241C2449F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:55:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9AC71F2149B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EF8185E68;
-	Wed,  3 Jul 2024 10:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F99E17A587;
+	Wed,  3 Jul 2024 10:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bv+mtDSc"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="VLDgNOSK"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FB0174ED0
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91AE17967A;
+	Wed,  3 Jul 2024 10:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720003621; cv=none; b=Pe2NCNy61ztxz7+jCt3uQUfjCztRjGkbbVm6qtBqWNnBFwzGASRHTzGZz1Zrr2zwEByZodsR4qoQzOA3zzeLJ7HBKTiaD0ccc083VEHdegx17/LE5D+JSK38LPWKBWAiEDSuuVxk003VdFsAT2z4B6TaIexBveiGigVmTb3AUQk=
+	t=1720003788; cv=none; b=HqXCed4pQrZMcLxJGFJygGzOssk8PsbTf1bcOCihxw+xnLYvZfHuqJ2cLQDbaYsyZAWbJt/LVxouZ2EGJNLVtrU0o5K3QxgMxFyDpKVgX3gpmF9gO4rP45DkAJVOYvbhK5qZOCNAtj7udE+ZSa4XXHnLlqK5/zn24884X/0QsFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720003621; c=relaxed/simple;
-	bh=foPMIvvTPseXesFoCi3Y6Msx3NpMb+EdXsD3e3zHHT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SxGwsAERaepDofX8WD93bGpo1RxF8wsosnMRCxIUqEVscwJibtXiFZVWX8yczfOgDL9Vnn3/Z+XoosCCV9fqVu3nIbBDHM1nVzPhBNxEjvfCVBfFXJjwptP8VEcIGLZGABRY6vwm23Owa0JNcPoFPMMUOK4pKl40qctQENYCMTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bv+mtDSc; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52db11b1d31so7300664e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720003618; x=1720608418; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z6RqGX8VTMC710d07ZkPLdr6JCBvXddZZa+hWl6qD7c=;
-        b=Bv+mtDSc4VpJyl9o7hOA8LPvSe6ExZzmRTBwgM+K5p17KkSLGR7Xu2EnogWzZmxnjJ
-         SeSuN8ib18XT508IFxgEDgLdqHRTbCgt+h14MR0u8bvGVfrhVsHup1QTytsViZ4a4g9A
-         B7Vd7WcDZtfIxEWZ+8uOnXej6MxTJkXpcvEwKIEEfDXMl/DHekHAV76bIjoZ7PjwNqyh
-         PtV1M/Brnq7cUHOPflAfrUkppolTA2lwxslsR1PJqB2hlSnHpZhyjeet2CVAkKt2r4QW
-         tCOR9nddCLRIqQF5RUnhmvCPk0tz5Geor3AGQls+Sz1BUembO8Gu8RVbp9Vx7kdBhCld
-         MLBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720003618; x=1720608418;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z6RqGX8VTMC710d07ZkPLdr6JCBvXddZZa+hWl6qD7c=;
-        b=ILLcL2cneEOkAYFV9sf+vx9Rlq2GScPa/CtnnZ/WnlGnLYegoYctrMaz8pghWbpoID
-         L/RZnEoJ47jeOEBDe6bCxN4lSmTyYuxaEdn14EzwsEgoIJr8sOL/7cCZOnV7rwPQCCwW
-         gEpNAyyiXgRYmUK5UaSfA/mztNCdVfOwSQbEJcfGLzaucsBJsON9ZffhYRpIpHfs/wd7
-         Is3JTrZJ0IVt4ACNS815PtyJZwyEZCqmJDzrTY21F0cTCk0dgDFFMQJo+9YYxtoisU+x
-         5mwnU47bEnlpJ3zDzvvXsnjlTkM6xIFygUfJudgBKsZH89mFjH9QsJhoW1Zn6SVix5S1
-         6NjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTHxd2pS8xHhKP0C8H7uYF6hIoPJNyI/njZUuc2Dq8YNbm7xHAqpejkHE38bhwurM5MhTXxzDQXqWx6pmWd0bqKC2eDZwPmwchyTKV
-X-Gm-Message-State: AOJu0Yw4XLcwbzS5b8c3vpxAStOucS3vC8rKeiGg8zpL9QxbonJBV0yR
-	gAhNdtYlM3Fd1o3JFwNjU6/Pq0rAr0Hqb0xb3gTRfcl+QGyll+iQqiIdIxahn00=
-X-Google-Smtp-Source: AGHT+IEP56pHbP4DCZFL0TzwnwRKdgriFsrjpsNp9TvUXF81k3NcrKi5DJQNSBnNphOP/g4IRsep+w==
-X-Received: by 2002:a05:6512:6d2:b0:52c:84d1:180e with SMTP id 2adb3069b0e04-52e827344e4mr7597722e87.67.1720003616744;
-        Wed, 03 Jul 2024 03:46:56 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab3b263sm2093468e87.268.2024.07.03.03.46.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 03:46:56 -0700 (PDT)
-Date: Wed, 3 Jul 2024 13:46:54 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, angelogioacchino.delregno@collabora.com, 
-	andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com, 
-	ilia.lin@kernel.org, rafael@kernel.org, ulf.hansson@linaro.org, 
-	quic_sibis@quicinc.com, quic_rjendra@quicinc.com, quic_rohiagar@quicinc.com, 
-	abel.vesa@linaro.org, otto.pflueger@abscue.de, danila@jiaxyga.com, 
-	quic_ipkumar@quicinc.com, luca@z3ntu.xyz, stephan.gerhold@kernkonzept.com, nks@flawful.org, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 01/10] soc: qcom: cpr3: Fix 'acc_desc' usage
-Message-ID: <u4hzxnecdyow6h4vhddcp53tuxrqhbqu6cv4cznytihsyshzy4@lqxhsn3qvjbz>
-References: <20240703091651.2820236-1-quic_varada@quicinc.com>
- <20240703091651.2820236-2-quic_varada@quicinc.com>
+	s=arc-20240116; t=1720003788; c=relaxed/simple;
+	bh=3qXmo/5pNDaZWNpYAjzoXZ2kcJMP7hkArNksNzOixz8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p/smUUL13JPk5wJ4XGhGIhETzi2Zgw0KSyhtQWliFN88onIeqW1WvkR0k/FvF5/QstxxBzphZI2QermCHm76+bH4OWhp0qTwJFhBJ+Z/pLJXoXJB+xHujLl5k9t8nABh6GvE8Wdz9SINbkm55QNSwd5tTx13mLLPnZ0qmrUB1UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=VLDgNOSK; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id B4F3D100004;
+	Wed,  3 Jul 2024 13:49:21 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1720003761; bh=qBTrMRweeYn17EcgCxBKWTPEOQW17rObU/UXX5H3hws=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=VLDgNOSKdpC3Zroyoh26tyyRk7D5usQSaCSbQ0vIocD11Ugj/zXbhoJIqgoKxoDyT
+	 XON1rzewXW90zK43ttAXAHOueRErWIOhqtD8yVfz6jWROgolAiJPiB+oXpl81JIPps
+	 RBwxgtzWH51j0i5+Ep7YX2d+F6/+N4KWOOrsKcyU2Krxcmm3w13+cnBVkTQ/ot5joy
+	 F2D6G8OA7DIDV0dlMnbYZcPv/cVEH7MZosaa2lwEdqdYYwsDYBRyV2O/eDGdCJRE8o
+	 BC/BcRAvzjdg4MNUTP8ODpRW/0RTc0/v2pjL16UM3s6KkqgyPeckjnTtaY/H+FjVOz
+	 2lNLCKWm0CMNg==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Wed,  3 Jul 2024 13:48:06 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 13:47:45 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Michael Hennerich <Michael.Hennerich@analog.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Lars-Peter Clausen
+	<lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Datta Shubhrajyoti <shubhrajyoti@ti.com>,
+	<linux-iio@vger.kernel.org>, <linux-staging@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH] staging: iio: frequency: ad9834: Validate frequency parameter value
+Date: Wed, 3 Jul 2024 13:47:34 +0300
+Message-ID: <20240703104734.12034-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703091651.2820236-2-quic_varada@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186302 [Jul 03 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1;t-argos.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/03 07:47:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/03 06:16:00 #25818842
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Wed, Jul 03, 2024 at 02:46:42PM GMT, Varadarajan Narayanan wrote:
-> cpr3 code assumes that 'acc_desc' is available for SoCs
-> implementing CPR version 4 or less. However, IPQ9574 SoC
-> implements CPRv4 without ACC. This causes NULL pointer accesses
-> resulting in crashes. Hence, check if 'acc_desc' is populated
-> before using it.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v4: Undo the acc_desc validation in probe function as that could
->     affect other SoC.
-> ---
->  drivers/pmdomain/qcom/cpr3.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/qcom/cpr3.c b/drivers/pmdomain/qcom/cpr3.c
-> index c7790a71e74f..6ceb7605f84d 100644
-> --- a/drivers/pmdomain/qcom/cpr3.c
-> +++ b/drivers/pmdomain/qcom/cpr3.c
-> @@ -2399,12 +2399,12 @@ static int cpr_pd_attach_dev(struct generic_pm_domain *domain,
->  		if (ret)
->  			goto exit;
->  
-> -		if (acc_desc->config)
-> +		if (acc_desc && acc_desc->config)
->  			regmap_multi_reg_write(drv->tcsr, acc_desc->config,
->  					       acc_desc->num_regs_per_fuse);
->  
->  		/* Enable ACC if required */
-> -		if (acc_desc->enable_mask)
-> +		if (acc_desc && acc_desc->enable_mask)
->  			regmap_update_bits(drv->tcsr, acc_desc->enable_reg,
->  					   acc_desc->enable_mask,
->  					   acc_desc->enable_mask);
+In ad9834_write_frequency() clk_get_rate() can return 0. In such case
+ad9834_calc_freqreg() call will lead to division by zero. Checking
+'if (fout > (clk_freq / 2))' doesn't protect in case of 'fout' is 0.
+ad9834_write_frequency() is called from ad9834_write(), where fout is
+taken from text buffer, which can contain any value.
 
-Should the same fix be applied to other places which access acc_desc?
-For example cpr_pre_voltage() and cpr_post_voltage() which call
-cpr_set_acc()?
+Modify parameters checking.
 
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: 12b9d5bf76bf ("Staging: IIO: DDS: AD9833 / AD9834 driver")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/staging/iio/frequency/ad9834.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/iio/frequency/ad9834.c b/drivers/staging/iio/frequency/ad9834.c
+index a7a5cdcc6590..9e42129f44f7 100644
+--- a/drivers/staging/iio/frequency/ad9834.c
++++ b/drivers/staging/iio/frequency/ad9834.c
+@@ -114,7 +114,7 @@ static int ad9834_write_frequency(struct ad9834_state *st,
+ 
+ 	clk_freq = clk_get_rate(st->mclk);
+ 
+-	if (fout > (clk_freq / 2))
++	if (!fout || fout > (clk_freq / 2))
+ 		return -EINVAL;
+ 
+ 	regval = ad9834_calc_freqreg(clk_freq, fout);
 -- 
-With best wishes
-Dmitry
+2.30.2
+
 
