@@ -1,135 +1,258 @@
-Return-Path: <linux-kernel+bounces-239584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F8B9262CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:05:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 678A49262D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2EF4B251FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB1561F230CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE25817B509;
-	Wed,  3 Jul 2024 14:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F5817BB20;
+	Wed,  3 Jul 2024 14:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sps+pOmG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D5rgJv8p"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C14E1DA318;
-	Wed,  3 Jul 2024 14:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCD41DA318;
+	Wed,  3 Jul 2024 14:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720015530; cv=none; b=pEgPRP0oAgUKiX4GsyuurTdEQa4VrJdf1oeyGLsAsUaWp3oL8REKLm/LO+OPlLk4Eh0CuEJzKFwrdoHepdbhIltPfbbqZ1ck5YDBa1N7QfMzHUckKzDw7sVPU3o6txnCxw4U9UYMABZZRE1wDVeFS2aILL4M6X3aPxCv3CH9NPA=
+	t=1720015552; cv=none; b=ahDXKy+99ebVvL3cv+1HrKg6ringF8Oxtg2FcJtgEeI3nFmxtSqkClmdeCAkyJlOmUueaZePafRbO0u1iuCDdsO53EgmRR6/rQtKCE6c6oMRHA6eB7eS6ZoTSAul7rIAyxZL6Ze2iiLa0nZXwBbWpOPdxNSWU6qoQstDW2wCSbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720015530; c=relaxed/simple;
-	bh=SBuiLlAm8KdKJg4F9Y0YoQ0A1QaiAy6w/Qr73jLhApo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eAmguks613ZzGAXaAILmvHxo2/fO3NbJf613IjJA31mKjkeubtqfhimgxYsSNUhTaGhdrvtLiiUcp2WmEQpKbsGOE0TKUnENurIDX0c/7ZrHT2NM/6nnFfFEGluKtm1aiLUqPb/RZLDfvQ7dmAn/azcYKMIgPSnmDMjEYZfaelo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sps+pOmG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD7AC2BD10;
-	Wed,  3 Jul 2024 14:05:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720015529;
-	bh=SBuiLlAm8KdKJg4F9Y0YoQ0A1QaiAy6w/Qr73jLhApo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sps+pOmGOcLZTVV9gSreDYf32GXk4Sa3XE8agNk7MvVkVWlhHYVJAkc5E0yJnbttA
-	 9NCCGPfPfIFZXp3rBmgBxXEjVim7Ke4nDtWYF8gz7DidP8S03BIpuILdH9e8p8QH5P
-	 h6Eb7Cs6LoF/il5mumcvp/t9iqQ52jxIrxJa1AfU=
-Date: Wed, 3 Jul 2024 16:05:19 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nikita Travkin <nikita@trvn.ru>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/7] usb: typec: ucsi: rework glue driver interface
-Message-ID: <2024070310-iodine-synopsis-4fd9@gregkh>
-References: <20240627-ucsi-rework-interface-v4-0-289ddc6874c7@linaro.org>
- <2024062717-foster-document-eb2f@gregkh>
- <CAA8EJprAshnt3YchBv0ssi4Vet9b6oMcf3z8nuRkoZVYNBq64w@mail.gmail.com>
- <CAA8EJpqCJ8_wOO7yLYA85KYtbLO6hvS-yb7DA6kJ2sH4QH43QA@mail.gmail.com>
- <2024062825-balancing-resigned-e383@gregkh>
- <CAA8EJprsJLMTnd9epLR4Uc02Vg2veW1mpqFxxL=rHU9DtJ8UqQ@mail.gmail.com>
+	s=arc-20240116; t=1720015552; c=relaxed/simple;
+	bh=IWJA0xbv5LS0UA48wEPz9qgicV9yG36KqfKbR7zT/+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RRA/SLOh4vd2T5yFXDjgb3janhnBL9Rh4iwSZkQFYvV+wGh7DwIpw5iPD9gmIdy4Hbh5TwOIQZX/txy3g3rpnCO3s7j9tB48ATCyxVQYbkXAGOMJJR7OAMWTntuaQ/hSpG/o9RZgCObe+gpMSlqr5jS0Hgd1NaKVX9uOU5l1zI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D5rgJv8p; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 463Cn8w1026744;
+	Wed, 3 Jul 2024 14:05:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IWJA0xbv5LS0UA48wEPz9qgicV9yG36KqfKbR7zT/+Y=; b=D5rgJv8p8G147a1n
+	q9YMjPajXWlZjrtOX/q7nEgT1Ff81wREgtyLY7Xcm+ueYXrkIShqKcndhUdg2lxP
+	OExzZzu0o+QYOuvJ1Lmrt1vG9QOryVex2bkUQd7rxSY9uL4M3kUq/nKHzYEVPhSL
+	qRLtadb6+HqwtxgjYTl7yRZWmrNumROyZwrlWYcg7Rvz51sXR37Otr+nUUQtJ7VC
+	Obe2NhNTj3geUWqW6tFte0oGOKjgR2PxiKC8kE0Ksf3wKAlCQlfKREuo54YCbFXP
+	60LKGP3580jxAOunfKkBTGCPnbagfaPbX7EhjIMqsWLspHWj3qsgdOSjxFSfncfk
+	xKAHRw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404yjhs9fm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 14:05:31 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 463E5UWZ008477
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Jul 2024 14:05:30 GMT
+Received: from [10.110.36.143] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 07:05:30 -0700
+Message-ID: <0f94978c-dad7-418b-b911-edf7e81d7460@quicinc.com>
+Date: Wed, 3 Jul 2024 07:05:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJprsJLMTnd9epLR4Uc02Vg2veW1mpqFxxL=rHU9DtJ8UqQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6 5/5] arm64: dts: qcom: x1e80100: Enable cpufreq
+To: Sibi Sankar <quic_sibis@quicinc.com>, Johan Hovold <johan@kernel.org>
+CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <jassisinghbrar@gmail.com>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <dmitry.baryshkov@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
+        <conor+dt@kernel.org>, <quic_psodagud@quicinc.com>,
+        <abel.vesa@linaro.org>
+References: <20240612124056.39230-1-quic_sibis@quicinc.com>
+ <20240612124056.39230-6-quic_sibis@quicinc.com>
+ <ZoQjAWse2YxwyRJv@hovoldconsulting.com>
+ <f53bc00f-8217-1dc8-5203-1a83c24d353d@quicinc.com>
+ <1fcea728-6ee6-4361-b3c5-63d8a2facd74@quicinc.com>
+ <65ce72e1-7106-0872-88f7-bfdfcef7a24b@quicinc.com>
+Content-Language: en-US
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <65ce72e1-7106-0872-88f7-bfdfcef7a24b@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: CwS6XI-x3LlntE0yQ5PZpWbX0Qq0b9KG
+X-Proofpoint-ORIG-GUID: CwS6XI-x3LlntE0yQ5PZpWbX0Qq0b9KG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_09,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ mlxlogscore=999 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ malwarescore=0 mlxscore=0 priorityscore=1501 adultscore=0 impostorscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407030104
 
-On Fri, Jun 28, 2024 at 05:25:17PM +0300, Dmitry Baryshkov wrote:
-> On Fri, 28 Jun 2024 at 17:24, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Thu, Jun 27, 2024 at 06:08:07PM +0300, Dmitry Baryshkov wrote:
-> > > On Thu, 27 Jun 2024 at 17:57, Dmitry Baryshkov
-> > > <dmitry.baryshkov@linaro.org> wrote:
-> > > >
-> > > > On Thu, 27 Jun 2024 at 17:54, Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > On Thu, Jun 27, 2024 at 05:44:39PM +0300, Dmitry Baryshkov wrote:
-> > > > > > The interface between UCSI and the glue driver is very low-level. It
-> > > > > > allows reading the UCSI data from any offset (but in reality the UCSI
-> > > > > > driver reads only VERSION, CCI an MESSAGE_IN data). All event handling
-> > > > > > is to be done by the glue driver (which already resulted in several
-> > > > > > similar-but-slightly different implementations). It leaves no place to
-> > > > > > optimize the write-read-read sequence for the command execution (which
-> > > > > > might be beneficial for some of the drivers), etc.
-> > > > > >
-> > > > > > The patchseries attempts to restructure the UCSI glue driver interface
-> > > > > > in order to provide sensible operations instead of a low-level read /
-> > > > > > write calls.
-> > > > > >
-> > > > > > If this approach is found to be acceptable, I plan to further rework the
-> > > > > > command interface, moving reading CCI and MESSAGE_IN to the common
-> > > > > > control code, which should simplify driver's implementation and remove
-> > > > > > necessity to split quirks between sync_control and read_message_in e.g.
-> > > > > > as implemented in the ucsi_ccg.c.
-> > > > > >
-> > > > > > Note, the series was tested only on the ucsi_glink platforms. Further
-> > > > > > testing is appreciated.
-> > > > > >
-> > > > > > Depends: [1], [2]
-> > > > > >
-> > > > > > [1] https://lore.kernel.org/linux-usb/20240612124656.2305603-1-fabrice.gasnier@foss.st.com/
-> > > > > >
-> > > > > > [2] https://lore.kernel.org/linux-usb/20240621-ucsi-yoga-ec-driver-v8-1-e03f3536b8c6@linaro.org/
-> > > > > >
-> > > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > ---
-> > > > > > Changes in v4:
-> > > > > > - Rebased on top of Greg's tree to resolve conflicts.
-> > > > >
-> > > > > Nope, still got conflicts, are you sure you updated properly?  Patch 1
-> > > > > applied, but #2 did not.
-> > > >
-> > > > I feel stupid enough now. I rebased on top of usb-next instead of
-> > > > usb-testing. Let me spam it once again
-> > >
-> > > Hmm, I see what happened. I had a next+usb-next. Simple usb-next
-> > > doesn't contain changes from 9e3caa9dd51b ("usb: typec: ucsi_acpi: Add
-> > > LG Gram quirk") which this patch also modifies. I can rebase it on top
-> > > of your tree, but then we will have build issues once usb-linus and
-> > > usb-next get merged together.
-> >
-> > Ah, you need/want stuff from both branches, right?  Then just wait until
-> > next week when my -linus branch will be in Linus's tree and then I will
-> > merge that into the -next branch.
-> 
-> Ack. Maybe I'll post another iteration based on the discussion on the
-> mailing list.
 
-Now queued up, thanks.
+On 7/3/2024 4:23 AM, Sibi Sankar wrote:
+>
+>
+> On 7/3/24 01:43, Nikunj Kela wrote:
+>>
+>> On 7/2/2024 12:59 PM, Sibi Sankar wrote:
+>>>
+>>>
+>>> On 7/2/24 21:25, Johan Hovold wrote:
+>>>> On Wed, Jun 12, 2024 at 06:10:56PM +0530, Sibi Sankar wrote:
+>>>>> Enable cpufreq on X1E80100 SoCs through the SCMI perf protocol node.
+>>>>>
+>>>>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+>>>>> ---
+>>>>>    arch/arm64/boot/dts/qcom/x1e80100.dtsi | 63
+>>>>> ++++++++++++++++----------
+>>>>>    1 file changed, 39 insertions(+), 24 deletions(-)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+>>>>> b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+>>>>> index 7b619db07694..d134dc4c7425 100644
+>>>>> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+>>>>> @@ -69,8 +69,8 @@ CPU0: cpu@0 {
+>>>>>                reg = <0x0 0x0>;
+>>>>>                enable-method = "psci";
+>>>>>                next-level-cache = <&L2_0>;
+>>>>> -            power-domains = <&CPU_PD0>;
+>>>>> -            power-domain-names = "psci";
+>>>>> +            power-domains = <&CPU_PD0>, <&scmi_dvfs 0>;
+>>>>> +            power-domain-names = "psci", "perf";
+>>>>>                cpu-idle-states = <&CLUSTER_C4>;
+>>>>
+>>>>> +        scmi {
+>>>>> +            compatible = "arm,scmi";
+>>>>> +            mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
+>>>>> +            mbox-names = "tx", "rx";
+>>>>> +            shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
+>>>>> +
+>>>>> +            #address-cells = <1>;
+>>>>> +            #size-cells = <0>;
+>>>>> +
+>>>>> +            scmi_dvfs: protocol@13 {
+>>>>> +                reg = <0x13>;
+>>>>> +                #power-domain-cells = <1>;
+>>>>> +            };
+>>>>> +        };
+>>>>>        };
+>>>>
+>>>
+>>> Hey Johan,
+>>>
+>>> Thanks for trying out the series.
+>>>
+>>>> This series gives a nice performance boost on the x1e80100 CRD, but
+>>>> I'm
+>>>> seeing a bunch of warnings and errors that need to be addressed:
+>>>>
+>>>> [    9.533053] arm-scmi firmware:scmi: Failed to get FC for protocol
+>>>> 13 [MSG_ID:6 / RES_ID:0] - ret:-95. Using regular messaging.
+>>>> [    9.549458] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
+>>>> 3417600 for NCC - ret:-16
+>>>> [    9.563925] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
+>>>> 3417600 for NCC - ret:-16
+>>>> [    9.572835] arm-scmi firmware:scmi: Failed to get FC for protocol
+>>>> 13 [MSG_ID:6 / RES_ID:1] - ret:-95. Using regular messaging.
+>>>> [    9.609471] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
+>>>> 3417600 for NCC - ret:-16
+>>>> [    9.633341] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
+>>>> 3417600 for NCC - ret:-16
+>>>> [    9.650000] arm-scmi firmware:scmi: Failed to get FC for protocol
+>>>> 13 [MSG_ID:6 / RES_ID:2] - ret:-95. Using regular messaging.
+>>>
+>>> X1E uses fast channels only for message-id: 7 (level set) and regular
+>>> channels for all the other messages. The spec doesn't mandate fast
+>>> channels for any of the supported message ids for the perf protocol.
+>>> So nothing to fix here.
+>>>
+>>>> [    9.727098] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected.
+>>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
+>>>> 3417600000, volt: 0, enabled: 1
+>>>> [    9.737157] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected.
+>>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
+>>>> 3417600000, volt: 0, enabled: 1
+>>>> [    9.875039] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected.
+>>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
+>>>> 3417600000, volt: 0, enabled: 1
+>>>> [    9.888428] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected.
+>>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
+>>>> 3417600000, volt: 0, enabled: 1
+>>>
+>>> The duplicate entries reported by the perf protocol come directly from
+>>> the speed bins. I was told the duplicate entry with volt 0 is meant to
+>>> indicate a lower power way of achieving the said frequency at a lower
+>>> core count. We have no way of using it in the kernel and it gets safely
+>>> discarded. So again nothing to fix in the kernel.
+>>
+>> Hi Sibi,
+>>
+>> Can you try increasing the max_msg_size to 256 bytes in mailbox
+>> transport? We saw the same issue but got resolved by increasing the
+>> max_msg_size for the transport(obviously, I reduced the max_msg to 10 to
+>> keep the total shmem size same). Even the opps_by_lvl warning went away
+>> with this for us.
+>
+> Nikunj,
+> Thanks for taking time to review the series :)
+>
+> Not sure if we are talking about the same things here, are you
+> suggesting that tweaking with the max_msg size will stop the SCMI
+> controller from reporting duplicate OPPs? Even if it does go away
+> magically wouldn't it mean you are dropping messages? Also opps_by_lvl
+> failing with -16 and duplicate opps detected in the opp core have the
+> same root cause i.e. duplicate entries reported by the controller.
 
-greg k-h
+
+Sibi,
+
+My observation was that only 12 OPPs could fit it 128bytes msg_size and
+our platform was sending 16 OPPs in one go. OPPs above 12 were getting
+clobbered so the duplicate warning/error were not genuine. You may need
+to tweak platform to send only 12(or less) OPPs in one go.
+
+
+>
+>>
+>> Thanks,
+>>
+>> -Nikunj
+>>
+>>>
+>>>> [    9.913506] debugfs: Directory 'NCC' with parent 'pm_genpd'
+>>>> already present!
+>>>> [    9.922198] debugfs: Directory 'NCC' with parent 'pm_genpd'
+>>>> already present!
+>>>
+>>> Yeah I did notice ^^ during dev, the series isn't the one
+>>> introducing it
+>>> so it shouldn't block the series acceptance. Meanwhile I'll spend some
+>>> cycles to get this warn fixed.
+>
+> Johan,
+>
+> https://lore.kernel.org/lkml/20240703110741.2668800-1-quic_sibis@quicinc.com/
+>
+>
+> Posted a fix for the warn ^^
+>
+>>>
+>>> -Sibi
+>>>
+>>>>
+>>>> Johan
+>>>>
 
