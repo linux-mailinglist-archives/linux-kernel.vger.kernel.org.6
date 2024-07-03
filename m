@@ -1,144 +1,101 @@
-Return-Path: <linux-kernel+bounces-239168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5F8925774
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:55:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834B5925776
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03BEE1F26C5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:55:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E0641F26C23
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002FD1411C7;
-	Wed,  3 Jul 2024 09:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CA51422B1;
+	Wed,  3 Jul 2024 09:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nuFTRo6x"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="lTnWTbo9"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F82F140E38
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 09:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0A813F45B;
+	Wed,  3 Jul 2024 09:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720000503; cv=none; b=QOIVH8jt1Ho4tnccFfeGhPUaI12nI5vzkGTgOE6eYoB1DiY9Nt2CTmHG0eZhL1nYU/5Mj/+PCeJ8JlrkqEtxMrYacQIudNWgYcd3K7gc0aJstQpHXfHQv6XSTzpfcKf25Qt1ff4PWipbT8LscFsa5MBOqBsHLB1m1GsIEUwGgNo=
+	t=1720000534; cv=none; b=npRV9Z9DBZj7tbtTnuNZ2GWCrYplg8LTacmP0yRMH2kFS8wLJluCGfJ+O3XJ+mka1EgBWq0NSr6jkWfYvXopSEu3SaRH8IRvtPZkZa/msZvn4IpDuATHHAZa88FRWO/xRsfm+34XA6Vl0yhQvWn66JrYfa9wnt6fiDUQd7PHcbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720000503; c=relaxed/simple;
-	bh=k/+CTBpj1EiCKMxmYiMFK6O7Hti0OmObuybzNT9VcZE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DJ0Y5Zv/f2AnmPw4D7GeprzxT9uHVeTiPLK6PXjD+dLm5tzpwrUPeGbEwgWxb1qNKVFx+95XwozVDXJvvhErRUAbNEGr4/T1XLZdM6cn/N6IqWgmTbwxTGIHHHU0FZmom3x6vCheZ+onDVyZ9n6sc29stoWdz17KFAM2idCIxzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nuFTRo6x; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-64b29539d87so45998887b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 02:55:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720000500; x=1720605300; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KRpouyYlT8w2vDlaWB3dgP182H0ox0N2Q0MheHmPiuY=;
-        b=nuFTRo6x4AaHQ5W+QWLWOgUgkOpgi5FCU7SwWX986/hr7jLsO1MZQaLDYAVxykukjg
-         ZX2kt2pUJZ8/xEhwFW3kEjQzKIo7WmB0PzV6/nmhGfF0w1fB/jQafFDDYzlF1pi7qYrt
-         QePEPBM+Qb+AzeM1KCEKRPFOcJuYpMhOmbcNxkQ7MoJvOS4O+1zATM739AcHmdq/Jarj
-         fAwEgXz2hyvdJnTIL4nnlfdAaFLxV1rJ88UYHDOXphUmapTF0LZhP1+PHnn5zAvflYqt
-         QU1PPLqniroTY+POaMukarYhczrPees08Lk6H/Y5o6hMRMvqqBCa8VFT3SPhYFHtX5Qj
-         xTsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720000500; x=1720605300;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KRpouyYlT8w2vDlaWB3dgP182H0ox0N2Q0MheHmPiuY=;
-        b=MOfkBxrNPak0Ti2mpiWlT9dZz34CZDIgvahuc0/kfsva7a1HEfhCqcf4ulBWjY4MfK
-         OtSbK6hkNArfwa5O5Qi1gX+PV4R6SlsRay3thBMgHTHiyTsJUYvTwQIYGL5LhA7UThyj
-         dmMFHqXWVSN3+YiOjSKWUm7o894wQNo3vjSZTV31MBFOshXhEr8V4Kp4umTszzQ685ja
-         juybjpXCtYWy+g0PK1Fju65i+0fPTPgiDFNi2Wj7ZP67cJ6/lKOcUg4JMWVl6TcyVz/x
-         AXDWqw67AuVa1SFZoa4NaA9zvQsgUmxW4LSH6vHtkXCNNY2wQRGDlwUxNfPfMoTBZZsR
-         L2IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJaOmrDNkOHUVbDNAwOBrfAMRDCqDb6hEKNreB4IU5VmCzXYc1LM5kCY7CLyZGw8leTgRlV5WgouR74EROGFJynVtAYJhziGiFI8kf
-X-Gm-Message-State: AOJu0YwbTKZkR6Kq2kwAWBh7ToUcq8tH7HqAbAgNoUisMLwKaX6YViry
-	oSw9uUkpfp06ovcuGSHi/ZWIuNI0Hf3pZweeEn9ohRPk07TzLIddFhhYxqyVqEu5JE3G+YW9EPL
-	FjuimdJhiC4zayYrBH2f74srDrTLQwPACkn2C2g==
-X-Google-Smtp-Source: AGHT+IHoNzBewnWkhcdAH2IejqHRntRYwy/kVJsz9+740G9qHkKMZZR3MQADqefkEA2eUyN1XlgmAmLhG8Zvd2gJPFA=
-X-Received: by 2002:a05:690c:804:b0:64a:7d9b:934 with SMTP id
- 00721157ae682-64c7277c728mr123416777b3.16.1720000500575; Wed, 03 Jul 2024
- 02:55:00 -0700 (PDT)
+	s=arc-20240116; t=1720000534; c=relaxed/simple;
+	bh=MH4RcLU2Ew8c5WvQKy9K80s3b4in5J9rOvq2ovT09vk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OCxj6HaZolsfcJt/tlwZ1a5rKIxWVcExnboHtb+vbdFD3IrXsNpD6eXzj0QLXeDs2JOm2mQcW0fqU3P7E6g26kf/5cDpdJPCoPiTnzeJV6G+pSXY4zIczUbO8WQi5kePwrZIV+hKc8ul65cuQgVAUZruyJDlLjH4gtjFMRb93UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=lTnWTbo9; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4636JLf5030004;
+	Wed, 3 Jul 2024 04:55:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=7oWiVqhXfjhbUu+v
+	MkJ6zhF4ivh4BhAtnUWD0CW582M=; b=lTnWTbo9wC0ILLcN2CesPxbgZ9AUsx5v
+	cRMpPTtvD7vrdpbMF2+LqC130r+xuDHQn9CD10g5ON9sMLsEcF5unaH2bUoMpt7R
+	JC+5W1jvLOiryqj+DvKdeVkGUBCq112CIxwhZ4Zy8Hux61OLG6R+J35akgq29KLm
+	4iKwebyPxZklLgRAh+IgmUIGLnl+d37PGZ1C+rzo2KgmxkYp96le7cL13gu4aLMJ
+	WwRx4sAOm/Lf9iw1O5Zc2szV/T/jpeEwTA7BGMy/o3pSPzKPTzoPSMvjUVEpITyu
+	gGoTVW4Sh6tRglCnvv7AmYvcbGz2/laEIH6ICtkAsFCsX++DhjNXMg==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 402fnxcq1b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 04:55:20 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 10:55:18 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Wed, 3 Jul 2024 10:55:18 +0100
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id E92AD820244;
+	Wed,  3 Jul 2024 09:55:17 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>
+Subject: [PATCH 0/2] ASoC: cs35l56: Set correct upper volume limit
+Date: Wed, 3 Jul 2024 10:55:15 +0100
+Message-ID: <20240703095517.208077-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240417133731.2055383-1-quic_c_gdjako@quicinc.com>
- <20240417133731.2055383-6-quic_c_gdjako@quicinc.com> <CAA8EJppcXVu72OSo+OiYEiC1HQjP3qCwKMumOsUhcn6Czj0URg@mail.gmail.com>
- <CAA8EJpr3GYimirDz39f4n-3hDAxFWzo+9fdY6MAuxaNguouVFg@mail.gmail.com>
- <3e816509-a12b-4658-85f4-c0d0037c6a64@kernel.org> <CAA8EJpr1G4eq5xJn0z2JQmpXY89UK13uk2BWJCgROsFP_-NkQw@mail.gmail.com>
- <20240702163908.GA4635@willie-the-truck>
-In-Reply-To: <20240702163908.GA4635@willie-the-truck>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 3 Jul 2024 12:54:48 +0300
-Message-ID: <CAA8EJprGja_L6QXVmfSqoeMKCmSrf-qBeAWNToZDe++AsZ+Nyg@mail.gmail.com>
-Subject: Re: [PATCH v8 5/7] arm64: dts: qcom: sdm845: Add DT nodes for the TBUs
-To: Will Deacon <will@kernel.org>
-Cc: Georgi Djakov <djakov@kernel.org>, Georgi Djakov <quic_c_gdjako@quicinc.com>, robin.murphy@arm.com, 
-	joro@8bytes.org, iommu@lists.linux.dev, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org, 
-	robdclark@gmail.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	quic_cgoldswo@quicinc.com, quic_sukadev@quicinc.com, quic_pdaly@quicinc.com, 
-	quic_sudaraja@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: bVRau-DgwfoTpCBdeRbG4rn1oi8FBUrq
+X-Proofpoint-ORIG-GUID: bVRau-DgwfoTpCBdeRbG4rn1oi8FBUrq
+X-Proofpoint-Spam-Reason: safe
 
-On Tue, 2 Jul 2024 at 19:39, Will Deacon <will@kernel.org> wrote:
->
-> On Tue, Jun 25, 2024 at 03:59:27PM +0300, Dmitry Baryshkov wrote:
-> > On Tue, 25 Jun 2024 at 15:57, Georgi Djakov <djakov@kernel.org> wrote:
-> > >
-> > > On 25.06.24 10:50, Dmitry Baryshkov wrote:
-> > > > On Fri, 14 Jun 2024 at 21:05, Dmitry Baryshkov
-> > > > <dmitry.baryshkov@linaro.org> wrote:
-> > > >>
-> > > >> On Wed, 17 Apr 2024 at 16:39, Georgi Djakov <quic_c_gdjako@quicinc.com> wrote:
-> > > >>>
-> > > >>> Add the device-tree nodes for the TBUs (translation buffer units) that
-> > > >>> are present on the sdm845 platforms. The TBUs can be used debug the
-> > > >>> kernel and provide additional information when a context faults occur.
-> > > >>>
-> > > >>> Describe the all registers, clocks, interconnects and power-domain
-> > > >>> resources that are needed for each of the TBUs.
-> > > >>>
-> > > >>> Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
-> > > >>
-> > > >> This patch now prevents interconnect drivers from hitting the sync
-> > > >> state on SDM845.
-> > > >> The TBU driver is enabled only when the ARM_SMMU_QCOM_DEBUG is
-> > > >> enabled, which is not a typical case on a normal system:
-> > > >
-> > > > Georgi, before I start acting like a bull in a china shop and sending
-> > > > reverts, any update from your side?
-> > >
-> > > Hi Dmitry!
-> > > Thanks for the report! We can easily add status = "disabled" to the DT
-> > > nodes, but please give me some time to take a look what would be the best
-> > > way to handle this, as i was out last week and now i am still catching up.
-> >
-> > I think the simplest thing would be to move the TBU driver to the
-> > arm-qcom-smmu.c instead of having it in the -debug.c
->
-> The TBUs aren't used for anything other than debugging, so I'd really
-> rather they live with the debug code.
+These two commits set the upper limit of the Speaker Volume control
+to +12dB instead of +100dB.
 
-The problem is that not having any driver bound to the TBU devices
-prevents interconnect drivers from hitting the sync state (and thus
-lowering the bandwidth to the requested values).
-Being that late in the development cycle, I think we should fix the
-issue in the fastest way. So I'm close to sending a revert of the DT
-changes. Setting status = "disabled" doesn't qualify as a logical
-change as having TBU units enabled on a platform-to-platform basis
-doesn't make sense.
+This should have been a simple 1-line change to the #define in the
+header file, but only the HDA cs35l56 driver is using this define.
+The ASoC cs35l56 driver was using hardcoded numbers instead of the
+header defines.
+
+So the first commit changes the ASoC driver to use the #defined
+constants. The second commit corrects the value of the constant.
+
+Richard Fitzgerald (2):
+  ASoC: cs35l56: Use header defines for Speaker Volume control
+    definition
+  ASoC: cs35l56: Limit Speaker Volume to +12dB maximum
+
+ include/sound/cs35l56.h    | 2 +-
+ sound/soc/codecs/cs35l56.c | 6 +++++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.39.2
+
 
