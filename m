@@ -1,216 +1,243 @@
-Return-Path: <linux-kernel+bounces-239371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96AAF925DD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 678E5925DDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:32:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A0929CC5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCC811F22E7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD5F18A95E;
-	Wed,  3 Jul 2024 11:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DBE18E75D;
+	Wed,  3 Jul 2024 11:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="fGKMLFkr"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GeUDNBd/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC461891CA
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2E0175549;
+	Wed,  3 Jul 2024 11:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720005734; cv=none; b=sXTEOun6GtoOPWCCc+VuP3jaBygHzoQiRKztydystbafmk+XTz0RmOUV/XpT3rdXeeA3M+rzNqx79tirZsygVjNfQMR9gn/QJzHP2/vO5BxodwAVV/PhkglSTkj2tww9ArBFAKHiVKGC3E/cVELETxWIouYR6QgQNmFzXHPqbxA=
+	t=1720005835; cv=none; b=UbCtx7PPpvjivX9x1y4mI5ROOwfG4pq17tqkM+94Cw1HjCFDEo//tQipEJmT1d7o7PImdeTBGySkQzCXq+aTNmv4Cdv9hP095oPWhtGVlZBRkMDh3RlIptJE2TCbNKyXhKJl+74gVMnxmAkeGKYsOrZiR+iwAPIA4UlBnd8JSIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720005734; c=relaxed/simple;
-	bh=XGvJWi2ACdeOImN/SwBAgmGV5CjAcEGdLvKIxHnA/Ig=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TK0eAw5p64xMya3uwcJqdOQwY6QmrCzj3k+IELDD5hTsdpdDlAtB29MQC7j/7Nc6zhBl7W+vQXsgZmXuDOoTf1k5Y6jzwLE4FxPEhaETAfiufNIKXNv2Aydosc+ch8S76TG04DcT6HoosZTuJlGu3fD46tuDpgGKI0uG/K11cZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=fGKMLFkr; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BE8203FD42
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:22:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1720005726;
-	bh=1qFVnINiw1OmtrqIdL6Ri9JaQ6L530vAhDFXUjoyBpE=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=fGKMLFkrmuhQQrYe/BWFJEP6GOzk3C4feeDUCE3lwk/PDdaUo4LDp4IXmeNnUzwWq
-	 +IEr2b+YMJpF2KRsJgCV9iY+ILZV5SkBrGJV6PQe7Mh9Lil9oTPJlSXEaT/RByVxfh
-	 0nbMlBJFqrzBIZohNaLc1F4Z6GkxpzCPA58MfE3QNMj+BDfyNMUm/ZKpiYZJAwKLFn
-	 F75MeHMsEGum7O341Kd/lWULXwcGP84DitPveHplpRYWsO4sbT9AgbYh0gXMPJ1nOv
-	 0fA6PjmWAkmhYGgEAGgI9nONn1FzRyIreeYF6bb+FErHK1vke0awybw8euvfRwjr2e
-	 keql42ajTZITg==
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-44634cda251so77117501cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 04:22:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720005725; x=1720610525;
-        h=content-transfer-encoding:cc:to:subject:message-id:date
-         :mime-version:references:in-reply-to:from:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1qFVnINiw1OmtrqIdL6Ri9JaQ6L530vAhDFXUjoyBpE=;
-        b=ppLym/XEbYd5izSo/iRlkBBPFdq/ZagbYuSQ8aWcZlxyAIgvY/OxHqqtlKWEFnf3Jh
-         KBHz5Oxy9o/C9PGH7tK6RgipxXF4Qym/8q1aSq5zPaKyh+7sRhBRnZhXXQJ+Po0/BIuF
-         AMHFc0SxxRQrSWv1MbQZ+o0Uu91yEX3HTcj23Da6MJTpZARj/PgfKfROg3UdTs1jBb5S
-         V7JLVzK4WHI/IjXxq3CrjniNqPNgD1I0wVzGIOiUcgxCh36kpdTodVEU2v/WJNM15ZG6
-         RydZp68ZAuwFcQKJaTdXBPlACllgfGscKfvIUYZcxCs8vEUO9ak3+alvlSrm8O5bg7Ah
-         erOA==
-X-Forwarded-Encrypted: i=1; AJvYcCW//0/ExGeWLUMvxcMVmbb8q9fakJ2j+tTjV+UfPW25h03mbhvlS2nAKaT68OmlH4rBVh/1gKuBH0x2ONyC6QU6dIg09H8yAmm6iJzz
-X-Gm-Message-State: AOJu0Yz41dv8+o2UCY+xFBsiTqITQO2Jp+e0QNHHyuY9OvNfTk/wDDr5
-	dD6QW6uZeZy1jAWLudPoLJOngHDAqNTOR/FDlBb/AdNTnoZ+Kybhv+uQHQ77Dw5NMvbTiqkMBFH
-	9TjmMlzWVm9m/5DKX85KUIsI0bdAGcUBpSmcXwKlldH6nL/2tK/TBhacU+4s6I8y4TWQr6oYlOP
-	BXA95Igp22IGNbqLX74KSak6+8XfVWGQXw6sSCfthy9piQDiNbSAdY
-X-Received: by 2002:ac8:58c8:0:b0:446:5d98:bbb1 with SMTP id d75a77b69052e-44662e5b600mr160719501cf.32.1720005725496;
-        Wed, 03 Jul 2024 04:22:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKJRX5E4PZN5AIkzZDqalz4GIxVyhLTZcy2t5CI2qf3j37GtaHnJJ1/0FVMsH63722yIHL+BLfMdPGdU70kDQ=
-X-Received: by 2002:ac8:58c8:0:b0:446:5d98:bbb1 with SMTP id
- d75a77b69052e-44662e5b600mr160719281cf.32.1720005725057; Wed, 03 Jul 2024
- 04:22:05 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 3 Jul 2024 04:22:04 -0700
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20240703094049.GB2676251@ofsar>
-References: <20240627-k1-01-basic-dt-v2-0-cc06c7555f07@gentoo.org>
- <20240627-k1-01-basic-dt-v2-8-cc06c7555f07@gentoo.org> <CAJM55Z9jeAQTsVjRiLeofDm1RyMWCuHXC0a-pdKtpUiTkSjJCA@mail.gmail.com>
- <20240702012847.GA2447193@ofsar> <IA1PR20MB4953C031CB453AA0E51657B3BBDC2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240702-appease-attire-6afbe758bf0f@spud> <20240703094049.GB2676251@ofsar>
+	s=arc-20240116; t=1720005835; c=relaxed/simple;
+	bh=UpA7Iba8tO6maXc3ayC0JI+euHmvgrbNveLcPh7m5YY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UTE2uZd9DZrtaI27pNRuwvUtlN+1iCf7LUG/fy8mXs2WJmJ7kqki/g7fQFM/qc/gbyUjgWFKHvdFq2rHE3dyQ3Oh1mgJFkyzshlq/6HL8DVBEgYIc0Ojy/MQW6IZKq7M9UjrhmcsTyABafnG/r8UyuRkCPhEox5n8O9E0PzwsPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GeUDNBd/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4632UD3K028827;
+	Wed, 3 Jul 2024 11:23:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eU63yGsA6bYUJtOsa6VUuuK/iRbrnEPILy0wIZf7Bt8=; b=GeUDNBd/B6r/ZGdN
+	2rnfWSpLAx1Qj52Csb+NjohRclhpBnB/GdxysSMj4Iid3bbtonXyEvWTSocedLuh
+	qi7PRcVGv5IYJ3fvUQfbgzh7RZYpsPAHOCjhIzRa1S2DbJJWUHcMGJW4bITMizM3
+	TUcDkJUaaiwQAjAhZxLJXFnC2kPEwdWYSg5jMEaF63Jvo7oGkirIPZRlUwccQAsW
+	KdfXeaVOc/TtUCKP85kPoKVXGdE+6wFVED+X+hmagCRtmFXLWnD+c5MPwRv9asGL
+	3seQD2BskH+oXAQljloncJiGza/yicRweXffSoQwvbC4pld4XYt+MYQ51qejiicC
+	oS9OqQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404kctjvw1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 11:23:45 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 463BNjuh028325
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Jul 2024 11:23:45 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 04:23:39 -0700
+Message-ID: <65ce72e1-7106-0872-88f7-bfdfcef7a24b@quicinc.com>
+Date: Wed, 3 Jul 2024 16:53:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Wed, 3 Jul 2024 04:22:04 -0700
-Message-ID: <CAJM55Z9AdOq_yd7sK_VhkutokK+-QKscdq9i759H3N1UKVwJkQ@mail.gmail.com>
-Subject: Re: [PATCH v2 08/10] riscv: dts: add initial SpacemiT K1 SoC device tree
-To: Yixun Lan <dlan@gentoo.org>, Conor Dooley <conor@kernel.org>
-Cc: Inochi Amaoto <inochiama@outlook.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Samuel Holland <samuel.holland@sifive.com>, 
-	Anup Patel <anup@brainfault.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-serial@vger.kernel.org, Meng Zhang <zhangmeng.kevin@spacemit.com>, 
-	Yangyu Chen <cyy@cyyself.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V6 5/5] arm64: dts: qcom: x1e80100: Enable cpufreq
+Content-Language: en-US
+To: Nikunj Kela <quic_nkela@quicinc.com>, Johan Hovold <johan@kernel.org>
+CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <jassisinghbrar@gmail.com>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <dmitry.baryshkov@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
+        <conor+dt@kernel.org>, <quic_psodagud@quicinc.com>,
+        <abel.vesa@linaro.org>
+References: <20240612124056.39230-1-quic_sibis@quicinc.com>
+ <20240612124056.39230-6-quic_sibis@quicinc.com>
+ <ZoQjAWse2YxwyRJv@hovoldconsulting.com>
+ <f53bc00f-8217-1dc8-5203-1a83c24d353d@quicinc.com>
+ <1fcea728-6ee6-4361-b3c5-63d8a2facd74@quicinc.com>
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <1fcea728-6ee6-4361-b3c5-63d8a2facd74@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7cTYTMIZOKw4j2DaxdBKCPCaAAiyc642
+X-Proofpoint-ORIG-GUID: 7cTYTMIZOKw4j2DaxdBKCPCaAAiyc642
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_06,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ bulkscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
+ suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407030084
 
-Yixun Lan wrote:
-> Hi Conor:
->
-> On 16:25 Tue 02 Jul     , Conor Dooley wrote:
-> > On Tue, Jul 02, 2024 at 09:35:45AM +0800, Inochi Amaoto wrote:
-> > > On Tue, Jul 02, 2024 at 01:28:47AM GMT, Yixun Lan wrote:
-> > > > On 12:49 Mon 01 Jul     , Emil Renner Berthing wrote:
-> > > > > Yixun Lan wrote:
-> > > > > > From: Yangyu Chen <cyy@cyyself.name>
-> > > > > >
-> > > > > > Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
-> > > > > >
-> > > > > > Key features:
-> > > > > > - 4 cores per cluster, 2 clusters on chip
-> > > > > > - UART IP is Intel XScale UART
-> > > > > >
-> > > > > > Some key considerations:
-> > > > > > - ISA string is inferred from vendor documentation[2]
-> > > > > > - Cluster topology is inferred from datasheet[1] and L2 in vend=
-or dts[3]
-> > > > > > - No coherent DMA on this board
-> > > > > >     Inferred by taking vendor ethernet and MMC drivers to the m=
-ainline
-> > > > > >     kernel. Without dma-noncoherent in soc node, the driver fai=
-ls.
-> > > > > > - No cache nodes now
-> > > > > >     The parameters from vendor dts are likely to be wrong. It h=
-as 512
-> > > > > >     sets for a 32KiB L1 Cache. In this case, each set is 64B in=
- size.
-> > > > > >     When the size of the cache line is 64B, it is a directly ma=
-pped
-> > > > > >     cache rather than a set-associative cache, the latter is co=
-mmonly
-> > > > > >     used. Thus, I didn't use the parameters from vendor dts.
-> > > > > >
-> > > > > > Currently only support booting into console with only uart, oth=
-er
-> > > > > > features will be added soon later.
-> > > > > >
-> > > > ...
-> > > >
-> > > > > > +		clint: timer@e4000000 {
-> > > > > > +			compatible =3D "spacemit,k1-clint", "sifive,clint0";
-> > > > > > +			reg =3D <0x0 0xe4000000 0x0 0x10000>;
-> > > > > > +			interrupts-extended =3D <&cpu0_intc 3>, <&cpu0_intc 7>,
-> > > > > > +					      <&cpu1_intc 3>, <&cpu1_intc 7>,
-> > > > > > +					      <&cpu2_intc 3>, <&cpu2_intc 7>,
-> > > > > > +					      <&cpu3_intc 3>, <&cpu3_intc 7>,
-> > > > > > +					      <&cpu4_intc 3>, <&cpu4_intc 7>,
-> > > > > > +					      <&cpu5_intc 3>, <&cpu5_intc 7>,
-> > > > > > +					      <&cpu6_intc 3>, <&cpu6_intc 7>,
-> > > > > > +					      <&cpu7_intc 3>, <&cpu7_intc 7>;
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		uart0: serial@d4017000 {
-> > > > > > +			compatible =3D "spacemit,k1-uart", "intel,xscale-uart";
-> > > > > > +			reg =3D <0x0 0xd4017000 0x0 0x100>;
-> > > > > > +			interrupts =3D <42>;
-> > > > > > +			clock-frequency =3D <14857000>;
-> > > > > > +			reg-shift =3D <2>;
-> > > > > > +			reg-io-width =3D <4>;
-> > > > > > +			status =3D "disabled";
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		/* note: uart1 skipped */
-> > > > >
-> > > > > The datasheet page you link to above says "-UART (=C3=9710)", but=
- here you're
-> > > > > skipping one of them. Why? I can see the vendor tree does the sam=
-e, but it
-> > > > > would be nice with an explanation of what's going on.
-> > > > >
-> > > > /* note: uart1 in 0xf0612000, reserved for TEE usage */
-> > > > I would put something like this, does this sound ok to you?
-> > > >
-> > > > more detail, iomem range from 0xf000,0000 - 0xf080,0000 are dedicat=
-ed for TEE purpose,
-> > > > It won't be exposed to Linux once TEE feature is enabled..
-> > > >
-> > > > skipping uart1 may make people confused but we are trying to follow=
- datasheet..
-> > >
-> > > Instead of skipping it, I suggest adding this to reserved-memory area=
-,
-> > > which make all node visible and avoid uart1 being touched by mistake.
-> >
-> > No, don't make it reserved-memory - instead add it as
-> > status =3D "reserved"; /* explanation for why */
-> Ok, got
->
-> > Also, I'd appreciate if the nodes were sorted by unit address in the
-> > dtsi.
-> so I would move "plic, clint" after node of uart9 as this suggestion
->
-> for uart1, its unit-address is 0xf0610000, it should be moved to after cl=
-int
-> (once unit-address sorted), if we follow this rule strictly.
-> but it occur to me this is not very intuitive, if no objection, I would p=
-ut
-> it between uart0 and uart2 (thus slightly break the rule..)
 
-No, please order nodes by their address as Conor said. It actually says so =
-in
-the DTS coding style:
 
-https://docs.kernel.org/devicetree/bindings/dts-coding-style.html
+On 7/3/24 01:43, Nikunj Kela wrote:
+> 
+> On 7/2/2024 12:59 PM, Sibi Sankar wrote:
+>>
+>>
+>> On 7/2/24 21:25, Johan Hovold wrote:
+>>> On Wed, Jun 12, 2024 at 06:10:56PM +0530, Sibi Sankar wrote:
+>>>> Enable cpufreq on X1E80100 SoCs through the SCMI perf protocol node.
+>>>>
+>>>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/qcom/x1e80100.dtsi | 63
+>>>> ++++++++++++++++----------
+>>>>    1 file changed, 39 insertions(+), 24 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+>>>> b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+>>>> index 7b619db07694..d134dc4c7425 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+>>>> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+>>>> @@ -69,8 +69,8 @@ CPU0: cpu@0 {
+>>>>                reg = <0x0 0x0>;
+>>>>                enable-method = "psci";
+>>>>                next-level-cache = <&L2_0>;
+>>>> -            power-domains = <&CPU_PD0>;
+>>>> -            power-domain-names = "psci";
+>>>> +            power-domains = <&CPU_PD0>, <&scmi_dvfs 0>;
+>>>> +            power-domain-names = "psci", "perf";
+>>>>                cpu-idle-states = <&CLUSTER_C4>;
+>>>
+>>>> +        scmi {
+>>>> +            compatible = "arm,scmi";
+>>>> +            mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
+>>>> +            mbox-names = "tx", "rx";
+>>>> +            shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
+>>>> +
+>>>> +            #address-cells = <1>;
+>>>> +            #size-cells = <0>;
+>>>> +
+>>>> +            scmi_dvfs: protocol@13 {
+>>>> +                reg = <0x13>;
+>>>> +                #power-domain-cells = <1>;
+>>>> +            };
+>>>> +        };
+>>>>        };
+>>>
+>>
+>> Hey Johan,
+>>
+>> Thanks for trying out the series.
+>>
+>>> This series gives a nice performance boost on the x1e80100 CRD, but I'm
+>>> seeing a bunch of warnings and errors that need to be addressed:
+>>>
+>>> [    9.533053] arm-scmi firmware:scmi: Failed to get FC for protocol
+>>> 13 [MSG_ID:6 / RES_ID:0] - ret:-95. Using regular messaging.
+>>> [    9.549458] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
+>>> 3417600 for NCC - ret:-16
+>>> [    9.563925] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
+>>> 3417600 for NCC - ret:-16
+>>> [    9.572835] arm-scmi firmware:scmi: Failed to get FC for protocol
+>>> 13 [MSG_ID:6 / RES_ID:1] - ret:-95. Using regular messaging.
+>>> [    9.609471] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
+>>> 3417600 for NCC - ret:-16
+>>> [    9.633341] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
+>>> 3417600 for NCC - ret:-16
+>>> [    9.650000] arm-scmi firmware:scmi: Failed to get FC for protocol
+>>> 13 [MSG_ID:6 / RES_ID:2] - ret:-95. Using regular messaging.
+>>
+>> X1E uses fast channels only for message-id: 7 (level set) and regular
+>> channels for all the other messages. The spec doesn't mandate fast
+>> channels for any of the supported message ids for the perf protocol.
+>> So nothing to fix here.
+>>
+>>> [    9.727098] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected.
+>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
+>>> 3417600000, volt: 0, enabled: 1
+>>> [    9.737157] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected.
+>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
+>>> 3417600000, volt: 0, enabled: 1
+>>> [    9.875039] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected.
+>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
+>>> 3417600000, volt: 0, enabled: 1
+>>> [    9.888428] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected.
+>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
+>>> 3417600000, volt: 0, enabled: 1
+>>
+>> The duplicate entries reported by the perf protocol come directly from
+>> the speed bins. I was told the duplicate entry with volt 0 is meant to
+>> indicate a lower power way of achieving the said frequency at a lower
+>> core count. We have no way of using it in the kernel and it gets safely
+>> discarded. So again nothing to fix in the kernel.
+> 
+> Hi Sibi,
+> 
+> Can you try increasing the max_msg_size to 256 bytes in mailbox
+> transport? We saw the same issue but got resolved by increasing the
+> max_msg_size for the transport(obviously, I reduced the max_msg to 10 to
+> keep the total shmem size same). Even the opps_by_lvl warning went away
+> with this for us.
 
-/Emil
+Nikunj,
+Thanks for taking time to review the series :)
+
+Not sure if we are talking about the same things here, are you
+suggesting that tweaking with the max_msg size will stop the SCMI
+controller from reporting duplicate OPPs? Even if it does go away
+magically wouldn't it mean you are dropping messages? Also opps_by_lvl
+failing with -16 and duplicate opps detected in the opp core have the
+same root cause i.e. duplicate entries reported by the controller.
+
+> 
+> Thanks,
+> 
+> -Nikunj
+> 
+>>
+>>> [    9.913506] debugfs: Directory 'NCC' with parent 'pm_genpd'
+>>> already present!
+>>> [    9.922198] debugfs: Directory 'NCC' with parent 'pm_genpd'
+>>> already present!
+>>
+>> Yeah I did notice ^^ during dev, the series isn't the one introducing it
+>> so it shouldn't block the series acceptance. Meanwhile I'll spend some
+>> cycles to get this warn fixed.
+
+Johan,
+
+https://lore.kernel.org/lkml/20240703110741.2668800-1-quic_sibis@quicinc.com/
+
+Posted a fix for the warn ^^
+
+>>
+>> -Sibi
+>>
+>>>
+>>> Johan
+>>>
 
