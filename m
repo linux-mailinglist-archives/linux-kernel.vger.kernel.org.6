@@ -1,68 +1,72 @@
-Return-Path: <linux-kernel+bounces-239169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834B5925776
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:55:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8268E925777
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E0641F26C23
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:55:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C285B2366B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CA51422B1;
-	Wed,  3 Jul 2024 09:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1165614265A;
+	Wed,  3 Jul 2024 09:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="lTnWTbo9"
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="V9VrI4AN"
 Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0A813F45B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0F2140E2E;
 	Wed,  3 Jul 2024 09:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720000534; cv=none; b=npRV9Z9DBZj7tbtTnuNZ2GWCrYplg8LTacmP0yRMH2kFS8wLJluCGfJ+O3XJ+mka1EgBWq0NSr6jkWfYvXopSEu3SaRH8IRvtPZkZa/msZvn4IpDuATHHAZa88FRWO/xRsfm+34XA6Vl0yhQvWn66JrYfa9wnt6fiDUQd7PHcbA=
+	t=1720000535; cv=none; b=AYOt7G0Q8zKn8pPtfpQyPrx21k+u97IGvI+zdMjiRZ1sxkViLqmbG3/EetKGRxNBakuNWstB06pDRHcAWp1HeCixbU7iHeVfESLt1s8Y0evO9e5Tm4xgUjGPIZEYcmlIpN4yGcyy9zk3pw5qm9WiVPQ02Y4r8xLXlI44tKJyPk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720000534; c=relaxed/simple;
-	bh=MH4RcLU2Ew8c5WvQKy9K80s3b4in5J9rOvq2ovT09vk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OCxj6HaZolsfcJt/tlwZ1a5rKIxWVcExnboHtb+vbdFD3IrXsNpD6eXzj0QLXeDs2JOm2mQcW0fqU3P7E6g26kf/5cDpdJPCoPiTnzeJV6G+pSXY4zIczUbO8WQi5kePwrZIV+hKc8ul65cuQgVAUZruyJDlLjH4gtjFMRb93UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=lTnWTbo9; arc=none smtp.client-ip=67.231.149.25
+	s=arc-20240116; t=1720000535; c=relaxed/simple;
+	bh=esBEZWhMiBRliaM1qYn3jnE+yA8P72YVy85h047u40c=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lFxoFABEcgkIOw8Mb4iV1coIdgOj3wBmCG5Efu2/anRPK47MBtxrpUSfHF2Yn1q6pwvwCMYK7Bpn+XXKM72LM2jfos1qp2hzfG2x2IcZnyqObkb3J4KpybPEGg9vGyRLsWJFNiICZcSIKslVzWd9ODsSkoCiy3kjfBNmJwYWOYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=V9VrI4AN; arc=none smtp.client-ip=67.231.149.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4636JLf5030004;
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4637xDTR029630;
 	Wed, 3 Jul 2024 04:55:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=7oWiVqhXfjhbUu+v
-	MkJ6zhF4ivh4BhAtnUWD0CW582M=; b=lTnWTbo9wC0ILLcN2CesPxbgZ9AUsx5v
-	cRMpPTtvD7vrdpbMF2+LqC130r+xuDHQn9CD10g5ON9sMLsEcF5unaH2bUoMpt7R
-	JC+5W1jvLOiryqj+DvKdeVkGUBCq112CIxwhZ4Zy8Hux61OLG6R+J35akgq29KLm
-	4iKwebyPxZklLgRAh+IgmUIGLnl+d37PGZ1C+rzo2KgmxkYp96le7cL13gu4aLMJ
-	WwRx4sAOm/Lf9iw1O5Zc2szV/T/jpeEwTA7BGMy/o3pSPzKPTzoPSMvjUVEpITyu
-	gGoTVW4Sh6tRglCnvv7AmYvcbGz2/laEIH6ICtkAsFCsX++DhjNXMg==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 402fnxcq1b-1
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=RmlRDYIfTUKyUgfRgzYWrwMdS4KjZ1LZo4J4TljIXaY=; b=
+	V9VrI4ANN3cLU6Ih6QiWqyyLuUyZ0krQoI9XQT9ssf46/R91mfDIzsFYzbroB9j1
+	KttzOIpalgxE9pkxC11y6H44zruL6H76QK2UBLQZcoln++K7BMejoTHLs5I/DCTf
+	35r96sh19IFciYdh+L+PhcOFMJFwbweeVa6G5JMHgOx6Q9w1fiB+SE0aEExVD7wS
+	+N2pSh6ZuXiQoXvZJduHjYPpHQGEjIc3byor3NcguI3rSNMge9U1mMraAwmgmy9K
+	A++US4AJUzlEmy3TZjrA2AHy9s8mwAGTD0EQGdWuws8jN6EZ0nevEPHzICZaO0w0
+	4L5ZVdK7QJDIp5SJm4STcg==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 402fnxcq1c-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 03 Jul 2024 04:55:20 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
  10:55:18 +0100
 Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
  anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
  15.2.1544.9 via Frontend Transport; Wed, 3 Jul 2024 10:55:18 +0100
 Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id E92AD820244;
-	Wed,  3 Jul 2024 09:55:17 +0000 (UTC)
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 02BA282024D;
+	Wed,  3 Jul 2024 09:55:18 +0000 (UTC)
 From: Richard Fitzgerald <rf@opensource.cirrus.com>
 To: <broonie@kernel.org>
 CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
         <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>
-Subject: [PATCH 0/2] ASoC: cs35l56: Set correct upper volume limit
-Date: Wed, 3 Jul 2024 10:55:15 +0100
-Message-ID: <20240703095517.208077-1-rf@opensource.cirrus.com>
+Subject: [PATCH 1/2] ASoC: cs35l56: Use header defines for Speaker Volume control definition
+Date: Wed, 3 Jul 2024 10:55:16 +0100
+Message-ID: <20240703095517.208077-2-rf@opensource.cirrus.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240703095517.208077-1-rf@opensource.cirrus.com>
+References: <20240703095517.208077-1-rf@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,30 +75,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: bVRau-DgwfoTpCBdeRbG4rn1oi8FBUrq
-X-Proofpoint-ORIG-GUID: bVRau-DgwfoTpCBdeRbG4rn1oi8FBUrq
+X-Proofpoint-GUID: JuavNmVy9FjEPBFVai9Kd07yRzthcEcE
+X-Proofpoint-ORIG-GUID: JuavNmVy9FjEPBFVai9Kd07yRzthcEcE
 X-Proofpoint-Spam-Reason: safe
 
-These two commits set the upper limit of the Speaker Volume control
-to +12dB instead of +100dB.
+The "Speaker Volume" control was being defined using four hardcoded magic
+numbers. There are #defines in the cs35l56.h header for these numbers, so
+change the code to use the defined constants.
 
-This should have been a simple 1-line change to the #define in the
-header file, but only the HDA cs35l56 driver is using this define.
-The ASoC cs35l56 driver was using hardcoded numbers instead of the
-header defines.
-
-So the first commit changes the ASoC driver to use the #defined
-constants. The second commit corrects the value of the constant.
-
-Richard Fitzgerald (2):
-  ASoC: cs35l56: Use header defines for Speaker Volume control
-    definition
-  ASoC: cs35l56: Limit Speaker Volume to +12dB maximum
-
- include/sound/cs35l56.h    | 2 +-
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+---
  sound/soc/codecs/cs35l56.c | 6 +++++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
+diff --git a/sound/soc/codecs/cs35l56.c b/sound/soc/codecs/cs35l56.c
+index 7cac9812f5b5..84c34f5b1a51 100644
+--- a/sound/soc/codecs/cs35l56.c
++++ b/sound/soc/codecs/cs35l56.c
+@@ -71,7 +71,11 @@ static const struct snd_kcontrol_new cs35l56_controls[] = {
+ 		       cs35l56_dspwait_get_volsw, cs35l56_dspwait_put_volsw),
+ 	SOC_SINGLE_S_EXT_TLV("Speaker Volume",
+ 			     CS35L56_MAIN_RENDER_USER_VOLUME,
+-			     6, -400, 400, 9, 0,
++			     CS35L56_MAIN_RENDER_USER_VOLUME_SHIFT,
++			     CS35L56_MAIN_RENDER_USER_VOLUME_MIN,
++			     CS35L56_MAIN_RENDER_USER_VOLUME_MAX,
++			     CS35L56_MAIN_RENDER_USER_VOLUME_SIGNBIT,
++			     0,
+ 			     cs35l56_dspwait_get_volsw,
+ 			     cs35l56_dspwait_put_volsw,
+ 			     vol_tlv),
 -- 
 2.39.2
 
