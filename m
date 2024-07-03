@@ -1,175 +1,130 @@
-Return-Path: <linux-kernel+bounces-238992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E2792549C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:29:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19AF59254B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AFB01C23A63
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:29:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D20C28A954
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6261D136E1C;
-	Wed,  3 Jul 2024 07:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FEE137767;
+	Wed,  3 Jul 2024 07:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="e3rcjBZ6"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="bZMv3fhO"
+Received: from out0-217.mail.aliyun.com (out0-217.mail.aliyun.com [140.205.0.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CD6131BDD;
-	Wed,  3 Jul 2024 07:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6551E4502F
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719991766; cv=none; b=mcuKVhRF/Hfhr0f/AGTD3Vxq7PIrTd97BQCtBXG3RSrtceeZ7UyukX7KN4pRGqt8xxgIq/hV2i8D18i24atbGAdkvKKpJLSaxMC0AoKpsorrfIoZoR/jLHED/HF0QlSwV5GZSO3md+WOH7y+M/mN+wvnO5yENIg03jB4doidavk=
+	t=1719991921; cv=none; b=iNNNl8R2P296v0U04yF6o6fVDrnKC6RxGsWG0gzRrwiAzA+4AWNJKMxh78NwjMAimQtD6VoN50ES/lfd8ksuPz+88YNSw2Fqpj1PEXAEDVsr1D6I7kf1rVO+C/OPcsgbGXPjab43/qei7O9dpAwTQLqtc3hhij7WGW2P71fY6hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719991766; c=relaxed/simple;
-	bh=XH8pzdAoHuWv8DznMXqsk1aeuJ++vg5q3W+27mPM9vo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rhYLq2IJZ+rw7F0CscT801yiUHMBG8kaVLBCHH2znS7bhu4vkutT5YCUh0yz0vrgPiGNfV/KFsL4HmYNsWSHpzG3ZY0WYbLg2rGgX+Ne9G7ng4hARMxioteilNk69k5PEgm9LFYjGT2v+U/qArjMBTKixm+Xk/fQpS+YjOaFvUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=e3rcjBZ6; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1719991764; x=1751527764;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XH8pzdAoHuWv8DznMXqsk1aeuJ++vg5q3W+27mPM9vo=;
-  b=e3rcjBZ6w1YCQadfPHuEgtKs9dThgtIuBbIMQEcRE7c57rwkAhQXJ0fT
-   ZqI5igh+PVw0FzZGL9MvCRXuplnbdwbp9jf1PMh3ntc2f5dauAB/gg0wi
-   jEP1SITvoBIxu6TJXYe9BOtHfQDC2TPXtu5rJIhLEltBMLlqbGwMXyzBD
-   A+MUZEdW3WDsNJ1jEk+MgdLBQTd8myE4ZIUQNDHJajXLq5EtIo6lVkNV/
-   ig0llmZw2jOM6Bqjv8FCUb7pKOQeWHlCTCywHQwYAbXjRDaVT5P0A14OR
-   p1GuQyR4/dfksh1oyWx32c4sQa90SKOmrxst0Gvuy8MTcUAlf+6Oji3x0
-   A==;
-X-CSE-ConnectionGUID: feGJv0yDT+igZZ1QI9ykeA==
-X-CSE-MsgGUID: ChZ+M0e1TT+Kc9XQeYII1A==
-X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
-   d="asc'?scan'208";a="28765840"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Jul 2024 00:29:16 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 3 Jul 2024 00:29:00 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Wed, 3 Jul 2024 00:28:57 -0700
-Date: Wed, 3 Jul 2024 08:28:36 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Serge Semin <fancer.lancer@gmail.com>
-CC: Samuel Holland <samuel.holland@sifive.com>, Kanak Shilledar
-	<kanakshilledar@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown
-	<broonie@kernel.org>, Rob Herring <robh@kernel.org>, Jisheng Zhang
-	<jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
-	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	<linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v2 2/3] spi: dw-mmio: update dw_spi_mmio_of_match struct
- with thead
-Message-ID: <20240703-garbage-explicit-bd95f8deb716@wendy>
-References: <20240701121355.262259-2-kanakshilledar@gmail.com>
- <20240701121355.262259-4-kanakshilledar@gmail.com>
- <f8604c68-8866-447b-a874-562bdad1df79@sifive.com>
- <23gvjkszxvf6zehiqetjfmtf67nlpnnfmhgx234jnxwrtmbdpr@4yv64sz2kpcs>
+	s=arc-20240116; t=1719991921; c=relaxed/simple;
+	bh=S63FyCEoP/hh8X9LPoLUHrYKp3JWPHJWSURm+YaQ3BM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mxXUnb3nXb7AfbRTcgLO7qe4YqVcSXrdQUWz1jkO9OtyiFzBxN5IYg3a+4zn175ELYV1qpSZWQnGAjyGW7y1tVg+ITfnSPNTAIa9nJ/d/VuKfeM5DF0p6K5PpQUfgkLXfkO+3EkM8nKmhVnCdX1fwqOAVZ0upkqk3VaVuXiOCWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=bZMv3fhO; arc=none smtp.client-ip=140.205.0.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1719991915; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=r1F4Tww59q1R5bRgyxjFQoWwXm2ayMMPEgBvkY/J2bE=;
+	b=bZMv3fhOemNRPCAhfdVUB1gKP/SotoicP/xdM7Jdh5vl61mHcmfnQV0DKnxAowSncXUnatvx/RHoKLAKSkp96Zai/bNG5Jq44+Wh22ldnwMwnMVH2MKKEVf78h9hFqojAWFAX6CWlBfhD0sLEwue+cKgYAiZ7PtvzLmHqBcqk9U=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068221070;MF=libang.li@antgroup.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---.YGDw6A8_1719991913;
+Received: from 30.230.88.238(mailfrom:libang.li@antgroup.com fp:SMTPD_---.YGDw6A8_1719991913)
+          by smtp.aliyun-inc.com;
+          Wed, 03 Jul 2024 15:31:54 +0800
+Message-ID: <c0cbe1c6-1009-4dba-acd1-5b8a1bb1141c@antgroup.com>
+Date: Wed, 03 Jul 2024 15:31:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wONVh+6L225rrd86"
-Content-Disposition: inline
-In-Reply-To: <23gvjkszxvf6zehiqetjfmtf67nlpnnfmhgx234jnxwrtmbdpr@4yv64sz2kpcs>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: thp: support "THPeligible" semantics for mTHP with
+ anonymous shmem
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, ughd@google.com,
+ akpm@linux-foundation.org
+Cc: david@redhat.com, ryan.roberts@arm.com, wangkefeng.wang@huawei.com,
+ ioworker0@gmail.com, ziy@nvidia.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240702023401.41553-1-libang.li@antgroup.com>
+ <6f383c8c-b125-4374-bf21-67b6cc3edcbe@linux.alibaba.com>
+Content-Language: en-US
+From: "Bang Li" <libang.li@antgroup.com>
+In-Reply-To: <6f383c8c-b125-4374-bf21-67b6cc3edcbe@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---wONVh+6L225rrd86
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Baolin,
 
-On Mon, Jul 01, 2024 at 09:57:20PM +0300, Serge Semin wrote:
-> Hi folks
->=20
-> On Mon, Jul 01, 2024 at 08:17:29AM -0500, Samuel Holland wrote:
-> > Hi Kanak,
-> >=20
-> > On 2024-07-01 7:13 AM, Kanak Shilledar wrote:
-> > > updated the struct of_device_id dw_spi_mmio_of_match to include
-> > > the updated compatible value for TH1520 SoC ("thead,th1520-spi")
-> > > to initialize with dw_spi_pssi_init().
-> > >=20
-> > > Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
-> > > ---
-> > > Changes in v2:
-> > > - Separated from a single patch file.
-> > > ---
-> > >  drivers/spi/spi-dw-mmio.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >=20
-> > > diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-> > > index 819907e332c4..39e3d46ebf5d 100644
-> > > --- a/drivers/spi/spi-dw-mmio.c
-> > > +++ b/drivers/spi/spi-dw-mmio.c
-> > > @@ -419,6 +419,7 @@ static const struct of_device_id dw_spi_mmio_of_m=
-atch[] =3D {
-> > >  	{ .compatible =3D "microchip,sparx5-spi", dw_spi_mscc_sparx5_init},
-> > >  	{ .compatible =3D "canaan,k210-spi", dw_spi_canaan_k210_init},
-> > >  	{ .compatible =3D "amd,pensando-elba-spi", .data =3D dw_spi_elba_in=
-it},
-> > > +	{ .compatible =3D "thead,th1520-spi", .data =3D dw_spi_pssi_init},
-> >=20
-> > Your binding requires snps,dw-apb-ssi as a fallback compatible string, =
-which is
-> > already supported by this driver and uses the same match data. So you d=
-on't need
-> > this patch; its only effect is to make the kernel larger.
->=20
-> Agree with Samuel comment. Indeed there is no point in adding the
-> vendor-specific device-name supported in the driver if the fallback
-> compatible works as-is.
+On 2024/7/2 14:14, Baolin Wang wrote:
+> 
+> 
+> On 2024/7/2 10:34, Bang Li wrote:
+>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
+>> anonymous shmem"), we can configure different policies through
+>> the multi-size THP sysfs interface for anonymous shmem. But
+>> currently "THPeligible" indicates only whether the mapping is
+>> eligible for allocating THP-pages as well as the THP is PMD
+>> mappable or not for anonymous shmem, we need to support semantics
+>> for mTHP with anonymous shmem similar to those for mTHP with
+>> anonymous memory.
+>>
+>> Signed-off-by: Bang Li <libang.li@antgroup.com>
+>> ---
+>> Changes since v1 [1]:
+>>   - Put anonymous shmem mthp related logic into
+>>     thp_vma_allowable_orders() (per David)
+>>
+>> [1] 
+>> https://lore.kernel.org/linux-mm/20240628104926.34209-1-libang.li@antgroup.com/
+>> ---
+>>   include/linux/huge_mm.h | 11 +++++++++++
+>>   mm/huge_memory.c        | 13 +++++++++----
+>>   mm/shmem.c              |  9 +--------
+>>   3 files changed, 21 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index 212cca384d7e..f87136f38aa1 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -267,6 +267,10 @@ unsigned long thp_vma_allowable_orders(struct 
+>> vm_area_struct *vma,
+>>       return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, 
+>> orders);
+>>   }
+>> +unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>> +                struct vm_area_struct *vma, pgoff_t index,
+>> +                bool global_huge);
+>> +
+>>   struct thpsize {
+>>       struct kobject kobj;
+>>       struct list_head node;
+>> @@ -460,6 +464,13 @@ static inline unsigned long 
+>> thp_vma_allowable_orders(struct vm_area_struct *vma,
+>>       return 0;
+>>   }
+>> +static inline unsigned long shmem_allowable_huge_orders(struct inode 
+>> *inode,
+>> +                struct vm_area_struct *vma, pgoff_t index,
+>> +                bool global_huge)
+>> +{
+>> +    return 0;
+>> +}
+> 
+> This function should be placed in the ‘shmem_fs.h’ header file, just 
+> like shmem_is_huge().
 
-FWIW, Mark picked up the binding alone so I think there's nothing for
-Kanak to do here & the driver patch should just be forgotten about :)
+Looks more reasonable，thank you for your review.
 
-> >From that perspective we shouldn't have merged in the patch adding the
-> Renesas RZN1 SPI device name support, since the generic fallback
-> compatible works for it. On the contrary the Microsemi Ocelot/Jaguar2
-> SoC SPI DT-bindings shouldn't have been defined with the generic
-> fallback compatible since should the device be bound via the generic
-> name it won't work as expected.
->=20
-> Although, it's better to hear out what Rob, Conor or Krzysztof think
-> about this.
-
-I agree with what you've written. If the fallback works identically, then
-the specific compatible shouldn't be added here. And if the fallback
-will cause the device to misbehave (or not behave at all), then it
-should not have been added.
-I'm not sure if the Microsemi stuff is in the "won't work {,properly}"
-camp or in the "will work in a limited fashion" camp. The latter would
-be suitable for a fallback, the former not.
-
-Cheers,
-Conor.
-
-
---wONVh+6L225rrd86
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoT9owAKCRB4tDGHoIJi
-0jYGAP9sjC9GgGM9qE1ZoqzHHiaERajD3hAFoKB9OYEHsOFtxQEAl1g8BT7QyaMo
-nMrjiPXoOmUwVmAt6fFAiWSAim+W7ws=
-=Z2Ad
------END PGP SIGNATURE-----
-
---wONVh+6L225rrd86--
+Thanks,
+Bang
 
