@@ -1,217 +1,200 @@
-Return-Path: <linux-kernel+bounces-238954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06E99253DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:44:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71DC9253DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A70F6285D03
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044FE1C24FB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FD1133406;
-	Wed,  3 Jul 2024 06:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1747F134409;
+	Wed,  3 Jul 2024 06:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BKJqAjrD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NenHOlnR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1D813210B;
-	Wed,  3 Jul 2024 06:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719989048; cv=fail; b=GsyIopYgaR/NBwRDvEHr1v4U5Wtw2MfEMnTB4N4aadM5KdNtJpPsrnXe4AfCIZOC8yt+Y3Ov3aFARcwpOK10DJYkvsRYRC+jhwwqqUmBeN3Kj2Rbyw0EvFfrr/4//RbEB2qj6Uf4pQDJDBm/iBxXREBd7DznXYmqkmzoV9b8KL8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719989048; c=relaxed/simple;
-	bh=FQjiHJ7J7N8qrgpvIJhbmJbRfEdL+j7LHyg101IUKZU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kneJ4OZjQvv4/Viak2/n9m1cw9Bwvip2qyyp9UUSK98hPTT2ZpFahzgs/aqL+SnwoDAVjBVIadMiG8m+M7AxmkHnxuwbDu7uUy7siVPkTfyyAarEv2UhiOTqUgr3kt1xgpdE1VrgIYyTwvrYLcJXe9lfYgtEPufDJCc+9E7o3BA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BKJqAjrD; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719989047; x=1751525047;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=FQjiHJ7J7N8qrgpvIJhbmJbRfEdL+j7LHyg101IUKZU=;
-  b=BKJqAjrDklSpilX7YRTWqXszBrKFAavCyutE54qyNGfdlKCdnNn9He5a
-   QOzcod0SZS3jSlbcrIIFH2+SXK6px9sd+6wAh7vE4Wh6L8dUj4WRsO4Fc
-   8oKu9T+2zX/udkOfLh/vef9pxR2MY2BUHRozJZx2zb99u8QVYeo+02FgH
-   Sp6dQW1lYdIytcuOTqVwhxOlGRffLzw0L5DT7fUn0qIEfQBIHH9dlpfIY
-   V3pejZ5mpPpZT69A6hZsF7Y+G20lf+FrzHostyvujHvE9V/KzLsX4JzuZ
-   9+zbTigYT1mTYRsMfO/eu3ZrHW9y1fWKtaYmkwrVf3fLj7/eGB2V8nGgl
-   g==;
-X-CSE-ConnectionGUID: iLcm62yWR4K5WExuE7mulA==
-X-CSE-MsgGUID: 26YAKWE7Sj22E06kIlWHFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="34735546"
-X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
-   d="scan'208";a="34735546"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 23:44:06 -0700
-X-CSE-ConnectionGUID: y0swnAGrSqKJOpLfXCvNVA==
-X-CSE-MsgGUID: k29rVrgySC2vY5Ha9s+UPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
-   d="scan'208";a="50760753"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Jul 2024 23:44:06 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 2 Jul 2024 23:44:05 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 2 Jul 2024 23:44:05 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 2 Jul 2024 23:44:05 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FO1FDTvHAAc9JpgmZXnGXfGaPXaGKGnPHFIkoIlZjgt818XxJ8wvXElW3mZg8qABeMc6ClADfBEMfDhp/Rs+HH9qmEEdUQZJSzsbGAzbwQbnSyrJxC7us2uBgKlBAJ+LvA5qaQxN7diNXVTys6ry7tP6s0jXe0VHI6Qm/JAs55mWkK787Ym9Tklh2owGFJM0G5NNWhJi+7AJTLzGJysNjnwl+OKuinpwmkMV2zYRjZSpzKEUGjLj1kFwyBLZNSuCcBn/y1IbBuoNnBOGv4KuHf+JzdKbBrWwB0N/KTFN9STciRC1qVrv3MZFYG0ODLg4K3EuYDXQiGR7xs4EmqJR7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=j27liu6475gAQPWJ1HpWkftXvUk9B6yI4c+fhMjZ1O8=;
- b=MEVHS3GzECqXvgqz5CED1IYbcv09O28G0eGwXUKO2QQdppPrR3ey8W2YhVP6pBxZv6E8b5cC497giii5pBYwRKcKYtDkqdWJBh+wppl7zlNyV1Hqpjf1qkKxOrFbu030GUc96GPP9MmGDVHdSJ12wBwjhpFOdJ1sPP1ThKE0l0u9oMfQAzDA0vd0Y/60iuiCmL7fTl4MwKpMru1lh01Fb+9JKRmLCuNhIeR6L+vMkpFJeC55ZE2+jr8IErsejSdPu0iOjoHNTLE6hdUw0nqdk4/86eO1bBP9U8/HTWJuXw24o0El8HpBprZ4S33BNkASKTT8WvHIwBEfiOq6Z5+ncQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com (2603:10b6:208:3c4::15)
- by BL3PR11MB6361.namprd11.prod.outlook.com (2603:10b6:208:3b4::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Wed, 3 Jul
- 2024 06:43:58 +0000
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4]) by MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4%3]) with mapi id 15.20.7741.017; Wed, 3 Jul 2024
- 06:43:58 +0000
-Date: Wed, 3 Jul 2024 08:43:53 +0200
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-CC: <shuah@kernel.org>, <fenghua.yu@intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<ilpo.jarvinen@linux.intel.com>, <tony.luck@intel.com>
-Subject: Re: [PATCH v3 1/2] selftests/resctrl: Adjust effective L3 cache size
- with SNC enabled
-Message-ID: <ocgoqu6hyouc37bes6drvnp2x4qvoiasz4wtckzeveeqgmxac6@e3spe5xyrvce>
-References: <cover.1719842207.git.maciej.wieczor-retman@intel.com>
- <1e6ed2bbbc7716a1606865b8e890afdfcea7ca1d.1719842207.git.maciej.wieczor-retman@intel.com>
- <c4e4d913-2bdb-4451-be7d-0fee80ae0c66@intel.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c4e4d913-2bdb-4451-be7d-0fee80ae0c66@intel.com>
-X-ClientProxiedBy: DUZPR01CA0004.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:3c3::20) To MN0PR11MB6231.namprd11.prod.outlook.com
- (2603:10b6:208:3c4::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490E5131BDD;
+	Wed,  3 Jul 2024 06:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719989067; cv=none; b=E9Y2yOGMFS7rC++MgOpfbAEf0P8YMJckQ2/Nz9+u9uUI9EjkY86yMRDpU5XjCz0FbU0bouXSy6siSzLW3nWPjbk0BHQBVEZlDf+EFIntuU1Y3k+S4eYOXtaTOsr7DUesbsW6AzX3i8T3lDKo0Dhy8EcoDZaj9pwpZHjGPje86G0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719989067; c=relaxed/simple;
+	bh=5a9KnK+yQL5yBs6h/0MIyztEbwdQDmjTI80SPyugzlQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oN4/tNd5z5xXBrC137AtcNSWqHVPWbzNJpnAHeP+1MpZXz3x+bsVR9IQp36Bq6nA8I2kbBnqq77QqTENNeCfjUuYXvrhN/qGKRYQx4XZW7gnS6DlCAVlkq1Gf3KPmsNJl8KoKBSwIZ9fAK50viI30mqThltZxXTdqEgvhIlZ0Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NenHOlnR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4635IuEg023216;
+	Wed, 3 Jul 2024 06:44:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LBnJNdNihFNWFLg/yGpphb/wqfN22TBekYfvklVf0NU=; b=NenHOlnRelxIX3v2
+	HGp9On1kf1vr2fhXnYhPZ4J8jvUcAGzoT9LQVDqhRZggHDkyogreezXJxPbsNyax
+	aViSLt3PlywcAkA6ekOXlJ0Hn+wxA/u2GzF9CL2X8L3aKuB/GzqwudhZSF2l7Xes
+	RnqR1wAdK7vf+T9aiudhCh4Q884+c8nFYCkqdC0R6x+J0b/qgrR1wHbPquKYqzEp
+	w0dPoUlU8dppm4gdMQC9CBD2v2qWcuYnMOIzoxb4ZYIP0zgeBJf79pZ4wWUHsOMn
+	inSTUhy8+dFU/Ztr5im2NXhgumZzxVUQX1COpIHoNAtMVuzdxpG+/Z96Pzq6I8dz
+	+2UMUw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4050cy85b1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 06:44:16 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4636iFfp001144
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Jul 2024 06:44:15 GMT
+Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
+ 23:44:12 -0700
+Message-ID: <c48e17df-1806-439d-b0c9-2c6b7c208505@quicinc.com>
+Date: Wed, 3 Jul 2024 12:14:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6231:EE_|BL3PR11MB6361:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3437027f-3f74-4d1a-952f-08dc9b2b8406
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?6RkctNrNINuWRbpERbBU/PQfSCJbCoOhVMlEV1OwTdUvIDMgn0zGZUxcYC?=
- =?iso-8859-1?Q?3t+jZxZAMmg3IKtZKe7uylu3Nz89GhDNhQvxKR73WJgwAHzsxS/jv0XHce?=
- =?iso-8859-1?Q?Y652XBBe0uBHEdg7IuySsHWXdOuiHq/9NK0gA3Pfcne7XQWGfuugX9CQwA?=
- =?iso-8859-1?Q?bVVUMk9ddSO9WEHQ0MbstO+taZOlSokHpn8XllqWHAb7SUnX4s/oKlLRDW?=
- =?iso-8859-1?Q?vdokr66xkgRb2b6PvOVFZ+r3jhV9HGgHnbKmKGqGlIinxSP6tD9/3yC7y+?=
- =?iso-8859-1?Q?Xzyn5PCA69IELHgpf2i0XbLI01K8DYC46JcPhlTPWblDkYA1M7c3P3oAc3?=
- =?iso-8859-1?Q?+JcCIrX16/zsJmn2/iv8ETzPvogzCqapaRL3y4Cij0yPm2xRpzoGyEOPd1?=
- =?iso-8859-1?Q?HR7Q4eAycpPATgUlHdmYKfj0cEryq9RircCceke/I5LR3SyiuZRLoXBrpC?=
- =?iso-8859-1?Q?gaKBikstqQtaFzq07/ZzzG1qb9y7zAKb+O61wM4zwvxnRF9CiKTrTgtN1n?=
- =?iso-8859-1?Q?6fDRmFMhkLD/JYMJd2KBjGfhvYyrtsyD5u3ZD9umejhpLZHa8zg8xDtM7W?=
- =?iso-8859-1?Q?bbquDZnOWvZLu5J34g5uuOYcgwvLFZJlBTyvKkqlGVSUzMnFPAcqQoHNGX?=
- =?iso-8859-1?Q?TKV930lclRuoW5qpR9fYzRTc9zmZHkjFeoAnZavRzHoJDV3YXqGy4xvZFM?=
- =?iso-8859-1?Q?ozeEto+qiKZClzOd6TokdX3qHnlsFi6yOkheLOrFOmetXxFFtYpwCvozeB?=
- =?iso-8859-1?Q?Y2CCe062+T/eeRghcQViyN48iLPhZhVo5SESQLlarOndD0qzkZV5Asa+uX?=
- =?iso-8859-1?Q?qZzM/UdElKFOdQ/7nSqLH25kwswH6OZC51z5XBlp6u1/CQUhzB58Po7XEa?=
- =?iso-8859-1?Q?Lb+6TaK/YQNcPXKmCWQPEhMca+QZ/w06C/fC6AeLpOneza69tbfOWfJB+G?=
- =?iso-8859-1?Q?hj8KZN3cClegqcM6JrF/l1AkcgHgKEmfO5R63u6wDpY1kyGnlpmJoqatGp?=
- =?iso-8859-1?Q?AsV1GFWs4/YOmTGih9/H6JVqWEmz0tr0XWdi0XADI3FKMnfILH3JtT0Jv7?=
- =?iso-8859-1?Q?wkMbw6P53y+K4j9VPd5tCaD2cX+rGxJ7XjZJ37qfz2FDdiyFINSvWS+hdt?=
- =?iso-8859-1?Q?fyQsty7QH7uI7xafqGTdFjyIRGwbnp5L9qssb1dA9VjPXtIbGhxi7VsGvZ?=
- =?iso-8859-1?Q?c0gwQ7YGoPNoy0AeDI2Ma0xbD+xTeE9HQ5k9QUZA9Hyof59RbNZ/t9VP20?=
- =?iso-8859-1?Q?yuIdYdZwQPUsAm2znHQ+d36SCrVBMqygrhCovxctAJx2GUjeZ8gb8Wa/Pk?=
- =?iso-8859-1?Q?8k6s04Vo+XIhgVZXJ8VpNJ2IGSkmfu26naFckkbzOyP0vgUSCVQlvt8jfM?=
- =?iso-8859-1?Q?T2rAQyC7Q5z6gTqCRnwn+njagdmvZnOA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6231.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?87EnLftcXoY2IgEmbC2fEFLjidV4v2j+3gYLgCSMBW0YCDF6AUO5d4W535?=
- =?iso-8859-1?Q?pQiOPCyeFE18Zl6yqLe0WArXT1QpT/KufY5sgw7CuavgoCXqFXzUYs3Xgs?=
- =?iso-8859-1?Q?Z3qICUxgwtOtVy5aAs8+r9eUz8xIt0KdQ9m+yZAoN7AEHz13Zrfe/2Xdqi?=
- =?iso-8859-1?Q?VqxiVNrDxCHMvRQbxqPUGllCLnX2AjJg5I9LHf+xw4WOo3AoJZkC2HZdZq?=
- =?iso-8859-1?Q?lsBHf8zS/70JTln2L8wPxlcW4Rp55D2L2Ow4zaaBr/ZEwn9C6Qb2SbXZxp?=
- =?iso-8859-1?Q?IKmIFoNeKZEnq8EvpjKeXhsG18ib5BMcsHbyTCTMTSfazaKQQLBMhhvd0q?=
- =?iso-8859-1?Q?Mb5sY4lH/BGPLdRzA1HbN7Egc7KKzeG2S/UEqjFjK8Lk2Kh2cWj/Hwx8FD?=
- =?iso-8859-1?Q?n5LnVN0lpXdMnqs8KPN3MCVe3KJvlLzTpxD78cpSOJSJoLq9RocNadCw4A?=
- =?iso-8859-1?Q?m4f+fx/lXh568YB2o6Ap0jz1Dt5f8Y+w3Kxfj7Z+6ey3FO1V3QELa8IvHk?=
- =?iso-8859-1?Q?Re0d58mXHSC9oQpf7Tmohuen0q5bR8KHA8QhYFyeDczQB8ZHY65KPPJ8v6?=
- =?iso-8859-1?Q?D3AfvzS6OMNWN8P4hNKAs2+wey8TlS6pGVtBHoM0AVhWdUeAeF6JIZ4sUt?=
- =?iso-8859-1?Q?kNveDwurGRStWfRUzFsSYxtLYyu/UIXTp9KkDZqW5qb+qCjc4N0+Op7uyt?=
- =?iso-8859-1?Q?1h5VxtTfoNaJwP2UU9KisUyY79NmiskCQYgGDWTTe1HL/jZOFVC5zh4BVZ?=
- =?iso-8859-1?Q?5xXDqZY7JEduKCN1WMEFqxcv4yHb6zE6103ViiAAlFlxnlNWrOA+raO8t3?=
- =?iso-8859-1?Q?jGnffMQ+4YErVpOQAwAQ+CwgiBXhMXqprw0i+PPdHMJicPUFrkROqqLQeA?=
- =?iso-8859-1?Q?hCvvz0ybyXxvM5r2OfiTF4Ge9cbZA2LQjbnwneUE2fJ1HeaaH2xnX1mSc4?=
- =?iso-8859-1?Q?gWEjl8fqUQJ1w1zGfj8RkUBQrIFCfF16P9qZ4PM0V+SFCnnLYy1W3XhAaS?=
- =?iso-8859-1?Q?wqTpT3hGK98SeabKn790gXnNPVoHsI0fTRWkctLe+heneLVLcSMdUTZEWz?=
- =?iso-8859-1?Q?uLtUnITkPZUN9mOiTVsNTmC2M7R5EqgL1YHnL0+iX5NIuAZ2mNtSf2Un9z?=
- =?iso-8859-1?Q?w/UAI17DAwxkurDMpZi83sacQASHIMAySgNJsRFpfD1+63RXkpElYx9p/R?=
- =?iso-8859-1?Q?d4FiMKdmba6C72PkpOs+QkFi55tGait1uQsUkpjVxCny75bOiGwdN02LYU?=
- =?iso-8859-1?Q?5ZToIZ0hwEIa5r1njwQHembR+G1ZlTMaLL4GLC6hp1syd8EJ133JuGRooQ?=
- =?iso-8859-1?Q?pCOn2URCQKlUeyK0vHBV4PgmbBoDtEafsGeo1f1vAlAYhR5w1LpANJbk/2?=
- =?iso-8859-1?Q?XXZye+5YQnNtmOlrqGQqrzBS4SeHMesGf+iBby/0v1HETOfqBfSPZSUgkL?=
- =?iso-8859-1?Q?ykxUE1Gcb7jWWJSHPlwTzWmD290jy48BprHdxxVnm4RqOxFNP8wT8AJ8py?=
- =?iso-8859-1?Q?t+KFbDo4UDuauJWpvbgvtK8ly6MKx9h/+6BxRF/RgbB20F/B09Fp63CBYb?=
- =?iso-8859-1?Q?lG9SK9/dPzUyte4A18Kg/kaKJuSJ8BaqF2PL0/upt7hHOfhcDaPDquo2ze?=
- =?iso-8859-1?Q?hHk0qnUiqwApYlPwOGOIDv4ztBJOi7WxGghpeuMWoasOxGYaiI4frx/oOH?=
- =?iso-8859-1?Q?Qg1pHHiP1IXoYQlPFPw=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3437027f-3f74-4d1a-952f-08dc9b2b8406
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6231.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 06:43:58.1676
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: g6iAS4oDtGezOgICf5owSvccj6+G0otqEjM9d5+XqvjsfpvVgp3aQjoIPd0whV2qcjJtkcYepd7Ec9dvLFu6+fmtZnKM4yRr03PLqW3WZLg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6361
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] misc: fastrpc: Remove user PD initmem size check
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Greg KH <gregkh@linuxfoundation.org>, <srinivas.kandagatla@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
+        stable
+	<stable@kernel.org>
+References: <20240627060518.1510124-1-quic_ekangupt@quicinc.com>
+ <62dzilcvsp3efxpxulzkf6e62rzcrhp55k6yjk5fymkqthdfzw@yageexbx6ddz>
+ <f3d502ca-228e-4be4-b296-a9073975d34b@quicinc.com>
+ <a5e69a5e-b882-4f36-b023-f85da430fa2f@quicinc.com>
+ <2024062849-brunt-humvee-d338@gregkh>
+ <2e616e9d-fc04-4826-b784-4c6ee45bfbc2@quicinc.com>
+ <foe6khsckzdvd5ccwitzfpdwoigdgu3uostuar3zk5d5stcd4s@hkrdg7vp4mqt>
+ <3b07be20-e0c9-4ee2-a37b-34400e63862b@quicinc.com>
+ <CAA8EJpoxwNv-wpJvqEf9U+Dg9=BJXG++GWB+2DES92MSqXN-3w@mail.gmail.com>
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <CAA8EJpoxwNv-wpJvqEf9U+Dg9=BJXG++GWB+2DES92MSqXN-3w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WrNEgocS_7TlX9dniu_Kv0D2ipA8uwYF
+X-Proofpoint-ORIG-GUID: WrNEgocS_7TlX9dniu_Kv0D2ipA8uwYF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_03,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 priorityscore=1501 adultscore=0 mlxscore=0 impostorscore=0
+ spamscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407030048
 
-On 2024-07-02 at 15:20:22 -0700, Reinette Chatre wrote:
->Hi Maciej,
+
+
+On 7/2/2024 3:10 PM, Dmitry Baryshkov wrote:
+> On Tue, 2 Jul 2024 at 10:07, Ekansh Gupta <quic_ekangupt@quicinc.com> wrote:
+>>
+>>
+>> On 7/1/2024 10:41 PM, Dmitry Baryshkov wrote:
+>>> On Mon, Jul 01, 2024 at 10:50:38AM GMT, Ekansh Gupta wrote:
+>>>> On 6/28/2024 7:51 PM, Greg KH wrote:
+>>>>> On Fri, Jun 28, 2024 at 04:12:10PM +0530, Ekansh Gupta wrote:
+>>>>>> On 6/28/2024 3:59 PM, Ekansh Gupta wrote:
+>>>>>>> On 6/27/2024 4:43 PM, Dmitry Baryshkov wrote:
+>>>>>>>> On Thu, Jun 27, 2024 at 11:35:18AM GMT, Ekansh Gupta wrote:
+>>>>>>>>> For user PD initialization, initmem is allocated and sent to DSP for
+>>>>>>>>> initial memory requirements like shell loading. This size is passed
+>>>>>>>>> by user space and is checked against a max size. For unsigned PD
+>>>>>>>>> offloading, more than 2MB size could be passed by user which would
+>>>>>>>>> result in PD initialization failure. Remove the user PD initmem size
+>>>>>>>>> check and allow buffer allocation for user passed size. Any additional
+>>>>>>>>> memory sent to DSP during PD init is used as the PD heap.
+>>>>>>>> Would it allow malicious userspace to allocate big enough buffers and
+>>>>>>>> reduce the amount of memory available to the system? To other DSP
+>>>>>>>> programs?
+>>>>>>> The allocation here is happening from SMMU context bank which is uniquely assigned
+>>>>>>> to processes going to DSP. As per my understanding process can allocate maximum
+>>>>>>> 4GB of memory from the context bank and the memory availability will be taken care
+>>>>>>> by kernel memory management. Please correct me if my understanding is incorrect.
+>>>>>> Just wanted to add 1 question here:
+>>>>>> User space can also directly allocate memory. Wouldn't that be a problem if any malicious userspace
+>>>>>> allocated huge memory?
+>>>>> No, because any userspace program that takes up too much memory will be
+>>>>> killed by the kernel.
+>>>>>
+>>>>> You can not have userspace tell the kernel to allocate 100Gb of memory,
+>>>>> as then the kernel is the one that just took it all up, and then
+>>>>> userspace applications will start to be killed off.
+>>>>>
+>>>>> You MUST bounds check your userspace-supplied memory requests.  Remember
+>>>>> the 4 words of kernel development:
+>>>>>
+>>>>>     All input is evil.
+>>>> Thanks for the detailed explanation, Greg. I'll remember this going forward.
+>>>>
+>>>> For this change, I'll increase the max size limit to 5MB which is the requirement for
+>>>> unsigned PD to run on DSP.
+>>> So we are back to the quesiton of why 5MB is considered to be enough,
+>>> see
+>>>
+>>> https://lore.kernel.org/linux-arm-msm/2024061755-snare-french-de38@gregkh/
+>> This is based on the initial memory requirement for unsigned PD. This includes memory for shell loading on DSP
+>> + memory for static heap allocations(heap allocations are dynamic for Signed PD). This requirement tends to
+>> around 5MB. I'll update this  also information in commit text. There will be some additional memory passed to
+>> the PD which will get added to the PD heap.
+> Could you please clarify, are these 2MB and 5MB requirements coming
+> from the DSP side or from the userspace side? In other words, is it
+> coming from the shell / firmware / etc?
+I did some more checking here, I'll summarize the problem and try to propose a
+better solution:
+init.filelen is actually the size of fastrpc shell file which is close to 900kb for both
+signed and unsigned shells. User space passes this memory and size after opening
+and reading the shell file. The bound check is for this filelen which looks correct also
+as this size is not expected to be more than 2MB.
+
+Now for PD initmem, this memory is needed for PD initialization which includes
+loading of shell and other initialization requirements eg. PD heap. As of today, the
+initmem allocation is taken as the max of FASTRPC_FILELEN_MAX(2MB bound check
+macro) and 4 times of filelen(~4MB). So every time, atleast 2MB memory is allocated
+for this initmem for PD initialization.
+
+For unsigned PD, there are some additional read-write segments loaded on DSP which
+takes the size requirement to slightly more than 4MB. Therefore allocating 5MB is
+helping unsigned PD to be spawned.
+
+I hope this helps in understanding the problem.
+
+Proposed solution:
+I believe the bound check macro should not be used for initmem size. I can add some
+new definition with FASTRPC_INITMEM_MIN.
+
+In the create_process function, the "memlen" will be set to FASTRPC_INITMEM_MIN
+initially and it will get increased to 5MB if "unsigned_module" is requested.
+
+Or I can add different MACRO definitions for both signed(3MB) and unsigned PD(5MB)
+minimum initmem size.
+
+Please let me know if this is not clear, I'll send a patch for better understanding.
+
+--Ekansh
+
+>> --Ekansh
+>>>> --Ekansh
+>>>>> thanks,
+>>>>>
+>>>>> greg k-h
 >
->On 7/1/24 7:18 AM, Maciej Wieczor-Retman wrote:
->...
->> +int snc_nodes_per_l3_cache(void)
->> +{
->> +	int node_cpus, cache_cpus, i, ret = 1;
->> +
->> +	node_cpus = count_sys_bitmap_bits("/sys/devices/system/node/node0/cpumap");
->> +	cache_cpus = count_sys_bitmap_bits("/sys/devices/system/cpu/cpu0/cache/index3/shared_cpu_map");
->> +
->> +	if (!node_cpus || !cache_cpus) {
->> +		ksft_print_msg("Could not determine Sub-NUMA Cluster mode!\n");
->
->nit: could you please check this series and remove exclamation marks from the messages
->printed to user space? Just stating the error should be sufficient.
 
-Sure, will do.
-
->
->Reinette
-
--- 
-Kind regards
-Maciej Wieczór-Retman
 
