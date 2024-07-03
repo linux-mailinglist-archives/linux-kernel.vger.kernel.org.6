@@ -1,109 +1,142 @@
-Return-Path: <linux-kernel+bounces-238691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7925924DEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:40:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F27FE924DF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D0791F26C8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:40:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4871F21C6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB066FD0;
-	Wed,  3 Jul 2024 02:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64FF567D;
+	Wed,  3 Jul 2024 02:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dNzz6FLA"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="MqodcdQV"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59E3523A;
-	Wed,  3 Jul 2024 02:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630B01DA32B;
+	Wed,  3 Jul 2024 02:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719974408; cv=none; b=NYdZv/7BEy4+epY6uzXVgz/rerk1ibGwNcsNlkpt0VgK7IcCgBdYENNIwRZOXvn2wUfulYi1mTY9m9lYpqvQ8OU66iDhrcmiyKgq7PssEXevUJeeIUc2tWML/LIMIUaAZ+/818wNnnIJp2S5bxR13PjjGlx1blo8a8hAQmM5+ZU=
+	t=1719974587; cv=none; b=FHc7mfP8+iAdpINGubvfe+XwIvhtRTr4d4vylh3qgX6SNrKvYg4CHfS/SSDvafVpvTY7oyAzGj9N3JRW25+frg4FYi8DiisK9NEIeu4hDZll3mv5EL7j+uZewV1+QZ4nKkrxkGieW8KiaOId806GVy61Tjp3yZAa72tWf7igEaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719974408; c=relaxed/simple;
-	bh=vPBhSNjWQ+xKJJpHAZ7T0HL0LQ9w3+F32kzIIzRV43I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IQykCbcnoCfoEapUXRwJlRSenZGzFRsTDaVBmRrw9MZI4g3XDp3zfRpOgoG3UpQ/yGKQ3yCj3rZi5Tg7DU3E5jn8LOJXVZi4vT9xmlfsg7dciIrNbURCGlR28mvExUgmbanIu9qr5R8vxLfiWozs9NicAhcXSNZZK5IedkzzHcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dNzz6FLA; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1719974404;
-	bh=/EDCIQAEg/p+MMLYNbszg680nHn24gcRpI+TzuKcU9U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dNzz6FLALGPfiBBeUd9mFzjTACHs3c7VtDmmOlzIbDb9ExivdmeboVLwjOCuGmFlX
-	 8JHOe65oS15FjvwbiJsxRawcevEG1qyMNiWHu4rhUkAdKXKI4ccsz71CKZtgOYqjiJ
-	 x6yi5mPfvQsy2k5QW7Vr9IalFMl+gdRn5ac+DocdUnKsr/o1OHQXH3WxPnEo8RQYz5
-	 tiUcrHAfKmwHbYAC244CfiR60uCmb5gIos3dJDc8X/w58S2UzWg75hlT2QE2gJcaIv
-	 aLhoMoSV1rBx1dux0GkzFonVX8vjXHx2xbFOEgvCSMy/ak5/u103SLEmQ9tRgH63pv
-	 yA+tiaObozFpw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WDPBq6FBXz4wcJ;
-	Wed,  3 Jul 2024 12:40:03 +1000 (AEST)
-Date: Wed, 3 Jul 2024 12:40:03 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: DRI <dri-devel@lists.freedesktop.org>, Daniel Vetter
- <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>,
- Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: Re: Comments in Fixes: line (Was: Re: linux-next: Fixes tag needs
- some work in the drm-intel tree)
-Message-ID: <20240703123930.13edbfa5@canb.auug.org.au>
-In-Reply-To: <155844385673.15761.3434506339174536733@jlahtine-desk.ger.corp.intel.com>
-References: <20190520221526.0e103916@canb.auug.org.au>
-	<155844385673.15761.3434506339174536733@jlahtine-desk.ger.corp.intel.com>
+	s=arc-20240116; t=1719974587; c=relaxed/simple;
+	bh=0+c8IamQc/JMP0Yy89b6rMfbUIOtGU6qGDJkh4JCqfI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N0OYYe684APSC+ls8cZGKBDslGVSnnno/a4oSXn2gwPIbBUHca4zuEXPYwP+AuTebw/zUQLDDFu/hARVwGeMST3nj4LNGkxMiWdxokCZK21aH/mR7eqat5p5VQg/G+D1b/PJdAnIw7MhMKktoq5J6Kr1XdxqLAXG67UM3IOihzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=MqodcdQV; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1719974585; x=1751510585;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=5IJUkVWImTRVEE1Lr4LGpvHulAgZFkW5TdFDxsW2jUU=;
+  b=MqodcdQVv3klT0bUxSwTo+RLrOn2VtX/TIDZqQ24o58/nTx75k9IkuPn
+   Gp/AwZnrHzy+BX/S2WZeAYIXWxrqpe4R0uHchoT6muZ5Tr0t3v8s375Bf
+   b8SZ8O3W6b+otCYr6Ek/9TvHkONnIEzYjzA4NRRpy2f//U3m/3DDQs7Jv
+   k=;
+X-IronPort-AV: E=Sophos;i="6.09,180,1716249600"; 
+   d="scan'208";a="407384094"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 02:43:02 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:52391]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.16.167:2525] with esmtp (Farcaster)
+ id 3c320ed6-bed0-4404-822c-201001489b19; Wed, 3 Jul 2024 02:43:01 +0000 (UTC)
+X-Farcaster-Flow-ID: 3c320ed6-bed0-4404-822c-201001489b19
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 3 Jul 2024 02:43:01 +0000
+Received: from 88665a182662.ant.amazon.com.com (10.106.100.30) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 3 Jul 2024 02:42:58 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <syoshida@redhat.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <syzkaller@googlegroups.com>
+Subject: Re: [PATCH net 1/2] af_unix: Fix uninit-value in __unix_walk_scc()
+Date: Tue, 2 Jul 2024 19:42:48 -0700
+Message-ID: <20240703024248.99131-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240702160428.10153-1-syoshida@redhat.com>
+References: <20240702160428.10153-1-syoshida@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/iW/ag6FLZSTW2BV7u.6x/zr";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D041UWB002.ant.amazon.com (10.13.139.179) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
---Sig_/iW/ag6FLZSTW2BV7u.6x/zr
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Shigeru Yoshida <syoshida@redhat.com>
+Date: Wed,  3 Jul 2024 01:04:27 +0900
+> KMSAN reported uninit-value access in __unix_walk_scc() [1].
+> 
+> In the list_for_each_entry_reverse() loop, when the vertex's index
+> equals it's scc_index, the loop uses the variable vertex as a
+> temporary variable that points to a vertex in scc. And when the loop
+> is finished, the variable vertex points to the list head, in this case
+> scc, which is a local variable on the stack (more precisely, it's not
+> even scc and might underflow the call stack of __unix_walk_scc():
+> container_of(&scc, struct unix_vertex, scc_entry)).
+> 
+> However, the variable vertex is used under the label prev_vertex. So
+> if the edge_stack is not empty and the function jumps to the
+> prev_vertex label, the function will access invalid data on the
+> stack. This causes the uninit-value access issue.
+> 
+> Fix this by introducing a new temporary variable for the loop.
+> 
+> [1]
+> BUG: KMSAN: uninit-value in __unix_walk_scc net/unix/garbage.c:478 [inline]
+> BUG: KMSAN: uninit-value in unix_walk_scc net/unix/garbage.c:526 [inline]
+> BUG: KMSAN: uninit-value in __unix_gc+0x2589/0x3c20 net/unix/garbage.c:584
+>  __unix_walk_scc net/unix/garbage.c:478 [inline]
+>  unix_walk_scc net/unix/garbage.c:526 [inline]
+>  __unix_gc+0x2589/0x3c20 net/unix/garbage.c:584
+>  process_one_work kernel/workqueue.c:3231 [inline]
+>  process_scheduled_works+0xade/0x1bf0 kernel/workqueue.c:3312
+>  worker_thread+0xeb6/0x15b0 kernel/workqueue.c:3393
+>  kthread+0x3c4/0x530 kernel/kthread.c:389
+>  ret_from_fork+0x6e/0x90 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> Uninit was stored to memory at:
+>  unix_walk_scc net/unix/garbage.c:526 [inline]
+>  __unix_gc+0x2adf/0x3c20 net/unix/garbage.c:584
+>  process_one_work kernel/workqueue.c:3231 [inline]
+>  process_scheduled_works+0xade/0x1bf0 kernel/workqueue.c:3312
+>  worker_thread+0xeb6/0x15b0 kernel/workqueue.c:3393
+>  kthread+0x3c4/0x530 kernel/kthread.c:389
+>  ret_from_fork+0x6e/0x90 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> Local variable entries created at:
+>  ref_tracker_free+0x48/0xf30 lib/ref_tracker.c:222
+>  netdev_tracker_free include/linux/netdevice.h:4058 [inline]
+>  netdev_put include/linux/netdevice.h:4075 [inline]
+>  dev_put include/linux/netdevice.h:4101 [inline]
+>  update_gid_event_work_handler+0xaa/0x1b0 drivers/infiniband/core/roce_gid_mgmt.c:813
+> 
+> CPU: 1 PID: 12763 Comm: kworker/u8:31 Not tainted 6.10.0-rc4-00217-g35bb670d65fc #32
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40 04/01/2014
+> Workqueue: events_unbound __unix_gc
+> 
+> Fixes: 3484f063172d ("af_unix: Detect Strongly Connected Components.")
+> Reported-by: syzkaller <syzkaller@googlegroups.com>
+> Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
 
-Hi Joonas,
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
-On Tue, 21 May 2019 16:04:16 +0300 Joonas Lahtinen <joonas.lahtinen@linux.i=
-ntel.com> wrote:
->
-> We also have an incoming patch where the Fixes: line has a comment in
-> it. Does your tooling account for this when checking the Fixes: line?
-
-No, but I will ignore it manually.  The tooling just produces suggested
-notifications - I don't send them all.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/iW/ag6FLZSTW2BV7u.6x/zr
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaEugMACgkQAVBC80lX
-0Gz4Jgf/UF7YP6SfzyE5+288tj6hS1FY8cZ48ltYoAR9PRxR4qY3m/+2f45akRCU
-F4TmPbvvLVtB0XolGcP6OL7DyPoPp2KXG5yu5DUugxm/jLdZNqKJDM8F65oSc9Cg
-jQdEy+CtBjJOXgSaX2sMP1ITeLa3CIUexX/McpAsRJTJODDEnAkzrDS+wNYGGU5+
-FrF/gwBHi3Nx+ncrAmIh2KLXUS6Jtt2PWVbzbgvrBgbRzsZ0idj5jeC8P2Lcco6J
-ftFxLt7sS2x9wFKTW+L++60F2XJFfdsYYqnTd5280gSrX6RvhihxKD3ShPkb9rW1
-XVorTzC+YUyPO7ImMsStLKC9vsEh0A==
-=vsZB
------END PGP SIGNATURE-----
-
---Sig_/iW/ag6FLZSTW2BV7u.6x/zr--
+Thanks!
 
