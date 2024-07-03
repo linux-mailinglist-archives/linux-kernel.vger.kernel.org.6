@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-239437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3C092601C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:20:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40B0925FDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 639CCB2E804
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:13:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ACEE1F26077
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0512F17B51B;
-	Wed,  3 Jul 2024 12:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6D517BB2D;
+	Wed,  3 Jul 2024 12:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UElA+R2b"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lqjeo5kW"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AF717B40F
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE50F17B4ED
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720008682; cv=none; b=A+vWC874tGavq1ayjf60gBe5kzuc/9S2n1To5TSY3ld7RX1OWx3fsjImPvATZFDDwLrQIQwvO0TU4Rf46Ro912NkemEpmBYBWc1KILWnEdb5AOF7Cyg2K/HP36HE57oApJ+C74dctgPI0KzkzLWzLRVNOODerU0XLTlHbZdek/k=
+	t=1720008683; cv=none; b=o16QTn97l/7VLcZ0iKaTY5Inc2E80tW9Fr/yLo6eKHo1DZ0srCYParuMxN8IQbvZuDNPzf6wSwHRg4VK+qLcA8jfr0ZzkuGvEay8v+DMqJlAPMXUefeO08qK53GkBPXi02VYZvmhV5wPRbi1wXcCevWeqlirOmZbhO1chrStX+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720008682; c=relaxed/simple;
-	bh=S5zvkzQpDxgR0YGwGmmFBfehEAbVxpQY2x0q3BNuI2o=;
+	s=arc-20240116; t=1720008683; c=relaxed/simple;
+	bh=X9RGNO5wB0C8KAI2bKN+Sff6tTbKWBwR8b9RYI6jmJE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WTbd5jASvXCqsJ+Sbtv5dMHsf7Sqk0X6gDO93twOjND9XceD7qgVu8hyKNfPOmmEMAiO4js+3F7KSGzf+SAe6SNa//PpGbkcm/s2q6G0QlNZzuIj6tHfrGfyWfIeNObYGX8ayEEWdLwKpC38vwjsl6YrYR2/Lgsc6XuALn5dXns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UElA+R2b; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:To:Cc; b=ZuqmBKjerKflYkxAT9fCZMPv1rVLLX1j1Lg5EFRLcii/SnrfHEsL19OoQdF/0Pzbijc/nwm1vN26BCFa7LaSVOAuIK2N/EnBflebttsqTlWasKzrIlNxu+4svCp/rSvCbuMACXwePvyv//iloqxDsXY5txHVD8G1wvXGjxNn7Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lqjeo5kW; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42565697036so3613495e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 05:11:20 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-365663f51adso3217392f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 05:11:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720008679; x=1720613479; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720008680; x=1720613480; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aJVuVtK10DRmUdGmaG4/PmO6Oec2LjszDDiQAZFkSrc=;
-        b=UElA+R2beYATP/RTfSx9YbCDRbDaXISBOW/cpqE9zJCqaDHyOHGzGKy4PXigUQWKfi
-         MFVovwQ4pFHIw+k4PZp3VSlRNbvUcL9IM30mviYLbCTWa/pm8M+ll4eDBXX4NPOtUj73
-         3a6343VTaazZ9TaCpX4MnDzvaDA9a+Z8/s9iy0zqEy9zjJedj5Mn5Jtu7ntwsz7FlDQR
-         gQOlYlFSgIlB9bjDgPiiuwd5+9ZocIDMONjwDRUUhLst7xFNLghvl2qlSBzhooxLbLtT
-         NHyLJ+u+f7ckPz5cnfvt94kx7pYn9WQ+Pt8GAb94ufvUJmIHTWUEnVmj3yZA6Td3GVkb
-         mlxw==
+        bh=30H4wuVh6MTN8EFct4l0si8PnCcJgk04g6gE9lXf/C0=;
+        b=Lqjeo5kWdS5KIKjk2O0hYJtYZ0JXhOiOhcntMD5j+5oxkatTpfwbM6SOpT+mkzuepq
+         +dEEBwuxqBRu1AGQEgbGwDglox/XSc0T2eoK0dupi9sztwq/H+NaN5sa/EPgmgCd/L25
+         UYAnJIOnhLWPvL/HbhRVWC29j3ZRYKDX1ZPZFqeRv7B/1KnVtpk3zNevg7jPqk7S9QNY
+         cduNkKUCl8JqU/ZFvaaLtCY66KlFEAFHctCflW2ZiBPlheztfBsBWwMHWCX1oFSbgjgS
+         veJABVaa8W0UiPoGzScpJvajsJ+lFYTm5rzFew6JcrWrErW8LyNJTWGNh/QAJp4jZ0bo
+         YT9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720008679; x=1720613479;
+        d=1e100.net; s=20230601; t=1720008680; x=1720613480;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aJVuVtK10DRmUdGmaG4/PmO6Oec2LjszDDiQAZFkSrc=;
-        b=xRbZSw4WrXVkJPfAcYu8PwiV9aYEpRYaeMPNeyGJvAhM7YLr2XH+MP38dTmWRXe+1g
-         J3NvvpVPanLmFe5ewwqTvuZaolUlIa/QrKGFDq/6BX7YX5BTyGglaDy3AyruweZ3PsW4
-         sQT5sBJmSF0bWCp0X4+nkNUhMPW9LW2IGITyaNxKiWHH5DAfSAxApQhHxfhVLrmyLXmo
-         qOqX618LqmnSkb0dH2qK1q1olthiV10m6ZacLXdVciBNVfWePglW2OmsxImspairr5gJ
-         vTTC1s+rh8D9mB8uCZSD7A1NUilbgiwukDDMtDMcMpZ2PXptyYxrvQ+wxqaawbyjUpCi
-         cNGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkXwdqbX5Bij+a6YB2kNLQ2sPS0Dp8eWHI5YS+UUn4i1ngB7uUNmaB6PTSDgQO22DSo8VWUUTvdv4DuOo2DWqEXJIFPfKeHhVShOjk
-X-Gm-Message-State: AOJu0Ywtd/oYi017Ja0D3+eTtBKOgAw0ag854skOHfKviV0/3RkA3Sy/
-	XGCkC1XRqlTJ0vIgmPjgoeiXAUtEZ6Zoo0jyVIShiQ+3St1GI8Iq8ZGy7GMm16o=
-X-Google-Smtp-Source: AGHT+IGxHphf5D82gF71UP89obxHtvR4jIfjhlOvTO3r6ArO5pT2ywt5RlxUaNm4CuKeT17LcvrrIA==
-X-Received: by 2002:a05:600c:4506:b0:425:7c42:d24b with SMTP id 5b1f17b1804b1-4264093f010mr12776955e9.18.1720008679207;
-        Wed, 03 Jul 2024 05:11:19 -0700 (PDT)
+        bh=30H4wuVh6MTN8EFct4l0si8PnCcJgk04g6gE9lXf/C0=;
+        b=xAP+QwbyG4m/KguvcHBGQkXcrtsNRq8tLfbbbSPUoCF5UjVlof8MgLu1y6B6wKfyuk
+         cjC3gkUI70fFpNuc7yFfNkR4i04G3uC4fEGoes+fF8pxKkWA5OhvCBBFVNooz8Jwpzj6
+         Bkl1UYv2KLwjaKg++cXwgMdCTPDmPwaFNNmtxRumUrzBw2LDnnovdSRMB9UvL2XXBsMF
+         Rc4QQOu8xO75dm4cTiMn8crbKTNYMtZUUJhrkAz96nnfBUtnsuLZdtUW2gfF4fHoPO/N
+         hM8+MHm9U7KkEeYePrE15grxiz6aty1MhDiHQdXB/eTSYp46rFL6rqRiQeaTc2GdmY+T
+         l4+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXiT86W+9D2Pn0sqgM5IaI6XVwHXUQAE9Sa5JvsnrF8f0X2CYmh5OishVwWO58siWaxZaV5l+tspa04NySIpv/xwN1i4OD4AEV1vV60
+X-Gm-Message-State: AOJu0YzEeqvE2rJI0/i838X10zDwDBCl+RVbD2hvrxXx7bJlEusHxQ49
+	DNYN0kpC42n7lQTdC/aia3tFZUXv8XJ8GtlpQ0csRn8TiF5TmKC99RNWh+f3dkY=
+X-Google-Smtp-Source: AGHT+IEDsnzvMssWW12W73oyc5NjjqnLZ9RF8bwCkjxaj+IHTX4GIR6Mw8E9wybObB/fyceJvM28mQ==
+X-Received: by 2002:a05:6000:156a:b0:366:e508:c7d7 with SMTP id ffacd0b85a97d-36775696c9emr9653713f8f.7.1720008680569;
+        Wed, 03 Jul 2024 05:11:20 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a10307bsm15716222f8f.94.2024.07.03.05.11.17
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a10307bsm15716222f8f.94.2024.07.03.05.11.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 05:11:18 -0700 (PDT)
+        Wed, 03 Jul 2024 05:11:20 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 03 Jul 2024 14:11:01 +0200
-Subject: [PATCH 07/11] ASoC: audio-graph-card2: Use cleanup.h instead of
+Date: Wed, 03 Jul 2024 14:11:02 +0200
+Subject: [PATCH 08/11] ASoC: simple-card: Use cleanup.h instead of
  devm_kfree()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240703-asoc-cleanup-h-v1-7-71219dfd0aef@linaro.org>
+Message-Id: <20240703-asoc-cleanup-h-v1-8-71219dfd0aef@linaro.org>
 References: <20240703-asoc-cleanup-h-v1-0-71219dfd0aef@linaro.org>
 In-Reply-To: <20240703-asoc-cleanup-h-v1-0-71219dfd0aef@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -89,21 +89,21 @@ Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
  alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1217;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1558;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=S5zvkzQpDxgR0YGwGmmFBfehEAbVxpQY2x0q3BNuI2o=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmhT/XW0SWctuZtJUcXCPlhsiWx2TNOffJ8CK/G
- W7SJVqOCxqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZoU/1wAKCRDBN2bmhouD
- 1wwmD/9/pdf7GwTIbhrVdNSj8ifQJAxH/unze4Doo1292r/QQqP/NTi6JIM9k11NGv/KmT68EbP
- wNtd2gHNAOILhJhnS83opBMJfoZWYjEguTMZtaD5RevZ2UuufFqvZRID1ikULZVGwuayXjCUebq
- BahUAoPu1hzTYOwToTFdCJYnTQAl+dg/umhIGuC7Hhsf8n9votw1LG7D0XJUEiCYC88xcT1Z/IR
- fRuzt1+eHyDSkSEFF3AtQlns1pVsDFe6IAGb9HDG24oLwD2glp+UmzdaXtlpTXAYPqmwXkFhe7r
- tBE7PSWWyGH3HgldHG0CDe8lVhj2yl9Gf3eqXWDUv7NsxrsbwRpVuaumm6BBXG4YbGnfTiyjXPQ
- b3qJY1g7ko5/Q2b0I8EXPh/Ca6yJ/+XwWZg4tjnEld0PBCtT+AOXhYgdZuQ3jODb4qMC0H6yvEI
- buwQeuR5d/DgsJAIUSRGIyGYKrUOyb97fJrDuk3VYDTflh9kwMw8Kn2qQrhp7aBDOC1pndwf5xG
- 7RJduqVwRtVICBdGI0bP22ckUVhXToXgc6XnOlbQznn3Eakd+Qn2gsKlRw5jQdIfPnQrYVnVupW
- 8sZ5WMY69SEMC0YZsiAMkSP+HfRvZcK+xH2NasIDubd2B2TuMG+zKFQKNndW03d/Ur2KJuIvmE4
- 4mikRl8ItjzC1gQ==
+ bh=X9RGNO5wB0C8KAI2bKN+Sff6tTbKWBwR8b9RYI6jmJE=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmhT/YMEj7J9NvFTYv5P+4OQRpfot2iJsqj4iuF
+ QE/7PDROlCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZoU/2AAKCRDBN2bmhouD
+ 1yMlD/9U1tGNEULLbx4K0Qb3ti9u79wPsPOGSVTGfeT4IvhdfTtElmd6RNSsJxBuhTXESGpgNLM
+ BmhcGaYslhtTD5iwD6vr/ytTPHZHB6olK1Q7+BMin5qZfeFVIf+rFICGdJy6UZnvy5491siZ1qq
+ NUSYVGoY0JPq8xa0CdB7vTiKEUFofiWfIr9DEqxJG1LsbA1goDvah5Iu2alGtaZmmDojm0CJwjL
+ O1MmfJx/7mxQvCrYj1gdENaI3q7b4DPDa+QDqY5HG5MIfBAad0EaANQSaKQRABSpZs9aagn+oF+
+ ucjzTD3VGG4Bv7rzp8mDddiADe0ew/umdLAkcFACuAfDXntAsYA08R4Ers9+7B2RbreeFEU9yQw
+ i/aMefqRpMeMYEjd/Gmb+KMUHt28mbk7P92iIOTTNB99yxn662j1EjY2tDC2bZWSeD2XAgMwDja
+ hBd4XutXGRhK4PL3sRvKWiJnJByM0ybhTpTzKsE/AxF5YWiADGrXrPeGBOktP0/+J+gmwmBQHQL
+ 9qDUp++viikr3mnx++adqlVaRCg1x4A3qp7c6O3GO8hfSWn2DUGjnJE1kVFGQql/5IlIUQy0mEm
+ UbiTrZ86Sg9n836zL7qIJHai2oZrfWzs2Gd8wq57VVVUOZ8clFwJDeQfcznZ9kBlY0hE5UTqm0N
+ R6WtkzOurrfY+yw==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
@@ -112,34 +112,46 @@ make the code more obvious that memory is not used outside this scope.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- sound/soc/generic/audio-graph-card2.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ sound/soc/generic/simple-card.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/generic/audio-graph-card2.c b/sound/soc/generic/audio-graph-card2.c
-index 93d9d045587b..56f7f946882e 100644
---- a/sound/soc/generic/audio-graph-card2.c
-+++ b/sound/soc/generic/audio-graph-card2.c
-@@ -1350,10 +1350,9 @@ int audio_graph2_parse_of(struct simple_util_priv *priv, struct device *dev,
- 			  struct graph2_custom_hooks *hooks)
- {
- 	struct snd_soc_card *card = simple_priv_to_card(priv);
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index edbb6322e9be..d2588f1ea54e 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -5,6 +5,7 @@
+ // Copyright (C) 2012 Renesas Solutions Corp.
+ // Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+ 
++#include <linux/cleanup.h>
+ #include <linux/clk.h>
+ #include <linux/device.h>
+ #include <linux/module.h>
+@@ -727,7 +728,6 @@ static int simple_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	struct snd_soc_card *card;
 -	struct link_info *li;
  	int ret;
+ 
+ 	/* Allocate the private data and the DAI link array */
+@@ -741,7 +741,7 @@ static int simple_probe(struct platform_device *pdev)
+ 	card->probe		= simple_soc_probe;
+ 	card->driver_name       = "simple-card";
  
 -	li = devm_kzalloc(dev, sizeof(*li), GFP_KERNEL);
 +	struct link_info *li __free(kfree) = kzalloc(sizeof(*li), GFP_KERNEL);
  	if (!li)
  		return -ENOMEM;
  
-@@ -1417,8 +1416,6 @@ int audio_graph2_parse_of(struct simple_util_priv *priv, struct device *dev,
- 
- 	ret = devm_snd_soc_register_card(dev, card);
- err:
--	devm_kfree(dev, li);
--
+@@ -818,7 +818,6 @@ static int simple_probe(struct platform_device *pdev)
  	if (ret < 0)
- 		dev_err_probe(dev, ret, "parse error\n");
+ 		goto err;
  
+-	devm_kfree(dev, li);
+ 	return 0;
+ err:
+ 	simple_util_clean_reference(card);
 
 -- 
 2.43.0
