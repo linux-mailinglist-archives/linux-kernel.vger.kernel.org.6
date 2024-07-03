@@ -1,154 +1,148 @@
-Return-Path: <linux-kernel+bounces-239554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA537926213
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:46:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E7F926215
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE84B1C21CA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:46:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E7D1284BBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A59617B4FF;
-	Wed,  3 Jul 2024 13:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909CD17B43C;
+	Wed,  3 Jul 2024 13:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HxnttMfA"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HLOuQYVI"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197D817A5A8
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A2A173336;
+	Wed,  3 Jul 2024 13:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720014384; cv=none; b=D4DQxF5GEG7NvAj7su9aHSnmfSYP8TpEwfmhXv6nm7R9+iUXN3OYp4+dH7ZQibqi8RFXfyxJVjtAwrfdqpwbwpNYGSQZ168nrsK3iAnpszzkOoPdhV8fOf4m5p58/zT77FaT1nLiV2al08YiLoc4OFXoGqPWWArBswGrZoZ1Nm0=
+	t=1720014399; cv=none; b=aev9C5wPJ2Jb7CGksTGKG7HuhCBerJ8WWcjBYSySMzWtyCRLUKgfGU3L2jf3osfEV3sZmPmPxoTXYgsMsT62LCx1iNMgDBw4EbXm8jxfG+yqQtSyUFOapsv4OUQzpBLQxAKw08wrH5Nj1tTAaL+uIAC+yp5HbeQdKKqP+ulOTw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720014384; c=relaxed/simple;
-	bh=/m6A+sXoU4Olg6HTeHCABBg9ut0WZrDY9nPjeBeXu2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kkW1IayOXPlwpGaD9UkuDNCWcfzIFeUVcX2T7REuATgG+Pf1ET0PLA8U8rh/RywRzGdoEfTXxU6LMMplJUwhxwNP9UyuLOA7PT/kA//1bIWJVyCoqMCQgHJ4xOFPlM4uY57CejoNZanzA7Bfq12+STKCXNr2lRRmvIDambP85d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HxnttMfA; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-6eab07ae82bso3270341a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 06:46:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720014381; x=1720619181; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Bf+gEq9Qv4j2DaejyoY0EnJO0snP/b2OWlh18sSmCtA=;
-        b=HxnttMfAn3tuNMuEG6PxLR3uCCkn1CEHyb1QYrRd6ISEV3ezk6dr+FXFedyY4XcWn4
-         gOqJRhG67Xj1TtUoxaRPpGHgAkzBFBzBa5cBv8pgPyzPvJxOKNGhHTkBV3RM9cxWWiSf
-         rH08kpUyb1gdEbw1eKWkb4nmhLiK1VGbYHoDsS0JnqN1P3sTfK2aHuXkdq+5BKWm386d
-         2Kx5OrWk7x8nIJLGowHsnEX6DVRFZkOAER/nfdXLsffCkuIOEmczPwHASREU8sX26Z8v
-         K0+iKliW+ZMwe7GQTkL0DZHbC9KIo1jDxuMb/W3rrfyNi5MkauNoFd+77dnrNmiFX5xt
-         xC2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720014381; x=1720619181;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bf+gEq9Qv4j2DaejyoY0EnJO0snP/b2OWlh18sSmCtA=;
-        b=I5r2v319rrxtC8BKwwU2+09RABS8lH2Z0J6D5HEX8TUSrTs4MicfTLqZge8PWjw14f
-         7tZNrqKFx6oTgR8cdgFGPwFsJB+XLLaFklZ5tfITzImkQOxMCOb94NUUdQiXqyBuhFkb
-         tGP5HNiBEBpWoOrpikVVEDEdpvLmECGmP6bQMrhe0L06hNLedOiJoknbHL2+2tbZ+HB+
-         uhxhYUsMHZy0Xb4FQ8u4bOJ69jxiBKT18uTwUx5yU4s9aZ0oh6KzSFWVVa80qY500f8/
-         TfQiAcrzbde9ADRZmG1+fYEZ3dpt8cDFyNmocaFIl5q5P96iKQMcTKgF17aYgm0XnxFZ
-         ToHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWB8llkyuAEXIYeba2/rETXs/yjZ2i95Lj1/Tlu9YGQRKRmBMtReXK7V85EImDkhvEHfbWnyEVXKSMW8cMw8AaR/H65cywKrE9+SFaz
-X-Gm-Message-State: AOJu0YzcaOzIyoyArDpk7hFRHsuf2rdC7UYuW8Y/n21pAKbHSqDNqq0L
-	LAu/7vt1+SKdwHhJD7pSDruuZR3bV7x566CMgqd5EsfeOmgSfV7ChmUJzmwsBg==
-X-Google-Smtp-Source: AGHT+IFbgy8xFgSDq57ntgaSsYgc8vIgCPq4hdC8aq3qDRUkMazMF18pniYYlOiILpepBoDGTQuepQ==
-X-Received: by 2002:a05:6a20:3c94:b0:1be:c4b9:c216 with SMTP id adf61e73a8af0-1bef60f3c38mr12064525637.7.1720014381428;
-        Wed, 03 Jul 2024 06:46:21 -0700 (PDT)
-Received: from thinkpad ([220.158.156.98])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3e7d7bsm10761774a91.47.2024.07.03.06.46.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 06:46:20 -0700 (PDT)
-Date: Wed, 3 Jul 2024 19:16:16 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Slark Xiao <slark_xiao@163.com>
-Cc: loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
-	johannes@sipsolutions.net, quic_jhugo@quicinc.com,
-	netdev@vger.kernel.org, mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] bus: mhi: host: Add name for mhi_controller
-Message-ID: <20240703134616.GC4342@thinkpad>
-References: <20240701021216.17734-1-slark_xiao@163.com>
- <20240701021216.17734-2-slark_xiao@163.com>
+	s=arc-20240116; t=1720014399; c=relaxed/simple;
+	bh=3rbejkaedxT29XraRDTu4kmwtIuQe1JLN2aB8gV80O8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ATDLAzm0ViRMeIL5GpaDSXzU10avm1kxRYz7LFSYJ6ZcR5CzS8X33W1DHO/XDr58uEF+L08HVi+rHF/pzpJE1D0SNJom3KVy9MLpndfLFjW0+7jld/dyePW6/xHAevTvZyd9msJyVfkg1SJ4Y26Kwl6CGJxcU12ioSjATgQ0EIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HLOuQYVI; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8507540006;
+	Wed,  3 Jul 2024 13:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720014396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=E7nyC9xIhY3z4m+xbftKrt+sa3nij1VWrsRiYkc5o3Q=;
+	b=HLOuQYVITl7k2zCLupO8rAknJ2K1RP6pGqJxly+lnIkGMi/siYfz6esXL1H7C9s1mxnFWM
+	9P1F2lAAx9/0/vaw04AyVhLMw2+GEH5Tpp4kLGNkZzEi3GeeUn5fG1xYdmw1xdvLsxs6g8
+	NiB2fFUJNAZjIGOObmr4O7t9rbXpOUVX1Rz/bBtkrMqe5dhhkXWypei5PBQfqUGAca4Qtp
+	MwqyZ1dMmaQF8x/SGKT5QkVmnauoY3AYXxXsSrDneVwEjm9JzGCmFe2d1VMm9jbTPgweaL
+	5w1zcPi4/insa7NfTwiNQIi/PjT2CrtMh397pU7LITx0jApQ4Z/rpl1+8RuuUg==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v2 0/2] Add Mobileye EyeQ reset support
+Date: Wed, 03 Jul 2024 15:46:31 +0200
+Message-Id: <20240703-mbly-reset-v2-0-3fe853d78139@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240701021216.17734-2-slark_xiao@163.com>
+X-B4-Tracking: v=1; b=H4sIADdWhWYC/23MQQ6DIBCF4auYWZcGR0u0q96jcaEw1ElUGiCkx
+ nD3Utdd/i953wGBPFOAe3WAp8SB3VYCLxXoedxeJNiUBpTYSoWdWKdlF54CRTFqpZUyzWT7G5T
+ D25Plz4k9h9Izh+j8ftqp/q1/mVQLKXDssG+taZseH5NzceHtqt0KQ875C81y78amAAAA
+To: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.15-dev-13183
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Mon, Jul 01, 2024 at 10:12:15AM +0800, Slark Xiao wrote:
-> For SDX72 MBIM mode, it starts data mux id from 112 instead of 0.
-> This would lead to device can't ping outside successfully.
-> Also MBIM side would report "bad packet session (112)".In order to
-> fix this issue, we decide to use the device name of MHI controller
-> to do a match in client driver side. Then client driver could set
-> a corresponding mux_id value for this MHI product.
-> 
-> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+This is a new iteration on the Mobileye system-controller series. It
+used to be sent as a single series [0], but has been split in the
+previous revision (see [1], [2], [3], [4]) to faciliate merging.
 
-Applied to mhi-next with fixup to commit subject and description and also fixed
-the issue spotted by Jeff!
+This series adds a platform driver handling SoC controllers resets. It
+is an auxiliary driver being instantiated by the platform clk driver.
 
-- Mani
+We support EyeQ5, EyeQ6L and EyeQ6H SoCs. The last one is special in
+that there are seven instances of this system-controller. Three of
+those (west, east, acc) contain a reset section.
 
-> ---
-> v2: Remove Fix flag
-> v3: Use name match solution instead of use mux_id
-> v4: Update the description of new member 'name' and move it to
-> right position
-> ---
->  drivers/bus/mhi/host/pci_generic.c | 1 +
->  include/linux/mhi.h                | 2 ++
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 1fb1c2f2fe12..14a11880bcea 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -1086,6 +1086,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	mhi_cntrl->runtime_get = mhi_pci_runtime_get;
->  	mhi_cntrl->runtime_put = mhi_pci_runtime_put;
->  	mhi_cntrl->mru = info->mru_default;
-> +	mhi_cntrl->name = info->name;
->  
->  	if (info->edl_trigger)
->  		mhi_cntrl->edl_trigger = mhi_pci_generic_edl_trigger;
-> diff --git a/include/linux/mhi.h b/include/linux/mhi.h
-> index b573f15762f8..d45058d3dbed 100644
-> --- a/include/linux/mhi.h
-> +++ b/include/linux/mhi.h
-> @@ -289,6 +289,7 @@ struct mhi_controller_config {
->  };
->  
->  /**
-> + * @name: device name of the MHI controller
->   * struct mhi_controller - Master MHI controller structure
->   * @cntrl_dev: Pointer to the struct device of physical bus acting as the MHI
->   *            controller (required)
-> @@ -367,6 +368,7 @@ struct mhi_controller_config {
->   * they can be populated depending on the usecase.
->   */
->  struct mhi_controller {
-> +	const char *name;
->  	struct device *cntrl_dev;
->  	struct mhi_device *mhi_dev;
->  	struct dentry *debugfs_dentry;
-> -- 
-> 2.25.1
-> 
+Related series are targeted at clk [5], pinctrl [6] and MIPS [4]. The
+first two are receiving a second version. The last one has no change
+and stays at its V1.
 
+Have a nice day,
+Théo
+
+[0]: https://lore.kernel.org/lkml/20240620-mbly-olb-v3-0-5f29f8ca289c@bootlin.com/
+
+[1]: https://lore.kernel.org/lkml/20240628-mbly-clk-v1-0-edb1e29ea4c1@bootlin.com/
+[2]: https://lore.kernel.org/lkml/20240628-mbly-reset-v1-0-2a8294fd4392@bootlin.com/
+[3]: https://lore.kernel.org/lkml/20240628-mbly-pinctrl-v1-0-c878192d6b0a@bootlin.com/
+[4]: https://lore.kernel.org/lkml/20240628-mbly-mips-v1-0-f53f5e4c422b@bootlin.com/
+
+[5]: https://lore.kernel.org/lkml/20240703-mbly-clk-v2-0-fe8c6199a579@bootlin.com/
+[6]: https://lore.kernel.org/lkml/20240703-mbly-pinctrl-v2-0-eab5f69f1b01@bootlin.com/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v2:
+- Kconfig: replace "depends on AUXILIARY_BUS" by "select AUXILIARY_BUS".
+- driver:
+  - turn rcdev_to_priv() into a static function to avoid a gnarly
+    container_of(rcdev, ..., rcdev) bug and use the typesystem.
+  - eqr_busy_wait_locked():
+    - assign values to base, sleep_us and timeout_us in the variable
+      declaration block rather than later down the function.
+    - fix indent of the conditional in the read_poll_timeout() call.
+    - rename val0 to rst_status and val1 to clk_status.
+  - eqr_status(): reorder variable declarations for offset and domain to
+    be next to each other.
+  - add comment expanding on usage of mutexes in the device private data.
+  - add comments mentioning that both RST_REQUEST and CLK_REQUEST
+    registers must be kept in sync, in both assert and deassert code.
+- Link to v1: see [2]
+
+Changes since OLB v3 [0]:
+ - MAINTAINERS: Move changes into a separate commit to avoid merge
+   conflicts. This commit is in the MIPS series [3].
+ - dt-bindings: Take Reviewed-by: Rob Herring.
+ - Kconfig: do not depend on COMMON_CLK_EYEQ. This symbol is not defined
+   in this series, it is defined in the clk series [1].
+ - Kconfig: do depend on AUXILIARY_BUS.
+ - Kconfig: remove outdated "depends on MFD_SYSCON".
+ - driver: remove "#include <linux/platform_device.h>".
+ - driver: cast platdata to (void _iomem *) explicitely.
+
+---
+Théo Lebrun (2):
+      Revert "dt-bindings: reset: mobileye,eyeq5-reset: add bindings"
+      reset: eyeq: add platform driver
+
+ .../bindings/reset/mobileye,eyeq5-reset.yaml       |  43 --
+ drivers/reset/Kconfig                              |  13 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-eyeq.c                         | 570 +++++++++++++++++++++
+ 4 files changed, 584 insertions(+), 43 deletions(-)
+---
+base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+change-id: 20240628-mbly-reset-ac6c66d3bf95
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Théo Lebrun <theo.lebrun@bootlin.com>
+
 
