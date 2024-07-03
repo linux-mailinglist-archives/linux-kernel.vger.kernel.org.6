@@ -1,78 +1,105 @@
-Return-Path: <linux-kernel+bounces-238605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A3F924CC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:30:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C49924CCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63C5CB21609
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFFA0284EDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5981854;
-	Wed,  3 Jul 2024 00:30:36 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF79A4C97;
+	Wed,  3 Jul 2024 00:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5he+TCD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76734391;
-	Wed,  3 Jul 2024 00:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDC54A2D;
+	Wed,  3 Jul 2024 00:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719966635; cv=none; b=KuVJaWWq5AVtyDpVWERd+4LAUSLhYizgCfSNoOSQeL4lcsx80vOVB3+VnteH4nNmayeyqXe6F+pjdF0AbUWVyT9Dr9laESNbzV4ZLWVSybonccQjvUE6l3cJtL85xcVlZ3yfKOWWP7xq4yBKGNO6Eyj+sWnOk2kP37tXJzAlepE=
+	t=1719966641; cv=none; b=cdDVJREpfUjw8nMD5dCX4sMFdwXm2z7ch1Yfj3Q4Rc+KL1OjhocMG7QIl8kINbVmqJXdtMEQ5wC3l5/8HO6GgTmP+6VIlare5Bu8uPjxXfHtGGTc8RHliyyWdmwrgS9PsZuaX2oIbEJTpg0rz+1NtAb7zRGJmrva5Cxn6bXmkAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719966635; c=relaxed/simple;
-	bh=raqoEpBV0Mpr/RDiRvzJcoV44b341bKzX5P6mYI4HLA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=d2O5R1UV9VlrGkG2sRs5ADbndmtYgqwtSVxlL/VMLyygmMOxy2Xi7jhfVmbzVnraKWh8djyyP3YND2g9lqwgbZG5B3UGrx/jgPj/VdyfQjMpbGnWUmRFWURJKjy484G1Rj/Hy+Ii6BDowAqGxZzu0KCmtGvscC28wHMbKzgkM3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4630U19K01538754, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 4630U19K01538754
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 3 Jul 2024 08:30:01 +0800
-Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 3 Jul 2024 08:30:01 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 3 Jul 2024 08:30:01 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Wed, 3 Jul 2024 08:30:01 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: =?utf-8?B?RnJlZHJpayBMw7ZubmVncmVu?= <fredrik@frelon.se>,
-        Kalle Valo
-	<kvalo@kernel.org>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] rtlwifi: fix comment typo
-Thread-Topic: [PATCH] rtlwifi: fix comment typo
-Thread-Index: AQHazH0vmgBNTpZiXUq16WOYK6nxprHkJsjA
-Date: Wed, 3 Jul 2024 00:30:01 +0000
-Message-ID: <bcc37f918d994755b7f3af689e54c9dd@realtek.com>
-References: <20240702123048.14829-1-fredrik@frelon.se>
-In-Reply-To: <20240702123048.14829-1-fredrik@frelon.se>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719966641; c=relaxed/simple;
+	bh=raEwlZhSHvYn4cb14CLaNp2VOnySoTc5QBSm+v6TF+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rqG2bNkwYWi7lz8c8cUwdswBHQPHd7fVLkNkXW4levF02Uaqqm+KlWkuPYcTqqQrTxpA4N8di05Lis9Mm1TmzDLybAYucq/Q3X21wq+e/77wDtKtCR0u2JjJkf8RKxBYQWolVQ2RzMolsCooRvyaWeZDVN9m2Xuof4OQ+YLWJ3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5he+TCD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 079E3C116B1;
+	Wed,  3 Jul 2024 00:30:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719966640;
+	bh=raEwlZhSHvYn4cb14CLaNp2VOnySoTc5QBSm+v6TF+4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=U5he+TCDKSDjGF5TaWQ6tooTmoFozUEudg/FdBlyD6PloDlswMaZVuZmnr4MUabjw
+	 3SviNgTr/chLzJnC6zBdopptPpkMyZ/Z4412rxqng218o84Isu6JNeV5Lu3O6HY+Se
+	 XAXhuDGIhB+jjM1J3TacN4TS80stMY/ygOt9qmaTNatV80lmcXxM/x5MJUI/3VDWry
+	 FoUmqbc4NV8QrSS/zSZCc0d99hmxdXac6GntSnHCecqwWYbu1vPeWOme+1g7CE/GXJ
+	 W6/p9ZWkb/QYxhSeFx3VFoqErp3UuHumE0fCZ88/g3bXt6tDxTgdl6VnR+Fu6bnfRq
+	 Tx6waO8u7K3TQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	stable@vger.kernel.org,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH] tpm: Limit TCG_TPM2_HMAC to known good drivers
+Date: Wed,  3 Jul 2024 03:30:33 +0300
+Message-ID: <20240703003033.19057-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-RnJlZHJpayBMw7ZubmVncmVuIDxmcmVkcmlrQGZyZWxvbi5zZT4gd3JvdGU6DQoNCj4gU3ViamVj
-dDogW1BBVENIXSBydGx3aWZpOiBmaXggY29tbWVudCB0eXBvDQoNClN1YmplY3QgcHJlZml4IHNo
-b3VsZCBiZSAid2lmaTogcnRsd2lmaTogLi4uIiwgYW5kIGl0IHdvdWxkIGJlIGJldHRlciB0byBw
-b2ludA0Kb3V0IHdoYXQgeW91IGNoYW5nZSBpcyAnZGVmYXVsdCcuIA0KDQoNCj4gQ2hhbmdlICdk
-ZWZ1bHQnIHRvICdkZWZhdWx0JyBpbiBjb21tZW50cyBpbiBzZXZlcmFsIHJ0bHdpZmkgZHJpdmVy
-cy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEZyZWRyaWsgTMO2bm5lZ3JlbiA8ZnJlZHJpa0BmcmVs
-b24uc2U+DQoNCg0K
+IBM vTPM driver lacks a call to tpm2_sessions_init() and reports:
+
+[    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM error 0x01C4
+[    2.987140] ima: Error Communicating to TPM chip, result: -14
+
+HMAC encryption code also has a risk of null derefence, given that when
+uninitialized, chip->auth is a null pointer.
+
+Limit TCG_TPM2_HMAC to known good drivers until these issues have been
+properly fixed.
+
+Cc: stable@vger.kernel.org # v6.10+
+Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+Reported-by: Stefan Berger <stefanb@linux.ibm.com>
+Closes: https://lore.kernel.org/linux-integrity/20240617193408.1234365-1-stefanb@linux.ibm.com/
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ drivers/char/tpm/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+index cf0be8a7939d..c310588a5958 100644
+--- a/drivers/char/tpm/Kconfig
++++ b/drivers/char/tpm/Kconfig
+@@ -30,6 +30,7 @@ if TCG_TPM
+ config TCG_TPM2_HMAC
+ 	bool "Use HMAC and encrypted transactions on the TPM bus"
+ 	default X86_64
++	depends on TCG_CRB || TCG_TIS_CORE
+ 	select CRYPTO_ECDH
+ 	select CRYPTO_LIB_AESCFB
+ 	select CRYPTO_LIB_SHA256
+-- 
+2.45.2
+
 
