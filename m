@@ -1,202 +1,109 @@
-Return-Path: <linux-kernel+bounces-240019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A339267F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:16:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3843C9267ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A33F11C25B75
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:16:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCB52B25729
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46A018F2EC;
-	Wed,  3 Jul 2024 18:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FB718754E;
+	Wed,  3 Jul 2024 18:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="11TkfX+q"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xvn23PIg"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765F018A938
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 18:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CE21862A4
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 18:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720030513; cv=none; b=RcQqcyEpPJvf7FqJ9jcbRFuDomcTMY2ireDxO3OY7v9xjHjIRfbXS/R2YGC5jyiTeuBxK87h2Ck0qEkpbzDle3XUm34M8LEK4fYsL9VQJw2q0G7jXawcEsdX2xk8mkt1ituoFxgMdskjzSHuNbDKierPUY7A3QUSdm2YyLpglSU=
+	t=1720030509; cv=none; b=XoYuqj4PboPR4XxNoZMPUC2rCyXfqzubVBnzfNFdeEWURr1OowBEKckKB4ktU82BOpEfcbKMR0uaPXAb4LB7T3AiMNafGKuhM/6ah188WArKfvtePU5Yz49uJuy7h/t+C/wbUE8qHnH51jQgMP8X4WiIT/2F+OVSVozEobaaQIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720030513; c=relaxed/simple;
-	bh=OhayV8asqA4tlrZmqZAr3hetao9MUBRw+6Zcnt3ZjBc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DTCHTbjot2H3UM8+hDY/XksnIitRQEvh7YqJczKNVsN8CRRgh0zqVo9qfS9YHjTaRy8ftAzQspXydLZDhlD8esqMI3TlzGgI8xzQNOnlxm5t4cPMSiAE8PAlhlz+IDwW0Sl75gTPjjbRnzaJcsCgK9T2yJJkUVZnt4rxDw+lzKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=11TkfX+q; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42565697036so6174645e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 11:15:11 -0700 (PDT)
+	s=arc-20240116; t=1720030509; c=relaxed/simple;
+	bh=GVMiYd1YPD4ViR7bJefM84jIGSsmyyiLJmbByp0VRVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsWCqgYoCLGQOY1RR8jOK0PppkHLLDXeDP0NRT/s8jXQQemYg4GxgzDc6h/lFAb4HOaq2mqtQ2heGdW9zDEbcg+awvPLOe4m2qF50Zmn2YyunrD+j5G2MwdX4GdwV14Kk/+EWGPN8Ld7IyMqND63moJdYEjMFHFjIPBIP2Ajpuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xvn23PIg; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7066a3229f4so3828779b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 11:15:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720030510; x=1720635310; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ASQg5AvNQNadFvEbt3zujicewyUwPXC5PJaL2UVk5WA=;
-        b=11TkfX+q9zyJ2bLBWAZuFpQQ7ObApFip11igdtfZYbEG7DKvP9hehES8ylmhh7VAdD
-         ksexgBArqLjH3FGWTkT95SOKcdLbDM0gu+66QM9MGLfXxJY7TM4Hma/Ji+cXWS4lrnfs
-         ZvkfyicaeGC1oeCPoUehPFRL8cotZgecmYyxnB3ywTN8Vprg9+Bbm8bKm378sNmqNuQ6
-         TugoMfsSY7SuXHASDTrJXT86MZRkHqtm32P/BKRBgHnDmnJMTzonTFNwvdiPe7wgS5Uy
-         AKTOeJxvfDBQ0YpHgFZfeSsPOE2DmgeQCendut/a/NGJuk+uyes8uztaP+SX1077VtrX
-         DkdA==
+        d=gmail.com; s=20230601; t=1720030507; x=1720635307; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zUBh4HJFbwCunvYW2TT9Lv7hcZt9lFP+VL8eZ2hanxo=;
+        b=Xvn23PIgl+71QfwPKKTzEHGpw8QMOL6o3pX7XVPFxZ+Slo4MTxLll/Y9TtRtIQEAx8
+         zOljUPFhCPo3q9o8JRFD5W1dkCIrRYhAUAEj16UrLZOj//2AoOyLTtyuSIHZ1QO4/5TM
+         EK0N1kGVC5s0eMZT90CleOCamBO/QjlpnsxhUkVq6cMltsZScZ+nsgk6DWWYvOD7+zCD
+         UZxi/16PYR1yjlHP/hRWFC/cAIxfwECZ39dD6mcWmypUr3W6N5lmhKwHujGt9gzVVVKZ
+         RIs0EFcvcNGFrSQuARuLt2jbRr1Pp7quZhz6EJdVWtOiCnUSPuF8LyVYoeDzMbDPGp9o
+         Go+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720030510; x=1720635310;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720030507; x=1720635307;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ASQg5AvNQNadFvEbt3zujicewyUwPXC5PJaL2UVk5WA=;
-        b=aOgrOKziImWpbWhHblJqaoCHPH7BrlgvwBCVhoHUVHHtr0XLOsasKeLCR2Rdzu9JuH
-         LI5Id4FCu8Ae0Z5S8N0cIGZOzsu/vjbALrHjD1Qucj9lvVSrH0modq5UZOpdZxjoD5Ib
-         tKiulOstUV+KIqbgkRJSgh8WLHRWdMA4CDeWRVCzU2cyDJoNlT+baP3g570/PXfqvSe1
-         OF8XHU4Uwvgkq4se02u/sgFRcqKInudTJdqGMVl75g/sKnd5fpiJMWAkxw+8eVEFZ8zr
-         T4qVwijXKG8nRMgTmz+b8o0Z5d6+r/BotXRuIdsgTzIUFL8kMzp37ieWDyBpTGkzjmoZ
-         VAjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLx/zEtvq3FpdafsVLLyhQ/CzBl+YDlQGVSUhbZQGpb+brcKbltQ7lXec85ikcaRcjnCzdw/+FD+ZMOcUxFbknVeAX/N6zMBhxCcdh
-X-Gm-Message-State: AOJu0Yy9jmb18l6nY0b5eP7ai74fFntBKdwHz/L0cRQJKW2BK3Rj4bsT
-	5c3uoZAESzIEPFDI70diuvSz9MYQUAFZ54Wk2nTyfvv7Snz5n9KmDnM1D59Ebkk=
-X-Google-Smtp-Source: AGHT+IHNlfmjna3tXbxnZXAgMVKod6UX7ashoHI1BYbx3wkqgqg5H0QXcmvLJ38mwLeb04u5JC3tOA==
-X-Received: by 2002:a05:600c:22d7:b0:421:8234:9bb4 with SMTP id 5b1f17b1804b1-4264093f1bcmr23484975e9.19.1720030509875;
-        Wed, 03 Jul 2024 11:15:09 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:c37f:195e:538f:bf06])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0c0f26sm245178845e9.39.2024.07.03.11.15.08
+        bh=zUBh4HJFbwCunvYW2TT9Lv7hcZt9lFP+VL8eZ2hanxo=;
+        b=ryoBovuiL7LPhrG2WG0AWYUUBoz0pmSclNNtaS75s+4LoWHL9m0ifuCX+jCulnJFJl
+         bRwposXAE+qbvbm6y0UkCVGLxBve2l3dBbBLZnHv2j9vyl1hLxeYAkZh8WyN399pevuP
+         BBIW7TBMH5xobaSejs9/V5cR8/2Ktc9gkFwWEr4xFj0Z5DKVGGpAzQXFTlWJcYc6XVif
+         lwj44dw4zuz7btreHCmzbCj0pFJIn4QdapWheT6GIainUjWVmfAa+gWmgAiN5/UcPNP2
+         kcXJrRPw7XkKtiz2hy7q430koM+NqMICITnvDpvk8VvBqkd5wJv+Wq/6q2YbOQ6zYDNO
+         a1Lg==
+X-Gm-Message-State: AOJu0YyprURwAmnaVEcY/OpbQU6Lo2ysqtwcEB2/RguI/VSCeIC++eCX
+	aJSWl5mlpaZfsiRDa8UQ/YnEOCTLm6QMwEJREeiu1rCaPFkKFa61
+X-Google-Smtp-Source: AGHT+IFgbyqvQQ39ZO1Uk1HtZc6612EMASxqn4YdKQqFKk20scgiATwbm2rhPqvtXhFMTrglELabwg==
+X-Received: by 2002:a05:6a20:431b:b0:1be:d74c:dd5a with SMTP id adf61e73a8af0-1bef6101c9bmr13245143637.23.1720030506950;
+        Wed, 03 Jul 2024 11:15:06 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c967df1e2bsm3128889a91.9.2024.07.03.11.15.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 11:15:08 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH net-next v3 2/2] net: stmmac: qcom-ethqos: enable SGMII loopback during DMA reset on sa8775p-ride-r3
-Date: Wed,  3 Jul 2024 20:14:59 +0200
-Message-ID: <20240703181500.28491-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240703181500.28491-1-brgl@bgdev.pl>
-References: <20240703181500.28491-1-brgl@bgdev.pl>
+        Wed, 03 Jul 2024 11:15:06 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 3 Jul 2024 08:15:05 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Hongyan Xia <hongyan.xia2@arm.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] sched/ext: Add BPF functions for uclamp inc and dec
+Message-ID: <ZoWVKQ7sD5uz66w5@slm.duckdns.org>
+References: <cover.1719999165.git.hongyan.xia2@arm.com>
+ <34f3e33aa236445d677ea2b48d2d556178c1ac34.1719999165.git.hongyan.xia2@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34f3e33aa236445d677ea2b48d2d556178c1ac34.1719999165.git.hongyan.xia2@arm.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hello.
 
-On sa8775p-ride-r3 the RX clocks from the AQR115C PHY are not available at
-the time of the DMA reset. We can however extract the RX clock from the
-internal SERDES block. Once the link is up, we can revert to the
-previous state.
+On Wed, Jul 03, 2024 at 11:07:48AM +0100, Hongyan Xia wrote:
+> +__bpf_kfunc void scx_bpf_uclamp_rq_inc(s32 cpu, struct task_struct *p)
+> +{
+> +	uclamp_rq_inc(cpu_rq(cpu), p);
+> +}
+> +
+> +__bpf_kfunc void scx_bpf_uclamp_rq_dec(s32 cpu, struct task_struct *p)
+> +{
+> +	uclamp_rq_dec(cpu_rq(cpu), p);
+> +}
 
-The AQR115C PHY doesn't support in-band signalling so we can count on
-getting the link up notification and safely reuse existing callbacks
-which are already used by another HW quirk workaround which enables the
-functional clock to avoid a DMA reset due to timeout.
+So, I don't think we can expose these functions directly to the BPF
+scheduler. The BPF schedulers shouldn't be able to break system integrity no
+matter what they do and with the above it'd be trivial to get the bucket
+counters unbalanced, right?
 
-Only enable loopback on revision 3 of the board - check the phy_mode to
-make sure.
+Thanks.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- .../stmicro/stmmac/dwmac-qcom-ethqos.c        | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-index 91fe57a3e59e..e46cbacc627d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-@@ -21,6 +21,7 @@
- #define RGMII_IO_MACRO_CONFIG2		0x1C
- #define RGMII_IO_MACRO_DEBUG1		0x20
- #define EMAC_SYSTEM_LOW_POWER_DEBUG	0x28
-+#define EMAC_WRAPPER_SGMII_PHY_CNTRL1	0xf4
- 
- /* RGMII_IO_MACRO_CONFIG fields */
- #define RGMII_CONFIG_FUNC_CLK_EN		BIT(30)
-@@ -79,6 +80,9 @@
- #define ETHQOS_MAC_CTRL_SPEED_MODE		BIT(14)
- #define ETHQOS_MAC_CTRL_PORT_SEL		BIT(15)
- 
-+/* EMAC_WRAPPER_SGMII_PHY_CNTRL1 bits */
-+#define SGMII_PHY_CNTRL1_SGMII_TX_TO_RX_LOOPBACK_EN	BIT(3)
-+
- #define SGMII_10M_RX_CLK_DVDR			0x31
- 
- struct ethqos_emac_por {
-@@ -95,6 +99,7 @@ struct ethqos_emac_driver_data {
- 	bool has_integrated_pcs;
- 	u32 dma_addr_width;
- 	struct dwmac4_addrs dwmac4_addrs;
-+	bool needs_sgmii_loopback;
- };
- 
- struct qcom_ethqos {
-@@ -114,6 +119,7 @@ struct qcom_ethqos {
- 	unsigned int num_por;
- 	bool rgmii_config_loopback_en;
- 	bool has_emac_ge_3;
-+	bool needs_sgmii_loopback;
- };
- 
- static int rgmii_readl(struct qcom_ethqos *ethqos, unsigned int offset)
-@@ -191,8 +197,22 @@ ethqos_update_link_clk(struct qcom_ethqos *ethqos, unsigned int speed)
- 	clk_set_rate(ethqos->link_clk, ethqos->link_clk_rate);
- }
- 
-+static void
-+qcom_ethqos_set_sgmii_loopback(struct qcom_ethqos *ethqos, bool enable)
-+{
-+	if (!ethqos->needs_sgmii_loopback ||
-+	    ethqos->phy_mode != PHY_INTERFACE_MODE_2500BASEX)
-+		return;
-+
-+	rgmii_updatel(ethqos,
-+		      SGMII_PHY_CNTRL1_SGMII_TX_TO_RX_LOOPBACK_EN,
-+		      enable ? SGMII_PHY_CNTRL1_SGMII_TX_TO_RX_LOOPBACK_EN : 0,
-+		      EMAC_WRAPPER_SGMII_PHY_CNTRL1);
-+}
-+
- static void ethqos_set_func_clk_en(struct qcom_ethqos *ethqos)
- {
-+	qcom_ethqos_set_sgmii_loopback(ethqos, true);
- 	rgmii_updatel(ethqos, RGMII_CONFIG_FUNC_CLK_EN,
- 		      RGMII_CONFIG_FUNC_CLK_EN, RGMII_IO_MACRO_CONFIG);
- }
-@@ -277,6 +297,7 @@ static const struct ethqos_emac_driver_data emac_v4_0_0_data = {
- 	.has_emac_ge_3 = true,
- 	.link_clk_name = "phyaux",
- 	.has_integrated_pcs = true,
-+	.needs_sgmii_loopback = true,
- 	.dma_addr_width = 36,
- 	.dwmac4_addrs = {
- 		.dma_chan = 0x00008100,
-@@ -682,6 +703,7 @@ static void ethqos_fix_mac_speed(void *priv, unsigned int speed, unsigned int mo
- {
- 	struct qcom_ethqos *ethqos = priv;
- 
-+	qcom_ethqos_set_sgmii_loopback(ethqos, false);
- 	ethqos->speed = speed;
- 	ethqos_update_link_clk(ethqos, speed);
- 	ethqos_configure(ethqos);
-@@ -820,6 +842,7 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 	ethqos->num_por = data->num_por;
- 	ethqos->rgmii_config_loopback_en = data->rgmii_config_loopback_en;
- 	ethqos->has_emac_ge_3 = data->has_emac_ge_3;
-+	ethqos->needs_sgmii_loopback = data->needs_sgmii_loopback;
- 
- 	ethqos->link_clk = devm_clk_get(dev, data->link_clk_name ?: "rgmii");
- 	if (IS_ERR(ethqos->link_clk))
 -- 
-2.43.0
-
+tejun
 
