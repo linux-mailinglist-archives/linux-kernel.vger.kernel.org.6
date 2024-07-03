@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-239723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC37592648C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:12:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD1192648F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:12:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A014B235FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:12:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B5528E30A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF977181B9D;
-	Wed,  3 Jul 2024 15:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9537181CF0;
+	Wed,  3 Jul 2024 15:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXCAsBIU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EW+JWy47"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D34B181303;
-	Wed,  3 Jul 2024 15:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E721DA318;
+	Wed,  3 Jul 2024 15:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720019539; cv=none; b=tMPKa0ItBLQh34Of7/u0tQxWQCzEjPIEKeOIqXSlUEO+l7sw+Oj1aX9KlTySPx2Tw1b+u/9tEMhizltDfQhF4djV4tojucpuXmHYYeU9uKwsUNBaVHRRwzs2gw93iSLAq49X6InaggnsVeWl5vR85hpMZEUA6YjttyuJZCSoMy4=
+	t=1720019547; cv=none; b=uCCId0EI0hZ4AJsgSjXAlWdNnh7ycvOl7V1fmwJABA+q7dwRN8JzbsZgpEouUclL92G1iMkj+WKTmBNc2UULEYqRHEgc9HI5TBe0Eau7POP67sXOQAjLADIoPivzJS6GMINURQG+KxS+c3oxUwXuAO/bWkHAOlLH0cdPOiVDj0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720019539; c=relaxed/simple;
-	bh=X7KkvROHIZA5v9Zh3iho8Licbn39MdZ8YXDxuNJ7XNM=;
+	s=arc-20240116; t=1720019547; c=relaxed/simple;
+	bh=bZW21jBK4bJEw2Fkn/wNBZ23fNCVJapRR3j2cdfhGXc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mr4MZyE8rakay/QVEeVMlG9xtmVUh255vfDybpXOZlNVKGwvpaZQ6VA/H61gz//8tQOlTWpJ2u5pAQNkCJoqqG2+q9WPrC2czlW4PRlYuu7L2zDZPhWmNNlgqz2QKGjO+cGwvR7ekDtig32Cqi36FaEL2XoNI1NZp89rG9LE5Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXCAsBIU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F003BC4AF07;
-	Wed,  3 Jul 2024 15:12:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bgZRjTukb7CE2Qd2swz0bBT1yCqRaVmiSM8w/F8iLE3YnY2hFAPMKkD4X7SBqRSqj2OlmCKMuK214h7281kux90RnCjWhaz3EjiuENsHff1FjkIE3tNUR28eCz0C4nCFpxfS/B+azh3O3EiZv0w9x55LSs1FSCdKMLxUTWm0YE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EW+JWy47; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 432FCC32781;
+	Wed,  3 Jul 2024 15:12:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720019539;
-	bh=X7KkvROHIZA5v9Zh3iho8Licbn39MdZ8YXDxuNJ7XNM=;
+	s=k20201202; t=1720019546;
+	bh=bZW21jBK4bJEw2Fkn/wNBZ23fNCVJapRR3j2cdfhGXc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eXCAsBIUhDx0hcDVysxLYy5n+y6OVoNK2yCqIwkvUMFHllmycXBNmIh5g9K0d5Jzx
-	 pEw53/h+aLERGlcSTAJ9vBivIKAZCftospMarzWY7qfdvHaYEgGXeQl82ckuzr5V8O
-	 RsXRdiFq2RnOJEuyK086iPJ22ZZEOTATphJetELAprXUGaJLGbZ3kTHGqnr4ATDjsR
-	 Q7XExUKE4mLRw/ERiptmE1VC856nOTEq7aJapdF5VFkIT40LvDiUMIO2g49NtUchvk
-	 agXKi0TIEyDDLActlWlhGL2ifBSg+EmC1kYIh+RV4RxGQdtIqKyojx5VgNEXraOxni
-	 3ztTsdXrdL/pA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sP1eZ-000000005vS-2e43;
-	Wed, 03 Jul 2024 17:12:16 +0200
-Date: Wed, 3 Jul 2024 17:12:15 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	b=EW+JWy47/PNUrBhyimitRESb08Tu0gmfg/JsQvSkFdBpCXrOFOQoPv7mrex1zEHQn
+	 fHw+7OwWob78p44o2kc3ktZ6AI4ZvEJJDjSheACEQyt1OcfVHB3YvzC89i5Bc8ui5v
+	 Y2QHxQp1oJi8DzjpMc8PbhCoA8HXCTdtm/wvn8RAnicv2xIwR5ql6cjjCCHD0Sd7Ci
+	 RkbgCxt0inAZT189lomnTiFlYNKOLFyk3DRfWPp4HkxiGk/1dz7rDiq9AILZkGYXnl
+	 KCy11+TrU/GSG7f3De2fynmwZ2uIhZ32PESwQyyajU89XFVRx9cFLr76pRny+x6c64
+	 4aPR84sKe/Aog==
+Date: Wed, 3 Jul 2024 16:12:22 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>, baolin.wang7@gmail.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: Failure to stop CAMSS stream (sc8280xp)
-Message-ID: <ZoVqT0jzro8s4NUC@hovoldconsulting.com>
-References: <ZoVNHOTI0PKMNt4_@hovoldconsulting.com>
- <49b2504f-e5ab-4ea9-aefb-bc9c7f71f5fc@linaro.org>
+Subject: Re: [PATCH] dt-bindings: hwlock: sprd-hwspinlock: convert to YAML
+Message-ID: <20240703-cartoon-blimp-aa9640ae8c29@spud>
+References: <ZoVDeHCUCTZu7AT/@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7fsRCS5eThH/Ab5L"
+Content-Disposition: inline
+In-Reply-To: <ZoVDeHCUCTZu7AT/@standask-GA-A55M-S2HP>
+
+
+--7fsRCS5eThH/Ab5L
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <49b2504f-e5ab-4ea9-aefb-bc9c7f71f5fc@linaro.org>
 
-On Wed, Jul 03, 2024 at 03:30:09PM +0100, Bryan O'Donoghue wrote:
-> On 03/07/2024 14:07, Johan Hovold wrote:
-> > Is this a known issue with CAMSS or is something missing in the sc8280xp
-> > integration?
-> 
-> A known issue on my end,
+On Wed, Jul 03, 2024 at 02:26:32PM +0200, Stanislav Jakubek wrote:
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/sprd,sc9860-clk.h>
+> +
+> +    soc {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      hwlock@40500000 {
+> +        compatible  = "sprd,hwspinlock-r3p0";
 
-Ok, good. Do you know already if this is a generic CAMSS issue or
-something with the sc8280xp integration? I believe I heard someone
-saying that they had seen something similar on other Qualcomm platforms.
+nit: double space here before the =
 
-> I also want to root cause intermittent sensor 
-> startup failure, before switching on the sensor upstream for more common 
-> use.
+> +        reg = <0 0x40500000 0 0x1000>;
 
-> > The issue was there with 6.9 as well so it's not a (recent) regression.
-> > 
-> > Probing the camera sometimes, but infrequently, also fails with:
-> > 
-> > 	qcom-camss ac5a000.camss: Failed to power up pipeline: -13
-> 
-> Yes this. If you recall on the pm8010 I had mentioned to you about a 
-> wait-time to startup the regulator - thinking it was the regulator 
-> causing this error.
-> 
-> More likely the GPIO reset polarity or delay needs to be tweaked in the 
-> sensor driver.
+nit: if there's a respin, drop the 0s and use size/address cells of 1.
 
-Ok. Seems to happen quite rarely here. I have also seen a probe deferral
-warning (which should be suppressed if it's legit) that may or may not
-be related:
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-	ov5675 24-0010: failed to get HW configuration: -517
+Cheers,
+Conor.
 
-> > and I'm seeing the following warning on every boot:
-> > 
-> > 	i2c-qcom-cci ac4c000.cci: Found 19200000 cci clk rate while 37500000 was expected
-> 
-> That's hanging around for quite a long time 19.2 MHz is a perfectly 
-> valid clock, useless error message.
+--7fsRCS5eThH/Ab5L
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Ok, but please do something to get rid of this warning as well. With
-too much noise in the logs, people may fail to notice real issues.
+-----BEGIN PGP SIGNATURE-----
 
-Johan
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoVqVgAKCRB4tDGHoIJi
+0uneAQCRdlQ7TihmxLlRjcZB5P9mcGoSZdiL3XYesILSRC55NAD8DDRxKW0LBom6
+iTXDfsIQ2HzsjvV6XtkOW2B+yjFMuAI=
+=f2DQ
+-----END PGP SIGNATURE-----
+
+--7fsRCS5eThH/Ab5L--
 
