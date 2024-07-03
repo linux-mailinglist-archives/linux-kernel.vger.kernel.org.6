@@ -1,114 +1,108 @@
-Return-Path: <linux-kernel+bounces-240186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E3C926A06
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:10:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538F6926A09
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95EE1C214FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:10:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1626328141A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956C9191F6D;
-	Wed,  3 Jul 2024 21:09:59 +0000 (UTC)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A5B191F6E;
+	Wed,  3 Jul 2024 21:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="DuOh7xfk"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE891DA316;
-	Wed,  3 Jul 2024 21:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53DF1DA316;
+	Wed,  3 Jul 2024 21:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720040999; cv=none; b=iuA1zUjyP1r/MpUybf1ezwBthz7EpmcKVN5o9mukBTBZhfwhdlAHTgAPYaWrWe2j1KbJuC8ZM9SBZUVNjAPESM/qTeBg83uUwqxFWiPDjxYJqy2P364NrEneN4RSNEFq/xqfJPQ0LPaFcU0yCNptivUKmKd7vm9RwIl29qXoCoI=
+	t=1720041092; cv=none; b=ocJm9RKV7yiqVVP7zmI67d/MvY+kApAOv3Ngp6mKLIUO8/pbBFsfTDYFbupfbKD0IYC2huVrNzDfWO55Zbw1D2OhWquxwvLGqwWHGkkmNwKYEWZ6zYvoMaBtLDrYWhdysKtg3VAFPE5iRmcbEG5Dx4I6TTj8L9iQkbM1gySWNUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720040999; c=relaxed/simple;
-	bh=tMq47QOPij8se7HSHqBVqnOeDkG9CDp79WI2y1+tbhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yx5GHibJujaoWxbFCaFCybotAquHP9aL8M6z376zR415AXRmYmfrEwEyzdeEGNMIU3T4xOBPhIqcYpt2zYYhWM8rPKsx+LWpELF9Dgjjx49o2CvaMCJ1y4GgWeuyBBHYHhtJTPllxVEYYUHvLoXe/Q5MOv5hAbSJ1FgDHgfn0Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so32308941fa.2;
-        Wed, 03 Jul 2024 14:09:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720040996; x=1720645796;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VPohgEkkVTicZaP/tQ2TI/bzxtUMTkGOzGhRAmmVqqs=;
-        b=JsTBQvWYr85YcGifdHyEnG6R5BAydxVtIMmxqsqXHELIi0KpS7+BVvOe3+MZY+mL+P
-         b5PcWkhGi9duNd8n7soRScf41tx9B83gTkaehgc2i3JbM2hdiR9zIoKojjsJth6v6JgW
-         mjSu5yE9uUDiwRllek9/MGY8+GinRYHl0qAwkt12W1jMflbJXuivVEBeARzjdasoDbBM
-         T1XYxahfsY8UjKX/gUnpi/t8EjGWu4FtBwT/UxyylMs4qIC6987pWSx1GShBdgrGwBSJ
-         It3wAorqAo6TrGgjKA5UlveKucnftdfbtFfRz/FBnmHeFchISonxF5psvZzyE4TZV2FO
-         JAmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIu4jGmmbaqYk5ZFFOc/7SfziDsK09e/fcfA3kMIORaXdam6fh9PclCqmOJUbBrq5wIhArxs8CioiEssBpiVKKtuOM092gcpnZ9yQF3s91ZAqIAY7qfeyKm0qRJ2sFLMmUfsobavulnyYFoFep5TINJ7zla1tayQtf0VY/SlYqL8GO/+hH
-X-Gm-Message-State: AOJu0YwP3UlsmwXSGLviqDqrkYY8su3CXwbEQhUnDh8Ldraf+FP8XmzC
-	Fihul/qG39BFPnOH9260ygSpMT1Z8g5PLRAVgUcIGRbxdTc2g5FR
-X-Google-Smtp-Source: AGHT+IEuSZN4DDZpcdpKk1B73Qx3j5WGw/eHTypA2SSfnSwme5FyjmU43jlUJnUFcka2w9gCbHYb7A==
-X-Received: by 2002:a2e:9bcc:0:b0:2ee:8701:787d with SMTP id 38308e7fff4ca-2ee87025196mr19669121fa.24.1720040995397;
-        Wed, 03 Jul 2024 14:09:55 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee51ffbfb2sm20867931fa.55.2024.07.03.14.09.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 14:09:54 -0700 (PDT)
-Date: Wed, 3 Jul 2024 21:09:41 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Wei Liu <wei.liu@kernel.org>,
-	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-	stable@kernel.org, Michael Kelley <mhklinux@outlook.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Dexuan Cui <decui@microsoft.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Jake Oshins <jakeo@microsoft.com>,
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] PCI: hv: Return zero, not garbage, when reading
- PCI_INTERRUPT_PIN
-Message-ID: <ZoW-FaSBPPDa8NX9@liuwe-devbox-debian-v2>
-References: <20240701202606.129606-1-wei.liu@kernel.org>
- <ZoTZTvL-SKxZEmu5@liuwe-devbox-debian-v2>
- <20240703081247.GA4117643@rocinante>
+	s=arc-20240116; t=1720041092; c=relaxed/simple;
+	bh=pvGAlW1v1sUajnNNO/8v24XdU8ixai6sMIw/JqvvK3s=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=urgE7bq2ZWaqEZpkGvg3caWJRiScpMz10U4O+DlqC1Q6b7NTbj3gwbpKdH+b8IEsmBaPO6aQBppl5NvIQw9deTnssW3oNMA51/FD9C4z+skCNRhKNi/LXEkIMTJ+j/hBfW48E1jljQVHcs1eHI7QcABcEOqRGr0912lTJlo4LwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=DuOh7xfk; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240703081247.GA4117643@rocinante>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1720041086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g4RrLkCB33hOEMUGwheKRpmYM3thvQih+jMVkGH4nZE=;
+	b=DuOh7xfkxgyG1FedaGH2jYO/BnzbrT9FMBNQfg+lfFSfQXR8ukKwto5ZcBdzwZL5LDjy7C
+	wvyrUPlxzJMri0QnA46pQ1o7ERRBldSbiXksEzTTwr/5xgndcuiQgadXmC9Xxghw8xXjkI
+	Xu0WTcYSkD/fFMo6lwShJaf6PVSQRTd+NQIEDV6zT0lzZh4Lk3FaKiq15eDia2a434Ul89
+	QL2neb15dCAIIyn5/AfT2joXEyOuBkUCoqNBoLjBXBleeiMrms3ylfychSSBRIL6UPWMy3
+	Fpg6eVlJAiXM0wcBz5Ldri1RPJlyt2dqRDOjHCIQ7ZqezyfqxvyVoMHNz4j61w==
+Date: Wed, 03 Jul 2024 23:11:25 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: arm: rockchip: Add Rock 5 ITX board
+In-Reply-To: <20240703210524.776455-2-heiko@sntech.de>
+References: <20240703210524.776455-1-heiko@sntech.de>
+ <20240703210524.776455-2-heiko@sntech.de>
+Message-ID: <0d1b1a5fbe97d27ee54513261d77df0e@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Wed, Jul 03, 2024 at 05:12:47PM +0900, Krzysztof Wilczyński wrote:
-> Hello,
-> 
-> > > The intent of the code snippet is to always return 0 for both
-> > > PCI_INTERRUPT_LINE and PCI_INTERRUPT_PIN.
-> > > 
-> > > The check misses PCI_INTERRUPT_PIN. This patch fixes that.
-> > > 
-> > > This is discovered by this call in VFIO:
-> > > 
-> > >     pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
-> > > 
-> > > The old code does not set *val to 0 because it misses the check for
-> > > PCI_INTERRUPT_PIN. Garbage is returned in that case.
-> [...]
-> > 
-> > Bjorn & other PCI maintainers, do you want to pick this up via your
-> > tree?
-> > 
-> > I can pick this up via the hyperv tree if you prefer.
-> 
-> We will pick this up.  No worries.
+Hello Heiko,
 
-Thank you very much!
+Please see a few comments below.
 
+On 2024-07-03 23:05, Heiko Stuebner wrote:
+> Add devicetree binding for the Rock 5 ITX board, build around the 
+> rk3588.
+
+s/Rock/ROCK/
+s/build/built/
+
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> 	Krzysztof
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml
+> b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> index d2e887415d5dc..7ddb008f52d1a 100644
+> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
+> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> @@ -826,6 +826,11 @@ properties:
+>            - const: radxa,rock-5b
+>            - const: rockchip,rk3588
 > 
+> +      - description: Radxa ROCK 5ITX
+
+s/5ITX/5 ITX/
+
+> +        items:
+> +          - const: radxa,rock-5itx
+
+s/5itx/5-itx/
+
+> +          - const: rockchip,rk3588
+> +
+>        - description: Radxa ROCK S0
+>          items:
+>            - const: radxa,rock-s0
 
