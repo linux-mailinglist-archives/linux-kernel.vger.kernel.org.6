@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-240103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56FE92692C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:53:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4772F92692F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814F6286631
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:53:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5D681F22EEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FF418F2CC;
-	Wed,  3 Jul 2024 19:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF3118F2F6;
+	Wed,  3 Jul 2024 19:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TiGX+rgZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5yCwFlP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82C1130A7C;
-	Wed,  3 Jul 2024 19:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4609517DA39;
+	Wed,  3 Jul 2024 19:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720036423; cv=none; b=IebcOYYv1fUl33n2XtXIFQLjWBePMGHVJCKXeedT5HoQv+8wkzOadi/yOI7VfpyzBvof9/wsv1DSUqZbtFjVsbT05ARVvSCb5Kv6EQipPv+iaMoNNWuuAMJuu5wo1Vye4m382TGcPHmGIGij4qenJp8Q3YLb/Op3YxhiYX24Rks=
+	t=1720036511; cv=none; b=H+L9ZMfcVl5VKAQkpDe1/EydvS2a9kYVTi4Sw+UnmV/1ZwDyx7C+YO1D89+Z0S2lQXHnNon6yu2sqEXlAJM9A1oIedIwm8iXHrO8dq/tSyyHgiy9yTVLal7m9sQcRzaZFaawxJB6yk1mYSwNCkwF5pBbGFarzRVHg2wcrCsG+Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720036423; c=relaxed/simple;
-	bh=gpPnxAmH7YVYAIk7U213xERaCKNz7L4XQJjxdiVAonk=;
+	s=arc-20240116; t=1720036511; c=relaxed/simple;
+	bh=3+KFKcrbRO4keOpt+JOi00B7hn3XwKfZiZ7l4BeJAs0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y3dyGp1LGYzHvwLiNMuzdIrYHUcGG2BSSzqa0TsLoSf/hZ1DyFZjFipZJBUikKSLmzfXKMD8wIr40oKxbxZ4wenw9ipays2QfP1+gL1kEKPL19L35c5v1yg+MlwtG9KepK0d5Jg97YpuEDCFOxUHtIpksZMsf1YcNXWHjpus+kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TiGX+rgZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BA5FC2BD10;
-	Wed,  3 Jul 2024 19:53:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ss9lhwRa6BsxWA69GuYmFg7R4rGPc6UvdBh+qgItvCDray8GYsdDF2eBYRnBkZusWTZYV/UdbFnRNBwe+o0/YpW41MUT44SpD6Ime51DDRTMA60KRtSdKlRFMgSgqxluF9sRJjgTgONPk6/lU+j5QvxUpn81mvuGpDlFNWSDKec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K5yCwFlP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90EC7C2BD10;
+	Wed,  3 Jul 2024 19:55:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720036423;
-	bh=gpPnxAmH7YVYAIk7U213xERaCKNz7L4XQJjxdiVAonk=;
+	s=k20201202; t=1720036510;
+	bh=3+KFKcrbRO4keOpt+JOi00B7hn3XwKfZiZ7l4BeJAs0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TiGX+rgZd6oGXSuPDvKT9AAvqCDq4dPYsWAaoI+jNnrRCLVUFFZX2juyxY+OcT8Yp
-	 uLFx7o7jX6lBOygGof4KiKtlIvzzV8c9ujI+8SHQowycUA7hyqo6FaZ4bDOTIQT7pG
-	 wG4kjuYpIF/0NC/LE7euV9CB7xlpYOZjh+w70oqcawcX0eBOskJJ+ueUlhD1IHUx+x
-	 jW3kB8CyYA9pkNGBRpaVPl4/6i5ettVDvtVPRUZJTva4fqEZtqlJYiv846hf7LcAcE
-	 J3q3B8XeoOW5BZ0zHSsS1sTXH0wN1gvydLmNrahzDXw/XnIwzwCjNhpgK7mUZ03fiv
-	 Bz9Oj1aqp4RMQ==
-Date: Wed, 3 Jul 2024 20:53:38 +0100
-From: Simon Horman <horms@kernel.org>
-To: admiyo@os.amperecomputing.com
-Cc: Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH v4 3/3] mctp pcc: Implement MCTP over PCC Transport
-Message-ID: <20240703195338.GR598357@kernel.org>
-References: <20240702225845.322234-1-admiyo@os.amperecomputing.com>
- <20240702225845.322234-4-admiyo@os.amperecomputing.com>
+	b=K5yCwFlP1evFYpDwXK3vVXxP/IgzwHvR2q7ZairTUXyPqRIGJwVdgOBMZFi+Kq+IY
+	 /fldO1PlBPChuRfQgILgfeTwFBKI6i0RDUUapFIsUi/RcA3KReuEsUe7TDZ98a4Tmc
+	 uf5FQK6xGcEcHy/G+oMB/KKSUpJv+o+Wv/zWSSaMkamf/nWndPExiIKMw4/aI1McN7
+	 9Z75B2chyCgl28NM2JbATXCndxwD+PGu1B3q0fI6MVe8ND00RT7/Ke8Tk9V5G5clRv
+	 iCjKw0k9i655alQwxKCyQ57mRdH8dMLvD6La5xOmO8sG50oEU+2tlwE+mmivQgK3N6
+	 JeTWutncFRupg==
+Date: Wed, 3 Jul 2024 21:55:00 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Xi Ruoyao <xry111@xry111.site>, Xi Ruoyao <libc-alpha@sourceware.org>, 
+	Andreas K Huettel <dilfridge@gentoo.org>, Huacai Chen <chenhuacai@kernel.org>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, loongarch@lists.linux.dev
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+Message-ID: <20240703-eckdaten-ganzheit-3b6ca8d71aed@brauner>
+References: <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+ <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+ <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
+ <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
+ <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
+ <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
+ <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
+ <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site>
+ <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
+ <a30ac1fe-07ac-4b09-9ede-c9360a34a103@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240702225845.322234-4-admiyo@os.amperecomputing.com>
+In-Reply-To: <a30ac1fe-07ac-4b09-9ede-c9360a34a103@app.fastmail.com>
 
-On Tue, Jul 02, 2024 at 06:58:45PM -0400, admiyo@os.amperecomputing.com wrote:
-> From: Adam Young <admiyo@os.amperecomputing.com>
+On Wed, Jul 03, 2024 at 08:44:50PM GMT, Arnd Bergmann wrote:
+> On Wed, Jul 3, 2024, at 19:40, Linus Torvalds wrote:
+> > On Wed, 3 Jul 2024 at 10:30, Xi Ruoyao <xry111@xry111.site> wrote:
+> >>
+> >> struct stat64 {
+> >>
+> >> // ...
+> >>
+> >>     int     st_atime;   /* Time of last access.  */
+> >
+> > Oh wow. Shows just *how* long ago that was - and how long ago I looked
+> > at 32-bit code. Because clearly, I was wrong.
+> >
+> > I guess it shows how nobody actually cares about 32-bit any more, at
+> > least in the 2037 sense.
+> >
+> > The point stands, though - statx isn't a replacement for existing binaries.
 > 
-> Implementation of network driver for
-> Management Control Transport Protocol(MCTP) over
-> Platform Communication Channel(PCC)
+> We had long discussions about adding another stat()/fstat()
+> variant with 64-bit timestamps from 2012 to 2017, the result
+> was that we mandated that a libc implementation with 64-bit
+> time_t must only use statx() and not fall back to the time32
+> syscalls on kernels that are new enough to have statx().
+> This is both for architectures that were introduced after
+> time64 support was added (riscv32 and the glibc port for
+> arc), and for userspace builds that are explicitly using
+> time64 syscalls only.
 > 
-> DMTF DSP:0292
-> 
-> MCTP devices are specified by entries in DSDT/SDST and
-> reference channels specified in the PCCT.
-> 
-> Communication with other devices use the PCC based
-> doorbell mechanism.
-> 
-> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
-> ---
->  drivers/net/mctp/Kconfig    |  13 ++
->  drivers/net/mctp/Makefile   |   1 +
->  drivers/net/mctp/mctp-pcc.c | 322 ++++++++++++++++++++++++++++++++++++
+> That may have been a mistake in hindsight, or it may have
+> been the right choice, but the thing is that if we now decide
+> that 32-bit userspace can not rely on statx() to be available,
+> then we need to introduce one or two new system calls.
 
-...
-
-> diff --git a/drivers/net/mctp/mctp-pcc.c b/drivers/net/mctp/mctp-pcc.c
-
-...
-
-> +static struct acpi_driver mctp_pcc_driver = {
-> +	.name = "mctp_pcc",
-> +	.class = "Unknown",
-> +	.ids = mctp_pcc_device_ids,
-> +	.ops = {
-> +		.add = mctp_pcc_driver_add,
-> +		.remove = mctp_pcc_driver_remove,
-> +	},
-> +	.owner = THIS_MODULE,
-
-Hi Adam,
-
-Perhaps net-next isn't the appropriate tree to apply this patch.
-But, due to [1] the owner field is not present in net-next and
-thus this fails to build when applied there.
-
-[1] cc85f9c05bba ("ACPI: drop redundant owner from acpi_driver")
-
-> +};
-> +
-> +module_acpi_driver(mctp_pcc_driver);
-> +
-> +MODULE_DEVICE_TABLE(acpi, mctp_pcc_device_ids);
-> +
-> +MODULE_DESCRIPTION("MCTP PCC device");
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Adam Young <admiyo@os.amperecomputing.com>");
-> -- 
-> 2.34.1
-> 
-> 
+I'm not sure we need to now pull the rug out from everyone now and I
+don't think this was where the discussion was going. Any new
+architecture will implement statx(). And for 32bit I think that's
+entirely fine and we don't need to add even more variants just for this
+case. I don't think we need to add newnewstat_promiseitsthelastone().
 
