@@ -1,187 +1,85 @@
-Return-Path: <linux-kernel+bounces-239194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10189257E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:08:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1AB89257E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E47B01C2561A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:08:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D384F1C25646
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E2D143C5C;
-	Wed,  3 Jul 2024 10:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Tk9vJapg"
-Received: from xry111.site (xry111.site [89.208.246.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE7B13DDA1;
-	Wed,  3 Jul 2024 10:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005BB14D42C;
+	Wed,  3 Jul 2024 10:07:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA9F13DDA1
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720001263; cv=none; b=Z+zaRmKGtxu0c9hL1jeA6mzA+kdrmJmGonGfJPA5SddfsU8HwffFC367EK2avlyWnExALZH/yMMAKIiPlAGOwltYtEzonWllHuvFSW8ambARUH8BjKsYDZqsuWtzZMcTN+UTI20wleeo+NNSUUwXFrgvDc+fuL5Q++Vs1oTEV+U=
+	t=1720001275; cv=none; b=N+UKv3MxVsCIuD/uXt1dILG//Mn+eTADNvXkUYVxXJc59YrCG8ms07RyN5BFURYWV27/2iNhqeY/me6ZZ3uT+2D1E1wVOpRnmVucVVjvXztEAI6PmBuVPgPEw9n8JyTeMd0bOsLBKiKm5tiZJlPFZGPtQDPqMhYIe+WvTFAAaZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720001263; c=relaxed/simple;
-	bh=7UlRlKdygRNW81tvq9O33mJTHGWQhr7TMDY7lvxWSss=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O3WNFmpheTzDTfMk21hhTBokh7W4jaeUZBrK6ruhusnL9Tuju2HANh74y33wLbohP3UIFVG4txLlYpme6ABIyq3kYMdElYP5s44SQGAKbw2IZytiGMGfEIsRJ2xlaW6Vq6BoC4tU+CdqGJ75AjzT3C1S7wdq53pDi26EKOMC+Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Tk9vJapg; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1720001254;
-	bh=7UlRlKdygRNW81tvq9O33mJTHGWQhr7TMDY7lvxWSss=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Tk9vJapgRxntpsBHFDGKhfQ45A48E7GRfvSsx8EzZRPkZx25sjEzTz4GgaAu+6rHC
-	 pH0VjHxqnK2ky0RFv9T2Uq7jCcutwFpbpdbSxlf7BCknq71q6QaYVSgn41z2sqfuVK
-	 haU6BIyc9pQ7BSmu09jzeTD8IBn76zwcigS3y0+E=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id B6A7B6760C;
-	Wed,  3 Jul 2024 06:07:31 -0400 (EDT)
-Message-ID: <8b4cfe608a23100fee4b227a2610ab662d51d810.camel@xry111.site>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@kernel.org>, Christian Brauner
- <brauner@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- linux-kernel@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Linus Torvalds
- <torvalds@linux-foundation.org>,  loongarch@lists.linux.dev
-Date: Wed, 03 Jul 2024 18:07:29 +0800
-In-Reply-To: <CAAhV-H73GpnD4hTGXDdWYBmo+Hs=088tSaVum69=4UyhZoKtOw@mail.gmail.com>
-References: <20240625110029.606032-1-mjguzik@gmail.com>
-	 <20240625110029.606032-3-mjguzik@gmail.com>
-	 <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
-	 <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
-	 <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
-	 <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
-	 <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
-	 <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
-	 <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
-	 <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
-	 <CAAhV-H73GpnD4hTGXDdWYBmo+Hs=088tSaVum69=4UyhZoKtOw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1720001275; c=relaxed/simple;
+	bh=9DJYjW/ca2L9cBZDJA7xYMtpGPyERgP8agG4YVqMgzg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FGx9tehvVLl78ZCJTJuquqlvoHrBcLk5TEE383Aiofq0XWIxyHS8KN8oXU5yNApz5/W3prTeJJ0PWbIrUrcZzZc73d+hK1v5FM/Bi4Khscj5rwP0giUmZM2S7ij56RHvRYkV7vksrINCO8ukiY44YTvE+9dSA9pxKsh844E6iY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A22C9367;
+	Wed,  3 Jul 2024 03:08:17 -0700 (PDT)
+Received: from e130256.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36FC63F766;
+	Wed,  3 Jul 2024 03:07:52 -0700 (PDT)
+From: Hongyan Xia <hongyan.xia2@arm.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Move uclamp to each sched_class
+Date: Wed,  3 Jul 2024 11:07:46 +0100
+Message-Id: <cover.1719999165.git.hongyan.xia2@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-07-03 at 17:35 +0800, Huacai Chen wrote:
-> Hi, Christian,
->=20
-> On Wed, Jul 3, 2024 at 4:46=E2=80=AFPM Christian Brauner <brauner@kernel.=
-org> wrote:
-> >=20
-> > On Tue, Jul 02, 2024 at 07:06:53PM GMT, Arnd Bergmann wrote:
-> > > On Tue, Jul 2, 2024, at 17:36, Huacai Chen wrote:
-> > > > On Mon, Jul 1, 2024 at 7:59=E2=80=AFPM Arnd Bergmann <arnd@arndb.de=
-> wrote:
-> > > > > On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
-> > > > > > On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
-> > > > > > > >=20
-> > > > > > > > Yes, both Linus and Christian hates introducing a new AT_ f=
-lag for
-> > > > > > > > this.
-> > > > > > > >=20
-> > > > > > > > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) b=
-ehave
-> > > > > > > > like
-> > > > > > > > statx(fd, "", AT_EMPTY_PATH, ...) instead.=C2=A0 NULL avoid=
-s the
-> > > > > > > > performance
-> > > > > > > > issue and it's also audit-able by seccomp BPF.
-> > > > > > > To be honest, I still want to restore __ARCH_WANT_NEW_STAT. B=
-ecause
-> > > > > > > even if statx() becomes audit-able, it is still blacklisted n=
-ow.
-> > > > > >=20
-> > > > > > Then patch the sandbox to allow it.
-> > > > > >=20
-> > > > > > The sandbox **must** be patched anyway or it'll be broken on al=
-l 32-bit
-> > > > > > systems after 2037.=C2=A0 [Unless they'll unsupport all 32-bit =
-systems before
-> > > > > > 2037.]
-> > > > >=20
-> > > > > More importantly, the sandbox won't be able to support any 32-bit
-> > > > > targets that support running after 2037, regardless of how long
-> > > > > the sandbox supports them: if you turn off COMPAT_32BIT_TIME toda=
-y
-> > > > > in order to be sure those don't get called by accident, the
-> > > > > fallback is immediately broken.
-> > > > Would you mind if I restore newstat for LoongArch64 even if this pa=
-tch exist?
-> > >=20
-> > > I still prefer not add newstat back: it's easier to
-> > > get applications to correctly implement the statx() code
-> > > path if there are more architectures that only have that.
-> >=20
-> > I agree.
-> >=20
-> > We've now added AT_EMPTY_PATH support with NULL names because we want t=
-o
-> > allow that generically. But I clearly remember that this was requested
-> > to make statx() work with these sandboxes. So the kernel has done its
-> > part. Now it's for the sandbox to allow statx() with NULL paths and
-> > AT_EMPTY_PATH but certainly not for the kernel to start reenabling old
-> > system calls.
-> Linux distributions don't use latest applications, so they still need
-> an out-of-tree kernel patch to restore newstat. Of course they can
-> also patch their applications, but patching the kernel is
-> significantly easier.
->=20
-> So in my opinion LoongArch has completed its task to drive statx()
-> improvement
+Hi. I only just started looking at sched_ext a couple of days ago so
+feel free to correct me if sched_ext patches have different rules,
+different cc's and different mailing lists than normal LKML.
 
-It'll only be finished once the apps are adapted, or they'll stop to
-work after 2037 anyway.
+This mini series delegates uclamp operations to each sched_class. The
+problem with the current handling of uclamp is that it seems to be a
+global thing but it conditions on sched_class->uclamp_enabled anyway, so
+it is in fact already kind of sched_class-specific. So, remove
+sched_class->uclamp_enabled and just let each class decide what to do.
 
-I've informed Firefox at
-https://bugzilla.mozilla.org/show_bug.cgi?id=3D1673771.  For Google
-products I guess someone else will have to do (I'm really unfamiliar
-with their things, and they often block my proxy server despite I've
-never used the proxy to attack them).
+More importantly, sched_ext no longer unconditionally follows the
+existing uclamp implementation, but instead each custom scheduler
+decides itself what to do. It can re-use the existing uclamp, ignore
+uclamp completely, or have its own uclamp implementation.
 
-> now restoring newstat is a double-insurance for compatibility.
+Some simple testing with trace_printk() shows uclamp_rq_{inc,dec}() are
+called successfully from a sched_ext scheduler:
 
-It may also introduce incompatibility: consider a seccomp sandbox which
-does not handle fstat on LoongArch because __NR_fstat is not defined in
-the UAPI header.  Now the kernel is updated to provide fstat the sandbox
-will be broken: a blocklist sandbox will fail to block fstat and leave a
-security hole; a whitelist sandbox will fail to allow fstat and blow up
-the app if some runtime library is updated to "take the advantage" of
-fstat.
+	[002] d..21  1016.017441: uclamp_rq_dec: sched_ext uclamp dec
+	[002] dN.21  1016.017456: uclamp_rq_inc: sched_ext uclamp inc
 
-My preference (most preferable to least preferable):
+Hongyan Xia (2):
+  sched/uclamp: Delegate uclamp to each sched_class
+  sched/ext: Add BPF functions for uclamp inc and dec
 
-1. Not to add them back at all.  Just let the downstream to patch the
-kernel if they must support a broken userspace.
-2. Add them back with a configurable option (depending on CONFIG_EXPERT:
-the distros are already enabling this anyway), make them documented
-clearly as only intended to support a broken userspace and removable in
-the future.
-3. Add it back only for 64-bit.  Add a #if **now** for ruling it out for
-32-bit despite we don't have 32-bit support, to make it clear we'll not
-flatter broken userspace anymore when we make the 32-bit port.
-<rant>4. Remove seccomp.  Personally I really wish to put this on the
-top.</rant>
+ kernel/sched/core.c                      | 14 ++------------
+ kernel/sched/ext.c                       | 16 ++++++++++++----
+ kernel/sched/fair.c                      |  6 ++----
+ kernel/sched/rt.c                        |  7 +++----
+ kernel/sched/sched.h                     | 15 +++++++++++----
+ tools/sched_ext/include/scx/common.bpf.h |  2 ++
+ 6 files changed, 32 insertions(+), 28 deletions(-)
 
-BTW has anyone tried to use Landlock for those browser sandboxes
-instead?
+-- 
+2.34.1
 
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
 
