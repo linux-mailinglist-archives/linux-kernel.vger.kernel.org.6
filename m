@@ -1,106 +1,151 @@
-Return-Path: <linux-kernel+bounces-238950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 674729253CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:39:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F119253CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9977B1C252D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:39:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F589B2410E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868ED13210B;
-	Wed,  3 Jul 2024 06:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608D8132135;
+	Wed,  3 Jul 2024 06:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xI/6RlKa"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Px2C1HOT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1336313213B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 06:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14C9130A68;
+	Wed,  3 Jul 2024 06:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719988780; cv=none; b=k/TPLQrUF8JTVt32ySm2Lo/CO1G3YQsQ0qb+cOdOdVS/F+O71g4ZvDG6PUXptTffk2MDhztHTcWi98w8jMrSM5UYmiDQ933g1FNgjqrHOhK97g16ULTaOJWvCQmsBzbyaHmTKm6Jbj1LcgzQ77Avo/lAHiAH0pmPEgxvMO3qyig=
+	t=1719988807; cv=none; b=MT0f/MupyGoZsYFzGkKLwrdGJLYxMS5lnYURp1M796Qap6W2UuQw/aGpkt1TMUBU1nOM1aOZbdXgeaCrtZ9Ooexwytr1exhGyBGsk5U2FRTt+SyUT8u1X4Q+GsCkowcwKLDjwDLl/IoCpPQqW39yFKMcbGSTJBfqz3yE1qiJyzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719988780; c=relaxed/simple;
-	bh=2gfJcP+dPdB8Ll2+BGwToOilKKAE5E2Ikpq/CZOFF+Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mOPm1zbsCREQZTmoP+BxF1W8LlDhOgPwfvAJlL4ondbhD3DdtVTifNpjMMr8Ao1EvQIOcB0sIAFvWrhj3jYrb4Ccq5Zg0cB2oXrIv0lXfWcy2S0uJPTK9gs7+/Ehdu6p4AqKVYlL6fic0iROAG8FBgBPhs/U4iiqM6bb3CXyHZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xI/6RlKa; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ce6c8db7bso7741651e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 23:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719988777; x=1720593577; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2gfJcP+dPdB8Ll2+BGwToOilKKAE5E2Ikpq/CZOFF+Q=;
-        b=xI/6RlKaYz5tVsdTz/fuXKnHhRs0f/SUvnte34B7w1WIbzfVRho2oLHcsaYu1M4vRW
-         Tn3siMniupBYIgHjTLeN81hyWMoAOjpNxHRvmCjNxx1ipnGC5Ia7o6sRwcyFgd60Xn5M
-         cFXxK5QpuYI4ufGw5EsS7f9gu4z9R778xVWOZh/QnBDDT+B6s0qK+8F3bVizqd0K9gPZ
-         ySixqHO+wNgTKQBWEvTYKO7YGiKOlOtt4Pz4gnSPDC8f+VRrvxRi1qOcN5eXbX2EaHoP
-         fJgRmmkOd6Ak9e8VOZu16b371nlSuIag8YzB8/EdIuDI0aXTFwcmMwqZ8oI9hjL5+5ab
-         He1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719988777; x=1720593577;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2gfJcP+dPdB8Ll2+BGwToOilKKAE5E2Ikpq/CZOFF+Q=;
-        b=poay5g8DkOkO4xi7BPn5DmJkHSoNHeOof2EKlu5ofmen/XfkgRkSEiz5TKCHXPncLq
-         KQHRKHt9eX5FDu2UhkziPEeUuCV5+3wI7hIxG0KzMKF8I82oCp8buWY4MWAawuAa8l06
-         PG3NOZw/SplSp+fX9K7tXtVVJ92pMrr7HDPkbjglm6UvxX3dEm0qfsB5ySqc8Yl+5wHN
-         m6lJJ57V/C7USdjF/Y9McxJLAycNGrXKJoLiFdpdIRBZedrEAAcv39/rqLpKKlpP0t7f
-         dijdTMPu2CMGrP3ZBspoHI6IUXd0o8vQHqNAzbnPH+s4Aj7eutzkIyQc5JjoQfxXjXRt
-         lbug==
-X-Forwarded-Encrypted: i=1; AJvYcCXFNngSMiYHGcvMSBymvUkJ5W+tz8NlaldVf1L8G36Dxzhk69nLmRcAuyeaJ9mpYUx4VPS+GbrknjmJDgeB1br2lkYtS7zgJLgQ4vJg
-X-Gm-Message-State: AOJu0Yyr2Gv0Hh97mcgL/ywHY7IKYqjBYwpBjwjUsCyagihPd/qKDwyk
-	GyB/X3UJPyQ3fZP/nC5rsp4HAC7PLSd3Yh84IZZ48+Ib5S91m/VFWF+cioQrJSnC5NO16JzZyn1
-	PQdJe7VCYsGukELQgaX/qURLRAFh5WKCxTuW7qg==
-X-Google-Smtp-Source: AGHT+IHU9DUx6SzBnuSCLTwk5I/hgKcSP3g1gias5lVbToL50BaDFFU6mIr8rhEcT8TXJ5tdUX9Gl+FsVBvHtHEo4a8=
-X-Received: by 2002:a05:6512:3b88:b0:52c:7f42:32c9 with SMTP id
- 2adb3069b0e04-52e82752b89mr6919968e87.67.1719988777074; Tue, 02 Jul 2024
- 23:39:37 -0700 (PDT)
+	s=arc-20240116; t=1719988807; c=relaxed/simple;
+	bh=Ux893/LfPQMGZoqAxPyx5lXQ3NSGVgFeJDL8OiKVL/A=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=csZ9HCYClUmFesKO0ekfghFhg+/Af9z3cKLaJMUZ2ZOFx4L4674XjXSX+bc/FBgzFMTM9+kSNJpBEVds4mhYrDgZAr4xtxx6loOuAr/VQrg0+GJOhhGqBmGgDunTa1C1a4yQot4Q7qdefUmZZizQD7AmYCD1wkfCQvHYQT5TByg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Px2C1HOT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36713C32781;
+	Wed,  3 Jul 2024 06:40:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719988807;
+	bh=Ux893/LfPQMGZoqAxPyx5lXQ3NSGVgFeJDL8OiKVL/A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Px2C1HOTaqXMYo0VdDmewLSiwB7i1m10Vlt+LBbRIhR340b0/dGOe1RqnQvjmwTuZ
+	 6xSzfAYswueo/Dkgc0Xrb2Q+KQ4TK6ZugK7ddsS0BQi5PgPDkfSuP84S/bRqAghbCu
+	 Yvqeoz+T24fTg9zaXDlzdWY5uQVMr3Tz5Bjd4ZVNEeCA7s2dPDME1eJfNpbwAowmY/
+	 vbAz936nzuwUz/xKc53MdNrJza41khM+Kj+0lQIyDjYszBLI1SwKVgV/AajJKTvk0K
+	 04qlTxjWBGHWkUynIF/h6qO0iT/USRK63WkejtJyDFoqN7lzOwASVxndGdcAaOEYL4
+	 W9PimwG1PFtjw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sOteu-009LMB-Vq;
+	Wed, 03 Jul 2024 07:40:05 +0100
+Date: Wed, 03 Jul 2024 07:40:04 +0100
+Message-ID: <86cynv9dx7.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Christian Zigotzky <chzigotzky@xenosoft.de>
+Cc: Rob Herring <robh@kernel.org>,
+	apatel@ventanamicro.com,
+	DTML <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	mad skateman <madskateman@gmail.com>,
+	"R.T.Dickinson" <rtd2@xtra.co.nz>,
+	Matthew Leaman <matthew@a-eon.biz>,
+	Darren Stevens
+ <darren@stevens-zone.net>,
+	Christian Zigotzky <info@xenosoft.de>
+Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives after the of/irq updates 2024-05-29
+In-Reply-To: <f150eb06-b796-48be-9373-544ca8948ab6@xenosoft.de>
+References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
+	<861q4bizxc.wl-maz@kernel.org>
+	<68b7988d-eaaa-4713-99c3-525a34c5b322@xenosoft.de>
+	<5a6166f107ae31536665d42f410d314d@kernel.org>
+	<f150eb06-b796-48be-9373-544ca8948ab6@xenosoft.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <ZoNAWoJ12DyApZ1s@google.com>
-In-Reply-To: <ZoNAWoJ12DyApZ1s@google.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 3 Jul 2024 08:39:25 +0200
-Message-ID: <CACRpkdbS8MDTZLwzM+OFso0-dYg6SwN1NV-tqPdD32HGs3o6qQ@mail.gmail.com>
-Subject: Re: [PATCH] MIPS: Alchemy: switch to use software nodes for GPIOs
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Arnd Bergmann <arnd@arndb.de>, 
-	Martin Schiller <ms@dev.tdt.de>, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: chzigotzky@xenosoft.de, robh@kernel.org, apatel@ventanamicro.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, madskateman@gmail.com, rtd2@xtra.co.nz, matthew@a-eon.biz, darren@stevens-zone.net, info@xenosoft.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Jul 2, 2024 at 1:48=E2=80=AFAM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On Wed, 03 Jul 2024 04:11:55 +0100,
+Christian Zigotzky <chzigotzky@xenosoft.de> wrote:
+>=20
+> Hello Marc,
+>=20
+> On 02.07.24 21:49, Marc Zyngier wrote:
+> > On 2024-07-02 18:55, Christian Zigotzky wrote:
+> >> Hello Marc,
+> >>=20
+> >> Thank you for your reply.
+> >>=20
+> >> On 02.07.24 17:19, Marc Zyngier wrote:
+> >>> Please provide the device tree for your platform. It isn't possible to
+> >>> debug this without it, no matter how many pictures you provide. If it
+> >>> doesn't exist in source form, you can dump it using:
+> >>>=20
+> >>> # dtc -I dtb /sys/firmware/fdt
+> >>>=20
+> >>> and posting the full output.
+> >>>=20
+> >>> Additionally, a full dmesg of both working and non working boots would
+> >>> be useful.
+> >>>=20
+> >>> Thanks,
+> >>>=20
+> >>> =C2=A0=C2=A0=C2=A0=C2=A0M.
+> >>>=20
+> >> The device tree of the Nemo board and further information:
+> >> https://forum.hyperion-entertainment.com/viewtopic.php?p=3D54406#p54406
+> >=20
+> > Please post these things on the list. I have no interest in
+> > fishing things on a random forum, and this information is
+> > useful for everyone.
+> >=20
+> > Thanks,
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 M.
+>=20
+> Sorry, here you are:
+>=20
+> Device tree of the Nemo board (Hardinfo):
+>=20
+> -Device Tree-
+> Summary
+> Maps
+> /
+> /sdc@fc000000
+> /sdc@fc000000/openpic@fc000000
+> /sdc@fc000000/mdio@0
 
-> Switch to use software nodes/properties to describe GPIOs for the
-> ADS7846 touchscreen and the SPI controller (away from using GPIO lookup
-> tables). This allows removing use of ADS7846 platform data, which will
-> be going away.
->
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->
-> Compiled only, as I do not have access to the hardware. However I would
-> very much like to get rid of ads7846_platform_data from the
-> kernel/ads7846 driver, and this is one of the last 3 users of it.
+[...]
 
-I agree. The years of working on device properties is finally
-starting to pay off!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+This isn't a DTS. This is a listing of all the nodes, not something I
+can use to feed the kernel. I explained how to generate it.
 
-Yours,
-Linus Walleij
+> Download the compiled device tree for the Nemo board:
+> http://www.xenosoft.de/fdt-nemo-board.zip
+
+No, thank you.
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
