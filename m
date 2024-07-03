@@ -1,119 +1,154 @@
-Return-Path: <linux-kernel+bounces-240279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817F0926B3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:07:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2035926B3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3777E1F2201B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:07:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B35DB28137C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754B518F2C7;
-	Wed,  3 Jul 2024 22:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412C21891B9;
+	Wed,  3 Jul 2024 22:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJrV/uC6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="s8Zj7kWf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="esisf+gy"
+Received: from flow7-smtp.messagingengine.com (flow7-smtp.messagingengine.com [103.168.172.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B418E17995;
-	Wed,  3 Jul 2024 22:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3595D13D892;
+	Wed,  3 Jul 2024 22:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720044422; cv=none; b=akqNO+uO3zYbMN4Ttw805tmHwEqMMt5A1Zt0I/0eSvY/LxY+issPFdfqGbQZ3fU9NhbPQRzHypqa7IwKGhf92bvhhYJHPs3RT3uevvNUhHiYxpPjcycuCBQ8HYqmG4IBPi2onFPyDwPbUaIizMK8NSec7mzwdueZxHqrcPjZXgw=
+	t=1720044457; cv=none; b=GsmCba1OVqtFTzhDCGCDEK3scw4oiGJquf4KhCJ+XmsACh4FkpQ9fqVr5MOrLQl4Xgc6FsXl03eFOb/SzOImtkzyuHDA1Izcr2nVlLSdxTSaBZJyXLv+i2txyEGpoL5FvnGYLZ6M28HWkQW+vMjm2XaTqZkCPeHy1AES0TFgwOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720044422; c=relaxed/simple;
-	bh=pvYZwe6lLH9pgNMzyKDtaoFNpQdZP1M+fnTc6yK0vHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nI/QF7QqLEjiBNuX+qubMgrR8pJZN9ujbvsjgO2a19EmGXKM1FFcCcof9WKQoHpN0HR1SmCGxUNoBibgECrTf1qg57vtO0apSv5FhGoxwdFa7GVLNJkk5x2GAugGFFRg1bOr8hbQnt2eCkcbgd5FCWZiCUzegDVhMecfSxRn4fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJrV/uC6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FA2EC4AF0A;
-	Wed,  3 Jul 2024 22:07:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720044422;
-	bh=pvYZwe6lLH9pgNMzyKDtaoFNpQdZP1M+fnTc6yK0vHA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=WJrV/uC6IPFNn2P0bpCVWvdHo02pjF0T378Q4XXqm6vZXCxK/s2XWxAduWX/8tjD0
-	 Edbd9y1k8fXDhPGGsTcTIeYRIJfEs0EQya2LETky/BA56FVgGDvH41KJ3F3yWspbz0
-	 hu+MAlO19r4frpCP4KpB/22NEVM1uGYlACf29sgyPHtO5VSIZS5IB2XpZqN3aKVlfN
-	 1TuzblKyfmy486xdjlwAnhVwgjW9gv8SOdzRAh3fbYL2jCPrKAjn0N1PsDoqSSIZWt
-	 CGjPyaY9u3srJJwe94gPKEanFhJlhzlrWFP/7X3wQT5fQ40l7IQnxboAsX5JcQR3kg
-	 E+ZoW9RJ82c5Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C7AF8CE0BC3; Wed,  3 Jul 2024 15:07:01 -0700 (PDT)
-Date: Wed, 3 Jul 2024 15:07:01 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, mhiramat@kernel.org,
-	oleg@redhat.com, mingo@redhat.com, bpf@vger.kernel.org,
-	jolsa@kernel.org, clm@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
- and per-CPU RW semaphore
-Message-ID: <4304cf1f-26e8-44c5-9755-bc7c526dcd7b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240701223935.3783951-1-andrii@kernel.org>
- <20240702102353.GG11386@noisy.programming.kicks-ass.net>
- <20240702115447.GA28838@noisy.programming.kicks-ass.net>
- <CAEf4BzaQUzQdba2=F2NoV7=Th98fxz2EN62QX2Ej92bazt1GAg@mail.gmail.com>
- <20240702191857.GJ11386@noisy.programming.kicks-ass.net>
- <fd1d8b71-2a42-4649-b7ba-1b2e88028a20@paulmck-laptop>
- <20240703075057.GK11386@noisy.programming.kicks-ass.net>
- <20240703175754.4c6a7bf1@rorschach.local.home>
+	s=arc-20240116; t=1720044457; c=relaxed/simple;
+	bh=soJI4chtLIqLeO17PIJX+g63ipl3X1zqSemWr9hFUsI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=a0g7y3+S6T+P8Gei7F1nDey4pwNfyClmIPuNUv9rsa4DUpdZX07bZbVRSDKsYGs4YZa4rCL//IwT34RXCoe5xeJ84MMLg9pt0k++4eLLtB7RgBxnSweP6grqsYdcJ8FHXBTC21rjjXnGMe8gnWoUF3fmQuFhE8UmKfz0241v1Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=s8Zj7kWf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=esisf+gy; arc=none smtp.client-ip=103.168.172.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailflow.nyi.internal (Postfix) with ESMTP id 147CB20031B;
+	Wed,  3 Jul 2024 18:07:34 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Wed, 03 Jul 2024 18:07:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1720044454;
+	 x=1720051654; bh=JbuTlFU3jY908U9UsfPP3FjyAvYnMyUyEQgWmOJdyvo=; b=
+	s8Zj7kWf4HrHU7BXUKaqo4iWTIsCCdlJr14dprcvQzsKTwOA/JpaxfgbBaFnOxUD
+	bM3ZEgesxre7ISn4gPFmMr0Vqa1nfWMj4Mp7RRGKtzUL9vVk2twk02BAOiHltvaD
+	i5KpDb75zoyBC43IgyfDt90wqHBVQMf5BSre7IbOe+I/RoZdRDpe6fBOS2kvGURx
+	E6Clfls0GV9bB4P+eND6NQImYXVC0xRO9jXPbmcyuiQiemh+8RNyXFC8k+dsJ0iW
+	2cD/amQWFZurm2TG9XLtXvgr8EP9qoUFZ0YFIG2AJ81/f0UX+dFkJlof91fLi09X
+	ri72xFPa9TA6QDJOWrbmeg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=ifd894703.fm2; t=
+	1720044454; x=1720051654; bh=JbuTlFU3jY908U9UsfPP3FjyAvYnMyUyEQg
+	WmOJdyvo=; b=esisf+gyG2ZL/r/3cwCOMzi8Tzha2dArYF8lnjPuWcc5g8hiGV3
+	5uJnI9VuZMxUuUpA3scYSX6w8pGKIDByRN5yzFC550syae3fh9TPXGNWQSuuZXkY
+	JnAchkTwh84ve6P1LHxiHuKnGb6dwwEXDdVk4T2wZtwZKdwzpzFXpiUtgyNdrQ5G
+	aWx3qnAj7tWD0UiiNAH9nnttrd1wm6n9BKQMm2yVmL0M4HJhRiZwuovzlU6PHiCA
+	RFuW9XzOn6IiCbfWE5ivUzjXR+HgctEVwke7xCxILgEGVZCXpDqRwCC26sG6bYEF
+	su9Fy49IWrmR++q7SkdYzYJqFakJ1g7yE7Q==
+X-ME-Sender: <xms:pcuFZiQ6mKZMIfjBPPklrG3uySLYsu3YuPE2VdTunKuxTQaQQ9ryEA>
+    <xme:pcuFZnw1M8yRchYnWPCwFLQ_2abTNJIjqfudP-DKfjO9vBF8TuupkkkvBVvd2saEb
+    f4bGTalrbCcT3p67u8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekgddtgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
+    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+    eqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefhjeeu
+    geevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:psuFZv2Fi8FQF90Xuy6zr7CRPetTEals_zlKX2vKfODDHKVt61PR-A>
+    <xmx:psuFZuDG6PLJ4kMaHzgPD7oGG862n0zfwIDYED7OMYPn_o5hZ2sLpw>
+    <xmx:psuFZrixjWJQZUOoCY5UMCa1CDwQLnFTWfWlPWmFOpjFSSCADNOB-Q>
+    <xmx:psuFZqqXhirXqkG5UeR9IcA4cNUo1VoMoYDDoqS_5kNwKi3oPLrcgg>
+    <xmx:psuFZujg5raPLlQFt2rSu0T8x2CrQClS-L0-j2A5zOshRZ96LnYszYFj>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id E056D36A0074; Wed,  3 Jul 2024 18:07:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703175754.4c6a7bf1@rorschach.local.home>
+Message-Id: <e54ec104-2e19-46da-8c3d-b6b7f620f563@app.fastmail.com>
+In-Reply-To: <alpine.DEB.2.21.2407032204331.38148@angie.orcam.me.uk>
+References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com>
+ <20240616-b4-mips-ipi-improvements-v1-1-e332687f1692@flygoat.com>
+ <ZoVokcDYqZnuqd2X@alpha.franken.de>
+ <7a822a33-dd67-4827-bbd0-01e75e203951@app.fastmail.com>
+ <alpine.DEB.2.21.2407032204331.38148@angie.orcam.me.uk>
+Date: Thu, 04 Jul 2024 06:07:12 +0800
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Florian Fainelli" <florian.fainelli@broadcom.com>,
+ "Broadcom internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Serge Semin" <fancer.lancer@gmail.com>,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] MIPS: smp: Make IPI interrupts scalable
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 03, 2024 at 05:57:54PM -0400, Steven Rostedt wrote:
-> On Wed, 3 Jul 2024 09:50:57 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > > However, in the past, the memory-barrier and array-indexing overhead
-> > > of SRCU has made it a no-go for lightweight probes into fastpath code.
-> > > And these cases were what motivated RCU Tasks Trace (as opposed to RCU
-> > > Tasks Rude).  
-> > 
-> > I'm thinking we're growing too many RCU flavours again :/ I suppose I'll
-> > have to go read up on rcu/tasks.* and see what's what.
-> 
-> This RCU flavor is the one to handle trampolines. If the trampoline
-> never voluntarily schedules, then the quiescent state is a voluntary
-> schedule. The issue with trampolines is that if something was preempted
-> as it was jumping to a trampoline, there's no way to know when it is
-> safe to free that trampoline, as some preempted task's next instruction
-> is on that trampoline.
-> 
-> Any trampoline that does not voluntary schedule can use RCU task
-> synchronization. As it will wait till all tasks have voluntarily
-> scheduled or have entered user space (IIRC, Paul can correct me if I'm
-> wrong).
 
-Agreed!
 
-> Now, if a trampoline does schedule, it would need to incorporate some
-> ref counting on the trampoline to handle the scheduling, but could
-> still use RCU task synchronization up to the point of the ref count.
+=E5=9C=A82024=E5=B9=B47=E6=9C=884=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8A=E5=
+=8D=885:26=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
+> On Thu, 4 Jul 2024, Jiaxun Yang wrote:
+>
+>> It has been tested on MIPS Boston I6500, malta SOC-It, Loongson-2K,
+>
+>  SOC-it (or SOC-it 101 to be precise) is the name of a bus controller:
+>
+> System controller/revision =3D    MIPS SOC-it 101 OCP / 1.3   SDR-FW-4=
+:1
+>
+> used across numerous platforms from the M4K core onwards, UP, MT, or M=
+P. =20
+> I think it would make sense if you revealed the processor type instead.
 
-Or, if the schedule is due at most to a page fault, it can use RCU
-Tasks Trace.
+Sure, sorry to be vague on the platform detail.
 
-> And yes, the rude flavor was to handle the !rcu_is_watching case, and
-> can now be removed.
+I actually tried on two Malta configurations, CoreFPGA6 interAptiv 2MPF =
+(2 cores, 2 VPE, 4TC),
+and CoreFPGA3 34Kc MT (2VPE 9TC).
 
-From x86, agreed.
+>
+>> I don't really know broadcom platforms and SGI platforms well so
+>> changes to those platforms are kept minimal (no functional change).
+>
+>  Technically I could run it on my SB1250, but I'm too overloaded now t=
+o=20
+> commit to any timescale.  Sorry.
 
-But have the other architectures done all the inlining and addition of
-noistr required to permit this?  (Maybe they have, I honestly do not know.
-But last I checked a few months ago, ARMv8 was not ready yet.)
+No worries, I'll try to fetch a BMIPS3000 SMP router to get Broadcom pla=
+tform
+undercover.
 
-							Thanx, Paul
+Thanks
+>
+>   Maciej
+
+--=20
+- Jiaxun
 
