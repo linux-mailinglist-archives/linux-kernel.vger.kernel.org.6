@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-239230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19635925830
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:17:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB11925831
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB581F214FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:17:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B5B1B24F86
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BAA17335C;
-	Wed,  3 Jul 2024 10:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FB71741E6;
+	Wed,  3 Jul 2024 10:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P4g0sMs6"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FKi+XauI"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57464172773
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86575173326
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720001783; cv=none; b=oHFa5P5/Ul09X2ewrGIRMJsryMvi//z//W6WCU7ess96VIovRABk26gXVD4DsKqrb64Z//VXpMjqYsBHiUqWD0WidNp4M4oeedKA6pI2S986pYg3AsU3HjvoG+0TFcr+uM+M405K3MAHFaL6BLu7RsuHV58sJP6O/fqsNCjkflE=
+	t=1720001785; cv=none; b=o8rDdYIQGmrSkaJ2wQ2Dl6FtA2QHYYq80a16S4AryKEmXG89Q56LnYvXpIj7+XhXGXMgTCMsiuB01CeIB6zriQAn2dPZ1ILnVCEdz1lZ5XKkBy3EaTYw5fuKKUcLiXFhWdl3B+hrM2USx1m7KNwMKdNSIxn73wfbYfv4zGF1uAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720001783; c=relaxed/simple;
-	bh=IY1oPHTeYFkPAQIumDC8e25FwPrkJ2qyVDIkUd9B5LY=;
+	s=arc-20240116; t=1720001785; c=relaxed/simple;
+	bh=2Hgb11TSE9fOERRmOGKvCbJsU5ExxL44Ao0bbckq9aI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=acco1UCvkdhGOzDLc+dcexh65xf4hHnkD1x6IFXyIEJrjFFRWbA4B0Wll9gdnNCJHNYYAlsaeKjQuWShc/kqHUQzAAJ9HFzsFj564GaPrpBr/RW34SbFIdF9gTpeUMFwH25AjSzxz2+4dR7++PPUEfRgOoi7suCc1MmyxzHVGDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P4g0sMs6; arc=none smtp.client-ip=209.85.218.54
+	 In-Reply-To:To:Cc; b=R6Pux+BNpDAmu+ji9n+aXWanxhjDlPxKWQ1mHzxHlrpFmg/AgWdIZ1JkRGWsLkoB/vPuNc33qwXUsnl6QR2iH47mf79rn6ZgI5s+f9LfbdnWiphLdTbZw5COyhY6IXhKIbzLs8j+JYCGM7ziyBEf3QVkio7n8GmyXpHODl+0GYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FKi+XauI; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a751ed17b1eso77783366b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:16:22 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a729d9d7086so87488866b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:16:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720001781; x=1720606581; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720001782; x=1720606582; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VrtpT+q3ugRzypCVgwmAVgi8FHiU6FE6B5vA8wJQ87o=;
-        b=P4g0sMs68BTO8/fU/dfJdDuVVhfatMjOSkVZdQSXNJmtg9HLgN8aydQ3ImZf3OfAGH
-         SfYr+ZXgnX1VVOFMIpzK/yOOpw3G0z6h3/UZGfffSMVa/YYeyxuDk09fAeq118XdPxgX
-         HezSHa9Dp3yr8hgWHs4ItYk0UR6r4PqSTRNo0KypwXXRkZvLLnpugS1BOD1+DXuss/++
-         eQK7UmyX4n6TeqovpiybvVG2qb1vKN5IBWMYRmQAuz+oEJ4n1LtPxsJmv4OCAh4Vbsyx
-         Ml3/aT3lt7wNR80xyXcRdJVfZi7a9fjDCUS54q38zdRNhi1qQj9ZBy+8sdENw0k36Nx7
-         jdGQ==
+        bh=3joTjD/EvzvybWiPdLIbHTzIsLTnwS1UMLvS3hxDr3Y=;
+        b=FKi+XauIGCJOUtOzsELIww5nhWM0C4941lxBHO7f1h8OT0CSAEpIMrpoIH5ied8Q1q
+         XX6LqZcf/Wyp4KhqBbMKQwi3yEpPCnwyUrA8TWwWciAwJVZxbwnjWX0x7LdqhC853ssm
+         1cYe/6GS5YZqeeFYQ5GN+PwQyw17K3E68kZfVH3PyGmMk1wjm/t1AumoJjDFfGqkRKss
+         cRpatoOBJnib240YQbtr+hK0a+DwiWH3COk90PBweevlmwbFMr5pzPS/06ZJw8vgnSjD
+         Yyda+V/cGDkq1454drCiy+krvdgsJAeGgSykrYJNeVzB9w5Igprd9TkAzM9pJPfsjCrs
+         4UZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720001781; x=1720606581;
+        d=1e100.net; s=20230601; t=1720001782; x=1720606582;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VrtpT+q3ugRzypCVgwmAVgi8FHiU6FE6B5vA8wJQ87o=;
-        b=oz9o+a7q8JKHgPmTPmN72QXp+rURTjPKMDto8NpuDQ6bvFeJc2un+lAgn27Y6+SV5e
-         IvtcT4sIsIGpe6HAnnlKzCWX+LrjVyySOGfusuhMZlePfDwyM5V5Xx5V5DZThTLAYoQb
-         6ufacAoMy/bfJzQRGuDhH4AG7qycAD8ASIp+4wMbzi3CIb7LneY1P8xGzksYjJk9wrzh
-         /7sLpUxSrZgLC68Z2Bdwp/XU/qUnruAuNY3+DINnkAH1m5+H7R77k1uhWXYRDDY2W9Lw
-         qiI51KVpwHqlOcQOK6BU9NSN5BoLYd5pM7zoYONuJ6AbW6WnfpplXzqUNyiqq1CyHFbJ
-         9cZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDtcxXIdBBDiqPnMegnxYx7NVB1HFW0Ya/R8X2VBCMyiiar5OaPrLhiSFRALA6MSMzWHRg/3izP5xNFJBcfh67kFSwB9YH3DOs7K3k
-X-Gm-Message-State: AOJu0YxF0rUqsNfEiB/omdxn22Jg0eEJVWjudnng3V6+vfvUCiBrkBkz
-	mc9fJlN0sLcThKkOc5b+c3OzfDfJsdEYejm7lPsNJfK73xki3vujjLs1mplz3A4=
-X-Google-Smtp-Source: AGHT+IEtZoY5JzZntBzNzE4Y9+mfHfz4VIjEoXHHcvOnPR9dBqvKKOQoXhvwcg0LzXPqeLC+5E0HGw==
-X-Received: by 2002:a17:907:3681:b0:a72:7736:9e14 with SMTP id a640c23a62f3a-a77a2441768mr102819766b.20.1720001780715;
-        Wed, 03 Jul 2024 03:16:20 -0700 (PDT)
+        bh=3joTjD/EvzvybWiPdLIbHTzIsLTnwS1UMLvS3hxDr3Y=;
+        b=rrrNjADgKK4cCiLgioVw8yhyjy/isq+yL31vg6R4+cbuOc8VLlKKz1RvIQXFKzqihb
+         KVkJiAFvdLxeBO4wrZE70w+iydKheYYtxUNof+C7w5bv+gHfYUJ/i8G9SUqotZJVHwGg
+         qaqiOf1EtneUlaQTIEaTGKGFQ+i1AO6pDXj0Gs/UM5ocs6gLVm5jI1mkfLKZFzKhdvEp
+         so1rndIXWDfceUDy+LpAIk6Xp4sjPAaWAvjE0Ph4p+YeGNIH4Qbp0zBuM5gpAhgos9AZ
+         lZ9Ja0nELOn3PLUpRSMobvNvCluIZQ/b2xlUQtvsHM6z8fPHmy5PvydjAWp2YQ+6h4qQ
+         GilA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwSkGTe3s3O4WYjudxPhGSfzP4Fpu6Yim8tj0OWBg9JBUn+YfmYJAic1VYKssQcFi4IadbH1GiHwoGNooVS/YrUGXhBwVg69PGA5Kr
+X-Gm-Message-State: AOJu0YxAKQGvXVrfuNh5F8XpfqKI0J0lDt9biBtbUbHRB4VEfKZdQdHU
+	+EaXcOWnV0Mq+q1huaCw2MlXKcuCovLbLlWoQNWrR6gbpv8emK7VTzZKqXWfpQw=
+X-Google-Smtp-Source: AGHT+IEELsiExLgIL8ViDXZhbHcr5lLNtKgOIwnhglxgd+MvGmadP9WGtD7IcS1FdBHJkN8UmxvuUQ==
+X-Received: by 2002:a17:906:3390:b0:a75:1923:eb2e with SMTP id a640c23a62f3a-a77a24202d2mr96155166b.14.1720001782114;
+        Wed, 03 Jul 2024 03:16:22 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab06565csm494291466b.103.2024.07.03.03.16.19
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab06565csm494291466b.103.2024.07.03.03.16.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 03:16:20 -0700 (PDT)
+        Wed, 03 Jul 2024 03:16:21 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 03 Jul 2024 12:15:59 +0200
-Subject: [PATCH 7/9] soundwire: intel_ace2x: simplify with cleanup.h
+Date: Wed, 03 Jul 2024 12:16:00 +0200
+Subject: [PATCH 8/9] soundwire: cadence: simplify with cleanup.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240703-soundwire-cleanup-h-v1-7-24fa0dbb948f@linaro.org>
+Message-Id: <20240703-soundwire-cleanup-h-v1-8-24fa0dbb948f@linaro.org>
 References: <20240703-soundwire-cleanup-h-v1-0-24fa0dbb948f@linaro.org>
 In-Reply-To: <20240703-soundwire-cleanup-h-v1-0-24fa0dbb948f@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -87,21 +87,21 @@ To: Vinod Koul <vkoul@kernel.org>,
 Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1521;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1247;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=IY1oPHTeYFkPAQIumDC8e25FwPrkJ2qyVDIkUd9B5LY=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmhSTnkavgfEK5yCLUKTCxvvF4PXPL5NgXbOKSZ
- sWx7SD8R86JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZoUk5wAKCRDBN2bmhouD
- 1xwsD/9gMhWaZZjNTAwmFUzuScG1m2CPsqiZWoBezCyR5KEDWxWf69dUBsYBPLlAYXfSHIrm5xT
- M8P3yDHaE9MQGJaR39xrtArAoYt2Qm3DiaOaSaxXPSH/nqNJrb3wIS56tYPbVCXevejg+elOd8C
- XU0lrreoxsHeEF2QpHehJJYoVpx0BlOTYe5SoExvz3gJrDYCVEt+YSYWhUqSpRii1LC0WNuBTYz
- GM1/9ei9HhvvhdgsnK2TMfiaYSsd9w6TDxeosIy1fXtgSHyaVYev7CIhJi4EI3o1eunWtc0nwDZ
- 6QtuoJGh4BMsA3jyc1Q5QxM05YkK2TzvEaaH9nnBhhfWGQYna0MiuYx4Z5uZgVdzKaxsSRbusWj
- nPERQk47di6YubUGrG5j1ezzyrr91UfHhW/PIvu//4uoGIytIEku+jVYdo7BSUWvl/+/kzBJkh8
- J6p/UxVp/kJU5Ioz4yTpGpMDX6Z6kCyC1G2zUSs42BXVMWY3er3FkWkLRzW0PfE1n34coDePDFT
- K0dylCRRUQqDY1jSZsSQpFv1MKGZUS6uxDXZcWifj9ThsOn7rvhKGHtyY2roqmP8TdkrgeABAtQ
- iLubbXCuFNg2eHpsURlbaq8gaeZmAaNe9tjHo/bGlI7nBzLOdjqS3O6lSdFgIC49kid3mb993xN
- dFiR2mEyDKGSEag==
+ bh=2Hgb11TSE9fOERRmOGKvCbJsU5ExxL44Ao0bbckq9aI=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmhSToVO7krJpsryvmNegqDera+Tzu8RsMQNven
+ Pl+d2kxioeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZoUk6AAKCRDBN2bmhouD
+ 10eBD/wOYMaY6NC26kuLeUu0bJQ+sYDgl1g6Q7lkH1bSLC5TO9SnH/0h4y+otOvZV67HNOwAd8N
+ cH2zTy/Z2E+pNrHspUPiOSxzg9tDPXMpcdSSnkBvqqine3JZhibf6kXd0c73jtRcTTRleFWfMy6
+ J4SOVEjrRO2VSXzv+M3iNRyUC9FU3ObCHmT55JAnRdRSwf5BYLZzD9GqqWtRtfmmAP/rY5CWWRe
+ zOEDY+edSJHyVzoANpMEySXRE5xTcQpCs/qSjW/ZXTKfLH4NNKdEgpkfP5XBQD4Q7+PdmM7c6NM
+ FGvnKZzzhMQaB8780Awfj0aJnoQePjrz9gVJR7eqyT2OByegp3MjXPEFye5daGwyUs+A3+st2Xe
+ s8YO29KiNQUs0XuOXqtCPgQWQaOqeyRuiojdUr9LUk4DtwwAHpctlQzpbCAKcNI+mTLCI05PsQQ
+ hgMuEtwxzPRyV/brU8MILtqInRt7H29Rm130MdNAe4ZopUxqoLeuz3m8jtUZ7Ujn3BJWYGpi9P/
+ UZfv4ulXMnDaAzhV4NITyL7vL525gjJveZi9/fb0FAFnGHnO1mBVOhAFTZEt8z0+xF15ibZINOr
+ Pfp6TunC1dFQJKp7P8LsFxDOoNeVkJJ9nFsFn1ckc9zlLHE1Ev492Zl5aDKlzYbF4nurrDdwhJ6
+ /PNP2BP22TZcJaQ==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
@@ -110,48 +110,43 @@ make the code a bit simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/soundwire/intel_ace2x.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/soundwire/cadence_master.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soundwire/intel_ace2x.c b/drivers/soundwire/intel_ace2x.c
-index f0008ff84ab4..781fe0aefa68 100644
---- a/drivers/soundwire/intel_ace2x.c
-+++ b/drivers/soundwire/intel_ace2x.c
+diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
+index 74da99034dab..e0683a5975d1 100644
+--- a/drivers/soundwire/cadence_master.c
++++ b/drivers/soundwire/cadence_master.c
 @@ -6,6 +6,7 @@
+  * Used by Master driver
   */
  
- #include <linux/acpi.h>
 +#include <linux/cleanup.h>
+ #include <linux/delay.h>
  #include <linux/device.h>
- #include <linux/soundwire/sdw_registers.h>
- #include <linux/soundwire/sdw.h>
-@@ -310,7 +311,6 @@ static int intel_hw_params(struct snd_pcm_substream *substream,
- 	struct sdw_cdns_dai_runtime *dai_runtime;
- 	struct sdw_cdns_pdi *pdi;
- 	struct sdw_stream_config sconfig;
--	struct sdw_port_config *pconfig;
- 	int ch, dir;
- 	int ret;
+ #include <linux/debugfs.h>
+@@ -323,12 +324,11 @@ static ssize_t cdns_sprintf(struct sdw_cdns *cdns,
+ static int cdns_reg_show(struct seq_file *s, void *data)
+ {
+ 	struct sdw_cdns *cdns = s->private;
+-	char *buf;
+ 	ssize_t ret;
+ 	int num_ports;
+ 	int i, j;
  
-@@ -357,7 +357,8 @@ static int intel_hw_params(struct snd_pcm_substream *substream,
- 	sconfig.bps = snd_pcm_format_width(params_format(params));
- 
- 	/* Port configuration */
--	pconfig = kzalloc(sizeof(*pconfig), GFP_KERNEL);
-+	struct sdw_port_config *pconfig __free(kfree) = kzalloc(sizeof(*pconfig),
-+								GFP_KERNEL);
- 	if (!pconfig)
+-	buf = kzalloc(RD_BUF, GFP_KERNEL);
++	char *buf __free(kfree) = kzalloc(RD_BUF, GFP_KERNEL);
+ 	if (!buf)
  		return -ENOMEM;
  
-@@ -369,8 +370,6 @@ static int intel_hw_params(struct snd_pcm_substream *substream,
- 	if (ret)
- 		dev_err(cdns->dev, "add master to stream failed:%d\n", ret);
+@@ -389,7 +389,6 @@ static int cdns_reg_show(struct seq_file *s, void *data)
+ 		ret += cdns_sprintf(cdns, buf, ret, CDNS_PDI_CONFIG(i));
  
--	kfree(pconfig);
--
- 	return ret;
+ 	seq_printf(s, "%s", buf);
+-	kfree(buf);
+ 
+ 	return 0;
  }
- 
 
 -- 
 2.43.0
