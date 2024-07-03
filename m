@@ -1,169 +1,228 @@
-Return-Path: <linux-kernel+bounces-239683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90A439263F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C5F926412
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D7B11F2279F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 372061F23C8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E802A17D8A6;
-	Wed,  3 Jul 2024 14:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9B71822D4;
+	Wed,  3 Jul 2024 14:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZXue8dpz"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=arri.de header.i=@arri.de header.b="NE8sgKhT"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02hn2228.outbound.protection.outlook.com [52.100.202.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA2917B401
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 14:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720018542; cv=none; b=KFkNpmOs0dHSD2aeuTkmxNgGgcuV00XWC85F4jx95xUPHHVohxDHP5Kd36MDtLVCdV0q6v6XWCc4tP9HKmUYgmuuVinbYX+3iMqAhvvK56DAHkLR31p5ZAbavK4yE7PtjqQGpW/YG2/183bjQlYQAmyTdN71z4pwvqPl9/IXbQ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720018542; c=relaxed/simple;
-	bh=cRYZ45OF53fIrCFZk+IUAjejhzMX236LoAYLsLRpLZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SuQIUuIyCv256SPGau1HXQxl5HuL8ghQ8LnZ/U9u3wE+kmyjuZ6c/1lZRu/ozg7SHcjAyTv68qDsFHf9CL/dg+BOGS5VM/LveM2NaE9slYYMZABIh9QoCdIPywf2hhoJ9dLvnypgjSbHPSTfWSpFtDGmQ6nL9+OK+63kPQ/cIp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZXue8dpz; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C4973240005;
-	Wed,  3 Jul 2024 14:55:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720018537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cRYZ45OF53fIrCFZk+IUAjejhzMX236LoAYLsLRpLZk=;
-	b=ZXue8dpzx9QdMyd8LRoQUb/7UbyLfMrk+hX3cf1A0pyQAyFBwnsgQKAre+XaulYP2oKdhM
-	Qmr7nTOzM9UUTdkmUSw1tD7AolEcBzH3QSwGHX/ZCUFPWOyR77D7TDIrsQLORP21I/KUzx
-	f6SUIdob4e14/NjRLmC7N667Px6Vi0p9KAy4SJtIOuUs4SqzBVrnxhy5aYJMvUbPa0mjrl
-	MxR80FL/+pOoHz9etBHoWM2GTiu0ezQ8prsIeDdjDQQzM4EJOD0VK4DSsbhcxGHdiTQRoF
-	XwIIbww8P7cLaJBqlP5zTv1f0fpVFNdUbGTwACkvdKKgni0kQqKsMfUbKGrhtg==
-Date: Wed, 3 Jul 2024 16:55:34 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Greg Ungerer <gerg@kernel.org>
-Cc: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>, Geert
- Uytterhoeven <geert@linux-m68k.org>, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>, Stefan Agner <stefan@agner.ch>,
- linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] arch: m68k: Add definitions for flash NFC
- support
-Message-ID: <20240703165534.699d238a@xps-13>
-In-Reply-To: <a9c34972-a933-49f4-98e4-cbcc321022e2@kernel.org>
-References: <20240627-upstream-nfc-mcf5441x-v2-0-312929d09ee5@yoseli.org>
-	<20240627-upstream-nfc-mcf5441x-v2-1-312929d09ee5@yoseli.org>
-	<20240628094511.75cc9c78@xps-13>
-	<b974df45-daf5-4156-8532-cf9e2be8bdfa@yoseli.org>
-	<a9c34972-a933-49f4-98e4-cbcc321022e2@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708DF17E904;
+	Wed,  3 Jul 2024 14:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.100.202.228
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720018663; cv=fail; b=o34tP1gWAe40sqnMRCJZvac0bc2IwH7In97BmuBsgNlWMFOEAUooJRglAqUor1YDQgcgMoW4SzQIXLOB8OiYFQordEBHRC/BKbre5nTEX+v2OBXoysyb5M8I0MFZWGTCUk5eKRJ5P3RbPBOVjl6A3RHcuS7BBvAt1XqZ7V9oWZc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720018663; c=relaxed/simple;
+	bh=dH1lqlI73nwHTfmTtWhu6gg5rxKsFGlMPgaJUhDAD1U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Vr+oB7DpI94sQv2JSRA8TcSss6KUmVA4QMiv/sRHlN8GvN5x7ht7wu+s3+S6zMAskbm4xgmfgOfb8sKq9oagy79xTfDi1oXhXPXJQ6y3Ln3jCg79EDzzqAGP3L4laaPW0pX7vADjrbesdhXzVS511859Up5yCZr8p4DPlx9l2zg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arri.de; spf=pass smtp.mailfrom=arri.de; dkim=pass (1024-bit key) header.d=arri.de header.i=@arri.de header.b=NE8sgKhT; arc=fail smtp.client-ip=52.100.202.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arri.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arri.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=m1Mptvr2FvfZCybkKyMfcJN4a6COgYrrcuJP1XFV3REM0u4ZWyCKI9bTqCRH/BSQpQwD8tKuzsjKJF9A/z7yIaD+CaYT2nkmqaB8QXiZq3TStJs+Ztss0N6umOeCx/WFdn5pYJg5jRcKfE45Q5GDgGv2Nrm6fIZY3bALjChOrD2v1zwvEPYDl5QaCgma/fD3otHS26ax1sEoOdC/tF7ia5L7RukA6hk36OODUHUQpJo9xuo6Bsg05ZdsjypvSrEPbxUWo5pt10gSUPpS9WE/2dI8x+kvKur2lMRP53vLwvaRlBv/67T/+uhvGe5Awkt7Gnd1gvavmsmreprIDQ1hFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lwU9KFby2UrfklUYFq+Lg59U6fKOAcMEnNy+uqbKSZI=;
+ b=ExZlONK2NUtvpGcvZoBhbYMopu36JXT92HNL3OzK0mXY40t8DkArPY+2eMnlrMCyqbQ848vDbGUbV7CReRGeGuDIExp9SH+c6wM6vaod4mAPERSV/z8/KXZocV92VY+DbmCL7hWwjAy6wLRfMe3z5slxHRaAhPT9Kr1XPcDVRKpT/XSwMxOwqGIVB+Wy5reqRJ7jp/U5qM08C6GpgMTu1jA3hO2O6F7X7OHC++r2WMd1R/yM0e1TzQtFEtwsko4lLsMTh/oh9iPAje8fADCQAeVPb9qRl2OVn/wzdqNU4AEAYCuHNX1MKbMAURz7OXftoXuD0R5u37d+19LGjAFHog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 217.111.95.7) smtp.rcpttodomain=lunn.ch smtp.mailfrom=arri.de; dmarc=fail
+ (p=none sp=none pct=100) action=none header.from=arri.de; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arri.de; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lwU9KFby2UrfklUYFq+Lg59U6fKOAcMEnNy+uqbKSZI=;
+ b=NE8sgKhTcK02YhPnmOQhx4dHTJrJI+pfyVDjwe2GXOtbp5oR+GAIn43e8q/NF+MSD5ormq5QPamlUkPJO7GqZRVxukpaxbwoBhVuyzmGGmBvlr4ijObMQ6AQHkW9sq0GNLj2Np74fwuqw3TztBSeNmWf9jFeaCbJZtX70CUst0k=
+Received: from DUZP191CA0028.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:4f8::24)
+ by AS5PR07MB9985.eurprd07.prod.outlook.com (2603:10a6:20b:67e::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Wed, 3 Jul
+ 2024 14:57:36 +0000
+Received: from DU2PEPF00028D0E.eurprd03.prod.outlook.com
+ (2603:10a6:10:4f8:cafe::cd) by DUZP191CA0028.outlook.office365.com
+ (2603:10a6:10:4f8::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25 via Frontend
+ Transport; Wed, 3 Jul 2024 14:57:36 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 217.111.95.7)
+ smtp.mailfrom=arri.de; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=arri.de;
+Received-SPF: Fail (protection.outlook.com: domain of arri.de does not
+ designate 217.111.95.7 as permitted sender) receiver=protection.outlook.com;
+ client-ip=217.111.95.7; helo=mta.arri.de;
+Received: from mta.arri.de (217.111.95.7) by
+ DU2PEPF00028D0E.mail.protection.outlook.com (10.167.242.22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7741.18 via Frontend Transport; Wed, 3 Jul 2024 14:57:35 +0000
+Received: from N9W6SW14.arri.de (10.30.4.245) by mta.arri.de (10.10.18.5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Wed, 3 Jul
+ 2024 16:57:35 +0200
+From: Christian Eggers <ceggers@arri.de>
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>, "David S . Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Juergen Beisert
+	<jbe@pengutronix.de>, Stefan Roese <sr@denx.de>, Juergen Borleis
+	<kernel@pengutronix.de>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Christian Eggers
+	<ceggers@arri.de>
+Subject: [PATCH net 1/2] dsa: lan9303: Fix mapping between DSA port number and PHY address
+Date: Wed, 3 Jul 2024 16:57:17 +0200
+Message-ID: <20240703145718.19951-1-ceggers@arri.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028D0E:EE_|AS5PR07MB9985:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a0af5bf-fc57-43da-42b0-08dc9b70797c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013|34020700016|921020|12100799063;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MMkVo5QLr2b5AV7Ztwi6U8Ar6BSYE7jGEwN+RoAo8u+Kk1Lk6NIXfNqzNMBA?=
+ =?us-ascii?Q?Mw1De2jz4x0kFbUIQW84Ym+fDqc+NnfS1mwYLm3C+Nc08FwEQkXEGeQtpPu9?=
+ =?us-ascii?Q?uAHmXGh9HlKaMqs1XxBTdxU3dpsG48mlK+xVmpASX8lxKe+Ac/ZMvgiYogxu?=
+ =?us-ascii?Q?5GR0fZ0rBKgRPOtD9KWn33E6CdfPY4ov1Sd1QeGBwUQxw+gqa8o/PRuggTKK?=
+ =?us-ascii?Q?frSEzXfTyTpJOQ2CSvNXNWyPiHIbHPiSfyCLd/cqiX832RLZXFfUXhIVE1Dl?=
+ =?us-ascii?Q?4dRT/r0ABlesqD+vmNB+YR3rwjV+SjvOj03yXDUP2MFTU+1yEWY013mG/cYz?=
+ =?us-ascii?Q?CaxF6TFyUbDAUM7K3NGLE3DdcNiDunnA4/P5mCLC8ZTzkfY0QJT6pyvaZovw?=
+ =?us-ascii?Q?gtkG1JkVQ4UrGZ1r0fzaIhDTFI2JqbIDLIyCsj8vUtJO4bxh9d3PcTCzvepr?=
+ =?us-ascii?Q?qA99h0mxCfIAevLTL2qJri3n30dxyhOkzsPx8QZ5l8TBR2gvZ5Vx0aQrXa8h?=
+ =?us-ascii?Q?5Yk5k7OPQ6gOzvhoZtGpa0NLUv2Yb/3JxJZXHDx7GlMAi0YUSrzTpcGUAdst?=
+ =?us-ascii?Q?2XOZEfFBAq+DKYgPD2YS+vG8y1qJpKAMArUfscYn7D2eOi6TzikA3PAbJPbl?=
+ =?us-ascii?Q?zBrh+kvO5aN3j5kjv6vU4dF+B7SsgJu9EGUZwkRrDgP199758c+cUgYTybIj?=
+ =?us-ascii?Q?voF1EWc7UPpXy0xqoS2zMrIpZhznL5wtSissle0KPGzuPcHLxmvPxVDp8Sg7?=
+ =?us-ascii?Q?3FOaAFip2SkmIffN0CWZ9BmugKBaAqEgsoemPZKlvlWbh4aM2zowsWEp+HXW?=
+ =?us-ascii?Q?lTUJ5wquaFmbRQkeMzDPiZgxtUTl84GxdTJb6sqpbVuvaHjG5+wyEixIVouv?=
+ =?us-ascii?Q?5LK53//M1FkaOV7bDon4W/Nrp5rVfOoBDviiDwy2BALdfpjlYSRkxwNK/Air?=
+ =?us-ascii?Q?PGOm5a0UnwJC7m0huh4YE9ic86a9Te7peHUSicPWscfRy8uVHzGFyKfFVDDH?=
+ =?us-ascii?Q?bQmBmlPb+DpA/GcMSvTVXDe0eWN/uvqOEFxSqY2yxwSNigqRyhum6cC2BrRt?=
+ =?us-ascii?Q?miLztMSE5NKaHLTPlodegnRdAY//PC/RM518R05YQLOZv66pMeW2SfjgEtZN?=
+ =?us-ascii?Q?u19g7UXrTurCKldy14CPKHrr79Ia06yYy0JywfdZBrXFYxwSCNpWoepgpzq+?=
+ =?us-ascii?Q?2WZSF5V4QUEx87bG5CGad67jaR7KVW8vkWEZst4RajSrNd6SDq7FZqx4f8bA?=
+ =?us-ascii?Q?0Ny36sWd3YwneQ0o85ro9d7g1WY7ErDqa4AYoW8KTq2WaaPR4MLsb5S6SdWJ?=
+ =?us-ascii?Q?YbJKnjsnps3No+RGO6bcRIrSbiEoiZ+43DPaExcFOHA8rJD7U3q2/wR2pnT5?=
+ =?us-ascii?Q?efdCsWqoflSQxSAyC26a3xTleE+NcxKbTgU1r8wTIS5MfucPjkVxqBroeaUW?=
+ =?us-ascii?Q?v7HANqO2O53PI8+8IIgHR+W9UKjPHE2Wm+jgOk6qBRj6xbpZeYDSNg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:217.111.95.7;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mta.arri.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013)(34020700016)(921020)(12100799063);DIR:OUT;SFP:1501;
+X-OriginatorOrg: arri.de
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 14:57:35.5815
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a0af5bf-fc57-43da-42b0-08dc9b70797c
+X-MS-Exchange-CrossTenant-Id: e6a73a5a-614d-4c51-b3e3-53b660a9433a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e6a73a5a-614d-4c51-b3e3-53b660a9433a;Ip=[217.111.95.7];Helo=[mta.arri.de]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU2PEPF00028D0E.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR07MB9985
 
-Hi Greg,
+The 'phy' parameter supplied to lan9303_phy_read/_write was sometimes a
+DSA port number and sometimes a PHY address. This isn't a problem as
+long as they are equal.  But if the external phy_addr_sel_strap pin is
+wired to 'high', the PHY addresses change from 0-1-2 to 1-2-3 (CPU,
+slave0, slave1).  In this case, lan9303_phy_read/_write must translate
+between DSA port numbers and the corresponding PHY address.
 
-gerg@kernel.org wrote on Wed, 3 Jul 2024 23:30:09 +1000:
+Fixes: a1292595e006 ("net: dsa: add new DSA switch driver for the SMSC-LAN9303")
+Signed-off-by: Christian Eggers <ceggers@arri.de>
+---
+ drivers/net/dsa/lan9303-core.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
-> On 3/7/24 02:44, Jean-Michel Hautbois wrote:
-> > Hi Miquel,
-> >=20
-> > On 28/06/2024 09:45, Miquel Raynal wrote: =20
-> >> Hi Jean-Michel & Geert,
-> >>
-> >> jeanmichel.hautbois@yoseli.org wrote on Thu, 27 Jun 2024 18:05:28 +020=
-0:
-> >> =20
-> >>> Add a few definitions, as the base address for the NFC for the M5441x.
-> >>>
-> >>> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-> >>> ---
-> >>> =C2=A0 arch/m68k/include/asm/m5441xsim.h | 7 +++++++
-> >>> =C2=A0 1 file changed, 7 insertions(+)
-> >>>
-> >>> diff --git a/arch/m68k/include/asm/m5441xsim.h b/arch/m68k/include/as=
-m/m5441xsim.h
-> >>> index f48cf63bd782..d4ee1eab7c4a 100644
-> >>> --- a/arch/m68k/include/asm/m5441xsim.h
-> >>> +++ b/arch/m68k/include/asm/m5441xsim.h
-> >>> @@ -99,6 +99,7 @@
-> >>> =C2=A0 #define MCFINT2_PIT1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- 14
-> >>> =C2=A0 #define MCFINT2_PIT2=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- 15
-> >>> =C2=A0 #define MCFINT2_PIT3=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- 16
-> >>> +#define MCFINT2_NFC=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 25
-> >>> =C2=A0 #define MCFINT2_RTC=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-26
-> >>> =C2=A0 /*
-> >>> @@ -333,4 +334,10 @@
-> >>> =C2=A0 #define MCF_IRQ_BOFF1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 (MCFINT1_VECBASE + MCFINT1_FLEXCAN1_BOFF)
-> >>> =C2=A0 #define MCF_IRQ_ERR1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- (MCFINT1_VECBASE + MCFINT1_FLEXCAN1_ERR)
-> >>> +/*
-> >>> + * Flash module
-> >>> + */
-> >>> +#define MCF_NFC_BASE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0xfc0=
-fc000
-> >>> +#define MCF_NFC_SIZE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (0xfc=
-0fff3b - 0xfc0fc000)
-> >>> +#define MCF_NFC_ISR=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (MCFIN=
-T2_VECBASE + MCFINT2_NFC) =20
-> >>
-> >> I'm sorry but this feels really backwards. Platform data as C
-> >> structures are already legacy, but defining these information in
-> >> some arch headers and using them directly from drivers really seems
-> >> even "wronger" to me. What's the mid/long term plan for this? If the
-> >> platforms are still in use today and need to be maintained, why not
-> >> finally enabling device tree support? I know it's harder to do than to
-> >> say, but I'd like some really good explanation on why we should accept
-> >> to do this in 2024 because it feels rather inadequate. =20
-> >=20
-> > Thanks for your review !
-> >=20
-> > I agree with you it is legacy. I use a lot of ARM platforms and device-=
-tree is indeed great. Though, switching the m68k architecture to use this s=
-ounds really tough.
-> >=20
-> > I will obviously let Geert and maybe others answer, but my feeling is i=
-t is not really worth it to implement the dts on those platforms are they a=
-re not that used (compared, again, to ARM for instance). =20
->=20
-> It would be nice to use devicetrees on ColdFire, but I am not aware of an=
-yone
-> currently working on it. So I don't think we will see it any time soon.
-> So currently all supported ColdFire peripherals are "legacy" and use the
-> old platform model.
+diff --git a/drivers/net/dsa/lan9303-core.c b/drivers/net/dsa/lan9303-core.c
+index 02f07b870f10..268949939636 100644
+--- a/drivers/net/dsa/lan9303-core.c
++++ b/drivers/net/dsa/lan9303-core.c
+@@ -1047,31 +1047,31 @@ static int lan9303_get_sset_count(struct dsa_switch *ds, int port, int sset)
+ 	return ARRAY_SIZE(lan9303_mib);
+ }
+ 
+-static int lan9303_phy_read(struct dsa_switch *ds, int phy, int regnum)
++static int lan9303_phy_read(struct dsa_switch *ds, int port, int regnum)
+ {
+ 	struct lan9303 *chip = ds->priv;
+ 	int phy_base = chip->phy_addr_base;
+ 
+-	if (phy == phy_base)
++	if (port == 0)
+ 		return lan9303_virt_phy_reg_read(chip, regnum);
+-	if (phy > phy_base + 2)
++	if (port > 2)
+ 		return -ENODEV;
+ 
+-	return chip->ops->phy_read(chip, phy, regnum);
++	return chip->ops->phy_read(chip, phy_base + port, regnum);
+ }
+ 
+-static int lan9303_phy_write(struct dsa_switch *ds, int phy, int regnum,
++static int lan9303_phy_write(struct dsa_switch *ds, int port, int regnum,
+ 			     u16 val)
+ {
+ 	struct lan9303 *chip = ds->priv;
+ 	int phy_base = chip->phy_addr_base;
+ 
+-	if (phy == phy_base)
++	if (port == 0)
+ 		return lan9303_virt_phy_reg_write(chip, regnum, val);
+-	if (phy > phy_base + 2)
++	if (port > 2)
+ 		return -ENODEV;
+ 
+-	return chip->ops->phy_write(chip, phy, regnum, val);
++	return chip->ops->phy_write(chip, phy_base + port, regnum, val);
+ }
+ 
+ static int lan9303_port_enable(struct dsa_switch *ds, int port,
+@@ -1099,7 +1099,7 @@ static void lan9303_port_disable(struct dsa_switch *ds, int port)
+ 	vlan_vid_del(dsa_port_to_conduit(dp), htons(ETH_P_8021Q), port);
+ 
+ 	lan9303_disable_processing_port(chip, port);
+-	lan9303_phy_write(ds, chip->phy_addr_base + port, MII_BMCR, BMCR_PDOWN);
++	lan9303_phy_write(ds, port, MII_BMCR, BMCR_PDOWN);
+ }
+ 
+ static int lan9303_port_bridge_join(struct dsa_switch *ds, int port,
+@@ -1374,8 +1374,6 @@ static const struct dsa_switch_ops lan9303_switch_ops = {
+ 
+ static int lan9303_register_switch(struct lan9303 *chip)
+ {
+-	int base;
+-
+ 	chip->ds = devm_kzalloc(chip->dev, sizeof(*chip->ds), GFP_KERNEL);
+ 	if (!chip->ds)
+ 		return -ENOMEM;
+@@ -1385,8 +1383,7 @@ static int lan9303_register_switch(struct lan9303 *chip)
+ 	chip->ds->priv = chip;
+ 	chip->ds->ops = &lan9303_switch_ops;
+ 	chip->ds->phylink_mac_ops = &lan9303_phylink_mac_ops;
+-	base = chip->phy_addr_base;
+-	chip->ds->phys_mii_mask = GENMASK(LAN9303_NUM_PORTS - 1 + base, base);
++	chip->ds->phys_mii_mask = GENMASK(LAN9303_NUM_PORTS - 1, 0);
+ 
+ 	return dsa_register_switch(chip->ds);
+ }
+-- 
+2.43.0
 
-It's not the old platform model, it is older than the old platform
-model. This series hardcodes a physical offset in a driver. We are not
-even talking about a C structure defining platform data.
-
-> > AFAIK the platform data is not officialy considered deprecated ? As it =
-concerns a few platforms out there... =20
->=20
-> Certainly not officially deprecated. m68k in all its forms is currently w=
-ell maintained
-> (if not necessarily a lot of new development).
-
-The platform is not deprecated, it is even maintained, but saying that
-hardware support using plain C structures and machine drivers is
-deprecated doesn't hurt me.
-
-Thanks,
-Miqu=C3=A8l
 
