@@ -1,120 +1,86 @@
-Return-Path: <linux-kernel+bounces-239389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 975BF925EC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:40:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4B9925ED2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 895FE2A3907
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:39:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4399428A43F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1E4173345;
-	Wed,  3 Jul 2024 11:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3947B1741C4;
+	Wed,  3 Jul 2024 11:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qi9zy9Ze"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="f7+L3cQA"
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9917D61FE7;
-	Wed,  3 Jul 2024 11:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F0E13776F;
+	Wed,  3 Jul 2024 11:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720006534; cv=none; b=MafUuF/RrZI5p3rxYQmIc37eKHFimAD8AK6bwC5FxqnRep7hUp2vyrFTxMrZdYMoDgDs0iSQFveyV2WgWq51/2K3piE3rINbIJZ8TsInw6nUxkLE6L/CvVo3fVvuqt2+SQGd3GH8jrHzjaCdiwZsGEeTJ3o2WM+9Tgvn95Dfmwk=
+	t=1720006611; cv=none; b=TY0mTJHE1+auuXbhHFWc6S6+csWaD84L0nXCSvyFrS2t2nstEvCKWmKfgQitD5VACQejlRCxmwnB55UaLxAOEFIBBvixRq6oU3L//SCGUQaukk9Y75Gbwc4qTWoSY80qcgK6Ye4eFZi4VM1kMlhZILsq53br7n/rp4l739uQQA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720006534; c=relaxed/simple;
-	bh=bJWg1rRruMPh0S46XG5+CR3ZR1oWqGv969BJsrIHKxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QLPzCE2g+f3zQL7O4kILDww4tieF1txKCcrv8NdXINxh97nUFsrIc9+UZ7do8lYbTfodtEJwl6kiwWzYFRy0Syulfa3R+yHDub5Ty3J571p/fFfLGMfUcoo7jryHcvJwK/NHVoWqfF8wudGczATMHUTkWJf4R9BrgWaHBzzzYWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qi9zy9Ze; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720006529;
-	bh=bJWg1rRruMPh0S46XG5+CR3ZR1oWqGv969BJsrIHKxE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qi9zy9Zes/ClqzyvfCnf4Li0fHcpxxr3Zw6QmiPAbcig71kV4GGxVF8um12eK+r1j
-	 s4i1/4ZM0ae35iYh8VksHbEXsUd7gzhShVpHbCRUPWwr5tfjc0teWw+yYy0kdU0n/+
-	 6/xN/FKUBId02cJTXv/o9IhLTglbTRZ3LCQmTnBxheT3ymFAWlKGuWTyFuincbJtZJ
-	 pDrEMUhovvpGx/asc7WyQrIZp5nwVczgGrZtQFkBcaW2228UF8SLKrJOZE7znDpzjE
-	 6S3rsGTFBCpVQW/6ROk+sKbiFRnDHBf4/2hkMr7ELXJWDv9kq93NdzpDWxnS1EhO1A
-	 vlMYOZI5FGzDA==
+	s=arc-20240116; t=1720006611; c=relaxed/simple;
+	bh=Vp/o8oM7f/Cn3VExLle9E9dQVEcxizL9LtkQF+BGUZQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=elUQY7uKY0noWwmycy+cTcAs7Ycf9bp81cerpbTykCCCoKKnOREqn2bHGU3shVeI8QqMsX60n6eWF87sBGWN/SKpkFixdIvmE495GUv7oX1yFUbdpKtz+wx5mZApwGj+7bYju4zAH1s+G5/l0Z9owDQZNX49d5WOo1QYs7CcIcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=f7+L3cQA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1720006607;
+	bh=R77gWoyRaHjitzxdt9vqwRqguNOuLOOkElH+/b0NzN4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=f7+L3cQAqB64y7v0d9teKpFDl3Lqj5p13+WmEOHetk0kaogcB+CO10T6RnDDzoAGa
+	 gteTUArhjd+tZSLSkZ12HblqsPIacZ86GX3eBvVRK39Sd6hSMmBojFyGID68qyD7Rl
+	 ibs74wFnVbDxEOHAjYGRnD6gj5uUK1ziIIT6EvjlcYeNd7yWSxe7ALpYLUXbcV9bp3
+	 59aqOIqN87dzi1KVnGlACpYAijp6yy+uQ+nBVJlsT+G9g1IrdOBPxf2lfhAI20zdTl
+	 YPizHsGFfVpjx+qw3Q/93Ghb4Dx939v87hOWW13H8xo6Vd7m+8gIebykA2M7Bljfte
+	 8V0Twp32F5CiA==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WDd4d2WPfz4xbg;
-	Wed,  3 Jul 2024 21:35:28 +1000 (AEST)
-Date: Wed, 3 Jul 2024 21:35:27 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Linux Media Mailing List
- <linux-media@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the
- v4l-dvb-next tree
-Message-ID: <20240703213527.221bfe5a@canb.auug.org.au>
-In-Reply-To: <b47f96bb-b1a5-48a1-8002-1cee351bdb3f@xs4all.nl>
-References: <20240703163317.55618738@canb.auug.org.au>
-	<b47f96bb-b1a5-48a1-8002-1cee351bdb3f@xs4all.nl>
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WDd675Lhqz4xM5;
+	Wed,  3 Jul 2024 21:36:47 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+  linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 19/20] powerpc/xive: convert to
+ of_property_for_each_u32_new()
+In-Reply-To: <20240703-of_property_for_each_u32-v1-19-42c1fc0b82aa@bootlin.com>
+References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
+ <20240703-of_property_for_each_u32-v1-19-42c1fc0b82aa@bootlin.com>
+Date: Wed, 03 Jul 2024 21:36:47 +1000
+Message-ID: <87ikxmk8q8.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ZRgYOvDDw1HzjEV4Ra8K3CA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
 
---Sig_/ZRgYOvDDw1HzjEV4Ra8K3CA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Hans,
-
-On Wed, 3 Jul 2024 11:17:47 +0200 Hans Verkuil <hverkuil-cisco@xs4all.nl> w=
-rote:
+Luca Ceresoli <luca.ceresoli@bootlin.com> writes:
+> Simplify code using of_property_for_each_u32_new() as the two additional
+> parameters in of_property_for_each_u32() are not used here.
 >
-> My mistake. I discovered that git revert doesn't run the commit-msg hook.
+> In this case only the 'prop' variable can be removed and not 'reg',
+> because 'reg' is used in _previous_ lines of the same function. There
+> is no side effect because the of_property_for_each_u32() macro being
+> removed would anyway write 'reg' bwfore reading its value, and 'reg'
+> is not used in _following_ lines.
+>
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+>  arch/powerpc/sysdev/xive/spapr.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Interesting to know.
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-> Anyway, I installed a pre-push hook to double check this before I push to
-> our tree, so hopefully this won't happen again.
-
-Nice idea.
-
-> Question: does this have to be fixed? That would require a rebase, I thin=
-k,
-> which makes some media developers unhappy. Or can this be left as-is for =
-one
-> time?
-
-A one off probably doesn't matter (especially such a small patch).
-
-I have to admit though, it looks like this revert *introduces* an
-infinite loop i.e. what decrements i?
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ZRgYOvDDw1HzjEV4Ra8K3CA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaFN38ACgkQAVBC80lX
-0Gy4wAf+Lh4ydMr5TTW4OFaNlcbvZJoyDcVGkgVo1QPlUxYkp0ozZ0jij1e534NA
-Pf4aUjm6JspcpZ4UIQA4AkpfdCU1APi5LImiarkFBrj0pAeiE1sYKJXOjKht2Naw
-0iNs/9Z34QZvH9E4avqPNfw+tP/wSmwGwdzFcKOaqw5RrJReAhbFJIT5YweuSPoE
-CWGvnKTtq1jIWhzgn7FccQc2F58npraK8Y+J4MSm8J6lFn9MVgFBwxC/aq3vShjN
-PaHvEvsL9SL3KBEvSsKw3B0Ede9mtZMJUznWjcvSRQondXlDlsOsaz0MbNsIBFUa
-KlBucrXc59Ij0RBeEBc2/mqWW3K7AQ==
-=M4GX
------END PGP SIGNATURE-----
-
---Sig_/ZRgYOvDDw1HzjEV4Ra8K3CA--
+cheers
 
