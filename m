@@ -1,178 +1,132 @@
-Return-Path: <linux-kernel+bounces-239758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF0B926501
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:38:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599F3926502
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDC94B22644
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:38:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70D5A1C21878
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290BE181D18;
-	Wed,  3 Jul 2024 15:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F041181BAC;
+	Wed,  3 Jul 2024 15:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vB447qfW"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hyonFXuk"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC95D181D0B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD6C181B90
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720021068; cv=none; b=BGs7nX5Lv8Joae5ZF6NBdr5AHjra0YU9dNn30KMTxln7WRb+1FK2XNAB3VjEO8AoKgzpPYxVsmTOBopF2DLOm22aAE6sNWAYX/Jnkn0OqDUBmwbcojQjyl9FHGrrZrR/z+dbonVpZZ7enFtTYiTa3SUxjnQehFZNqdW7gt6W8LY=
+	t=1720021079; cv=none; b=bJYFNBdynyDdXglHBcuipXkwXr/zEudEwpooPlpQFrENwd1PG41X8K1rVpcGF/oB9nNEaofNHD8iBTTAKy78ID31CZfLYy69rK51KDq7defKgakx5IlStbbU+E0iQ/KAA06KAPjdn/cZCjbMc7RheaLepabbvvp9X2YsxThNaxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720021068; c=relaxed/simple;
-	bh=wWQnGurz34dVjbYa9e51gztmmwliLAPDPJ50ZxG9qgA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OtMy1/5XBnpCkRvKzGnz/LEV5WaOvTOVYJo/cUszUG4CHYkjh0bO/4YBsMDMUAhLwrqkMh2Sah11C9RVIz4f2MOo19IEl8KrVTKNCMqCuAb6xVCOitmnlQl6xfiCCxcW/rZpTFKgP9ge0VUlprAKvjzPUK75vvvS4SbN3K1xo+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vB447qfW; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-36710f4d5c9so3659313f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 08:37:46 -0700 (PDT)
+	s=arc-20240116; t=1720021079; c=relaxed/simple;
+	bh=ToTvATnp4WABvxAFVRt/CR2K+RafSr9oJSdMneycmR8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Yda3mOHXq1iBI4o0H0aOy+a+tp+nt5iqkPWqM3ZXRHwTKzFjTlbXqv5ntO4egnAHQM5+lX1+q5yukz3Gy1/wNIdMCwB/lXY0yQ7hqN8qIGoqK3w3j6RvNnB+9iNFkeicKmAp4MIsk0dyABvWEPF8Zy44w0Cz7BIzj9FkydfJp38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hyonFXuk; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a725041ad74so219455866b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 08:37:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720021065; x=1720625865; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0VgYma1pZNwjgQS0gGYLtcG95OpDEpiYchTd4dd1CUU=;
-        b=vB447qfWA+QqAReHdJNZ6pANeyk610uYUMJas++wzJz0l8thIZWaLmY3lOGRaMDbdl
-         3x8pINYgZQpnfPz4oTUy9hHA6F8bQY24WDV1lBuIfHcZb1Bf4HxcsyYY1exSeAYf9Uut
-         YrCKWqWk/F75yiXjcqpS611pjQ3qSB0a82xO/iYMhPrUECSpBGZ95ZI+BpxHQAeBaufh
-         /4e4rQooSl64Q8gR++CKkt4DJH1B4CfjHtevJjCQEKIKYoaSeO/rbk4KVQWvSxEtNaxA
-         mk9OddIYcXDezGG8WA7L2rkesLhlOCo8pIRik5USrbHTWxcaxMPdhsdv8aqW0qLRZMfk
-         OIqA==
+        d=gmail.com; s=20230601; t=1720021076; x=1720625876; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0qoGRCwGNsTclf/4dZ4LBPFCeRN6TBtp4p8AKuUCcKw=;
+        b=hyonFXukyrGkGBX2XyNs10hv0sjzLQPxF/Ea6MKChRW5ONwFjBRxOFuXUlXPfqOeD4
+         i/NfYHvcEPqak2sleHmzeXuzeXAsdvtUXQdVTbY0hPLxglJKBNnIlPuGo2n8hS0Fi6AL
+         xtqd2uvmNmcBdEjZ+c6jRyvjIqiUgKrtczWj2E4anFgn03CgPYQHsN5wpU2tlW5pKvRL
+         /8WJEY+Bsy4i2dJguTnYlAW+E7rcFL1QS4iJ2qwYDKcAs1O/cZeKH4k92ZW4336cw7Zz
+         Q0w1fKdjtbnsti0Nm6+7c6RRuH97gpXQoWD8MUeGdgF1YN/3q9l/YDkyPSmRHvZCS2Tv
+         Y+nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720021065; x=1720625865;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0VgYma1pZNwjgQS0gGYLtcG95OpDEpiYchTd4dd1CUU=;
-        b=ULqDC4DmDbJJulFyKwRgpHKMyEbTD/QiHwWAicfgg9ge8H7Tcjv/PCRa0U73FKQBDA
-         a3HeqXosZIW558L6JPdwHI00v24CddoQ23EroWCzb7MiS+BzaiKQq/acU/iop0jWkNLj
-         Opychd2kvsRq54UlpPUiRjdvbs6s0QrAPns3Il7dWD8Jop8Kh3IAR/qiaZm6AbvwpnHt
-         E5ZXM7GNIL1iqMG+upXwT8UjWLXTICnQsf+AlDGb1eI85yrAUtWZRyJymenjSCqqtFEb
-         sS4BG2f8kQAovQfbwtsUgMIO88A8rWtlHDYt9kwtzQmg3J652RlAtQSe+WR/d+w8AJyn
-         DWtw==
-X-Gm-Message-State: AOJu0YxTfvGq1F7/fbl3PMFbntW3kqZ3fLMf45hYYS95HZxP0Gd9HfLq
-	HHvg79+zRvUmczE7SWHVbu7+MIHCKbpXi1CxbYv3D6wyK1uO5BS9+A++s9m6J3ikrCk9CyeAgYs
-	A0ry8HLJQnVQu1C3xkhW9sjh9rg==
-X-Google-Smtp-Source: AGHT+IFtkau4PUrPfaFpoWT9WZrMlwkJ6nzWXCWyNHWwfM9MaDp702lOc0joHAm0FFW3M+zr4hwKVhi/sAR/SkVIlZA=
-X-Received: from sebkvm.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:cd5])
- (user=sebastianene job=sendgmr) by 2002:a5d:6447:0:b0:362:b9a0:1cdc with SMTP
- id ffacd0b85a97d-367756b2babmr19658f8f.5.1720021065201; Wed, 03 Jul 2024
- 08:37:45 -0700 (PDT)
-Date: Wed,  3 Jul 2024 15:37:32 +0000
-In-Reply-To: <20240703153732.3214238-1-sebastianene@google.com>
+        d=1e100.net; s=20230601; t=1720021076; x=1720625876;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0qoGRCwGNsTclf/4dZ4LBPFCeRN6TBtp4p8AKuUCcKw=;
+        b=wryiP6rYg8G+7W/MddqIGd1Awu6TFTeXAwy4eYLvZcjHVOmnLBv4OX9IE3Ulkf8Ngz
+         cipqsHq/cNYTh5ZS1EcV0i7Tcw/OylMPdTQaGsvvmCJgzGT9GhqT1zaxEZkzXKn90+rl
+         r1j7gS3XFQYGBsrCFRHiGm2Seoc0Iz8T2xrMrKOTFsX3L366pezgjGLr5sfZfnYAC8/K
+         VStK0e546sEYjD8j2yXbNvsezo/TlhpajBKqhkTcEeUckg/vtmBri8UXhRJc3q/BjXKE
+         jf6+Ty9Q+MLzkqBfddmkJbWfnOl197piMttRTBxtxGt7Aw4wmPLo2T4h4MnsSBVIedgs
+         P/lg==
+X-Gm-Message-State: AOJu0YzIBkSlQcY+bJHzTvLfSB5vnTPQiGd4b75nPq3338KsuIR6sb8m
+	HjtfRVY8Ee3OaO+VXH2aG9C3O7XYsgjWimxAOKku/x3a8sxO9Zvw
+X-Google-Smtp-Source: AGHT+IG9tUs1K8wFUzZ6FBE31DCX9QrAQqkQU0GQjvqCXnv+VDlXB8CazidTqdklLVnNbx5+M6zTjA==
+X-Received: by 2002:aa7:cf8f:0:b0:58c:3252:3ab8 with SMTP id 4fb4d7f45d1cf-58c32523b82mr2920229a12.37.1720021076222;
+        Wed, 03 Jul 2024 08:37:56 -0700 (PDT)
+Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861503b4c5sm7119512a12.93.2024.07.03.08.37.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 08:37:55 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/7] mfd: Constify struct regmap_config
+Date: Wed, 03 Jul 2024 17:37:33 +0200
+Message-Id: <20240703-mfd-const-regmap_config-v1-0-aa6cd00a03bd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240703153732.3214238-1-sebastianene@google.com>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240703153732.3214238-3-sebastianene@google.com>
-Subject: [PATCH v3 2/2] misc: Register a PPI for the vcpu stall detection
- virtual device
-From: Sebastian Ene <sebastianene@google.com>
-To: arnd@arndb.de, gregkh@linuxfoundation.org, will@kernel.org, maz@kernel.org, 
-	Rob Herring <robh+dt@kernel.org>, Dragan Cvetic <dragan.cvetic@xilinx.com>, 
-	Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	kernel-team@android.com, Sebastian Ene <sebastianene@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD1whWYC/x3MTQqAIBBA4avErBvQyv6uEhGSo80iC40IpLsnL
+ b/FewkiBaYIY5Eg0M2RD58hywLWTXtHyCYbKlE1ohM17tbgevh4YSC363PJsOxwaI1WJHvdKwu
+ 5PgNZfv7zNL/vBxreTUxpAAAA
+To: Support Opensource <support.opensource@diasemi.com>, 
+ Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, Xu Yilun <yilun.xu@intel.com>, 
+ Tom Rix <trix@redhat.com>
+Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720021075; l=1254;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=ToTvATnp4WABvxAFVRt/CR2K+RafSr9oJSdMneycmR8=;
+ b=AGMaznePLnXgEW/jSt4EEspaxMwtnpG/rCVqCkUct9H+d4UivQMvlfVn37EjkyWRm2dkQGY+o
+ seS0kQN09fvChJ2BEWEfUN6pOnxm4tP8hnbzbcmFXGqGGXfAz97JeW5
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Request a PPI for each vCPU during probe which will be used by the host
-to communicate a stall detected event on the vCPU. When the host raises
-this interrupt from the virtual machine monitor, the guest is expected to
-handle the interrupt and panic.
+This series adds the const modifier to the remaining regmap_config
+structs within mfd that are effectively used as const (i.e., only
+read after their declaration), but kept as writtable data.
 
-Signed-off-by: Sebastian Ene <sebastianene@google.com>
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 ---
- drivers/misc/vcpu_stall_detector.c | 31 ++++++++++++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
+Javier Carrasco (7):
+      mfd: da9062-core: Constify struct regmap_config
+      mfd: fsl-imx25-tsadc: Constify struct regmap_config
+      mfd: hi655x-pmic: Constify struct regmap_config
+      mfd: wcd934x: Constify struct regmap_config
+      mfd: tps6105x: Constify struct regmap_config
+      mfd: rohm-bd9576: Constify struct regmap_config
+      mfd: intel-m10-bmc: Constify struct regmap_config
 
-diff --git a/drivers/misc/vcpu_stall_detector.c b/drivers/misc/vcpu_stall_detector.c
-index e2015c87f03f..41b8c2119e20 100644
---- a/drivers/misc/vcpu_stall_detector.c
-+++ b/drivers/misc/vcpu_stall_detector.c
-@@ -32,6 +32,7 @@
- struct vcpu_stall_detect_config {
- 	u32 clock_freq_hz;
- 	u32 stall_timeout_sec;
-+	int ppi_irq;
- 
- 	void __iomem *membase;
- 	struct platform_device *dev;
-@@ -77,6 +78,12 @@ vcpu_stall_detect_timer_fn(struct hrtimer *hrtimer)
- 	return HRTIMER_RESTART;
- }
- 
-+static irqreturn_t vcpu_stall_detector_irq(int irq, void *dev)
-+{
-+	panic("vCPU stall detector");
-+	return IRQ_HANDLED;
-+}
-+
- static int start_stall_detector_cpu(unsigned int cpu)
- {
- 	u32 ticks, ping_timeout_ms;
-@@ -132,7 +139,7 @@ static int stop_stall_detector_cpu(unsigned int cpu)
- 
- static int vcpu_stall_detect_probe(struct platform_device *pdev)
- {
--	int ret;
-+	int ret, irq;
- 	struct resource *r;
- 	void __iomem *membase;
- 	u32 clock_freq_hz = VCPU_STALL_DEFAULT_CLOCK_HZ;
-@@ -169,9 +176,22 @@ static int vcpu_stall_detect_probe(struct platform_device *pdev)
- 	vcpu_stall_config = (struct vcpu_stall_detect_config) {
- 		.membase		= membase,
- 		.clock_freq_hz		= clock_freq_hz,
--		.stall_timeout_sec	= stall_timeout_sec
-+		.stall_timeout_sec	= stall_timeout_sec,
-+		.ppi_irq		= -1,
- 	};
- 
-+	irq = platform_get_irq_optional(pdev, 0);
-+	if (irq > 0) {
-+		ret = request_percpu_irq(irq,
-+					 vcpu_stall_detector_irq,
-+					 "vcpu_stall_detector",
-+					 vcpu_stall_detectors);
-+		if (ret)
-+			goto err;
-+
-+		vcpu_stall_config.ppi_irq = irq;
-+	}
-+
- 	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
- 				"virt/vcpu_stall_detector:online",
- 				start_stall_detector_cpu,
-@@ -184,6 +204,9 @@ static int vcpu_stall_detect_probe(struct platform_device *pdev)
- 	vcpu_stall_config.hp_online = ret;
- 	return 0;
- err:
-+	if (vcpu_stall_config.ppi_irq > 0)
-+		free_percpu_irq(vcpu_stall_config.ppi_irq,
-+				vcpu_stall_detectors);
- 	return ret;
- }
- 
-@@ -193,6 +216,10 @@ static void vcpu_stall_detect_remove(struct platform_device *pdev)
- 
- 	cpuhp_remove_state(vcpu_stall_config.hp_online);
- 
-+	if (vcpu_stall_config.ppi_irq > 0)
-+		free_percpu_irq(vcpu_stall_config.ppi_irq,
-+				vcpu_stall_detectors);
-+
- 	for_each_possible_cpu(cpu)
- 		stop_stall_detector_cpu(cpu);
- }
+ drivers/mfd/da9062-core.c        | 4 ++--
+ drivers/mfd/fsl-imx25-tsadc.c    | 2 +-
+ drivers/mfd/hi655x-pmic.c        | 2 +-
+ drivers/mfd/intel-m10-bmc-pmci.c | 2 +-
+ drivers/mfd/intel-m10-bmc-spi.c  | 2 +-
+ drivers/mfd/rohm-bd9576.c        | 2 +-
+ drivers/mfd/tps6105x.c           | 2 +-
+ drivers/mfd/wcd934x.c            | 2 +-
+ 8 files changed, 9 insertions(+), 9 deletions(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240703-mfd-const-regmap_config-96da5e18a85f
+
+Best regards,
 -- 
-2.45.2.803.g4e1b14247a-goog
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
