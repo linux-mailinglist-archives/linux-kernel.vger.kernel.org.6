@@ -1,129 +1,94 @@
-Return-Path: <linux-kernel+bounces-238635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73937924D2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:29:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85736924D34
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE2A1F238ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:29:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81DF1C213FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFD7442C;
-	Wed,  3 Jul 2024 01:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XC6nxYXd"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806224409;
-	Wed,  3 Jul 2024 01:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180216FB0;
+	Wed,  3 Jul 2024 01:42:07 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 58CA51FB4;
+	Wed,  3 Jul 2024 01:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719970185; cv=none; b=jVozjarE1eH6ofE1iLrsgpiM00BrR32fdd/1cw5YO97mdjOIe+y0s+mizQ4sjU8fp6d2t5xiARMJlCw0XW8UgZYf3hznLEEomRK4XK/yAdf1k2vDpe9/HPqEOTdBhULMnYTTmalzJ2uT9LBlaW4ItB8aFyD/OweaB0bSlctYWK8=
+	t=1719970926; cv=none; b=GfqIjeh0II1/TcimWm8KLHdAZ00WhmiKB1KYC2FmzY1aLxu9bZnJrCWe1KZXX7y0Lkcf5tcfYHY8borugcHKT5AymNKF9jWJZDFQq/gdwzFGssK55BYm59mxKG5UAluWWNCL4yD86Xnv4PKQtnaYQWW0z2xabfor10xecbI2Gpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719970185; c=relaxed/simple;
-	bh=g+XXyHOzir2A2nh4K4ouH8PO9d/BcCXBpfaXdmkAeN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AhDjg/fliRWFownExQmTCR8lP/2u/8ifzReP+VG6d6EvbqoNxtMKSL5izRbpD6A4NkY99+HL+TeWAnC0XMx8tfn5KFMV00ePCPOyb/h9pQqBj9Rn8h2ps/Ubs88pETfEAjd1J7EMuwjZLZKvbwkXyFgKmnsBmNTqZv+USLhGjrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XC6nxYXd; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1719970179;
-	bh=nIM5iPvChSeqRiNksJ2bd1KdDzBJoaJC7afh/m1jadA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=XC6nxYXdzsXwAtOUKw73d5PjyMc7HeX7ZJoT1mjy60zHjNwsaENQxUKfuBro+MEUV
-	 RA3vOaLPjOxVQ69UAkQteAu/lvlSXd2Qoi8zW9aQBaRAhpnnlAboZhUc6eGaz4ReYL
-	 RuLfJpIkn0DO6NTkhM7M5Z7f46ieoyqjzBB750gApxSKQAJtv1cdsEAmahXow2fJuc
-	 Nd3qqvhw5o7a/pwVi0eGXLUuXb6KYtC/Qx05Aoy+aeJOFbAiK7wOjvNxhgwQbepP4l
-	 kjbFLinaKFVnU2EbfaHnue+nf/0C/56GOQkUIS0BnFyEROTMLa6kPtL44EMwzyZkuL
-	 MFe3s2Thub0WQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WDMdZ5cJnz4wc1;
-	Wed,  3 Jul 2024 11:29:37 +1000 (AEST)
-Date: Wed, 3 Jul 2024 11:29:36 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Jiawen Wu
- <jiawenwu@trustnetic.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20240703112936.483c1975@canb.auug.org.au>
+	s=arc-20240116; t=1719970926; c=relaxed/simple;
+	bh=/0w+i+Lr65ap+CUE0bx3iXZmGu8G7R70ai0Z4Ilzjm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=ZxLQj4DWGiSANux5JNSndL3KsL3Jp9TKBNyyl9Kwl8AUkv6ZDq5ETAn6lvJakXjnCdXOMGlqV2sU+nbVy37uEVeNnaBeU8Q1oHRgwxdthBtf4JNYdjWsMQMXqnu9aD+DaPBOc2FZkyzlv83L0aNs/o44VZnCGmkMkuvitJg45yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 515B16047B688;
+	Wed,  3 Jul 2024 09:41:46 +0800 (CST)
+Message-ID: <36cef2a8-10a3-928a-d962-3599333d9ac8@nfschina.com>
+Date: Wed, 3 Jul 2024 09:41:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_UeR91GFvX0uJsm9Y8KOSP1";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [PATCH wireless 1/9] wifi: cfg80211: avoid garbage value of
+ 'io_type' in brcmf_cfg80211_attach()
+Content-Language: en-US
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
+ Kalle Valo <kvalo@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, johannes.berg@intel.com,
+ kees@kernel.org, a@bayrepo.ru, marcan@marcan.st, quic_alokad@quicinc.com,
+ zyytlz.wz@163.com, petr.tesarik.ext@huawei.com, duoming@zju.edu.cn,
+ colin.i.king@gmail.com, frankyl@broadcom.com, meuleman@broadcom.com,
+ phaber@broadcom.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <1907419a888.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---Sig_/_UeR91GFvX0uJsm9Y8KOSP1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the net-next tree got a conflict in:
-
-  drivers/net/ethernet/wangxun/libwx/wx_hw.c
-
-between commit:
-
-  bd07a9817846 ("net: txgbe: remove separate irq request for MSI and INTx")
-
-from the net tree and commit:
-
-  b501d261a5b3 ("net: txgbe: add FDIR ATR support")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/ethernet/wangxun/libwx/wx_hw.c
-index d1b682ce9c6d,44cd7a5866c1..000000000000
---- a/drivers/net/ethernet/wangxun/libwx/wx_hw.c
-+++ b/drivers/net/ethernet/wangxun/libwx/wx_hw.c
-@@@ -1959,7 -1977,7 +1977,8 @@@ int wx_sw_init(struct wx *wx
-  	}
- =20
-  	bitmap_zero(wx->state, WX_STATE_NBITS);
- +	wx->misc_irq_domain =3D false;
-+ 	bitmap_zero(wx->flags, WX_PF_FLAGS_NBITS);
- =20
-  	return 0;
-  }
-
---Sig_/_UeR91GFvX0uJsm9Y8KOSP1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaEqYAACgkQAVBC80lX
-0GyYZAf8DxYgI5fhkZtmy+Uwo+WcOxg8hYCNADg8Ozmw0ZpfyWjjaemX75sVac8P
-AV58qTSoA98P+ktBpOlJrZVgmd3vOasBB3HqIWp6HiS8oVySYqxxW5zboNC3uUut
-/X3tzuUBlkggYIHZElnmyDUWJCXs7rDhUihBEkU04dOdFyTI5OhwL6Vp5M7069bY
-zluk5SjeM23y0hn9WswmzOJZw7OUE6ELKCPaen+fSqKTpadDSDHLm8VuaSmlKPtc
-hr3nyvPSR/SsPufnOLO30crCz8bomm5y6ashou7OPNAV3IKAOpU7QvW4k8R3w8/r
-ChJtUFF6DShtJAY9KjQM2t5RthSRkg==
-=HcsQ
------END PGP SIGNATURE-----
-
---Sig_/_UeR91GFvX0uJsm9Y8KOSP1--
+On 2024/7/2 23:39, Arend Van Spriel wrote:
+> On July 2, 2024 5:29:27 PM Kalle Valo <kvalo@kernel.org> wrote:
+>
+>> Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
+>>
+>>> On July 2, 2024 3:57:27 PM Dan Carpenter <dan.carpenter@linaro.org> 
+>>> wrote:
+>>>
+>>>> On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
+>>>>> brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
+>>>>> brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage 
+>>>>> value.
+>>>>
+>>>> Since you're going to be resending anyway, please delete the space 
+>>>> char
+>>>> from the start of the line.
+>>>>
+>>>> It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
+>>>> It looks like it just goes to great lengths to preserve the original
+>>>> data in io_type...  So it likely is harmless enough but still a 
+>>>> strange
+>>>> and complicated way write a no-op.
+>>>
+>>> Not sure if it helps, but I tried to explain the reason in response to
+>>> patch 0 (cover letter).
+>>
+>> Would it make more sense to have just one patch? It's the same issue
+>> anyway.
+>
+> Yes, but I would solve it in brcmf_fil_* functions (fwil.[ch]).
+It seems you will send a new patch to solve this issue.
+And I guess there is no need for me to resend a v2 patchset or just one 
+patch.
 
