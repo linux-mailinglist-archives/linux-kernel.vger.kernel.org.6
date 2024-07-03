@@ -1,214 +1,195 @@
-Return-Path: <linux-kernel+bounces-239316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4393A925B10
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:05:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD200925A19
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4509529A1C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:54:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AE101F21A21
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FC018412F;
-	Wed,  3 Jul 2024 10:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE0713BC18;
+	Wed,  3 Jul 2024 10:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LJOnaLoQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/dbKkCo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3616F136E2A;
-	Wed,  3 Jul 2024 10:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D2E136E2A;
+	Wed,  3 Jul 2024 10:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720003553; cv=none; b=gkaC98rD9NnWjpzQHGocsnDlVGGFKSkuIlvYUh9jketWyGPDyNU8w13kdt81tgu0XNkVmEpLTRmMvRh8x4sWWR40DF1KiAVZ43i0WZt5RgTFc8QnFHWYswvRx3tQpjYPRumMFqqsNAuMY91JZw5pSapaR4jOXuzcfKIAR2HxbfU=
+	t=1720003510; cv=none; b=XewEbY6YctYoe9Gn/tBDxgqLjYHmjAl2pQUfozQFMlA3XBj1XPNH4FWPvCQb3DxFtoKbkzGk1DgzGCGAt8Ez0pAvAqVJOUlu39ZTUctOnseXt3pYBySh+O4U9EKai5rfZClSbZ5Jm1mZF2MXDwMuAibJfhUuc0HwF2I6J2zTPjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720003553; c=relaxed/simple;
-	bh=ybZI4gJNmFnoEu3H9cWbSOw6kCgX8A39RFgpl/yKhZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JniM/DMu9njpwlGpwkjt2RD3KWHAuU9zo1AQWh+V4iu+mNYOozqOV7hIbOMMNAYCSMuhQN2noTAk1XXU8ERShka5yypo3M7Kvyjckh3RKjBeOUFQ2jXzR87x+yk0p0AeSxTMf2xNC7WsJ7iRraBOrWPYBRodQj7nblLVKEj/GFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LJOnaLoQ; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720003551; x=1751539551;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ybZI4gJNmFnoEu3H9cWbSOw6kCgX8A39RFgpl/yKhZE=;
-  b=LJOnaLoQAYC1sPRYS76IwwMcMjcbCgIka1AbHykWmJnEYYAdUIa/Xw9d
-   yRQNjnqIsVRdiJjT6R4PfnOzHnMjKyrZO8meeSY4jVYvjgzpYkAv+CFLy
-   8RX8eR/tqNazKlW19Pagl5MwNzOVHTEjY7j8xq3NufrsUowWfXcKhrpLe
-   n0rO84YeKyVXqHz+2pQMbnbm9eixztbjrbHxrpQiOfzecNdD/oKFia4wZ
-   HZhJM/tRFc29BoCr5Hvu2LqPhMhQUTyxl5j2Z7ExmDmj4pSyCv8KpB4pW
-   djZljblugejhFmiHMxurWa0DA4b1K2DaaDP5zX2pb1FGar61KK8VMXNcH
-   A==;
-X-CSE-ConnectionGUID: WUia96+hT8mjiJmiChBHcg==
-X-CSE-MsgGUID: NqrdvJGpS8SF6Jv8bAenYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="28617588"
-X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
-   d="scan'208";a="28617588"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 03:45:50 -0700
-X-CSE-ConnectionGUID: mGFZsjhpSDavh5I/wmDnYw==
-X-CSE-MsgGUID: koyajHxJR5q0JcInXI98ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
-   d="scan'208";a="76947966"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 03:45:48 -0700
-Date: Wed, 3 Jul 2024 12:44:27 +0200
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
-	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
-Subject: Re: [net-next PATCH v7 00/10] Introduce RVU representors
-Message-ID: <ZoUri0XggubbjQvg@mev-dev.igk.intel.com>
-References: <20240628133517.8591-1-gakula@marvell.com>
+	s=arc-20240116; t=1720003510; c=relaxed/simple;
+	bh=PtQNUlx8ansBCk+WctUe9IMiEXLQyi16mlQEDtfaI0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M+7Ln4YMpG7EPjN/995k3jRDzwcVppJ3u3OEmOqEav3ekCuYZ5lKyJjg9IqtdMiZj419zotq7ftANSGNDVQTXnTnvmM+cde1Xc/rfsh9szWdZ+rrGuNRbXL75xUj8TfkwvdPF6j74Sk3M1pw0drkoBOjEO2O7XUbcV0DmtU9BPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/dbKkCo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21BA8C4AF0A;
+	Wed,  3 Jul 2024 10:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720003510;
+	bh=PtQNUlx8ansBCk+WctUe9IMiEXLQyi16mlQEDtfaI0k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=h/dbKkCo8418U3YgZo3vL3QEhwgmbEw8uLXqVq9r7Deo8OCi/A9mI4fIukRYmYSPx
+	 xD7O9t/Ocjt+XcklvHPEFdF/LmpkdwcgYEVY2eOpcDj5ZJKEMebFDbYaPkwdf05tgF
+	 5y4+m4AWLppp/Fw2MO9G3VSJuwmRgrXPVId2Qtl/9EdybbCXIEbaEoC5D1aw3nHqnn
+	 k3iT9KNH2aQYV028PVlvFtjvc0XbgIcFItBvJNv+tNxPqvGKS1n1jhJ0FGX2VMzlar
+	 8HsMtM0GqbSVrZPmk0NlXTdNEjlMPrlR4+SbMUOjfvNBvYehyvep4jJCmAILYHKzZD
+	 eVzxLrFETSKHA==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a729d9d7086so91505966b.0;
+        Wed, 03 Jul 2024 03:45:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUigJPjxcSkw+NUyrogq/8v6pflInC60WXNJWlhKJYUJCBEBwQvQqqV8VzFeb612C+Ieh5NARz6uPxnS6jPfrirSHzUIl548MvY1gc=
+X-Gm-Message-State: AOJu0YxK3N1BNtTyypks+UWZzLWpj5cpx0CD9YFwCmXb30Z37gPxqfRJ
+	/DZnBIuEp/LIK+ui10wVxHzQgNHlOqRkYOubewJL1yAtDUx3rDtvUoerI71DM6vk7TeCH5R4h2F
+	h2IDkF1RHjp84UylOni3miyh3V2I=
+X-Google-Smtp-Source: AGHT+IFSSZRSZiPOdAVlcgtTYF0Q7TZArdGktuMCmFK5m3DdOJNmu80FkBBogvdkrJxRYC7UIxsHSxlNbePArkkq+no=
+X-Received: by 2002:a17:906:5a91:b0:a6f:b352:a74b with SMTP id
+ a640c23a62f3a-a77a252e4d9mr84232066b.38.1720003508655; Wed, 03 Jul 2024
+ 03:45:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240628133517.8591-1-gakula@marvell.com>
+References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
+ <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
+ <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
+ <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
+ <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
+ <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com> <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
+In-Reply-To: <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Wed, 3 Jul 2024 11:44:32 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
+Message-ID: <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
+Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
+ execution time of the kswapd0 process and symptoms as if there is not enough memory
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
+	dsterba@suse.com, josef@toxicpanda.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 28, 2024 at 07:05:07PM +0530, Geetha sowjanya wrote:
-> This series adds representor support for each rvu devices.
-> When switchdev mode is enabled, representor netdev is registered
-> for each rvu device. In implementation of representor model, 
-> one NIX HW LF with multiple SQ and RQ is reserved, where each
-> RQ and SQ of the LF are mapped to a representor. A loopback channel
-> is reserved to support packet path between representors and VFs.
-> CN10K silicon supports 2 types of MACs, RPM and SDP. This
-> patch set adds representor support for both RPM and SDP MAC
-> interfaces.
-> 
-> - Patch 1: Refactors and exports the shared service functions.
-> - Patch 2: Implements basic representor driver.
-> - Patch 3: Add devlink support to create representor netdevs that
->   can be used to manage VFs.
-> - Patch 4: Implements basec netdev_ndo_ops.
-> - Patch 5: Installs tcam rules to route packets between representor and
-> 	   VFs.
-> - Patch 6: Enables fetching VF stats via representor interface
-> - Patch 7: Adds support to sync link state between representors and VFs .
-> - Patch 8: Enables configuring VF MTU via representor netdevs.
-> - Patch 9: Add representors for sdp MAC.
-> - Patch 10: Add devlink port support.
-> 
-> Command to create VF representor
-> #devlink dev eswitch set pci/0002:1c:00.0 mode switchdev
-> VF representors are created for each VF when switch mode is set switchdev on representor PCI device
+On Wed, Jul 3, 2024 at 11:31=E2=80=AFAM Filipe Manana <fdmanana@kernel.org>=
+ wrote:
+>
+> On Tue, Jul 2, 2024 at 6:22=E2=80=AFPM Filipe Manana <fdmanana@kernel.org=
+> wrote:
+> >
+> > On Tue, Jul 2, 2024 at 3:13=E2=80=AFPM Mikhail Gavrilov
+> > <mikhail.v.gavrilov@gmail.com> wrote:
+> > >
+> > > On Mon, Jul 1, 2024 at 2:31=E2=80=AFPM Filipe Manana <fdmanana@kernel=
+.org> wrote:
+> > > >
+> > > > Try this:
+> > > >
+> > > > https://lore.kernel.org/linux-btrfs/cb12212b9c599817507f3978c910276=
+7267625b2.1719825714.git.fdmanana@suse.com/
+> > > >
+> > > > That applies only to the "for-next", it will need conflict resoluti=
+on
+> > > > for 6.10-rc, as noted in the commnets.
+> > > > For a version that cleanly applies to 6.10-rc:
+> > > >
+> > > > https://gist.githubusercontent.com/fdmanana/5262e608b3eecb9a3b2631f=
+8dad49863/raw/1a82fe8eafbd5f6958dddf34d3c9648d7335018e/btrfs-don-t-loop-aga=
+in-over-pinned-extent-maps-when-.patch
+> > >
+> > > I tested this patch on top of v6.10-rc6
+> > >
+> > > > Btw, besides the longer kswapd execution times, what else do you ob=
+serve?
+> > > > Is it impacting performance of any applications?
+> > >
+> > > I observe that the system freezes under load.
+> > > Demonstration: https://youtu.be/1-gUrnEi2aU
+> > > The GNOME shell stops responding, and even the clock in the GNOME
+> > > status bar stops updating seconds.
+> > > And this didn't happen when the v6.9 kernel was running. Second, I
+> > > spotted high CPU usage by process kswapd0 when freezes occurred.
+> > > Therefore, I decided to find the commit that led to high CPU
+> > > consumption by the kswapd0 process.
+> > > As we found out, this commit turned out to be 956a17d9d050.
+> > >
+> > > > I think no matter what we do, it's likely that kswapd will take mor=
+e
+> > > > time than before, because now there's extra work of going through
+> > > > extent maps and dropping them.
+> > > > We had to do it to prevent OOM situations because extent map creati=
+on
+> > > > was unbounded.
+> > >
+> > > Unfortunately, the patch didn't improve anything.
+> > > kswapd0 still consumes 100% CPU under load.
+> > > And my system continues to freeze.
+> >
+> > Ok, the concerning part is the freezing and high cpu usage.
+> >
+> > So besides that patch, try 2 other patches on top of it:
+> >
+> > 1) https://gist.githubusercontent.com/fdmanana/5262e608b3eecb9a3b2631f8=
+dad49863/raw/aaf4c00fd40aaee0ee2788cd9fdfe2f083328c39/btrfs-don-t-loop-agai=
+n-over-pinned-extent-maps-when-.patch
+> >     (this is the patch you tried before)
+> >
+> > 2) https://gist.githubusercontent.com/fdmanana/f2275050f04d1830adb81174=
+5bfd99d4/raw/1001d8154133d862e305959ee9eedebf55941669/gistfile1.txt
+> >
+> > 3) https://gist.githubusercontent.com/fdmanana/0a71b9e0fe71f38f67a50b7b=
+53d520e6/raw/680cab70d2ef32337583bee6a4fb6519241b2faa/0003-btrfs-prevent-ex=
+tent-map-shrinker-from-monopolizing-.patch
+> >
+> > Apply those patches on top of 6.10-rc in that order and let me know how=
+ it goes.
+>
+> Also, a 4th one:
+>
+> https://gist.githubusercontent.com/fdmanana/638d90142e4db7cd462121d812075=
+de7/raw/acb90d92c1cab512414e0bd5461640c9015da4ec/0004-btrfs-use-delayed-ipu=
+t-during-extent-map-shrinking.patch
+>
+> This one should apply in any order. Try all those 4 together please.
+> Thanks!
 
-Does it mean that VFs needs to be created before going to switchdev
-mode? (in legacy mode). Keep in mind that in both mellanox and ice
-driver assume that VFs are created after chaning mode to switchdev (mode
-can't be changed if VFs).
+I'm collecting all the patches in this branch:
 
-Different order can be problematic. For example (AFAIK) kubernetes
-scripts for switchdev assume that first is switching to switchdev and
-VFs creation is done after that.
+https://git.kernel.org/pub/scm/linux/kernel/git/fdmanana/linux.git/log/?h=
+=3Dem_shrinker_6.10
 
-Thanks,
-Michal
+They apply cleanly to 6.10-rc.
 
-> # devlink dev eswitch set pci/0002:1c:00.0  mode switchdev 
-> # ip link show
-> 25: r0p1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
->     link/ether 32:0f:0f:f0:60:f1 brd ff:ff:ff:ff:ff:ff
-> 26: r1p1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
->     link/ether 3e:5d:9a:4d:e7:7b brd ff:ff:ff:ff:ff:ff
-> 
-> #devlink dev
-> pci/0002:01:00.0
-> pci/0002:02:00.0
-> pci/0002:03:00.0
-> pci/0002:04:00.0
-> pci/0002:05:00.0
-> pci/0002:06:00.0
-> pci/0002:07:00.0
-> 
-> ~# devlink port
-> pci/0002:1c:00.0/0: type eth netdev r0p1v0 flavour pcipf controller 0 pfnum 1 vfnum 0 external false splittable false
-> pci/0002:1c:00.0/1: type eth netdev r1p1v1 flavour pcivf controller 0 pfnum 1 vfnum 1 external false splittable false
-> pci/0002:1c:00.0/2: type eth netdev r2p1v2 flavour pcivf controller 0 pfnum 1 vfnum 2 external false splittable false
-> pci/0002:1c:00.0/3: type eth netdev r3p1v3 flavour pcivf controller 0 pfnum 1 vfnum 3 external false splittable false
-> 
-> -----------
-> v1-v2:
->  -Fixed build warnings.
->  -Address review comments provided by "Kalesh Anakkur Purayil".
-> 
-> v2-v3:
->  - Used extack for error messages.
->  - As suggested reworked commit messages.
->  - Fixed sparse warning.
-> 
-> v3-v4: 
->  - Patch 2 & 3: Fixed coccinelle reported warnings.
->  - Patch 10: Added devlink port support.
-> 
-> v4-v5:
->   - Patch 3: Removed devm_* usage in rvu_rep_create()
->   - Patch 3: Fixed build warnings.
-> 
-> v5-v6:
->   - Addressed review comments provided by "Simon Horman".
->   - Added review tag. 
-> 
-> v6-v7:
->   - Rebased on top net-next branch.
-> 
-> Geetha sowjanya (10):
->   octeontx2-pf: Refactoring RVU driver
->   octeontx2-pf: RVU representor driver
->   octeontx2-pf: Create representor netdev
->   octeontx2-pf: Add basic net_device_ops
->   octeontx2-af: Add packet path between representor and VF
->   octeontx2-pf: Get VF stats via representor
->   octeontx2-pf: Add support to sync link state between representor and
->     VFs
->   octeontx2-pf: Configure VF mtu via representor
->   octeontx2-pf: Add representors for sdp MAC
->   octeontx2-pf: Add devlink port support
-> 
->  .../net/ethernet/marvell/octeontx2/Kconfig    |   8 +
->  .../ethernet/marvell/octeontx2/af/Makefile    |   3 +-
->  .../ethernet/marvell/octeontx2/af/common.h    |   2 +
->  .../net/ethernet/marvell/octeontx2/af/mbox.h  |  74 ++
->  .../net/ethernet/marvell/octeontx2/af/npc.h   |   1 +
->  .../net/ethernet/marvell/octeontx2/af/rvu.c   |  11 +
->  .../net/ethernet/marvell/octeontx2/af/rvu.h   |  30 +-
->  .../marvell/octeontx2/af/rvu_debugfs.c        |  27 -
->  .../marvell/octeontx2/af/rvu_devlink.c        |   6 +
->  .../ethernet/marvell/octeontx2/af/rvu_nix.c   |  81 ++-
->  .../marvell/octeontx2/af/rvu_npc_fs.c         |   5 +
->  .../ethernet/marvell/octeontx2/af/rvu_reg.h   |   4 +
->  .../ethernet/marvell/octeontx2/af/rvu_rep.c   | 464 ++++++++++++
->  .../marvell/octeontx2/af/rvu_struct.h         |  26 +
->  .../marvell/octeontx2/af/rvu_switch.c         |  20 +-
->  .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +
->  .../ethernet/marvell/octeontx2/nic/cn10k.c    |   4 +-
->  .../ethernet/marvell/octeontx2/nic/cn10k.h    |   2 +-
->  .../marvell/octeontx2/nic/otx2_common.c       |  56 +-
->  .../marvell/octeontx2/nic/otx2_common.h       |  84 ++-
->  .../marvell/octeontx2/nic/otx2_devlink.c      |  49 ++
->  .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 305 +++++---
->  .../marvell/octeontx2/nic/otx2_txrx.c         |  38 +-
->  .../marvell/octeontx2/nic/otx2_txrx.h         |   3 +-
->  .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  19 +-
->  .../net/ethernet/marvell/octeontx2/nic/rep.c  | 684 ++++++++++++++++++
->  .../net/ethernet/marvell/octeontx2/nic/rep.h  |  53 ++
->  27 files changed, 1834 insertions(+), 227 deletions(-)
->  create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
->  create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/rep.c
->  create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/rep.h
-> 
-> -- 
-> 2.25.1
-> 
+>
+> > Thanks.
+> >
+> > >
+> > > 6.10.0-0.rc6.51.fc41.x86_64+debug with patch
+> > > up  1:00
+> > > root         269 13.1  0.0      0     0 ?        S    12:24   7:53 [k=
+swapd0]
+> > > up  2:00
+> > > root         269 29.9  0.0      0     0 ?        R    12:24  36:02 [k=
+swapd0]
+> > > up  3:00
+> > > root         269 37.8  0.0      0     0 ?        S    12:24  68:19 [k=
+swapd0]
+> > > up  4:05
+> > > root         269 39.3  0.0      0     0 ?        R    12:24  96:40 [k=
+swapd0]
+> > > up  5:01
+> > > root         269 38.8  0.0      0     0 ?        R    12:24 117:00 [k=
+swapd0]
+> > > up  6:00
+> > > root         269 40.3  0.0      0     0 ?        S    12:24 145:24 [k=
+swapd0]
+> > >
+> > > --
+> > > Best Regards,
+> > > Mike Gavrilov.
 
