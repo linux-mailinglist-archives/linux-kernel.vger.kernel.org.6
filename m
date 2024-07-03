@@ -1,128 +1,127 @@
-Return-Path: <linux-kernel+bounces-240076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18DF29268DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:12:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D299268DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DDEDB214D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:12:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF65281C34
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BE7187570;
-	Wed,  3 Jul 2024 19:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3379618C333;
+	Wed,  3 Jul 2024 19:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="snxCe3va"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="u8sAIh0k"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB2941A81;
-	Wed,  3 Jul 2024 19:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B602187570;
+	Wed,  3 Jul 2024 19:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720033929; cv=none; b=N8k3i0AJvLgU4E2UFOFrGy1lzkeKohv1yzWNE07gxoSgaMeDa79QJBC9ekxQy5PrNMFwQbzerSSKxAWmM2oogOEs9+8jKb1S+aclRy2MCTQzgFjGUEY25VAlDcWUuBzub7en+8gtkBU80JjRp9LA3OM5sbDvX5fy4vdnJO6U8Uc=
+	t=1720033906; cv=none; b=IFKfX/XbMebltPfkBGd3Y8y+GnnCkO2UEnD2CASeor85mw3g2G6HWOd9ezgKHNhskfZIfkDgBSz+YBPa6nbaxMcwTdt795Tzg3ntNqqO6cjnvPu778+0eiZ5VrFomrI7tUFI9nqmWSYYpai/FFq6TSVFxUwGRpOptI5tbBRKRSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720033929; c=relaxed/simple;
-	bh=N2yseTzSknHLCuz9k9d0iGU8jXJUX7vZr9eibLokf1s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZKOPACptDTvG4pJIaFRhG9N+oO+GLwuQaZyqiRS1QKOKDAtILkXHItsn8zm5Nkji+C6LvM73n1h1m/DjmusenXl0qKarFhuGlZ0IbX4/yPuBjVa82mkyNZmYTbU+QxbhzgQCWEqrrh67lpUqlUW9DFfdGLgBlGAMCkCeBhafuO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=snxCe3va; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id AEB3F100004;
-	Wed,  3 Jul 2024 22:11:44 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1720033904; bh=wR4UhQBrxz9Tl2V3D1+Y+i8wbjNl2gzDlSVQGT2T3Kw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=snxCe3vaTvNrSqB+OqExmDsR5hkNW6T5WrWagR5Zmw6kNNsIgD08LQC1ViVDn1Uxt
-	 f7/4+gSP/G+sAXP4pVy28CIZBBJaCJ0oA8PeSUBb/+F9LvYiK6ZCeUpsKJruKd1NMf
-	 LEjFW9zq1cGMphVk7SGqA3068A+Prhci7fLLyXhSPHx6QyZxeY5FvIsdXMo35m12pD
-	 fu7DyVjKHzzsvC9nZY8IgXerTmrj1b1cFYq48L2aelgC7hXADzX0fRGLqcAkAHi7VK
-	 ZQyHagO9Up5gnJxjJf8cLJ5v/cDR+1ZaS7MJNOsvQHUyTzpOa6R71R62IFu0fyBD7o
-	 Y0HPbuSe7G7uA==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Wed,  3 Jul 2024 22:10:47 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
- 22:10:27 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela
-	<perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto
-	<kuninori.morimoto.gx@renesas.com>, <linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH v2] ASoC: amd: Adjust error handling in case of absent codec device
-Date: Wed, 3 Jul 2024 22:10:07 +0300
-Message-ID: <20240703191007.8524-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240703164028.32806-1-amishin@t-argos.ru>
-References: 
+	s=arc-20240116; t=1720033906; c=relaxed/simple;
+	bh=3E3xPWB6kiGiSy2QWa5qKXmQoyeUU4QTQ749wteyoL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B00P7OrrqV0CFeBOvuR8YSUKMqPjcpQZ4c9zAIUuYcuCvt0geTepA2YVCboBBGxrIA1RNhQA17DOi2IVjBAnFgeYG3A0zkna4fupflKTmjIFL3wYq9F/SzQZCG4oPmk4pEGA3JfK32ExLAe1iZVi/P4cR4Wznt7IocY30Og99P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=u8sAIh0k; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WDqC3677jz6CmQyM;
+	Wed,  3 Jul 2024 19:11:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1720033898; x=1722625899; bh=6m7fScHfvSHfw4I4vLfsawbF
+	PucKc6EUzaqYNkps4vk=; b=u8sAIh0kNsdEUfY3MOrGoAaI0TvCnPmXQIvsm6OL
+	9lo1D2nPKU78UC38EZODq5CQOs72rsYWTiZ34GJHD/NZSo5kHfAoxLqvUd1FxkQf
+	pzlLd7q2g8l0EhAnZU5ZEdoNbWcnoGNL9abkOrBFNyVJI2n0dHvX4bogQ3U/ZYL1
+	lbpMsdd1GFrcet6GTtD1RTelariLEJ5bY5Pg24GFooW7dQEwEFYFe/Ya0qVnecC3
+	5WwGEzGbhNfUGfiAqEM2NqMWJJhjyxNWxhQrWCD8evKYrm11Zi6/rHgre+AsG/dk
+	rZ6Z4v4Ovq4TYoRvnaGAkqsRstdtEFlj6ajkzgNN3xt4aw==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Ot4i4DB33GKA; Wed,  3 Jul 2024 19:11:38 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WDqBw15YRz6Cnv3Q;
+	Wed,  3 Jul 2024 19:11:35 +0000 (UTC)
+Message-ID: <64d7746e-4751-4f46-a603-ce07f586b2d2@acm.org>
+Date: Wed, 3 Jul 2024 12:11:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186315 [Jul 03 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;t-argos.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/03 18:01:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/03 17:02:00 #25823003
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1] scsi: ufs: ufshpb: Fix NULL deallocation in
+ ufshpb_pre_req_mempool_destroy()
+To: Aleksandr Mishin <amishin@t-argos.ru>,
+ Daejun Park <daejun7.park@samsung.com>, stable@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ "James E.J. Bottomley" <jejb@linux.ibm.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Can Guo <cang@codeaurora.org>, Bean Huo <beanhuo@micron.com>,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+References: <20240703111751.23377-1-amishin@t-argos.ru>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240703111751.23377-1-amishin@t-argos.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-acpi_get_first_physical_node() can return NULL in several cases (no such
-device, ACPI table error, reference count drop to 0, etc).
-Existing check just emit error message, but doesn't perform return.
-Then this NULL pointer is passed to devm_acpi_dev_add_driver_gpios()
-where it is dereferenced.
+On 7/3/24 4:17 AM, Aleksandr Mishin wrote:
+> No upstream commit exists for this commit.
+> 
+> The issue was introduced with commit 41d8a9333cc9 ("scsi: ufs: ufshpb:
+> Add HPB 2.0 support").
+> 
+> In ufshpb_pre_req_mempool_destroy() __free_page() is called only if pointer
+> contains NULL value.
+> Fix this bug by modifying check condition.
+> 
+> Upstream branch code has been significantly refactored and can't be
+> backported directly.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 41d8a9333cc9 ("scsi: ufs: ufshpb: Add HPB 2.0 support")
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> ---
+>   drivers/ufs/core/ufshpb.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ufs/core/ufshpb.c b/drivers/ufs/core/ufshpb.c
+> index b7f412d0f301..c649e8a10a23 100644
+> --- a/drivers/ufs/core/ufshpb.c
+> +++ b/drivers/ufs/core/ufshpb.c
+> @@ -2120,7 +2120,7 @@ static void ufshpb_pre_req_mempool_destroy(struct ufshpb_lu *hpb)
+>   	for (i = 0; i < hpb->throttle_pre_req; i++) {
+>   		pre_req = hpb->pre_req + i;
+>   		bio_put(hpb->pre_req[i].bio);
+> -		if (!pre_req->wb.m_page)
+> +		if (pre_req->wb.m_page)
+>   			__free_page(hpb->pre_req[i].wb.m_page);
+>   		list_del_init(&pre_req->list_req);
+>   	}
 
-Adjust this error handling by adding error code return.
+Are any users of the 6.1 kernel using UFS HPB support? If not, another
+possibility is to backport commit 7e9609d2daea ("scsi: ufs: core: Remove
+HPB support").
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Thanks,
 
-Fixes: 02527c3f2300 ("ASoC: amd: add Machine driver for Jadeite platform")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
-v1->v2: Comment updated
-
- sound/soc/amd/acp-es8336.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/amd/acp-es8336.c b/sound/soc/amd/acp-es8336.c
-index e079b3218c6f..3756b8bef17b 100644
---- a/sound/soc/amd/acp-es8336.c
-+++ b/sound/soc/amd/acp-es8336.c
-@@ -203,8 +203,10 @@ static int st_es8336_late_probe(struct snd_soc_card *card)
- 
- 	codec_dev = acpi_get_first_physical_node(adev);
- 	acpi_dev_put(adev);
--	if (!codec_dev)
-+	if (!codec_dev) {
- 		dev_err(card->dev, "can not find codec dev\n");
-+		return -ENODEV;
-+	}
- 
- 	ret = devm_acpi_dev_add_driver_gpios(codec_dev, acpi_es8336_gpios);
- 	if (ret)
--- 
-2.30.2
-
+Bart.
 
