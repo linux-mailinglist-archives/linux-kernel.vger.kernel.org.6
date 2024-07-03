@@ -1,85 +1,82 @@
-Return-Path: <linux-kernel+bounces-240004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C37E9267D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:09:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 191A79267D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D7271C24F67
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:09:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA941C25180
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F8C186E5E;
-	Wed,  3 Jul 2024 18:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFA2187557;
+	Wed,  3 Jul 2024 18:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R2y2abge"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dEFY+Q7Y"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEA518628C;
-	Wed,  3 Jul 2024 18:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08A3185E53;
+	Wed,  3 Jul 2024 18:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720030173; cv=none; b=LHWfLsqe26RMwGf2Q5wBo+IERI+KsE0SE43CA5Rn774foWu0JDmN8veDAoswOpAj0CY5Eeq/WXmEpC5OGYyOG0oR9l31BEdiSCop8BRg4Bjss3CUYGIADVJMdtTEZBydoSDNceabBvW31VdiukwqnDWNI1oqz1Jt70JZsuJdpEY=
+	t=1720030175; cv=none; b=YezI/6fri6BzL5qb6Zm4m7lmn2HkvrJ47WEKh3I27XYdaYBJ43AMxx6WD0QcDQ/Qp8pA8+HRMiWNYlSjqtEyhZqem7V8M/L/0IUxVcS3OyLbRGAutIvswWjepXTWiqRwpkPb6r7sySpZcqseldfFC4/XwGA2JCnu9fa6WS62zU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720030173; c=relaxed/simple;
-	bh=ly+zdbaT1osIlNv/3aqRM3D0Eq/FlhdjnXjVeuOFpps=;
+	s=arc-20240116; t=1720030175; c=relaxed/simple;
+	bh=pE8UojUxvsUTrTbmPwYotN6I2N/PVqI/hdhpFcSnIGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mQfnI06k8mEr6gBOZWFMsShSjYquMcUhKoeuhJpERUzWLgNI1N4vnc7PBmpyhNnbo0JQWOkahOjGwfi5dOFC9iuqwMnd6L3ZqqSVzhaMkHZS6ViMf50YzXJq4DXTrribRsal7dKK3OT5I0ezIGuW9lqjGndnVr/0Fc/Z+roC5oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R2y2abge; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720030172; x=1751566172;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ly+zdbaT1osIlNv/3aqRM3D0Eq/FlhdjnXjVeuOFpps=;
-  b=R2y2abgejbdr2YwJx3Gg02LNHyd+fuyESIcffiKfszf47vZfXFaehFh2
-   Ld/vBjFfs8ONA/TvU0aA3yql1iijotQn40FIo1xm+BfnqdTqy80DXFq6S
-   aislqyKAWYj3zRFRee4k1n5CTHIwEoVQ2Nmx7bdjXxM6neiNGqZnH7o4E
-   +2TUH7VCPQ9/oHsQItYmKolRovhvWi9Zex83n60ZZxeQmy/i9ADmp2hSM
-   4tOFN+PQkfflNBpYABmccePkPruVsz2Khy9nZdkK4oNyaQ8vpiO2Nb9W9
-   pf0cNVyvFsRp1KVOJW62u8cHyP2BUCYrKoU530egqpOj/MaA09SV5gWcc
-   A==;
-X-CSE-ConnectionGUID: 6LGUO/5RTh+9NLaeM60rYA==
-X-CSE-MsgGUID: 963Vfbe0Q6q5/HKcVUU6kg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="17003271"
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="17003271"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 11:09:29 -0700
-X-CSE-ConnectionGUID: BdzLNe5OQraCHrOFUXa1kg==
-X-CSE-MsgGUID: BBz2WTcYS2u1WIxpKn1SGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="47001484"
-Received: from plborg-mobl.amr.corp.intel.com (HELO desk) ([10.209.72.65])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 11:09:29 -0700
-Date: Wed, 3 Jul 2024 11:09:21 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [PATCH PATCH v2 8/9] x86/bugs: Declutter vulnerable CPU list
-Message-ID: <20240703180921.gsfqdupitha22nz5@desk>
-References: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com>
- <20240627-add-cpu-type-v2-8-f927bde83ad0@linux.intel.com>
- <20240703010018.qov5lxldvou7fhhl@treble>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PErxefdbp/UrKvadEdnuie6olvHn8ftorRjBch1dwwQvmc5jmtspRJkirgaee3wSEk1nX+WbJW4fmsPH923T7WKveuLCViOQB1li4pm0TcbXeSU8EaCvgMt9CbVqxIkIwZoSju5zEYYSql48bIx9w+xBcLWLcHEVJH7vNq3Flss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dEFY+Q7Y; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f480624d0dso42634325ad.1;
+        Wed, 03 Jul 2024 11:09:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720030173; x=1720634973; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nERZSIG+9P3/XY2VuM/TfBeyxDC9IgQmuXZYoF/vBHM=;
+        b=dEFY+Q7YJYwzNzsehwrCt68WCWN97wlq5rP1vHgxPh0wc4XjkgtD3OHQ61m3mUUJ8B
+         CoXTDOuFVa80LrPExLOHz0V7TvA7l9oLcdIuIctLATbAezTHZlYtwXPOu3zieEnlFd2V
+         tbJ86Eo1GhBkxf06oCK9Lo0N5YYTCqkonU4u/6DIVjF7Y32rZf0flog5+Kc3Yho2pAZ5
+         lhZItsopaJtnC76pvnGzz/u3IJ7iT54/DVT2clIT5TsxbGlKt6F2prEP2oHf0ZBSKAaM
+         yVT/KWQd5zMC+ic59jewHNIx/fMfYZ1WJ9cV+vWG/Zf7mMa/ElEEehb6z+PJFKiNAVy/
+         1QTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720030173; x=1720634973;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nERZSIG+9P3/XY2VuM/TfBeyxDC9IgQmuXZYoF/vBHM=;
+        b=jImcl3ia10XacbY+L0Z3lda3E+OD+yu/amGZdrc3mCPFaCbQ4lAhbDphxmMY5F/F+/
+         tSbkelxbiZX3aUPFAJ8KD4G0/4Qf7vLE+SF+grZVnTRUTL51rUKPNrQXlsSUeGc3gjr+
+         jPgqdbzNKJyX2d3uD2YDqhhSQwl/JxvkGDuhCWcs4NxkRmo2SGh4LgAOlX9zUyxQw2GQ
+         tEh/PnoFSROfSP6Vk3diQxL/XnQy7d9eaq3Q+PXPkEL9YvdvcZuEgBkK66CuLxgCrlST
+         B/5LVeGbMUJmL2LyUqpY3O5n3E0kmo7OcC8SwrpXT56pUNaX38yPZ5tOYjS8BLpVJH10
+         FLdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVISFpYg6SRNIVHLEW3CUTBhiIZNwVGOcEya7SxQ3C/gpWPKjHsI/POvUCqaWNOz4YSAmvkrTLdXSIZPO3xBEkDcGe1jYeyM1p7fSNlDUP9bZ5U/fMOP7XxvDhQT8etRJoVUMS2WUsD0gGU5COwI4vPwM8V96OvtN9WEkaDUP80w==
+X-Gm-Message-State: AOJu0Yw56GGuWHpzsAhHZPGnPY4iQFBns99YvNk1Kr/GDNS1Q6tlDb2F
+	4PY95l5NM3iQ1KH8QzTzDhxDq/Um1SoqUoDd8A0vz1vFMx5I67pQonoWow==
+X-Google-Smtp-Source: AGHT+IFzD6hT7SV8vSVqYV+sEfsYjrm7wSKeq/WyV1dy7QOHkZbDHHqPDSfQZRQyXeV6I8nkqNohWw==
+X-Received: by 2002:a17:902:f545:b0:1fb:1e2d:9d23 with SMTP id d9443c01a7336-1fb1e2d9dd5mr17287625ad.30.1720030172928;
+        Wed, 03 Jul 2024 11:09:32 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb1bb5488dsm15160695ad.136.2024.07.03.11.09.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 11:09:32 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 3 Jul 2024 08:09:31 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Xiu Jianfeng <xiujianfeng@huawei.com>
+Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, corbet@lwn.net,
+	kamalesh.babulal@oracle.com, haitao.huang@linux.intel.com,
+	cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 -next] cgroup/misc: Introduce misc.peak
+Message-ID: <ZoWT21ElQDnnUtYL@slm.duckdns.org>
+References: <20240703003646.2762150-1-xiujianfeng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,63 +85,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240703010018.qov5lxldvou7fhhl@treble>
+In-Reply-To: <20240703003646.2762150-1-xiujianfeng@huawei.com>
 
-On Tue, Jul 02, 2024 at 06:00:18PM -0700, Josh Poimboeuf wrote:
-> On Thu, Jun 27, 2024 at 01:44:48PM -0700, Pawan Gupta wrote:
-> > The affected processor table has a lot of repetition and redundant
-> > information that can be omitted. For example:
-> > 
-> >   VULNBL_INTEL_STEPPINGS(INTEL_IVYBRIDGE,		X86_STEPPING_ANY,		SRBDS),
-> > 
-> > can easily be simplified to:
-> > 
-> >   VULNBL_INTEL(IVYBRIDGE,	SRBDS),
-> > 
-> > Apply this to all the entries in the affected processor table.
-> > 
-> > No functional change. Disassembly of arch/x86/kernel/cpu/common.o does not
-> > show any difference before and after the change.
+On Wed, Jul 03, 2024 at 12:36:46AM +0000, Xiu Jianfeng wrote:
+> Introduce misc.peak to record the historical maximum usage of the
+> resource, as in some scenarios the value of misc.max could be
+> adjusted based on the peak usage of the resource.
 > 
-> This patch only changes data, not code.  So there's not much point in
-> diffing the disassembly ;-)
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-You are right.
+Applied to cgroup/for-6.11.
 
-> A diff of the .init.rodata sections actually shows one (non-functional)
-> difference in cpu_vuln_blacklist[].
-> 
-> The COMETLAKE_L entries were moved to a new section below the rest of
-> the entries:
-> 
-> 	/* Match more than Vendor/Family/Model */
-> 	VULNBL_INTEL_STEPPINGS(COMETLAKE_L,	X86_STEPPINGS(0x0, 0x0),	MMIO | RETBLEED),
-> 	VULNBL_INTEL	      (COMETLAKE_L,					MMIO | MMIO_SBDS | RETBLEED | GDS),
-> 
-> While that's functionally correct, it breaks the visual sorting, which
-> is confusing and even a bit dangerous.  One would reasonably expect the
-> COMETLAKE_L entries to come immediately after COMETLAKE, so it would be
-> quite possible for somebody to come along later and add a new
-> COMETLAKE_L there which conflicts with the later entries.
-> 
-> I'd much rather leave the STEPPINGS entry in the original list where it
-> belongs.  Something like:
-> 
-> 	...
-> 	VULNBL_INTEL(ICELAKE_L,			MMIO | MMIO_SBDS | RETBLEED | GDS),
-> 	VULNBL_INTEL(ICELAKE_D,			MMIO | GDS),
-> 	VULNBL_INTEL(ICELAKE_X,			MMIO | GDS),
-> 	VULNBL_INTEL(COMETLAKE,			MMIO | MMIO_SBDS | RETBLEED | GDS),
-> 	VULNBL_INTEL_STEPPINGS(COMETLAKE_L,
-> 			       X86_STEPPINGS(0x0, 0x0),
-> 			       MMIO | RETBLEED),
-> 	VULNBL_INTEL(COMETLAKE_L,		MMIO | MMIO_SBDS | RETBLEED | GDS),
-> 	VULNBL_INTEL(TIGERLAKE_L,		GDS),
-> 	VULNBL_INTEL(TIGERLAKE,			GDS),
-> 	...
-> 
-> Yes, that's a little ugly, but at least the sorting is correct so it's
-> less confusing and more robust overall.
+Thanks.
 
-That makes sense, I will make that change.
+-- 
+tejun
 
