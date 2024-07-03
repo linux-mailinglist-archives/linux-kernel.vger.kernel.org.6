@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-238761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75AAB924FA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:37:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2A1924FAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA9228EC0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FAD928ED01
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA9B17BA9;
-	Wed,  3 Jul 2024 03:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA67345028;
+	Wed,  3 Jul 2024 03:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPzzBHJa"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nxbk4nCG"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87733D969
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 03:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF13C39FEF
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 03:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719977782; cv=none; b=HCf5XEzEy/qUcoDUBLCeTMfWmNWjHPALCqglJEuOIbctqyAhj7dcZqt8+6fPK4ILHJ+FbPLfab+qNf523UOOSJL3gUuyv8LmctQXEqlVZw0NV08hWBAo0EGiT7muJPNBM8gchFstdQCP6TVY0ewedFDLkTLfWoWlFjlmcpcOLQU=
+	t=1719977785; cv=none; b=lyQtjsWETAVZJxKDh0fXav2bAOL9l46KfMztQE/YtHydE5+QWvFF2uPg7Fof8STVhceNd8/kFkOsYTdpvyTcJocC0YLv9/9FWk+BNzspwq3iTfg9sMWCkmzcyBMUEMZo0zYTNRFCheHaJseciInYtluL9QiePOK/KP1jrXKiScs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719977782; c=relaxed/simple;
-	bh=4eMOivaNyGq3AAE/jp7yke6+6PAXIf8vuuNWSJKJq1A=;
+	s=arc-20240116; t=1719977785; c=relaxed/simple;
+	bh=QeCToHbPzWcpfWXXN0pXnJv0lCpyhXKVWAK1z/fEb7U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JFlJbVX3R/XhEbjybeQr83onoHuKtGQRe++35DZBKdaRJ2JmlwH8YF6X1jpnaH7Sz6tHBVe+P7UNCtDYUwe5eP0ZP2N29p6TIC+CBah1LwmsqGfzw/6rR5lU721hQN/IC8I8hlgzHxYbhpToD1dn9xX85qPTiFYXuhR5i5AvVrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NPzzBHJa; arc=none smtp.client-ip=209.85.215.170
+	 MIME-Version; b=KI0XuhAWC5NpMLN5aA9zBcnuCyZYiuYKl4Ai+kcxmP4XVl6+3OYE7r/VymNslYPNC2Uf4UCSrfzSHLvL7QutCAMgna6ie01y6aDn9N3TEsbmEWQ84JO8Jef37MvT2LBSMO/RSUHiw1pVyEg+w2vzKI3JarOpQEe3jP56OxdazQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nxbk4nCG; arc=none smtp.client-ip=209.85.219.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-71884eda768so2820127a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 20:36:20 -0700 (PDT)
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e03b0e73f14so7253276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 20:36:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719977779; x=1720582579; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719977782; x=1720582582; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Lws+ZLig0oV0HzzX4lmzZbMJvRrN++IbAE2lJR9pEa4=;
-        b=NPzzBHJaYuvklHTSLFevUUE2H1REwKCbQsW4kgl3WQDF3sYWdt0e+NbTGk4ZV/0Vz/
-         ceClXZrrAwcaj8pQ8LMjs5QDhusXzrxMODTQHM2Z9ipMCDv3zE/YFkZjwzgbHXn5qrfW
-         Cp0piMoGsNTua2grVFMvmq+uWk3LjkgyTDfFa5y1j5nMPVD0eapwb1lQd4L5ratM1atV
-         X1xdc8IpaMx1NYPYDdgMMNbNRzBAUyEzsGEZOXkb0d+cpD2CpImbhh0oBgwvG0XmuSIC
-         CzuV6bs2oMf1yfaGoxTPqcS2a9PxX2gguVLFJtM9B7gHA7wViALFnNG6oHXjn50wnDXF
-         le/w==
+        bh=TvgJeZKGGm17GDbCpMSw1b9wVEFwhXIl35XREnILA4o=;
+        b=Nxbk4nCGinfAYrtWFYIkFCZWs5ZAyaavpVl4zt6PAUl0KFRjRbKhFUugD0o3y77yhi
+         C+p51xVN+ce62IXMHueiCGDpbA4qw3EB3W8jPhmQkyIqXrYuvYCCVYfPARd9MQIAkKBR
+         JpzbOZAsZtzeXI8o2fzuo1uthykYdzum+nAx2q8m7s9zw6xdbfV/Lx2RJFuIPiXkquoK
+         8KPCgTqNywYgMhiN0NzzXPi/y7B4SeZKN+I557Vz2wUg5L5ekQxgmH5USwWU6X0wCpVN
+         y5pws+k7FBDq7MZlPyYb1us0ZaeXOQSb+09dilhzWexK/RxH3+X26aCqojiNfun0pHOA
+         9LIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719977779; x=1720582579;
+        d=1e100.net; s=20230601; t=1719977782; x=1720582582;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Lws+ZLig0oV0HzzX4lmzZbMJvRrN++IbAE2lJR9pEa4=;
-        b=k4Bi90pU8MfNNzYWA0n8LsNEaIGwSv0VIKiVZinbM5DKnvC/v26G3M2EmQrm3kMO2x
-         ghqTMweaKMH9jnhR/YFVWjihP8mR65OLHr0/A3lIlxLSjUdnSo+SVHB3R2TvxPsBVlYr
-         se0C+6JXu0EnzSOro0cJmOgN4so7V9sE3hF3PnkKCRO7SW/B6+A/ucZYQRwMlVw6nhsj
-         fHEBLl7ioiSY8I12xXNPtXWREbEXYuOh94KIANzLtPJuIBjm0KmEvfevnJeV4+GUkv1d
-         TUKYaU5BURUBqewtJawgX4bXeJFJEULlhfGlK1vItBWEtHWJFMD8DcK2NoIxmJCnZYnM
-         /U5g==
-X-Gm-Message-State: AOJu0YztRzZy8UTLDuzpzSN/h1M+30LFwMPkqEELtEfXLjerdVm8KcCL
-	c4hj5bKdF+0eQZBI2eZCxBU7ZQ+Be9F8O9r5WsbGnIM8XurKNtK53CJCTw==
-X-Google-Smtp-Source: AGHT+IF0l8eugTgllvLJTnwYtOC4OQsSPG3BE9H1d3jWcGDuYL2+VncEdV4DmPcltO0syFLtFPW3Zw==
-X-Received: by 2002:a05:6a20:3d86:b0:1c0:bf35:ef42 with SMTP id adf61e73a8af0-1c0bf35f31cmr852347637.3.1719977779562;
-        Tue, 02 Jul 2024 20:36:19 -0700 (PDT)
+        bh=TvgJeZKGGm17GDbCpMSw1b9wVEFwhXIl35XREnILA4o=;
+        b=HvSVE7wg5OERhMMWsNdLyIwA/v4XTsJo4cuMXrzbXwQdqp7uiCmzYJ7mLKPF2wuVQJ
+         oLyuCyAQir5AvxmjEOmO1mAMkRtXOLNp31xkbP+DbzChLE/pXFpoo8jWA2gP9IDJz/wv
+         FxEQ7qivgagk8hZ7fnqKLXin11V2UY+K5jUcMn5yzuQHBtKvqgqPWjh27QQ7cEYi9DFC
+         sRQ4aJZy0eW+yq6V+a+WSb1Z/OHgKq2+NG8332cbI62oQch4dCj4SmFvwRnIMQTvhWej
+         oVm9S+SDRfZDaQcSsN0yiWeYzUkMI9tIJQESXdr/cywgAuNQziB1AZQvH98AAhJ+woej
+         Aq9Q==
+X-Gm-Message-State: AOJu0Yy/0JlyoNp5j1h1D+oPJIYuQ8ANXlfwEG4BydoFcNuaw1J0b8f1
+	tgHhYpbQroxXjJ4rfIFyGgPqRylONxIkxtxCSis91oPFFO+uwopEM/5kxw==
+X-Google-Smtp-Source: AGHT+IEMxrB5TU29/Sg7Vd7BZZpIeNwKEjqmuJYkr2a2JsIy1hWgorAseX3NUmjTy2OHvdVREG+ddQ==
+X-Received: by 2002:a25:ab32:0:b0:e03:a4ba:856f with SMTP id 3f1490d57ef6-e03a4ba8622mr3241381276.53.1719977782470;
+        Tue, 02 Jul 2024 20:36:22 -0700 (PDT)
 Received: from localhost ([47.89.225.180])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c97cf8fc68sm160047a91.36.2024.07.02.20.36.18
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6c9e0ee3sm7250544a12.60.2024.07.02.20.36.21
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2024 20:36:19 -0700 (PDT)
+        Tue, 02 Jul 2024 20:36:22 -0700 (PDT)
 From: Lai Jiangshan <jiangshanlai@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
 	Tejun Heo <tj@kernel.org>,
 	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH 3/6] workqueue: Separate out destroy_rescuer()
-Date: Wed,  3 Jul 2024 11:38:52 +0800
-Message-Id: <20240703033855.3373-4-jiangshanlai@gmail.com>
+Subject: [PATCH 4/6] workqueue: Init rescuer before alloc and link pwqs
+Date: Wed,  3 Jul 2024 11:38:53 +0800
+Message-Id: <20240703033855.3373-5-jiangshanlai@gmail.com>
 X-Mailer: git-send-email 2.19.1.6.gb485710b
 In-Reply-To: <20240703033855.3373-1-jiangshanlai@gmail.com>
 References: <20240703033855.3373-1-jiangshanlai@gmail.com>
@@ -86,61 +86,43 @@ Content-Transfer-Encoding: 8bit
 
 From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
 
-Separate out destroy_rescuer() to simplify destroy_workqueue() and
-prepare of reusing it in alloc_workqueue().
+Swap the order of the allocations for rescuer and pwqs to prepare for
+making alloc_and_link_pwqs() and the wq enlistment into the same
+wq_pool_mutex and cpu hotplug locks protection.
 
 Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
 ---
- kernel/workqueue.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ kernel/workqueue.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index cf1a129eb547..0dd9a12befb5 100644
+index 0dd9a12befb5..810ea55c0ac9 100644
 --- a/kernel/workqueue.c
 +++ b/kernel/workqueue.c
-@@ -5548,6 +5548,22 @@ static int init_rescuer(struct workqueue_struct *wq)
- 	return 0;
- }
+@@ -5704,11 +5704,11 @@ struct workqueue_struct *alloc_workqueue(const char *fmt,
+ 			goto err_unreg_lockdep;
+ 	}
  
-+static void destroy_rescuer(struct workqueue_struct *wq)
-+{
-+	struct worker *rescuer = wq->rescuer;
-+
-+	if (rescuer) {
-+		/* this prevents new queueing */
-+		raw_spin_lock_irq(&wq_mayday_lock);
-+		wq->rescuer = NULL;
-+		raw_spin_unlock_irq(&wq_mayday_lock);
-+
-+		/* rescuer will empty maydays list before exiting */
-+		kthread_stop(rescuer->task);
-+		kfree(rescuer);
-+	}
-+}
-+
- /**
-  * wq_adjust_max_active - update a wq's max_active to the current setting
-  * @wq: target workqueue
-@@ -5772,18 +5788,7 @@ void destroy_workqueue(struct workqueue_struct *wq)
- 	drain_workqueue(wq);
+-	if (alloc_and_link_pwqs(wq) < 0)
++	if (wq_online && init_rescuer(wq) < 0)
+ 		goto err_free_node_nr_active;
  
- 	/* kill rescuer, if sanity checks fail, leave it w/o rescuer */
--	if (wq->rescuer) {
--		struct worker *rescuer = wq->rescuer;
--
--		/* this prevents new queueing */
--		raw_spin_lock_irq(&wq_mayday_lock);
--		wq->rescuer = NULL;
--		raw_spin_unlock_irq(&wq_mayday_lock);
--
--		/* rescuer will empty maydays list before exiting */
--		kthread_stop(rescuer->task);
--		kfree(rescuer);
--	}
-+	destroy_rescuer(wq);
+-	if (wq_online && init_rescuer(wq) < 0)
+-		goto err_destroy;
++	if (alloc_and_link_pwqs(wq) < 0)
++		goto err_free_rescuer;
  
  	/*
- 	 * Sanity checks - grab all the locks so that we wait for all
+ 	 * wq_pool_mutex protects global freeze state and workqueues list.
+@@ -5730,6 +5730,8 @@ struct workqueue_struct *alloc_workqueue(const char *fmt,
+ 
+ 	return wq;
+ 
++err_free_rescuer:
++	destroy_rescuer(wq);
+ err_free_node_nr_active:
+ 	if (wq->flags & WQ_UNBOUND)
+ 		free_node_nr_active(wq->node_nr_active);
 -- 
 2.19.1.6.gb485710b
 
