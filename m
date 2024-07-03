@@ -1,230 +1,156 @@
-Return-Path: <linux-kernel+bounces-239746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09119264D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:29:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0AD9264DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50199B25652
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:29:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDAB81C21064
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3B41802A3;
-	Wed,  3 Jul 2024 15:29:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5687B17E459
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E36179641;
+	Wed,  3 Jul 2024 15:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dpolakovic.space header.i=@dpolakovic.space header.b="Ff6ayhG2"
+Received: from m1-out-mua-14.websupport.sk (m1-out-mua-14.websupport.sk [45.13.137.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0980417CA1D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.13.137.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720020547; cv=none; b=HI3vGeufLKLIzEhrxtj4dwbG0dAu+V7FPc+mUVnpMJ1iKo7TsVQL+QkUE2VrLQP+QW/FRlALeRpwUJibbpA71z3bBFn+A4PBDGJUGmyH4hB3p2Fl7xL9Lz1v9i8mTeFkBmCe0FmXclIIWL90V/FY33XozuXE5bDilHou2ReTGKw=
+	t=1720020614; cv=none; b=ZPao4B7OZBe6W4/nWCAuwtKIsZp+W5vYDlOZaXBYas58ZPy/Q4Eis68QlHjho8y/CrVUdArI8BE4+biBaBlaBjGA5GzJnbZgewmeIfSZh9XQpqwKXcB+4/LOYf4fvdestznCH1Ho1upORJ/PRST9ZzAYblyFvo4/DHLFBK1uDCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720020547; c=relaxed/simple;
-	bh=nVtV3+XrAOUKCsmJFyjtl1h95HdUH0VtsH7x7/iE6p0=;
+	s=arc-20240116; t=1720020614; c=relaxed/simple;
+	bh=y+y08AM3f5TOY4c9E78hb87lm+/c2eOErjtpjPBqmEM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W/4U4cibKy1j27SI28b3wQ6BeCpsGUA5y0kyH3AQobSlPb2RqEE0dpaY90/PHfZeZYUYxjstdmBrZH1U6n2fZIlEW5EJAbJZzDkLEzYRhzY/Sih/zJBFD9ykey+UfPQWuR2RUqxIIez1vwVrZwm9cHIK0iAF56UOFRY01V4WYXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2571B367;
-	Wed,  3 Jul 2024 08:29:29 -0700 (PDT)
-Received: from [10.1.37.29] (e122027.cambridge.arm.com [10.1.37.29])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 79C5E3F762;
-	Wed,  3 Jul 2024 08:29:02 -0700 (PDT)
-Message-ID: <157b20fa-078a-479c-bb40-017d16d55c21@arm.com>
-Date: Wed, 3 Jul 2024 16:29:00 +0100
+	 In-Reply-To:Content-Type; b=mmLWAul8exrqtF53IFxSMgu/hZXuc47rA5DV31WSk8YdZzxUeaoIj2Cff1gSJS6mPAUkjsrNO4oMDYPPVtOt3yoVDj6Sg2Y0vCQFrZ0uiBPHO4lekv8T8dHNuakN0E+YLl0J/7eCZXDhsXEM6BbirPaGhtQ7S7CyyUvX5nRCJRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dpolakovic.space; spf=pass smtp.mailfrom=dpolakovic.space; dkim=pass (2048-bit key) header.d=dpolakovic.space header.i=@dpolakovic.space header.b=Ff6ayhG2; arc=none smtp.client-ip=45.13.137.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dpolakovic.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dpolakovic.space
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dpolakovic.space;
+	s=mail; t=1720020601;
+	bh=y+y08AM3f5TOY4c9E78hb87lm+/c2eOErjtpjPBqmEM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ff6ayhG25KPL0NT5fYLPKokke6QeJPAHBQcXVN8yVMs6VHllQ8ixPv5WdS900oMLz
+	 1+P2vbYa9vnJWX8SBPb2neRg/XkMlU4s0sS7YjYgAQ3izxfcmc1AYjl4KgY1bNWbra
+	 VfVgBncEhHOqBiHnbMFYx2uZ84a2CXtc2pesqKeYrNbLT99STVVdykqJv5n+AIUtEg
+	 4EOKXaMmEIagCpUyypIdqT0O+E9eueT0HCS6vJCl+tBz9RtXWimcWV1v9seXcYhzm2
+	 6PbJuu/t5mB8/lEI5g2UvXFZpt3X+Hhcuu8KVVpsbH0VHZduKfUvVvmAF8/4yXpaEC
+	 eqtlCe3Jb/Irw==
+Received: from m1-u7-ing.websupport.sk (unknown [10.30.7.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by m1-out-mua-14.websupport.sk (Postfix) with ESMTPS id 4WDkHF6RSCz1wrg;
+	Wed,  3 Jul 2024 17:30:01 +0200 (CEST)
+X-Authenticated-Sender: email@dpolakovic.space
+Authentication-Results: m1-u7-ing.websupport.sk;
+	auth=pass smtp.auth=email@dpolakovic.space smtp.mailfrom=email@dpolakovic.space
+Received: from [192.168.0.54] (dev190.net181.ip-net.sk [46.227.181.190])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: email@dpolakovic.space)
+	by m1-u7-ing.websupport.sk (Postfix) with ESMTPSA id 4WDkHD0NqPzmhkX;
+	Wed,  3 Jul 2024 17:29:59 +0200 (CEST)
+Message-ID: <d88861a6-ccd9-3fe5-67e0-b50a72ca1e51@dpolakovic.space>
+Date: Wed, 3 Jul 2024 17:29:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] Support fdinfo runtime and memory stats on Panthor
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240606005416.1172431-1-adrian.larumbe@collabora.com>
- <ae1ec268-fd76-48b5-94f9-761565153e12@arm.com>
- <uzsqh2b3j7hp6z3zcjcsxxudt2sucgutzwof5bhsvjjaeusigy@wvfhibqtyz4y>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <uzsqh2b3j7hp6z3zcjcsxxudt2sucgutzwof5bhsvjjaeusigy@wvfhibqtyz4y>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: proposition for fixing Y292B bug
+To: Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Theodore Ts'o <tytso@mit.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrew Morton <akpm@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Alexander Lobakin <alexandr.lobakin@intel.com>,
+ Jakub Kicinski <kuba@kernel.org>
+References: <3be3235a-dea7-a5ca-b5ea-4047bdeb695d@dpolakovic.space>
+ <ZoFgga45QCh2uA0i@archie.me>
+ <9e3b638d-76f2-8520-2a24-7de0cd0bc149@dpolakovic.space>
+ <ZoJx5GaBDHg7nayw@archie.me> <cef39a6f-426d-4c4d-950e-edbbe5e95acf@intel.com>
+Content-Language: en-US
+From: David Polakovic <email@dpolakovic.space>
+In-Reply-To: <cef39a6f-426d-4c4d-950e-edbbe5e95acf@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Out-Rspamd-Queue-Id: 4WDkHD0NqPzmhkX
+X-Out-Spamd-Result: default: False [-0.10 / 1000.00];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_ZERO(0.00)[0];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_TO(0.00)[intel.com,gmail.com];
+	ASN(0.00)[asn:56349, ipnet:46.227.176.0/21, country:SK];
+	ARC_NA(0.00)[];
+	HAS_X_AS(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	GENERIC_REPUTATION(0.00)[-0.49974851024184]
+X-Out-Rspamd-Server: m1-rspamd-out-5
+X-Rspamd-Action: no action
+Feedback-ID: m1:dpolakovic.spac
 
-On 24/06/2024 12:23, Adrián Larumbe wrote:
-> Hi Steven,
-> 
-> On 13.06.2024 16:28, Steven Price wrote:
->> On 06/06/2024 01:49, Adrián Larumbe wrote:
->>> This patch series enables userspace utilities like gputop and nvtop to
->>> query a render context's fdinfo file and figure out rates of engine
->>> and memory utilisation.
->>>
->>> Previous discussion can be found at
->>> https://lore.kernel.org/dri-devel/20240423213240.91412-1-adrian.larumbe@collabora.com/
->>>
->>> Changelog:
->>> v3:
->>>  - Fixed some nits and removed useless bounds check in panthor_sched.c
->>>  - Added support for sysfs profiling knob and optional job accounting
->>>  - Added new patches for calculating size of internal BO's
->>> v2:
->>>  - Split original first patch in two, one for FW CS cycle and timestamp
->>>  calculations and job accounting memory management, and a second one
->>>  that enables fdinfo.
->>>  - Moved NUM_INSTRS_PER_SLOT to the file prelude
->>>  - Removed nelem variable from the group's struct definition.
->>>  - Precompute size of group's syncobj BO to avoid code duplication.
->>>  - Some minor nits.
->>>
->>>
->>> Adrián Larumbe (7):
->>>   drm/panthor: introduce job cycle and timestamp accounting
->>>   drm/panthor: add DRM fdinfo support
->>>   drm/panthor: enable fdinfo for memory stats
->>>   drm/panthor: add sysfs knob for enabling job profiling
->>>   drm/panthor: support job accounting
->>>   drm/drm_file: add display of driver's internal memory size
->>>   drm/panthor: register size of internal objects through fdinfo
+On 7/1/24 15:31, Alexander Lobakin wrote:
+> From: Bagas Sanjaya <bagasdotme@gmail.com>
+> Date: Mon, 1 Jul 2024 16:07:48 +0700
+>
+>> On Sun, Jun 30, 2024 at 05:27:24PM +0200, David Polakovic wrote:
+>>> Thanks for reply.
+>> Please don't top-post on LKML, reply inline with appropriate context
+>> instead.
 >>
->> The general shape of what you end up with looks correct, but these
->> patches are now in a bit of a mess. It's confusing to review when the
->> accounting is added unconditionally and then a sysfs knob is added which
->> changes it all to be conditional. Equally that last patch (register size
->> of internal objects through fdinfo) includes a massive amount of churn
->> moving everything into an 'fdinfo' struct which really should be in a
->> separate patch.
-> 
-> I do agree with you in that perhaps too many things change across successive
-> patches in the series. I think I can explain this because of the way the series
-> has evolved thorugh successive revisions.
-> 
-> In the last one of them, only the first three patches were present, and both
-> Liviu and Boris seemed happy with the shape they had taken, but then Boris
-> suggested adding the sysfs knob and optional profiling support rather than
-> submitting them as part of a different series like I had done in Panfrost. In
-> that spirit, I decided to keep the first three patches intact.
-> 
-> The last two patches are a bit more of an afterthought, and because they touch
-> on the drm fdinfo core, I understood they were more likely to be rejected for
-> now, at least until consensus with Tvrtko and other people involved in the
-> development of fdinfo had agreed on a way to report internal bo sizes.  However,
-> being also part of fdinfo, I thought this series was a good place to spark a
-> debate about them, even if they don't seem as seamlessly linked with the rest
-> of the work.
-> 
->> Ideally this needs to be reworked into a logical series of patches with
->> knowledge of what's coming next. E.g. the first patch could introduce
->> the code for cycle/timestamp accounting but leave it disabled to be then
->> enabled by the sysfs knob patch.
+>>> My proposed solution was to create this BigInt datatype, which
+>>> stores the value in array. The functions for division, multiplication,
+>>> addition, subtraction and comparison could be stored in separate
+>>> ".h" library for manipulation with BigInt datatype. The paper speaks
+>>> more in detail.
+> IRRC there is big integer type somewhere in either lib/ or crypto/,
+> I don't remember exactly. It's used only for crypto tho.
+>
+>>> And yes, this truly is an userspace solution, but for kernel space
+>>> implementation I have zero to none experience. Therefore I wrote
+>>> here.
+>> There was a proposal for adding 128-bit unsigned integer (see [1]).
+>> The signed counterpart should be analogous.
+> I have generic 128-bit integer API/infra for the kernel in my internal
+> repo. I've been planning to upstream it for a couple years already, but
+> every time couldn't find a slot to do that.
+> I can upload it to my open GitHub, so that maybe someone else who needs
+> it could pick it up?
+>
+>> Thanks.
 >>
->> One thing I did notice though is that I wasn't seeing the GPU frequency
->> change, looking more closely at this it seems like there's something
->> dodgy going on with the devfreq code. From what I can make out I often
->> end up in a situation where all contexts are idle every time tick_work()
->> is called - I think this is simply because tick_work() is scheduled with
->> a delay and by the time the delay has hit the work is complete. Nothing
->> to do with this series, but something that needs looking into. I'm on
->> holiday for a week but I'll try to look at this when I'm back.
-> 
-> Would you mind sharing what you do in UM to trigger this behaviour and also
-> maybe the debug traces you've written into the driver to confirm this?
+>> [1]: https://lore.kernel.org/lkml/20220722145514.767592-1-alexandr.lobakin@intel.com/
+> Thanks,
+> Olek
 
-Debugging is tricky as adding a printk() completely changes the timing. 
-My hack was just to record the count of calls to 
-panthor_devfreq_record_{busy,idle}() and output that along with the 
-debug message. See below.
 
-With that change I could see that when glmark I was seeing a number of 
-calls to idle(), but rarely any calls to busy(). This obviously causes 
-devfreq to sit at the lowest possible frequency. A possible fix is as 
-simple as:
+I am not sure if I don't understand your solution, but extending the
+memory designation from 64 to 128 bits, is another temporary
+solution, which will again overflow one day.
 
-----8<----
-diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index 79ffcbc41d78..42929e147107 100644
---- a/drivers/gpu/drm/panthor/panthor_sched.c
-+++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -2926,6 +2926,7 @@ queue_run_job(struct drm_sched_job *sched_job)
-                        pm_runtime_get(ptdev->base.dev);
-                        sched->pm.has_ref = true;
-                }
-+               panthor_devfreq_record_busy(sched->ptdev);
-        }
- 
-        done_fence = dma_fence_get(job->done_fence);
-----8<----
+The sole reason why I was proposing the new "BigInt" type was to
+store each digit of the time_c as separate element of array, which
+could be resized (added one digit) as needed. The only limit would
+then be the physical amount of memory in the machine.
 
-With that I see roughly as many calls to busy() as idle() and devfreq scales the GPU 
-frequency up as expected.
+dpo
 
-Steve
-
-----8<----
-diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/panthor/panthor_devfreq.c
-index c6d3c327cc24..bfc06e58fff5 100644
---- a/drivers/gpu/drm/panthor/panthor_devfreq.c
-+++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
-@@ -31,6 +31,8 @@ struct panthor_devfreq {
- 	/** @time_last_update: Last update time. */
- 	ktime_t time_last_update;
- 
-+	int counta, counti;
-+
- 	/** @last_busy_state: True if the GPU was busy last time we updated the state. */
- 	bool last_busy_state;
- 
-@@ -76,6 +78,8 @@ static void panthor_devfreq_reset(struct panthor_devfreq *pdevfreq)
- {
- 	pdevfreq->busy_time = 0;
- 	pdevfreq->idle_time = 0;
-+	pdevfreq->counta = 0;
-+	pdevfreq->counti = 0;
- 	pdevfreq->time_last_update = ktime_get();
- }
- 
-@@ -97,14 +101,17 @@ static int panthor_devfreq_get_dev_status(struct device *dev,
- 
- 	status->busy_time = ktime_to_ns(pdevfreq->busy_time);
- 
-+	int counta = pdevfreq->counta;
-+	int counti = pdevfreq->counti;
-+
- 	panthor_devfreq_reset(pdevfreq);
- 
- 	spin_unlock_irqrestore(&pdevfreq->lock, irqflags);
- 
--	drm_dbg(&ptdev->base, "busy %lu total %lu %lu %% freq %lu MHz\n",
-+	printk("busy %lu total %lu %lu %% freq %lu MHz count=%da,%di\n",
- 		status->busy_time, status->total_time,
- 		status->busy_time / (status->total_time / 100),
--		status->current_frequency / 1000 / 1000);
-+		status->current_frequency / 1000 / 1000, counta,counti);
- 
- 	return 0;
- }
-@@ -262,6 +269,7 @@ void panthor_devfreq_record_busy(struct panthor_device *ptdev)
- 
- 	panthor_devfreq_update_utilization(pdevfreq);
- 	pdevfreq->last_busy_state = true;
-+	pdevfreq->counta++;
- 
- 	spin_unlock_irqrestore(&pdevfreq->lock, irqflags);
- }
-@@ -278,6 +286,7 @@ void panthor_devfreq_record_idle(struct panthor_device *ptdev)
- 
- 	panthor_devfreq_update_utilization(pdevfreq);
- 	pdevfreq->last_busy_state = false;
-+	pdevfreq->counti++;
- 
- 	spin_unlock_irqrestore(&pdevfreq->lock, irqflags);
- }
 
