@@ -1,61 +1,84 @@
-Return-Path: <linux-kernel+bounces-238987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4430A925491
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:24:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63ED492549E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF746B21CB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:24:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8A3284AA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD20136E37;
-	Wed,  3 Jul 2024 07:24:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE0D1369A0;
+	Wed,  3 Jul 2024 07:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="PKCFTvpw"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7B4134415
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F49C131BDD
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719991459; cv=none; b=DCWAiSEZCMJ5QBQgvnhQpWZdBQgjd2aoOs+9uczhF1rYol0OV3BfADvohlb3wTifv/8eMajprSv/cQ6+rVP9LBUmSyNyv1zQL/0clKgH7I8dmidnsCtUkZz7I6qgnJGva/BzGkmhJRDMV8M+hG8L3tV9BdGcP5r3awhxP8LaWQU=
+	t=1719991794; cv=none; b=fmw0Ue0n2ezRlup2UvmNotakAqskQRuJGOnWIPvA3A3DR5Vsc4tSSxFK6bcLK//9GcPpqcoa4B/gigIlWSoePzhL/YEoKtgSpqAdkjyU1ofKlsZyZyhG5eyuD/vmRKkGwSvHXoCzjJMYLjh/Xy9QHyMFmjwwcHGqQqZkv1pw3CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719991459; c=relaxed/simple;
-	bh=0VKK8+VF4ewnjWMtGfxaudX5Z/NmLjRR80N4kfnXCFA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q8cJeVOI9kkzuDPDr7AKct9YJB4br6af2f0twhqR61RjTceX/T9K5aqnGEgDTlkNYeep0+M6SlsUcqGFiYhI8iHYuPJBfrdbeYSvIUUpo70RF95cP1q3N6VeyROMz5UVvEBsAkmFXDkAC4hvCMEeTcPiwy+HBUhCg13bwvApq2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sOuLb-00028c-Kk; Wed, 03 Jul 2024 09:24:11 +0200
-Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sOuLa-006nQZ-KS; Wed, 03 Jul 2024 09:24:10 +0200
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sOuLa-002Knv-1e;
-	Wed, 03 Jul 2024 09:24:10 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	David Lin <yu-hao.lin@nxp.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Brian Norris <briannorris@chromium.org>,
-	kernel@pengutronix.de,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: [PATCH] mwifiex: Do not return unused priv in mwifiex_get_priv_by_id()
-Date: Wed,  3 Jul 2024 09:24:09 +0200
-Message-Id: <20240703072409.556618-1-s.hauer@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1719991794; c=relaxed/simple;
+	bh=ZgpTGg7ZhLUOVu5lLH9uwx5tIQp5zc/pXJ0uUfZM2Rc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fPcEYT5njcXsRt+IWnFc+uXk6fJLGW/4E8OXuNf3ySEdgcpl2WxOwBzJHducErkSPzLoCGq5NbF45iMsg0MDC5QDzrOjppldSRGPvCNy+rGJKKUo42TAGimjyoK/O6S+cSo1DxogENLP4T8QRhdwdUEWnFmcKqDl/P7DkoratDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=PKCFTvpw; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7066c9741fbso4316198b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 00:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1719991792; x=1720596592; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eyHOv+1TQs3NJgyrsK3G70btEgM4PBOJQcOuP6+/cTo=;
+        b=PKCFTvpw5bXb4OQexhnk1hkKHZIMmU2RAbXxjNTzeM6Ni4DtgG7gwv1JntMkmQmm0B
+         rYLKZs3SYy+meTYY+sShbVkhj0Ewtm48EF8hvfPmJeL5lOtidw830HCjnLGQO9dCGu9q
+         wLWkr81aYV9OxbZWUNIGF2UKr9eQmFwZTzUy+sAA7pN6qGiYJPhwNr+gDcxGSCteuvWD
+         maRilwBFMp244KZpv+9vvX7vwrCq/dRXwZdGKECpX4GphxnGB8r3/To4mnj7L84zNsHN
+         3axF/jx6f83zLGwkTTgHJmFWmmUDQ+yC0ERm1xsYZGrmZKuvR4e8WCk79uEwS1VCsj0B
+         eyEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719991792; x=1720596592;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eyHOv+1TQs3NJgyrsK3G70btEgM4PBOJQcOuP6+/cTo=;
+        b=Vad3fguEVkW/RooIG6TfKsEqtnNZp93TjBBSxPDYp0il5ST9TLzAq0aq0VCU955cAi
+         wIh5E08tZzOjo3t9FQjIUr37r2FzirMMGYBLGOAkqrIzod0b2uolDl3GJmnparunt/Qs
+         2Xreo4wfxdYU8paQxbxgpnZIkCN45rYFNRnZMeAuzhfdz/YXezZy07T/gQ9Z2eIhShWm
+         0CLkmMTpRvjBm5kkZ3GixBC2vBvEaGHOCkOxaFjcHns8jIhWarlhbv7VCp5R927WsCxj
+         UpLq+q2JpV1P3mbTi7YhMhlDJtfmIuQVWQLHG6zBSJQ7Wclrwor8EHweGbVU0HfrM5OK
+         DgTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzN7drBMWzoh5OUoVd1ZHrIFrNctd7NCncJe/v9KUmMxgRRiUzzFa2+NFICNEi6F3EYVTmyQcbiwRT9z9EkgFyzCnRnsHSyVrXdeu+
+X-Gm-Message-State: AOJu0YySS50wwIvl4jneVEDIwr/boD51+g6r9xFhWwHAdDeWVJm0Ymkp
+	atehpvT8DJLFZTsaEhrnNqWTNCeZ6og5mziKrGnjjetCzA+PID1OgvQiW2OYF20=
+X-Google-Smtp-Source: AGHT+IF/2q2bYv+AW1oYPuOUB0yCXXmEAlApl3JeOfwhHA84IKB4Vo8dFV5LyPLNM+Hvub3oz8ssbw==
+X-Received: by 2002:a05:6a00:194a:b0:706:759a:70bc with SMTP id d2e1a72fcca58-70aaaf32f24mr14483206b3a.29.1719991792618;
+        Wed, 03 Jul 2024 00:29:52 -0700 (PDT)
+Received: from fedora.vc.shawcable.net (S0106c09435b54ab9.vc.shawcable.net. [24.85.107.15])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70802959d41sm9993502b3a.96.2024.07.03.00.29.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 00:29:52 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: ogabbay@kernel.org
+Cc: ttayar@habana.ai,
+	obitton@habana.ai,
+	fkassabri@habana.ai,
+	dliberman@habana.ai,
+	quic_carlv@quicinc.com,
+	dhirschfeld@habana.ai,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [RESEND PATCH] accel/habanalabs/gaudi2: Use kvfree() for memory allocated with kvcalloc()
+Date: Wed,  3 Jul 2024 09:24:39 +0200
+Message-ID: <20240703072438.725114-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,109 +86,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-mwifiex_get_priv_by_id() returns the priv pointer corresponding to
-the bss_num and bss_type, but without checking if the priv is actually
-currently in use.
-Unused priv pointers do not have a wiphy attached to them which can
-lead to NULL pointer dereferences further down the callstack.  Fix
-this by returning only used priv pointers which have priv->bss_mode
-set to something else than NL80211_IFTYPE_UNSPECIFIED.
+Use kvfree() to fix the following Coccinelle/coccicheck warning reported
+by kfree_mismatch.cocci:
 
-Said NULL pointer dereference happened when an Accesspoint was started
-with wpa_supplicant -i mlan0 with this config:
+	WARNING kvmalloc is used to allocate this memory at line 10398
 
-network={
-        ssid="somessid"
-        mode=2
-        frequency=2412
-        key_mgmt=WPA-PSK WPA-PSK-SHA256
-        proto=RSN
-        group=CCMP
-        pairwise=CCMP
-        psk="12345678"
-}
-
-When waiting for the AP to be established, interrupting wpa_supplicant
-with <ctrl-c> and starting it again this happens:
-
-| Unable to handle kernel NULL pointer dereference at virtual address 0000000000000140
-| Mem abort info:
-|   ESR = 0x0000000096000004
-|   EC = 0x25: DABT (current EL), IL = 32 bits
-|   SET = 0, FnV = 0
-|   EA = 0, S1PTW = 0
-|   FSC = 0x04: level 0 translation fault
-| Data abort info:
-|   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-|   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-|   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-| user pgtable: 4k pages, 48-bit VAs, pgdp=0000000046d96000
-| [0000000000000140] pgd=0000000000000000, p4d=0000000000000000
-| Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-| Modules linked in: caam_jr caamhash_desc spidev caamalg_desc crypto_engine authenc libdes mwifiex_sdio
-+mwifiex crct10dif_ce cdc_acm onboard_usb_hub fsl_imx8_ddr_perf imx8m_ddrc rtc_ds1307 lm75 rtc_snvs
-+imx_sdma caam imx8mm_thermal spi_imx error imx_cpufreq_dt fuse ip_tables x_tables ipv6
-| CPU: 0 PID: 8 Comm: kworker/0:1 Not tainted 6.9.0-00007-g937242013fce-dirty #18
-| Hardware name: somemachine (DT)
-| Workqueue: events sdio_irq_work
-| pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-| pc : mwifiex_get_cfp+0xd8/0x15c [mwifiex]
-| lr : mwifiex_get_cfp+0x34/0x15c [mwifiex]
-| sp : ffff8000818b3a70
-| x29: ffff8000818b3a70 x28: ffff000006bfd8a5 x27: 0000000000000004
-| x26: 000000000000002c x25: 0000000000001511 x24: 0000000002e86bc9
-| x23: ffff000006bfd996 x22: 0000000000000004 x21: ffff000007bec000
-| x20: 000000000000002c x19: 0000000000000000 x18: 0000000000000000
-| x17: 000000040044ffff x16: 00500072b5503510 x15: ccc283740681e517
-| x14: 0201000101006d15 x13: 0000000002e8ff43 x12: 002c01000000ffb1
-| x11: 0100000000000000 x10: 02e8ff43002c0100 x9 : 0000ffb100100157
-| x8 : ffff000003d20000 x7 : 00000000000002f1 x6 : 00000000ffffe124
-| x5 : 0000000000000001 x4 : 0000000000000003 x3 : 0000000000000000
-| x2 : 0000000000000000 x1 : 0001000000011001 x0 : 0000000000000000
-| Call trace:
-|  mwifiex_get_cfp+0xd8/0x15c [mwifiex]
-|  mwifiex_parse_single_response_buf+0x1d0/0x504 [mwifiex]
-|  mwifiex_handle_event_ext_scan_report+0x19c/0x2f8 [mwifiex]
-|  mwifiex_process_sta_event+0x298/0xf0c [mwifiex]
-|  mwifiex_process_event+0x110/0x238 [mwifiex]
-|  mwifiex_main_process+0x428/0xa44 [mwifiex]
-|  mwifiex_sdio_interrupt+0x64/0x12c [mwifiex_sdio]
-|  process_sdio_pending_irqs+0x64/0x1b8
-|  sdio_irq_work+0x4c/0x7c
-|  process_one_work+0x148/0x2a0
-|  worker_thread+0x2fc/0x40c
-|  kthread+0x110/0x114
-|  ret_from_fork+0x10/0x20
-| Code: a94153f3 a8c37bfd d50323bf d65f03c0 (f940a000)
-| ---[ end trace 0000000000000000 ]---
-
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-Acked-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Reviewed-by: Tomer Tayar <ttayar@habana.ai>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
- drivers/net/wireless/marvell/mwifiex/main.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/accel/habanalabs/gaudi2/gaudi2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
-index 175882485a195..c5164ae41b547 100644
---- a/drivers/net/wireless/marvell/mwifiex/main.h
-+++ b/drivers/net/wireless/marvell/mwifiex/main.h
-@@ -1287,6 +1287,9 @@ mwifiex_get_priv_by_id(struct mwifiex_adapter *adapter,
+diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2.c b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+index fa1c4feb9f89..8024047962ec 100644
+--- a/drivers/accel/habanalabs/gaudi2/gaudi2.c
++++ b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+@@ -10489,7 +10489,7 @@ static int gaudi2_memset_device_memory(struct hl_device *hdev, u64 addr, u64 siz
+ 				(u64 *)(lin_dma_pkts_arr), DEBUGFS_WRITE64);
+ 	WREG32(sob_addr, 0);
  
- 	for (i = 0; i < adapter->priv_num; i++) {
- 		if (adapter->priv[i]) {
-+			if (adapter->priv[i]->bss_mode == NL80211_IFTYPE_UNSPECIFIED)
-+				continue;
-+
- 			if ((adapter->priv[i]->bss_num == bss_num) &&
- 			    (adapter->priv[i]->bss_type == bss_type))
- 				break;
+-	kfree(lin_dma_pkts_arr);
++	kvfree(lin_dma_pkts_arr);
+ 
+ 	return rc;
+ }
 -- 
-2.39.2
+2.45.2
 
 
