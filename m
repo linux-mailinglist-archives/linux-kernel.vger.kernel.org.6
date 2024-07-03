@@ -1,98 +1,98 @@
-Return-Path: <linux-kernel+bounces-238650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E2B6924D6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:02:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B1B924D76
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD7A1284D8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297201F23618
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6BF4C6C;
-	Wed,  3 Jul 2024 02:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9C39450;
+	Wed,  3 Jul 2024 02:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I/+f4ipY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZkiJu8V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A384683
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 02:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841128F5B;
+	Wed,  3 Jul 2024 02:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719972145; cv=none; b=jHTKhDyNKhqKmHHvZm9JT/Ja6A0I2EdRC251NS7nqKaugURqKif7nHWLNKd56FIPYma1tZZrHAhWaEf8WFmMl1WBJdUK6tCFgpro430rbEveh9uNDtEubpSpXcdDofii/Qi3dTwrwV+sDXAAgnjvUc05ZsCWmpXVyeYGJ7ptLtM=
+	t=1719972156; cv=none; b=ARn1Qkidza5oc8OE+X/i5+2JMEWS5k3//5K1WUMtGiplHzZoVrXwMkwNyf5dDRYsU+glo2g8EYxdWjEe4XJxTaEAkjmtPCqahMw7OmwqEmoETrVJA8jre5epwOwAU4av5ABq7fmWL2/q4d4B04wgBwim5ffpOdS7NJnmovi2Ym0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719972145; c=relaxed/simple;
-	bh=QfoIjRTn+ka2CQBVEdytcNNbpnUTel10PUxBa8/LBC8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=MsNyJMpHuOvYAkjrHPGVa/b2vDqho0WNpg1tQe27NkOLsJBUK8nc/OoGRGnApp2C7egr8Nvt+3IBu7WP7tormow9B0RTJzhwH49qR/un7R5SiM42urRdeOWZYYDU5mcU5uY9fV+VqZVYpkkJlW7tCPDmAmIXDz3Ll2NHF6ocuaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I/+f4ipY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDACBC116B1;
-	Wed,  3 Jul 2024 02:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1719972145;
-	bh=QfoIjRTn+ka2CQBVEdytcNNbpnUTel10PUxBa8/LBC8=;
+	s=arc-20240116; t=1719972156; c=relaxed/simple;
+	bh=R6kgAs73TS+N4+4Y27yXxUyZx91QX/oME+K5F6DbZ1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bZlu7eDKKnjHX7f+Czk1p805q1VLOV148XZ4RDTrt4xQzlXB0HwSyJ87CftOesDO3tIDiqh037YBEe4K6T13tDw/31+dlV59w6be0tWdJNezZinNJ8dp5mjTvFPUanFMjWYIGiKXeBgXs4zTrJebVZPCZdrUt5jWIxPLLvZ/kLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZkiJu8V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E22CC32781;
+	Wed,  3 Jul 2024 02:02:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719972156;
+	bh=R6kgAs73TS+N4+4Y27yXxUyZx91QX/oME+K5F6DbZ1c=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I/+f4ipYS7WoxO43yMqiWlwu3V3hgu2UIl6NOWmGnbai7wVyb7QXGe9mLtzYpH5U8
-	 oYorKoy4dDax3OQt45+2sWuCfC8j8ptBDiqVkPmpdACTJO2rLAIVkWeZf5mFhbTOcN
-	 N7zRMVFrruzjy3eNKzyG0Wc3uOznuESFycfp3Hfk=
-Date: Tue, 2 Jul 2024 19:02:24 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Barry Song <21cnbao@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, Nhat Pham
- <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, Chris Li
- <chrisl@kernel.org>, David Hildenbrand <david@redhat.com>, Johannes Weiner
- <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] mm: zswap: fix zswap_never_enabled() for
- CONFIG_ZSWAP==N
-Message-Id: <20240702190224.99d97227a02bbbe4f140f845@linux-foundation.org>
-In-Reply-To: <CAJD7tkYJwRF5B2-vQGkmEhgw9t20OcVbB7MNrQqvmTor8Vjptw@mail.gmail.com>
-References: <20240629232231.42394-1-21cnbao@gmail.com>
-	<20240701235210.5c187c85aa225292d034cafc@linux-foundation.org>
-	<CAJD7tkYJwRF5B2-vQGkmEhgw9t20OcVbB7MNrQqvmTor8Vjptw@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=nZkiJu8VGkExL+V5eE4TDNRvf6KjZSSsn/r8tuggjTUlWsOLkZpiVUHTnjLRiNwNU
+	 VeTQthUWctRpmaY5e/iSnDXXpAF2t86pYqMWLsTKj25XULlKC2vLrCx7hGY3xvcFuv
+	 Uj09eyf8otNb8v9e39qs7Lxed4UQvrG50QOns/dziVCxTqzN6QKAtP/7MTwkC52Yvn
+	 X2Rr75v95DZXNFuMqrUO5D9PIsCgHfg72jH5LhBVJaJKHbLGnZCIT5snd5fDgANFyC
+	 VUbx8fAuRtC/pj/Eea0xyvGwlc5iucM3sDRIte3Z2CJ74+DIpSCuhaPkTTzjly8lpE
+	 2pasIfmYiJF3Q==
+Date: Tue, 2 Jul 2024 19:02:32 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Donald
+ Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Richard
+ Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
+ <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan
+ <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, "Christian
+ =?UTF-8?B?S8O2bmln?=" <christian.koenig@amd.com>, Bagas Sanjaya
+ <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, Nikolay
+ Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>,
+ David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
+ <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
+ <pkaligineedi@google.com>
+Subject: Re: [PATCH net-next v15 00/14] Device Memory TCP
+Message-ID: <20240702190232.7cbe4c41@kernel.org>
+In-Reply-To: <20240628003253.1694510-1-almasrymina@google.com>
+References: <20240628003253.1694510-1-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 2 Jul 2024 04:58:05 -0700 Yosry Ahmed <yosryahmed@google.com> wrote:
+On Fri, 28 Jun 2024 00:32:37 +0000 Mina Almasry wrote:
+> v15: https://patchwork.kernel.org/project/netdevbpf/list/?series=865481&state=*
 
-> > > --- a/include/linux/zswap.h
-> > > +++ b/include/linux/zswap.h
-> > > @@ -68,7 +68,7 @@ static inline bool zswap_is_enabled(void)
-> > >
-> > >  static inline bool zswap_never_enabled(void)
-> > >  {
-> > > -     return false;
-> > > +     return true;
-> > >  }
-> >
-> > Well, that code was as wrong as it's possible to get.
-> >
-> > But what effect does this have?  Seems "not much"?  Perhaps we'll
-> > attempt a zswap_load() which later fails for other reasons?
-> 
-> Actually zswap_load() is a noop with !CONFIG_ZSWAP, so it doesn't have
-> an effect there. The only effect is that with Barry's latest large
-> folio swapin patches for zram, we will always fallback to order-0
-> swapin, even mistakenly when !CONFIG_ZSWAP.
-> 
-> Basically the bug just makes Barry's in progress patches not work at all.
-
-OK, thanks, I added this to the changelog:
-
-The only effect of this issue is that with Barry's latest large folio
-swapin patches for zram ("mm: support mTHP swap-in for zRAM-like
-swapfile"), we will always fallback to order-0 swapin, even mistakenly
-when !CONFIG_ZSWAP.
-
-Basically this bug makes Barry's in progress patches not work at all.
-
+I'll pick up a couple of patches unlikely to change.
 
