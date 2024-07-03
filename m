@@ -1,108 +1,87 @@
-Return-Path: <linux-kernel+bounces-239524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE1C9261A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:19:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0599261AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC5EC284DF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:19:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8901C22F6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E74517A59D;
-	Wed,  3 Jul 2024 13:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A0B17A58B;
+	Wed,  3 Jul 2024 13:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="h10xqMoj"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fNOUDqhM"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64007175555;
-	Wed,  3 Jul 2024 13:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69926178CEE;
+	Wed,  3 Jul 2024 13:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720012743; cv=none; b=uPE/ZdaI9lBRQRRa1KxKjVqF8n03p5a+DlplQ9P8q/c7TmJCafs+5hZK6CdXCrGG+h91Jli+rI9mqBnAZwOk7A1XppRB3+aXj2BfuT1AaPHokX56ZNgDSYpKBwSH4vLrcZ4TER2BPvhXQvsbA1UNpcJJ9HGwmEuYcoTnW5d46Z8=
+	t=1720012776; cv=none; b=GBhgPtoWjgCftWf5JBKRLHEmC6vIuRjPR4ybL+CAUogN4l6Zl3Afb1RqrGV/q0j0Q1Ba13vcmJDDPu4q5sMYalQN/fFrsPk2ee6tvGOmyfWJ6tk1mV/Ik2+nZJSEht8Si7ql4XPU7qoEPbk6Fft+tcuBBgTWQims+e8pTE2cTtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720012743; c=relaxed/simple;
-	bh=zUu2F1hV+miT5I8Gkjrxe7EVSNhBDwp44fj2E7hlYsg=;
-	h=Subject:MIME-Version:Content-Type:Date:Message-ID:From:To:CC:
-	 References:In-Reply-To; b=KTj/oKm/gJBi3UXE1D37oPapzdIYILnXosbFLyGgUnhx2a26JSYWFABRvOVQm3N9svGU3WQeve3NWz6+guGbTpcyCOVZs0KaRkmaXMJhikCaDyybylUapou2QN8NBlmvjoeUlGW1CuBZiFxzSsvnucAWxfQbfPp3SbAiDHtBs14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=h10xqMoj; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1720012742; x=1751548742;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   from:to:cc:references:in-reply-to:subject;
-  bh=zUu2F1hV+miT5I8Gkjrxe7EVSNhBDwp44fj2E7hlYsg=;
-  b=h10xqMojGvcnQ9vfl7ywtrgPImF73FdjFAK9o4Xgkl5eMqIDKEeupLrt
-   9dGOok6wCF8fVcjiL7Ep6bQ0hEN9RijbSI8V4z7CQJ5DQjOClb3gVxXj6
-   fO32zvVMbsehWh4krmsxZ/9qIPOvqdrpz7qx3R7zmJARcShegY9NAdpUU
-   w=;
-X-IronPort-AV: E=Sophos;i="6.09,182,1716249600"; 
-   d="scan'208";a="417489642"
-Subject: Re: [PATCH 00/18] Introducing Core Building Blocks for Hyper-V VSM Emulation
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 13:18:59 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [10.0.43.254:59500]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.20.30:2525] with esmtp (Farcaster)
- id 4b69d89c-843b-442a-9219-fefd3322b1f3; Wed, 3 Jul 2024 13:18:58 +0000 (UTC)
-X-Farcaster-Flow-ID: 4b69d89c-843b-442a-9219-fefd3322b1f3
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 3 Jul 2024 13:18:57 +0000
-Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
- (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Wed, 3 Jul 2024
- 13:18:51 +0000
+	s=arc-20240116; t=1720012776; c=relaxed/simple;
+	bh=dhUbszQYZ16St23VHIu0tFLExWMcJ5jU50lppUTa+9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nlcUfGMqP1psTI1Pq0xOx1D1QO+g2SLc0wCZIjUse21dvitB+Uvze1j2pi3tHMzw72uojZw8PxQUfCEAs5ylW35cKZ+qOK/eooBOkTE/u+MF09x7ZuYv6q4q7CGseFWmo2G1IchpCdgGmjQHVm3wKJsOnigwAXQ9lusvbuw4Sng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fNOUDqhM; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5rDjlZZEKG84QDIShgonwEJOVJtAmB4KTYil0+eurmE=; b=fNOUDqhMhUE1oGfgA946jOjNnD
+	r1QUfk55VVHMOqmfs0WfbosbGFGz+9JFdoychdws8+ogUtyAeXzUE7l0b/0S8FAXtRM4N6jlFBpZZ
+	zohXLFwrWHJwwhaYQICIT9AAnlPK5czeKdzDXkKRLNNfubW1gYhx/yJkdYuR/+agWPWCsBb0WgtKV
+	Ulbs8jmium7Y/XXl1WxK7vrA3Ct84ibb5Z/NVtGCtSFExF7FD5QAdJaKadmIu90O2S/SMtQcgqIxD
+	WzeKVRv2SSgZ8ZD8ay4H2rRLvQT4Cgf9vrZL8GOPZ6GXZq2DAouvORipjna4//oQGOv/PCqw8wYCg
+	3GQM0q6A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sOztU-0000000AHbZ-1Zzj;
+	Wed, 03 Jul 2024 13:19:32 +0000
+Date: Wed, 3 Jul 2024 06:19:32 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: blk_validate_limits validation of block size (was Re: [PATCH v2]
+ null_blk: fix validation of block size)
+Message-ID: <ZoVP5NZhCmMH6qBp@infradead.org>
+References: <20240603192645.977968-1-nmi@metaspace.dk>
+ <Zl4dxaQgPbw19Irk@kbusch-mbp.dhcp.thefacebook.com>
+ <Zl6cHI48ye7Tp1-C@infradead.org>
+ <8f8f8f78-fcd4-4e71-8dd5-bae03a627a34@oracle.com>
+ <Zn-Wpq2AzBo6rcgd@infradead.org>
+ <43aab70c-8521-4dfa-847a-1175d31a55d1@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Wed, 3 Jul 2024 13:18:48 +0000
-Message-ID: <D2FXMJ39HOWV.MEBKDIO1F1TM@amazon.com>
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>, <seanjc@google.com>
-CC: <pbonzini@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-hyperv@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <graf@amazon.de>,
-	<dwmw2@infradead.org>, <pdurrant@amazon.co.uk>, <mlevitsk@redhat.com>,
-	<jgowans@amazon.com>, <corbet@lwn.net>, <decui@microsoft.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <amoorthy@google.com>
-X-Mailer: aerc 0.17.0-152-g73bcb4661460-dirty
-References: <20240609154945.55332-1-nsaenz@amazon.com>
- <D2FTASL4CXLN.32GYJ8QZH4OCR@amazon.com> <87ikxm63px.fsf@redhat.com>
-In-Reply-To: <87ikxm63px.fsf@redhat.com>
-X-ClientProxiedBy: EX19D040UWB001.ant.amazon.com (10.13.138.82) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43aab70c-8521-4dfa-847a-1175d31a55d1@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Vitaly,
+On Wed, Jul 03, 2024 at 01:20:26PM +0100, John Garry wrote:
+> So if we stop validating the limits in a., there is a user-visible change in
+> behaviour (as we stop rejecting invalid limits from the NBD_SET_BLKSIZE
+> ioctl).
+> 
+> We could add a "dryrun" option to queue_limits_commit_update() (and call
+> that instead of blk_validate_block_size(), which is effectively the same as
+> calling blk_validate_block_size()). Or we can keep
+> nbd as the only blk_validate_limits() user (outside the block layer).
 
-On Wed Jul 3, 2024 at 12:48 PM UTC, Vitaly Kuznetsov wrote:
-> Nicolas Saenz Julienne <nsaenz@amazon.com> writes:
->
-> > Hi Sean,
-> >
-> > On Sun Jun 9, 2024 at 3:49 PM UTC, Nicolas Saenz Julienne wrote:
-> >> This series introduces core KVM functionality necessary to emulate Hyp=
-er-V's
-> >> Virtual Secure Mode in a Virtual Machine Monitor (VMM).
-> >
-> > Just wanted to make sure the series is in your radar.
-> >
->
-> Not Sean here but I was planning to take a look at least at Hyper-V
-> parts of it next week.
+I'd just keep the extra external blk_validate_block_size call in nbd.c.
 
-Thanks for the update.
-
-Nicolas
+Maybe add a comment to the blk_validate_block_size declaration that
+drivers should not bother with it as it's already done by
+blk_validate_limits.
 
