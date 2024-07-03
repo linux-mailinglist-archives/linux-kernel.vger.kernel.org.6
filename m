@@ -1,120 +1,115 @@
-Return-Path: <linux-kernel+bounces-238689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A0C924DE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:37:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F7C924DE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EC5BB22055
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:36:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24D621C22179
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DF6523A;
-	Wed,  3 Jul 2024 02:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9653F567D;
+	Wed,  3 Jul 2024 02:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BrTosh7Q"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="rvzpSked"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2E9139D;
-	Wed,  3 Jul 2024 02:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5463522F
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 02:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719974211; cv=none; b=Z5WpO5OniDygb48hAFCgUg2LapFlRC36NBGMoeCr8CrxmUGS8oloefvdG+LJ37TBJZtIZFaTI4aCq7iZC4YFtLPbt1TUOGxg+4x83JCNe5lqwT5ZtO+2Ra5xhkZi5UY2IyGzEUShH8gmKPPdCBCZVnsLbFjDtyYK0YQUBugLlwc=
+	t=1719974373; cv=none; b=ks62r8oYMXfKB4Mi/UtujuMfVuiJxCqb8CBoOCTjw7z6oaTiAU245Z78D+jh1aNh4Ri5SJLz86fEzdMbPORWcqMcR8lHQ1x+1E/FOYHf9Wx1UXdOrnx4uB956KHsGCJmznrlrZIyQOmQHMt9GkdYNOJ5q3ocMUVWTTWipIVI6zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719974211; c=relaxed/simple;
-	bh=aSfuX8QaCcB4szCaBQHcb6fbkYpJ+xJH7F8/1Hanxio=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RrWv8kSkaoTdhiOmnHcMwahFSlUHjiWrKB/Tf11IgTOFdSFzkpxCybfiuopeuB2TjaAqXH9HrkrTPZ5o7vqJcrTJ/cFokFwJIPIIHUIrJw2yRLyzfgtbiRpBA9tK/wGMFYrS6lyv/78HFV7gKT6V2h0g6W3U99hAwRkizwXPL7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BrTosh7Q; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1719974205;
-	bh=0SHqF0dUovd6ss7dr8haTSOKzF2Sqk2aiA+Wo+YlUXw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BrTosh7QOfRCq2kxrXOrE8VmZbJ+puf5D3nORfbHKQFZ166stwB0wms/m3X4eyOFO
-	 Kr7n0OQysIE4CUVMEpEMBM8t0wDnDB2G9glSM8lOIIaIU6zJMpQiWvYgOEn1Ovlgex
-	 UEkrQ60MvhEBj2ekWFrKPsk9f7xvJt5XqbEhjyGZF0ESDf2slOcg4Ci13fW72gtdRK
-	 StugcFI0ly3iVCGkClfUtX8oXm2/1DdYc31ir1Q2zloNy7I97NvwGZACzBes6XlMxG
-	 uB9wk9zd5xi2mfvy4ZnuSqsdXLOVejNqlNLiDf7M1Qf5jEQekJi87DoW9obsXnX4+H
-	 LtJl48F11Yshg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1719974373; c=relaxed/simple;
+	bh=nesRTquYSmAgGVBGCb6VKWwFQ3BzkeM3+SZXjJ0qOSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aEeJBOv2rERXCeGQSepPVdsEgTPVAiWiIRi4VMxAVJvcn+OnNgoREwTD2k0kuWlXeKegHU3Dyl1RFr8GMF81QL8igiIn6jScyaFSJwvN/fCMEjFsj2Ro7OhMyeAQD7G49F461d5nw8Cm42SawECsdjP1KIuVLZf5CH33YJidebw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=rvzpSked; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WDP704HvCz4wbr;
-	Wed,  3 Jul 2024 12:36:44 +1000 (AEST)
-Date: Wed, 3 Jul 2024 12:36:43 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dave Airlie <airlied@redhat.com>
-Cc: Mark Brown <broonie@kernel.org>, DRI <dri-devel@lists.freedesktop.org>,
- Piotr =?UTF-8?B?UGnDs3Jrb3dza2k=?= <piotr.piorkowski@intel.com>, Michal
- Wajdeczko <michal.wajdeczko@intel.com>,
- buildfailureaftermergeofthedrmtree@sirena.org.uk, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm
-Message-ID: <20240703123643.5b4dc83f@canb.auug.org.au>
-In-Reply-To: <Zn7s611xnutUFxR0@sirena.org.uk>
-References: <Zn7s611xnutUFxR0@sirena.org.uk>
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 8F7082C044B;
+	Wed,  3 Jul 2024 14:39:22 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1719974362;
+	bh=mSPdwjA6VRheCRrQxnrkew5mjmQX0ILCVy3v5OXgySM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rvzpSkedJ7CyBO8MdjZPYq5M5JkPmqpS9lKgIzDAMy09c4u7rCWVYhOuDNP3jltWA
+	 pSLOJ7jdTq/MEZ2Eshp800RzozG3qfolob3q9n2BtC6EQ6MGiZUHZRPm/ixRXpDGFh
+	 Krj8RZdwhqB/im71DwvglQCHe54s27aum8x1eluTJzUxs4c0x2jtvE1V4pThwYlBkC
+	 pSM9IK33DmsBHVcOlFfRRfCP0TqAUoEaWc8xbgIDaTyN3TURnPx47kcvx9CwpkF5Oi
+	 EnihWH9g0CS3O1J937xz081PMyxTe1FUnzDB4ePk5zpidtOta8Iuqa6N+Nw9OUe21s
+	 vFb4x9YJRgzTQ==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6684b9da0000>; Wed, 03 Jul 2024 14:39:22 +1200
+Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 6627D13ED5B;
+	Wed,  3 Jul 2024 14:39:22 +1200 (NZST)
+Message-ID: <c8132fc9-37e2-42c3-8e6b-fbe88cc2d633@alliedtelesis.co.nz>
+Date: Wed, 3 Jul 2024 14:39:22 +1200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/yaBhn/0VkwjWMaUO2AGJq8U";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: net: dsa: Realtek switch drivers
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Luiz Angelo Daros de Luca <luizluca@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ "alsi@bang-olufsen.dk" <alsi@bang-olufsen.dk>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ "olteanv@gmail.com" <olteanv@gmail.com>, =?UTF-8?Q?Marek_Beh=C3=BAn?=
+ <kabel@kernel.org>, "ericwouds@gmail.com" <ericwouds@gmail.com>,
+ David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "justinstitt@google.com" <justinstitt@google.com>,
+ "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>,
+ netdev <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "sander@svanheule.net" <sander@svanheule.net>
+References: <aa5ffa9a-62cc-4a79-9368-989f5684c29c@alliedtelesis.co.nz>
+ <CACRpkdbF-OsV_jUp42yttvdjckqY0MsLg4kGxTr3JDnjGzLRsA@mail.gmail.com>
+ <CAJq09z6dN0TkxxjmXT6yui8ydRUPTLcpFHyeExq_41RmSDdaHg@mail.gmail.com>
+ <b15b15ce-ae24-4e04-83ab-87017226f558@alliedtelesis.co.nz>
+ <c19eb8d0-f89b-4909-bf14-dfffcdc7c1a6@lunn.ch>
+Content-Language: en-US
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <c19eb8d0-f89b-4909-bf14-dfffcdc7c1a6@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=6684b9da a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=CfxWgEXZv7hflEJXd20A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
---Sig_/yaBhn/0VkwjWMaUO2AGJq8U
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-On Fri, 28 Jun 2024 18:03:39 +0100 Mark Brown <broonie@kernel.org> wrote:
+On 2/07/24 14:50, Andrew Lunn wrote:
+>> What would I be loosing if I don't use the DSA infrastructure? I got kind of
+>> hung up at the point where it really wanted a CPU port and I just couldn't
+>> provide a nice discrete NIC.
+>   
+> DSA gives you a wrapper which handles some common stuff, which you
+> will end up implementing if you do a pure switchdev driver. Mostly
+> translating netdev to port index. The tagging part of DSA does not
+> apply if you have DMA per user port, so you don't loose anything
+> there.  I guess you cannot cascade multiple switches, so the D in DSA
+> also does not apply. You do lose out on tcpdump support, since you
+> don't have a conduit interface which all traffic goes through.
 >
-> After merging the drm tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c: In function '=
-pf_get_threshold':
-> /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c:1788:27: error=
-: unused variable 'xe' [-Werror=3Dunused-variable]
->  1788 |         struct xe_device *xe =3D gt_to_xe(gt);
->       |                           ^~
-> cc1: all warnings being treated as errors
->=20
-> Caused by commit
->=20
->   629df234bfe73d ("drm/xe/pf: Introduce functions to configure VF thresho=
-lds")
->=20
-> I have used the tree from 20240627 instead.
-
-I am still seeing that build failure.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/yaBhn/0VkwjWMaUO2AGJq8U
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaEuTsACgkQAVBC80lX
-0GxrbQf+LSBGQ52sQ0YfN9wr5fTIjIq/ntnbwl+hoEnKZtBUjmaiPZWEoWXYnmbG
-oKgUBRZvVBAKjxpb4hwV4aVdvQGWKDe4FjD+AwUeevutrFEeZEGI2ZQBLfHbFC6x
-+kio3gEHjh/I5VOIgeaDToOo47JLKvArn5Bu69nZgMZIaOVectLT74KrE0TP4L4a
-V5Ey0a2C4MXXbTC+zZWP2Y9AX8LgvxE5wGOkRJ5pN7C0p5Ff8UDYwEXBEQ/T6SRF
-E3ejRAGuWP5FVOe6gGDeC2FEeBQfrCVrnIzCq7aqNiZIyW3lrXTFHQo3atFYwekB
-gk25zepLUnHaYJPhIXoYZw0eLsGC2g==
-=efJw
------END PGP SIGNATURE-----
-
---Sig_/yaBhn/0VkwjWMaUO2AGJq8U--
+> But you should not try to impose DSA if it does not fit. There are
+> 'simple' pure switchdev drivers, you don't need to try to understand
+> the mellanox code. Look at the microchip drivers for something to
+> copy.
+One reason for using DSAI've just found is that in theory the RTL930x 
+supports a CPU disabled mode where you do connect it to an external CPU 
+and the data travels over SGMII like you'd get with a traditional DSA 
+design. It's not a mode I'm planning on supporting anytime soon but it 
+might come up when I get round to submitting some patches.
 
