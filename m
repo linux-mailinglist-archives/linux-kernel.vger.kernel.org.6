@@ -1,161 +1,107 @@
-Return-Path: <linux-kernel+bounces-239797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933AE926577
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 18:00:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB36A926560
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B67EF1C24BD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87BAA28375F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8085A181CF0;
-	Wed,  3 Jul 2024 15:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4195918132E;
+	Wed,  3 Jul 2024 15:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Q+JBxIpK"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NsIDCdv6"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EDC181BAE
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A1179E1
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720022393; cv=none; b=A+gaz0QpClax83luqVhkftN+uchzXH4TDsbf0z/BaD3piOKtlHWfY172Wjv4JcXvPRHH7PDpKFSvTnynUrvGsIRjkGOVNRzXrBvjqTP5Sxj0nB7U/Rfql22jmCRVDodGQ/WuOQnJ8d/FpeqqKJlw8K9RU8y6/t6mq6pKLkAnCeY=
+	t=1720022330; cv=none; b=k5eqVtrSwlI92zgx3cAVWtg1rA0dr0ZQ/sxodj8HpkJ7nTiu4kG/22euI2QAVab0ac/mclkQQx+Oh1QW8+jcUPMvs89mfgTn8fRCsuU7O7zC+mHcrqBhogFWSFsOECDWiszxNr9PoVZ77tWFO9/Q2cQP9Zo/Gls3+Xl/KnbIbuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720022393; c=relaxed/simple;
-	bh=FNRprOWq8ldQpxWHTTdhVGM9NaiNYj8i5iZmJH/dIhY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ULKMPtiUrGil4dz4cj1YaMmKkNETnvp5WNk/GldS0PTm3nPWy95wYMb3bkrs7h8+abqCs9OOlV8QuxdV3b61dZzdyeWZVktdYjYHz21zLyCK7CKuxwLM1/qpbdilVVqtV04WWfvevMZ20jYspA6oLhxCkGjgfe9q3IqAocjOzT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Q+JBxIpK; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-X-Virus-Scanned: SPAM Filter at disroot.org
-From: Yao Zi <ziyao@disroot.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1720022382; bh=FNRprOWq8ldQpxWHTTdhVGM9NaiNYj8i5iZmJH/dIhY=;
-	h=From:To:Cc:Subject:Date;
-	b=Q+JBxIpKF4lEYSy9NZ201G1vVCb6o4Nb3wbVRUw10LWkcCnJXVM8GxqHQyW989FME
-	 PI10wJm/FAIJUTlLDpbFvFddyt4TsqHPvrebgRFADHBVTDv6pLiO494v3wSbug9Xpd
-	 /xSFLlzswHlt4jaV3N6jpyQs5VZMoVrYPPEE9Disgs2jtk7e/lSuWs11/qZlkZGs3V
-	 MrOdvcL3NPUIG2t6HrkUaaZWUaFfUVBuckFJhT4jxRg9sBdKvrXDXYjOcK2XXsUzpb
-	 Q2ibE8NtHn7I94XO9JZdYmExIuixmdKD5ieHLsQD/A4GR3qUYF6hxYGkEH8dpRxbVC
-	 geNOweXQvDlkQ==
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Maxime Jourdan <mjourdan@baylibre.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH] drm/meson: fix canvas release in bind function
-Date: Wed,  3 Jul 2024 15:58:27 +0000
-Message-ID: <20240703155826.10385-2-ziyao@disroot.org>
+	s=arc-20240116; t=1720022330; c=relaxed/simple;
+	bh=5JRPgysfabq+bO5Avj1lkdsGmnq/d+cFT7Ou4T4oFTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zwb0ZgkkRDnEeKM49eV1L6QQlzXDpySbdI3+1vm7vaOwuMTJyebS+RW+Cokxbyqqv6vGLpyMzkCbi1ZUHt2a29HBsTdF4TdzhmgNFb6TBhFK1Zx1J8nuU4cv0YHhG39NS7pWxNMxxopHLiw+NwlZOEFPrtBGIhhjVrGzwEC+w4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NsIDCdv6; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720022327;
+	bh=5JRPgysfabq+bO5Avj1lkdsGmnq/d+cFT7Ou4T4oFTs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NsIDCdv6y1vFaehheLrd6HmDeUq/2CVHjwGG+SzVr1as+ZcUgkRnGZlMkjiIoeyCv
+	 zfxRpmLYb6rYJ8xzsXT9SRPDia8ryZkmWIP9u71Q5/BfJni7vcVr826EDE45KlpV2C
+	 ArfooN61Xz9g92w4ZOGDqN+leAf1jhS8W56k0NtY8qQPW7wjq37ClL5e3b6VhnViKY
+	 GJZ9Xhm11EPJ9tqpBGYKtfcqbo77wTu/KE58aYMUS651H4zvkeHhadxbr1bhNJDapV
+	 JLyhb0oB5xpqU6aZdOHw8yj3xI6658rCTUvMAt66KVdkR5YSBdSbCBxxqz9yRqzwHi
+	 ofqeRkGwZxGig==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C84B53782039;
+	Wed,  3 Jul 2024 15:58:46 +0000 (UTC)
+Date: Wed, 3 Jul 2024 17:58:45 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, =?UTF-8?B?QWRyacOhbg==?= Larumbe
+ <adrian.larumbe@collabora.com>
+Subject: Re: [PATCH] drm/panthor: Record devfreq busy as soon as a job is
+ started
+Message-ID: <20240703175845.2268b890@collabora.com>
+In-Reply-To: <20240703155646.80928-1-steven.price@arm.com>
+References: <20240703155646.80928-1-steven.price@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Allocated canvases may not be released on the error exit path of
-meson_drv_bind_master(), leading to resource leaking. Rewrite exit path
-to release canvases on error.
+On Wed,  3 Jul 2024 16:56:46 +0100
+Steven Price <steven.price@arm.com> wrote:
 
-Fixes: 2bf6b5b0e374 ("drm/meson: exclusively use the canvas provider module")
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- drivers/gpu/drm/meson/meson_drv.c | 37 +++++++++++++++----------------
- 1 file changed, 18 insertions(+), 19 deletions(-)
+> If a queue is already assigned to the hardware, then a newly submitted
+> job can start straight away without waiting for the tick. However in
+> this case the devfreq infrastructure isn't notified that the GPU is
+> busy. By the time the tick happens the job might well have finished and
+> no time will be accounted for the GPU being busy.
+> 
+> Fix this by recording the GPU as busy directly in queue_run_job() in the
+> case where there is a CSG assigned and therefore we just ring the
+> doorbell.
+> 
+> Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
+> Signed-off-by: Steven Price <steven.price@arm.com>
 
-diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index 17a5cca007e2..4bd0baa2a4f5 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -250,29 +250,20 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	if (ret)
- 		goto free_drm;
- 	ret = meson_canvas_alloc(priv->canvas, &priv->canvas_id_vd1_0);
--	if (ret) {
--		meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
--		goto free_drm;
--	}
-+	if (ret)
-+		goto free_canvas_osd1;
- 	ret = meson_canvas_alloc(priv->canvas, &priv->canvas_id_vd1_1);
--	if (ret) {
--		meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
--		meson_canvas_free(priv->canvas, priv->canvas_id_vd1_0);
--		goto free_drm;
--	}
-+	if (ret)
-+		goto free_canvas_vd1_0;
- 	ret = meson_canvas_alloc(priv->canvas, &priv->canvas_id_vd1_2);
--	if (ret) {
--		meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
--		meson_canvas_free(priv->canvas, priv->canvas_id_vd1_0);
--		meson_canvas_free(priv->canvas, priv->canvas_id_vd1_1);
--		goto free_drm;
--	}
-+	if (ret)
-+		goto free_canvas_vd1_1;
- 
- 	priv->vsync_irq = platform_get_irq(pdev, 0);
- 
- 	ret = drm_vblank_init(drm, 1);
- 	if (ret)
--		goto free_drm;
-+		goto free_canvas_vd1_2;
- 
- 	/* Assign limits per soc revision/package */
- 	for (i = 0 ; i < ARRAY_SIZE(meson_drm_soc_attrs) ; ++i) {
-@@ -288,11 +279,11 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	 */
- 	ret = drm_aperture_remove_framebuffers(&meson_driver);
- 	if (ret)
--		goto free_drm;
-+		goto free_canvas_vd1_2;
- 
- 	ret = drmm_mode_config_init(drm);
- 	if (ret)
--		goto free_drm;
-+		goto free_canvas_vd1_2;
- 	drm->mode_config.max_width = 3840;
- 	drm->mode_config.max_height = 2160;
- 	drm->mode_config.funcs = &meson_mode_config_funcs;
-@@ -307,7 +298,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	if (priv->afbcd.ops) {
- 		ret = priv->afbcd.ops->init(priv);
- 		if (ret)
--			goto free_drm;
-+			goto free_canvas_vd1_2;
- 	}
- 
- 	/* Encoder Initialization */
-@@ -371,6 +362,14 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- exit_afbcd:
- 	if (priv->afbcd.ops)
- 		priv->afbcd.ops->exit(priv);
-+free_canvas_vd1_2:
-+	meson_canvas_free(priv->canvas, priv->canvas_id_vd1_2);
-+free_canvas_vd1_1:
-+	meson_canvas_free(priv->canvas, priv->canvas_id_vd1_1);
-+free_canvas_vd1_0:
-+	meson_canvas_free(priv->canvas, priv->canvas_id_vd1_0);
-+free_canvas_osd1:
-+	meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
- free_drm:
- 	drm_dev_put(drm);
- 
--- 
-2.45.2
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
+> ---
+>  drivers/gpu/drm/panthor/panthor_sched.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index 951ff7e63ea8..e7afaa1ad8dc 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -2942,6 +2942,7 @@ queue_run_job(struct drm_sched_job *sched_job)
+>  			pm_runtime_get(ptdev->base.dev);
+>  			sched->pm.has_ref = true;
+>  		}
+> +		panthor_devfreq_record_busy(sched->ptdev);
+>  	}
+>  
+>  	/* Update the last fence. */
 
 
