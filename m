@@ -1,199 +1,149 @@
-Return-Path: <linux-kernel+bounces-239680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AFE29263E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 513D09263E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 818801F22D41
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:52:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72BA1F21FFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35E717DE09;
-	Wed,  3 Jul 2024 14:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9282B17BB39;
+	Wed,  3 Jul 2024 14:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="vKlkUWrY"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gCbRf+If"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B4A17DE01;
-	Wed,  3 Jul 2024 14:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475CC1DA319
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 14:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720018359; cv=none; b=KOsYcHAwtGylaK6y6XYhA8Z3tv2DzqeNbpRH2Ue9Rttij4IaLM2XjMb2cVvxDtEGZQMEWXBq74q5DNIhvzpWWR3ysG9cXSAg728tkEMcv9HEKTHzo+Xi09TdJ5o8OjypEZ/owEDCK3moTkHIa3Z6jHvH17yYQdut/aBjvHmZhQE=
+	t=1720018502; cv=none; b=OjBf4ajanUHN3IBp20UqQ9p3JLZV6r33cK0sWZopDXzsqRmMeKANYhk3ewLBwKBxdKFPM5Bu1eVJqpJKLLBkigRVma34yGC82OieXltpT1HBND1UimK5p6jK1J4BXcPKJJFkqwBZLxYNg0FaVstKCsJ6OqVI/psy3xto/QTzIYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720018359; c=relaxed/simple;
-	bh=HvGp07wavk1JrZaCJOVO3Zvyms04mXkjTItY8TJVo4I=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=C6K+LbAMFHQ/KfkEbuOPZ7Dtp+djWmWQUK6vmB0cms1CUozEUjP25wLtT8GLsoHrtITLhZ/9g15I6TXVx9n+Qk4h3ogiAZN12DtODZyi1PcwI5vAGRd1S0um4mYoFJyWYPpbfPm5dFXb0WVFXcsSZJLOVEV0uElXefQD49Iup9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=vKlkUWrY; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1720018502; c=relaxed/simple;
+	bh=snDQDDyLA00EBLFqmDZtu42ZDwCdtxV8FFojaJwQJeQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NhImw7Dm1jlr8udKkhjwAAeFlKq+WkYchQ6bk8stGGBSKiMSndN8hdN63Ql1OgmPDacblBRMZk0hbQo+SQacCjWyWRIvmkHAceGXxZIW5+9x3e3zcwZUwnL0kpe+nOkXxRk3+mQ7QVCAPVQRD5mXY/wZ1pUqD5n7VlullXyIWiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gCbRf+If; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7066c799382so4603330b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 07:55:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720018500; x=1720623300; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CJra/hwZ4zcRXGF8MC6VA/thedkR4ig6VKv4A5Elx4s=;
+        b=gCbRf+IfChDFpcuxNGlyMqKtQrtj1LUkOHHFoy0/qFXSmfZQ2QyjG/zY0+omQ9gA05
+         RRqdpvIRwvaM0fVka5sbTVZMfe1Z3J20n2azQQBKQ8x+zTdqogajrfmRrfbItDOIadZ0
+         fVq0VmCW67Pg4VBJwDHOOEnCJc8u9LsYz42CcB6V9cnJl/CZUUnbB4hJyxOel8yk8sTY
+         uzGHJnb6pJlx//jymGVspoWYZSuvpSWwmxI+MR1pvUfKPv5hqegF2Afm/OXBCv9jur6U
+         cl/aoEN+okbHjYoAGKhqM1lzZIPbJmZYssgKUwWkpNTjjjRQ76gzXb5f9Wy8EKe+XT1M
+         oekg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720018500; x=1720623300;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CJra/hwZ4zcRXGF8MC6VA/thedkR4ig6VKv4A5Elx4s=;
+        b=dmr0AetTFb8F3MiBVfnyNtXw6PpXXFBPB0/ngX4s4OqeuysH51EgzuiXa1m9hAN+Zb
+         gZS5aKxK7CiYgztpTSUOj9GBNk1Z8fyvn5kNR9CmPKRRC0mOrbKHcI+QTDQqSiOTIp6Z
+         unj/QYMLv1jEGj54JxiF+O+/k3JpjeLmmL4xyAqxZ7xhj8nx+g80FbMRJZ4hjGNsx4h1
+         8O42vS0wcEnacW30neFdKYZpf1+qKC0B0Ysbvbk+G2sA4tOykun+b0UEFYITFOEJ24vh
+         rY7BumHxWWK2O0ttka8kYXYm7dztesML+OVmxV7V4UjFyG2xSfLB/5Sj7zYHTtWwc2i+
+         RSTA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6TUNdOTm18ApMpanEYVDMV/5a+LAEOJUj9ZV4IBoS9I7V5g2DIKTTsLlfAK60PDfzYU2/9OfbZDiszUgaKx2eRR9F/XiEcGPJy8Hi
+X-Gm-Message-State: AOJu0Yz+8wA3y+88U+skS01OFV7/+H+fK8qXzKvBW5vXi8AHrePIvgUN
+	T9xh5TDFpLo5BaTIJv7ri15sbYTN7mz6UypFJVn18/OBoPKKdBktfTE8YwaEg2XfvoUKwuhz1YT
+	RTGOEr4H/zNdaRGI6Yt91oMQvNzHqNR33TRxvUA==
+X-Google-Smtp-Source: AGHT+IF5DrWqR54rMlVhGn9iJTMK8TJZJpWVDW7F9HCl+FEPivRxR+MxR5vkOxV020W4XrKZPHjjxW1kOR10PedlLpo=
+X-Received: by 2002:a05:6a00:230c:b0:704:2f65:4996 with SMTP id
+ d2e1a72fcca58-70aaad3b5c9mr14365683b3a.11.1720018500452; Wed, 03 Jul 2024
+ 07:55:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1720018355;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lVm5E6swsesJb06uFJCAcatfBLzXL+iYie8HScXx3cM=;
-	b=vKlkUWrYQaoJmbPXXISLT74VRiQWv32r99RgM5O1kWtx5Mv2m477cvHj8gp52amczXkFah
-	lx14wum+G/sArou9KFA3+cv371EGwBCAmUEbc7uGCfknM7jGvRlwEAjPGFc4IrdvzJNmwp
-	by2CJ9iD6+7gbLSo943NFtO6/yUQyokBdNrdTtrMbyiOeV1cEDWKrhATxJVU9u3psQgXa5
-	q4mhkEI3lbpPvdZsBUkCpIRRL/o8TcmdkhlwvxHH31VT0BVokeBCuwvWO3/4/BHaa4rG53
-	y0GwOh8sDu3UJSWTqbFCZpdTlOt8zc5G3urs03TVeET4/Womq/UcsF6Pn1yOlg==
-Date: Wed, 03 Jul 2024 16:52:35 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Steven Price <steven.price@arm.com>
-Cc: dri-devel@lists.freedesktop.org, boris.brezillon@collabora.com,
- robh@kernel.org, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- linux-kernel@vger.kernel.org, Diederik de Haas <didi.debian@cknow.org>,
- Furkan Kardame <f.kardame@manjaro.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] drm/panfrost: Mark simple_ondemand governor as softdep
-In-Reply-To: <e42a55ba-cbb5-47a4-bec6-9c3067040970@arm.com>
-References: <4e1e00422a14db4e2a80870afb704405da16fd1b.1718655077.git.dsimic@manjaro.org>
- <f672e7460c92bc9e0c195804f7e99d0b@manjaro.org>
- <e42a55ba-cbb5-47a4-bec6-9c3067040970@arm.com>
-Message-ID: <192dbcd968dfebf825a3a759701bf381@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+References: <20240624082011.4990-1-xuewen.yan@unisoc.com> <20240624082011.4990-3-xuewen.yan@unisoc.com>
+ <20240628012832.37swdtxr4ds2kkp7@airbuntu> <CAKfTPtALDtnbPmq4401oLKzcEDurLKuCyqyNKOb1oYLAVJ2P4A@mail.gmail.com>
+ <20240703115407.y6tjelkpq5njkzjy@airbuntu>
+In-Reply-To: <20240703115407.y6tjelkpq5njkzjy@airbuntu>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 3 Jul 2024 16:54:48 +0200
+Message-ID: <CAKfTPtCNEa+pAbo1br_1SDSn8=x67YMCi_jytpjUMHv7a9xMKA@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] sched/fair: Use actual_cpu_capacity everywhere in util_fits_cpu()
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, dietmar.eggemann@arm.com, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	christian.loehle@arm.com, vincent.donnefort@arm.com, ke.wang@unisoc.com, 
+	di.shen@unisoc.com, xuewen.yan94@gmail.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-07-03 15:20, Steven Price wrote:
-> On 03/07/2024 13:42, Dragan Simic wrote:
->> On 2024-06-17 22:17, Dragan Simic wrote:
->>> Panfrost DRM driver uses devfreq to perform DVFS, while using
->>> simple_ondemand
->>> devfreq governor by default.  This causes driver initialization to
->>> fail on
->>> boot when simple_ondemand governor isn't built into the kernel
->>> statically,
->>> as a result of the missing module dependency and, consequently, the
->>> required
->>> governor module not being included in the initial ramdisk.  Thus,
->>> let's mark
->>> simple_ondemand governor as a softdep for Panfrost, to have its 
->>> kernel
->>> module
->>> included in the initial ramdisk.
->>> 
->>> This is a rather longstanding issue that has forced distributions to
->>> build
->>> devfreq governors statically into their kernels, [1][2] or has forced
->>> users
->>> to introduce some unnecessary workarounds. [3]
->>> 
->>> For future reference, not having support for the simple_ondemand
->>> governor in
->>> the initial ramdisk produces errors in the kernel log similar to 
->>> these
->>> below,
->>> which were taken from a Pine64 RockPro64:
->>> 
->>>   panfrost ff9a0000.gpu: [drm:panfrost_devfreq_init [panfrost]]
->>> *ERROR* Couldn't initialize GPU devfreq
->>>   panfrost ff9a0000.gpu: Fatal error during GPU init
->>>   panfrost: probe of ff9a0000.gpu failed with error -22
->>> 
->>> Having simple_ondemand marked as a softdep for Panfrost may not
->>> resolve this
->>> issue for all Linux distributions.  In particular, it will remain
->>> unresolved
->>> for the distributions whose utilities for the initial ramdisk
->>> generation do
->>> not handle the available softdep information [4] properly yet. 
->>> However, some
->>> Linux distributions already handle softdeps properly while generating
->>> their
->>> initial ramdisks, [5] and this is a prerequisite step in the right
->>> direction
->>> for the distributions that don't handle them properly yet.
->>> 
->>> [1]
->>> https://gitlab.manjaro.org/manjaro-arm/packages/core/linux/-/blob/linux61/config?ref_type=heads#L8180
->>> [2] https://salsa.debian.org/kernel-team/linux/-/merge_requests/1066
->>> [3] https://forum.pine64.org/showthread.php?tid=15458
->>> [4]
->>> https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/commit/?id=49d8e0b59052999de577ab732b719cfbeb89504d
->>> [5]
->>> https://github.com/archlinux/mkinitcpio/commit/97ac4d37aae084a050be512f6d8f4489054668ad
->>> 
->>> Cc: Diederik de Haas <didi.debian@cknow.org>
->>> Cc: Furkan Kardame <f.kardame@manjaro.org>
->>> Cc: stable@vger.kernel.org
->>> Fixes: f3ba91228e8e ("drm/panfrost: Add initial panfrost driver")
->>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> 
-> Reviewed-by: Steven Price <steven.price@arm.com>
+On Wed, 3 Jul 2024 at 13:54, Qais Yousef <qyousef@layalina.io> wrote:
+>
+> On 07/02/24 15:25, Vincent Guittot wrote:
+>
+> > > >        *
+> > > >        * Only exception is for HW or cpufreq pressure since it has a direct impact
+> > > >        * on available OPP of the system.
+> > > > @@ -5011,7 +5011,7 @@ static inline int util_fits_cpu(unsigned long util,
+> > > >        * For uclamp_max, we can tolerate a drop in performance level as the
+> > > >        * goal is to cap the task. So it's okay if it's getting less.
+> > > >        */
+> > > > -     capacity_orig = arch_scale_cpu_capacity(cpu);
+> > > > +     capacity_actual = get_actual_cpu_capacity(cpu);
+> > > >
+> > > >       /*
+> > > >        * We want to force a task to fit a cpu as implied by uclamp_max.
+> > > > @@ -5039,7 +5039,7 @@ static inline int util_fits_cpu(unsigned long util,
+> > > >        *     uclamp_max request.
+> > > >        *
+> > > >        *   which is what we're enforcing here. A task always fits if
+> > > > -      *   uclamp_max <= capacity_orig. But when uclamp_max > capacity_orig,
+> > > > +      *   uclamp_max <= capacity_actual. But when uclamp_max > capacity_actual,
+> > > >        *   the normal upmigration rules should withhold still.
+> > > >        *
+> > > >        *   Only exception is when we are on max capacity, then we need to be
+> > > > @@ -5050,8 +5050,8 @@ static inline int util_fits_cpu(unsigned long util,
+> > > >        *     2. The system is being saturated when we're operating near
+> > > >        *        max capacity, it doesn't make sense to block overutilized.
+> > > >        */
+> > > > -     uclamp_max_fits = (capacity_orig == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
+> > > > -     uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_orig);
+> > > > +     uclamp_max_fits = (capacity_actual == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
+> > >
+> > > We should use capacity_orig here. We are checking if the CPU is the max
+> > > capacity CPU.
+> >
+> > I was also wondering what would be the best choice there. If we
+> > consider that we have only one performance domain with all max
+> > capacity cpus then I agree that we should keep capacity_orig as we
+> > can't find a better cpu that would fit. But is it always true that all
+> > max cpu are tied to the same perf domain ?
+>
+> Hmm I could be not thinking straight today. But the purpose of this check is to
+> ensure overutilized can trigger for the common case where a task will always
+> fit the max capacity cpu (whether it's on a single pd or multiple ones). For
+> that corner case fits_capacity() should be the only fitness check otherwise
+> overutilized will never trigger by default.
 
-Thanks!
+Ok, so I messed up several use cases but in fact both are similar ...
 
->> Just checking, could this patch be accepted, please?  The Lima 
->> counterpart
->> has already been accepted. [6]
-> 
-> Thanks for the prod - I have to admit I saw there was discussion about
-> the Lima patch and so just put this on my list to look again later 
-> after
-> the discussion had reached a conclusion.
-> 
->> The approach in this patch is far from perfect, but it's still fine 
->> until
->> there's a better solution, such as harddeps.  I'll continue my 
->> research
->> about the possibility for introducing harddeps, which would hopefully
->> replace quite a few instances of the softdep (ab)use that already 
->> extend
->> rather far.  For example, have a look at the commit d5178578bcd4 
->> (btrfs:
->> directly call into crypto framework for checksumming) [7] and the 
->> lines
->> containing MODULE_SOFTDEP() at the very end of fs/btrfs/super.c. [8]
-> 
-> I agree - it's not perfect, but it's the best we have for now. I hope
-> sometime we'll have a cleaner solution to express dependencies like 
-> this
-> (good luck! ;) ).
+if capacity_actual != SCHED_CAPACITY_SCALE and uclamp_max ==
+SCHED_CAPACITY_SCALE
+then uclamp_max_fits = (capacity_actual == SCHED_CAPACITY_SCALE) &&
+(uclamp_max == SCHED_CAPACITY_SCALE) is false
+and uclamp_max_fits = !uclamp_max_fits && (uclamp_max <=
+capacity_actual); is also false because (uclamp_max <=
+capacity_actual) is always false
 
-Thanks. :)  Implementing harddeps is _relatively_ straightforward, but
-getting full support for harddeps reach various Linux distributions is
-going to be an uphill battle without doubt. :)
-
->> If a filesystem driver can rely on the (ab)use of softdeps, which may 
->> be
->> fragile or seen as a bit wrong, I think we can follow the same 
->> approach,
->> at least until a better solution is available.
->> 
->> [6]
->> https://cgit.freedesktop.org/drm/drm-misc/commit/?id=0c94f58cef319ad054fd909b3bf4b7d09c03e11c
->> [7]
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d5178578bcd4
->> [8]
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/btrfs/super.c#n2593
->> 
->>> ---
->>>  drivers/gpu/drm/panfrost/panfrost_drv.c | 1 +
->>>  1 file changed, 1 insertion(+)
->>> 
->>> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c
->>> b/drivers/gpu/drm/panfrost/panfrost_drv.c
->>> index ef9f6c0716d5..149737d7a07e 100644
->>> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
->>> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
->>> @@ -828,3 +828,4 @@ module_platform_driver(panfrost_driver);
->>>  MODULE_AUTHOR("Panfrost Project Developers");
->>>  MODULE_DESCRIPTION("Panfrost DRM Driver");
->>>  MODULE_LICENSE("GPL v2");
->>> +MODULE_SOFTDEP("pre: governor_simpleondemand");
+if capacity_actual == SCHED_CAPACITY_SCALE and uclamp_max ==
+SCHED_CAPACITY_SCALE
+then we are the same as with capacity_orig
 
