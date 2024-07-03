@@ -1,105 +1,209 @@
-Return-Path: <linux-kernel+bounces-239384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E768D925EC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:40:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76881925EA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD8A2946E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:37:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B2CA1C2449F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D0418509C;
-	Wed,  3 Jul 2024 11:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BC4186E22;
+	Wed,  3 Jul 2024 11:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYbxGRBa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="R8bLTIY4"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D20178384;
-	Wed,  3 Jul 2024 11:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04607178384;
+	Wed,  3 Jul 2024 11:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720006289; cv=none; b=olo6PrzLKQhqyMjEFftrnYp+0h4iTSsIIWpz/2QcfInjMpiL3rGpKBwajryoPV2Cgolpwdk6jloe7g2TTGgsrJ9MPl37BKlkvprKsG9zoD60kk1ejDKAw6Vsn4u+n/nZja+3JxV/bh854kFhaBixAHPDxUkHidvkNSKsyjJHfRI=
+	t=1720006299; cv=none; b=OfsRMQ0UwjRqkflh5jblzSOfbH/hyGB/1DoazB4BBR4FJAWhk2TBiFknBF559ceEbvOIkSd40snp35xhSQdeWJqgXZiTz53+ZDCxSZp4hu44eFHD00lPC/LUXw28t5NVhN8TWaUJiYqweNST+orpW9UNhVxrABcabeNR2u1yFhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720006289; c=relaxed/simple;
-	bh=OOqX7HXKQvRZ8kJaMG1PBXsJYL3kB9aBJ4y7GrmT338=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AXiLRYSolPtGJTpjmemmarhPrjwi+5ohtLZpWp909Upfm6ObvNqIaLk8z03U0dRGOMhYZEtxk6gTnSepIxlcRmanbypJ7K/d3lFJ2r8ahxuOuoNeFXuGV7gbpm2ldBoaPgmhMaMqMcDQZmBIY3lusX2sF4e7Kc9ByjhBCKE8eaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYbxGRBa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B480C4AF0E;
-	Wed,  3 Jul 2024 11:31:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720006289;
-	bh=OOqX7HXKQvRZ8kJaMG1PBXsJYL3kB9aBJ4y7GrmT338=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZYbxGRBaglXSZvrdwzgntW0V74f2TqoCGL+Vwbgw0ZqQuebO1HOJmOLvbOY+Xu+qO
-	 TJNpjMY/7U34DyJb0FgCUypHUCkvxV4LnsFOgmYPLnYYAA+C0+tjCkBoPxF9cPFw3c
-	 HBg87gg3TkQIsunfDw7CyASp9l1hNmmTq7PIFNtPhOhTgLUYgx25YbBVU4OnIqH9Ox
-	 0zD+MxC2fDX4pZNqOFpR37Hr0L2pl/UkE3sBg599P/OnAps9IcFoVbgUSRcZvlxVey
-	 7fvXwe3SEItT+qKg1+AvR5RQSw74QmgUxtzG6j160/jhoAgK9vTX+issGs400HYaI5
-	 gCgwDzLSyCznQ==
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3d56754a4ceso298058b6e.1;
-        Wed, 03 Jul 2024 04:31:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXvdhGcxc/9ZUqeGcNRGvCgIVy/qj0Wl+LCeoNZprEJtJd6M62BjNQ7x452Ied9vZzLMdxQAIM3BKmQfYlhOKY9eI7ay3ufq/ZINVzk5KgdSxUNsSUSK+sEf2U/K6wkMkkHIagLe35bQH/Z/JBEUoydCYbgcNWGh3kSpp0eAMMzLG7cfiwL2jUL0yslckA2+gW50XHxlKkdVFshI/YBB+y65Qr+
-X-Gm-Message-State: AOJu0YwGrn54YUWokqHEH6QkU50gnL7zFv9DVBTlS6ezMvwP4pAD2Sgt
-	jZu9MbMgLns8sqt3zeoE1pmo1J4NPNrnBmM/r7360gypjIYVw5f4T9ySaGbWs89AK7dKcxSsFur
-	Ahjn7yreCwwWuaheAJJQuZLxe8EI=
-X-Google-Smtp-Source: AGHT+IHjc7MTNZRLTBNE7mu4jABEZQGDjUj30z0WrDXIT7TlEe02wTsalj1wTZ4s4WUo3e9PxE2VMnph7z7hy9nYD4M=
-X-Received: by 2002:a05:6870:46a8:b0:25c:f5f8:a822 with SMTP id
- 586e51a60fabf-25db33f8baamr12061362fac.1.1720006288688; Wed, 03 Jul 2024
- 04:31:28 -0700 (PDT)
+	s=arc-20240116; t=1720006299; c=relaxed/simple;
+	bh=vZi55+d/iX+EuvKV8mN+e7KkXuHSSU/Dtl2KCpiRmP0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TxVXCTNO4xhj/YhSJJFXInbRJlYYK+0gasUXO3Vt0tdZ3kuT0vf0CAZKDwsZj8UPD6IgDRtQfB43Y8zAyM4wQutwcfS+P06gcBwyRTgai4ccmCsVk7CFjoP6v1b9/st8ntGb6yi3S3R9RTQIFi85O43cVy1VGnxXq2UI6a/u+Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=R8bLTIY4; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4639QCoB025213;
+	Wed, 3 Jul 2024 06:31:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=f37i3vEXbnh14lMCwflrH5FfWLKGacpcQ9pw+V8X0GM=; b=
+	R8bLTIY48RtsMO5W33X+WUtLDu015SRIt038i3YUvPba2aFZ7qg1vmymuu0VzVPR
+	dTOIzN4nyuQGhE4jknIXboTsF2dzcFPkPmeWIKcJtCmEgaVgMrjEmIzccsKy9Y8V
+	gTkxIHEYLW6x2BHovPiV3+uVqxE3yIOULX083IeUlFzfdF+H+7Nu9fF09fxUfNvo
+	7GJ3s/dORuiyVA+rpnqAre/JMlyS014k+dTNzTwfeLkP53pduKo/9QGu+mEYVHBV
+	mg+Esn5db3/+dmU+PB4khD9QCkxVtDsMDxYJgYoBe209i/M/ETe4MjdHBOmpSoKg
+	DCKOVEz1XZpndZXCmxku/g==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 402epjd9kw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Jul 2024 06:31:30 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 12:31:29 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Wed, 3 Jul 2024 12:31:29 +0100
+Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id E8801820244;
+	Wed,  3 Jul 2024 11:31:28 +0000 (UTC)
+Message-ID: <0796b481-3eec-4618-b92e-a372b7da5381@opensource.cirrus.com>
+Date: Wed, 3 Jul 2024 12:31:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1890956.tdWV9SEqCh@rjwysocki.net> <8392906.T7Z3S40VBb@rjwysocki.net>
- <c5fdac6f90b7b2191914f632dc89bac8b4701bdc.camel@sipsolutions.net>
-In-Reply-To: <c5fdac6f90b7b2191914f632dc89bac8b4701bdc.camel@sipsolutions.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 3 Jul 2024 13:31:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gdQtbJHsQ2LMQrgnaQxS3BybaCXLYKeF1sFh7wPW8Uuw@mail.gmail.com>
-Message-ID: <CAJZ5v0gdQtbJHsQ2LMQrgnaQxS3BybaCXLYKeF1sFh7wPW8Uuw@mail.gmail.com>
-Subject: Re: [RESEND][PATCH v1 3/5] thermal: trip: Pass trip pointer to
- .set_trip_temp() thermal zone callback
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Thara Gopinath <thara.gopinath@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-wireless@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/20] ASoC: arizona: convert to
+ of_property_for_each_u32_new()
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Miguel Ojeda
+	<ojeda@kernel.org>, Rob Herring <robh@kernel.org>,
+        Saravana Kannan
+	<saravanak@google.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tony
+ Lindgren <tony@atomide.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+        Chen-Yu Tsai
+	<wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland
+	<samuel@sholland.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Daniel Lezcano
+	<daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian
+ Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review
+ list <bcm-kernel-feedback-list@broadcom.com>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan
+ Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>,
+        Shawn Guo
+	<shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Richard
+ Leitner <richard.leitner@linux.dev>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "Naveen N. Rao"
+	<naveen.n.rao@linux.ibm.com>,
+        Damien Le Moal <dlemoal@kernel.org>
+CC: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <llvm@lists.linux.dev>, <linux-clk@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <patches@opensource.cirrus.com>, <linux-sound@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>
+References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
+ <20240703-of_property_for_each_u32-v1-17-42c1fc0b82aa@bootlin.com>
+Content-Language: en-GB
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <20240703-of_property_for_each_u32-v1-17-42c1fc0b82aa@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 76f180QPbr034NdfsL7n2lcoXt87nILT
+X-Proofpoint-ORIG-GUID: 76f180QPbr034NdfsL7n2lcoXt87nILT
+X-Proofpoint-Spam-Reason: safe
 
-On Wed, Jul 3, 2024 at 10:43=E2=80=AFAM Johannes Berg <johannes@sipsolution=
-s.net> wrote:
->
-> You said in the cover letter this hasn't received much attention ... as
-> far as I can tell, the only wireless thing is this:
->
-> > --- linux-pm.orig/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > +++ linux-pm/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > @@ -638,7 +638,7 @@ out:
-> >  }
-> >
-> >  static int iwl_mvm_tzone_set_trip_temp(struct thermal_zone_device *dev=
-ice,
-> > -                                    int trip, int temp)
-> > +                                    const struct thermal_trip *trip, i=
-nt temp)
-> >  {
-> >       struct iwl_mvm *mvm =3D thermal_zone_device_priv(device);
-> >       int ret;
->
-> which I guess looks totally fine :)
-
-Well, I would think so. :-)
-
-Thanks!
+On 03/07/2024 11:37, Luca Ceresoli wrote:
+> Simplify code using of_property_for_each_u32_new() as the two additional
+> parameters in of_property_for_each_u32() are not used here.
+> 
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+>   sound/soc/codecs/arizona.c | 12 +++++-------
+>   1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/arizona.c b/sound/soc/codecs/arizona.c
+> index 7434aeeda292..1a64b9815809 100644
+> --- a/sound/soc/codecs/arizona.c
+> +++ b/sound/soc/codecs/arizona.c
+> @@ -2786,15 +2786,13 @@ int arizona_of_get_audio_pdata(struct arizona *arizona)
+>   {
+>   	struct arizona_pdata *pdata = &arizona->pdata;
+>   	struct device_node *np = arizona->dev->of_node;
+> -	struct property *prop;
+> -	const __be32 *cur;
+>   	u32 val;
+>   	u32 pdm_val[ARIZONA_MAX_PDM_SPK];
+>   	int ret;
+>   	int count = 0;
+>   
+>   	count = 0;
+> -	of_property_for_each_u32(np, "wlf,inmode", prop, cur, val) {
+> +	of_property_for_each_u32_new(np, "wlf,inmode", val) {
+>   		if (count == ARRAY_SIZE(pdata->inmode))
+>   			break;
+>   
+> @@ -2803,7 +2801,7 @@ int arizona_of_get_audio_pdata(struct arizona *arizona)
+>   	}
+>   
+>   	count = 0;
+> -	of_property_for_each_u32(np, "wlf,dmic-ref", prop, cur, val) {
+> +	of_property_for_each_u32_new(np, "wlf,dmic-ref", val) {
+>   		if (count == ARRAY_SIZE(pdata->dmic_ref))
+>   			break;
+>   
+> @@ -2812,7 +2810,7 @@ int arizona_of_get_audio_pdata(struct arizona *arizona)
+>   	}
+>   
+>   	count = 0;
+> -	of_property_for_each_u32(np, "wlf,out-mono", prop, cur, val) {
+> +	of_property_for_each_u32_new(np, "wlf,out-mono", val) {
+>   		if (count == ARRAY_SIZE(pdata->out_mono))
+>   			break;
+>   
+> @@ -2821,7 +2819,7 @@ int arizona_of_get_audio_pdata(struct arizona *arizona)
+>   	}
+>   
+>   	count = 0;
+> -	of_property_for_each_u32(np, "wlf,max-channels-clocked", prop, cur, val) {
+> +	of_property_for_each_u32_new(np, "wlf,max-channels-clocked", val) {
+>   		if (count == ARRAY_SIZE(pdata->max_channels_clocked))
+>   			break;
+>   
+> @@ -2830,7 +2828,7 @@ int arizona_of_get_audio_pdata(struct arizona *arizona)
+>   	}
+>   
+>   	count = 0;
+> -	of_property_for_each_u32(np, "wlf,out-volume-limit", prop, cur, val) {
+> +	of_property_for_each_u32_new(np, "wlf,out-volume-limit", val) {
+>   		if (count == ARRAY_SIZE(pdata->out_vol_limit))
+>   			break;
+>   
+> 
+Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 
