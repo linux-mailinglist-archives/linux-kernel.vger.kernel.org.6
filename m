@@ -1,143 +1,191 @@
-Return-Path: <linux-kernel+bounces-238608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80613924CCE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:34:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AAED924CD4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D82C1F2394C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:34:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6BE01C20C22
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056DC2905;
-	Wed,  3 Jul 2024 00:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="Hwzk1ORC"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17BE2564;
+	Wed,  3 Jul 2024 00:45:08 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1AB1FB4;
-	Wed,  3 Jul 2024 00:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719966865; cv=pass; b=A2sGz7aPH2iuvow8MAZRI/qKiZN0T7DzZOym0tMZuKDQTt1sfpj1n5rSy/r2VZ97wjL6CvDNX9GWN5pYwLRyeo50mOrcIkahxiQR8VBDPHXGETjR2Veq1SCrEKmVzc9iGCNOHfaJfQD2bkBfDFsixFE024wEr6IcQdTOFkuQJ/U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719966865; c=relaxed/simple;
-	bh=ywzEqGjjGM7mIn1VawbrZuz00V7sB9FTsYmYjFiztFQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=QqOjblOdkwK45AqFsxGu86Bz/lPnHFECfgH5AKXXsXelLS4pms6nm3kYK4/01p71eQojwlgABCdM+mH/SWjwY0ePuIVhDlsHMZmem5Yu2pHVihhJ5en50/2KEvm15cwHkEvHoeazDl2J8lMhf34+yu8V87BQoSnx60WAGbQJzHM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=Hwzk1ORC; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from localhost (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sakkinen)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WDLPn43c7z49PwY;
-	Wed,  3 Jul 2024 03:34:21 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1719966861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GaV4tuk1WbugWdGR34mCTzuCrF1HR/X8Zy5U2pP20mY=;
-	b=Hwzk1ORCDLDo+ZiLXJZ9VZDcBs7xVnOnpn2RghTPQxZfI25659jdF6jLTsfX00r63/BfUK
-	4LJpl2qkg+FsZzTi6qEj7aJZ+qm+T3Q8QG08lI9lpRhGYIid5OcV9mk9dhF5fKgG5cAb+r
-	fOJEmy8yHRDQ23Vo27z6NynYLgwq3IUaJkTe7bAw4ek5Qe/33BCx2b2pveBwT/BVLlChT+
-	SRxjiCB9EixM2pioAv2iotHdA1II0Mt9DbC4uGjOW/vyoPOM2mUUykK7UJIhSr7WzrAqF4
-	vIvoYYMuxgqWZ/0OmKOUJElMv3Hc1HTYrq3uBKU1m+Qj0+zfJSR+r5JjUG1Fww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1719966861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GaV4tuk1WbugWdGR34mCTzuCrF1HR/X8Zy5U2pP20mY=;
-	b=r0a24xe0CGr61iBcz2UuPxJCeXSNlnpKlc2FHYz2NFz2gAk1FYG+s7W0I+0Vyyo4Y9gDBX
-	sE/pwlTG1yW3ijfHKJI6XsbchMT68iiEDm1djjK4WI2XX2EWsztLDnsqKgCnxd0oed7BOU
-	FMH2F9TXYvdseY0vdsxthj5JIXYUhOUr3PkgACLFE80nMRaXnGzwmu8fNeGUZPdd+1fm41
-	six+W33Kc1zTdF76mrSrF4ErWJHJ1pd0C4nqzmwmNeEgBXnQYeOTUOskUFN3LeTuZQxQMI
-	PKTkAcTtfQuHdyAMiDbtuiAha0SUQQs0lMrgUWfHFAW5/hn3Q+D1/xx7/2bQlQ==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1719966861; a=rsa-sha256;
-	cv=none;
-	b=Vu1Tcl6h9Orp81BbUjw627PbKr6gMUDh/2r3b4xEIAn2hDle019jRr3F6WBTIPEv3lah3I
-	6/0AdEeDW2sxRnvNFbE6UP90xd21TXSR4dPWn0HN3fU8ejGP826iWNmDmsei6oxby5Y058
-	kLk/cSbUN2JukeWIZHt5qZiZFRHd8WqMG04T2WD7KvlMaEKBRixgP2RZYav3GztbSwg8L8
-	2vOY25jM8l5yC90/mvjOYiojzXDbi4Qy5gnko3qORWiEc/HuBk7T591AvyE00GoUGANF4D
-	yfD+D3zH1zV3mHH2JEOW19bV3R1I8s7BXPooVyDvdzuBWY++Kl8DY9EuSLWKUw==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8199E39B;
+	Wed,  3 Jul 2024 00:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719967508; cv=none; b=MqDIvjY6N0sQosWXri1Ec8l3k+q35/FNj3CZYOriE1xV1JS1Zfhun9FPTrcUyFBaBrSSHxNuu1S4nyPmJV9RIqSMtKL9qma+rhWp8P8Xx92TTWynmRS9jyPlIS2UTe2bdf2Kmtgi1g29dmfzZWxBfdlGi4sdhvvG3t3VST5D8Ic=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719967508; c=relaxed/simple;
+	bh=Rc9P7ZJ+dPEJ3aG2H9h6pf7kboUupCHAPxAKJZWyEBY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k6n2IlZVVdMMsgTlGmdCWUuDsn8ZJJJz5vYKi/EyP/hcuAlsOVbgedR7Ke8s8CUMUGmiD/Nv9jA82YSHY+WKsjLd6yBnW7x4Lu62tIAeyhpU1ePiXPMydlm4mCG/Skq4iBYKiuaBj21cRbnQbXvKeG26EXl9SYAStsIZr62G9LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WDLdp0Y7rznVcy;
+	Wed,  3 Jul 2024 08:44:46 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4FFC2140382;
+	Wed,  3 Jul 2024 08:45:02 +0800 (CST)
+Received: from hulk-vt.huawei.com (10.67.174.26) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 3 Jul 2024 08:45:02 +0800
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<corbet@lwn.net>, <kamalesh.babulal@oracle.com>,
+	<haitao.huang@linux.intel.com>
+CC: <cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 -next] cgroup/misc: Introduce misc.peak
+Date: Wed, 3 Jul 2024 00:36:46 +0000
+Message-ID: <20240703003646.2762150-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Jul 2024 03:34:21 +0300
-Message-Id: <D2FHD82R8YAC.YBL9FAIVMBWL@iki.fi>
-Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
- session support
-From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
-To: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>, "Stefan Berger"
- <stefanb@linux.ibm.com>, "Linux regressions mailing list"
- <regressions@lists.linux.dev>
-Cc: <naveen.n.rao@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
- <linux-integrity@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
-X-Mailer: aerc 0.17.0
-References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
- <9e167f3e-cd81-45ab-bd34-939f516b05a4@linux.ibm.com>
- <55e8331d-4682-40df-9a1b-8a08dc5f6409@leemhuis.info>
- <9f86a167074d9b522311715c567f1c19b88e3ad4.camel@kernel.org>
- <53d96a8b-26ef-46a3-9b68-3d791613e47c@linux.ibm.com>
- <D2EFNJTR80JS.1RW91OVY1UH1N@iki.fi>
- <e7db74a0-cd5c-4394-b87e-c31ea0861ea1@linux.ibm.com>
- <b7559dbb323d16fb334f8f8f35b8fda3fb6e481c.camel@iki.fi>
- <85f882ff079554c41a73d8ad4275072c5229f716.camel@iki.fi>
-In-Reply-To: <85f882ff079554c41a73d8ad4275072c5229f716.camel@iki.fi>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-On Wed Jul 3, 2024 at 2:57 AM EEST, Jarkko Sakkinen wrote:
-> On Wed, 2024-07-03 at 02:48 +0300, Jarkko Sakkinen wrote:
-> > On Mon, 2024-07-01 at 15:14 -0400, Stefan Berger wrote:
-> > > Applying it is probably the better path forward than restricting HMAC=
- to=20
-> > > x86_64 now and enabling it on a per-architecture basis afterwards ...
-> >=20
-> > Why is this here and not in the associated patch?
-> >=20
-> > Any, what argue against is already done for v6.10.
-> >=20
-> > The actual bug needs to be fixed before anything
-> > else.
-> >=20
-> > I can look at the patch when in August (back from
-> > holiday) but please response to the correct patch
-> > next time, thanks.
->
-> Next steps forward:
->
-> 1  Comment out sessions_init().
-> 2. See what happens on x86 in QEMU.
-> 3. All errors were some sort size errors, so look into failing
->    sites and fixup the use of hmac shenanigans.
+Introduce misc.peak to record the historical maximum usage of the
+resource, as in some scenarios the value of misc.max could be
+adjusted based on the peak usage of the resource.
 
-For anything "fast" or "quick" I think this really the only
-possible sane thing to do right now:
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+v5: change the type of watermark to atomic64_t
+v4: fix the issue of unconditionally updating the watermark
+v3: fix while (0)
+v2: use cmpxchg to update the watermark
+---
+ Documentation/admin-guide/cgroup-v2.rst |  9 ++++++
+ include/linux/misc_cgroup.h             |  2 ++
+ kernel/cgroup/misc.c                    | 41 +++++++++++++++++++++++++
+ 3 files changed, 52 insertions(+)
 
-https://lore.kernel.org/linux-integrity/20240703003033.19057-1-jarkko@kerne=
-l.org/T/#u
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index ae0fdb6fc618..468a95379009 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -2646,6 +2646,15 @@ Miscellaneous controller provides 3 interface files. If two misc resources (res_
+ 	  res_a 3
+ 	  res_b 0
+ 
++  misc.peak
++        A read-only flat-keyed file shown in all cgroups.  It shows the
++        historical maximum usage of the resources in the cgroup and its
++        children.::
++
++	  $ cat misc.peak
++	  res_a 10
++	  res_b 8
++
+   misc.max
+         A read-write flat-keyed file shown in the non root cgroups. Allowed
+         maximum usage of the resources in the cgroup and its children.::
+diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
+index e799b1f8d05b..ba02e04b7165 100644
+--- a/include/linux/misc_cgroup.h
++++ b/include/linux/misc_cgroup.h
+@@ -30,11 +30,13 @@ struct misc_cg;
+ /**
+  * struct misc_res: Per cgroup per misc type resource
+  * @max: Maximum limit on the resource.
++ * @watermark: Historical maximum usage of the resource.
+  * @usage: Current usage of the resource.
+  * @events: Number of times, the resource limit exceeded.
+  */
+ struct misc_res {
+ 	u64 max;
++	atomic64_t watermark;
+ 	atomic64_t usage;
+ 	atomic64_t events;
+ };
+diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
+index 79a3717a5803..b92daf5d234d 100644
+--- a/kernel/cgroup/misc.c
++++ b/kernel/cgroup/misc.c
+@@ -121,6 +121,19 @@ static void misc_cg_cancel_charge(enum misc_res_type type, struct misc_cg *cg,
+ 		  misc_res_name[type]);
+ }
+ 
++static void misc_cg_update_watermark(struct misc_res *res, u64 new_usage)
++{
++	u64 old;
++
++	while (true) {
++		old = atomic64_read(&res->watermark);
++		if (new_usage <= old)
++			break;
++		if (atomic64_cmpxchg(&res->watermark, old, new_usage) == old)
++			break;
++	}
++}
++
+ /**
+  * misc_cg_try_charge() - Try charging the misc cgroup.
+  * @type: Misc res type to charge.
+@@ -159,6 +172,7 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg, u64 amount)
+ 			ret = -EBUSY;
+ 			goto err_charge;
+ 		}
++		misc_cg_update_watermark(res, new_usage);
+ 	}
+ 	return 0;
+ 
+@@ -307,6 +321,29 @@ static int misc_cg_current_show(struct seq_file *sf, void *v)
+ 	return 0;
+ }
+ 
++/**
++ * misc_cg_peak_show() - Show the peak usage of the misc cgroup.
++ * @sf: Interface file
++ * @v: Arguments passed
++ *
++ * Context: Any context.
++ * Return: 0 to denote successful print.
++ */
++static int misc_cg_peak_show(struct seq_file *sf, void *v)
++{
++	int i;
++	u64 watermark;
++	struct misc_cg *cg = css_misc(seq_css(sf));
++
++	for (i = 0; i < MISC_CG_RES_TYPES; i++) {
++		watermark = atomic64_read(&cg->res[i].watermark);
++		if (READ_ONCE(misc_res_capacity[i]) || watermark)
++			seq_printf(sf, "%s %llu\n", misc_res_name[i], watermark);
++	}
++
++	return 0;
++}
++
+ /**
+  * misc_cg_capacity_show() - Show the total capacity of misc res on the host.
+  * @sf: Interface file
+@@ -357,6 +394,10 @@ static struct cftype misc_cg_files[] = {
+ 		.name = "current",
+ 		.seq_show = misc_cg_current_show,
+ 	},
++	{
++		.name = "peak",
++		.seq_show = misc_cg_peak_show,
++	},
+ 	{
+ 		.name = "capacity",
+ 		.seq_show = misc_cg_capacity_show,
+-- 
+2.34.1
 
-There's also bunch of other drivers than tpm_ibmvtpm so better
-to limit it to known good drivers.
-
-I can take at the actual issue in August and will review any
-possible patches then. This one I'll send after my current PR
-for TPM has been merged.
-
-BR, Jarkko
 
