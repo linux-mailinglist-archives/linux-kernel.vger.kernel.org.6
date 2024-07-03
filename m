@@ -1,170 +1,117 @@
-Return-Path: <linux-kernel+bounces-240131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA08192696E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:16:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A427926970
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A1F71C2319E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:16:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15B63289945
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 20:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E91C18F2C7;
-	Wed,  3 Jul 2024 20:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FC218F2E4;
+	Wed,  3 Jul 2024 20:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="FsKj0PrA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PTFaLboR"
-Received: from flow5-smtp.messagingengine.com (flow5-smtp.messagingengine.com [103.168.172.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6BogCfs"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADB04C6C;
-	Wed,  3 Jul 2024 20:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477D14C6C;
+	Wed,  3 Jul 2024 20:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720037760; cv=none; b=aHzX7JpsQZMtYoPg7mj8pBtsQ9+lAqVZ2617YuC8SsSL7y/PkIlq3qUi2ZpXPx5b9Fgw6rsU6GXN4cBm0l7mo54FD65kUe8nvj/cDIR8t64Jxy6cVWIpt4zN3ffWkKKDwmvRmeoTyMyVMGGUHamzKg1XGo/T+0b8cpudnzGWJyc=
+	t=1720037794; cv=none; b=i2Df6GzSgXES5CsrfP0V+RAGLu4KlnfYbnX4g1Wf3dLNBsWcjtA5+hgsrQPZOL9XnRfBaEqu1XiAd1zMmbKLeFYf91L+MzZ4+jmJc/3twR2NnkYpP210dl9oIO/jkMK86Klh+cbjVVtK030OJOlYwWqXKmeTAct4cpowWRG3P04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720037760; c=relaxed/simple;
-	bh=P5wNJ9gsyoEKAcFfUB01DuXV2qGlNcanG72NtYGP7D0=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Y9JGxS2V5xPJH8vmFR+nLL1IWZYsg4f6JRtVO4d+cz6bEozLOqeDPNDsYlUTeStevO8IBNeodgil2qxDJUE2rRfg5E4KHTVLqGIcMitxHEuNJ6mHjnFcrBLhdqwwKKR5q5WmICms58oFMQwMnkDr6SgYLDaqOHnLW75aU46bhow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=FsKj0PrA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PTFaLboR; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 16DA02004F9;
-	Wed,  3 Jul 2024 16:15:58 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Wed, 03 Jul 2024 16:15:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1720037758;
-	 x=1720044958; bh=HSAxzquXwRyiEDZ1fHQ9wErG/hRJ0VszrFLvyboz7pM=; b=
-	FsKj0PrAQdMspVUqpD508lLSglz0iLYOgBTBSrM7fWFhnALm/407EOascTQelCsF
-	cVSJMh9v71IC7mJ24JOobMW3XjGzaWmWssqgR7qg6PCwmMY3tJMJhXkaEI95oU1h
-	xyfluu6S7wsZf/p/PjGgC6Ayu4MwJlE4Fdr3EfWYp0pn0d95PHl6MiG0bLIHbVU5
-	9OLK61yI5iiv1HqvyYuqfECcmZJWVz4zV4h8/1zPhgY+Em55MWPFYaKiUm+VUlev
-	zfKSnLFNuf4LmMtA4q5qkDNrp9uia/hpk0FPwarh61oTTgMouqj39jv5HAqNQOao
-	hpATt8sTcodwkiLze5wOdQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=ifd894703.fm2; t=
-	1720037758; x=1720044958; bh=HSAxzquXwRyiEDZ1fHQ9wErG/hRJ0VszrFL
-	vyboz7pM=; b=PTFaLboRWbeKSMCZKRiBvGtQMhtn6alstkDy9HZwIeZMBzJAntf
-	8gEsQ3gP6CHKe2uawnWM6wwkQ0aWlDQOw7e4ylsHlpZDK6dyRdq/5fdMI5nRtTc+
-	Ss6KR/iG1UDCbblpkBYxhA+QElW8KZuKjd2zbhKCZG8ial9iwwoqxtOky9JYQfG4
-	YqWSm0omEgHgIbAAV9Uf5YFZCw/qOhqEY45BMDa5n6oFRW0VPzNab9egcwXrmP1A
-	HQ49ryL6/2n1qRfxPtxFSL03OKBknv0Zws5h2B7Q0Np5yQrjEHYShjpVYb5WuVQ3
-	uHcfC/27zr5Zk15xo609dWFqG9wy2uZXYiQ==
-X-ME-Sender: <xms:fbGFZoaRwMIc9S9DAGnzzFGZ0INzuWfX0FQsVQPud9BQcGpflI1JAw>
-    <xme:fbGFZjZ2OpLVmzv4Pc5mRMOcPH4AjZg65tVlud_l7NUXLcW0L0wJJAADI1Qa3cFqv
-    JPKlzBNDojWOxPJdwU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejgddugeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:fbGFZi8xQY5CAiTowXYdV8rr12CSDweSU11YOXFJkJ9GUOUZ7HWJYw>
-    <xmx:frGFZiqXKYLbMzPz2nUj8ybvGsUx6cbzMoZgJ6lsrtRPc0jI8AnySg>
-    <xmx:frGFZjrdgMwax36NjNOrtdJ8KsTO4XmE5YJRLM8i_0usSsLwyqus1g>
-    <xmx:frGFZgTq_pcyW5Mww6MkOX9JNOSI4wtQUQrJ6eK2Nmf5zYcjTqL9ww>
-    <xmx:frGFZjrNFmRMHJBUhYorFqSLVZPTMVqkgXm4jbOI_E4KB_tJFP0NBLY_>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id DC33436A0074; Wed,  3 Jul 2024 16:15:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1720037794; c=relaxed/simple;
+	bh=u8ogO3DLpXKLPeX5tVXlur1d4bHjjIwzEkvdano2uRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=urYW3+Cbj1bzCtpAK4I4+F23cNdkBo90mx27v3ZitamqBAOfQO2PESMyNyym9aGjJu2LqLve5YDKMO43TFpqPwbN1gwsj2CUOr+q0fGpqd30dgZcRbFJHj8oePfC4sxeovMji3F24RdlORWhaQNBVTokgEJN4SUAXR4S9WPNkbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6BogCfs; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ee4ae13aabso61389181fa.2;
+        Wed, 03 Jul 2024 13:16:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720037791; x=1720642591; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5FMCE9UbgpOVCC9FJkSc1QmMTWN5DEOwOg2bxxVzL/o=;
+        b=X6BogCfs1NW12abqWMFdwzonaarQCC9ESzOixJC58TOC9Jk7C3Z2AIcLAKhq2CN1t0
+         RdhYowgWT7RoehsB66Yr4u6QWYlTvcoxn/XKIw2iaD0ga9aG/iQN/tmTgNAcLmQtTffk
+         YZHN6vrrgnMswIqLlb//f/Tj91Ql1ExEMADY4sk1avAud6U++vykmi0xsTbMkD4l5emY
+         QXITGEhKe4sGMTx0FNVg7KYxFXA9yfIsIwEImlU+YUbCV2hVQseP4zHykqzo8H918r/X
+         Ol0ZeNFck8K9XwROaxnITOYZfOcvQHLh3GMMUM+SJH2y0zwr89aham7rW/rfaomo8Wga
+         MR7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720037791; x=1720642591;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5FMCE9UbgpOVCC9FJkSc1QmMTWN5DEOwOg2bxxVzL/o=;
+        b=wQTwz8K9+MwxLB7uwqLp6Lv7cNIpHik2FJRM20Kz1kyMKEROVm1ZvCcKpZ5QSDF7J7
+         comkD9oCh/r8pHC9Na1BcvmfIXQ4EKPAH+0lhu69xhUHnAMcozHq9fWHox1gMgT460Uf
+         EnJcq8UrzmDl2+XEyMIc2g3ruk4IB2jHBp0rQ1s4OSKKNpz48fHowNO0Af/5cG5ZP5MQ
+         jZOsKBUqAYGqmlf68CrB/P5+BlYyD0a0ClKjdW//QjePU9jZj0rt8L6ld7glEKX6GQgV
+         Sfkgkl/teCUYaAbETxQPScov4psglj3zn0x05O1ump7OwhIooDQvBz9UIpLoVlqaHIF1
+         UeUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUE82VhWlISqPKsEVyMMrUud7+lxumdYWeGc4b78rcgtetbcxNgOtWJUtI8M9poUQy/KbicjQ6O1a1uTxBxFXdOVkCapBEOOy48BkDl
+X-Gm-Message-State: AOJu0YzV+Gqjn/uXZ8llPY71DZ8ar1v9gxLHtkCK8eGVRTO1AoZMWhwa
+	Nrbq05AFf79zwKMzKw5jZ9TopZwmtEUz1PN+Iy5VXVXe4B61nqZn
+X-Google-Smtp-Source: AGHT+IGu33G8HzwFix2em+R5fqlgoTOpVBnaWG3OHM+DIQ3+gqQ6LjvhUKMiDwiUUaUNY6tINmoNbw==
+X-Received: by 2002:a2e:a98b:0:b0:2ee:4f22:33f9 with SMTP id 38308e7fff4ca-2ee5e38096fmr99568081fa.24.1720037790117;
+        Wed, 03 Jul 2024 13:16:30 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fc434sm16714752f8f.76.2024.07.03.13.16.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 13:16:29 -0700 (PDT)
+Date: Wed, 3 Jul 2024 22:16:28 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+Subject: [PATCH] dt-bindings: regulator: ti,tps65132: document VIN supply
+Message-ID: <ZoWxnEY944ht2EWf@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <7a822a33-dd67-4827-bbd0-01e75e203951@app.fastmail.com>
-In-Reply-To: <ZoVokcDYqZnuqd2X@alpha.franken.de>
-References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com>
- <20240616-b4-mips-ipi-improvements-v1-1-e332687f1692@flygoat.com>
- <ZoVokcDYqZnuqd2X@alpha.franken.de>
-Date: Thu, 04 Jul 2024 04:15:21 +0800
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Cc: "Florian Fainelli" <florian.fainelli@broadcom.com>,
- "Broadcom internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
- "Huacai Chen" <chenhuacai@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Serge Semin" <fancer.lancer@gmail.com>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] MIPS: smp: Make IPI interrupts scalable
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+TPS65132 is powered by its VIN supply, document it.
 
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+ Documentation/devicetree/bindings/regulator/ti,tps65132.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-=E5=9C=A82024=E5=B9=B47=E6=9C=883=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
-=8D=8811:04=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
-> On Sun, Jun 16, 2024 at 10:03:05PM +0100, Jiaxun Yang wrote:
->> Define enum ipi_message_type as other architectures did to
->> allow easy extension to number of IPI interrupts, fiddle
->> around platform IPI code to adopt to the new infra, add
->> extensive BUILD_BUG_ON on IPI numbers to ensure future
->> extensions won't break existing platforms.
->>=20
->> IPI related stuff are pulled to asm/ipi.h to avoid include
->> linux/interrupt.h in asm/smp.h.
->>=20
->> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->> ---
->>  arch/mips/cavium-octeon/smp.c   | 109 ++++++++++++------------------=
------
->>  arch/mips/include/asm/ipi.h     |  34 +++++++++++
->>  arch/mips/include/asm/smp-ops.h |   8 +--
->>  arch/mips/include/asm/smp.h     |  42 ++++++--------
->>  arch/mips/kernel/smp-bmips.c    |  43 +++++++-------
->>  arch/mips/kernel/smp-cps.c      |   1 +
->>  arch/mips/kernel/smp.c          | 124 ++++++++++++++++++++----------=
-----------
->>  arch/mips/loongson64/smp.c      |  51 +++++++++--------
->>  arch/mips/mm/c-octeon.c         |   2 +-
->>  arch/mips/sgi-ip27/ip27-smp.c   |  15 +++--
->>  arch/mips/sgi-ip30/ip30-smp.c   |  15 +++--
->>  arch/mips/sibyte/bcm1480/smp.c  |  19 +++---
->>  arch/mips/sibyte/sb1250/smp.c   |  13 +++--
->>  13 files changed, 236 insertions(+), 240 deletions(-)
->
-> you are touching a lot of platforms, how many did you test ?
+diff --git a/Documentation/devicetree/bindings/regulator/ti,tps65132.yaml b/Documentation/devicetree/bindings/regulator/ti,tps65132.yaml
+index 6a6d1a3d6fa7..873d92738eb0 100644
+--- a/Documentation/devicetree/bindings/regulator/ti,tps65132.yaml
++++ b/Documentation/devicetree/bindings/regulator/ti,tps65132.yaml
+@@ -23,6 +23,8 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  vin-supply: true
++
+ patternProperties:
+   "^out[pn]$":
+     type: object
+@@ -65,6 +67,7 @@ examples:
+         regulator@3e {
+             compatible = "ti,tps65132";
+             reg = <0x3e>;
++            vin-supply = <&supply>;
+ 
+             outp {
+                 regulator-name = "outp";
+-- 
+2.34.1
 
-As mentioned in cover letter:
-
-```
-It has been tested on MIPS Boston I6500, malta SOC-It, Loongson-2K,
-Cavium CN7130 (EdgeRouter 4), and an unannounced interaptiv UP MT
-platform with EIC.
-
-I don't really know broadcom platforms and SGI platforms well so
-changes to those platforms are kept minimal (no functional change).
-```
-
-Thanks
-- Jiaxun
-
->
-> Thomas.
->
-> --=20
-> Crap can work. Given enough thrust pigs will fly, but it's not necessa=
-rily a
-> good idea.                                                [ RFC1925, 2=
-.3 ]
-
---=20
-- Jiaxun
 
