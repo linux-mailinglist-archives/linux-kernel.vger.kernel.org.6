@@ -1,164 +1,206 @@
-Return-Path: <linux-kernel+bounces-240212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB36926A4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:31:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC6E926A50
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:33:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA895284FD3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1831C1C2230A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF846198831;
-	Wed,  3 Jul 2024 21:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E35191F8E;
+	Wed,  3 Jul 2024 21:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pv01mkK1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTpvtQuY"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF30192B70;
-	Wed,  3 Jul 2024 21:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220742BD19;
+	Wed,  3 Jul 2024 21:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720042192; cv=none; b=TGbGDqg/3+6oFh/9XWciFsyAjH1ox3SPJk11Zfmd4cSZ0GLhsWxLPoUpVXhL9hvvzMHxcjSU8OXyzM46tAVSdaq7ErJp2n5/3/0vYrOASDL+3U9uFEO9bN38dOEtVb/RVwxafhhLhK7PIDqs+1fhPnzfmXTDzXAG/lAc1FMWr/w=
+	t=1720042400; cv=none; b=FKif15ODrKXHq8Ha8NgOUZUkoKsa98BANk+Pz90NZrR8cQZ0gU3OjlgEGRNjfkNF9ZpMM50rIFSU023fDtkOTFdR7/igIoG4bCOgFd6kNKAI04SLmdPTMy+cNibItMy+olCyUFY5y1uzIro9JfLf3HHnBoUG0g+SUAhl7IbPaZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720042192; c=relaxed/simple;
-	bh=FNqtIxiz/iLSE0auqATLt3TNJBkF0qDalYBF2yAIu+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QLCB+Sw/1RT+eZ8eF1rJxL+BJmuCfGYWvQrboY7/aRl0Sl3N3PnKdbZEdIioyZw/X5Y7lFjKb18Q5qyhvVdJeoTcltTLAnV5DXi8HMZINas2VShU+jIAHunYXym8ZjWOCn7fvP4OdM4OM5uL/yKsyKadBGSy+XzucwrRGgXeErM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pv01mkK1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DE8C2BD10;
-	Wed,  3 Jul 2024 21:29:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720042191;
-	bh=FNqtIxiz/iLSE0auqATLt3TNJBkF0qDalYBF2yAIu+8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pv01mkK1YBpFTAXKz488wlegYxCoyJ4soI5WNa957/Xie4y5GMbcs8mVvthbT9BAI
-	 SA5VL+ZSQLB3F800JE6hrfXLNAu5sxl2m9fkfywTgJWUw0XH9EBXCJ3x6GUxJ0DlK2
-	 MfauCsZNyW+QtbE9rH6IMsKP9o8ru8OSHh6JB2ExKZD1HojBsqOWV07RgO6erqAYuj
-	 cNgjQpw1a+TAALghtCWK/dSyJo8Adb9z/pyvn9tIDSc23FZkFEnyqU/KS7yG4VFdol
-	 MHRZz8fHu4ala5dLONlnQJi+zSwKtCferT2H2PkrHK67uw9zS1ytK62XpFyKWhwXiC
-	 Zwj2d3RrrpIuA==
-Date: Wed, 3 Jul 2024 14:29:49 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Guilherme Amadio <amadio@gentoo.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Thorsten Leemhuis <linux@leemhuis.info>, Leo Yan <leo.yan@arm.com>,
-	linux-perf-users@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/6] perf build: Conditionally add feature check flags
- for libtrace{event,fs}
-Message-ID: <ZoXCzbU_oHSZQzO7@google.com>
-References: <20240628202608.3273329-1-amadio@gentoo.org>
- <20240628203432.3273625-1-amadio@gentoo.org>
- <ZoSOR0ULxXLxLZvA@google.com>
- <ZoVFqiZdTXy1glLc@gentoo.org>
+	s=arc-20240116; t=1720042400; c=relaxed/simple;
+	bh=ppambdjBN1x/jfaPWwxdWSSQGBavG6iU4iRd7/NpFhQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YcrnSWz5uB2MpYe1vq9Q8hCzOcx0Yyd4fZPyPJ60WIUH/S9ZWyyvZWhDY/xKFpFhFfQ/vAYMNgUC0zb/ftXUX5V+31unkfIf4FYIYcb3A3JgpKvPTQS58PWA0YOFgjf+6xcnUpilm4sHHivjABCYHsKy4BZR0n8CQczkLj5sTww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dTpvtQuY; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-75ee39f1ffbso83675a12.2;
+        Wed, 03 Jul 2024 14:33:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720042398; x=1720647198; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xOUZe3r2B6mT9OCJJ4ifXJWPwhJCaL9FAWnv8DZDhpY=;
+        b=dTpvtQuYaHY4n3q+vF1C+zy/644MVxyT6aOVhVICZC+Wc4pDWdnpHDsborP1iypTrq
+         9+JDcsaLc/Uwh2TR3uUyLA5kb06ZzgOeLoZnYD2BxW0sRgRBptXP/YltnAdC0U4gfVM/
+         X6uARBivG400f3m0DhLK0a8r+SBtn+CRiB5Op+T000TvNlAMxpf/b/h993cq05c3i2Dk
+         F5y15Vu4g1IExPhkSSf/rZQGngf3FFvPz31lcpP6OC2sx+zWv1eCA7irdZVtSauQ8HTq
+         22sKrKdcnIm2xOVhxX3g8HieOaLFghnvv6x8DcWgwZGUrRSUOIdVAGaP5/1lNsnI53s0
+         X5Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720042398; x=1720647198;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xOUZe3r2B6mT9OCJJ4ifXJWPwhJCaL9FAWnv8DZDhpY=;
+        b=QSyXQaObN390GcylYTMAVDSl7gyCnxm2sSQV096idrAYIjBrIVa3YZzo8LjlPQFZQE
+         CFA4jnXxQUmMSlEvOFwKkpkTkQwPrLMz+gXuwJ1ni0mxQvjFi4TTylnQ/QVEGVMqG5R5
+         t2KRrsygZjSXU/xcla407Ok8inDcVQ0alY4VYzMoY2NuOTJy2+1jiIYMz9w9Mdom8K58
+         WyLdjjz+ZqJEyR2ZLtDCu0jP5S/fpaLJm+6WC2W+c4qD952QRi21dlrfKrdC0wkQfd75
+         aCpNcNrIGQvm/ZWsmOyiN9w5l2SWK+DcjJ9kAZ5dbp/FNtsU/mew2pJ2m5h4vRlttRrM
+         OdFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXl74wCEUwaduVANF/YWTNw9aGtuqKm1VHdrNfuMEkfuT3uSU9/k2LB6SsaPkaOlhf0P9WFZIQar0w4zoTNLgRPzc1KmdD7xJg9kJYk6l0FqaMagFkWvpWdoja2Pi36utmE
+X-Gm-Message-State: AOJu0YxpXEpU09k8XKw5RmQZ+wI/tdFuEJmu+sHS3wgSW/2eh4mzyrxS
+	OqO0aOU6tEZmnH3sIAIB9Hc6CYPqBzHsLDcOn6vGEBltPCLnYhWPD0suRvt6PNJAKTjRkyE0TdT
+	nDa0P/OaizEYArxnUZ3QREs7D28k=
+X-Google-Smtp-Source: AGHT+IEbRDOgmzoLDAS+K8tbfmLzybGoB1JV3AcBepgRQ+8qzf44GY8OAor4QYpSOrUa12pg0XKDlGt2gYWiTa3U7k8=
+X-Received: by 2002:a05:6a20:ce4d:b0:1bd:2ae7:792e with SMTP id
+ adf61e73a8af0-1bef61ed474mr18464736637.49.1720042398195; Wed, 03 Jul 2024
+ 14:33:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZoVFqiZdTXy1glLc@gentoo.org>
+References: <20240701223935.3783951-1-andrii@kernel.org>
+In-Reply-To: <20240701223935.3783951-1-andrii@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 3 Jul 2024 14:33:06 -0700
+Message-ID: <CAEf4BzaZhi+_MZ0M4Pz-1qmej6rrJeLO9x1+nR5QH9pnQXzwdw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
+ and per-CPU RW semaphore
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org, 
+	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org, mingo@redhat.com, 
+	bpf@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, clm@meta.com, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 03, 2024 at 02:35:54PM +0200, Guilherme Amadio wrote:
-> Hello,
-> 
-> On Tue, Jul 02, 2024 at 04:33:27PM -0700, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > On Fri, Jun 28, 2024 at 10:34:27PM +0200, Guilherme Amadio wrote:
-> > > This avoids reported warnings when the packages are not installed.
-> > > 
-> > > Fixes: 0f0e1f44569061e3dc590cd0b8cb74d8fd53706b
-> > > Signed-off-by: Guilherme Amadio <amadio@gentoo.org>
-> > 
-> > Thanks for working on this.
-> > 
-> > > ---
-> > >  tools/perf/Makefile.config | 28 +++++++++++++++-------------
-> > >  1 file changed, 15 insertions(+), 13 deletions(-)
-> > > 
-> > > diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> > > index 5271a4c1d2b3..5387babb8f04 100644
-> > > --- a/tools/perf/Makefile.config
-> > > +++ b/tools/perf/Makefile.config
-> > > @@ -182,13 +182,21 @@ endif
-> > >  FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
-> > >  FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
-> > >  
-> > > -# for linking with debug library, run like:
-> > > -# make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
-> > > -FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
-> > > -FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
-> > > -
-> > > -FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
-> > > -FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
-> > > +ifneq ($(NO_LIBTRACEEVENT),1)
-> > > +  ifeq ($(call get-executable,$(PKG_CONFIG)),)
-> > > +  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
-> > 
-> > I know you just copied the code, but IIRC we wanted to remove this dummy
-> > assignment before.
-> 
-> Sure, I will change this. I think we can also remove the "dummy :=" part and
-> just do $(error Error: ...), like it's done in other places.
+On Mon, Jul 1, 2024 at 3:39=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org> =
+wrote:
+>
+> This patch set, ultimately, switches global uprobes_treelock from RW spin=
+lock
+> to per-CPU RW semaphore, which has better performance and scales better u=
+nder
+> contention and multiple parallel threads triggering lots of uprobes.
+>
+> To make this work well with attaching multiple uprobes (through BPF
+> multi-uprobe), we need to add batched versions of uprobe register/unregis=
+ter
+> APIs. This is what most of the patch set is actually doing. The actual sw=
+itch
+> to per-CPU RW semaphore is trivial after that and is done in the very las=
+t
+> patch #12. See commit message with some comparison numbers.
+>
 
-Exactly.
+Peter,
 
-> 
-> > > +  endif
-> > > +endif
-> > > +ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent 2>&1 1>/dev/null; echo $$?),0)
-> > > +  # for linking with debug library, run like:
-> > > +  # make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
-> > > +  FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
-> > > +  FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
-> > > +endif
-> > > +ifeq ($(shell $(PKG_CONFIG) --exists libtracefs 2>&1 1>/dev/null; echo $$?),0)
-> > > +  FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
-> > > +  FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
-> > 
-> > I'm curious if we can redirect stderr to /dev/null to surpress the
-> > output when pkg-config is not installed.  Then we don't need to check
-> > the `ifeq`.
-> 
-> I was wondering that myself when I added the check, if you prefer to redirect
-> stderr to /dev/null, I will do it that way then when I submit v3.
+I think I've addressed all the questions so far, but I wanted to take
+a moment and bring all the discussions into a single palace, summarize
+what I think are the main points of contention and hopefully make some
+progress, or at least get us to a bit more constructive discussion
+where *both sides* provide arguments. Right now there is a lot of "you
+are doing X, but why don't you just do Y" with no argument for a) why
+X is bad/wrong/inferior and b) why Y is better (and not just
+equivalent or, even worse, inferior).
 
-Yep, let's have a fewer lines of changes.
+I trust you have the best intentions in mind for this piece of kernel
+infrastructure, so do I, so let's try to find a path forward.
 
-> 
-> Thanks for the review.
+1. Strategically, uprobes/uretprobes have to be improved. Customers do
+complain more and more that "uprobes are slow", justifiably so. Both
+single-threaded performance matters, but also, critically, uprobes
+scalability. I.e., if the kernel can handle N uprobe per second on a
+single uncontended CPU, then triggering uprobes across M CPUs should,
+ideally and roughly, give us about N * M total throughput.
 
-No problem and thanks for your contribution!
+This doesn't seem controversial, but I wanted to make it clear that
+this is the end goal of my work. And no, this patch set alone doesn't,
+yet, get us there. But it's a necessary step, IMO. Jiri Olsa took
+single-threaded performance and is improving it with sys_uretprobe and
+soon sys_uprobe, I'm looking into scalability and other smaller
+single-threaded wins, where possible.
 
-Thanks,
-Namhyung
+2. More tactically, RCU protection seems like the best way forward. We
+got hung up on SRCU vs RCU Tasks Trace. Thanks to Paul, we also
+clarified that RCU Tasks Trace has nothing to do with Tasks Rude
+flavor (whatever that is, I have no idea).
 
-> > 
-> > > +endif
-> > >  
-> > >  FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
-> > >  # include ARCH specific config
-> > > @@ -208,12 +216,6 @@ ifeq ($(call get-executable,$(BISON)),)
-> > >    $(error Error: $(BISON) is missing on this system, please install it)
-> > >  endif
-> > >  
-> > > -ifneq ($(NO_LIBTRACEEVENT),1)
-> > > -  ifeq ($(call get-executable,$(PKG_CONFIG)),)
-> > > -  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
-> > > -  endif
-> > > -endif
-> > > -
-> > >  ifneq ($(OUTPUT),)
-> > >    ifeq ($(shell expr $(shell $(BISON) --version | grep bison | sed -e 's/.\+ \([0-9]\+\).\([0-9]\+\).\([0-9]\+\)/\1\2\3/g') \>\= 371), 1)
-> > >      BISON_FILE_PREFIX_MAP := --file-prefix-map=$(OUTPUT)=
-> > > -- 
-> > > 2.45.2
-> > > 
+Now, RCU Tasks Trace were specifically designed for least overhead
+hotpath (reader side) performance, at the expense of slowing down much
+rarer writers. My microbenchmarking does show at least 5% difference.
+Both flavors can handle sleepable uprobes waiting for page faults.
+Tasks Trace flavor is already used for tracing in the BPF realm,
+including for sleepable uprobes and works well. It's not going away.
+
+Now, you keep pushing for SRCU instead of RCU Tasks Trace, but I
+haven't seen a single argument why. Please provide that, or let's
+stick to RCU Tasks Trace, because uprobe's use case is an ideal case
+of what Tasks Trace flavor was designed for.
+
+3. Regardless of RCU flavor, due to RCU protection, we have to add
+batched register/unregister APIs, so we can amortize sync_rcu cost
+during deregistration. Can we please agree on that as well? This is
+the main goal of this patch set and I'd like to land it before working
+further on changing and improving the rest of the locking schema.
+
+I won't be happy about it, but just to move things forward, I can drop
+a) custom refcounting and/or b) percpu RW semaphore. Both are
+beneficial but not essential for batched APIs work. But if you force
+me to do that, please state clearly your reasons/arguments. No one had
+yet pointed out why refcounting is broken and why percpu RW semaphore
+is bad. On the contrary, Ingo Molnar did suggest percpu RW semaphore
+in the first place (see [0]), but we postponed it due to the lack of
+batched APIs, and promised to do this work. Here I am, doing the
+promised work. Not purely because of percpu RW semaphore, but
+benefiting from it just as well.
+
+  [0] https://lore.kernel.org/linux-trace-kernel/Zf+d9twfyIDosINf@gmail.com=
+/
+
+4. Another tactical thing, but an important one. Refcounting schema
+for uprobes. I've replied already, but I think refcounting is
+unavoidable for uretprobes, and current refcounting schema is
+problematic for batched APIs due to race between finding uprobe and
+there still being a possibility we'd need to undo all that and retry
+again.
+
+I think the main thing is to agree to change refcounting to avoid this
+race, allowing for simpler batched registration. Hopefully we can
+agree on that.
+
+But also, refcount_inc_not_zero() which is another limiting factor for
+scalability (see above about the end goal of scalability) vs
+atomic64_add()-based epoch+refcount approach I took, which is
+noticeably better on x86-64, and I don't think hurts any other
+architecture, to say the least. I think the latter could be
+generalized as an alternative flavor of refcount_t, but I'd prefer to
+land it in uprobes in current shape, and if we think it's a good idea
+to generalize, we can always do that refactoring once things stabilize
+a bit.
+
+You seem to have problems with the refcounting implementation I did
+(besides overflow detection, which I'll address in the next revision,
+so not a problem). My arguments are a) performance and b) it's well
+contained within get/put helpers and doesn't leak outside of them *at
+all*, while providing a nice always successful get_uprobe() primitive.
+
+Can I please hear the arguments for not doing it, besides "Everyone is
+using refcount_inc_not_zero", which isn't much of a reason (we'd never
+do anything novel in the kernel if that was a good enough reason to
+not do something new).
+
+Again, thanks for engagement, I do appreciate it. But let's try to
+move this forward. Thanks!
 
