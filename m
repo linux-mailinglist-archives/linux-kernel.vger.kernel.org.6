@@ -1,156 +1,151 @@
-Return-Path: <linux-kernel+bounces-239675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BFE9263CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:50:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E489263DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 16:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C58D1F2313F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:50:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7AF3281C69
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1870E17D892;
-	Wed,  3 Jul 2024 14:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407D317DA1A;
+	Wed,  3 Jul 2024 14:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XeRSW4Mb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNyYVSL6"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD76117B401;
-	Wed,  3 Jul 2024 14:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3658F6A342;
+	Wed,  3 Jul 2024 14:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720018192; cv=none; b=qb4ZSI0k5O8G+tQCic69cnL3c1Rv4nIpiRkpvohmQE1sj8tNLew/pCf5xfYQbflW13OMWo5bhJqzzfITHAcPnt/S+sqrsKhRcLIA+sK5mmiFsLwOq0KtMInpeTEDC3eEi3NW16wzTjROUyT95M9QXKOgyb7q2NaTIU9WQWYspsY=
+	t=1720018330; cv=none; b=jpHjr9SNKGAlal1BmXN1NxQ8an9tgZhCEA3NaKkcbhiqNWYldonpINGHJdfVWCKmxBb6tvkGXAwQydvWY19BqUX//F6WUr+GxPKuN1XE29/2mSGMddXWdDMzrJqdkSYF5aYy19R1qlLab4/xnQLDM2iJAjk84R5fjh9D7yNrN38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720018192; c=relaxed/simple;
-	bh=yJglA0kKAh7frBLvVoOSsqhvuxymRE3x7UmFUPHGhX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cv1WvJTRe/aFIQRsiFSBrqcA1ZQ0S29Go/RPb69q9utkDWV9R4dvD1nLhggjg8my0X7N0vVh5jgn+QN3v4Xqgjg5RET4cI4g80rUmfqXTIOkckYBA60eB/tgjTpmh+QPSoKlf5jxc5vSVaNNiikqBkiF/TLIoxW254I52euqL3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XeRSW4Mb; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720018191; x=1751554191;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yJglA0kKAh7frBLvVoOSsqhvuxymRE3x7UmFUPHGhX4=;
-  b=XeRSW4MbcOjOPtc1xR/NHy643hyTIp7LyVzFl6CVasCAyBAvtShzJid2
-   2xeVbqvUrZqpoWIw5b2oa0zzbDRwrXuAE/v+BtJjsNRCVTt03XOitfHy6
-   ZpGgzDRQksorSFW2s7C1pTq7wb5ychHMlcZD84tLM2mD6Yy0qWV5L/g8a
-   dhsPySbmEKUYpTBh9auRElC5Xrq9/G3lnqy/uRQLcGENNme6tQdp94bBz
-   x1qNI8Z+jKbpQ1sv3X7R9PNpK17y1AjDpvso8XQQRWTJcyxmA/sySNmRA
-   I2bCarGLD3Rf5UNZEJrQAAGVJivrUL3wE4tFPCw4Wqil0Z7ObqXBs1SC6
-   A==;
-X-CSE-ConnectionGUID: ndcJygv0SjeLcjMmhffCzA==
-X-CSE-MsgGUID: vYJK1ss7RyG32etIpwPmWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="21063434"
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="21063434"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 07:49:51 -0700
-X-CSE-ConnectionGUID: e8fHtqjGRuuMzKE3onKr8Q==
-X-CSE-MsgGUID: 4SueTnJDSMKw2MlwkGIHRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="83830713"
-Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.223.221]) ([10.124.223.221])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 07:49:50 -0700
-Message-ID: <3b164525-f797-478a-a75c-1c2bd83086af@intel.com>
-Date: Wed, 3 Jul 2024 07:49:48 -0700
+	s=arc-20240116; t=1720018330; c=relaxed/simple;
+	bh=WWBTexeKlu3/m4CBeaLtt0EX7DuzSpqIQxTrunqvRBg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tSISzq4mewB123g3Kcof56HDakidBhR5u311XKBZ7dgXDv/bP+Njm2/ZgWg47zAhgQ/xHbKiZ/YJ8e8JR6+MsnS5c5Gfok6KMm6CaMredmoUdIkGW2gz5Ef18Q6q3JQkX9VkiEACecksN99y8PirH1i/BvGVWbz+ZXBol9rcibo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNyYVSL6; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d841a56e1dso1788683b6e.2;
+        Wed, 03 Jul 2024 07:52:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720018328; x=1720623128; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HQ2PNk6wpFX/f/zn7sOj1CSv21ZtsJPh8OUiiFyP9QU=;
+        b=hNyYVSL6yggH5eum30z7TeE1HV6kDsqD90Tw8HEMY4d+VgdoAhIqCH6Um4Rm7new9V
+         doeFw1O9MrJ75FLQQx5cGtnQkCGDmzPC0+LHZwLtT7noVrEECj5KB5m5JuegihVq1prJ
+         wy7ijQY6qVJ5NpKwcsoESIFFjnHWbYybE8dDPfC5yAP+MKD4GVc6zvZg6SE3pw+jUavx
+         bL2KItxFWcQL2QYadGl/NULYFHTgB3silB0gGCIbn3iWYCsbNJ9zUrTigDcO6mc1WUcE
+         wHYPapTk5sIbQ6dZ6ihFTBODkWLTUwQlzgTmSFe4x7YSHc+F+CBe7Zevh1oFi6wd3iMh
+         ky8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720018328; x=1720623128;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HQ2PNk6wpFX/f/zn7sOj1CSv21ZtsJPh8OUiiFyP9QU=;
+        b=Vv63a2VA/2rnyYt6GSkz3kl8YfJO/zxoaEuQk+KCnSHLWIGbU0+zM3jBrkx1PRl1oj
+         4PAndn9qZUz0kDxSx/cZBwATtffMEHDssjmyWR34GSz4vKBVGN+l/uUrvqGKjx4OmTCQ
+         7ufT9cRa2o9/zKF7JWpg/NzAvmOwca3C1xfxYUeRGtm8jFIFhReDbJhW4wtSwr1pES9M
+         tGQDu/BD+6oWpFY/0RF8YDSLEdg9AOxd0FY9YJOdxCoxQgqkzbn6vlnZhBsfzkXjmuYk
+         q3jNo0ICGrDnZvm75m44II+d9edgE0mCSL+SPX2gEVMfXcV5yAGWdi/J7YDJer5Ov0uG
+         2dog==
+X-Forwarded-Encrypted: i=1; AJvYcCW9ywuvKeVhoNATr7++agpETgjsRkN+aVSLux0tE4VaOB0dIW0jT20/2Y5BCWKYtJ32bpfuIoV7f0nMPgQ4CxbXYlCpIK5lxFhbYQZMPcyZMWqMYOxuK3uFRLQwysqom0Z2IVBv
+X-Gm-Message-State: AOJu0Yy/QeaSGbOtLyCiCgbZaU0t6XVZyHB6/ISpX9I6vWecf71cQ93+
+	0LWZPH00RhV1sX2evljfxjekROPE0ymffF4alNXnTC+lSJxLyybb
+X-Google-Smtp-Source: AGHT+IFDfhm0K6JoG12J5Rx2/x1IL2tWJEvmqkrUiN32sQcsyQBavttJjBMt0d5//xNr1G/wMaxoIA==
+X-Received: by 2002:a05:6808:23ca:b0:3d5:fdc5:cfb9 with SMTP id 5614622812f47-3d6b2b24facmr17631436b6e.1.1720018328311;
+        Wed, 03 Jul 2024 07:52:08 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044b0c5csm10492973b3a.167.2024.07.03.07.52.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 07:52:07 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: jiri@resnulli.us
+Cc: syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH net] team: Fix ABBA deadlock caused by race in team_del_slave
+Date: Wed,  3 Jul 2024 23:51:59 +0900
+Message-Id: <20240703145159.80128-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <000000000000ffc5d80616fea23d@google.com>
+References: <000000000000ffc5d80616fea23d@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv5 3/4] x86/tdx: Dynamically disable SEPT violations from
- causing #VEs
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Nikolay Borisov <nik.borisov@suse.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240624114149.377492-1-kirill.shutemov@linux.intel.com>
- <20240624114149.377492-4-kirill.shutemov@linux.intel.com>
- <05d0b24a-2e21-48c0-85b7-a9dd935ac449@suse.com>
- <oujihwk2ghwpobsuivxlgflalwxigctjp6nld2jdtz4cbwoqnp@7v3s7ap4ul6u>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <oujihwk2ghwpobsuivxlgflalwxigctjp6nld2jdtz4cbwoqnp@7v3s7ap4ul6u>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/3/24 06:04, Kirill A. Shutemov wrote:
->>> -/* TDCS fields. To be used by TDG.VM.WR and TDG.VM.RD module calls */
->>> +/* TDX TD-Scope Metadata. To be used by TDG.VM.WR and TDG.VM.RD */
->>> +#define TDCS_CONFIG_FLAGS		0x1110000300000016
->> 0x9110000300000016
->>> +#define TDCS_TD_CTLS			0x11104800000017
->> 0x9110000300000017
-> Setting bit 63 in these field id is regression in new TDX spec and TDX
-> module. It is going to be fixed in next version. Both versions of field
-> ids are going to be valid.
+       CPU0                    CPU1
+       ----                    ----
+  lock(&rdev->wiphy.mtx);
+                               lock(team->team_lock_key#4);
+                               lock(&rdev->wiphy.mtx);
+  lock(team->team_lock_key#4);
 
-I kinda never liked the big ol' magic numbers approach here.  But could
-we please introduce some helpers here?
+Deadlock occurs due to the above scenario. Therefore,
+modify the code as shown in the patch below to prevent deadlock.
 
-Then we'll end up with something like this (if the 0x111 can't be
-decomposed):
+Regards,
+Jeongjun Park.
 
-#define _TDCS_CMD(c)	((0x1110UL << 48) | (c))
+Reported-and-tested-by: syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com
+Fixes: 61dc3461b954 ("team: convert overall spinlock to mutex")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ drivers/net/team/team_core.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-#define TDCS_CONFIG_FLAGS _TDCS_CMD(0x16)
-#define TDCS_TD_CTLS	  _TDCS_CMD(0x17)
-
-Then when folks change their mind about what should be in the TDX spec,
-we have one place to go fix it up in addition to making this all more
-readable.
+diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
+index ab1935a4aa2c..3ac82df876b0 100644
+--- a/drivers/net/team/team_core.c
++++ b/drivers/net/team/team_core.c
+@@ -1970,11 +1970,12 @@ static int team_add_slave(struct net_device *dev, struct net_device *port_dev,
+                          struct netlink_ext_ack *extack)
+ {
+        struct team *team = netdev_priv(dev);
+-       int err;
++       int err, locked;
+ 
+-       mutex_lock(&team->lock);
++       locked = mutex_trylock(&team->lock);
+        err = team_port_add(team, port_dev, extack);
+-       mutex_unlock(&team->lock);
++       if (locked)
++               mutex_unlock(&team->lock);
+ 
+        if (!err)
+                netdev_change_features(dev);
+@@ -1985,11 +1986,12 @@ static int team_add_slave(struct net_device *dev, struct net_device *port_dev,
+ static int team_del_slave(struct net_device *dev, struct net_device *port_dev)
+ {
+        struct team *team = netdev_priv(dev);
+-       int err;
++       int err, locked;
+ 
+-       mutex_lock(&team->lock);
++       locked = mutex_trylock(&team->lock);
+        err = team_port_del(team, port_dev);
+-       mutex_unlock(&team->lock);
++       if (locked)
++               mutex_unlock(&team->lock);
+ 
+        if (err)
+                return err;
+--
 
