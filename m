@@ -1,143 +1,113 @@
-Return-Path: <linux-kernel+bounces-239180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655FF9257AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:02:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEFED9257B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C8E2860E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:02:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5493B1F271CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487CE139590;
-	Wed,  3 Jul 2024 10:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B2613D8B5;
+	Wed,  3 Jul 2024 10:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cOnYZ6xK"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hLK23n0o"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD26113CABC
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DD713D2BE
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720000906; cv=none; b=OFIcwSH6/fIQeytJ3z3rYynlyY9VBktN14GX7CD8p5LP0OrPyObOpka3w0OUvYK7GbH1vlp+roPBia8V9eu1FBuEVMURYY3uOodmWWNS2lNdQIj7YhnxZI0PgyaDR4hI7+uACVzz2qTUrv9jMgxIsdv8GpvGvcYkWjZV7FiarhQ=
+	t=1720000943; cv=none; b=mpzo4ypGQB2lmuRFoDICXZmB+pi17kjG59lMn3VgMBlD6hFcqXpF+xs0UgsbI5NuA3S47wYotpTISy7B+vVBATun+hZcIK+9OHpS8g0ENcUZm/5MQw3i4/dLoAep2xym83ZKZKSsxUnICxwbtU6Zn3mGa0HAUFNQwkVWq5D/G0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720000906; c=relaxed/simple;
-	bh=IoztH7c3ObPzPyOJzXRpFf3OvcHSvttFXXjWl6mAImk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YP8OQhEXDzkWG8zIsMr2Vx6JvJg7cDbjB/86HQ8S1JvXnaaapw6mC46tI+agAXExys1HA+Gf2U51eeAcduHYIatHDbrWaRh9zeKggtV3DxLHwnXnWAOX87ZZzg2BgviP6pr1DcSsSeevVwfAU4ZjW5bL0akkAOgof+53lwrLTL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cOnYZ6xK; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ebe785b234so53566071fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:01:44 -0700 (PDT)
+	s=arc-20240116; t=1720000943; c=relaxed/simple;
+	bh=2BueQlBHNUIUsB9Kn2OPvhoSOi/prFH4uiBvlAu1/5A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DyxRXv2WpOhrWGA6/SMkEQ1bAqIVayRTAALyUxbYKciIDj00H2OselLM0uVebHbO7FaUrH6AermbaoKMdSei2HgTMe1raMCk15pwqweB9p4LsRfmXjeDkLhhrPTdKRbAmYap310KJwgckiCVVtew/arItfadg2B+A0cOhAnVGdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hLK23n0o; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cf4ca8904so8486570e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:02:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720000903; x=1720605703; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ba8TVs0WiPW/mrVDZB1JnVEfDtu3H86gU8ZQ9MafN2c=;
-        b=cOnYZ6xKRBAttW8/AJvS8G3KoH4Xq2Pua85oqMMlKvuZnD9DaxAk1oNZ91SIqt9BgB
-         YJ+EMEOmZgbKA7m8b1oky8TZjPibE4vdTr8Nx+EhMa2rYI9RGXatFmFyZhruLz6Az+it
-         HmQJdRLPwJ5ILE7IKV5uNq8jQu9XEJdAGEtSN/+vkb/vt5qtDFuKrMd1MpkwyDPHv5I8
-         mov4gifDGzBZRkRMQHn1wd6zF5xRHf1RDXU1bz8FXXdLiZju9SZsqDBvd1nICZR1hGaD
-         jG7+ab8VaTLiN80H20o/x9Gkuxw76DOL+QoCJLC4LfCZST9fOJkqzOESlyyvHK2s6Q3l
-         xfWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720000903; x=1720605703;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720000940; x=1720605740; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ba8TVs0WiPW/mrVDZB1JnVEfDtu3H86gU8ZQ9MafN2c=;
-        b=l/bt1fohPYP0BTBqtybxk9gzDNfdjo5cUMwSu1MjvpQ9DGqAOai8WWXO/e90wuTHQD
-         dkrMcdf6zkftTST9aYLdl0bLO5Gd608Af+0sJn/deqdrSGUkJLThQ11+mpmktcj+aKns
-         DLQnDw9xAnsqj4VRHbU0hjjr54yzfTK/fSsCip3k0NBdKlGGFoXveDbGrcloCvUuklUV
-         djv0XmZqqdipg+F6wYkClslxOL+pFOVoGlXNEJSTgeVwhO8JwF4g1ofWbA6t04Er0822
-         tm1yJLe5IqcxCQLJ8fx52lQVwMscVpKMaChLuClPRm9IuVlN364MNGc63oangPwMrNl1
-         ohuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAWpTiqI3WZHV3A/nLHRY2uzU3/RKty2HDhEapywOUVDu36Ixfs/WeR9un7dnxsA/kqz6Z0LlPOftm36FAppm13QQ5B/4/Py8CLvTv
-X-Gm-Message-State: AOJu0Yx/D4crZbkg3b6bVtBg1x93qbayK7zjPVasN12Uu6kinC49FaNO
-	rFxfr0NdhZpUIk4SZKfDaDP/r6tlgaD0IwVW7XjF9pA0ipEM8gM/57nDmpf0s1Y=
-X-Google-Smtp-Source: AGHT+IFt0NIPlTRfTacZKad2D9AAb0rB8mNH1GSrB71JnEIIs0lwsvAcQ1VQLk1LTElL0scOqic9Gg==
-X-Received: by 2002:a2e:9849:0:b0:2ec:4e59:a3e with SMTP id 38308e7fff4ca-2ee5e4bb7a5mr70347281fa.23.1720000900854;
-        Wed, 03 Jul 2024 03:01:40 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee59fd21a5sm16276051fa.129.2024.07.03.03.01.40
+        bh=oKXjwCiaLg72R2gJ/FT04OGaQAr4J9i9LzgGVlBH+qc=;
+        b=hLK23n0onEk1CF3XTzyjr0MjReLqzOfhQzV04LBBRM74og0zmEdpLDvZuk+U4/w5XZ
+         Y0UJpyuN0+3YeAukNLedAYHHZ532ImpNIXN1GK8wxUsUK7n8J39tct1yl22o1HFFHmgM
+         /OUZ3j6ymoH+FMuNPjhS+zn86aGGHhILS2XzPR/HRLdIrkvdvSj1QhPCw+4WzRhqmS4x
+         uTooZFRIaym0Lat8YRHhsBpLdpsWXjPlCyAvJEEJ3K4Yryr5Jljt5vy7DnDADsFgaGPD
+         BhhKn2YE/Suq/bIbTzWt+W8axArnpgKlJXMCzESbPBXe5809qYTuoQtUhGZuMWilut1E
+         8+qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720000940; x=1720605740;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oKXjwCiaLg72R2gJ/FT04OGaQAr4J9i9LzgGVlBH+qc=;
+        b=JJmsHS4mb90mCKEI9cZW35O01n2OyESmlwC68CPfIcXuwXNJ9E5oJkEAUqMPCb+Ol0
+         rFQMyuiId3SgEfybNYRZt3hLY053OtLTY81LclpML9fIyyjeX20kR/buOQzO9LNDb95Q
+         tpXDYGfgshamZDSDLvxPqxhoVnCmgZxlmnsMZCDcHW6Vctl1mfvGuPWiPTkYncawmuEg
+         TERMLF45HqxR78UQ1/K9P9IjW0++4Ijt0VmNqs/K1TsDewZA8BheV+GfMDflh3Nje2wk
+         Bu2dLslK7BIPYtSA0aQADbR0Z5bOrTXsbnbl6HN8VGcZSZ8Kva5zq6C/jNOxx+ZUUC7Y
+         9Kzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXED5CRYpYSGcFewVmaIiMtlEz8CiloBXqFJ1CAc5roajI/6MdljaBPcXYzs+ieHdKEfLcAb6/+4oeWakdBuy5HATzMx/4K8cJ4l9Ml
+X-Gm-Message-State: AOJu0YzofiCkZUqOA6q/vRXKFKaGd7kYcuAefxrGzuh7M8KFBF8dKBGB
+	8iZs7BtETjTZsiMPo1YRqLo+6zK+84aKwgqG4Nd3BF9a5Qg0M78DHrOzLfFUZhQ=
+X-Google-Smtp-Source: AGHT+IHzaRxDw+0xOP288QMyiqj94os0mlDtdORAYbbCky+tos45ZKFz/8bNjlRpBD4147ufyiEMjg==
+X-Received: by 2002:a05:6512:b92:b0:52e:7de3:64fa with SMTP id 2adb3069b0e04-52e826feba4mr7443996e87.46.1720000939825;
+        Wed, 03 Jul 2024 03:02:19 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:c37f:195e:538f:bf06])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8df0sm15560651f8f.29.2024.07.03.03.02.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 03:01:40 -0700 (PDT)
-Date: Wed, 3 Jul 2024 13:01:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] clk: qcom: alpha-pll: Fix the pll post div mask
- and shift
-Message-ID: <gx3vhkjvwwzxvbh36c3bwp5kw7pxiki2rvsp7ig6rdo3gw6fju@afmhwuwdqquj>
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-1-4baf54ec7333@quicinc.com>
+        Wed, 03 Jul 2024 03:02:19 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Frank Li <Frank.Li@nxp.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: gpio: fsl,qoriq-gpio: Add compatible string fsl,ls1046a-gpio
+Date: Wed,  3 Jul 2024 12:02:17 +0200
+Message-ID: <172000093537.12215.11059064969197754180.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240702201724.96681-1-Frank.Li@nxp.com>
+References: <20240702201724.96681-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702-camcc-support-sm8150-v2-1-4baf54ec7333@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 02, 2024 at 09:20:39PM GMT, Satya Priya Kakitapalli wrote:
-> The PLL_POST_DIV_MASK should be 0 to (width - 1) bits. Fix it.
-> Also, correct the pll postdiv shift used in trion pll postdiv
-> set rate API. The shift value is not same for different types of
-> plls and should be taken from the pll's .post_div_shift member.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Two separate commits for two different fixes, please.
 
+On Tue, 02 Jul 2024 16:17:24 -0400, Frank Li wrote:
+> Add compatible string for chip ls1046 to fix below warning.
+> arch/arm64/boot/dts/freescale/fsl-ls1046a-frwy.dtb: /soc/gpio@2300000: failed to match any schema with compatible: ['fsl,ls1046a-gpio', 'fsl,qoriq-gpio']
 > 
-> Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 8a412ef47e16..6107c144c0f5 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -40,7 +40,7 @@
->  
->  #define PLL_USER_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_USER_CTL])
->  # define PLL_POST_DIV_SHIFT	8
-> -# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width, 0)
-> +# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width - 1, 0)
->  # define PLL_ALPHA_EN		BIT(24)
->  # define PLL_ALPHA_MODE		BIT(25)
->  # define PLL_VCO_SHIFT		20
-> @@ -1496,8 +1496,8 @@ clk_trion_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
->  	}
->  
->  	return regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> -				  PLL_POST_DIV_MASK(pll) << PLL_POST_DIV_SHIFT,
-> -				  val << PLL_POST_DIV_SHIFT);
-> +				  PLL_POST_DIV_MASK(pll) << pll->post_div_shift,
-> +				  val << pll->post_div_shift);
->  }
->  
->  const struct clk_ops clk_alpha_pll_postdiv_trion_ops = {
-> 
-> -- 
-> 2.25.1
 > 
 
+Applied, thanks!
+
+[1/1] dt-bindings: gpio: fsl,qoriq-gpio: Add compatible string fsl,ls1046a-gpio
+      commit: f2e395629747e718a67b567cb84b49d14792b312
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
