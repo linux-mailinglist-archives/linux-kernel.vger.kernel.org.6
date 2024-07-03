@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-240237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E706F926AAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:45:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252AA926AAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236C61C22F2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:45:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55ED21C232D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422CD1946A5;
-	Wed,  3 Jul 2024 21:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="wm8hzuPb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D88192B8B;
+	Wed,  3 Jul 2024 21:44:12 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E15198836;
-	Wed,  3 Jul 2024 21:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A992136660;
+	Wed,  3 Jul 2024 21:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720043027; cv=none; b=ue+aO/NmHVMI1AwGNfvul+mrBVoy0t7pI3UiVeCF47nqr3XR/QnaSPHLTjz3UVD3l4yCmADDCjwpxES1UiiPf+j1ypayVhQEu11/zg1e7oX6g7l9e9Xu6TUorLyrp0YsMFlC+EwoUADyFNsgV2kkOGXnRGN6C5gHksj8KCFKaCk=
+	t=1720043052; cv=none; b=hJdbzRblR990HnsXAJQdhcBnsgRc3IIjE05dUzpzCzJiuPhgfEQVX/odwdY71opACfiUVR+2cNKmmTLcRSptKZmhr0AQCkVNDNEOU8JMhCq8u5wYDhHXiJ6tvdnlVxhv4ffzYNGFLaX7cmnwbu6VUKQ/ytmKeCWUxL2548qfC4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720043027; c=relaxed/simple;
-	bh=CpC1+7GyO7O8zAq0nMpMmymsg6eQS97CVLhpi3orCkE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=SBbsjPZtAYo+VW7HF/1ur9Ni7B4TfEvv/WQMBijDh2E8kt8RUM/U2AvDRGV59IHEzebOMhNPEUR6IGZY2OuRZ923QBvE8IufJWq7jQlGm6vJP2Bdk46r98/hb2yy8Gn3d62PEdNZ+1VFztEvLGslpIeiJ1TUlPUeMA+8DPGVf0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=wm8hzuPb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53CAFC4AF07;
-	Wed,  3 Jul 2024 21:43:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1720043026;
-	bh=CpC1+7GyO7O8zAq0nMpMmymsg6eQS97CVLhpi3orCkE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=wm8hzuPbtf99HljIKgn5ihS5pWJJounqB04L8GR/czcjjFyTRXIT14ZBWeG+3vRJE
-	 BcJdcWULuIzHhL+D5VPzQiBBvq2ziOiZs5sQFWJnIQvqXCH9RF8bYalQ4Ym3xrjL2Z
-	 sb8ezQfQ4fBfmVNQWO6N8x2a5nBa/efjSLj1hyO4=
-Date: Wed, 3 Jul 2024 14:43:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil
- Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>, Kees Cook
- <kees@kernel.org>, Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH 0/7] Make core VMA operations internal and testable
-Message-Id: <20240703144345.530d82e0f337fe7b57704df6@linux-foundation.org>
-In-Reply-To: <1a41caa5-561e-415f-85f3-01b52b233506@lucifer.local>
-References: <cover.1720006125.git.lorenzo.stoakes@oracle.com>
-	<20240703132653.3cb26750f5ff160d6b698cae@linux-foundation.org>
-	<1a41caa5-561e-415f-85f3-01b52b233506@lucifer.local>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720043052; c=relaxed/simple;
+	bh=XciLH2BvLZX+43hDP99uSAJVZsp+okYTl4PoGg/jKsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Se7lzvLjvXbAma7sWljnuoRne7hQgwRwiRqyHt6RzPJC6arcei9TobR378AVeNBft3a6QPXmCKFKLWCmuPlrr7kA8Jwd2xAesRViuta2V+iTH2kImB65FXGPfJMiR/7MSed8R5olO0dwNSoCb3xpwLn2WN3MzffwuAYls/ee29c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F9B6C2BD10;
+	Wed,  3 Jul 2024 21:44:11 +0000 (UTC)
+Date: Wed, 3 Jul 2024 17:44:10 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ring-buffer: Limit time with disabled interrupts in
+ rb_check_pages()
+Message-ID: <20240703174410.099e8784@rorschach.local.home>
+In-Reply-To: <20240703075314.23511-1-petr.pavlu@suse.com>
+References: <20240703075314.23511-1-petr.pavlu@suse.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 3 Jul 2024 21:33:00 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On Wed,  3 Jul 2024 09:53:14 +0200
+Petr Pavlu <petr.pavlu@suse.com> wrote:
 
-> >
-> > >  51 files changed, 3914 insertions(+), 2453 deletions(-)
-> >
-> > eep.  The best time for me to merge this is late in the -rc cycle so
-> > the large skew between mainline and mm.git doesn't spend months
-> > hampering ongoing development.  But that merge time is right now.
+> The function rb_check_pages() validates the integrity of a specified
+> per-CPU tracing ring buffer. It does so by traversing the underlying
+> linked list and checking its next and prev links.
 > 
-> Argh. Well, the numbers are scary, but it's _mostly_ moving code around
-> with some pretty straightforward refactorings and adding a bunch of
-> userland code that won't impact kernels at all.
+> To guarantee that the list isn't modified during the check, a caller
+> typically needs to take cpu_buffer->reader_lock. This prevents the check
+> from running concurrently, for example, with a potential reader which
+> can make the list temporarily inconsistent when swapping its old reader
+> page into the buffer.
 > 
-> So I'd argue this is less crazy in size than it might seem...
+> A problem with this approach is that the time when interrupts are
+> disabled is non-deterministic, dependent on the ring buffer size. This
+> particularly affects PREEMPT_RT because the reader_lock is a raw
+> spinlock which doesn't become sleepable on PREEMPT_RT kernels.
+> 
+> Modify the check so it still attempts to traverse the entire list, but
+> gives up the reader_lock between checking individual pages. Introduce
+> for this purpose a new variable ring_buffer_per_cpu.pages_era which is
 
-OK, let's leave it a couple of days for some feedback then decide. 
-It's still a couple of weeks until we go upstream.
+I'm dumb. What's an "era"?
+
+-- Steve
+
+> bumped any time the list is modified. The value is used by
+> rb_check_pages() to detect such a change and restart the check.
+> 
+> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
 
