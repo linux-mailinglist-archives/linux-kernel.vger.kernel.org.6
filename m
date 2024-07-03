@@ -1,76 +1,115 @@
-Return-Path: <linux-kernel+bounces-239017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309679254EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:48:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5EB9254F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2195B2131F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:48:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7390F1C22B44
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64ACC137936;
-	Wed,  3 Jul 2024 07:48:15 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBE013958C;
+	Wed,  3 Jul 2024 07:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pd+Nud4w"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59023D0A9
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E4A944E;
+	Wed,  3 Jul 2024 07:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719992895; cv=none; b=XyQJiy+ORKgeeXJHAKjLHj3Y7lVrzR2EnKq44LKyskN5rZXftEtGPrugwh6R4Ir71XpKQEmGCupEQ/PuDeQyD4KegNBI6Q+5deENY2S9OJ0ldRrn7FY6IENeEE6BOQUKaFIvcycY3knvaYb1PqSlbD6VGDCkaX9DC5xLrKlQJNk=
+	t=1719993294; cv=none; b=vGVRwkq6QG1O3onVoNRumxn54YdIj46c0Q3TsXAJ2B7b9pFgaSsb0wudhsgugMd+H0KlImpbg2ubCiTdsGsPC42FKNSt/c2/up+bM7/wXFEVQ0V/094BsaQVA5llpdOMLMbIi4grqARuM0VgbuVlu1Rhguky/hG/N4KmSMkfqKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719992895; c=relaxed/simple;
-	bh=Y9AYcDafw84WaELcKZx/PZ9PJ1afHDDZ6L47ZLGt0nE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CGj7M/o7LVRPWo/DsVt9gy5wDIQhH1BdW7kf2BE4TpDYkHf45gQkGQjWfLCbuE1hrj+ms9V0SRyReOwqqKQOsy4fCTaYDerZFswheJof9cP96SLK9JICr9ddfT+mEvWF/fJl2m14wYnJiWfT2SaCPCPmAs5ZSRrydvQKgP+PlMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f61da2de1eso537794839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 00:48:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719992893; x=1720597693;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPhZX+e268RTxrzgISskdKBK5rBuPGfbhsJHkVcoNH4=;
-        b=Xa8T9A0ra7Jk24A8yA5zDiMZGXmZw0ImnshgLpf61Hx1o5j6Zo85LjPQFsfn8Sa3W8
-         zMHu9na5ZTOvUf5/avWE0H0EFHQfYl6HE4BLyuToaEhVdW7DyozfmnXLksEh8SMenI0h
-         c8sKKrgdLWA4of+B+LuJQfshimUFc/13qweINQ/92ADlN+xXVnx8ozgZ5Uj8vIDgfUeE
-         O2ta9HdpIa8N7gaB0X9jeE4wPxaHeahq9Wx8XdbfyBa8sGMphYvCfVwUDeI7u31SDeWK
-         jSJ5azU5Xj79ZmeQmXj3IHkCbO8yVQ/fGMFooK16WznCbEkKxT59EVKouwP+ChtajcVI
-         myIg==
-X-Gm-Message-State: AOJu0Yz/1jwhcgaYEgACabaK7DlJXHlqqWmbhEududcDlCJtnCv9ac9K
-	KwCqUCgfdLtJlgHhrTq9Z1Fv922Xt3sRG4HFk4eCSdt4K3wuKXPjALgRqFJx3kPjyaQYhbgMpBz
-	NURIlXkkzjEJcpVtPJQwrbEKisJ+wvWE9ja974PFP/EKkg+bGpXfn/Oc=
-X-Google-Smtp-Source: AGHT+IF6+Zf2aKtTMT94eTxz2yQT5QEWTNulrvcvwJ69wQfkfJileHxw1k30FiWL1J0MbziDNZ17rHqNhrFcEOtG2mOS9mMI5pst
+	s=arc-20240116; t=1719993294; c=relaxed/simple;
+	bh=vtE/NNoAZRdyDR7r3N+ZuXRuMoxw7RThxPjInKSm2k4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHUC/z3QI28gLLVDsZzoegsPoXTBAkrBvUrl8CJdLtpILUL+kollsWc9vM2Ue5W/UVjZRqJAevDQfdgTamF6E+y36DIcjA6QExfAwA3pJHROaV+YHdNyk0XPU3RP5rAUUBSQRD70eJCQ1SEuPWx9a5fWJCiset4yntSBZEbxWPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pd+Nud4w; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=T95oREdPztj0OUcXPuTTOjyptMYHlUv4BqXqqdFX70Q=; b=pd+Nud4wJQs2g5c1OkbqTV4KFg
+	7tgtnvPjY2k6rytrgNwxouiFNBpxle+N687GfrgWHdoN22ufB5t9ejmXQ6/EphHz9Lg6iqysTOTdj
+	ui93mE0cKFpy5g1WV3MCZ8DWKoPD3l/9rryu57HEV/RdF4mFT8vO7KY0tTJKux6/frk3QuBPxj35P
+	AMDxbHdoa8bkkDnXNI5Y2LVA5SRnpMIe4BQNkoNhmajyxoLsEUU4FGdJ3SYG4/6L2fPfOKx9ITzEG
+	zlEBqVvHw5qwpCHvtpNyBCzN2Q+8Z8ZA1Ox0I1zUI3pjn2Wuu+E+DLxtY01IazAfT1J2Rpk/TdwHg
+	eemb0pZQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sOulz-00000009wWD-0jhs;
+	Wed, 03 Jul 2024 07:53:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 33DA33006B7; Wed,  3 Jul 2024 09:50:57 +0200 (CEST)
+Date: Wed, 3 Jul 2024 09:50:57 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
+	mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com,
+	bpf@vger.kernel.org, jolsa@kernel.org, clm@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
+ and per-CPU RW semaphore
+Message-ID: <20240703075057.GK11386@noisy.programming.kicks-ass.net>
+References: <20240701223935.3783951-1-andrii@kernel.org>
+ <20240702102353.GG11386@noisy.programming.kicks-ass.net>
+ <20240702115447.GA28838@noisy.programming.kicks-ass.net>
+ <CAEf4BzaQUzQdba2=F2NoV7=Th98fxz2EN62QX2Ej92bazt1GAg@mail.gmail.com>
+ <20240702191857.GJ11386@noisy.programming.kicks-ass.net>
+ <fd1d8b71-2a42-4649-b7ba-1b2e88028a20@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6c04:b0:7f4:10e3:1671 with SMTP id
- ca18e2360f4ac-7f62ed6878cmr57945939f.0.1719992892836; Wed, 03 Jul 2024
- 00:48:12 -0700 (PDT)
-Date: Wed, 03 Jul 2024 00:48:12 -0700
-In-Reply-To: <000000000000e55d2005fd59d6c9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000064defc061c530d94@google.com>
-Subject: Re: [syzbot] 
-From: syzbot <syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd1d8b71-2a42-4649-b7ba-1b2e88028a20@paulmck-laptop>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Tue, Jul 02, 2024 at 04:56:53PM -0700, Paul E. McKenney wrote:
 
-***
+> > Paul, isn't this the RCU flavour you created to deal with
+> > !rcu_is_watching()? The flavour that never should have been created in
+> > favour of just cleaning up the mess instead of making more.
+> 
+> My guess is that you are instead thinking of RCU Tasks Rude, which can
+> be eliminated once all architectures get their entry/exit/deep-idle
+> functions either inlined or marked noinstr.
 
-Subject: 
-Author: bottaawesome633@gmail.com
+Would it make sense to disable it for those architectures that have
+already done this work?
 
-#syz test
+> > > I will
+> > > ultimately use it anyway to avoid uprobe taking unnecessary refcount
+> > > and to protect uprobe->consumers iteration and uc->handler() calls,
+> > > which could be sleepable, so would need rcu_read_lock_trace().
+> > 
+> > I don't think you need trace-rcu for that. SRCU would do nicely I think.
+> 
+> From a functional viewpoint, agreed.
+> 
+> However, in the past, the memory-barrier and array-indexing overhead
+> of SRCU has made it a no-go for lightweight probes into fastpath code.
+> And these cases were what motivated RCU Tasks Trace (as opposed to RCU
+> Tasks Rude).
+
+I'm thinking we're growing too many RCU flavours again :/ I suppose I'll
+have to go read up on rcu/tasks.* and see what's what.
+
+> The other rule for RCU Tasks Trace is that although readers are permitted
+> to block, this blocking can be for no longer than a major page fault.
+> If you need longer-term blocking, then you should instead use SRCU.
+
+I think this would render it unsuitable for uprobes. The whole point of
+having a sleepable handler is to be able to take faults.
+
+
 
