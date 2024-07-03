@@ -1,211 +1,263 @@
-Return-Path: <linux-kernel+bounces-239752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19FAE9264F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:35:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9471C9264F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C434B284B05
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:35:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF012852BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17E0181BB8;
-	Wed,  3 Jul 2024 15:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InE0LzIp"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFF0181B8C;
-	Wed,  3 Jul 2024 15:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF9118132E;
+	Wed,  3 Jul 2024 15:35:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9939E17B50D;
+	Wed,  3 Jul 2024 15:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720020901; cv=none; b=bqm2VjzSyuFd6d0X6lFj9YWHWJjODDizLQ1oPZrFUbHlvfVGOe+oq/CIowiKAx2ROa1KxH1xj7PD99Dvirn5eOiiwTkCcA0F8mPoTCB6+K0Lltw8GbrcjTUaCQRADREpOhRIQkzFeUM5BJhkrlkNYOMr0m9csRzCTY5JKJ4d3zA=
+	t=1720020958; cv=none; b=FwAG2zr3jFQZB+i6dr+EPnkMEro8o7JLyXVsC+QgamLK7KwjFQwQDVk0jb9Dz+W8tLbNKXOzNq72Hdzs+PZ0I/VNe9WlSbLG+C2WGkCPCsno1mu4L0zGTrkc0jzUmRrQ+xLoHyQERdXKMBU8VlPi+PdF7eIil6OkVSrWTOtg9LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720020901; c=relaxed/simple;
-	bh=WoXjh+ypt7zasFF+jb9rD3vMfTVDYAqnKxgrqLWK2PE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KNYNVSosdNRJ+2ky78YpjDFewrDGpKOXdxgNcswSjPkML8Hg4j9N0H3THkF6QoQmKTJCSsnU7g/cQXFr1st1VUMRbfgA9fjWFFYczp4bCUbx9gbvAKufSH/SUmP5zTgAts7s4VbkIj0PWbtEO8xGwHCkOUQHgRpeoI7j4Or1VuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=InE0LzIp; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-79c056a7d4eso324181785a.2;
-        Wed, 03 Jul 2024 08:34:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720020898; x=1720625698; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=x/l9NCWIE0l4Bx+XrdXwTpflR2LutCCCxUOf/LMelxo=;
-        b=InE0LzIpza2ZgMh9M2YaFaUduzO8Vpo3UsvAfnDYNYQb45XtApSbseKOtnLbUA5PvH
-         ovD4Fp/1nIzQElU0/3/9t4zj9bAfQZ+9gWPBOIsA/NqZLo/B3Ou/q7j5NGKYH19Eitxd
-         RumuYu+s/AKxlJ3KfU/y/maq9/VBtpIF1rIiznqaBmoouO86jYo1SzhZLbr/d38PPzJo
-         OYP4gfM39yVfCcMZ0gwttk8z6QHgdFhP/U8imUKIGo2bwTXspUxdy3MKIu7ONFWTnjGs
-         x+hCFkJHCFqisoEbQeQKOw11c0viD37/xG2EH6UHYMT1J/5JignLpY/wVhQqemMU5qrv
-         BkNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720020898; x=1720625698;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x/l9NCWIE0l4Bx+XrdXwTpflR2LutCCCxUOf/LMelxo=;
-        b=th1L2yK387iY70hCS5SJnmAVSyJ9AOMRH0EAftCcmvjNoVrr+uoL2uv/oKiGfEvVAr
-         jHMWXKKWiD9KNHwFNU4PTb2v4GuWupGwC1a1ygxld6WB5IhZG3p/5+ecmsLxwwWnBU//
-         Swhhyx2+4aSQJqvXE3NpUAPbcOoP5gvuva2DQtIBdJVxLTwV+O+QMyrbkyVdtA4gahAi
-         wR4oLc+mGTMrsF91s0hYSZgzusvCVNrEj5FWNBk7t03Qu7eI0KPLPk1WuuAZrkfdq73+
-         d34cr4oedBODhmwgn+kUxpjHkvb2I/zTCekq79ULOWNLXJqxn4wiPFoLw03ljbZ1AAL4
-         Eh8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVwWGchL0LJmnLaIfQnPhNQMbvnsXNOs9+dRPfrSnOfpQTgLkP+HvBQpoCpCkhyU8twN2UjzsWMhnJb5cvVdNVMDYjkxHzxLO9EbIJWV3Vh4ArCWfprm2TF8KBkChgE5dJcehAfvJEAWwVyaYW1xUQdtBoVPdHqyxEaoKd1aOVzmJCJpW7I1g==
-X-Gm-Message-State: AOJu0YwWChpflNT+kziy7foxsWmmQBwO1oxNfp2o5wbNNL/MgrI6z5Yx
-	Oij8laVjUMXA1PnoogAutCKAOeghuCkYa0oT5kRWkcXA1f8xZotH
-X-Google-Smtp-Source: AGHT+IEO4d2+aOnQArZ0S0ETV0kECHeJ9pw9DdLn3G4dWl2YLKyImfiX01E+IK2AhKyvjtzb/1cuCA==
-X-Received: by 2002:ad4:5d49:0:b0:6b5:de1e:4bc1 with SMTP id 6a1803df08f44-6b5de1e4df1mr37812496d6.51.1720020898517;
-        Wed, 03 Jul 2024 08:34:58 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5e3d4b56csm4534756d6.48.2024.07.03.08.34.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 08:34:57 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 244211200043;
-	Wed,  3 Jul 2024 11:34:57 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Wed, 03 Jul 2024 11:34:57 -0400
-X-ME-Sender: <xms:oW-FZjiKjNwbtqpKpce0t7OUID3NoJS9L5vePjOeg6UX4whTG3YH7Q>
-    <xme:oW-FZgBGm2-keJLkSXRoYqpwmfXO_4u60M3TwaI4hdRpC0YSUi6ijx57lQQ0zZ21E
-    8s1UpbVpr5y2-1q2Q>
-X-ME-Received: <xmr:oW-FZjEmYYWtndaJ7WpAG141qzt9Wu-EQKvbeOKNER3tMkOhkKkaQbNBsQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejgdeltdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtudenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpedtuedtveethfdugfejieetleekteekgeeguefhvedvteeljeelteehhffh
-    ieetffenucffohhmrghinheptggrshhtrdgrshenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghr
-    shhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvg
-    hngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:oW-FZgS1vAodjsg-AiSVHGVlUnwX5eeNDGhBHIXHEX6ILo_GI9F4tQ>
-    <xmx:oW-FZgxv7rDfADyfXu9HSStSXn_BeRp6ZYFCMfXfmZSsdVr6bLViMg>
-    <xmx:oW-FZm6sQNUNo7NQ9Cr-q8TOVusgKy9Yz4ubNw6RMtRwoO7cd5v6fQ>
-    <xmx:oW-FZlzQebP0q8E4d-OfhD29xYWX6oQn6Qv1mdfdNOFqVHhlPk6oiw>
-    <xmx:oW-FZggskcFHT1Oa_tFVHo1ZR_NEvvBsLZNdlHjVcevbDmsXaxh7SJ6d>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Jul 2024 11:34:56 -0400 (EDT)
-Date: Wed, 3 Jul 2024 08:34:55 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Erik Schilling <erik.schilling@linaro.org>,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH V3 1/8] rust: Add initial bindings for OPP framework
-Message-ID: <ZoVvn0QCSR8y4HQJ@Boquns-Mac-mini.home>
-References: <cover.1719990273.git.viresh.kumar@linaro.org>
- <fe8e9a96b29122876346fc98a6a9ede7e4f28707.1719990273.git.viresh.kumar@linaro.org>
+	s=arc-20240116; t=1720020958; c=relaxed/simple;
+	bh=Uyc1hU8okBF33WZyc4l2HVw4+2t1v/yUIooCPhLOmnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pTJyOW6ikzlgpZhjKYcD1uWaQuZ4Gwff99Rrzp2brq3pzT61tmaYgbRKuusDWSfn67MSQB2FftyN034vSzVxJpsYTgkumvL2fEDO/pcr/V3JVjcrQe5KVX/8+Pszr9o84tUPc7t32robwgz6mLYJ+Jr7czYUKBxWTdRmh+0fqwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2830B367;
+	Wed,  3 Jul 2024 08:36:21 -0700 (PDT)
+Received: from [10.57.75.119] (unknown [10.57.75.119])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EC2F3F762;
+	Wed,  3 Jul 2024 08:35:54 -0700 (PDT)
+Message-ID: <cc69b154-ca4b-42eb-950a-9ea3c5a4e4ee@arm.com>
+Date: Wed, 3 Jul 2024 16:35:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] iommu: Optimize IOMMU UnMap
+To: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org,
+ linux-arm-kernel@lists.infradead.org, Rob Clark <robdclark@gmail.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>
+Cc: vdumpa@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com,
+ jonathanh@nvidia.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240523031935.90856-1-amhetre@nvidia.com>
+ <6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
+ <2a349725-72cf-45e2-9ca2-5a8b153a6fae@nvidia.com>
+ <d854664c-ab56-46b6-81f9-9ef712c32b3a@nvidia.com>
+ <39d1635d-25b4-47ca-beb3-0baaae6252db@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <39d1635d-25b4-47ca-beb3-0baaae6252db@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <fe8e9a96b29122876346fc98a6a9ede7e4f28707.1719990273.git.viresh.kumar@linaro.org>
 
-Hi Viresh,
-
-On Wed, Jul 03, 2024 at 12:44:26PM +0530, Viresh Kumar wrote:
-> This commit adds initial Rust bindings for the Operating performance
-> points (OPP) core. This adds bindings for `struct dev_pm_opp` and
-> `struct dev_pm_opp_data` to begin with.
+On 2024-07-01 8:49 am, Ashish Mhetre wrote:
 > 
-> Reviewed-by: Manos Pitsidianakis <manos.pitsidianakis@linaro.org>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-[...]
-> +
-> +/// Operating performance point (OPP).
-> +///
-> +/// # Invariants
-> +///
-> +/// The pointer stored in `Self` is non-null and valid for the lifetime of the ARef instance. In
-> +/// particular, the ARef instance owns an increment on underlying object�s reference count.
-
-Since you use `ARef` pattern now, you may want to rewrite this
-"invariants".
-
-> +#[repr(transparent)]
-> +pub struct OPP(Opaque<bindings::dev_pm_opp>);
-> +
-> +// SAFETY: `OPP` only holds a pointer to a C OPP, which is safe to be used from any thread.
-> +unsafe impl Send for OPP {}
-> +
-> +// SAFETY: `OPP` only holds a pointer to a C OPP, references to which are safe to be used from any
-> +// thread.
-> +unsafe impl Sync for OPP {}
-> +
-
-Same for the above safety comments, as they are still based on the old
-implementation.
-
-> +// SAFETY: The type invariants guarantee that [`OPP`] is always refcounted.
-> +unsafe impl AlwaysRefCounted for OPP {
-> +    fn inc_ref(&self) {
-> +        // SAFETY: The existence of a shared reference means that the refcount is nonzero.
-> +        unsafe { bindings::dev_pm_opp_get(self.0.get()) };
-> +    }
-> +
-> +    unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
-> +        // SAFETY: The safety requirements guarantee that the refcount is nonzero.
-> +        unsafe { bindings::dev_pm_opp_put(obj.cast().as_ptr()) }
-> +    }
-> +}
-> +
-> +impl OPP {
-[...]
-> +
-> +impl Drop for OPP {
-
-I don't think you need the `drop` implementation here, since it should
-be already handled by `impl AlwaysRefCounted`, could you try to a doc
-test for this? Something like:
-
-	let opp: ARef<OPP> = <from a raw dev_pm_opp ponter whose refcount is 1>
-	drop(opp);
-
-IIUC, this will result double-free with the current implementation.
-
-Overall, `OPP` is now representing to the actual device instead of the
-pointer to the device, so the `drop` function won't need to handle the
-refcounting.
-
-Regards,
-Boqun
-
-> +    fn drop(&mut self) {
-> +        // SAFETY: The safety requirements guarantee that the refcount is nonzero.
-> +        unsafe { bindings::dev_pm_opp_put(self.as_raw()) }
-> +    }
-> +}
-> -- 
-> 2.31.1.272.g89b43f80a514
+> On 5/31/2024 2:52 PM, Ashish Mhetre wrote:
+>>
+>> On 5/24/2024 6:09 PM, Ashish Mhetre wrote:
+>>>
+>>> On 5/23/2024 7:11 PM, Robin Murphy wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> On 23/05/2024 4:19 am, Ashish Mhetre wrote:
+>>>>> The current __arm_lpae_unmap() function calls dma_sync() on individual
+>>>>> PTEs after clearing them. By updating the __arm_lpae_unmap() to call
+>>>>> dma_sync() once for all cleared PTEs, the overall performance can be
+>>>>> improved 25% for large buffer sizes.
+>>>>> Below is detailed analysis of average unmap latency(in us) with and
+>>>>> without this optimization obtained by running dma_map_benchmark for
+>>>>> different buffer sizes.
+>>>>>
+>>>>> Size  Time W/O        Time With       % Improvement
+>>>>>       Optimization    Optimization
+>>>>>       (us)            (us)
+>>>>>
+>>>>> 4KB   3.0             3.1             -3.33
+>>>>> 1MB   250.3           187.9           24.93
+>>>>
+>>>> This seems highly suspect - the smallest possible block size is 2MB 
+>>>> so a
+>>>> 1MB unmap should not be affected by this path at all.
+>>>>
+>>> It will be unmapped at 4KB block size, right? The 'size' passed to
+>>> __arm_lpae_unmap will be 4KB and 'pgcount' will be 256 for 1MB
+>>> buffer from iommu_pgsize() unless the IOVA and phys address met
+>>> conditions for next bigger size i.e., 2MB.
+>>>>> 2MB   493.7           368.7 25.32
+>>>>> 4MB   974.7           723.4           25.78
+>>>>
+>>>> I'm guessing this is on Tegra with the workaround to force 
+>>>> everything to
+>>>> PAGE_SIZE? In the normal case a 2MB unmap should be nominally *faster*
+>>>> than 4KB, since it would also be a single PTE, but with one fewer level
+>>>> of table to walk to reach it. The 25% figure is rather misleading if
+>>>> it's only a mitigation of an existing erratum workaround, and the 
+>>>> actual
+>>>> impact on the majority of non-broken systems is unmeasured.
+>>>>
+>>> Yes, I forgot about the workaround we have and agree that without the
+>>> workaround, 2MB unmap will be faster without this optimization. But
+>>> for any size between 4KB and 2MB, this optimization would help in
+>>> improving the unmap latencies. To verify that, I reverted the workaround
+>>> and again got unmap latencies using dma_map_benchmark which are as
+>>> mentioned below. We can see an improvement around 20% to 25%:
+>>>
+>>> Size          Time WO Opt(us)     Time With Opt(us)       % improvement
+>>> 4KB          3                                  3.1 -3.33
+>>> 64KB        18.6                            15 19.36
+>>> 128KB      35.2                            27.7            21.31
+>>> 256KB      67.6                            52.6            22.19
+>>> 512KB      128.4                          97.7           23.91
+>>> 1MB         249.9                          188.1           24.72
+>>> 2MB         67.4                             67.5 -0.15
+>>> 4MB         121.3                          121.2           0.08
+>>>
+>>>> (As an aside, I think that workaround itself is a bit broken, since at
+>>>> least on Tegra234 with Cortex-A78, PAGE_SIZE could be 16KB which 
+>>>> MMU-500
+>>>> doesn't support.)
+>>>>
+>>> Yes, that's true. For 16KB PAGE_SIZE, we need to fall back to 4KB 
+>>> pgsize_bitmap.
+>>>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>>>> ---
+>>>>>   drivers/iommu/io-pgtable-arm.c | 34 
+>>>>> +++++++++++++++++++++++++---------
+>>>>>   1 file changed, 25 insertions(+), 9 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/iommu/io-pgtable-arm.c 
+>>>>> b/drivers/iommu/io-pgtable-arm.c
+>>>>> index 3d23b924cec1..94094b711cba 100644
+>>>>> --- a/drivers/iommu/io-pgtable-arm.c
+>>>>> +++ b/drivers/iommu/io-pgtable-arm.c
+>>>>> @@ -256,13 +256,15 @@ static void 
+>>>>> __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
+>>>>>                                  sizeof(*ptep) * num_entries, 
+>>>>> DMA_TO_DEVICE);
+>>>>>   }
+>>>>>
+>>>>> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct 
+>>>>> io_pgtable_cfg *cfg)
+>>>>> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct 
+>>>>> io_pgtable_cfg *cfg, int num_entries)
+>>>>>   {
+>>>>> +     int i;
+>>>>>
+>>>>> -     *ptep = 0;
+>>>>> +     for (i = 0; i < num_entries; i++)
+>>>>> +             ptep[i] = 0;
+>>>>>
+>>>>>       if (!cfg->coherent_walk)
+>>>>> -             __arm_lpae_sync_pte(ptep, 1, cfg);
+>>>>> +             __arm_lpae_sync_pte(ptep, num_entries, cfg);
+>>>>>   }
+>>>>>
+>>>>>   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>>>>> @@ -633,13 +635,25 @@ static size_t __arm_lpae_unmap(struct 
+>>>>> arm_lpae_io_pgtable *data,
+>>>>>       if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
+>>>>>               max_entries = ARM_LPAE_PTES_PER_TABLE(data) - 
+>>>>> unmap_idx_start;
+>>>>>               num_entries = min_t(int, pgcount, max_entries);
+>>>>> -
+>>>>> -             while (i < num_entries) {
+>>>>> -                     pte = READ_ONCE(*ptep);
+>>>>> +             arm_lpae_iopte *pte_flush;
+>>>>> +             int j = 0;
+>>>>> +
+>>>>> +             pte_flush = kvcalloc(num_entries, sizeof(*pte_flush), 
+>>>>> GFP_ATOMIC);
+>>>>
+>>>> kvmalloc() with GFP_ATOMIC isn't valid. However, I'm not sure if there
+>>>> isn't a more fundamental problem here - Rob, Boris; was it just the map
+>>>> path, or would any allocation on unmap risk the GPU reclaim deadlock
+>>>> thing as well?
+>>>>
+>>> I am using kvmalloc() here to create an array which is used to store 
+>>> PTEs
+>>> that are going to be flushed after clearing. If we don't store them then
+>>> those will be lost once cleared and we won't be able to flush them.
+>>> I tried using GFP_KERNEL instead of GFP_ATOMIC but then I am getting
+>>> warning from might_sleep().
+>>> Is there any other alternative way we can use here to store the PTEs?
+>>>> Thanks,
+>>>> Robin.
+>>>>
+>>>>> +             if (pte_flush) {
+>>>>> +                     for (j = 0; j < num_entries; j++) {
+>>>>> +                             pte_flush[j] = READ_ONCE(ptep[j]);
+>>>>> +                             if (WARN_ON(!pte_flush[j]))
+>>>>> +                                     break;
+>>>>> +                     }
+>>>>> +                     __arm_lpae_clear_pte(ptep, &iop->cfg, j);
+>>>>> +             }
+>>>>> +             while (i < (pte_flush ? j : num_entries)) {
+>>>>> +                     pte = pte_flush ? pte_flush[i] : 
+>>>>> READ_ONCE(*ptep);
+>>>>>                       if (WARN_ON(!pte))
+>>>>>                               break;
+>>>>>
+>>>>> -                     __arm_lpae_clear_pte(ptep, &iop->cfg);
+>>>>> +                     if (!pte_flush)
+>>>>> +                             __arm_lpae_clear_pte(ptep, &iop->cfg, 
+>>>>> 1);
+>>>>>
+>>>>>                       if (!iopte_leaf(pte, lvl, iop->fmt)) {
+>>>>>                               /* Also flush any partial walks */
+>>>>> @@ -649,10 +663,12 @@ static size_t __arm_lpae_unmap(struct 
+>>>>> arm_lpae_io_pgtable *data,
+>>>>>                       } else if (!iommu_iotlb_gather_queued(gather)) {
+>>>>>                               io_pgtable_tlb_add_page(iop, gather, 
+>>>>> iova + i * size, size);
+>>>>>                       }
+>>>>> -
+>>>>> -                     ptep++;
+>>>>> +                     if (!pte_flush)
+>>>>> +                             ptep++;
+>>>>>                       i++;
+>>>>>               }
+>>>>> +             if (pte_flush)
+>>>>> +                     kvfree(pte_flush);
+>>>>>
+>>>>>               return i * size;
+>>>>>       } else if (iopte_leaf(pte, lvl, iop->fmt)) {
+>> Hi all,
+>>
+>> Can you please provide feedback on this patch? Is this optimization
+>> worth pursuing?
+>>
+>> Thanks,
+>> Ashish Mhetre
+> Hi Robin,
 > 
+> Can you please share feedback on this? Is more testing required
+> for this on non-Tegra platforms? Perhaps shall I send it as RFT ?
+> I have used 'dma_map_benchmark' available in kernel to test this.
+> Same can be used to test on other platforms.
+
+Apologies I was slightly mistaken before - I confess I was trying to 
+remember how the code worked from the patch context alone, and forgot 
+that this same path is actually used for clearing leaf entries all the 
+way down to L3 as well as freeing tables. So yes, indeed there should be 
+something to gain in general from combining the syncs for adjacent leaf 
+entries. However we still have the problem that we can't put an 
+unconditional allocation in here, so we'd have to do something like 
+combine up to the next non-leaf entry and keep the "inline" sync for 
+those. Or perhaps it might end up quite a neat compromise overall to do 
+your current idea on a smaller scale, with a fixed number of PTEs that's 
+reasonable to keep on the stack - even in the worst case, I'd expect to 
+still get a fair boost from doing, say, 32 syncs of 2 cachelines each 
+vs. 512 that touch each line multiple times.
+
+Thanks,
+Robin.
 
