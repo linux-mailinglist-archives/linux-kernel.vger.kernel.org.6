@@ -1,172 +1,185 @@
-Return-Path: <linux-kernel+bounces-240072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190469268D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:06:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEF29268D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 21:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24B4E1C22BA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:06:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 712EE2882CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 19:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555BD188CD3;
-	Wed,  3 Jul 2024 19:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4810A188CAE;
+	Wed,  3 Jul 2024 19:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VD1xybn4"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMh7eHXp"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3F9178367
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 19:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24FD1862A8
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 19:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720033601; cv=none; b=IVD+/dX3T6bNpRBFqfumK4/wOCiLln0o8IzxoXQXLIlM+fuldHAOSoMj9/gOSsZnhbWGbUt6uoZng1I6QTt/I/P1ejz6b8RYOGCoaO7EWtNTXMFKpwj76JLOpJZ5WOjIk1YeqWr7z2gBi3cHRSOxJAIE1VHCiLHDyBJLPCeF5Nw=
+	t=1720033632; cv=none; b=EB7RHMES4YZHjvVvmXqpod5gWc3sQhi2T4+yPTM1XN/RV2gITVa+X0bP5ajgQfGFAhrGpsAI+YNPKIg9h+EM8RpnfopttpyJR+Ok2P/sHW2T3gMIiEcPdNjzacwOTv39fZWQSNB26H+AWFDouKQAa7PAABoGCbcx7Nn4tz3sDTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720033601; c=relaxed/simple;
-	bh=6P39zQQm1mhPiYLUc+P8uMCtysrA52dIYROykZYNsPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JIdqP472DvmMbh24e+QKZQWAzedXZaAlFGA19AlkRJDdSG7uE3aTFEzkB+b8n2lOBplHYkEENvdxqeBUol5BCwcYKRcnGfb3F8cQqmNYnInyc62LJ5in3d8r6059mXFz9ILQxZvqzKvP8WCC6eb57mfWWHaSxNe4XaHHF81WwZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VD1xybn4; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1720033632; c=relaxed/simple;
+	bh=TEqcSO5UEcxu3Y9WGWUSnkXLMs2QJKWm2wfikBUpIzs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KjFtN3/M0wmPW7pa0i0ATx5ftdMKcn5NjzN38aS4Y+DtsaWlFDmcHG8pN6qrUwAmNSCNnm3MW1rWOrlljC5HcvwB+ho1Ffo1hMl5wN1FjkyXsg1G2gpoOoW8mevv2WVYlmmLqH5MK44Rwau2G/Xw2OdhuRgozX/kUn3F7/2QUe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMh7eHXp; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f9fb3ca81bso34069735ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 12:06:40 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-58bac81f40bso3058480a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 12:07:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720033599; x=1720638399; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=79l7g6TVpjXZUxamTY9AWClCT8i64EIEzq8NMS8zS+o=;
-        b=VD1xybn4Dc0A7cNnOObg9Qnd/b4wFJwntujsCTBxSJv4biwYybjRIWXgoLmtCEyf2D
-         0ix01IOMEHhVl+FH8V+cvBNLtXcgcBU41+Wsa/xZhhqX6LVnlXrsjYhSL5qgLg68mjhz
-         K7WRkLwN8fofLQZq+cnxxmIvawZLvTBX6Qf/YxZfK/2/O9RFA3Ep28khXvICwJxJv2Vv
-         OHnfQipUNmJopPpy9KlouLQ2KlGVYOqbzy2crUX4B/VsrOTq0Kp8juuZmiD5S9Hjzgm4
-         erVA271CIK1WH3rXEDMnNs6hFSSqayr+TYLklpKQtyjwbkPDPJpsOHiaKhCU09wTkFm2
-         7XtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720033599; x=1720638399;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720033629; x=1720638429; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=79l7g6TVpjXZUxamTY9AWClCT8i64EIEzq8NMS8zS+o=;
-        b=ZOATsOTI2oZQQ0YzU6TG/JcKAg/TcNvs4fXV1NLhutLAcCgrXYSGfwQfXZQwQ1Ycvw
-         M0dv3TCRs7FgtnMJQ7gNT3g3PlCPA65VY9uaxIMD4Rl0EkzdRSWBrVx/lpC6rEwvEH6m
-         /H4FNb2jksUoJLrjRCiXS+cckVTFX9JL2J69q6rihqcNm5CFIvnKfAQxYjrluXKh64+t
-         yzsFiXcZYrXpbrusX/LPR2qibaPej1sEwOhj2oiBuvTqMtLrQJd41hMddEj3XOtduUcN
-         9BRRVasa0stRf1WMrdFPOxsRq/qR9DFUpKWVzE8P5HnaA1YuOIyvBPpxLTZXa3d/YNOg
-         A3Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvWxYa1WovJ4rRimMvdbNiSgFcib2DHGqMXWqPYR8HNNZ6jtrnX752uIgSuA1BB3crsWrkb6pqTiKixNYM9qDQZneVekLCqETm8chk
-X-Gm-Message-State: AOJu0YzoquqDaXetB3tkLmxIWrkTGbbdHjKw1tBjTfGL73zsHUGKElfw
-	lw/wjLX7rOe1TE5Jd2EAvp31u1uvHal/8XZ21597JpSfPLa+uDRu
-X-Google-Smtp-Source: AGHT+IEorQWGFhcttYBEcQwHE5TgZ3phs6TgzO9ZovYMeHWQpzUOCSpwI1pOvZJCqV1bUJkDeX0dvQ==
-X-Received: by 2002:a17:902:d48a:b0:1fb:30db:be0 with SMTP id d9443c01a7336-1fb30db0ef2mr2177525ad.51.1720033599369;
-        Wed, 03 Jul 2024 12:06:39 -0700 (PDT)
-Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1596818sm106575455ad.270.2024.07.03.12.06.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 12:06:38 -0700 (PDT)
-Date: Wed, 3 Jul 2024 12:06:36 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>, llvm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Justin Stitt <justinstitt@google.com>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH] cpumask: Switch from inline to __always_inline
-Message-ID: <ZoWhPFJIvGpMGKm4@yury-ThinkPad>
-References: <20240514204910.1383909-1-briannorris@chromium.org>
- <ZnsML1RYMmEhhdPP@google.com>
+        bh=rzqLcYmNlhaEa9iw+jtKoQZyVNKKD3jdk0VbO2iS/r8=;
+        b=WMh7eHXpNHBerCPj0w5eFoOc3FYQTjk0GjBXiVSWPC3c0DPdDKBx5QoCatrQVjp1CU
+         UiSIiBHP33lRiFAPjXsjpwv7RmoBFAhEtAC4jJpXaaOkpUSnrwepKOKySfpC2IbTTNke
+         2evF0O+rumj8FJy4B14xBADTmcKQjHYsh1UJIDYHecvnFTGHn640bytNRea9TKjsrxGJ
+         JRQ+8Kzke4jTuTsOK2bNq6f86ZDeKWn/VkkdQLjd8dJ5T+VJBIuCAkDz9pSBdz9h2ylf
+         4Zv1PSjRetBTreBY1L4a8QVqGI8/e62qTEQwcgr6t/B6NPc63LF7fCa21edcSWQ7iCn3
+         ZeBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720033629; x=1720638429;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rzqLcYmNlhaEa9iw+jtKoQZyVNKKD3jdk0VbO2iS/r8=;
+        b=lxxiSwxE1TibN1Yq+NXYGxgMBFsBSEzj7E9YlxTYnAikgeLgq50ubiyQ8+1u252/A1
+         tl0FzGUI9OvHmSCxlp3zOg5p19QK9gOSAzXMrQhLQODxM4iKr8xWOdOnlh72r8clfDVe
+         ldraio2HKiQ/nunhRrpVTWt+E3Ka4TmcbRaAwkxen6yUu69BeSErtv8px2IawJ/jbRkH
+         dOWIxDu0Afd8GBdoxddqPzRNEyOZErRriO5vJ/yRXL0+VuraYANwvx1MBDJoC1blbP/a
+         bMgygAFhb/VpV9MzoSmE3NxGUlBV3d1XVV1l5p+gluLmbcYTUZWbeXqUPDXuOgk9h5E3
+         Tm0A==
+X-Gm-Message-State: AOJu0YzMl1h14Pv9H4SIZw8jqrC+MedSJEsuT4dYd/CBge9sEvKp0k+n
+	kObA8ayeyGZjyI6ZAV+zaeF/DMVuXYJHiLR1eBwxgWkToQ4a2xKiGWTPWaKKafcJV0MOZJ7ObJH
+	QNoRRLo+UrXX51cLznVRiyYcJyPE=
+X-Google-Smtp-Source: AGHT+IFTvqGKg+d2P1MX6zFoO20UuDNnBH0NZJoGdJm/F+Ghp9HnoLsYjQOjQhwonC/vbbujybApLnU1klWdkMuzG50=
+X-Received: by 2002:a17:906:fccc:b0:a72:548a:6f42 with SMTP id
+ a640c23a62f3a-a751445451dmr802270766b.18.1720033629247; Wed, 03 Jul 2024
+ 12:07:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnsML1RYMmEhhdPP@google.com>
+References: <20240614040133.24967-1-jason-jh.lin@mediatek.com>
+ <20240614040133.24967-3-jason-jh.lin@mediatek.com> <CABb+yY2bwj2BcdJLGe1ZYwCrnXL3LtcePMb=wQPaBKorBSs2yA@mail.gmail.com>
+ <fc92d51cc6e55301c081ea2d589e1ba6cdd295ee.camel@mediatek.com>
+ <CABb+yY1L+YGjf6O9UgPYkS2gWAdo=7QoojSAUNWC_8o7XtZQSg@mail.gmail.com>
+ <1f815ff8-2b7a-48de-8b47-0bc9b3cb67ab@collabora.com> <CABb+yY1Yy8o3ofAiC-uV+gDrO3QDTWz3_XTUMai_2uyrnj-VrQ@mail.gmail.com>
+ <b7ebc021d391452eaf2149976ea2d53fba3d89fc.camel@mediatek.com>
+ <CABb+yY3+pnuXDK_jZMDYOAzahdSZ5iig51VqzM=FFHrFpK+9LA@mail.gmail.com>
+ <4e5d4362-4940-4ba0-95aa-627b82e21e41@collabora.com> <CABb+yY3eXvJRUq7MOqB8QZ9N4aiuogaUCTfP7MerKdNbAbLkvw@mail.gmail.com>
+ <895af04e45d286c38d01f48b29ad41598b7dadb7.camel@mediatek.com>
+ <CABb+yY1EZOsKUR7WUX0Ni0Ukbqz0+yRHswiu07tNXtY1A1gNUQ@mail.gmail.com>
+ <d6f0e7072ec0e89e573e5720fb2b9c621eb9154c.camel@mediatek.com>
+ <CABb+yY0+fFw7Bg578DFEdrigVFgf4-v3qo2JVruEa3ExtvRsMg@mail.gmail.com> <092d917b4cae2762317a8739c874855554ae913f.camel@mediatek.com>
+In-Reply-To: <092d917b4cae2762317a8739c874855554ae913f.camel@mediatek.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Wed, 3 Jul 2024 14:06:57 -0500
+Message-ID: <CABb+yY2-KWYORo_-ZWafyM0VJnh8-2wefvCpeDsK204qB0TchQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mailbox: mtk-cmdq: Move pm_runimte_get and put to
+ mbox_chan_ops API
+To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	=?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>, 
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>, 
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 11:27:59AM -0700, Brian Norris wrote:
-> Hi Yuri, Rasmus,
-> 
-> On Tue, May 14, 2024 at 01:49:01PM -0700, Brian Norris wrote:
-> > On recent (v6.6+) builds with Clang (based on Clang 18.0.0) and certain
-> > configurations [0], I'm finding that (lack of) inlining decisions may
-> > lead to section mismatch warnings like the following:
-> > 
-> >   WARNING: modpost: vmlinux.o: section mismatch in reference:
-> >   cpumask_andnot (section: .text) ->
-> >   cpuhp_bringup_cpus_parallel.tmp_mask (section: .init.data) ERROR:
-> >   modpost: Section mismatches detected.
-> > 
-> > or more confusingly:
-> > 
-> >   WARNING: modpost: vmlinux: section mismatch in reference:
-> >   cpumask_andnot+0x5f (section: .text) -> efi_systab_phys (section:
-> >   .init.data)
-> > 
-> > The first warning makes a little sense, because
-> > cpuhp_bringup_cpus_parallel() (an __init function) calls
-> > cpumask_andnot() on tmp_mask (an __initdata symbol). If the compiler
-> > doesn't inline cpumask_andnot(), this may appear like a mismatch.
-> > 
-> > The second warning makes less sense, but might be because efi_systab_phys
-> > and cpuhp_bringup_cpus_parallel.tmp_mask are laid out near each other,
-> > and the latter isn't a proper C symbol definition.
-> > 
-> > In any case, it seems a reasonable solution to suggest more strongly to
-> > the compiler that these cpumask macros *must* be inlined, as 'inline' is
-> > just a recommendation.
-> > 
-> > This change (plus more) has been previously proposed for other reasons
-> > -- that some of the bitmask 'const' machinery doesn't work without
-> > inlining -- in the past as:
-> > 
-> >   Subject: [PATCH 1/3] bitmap: switch from inline to __always_inline
-> >   https://lore.kernel.org/all/20221027043810.350460-2-yury.norov@gmail.com/
-> > 
-> > It seems like a good idea to at least make all cpumask functions use
-> > __always_inline; several already do.
-> > 
-> > According to bloat-o-meter, my ~29MB vmlinux increases by a total of 61
-> > bytes (0.00%) with this change.
-> > 
-> > [0] CONFIG_HOTPLUG_PARALLEL=y ('select'ed for x86 as of [1]) and
-> >     CONFIG_GCOV_PROFILE_ALL.
-> > 
-> > [1] commit 0c7ffa32dbd6 ("x86/smpboot/64: Implement
-> >     arch_cpuhp_init_parallel_bringup() and enable it")
-> > 
-> > Cc: Yury Norov <yury.norov@gmail.com>
-> > Signed-off-by: Brian Norris <briannorris@chromium.org>
-> > ---
-> > 
-> >  include/linux/cpumask.h | 214 +++++++++++++++++++++-------------------
-> >  1 file changed, 113 insertions(+), 101 deletions(-)
-> 
-> Any thoughts here? scripts/get_maintainer.pl suggests you are
-> maintainer/reviewer here.
+On Wed, Jul 3, 2024 at 11:41=E2=80=AFAM Jason-JH Lin (=E6=9E=97=E7=9D=BF=E7=
+=A5=A5)
+<Jason-JH.Lin@mediatek.com> wrote:
+>
+> On Thu, 2024-06-27 at 22:40 -0500, Jassi Brar wrote:
+> >
+> > External email : Please do not click links or open attachments until
+> > you have verified the sender or the content.
+> >  On Wed, Jun 26, 2024 at 4:32=E2=80=AFAM Jason-JH Lin (=E6=9E=97=E7=9D=
+=BF=E7=A5=A5)
+> > <Jason-JH.Lin@mediatek.com> wrote:
+> > > >
+> > > > The idea is that
+> > > > 1) If the gap between transfers on a busy channel is ~10ms or
+> > > > more.  And ..
+> > > > 2) The silence on the mailbox channel is multiple of 100ms. And
+> > ...
+> > >
+> > > The mailbox channel would not be always busy and the gap is not
+> > > consistent as well.
+> > > For example, display driver calls mbox_send_message() every ~16ms
+> > while
+> > > UI is updating in 60fps.
+> > > If UI dose not update, display driver won't call
+> > mbox_send_message(),
+> > > so user may not has the gap and the silence like this.
+> > >
+> > From your logs, send_diff only increases from 16ms if the UI is not
+> > updating. Which makes it more prudent to release the channel.
+> >
+> > The user needs the channel for mbox_send_message, while actual power
+> > saving comes from cmdq_runtime_suspend/resume.
+> > So for your target usage pattern, trace mbox_send_message() ,
+> > cmdq_runtime_resume() and cmdq_runtime_suspend() and compare the
+> > timestamped logs with and without this patchset.
+> >
+> [snip]
+>
+> I realized that we have 2 cmdq drivers:
+> display uses 10320000.mailbox and imgsys uses 10330000.mailbox
+>
+You may disable one to make it easy to capture.
+Make sure your kernel prints have timestamps.
+Over your patchset, apply the following diff and execute your usecase.
+Then share
+ $ dmesg | grep Jason
 
-Hi Brian,
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index bafcc7b0c0b8d..90c0620c0ae63 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -284,6 +284,7 @@ int mbox_send_message(struct mbox_chan *chan, void *mss=
+g)
+ {
+  int t;
 
-I never received the original email, only this reply, and can't recover
-any context.
++ printk("Jason %s: %p\n", __func__, (void *)chan);
+  if (!chan || !chan->cl)
+  return -EINVAL;
 
-cpumask_andnot() is a pure wrapper around bitmap_andnot(), and it's
-really surprising that clang decided to make it an outline function.
-Maybe the bitmap_andnot() is one that outlined? Did you apply only
-this patch, or my patch for bitmaps too to fix the warning?
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c
+b/drivers/mailbox/mtk-cmdq-mailbox.c
+index 02cef3eee35a5..6436e1b22f353 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -317,6 +317,7 @@ static int cmdq_runtime_resume(struct device *dev)
+ {
+  struct cmdq *cmdq =3D dev_get_drvdata(dev);
 
-Clang people are already in CC. Guys, can you please comment if making
-cpumask API __always_inline is OK for you? Why Clang decides to make a
-pure wrapper outlined?
++ printk("Jason %s: %p\n", __func__, (void *)dev);
+  return clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks);
+ }
 
-I feel that if we decide making cpumask an __always_inline is the
-right way, we also should make underlying bitmap API __always_inline
-just as well. Otherwise, there will be a chance of having outlined
-bitmap helpers, which may confuse clang again.
+@@ -324,6 +325,7 @@ static int cmdq_runtime_suspend(struct device *dev)
+ {
+  struct cmdq *cmdq =3D dev_get_drvdata(dev);
 
-Thanks,
-Yury
++ printk("Jason %s: %p\n", __func__, (void *)dev);
+  clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
+  return 0;
+ }
+
+Thanks
 
