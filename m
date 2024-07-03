@@ -1,84 +1,95 @@
-Return-Path: <linux-kernel+bounces-240290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7D5926B65
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:18:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B34D926B67
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8707C1C218F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:18:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3A51C217D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCE518C35D;
-	Wed,  3 Jul 2024 22:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C604418E746;
+	Wed,  3 Jul 2024 22:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="gsVE7toF"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PaDYTXZH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854A3142651;
-	Wed,  3 Jul 2024 22:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F4B142651;
+	Wed,  3 Jul 2024 22:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720045132; cv=none; b=Hv2PifsKQwQXoCGOh+ktFg7esST94UL7Tb/IjyYDQXvTeToyoSKWDzrcB79aIK9gbsY9yNFQhK4xLLBHgWSYxUiXReE6qJPDqG+O6C8NkZQ6maxm5nYrSvRfToZ65TZPHUEwR7CPVBmtkqZf74m8ORoPsXA6iM3UlEGk2FiRYto=
+	t=1720045178; cv=none; b=AfMSRlBSkpunLdQcU+vzsjpDOH5AGXnOvu8hgDQ3Sj9htJ7UpH8dUgQEAVt/WlI3eZf0TxtHMYa/txCSlzNdEQJ0xWqPjkebYFR5BtFZL+e059411C/qekW/Gpe8D+VatwCY85I+NwN/GKbiK3Y3tqwI5tzabdeieBs1/nptQUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720045132; c=relaxed/simple;
-	bh=fNMX6LNmh16dMiXO4z7x3irE1n3zIQb3P1oUmSudkEc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kf4P9as/3+7+3cIdp9i/0vMB19CRDUcxOIMoq5ziS9l/TFfO/vJwdgUB/Lfm11MCPDnFBqbpA1O4SXO5PqWii8pG77+rCASA7JccUxzRt+bgj6U9blrQwMx1nbLo53/Xrui7C8sMaQHSZ4lPBIvJ80nT8RpUNVhJCrw4iYQNlto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=gsVE7toF; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net AC9D84189E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1720045123; bh=/WvdytxKpPkmEjUXLYygIM/cKdrtdeWcy4Sbmhrp2c0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gsVE7toFwGGZooLQoO99u1rbVDXKW+oeLXti6mY+a6w/DarlPNndVXefowsSnwpGG
-	 VWQRCGHIR5kqBcrK4CxTUesCwzYGFfs2hXM+IRomIWbjZPZYObIWbhmMsJcnitFN0t
-	 Gy47VCw9shVKduFJBjQtH9jtFQVNmel2+CKPzgCWi3MU17rS+cjR8BXDiDTxZ0Sjxq
-	 kSVWpd2euQd1UyaGXwwh2C0lNIApAH8OnJyAi8VM4kv62K78jyNNH+tpMD+oKgNySE
-	 mvIW43T8oZIy93w1QE9RiVoSDiN4RV7vecwjRAC/HTvTjXZRIPSc19+gDoq5SAsXOZ
-	 CFJm9hHIx3x4w==
-Received: from localhost (c-24-9-249-71.hsd1.co.comcast.net [24.9.249.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id AC9D84189E;
-	Wed,  3 Jul 2024 22:18:43 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: SeongJae Park <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] Docs/mm/index: move allocation profiling document
- to unsorted documents chapter
-In-Reply-To: <20240701190512.49379-5-sj@kernel.org>
-References: <20240701190512.49379-1-sj@kernel.org>
- <20240701190512.49379-5-sj@kernel.org>
-Date: Wed, 03 Jul 2024 16:18:42 -0600
-Message-ID: <87msmyt8zh.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1720045178; c=relaxed/simple;
+	bh=26V2kaf3zdDuE6VsMb273D5MiwDCQFhfoifkCXSX13E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VcgdDhajFVVBfwnt5FbXGVOhAuzuAL34W6uwsnfCp2uXNxrmbMWbDZULUmh+GVLi/XiEZpWdiwY470fBYEdIyfFt/I2JSq9lqDYCpp2d25UF5fS4wZriKMpBcnN8pwHPMbNghFtkEIH91CM+i7X99WXhUr3So+g9da490REgPXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PaDYTXZH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CABCC2BD10;
+	Wed,  3 Jul 2024 22:19:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720045177;
+	bh=26V2kaf3zdDuE6VsMb273D5MiwDCQFhfoifkCXSX13E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PaDYTXZHom8uzqm+9jcYJXjl8Vy2dt5AthIwfgdlpTsZKygUCM86AWIuG9jCoUQXW
+	 hjz1wk5nRF0KeTymDl3EC0tUWkpozu5YnaaLKuRzrQssfkwx+eFdqjhsvJCIulkQYy
+	 vjT5IZGfYqZ6NWivIl0leM4C2cwA6lPN+sEMR24dEYsY0OxuDKoE/ci7plzZTo1Yk6
+	 cDk7TlRw5bkjW8EoR6N4t6FFBoYZlRcIvKP6OM+fn90AgJ6/EtHYjWxqty0APLj+tq
+	 TyqipUNqPyOLwQx8mElBrxeUhs2gbTcYoWcrVCzE8Cbz2DbABe/6Qmm5AjMVi4eg3K
+	 kSzz8CmIjFGBw==
+Date: Thu, 4 Jul 2024 00:19:33 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Cc: Vladimir Zapolskiy <vz@mleia.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch v6] i2c: pnx: Fix potential deadlock warning from
+ del_timer_sync() call in isr
+Message-ID: <otsopuw5pqpe637mywdoecnv5xhfhcny5xsxnwoyxhy7gj5yy6@3s43zn2udeei>
+References: <20240628152543.281105-1-piotr.wojtaszczyk@timesys.com>
+ <dudh4jdce3yxwv5yw345gw23diwparhwvsl4jrpsyzpv3sgge3@ojtdgsdgwcor>
+ <CAG+cZ06sqDuOer=fBcGhQkTUgWt9XqaLkAW0cmT8g=EJ+e8pWA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG+cZ06sqDuOer=fBcGhQkTUgWt9XqaLkAW0cmT8g=EJ+e8pWA@mail.gmail.com>
 
-SeongJae Park <sj@kernel.org> writes:
+Hi Piotr,
 
-> The memory allocation profiling document was added to the bottom of the
-> new outline.  Apparently it was not decided by well-defined guidelines
-> or a thorough discussions.  Rather than that, it was added there just
-> because there was no place for such unsorted documents.  Now there is
-> the chapter.  Move the document to the new place.
+On Tue, Jul 02, 2024 at 11:13:06AM GMT, Piotr Wojtaszczyk wrote:
+> On Tue, Jul 2, 2024 at 1:01 AM Andi Shyti <andi.shyti@kernel.org> wrote:
+> > > @@ -653,7 +624,10 @@ static int i2c_pnx_probe(struct platform_device *pdev)
+> > >       alg_data->adapter.algo_data = alg_data;
+> > >       alg_data->adapter.nr = pdev->id;
+> > >
+> > > -     alg_data->timeout = I2C_PNX_TIMEOUT_DEFAULT;
+> > > +     alg_data->timeout = msecs_to_jiffies(I2C_PNX_TIMEOUT_DEFAULT);
+> > > +     if (alg_data->timeout <= 1)
+> > > +             alg_data->timeout = 2;
+> >
+> > I don't see the need for this check. The default timeout is
+> > defined as 10.
+> >
+> > Thanks,
+> > Andi
+> 
+> That's the timeout value which was in the previous timer in i2c_pnx_arm_timer(),
+> without this I had time out events.
 
-I'll take this for now, but it's truly sad to see new documentation
-being added to the slushpile at the end.  It seems better to create a
-"development tools" section in the new outline and put the allocation
-profiling document there?
+I meant the if() statement. We are sure timeout is not <= 1 at
+this point.
+
+Anyway, it doesn't matter. I applied the patch in
+i2c/i2c-host-next.
 
 Thanks,
-
-jon
+Andi
 
