@@ -1,109 +1,142 @@
-Return-Path: <linux-kernel+bounces-240351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C40926C7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:34:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21774926C6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E58CD1C22A2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:34:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8DDC1F23556
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DEB194A62;
-	Wed,  3 Jul 2024 23:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62111194A6D;
+	Wed,  3 Jul 2024 23:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bade.nz header.i=@bade.nz header.b="i7wx02Rv"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GmjxaF7I"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F9E178377
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 23:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0729C17838D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 23:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720049657; cv=none; b=d+J41JXF7BtoElnFyhss34jllfBL/rGgq3dUodxTRdEhuz0JSI+dsfT4v9eOEdS4xsX9xTkLeooFnEhlDlhSmDeu39FiqMwFFIDvYkpZBHVqBxK6ijQA4lhqVWH3Y3iBYJT7ebQ1M0J1yQPKD94nhzCPfzq3fXRT/GCOPb9HAX4=
+	t=1720049316; cv=none; b=K8l0EaR2Gtu7ULnARxFx7IeRX0jHRHB6E6f2cbkyZNvaMWcecEcK7v/F+rcUkm5vQH15IU4forZDO/UUk5Rj8r0/jY9dSNBFZfs0AuD6L/fKZLMiNqsPOVf89+XGu2M5U2ZmRfmpkv2NdNQ9vVk0ixpAauuSBtDb/RdnapWnI98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720049657; c=relaxed/simple;
-	bh=9ChJsKd9nUrCCIHOcicgHlKupltI6o7lz0YIiqLHyiQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cqs4sV25O41zKAkr7EOlsD+aLS6i0saj3nEMNBhBzvenGMRxxG5sBTAWJUQCgGXKM+Ko1xEVMLR8MjbWztOT06wFTrj+GOnYge3O93zhTohx9HBviCbqi566jGfgJRLbDRtjH6yip6qgMdr8mCUYE+4rPov14Fc/F8X7mQ7vrS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bade.nz; spf=pass smtp.mailfrom=leithalweapon.geek.nz; dkim=pass (2048-bit key) header.d=bade.nz header.i=@bade.nz header.b=i7wx02Rv; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bade.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leithalweapon.geek.nz
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5c45d13e658so648930eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 16:34:14 -0700 (PDT)
+	s=arc-20240116; t=1720049316; c=relaxed/simple;
+	bh=K7emvDdPnxid5SAyFTESF/lQg364GGuWtvnljTHbOh4=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=FAema8vofaS9VYnoHN2W0tzOJaQN5BAFMFa+IoB3L/CFDf6/3xZSbHXdXbcRmf07XIRP/ZAVi46sQfrwEoi6IY3dEjYomHG7FYjryOnJpLsyHONUuCYa2DZTiy72sClkPQPHsi3HU4TyupQpFmDAihfMH6qa1Sl+6d/Loj7eXY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GmjxaF7I; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c8911c84daso63981a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 16:28:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bade.nz; s=google; t=1720049653; x=1720654453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ChJsKd9nUrCCIHOcicgHlKupltI6o7lz0YIiqLHyiQ=;
-        b=i7wx02Rvh8LsEJHmo9l/k86LvUOD+foEX55ZlZgtA+NKQnbE06vLbMnzp6BcbbWgRP
-         LhSWIr0hqrjMlWcelwBq+nTSt1vGLbva21sWp78AGmulnb3re9ttRrvpf2qYWtCH3vXZ
-         HdQTbywest2ztOcGkC2pi3FwGEvvJYZ116KUsHFe1kUFuuLjhbhLEIMZchZIwhvM5wjc
-         Pkm3d793XCQ9NiIInhtTSzv+8WT7H7EHwb5oh4n5xzc4l+KNCJshsTJieFtolXflsjk0
-         fkJhgfAhRdgBr8v5+2votdlT4CgsOK7jFes5vlOE0HOHSdJnPipTEuho/xv9AbQJ5ZFM
-         86tg==
+        d=broadcom.com; s=google; t=1720049313; x=1720654113; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hwsbtQMOS4k6+Oss7Cpgl4Cpjs6vMsFQ0jCc9Uz8oAs=;
+        b=GmjxaF7IoKg8hhN2Aq8bb91z9i39/C8tp9q/eqN0aqHNFdc4fIs7r3pSQ6UJBH2yt8
+         d8LrP/cKXMsCXc8MUpbtkDwPgSug2DhZuiNRrnono1+1tRFQeNVEZWHDucnhZlgiosyq
+         Wio4iTs56XPRLArBVJBDFwygIx9ifprMl3ui0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720049653; x=1720654453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9ChJsKd9nUrCCIHOcicgHlKupltI6o7lz0YIiqLHyiQ=;
-        b=oiF5PPmt4yVBQJhz18Y2NPm98yYd45VBq3W+YRQasZrMeUIb5XG0Ao7qNI4YCqUg7P
-         CFtvnwOdnAFNPanhaDa95+MXHOLqfn+mcuh3RLIpYty0XljxTtZRUbYOxag2n+gIr1AV
-         Atmyxw9eS+Zs85EcI3AElLKG86OyrG+XTYYXOc/jp9GK7uqE667b0UTWqkgT0FMMU26y
-         BghK95tcpMzYK9t2fyuDEnr3b856acqxkUeRrRJQ6gs+mvc2YUNZh3cwb+7gaNsBbjVe
-         8cCFDFudhYQueG3dfwlhGmQEmFAxRKfQIbPNdRd4G0NRTFkAYq93bXJqZuEm5p/OfbSa
-         L/ww==
-X-Forwarded-Encrypted: i=1; AJvYcCW2xpOC2O/dujG5mqcjIZInMt9G8r0vPVXORROjMhC+ZHhN6HdeuGbiHehE9eA7zpVt025VV2nP/AxNPQVZpPNM8umnk6lMat0bjy6i
-X-Gm-Message-State: AOJu0Yw76nRKjZJjYp62M+dUKKdg5jg33bUNF/9vVQwjABAXjxC+qzbm
-	QMR1oXXCF2GpuPtXJHen1kmJRc+0u0ySS9LFiuw5TS8myxmAVtqWM24WVE73802D2AceKoZTWo/
-	qfjEGmiyP7d0cUupIIbLS9d8kaeaMPU0ac0zF
-X-Google-Smtp-Source: AGHT+IGKlQ2pI7mo0VbCXTl1zMtiImR+Q3bkZ5aDzc2+PetUeMf8KI9s1d1gy4XqYnABgmOWCY4KaVO4ZAo/Zk+wakQ=
-X-Received: by 2002:a05:6870:718f:b0:25c:9bf2:cc18 with SMTP id
- 586e51a60fabf-25e10337e4emr1508238fac.7.1720049653415; Wed, 03 Jul 2024
- 16:34:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720049313; x=1720654113;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hwsbtQMOS4k6+Oss7Cpgl4Cpjs6vMsFQ0jCc9Uz8oAs=;
+        b=jEN6MyAN3oGU4Oz37k8JxSO6KLwmatTb7nmtD88ZRDwIAKOiAIoMH0cGvZDmnRydnC
+         l+RI3+KeyTBB5uJO5/sPxoFW85JdbgEX8PlNu+GtBTRzefxqatMaLetb5/zHBtPN/2xu
+         BcZKTu/+hlU3VV8zMnVZAYlilexEuJI6PwtqgHZet8ybdSXEYt3q+6rlYwVxwXtGIg2E
+         zTcSNQBC6SZB2/BUTuHx+UZ6IwWXMXunl35WIuoH399ewOF0OhII8QjfxjmgYWPXDePr
+         Uq5v5em/n8svDKWNun/va/ALkMc67ChlTFndify1Mio1MYgLc5UeQC0YV9NQ0nRkfXvI
+         Etiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEn8UTloA/6XINSQCsyo3ItfHjENJIpkzVDe94khEzR7+C51Y8eN6bg8LMz7IJeVs7d7HP0SQeyErYhbAhePndXM5Tk8+195zYvQAK
+X-Gm-Message-State: AOJu0YyxGnd+aTojeWpBWx7Lp7PrFYSabhBR36r6kt7bNS9zlgehq1Af
+	Ro6TeE16CygqrCVrnnVPJvy+uIf91v5/QdvCWkygyRff8KQX8JC99YUR+k4tUw==
+X-Google-Smtp-Source: AGHT+IFDXbgaXSaqqMX6UdrgdU2QN/tX+qwOwKdsBmygBlfpugT7eTTkgzvnHrtjv7YtX8LnCJTHNQ==
+X-Received: by 2002:a17:90a:d142:b0:2c8:431e:4105 with SMTP id 98e67ed59e1d1-2c93d7215c1mr11055885a91.26.1720049313293;
+        Wed, 03 Jul 2024 16:28:33 -0700 (PDT)
+Received: from ubuntu.eng.vmware.com ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a946fb2sm83793a91.3.2024.07.03.16.28.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 16:28:33 -0700 (PDT)
+From: Tim Merrifield <tim.merrifield@broadcom.com>
+To: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Xin Li <xin3.li@intel.com>,
+	Tim Merrifield <tim.merrifield@broadcom.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Kai Huang <kai.huang@intel.com>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Kees Cook <kees@kernel.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Brian Gerst <brgerst@gmail.com>,
+	linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Ajay Kaher <ajay.kaher@broadcom.com>,
+	Alexey Makhalov <alexey.amakhalov@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	virtualization@lists.linux.dev,
+	alex.james@broadcom.com,
+	doug.covelli@broadcom.com,
+	jeffrey.sheldon@broadcom.com
+Subject: [PATCH 0/2] Support userspace hypercalls for TDX
+Date: Wed,  3 Jul 2024 23:35:59 +0000
+Message-Id: <cover.1720046911.git.tim.merrifield@broadcom.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608080530.9436-1-linux@fw-web.de> <20240608080530.9436-2-linux@fw-web.de>
- <trinity-82c94d49-2a78-4470-83cd-3c6747e01849-1719434738199@3c-app-gmx-bs52>
- <726f2ed3-675f-45e8-94f0-d392181e7f92@collabora.com> <951E802C-1B53-45C4-B3E6-4A3400F47214@public-files.de>
-In-Reply-To: <951E802C-1B53-45C4-B3E6-4A3400F47214@public-files.de>
-From: Leith Bade <leith@bade.nz>
-Date: Thu, 4 Jul 2024 09:34:02 +1000
-Message-ID: <CAPDEroWUeR3iUFnjVr6WFLg3=dkML+5cbRPph9bj64F=zc1UWA@mail.gmail.com>
-Subject: Re: Aw: [PATCH v3 1/2] arm64: dts: mt7986: add dtbs with applied
- overlays for bpi-r3
-To: frank-w@public-files.de
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	devicetree@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>, 
-	Rob Herring <robh+dt@kernel.org>, Frank Wunderlich <linux@fw-web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-> Yes, 1st reason is to check if overlay can be applied to base dts (the pa=
-rt rob was requested). The second thing that was solved is that some users =
-wanting a "full" dtb without the need to handle overlays in bootloader. Due=
- to hardware design of the board there are 4 "full" dtb's.
+VMCALL and VMMCALL instructions are used by x86 guests to request services
+from the host VMM. Both VMCALL and VMMCALL are not restricted to CPL 0.
+This allows userspace software like open-vm-tools to communicate directly
+with the VMM.
 
-I have been looking at using the "u-boot-update" package in Debian to
-generate an extlinux.conf file so I can use the U-boot standard/distro
-boot. This script seems to currently assume that you pick a single
-.dtb file for the board, and then the user can put additional .dtbo
-files in /boot/dtbo/ for any additional hardware the user has plugged
-in.
+In the context of confidential VMs, direct communication with the host may
+violate the security model. Existing binaries that make use of hypercalls
+and are not hardened against malicious hypervisors can become a possible
+attack surface. For this reason, user-level VMCALLs are not currently
+forwarded to the host on TDX VMs. This breaks any user-level software that
+use these instructions.
 
-So having a series of "merged" base files would be useful for this use case=
-.
+But if user-level software is aware of the risks and has been hardened to
+address any known violations of the security model, then it seems
+reasonable to allow hypercalls from this process to proceed.
 
-Thanks,
-Leith Bade
+This patchset introduces a new x86 process control flag to address this
+concern. By setting the TIF_COCO_USER_HCALL thread information flag, the
+process opts in to user-level hypercalls. When TDX is enabled, the VMCALL
+will #VE and control will be transferred to a hypervisor-specific
+hypercall handler (similar to how things work today for SEV with
+sev_es_hcall_prepare/sev_es_hcall_finish). The flag has no effect on
+non-TDX VMs. Other confidential computing technologies could use this flag
+to provide limited access to user-level hypercalls.
+
+Tim Merrifield (2):
+  x86/tdx: Add prctl to allow userlevel TDX hypercalls
+  x86/vmware: VMware support for TDX userspace hypercalls
+
+ arch/x86/coco/tdx/tdx.c            | 18 +++++++++++
+ arch/x86/include/asm/thread_info.h |  2 ++
+ arch/x86/include/asm/x86_init.h    |  1 +
+ arch/x86/include/uapi/asm/prctl.h  |  3 ++
+ arch/x86/kernel/cpu/vmware.c       | 51 +++++++++++++++++++++++-------
+ arch/x86/kernel/process.c          | 20 ++++++++++++
+ 6 files changed, 84 insertions(+), 11 deletions(-)
+
+-- 
+2.40.1
+
 
