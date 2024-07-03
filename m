@@ -1,158 +1,171 @@
-Return-Path: <linux-kernel+bounces-238986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECFB692548D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:23:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4430A925491
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 286861C249C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:23:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF746B21CB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBE9136E1A;
-	Wed,  3 Jul 2024 07:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6BKzlxMG"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD20136E37;
+	Wed,  3 Jul 2024 07:24:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C721131BDD;
-	Wed,  3 Jul 2024 07:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7B4134415
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719991394; cv=none; b=mPMRnClop3my7RcDS04C6sSSCvgorPW/6Czcsr1dZ8t8NU/L+lDMZMLcnmkf8KZMQlSyhGglrNXXs1maSrNgUp0o0ei4b5+AlRxMMWTXj0C0CAlldkV7bezIDG+EzOzncAQiXq27XoE7Rz8xcskyCkqyHQOP8uqul3vjcm9Nye4=
+	t=1719991459; cv=none; b=DCWAiSEZCMJ5QBQgvnhQpWZdBQgjd2aoOs+9uczhF1rYol0OV3BfADvohlb3wTifv/8eMajprSv/cQ6+rVP9LBUmSyNyv1zQL/0clKgH7I8dmidnsCtUkZz7I6qgnJGva/BzGkmhJRDMV8M+hG8L3tV9BdGcP5r3awhxP8LaWQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719991394; c=relaxed/simple;
-	bh=LMG0Hk9HWoesEQBaKPnUAzUolPD1IIQjdRRRL3Ahrz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rIVyMCkzn7EVCo+Gvz3/NjzfJPhkoIktLuTHmbVqRZOGEIBXpZXwIXpnlyID8cJpkg//OZ1iqFHa6TyViEZkmbogIoVL5agLLpPGbx+WIq9Xkbs8/6e04f5Am6dwBcoQBnc15uOGYkMw7SmLw/VRNIULwl4J3jZ9J4zOPSYde5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6BKzlxMG; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4630KYv2022258;
-	Wed, 3 Jul 2024 09:22:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	lP6a1UtKqsjM5BY6HprJY0SpXdmd34uScXaSFUlCRhY=; b=6BKzlxMG7Fploan6
-	Q7z0BOpwXEuvAGiU2TVP5rXpARzGmn0Dle39WcqH8QzD8+/GI5HR1TA0Emcod90H
-	oH0G35YmCvszC48t8KcMUIbFtdkdeJMhsrKkYncaw5paxDnOr5nxd15pY7LdOsUT
-	X59lLZYT8PbNsuoeG+CARYpi7/zrXMYdiWh3hJ0EObPW/YJ9lpQPGhRmkt/4YqxD
-	HBKIO/FmatfpN+VOJ6AV3GcEK72iS3nO7xZI8BOFzuS71+5lwV4Nr68sLc+QetQ5
-	nQUCUwK+Et6SovgNcHdKOI0HM4XmR9kaba4EVp4rdKYDUBWhlJ0pXd8O0VkaQmTc
-	xBbrAw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 402uu0vp0e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Jul 2024 09:22:56 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BEAC94004F;
-	Wed,  3 Jul 2024 09:22:52 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0BEA9214526;
-	Wed,  3 Jul 2024 09:22:17 +0200 (CEST)
-Received: from [10.252.27.110] (10.252.27.110) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 3 Jul
- 2024 09:22:16 +0200
-Message-ID: <7e7c0e37-cb5d-4c2e-93a5-708cf0f82f44@foss.st.com>
-Date: Wed, 3 Jul 2024 09:22:15 +0200
+	s=arc-20240116; t=1719991459; c=relaxed/simple;
+	bh=0VKK8+VF4ewnjWMtGfxaudX5Z/NmLjRR80N4kfnXCFA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q8cJeVOI9kkzuDPDr7AKct9YJB4br6af2f0twhqR61RjTceX/T9K5aqnGEgDTlkNYeep0+M6SlsUcqGFiYhI8iHYuPJBfrdbeYSvIUUpo70RF95cP1q3N6VeyROMz5UVvEBsAkmFXDkAC4hvCMEeTcPiwy+HBUhCg13bwvApq2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sOuLb-00028c-Kk; Wed, 03 Jul 2024 09:24:11 +0200
+Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sOuLa-006nQZ-KS; Wed, 03 Jul 2024 09:24:10 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sOuLa-002Knv-1e;
+	Wed, 03 Jul 2024 09:24:10 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	David Lin <yu-hao.lin@nxp.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Brian Norris <briannorris@chromium.org>,
+	kernel@pengutronix.de,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: [PATCH] mwifiex: Do not return unused priv in mwifiex_get_priv_by_id()
+Date: Wed,  3 Jul 2024 09:24:09 +0200
+Message-Id: <20240703072409.556618-1-s.hauer@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] dt-bindings: iio: add sigma delta modulator
- backend
-To: Conor Dooley <conor@kernel.org>
-CC: <fabrice.gasnier@foss.st.com>, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240625150717.1038212-1-olivier.moysan@foss.st.com>
- <20240625150717.1038212-6-olivier.moysan@foss.st.com>
- <20240625-babied-skies-0722dbdfc524@spud>
- <eefc746a-2181-41da-b777-b077a4c19b77@foss.st.com>
- <20240627-identity-enviable-4fda0b3a09c0@spud>
-Content-Language: en-US
-From: Olivier MOYSAN <olivier.moysan@foss.st.com>
-In-Reply-To: <20240627-identity-enviable-4fda0b3a09c0@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_03,2024-07-02_02,2024-05-17_01
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Conor,
+mwifiex_get_priv_by_id() returns the priv pointer corresponding to
+the bss_num and bss_type, but without checking if the priv is actually
+currently in use.
+Unused priv pointers do not have a wiphy attached to them which can
+lead to NULL pointer dereferences further down the callstack.  Fix
+this by returning only used priv pointers which have priv->bss_mode
+set to something else than NL80211_IFTYPE_UNSPECIFIED.
 
-On 6/27/24 18:13, Conor Dooley wrote:
-> On Wed, Jun 26, 2024 at 06:40:58PM +0200, Olivier MOYSAN wrote:
->> Hi Conor,
->>
->> On 6/25/24 17:34, Conor Dooley wrote:
->>> On Tue, Jun 25, 2024 at 05:07:13PM +0200, Olivier Moysan wrote:
->>>> Add documentation of device tree bindings to support
->>>> sigma delta modulator backend in IIO framework.
->>>>
->>>> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
->>>
->>> I don't review bindings for a job, I can only reliably get to look at
->>> my mail queue in the evenings, please give me a chance to reply to you
->>> before you submit a new version.
->>>
->>
->> Sorry, the short review delay.
->>
->>>> +$id: http://devicetree.org/schemas/iio/adc/sd-modulator-backend.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Sigma delta modulator backend
->>>
->>> Same comments about filename and title apply here as the previous
->>> version. "TI $foo Sigma Delta Modulator" and drop the reference to back
->>> ends or the pretence of being generic.
->>>
->>
->> The logic here is the same as for the former sigma delta modulator driver.
->> (see discussion [1])
->> I mean introducing a generic and minimalist driver to support sd modulators,
->> but not dedicated to a specific modulator. The ads1201 is chosen as a basic
->> modulator here. But it is rather an arbitrary choice.
->>
->> I agree "backend" reference is not really relevant here. I have to think
->> about a way to manage the coexistence of this sigma delta modulator driver
->> with its former version.
-> 
-> To be blunt, I don't care about drivers! Well I do, but not in this
-> particular context. You can absolutely have a driver that supports
-> multiple backends or sigma delta modulators, but right now we are
-> talking about a binding and this binding supports exactly one sigma
-> delta modulator - and with an explicit compatible. In that context,
-> presenting the binding as generic makes little sense.
-> 
->> [1] https://lore.kernel.org/all/6943aaf5-b580-0fd1-7a2e-b99f7a266388@st.com/
-> 
-> Looking at this though, I question the binding more... The programming
-> model of the device is identical as a backend or otherwise, so it
-> shouldn't be getting a new compatible. Isn't this actually as simple as
-> adding #io-backend-cells to the existing binding and using that to
-> determine whether the device is being used as a backend or in isolation?
-> 
+Said NULL pointer dereference happened when an Accesspoint was started
+with wpa_supplicant -i mlan0 with this config:
 
-For sure. I came to the same conclusion. My first idea was to isolate 
-the deprecated binding. However, I agree that the best approach is to 
-adapt the existing binding. I prepared a v3 like this.
+network={
+        ssid="somessid"
+        mode=2
+        frequency=2412
+        key_mgmt=WPA-PSK WPA-PSK-SHA256
+        proto=RSN
+        group=CCMP
+        pairwise=CCMP
+        psk="12345678"
+}
 
-BRs
-Olivier
+When waiting for the AP to be established, interrupting wpa_supplicant
+with <ctrl-c> and starting it again this happens:
 
-> Thanks,
-> Conor.
+| Unable to handle kernel NULL pointer dereference at virtual address 0000000000000140
+| Mem abort info:
+|   ESR = 0x0000000096000004
+|   EC = 0x25: DABT (current EL), IL = 32 bits
+|   SET = 0, FnV = 0
+|   EA = 0, S1PTW = 0
+|   FSC = 0x04: level 0 translation fault
+| Data abort info:
+|   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+|   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+|   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+| user pgtable: 4k pages, 48-bit VAs, pgdp=0000000046d96000
+| [0000000000000140] pgd=0000000000000000, p4d=0000000000000000
+| Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+| Modules linked in: caam_jr caamhash_desc spidev caamalg_desc crypto_engine authenc libdes mwifiex_sdio
++mwifiex crct10dif_ce cdc_acm onboard_usb_hub fsl_imx8_ddr_perf imx8m_ddrc rtc_ds1307 lm75 rtc_snvs
++imx_sdma caam imx8mm_thermal spi_imx error imx_cpufreq_dt fuse ip_tables x_tables ipv6
+| CPU: 0 PID: 8 Comm: kworker/0:1 Not tainted 6.9.0-00007-g937242013fce-dirty #18
+| Hardware name: somemachine (DT)
+| Workqueue: events sdio_irq_work
+| pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+| pc : mwifiex_get_cfp+0xd8/0x15c [mwifiex]
+| lr : mwifiex_get_cfp+0x34/0x15c [mwifiex]
+| sp : ffff8000818b3a70
+| x29: ffff8000818b3a70 x28: ffff000006bfd8a5 x27: 0000000000000004
+| x26: 000000000000002c x25: 0000000000001511 x24: 0000000002e86bc9
+| x23: ffff000006bfd996 x22: 0000000000000004 x21: ffff000007bec000
+| x20: 000000000000002c x19: 0000000000000000 x18: 0000000000000000
+| x17: 000000040044ffff x16: 00500072b5503510 x15: ccc283740681e517
+| x14: 0201000101006d15 x13: 0000000002e8ff43 x12: 002c01000000ffb1
+| x11: 0100000000000000 x10: 02e8ff43002c0100 x9 : 0000ffb100100157
+| x8 : ffff000003d20000 x7 : 00000000000002f1 x6 : 00000000ffffe124
+| x5 : 0000000000000001 x4 : 0000000000000003 x3 : 0000000000000000
+| x2 : 0000000000000000 x1 : 0001000000011001 x0 : 0000000000000000
+| Call trace:
+|  mwifiex_get_cfp+0xd8/0x15c [mwifiex]
+|  mwifiex_parse_single_response_buf+0x1d0/0x504 [mwifiex]
+|  mwifiex_handle_event_ext_scan_report+0x19c/0x2f8 [mwifiex]
+|  mwifiex_process_sta_event+0x298/0xf0c [mwifiex]
+|  mwifiex_process_event+0x110/0x238 [mwifiex]
+|  mwifiex_main_process+0x428/0xa44 [mwifiex]
+|  mwifiex_sdio_interrupt+0x64/0x12c [mwifiex_sdio]
+|  process_sdio_pending_irqs+0x64/0x1b8
+|  sdio_irq_work+0x4c/0x7c
+|  process_one_work+0x148/0x2a0
+|  worker_thread+0x2fc/0x40c
+|  kthread+0x110/0x114
+|  ret_from_fork+0x10/0x20
+| Code: a94153f3 a8c37bfd d50323bf d65f03c0 (f940a000)
+| ---[ end trace 0000000000000000 ]---
+
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Acked-by: Brian Norris <briannorris@chromium.org>
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+ drivers/net/wireless/marvell/mwifiex/main.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
+index 175882485a195..c5164ae41b547 100644
+--- a/drivers/net/wireless/marvell/mwifiex/main.h
++++ b/drivers/net/wireless/marvell/mwifiex/main.h
+@@ -1287,6 +1287,9 @@ mwifiex_get_priv_by_id(struct mwifiex_adapter *adapter,
+ 
+ 	for (i = 0; i < adapter->priv_num; i++) {
+ 		if (adapter->priv[i]) {
++			if (adapter->priv[i]->bss_mode == NL80211_IFTYPE_UNSPECIFIED)
++				continue;
++
+ 			if ((adapter->priv[i]->bss_num == bss_num) &&
+ 			    (adapter->priv[i]->bss_type == bss_type))
+ 				break;
+-- 
+2.39.2
+
 
