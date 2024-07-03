@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-239404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4F3925F4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:56:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1533C925F58
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3992833F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:56:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 387C81C2246E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E7317279B;
-	Wed,  3 Jul 2024 11:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54783172777;
+	Wed,  3 Jul 2024 11:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AK1xEVv+"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="mQLb73QS"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE99016EC0C;
-	Wed,  3 Jul 2024 11:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AB3944D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720007752; cv=none; b=ky+EM5FRDSGux/iPFHam3nhNQg0V2xFe9rmE8Rn9QWuWMCT3g8HS8lVBpm1Zd/UelIR0M5yH51b3CBNf7B/x2J2zLMt4g8q/X70ZXm9kD9iu8t4l1J6sslHnKei/l85vV/hSRlSvlciv8nXzeqmBVTvcumUrygVWpilgFnM7QRo=
+	t=1720007865; cv=none; b=imrHK6k7pdye91aHBCy2rl8VGXHb2MTk0q08wz1SQEldh6nf9jTH57V9h5ieD34O9F1Utpv35NFfC9r8g2wki8wtI9e33BvhakY4SMTxVY0MgD5g+JhDWMiWR2kfGu2NyRkBfFd+5Ky/7stPQjNH1e7R2UNKENzQQd8GwjKacSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720007752; c=relaxed/simple;
-	bh=0oJeoGG81bzehMG51mi88GXA8pDGoGhbepv1IZLVz7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=E802mGdzKgNEyXcy3/G+fu6ev05kO1kKbgPMDFM8h2Yt6MhogAgv4MGOKlHsvPUMJGvDgAyMS2WnoOkh+zUMJSqyrHowrGtNw9xy16VQ9q800wULWw3Iip/4oxnXi85Z9aVnyEWAaX4MSPef+TioZ3pFkSMvWL2drJSOJZStHuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AK1xEVv+; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-58b0beaf703so2977371a12.2;
-        Wed, 03 Jul 2024 04:55:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720007749; x=1720612549; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=MTSQnqgsaxj4ShNaVAyout8ROilJlVNHANanPFm1Bp8=;
-        b=AK1xEVv+J8q6sJVSSp1xomuU6rNLWe9gaVCbvrmret/HSYxor7M3pvppC7X8Od71eK
-         tJBPJlK8iNiXeG5KGkdRfCKBN/Yp4aC9+f6Lxb7h85CBMQ0WuNf/dZAGt7ST0AlQlqtC
-         MGJ4K/GFgCvX46lJNX2KNG201IUg3Yus0ekcd1em2q8nb0/hC4K/lXe7Y1gh2v13dOZM
-         0+aErfGL+TKs4j9BS40Obs/ufQU/n3o7IElv31SQ3N5r1Kf+o+UVD8EATY1oKL1jGh2t
-         XAGfpfsJQeqpDTDMU7HPPvSv7StcvxcY4UACou9mRcs2J5W9U8nz4aR67upOYX3AlaOj
-         uJqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720007749; x=1720612549;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MTSQnqgsaxj4ShNaVAyout8ROilJlVNHANanPFm1Bp8=;
-        b=SjkcBXd2d8kgxI9RW4plzqTfV7e+bqAlejTr2tIrDs3RIm4jRVpw1O0rYqtVzdDppZ
-         MfpHiOgZuxOt4pm5AcfumYTvfDf2l04tI2GZGQAxk9aYgRmns5I3GHEUwL4LqfGK6fjT
-         s0SbdVoZfs80Vui1irw91Z6YBCgXHj5Q1SmlbjVOkhzOsPxsHWO1hKhKF0qko6LZTzWD
-         Ls5kNzVOB1dvyVb9U9FgHw/Q0fAMecVrfzd1qhQUB5BoRz9FIbCsYX+7m3+N2RA2ZCUP
-         Rw0X53YIh6KjujtdRNdsvBCr0n1SPb/hC8q/Mqkz8w3HlUBcxfqmqAhSa5fGzE7YPM6C
-         L0pw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3+DPkrCW8FvItqgLtAzo/5/s2xqelaulmDgB2rGqZ0SMTFirrSCYgYkOH+yqt/WC2iGbw2IFPOcsRacKPBIXTo2rYrkHHGdUcSl2ISFNz7tvrTMB2NxXZpmzmBVBRwBf9ucbsd2clOAU=
-X-Gm-Message-State: AOJu0Yyy2ts3YmnidQXr2zF43838M5eIf2fXobVaW8wMMe+nWElN7DJq
-	E0rD8c6QHl639S5PBOMwZnuRiD0M4XQ9HVf8db8rD6VjWx+RTWwO
-X-Google-Smtp-Source: AGHT+IHaPlJYig52nHAvcAkSxel6Q87BW6mueSa8QLn+Gow9q8XpeYxS+0PKkttq3s7IBzQ/asjqpw==
-X-Received: by 2002:a17:906:6c9:b0:a74:5b82:7f28 with SMTP id a640c23a62f3a-a75144301efmr720652566b.23.1720007748897;
-        Wed, 03 Jul 2024 04:55:48 -0700 (PDT)
-Received: from [192.168.42.235] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf1ba77sm500748966b.33.2024.07.03.04.55.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 04:55:48 -0700 (PDT)
-Message-ID: <fbd3bebc-db09-4224-bdf9-b44304bf55b8@gmail.com>
-Date: Wed, 3 Jul 2024 12:55:57 +0100
+	s=arc-20240116; t=1720007865; c=relaxed/simple;
+	bh=rKV38DTKe44owKlSJKgilDF63JZgHdfEW79Spi8tgRE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X8UYk21Hmg1BTIP2atti38B6LH+5HZ5JpSJ82r98BF7ijSGumC+6ZBgSoJXjD/DLPOmmfv/kiPkUSiE0PX3FowuChKWWzQ4czwP+Pr57m/rpnN7G/nMpD4S8IHsmwCTNNYDIECuGqkrKGBgyPokc0WGoxXT4Q3dTFljfsGvbdB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=mQLb73QS; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1720007841; x=1720612641; i=efault@gmx.de;
+	bh=SQRSK4a08DTy1RMTibP027PFWUlxi+GRikrcCxsT88w=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=mQLb73QS928NmijNLr/rwtHD5r+z4Mqdv/cVS8qfsUOYgRAYzM+S8TgXxfInKAlu
+	 3wHVn2uJcMDYqmVI4b0MyUIkyDX23JZmTqQpIgA3b7warVohsSk0OaJIs9QgavT6G
+	 UoDRN2/KNePCGAHlu49HE6HFLSZfwyUxIqH0tkX+zMO43KMwmW2Yz9ufzGKr0SyEv
+	 0buidByWo4t8OkMR47QIXWGhDsLk9fm5Fkg0ccM8iK+Ue/0bY+4xVh2PtMlf8zPDl
+	 bBjEvnqeLpXyLYRFMOy9fTyAe27a4LF3bJFJyCEqsM8QW5VI0Zs+PP2sdYPuzFpRd
+	 FIddCxhOd6pTveh5Lg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([185.146.49.228]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mirng-1rtC6P2zmG-00klSH; Wed, 03
+ Jul 2024 13:57:21 +0200
+Message-ID: <4e28fd17d7a2f7146aae10a76982f0e58b22befb.camel@gmx.de>
+Subject: Re: [PATCH 1/2] sched/fair: Record the average duration of a task
+From: Mike Galbraith <efault@gmx.de>
+To: Raghavendra K T <raghavendra.kt@amd.com>, Chen Yu <yu.c.chen@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Tim Chen <tim.c.chen@intel.com>, Yujie Liu
+ <yujie.liu@intel.com>, K Prateek Nayak <kprateek.nayak@amd.com>, "Gautham R
+ . Shenoy" <gautham.shenoy@amd.com>,  Chen Yu <yu.chen.surf@gmail.com>,
+ linux-kernel@vger.kernel.org
+Date: Wed, 03 Jul 2024 13:57:19 +0200
+In-Reply-To: <683663e3-cef0-bb45-e1c7-5bf1cf44209c@amd.com>
+References: <cover.1719295669.git.yu.c.chen@intel.com>
+	 <338ec61022d4b5242e4af6d156beac53f20eacf2.1719295669.git.yu.c.chen@intel.com>
+	 <d922f7bf3965f4eaef5028177b886e2e1861742d.camel@gmx.de>
+	 <ZoFY/n2S7rMp6ypn@chenyu5-mobl2>
+	 <db81ba7fba622e2a1b7186e66471cfb9ad8490fd.camel@gmx.de>
+	 <ZoLDxQlTR7fxoXWs@chenyu5-mobl2>
+	 <683663e3-cef0-bb45-e1c7-5bf1cf44209c@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] sbitmap: fix io hung due to race on
- sbitmap_word::cleared
-To: Yang Yang <yang.yang@vivo.com>, Ming Lei <ming.lei@redhat.com>,
- Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-References: <20240703022807.642115-1-yang.yang@vivo.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240703022807.642115-1-yang.yang@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:CtQ/l1TksDKUoYM5X2hpLTu42SJe7Sq/7yDsfwUmYIHnqAX1KUb
+ 8TKr10nZriZbVaRYan5sgzkLzqqErNfQ3jdKM3V0oJf3SeFt4KGAJO3RcKYpxjMVj//mb0i
+ mWaVQ0hg99tzbmJwUiyUqAwuCQtefjxl0deaM7IliipxQEYeHRg0PBCKd+eK2okzxzcXcuy
+ glRB2jAea6NzAGqsdcC2Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:v/67zEkirsc=;HpScUQuYcf5o+tBNG1kYwgUICng
+ DOm1rpKZcAG8UTlnIpXJkRcfyz5p+fE2Z9OUUDjVfIPs1aNydAI9t3qX4KvP5G9AOnpThSv87
+ iLsb12tKy9Y1fx1sP7bceUfNWwIboDIZbqGxKZKUNQutZ61UMU1oq+cV/M7V8NhZKZ03RLNHG
+ 8mE4+gruBLHg2iDq13VhYHXPieXAsEozCLg2onSiJizEg32uVmoBcA8aOdo/baMnUaKTtAF7R
+ LOROvcJ7uoUR7aCRScMpgVaS9GO+ImjzD2tOhumdwcachncxBPDXppRFAwrEZKjR4ZwBLy798
+ wsLQziDmai5fcoNcAA11/9+NrEOrEK40pvT4yR0XgiohmiLUh2SK5YLZAMK2/P1TFS6khVaTy
+ k6OTu9AYxUqjcWUcx+JNOUX2ItxBDLa5YlFUecYajuMZgZvL6L2mZr/dui2GyoQ1z5AD07iRk
+ E0SYS1lV0oQJr2K2LZZkLyB4dNtw+U9w/4YqxFNclgoVd2AqG4Dh2f3y1SdRpn3PMG5/voEGN
+ Y65Km7yhXRim3TEIzqWMK0aH+UHaFBVPi0KRphxWzjhtAr8OYg8JeNL/Vd/wRp7rtGjyxr/aX
+ /cWOc/hwFQ9CE09Su4NWr2X3Ju+qKTmtDCt7i9r/QAXU34qrqnvFIgONkcbtaWCHFy8Ky3bYQ
+ hzgYeTIGrDTwZEwLS+I6YB9w6FvEogSsb+3WED8grS4naMg3b42fWISzSwCdOCYwSXzpw1Y7l
+ klU8UbgVrIizfR5kEvuj+0plTuLnNjLONIDjPnwtZkhMK+a4fyxQgj4Ve+34FpgJWs0Bt2mSS
+ FptoRFwk+JCzluFoEZpUm/oxRPu38n3mfQF/lrHSoVCkg=
 
-On 7/3/24 03:28, Yang Yang wrote:
-> Configuration for sbq:
->    depth=64, wake_batch=6, shift=6, map_nr=1
-> 
-> 1. There are 64 requests in progress:
->    map->word = 0xFFFFFFFFFFFFFFFF
-> 2. After all the 64 requests complete, and no more requests come:
->    map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
-> 3. Now two tasks try to allocate requests:
->    T1:                                       T2:
->    __blk_mq_get_tag                          .
->    __sbitmap_queue_get                       .
->    sbitmap_get                               .
->    sbitmap_find_bit                          .
->    sbitmap_find_bit_in_word                  .
->    __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
->    sbitmap_deferred_clear                    __sbitmap_queue_get
->    /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
->      if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
->        return false;                         __sbitmap_get_word -> nr=-1
->      mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
->      atomic_long_andnot()                    /* map->cleared=0 */
->                                                if (!(map->cleared))
->                                                  return false;
->                                       /*
->                                        * map->cleared is cleared by T1
->                                        * T2 fail to acquire the tag
->                                        */
-> 
-> 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
-> up due to the wake_batch being set at 6. If no more requests come, T1
-> will wait here indefinitely.
-> 
-> This patch achieves two purposes:
-> 1. Check on ->cleared and update on both ->cleared and ->word need to
-> be done atomically, and using spinlock could be the simplest solution.
-> So revert commit 661d4f55a794 ("sbitmap: remove swap_lock"), which
-> may cause potential race.
-> 
-> 2. Add extra check in sbitmap_deferred_clear(), to identify whether
-> ->word has free bits.
-> 
-> Fixes: 661d4f55a794 ("sbitmap: remove swap_lock")
+On Wed, 2024-07-03 at 14:04 +0530, Raghavendra K T wrote:
+>
+>
+> On 7/1/2024 8:27 PM, Chen Yu wrote:
+> >
+> > A thought occurred to me that one possible method to determine if the =
+waker
+> > and wakee share data could be to leverage the NUMA balance's numa_grou=
+p data structure.
+> > As numa balance periodically scans the task's VMA space and groups tas=
+ks accessing
+> > the same physical page into one numa_group, we can infer that if the w=
+aker and wakee
+> > are within the same numa_group, they are likely to share data, and it =
+might be
+> > appropriate to place the wakee on top of the waker.
+> >
+> > CC Raghavendra here in case he has any insights.
+> >
+>
+> Agree with your thought here,
+>
+> So I imagine two possible things to explore here.
+>
+> 1) Use task1, task2 numa_group and check if they belong to same
+> numa_group, also check if there is a possibility of M:N relationship
+> by checking if t1/t2->numa_group->nr_tasks > 1 etc
+>
+> 2) Given a VMA we can use vma_numab_state pids_active[] if task1, task2
+> (threads) possibly interested in same VMA.
+> Latter one looks to be practically difficult because we don't want to
+> sweep across VMAs perhaps..
 
-Is it blamed right? Considering that the revert alone doesn't fix
-the problem, it sounds like the 2nd step might need to be ported
-to kernels even without the blamed commit.
+Oooh dear.. as soon as you mention threads, the question of who's
+wheelhouse is this in springs to mind, ie should the kernel be
+overriding userspace by targeting bits of threaded programs for forced
+serialization?
 
--- 
-Pavel Begunkov
+Bah, think I'll just bugger off and let you guys have a go at making
+this stacking business do less harm than good.
+
+	-Mike
 
