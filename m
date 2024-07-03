@@ -1,129 +1,180 @@
-Return-Path: <linux-kernel+bounces-239459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1235D92604D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:28:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A88926056
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 924B6B26605
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:27:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2F04B282BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4453A175555;
-	Wed,  3 Jul 2024 12:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8A0176ADB;
+	Wed,  3 Jul 2024 12:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="dDEhMoQq";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="hSE1Xdbm"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hRZYA297";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1Oyqklkl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A7E85298
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32B216F84E;
+	Wed,  3 Jul 2024 12:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720009655; cv=none; b=CEXKpsIHbq4mZHEduDZyfYHiK8SN4jn1Kk5eOHL5qHpHdfmScllAoPn7JNdHfUak38RgZRG1q0d0LCCINO0FtDc+rN698h65ZXxdO1uAjIOnxHtCHqkicEJk+srj6PQPW9luni7CzUZpRxnXLybXgsk3DH8ye7oDvP2midMKI/k=
+	t=1720009683; cv=none; b=a3+a4oKwUUvaD+Qa5k9Ju5XH9CBVqjcnS6CFOyz0FyP6qcyFDNlFd3803ZrCfScb+8yDGq0wvXVCkh3qc+tx3bhyHDDEZzO7xXQbW/d86u9XFBPEgXrBjWvjvkBRzGs4bHKgBn9HwsluJsCAfvIMqaXo4wlCXPB+LdxSwBhA2Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720009655; c=relaxed/simple;
-	bh=MIdVA2MuNr7Kjwugehxlbk5pPoNQtJ6M8cJeWem3X6I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KtKKi438DDBMZnt7Mr9DZA9AvjYpTluYprbkGYyttpWAVKb183klDVFERbK9BPp+N/UMjSvnk83KuLuvl1ycG7Sfil95GJuAKsVTWpyrlN3VEs1yscYt7Hr+aRtFH1aMKXbWvl3qzwrN5LfuU3PlsLAqnBm8Lodh8vEYyAOlfAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=dDEhMoQq; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=hSE1Xdbm reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1720009652; x=1751545652;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=8jq6y7aA7RK3dKCehG+wrp8fblOjHLald6MD0wxTNHc=;
-  b=dDEhMoQqNLYrdlVUnun8ykYZczMS5I6JN2tcUChZCUrRFAFUPjMdpMbt
-   i7Hnc5C9syAtSGSUxzd8nKDAAkw8iDRSrSA8GgsuS7fSpH/lzfa4TuUpl
-   VyReAgbIsKYNfO5cFVAFaJXSfUaOXymdWtF5WksDv90pDbWsbVsPUTS64
-   WiS23ZKcR1AbTQyh7nLobTOnqkBFsoFYtVJIFVb7q2rjx9SmiD3GqheV9
-   a+W/MM/i4B4tInWsTH3COXBjntgs4EdjbIpEf1dPDHiY3rM21XAb9d1l6
-   JNdtm27Z1N+fKKwxxw6v36C2gtPE4T2THhmgC3LmqTNkmQ6rM8LTEsl4X
-   w==;
-X-CSE-ConnectionGUID: dggba+NXRHGpeBGX8BmCdw==
-X-CSE-MsgGUID: 4YDp7SzqSiiu6+kXLImTLg==
-X-IronPort-AV: E=Sophos;i="6.09,182,1716242400"; 
-   d="scan'208";a="37726416"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 03 Jul 2024 14:27:24 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2CFEB165C89;
-	Wed,  3 Jul 2024 14:27:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1720009640; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=8jq6y7aA7RK3dKCehG+wrp8fblOjHLald6MD0wxTNHc=;
-	b=hSE1XdbmneKXrssEo+FANb1s0MTPKTkv5oqLVPlNZInBXXbawo4s4SqNnJzA+yJvypaQ19
-	Vb+jHRREaLBRFfid6YbAapkxKwAS8L5dJr9laEbWmj/n4t7zX6Ongda1Gga0NuCVFsjVhz
-	mGFcR88QfJIWnBcp3EILNfnUsabJAUjDZT8L3H4ZD5SlppkoZScNj64Bd6sIQJjYT3dW+N
-	Pxlq1LJE5y5REEp3r4M6CS2OhT5cZnI5befFk4xEXzM6rvzzENX2yNjHpuKUOST29kn2er
-	d1ySPaHSvL0g7XJiCURqIY3ewKXd0xlpXNd8Db4PtO55Dn+ciS+r84RSRN1hQg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 1/1] drm/bridge: Silence error messages upon probe deferral
-Date: Wed,  3 Jul 2024 14:27:15 +0200
-Message-Id: <20240703122715.4004765-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720009683; c=relaxed/simple;
+	bh=213ci+0cxZ10GqVJJAbw2lpuJ/8tXssG4bIdE6Qu3gE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sgMda2klcle9qD6V77/RkL2iC/Ho0AQTBvNyXISwgA3qPkLcuBw9CYHO0gmNy4bwby96tihqXxuk4DO844KPrMKs3UlySYGS3NTXRAc8THjggMP2fH7IJ7APK2fuo5wv+4sYcUjj4ddirrTg1eLTYuGYtc+hoik+wGJMt+/J2nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hRZYA297; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1Oyqklkl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 3 Jul 2024 14:27:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720009679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VEgcupWrb36dcZYH1yhSo7JVJd/uausUyMuli7DmLp8=;
+	b=hRZYA297jYac2WMZflGkRXGcnaHSBfvkiKBRliEdgL5xCwghF+GRgTgNDfWOtwnwVAYE7I
+	BkKNy34qY1/vR/PfiZfrYqHWID5PCn2LkVvwXjAPQ3gRRHb7q0Y1+9SKIwWmnbcZxzZWiL
+	dkyghnDGHoSiMc3Qn9SwxcJiZ1gRIqoZODM9LneUDLRnJF0NuVSNo/sIulgwGtBYgMMbC0
+	urVqi83Z8b+s9Yuwh5hRPhqV7vh8j4Mo10CoHe8B99SNjk5wvrUnnpAW3jzqKjREOFqN1R
+	sJHLYp2IkJdbT2jvpJmwuxYMttTfddZ9PZC1Jwygwy7ojiHXN5cvLvwBjD6VSw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720009679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VEgcupWrb36dcZYH1yhSo7JVJd/uausUyMuli7DmLp8=;
+	b=1OyqklkloIhT/PPpuo4cXwNLY2uCwimSN1Bis+J5CiivXkDwWC4xjLOgN5XBM5d7HRXecj
+	h/LH1EzxDp+p1XDw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: syzbot <syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com>,
+	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com,
+	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com,
+	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
+	song@kernel.org, syzkaller-bugs@googlegroups.com,
+	yonghong.song@linux.dev
+Subject: [PATCH net-net] tun: Assign missing bpf_net_context.
+Message-ID: <20240703122758.i6lt_jii@linutronix.de>
+References: <000000000000adb970061c354f06@google.com>
+ <20240702114026.1e1f72b7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240702114026.1e1f72b7@kernel.org>
 
-When -EPROBE_DEFER is returned do not raise an error, but silently return
-this error instead. Fixes error like this:
-[drm:drm_bridge_attach] *ERROR* failed to attach bridge
-  /soc@0/bus@30800000/mipi-dsi@30a00000 to encoder None-34: -517
-[drm:drm_bridge_attach] *ERROR* failed to attach bridge
-  /soc@0/bus@30800000/mipi-dsi@30a00000 to encoder None-34: -517
+During the introduction of struct bpf_net_context handling for
+XDP-redirect, the tun driver has been missed.
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Reviewed-by: Robert Foss <rfoss@kernel.org>
+Set the bpf_net_context before invoking BPF XDP program within the TUN
+driver.
+
+Reported-by: syzbot+0b5c75599f1d872bea6f@syzkaller.appspotmail.com
+Reported-by: syzbot+5ae46b237278e2369cac@syzkaller.appspotmail.com
+Reported-by: syzbot+c1e04a422bbc0f0f2921@syzkaller.appspotmail.com
+Fixes: 401cb7dae8130 ("net: Reference bpf_redirect_info via task_struct on PREEMPT_RT.")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
-Changes in v5:
-* Added dev_err_probe() call if probe deferral occurs
+ drivers/net/tun.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
- drivers/gpu/drm/drm_bridge.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index d44f055dbe3e7..c6af46dd02bfa 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -353,8 +353,13 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
- 	bridge->encoder = NULL;
- 	list_del(&bridge->chain_node);
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 9254bca2813dc..df4dd6b7479e1 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1661,6 +1661,7 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 				     int len, int *skb_xdp)
+ {
+ 	struct page_frag *alloc_frag = &current->task_frag;
++	struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
+ 	struct bpf_prog *xdp_prog;
+ 	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+ 	char *buf;
+@@ -1700,6 +1701,7 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
  
--	DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
--		  bridge->of_node, encoder->name, ret);
-+	if (ret != -EPROBE_DEFER)
-+		DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
-+			  bridge->of_node, encoder->name, ret);
-+	else
-+		dev_err_probe(encoder->dev->dev, -EPROBE_DEFER,
-+			      "failed to attach bridge %pOF to encoder %s\n",
-+			      bridge->of_node, encoder->name);
+ 	local_bh_disable();
+ 	rcu_read_lock();
++	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
+ 	xdp_prog = rcu_dereference(tun->xdp_prog);
+ 	if (xdp_prog) {
+ 		struct xdp_buff xdp;
+@@ -1728,12 +1730,14 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 		pad = xdp.data - xdp.data_hard_start;
+ 		len = xdp.data_end - xdp.data;
+ 	}
++	bpf_net_ctx_clear(bpf_net_ctx);
+ 	rcu_read_unlock();
+ 	local_bh_enable();
  
- 	return ret;
- }
+ 	return __tun_build_skb(tfile, alloc_frag, buf, buflen, len, pad);
+ 
+ out:
++	bpf_net_ctx_clear(bpf_net_ctx);
+ 	rcu_read_unlock();
+ 	local_bh_enable();
+ 	return NULL;
+@@ -1914,20 +1918,24 @@ static ssize_t tun_get_user(struct tun_struct *tun, struct tun_file *tfile,
+ 	skb_record_rx_queue(skb, tfile->queue_index);
+ 
+ 	if (skb_xdp) {
++		struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
+ 		struct bpf_prog *xdp_prog;
+ 		int ret;
+ 
+ 		local_bh_disable();
+ 		rcu_read_lock();
++		bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
+ 		xdp_prog = rcu_dereference(tun->xdp_prog);
+ 		if (xdp_prog) {
+ 			ret = do_xdp_generic(xdp_prog, &skb);
+ 			if (ret != XDP_PASS) {
++				bpf_net_ctx_clear(bpf_net_ctx);
+ 				rcu_read_unlock();
+ 				local_bh_enable();
+ 				goto unlock_frags;
+ 			}
+ 		}
++		bpf_net_ctx_clear(bpf_net_ctx);
+ 		rcu_read_unlock();
+ 		local_bh_enable();
+ 	}
+@@ -2566,6 +2574,7 @@ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+ 
+ 	if (m->msg_controllen == sizeof(struct tun_msg_ctl) &&
+ 	    ctl && ctl->type == TUN_MSG_PTR) {
++		struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
+ 		struct tun_page tpage;
+ 		int n = ctl->num;
+ 		int flush = 0, queued = 0;
+@@ -2574,6 +2583,7 @@ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+ 
+ 		local_bh_disable();
+ 		rcu_read_lock();
++		bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
+ 
+ 		for (i = 0; i < n; i++) {
+ 			xdp = &((struct xdp_buff *)ctl->ptr)[i];
+@@ -2588,6 +2598,7 @@ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+ 		if (tfile->napi_enabled && queued > 0)
+ 			napi_schedule(&tfile->napi);
+ 
++		bpf_net_ctx_clear(bpf_net_ctx);
+ 		rcu_read_unlock();
+ 		local_bh_enable();
+ 
 -- 
-2.34.1
+2.45.2
 
 
