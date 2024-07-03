@@ -1,124 +1,136 @@
-Return-Path: <linux-kernel+bounces-239322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C01F925AE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:04:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B07925A3F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 143C929BE95
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:57:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4D241C2449F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C3F191F90;
-	Wed,  3 Jul 2024 10:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EF8185E68;
+	Wed,  3 Jul 2024 10:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="N55ptznV"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bv+mtDSc"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F03D186E5A;
-	Wed,  3 Jul 2024 10:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FB0174ED0
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 10:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720003648; cv=none; b=el4ItL3cIhDscWSgU/xC7rd+p5x1JZeKWEpH9LoW3WM9Kc9iF9CGGGCCpBIey4p6h+JrsZ1yd9H+wEnnwoSGr88s0OKE+l/5coXc2YXsgdpQXbo1bbuZ08jHTpcqjTCmugxWv6KXPYmFPJay8Yy+IHdhWqFijG5HtHuW8N2zyaU=
+	t=1720003621; cv=none; b=Pe2NCNy61ztxz7+jCt3uQUfjCztRjGkbbVm6qtBqWNnBFwzGASRHTzGZz1Zrr2zwEByZodsR4qoQzOA3zzeLJ7HBKTiaD0ccc083VEHdegx17/LE5D+JSK38LPWKBWAiEDSuuVxk003VdFsAT2z4B6TaIexBveiGigVmTb3AUQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720003648; c=relaxed/simple;
-	bh=z6CU+hempZ5xYvk+G+kTKKpEJcoRr3AqdbLe57dcww8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mUKO22ADIe5U4YVL7dDkvCOgwFhNKk6zD9tuLVE+eeraqq0YEam6sF7LZ9Nd/KsIhQY48S7lYnNdCik5j3aUJSucxLQoU13D+74PVqXKUCjjIOusF9hblbLxAwZq9g08CBQY20COnzJnGh4GqT2z0T/pGFJ29C2IN+hBqaPjdzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=N55ptznV; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1720003635;
-	bh=z6CU+hempZ5xYvk+G+kTKKpEJcoRr3AqdbLe57dcww8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N55ptznV6NMf8dsS9lPo4ylqBG0iMjE+exkEQn+mTqEvjlwGLrIAx9tMrZUBQnVjc
-	 mKpfkPS+zaLzWJlCMbJaC88DBrW/RZHfYXJ6WUpct/ckmCtskz9ouHglnhcPM1nL1z
-	 EeZG36f8oPy0cTEEcwSCCfrrA8H7qM+uLt8JJWYEbWhucad6ACGj2pKNgb/pknCx9S
-	 N+5tHIGq1qvzBJyyfYdEq7CzAZpYd5mQs1/9oeP80UzZsHnm5PFbJgWfE7VoY37hot
-	 QNWYCF/xRhIqejHV9ze13ku56PPj8/xF5IUuqOX2y57H5RjudgfP61f0CRUbKaoT7i
-	 b6LxXsGo7B4fA==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id 149C160078;
-	Wed,  3 Jul 2024 10:46:59 +0000 (UTC)
-Received: by x201s (Postfix, from userid 1000)
-	id 7416D20474A; Wed, 03 Jul 2024 10:46:33 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: netdev@vger.kernel.org
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	Davide Caratti <dcaratti@redhat.com>,
-	Ilya Maximets <i.maximets@ovn.org>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	David Ahern <dsahern@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	Ratheesh Kannoth <rkannoth@marvell.com>,
-	Florian Westphal <fw@strlen.de>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 9/9] flow_dissector: set encapsulation control flags for non-IP
-Date: Wed,  3 Jul 2024 10:45:58 +0000
-Message-ID: <20240703104600.455125-10-ast@fiberby.net>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240703104600.455125-1-ast@fiberby.net>
-References: <20240703104600.455125-1-ast@fiberby.net>
+	s=arc-20240116; t=1720003621; c=relaxed/simple;
+	bh=foPMIvvTPseXesFoCi3Y6Msx3NpMb+EdXsD3e3zHHT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SxGwsAERaepDofX8WD93bGpo1RxF8wsosnMRCxIUqEVscwJibtXiFZVWX8yczfOgDL9Vnn3/Z+XoosCCV9fqVu3nIbBDHM1nVzPhBNxEjvfCVBfFXJjwptP8VEcIGLZGABRY6vwm23Owa0JNcPoFPMMUOK4pKl40qctQENYCMTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bv+mtDSc; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52db11b1d31so7300664e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 03:46:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720003618; x=1720608418; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z6RqGX8VTMC710d07ZkPLdr6JCBvXddZZa+hWl6qD7c=;
+        b=Bv+mtDSc4VpJyl9o7hOA8LPvSe6ExZzmRTBwgM+K5p17KkSLGR7Xu2EnogWzZmxnjJ
+         SeSuN8ib18XT508IFxgEDgLdqHRTbCgt+h14MR0u8bvGVfrhVsHup1QTytsViZ4a4g9A
+         B7Vd7WcDZtfIxEWZ+8uOnXej6MxTJkXpcvEwKIEEfDXMl/DHekHAV76bIjoZ7PjwNqyh
+         PtV1M/Brnq7cUHOPflAfrUkppolTA2lwxslsR1PJqB2hlSnHpZhyjeet2CVAkKt2r4QW
+         tCOR9nddCLRIqQF5RUnhmvCPk0tz5Geor3AGQls+Sz1BUembO8Gu8RVbp9Vx7kdBhCld
+         MLBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720003618; x=1720608418;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z6RqGX8VTMC710d07ZkPLdr6JCBvXddZZa+hWl6qD7c=;
+        b=ILLcL2cneEOkAYFV9sf+vx9Rlq2GScPa/CtnnZ/WnlGnLYegoYctrMaz8pghWbpoID
+         L/RZnEoJ47jeOEBDe6bCxN4lSmTyYuxaEdn14EzwsEgoIJr8sOL/7cCZOnV7rwPQCCwW
+         gEpNAyyiXgRYmUK5UaSfA/mztNCdVfOwSQbEJcfGLzaucsBJsON9ZffhYRpIpHfs/wd7
+         Is3JTrZJ0IVt4ACNS815PtyJZwyEZCqmJDzrTY21F0cTCk0dgDFFMQJo+9YYxtoisU+x
+         5mwnU47bEnlpJ3zDzvvXsnjlTkM6xIFygUfJudgBKsZH89mFjH9QsJhoW1Zn6SVix5S1
+         6NjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTHxd2pS8xHhKP0C8H7uYF6hIoPJNyI/njZUuc2Dq8YNbm7xHAqpejkHE38bhwurM5MhTXxzDQXqWx6pmWd0bqKC2eDZwPmwchyTKV
+X-Gm-Message-State: AOJu0Yw4XLcwbzS5b8c3vpxAStOucS3vC8rKeiGg8zpL9QxbonJBV0yR
+	gAhNdtYlM3Fd1o3JFwNjU6/Pq0rAr0Hqb0xb3gTRfcl+QGyll+iQqiIdIxahn00=
+X-Google-Smtp-Source: AGHT+IEP56pHbP4DCZFL0TzwnwRKdgriFsrjpsNp9TvUXF81k3NcrKi5DJQNSBnNphOP/g4IRsep+w==
+X-Received: by 2002:a05:6512:6d2:b0:52c:84d1:180e with SMTP id 2adb3069b0e04-52e827344e4mr7597722e87.67.1720003616744;
+        Wed, 03 Jul 2024 03:46:56 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab3b263sm2093468e87.268.2024.07.03.03.46.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 03:46:56 -0700 (PDT)
+Date: Wed, 3 Jul 2024 13:46:54 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, angelogioacchino.delregno@collabora.com, 
+	andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com, 
+	ilia.lin@kernel.org, rafael@kernel.org, ulf.hansson@linaro.org, 
+	quic_sibis@quicinc.com, quic_rjendra@quicinc.com, quic_rohiagar@quicinc.com, 
+	abel.vesa@linaro.org, otto.pflueger@abscue.de, danila@jiaxyga.com, 
+	quic_ipkumar@quicinc.com, luca@z3ntu.xyz, stephan.gerhold@kernkonzept.com, nks@flawful.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 01/10] soc: qcom: cpr3: Fix 'acc_desc' usage
+Message-ID: <u4hzxnecdyow6h4vhddcp53tuxrqhbqu6cv4cznytihsyshzy4@lqxhsn3qvjbz>
+References: <20240703091651.2820236-1-quic_varada@quicinc.com>
+ <20240703091651.2820236-2-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703091651.2820236-2-quic_varada@quicinc.com>
 
-Make sure to set encapsulated control flags also for non-IP
-packets, such that it's possible to allow matching on e.g.
-TUNNEL_OAM on a geneve packet carrying a non-IP packet.
+On Wed, Jul 03, 2024 at 02:46:42PM GMT, Varadarajan Narayanan wrote:
+> cpr3 code assumes that 'acc_desc' is available for SoCs
+> implementing CPR version 4 or less. However, IPQ9574 SoC
+> implements CPRv4 without ACC. This causes NULL pointer accesses
+> resulting in crashes. Hence, check if 'acc_desc' is populated
+> before using it.
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v4: Undo the acc_desc validation in probe function as that could
+>     affect other SoC.
+> ---
+>  drivers/pmdomain/qcom/cpr3.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pmdomain/qcom/cpr3.c b/drivers/pmdomain/qcom/cpr3.c
+> index c7790a71e74f..6ceb7605f84d 100644
+> --- a/drivers/pmdomain/qcom/cpr3.c
+> +++ b/drivers/pmdomain/qcom/cpr3.c
+> @@ -2399,12 +2399,12 @@ static int cpr_pd_attach_dev(struct generic_pm_domain *domain,
+>  		if (ret)
+>  			goto exit;
+>  
+> -		if (acc_desc->config)
+> +		if (acc_desc && acc_desc->config)
+>  			regmap_multi_reg_write(drv->tcsr, acc_desc->config,
+>  					       acc_desc->num_regs_per_fuse);
+>  
+>  		/* Enable ACC if required */
+> -		if (acc_desc->enable_mask)
+> +		if (acc_desc && acc_desc->enable_mask)
+>  			regmap_update_bits(drv->tcsr, acc_desc->enable_reg,
+>  					   acc_desc->enable_mask,
+>  					   acc_desc->enable_mask);
 
-Suggested-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
----
- net/core/flow_dissector.c | 4 ++++
- net/sched/cls_flower.c    | 3 ++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+Should the same fix be applied to other places which access acc_desc?
+For example cpr_pre_voltage() and cpr_post_voltage() which call
+cpr_set_acc()?
 
-diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
-index 1a9ca129fddd..ada1e39b557e 100644
---- a/net/core/flow_dissector.c
-+++ b/net/core/flow_dissector.c
-@@ -434,6 +434,10 @@ skb_flow_dissect_tunnel_info(const struct sk_buff *skb,
- 			ipv6->dst = key->u.ipv6.dst;
- 		}
- 		break;
-+	default:
-+		skb_flow_dissect_set_enc_control(0, ctrl_flags, flow_dissector,
-+						 target_container);
-+		break;
- 	}
- 
- 	if (dissector_uses_key(flow_dissector, FLOW_DISSECTOR_KEY_ENC_KEYID)) {
-diff --git a/net/sched/cls_flower.c b/net/sched/cls_flower.c
-index 897d6b683cc6..38b2df387c1e 100644
---- a/net/sched/cls_flower.c
-+++ b/net/sched/cls_flower.c
-@@ -2199,7 +2199,8 @@ static void fl_init_dissector(struct flow_dissector *dissector,
- 	FL_KEY_SET_IF_MASKED(mask, keys, cnt,
- 			     FLOW_DISSECTOR_KEY_ENC_IPV6_ADDRS, enc_ipv6);
- 	if (FL_KEY_IS_MASKED(mask, enc_ipv4) ||
--	    FL_KEY_IS_MASKED(mask, enc_ipv6))
-+	    FL_KEY_IS_MASKED(mask, enc_ipv6) ||
-+	    FL_KEY_IS_MASKED(mask, enc_control))
- 		FL_KEY_SET(keys, cnt, FLOW_DISSECTOR_KEY_ENC_CONTROL,
- 			   enc_control);
- 	FL_KEY_SET_IF_MASKED(mask, keys, cnt,
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
