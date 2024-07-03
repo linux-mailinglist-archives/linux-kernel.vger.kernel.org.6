@@ -1,107 +1,107 @@
-Return-Path: <linux-kernel+bounces-239494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27169260E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:51:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D149260EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 14:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61C71B2791B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:51:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC2F7B237D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 12:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9C0178CF5;
-	Wed,  3 Jul 2024 12:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEC8178360;
+	Wed,  3 Jul 2024 12:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tUIWeMOF"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GtODGSCl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA8A17334F
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FD21E4A9
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 12:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720011079; cv=none; b=GDkJ/0X7et2XEcYQHDlf9tnbA+tEwov5XSv0GMCX/YiHrHTUzOfxpN6foln0qG/YcfNXrmrSi4yC+spKMoJGQdUhcGAhYpu62kket88D4hbzbm6FmjHOPOc7BEO8ahupJE0eHJnr2uE+tZR+k2JHwhJo3OXl7ba9ZqMbXfTrvTY=
+	t=1720011145; cv=none; b=bY1Uv2LxaNfbWeQFvEc55Tr1fTXn7B6b+HMm2Eb8pVZpsgbSx+1WoTd+3R9J5LSQaveGiaAPM/3c0ZPFXQxwsnimF0XygSfjNX0wrFVi/RJjSlx61TOhAwpzkTf++r/D++ZDGpAZa8QgDTvwuXRM0fM+8gxL9pzJ28ouHPjKkz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720011079; c=relaxed/simple;
-	bh=ZZVkBBnq2f3WMD6/iuDrxcJPNCrmNZnRew3n6wDwu7s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L6/QPKtQi7soy1YxJoGEr6ggua6sIkA6Gj4L72Vv7u40zonzSHyFkRJZf88bKqiSzkuhyZTr51bgg6hIVN4HxNrUnnfZIFjd8LJacR5YH9vkozjiVbf4G/XyZLRd3lwoeen4EA+192zCjHrEiFQNy2NTHxBYu8UW7fFX1P1hlqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tUIWeMOF; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e0365588ab8so4714842276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 05:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720011077; x=1720615877; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZZVkBBnq2f3WMD6/iuDrxcJPNCrmNZnRew3n6wDwu7s=;
-        b=tUIWeMOFUIgmXLDzOrCdgsQmOerepX6Dnfxfqm9IsRir9pGt2R+Q3hgOIuiDj4SHuk
-         djxH6Knc2tL4VhbRfYJAXQRGTS76g5zD9ILfTFEPOMLKY7gXaUz2C1FCE6A/no0EUwoH
-         JdgIG273Z29Dw/Ves2Rrb+pbSLEfnyuHm7qoNXYkVCO2z43mztOEBq2rVlbtGAJ7quE9
-         lCY/SC5UaUqxqOCrC0coJtjKmS8jH82kbLwr4p/TXrPjGXjNXHy+xSpeav2UfEKWKBXK
-         YeSZrwSajAUa92BJAuspUq563N1GwW4Y1PGkuWYYGMVBMVh1hqUtAqlnKtvs5q8Cvd/G
-         sDmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720011077; x=1720615877;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZZVkBBnq2f3WMD6/iuDrxcJPNCrmNZnRew3n6wDwu7s=;
-        b=tf3SQ2nBznPiAF/9YwXJ5ssvTCS55sSCHY9MNMNryR1RIG+CE9YMONRDVTrpDeyiSF
-         R9prf5xKY7UUsUpIoLpp9e9YS5WIAsUGVi38fPX9h63A0EfyRh1426kmPxAT2YUspxjP
-         7dhijwZiQzzQcqS2Cvi0coTFrwUuwv7x4NgnJN89zMWX9qsSI7lhmBgUPWXjU6fIVe30
-         ZD1Fk2RTPjRNgCyVe29dqDsD794j3KKw3JH95F4u1KvaXywAg3Km3+P0B6GwQ1FGVLpv
-         STY7WbdmotmKKuCmzE+4tbVNiYV1/pskIbyzpANh5aZ3UtM/CWC4vILJ7GtPNiEnm5rY
-         ybbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmdohw4ADNqo91VkHgbXfR2yF2jEpjAsaCCezaT2zCfXhv2TEv9JyOMCKZV/auELtemtKwBF6bZePLn2JZP4S+SYHckHoCux5H141r
-X-Gm-Message-State: AOJu0YxsOYp/DzZklqrjnBMMqJhUG5g3UITHILCsYmz9wunmoPdiqyqL
-	WaSt9iyMPxsn26inRhMF+rxw5szzkD+BswQLBlSWFWocVZ7o8eq74Tc2u43kpTUX/NX1tUrxW6v
-	IqZ1oYWZ4YyKjDKSa1IaVynS05xefEqjHFbAwHMEMmZ4QvQIF
-X-Google-Smtp-Source: AGHT+IECrd8bfdv0TCVTEGytAoZV0MmpC2JqwWFIdgBO3sCCPGjShflQOP9qVEN/9TFxAfVaWqkWmk0wLDZLlLAKfuA=
-X-Received: by 2002:a25:d692:0:b0:dfe:4ab9:1cc1 with SMTP id
- 3f1490d57ef6-e03712615e2mr10259122276.40.1720011076677; Wed, 03 Jul 2024
- 05:51:16 -0700 (PDT)
+	s=arc-20240116; t=1720011145; c=relaxed/simple;
+	bh=K3q9isDJCgc7PzYtHI2xjbHaQnN2noNAiXF7TE18c44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ddytOi5X7it+/bI0ccpjzUUiSMfADIKkhFy2do8oIPg7opP4688mFATQEmERkdLoUFJLI/rbq7sKj7ZCQJnhT5jAogMmq3JuMSRQxw4hwwQ0PSdjB8TxwsUgkwLMk3rRUjGy9TufYx+wvc2US8+bwV1WctDBNm62VqmOi5fBPDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GtODGSCl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A9ACC4AF0C;
+	Wed,  3 Jul 2024 12:52:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720011144;
+	bh=K3q9isDJCgc7PzYtHI2xjbHaQnN2noNAiXF7TE18c44=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GtODGSCl6ts7VPIhjJUbBmJbCZbek5MQIQFyZxlXsVvntrNYHdjM8mg5db19H2EMp
+	 rZ1MwuMUMKOkpdeLDgO2Ggv9C4s+LSNqXwKFBd3iKHbQ6aI0WQ6V/wGJ3+41HP925V
+	 Anj7/b+UJH6OC4UubcyXh2hzpB3TWIwejwdERfj7PfagDoZtjYgnO0GUfZfsBEQTMt
+	 Aw7pBoENHCDmP9VD3AydkM1FS/k7bi3f1Goo5TRU6CxPFSyG9w6gM4HqIK6HNM3COA
+	 72RKdC2sCNm3MduHokF1qNA2cfShZD1iMmcojh5sUbSFL7+rTk5lFSBurkviznBqsz
+	 O5YcCLtpz0TaA==
+Date: Wed, 3 Jul 2024 14:52:21 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [RFC PATCH 6/6] mm: Drain LRUs upon resume to userspace on
+ nohz_full CPUs
+Message-ID: <ZoVJhXcR26paUNhX@localhost.localdomain>
+References: <20240625135244.20227-1-frederic@kernel.org>
+ <20240625135244.20227-7-frederic@kernel.org>
+ <ZnrSEf1xuFxKxj1D@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627150610.469645-1-nm@ti.com>
-In-Reply-To: <20240627150610.469645-1-nm@ti.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 3 Jul 2024 14:51:04 +0200
-Message-ID: <CACRpkdaY4xK+yegDHjkUReRydc3oVLy00i73KDRasCwxkkpEGA@mail.gmail.com>
-Subject: Re: [PATCH V2] dt-bindings: pinctrl: pinctrl-single: Fix
- pinctrl-single,gpio-range description
-To: Nishanth Menon <nm@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZnrSEf1xuFxKxj1D@tiehlicka>
 
-On Thu, Jun 27, 2024 at 5:06=E2=80=AFPM Nishanth Menon <nm@ti.com> wrote:
+Le Tue, Jun 25, 2024 at 04:20:01PM +0200, Michal Hocko a écrit :
+> On Tue 25-06-24 15:52:44, Frederic Weisbecker wrote:
+> > LRUs can be drained through several ways. One of them may add disturbances
+> > to isolated workloads while queuing a work at any time to any target,
+> > whether running in nohz_full mode or not.
+> > 
+> > Prevent from that on isolated tasks with draining LRUs upon resuming to
+> > userspace using the isolated task work framework.
+> > 
+> > It's worth noting that this is inherently racy against
+> > lru_add_drain_all() remotely queueing the per CPU drain work and
+> > therefore it prevents from the undesired disturbance only
+> > *most of the time*.
+> 
+> Can we simply not schedule flushing on remote CPUs and leave that to the
+> "return to the userspace" path?
 
-> The binding is supposed to describe the properties of each element
-> of the pinctrl-single,gpio-range array entry, however when we use
-> "- items:" instead of "items:", it explicitly describes that there
-> is just a single entry in the array.
->
-> The pinctrl-single,gpio-range property should describe more than one
-> entry in the array. Fix the typo and adjust the alignment of the
-> description of the entries appropriately.
->
-> Fixes: 677a62482bd6 ("dt-bindings: pinctrl: Update pinctrl-single to use =
-yaml")
-> Signed-off-by: Nishanth Menon <nm@ti.com>
+Do you mean I should add a call on return to the userspace path or can
+I expect it to be drained at some point already?
 
-Patch applied!
+The other limitation with that task work thing is that if the task
+queueing the work actually goes to sleep and another task go on the CPU
+and does isolated work in userspace, the drain doesn't happen. Now whether
+that is a real problem or not, I have no idea.
 
-Yours,
-Linus Walleij
+> 
+> I do not think we rely on LRU cache flushing for correctness purposes anywhere.
+> 
+> Please also CC linux MM ML once the core infrastructure is agreed on.
+
+Ok, thanks.
+
+> -- 
+> Michal Hocko
+> SUSE Labs
 
