@@ -1,70 +1,94 @@
-Return-Path: <linux-kernel+bounces-239564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E02AB92622E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:49:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100E3926231
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E5641C21CEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:49:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFE821F2194B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B793C17967E;
-	Wed,  3 Jul 2024 13:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C747C17B417;
+	Wed,  3 Jul 2024 13:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qAny1NVD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4JW+mEh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D961DFEF
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 13:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBA33CF73;
+	Wed,  3 Jul 2024 13:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720014585; cv=none; b=SWGbL9u0JfqnnW2Q/5CPDFA9qS3lwZVIlFFGhBYh94YbN+QZ+RYo6J0CCNyIzTaDL5ttX1bQBUhD2RO9zF/TdlOSgAxrqZFNBy9KLU8aBWCiEAVax48xajan6q8FZFGlhwgwr3+6LQ2/axbVZzCmuTiwJMsHNObcck/l1FDJIBM=
+	t=1720014605; cv=none; b=ISUbD1Ies+S7vY1EZQiGa2KMRloCYccmDbNgbwlP0+39QBDUIIAgy52dXCmvibKf74mdl3kDzFcmssa1pn/n+ewTzl8/rfDO9/U9ufsB2zJQgf7tBOBtBW5zqxRKIHC3F8e/meJW4k8RJSSViLMWypDqVDI/8jJsb+lWDfj5p8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720014585; c=relaxed/simple;
-	bh=yfG1Lz4pK+dFCpKvqdy/MfVhi89WaI/JT6wPWZbrjio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TU08Wu0Mtb0b7yNLEzozS3O8g/5yPbDNMfEjmlPDTXL0jq34T+2IAwSKOt+x43Wxr1yip9Mtkkeq7QUg515rWPZAfKAt1Ewd9ww36XJpapP6i59hfurzgXTtGE5vsx9k1Rnl479k6eAT573w4dYbVCwOhQsotzpKla+GviAe7E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qAny1NVD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DF54C2BD10;
-	Wed,  3 Jul 2024 13:49:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720014584;
-	bh=yfG1Lz4pK+dFCpKvqdy/MfVhi89WaI/JT6wPWZbrjio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qAny1NVDiVk6k4k+5nDz7JeWl8lJj+1WO+okFW6MIT/RgQ7xwOgBmLn2PxU9yUK7e
-	 xg/jaXBZsZaKadOeErfbVeWm+Yd+dLKpV3QTX5mCGbM8bXDXEOeMyTsHZh8FAeq0cs
-	 +wjEqLcObJbgz9ge87IFELX75N1J71fJvr0XztJY=
-Date: Wed, 3 Jul 2024 15:49:38 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL] w1: drivers for v6.11
-Message-ID: <2024070331-output-unloaded-85dc@gregkh>
-References: <20240702071459.9436-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1720014605; c=relaxed/simple;
+	bh=TYYrulL72xGPd06hOb7IJr0N/E4cRIN0SurAKhyIFws=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=KD6B9UldyKrOMpih+wRZcV3DnhVLKkeH47V73jyftbXrKFQQ6l9UOliM+Vduk22DjlyPkeUvf8eo/B05egKL0TRhzADIi9tJKKT5HBVCVkidMs4v4JG75KNM+WWjrYoYrFvKlIcgor2F4FO8GWhbIHXNQlxFKCbE16tC2axuRwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4JW+mEh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35A84C3277B;
+	Wed,  3 Jul 2024 13:50:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720014604;
+	bh=TYYrulL72xGPd06hOb7IJr0N/E4cRIN0SurAKhyIFws=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=f4JW+mEh1o4xwRKF3EububZchS8cA7pxn/e6cLmXdaU9rYrDZ5pKULsdL+JoYsjJY
+	 4IQPAo+mJTpdbbFOaxlaoA9+MtP/qKThar2Igqy/936seBj/1rsre9Cl2MB5Y5a3uO
+	 aaSKCdH2HIEy5p1eHD2cF+Z+9ZL4aeOzyX0msMcE80nfYeCe94Uz61WQgk3AsG7AJW
+	 5yrBbLKSTe+VnxU2E9J4xy8WvSpcqs/4eUdup7ZI9wZc1FT3WJN/jWFJzgS0IohNgM
+	 zd/guBvUKpPnxXVARKa9SpStsABPK8N3OvQutf+Bq6evnmxfSCRWa+xIEMPDjqB/99
+	 aaZCQfTXx4O7w==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702071459.9436-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH wireless] wifi: wilc1000: fix ies_len type in connect path
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240701-wilc_fix_ies_data-v1-1-7486cbacf98a@bootlin.com>
+References: <20240701-wilc_fix_ies_data-v1-1-7486cbacf98a@bootlin.com>
+To: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Cc: linux-wireless@vger.kernel.org, Ajay Singh <ajay.kathat@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, Jozef Hopko <jozef.hopko@altana.com>,
+ =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172001460150.3313435.9699200902279507680.kvalo@kernel.org>
+Date: Wed,  3 Jul 2024 13:50:03 +0000 (UTC)
 
-On Tue, Jul 02, 2024 at 09:14:59AM +0200, Krzysztof Kozlowski wrote:
-> The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-> 
->   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-w1.git tags/w1-drv-6.11
-> 
+Alexis Lothoré <alexis.lothore@bootlin.com> wrote:
 
-Pulled and pushed out, thanks.
+> From: Jozef Hopko <jozef.hopko@altana.com>
+> 
+> Commit 205c50306acf ("wifi: wilc1000: fix RCU usage in connect path")
+> made sure that the IEs data was manipulated under the relevant RCU section.
+> Unfortunately, while doing so, the commit brought a faulty implicit cast
+> from int to u8 on the ies_len variable, making the parsing fail to be
+> performed correctly if the IEs block is larger than 255 bytes. This failure
+> can be observed with Access Points appending a lot of IEs TLVs in their
+> beacon frames (reproduced with a Pixel phone acting as an Access Point,
+> which brough 273 bytes of IE data in my testing environment).
+> 
+> Fix IEs parsing by removing this undesired implicit cast.
+> 
+> Fixes: 205c50306acf ("wifi: wilc1000: fix RCU usage in connect path")
+> Signed-off-by: Jozef Hopko <jozef.hopko@altana.com>
+> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+> Acked-by: Ajay Singh <ajay.kathat@microchip.com>
 
-greg k-h
+Patch applied to wireless.git, thanks.
+
+39ab8fff6230 wifi: wilc1000: fix ies_len type in connect path
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20240701-wilc_fix_ies_data-v1-1-7486cbacf98a@bootlin.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
 
