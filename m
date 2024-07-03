@@ -1,100 +1,130 @@
-Return-Path: <linux-kernel+bounces-238620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 822E7924CEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B58924CF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A381B22E6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:00:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7119B22A42
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BC32563;
-	Wed,  3 Jul 2024 01:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969C553A7;
+	Wed,  3 Jul 2024 01:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbWxUkCl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DO26YFnF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F911645;
-	Wed,  3 Jul 2024 01:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB734683;
+	Wed,  3 Jul 2024 01:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719968411; cv=none; b=e6BHIK3mrglmccmoNV/r6nLER1yNJVh3uFtb49dmzYeukdRIf746B4skd7BblbfKnK4bTQD356Hlrvn0SrEa9XRDywQW9xPLGodYi1HkYSeChE1V9xUndXPC8TTvlU1EunPIjSK+z85+PKFqa2m0gtxL8EbfG8l4A+byeQjZGKA=
+	t=1719968421; cv=none; b=QhC3OUav6N1jfkGFV9nm4in/y9hQwTlOqC28bMfalGW6lNvCLWXTZBGCLCYvjr7VxVpHMYXOOWMNhTzjkzrNdlsv5MY+VdjsTnv2je0XKd6c7YXVm9yQCbhWqVjECpgba+e0/koqePHetgIDfCRgq0AxHh+pRYkYNC1GgJWYUks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719968411; c=relaxed/simple;
-	bh=lFjYUrOF7VxhaDL6M2zQYg/d02i9zQFo7I3m20cFD2g=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=YRFQeBM1GU1umRXye8sy2U4koXrhFIHcC3YRptu15y8WPDo2gBYq5jfpjrgBqU3fRT9HnNiuevKsb7Q/Wz3C2jgdS0HnmbvtCNpVBizdmY6KlT0o4jlYnYBEjPTANgGGYgV3PSwUM42iurhhGqsXyd9wpv+5mcGjb7qH+0JUhEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbWxUkCl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41ECFC116B1;
-	Wed,  3 Jul 2024 01:00:09 +0000 (UTC)
+	s=arc-20240116; t=1719968421; c=relaxed/simple;
+	bh=v9a2giiEKnJ5XVS6wLgrehH9OKCuZrkXtBNVi2LQQ9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sD8BGRXI5xxSq43toWUG2XIy/HsDsnfTcvS+eorBSivvXlV7uZgYxxYfQSXDE+r8P/0+qPocFHFdUjfnpOnzlQReUu/SHuctGvVtJidLNglu/G0d/hWr/pV4hzQfZPZiZ03nSWi+CbNyYKKprDK8pUPq97p+o3PcuoP0aGI2TQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DO26YFnF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77E99C116B1;
+	Wed,  3 Jul 2024 01:00:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719968410;
-	bh=lFjYUrOF7VxhaDL6M2zQYg/d02i9zQFo7I3m20cFD2g=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=sbWxUkCl1dM3JNyZi5jytbVt6B9yMS0pJ63BT+ZfxKLVM0TZEqxdVEkQuONE+UJqB
-	 +uRxZpd/QyF2zzT1cENI36TkIi4EzZl/bLY1+9aHkuL/AH2wChOJF8GFj5kcVx2ypv
-	 2BFdkSJsMtxVBrVeWq8rDiLEzVlsUk9R58R/ih9N9wUFJUHD4bpPlmskwMSdNrsPbi
-	 +xBIj8tgmC6CdYB7ACpD73k4Ccm4k0DsdV/tT839nsKKxauxOTok+vnnlc8OHJPhDi
-	 NsMhjiQ1bckpSpKOcuacVAzaMdvroNnQsBiAoMcW8aIbhm5HI4rsEjwjzodp4UJyma
-	 slYJ9ruaQuP5A==
+	s=k20201202; t=1719968421;
+	bh=v9a2giiEKnJ5XVS6wLgrehH9OKCuZrkXtBNVi2LQQ9Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DO26YFnF9wBh74tR67gPrg2v8ZmxbBN+ni3IolIIsRvlGZc6uOulxvOSRKngFVnPp
+	 FsthxQy5KMcdT7wFVXdGjccRxxmmii7aJQvEOuw/B395d+ipSm0BnrO9JoKNtxgLod
+	 DErqeUGG7R0I2US28DVfx5P1ZcB7mY4twXsskdBrSW38K7XHQcYP+ddVLGT+zxGh+F
+	 pVuSuuOSmO4CWC/8MZgXqzNVEuqeqWS03kLbGD9g7AuBErfG3OsouZaxG2jVx8Qc5H
+	 U+h2Np1VWZW0cUfFFkqRXpXf8Q2HXQuUsYUTHo7cZoTx9uC9oGsLzX/t+4I6c1Y7ds
+	 PD1QerVrdxxZQ==
+Date: Tue, 2 Jul 2024 18:00:18 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: Re: [PATCH PATCH v2 8/9] x86/bugs: Declutter vulnerable CPU list
+Message-ID: <20240703010018.qov5lxldvou7fhhl@treble>
+References: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com>
+ <20240627-add-cpu-type-v2-8-f927bde83ad0@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Jul 2024 04:00:07 +0300
-Message-Id: <D2FHWYEXITS4.1GNXEB8V6KJM7@kernel.org>
-Cc: <naveen.n.rao@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
- <linux-integrity@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
- session support
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Jarkko Sakkinen"
- <jarkko.sakkinen@iki.fi>, "Stefan Berger" <stefanb@linux.ibm.com>, "Linux
- regressions mailing list" <regressions@lists.linux.dev>
-X-Mailer: aerc 0.17.0
-References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
- <9e167f3e-cd81-45ab-bd34-939f516b05a4@linux.ibm.com>
- <55e8331d-4682-40df-9a1b-8a08dc5f6409@leemhuis.info>
- <9f86a167074d9b522311715c567f1c19b88e3ad4.camel@kernel.org>
- <53d96a8b-26ef-46a3-9b68-3d791613e47c@linux.ibm.com>
- <D2EFNJTR80JS.1RW91OVY1UH1N@iki.fi>
- <e7db74a0-cd5c-4394-b87e-c31ea0861ea1@linux.ibm.com>
- <b7559dbb323d16fb334f8f8f35b8fda3fb6e481c.camel@iki.fi>
- <85f882ff079554c41a73d8ad4275072c5229f716.camel@iki.fi>
- <D2FHD82R8YAC.YBL9FAIVMBWL@iki.fi> <D2FHNOGO624G.HX2SKHYFXU4L@kernel.org>
-In-Reply-To: <D2FHNOGO624G.HX2SKHYFXU4L@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240627-add-cpu-type-v2-8-f927bde83ad0@linux.intel.com>
 
-On Wed Jul 3, 2024 at 3:48 AM EEST, Jarkko Sakkinen wrote:
-> On Wed Jul 3, 2024 at 3:34 AM EEST, Jarkko Sakkinen wrote:
-> > https://lore.kernel.org/linux-integrity/20240703003033.19057-1-jarkko@k=
-ernel.org/T/#u
-> >
-> > There's also bunch of other drivers than tpm_ibmvtpm so better
-> > to limit it to known good drivers.
-> >
-> > I can take at the actual issue in August and will review any
-> > possible patches then. This one I'll send after my current PR
-> > for TPM has been merged.
->
-> After this patch has been merged to mainline, you can send your change
-> as a feature patch for tpm_ibmvtpm and replace Kconfig line with
-> "depends on ... || TCG_IBMVTPM".
->
-> This zeros the risk other drivers than tpm_tis, tpm_crb and tpm_ibmvtpm,
-> and thus is the only possible solution that I'm willing to accept in
-> *fast phase*". I.e. the most conservative and guaranteed route, like
-> anyone with sane mind should really.
+On Thu, Jun 27, 2024 at 01:44:48PM -0700, Pawan Gupta wrote:
+> The affected processor table has a lot of repetition and redundant
+> information that can be omitted. For example:
+> 
+>   VULNBL_INTEL_STEPPINGS(INTEL_IVYBRIDGE,		X86_STEPPING_ANY,		SRBDS),
+> 
+> can easily be simplified to:
+> 
+>   VULNBL_INTEL(IVYBRIDGE,	SRBDS),
+> 
+> Apply this to all the entries in the affected processor table.
+> 
+> No functional change. Disassembly of arch/x86/kernel/cpu/common.o does not
+> show any difference before and after the change.
 
-Ouch, that won't obviously work so please ignore this! :-) Sorry.
-It really needs to be !TCG_IBMVTPM because otherwise TCG_TIS_CORE
-or TCG_CRB would leak the code over there.
+This patch only changes data, not code.  So there's not much point in
+diffing the disassembly ;-)
 
-BR, Jarkko
+A diff of the .init.rodata sections actually shows one (non-functional)
+difference in cpu_vuln_blacklist[].
+
+The COMETLAKE_L entries were moved to a new section below the rest of
+the entries:
+
+	/* Match more than Vendor/Family/Model */
+	VULNBL_INTEL_STEPPINGS(COMETLAKE_L,	X86_STEPPINGS(0x0, 0x0),	MMIO | RETBLEED),
+	VULNBL_INTEL	      (COMETLAKE_L,					MMIO | MMIO_SBDS | RETBLEED | GDS),
+
+While that's functionally correct, it breaks the visual sorting, which
+is confusing and even a bit dangerous.  One would reasonably expect the
+COMETLAKE_L entries to come immediately after COMETLAKE, so it would be
+quite possible for somebody to come along later and add a new
+COMETLAKE_L there which conflicts with the later entries.
+
+I'd much rather leave the STEPPINGS entry in the original list where it
+belongs.  Something like:
+
+	...
+	VULNBL_INTEL(ICELAKE_L,			MMIO | MMIO_SBDS | RETBLEED | GDS),
+	VULNBL_INTEL(ICELAKE_D,			MMIO | GDS),
+	VULNBL_INTEL(ICELAKE_X,			MMIO | GDS),
+	VULNBL_INTEL(COMETLAKE,			MMIO | MMIO_SBDS | RETBLEED | GDS),
+	VULNBL_INTEL_STEPPINGS(COMETLAKE_L,
+			       X86_STEPPINGS(0x0, 0x0),
+			       MMIO | RETBLEED),
+	VULNBL_INTEL(COMETLAKE_L,		MMIO | MMIO_SBDS | RETBLEED | GDS),
+	VULNBL_INTEL(TIGERLAKE_L,		GDS),
+	VULNBL_INTEL(TIGERLAKE,			GDS),
+	...
+
+Yes, that's a little ugly, but at least the sorting is correct so it's
+less confusing and more robust overall.
+
+-- 
+Josh
 
