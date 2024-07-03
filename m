@@ -1,69 +1,127 @@
-Return-Path: <linux-kernel+bounces-239727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77309926495
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:13:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078B69264A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229B91F242D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:13:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90547B246A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58903181B9F;
-	Wed,  3 Jul 2024 15:13:08 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FCD180A86;
-	Wed,  3 Jul 2024 15:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656BE180A64;
+	Wed,  3 Jul 2024 15:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="F/TChOj+"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84861DFD1;
+	Wed,  3 Jul 2024 15:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720019587; cv=none; b=HQWlftd8Nmo+NBNjA/ChMrJ5Ic7CKkn5mwOL21Rr9PS3wdDyAcxzLCh8HHJiaz6+KBxWljEeQ4/EEh0iMG5Q52q8TlVZPRZq+/IpBTOwcvn54Olr1OSjnhiHjUyUVDVV6dwsyMv51dE5tC6Jt6wg5qx8StyfiCTFnubFrcWJzs0=
+	t=1720019783; cv=none; b=QCrQnAtL7taaLT51SuIEakJLz3dgBg/p6XSk9YwdOIirtG2FlL4Lz8jc4hQj/t/YQAt1zNnsys5K0zIuunA6qGH4W5GwFGTozeufwRDTKD9Jn3SU/05i9AtkvhfFbkPF0E89C2E5T/BUYCgJGMrmGpDaQBj/DrgPBplI/+xTppw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720019587; c=relaxed/simple;
-	bh=jKTmlKxi/yn3cFG5v91xEFOOukpAGESCC2WZcF+oqLg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xvv11adozgLWpq7aiZsH+APDcfIx4gn79S0w/NFdWVRg27TQJX/LPju/9CkgkKaLmVTssjND3CARwWBiF3LqRctdcwk8d2C051E13GzIO42pE4oT9J/94ObJ0sCRYN1kLCMeYqZCU+LzdAoMi59gj7nemuPuKTgNuxQNHL1g7vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sP1eq-0000BL-00; Wed, 03 Jul 2024 17:12:32 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id D500DC031A; Wed,  3 Jul 2024 17:11:38 +0200 (CEST)
-Date: Wed, 3 Jul 2024 17:11:38 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Paul Burton <paulburton@kernel.org>, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/10] MIPS: smp: Implement IPI stats
-Message-ID: <ZoVqKlpQ5K+w3VDn@alpha.franken.de>
-References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com>
- <20240616-b4-mips-ipi-improvements-v1-5-e332687f1692@flygoat.com>
+	s=arc-20240116; t=1720019783; c=relaxed/simple;
+	bh=7FMn/uRg0zYfw3DQH1Sz/pojM+8pV3loh/mbtGw+Fm4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QVqWVMyoiDEcA9dukxUg9euNOnbedMXdXIyUxt50r/VAuGQM8Un6UiFSDWGNNQnTXLlcxSlJnlLwh8CfEJYwrooY6rHZU7LueR7Gsol1479wxL/YUVlq28d1FFVaKLx750QsMearbtFPEF/yDL/LnOc416J7j6TewIr9xmtU4vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=F/TChOj+; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=6Pvtr4CL3nBCwnXoyeyqTuDH9oRlsRjo2dtNGYFj5Ks=; t=1720019779; x=1720624579; 
+	b=F/TChOj+kldVL4qjJxBxCohEnwgii6ad0clG+V8T0KJKorBpRTV5RRik+zLk/d4F9/r06SwwejT
+	xUdBzw57lCxjrIGtqTor+cXOzVgKMxKPeP5QNqeqxZH9Lhccit9gGlPEB8HW/KZdp5y8zlhfBKrh7
+	XAceUqDm9rvmSXmIaj7d0cOFAfuJeu6y7D3g3aVkHxAJo5iFs+j4J42N1JF3bgzEfw/stgyEki6l8
+	DphxZNmBP6Ws4Dmv0kJ/UejncXX8nk42U1kfIxi2atuCUtXPiFb2JG5rIBMtCKQsq62PoyhM+JWWx
+	noXj8xwkCXpLb4HuJsrfS8T3WPQ8Ic7ytXMg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sP1eU-00000002G2P-0ZsP; Wed, 03 Jul 2024 17:12:10 +0200
+Received: from tmo-084-6.customers.d1-online.com ([80.187.84.6] helo=[172.20.10.3])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sP1eT-00000003lh1-3VTh; Wed, 03 Jul 2024 17:12:10 +0200
+Message-ID: <5473f57a21639724e6277c3e271fc46ea5f62ed3.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH] sh: push-switch: add missing MODULE_DESCRIPTION() macro
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Yoshinori Sato
+	 <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>
+Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Date: Wed, 03 Jul 2024 17:12:07 +0200
+In-Reply-To: <20240702-md-sh-arch-sh-drivers-v1-1-2c5d439a5479@quicinc.com>
+References: <20240702-md-sh-arch-sh-drivers-v1-1-2c5d439a5479@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240616-b4-mips-ipi-improvements-v1-5-e332687f1692@flygoat.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Sun, Jun 16, 2024 at 10:03:09PM +0100, Jiaxun Yang wrote:
-> Show IPI statistics in arch_show_interrupts as what RISC-V
-> did.
+Hi Jeff,
 
-it probably still does, but either this is usefull on it's own or
-we don't need it. IMHO it's useful, so drop the reference to RISC-V.
+On Tue, 2024-07-02 at 12:29 -0700, Jeff Johnson wrote:
+> With ARCH=3Dsh, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/sh/drivers/push-sw=
+itch.o
+>=20
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>=20
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> MODULE_DESCRIPTION copied from file prologue:
+> /*
+>  * Generic push-switch framework
+>  *
+>  * Copyright (C) 2006  Paul Mundt
+>  */
+> ---
+>  arch/sh/drivers/push-switch.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/sh/drivers/push-switch.c b/arch/sh/drivers/push-switch.=
+c
+> index 362e4860bf52..1dea43381b5a 100644
+> --- a/arch/sh/drivers/push-switch.c
+> +++ b/arch/sh/drivers/push-switch.c
+> @@ -131,4 +131,5 @@ module_exit(switch_exit);
+> =20
+>  MODULE_VERSION(DRV_VERSION);
+>  MODULE_AUTHOR("Paul Mundt");
+> +MODULE_DESCRIPTION("Generic push-switch framework");
+>  MODULE_LICENSE("GPL v2");
+>=20
+> ---
+> base-commit: 1dfe225e9af5bd3399a1dbc6a4df6a6041ff9c23
+> change-id: 20240702-md-sh-arch-sh-drivers-40af731eb66c
 
-Thomas.
+Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Thanks for fixing this. Will pick this up later this week.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
