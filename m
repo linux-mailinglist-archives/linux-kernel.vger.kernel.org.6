@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-238616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D58924CE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:52:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8CD924CE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C761F22537
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:52:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09F90281AE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D231DA313;
-	Wed,  3 Jul 2024 00:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927AF1FBA;
+	Wed,  3 Jul 2024 00:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/vvZ1hO"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwbF50Bc"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5C04683
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 00:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59003524C
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 00:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719967932; cv=none; b=RZQqflWQ31Vq5a1a9Pn0to3OP9TwvS+ZuxDJWBqNAo6F4NJBcW/w1dLQFfhJfP3Y0FtgtP85dkY07m6SlFE7E3cSMqtgN913lqBf2Epi3clJnB7SfldhKga79lRY91kB0ax4BxUt+ATlEvHx3SiGfemnQC208P6Xh/ASvbqiDoA=
+	t=1719967935; cv=none; b=cBwxw25yMPo7fjxLr3kEr9uExIBq1zRmQ3lG3aJmgtzzEGDL0SfcA1ZRWhp2CJkkZUHepz3LhIrHUFLR/oxHi/ISVIdAmiDU6rEbY7mdlZ+V3EcAH74L57WoMvNgVol/yGfuODFFgCQRSE7n5IJ77XiVmO3hA4mTezNWqKN5BFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719967932; c=relaxed/simple;
-	bh=SbJ5jH7HTCaPQ29C934mRKx80B8YiJkDdAkEVCksC+k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=I4LkVyRZNeB56LC57EJ7kgaItFnblYQomr2BCLHp3tgOIiBAXWZsXljbi8T3/q85YCdMSbrgmqxJK3PiMZAgrEnkVJMW2ba8ad4if/3MpEm62i7ff9etqGLkvMw+DomzHyy/NicJs/oErvs8EM/1ovpLoWsBk1pvZeNAi+whRNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/vvZ1hO; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1719967935; c=relaxed/simple;
+	bh=CWHs1RnZQWzXoqsf0MBy+IdSB7HhewCEIVGilfoyOcE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=RAtkhx1gS12gyPMQTWGJnI23F9FrkjYQuSHEoXjrAU+ybMwMVWK6paylIDD815JdlL7bgmJA8FoALf3MJCW6ZQSLNzov+LKEN5PkA6b6SUD+WnbSA/29HC/nv3sY9gVbWKuhwRzg/UWsm2FB6wA08Cd2L3oG+zQgX1F59SClTrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IwbF50Bc; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52e9380add2so1432699e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 17:52:09 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a72459d8d6aso490047566b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 17:52:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719967928; x=1720572728; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719967933; x=1720572733; darn=vger.kernel.org;
         h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=hlxAVPd+z/4aF6F4fWIjQzN+IGGbLzBgd/ODx938I10=;
-        b=T/vvZ1hO9W2njOKIJH8TAszQw3seHA2nXurf2KflDEw+jxoqNK/xLgc69j4dRPBfip
-         6OhpKLECqraaEwM0CFXvLVCdKbBfsDp0ltK9b6WnI63wcJfvz01y9wTitz7sJBTSZg9F
-         luFfreaaMBGxyPOcEDHuK6bffSjBuvrTCqHODkjG2qK9wNEzO2Mb8fNnE6IqjvDBcPR/
-         kJtrqcB1fBPSbSh40VJx6t8M5RZOU3zs50UoJGg00cuUsK7XpF4s33jk54rX2tycjxdE
-         RP84eao3Syic72RhGRsiHioB0jlNl2M2rVZlY6NyXZDOpQPYh9b/xz2FaeD9neBFUz3y
-         nQ0A==
+        bh=d1GfZdw5ohet6O1nYdwlJF2qI1saYkoy2VpOhi2t3L8=;
+        b=IwbF50BcVcAPyc0vWwAio3Bw5MCaMM+YEXhG04Rx4Nve2zZxXBFkq60/mWjZhaZiSX
+         Bo+s3IJpEuVxZKLKPppt0sm7mUUfR5u8hW2qh6Mi+Ubq1M/JiFr38LlCEaQ5pZiSU5GT
+         9FSQK4+m2OG4okS6DxC5b6LUgDnP5gWGjOOvxIGZqCEWaVQFQWxUNo+2cZCJxZfmwsD0
+         2XzkEFwZi6kKlncgJ00iFrwRlGulUlrf8JwC8YwB4qIhuUejsa3BVXhM26b8POC0Ovea
+         TJM/+UXJVUxyhGnOletpreJJjl+zXUEfPtQ/EW0EXljXmGLjWhSwIHftVf8WT+lBR7qq
+         sjEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719967928; x=1720572728;
+        d=1e100.net; s=20230601; t=1719967933; x=1720572733;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hlxAVPd+z/4aF6F4fWIjQzN+IGGbLzBgd/ODx938I10=;
-        b=YNorNm369G9wG8szqXC61ohGHgBowE7h5Hq5irwQpzNQ7WHI4atrZeB7rSrmCqwaKr
-         K8Kj0D0L/b4ApOWxWjZg7+2ha59ijT0uaSBcYBe8KW1OU1SAtRm1+MW/FXxeKAGecb/A
-         m1PGtcJdIAYpkOni9PMklC+zr69IzS7yEh4xCYxEorkn5pdX2Jbf5d9wFhRTOODpcu+a
-         ytoctHzPsMJL8a0X+Am+1npRsxh9oe/6/Azqz/PgbpNt1eLAesFeTs1VCTo/WuW9c+s7
-         CyH5YBt/sYfRN5avVGbJKs2tCN/57T/gxdRcHK5XIsR1k5QfftmXCKHr5NQFQoJ5PNgG
-         DsNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUunZundr6KrBuNYwxxlsDHBcyAKRKnEup2viFcnB0xrne/1iwYfOtI696V/Dx1+Kw9MWHpTPOdIzij2Fn83Ikt4rGkAQQMa4jrGMyw
-X-Gm-Message-State: AOJu0YwY7w8CyLsUsKUKF7nnj8v2m4pTP9eaxyZ7mVfiRz0+V1WieTli
-	QN+mfO0g4/mL20Zk3LAR7ezO1+UmYy30dU8r1zXZL6zbvaQiRWGV
-X-Google-Smtp-Source: AGHT+IFunxU3aCA2igMV0VDSihUIRl9wR+hXTq/LJHY8uSNSWMts/3OWUtAEdbp1a66ut6KDvzvC+A==
-X-Received: by 2002:a05:6512:b15:b0:52c:8b69:e039 with SMTP id 2adb3069b0e04-52e8264b68cmr9439738e87.4.1719967927546;
-        Tue, 02 Jul 2024 17:52:07 -0700 (PDT)
+        bh=d1GfZdw5ohet6O1nYdwlJF2qI1saYkoy2VpOhi2t3L8=;
+        b=s3/PmiWUpSEdAOdm3ewhcL3/QOzBwwcrygLgkNJWoTpl5q4B1imx2nQrNQA5DZnQ96
+         TRPXpay3KWmdg1ydn4qLIh+w+6QeIFCWmvwdW9ZEjAP1T0vDuzV39EqTWU3jTYXEfGcY
+         pVYVzSdoXfeeEvgMREC1uoyYbiJv6f3pIlBkwjlLVLSUpN6MpkxRf452eU8oe6CHa4wi
+         J98dECwPueAxbhkwsQcrS4wDcmKIAVivwe+GScPkETbPPIm3JBgs88/pFW3yBexLKqAU
+         Bm3VQwEfnjeP692fFcHTCV4ha2hZjMV4qJjciTcLHU7yIUcQOrb1lc8y07Txm34uDPgi
+         vB5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXGik+WedBtDZvM296i8YcdkTU91zfV/EnrczUubGv6ZSARQ/+ZkidTAiyHgg4p7uTAMJGOIk00mJqsCO5r/9hOulH25ifnsB8UzkJM
+X-Gm-Message-State: AOJu0YySDWFRQrNDwZgEzqipwY8E7SsOUAzNqeS5Dv1eiE7RcJz5HRb3
+	gm9Lc1C5cHrhbewpQRqzYeT0DR25euhZhX/eFZmH15wW5mOyFbg8JxmB7Tax
+X-Google-Smtp-Source: AGHT+IFzTtggPFUKEuWZNlmFKVoT2gXq/hU0dG2odaLvrlmUa7GEr2lbhlu4ZHmb/JS8vH4nQBsLkA==
+X-Received: by 2002:a17:906:e205:b0:a6f:e25d:f6a4 with SMTP id a640c23a62f3a-a75144b665dmr561697166b.76.1719967932668;
+        Tue, 02 Jul 2024 17:52:12 -0700 (PDT)
 Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a779bcb94a4sm36144666b.117.2024.07.02.17.52.06
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf1bc8esm464287666b.35.2024.07.02.17.52.11
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Jul 2024 17:52:06 -0700 (PDT)
+        Tue, 02 Jul 2024 17:52:12 -0700 (PDT)
 From: Wei Yang <richard.weiyang@gmail.com>
 To: rppt@kernel.org,
 	akpm@linux-foundation.org,
@@ -74,9 +74,9 @@ Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	david@redhat.com,
 	Wei Yang <richard.weiyang@gmail.com>
-Subject: [PATCH v3 2/3] kernel/fork.c: get totalram_pages from memblock to calculate max_threads
-Date: Wed,  3 Jul 2024 00:51:50 +0000
-Message-Id: <20240703005151.28712-2-richard.weiyang@gmail.com>
+Subject: [PATCH v3 3/3] kernel/fork.c: put set_max_threads()/task_struct_whitelist() in __init section
+Date: Wed,  3 Jul 2024 00:51:51 +0000
+Message-Id: <20240703005151.28712-3-richard.weiyang@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20240703005151.28712-1-richard.weiyang@gmail.com>
 References: <20240703005151.28712-1-richard.weiyang@gmail.com>
@@ -86,41 +86,39 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-Since we plan to move the accounting into __free_pages_core(),
-totalram_pages may not represent the total usable pages on system
-at this point when defer_init is enabled.
+Function set_max_threads()/task_struct_whitelist() is only used by
+fork_init() during bootup.
 
-Instead we can get the total estimated pages from memblock directly.
+Let's add __init tag to them.
 
 Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-CC: Mike Rapoport (IBM) <rppt@kernel.org>
-CC: David Hildenbrand <david@redhat.com>
-CC: Oleg Nesterov <oleg@redhat.com>
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
 ---
- kernel/fork.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/fork.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/fork.c b/kernel/fork.c
-index 99076dbe27d8..e80e889543f3 100644
+index e80e889543f3..da0b4545d380 100644
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -44,6 +44,7 @@
- #include <linux/fs.h>
- #include <linux/mm.h>
- #include <linux/mm_inline.h>
-+#include <linux/memblock.h>
- #include <linux/nsproxy.h>
- #include <linux/capability.h>
- #include <linux/cpu.h>
-@@ -999,7 +1000,7 @@ void __init __weak arch_task_cache_init(void) { }
- static void set_max_threads(unsigned int max_threads_suggested)
+@@ -997,7 +997,7 @@ void __init __weak arch_task_cache_init(void) { }
+ /*
+  * set_max_threads
+  */
+-static void set_max_threads(unsigned int max_threads_suggested)
++static void __init set_max_threads(unsigned int max_threads_suggested)
  {
  	u64 threads;
--	unsigned long nr_pages = totalram_pages();
-+	unsigned long nr_pages = memblock_estimated_nr_pages();
+ 	unsigned long nr_pages = memblock_estimated_nr_pages();
+@@ -1023,7 +1023,7 @@ static void set_max_threads(unsigned int max_threads_suggested)
+ int arch_task_struct_size __read_mostly;
+ #endif
  
- 	/*
- 	 * The number of threads shall be limited such that the thread
+-static void task_struct_whitelist(unsigned long *offset, unsigned long *size)
++static void __init task_struct_whitelist(unsigned long *offset, unsigned long *size)
+ {
+ 	/* Fetch thread_struct whitelist for the architecture. */
+ 	arch_thread_struct_whitelist(offset, size);
 -- 
 2.34.1
 
