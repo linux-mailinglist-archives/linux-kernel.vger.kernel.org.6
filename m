@@ -1,50 +1,80 @@
-Return-Path: <linux-kernel+bounces-238893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C439252DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:16:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2549252EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC351C23BBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:16:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E3E1C244D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CAA4CB2B;
-	Wed,  3 Jul 2024 05:16:24 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B650D5A4D5;
+	Wed,  3 Jul 2024 05:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uhVnfzsl"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC74C2C95;
-	Wed,  3 Jul 2024 05:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4047017C60;
+	Wed,  3 Jul 2024 05:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719983784; cv=none; b=g9+HKZvK5V61+fVvFV5/5bD7ZHdo9pVwBRaAseGZI9LxGGvpEbFqzpMjwc1X6BsGZE0/IA0GTp8EjHNeZi0uenvBCH+4ZUmLXDUb9ujgfuNX+AG9fu3+vNJjJUK1tuUGmIq1MPJfE6OLnoPNC4R+D+7bOG5I6ouY78uNesy0k7k=
+	t=1719984425; cv=none; b=pws6zvZOqJh4KYX3g0l4Dcv2RkEZ3Jh+ar36Q8P2M/1zW/koWC+Y7GVFITwrkPv18TyqTWkyO6lCt/GewD0ek5K7WuE+0Pxaqd31jPNy/KSEqiLwrDuMmPFv4Ju3FY0ovMDr5WadqoyzAA8RdvLy16t83L7RXIhP/pNGoSiLq6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719983784; c=relaxed/simple;
-	bh=zBM/OwFTXglD9n4ThuEV7Jg/PFbcp1z2kFMxyIINViY=;
+	s=arc-20240116; t=1719984425; c=relaxed/simple;
+	bh=mZHTDOjfNldNq9pm83st4/J9NEm34dK9p7Q7e6Vj96w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ow67PN11BS41GgdP3CaWMU6gN7Pr0EYE8p9TBgSrL1Wm5RrVfOpjA/0GUB+5CJUxRv3iN7XYDWCL5QT30oosDL4ZBknP6L0ZJZwWtXnee6S7lPYMd0NmRR51fhMTBB9jOgJeQyYs6C7rxo1aHJo6PAKW4zMnnGNsyG429RRcGk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 788DD227A87; Wed,  3 Jul 2024 07:16:16 +0200 (CEST)
-Date: Wed, 3 Jul 2024 07:16:16 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@lst.de>,
-	david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs >
- system page size
-Message-ID: <20240703051616.GA25052@lst.de>
-References: <20240625114420.719014-1-kernel@pankajraghav.com> <20240625114420.719014-7-kernel@pankajraghav.com> <20240702074203.GA29410@lst.de> <20240702101556.jdi5anyr3v5zngnv@quentin> <20240702120250.GA17373@lst.de> <20240702140123.emt2gz5kbigth2en@quentin> <20240702154216.GA1037@lst.de> <20240702161329.i4w6ipfs7jg5rpwx@quentin> <ZoQwKlYkI5oik32m@casper.infradead.org> <20240702171014.reknnw3smasylbtc@quentin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S+AMSGIkZEDfAuVaDdIv8/fvTD+KvvPZ2UtsUJE/bKyeBlQke/jOJ1UAo6kGs3a08VatfRtGzd/kvkvbU23X3rpXV1I19EW3GY2A9IW3fmZP4urOXXgqena0SBjt86hCAixUzgmC7JTvhnJvSfFzyqKFppe8xKqJwWqVV7ncd8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uhVnfzsl; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=B2QFWmmtnzG9/Nt7IO4g9fzoajf9ZPOHUxGkfqY/0Fk=; b=uhVnfzsl8Ss5ByDBA//ACjebHe
+	jorQN3OuDLkgxctOg56Sg6djOeDxfc7ypq0RjIwaSmmPFXDEUZ/TW5UWehQr/LfVoSlFkiaAC6pRA
+	WvgJeI4zFNwfDNZlzqcdkrJT9lGakvlV4LUKGqpz60aa64GQRq7tKAemE2ILOcCM62/kioq5QTKqv
+	xL2lvZFiMCrBvDaEoHNlgd2xoA3eHdmqrwffMGPTrPWwyP1HwbKBsmqlZP+Z0fNJWZhXRpK2wYiLL
+	aI/5wqPGpdtMm3LxwtISeJZIpmVQmcTBWUE5NDVOMGGK/Sm4+IAz+HiFlxcI8UJmYUzaxk/mGUo26
+	CAFHPolQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sOsW7-000000092xA-20k6;
+	Wed, 03 Jul 2024 05:26:55 +0000
+Date: Tue, 2 Jul 2024 22:26:55 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
+Message-ID: <ZoThH9fWsdzq7IXR@infradead.org>
+References: <ZoOuSxRlvEQ5rOqn@infradead.org>
+ <d91a29f0e600793917b73ac23175e02dafd56beb.camel@kernel.org>
+ <20240702101902.qcx73xgae2sqoso7@quack3>
+ <958080f6de517cf9d0a1994e3ca500f23599ca33.camel@kernel.org>
+ <ZoPs0TfTEktPaCHo@infradead.org>
+ <09ad82419eb78a2f81dda5dca9caae10663a2a19.camel@kernel.org>
+ <ZoPvR39vGeluD5T2@infradead.org>
+ <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
+ <ZoQY4jdTc5dHPGGG@infradead.org>
+ <4ec1fbdc6568e16da40f41789081805e764fd83e.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,24 +83,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240702171014.reknnw3smasylbtc@quentin>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <4ec1fbdc6568e16da40f41789081805e764fd83e.camel@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Jul 02, 2024 at 05:10:14PM +0000, Pankaj Raghav (Samsung) wrote:
-> > > Yes, I will rename it to ZERO_PAGE_SZ_64K as you suggested.
-> > 
-> > No.  It needs a symbolic name that doesn't include the actual size.
-> > Maybe ZERO_PAGE_IO_MAX.  Christoph suggested using SZ_64K to define
-> > it, not to include it in the name.
+On Tue, Jul 02, 2024 at 11:58:02AM -0400, Jeff Layton wrote:
+> Yeah, mostly. We shrink struct inode by 8 bytes with that patch, and we
+> (probably) get a better cache footprint, since i_version ends up in the
+> same cacheline as the ctime. That's really a separate issue though, so
+> I'm not too worked up about dropping that patch.
 > 
-> Initially I kept the name as ZERO_FSB_PAGE as it is used to do sub-block
-> zeroing. But I know John from Oracle is already working on using it for
-> rt extent zeroing. So I will just go with ZERO_PAGE_IO_MAX for now.
-> Understood about the SZ_64K part. Thanks for the clarification.
+> As a bonus, leaving it split across separate fields means that we can
+> use unused bits in the nsec field for the flag, so we don't need to
+> sacrifice any timestamp granularity either.
+> 
+> I've got a draft rework that does this that I'm testing now. Assuming
+> it works OK, I'll resend in a few days.
 
-IOMAP_ZERO_PAGE_SIZE ?
+So while shrinking the inodes sounds nice, the tradeoff to have to
+check all timestamps from disk / the server for validity doesn't
+sound as positive.  So I'm glade we're avoiding this at least for.
 
-(I kind regret not going for just adding zero page as originally
-suggested, but then we'd keep arguing about the nr_vecs sizing and
-naming :))
 
