@@ -1,69 +1,118 @@
-Return-Path: <linux-kernel+bounces-239052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB29925575
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:34:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E71E925578
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 10:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB28A285193
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:34:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EFE21F23A10
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F6813A402;
-	Wed,  3 Jul 2024 08:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590E213AA3B;
+	Wed,  3 Jul 2024 08:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aH+Uo8gY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=siemens.com header.i=ziegler.andreas@siemens.com header.b="L7L57DzH"
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFB94D584;
-	Wed,  3 Jul 2024 08:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709A713BAFA
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 08:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719995675; cv=none; b=nia1edO6XRKt/Rs/SrZo+03in0CtsQSwNkesfn5xIvy1XK9fewoQdUJ4RnOpzHS5thXnDBDCxzKRbD9qQyfXOGLJmbPzWDs73EUJDgaMAULG8P2UGd9/oy30af94rxXJlkFDAq/l/vr6/cXVShhiSafLM5796nsowDh06o/EM/U=
+	t=1719995718; cv=none; b=ZbRtlqBLGfNFiTAExr4pgj5UIYAgsVO/xCmQN1pQv1Zs1pi4DBBhagnZlLDfBALljNxMFR1i6Tg24Tv7GHJDYK9mwze41rByEMkF8VhK3B3jyJYUQDVUi8eSy5BPeMv0IfnsDKJfog/dGn2HlGeM/ZwE2B9sQeNYxVnn7m1NVrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719995675; c=relaxed/simple;
-	bh=w6xg1fyr7yWh81UufQwP4pvlK6VB04D0mXQfOGaYspQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R6BPkLQeWb2jNJWsnZFnfb3wkJ1RCyJeua8JCmmgaczVxzWzCgvVTnvptd/qvThpGv76IB4kdQkcsvdQZUUkvvcrI79SFaRMTWsQowaZLkR6fT9ePsk1BJiyUWV8Hm3eAh8ptCbK2ZXfD9xkQcUJFFUviW9U+WBn6Gk+cgPqqyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aH+Uo8gY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A9B1C2BD10;
-	Wed,  3 Jul 2024 08:34:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719995675;
-	bh=w6xg1fyr7yWh81UufQwP4pvlK6VB04D0mXQfOGaYspQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aH+Uo8gYQNBm85rnqkHTED/XB6kbeYQhUIlf8opLkg4ZhygWI4moPJXezmu3tgs+6
-	 tnkC/eBuqcisvQlSpKdS+v+1vSYU1nnx6k5mlnp8nOt5wxdVRHhKOI0qK7xasMLiZ7
-	 J4exc6yCxVat7oQWxkSkxvb7O9PCj+6T3j/S0nA2uieF94rEe+HFRs5EO04yDX88cx
-	 SGy8dHBBdzh3axPh8cgbuN2iSiA2o7Oy91Tn9Asta+bBRGnbEKVjHkXBRu2tKvERxQ
-	 yjJvJAj4Qj7GR9qukWqpEmSlSzI+otqOKpBtI05/x+PI6Zsb9cDJbbySwn3a1dmkfl
-	 2OE9Fw3FQHgZg==
-Date: Wed, 3 Jul 2024 10:34:29 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
-	Linux Memory Management List <linux-mm@kvack.org>, linux-kernel@vger.kernel.org, ying.huang@intel.com, 
-	feng.tang@intel.com, fengwei.yin@intel.com
-Subject: Re: [linux-next:master] [lockref]  d042dae6ad:  unixbench.throughput
- -33.7% regression
-Message-ID: <20240703-stornieren-achtmal-ea2fa1422bea@brauner>
-References: <202406270912.633e6c61-oliver.sang@intel.com>
- <lv7ykdnn2nrci3orajf7ev64afxqdw2d65bcpu2mfaqbkvv4ke@hzxat7utjnvx>
+	s=arc-20240116; t=1719995718; c=relaxed/simple;
+	bh=NE4mcokORx8nzprECoDhl/NIF8E+UJxpNKhON4U3ad0=;
+	h=From:Cc:Subject:Date:Message-Id:MIME-Version; b=o0ENqFfOdSJm6+AZgeKFHLGGKurKUUqwdJp4Pa/gQlgSxA20ymTDP3MKd1UU8do9WUY5wlcprpDQhUEhfGZRFpD00b+iY34DC1b15AxoGh5Jfo7fVcDPm47M7eReF2vw+dVpiK3fP5gsJ1a1+DAD4B+rfpGBBAme3DleYrz0eXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=ziegler.andreas@siemens.com header.b=L7L57DzH; arc=none smtp.client-ip=185.136.64.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20240703083506c2ff85faf35c490d4e
+        for <linux-kernel@vger.kernel.org>;
+        Wed, 03 Jul 2024 10:35:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=ziegler.andreas@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=UHaxMOTp3hJaKOa/viZsy6vWL1hwPuU7YOxyKbA6WLo=;
+ b=L7L57DzHFeX15AzeEnjrqgT42DUvRC/p9S2Wt105lRC9zUWApVFMGKLwDDl2BMZoIYXO3T
+ YLaSvtCOQEQ/j/sC4TahuaigGYGmhAaAUzxMw6TRZzNwK7UTBq31+8mjoKXB/ivJ7t4Sn3uY
+ dMq1/Ht87EY3QztB47sPLJmpNsZa4=;
+From: Andreas Ziegler <ziegler.andreas@siemens.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andreas Ziegler <ziegler.andreas@siemens.com>
+Subject: [PATCH] libbpf: add NULL checks to bpf_object__{prev_map,next_map}
+Date: Wed,  3 Jul 2024 10:34:36 +0200
+Message-Id: <20240703083436.505124-1-ziegler.andreas@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <lv7ykdnn2nrci3orajf7ev64afxqdw2d65bcpu2mfaqbkvv4ke@hzxat7utjnvx>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1326705:519-21489:flowmailer
 
-> 1. this patch should be dropped, I don't think there is a good
-> replacement either
+In the current state, an erroneous call to
+bpf_object__find_map_by_name(NULL, ...) leads to a segmentation fault
+through the following call chain:
 
-dropped
+bpf_object__find_map_by_name(obj = NULL, ...)
+-> bpf_object__for_each_map(pos, obj = NULL)
+-> bpf_object__next_map((obj = NULL), NULL)
+-> return (obj = NULL)->maps
+
+While calling bpf_object__find_map_by_name with obj = NULL is
+obviously incorrect, this should not lead to a segmentation
+fault but rather be handled gracefully.
+
+As __bpf_map__iter already handles this situation correctly,
+we can delegate the check for the regular case there and only
+add a check in case the prev or next parameter is NULL.
+
+Signed-off-by: Andreas Ziegler <ziegler.andreas@siemens.com>
+---
+ tools/lib/bpf/libbpf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 4a28fac4908a..30f121754d83 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -10375,7 +10375,7 @@ __bpf_map__iter(const struct bpf_map *m, const struct bpf_object *obj, int i)
+ struct bpf_map *
+ bpf_object__next_map(const struct bpf_object *obj, const struct bpf_map *prev)
+ {
+-	if (prev == NULL)
++	if (prev == NULL && obj != NULL)
+ 		return obj->maps;
+ 
+ 	return __bpf_map__iter(prev, obj, 1);
+@@ -10384,7 +10384,7 @@ bpf_object__next_map(const struct bpf_object *obj, const struct bpf_map *prev)
+ struct bpf_map *
+ bpf_object__prev_map(const struct bpf_object *obj, const struct bpf_map *next)
+ {
+-	if (next == NULL) {
++	if (next == NULL && obj != NULL) {
+ 		if (!obj->nr_maps)
+ 			return NULL;
+ 		return obj->maps + obj->nr_maps - 1;
+-- 
+2.39.2
+
 
