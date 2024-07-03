@@ -1,122 +1,116 @@
-Return-Path: <linux-kernel+bounces-239720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D195926484
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:11:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0EA926449
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890111C21424
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:11:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C0DF1C21866
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C0017FAB8;
-	Wed,  3 Jul 2024 15:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC1F17DE09;
+	Wed,  3 Jul 2024 15:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QctYtcqB"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="dQPIwRs2"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DE61DA319;
-	Wed,  3 Jul 2024 15:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECB717C21F;
+	Wed,  3 Jul 2024 15:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720019467; cv=none; b=Gh0Km+NDm3G6DG16BjoPfGj7NCIgXDq2D0JA+6UDvrONPhk4XHCm/sUm6LlDwtz8YZVy1BkFT/w9B/3UqF6lSLf5Hz1PaEICgBoPjZvLLFcrEiXipduQ26+t5AtdGD3ta88Y5cI4YgFTpHV1ziTJZbPqrBhau0uQ4mwHeu/0YG8=
+	t=1720019158; cv=none; b=adC/WdsG6WdjE/TLS+xB/d5D16H9AOx57oTY0D0WN2KTjAEg42I3B4dwP2h5GoZ1kU+x9B7o3ne8jS966fjN5bECgTtE6PdAI0SDZNb/gx4tgGE/5YqPek00rYYLaZCDAp3XgLzstZZ9zjiK0YO/mbj3VekQ6AAN7q4HZH0Dz/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720019467; c=relaxed/simple;
-	bh=3wjTP1DBKceOOiIIRZ+CtbjKJjvmYWz9hXD+GkONhlo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=G6G+R5c7NE25FndVIBgOc4IPngj3zYC1/N7yQ66Ok0Xu4hMvnLhF46g+w2n/dN9K3lpuhxo9HLB7USjZM8m+NBbUlc5oDHSFUuh5QmnsNA61hxC/TdcwRFp1peKFSyvhojOw2UvlHCj0lueJ5+jMuiDSEFocRVRxwzPAfoxPriM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QctYtcqB; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720019462; x=1720624262; i=markus.elfring@web.de;
-	bh=uzXyAXmbJBxGH6PQ3hVx3H9XYijhY9dW2zRghJjaRTI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=QctYtcqBAc9Z7SyNbdJh4kGMRJx+WhM3exw+AS54JsJAzzZq4gkRLIQRZBh/ZNdb
-	 uI6gZykd6BzQo4orusmIJM/tWoGmoNRyGzcDykFjb5lQkDAGkaqEFb+uHGM8dNrAn
-	 2BpIRCqL7Z3ZboCPKX+cMjk6Rrj/FmDtQFTZa38sM+nDycmzezFBDj3M4rzqdUoHG
-	 Nh4Aw7GxsMH7bQA4ZL3147x892CPOhKKfxjqf/XRsH4oy16Ht/dX7qjNmTsYqNy8/
-	 SORh5RcMOBzieCuU5x1d+X6LLZ+eEb02Pm6ZhTwTmDKZX0IygU7i8wz7JytqlfmHu
-	 gD1IPlNrNCu6L2bEIQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Ml46w-1rzp832BZM-00ekp4; Wed, 03
- Jul 2024 17:05:15 +0200
-Message-ID: <b0fe50c3-9279-4225-aad5-2869b335fe53@web.de>
-Date: Wed, 3 Jul 2024 17:05:14 +0200
+	s=arc-20240116; t=1720019158; c=relaxed/simple;
+	bh=B6sujYJQENgveO7tnjCvpEBvHp1f2ksX/jbI4qsbw3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=evDCUaIZLlgEubRbYL+OjQqt1LoSb+Fk1nMv+NN8a0Siz9pUKl0DIioamCJvb4UkrFlB7nNrIiXFYNLHDkgb3vFd3SA/FuR6+eHNSYfYaZMvvuy3kFLrU7tWKxNdolJQ7rXPyuiDc3NGIu6q6PsfgUyF0Fzvqaz6W+eQx5b2OJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=dQPIwRs2; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7541fad560so251192666b.0;
+        Wed, 03 Jul 2024 08:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1720019156; x=1720623956; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OUv04gNK+axs6Kwx3JUMSuV2/tPCNKiXFLMvPtB/z+s=;
+        b=dQPIwRs2isjSKGHHL2SnKitMtQZVraeh8YoUOfKUmB5Gvbp0y4OrYrsCyrTfabyEKK
+         6B/voeUT5ooNjn/23+iioVAYPLsVKQEzBU8+l3tKVyZyMDxHbKbaSET2RClBwfmKjQpy
+         74N7xS5XKa+HEI3bSqpsHPN+wjxUBB7D46E4jlrtwbSBl4XQghkVSuYVwMvfw+PL2Ybd
+         5wyU0iV6xRJu5JeNA8YFsxIiGKRFrSKJ9R8Qp4ggvz2aouH59OU9Xf3+DoGnhyJcs7Lp
+         IrsEI9M9c///R5dKETftl0dGgeQpBsXRnaSbb6YUfTOBV1LOUWhtGkRNxatDdmovZthQ
+         VgKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720019156; x=1720623956;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OUv04gNK+axs6Kwx3JUMSuV2/tPCNKiXFLMvPtB/z+s=;
+        b=FnRblQKXvrTqYBjqzX8wh7xIT6zped6nAaPnfXt59WN3aKSENoVRHdVp+Vw77egY2a
+         W6YcPgiC0vN1mdt+zWrKrPH6A4lewQc5gC/2ibm+Ybxj32VJwf9uzKD4y9JhpPO/dcSR
+         HT9IRdTOMgbC+4Q3XGVwiaUdytlLWT2HEUJI1VBRiHGZlo2zE1RyWLVsGQYpQOzP9zyU
+         V5w42ous3NmASPjJ353rD+IacU8t0NWsD2A4s3X+VfVaekVQLSAAgI6EP+c+uhnwdvnr
+         9VGZ0xK/yipsyTSVbm/07iBNaZjvwnidCY0QFPLy3QT8Qgkx7CyQcXHXKzNzlAoxpbjf
+         Vj1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUsBBwC7c2BTEAPL4eWkm6L/lrU/cSbLjoyUoRTpN1F5ZsRwtIBBB9JGGAVMkWfGm9yFGfX1SsCd4QbwLfnIbBr62x07GxeIk1r2xWkh0HK10zBVl8Cogp93ySbpp9I2itz9ZD1
+X-Gm-Message-State: AOJu0YyMm1v3QPNQbOIQJqgQILICPEQgl9j8uwkFl00eKK70iVEjcrja
+	H4QW81iD3SuWU/PJywZQfGidpYH2S7hnGl/OiEIivKRk4Rm/Lk4=
+X-Google-Smtp-Source: AGHT+IHpMD6EDrrI/Wl0zM/QLJIENWXXXmfuMXLQ3fiJHPvoOk3BXQjywm+JvONRLzyxl9UjFiF7hQ==
+X-Received: by 2002:a17:906:f88f:b0:a6f:e19:6fb2 with SMTP id a640c23a62f3a-a751443ba6fmr814949866b.29.1720019155086;
+        Wed, 03 Jul 2024 08:05:55 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4597.dip0.t-ipconnect.de. [91.43.69.151])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf63dfbsm513147866b.84.2024.07.03.08.05.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 08:05:54 -0700 (PDT)
+Message-ID: <e6c07abb-d202-4851-9e33-265e3ab51dc6@googlemail.com>
+Date: Wed, 3 Jul 2024 17:05:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Haoxiang Li <make24@iscas.ac.cn>, linux-hyperv@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Andrea Parri <parri.andrea@gmail.com>,
- Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>, Michael Kelley
- <mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240703084221.12057-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v2] drivers: hv: vmbus: Add missing check for dma_set_mask
- in vmbus_device_register()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240703084221.12057-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:YV8ws4IVXhh8faxR3kOPPdm6RfB/oTFu1GWuLpn3YbmM6sIdPrS
- kdcANEgP8Z3mzIkApf8ZC6F+eE8H9zgChVOZllxO5YZyDBJz7IvNo2qG7WZgbV1FEo/YUZx
- En6C+uRQWZKf47+Fgyqh7vgGCu8V+2e07I/2hNOm/g7UJknTRyTAscOnJG+1QSKMHoQuMxQ
- DH1aX6qwRzRq7oCWtKbTQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:njd83SA+1ts=;J++nmAq9qfV+/27rRiJIp7+2skC
- ie7foP98eRndAw9gUKDk3/WRDjb7nlNxefeJLjVZakxQyUUScjeabFmhN8y4YEBlfvqIgbiEp
- KPWTpuOYnD1/EArT0dYcenbLcWv8sjapAypkUOzyrxC0QVk8ZbCdWezbK+K3EG8tr3FwuenQY
- 14CLBPN7IlmhOa041iu7KW047zdTuG7NZalH5csWhpX91GuZkFKQhoNPVoW9waBQjaTzb4nyu
- jq0XJWtMdN/q2F+1s9EEspSgpqSK4oZHxx/aPGq9M0W8698cglHJV/fDkbyOlM1z5p3iA1Onv
- EBXX9y1GZmE5yXOeKicPzEFGDr3eDiBdMHQ6rcMmHxB8xpxGHcNAXdWdFokSE++jZpiojWzxB
- GxJGttL9jCv4COvG0PK1y9hnTdUH+mi5gGnAAgVaNwoJJv1mvSNjegmgMWksRHTaTfgdroxs4
- 5b4rXt8zBwhOjCvuOHu6EM8wx+OrhviaufEY1AvOryfnqreFIGN8soeaGvfTBZJ49QILoD7/c
- T6L8/W3jHqlL5B5dmouUk+y2n23JwdfzzHX85AstyF7nmQu42rrPNpAhHhg0Tvd95MVk/Ahop
- 2lpP24KXemslIloJjLqPwNKLog79crjZKVDIzkv4XvJKTT+AugA6t8DHZ6umkOV1AxCPArWpD
- qTpuH5iw5d7GEm28JtTW92Nf45Uo9nQM7gUWvuLg0JWe9rRe1edMIih5ViQ1cn/ppS9kB1hXK
- m6M+gTkoCrKx4wGSHv1lMaGB0POF22yFUY3SV5G+tTigD7oq7InFz3Bfm5v54I6/9cDoeh5Y/
- tbSYpyOkwHymqUMLqwj/jpnEGADY4DBwejG2RmYLuqliQ=
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 000/163] 6.6.37-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240702170233.048122282@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240702170233.048122282@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> child_device_obj->device cannot perform DMA properly if dma_set_mask()
-> returns non-zero. =E2=80=A6
+Am 02.07.2024 um 19:01 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.37 release.
+> There are 163 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Can the repetition of another wording suggestion influence the software ev=
-olution?
-  Direct memory access can not be properly performed any more
-  after a dma_set_mask() call failed.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-See also:
-https://elixir.bootlin.com/linux/v6.10-rc6/source/kernel/dma/mapping.c#L80=
-4
+Beste Grüße,
+Peter Schneider
 
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-=E2=80=A6
-> Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
-
-Under which circumstances will applications of the Developer's Certificate=
- of Origin
-be reconsidered any more (after three different names were presented so fa=
-r)?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
-
-
-Would you like to append parentheses to another function name in the summa=
-ry phrase?
-
-Regards,
-Markus
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
