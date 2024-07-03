@@ -1,174 +1,112 @@
-Return-Path: <linux-kernel+bounces-238681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CE5924DC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:26:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68348924DC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42C881C24AC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:25:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6CB1C2293E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 02:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6794C7D;
-	Wed,  3 Jul 2024 02:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="YUBBLpfv"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DCE804;
-	Wed,  3 Jul 2024 02:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35CF1DA33C;
+	Wed,  3 Jul 2024 02:24:00 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6D89454
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 02:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719973553; cv=none; b=XKM4klaavelslldiKFT43XI1OOgUFQy5SaoofB1FV8TYdwl5Sd8nWlGHfg4PvRGMa1qrntFOzfcnYrQ4LwzgTlqtN6cBmxfgtCuK/ek+2QA/ETzHYv7M0mj0bl2JKIIHM5wQQsRbioxsrp8gYX6258WbzdCiOyW8t16/QJQYrvk=
+	t=1719973440; cv=none; b=m8lCHrDy8FZfnYc7qbz8hilRnd5rEdFWgc9bDdcf7RfLlvMGcl0VoDiFydq7Ur04qfG2VuMOe0OFrBb7kv66gc2pSoX9T2uoRLiUFpf6vO3Izyj92WvV8bEtVNOqxbahgsVB5lEVWU0CL6QZxfSpi58ak8VOAwn/qSkCVKz4dYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719973553; c=relaxed/simple;
-	bh=NIC4+zzXAcMknIK839GaO1Pnsj+/FEFhJBJAaRMhZ34=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=T3+1IvzqbkzrK7ylzJ+PDLV+zAwexHk8POJM8ZPbR5IFWLTRSvhKfSpTjc1y74C+TP6EG1by5mv5QIIjfLepCb8xtfudAB2C6AmGqVX8g5GeeWfhX11FzyJpzsKy4GITLX+KjjyTJ7Shj7fqcGL8ocuobQynOuQBY7ICHssZUbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=YUBBLpfv reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=TuXAX6mesYwBxRv3gpxfoJNpaDe0ZpZu9qJ5JleIgdQ=; b=Y
-	UBBLpfvvgufoBe6QS7K8BZOCslheVuQqvkoHMxKoCDWBvYjxh2/EwcCAGDR33a4k
-	+JmqafhcT2T721C1qpwCT0lE93XQzv54Oy8AR9RV1mdnT3htVNL9gZs110n6UVVl
-	BTplSm+vk+r33JhvCjhlQsY0el8yxKjm0T6Ag9mFgA=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-123 (Coremail) ; Wed, 3 Jul 2024 10:25:03 +0800 (CST)
-Date: Wed, 3 Jul 2024 10:25:03 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Johan Jonker" <jbx6244@gmail.com>
-Cc: heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	lgirdwood@gmail.com, broonie@kernel.org, linux-sound@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re:[PATCH v8] drm/rockchip: rk3066_hdmi: add sound support
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <3bd738a7-379f-4b93-befd-e6ee96e802b5@gmail.com>
-References: <3bd738a7-379f-4b93-befd-e6ee96e802b5@gmail.com>
-X-NTES-SC: AL_Qu2aC/WcvE0r5SWaYOkZnEobh+Y5UcK2s/ki2YFXN5k0kSTM2CsGV3pJPWHq0MiGMx+BtR2MXSdi8+RXe4lDeY3TwUXZNzNGNNC3JiG174yH
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1719973440; c=relaxed/simple;
+	bh=uHUNtsPWp3XTzToO0P+8INuIbRELTA3kuv716G7A6Ik=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Eg716DMOT2HjaicP9Bdd6fOT7s3+uS0OC55xbpON7YJ/32BQDHzhvAB/gk1dFYeoIKkiC9CreK+afKknJGS+sveDccgvPabtHYGFJahxAF7jhXt0R63tXiae5PjuELmpJ9JBHbpL87oyTfm6K/VquCLMkiMFKMDChxXrPHdjJrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WDNlp1QHqzQk5P;
+	Wed,  3 Jul 2024 10:20:06 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id EB695180A9C;
+	Wed,  3 Jul 2024 10:23:53 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
+ (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 3 Jul
+ 2024 10:23:53 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<samuel.holland@sifive.com>, <tglx@linutronix.de>,
+	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [RFC PATCH] riscv: Enable generic CPU vulnerabilites support
+Date: Wed, 3 Jul 2024 10:27:32 +0800
+Message-ID: <20240703022732.2068316-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7ff02f5.26b3.1907668e229.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3319_toRm3JwYAA--.32470W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMwcRXmXAmOsbugACsO
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-CkhpIEpvaGFu77yMCgpBdCAyMDI0LTA3LTAzIDAyOjIzOjI0LCAiSm9oYW4gSm9ua2VyIiA8amJ4
-NjI0NEBnbWFpbC5jb20+IHdyb3RlOgo+QWRkIHNvdW5kIHN1cHBvcnQgdG8gdGhlIFJLMzA2NiBI
-RE1JIGRyaXZlci4KPlRoZSBIRE1JIFRYIGF1ZGlvIHNvdXJjZSBpcyBjb25uZWN0ZWQgdG8gSTJT
-XzhDSC4KPgo+U2lnbmVkLW9mZi1ieTogWmhlbmcgWWFuZyA8emhlbmd5YW5nQHJvY2stY2hpcHMu
-Y29tPgo+U2lnbmVkLW9mZi1ieTogSm9oYW4gSm9ua2VyIDxqYng2MjQ0QGdtYWlsLmNvbT4KPi0t
-LQo+Cj5DaGFuZ2VkIFY4Ogo+ICByZXR1cm4gLUVQUk9CRV9ERUZFUiBhcyBlYXJseSBhcyBwb3Nz
-aWJsZQo+ICBtb3ZlIHJrMzA2Nl9oZG1pX2F1ZGlvX2NvZGVjX2luaXQoKSBmdW5jdGlvbiBhZnRl
-ciByazMwNjZfaGRtaV9yZWdpc3RlcigpCj4gIHJlc3R5bGUKPgo+Q2hhbmdlZCBWNzoKPiAgcmVi
-YXNlCj4tLS0KPiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvS2NvbmZpZyAgICAgICB8ICAgMiAr
-Cj4gZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JrMzA2Nl9oZG1pLmMgfCAyOTYgKysrKysrKysr
-KysrKysrKysrKysrKystLQo+IDIgZmlsZXMgY2hhbmdlZCwgMjgzIGluc2VydGlvbnMoKyksIDE1
-IGRlbGV0aW9ucygtKQo+Cj5kaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL0tj
-b25maWcgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvS2NvbmZpZwo+aW5kZXggMWJmM2UyODI5
-Y2QwLi5hMzJlZTU1ODQwOGMgMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
-S2NvbmZpZwo+KysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL0tjb25maWcKPkBAIC0xMDIs
-NiArMTAyLDggQEAgY29uZmlnIFJPQ0tDSElQX1JHQgo+IGNvbmZpZyBST0NLQ0hJUF9SSzMwNjZf
-SERNSQo+IAlib29sICJSb2NrY2hpcCBzcGVjaWZpYyBleHRlbnNpb25zIGZvciBSSzMwNjYgSERN
-SSIKPiAJZGVwZW5kcyBvbiBEUk1fUk9DS0NISVAKPisJc2VsZWN0IFNORF9TT0NfSERNSV9DT0RF
-QyBpZiBTTkRfU09DCj4rCXNlbGVjdCBTTkRfU09DX1JPQ0tDSElQX0kyUyBpZiBTTkRfU09DCj4g
-CWhlbHAKPiAJICBUaGlzIHNlbGVjdHMgc3VwcG9ydCBmb3IgUm9ja2NoaXAgU29DIHNwZWNpZmlj
-IGV4dGVuc2lvbnMKPiAJICBmb3IgdGhlIFJLMzA2NiBIRE1JIGRyaXZlci4gSWYgeW91IHdhbnQg
-dG8gZW5hYmxlCj5kaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JrMzA2Nl9o
-ZG1pLmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcmszMDY2X2hkbWkuYwo+aW5kZXggNzg0
-ZGU5OTBkYTFiLi4yOTYwOTRhM2M0MDUgMTAwNjQ0Cj4tLS0gYS9kcml2ZXIKCi4uLi4uCgprMzA2
-Nl9oZG1pICpoZG1pLCBzdHJ1Y3QgZGV2aWNlICpkZXYpCj4rewo+KwlzdHJ1Y3QgaGRtaV9jb2Rl
-Y19wZGF0YSBjb2RlY19kYXRhID0gewo+KwkJLmkycyA9IDEsCj4rCQkub3BzID0gJmF1ZGlvX2Nv
-ZGVjX29wcywKPisJCS5tYXhfaTJzX2NoYW5uZWxzID0gOCwKPisJfTsKPisKPisJaGRtaS0+YXVk
-aW8uY2hhbm5lbHMgPSAyOwo+KwloZG1pLT5hdWRpby5zYW1wbGVfcmF0ZSA9IDQ4MDAwOwo+Kwlo
-ZG1pLT5hdWRpby5zYW1wbGVfd2lkdGggPSAxNjsKPisJaGRtaS0+YXVkaW9fZW5hYmxlID0gZmFs
-c2U7Cj4rCWhkbWktPmF1ZGlvX3BkZXYgPQo+KwkJcGxhdGZvcm1fZGV2aWNlX3JlZ2lzdGVyX2Rh
-dGEoZGV2LAo+KwkJCQkJICAgICAgSERNSV9DT0RFQ19EUlZfTkFNRSwKPisJCQkJCSAgICAgIFBM
-QVRGT1JNX0RFVklEX05PTkUsCj4rCQkJCQkgICAgICAmY29kZWNfZGF0YSwKPisJCQkJCSAgICAg
-IHNpemVvZihjb2RlY19kYXRhKSk7Cj4rCj4rCXJldHVybiBQVFJfRVJSX09SX1pFUk8oaGRtaS0+
-YXVkaW9fcGRldik7Cj4rfQo+Kwo+K3N0YXRpYyBpbnQgcmszMDY2X2hkbWlfcmVnaXN0ZXIoc3Ry
-dWN0IGRybV9kZXZpY2UgKmRybSwgc3RydWN0IHJrMzA2Nl9oZG1pICpoZG1pKQo+K3sKPisJc3Ry
-dWN0IGRybV9lbmNvZGVyICplbmNvZGVyID0gJmhkbWktPmVuY29kZXIuZW5jb2RlcjsKPgo+IAlk
-cm1fZW5jb2Rlcl9oZWxwZXJfYWRkKGVuY29kZXIsICZyazMwNjZfaGRtaV9lbmNvZGVyX2hlbHBl
-cl9mdW5jcyk7Cj4gCWRybV9zaW1wbGVfZW5jb2Rlcl9pbml0KGRybSwgZW5jb2RlciwgRFJNX01P
-REVfRU5DT0RFUl9UTURTKTsKPkBAIC03NDAsNiArOTg4LDcgQEAgc3RhdGljIGludCByazMwNjZf
-aGRtaV9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAo+IHsK
-PiAJc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiA9IHRvX3BsYXRmb3JtX2RldmljZShkZXYp
-Owo+IAlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gZGF0YTsKPisJc3RydWN0IGRybV9lbmNvZGVy
-ICplbmNvZGVyOwo+IAlzdHJ1Y3QgcmszMDY2X2hkbWkgKmhkbWk7Cj4gCWludCBpcnE7Cj4gCWlu
-dCByZXQ7Cj5AQCAtNzQ4LDggKzk5NywyMSBAQCBzdGF0aWMgaW50IHJrMzA2Nl9oZG1pX2JpbmQo
-c3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCj4gCWlmICghaGRtaSkK
-PiAJCXJldHVybiAtRU5PTUVNOwo+Cj4rCWVuY29kZXIgPSAmaGRtaS0+ZW5jb2Rlci5lbmNvZGVy
-Owo+Kwo+KwllbmNvZGVyLT5wb3NzaWJsZV9jcnRjcyA9Cj4rCQlkcm1fb2ZfZmluZF9wb3NzaWJs
-ZV9jcnRjcyhkcm0sIGRldi0+b2Zfbm9kZSk7Cj4rCj4rCS8qCj4rCSAqIElmIHdlIGZhaWxlZCB0
-byBmaW5kIHRoZSBDUlRDKHMpIHdoaWNoIHRoaXMgZW5jb2RlciBpcwo+KwkgKiBzdXBwb3NlZCB0
-byBiZSBjb25uZWN0ZWQgdG8sIGl0J3MgYmVjYXVzZSB0aGUgQ1JUQyBoYXMKPisJICogbm90IGJl
-ZW4gcmVnaXN0ZXJlZCB5ZXQuICBEZWZlciBwcm9iaW5nLCBhbmQgaG9wZSB0aGF0Cj4rCSAqIHRo
-ZSByZXF1aXJlZCBDUlRDIGlzIGFkZGVkIGxhdGVyLgo+KwkgKi8KPisJaWYgKGVuY29kZXItPnBv
-c3NpYmxlX2NydGNzID09IDApCj4rCQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsKPisKCgoKCgoKTW92
-ZSAgRVBST0JFX0RFRkVSIGVhcmx5IHN0aWxsIGRvZXMgbm90IGF2b2lkIHRoZSBpc3N1ZSBJIG1l
-bnRpb25lZCBpbiBWNy4KCkZvciB0aGUgY29tcG9uZW50IGJhc2VkIGRyaXZlciBtb2RlIGluIGRy
-be+8jHRoZSBwcm9iZSBvZiBsYXN0IHN1YmNvbXBvbmVudO+8iGNvbXBvbmVudF9hZGTvvIjvvInv
-vIkgd2lsbAp0cmlnZ2VyIHRoZSBiaW5kIGNhbGxiYWNrIG9mIGFsbCBzdWJjb21wb25lbnTvvIwg
-YW55ICAgLUVQUk9CRV9ERUZFUiAgcmV0dXJuIGluIHRoZSBiaW5kIGNhbGxiYWNrIHdpbGwgbGVh
-ZAp0aGUgIEVQUk9CRV9ERUZFUiBvZiB0aGUgbGFzdCBzdWJjb21wb25lbnQgLnByb2JlLgpGb3Ig
-b25lIGV4YW1wbGUgb24gcmszMDY2OgpMQ0RDMC0tPkhETUkKTENEQzEtLT5SR0ItLT5wYW5lbAps
-Y2RjMCh2b3BfcHJvYmUpLS0tPmhkbWlfYmluZC0tPmF1ZGlvIHJlZ2lzdGVyLS0+aGRtaV9jb2Rl
-Y19wcm9iZSBzdWNjZXNzLS0+bGNkYzEodm9wX2JpbmQpLS0+CnJvY2tjaGlwX3JnYl9pbml0KGRl
-ZmVyIGJ5IHNvbWVob3csbWF5YmUgcGFuZWwgcmVnaXN0ZXIgZmFpbGVkKS0tPiBsY2RjMCh2b3Bf
-cHJvYmUpIHJldHVybiAgIEVQUk9CRV9ERUZFUi4KCkFzIHRoZXJlIGlzIG9uIHN1Y2Nlc3MgcHJv
-YmUoaGRtaV9jb2RlY19wcm9iZSkgZHVyaW5nIHRoZSBwcm9jZXNzLCB0aGlzIHdpbGwgdHJpZ2dl
-ciBhIG5ldyBkZWZlcnJlZCBwcm9iZSwgc2VlOgpzdGF0aWMgaW50IGRyaXZlcl9wcm9iZV9kZXZp
-Y2Uoc3RydWN0IGRldmljZV9kcml2ZXIgKmRydiwgc3RydWN0IGRldmljZSAqZGV2KQp7CiAgICAg
-ICAgaW50IHRyaWdnZXJfY291bnQgPSBhdG9taWNfcmVhZCgmZGVmZXJyZWRfdHJpZ2dlcl9jb3Vu
-dCk7IAogICAgICAgIGludCByZXQ7CgogICAgICAgIGF0b21pY19pbmMoJnByb2JlX2NvdW50KTsg
-CiAgICAgICAgcmV0ID0gX19kcml2ZXJfcHJvYmVfZGV2aWNlKGRydiwgZGV2KTsKICAgICAgICBp
-ZiAocmV0ID09IC1FUFJPQkVfREVGRVIgfHwgcmV0ID09IEVQUk9CRV9ERUZFUikgewogICAgICAg
-ICAgICAgICAgZHJpdmVyX2RlZmVycmVkX3Byb2JlX2FkZChkZXYpOwoKICAgICAgICAgICAgICAg
-IC8qCiAgICAgICAgICAgICAgICAgKiBEaWQgYSB0cmlnZ2VyIG9jY3VyIHdoaWxlIHByb2Jpbmc/
-IE5lZWQgdG8gcmUtdHJpZ2dlciBpZiB5ZXMKICAgICAgICAgICAgICAgICAqLwogICAgICAgICAg
-ICAgICAgaWYgKHRyaWdnZXJfY291bnQgIT0gYXRvbWljX3JlYWQoJmRlZmVycmVkX3RyaWdnZXJf
-Y291bnQpICYmCiAgICAgICAgICAgICAgICAgICAgIWRlZmVyX2FsbF9wcm9iZXMpCiAgICAgICAg
-ICAgICAgICAgICAgICAgIGRyaXZlcl9kZWZlcnJlZF9wcm9iZV90cmlnZ2VyKCk7CiAgICAgICAg
-fQogICAgICAgIGF0b21pY19kZWMoJnByb2JlX2NvdW50KTsKICAgICAgICB3YWtlX3VwX2FsbCgm
-cHJvYmVfd2FpdHF1ZXVlKTsKICAgICAgICByZXR1cm4gcmV0Owp9CgpTbyB0aGUgcG90ZW50aWEg
-b2YgaW5maW5pdGUgbG9vcCBwb3JiZSByaXNl44CCCgpJIHRoaW5rIG9uZSBwb3NzaWJsZSBzb2x1
-dGlpb24gaXMgcmVnaXN0ZXIgdGhlIGV4dHJhIGRpcnZlcnPvvIhoZG1pIGF1ZGlv77yMY2Vj77yM
-aGRjcO+8iWF0IHRoZQplbmNvZGVyLT5mdW5jcy0+bGF0ZV9yZWdpc3RlciBob29r44CCCnRoZSBs
-YXRlX3JlZ2lzdGVyIGlzIGNhbGxlZCBhdCB0aGUgdmVyeSBsYXN0IG9mIGRybV9kZXZfcmVnaXN0
-ZXIsICBhbGwgdGhlIHN1YmNvbXBlbnQgbXVzdApiaW5kIHN1Y2Nlc3MgaWYgd2UgZmluYWxseSBy
-dW4gdG8gdGhpcyBzdGVwLgoKPiAJaGRtaS0+ZGV2ID0gZGV2Owo+LQloZG1pLT5kcm1fZGV2ID0g
-ZHJtOwo+IAloZG1pLT5yZWdzID0gZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlKHBkZXYs
-IDApOwo+IAlpZiAoSVNfRVJSKGhkbWktPnJlZ3MpKQo+IAkJcmV0dXJuIFBUUl9FUlIoaGRtaS0+
-cmVncyk7Cj5AQCAtODAwLDYgKzEwNjIsOCBAQCBzdGF0aWMgaW50IHJrMzA2Nl9oZG1pX2JpbmQo
-c3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCj4gCWlmIChyZXQpCj4g
-CQlnb3RvIGVycl9kaXNhYmxlX2kyYzsKPgo+KwlyazMwNjZfaGRtaV9hdWRpb19jb2RlY19pbml0
-KGhkbWksIGRldik7Cj4rCj4gCWRldl9zZXRfZHJ2ZGF0YShkZXYsIGhkbWkpOwo+Cj4gCXJldCA9
-IGRldm1fcmVxdWVzdF90aHJlYWRlZF9pcnEoZGV2LCBpcnEsIHJrMzA2Nl9oZG1pX2hhcmRpcnEs
-Cj5AQCAtODEzLDYgKzEwNzcsNyBAQCBzdGF0aWMgaW50IHJrMzA2Nl9oZG1pX2JpbmQoc3RydWN0
-IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCj4gCXJldHVybiAwOwo+Cj4gZXJy
-X2NsZWFudXBfaGRtaToKPisJcGxhdGZvcm1fZGV2aWNlX3VucmVnaXN0ZXIoaGRtaS0+YXVkaW9f
-cGRldik7Cj4gCWhkbWktPmNvbm5lY3Rvci5mdW5jcy0+ZGVzdHJveSgmaGRtaS0+Y29ubmVjdG9y
-KTsKPiAJaGRtaS0+ZW5jb2Rlci5lbmNvZGVyLmZ1bmNzLT5kZXN0cm95KCZoZG1pLT5lbmNvZGVy
-LmVuY29kZXIpOwo+IGVycl9kaXNhYmxlX2kyYzoKPkBAIC04MjgsNiArMTA5Myw3IEBAIHN0YXRp
-YyB2b2lkIHJrMzA2Nl9oZG1pX3VuYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZp
-Y2UgKm1hc3RlciwKPiB7Cj4gCXN0cnVjdCByazMwNjZfaGRtaSAqaGRtaSA9IGRldl9nZXRfZHJ2
-ZGF0YShkZXYpOwo+Cj4rCXBsYXRmb3JtX2RldmljZV91bnJlZ2lzdGVyKGhkbWktPmF1ZGlvX3Bk
-ZXYpOwo+IAloZG1pLT5jb25uZWN0b3IuZnVuY3MtPmRlc3Ryb3koJmhkbWktPmNvbm5lY3Rvcik7
-Cj4gCWhkbWktPmVuY29kZXIuZW5jb2Rlci5mdW5jcy0+ZGVzdHJveSgmaGRtaS0+ZW5jb2Rlci5l
-bmNvZGVyKTsKPgo+LS0KPjIuMzkuMgo=
+Currently x86, ARM and ARM64 support generic CPU vulnerabilites, but
+RISC-V not, such as:
+
+	# cd /sys/devices/system/cpu/vulnerabilities/
+x86:
+	# cat spec_store_bypass
+		Mitigation: Speculative Store Bypass disabled via prctl and seccomp
+	# cat meltdown
+		Not affected
+
+ARM64:
+
+	# cat spec_store_bypass
+		Mitigation: Speculative Store Bypass disabled via prctl and seccomp
+	# cat meltdown
+		Mitigation: PTI
+
+RISC-V:
+
+	# cat /sys/devices/system/cpu/vulnerabilities
+	# ... No such file or directory
+
+As SiFive RISC-V Core IP offerings are not affected by Meltdown and
+Spectre, it can use the default weak function as below:
+
+	# cat spec_store_bypass
+		Not affected
+	# cat meltdown
+		Not affected
+
+Link: https://www.sifive.cn/blog/sifive-statement-on-meltdown-and-spectre
+
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ arch/riscv/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 0525ee2d63c7..3b44e7b51436 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -85,6 +85,7 @@ config RISCV
+ 	select GENERIC_ATOMIC64 if !64BIT
+ 	select GENERIC_CLOCKEVENTS_BROADCAST if SMP
+ 	select GENERIC_CPU_DEVICES
++	select GENERIC_CPU_VULNERABILITIES
+ 	select GENERIC_EARLY_IOREMAP
+ 	select GENERIC_ENTRY
+ 	select GENERIC_GETTIMEOFDAY if HAVE_GENERIC_VDSO
+-- 
+2.34.1
+
 
