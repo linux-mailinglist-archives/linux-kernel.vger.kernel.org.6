@@ -1,147 +1,264 @@
-Return-Path: <linux-kernel+bounces-238934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDE1925390
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:19:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D41B925392
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AD8628465B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8207D1F2404B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85429130A68;
-	Wed,  3 Jul 2024 06:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9396012FB2F;
+	Wed,  3 Jul 2024 06:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="DCiz2Qrr"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="N6BB8wre"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5929D4501E
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 06:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18F04501E;
+	Wed,  3 Jul 2024 06:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719987536; cv=none; b=VmsxIjmwLMmY1aDFmTZChywW0LG5d4IOsaLEFE5YJkTrR9m8qmJf4cnHcMvFlbHFlrp1iwVsoMkAynfJ31Ck533EXLA8CuHRKKTsRDTFmla7Yw/vYLUyvfkTKMGsAJdEwOPXKv+To/zGbNG9C/FIcYSj9yrJBpe8b8rUcTt4VTg=
+	t=1719987554; cv=none; b=VgSi1is1wGekhrSRJxkhVNRIHwc0nT0rGfWoPvytTb+kQ9sbwqq7PRe9emU7pvc4V6BXj+SIQbkQhk8N4JW+9aU4pAdM2Z8XIZ+KOVOI2IqiujvfG/MDDUPImGbtd6nZV3RR79Qm4JDlBvubCCc5Jh7/9zM06m0/StsbYzj8eok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719987536; c=relaxed/simple;
-	bh=61VB0U1/4ibLbcElNxUWDU9uLD1kPVwe53Y9CP56XCs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=hADSc4Xq6TKu3Zz8dYSNtIyUubRJo1Zd1+GZk+UX0GehMAiBHhPlf0FNY9XJjwXOGDbvuy1nnhi+Imf60pmYWLbVbt4rxpSGQmQLKqi4NYQinvyyu9iPZ8gDq6SfWGkaUfuBdATadqEEwjuU0TlPVcNaubguwieAc+nTvWgHxYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=DCiz2Qrr; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1719987554; c=relaxed/simple;
+	bh=zMYpqvd0DDBLcnkZqDMLheHzOxiRWgeFrQ7fSfz/+Z4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GVgpO4Xc2KVfxhIB+Q6fIO58GZpY/F+5JqyTgHe81cjMrdeZWXRig8uBFREN2ihQqHrmM97fX6IMN5wg4FQKMQrMUFzNqTyzkGz3S7BkE8iuVirHOlzqD2Xq8V4PkqR0hO0mNADt8CzBMICEZ5M+2iHNkVWas8TWsdWogH3F+Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=N6BB8wre; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719987550;
+	bh=zMYpqvd0DDBLcnkZqDMLheHzOxiRWgeFrQ7fSfz/+Z4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=N6BB8wrefrxzNZ7Ak3OI7zH9CfE3Ebz6K8L1veRE6MdsMhN8z4DOzEIuNeOUNCXao
+	 K10/n+LtcWA515x+uwiRD5yt3PQuy7W7sluZ4+05pseNjnp6Qasjj09f0gZvmhl9LC
+	 eeqhGRsA+fPnT8QlfxE/9e84HqaN49i2WEhyMrvvVKroxjG4CETFyCN7EtnM0+a170
+	 3DAnVtyE4/UFEILVhduKYo+fHa/f9kciJUK9a/ah9ARjB4TcIdqnUdC1LBBx9Cuu66
+	 3RZTG/KEoWYixKzQVtDioC0cw9yJHPoNPqqghbRxZiXwDS9+f9/2aM6s+WVu46LzSn
+	 HGRCIVCYAwuYA==
+Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 817D93F215
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 06:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1719987528;
-	bh=U6QOa4p5DGjIW7VT0FAxsBUw54TL3D22ZXc+mN72UUw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=DCiz2QrryBqhpqOrWh7z7BD0yAbYE5dpTEewgAefp3+LAYX6nBkT29sh5jFKe20s0
-	 XsQTMezvtA3Sasx430tUZOBynuWydwxsks78YTNilncKmRsd29ARwo9c5uXyvkRmsy
-	 Sor0o8mM4y8zd0Q3z5D0dt9ozcHwgnnzZLWNoblUKooAulTnN2r46tg9a6Xj7WEa8i
-	 jr3XM57PtRAtF2QAz1/rY0rriPxaQ3MyZFcBo1cXZdcYKYwyAst7XvQPflKV4RchND
-	 3DxabVYYeYTDedqBye1srDRWOfXuHEsnMpXy5yTzpLPEuBPEKvzWpyjd8+BEFDVIZE
-	 rISup4QBbKI1A==
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7068f155058so4688072b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 23:18:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719987526; x=1720592326;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U6QOa4p5DGjIW7VT0FAxsBUw54TL3D22ZXc+mN72UUw=;
-        b=S8ucBX/UZPbHxXMJYmhZOaa1yULXcHej7j/YRZTrO7R2cH8Lz4BlKLYyoUTgAX/E+q
-         DvSWxiiNcYIn/WtgCVmUHVSyvKXIPVaos8lPlkTuB8geIJik2/o5ZwnMMl9RqN6uYrb5
-         KmRUt6eHd1wkhiSS4VFMv7nfuSSClenq7C1TxqkXRCD1luK/UmFpziq4QfnknF5xHcJ4
-         Fptr+kb/MPdQsDFyWEeb+elbDm8zJWakDSlJMpd+CG5HhFXUa+oXrmc+bZZhdrfV8/tU
-         QAslgpW8cy/0CRxAZU3Pd3rR56CK6BvwIgkbh2WG0XqVp0FIAL9+RY05rWpRi+NEk8jh
-         fELw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWKQVKDrXS3swdiEZKuxQJYpKe4NKZ5T30+2SVI11UpzH3lwEURXR7vhFPw/pg0h3Vf04Ufu5Rqw+42RHq57ISl/KK1EVjoPpPjqNu
-X-Gm-Message-State: AOJu0YypdkeC/RsExMPamhau8o72PSTDmE8cq1AymiQN0YqGoGyFUPAO
-	pe3AEdmzsiaR71PZ+HAIMR/BHsxh5cWLWytvYe2LtMmhyHgzRGj2hpaKJovd3tIiS153ZddA2QE
-	kpHMGUh7orlknrqcOVjJs1bmlsPys4lunA2Fi0woWHrHcoO5DXkGviwt2dC8VIrYoV+yMkaPw4Q
-	3XLw==
-X-Received: by 2002:a05:6a00:179e:b0:706:8e4:56a1 with SMTP id d2e1a72fcca58-70aaad608b0mr14664496b3a.18.1719987526088;
-        Tue, 02 Jul 2024 23:18:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQC6QeXQUsDBKRVwGsKjexDIZNaCLw402fvTZemCMLNU+hjyxfH1ynCl3eSRp1HOz8hh3wqQ==
-X-Received: by 2002:a05:6a00:179e:b0:706:8e4:56a1 with SMTP id d2e1a72fcca58-70aaad608b0mr14664465b3a.18.1719987525589;
-        Tue, 02 Jul 2024 23:18:45 -0700 (PDT)
-Received: from solution.. (125-228-254-191.hinet-ip.hinet.net. [125.228.254.191])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080205ebbcsm9581936b3a.40.2024.07.02.23.18.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 23:18:45 -0700 (PDT)
-From: Jian Hui Lee <jianhui.lee@canonical.com>
-To: Felix Fietkau <nbd@nbd.name>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [RESEND PATCH net] net: ethernet: mtk-star-emac: set mac_managed_pm when probing
-Date: Wed,  3 Jul 2024 14:18:40 +0800
-Message-ID: <20240703061840.3137496-1-jianhui.lee@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 72BD8378202D;
+	Wed,  3 Jul 2024 06:19:07 +0000 (UTC)
+Message-ID: <81fe07bb-8980-4fca-950a-7945b6f8563a@collabora.com>
+Date: Wed, 3 Jul 2024 11:19:03 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] selftests/thermel/intel: conform the test to TAP
+ output
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+ Shuah Khan <shuah@kernel.org>
+References: <20240702101259.1251377-1-usama.anjum@collabora.com>
+ <20240702101259.1251377-2-usama.anjum@collabora.com>
+ <7142312c6a9e2aa96134031be435448c56d1897e.camel@linux.intel.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <7142312c6a9e2aa96134031be435448c56d1897e.camel@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The below commit introduced a warning message when phy state is not in
-the states: PHY_HALTED, PHY_READY, and PHY_UP.
-commit 744d23c71af3 ("net: phy: Warn about incorrect mdio_bus_phy_resume() state")
+On 7/3/24 9:40 AM, srinivas pandruvada wrote:
+> On Tue, 2024-07-02 at 15:12 +0500, Muhammad Usama Anjum wrote:
+>> Conform the layout, informational and status messages to TAP. No
+>> functional change is intended other than the layout of output
+>> messages.
+>>
+> Not true. You did functional change by adding a break in the loop.
+> The purpose here to wait for these message continuously till ctrl-c or
+> similar.
+I'll correct the description.
 
-mtk-star-emac doesn't need mdiobus suspend/resume. To fix the warning
-message during resume, indicate the phy resume/suspend is managed by the
-mac when probing.
+> 
+>> The test has infinite loop to read the value of status_str. Break the
+>> loop after getting the value once and finish the test.
+>>
+> No, that is not the purpose.
+We want to finish the test after some iterations as in CIs we cannot abort
+the test by sending signals. Would 10 or 100 iterations be enough for this
+test? Or it is the kind of test which wouldn't get events until some other
+process is using the same driver files?
 
-Fixes: 744d23c71af3 ("net: phy: Warn about incorrect mdio_bus_phy_resume() state")
-Signed-off-by: Jian Hui Lee <jianhui.lee@canonical.com>
----
-resending to add the mailing list recipient
+> 
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>> Changes since v1:
+>> - Use ksft_exit_fail_perror if read() returns error
+>> - Break the infinite loop after printing status_str
+>> ---
+>>  .../intel/power_floor/power_floor_test.c      | 70 ++++++++---------
+>> --
+>>  1 file changed, 30 insertions(+), 40 deletions(-)
+>>
+>> diff --git
+>> a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.
+>> c
+>> b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.
+>> c
+>> index 0326b39a11b91..c06b275acd36b 100644
+>> ---
+>> a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.
+>> c
+>> +++
+>> b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.
+>> c
+>> @@ -9,6 +9,7 @@
+>>  #include <fcntl.h>
+>>  #include <poll.h>
+>>  #include <signal.h>
+>> +#include "../../../kselftest.h"
+>>  
+>>  #define POWER_FLOOR_ENABLE_ATTRIBUTE
+>> "/sys/bus/pci/devices/0000:00:04.0/power_limits/power_floor_enable"
+>>  #define POWER_FLOOR_STATUS_ATTRIBUTE 
+>> "/sys/bus/pci/devices/0000:00:04.0/power_limits/power_floor_status"
+>> @@ -20,17 +21,13 @@ void power_floor_exit(int signum)
+>>  	/* Disable feature via sysfs knob */
+>>  
+>>  	fd = open(POWER_FLOOR_ENABLE_ATTRIBUTE, O_RDWR);
+>> -	if (fd < 0) {
+>> -		perror("Unable to open power floor enable file\n");
+>> -		exit(1);
+>> -	}
+>> +	if (fd < 0)
+>> +		ksft_exit_fail_perror("Unable to open power floor
+>> enable file");
+>>  
+>> -	if (write(fd, "0\n", 2) < 0) {
+>> -		perror("Can' disable power floor notifications\n");
+>> -		exit(1);
+>> -	}
+>> +	if (write(fd, "0\n", 2) < 0)
+>> +		ksft_exit_fail_perror("Can' disable power floor
+>> notifications");
+>>  
+>> -	printf("Disabled power floor notifications\n");
+>> +	ksft_print_msg("Disabled power floor notifications\n");
+>>  
+>>  	close(fd);
+>>  }
+>> @@ -41,6 +38,9 @@ int main(int argc, char **argv)
+>>  	char status_str[3];
+>>  	int fd, ret;
+>>  
+>> +	ksft_print_header();
+>> +	ksft_set_plan(1);
+>> +
+>>  	if (signal(SIGINT, power_floor_exit) == SIG_IGN)
+>>  		signal(SIGINT, SIG_IGN);
+>>  	if (signal(SIGHUP, power_floor_exit) == SIG_IGN)
+>> @@ -50,59 +50,49 @@ int main(int argc, char **argv)
+>>  
+>>  	/* Enable feature via sysfs knob */
+>>  	fd = open(POWER_FLOOR_ENABLE_ATTRIBUTE, O_RDWR);
+>> -	if (fd < 0) {
+>> -		perror("Unable to open power floor enable file\n");
+>> -		exit(1);
+>> -	}
+>> +	if (fd < 0)
+>> +		ksft_exit_fail_perror("Unable to open power floor
+>> enable file");
+>>  
+>> -	if (write(fd, "1\n", 2) < 0) {
+>> -		perror("Can' enable power floor notifications\n");
+>> -		exit(1);
+>> -	}
+>> +	if (write(fd, "1\n", 2) < 0)
+>> +		ksft_exit_fail_perror("Can' enable power floor
+>> notifications");
+>>  
+>>  	close(fd);
+>>  
+>> -	printf("Enabled power floor notifications\n");
+>> +	ksft_print_msg("Enabled power floor notifications\n");
+>>  
+>>  	while (1) {
+>>  		fd = open(POWER_FLOOR_STATUS_ATTRIBUTE, O_RDONLY);
+>> -		if (fd < 0) {
+>> -			perror("Unable to power floor status
+>> file\n");
+>> -			exit(1);
+>> -		}
+>> +		if (fd < 0)
+>> +			ksft_exit_fail_perror("Unable to power floor
+>> status file");
+>>  
+>> -		if ((lseek(fd, 0L, SEEK_SET)) < 0) {
+>> -			fprintf(stderr, "Failed to set pointer to
+>> beginning\n");
+>> -			exit(1);
+>> -		}
+>> +		if ((lseek(fd, 0L, SEEK_SET)) < 0)
+>> +			ksft_exit_fail_perror("Failed to set pointer
+>> to beginning\n");
+>>  
+>> -		if (read(fd, status_str, sizeof(status_str)) < 0) {
+>> -			fprintf(stderr, "Failed to read from:%s\n",
+>> -			POWER_FLOOR_STATUS_ATTRIBUTE);
+>> -			exit(1);
+>> -		}
+>> +		if (read(fd, status_str, sizeof(status_str)) < 0)
+>> +			ksft_exit_fail_perror("Failed to read from:
+>> power_floor_status");
+>>  
+>>  		ufd.fd = fd;
+>>  		ufd.events = POLLPRI;
+>>  
+>>  		ret = poll(&ufd, 1, -1);
+>>  		if (ret < 0) {
+>> -			perror("poll error");
+>> -			exit(1);
+>> +			ksft_exit_fail_msg("Poll error\n");
+>>  		} else if (ret == 0) {
+>> -			printf("Poll Timeout\n");
+>> +			ksft_print_msg("Poll Timeout\n");
+>>  		} else {
+>> -			if ((lseek(fd, 0L, SEEK_SET)) < 0) {
+>> -				fprintf(stderr, "Failed to set
+>> pointer to beginning\n");
+>> -				exit(1);
+>> -			}
+>> +			if ((lseek(fd, 0L, SEEK_SET)) < 0)
+>> +				ksft_exit_fail_msg("Failed to set
+>> pointer to beginning\n");
+>>  
+>>  			if (read(fd, status_str, sizeof(status_str))
+>> < 0)
+>> -				exit(0);
+>> +				ksft_exit_fail_perror("Failed to
+>> read");
+>>  
+>> -			printf("power floor status: %s\n",
+>> status_str);
+>> +			ksft_print_msg("power floor status: %s\n",
+>> status_str);
+>> +			break;
+>>  		}
+>>  
+>>  		close(fd);
+>>  	}
+>> +
+>> +	ksft_test_result_pass("Successfully read\n");
+>> +	ksft_finished();
+>>  }
+> 
+> 
 
- drivers/net/ethernet/mediatek/mtk_star_emac.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/net/ethernet/mediatek/mtk_star_emac.c b/drivers/net/ethernet/mediatek/mtk_star_emac.c
-index 31aebeb2e285..79f8a8b72c27 100644
---- a/drivers/net/ethernet/mediatek/mtk_star_emac.c
-+++ b/drivers/net/ethernet/mediatek/mtk_star_emac.c
-@@ -1525,6 +1525,7 @@ static int mtk_star_probe(struct platform_device *pdev)
- 	struct device_node *of_node;
- 	struct mtk_star_priv *priv;
- 	struct net_device *ndev;
-+	struct phy_device *phydev;
- 	struct device *dev;
- 	void __iomem *base;
- 	int ret, i;
-@@ -1649,6 +1650,12 @@ static int mtk_star_probe(struct platform_device *pdev)
- 	netif_napi_add(ndev, &priv->rx_napi, mtk_star_rx_poll);
- 	netif_napi_add_tx(ndev, &priv->tx_napi, mtk_star_tx_poll);
- 
-+	phydev = of_phy_find_device(priv->phy_node);
-+	if (phydev) {
-+		phydev->mac_managed_pm = true;
-+		put_device(&phydev->mdio.dev);
-+	}
-+
- 	return devm_register_netdev(dev, ndev);
- }
- 
 -- 
-2.43.0
-
+BR,
+Muhammad Usama Anjum
 
