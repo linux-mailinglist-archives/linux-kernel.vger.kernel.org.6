@@ -1,139 +1,140 @@
-Return-Path: <linux-kernel+bounces-239403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30DE5925F40
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:54:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E4F3925F4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 13:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A53BF1F27E4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:54:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3992833F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 11:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A47F17164D;
-	Wed,  3 Jul 2024 11:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E7317279B;
+	Wed,  3 Jul 2024 11:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="V6C9//Pa"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AK1xEVv+"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DB913D61B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 11:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE99016EC0C;
+	Wed,  3 Jul 2024 11:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720007652; cv=none; b=BXR3LLT0+kOpY/Z+jcFBOTynuUENwz+Pmr0CGNUGD8YRFNUgJv/yl//PC7MU7XUtOZfJpA6q2f3ODnhFQjafJ6qPWtFmh+mxr/MokvUMsRy8AMWAQ3yE3/FcRcxBvZQt6gi5ZMbHAov9Gn+6CdtWOMIeN09pVtIjxIMss7FFVgI=
+	t=1720007752; cv=none; b=ky+EM5FRDSGux/iPFHam3nhNQg0V2xFe9rmE8Rn9QWuWMCT3g8HS8lVBpm1Zd/UelIR0M5yH51b3CBNf7B/x2J2zLMt4g8q/X70ZXm9kD9iu8t4l1J6sslHnKei/l85vV/hSRlSvlciv8nXzeqmBVTvcumUrygVWpilgFnM7QRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720007652; c=relaxed/simple;
-	bh=h1S2QC4xqEr68NWDQmaXFNegpal0bU94w8d1XyaS8sQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eqdF6cZwxvrkHtC54M1V+E9D8URnyZDT5nsZ51+i0I18SrEO2jkdipgpb6xIedda34jz41wUv/wBIwsSnyj4s+rfDVAAGl6EPVzeYJYj5sZ3QamXLcxgo9XRzYag9oQc4C3EVtK8b2DGJyzFXE/d6AEnPVp0s4SPD9Ga4ocXUr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=V6C9//Pa; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42574064b16so33929945e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 04:54:10 -0700 (PDT)
+	s=arc-20240116; t=1720007752; c=relaxed/simple;
+	bh=0oJeoGG81bzehMG51mi88GXA8pDGoGhbepv1IZLVz7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=E802mGdzKgNEyXcy3/G+fu6ev05kO1kKbgPMDFM8h2Yt6MhogAgv4MGOKlHsvPUMJGvDgAyMS2WnoOkh+zUMJSqyrHowrGtNw9xy16VQ9q800wULWw3Iip/4oxnXi85Z9aVnyEWAaX4MSPef+TioZ3pFkSMvWL2drJSOJZStHuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AK1xEVv+; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-58b0beaf703so2977371a12.2;
+        Wed, 03 Jul 2024 04:55:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1720007649; x=1720612449; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j/dKdrQWpBi8sNN8osFIvhbjM6ILY5kr5k1v9ROGIPU=;
-        b=V6C9//PaL4d34ClaqkkOBFnVJA6p0OOyIw3qZLIMSxyFsi8jMywMwqv4ZS+RhMDzAn
-         3nRZ2NC7VwsoIHx+wuCS2AueJ9Im24fD0BRcUxhQClZxQSbwM81ISXxejZfRUVY0Mv+y
-         qvRQUnl+OQs+EUUam63SJR/+nJUjliVIC7CT1QMkO3CQRcCckv259p2YpOvhFgIddbBJ
-         CESb+4o5/soC4/jel6H2B5AU7JtWMK55epj/ffXY2g62Vscrfa2Kc/xAIKZTTu66XqkM
-         Eg5kXCaSpLNimE65c7wEecz5gXqR9gWnixB3Hepkw3nhTn2Ejvk02Lv6jddTjk6J0teP
-         DT5Q==
+        d=gmail.com; s=20230601; t=1720007749; x=1720612549; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=MTSQnqgsaxj4ShNaVAyout8ROilJlVNHANanPFm1Bp8=;
+        b=AK1xEVv+J8q6sJVSSp1xomuU6rNLWe9gaVCbvrmret/HSYxor7M3pvppC7X8Od71eK
+         tJBPJlK8iNiXeG5KGkdRfCKBN/Yp4aC9+f6Lxb7h85CBMQ0WuNf/dZAGt7ST0AlQlqtC
+         MGJ4K/GFgCvX46lJNX2KNG201IUg3Yus0ekcd1em2q8nb0/hC4K/lXe7Y1gh2v13dOZM
+         0+aErfGL+TKs4j9BS40Obs/ufQU/n3o7IElv31SQ3N5r1Kf+o+UVD8EATY1oKL1jGh2t
+         XAGfpfsJQeqpDTDMU7HPPvSv7StcvxcY4UACou9mRcs2J5W9U8nz4aR67upOYX3AlaOj
+         uJqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720007649; x=1720612449;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j/dKdrQWpBi8sNN8osFIvhbjM6ILY5kr5k1v9ROGIPU=;
-        b=SE4lz7cnZ76podPknGQwq9C1R62BxVkD82LS7SvVENCnwzqOEGH2FekHbj69oN4tca
-         nDQYBQlZcXZiNlAbYyhmsv1NCJR80Unz2dnXTnxtbloPkx9FXudnJtIa1oaMM6YuYmbM
-         GZCFKuVutLVF7p6NsahOa74WtP/HfzeWfR2dGkJ0ONtoYfgKeGzrqeYi4SneuMz1osnh
-         Lj5OhpSREF8RKluc74bDWXrHZpRNjzPCnBMStlfaB4L296NBOTPHHUWPjpOro7iynW4I
-         Y4tcSHwAxg5U1Cyf9drGfWNmiKT0uJGeOs7IQMoaP/RxnTl++Er9CWvaNS01zKk0Zqlj
-         3J8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUevBsnGzoMP7v4FiJ0Sb9zrUtYv+y7Ek/GW7WxL8MexcTE6+WyLoSFedUZnP7RZHlEXtJ4KKUTeJdOuYKeAdYLR6bqkj6dbq5HfAjR
-X-Gm-Message-State: AOJu0Yx7nfXJyXK/qdzHtsjvHXZ13CJWZa0HcS0NpPkzS+y8u7rCU+jt
-	0V4wuL5tpi9pad5kjIqxyPOHT+wGEOk7mVGVB2P/7ln6llKxf4KfGGobnWscOjw=
-X-Google-Smtp-Source: AGHT+IFt1tHV9WjwDQ4r4yGBCAWHvI3yCcMRx5Lk/4wU8pkkhtSCAhHCYrUR3fEp3K/O1euw3ZoLyw==
-X-Received: by 2002:a05:600c:3541:b0:425:62f7:92ea with SMTP id 5b1f17b1804b1-4257a02f7c9mr74975865e9.14.1720007649185;
-        Wed, 03 Jul 2024 04:54:09 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42577a06536sm75008455e9.0.2024.07.03.04.54.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 04:54:08 -0700 (PDT)
-Date: Wed, 3 Jul 2024 12:54:07 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, dietmar.eggemann@arm.com,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, christian.loehle@arm.com,
-	vincent.donnefort@arm.com, ke.wang@unisoc.com, di.shen@unisoc.com,
-	xuewen.yan94@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] sched/fair: Use actual_cpu_capacity everywhere in
- util_fits_cpu()
-Message-ID: <20240703115407.y6tjelkpq5njkzjy@airbuntu>
-References: <20240624082011.4990-1-xuewen.yan@unisoc.com>
- <20240624082011.4990-3-xuewen.yan@unisoc.com>
- <20240628012832.37swdtxr4ds2kkp7@airbuntu>
- <CAKfTPtALDtnbPmq4401oLKzcEDurLKuCyqyNKOb1oYLAVJ2P4A@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1720007749; x=1720612549;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MTSQnqgsaxj4ShNaVAyout8ROilJlVNHANanPFm1Bp8=;
+        b=SjkcBXd2d8kgxI9RW4plzqTfV7e+bqAlejTr2tIrDs3RIm4jRVpw1O0rYqtVzdDppZ
+         MfpHiOgZuxOt4pm5AcfumYTvfDf2l04tI2GZGQAxk9aYgRmns5I3GHEUwL4LqfGK6fjT
+         s0SbdVoZfs80Vui1irw91Z6YBCgXHj5Q1SmlbjVOkhzOsPxsHWO1hKhKF0qko6LZTzWD
+         Ls5kNzVOB1dvyVb9U9FgHw/Q0fAMecVrfzd1qhQUB5BoRz9FIbCsYX+7m3+N2RA2ZCUP
+         Rw0X53YIh6KjujtdRNdsvBCr0n1SPb/hC8q/Mqkz8w3HlUBcxfqmqAhSa5fGzE7YPM6C
+         L0pw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3+DPkrCW8FvItqgLtAzo/5/s2xqelaulmDgB2rGqZ0SMTFirrSCYgYkOH+yqt/WC2iGbw2IFPOcsRacKPBIXTo2rYrkHHGdUcSl2ISFNz7tvrTMB2NxXZpmzmBVBRwBf9ucbsd2clOAU=
+X-Gm-Message-State: AOJu0Yyy2ts3YmnidQXr2zF43838M5eIf2fXobVaW8wMMe+nWElN7DJq
+	E0rD8c6QHl639S5PBOMwZnuRiD0M4XQ9HVf8db8rD6VjWx+RTWwO
+X-Google-Smtp-Source: AGHT+IHaPlJYig52nHAvcAkSxel6Q87BW6mueSa8QLn+Gow9q8XpeYxS+0PKkttq3s7IBzQ/asjqpw==
+X-Received: by 2002:a17:906:6c9:b0:a74:5b82:7f28 with SMTP id a640c23a62f3a-a75144301efmr720652566b.23.1720007748897;
+        Wed, 03 Jul 2024 04:55:48 -0700 (PDT)
+Received: from [192.168.42.235] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf1ba77sm500748966b.33.2024.07.03.04.55.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 04:55:48 -0700 (PDT)
+Message-ID: <fbd3bebc-db09-4224-bdf9-b44304bf55b8@gmail.com>
+Date: Wed, 3 Jul 2024 12:55:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtALDtnbPmq4401oLKzcEDurLKuCyqyNKOb1oYLAVJ2P4A@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] sbitmap: fix io hung due to race on
+ sbitmap_word::cleared
+To: Yang Yang <yang.yang@vivo.com>, Ming Lei <ming.lei@redhat.com>,
+ Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+References: <20240703022807.642115-1-yang.yang@vivo.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240703022807.642115-1-yang.yang@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 07/02/24 15:25, Vincent Guittot wrote:
-
-> > >        *
-> > >        * Only exception is for HW or cpufreq pressure since it has a direct impact
-> > >        * on available OPP of the system.
-> > > @@ -5011,7 +5011,7 @@ static inline int util_fits_cpu(unsigned long util,
-> > >        * For uclamp_max, we can tolerate a drop in performance level as the
-> > >        * goal is to cap the task. So it's okay if it's getting less.
-> > >        */
-> > > -     capacity_orig = arch_scale_cpu_capacity(cpu);
-> > > +     capacity_actual = get_actual_cpu_capacity(cpu);
-> > >
-> > >       /*
-> > >        * We want to force a task to fit a cpu as implied by uclamp_max.
-> > > @@ -5039,7 +5039,7 @@ static inline int util_fits_cpu(unsigned long util,
-> > >        *     uclamp_max request.
-> > >        *
-> > >        *   which is what we're enforcing here. A task always fits if
-> > > -      *   uclamp_max <= capacity_orig. But when uclamp_max > capacity_orig,
-> > > +      *   uclamp_max <= capacity_actual. But when uclamp_max > capacity_actual,
-> > >        *   the normal upmigration rules should withhold still.
-> > >        *
-> > >        *   Only exception is when we are on max capacity, then we need to be
-> > > @@ -5050,8 +5050,8 @@ static inline int util_fits_cpu(unsigned long util,
-> > >        *     2. The system is being saturated when we're operating near
-> > >        *        max capacity, it doesn't make sense to block overutilized.
-> > >        */
-> > > -     uclamp_max_fits = (capacity_orig == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
-> > > -     uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_orig);
-> > > +     uclamp_max_fits = (capacity_actual == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
-> >
-> > We should use capacity_orig here. We are checking if the CPU is the max
-> > capacity CPU.
+On 7/3/24 03:28, Yang Yang wrote:
+> Configuration for sbq:
+>    depth=64, wake_batch=6, shift=6, map_nr=1
 > 
-> I was also wondering what would be the best choice there. If we
-> consider that we have only one performance domain with all max
-> capacity cpus then I agree that we should keep capacity_orig as we
-> can't find a better cpu that would fit. But is it always true that all
-> max cpu are tied to the same perf domain ?
+> 1. There are 64 requests in progress:
+>    map->word = 0xFFFFFFFFFFFFFFFF
+> 2. After all the 64 requests complete, and no more requests come:
+>    map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
+> 3. Now two tasks try to allocate requests:
+>    T1:                                       T2:
+>    __blk_mq_get_tag                          .
+>    __sbitmap_queue_get                       .
+>    sbitmap_get                               .
+>    sbitmap_find_bit                          .
+>    sbitmap_find_bit_in_word                  .
+>    __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
+>    sbitmap_deferred_clear                    __sbitmap_queue_get
+>    /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
+>      if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
+>        return false;                         __sbitmap_get_word -> nr=-1
+>      mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
+>      atomic_long_andnot()                    /* map->cleared=0 */
+>                                                if (!(map->cleared))
+>                                                  return false;
+>                                       /*
+>                                        * map->cleared is cleared by T1
+>                                        * T2 fail to acquire the tag
+>                                        */
+> 
+> 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
+> up due to the wake_batch being set at 6. If no more requests come, T1
+> will wait here indefinitely.
+> 
+> This patch achieves two purposes:
+> 1. Check on ->cleared and update on both ->cleared and ->word need to
+> be done atomically, and using spinlock could be the simplest solution.
+> So revert commit 661d4f55a794 ("sbitmap: remove swap_lock"), which
+> may cause potential race.
+> 
+> 2. Add extra check in sbitmap_deferred_clear(), to identify whether
+> ->word has free bits.
+> 
+> Fixes: 661d4f55a794 ("sbitmap: remove swap_lock")
 
-Hmm I could be not thinking straight today. But the purpose of this check is to
-ensure overutilized can trigger for the common case where a task will always
-fit the max capacity cpu (whether it's on a single pd or multiple ones). For
-that corner case fits_capacity() should be the only fitness check otherwise
-overutilized will never trigger by default.
+Is it blamed right? Considering that the revert alone doesn't fix
+the problem, it sounds like the 2nd step might need to be ported
+to kernels even without the blamed commit.
+
+-- 
+Pavel Begunkov
 
