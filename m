@@ -1,149 +1,90 @@
-Return-Path: <linux-kernel+bounces-239788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF08926550
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:54:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D04926551
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 100F0282B45
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:54:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E37F282925
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9194181328;
-	Wed,  3 Jul 2024 15:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABCB180A9C;
+	Wed,  3 Jul 2024 15:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LGnrEHYN"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FHOPPJdb"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B56017B41D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04C917995
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 15:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720022047; cv=none; b=FWR+Gnhcm/E+uob35+jSGuOkPP/7XMebP59xvgyTrgSjJOpK7OybuJHhtgUb25xv17PNZGnfUci7dJcLyeJ6w8bLVSa0xnaML0fxQ25fbtJMDT842e+FiuTNOD1gTJONQreF3pCWAHDK/un824sD9co7Y9VXnk+Lk6srjWxC4wk=
+	t=1720022075; cv=none; b=aD6Is6/X965pQ6zHkMR+NlwLGPE07hWUxxZ7SS1bvaP6g6B84E2GS84F5IK8GbTuNaK+HfQiyMgmAELC5hu4TvpLK5wLpMCjUHwJ855NNMuYxuT1Un+tEVffEGosZ+VIu5GFZIvc7KygREwae190dihtUXR/qVA5ZeeHsxnQ0PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720022047; c=relaxed/simple;
-	bh=wb28OCOL6XIgWlTK4F54uD0brSLivRMyb33CBcVWIJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DEcowQEJIXWaGksa2ksmaVv5Q3uP1yqFTkiWu7LMjNsKxkkJ1jRfy30x1rof01SyUJWihl/rqTSm8Mmzi7D9yTnbEj/IXNPUtUP5YGeuTHLcTX3JBf2uV999GD2Fr4olOWoMFiU9JvHJzuXlThCbk/TYm/YIYG0totH7CxgisvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LGnrEHYN; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58c947a6692so1736059a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 08:54:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720022043; x=1720626843; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FgKAueHAmsvhRUNxEOXMX0TgnL4O49SNBsQJkiw1bnE=;
-        b=LGnrEHYNcm1XhC9QN3iw6mLY+h0OlcGIRnjpqib/tVJQ+8Xw8zLI8ZnnjimDrGybiH
-         TTa/H0gmI6rKdwYHVB1f9iODuE1QOF8+G38Zs2dKb0bevKf6Td4ms6j8KFAAod4/T8+j
-         wsFK5lecg32CDt1ujJHaDTHal6kCDq5wCVpc2z6g5M1+fwRpDhsuTerQBz8zydk0Z3Kr
-         1GWJ3ldpNQhsqhOwlHBFFzUMXR40e0tIbjnsRitCVbevpvlGRWZk7YR2kriLOv0AjAaY
-         h9GXM6VpV1QKBymHlmdycT4EoJw3lhYU6+bcQK9ssL4PJAIjzgQtkmVOk6ZMZ60ePY5x
-         c98A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720022043; x=1720626843;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FgKAueHAmsvhRUNxEOXMX0TgnL4O49SNBsQJkiw1bnE=;
-        b=nb2er3p8eFhGfdwvH4CxIRER2IaMLh3S7t9iHs8gr14nj8WIna8nCe3YSMEICPYY0r
-         ejntzOu62DlOilb5pkQ+x612+B9cmXRjPF9iTOTmvpQaY3EbkJH3GtEkPOi3KzaWzn9f
-         aHP7vgXM1zKUW2mX8tLYDp5KcmmeyJVF1oT3SkbZjYN++jyCvK4TpWSF/m473J/W8Eln
-         lDdpctoLj8dW+HOXvrJEzt84gJgxdvvdJUdJh3C8BDLolwo8zsZxp+1NMX5f4CUe5rqC
-         GerlEr37CfvBzcSPfc3CQBHDvr/WifEF7OKEflRBnYNKIWZMS318tRms9o8Yiy+bnPqv
-         k21w==
-X-Forwarded-Encrypted: i=1; AJvYcCWMXt+UXHGyC5C+Uk0Apyk/Ms7YgVdU5zcWxM9oiuDRBhjEAtO7vbvdx/JaPoYZxm4sSzWXQCZhn6ZO9tiaUbvM83KlQ0TRZFUQlmjq
-X-Gm-Message-State: AOJu0YydWPhs6rDsu3smIECMg1ZF+lozMtHn7kyaOp+IjNi587keUP5S
-	jiFEAWRxoI4aL1YVnXNVEsQLxUhpgN2+F5epEKvX3bbbrkTn1IhG1wUvDtIPCLs=
-X-Google-Smtp-Source: AGHT+IGN8vmmwbPhk2yzHSQbyP4/LzBLPhHVaIwbElW2ruwjQ31vIWu8z1bU27K7fNs+RY0pX/NXng==
-X-Received: by 2002:a05:6402:2803:b0:57d:10be:6100 with SMTP id 4fb4d7f45d1cf-587a063657fmr8013281a12.29.1720022042560;
-        Wed, 03 Jul 2024 08:54:02 -0700 (PDT)
-Received: from localhost (p50915e7b.dip0.t-ipconnect.de. [80.145.94.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c834e1sm7201287a12.1.2024.07.03.08.54.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 08:54:01 -0700 (PDT)
-Date: Wed, 3 Jul 2024 17:54:00 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Nicolas Schier <n.schier@avm.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf install: Don't propagate subdir to Documentation
- submake
-Message-ID: <psbxdrh74gsqceu5xtgsuhzjxxaf3vspmgr6kjoz6bz2r6kiig@dc2qgrsk6wxv>
-References: <20240523-make-tools-perf-install-v1-1-3903499e637f@avm.de>
+	s=arc-20240116; t=1720022075; c=relaxed/simple;
+	bh=tfqRJwvONI8GGlj/8E/+reu8SFTZ2hWpcslVf0EMaH4=;
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID:
+	 References:In-Reply-To; b=pjPAKt+uj4Dgtg8TTpS4oM6/YXzJbQWelXI+oqVgs0ahfrOYZbUE5RXfbbsGaDqNfF9WhpldqTiL4644OFcCgHusqVYvMNVhwIjsNAydN5h7KpVwRvAqSwmwOi6E70XfDKkt2FOZdvza2gtxTvYMjDhxivsZ0hpmrYxtUSZDkGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FHOPPJdb; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C0C8D40E021B;
+	Wed,  3 Jul 2024 15:54:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 5R8ocm1oCB7O; Wed,  3 Jul 2024 15:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1720022066; bh=O8sfi56HtPF76e9XLUaUnSvoXfoE8PrURdzXWpeiRdc=;
+	h=Subject:From:To:Cc:Date:References:In-Reply-To:From;
+	b=FHOPPJdbb7oawsQaS0nwefEpH+lLEZWbcp9UiE2sdbu1KlMN/m46PSXhwFG8B7DV4
+	 xEzrPdMMb8BS41vpSA8LWk+LSfH8GoDBYsi2U25AsQSFPydXZvoyevBA2WyVVRi/DS
+	 8R+Q1htyjIPx521i3+zNcRXCRv/BWHABRwgyfHBLjvN9V/NKUHrac4jOrhD+U7VN5U
+	 pFrsdRi3PlNvqDLDGNlaSDIZ7zb3dzehsdHw54ZtAHXGWIfIXhE2Tw1qtHMMPlXgaW
+	 SIlaGDXbxhzOUrJW1PDRCDptfDSyjSr7se+s+gZpluHuTaY5CZ3xA0yTL25v45yybT
+	 ID9mnJY7KtfOejjIawF8ieNBbZmWOJvPUnTR4WkspPPjiOt5vtuO8rdW3r/ufvbbA7
+	 8Hymvs+DyW6Sth1D8K4F2ACVKFQIJUeKdesNZKFfcZRdPPSRnJdoCRCZADgfTeXuco
+	 y+SFGe+l2l3xECAzNFMwwuO2wXTp0+mgoaYy6Vr7ZWR+G11/qCkN3WtFUJu3qQElQZ
+	 GgNi5q2WQLP6zcYyMTdg3cFwxeYrsZbNS4D+cARph0LWgLWXvcn22JO7liPgSjjWO+
+	 rTqvwPu/aQKM3sgJRjT86zZilGGc7R0ZJCcpEt7EJ2gInxOkp0zzaJtku1INWgnpCi
+	 tXoZrRlZpoNIojmjzklkXo+s=
+Received: from Ubuntu-2204-jammy-amd64-base (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1056C40E019C;
+	Wed,  3 Jul 2024 15:54:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lhmzlz7q2j5n55zj"
-Content-Disposition: inline
-In-Reply-To: <20240523-make-tools-perf-install-v1-1-3903499e637f@avm.de>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
+From: "Borislav Petkov" <bp@alien8.de>
+To: dave.hansen@intel.com
+Cc: xin@zytor.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+ tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+ x86@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com,
+ nik.borisov@suse.com, houwenlong.hwl@antgroup.com
+Date: Wed, 03 Jul 2024 15:54:14 -0000
+Message-ID: 
+ <172002205406.3280081.14523962650685954182@Ubuntu-2204-jammy-amd64-base>
+User-Agent: Modoboa 2.2.2
+References: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com>
+In-Reply-To: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com>
 
+Dave Hansen <dave.hansen@intel.com> wrote:
+>On 7/3/24 01:54, Xin Li (Intel) wrote:
+>&gt; Do FRED MSR writes with wrmsrns() rather than wrmsrl().
+>
+>A longer changelog would be appreciated here.  The wrmsrns() is
+>presumably to avoid the WRMSR serialization overhead and the CR4 write
+>provides all of the serialization that we need.
 
---lhmzlz7q2j5n55zj
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Also, all those wrmsrns() writes better be behind a CPUID check.
 
-Hello Nicolas,
-
-On Thu, May 23, 2024 at 10:06:40AM +0200, Nicolas Schier wrote:
-> Explicitly reset 'subdir' variable when descending to
-> tools/perf/Documentation.  Similar to commit f89fb55714b62 ("perf build:
-> Don't propagate subdir to submakes for install_headers", 2023-01-02),
-> calling the 'tools/perf_install' target via top-levels Makefile results
-> in repeated subdir components when attempting to call the perf
-> documentation installation rules:
->=20
->     $ make tools/perf_install NO_LIBTRACEEVENT=3D1 JOBS=3D1
->     [...]
->     /bin/sh: 1: cd: can't cd to /data/linux/kbuild/tools/perf/tools/perf/
->     ../../scripts/Makefile.include:17: *** output directory "/data/linux/=
-kbuild/tools/perf/tools/perf/" does not exist.  Stop.
->     make[5]: *** [Makefile.perf:1096: try-install-man] Error 2
->     make[4]: *** [Makefile.perf:264: sub-make] Error 2
->     make[3]: *** [Makefile:113: install] Error 2
->     make[2]: *** [Makefile:131: perf_install] Error 2
->=20
-> Resetting 'subdir' fixes the call from top-level Makefile.
->=20
-> Reported-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Nicolas Schier <n.schier@avm.de>
-
-If it helps:
-
-Tested-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-
-Did I already thank you? If not: Thanks a lot!
-
-Best regards
-Uwe
-
-
---lhmzlz7q2j5n55zj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaFdBYACgkQj4D7WH0S
-/k4JnQf8CASfZg0wOKxCWDtiy8OPsDkN1QPEBE0Ely47vXN7v4w6T53/KH5xPGy7
-aM7NyblCIrPYoYJ/GmCC4B8mCHJGWcVKF5NkdKYaREY+zvDg8ojQX8FlnRxmOO32
-E8NR2Cf4zPL3cOFzsq+TVpVzhc0AR98qaNC6ossmX91iiHkpN4rGlpyzcZva+pJx
-ByRWEbnmqQ/6O3uHpmsj07XcS7RrozKicD8nL23qLns/QzqsGu2yrkGsgsN9nxxa
-/94qkvideh6ZASV67Zn+DFD5SHdWnjOwTGSY5rJPF7TzZk0EocgeMPFnOszR4WoL
-IPPWOUzBQEED9moydr+qOv5jBgXrlw==
-=GooX
------END PGP SIGNATURE-----
-
---lhmzlz7q2j5n55zj--
+Thx.
 
