@@ -1,148 +1,171 @@
-Return-Path: <linux-kernel+bounces-240347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7DB926C74
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:31:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA744926C78
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CCA728592A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:31:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC48C1C22965
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 23:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48700178377;
-	Wed,  3 Jul 2024 23:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B4E178377;
+	Wed,  3 Jul 2024 23:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="k2e73T4W";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tpP7ooKB"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="FCIW4v3K"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E5E1C68D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 23:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10371C68D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 23:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720049455; cv=none; b=fIXjz+4N29NegLPvJue8yuGGDhIq9wNJrGHnAWrOYfd3gDlEguBYOVzJTh8Us+2F4iJl9JplRPi+Id/SDkhzMLCqqRHNWcPRL46e6MQadDKxBEBFcSqr59bMLHK6KEFliq8eBjna0EwLXDrDN/fxjpxQWyjIQ9hRZ7RhuCRmoEY=
+	t=1720049539; cv=none; b=IYl3qyNwXU7i3iEIY7KBss4aDNjo200U+zftL7ZkqcuPHemKc/hNfT0/gII/YXK+1n/JAtvB31nxYujJfSWdpeySfOVDzXKzbuzmgrWobqXgOt7wqJWB69MrI1qH4gab4KrJSpC8riWAIbSK3zWFu+EQIcbLQTMIT8uVrLQ4IX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720049455; c=relaxed/simple;
-	bh=jv9izjVCFx08jaRmdoUJ03mx+SPiEKMPfOvx7XvV0/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c1JeeHBvSZyO37uEPiyIW7E9fx8InIxB9GUcF6G4kpSmQp9wpwjxWQLNjvndbttGaxzTVU5r4vux6Pfixo1Aurou5Y61oCMf0E/jJDpxd7GVV5jypKCX4vEsvEbjyPd0009VGdIeBveh6FyueGJ8wZ3qsnTZdnASlwXJyOadHM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=k2e73T4W; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tpP7ooKB; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 846831140274;
-	Wed,  3 Jul 2024 19:30:51 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 03 Jul 2024 19:30:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1720049451; x=
-	1720135851; bh=Wk19BgkiX8lgErfCjZ7uFzpS8AsJuw3QkRtAF46r3yo=; b=k
-	2e73T4WKwZjrZLCOCkSs5m4GWJ9t+EViJswf3KIGkqrXjSKH+cDyHC+C1FCnmrLf
-	Ya+Me8DVeJR3B51pWoAlJAj/xhWsabhSCLa4uYiIc4kExhIj8iXrAME5IhXLGy3p
-	8TlO0JI96hUwP5V1um/5xE6fcxtixRPZ/kX+ct2yzpwXfewwBEUayLvuGfWgX1QY
-	lHZu+fhGnVpK2NENBe8AYTzYW9XB4pc3vB5Q7NVmjYXlCNqfs2BFb7di3QM7/EEr
-	cJr36kdIhbfCHx1vQ0zevYUPvi0ZWnXxx8FvlRccXCd0Qg3i3BoCbWxslnjUUE02
-	RHzq0OO9GlTMn3VAJ+LPQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720049451; x=1720135851; bh=Wk19BgkiX8lgErfCjZ7uFzpS8AsJ
-	uw3QkRtAF46r3yo=; b=tpP7ooKBfmqDz+1Ob6MOPzzNvG7et4cDh46dNNCnnYUS
-	s0mMHTme82NsYhLPUo+L2WhtMn+Swm8n4nuc4Vt86lsitL7AXXDogKfb4lfgVgz1
-	x8GZc/IEVeVrQIvdveQG1n3V1q+jYIHQQvoVkKAiJZR3ZUsp+r7LY+j45fQfEVYd
-	veV8vo8zjhL0EnnxXzifIyE0xUN1oDLdg9MnkWLDYgAEJgkFA7zisA2MIbIw7LFh
-	GXxSffHbxJ78Omiu2t+n0GzedxMpPlQF3WbKo8NJ52YFIctXmFe0z7gFj46xxYu8
-	/n7uA7Cmp9cKvc8iUiTvZaxTOqP472E++iRyxVOMnA==
-X-ME-Sender: <xms:K9-FZvX9SxQqN8CC1oaGXJmyLe5rBhOllCAnD_gg45UDjXPgvGgenQ>
-    <xme:K9-FZnlbV8ZGoISAaDDkrOG7kDdeau-ABw-47gXcK7u-AOoyX-VTvcRPnA9FI2MaO
-    gQjsOighVjMYBokF0s>
-X-ME-Received: <xmr:K9-FZrYATSixmIm8yojwRJRcRScJ7ezqoVvLl0nGkHlOEYaCUiS7mWN8vLXYB6nXNr8jnmldhnswB9lq4HZdjPYraiZZ9CXTwA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekgddvudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtre
-    dttddtvdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
-    shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhephefhhfette
-    fgkedvieeuffevveeufedtlefhjeeiieetvdelfedtgfefuedukeeunecuvehluhhsthgv
-    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
-    grkhgrmhhotggthhhirdhjph
-X-ME-Proxy: <xmx:K9-FZqU9GBgTMmP2wZz22u1Ghj_0M9iTFsqGVYqbqgYXQW3gssCJaA>
-    <xmx:K9-FZplBFDCvGdKNHGlT-JDcHTsGHsLSmZ-L0fJbSYCnpLmghs9zJw>
-    <xmx:K9-FZncAglNWV63K9GkiiccQedD8hlss23ZD2AGHzZttGkR6PHPktQ>
-    <xmx:K9-FZjGuFm3omMh75C4zsyBU3mTRQ1t5yffMRUiVtAamEDhCZJ0AlA>
-    <xmx:K9-FZuyIQgZmju-Qg2QKlSYv06XaaumdS3wRWK0GUD8eBu0PPgp4cLX5>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Jul 2024 19:30:50 -0400 (EDT)
-Date: Thu, 4 Jul 2024 08:30:47 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] firewire: ohci: add tracepoints event for data of
- Self-ID DMA
-Message-ID: <20240703233047.GA1441700@workstation.local>
-Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
+	s=arc-20240116; t=1720049539; c=relaxed/simple;
+	bh=kQH17cKo49JscTMErwhxpwT1c+G4HFWtKH1azX3MrHY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KOLsBiErX0SdXpRCIlBP7JFFm0PDGoUYzvqV9EPudNe1ZVN1iLc2j/7YRsbK5bdPhJFtuokhoj+dj6N4gdP3xAQ5YvgFolh+I5bIzi88WdWK5q6rEHuA6iqWzL0aix8yUgMG6fdZ8G/+IUtO+ztQPalHOEkS0LdDgpUEFI2XuWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=FCIW4v3K; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1720049533;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QlysRJGMPVMeOyPkS2J6+X2utP4VEwmmX+EczNyIJjk=;
+	b=FCIW4v3KulXCCrJ17Z/KdG0HmI74JNGt56c6V4NKu8hg7IHzTQp3mAQBJhS4VQLZm2EX2I
+	T4VlSTAP2VT62fyVvfE5EsO6+7vJ1u63ORQ9OkK0O54pC1GsJL3WicmvVf0Jy+RwGN35fe
+	GoVsbiPQlLvi9MNjY7zfPdnDBWTdFPpSP1m5tXBgtMPZ4//8aKWIJpGcmC1GtZ6j9UFtdt
+	Csy1+CXnAlOHR0v9MeNF6qh1kwrSeXpzqS7ALiF+X1v415HS6Fs0zVoKToUjZeQaT1Z5Cc
+	XS39/nf/pLAio6TxwRuQfXKRY9oFCPbG/MboevgWIlfJjT/mi51pui5lWse4CQ==
+To: linux-rockchip@lists.infradead.org,
+	dri-devel@lists.freedesktop.org
+Cc: heiko@sntech.de,
+	hjc@rock-chips.com,
+	andy.yan@rock-chips.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-References: <20240702222034.1378764-1-o-takashi@sakamocchi.jp>
+Subject: [PATCH] drm/rockchip: cdn-dp: Remove redundant workarounds for firmware loading
+Date: Thu,  4 Jul 2024 01:32:02 +0200
+Message-Id: <9b7a9e9b88ad8c7489ee1b4c70b8751eeb5cf6f9.1720049413.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702222034.1378764-1-o-takashi@sakamocchi.jp>
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Wed, Jul 03, 2024 at 07:20:29AM +0900, Takashi Sakamoto wrote:
-> Hi,
-> 
-> In IEEE 1394, Self identification process is the last step at
-> bus configuration process initiated by reset. In this step, all nodes at
-> the bus broadcast self-ID packet according to the new topology. In 1394
-> OHCI, the contents of the self-ID packet stream are transmitted to host
-> system by DMA. This is Self-ID DMA, and configured by two registers,
-> signaled by an interrupt, has a format of buffer.
-> 
-> Software handles the interrupt, then parse the contents of self-ID packet
-> stream to detect all nodes in the bus. Finally it starts any type of
-> operation in the bus. Both the timing to handle the interrupt and the
-> data of DMA buffer are important as a first step to use the bus.
-> 
-> This series of patches is to add a tracepoints event to trace the
-> interrupt and the data of DMA buffer. It would be useful to diagnose
-> some kind of issue related to the self-ID process; e.g. hardware quirks.
-> I also expect it useful to investigate the timing issue between hardIRQ
-> and softIRQ contexts to process the contents of self-ID packets.
-> 
-> Takashi Sakamoto (5):
->   firewire: ohci: use common macro to interpret be32 data in le32 buffer
->   firewire: ohci: use static function to handle endian issue on PowerPC
->     platform
->   firewire: ohci: add static inline functions to deserialize for Self-ID
->     DMA operation
->   firewire: ohci: use inline functions to operate data of self-ID DMA
->   firewire: ohci: add tracepoints event for data of Self-ID DMA
-> 
->  drivers/firewire/.kunitconfig        |  1 +
->  drivers/firewire/Kconfig             | 16 ++++++++
->  drivers/firewire/Makefile            |  1 +
->  drivers/firewire/ohci-serdes-test.c  | 56 ++++++++++++++++++++++++++
->  drivers/firewire/ohci.c              | 60 ++++++++++++++++++++--------
->  drivers/firewire/ohci.h              | 43 +++++++++++++++++++-
->  include/trace/events/firewire_ohci.h | 54 +++++++++++++++++++++++++
->  7 files changed, 213 insertions(+), 18 deletions(-)
->  create mode 100644 drivers/firewire/ohci-serdes-test.c
+After the additional firmware-related module information was introduced by
+the commit c0677e41a47f ("drm/rockchip: cdn-dp-core: add MODULE_FIRMWARE
+macro"), there's no longer need for the firmware-loading workarounds whose
+sole purpose was to prevent the missing firmware blob in an initial ramdisk
+from causing driver initialization to fail.  Thus, delete the workarounds,
+which removes a sizable chunk of redundant code.
 
-Applied to for-next branch.
+Various utilities used by Linux distributions to generate initial ramdisks
+need to obey the firmware-related module information, so we can rely on the
+firmware blob being present in the generated initial ramdisks.
 
+Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+---
+ drivers/gpu/drm/rockchip/cdn-dp-core.c | 53 +++++---------------------
+ 1 file changed, 10 insertions(+), 43 deletions(-)
 
-Regards
-
-Takashi Sakamoto
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+index bd7aa891b839..e1a7c6a1172b 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+@@ -44,9 +44,9 @@ static inline struct cdn_dp_device *encoder_to_dp(struct drm_encoder *encoder)
+ #define DPTX_HPD_DEL		(2 << 12)
+ #define DPTX_HPD_SEL_MASK	(3 << 28)
+ 
+-#define CDN_FW_TIMEOUT_MS	(64 * 1000)
+ #define CDN_DPCD_TIMEOUT_MS	5000
+ #define CDN_DP_FIRMWARE		"rockchip/dptx.bin"
++
+ MODULE_FIRMWARE(CDN_DP_FIRMWARE);
+ 
+ struct cdn_dp_data {
+@@ -909,61 +909,28 @@ static int cdn_dp_audio_codec_init(struct cdn_dp_device *dp,
+ 	return PTR_ERR_OR_ZERO(dp->audio_pdev);
+ }
+ 
+-static int cdn_dp_request_firmware(struct cdn_dp_device *dp)
+-{
+-	int ret;
+-	unsigned long timeout = jiffies + msecs_to_jiffies(CDN_FW_TIMEOUT_MS);
+-	unsigned long sleep = 1000;
+-
+-	WARN_ON(!mutex_is_locked(&dp->lock));
+-
+-	if (dp->fw_loaded)
+-		return 0;
+-
+-	/* Drop the lock before getting the firmware to avoid blocking boot */
+-	mutex_unlock(&dp->lock);
+-
+-	while (time_before(jiffies, timeout)) {
+-		ret = request_firmware(&dp->fw, CDN_DP_FIRMWARE, dp->dev);
+-		if (ret == -ENOENT) {
+-			msleep(sleep);
+-			sleep *= 2;
+-			continue;
+-		} else if (ret) {
+-			DRM_DEV_ERROR(dp->dev,
+-				      "failed to request firmware: %d\n", ret);
+-			goto out;
+-		}
+-
+-		dp->fw_loaded = true;
+-		ret = 0;
+-		goto out;
+-	}
+-
+-	DRM_DEV_ERROR(dp->dev, "Timed out trying to load firmware\n");
+-	ret = -ETIMEDOUT;
+-out:
+-	mutex_lock(&dp->lock);
+-	return ret;
+-}
+-
+ static void cdn_dp_pd_event_work(struct work_struct *work)
+ {
+ 	struct cdn_dp_device *dp = container_of(work, struct cdn_dp_device,
+ 						event_work);
+ 	struct drm_connector *connector = &dp->connector;
+ 	enum drm_connector_status old_status;
+-
+ 	int ret;
+ 
+ 	mutex_lock(&dp->lock);
+ 
+ 	if (dp->suspended)
+ 		goto out;
+ 
+-	ret = cdn_dp_request_firmware(dp);
+-	if (ret)
+-		goto out;
++	if (!dp->fw_loaded) {
++		ret = request_firmware(&dp->fw, CDN_DP_FIRMWARE, dp->dev);
++		if (ret) {
++			DRM_DEV_ERROR(dp->dev, "Loading firmware failed: %d\n", ret);
++			goto out;
++		}
++
++		dp->fw_loaded = true;
++	}
+ 
+ 	dp->connected = true;
+ 
 
