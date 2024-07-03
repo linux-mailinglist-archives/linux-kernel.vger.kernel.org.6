@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-239767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-239768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0646B92651C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:40:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A009926521
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 17:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39AEF1C22DEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:40:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F64B1F22B98
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 15:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F97181325;
-	Wed,  3 Jul 2024 15:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BE1181B9F;
+	Wed,  3 Jul 2024 15:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F877FsCW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgNu5Ods"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D76017C204;
-	Wed,  3 Jul 2024 15:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F38177980;
+	Wed,  3 Jul 2024 15:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720021185; cv=none; b=ZBmYbQYJkyg47dhfdMCvbED/HEIDebXZZeel/g5SaOSPkn4hRweSiZVxHOXyCMgmPmA8M5P3Y0vLK88bzueqbfNBW5ak6EF9nEjxdbF//FebP7YqsYARcdC9j6DTFDCFyBXisp9j3+CcdlmUme5Oenz1pS+FyVloIaNkuE24FAg=
+	t=1720021305; cv=none; b=gBC8132tqiISeeVrXaIOujjTGnyqKeGeQ3PD0m9Bkpc4MbjuenprQH1Hsy8ZsplUpcZ/N9Oq/3/aScINzcqnALCwuQf2CHLsas5TEbEAd4G8WYCxp2MTRU2D0eaJYI35vNBjCRaa1Bt3A2BLlTYjMHHNEEkVgE6pC072WlJvLa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720021185; c=relaxed/simple;
-	bh=wAyGisIX9CCv+TG3OfxzHu8vRzrUKCmaIRCO11WqeAs=;
+	s=arc-20240116; t=1720021305; c=relaxed/simple;
+	bh=8QrU4tdc4O7uvfChN9kjeYliOuT7HD1Ihq7NwYTkLgA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hv5ti7+21QJIkDgpXKXhl7ky9YaYygF6bFU/18FT5Sk8fKGCG0FbHJ0qqFGam20IiQndmR7rYjjCCZtbvsztDH1N/d2Q4vo62PtjLQM/JvQEKhZdxhf2rtBWw0R5QSjlW6amyn8W9KGkTBPAujn6+KSKZB7J/nA9BS1QPxCzK3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F877FsCW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25F5C2BD10;
-	Wed,  3 Jul 2024 15:39:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tU57+EzhMWXqzN1yKK2Ro3yblD9NNnpa60qGXK+E2N1+5jNDKVrLnXUgZVee4l4vPxr1RABxFojQy7Couz0pZcMR3A9ANuHsK/1ayKK6hOF2ynJjXaGG5azUoTpDuDzsEKzLsZRqK4n0f8cHR+FI2O2G9kUTcJtHdBJ0xIfrfVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgNu5Ods; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FF6C3277B;
+	Wed,  3 Jul 2024 15:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720021185;
-	bh=wAyGisIX9CCv+TG3OfxzHu8vRzrUKCmaIRCO11WqeAs=;
+	s=k20201202; t=1720021304;
+	bh=8QrU4tdc4O7uvfChN9kjeYliOuT7HD1Ihq7NwYTkLgA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F877FsCW/h44wdPUNsiSFXpG0mwv+zN199Lpf0BMqAeX66WfLHA5QpYSNBhpIZMvZ
-	 5vVbISnpe3AtsCKlSO/xL5r9TjFxgPza63pvdvFWJvGN9+7lFF9d5avqJQGaywyJ6u
-	 VAGFCP9CxwIttlzJMy3UkqKHLargnpAtXEBS7rL6UY8lYnwoBh43rdJSmvsRNF/2qx
-	 Zvhm/jGNMehGK14nhT3DjXZbdDizNRrExNKoqi5EjYa3CjVBjUQck9TxXXqG4qp0AT
-	 SEit1X86aA0V6oN2f8T3XAZW0/K9dBcoK+1vvIgdxvRETuCM+7UskPVvWCH3ZrE+si
-	 BuwGzrHR52BKQ==
-Date: Wed, 3 Jul 2024 16:39:40 +0100
+	b=MgNu5Ods8UbxEF91YLLjBIALaSGfBsSNvI618Ni6ieQ1D6FMGKGQ0p5RS4dDJbQw+
+	 Ajko1cFny/AMmMjIA6+JAch+qpxbumjlwe0ZBhtXLiTcd1axsLl4Mo3KaWduapYCdo
+	 4CoWXZY8eC9TmqzUFYyOcvUrD1yqJHHcO+K8SuNljob0KGjHwsjlXmeUzi5CYkumjh
+	 dbyt1VIrnZbxWU2VQ8Q+jBnEwGCDshea5gpPz/9A9M9rktGKihbQWyJs4jsRAr+sRW
+	 wVR3s4dXE0GrBdApANcvUBoxSDEnkhE3X8Do+beocuhKESDMo/DN5Yv6wVYbhJpK2x
+	 UkETpB7a23AwQ==
+Date: Wed, 3 Jul 2024 16:41:39 +0100
 From: Conor Dooley <conor@kernel.org>
 To: Varshini Rajendran <varshini.rajendran@microchip.com>
 Cc: tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org,
@@ -48,11 +48,11 @@ Cc: tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org,
 	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
 	dharma.b@microchip.com, linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 14/27] dt-bindings: interrupt-controller: Add support
- for sam9x7 aic
-Message-ID: <20240703-float-residency-778542d36224@spud>
+Subject: Re: [PATCH v5 15/27] dt-bindings: interrupt-controller: Document the
+ property microchip,nr-irqs
+Message-ID: <20240703-dentist-wired-bdb063522ef7@spud>
 References: <20240703102011.193343-1-varshini.rajendran@microchip.com>
- <20240703102806.196014-1-varshini.rajendran@microchip.com>
+ <20240703102814.196063-1-varshini.rajendran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,34 +60,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DWarSnxkZBAIdBVg"
+	protocol="application/pgp-signature"; boundary="3P1wqdHr/mHz/9qd"
 Content-Disposition: inline
-In-Reply-To: <20240703102806.196014-1-varshini.rajendran@microchip.com>
+In-Reply-To: <20240703102814.196063-1-varshini.rajendran@microchip.com>
 
 
---DWarSnxkZBAIdBVg
+--3P1wqdHr/mHz/9qd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 03, 2024 at 03:58:06PM +0530, Varshini Rajendran wrote:
-> Document the support added for the Advanced interrupt controller(AIC)
-> chip in the sam9x7 SoC family.
+On Wed, Jul 03, 2024 at 03:58:14PM +0530, Varshini Rajendran wrote:
+> Add the description and conditions to the device tree documentation
+> for the property microchip,nr-irqs.
 >=20
 > Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+This needs to be part of patch 14.
 
---DWarSnxkZBAIdBVg
+> ---
+>  .../bindings/interrupt-controller/atmel,aic.yaml     | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/atmel=
+,aic.yaml b/Documentation/devicetree/bindings/interrupt-controller/atmel,ai=
+c.yaml
+> index 9c5af9dbcb6e..06e5f92e7d53 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.ya=
+ml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.ya=
+ml
+> @@ -54,6 +54,10 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/uint32-array
+>      description: u32 array of external irqs.
+> =20
+> +  microchip,nr-irqs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description: u32 array of nr_irqs.
+
+This makes no sense, did you just copy from above? Why would the number
+of irqs be an array? Why can't you determine this from the compatble?
+
+Thanks,
+Conor.
+
+> +
+>  allOf:
+>    - $ref: /schemas/interrupt-controller.yaml#
+>    - if:
+> @@ -71,6 +75,14 @@ allOf:
+>          atmel,external-irqs:
+>            minItems: 1
+>            maxItems: 1
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: microchip,sam9x7-aic
+> +    then:
+> +      required:
+> +        - microchip,nr-irqs
+> =20
+>  required:
+>    - compatible
+> --=20
+> 2.25.1
+>=20
+
+--3P1wqdHr/mHz/9qd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoVwvAAKCRB4tDGHoIJi
-0g+jAPsFReX4wE5oHOugI9Md+cQa2gCTgHi0weB/jlYsdHxYmgD/QKKdYnI5lpb0
-+IhwxdcRExKR7QAI4SX+2Bim1m5XMgc=
-=ibkS
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoVxMwAKCRB4tDGHoIJi
+0iH1AQDvRPpGyTjiFj+CE9KXyVN45mw6rl8Nyksg/dpCyi+KFwEApgBkyYjvcBLe
+KCkJcrbqbQgiVj5SSv0x2yVBZelIZAs=
+=EFzl
 -----END PGP SIGNATURE-----
 
---DWarSnxkZBAIdBVg--
+--3P1wqdHr/mHz/9qd--
 
