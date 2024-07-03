@@ -1,132 +1,142 @@
-Return-Path: <linux-kernel+bounces-238972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48863925456
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:03:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EA7925458
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F088B1F22A68
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:03:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B856B21685
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89CF136986;
-	Wed,  3 Jul 2024 07:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79F513664B;
+	Wed,  3 Jul 2024 07:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="FL3jI5fr"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="QLU8n0pp"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907EB33D5
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB8813247D;
+	Wed,  3 Jul 2024 07:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719990186; cv=none; b=g7T1RSDJmgKqdmdd69FHpVQGkPqjlqjVY50QmvVCeHwnkLdrVgRoNNEaKQm0iHctbr0mwDk/WRF9/Vwuz5veGGlYLNjwfgvM2yce6GzuZoTux9X7RlrSbOep8C0r/Zp0ZrNdvYPaeeasi9gPcpsreN0S47SIV7VBFHLk4rsihl8=
+	t=1719990204; cv=none; b=IY30j9bsXbH9BxrxN9SuchAZybBiIfMSECJczj8pVtKYHvpuhRd/AFQcBnvyHCX8IOFkM1ifUbe9oXJ6+8ykXZxxoDJwtnaJI1fx78bvU5nrBTMw7yvrX0hs2QE9noKLKwa+NvtUYlCFK7XwfHm+xH8LxjFL4GPAxNhZYBErCOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719990186; c=relaxed/simple;
-	bh=GVh9ip8KLt/d5bm9NvCHREuBNl0zWxx0EuSWB7jNjYE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kRLJPuLhVKQrOJ075Qwzn+HRNUAcEy9pOmJbZfvHAIG4sv/iPL6OVmQ8sCuoGWkZibYhXOqVi9WamUfc9d/5GSeYSIfrqIS8rJBJfXCxXqrg0i4NbRkcTP1S+VIcPt8VzdMVglRqgn3DGby0NmPxGJ8CiPLdC3IAGeZJBrlVjFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=FL3jI5fr; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58b0beaf703so2591170a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 00:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1719990183; x=1720594983; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4KltvjFIOjRkVsHHBPCEopzINmvw8FbzGa8sdMwIII0=;
-        b=FL3jI5frQK0dQtBYwpSkZb2gNNyMQKnQTDp/lCn3J4t7GFvdipvYZ45cI10gzOCFrl
-         QaYXfo1PrU8Rx98I4OHDCBpLZmvwADwGll7ejpqzIO38OdlRCdCoGzCsYc796SHVeio5
-         alzEJmTCA3Zg/p8bcJpUTAnDkUj3q6vQ/R+xj1Z/W9Vr0UOzHJofEKmO96YXB+fLo5nz
-         va92iofsCoZFNkrIQJkgtDiCuhT6jLaBvMWvcIaS74jfHaDd+ahvfjdktGQ6B4iy8XUz
-         Y7qTlodG9cemCfdwD5PPz0D5+XP+PVlIIcNNvH61iasm6MLy/tjtMvsUxUE1e22CTFj0
-         D/TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719990183; x=1720594983;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4KltvjFIOjRkVsHHBPCEopzINmvw8FbzGa8sdMwIII0=;
-        b=p4ScOzlxQlajGX3+3mWJpgXs2WzpJUG5J1rurqMywOsDNsbv9hzBCYih0o+MAKOAUv
-         Y3FSA48o89pNGjgHaghDRpWg5PbDNMa8cC+Y27JCic19AoyU6NLvE4rpMC9Lz0yxvtO6
-         SlNlU08sjo6eh/9QdQy7oavjG54bKb1cYnyuI/mYhtm89qMTnTnd0GNKbgWP/aZkWocP
-         vU3iDZ8fKeiQxvKaFN+13V0IeleRkErDx13Jmw7SSUnuqhc/7MbfEMf1h6YrhAtzvaA1
-         Ez8eAjYEl+QfFjaAcrI1gdYoEJFXPi7IruTXKekcfLEiL+rZkp8M+VDbrnxhukfTB2b8
-         PlQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVj3fiz2f+Q4glMP9UF+ISqBgNNXIbMRD7XsxmlCmJ85d98e9SoEq/GBQp4ogCxVw+VJljw32Azb3/dp87oFvfeZQvgkJ1j64gz92SJ
-X-Gm-Message-State: AOJu0Yw/3kommLYDSNkrnXbmW1Hh618IlK22e08jC27GJivIfOURq6wb
-	FqsrKuubDkQpdEt8Hbu1dPDwsRYbIYr0lT+07H0il+F58zAaIjjcF7ad7ELNcqA=
-X-Google-Smtp-Source: AGHT+IEczdSS9+0ua/RbDHMAReKBYuM9KK1ScxdSMObEBuC1UbPsZcOdIzp38grF3lmzROzoYzH3rg==
-X-Received: by 2002:a05:6402:354c:b0:57c:9d54:67db with SMTP id 4fb4d7f45d1cf-5879f0cbdbfmr7264238a12.9.1719990182911;
-        Wed, 03 Jul 2024 00:03:02 -0700 (PDT)
-Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58d3ab39f06sm124764a12.5.2024.07.03.00.03.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 00:03:02 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Wed, 03 Jul 2024 09:03:01 +0200
-Subject: [PATCH] arm64: dts: qcom: sm6350: Add missing
- qcom,non-secure-domain property
+	s=arc-20240116; t=1719990204; c=relaxed/simple;
+	bh=lvDGTesE/6toPU38panrJWuJ6j/xQ7PKrBsKsuWdeGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=svMaSEJiZU5S7DVvzja99WZahLAc/A+ubz+ClYuVZbRCs4jG8iPnofLH0SCkQmUEjNlzhd8q6q1IKAm5GA7hSOhF3Qlb4SQRULf0jfCNfwnWvS0EoDFYh8gNOmP78VK4nqAS0g6E7GRBaX0pdOIroMax/ExeqaPUxnPhetP3NdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=QLU8n0pp; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4E3A940008;
+	Wed,  3 Jul 2024 07:03:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
+	t=1719990194;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SBX2/MGaOS1ZkS0ejeTXdSBLBk8fKts4uFWqlOjCCxY=;
+	b=QLU8n0pp4oKXT2jnEnw/2NUh5RoMDi+EnE/qwfSgtYP3e49V46R183fl57FUe4yyrtm2j0
+	xZ3gX54HYsBb5ZzK4KQIjQl6nNayGvWhOEVqUFuzPEadVNSwnxrpIaTBH6AVevCOmz+GQa
+	DRNh3Veg72O7SnHljex3H2G5ECbKNiB/+yzP+D1P0HOsqPN/gW2kYu+V8+WvdUWRSXaMzZ
+	Ca+3mlMJlQdMl/xD/nB3dd9csjM45OJwqEhrfkxFIo4vhkAjJXzDsqw/Xf92vL6k1BV9EP
+	obgXugHip14iaC35LvDWSSWkvlveobMkbIa2EDaOX2WjsAprOPsenCl3TiWmlQ==
+Message-ID: <d3ac5584-8e52-46e0-b690-ad5faa1ede61@arinc9.com>
+Date: Wed, 3 Jul 2024 10:03:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240703-sm6350-fastrpc-fix-v1-1-9f127de17175@fairphone.com>
-X-B4-Tracking: v=1; b=H4sIAKT3hGYC/x2MSQqAMAwAvyI5G4hVq/gV8aA21RxcaEQE6d8tH
- mdg5gXlIKzQZS8EvkXl2BMUeQbzOu4Lo7jEYMhU1FCJutmyJvSjXuGc0cuDjSVn2qpwNFlI4Rk
- 46X/aDzF+Mk41qWQAAAA=
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@somainline.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3] net: dsa: mt7530: fix impossible MDIO address and
+ issue warning
+To: Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
+ Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+ Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
+ <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Landen Chao <Landen.Chao@mediatek.com>, Frank Wunderlich <linux@fw-web.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ regressions@lists.linux.dev
+References: <7e3fed489c0bbca84a386b1077c61589030ff4ab.1719963228.git.daniel@makrotopia.org>
+Content-Language: en-US
+From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <7e3fed489c0bbca84a386b1077c61589030ff4ab.1719963228.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: arinc.unal@arinc9.com
 
-By default the DSP domains are non secure, add the missing
-qcom,non-secure-domain property to mark them as non-secure.
+On 03/07/2024 02:44, Daniel Golle wrote:
+> The MDIO address of the MT7530 and MT7531 switch ICs can be configured
+> using bootstrap pins. However, there are only 4 possible options for the
+> switch itself: 7, 15, 23 and 31. As in MediaTek's SDK the address of the
+> switch is wrongly stated in the device tree as 0 (while in reality it is
+> 31), warn the user about such broken device tree and make a good guess
+> what was actually intended.
+> 
+> This is imporant also to not break compatibility with older Device Trees
+> as with commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of
+> switch from device tree") the address in device tree will be taken into
+> account, while before it was hard-coded to 0x1f.
+> 
+> Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+> Only tested on BPi-R3 (with various deliberately broken DT) for now!
+> 
+> Changes since v2 [2]:
+>   - use macros instead of magic numbers
+>   - introduce helper functions
+>   - register new device on MDIO bus instead of messing with the address
+>     and schedule delayed_work to unregister the "wrong" device.
+>     This is a slightly different approach than suggested by Russell, but
+>     imho makes things much easier than keeping the "wrong" device and
+>     having to deal with keeping the removal of both devices linked.
+>   - improve comments
+> 
+> Changes since v1 [1]:
+>   - use FW_WARN as suggested.
+>   - fix build on net tree which doesn't have 'mdiodev' as member of the
+>     priv struct. Imho including this patch as fix makes sense to warn
+>     users about broken firmware, even if the change introducing the
+>     actual breakage is only present in net-next for now.
+> 
+> [1]: https://patchwork.kernel.org/project/netdevbpf/patch/e615351aefba25e990215845e4812e6cb8153b28.1714433716.git.daniel@makrotopia.org/
+> [2]: https://patchwork.kernel.org/project/netdevbpf/patch/11f5f127d0350e72569c36f9060b6e642dfaddbb.1714514208.git.daniel@makrotopia.org/
 
-Fixes: efc33c969f23 ("arm64: dts: qcom: sm6350: Add ADSP nodes")
-Fixes: 8eb5287e8a42 ("arm64: dts: qcom: sm6350: Add CDSP nodes")
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- arch/arm64/boot/dts/qcom/sm6350.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Works on standalone MT7530, MT7621's MCM MT7530, and MT7531. From MT7621's
+MCM MT7530:
 
-diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-index 46e122c4421c..8b9bff38e687 100644
---- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-@@ -1323,6 +1323,7 @@ fastrpc {
- 					compatible = "qcom,fastrpc";
- 					qcom,glink-channels = "fastrpcglink-apps-dsp";
- 					label = "adsp";
-+					qcom,non-secure-domain;
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 
-@@ -1582,6 +1583,7 @@ fastrpc {
- 					compatible = "qcom,fastrpc";
- 					qcom,glink-channels = "fastrpcglink-apps-dsp";
- 					label = "cdsp";
-+					qcom,non-secure-domain;
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 
+[    1.357287] mt7530-mdio mdio-bus:1f: MT7530 adapts as multi-chip module
+[    1.364065] mt7530-mdio mdio-bus:00: [Firmware Warn]: impossible switch MDIO address in device tree, assuming 31
+[    1.374303] mt7530-mdio mdio-bus:00: probe with driver mt7530-mdio failed with error -14
+[...]
+[    1.448370] mt7530-mdio mdio-bus:1f: MT7530 adapts as multi-chip module
+[    1.477676] mt7530-mdio mdio-bus:1f: configuring for fixed/rgmii link mode
+[    1.485687] mt7530-mdio mdio-bus:1f: Link is Up - 1Gbps/Full - flow control rx/tx
+[    1.493480] mt7530-mdio mdio-bus:1f: configuring for fixed/trgmii link mode
+[    1.502680] mt7530-mdio mdio-bus:1f lan1 (uninitialized): PHY [mt7530-0:00] driver [MediaTek MT7530 PHY] (irq=17)
+[    1.513620] mt7530-mdio mdio-bus:1f: Link is Up - 1Gbps/Full - flow control rx/tx
+[    1.519671] mt7530-mdio mdio-bus:1f lan2 (uninitialized): PHY [mt7530-0:01] driver [MediaTek MT7530 PHY] (irq=18)
+[    1.533072] mt7530-mdio mdio-bus:1f lan3 (uninitialized): PHY [mt7530-0:02] driver [MediaTek MT7530 PHY] (irq=19)
+[    1.545042] mt7530-mdio mdio-bus:1f lan4 (uninitialized): PHY [mt7530-0:03] driver [MediaTek MT7530 PHY] (irq=20)
+[    1.557031] mt7530-mdio mdio-bus:1f wan (uninitialized): PHY [mt7530-0:04] driver [MediaTek MT7530 PHY] (irq=21)
 
----
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20240703-sm6350-fastrpc-fix-760d2841d0b6
+I'm not fond of the use of the non-standard term, MDIO address, instead of
+"PHY Address" as described in 22.2.4.5.5 of IEEE Std 802.3-2022.
+Regardless:
 
-Best regards,
--- 
-Luca Weiss <luca.weiss@fairphone.com>
+Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+Reviewed-by: Arınç ÜNAL <arinc.unal@arinc9.com>
 
+Arınç
 
