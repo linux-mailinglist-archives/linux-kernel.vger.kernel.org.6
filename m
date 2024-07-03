@@ -1,136 +1,165 @@
-Return-Path: <linux-kernel+bounces-238854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DFF92520E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:26:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758A7925238
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1C3E1F27335
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:26:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 254E7282ABC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 04:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CD74D584;
-	Wed,  3 Jul 2024 04:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17125130AC8;
+	Wed,  3 Jul 2024 04:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="b8jKCQ4Q"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AQo9Ti6A"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62B8BA2D;
-	Wed,  3 Jul 2024 04:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F98CBA2D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 04:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719980379; cv=none; b=Ld5Hco0MPZHNgdGEhfBA/YTRp710Kumu8d8W8rlsRZ0ME8pbyh9GCYtA0kAgwAapiLPS7MFROxffzUjP2pRzL8aNL2/q58eDNa9cqCh3aO/NYhQ8OjKPVE0JSgcrnu9C3DzKgq1uxV4JKAN4F6CU5dIzMfSkdgU8xwHxwL0Qkf4=
+	t=1719980475; cv=none; b=CAYyv25H4ea+xQG2yWDnqB0Pd/NunjAP4psmqYnhrjtuEFHY+2F5kKVLI/H8YDpUG3jQ0YbUUZSiiBZ9Oc49yL22qB/nKvNQLawRhVVH5z4Z8K7T5quQvS5IDb5OMxOUyoAdIDw0JAE6pnEJ1EqoiizkzCA7TFrGrj74wJhnecs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719980379; c=relaxed/simple;
-	bh=20ZuX0judSc+BaDq5v2IZLQAn7nMVNSsXBjp6fVHD5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=p4PbtlOLPFUkUTQIeCPU+EZn8aiGzuyRADg0eVoBcXkaUFWaZr7gqdSb6a3PJJI3BNHYoLygN4efAy4RPZykvEok17mco51zxNbTzADv+u77jb/gFOd4gxkoUnHGWSYCZ5xIjAFNTggVWrWiX2bSKIneThzWkxmrxnW9d8/8kug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=b8jKCQ4Q; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1719980373;
-	bh=gYH1q2C2t5oF7TpkdAWWauH5U+b0niw7/owZDAAH2h4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=b8jKCQ4Qj4NelEnPjfNiQJIrlP1qeiwCN/bhwr0CMtY7txp5MVGlJ1wMLY+vNPbMV
-	 VXKmlF7H5dX73Wu6cgsJ9piaD0qLG/VHcHtauwzny03KraWa6OWVs17UCjzydwAtoK
-	 9tpjr/AykWeIuLDg0svrTqxWhR4s7DmQyB+ZX6G1lJZ/KR+unV4v8vOCfNoU46LYNb
-	 sOqBbVNUSU1eJ+KoB1yBJqyttXP23YNrDhdlI6aYGE1NRClSIWbt38E+j+rU6Jxcls
-	 y8MALhqqklHeqkwy+3g7BBBvQhBnBSS5fXqnbdcwjkD7PoSbafJTLXcq3vmyvK0tg7
-	 iLMnDJOYtI3fw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WDRPc60Slz4wc1;
-	Wed,  3 Jul 2024 14:19:32 +1000 (AEST)
-Date: Wed, 3 Jul 2024 14:19:32 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, Vinod Koul
- <vkoul@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: =?UTF-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Peter Griffin <peter.griffin@linaro.org>
-Subject: linux-next: manual merge of the phy-next tree with the samsung-krzk
- tree
-Message-ID: <20240703141932.47e51748@canb.auug.org.au>
+	s=arc-20240116; t=1719980475; c=relaxed/simple;
+	bh=afFBUcRiUw/uSnUuZOl4J32FjnbvltPxLHc8UdKHsoc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eg9Mekhbi9AG8sHu0ftXACKLdQvODvF4W/EUglz/vIlryB6/nbCLS8vmtaVDnypaeqw+ZcuSnaqj2XdMN6zlZbQf4+Jwbk/Zg6PB0JQ27VMP6YDU0X70+9KaxEpTXEnJNlT3P0kvmnMZRYhxCSt4gl+FOfSu35BgRt3xxQj/sZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AQo9Ti6A; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4634JoKv086081;
+	Tue, 2 Jul 2024 23:19:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719980390;
+	bh=htFylJICkiDuwB5yYHq2LC3E7cQvuIoGFvuuR013PkU=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To;
+	b=AQo9Ti6AXUmkJWvbZMYVNuj2fotDM1alb3Js9vGLtNaImA5uoHJaw9mHazZ+3vGP3
+	 tP58YT7W5ES6hBWQSCK6LweEHYr9+uaMUTesoPo9qX1MhrzR05J+7gWSCjNd+gpiH2
+	 sNGP4lWzVS948zUBOWNrIVzPXbz8tuTi01RtZ/Ok=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4634JoUY121890
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 2 Jul 2024 23:19:50 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 2
+ Jul 2024 23:19:49 -0500
+Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
+ DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
+ 15.01.2507.023; Tue, 2 Jul 2024 23:19:49 -0500
+From: "Ding, Shenghao" <shenghao-ding@ti.com>
+To: Mark Brown <broonie@kernel.org>
+CC: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz"
+	<perex@perex.cz>,
+        "pierre-louis.bossart@linux.intel.com"
+	<pierre-louis.bossart@linux.intel.com>,
+        "13916275206@139.com"
+	<13916275206@139.com>,
+        "zhourui@huaqin.com" <zhourui@huaqin.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "Salazar, Ivan"
+	<i-salazar@ti.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "Chadha, Jasjot Singh" <j-chadha@ti.com>,
+        "liam.r.girdwood@intel.com" <liam.r.girdwood@intel.com>,
+        "Yue, Jaden"
+	<jaden-yue@ti.com>,
+        "yung-chuan.liao@linux.intel.com"
+	<yung-chuan.liao@linux.intel.com>,
+        "Rao, Dipa" <dipa@ti.com>, "yuhsuan@google.com" <yuhsuan@google.com>,
+        "Lo, Henry" <henry.lo@ti.com>, "tiwai@suse.de" <tiwai@suse.de>,
+        "Xu, Baojun" <baojun.xu@ti.com>, "soyer@irl.hu" <soyer@irl.hu>,
+        "Baojun.Xu@fpt.com" <Baojun.Xu@fpt.com>,
+        "judyhsiao@google.com" <judyhsiao@google.com>,
+        "Navada Kanyana, Mukund"
+	<navada@ti.com>,
+        "cujomalainey@google.com" <cujomalainey@google.com>,
+        "Kutty,
+ Aanya" <aanya@ti.com>,
+        "Mahmud, Nayeem" <nayeem.mahmud@ti.com>,
+        "savyasanchi.shukla@netradyne.com" <savyasanchi.shukla@netradyne.com>,
+        "flaviopr@microsoft.com" <flaviopr@microsoft.com>,
+        "Ji, Jesse"
+	<jesse-ji@ti.com>,
+        "darren.ye@mediatek.com" <darren.ye@mediatek.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add name_prefix as the
+ prefix name of DSP firmwares and calibrated data files
+Thread-Topic: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add name_prefix as the
+ prefix name of DSP firmwares and calibrated data files
+Thread-Index: AQHaygy3zqcBdt6oi0KleesuzWGEKLHiIqwA///EuhCAAIolgIAB+XEg
+Date: Wed, 3 Jul 2024 04:19:49 +0000
+Message-ID: <c53c1f597e6c43e3874f4bbe1b467d24@ti.com>
+References: <20240629101112.628-1-shenghao-ding@ti.com>
+ <8245d8e7-3ff0-4f05-9f99-666e9693603f@sirena.org.uk>
+ <664b818a177f4403bd60c3d4cd0bf4d1@ti.com>
+ <7a44a36c-6f95-4c5b-a86d-044f9ad13ac1@sirena.org.uk>
+In-Reply-To: <7a44a36c-6f95-4c5b-a86d-044f9ad13ac1@sirena.org.uk>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/CoM4KYEr_Pu0_WKx0t6EDH6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/CoM4KYEr_Pu0_WKx0t6EDH6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Brown
+Thanks for your comment. Feedback is inline.
+> -----Original Message-----
+> From: Mark Brown <broonie@kernel.org>
+> Sent: Tuesday, July 2, 2024 1:06 AM
+> To: Ding, Shenghao <shenghao-ding@ti.com>
+> Cc: andriy.shevchenko@linux.intel.com; lgirdwood@gmail.com;
+> perex@perex.cz; pierre-louis.bossart@linux.intel.com;
+> 13916275206@139.com; zhourui@huaqin.com; alsa-devel@alsa-project.org;
+> Salazar, Ivan <i-salazar@ti.com>; linux-kernel@vger.kernel.org; Chadha,
+> Jasjot Singh <j-chadha@ti.com>; liam.r.girdwood@intel.com; Yue, Jaden
+> <jaden-yue@ti.com>; yung-chuan.liao@linux.intel.com; Rao, Dipa
+> <dipa@ti.com>; yuhsuan@google.com; Lo, Henry <henry.lo@ti.com>;
+> tiwai@suse.de; Xu, Baojun <baojun.xu@ti.com>; soyer@irl.hu;
+> Baojun.Xu@fpt.com; judyhsiao@google.com; Navada Kanyana, Mukund
+> <navada@ti.com>; cujomalainey@google.com; Kutty, Aanya
+> <aanya@ti.com>; Mahmud, Nayeem <nayeem.mahmud@ti.com>;
+> savyasanchi.shukla@netradyne.com; flaviopr@microsoft.com; Ji, Jesse
+> <jesse-ji@ti.com>; darren.ye@mediatek.com
+> Subject: Re: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add name_prefix as
+> the prefix name of DSP firmwares and calibrated data files
+>=20
+> On Mon, Jul 01, 2024 at 02:00:13PM +0000, Ding, Shenghao wrote:
+>=20
+> > > I'll apply this but I do wonder if it's worth falling back to trying
+> > > to load the unprefixed name if we fail to load the prefixed one.
+>=20
+> > If fail to load dsp firmware, the driver won't load unprefixed name
+> > firmware, but switch tas2563/tas2781 to bypass-dsp mode automatically.
+> > In this mode, smartamp become simple amp.
+> > These day, I met a case from one of my customers, they put 2 pieces of
+> > tas2563, and 2 pieces of tas2781 in the same i2c bus. In order to
+> > identify tas2563 and tas2781, I think name_prefix is a good solution fo=
+r this
+> case.
+> > Looking forward to your comment. Thanks.
+>=20
+> Yes, the name_prefix is a good idea and probably people want things
+> specifically tuned for the DSP - I was thinking about error handling or
+> upgrade cases where wrong calibration might work better.  Bypass mode
+> means the device will still function at least.
+In bypass mode, tas2563/tas2781 can still work without speaker protection o=
+r audio acoustic function.
+In case of only dsp firnmware loading without calibrated data, tas2563/tas2=
+781 still can work with
+default calibrated data and default audio acoustic parameter.
 
-Hi all,
-
-Today's linux-next merge of the phy-next tree got a conflict in:
-
-  include/linux/soc/samsung/exynos-regs-pmu.h
-
-between commit:
-
-  85863cee8ce0 ("soc: samsung: exynos-pmu: add support for PMU_ALIVE non at=
-omic registers")
-
-from the samsung-krzk tree and commit:
-
-  32267c29bc7d ("phy: exynos5-usbdrd: support Exynos USBDRD 3.1 combo phy (=
-HS & SS)")
-
-from the phy-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/soc/samsung/exynos-regs-pmu.h
-index f411c176536d,6765160eaab2..000000000000
---- a/include/linux/soc/samsung/exynos-regs-pmu.h
-+++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-@@@ -657,8 -657,8 +657,12 @@@
-  #define EXYNOS5433_PAD_RETENTION_UFS_OPTION			(0x3268)
-  #define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
- =20
- +/* For Tensor GS101 */
- +#define GS101_SYSIP_DAT0					(0x810)
- +#define GS101_SYSTEM_CONFIGURATION				(0x3A00)
- +
-+ /* For GS101 */
-+ #define GS101_PHY_CTRL_USB20					0x3eb0
-+ #define GS101_PHY_CTRL_USBDP					0x3eb4
-+=20
-  #endif /* __LINUX_SOC_EXYNOS_REGS_PMU_H */
-
---Sig_/CoM4KYEr_Pu0_WKx0t6EDH6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaE0VQACgkQAVBC80lX
-0GzMYwf/VD6ZV3ECZh7o9YP6+Hu61hp0IaCXPlCkT8Vw8mgDrgzEbOYMMocfgZJM
-CgoIR/40XwUGNog3QBtHkNXxirbEK7a4GTtKtrFQAad7ZmWKE8A/g599vv2Eb0ae
-bdHVpeBurN0OkpkmJWI7AZDYEAN/5CHqElV+oljdiN6Lytn7tcmjAGYxxjNUiR6h
-sf75V+FyLx74OA8Z9VSUIS7O7mEcw2cdHZIOfTDiuWiJNjv5yxK+sGF1dWrVbJ/w
-wd/FNTM9TZVNe3qGDADC4yFI2Rre6UtlPcYPW7tjSJse+oPGYYg7SixGiZjxvu6m
-dGUR3LxsRJh/kmNydbyInl1pz4KIoQ==
-=VjBH
------END PGP SIGNATURE-----
-
---Sig_/CoM4KYEr_Pu0_WKx0t6EDH6--
 
