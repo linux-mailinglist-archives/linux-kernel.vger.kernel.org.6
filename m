@@ -1,140 +1,382 @@
-Return-Path: <linux-kernel+bounces-240323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14960926C2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:59:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3373D926C2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C018D282970
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:59:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 233F71C2223F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 22:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FD1194A48;
-	Wed,  3 Jul 2024 22:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B26194A42;
+	Wed,  3 Jul 2024 22:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Irc4qML2"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bloHxh0k"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807051369A0;
-	Wed,  3 Jul 2024 22:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D161946AA
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 22:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720047543; cv=none; b=T5BPvvqenHBPS0CXvN/T1WSrb0ZsJMZHp262Lz4xbycFtu40cDS7KsTqeyGkY4+JW0j5BaGp5dVechJ30pklPZYO/i5ScBn57/M9Bu74OSn/PJvGUBdrrjTkqVaBxGICIB33CJXsCy0SO6ebHM2tzvnZZp6Q2C6VumjznJI7hFM=
+	t=1720047563; cv=none; b=HkLUUdUMj48uN4ltUfoRcoXX/IRnOctjaeYxVYGDcBL7FhmEsGiYpCeLrA6TAlBJiorbTO8zNIeZM7RCicuLnzboFNsW6L//6Lar6kXPvAPYZCSoQUPznNhPVGkoNFynFL2Xh/v7AYkDooYkMqXlKHGaXlGCgoVn2WXyKeDvh4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720047543; c=relaxed/simple;
-	bh=Dn6s3qu4JChWZeRiOFYv1ju6D+1sockuxvi7rzY6G94=;
+	s=arc-20240116; t=1720047563; c=relaxed/simple;
+	bh=e413piQ6ohngTa1KgwEeLX2cZKwf/FcbFovnN+krFcY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KDsfY4+3hYGGR9cRE/lhLsyXztaF1lZ389FEWNQxQIkTp0LMcqSZousNHmxUn2RYSptc+RhSYxQ6c4r4lz4Hj5gSE9ox4bZ3c5aDwUKcDvC03l4TdvP0mq2tOyzTTA5Br/ZAvT5xLnt6Pdqp5hwtYI9WWfpE8d1v1w1ztBT87W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Irc4qML2; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-706b14044cbso44428b3a.2;
-        Wed, 03 Jul 2024 15:59:02 -0700 (PDT)
+	 To:Cc:Content-Type; b=TIo2L7A9DlcqgeHy96DDXke0I0iZHdlsnpYE0A9qazTL1PccSDv6LBWVYlzXdaySDarTnnzuG+EjCBQqZ7/2etmvnmaoemi8/5Eh36p9mJOHYqeOPEXk4KyZacVG4v74pxjVHVZGY3JvWCjSfn24wYAcWGy43SdVYOi4MV7hN+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bloHxh0k; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dff17fd97b3so33102276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 15:59:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720047542; x=1720652342; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720047560; x=1720652360; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eUYRLpN1HsvQ9Iub7j78dAtckWGp5xsN9z0zcOVj+Ws=;
-        b=Irc4qML27MsHoKqIDTfa4buAbOMIWH2rOyUMW9uZHF1efhE8gZIIYm+mjX+bGXPaAO
-         FUcrx81NKL1JD1wccIrWz6o8udHePw74OzyCObze8jxFLa3bCVS9nnggIRneIJAOKO40
-         hJudQgeIaJdILrrst5fgnkENbk1C3VqVYD3hozoJ77vw8e17zoUtjgajRzOVLXaxyDhm
-         hvl3QOtSf0dEltlnSikbbJtw6WMqE6EnvRGFgPfem3eYyWoFyhEONOEL4UcmBLE+0DXI
-         K3xELYcbv83yr75p2REt8TsxHTczVzWI5wOVCiO78BkBRYQ8YD/2f0eqSYWZ+4v7OIH4
-         WHzw==
+        bh=O641zrdw12C+c0OOg6YL1Y9zyKGp2U7Zfh7m/aotDYo=;
+        b=bloHxh0kSHOXYxRmOtgZirX4lFFNS439ZsKeuxOejQ8FOSAugLL4snU335thR0hidO
+         CvrqJ0VJM0Ur+uQeI2mY3P6BQp4xIR8/8fmDH2uiEjQOlaaB9RXuiDfXwdk6KPKovguN
+         v+hVJ3ATwMBXsUZMg/N05F9Ou0keeqt7kAAxDleqtLRaACxI1pcJHkjwxeoYQRlpBV4A
+         Xe18XZoKJGw1WrNMn+DmKai4Hg6r2C11tnrm29LdTI73yeN7WbcjtVRWGyi91rtltAp3
+         YN2vV7INLvSm0hFNOkHzcMzvOxPuQi2VKyg/fEgW3jUARxR1uo6uAmDlfm3Iq+pHi/0d
+         9EDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720047542; x=1720652342;
+        d=1e100.net; s=20230601; t=1720047560; x=1720652360;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eUYRLpN1HsvQ9Iub7j78dAtckWGp5xsN9z0zcOVj+Ws=;
-        b=rsVMAl98qH4Cu53Y5+029NKwUMPkvZb8KLaWQWSMVBzoOIYwMfuh06XK0fbwbL167R
-         jJadyEZV9lkt78vUYkNqBHW2SD09dMQSDlBD2lWd4MbD+Zknr1OKXcFpcMpQVv74k6sz
-         EGu/+0Ce3+49NAEu+lBwthVRkCH286wOfm9bMd5NBn0eBNu81ILxltwv04H/bBeS+WK8
-         pLQPLoVLM6YKbZY2DpTbZgnRrqJ9iU/QjtAT0jIO/ogyyewKpiSmWl/zvn7scQ4yTM6Y
-         JmqD5pOjBbk9S9/BAatdbkgx9qc0IFIJ3g3U4mnowK72eHEpE/hInv9sd4Lia7dCJEQC
-         UQ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV5ey7UFkOp8OurwKtOjP+m006DNlWm9xr26evqlSmAxirPA0FynC3VvNK6DdLxkewhNbS3jkrBe427eOaRbNYPe1jJVNHjxPEvG4p1ZQEp/YD8bLGV97/u9DC4tjDeOqIp4NxlEghVVTJqdNaR2hWYI5ex4tSCS+NeCdXAcpnccXqAwvoJznAMUsJJTgxadXu4iSN8CeOXR++6JykgEPDgcwwx/bT9cw==
-X-Gm-Message-State: AOJu0YxjEoArqptrqvq14EaoMkXLgyJS3X10TDF/GUf1lKnKt8RFmFo1
-	MCIt4ehxpy1gqrV1MdUejw/72XYuHSWWSMeGHE0fuh7mPhfW1k2jkWBcc0eDSb16C2SXW6g62HS
-	WAqj2KstuVKAi/HXE2B7mLrImKrdzgNDt
-X-Google-Smtp-Source: AGHT+IFr04NbMFedS5PsaMHEQQnrJeYwnDmLyBo5tjso1mhnymhHom2UAmA9d+aMBqsaKF7js1jvSVq6zKf+eFeKz1I=
-X-Received: by 2002:a05:6a00:148c:b0:706:6937:cb9d with SMTP id
- d2e1a72fcca58-70aaac1f237mr13299391b3a.0.1720047541566; Wed, 03 Jul 2024
- 15:59:01 -0700 (PDT)
+        bh=O641zrdw12C+c0OOg6YL1Y9zyKGp2U7Zfh7m/aotDYo=;
+        b=a3bEfJVcCTdHA6FTEfFN7qcIshZikempu2mGCDkjLrwQTpnXsX0BXzUQ24mzgBmjPT
+         meLFnSuMUJBw/+CbqxUik1oRrgEvR52kFJpM1Mxh0EywQP2y/YD2L9XAcz6l5W8OrDj/
+         Y8pq0RcT/OzzuZvq+WrD9VkqWLgvJPEWnkQWPOp5J2oYQJjLiD3E2gqKfG4WI1oy7A8I
+         KaGri4+8JI88gkujIBW1Xb6y0+anOrX9VUWKheS0q+r1ylUfg62PCrrDbFOUhC9rbN8+
+         x1wkJ0E1nkV+m8aUrv70MOeZ939+YBeuRnF0POHH0msTgWbb8Md/z3HkgtnZ5pnXWnLN
+         upfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzXlGS9ztCyZYeBkO0Z+YliZ7nCAC7dktuWy1YZA89Is+klGIy/s4Gka+/wZUqyo9WNpNoADt1AB+/kV1sxcAEV4ntKtrpWT3Z4Dg3
+X-Gm-Message-State: AOJu0YwZ57R+MZ3dElE6PPMu0ADENvaANG9wD0ckverrd2rXUHyzAiL3
+	1aN1LLh7JzDOi8wwfLY8+rabwbvuQwvBxXH5v2TSJadr8DMY2wNUEMNAymTo6G1ofDwhtf0dApm
+	Ay+ZhUM1h4V/1Op6Ev3oyNKEzBcgqzqXUCvldT4HG0X4OHoDGGWsg
+X-Google-Smtp-Source: AGHT+IEHdx+HiYOgSblpEZh8SDfLHA9XpYlLidnzOOkWvb/luHuRDdm/V7HIvv/c8Pww7EOqqB70nluyXjebX6FRws4=
+X-Received: by 2002:a05:6902:1b8a:b0:dff:2f2c:d6ad with SMTP id
+ 3f1490d57ef6-e036ec4ba6emr15942437276.51.1720047559760; Wed, 03 Jul 2024
+ 15:59:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702171858.187562-1-andrii@kernel.org> <20240702233554.slj6kh7dn2mc2w4n@treble>
- <20240702233902.p42gfhhnxo2veemf@treble> <CAEf4BzZ1GexY6uhO2Mwgbd7DgUnpMeTR2R37G5_5vdchQUAvjA@mail.gmail.com>
- <20240703011153.jfg6jakxaiedyrom@treble> <CAEf4BzbzsKLtzPUOhby0ZOM3FskE0q4bYx-o5bB4P=dVBVPSNw@mail.gmail.com>
- <20240703061119.iamshulwf3qzsdu3@treble> <CAEf4Bza6YdQ5HCcuPozOwVx75UrcyZL_1DGnYrJ=2pz=DxJpPQ@mail.gmail.com>
- <20240703224101.36r32g7j2atskidg@treble>
-In-Reply-To: <20240703224101.36r32g7j2atskidg@treble>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 3 Jul 2024 15:58:49 -0700
-Message-ID: <CAEf4Bzb+8FOcC0kRiW5D-OLfBkX6TcHfto9oK57yQRy_eFHepA@mail.gmail.com>
-Subject: Re: [PATCH v2] perf,x86: avoid missing caller address in stack traces
- captured in uprobe
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org, 
-	x86@kernel.org, mingo@redhat.com, tglx@linutronix.de, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, rihams@fb.com, 
-	linux-perf-users@vger.kernel.org
+References: <20240702084423.1717904-1-link@vivo.com> <ZoRUukQUNqGHn_x1@google.com>
+ <27a62e44-9d85-4ef2-b833-e977af039758@vivo.com>
+In-Reply-To: <27a62e44-9d85-4ef2-b833-e977af039758@vivo.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Wed, 3 Jul 2024 15:59:07 -0700
+Message-ID: <CABdmKX3+3YQMOynNyKgE-+XbS8Et4o-_s9ieWGwvUnWUUtSYqg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] Introduce PMC(PER-MEMCG-CACHE)
+To: Huan Yang <link@vivo.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, David Hildenbrand <david@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Chris Li <chrisl@kernel.org>, 
+	Dan Schatzberg <schatzberg.dan@gmail.com>, Kairui Song <kasong@tencent.com>, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, opensource.kernel@vivo.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 3, 2024 at 3:41=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org>=
- wrote:
+On Tue, Jul 2, 2024 at 7:23=E2=80=AFPM Huan Yang <link@vivo.com> wrote:
 >
-> On Wed, Jul 03, 2024 at 01:23:39PM -0700, Andrii Nakryiko wrote:
-> > > >  [0] https://docs.google.com/presentation/d/1k10-HtK7pP5CMMa86dDCdL=
-W55fHOut4co3Zs5akk0t4
-> > >
-> > > I don't seem to have permission to open it.
-> > >
+>
+> =E5=9C=A8 2024/7/3 3:27, Roman Gushchin =E5=86=99=E9=81=93:
+> > On Tue, Jul 02, 2024 at 04:44:03PM +0800, Huan Yang wrote:
+> >> This patchset like to talk abount a idea about PMC(PER-MEMCG-CACHE).
+> >>
+> >> Background
+> >> =3D=3D=3D
+> >>
+> >> Modern computer systems always have performance gaps between hardware,
+> >> such as the performance differences between CPU, memory, and disk.
+> >> Due to the principle of locality of reference in data access:
+> >>
+> >>    Programs often access data that has been accessed before
+> >>    Programs access the next set of data after accessing a particular d=
+ata
+> >> As a result:
+> >>    1. CPU cache is used to speed up the access of already accessed dat=
+a
+> >>       in memory
+> >>    2. Disk prefetching techniques are used to prepare the next set of =
+data
+> >>       to be accessed in advance (to avoid direct disk access)
+> >> The basic utilization of locality greatly enhances computer performanc=
+e.
+> >>
+> >> PMC (per-MEMCG-cache) is similar, utilizing a principle of locality to=
+ enhance
+> >> program performance.
+> >>
+> >> In modern computers, especially in smartphones, services are provided =
+to
+> >> users on a per-application basis (such as Camera, Chat, etc.),
+> >> where an application is composed of multiple processes working togethe=
+r to
+> >> provide services.
+> >>
+> >> The basic unit for managing resources in a computer is the process,
+> >> which in turn uses threads to share memory and accomplish tasks.
+> >> Memory is shared among threads within a process.
+> >>
+> >> However, modern computers have the following issues, with a locality d=
+eficiency:
+> >>
+> >>    1. Different forms of memory exist and are not interconnected (anon=
+ymous
+> >>       pages, file pages, special memory such as DMA-BUF, various memor=
+y alloc in
+> >>       kernel mode, etc.)
+> >>    2. Memory isolation exists between processes, and apart from specif=
+ic
+> >>       shared memory, they do not communicate with each other.
+> >>    3. During the transition of functionality within an application, a =
+process
+> >>       usually releases memory, while another process requests memory, =
+and in
+> >>       this process, memory has to be obtained from the lowest level th=
+rough
+> >>       competition.
+> >>
+> >> For example abount camera application:
+> >>
+> >> Camera applications typically provide photo capture services as well a=
+s photo
+> >> preview services.
+> >> The photo capture process usually utilizes DMA-BUF to facilitate the s=
+haring
+> >> of image data between the CPU and DMA devices.
+> >> When it comes to image preview, multiple algorithm processes are typic=
+ally
+> >> involved in processing the image data, which may also involve heap mem=
+ory
+> >> and other resources.
+> >>
+> >> During the switch between photo capture and preview, the application t=
+ypically
+> >> needs to release DMA-BUF memory and then the algorithms need to alloca=
+te
+> >> heap memory. The flow of system memory during this process is managed =
+by
+> >> the PCP-BUDDY system.
+> >>
+> >> However, the PCP and BUDDY systems are shared, and subsequently reques=
+ted
+> >> memory may not be available due to previously allocated memory being u=
+sed
+> >> (such as for file reading), requiring a competitive (memory reclamatio=
+n)
+> >> process to obtain it.
+> >>
+> >> So, if it is possible to allow the released memory to be allocated wit=
+h
+> >> high priority within the application, then this can meet the locality
+> >> requirement, improve performance, and avoid unnecessary memory reclaim=
+.
+> >>
+> >> PMC solutions are similar to PCP, as they both establish cache pools a=
+ccording
+> >> to certain rules.
+> >>
+> >> Why base on MEMCG?
+> >> =3D=3D=3D
+> >>
+> >> The MEMCG container can allocate selected processes to a MEMCG based o=
+n certain
+> >> grouping strategies (typical examples include grouping by app or UID).
+> >> Processes within the same MEMCG can then be used for statistics, upper=
+ limit
+> >> restrictions, and reclamation control.
+> >>
+> >> All processes within a MEMCG are considered as a single memory unit,
+> >> sharing memory among themselves. As a result, when one process release=
+s
+> >> memory, another process within the same group can obtain it with the
+> >> highest priority, fully utilizing the locality of memory allocation
+> >> characteristics within the MEMCG (such as APP grouping).
+> >>
+> >> In addition, MEMCG provides feature interfaces that can be dynamically=
+ toggled
+> >> and are fully controllable by the policy.This provides greater flexibi=
+lity
+> >> and does not impact performance when not enabled (controlled through s=
+tatic key).
+> >>
+> >>
+> >> Abount PMC implement
+> >> =3D=3D=3D
+> >> Here, a cache switch is provided for each MEMCG(not on root).
+> >> When the user enables the cache, processes within the MEMCG will share=
+ memory
+> >> through this cache.
+> >>
+> >> The cache pool is positioned before the PCP. All order0 page released =
+by
+> >> processes in MEMCG will be released to the cache pool first, and when =
+memory
+> >> is requested, it will also be prioritized to be obtained from the cach=
+e pool.
+> >>
+> >> `memory.cache` is the sole entry point for controlling PMC, here are s=
+ome
+> >> nested keys to control PMC:
+> >>    1. "enable=3D[y|n]" to enable or disable targeted MEMCG's cache
+> >>    2. "keys=3Dnid=3D%d,watermark=3D%u,reaper_time=3D%u,limit=3D%u" to =
+control already
+> >>    enabled PMC's behavior.
+> >>      a) `nid` to targeted a node to change it's key. or else all node.
+> >>      b) The `watermark` is used to control cache behavior, caching onl=
+y when
+> >>         zone free pages above the zone's high water mark + this waterm=
+ark is
+> >>         exceeded during memory release. (unit byte, default 50MB,
+> >>         min 10MB per-node-all-zone)
+> >>      c) `reaper_time` to control reaper gap, if meet, reaper all cache=
+ in this
+> >>          MEMCG(unit us, default 5s, 0 is disable.)
+> >>      d) `limit` is to limit the maximum memory used by the cache pool(=
+unit bytes,
+> >>         default 100MB, max 500MB per-node-all-zone)
+> >>
+> >> Performance
+> >> =3D=3D=3D
+> >> PMC is based on MEMCG and requires performance measurement through the
+> >> sharing of complex workloads between application processes.
+> >> Therefore, at the moment, we unable to provide a better testing soluti=
+on
+> >> for this patchset.
+> >>
+> >> Here is the internal testing situation we provide, using the camera
+> >> application as an example. (1-NODE-1-ZONE-8GRAM)
+> >>
+> >> Test Case: Capture in rear portrait HDR mode
+> >> 1. Test mode: rear portrait HDR mode. This scene needs more than 800M =
+ram
+> >>     which memory types including dmabuf(470M), PSS(150M) and APU(200M)
+> >> 2. Test steps: take a photo, then click thumbnail to view the full ima=
+ge
+> >>
+> >> The overall performance benefit from click shutter button to showing w=
+hole
+> >> image improves 500ms, and the total slowpath cost of all camera thread=
+s reduced
+> >> from 958ms to 495ms.
+> >> Especially for the shot2shot in this mode, the preview dealy of each f=
+rame have
+> >> a significant improve.
+> > Hello Huan,
 > >
-> > Argh, sorry, it's under my corporate account which doesn't allow
-> > others to view it. Try this, I "published" it, let me know if that
-> > still doesn't work:
+> > thank you for sharing your work.
+> thanks
 > >
-> >   [0] https://docs.google.com/presentation/d/e/2PACX-1vRgL3UPbkrznwtNPK=
-n-sSjvan7tFeMqOrIyZAFSSEPYiWG20JGSP80jBmZqGwqMuBGVmv9vyLU4KRTx/pub
+> > Some high-level thoughts:
+> > 1) Naming is hard, but it took me quite a while to realize that you're =
+talking
+> Haha, sorry for my pool english
+> > about free memory. Cache is obviously an overloaded term, but per-memcg=
+-cache
+> > can mean absolutely anything (pagecache? cpu cache? ...), so maybe it's=
+ not
 >
-> The new link doesn't work either :-)
+> Currently, my idea is that all memory released by processes under memcg
+> will go into the `cache`,
 >
+> and the original attributes will be ignored, and can be freely requested
+> by processes under memcg.
+>
+> (so, dma-buf\page cache\heap\driver, so on). Maybe named PMP more
+> friendly? :)
+>
+> > the best choice.
+> > 2) Overall an idea to have a per-memcg free memory pool makes sense to =
+me,
+> > especially if we talk 2MB or 1GB pages (or order > 0 in general).
+> I like it too :)
+> > 3) You absolutely have to integrate the reclaim mechanism with a generi=
+c
+> > memory reclaim mechanism, which is driven by the memory pressure.
+> Yes, I all think about it.
+> > 4) You claim a ~50% performance win in your workload, which is a lot. I=
+t's not
+> > clear to me where it's coming from. It's hard to believe the page alloc=
+ation/release
+> > paths are taking 50% of the cpu time. Please, clarify.
+>
+> Let me describe it more specifically. In our test scenario, we have 8GB
+> of RAM, and our camera application
+>
+> has a complex set of algorithms, with a peak memory requirement of up to
+> 3GB.
+>
+> Therefore, in a multi-application background scenario, starting the
+> camera and taking photos will create a
+>
+> very high memory pressure. In this scenario, any released memory will be
+> quickly used by other processes (such as file pages).
+>
+> So, during the process of switching from camera capture to preview,
+> DMA-BUF memory will be released,
+>
+> while the memory used for the preview algorithm will be simultaneously
+> requested.
+>
+> We need to take a lot of slow path routes to obtain enough memory for
+> the preview algorithm, and it seems that the
+>
+> just released DMA-BUF memory does not provide much help.
+>
+Hi Huan,
 
-Goodness, sorry about that. I just recreated it under my public
-account and shared it with the world. This HAS to work:
+I find this part surprising. Assuming the dmabuf memory doesn't first
+go into a page pool (used for some buffers, not all) and actually does
+get freed synchronously with fput, this would mean it gets sucked up
+by other supposedly background processes before it can be allocated by
+the preview process. I thought the preview process was the one most
+desperate for memory? You mention file pages, but where is this
+newly-freed memory actually going if not to the preview process? My
+initial reaction was the same as Roman's that the PMC should be hooked
+up to reclaim instead of depending on the reaper. But I think this
+might suggest that wouldn't work because the system is under such high
+memory pressure that it'd be likely reclaim would have emptied the
+PMCs before the preview process could use it.
 
-  https://docs.google.com/presentation/d/1eaOf9CVZlCOD6b7_UtZBYMfTyYIDZw9cl=
-yjzu-IIOIo
+One more thing I find odd is that for this to work a significant
+portion of your dmabuf pages would have to be order 0, but we're
+talking about a ~500M buffer. Does whatever exports this buffer not
+try to use higher order pages like here?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
+vers/dma-buf/heaps/system_heap.c?h=3Dv6.9#n54
 
-> > > > Few questions, while we are at it. Does it mean that
-> > > > perf_callchain_user() will support working from sleepable context a=
-nd
-> > > > will wait for data to be paged in? Is anyone already working on thi=
-s?
-> > > > Any pointers?
-> > >
-> > > I had a prototype here:
-> > >
-> > >   https://lkml.kernel.org/lkml/cover.1699487758.git.jpoimboe@kernel.o=
-rg
-> > >
-> > > Hopefully I can get started on v2 soon.
+Thanks!
+-T.J.
+
+> But using PMC (let's call it that for now), we are able to quickly meet
+> the memory needs of the subsequent preview process
+>
+> with the just released DMA-BUF memory, without having to go through the
+> slow path, resulting in a significant performance improvement.
+>
+> (of course, break migrate type may not good.)
+>
 > >
-> > Ok, so you are going to work on this. Please cc me on future revisions
-> > then. Thanks!
+> > There are a lot of other questions, and you highlighted some of them be=
+low
+> > (and these are indeed right questions to ask), but let's start with som=
+ething.
+> >
+> > Thanks
+> Thanks
 >
-> Will do!
->
-> --
-> Josh
 
