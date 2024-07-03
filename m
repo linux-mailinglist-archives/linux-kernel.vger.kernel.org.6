@@ -1,143 +1,126 @@
-Return-Path: <linux-kernel+bounces-238783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C304E924FE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:44:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2756D924FE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 05:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2883B21917
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:43:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D4F1C225FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 03:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C40182C3;
-	Wed,  3 Jul 2024 03:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EB417BCA;
+	Wed,  3 Jul 2024 03:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="h7GXSRM7"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="eIzh4JOJ"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE2D18042
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 03:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A390117C60;
+	Wed,  3 Jul 2024 03:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719978184; cv=none; b=Aj1CXN21yQgCK9wP1dtU6qXLb1ef4ddncFM3E8mXvclLXe3Kw48gKowaLm+PYUkAV/ITtbg8KaU5cyjbhFBA4jgdStLbHVR6mjjVHqYJVJB104jvyiYepQV3lxvyiKo0JdaEPnwSAy2MeNIIxnuCpOPmrWmS2lNnTDzmlw6g1pU=
+	t=1719978267; cv=none; b=fqaqV0mIhI728+oOLuYZiq3JFhJA81AG3uEBM+sUC8DWDOU27zvw7SSRIpNgZ95WMWyYqKkcHrdGhg3dr4icxMHoF9TFfb69jsJmn9z/mwdQCk8Wsmj8iqFckkeZYVKHA6WlAJ+/FUIPDcFDZ0LWtuLHIXOnyJSOni52JjrauDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719978184; c=relaxed/simple;
-	bh=a6TKJdWYiAp3I0uWNzwAOR9657oxxZMqD+Cd6q6GXPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c1gNr901AuluoFUBGRlo+Jczxh+nCHgcgejqQ9r5GdOGVomhTvWLOlbRID9XjtFjfE10DFa1V5ZyfEreqhzanwOwpX4KrHWQ19WxFX4LOLtxq6uuqtHkYgvcVjBCmUo6tw+Ixt1py9Qicf0NzQeYlczMmaF4LlcDB367/olULwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=h7GXSRM7; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 4633gLTk146462
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 2 Jul 2024 20:42:22 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4633gLTk146462
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1719978143;
-	bh=Ex/fYNECMashiRiup/1meZ1pO0xIwMpSCpz7AOoym0I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h7GXSRM7ujiYemNFWgE6zgJRZwNnQg1woodnmE/0KZ9b1gWOJWX+rjPiR45mz0rkC
-	 4fR004Q/bHruhXFwabXZfC0wfWamqlaYZE8LrY7SFvhFcIDoCUVT4/0yKufcXdWqmR
-	 zujocGagCy3vxTxkvRfIl0L7w5snHxDgkRujP3x3sigG1i9bNpWIXSh7BEceNqcENk
-	 CGS/Pu9IBDmaHqQatdA2/p5PbdXDI86WKsy8jp3kD9CpSAmTMiiZqlWAcalJ3kIibn
-	 DyI/gtiCGF1zCbQlCZG1jTqq9s+SqmILQLpXALHtP4aWDxQ1usYdLTVKBIoe5ZdN5n
-	 0YP9R4NkUSMkQ==
-Message-ID: <52d155d1-61bb-4829-b2ec-b60cdd1bf2c5@zytor.com>
-Date: Tue, 2 Jul 2024 20:42:20 -0700
+	s=arc-20240116; t=1719978267; c=relaxed/simple;
+	bh=bSWZY5KWhs4pwbuKUAh+EkDN2bROG4myn3eDtiD0mrE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FeJx2LAlPIVfrdNPuVYZNLosPku9f8ByrVtyrt9+UuDcWy9FS0OapXY3cjmm01kJndNgrdcsmeJxzaUtEwOCH4Y197SFqX4slCOZsim4sDbTHaE3JRdXaoim4HAPoKe3UODz0i7K++ls6+wicvmTH5VwOsVGOgVXzT7gJnUFI14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=eIzh4JOJ; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 872bc36c38ee11ef99dc3f8fac2c3230-20240703
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=0919Eg9JUothln0+V1EUy9kX5BQowYtQJF09dFwlQ+Q=;
+	b=eIzh4JOJmNhqQfZg3FffbYTrdBgiSvYozra/EbJ01xc9WcPN/1QGLK7MyYvK/Cpxs61ehbLh9TuhiNyoXE1Kc1nNBhVbUSIq0xO/+k3Wk6cTdWB1dFusFzoDt8BtrwYaYwNTQA/WeQ9yYEmAGi3vM/hm3LoqL0plDvvHN92dQqM=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:f6a74159-9ce3-4de6-ac21-4f873f4c9204,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:ba885a6,CLOUDID:16d2d744-a117-4f46-a956-71ffeac67bfa,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 872bc36c38ee11ef99dc3f8fac2c3230-20240703
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <jason-ch.chen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2116597845; Wed, 03 Jul 2024 11:44:19 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 3 Jul 2024 11:44:17 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 3 Jul 2024 11:44:17 +0800
+From: Jason Chen <Jason-ch.Chen@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Jason Chen <Jason-ch.Chen@mediatek.com>
+Subject: [PATCH] remoteproc: mediatek: Increase MT8188/MT8195 SCP core0 DRAM size
+Date: Wed, 3 Jul 2024 11:44:09 +0800
+Message-ID: <20240703034409.698-1-Jason-ch.Chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/fred: Always install system interrupt handler
- into IDT
-To: Hou Wenlong <houwenlong.hwl@antgroup.com>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshan.ljs@antgroup.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Xin Li
- <xin3.li@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-References: <cover.1718972598.git.houwenlong.hwl@antgroup.com>
- <2f632ef59c8c9cc27c3702bc2d286496ed298d65.1718972598.git.houwenlong.hwl@antgroup.com>
- <dca1635b-1e08-4dbb-9dbb-335cbdcf9b9d@zytor.com>
- <20240628093656.GA103025@k08j02272.eu95sqa>
- <c0ec7712-c538-4cd1-ada2-d0120c662ce8@zytor.com>
- <c2548e16-7251-4d1c-87a2-f1c09be83e3e@zytor.com>
- <20240703024438.GA76553@k08j02272.eu95sqa>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20240703024438.GA76553@k08j02272.eu95sqa>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK: N
 
-On 7/2/2024 7:44 PM, Hou Wenlong wrote:
-> On Wed, Jul 03, 2024 at 01:16:29AM +0800, Xin Li wrote:
->> On 6/28/2024 8:18 AM, Xin Li wrote:
->>> On 6/28/2024 2:36 AM, Hou Wenlong wrote:
->>>> Hi Xin,
->>>>
->>>> It seems preferable to parse the FRED command line and disable FRED
->>>> early instead of using this method. As mentioned in my cover letter, I
->>>> initially attempted to fix the problem this way (by parsing the command
->>>> line in cpu_parse_early_param()). Should I send a new patch for it, or
->>>> will you be covering it in your work to enable FRED early?
->>>>
->>>
->>> I have done it in my patches that enables FRED early, but if you want,
->>> you can post it, because you're a key contributor in this work.
->>>
->>
->> Please let me know if you want to do it.
->>
-> Hi Xin,
-> 
-> Sorry for forgetting to reply. I think it would be better for the fix to
-> be covered in your work.
+The current DRAM size is insufficient for the HEVC feature, which
+requires more memory for proper functionality. This change ensures the
+feature has the necessary resources.
 
-NP, thanks!
+Signed-off-by: Jason Chen <Jason-ch.Chen@mediatek.com>
+---
+ drivers/remoteproc/mtk_scp.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index b17757900cd7..e744c07507ee 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -1388,7 +1388,7 @@ static const struct mtk_scp_sizes_data default_scp_sizes = {
+ };
+ 
+ static const struct mtk_scp_sizes_data mt8188_scp_sizes = {
+-	.max_dram_size = 0x500000,
++	.max_dram_size = 0x800000,
+ 	.ipi_share_buffer_size = 600,
+ };
+ 
+@@ -1397,6 +1397,11 @@ static const struct mtk_scp_sizes_data mt8188_scp_c1_sizes = {
+ 	.ipi_share_buffer_size = 600,
+ };
+ 
++static const struct mtk_scp_sizes_data mt8195_scp_sizes = {
++	.max_dram_size = 0x800000,
++	.ipi_share_buffer_size = 288,
++};
++
+ static const struct mtk_scp_of_data mt8183_of_data = {
+ 	.scp_clk_get = mt8183_scp_clk_get,
+ 	.scp_before_load = mt8183_scp_before_load,
+@@ -1474,7 +1479,7 @@ static const struct mtk_scp_of_data mt8195_of_data = {
+ 	.scp_da_to_va = mt8192_scp_da_to_va,
+ 	.host_to_scp_reg = MT8192_GIPC_IN_SET,
+ 	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+-	.scp_sizes = &default_scp_sizes,
++	.scp_sizes = &mt8195_scp_sizes,
+ };
+ 
+ static const struct mtk_scp_of_data mt8195_of_data_c1 = {
+-- 
+2.34.1
 
 
