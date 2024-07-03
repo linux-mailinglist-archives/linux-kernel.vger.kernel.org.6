@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-238979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2009392546A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:10:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B11925475
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 09:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1FCEB20EEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F25371F24C95
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 07:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF57135A6C;
-	Wed,  3 Jul 2024 07:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDEC136982;
+	Wed,  3 Jul 2024 07:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kQadzdev"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="gDY8nuV8"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B71313541F
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D794F130488
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 07:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719990628; cv=none; b=swIdPbl+fKj5KNFLSeZK4Ut6CVMu0gHlm9/TL7r0vHaJKgDy0Luq1IP/lNN/vRNeyS1F6sdD19zVfiF4LA4RSdn7lYjsLrkJvbb7B1ITJsJbUmQL9COWZAF7g8F7f2AlY4b1LoQkOW1fQ5KMM/DVLtnsGOrmz74+OVnOamhRlHU=
+	t=1719990998; cv=none; b=fUTFHgF5zLQ8KZ2JUMsjoWfZzxiKoPR4gykWaxGzdEm6Jsko5MTCbah3owTR6enqrwuit6ed7XZppu4h7y99cKgR5Ykr5WdI16Uj7pjAhfvgNKrOHf87OYBoRp5CXgBl19S7FJO96wU65KG7/jc+F1sgENRrOBoH5rOuhRIWW2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719990628; c=relaxed/simple;
-	bh=OlwUiCXewDyw3zYSLPgZ1L2XZ7B8RYL2CMyOeckMhdc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IcVRG1FjecgxZSvm0Fk6jKjHGiyaXh2qlDTNx6a5vSfJXcDWqAhw1FbFBtwGwCu+YBX1zUOGooKOWftwXBLT3E2zWEe4yt9bqpsInEejvNHscmQUmsJdIUTcjBkkPSzqxiiCVwGB8Sms/XCUF7PJS3OIPbPHaDAbBauAklhwTzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kQadzdev; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: kent.overstreet@linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719990623;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bhgTv6ReHO7QsWKhJp5T5JfpRyE52nnWo5na3qgj96s=;
-	b=kQadzdevaT4Yinmvis3gGKRPoTnuOB5xxjFi8mBkz2rgTiPZiGaKSaf+sRpGjOheiIdhps
-	yaXmsIInA40LqMRwUHLzFciZUDcbg9BuERjq/cfkRqlHKKKLCMeTkrFRB9fgZvy5oCYCTN
-	VySLjQODtfpAQB6U1a6rDcpqt0BrlfU=
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: youling.tang@linux.dev
-X-Envelope-To: tangyouling@kylinos.cn
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	youling.tang@linux.dev,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: [PATCH] bcachefs: Mark bch_inode_info as SLAB_ACCOUNT
-Date: Wed,  3 Jul 2024 15:09:55 +0800
-Message-Id: <20240703070955.104163-1-youling.tang@linux.dev>
+	s=arc-20240116; t=1719990998; c=relaxed/simple;
+	bh=KTDcWsE7q4CAGrggP1GbK428gemPHQuwGvTGjC4cR9s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lO9GkTRLQnyNiPuYyS7Rf/DyEnFA01p9IolINNpIPe1OSjUkmy0v3mWS4GJJH8X/wqmIS0Ss7eZkhFpFsW2NCnoettB9mYYyc+JrfBnsijPPeVt3+uEFJ7X6pjGYIdaWla2FZT9ggznsGwgdnwvUovg96qzqgQ4dDhWUT98Uw4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=gDY8nuV8; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=3YHgR2kPNRh6LD
+	6XnaVo+nlQknMU0QRGpA7uAzZVuBs=; b=gDY8nuV8rZhIxJHTHPkdNHFsOmkRiR
+	6KMji7NU9ODVPWP9ByB4CKCHwTA4wTY+SkuhsFG459pr6Pbne0C4Lu3EeMysjkqy
+	cSKnAi6WtcC7L5v5mMd2l/0v9W7REa63RO9z/4wNBrVedG6gq98mBuOtjd9L64Tj
+	cgHHqTUqoQVRS6bQwMXOKBewGiQdUKlmxC++QwPh/d5ISDXyhc95ZSCUPULAjiqX
+	2zHkFD9HN3Aa8+PvSKa5mVJZIs2VaNrbH5TDCeYF/30S/GVg7bOemSAIjjZZO0TO
+	ShPxqS8hW0N4hSfnhbbIeTURDIG0C5q+it1oQG1GTB+Qw3aRjoUpJS6A==
+Received: (qmail 2715603 invoked from network); 3 Jul 2024 09:16:32 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Jul 2024 09:16:32 +0200
+X-UD-Smtp-Session: l3s3148p1@Zq8ZnFIcBK9ehhrb
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] i2c: rcar: bring hardware to known state when probing
+Date: Wed,  3 Jul 2024 09:12:03 +0200
+Message-ID: <20240703071625.5389-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,34 +60,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: Youling Tang <tangyouling@kylinos.cn>
+Probably due to a lot of refactorization, the hardware was not brought
+into a known state in probe. This may be a problem when a hypervisor
+restarts Linux without resetting the hardware, leaving an old state
+running. Make sure the hardware gets initialized, especially interrupts
+should be cleared and disabled.
 
-After commit 230e9fc28604 ("slab: add SLAB_ACCOUNT flag"), we need to mark
-the inode cache as SLAB_ACCOUNT, similar to commit 5d097056c9a0 ("kmemcg:
-account for certain kmem allocations to memcg")
-
-Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Closes: https://lore.kernel.org/r/20240702045535.2000393-1-dirk.behme@de.bosch.com
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- fs/bcachefs/fs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-index be7eda94b459..092f95426dce 100644
---- a/fs/bcachefs/fs.c
-+++ b/fs/bcachefs/fs.c
-@@ -2126,7 +2126,8 @@ int __init bch2_vfs_init(void)
+Here is my proposal to fix the issue reported by Dirk. Build tested.
+I can do proper testing on HW only tomorrow. But so you know already...
+
+It is strange to add another "_slave" function to the driver while I
+work on removing such language from I2C somewhere else. "Consistency" is
+the answer here. The driver will be converted as well. But then as a
+whole.
+
+ drivers/i2c/busses/i2c-rcar.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 828aa2ea0fe4..00a885205075 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -257,6 +257,14 @@ static void rcar_i2c_init(struct rcar_i2c_priv *priv)
+ 	}
+ }
+ 
++static void rcar_i2c_init_slave(struct rcar_i2c_priv *priv)
++{
++	rcar_i2c_write(priv, ICSIER, 0);
++	rcar_i2c_write(priv, ICSSR, 0);
++	rcar_i2c_write(priv, ICSCR, SDBS);
++	rcar_i2c_write(priv, ICSAR, 0); /* Gen2: must be 0 if not using slave */
++}
++
+ static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
  {
- 	int ret = -ENOMEM;
+ 	int ret;
+@@ -1033,11 +1041,8 @@ static int rcar_unreg_slave(struct i2c_client *slave)
  
--	bch2_inode_cache = KMEM_CACHE(bch_inode_info, SLAB_RECLAIM_ACCOUNT);
-+	bch2_inode_cache = KMEM_CACHE(bch_inode_info, SLAB_RECLAIM_ACCOUNT |
-+				      SLAB_ACCOUNT);
- 	if (!bch2_inode_cache)
- 		goto err;
+ 	/* ensure no irq is running before clearing ptr */
+ 	disable_irq(priv->irq);
+-	rcar_i2c_write(priv, ICSIER, 0);
+-	rcar_i2c_write(priv, ICSSR, 0);
++	rcar_i2c_init_slave(priv);
+ 	enable_irq(priv->irq);
+-	rcar_i2c_write(priv, ICSCR, SDBS);
+-	rcar_i2c_write(priv, ICSAR, 0); /* Gen2: must be 0 if not using slave */
  
+ 	priv->slave = NULL;
+ 
+@@ -1152,7 +1157,9 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+ 		goto out_pm_disable;
+ 	}
+ 
+-	rcar_i2c_write(priv, ICSAR, 0); /* Gen2: must be 0 if not using slave */
++	/* Bring hardware to known state */
++	rcar_i2c_init(priv);
++	rcar_i2c_init_slave(priv);
+ 
+ 	if (priv->devtype < I2C_RCAR_GEN3) {
+ 		irqflags |= IRQF_NO_THREAD;
 -- 
-2.34.1
+2.43.0
 
 
