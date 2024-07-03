@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-238966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD365925442
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:58:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2EC925443
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 08:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B771F220C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E32451C23A78
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 06:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6651D135A71;
-	Wed,  3 Jul 2024 06:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632E413774D;
+	Wed,  3 Jul 2024 06:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AkGCrcyk"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YSl/XEM5"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22446134415
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 06:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57214137760
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Jul 2024 06:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719989897; cv=none; b=V4aFEbJnSBoEYTjcXIh/B7PIxXOPl7iXXF4hPmsCfiGITwWSdWn/9Bwh9EZFAUVSU5cgV68/aGgCFlDK5QoIbvdkIY62cHp7w7KBNYxFkmX5LJtzOzfOoSYkE7yEN+E81FnB0LvYSy7hkejvXBk1Pk0Q9T5+aI4An9PUq0EKAO0=
+	t=1719989902; cv=none; b=NVe75Wk5FJvUmJH+4zSJO0rWqDoygDCOod2YK5pldrLo0eB4BySLqQuKfz69hMrk4q7ZqoQAT1Cjh9YZDSs9nxOj+cBgoY3zXtcDfP7ZybcLR6kkgr7f0xUDjVJefuD+hDLnd/jDbHxk7TUpIIGHaJteHmyDLy5qJTvjFzOFZhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719989897; c=relaxed/simple;
-	bh=ZPs014jUeapXXCgzHtG44Q1FaQuSO5JnIUvqtly4tiY=;
+	s=arc-20240116; t=1719989902; c=relaxed/simple;
+	bh=o2uBgu6KoI6iC4vRl+T9bSlBLBAmmXqPYZ7yreC4cEY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YGAhV64yKsq0MzRI6t0dhS4wFJpIOFRg3OR2xsnYUwbX79Jnp1aNnu2NPUzZ9yZJ3WKG6tzeREQYPg7njESbv57NT1yMO50rH5AaQOzNuDENweOaGDcwS6a4TKxab/ZnhwdzsHOKFBSzNAgETtmkDqnuFVi7VHf06JuRSS3l2QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AkGCrcyk; arc=none smtp.client-ip=209.85.216.41
+	 MIME-Version; b=fRoDeUXsM8Ssc5+DQEGB12UAwE+KVWINKy29vXnhfO/+sevOGkkfI0h46f0ESO/eVckxporVU6rBtLXMtE0w71Ladqpfo/baC34ctI8+c3/CslJlbMnFGCUEAiRI2EuuYN6jXGYqKnB0wKcUy/zTzeudgdTWyS1VrvCxAG13BBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YSl/XEM5; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c8911c84daso3468505a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 23:58:15 -0700 (PDT)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c8911c84daso3468542a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 23:58:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719989895; x=1720594695; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719989901; x=1720594701; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xzpdtG7l+61FZknCaY59u/tBtOIKZgOnyqq0sEG7wfc=;
-        b=AkGCrcykJlhpDOHQK+VLb2YXoUJBsrzcomXV5EgmOsWU4cWVVGPfd2OpGjDsb2ezoC
-         542jInNrf2mmEVxkiImLuf6n9bvtu5Wqu/THJIFH8Eo5iCsuhv+gUcERcjyQ5wzDIS9m
-         wS3Mx6OCQwPv0VLzxeYRWvHs5J8SdbtENkRCNPdKz/F0WILa13tj8GD2SXRG1An1PKtc
-         Wr6GI61T3dGK0TybEE1kkFYZCi0H36+sWUcylsf/I1B0FPnnzPJKaaaW5eT+gzB+c3o1
-         cgHqjTwDMa55cNiQT58nbzu/o+fY6EQFbaBQHJq1O5vxZuZB1wAc4OHTG6usmUTv2gZi
-         LGEw==
+        bh=bxbxKt+yrBPNNKQZqw0DOsM2FX9GJEjPe3EATpJa3RU=;
+        b=YSl/XEM5jROWO724p4De+dkUqr2O7CWc4oWZivF4HzzN/+fKk9tbqEsQHDOi3IPHCH
+         wXmb+2hOcrdW8TUqmcrc0C/DKY7yPugI4JznCAxGzXXM1OSoc9riquduNTYiJzvK7f+/
+         wKvGzWXEzB0xzJTLus9pPqqxuNBEwuS6BPnhb426tAGIpa/PbrYUUwXqhyIfSCwaIHhR
+         cRPC2HxzOHzj+YIus1eRajqy2Mvdw79zrBL86RK211PWbaJtqQ9SVcWpPe//s8ajiGL+
+         nlzxud2BoAciozenOXX6bjzLK9L+gX18J8wET0YwPvYXpnk7sWgU7MYUGouZZ9KaHa9t
+         /xAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719989895; x=1720594695;
+        d=1e100.net; s=20230601; t=1719989901; x=1720594701;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xzpdtG7l+61FZknCaY59u/tBtOIKZgOnyqq0sEG7wfc=;
-        b=dDwyy+ppsYDIYfid1Ww3bCSi4PZX18cGjEnNWNB8FeGzIwCqTUvrWbmyltcOq47O5G
-         rdn7rz2lsAoIjO+0tgwOWrkD4KxraQzHfkQTH/XO4FMhCDg7IPhOws8FaVpRHLmWuNWF
-         6TZzLXFyy8f3PwgDm8GDMgp3DF7Cu9XvbVF4IwlpjONZXCjl75uZVrU06jH3iKxtS+XJ
-         bIYtDwJPPtcVlaatAbQVjDe2QEfS6o+5hLDaUhP3/peyJJAzPKG8Q+QlG6O3bv+L4j7X
-         lx8xyn/rU2Elep9Nm9VV7V4x+oy5uVMIaOYbq6dLJC3RmMetQxCFWdg5hoUqRohEavCU
-         7PbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMQa7JMsBkbR1PQEQZnKj0jTXCy628GHE8vlS1xiYJNXNa/5l4G7JMlRHmmiBMepKKR2l9LwFgDEY0lvWSD6rjFBpLdEL3V2hsJMjm
-X-Gm-Message-State: AOJu0Yw3G2lf62ipmzy/DbzBjYGN8ML7t1E1xpFshYfXL4ZRx/0zFq41
-	sEGMEDcUjw+IbDJ2WoffpNWoldX9Y9EXeC+STHXq+MAoALdkJzJg
-X-Google-Smtp-Source: AGHT+IFhTTaB1WupIMW6rfPpx8ReG1qfczZ5DxmoQdwGtfpjx5/6cHxOC3KlaEaxTWQ5ki3CPJyZXg==
-X-Received: by 2002:a17:90b:3a8b:b0:2c8:6308:ad78 with SMTP id 98e67ed59e1d1-2c93d7694abmr10642022a91.34.1719989895182;
-        Tue, 02 Jul 2024 23:58:15 -0700 (PDT)
+        bh=bxbxKt+yrBPNNKQZqw0DOsM2FX9GJEjPe3EATpJa3RU=;
+        b=EG9cT6JHbX0861ZZ4CQa7Y6MBx3gUP2ImrgHCbRpji4YYR22n8Z5CrH+JJh7Zwx2tt
+         4NC4e7Ze3DtEbtHPLcuvwbbee5MdtYaCjy4xeIL36BqPYiEeawvHiXwZ9NIiISf4bfyN
+         86cYoDattFCLSwuCmYKUVj437HMLkKd9uqo9wpfEw8xO2dq2LrxRF1gs+ew+/mV1DN03
+         b7FZuomy0QLUZuVoGTGlvphUB53gB/LDouVz1PCjq2zyY7SpztXoxrOg3X00SRREtOKg
+         jThQoSxnEhkVJXpbKyuBf1uhQR0HiOhLTv02CXCPKWln0sNrXr1yT9yYR0Zi9ogVtNG0
+         Dy+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX7vcsB1PvXacxyHj9CRE2knSP/ik+0Ik1ocYUbjdH4plH1Tu8UvHsCAaUE71oZmD47BGSdTMKeHBqI7HcU+9+xBcHy/hgIKL7oZM2w
+X-Gm-Message-State: AOJu0YxelKXar4/UUJ5orX3z8WuPqoSor9ojXEUO4Jr9ePp6Dgu59FC8
+	4hw76Kh/5hBGAgtyl+mL+i5TOnXswDCXVPXRyi8dtSKatMZ/Afjy
+X-Google-Smtp-Source: AGHT+IHArs7mizExpBu5sv5B/RYD+ZEGUNrrOWSx56Hcy+SLKwJ5Kja6sljlxOWMSAWYm+qthagh5g==
+X-Received: by 2002:a17:90a:ec12:b0:2c8:880:776b with SMTP id 98e67ed59e1d1-2c93d71f509mr9257040a91.23.1719989900562;
+        Tue, 02 Jul 2024 23:58:20 -0700 (PDT)
 Received: from kousik.local ([2405:201:c006:312d:258c:c06c:76e7:dba9])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3e818asm9973921a91.51.2024.07.02.23.58.10
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3e818asm9973921a91.51.2024.07.02.23.58.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 23:58:14 -0700 (PDT)
+        Tue, 02 Jul 2024 23:58:20 -0700 (PDT)
 From: Kousik Sanagavarapu <five231003@gmail.com>
 To: Julia Lawall <julia.lawall@inria.fr>,
 	Nishanth Menon <nm@ti.com>,
@@ -77,9 +77,9 @@ Cc: Shuah Khan <skhan@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Kousik Sanagavarapu <five231003@gmail.com>
-Subject: [PATCH v2 2/3] soc: ti: knav_qmss_queue: do device_node auto cleanup
-Date: Wed,  3 Jul 2024 12:25:27 +0530
-Message-ID: <20240703065710.13786-3-five231003@gmail.com>
+Subject: [PATCH v2 3/3] soc: ti: pm33xx: do device_node auto cleanup
+Date: Wed,  3 Jul 2024 12:25:28 +0530
+Message-ID: <20240703065710.13786-4-five231003@gmail.com>
 X-Mailer: git-send-email 2.45.2.561.g66ac6e4bcd
 In-Reply-To: <20240703065710.13786-1-five231003@gmail.com>
 References: <20240703065710.13786-1-five231003@gmail.com>
@@ -91,183 +91,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use scope based cleanup, instead of manual of_node_put() calls, which
-automatically free()s "struct device_node".
-
-While at it, refactor the code from knav_queue_probe() into the seperate
-functions to make auto cleanup look more neat.
-
-Doing the cleanup this way has the advantage of reducing the chance of
-memory leaks in case we need to read from new OF nodes in the future
-when we probe.
+Use scope based cleanup instead of manual of_node_put() calls, hence
+simplifying the handling of error paths.
 
 Suggested-by: Julia Lawall <julia.lawall@inria.fr>
 Signed-off-by: Kousik Sanagavarapu <five231003@gmail.com>
 ---
- drivers/soc/ti/knav_qmss_queue.c | 85 +++++++++++++++++---------------
- 1 file changed, 46 insertions(+), 39 deletions(-)
+ drivers/soc/ti/pm33xx.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index 06fb5505c22c..767b9c49ea93 100644
---- a/drivers/soc/ti/knav_qmss_queue.c
-+++ b/drivers/soc/ti/knav_qmss_queue.c
-@@ -1076,14 +1076,20 @@ static const char *knav_queue_find_name(struct device_node *node)
- }
- 
- static int knav_queue_setup_regions(struct knav_device *kdev,
--					struct device_node *regions)
-+				    struct device_node *node)
+diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
+index 8e983c3c4e03..40988c45ed00 100644
+--- a/drivers/soc/ti/pm33xx.c
++++ b/drivers/soc/ti/pm33xx.c
+@@ -383,10 +383,9 @@ static void am33xx_pm_free_sram(void)
+  */
+ static int am33xx_pm_alloc_sram(void)
  {
- 	struct device *dev = kdev->dev;
-+	struct device_node *regions __free(device_node) =
-+			of_get_child_by_name(node, "descriptor-regions");
- 	struct knav_region *region;
- 	struct device_node *child;
- 	u32 temp[2];
- 	int ret;
+-	struct device_node *np;
+-	int ret = 0;
++	struct device_node *np __free(device_node) =
++			of_find_compatible_node(NULL, NULL, "ti,omap3-mpu");
  
-+	if (!regions)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "descriptor-regions not specified\n");
-+
- 	for_each_child_of_node(regions, child) {
- 		region = devm_kzalloc(dev, sizeof(*region), GFP_KERNEL);
- 		if (!region) {
-@@ -1306,10 +1312,16 @@ static int knav_setup_queue_range(struct knav_device *kdev,
- }
+-	np = of_find_compatible_node(NULL, NULL, "ti,omap3-mpu");
+ 	if (!np) {
+ 		np = of_find_compatible_node(NULL, NULL, "ti,omap4-mpu");
+ 		if (!np) {
+@@ -400,24 +399,21 @@ static int am33xx_pm_alloc_sram(void)
+ 	if (!sram_pool) {
+ 		dev_err(pm33xx_dev, "PM: %s: Unable to get sram pool for ocmcram\n",
+ 			__func__);
+-		ret = -ENODEV;
+-		goto mpu_put_node;
++		return -ENODEV;
+ 	}
  
- static int knav_setup_queue_pools(struct knav_device *kdev,
--				   struct device_node *queue_pools)
-+				  struct device_node *node)
- {
-+	struct device_node *queue_pools __free(device_node) =
-+			of_get_child_by_name(node, "queue-pools");
- 	struct device_node *type, *range;
+ 	sram_pool_data = of_gen_pool_get(np, "pm-sram", 1);
+ 	if (!sram_pool_data) {
+ 		dev_err(pm33xx_dev, "PM: %s: Unable to get sram data pool for ocmcram\n",
+ 			__func__);
+-		ret = -ENODEV;
+-		goto mpu_put_node;
++		return -ENODEV;
+ 	}
  
-+	if (!queue_pools)
-+		return dev_err_probe(kdev->dev, -ENODEV,
-+				     "queue-pools not specified\n");
-+
- 	for_each_child_of_node(queue_pools, type) {
- 		for_each_child_of_node(type, range) {
- 			/* return value ignored, we init the rest... */
-@@ -1389,14 +1401,20 @@ static void __iomem *knav_queue_map_reg(struct knav_device *kdev,
- }
+ 	ocmcram_location = gen_pool_alloc(sram_pool, *pm_sram->do_wfi_sz);
+ 	if (!ocmcram_location) {
+ 		dev_err(pm33xx_dev, "PM: %s: Unable to allocate memory from ocmcram\n",
+ 			__func__);
+-		ret = -ENOMEM;
+-		goto mpu_put_node;
++		return -ENOMEM;
+ 	}
  
- static int knav_queue_init_qmgrs(struct knav_device *kdev,
--					struct device_node *qmgrs)
-+				 struct device_node *node)
- {
- 	struct device *dev = kdev->dev;
-+	struct device_node *qmgrs __free(device_node) =
-+			of_get_child_by_name(node, "qmgrs");
- 	struct knav_qmgr_info *qmgr;
- 	struct device_node *child;
- 	u32 temp[2];
- 	int ret;
+ 	ocmcram_location_data = gen_pool_alloc(sram_pool_data,
+@@ -425,12 +421,10 @@ static int am33xx_pm_alloc_sram(void)
+ 	if (!ocmcram_location_data) {
+ 		dev_err(pm33xx_dev, "PM: Unable to allocate memory from ocmcram\n");
+ 		gen_pool_free(sram_pool, ocmcram_location, *pm_sram->do_wfi_sz);
+-		ret = -ENOMEM;
++		return -ENOMEM;
+ 	}
  
-+	if (!qmgrs)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "queue manager info not specified\n");
-+
- 	for_each_child_of_node(qmgrs, child) {
- 		qmgr = devm_kzalloc(dev, sizeof(*qmgr), GFP_KERNEL);
- 		if (!qmgr) {
-@@ -1668,6 +1686,25 @@ static int knav_queue_start_pdsps(struct knav_device *kdev)
- 	return 0;
- }
- 
-+static int knav_queue_setup_pdsps(struct knav_device *kdev,
-+				  struct device_node *node)
-+{
-+	struct device_node *pdsps __free(device_node) =
-+			of_get_child_by_name(node, "pdsps");
-+
-+	if (pdsps) {
-+		int ret;
-+
-+		ret = knav_queue_init_pdsps(kdev, pdsps);
-+		if (ret)
-+			return ret;
-+		ret = knav_queue_start_pdsps(kdev);
-+		if (ret)
-+			return ret;
-+	}
+-mpu_put_node:
+-	of_node_put(np);
+-	return ret;
 +	return 0;
-+}
-+
- static inline struct knav_qmgr_info *knav_find_qmgr(unsigned id)
- {
- 	struct knav_qmgr_info *qmgr;
-@@ -1755,7 +1792,6 @@ MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
- static int knav_queue_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
--	struct device_node *qmgrs, *queue_pools, *regions, *pdsps;
- 	struct device *dev = &pdev->dev;
- 	u32 temp[2];
- 	int ret;
-@@ -1799,39 +1835,17 @@ static int knav_queue_probe(struct platform_device *pdev)
- 	kdev->num_queues = temp[1];
+ }
  
- 	/* Initialize queue managers using device tree configuration */
--	qmgrs =  of_get_child_by_name(node, "qmgrs");
--	if (!qmgrs) {
--		dev_err(dev, "queue manager info not specified\n");
--		ret = -ENODEV;
--		goto err;
--	}
--	ret = knav_queue_init_qmgrs(kdev, qmgrs);
--	of_node_put(qmgrs);
-+	ret = knav_queue_init_qmgrs(kdev, node);
- 	if (ret)
- 		goto err;
- 
- 	/* get pdsp configuration values from device tree */
--	pdsps =  of_get_child_by_name(node, "pdsps");
--	if (pdsps) {
--		ret = knav_queue_init_pdsps(kdev, pdsps);
--		if (ret)
--			goto err;
--
--		ret = knav_queue_start_pdsps(kdev);
--		if (ret)
--			goto err;
--	}
--	of_node_put(pdsps);
-+	ret = knav_queue_setup_pdsps(kdev, node);
-+	if (ret)
-+		goto err;
- 
- 	/* get usable queue range values from device tree */
--	queue_pools = of_get_child_by_name(node, "queue-pools");
--	if (!queue_pools) {
--		dev_err(dev, "queue-pools not specified\n");
--		ret = -ENODEV;
--		goto err;
--	}
--	ret = knav_setup_queue_pools(kdev, queue_pools);
--	of_node_put(queue_pools);
-+	ret = knav_setup_queue_pools(kdev, node);
- 	if (ret)
- 		goto err;
- 
-@@ -1853,14 +1867,7 @@ static int knav_queue_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err;
- 
--	regions = of_get_child_by_name(node, "descriptor-regions");
--	if (!regions) {
--		dev_err(dev, "descriptor-regions not specified\n");
--		ret = -ENODEV;
--		goto err;
--	}
--	ret = knav_queue_setup_regions(kdev, regions);
--	of_node_put(regions);
-+	ret = knav_queue_setup_regions(kdev, node);
- 	if (ret)
- 		goto err;
- 
+ static int am33xx_pm_rtc_setup(void)
 -- 
 2.45.2.561.g66ac6e4bcd
 
