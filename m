@@ -1,172 +1,99 @@
-Return-Path: <linux-kernel+bounces-240818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D75D927331
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:39:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E5A9927333
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37636281498
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:39:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE371C24211
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96AF1AB503;
-	Thu,  4 Jul 2024 09:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7878748F;
+	Thu,  4 Jul 2024 09:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="toPUSqyT"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H5ky8x62"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131C2748F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22771AB51C
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720085947; cv=none; b=FiYs7MwtrGyJXiyxhRoGFTZCgX6s+aNmHdv0BegTAeX6kqohI6dOLywn0iOIgslRcb+7vRHj33UOl3uPIZN/NTdMMAEVoNTZUDDfZN0mrZj7YjZ2lLy/Qke8Hn0OOcV/3Kx6UbKZh06a2NydKM7fX/gHnSaxL6aw1VJAKjWlypQ=
+	t=1720085950; cv=none; b=bRFnGQs2DCDLn+TC12joZngjIA4WjIlgufwRzn2JWSwN4gXd5Oxlz3bbWl7dBibV7aRdEE4xJyoUswDdQgfpXZDMtplpEMUBKm9DX042+k2C75GcoSLJJIthpQ68lLHPxNeYaLtWkjCYaH4APo9RkCUWPfhHO0y9Dobh7is1ElU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720085947; c=relaxed/simple;
-	bh=1id0SpFkgrDsTPAjmuU7RHogfbszgR+A3t102c2bvLQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aBLkpynxprane5bOlGmmkrNJvSnqLroJOsC5pgL1iCOUKC8jKYAHt93M2gssCXRZ6IwZoSDFTtytfcwJcRi+BAMAyZyrbrxZMQisuM98BIJD7m+wI3cTL8uzvFyysPMxTpSSjG6EnwlIjpH6ok9HU6uyXrKs/ItXL8+W6zBF40c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=toPUSqyT; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Envelope-To: heiko@sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1720085943;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UZNJgxosyNiX9qzr7UAd3UGX4gQYJbfBUAOEaVCsycc=;
-	b=toPUSqyTaxviu1wd/DydUpiw5NbI2i+Z+8iYr6E7THqkDPne/3+wn3cbC39DEOqVO/yl8u
-	uy9P0BQegT8m1QaGHbYfasbtgKeMvCQi27ouoenBZrPu2AUiiRRmD09m+BmCBH7JLGo3Xe
-	k31WqK2mX/Bdj8hcxbzWejYNPpX2Vv2JCwLeMXA2hrru95GkiT5SKVZqr/MSmGzBSNWp6e
-	4E6Y/Dc9iMw+U1ritSCvTGlCalOohN82MFsQJIvG+4BSej2vQtFp96BYTsjtbAzYYBSyPj
-	tgW8MkwSM5Z4n1jd+XA7aZX9LBEtH1ieYFBDor1Q1p8iIIQUbdAxuFCNz3df7w==
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: krzk+dt@kernel.org
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: heiko@sntech.de
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Diederik de Haas <didi.debian@cknow.org>
-To: heiko@sntech.de, linux-rockchip@lists.infradead.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 2/2] arm64: dts: rockchip: add rock5 itx board
-Date: Thu, 04 Jul 2024 11:38:51 +0200
-Message-ID: <2278169.QnsP76Vvrg@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <20240703210524.776455-3-heiko@sntech.de>
-References:
- <20240703210524.776455-1-heiko@sntech.de>
- <20240703210524.776455-3-heiko@sntech.de>
+	s=arc-20240116; t=1720085950; c=relaxed/simple;
+	bh=Ys2s6wfPKTdNY6st1Y3BR4Waa735ufPB0CWHvUkIhOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M17VWV5iBHpWstMvkd49VT+cY2dqyPm1ojTQL+vLJcpe7QyDcJDCDPvB7ZIGWewj4D3IVR8pWvBnw/Kh2fOH+m1Iy4Dol3Ej8b2ldg1vJ07nG9YFZWqRgvMHEt0aMapXuMt2m/H01jhwhoLjndPR0E+Dx/J0SwZdDuEcB1jzqT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=H5ky8x62; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-71871d5e087so265771a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:39:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1720085948; x=1720690748; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ys2s6wfPKTdNY6st1Y3BR4Waa735ufPB0CWHvUkIhOc=;
+        b=H5ky8x62uOfZP27NKJ+GSjCaqr4WU2MrZG2Z8swDrw5xAIDMW8h0gRtuZLAkDnXzVu
+         3CqOY5MmljnRimy+6FsEDRpyRCmFe0KCmzbJ4yEb1+5HvFk46jw+Fn0nA/byTb+xISNT
+         ncT+oOs3XLSzZvrfvhDIpC5dNHyLeWTcOp3is=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720085948; x=1720690748;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ys2s6wfPKTdNY6st1Y3BR4Waa735ufPB0CWHvUkIhOc=;
+        b=sERUWtSrmeB/9JBiI1/qnMfO7Km6uc/Pg41aXzLypt87du2jWyOMR9RM+qLFmISFL+
+         PiY5WQkZZarynT22e+Yln+RPkW79CG7R30mnUfW34GBT5avX2NCUMeKOsEaS3xjyBFY3
+         ZkIckKJBr7622a9wvSJA+kGisD586rXOWfGMPoRFwvBa6UX+5JjEmutgTjPZgQSk5yEY
+         1odl/9AoVIud6Hx7NYbLMGITLiOdRqhWdRPXXGmbn8toUAzQdhdWG8OGES3tR2zs6LNG
+         WXgTv6cYLB7ALXXCV70z18j3FgRU7+6MZCodVu9Cpk+YRdJct9IpL0gQqO052xAc6aDX
+         z4EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMcsUAbrzMV6eMsBOYe2nObYJgygghPn6JAp/6VDTiWHCGHcRBSCssnpZKNjJiHxy2RRUs3YJ1bT2RtuQjkMNzmI78pV46ia2LhYBe
+X-Gm-Message-State: AOJu0YyDPLsdjYug/LMhe2z8mNexWMAk/7Ky+UPUrJH3ZZcygDn1pR1a
+	gBSNLNFcems38y16ZzeCkqBtSmyYqtkDQHxQSJQpRp1jf1Q53GfJwOXxKRsF6g==
+X-Google-Smtp-Source: AGHT+IHFV8ODDEu8wWKjCCRauRPD0y8C2a9w//eCdb5ZIFlSE8Kk9VDC/aqHLbkN7rsLC2/o2VT4pQ==
+X-Received: by 2002:a05:6a20:6a0d:b0:1c0:bdf5:2a2a with SMTP id adf61e73a8af0-1c0cc73ea39mr1127241637.24.1720085948067;
+        Thu, 04 Jul 2024 02:39:08 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:3db1:715f:c72d:16f7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99aa321cesm1033744a91.56.2024.07.04.02.39.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 02:39:07 -0700 (PDT)
+Date: Thu, 4 Jul 2024 18:39:03 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Minchan Kim <minchan@kernel.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jens Axboe <axboe@kernel.dk>, Thomas Gleixner <tglx@linutronix.de>,
+	Mike Galbraith <umgwanakikbuti@gmail.com>
+Subject: Re: [PATCH v2 0/3] zram: Replace bit spinlocks with a spinlock_t.
+Message-ID: <20240704093903.GC3232210@google.com>
+References: <20240620153556.777272-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2395254.yhVh8MZHF5";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620153556.777272-1-bigeasy@linutronix.de>
 
---nextPart2395254.yhVh8MZHF5
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-To: heiko@sntech.de, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 2/2] arm64: dts: rockchip: add rock5 itx board
-Date: Thu, 04 Jul 2024 11:38:51 +0200
-Message-ID: <2278169.QnsP76Vvrg@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <20240703210524.776455-3-heiko@sntech.de>
-MIME-Version: 1.0
+On (24/06/20 17:28), Sebastian Andrzej Siewior wrote:
+> this is follow up to the previous posting, making the lock
+> unconditionally. The original problem with bit spinlock is that it
+> disabled preemption and the following operations (within the atomic
+> section) perform operations that may sleep on PREEMPT_RT. Mike expressed
+> that he would like to keep using zram on PREEMPT_RT.
 
-Hi Heiko,
+Sorry for the delay.
 
-Thanks for submitting this. A quick scan indicates it should work with a 
-(recent) Debian kernel OOTB :-)
+I guess this works for me, FWIW:
+Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
-On Wednesday, 3 July 2024 23:05:24 CEST Heiko Stuebner wrote:
-> +&sdhci {
-> +       bus-width = <8>;
-> +       no-sdio;
-> +       no-sd;
-> +       non-removable;
-> +       max-frequency = <200000000>;
-> +       mmc-hs400-1_8v;
-> +       mmc-hs400-enhanced-strobe;
-> +       mmc-hs200-1_8v;
-> +       status = "okay";
-> +};
-> +
-> +&sdmmc {
-> +       max-frequency = <200000000>;
-> +       no-sdio;
-> +       no-mmc;
-> +       bus-width = <4>;
-> +       cap-mmc-highspeed;
-> +       cap-sd-highspeed;
-> +       disable-wp;
-> +       sd-uhs-sdr104;
-> +       vmmc-supply = <&vcc_3v3_s3>;
-> +       vqmmc-supply = <&vccio_sd_s0>;
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&sdmmc_bus4 &sdmmc_clk &sdmmc_cmd &sdmmc_det>;
-> +       status = "okay";
-> +};
-> +
-> +/* M.2 E-KEY */
-> +&sdio {
-> +       broken-cd;
-> +       bus-width = <4>;
-> +       cap-sdio-irq;
-> +       disable-wp;
-> +       keep-power-in-suspend;
-> +       max-frequency = <150000000>;
-> +       mmc-pwrseq = <&sdio_pwrseq>;
-> +       no-sd;
-> +       no-mmc;
-> +       non-removable;
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&sdiom0_pins>;
-> +       sd-uhs-sdr104;
-> +       vmmc-supply = <&vcc3v3_ekey>;
-> +       status = "okay";
-> +};
-> +
-> +&sfc {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&fspim2_pins>;
-> +       status = "okay";
-
-Shouldn't those properties be sorted alphabetically? Or at least consistently?
-Note that the same issue is present on other places too, but I believe the 
-above quoted part shows the issue enough.
-
-Cheers,
-  Diederik
---nextPart2395254.yhVh8MZHF5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZoZtqwAKCRDXblvOeH7b
-bnCgAP4zrwaK/BWbiaA7rwRd9f/pdJv8MIIlT6RlMaMJjpj3PgD9G3dQjI2QUesx
-hlmHmGB3VmWGdOoIuqbJNtvDZ/bNtgs=
-=ja2L
------END PGP SIGNATURE-----
-
---nextPart2395254.yhVh8MZHF5--
-
-
-
+Minchan, any objections?
 
