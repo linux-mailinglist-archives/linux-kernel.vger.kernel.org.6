@@ -1,46 +1,50 @@
-Return-Path: <linux-kernel+bounces-241401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9146927B0E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:22:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF70927B0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41B63B251E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:22:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D041F233C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A751F1B29C5;
-	Thu,  4 Jul 2024 16:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505121B29D2;
+	Thu,  4 Jul 2024 16:22:36 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFEC16A95F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 16:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D768A1AEFFF;
+	Thu,  4 Jul 2024 16:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720110140; cv=none; b=KrqZzQGkcAfj5KzKWLht2afXYH0eVnrRPO8iCmFjJ92R3+9Llj8WXKtv5c2olqevu+bKHpDeT3EGdMRDGbeawAeIZIGMmvZlTrHGhlf4KwUT9E2eIzdqCLKXavX9hra+Ym3AcYnqmWEjo5wnbbWZhmTh0nTN0J4MF3fAnBJG3kM=
+	t=1720110155; cv=none; b=dq2BzD4xCjC88hRscghqY2b9Xyxcp1QyUl74W2Rt7CyyTLKLJDo8nVRJFG/WksFXnpO6n1lG6iSP3L5+8Z/zFli6RO2m4Rc/+EU7tsA56vyok6sIICWg77/GnjgHmIv5kAsxJ71pPoVntE2KC+b6cT7imVrbKUQIaSOrini9y1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720110140; c=relaxed/simple;
-	bh=S/R/Vn7FHeMESAswRH+qidI0quWHkvLGHPhc8ssOsLA=;
+	s=arc-20240116; t=1720110155; c=relaxed/simple;
+	bh=yLzcPY0Tkd1yy63iM9n94MQZwVpxYr9G4i9fXW/G+Mw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sCa6AfJNOwSm0NwDLMDki0vKylJlwY4i+yW8jtiKJX7AB4X0e4tDUQ8F109GOQ4dGrx7fCeJmd59190nGXelNJWqFV1LBeIrA8ZlBcKmInNbPPs9SP6IpMJlLNWVfc4gXJiovnOwwRznVp7syfAKarQjBnvE3dI1qPpuWFHKHAM=
+	 MIME-Version:Content-Type; b=CZcBu8qDOlx4+1zlYkGW7L+P5w4PL60WHxbA4tWmoa3qcVs2k+lLmrvmmKjhtHMvZO0Xvflwje6lNm+92Kr53+o6bcw34H7KrpSe/461m3VfxiSpPndMTkMtT0Mh18NoiXh+YrxdaOD+0F+KgjqrTUFW1HNmXPrYayCcnis2J3k=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFEBC3277B;
-	Thu,  4 Jul 2024 16:22:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97677C3277B;
+	Thu,  4 Jul 2024 16:22:33 +0000 (UTC)
 From: Catalin Marinas <catalin.marinas@arm.com>
-To: will@kernel.org,
-	Liu Wei <liuwei09@cestc.cn>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	prarit@redhat.com,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v4] ACPI: Add acpi=nospcr to disable ACPI SPCR as default console on ARM64
-Date: Thu,  4 Jul 2024 17:22:16 +0100
-Message-Id: <172011012941.982727.4337603550734525246.b4-ty@arm.com>
+To: linux-arm-kernel@lists.infradead.org,
+	Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Will Deacon <will@kernel.org>,
+	mark.rutland@arm.com,
+	ryan.roberts@arm.com,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 0/2] arm64: Drop ID_AA64PFR0_EL1_ELx_[64BIT_ONLY|32BIT_64BIT]
+Date: Thu,  4 Jul 2024 17:22:31 +0100
+Message-Id: <172011014332.983778.3066072666781359420.b4-ty@arm.com>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240625030504.58025-1-liuwei09@cestc.cn>
-References: <20240530015332.7305-1-liuwei09@cestc.cn> <20240625030504.58025-1-liuwei09@cestc.cn>
+In-Reply-To: <20240613102710.3295108-1-anshuman.khandual@arm.com>
+References: <20240613102710.3295108-1-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,20 +54,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Tue, 25 Jun 2024 11:05:04 +0800, Liu Wei wrote:
-> For varying privacy and security reasons, sometimes we would like to
-> completely silence the _serial_ console, and only enable it when needed.
+On Thu, 13 Jun 2024 15:57:08 +0530, Anshuman Khandual wrote:
+> This series replaces custom macros usage for ID_AA64PFR0_EL1_ELx_64BIT_ONLY
+> and ID_AA64PFR0_EL1_ELx_32BIT_64BIT fields, thus finally just dropping them
+> off completely. This series applies on v6.10-rc3
 > 
-> But there are many existing systems that depend on this _serial_ console,
-> so add acpi=nospcr to disable console in ACPI SPCR table as default
-> _serial_ console.
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: kvmarm@lists.linux.dev
+> Cc: linux-kernel@vger.kernel.org
 > 
 > [...]
 
-Applied to arm64 (for-next/acpi), thanks!
+Applied to arm64 (for-next/cpufeature), thanks!
 
-[1/1] ACPI: Add acpi=nospcr to disable ACPI SPCR as default console on ARM64
-      https://git.kernel.org/arm64/c/f5a4af3c7527
+[1/2] KVM: arm64: Replace custom macros with fields from ID_AA64PFR0_EL1
+      https://git.kernel.org/arm64/c/42b9fed388a5
+[2/2] arm64/cpufeature: Replace custom macros with fields from ID_AA64PFR0_EL1
+      https://git.kernel.org/arm64/c/056600ff7330
 
 -- 
 Catalin
