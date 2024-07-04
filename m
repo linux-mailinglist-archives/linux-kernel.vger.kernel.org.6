@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-241465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F91927BA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:10:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8BA927BA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EA371F273B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AFBB1F27A59
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6781BBBF8;
-	Thu,  4 Jul 2024 17:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9A81B3F3C;
+	Thu,  4 Jul 2024 17:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jj4QXqQY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XN2pfmFg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576F01BB6A2
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 17:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2867D1BC089
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 17:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720112922; cv=none; b=DyFMDpF3gBg1pWZ2lQTVJhFLe6nbNvh5Mrc6IvdNYgG+YJcRlCZs9S5X/JqZaAHGolp0cXhNoPLOHS804yJSrzHUGyaqYXo8fUQFHeVGsNnjNJRHkTix3I1eNopZ8nEC5i5SJ4xHoEG2oDkS3wB/2WS3kDAupDW4Y2uWLU+Rd40=
+	t=1720112926; cv=none; b=OdHyt2/t/hE6zNTNGietjHsilvFxJNfSX8jc9xj3aFN4ruKUbG17SBqKAsKggwx1P1R58hV5WrQoLL7SLMbilCJPNoydkJlavGAatKV+flwXbsWwaeYjMu/ILj3x4oFsTjW2U8VhZNX832jpimE/weoeIjTYYTYrsxCikRd7sWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720112922; c=relaxed/simple;
-	bh=YcnAH3SHZXROeNoMHnipvFfals1BnUzQ96nTlnvMQFo=;
+	s=arc-20240116; t=1720112926; c=relaxed/simple;
+	bh=MmT2mTIg7lD3LQpVQ6BofZ6b0wOersBEjYOE2yVnphM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MszTlQbOoA7Ivx9pX7VOUhbfqwskhu1F0bOAIGYstnJo3CcxSCayZ75nqc7ohB25Va9UlEL1qE631jbOpZpHE+wc9ZLX6WMI4EUIDQAU4TdHVibbJRMxuM7yfjpTIUYKkYxl6hip0AZ1z2xageD5XZ1EF0hGT4lSrcK3sqpFzWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jj4QXqQY; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=kKCsCQ/bVHgQ3TRpEU5VAlA78zrbsl3bsjMCTg5hIXFf9fr8Qqe/yaHdGWi6SLVe0Rgi2BhLC1EsEr9hxWtXOg/wnMlxX85CoiiRTNz/w+uERJM4TmpYjd/FzZFEc1ou+SCYooMwgx+6UEJK0Jp5Zem+WRukeUbXbLV6Gh7uDdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XN2pfmFg; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720112920;
+	s=mimecast20190719; t=1720112924;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=u0UMICwsMRzMsfA9s19JVB8HcVWOB39iLX8GByK/zHc=;
-	b=Jj4QXqQYg9Db1teo87LBqhfTfKnhttYn7Mim+T+cFOcMIASjJ5UbvyQ96jkn92GWF/Znrg
-	iq+bmKjX9Tl+pEz1UdMroOoDgpub8bcAB8P/Us5H36+wmffcZuwMjiVYEd9AaStyw7cTEB
-	tSmdR0uOgya5hxxkkoMRYivPgHX8nWY=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Kxr2ZwkBcEiYjaLoRj6Vm8ZHty9ueyrSMs+jrT+4p3E=;
+	b=XN2pfmFgC4NFpae5hNlbK4BSLSNoZN2JPNfu5Dcl8qu/7hwxyiJxSk4hQizJ79Us36+eld
+	bSjC0V/JEIiK3iXeRwHMbInztRINkn/yi1rDRhrNZQwtPiERuwH2nDfxty/Ol+VNMwdbHZ
+	4LcjZS5dBIHbGQtBusmnBeShTpNJIGo=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-659-BAUgnQgJPLmzE_HnGCcwMw-1; Thu, 04 Jul 2024 13:08:39 -0400
-X-MC-Unique: BAUgnQgJPLmzE_HnGCcwMw-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36792df120fso658730f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 10:08:38 -0700 (PDT)
+ us-mta-342-8SljsF9ZN9aiTyLE0zzwXg-1; Thu, 04 Jul 2024 13:08:42 -0400
+X-MC-Unique: 8SljsF9ZN9aiTyLE0zzwXg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4257a75193aso6150205e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 10:08:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720112918; x=1720717718;
+        d=1e100.net; s=20230601; t=1720112922; x=1720717722;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u0UMICwsMRzMsfA9s19JVB8HcVWOB39iLX8GByK/zHc=;
-        b=LDhQEdc+XUbsNw6BIN9LU7XHy6CSusn6+Msklt/xekLepj8ymRZGecX/gn0DN7vbEF
-         ulvfleGkXAQ0KuOGnSeFfIC1mQZ9Zgkufj62yuq4K5f4pDZaLyrciThtXgAwAkk3y0yz
-         CvcC2s3gb82xK7AuohO5j4AnbYJP61oK7sfORlH+DIIxQOEEOERJPYjiALmNO2wHVLoB
-         2Lv1hOQ4btIFjhxVIklnl3qqPq8Ej6KNiCvRz3MWSt4Jn1EZG61/chQffYmnaNXIz39w
-         ItcDzqKEjmzbHxJuOk/DR9PJ7H6jnMozAmZUzqPcCEUooG/ONEpwk1UqM3nJBXe+a8tO
-         LFPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVym65xGZhhiOmzhmugj5we18DjztCP4VllcL2ebcO6R2tLtRB/SfAdGbIaojh34xWgf8BQEhRG27RaUtoRUQSiuEVtNpuvtT/TrTby
-X-Gm-Message-State: AOJu0YyBX7ffoSayD5TZC1FA/oTavqA24h1wK11PEJRTAzqM13ntGX6Q
-	rqPiKyTMCfzfbrHm+BXi1nxOeg8K8xMEpM2Zi1Z2tcOTVNsJ/uznJTSojF6UOQTrr8rOfURULcj
-	nv9FXcb93rmnY2GzjfYo2tVSttXVcp+CjJsu+1ndpEmNRmWiXqmoX3IPBKKun9A==
-X-Received: by 2002:a05:6000:12c6:b0:367:91cf:e890 with SMTP id ffacd0b85a97d-3679dd10283mr1823258f8f.6.1720112917799;
-        Thu, 04 Jul 2024 10:08:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/XJEdVUhXEyatK6ngjqfp7NJ4Le1ciarBr+9Y1EF175deeq20/plyxZJPo3uVQ0XayyddFQ==
-X-Received: by 2002:a05:6000:12c6:b0:367:91cf:e890 with SMTP id ffacd0b85a97d-3679dd10283mr1823239f8f.6.1720112917535;
-        Thu, 04 Jul 2024 10:08:37 -0700 (PDT)
+        bh=Kxr2ZwkBcEiYjaLoRj6Vm8ZHty9ueyrSMs+jrT+4p3E=;
+        b=U/Zjx9G6r2qqDy8hj99U6NeT1AepC74l5lig7ZJgHVC50/W/mVGfwv+dGfRvyJ3YJB
+         +iG/fw/4lWCz7m1MvQI1DGXnF12dNpWpE/NK5imY9dKQFNj6CK2FiIOE/Xf4H0dqqKke
+         ziVLCnafPV4thT/E/2FO2BNYV+PWHh9PDq+8kDoDSNm/t+sznIG4qh5WbBPb3bvJ7M8q
+         qVILBiq61QhDFfeb6wCuXqRZ8zl61p+ZeKGd01XS2BnblgM22egF3pa1Y0Nijj4jJiBc
+         6G/BWW9auRLhTe+cLppCpoSqYwMTPYMmrjVRqhyK6L7ou2SuUjiML0yD/n88CuTe6Tea
+         5wXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqyBLKMmFUTl57N9ru4dWgcH3BuzewiGJ5vMXu8KshrSVJ9FFtrKqie6dKk0pTmLl1iez7kvVRQCVJCMVnEfa65hzXm1A0OWzdXk7l
+X-Gm-Message-State: AOJu0Yy1cxQlExXz1ZKvp657fxVjFCqtlIpaqjBu+h+60iPznOEZept/
+	rqe2POGyouAuyhM+jql7hTyIT4j+uls2s8c3/I89TSBoHKe4TnKFVBzrIQhzjKmYtlkMQ8xhkoS
+	aFS0ga7JoFRksRdafuh+d3EhPt1SCvi0nRDJ5x6Kvk79HwmtqH7P84Mn4/+CLyg==
+X-Received: by 2002:a05:600c:4f88:b0:424:ad14:6b79 with SMTP id 5b1f17b1804b1-4264a3cc8bdmr13990895e9.8.1720112921744;
+        Thu, 04 Jul 2024 10:08:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF1VJwx5uKuQN/O8iZw/4yKAqhZVwMwMz3EKnS+JDkXDZHxAy/WJXVoREQUOWvD5/92MPuUDA==
+X-Received: by 2002:a05:600c:4f88:b0:424:ad14:6b79 with SMTP id 5b1f17b1804b1-4264a3cc8bdmr13990825e9.8.1720112921452;
+        Thu, 04 Jul 2024 10:08:41 -0700 (PDT)
 Received: from cassiopeiae.. ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a3016f8bsm877280f8f.46.2024.07.04.10.08.36
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264d5101ffsm17492075e9.16.2024.07.04.10.08.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 10:08:36 -0700 (PDT)
+        Thu, 04 Jul 2024 10:08:41 -0700 (PDT)
 From: Danilo Krummrich <dakr@redhat.com>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -97,9 +97,9 @@ Cc: daniel.almeida@collabora.com,
 	linux-kernel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	Danilo Krummrich <dakr@redhat.com>
-Subject: [PATCH 06/20] rust: alloc: remove `krealloc_aligned`
-Date: Thu,  4 Jul 2024 19:06:34 +0200
-Message-ID: <20240704170738.3621-7-dakr@redhat.com>
+Subject: [PATCH 07/20] rust: alloc: implement `Vmalloc` allocator
+Date: Thu,  4 Jul 2024 19:06:35 +0200
+Message-ID: <20240704170738.3621-8-dakr@redhat.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240704170738.3621-1-dakr@redhat.com>
 References: <20240704170738.3621-1-dakr@redhat.com>
@@ -111,124 +111,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that we have `Allocator` for `Kmalloc` in place, remove explicit
-calls to `krealloc_aligned` and get rid of `krealloc_aligned` itself.
+Implement `Allocator` for `Vmalloc`, the kernel's virtually contiguous
+allocator, typically used for larger objects, (much) larger than page
+size.
 
-`bindings::krealloc` should only be called from `Kmalloc::realloc`.
+All memory allocations made with `Vmalloc` end up in
+`__vmalloc_noprof()`; all frees in `vfree()`.
 
 Signed-off-by: Danilo Krummrich <dakr@redhat.com>
 ---
- rust/kernel/alloc/allocator.rs | 21 ---------------------
- rust/kernel/alloc/box_ext.rs   | 13 ++++---------
- rust/kernel/alloc/vec_ext.rs   | 23 +++++++++++++----------
- 3 files changed, 17 insertions(+), 40 deletions(-)
+ rust/bindings/bindings_helper.h     |  1 +
+ rust/kernel/alloc/allocator.rs      | 55 +++++++++++++++++++++++++++++
+ rust/kernel/alloc/allocator_test.rs |  1 +
+ 3 files changed, 57 insertions(+)
 
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index ddb5644d4fd9..f10518045c16 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -15,6 +15,7 @@
+ #include <linux/refcount.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
++#include <linux/vmalloc.h>
+ #include <linux/wait.h>
+ #include <linux/workqueue.h>
+ 
 diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index b7c0490f6415..1860cb79b875 100644
+index 1860cb79b875..0a4f27c5c3a6 100644
 --- a/rust/kernel/alloc/allocator.rs
 +++ b/rust/kernel/alloc/allocator.rs
-@@ -36,27 +36,6 @@ fn aligned_size(new_layout: Layout) -> usize {
-     size
+@@ -16,6 +16,12 @@
+ /// `bindings::krealloc`.
+ pub struct Kmalloc;
+ 
++/// The virtually contiguous kernel allocator.
++///
++/// The vmalloc allocator allocates pages from the page level allocator and maps them into the
++/// contiguous kernel virtual space.
++pub struct Vmalloc;
++
+ /// Returns a proper size to alloc a new object aligned to `new_layout`'s alignment.
+ fn aligned_size(new_layout: Layout) -> usize {
+     // Customized layouts from `Layout::from_size_align()` can have size < align, so pad first.
+@@ -112,6 +118,55 @@ unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
+     }
  }
  
--/// Calls `krealloc` with a proper size to alloc a new object.
--///
--/// # Safety
--///
--/// - `ptr` can be either null or a pointer which has been allocated by this allocator.
--/// - `new_layout` must have a non-zero size.
--pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, new_layout: Layout, flags: Flags) -> *mut u8 {
--    // SAFETY:
--    // - `ptr` is either null or a pointer returned from a previous `k{re}alloc()` by the
--    //   function safety requirement.
--    // - `size` is greater than 0 since it's either a `layout.size()` (which cannot be zero
--    //   according to the function safety requirement) or a result from `next_power_of_two()`.
--    unsafe {
--        bindings::krealloc(
--            ptr as *const core::ffi::c_void,
--            aligned_size(new_layout),
--            flags.0,
--        ) as *mut u8
--    }
--}
--
++unsafe impl Allocator for Vmalloc {
++    unsafe fn realloc(
++        &self,
++        src: *mut u8,
++        old_size: usize,
++        layout: Layout,
++        flags: Flags,
++    ) -> Result<NonNull<[u8]>, AllocError> {
++        let mut size = aligned_size(layout);
++
++        let dst = if size == 0 {
++            // SAFETY: `src` is guaranteed to be previously allocated with this `Allocator` or NULL.
++            unsafe { bindings::vfree(src.cast()) };
++            NonNull::dangling()
++        } else if size <= old_size {
++            size = old_size;
++            NonNull::new(src).ok_or(AllocError)?
++        } else {
++            // SAFETY: `src` is guaranteed to point to valid memory with a size of at least
++            // `old_size`, which was previously allocated with this `Allocator` or NULL.
++            let dst = unsafe { bindings::__vmalloc_noprof(size as u64, flags.0) };
++
++            // Validate that we actually allocated the requested memory.
++            let dst = NonNull::new(dst.cast()).ok_or(AllocError)?;
++
++            if !src.is_null() {
++                // SAFETY: `src` is guaranteed to point to valid memory with a size of at least
++                // `old_size`; `dst` is guaranteed to point to valid memory with a size of at least
++                // `size`.
++                unsafe {
++                    core::ptr::copy_nonoverlapping(
++                        src,
++                        dst.as_ptr(),
++                        core::cmp::min(old_size, size),
++                    )
++                };
++
++                // SAFETY: `src` is guaranteed to be previously allocated with this `Allocator` or
++                // NULL.
++                unsafe { bindings::vfree(src.cast()) }
++            }
++
++            dst
++        };
++
++        Ok(NonNull::slice_from_raw_parts(dst, size))
++    }
++}
++
+ #[global_allocator]
+ static ALLOCATOR: Kmalloc = Kmalloc;
+ 
+diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+index 3a0abe65491d..b2d7db492ba6 100644
+--- a/rust/kernel/alloc/allocator_test.rs
++++ b/rust/kernel/alloc/allocator_test.rs
+@@ -7,6 +7,7 @@
+ use core::ptr::NonNull;
+ 
+ pub struct Kmalloc;
++pub type Vmalloc = Kmalloc;
+ 
  unsafe impl Allocator for Kmalloc {
      unsafe fn realloc(
-         &self,
-diff --git a/rust/kernel/alloc/box_ext.rs b/rust/kernel/alloc/box_ext.rs
-index 829cb1c1cf9e..1aeae02c147e 100644
---- a/rust/kernel/alloc/box_ext.rs
-+++ b/rust/kernel/alloc/box_ext.rs
-@@ -33,24 +33,19 @@ fn new_uninit(_flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocError> {
-     #[cfg(not(any(test, testlib)))]
-     fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocError> {
-         let ptr = if core::mem::size_of::<MaybeUninit<T>>() == 0 {
--            core::ptr::NonNull::<_>::dangling().as_ptr()
-+            core::ptr::NonNull::dangling()
-         } else {
-+            let alloc: &dyn super::Allocator = &super::allocator::Kmalloc;
-             let layout = core::alloc::Layout::new::<MaybeUninit<T>>();
- 
-             // SAFETY: Memory is being allocated (first arg is null). The only other source of
-             // safety issues is sleeping on atomic context, which is addressed by klint. Lastly,
-             // the type is not a SZT (checked above).
--            let ptr =
--                unsafe { super::allocator::krealloc_aligned(core::ptr::null_mut(), layout, flags) };
--            if ptr.is_null() {
--                return Err(AllocError);
--            }
--
--            ptr.cast::<MaybeUninit<T>>()
-+            alloc.alloc(layout, flags)?.cast()
-         };
- 
-         // SAFETY: For non-zero-sized types, we allocate above using the global allocator. For
-         // zero-sized types, we use `NonNull::dangling`.
--        Ok(unsafe { Box::from_raw(ptr) })
-+        Ok(unsafe { Box::from_raw(ptr.as_ptr()) })
-     }
- }
-diff --git a/rust/kernel/alloc/vec_ext.rs b/rust/kernel/alloc/vec_ext.rs
-index e9a81052728a..bf277976ed38 100644
---- a/rust/kernel/alloc/vec_ext.rs
-+++ b/rust/kernel/alloc/vec_ext.rs
-@@ -118,6 +118,7 @@ fn reserve(&mut self, additional: usize, _flags: Flags) -> Result<(), AllocError
- 
-     #[cfg(not(any(test, testlib)))]
-     fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocError> {
-+        let alloc: &dyn super::Allocator = &super::allocator::Kmalloc;
-         let len = self.len();
-         let cap = self.capacity();
- 
-@@ -145,16 +146,18 @@ fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocError>
- 
-         // SAFETY: `ptr` is valid because it's either NULL or comes from a previous call to
-         // `krealloc_aligned`. We also verified that the type is not a ZST.
--        let new_ptr = unsafe { super::allocator::krealloc_aligned(ptr.cast(), layout, flags) };
--        if new_ptr.is_null() {
--            // SAFETY: We are just rebuilding the existing `Vec` with no changes.
--            unsafe { rebuild(self, old_ptr, len, cap) };
--            Err(AllocError)
--        } else {
--            // SAFETY: `ptr` has been reallocated with the layout for `new_cap` elements. New cap
--            // is greater than `cap`, so it continues to be >= `len`.
--            unsafe { rebuild(self, new_ptr.cast::<T>(), len, new_cap) };
--            Ok(())
-+        match unsafe { alloc.realloc(ptr.cast(), cap, layout, flags) } {
-+            Ok(ptr) => {
-+                // SAFETY: `ptr` has been reallocated with the layout for `new_cap` elements.
-+                // `new_cap` is greater than `cap`, so it continues to be >= `len`.
-+                unsafe { rebuild(self, ptr.as_ptr().cast(), len, new_cap) };
-+                Ok(())
-+            }
-+            Err(err) => {
-+                // SAFETY: We are just rebuilding the existing `Vec` with no changes.
-+                unsafe { rebuild(self, old_ptr, len, cap) };
-+                Err(err)
-+            }
-         }
-     }
- }
 -- 
 2.45.2
 
