@@ -1,236 +1,145 @@
-Return-Path: <linux-kernel+bounces-241011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1219275B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 228C69275BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833CC1F2233D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:10:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBD0F1F22A25
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5251AE0B6;
-	Thu,  4 Jul 2024 12:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE03619409E;
+	Thu,  4 Jul 2024 12:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cSXBitAk"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SvnGp9fd"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F213D17995;
-	Thu,  4 Jul 2024 12:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1694317995
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 12:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720095014; cv=none; b=Rdx82D0KZ7TT0O1Bp7y4XETWUtF7REYU3g+mwT5yr1ysVpKb9XMcUriHw5TvE+JSRs9kaAqX6cVpfiGNxW0XGSL/YSXUIEy5v125Pk3yVse3osO485e82i7bfBnLu+uL2n2GWPCUYvuUx5KbfvOUGjpsgNYrHOUTh0pz7mEqsqA=
+	t=1720095155; cv=none; b=jWBgqZEXpyCIx9L8JULyEF4Qz4CSoMMriA3PR0Ncmop2AeTI8ePZx31rjr9BPYu5ef54FOYk0+XMz2bc0KjMKnDh0zctlp5POqYXjV28tG4x4CKs7JXsPi3BVTH8Cyypw/Z1vf6Vi5VyNcobJB0N1eOxtAVNU/VYUrH40Qz0/fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720095014; c=relaxed/simple;
-	bh=QO7Jb1iEQ+V6p6XmkF0p47Xfs1xtuglwyapZXD8gCe4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=aKknIKOWZAZgh4AqmstcSEqKmaCpAPFmBKvqO3Iwn6igQ5D7GEosSyZQi45rOJ22mHPXpVHXUz74hyk1WYugEfJ8MQpLOaz2MV5NgF5Nj4mlC9aO49lOwk+YSWTvzuMHEFfemzmY0WgfUSuFNoIYanYnEpEKNsUPK091Pe+85Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cSXBitAk; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-726d9b3bcf8so446969a12.0;
-        Thu, 04 Jul 2024 05:10:12 -0700 (PDT)
+	s=arc-20240116; t=1720095155; c=relaxed/simple;
+	bh=/L8RpMI0AIzYt3SDf5oEdlmD7357rNaV1BZH1go1oxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NrB00BKW9roPhOD/hQwafknnFCH1mqNcuzo0pz8E3YHJHtJocCmf2yQKpBxMX2aTBt1CCb90a30gFXbIDdWOu7un9fKwmtyInK399uaqj6XXLyvH4zg0wVHgWqBOj9XEgC+UmIC/8c0kJ6Mc+ELlTz4B+cnE41ayTwmidZJe53Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SvnGp9fd; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111b0so422458a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 05:12:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720095012; x=1720699812; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KS8912iTY0xW9afn3Y1NFj6von6GR2I+TxZx9FsjCOo=;
-        b=cSXBitAkxTs6QXyp9Tna8aIAiuOhSUn1iTycqhBl7X+K1ZEHx518rZ7xnjmKc07GPn
-         IjtHI9AZKmm7wCtOBL7CbLsO3tuoRxIp5lTo10q3gMTvHAAYCUxPy8NbTYt3x1uw1G+o
-         IamKfqEFRcHxPdZvyIdfAw8yLCExY1YtXhp2WLJ2YUh196/yy7SMDwa5ggWs3IXCgCeS
-         PEpJsHPzLykiNmif5p0zHnmrawdMiSzL2NI+u8wxvT7KdmXs9Tdh3c7VLbLnt9bu5szv
-         p/Yxp5J/nIOjim6shWbFrWoSNlI8oKHsRXIiv4X0v/HR0WXjyUZD0lN1ia0Usw6RLXm1
-         YIIA==
+        d=suse.com; s=google; t=1720095151; x=1720699951; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=30WkcI2XN7ZKxp46jucJdLjj2rsE35KOzhzMbBHJY6M=;
+        b=SvnGp9fdeL9kjd89eXKPl6upfFXuEFx4d2Ckj7eRuOuJY7wPlbJq33ZTONCk0X3rm/
+         j0G0Qr9S+LKqj+Yp5ji2wpD1eNim6e8Q/oEv7QDaSFyJ+IxPrv5QDm4smJ8chl1jCMmZ
+         cy34uVeCXN3ffSU89Q/KDNN/3X/+X55v2knik/7tUtoRp5KIM12MI07OOH98ewckqIVX
+         EipgWpdAkmiNMmDRvQbQGgmXnTIMCEjyGsdX52LBhH60jPdyXCim1FZxbfP1ONyIMQOy
+         rRQxjTo7EwSQf6i3nfavJ7LzF/GUVj5s8q1kkbj+cc4UahgjPOcsQViK81cZmNZS+VK0
+         chyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720095012; x=1720699812;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KS8912iTY0xW9afn3Y1NFj6von6GR2I+TxZx9FsjCOo=;
-        b=CQgOTIVtiLyeXfEHMGPmXDu2RvrLFSP1F6v5b9SGSuwHI2LRVwi024pyk9JelXAixe
-         bVbyuzkMKya94+AVahoTfld2wCMD56p7bqUbgEq6T8i9iR36+ZdrncNZb0yArpPrXV+F
-         Y/UKBOH3N3aYXC43Z/9Tascz+H/GRHrrGYnph3+ryt4O3EEBVJsYRJ5hQizie4rFVShD
-         M9qgFRVg0TlvdTILE907NxTsMGadF0YsADaxQzqeaLdLNGgnRgUGjDp1HQPVM76CJcZe
-         PA6yiCs+8GnpXa5Me49AhRb84/uShwuUE/dLjHTwzypVg/jlVLSa92hCOzIIbe/szsZs
-         D0pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXp8d5VSEfRjVvZOjGv3ClTgQyhUI2aX3zvsFpq1naXU5xKHk8efoaTzOAMCj6jqM8/4BWooClug6Zl0fbY+lGr/kitqG2zzt7nnA/OLHRMljPfSEAgntrSMQGrMeE4lrOk
-X-Gm-Message-State: AOJu0YwZT9XlzXn0QSixOpMdxHSyTGlRsBkLIlU7nCPHZBkgVNJ+f5Q3
-	QuYWckaZFyCtJSuo8LZmZCxSwru/zaAV0antwQYimepiDvGo8QME
-X-Google-Smtp-Source: AGHT+IGcWrJqtZ43V+s8BIoH/VOJWFVfMjaAJrAMjYxsFFcshcsaLm5j7uSV+h6i+eHEuIvhwXgutA==
-X-Received: by 2002:a05:6a20:6a11:b0:1be:cbe9:f765 with SMTP id adf61e73a8af0-1c0cc73ea5dmr1319914637.18.1720095012149;
-        Thu, 04 Jul 2024 05:10:12 -0700 (PDT)
-Received: from localhost (118-211-5-80.tpgi.com.au. [118.211.5.80])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c999e13eedsm758458a91.1.2024.07.04.05.10.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 05:10:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720095151; x=1720699951;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=30WkcI2XN7ZKxp46jucJdLjj2rsE35KOzhzMbBHJY6M=;
+        b=GY8oOWvosQX+rVKkkeBDo0eT510RyYHS3ha7TjSGT0Z89JOibE9xWGzFECPW/yXJyk
+         cVqdft1d7Mm5YEK2BO/VGgStQC0nt6vhEDYQbqEjAOEKo7+I5oOgcJwDuGV1Y+BngJ7D
+         9ul6iQqum2y5JbU1gktjr8O5vd2WARufUzXOc/CW72CpCF96bJZ86O4+gF2NjvUhyLjR
+         DJTTH+wXYVTp+XmENztXRO+1lErUwODeFxujr0nbD3DD2DJdpyp3uo4HTSbcLnMxXXHB
+         LFRS1ptqQza/EQx6uj/lEtludUBsWI/1sFzvMuy4Z5YbUmgM9R5byhBA1m4aj4K3BBvY
+         7mxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUw1gvRXL/2f7jlc4zDQKnbScFAlIVX/N8sF2BkGAbQBAulJ8gw/q0FTbOqI5EWRs6WiLculMuBccZomnLHL4QUvpoPKWpjQ/8JNbND
+X-Gm-Message-State: AOJu0YzCb+6dDliYjzEc8Ju2OoYNpUtr/5Qki7hHZVH6j7F4Ts3Ej3Zw
+	66syQ5odDeo1gi8MwhnOUdVvomFZnSzM2zNo5nmsKIKZjrrefBnc7b5kra63zVg=
+X-Google-Smtp-Source: AGHT+IFw/pQrCU942dv1/+ZVwuZjVBu1zYboDoTUa7dDrxssvyk1Ho3MZM3/M2ZDqxAaktRuo8S0DQ==
+X-Received: by 2002:a05:6402:2792:b0:578:638e:3683 with SMTP id 4fb4d7f45d1cf-58e5994e612mr1652698a12.5.1720095151366;
+        Thu, 04 Jul 2024 05:12:31 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58eeabbf108sm194512a12.93.2024.07.04.05.12.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 05:12:30 -0700 (PDT)
+Date: Thu, 4 Jul 2024 14:12:29 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Xavier <xavier_qy@163.com>
+Cc: tj@kernel.org, longman@redhat.com, akpm@linux-foundation.org, 
+	lizefan.x@bytedance.com, hannes@cmpxchg.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: [PATCH-cpuset v10 1/2] Union-Find: add a new module in kernel
+ library
+Message-ID: <ga4sohvmxgu4hr5o2l5uylb3ryjfqbn7z4nlqb7gryw5lk5rdo@lgqh5rndrfln>
+References: <ZoRThI4lcZLxBlwc@slm.duckdns.org>
+ <20240703063727.258722-1-xavier_qy@163.com>
+ <20240703063727.258722-2-xavier_qy@163.com>
+ <haimyc4y2trcyvbnkpw2gkfoiaunykb2q2d5ybr6qgt6upf3lm@afhcevtyjcjl>
+ <13bf9422.aeb4.1907852c7ce.Coremail.xavier_qy@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zwr5qrurnxwgzr3x"
+Content-Disposition: inline
+In-Reply-To: <13bf9422.aeb4.1907852c7ce.Coremail.xavier_qy@163.com>
+
+
+--zwr5qrurnxwgzr3x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 04 Jul 2024 22:10:05 +1000
-Message-Id: <D2GQSGNWNGX4.2R8TH3M64POGJ@gmail.com>
-Cc: <linuxppc-dev@lists.ozlabs.org>, <kvm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/2] arch/powerpc/kvm: Fix doorbells for nested KVM
- guests on PowerNV
-From: "Nicholas Piggin" <npiggin@gmail.com>
-To: "Gautam Menghani" <gautam@linux.ibm.com>, <mpe@ellerman.id.au>,
- <christophe.leroy@csgroup.eu>, <naveen.n.rao@linux.ibm.com>
-X-Mailer: aerc 0.17.0
-References: <20240627180342.110238-1-gautam@linux.ibm.com>
- <20240627180342.110238-3-gautam@linux.ibm.com>
-In-Reply-To: <20240627180342.110238-3-gautam@linux.ibm.com>
 
-On Fri Jun 28, 2024 at 4:03 AM AEST, Gautam Menghani wrote:
-> commit 6398326b9ba1("KVM: PPC: Book3S HV P9: Stop using vc->dpdes")
-> introduced an optimization to use only vcpu->doorbell_request for SMT
-> emulation for Power9 and above guests, but the code for nested guests=20
-> still relies on the old way of handling doorbells, due to which an L2
-> guest cannot be booted with XICS with SMT>1. The command to repro
-> this issue is:
->
-> qemu-system-ppc64 \
-> 	-drive file=3Drhel.qcow2,format=3Dqcow2 \
-> 	-m 20G \
-> 	-smp 8,cores=3D1,threads=3D8 \
-> 	-cpu  host \
-> 	-nographic \
-> 	-machine pseries,ic-mode=3Dxics -accel kvm
->
-> Fix the plumbing to utilize vcpu->doorbell_request instead of vcore->dpde=
-s=20
-> on P9 and above.
->
-> Fixes: 6398326b9ba1 ("KVM: PPC: Book3S HV P9: Stop using vc->dpdes")
-> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
-> ---
->  arch/powerpc/kvm/book3s_hv.c        |  9 ++++++++-
->  arch/powerpc/kvm/book3s_hv_nested.c | 20 ++++++++++++++++----
->  2 files changed, 24 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-> index cea28ac05923..0586fa636707 100644
-> --- a/arch/powerpc/kvm/book3s_hv.c
-> +++ b/arch/powerpc/kvm/book3s_hv.c
-> @@ -4178,6 +4178,9 @@ static int kvmhv_vcpu_entry_p9_nested(struct kvm_vc=
-pu *vcpu, u64 time_limit, uns
->  	}
->  	hvregs.hdec_expiry =3D time_limit;
-> =20
-> +	// clear doorbell bit as hvregs already has the info
-> +	vcpu->arch.doorbell_request =3D 0;
-> +
->  	/*
->  	 * When setting DEC, we must always deal with irq_work_raise
->  	 * via NMI vs setting DEC. The problem occurs right as we
-> @@ -4694,6 +4697,7 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u6=
-4 time_limit,
->  	struct kvm_nested_guest *nested =3D vcpu->arch.nested;
->  	unsigned long flags;
->  	u64 tb;
-> +	bool doorbell_pending;
-> =20
->  	trace_kvmppc_run_vcpu_enter(vcpu);
-> =20
-> @@ -4752,6 +4756,9 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u6=
-4 time_limit,
->  	 */
->  	smp_mb();
-> =20
-> +	doorbell_pending =3D !cpu_has_feature(CPU_FTR_ARCH_300) &&
-> +				vcpu->arch.doorbell_request;
+On Wed, Jul 03, 2024 at 07:20:09PM GMT, Xavier <xavier_qy@163.com> wrote:
+> >Xavier, not sure if you responded to my suggestion of considered zeroed
+> >object a valid initialized one. That could save some init work (and
+> >move it to alternative uf_find, see below).
+> >
+> >With uf_find body checking for NULL:
+> >
+> >	while (node->parent !=3D node) {
+> >		parent =3D node->parent;
+> >		node->parent =3D parent ? parent->parent : node;
+> >		node =3D node->parent;
+> >	}
+>=20
+> Yes, I noticed your suggestion. In patch v4, I implemented it by
+> initializing to 0 and adding a check for whether the parent is 0 in
+> uf_find.
 
-Hmm... is the feature test flipped here?
+Ah, I didn't read all versions. (You may consider adding a short
+changelog when sending a new version of patches where main evolution
+points are summed up. ;-))
 
-> +
->  	if (!nested) {
->  		kvmppc_core_prepare_to_enter(vcpu);
->  		if (test_bit(BOOK3S_IRQPRIO_EXTERNAL,
-> @@ -4769,7 +4776,7 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u6=
-4 time_limit,
->  				lpcr |=3D LPCR_MER;
->  		}
->  	} else if (vcpu->arch.pending_exceptions ||
-> -		   vcpu->arch.doorbell_request ||
-> +		   doorbell_pending ||
->  		   xive_interrupt_pending(vcpu)) {
->  		vcpu->arch.ret =3D RESUME_HOST;
->  		goto out;
-> diff --git a/arch/powerpc/kvm/book3s_hv_nested.c b/arch/powerpc/kvm/book3=
-s_hv_nested.c
-> index 05f5220960c6..b34eefa6b268 100644
-> --- a/arch/powerpc/kvm/book3s_hv_nested.c
-> +++ b/arch/powerpc/kvm/book3s_hv_nested.c
-> @@ -32,7 +32,10 @@ void kvmhv_save_hv_regs(struct kvm_vcpu *vcpu, struct =
-hv_guest_state *hr)
->  	struct kvmppc_vcore *vc =3D vcpu->arch.vcore;
-> =20
->  	hr->pcr =3D vc->pcr | PCR_MASK;
-> -	hr->dpdes =3D vc->dpdes;
-> +	if (cpu_has_feature(CPU_FTR_ARCH_300))
-> +		hr->dpdes =3D vcpu->arch.doorbell_request;
-> +	else
-> +		hr->dpdes =3D vc->dpdes;
->  	hr->hfscr =3D vcpu->arch.hfscr;
->  	hr->tb_offset =3D vc->tb_offset;
->  	hr->dawr0 =3D vcpu->arch.dawr0;
+> However, later, when I was reviewing the algorithm's documentation, I
+> noticed it requires initialization to itself.
 
-Great find.
+Well, that's not a hard requirement.
 
-Nested is all POWER9 and later only, so I think you can just
-change to using doorbell_request always.
+> Moreover, uf_find is a high-frequency operation, if we add a parent
+> check within it, the efficiency impact each time would be more
+> significant than initializing once. Therefore, I adhered to the
+> initialization to itself approach.
 
-And probably don't have to do anything for book3s_hv.c unless
-I'm mistaken about the feature test.
+I see, thanks for the clarifications,
+Michal
 
-Thanks,
-Nick
+--zwr5qrurnxwgzr3x
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> @@ -105,7 +108,10 @@ static void save_hv_return_state(struct kvm_vcpu *vc=
-pu,
->  {
->  	struct kvmppc_vcore *vc =3D vcpu->arch.vcore;
-> =20
-> -	hr->dpdes =3D vc->dpdes;
-> +	if (cpu_has_feature(CPU_FTR_ARCH_300))
-> +		hr->dpdes =3D vcpu->arch.doorbell_request;
-> +	else
-> +		hr->dpdes =3D vc->dpdes;
->  	hr->purr =3D vcpu->arch.purr;
->  	hr->spurr =3D vcpu->arch.spurr;
->  	hr->ic =3D vcpu->arch.ic;
-> @@ -143,7 +149,10 @@ static void restore_hv_regs(struct kvm_vcpu *vcpu, c=
-onst struct hv_guest_state *
->  	struct kvmppc_vcore *vc =3D vcpu->arch.vcore;
-> =20
->  	vc->pcr =3D hr->pcr | PCR_MASK;
-> -	vc->dpdes =3D hr->dpdes;
-> +	if (cpu_has_feature(CPU_FTR_ARCH_300))
-> +		vcpu->arch.doorbell_request =3D hr->dpdes;
-> +	else
-> +		vc->dpdes =3D hr->dpdes;
->  	vcpu->arch.hfscr =3D hr->hfscr;
->  	vcpu->arch.dawr0 =3D hr->dawr0;
->  	vcpu->arch.dawrx0 =3D hr->dawrx0;
-> @@ -170,7 +179,10 @@ void kvmhv_restore_hv_return_state(struct kvm_vcpu *=
-vcpu,
->  {
->  	struct kvmppc_vcore *vc =3D vcpu->arch.vcore;
-> =20
-> -	vc->dpdes =3D hr->dpdes;
-> +	if (cpu_has_feature(CPU_FTR_ARCH_300) && !vcpu->arch.doorbell_request)
-> +		vcpu->arch.doorbell_request =3D hr->dpdes;
-> +	else
-> +		vc->dpdes =3D hr->dpdes;
->  	vcpu->arch.hfscr =3D hr->hfscr;
->  	vcpu->arch.purr =3D hr->purr;
->  	vcpu->arch.spurr =3D hr->spurr;
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZoaRqAAKCRAt3Wney77B
+SeeiAQCo1j0ve5vYgiced6AV3KscuwHWw54IB3C1CMEj1F6/yQEA8lXi8eFLlMl9
++injSP+dwCnJuw6bux4jE9pIkuF49AI=
+=TMIo
+-----END PGP SIGNATURE-----
+
+--zwr5qrurnxwgzr3x--
 
