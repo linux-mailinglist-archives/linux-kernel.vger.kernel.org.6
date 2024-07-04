@@ -1,69 +1,53 @@
-Return-Path: <linux-kernel+bounces-240617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63531926FD7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:44:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F39926FDA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D461C21BD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:44:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73718B23456
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8721A08D1;
-	Thu,  4 Jul 2024 06:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201541A0AFF;
+	Thu,  4 Jul 2024 06:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pCvebEww"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXOW/ZUk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A6E1A08C4;
-	Thu,  4 Jul 2024 06:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C561A08D2;
+	Thu,  4 Jul 2024 06:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720075449; cv=none; b=L8Q4wdvGFZDwstwQkwhFvzauN3p9GAwcRUqpSoUgybXEDMcJftCrCe5j21WCrFedomPepQKXt4IXQN3q9grIwS4EIOGFPMhfaNX1GC8/ypjkfw121mUQ10ZF6mvooXbvwdxZz2PmvMqUNkKp7Yhs+kh4oCWREvWal3m+g0mI6hY=
+	t=1720075452; cv=none; b=NvDzwEMRQqypsmgHhL8JFK3uf+RPPqz0MHMWofjgtzgiTg3K4tWdGIbCsST03wlrkhRIFRZ7IPJONIbTDkeE1wf6ZtWf2v0e4sXt/Eyl3HGOpSOxINkuVM275VjcDrObRkNm63MRVobphwnsnAApnloL4EmIL0c6K7PGqGBsOvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720075449; c=relaxed/simple;
-	bh=C5Gt6GpTd+UsQ/97Qqy5yrcQBhYdMqxjLWLGNWygVh4=;
+	s=arc-20240116; t=1720075452; c=relaxed/simple;
+	bh=rvXyG9sJTCPpTYgjZbIeCmBobKRKTbNnXbiaWepNIm0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JeyaH9yEkunZSXW5RFNbqmSlo4o5UzLoS/Q3SjPsGowfdQvdOwSVNyckGcHoZXX3bpjS17LkLHNVGLCMRZ1ogGtThJCj1Yo8qVAeSkrhuWcP69IlKjIe6tZP8tS5/K/Y37TLBdqPyYsPXLfecUoMkyWi32XXcya6D4Pc6MyubZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pCvebEww; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=awbbpRBWE7W7u7wrmPj3r9l6ibvQU6/aKWQd0BnOj3E=; b=pCvebEwwcRQB0joWcPaJO8Kjdn
-	BTvYHfsCLSn9ahVnzayRvc05y0EaNrYH6iQOaEHQk4cxPsJi28HOOB+N1T7ITjjqv8mXhhhbP2kf4
-	AswB51esYrF1Y70lh+P81+ld8wwZLYOZXl4liuWnNSbQj01TkejS+RwqmbseJVWduw62XQSBe+QgI
-	RvAc49bsqeST3MO8yWEAI0icb9sfUjp4esAoAro11pHHTuwLzXXV12a4wAvVsR98owwwuAGaZNKRv
-	ucHAbsMSGIIsB5n4DxDTJXSmu5rTfy9z2ftRUJyncUiMSlpdqBDkUvCUldhjYEzI4sO7ALuSL73ld
-	8IN3t2Hg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sPGCK-0000000CN3T-3LQT;
-	Thu, 04 Jul 2024 06:44:04 +0000
-Date: Wed, 3 Jul 2024 23:44:04 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	bhelgaas@google.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: PCIe coherency in spec (was: [RFC PATCH 2/2] drm/ttm: downgrade
- cached to write_combined when snooping not available)
-Message-ID: <ZoZEtLe66MZRBDLc@infradead.org>
-References: <20240703210831.GA63958@bhelgaas>
- <99ff395019901c5c1a7b298481c8261b30fdbd01.camel@icenowy.me>
- <ZoY9HZwon3_yiq6F@infradead.org>
- <51603213d16493879c85417c0c8cc3f2df0cf7cf.camel@icenowy.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3wRABkKTh+409/zbMUDHBdaZzNClvVslkFccth+u4I7P6kLqePW8kYvKijTjiJDmugti/pgRXqx5S24LbUGoHzojyiszKZdTuc4hkFSxHrlsa8fhEHMkHHt8tRsOwP34S5DOFpyVRzBTGeu1ZXMr7R0QmWIz/lXT/Ya0oHLFY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TXOW/ZUk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B64C4AF0D;
+	Thu,  4 Jul 2024 06:44:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720075451;
+	bh=rvXyG9sJTCPpTYgjZbIeCmBobKRKTbNnXbiaWepNIm0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TXOW/ZUkPB+Wes/HFQ2z6SBVVUiGzt9ObQ3AMkCuh0XBBbhsGi8pGLcQrAUEcoJEj
+	 Yovp920ZejtzD+0lC2Jk6HijN5M+bnOAFKmC7+/bZg3Ig/UbnQ5ffn1+Tmg8smp1us
+	 QdFG/8fhMbR1/EmRk/gYRzj9+F0Igfnor9Pw8TgXUxDbSrrietuVFnZpVEF81mlCMa
+	 rJQMQX2d1TIseostMZI5RZG56nlGhVv/BeVeAdBDO4uLTD34r5QURRstPe1JsqFoth
+	 gIKuVevQP7NVoEHMQhEr/K6MkSioDrCCRm2S9/tW9DjhcWR4uXVJfIEXYCOQ/FRwcv
+	 /FnQDxK6HeGNQ==
+Date: Thu, 4 Jul 2024 08:44:07 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] Simplify event handling logic in input core
+Message-ID: <csyxz5pcep5hxtliwhbxmzpgbwr4fpo3ckybsvtzuowgij4yym@ql77o4jlfell>
+References: <20240703213756.3375978-1-dmitry.torokhov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,30 +56,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <51603213d16493879c85417c0c8cc3f2df0cf7cf.camel@icenowy.me>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240703213756.3375978-1-dmitry.torokhov@gmail.com>
 
-On Thu, Jul 04, 2024 at 02:40:16PM +0800, Icenowy Zheng wrote:
-> > Nothing in the PCIe specifications that mandates a programming model.
-> > Non-coherent DMA is extremely common in lower end devices, and
-> > despite
-> > all the issues that it causes well supported in Linux.
-> > 
-> > What are you trying to solve?
+On Jul 03 2024, Dmitry Torokhov wrote:
+> This series tries to untangle somewhat convoluted logic in the input
+> event processing in the input core by realizing that input handler can
+> be either a filter, or a handler that handles a single event at a time,
+> or a handler that can handle a sequence of events, but should not mix
+> the 3 behaviors in one handler. This allows us to reduce both filter
+> functionality and single-event handling functionality to batch handling
+> and have the main event handling path to only deal with
+> input_handle->events() batch method.
 > 
-> Currently the DRM TTM subsystem (and GPU drivers using it) will assume
-> coherency and fail on these non-coherent systems with cryptic error
-> messages (like `[drm:amdgpu_ring_test_helper [amdgpu]] *ERROR* ring gfx
-> test failed (-110)`) without mentioning coherency issues at all.
+> v2: addressed comments from Benjamin:
 > 
-> My original patchset tries to solve this problem by make the TTM
-> subsystem sensible of coherency status (and prevent CPU-side cached
-> mapping when non-coherent), but got argued by TTM maintainer and the
-> maintainer says TTM's ignorance on non-coherent systems is intentional.
+> - added missing patch to remove evdev->event() implementation
+> - allow not specifying any event handling method to satisfy kgdboc
+>   handler
+> - expanded comment on order of running input handlers when passing
+>   events
+> - split pre-allocation into 2 patches and moved removal of count check
+>   into 3rd patch.
 
-From the dma mapping subsystem POV all drivers not supporting DMA
-incoherent devices are buggy.  But if the drm maintaintainers disagree
-(and they have in the past) there is not much I can do, especially
-given the DRM is rather special in abuses of all kinds of APIs anyway.
+Thanks for the respin.
 
+This series is:
+Reviewed-by: Benjamin Tissoires <bentiss@kernel.org>
+
+Cheers,
+Benjamin
+
+
+> 
+> Dmitry Torokhov (7):
+>   Input: evdev - remove ->event() method
+>   Input: make sure input handlers define only one processing method
+>   Input: make events() method return number of events processed
+>   Input: simplify event handling logic
+>   Input: rearrange input_alloc_device() to prepare for preallocating of vals
+>   Input: preallocate memory to hold event values
+>   Input: do not check number of events in input_pass_values()
+> 
+>  drivers/input/evdev.c |  16 +--
+>  drivers/input/input.c | 230 ++++++++++++++++++++++++++++--------------
+>  include/linux/input.h |   7 +-
+>  3 files changed, 163 insertions(+), 90 deletions(-)
+> 
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
 
