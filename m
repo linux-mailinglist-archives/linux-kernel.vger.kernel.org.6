@@ -1,96 +1,260 @@
-Return-Path: <linux-kernel+bounces-240783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B05B9272A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:07:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCDB9272AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31E64287E8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1491628AE6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D5E1A4F3A;
-	Thu,  4 Jul 2024 09:07:10 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236B21AAE06;
+	Thu,  4 Jul 2024 09:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PuUnNJiE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576AE1A2C1E;
-	Thu,  4 Jul 2024 09:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF821649CC
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720084030; cv=none; b=lGR+Khc6kC5b3Qpf3vB86/wkIxMavzpj95ZWDaS5l/axFtegGrzbMHO1HdhWyPxNKu2HymEb2nYQotyYKyuHmYm3TzeXIvVOOSciX736rZWvNJiPQLmoctrB3jaTc9fcS3VwdBFpMvOBGFWQhDIxE8JRDlvXVWvgPWG6g5cHybY=
+	t=1720084109; cv=none; b=VS4QSjQ7R2wxuYIAQQixm99UITyRsyK4CALi9BL+wQLABqFJeHtKCvVs6+3sbXwXsgphhSP58c19YNB0l8PNlsiq+acVwLLmc1Q/YdbaVpDK26xWa/WHGmma1ILF4PDuP/I0lH6ZawwJZpovwV+0veuCPDbeTuWA47WYJ1FHVCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720084030; c=relaxed/simple;
-	bh=m3qFZFHHNn0awE1fYsv7m1+rjLeG0ckAedaj9ES3qEo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ku6Y+quOWmptR0qaECjrbQSdxg/yAFdhGQJoICfFSTFoW4mBoA9GyPxdF7Xd4EEEfWavcP5yrY6XLZFKpukiv36J2kV15LA2No2GocivsZ8toRNxiPAdJ2Bv8eeqZMYJ0XAYJqCuYtaqQT1V7ARGzd/YOvfcMo9ach2svxkE6As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowADX3eUvZoZmvmd4AQ--.29228S2;
-	Thu, 04 Jul 2024 17:06:55 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: stas.yakovlev@gmail.com,
-	kvalo@kernel.org
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ipw2x00: Use kzalloc instead of kmalloc/memset
-Date: Thu,  4 Jul 2024 17:06:22 +0800
-Message-Id: <20240704090622.2260102-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720084109; c=relaxed/simple;
+	bh=BWEMm4TLSIqjs5u90YR8w2kxxIlVC550VuZJ+aZT7AU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DM7Vya7b6FLYJ39yQnmZIGLbwKAqLRV8EMPj3ERqJEfJrTtcl2vG5NFskeu0IrY0Z0KCWZP7XK4Gr+dPNaKMIuU24zn0zma6lNxjqxWTJhgsqybTqakxSpEWqCHM3gGiX0guaW7EQSdc+ZU6EbOmMI3rPsFSfg8JtsSb/Cr8KmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PuUnNJiE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720084106;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DKCO9hi0iOHcupl51SjKtPFnD2GhgF5lbrdnfaISLMg=;
+	b=PuUnNJiE+v9rbl8Wrc6eEPDKsAtmGec+/WSuWgHXa4z2V1RE2bmYk7qZkWMmAubyIw+OuD
+	cpgotW4D/ABdNg9xtylP0qPOyhtBmxuRkC/yRJ+adTj9ScSVGcuPOWUL8ZBzvsmNqRF3q6
+	fBlGYa62R/AT1raMc0YIGkTQH4LvqDk=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-438-5l1dAQcEPASPVDPbBdgu3g-1; Thu, 04 Jul 2024 05:08:24 -0400
+X-MC-Unique: 5l1dAQcEPASPVDPbBdgu3g-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-367a19f9fd7so16544f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:08:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720084098; x=1720688898;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DKCO9hi0iOHcupl51SjKtPFnD2GhgF5lbrdnfaISLMg=;
+        b=Oi/tCBI1999d8yEigiPZ7njZoBZibtkkkiPhbpaOYna2RR/oOyER5pOOb6Q0mRtOIw
+         MRQSIFnB/icQOyjAThWFi1OMZsoc2RIDinSaPkWk84bhNRJfuoJ8Sop6Up1dKNI2cBZQ
+         kqiCzLEBzt6fcfi7SIOb3pKGIIq0Fi2/nHQRaWD09SOVEBxP/4yXKPbepgwc+bdN/kil
+         pybEEPlzs7k8gz7FMInF5XmsQn6bCaJaowZnOWR0fTIuk1aJJRJm4Nwq3i9rbD5A2lB3
+         ADQeikWSlkUEMm/Zc+1el+MNdjg5gFIFaHKAqr/bU3dDSo9lS3D3fozorosV8d33tjld
+         XXGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsJRBLkfJeWc4o7G+0kBVLoyizNWlSBnpShnmSQv3Npd0AdOIYhpBgNZmMIbRKqXKZwr2apZtfG4Aiz1Qjet46Pk3ZjbdLAHWFvCSV
+X-Gm-Message-State: AOJu0YyooL8fLWVfMZiQiYsukYTHVIYfnbAGQYzZWZI/1pqh1sk79Nu/
+	BAzlugXudeQY8DYchuTC6oyUdpxKBEWbj0Ns4xl6X3zBzh7kj/lQCq2CndPxfTii/bxbWABEVWh
+	sZ47DBjs2burDe8LFicFbPikuYTcAw+lib55s7J/rykWQjT0KBRVvMnSt9hB38A==
+X-Received: by 2002:a5d:6da8:0:b0:362:4aac:8697 with SMTP id ffacd0b85a97d-3679db7dbdamr780767f8f.0.1720084098242;
+        Thu, 04 Jul 2024 02:08:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHA/v0+krCgjtr2DkeouOKwOhto9pzLiK9iadAlEvA7+g6Hf2UtCDMvBvi1+mRl4tRmFdU5Vg==
+X-Received: by 2002:a5d:6da8:0:b0:362:4aac:8697 with SMTP id ffacd0b85a97d-3679db7dbdamr780751f8f.0.1720084097811;
+        Thu, 04 Jul 2024 02:08:17 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:172b:1510:dd78:6ccd:a776:5943])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367958d8966sm3260236f8f.91.2024.07.04.02.08.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 02:08:17 -0700 (PDT)
+Message-ID: <c026a24950813970edab1917c4f85b70db4900b2.camel@redhat.com>
+Subject: Re: [PATCH net 1/2] net: ioam6: use "new" dst entry with
+ skb_cow_head
+From: Paolo Abeni <pabeni@redhat.com>
+To: Justin Iurman <justin.iurman@uliege.be>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org,  linux-kernel@vger.kernel.org
+Date: Thu, 04 Jul 2024 11:08:15 +0200
+In-Reply-To: <20240702174451.22735-2-justin.iurman@uliege.be>
+References: <20240702174451.22735-1-justin.iurman@uliege.be>
+	 <20240702174451.22735-2-justin.iurman@uliege.be>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADX3eUvZoZmvmd4AQ--.29228S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xr18Xr4fJw15GryUWryUJrb_yoWftFg_Cr
-	1IkFn2yr98uwsa9r4UCF4fC3yjkFWDWr40qryIyr98GFWDArZ5C3s5Zry7XrW5C343AFyU
-	A3sxZr9rCrW5ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb2AFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8uwCF
-	04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
-	18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vI
-	r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr
-	1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
-	x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU6rWrUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-replace kmalloc + memset to kzalloc for
-better code readability and simplicity.
+On Tue, 2024-07-02 at 19:44 +0200, Justin Iurman wrote:
+> In ioam6_output(), we call skb_cow_head() with LL_RESERVED_SPACE(). The
+> latter uses "dst", which is potentially not the good one anymore. As a
+> consequence, there might not be enough headroom, depending on the "new"
+> dev (e.g., needed_headroom > 0). Therefore, we first need to get the
+> "new" dst entry (from the cache or by calling ip6_route_output()), just
+> like seg6 and rpl both do, and only then call skb_cow_head() with
+> LL_RESERVED_SPACE() on the "new" dst entry.
+>=20
+> Fixes: 8cb3bf8bff3c ("ipv6: ioam: Add support for the ip6ip6 encapsulatio=
+n")
+> Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
+> ---
+>  net/ipv6/ioam6_iptunnel.c | 65 +++++++++++++++++++--------------------
+>  1 file changed, 32 insertions(+), 33 deletions(-)
+>=20
+> diff --git a/net/ipv6/ioam6_iptunnel.c b/net/ipv6/ioam6_iptunnel.c
+> index bf7120ecea1e..b08c13550144 100644
+> --- a/net/ipv6/ioam6_iptunnel.c
+> +++ b/net/ipv6/ioam6_iptunnel.c
+> @@ -295,7 +295,7 @@ static int ioam6_do_encap(struct net *net, struct sk_=
+buff *skb,
+> =20
+>  static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff=
+ *skb)
+>  {
+> -	struct dst_entry *dst =3D skb_dst(skb);
+> +	struct dst_entry *dst, *orig_dst =3D skb_dst(skb);
+>  	struct in6_addr orig_daddr;
+>  	struct ioam6_lwt *ilwt;
+>  	int err =3D -EINVAL;
+> @@ -304,7 +304,7 @@ static int ioam6_output(struct net *net, struct sock =
+*sk, struct sk_buff *skb)
+>  	if (skb->protocol !=3D htons(ETH_P_IPV6))
+>  		goto drop;
+> =20
+> -	ilwt =3D ioam6_lwt_state(dst->lwtstate);
+> +	ilwt =3D ioam6_lwt_state(orig_dst->lwtstate);
+> =20
+>  	/* Check for insertion frequency (i.e., "k over n" insertions) */
+>  	pkt_cnt =3D atomic_fetch_inc(&ilwt->pkt_cnt);
+> @@ -346,45 +346,44 @@ static int ioam6_output(struct net *net, struct soc=
+k *sk, struct sk_buff *skb)
+>  		goto drop;
+>  	}
+> =20
+> -	err =3D skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
+> -	if (unlikely(err))
+> -		goto drop;
+> +	local_bh_disable();
+> +	dst =3D dst_cache_get(&ilwt->cache);
+> +	local_bh_enable();
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+This makes the dst lookup and cache update unconditional, at best
+slowing down ioam6_output(), possibly introducing unintended side
+effects.
+
+> +
+> +	if (unlikely(!dst)) {
+> +		struct ipv6hdr *hdr =3D ipv6_hdr(skb);
+> +		struct flowi6 fl6;
+> +
+> +		memset(&fl6, 0, sizeof(fl6));
+> +		fl6.daddr =3D hdr->daddr;
+> +		fl6.saddr =3D hdr->saddr;
+> +		fl6.flowlabel =3D ip6_flowinfo(hdr);
+> +		fl6.flowi6_mark =3D skb->mark;
+> +		fl6.flowi6_proto =3D hdr->nexthdr;
+> +
+> +		dst =3D ip6_route_output(net, NULL, &fl6);
+> +		if (dst->error) {
+> +			err =3D dst->error;
+> +			dst_release(dst);
+> +			goto drop;
+> +		}
+> =20
+> -	if (!ipv6_addr_equal(&orig_daddr, &ipv6_hdr(skb)->daddr)) {
+>  		local_bh_disable();
+> -		dst =3D dst_cache_get(&ilwt->cache);
+> +		dst_cache_set_ip6(&ilwt->cache, dst, &fl6.saddr);
+>  		local_bh_enable();
+> +	}
+> =20
+> -		if (unlikely(!dst)) {
+> -			struct ipv6hdr *hdr =3D ipv6_hdr(skb);
+> -			struct flowi6 fl6;
+> -
+> -			memset(&fl6, 0, sizeof(fl6));
+> -			fl6.daddr =3D hdr->daddr;
+> -			fl6.saddr =3D hdr->saddr;
+> -			fl6.flowlabel =3D ip6_flowinfo(hdr);
+> -			fl6.flowi6_mark =3D skb->mark;
+> -			fl6.flowi6_proto =3D hdr->nexthdr;
+> -
+> -			dst =3D ip6_route_output(net, NULL, &fl6);
+> -			if (dst->error) {
+> -				err =3D dst->error;
+> -				dst_release(dst);
+> -				goto drop;
+> -			}
+> -
+> -			local_bh_disable();
+> -			dst_cache_set_ip6(&ilwt->cache, dst, &fl6.saddr);
+> -			local_bh_enable();
+> -		}
+> +	skb_dst_drop(skb);
+> +	skb_dst_set(skb, dst);
+> =20
+> -		skb_dst_drop(skb);
+> -		skb_dst_set(skb, dst);
+> +	err =3D skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
+> +	if (unlikely(err))
+> +		goto drop;
+
+This is quite a bit of code churn, but you just need to postpone the
+cow operation after the dst lookup right?
+
+I suggest to simply move the cow there, something alike (completely
+untested):=20
 ---
- drivers/net/wireless/intel/ipw2x00/libipw_tx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+diff --git a/net/ipv6/ioam6_iptunnel.c b/net/ipv6/ioam6_iptunnel.c
+index bf7120ecea1e..636480bded0e 100644
+--- a/net/ipv6/ioam6_iptunnel.c
++++ b/net/ipv6/ioam6_iptunnel.c
+@@ -346,10 +346,6 @@ static int ioam6_output(struct net *net, struct sock *=
+sk, struct sk_buff *skb)
+ 		goto drop;
+ 	}
+=20
+-	err =3D skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
+-	if (unlikely(err))
+-		goto drop;
+-
+ 	if (!ipv6_addr_equal(&orig_daddr, &ipv6_hdr(skb)->daddr)) {
+ 		local_bh_disable();
+ 		dst =3D dst_cache_get(&ilwt->cache);
+@@ -381,9 +377,17 @@ static int ioam6_output(struct net *net, struct sock *=
+sk, struct sk_buff *skb)
+ 		skb_dst_drop(skb);
+ 		skb_dst_set(skb, dst);
+=20
++		err =3D skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
++		if (unlikely(err))
++			goto drop;
++
+ 		return dst_output(net, sk, skb);
+ 	}
+ out:
++	err =3D skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
++	if (unlikely(err))
++		goto drop;
++
+ 	return dst->lwtstate->orig_output(net, sk, skb);
+ drop:
+ 	kfree_skb(skb);
+---
+Thanks,
 
-diff --git a/drivers/net/wireless/intel/ipw2x00/libipw_tx.c b/drivers/net/wireless/intel/ipw2x00/libipw_tx.c
-index 4aec1fce1ae2..e22a6732a4c3 100644
---- a/drivers/net/wireless/intel/ipw2x00/libipw_tx.c
-+++ b/drivers/net/wireless/intel/ipw2x00/libipw_tx.c
-@@ -180,11 +180,10 @@ static struct libipw_txb *libipw_alloc_txb(int nr_frags, int txb_size,
- 	struct libipw_txb *txb;
- 	int i;
- 
--	txb = kmalloc(struct_size(txb, fragments, nr_frags), gfp_mask);
-+	txb = kzalloc(struct_size(txb, fragments, nr_frags), gfp_mask);
- 	if (!txb)
- 		return NULL;
- 
--	memset(txb, 0, sizeof(struct libipw_txb));
- 	txb->nr_frags = nr_frags;
- 	txb->frag_size = txb_size;
- 
--- 
-2.25.1
+Paolo
 
 
