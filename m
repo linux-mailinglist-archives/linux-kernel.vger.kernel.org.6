@@ -1,135 +1,165 @@
-Return-Path: <linux-kernel+bounces-241396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66140927AE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:15:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96147927AF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 972911C223BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:15:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9B9B1C2242C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED441B29CC;
-	Thu,  4 Jul 2024 16:15:37 +0000 (UTC)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA081B373D;
+	Thu,  4 Jul 2024 16:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QPy9yZqG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE7314B966;
-	Thu,  4 Jul 2024 16:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8861B150C
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 16:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720109737; cv=none; b=IrC4YDI8WKQKS/TfCQZ1pySESgFJOnhwXRx7XqTP99GEjRCpAjQLHuF3mLxd87MrqTU9tpFqmGqu2RYz02CDmm0gGl++QtYV2L/E3cIrikmmtZlWpSRmgzWsnRRfJRBEaZx7bEOu2QYyMwXsvY8PYhRjFLaec/ICrd1ToeNC8CI=
+	t=1720109801; cv=none; b=BkSFcd8QXiL/8mVvaKej5g2UUaKHuhe20iPTsV0bGL2t7budyGT8p6rmeZxyq1MSWldfKSVuz3MJgWVjuCletPmPS2xa9R0NaZok9BaFhz3mM4MzThvnIUCzzxH6DTyNuGolgEnlSm0+b94fFKT6VwFjUGQGRKFrt93tIq2+NaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720109737; c=relaxed/simple;
-	bh=c4q5Jgv8TLP8NcmfeDKwvvOhlsN3MP6PRX2BR1kN7zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=almrmO68uqmfhJ7HCRCCECB4cIJdc7DyG5fJc1lKF+bZ44bonxDaKDqhiIT9vvQ4IyTpaZV/TJgAUfcDg+wGVvj+ln8l3OapO2vwQRPVcUQCfakdd8M35kr7D5ox9lNja+GQWsBH5mTQcypc22hucniKWnekfLQiqIiDtCofxJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a729d9d7086so339034566b.0;
-        Thu, 04 Jul 2024 09:15:35 -0700 (PDT)
+	s=arc-20240116; t=1720109801; c=relaxed/simple;
+	bh=Q64XgPXxdPyF8fceBZsqiK/ZwK9E+LeSQ35lbTiGvTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ekDPT9bW5mv95mU2ZuAGd4rqqs8groIP8a4fJLvXEO9wniT0B2AYD0p9/ZD8B/8GCUbkd3Va37EZJ9/+7LqIuYyTz7LqgZsKxSV89ao3Lppjn2WWVgMGKDFjNudYKoNaBh4WnOjws/C87Hp/9UHUuTGNSosia131HTVDY9AH78o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QPy9yZqG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720109799;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yJa9zCFGNHZVVWTUWtjqpJT17S7A9QRX0TDrsTkoGKc=;
+	b=QPy9yZqGfeZ80kcMHWlgtBeRfXuoAJRyeeHNrI+yv1OxBX+w7QLi3qsfS+VCEiqFEIcNwM
+	/R3JVnMe49R5hPbFS78Qh+8bRDp7dmjGWY27Qdi/A/0x5D9DfldhPzsuWnXENkmXphxG5x
+	jnCbBYjh944RSEylKATcSAufL7mDjEs=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-652-mRuSFc0xMHe8nm8kiZAebQ-1; Thu, 04 Jul 2024 12:16:37 -0400
+X-MC-Unique: mRuSFc0xMHe8nm8kiZAebQ-1
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f61f4c998bso105819339f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 09:16:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720109734; x=1720714534;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ifhtzXGs+i5f3VXWSwrfmv9kw+0cgBz6vNCd3/K8wJo=;
-        b=tBGLiDg0Vc7GjjEuDfBNalLiZ4KqDEfa2ac34pRec+hfcDl2bPjVPgW6BtM1U35sq3
-         3zcQChrW0GGKiTSDBD8TtKyXSU2aQGl0Ez7SO3XTLs1/aKXAo52AKKRAZ37MPcpHcFd3
-         bnQnUK9dJ+AXjeNiBbiW02U7mMhs1PnNGkCir2c8qbrLdg7cdVGr82UVyaozNrZpV2lp
-         bOoXjdzBQsqvX1zMJYnHcCjCy6M7rRv7XjRkeWAK7nK/yRNJz4U13S7Em4//OXCsmClq
-         nQpDobAlQPVB9gqR4XBohmeP51fTqZL4vz+RSlDA4jisBG2wggXXBWUOXAcZmECG4aSn
-         3dew==
-X-Forwarded-Encrypted: i=1; AJvYcCXmr3QGRH9DgZXdYDNfkgf5vRF9aKZjbvTXOZEGTkbzJaN/5++Zjdftodf8O3Gy4YyqNm/xlQIev0vpTnNyI20ukfew77nagyPysLSORG0LRSTZ7o1k5J2HvU53jCzEq2a52LS8/ZY9nJixvMjum+hO1IZq2mBtmqgVx4KzHEqVIJ3C
-X-Gm-Message-State: AOJu0YwRj1LAsKzamxqHx8I3/GC/ZMeN1E4X8rfkzVG5vLl2uGhiBOiu
-	Qla8N8CXEmREMRJYFqp1keZEc+2msz/caScbsKuCqlGEat1neGwq
-X-Google-Smtp-Source: AGHT+IHyIp9PHYjXo9rsa26hJ5TZ1+lz779fiuQgo4pA6qV9Q55a9y4V+mdgajPl/5voXT1eb1gdAw==
-X-Received: by 2002:a17:906:f882:b0:a62:e450:b147 with SMTP id a640c23a62f3a-a77bdc1f137mr150099566b.29.1720109732671;
-        Thu, 04 Jul 2024 09:15:32 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0652d8sm612815566b.98.2024.07.04.09.15.31
+        d=1e100.net; s=20230601; t=1720109797; x=1720714597;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yJa9zCFGNHZVVWTUWtjqpJT17S7A9QRX0TDrsTkoGKc=;
+        b=lHZLUv8hTRzVVZ7lUTYL7Viw82ZMzRVPSAQgwmpf7RdLQFnUSgo7g4hdh+CLltVB6n
+         LKeY+ScUdWuIzqyvNtSTZ1k9oDRk3wuB/cQI0wpgchJHpdip2aOeTOjMDI2r9/jVS5w9
+         UGXzhXmmsKu2b85Wcho8L0Dvz/dE17zgdRZjaZkDiV1fn+S/0T39aG3unT+uIzoZSULC
+         NOtnwf04eaduYojpU9UWfkjj+TMy9jdkMtL+8QtZEnvpbwOzKpzqX0PMH7zRgyNFn8z3
+         lEKOl8Y/PZ5rWuvEllWC+pN3GNoLQr0Pa9wRMfH3FCFo0kPQoyITNosam7YBFe2s40x5
+         EKVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpN03NjAPWwJl9SSgdlcdrF/eeIEZgT4MNMBakDZHQYka5GovkcBstwZn2rjcB383hYC08KascQMzvxYvOr7xIRcqq/gJHTg6XruiB
+X-Gm-Message-State: AOJu0YwQZH9tYF2ObnFHFEBQtxDsyg4X5gzdg/VJ/tVZDts5Bww4w/Rw
+	0X9xUcPhdNjHBlgd6I6uMrUhlNQuCrGVAC92PB8UbZsSxPx9LPUyMjrAs2Q1bvOv1sijA85PNgF
+	F93RqtidfZyWkD5X7k3Jd8sUDM1EUKDtY89GD6oawGtDJDva+h1ihFGpF9Rwmxg==
+X-Received: by 2002:a6b:e611:0:b0:7f3:d82c:b9e6 with SMTP id ca18e2360f4ac-7f66df1c79emr262810339f.15.1720109796818;
+        Thu, 04 Jul 2024 09:16:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEJUTtWQwJuNtpWfpOA8Dm3k5p7PLSbdfR6O6iYLOTaqEpw7ci4MY9M4rg9iu7ACxq2jHdXvw==
+X-Received: by 2002:a6b:e611:0:b0:7f3:d82c:b9e6 with SMTP id ca18e2360f4ac-7f66df1c79emr262807939f.15.1720109796433;
+        Thu, 04 Jul 2024 09:16:36 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73bb361fsm4006058173.23.2024.07.04.09.16.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 09:15:32 -0700 (PDT)
-Date: Thu, 4 Jul 2024 09:15:29 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: horia.geanta@nxp.com, pankaj.gupta@nxp.com, gaurav.jain@nxp.com,
-	linux-crypto@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, horms@kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 3/4] crypto: caam: Unembed net_dev structure
- from qi
-Message-ID: <ZobKod5Fhf1kvLp1@gmail.com>
-References: <20240702185557.3699991-1-leitao@debian.org>
- <20240702185557.3699991-4-leitao@debian.org>
- <20240703194533.5a00ea5d@kernel.org>
+        Thu, 04 Jul 2024 09:16:36 -0700 (PDT)
+Date: Thu, 4 Jul 2024 10:16:34 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Gerd
+ Bayer <gbayer@linux.ibm.com>, Matthew Rosato <mjrosato@linux.ibm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, linux-s390@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] vfio/pci: Enable PCI resource mmap() on s390 and
+ remove VFIO_PCI_MMAP
+Message-ID: <20240704101634.30b542a2.alex.williamson@redhat.com>
+In-Reply-To: <20240626-vfio_pci_mmap-v4-4-7f038870f022@linux.ibm.com>
+References: <20240626-vfio_pci_mmap-v4-0-7f038870f022@linux.ibm.com>
+	<20240626-vfio_pci_mmap-v4-4-7f038870f022@linux.ibm.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703194533.5a00ea5d@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello Jakub,
+On Wed, 26 Jun 2024 13:15:51 +0200
+Niklas Schnelle <schnelle@linux.ibm.com> wrote:
 
-On Wed, Jul 03, 2024 at 07:45:33PM -0700, Jakub Kicinski wrote:
-> On Tue,  2 Jul 2024 11:55:53 -0700 Breno Leitao wrote:
-
-> > @@ -751,10 +766,16 @@ int caam_qi_init(struct platform_device *caam_pdev)
-> >  		struct caam_qi_pcpu_priv *priv = per_cpu_ptr(&pcpu_qipriv, i);
-> >  		struct caam_napi *caam_napi = &priv->caam_napi;
-> >  		struct napi_struct *irqtask = &caam_napi->irqtask;
-> > -		struct net_device *net_dev = &priv->net_dev;
-> > +		struct net_device *net_dev;
-> >  
-> > +		net_dev = alloc_netdev_dummy(0);
-> > +		if (!net_dev) {
-> > +			err = -ENOMEM;
-> > +			goto fail;
+> With the introduction of memory I/O (MIO) instructions enbaled in commit
+> 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions") s390
+> gained support for direct user-space access to mapped PCI resources.
+> Even without those however user-space can access mapped PCI resources
+> via the s390 specific MMIO syscalls. Thus mmap() can and should be
+> supported on all s390 systems with native PCI. Since VFIO_PCI_MMAP
+> enablement for s390 would make it unconditionally true and thus
+> pointless just remove it entirely.
 > 
-> free_netdev() doesn't take NULL, free_caam_qi_pcpu_netdev()
-> will feed it one if we fail here
+> Link: https://lore.kernel.org/all/c5ba134a1d4f4465b5956027e6a4ea6f6beff969.camel@linux.ibm.com/
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> ---
+>  drivers/vfio/pci/Kconfig         | 4 ----
+>  drivers/vfio/pci/vfio_pci_core.c | 3 ---
+>  2 files changed, 7 deletions(-)
 
-Sorry, I am not sure I followed you. Let me ask a clarifying questions:
+I think you're planning a v5 which drops patch 3/ of this series and
+finesses the commit log of patch 2/ a bit.  This has become much less a
+vfio series, so if you want to commit through s390,
 
-Do you think that free_netdev() will take NULL ?
+Acked-by: Alex Williamson <alex.williamson@redhat.com>
 
-If that is the case, that *shouldn't* happen, since I have a cpumask
-that tracks the percpu netdev that got allocated, and only free those
-percpu-net_device that was properly allocated.
+Thanks,
+Alex
 
-Let me simplify the code to make it easy to understand what I had in
-mind:
+> 
+> diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig
+> index bf50ffa10bde..c3bcb6911c53 100644
+> --- a/drivers/vfio/pci/Kconfig
+> +++ b/drivers/vfio/pci/Kconfig
+> @@ -7,10 +7,6 @@ config VFIO_PCI_CORE
+>  	select VFIO_VIRQFD
+>  	select IRQ_BYPASS_MANAGER
+>  
+> -config VFIO_PCI_MMAP
+> -	def_bool y if !S390
+> -	depends on VFIO_PCI_CORE
+> -
+>  config VFIO_PCI_INTX
+>  	def_bool y if !S390
+>  	depends on VFIO_PCI_CORE
+> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+> index 0e9d46575776..c08d0f7bb500 100644
+> --- a/drivers/vfio/pci/vfio_pci_core.c
+> +++ b/drivers/vfio/pci/vfio_pci_core.c
+> @@ -120,9 +120,6 @@ static void vfio_pci_probe_mmaps(struct vfio_pci_core_device *vdev)
+>  
+>  		res = &vdev->pdev->resource[bar];
+>  
+> -		if (!IS_ENABLED(CONFIG_VFIO_PCI_MMAP))
+> -			goto no_mmap;
+> -
+>  		if (!(res->flags & IORESOURCE_MEM))
+>  			goto no_mmap;
+>  
+> 
 
-	int caam_qi_init(struct platform_device *caam_pdev) {
-		cpumask_clear(&clean_mask);
-
-		net_dev = alloc_netdev_dummy(0);
-		if (!net_dev)
-			goto fail;
-
-		cpumask_set_cpu(i, &clean_mask);
-
-	fail:
-		free_caam_qi_pcpu_netdev(&clean_mask);
-	}
-
-	static void free_caam_qi_pcpu_netdev(const cpumask_t *cpus) {
-		for_each_cpu(i, cpus) {
-			priv = per_cpu_ptr(&pcpu_qipriv, i);
-			free_netdev(priv->net_dev);
-		}
-	}
-
-So, if alloc_netdev_dummy() fails, then the cpu current cpu will not be
-set in `clean_mask`, thus, free_caam_qi_pcpu_netdev() will not free it
-later.
-
-Anyway, let me know if I am missing something.
 
