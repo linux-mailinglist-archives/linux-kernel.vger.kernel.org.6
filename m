@@ -1,128 +1,167 @@
-Return-Path: <linux-kernel+bounces-240780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5534F9272A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:02:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DBF09272A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A21F1F215AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:02:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CF271C24306
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6D91A2C15;
-	Thu,  4 Jul 2024 09:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8F61A4F03;
+	Thu,  4 Jul 2024 09:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bUt0k7LD"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wl054z6e"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1144F2BB06
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CEF1A08D0
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720083770; cv=none; b=qb3DEV+PZL0QKStWMlhonzkGHA73Rb/nWjJsuWnYJlDsRstkVv0AWMVT9D+LbyeEYaeahOOS5oU5CuABrUCjTKjIiqPM28HcSNYsdGfEAwAk2HSmfGH8YpDvhFIvuw0dd8+4eGFrMV5LGSIG4OPfgcqogkgdDRcWnzLHmL4Mn/c=
+	t=1720083786; cv=none; b=TdGVFUOxSde6ZvXHhJqpRVZ2ieXlsfOgFxTvu+iAikzrEKtYHfqldtBSBX/HcB3mmHKZMQ8zDts+CpGcKU0FEKjg0ulSADTD8t/1u/a7jiHpvrqAcZMzBO+sUaGZQQyUaR5rle1p97qiL/YoOW7Bqdu18AN4lD+FwUgNvhhsRjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720083770; c=relaxed/simple;
-	bh=G7CO/CL4pp10TGPHFmXkvkXMIw9hPunx57cDry4uoXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J8uniFMpWMuk4/pXng5H+p8MlrJqEJayTvDLZVO1jj2Ialtqk23O1I2NpbjYTIBgerRE6fOVhwBLzfziAI+V+NztoQKjtA5cFFBVZ+tnk9q3m+0a2VR17TZVex+vrXzYYH1qivKxCPNdjFHIV+6HK6sYRkOZVcxwKF+McFfjeMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bUt0k7LD; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ec1ac1aed2so4042951fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:02:47 -0700 (PDT)
+	s=arc-20240116; t=1720083786; c=relaxed/simple;
+	bh=lJeXmk1CcWCnW6+sA0Si+XgkMXTZlK92WQIJ55qf44I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ORsMF3fYRW3jSXn0fptQ4Lmb3Y6IAr8LdNwlHrS//DAOBhuaKWwVN53VJXCD68s9DaBQioCdtgkOkAW3b9eyYuXIMcYijJ8syxczDLUAdv5JFFMO4s9OpF3c+YrE/rlv/IaKt53jym6LevdTe2MVWt22I5+E/TwiNLRVl86CoEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wl054z6e; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4256eec963eso2507315e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:03:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1720083766; x=1720688566; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YmTXwmh1YVZIuuasStO2QRvsBLiKm7EOJYEtTyW4F4U=;
-        b=bUt0k7LD9XjnjcO83BPS4KJ4BJoDrtxzFXHwyRrSQpD0ACDQxVrUdnwqSpv1mHz3ng
-         75j4obTN3HoEQMCFaZB4nx1BDh+HILYN9gB7tt7gHBNI1UK3FfCN/uUKPSn/DZO/YKHY
-         HIuPt88pXY1UIaePwn0tw6/uWSv9MJ/VTPviNmxt+7piRcUpZW8SY4cY23iamujJlBaR
-         rb/54yKW7UX3+ZJeArkTrFEZWKqMyrCZAfoF+GjCZ5xkEuPEaTuIOasc6IYxh0nMO4/d
-         RowNrxILPc/h7Yq6t7XxmpS8bTZlACy8IJlu00NIGPYiiExK9NFSsmso2O5/Vtsmotk1
-         JceA==
+        d=gmail.com; s=20230601; t=1720083783; x=1720688583; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Cx3d5CxqTkB14K4gwBHdHmuzRMB2FNvR/ektMnAQxOM=;
+        b=Wl054z6e9+k79vpHVr1S1cuWTHuxExjfhEZ3vq9kBwn3TcMNc/rV70GolW3hoUn8ct
+         1LfslvLTBcgiqXdrjikcSnjHxOXEPQ0Xjcdi8eygjB0CUNdcP2i+ylNIG3Ig/AU2oQLb
+         YTTP4jdTUXjmjAp3MlWWsQsEfi/FmL8s4V9zZFgyKtELj8J7b8RuOVmMUCN3+ps/yvtj
+         I6axz8onNrwuBBq6PngWGp5pN7cdDxG2up6DxZAr7SGz97zeD3JMq5y5K34kiRbA5lxa
+         9Y5ztzUIfiCZJz+KXkgugCWo03Ao1d0sJFDirFNyX2qZNgtXlqBjaHP6Vh5UqIvU90XT
+         FNlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720083766; x=1720688566;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YmTXwmh1YVZIuuasStO2QRvsBLiKm7EOJYEtTyW4F4U=;
-        b=Wng8H2/xajhzG3zk6e+Kt11mbFGVl2mvRvds15YPaitqGb8BzeO7lrX0vo/+YtFkLM
-         rRAtdFLEnMzRkuoWbxO6jx2UBGp0vl4wsKFnq/fJ3C0yEg3dCyekN5gkPS89CNRucEqk
-         Gj/3pNcu2RbsiRldobuEXnJwunQNrv1Ui3/UN2aNSbPO/WECjQ73aeDAfgxBPKaCNC5d
-         B6bDvL2o9JMIQpFGcsCblmV8ny6na5Q6NK3j94lj+69K1EVdM4gWX/hcWe0vW3c9ZTDQ
-         lTvEjXHwz7loKpLN3p20+mcEK3dz+CocyXJ3Oa0m+97eUz9AnI8121EYZ8UMZ8IJnC+B
-         oL0w==
-X-Forwarded-Encrypted: i=1; AJvYcCW9UvFqOfTISgkXtQ7GSTbAZDGoKJsCcrFiS6ZTkn6GXxhxj4AdbWT2kQ/DUcNAQa0Tir+XBBZtZDhijuYhO01dM5TWhZbMjmxHg9FC
-X-Gm-Message-State: AOJu0YwQynsTQKg357wS0VMqurud5jh3bAJuCHIJ/lMog+TQCYRFCRMm
-	JvQE8VnpL254i2cbYELmsEQUfP8vmvyBIukBJWlhQsRYG6KqCwXojQ71DZNt920=
-X-Google-Smtp-Source: AGHT+IGBdC/+ZkuCypIRlFRUUAawwwMvrs2VcrlAwPmzy3O+A1bo954nfyMjIo5nhBQhpQhi5s4SVQ==
-X-Received: by 2002:a2e:8007:0:b0:2ee:7e6c:34d6 with SMTP id 38308e7fff4ca-2ee8edf14a9mr7759961fa.53.1720083749350;
-        Thu, 04 Jul 2024 02:02:29 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb3ce7144esm3116645ad.300.2024.07.04.02.02.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 02:02:28 -0700 (PDT)
-Date: Thu, 4 Jul 2024 11:02:18 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-	Sami Tolvanen <samitolvanen@google.com>, Song Liu <song@kernel.org>,
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jikos@kernel.org, joe.lawrence@redhat.com, nathan@kernel.org,
-	morbo@google.com, justinstitt@google.com,
-	thunder.leizhen@huawei.com, kees@kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH] kallsyms, livepatch: Fix livepatch with CONFIG_LTO_CLANG
-Message-ID: <ZoZlGnVDzVONxUDs@pathway.suse.cz>
-References: <20240605032120.3179157-1-song@kernel.org>
- <alpine.LSU.2.21.2406071458531.29080@pobox.suse.cz>
- <CAPhsuW5th55V3PfskJvpG=4bwacKP8c8DpVYUyVUzt70KC7=gw@mail.gmail.com>
- <alpine.LSU.2.21.2406281420590.15826@pobox.suse.cz>
- <Zn70rQE1HkJ_2h6r@bombadil.infradead.org>
- <ZoKrWU7Gif-7M4vL@pathway.suse.cz>
- <20240703055641.7iugqt6it6pi2xy7@treble>
- <ZoVumd-b4CaRu5nW@bombadil.infradead.org>
+        d=1e100.net; s=20230601; t=1720083783; x=1720688583;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cx3d5CxqTkB14K4gwBHdHmuzRMB2FNvR/ektMnAQxOM=;
+        b=bTiovoAJf6dZKF8zefCpaYJjh+1EOkNWY6D2q8S6w3YSI6RW1wFluw6gEuSZ/+hDOU
+         1dspkz5wLNepQwucSu7+TAqXtjR7JuXVN7t/z0fgXb+6nV7dXUNR/OVbVSi7qmsFr1io
+         kZC9KAikRhSB1YhyKF7qnl9Xyl9OfUJB1bXFqXk45ziOxlRJeilZj2HIQwHv44oO1gl5
+         Or52OnUyunim/KI3lSR/1bxQ/5x0pfJZxmU5ROYDIxcoxfyru3qzKH2ANtC77v2YWSpx
+         eVgEob0arPjaHKVcHYqeG7StTAIrlf+PNiQXxLwH+RKIluaBQMgBBb5I3a3RGjgKh1hQ
+         Ii2Q==
+X-Gm-Message-State: AOJu0Yx6y2LCQxGy2SlC937zZgI0KILzgKmskTvU1N4EQ/6JwJWlS1Fx
+	yYlN2C3GFro+JoBg7+aVmNBnbdqoBYZnn0MLfVImquhsblCdsZAl
+X-Google-Smtp-Source: AGHT+IE5rRRgQ+3VAktBOrwvlEMxaYncLW64BefnBB2CyyVIkKT2zQeyktZpK58oIjvjEAzP4/eFaw==
+X-Received: by 2002:a5d:608e:0:b0:367:9877:750e with SMTP id ffacd0b85a97d-3679dd3df99mr753973f8f.25.1720083782983;
+        Thu, 04 Jul 2024 02:03:02 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:2c0f:6313:4446:a47? (2a02-8389-41cf-e200-2c0f-6313-4446-0a47.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:2c0f:6313:4446:a47])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3679c9008b0sm1194575f8f.80.2024.07.04.02.03.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 02:03:02 -0700 (PDT)
+Message-ID: <c83ef39f-2267-4d02-9d77-65baa5a026c1@gmail.com>
+Date: Thu, 4 Jul 2024 11:03:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZoVumd-b4CaRu5nW@bombadil.infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] mfd: rohm-bd9576: Constify struct regmap_config
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Xu Yilun <yilun.xu@intel.com>,
+ Tom Rix <trix@redhat.com>
+Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20240703-mfd-const-regmap_config-v1-0-aa6cd00a03bd@gmail.com>
+ <20240703-mfd-const-regmap_config-v1-6-aa6cd00a03bd@gmail.com>
+ <0acd9da5-80ec-4a45-b00a-8e28ab4e345a@gmail.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <0acd9da5-80ec-4a45-b00a-8e28ab4e345a@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed 2024-07-03 08:30:33, Luis Chamberlain wrote:
-> On Tue, Jul 02, 2024 at 10:56:41PM -0700, Josh Poimboeuf wrote:
-> > On Mon, Jul 01, 2024 at 03:13:23PM +0200, Petr Mladek wrote:
-> > > So, you suggest to search the symbols by a hash. Do I get it correctly?
+On 04/07/2024 06:50, Matti Vaittinen wrote:
+> On 7/3/24 18:37, Javier Carrasco wrote:
+>> `bd957x_regmap` is not modified and can be declared as const
+>> to move its data to a read-only section.
+>>
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>>   drivers/mfd/rohm-bd9576.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mfd/rohm-bd9576.c b/drivers/mfd/rohm-bd9576.c
+>> index 3a9f61961721..634c65c7d108 100644
+>> --- a/drivers/mfd/rohm-bd9576.c
+>> +++ b/drivers/mfd/rohm-bd9576.c
+>> @@ -57,7 +57,7 @@ static const struct regmap_access_table
+>> volatile_regs = {
+>>       .n_yes_ranges = ARRAY_SIZE(volatile_ranges),
+>>   };
+>>   -static struct regmap_config bd957x_regmap = {
+>> +static const struct regmap_config bd957x_regmap = {
+>>       .reg_bits = 8,
+>>       .val_bits = 8,
+>>       .volatile_table = &volatile_regs,
+>>
 > 
-> I meant, that in the Rust world the symbols go over the allowed limit,
-> and so an alternative for them is to just use a hash. What I'm
-> suggesting is for a new kconfig option where that world is the
-> new one, so that they have to also do the proper userspace tooling
-> for it. Without that, I don't see it as properly tested or scalable.
-> And if we're gonna have that option for Rust for modules, then it begs
-> the question if this can be used by other users.
+> Thanks a ton Javier. This looks good to me but if you feel like going an
+> extra mile while you are at it... Do you think this could be extended to:
+> 
+> 
+> diff --git a/drivers/mfd/rohm-bd9576.c b/drivers/mfd/rohm-bd9576.c
+> index 3a9f61961721..17323ae39803 100644
+> --- a/drivers/mfd/rohm-bd9576.c
+> +++ b/drivers/mfd/rohm-bd9576.c
+> @@ -57,7 +57,7 @@ static const struct regmap_access_table volatile_regs = {
+>         .n_yes_ranges = ARRAY_SIZE(volatile_ranges),
+>  };
+> 
+> -static struct regmap_config bd957x_regmap = {
+> +static const struct regmap_config bd957x_regmap = {
+>         .reg_bits = 8,
+>         .val_bits = 8,
+>         .volatile_table = &volatile_regs,
+> @@ -65,7 +65,7 @@ static struct regmap_config bd957x_regmap = {
+>         .cache_type = REGCACHE_MAPLE,
+>  };
+> 
+> -static struct regmap_irq bd9576_irqs[] = {
+> +static const struct regmap_irq bd9576_irqs[] = {
+>         REGMAP_IRQ_REG(BD9576_INT_THERM, 0, BD957X_MASK_INT_MAIN_THERM),
+>         REGMAP_IRQ_REG(BD9576_INT_OVP, 0, BD957X_MASK_INT_MAIN_OVP),
+>         REGMAP_IRQ_REG(BD9576_INT_SCP, 0, BD957X_MASK_INT_MAIN_SCP),
+> @@ -76,7 +76,7 @@ static struct regmap_irq bd9576_irqs[] = {
+>         REGMAP_IRQ_REG(BD9576_INT_SYS, 0, BD957X_MASK_INT_MAIN_SYS),
+>  };
+> 
+> -static struct regmap_irq_chip bd9576_irq_chip = {
+> +static const struct regmap_irq_chip bd9576_irq_chip = {
+>         .name = "bd9576_irq",
+>         .irqs = &bd9576_irqs[0],
+>         .num_irqs = ARRAY_SIZE(bd9576_irqs),
+> 
+> 
+> Yours,
+>     -- Matti
+> 
 
-I am still not sure at which level the symbol names would get hashed ;-)
+Sure, I will generalize it and update the series to cover regmap_irq and
+regmap_irq_chip as well, of course including these two cases too.
 
-The symbols names are used in many situations, e.g. backtraces,
-crashdump, objdump, nm, gdb, tracing, livepatching, kprobes, ...
-
-Would kallsyms provide some translation table between the usual
-"long" symbol name and a hash?
-
-Would it allows to search the symbols both ways?
-
-
-I am a bit scared because using hashed symbol names in backtraces, gdb,
-... would be a nightmare. Hashes are not human readable and
-they would complicate the life a lot. And using different names
-in different interfaces would complicate the life either.
-
-Best Regards,
-Petr
+Best regards,
+Javier Carrasco
 
