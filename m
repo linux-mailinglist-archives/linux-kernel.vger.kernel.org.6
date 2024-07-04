@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-240513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A9CB926E6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:36:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06573926E6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 724C1B24D5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:36:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37AB91C2383A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50181448FF;
-	Thu,  4 Jul 2024 04:32:21 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FC0144D23;
+	Thu,  4 Jul 2024 04:32:22 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2D1144303
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 04:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33291448D2
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 04:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720067541; cv=none; b=lUcvwTPkXUyq89LDlXTVgfm5NFxzlrORcYERI3wzjpF7kW3XQtxGi4byHnFNkFaAgt42kh4EnzQVAXj1215ElJvNWnj6PeiQzhtESTNZ5zzHIRvwBGUg0HJ5hPnhIltbumgW8sDlElpqRyiFTRxI4sYeAvjMfylwbYCmEa2H6M4=
+	t=1720067542; cv=none; b=dIW5E9Q88mH/BAK4/abKimmOaz+i065YJGGmWFJ3GoFzaDVGUToIR+2aOSu/Iaz+tO4c+RAHmUj2J6o/sxMs2a81fywTY9/dlEpEohtbjZQtwuqXQB6Xz3Z0C890EQMNE4ir/65DrN40LYDWpnRiFH3Em7ZsnWtFX5YKJON+608=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720067541; c=relaxed/simple;
-	bh=ciNhVhOKdrAaNI83ufvC/pkkbqW7liVHKSpNFuH+6Dg=;
+	s=arc-20240116; t=1720067542; c=relaxed/simple;
+	bh=n8CwSRarq4ActNGgFQhYTPVt1+MvFBSEx/o9wxAsuUM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IXoz1MyqY4x8eV+VXFE4i1st1JqOxSy7rKwbV6MxJCiKCf9HaeqTNzqvT8S9DpXotY/MLF50Y1f476XVxudO1O0HUzOnIb4avPRKi/ez0T+dKoaVivyg3Alb+NwluceIaIUSHZpFBZ9y/mUvO4FBIwyZbkzzsw579tMGY6Ckyi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=iOeY6lPaZPwL5ZTr3coj5j4UVIgUBjsV4H/z+sfpiEAw1LGaLuBIb12BIwLjO/Iw23E/thA6mcmUVnu8hduCGZ3RmJsKZk0DXBDJMk5FhCOvxCDFc6CQ0i1AiwwH7NIDteOCqUnjattU6AiI0klqbVaORpFSclkEanQcXPdqeag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DB2C41FCFD;
-	Thu,  4 Jul 2024 04:32:17 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2B07D21C0D;
+	Thu,  4 Jul 2024 04:32:19 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
 	none
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C2D9D13889;
-	Thu,  4 Jul 2024 04:32:16 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 06B6F13889;
+	Thu,  4 Jul 2024 04:32:17 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iBXOKtAlhmbnDAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 04 Jul 2024 04:32:16 +0000
+	id cMqbONElhmbnDAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 04 Jul 2024 04:32:17 +0000
 From: Oscar Salvador <osalvador@suse.de>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org,
@@ -59,9 +59,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Matthew Wilcox <willy@infradead.org>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
 	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH 22/45] mm/mempolicy: Enable queue_folios_pmd to handle hugetlb vmas
-Date: Thu,  4 Jul 2024 06:31:09 +0200
-Message-ID: <20240704043132.28501-23-osalvador@suse.de>
+Subject: [PATCH 23/45] mm/mempolicy: Create queue_folios_pud to handle PUD-mapped hugetlb vmas
+Date: Thu,  4 Jul 2024 06:31:10 +0200
+Message-ID: <20240704043132.28501-24-osalvador@suse.de>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240704043132.28501-1-osalvador@suse.de>
 References: <20240704043132.28501-1-osalvador@suse.de>
@@ -77,7 +77,7 @@ X-Rspamd-Pre-Result: action=no action;
 	Message is reply to one we originated
 X-Spamd-Result: default: False [-4.00 / 50.00];
 	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: DB2C41FCFD
+X-Rspamd-Queue-Id: 2B07D21C0D
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
@@ -87,136 +87,102 @@ X-Spam-Flag: NO
 X-Spam-Score: -4.00
 X-Spam-Level: 
 
-PMD-mapped hugetlb vmas will also reach smaps_pmd_entry.
-Add the required code so it knows how to handle those there.
+Normal THP cannot be PUD-mapped (besides devmap), but hugetlb can, so create
+queue_folios_pud in order to handle PUD-mapped hugetlb vmas.
+Also implement is_pud_migration_entry and pud_folio, as they will be used in this patch.
 
 Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
- include/linux/mm_inline.h |  7 +++++++
- mm/mempolicy.c            | 42 ++++++++++++++++++++++++---------------
- 2 files changed, 33 insertions(+), 16 deletions(-)
+ include/linux/pgtable.h |  1 +
+ include/linux/swapops.h | 12 ++++++++++++
+ mm/mempolicy.c          | 32 ++++++++++++++++++++++++++++++++
+ 3 files changed, 45 insertions(+)
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index 93e3eb86ef4e..521a001429d2 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -591,6 +591,13 @@ static inline bool vma_has_recency(struct vm_area_struct *vma)
- 	return true;
- }
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 458e3cbc96b2..23d51fec81ac 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -51,6 +51,7 @@
+ #endif
  
-+static inline bool is_shared_pmd(pmd_t *pmd, struct vm_area_struct *vma)
-+{
-+	if (!is_vm_hugetlb_page(vma))
-+		return false;
-+	return hugetlb_pmd_shared((pte_t *)pmd);
-+}
-+
- static inline spinlock_t *pmd_huge_lock(pmd_t *pmd, struct vm_area_struct *vma)
- {
- 	spinlock_t *ptl;
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index f8703feb68b7..5baf29da198c 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -455,7 +455,8 @@ static const struct mempolicy_operations mpol_ops[MPOL_MAX] = {
- };
- 
- static bool migrate_folio_add(struct folio *folio, struct list_head *foliolist,
--				unsigned long flags);
-+				unsigned long flags, struct vm_area_struct *vma,
-+				bool shared);
- static nodemask_t *policy_nodemask(gfp_t gfp, struct mempolicy *pol,
- 				pgoff_t ilx, int *nid);
- 
-@@ -518,7 +519,8 @@ static void queue_folios_pmd(pmd_t *pmd, struct mm_walk *walk)
- 		return;
- 	if (!(qp->flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) ||
- 	    !vma_migratable(walk->vma) ||
--	    !migrate_folio_add(folio, qp->pagelist, qp->flags))
-+	    !migrate_folio_add(folio, qp->pagelist, qp->flags, walk->vma,
-+			       is_shared_pmd(pmd, walk->vma)))
- 		qp->nr_failed++;
- }
- 
-@@ -543,7 +545,7 @@ static int queue_folios_pte_range(pmd_t *pmd, unsigned long addr,
- 	pte_t ptent;
- 	spinlock_t *ptl;
- 
--	ptl = pmd_trans_huge_lock(pmd, vma);
-+	ptl = pmd_huge_lock(pmd, vma);
- 	if (ptl) {
- 		queue_folios_pmd(pmd, walk);
- 		spin_unlock(ptl);
-@@ -598,7 +600,7 @@ static int queue_folios_pte_range(pmd_t *pmd, unsigned long addr,
- 		}
- 		if (!(flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) ||
- 		    !vma_migratable(vma) ||
--		    !migrate_folio_add(folio, qp->pagelist, flags)) {
-+		    !migrate_folio_add(folio, qp->pagelist, flags, vma, false)) {
- 			qp->nr_failed++;
- 			if (strictly_unmovable(flags))
- 				break;
-@@ -1025,8 +1027,11 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
- 
- #ifdef CONFIG_MIGRATION
- static bool migrate_folio_add(struct folio *folio, struct list_head *foliolist,
--				unsigned long flags)
-+			      unsigned long flags, struct vm_area_struct *vma,
-+			      bool shared)
- {
-+	bool ret = true;
-+	bool is_hugetlb = is_vm_hugetlb_page(vma);
- 	/*
- 	 * Unless MPOL_MF_MOVE_ALL, we try to avoid migrating a shared folio.
- 	 * Choosing not to migrate a shared folio is not counted as a failure.
-@@ -1034,23 +1039,27 @@ static bool migrate_folio_add(struct folio *folio, struct list_head *foliolist,
- 	 * See folio_likely_mapped_shared() on possible imprecision when we
- 	 * cannot easily detect if a folio is shared.
- 	 */
--	if ((flags & MPOL_MF_MOVE_ALL) || !folio_likely_mapped_shared(folio)) {
--		if (folio_isolate_lru(folio)) {
--			list_add_tail(&folio->lru, foliolist);
--			node_stat_mod_folio(folio,
--				NR_ISOLATED_ANON + folio_is_file_lru(folio),
--				folio_nr_pages(folio));
--		} else {
-+	if ((flags & MPOL_MF_MOVE_ALL) ||
-+	    (!folio_likely_mapped_shared(folio) && !shared)) {
-+		if (is_hugetlb)
-+			return isolate_hugetlb(folio, foliolist);
-+
-+		ret = folio_isolate_lru(folio);
-+		if (!ret)
- 			/*
- 			 * Non-movable folio may reach here.  And, there may be
- 			 * temporary off LRU folios or non-LRU movable folios.
- 			 * Treat them as unmovable folios since they can't be
- 			 * isolated, so they can't be moved at the moment.
- 			 */
--			return false;
--		}
-+			return ret;
-+
-+		list_add_tail(&folio->lru, foliolist);
-+		node_stat_mod_folio(folio,
-+			NR_ISOLATED_ANON + folio_is_file_lru(folio),
-+			folio_nr_pages(folio));
- 	}
--	return true;
-+	return ret;
- }
+ #define pmd_folio(pmd) page_folio(pmd_page(pmd))
++#define pud_folio(pud) page_folio(pud_page(pud))
  
  /*
-@@ -1239,7 +1248,8 @@ static struct folio *alloc_migration_target_by_mpol(struct folio *src,
- #else
+  * A page table page can be thought of an array like this: pXd_t[PTRS_PER_PxD]
+diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+index 182957f0d013..a23900961d11 100644
+--- a/include/linux/swapops.h
++++ b/include/linux/swapops.h
+@@ -542,6 +542,18 @@ static inline bool is_pfn_swap_entry(swp_entry_t entry)
  
- static bool migrate_folio_add(struct folio *folio, struct list_head *foliolist,
--				unsigned long flags)
-+				unsigned long flags, struct vm_area_struct *vma,
-+				bool shared)
- {
- 	return false;
+ struct page_vma_mapped_walk;
+ 
++#ifdef CONFIG_HUGETLB_PAGE
++static inline int is_pud_migration_entry(pud_t pud)
++{
++	return is_swap_pud(pud) && is_migration_entry(pud_to_swp_entry(pud));
++}
++#else
++static inline int is_pud_migration_entry(pud_t pud)
++{
++	return 0;
++}
++#endif
++
+ #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+ extern int set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
+ 		struct page *page);
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 5baf29da198c..93b14090d484 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -501,6 +501,37 @@ static inline bool queue_folio_required(struct folio *folio,
+ 	return node_isset(nid, *qp->nmask) == !(flags & MPOL_MF_INVERT);
  }
+ 
++static int queue_folios_pud(pud_t *pud, unsigned long addr, unsigned long end,
++			     struct mm_walk *walk)
++{
++	spinlock_t *ptl;
++	struct folio *folio;
++	struct vm_area_struct *vma = walk->vma;
++	struct queue_pages *qp = walk->private;
++
++	ptl = pud_huge_lock(pud, vma);
++	if (!ptl)
++		return 0;
++
++	if (unlikely(is_pud_migration_entry(*pud))) {
++		qp->nr_failed++;
++		goto out;
++	}
++	folio = pud_folio(*pud);
++	if (!queue_folio_required(folio, qp))
++		goto out;
++	if (!(qp->flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) ||
++	    !vma_migratable(walk->vma) ||
++	    !migrate_folio_add(folio, qp->pagelist, qp->flags, walk->vma, false))
++		qp->nr_failed++;
++
++	spin_unlock(ptl);
++out:
++	if (qp->nr_failed && strictly_unmovable(qp->flags))
++		return -EIO;
++	return 0;
++}
++
+ static void queue_folios_pmd(pmd_t *pmd, struct mm_walk *walk)
+ {
+ 	struct folio *folio;
+@@ -730,6 +761,7 @@ static int queue_pages_test_walk(unsigned long start, unsigned long end,
+ 
+ static const struct mm_walk_ops queue_pages_walk_ops = {
+ 	.hugetlb_entry		= queue_folios_hugetlb,
++	.pud_entry		= queue_folios_pud,
+ 	.pmd_entry		= queue_folios_pte_range,
+ 	.test_walk		= queue_pages_test_walk,
+ 	.walk_lock		= PGWALK_RDLOCK,
 -- 
 2.26.2
 
