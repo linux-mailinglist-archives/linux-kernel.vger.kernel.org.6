@@ -1,120 +1,106 @@
-Return-Path: <linux-kernel+bounces-241586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAA9927CE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:13:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 456C0927CE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446C31F243DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F36282541
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0D11369B8;
-	Thu,  4 Jul 2024 18:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3770A12FF89;
+	Thu,  4 Jul 2024 18:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVJf81ez"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="dYnVuHGX"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007CB76050
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4FE15491;
+	Thu,  4 Jul 2024 18:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720116796; cv=none; b=QL50PwnKbBp4uc9ch5zmMPhDEv2QLAVkLRSa6txJ/lA4Y8gW+8QcrIEm4kct1gobob6acukrzKl8sWGELlAfNGyrXDsvrbHWkq3qzX7BKm7dSuAEWMefzr+xxMMK0pGaoJe6/dG0M82YlWY5TdXQ/rR2kEYKnxPZ0S0EsVYMpvM=
+	t=1720116984; cv=none; b=UXl6s9WwgKOSQclRexMdw624vnpBOqvTVmIBWAFY8gAs/wXQ+4cq9NQxkfzDPZfgBHUvI6UWiCkFniJGxV+0flxC+DVTcvXbkXt9VR+xvB6YpMhDV1uLJjUmVWsFxSrPeaBVY1exqUKH6dG1Qv8T34Eoa6OMIksDIWpc4O2Ukuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720116796; c=relaxed/simple;
-	bh=OUiWTZTqWlc4SvJdwojYPEb1CINd2C0Flb2icDCmd8Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VgSoUjoNm2QNhzPDNA3ddTaJnbU7jgnfdxk4LiLbWST6efG+r0AyCxN/tQ66fituSVZg7aTRb1wyVGgM6R3wDMVbL8ZhdsoPLfEjX/GaZio7z+7VcoUEihL+Umy975j1kxg1XcEfjclwIHVaM+Wia0WNl0OKq+WqbqQtOn5Slqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVJf81ez; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ee7a1ad286so9607701fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 11:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720116793; x=1720721593; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r5wmc3JLBv697TtUhyKSB/n8Ks6mEjR8phindw2vHwk=;
-        b=MVJf81ezAlkMt9LW9hLkHiO3N1uWx7OTf28roo3SsCyYx9OeHRNmRl9DybYeW5oTjf
-         TzRz0Z9RDUFYeK7PhC0EqpUZpn48zi7fFC4LdamXy/aSwAE/4TzN67mCAXL6868KEuA/
-         Y3GTWnPC4QiJXRgNhc24eB3udPvnsDve0wdZs8SZhnMQ412SLaf6R+1hboidLQC9W22d
-         5nSythvK5G95nKXncauRX3wC6bBYdYLKWPsigvHZxkdmPie+uUi+3vX5wC0UpGoNmek7
-         B2bz1/RkWPrFfxg84GdWt9mP1Y5AD2ZTu7tfxLiMU9pAkleXTj8GmZAUASHgsxvBhb50
-         oyAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720116793; x=1720721593;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r5wmc3JLBv697TtUhyKSB/n8Ks6mEjR8phindw2vHwk=;
-        b=QW4dm4/fmvFra3LkTugoTcjArAFf+qA0pCCnnhMeB5AKieFfU12DAhFgJk4+J6C4Y7
-         y4iEKJGcjm+yEip4BRJh0LX2dGsPU/RxIF4+Ak1Gt9MrqtO/Upr0AVOIuqlkHFUC2OSw
-         NP1xlV+89B6wc1iNFoBWHkqEdFBrQxa7iBVfSzJXg/hITtCYxdEOQPNIscX/rRrylYeP
-         ZISqsgbs2z5vE5uP727gPF5kIpQTEkASfrBk1VFrZ1kgf8m0J1QG7bdut7BvKpFshZxW
-         11ELLCzoFaw7BV9yDW5FF+Z7dQfccbrlbXZCRrGd7FFSQBO47YohZSNS4eSqYjvCDBp1
-         FMnA==
-X-Gm-Message-State: AOJu0YxfBQXJwSC9ihZeyAhHCnbtFE3VbmdysqrkwWkN3WVf3fNNYw1H
-	YvSgqruFmJk58EsDrFad10H1UFqVZCCJ9BFexp9oDWeYgzSI0/x9
-X-Google-Smtp-Source: AGHT+IGbXR/+ZfGhIcPgZDZTcOHuwAG7346JR274Tx/ADP/F3rMhj9KO/uUeIY6eA6HGN84H7lmFcg==
-X-Received: by 2002:a2e:6e11:0:b0:2ee:8d05:db2 with SMTP id 38308e7fff4ca-2ee8eda81b9mr18148491fa.29.1720116793075;
-        Thu, 04 Jul 2024 11:13:13 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-0b06-a203-2f25-a0f6.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:b06:a203:2f25:a0f6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a25198dsm32993855e9.32.2024.07.04.11.13.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 11:13:12 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 04 Jul 2024 20:13:08 +0200
-Subject: [PATCH 2/2] regulator: max77857: Constify struct regmap_config
+	s=arc-20240116; t=1720116984; c=relaxed/simple;
+	bh=5d/dB4AsLDLrUV0iB98Gfxiyh26yO3HZ8Hx1w+E/ZNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DgwcviE0svh9N8caMNlYxhIaB1oSLBt6x0BlAEhZRFBYa+X3jWdKvyE/V7mcyzJPhsi0OEzgXfUVbJvVjVpzE7xEe7S/l3pUHP9g5xzJ4uRQKLHlJHOvKe62iF/5W0T888p4Eme2qRiLHgi2ZhPWq5JEygyvxGXec0YWvU9acdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=dYnVuHGX; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1720116978;
+	bh=5d/dB4AsLDLrUV0iB98Gfxiyh26yO3HZ8Hx1w+E/ZNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dYnVuHGX5hdWPRFDaQopLHp/LP69wqpUd+usfunfEK/X/17gWqtMzdoHKz//7Gr1C
+	 PFtoBAsH7OAy+0dwk3EYG82ysadfethxc45svz6nPUwD4EOqaGQlZWDNF/83ztVwaw
+	 Ru/oLroh7CexjOHBCljggFDw2V3QGmr0RM0MVPh8=
+Date: Thu, 4 Jul 2024 20:16:18 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Sebastian Reichel <sre@kernel.org>, 
+	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] power: supply: cros_charge-control: Fix signedness bug
+ in charge_behaviour_store()
+Message-ID: <48a348a0-0489-45bb-874b-246c7683a5a5@t-8ch.de>
+References: <ZoWKEs4mCqeLyTOB@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240704-regulator-const-regmap-v1-2-bce0ddef63ea@gmail.com>
-References: <20240704-regulator-const-regmap-v1-0-bce0ddef63ea@gmail.com>
-In-Reply-To: <20240704-regulator-const-regmap-v1-0-bce0ddef63ea@gmail.com>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720116789; l=817;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=OUiWTZTqWlc4SvJdwojYPEb1CINd2C0Flb2icDCmd8Q=;
- b=hPieVHSguLU0SUKYUs6fc1/2nA59LGIf1SNaFxyxkKXOgHDW5nIM9HNwtFinOinEnHU+M2EgC
- ZAS3xRetrkqAXzzA5kaEZh/vg6n7pWDqU7kaFCNoOo6jStc4vqVY4hX
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZoWKEs4mCqeLyTOB@stanley.mountain>
 
-`max77857_remgap_config` is not modified and can be declared as const to
-move its data to a read-only section.
+Hi Dan,
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/regulator/max77857-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks!
 
-diff --git a/drivers/regulator/max77857-regulator.c b/drivers/regulator/max77857-regulator.c
-index 145ad0281857..bc28dc8503a8 100644
---- a/drivers/regulator/max77857-regulator.c
-+++ b/drivers/regulator/max77857-regulator.c
-@@ -67,7 +67,7 @@ static bool max77857_volatile_reg(struct device *dev, unsigned int reg)
- 	}
- }
- 
--static struct regmap_config max77857_regmap_config = {
-+static const struct regmap_config max77857_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.cache_type = REGCACHE_MAPLE,
+On 2024-07-04 10:20:03+0000, Dan Carpenter wrote:
+> The C standard is vague about the signedness of enums, but in this case
+> here, they are treated as unsigned so the error handling does not work.
+> Use an int type to fix this.
+> 
+> Fixes: c6ed48ef5259 ("power: supply: add ChromeOS EC based charge control driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
--- 
-2.40.1
+Acked-by: Thomas Weißschuh <linux@weissschuh.net>
 
+> ---
+>  drivers/power/supply/cros_charge-control.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/power/supply/cros_charge-control.c b/drivers/power/supply/cros_charge-control.c
+> index 73d7f2dc0fa3..3183a13eefd0 100644
+> --- a/drivers/power/supply/cros_charge-control.c
+> +++ b/drivers/power/supply/cros_charge-control.c
+> @@ -204,14 +204,13 @@ static ssize_t charge_behaviour_store(struct device *dev, struct device_attribut
+>  {
+>  	struct cros_chctl_priv *priv = cros_chctl_attr_to_priv(&attr->attr,
+>  							       CROS_CHCTL_ATTR_CHARGE_BEHAVIOUR);
+> -	enum power_supply_charge_behaviour behaviour;
+>  	int ret;
+>  
+> -	behaviour = power_supply_charge_behaviour_parse(EC_CHARGE_CONTROL_BEHAVIOURS, buf);
+> -	if (behaviour < 0)
+> -		return behaviour;
+> +	ret = power_supply_charge_behaviour_parse(EC_CHARGE_CONTROL_BEHAVIOURS, buf);
+> +	if (ret < 0)
+> +		return ret;
+>  
+> -	priv->current_behaviour = behaviour;
+> +	priv->current_behaviour = ret;
+>  
+>  	ret = cros_chctl_configure_ec(priv);
+>  	if (ret < 0)
+> -- 
+> 2.43.0
+> 
 
