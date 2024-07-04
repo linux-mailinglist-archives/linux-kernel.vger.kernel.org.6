@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-241282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A578E92795B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:57:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9764D92795F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D78771C21707
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:57:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1903F1F2128E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2075E1B140B;
-	Thu,  4 Jul 2024 14:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE601B14EA;
+	Thu,  4 Jul 2024 14:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBAsuh/Y"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jedAyiBa"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28D11B120A;
-	Thu,  4 Jul 2024 14:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1A21B11EE;
+	Thu,  4 Jul 2024 14:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720105050; cv=none; b=QCOGZoDOzXTUPOHGEVsAWD8lBS1/qYHfLpmTei6ndyCWpQQ+CdzafbW8xUCkymoncEel6tr6ggb7OBjSVWvN6o1au/h9qcXSaJ+MzW2UtFRNX5ul2ktC0ku2BPVpdtPb84xdtObMnsVPWZHe/Mijw357KYpGoKxGjyu2rcmyXeg=
+	t=1720105059; cv=none; b=IZNlUK6WWfTu1Nc/3lcSFR1/n/Ckyj/fOH5HVYAkduhADDwU6jz+etsNqxjUR0FYLShgKG86YEl+Nsq7TT3B+V20WCstU7iwyFjZHrKEsh2sqMNEFDFDLx9+9jaTfH/WKyLe4/G7r8gkwY0lnGSdshMzS+xd/bIFLcVBTBw3iG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720105050; c=relaxed/simple;
-	bh=Asb3OsmaU4xur7jTKhpefAUeM3PR7wjkzqbeEqFt1vk=;
+	s=arc-20240116; t=1720105059; c=relaxed/simple;
+	bh=AgRx+RE90Nsd+3SC1MJNAZFTOkBW1aGkM1cwxyvfbW0=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f7u0SKgHg65Gfjr3n2ibbXkTkxTyH5DM2CdACUG2f++A++nJKn+DPwCPnJLj3e4GyCgF8qIIMaOlhHIXN6y/updHPCEu8bxRaBNbBsoJzNnRRyTyrD/3jjVQwE0QHXhjhe9EDJjFN39zXEb72+HrPkqGij9VWRUo9gzD3BakuO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBAsuh/Y; arc=none smtp.client-ip=209.85.166.52
+	 MIME-Version; b=aphCUT7kqAy+sWTNZkgnnc0YI95E7sM3P3LjZt2m3dm7l8Q/KS6s3riV6JKXzTgXvhCLdNBasBmA59AUOrUWub/l60AxjSZhC9SbXeS1nD5nIonrKfqnS9+zMwy1rTu0zUUWJoNXF6rjoPf/aZwzyy6enkvxEvT1JCnsTccvWzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jedAyiBa; arc=none smtp.client-ip=209.85.166.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7f3c5af0a04so40382539f.0;
-        Thu, 04 Jul 2024 07:57:28 -0700 (PDT)
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7f3d3919a4aso25767639f.1;
+        Thu, 04 Jul 2024 07:57:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720105048; x=1720709848; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720105057; x=1720709857; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YS4FeN8/6jzuogXItnqNR+Y++d8T9MSODY7gDNOWrGo=;
-        b=WBAsuh/YtWqF5OJUvPklrQnRyL9eDcmQg9eAGSefGLCJFA8SRmnOmDwyMgrBFSwhwe
-         YkcAoN6rMvOaCY+VA3onqfTaUZvHLqNcSlXbMFEiPvuCZTOX8DnTpEZ8abBWOsAlrKwk
-         K0RfJelbcphtiIhrf6TXtxjdLGeKUYk1ci4Gxp9P8GhvqQ1Ifs6ER7ML+Um5MsAdyduF
-         0NUlBWysWT7aQgWemr4iCIJjKe2LNzu7fGNxZKoioUQMWArofUY0Mbz+z7gm+xAfQqpZ
-         xRty3+4FOnYuF1jze88+DTDyPBHZoPlT1uxiLZmdYy3fVZsOG0Pl50OioyPi5GsGKmAu
-         ITTQ==
+        bh=H1IOl0BzF8HgBSBcBwDW60PY7M8R5w3VEjOB+eb5FzM=;
+        b=jedAyiBav6BV73Q2RaNJBHoc3R8N+2xmG9UFiOidPWJ+H7bFt5H81NcQdt9bGjZDzc
+         N7rQ4C7eiyxaNoFjkC9u3UN+XYAvbKapv7yhP/QcEM1wsFk5blNR8eGhWZR5teKeDlBU
+         qUH5NYcbQys7lTTNjshaKpUxOKm10xa8/3ZATzPr7vo9VgMOgM92qKNZad6q+zITn5jF
+         u84eXcxQ07+zV9OlNAaa4ZRoAtTRXDHTpJW/2ODejmtDt4rHlTalRO18t5ZK97CjFgHq
+         Uay29iZyAtPiDwFdyZITuNGQn5m0XaQ8MpNXePo3/lcWc81wlguMXwM8CwdXoonhUwXm
+         aZ8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720105048; x=1720709848;
+        d=1e100.net; s=20230601; t=1720105057; x=1720709857;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YS4FeN8/6jzuogXItnqNR+Y++d8T9MSODY7gDNOWrGo=;
-        b=dgRtLnYMNSobq/0YZOhZo8pCK9E20+hfY++54wqcUHcHJ9yDEDL90LZZgI+PdAeg6o
-         lxTD13Bkro8u9kQQ3Z5jIK02bCk7ozVYna758cc/HHBk2xqfY5dVZC8/0acvktjiIyR5
-         3Z3hdlU0N8FIwvesgmJFzfIYvf+cf6CNCNIZx8FuunMHgA0TTHCTm3RNfZw2BhGDo8JC
-         SQB59/C1V0Xut+7XNiNiYlxhoTmpbg9wL3lGyxsTYKBu6Xfb0jQIW7X5lo7dBTboLc9w
-         8VyHdoJFXpgi4NBo4+1IiITJijsU3hWDRUb272yv9MgZeSX81wv7/8NE9SjtbUrjJV6K
-         4kVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUENB8NeaHuIhMAiVmNMYN3LXDwoZG4hgF8VhkKDzVJuHPEZtpXYY6G8QfyAGtiEu4kB0v0eSJLOEW8zZlhGR+xHB6lY1HWKL41vQet3jNym93a2Y7EqlOWXe1ypcjyci0nGOEN0bnDLeuvjFE=
-X-Gm-Message-State: AOJu0Yy29FyTJbgIzPvNQnTlFzTofPDoz1hInlL0geajDk53xxcrNb57
-	9mPlkeT3QPPQmkoZSA3VqkdYalOxsg2Lf53zvMHjoBp6p33R1xsa
-X-Google-Smtp-Source: AGHT+IHmT4M+fJI4PcJf4RElkH9Xa6Im8XFst1pbdkA3tOoDRK2h+O7oGNWrVw2ZDlnqNaZ2H1FcIA==
-X-Received: by 2002:a6b:7b4c:0:b0:7f6:522d:2714 with SMTP id ca18e2360f4ac-7f66def0274mr213062839f.16.1720105047999;
-        Thu, 04 Jul 2024 07:57:27 -0700 (PDT)
+        bh=H1IOl0BzF8HgBSBcBwDW60PY7M8R5w3VEjOB+eb5FzM=;
+        b=iiQ/U23XJkEy8QAfPj8VDl4VpJSTeAKJvc/Zmx/MT+G9jWE4lB/fRHEdv/ewTvLTjv
+         zCtS1LgXu+jVghZi7wmKbztzlysVeA7UhLjoJyX7tQQMAmrf2dCxlq3Gf5kiAD7fA7TE
+         RjiHH5Gr7xitZWEsWl3XsQyZCeD5qtAS7oH7sTCOp0fHSkXnNzPSX6W38CUsXWzvsDuo
+         HXq5lMxpM54app01R1W5BpxuUVuPIXa5BQJdjJmlOePChABr5xlEZC5+nrBIC7+QfkDZ
+         O8QV1Y++6/Ww/mxy32rM7NdnDjwXzvwZUtYi/q50+Bj0lZc4NfYd4MXZWA7PWKDQSweD
+         oeGA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/o14IXjUr5mWwW5PTgTxnEz43mZXXqhecIwFw8U4BvzKxKLa8RJRm2tpbVk2JbAHCoRPqlNMQlt94EqibcU0rwscG0aGmH5iPsCDSVJ8ToB6ndzSK58GOG58A4Jdl82xr+ccJLjV6yWiRBVw=
+X-Gm-Message-State: AOJu0YxXu4aduGlE+4XBizxbn7ZeCJK/34nABMffPu7K1Nn1puboNpBl
+	J48snb5NOo8/W3Xa+Rxz0obu4tnxGCin39eVW/sYvzclRypKE/GU
+X-Google-Smtp-Source: AGHT+IEycvy1RUeZggngRqiGufk5KXpqiCYij8IVXDZxf8SybcASMYnCrcrSkp5sq8AHJ95p6Pligg==
+X-Received: by 2002:a6b:dc06:0:b0:7f6:19bb:7939 with SMTP id ca18e2360f4ac-7f66dec26b9mr240357239f.11.1720105056885;
+        Thu, 04 Jul 2024 07:57:36 -0700 (PDT)
 Received: from localhost.localdomain (h135-131-130-199.ashwwi.broadband.dynamic.tds.net. [135.131.130.199])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73bb388asm3940867173.5.2024.07.04.07.57.27
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73bb388asm3940867173.5.2024.07.04.07.57.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 07:57:27 -0700 (PDT)
+        Thu, 04 Jul 2024 07:57:36 -0700 (PDT)
 From: "Ethan D. Twardy" <ethan.twardy@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
@@ -78,13 +78,13 @@ To: Miguel Ojeda <ojeda@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
 	"Ethan D. Twardy" <ethan.twardy@gmail.com>,
-	Aswin Unnikrishnan <aswinunni01@gmail.com>,
 	Trevor Gross <tmgross@umich.edu>,
+	Aswin Unnikrishnan <aswinunni01@gmail.com>,
 	rust-for-linux@vger.kernel.org (open list:RUST),
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 2/4] rust: Enable test for macros::module
-Date: Thu,  4 Jul 2024 09:55:43 -0500
-Message-ID: <20240704145607.17732-3-ethan.twardy@gmail.com>
+Subject: [PATCH v3 3/4] rust: macros: Enable use from macro_rules!
+Date: Thu,  4 Jul 2024 09:55:44 -0500
+Message-ID: <20240704145607.17732-4-ethan.twardy@gmail.com>
 X-Mailer: git-send-email 2.44.2
 In-Reply-To: <20240704145607.17732-1-ethan.twardy@gmail.com>
 References: <20240704145607.17732-1-ethan.twardy@gmail.com>
@@ -96,72 +96,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Previously, this test was ignored due to a missing necessary dependency
-on the `kernel` crate. Enable the test, and update it to remove the use
-of a kernel parameter mechanism that was never merged.
+According to the rustdoc for the proc_macro crate[1], tokens captured
+from a "macro variable" (e.g. from within macro_rules!) may be delimited
+by invisible tokens and be contained within a proc_macro::Group.
+Previously, this scenario was not handled by macros::paste, which caused
+a proc-macro panic when the corresponding tests are enabled. Enable the
+tests, and handle this case by making macros::paste::concat recursive.
 
+Link: https://doc.rust-lang.org/stable/proc_macro/enum.Delimiter.html [1]
 Signed-off-by: Ethan D. Twardy <ethan.twardy@gmail.com>
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-diff --git a/rust/Makefile b/rust/Makefile
-index df389df4db9c..3ace8506ee8d 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -256,6 +256,7 @@ rusttest-prepare: FORCE
- 
- quiet_cmd_rustdoc_test_macros = RUSTDOC T $<
-       cmd_rustdoc_test_macros = \
-+	export RUST_MODFILE=test.rs; \
- 	OBJTREE=$(abspath $(objtree)) \
- 	$(RUSTDOC) --test $(rust_common_flags) \
- 		@$(objtree)/include/generated/rustc_cfg \
 diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-index 520eae5fd792..1c4ae5789cfa 100644
+index 1c4ae5789cfa..3278f7c8aa5e 100644
 --- a/rust/macros/lib.rs
 +++ b/rust/macros/lib.rs
-@@ -26,9 +26,13 @@
+@@ -268,12 +268,25 @@ pub fn pinned_drop(args: TokenStream, input: TokenStream) -> TokenStream {
  ///
- /// # Examples
+ /// # Example
+ ///
+-/// ```ignore
+-/// use kernel::macro::paste;
+-///
++/// ```
++/// # const binder_driver_return_protocol_BR_OK: u32 = 0;
++/// # const binder_driver_return_protocol_BR_ERROR: u32 = 1;
++/// # const binder_driver_return_protocol_BR_TRANSACTION: u32 = 2;
++/// # const binder_driver_return_protocol_BR_REPLY: u32 = 3;
++/// # const binder_driver_return_protocol_BR_DEAD_REPLY: u32 = 4;
++/// # const binder_driver_return_protocol_BR_TRANSACTION_COMPLETE: u32 = 5;
++/// # const binder_driver_return_protocol_BR_INCREFS: u32 = 6;
++/// # const binder_driver_return_protocol_BR_ACQUIRE: u32 = 7;
++/// # const binder_driver_return_protocol_BR_RELEASE: u32 = 8;
++/// # const binder_driver_return_protocol_BR_DECREFS: u32 = 9;
++/// # const binder_driver_return_protocol_BR_NOOP: u32 = 10;
++/// # const binder_driver_return_protocol_BR_SPAWN_LOOPER: u32 = 11;
++/// # const binder_driver_return_protocol_BR_DEAD_BINDER: u32 = 12;
++/// # const binder_driver_return_protocol_BR_CLEAR_DEATH_NOTIFICATION_DONE: u32 = 13;
++/// # const binder_driver_return_protocol_BR_FAILED_REPLY: u32 = 14;
+ /// macro_rules! pub_no_prefix {
+ ///     ($prefix:ident, $($newname:ident),+) => {
+-///         paste! {
++///         kernel::macros::paste! {
+ ///             $(pub(crate) const $newname: u32 = [<$prefix $newname>];)+
+ ///         }
+ ///     };
+@@ -312,13 +325,28 @@ pub fn pinned_drop(args: TokenStream, input: TokenStream) -> TokenStream {
+ /// * `lower`: change the identifier to lower case.
+ /// * `upper`: change the identifier to upper case.
+ ///
+-/// ```ignore
+-/// use kernel::macro::paste;
+-///
++/// ```rust
++/// # const binder_driver_return_protocol_BR_OK: u32 = 0;
++/// # const binder_driver_return_protocol_BR_ERROR: u32 = 1;
++/// # const binder_driver_return_protocol_BR_TRANSACTION: u32 = 2;
++/// # const binder_driver_return_protocol_BR_REPLY: u32 = 3;
++/// # const binder_driver_return_protocol_BR_DEAD_REPLY: u32 = 4;
++/// # const binder_driver_return_protocol_BR_TRANSACTION_COMPLETE: u32 = 5;
++/// # const binder_driver_return_protocol_BR_INCREFS: u32 = 6;
++/// # const binder_driver_return_protocol_BR_ACQUIRE: u32 = 7;
++/// # const binder_driver_return_protocol_BR_RELEASE: u32 = 8;
++/// # const binder_driver_return_protocol_BR_DECREFS: u32 = 9;
++/// # const binder_driver_return_protocol_BR_NOOP: u32 = 10;
++/// # const binder_driver_return_protocol_BR_SPAWN_LOOPER: u32 = 11;
++/// # const binder_driver_return_protocol_BR_DEAD_BINDER: u32 = 12;
++/// # const binder_driver_return_protocol_BR_CLEAR_DEATH_NOTIFICATION_DONE: u32 = 13;
++/// # const binder_driver_return_protocol_BR_FAILED_REPLY: u32 = 14;
+ /// macro_rules! pub_no_prefix {
+ ///     ($prefix:ident, $($newname:ident),+) => {
+ ///         kernel::macros::paste! {
+-///             $(pub(crate) const fn [<$newname:lower:span>]: u32 = [<$prefix $newname:span>];)+
++///             $(pub(crate) const fn [<$newname:lower:span>]() -> u32 {
++///                 [<$prefix $newname:span>]
++///             })+
+ ///         }
+ ///     };
+ /// }
+@@ -349,7 +377,7 @@ pub fn pinned_drop(args: TokenStream, input: TokenStream) -> TokenStream {
+ ///
+ /// Literals can also be concatenated with other identifiers:
  ///
 -/// ```ignore
 +/// ```rust
-+/// # #[macro_use] extern crate macros;
-+/// # #[macro_use] extern crate kernel;
- /// use kernel::prelude::*;
- ///
-+/// struct MyModule(i32);
-+///
- /// module!{
- ///     type: MyModule,
- ///     name: "my_kernel_module",
-@@ -37,22 +41,14 @@
- ///     license: "GPL",
- /// }
- ///
--/// struct MyModule;
--///
- /// impl kernel::Module for MyModule {
--///     fn init() -> Result<Self> {
--///         // If the parameter is writeable, then the kparam lock must be
--///         // taken to read the parameter:
--///         {
--///             let lock = THIS_MODULE.kernel_param_lock();
--///             pr_info!("i32 param is:  {}\n", writeable_i32.read(&lock));
--///         }
--///         // If the parameter is read only, it can be read without locking
--///         // the kernel parameters:
--///         pr_info!("i32 param is:  {}\n", my_i32.read());
--///         Ok(Self)
-+///     fn init(module: &'static ThisModule) -> Result<Self> {
-+///         let foo: i32 = 42;
-+///         pr_info!("I contain:  {}\n", foo);
-+///         Ok(Self(foo))
- ///     }
- /// }
-+/// # fn main() {}
- /// ```
- ///
- /// # Supported argument types
+ /// macro_rules! create_numbered_fn {
+ ///     ($name:literal, $val:literal) => {
+ ///         kernel::macros::paste! {
+diff --git a/rust/macros/paste.rs b/rust/macros/paste.rs
+index f40d42b35b58..6529a387673f 100644
+--- a/rust/macros/paste.rs
++++ b/rust/macros/paste.rs
+@@ -2,7 +2,7 @@
+ 
+ use proc_macro::{Delimiter, Group, Ident, Spacing, Span, TokenTree};
+ 
+-fn concat(tokens: &[TokenTree], group_span: Span) -> TokenTree {
++fn concat_helper(tokens: &[TokenTree]) -> Vec<(String, Span)> {
+     let mut tokens = tokens.iter();
+     let mut segments = Vec::new();
+     let mut span = None;
+@@ -46,12 +46,21 @@ fn concat(tokens: &[TokenTree], group_span: Span) -> TokenTree {
+                 };
+                 segments.push((value, sp));
+             }
+-            _ => panic!("unexpected token in paste segments"),
++            Some(TokenTree::Group(group)) if group.delimiter() == Delimiter::None => {
++                let tokens = group.stream().into_iter().collect::<Vec<TokenTree>>();
++                segments.append(&mut concat_helper(tokens.as_slice()));
++            }
++            token => panic!("unexpected token in paste segments: {:?}", token),
+         };
+     }
+ 
++    segments
++}
++
++fn concat(tokens: &[TokenTree], group_span: Span) -> TokenTree {
++    let segments = concat_helper(tokens);
+     let pasted: String = segments.into_iter().map(|x| x.0).collect();
+-    TokenTree::Ident(Ident::new(&pasted, span.unwrap_or(group_span)))
++    TokenTree::Ident(Ident::new(&pasted, group_span))
+ }
+ 
+ pub(crate) fn expand(tokens: &mut Vec<TokenTree>) {
 -- 
 2.44.2
 
