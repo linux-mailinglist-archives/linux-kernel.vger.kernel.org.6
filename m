@@ -1,407 +1,262 @@
-Return-Path: <linux-kernel+bounces-240387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8496926D20
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:35:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE9A5926D22
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7423D282219
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:35:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCDFEB21D8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69102FC0B;
-	Thu,  4 Jul 2024 01:35:28 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04592581;
-	Thu,  4 Jul 2024 01:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720056927; cv=none; b=BwNSSwnrhR9ROqZ7vdn0GtOaMz79KSsMvpDJISvLhA9UAcquSeA4RjU6YninEDZvQJR1JuluuUISU1Pl/YnwnXU7DPTFeNl4Khlei7K/dmYM7FmbwE8COsln96gJ2IUR7xBZWj7zB6/JKIz1OQnIsLnoR+37mcgb+2+g+oU/3sM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720056927; c=relaxed/simple;
-	bh=v8JDP/y+svxQCeMNKr2msyz9U+PXhhOmwZZ7hsE94fE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=euj/r2le9qvDctUrp+iM8xuqxbXgZScHo+tge2eO/Vl40RGTrVodoYBQAScDWXCr6uVUF6sltSfWnFIz34DN6b9Bhtu6SVPCtWFipfnDmk6TNW8bhX7sp5cM+NgJqVIGB9N8YI4OVbmtm3JBlFv/Io8mgwbCbOoPeI1BMMvyEzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxL_FZ_IVmQsMAAA--.2771S3;
-	Thu, 04 Jul 2024 09:35:21 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxosRW_IVmH3Q6AA--.59732S3;
-	Thu, 04 Jul 2024 09:35:20 +0800 (CST)
-Subject: Re: [PATCH v4 2/3] LoongArch: KVM: Add LBT feature detection function
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240626063239.3722175-1-maobibo@loongson.cn>
- <20240626063239.3722175-3-maobibo@loongson.cn>
- <CAAhV-H4O8QNb61xkErd9y_1tK_70=Y=LNqzy=9Ny5EQK1XZJaQ@mail.gmail.com>
- <79dcf093-614f-2737-bb03-698b0b3abc57@loongson.cn>
- <CAAhV-H5bQutcLcVaHn-amjF6_NDnCf2BFqqnGSRT_QQ_6q6REg@mail.gmail.com>
- <9c7d242e-660b-8d39-b69e-201fd0a4bfbf@loongson.cn>
- <CAAhV-H4wwrYyMYpL1u5Z3sFp6EeW4eWhGbBv0Jn9XYJGXgwLfg@mail.gmail.com>
- <059d66e4-dd5d-0091-01d9-11aaba9297bd@loongson.cn>
- <CAAhV-H41B3_dLgTQGwT-DRDbb=qt44A_M08-RcKfJuxOTfm3nw@mail.gmail.com>
- <7e6a1dbc-779a-4669-4541-c5952c9bdf24@loongson.cn>
- <CAAhV-H7jY8p8eY4rVLcMvVky9ZQTyZkA+0UsW2JkbKYtWvjmZg@mail.gmail.com>
- <81dded06-ad03-9aed-3f07-cf19c5538723@loongson.cn>
- <CAAhV-H520i-2N0DUPO=RJxtU8Sn+eofQAy7_e+rRsnNdgv8DTQ@mail.gmail.com>
- <0e28596c-3fe9-b716-b193-200b9b1d5516@loongson.cn>
- <CAAhV-H6vgb1D53zHoe=BJD1crB9jcdZy7RM-G0YY0UD+ubDi4g@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <bdcc9ec4-31a8-1438-25c0-be8ba7f49ed0@loongson.cn>
-Date: Thu, 4 Jul 2024 09:35:18 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E4D8F6E;
+	Thu,  4 Jul 2024 01:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="XRzQfqBG";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="rEy5xnjd"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFEE14285
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720056941; cv=fail; b=V7jIZGVpxF6iq48AHGYJzvuFLRjqBF2El2Phd0e4TJtxT68S+9ekjGX4cUfPaGYiEi61PIAvqYI62Pe9L1wT2TWi5oYDa6Q1mMy8YxN9JN4/mCermNlQYs39gZR63l9qUv3KTTzkbg0toI07nd8gbNE25ep2FhsTX8Y6M8mg6Dw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720056941; c=relaxed/simple;
+	bh=VL21A/jhpJmn9YKsTb6SnxLLg0iYO/2bw8ERiaujkKc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FvcPw6xgOgZ+WM5AVRrFNPQPGLYFOhmtdFxVOJPWJ8zDCfvdQR2hzJG6JpXdCrXhug+R5kacmR8gBGGlI3hqnlRDuRUK4IKV8GSAhgDe5MN2803w3UXl8QFZBOopVO3kJzq43tm6QXknuHkjuXPJu6hNZOS8KNfCU/2MQx7F4vQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=XRzQfqBG; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=rEy5xnjd; arc=fail smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: b5d8dd5a39a511ef99dc3f8fac2c3230-20240704
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=VL21A/jhpJmn9YKsTb6SnxLLg0iYO/2bw8ERiaujkKc=;
+	b=XRzQfqBG3L8rdhRmRlKfYu99PCR7nqLTeNoF1bZgYdbfl1Y0D3nQTZXOfL0AWFTSkC7eH65my2WPbrfDqD4VL1vNGE8GmwPDMA3Pz+Xuf9m3QsNOsrX2AZl1N1TbY70rLAE2rbcxFtQhNwbq6G7MZHegskLH/Xf+lXnRtVrMwu4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:dd41fe6f-6874-4cd5-92e4-d76a2a39cdb1,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:946c10d1-436f-4604-ad9d-558fa44a3bbe,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: b5d8dd5a39a511ef99dc3f8fac2c3230-20240704
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
+	(envelope-from <shawn.sung@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1405965569; Thu, 04 Jul 2024 09:35:35 +0800
+Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 4 Jul 2024 09:35:34 +0800
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 4 Jul 2024 09:35:34 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TJnF4QQDDydXelUq7J1vDjxgoGMh5ABT/jAlhNRhAwll3ycjD/L3xGGCi7/IoUsmGrXJGRLnD3mCys19bHH+DSuJj+kmNgKJzqXimEovVnyHXy8b9U4WJfruPEf/Q8LMGD0+Ck43UOChXt5gbuDaomvWaTxkkeX5N/EI+Vsai6JvtmBIkm8L5NmIqmJI6AsY6txKBv2vMyNU3yqDxIzPobh/fwSs1suPuQGhRaAOWout55amqOhjlrtzoKJWeybGPXFUtTsVC2BFUf8riO6509aovhN66UvQJXWvb/KhjogayvGT+lxpVVpy0c9dJ5B0zC7k4/SU/EAxfmKe2+iVBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VL21A/jhpJmn9YKsTb6SnxLLg0iYO/2bw8ERiaujkKc=;
+ b=j0TpWJ41A3o0Th53g3UIVx3KxeaCawU9fJOwJLUGYmS3zBAf1F/ghmxz4U/NZRa2pbchwu47/JEXF4hZ/HHlejhXQxHjYmW0eHe3pHh3LcJDP8K8T0sazpVTaATcjXNcOWwsYmmK4Cq7sW4IlrwOjw7+4zS6FY8dNMVKFt0Z5a2s6zL9GQ0R9pNXjsOcwAaNvGxYwHus5W9wC5i4jUMWY30NGcs/qesgfm4UJahQCwZL04syBk3G+TeEbH/DcqQsz7CuarklAKdGtBepSjY3GkjwkH+4m8xwH42w6Hv9I3fGP8cUSY0rA0tsBA1BkTU7R/KRdjJlT7MxUrYL23FsFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VL21A/jhpJmn9YKsTb6SnxLLg0iYO/2bw8ERiaujkKc=;
+ b=rEy5xnjdxHpYcfyEr7Wuez08uFY0sNqfDYPXYGYwXvFeTnW3wyjsMbnxSU7TztO8vnbKPiivH9z0GTeRUx3Qz887JQIUHdGRGEiegblzHkOue8GyDZzVxFRHGTT0yx/j5rvEmA+BehRyLhVnE7gPdzkTWAk19040mliWxuORSVI=
+Received: from TYZPR03MB6623.apcprd03.prod.outlook.com (2603:1096:400:1f5::13)
+ by SEYPR03MB7414.apcprd03.prod.outlook.com (2603:1096:101:13f::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Thu, 4 Jul
+ 2024 01:35:31 +0000
+Received: from TYZPR03MB6623.apcprd03.prod.outlook.com
+ ([fe80::8212:6c81:8e8d:1f7a]) by TYZPR03MB6623.apcprd03.prod.outlook.com
+ ([fe80::8212:6c81:8e8d:1f7a%7]) with mapi id 15.20.7741.017; Thu, 4 Jul 2024
+ 01:35:31 +0000
+From: =?utf-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>
+To: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+	"angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>, "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/5] drm/mediatek: Support "None" blending in Mixer
+Thread-Topic: [PATCH 2/5] drm/mediatek: Support "None" blending in Mixer
+Thread-Index: AQHawm4CehGZ7j4H80uVSodFizERF7HhQ4EAgASciwA=
+Date: Thu, 4 Jul 2024 01:35:31 +0000
+Message-ID: <5cee68d3bee73e034781c8ee8b5ff2c2c045791f.camel@mediatek.com>
+References: <20240620-blend-v1-0-72670072ca20@mediatek.com>
+	 <20240620-blend-v1-2-72670072ca20@mediatek.com>
+	 <2bcb715c19c8445746a00bcd4b633ceb42c286a1.camel@mediatek.com>
+In-Reply-To: <2bcb715c19c8445746a00bcd4b633ceb42c286a1.camel@mediatek.com>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6623:EE_|SEYPR03MB7414:EE_
+x-ms-office365-filtering-correlation-id: 798d6b23-c142-48bc-9d5f-08dc9bc99770
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?ZFQ0aCthVkVhMjFlVnFXWWFQMjFyR2hoQ2pPSk45ZjQyVlBQbEZOcCtWOTMv?=
+ =?utf-8?B?Z3ZKYU40TVlyZDBucEdieHcya0FUSkt3R1BRNnlydnV5U01maHFkOWQ1ZUN4?=
+ =?utf-8?B?WEthWWJtdGRJRWE5eHlkKzN2WnNhcFUzSTNUclZPY3BSdXg1WXAzcW9GRS83?=
+ =?utf-8?B?Rkd3dG9VNTczUDAvcXBualpMcGJoQXFZT3FwakdLdnFaRXE1SXprb1NZbExh?=
+ =?utf-8?B?Vzh5TDRZQlFMKzBkN3gxL29oUnllM3ZYb1orekl3SjAvVFJJUXIxWXVMSGFB?=
+ =?utf-8?B?TU5Da2g1cWZNZm40TjNnZkVQSCtQZ0FuU3BRSzNITnUrdmliV3VZWEhXR3F4?=
+ =?utf-8?B?VE15L3NmOTBlQk1leFpVVmE1OTNPSTc1d1NDQWZNSnFtSGZBTGVRS1k5STNY?=
+ =?utf-8?B?R3lqRGdGWGZJVDErWjlZQ1ZvNFJrVjEyRFdlbXhaaDhOd202NlYrbm54RnEw?=
+ =?utf-8?B?WXVpdzVjcmhEOHBVVUdoUkJJSzBsRVBtYW9FV1EydjdEbkxoV3d4aldZSUw4?=
+ =?utf-8?B?QUNwSnJuV3BIbGhNK1prbmdYL1lwamxLc3hZeVU3aXZIeFVNWklndEFIZ3NO?=
+ =?utf-8?B?ZXlmZnNmRGpBLzJRRGxwVURuTkJKR2Rpd0JiVlhmbmtkc0l0Z01TKzJ3M3JJ?=
+ =?utf-8?B?cXJHeHgvK0FEY3cxQ0lHZnFuSXR1TGQwYkdadTZKbVpEdG04bGRUdzJ6bVJK?=
+ =?utf-8?B?dmRzMG1SdEE0L05tb2dDSWRDMG80bzJ0eVBCTFIvSVlyVkxqWVZFcnJPWTVN?=
+ =?utf-8?B?UVBhbkdRZ1NPTzViVTF4eGY3UDk2OHlOdlhSM1FvSWdnSVM0WER1NFM5MUJB?=
+ =?utf-8?B?NGFRWmhnRkM3VkNDNHJaWjU3Nm1uWlhsK3lqZ1dvZ1N1R1ZwUGhuazdIemZv?=
+ =?utf-8?B?eWQ4dm4yZWdQYUpKR0lRekNzZE02V3NlZ1IzQVgwcnFuakw3b1plai9iMG1Z?=
+ =?utf-8?B?SmMyKzM3bmxZTzBwZDI2U2k4OWM3T2xjaDVYQmhDTmVrOVRhUC9EU21uem9s?=
+ =?utf-8?B?TGExNlY1eGM1QnlFMWpsTTdwMzBmU0NLbWhOM285OWVqMWxnVS91OXdyQ3Uw?=
+ =?utf-8?B?RlRDWUV3RHJobGdCZ3VpS2ZPVE9IY05tL3lTaEhQd1k0WFlLTTRJSGgyVWUx?=
+ =?utf-8?B?dkRqL1FvVm5CeDZ3anFmNzNxaWd0MFRnamo0MVh2aENMWklzbDhsNllxeHRw?=
+ =?utf-8?B?T0FzNlZTZFdNYzBLd0NSVE5wZjZzZ25QQlNVYmtrWHBxWC9sVVB6ZEkrY1hp?=
+ =?utf-8?B?MlI3ZHJBT25sc2xBUlJrMHRhV2RTb2RGazZSZGkzU0JjbWxpT3JXckxObllp?=
+ =?utf-8?B?VjlGZExQVll2dmJmOGJmZVNwRVpjU2xGakR0aFg3bXhRcC9KV2FQT2tsZDlC?=
+ =?utf-8?B?TDFhalNlQm54S1dVb2NNdjdTQ2RtNUNkZ290eSt3NVovWDFLU2lwWEIxdmJX?=
+ =?utf-8?B?MzhuWW8zZlJsRW9QYjYxNkRxUngzaTZsNDNoc0ZuVXV1bjVGczdmZWJxemht?=
+ =?utf-8?B?eEg5VzJUV05zbTAvbGpieXJnaFdFK1dJMHdjbE5heDU0N3lMUzJGTUplRWV4?=
+ =?utf-8?B?K0kvSUVLR0pWbmVla0tKQXIvb2pxNk9kR20wRFhrTG9Gck91TWdhNFl4Lzg3?=
+ =?utf-8?B?VGtUWE42dWdMQjQ0amVUOGhGQVo2QmZJZ3Z0SnhCelNtZXNwZDlKNU5IL21Z?=
+ =?utf-8?B?UUtoZ25iYTBOTDdLOXdmdHZQVlQ0MHR1VVQyRWZWR1lIUWxnS21VRGxIYksr?=
+ =?utf-8?B?VS9PZ0pxOHVYSjU5U21NU0M2UkJmWTNwZktnN1FvaDZvaWNzcXZaN04xQUNo?=
+ =?utf-8?B?U1VtcnVDelJRaFhSbFljeXlTaHgrdDZyRjhXWmEyOXdDSithU24xV0kvbXVR?=
+ =?utf-8?B?b1ZFNCtiKzM1ckJDU3BKZFJXeEtHTW9UbmlDSEVNbVRyN0E9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6623.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Qmg3ejAwOWFIZ1NUOXZsVEw2WVhMcGRrOHpTTjI4eE5MVTlDdFQyVllQcmRS?=
+ =?utf-8?B?WTJDQStPbUYrVmJwQVZXREdWYlNLY0swc0VpR0VVZXVFNUQ2b1VTNDdDUVBk?=
+ =?utf-8?B?UFpvbnpKaGRYaExZb2JYMkNuMHR6YlBJZ042U1lBT0xKUmtEQy84MUhlN0Vy?=
+ =?utf-8?B?V0FISDlFbEROVDNpY1A0Z0ZIWjVJWGlJSFd6MzlzbmFYK2hBTDA3bHNHNzl0?=
+ =?utf-8?B?azBpRmVqdGxYMWRWMFhZamYxVXl1cVNnRmd1ZFhER1NacS9oYllEaFQ3ZVRh?=
+ =?utf-8?B?R3V1SXhqOVJWRU5UUEdtUUJMNHQ3YWJzTTM4V1VHR2RVL21sUEFCNXVQUjJU?=
+ =?utf-8?B?SG5kYW55ZEUwTnUvNTFEald4RFJSM2tid1NJT0JOMSs3WU53alpaSm5lUksr?=
+ =?utf-8?B?Mm0wU1VMVVg5cWtUaUpPNDhkUnh5NDYvbFBJbTJwUk5UdFgrWkE0ajNVb2s0?=
+ =?utf-8?B?ZzhtODhUdi9kc25Hek5HWVB4ekJUVUJ6Y2RNYTA5Y0kzU2prSDVYNCtTeFhW?=
+ =?utf-8?B?all6Qlc1SE11R2JmNHdBSUhrU0xibmxwazlIaGNiWUkyTk5lSmk5c1V6bXc3?=
+ =?utf-8?B?M0wzV2ZtejV1NGR2UnhxMDBWa2JIU2JDUEQxKy9GWnA1TWhON1pLZXR4bmw4?=
+ =?utf-8?B?Q0Y1bnJyZDNBdENucUZuWTZGdThGWXlxcnBGV0dXMnhqU0ExQXE5ZVQ5cURm?=
+ =?utf-8?B?NEJqbks0akdPSzhtdmpoM0xxMVJHNHQ5ZGpvbzZ2N2NISi9TNGRYRkw0OWI2?=
+ =?utf-8?B?ZUg2UXJObzMyR1pqL0lNZlVtdzJ3N3A3S3VielUxejBKZVdzVjdwRWxLSmhE?=
+ =?utf-8?B?ZzV4SHhqZFg5YkIxM01VVU45U1EyVDRPdkY2T3pxSHN6Y3F6dWFBY0kxRVZk?=
+ =?utf-8?B?MUNrdWNmTFpjeGkxT2t3TVN3d2Z5UnJ3ZkFKcDZYRGZxeEVLTm5iVGV4MzBI?=
+ =?utf-8?B?TTlENFAvL3NXd2Jmanljb2dhV0FYTnJiZ2tDdEVuNVczYUpETDc3a3lCNkF6?=
+ =?utf-8?B?emUvSmp6dWI5ZEUwM3VhZXpuTUVoa2w5R2JQYUgvNDYzZU5XTXNaWFN3eGpG?=
+ =?utf-8?B?cklnOTFaMmhPREc1Y3V2d3pZYWNoSitHT29HWlpHUWxYVFNmblVUZUhxUVFZ?=
+ =?utf-8?B?VE9kUTA3MStJTXRSYVZHZjVuWllyTnhlTFRlT2NKSitzRHFjUW5HYXArd1JN?=
+ =?utf-8?B?cTZUaldndU5GQVZUNXJJUkZwTEJuUmMrWW5WNEk1K1VXMHRpOStUcitveUow?=
+ =?utf-8?B?SFZNZE9iSmpneldVS0tHRk0xenk5cjJ5bmkveWVBTkRmYy9wTTNpbXM3T1o3?=
+ =?utf-8?B?SHVQMHBPbllTcHBhYkhvc0l3SzREZ1Azdk9MREdtUlphQkpCY2RpenRxcHpZ?=
+ =?utf-8?B?L3VWaEJ3dmorRWRvN29icm1NaTR4QTR2UVY3WmRzalhka016UjlUQXBmM0hq?=
+ =?utf-8?B?SS9DZ2orcnMvM052N1BhRW9wUjZtNVdPMXRyYm8xOFg4VEoyTTZrT2ZoY2l5?=
+ =?utf-8?B?SlJyWXcyOW4vNTdEN0ZEOUFDSFlweXU1eUxyRlpvRzBWQ0ZneVJwOUFBQlZ2?=
+ =?utf-8?B?YXExam5BZTdqdWUvaGw1YUprcFZyUS9OZzN4WGJKKytqNUZ4dys0RWpRQmt4?=
+ =?utf-8?B?NGhveGErb0xaaSs4Uk9mWjNwcUhZU3lRQkVsdUYxQ2JBVWREbU0wdWdPcDM2?=
+ =?utf-8?B?YUI2SEx4UEJsSUd0ZzhWc3ZCUkRDdkU1QlJOYTBsWU4yQ1ZBaGJiWk55MjNy?=
+ =?utf-8?B?ajN0MEErV1JGZTl0WHhzOVhhOWZhcTlIOWRmSlFBZ3dvNmtRRGdvM3VJdVE2?=
+ =?utf-8?B?b1RHbGQwTUxjYUp5MkJXU28ydnZYemkyR3Vya0swTEtabnNML2Nodk9YRTBL?=
+ =?utf-8?B?OTBoclJCb3JmU25paVdFYkUwOXBCN0VmcFpLYnBxUGJMTVp6THlqSTluZFgv?=
+ =?utf-8?B?a056Sk8xTGVEQUJpRm5WVWFheHZkN1JYcHVkQ2t2YTlWb05SYlpkYTdVVjV2?=
+ =?utf-8?B?b0NieE8weFhvai81a0drUDhpTHdvaHp4U0lIcGgvK25JN1lyWmpVZGpXNjN3?=
+ =?utf-8?B?bEo3QUpUOTgrZlZIdXFidUt0WlhEOGlnTVI0R050SkpYSWNwZXl2WG8xenFH?=
+ =?utf-8?B?OUNzVHo4OC9PL3ZqTDAvRE55ZmxlQzNOak9ROXlRNWhhTnZYSk1zNW82YWFX?=
+ =?utf-8?B?OFE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F42F7D0EACCE1E4EBECB9FC3793ECA8B@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H6vgb1D53zHoe=BJD1crB9jcdZy7RM-G0YY0UD+ubDi4g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8CxosRW_IVmH3Q6AA--.59732S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj9fXoW3ZF17KF4fAF1kWryxuFy3GFX_yoW8Gr45Ko
-	W5Jr1xJr18Jr1UAF1UJ34DJr1UJw1UGr1UJryUJr15Jr1Utw1UAr1UJr1UJF43Jr1UGryU
-	JryUJr1UAFy7JF1Ul-sFpf9Il3svdjkaLaAFLSUrUUUU8b8apTn2vfkv8UJUUUU8wcxFpf
-	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
-	UjIYCTnIWjp_UUUOb7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
-	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUGVWUXwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-	Y2AK021l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4j6r4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
-	Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-	CYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48J
-	MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcveHDUUUU
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6623.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 798d6b23-c142-48bc-9d5f-08dc9bc99770
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2024 01:35:31.0684
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TV62wWl5NwYw2A8ekVXbA9+e46gsN+B5cqJxqP291vqJEOlU68LoQy/52PVldkG+6pAF9OrdRfUvWmk0oedfYQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7414
 
-
-
-On 2024/7/3 下午11:35, Huacai Chen wrote:
-> On Wed, Jul 3, 2024 at 11:15 AM maobibo <maobibo@loongson.cn> wrote:
->>
->>
->>
->> On 2024/7/2 下午11:43, Huacai Chen wrote:
->>> On Tue, Jul 2, 2024 at 4:42 PM maobibo <maobibo@loongson.cn> wrote:
->>>>
->>>>
->>>>
->>>> On 2024/7/2 下午3:28, Huacai Chen wrote:
->>>>> On Tue, Jul 2, 2024 at 12:13 PM maobibo <maobibo@loongson.cn> wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 2024/7/2 上午10:34, Huacai Chen wrote:
->>>>>>> On Tue, Jul 2, 2024 at 10:25 AM maobibo <maobibo@loongson.cn> wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On 2024/7/2 上午9:59, Huacai Chen wrote:
->>>>>>>>> On Tue, Jul 2, 2024 at 9:51 AM maobibo <maobibo@loongson.cn> wrote:
->>>>>>>>>>
->>>>>>>>>> Huacai,
->>>>>>>>>>
->>>>>>>>>> On 2024/7/1 下午6:26, Huacai Chen wrote:
->>>>>>>>>>> On Mon, Jul 1, 2024 at 9:27 AM maobibo <maobibo@loongson.cn> wrote:
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> Huacai,
->>>>>>>>>>>>
->>>>>>>>>>>> On 2024/6/30 上午10:07, Huacai Chen wrote:
->>>>>>>>>>>>> Hi, Bibo,
->>>>>>>>>>>>>
->>>>>>>>>>>>> On Wed, Jun 26, 2024 at 2:32 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Two kinds of LBT feature detection are added here, one is VCPU
->>>>>>>>>>>>>> feature, the other is VM feature. VCPU feature dection can only
->>>>>>>>>>>>>> work with VCPU thread itself, and requires VCPU thread is created
->>>>>>>>>>>>>> already. So LBT feature detection for VM is added also, it can
->>>>>>>>>>>>>> be done even if VM is not created, and also can be done by any
->>>>>>>>>>>>>> thread besides VCPU threads.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Loongson Binary Translation (LBT) feature is defined in register
->>>>>>>>>>>>>> cpucfg2. Here LBT capability detection for VCPU is added.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Here ioctl command KVM_HAS_DEVICE_ATTR is added for VM, and macro
->>>>>>>>>>>>>> KVM_LOONGARCH_VM_FEAT_CTRL is added to check supported feature. And
->>>>>>>>>>>>>> three sub-features relative with LBT are added as following:
->>>>>>>>>>>>>>         KVM_LOONGARCH_VM_FEAT_X86BT
->>>>>>>>>>>>>>         KVM_LOONGARCH_VM_FEAT_ARMBT
->>>>>>>>>>>>>>         KVM_LOONGARCH_VM_FEAT_MIPSBT
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->>>>>>>>>>>>>> ---
->>>>>>>>>>>>>>         arch/loongarch/include/uapi/asm/kvm.h |  6 ++++
->>>>>>>>>>>>>>         arch/loongarch/kvm/vcpu.c             |  6 ++++
->>>>>>>>>>>>>>         arch/loongarch/kvm/vm.c               | 44 ++++++++++++++++++++++++++-
->>>>>>>>>>>>>>         3 files changed, 55 insertions(+), 1 deletion(-)
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
->>>>>>>>>>>>>> index ddc5cab0ffd0..c40f7d9ffe13 100644
->>>>>>>>>>>>>> --- a/arch/loongarch/include/uapi/asm/kvm.h
->>>>>>>>>>>>>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
->>>>>>>>>>>>>> @@ -82,6 +82,12 @@ struct kvm_fpu {
->>>>>>>>>>>>>>         #define KVM_IOC_CSRID(REG)             LOONGARCH_REG_64(KVM_REG_LOONGARCH_CSR, REG)
->>>>>>>>>>>>>>         #define KVM_IOC_CPUCFG(REG)            LOONGARCH_REG_64(KVM_REG_LOONGARCH_CPUCFG, REG)
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> +/* Device Control API on vm fd */
->>>>>>>>>>>>>> +#define KVM_LOONGARCH_VM_FEAT_CTRL     0
->>>>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_X86BT   0
->>>>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_ARMBT   1
->>>>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_MIPSBT  2
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>>         /* Device Control API on vcpu fd */
->>>>>>>>>>>>>>         #define KVM_LOONGARCH_VCPU_CPUCFG      0
->>>>>>>>>>>>>>         #define KVM_LOONGARCH_VCPU_PVTIME_CTRL 1
->>>>>>>>>>>>> If you insist that LBT should be a vm feature, then I suggest the
->>>>>>>>>>>>> above two also be vm features. Though this is an UAPI change, but
->>>>>>>>>>>>> CPUCFG is upstream in 6.10-rc1 and 6.10-final hasn't been released. We
->>>>>>>>>>>>> have a chance to change it now.
->>>>>>>>>>>>
->>>>>>>>>>>> KVM_LOONGARCH_VCPU_PVTIME_CTRL need be attr percpu since every vcpu
->>>>>>>>>>>> has is own different gpa address.
->>>>>>>>>>> Then leave this as a vm feature.
->>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> For KVM_LOONGARCH_VCPU_CPUCFG attr, it will not changed. We cannot break
->>>>>>>>>>>> the API even if it is 6.10-rc1, VMM has already used this. Else there is
->>>>>>>>>>>> uapi breaking now, still will be in future if we cannot control this.
->>>>>>>>>>> UAPI changing before the first release is allowed, which means, we can
->>>>>>>>>>> change this before the 6.10-final, but cannot change it after
->>>>>>>>>>> 6.10-final.
->>>>>>>>>> Now QEMU has already synced uapi to its own directory, also I never hear
->>>>>>>>>> about this, with my experience with uapi change, there is only newly
->>>>>>>>>> added or removed deprecated years ago.
->>>>>>>>>>
->>>>>>>>>> Is there any documentation about UAPI change rules?
->>>>>>>>> No document, but learn from my more than 10 years upstream experience.
->>>>>>>> Can you show me an example about with your rich upstream experience?
->>>>>>> A simple example,
->>>>>>> e877d705704d7c8fe17b6b5ebdfdb14b84c revert
->>>>>>> 1dccdba084897443d116508a8ed71e0ac8a0 and it changes UAPI.
->>>>>>> 1dccdba084897443d116508a8ed71e0ac8a0 is upstream in 6.9-rc1, and
->>>>>>> e877d705704d7c8fe17b6b5ebdfdb14b84c can revert the behavior before
->>>>>>> 6.9-final, but not after that.
->>>>>>>
->>>>>>> Before the first release, the code status is treated as "unstable", so
->>>>>>> revert, modify is allowed. But after the first release, even if an
->>>>>>> "error" should also be treated as a "bad feature".
->>>>>> Huacai,
->>>>>>
->>>>>> Thanks for showing the example.
->>>>>>
->>>>>> For this issue, Can we adding new uapi and mark the old as deprecated?
->>>>>> so that it can be removed after years.
->>>>> Unnecessary, just remove the old one. Deprecation is for the usage
->>>>> after the first release.
->>>>>
->>>>>>
->>>>>> For me, it is too frequent to revert the old uapi, it is not bug and
->>>>>> only that we have better method now. Also QEMU has synchronized the uapi
->>>>>> to its directory already.
->>>>> QEMU also hasn't been released after synchronizing the uapi, so it is
->>>>> OK to remove the old api now.
->>>> No, I will not do such thing. It is just a joke to revert the uapi.
->>>>
->>>> So just create new world and old world on Loongarch system again?
->>> Again, code status before the first release is *unstable*, that status
->>> is not enough to be a "world".
->>>
->>> It's your responsibility to make a good design at the beginning, but
->>> you fail to do that. Fortunately we are before the first release;
->>> unfortunately you don't want to do that.
->> Yes, this is flaw at the beginning, however it can works and new abi can
->> be added.
->>
->> If there is no serious bug and it is synced to QEMU already, I am not
->> willing to revert uabi. Different projects have its own schedule plan,
->> that is one reason. The most important reason may be that different
->> peoples have different ways handling these issues.
-> In another thread I found that Jiaxun said he has a solution to make
-> LBT be a vcpu feature and still works well. However, that may take
-> some time and is too late for 6.11.
-> 
-> But we have another choice now: just remove the UAPI and vm.c parts in
-> this series, let the LBT main parts be upstream in 6.11, and then
-> solve other problems after 6.11. Even if Jiaxun's solution isn't
-> usable, we can still use this old vm feature solution then.
-
-I am sure it is best if it is VM feature for LBT feature detection, 
-LSX/LASX feature detection uses CPU feature, we can improve it later.
-
-For host cpu type or migration feature detection, I have no idea now, 
-also I do not think it will be big issue for me, I will do it with 
-scheduled time. Of source, welcome Jiaxun and you to implement host cpu 
-type or migration feature detection.
-
-Regards
-Bibo Mao
-> 
-> 
-> Huacai
->>
->> Regards
->> Bibo, Mao
->>>
->>>
->>> Huacai
->>>
->>>>
->>>> Regards
->>>> Bibo, Mao
->>>>
->>>>>
->>>>> Huacai
->>>>>
->>>>>>
->>>>>> Regards
->>>>>> Bibo, Mao
->>>>>>>
->>>>>>> Huacai
->>>>>>>
->>>>>>>
->>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> How about adding new extra features capability for VM such as?
->>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_LSX   3
->>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_LASX  4
->>>>>>>>>>> They should be similar as LBT, if LBT is vcpu feature, they should
->>>>>>>>>>> also be vcpu features; if LBT is vm feature, they should also be vm
->>>>>>>>>>> features.
->>>>>>>>>> On other architectures, with function kvm_vm_ioctl_check_extension()
->>>>>>>>>>          KVM_CAP_XSAVE2/KVM_CAP_PMU_CAPABILITY on x86
->>>>>>>>>>          KVM_CAP_ARM_PMU_V3/KVM_CAP_ARM_SVE on arm64
->>>>>>>>>> These features are all cpu features, at the same time they are VM features.
->>>>>>>>>>
->>>>>>>>>> If they are cpu features, how does VMM detect validity of these features
->>>>>>>>>> passing from command line? After all VCPUs are created and send bootup
->>>>>>>>>> command to these VCPUs? That is too late, VMM main thread is easy to
->>>>>>>>>> detect feature validity if they are VM features also.
->>>>>>>>>>
->>>>>>>>>> To be honest, I am not familiar with KVM still, only get further
->>>>>>>>>> understanding after actual problems solving. Welcome to give comments,
->>>>>>>>>> however please read more backgroud if you insist on, else there will be
->>>>>>>>>> endless argument again.
->>>>>>>>> I just say CPUCFG/LSX/LASX and LBT should be in the same class, I
->>>>>>>>> haven't insisted on whether they should be vcpu features or vm
->>>>>>>>> features.
->>>>>>>> It is reasonable if LSX/LASX/LBT should be in the same class, since
->>>>>>>> there is feature options such as lsx=on/off,lasx=on/off,lbt=on/off.
->>>>>>>>
->>>>>>>> What is the usage about CPUCFG capability used for VM feature? It is not
->>>>>>>> a detailed feature, it is only feature-set indicator like cpuid.
->>>>>>>>
->>>>>>>> Regards
->>>>>>>> Bibo Mao
->>>>>>>>>
->>>>>>>>> Huacai
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Regards
->>>>>>>>>> Bibo, Mao
->>>>>>>>>>>
->>>>>>>>>>> Huacai
->>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> Regards
->>>>>>>>>>>> Bibo Mao
->>>>>>>>>>>>>
->>>>>>>>>>>>> Huacai
->>>>>>>>>>>>>
->>>>>>>>>>>>>> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
->>>>>>>>>>>>>> index 233d28d0e928..9734b4d8db05 100644
->>>>>>>>>>>>>> --- a/arch/loongarch/kvm/vcpu.c
->>>>>>>>>>>>>> +++ b/arch/loongarch/kvm/vcpu.c
->>>>>>>>>>>>>> @@ -565,6 +565,12 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
->>>>>>>>>>>>>>                                *v |= CPUCFG2_LSX;
->>>>>>>>>>>>>>                        if (cpu_has_lasx)
->>>>>>>>>>>>>>                                *v |= CPUCFG2_LASX;
->>>>>>>>>>>>>> +               if (cpu_has_lbt_x86)
->>>>>>>>>>>>>> +                       *v |= CPUCFG2_X86BT;
->>>>>>>>>>>>>> +               if (cpu_has_lbt_arm)
->>>>>>>>>>>>>> +                       *v |= CPUCFG2_ARMBT;
->>>>>>>>>>>>>> +               if (cpu_has_lbt_mips)
->>>>>>>>>>>>>> +                       *v |= CPUCFG2_MIPSBT;
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>                        return 0;
->>>>>>>>>>>>>>                case LOONGARCH_CPUCFG3:
->>>>>>>>>>>>>> diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
->>>>>>>>>>>>>> index 6b2e4f66ad26..09e05108c68b 100644
->>>>>>>>>>>>>> --- a/arch/loongarch/kvm/vm.c
->>>>>>>>>>>>>> +++ b/arch/loongarch/kvm/vm.c
->>>>>>>>>>>>>> @@ -99,7 +99,49 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->>>>>>>>>>>>>>                return r;
->>>>>>>>>>>>>>         }
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> +static int kvm_vm_feature_has_attr(struct kvm *kvm, struct kvm_device_attr *attr)
->>>>>>>>>>>>>> +{
->>>>>>>>>>>>>> +       switch (attr->attr) {
->>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_X86BT:
->>>>>>>>>>>>>> +               if (cpu_has_lbt_x86)
->>>>>>>>>>>>>> +                       return 0;
->>>>>>>>>>>>>> +               return -ENXIO;
->>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_ARMBT:
->>>>>>>>>>>>>> +               if (cpu_has_lbt_arm)
->>>>>>>>>>>>>> +                       return 0;
->>>>>>>>>>>>>> +               return -ENXIO;
->>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_MIPSBT:
->>>>>>>>>>>>>> +               if (cpu_has_lbt_mips)
->>>>>>>>>>>>>> +                       return 0;
->>>>>>>>>>>>>> +               return -ENXIO;
->>>>>>>>>>>>>> +       default:
->>>>>>>>>>>>>> +               return -ENXIO;
->>>>>>>>>>>>>> +       }
->>>>>>>>>>>>>> +}
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>> +static int kvm_vm_has_attr(struct kvm *kvm, struct kvm_device_attr *attr)
->>>>>>>>>>>>>> +{
->>>>>>>>>>>>>> +       switch (attr->group) {
->>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_CTRL:
->>>>>>>>>>>>>> +               return kvm_vm_feature_has_attr(kvm, attr);
->>>>>>>>>>>>>> +       default:
->>>>>>>>>>>>>> +               return -ENXIO;
->>>>>>>>>>>>>> +       }
->>>>>>>>>>>>>> +}
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>>         int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
->>>>>>>>>>>>>>         {
->>>>>>>>>>>>>> -       return -ENOIOCTLCMD;
->>>>>>>>>>>>>> +       struct kvm *kvm = filp->private_data;
->>>>>>>>>>>>>> +       void __user *argp = (void __user *)arg;
->>>>>>>>>>>>>> +       struct kvm_device_attr attr;
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>> +       switch (ioctl) {
->>>>>>>>>>>>>> +       case KVM_HAS_DEVICE_ATTR:
->>>>>>>>>>>>>> +               if (copy_from_user(&attr, argp, sizeof(attr)))
->>>>>>>>>>>>>> +                       return -EFAULT;
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>> +               return kvm_vm_has_attr(kvm, &attr);
->>>>>>>>>>>>>> +       default:
->>>>>>>>>>>>>> +               return -EINVAL;
->>>>>>>>>>>>>> +       }
->>>>>>>>>>>>>>         }
->>>>>>>>>>>>>> --
->>>>>>>>>>>>>> 2.39.3
->>>>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>
->>>>>>>>
->>>>>>
->>>>
->>
->>
-
+SGkgQ0ssDQoNCk9uIE1vbiwgMjAyNC0wNy0wMSBhdCAwMzoxMCArMDAwMCwgQ0sgSHUgKOiDoeS/
+iuWFiSkgd3JvdGU6DQo+IEhpLCBTaGF3bjoNCj4gDQo+IE9uIFRodSwgMjAyNC0wNi0yMCBhdCAw
+MToyNyArMDgwMCwgSHNpYW8gQ2hpZW4gU3VuZyB2aWEgQjQgUmVsYXkNCj4gd3JvdGU6DQo+ID4g
+IAkgDQo+ID4gRXh0ZXJuYWwgZW1haWwgOiBQbGVhc2UgZG8gbm90IGNsaWNrIGxpbmtzIG9yIG9w
+ZW4gYXR0YWNobWVudHMNCj4gPiB1bnRpbCB5b3UgaGF2ZSB2ZXJpZmllZCB0aGUgc2VuZGVyIG9y
+IHRoZSBjb250ZW50Lg0KPiA+ICBGcm9tOiBIc2lhbyBDaGllbiBTdW5nIDxzaGF3bi5zdW5nQG1l
+ZGlhdGVrLmNvbT4NCj4gPiANCj4gPiBTdXBwb3J0ICJOb25lIiBhbHBoYSBibGVuZGluZyBtb2Rl
+IG9uIE1lZGlhVGVrJ3MgY2hpcHMuDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogSHNpYW8gQ2hp
+ZW4gU3VuZyA8c2hhd24uc3VuZ0BtZWRpYXRlay5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMv
+Z3B1L2RybS9tZWRpYXRlay9tdGtfZXRoZHIuYyB8IDEzICsrKysrKysrKystLS0NCj4gPiAgMSBm
+aWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZXRoZHIuYw0KPiA+IGIv
+ZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19ldGhkci5jDQo+ID4gaW5kZXggMzYwMjFjYjhk
+ZjYyLi40OGI3MTQ5OTQ0OTIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlh
+dGVrL210a19ldGhkci5jDQo+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19l
+dGhkci5jDQo+ID4gQEAgLTMsNiArMyw3IEBADQo+ID4gICAqIENvcHlyaWdodCAoYykgMjAyMSBN
+ZWRpYVRlayBJbmMuDQo+ID4gICAqLw0KPiA+ICANCj4gPiArI2luY2x1ZGUgPGRybS9kcm1fYmxl
+bmQuaD4NCj4gPiAgI2luY2x1ZGUgPGRybS9kcm1fZm91cmNjLmg+DQo+ID4gICNpbmNsdWRlIDxk
+cm0vZHJtX2ZyYW1lYnVmZmVyLmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC9jbGsuaD4NCj4gPiBA
+QCAtMzUsNiArMzYsNyBAQA0KPiA+ICAjZGVmaW5lIE1JWF9TUkNfTDBfRU5CSVQoMCkNCj4gPiAg
+I2RlZmluZSBNSVhfTF9TUkNfQ09OKG4pKDB4MjggKyAweDE4ICogKG4pKQ0KPiA+ICAjZGVmaW5l
+IE5PTl9QUkVNVUxUSV9TT1VSQ0UoMiA8PCAxMikNCj4gPiArI2RlZmluZSBQUkVNVUxUSV9TT1VS
+Q0UoMyA8PCAxMikNCj4gPiAgI2RlZmluZSBNSVhfTF9TUkNfU0laRShuKSgweDMwICsgMHgxOCAq
+IChuKSkNCj4gPiAgI2RlZmluZSBNSVhfTF9TUkNfT0ZGU0VUKG4pKDB4MzQgKyAweDE4ICogKG4p
+KQ0KPiA+ICAjZGVmaW5lIE1JWF9GVU5DX0RDTTAweDEyMA0KPiA+IEBAIC0xNzUsNyArMTc3LDEz
+IEBAIHZvaWQgbXRrX2V0aGRyX2xheWVyX2NvbmZpZyhzdHJ1Y3QgZGV2aWNlDQo+ID4gKmRldiwg
+dW5zaWduZWQgaW50IGlkeCwNCj4gPiAgYWxwaGFfY29uIHw9IHN0YXRlLT5iYXNlLmFscGhhICYg
+TUlYRVJfQUxQSEE7DQo+ID4gIH0NCj4gPiAgDQo+ID4gLWlmIChzdGF0ZS0+YmFzZS5mYiAmJiAh
+c3RhdGUtPmJhc2UuZmItPmZvcm1hdC0+aGFzX2FscGhhKSB7DQo+ID4gK2lmIChzdGF0ZS0+YmFz
+ZS5waXhlbF9ibGVuZF9tb2RlID09IERSTV9NT0RFX0JMRU5EX1BJWEVMX05PTkUpDQo+ID4gK2Fs
+cGhhX2NvbiB8PSBQUkVNVUxUSV9TT1VSQ0U7DQo+IA0KPiBUbyBzdXBwb3J0IERSTV9NT0RFX0JM
+RU5EX1BJWEVMX05PTkUsIEkgdGhpbmsgaWdub3JlIHBpeGVsIGFscGhhIGlzDQo+IGVub3VnaC4g
+V2h5IG5lZWQgdGhpcyBzZXR0aW5nPw0KDQpZZXMsIGJ5IHNldHRpbmcgUFJFTVVMVElfU09VUkNF
+IGJpdCwgRVRIRFIgd2lsbCBpZ25vcmUgdGhlIHBpeGVsIGFscGhhDQpvZiB0aGUgbGF5ZXIuDQoN
+ClRoYW5rcywNClNoYXduDQoNCj4gDQo+IFJlZ2FyZHMsDQo+IENLDQo+IA0KPiA+ICtlbHNlDQo+
+ID4gK2FscGhhX2NvbiB8PSBOT05fUFJFTVVMVElfU09VUkNFOw0KPiA+ICsNCj4gPiAraWYgKChz
+dGF0ZS0+YmFzZS5mYiAmJiAhc3RhdGUtPmJhc2UuZmItPmZvcm1hdC0+aGFzX2FscGhhKSB8fA0K
+PiA+ICsgICAgc3RhdGUtPmJhc2UucGl4ZWxfYmxlbmRfbW9kZSA9PSBEUk1fTU9ERV9CTEVORF9Q
+SVhFTF9OT05FKSB7DQo+ID4gIC8qDQo+ID4gICAqIE1peGVyIGRvZXNuJ3Qgc3VwcG9ydCBDT05T
+VF9CTEQgbW9kZSwNCj4gPiAgICogdXNlIGEgdHJpY2sgdG8gbWFrZSB0aGUgb3V0cHV0IGVxdWl2
+YWxlbnQNCj4gPiBAQCAtMTkxLDggKzE5OSw3IEBAIHZvaWQgbXRrX2V0aGRyX2xheWVyX2NvbmZp
+ZyhzdHJ1Y3QgZGV2aWNlICpkZXYsDQo+ID4gdW5zaWduZWQgaW50IGlkeCwNCj4gPiAgbXRrX2Rk
+cF93cml0ZShjbWRxX3BrdCwgcGVuZGluZy0+aGVpZ2h0IDw8IDE2IHwgYWxpZ25fd2lkdGgsDQo+
+ID4gJm1peGVyLT5jbWRxX2Jhc2UsDQo+ID4gICAgICAgIG1peGVyLT5yZWdzLCBNSVhfTF9TUkNf
+U0laRShpZHgpKTsNCj4gPiAgbXRrX2RkcF93cml0ZShjbWRxX3BrdCwgb2Zmc2V0LCAmbWl4ZXIt
+PmNtZHFfYmFzZSwgbWl4ZXItPnJlZ3MsDQo+ID4gTUlYX0xfU1JDX09GRlNFVChpZHgpKTsNCj4g
+PiAtbXRrX2RkcF93cml0ZV9tYXNrKGNtZHFfcGt0LCBhbHBoYV9jb24sICZtaXhlci0+Y21kcV9i
+YXNlLCBtaXhlci0NCj4gPiA+cmVncywgTUlYX0xfU1JDX0NPTihpZHgpLA0KPiA+IC0gICAweDFm
+Zik7DQo+ID4gK210a19kZHBfd3JpdGUoY21kcV9wa3QsIGFscGhhX2NvbiwgJm1peGVyLT5jbWRx
+X2Jhc2UsIG1peGVyLT5yZWdzLCANCj4gPiBNSVhfTF9TUkNfQ09OKGlkeCkpOw0KPiA+ICBtdGtf
+ZGRwX3dyaXRlX21hc2soY21kcV9wa3QsIEJJVChpZHgpLCAmbWl4ZXItPmNtZHFfYmFzZSwgbWl4
+ZXItDQo+ID4gPnJlZ3MsIE1JWF9TUkNfQ09OLA0KPiA+ICAgICBCSVQoaWR4KSk7DQo+ID4gIH0N
+Cj4gPiANCj4gPiAtLSANCj4gPiBHaXQtMTQ2KQ0KPiA+IA0KPiA+IA0KPiA+IA0K
 
