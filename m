@@ -1,75 +1,94 @@
-Return-Path: <linux-kernel+bounces-241052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD461927671
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:53:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78D0927678
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEE001C21A6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC491F227E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55991AE84A;
-	Thu,  4 Jul 2024 12:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BA01AE84C;
+	Thu,  4 Jul 2024 12:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ADWXGZ3F"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="be1DLUvs";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gbNWeooP";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DLHHJplP";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="i3WgNq/Y"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0541F1ABC33
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 12:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A234726289;
+	Thu,  4 Jul 2024 12:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720097575; cv=none; b=RWzizPgRkZ5gjaABVVk0TntSz2UvaiTcUivkGwDgfmpGgG+dYxHGpWebre8pzDH3qIqdk4JLMcLiLg2JWEIjPQf0Isw9nVAYCbdLG4TALQ9N+Q8jzXNMb3MThQueZzL/+JEkMnMnzMefkO1qjjlvqrER4u8Tlu/hX7pqKlRralA=
+	t=1720097657; cv=none; b=a0FhixgFsm7WX1WTjWOxVZPbiCN2hvdBC9TbJG+GghfDSqjPir5SD/li3gTf/Bo/QeY1cx2BgKNLD5PbtM335oLc1IUxZTCM93hnQZz2anR/LaJRFkGUsl4NK+qjK2d/s8BIj6EXJ3UKuP9ZUCzj99EfqeotY8Pir/4G+G52XlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720097575; c=relaxed/simple;
-	bh=s1aeqAr7pZZSjhKno9CeXyDqgFwb+Pm7TOlyclNbJFw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XR15h5jbToAhqwGYReYHK+fBk+UEeUqgqstIFewo7d77l2p/sLC44GP7msmg9/Q+hNXvl0zRPYwsbBbPrHQUuMuK1uUw2S+uI+lAbtw8pi09LEWgvZFR5t7YYj/TKxD6nuIk6iNtrnw2IdUCGBjuJUaByrv5Kg6xVEtxn/MyqgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ADWXGZ3F; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42565cdf99cso5110905e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 05:52:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720097572; x=1720702372; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ojBdomht8992CLL3MWJCzSVU4eAEXfQWlgF80GsezlQ=;
-        b=ADWXGZ3FnNLy4OA0oVi9C/zIq64htHa8JNeVlUDmtJ+dP/0k2GtMHBa6iWg3t3++w2
-         kWS891U/ofa6r1nEG6N5yZVzfGeGTU1FqcdvMPgxp2t6n8QDqAXG8szYdMcPwLy6T1b3
-         B3mC1S54UnLWmhJQhzJxRoJ/5qpcByAdHu+E4zT/KlVqKbj2wUp6z/raR0jhTrS7oK0r
-         gZva088XGwnSmUCZLmuLeir2bZPQkhFDOWrL5VqqP8+RONvytPRjotKyLcZpbYoSF7ie
-         EwWG5b9WjGVXzIM0r+0dGHpM/tZX2dCJ/cO8ekYX7L+om9lgGzGl03/TWdvNOLmk4UZt
-         jTqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720097572; x=1720702372;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ojBdomht8992CLL3MWJCzSVU4eAEXfQWlgF80GsezlQ=;
-        b=lQzrP8scYsfulM9LQJ8uWGa1FUfHOlKBdNht4RdjD6O8PRfOhJ7yNdGAjJB2iQ/8nF
-         eVwybewlNTDneCVPtimNVQm/kKcWS4XjiCAHxAqMTN17POrQfBTkvrA0FHnZpUExNWSO
-         VP1DzyFVBIkjgV08/iWTzY6hS0oYVK8xDwf5pWH1g/aGnBkiGish+Lqt2IxV3HFPBI+e
-         9n4IYCMSa+PZ+eW/cJ3jWBpAMzyaWRaxeH3VEHNA4OJfGYC/3zLOeMfEwNyZgQ08IEwX
-         3VzZiYJg9oTxqpz0mGI/tccxz9LaGjbBIYxquWvyzCzj2T3G1wVBqB1pUwGVObWoXhzx
-         0QyQ==
-X-Gm-Message-State: AOJu0YxmlMkV38XB3Xee+kl+2N0T52MpTPh4J5l/MLqviJS4+Auq7/2y
-	gn1PDRG23d6p8jgQXF0q+qD49O/uMpVBUoo/IpeSQ/jPcjlUolyBjRu2NhDe3aICvgXBodPiB7x
-	2n1g=
-X-Google-Smtp-Source: AGHT+IFUvtoFlxxScN4PRB8HgZPhGILpqFT7zG6E5zsLT1Y/5gE6gi1n/oR0JdAdedgIbxn0EwVm6Q==
-X-Received: by 2002:a5d:4207:0:b0:367:9cd5:c608 with SMTP id ffacd0b85a97d-3679dd31836mr1392396f8f.36.1720097572007;
-        Thu, 04 Jul 2024 05:52:52 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:bf0c:e5a4:4535:f45c? ([2a01:e0a:982:cbb0:bf0c:e5a4:4535:f45c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a043a16sm18687489f8f.0.2024.07.04.05.52.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 05:52:51 -0700 (PDT)
-Message-ID: <d30068aa-b0df-4ec7-9a6b-9d5c6b49b74e@linaro.org>
-Date: Thu, 4 Jul 2024 14:52:50 +0200
+	s=arc-20240116; t=1720097657; c=relaxed/simple;
+	bh=tShDoJsMMhWIu5HR/pk3kvVV1/tO24/BZrog9B0ki98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ajYemfK63hsDQGR+OZy1veY8Hgxt5DJT3p2XrkjTJuGuGQBacsVosgLAZzM1LypY1BnFCPrewhufslN2+pJ/s3yP3MkfvZyoytPxR8MAZ5uma3rg9jOdL878sjLzBVhp84DiliiFYwKmLfIcw+00cGB1BB1KwVR5i5itfLq876I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=be1DLUvs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gbNWeooP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DLHHJplP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=i3WgNq/Y; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D4B1521BC5;
+	Thu,  4 Jul 2024 12:54:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720097654; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y4AM5FpRPvUcHEf9YSBZUYhmHXe53kyv5A3TN6UfvTQ=;
+	b=be1DLUvsRzYO403e9eypK7bILaEWXV/8Xk0OjeHXTFLKPzfaEh0y8gTkLNErc5mhnZKDtY
+	b8AXLHvHaZ28Z1pX9aN01YvzbqfR1+1LIAoEmEgtKQ3tZ4eI8tMpYMgvbuP6ji/2PN1iOo
+	pKqljtT1+UhIwOJ9pNjAx2ISJzqnnYk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720097654;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y4AM5FpRPvUcHEf9YSBZUYhmHXe53kyv5A3TN6UfvTQ=;
+	b=gbNWeooPQBqClpoTCzlDzLl/7VxwqMkVl9wfCkN/sRGoPrYPeLIsg25gWxChZy1OOvPIRM
+	wY407yd1xAhjMZBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720097653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y4AM5FpRPvUcHEf9YSBZUYhmHXe53kyv5A3TN6UfvTQ=;
+	b=DLHHJplPLaO2MM/eCh6uxSDCndM8vMlPdpYOpLiy9vufM5FKMyS7N78kNaTF4SNRxltGho
+	peXawOMUjGbqMvEAWI8T4Lyo859EmQ1603aMvyY5ZpojbJot+V/PoDgAXT6Y2RkTA+zoxl
+	Ls5c/nBUAX3VnR2UPlG+3VaIjyy91Ic=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720097653;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y4AM5FpRPvUcHEf9YSBZUYhmHXe53kyv5A3TN6UfvTQ=;
+	b=i3WgNq/Y9baN/6ya5zXhTV+2yCZ6ZTBCp7UcTZKYgui0tBWOi6ijaSvFu4eJlmrbb2knBo
+	sfKMZdo+d41vmzCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B78C13889;
+	Thu,  4 Jul 2024 12:54:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AoZHAHWbhmaUFQAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Thu, 04 Jul 2024 12:54:13 +0000
+Message-ID: <45fdcd29-adb1-40eb-9f17-8c1ef8fde0d4@suse.de>
+Date: Thu, 4 Jul 2024 15:53:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,177 +96,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
- temperature is invalid
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>
-References: <6064157.lOV4Wx5bFT@rjwysocki.net>
- <218d45a8-4c3d-453b-aded-d232c366da2c@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <218d45a8-4c3d-453b-aded-d232c366da2c@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 02/12] PCI: brcmstb: Use "clk_out" error path label
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240703180300.42959-1-james.quinlan@broadcom.com>
+ <20240703180300.42959-3-james.quinlan@broadcom.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20240703180300.42959-3-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -8.28
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-8.28 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.19)[-0.975];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[broadcom.com,vger.kernel.org,kernel.org,google.com,arm.com,debian.org,suse.de,gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-Hi,
+Hi Jim,
 
-On 04/07/2024 14:49, Daniel Lezcano wrote:
-> On 04/07/2024 13:46, Rafael J. Wysocki wrote:
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
->> if zone temperature is invalid") caused __thermal_zone_device_update()
->> to return early if the current thermal zone temperature was invalid.
->>
->> This was done to avoid running handle_thermal_trip() and governor
->> callbacks in that case which led to confusion.  However, it went too
->> far because monitor_thermal_zone() still needs to be called even when
->> the zone temperature is invalid to ensure that it will be updated
->> eventually in case thermal polling is enabled and the driver has no
->> other means to notify the core of zone temperature changes (for example,
->> it does not register an interrupt handler or ACPI notifier).
->>
->> Also if the .set_trips() zone callback is expected to set up monitoring
->> interrupts for a thermal zone, it needs to be provided with valid
->> boundaries and that can only be done if the zone temperature is known.
->>
->> Accordingly, to ensure that __thermal_zone_device_update() will
->> run again after a failing zone temperature check, make it call
->> monitor_thermal_zone() regardless of whether or not the zone
->> temperature is valid and make the latter schedule a thermal zone
->> temperature update if the zone temperature is invalid even if
->> polling is not enabled for the thermal zone (however, if this
->> continues to fail, give up after some time).
+On 7/3/24 21:02, Jim Quinlan wrote:
+> Instead of invoking "clk_disable_unprepare(pcie->clk)" in
+> a number of error paths, we can just use a "clk_out" label
+> and goto the label after setting the return value.
 > 
-> Rafael,
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
 > 
-> do we agree that we should fix somehow the current issue in this way because we are close to the merge window, but the proper fix is not doing that ?
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index c08683febdd4..c2eb29b886f7 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -1620,24 +1620,25 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  	}
+>  	pcie->rescal = devm_reset_control_get_optional_shared(&pdev->dev, "rescal");
+>  	if (IS_ERR(pcie->rescal)) {
+> -		clk_disable_unprepare(pcie->clk);
+> -		return PTR_ERR(pcie->rescal);
+> +		ret = PTR_ERR(pcie->rescal);
+> +		goto clk_out;
+>  	}
+>  	pcie->perst_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "perst");
+>  	if (IS_ERR(pcie->perst_reset)) {
+> -		clk_disable_unprepare(pcie->clk);
+> -		return PTR_ERR(pcie->perst_reset);
+> +		ret = PTR_ERR(pcie->perst_reset);
+> +		goto clk_out;
+>  	}
+>  
 
-I've tested this patch, but I have no opinion about it.
+	ret = clk_prepare_enable(pcie->clk);
 
-I sent https://lore.kernel.org/all/20240704-topic-sm8x50-upstream-fix-battmgr-temp-tz-warn-v1-1-9d66d6f6efde@linaro.org/ which
-fixes the warning print, leaving the option for thermal core to update the tz once it becomes available,
-which is the initial goal of this patchset.
+Have you considered enabling pcie->clk clock here ^^^ and avoid jumping
+to clk_out label?
 
-Neil
+Basically, it'd be easier from error-path POV to get all required
+resources and just after that start the initialization sequence of pcie
+controller.
 
-> 
-> 
->> Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip() if zone temperature is invalid")
->> Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Link: https://lore.kernel.org/linux-pm/dc1e6cba-352b-4c78-93b5-94dd033fca16@linaro.org
->> Link: https://lore.kernel.org/linux-pm/2764814.mvXUDI8C0e@rjwysocki.net
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> ---
->>   drivers/thermal/thermal_core.c |   13 ++++++++++++-
->>   drivers/thermal/thermal_core.h |    9 +++++++++
->>   2 files changed, 21 insertions(+), 1 deletion(-)
->>
->> Index: linux-pm/drivers/thermal/thermal_core.c
->> ===================================================================
->> --- linux-pm.orig/drivers/thermal/thermal_core.c
->> +++ linux-pm/drivers/thermal/thermal_core.c
->> @@ -300,6 +300,14 @@ static void monitor_thermal_zone(struct
->>           thermal_zone_device_set_polling(tz, tz->passive_delay_jiffies);
->>       else if (tz->polling_delay_jiffies)
->>           thermal_zone_device_set_polling(tz, tz->polling_delay_jiffies);
->> +    else if (tz->temperature == THERMAL_TEMP_INVALID &&
->> +         tz->recheck_delay_jiffies <= THERMAL_MAX_RECHECK_DELAY) {
->> +        thermal_zone_device_set_polling(tz, tz->recheck_delay_jiffies);
->> +        /* Double the recheck delay for the next attempt. */
->> +        tz->recheck_delay_jiffies += tz->recheck_delay_jiffies;
->> +        if (tz->recheck_delay_jiffies > THERMAL_MAX_RECHECK_DELAY)
->> +            dev_info(&tz->device, "Temperature unknown, giving up\n");
->> +    }
->>   }
->>   static struct thermal_governor *thermal_get_tz_governor(struct thermal_zone_device *tz)
->> @@ -430,6 +438,7 @@ static void update_temperature(struct th
->>       tz->last_temperature = tz->temperature;
->>       tz->temperature = temp;
->> +    tz->recheck_delay_jiffies = 1;
->>       trace_thermal_temperature(tz);
->> @@ -514,7 +523,7 @@ void __thermal_zone_device_update(struct
->>       update_temperature(tz);
->>       if (tz->temperature == THERMAL_TEMP_INVALID)
->> -        return;
->> +        goto monitor;
->>       tz->notify_event = event;
->> @@ -536,6 +545,7 @@ void __thermal_zone_device_update(struct
->>       thermal_debug_update_trip_stats(tz);
->> +monitor:
->>       monitor_thermal_zone(tz);
->>   }
->> @@ -1438,6 +1448,7 @@ thermal_zone_device_register_with_trips(
->>       thermal_set_delay_jiffies(&tz->passive_delay_jiffies, passive_delay);
->>       thermal_set_delay_jiffies(&tz->polling_delay_jiffies, polling_delay);
->> +    tz->recheck_delay_jiffies = 1;
->>       /* sys I/F */
->>       /* Add nodes that are always present via .groups */
->> Index: linux-pm/drivers/thermal/thermal_core.h
->> ===================================================================
->> --- linux-pm.orig/drivers/thermal/thermal_core.h
->> +++ linux-pm/drivers/thermal/thermal_core.h
->> @@ -67,6 +67,8 @@ struct thermal_governor {
->>    * @polling_delay_jiffies: number of jiffies to wait between polls when
->>    *            checking whether trip points have been crossed (0 for
->>    *            interrupt driven systems)
->> + * @recheck_delay_jiffies: delay after a failed thermal zone temperature check
->> + *             before attempting to check it again
->>    * @temperature:    current temperature.  This is only for core code,
->>    *            drivers should use thermal_zone_get_temp() to get the
->>    *            current temperature
->> @@ -108,6 +110,7 @@ struct thermal_zone_device {
->>       int num_trips;
->>       unsigned long passive_delay_jiffies;
->>       unsigned long polling_delay_jiffies;
->> +    unsigned long recheck_delay_jiffies;
->>       int temperature;
->>       int last_temperature;
->>       int emul_temperature;
->> @@ -133,6 +136,12 @@ struct thermal_zone_device {
->>       struct thermal_trip_desc trips[] __counted_by(num_trips);
->>   };
->> +/*
->> + * Maximum delay after a failing thermal zone temperature check before
->> + * attempting to check it again (in jiffies).
->> + */
->> +#define THERMAL_MAX_RECHECK_DELAY    (30 * HZ)
->> +
->>   /* Default Thermal Governor */
->>   #if defined(CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE)
->>   #define DEFAULT_THERMAL_GOVERNOR       "step_wise"
->>
->>
->>
-> 
+~Stan
 
+>  	ret = reset_control_reset(pcie->rescal);
+> -	if (ret)
+> +	if (ret) {
+>  		dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
+> +		goto clk_out;
+> +	}
+>  
+>  	ret = brcm_phy_start(pcie);
+>  	if (ret) {
+>  		reset_control_rearm(pcie->rescal);
+> -		clk_disable_unprepare(pcie->clk);
+> -		return ret;
+> +		goto clk_out;
+>  	}
+>  
+>  	ret = brcm_pcie_setup(pcie);
+> @@ -1676,6 +1677,9 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  
+>  	return 0;
+>  
+> +clk_out:
+> +	clk_disable_unprepare(pcie->clk);
+> +	return ret;
+>  fail:
+>  	__brcm_pcie_remove(pcie);
+>  	return ret;
 
