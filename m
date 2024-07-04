@@ -1,58 +1,64 @@
-Return-Path: <linux-kernel+bounces-241619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A37927D30
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:35:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7344B927D32
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 713BAB23D33
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D15A1F2475E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8001B73448;
-	Thu,  4 Jul 2024 18:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C890F135A69;
+	Thu,  4 Jul 2024 18:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7O6TYn9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwkC4aqR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA3445979;
-	Thu,  4 Jul 2024 18:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1141945979;
+	Thu,  4 Jul 2024 18:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720118141; cv=none; b=h9kodB1ZCIS7nVIyx57IcQAXCt4UpdiA/P2l3AS0vcs350e04Y5v8D8XqO0QxVOCmpbinqbvRi5biSVbtHO3KIUSZShdAXmiOKW9yhKhR93DOaZQBRP91IFS/L93beGcI1z85hk3v6lI19QsJF8UTppu4+MBfGMVO8nAHt5hf9U=
+	t=1720118147; cv=none; b=uE80qbm7GuSyETiXp0Mkt2XKlCPs+qHkmEv7zoxFeyOOcWIxse8iOMHy2wuilG18t1TgtZhQnfosAucZ6tGsIZa976gBgyQV/HZiDu53pXmXiyh3j7None9Eb/vNU490Bsxm1IujiggvUQ4hRcJ9NCsD5oIEBBiK5X90p+jptMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720118141; c=relaxed/simple;
-	bh=x3m9D/QtwKRfrkMQATybZBTtL+idcV8O373Ppn4287Y=;
+	s=arc-20240116; t=1720118147; c=relaxed/simple;
+	bh=rCWEKZiJpFDMpQmRBe2oHF+Q4L1xuCzmJqFKI9sBbBU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=T1u3U0km9ROdRw1N4tUogTYOvZVMbtI1MVdA0FbTcb4m3uPAlMOacGHaXuXDzNrBXWYjMswpi9yVMnZc+461tXYY4PivmJmRRV8/UcC5GSObPOo7vVKP0q1lhctpkQmAtPnWOhlpqDt7kkol8UXFrQJ0Hc9BuV8xWAm6YL+TiaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7O6TYn9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D540C3277B;
-	Thu,  4 Jul 2024 18:35:39 +0000 (UTC)
+	 MIME-Version:Content-Type; b=H70Bqu1PirnJYdsx0vGna+hr0qUq2XD9y6q0kuexQYsNvFibmhgZopONGzT1vx4mYF4LSV9MQpvpthJAe3WvbWdPND37C9ibVF//dc/yhtTIyqEftxIBRZUIbIh4uE8KLCq7W7MzYSql310vWGQuOefmG6nK0eWyeNoKuJRXVP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwkC4aqR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBE4C32781;
+	Thu,  4 Jul 2024 18:35:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720118141;
-	bh=x3m9D/QtwKRfrkMQATybZBTtL+idcV8O373Ppn4287Y=;
+	s=k20201202; t=1720118145;
+	bh=rCWEKZiJpFDMpQmRBe2oHF+Q4L1xuCzmJqFKI9sBbBU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Z7O6TYn9rH9U9DNLwoH+7LVOv1bT0wKHvm3jZsMwLwm0xQauZ5yqUfUICRZUaoqlq
-	 uJOlm13ATmnokGbIaQS4Pqr8dQQLEw3sWGMj72OdlQxqk9QeMxj6eqQPbT0438060X
-	 87MlttsNAmfJmWtgzDVyygHVih2fXs8IowOGn9NI+Q7HftzvIQSHZvS8fz8e/MpkyW
-	 QBwuoEHCmbPlSvmhqy5LRSgg8L9iQ25LBZ0zbkOm5XRnxTtdc1RRmCNoXUN0620yJ4
-	 uuGWj3Ebawe/NqmPrN4E+9iWGuywmvsf8voA1gEiNJ2ou78kI3UfLuwmlhaldRCK8Y
-	 yxCgW+NAB73KA==
+	b=XwkC4aqRrEk7dbyVe7FPkDuvLWRj1jidNP+euuAbzP9JjJzLszTewqZzPa+o+jBjC
+	 FfFm5HKXGJqAADRL6npfN59JBc96M4knjbEw55jvee+lnAx4pced+gtLG/Id8VWOlX
+	 UQaKQ5if+3ZNZlp6hHhpWOkCK8IUesi7Y+7OLE0lk5WaxQg3EGu/fmJaNrpwGR5QFa
+	 TiIMvvL5uQCyFdh6L8HSwLkmE8hrqsRtVIJiouy9JLLCww5LkHFuXxaL0ZNkP965RM
+	 mu/JfdeUKlnfOmLtHEJjNcf0T0eHBjGtDD9EamZCPEDDyP3EtBv9EaBAWPirYx85z0
+	 kOEspMLmVOnEA==
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>, 
+ Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
+ Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
  Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20240701-b4-qcom-audio-lpass-codec-cleanups-v3-0-6d98d4dd1ef5@linaro.org>
-References: <20240701-b4-qcom-audio-lpass-codec-cleanups-v3-0-6d98d4dd1ef5@linaro.org>
-Subject: Re: [PATCH v3 0/6] ASoC: codecs: lpass-rx-macro: Few code cleanups
-Message-Id: <172011813890.108577.12531319893239383182.b4-ty@kernel.org>
-Date: Thu, 04 Jul 2024 19:35:38 +0100
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Herve Codina <herve.codina@bootlin.com>
+Cc: alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+In-Reply-To: <20240701113038.55144-1-herve.codina@bootlin.com>
+References: <20240701113038.55144-1-herve.codina@bootlin.com>
+Subject: Re: [PATCH v2 00/10] Add support for non-interleaved mode in
+ qmc_audio
+Message-Id: <172011814156.108577.6835000954041673379.b4-ty@kernel.org>
+Date: Thu, 04 Jul 2024 19:35:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,15 +69,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Mon, 01 Jul 2024 09:39:32 +0200, Krzysztof Kozlowski wrote:
-> Changes in v3:
-> - New patch #1 to fix clang jump warning ("ASoC: codecs: lpass-rx-macro: Simplify PDS cleanup with devm")
-> - Link to v2: https://lore.kernel.org/r/20240628-b4-qcom-audio-lpass-codec-cleanups-v2-0-e9741143e485@linaro.org
+On Mon, 01 Jul 2024 13:30:27 +0200, Herve Codina wrote:
+> The qmc_audio driver supports only audio in interleaved mode.
+> Non-interleaved mode can be easily supported using several QMC channel
+> per DAI. In that case, data related to ch0 are sent to (received from)
+> the first QMC channel, data related to ch1 use the next QMC channel and
+> so on up to the last channel.
 > 
-> Changes in v2:
-> - Use cleanup.h instead of devm(), therefore not adding Dmitry's review.
-> - New patch #5.
-> - Link to v1: https://lore.kernel.org/r/20240627-b4-qcom-audio-lpass-codec-cleanups-v1-0-ede31891d238@linaro.org
+> In terms of constraints and settings, the interleaved and
+> non-interleaved modes are slightly different.
 > 
 > [...]
 
@@ -81,18 +87,26 @@ Applied to
 
 Thanks!
 
-[1/6] ASoC: codecs: lpass-rx-macro: Simplify PDS cleanup with devm
-      commit: 891168dc4a6c637ca76c64e7bde6917b96b9cd54
-[2/6] ASoC: codecs: lpass-rx-macro: Simplify with cleanup.h
-      commit: ee5e13b2c92324938c2bffc44b36b5a29fc28087
-[3/6] ASoC: codecs: lpass-rx-macro: Keep static regmap_config as const
-      commit: 0c02cacf62fd90bf9f0c6c33e9a4862cfc50aab4
-[4/6] ASoC: dapm: Use unsigned for number of widgets in snd_soc_dapm_new_controls()
-      commit: bf95919fe1917efa8f5da83057ff9fc11130aa55
-[5/6] ASoC: codecs: lpass-rx-macro: Use unsigned for number of widgets
-      commit: c72585d79249fb07ca3e3c91022e312d21f20f40
-[6/6] ASoC: codecs: lpass-wsa-macro: Simplify with cleanup.h
-      commit: 67820eb9f4895791da46df42ff7942dfc1353bb2
+[01/10] ASoC: fsl: fsl_qmc_audio: Check devm_kasprintf() returned value
+        commit: e62599902327d27687693f6e5253a5d56583db58
+[02/10] ASoC: fsl: fsl_qmc_audio: Fix issues detected by checkpatch
+        commit: 86dd725b57a88869acfe15b0405937450d0aef30
+[03/10] ASoC: fsl: fsl_qmc_audio: Split channel buffer and PCM pointer handling
+        commit: 42212b2ce8b1182d536452eee2880d2de7cce059
+[04/10] ASoC: fsl: fsl_qmc_audio: Identify the QMC channel involved in completion routines
+        commit: 5e51a1f9dfd90de6e44cfb5340d48263f9e8f8d8
+[05/10] ASoC: fsl: fsl_qmc_audio: Introduce qmc_audio_pcm_{read,write}_submit()
+        commit: 33a6969fbc653f25d5204b17fb67d5a21e6295e6
+[06/10] ASoC: fsl: fsl_qmc_audio: Introduce qmc_dai_constraints_interleaved()
+        commit: b81cfa66435bdab896b4c24e11d24ec33bdb0601
+[07/10] soc: fsl: cpm1: qmc: Introduce functions to get a channel from a phandle list
+        commit: 37797c605da33445adc112561695f70bfaa11133
+[08/10] soc: fsl: cpm1: qmc: Introduce qmc_chan_count_phandles()
+        commit: af8432b2e41abc0a20bdc01a3b144ea7b2f1ee09
+[09/10] dt-bindings: sound: fsl,qmc-audio: Add support for multiple QMC channels per DAI
+        commit: fb6013168fa94d5863ed6085b24eaeb89102ad74
+[10/10] ASoC: fsl: fsl_qmc_audio: Add support for non-interleaved mode.
+        commit: 188d9cae54388171d28bd632a2561863db4b9f8b
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
