@@ -1,192 +1,226 @@
-Return-Path: <linux-kernel+bounces-240871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA139273ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:23:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 200C99273EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4195B1F22544
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:23:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 769F0B23530
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629221AB916;
-	Thu,  4 Jul 2024 10:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7720D1AB90C;
+	Thu,  4 Jul 2024 10:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="l3mca594"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KUxVRJip"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2491C1AB53B;
-	Thu,  4 Jul 2024 10:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184C31AAE13
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 10:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720088590; cv=none; b=aM1VqeSn2YTcDfamLiEwAJE8RnruaVeT0cPdreV+uUiSKRRHUi75PTzpEers4SVdu4wrYNKPKkuL2UtyNTjVji1UxSR9HhjHyBaStbHFbx/J/OmnzHUxmoV2JPOL734H/9PrvjZhqSzoYpUkiGECS3L3KyFSrOBhNZ1wFgAFuxA=
+	t=1720088617; cv=none; b=l1U6CxqhHH67Hko6k3ab3LfKwrhBLcEkOO9XIktdFvESSfMleL+Y/Suaun84dtGXKwKPQmjR+WrNWUKxurTLMWi8lyZN6v29ed58yjkmFsWGaEzcSwYcv90LQaFkD9sEtfYpigvnxj+SKcc0pGdalwQpse3wq2btrzDjmdzqWgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720088590; c=relaxed/simple;
-	bh=7nyOpKME690gkvlBcGeJF0SLp1Y4QA/z18+829pfKwg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FYkurxbWqvUbLiUMYDMA9w0lLRQCGDve3VHKaXLjBXKRMBCrcYqZVbdglRvac2/sV41JBoZkAEx7KlYtBs6oK4oYjWF1Jbu6hJPvSBLvrGisLfGKxVbrcs6e+LwazQYJ64D6gVr/yfNIPWeY9E9L5GGuxzIDfpFtsv5S7XQvBs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=l3mca594; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8A9AC200E9;
-	Thu,  4 Jul 2024 18:23:03 +0800 (AWST)
+	s=arc-20240116; t=1720088617; c=relaxed/simple;
+	bh=pmMrpsQkK/wpspI2U/cFcPsz5WLQIssniZMRQUbapSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=INO0PYwXRx61c16q8Jyr06NXj2DK2BOovqDBkPdRrb0hklKR8ONYmm6H2csLldr5AC+a4Dz2BZGHsfz8JU/9lyrbBv4B5++eGPrHqP2O92HxGdeVPVpOvrHomn99wHLZnvQGHUMLha9Dhwaowna+HixB7CWT3GiWFtBvTM2amUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KUxVRJip; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4f2f24f6470so173392e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 03:23:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1720088585;
-	bh=7nyOpKME690gkvlBcGeJF0SLp1Y4QA/z18+829pfKwg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=l3mca594A+J75xqCfbb8jWGh8SOWpbzVHF08kUhIZ81tD2orne5B6vF19VFYx5VD3
-	 D+6FaMqwBheR/TmKEcpzGBI+Q5kkbOjXNKdINEOUpIDbBHUXtVo3SaQPqMTTinoAyO
-	 AHpVndrY4Qm6urEgvhpJmskSU5gEgVffNPDDWq+zvOoy8APicNrbwVR6GlX/GKxIqB
-	 ZHnG1JEBBGAKqwSxPfGBIz7AWOitZXeZXhCOeNx5VBLfYh9k9tuD38xOEe7Djh4P1c
-	 OF9lF5caWsjCTkiZxMsmx5G20+kHRWOfjA9wpcKwqY5iegynPRuBnJxZDHPQUtB32w
-	 RehSnSN/2fTww==
-Message-ID: <35d8f28ef8d7de30733da7d8b1b16da39545879e.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v4 3/3] mctp pcc: Implement MCTP over PCC Transport
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: admiyo@os.amperecomputing.com, Matt Johnston
- <matt@codeconstruct.com.au>,  "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla
-	 <sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Huisong Li <lihuisong@huawei.com>
-Date: Thu, 04 Jul 2024 18:23:03 +0800
-In-Reply-To: <20240702225845.322234-4-admiyo@os.amperecomputing.com>
-References: <20240702225845.322234-1-admiyo@os.amperecomputing.com>
-	 <20240702225845.322234-4-admiyo@os.amperecomputing.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+        d=gmail.com; s=20230601; t=1720088615; x=1720693415; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WmwdjVxyjtKsZjEvWiJCTAahZeOXiJ6Fw2zpiu13l0A=;
+        b=KUxVRJipMyPJWYQ3jDX2k7x0/1Uh8j9LHPUnSV6ObX+naffR9sn5Z1klqvtupvhYfe
+         lH+ESi68+lufY+X5BMemyAuSUOFvmxXBRGytMBASF5yKA/fBZ6OUGfxVDG2h71fW/u8e
+         RMbzN7hNKhrNO1U8NRoc33cPtZGU1ebzPFemLte4scVhSnI+GEoa++tqa+YkuuHbjhYW
+         WyF9JpgZuyptX630wKV103hZCd0/4bQkwcGssBw5fsfm9H3ejElJQk6Tm3poAQJ3D7+h
+         IYfx9iNS+rHLyMGVnPIYQDDY4nc2xGygBba5Ve3vAiAfkhuQwPs5DrQw6uij7HGJXbG9
+         7b0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720088615; x=1720693415;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WmwdjVxyjtKsZjEvWiJCTAahZeOXiJ6Fw2zpiu13l0A=;
+        b=IP2hk8BqqPyQgjM6AeYban7j5dq+pFhwrGH6cDjOKrUItt6Pqt4+0/XUDkuVfgR5Mb
+         QGWb+gRZrXcF9DmHgGBo+3L+Cqq0s2mAGVOf0tFJ0Vp/mN6n7uIvHDTeqeaDpBhpJoCR
+         6z3xwCM0DhtLVqzDGyxzmi2gMWWOAeDVFfzp8NAPa+fswOFtIouKWvNkENtBEbO2fpvK
+         GiJ4/fpGBvvO2PJE55jsWyf2NgyrVuTK3KBoWJ9n4xMAGV4oZ0/EYVlQThLUXOd3V78o
+         q/MkjxO1KjMS6l9Z1cU9h2rljQspoR3sLFXkhdCFClHQLZ/fEDpi5QkPX5hWGSRODt/E
+         S74g==
+X-Forwarded-Encrypted: i=1; AJvYcCW0CFuzVHmZVLyugRrhCJFWfbNP9pts1zVDrW7Ldn77TwrP13KwsBj97jlNE5G1DNA25S+I36pqo2Dyy9PoLRa06cVzAY1sOfUn3/XY
+X-Gm-Message-State: AOJu0YzPLG+/CIe8PIWzy+jIX7e47+QrWJ9cB+JkktXBSrAFVefYrUIe
+	0RaUQDc+9tAIZg+TBdl5EvxLE1ZrDfCFOIsMlpagmf9zy2YewU2qs3YLpW6glmR0DPia6uzRHkD
+	/EneDW3lKPDUQWftCfnclIRJNr4o=
+X-Google-Smtp-Source: AGHT+IGWxqnIFpMAmgQZNvh0Y1gAvdLy+PIQwYo9k5U4/xN4SkWGNDHxB0lLKtmbjTikAjoFkutVrOqkihbASZr+zGo=
+X-Received: by 2002:a05:6122:4d0c:b0:4ef:6d02:f4a with SMTP id
+ 71dfb90a1353d-4f2f407a7eamr1398798e0c.13.1720088614717; Thu, 04 Jul 2024
+ 03:23:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240629111010.230484-1-21cnbao@gmail.com> <87ikxnj8az.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <CAGsJ_4y7=b9gzKynXnT7rKd4nJ+m+POhMhmGMPKz37o_knpu6g@mail.gmail.com> <8734oqhr4c.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <8734oqhr4c.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 4 Jul 2024 22:23:20 +1200
+Message-ID: <CAGsJ_4yKNzZTzfj-deN=cLkgNxb6sbgj75NVH3UYjXVbHykvhg@mail.gmail.com>
+Subject: Re: [PATCH RFC v4 0/2] mm: support mTHP swap-in for zRAM-like swapfile
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org, 
+	david@redhat.com, hannes@cmpxchg.org, kasong@tencent.com, 
+	linux-kernel@vger.kernel.org, mhocko@suse.com, nphamcs@gmail.com, 
+	ryan.roberts@arm.com, shy828301@gmail.com, surenb@google.com, 
+	kaleshsingh@google.com, hughd@google.com, v-songbaohua@oppo.com, 
+	willy@infradead.org, xiang@kernel.org, yosryahmed@google.com, 
+	baolin.wang@linux.alibaba.com, shakeel.butt@linux.dev, 
+	senozhatsky@chromium.org, minchan@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgQWRhbSwKClN0aWxsIHNvbWUgbWlub3IgdGhpbmdzLCBhbmQgbG9ja2luZyBxdWVyeSwgaW5s
-aW5lLgoKWW91J2xsIHdhbnQgdG8gYWRkcmVzcyB0aGUga2VybmVsLXRlc3Qtcm9ib3QgZmFpbHVy
-ZSB0b287IGl0IGxvb2tzIGxpa2UKdGhlIGNvbmZpZyBpdCdzIGhpdHRpbmcgZW5kcyB1cCB3aXRo
-b3V0IHRoZSBhY3BpIGRlZmluaXRpb25zIGF2YWlsYWJsZTsKcG9zc2libHkgQ09ORklHX0FDUEkg
-aXMgbm90IHNldC4gTWF5YmUgeW91IG5lZWQgYSBkZXBlbmRzIGluc3RlYWQgb2YgYQpzZWxlY3Q/
-Cgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9tY3RwL0tjb25maWcgYi9kcml2ZXJzL25ldC9t
-Y3RwL0tjb25maWcKPiBpbmRleCBjZTlkMmQyY2NmM2IuLmZmNGVmZmQ4ZTk5YyAxMDA2NDQKPiAt
-LS0gYS9kcml2ZXJzL25ldC9tY3RwL0tjb25maWcKPiArKysgYi9kcml2ZXJzL25ldC9tY3RwL0tj
-b25maWcKPiBAQCAtNDIsNiArNDIsMTkgQEAgY29uZmlnIE1DVFBfVFJBTlNQT1JUX0kzQwo+IMKg
-wqDCoMKgwqDCoMKgwqDCoCBBIE1DVFAgcHJvdG9jb2wgbmV0d29yayBkZXZpY2UgaXMgY3JlYXRl
-ZCBmb3IgZWFjaCBJM0MgYnVzCj4gwqDCoMKgwqDCoMKgwqDCoMKgIGhhdmluZyBhICJtY3RwLWNv
-bnRyb2xsZXIiIGRldmljZXRyZWUgcHJvcGVydHkuCj4gwqAKPiArY29uZmlnIE1DVFBfVFJBTlNQ
-T1JUX1BDQwo+ICvCoMKgwqDCoMKgwqDCoHRyaXN0YXRlICJNQ1RQwqAgUENDIHRyYW5zcG9ydCIK
-Ck5pdDogeW91IGhhdmUgdHdvIHNwYWNlcyB0aGVyZS4KCj4gK3N0cnVjdCBtY3RwX3BjY19oZHIg
-ewo+ICvCoMKgwqDCoMKgwqDCoHUzMiBzaWduYXR1cmU7Cj4gK8KgwqDCoMKgwqDCoMKgdTMyIGZs
-YWdzOwo+ICvCoMKgwqDCoMKgwqDCoHUzMiBsZW5ndGg7Cj4gK8KgwqDCoMKgwqDCoMKgY2hhciBt
-Y3RwX3NpZ25hdHVyZVs0XTsKPiArfTsKCkkgc2VlIHlvdSd2ZSBhZGRlZCB0aGUgX19sZSBhbm5v
-dGF0aW9ucyB0aGF0IEkgbWVudGlvbmVkLCBidXQgdG8gYQpkaWZmZXJlbnQgcGF0Y2ggaW4gdGhl
-IHNlcmllcy4gV2FzIHRoYXQgaW50ZW50aW9uYWw/Cgo+ICsKPiArc3RydWN0IG1jdHBfcGNjX2h3
-X2FkZHIgewo+ICvCoMKgwqDCoMKgwqDCoHUzMiBpbmJveF9pbmRleDsKPiArwqDCoMKgwqDCoMKg
-wqB1MzIgb3V0Ym94X2luZGV4Owo+ICt9Owo+ICsKPiArLyogVGhlIG5ldGRldiBzdHJ1Y3R1cmUu
-IE9uZSBvZiB0aGVzZSBwZXIgUENDIGFkYXB0ZXIuICovCj4gK3N0cnVjdCBtY3RwX3BjY19uZGV2
-IHsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgbGlzdF9oZWFkIG5leHQ7CgpUaGlzIGlzIG5vdyB1
-bnVzZWQuCgo+ICvCoMKgwqDCoMKgwqDCoC8qIHNwaW5sb2NrIHRvIHNlcmlhbGl6ZSBhY2Nlc3Mg
-dG8gcGNjIGJ1ZmZlciBhbmQgcmVnaXN0ZXJzKi8KPiArwqDCoMKgwqDCoMKgwqBzcGlubG9ja190
-IGxvY2s7CgpUaGUgYWRkaXRpb24gb2YgdGhlIGNvbW1lbnQgaXMgZ29vZCwgYnV0IEknbSBzdGls
-bCBub3QgY2xlYXIgb24gd2hhdApkYXRhIHRoaXMgbG9jayBpcyBzZXJpYWxpc2luZyBhY2Nlc3Mg
-dG8uIERvZXMgInBjYyBidWZmZXIiIHJlZmVyIHRvIGJvdGgKdGhlIHBjY19jb21tX2luYm94X2Fk
-ZHIgYW5kIHBjY19jb21tX291dGJveF9hZGRyIGJ1ZmZlcj8KCklmIHNvLCB5b3UgbWF5IGJlIG1p
-c3NpbmcgbG9ja2luZyBvbiB0aGUgY2xpZW50X3J4X2NhbGxiYWNrLgoKQW5kIHdoYXQgYXJlIHRo
-ZSAicmVnaXN0ZXJzIiByZWZlcnJpbmcgdG8gaGVyZT8gZXZlcnl0aGluZyBzZWVtcyB0byBiZQph
-Y2Nlc3NlZCB0aHJvdWdoIHRoZSBtYm94IGludGVyZmFjZS4gRG9lcyB0aGF0IHJlcXVpcmUgc2Vy
-aWFsaXNhdGlvbj8KCihpZiB5b3UgY2FuIGxpc3QgYWN0dWFsIHN0cnVjdCBtZW1iZXJzIHRoYXQg
-YXJlIG9ubHkgYWNjZXNzZWQgdW5kZXIgdGhlCmxvY2ssIHRoYXQgbWF5IG1ha2UgdGhpbmdzIG1v
-cmUgY2xlYXIgLSBidXQgaXQgY2FuIGJlIGEgYml0IG9mIGEgYmFsYW5jZQppbiBub3QgZ29pbmcg
-KnRvbyogb3ZlcmJvYXJkIHdpdGggdGhlIGRlc2NyaXB0aW9uISkKCj4gK8KgwqDCoMKgwqDCoMKg
-c3RydWN0IG1jdHBfZGV2IG1kZXY7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IGFjcGlfZGV2aWNl
-ICphY3BpX2RldmljZTsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgcGNjX21ib3hfY2hhbiAqaW5f
-Y2hhbjsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgcGNjX21ib3hfY2hhbiAqb3V0X2NoYW47Cj4g
-K8KgwqDCoMKgwqDCoMKgc3RydWN0IG1ib3hfY2xpZW50IG91dGJveF9jbGllbnQ7Cj4gK8KgwqDC
-oMKgwqDCoMKgc3RydWN0IG1ib3hfY2xpZW50IGluYm94X2NsaWVudDsKPiArwqDCoMKgwqDCoMKg
-wqB2b2lkIF9faW9tZW0gKnBjY19jb21tX2luYm94X2FkZHI7Cj4gK8KgwqDCoMKgwqDCoMKgdm9p
-ZCBfX2lvbWVtICpwY2NfY29tbV9vdXRib3hfYWRkcjsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3Qg
-bWN0cF9wY2NfaHdfYWRkciBod19hZGRyOwo+ICt9Owo+ICsKPiArc3RhdGljIHZvaWQgbWN0cF9w
-Y2NfY2xpZW50X3J4X2NhbGxiYWNrKHN0cnVjdCBtYm94X2NsaWVudCAqYywgdm9pZCAqYnVmZmVy
-KQo+ICt7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1jdHBfcGNjX25kZXYgKm1jdHBfcGNjX2Rl
-djsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgbWN0cF9wY2NfaGRyIG1jdHBfcGNjX2hkcjsKPiAr
-wqDCoMKgwqDCoMKgwqBzdHJ1Y3QgbWN0cF9za2JfY2IgKmNiOwo+ICvCoMKgwqDCoMKgwqDCoHN0
-cnVjdCBza19idWZmICpza2I7Cj4gK8KgwqDCoMKgwqDCoMKgdm9pZCAqc2tiX2J1ZjsKPiArwqDC
-oMKgwqDCoMKgwqB1MzIgZGF0YV9sZW47Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoG1jdHBfcGNjX2Rl
-diA9IGNvbnRhaW5lcl9vZihjLCBzdHJ1Y3QgbWN0cF9wY2NfbmRldiwgaW5ib3hfY2xpZW50KTsK
-PiArwqDCoMKgwqDCoMKgwqBtZW1jcHlfZnJvbWlvKCZtY3RwX3BjY19oZHIsIG1jdHBfcGNjX2Rl
-di0+cGNjX2NvbW1faW5ib3hfYWRkciwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCBzaXplb2Yoc3RydWN0IG1jdHBfcGNjX2hkcikpOwo+ICvCoMKgwqDCoMKgwqDC
-oGRhdGFfbGVuID0gbWN0cF9wY2NfaGRyLmxlbmd0aCArIE1DVFBfSEVBREVSX0xFTkdUSDsKPiAr
-Cj4gK8KgwqDCoMKgwqDCoMKgaWYgKGRhdGFfbGVuID4gbWN0cF9wY2NfZGV2LT5tZGV2LmRldi0+
-bWF4X210dSkgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBtY3RwX3BjY19kZXYt
-Pm1kZXYuZGV2LT5zdGF0cy5yeF9kcm9wcGVkKys7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoHJldHVybjsKPiArwqDCoMKgwqDCoMKgwqB9CgpTaG91bGRuJ3QgdGhpcyBiZSBjb21w
-YXJpbmcgb24gdGhlIGN1cnJlbnRseS1zZXQgTVRVLCByYXRoZXIgdGhhbiB0aGUKbWF4PwoKW2lu
-IGVpdGhlciBjYXNlLCB0aGlzIGFzc3VtZXMgdGhhdCB3ZSB3YW50IHRvIGVuZm9yY2UgUlggcGFj
-a2V0cyB0byBiZQp3aXRoaW4gdGhlIHRyYW5zbWl0IGxpbWl0LCB3aGljaCBtYXkgYmUgcmVhc29u
-YWJsZSwgYnV0IG1heWJlIG5vdApzdHJpY3RseSBuZWNlc3NhcnldCgo+ICsKPiArwqDCoMKgwqDC
-oMKgwqBza2IgPSBuZXRkZXZfYWxsb2Nfc2tiKG1jdHBfcGNjX2Rldi0+bWRldi5kZXYsIGRhdGFf
-bGVuKTsKPiArwqDCoMKgwqDCoMKgwqBpZiAoIXNrYikgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqBtY3RwX3BjY19kZXYtPm1kZXYuZGV2LT5zdGF0cy5yeF9kcm9wcGVkKys7Cj4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybjsKPiArwqDCoMKgwqDCoMKgwqB9
-Cj4gK8KgwqDCoMKgwqDCoMKgbWN0cF9wY2NfZGV2LT5tZGV2LmRldi0+c3RhdHMucnhfcGFja2V0
-cysrOwo+ICvCoMKgwqDCoMKgwqDCoG1jdHBfcGNjX2Rldi0+bWRldi5kZXYtPnN0YXRzLnJ4X2J5
-dGVzICs9IGRhdGFfbGVuOwo+ICvCoMKgwqDCoMKgwqDCoHNrYi0+cHJvdG9jb2wgPSBodG9ucyhF
-VEhfUF9NQ1RQKTsKPiArwqDCoMKgwqDCoMKgwqBza2JfYnVmID0gc2tiX3B1dChza2IsIGRhdGFf
-bGVuKTsKPiArwqDCoMKgwqDCoMKgwqBtZW1jcHlfZnJvbWlvKHNrYl9idWYsIG1jdHBfcGNjX2Rl
-di0+cGNjX2NvbW1faW5ib3hfYWRkciwgZGF0YV9sZW4pOwo+ICsKPiArwqDCoMKgwqDCoMKgwqBz
-a2JfcmVzZXRfbWFjX2hlYWRlcihza2IpOwo+ICvCoMKgwqDCoMKgwqDCoHNrYl9wdWxsKHNrYiwg
-c2l6ZW9mKHN0cnVjdCBtY3RwX3BjY19oZHIpKTsKPiArwqDCoMKgwqDCoMKgwqBza2JfcmVzZXRf
-bmV0d29ya19oZWFkZXIoc2tiKTsKPiArwqDCoMKgwqDCoMKgwqBjYiA9IF9fbWN0cF9jYihza2Ip
-Owo+ICvCoMKgwqDCoMKgwqDCoGNiLT5oYWxlbiA9IDA7Cj4gK8KgwqDCoMKgwqDCoMKgbmV0aWZf
-cngoc2tiKTsKPiArfQo+ICsKPiArc3RhdGljIG5ldGRldl90eF90IG1jdHBfcGNjX3R4KHN0cnVj
-dCBza19idWZmICpza2IsIHN0cnVjdCBuZXRfZGV2aWNlICpuZGV2KQo+ICt7Cj4gK8KgwqDCoMKg
-wqDCoMKgc3RydWN0IG1jdHBfcGNjX2hkciBwY2NfaGVhZGVyOwo+ICvCoMKgwqDCoMKgwqDCoHN0
-cnVjdCBtY3RwX3BjY19uZGV2ICptcG5kOwo+ICvCoMKgwqDCoMKgwqDCoHZvaWQgX19pb21lbSAq
-YnVmZmVyOwo+ICvCoMKgwqDCoMKgwqDCoHVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4gKwo+ICvCoMKg
-wqDCoMKgwqDCoG5kZXYtPnN0YXRzLnR4X2J5dGVzICs9IHNrYi0+bGVuOwo+ICvCoMKgwqDCoMKg
-wqDCoG5kZXYtPnN0YXRzLnR4X3BhY2tldHMrKzsKPiArwqDCoMKgwqDCoMKgwqBtcG5kID0gbmV0
-ZGV2X3ByaXYobmRldik7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoHNwaW5fbG9ja19pcnFzYXZlKCZt
-cG5kLT5sb2NrLCBmbGFncyk7Cj4gK8KgwqDCoMKgwqDCoMKgYnVmZmVyID0gbXBuZC0+cGNjX2Nv
-bW1fb3V0Ym94X2FkZHI7Cj4gK8KgwqDCoMKgwqDCoMKgcGNjX2hlYWRlci5zaWduYXR1cmUgPSBQ
-Q0NfTUFHSUMgfCBtcG5kLT5od19hZGRyLm91dGJveF9pbmRleDsKPiArwqDCoMKgwqDCoMKgwqBw
-Y2NfaGVhZGVyLmZsYWdzID0gUENDX0hFQURFUl9GTEFHUzsKPiArwqDCoMKgwqDCoMKgwqBtZW1j
-cHkocGNjX2hlYWRlci5tY3RwX3NpZ25hdHVyZSwgTUNUUF9TSUdOQVRVUkUsIFNJR05BVFVSRV9M
-RU5HVEgpOwo+ICvCoMKgwqDCoMKgwqDCoHBjY19oZWFkZXIubGVuZ3RoID0gc2tiLT5sZW4gKyBT
-SUdOQVRVUkVfTEVOR1RIOwoKQXJlIHRoZXJlIGFueSBjb25zdHJhaW50cyBvbiB0aGlzIGxlbmd0
-aD8KCj4gK8KgwqDCoMKgwqDCoMKgbWVtY3B5X3RvaW8oYnVmZmVyLCAmcGNjX2hlYWRlciwgc2l6
-ZW9mKHN0cnVjdCBtY3RwX3BjY19oZHIpKTsKPiArwqDCoMKgwqDCoMKgwqBtZW1jcHlfdG9pbyhi
-dWZmZXIgKyBzaXplb2Yoc3RydWN0IG1jdHBfcGNjX2hkciksIHNrYi0+ZGF0YSwgc2tiLT5sZW4p
-Owo+ICvCoMKgwqDCoMKgwqDCoG1wbmQtPm91dF9jaGFuLT5tY2hhbi0+bWJveC0+b3BzLT5zZW5k
-X2RhdGEobXBuZC0+b3V0X2NoYW4tPm1jaGFuLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIE5VTEwpOwo+ICvCoMKgwqDCoMKgwqDCoHNwaW5fdW5sb2NrX2ly
-cXJlc3RvcmUoJm1wbmQtPmxvY2ssIGZsYWdzKTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgZGV2X2Nv
-bnN1bWVfc2tiX2FueShza2IpOwo+ICvCoMKgwqDCoMKgwqDCoHJldHVybiBORVRERVZfVFhfT0s7
-Cj4gK30KPiArCj4gK3N0YXRpYyB2b2lkCj4gK21jdHBfcGNjX25ldF9zdGF0cyhzdHJ1Y3QgbmV0
-X2RldmljZSAqbmV0X2RldiwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBz
-dHJ1Y3QgcnRubF9saW5rX3N0YXRzNjQgKnN0YXRzKQo+ICt7Cj4gK8KgwqDCoMKgwqDCoMKgc3Ry
-dWN0IG1jdHBfcGNjX25kZXYgKm1wbmQ7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoG1wbmQgPSBuZXRk
-ZXZfcHJpdihuZXRfZGV2KTsKPiArwqDCoMKgwqDCoMKgwqBzdGF0cy0+cnhfZXJyb3JzID0gMDsK
-PiArwqDCoMKgwqDCoMKgwqBzdGF0cy0+cnhfcGFja2V0cyA9IG1wbmQtPm1kZXYuZGV2LT5zdGF0
-cy5yeF9wYWNrZXRzOwo+ICvCoMKgwqDCoMKgwqDCoHN0YXRzLT50eF9wYWNrZXRzID0gbXBuZC0+
-bWRldi5kZXYtPnN0YXRzLnR4X3BhY2tldHM7Cj4gK8KgwqDCoMKgwqDCoMKgc3RhdHMtPnJ4X2Ry
-b3BwZWQgPSAwOwo+ICvCoMKgwqDCoMKgwqDCoHN0YXRzLT50eF9ieXRlcyA9IG1wbmQtPm1kZXYu
-ZGV2LT5zdGF0cy50eF9ieXRlczsKPiArwqDCoMKgwqDCoMKgwqBzdGF0cy0+cnhfYnl0ZXMgPSBt
-cG5kLT5tZGV2LmRldi0+c3RhdHMucnhfYnl0ZXM7CgpJc24ndCBtcG5kLT5tZGV2LmRldiBqdXN0
-IG5ldF9kZXY/CgpTaG91bGQgd2UgYmUgZG9pbmcgdGhpcyAoYXMgd2VsbCBhcyB0aGUgc3RhdHMg
-dXBkYXRlcykgd2l0aCBtcG5kLT5sb2NrCmhlbGQ/IAoKPiArc3RhdGljIHZvaWQgbWN0cF9wY2Nf
-ZHJpdmVyX3JlbW92ZShzdHJ1Y3QgYWNwaV9kZXZpY2UgKmFkZXYpCj4gK3sKPiArwqDCoMKgwqDC
-oMKgwqBzdHJ1Y3QgbWN0cF9wY2NfbmRldiAqbWN0cF9wY2NfbmRldiA9IGFjcGlfZHJpdmVyX2Rh
-dGEoYWRldik7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoHBjY19tYm94X2ZyZWVfY2hhbm5lbChtY3Rw
-X3BjY19uZGV2LT5vdXRfY2hhbik7Cj4gK8KgwqDCoMKgwqDCoMKgcGNjX21ib3hfZnJlZV9jaGFu
-bmVsKG1jdHBfcGNjX25kZXYtPmluX2NoYW4pOwo+ICvCoMKgwqDCoMKgwqDCoG1jdHBfdW5yZWdp
-c3Rlcl9uZXRkZXYobWN0cF9wY2NfbmRldi0+bWRldi5kZXYpOwo+ICt9CgpOaWNlIQoKQ2hlZXJz
-LAoKCkplcmVteQo=
+On Thu, Jul 4, 2024 at 1:42=E2=80=AFPM Huang, Ying <ying.huang@intel.com> w=
+rote:
+>
+> Barry Song <21cnbao@gmail.com> writes:
+>
+> > On Wed, Jul 3, 2024 at 6:33=E2=80=AFPM Huang, Ying <ying.huang@intel.co=
+m> wrote:
+> >>
+> >
+> > Ying, thanks!
+> >
+> >> Barry Song <21cnbao@gmail.com> writes:
+>
+> [snip]
+>
+> >> > This patch introduces mTHP swap-in support. For now, we limit mTHP
+> >> > swap-ins to contiguous swaps that were likely swapped out from mTHP =
+as
+> >> > a whole.
+> >> >
+> >> > Additionally, the current implementation only covers the SWAP_SYNCHR=
+ONOUS
+> >> > case. This is the simplest and most common use case, benefiting mill=
+ions
+> >>
+> >> I admit that Android is an important target platform of Linux kernel.
+> >> But I will not advocate that it's MOST common ...
+> >
+> > Okay, I understand that there are still many embedded systems similar
+> > to Android, even if
+> > they are not Android :-)
+> >
+> >>
+> >> > of Android phones and similar devices with minimal implementation
+> >> > cost. In this straightforward scenario, large folios are always excl=
+usive,
+> >> > eliminating the need to handle complex rmap and swapcache issues.
+> >> >
+> >> > It offers several benefits:
+> >> > 1. Enables bidirectional mTHP swapping, allowing retrieval of mTHP a=
+fter
+> >> >    swap-out and swap-in.
+> >> > 2. Eliminates fragmentation in swap slots and supports successful TH=
+P_SWPOUT
+> >> >    without fragmentation. Based on the observed data [1] on Chris's =
+and Ryan's
+> >> >    THP swap allocation optimization, aligned swap-in plays a crucial=
+ role
+> >> >    in the success of THP_SWPOUT.
+> >> > 3. Enables zRAM/zsmalloc to compress and decompress mTHP, reducing C=
+PU usage
+> >> >    and enhancing compression ratios significantly. We have another p=
+atchset
+> >> >    to enable mTHP compression and decompression in zsmalloc/zRAM[2].
+> >> >
+> >> > Using the readahead mechanism to decide whether to swap in mTHP does=
+n't seem
+> >> > to be an optimal approach. There's a critical distinction between pa=
+gecache
+> >> > and anonymous pages: pagecache can be evicted and later retrieved fr=
+om disk,
+> >> > potentially becoming a mTHP upon retrieval, whereas anonymous pages =
+must
+> >> > always reside in memory or swapfile. If we swap in small folios and =
+identify
+> >> > adjacent memory suitable for swapping in as mTHP, those pages that h=
+ave been
+> >> > converted to small folios may never transition to mTHP. The process =
+of
+> >> > converting mTHP into small folios remains irreversible. This introdu=
+ces
+> >> > the risk of losing all mTHP through several swap-out and swap-in cyc=
+les,
+> >> > let alone losing the benefits of defragmentation, improved compressi=
+on
+> >> > ratios, and reduced CPU usage based on mTHP compression/decompressio=
+n.
+> >>
+> >> I understand that the most optimal policy in your use cases may be
+> >> always swapping-in mTHP in highest order.  But, it may be not in some
+> >> other use cases.  For example, relative slow swap devices, non-fault
+> >> sub-pages swapped out again before usage, etc.
+> >>
+> >> So, IMO, the default policy should be the one that can adapt to the
+> >> requirements automatically.  For example, if most non-fault sub-pages
+> >> will be read/written before being swapped out again, we should swap-in
+> >> in larger order, otherwise in smaller order.  Swap readahead is one
+> >> possible way to do that.  But, I admit that this may not work perfectl=
+y
+> >> in your use cases.
+> >>
+> >> Previously I hope that we can start with this automatic policy that
+> >> helps everyone, then check whether it can satisfy your requirements
+> >> before implementing the optimal policy for you.  But it appears that y=
+ou
+> >> don't agree with this.
+> >>
+> >> Based on the above, IMO, we should not use your policy as default at
+> >> least for now.  A user space interface can be implemented to select
+> >> different swap-in order policy similar as that of mTHP allocation orde=
+r
+> >> policy.  We need a different policy because the performance characters
+> >> of the memory allocation is quite different from that of swap-in.  For
+> >> example, the SSD reading could be much slower than the memory
+> >> allocation.  With the policy selection, I think that we can implement
+> >> mTHP swap-in for non-SWAP_SYNCHRONOUS too.  Users need to know what th=
+ey
+> >> are doing.
+> >
+> > Agreed. Ryan also suggested something similar before.
+> > Could we add this user policy by:
+> >
+> > /sys/kernel/mm/transparent_hugepage/hugepages-<size>/swapin_enabled
+> > which could be 0 or 1, I assume we don't need so many "always inherit
+> > madvise never"?
+> >
+> > Do you have any suggestions regarding the user interface?
+>
+> /sys/kernel/mm/transparent_hugepage/hugepages-<size>/swapin_enabled
+>
+> looks good to me.  To be consistent with "enabled" in the same
+> directory, and more importantly, to be extensible, I think that it's
+> better to start with at least "always never".  I believe that we will
+> add "auto" in the future to tune automatically.  Which can be used as
+> default finally.
 
+Sounds good to me. Thanks!
+
+>
+> --
+> Best Regards,
+> Huang, Ying
+
+Barry
 
