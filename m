@@ -1,94 +1,151 @@
-Return-Path: <linux-kernel+bounces-241433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42721927B62
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:44:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7AE927B68
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1C801F23FAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:44:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60FA21F24071
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2961B3736;
-	Thu,  4 Jul 2024 16:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5468C1B3749;
+	Thu,  4 Jul 2024 16:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5RzLPrq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/8Qk5IF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D4F1AE859;
-	Thu,  4 Jul 2024 16:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B54A1BC57;
+	Thu,  4 Jul 2024 16:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720111444; cv=none; b=t/vB19nI7NAqeHdoac3VLb/vzrHCukdn7al47rvg0eFveW9MNkvxRiN07JJrnt9V5sQ42io7aCnTR4qxQ6Ptbd7kN9X4YKVimJcu1S4xMXMqdJRUEUCVGNVUeh5iOAhTNL6sPrU6PnESHdym1XqXQal6HDmkkLMwh0sH9p4FVKQ=
+	t=1720111551; cv=none; b=gkTdqAjkvifN3hIcDhTvoxQQAH10CUgPbRBM47ordBp0k+JMOvVKLx07zr5gptI7oiyCrgE4KFhnMfj3c758vX5hPqI/kESywdZtSkCSaDw9I+KZluzfQ2mW+2dYyMdEuBIV1h7hWh5ok6vXBfJrfYCG+uFCmi7iauaf2smuRMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720111444; c=relaxed/simple;
-	bh=hLebRaAM36NHuqbUZi6dU7R+OUVeX5KaSf0xNzbyg6o=;
+	s=arc-20240116; t=1720111551; c=relaxed/simple;
+	bh=WheJjgM7xwoYDL2h9KMuA8Uv+Mr1sZiDhbDrO6nNij0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QzJ/zMWDI9F4N6OcrVDCDdMl/O20uQlGGyFq0tsU6xnSeG74EN3m2dnu+ccE7cL7FUEdfK41kOjswbBJI86efjHXJoLBA7pFcMLyVapGlMa1BvXPsGbuX/9yKcg0QyV/SCPIy0KBdW+J4BTkPNEA06ggCWdTM9tAWf0KGy5/CVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5RzLPrq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB9DC3277B;
-	Thu,  4 Jul 2024 16:44:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pbv3iBDP3JF9Miv5uFZL9Pvy5CC29mIjDqT18q++cyuZcX2X/anOkG1d/yvKGGb+5i4wAq4pr39m/ROTUOZj1X/JG3oJwSkPKn1hpOPqu5UrHnCG7D/507Mv19QWmxQXUP5Tg156fbZuUJQZxNTcVui1bcRJCh4YGWv5PoLiXWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/8Qk5IF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D042C3277B;
+	Thu,  4 Jul 2024 16:45:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720111444;
-	bh=hLebRaAM36NHuqbUZi6dU7R+OUVeX5KaSf0xNzbyg6o=;
+	s=k20201202; t=1720111551;
+	bh=WheJjgM7xwoYDL2h9KMuA8Uv+Mr1sZiDhbDrO6nNij0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F5RzLPrqO2U+dzI9F3fWtgHf6lPKonEtman3EV29DVll0B2d8sA04N3akCP5KlsSa
-	 duUR87C8W3RFefmVKx+UrFslYxTfoivs5Wx8DIYQC6LZEYMTz69kW5W5s0qpsr+BbS
-	 oVyP6otxODUUMkJ4BwL2HNeWh4j3bZwGcWY5GyC5Dpu19WrUCBnUcvbZu694xEsmGJ
-	 u7bObgwgZcCIHgLhejvF6MjtZXAvNw3HTHOrTEzHq/GFLNOAdbMqtRGxB9FnDhCuuS
-	 H4mD/zxL85WQKf68n/fWAZgczj8giZIeIdn3xguL0YITi637nw6tTJ8VrfdIRwIQsR
-	 R2jcpebMXhETg==
-Date: Thu, 4 Jul 2024 17:43:59 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, jikos@kernel.org, bentiss@kernel.org,
-	linus.walleij@linaro.org, dianders@google.com, hsinyi@google.com,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: HID: i2c-hid: elan: Introduce Elan
- ekth6a12nay
-Message-ID: <20240704-garage-thrill-6834f7ef079d@spud>
-References: <20240704085555.11204-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240704085555.11204-2-lvzhaoxiong@huaqin.corp-partner.google.com>
+	b=N/8Qk5IFaMOxhwedoQRRXvwxJ7aRBZtVyf1mVXOzpkF9wog9F4dXJ2mHn+ROUdue0
+	 yZNdABnYecO8PZLjZ6DY5oZLAhV6bGO5W72583Hkh95G3iu9m5CGvUjcmdwH1B9pQA
+	 m2lWQUbTD5ZF0y08aUnTgpzpa0KK9CXJivtY6SJD1kpCNnzsNkSapldCHUVW3H0778
+	 c3Tcqc4eP8/jNB0b3ihZWSRQ/plFmkAnkHRwvBc3LyDr3lEzRKLtM+495jjSccaz8b
+	 9mqZumxHPEjoWJYugOu6AS2QcZozZ5GmiNch3Qtrwoozq6/u3YwAOH1zCZ/6dBa1Cm
+	 H0JPrHAv76+bQ==
+Date: Thu, 4 Jul 2024 09:45:48 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Kees Cook <keescook@chromium.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rust-for-linux@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] rust: SHADOW_CALL_STACK is incompatible with Rust
+Message-ID: <20240704164548.GB1394865@thelio-3990X>
+References: <20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com>
+ <20240704-shadow-call-stack-v3-1-d11c7a6ebe30@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0gW4uFFvq9OjeSPs"
-Content-Disposition: inline
-In-Reply-To: <20240704085555.11204-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-
-
---0gW4uFFvq9OjeSPs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240704-shadow-call-stack-v3-1-d11c7a6ebe30@google.com>
 
-On Thu, Jul 04, 2024 at 04:55:54PM +0800, Zhaoxiong Lv wrote:
-> The Elan ekth6a12nay touch screen chip same as Elan eKTH6915 controller
-> has a reset gpio. The difference is that they have different
-> post_power_delay_ms.
->=20
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+On Thu, Jul 04, 2024 at 03:07:57PM +0000, Alice Ryhl wrote:
+> When using the shadow call stack sanitizer, all code must be compiled
+> with the -ffixed-x18 flag, but this flag is not currently being passed
+> to Rust. This results in crashes that are extremely difficult to debug.
+> 
+> To ensure that nobody else has to go through the same debugging session
+> that I had to, prevent configurations that enable both SHADOW_CALL_STACK
+> and RUST.
+> 
+> It is rather common for people to backport 724a75ac9542 ("arm64: rust:
+> Enable Rust support for AArch64"), so I recommend applying this fix all
+> the way back to 6.1.
+> 
+> Cc: <stable@vger.kernel.org> # 6.1 and later
+> Fixes: 724a75ac9542 ("arm64: rust: Enable Rust support for AArch64")
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Would it be better to move this to arch/arm64/Kconfig?
 
---0gW4uFFvq9OjeSPs
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 167e51067508..080907776db9 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -90,7 +90,7 @@ config ARM64
+ 	select ARCH_SUPPORTS_DEBUG_PAGEALLOC
+ 	select ARCH_SUPPORTS_HUGETLBFS
+ 	select ARCH_SUPPORTS_MEMORY_FAILURE
+-	select ARCH_SUPPORTS_SHADOW_CALL_STACK if CC_HAVE_SHADOW_CALL_STACK
++	select ARCH_SUPPORTS_SHADOW_CALL_STACK if CC_HAVE_SHADOW_CALL_STACK && !RUST
+ 	select ARCH_SUPPORTS_LTO_CLANG if CPU_LITTLE_ENDIAN
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
+ 	select ARCH_SUPPORTS_CFI_CLANG
 
------BEGIN PGP SIGNATURE-----
+RISC-V probably needs the same change, which further leads me to believe
+that this workaround should be architecture specific, as they may be
+fixed and enabled at different rates.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZobRTwAKCRB4tDGHoIJi
-0rbAAP4sgBrY4rADyU1gV0eK2FbqhUeamyhGPsRhlmomx6rdmQD+NhzqQZ9nkf2g
-4TV+3Fr6wPfefh81lEQwAm7FjMGf7w8=
-=cB44
------END PGP SIGNATURE-----
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 6b4d71aa9bed..4d89afdd385d 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -213,6 +213,7 @@ config HAVE_SHADOW_CALL_STACK
+ 	def_bool $(cc-option,-fsanitize=shadow-call-stack)
+ 	# https://github.com/riscv-non-isa/riscv-elf-psabi-doc/commit/a484e843e6eeb51f0cb7b8819e50da6d2444d769
+ 	depends on $(ld-option,--no-relax-gp)
++	depends on !RUST
+ 
+ config RISCV_USE_LINKER_RELAXATION
+ 	def_bool y
 
---0gW4uFFvq9OjeSPs--
+> ---
+>  arch/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index 975dd22a2dbd..238448a9cb71 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -690,6 +690,7 @@ config SHADOW_CALL_STACK
+>  	bool "Shadow Call Stack"
+>  	depends on ARCH_SUPPORTS_SHADOW_CALL_STACK
+>  	depends on DYNAMIC_FTRACE_WITH_ARGS || DYNAMIC_FTRACE_WITH_REGS || !FUNCTION_GRAPH_TRACER
+> +	depends on !RUST
+>  	depends on MMU
+>  	help
+>  	  This option enables the compiler's Shadow Call Stack, which
+> 
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
 
