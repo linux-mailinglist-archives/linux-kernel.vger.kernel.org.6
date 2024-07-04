@@ -1,143 +1,102 @@
-Return-Path: <linux-kernel+bounces-240434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8CD926D93
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:45:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B211C926D96
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63FB01F22DC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 672352829B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066CD17BA0;
-	Thu,  4 Jul 2024 02:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npZazG+W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BE017991;
+	Thu,  4 Jul 2024 02:48:38 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D64A3232;
-	Thu,  4 Jul 2024 02:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2860317543
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 02:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720061135; cv=none; b=hCWdkjVwwkWS/p03UE8MMXVvyslw/G0jFERz5EiLvWKqAog52ynOpoqca5HORziyVp5pYxAXLs7O64eyveR5IYAjTKcBZHDIUPda+MbpQmbrRQExOcjFz3fEpWjM2ynqxING1QH3VBlcMNxHrNNIf56Sl8PQs9zu+hahyDy0Yc4=
+	t=1720061318; cv=none; b=eO7dLL2UYCwUBMZLgtyxw51lw1iMEJrFXkkifNqkye9BO7/n5IxlKEL6Im40uK9WnmBfsJDupPn8dkbrBbXOcB6uf9y27rwgEBJIx1kcEcPV9B6o3Wux6u1JW4iU5uWDzh5r2zpi2cT8kjJsNiBFYK0wAGitH4SJmf2asRRN3BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720061135; c=relaxed/simple;
-	bh=pFP9IxCw7IYe6OVYz0+ush3KMUC3J8iarT/TRPZp4Pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iTetWmBALGpA3I47EA3r4p+mfVDHQbxzcvTxZEES7EnmjMv4LDi1UB+DmT/BgO0m1/faA1MLdk6j5KvDFG4YuWOyW1YOOvpIjza/VZgk3mjRRH9Q1fxq5F1NYEdsLbuW2Wy6odNzaU4ruCYuvDEMMwLYOpNOi4dBpYWcCHxtzFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npZazG+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C329C2BD10;
-	Thu,  4 Jul 2024 02:45:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720061134;
-	bh=pFP9IxCw7IYe6OVYz0+ush3KMUC3J8iarT/TRPZp4Pk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=npZazG+WyFRwPSNDIE22wrtS5mBL5a/vZ/U6MkDA7J9RZuqhXhOrrore8Z55msytf
-	 qnMQAUKQQshhqxvPSoUCdgtkmZwedZikV8HLIAj6PgeC1fGJnkLUru8QxRah51EqOd
-	 GBtcAZzH4k2S1eSYWvJOEzAsVGKRi/10Qwa4pnJzbgnFSCxMAucxnhUUIdURt/dhQZ
-	 dGheeB5aP/6fbdYJt8e7nYaMkrXmxl8/UOcA1fPQGxCVEVjJSGPfVMdFDfVxvsU857
-	 bIT7FI8x0LmGAKsFyZH8Ew/bVy/eXdcsGE6z7b/IExCrh+B+m5/Z8+EGNriWmnk0/E
-	 Nd1DVSCeVI4YQ==
-Date: Wed, 3 Jul 2024 19:45:33 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: horia.geanta@nxp.com, pankaj.gupta@nxp.com, gaurav.jain@nxp.com,
- linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, horms@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 3/4] crypto: caam: Unembed net_dev structure
- from qi
-Message-ID: <20240703194533.5a00ea5d@kernel.org>
-In-Reply-To: <20240702185557.3699991-4-leitao@debian.org>
-References: <20240702185557.3699991-1-leitao@debian.org>
-	<20240702185557.3699991-4-leitao@debian.org>
+	s=arc-20240116; t=1720061318; c=relaxed/simple;
+	bh=7VzgBXLG/qymrHo7gjB3CpNb75voyhGkXAAnKOXj1sA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=saaPd3oC/hyUh6GUISWS8U0qzixpZnPlQlJ75mum4qOVOh0t+qU8/uDodvHGRvnzTNEtXjCuKiiVVMwvRQYNtlLS6AFhzezgDuQHw1Hk43nNt19qtx0T6QJX3L8lHzFs9b3cBY1AYeCdn3Btmk54kkwqsM9YEkJaeFvia2Q7klE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3737b3ae019so2259555ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 19:48:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720061316; x=1720666116;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xt3s/S9YE6diJMIOv5CEteRczbHApy6ZGmofocIkilM=;
+        b=oB99OMEm+AgdV3DzLoOWWcWnZe7bECsYcc41qY6LM+pJASt5h4xd/hVKLuSFaNXm7G
+         ECUWl7cWlcqYhLqSz9/SOgiSGcsZqRdszhoRGUAvNRQnFoVViqXeixlw2nfs7insF09k
+         xt5Eln9XnxNT4UGCSLqpkmi1rz2YPhA1O7AIwk9CEYun4b94OpRw7XrDNHym3AePtLI6
+         pQ8xSHjzc/M4Gs7kIm9ISToc5WJbfXQSi9s1itH61EkeL6+8HLHIydiUw3ZYZzJ+H7GS
+         Ky9oQJkdUyIT1cNNJkwp3mLLGOH4nT/ljnSPVvObQhbNaCJwG+u3GcUDCUCAdsyIE9a0
+         rdHg==
+X-Gm-Message-State: AOJu0Yx6XY6BbNnP4NUDtT8o7MJIjFxIU3604sL6kqVsqjS6fj+Ropy7
+	nRRtU61/kYTFfOsno7Dqp/+AlKI5mGmajS4rq7KufbR0LuHoYDMlEuK+Nv1IqXVQH4neAEAJJu6
+	03ukHw8ik52C+B+z0bYWrDkOKFa1Kr7ofjlCVxHAQQvs2dTA30ZjwWGY=
+X-Google-Smtp-Source: AGHT+IFAxV7+Kvn3YnzxE9UODZk9kBNs96OyRljs1hLXiRXKkryALjAhduOJNcFzoMVojRGZDOLW1N5PMAkqk3ASiG3eUBo7aPEp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1085:b0:380:9233:96e6 with SMTP id
+ e9e14a558f8ab-3839bb41aa4mr130125ab.4.1720061316327; Wed, 03 Jul 2024
+ 19:48:36 -0700 (PDT)
+Date: Wed, 03 Jul 2024 19:48:36 -0700
+In-Reply-To: <00000000000047cef3061c5be92d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c07cf2061c62fbbd@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [kernel?] WARNING in follow_pte
+From: syzbot <syzbot+35a4414f6e247f515443@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue,  2 Jul 2024 11:55:53 -0700 Breno Leitao wrote:
-> +static void free_caam_qi_pcpu_netdev(const cpumask_t *cpus)
-> +{
-> +	struct caam_qi_pcpu_priv *priv;
-> +	int i;
-> +
-> +	for_each_cpu(i, cpus) {
-> +		priv = per_cpu_ptr(&pcpu_qipriv, i);
-> +		free_netdev(priv->net_dev);
-> +	}
-> +}
-> +
->  int caam_qi_init(struct platform_device *caam_pdev)
->  {
->  	int err, i;
->  	struct device *ctrldev = &caam_pdev->dev, *qidev;
->  	struct caam_drv_private *ctrlpriv;
->  	const cpumask_t *cpus = qman_affine_cpus();
-> +	cpumask_t clean_mask;
->  
->  	ctrlpriv = dev_get_drvdata(ctrldev);
->  	qidev = ctrldev;
-> @@ -743,6 +756,8 @@ int caam_qi_init(struct platform_device *caam_pdev)
->  		return err;
->  	}
->  
-> +	cpumask_clear(&clean_mask);
-> +
->  	/*
->  	 * Enable the NAPI contexts on each of the core which has an affine
->  	 * portal.
-> @@ -751,10 +766,16 @@ int caam_qi_init(struct platform_device *caam_pdev)
->  		struct caam_qi_pcpu_priv *priv = per_cpu_ptr(&pcpu_qipriv, i);
->  		struct caam_napi *caam_napi = &priv->caam_napi;
->  		struct napi_struct *irqtask = &caam_napi->irqtask;
-> -		struct net_device *net_dev = &priv->net_dev;
-> +		struct net_device *net_dev;
->  
-> +		net_dev = alloc_netdev_dummy(0);
-> +		if (!net_dev) {
-> +			err = -ENOMEM;
-> +			goto fail;
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-free_netdev() doesn't take NULL, free_caam_qi_pcpu_netdev()
-will feed it one if we fail here
+***
 
-> +		}
-> +		cpumask_set_cpu(i, &clean_mask);
-> +		priv->net_dev = net_dev;
->  		net_dev->dev = *qidev;
-> -		INIT_LIST_HEAD(&net_dev->napi_list);
->  
->  		netif_napi_add_tx_weight(net_dev, irqtask, caam_qi_poll,
->  					 CAAM_NAPI_WEIGHT);
-> @@ -766,16 +787,22 @@ int caam_qi_init(struct platform_device *caam_pdev)
->  				     dma_get_cache_alignment(), 0, NULL);
->  	if (!qi_cache) {
->  		dev_err(qidev, "Can't allocate CAAM cache\n");
-> -		free_rsp_fqs();
-> -		return -ENOMEM;
-> +		err = -ENOMEM;
-> +		goto fail2;
->  	}
->  
->  	caam_debugfs_qi_init(ctrlpriv);
->  
->  	err = devm_add_action_or_reset(qidev, caam_qi_shutdown, ctrlpriv);
->  	if (err)
-> -		return err;
-> +		goto fail2;
->  
->  	dev_info(qidev, "Linux CAAM Queue I/F driver initialised\n");
->  	return 0;
-> +
-> +fail2:
-> +	free_rsp_fqs();
-> +fail:
-> +	free_caam_qi_pcpu_netdev(&clean_mask);
+Subject: Re: [syzbot] [kernel?] WARNING in follow_pte
+Author: lizhi.xu@windriver.com
+
+Fixes: c5541ba378e3 ("mm: follow_pte() improvements")
+It introduced mmap_assert_locked(mm) in follow_pte.
+This case content does not hold mm lock.
+
+#syz test: upstream 734610514cb0
+
+
+diff --git a/mm/memory.c b/mm/memory.c
+index 25a77c4fe4a0..18bc74dd0b72 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1909,6 +1909,7 @@ void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
+ 	lru_add_drain();
+ 	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm,
+ 				address, end);
++	mmap_read_lock(vma->vm_mm);
+ 	hugetlb_zap_begin(vma, &range.start, &range.end);
+ 	tlb_gather_mmu(&tlb, vma->vm_mm);
+ 	update_hiwater_rss(vma->vm_mm);
+@@ -1921,6 +1922,7 @@ void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
+ 	mmu_notifier_invalidate_range_end(&range);
+ 	tlb_finish_mmu(&tlb);
+ 	hugetlb_zap_end(vma, details);
++	mmap_read_unlock(vma->vm_mm);
+ }
+ 
+ /**
 
