@@ -1,103 +1,119 @@
-Return-Path: <linux-kernel+bounces-240801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B48A9272FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:26:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5BF9272FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A8021C2247D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:26:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E94828C47E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBE51AB53F;
-	Thu,  4 Jul 2024 09:26:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5D11AAE29;
-	Thu,  4 Jul 2024 09:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5561AB509;
+	Thu,  4 Jul 2024 09:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="flE9jJl2"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215391A4F10;
+	Thu,  4 Jul 2024 09:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720085196; cv=none; b=l2izSEnNUAJZaYkW+UtLhNaJKMsEE0jPCPO3XB8zsV0CJPqh0RUWGx1EY2JODMn8gNHyhTZHqZjzJe93DkOwvLEMNxq+8ewHDN5sbockupzajcVZSYwzUF5AcPBHCJmrYMtPNe8bVFHa1uxdYQpgqBKhVzHKuHEgSg3FwYpOR+I=
+	t=1720085221; cv=none; b=bwfJvIoSnMShbyLDPWyk0e39yw3JI46AE+zoWOgOG0xdpCqCoyB9CKN53URcCAhbeBUjyboIr3n+4eb0IBOcjpbJu0kp61r5WKNlAKE1jKFGCI0lOb7uzrptOH4KATEwZfUg6zRGjZ6UHUFNUSJbLCEO6um5FalRXz4pS3e9E2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720085196; c=relaxed/simple;
-	bh=kK96TeKGcssH878y2ucEpd6cY3M4B7FOVaLWCw4mfVU=;
+	s=arc-20240116; t=1720085221; c=relaxed/simple;
+	bh=F1KfsD3UGvzoMc6T0DbYQti/NUflDGqLSkO0N0b94Ek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I7ufLtArPMPS4/CDBuRJUV0oXp8NZ5LxoFBaQOkapnAx38C4G+kFO08KoKSTYQstm7yr2XbkpQs+pFtCry39ZJSLCrB6I6BeDCHit5D7mJp2E5G6h1Rjab5gU2nUKQ/9LtSlKddB8ZtItOUOuj/pHPsnYl1PwDVzldAx9A7ZH7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2C4C367;
-	Thu,  4 Jul 2024 02:26:57 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E27D83F766;
-	Thu,  4 Jul 2024 02:26:27 -0700 (PDT)
-Date: Thu, 4 Jul 2024 10:26:25 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Huang Rui <ray.huang@amd.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>, Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Markus Mayer <mmayer@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Len Brown <lenb@kernel.org>, Kevin Hilman <khilman@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Lizhe <sensor1010@163.com>, linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 4/4] cpufreq: Make cpufreq_driver->exit() return void
-Message-ID: <ZoZqwb8LdQQohQHM@bogus>
-References: <cover.1720075640.git.viresh.kumar@linaro.org>
- <3f73fda736818128558b61ad5fe2bed5dce3ddc4.1720075640.git.viresh.kumar@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L1bxLAuI14zCsZco0etnkm4zuWK5JIMo/5SZVaFARCwF8pswOASW6Nuy6M8oHJLtnfFx7g88RqocdFM6fIrEe1s50MzXsrRDHB5AobRfNXkYvXt2ARwbwD/7PfwstnTGMbTD/rFgWfFRYrgFjQYpF/6mlIfKD/qbrRCuTr0wPMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=flE9jJl2; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2lguWEUjpKlrDoi2fLaNoUIl9vpd9WgCM2kNC4wH6Yw=; b=flE9jJl2aWecCqgjHzWRQ3gyBv
+	WqR15/1yY3x+YTlm5k4lTIIMWeel84Y+l/A8zbncvTu1w4Gw63SxJrZNKfsJOTlSQrF40aXAqI/Ro
+	Nui0sg1Z47pBX4hPoZUWWzIFw+A+gvheghoasORhFz6sZnM++IYUq2hsTXvuZgSGT+e5W3Bhq1rgR
+	cIwqBuL8vu5eMzgIcaCSoru5EeIufzGpf8kKBOxD+rUZ9COaGXX7KualwetqpRBAljZ5BaJ8S9Ktm
+	rUupaKV+rXwRthNo3/FvEWIJdR38R87LMP2utYWjvg3RRMAzP628X2WEABEfm0QJJ2lD1XsG3djr/
+	3qEjBqOA==;
+Received: from [2001:9e8:9da:801:3235:adff:fed0:37e6] (port=54722 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sPIjp-006g3V-IA;
+	Thu, 04 Jul 2024 11:26:49 +0200
+Date: Thu, 4 Jul 2024 11:26:46 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Riku Voipio <riku.voipio@linaro.org>,
+	Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: [PATCH v2 1/3] kbuild: deb-pkg: remove support for EMAIL
+ environment variable
+Message-ID: <20240704-able-honeybee-of-symmetry-ddfcdd@lindesnes>
+References: <20240702180332.398978-1-masahiroy@kernel.org>
+ <CAK7LNAS1jz51ytG1fu3tvUp-iNYk8UzwE+q5ioS1TP0tM7Phkg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3f73fda736818128558b61ad5fe2bed5dce3ddc4.1720075640.git.viresh.kumar@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNAS1jz51ytG1fu3tvUp-iNYk8UzwE+q5ioS1TP0tM7Phkg@mail.gmail.com>
 
-On Thu, Jul 04, 2024 at 12:23:55PM +0530, Viresh Kumar wrote:
-> From: Lizhe <sensor1010@163.com>
+On Wed, Jul 03, 2024 at 11:57:44PM +0900, Masahiro Yamada wrote:
+> (+CC more Debian developers)
 > 
-> The cpufreq core doesn't check the return type of the exit() callback
-> and there is not much the core can do on failures at that point. Just
-> drop the returned value and make it return void.
 > 
-> Signed-off-by: Lizhe <sensor1010@163.com>
-> [ Viresh: Reworked the patches to fix all missing changes together. ]
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
+> On Wed, Jul 3, 2024 at 3:03 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> >
+> > Commit edec611db047 ("kbuild, deb-pkg: improve maintainer
+> > identification") added the EMAIL and NAME environment variables.
+> >
+> > Commit d5940c60e057 ("kbuild: deb-pkg improve maintainer address
+> > generation") removed support for NAME, but kept support for EMAIL.
+> >
+> > The EMAIL and NAME environment variables are still supported by some
+> > tools (see 'man debchange'), but not by all.
+> >
+> > We should support both of them, or neither of them. We should not stop
+> > halfway.
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> >
+> > Changes in v2:
+> >  - New patch
+> >
+> >  scripts/package/mkdebian | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+> > index b9a5b789c655..589f92b88c42 100755
+> > --- a/scripts/package/mkdebian
+> > +++ b/scripts/package/mkdebian
+> > @@ -125,7 +125,7 @@ gen_source ()
+> >  rm -rf debian
+> >  mkdir debian
+> >
+> > -email=${DEBEMAIL-$EMAIL}
+> > +email=${DEBEMAIL}
+> >
+> >  # use email string directly if it contains <email>
+> >  if echo "${email}" | grep -q '<.*>'; then
+> > --
+> > 2.43.0
 
-[...]
-
->  drivers/cpufreq/scmi-cpufreq.c         |  4 +---
->  drivers/cpufreq/scpi-cpufreq.c         |  4 +---
->  drivers/cpufreq/vexpress-spc-cpufreq.c |  5 ++---
-
-(For the above 3 files)
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-
---
-Regards,
-Sudeep
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
