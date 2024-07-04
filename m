@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-240697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865E992712C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:03:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F7E927131
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D22DB22E54
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:03:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9C91F21DCE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D411A3BD8;
-	Thu,  4 Jul 2024 08:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9661A3BA7;
+	Thu,  4 Jul 2024 08:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oUWeZS9A"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XPmoLHHN"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699CE1A0AF7;
-	Thu,  4 Jul 2024 08:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C032C18637;
+	Thu,  4 Jul 2024 08:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720080197; cv=none; b=fCr6RnKUjNPrgmzC+sPWQ7qLEyGFsbt4jlLQ0wUfSsFXiNpvvn9zqInCcPfphR3nPcgWNNI5M4p4501Z01CEfW9CpFSLHVbltQ9wCYi2K2n4oaxl/MKPNHnKKl96MgizdWQtGVIshimdC4IEZ4fSqiS9mhUIwcyI2uNaMc6Exiw=
+	t=1720080299; cv=none; b=nniIrv4sHOalj7KNrXkZTwuDHm3AILcmohgnBPtGLJvemNTD+7QP0gryTp+61AQ8qM0swyi8LcJyN24RUTHKDwzxozHS+MAEWX/DqUAWYO69J1yqgCwac3NvtHF1xOTL60uOEG9kDiASHemEgYb5kkzOv48xHniNf18yZatzm5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720080197; c=relaxed/simple;
-	bh=wjdxwy7JdU++nCctnY2Z7f24fc/hxQ0ZQpltW56jY7o=;
+	s=arc-20240116; t=1720080299; c=relaxed/simple;
+	bh=PBoisISGLknAlq0wKrfsyN9ceoRghcEUzBB6UHhN16c=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JSAshIoPwSdSp+VeRXhmvp+5n6do0YVuwPtyks8nwc5fHzuhr7/87jGVQai96ctISgcmBjjf156J9dzY686462cPd0cnWosqU5AsixGWKXnSGnQnMMUn468g6alUjg4z0C9rYOKWeKiFzHNnHKlGqaTLm8KgsBq02BuwWn5g2sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oUWeZS9A; arc=none smtp.client-ip=217.70.183.200
+	 MIME-Version:Content-Type; b=JTKJiKK2Z5T8vXlXrJeYeHb1K5b7zckNBETuYtmWlTsi0iVJ4ouehQVBzd+kN97vTpIkqEehlGDghJxvUVsBLDfwdtJaERb6jR2H5ovX/J9SHocE+mY2Av3YWRHEpvl+8VH7X8zfQTMu3apAuFwsxNaNKKJ2nxr3Z9297D1rVCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XPmoLHHN; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 106C220003;
-	Thu,  4 Jul 2024 08:03:03 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 711C0E0007;
+	Thu,  4 Jul 2024 08:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720080186;
+	t=1720080295;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=u3QQQ5ARWg4GTEklbN8jcuflrQuDFZGUcDJdod6ovi4=;
-	b=oUWeZS9AvwLJ2VifN/dXxxjXi9B37TDv2jxdj9yaKQZnECttYL+V09i0//Ce9dFEzKqt01
-	2k3HKUvF70jPFlCUTyqIS55woW9/BLrOBtbk9PuccudyuBA09RPMiwM7xJkWHND2BJWvHL
-	HH6Y+HoyugneC2qbg6fBjgpIKlhv9fQ3T+rTzv6t/l02VmuL9cfrDxyC09xguVUYuYd0DK
-	VkX1SR8halZQihNKORBNlkJ/LF+lbmza3olJ5dIkRbdLJ4qpv6nRszfnWNBzy/FxKviEWt
-	HWn3hJ7RETbTITuk0Qci1Cxu9fLktAqNCzfFspDoK165xgnQeDo/HfR86Bz2uQ==
-Date: Thu, 4 Jul 2024 10:03:02 +0200
+	bh=B2Dd+Vi+ygaeHfugpUqHHdz5n+PugnuRjKyRb3baBns=;
+	b=XPmoLHHN0tJQLVIPOtg1MytcKIp5T1fpADEqDfSZOLEYa2kQzbEgevd0sIF/0YMKjlV+0r
+	BpygXMaRmo063x+xCd4j5VKWWoxQA4HPf3LVMnDx4AcXaz1heMAPXe2/+NqENHQWkjxstm
+	Olwb1Od51q7UKZ+0p9H+60E/LzDhgee1MquerNPBO7D1JE5f6Eivl6R9kP4mQCgt2lWX0E
+	wKWpgI4s7ZhVnfQkLw/R0ISsHHuLOP9xxZMPsNwsieuqUZawwe5ZsopgxGpZFP+X1t01tv
+	mAZw7Is6oIhclSZ5FCza5xuwKRAeRcQi0sqMlUn5YZK8sVq8Edzhd9cmrXom4Q==
+Date: Thu, 4 Jul 2024 10:04:50 +0200
 From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 To: "Russell King (Oracle)" <linux@armlinux.org.uk>
 Cc: davem@davemloft.net, netdev@vger.kernel.org,
@@ -63,13 +63,13 @@ Cc: davem@davemloft.net, netdev@vger.kernel.org,
  mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
  <atenart@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, Dan Carpenter
  <dan.carpenter@linaro.org>
-Subject: Re: [PATCH net-next v15 07/14] net: ethtool: Introduce a command to
- list PHYs on an interface
-Message-ID: <20240704100302.2c9983ca@fedora-2.home>
-In-Reply-To: <ZoVlnLkXuJ0J/da3@shell.armlinux.org.uk>
+Subject: Re: [PATCH net-next v15 04/14] net: sfp: Add helper to return the
+ SFP bus name
+Message-ID: <20240704100450.67182233@fedora-2.home>
+In-Reply-To: <ZoVv9OJl0Cu67q1E@shell.armlinux.org.uk>
 References: <20240703140806.271938-1-maxime.chevallier@bootlin.com>
-	<20240703140806.271938-8-maxime.chevallier@bootlin.com>
-	<ZoVlnLkXuJ0J/da3@shell.armlinux.org.uk>
+	<20240703140806.271938-5-maxime.chevallier@bootlin.com>
+	<ZoVv9OJl0Cu67q1E@shell.armlinux.org.uk>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
@@ -84,22 +84,40 @@ X-GND-Sasl: maxime.chevallier@bootlin.com
 
 Hello Russell,
 
-On Wed, 3 Jul 2024 15:52:12 +0100
+On Wed, 3 Jul 2024 16:36:20 +0100
 "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-> So, if we want to report the ID of the PHY, then really we need to
-> report the clause 22 ID, and at least all the devids of each MMD in
-> a clause 45 PHY. Alternatively, we may decide it isn't worth the
-> effort of reporting any of these IDs.
+> On Wed, Jul 03, 2024 at 04:07:54PM +0200, Maxime Chevallier wrote:
+> > Knowing the bus name is helpful when we want to expose the link topology
+> > to userspace, add a helper to return the SFP bus name.  
 > 
-> However, reporting just the clause 22 ID would be a design error
-> IMHO.
+> I think it's worth mentioning about the use case in this patch as well,
+> something like:
+> 
+> "This call will always be made while holding the RTNL which ensures
+> that the SFP driver won't unbind from the device. The returned pointer
+> to the bus name will only be used while RTNL is held."
 
-I don't have any strong reason to keep exporting the PHY id. Reporting
-the driver name is enough to get a good idea of the nature of the
-device, I'll drop that field then.
+I'll add that in both the commit log and the documentation for the
+function.
 
-Thanks for taking a look,
+[...]
+
+> > +EXPORT_SYMBOL_GPL(sfp_get_name);  
+> 
+> Please move this to just below sfp_bus_del_upstream() since the
+> functions in this file are organised as:
+> 
+> - internal functions
+> - upstream callable functions
+> - downstream (sfp driver) callable functions.
+> 
+> Note also that the upstream callable functions are all documented with
+> kerneldoc, and sfp_get_name() is clearly a function called from the
+> upstream side.
+
+No problem, I'll move it and a some proper documentation. Thanks for
+the review,
 
 Maxime
 
