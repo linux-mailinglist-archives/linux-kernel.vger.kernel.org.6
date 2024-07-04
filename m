@@ -1,124 +1,147 @@
-Return-Path: <linux-kernel+bounces-241439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F019927B76
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:49:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DC8927B78
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09DA61F23FCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D88161C21708
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B241B3749;
-	Thu,  4 Jul 2024 16:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118181B373F;
+	Thu,  4 Jul 2024 16:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChPzUC53"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qR2Q1RE2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7A4182D8;
-	Thu,  4 Jul 2024 16:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554FF1B29C0;
+	Thu,  4 Jul 2024 16:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720111764; cv=none; b=JjXSUB7jT/R5NKaA4C80q6d6W98HdCJOpWfjzBQV+GimIRxeTYOeWZpYS8igZgj6le6YOv5Zr+4sCbviFnDlMQ9nmvYamNDo699253EQDyM8BUdVeYo1xALgCUww5cJb4JM5QonOaCg7ZJ08QVd8FS+fmBaB0NK6H2bc2XZd1t8=
+	t=1720111805; cv=none; b=mWaBHUcBldOZ8Cv0yNM1YHkjsepqw/2WRJFhyGnBH9zzsxNObb3LAQ9kF+vgUE5+4Y+h+lBdJ1rdfsqZYInTKATqYxhP1B2IJgtkCrXHwwiLwlAZ5+0qD1s7DeqIGwBMpoJocxKXKTrh2V+yPlwRQ7rEjbvzZSh8s3EGJPHS9go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720111764; c=relaxed/simple;
-	bh=V/hNryxYUoqX/3hr4qkJMKJe/sxOnEhMLqbIa0w1mOw=;
+	s=arc-20240116; t=1720111805; c=relaxed/simple;
+	bh=M32rWEsF2jgLzr9GzWVSV/ALWkQHAj71fx8QBNAzwjs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WYaztPo3MbYtggFO5MYbtWhAcyMTdNHoGjPmsVoTJqw1ZVk/khe9Ibuf34YirbNlxeImFEfk5rvOQGOkrb419t9bVQ4a+OEzPKKXuG9CykQDB07WHJdNlS/bJxgyuTNdOQU0hsCn00JXrAMb3wTT/uru7eDcDxq/FHQkv8p8yQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChPzUC53; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B306C3277B;
-	Thu,  4 Jul 2024 16:49:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=r2v+B24id9hxrQFbwz90ZR8dpCRtZe6v17nzC07HJeHVMBc0lGc8wG3dKhcMomcztlgKO7/PKiAqshAOzOQ/VQXFcsvp8SHJm2I7UuvTRfIN8bbIjYfc3JDxUHDo85H5bAyXFmHa2xOJuIBo8lkYqzJV6GOg5Mlr/Kd5KxPo3D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qR2Q1RE2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517E2C3277B;
+	Thu,  4 Jul 2024 16:50:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720111763;
-	bh=V/hNryxYUoqX/3hr4qkJMKJe/sxOnEhMLqbIa0w1mOw=;
+	s=k20201202; t=1720111804;
+	bh=M32rWEsF2jgLzr9GzWVSV/ALWkQHAj71fx8QBNAzwjs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ChPzUC53rna8olX5yXkpeizcxuhdkvoYsJyKcGnFlIstZh48N3YMeD2dM6zNSfUlL
-	 CGeSlmXr1KfvsdCQRDKBFX7d8Id0oUlHq1awnegoPAgSHebCDicc7n8NOp9mSgaTfD
-	 BTMFfS8WoRS4JOx7tARRw6R5tE1DBOySbN+u+qDIQcp7XPwOYHwjAwVubSj5DNfFW7
-	 79QrD59o3EGx0QxC9SKZ6p3iani42yt9C7CH/x2lqyXhmNx8R5As7bfGWWSMVbBIIK
-	 7LM3cryE5eYoY4wv2Q8RhLX0sFVHDTDQWvhGOqhS+vaMrHbpijgf45c3pBP2zCaQaN
-	 xc/Dfk/nPyyWA==
-Date: Thu, 4 Jul 2024 17:49:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Kanak Shilledar <kanakshilledar@gmail.com>
-Cc: Serge Semin <fancer.lancer@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] riscv: dts: thead: add basic spi node
-Message-ID: <20240704-nifty-footman-a0b21ee461e0@spud>
-References: <20240701121355.262259-2-kanakshilledar@gmail.com>
- <20240701121355.262259-5-kanakshilledar@gmail.com>
- <20240703-juice-refreeze-62c468a56ea5@spud>
- <CAGLn_=tVZ3StW3uB+CkcHBpSJG8PfNGSM6zOVV6OSJeL2Pz56A@mail.gmail.com>
+	b=qR2Q1RE29nfcHw3C8czz56kPt2ywRb2DG1mAsJlLWuwjC2byn+qF1fbUTiF1YW2/R
+	 yhI4/CTfdYSEhIjZRVgRamv5MCl9Xfd3mokI968dpxtjojg1NajzsddkguOJYErYSU
+	 Qq7t/6XwLbj93nbXbEVnP+FA/uw46x8+Pqowjo37VLPdZsDaSIsRDbXjkKvvGZtIib
+	 UmbdjtWx1s70Bb9TnblkAiHvww/PNiOmb1IDjaymEp5nuhx2fmn+n/aoFARlF/B78O
+	 6Y+OLh8tTBgzCzXhTXS9u4mgi7C9lR/mXTm4m+f9VCNFYUQa0jVmkL/LlxBBg3D0D/
+	 nit4kYLgT6O7w==
+Date: Thu, 4 Jul 2024 17:50:00 +0100
+From: Lee Jones <lee@kernel.org>
+To: Jack Chen <zenghuchen@google.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Mark Brown <broonie@kernel.org>,
+	Vadim Pasternak <vadimp@nvidia.com>,
+	Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH] leds:lm3601x:calculate max_brightness and brightness
+ properly
+Message-ID: <20240704165000.GA501857@google.com>
+References: <20240703164635.221203-1-zenghuchen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iudhDWt6j+LdvUYo"
-Content-Disposition: inline
-In-Reply-To: <CAGLn_=tVZ3StW3uB+CkcHBpSJG8PfNGSM6zOVV6OSJeL2Pz56A@mail.gmail.com>
-
-
---iudhDWt6j+LdvUYo
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240703164635.221203-1-zenghuchen@google.com>
 
-On Thu, Jul 04, 2024 at 11:12:43AM +0530, Kanak Shilledar wrote:
-> Hi
->=20
-> On Wed, Jul 3, 2024 at 8:15=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
-ote:
-> >
-> > Kanak, Drew,
-> >
-> > On Mon, Jul 01, 2024 at 05:43:54PM +0530, Kanak Shilledar wrote:
-> > > created spi0 node with fixed clock. the spi0 node
-> > > uses synopsis designware driver and has the following
-> > > compatible "snps,dw-apb-ssi". the spi0 node is connected
-> > > to a SPI NOR flash pad which is left unpopulated on the back
-> > > side of the board.
-> > >
-> > > Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
-> > > ---
-> > > Changes in v2:
-> > > - Separated from a single patch file
-> > > ---
-> > >  .../boot/dts/thead/th1520-beaglev-ahead.dts      |  9 +++++++++
-> > >  .../boot/dts/thead/th1520-lichee-module-4a.dtsi  |  4 ++++
-> > >  .../riscv/boot/dts/thead/th1520-lichee-pi-4a.dts |  5 +++++
-> >
-> > Didn't you say there was a flash on one of these two boards?
-> Yes, there is a SPI nor flash pad left unpopulated on the bottom side
-> of the LicheePi 4a
-> carrier board. https://wiki.sipeed.com/hardware/en/lichee/th1520/lpi4a/2_=
-unbox.html#Board-hardware-overview
-> notice the reserved pad in the bottom part of the image.
+Subject line needs fixing.
 
-Ah right, unpopulated. That makes sense, thanks.
+`git log --oneline -- drivers/<subsystem>` is your friend.
 
---iudhDWt6j+LdvUYo
-Content-Type: application/pgp-signature; name="signature.asc"
+> 1) check the range of torch_current_max,
+> 2) calcualtes max_brightness precisely,
+> 3) lm3601x torch brightness register starts from 0 (2.4 mA).
 
------BEGIN PGP SIGNATURE-----
+Please write this out as a proper paragraph.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZobSjgAKCRB4tDGHoIJi
-0hWfAP4uT4pgwm2LlqNsYq0IrYwSClAiEbvyWGLDIpcB45LO4wEA/iWiNXaMCveq
-fX/ADDYJWod2qCc/NImHzdaaCxqBKQk=
-=fj/5
------END PGP SIGNATURE-----
+This isn't really a numbered list type situation.
 
---iudhDWt6j+LdvUYo--
+> Tested: tested with a lm36011 and it can set its brightness to lowest
+> value (2.4 mA)
+
+What is the Tested: trailer?  Again, please write this out properly.
+
+> Signed-off-by: Jack Chen <zenghuchen@google.com>
+> ---
+>  drivers/leds/flash/leds-lm3601x.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/leds/flash/leds-lm3601x.c b/drivers/leds/flash/leds-lm3601x.c
+> index 7e93c447fec5..fc4df904ea90 100644
+> --- a/drivers/leds/flash/leds-lm3601x.c
+> +++ b/drivers/leds/flash/leds-lm3601x.c
+> @@ -190,7 +190,7 @@ static int lm3601x_brightness_set(struct led_classdev *cdev,
+>  		goto out;
+>  	}
+>  
+> -	ret = regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightness);
+> +	ret = regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightness - 1);
+
+Why is there now a need to start adding/subtracting 1s to make the maths work?
+
+>  	if (ret < 0)
+>  		goto out;
+>  
+> @@ -341,8 +341,9 @@ static int lm3601x_register_leds(struct lm3601x_led *led,
+>  
+>  	led_cdev = &led->fled_cdev.led_cdev;
+>  	led_cdev->brightness_set_blocking = lm3601x_brightness_set;
+> -	led_cdev->max_brightness = DIV_ROUND_UP(led->torch_current_max,
+> -						LM3601X_TORCH_REG_DIV);
+> +	led_cdev->max_brightness = DIV_ROUND_UP(
+
+This is no place to break a line.
+
+Break after the '=' and wrap at 100-chars instead.
+
+> +			led->torch_current_max - LM3601X_MIN_TORCH_I_UA + 1,
+> +			LM3601X_TORCH_REG_DIV);
+>  	led_cdev->flags |= LED_DEV_CAP_FLASH;
+>  
+>  	init_data.fwnode = fwnode;
+> @@ -386,6 +387,14 @@ static int lm3601x_parse_node(struct lm3601x_led *led,
+>  		goto out_err;
+>  	}
+>  
+> +	if (led->torch_current_max > LM3601X_MAX_TORCH_I_UA) {
+> +		dev_warn(&led->client->dev,
+> +			 "led-max-microamp cannot be higher than %d\n",
+> +			 LM3601X_MAX_TORCH_I_UA);
+
+"Max torch current set too high (%d vs %d)"
+
+> +		led->torch_current_max = LM3601X_MAX_TORCH_I_UA;
+> +	}
+> +
+> +
+
+2 lines?
+
+>  	ret = fwnode_property_read_u32(child, "flash-max-microamp",
+>  				&led->flash_current_max);
+>  	if (ret) {
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
+
+-- 
+Lee Jones [李琼斯]
 
