@@ -1,184 +1,117 @@
-Return-Path: <linux-kernel+bounces-240986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B6D92755A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:43:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7758292755F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21F02826A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:43:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07611B21383
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65171AC44A;
-	Thu,  4 Jul 2024 11:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511F21AB524;
+	Thu,  4 Jul 2024 11:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hatAKI+P"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XHunqudP"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBB217B410;
-	Thu,  4 Jul 2024 11:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0D11AC44B
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 11:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720093432; cv=none; b=P2w7hC38fafTjTyM5Yc/fxrZFGMl8rouyFF5yB7TM2Y9WZQHB9fUEHqJPHQoZYYeKX05qMVne5PmimEDccQy484JMAseymYwD1YzQsC/uCgj3+CFK40VXn16e8i2KB63THDA00yRsSJvuHFQSkrt99Av+QkhXMx54GAno5drfj8=
+	t=1720093457; cv=none; b=fkgfn9HAdxuSLWmHBJrzrbeGVq2mGqIZgjZFxSt2apXG+IcJTFxpSAcFzjkrmwypodvLc2ZetcJAVmoby0sgnsaRclJmhBXKoq8+K6DBSK4WsxTzWzSRS+6z6bVLJ8di/qN51qM2dTzVTOikAHFNGK3m+p676RONddWdk5kLj88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720093432; c=relaxed/simple;
-	bh=MBMdo7s33ygnlwSJlQ8Wtv/OVCeNUkSqzmNIgtCkdcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OMYhgMEj3M3YmvkC5SC5lDR5XzMdbtxswstsfMYzxRNVytqXK/JzpVBGjriu+PmqkvU+0hCM/YbmgLi9cH1rCudj918IkiGHwrd11timipSQOZn6dLUxQCO987MYBJ/NrfPETlVfzetGSxu3CbEySG/Kd2VIL3w0z2n6e0hmv68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hatAKI+P; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a724b3a32d2so57489866b.2;
-        Thu, 04 Jul 2024 04:43:50 -0700 (PDT)
+	s=arc-20240116; t=1720093457; c=relaxed/simple;
+	bh=DsedHeJsS/amdZVpKFJyVeLkOMNQa+PMTWNkWl1ltVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cbc3uMW3TDTaBcNbfdU0zdaoPNIFsPz5N7BhnszO0/+yW/tVS4Z5Ad/s3MeFFOkGJQLHwiBl05k7f6kHelg5bKkbYizrGvtu98LBoED5ZEJpc5rAGiZHmm/G17HYyrw2Bcwdv121d4tx/TmUPBlpt149gLQfT7JE2pZZSIeabzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XHunqudP; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3679e9bfb08so301961f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 04:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720093429; x=1720698229; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zveAwN34PYsp6aPMx1IsdJe3pfWxmcuJq8MSSftt/mQ=;
-        b=hatAKI+P3oelM4717kb86oYcJcjyxasqXwgqHSh55poKEyaIFr5eVovl8b5aOROneI
-         6njNnGJO7b+1Eyhd9PQDeRdsanGduMyJ95P6TzAOf98gj3OfJYXjx4X/bWTarC3eaUJ6
-         OoTpMO1bzBYZR+SHhgmDJtuDugWTwHokt7MsuMFQ6iQx9HNK9rNhSrHN+Qt4UwPIDFFA
-         9AW+5Ocecr75CBkYQ1N1Z109OexS1FmSsQQ4k+aynDBRESpX3mfr+lYsfjdEpSl5ZX6Y
-         jK8O0bbwpbDpxFScdfMcNY2YJ3n6AFX0HWJeejKSqVnUw6oXvB/qoad5MSoK4vI3pKht
-         PBkg==
+        d=suse.com; s=google; t=1720093453; x=1720698253; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lD0PPZ24LDJ5fGIwXYEdiOvdE6uwqRXg1JRtKinTRe4=;
+        b=XHunqudP/7g/rGD0xQyyRcYkJVzISGl6QC6/yqNZj6Mes7HDBRk4iRArO52D96CCB4
+         uI4N8yKbrSMjcfv4C6pRJzhYyjRcRRNCAiFFfDQJAptIbroKCQMcGNzVWg/5Lbtn0QgE
+         w5cU7XLemDMWgfldtunLL9cTuUaL9+qxmkBwL+XZDNeRHO2E+cXpqWrOvJ/kItgMw2U+
+         Pb/OpK66PRy29h62V14IuFMbC3egj7lfZ6ZzijBBpjcvG0mta3Bw6xBTBt1fJpFSEG4Y
+         F1fnJM7ThJFkCvCRJ5R/utaFT8ySspbpF+dhi6NcWS6HAS7sDZwQTYp/h0DWJdUers/S
+         q7IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720093429; x=1720698229;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zveAwN34PYsp6aPMx1IsdJe3pfWxmcuJq8MSSftt/mQ=;
-        b=QwCFvSqUtkFKy6Jl+lqoez4/iVpywPHwNat56LR013CCAhzwtZ+C0vQDR1C1EHK+u3
-         39a918fYs1U+bj+CDFUCPW0oYdkLWK7OvZIjVoBSCCn3QixQ5GrPKqVfWhdCsMU2tI4m
-         0RRwQfD23ORGpYwhiWNz5F3LklXb2b4H1OM9q/oG8sm/xWb0Ta4cE/U2lhonUVom/1h0
-         vB5twbjWHIUIqGOxbfDVE1/AojTj3a4MCaENYcgk61Bv0jrvSLSx2hhEXY0n8OrvPsKo
-         G74F+ef0wzHIiP0NxeHNBM7azaH29bhBB6BXu8ZZdm99Ir+POlOnrPb61FotKpXCYdbZ
-         ofVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaIi04pH7TpgayCOTd7mo6/i6ECEJnzAodDunqkTH4xwxHcxVU79SOrmgbzpRSLi2/4SmurcvqGLhwNKOZsX9Fh/NzXbhh2REBs/FGWo2boYFQWTQjid4c4j37PBkljmk3VQt8oPAFPQ==
-X-Gm-Message-State: AOJu0YwSonKzyJNPGpzASiTBGcIAUK7reNilpxCz4wQrXTiYogsTVFhb
-	IprvxBMwpnVRLVNbQgf6DWnbvqBNWjy7R0DFYGS8NBh3++RuBrM=
-X-Google-Smtp-Source: AGHT+IFCdpf6OuObS+dVAXvcZeJOQuT115EAXlgiAT6ExmVmJY8OSQLXrRwDiCoprKTsl/0fXCoYaQ==
-X-Received: by 2002:a17:906:f287:b0:a72:415f:cb0e with SMTP id a640c23a62f3a-a77ba72725cmr89878366b.69.1720093428276;
-        Thu, 04 Jul 2024 04:43:48 -0700 (PDT)
-Received: from ?IPV6:2a02:810b:f40:4600:5f4b:4104:ca7b:6efb? ([2a02:810b:f40:4600:5f4b:4104:ca7b:6efb])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0652eesm593037466b.131.2024.07.04.04.43.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 04:43:47 -0700 (PDT)
-Message-ID: <2c46dfb7-5ef3-494f-8cf1-413033e73412@gmail.com>
-Date: Thu, 4 Jul 2024 13:43:47 +0200
+        d=1e100.net; s=20230601; t=1720093453; x=1720698253;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lD0PPZ24LDJ5fGIwXYEdiOvdE6uwqRXg1JRtKinTRe4=;
+        b=vMcO03VSCkhAUT2iqj3BjvsqLiHfGM/fOef2aG+vh9aFE+kmRDdPCl6qKWJpnC0Mr9
+         yxxzkwpno2RUHzMFZYxuZgcjXqxEMDQA9rOkhIpP2yIRgX1XTQNzTTX5PcknagArYSU5
+         ZEONopa1E9elovK2lSQKXhPjtRoK3MD5him3t9v7kRNMbCAXS5zuiQe0JrIwz8SBNIa3
+         3wgCzyk4D0nQ3ChqAn970CPCG0eDRh0R876Xp952WExtwfudYoAL+pm+5uiDWBr2zljT
+         iY08sMz68iuPCB6PN/cQHx98zvsHVXBGN/CN023WQ47Np2nE0GpdkhwRbBJEJuQ7TCSV
+         YZfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzsrM2h6ewUG8EQr5U9bfBxccD/vdUB6KVh0pnPg8mjp531wSHiVf1cfxUeLxv31EaUH0NMPVlLjh4wnOM/jYrZbD6SIi6eurvMv6t
+X-Gm-Message-State: AOJu0YwvqmN4D5EmumNd7nN+udHmhprCQcNsMDy/F2u+muRLTSMIftTT
+	sndhcyvI3m0T4zvFIn0EvSEZiTBscKOojNEbTSr4cElc1WT02pmKOl2eWMAfndo=
+X-Google-Smtp-Source: AGHT+IGNLj31HSnKP8eMBVVDQWkUG1T6Sz0uQgf58SIcESsrCGl4BgnlWeQWQYBK7LzNx7BMg/xfeA==
+X-Received: by 2002:a5d:58f7:0:b0:366:df35:b64f with SMTP id ffacd0b85a97d-3679f6c4ee3mr1144700f8f.4.1720093453629;
+        Thu, 04 Jul 2024 04:44:13 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb33901426sm12164205ad.91.2024.07.04.04.44.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 04:44:13 -0700 (PDT)
+Date: Thu, 4 Jul 2024 13:44:03 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Tony Lindgren <tony.lindgren@linux.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-serial@vger.kernel.org, Dhruva Gole <d-gole@ti.com>,
+	Sebastian Reichel <sre@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] printk: Add
+ match_devname_and_update_preferred_console()
+Message-ID: <ZoaLA5IVTnh0E0QI@pathway.suse.cz>
+References: <20240703100615.118762-1-tony.lindgren@linux.intel.com>
+ <20240703100615.118762-2-tony.lindgren@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: rockchip: add rock5 itx board
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- linux-rockchip@lists.infradead.org, Diederik de Haas <didi.debian@cknow.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240703210524.776455-1-heiko@sntech.de>
- <20240703210524.776455-3-heiko@sntech.de> <2278169.QnsP76Vvrg@bagend>
- <4552794.8F6SAcFxjW@diego>
-Content-Language: en-US
-From: Alex Bee <knaerzche@gmail.com>
-In-Reply-To: <4552794.8F6SAcFxjW@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703100615.118762-2-tony.lindgren@linux.intel.com>
 
-Am 04.07.24 um 12:05 schrieb Heiko Stübner:
-> Hi Diederik,
+On Wed 2024-07-03 13:06:08, Tony Lindgren wrote:
+> Let's add match_devname_and_update_preferred_console() for driver
+> subsystems to call during init when the console is ready, and it's
+> character device name is known. For now, we use it only for the serial
+> layer to allow console=DEVNAME:0.0 style hardware based addressing for
+> consoles.
 > 
-> Am Donnerstag, 4. Juli 2024, 11:38:51 CEST schrieb Diederik de Haas:
->> Thanks for submitting this. A quick scan indicates it should work with a
->> (recent) Debian kernel OOTB :-)
->>
->> On Wednesday, 3 July 2024 23:05:24 CEST Heiko Stuebner wrote:
->>> +&sdhci {
->>> +       bus-width = <8>;
->>> +       no-sdio;
->>> +       no-sd;
->>> +       non-removable;
->>> +       max-frequency = <200000000>;
->>> +       mmc-hs400-1_8v;
->>> +       mmc-hs400-enhanced-strobe;
->>> +       mmc-hs200-1_8v;
->>> +       status = "okay";
->>> +};
->>> +
->>> +&sdmmc {
->>> +       max-frequency = <200000000>;
->>> +       no-sdio;
->>> +       no-mmc;
->>> +       bus-width = <4>;
->>> +       cap-mmc-highspeed;
->>> +       cap-sd-highspeed;
->>> +       disable-wp;
->>> +       sd-uhs-sdr104;
->>> +       vmmc-supply = <&vcc_3v3_s3>;
->>> +       vqmmc-supply = <&vccio_sd_s0>;
->>> +       pinctrl-names = "default";
->>> +       pinctrl-0 = <&sdmmc_bus4 &sdmmc_clk &sdmmc_cmd &sdmmc_det>;
->>> +       status = "okay";
->>> +};
->>> +
->>> +/* M.2 E-KEY */
->>> +&sdio {
->>> +       broken-cd;
->>> +       bus-width = <4>;
->>> +       cap-sdio-irq;
->>> +       disable-wp;
->>> +       keep-power-in-suspend;
->>> +       max-frequency = <150000000>;
->>> +       mmc-pwrseq = <&sdio_pwrseq>;
->>> +       no-sd;
->>> +       no-mmc;
->>> +       non-removable;
->>> +       pinctrl-names = "default";
->>> +       pinctrl-0 = <&sdiom0_pins>;
->>> +       sd-uhs-sdr104;
->>> +       vmmc-supply = <&vcc3v3_ekey>;
->>> +       status = "okay";
->>> +};
->>> +
->>> +&sfc {
->>> +       pinctrl-names = "default";
->>> +       pinctrl-0 = <&fspim2_pins>;
->>> +       status = "okay";
->>
->> Shouldn't those properties be sorted alphabetically? Or at least consistently?
->> Note that the same issue is present on other places too, but I believe the
->> above quoted part shows the issue enough.
+> The earlier attempt on doing this caused a regression with the kernel
+> command line console order as it added calling __add_preferred_console()
+> again later on during init. A better approach was suggested by Petr where
+> we add the deferred console to the console_cmdline[] and update it later
+> on when the console is ready.
 > 
-> The main sorting is
-> - compatible
-> - reg
-> [... alphabetically ...]
-> - status
-> 
-Yeah ... that's always the question when adding new board files. Do it like
-"it's always been done" or re-sort the properties alphanumeric _everywhere_
-which looks quite strange at times. If I'm getting the newly added dt
-coding style correctly common (subsystem?) properties should also be placed
-before vendor (driver?) specific ones. Yet I didn't see a board file which
-places 'regulator-max-microvolt' before 'regulator-min-microvolt'. So I
-guess it's fine if it's done consistently within the same file?
+> Suggested-by: Petr Mladek <pmladek@suse.com>
+> Co-developed-by: Petr Mladek <pmladek@suse.com>
+> Signed-off-by: Tony Lindgren <tony.lindgren@linux.intel.com>
 
-Alex
-> But now that I look at it, you're right there are some non-alphabetical
-> shenanigans going on there in the sdmmc and sdhci nodes ;-)
-> 
-> Heiko
-> 
-> 
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
+Best Regards,
+Petr
 
