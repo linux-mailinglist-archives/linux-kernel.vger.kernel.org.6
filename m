@@ -1,89 +1,133 @@
-Return-Path: <linux-kernel+bounces-241006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E9639275AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:04:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79E09275B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFAF4B21511
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:04:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D251C225F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1863A1AE09B;
-	Thu,  4 Jul 2024 12:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF121AE0AD;
+	Thu,  4 Jul 2024 12:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="BAjmcqJi"
-Received: from out0-205.mail.aliyun.com (out0-205.mail.aliyun.com [140.205.0.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="gRBPlNW0"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFB81A2575
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 12:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846FF1AB503;
+	Thu,  4 Jul 2024 12:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720094636; cv=none; b=uP0x5b3pE4nrsOr8om/Dgz/csyOSwHFVi/R5UOHvAsltPWfhDUV6dy+Y/yVjXpCp0UzrWqP/g1dnb94XmGSsEQ1e535SJaPnak5hfJztUYWJpW6FHOSKpkFjIW0WgqUWMZGMziKWJBX/OEtYkqTe7Rsddo1B1sn89ZKRo8jbP5Y=
+	t=1720094664; cv=none; b=SX9d5qvCAoQiFYADtvy+wD03UJL/r1Q8GYS5y9qyG/6E1v6UX9IQiZPUFePVuSoBX+01d4Nl8/yNIByvnfqrQogH+w9JCbxhxf+AQeTzUHEZWnwOIFgm9owiY8suLGKL+dLGLYMrxwQFUWPOpIYkagBQKyo6BjDMhu2k3u1PDw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720094636; c=relaxed/simple;
-	bh=JDumeNspSWqlTWbZ6YnvyRprnInAaX726rTS4K1KRUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZSeenHCdqhXmSiBX/InBHo9WdC4QCFJScO8KYLkEQu7f/c76NLvmHGq8C7y8W1xhu1LAF/PXH9J5luprDCMKRliK0orO72CPoRE4USlRMoTxLXOJ4b5rffZqEZiYNWJgHS2JtZjEnkg5KTTI3iYN8WuxtL4pDxMJIcBJmvp8nP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=BAjmcqJi; arc=none smtp.client-ip=140.205.0.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1720094624; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=cbVEhxr2ORWQD6IKAPLNFnpCkoyFxpBMWadoI4o3XEk=;
-	b=BAjmcqJiJyq/uKuVMZhxLqWNaioK8tEKdyron0JZ+nRP1ZB7+L0gLXRsejbViBonhNtJt4KCBTHSyYgubydiAxg+RXy+bUeW5iunQOhFFKpVPyF83GPVhW9SNMH6vPwhLD8ms8cyD3PXEIYdC1AdUJA4JYkTFZtUO3rZS/Isnwg=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R681e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033070021168;MF=libang.li@antgroup.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---.YHNnlVT_1720094622;
-Received: from 30.230.83.123(mailfrom:libang.li@antgroup.com fp:SMTPD_---.YHNnlVT_1720094622)
-          by smtp.aliyun-inc.com;
-          Thu, 04 Jul 2024 20:03:42 +0800
-Message-ID: <6fc49a27-5d82-4690-9722-6cfe5f269f43@antgroup.com>
-Date: Thu, 04 Jul 2024 20:03:41 +0800
+	s=arc-20240116; t=1720094664; c=relaxed/simple;
+	bh=IHvig0xNBoArwokNbI6ToWo2CGjEfPQHtuYXlRQ32Bs=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=FcFz11d+/u5wzzWZ4N2BPlUmAUaIfANeQxt0/rBO2qSNs4uB29td4BsqjNIWelTyXJ4KkDowWAJeOWOCOOBdwIjRs+zcLAq2j5cf2YerxoG/oT0fpN7YcHd0bERngJA1+cj4mCXb6aJCB2f5QuPGDMgRVgnq/dXeZGJ5xdx8d44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=gRBPlNW0; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: thp: support "THPeligible" semantics for mTHP with
- anonymous shmem
-To: Ryan Roberts <ryan.roberts@arm.com>, ughd@google.com,
- akpm@linux-foundation.org
-Cc: david@redhat.com, wangkefeng.wang@huawei.com,
- baolin.wang@linux.alibaba.com, ioworker0@gmail.com, ziy@nvidia.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240702023401.41553-1-libang.li@antgroup.com>
- <507da6d0-77c5-46ca-8351-53b405ecb131@arm.com>
- <8c018e06-74f1-46e9-bc32-b3870342cdc1@antgroup.com>
- <8d9e501a-0645-4b78-809a-7c9f49f2106d@arm.com>
- <c1e38d54-400c-4647-9ffb-1bf70f92c0c2@antgroup.com>
- <ccd5a1b8-3b01-4f5a-b9fb-6a5068b08a4a@arm.com>
- <941458a6-9e74-444a-9dfd-726d0a7cf158@antgroup.com>
- <60829312-5011-4fa8-9a56-40c6e2382e2f@arm.com>
-Content-Language: en-US
-From: "Bang Li" <libang.li@antgroup.com>
-In-Reply-To: <60829312-5011-4fa8-9a56-40c6e2382e2f@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1720094658;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NJUq1gL2n6O72FkagfIzF/3l8GxaCoyh+6xXf/fqDcI=;
+	b=gRBPlNW08B8tS5OnAMQ9KbKBi1bRqPjxjtrqXgm1ASF6PQDH92VNJkkDhsO00ovfrcdcJI
+	0u0t6QUKlKkw/tGLgfI274Ea6vx84+jMCmO7lLxunIOMFqubhCINssRMbG20qRcxUocKSB
+	lM0807HOaxgbUafC3UDKSOwxQs5D53ypO5h+iyc/DneuMEkFGSLmAvfP4Jmp8EHsd5SwII
+	lVFodHrBKgetcu/1SM0PdWI5FYYDE43K/BR9aBvFceU2htemLGaKirtvHohMpaSbUD2as0
+	UxYGWCY10fd0DpH2pdrUsdozBzqtInvALsyReoRSkYXCaI20jYTezqGlSfeeug==
+Date: Thu, 04 Jul 2024 14:04:18 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Alex Bee <knaerzche@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: rockchip: add rock5 itx board
+In-Reply-To: <faeb87de-b97e-4f95-bbb0-edd03a411f4c@gmail.com>
+References: <20240703210524.776455-1-heiko@sntech.de>
+ <20240703210524.776455-3-heiko@sntech.de>
+ <faeb87de-b97e-4f95-bbb0-edd03a411f4c@gmail.com>
+Message-ID: <06e69b64b25fbbff338aac9e84c68ce9@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
+Hello Alex and Heiko,
 
-On 2024/7/4 18:25, Ryan Roberts wrote:
->>>
->>> See [1] for an expanded list of concerns I have about the current state of the
->>> interface and implementation.
->>
->> OK, could you please send me the corresponding link ;)？
+On 2024-07-04 12:52, Alex Bee wrote:
+> Am 03.07.24 um 23:05 schrieb Heiko Stuebner:
+>> The Rock 5 ITX as the name suggests is made in the ITX form factor and
+>> actually build in a form to be used in a regular case even providing
+>> connectors for regular front-panel io.
+>> 
+>> It can be powered either bei 12V, ATX power-supply or PoE.
+>> 
+>> Notable peripherals are the 4 SATA ports, M.2 M-Key slot, M.2 E-key 
+>> slot,
+>> 2*2.5Gb pcie-connected ethernet nics.
+>> 
+>> As of yet unsupported display options consist of 2*hdmi, DP via 
+>> type-c,
+>> eDP + 2*DSI via pcb connectors.
+>> 
+>> USB ports are 4*USB3 + 2*USB2 on the back panel and 2-port front-panel
+>> connector.
+>> 
+>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>> ---
+>>   arch/arm64/boot/dts/rockchip/Makefile         |    1 +
+>>   .../boot/dts/rockchip/rk3588-rock-5itx.dts    | 1188 
+>> +++++++++++++++++
+>>   2 files changed, 1189 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-rock-5itx.dts
+
+[snip]
+
+>> +&usb_host1_xhci {
+>> +	dr_mode = "host";
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	status = "okay";
+>> +
+>> +	/* 2.0 hub on port 1 */
+>> +	hub_2_0: hub@1 {
+>> +		compatible = "usb5e3,610";
+>> +		reg = <1>;
+>> +		peer-hub = <&hub_3_0>;
+>> +		vdd-supply = <&vcc5v0_usb12>;
 > 
-> Oops!
+> Are you sure about this one? I couldn't find any schematics for this 
+> board,
+> but both the bindings for usb5e3,610 and the datasheet[0] are saying 
+> this
+> is the supply for the hub's internal logic which is typically ~3.3V. 
+> It's
+> definitely not a supply for the vbus.
 > 
-> https://lore.kernel.org/linux-mm/65c37315-2741-481f-b433-cec35ef1af35@arm.com/
+> [0] http://www.sunnyqi.com/upLoad/product/month_1308/GL852G.pdf
 
-Thank you for providing the link. I will review the details of your 
-concerns.
+FYI, here's the board schematic:
 
-Best regards,
-Bang
+- https://dl.radxa.com/rock5/5itx/radxa_rock_5_itx_X1100_schematic.pdf
+- 
+https://dl.radxa.com/rock5/5itx/v1110/radxa_rock_5itx_v1110_schematic.pdf
+
+Perhaps it would be good to include these URLs in the v3 patch 
+description.
 
