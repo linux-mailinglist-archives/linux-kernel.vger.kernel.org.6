@@ -1,258 +1,375 @@
-Return-Path: <linux-kernel+bounces-241534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9662D927C4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:34:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A2E927C52
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0A2AB240D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:34:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BD5D1C232C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A4E47A62;
-	Thu,  4 Jul 2024 17:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4893E73463;
+	Thu,  4 Jul 2024 17:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWYl9MG2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyCUZz8N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430C149628;
-	Thu,  4 Jul 2024 17:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33672481CE;
+	Thu,  4 Jul 2024 17:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720114349; cv=none; b=CX8t3+xEX5riHYj/qJ7MxOGvz7yApDde7JM9iY6Kz6wf0vaY0DpsrwCB/l2IcN0nd1PLMxso4tQQkxwx2stEwmKv2xlxVC1tf4FwLPKq+PayqSjqUGl1YWFaXR9Whk7spR7svMG/Yps9nCYGUzPaCcfGk1KpBmboH1hnVLEsDzM=
+	t=1720114393; cv=none; b=Wslgjj9AtWoIPv3ZUCb+36lPbl3jmKdDDyxP7IMETBdI85pcWdZ2xI3qdiTh5hqGgGIiIr7B/eBEfhMkjqEr2qGNBCC/KiwLH/0QBldSqe+PSRhyR5gv4O947vB6JYoUdnmPWW5MWZY6YLfJrlwIkkxgAWMmxd/GSS1YEAsjkVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720114349; c=relaxed/simple;
-	bh=ln09xEmOM+kzw9WpLfjUjc3sZlPX+iXLorhBcZY3XKw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YNOH4/9CHLpb15M0K9xIy1/+EmrzObVkMn+IuW1zdkMmq+kEdTd4Wd/7BkSWvvIoCA1ljDLbqDegFr+mpCNRHqtepKiIho4f0WLKzltMCnWNEGJflNdaAB5DaBNeDAMBt2OERUh4kcO3hqAxyUXt3EJcduSciJfhM1pLjmwxZNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWYl9MG2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2DE2C4AF0A;
-	Thu,  4 Jul 2024 17:32:28 +0000 (UTC)
+	s=arc-20240116; t=1720114393; c=relaxed/simple;
+	bh=Segdk090mGftt1pYyroxjdKfPQEmywUaMaTwyyVMAYc=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=JPyD4pvJVTCjTaptQvUG0yHx0eCrshkR3uXR/Q9fO/Q4HYglZIEYnJ6qsDb8HcsaWtuw76pKg3kwPeIOWwQlXqKQiVMaCS0AtUNR39Koi1pTnTbqznXHfIWlwxVoqbemUXKN03X/xoTIuNu1Xfrv+nNFwcwXZYPMREAuLrbzpJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UyCUZz8N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B397FC32781;
+	Thu,  4 Jul 2024 17:33:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720114349;
-	bh=ln09xEmOM+kzw9WpLfjUjc3sZlPX+iXLorhBcZY3XKw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HWYl9MG2yZ1rikoO6BWyPW3+TPODsL/ZKnK72pN3QFBIibrvYswoMFSTxtl3XFL2Y
-	 3XEPC7MHkI2bAakxNXGSlJB0tlAjrWYYkCCqa4dAA3noOyJA7oKbtQSsaHW5QBXS17
-	 Tk/RdspGp6aeY5U5WL0dL1a0MvPuxhdbcFRJr5ksCrdilan6o7upEJiJ9pAkzvJah1
-	 hIsgxN6CC/BbjVmoXvqE92jpAknZOxYOrKJrYn+Z9qUCJYPJfVmo5/rPtFGo5CtZpK
-	 YJ8S+ptTVDcCwbHCErE4JSYBS7sNvpFnQlPq7cgKt3MIh56paIhva74tR2mMuJg5n1
-	 2Pzn51pQYoBGQ==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7523f0870cso100217766b.3;
-        Thu, 04 Jul 2024 10:32:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUTLrUcHz8/r6eTLWrtsAxVfdh6Rmdfm22w4Ev2dh4SNqQvDhAiKg/JxRhZHpswXfgAsy9BMDkPp2WwOLtB1nBMK9/GJw+Ccch2RFXTlp0vF6yqLrMxh43fTBEp2y475/rYfs5Q7lr2gfo=
-X-Gm-Message-State: AOJu0YwjVDWDviqm3WJH3/UiyZJ/WVgGm1aZdHV3UCGfXnvv43kyYMNM
-	d8ROFlbphuWL2s6lgCsewcItV+aR6AJWC6j+nyf4WWHvuCj1Sx0YbdNCAX5qgbyKTTk8BmCwnq9
-	HVKJOthEt7fTl+lfUl3mwr9iZCHc=
-X-Google-Smtp-Source: AGHT+IFZqWRfzSyRUXYjto4ORJlfnjFaKu7LIbKOqkA2/uYCdlWzOclXoUWpuR7YqssOCDNWdst5UtNTXEsgE0DjuJc=
-X-Received: by 2002:a17:906:c256:b0:a72:7da4:267c with SMTP id
- a640c23a62f3a-a77ba44cfb2mr124294166b.12.1720114347425; Thu, 04 Jul 2024
- 10:32:27 -0700 (PDT)
+	s=k20201202; t=1720114393;
+	bh=Segdk090mGftt1pYyroxjdKfPQEmywUaMaTwyyVMAYc=;
+	h=From:To:Subject:Date:From;
+	b=UyCUZz8NwlWUj+6qxcP+ICAP+TNJJArskXX3BC+E8ZB9ZPVDh2UIxEd+MziEszkFM
+	 qUyvZpQHrGVp1BpN20/v+hoLHtXlWDl5paMmomKmDjx8E6GKaTxvO1+2lxElHYv0g1
+	 Zi+lJny+SjPq8HPhCZvfOMFM9KFY3Hglp7U85QkdmXZw4h0upbXpkLqe5w/kbpvpt7
+	 We0WWPtF7gK+imuxZLtjhWFi2RaszLVKrBD+CwfAvGi7WezdAwVlOrsDrvBl9dXpa7
+	 qlDtlNFkQ50wjqd2SwUcg7G1MSN45D0gijmeE/k9SoqWmDMuZbjYd0TuEb0VjgsJbS
+	 bUV/4qrCH6rFw==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Puranjay Mohan <puranjay12@gmail.com>,
+	Xu Kuohai <xukuohai@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf-next] arm64, bpf: Add 12-argument support for bpf trampoline
+Date: Thu,  4 Jul 2024 17:32:27 +0000
+Message-Id: <20240704173227.130491-1-puranjay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
- <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
- <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com> <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com>
-In-Reply-To: <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Thu, 4 Jul 2024 18:31:50 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H5MEyR+=_16bzq533ua-Ne3F1evZmt2NMcYoT9t=XtPig@mail.gmail.com>
-Message-ID: <CAL3q7H5MEyR+=_16bzq533ua-Ne3F1evZmt2NMcYoT9t=XtPig@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Andrea Gelmini <andrea.gelmini@gmail.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 4, 2024 at 6:25=E2=80=AFPM Filipe Manana <fdmanana@kernel.org> =
-wrote:
->
-> On Thu, Jul 4, 2024 at 3:48=E2=80=AFPM Andrea Gelmini <andrea.gelmini@gma=
-il.com> wrote:
-> >
-> > Il giorno gio 4 lug 2024 alle ore 15:47 Andrea Gelmini
-> > <andrea.gelmini@gmail.com> ha scritto:
-> > > I send you everything when I collect enough data.
-> >
-> > Here we are.
-> >
-> > Kernel rc6+branch:
-> >     Output of bfptrace:
-> >     https://pastebin.com/P9RFp5mg
->
-> So a couple interesting things here, which we didn't get in the short
-> capture from Mikhail:
->
-> 1) There's apparently multiple tasks entering the shrinker at the same ti=
-me:
->      kswapd0, Chrome_ChildIOT, Chrome_IOThread, chrome, Xorg.
->
-> 2) In some cases we get very large negative numbers for the number of
-> extent maps to scan.
->     This shouldn't happen and either our own btrfs counter might have
-> overflowed or some other bug,
->     or the super block's shrinker is being called with sc->nr_to_scan
-> negative, and outside btrfs' control,
->     and it seems outside of control of the VFS's shrinker callback
-> (see fs/super.c:super_cache_scan()).
->
-> >
-> >     Recording of tar session: (summary: start fast, then flipping super=
- slow)
-> >     https://asciinema.org/a/BxYI83TkrlOhEe42IWXNY135D
-> >
-> >     Recording of htop session: (summary: PSI high and two threads at 10=
-0%)
-> >     https://asciinema.org/a/ZwGSepZZ8TSpFfPssACUUXcCB
->
-> Ok, so maybe I missed it, but I haven't kswapd0 in there, or nothing
-> taking 100% CPU.
-> Maybe it was just Mikhail running into that?
->
-> I was looking at the memory PSI and I never noticed it going over 60%.
-> As for cpu and IO PSI, for cpu it was always low, under 3% from what
-> I've seen and for IO even lower than that, very close to 0%.
->
-> So I'm surprised that you get an unresponsive desktop.
->
-> >
-> >
-> > Kernel 6.6.36:
-> >     Recording of tar session: (summary: tar always fast)
-> >     https://asciinema.org/a/a6dOkbjyPFkkQ5aNTaRiFD3H8
-> >
-> >     Recording of htop session: (summary: no threads and PSI load)
-> >     https://asciinema.org/a/mFsypWzHfSdsjrIQf8zpzNpKo
->
-> Interestingly, here the memory PSI stays at 0% or very close to that,
-> it never reaches anything close to the 60%.
->
-> >
-> > If you need to run for longer time, I can do it in the weekend.
-> > If you need dump of my BTRFS fs, no problem, but I need 'btrfs image
-> > -s" working (point is: scrambling filenames).
->
-> Ok, so I haven been delaying my reply because I kept accumulating
-> things for you (or Mikhail) to try, and avoid sending several messages
-> with very little.
->
-> So first thing, I tried reproducing your scenario like you described
-> in a previous message using tar:
->
-> On a fresh btrfs filesystem, I cloned Linus' kernel tree into /mnt/git/li=
-nux
-> Compiled a kernel.
-> Then copied the tree 3 times like this:
->
-> cd /mnt/git
-> cp --reflink=3Dnever -r linux linux2
-> cp --reflink=3Dnever -r linux linux3
-> cp --reflink=3Dnever -r linux linux4
->
-> The total size of /mnt/git was 62G (as reported by:  du -hs /mnt/git).
->
-> Than I ran:
->
-> cd /mnt/git
-> tar cp git/ | pv > /dev/null
->
-> With htop in parallel, the bpftrace script, and since my htop version
-> doesn't show PSI information (probably an older version than yours), I
-> kept monitoring PSI like this:
->
-> watch -d -n 3 'echo "cpu:\n"; cat /proc/pressure/cpu ; echo
-> "\nmemory:\n" ; cat /proc/pressure/memory ; echo "\nio:\n" ; cat
-> /proc/pressure/io'
->
-> Nothing went out of the roof, the machine was always responsive, never
-> seen kswapd0 anywhere near the top, and the process using most CPU was
-> tar (and always under 30%).
-> PSI had all values low.
->
-> The shrinker was being triggered very often, for small numbers (mostly
-> under 1000, and most of the time much less than that), but I never had
-> those large negative numbers nor apparently different tasks entering
-> into it concurrently.
-> It took a few seconds at most in each run.
->
-> I also tried monitoring while doing the "cp --reflink=3Dnever -r"
-> commands and while PSI often peaked to 92%, 93%, the system was always
-> responsive (and such IO PSI seems reasonable since we are doing a lot
-> of read and write IO).
->
-> So several different things to try here:
->
-> 1) First let's check that the problem is really a consequence of the shri=
-nker.
->     Try this patch:
->
->     https://gist.githubusercontent.com/fdmanana/b44abaade0000d28ba0e1e1ae=
-3ac4fee/raw/5c9bf0beb5aa156b893be2837c9244d035962c74/gistfile1.txt
->
->     This disables the shrinker. This is just to confirm if I'm looking
-> in the right direction, if your problem is the same as Mikhail's and
-> double check his bisection.
->
-> 2) Then drop that patch that disables the shrinker.
->      With all the previous 4 patches applied, apply this one on top of th=
-em:
->
->      https://gist.githubusercontent.com/fdmanana/9cea16ca56594f8c7e20b67d=
-c66c6c94/raw/557bd5f6b37b65d210218f8da8987b74bfe5e515/gistfile1.txt
->
->      The goal here is to see if the extent map eviction done by the
-> shrinker is making reads from other tasks too slow, and check if
-> that's what0s making your system unresponsive.
->
-> 3) Then drop the patch from step 2), and on top of the previous 4
-> patches from my git tree, apply this one:
->
->      https://gist.githubusercontent.com/fdmanana/a7c9c2abb69c978cf5b80c2f=
-784243d5/raw/b4cca964904d3ec15c74e36ccf111a3a2f530520/gistfile1.txt
->
->      This is just to confirm if we do have concurrent calls to the
-> shrinker, as the tracing seems to suggest, and where the negative
-> numbers come from.
->      It also helps to check if not allowing concurrent calls to it, by
-> skipping if it's already running, helps making the problems go away.
+The arm64 bpf JIT currently supports attaching the trampoline to
+functions with <= 8 arguments. This is because up to 8 arguments can be
+passed in registers r0-r7. If there are more than 8 arguments then the
+9th and later arguments are passed on the stack, with SP pointing to the
+first stacked argument. See aapcs64[1] for more details.
 
-Oh and for this one, show your 'dmesg' after your testing to see if
-any stack traces or warning messages were logged (even if it happens
-to solve all the problems).
+Add the support of storing and restoring arguments passed on the stack
+to the arm64 bpf trampoline. This will allow attaching the trampoline to
+functions that take 12 arguments.
 
-Thanks!
+[1] https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst#parameter-passing
 
+Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+---
+ arch/arm64/net/bpf_jit_comp.c                | 113 +++++++++++++------
+ tools/testing/selftests/bpf/DENYLIST.aarch64 |   2 -
+ 2 files changed, 81 insertions(+), 34 deletions(-)
 
->
-> >
-> > Thanks a lot,
->
-> Thanks a lot to you and Mikhail, not just for the reporting but also
-> to apply patches, compile a kernel, run the tests and do all those
-> valuable observations which are all very time consuming.
->
-> Thanks!
->
-> > Gelma
+diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+index 751331f5ba90..ebc148596e59 100644
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -30,6 +30,8 @@
+ #define TMP_REG_3 (MAX_BPF_JIT_REG + 3)
+ #define FP_BOTTOM (MAX_BPF_JIT_REG + 4)
+ #define ARENA_VM_START (MAX_BPF_JIT_REG + 5)
++/* Up to eight function arguments are passed in registers r0-r7 */
++#define ARM64_MAX_REG_ARGS 8
+ 
+ #define check_imm(bits, imm) do {				\
+ 	if ((((imm) > 0) && ((imm) >> (bits))) ||		\
+@@ -2001,26 +2003,51 @@ static void invoke_bpf_mod_ret(struct jit_ctx *ctx, struct bpf_tramp_links *tl,
+ 	}
+ }
+ 
+-static void save_args(struct jit_ctx *ctx, int args_off, int nregs)
++static void save_args(struct jit_ctx *ctx, int args_off, int orig_sp_off,
++		      int nargs)
+ {
++	const u8 tmp = bpf2a64[TMP_REG_1];
++	int arg_pos;
+ 	int i;
+ 
+-	for (i = 0; i < nregs; i++) {
+-		emit(A64_STR64I(i, A64_SP, args_off), ctx);
++	for (i = 0; i < nargs; i++) {
++		if (i < ARM64_MAX_REG_ARGS) {
++			emit(A64_STR64I(i, A64_SP, args_off), ctx);
++		} else {
++			arg_pos = orig_sp_off + (i - ARM64_MAX_REG_ARGS) * 8;
++			emit(A64_LDR64I(tmp, A64_SP, arg_pos), ctx);
++			emit(A64_STR64I(tmp, A64_SP, args_off), ctx);
++		}
+ 		args_off += 8;
+ 	}
+ }
+ 
+-static void restore_args(struct jit_ctx *ctx, int args_off, int nregs)
++static void restore_args(struct jit_ctx *ctx, int args_off, int nargs)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < nregs; i++) {
++	for (i = 0; i < nargs; i++) {
+ 		emit(A64_LDR64I(i, A64_SP, args_off), ctx);
+ 		args_off += 8;
+ 	}
+ }
+ 
++static void restore_stack_args(struct jit_ctx *ctx, int args_off, int stk_arg_off,
++			       int nr_stack_args)
++{
++	const u8 tmp = bpf2a64[TMP_REG_1];
++	int arg_pos;
++	int i;
++
++	for (i = ARM64_MAX_REG_ARGS; i < nr_stack_args; i++) {
++		arg_pos = args_off + i * 8;
++		emit(A64_LDR64I(tmp, A64_SP, arg_pos), ctx);
++		emit(A64_STR64I(tmp, A64_SP, stk_arg_off), ctx);
++
++		stk_arg_off += 8;
++	}
++}
++
+ /* Based on the x86's implementation of arch_prepare_bpf_trampoline().
+  *
+  * bpf prog and function entry before bpf trampoline hooked:
+@@ -2034,15 +2061,17 @@ static void restore_args(struct jit_ctx *ctx, int args_off, int nregs)
+  */
+ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 			      struct bpf_tramp_links *tlinks, void *func_addr,
+-			      int nregs, u32 flags)
++			      int nargs, u32 flags)
+ {
+ 	int i;
+ 	int stack_size;
++	int stk_arg_off;
++	int orig_sp_off;
+ 	int retaddr_off;
+ 	int regs_off;
+ 	int retval_off;
+ 	int args_off;
+-	int nregs_off;
++	int nargs_off;
+ 	int ip_off;
+ 	int run_ctx_off;
+ 	struct bpf_tramp_links *fentry = &tlinks[BPF_TRAMP_FENTRY];
+@@ -2052,6 +2081,7 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	__le32 **branches = NULL;
+ 
+ 	/* trampoline stack layout:
++	 * SP + orig_sp_off [ first stack arg   ] if nargs > ARM64_MAX_REG_ARGS
+ 	 *                  [ parent ip         ]
+ 	 *                  [ FP                ]
+ 	 * SP + retaddr_off [ self ip           ]
+@@ -2069,14 +2099,23 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	 *                  [ ...               ]
+ 	 * SP + args_off    [ arg reg 1         ]
+ 	 *
+-	 * SP + nregs_off   [ arg regs count    ]
++	 * SP + nargs_off   [ arg count         ]
+ 	 *
+ 	 * SP + ip_off      [ traced function   ] BPF_TRAMP_F_IP_ARG flag
+ 	 *
+ 	 * SP + run_ctx_off [ bpf_tramp_run_ctx ]
++	 *
++	 *		    [ stack_argN	]
++	 *		    [ ...		]
++	 * SP + stk_arg_off [ stack_arg1	] BPF_TRAMP_F_CALL_ORIG
+ 	 */
+ 
+ 	stack_size = 0;
++	stk_arg_off = stack_size;
++	/* room for saving arguments passed on stack */
++	if (nargs - ARM64_MAX_REG_ARGS > 0)
++		stack_size += (nargs - ARM64_MAX_REG_ARGS) * 8;
++
+ 	run_ctx_off = stack_size;
+ 	/* room for bpf_tramp_run_ctx */
+ 	stack_size += round_up(sizeof(struct bpf_tramp_run_ctx), 8);
+@@ -2086,13 +2125,13 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	if (flags & BPF_TRAMP_F_IP_ARG)
+ 		stack_size += 8;
+ 
+-	nregs_off = stack_size;
++	nargs_off = stack_size;
+ 	/* room for args count */
+ 	stack_size += 8;
+ 
+ 	args_off = stack_size;
+ 	/* room for args */
+-	stack_size += nregs * 8;
++	stack_size += nargs * 8;
+ 
+ 	/* room for return value */
+ 	retval_off = stack_size;
+@@ -2110,6 +2149,11 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	/* return address locates above FP */
+ 	retaddr_off = stack_size + 8;
+ 
++	/* original SP position
++	 * stack_size + parent function frame + patched function frame
++	 */
++	orig_sp_off = stack_size + 32;
++
+ 	/* bpf trampoline may be invoked by 3 instruction types:
+ 	 * 1. bl, attached to bpf prog or kernel function via short jump
+ 	 * 2. br, attached to bpf prog or kernel function via long jump
+@@ -2135,12 +2179,12 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 		emit(A64_STR64I(A64_R(10), A64_SP, ip_off), ctx);
+ 	}
+ 
+-	/* save arg regs count*/
+-	emit(A64_MOVZ(1, A64_R(10), nregs, 0), ctx);
+-	emit(A64_STR64I(A64_R(10), A64_SP, nregs_off), ctx);
++	/* save arg count */
++	emit(A64_MOVZ(1, A64_R(10), nargs, 0), ctx);
++	emit(A64_STR64I(A64_R(10), A64_SP, nargs_off), ctx);
+ 
+-	/* save arg regs */
+-	save_args(ctx, args_off, nregs);
++	/* save arguments passed in regs and on the stack */
++	save_args(ctx, args_off, orig_sp_off, nargs);
+ 
+ 	/* save callee saved registers */
+ 	emit(A64_STR64I(A64_R(19), A64_SP, regs_off), ctx);
+@@ -2167,7 +2211,11 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	}
+ 
+ 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+-		restore_args(ctx, args_off, nregs);
++		/* restore arguments that were passed in registers */
++		restore_args(ctx, args_off,
++			     min_t(int, nargs, ARM64_MAX_REG_ARGS));
++		/* restore arguments that were passed on the stack */
++		restore_stack_args(ctx, args_off, stk_arg_off, nargs);
+ 		/* call original func */
+ 		emit(A64_LDR64I(A64_R(10), A64_SP, retaddr_off), ctx);
+ 		emit(A64_ADR(A64_LR, AARCH64_INSN_SIZE * 2), ctx);
+@@ -2196,7 +2244,8 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	}
+ 
+ 	if (flags & BPF_TRAMP_F_RESTORE_REGS)
+-		restore_args(ctx, args_off, nregs);
++		restore_args(ctx, args_off,
++			     min_t(int, nargs, ARM64_MAX_REG_ARGS));
+ 
+ 	/* restore callee saved register x19 and x20 */
+ 	emit(A64_LDR64I(A64_R(19), A64_SP, regs_off), ctx);
+@@ -2228,19 +2277,19 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	return ctx->idx;
+ }
+ 
+-static int btf_func_model_nregs(const struct btf_func_model *m)
++static int btf_func_model_nargs(const struct btf_func_model *m)
+ {
+-	int nregs = m->nr_args;
++	int nargs = m->nr_args;
+ 	int i;
+ 
+-	/* extra registers needed for struct argument */
++	/* extra registers or stack slots needed for struct argument */
+ 	for (i = 0; i < MAX_BPF_FUNC_ARGS; i++) {
+ 		/* The arg_size is at most 16 bytes, enforced by the verifier. */
+ 		if (m->arg_flags[i] & BTF_FMODEL_STRUCT_ARG)
+-			nregs += (m->arg_size[i] + 7) / 8 - 1;
++			nargs += (m->arg_size[i] + 7) / 8 - 1;
+ 	}
+ 
+-	return nregs;
++	return nargs;
+ }
+ 
+ int arch_bpf_trampoline_size(const struct btf_func_model *m, u32 flags,
+@@ -2251,14 +2300,14 @@ int arch_bpf_trampoline_size(const struct btf_func_model *m, u32 flags,
+ 		.idx = 0,
+ 	};
+ 	struct bpf_tramp_image im;
+-	int nregs, ret;
++	int nargs, ret;
+ 
+-	nregs = btf_func_model_nregs(m);
+-	/* the first 8 registers are used for arguments */
+-	if (nregs > 8)
++	nargs = btf_func_model_nargs(m);
++	/* the first 8 arguments are in registers and others are on stack */
++	if (nargs > MAX_BPF_FUNC_ARGS)
+ 		return -ENOTSUPP;
+ 
+-	ret = prepare_trampoline(&ctx, &im, tlinks, func_addr, nregs, flags);
++	ret = prepare_trampoline(&ctx, &im, tlinks, func_addr, nargs, flags);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -2285,7 +2334,7 @@ int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
+ 				u32 flags, struct bpf_tramp_links *tlinks,
+ 				void *func_addr)
+ {
+-	int ret, nregs;
++	int ret, nargs;
+ 	void *image, *tmp;
+ 	u32 size = ro_image_end - ro_image;
+ 
+@@ -2302,13 +2351,13 @@ int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
+ 		.idx = 0,
+ 	};
+ 
+-	nregs = btf_func_model_nregs(m);
+-	/* the first 8 registers are used for arguments */
+-	if (nregs > 8)
++	nargs = btf_func_model_nargs(m);
++	/* the first 8 arguments are in registers and others are on stack */
++	if (nargs > MAX_BPF_FUNC_ARGS)
+ 		return -ENOTSUPP;
+ 
+ 	jit_fill_hole(image, (unsigned int)(ro_image_end - ro_image));
+-	ret = prepare_trampoline(&ctx, im, tlinks, func_addr, nregs, flags);
++	ret = prepare_trampoline(&ctx, im, tlinks, func_addr, nargs, flags);
+ 
+ 	if (ret > 0 && validate_code(&ctx) < 0) {
+ 		ret = -EINVAL;
+diff --git a/tools/testing/selftests/bpf/DENYLIST.aarch64 b/tools/testing/selftests/bpf/DENYLIST.aarch64
+index 3c7c3e79aa93..0b17bc0dea7a 100644
+--- a/tools/testing/selftests/bpf/DENYLIST.aarch64
++++ b/tools/testing/selftests/bpf/DENYLIST.aarch64
+@@ -4,8 +4,6 @@ fexit_sleep                                      # The test never returns. The r
+ kprobe_multi_bench_attach                        # needs CONFIG_FPROBE
+ kprobe_multi_test                                # needs CONFIG_FPROBE
+ module_attach                                    # prog 'kprobe_multi': failed to auto-attach: -95
+-fentry_test/fentry_many_args                     # fentry_many_args:FAIL:fentry_many_args_attach unexpected error: -524
+-fexit_test/fexit_many_args                       # fexit_many_args:FAIL:fexit_many_args_attach unexpected error: -524
+ tracing_struct/struct_many_args                  # struct_many_args:FAIL:tracing_struct_many_args__attach unexpected error: -524
+ fill_link_info/kprobe_multi_link_info            # bpf_program__attach_kprobe_multi_opts unexpected error: -95
+ fill_link_info/kretprobe_multi_link_info         # bpf_program__attach_kprobe_multi_opts unexpected error: -95
+-- 
+2.40.1
+
 
