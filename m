@@ -1,90 +1,111 @@
-Return-Path: <linux-kernel+bounces-240805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15942927309
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:29:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 665F49272F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C004F1F23361
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:29:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8273B1C22016
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105661AB8E3;
-	Thu,  4 Jul 2024 09:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30E01AB511;
+	Thu,  4 Jul 2024 09:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WsErD0F2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X1LQkm1q"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C541AAE30;
-	Thu,  4 Jul 2024 09:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC861AAE0F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720085339; cv=none; b=HzNbUJkeUTjT34SCzbneZZpCKbqU38OQxKQO+IdSkk1tITtTKQ1mvMM/h1A2l4TLcagzrDNRhrcgNQwH1FkImeebBGw3jVZ6Cu9MbG3kB38pvkJ1bhsaql4oitr4A2/MrvVr1rB7IAUKaa98zIDVZJJqohR/PBxg+vByQY7fbnw=
+	t=1720085187; cv=none; b=PKfWdQbCVFEwGb3yyap/t7ZCMdLk1fT20YbXVX+CccRdQ/SAhTOCfQJ5QayozM1noqIy0zRMJ8KmOO2eIUqaIWZueV25jftWFCyyDVpCu6E87fG2Es3/00B3dt6CWiXzcNeSFnRZ7xMfKjecDjIcB1daAuSiQ8k2ynuRLLM7Eew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720085339; c=relaxed/simple;
-	bh=RAU682pllQ3Qwzdcw44X5tDRqFgQveq+4ErPH8vDthE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JzglVGb6OM4KvQOw5Tdbz7k7EYSXEOumpLDeMhmdCJaiWCW8OGp10CJ1wqGz78D9glGGdc3/IRWFitmFNtb+V5TXvaxgBP2VJa6Cj6hOC/ZGdaZsCZUVe3ZH69skIoBzCZujMFW1XoLcbq7zzX24wtUseiXW8agRs4BxZIivJoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WsErD0F2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1619AC3277B;
-	Thu,  4 Jul 2024 09:28:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720085338;
-	bh=RAU682pllQ3Qwzdcw44X5tDRqFgQveq+4ErPH8vDthE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WsErD0F2Dnok9dLeG96r/JEVtpzxttD4/6V0yWRtJlXN+DW3lv4/CDub/JMnjSsxS
-	 U4QAbF7C09QoJ7fdWOiToWRxwNJutAKNs8HMCcOPtHOuBg8kTMBQBXZ1xGjk41HOWf
-	 Qu7HKyyDH7uPS4ncn1pSruXHz/LMPMp5RHtE+eSY=
-Date: Thu, 4 Jul 2024 11:25:11 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Guenter Roeck <linux@roeck-us.net>, shuah <shuah@kernel.org>,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	Pavel Machek <pavel@denx.de>, Jon Hunter <jonathanh@nvidia.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Sudip Mukherjee <sudipm.mukherjee@gmail.com>, srw@sladewatkins.net,
-	rwarsow@gmx.de, Conor Dooley <conor@kernel.org>,
-	Allen <allen.lkml@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Linux-sh list <linux-sh@vger.kernel.org>,
-	Rich Felker <dalias@libc.org>
-Subject: Re: [PATCH 5.4 000/189] 5.4.279-rc1 review
-Message-ID: <2024070402-gallows-schematic-ce53@gregkh>
-References: <20240703102841.492044697@linuxfoundation.org>
- <CA+G9fYvAkELSdWF1EYyjS=d_jvCJD0O=aPnZFHUGnhYy6c1VCg@mail.gmail.com>
- <72ddde27-e2e2-4a46-a2ab-4d20a7a9424f@app.fastmail.com>
- <c497d1abee4bf37663488c3a80e042a25303c0c4.camel@physik.fu-berlin.de>
+	s=arc-20240116; t=1720085187; c=relaxed/simple;
+	bh=jK4QiJYgMpqZHuOiFOYJ7LRloe0aUPmvOMr7gZdKz2M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GyXEQmFs7qr7pFklntZh9bw7Ma1H1CMdU6uJMqL8yDr+CjmeDj3fMPkjGuLea4nQcSZQAmEvSdaifyvPIUKNWTllQx8WnLS7+SQbvyuMtUzv+IBEEqqRZhOstcOu6UrsFLFLEYHlExV1tMkA6tpTHkE+0zpdaiRUtWbmnFGWQ7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X1LQkm1q; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42567ddf099so2680345e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:26:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720085184; x=1720689984; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jK4QiJYgMpqZHuOiFOYJ7LRloe0aUPmvOMr7gZdKz2M=;
+        b=X1LQkm1qIhKmx2cXHDWcmiIyZH7j1qfnh6QbGyfLyyIevj3VsoKYxEEr70fXHRrJCH
+         GoMAeqoV/WGnX3PhaJMozwPy0QnS2FvD+MRKKvBTpYHSPtjW5hJY/D9I39Ribv/jbGXQ
+         z3BJftDmqwarjuta1GYq1mO+ZbI0uh7B9tbhdzbJgUhNMR0zmnPIZ99uQTLTRe+eINea
+         grb9FoSBlY/UasLH5qKn1UVRPYSLeqSKmHG9XKO9WREvZTJlszyRrlJzQ6o9CFwL40Xd
+         Bo6G4HeM4IOq7nxQYJxDggaPIb1Xvrwf0CycQQHcR4HcPw8yO56CfchaRXIppmUJWdfw
+         3pDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720085184; x=1720689984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jK4QiJYgMpqZHuOiFOYJ7LRloe0aUPmvOMr7gZdKz2M=;
+        b=PAHztiQhn9LfX7mpFDCHMCHF7sdHdkSHDekmuRHyvZqsP1hyiflGXgyJECUvic0Oki
+         fuoZhiowGF9j3ZZtRGMMIiprUQmsgWfZJE10XACdBG2ExslQJbpFqaPK8JIbQZzLyPJv
+         L0WNzQGCeUKkjRa6Plvifa5MCfFJsWN/H4io/s74bARK4VK69vyAqPYl9/8mhmX1be/y
+         noWmZ7O2u6yoGzC16sF6JcZWlXdb+uVRlCOEQPyMBLlumGdX3Jj8gT4sNE4QWCTW9l5T
+         29Le4bDqvqkkqQkI5dMbLb2AoN5PTger0kzWjIcLdFZB5ZPBiC94fRmLNOR4O3BcorZV
+         3IdQ==
+X-Gm-Message-State: AOJu0Yx9IVZAAxIQkulCuuM//51nXI3A7/qnOsFD4l/KGsY8yqQPIRxF
+	HmR0a24EvjgyLIFalDGVK5EWaLeWE1aKUB5+BkLjirOylGs8PHeg4Qf/eK3scuYuUQyFFm1gIz2
+	FzTUSKwGAx9T7QJR75w3UmlG+mljijkEwnRs4
+X-Google-Smtp-Source: AGHT+IFv88LNQ+GBGvy774X0W9nVuAppKr5CisW/ZF3NA8NQh92OFnzT9hs2dwXxiuMzIoeI82UfG3HBNYc2ycinAtg=
+X-Received: by 2002:a05:600c:4891:b0:425:6f96:8bde with SMTP id
+ 5b1f17b1804b1-4264a44d7e5mr8270825e9.29.1720085183623; Thu, 04 Jul 2024
+ 02:26:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c497d1abee4bf37663488c3a80e042a25303c0c4.camel@physik.fu-berlin.de>
+References: <2dbd1491-149d-443c-9802-75786a6a3b73@gmail.com>
+In-Reply-To: <2dbd1491-149d-443c-9802-75786a6a3b73@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 4 Jul 2024 11:26:12 +0200
+Message-ID: <CAH5fLgiyDsmG-YvsxvPPS9dAnKb7jJ2iapQQ3eWXnBPDOiA=LQ@mail.gmail.com>
+Subject: Re: [PATCH v2] arm: rust: Enable Rust support for ARMv7
+To: Christian Schrefl <chrisi.schrefl@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sven Van Asbroeck <thesven73@gmail.com>, 
+	Geert Stappers <stappers@stappers.nl>, Andrew Lunn <andrew@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 03, 2024 at 08:42:42PM +0200, John Paul Adrian Glaubitz wrote:
-> Hi Arnd,
-> 
-> On Wed, 2024-07-03 at 20:34 +0200, Arnd Bergmann wrote:
-> > Rich and Adrian, let me know if you would submit a
-> > tested backport stable@vger.kernel.org yourself, if you
-> > want help backporting my patch, or if we should just
-> > leave the existing state in the LTS kernels.
-> 
-> I think it's safe to keep the existing state in the old LTS kernels
-> as most SH users will be on the latest kernel anyway.
+On Mon, Jun 17, 2024 at 6:04=E2=80=AFPM Christian Schrefl
+<chrisi.schrefl@gmail.com> wrote:
+>
+> This commit allows building ARMv7 kernels with Rust support.
+>
+> The rust core library expects some __eabi_... functions
+> that are not implemented in the kernel.
+> Those functions are some float operations and __aeabi_uldivmod.
+> For now those are implemented with define_panicking_intrinsics!.
+>
+> This is based on the code by Sven Van Asbroeck from the original
+> rust branch and inspired by the AArch64 version by Jamie Cunliffe.
+>
+> I have tested the rust samples and a custom simple MMIO module
+> on hardware (De1SoC FPGA + Arm A9 CPU).
+>
+> This only includes support for ARMv7, but supporting other
+> sub-architectures in the future should be as simple as setting
+> the correct rustc target.
+>
+> Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
 
-Thanks, I'll drop it from these older kernels now.
+With the clarification from Ard, I give:
 
-greg k-h
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
