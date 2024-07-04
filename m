@@ -1,130 +1,163 @@
-Return-Path: <linux-kernel+bounces-241620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7344B927D32
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A8E927D33
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D15A1F2475E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:36:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8971F21322
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C890F135A69;
-	Thu,  4 Jul 2024 18:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1070073443;
+	Thu,  4 Jul 2024 18:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwkC4aqR"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="N2/U+gj2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1141945979;
-	Thu,  4 Jul 2024 18:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23EF7344C
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720118147; cv=none; b=uE80qbm7GuSyETiXp0Mkt2XKlCPs+qHkmEv7zoxFeyOOcWIxse8iOMHy2wuilG18t1TgtZhQnfosAucZ6tGsIZa976gBgyQV/HZiDu53pXmXiyh3j7None9Eb/vNU490Bsxm1IujiggvUQ4hRcJ9NCsD5oIEBBiK5X90p+jptMA=
+	t=1720118179; cv=none; b=BKa98SbT0JemNseGzTJCiwUPAHuCvlIy6wrfD/Zbzm+oGV+6LEGUM+nnovqQPXpzgVaO3DNCTHcTpmUL9DkjNElom94kKGvriangIMEqPOGblZGTji0n8QFQ6M/Wh85xFGv8lbY8To1FzRu+piLWsQN4y/td7oT2SRlIg+JNFiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720118147; c=relaxed/simple;
-	bh=rCWEKZiJpFDMpQmRBe2oHF+Q4L1xuCzmJqFKI9sBbBU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=H70Bqu1PirnJYdsx0vGna+hr0qUq2XD9y6q0kuexQYsNvFibmhgZopONGzT1vx4mYF4LSV9MQpvpthJAe3WvbWdPND37C9ibVF//dc/yhtTIyqEftxIBRZUIbIh4uE8KLCq7W7MzYSql310vWGQuOefmG6nK0eWyeNoKuJRXVP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwkC4aqR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBE4C32781;
-	Thu,  4 Jul 2024 18:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720118145;
-	bh=rCWEKZiJpFDMpQmRBe2oHF+Q4L1xuCzmJqFKI9sBbBU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=XwkC4aqRrEk7dbyVe7FPkDuvLWRj1jidNP+euuAbzP9JjJzLszTewqZzPa+o+jBjC
-	 FfFm5HKXGJqAADRL6npfN59JBc96M4knjbEw55jvee+lnAx4pced+gtLG/Id8VWOlX
-	 UQaKQ5if+3ZNZlp6hHhpWOkCK8IUesi7Y+7OLE0lk5WaxQg3EGu/fmJaNrpwGR5QFa
-	 TiIMvvL5uQCyFdh6L8HSwLkmE8hrqsRtVIJiouy9JLLCww5LkHFuXxaL0ZNkP965RM
-	 mu/JfdeUKlnfOmLtHEJjNcf0T0eHBjGtDD9EamZCPEDDyP3EtBv9EaBAWPirYx85z0
-	 kOEspMLmVOnEA==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>, 
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Herve Codina <herve.codina@bootlin.com>
-Cc: alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-In-Reply-To: <20240701113038.55144-1-herve.codina@bootlin.com>
-References: <20240701113038.55144-1-herve.codina@bootlin.com>
-Subject: Re: [PATCH v2 00/10] Add support for non-interleaved mode in
- qmc_audio
-Message-Id: <172011814156.108577.6835000954041673379.b4-ty@kernel.org>
-Date: Thu, 04 Jul 2024 19:35:41 +0100
+	s=arc-20240116; t=1720118179; c=relaxed/simple;
+	bh=OuiuIk/uej5hD6ctUQ0sHEHyXJx0Mi7ACNO0r9tkxOk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E64r26kqJOZmmGplbRYwPRX68kmPPLKukcabA3s8DIrjOi9QqAnHtgyx1efwSLC2e2RWSfDbrIf2LppRVNlVeCTjyu4UT3hbko4G3rahAFd/ZKLLTqpqGU+i7XHq2/C/KN4YN6YsdjPbWFzNhr20vAmFoKjrLIHyjJzM2EPJLZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=N2/U+gj2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FAECC4AF0A
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:36:18 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="N2/U+gj2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1720118175;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OuiuIk/uej5hD6ctUQ0sHEHyXJx0Mi7ACNO0r9tkxOk=;
+	b=N2/U+gj2TgBpNkbDSsuYiRPakmOJQVFz4V/8W2qFGxPSJmki1NXuWKGEhhDB5tPmbDmi9z
+	mnz+lih34tSNwPOdcwV0/UKUJZm8I2cxCxBTG2DzvgZNo7eFYKLhWOCygf547EBQoJIZCc
+	uFeugMNMZ9Mi63V0TB+srLPgCMlAL1E=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9e5391b0 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO)
+	for <linux-kernel@vger.kernel.org>;
+	Thu, 4 Jul 2024 18:36:15 +0000 (UTC)
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-700cc366e0dso428901a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 11:36:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUPtpeSsyUTLFjHus0izsm0TB6lQEYUvvJpMX4HzUMMdmuyXozkmWXSUqg0CWV2XwLIBxyvcKcXD9plfGYRQfKLXwDAeF04B/JFmub0
+X-Gm-Message-State: AOJu0YzHryB77q0/pg8kd5DorDMRHJeKz2VE3OWIlKFcvdJkAYIjyz/E
+	FoSbuutaxkxbALOazBd8wUuiPdRtgP4qA/jqdcS2yq9SKSMptu+VHb1xAg7s9WZHxoXzbbQyMkN
+	q4IwklbsuT2HeS9GAy5h/yDM0WDs=
+X-Google-Smtp-Source: AGHT+IFbtFgg7L97e+n0cgFnXAuyoEI+bq0oAKVrVHmyzTuWovsSVjMbELnp+2Vlb/gNNeCcr/92vXFzi98cshdt1Zk=
+X-Received: by 2002:a05:6870:d624:b0:24c:b0bd:7eb8 with SMTP id
+ 586e51a60fabf-25e2b8dd7c9mr2373124fac.6.1720118174065; Thu, 04 Jul 2024
+ 11:36:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+References: <ZobXdDCYBi8OM-Fo@zx2c4.com> <CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
+ <Zobf3fZOuvOJOGPN@zx2c4.com> <CAHk-=whf2Pb8fSmUsLRSn6CnYvQoyUkLikKpFDWN_xnTJqix=A@mail.gmail.com>
+ <CAHmME9pm+ZE2_qf1DNxukB6ufPrjTAsnwin05-VX_gS03Yq-ag@mail.gmail.com> <CAHk-=whTjdO6szgRKp51ZeDLDmA1+YYSbg+vEUt9OsxTMDUtjQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whTjdO6szgRKp51ZeDLDmA1+YYSbg+vEUt9OsxTMDUtjQ@mail.gmail.com>
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Thu, 4 Jul 2024 20:36:02 +0200
+X-Gmail-Original-Message-ID: <CAHmME9qwrGUCC35Z7rNrqDANJN2Zr7q-T24=8od0cy7O3xi4Dw@mail.gmail.com>
+Message-ID: <CAHmME9qwrGUCC35Z7rNrqDANJN2Zr7q-T24=8od0cy7O3xi4Dw@mail.gmail.com>
+Subject: Re: deconflicting new syscall numbers for 6.11
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: jolsa@kernel.org, mhiramat@kernel.org, cgzones@googlemail.com, 
+	brauner@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 01 Jul 2024 13:30:27 +0200, Herve Codina wrote:
-> The qmc_audio driver supports only audio in interleaved mode.
-> Non-interleaved mode can be easily supported using several QMC channel
-> per DAI. In that case, data related to ch0 are sent to (received from)
-> the first QMC channel, data related to ch1 use the next QMC channel and
-> so on up to the last channel.
-> 
-> In terms of constraints and settings, the interleaved and
-> non-interleaved modes are slightly different.
-> 
-> [...]
+Hi Linus,
 
-Applied to
+On Thu, Jul 4, 2024 at 8:18=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> > What do you want me to do here?
+>
+> You literally said "those users exist".
+>
+> Make them pipe up.
+>
+> Make them explain why what they don't have now doesn't work. What this
+> solves. In real terms.
+>
+> Make them explain why that random "we duplicated the VM, and now we
+> worry that mixing in TSC doesn't help" is an actual real-world
+> concern, rather than something COMPLETELY MADE UP BY RANDOM NUMBER
+> PEOPLE.
+>
+> See what my argument is? My argument is literally that theoretical
+> random number people will make up arguments that aren't actually
+> relevant in real life.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+No, I don't think this is made up by random number nutsos. I believe
+this is a real actual concern.
 
-Thanks!
+> Do real people migrate VMs? Hell yes they do. Do they care about the
+> numbers being magically "stale" after said migration? I seriously
+> doubt that.
 
-[01/10] ASoC: fsl: fsl_qmc_audio: Check devm_kasprintf() returned value
-        commit: e62599902327d27687693f6e5253a5d56583db58
-[02/10] ASoC: fsl: fsl_qmc_audio: Fix issues detected by checkpatch
-        commit: 86dd725b57a88869acfe15b0405937450d0aef30
-[03/10] ASoC: fsl: fsl_qmc_audio: Split channel buffer and PCM pointer handling
-        commit: 42212b2ce8b1182d536452eee2880d2de7cce059
-[04/10] ASoC: fsl: fsl_qmc_audio: Identify the QMC channel involved in completion routines
-        commit: 5e51a1f9dfd90de6e44cfb5340d48263f9e8f8d8
-[05/10] ASoC: fsl: fsl_qmc_audio: Introduce qmc_audio_pcm_{read,write}_submit()
-        commit: 33a6969fbc653f25d5204b17fb67d5a21e6295e6
-[06/10] ASoC: fsl: fsl_qmc_audio: Introduce qmc_dai_constraints_interleaved()
-        commit: b81cfa66435bdab896b4c24e11d24ec33bdb0601
-[07/10] soc: fsl: cpm1: qmc: Introduce functions to get a channel from a phandle list
-        commit: 37797c605da33445adc112561695f70bfaa11133
-[08/10] soc: fsl: cpm1: qmc: Introduce qmc_chan_count_phandles()
-        commit: af8432b2e41abc0a20bdc01a3b144ea7b2f1ee09
-[09/10] dt-bindings: sound: fsl,qmc-audio: Add support for multiple QMC channels per DAI
-        commit: fb6013168fa94d5863ed6085b24eaeb89102ad74
-[10/10] ASoC: fsl: fsl_qmc_audio: Add support for non-interleaved mode.
-        commit: 188d9cae54388171d28bd632a2561863db4b9f8b
+Yes! They do!
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+>
+> Do real people start multiple VMs from one single starting image?
+> Again, hell yes they do.
+>
+> But do they start those multiple VMs from some random slapdash
+> snapshot that they just picked without any concern and cannot just
+> reseed in user space? And if they do, why should *WE* clean up after
+> their mindbogglingly stupid setup?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Except userspace isn't really in a great position to do that. There's
+no need to suggest that people proliferate these foot guns either.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> See what my argument is? I suspect _strongly_ that this is all
+> completely over-engineered based on theoretical grounds that aren't
+> actually practical grounds.
+>
+> And dammit, I'm asking for the practical grounds. For the actual users.
+>
+> And if you have trouble finding those, you just proved my point.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+And I think what you're missing here is that these concerns come _from
+actual users_. This *isn't* theoretical.
 
-Thanks,
-Mark
+Look, I am not some "random number" nut job. I've worked very hard to
+move the kernel's RNG far outside the realm of that world. And I'm not
+looking for things to do or code to write or ways to occupy my time,
+just 'cuz. I'm working on this because there's a real, tangible, need
+for it. This has come out of countless recurring discussions with
+folks at conferences and elsewhere. I am very much part of the world
+where people are writing code that makes use of getrandom(), or would
+like to make use of getrandom() but can't, and this pickle comes up
+repeatedly. "Oh but we can't because of syscall speed, so we've got
+this userspace thing, but it's not optimal, so we're just kind of
+hoping for the best, but yea one of these days somebody should do
+something..."
 
+It's okay that people aren't having those discussions with you. That's
+why I'm maintaining this thing and talking to folks and caring about
+it and thinking carefully about it. And because people are having
+these conversations with me, that's *also* why I am very sensitive to,
+"is this guy a random number nut?" concerns, because lord I've met a
+lot of them and they all have their little hang up. I don't want to
+add code "just because we can." But I think this here will solve a
+very real problem for very real users, and everytime the fact that I'm
+working on this comes up, there are real people with real concerns who
+are glad to hear it's coming finally.
+
+Alternatively, you can say, "well until they talk to me directly, no
+way jos=C3=A9", and that'd be your prerogative, I guess. But that'd be
+pretty darn disappointing.
+
+Jason
 
