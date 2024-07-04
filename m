@@ -1,112 +1,129 @@
-Return-Path: <linux-kernel+bounces-240999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9C1927586
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:54:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35B692757A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF4861C2130B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:54:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA0F1F23208
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D020A1AD9D1;
-	Thu,  4 Jul 2024 11:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DA61AD9D0;
+	Thu,  4 Jul 2024 11:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="hoGDsGFh"
-Received: from smtpcmd02101.aruba.it (smtpcmd02101.aruba.it [62.149.158.101])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eSn9hP53"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145B01AD9EA
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 11:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.158.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDFB1AD9C0;
+	Thu,  4 Jul 2024 11:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720094027; cv=none; b=ifLIZ4PAdi5dKLsIjeUvYMXAzOWK0n/LQ5M05TcOC0UC+BoSJK96SVhfEQxi0y/NQtF1uXvHjyui2RWr8gI3go3qzsn4l0qOx5t+x41psn8nM9cHMbRYCRA2V+FJBdNE55vOy5SH128zT6ERFBcoI/3IZXWVXCdzsikR/r+NTcw=
+	t=1720093847; cv=none; b=apBMSNdHvccUXAfUS62cHJ88trytC1ywQDzxB83GZxNfgA/r1e1oeKW7jeL0rFSsE6yKIqubv0xHLJ8TRg0BVxcbgBV/0rzGgfLexVF1r4hIO8E9ZrtGruoysBpEy0YiOjWfx1zSteNPwGl/Ob2BcvL4PxWrH9rzucDjlux86qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720094027; c=relaxed/simple;
-	bh=eh3FLln4NGZyYClFo0FJIgNTWuxuqbiWfuDw4ps0rWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ugx9KDENGw3Y0QiHGDwdpzN+GsbnTLYKSroVGuQ+o0QGjWPzb54ZX9v9ywKXK6ND79HPiqo3Wa7dRVwgzKKWprve8B5Kl2TnXAJ8q9mqpKl/UBW5FjlLfVz1I2mDinwhUkfWHFgaDCuvuCrxkt8vW/FhTghsNkjE6icZdKBmeuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=hoGDsGFh; arc=none smtp.client-ip=62.149.158.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from [192.168.1.58] ([79.0.204.227])
-	by Aruba Outgoing Smtp  with ESMTPSA
-	id PKyvsCu1uzLFGPKywsI88b; Thu, 04 Jul 2024 13:50:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1720093835; bh=eh3FLln4NGZyYClFo0FJIgNTWuxuqbiWfuDw4ps0rWg=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=hoGDsGFhmHUnjCZVVQ4ey0YbRuqbgT5Iy9BO20KyhXNUGkSvycaUolXCiQL13Qn0p
-	 HZu9/WfZV2qe9xdHKdL5gQlxCuL9eQkM1EvGbGm5lWZ2zhGAnkJMWviFNrGz67Gy1Y
-	 lW3fIER5mPx8FeU87WtfecOFDEQZuz9lxjTTJUXx1vd6NVVG470lLeBiMqiuj2HSBl
-	 ImpA5Le7xW4KijH4UDh361wGdy7lIPKtectL/rB0vX2/Yrft5LF82bLgI3Xj4UdCr5
-	 MQuyb4Rk/bjASnI+NG6eg2XVvN5JpATw4ueWhvTRlzdtLWunOzSbd6nsMJymgJvB+l
-	 sIaO5M1YWhcQA==
-Message-ID: <d463bd28-9890-47a5-97cc-14f96db2db22@enneenne.com>
-Date: Thu, 4 Jul 2024 13:50:33 +0200
+	s=arc-20240116; t=1720093847; c=relaxed/simple;
+	bh=r32OYyafeioYlL/gWWhzHmJjQ3BGcDLQ9nYLWcuZLM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SlSNqUmFfeGp81pKAt6mfon892ezCKc1p2bjwCoTLi1PWKiUcYao9wLvC5o4Cb+/So4ByjBMmhBlB8ZB6cI0+wMBkRxgcwXv7UBUcErAJm1mIyfg//Vr//o03b+PVrQo5sUvjyiM1l1ZOb9feI8AlA/4z1MAsBBBi74cAOz8u54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eSn9hP53; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57BEEC3277B;
+	Thu,  4 Jul 2024 11:50:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720093846;
+	bh=r32OYyafeioYlL/gWWhzHmJjQ3BGcDLQ9nYLWcuZLM8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eSn9hP53yxT2sMm3nTyHnW19q20XewBwbtlnHWYJCCbDLnWG4EA41M38M+Hz39jqe
+	 xH1kM1Zg3uwTxJogL2MqJxxCr5ZzJLw8gi0dtKtvo9aWmzLF+BkkdIZj0zW9SjvBnk
+	 94+gMj0UeeExbL7udPSdHWYAMyDdEo6wM0M6yzPE=
+Date: Thu, 4 Jul 2024 13:50:43 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Akshay Gupta <akshay.gupta@amd.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux@roeck-us.net, arnd@arndb.de, naveenkrishna.chatradhi@amd.com
+Subject: Re: [PATCH 2/6] misc: sbrmi: Add platform device add to create
+ platform device
+Message-ID: <2024070447-cosigner-shanty-fbbd@gregkh>
+References: <20240704111624.1583460-1-akshay.gupta@amd.com>
+ <20240704111624.1583460-3-akshay.gupta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 0/3] Add support for Intel PPS Generator
-To: "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "corbet@lwn.net"
- <corbet@lwn.net>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- "Dong, Eddie" <eddie.dong@intel.com>,
- "Hall, Christopher S" <christopher.s.hall@intel.com>,
- "N, Pandith" <pandith.n@intel.com>,
- "Mohan, Subramanian" <subramanian.mohan@intel.com>,
- "T R, Thejesh Reddy" <thejesh.reddy.t.r@intel.com>
-References: <20240612035359.7307-1-lakshmi.sowjanya.d@intel.com>
- <CY8PR11MB736490B761DBA045513AF078C4DD2@CY8PR11MB7364.namprd11.prod.outlook.com>
-From: Rodolfo Giometti <giometti@enneenne.com>
-Content-Language: en-US
-In-Reply-To: <CY8PR11MB736490B761DBA045513AF078C4DD2@CY8PR11MB7364.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfNw/GJG7NfJC3Orqnad1dvoxIQzjrwIsk9VE1qjl4UZ6wvBCu58y/F8Nbs5D+MPrkMatUItes1REacCg2kySN7vU964GrQFRf3Ds4oacAddn8dR0WU6Z
- 0TnrNrrza3FR0uz32kaQNHyphkyH5zmlPOwgTvFu1tQx22eo9PDgAk9vA1hzYkJ0APOT9XQaWsrxQRrl2nn/qJp9+dRAI+beGoxGm6MJqxm4TZ5dX7pWUUI7
- 7wCBMT+nmp3ukJaJL7OO/CIfLldVjc0U0uPovhMzNqX5hmKrboz/eL+JP2GtMvTNHJiuTF8Ni9pbW57BXqxrwD/Vs3GxTt5QdjJrqqSocnvP9xAqF71s/9BF
- QrUfDFeyFYunT90v19etPsbPEenieKRZZkol1W8wZeJGnZcuCDqS/8amUwQiLWBvmXNlus0SsMDsKXc+pP4L2MzHGPqzanqrdfkRAaWLa/6TROAd6Y2mawcq
- vTzvMr2ybY6iVRw5PIGQEwcJNhsFPv60HNuMEEiptyAk/zY3GBb8tLd+epgkHqGuDFGoTXlu19NTFeWhPESK/EvfRJDdZw931BhkjJ9xRmc2p/+mgqlcfI3c
- 5Vfjhgsd8NNSH2mwVT1B7ZOH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704111624.1583460-3-akshay.gupta@amd.com>
 
-On 03/07/24 16:47, D, Lakshmi Sowjanya wrote:
+On Thu, Jul 04, 2024 at 11:16:20AM +0000, Akshay Gupta wrote:
+> - AMD provides socket power information from out of band
+>   which can be read by sensors.
+> - platform driver will probe drivers/hwmon/sbrmi as a platform device
+>   and share the sbrmi device data.
 
-[sbip]
+So you are "splitting" a real device into different ones using a
+platform device?  THat's not ok, and an abuse of the platform api.
+Please use the correct one for that instead.
 
->> Subject: [PATCH v10 0/3] Add support for Intel PPS Generator
->>
->> From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
->>
->> The goal of the PPS (Pulse Per Second) hardware/software is to generate a
->> signal from the system on a wire so that some third-party hardware can observe
->> that signal and judge how close the system's time is to another system or piece
->> of hardware.
 
-[snip]
-
-> Hi,
 > 
-> A gentle reminder for the review of the pps patchset.
+> Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
+> Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
+> ---
+>  drivers/misc/amd-sb/sbrmi-i2c.c | 25 ++++++++++++++++++++++++-
+>  include/misc/amd-sb.h           |  2 ++
+>  2 files changed, 26 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/misc/amd-sb/sbrmi-i2c.c b/drivers/misc/amd-sb/sbrmi-i2c.c
+> index c4903d9e9f0f..b593bbdd78e0 100644
+> --- a/drivers/misc/amd-sb/sbrmi-i2c.c
+> +++ b/drivers/misc/amd-sb/sbrmi-i2c.c
+> @@ -72,7 +72,29 @@ static int sbrmi_i2c_probe(struct i2c_client *client)
+>  		return ret;
+>  
+>  	/* Cache maximum power limit */
+> -	return sbrmi_get_max_pwr_limit(data);
+> +	ret = sbrmi_get_max_pwr_limit(data);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	dev_set_drvdata(dev, (void *)data);
 
-I already acked these patchset, didn't I? =8-o
+No need to cast, right?
 
-Please let me know if I missed something.
+> +	data->pdev = platform_device_register_data(dev, "sbrmi-hwmon",
+> +						   PLATFORM_DEVID_NONE,
 
-Rodolfo
+Yeah, that's not ok.  Please do this correctly, as this is NOT a
+platform device, but rather a made-up one that you just created out of
+no where.  Instead use the correct apis for that.
 
--- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
+> +						   data,
+> +						   sizeof(struct sbrmi_data));
+> +	if (IS_ERR(data->pdev)) {
+> +		pr_err("unable to register platform device for sbrmi-hwmon\n");
+> +		return PTR_ERR(data->pdev);
 
+You don't need to unwind anything else here?
+
+
+
+> +	}
+> +	return ret;
+> +}
+> +
+> +static void sbrmi_i2c_remove(struct i2c_client *client)
+> +{
+> +	struct sbrmi_data *data = dev_get_drvdata(&client->dev);
+> +
+> +	if (!data)
+> +		return;
+
+How can that happen?
+
+thanks,
+
+greg k-h
 
