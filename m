@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-240909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247FA927474
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:57:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65CB927479
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B32281CC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:57:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 707E91F253B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416271AC22C;
-	Thu,  4 Jul 2024 10:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742E41AC231;
+	Thu,  4 Jul 2024 10:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzEeOL+y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZNtqPDO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB98191F8F;
-	Thu,  4 Jul 2024 10:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25111A0B10;
+	Thu,  4 Jul 2024 10:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720090668; cv=none; b=ZUW1m9u1BrCCOXw3fNDx6lWsTZIvhCG14bh7WtXj19vDDPq2CzqbX8p6FJHC8bnk8/LCTWGk6eMYoN36lCRVoG8gM+lNFyAY6ks3nT6rH8EVwEkqYKFyoZD1lVeDQn4nvL2QZ8T9pYoOUzDfoBh7DB6KEE4ZMhNS7NXsN/rOfqY=
+	t=1720090716; cv=none; b=OWGu++xlkOd5XBwAOa7nOYtfUNyU4bOZh14EySXjv2mOt5ZVed6mTsFhYNA/Da0ap+PeJhZ7Bnzjzi/9eroBA/N1AjHb5JDaCLrjWs8MmuaHx7k6UECp7VlbAwc8Kcr9IUFBuRzzBsmn4DInfh0WtBuQFDqIxRmZX5DirzD8zAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720090668; c=relaxed/simple;
-	bh=V+KXgBsdWqqQhukSQm9HVIb7N1iIDvx2Pq5wFVvJehc=;
+	s=arc-20240116; t=1720090716; c=relaxed/simple;
+	bh=UsqL1co0Nmofqg6XqjX4A1LcsAwMo52FaNV5SWxicbk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FRuMyP/jKSvKZ+RbK3uWT9xLle94pxxbLeZEA1xypvwBiif43/cVxik2cr0xHmknOXEl+NEdnJGQ9mLfM0NuRivbQjam8gr7VRoh1EQP0SO7a3vlXEGmveLmtoxdipyXEaDNVgFjAJVMNymITjx3jkA9AQwKmOAxoj9ZBv+krT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzEeOL+y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B91F3C3277B;
-	Thu,  4 Jul 2024 10:57:38 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=lEW3IxVkRoBvOPQk9KNXwi2c/8jJLJ6W+dzilQf9In4dEI7kMxcw6lrt89kFVizSXRqMKLEBc/Yjv7X2/E+TVnCnJn8+InAIFl+sm+gMNy6evxdgiTRSj5VNGWGl2ibNu912i3TYsJxEp0fhM7K13rI4F4FyGX3nGE2J6x/+jvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZNtqPDO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBEE7C3277B;
+	Thu,  4 Jul 2024 10:58:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720090668;
-	bh=V+KXgBsdWqqQhukSQm9HVIb7N1iIDvx2Pq5wFVvJehc=;
+	s=k20201202; t=1720090716;
+	bh=UsqL1co0Nmofqg6XqjX4A1LcsAwMo52FaNV5SWxicbk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lzEeOL+yPLEs0bGyrbd0GAzjxXb0c1N+FUB1VEp3X/qGeQqC84RuSyq1ZQG7jZODt
-	 CLdovOSEGbKIiyZ6EKpp4cS/CCV5vVIUkI2pXC5pKPGvhSywzR/oxQfuiLDY441gmh
-	 VA5Oog6Nh5I+zrj2WCgJdozyNteE7S/01MrvhFID2yrt2xErHcQ4wuSdz1JLl7LOfn
-	 TSTxl0O7UH+U2nsblLAjeb1Z92ANmkjr9+p7RW9Jm5rPI5xBHurBJ10MH8fkND7Lu5
-	 +bu4ZWwx8Fhf5TAB4C7lN1JYrxrJA6gV/HABStOau1Yb3LjEgfsoC45Oz4IQSoy5xN
-	 wiCeraEQ4YHxg==
-Message-ID: <9ef5a1ba-e404-46e0-8513-5fffbfb5618b@kernel.org>
-Date: Thu, 4 Jul 2024 12:57:36 +0200
+	b=HZNtqPDOaRQnaE/UAj5YRJMbHvmhflAk0CybgKUv7XiP8DbdRSOQwBf+g5vkAztH0
+	 kdWnZD6S49mOsnnK50qHNV4YcI307gVUgEhoTMSMTssyU1Olxh6G0cv7DQ76aHv75B
+	 /wyk0DwJXyYlTH5uZsZs5yDGWuV4xeu1Wg9SFXp5hYg4BNQtT6ot+bQoZPwXyU8N9E
+	 YuPEqAGtx/lLIVK2v22sAGWjJt0RWRjrKC/MgL729eAAw34v4zbQprWnXXFtihaRWb
+	 zWwBKRWoJiS/2zgGP9jeFUnzqsy6/2yyeSHJKWUWEZoJQ46SZDLOWxNdKtrL3xoB7R
+	 NtGbphcCO2XEA==
+Message-ID: <857b9398-a19b-4f6d-8a73-647f6aa8eeb3@kernel.org>
+Date: Thu, 4 Jul 2024 12:58:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] drm/bridge: add Microchip DSI controller support for
- sam9x7 SoC series
-To: Manikandan Muralidharan <manikandan.m@microchip.com>,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux@armlinux.org.uk, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, arnd@arndb.de,
- Jason@zx2c4.com, palmer@rivosinc.com, mpe@ellerman.id.au,
- rdunlap@infradead.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Hari.PrasathGE@microchip.com
-References: <20240704084837.168075-1-manikandan.m@microchip.com>
- <20240704084837.168075-3-manikandan.m@microchip.com>
+Subject: Re: [PATCH v6 3/3] dt-bindings: input: Update dtbinding for adp5588
+To: utsav.agarwal@analog.com, Michael Hennerich
+ <michael.hennerich@analog.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Arturs Artamonovs <arturs.artamonovs@analog.com>,
+ Vasileios Bimpikas <vasileios.bimpikas@analog.com>,
+ Oliver Gaskell <oliver.gaskell@analog.com>
+References: <20240704-adp5588_gpio_support-v6-0-cb65514d714b@analog.com>
+ <20240704-adp5588_gpio_support-v6-3-cb65514d714b@analog.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -111,191 +107,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240704084837.168075-3-manikandan.m@microchip.com>
+In-Reply-To: <20240704-adp5588_gpio_support-v6-3-cb65514d714b@analog.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/07/2024 10:48, Manikandan Muralidharan wrote:
-> Add the Microchip's DSI controller wrapper driver that uses
-> the Synopsys DesignWare MIPI DSI host controller bridge.
-> 
-> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-> ---
-
-
-...
-
+On 04/07/2024 12:45, Utsav Agarwal via B4 Relay wrote:
 > +
-> +#define HSTT(_maxfreq, _c_lp2hs, _c_hs2lp, _d_lp2hs, _d_hs2lp)	\
-> +{					\
-> +	.maxfreq = _maxfreq,		\
-> +	.timing = {			\
-> +		.clk_lp2hs = _c_lp2hs,	\
-> +		.clk_hs2lp = _c_hs2lp,	\
-> +		.data_lp2hs = _d_lp2hs,	\
-> +		.data_hs2lp = _d_hs2lp,	\
-> +	}				\
-> +}
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/input/input.h>
+> +    #include <dt-bindings/gpio/gpio.h>
 > +
-> +struct hstt hstt_table[] = {
-
-So more globals? No.
-
-> +	HSTT(90,  32, 20,  26, 13),
-> +	HSTT(100,  35, 23,  28, 14),
-> +	HSTT(110,  32, 22,  26, 13),
-> +	HSTT(130,  31, 20,  27, 13),
-> +	HSTT(140,  33, 22,  26, 14),
-> +	HSTT(150,  33, 21,  26, 14),
-> +	HSTT(170,  32, 20,  27, 13),
-> +	HSTT(180,  36, 23,  30, 15),
-> +	HSTT(200,  40, 22,  33, 15),
-> +	HSTT(220,  40, 22,  33, 15),
-> +	HSTT(240,  44, 24,  36, 16),
-> +	HSTT(250,  48, 24,  38, 17),
-> +	HSTT(270,  48, 24,  38, 17),
-> +	HSTT(300,  50, 27,  41, 18),
-> +	HSTT(330,  56, 28,  45, 18),
-> +	HSTT(360,  59, 28,  48, 19),
-> +	HSTT(400,  61, 30,  50, 20),
-> +	HSTT(450,  67, 31,  55, 21),
-> +	HSTT(500,  73, 31,  59, 22),
-> +	HSTT(550,  79, 36,  63, 24),
-> +	HSTT(600,  83, 37,  68, 25),
-> +	HSTT(650,  90, 38,  73, 27),
-> +	HSTT(700,  95, 40,  77, 28),
-> +	HSTT(750, 102, 40,  84, 28),
-> +	HSTT(800, 106, 42,  87, 30),
-> +	HSTT(850, 113, 44,  93, 31),
-> +	HSTT(900, 118, 47,  98, 32),
-> +	HSTT(950, 124, 47, 102, 34),
-> +	HSTT(1000, 130, 49, 107, 35),
-> +};
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +        gpio@34 {
+> +            compatible = "adi,adp5588";
+> +            reg = <0x34>;
 > +
+> +            #gpio-cells = <2>;
+> +            gpio-controller;
+> +            };
 
-...
-
-> +
-> +static void dw_mipi_dsi_mchp_power_on(void *priv_data)
-> +{
-> +	struct dw_mipi_dsi_mchp *dsi = priv_data;
-> +
-> +	/* Enable the DSI wrapper */
-> +	dsi_write(dsi, DSI_PWR_UP, HOST_PWRUP);
-> +}
-> +
-> +static void dw_mipi_dsi_mchp_power_off(void *priv_data)
-> +{
-> +	struct dw_mipi_dsi_mchp *dsi = priv_data;
-> +
-> +	/* Disable the DSI wrapper */
-> +	dsi_write(dsi, DSI_PWR_UP, HOST_RESET);
-> +}
-> +
-> +struct dw_mipi_dsi_phy_ops dw_mipi_dsi_mchp_phy_ops = {
-
-Why this is not static?
-
-Why this is not const?
-
-> +	.init = dw_mipi_dsi_mchp_init,
-> +	.power_on = dw_mipi_dsi_mchp_power_on,
-> +	.power_off = dw_mipi_dsi_mchp_power_off,
-> +	.get_lane_mbps = dw_mipi_dsi_mchp_get_lane_mbps,
-> +	.get_timing = dw_mipi_dsi_mchp_get_timing,
-> +};
-> +
-> +static int dw_mipi_dsi_mchp_probe(struct platform_device *pdev)
-> +{
-> +	struct dw_mipi_dsi_mchp *dsi;
-> +	struct resource *res;
-> +	struct regmap *sfr;
-> +	const struct dw_mipi_dsi_mchp_chip_data *cdata;
-> +	int ret;
-> +
-> +	dsi = devm_kzalloc(&pdev->dev, sizeof(*dsi), GFP_KERNEL);
-> +	if (!dsi)
-> +		return -ENOMEM;
-> +
-> +	dsi->dev = &pdev->dev;
-> +	cdata = of_device_get_match_data(dsi->dev);
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	dsi->base = devm_ioremap_resource(&pdev->dev, res);
-
-There is a helper for these two.
-
-> +	if (IS_ERR(dsi->base)) {
-> +		ret = PTR_ERR(dsi->base);
-> +		dev_err(dsi->dev, "Unable to get DSI Base address: %d\n", ret);
-
-return dev_err_probe
-
-> +		return ret;
-> +	}
-> +
-> +	dsi->pclk = devm_clk_get(&pdev->dev, "pclk");
-> +	if (IS_ERR(dsi->pclk)) {
-> +		ret = PTR_ERR(dsi->pclk);
-> +		dev_err(dsi->dev, "Unable to get pclk: %d\n", ret);
-
-return dev_err_probe
-
-You are upstreaming some old code, aren't you?
-
-> +		return ret;
-> +	}
-> +
-> +	dsi->pllref_clk = devm_clk_get(&pdev->dev, "refclk");
-> +	if (IS_ERR(dsi->pllref_clk)) {
-> +		ret = PTR_ERR(dsi->pllref_clk);
-> +		dev_err(dsi->dev, "Unable to get DSI PHY PLL reference clock: %d\n",
-
-return dev_err_probe
-
-
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	clk_set_rate(dsi->pllref_clk, DSI_PLL_REF_CLK);
-> +	if (clk_get_rate(dsi->pllref_clk) != DSI_PLL_REF_CLK) {
-> +		dev_err(dsi->dev, "Failed to set DSI PHY PLL reference clock\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = clk_prepare_enable(dsi->pllref_clk);
-
-Enable clock later, so your error paths will be simpler.
-
-> +	if (ret) {
-> +		dev_err(dsi->dev, "Failed to enable DSI PHY PLL reference clock: %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	sfr = syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "microchip,sfr");
-> +	if (IS_ERR_OR_NULL(sfr)) {
-
-NULL? Can it be NULL?
-
-> +		ret = PTR_ERR(sfr);
-> +		dev_err(dsi->dev, "Failed to get handle on Special Function Register: %d\n",
-> +			ret);
-
-ret = dev_err_probe
-
-> +		goto err_dsi_probe;
-> +	}
-> +	/* Select DSI in SFR's ISS Configuration Register */
-> +	ret = regmap_write(sfr, SFR_ISS_CFG, ISS_CFG_DSI_MODE);
-> +	if (ret) {
-> +		dev_err(dsi->dev, "Failed to enable DSI in SFR ISS configuration register: %d\n",
-> +			ret);
-> +		goto err_dsi_probe;
-> +	}
-
-
+Fix your indentation. It's total mess above.
 
 Best regards,
 Krzysztof
