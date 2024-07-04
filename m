@@ -1,211 +1,163 @@
-Return-Path: <linux-kernel+bounces-240433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A11E926D90
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:42:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A96A1926D95
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60496B22AC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:42:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66DB0284779
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08CE17557;
-	Thu,  4 Jul 2024 02:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6990F179BF;
+	Thu,  4 Jul 2024 02:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tfrokzVY"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2080.outbound.protection.outlook.com [40.107.93.80])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G6H6387p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E99C8CE;
-	Thu,  4 Jul 2024 02:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720060929; cv=fail; b=SzHuMD3c2Y/y4GlQA1UPcqyrFQjeliZ0B1HtvgJEmD5NQ0caIpMd4hOWKDRCl9T1+4X2Mm4bZXnQjlXUWy6CZ18wf9RFOBgXtCcYysRjNWCFuegxW8dzThdIA8SqX67W82B/gTQn8waWraCjLCCLLwIeSxy1h4YMe2BQis1TOIs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720060929; c=relaxed/simple;
-	bh=gSAnVR9xl3FM3P1C862bELMBiwcKFvcu0TBdmBklJ9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=YlFX8nqh04Jeg2i52wHy09aTmdfjZjVi3hsuGRWAt6hx2gPUMrhW1z4PR0kGLVS/jOPo1E6WjIL1FmDiUhA8507mw1zi6BvODFeWI+ZOnQh2AgF1nHzUMGbCCBlvJyhhnLJTaNg6zHqBXK9oQfQpep6/St71+jGxwU5t9QGA7xI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tfrokzVY; arc=fail smtp.client-ip=40.107.93.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FrnM0Ws0rH3zqxxmoyUmGpCqkgrqns8mO9nHY8s6aa+qWnTxeS8DMnThY58KIHCSkRNhuoqVRrwelteyqfd4C0pXqkgIXLj5JlmqXvO80KwT9vLmSPTtYQ888Pu9ZTzrpoVDKdAoi98YTWvKUe83cXsndRsW5BlhI8sGjsGLg94r1d7v4QpmqiOqXYLNZz/++qG7haeXMGrPl0V/oXT7wUaHR4IfjqqejLQKKLNp1OEyio5t6s2Gv5crIlPkip8NYJSfqPDA6pqUjQM1B8csIra7H5wLmeZwS28Yf7PVmiuznCdNmmtgt1UWrRuJB50+fuKWGOpiX/1rezwPysMkkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e/gCnbt+DKW2xz1QEIoUwhHOn+OzpH1TZNFbAjs3CYg=;
- b=kb0mKJpzE06XqzBQuUSTS2m24cPlYIvsdDOagxEzQqVw5r3s6nFJWkFIhgFocZaSmLEMKmYjPKFLYXAHDsMVYoT5IycO7YwLga2w4HcWR5N17Othm4hyGfg4bQ/Y7jbWZxRJ0Zn/qQ6LtGIz/BsxegZqtGQQd9dn5Ub9lrt/tx/aJzuMZ4nx1OBpuq/3j7gDluZiC1aaegTxh4YLzUqFJgddbFtIbVeSVqjGoNM3iiMBSrMGH08+8pHx9pKfsMbuyfiCGYxjYFFqBhyoJss4JKc9bP3a5EITqB6ZEhNJ72+3PqXMrnqv9R5amNkzpDzmP+rqSaPC7MIARgJffDcguQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e/gCnbt+DKW2xz1QEIoUwhHOn+OzpH1TZNFbAjs3CYg=;
- b=tfrokzVYUcYZCOCLqFwexKHfBw0h8/DUprUh9YtgZwGWHZXQmbqNB89NFFIVQJXoe21QHPICeMO/kWPaIUmXRNlCglpadG2E5GPcLYg1hg2C35o7k4WGaCKGOTK05TxNBR5zI31EuwVRcTEcYWOpFLhXUyDmTflJdAk+27Znr8qiUN0XPeeAqb7Ph6tdi67zIBo8cVqp3f3P1Z60MmAb4VQuPsBSHfqwx0wzv90neEoBTX14lSO1pCRbNrFMS14P7L2tms7uLdXO/AdFtC/zNrtxwzkxt27YgHF1qqgz8OuUy5vE1IXLSKDDRUpu3dluo6fFChh/qM7xv/71MGOT4g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
- by LV3PR12MB9409.namprd12.prod.outlook.com (2603:10b6:408:21d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.33; Thu, 4 Jul
- 2024 02:42:05 +0000
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::2cf4:5198:354a:cd07]) by BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::2cf4:5198:354a:cd07%6]) with mapi id 15.20.7741.017; Thu, 4 Jul 2024
- 02:42:04 +0000
-From: John Hubbard <jhubbard@nvidia.com>
-To: Shuah Khan <shuah@kernel.org>
-Cc: John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kselftest@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	llvm@lists.linux.dev,
-	John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v3] selftests/timers: remove unused irqcount variable
-Date: Wed,  3 Jul 2024 19:42:02 -0700
-Message-ID: <20240704024202.84726-1-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.45.2
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR03CA0031.namprd03.prod.outlook.com
- (2603:10b6:a02:a8::44) To BY5PR12MB4130.namprd12.prod.outlook.com
- (2603:10b6:a03:20b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2A4FC02;
+	Thu,  4 Jul 2024 02:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720061187; cv=none; b=pbGHffycHXBj0fG7t9X/60kdH+oOBCfz06ekbklSPWK3hGfIyLdP5hEON3SjgLB0Xwuw/PRmStwbh/k/D+9VYFkR11LTAuLFJ2ZSwgKGcYDbl+peT6cGESB08zH4WMrD2fc9HnxVbCEhTpG4KQZEne1TKwq5+3pomt8nX1PWTdo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720061187; c=relaxed/simple;
+	bh=t8qE3We53Na00zt5abu3IlQE7nzPjYeoyhAYo9iwov0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OStW0Gvc7jvUhCVu1NQncowwUK6wVR9e8N4ImQo9M20bdKo21hh687eJo31e00zxIwHQpt9PEy+SzR7ZiFPH9OJCODsDGSvBLyzIpMp+psdVDBZy8b7x7toM4OO6Q87f0KVaAd5Mhph9amwU8QS7KDV+e1d32C763qS3AhKpI7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G6H6387p; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720061185; x=1751597185;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t8qE3We53Na00zt5abu3IlQE7nzPjYeoyhAYo9iwov0=;
+  b=G6H6387pEM42lJSii35XR7dQGyHFMqywD4vMsl+wQR55UXt59XxlBboo
+   zlTE9hmqtt9dUYB/nEvvQiauPTs2YVO85NOguR0ZpuwrrXKGfZ7Pqu88Z
+   6FUZ1nVdh+FtrmOJPKe6ruWBokJYcecxDniXq3+WBpQz8wNn3/WNrTauc
+   Z9+RRSnc+3whTWLUMWAFr7yj7C/3rvFg+4ADWWhK2+ucvsv+IVTQt4ImQ
+   6B4axH9OI3iZVgAzrWPfqgS2+JfDi3F6cO3EyGXh2Sjqd1d7RJQTNflcP
+   SqFYeZsIEhnBcaMnpgPQWc52IxXYT2q9CZB8GEnUKB3IoRR1s+EI++4JK
+   A==;
+X-CSE-ConnectionGUID: kQSkRInBQz6aUma761caUg==
+X-CSE-MsgGUID: jXRBYofyRkesNGkuS0DBeQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="16973327"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="16973327"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 19:46:24 -0700
+X-CSE-ConnectionGUID: Gde1qrjUQNK5XjNOTOZTeg==
+X-CSE-MsgGUID: setmmUkuTcWqN3a6OUy9bA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="69650378"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 03 Jul 2024 19:46:21 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sPCUE-000QSY-0D;
+	Thu, 04 Jul 2024 02:46:18 +0000
+Date: Thu, 4 Jul 2024 10:44:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: admiyo@os.amperecomputing.com, Sudeep Holla <sudeep.holla@arm.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Robert Moore <robert.moore@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Len Brown <lenb@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH v4 1/3] mctp pcc: Check before sending MCTP PCC response
+ ACK
+Message-ID: <202407041052.926ISbwR-lkp@intel.com>
+References: <20240702225845.322234-2-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4130:EE_|LV3PR12MB9409:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4ecb0095-19c5-45b7-3901-08dc9bd2e3e3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4BXPI9X2/xNrEHAnYWRApYcCRrhhIJb0PBSG3jbJ/dWawAJizAkDHHSZx2Nz?=
- =?us-ascii?Q?7WWKbugtJFSwfNoBhfUF0vpLTVtlfSBWCCyd6XOInT3xCZ5ouZY+hYJQo/EY?=
- =?us-ascii?Q?9Mzg/ZecocMMFK1nUl9rnxNCffJBf1XoVqHiPeP8gLjpHeHQ48ae+ihfbX1x?=
- =?us-ascii?Q?o91rHB3WYpEtF8TEYX8A77ICmAip7DlLdwj5HTWhyu5SX/6ZF6c+1cL3SuSV?=
- =?us-ascii?Q?BK6rwsD3ZOi4c4eQas8wwA3n5EA5GXAH2oqNXSwCJvoiwATCVool+mkA3tiA?=
- =?us-ascii?Q?kfl8iGVQAzQX2/7cfqbH8zat9PHRgN2TGzx19pB1AvWRERAl8nWxHDTrruAr?=
- =?us-ascii?Q?97z9Fm6dyAZK01NURYmgCD2S+ug1M4iZ/Gtifaw8TLkrLLV7jhHX3YzdaFdw?=
- =?us-ascii?Q?Xv+eWnFP6BDO4uD1jnJZM/nHUECfhbew9LhioQZo4Dc6Ft9PptHt7XpjKGYQ?=
- =?us-ascii?Q?3U9OH04iNAfXFkFd5+NGL20eDCV7B09xIxC7iznhdYhVh4vXJHsAc8a9XBBl?=
- =?us-ascii?Q?puRBuIgvjjCW/uFg4H3iAIfjHud03TUxmLITCzahV+zZv3mJwDSCblfAvQV2?=
- =?us-ascii?Q?Og97nm5yDQ8L2CDmKhZdpjQ1GUsb/LE46L4Ez1CmSWFLOK01HMdsOH/KC+/P?=
- =?us-ascii?Q?uj76qhsQLHF0D+yOP3C8sWvcb/Kj/NRDd43GeHzGRMoZrg0yDLy0Y2B7HEy6?=
- =?us-ascii?Q?mynR+kkJLtPfS89H5D1Dt/GRQqQ2W7FmcK5aTaO6orQqXGr6451PqpgwWEvq?=
- =?us-ascii?Q?zwj4fR3Zrh7g2zBU8NHPrqiZnuHrG2D0LYBrmW/bu2agqKUZR+PU4FzGVeJB?=
- =?us-ascii?Q?ExsGBT689KO3VI0+uTgjH9sbFXiWQH1TZ02CeFWH3ZsWpR5GTmmcmzBJDRtU?=
- =?us-ascii?Q?cn/i7Q/jgS1qKWBMqRr++kknj4URY16lJCNkiFQkL9SF20jWvtGeW+kYc/qz?=
- =?us-ascii?Q?uAs0cR/jBvtRjUSBg+0sTJFFvN08FrdGysOFl6PVGbBVleoHwT0O+2XmvW63?=
- =?us-ascii?Q?v6iQ2Ii19LDWvVHlSKCER/3JPW82DeCI3LRtSzoQRRrEk6lrlaR0Y1IdCjTH?=
- =?us-ascii?Q?TrxGQcTnGdhbsktfmoyGkgxDsfeyQ6UnvK43jno4b797QXZdyt6sG5NROXDp?=
- =?us-ascii?Q?aLVw8eVjMOMRtcL+p64JPQizNGbJoaJWZJLENPNPjJZAt1yVzOb+5MajONid?=
- =?us-ascii?Q?KiUqR9tysyLm7z8wQLJpHMALKXcb4jU51wLcuYLbDAIwBddmvqwe4kk5KaMa?=
- =?us-ascii?Q?bl3aPCnkm3qEBiVUXruJFX9jwDE8CayleTTC8ECsXvilAu1ErZh/s6ZRT+d9?=
- =?us-ascii?Q?P61QzaalhyEoJRzE4obxgsjrQ9RpBNXb9waldgUzXl908g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UKCiFHyZt1aNUB/YAGPY2OO/zuu6606hXe0D3zVPTNCDcWjz/dSzH23dDN4c?=
- =?us-ascii?Q?bdR8e3rkRsqV9FjAk7TjddzSCaJuAvkP72XOK0KH9FOq5WdliEzTuC9HVu6c?=
- =?us-ascii?Q?rXmQOJA/qFmd4lEWYw/qngkEuYSu/8qyYC2VPD/pKfwc4PDfv2ctVJyr0K23?=
- =?us-ascii?Q?fJ77ptZdttnBR15hCxNr3DixK20jZZuFzRcrCRx+ds5n3AKzkf7+ekwxToqZ?=
- =?us-ascii?Q?iF8OVnI90J6YXONMPPx+j3Vv797mlBJJoDLBffIAwMuHpxXCP5zJFgMd9fep?=
- =?us-ascii?Q?6itw5FElWx/b4DRVTZQTxfO1jQIP1kHpOTgHxPpgfVd9jvw9cWdSYpnFvFO1?=
- =?us-ascii?Q?cNXKT7e7lOW4fHLOKbfyl1Xt1oUf4sGy6NcOIeIZTahKnpa/R0C6H86WbQYe?=
- =?us-ascii?Q?qM3hGcPYk/d3xFXm9o1rV8cm+mu4qWC6OF1nvOrtDShpWJIFFjGgvWZplmLc?=
- =?us-ascii?Q?QkLNknYhEzNI04Ht0E5tHdLEZKBmZLF4s3tMas6OiCvJBPcwQshUefWBtb2v?=
- =?us-ascii?Q?PVu8UxRVD/5f8881DUsdFAE66wHRXXf9X8vF4eanf9SbFgvSUUNgLA1tQnEZ?=
- =?us-ascii?Q?JknyHOGsjoMFtmzduVQD1u8jhVIrygKBquGN7O6fSC7FrSgw/KYqZOLAlga+?=
- =?us-ascii?Q?MtCGwMePXyvL7xao893k7fRMD2x+idsKMoQCdobOFnCFLGZrDISRgqxMLmF9?=
- =?us-ascii?Q?bYFM9gZbxwQGMOOUfZ9zJSH4/bpYR1yBJ4SLnNwMaVlrnULsFdgnX2DNipFA?=
- =?us-ascii?Q?VDBjjEa6uK5ZELunC9w4bLUImUNj6qrIPusJvu3iWcVsSw9IikX0RtVHoPeZ?=
- =?us-ascii?Q?nvGbW+ZOeOWhzMrka57bQXCbQm6eNLEsl9twxDMOCKcPd5NqMv+EosSRyWtM?=
- =?us-ascii?Q?yA2xspH5HudvvGRbZtHBaPLwH+I16ManktHD7e/vgSLFKEJHK1c7rsPYzQpj?=
- =?us-ascii?Q?B2vpbaP9tlnZDvSyhv8VTKVOo8jV7q/MRnfoQVzW3U+9DhH0AFq7yX7IsXpR?=
- =?us-ascii?Q?KVutiCowJfjFCXzmYhdTRXdzTq7AOE+fYz8OSGFZQxlzSSRCig6Flt9UCEbY?=
- =?us-ascii?Q?Ixlu0/ehdr2Fou1BMtiLBqdCpiI02eYo7fWmLbCpTFy/REZDB6Vhu6q2dIKf?=
- =?us-ascii?Q?Bk6YeAmsLWvuB9VVS03edEcYs6n7jeU51BCZZE017BkAcxTMqN7uydAHm/ic?=
- =?us-ascii?Q?/Qp5YVo1HRew+zkqtjewWrpyUIlnh51sBPgV44oUVoxGcWAdk66Nbieri3tg?=
- =?us-ascii?Q?3u0Vaz8h7ZrsE1V1vqFmDxOdYEoD6s5+Ca8lyTA/4pkq2eBnC0dnPzAKug4/?=
- =?us-ascii?Q?9OsNb9NgpUP/JnWvcqtspyXmpyO6tRfpfXT4JlEzOJrzk3F1Q6ZLHPDs1XLw?=
- =?us-ascii?Q?A1QuYzQHpktzaZJ5RFXDZCfkipAmSVe+S/2tS7JwIlsjo+Z4yJx8ZjJRpxWM?=
- =?us-ascii?Q?PipgETgU1AYLZehZH0Lc9obFENBKx04HbzI1+4dM+K9aaSyLa1YuOsDMz8zI?=
- =?us-ascii?Q?tHXcO7sSQKC0GoaZ11cEFB71h3C16EpPD0YtcddiPva80or4htLHmKzZAg1a?=
- =?us-ascii?Q?IFylMamu+RD1NkKSkwrwaHEMOmVJL4B6xKd2Q38s?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ecb0095-19c5-45b7-3901-08dc9bd2e3e3
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 02:42:04.9180
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M9x53Yh5obotrNWpoNLGw37gimWztSDLGpgxNUfzyF24Iav7v9znznkg5LSt0ZUyAF4/eTCBA/WUqEIXVsYRtw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9409
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702225845.322234-2-admiyo@os.amperecomputing.com>
 
-When building with clang, via:
+Hi,
 
-    make LLVM=1 -C tools/testing/selftest
+kernel test robot noticed the following build warnings:
 
-...clang warns about an unused irqcount variable. clang is correct: the
-variable is incremented and then ignored.
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.10-rc6 next-20240703]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Fix this by deleting the irqcount variable.
+url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20240703-163558
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20240702225845.322234-2-admiyo%40os.amperecomputing.com
+patch subject: [PATCH v4 1/3] mctp pcc: Check before sending MCTP PCC response ACK
+config: i386-buildonly-randconfig-004-20240704 (https://download.01.org/0day-ci/archive/20240704/202407041052.926ISbwR-lkp@intel.com/config)
+compiler: gcc-12 (Ubuntu 12.3.0-9ubuntu2) 12.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240704/202407041052.926ISbwR-lkp@intel.com/reproduce)
 
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407041052.926ISbwR-lkp@intel.com/
 
-Changes since v2:
+All warnings (new ones prefixed by >>):
 
-1) Rebased onto Linux 6.10-rc6+
+>> drivers/mailbox/pcc.c:115: warning: Function parameter or struct member 'shmem_base_addr' not described in 'pcc_chan_info'
 
-Changes since the first version:
 
-1) Rebased onto Linux 6.10-rc1
+vim +115 drivers/mailbox/pcc.c
 
-thanks,
-John Hubbard
+800cda7b63f22b Sudeep Holla 2021-09-17   82  
+80b2bdde002c52 Sudeep Holla 2021-09-17   83  /**
+80b2bdde002c52 Sudeep Holla 2021-09-17   84   * struct pcc_chan_info - PCC channel specific information
+80b2bdde002c52 Sudeep Holla 2021-09-17   85   *
+0f2591e21b2e85 Sudeep Holla 2021-09-17   86   * @chan: PCC channel information with Shared Memory Region info
+bf18123e78f4d1 Sudeep Holla 2021-09-17   87   * @db: PCC register bundle for the doorbell register
+bf18123e78f4d1 Sudeep Holla 2021-09-17   88   * @plat_irq_ack: PCC register bundle for the platform interrupt acknowledge
+bf18123e78f4d1 Sudeep Holla 2021-09-17   89   *	register
+c45ded7e11352d Sudeep Holla 2021-09-17   90   * @cmd_complete: PCC register bundle for the command complete check register
+c45ded7e11352d Sudeep Holla 2021-09-17   91   * @cmd_update: PCC register bundle for the command complete update register
+c45ded7e11352d Sudeep Holla 2021-09-17   92   * @error: PCC register bundle for the error status register
+f92ae90e52bb09 Sudeep Holla 2021-09-17   93   * @plat_irq: platform interrupt
+60c40b06fa6869 Huisong Li   2023-08-01   94   * @type: PCC subspace type
+3db174e478cb0b Huisong Li   2023-08-01   95   * @plat_irq_flags: platform interrupt flags
+3db174e478cb0b Huisong Li   2023-08-01   96   * @chan_in_use: this flag is used just to check if the interrupt needs
+3db174e478cb0b Huisong Li   2023-08-01   97   *		handling when it is shared. Since only one transfer can occur
+3db174e478cb0b Huisong Li   2023-08-01   98   *		at a time and mailbox takes care of locking, this flag can be
+3db174e478cb0b Huisong Li   2023-08-01   99   *		accessed without a lock. Note: the type only support the
+3db174e478cb0b Huisong Li   2023-08-01  100   *		communication from OSPM to Platform, like type3, use it, and
+3db174e478cb0b Huisong Li   2023-08-01  101   *		other types completely ignore it.
+80b2bdde002c52 Sudeep Holla 2021-09-17  102   */
+80b2bdde002c52 Sudeep Holla 2021-09-17  103  struct pcc_chan_info {
+0f2591e21b2e85 Sudeep Holla 2021-09-17  104  	struct pcc_mbox_chan chan;
+bf18123e78f4d1 Sudeep Holla 2021-09-17  105  	struct pcc_chan_reg db;
+bf18123e78f4d1 Sudeep Holla 2021-09-17  106  	struct pcc_chan_reg plat_irq_ack;
+c45ded7e11352d Sudeep Holla 2021-09-17  107  	struct pcc_chan_reg cmd_complete;
+c45ded7e11352d Sudeep Holla 2021-09-17  108  	struct pcc_chan_reg cmd_update;
+c45ded7e11352d Sudeep Holla 2021-09-17  109  	struct pcc_chan_reg error;
+ddd70a454be0e5 Adam Young   2024-07-02  110  	void __iomem *shmem_base_addr;
+f92ae90e52bb09 Sudeep Holla 2021-09-17  111  	int plat_irq;
+60c40b06fa6869 Huisong Li   2023-08-01  112  	u8 type;
+3db174e478cb0b Huisong Li   2023-08-01  113  	unsigned int plat_irq_flags;
+3db174e478cb0b Huisong Li   2023-08-01  114  	bool chan_in_use;
+80b2bdde002c52 Sudeep Holla 2021-09-17 @115  };
+80b2bdde002c52 Sudeep Holla 2021-09-17  116  
 
- tools/testing/selftests/timers/rtcpie.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/timers/rtcpie.c b/tools/testing/selftests/timers/rtcpie.c
-index 4ef2184f1558..7c07edd0d450 100644
---- a/tools/testing/selftests/timers/rtcpie.c
-+++ b/tools/testing/selftests/timers/rtcpie.c
-@@ -29,7 +29,7 @@ static const char default_rtc[] = "/dev/rtc0";
- 
- int main(int argc, char **argv)
- {
--	int i, fd, retval, irqcount = 0;
-+	int i, fd, retval;
- 	unsigned long tmp, data, old_pie_rate;
- 	const char *rtc = default_rtc;
- 	struct timeval start, end, diff;
-@@ -120,7 +120,6 @@ int main(int argc, char **argv)
- 
- 			fprintf(stderr, " %d",i);
- 			fflush(stderr);
--			irqcount++;
- 		}
- 
- 		/* Disable periodic interrupts */
-
-base-commit: 8a9c6c40432e265600232b864f97d7c675e8be52
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
