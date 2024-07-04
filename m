@@ -1,62 +1,44 @@
-Return-Path: <linux-kernel+bounces-240589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04841926F6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:21:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A401926F74
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D141C224A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:21:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95611F22CF8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D06F1A01D4;
-	Thu,  4 Jul 2024 06:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04511A01DE;
+	Thu,  4 Jul 2024 06:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ivBebod6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71F42F23;
-	Thu,  4 Jul 2024 06:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="BOfhcVi8"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077511BDCF;
+	Thu,  4 Jul 2024 06:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720074072; cv=none; b=iq6+Yw9TyJairTG/8oCtZ7ia+ydj2liH0xScl1C8jBi9qvxA72sVX/li7EkjChqE2olQovjDinScUr9vOdT70nsfiz6seY3cwogEBgbtSUuuxVn/im2OuWfib37H0J/IfekWrfONzrKIfXSswXR/jy0c2SHfDGKNWp1sep5Hays=
+	t=1720074337; cv=none; b=rWyTLhm4DD4u5GIHJLI0kUr0hnAVWCeMn17Tz9RH0XFufFo+41mlMPDTlkPvgZZHyYd/QeSl7rHy2caCLciK7PrcOZpuCRKXKRKVRinJ7gjGM+o0a0udMcVW0HF31PYHYY33HYfSFuq9JNEG6GJA0RB0yMnAKhrkB7rrMsaGWwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720074072; c=relaxed/simple;
-	bh=l0jXg9Z37c7YXtzxXyO5KhWqS9Dyjj1FQkZJMk2TBmI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=CQyph8FxPXmmXBU2PtglUwpeV4IOcbqC6+mvXm4QGA5+2WNS8GChr7zD43PhQSXCY2mn9cJ9bAOROW/TtwyXV5K8NZqx4hgbL0w3J6uf3R0UZ8S7fmjPAjJOSw9Ko/6Os8sUuCfEdJEMZ4xYZ9e91Px5DKL92DDPWhPZmgA//7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ivBebod6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 463Jg0Sa015265;
-	Thu, 4 Jul 2024 06:21:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EFlplKsC2U4laB+KrH0cH5+kAdnVOXbiGsTloY1PRoQ=; b=ivBebod6pQ3RuNmq
-	qJhf5gwIpxhTkqkxyFvqU2kXqJvSojd4pUsNhSKEV/NLed0e30vgYSSdUKKIwWEb
-	m8Rq1bi0k0wfHHucvRddZgq+6bjYkH2FESCJN40DCrAZAzTM1nw0qeUroNA9h4nS
-	XoXLTGyy3xl1nVc/Iog+dBx2Qw88GEVsUl/n6unoiBmH6/H/2lM2LwkGrZ45z+cH
-	0S7yb4ALN/gGH4LhStDjGI6YEe9iOl9cC//TjbOZlN5U+371+oPBJ3W+Xjp7NeuW
-	lEcQ3+9nI2qW2tOk13/VOER4zKlvDO8Go+dGuQ6wIxU+2ulg1GLA8GNypYcl+34C
-	8aRbCA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4052yhjcfc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Jul 2024 06:21:04 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4646L38L026997
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 4 Jul 2024 06:21:03 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
- 23:21:00 -0700
-Message-ID: <05a87604-af26-4755-9740-7af157e12099@quicinc.com>
-Date: Thu, 4 Jul 2024 11:50:57 +0530
+	s=arc-20240116; t=1720074337; c=relaxed/simple;
+	bh=T2BXVPG0Xciyi6KtfRni/IEp7xhSTzvD3uma1vOVg90=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gnmPHsxOFDF6QGAUnR8Qy+cEekXH25aJCDJVrHbXnpwQ+vxBLwMKkjsx0/yeXp396JGwmvuFcMv79a3gSqHgyt9e+zTjpv5czUqL3frQFK7R3I69plWoAwLbCNcwMPdsVwP1q1ScDJu+c3Oh0vAYKH3rKz4S/M6sOcLpr+M3p5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=BOfhcVi8; arc=none smtp.client-ip=220.197.31.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=/AKERoNUk3QOspjtoJsYJHGJH3MzhEmNn77tnVZjOls=;
+	b=BOfhcVi8iWK8aFiViJYt4G9BC6pASMp8AFGgf4Bp6m/VWeZu+8Dzp1sjCZYUpA
+	2UWjo+FI+O0h8TGOSchnGjmfY9YPLl3fxxoRDMTge7DTifnBkFhjegFd0eeAJib4
+	XOz8G0V3CNHrRWx68NDaHoMV/bQSrZ/a9JiKW9wxqOk84=
+Received: from [172.21.22.210] (unknown [118.242.3.34])
+	by gzga-smtp-mta-g0-2 (Coremail) with SMTP id _____wD3P+YOQIZm42A0AQ--.856S2;
+	Thu, 04 Jul 2024 14:24:16 +0800 (CST)
+Message-ID: <ef7eee42-ebee-477c-83f5-d2103886ccd5@126.com>
+Date: Thu, 4 Jul 2024 14:24:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,102 +46,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] misc: fastrpc: Add support for multiple PD from one
- process
-Content-Language: en-US
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
-        <arnd@arndb.de>
-References: <20240703065200.1438145-1-quic_ekangupt@quicinc.com>
- <2024070353-giggly-stardom-7b6d@gregkh>
- <c4a184cb-46d5-49cc-ad42-3d5d7828f06b@quicinc.com>
-In-Reply-To: <c4a184cb-46d5-49cc-ad42-3d5d7828f06b@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: FpRFOUq01CFQk1vxffzAtJjAxd395DNG
-X-Proofpoint-GUID: FpRFOUq01CFQk1vxffzAtJjAxd395DNG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_18,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 malwarescore=0 adultscore=0 mlxscore=0 phishscore=0
- priorityscore=1501 mlxlogscore=999 impostorscore=0 clxscore=1015
- bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407040045
+Subject: Re: [PATCH V2] mm/gup: Clear the LRU flag of a page before adding to
+ LRU batch
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ 21cnbao@gmail.com, baolin.wang@linux.alibaba.com, liuzixing@hygon.cn
+References: <1719038884-1903-1-git-send-email-yangge1116@126.com>
+ <26efe5f2-0cad-404c-82ca-a556469ba9c7@redhat.com>
+From: Ge Yang <yangge1116@126.com>
+In-Reply-To: <26efe5f2-0cad-404c-82ca-a556469ba9c7@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3P+YOQIZm42A0AQ--.856S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuF1rCryxAr4UuF45CF1xXwb_yoW5XryrpF
+	Wft3WakrWDXFZa9rn7J3yDCr1SyrZ2yw45Ar1fJr18Cws8WFya9rW5K3WDWa45CrWYga1a
+	vr409rn5uF4DZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j5WrXUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiGBUSG2VLcMptdgAAsL
 
 
 
-On 7/4/2024 11:47 AM, Ekansh Gupta wrote:
->
-> On 7/3/2024 4:09 PM, Greg KH wrote:
->> On Wed, Jul 03, 2024 at 12:22:00PM +0530, Ekansh Gupta wrote:
->>> @@ -268,6 +272,7 @@ struct fastrpc_channel_ctx {
->>>  	struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
->>>  	spinlock_t lock;
->>>  	struct idr ctx_idr;
->>> +	struct ida dsp_pgid_ida;
->> You have an idr and an ida?  Why two different types for the same
->> driver?
-> Using ida for this because for this I just need to allocate and manage unique IDs
-> without any associated data. So this looks more space efficient that idr.
-> Should I keep it uniform for a driver?
->>>  	struct list_head users;
->>>  	struct kref refcount;
->>>  	/* Flag if dsp attributes are cached */
->>> @@ -299,6 +304,7 @@ struct fastrpc_user {
->>>  	struct fastrpc_buf *init_mem;
->>>  
->>>  	int tgid;
->>> +	int dsp_pgid;
->> Are you sure this fits in an int?
-> I think this should be fine for IDs in rage of 1000-1064.
-changing this to u32 as won't be storin any negative values here if allocation fails.
->>> +static int fastrpc_pgid_alloc(struct fastrpc_channel_ctx *cctx)
->>> +{
->>> +	int ret = -1;
->> No need to initialize this.
-> I'll update this.
->>> +
->>> +	/* allocate unique id between MIN_FRPC_PGID and MAX_FRPC_PGID */
->>> +	ret = ida_alloc_range(&cctx->dsp_pgid_ida, MIN_FRPC_PGID,
->>> +					MAX_FRPC_PGID, GFP_ATOMIC);
->>> +	if (ret < 0)
->>> +		return -1;
->> Why is -1 a specific value here?  Return a real error please.
->> Or return 0 if that's not allowed.
-> Sure, will fix this in next spin.
->> v
->>> +
->>> +	return ret;
->>> +}
->>> +
->>>  static int fastrpc_device_open(struct inode *inode, struct file *filp)
->>>  {
->>>  	struct fastrpc_channel_ctx *cctx;
->>> @@ -1582,6 +1605,12 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
->>>  	fl->cctx = cctx;
->>>  	fl->is_secure_dev = fdevice->secure;
->>>  
->>> +	fl->dsp_pgid = fastrpc_pgid_alloc(cctx);
->>> +	if (fl->dsp_pgid == -1) {
->>> +		dev_dbg(&cctx->rpdev->dev, "too many fastrpc clients, max %u allowed\n", MAX_DSP_PD);
->>> +		return -EUSERS;
->> Why -EUSERS?
-> This should be -EBUSY, I'll correct this.
->> And you obviously did not test this as you just leaked memory :(
-> My bad, I ran basic fastrpc tests and the working of this use case. Sorry for the miss.
->
-> --Ekansh
->> thanks,
+在 2024/7/3 20:02, David Hildenbrand 写道:
+> On 22.06.24 08:48, yangge1116@126.com wrote:
+>> From: yangge <yangge1116@126.com>
 >>
->> greg k-h
->
+>> If a large number of CMA memory are configured in system (for example, 
+>> the
+>> CMA memory accounts for 50% of the system memory), starting a virtual
+>> virtual machine, it will call pin_user_pages_remote(..., FOLL_LONGTERM,
+>> ...) to pin memory.  Normally if a page is present and in CMA area,
+>> pin_user_pages_remote() will migrate the page from CMA area to non-CMA
+>> area because of FOLL_LONGTERM flag. But the current code will cause the
+>> migration failure due to unexpected page refcounts, and eventually cause
+>> the virtual machine fail to start.
+>>
+>> If a page is added in LRU batch, its refcount increases one, remove the
+>> page from LRU batch decreases one. Page migration requires the page is 
+>> not
+>> referenced by others except page mapping. Before migrating a page, we
+>> should try to drain the page from LRU batch in case the page is in it,
+>> however, folio_test_lru() is not sufficient to tell whether the page is
+>> in LRU batch or not, if the page is in LRU batch, the migration will 
+>> fail.
+>>
+>> To solve the problem above, we modify the logic of adding to LRU batch.
+>> Before adding a page to LRU batch, we clear the LRU flag of the page so
+>> that we can check whether the page is in LRU batch by 
+>> folio_test_lru(page).
+>> Seems making the LRU flag of the page invisible a long time is no 
+>> problem,
+>> because a new page is allocated from buddy and added to the lru batch,
+>> its LRU flag is also not visible for a long time.
+>>
+> 
+> I think we need to describe the impact of this change in a better way. 
+> This example here is certainly interesting, but if pages are new they 
+> are also not candidate for immediate reclaim (tail of the LRU).
+> 
+> The positive thing is that we can more reliably identify pages that are 
+> on an LRU batch.
+> 
+> Further, a page can now only be on exactly one LRU batch.
+> 
+> But, as long as a page is on a LRU batch, we cannot isolate it, and we 
+> cannot check if it's an LRU page. The latter can currently already 
+> happen for a shorter time when moving LRU pages, and temporarily 
+> clearing the flag.
+> 
+> I shared some examples where we don't care, because we'd check for 
+> additional folio references either way (and the one from the LRU batch).
+> 
+> But I think we have to identify if there are any LRU folio/page checks 
+> that could now be impacted "more". At least we should document it 
+> properly to better understand the possible impact (do we maybe have to 
+> flush more often?).
+> 
+
+Thanks.
+I have reviewed a lot of paths using LRU folio/page checks and haven't 
+seen more impact. I will documnt possible impact in next version, thanks.
+
 
 
