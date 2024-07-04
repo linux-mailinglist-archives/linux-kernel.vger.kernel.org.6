@@ -1,101 +1,164 @@
-Return-Path: <linux-kernel+bounces-240719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BCB92719D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:24:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47DB192719C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C131F22FD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:24:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1B222843E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EBC1A4F1E;
-	Thu,  4 Jul 2024 08:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF751A3BB5;
+	Thu,  4 Jul 2024 08:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JL1dlv0O"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NKY1Ej1u"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D35E1A4F0C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 08:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86ED31A0AE1
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 08:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720081450; cv=none; b=BPBnElVe8eRQizj2KoDCmJvP2y2TS2SN5XaznfqtA9WFUU9uwjn4gpPYDzBd+rz5DuBgYISZ1XPR+brI3d1Ud94d7lUAq50xU+r5TcrVUJ0yi7CoY8dEqC4DTwEK7PhbtTfiTPLJU2QqiwDssS3mz52ukzSyIQ4inHFjv/wJxXo=
+	t=1720081445; cv=none; b=UzruSosHk5eZvJ7PQR1pFPeXpnF51JZbyc/osUQBhun6FH3kIa0LjryCUVxQXuKDmHNWYRCyhE2DfZkuxn5mzvRJqkjHdHGcqVMU5fY3ESg72ix1Rv8UdwNz6xbEf34ZPt1IvbHPfqjOJI8IreIWIhhw0UuIU3KLCKZRYLVrxCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720081450; c=relaxed/simple;
-	bh=SsZGFCSeNd6pOIw6sW2l2UnMS6vQBj2fSUuu2slqcz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oAkih8VUTfvLXGv8lYgkGSNMtvQPVjqmC6TV5v5DO2oyKEIWMX9CpoogLpnlg9H8ky+9izZH5ZBKd1lzH2SWglocN6oFkveUquHCx6lDiLCzzND0CoEuzUaZZarXMW8VMPxJew2J20z2Bzv8FXeMBy0mQwOgGydJT113LTjvviE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JL1dlv0O; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8C8C940E0187;
-	Thu,  4 Jul 2024 08:24:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id RCBGzG_T4uXm; Thu,  4 Jul 2024 08:24:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720081441; bh=JdFPBoVuOCOhlNcwTSA2y/2iB7+DzbcvKLu2Me4HYvs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JL1dlv0OLpL2wZvWwrhVFdvY32gpN/Buooi04VrPufdWzrDo2PYY25Y7RJvxwHtro
-	 4/quIxMAT2ew+Usv1/SDfskCZ7tFrfrBvQoTqwXuPcZlfpRrCWimlAdzToXN2dOiXA
-	 nUd7nPnaUn+R63jF3Kdl1ptNXjQ1FXdVgAvt3URRSY0eTBow0j7ZyH06M23xYXh+jm
-	 g5nxAtxomLJ/z6DxCtzuxHde+ew/R1j1Ip9Fmr+a0X4X2fkxTeurPNqicfO6I7/9zZ
-	 zMIkoa1ar8GK4i5XFG0wfH2uXSx/f5Unk/YxHm1xqZ+lI0MvZ0PDBxPsImaM+NjPPF
-	 TqgFfZVD/nMrN9kYGygQ2iflVEDvinUVbKBqbiw5B7oBs1qGXcdwFz7O7ltVvZNN9H
-	 I8aAND5LqJDyCChy9hlHhTrkpf1PT2bc7IDIX4i9jyaKK2L/6tvwNrkUoVTDUma0Vp
-	 0Sj9R5tXJApBHPZs5Mzi+H8II6ph/95IeDp6Msuiw+lA8u92JfELJuT3btkxXvIDY+
-	 +JX7UIA8kxa2BAviAL/iKArEdi41mRmWetsZSl5IV0XgjSsu+jTH73X4tcJW1WwlO4
-	 XjY1xBftzEeNVmthU5bHvOLj9RNKDaLyJXw5HHwnpGG6MCz5D/S5ctuMhHwp4saa6b
-	 H+GqGHozh8ux2Q29Y7DrZ4zQ=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4ACDB40E0177;
-	Thu,  4 Jul 2024 08:23:49 +0000 (UTC)
-Date: Thu, 4 Jul 2024 10:23:43 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Xin Li <xin@zytor.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, dave.hansen@intel.com,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
-	nik.borisov@suse.com, houwenlong.hwl@antgroup.com
-Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
-Message-ID: <20240704082343.GAZoZcD-yGxjYajcJT@fat_crate.local>
-References: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com>
- <172002205406.3280081.14523962650685954182@Ubuntu-2204-jammy-amd64-base>
- <15f56e6a-6edd-43d0-8e83-bb6430096514@citrix.com>
- <AD99CE51-62B3-494D-9107-7C9093126138@zytor.com>
- <56909a1e-b360-4090-945e-cf6ec623cccc@citrix.com>
- <ada20b3c-2935-4d4f-8daf-ba7b9a533877@zytor.com>
+	s=arc-20240116; t=1720081445; c=relaxed/simple;
+	bh=IDnYpu6LnIH+k0zmCD3wUrVsalUVdhXmRpn0RlxEM1k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QiKMEaIv617/VyHRC+ay5+nasyh7fG7XJjQLT6pT+1bLpXRETco1jW8xK1ABXLE/8rvySm9BIbKiLJFLCJR89vfUgRHYvg5NTeu0941qkk/kz832TlA4/ftI9dPRkMAtFL7t9tIQ1AoYVwLk+o2W6RvBfsNe0Z8+jaX6CahXoJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NKY1Ej1u; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4256742f67fso2291235e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 01:24:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720081442; x=1720686242; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZqCtJ5y5zSnhwHC2voq3IkAJVOxWAlAg39jm3a/zAaI=;
+        b=NKY1Ej1uUsKo5b9ycDMpTZhhiJabgYKjsgfsAp6L71jv93kOew7eqvhzG5iHuAt/A1
+         jsMqKRGwnRTf3R3Bhc2GFT1+gqChfwyAkqP9CldeDgfZrckBmYrhm20fCyFNSyPViokw
+         CYNHIJ+g5MpeYazoarQ3Bo32NwHua7PYmjtiWs2wMZCJMa80JhJE80F4/cEOqgnjOoMn
+         HLQYitTqdWftfEjx6ESqC1XVjtEO2Sb+iRUAH/MxG98W+rjRhm6Rwxlfx7u1XSLLmB8d
+         XQ61SarjC3nKsX+3mLABPmFZ+OIm9M/72hDJ9bg2OxRs6XsEQlfu/KZ2irTZdoz5Pmr4
+         hHTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720081442; x=1720686242;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZqCtJ5y5zSnhwHC2voq3IkAJVOxWAlAg39jm3a/zAaI=;
+        b=xBW5F2rCPW9G2n/lYZydKQIsPX78+U7BmP7XAyYZ58l7h27Yihh2S8HGT2My17Uv/1
+         +eeEB98wc+Cf/qouGkD/gEeYRWE+yg9bXsB9uo8W+cP+zBvVTconhPGfOk5eGSmVZw38
+         gUaPfiDXnf8lH9LolUukvyU893Immt73ovD2cfomXSuMYRRI0cMjhEvbtHHMueyFxo9L
+         UWoFEjIlA9Y6CjDy5zZoJ81jaQWZIkQMb8zvCh1eP0lHJitywK/AAgVFdpgP8Kx15g+C
+         jThZRWsk6yXE2rFtzV7RSn+IToSKD50yxiS6L3BQDaeZ/pdjL0RsixGahUy0+HNKibtu
+         oeDQ==
+X-Gm-Message-State: AOJu0Ywfkf2n6S8YnevQJOJhWDylVqI/4kQSL98cgcdFtn4kgLP+UlWY
+	3gZfFlUiMphuao74BggsjHWjlAxEPqbsJdDRB2e1b+9/yOM9LiI0eaYVl8oKPm8=
+X-Google-Smtp-Source: AGHT+IE4czX4omat9eL2TaWnpIIfB52dh+deEPL+LZJeB9XOHhLob4g4U3ybxs5P6/smcUxeUNiz7g==
+X-Received: by 2002:a5d:4b41:0:b0:367:9571:ceee with SMTP id ffacd0b85a97d-3679dd31841mr880760f8f.37.1720081441615;
+        Thu, 04 Jul 2024 01:24:01 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:bf0c:e5a4:4535:f45c? ([2a01:e0a:982:cbb0:bf0c:e5a4:4535:f45c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3678e68a622sm5161933f8f.106.2024.07.04.01.24.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 01:24:01 -0700 (PDT)
+Message-ID: <5ad6a075-7280-4280-a797-cf04a1df0830@linaro.org>
+Date: Thu, 4 Jul 2024 10:24:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ada20b3c-2935-4d4f-8daf-ba7b9a533877@zytor.com>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>,
+ linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <2764814.mvXUDI8C0e@rjwysocki.net>
+ <2ed4c630-204a-4f80-a37f-f2ca838eb455@linaro.org>
+ <8d91a3c1-018f-495b-83be-979b795b5548@linaro.org>
+ <12c5c133-9519-4a26-b9a3-2da1d3466e94@linaro.org>
+ <15b67ce6-3238-435d-ad28-7c06efbe9153@linaro.org>
+ <ce6c2e8a-65a7-4cb2-a91d-fbcaeef6edc1@linaro.org>
+ <0c4b401e-86b8-4169-af88-475433012d67@linaro.org>
+ <636922b4-96d4-49cb-9020-2359e7497f56@linaro.org>
+ <50390ee7-20df-4be1-9cda-639981bf4ca7@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <50390ee7-20df-4be1-9cda-639981bf4ca7@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 03, 2024 at 10:57:29PM -0700, Xin Li wrote:
-> Won't it be way better if we could have all x86 vendors agree on it?
+On 04/07/2024 09:57, Daniel Lezcano wrote:
+> On 04/07/2024 09:39, neil.armstrong@linaro.org wrote:
+> 
+> [ ... ]
+> 
+>> OK I just found out, it's the `qcom-battmgr-bat` thermal zone, and in CI we do not have the firmwares so the
+>> temperature is never available, this is why it fails in a loop.
+>>
+>> Before this patch it would fail silently, but would be useless if we start the firmware too late.
+>>
+>> So since it's firmware based, valid data could arrive very late in the boot stage, and sending an
+>> error message in a loop until the firmware isn't started doesn't seem right.
+> 
+> Yeah, there was a similar bug with iwlwifi. They fixed it by registering the thermal zone after the firmware was successfully loaded.
+> 
+> Is that possible to do the same ?
 
-It would be way better if you simply do it as I suggested and stop debating.
-One fine day you'll know why I'm adamant about it.
+The thermal zone is indirect, it's registered via power_supply_core.
 
-Thx.
+A tentative was done to delay registering the power supply , since it caused issues in suspend/resume,
+but it was reverted because it would require much more work:
+https://lore.kernel.org/all/20240123160053.18331-1-johan+linaro@kernel.org/
 
--- 
-Regards/Gruss,
-    Boris.
+Seems we should instead return -EAGAIN instead of -ENODEV in qcom_battmgr_bat_get_property(),
 
-https://people.kernel.org/tglx/notes-about-netiquette
+But I think power_supply_read_temp() should return -EAGAIN on -ENODEV, since it's the return
+code for when a power supply isn't initialized.
+
+Neil
+
+> 
+>> I think Rafael's new patch is good, but perhaps it should send an error when it finally stops monitoring.
+> 
+> 
+> 
+
 
