@@ -1,104 +1,95 @@
-Return-Path: <linux-kernel+bounces-241293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E73927973
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:03:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C58927974
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00DDA282501
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C6511F23046
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E15E1B14F8;
-	Thu,  4 Jul 2024 15:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQjKScyD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D2A1B143F;
-	Thu,  4 Jul 2024 15:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4471AED53;
+	Thu,  4 Jul 2024 15:02:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512581B1208;
+	Thu,  4 Jul 2024 15:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720105323; cv=none; b=HqUhVM50EWuFHJCABN5BQ5f1wqrlJeLr78ivZu3YNbjraavCl+ukDyP52ZX1ehEJMO4KcsmGTy+PooWtqtdDkXZa2ppQCJQ92gNVzghLjubL3G+PLv941MX1tTVX9+G4nu+EQgYFM9nk0a60RaoyrnGRUjPUJb+qF4xqw5Nawj8=
+	t=1720105357; cv=none; b=uzKrkyH2QEYj8eh1gFKepXh5Qp2Ay4iWj0nyg/OmKjyq/f6Jj0dwajnrIWzXID729VItqeDYwp6tCeFAMDVX2IapbtgonqgNHyrsrqCAhi6hAGy/0qimYb/hn2jQ6k2u1O9YXNxSQh7UL8bP+cEzsSyrbly5uTHuNf2ziO4mUY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720105323; c=relaxed/simple;
-	bh=7UHlyrvutroT0e2Bj7J6khcsqqDlXY5x61RtVzZzXig=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uSFtyLkdGl01dauiK90AjEmgDTP4sFm/cZLNAQoRgU8gWrCEB+tJJQz/e/vMCeh094uWDtdF6uJ4siHyA2MNoEAaUZ2DbF0Uu16dgEwG7iGz3SC+t3fUoM86svLB3230z+RZpLIvglpWLc02QtvYE1mAAwTu4p8a8DexP8iZevw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQjKScyD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5053FC4AF0E;
-	Thu,  4 Jul 2024 15:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720105322;
-	bh=7UHlyrvutroT0e2Bj7J6khcsqqDlXY5x61RtVzZzXig=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=bQjKScyD1701uwvQqGnFVg7mzBu9pxrhpdV3QMhVuITH0B1wLcQ4zdzicCpAesTtX
-	 6OmZ21c3HGM7kkifugPF/TEwyg0ovTj3tXWta2AMWCLzToj4CzfuBRa/nnVDmmPZMY
-	 LKnZnY2rvXjpccQpGSUjJJHRxYN6f4azWNb+stt3RZtdfhMnMHz8EQbrCgv272RkW+
-	 kQ+Ae3z62q4QamcxQPd4nYrik7uo39mj1eDPKHEi5YNZQA8kzoADO1yFH/iKaeWCzv
-	 hQZvsZHvryVNPcHOZ8EsSaXtNznYtbbdaEgvbByKqWzkRJU1m9FJGToZO9yrQ3dEo8
-	 2hm+bhdzwwtLQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: stable@vger.kernel.org
-In-Reply-To: <20240701122616.414158-1-krzysztof.kozlowski@linaro.org>
-References: <20240701122616.414158-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] ASoC: codecs: wcd939x: Fix typec mux and switch leak
- during device removal
-Message-Id: <172010532104.64240.18084031474568618131.b4-ty@kernel.org>
-Date: Thu, 04 Jul 2024 16:02:01 +0100
+	s=arc-20240116; t=1720105357; c=relaxed/simple;
+	bh=F3KOP0jmIqBH4qhe1aeFrzNKJPq7V8S3w8a/aBZYg5U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oMwJiP6uCbiukJcxJmn7ivkiUAukdrxHRx3WH7H0ZOknVvHe5hyJKh9uGu6OjGtUaeKpp85VsLX52waPtLC3/od6DecAmzAwlVtO015V1hnc+o32IWPmLdGfZtwCPq75gO3bb+5/TEd/S4vksSibZ1MqDOTKSLLdQvEpB6GdZLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F288367;
+	Thu,  4 Jul 2024 08:02:59 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A0A5F3F766;
+	Thu,  4 Jul 2024 08:02:33 -0700 (PDT)
+From: Levi Yun <yeoreum.yun@arm.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	"levi.yun" <yeoreum.yun@arm.com>
+Subject: [PATCH v2] trace/pid_list: Change gfp flags in pid_list_fill_irq()
+Date: Thu,  4 Jul 2024 16:02:26 +0100
+Message-Id: <20240704150226.1359936-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Transfer-Encoding: 8bit
 
-On Mon, 01 Jul 2024 14:26:16 +0200, Krzysztof Kozlowski wrote:
-> Driver does not unregister typec structures (typec_mux_dev and
-> typec_switch_desc) during removal leading to leaks.  Fix this by moving
-> typec registering parts to separate function and using devm interface to
-> release them.  This also makes code a bit simpler:
->  - Smaller probe() function with less error paths and no #ifdefs,
->  - No need to store typec_mux_dev and typec_switch_desc in driver state
->    container structure.
-> 
-> [...]
+From: "levi.yun" <yeoreum.yun@arm.com>
 
-Applied to
+pid_list_fill_irq() runs via irq_work.
+When CONFIG_PREEMPT_RT is disabled, it would run in irq_context.
+so it shouldn't sleep while memory allocation.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Change gfp flags from GFP_KERNEL to GFP_NOWAIT to prevent sleep in
+irq_work.
 
-Thanks!
+This change wouldn't impact functionality in practice because the worst-size
+is 2K.
 
-[1/1] ASoC: codecs: wcd939x: Fix typec mux and switch leak during device removal
-      commit: 9f3ae72c5dbca9ba558c752f1ef969ed6908be01
+Signed-off-by: levi.yun <yeoreum.yun@arm.com>
+---
+ kernel/trace/pid_list.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+diff --git a/kernel/trace/pid_list.c b/kernel/trace/pid_list.c
+index 95106d02b32d..85de221c0b6f 100644
+--- a/kernel/trace/pid_list.c
++++ b/kernel/trace/pid_list.c
+@@ -354,7 +354,7 @@ static void pid_list_refill_irq(struct irq_work *iwork)
+ 	while (upper_count-- > 0) {
+ 		union upper_chunk *chunk;
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-		chunk = kzalloc(sizeof(*chunk), GFP_KERNEL);
++		chunk = kzalloc(sizeof(*chunk), GFP_NOWAIT);
+ 		if (!chunk)
+ 			break;
+ 		*upper_next = chunk;
+@@ -365,7 +365,7 @@ static void pid_list_refill_irq(struct irq_work *iwork)
+ 	while (lower_count-- > 0) {
+ 		union lower_chunk *chunk;
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-		chunk = kzalloc(sizeof(*chunk), GFP_KERNEL);
++		chunk = kzalloc(sizeof(*chunk), GFP_NOWAIT);
+ 		if (!chunk)
+ 			break;
+ 		*lower_next = chunk;
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
 
