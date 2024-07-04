@@ -1,57 +1,76 @@
-Return-Path: <linux-kernel+bounces-240941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8309274DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:23:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7916E9274E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 988E6289502
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:23:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC2F31C212F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38B119DF88;
-	Thu,  4 Jul 2024 11:23:31 +0000 (UTC)
-Received: from mail114-240.sinamail.sina.com.cn (mail114-240.sinamail.sina.com.cn [218.30.114.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DE21AC444;
+	Thu,  4 Jul 2024 11:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="XBiq1xE1"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65E11AC24D
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 11:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946171AB50A;
+	Thu,  4 Jul 2024 11:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720092211; cv=none; b=oY7Rb2XRPV2GN6zVH6noD/xKdJjJpywDy9npgVXm/7o9uNeBffiTVUQlTmx808Ddk18Xe0FkVNow5ALu9d4mOxHXyeHwJIOmEW1i6cmhnPPXRTA+/im1Gr5ICkCHh3Kd7gXJ+7HId0GgVNnj2P4CEF83iBtUuroWzL4UBIgelFg=
+	t=1720092216; cv=none; b=TWIZMURpbOgDhXrL66L6j8HSp/A1X+Vm4vASymLgUjZJAIFI06uR5T8n5VVSI6/Guek22dwzx5qfbT2jUa5aojwOeQJilvhMa7YBKNLxm0dqH+NDXyW4IxLkokL6T/KdS1V1t9ezjBkOPADgyGWizupZ7fR7DAhBl77d9pwI9fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720092211; c=relaxed/simple;
-	bh=pVSCAJoecPX1458nCdejVlCMmEZ2e1cX1fQ1zBgWE84=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=awxwGvZVLfewiZzUN0hUWXBLwc/caM7r8Y4rJDYucZ6vCgVX8IY761cssRwslsHibE/6t+0XEh9dDejdKyl2NXgsB7OK6jO9htEl1nOGmzYgc4tTu1a86JymzV9VgDfplpF36ujLQgOQn7i0NVQN4f3IDiN2UabHRBEjpnAhUpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.65.201])
-	by sina.com (10.185.250.23) with ESMTP
-	id 6686862100003C11; Thu, 4 Jul 2024 19:23:15 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 6514678913393
-X-SMAIL-UIID: DD3994290EBD43A886A3B9D93EBC3288-20240704-192315-1
-From: Hillf Danton <hdanton@sina.com>
-To: Tom Parkin <tparkin@katalix.com>
-Cc: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>,
+	s=arc-20240116; t=1720092216; c=relaxed/simple;
+	bh=hNSG/+5K1J5saVZJ7BglnnF5ZNhsyHDkYQsiG/KzOQA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=J86oz0vRqO0YM0udUEsG92GgdH3S96gv5Df6jiAqF0Re0BNFirjTuAN8l4KXCMU65lSek3O2wnFQRRGClh1eNgJyTeLm+TBDFPZV2RgalKf1A6oJ/7UorDrQwIEE+i3bxPfC/vYxWxG0ZVfSddCM1IjeYszv5WdEm2OjVw+O/kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=XBiq1xE1; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4WFDmF3QGbz9sTk;
+	Thu,  4 Jul 2024 13:23:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1720092205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3dxNOGhfNGAjYVHU9ar+wjZtc9amrH6gr9ZRGCzp9lc=;
+	b=XBiq1xE15euorUKdE9CA20Ht7ksK1twWwZnkS0R8/xLLIAAI1HeUz3Il4HHy0MnqZ/egg8
+	O/SvONo4HhSB7ruEy0eJMp8eY3uAMSBhP7v3EjNG4fx7lRrwgjeB95f6UmJ9Cy+H5nIbZe
+	fveqfentOgLqxbofudhh2qFBbYaHj/iBvVydTNImsWM901vhyOMebXNZfp7PCdduSyztOz
+	j1LVm0+XyshLrFwEIUvbgfjqYrIJUce0Aue4Z522W9kvcEM4HThzdwKxx/Ro4SqmMkv9lX
+	0uNSSA/yMUJ5jVVNAco9Xm0lJ1Rn0Af1pghyYB+UP4Rpjs7eyxBqU68EhckTQw==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: david@fromorbit.com,
+	willy@infradead.org,
+	chandan.babu@oracle.com,
+	djwong@kernel.org,
+	brauner@kernel.org,
+	akpm@linux-foundation.org
+Cc: yang@os.amperecomputing.com,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	James Chapman <jchapman@katalix.com>,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
-Date: Thu,  4 Jul 2024 19:23:03 +0800
-Message-Id: <20240704112303.3092-1-hdanton@sina.com>
-In-Reply-To: <ZoVGfR6Gx7PLbnn1@katalix.com>
-References: 
+	linux-mm@kvack.org,
+	john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org,
+	hare@suse.de,
+	p.raghav@samsung.com,
+	mcgrof@kernel.org,
+	gost.dev@samsung.com,
+	cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org,
+	kernel@pankajraghav.com,
+	hch@lst.de,
+	Zi Yan <ziy@nvidia.com>
+Subject: [PATCH v9 00/10] enable bs > ps in XFS
+Date: Thu,  4 Jul 2024 11:23:10 +0000
+Message-ID: <20240704112320.82104-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,47 +79,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Wed, 3 Jul 2024 13:39:25 +0100 Tom Parkin <tparkin@katalix.com>
-> 
-> The specific UAF that syzbot hits is due to the list node that the
-> list_for_each_safe temporary variable points to being modified while
-> the list_for_each_safe walk is in process.
-> 
-> This is possible due to l2tp_tunnel_closeall dropping the spin lock
-> that protects the list mid way through the list_for_each_safe loop.
-> This opens the door for another thread to call list_del_init on the
-> node that list_for_each_safe is planning to process next, causing
-> l2tp_tunnel_closeall to repeatedly iterate on that node forever.
-> 
-Yeah the next node could race with other thread because of the door.
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-> In the context of l2tp_ppp, this eventually leads to UAF because the
-> session structure itself is freed when the pppol2tp socket is
-> destroyed and the pppol2tp sk_destruct handler unrefs the session
-> structure to zero.
-> 
-> So to avoid the UAF, the list can safely be processed using a loop
-> which accesses the first entry in the tunnel session list under
-> spin lock protection, removing that entry, then dropping the lock
-> to call l2tp_session_delete.
+This is the ninth version of the series that enables block size > page size
+(Large Block Size) in XFS.
+The context and motivation can be seen in cover letter of the RFC v1 [0].
+We also recorded a talk about this effort at LPC [1], if someone would
+like more context on this effort.
 
-Race exists after your patch.
+A lot of emphasis has been put on testing using kdevops, starting with an XFS
+baseline [3]. The testing has been split into regression and progression.
 
-	cpu1				cpu2
-	---				---
-					pppol2tp_release()
+Regression testing:
+In regression testing, we ran the whole test suite to check for regressions on
+existing profiles due to the page cache changes.
 
-	spin_lock_bh(&tunnel->list_lock);
-	while (!list_empty(&tunnel->session_list)) {
-		session = list_first_entry(&tunnel->session_list,
-					struct l2tp_session, list);
- 		list_del_init(&session->list);
- 		spin_unlock_bh(&tunnel->list_lock);
+I also ran split_huge_page_test selftest on XFS filesystem to check for
+huge page splits in min order chunks is done correctly.
 
- 					l2tp_session_delete(session);
+No regressions were found with these patches added on top.
 
- 		l2tp_session_delete(session);
- 		spin_lock_bh(&tunnel->list_lock);
- 	}
- 	spin_unlock_bh(&tunnel->list_lock);
+Progression testing:
+For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.  To
+compare it with existing support, an ARM VM with 64k base page system (without
+our patches) was used as a reference to check for actual failures due to LBS
+support in a 4k base page size system.
+
+There are some tests that assumes block size < page size that needs to be fixed.
+We have a tree with fixes for xfstests [4], most of the changes have been posted
+already, and only a few minor changes need to be posted. Already part of these
+changes has been upstreamed to fstests, and new tests have also been written and
+are out for review, namely for mmap zeroing-around corner cases, compaction
+and fsstress races on mm, and stress testing folio truncation on file mapped
+folios.
+
+No new failures were found with the LBS support.
+
+We've done some preliminary performance tests with fio on XFS on 4k block size
+against pmem and NVMe with buffered IO and Direct IO on vanilla Vs + these
+patches applied, and detected no regressions.
+
+We also wrote an eBPF tool called blkalgn [5] to see if IO sent to the device
+is aligned and at least filesystem block size in length.
+
+For those who want this in a git tree we have this up on a kdevops
+large-block-minorder-for-next-v9 tag [6].
+
+[0] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+[1] https://www.youtube.com/watch?v=ar72r5Xf7x4
+[2] https://lkml.kernel.org/r/20240501153120.4094530-1-willy@infradead.org
+[3] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+489 non-critical issues and 55 critical issues. We've determined and reported
+that the 55 critical issues have all fall into 5 common  XFS asserts or hung
+tasks  and 2 memory management asserts.
+[4] https://github.com/linux-kdevops/fstests/tree/lbs-fixes
+[5] https://github.com/iovisor/bcc/pull/4813
+[6] https://github.com/linux-kdevops/linux/
+[7] https://lore.kernel.org/linux-kernel/Zl20pc-YlIWCSy6Z@casper.infradead.org/#t
+
+Changes since v8:
+- make iomap_dio_zero return error code and some variable name changes.
+- Call THP_SPLIT_PAGE_FAILED only if folio_is_pmd_mappable()
+- Collected RVB from willy, Darrick and Dave.
+
+Dave Chinner (1):
+  xfs: use kvmalloc for xattr buffers
+
+Luis Chamberlain (1):
+  mm: split a folio in minimum folio order chunks
+
+Matthew Wilcox (Oracle) (1):
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (7):
+  filemap: allocate mapping_min_order folios in the page cache
+  readahead: allocate folios with mapping_min_order in readahead
+  filemap: cap PTE range to be created to allowed zero fill in
+    folio_map_range()
+  iomap: fix iomap_dio_zero() for fs bs > system page size
+  xfs: expose block size in stat
+  xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+  xfs: enable block size larger than page size support
+
+ fs/iomap/buffered-io.c        |   4 +-
+ fs/iomap/direct-io.c          |  45 ++++++++++++--
+ fs/xfs/libxfs/xfs_attr_leaf.c |  15 ++---
+ fs/xfs/libxfs/xfs_ialloc.c    |   5 ++
+ fs/xfs/libxfs/xfs_shared.h    |   3 +
+ fs/xfs/xfs_icache.c           |   6 +-
+ fs/xfs/xfs_iops.c             |   2 +-
+ fs/xfs/xfs_mount.c            |   8 ++-
+ fs/xfs/xfs_super.c            |  18 +++---
+ include/linux/huge_mm.h       |  14 +++--
+ include/linux/pagemap.h       | 107 +++++++++++++++++++++++++++++-----
+ mm/filemap.c                  |  36 +++++++-----
+ mm/huge_memory.c              |  55 +++++++++++++++--
+ mm/readahead.c                |  83 +++++++++++++++++++-------
+ 14 files changed, 317 insertions(+), 84 deletions(-)
+
+
+base-commit: 74564adfd3521d9e322cfc345fdc132df80f3c79
+-- 
+2.44.1
+
 
