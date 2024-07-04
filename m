@@ -1,139 +1,218 @@
-Return-Path: <linux-kernel+bounces-240670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED6489270BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:37:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0B99270C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CA8CB21476
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30DD9284DF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC671A254F;
-	Thu,  4 Jul 2024 07:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214AF1A2566;
+	Thu,  4 Jul 2024 07:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntFiyolL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qaXQfcxg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HtuLcNHI";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qaXQfcxg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HtuLcNHI"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A13156679;
-	Thu,  4 Jul 2024 07:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B8B1482E8;
+	Thu,  4 Jul 2024 07:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720078659; cv=none; b=itIVDZEo5GvfCdKpwhdUBh5r3IOrj7Mb5fy0QEvtXYkSE1oTpr1hiKSATEvQESnybsY0UYX66sidKqSPBvm1I630F5TIo1+/j7BH2aBf6sZ6H6eDVwDvIHXROoKmGTZ79cFqh24745e37WjJWUZjJIk6lavljg+AsS09sV6q4mE=
+	t=1720078759; cv=none; b=F2cdeJ31gvJEASUnmabPGfVMXKT6q0ZYaasd2EOpIEqlUeG2NCzGy2USTcvbktIVAG4QXwJyF6chQyHmJYzZqGFhfgn1F/Ko3QAm4+1dTUYWKIzNx5LNuYakl3ICkwS1CMeEfPm8GYQ8dulTAE2I84OUsJ8J0pYIOcmnK3AP5NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720078659; c=relaxed/simple;
-	bh=4b8M2Kr1D8wWFbEG11gulaaYlKoocvWNkaRYNPG4rX8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BtxxDukI1Edl1vcUPiq+CiJS0ythIh4owQ201zZQIrGVoVyL+d5lDG3mriEg1SKaC/N+qcN6gH8ItlHRlsnhMdveEp9gK+qmRjhytphzv9gKuI5llOUNHmpO6mkWu97NVjEbpzxkqDOZn0vPcqqmX9tsYZjMdVqExMm/B2B2Lpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntFiyolL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9FADC4AF13;
-	Thu,  4 Jul 2024 07:37:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720078658;
-	bh=4b8M2Kr1D8wWFbEG11gulaaYlKoocvWNkaRYNPG4rX8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ntFiyolL4XzVk9jl29/9X3ioFhy4aeS69BJzLHxmKM/29sWYFvI2vTFnsI8o4mqyj
-	 ZPNqrXzLt4rkKhmngB1hgLYUhrxQls1mPTk7Ehf14SZRE0MSxd1A89GQsKDWwrBLm6
-	 5iGMyyT73zEJhd1Kt4jdvQQP0VTKacAEuhS6XBTq4lZx0EzJbx4KUOIFP8jCfMd3rx
-	 i3F4v1fp2tiO1ECJDQddvHpa24cnLtPDtBQlOWlx9R1aemTSP70gyiiO1DEH+7Zcsg
-	 xUC1tisL/dJQ5hyG7lYzZxOp3xt2n2j4z3Iebeul7Rzyhs1A0KhKrkIEFa5S8bIJWL
-	 umr8qUZe+HCYA==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-58b447c5112so370936a12.3;
-        Thu, 04 Jul 2024 00:37:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVbJ3tEJ5uGLL0YDCADzvzGsmABTQa9vHNg5ZTqoNbAH3n9bKPOo2iuJ3yLxYuz7O7vY5r8VVzHrVEsUr16fatGSFnCJ+dbdQWiCiJWCqVmCKaIezd2aXgw10yCoLoninlgYc4+JEE=
-X-Gm-Message-State: AOJu0YwMl3FfIviaDm5zvReCENhm5ZgrJf/X4bbSsuz0rCnbGVQ3aqCd
-	V8ykQKp/h8wlzGOZJ5QDLHikwXgFJgPwDyUrKZ8/uKQvfdNozSmg365St4hgCn3K4S5we2OLKtL
-	4o8ftUvPsECxnH3aZ1Rv3Ku4DJio=
-X-Google-Smtp-Source: AGHT+IGv5wn4a6TI1CPUD8KsvqfV8JNoexVkDkXwdzMRAPLV8uUZztDLHe8kJIUE6xbMcSQzf7IFTkDSXG2N/w0LFVg=
-X-Received: by 2002:a17:906:5acd:b0:a77:b052:877e with SMTP id
- a640c23a62f3a-a77ba46af61mr57544066b.19.1720078657344; Thu, 04 Jul 2024
- 00:37:37 -0700 (PDT)
+	s=arc-20240116; t=1720078759; c=relaxed/simple;
+	bh=F24KkJLwPQYXk7vxe8vqLX6O1KAuxpNRaL1WRO/M1M8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PcsrMortidxUr59nFhYf2gDuXf0NVT74fg+YcTFJL96CJ2SkusaooExBlPRJ4EwYboeyrEuA1+xvyJ6+HwRiRVquhlaIdJwQzEEaFmLOXG+5Hlfo+8Szf5zhHQ408U4EzTYInk1WQj/5z5G9uaXDJU0uIQIRHumZjkUR0O2079I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qaXQfcxg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HtuLcNHI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qaXQfcxg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HtuLcNHI; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6CF6221990;
+	Thu,  4 Jul 2024 07:39:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720078755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WNLRmPleVtl+fAz4qD+C2UqkheLv+LIaKAgdQTDh8VA=;
+	b=qaXQfcxgjeDpVsGDbuWhatdUiMD5GddOcB8It02hjPXPVtOiTsoKMdL4/jZ8MOYEQ5Sdc/
+	bZm3sy0Jhm3YbzhnnbxZriDj7ZnXmUN730PLseXb6ZMOYo2RdnEEWZ13Af3BQfGcRucLtB
+	oVBuLWeNlKwfU2CENaZLBX8/2dgxNok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720078755;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WNLRmPleVtl+fAz4qD+C2UqkheLv+LIaKAgdQTDh8VA=;
+	b=HtuLcNHImQwn8QCjkVykYh35kGA1NQ3UMsMU47I7sOohMegIeqIxIBdv2NFlUcn1MjM66Q
+	px3Q+4D/vVoYTPAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720078755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WNLRmPleVtl+fAz4qD+C2UqkheLv+LIaKAgdQTDh8VA=;
+	b=qaXQfcxgjeDpVsGDbuWhatdUiMD5GddOcB8It02hjPXPVtOiTsoKMdL4/jZ8MOYEQ5Sdc/
+	bZm3sy0Jhm3YbzhnnbxZriDj7ZnXmUN730PLseXb6ZMOYo2RdnEEWZ13Af3BQfGcRucLtB
+	oVBuLWeNlKwfU2CENaZLBX8/2dgxNok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720078755;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WNLRmPleVtl+fAz4qD+C2UqkheLv+LIaKAgdQTDh8VA=;
+	b=HtuLcNHImQwn8QCjkVykYh35kGA1NQ3UMsMU47I7sOohMegIeqIxIBdv2NFlUcn1MjM66Q
+	px3Q+4D/vVoYTPAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A3E81369F;
+	Thu,  4 Jul 2024 07:39:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dzqiEaNRhmbfNwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 04 Jul 2024 07:39:15 +0000
+Message-ID: <a2d9d43b-9cc3-4668-8c87-46da90bd8752@suse.cz>
+Date: Thu, 4 Jul 2024 09:39:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702152737.1184244-1-chenhuacai@loongson.cn>
- <20240702152737.1184244-3-chenhuacai@loongson.cn> <20240703101850.dtck223pleiiwfxp@vireshk-i7>
- <CAAhV-H74HJr0=8g0GtHj=zZH5nJijRpc90zLLRY_sXJfKFVtHA@mail.gmail.com> <20240704031532.5bkh4nr7d3vcvzwq@vireshk-i7>
-In-Reply-To: <20240704031532.5bkh4nr7d3vcvzwq@vireshk-i7>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 4 Jul 2024 15:37:13 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4HbZ02BdtE47gVyZGdNKj4QWzMSuZgHR6d9RHE36Nv=A@mail.gmail.com>
-Message-ID: <CAAhV-H4HbZ02BdtE47gVyZGdNKj4QWzMSuZgHR6d9RHE36Nv=A@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] cpufreq: Add Loongson-3 CPUFreq driver support
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, "Rafael J . Wysocki" <rafael@kernel.org>, loongarch@lists.linux.dev, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] MAINTAINERS: Add entry for new VMA files
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>
+References: <cover.1720006125.git.lorenzo.stoakes@oracle.com>
+ <7177e938f13dae3e44fd77d39f1f1b3e935e4908.1720006125.git.lorenzo.stoakes@oracle.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <7177e938f13dae3e44fd77d39f1f1b3e935e4908.1720006125.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.29
+X-Spam-Level: 
 
-On Thu, Jul 4, 2024 at 11:15=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> On 03-07-24, 22:37, Huacai Chen wrote:
-> > On Wed, Jul 3, 2024 at 6:18=E2=80=AFPM Viresh Kumar <viresh.kumar@linar=
-o.org> wrote:
-> > > > +static int loongson3_cpufreq_target(struct cpufreq_policy *policy,=
- unsigned int index)
-> > > > +{
-> > > > +     /* setting the cpu frequency */
-> > > > +     return loongson3_cpufreq_set(policy, index);
-> > >
-> > > Why use a separate function for calling do_service_request() ? Just
-> > > open code it here.
-> > Hmm, there is a loongson3_cpufreq_get() function, so I make a
-> > loongson3_cpufreq_set() function, too.
->
-> The counterpart of _get is _target and so a separate set function
-> isn't required at all. Just get rid of it.
-OK, will do.
+On 7/3/24 1:57 PM, Lorenzo Stoakes wrote:
+> The vma files contain logic split from mmap.c for the most part and are all
+> relevant to VMA logic, so maintain the same reviewers for both.
 
->
-> > > > +static int loongson3_cpufreq_get_freq_table(int cpu)
-> > > > +{
-> > > > +     int i, ret, boost_level, max_level, freq_level;
-> > > > +     struct cpufreq_frequency_table *table;
-> > > > +
-> > > > +     if (per_cpu(freq_table, cpu))
-> > > > +             return 0;
-> > > > +
-> > > > +     ret =3D do_service_request(cpu, 0, CMD_GET_FREQ_LEVEL_NUM, 0,=
- 0);
-> > > > +     if (ret < 0)
-> > > > +             return ret;
-> > > > +     max_level =3D ret;
-> > > > +
-> > > > +     ret =3D do_service_request(cpu, 0, CMD_GET_FREQ_BOOST_LEVEL, =
-0, 0);
-> > > > +     if (ret < 0)
-> > > > +             return ret;
-> > > > +     boost_level =3D ret;
-> > > > +
-> > > > +     freq_level =3D min(max_level, FREQ_MAX_LEVEL);
-> > > > +     table =3D kzalloc(sizeof(struct cpufreq_frequency_table) * (f=
-req_level + 1), GFP_KERNEL);
-> > >
-> > > devm_kcalloc(pdev, ...) instead ?
-> > I remember you told me this in V1, but devm_kalloc() needs a pdev
-> > instance, which doesn't exist here, so I keep kzalloc().
->
-> See how drivers/cpufreq/brcmstb-avs-cpufreq.c stores the pdev in
-> cpufreq_driver's driver_data and reuses later on.
-OK, I have learned that devm_kzalloc() allocated memory will be
-automatically freed at driver dettach.
-But I have another question: can the "kfree(table)" after
-do_service_request() fail be removed?  Because I think in this case
-the probe will fail, then no driver detach happens.
+But it's still related to mmap.c a lot, so why not just rename that existing
+"MEMORY MAPPING" appropriately (how? haha) and expand it with the new files?
 
-Huacai
-
->
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  MAINTAINERS | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 098d214f78d9..ff3e113ed081 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -23971,6 +23971,19 @@ F:	include/uapi/linux/vsockmon.h
+>  F:	net/vmw_vsock/
+>  F:	tools/testing/vsock/
+> 
+> +VMA
+> +M:	Andrew Morton <akpm@linux-foundation.org>
+> +R:	Liam R. Howlett <Liam.Howlett@oracle.com>
+> +R:	Vlastimil Babka <vbabka@suse.cz>
+> +R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> +L:	linux-mm@kvack.org
+> +S:	Maintained
+> +W:	https://www.linux-mm.org
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> +F:	mm/vma.c
+> +F:	mm/vma.h
+> +F:	mm/vma_internal.h
+> +
+>  VMALLOC
+>  M:	Andrew Morton <akpm@linux-foundation.org>
+>  R:	Uladzislau Rezki <urezki@gmail.com>
 > --
-> viresh
+> 2.45.2
+
 
