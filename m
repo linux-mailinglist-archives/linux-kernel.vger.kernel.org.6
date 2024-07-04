@@ -1,118 +1,120 @@
-Return-Path: <linux-kernel+bounces-241629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFEB927D49
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:52:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5D7927D4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967C82842F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:52:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B0F0284390
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24020131736;
-	Thu,  4 Jul 2024 18:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF79130A7C;
+	Thu,  4 Jul 2024 18:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="RM4d7OgO"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d3+4C7LD"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F03B364A1;
-	Thu,  4 Jul 2024 18:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A106240BF5
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720119130; cv=none; b=MYoxWFHarui0fAkXaBj/wQnO/Q5IallNR+Dec1APC7jhpUyRkJmPmHu29JWDe87KYe5cZ6Ebuw8Ll4rhWszkQO9sBuSJ6e09+2QnOlQIil6x9Q2Ax8HD5ejPtPet+q8Z4HQ6rGuj62Pv9H+LGEwZf/gTF7mFGV+XYYCYZtqrsE0=
+	t=1720119154; cv=none; b=aR60BlCdNtbTEk1UZrJOKnPAcnJxKiWSsLZ1dxTN/wJ5ty7GFwFK2FHOoNvrlBC5rYEDYsrt5sGzI3Uh8S1iY9TFR+osmRM0/t9hP7QYP0WsHifJdAEmXivx95PeZxezDDC9tH7iRn4xWd6+vJXGM362uPqu9Dxvkhjh06Fv2pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720119130; c=relaxed/simple;
-	bh=rOiNFRjFbsjEYyVjdLFWoHQguJR1w1G3QXWED0fZyEU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ct8LzG2M49eoFRqWM2XDlEq1xWQqIkKYNiYODSQ0dlkrfgg4yeKktM7Sj5Xb2DGZGr0ZHbxvKf8pDsfcG+3rkbvfUVBKOKUtOwfKaXc+LDrpyLDDo1Zcw0zm/dYxCfLwe8UaLEVMvNGeyduWm19EbjxkErmXv2uUHeVFGEtVqK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=RM4d7OgO; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B42861BF204;
-	Thu,  4 Jul 2024 18:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1720119126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gy8AH0XBcf7dpV5Zm5VUIvD/5OEaKpGMnkFSxXObV2s=;
-	b=RM4d7OgO35orTuUrSmobImrl4SjstNMZ3iYSeI0nJ2I/C33xMNK+kNMCzJQuDkYt4cSCrA
-	XVyhcSNOPrQ/Wo0FYV2pYggCDZky4jXo7ob9jpOxE/IXuTUcowpRpyqkflU4ZEfcMphxa9
-	dCzTjfNr2KniWE5X+ulSzYbFN8wRveP0fd6NNXCjh+vvR1QswDG+PHzKWLV+4KAoc6I17K
-	h7F1XLel6TqlPbyu8ATAte3XQB8fShsPmsLrIRhe4VJ1i0GKediW/zGi5prSas5L0+3ZCI
-	vzFjZQHIzHTWzVeRQ2Yn+OwFOo02jO/bTrBZpFdA6SJ4zpmLP/1RnzcyjaukXw==
-Message-ID: <884b94a6-3488-4ddf-b096-4f445902875e@arinc9.com>
-Date: Thu, 4 Jul 2024 21:52:02 +0300
+	s=arc-20240116; t=1720119154; c=relaxed/simple;
+	bh=+93Aq5gRk1QUFv6/zcEDBVacdtTPGRpPKUqs9kJAJBA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G2qkDF47QK/yC+QYeSxiqkG2cJ/qtKjlpVvu/j1isMDc3CJWc/XtiWueXHcW3vmgEA+oDTWJ09/8oplyPMr2h4tt1UbBI2rTCKEBgMKI3TYubRg6WQ2Cup4Phx97Se2ttRnaWOizbrJRTtrBsYcWzrMmAWkV2A6JYzDQr7yBOg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=d3+4C7LD; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77b4387302so118271866b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 11:52:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1720119151; x=1720723951; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ebaU5nRCNutbW0xREH8nKuSp9Alz78vjbtHSVH4o2bA=;
+        b=d3+4C7LDkn94nA+MKC8uVImwrNaC47CZpMfrmERR4YACo/6EtA1K5tkVClKg6/MQdw
+         sgC6jO5FbciMaiJuG1yJjR3+Zasmvd4egF34edvji+bN17pxv7CMFFL66ZNbem3Be/Bj
+         eyRhrCdFfsggMcWrpiIohIXPZKTfTMNOGwLFY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720119151; x=1720723951;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ebaU5nRCNutbW0xREH8nKuSp9Alz78vjbtHSVH4o2bA=;
+        b=ItrjXZunVuw7Y/kHSDyLPBZz6nAwVGysBgWQJBqrNTpK8mHVAuym1Tej73orqg3KAT
+         Pdvl+kg2A0V4giCipdin65izfOA2K8PPWD+KTwCO9kDzBnhNvTb8Tl897PteHZ22ao+r
+         NO0/2lSKHMCYjZCQRdJiDoEWQ4rxsC1HDRaesdR5QQHcXh3TyPL9QLbF54JXsNwG3Uxl
+         nwu30L8+6GBAjAkmYFuvnggT0bejA820rdk+jtx4UaF9YcbREwfhK4G2UGyTutwCYpSD
+         isnObLfm0jj5SucKh25teBaAtpy6aV5P0MFzcUUTL7ag4VSuhLNz/zOzwvoZ3CdZG3OE
+         psTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOfyxAEdGd6+UgV3uA0qB8dXF90bUYljqkHBkdjpxeC5nq6ZVVuYE+bkjb1hQ7ws4AjeKljfmjzGNxChZJkUd4ul+weZoiBv7NVtwM
+X-Gm-Message-State: AOJu0YwnK40xf93m8K78MrAoI+G9fCs4gxV4zIMJPWLDESk3TiPJ9VMP
+	bS/3jD4/dAxr9aTxPichCp6Wik1FbO4ZGScfjc0gTabBF31XJniqw/wsOgX8KwhMY1sjevL2Waj
+	uEosxMg==
+X-Google-Smtp-Source: AGHT+IFOSXBA1INFpiTIQa7gafG41EbdvNIhpjB9Z2eAQWxXRkvwW7fro1CnAngs0Y0Ibl+bHe3T7Q==
+X-Received: by 2002:a17:906:34d3:b0:a6f:3155:bb89 with SMTP id a640c23a62f3a-a77ba72759cmr176873766b.70.1720119150854;
+        Thu, 04 Jul 2024 11:52:30 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72b4125807sm575015866b.86.2024.07.04.11.52.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 11:52:30 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58ba3e38028so1244129a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 11:52:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVoQeiZYcpmZqdEAFjWwUXrYkCWLRm9IQ5UQ309Z/vCYbDeFwkt63KkxWwhp06g0Bc8WeAcO2DBJGsKEt/SplOnRqOIgi6RSVomVttW
+X-Received: by 2002:a17:906:581:b0:a72:b287:1e04 with SMTP id
+ a640c23a62f3a-a77ba48debcmr132743466b.34.1720119149587; Thu, 04 Jul 2024
+ 11:52:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3] net: dsa: mt7530: fix impossible MDIO address and
- issue warning
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
- Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
- Florian Fainelli <f.fainelli@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Landen Chao <Landen.Chao@mediatek.com>, Frank Wunderlich <linux@fw-web.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- regressions@lists.linux.dev
-References: <7e3fed489c0bbca84a386b1077c61589030ff4ab.1719963228.git.daniel@makrotopia.org>
- <d3ac5584-8e52-46e0-b690-ad5faa1ede61@arinc9.com>
- <20240704172154.opqyrv2mfgbxj7ce@skbuf>
- <a57dd43e-0798-4dab-853f-da84a19ee153@arinc9.com>
-Content-Language: en-US
-In-Reply-To: <a57dd43e-0798-4dab-853f-da84a19ee153@arinc9.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+References: <ZobXdDCYBi8OM-Fo@zx2c4.com> <CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
+ <Zobf3fZOuvOJOGPN@zx2c4.com> <CAHk-=whf2Pb8fSmUsLRSn6CnYvQoyUkLikKpFDWN_xnTJqix=A@mail.gmail.com>
+ <CAHmME9pm+ZE2_qf1DNxukB6ufPrjTAsnwin05-VX_gS03Yq-ag@mail.gmail.com>
+ <CAHk-=whTjdO6szgRKp51ZeDLDmA1+YYSbg+vEUt9OsxTMDUtjQ@mail.gmail.com>
+ <CAHk-=wgqD9h0Eb-n94ZEuK9SugnkczXvX497X=OdACVEhsw5xQ@mail.gmail.com> <Zobt_M91PEnVobML@zx2c4.com>
+In-Reply-To: <Zobt_M91PEnVobML@zx2c4.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 4 Jul 2024 11:52:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh47WSNQYuSWqdu_8XeRzfpWbozzTDL6KtkGbSmLrWU4g@mail.gmail.com>
+Message-ID: <CAHk-=wh47WSNQYuSWqdu_8XeRzfpWbozzTDL6KtkGbSmLrWU4g@mail.gmail.com>
+Subject: Re: deconflicting new syscall numbers for 6.11
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: jolsa@kernel.org, mhiramat@kernel.org, cgzones@googlemail.com, 
+	brauner@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
+Content-Type: text/plain; charset="UTF-8"
 
-On 04/07/2024 21:19, Arınç ÜNAL wrote:
-> On 04/07/2024 20:21, Vladimir Oltean wrote:
->> On Wed, Jul 03, 2024 at 10:03:09AM +0300, Arınç ÜNAL wrote:
->>> Works on standalone MT7530, MT7621's MCM MT7530, and MT7531. From MT7621's
->>> MCM MT7530:
->>>
->>> [    1.357287] mt7530-mdio mdio-bus:1f: MT7530 adapts as multi-chip module
->>
->> Why is the device corresponding to the first print located at address 1f,
->> then 0?
-> 
-> Because mdio_device_register() in mt7530_reregister() runs with new_mdiodev
-> after dev_warn() runs with mdiodev.
+On Thu, 4 Jul 2024 at 11:46, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+>
+> I addressed this in the cover letter:
+>
+> | How do we rectify this? By putting a safe implementation of getrandom()
+> | in the vDSO, which has access to whatever information a
+> | particular iteration of random.c is using to make its decisions. I use
+> | that careful language of "particular iteration of random.c", because the
+> | set of things that a vDSO getrandom() implementation might need for making
+> | decisions as good as the kernel's will likely change over time.
 
-I meant before. mdio_device_register() with the new_mdiodev argument is
-called before dev_warn() is called with the mdiodev argument.
+Jason. This smells. It's BS.
 
-> 
->>
->>> [    1.364065] mt7530-mdio mdio-bus:00: [Firmware Warn]: impossible switch MDIO address in device tree, assuming 31
->>> [    1.374303] mt7530-mdio mdio-bus:00: probe with driver mt7530-mdio failed with error -14
->>> [...]
->>> [    1.448370] mt7530-mdio mdio-bus:1f: MT7530 adapts as multi-chip module
->>> [    1.477676] mt7530-mdio mdio-bus:1f: configuring for fixed/rgmii link mode
->>> [    1.485687] mt7530-mdio mdio-bus:1f: Link is Up - 1Gbps/Full - flow control rx/tx
->>> [    1.493480] mt7530-mdio mdio-bus:1f: configuring for fixed/trgmii link mode
->>> [    1.502680] mt7530-mdio mdio-bus:1f lan1 (uninitialized): PHY [mt7530-0:00] driver [MediaTek MT7530 PHY] (irq=17)
->>> [    1.513620] mt7530-mdio mdio-bus:1f: Link is Up - 1Gbps/Full - flow control rx/tx
->>> [    1.519671] mt7530-mdio mdio-bus:1f lan2 (uninitialized): PHY [mt7530-0:01] driver [MediaTek MT7530 PHY] (irq=18)
->>> [    1.533072] mt7530-mdio mdio-bus:1f lan3 (uninitialized): PHY [mt7530-0:02] driver [MediaTek MT7530 PHY] (irq=19)
->>> [    1.545042] mt7530-mdio mdio-bus:1f lan4 (uninitialized): PHY [mt7530-0:03] driver [MediaTek MT7530 PHY] (irq=20)
->>> [    1.557031] mt7530-mdio mdio-bus:1f wan (uninitialized): PHY [mt7530-0:04] driver [MediaTek MT7530 PHY] (irq=21)
-> 
-> Arınç
+Christ, let's make a deal: do a five-liner patch that adds the
+generation number to the vdso data, and basically document it as a
+"the kernel thinks you need to reseed your buffers using getrandom"
+flag.
 
-Arınç
+And *if* it turns out in the future that there is then any major
+reason why that doesn't work, I'll take the 1000+ line thing, ok?
+
+Deal?
+
+                    Linus
 
