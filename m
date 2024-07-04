@@ -1,122 +1,216 @@
-Return-Path: <linux-kernel+bounces-240821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722FE92733D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:41:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9402D927317
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD2A2B20CE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:41:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B731C20D6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB271AB503;
-	Thu,  4 Jul 2024 09:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="MWWbtqKm"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBFC748F;
-	Thu,  4 Jul 2024 09:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1841AB50E;
+	Thu,  4 Jul 2024 09:31:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1332A171A7;
+	Thu,  4 Jul 2024 09:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720086054; cv=none; b=E9P3h84Uw8nTGL8VIvVMzp9qCW9d6D8HF5D/UEEF3qjNQt+AObtUMksHvHYxJyD7YvUU4Ukf1ujgyriJHjli9zyLl0DmXvgDh/1/iXFKxVGym3Kk3fday2mbE6gxKhPGaEuou3jTx/1zUEOXKqrpDxTTktNAZfsZQGSOPPHj5JQ=
+	t=1720085497; cv=none; b=AReX6EEZRkrpfmtWqk4/pYWJ2cWrzi02ZY7hisxfwptCKJTJEu6c5EaRSC2FcXUpTrXDX8pscJEp6vS2IzUBMu0YJFwk2EqA/FpZBa0/Meq+77ZgOo/UL9QfkHqjO3K7JsLCkG9vGCYvj2pZr5PiPBdXq5+RIShuYCHft1HfGEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720086054; c=relaxed/simple;
-	bh=LFsTJJd1W4fXb/jMbzQDcaIFLZTTY0/1pg+wvXVjafc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nl+P16N6i0sE4z3JudqE7dk2BGZyWQjW5JYPM0tNb0bZ/5cnTntGohVxONGQ4NLF2dPcgbG+m5UjxgMD5YN3EHUPEsLidj2BbDg8uDO96ZWOuVcKpeKj2Q7UUErr/f4su9S+fbIQ24UXtyhFr3mXO/z0WWx50aD4Pi/hN1wtPWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=MWWbtqKm; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 0380F100004;
-	Thu,  4 Jul 2024 12:31:57 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1720085517; bh=+/C+JViDMgPfxW69NIXMldo08NxYAJ+C72fKQYsFUQU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=MWWbtqKmCW5J3SPoHR3qV/qQfQM/X3eJMMsffsZtWbA1jmVejivQ/7fhjddIzHPOD
-	 lEg3xwDxx5mzaPL/IkyoewvUF0nseObL/gtbJZza5CrHzl7hhe1Pos2lXb9NopzpEK
-	 5sxHDkENwPC/PBLJSnZqf+hwnBIMlpgdHC+ZXzIOw8rtGbRRno9QnaXZYAZLohtBP2
-	 yOZPFhUGHRa8hC1farLmPYuMq3K5P94JMeBwrj/Ag3f3XRtAk/8uIznMqYo21iUmKa
-	 zVluOE3qkiGGE7IEkqfABEPshz4TY+k0jmz19+DQ91L8SrlqyftfAliN4Bga3vQF/C
-	 Nhqg/YZwQa60g==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Thu,  4 Jul 2024 12:30:36 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 4 Jul 2024
- 12:30:15 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Jordan Crouse <jordan@cosmicpenguin.net>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>, Marijn Suijten
-	<marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>, <linux-arm-msm@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] drm/msm: Fix incorrect file name output in adreno_request_fw()
-Date: Thu, 4 Jul 2024 12:30:02 +0300
-Message-ID: <20240704093002.15155-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1720085497; c=relaxed/simple;
+	bh=6JvIoGeJYxTilGdyGLvutd4vO5hzpifvREfdh9Tlzy4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oRiB/L0TpxZzasuYemmdU3b8VZfaU2P4PmxAemcRoUw/iTtJn6TcH5WtCazGYNMqenSBULC7jqZartGPrBPe3/ozp9ljFZ3p87oVudSLX4byDkZvkjlQOgbZsk7LqUqaK5NGEY+i+H7xRJTk9wSRiYxgLehqjLIckVKJ3irJubE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74E3ADA7;
+	Thu,  4 Jul 2024 02:32:00 -0700 (PDT)
+Received: from [10.1.29.168] (XHFQ2J9959.cambridge.arm.com [10.1.29.168])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FF323F766;
+	Thu,  4 Jul 2024 02:31:34 -0700 (PDT)
+Message-ID: <92b7375f-7239-4fbd-bedd-b3b8d55bf7a1@arm.com>
+Date: Thu, 4 Jul 2024 10:31:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186323 [Jul 04 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2;t-argos.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/04 08:06:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/04 08:45:00 #25843417
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] selftests: introduce and use SELFTESTS_CC_IS_CLANG
+ instead of LLVM
+Content-Language: en-GB
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ linux-kselftest@vger.kernel.org, llvm@lists.linux.dev,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240704030452.88793-1-jhubbard@nvidia.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240704030452.88793-1-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In adreno_request_fw() when debugging information is printed to the log
-after firmware load, an incorrect filename is printed. 'newname' is used
-instead of 'fwname', so prefix "qcom/" is being added to filename.
-Looks like "copy-paste" mistake.
+On 04/07/2024 04:04, John Hubbard wrote:
+> Current practice in the selftests Makefiles is to use $(LLVM) as a way
+> to decide if clang is being used as the compiler (and/or the linker
+> front end). Unfortunately, this does not cover all of the use cases:
+> 
+> 1) CC could have been set within selftests/lib.mk, by inferring it from
+> LLVM==1, or
+> 
+> 2) CC could have been set externally, such as when cross compiling.
+> 
+> Solution: In order to allow subsystem selftests to more accurately
+> control clang-specific behavior, such as compiler options, provide a new
+> Makefile variable: SELFTESTS_CC_IS_CLANG. If $(CC) contains an
+> invocation of clang in any form, then SELFTESTS_CC_IS_CLANG will be
+> non-empty.
+> 
+> SELFTESTS_CC_IS_CLANG does not specify which linker is being used.
+> However, it can still help with linker options, because $(CC) is often
+> used to do both the compile and link steps (often in the same step).
+> 
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+> 
+> Hi,
+> 
+> If this looks reasonable, I'll break it up into separate patches and
+> post it as a non-RFC.
 
-Fix this mistake by replacing 'newname' with 'fwname'.
+I'm makefile-illiterate so not really qualified to review. But the concept
+certainly looks fine to me.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Thanks,
+Ryan
 
-Fixes: 9fe041f6fdfe ("drm/msm: Add msm_gem_get_and_pin_iova()")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
- drivers/gpu/drm/msm/adreno/adreno_gpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-index 074fb498706f..0bb7d66047f8 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-@@ -475,7 +475,7 @@ adreno_request_fw(struct adreno_gpu *adreno_gpu, const char *fwname)
- 		ret = request_firmware_direct(&fw, fwname, drm->dev);
- 		if (!ret) {
- 			DRM_DEV_INFO(drm->dev, "loaded %s from legacy location\n",
--				newname);
-+				fwname);
- 			adreno_gpu->fwloc = FW_LOCATION_LEGACY;
- 			goto out;
- 		} else if (adreno_gpu->fwloc != FW_LOCATION_UNKNOWN) {
--- 
-2.30.2
+> 
+> thanks,
+> John Hubbard
+> 
+>  tools/testing/selftests/bpf/Makefile       |  2 +-
+>  tools/testing/selftests/fchmodat2/Makefile | 12 +++++++-----
+>  tools/testing/selftests/hid/Makefile       |  2 +-
+>  tools/testing/selftests/lib.mk             | 15 +++++++++++++++
+>  tools/testing/selftests/openat2/Makefile   | 16 +++++++++-------
+>  5 files changed, 33 insertions(+), 14 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+> index dd49c1d23a60..6b924297ab71 100644
+> --- a/tools/testing/selftests/bpf/Makefile
+> +++ b/tools/testing/selftests/bpf/Makefile
+> @@ -55,7 +55,7 @@ progs/test_sk_lookup.c-CFLAGS := -fno-strict-aliasing
+>  progs/timer_crash.c-CFLAGS := -fno-strict-aliasing
+>  progs/test_global_func9.c-CFLAGS := -fno-strict-aliasing
+>  
+> -ifneq ($(LLVM),)
+> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
+>  # Silence some warnings when compiled with clang
+>  CFLAGS += -Wno-unused-command-line-argument
+>  endif
+> diff --git a/tools/testing/selftests/fchmodat2/Makefile b/tools/testing/selftests/fchmodat2/Makefile
+> index 4373cea79b79..d00b01be5d96 100644
+> --- a/tools/testing/selftests/fchmodat2/Makefile
+> +++ b/tools/testing/selftests/fchmodat2/Makefile
+> @@ -2,14 +2,16 @@
+>  
+>  CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined $(KHDR_INCLUDES)
+>  
+> +TEST_GEN_PROGS := fchmodat2_test
+> +
+> +include ../lib.mk
+> +
+>  # gcc requires -static-libasan in order to ensure that Address Sanitizer's
+>  # library is the first one loaded. However, clang already statically links the
+>  # Address Sanitizer if -fsanitize is specified. Therefore, simply omit
+>  # -static-libasan for clang builds.
+> -ifeq ($(LLVM),)
+> +# This check must be done after including ../lib.mk, in order to pick up the
+> +# correct value of SELFTESTS_CC_IS_CLANG.
+> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
+>      CFLAGS += -static-libasan
+>  endif
+> -
+> -TEST_GEN_PROGS := fchmodat2_test
+> -
+> -include ../lib.mk
+> diff --git a/tools/testing/selftests/hid/Makefile b/tools/testing/selftests/hid/Makefile
+> index 2b5ea18bde38..734a53dc8ad9 100644
+> --- a/tools/testing/selftests/hid/Makefile
+> +++ b/tools/testing/selftests/hid/Makefile
+> @@ -27,7 +27,7 @@ CFLAGS += -I$(OUTPUT)/tools/include
+>  LDLIBS += -lelf -lz -lrt -lpthread
+>  
+>  # Silence some warnings when compiled with clang
+> -ifneq ($(LLVM),)
+> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
+>  CFLAGS += -Wno-unused-command-line-argument
+>  endif
+>  
+> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+> index 429535816dbd..f321ad5a1d0c 100644
+> --- a/tools/testing/selftests/lib.mk
+> +++ b/tools/testing/selftests/lib.mk
+> @@ -43,6 +43,21 @@ else
+>  CC := $(CROSS_COMPILE)gcc
+>  endif # LLVM
+>  
+> +# SELFTESTS_CC_IS_CLANG allows subsystem selftests to more accurately control
+> +# clang-specific behavior, such as compiler options. If CC is an invocation of
+> +# clang in any form, then SELFTESTS_CC_IS_CLANG will be non-empty. Notes:
+> +#
+> +# 1) CC could have been set above, by inferring it from LLVM==1, or externally,
+> +# from the CC shell environment variable.
+> +#
+> +# 2) SELFTESTS_CC_IS_CLANG does not specify which linker is being used. However,
+> +#    it can still help with linker options, if clang or gcc is used for the
+> +#    linker front end.
+> +SELFTESTS_CC_IS_CLANG :=
+> +ifeq ($(findstring clang,$(CC)),clang)
+> +    SELFTESTS_CC_IS_CLANG := 1
+> +endif
+> +
+>  ifeq (0,$(MAKELEVEL))
+>      ifeq ($(OUTPUT),)
+>  	OUTPUT := $(shell pwd)
+> diff --git a/tools/testing/selftests/openat2/Makefile b/tools/testing/selftests/openat2/Makefile
+> index 185dc76ebb5f..7acb85a8f2ac 100644
+> --- a/tools/testing/selftests/openat2/Makefile
+> +++ b/tools/testing/selftests/openat2/Makefile
+> @@ -3,16 +3,18 @@
+>  CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined
+>  TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test
+>  
+> +LOCAL_HDRS += helpers.h
+> +
+> +include ../lib.mk
+> +
+> +$(TEST_GEN_PROGS): helpers.c
+> +
+>  # gcc requires -static-libasan in order to ensure that Address Sanitizer's
+>  # library is the first one loaded. However, clang already statically links the
+>  # Address Sanitizer if -fsanitize is specified. Therefore, simply omit
+>  # -static-libasan for clang builds.
+> -ifeq ($(LLVM),)
+> +# This check must be done after including ../lib.mk, in order to pick up the
+> +# correct value of SELFTESTS_CC_IS_CLANG.
+> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
+>      CFLAGS += -static-libasan
+>  endif
+> -
+> -LOCAL_HDRS += helpers.h
+> -
+> -include ../lib.mk
+> -
+> -$(TEST_GEN_PROGS): helpers.c
+> 
+> base-commit: 9a5cd459be8a425d70cda1fa1c89af7875a35d17
 
 
