@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-241697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CA4927E0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01181927E0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 22:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3CB01F2440F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:59:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5891F245BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA7D13D276;
-	Thu,  4 Jul 2024 19:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E5576050;
+	Thu,  4 Jul 2024 20:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgZtqB/+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H6IzO+3u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF762F23;
-	Thu,  4 Jul 2024 19:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BC414AA9
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 20:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720123142; cv=none; b=GzB0u2cFSVvjyTXTmHZWK2kQ1zmM+7kbEDDC10vXyIBxexRCQI8Qk+dxP9QsK3GklbROcpK3URmuSezdb6h6ZaiD90+VHP0uS2RtZGgBR8t+YS8lEFkbqWky6Ahabu+o0nciXm3iizak+oF7PMt8ySU5aNnCRMSNa6mWg1a3QsA=
+	t=1720123212; cv=none; b=Zjd4odWJ+49XTRIIQlzuPQU3M8OkLAfmyCvC6Vf9voOIn8f/6RJWBxXSP8KG5m3ySvWIrVP08SUtVuUlA3ZGku/j/wFRlqAVgGUT3k52mTdYpGUArJcO8IlD/xcigonO7zi2R2zOZmo1C65AZI3NlVNSs/rvdZkz92A3qSPbwPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720123142; c=relaxed/simple;
-	bh=apep1Q9DkKcZcxF/SQGxA71cyB/fMtchWOgXl4gMPCI=;
+	s=arc-20240116; t=1720123212; c=relaxed/simple;
+	bh=Csc5MsbsEyLuNfkh2wCe32CpcbgQ5UEZ2i7ZZ9LoNq0=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Bs+5HOp0dhGJ27RbVcjiSUB9Ac2quNKXDbdnEWY5FpZ8dudTPYIb9h9Jwz++8BOYaIYmQMdkYFc61LFwY1UnqcPU5kMcI3oepj4jCYWDXpl4JjuPG81w+xs/HMbWNzakS65lSaiugQXMHV2jQS3ZIEgvOzSQfYdo2iynbRBJXh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VgZtqB/+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5753C32786;
-	Thu,  4 Jul 2024 19:59:00 +0000 (UTC)
+	 MIME-Version:Content-Type; b=J5wd77kIdAoJVeKF5hXH+QYfv+QJ4ndbIxZjZiwKGw8W6gjrUfpWWkYq+WwrXHi7MlpJqAitK8sT2uGwXAl080awfgomi8TWJli7l1sa/nT1cMcOGi95QoI6S+hCVVcPqagdkinCvJNX5JsDhdyaiTPNpEGRtdm6v7183wlARX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H6IzO+3u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF421C3277B;
+	Thu,  4 Jul 2024 20:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720123142;
-	bh=apep1Q9DkKcZcxF/SQGxA71cyB/fMtchWOgXl4gMPCI=;
+	s=k20201202; t=1720123211;
+	bh=Csc5MsbsEyLuNfkh2wCe32CpcbgQ5UEZ2i7ZZ9LoNq0=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=VgZtqB/+5P+OjYEvPtgheKZWolSMXxKZWcg9HO7e8CR8b7vnqdKYmVisOx9Hs2IM/
-	 XsPucPIjUYAhGwCzLyVHhlJJKZwbto+uh9hR40DKnS+GgqIn3eoaqudoFHuth+Mgq2
-	 PSNeUKTTRN5tM8Cgpa1zCL7nyBHa3NEImB5Wsk8pnlMrXx3jN2XtuUMU0xI0n0zyYm
-	 wq5ANihj2CqsfY/yusmYU4MAHEXcWwKeJ7izuXExTZ+HCoSF8oY8kFkMkT+zlJUphS
-	 yS4YYGwTfdeyP3CA/zbzrvwFZfu576gKowNTWnRX3mTh1BOMaADvqLHFL+kBtXsn4j
-	 AodR+ELyIeNPg==
+	b=H6IzO+3ujVDZgZLJm+QWcHXmEUUN5OV/540PccnYKmNEIRbx7kdmB/PfkTE2ZWaqJ
+	 P+1ZT3WDvq0rBDiacMdWi4MIc+a6MHMEz5MnwDa+L8+9LaWTMixV4pobN5B8oHIaD3
+	 QfUdMk77aY5i2VmYQ+lgX+L3bypgu/43fvMU83pRJ7yNldYB3htlY8iMlSCPwUXuOm
+	 Nu+mOnQPdg2Aqfh4VXEb0n37nDVtNSHAKZ6iGcHTPwDSkMNUKpCt8f2zp6qVQ6Xa9x
+	 w4xbe6eUeGlNhxRhdcIgDQfQQBL8vxVEbmNSRVqZ4VRVQSx0ptLf+43EsDHwD2+DhX
+	 Vs4efGzAAIGOg==
 From: Mark Brown <broonie@kernel.org>
-To: Louis Chauvet <louis.chauvet@bootlin.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: Colin Foster <colin.foster@in-advantage.com>, 
- =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240704-spi-revert-omap2-multi-v1-1-69357ef13fdc@kernel.org>
-References: <20240704-spi-revert-omap2-multi-v1-1-69357ef13fdc@kernel.org>
-Subject: Re: [PATCH] spi: omap2-mcspi: Revert multi mode support
-Message-Id: <172012314050.120154.11791655671608343293.b4-ty@kernel.org>
-Date: Thu, 04 Jul 2024 20:59:00 +0100
+To: Support Opensource <support.opensource@diasemi.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20240704-regulator-const-regmap-v1-0-bce0ddef63ea@gmail.com>
+References: <20240704-regulator-const-regmap-v1-0-bce0ddef63ea@gmail.com>
+Subject: Re: [PATCH 0/2] regulator: Constify read-only regmap_config struct
+Message-Id: <172012321044.121848.14079522267513199767.b4-ty@kernel.org>
+Date: Thu, 04 Jul 2024 21:00:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,24 +60,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Thu, 04 Jul 2024 13:05:48 +0100, Mark Brown wrote:
-> There have been multiple reports that the multi-mode support in the
-> OMAP2 McSPI driver has caused regressions on existing systems.  There's
-> been some discussion and some proposed changes but nothing that's been
-> tested by all the reporters.  Drop the patch for v6.10, hopefully we can
-> get to the bottom of the issue and reenable the feature for v6.11.
+On Thu, 04 Jul 2024 20:13:06 +0200, Javier Carrasco wrote:
+> This series adds the const modifier to the remaining regmap_config
+> structs in the regulator subsystem that are effectively used as const
+> (i.e., only read after their declaration), but kept ad writtable data.
 > 
 > 
-> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-[1/1] spi: omap2-mcspi: Revert multi mode support
-      commit: 8221545c440b5f83f00b3e5a92bbc86bf268bad4
+[1/2] regulator: da9121: Constify struct regmap_config
+      commit: 05db2e27b92302a43f996561dbb58ecabc3cc85d
+[2/2] regulator: max77857: Constify struct regmap_config
+      commit: 32d1171014a74c788218e0a8a5fd6fef65fb10ba
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
