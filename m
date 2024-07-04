@@ -1,212 +1,179 @@
-Return-Path: <linux-kernel+bounces-240855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E2A9273B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:11:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D7E9273B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4456F1C23466
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:11:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A0C1F22A60
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BF51AB90A;
-	Thu,  4 Jul 2024 10:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z6YnfVKP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4YcRZxQD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QVtt9Ckj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8W4r3nxM"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8181A0730;
-	Thu,  4 Jul 2024 10:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E3F1AB908;
+	Thu,  4 Jul 2024 10:13:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFB71A0730;
+	Thu,  4 Jul 2024 10:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720087868; cv=none; b=IceT9KWkETCMA4bhj2TPuxv/FHvYsqkQElLkBFyi8dqQ/TJCTpIOFobAoaJH8Q/6m71tkZpCNTdbZEUVttN0gBkowDQvCi+Wj8LiRMfUuNcBHApHskXFe+7hQDqH3B96wzDuYlCENNoOeqQ7QME30HptGO/lkuvLSc3Xt3eg9uU=
+	t=1720087984; cv=none; b=ROt5vGD2Lskaij7L85GHrLlxWQAsDQ2x489POaBe6wrGQ6MelC1IsNANT6y2D6WtntjOFxkwIUAmFt82o7L4tDacIW2Nye3up9Ha31aOGdGvzRmZaocte4VIKD5xp5ZTYfJ2bQAY3TnZNqA4gp4WABGL1ok8PB2otL7tPqt5whk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720087868; c=relaxed/simple;
-	bh=REDkPGsiavxL2k363CjZX5Holdl9qed6inupLZxFSDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YyA1IiXgvd1yjmxS4aCBRQgF3JdjLptZkiYrDbY6DHEF9bDid3lZN6dzZ2c6GglF6yKc1+UEbycKOnbV8q//+uAnEhBb3GjNT19siG5HaZFgkWOZXCVE0XKQxZh4ViAmSFJy+UXn4p6CyeQp6jO0aSyGYtC0OWf0gspjnoGjwaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z6YnfVKP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4YcRZxQD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QVtt9Ckj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8W4r3nxM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F19FF21AB6;
-	Thu,  4 Jul 2024 10:11:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720087865; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lg0uBLdt9E/i1S+HKhxKO6kyT4SuMZfGYVUxX1nIWUY=;
-	b=z6YnfVKP7Nz96TCmyYBGZG0gDHPuRiAEqKj06RcBj3I7X5C53c/0L4U+3xnf4tNjHtKMEb
-	82Byu5a9aLUAR9tOmzu76R1BgSq04Pq770k+47VFvc1r2Hoppb2WQT9FPXemaORP7vIVTl
-	GA95dHY7eZlZPGVdFMWSw9OYbV0RAyA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720087865;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lg0uBLdt9E/i1S+HKhxKO6kyT4SuMZfGYVUxX1nIWUY=;
-	b=4YcRZxQDf8+SQjseipotQC2NK+vXvqGncLsmiNCzXLjiAcaOIVlAgIm9UqRUgI3vnx7AIo
-	qGfSXI8UZbAHLTAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QVtt9Ckj;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8W4r3nxM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720087864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lg0uBLdt9E/i1S+HKhxKO6kyT4SuMZfGYVUxX1nIWUY=;
-	b=QVtt9CkjnruDnsdyLN/8N8Q2NVgQzT6OEusWpqw+rXgQ4DqJZTux/FeI7c0fbSRoLaxJht
-	sOu5QgDZlg//CQ3a3+10dkEXKnzdHrBtrBWDk+M5xHch0S2oJgh6G9Lr35gBccYXTPUKNW
-	pdJV5DvBPBdOVmQ8yebJRxU1QlNEWT8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720087864;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lg0uBLdt9E/i1S+HKhxKO6kyT4SuMZfGYVUxX1nIWUY=;
-	b=8W4r3nxMBACqU47kxWqN5d5+ZoiTHxxJxh/K/FnqhK1wmi6Xx7W+baISucayqne8pcxxdW
-	1oJF/ls9YXyzyACQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E07131369F;
-	Thu,  4 Jul 2024 10:11:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mx1iNjh1hmbzYgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 04 Jul 2024 10:11:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 96EDAA088E; Thu,  4 Jul 2024 12:11:04 +0200 (CEST)
-Date: Thu, 4 Jul 2024 12:11:04 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Yu Ma <yu.ma@intel.com>, viro@zeniv.linux.org.uk, jack@suse.cz,
-	mjguzik@gmail.com, edumazet@google.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v3 1/3] fs/file.c: remove sanity_check and add
- likely/unlikely in alloc_fd()
-Message-ID: <20240704101104.btkwwnhwf3mnfsvj@quack3>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240703143311.2184454-1-yu.ma@intel.com>
- <20240703143311.2184454-2-yu.ma@intel.com>
- <20240703-ketchup-aufteilen-3e4c648b20c8@brauner>
+	s=arc-20240116; t=1720087984; c=relaxed/simple;
+	bh=UMT+3o1id/iUYRmU6CkrDgoAaUAyPXeN3HPV2v2JMmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gK1kgwxivfF8O4T8GfUUQNfkr1T6FNii0buTBVwPVSGml6NiVFpeksbDEwSy6puf3a61x8ZGF0ct1TmCBgnsD2f/NUo7wgVYegHOArt2vlsOapDD/XqwvlOJotBr8gjMmHFWSoR+a/eakeTZXFouCMQjPI6OSkV9fi51b5kMiSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AFB9367;
+	Thu,  4 Jul 2024 03:13:26 -0700 (PDT)
+Received: from [192.168.178.110] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 001213F762;
+	Thu,  4 Jul 2024 03:12:58 -0700 (PDT)
+Message-ID: <d510f41a-1225-46d9-a2d7-ff9e6ff599d2@arm.com>
+Date: Thu, 4 Jul 2024 12:12:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703-ketchup-aufteilen-3e4c648b20c8@brauner>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[intel.com,zeniv.linux.org.uk,suse.cz,gmail.com,google.com,vger.kernel.org,linux.intel.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: F19FF21AB6
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] sched: Consolidate cpufreq updates
+To: Qais Yousef <qyousef@layalina.io>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Hongyan Xia <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240619201409.2071728-1-qyousef@layalina.io>
+ <f281ba07-d54a-460a-8f78-f7eb6bd8ed88@arm.com>
+ <20240628015200.vw75huo53redgkzf@airbuntu>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <20240628015200.vw75huo53redgkzf@airbuntu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed 03-07-24 16:34:49, Christian Brauner wrote:
-> On Wed, Jul 03, 2024 at 10:33:09AM GMT, Yu Ma wrote:
-> > alloc_fd() has a sanity check inside to make sure the struct file mapping to the
-> > allocated fd is NULL. Remove this sanity check since it can be assured by
-> > exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
-> > likely/unlikely and expand_file() call avoidance to reduce the work under
-> > file_lock.
-> > 
-> > Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> > Signed-off-by: Yu Ma <yu.ma@intel.com>
-> > ---
-> >  fs/file.c | 38 ++++++++++++++++----------------------
-> >  1 file changed, 16 insertions(+), 22 deletions(-)
-> > 
-> > diff --git a/fs/file.c b/fs/file.c
-> > index a3b72aa64f11..5178b246e54b 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -515,28 +515,29 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
-> >  	if (fd < files->next_fd)
-> >  		fd = files->next_fd;
-> >  
-> > -	if (fd < fdt->max_fds)
-> > +	if (likely(fd < fdt->max_fds))
-> >  		fd = find_next_fd(fdt, fd);
-> >  
-> > +	error = -EMFILE;
-> > +	if (unlikely(fd >= fdt->max_fds)) {
-> > +		error = expand_files(files, fd);
-> > +		if (error < 0)
-> > +			goto out;
-> > +		/*
-> > +		 * If we needed to expand the fs array we
-> > +		 * might have blocked - try again.
-> > +		 */
-> > +		if (error)
-> > +			goto repeat;
-> > +	}
+On 28/06/2024 03:52, Qais Yousef wrote:
+> On 06/25/24 14:58, Dietmar Eggemann wrote:
 > 
-> So this ends up removing the expand_files() above the fd >= end check
-> which means that you can end up expanding the files_struct even though
-> the request fd is past the provided end. That seems odd. What's the
-> reason for that reordering?
+>>> @@ -4917,6 +4927,84 @@ static inline void __balance_callbacks(struct rq *rq)
+>>>  
+>>>  #endif
+>>>  
+>>> +static __always_inline void
+>>> +__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
+>>> +{
+>>> +#ifdef CONFIG_CPU_FREQ
+>>> +	if (prev && prev->dl.flags & SCHED_FLAG_SUGOV) {
+>>> +		/* Sugov just did an update, don't be too aggressive */
+>>> +		return;
+>>> +	}
+>>> +
+>>> +	/*
+>>> +	 * RT and DL should always send a freq update. But we can do some
+>>> +	 * simple checks to avoid it when we know it's not necessary.
+>>> +	 *
+>>> +	 * iowait_boost will always trigger a freq update too.
+>>> +	 *
+>>> +	 * Fair tasks will only trigger an update if the root cfs_rq has
+>>> +	 * decayed.
+>>> +	 *
+>>> +	 * Everything else should do nothing.
+>>> +	 */
+>>> +	switch (current->policy) {
+>>> +	case SCHED_NORMAL:
+>>> +	case SCHED_BATCH:
+>>
+>> What about SCHED_IDLE tasks?
+> 
+> I didn't think they matter from cpufreq perspective. These tasks will just run
+> at whatever the idle system is happen to be at and have no specific perf
+> requirement since they should only run when the system is idle which a recipe
+> for starvation anyway?
 
-Yeah, not only that but also:
+Not sure we talk about the same thing here? idle_sched_class vs.
+SCHED_IDLE policy (FAIR task with a tiny weight of WEIGHT_IDLEPRIO).
 
-> >  	/*
-> >  	 * N.B. For clone tasks sharing a files structure, this test
-> >  	 * will limit the total number of files that can be opened.
-> >  	 */
-> > -	error = -EMFILE;
-> > -	if (fd >= end)
-> > -		goto out;
-> > -
-> > -	error = expand_files(files, fd);
-> > -	if (error < 0)
-> > +	if (unlikely(fd >= end))
-> >  		goto out;
+>>> +		if (unlikely(current->in_iowait)) {
+>>> +			cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
+>>> +			return;
+>>> +		}
+>>> +
+>>> +#ifdef CONFIG_SMP
+>>> +		if (unlikely(rq->cfs.decayed)) {
+>>> +			rq->cfs.decayed = false;
+>>> +			cpufreq_update_util(rq, 0);
+>>> +			return;
+>>> +		}
+>>> +#else
+>>> +		cpufreq_update_util(rq, 0);
+>>> +#endif
+>>
+>> We can have !CONFIG_SMP and CONFIG_FAIR_GROUP_SCHED systems. Does this
+>> mean on those systems we call cpufreq_update_util() for each cfs_rq of
+>> the hierarchy where on CONFIG_SMP we only do this for the root cfs_rq?
+> 
+> No. This is called on context switch only and hierarchy doesn't matter here. We
+> just do it unconditionally for UP since we only track the decayed at cfs_rq
+> level and I didn't think it's worth trying to make it at rq level.
 
-We could then exit here with error set to 0 instead of -EMFILE. So this
-needs a bit of work. But otherwise the patch looks good to me.
+OK, I see. The call in __update_cpufreq_ctx_switch() plus
+(task_tick_fair() and check_preempt_wakeup_fair()) are not related to a
+cfs_rq, but rather to the rq and/or task directly.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Currently we have the thing in update_load_avg() for !CONFIG_SMP and
+there we use cfs_rq_util_change() which only calls cpufreq_update_util()
+for root cfs_rq but this clearly has a cfs_rq context.
+
+>> [...]
+>>
+>>> @@ -4744,8 +4716,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+>>>  	if (se->avg.last_update_time && !(flags & SKIP_AGE_LOAD))
+>>>  		__update_load_avg_se(now, cfs_rq, se);
+>>>  
+>>> -	decayed  = update_cfs_rq_load_avg(now, cfs_rq);
+>>> -	decayed |= propagate_entity_load_avg(se);
+>>> +	cfs_rq->decayed |= update_cfs_rq_load_avg(now, cfs_rq);
+>>> +	cfs_rq->decayed |= propagate_entity_load_avg(se);
+>>>  
+>>>  	if (!se->avg.last_update_time && (flags & DO_ATTACH)) {
+>>>  
+>>> @@ -4766,11 +4738,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+>>>  		 */
+>>>  		detach_entity_load_avg(cfs_rq, se);
+>>>  		update_tg_load_avg(cfs_rq);
+>>> -	} else if (decayed) {
+>>> -		cfs_rq_util_change(cfs_rq, 0);
+>>> -
+>>> -		if (flags & UPDATE_TG)
+>>> -			update_tg_load_avg(cfs_rq);
+>>> +	} else if (cfs_rq->decayed && (flags & UPDATE_TG)) {
+>>> +		update_tg_load_avg(cfs_rq);
+>>>  	}
+>>>  }
+>>
+>> You set cfs_rq->decayed for each taskgroup level but you only reset it
+>> for the root cfs_rq in __update_cpufreq_ctx_switch() and task_tick_fair()?
+> 
+> Yes. We only care about using it for root level. Tracking the information at
+> cfs_rq level is the most natural way to do it as this is what update_load_avg()
+> is acting on.
+
+But IMHO this creates an issue with those non-root cfs_rq's within
+update_load_avg() itself. They will stay decayed after cfs_rq->decayed
+has been set to 1 once and will never be reset to 0. So with UPDATE_TG
+update_tg_load_avg() will then always be called on those non-root
+cfs_rq's all the time.
+
+[...]
 
