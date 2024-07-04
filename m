@@ -1,119 +1,136 @@
-Return-Path: <linux-kernel+bounces-240802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF5BF9272FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:27:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81F492730C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E94828C47E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:27:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F0301F24BAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5561AB509;
-	Thu,  4 Jul 2024 09:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063401AB907;
+	Thu,  4 Jul 2024 09:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="flE9jJl2"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mSQnWx+o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215391A4F10;
-	Thu,  4 Jul 2024 09:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3C41AB8F8;
+	Thu,  4 Jul 2024 09:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720085221; cv=none; b=bwfJvIoSnMShbyLDPWyk0e39yw3JI46AE+zoWOgOG0xdpCqCoyB9CKN53URcCAhbeBUjyboIr3n+4eb0IBOcjpbJu0kp61r5WKNlAKE1jKFGCI0lOb7uzrptOH4KATEwZfUg6zRGjZ6UHUFNUSJbLCEO6um5FalRXz4pS3e9E2U=
+	t=1720085342; cv=none; b=FnfrZpmfyi1KlEQpge34uerKVLL1disN/9AXHD21T7Xy7LTrfg+GpwDGFkayo5qPLk52CD2b/CB2wJr35gQMD7k7fR6RDDOkja3ywEEU28hXsomXNgBpehochojYj/x6OVycv7+sCvoe5kuvleVoNb98Sg4mE98hrxK5eXkWG4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720085221; c=relaxed/simple;
-	bh=F1KfsD3UGvzoMc6T0DbYQti/NUflDGqLSkO0N0b94Ek=;
+	s=arc-20240116; t=1720085342; c=relaxed/simple;
+	bh=99QdLiQfWVvNrakKybpaotUBHFtBmS12E1R2ONNXAUo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L1bxLAuI14zCsZco0etnkm4zuWK5JIMo/5SZVaFARCwF8pswOASW6Nuy6M8oHJLtnfFx7g88RqocdFM6fIrEe1s50MzXsrRDHB5AobRfNXkYvXt2ARwbwD/7PfwstnTGMbTD/rFgWfFRYrgFjQYpF/6mlIfKD/qbrRCuTr0wPMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=flE9jJl2; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=2lguWEUjpKlrDoi2fLaNoUIl9vpd9WgCM2kNC4wH6Yw=; b=flE9jJl2aWecCqgjHzWRQ3gyBv
-	WqR15/1yY3x+YTlm5k4lTIIMWeel84Y+l/A8zbncvTu1w4Gw63SxJrZNKfsJOTlSQrF40aXAqI/Ro
-	Nui0sg1Z47pBX4hPoZUWWzIFw+A+gvheghoasORhFz6sZnM++IYUq2hsTXvuZgSGT+e5W3Bhq1rgR
-	cIwqBuL8vu5eMzgIcaCSoru5EeIufzGpf8kKBOxD+rUZ9COaGXX7KualwetqpRBAljZ5BaJ8S9Ktm
-	rUupaKV+rXwRthNo3/FvEWIJdR38R87LMP2utYWjvg3RRMAzP628X2WEABEfm0QJJ2lD1XsG3djr/
-	3qEjBqOA==;
-Received: from [2001:9e8:9da:801:3235:adff:fed0:37e6] (port=54722 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sPIjp-006g3V-IA;
-	Thu, 04 Jul 2024 11:26:49 +0200
-Date: Thu, 4 Jul 2024 11:26:46 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Riku Voipio <riku.voipio@linaro.org>,
-	Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH v2 1/3] kbuild: deb-pkg: remove support for EMAIL
- environment variable
-Message-ID: <20240704-able-honeybee-of-symmetry-ddfcdd@lindesnes>
-References: <20240702180332.398978-1-masahiroy@kernel.org>
- <CAK7LNAS1jz51ytG1fu3tvUp-iNYk8UzwE+q5ioS1TP0tM7Phkg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BunVd6meQKuX2ONp2+Dr5thAcgd+OxzK1EWgfAL2eCgU+IR6EN0vznja/Jz84ye1CPisfei/YK2gLhqOPqGaSzL/8g0a1D0ALWhFcZSCG2x4D9oy2o5bUIlkSNjsq2JEcCmrAse0gzwcdIevmtGYIVyClMMSD3UoUKpFgjxKiDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mSQnWx+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C181C4AF0A;
+	Thu,  4 Jul 2024 09:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720085341;
+	bh=99QdLiQfWVvNrakKybpaotUBHFtBmS12E1R2ONNXAUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mSQnWx+oYdMK4tn623s9b61z8DkjTc7HlS1IFjpffqtWuvzMYwDwtfhQN0MZiAcR3
+	 Ntxi6aLTOGvgnuMajtSLx1vRR9xHd9T72eGe/yHcuftprHDv4qS6BqF3Yq15Ycztl3
+	 xTfQzM3HCoc4iMwGh5ZonO9IUqVEiXRZtZkrNJ7U=
+Date: Thu, 4 Jul 2024 11:27:58 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+	linux-s390@vger.kernel.org
+Subject: Re: [PATCH 5.10 000/290] 5.10.221-rc1 review
+Message-ID: <2024070447-robbing-devalue-c16d@gregkh>
+References: <20240703102904.170852981@linuxfoundation.org>
+ <CA+G9fYu8dpsNyqPk53wyq1ZTKmCJ3gUb6JBjH3OM9p2pqL_E-A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNAS1jz51ytG1fu3tvUp-iNYk8UzwE+q5ioS1TP0tM7Phkg@mail.gmail.com>
+In-Reply-To: <CA+G9fYu8dpsNyqPk53wyq1ZTKmCJ3gUb6JBjH3OM9p2pqL_E-A@mail.gmail.com>
 
-On Wed, Jul 03, 2024 at 11:57:44PM +0900, Masahiro Yamada wrote:
-> (+CC more Debian developers)
+On Wed, Jul 03, 2024 at 11:41:54PM +0530, Naresh Kamboju wrote:
+> On Wed, 3 Jul 2024 at 16:29, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 5.10.221 release.
+> > There are 290 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Fri, 05 Jul 2024 10:28:12 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.221-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
 > 
-> On Wed, Jul 3, 2024 at 3:03 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> >
-> > Commit edec611db047 ("kbuild, deb-pkg: improve maintainer
-> > identification") added the EMAIL and NAME environment variables.
-> >
-> > Commit d5940c60e057 ("kbuild: deb-pkg improve maintainer address
-> > generation") removed support for NAME, but kept support for EMAIL.
-> >
-> > The EMAIL and NAME environment variables are still supported by some
-> > tools (see 'man debchange'), but not by all.
-> >
-> > We should support both of them, or neither of them. We should not stop
-> > halfway.
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> >
-> > Changes in v2:
-> >  - New patch
-> >
-> >  scripts/package/mkdebian | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> > index b9a5b789c655..589f92b88c42 100755
-> > --- a/scripts/package/mkdebian
-> > +++ b/scripts/package/mkdebian
-> > @@ -125,7 +125,7 @@ gen_source ()
-> >  rm -rf debian
-> >  mkdir debian
-> >
-> > -email=${DEBEMAIL-$EMAIL}
-> > +email=${DEBEMAIL}
-> >
-> >  # use email string directly if it contains <email>
-> >  if echo "${email}" | grep -q '<.*>'; then
-> > --
-> > 2.43.0
+> The s390 builds failed on stable-rc 5.10.221-rc1 due to following build
+> warnings / errors. These errors were also noticed on stable-rc 5.4.279-rc1.
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> Regressions found on s390:
+> 
+>   - gcc-12-defconfig
+>   - clang-18-defconfig
+>   - gcc-8-defconfig-fe40093d
+> 
+> 
+> Build log:
+> ------
+> arch/s390/include/asm/cpacf.h: In function 'cpacf_km':
+> arch/s390/include/asm/cpacf.h:320:29: error: storage size of 'd' isn't known
+>   320 |         union register_pair d, s;
+>       |                             ^
+> arch/s390/include/asm/cpacf.h:320:32: error: storage size of 's' isn't known
+>   320 |         union register_pair d, s;
+>       |                                ^
+> arch/s390/include/asm/cpacf.h:320:32: warning: unused variable 's'
+> [-Wunused-variable]
+> arch/s390/include/asm/cpacf.h:320:29: warning: unused variable 'd'
+> [-Wunused-variable]
+>   320 |         union register_pair d, s;
+>       |                             ^               ^
+> 
+> Build log link,
+>  [1] https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.220-291-g4d0fada143ed/testrun/24509787/suite/build/test/gcc-12-defconfig/log
+> 
+> 
+> Build config url:
+>   config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ijXjGemFUwKSWd98LvKtd4i3uF/config
+>   download_url:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2ijXjGemFUwKSWd98LvKtd4i3uF/
+> 
+> metadata:
+>   git_describe: v5.10.220-291-g4d0fada143ed
+>   git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+>   git_short_log: 4d0fada143ed ("Linux 5.10.221-rc1")
+>   toolchain: gcc-12
+>   arch: s390
+> 
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+Found the issue, will push out -rc2 versions soon, thanks.
+
+greg k-h
 
