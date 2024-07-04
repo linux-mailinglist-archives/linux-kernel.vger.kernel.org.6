@@ -1,138 +1,86 @@
-Return-Path: <linux-kernel+bounces-240812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E69092731C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6205392731A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC9822822EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:32:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3FDD28D01C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469F21AB902;
-	Thu,  4 Jul 2024 09:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01B41AAE28;
+	Thu,  4 Jul 2024 09:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK5kdrdb"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BNAqwIcf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D13613B29D
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294C013B29D;
+	Thu,  4 Jul 2024 09:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720085550; cv=none; b=Rq3rDcv3NHvx4JB1C7Wr5xGGMzYwsJH/xDIprckP67J/dng8CfqGpwlWFIfQ/EYBFDmS6EhRAxyA7M7vP52TTWnlJt7Fh6PwuRx3QseEn8+/fvstwL9cDjbJqwGy8WseSs7LpNLaPMlYWFAd9FTJNcOur33rd9Aa169GLKY2JDo=
+	t=1720085547; cv=none; b=hXO2yWLRzvi+eixKryHURq4L16408dqDRlIHDeAE4gbj8jayM+61aV8VBgnWNp2uEW/0ukE3/KY65I4RDkxsmmKyStnUNVAl8v1VTzRbPZ+yPJIVfsdFlO3mePi/71xnHZjjC+WEtoAy1kOzClCyJYW+dkP7wf0su5K10CiKq1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720085550; c=relaxed/simple;
-	bh=/UU6dlcInhejLosomtZUum1OVKmIQu5j7w157Dwp7As=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CqiVjnc6tEqv7e6ZxyGZMmxhvxqtslSzE20KsNj5sQuCFSXBYjws8i+ybzqVmIn+arJbeSgF9Lj6U2uetPa92i04kScRV/hqgro0nLAUbE0SSz9+99Tki8eYXcmRTp5fS4br40C0H+Qi4Cj/yY3f4kNPsws28jpt3tJXPouWZ5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BK5kdrdb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BEEC4AF0D;
+	s=arc-20240116; t=1720085547; c=relaxed/simple;
+	bh=w19DchiW/7C37L4MuQM+qfzoS3IEIWVbJxorCmkgc9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M64ITIAVeV/nywuhNjoPfesBcdfCZ9Ivjp+CLp/eAlif62nBxmGgkWnjjaSWkH5GPgJSrPrzlAfcyNm5ZFAm6iDZHzbsLvR/p0f3seP5rFexSZ0/hu9Mu7YM4DvteiuCajTsTdYd0kcBcNgAg/ZQjIsGgh74zQQRIvdpRPll6Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BNAqwIcf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C3DC32786;
 	Thu,  4 Jul 2024 09:32:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720085550;
-	bh=/UU6dlcInhejLosomtZUum1OVKmIQu5j7w157Dwp7As=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BK5kdrdbNdTvEC7iAaYKdBelQ26rM8ln0nP1Beo6FBfcBBlUkQzyplzsA/kCs234z
-	 RclB0PwQecPq0a9dM7XO/T4YpogaujgDKJZ+SdGnvb6L69fTd0/LVTgjum/T8jQf4b
-	 6vKeF+OaBZ5ivLzqGghecpxgjHdL/ozvFaZrcMDb8sN+QLT3eBytlvI4ySxfovx29p
-	 fEgTiPSo0YlI7ellIUlzpJC7JcfIBCkdqYwls6iBzJPZ/I1SdY52ChA07vYsTpWdz1
-	 CbfZoCnrFKby6N6Q2cbZXMhJYjZ+nFbyA+dKK6gtsPrYSW4ufsOYAZcflZLqkmEdLM
-	 dVuRoB3E10jCA==
-Message-ID: <5c312ebb-a202-45e5-a82b-7b7c3f080d67@kernel.org>
-Date: Thu, 4 Jul 2024 17:32:23 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720085546;
+	bh=w19DchiW/7C37L4MuQM+qfzoS3IEIWVbJxorCmkgc9I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BNAqwIcfUM2oyPOu+N0omQ/Aw48pvHWGoHOgMqmb5UR/G0e4vgIkVFYvqx0iZDSOr
+	 9t/ejfmTQYtXZniUGFqg8BDScdTYtrChTtBeGk24je6r2xBdutolp7FTElPJcm36lH
+	 v09x0CK3UNja4i6Jbm9A34j6eGriKxcgbWG9I3Vw=
+Date: Thu, 4 Jul 2024 11:32:24 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Yunseong Kim <yskelg@gmail.com>, stable@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, Sasha Levin <sashal@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Taehee Yoo <ap420073@gmail.com>,
+	Pedro Tammela <pctammela@mojatatu.com>,
+	Austin Kim <austindh.kim@gmail.com>,
+	MichelleJin <shjy180909@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	ppbuk5246@gmail.com, Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: Re: [PATCH] tracing/net_sched: NULL pointer dereference in
+ perf_trace_qdisc_reset()
+Message-ID: <2024070400-slideshow-professor-af80@gregkh>
+References: <20240702180146.5126-2-yskelg@gmail.com>
+ <20240703191835.2cc2606f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (2) [PATCH] f2fs: fix null reference error when checking end of
- zone
-To: daejun7.park@samsung.com, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
- "daehojeong@google.com" <daehojeong@google.com>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Seokhwan Kim <sukka.kim@samsung.com>,
- Dongjin Kim <dongjin_.kim@samsung.com>,
- Yonggil Song <yonggil.song@samsung.com>,
- Jaeyoon Choi <j_yoon.choi@samsung.com>, Nayeon Kim
- <nayeoni.kim@samsung.com>, Siwoo Jung <siu.jung@samsung.com>
-References: <460c4708-3ec6-4fbc-8f6c-7f8e5f901061@kernel.org>
- <20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90@epcms2p4>
- <CGME20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90@epcms2p4>
- <20240704075521epcms2p49cc9985b6624e4e1129907e883fbc1d9@epcms2p4>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240704075521epcms2p49cc9985b6624e4e1129907e883fbc1d9@epcms2p4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703191835.2cc2606f@kernel.org>
 
-On 2024/7/4 15:55, Daejun Park wrote:
-> Hi Chao Yu,
->>   
->> --------- Original Message ---------
->> Sender : Chao Yu <chao@kernel.org>
->> Date : 2024-07-04 16:16 (GMT+9)
->> Title : Re: [PATCH] f2fs: fix null reference error when checking end of zone
->>   
->> On 2024/7/4 9:01, Daejun Park wrote:
->>> This patch fixes a potentially null pointer being accessed by
->>> is_end_zone_blkaddr() that checks the last block of a zone
->>> when f2fs is mounted as a single device.
->>
->> blkzoned feature depends on multiple device feature? One regular
->> device and one seq-zone device?
+On Wed, Jul 03, 2024 at 07:18:35PM -0700, Jakub Kicinski wrote:
+> On Wed,  3 Jul 2024 03:01:47 +0900 Yunseong Kim wrote:
+> > Support backports for stable version. There are two places where null
+> > deref could happen before
+> > commit 2c92ca849fcc ("tracing/treewide: Remove second parameter of __assign_str()")
+> > Link: https://lore.kernel.org/linux-trace-kernel/20240516133454.681ba6a0@rorschach.local.home/
+> > 
+> > I've checked +v6.1.82 +v6.6.22 +v6.7.10, +v6.8, +6.9, this version need
+> > to be applied, So, I applied the patch, tested it again, and confirmed
+> > working fine.
 > 
-> According to mkfs.f2fs, if there are a sufficient number of
-> conventional zones, a single zoned device can be used.
-
-Correct.
-
-Anyway, the code looks clean.
-
-Reviewed-by: Chao Yu <chao@kernel.org>
-
-Thanks,
-
+> You're missing the customary "[ Upstream commit <upstream commit> ]"
+> line, not sure Greg will pick this up.
 > 
-> Thanks,
-> Daejun
-> 
->>
->> Thanks,
->>
->>>
->>> Fixes: e067dc3c6b9c ("f2fs: maintain six open zones for zoned devices")
->>> Signed-off-by: Daejun Park <daejun7.park@samsung.com>
->>> ---
->>>    fs/f2fs/data.c 4 +++-
->>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>> index b6dcb3bcaef7..1aa7eefa659c 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -925,6 +925,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
->>>    #ifdef CONFIG_BLK_DEV_ZONED
->>>    static bool is_end_zone_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr)
->>>    {
->>> +        struct block_device *bdev = sbi->sb->s_bdev;
->>>             int devi = 0;
->>>   
->>>             if (f2fs_is_multi_device(sbi)) {
->>> @@ -935,8 +936,9 @@ static bool is_end_zone_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr)
->>>                             return false;
->>>                     }
->>>                     blkaddr -= FDEV(devi).start_blk;
->>> +                bdev = FDEV(devi).bdev;
->>>             }
->>> -        return bdev_is_zoned(FDEV(devi).bdev) &&
->>> +        return bdev_is_zoned(bdev) &&
->>>                     f2fs_blkz_is_seq(sbi, devi, blkaddr) &&
->>>                     (blkaddr % sbi->blocks_per_blkz == sbi->blocks_per_blkz - 1);
->>>    }
+
+Yeah, I missed this, needs to be very obvious what is happening here.
+I'll replace the version in the queues with this one now, thanks.
+
+greg k-h
 
