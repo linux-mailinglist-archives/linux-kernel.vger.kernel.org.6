@@ -1,183 +1,104 @@
-Return-Path: <linux-kernel+bounces-241015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8159275C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:16:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0AF9275D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 535D81F24029
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 278351F239AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8713E1AE0BA;
-	Thu,  4 Jul 2024 12:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443F01AE0AD;
+	Thu,  4 Jul 2024 12:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9uDYZNz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zibf5UeN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FC/+YWlj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F015A11D;
-	Thu,  4 Jul 2024 12:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2422125779;
+	Thu,  4 Jul 2024 12:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720095390; cv=none; b=f3O2JLWfqMa3GZJBiWAnC2/0fahkUqQfvrC4h0EhbhJEMsfnLevFrsx1Y9e22YZhW/b+b0n3/kBnDu4eF9qvTuzP9/vrhvyENHfRPwJrKe07XdGh56dMGDS+kj4yJOGXCmBJ6qmMekxf2v9rVzdI13AKJ82D9JN2CY6hQVg55+4=
+	t=1720095553; cv=none; b=WWbg8P5I+a5AFJNLlp39RzYhsPJdpVSFY/p6uqvsr6/EzLGsDRlvJn9tgmn9J2jl93jcknvRvCEHezJ4DBFpHcgyLVEM/hGMYC+oNS/mffXaJkG0TcJr2xtQuKK6HYdYMAen/93pQL/U8wzqbMm6dsXjk0zBp89F1Eobxd4t9qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720095390; c=relaxed/simple;
-	bh=W31QLCmsBH+N23WsVFp6vLfxTlySqxr6oI2EDkb0Bxs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TF23Ljg7/D+2L3f82ZUuuErYqTLgTZ5U8yGCGkpP2DL9FD5enMq/2Mc+O1u/vZeoxX2dcpUVhVtWIICz6OpnaEV0APWI5ADTUZ75Quq4qvo7n/b2afJUkbCMqRQSLkne8G9gPhlF8Q6cFVTR2nXZPGreyAnhj9/eiDPriU/bG60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9uDYZNz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D25FC4AF0A;
-	Thu,  4 Jul 2024 12:16:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720095390;
-	bh=W31QLCmsBH+N23WsVFp6vLfxTlySqxr6oI2EDkb0Bxs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=O9uDYZNzfjbL20BPce0SBXAc/6RLb5luVbNL9iCTQkFLPB99LpWgM5nctRQ/1XVji
-	 nshJkaGwdzZDbyDUMoQHt/xAifrlNytJgUgH6VnItp/6hHsVmsGSLvWiDX9FRgYiWJ
-	 pjXcA7iVvKNESo3x4n19MGOsweMqlzElVf8p8SpN/ndYxkPx6CNZyT5m2ejHEsMNDq
-	 MJMpk2qp981GKj6XP19yo4c7GEZjxVCQmGhtXwTjsllc4b+11ALcxgMT/6Qvtxbrty
-	 ogK2aquxqjOS0h2jxDo1XXCmGHd4yeZDgS6s+QAvgeok/s4MCOIPUh5rq3q/uM+rzT
-	 qyQVilGGdzmvA==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-25989f87e20so86127fac.1;
-        Thu, 04 Jul 2024 05:16:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVFlMKkWyhXBGzcp8xsFWTbCpvO6FDEgdQHbUVFlY2hBKuI6/fckHSB8fYTKPpimPWAyJx7R0LAyQwMDKcGywlRp4tvKnLRn6uHKtKsWFSz2QxwYOeixDF3xS7vAm4utocSOwiDjv8IvCHnsqc/X4y4fDqnPpWoqfP+4cLKTS4FEw==
-X-Gm-Message-State: AOJu0Yzj7jIcyr7B0PlmQSOWbgyBsvteSe6HL7ddYYIkr+JRoHuUcMKk
-	AXYW2z/H9yzrw/Hbb3iKSvYv9eQbDH8HICeXTKGUZOMTbyj/a7ji5NUrYurxftEd3sbF1hKgyYZ
-	qvUl9zTJ3sAG+3zcyHNImmg90CIA=
-X-Google-Smtp-Source: AGHT+IFtXfqhDha8ognSJPCS7ZjL1umAb0rhhN7ePNkKKBtyEecApBtNtccw9KOd6T0xU7AAFVDa0ziWjPibVSlRSUc=
-X-Received: by 2002:a05:6820:2c07:b0:5c4:5cbc:b1b4 with SMTP id
- 006d021491bc7-5c646a91827mr1360390eaf.0.1720095389853; Thu, 04 Jul 2024
- 05:16:29 -0700 (PDT)
+	s=arc-20240116; t=1720095553; c=relaxed/simple;
+	bh=Nnlx2nHqz0VPl3CWDgzgXFLf1nEKUzyfRv56y/zLLtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WVugdObJ0oJ7hePlLpFnHhrrdN/uXPPBCggYD3sknKQxt6ee/uGrG2UyDMAQfHPNRzBpkEQOdihPAcDDnWEJiSXgtTCMJjoeamm6DXuc5+ljFzxktehFk72w4l+WQ9AsCglQtP5pi4kxcJuTx5k4stATvcoIwKeJlzFWPdz3zpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zibf5UeN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FC/+YWlj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 4 Jul 2024 14:19:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720095550;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bAv0pawrlTY1HxGYFhyoC+vPlRm/ofgkenUj6RqKG+8=;
+	b=zibf5UeNO2SvoaMy/Fmrk4rG1LXq+drMULDUKoNV6B+MZA48UpRCtUHeIQn/ldsIIuSzRw
+	cZ01KjDKWumFaAUsS6sX66QtiHZz5kv7CuEdVTKT50Wr/9rf4opT7YxX7Qj2Zm35BgXb2m
+	RK3lVo7CIwuWojjs2FnKAkl7HyAVeDfQUYtoC0hDUXOrob/zcSlVOKRHv8GApU/vQkXfac
+	4Vk7n7TeEO7PoCDeWFcF59q0ySjvPkd3IbL0RkkCcpVcwPTABI16F1VQeE0jZjsxE4bJw9
+	+eDizpmcHjC1bpBnw4+U3DVsh9d1nhbDp14mu2bOnwwZ6DRJOB9c91LXpMsH9Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720095550;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bAv0pawrlTY1HxGYFhyoC+vPlRm/ofgkenUj6RqKG+8=;
+	b=FC/+YWljnqh8L9IpnFdXPnrZooaGcGd0M3aqtJvVZcnn5x4cuq2m5MiBfXOp16JkGNWTwj
+	2M1MLhCUOSF5V0Cg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jens Axboe <axboe@kernel.dk>, Thomas Gleixner <tglx@linutronix.de>,
+	Mike Galbraith <umgwanakikbuti@gmail.com>
+Subject: Re: [PATCH v2 1/3] zram: Replace bit spinlocks with a spinlock_t.
+Message-ID: <20240704121908.GjH4p40u@linutronix.de>
+References: <20240620153556.777272-1-bigeasy@linutronix.de>
+ <20240620153556.777272-2-bigeasy@linutronix.de>
+ <27fb4f62-d656-449c-9f3c-5d0b61a88cca@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613211011.413120-1-surajjs@amazon.com> <CAJZ5v0iLtYOWc0w202kq8Tb-n=8ToQj2xHQ2_socwqqTyXufSw@mail.gmail.com>
- <703fd8504ca9541898ec920e15c05d673233218f.camel@amazon.com>
-In-Reply-To: <703fd8504ca9541898ec920e15c05d673233218f.camel@amazon.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Jul 2024 14:16:19 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hXADyd57jAujYSb5gXWoPJpEAyUPXi_mcJdpORcpg7KQ@mail.gmail.com>
-Message-ID: <CAJZ5v0hXADyd57jAujYSb5gXWoPJpEAyUPXi_mcJdpORcpg7KQ@mail.gmail.com>
-Subject: Re: [PATCH] acpi: Support CONFIG_ACPI without CONFIG_PCI
-To: "Jitindar Singh, Suraj" <surajjs@amazon.com>
-Cc: "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>, 
-	"acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "okaya@kernel.org" <okaya@kernel.org>, 
-	"rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, "robert.moore@intel.com" <robert.moore@intel.com>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <27fb4f62-d656-449c-9f3c-5d0b61a88cca@intel.com>
 
-On Wed, Jul 3, 2024 at 1:01=E2=80=AFAM Jitindar Singh, Suraj <surajjs@amazo=
-n.com> wrote:
->
-> On Fri, 2024-06-14 at 13:08 +0200, Rafael J. Wysocki wrote:
-> > On Thu, Jun 13, 2024 at 11:10=E2=80=AFPM Suraj Jitindar Singh
-> > <surajjs@amazon.com> wrote:
-> > >
-> > > Make is possible to use ACPI without having CONFIG_PCI set.
-> > >
-> > > When initialising ACPI the following call chain occurs:
-> > >
-> > >   acpi_init() ->
-> > >     acpi_bus_init() ->
-> > >       acpi_load_tables() ->
-> > >         acpi_ev_install_region_handlers() ->
-> > >
-> > > acpi_ev_install_region_handlers() calls
-> > > acpi_ev_install_space_handler() on
-> > > each of the default address spaces defined as:
-> > >
-> > >   u8 acpi_gbl_default_address_spaces[ACPI_NUM_DEFAULT_SPACES] =3D {
-> > >           ACPI_ADR_SPACE_SYSTEM_MEMORY,
-> > >           ACPI_ADR_SPACE_SYSTEM_IO,
-> > >           ACPI_ADR_SPACE_PCI_CONFIG,
-> > >           ACPI_ADR_SPACE_DATA_TABLE
-> > >   };
-> > >
-> > > However in acpi_ev_install_space_handler() the case statement for
-> > > ACPI_ADR_SPACE_PCI_CONFIG is ifdef'd as:
-> > >
-> > >   #ifdef ACPI_PCI_CONFIGURED
-> > >                   case ACPI_ADR_SPACE_PCI_CONFIG:
-> > >
-> > >                           handler =3D
-> > > acpi_ex_pci_config_space_handler;
-> > >                           setup =3D acpi_ev_pci_config_region_setup;
-> > >                           break;
-> > >   #endif
-> > >
-> > > ACPI_PCI_CONFIGURED is not defined if CONFIG_PCI is not enabled,
-> > > thus the
-> > > attempt to install the handler fails.
-> > >
-> > > Fix this by ifdef'ing ACPI_ADR_SPACE_PCI_CONFIG in the list of
-> > > default
-> > > address spaces.
-> >
-> > What if there are PCI operation regions in the AML on the platform?
-> > How are they going to be handled?
->
-> Hi,
->
-> Appreciate the response.
->
-> I think the short answer is that if there are PCI operation regions in
-> the AML on the platform then the kernel will need to be built with PCI
-> support (CONFIG_PCI) and if it isn't then there won't be a handler
-> installed and the operation will error.
+On 2024-07-04 13:38:04 [+0200], Alexander Lobakin wrote:
+> > index 3acd7006ad2cc..036845cd4f25e 100644
+> > --- a/drivers/block/zram/zram_drv.c
+> > +++ b/drivers/block/zram/zram_drv.c
+> > @@ -57,19 +57,34 @@ static void zram_free_page(struct zram *zram, size_t index);
+> >  static int zram_read_page(struct zram *zram, struct page *page, u32 index,
+> >  			  struct bio *parent);
+> >  
+> > +static void zram_meta_init_table_locks(struct zram *zram, size_t num_pages)
+> > +{
+> > +	size_t index;
+> > +
+> > +	for (index = 0; index < num_pages; index++)
+> 
+> Maybe declare @index right here?
 
-A problem with this approach is that AML has no good way of handling
-such errors.  It accesses a location in an address space of some sort
-and expects the access to be successful.
+But why? Declarations at the top followed by code. 
 
-The interpreter can catch them, but then the only thing it can do is
-to abort the AML which then may lead to all sorts of unexpected
-behavior of the platform.
+> 
+> > +		spin_lock_init(&zram->table[index].lock);
+> > +}
+> 
+> [...]
+> 
+> Thanks,
+> Olek
 
-> Correct me if I'm wrong but it seems the intention of the patch series:
->
-> 36ad7d2b9e9b ACPI: Move PCI reset to a separate function
-> 86689776878f ACPI: Allow CONFIG_PCI to be unset for reboot
-> bd23fac3eaaa ACPICA: Remove PCI bits from ACPICA when CONFIG_PCI is
-> unset
-> 5d32a66541c4 PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set
->
-> was to decouple the dependency between CONFIG_PCI and CONFIG_ACPI.
-
-Yes, and as per the above, it was a mistake.
-
-> bd23fac3eaaa ("ACPICA: Remove PCI bits from ACPICA when CONFIG_PCI is
-> unset") added an ifdef around the code to install the handler for the
-> PCI CONFIG region making it dependent on ACPI_PCI_CONFIGURED (and thus
-> CONFIG_PCI). Thus it is not possible to install the default handler for
-> the PCI CONFIG region unless CONFIG_PCI is set meaning it makes no
-> sense to have it in the list of default address spaces.
->
-> I can gather that this leads to 2 possibilities:
->
-> 1. If there are PCI operation regions in the AML on the platform then
-> these will error on a kernel not compiled with CONFIG_PCI.
-
-But as I said, there is no good way of handling such errors.
-Basically, the kernel should panic() in those cases.
-
-> or,
->
-> 2. The code to install the handler for the PCI CONFIG region should not
-> be ifdef'ed and should be executed irrespective of if the kernel is
-> compiled with CONFIG_PCI to allow for PCI CONFIG regions in the AML.
-
-That doesn't work either because the PCI config address space may not
-be really accessible without CONFIG_PCI.
-
-IOW, I don't see how this can be made work.
-
-Can you please remind me what the use case for ACPI without PCI is?
+Sebastian
 
