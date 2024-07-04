@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-241085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131619276E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:11:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7B99276EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44ED91C222FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:11:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82F2CB223D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AE21AED4D;
-	Thu,  4 Jul 2024 13:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F711B012A;
+	Thu,  4 Jul 2024 13:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="InBIbUHd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vpwd2tcY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196A91A3BDA
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCB11AED27;
+	Thu,  4 Jul 2024 13:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720098657; cv=none; b=ZeTq1JXYZU1gp1GUfvBvnKGwyC81Elm4F9f7gM37FcXsAtHN3iW7ilnp+bQ82aJoHyXeQ4Y44UxNdAw7VbWB0rSEojlg/N0bUUhHtjxvBA5pqJJI1alseEEknZ4pNArLjLFWUnBVavcpBpuumx7dXhJTx4kxWZVa9YRJlc8sx6s=
+	t=1720098657; cv=none; b=T1bimdxh2rVFcOl2kgoOO/80LNzoKVqK3OLxkXhGtsyFq3/lSI13mp8rLeGoASEqBHFP5xQUXBfoF+a0EKhOc+/F/ArG08POcJtCzjyVIgVQN44sa9+FSAp5MDVUGpEWnd1CTRME2ybm4VI/mbsXUo7onZYmSO/JTGUwzuUCsSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720098657; c=relaxed/simple;
-	bh=dlHwO2nGfEIPQRND3XuHL5U3U23kIOrurw+F13qm/ZQ=;
+	bh=lJXnONd5ISVvmE4QQ4QJTEc1T2lWaVBV5IrBFXcFzSs=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ncdRpk93FR75FPN50PnVOTFCNFSwNwzzo/pEh7ZjgEf73TnXyvc6cnwwEICO0aeNuWa1+6YGp267edKHo7aWn2i4McGTMjRmym1oTPcC1drpfBgevsQohZBq61yfJDBSo1jGbEZ7K1tYEY0ab5BkeKfogGI0K9/WxK5gv/F63HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=InBIbUHd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C0D5FC4AF0B;
+	 In-Reply-To:To:Cc; b=RyziWlbFZvksz6E4/oP+1W+KIi7FZiDd4FTFBCD7JtY0i+Ur4CFq1L666XpInDwEF3in4G9fHc9JLkuegwl51fk/Cu5zwQI5/LU7Ko2uFgmaTQHlSgaV+1KF1Nt0FVsrAsLLRNG8W2UerE67Gr8ydTWwCsbo0rqweEvBlivS6HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vpwd2tcY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E2A1DC4AF11;
 	Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720098656;
-	bh=dlHwO2nGfEIPQRND3XuHL5U3U23kIOrurw+F13qm/ZQ=;
+	s=k20201202; t=1720098657;
+	bh=lJXnONd5ISVvmE4QQ4QJTEc1T2lWaVBV5IrBFXcFzSs=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=InBIbUHdpMnMo7f1ektkDLglWqxh9mBUdbKu9I8TEsJvLdwk1i5Boy8crJvO30KXJ
-	 b7LxBNJTKdxW6HEb0Wm3eGokL6O8gDR/fnw7iraRCRofIXZP93T5FJ1kipm67ktLkb
-	 pFMTBZk9ZoAowQ7AcjjfFupZwW3nN5qqzFXIbcJtLLCdN86pmls3mRsblbUqRHDivD
-	 mAbTQLzqSmAmP4WYyZ1DXo2CYtdtIXitJdFeXmiYaNRJqH5rff0YtQr4Lo87EpwVRa
-	 HeqWLQvqYHmOIqgsJrPG05Bo0ARM9a36Uz0n2prZJzBn1Ie/TehuDgn05k6Fjvify+
-	 pkyZbQVJNcfZg==
+	b=Vpwd2tcYqNgW1dMG4DUsuYkKBIfDlCn4PVslQ+vVDvZ3zq5iOcb6vvRYYnY6zPLqm
+	 b7qRPNJMCF708+0X9bllMigap/i9FHO/+hiquNIRAZExPqCwtGbOBjIJuQ7OkQnqn0
+	 sPH8SB9WW3Zr18pR0U7e1oUFPHWfJ1HJqEs8ZH2+2KSpcEudv6FOxA6WTWsch9b6Or
+	 Tab2z58GTWX2feeNdjzi6LpoNRXkbTLsvakMu53Ah1izJcjwti+u6cCNBmIy7ILBgZ
+	 8q99pCDwKY1JTEl8QytqRgm64Qa8FzCXj9BCjgdlSwIP/Xyncj4Y/MSAwHIEK4Njwe
+	 nAqxfUSP9Im+g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B246CC43612;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D4BA4C433A2;
 	Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,37 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: stacktrace: fix usage of ftrace_graph_ret_addr()
+Subject: Re: [PATCH] randomize_kstack: Remove non-functional per-arch entropy
+ filtering
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172009865672.17306.10078143988695346844.git-patchwork-notify@kernel.org>
+ <172009865686.17306.9398253862841269029.git-patchwork-notify@kernel.org>
 Date: Thu, 04 Jul 2024 13:10:56 +0000
-References: <20240618145820.62112-1-puranjay@kernel.org>
-In-Reply-To: <20240618145820.62112-1-puranjay@kernel.org>
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, samuel.holland@sifive.com,
- dev.mbstr@gmail.com, linux-kernel@vger.kernel.org, puranjay12@gmail.com,
- rostedt@goodmis.org
+References: <20240619214711.work.953-kees@kernel.org>
+In-Reply-To: <20240619214711.work.953-kees@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: linux-riscv@lists.infradead.org, arnd@arndb.de, liuyuntao12@huawei.com,
+ mark.rutland@arm.com, catalin.marinas@arm.com, will@kernel.org,
+ hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+ borntraeger@linux.ibm.com, svens@linux.ibm.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ gustavoars@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, leobras@redhat.com, imbrenda@linux.ibm.com,
+ pawan.kumar.gupta@linux.intel.com, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-hardening@vger.kernel.org
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
-by Palmer Dabbelt <palmer@rivosinc.com>:
+by Kees Cook <kees@kernel.org>:
 
-On Tue, 18 Jun 2024 14:58:20 +0000 you wrote:
-> ftrace_graph_ret_addr() takes an `idx` integer pointer that is used to
-> optimize the stack unwinding. Pass it a valid pointer to utilize the
-> optimizations that might be available in the future.
-> 
-> The commit is making riscv's usage of ftrace_graph_ret_addr() match
-> x86_64.
+On Wed, 19 Jun 2024 14:47:15 -0700 you wrote:
+> An unintended consequence of commit 9c573cd31343 ("randomize_kstack:
+> Improve entropy diffusion") was that the per-architecture entropy size
+> filtering reduced how many bits were being added to the mix, rather than
+> how many bits were being used during the offsetting. All architectures
+> fell back to the existing default of 0x3FF (10 bits), which will consume
+> at most 1KiB of stack space. It seems that this is working just fine,
+> so let's avoid the confusion and update everything to use the default.
 > 
 > [...]
 
 Here is the summary with links:
-  - riscv: stacktrace: fix usage of ftrace_graph_ret_addr()
-    https://git.kernel.org/riscv/c/393da6cbb2ff
+  - randomize_kstack: Remove non-functional per-arch entropy filtering
+    https://git.kernel.org/riscv/c/6db1208bf95b
 
 You are awesome, thank you!
 -- 
