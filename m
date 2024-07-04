@@ -1,296 +1,156 @@
-Return-Path: <linux-kernel+bounces-241205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A8492783E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:24:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9B6927844
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5FA5289F2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:24:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803181C21466
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FABB1B0106;
-	Thu,  4 Jul 2024 14:24:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A81D2F5;
-	Thu,  4 Jul 2024 14:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A6E1B11E1;
+	Thu,  4 Jul 2024 14:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZQT63EZy"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6E11AEFF5;
+	Thu,  4 Jul 2024 14:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720103058; cv=none; b=ltz4T/5lWxajo9h9NF3sNUcGZ5BE9bLmrsii5lPz0M5/5gQf1evfe85E9ZtzFDJm4eqwuhY4gAZ7+zgtQAO4lNO+VXjIuUaXIZYz4Rk+YGiBE5gh41lkz2L7uvqQD27b2lTvZ+wfDhL2N7tCK4VbH5oQNEkvT5OAhUo3GDSkGOU=
+	t=1720103084; cv=none; b=J6T4tcL6vCesS18fxFemVzC6Hl8xBQWe+lFKpZ1tqkETty9vMJyBK/kgXEVWEkPE3QfQy0RtO7pUkyhxYpsvqZx47ynPz5DYpFYNT7QG1Crz+G20l/i8GFzlr1jm0HavP/mjvhQzZzH+EXFKjxjFi7/YovZQ4lTErlKLUDectoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720103058; c=relaxed/simple;
-	bh=OEHQ7C893Gjev4bvMfn1iM0WMS4Q5I2bihnm8aIUGr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T5JlOAuBfI1KRKcDe8eGjRhilymQ8xGdbUKAuOYblKh9GtzgnkiIkv3rOYUoEjxcD+GCK8lTNBpYrYaeTVpm+7ZOuMCPI5AuWxqfjGVVJXToX+Hs3XHsdvcDjXM0YTV+jd4ORRcAvud7XqlOZwyCO+IeFTtC0gmT6puDyW5P/F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35EA8367;
-	Thu,  4 Jul 2024 07:24:40 -0700 (PDT)
-Received: from [10.1.29.168] (XHFQ2J9959.cambridge.arm.com [10.1.29.168])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 29AE33F766;
-	Thu,  4 Jul 2024 07:24:12 -0700 (PDT)
-Message-ID: <98790338-0f86-4658-8dec-95e94b6d5c18@arm.com>
-Date: Thu, 4 Jul 2024 15:24:10 +0100
+	s=arc-20240116; t=1720103084; c=relaxed/simple;
+	bh=WkASUccS1iaI0JkyEUG7v6JqDw0zQ1RrOOfIwZhPcm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DO2h7nR0YlJbRObyCVq0syhw1fFQGxsiVD3hUMdupSEt6+0bKlMvd+QWV6gwOozRJijh+8lGYXWCJs9VxIz1IW3Z6oEngf0uERCDutwWfD+pSW7OSdzbORsTMJsssRcr+2ZtjGnjgNJnVLlO+y22n7s9PAefPoNNapo3KG9j2r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZQT63EZy; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=xe3YJWWLCTD5Uj3YuzCc3NRG9utaZux7QG2xA/rd4XM=; b=ZQ
+	T63EZytTgwDmnKkR6YBG7Kvn3tXnOx1bs54ZZEmFEadHyBeluMIogHjFIUShwN9PuUttSdWntHLmX
+	p7R+JxJlZJFUAE5WpTMihYrdAii1Cl9MqCH/9YV8PaOjO4Srx/fkozqTRWxl9pO7r3SCjQGpc9a60
+	5OKLTMJNHdhzdNk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sPNNn-001oh6-Oq; Thu, 04 Jul 2024 16:24:23 +0200
+Date: Thu, 4 Jul 2024 16:24:23 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kamil =?iso-8859-1?Q?Hor=E1k_=282N=29?= <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 4/4] net: phy: bcm-phy-lib: Implement BroadR-Reach
+ link modes
+Message-ID: <f598ebe0-4e43-45e9-878e-49ec06383ef3@lunn.ch>
+References: <20240621112633.2802655-1-kamilh@axis.com>
+ <20240621112633.2802655-5-kamilh@axis.com>
+ <5a77ba27-1a0e-4f29-bf94-04effb37eefb@lunn.ch>
+ <26dcc3ee-6ea8-435e-b9e9-f22c712e5b4c@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 03/10] readahead: allocate folios with
- mapping_min_order in readahead
-Content-Language: en-GB
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, david@fromorbit.com,
- willy@infradead.org, chandan.babu@oracle.com, djwong@kernel.org,
- brauner@kernel.org, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
- linux-mm@kvack.org, john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
- hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org, gost.dev@samsung.com,
- cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
- Zi Yan <zi.yan@sent.com>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-4-kernel@pankajraghav.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240625114420.719014-4-kernel@pankajraghav.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <26dcc3ee-6ea8-435e-b9e9-f22c712e5b4c@axis.com>
 
-On 25/06/2024 12:44, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+On Thu, Jul 04, 2024 at 04:01:13PM +0200, Kamil Horák (2N) wrote:
 > 
-> page_cache_ra_unbounded() was allocating single pages (0 order folios)
-> if there was no folio found in an index. Allocate mapping_min_order folios
-> as we need to guarantee the minimum order if it is set.
-> While we are at it, rework the loop in page_cache_ra_unbounded() to
-> advance with the number of pages in a folio instead of just one page at
-> a time.
+> On 6/22/24 21:12, Andrew Lunn wrote:
+> > On Fri, Jun 21, 2024 at 01:26:33PM +0200, Kamil Horák (2N) wrote:
+> > > Implement single-pair BroadR-Reach modes on bcm5481x PHY by Broadcom.
+> > > Create set of functions alternative to IEEE 802.3 to handle
+> > > configuration of these modes on compatible Broadcom PHYs.
+> > What i've not seen anywhere is a link between BroadR-Reach and LRE.
+> > Maybe you could explain the relationship here in the commit message?
+> > And maybe also how LDS fits in.
 > 
-> page_cache_ra_order() tries to allocate folio to the page cache with a
-> higher order if the index aligns with that order. Modify it so that the
-> order does not go below the mapping_min_order requirement of the page
-> cache. This function will do the right thing even if the new_order passed
-> is less than the mapping_min_order.
-> When adding new folios to the page cache we must also ensure the index
-> used is aligned to the mapping_min_order as the page cache requires the
-> index to be aligned to the order of the folio.
+> Tried to extend it a bit... LRE should be for "Long Reach Ethernet" but
+> Broadcom
 > 
-> readahead_expand() is called from readahead aops to extend the range of
-> the readahead so this function can assume ractl->_index to be aligned with
-> min_order.
+> only uses the acronym in the datasheets... LDS is "Long-Distance Signaling",
+> really screwed
 > 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> Co-developed-by: Hannes Reinecke <hare@suse.de>
-> Signed-off-by: Hannes Reinecke <hare@suse.de>
-> ---
->  mm/readahead.c | 81 +++++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 63 insertions(+), 18 deletions(-)
-> 
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index 66058ae02f2e..2acfd6447d7b 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -206,9 +206,10 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  		unsigned long nr_to_read, unsigned long lookahead_size)
->  {
->  	struct address_space *mapping = ractl->mapping;
-> -	unsigned long index = readahead_index(ractl);
-> +	unsigned long ra_folio_index, index = readahead_index(ractl);
->  	gfp_t gfp_mask = readahead_gfp_mask(mapping);
-> -	unsigned long i;
-> +	unsigned long mark, i = 0;
-> +	unsigned int min_nrpages = mapping_min_folio_nrpages(mapping);
->  
->  	/*
->  	 * Partway through the readahead operation, we will have added
-> @@ -223,10 +224,26 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  	unsigned int nofs = memalloc_nofs_save();
->  
->  	filemap_invalidate_lock_shared(mapping);
-> +	index = mapping_align_index(mapping, index);
-> +
-> +	/*
-> +	 * As iterator `i` is aligned to min_nrpages, round_up the
-> +	 * difference between nr_to_read and lookahead_size to mark the
-> +	 * index that only has lookahead or "async_region" to set the
-> +	 * readahead flag.
-> +	 */
-> +	ra_folio_index = round_up(readahead_index(ractl) + nr_to_read - lookahead_size,
-> +				  min_nrpages);
-> +	mark = ra_folio_index - index;
-> +	if (index != readahead_index(ractl)) {
-> +		nr_to_read += readahead_index(ractl) - index;
-> +		ractl->_index = index;
-> +	}
-> +
->  	/*
->  	 * Preallocate as many pages as we will need.
->  	 */
-> -	for (i = 0; i < nr_to_read; i++) {
-> +	while (i < nr_to_read) {
->  		struct folio *folio = xa_load(&mapping->i_pages, index + i);
->  		int ret;
->  
-> @@ -240,12 +257,13 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  			 * not worth getting one just for that.
->  			 */
+> term for a link auto-negotiation...
 
-For the case that the folio is already in the xarray, perhaps its worth
-asserting that the folio is at least min_nrpages?
+You are allowed to ignore the data sheet. If using AN makes the code
+more understandable, use AN. Just add a comment in the commit message.
+
+> > > +static int bcm54811_read_abilities(struct phy_device *phydev)
+> > > +{
+> > > +	int i, val, err;
+> > > +	u8 brr_mode;
+> > > +
+> > > +	for (i = 0; i < ARRAY_SIZE(bcm54811_linkmodes); i++)
+> > > +		linkmode_clear_bit(bcm54811_linkmodes[i], phydev->supported);
+> > I think that needs a comment since it is not clear what is going on
+> > here. What set these bits in supported?
+> 
+> This is an equivalent of genphy_read_abilities for an IEEE PHY, that is, it
+> fills the phydev->supported bit array exactly
+> 
+> as genphy_read_abilities does. The genphy_read_abilities is even called if
+> the PHY is not in BRR mode.
+
+I lost the context. But genphy_read_abilities() is only called if
+phydrv->get_features is not set. Don't you make use of this
+bcm54811_read_abilities for get_features? So i'm wondering, what set
+these bits in the first place?
 
 
->  			read_pages(ractl);
-> -			ractl->_index++;
-> -			i = ractl->_index + ractl->_nr_pages - index - 1;
-> +			ractl->_index += min_nrpages;
-> +			i = ractl->_index + ractl->_nr_pages - index;
->  			continue;
->  		}
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask,
-> +					    mapping_min_folio_order(mapping));
->  		if (!folio)
->  			break;
->  
-> @@ -255,14 +273,15 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  			if (ret == -ENOMEM)
->  				break;
->  			read_pages(ractl);
-> -			ractl->_index++;
-> -			i = ractl->_index + ractl->_nr_pages - index - 1;
-> +			ractl->_index += min_nrpages;
-> +			i = ractl->_index + ractl->_nr_pages - index;
->  			continue;
->  		}
-> -		if (i == nr_to_read - lookahead_size)
-> +		if (i == mark)
->  			folio_set_readahead(folio);
->  		ractl->_workingset |= folio_test_workingset(folio);
-> -		ractl->_nr_pages++;
-> +		ractl->_nr_pages += min_nrpages;
-> +		i += min_nrpages;
->  	}
->  
->  	/*
-> @@ -492,13 +511,19 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  {
->  	struct address_space *mapping = ractl->mapping;
->  	pgoff_t index = readahead_index(ractl);
-> +	unsigned int min_order = mapping_min_folio_order(mapping);
->  	pgoff_t limit = (i_size_read(mapping->host) - 1) >> PAGE_SHIFT;
->  	pgoff_t mark = index + ra->size - ra->async_size;
->  	unsigned int nofs;
->  	int err = 0;
->  	gfp_t gfp = readahead_gfp_mask(mapping);
-> +	unsigned int min_ra_size = max(4, mapping_min_folio_nrpages(mapping));
->  
-> -	if (!mapping_large_folio_support(mapping) || ra->size < 4)
-> +	/*
-> +	 * Fallback when size < min_nrpages as each folio should be
-> +	 * at least min_nrpages anyway.
-> +	 */
-> +	if (!mapping_large_folio_support(mapping) || ra->size < min_ra_size)
->  		goto fallback;
->  
->  	limit = min(limit, index + ra->size - 1);
-> @@ -507,11 +532,20 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  		new_order += 2;
->  		new_order = min(mapping_max_folio_order(mapping), new_order);
->  		new_order = min_t(unsigned int, new_order, ilog2(ra->size));
-> +		new_order = max(new_order, min_order);
->  	}
->  
->  	/* See comment in page_cache_ra_unbounded() */
->  	nofs = memalloc_nofs_save();
->  	filemap_invalidate_lock_shared(mapping);
-> +	/*
-> +	 * If the new_order is greater than min_order and index is
-> +	 * already aligned to new_order, then this will be noop as index
-> +	 * aligned to new_order should also be aligned to min_order.
-> +	 */
-> +	ractl->_index = mapping_align_index(mapping, index);
-> +	index = readahead_index(ractl);
-> +
->  	while (index <= limit) {
->  		unsigned int order = new_order;
->  
-> @@ -519,7 +553,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  		if (index & ((1UL << order) - 1))
->  			order = __ffs(index);
->  		/* Don't allocate pages past EOF */
-> -		while (index + (1UL << order) - 1 > limit)
-> +		while (order > min_order && index + (1UL << order) - 1 > limit)
->  			order--;
->  		err = ra_alloc_folio(ractl, index, mark, order, gfp);
->  		if (err)
-> @@ -783,8 +817,15 @@ void readahead_expand(struct readahead_control *ractl,
->  	struct file_ra_state *ra = ractl->ra;
->  	pgoff_t new_index, new_nr_pages;
->  	gfp_t gfp_mask = readahead_gfp_mask(mapping);
-> +	unsigned long min_nrpages = mapping_min_folio_nrpages(mapping);
-> +	unsigned int min_order = mapping_min_folio_order(mapping);
->  
->  	new_index = new_start / PAGE_SIZE;
-> +	/*
-> +	 * Readahead code should have aligned the ractl->_index to
-> +	 * min_nrpages before calling readahead aops.
-> +	 */
-> +	VM_BUG_ON(!IS_ALIGNED(ractl->_index, min_nrpages));
->  
->  	/* Expand the leading edge downwards */
->  	while (ractl->_index > new_index) {
-> @@ -794,9 +835,11 @@ void readahead_expand(struct readahead_control *ractl,
->  		if (folio && !xa_is_value(folio))
->  			return; /* Folio apparently present */
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask, min_order);
->  		if (!folio)
->  			return;
-> +
-> +		index = mapping_align_index(mapping, index);
->  		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
->  			folio_put(folio);
->  			return;
-> @@ -806,7 +849,7 @@ void readahead_expand(struct readahead_control *ractl,
->  			ractl->_workingset = true;
->  			psi_memstall_enter(&ractl->_pflags);
->  		}
-> -		ractl->_nr_pages++;
-> +		ractl->_nr_pages += min_nrpages;
->  		ractl->_index = folio->index;
->  	}
->  
-> @@ -821,9 +864,11 @@ void readahead_expand(struct readahead_control *ractl,
->  		if (folio && !xa_is_value(folio))
->  			return; /* Folio apparently present */
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask, min_order);
->  		if (!folio)
->  			return;
-> +
-> +		index = mapping_align_index(mapping, index);
->  		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
->  			folio_put(folio);
->  			return;
-> @@ -833,10 +878,10 @@ void readahead_expand(struct readahead_control *ractl,
->  			ractl->_workingset = true;
->  			psi_memstall_enter(&ractl->_pflags);
->  		}
-> -		ractl->_nr_pages++;
-> +		ractl->_nr_pages += min_nrpages;
->  		if (ra) {
-> -			ra->size++;
-> -			ra->async_size++;
-> +			ra->size += min_nrpages;
-> +			ra->async_size += min_nrpages;
->  		}
->  	}
->  }
+> > > +
+> > > +	err = bcm5481x_get_brrmode(phydev, &brr_mode);
+> > > +	if (err)
+> > > +		return err;
+> > > +
+> > > +	if (brr_mode) {
+> > I would expect the DT property to be here somewhere. If the DT
+> > property is present, set phydev->supported to only the BRR modes,
+> > otherwise set it to the standard baseT modes. That should then allow
+> > the core to do most of the validation. This is based on my
+> > understanding the coupling hardware makes the two modes mutually
+> > exclusive?
+> 
+> From my point of view relying on DT property only would imply to validate
+> the setting with what is read from the PHY on
+> 
+> all code locations where it is currently read by bcm5481x_get_brrmode.
 
+In general, the DT value is the source of truth. It does not matter
+how the PHY is strapped etc, we should reconfigure it how the DT
+property indicates. So i really would set phydev->supported based on
+it.
+
+> > > +	/* With BCM54811, BroadR-Reach implies no autoneg */
+> > > +	if (brr)
+> > > +		phydev->autoneg = 0;
+> > So long as phydev->supported does not indicate autoneg, this should
+> > not happen.
+> 
+> I also thought so but unfortunately our batch of bcm54811 indicates possible
+> autoneg in its status register
+> 
+>  (LRESR_LDSABILITY) but refuses to negotiate. So this is rather a
+> preparation for bcm54810 full support. Unlike bcm54811,
+
+If the hardware is broke, feel free to ignore the bit. I would also
+keep it KISS. If somebody does want bcm54810 to auto-neg, they can add
+the feature, and ask you to test for regressions with the bcm54811.
+
+	Andrew
 
