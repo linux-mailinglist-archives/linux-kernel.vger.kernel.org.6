@@ -1,407 +1,152 @@
-Return-Path: <linux-kernel+bounces-240767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2165D92725D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:58:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28E7927266
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C21A1F255F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:58:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57E8528D0D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333D41A38D4;
-	Thu,  4 Jul 2024 08:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB481ABC3C;
+	Thu,  4 Jul 2024 08:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9VZUILx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="DHFGVy6C"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2042.outbound.protection.outlook.com [40.92.103.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E817F1AB521;
-	Thu,  4 Jul 2024 08:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720083459; cv=none; b=AxIued+2zkiM+9tYCs+OKNO0jwcVEuB8lD/4GzfwtenVWNiVnjfA/jHKxWkTvOc0svaIELnUUGo0vDVh7Ub9uUG8j6GPm7Le2YTbnRYpjc/QXga8VldGJSb5Esa8zbtyuN9HJbnlMjkqHeh4934OwOOsLxGh/FhoqK8xgqsCiOw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720083459; c=relaxed/simple;
-	bh=1R1l/jh/2sVbYXEuHFTT6vinE3yiZu+gRxbg7eWhc4w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z/rhxM6TW6SP8jWrgQ8TjZonLk8KdTBhqQXQM0aQaYZcweeM6fQ0DkWRz8kKM/vEqrZXt6f/wGYoMELTjVaT6Giph53lLd1yO1uHUMg5R/FVRx0cBRoOh+DOaSIVf/HSJCALF1F18pmFQ/fDNBhc5oCqFbTYd8eYxG6WGKma9XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9VZUILx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 296B0C4AF0B;
-	Thu,  4 Jul 2024 08:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720083458;
-	bh=1R1l/jh/2sVbYXEuHFTT6vinE3yiZu+gRxbg7eWhc4w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f9VZUILxFQlQsYkDK5sjS4MXCR40r/4MWt6lsSedyN2b573OFxRYKCDROoxC7pO48
-	 iyfM6g/OjzHZXu73ERxx4BFtQSG8cUjGrTGQJp9LU8iPUfhzxmXlCidQv6G6rHynYE
-	 sUhfp1x5m42Jkj62+x6M5JLiIlohItWprZA/FXhk/rlLlccD1ZOxfduKNE3NQPb3xo
-	 nZJiHdk7PUH1kbOGTQEeeKtyJX1tFXZN0UPjGv88yR4vvBETFJgq7EJIFpD6yK84EP
-	 SkJqLLCFUvkfBe7B5hxunEmjHcLroAhkuCYGdi68C7gXEOXnu6FPUCjtqxnmYqdQgZ
-	 iMcWadP/GJppA==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	stable@vger.kernel.org,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] tpm: Address !chip->auth in tpm_buf_append_hmac_session*()
-Date: Thu,  4 Jul 2024 11:57:04 +0300
-Message-ID: <20240704085708.661142-4-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240704085708.661142-1-jarkko@kernel.org>
-References: <20240704085708.661142-1-jarkko@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5501AB903;
+	Thu,  4 Jul 2024 08:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720083485; cv=fail; b=XZdSDk3e6K1GB66L88DwFKVGGvsiQ90bIP4ACX/cpPzkvwFQxrqio5eKX/BA4sPBz6pNSCQaNZ2V9YtXTF/PypsTw2FOap6kJkoKZ+6+fTaCI5tiDcXgZOj8EW+RYojTowdCymbBJ3dCNBWQaYOwsx6fDz8YHV2r0iu/h/SaRI4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720083485; c=relaxed/simple;
+	bh=yMkVwvnjJdSI1va7AI/8MJB9GMK/1a/Jr2wpPBYCrIc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=U7BXuQKMO65HHEbZ1XjoRhKqlAHApA6Cual0rQSu2uIun3A8QfKLw8F9bgACeIYKBv084/RBBDF5yRzIHRqwkYlYD34v5KqxPmC7+ogDWh+cYM0YgcshiSUlYIhH7F228oy0+Ayag/by4yDUb/xRrAs5lQbI3K8GnTaaENOI8LY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=DHFGVy6C; arc=fail smtp.client-ip=40.92.103.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GwCTfv2M6Oqy+WrCXoGGUXM1qJ3jYuoGjK+cIcRl5mCf0EbjZzmj7bHCT5FVu2lTPpmOl7ryN5IBzhZhFdkdyWWr37OWu8XXLbznxSqNf3jn+Y+7o3fLkZogirt3qtVorwaWhAWtZ5e6IOr79TN1TM35JpL6tH0Td0NWU+/EDDGFcNkcWAHm28GuKHPG2hwdOdpe6I7gRRAk9wJqX2bY066kOpu7A+ZPiQd4Olqi+64jMFKMp6XGpr4axLdnPai64gyWt1Gt2skIkzXQ62mKXZKz895eRJErRRR6cKYaN8usonklH18PdPNkpWiWvaaPcWURuRTy66/ueZlDzidfNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yMkVwvnjJdSI1va7AI/8MJB9GMK/1a/Jr2wpPBYCrIc=;
+ b=bPXgjaSOeNWkldiU8Z4hGjZow5w69v4mHAaTBK/rFLgsji19XkQG14YCU4Oh01MozfD5lpl28VjFFY7375PEvbLQqWMYfTvlN1K9VnPN4xnEB+0qbYOrvosKYvn7DrQHdn6mMSEDF6Z5QWRTwSDV2DnqI1IJUCpe2oafkm2LL+uGFauEiAdQdesh3/dVgmPOiYMs2iI1qd5kld8j3/8qrNpHSu4eTsiEeIRMyNxnntriG7AIcu0N8BMHOWw2WQhJcDzXBQoTLIh0DFnYJQCln2dXZB1GeA0H/ATue8/BhoHbdev82cmPOXZhiNjF1UDkgANl7MvoaPj8V7Yl25vJCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yMkVwvnjJdSI1va7AI/8MJB9GMK/1a/Jr2wpPBYCrIc=;
+ b=DHFGVy6CDSEhsnQznJH5qmF02KbwTRNSs+CkNm7rwFs/WibzXRUr4q2xcgjdOTeRyeVJJDaEt3ArIz6B/MY1/6hoQy06mqeMGKeADZoZZxgETUrpH+iDWuG28MO0Vrfn3Z06RnpmhsKbxXMWnlmlUiOzVOTvNjVBZxWDEWzQxUqMb4gQ3NNUpWvBPRPIAjE6H/TW5QOXfsEZdCwk4+UsyWaazGX7CVHPE5MJl5XirP5FVXHg8qRp6Kf8kpMkYAGx/GbdYdBHW9h78fgoV47CN3cjS/VBceqMXmxIqQbt9dbTcwI+63SBMRA1t9+N+LDa+MNRU2SVQP2JW33fG3M9Uw==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN3P287MB1070.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:173::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7741.25; Thu, 4 Jul 2024 08:57:57 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7741.027; Thu, 4 Jul 2024
+ 08:57:57 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Benjamin Tissoires <bentiss@kernel.org>
+CC: Jiri Kosina <jikos@kernel.org>, Orlando Chamberlain
+	<orlandoch.dev@gmail.com>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] HID: apple: Add support for magic keyboard backlight
+ on T2 Macs
+Thread-Topic: [PATCH v3] HID: apple: Add support for magic keyboard backlight
+ on T2 Macs
+Thread-Index: AQHazXICmE7N541aCEubCM7ljDry1bHmRIgAgAABG88=
+Date: Thu, 4 Jul 2024 08:57:57 +0000
+Message-ID:
+ <MA0P287MB021787375884DF8FFF3634C0B8DE2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+References: <E1D444EA-7FD0-42DA-B198-50B0F03298FB@live.com>
+ <172008324081.1517774.10367638592868266446.b4-ty@kernel.org>
+In-Reply-To: <172008324081.1517774.10367638592868266446.b4-ty@kernel.org>
+Accept-Language: en-IN, en-US
+Content-Language: en-IN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [R7gzqFNc9I1XysvfirVq4ZJ09grqn/LdqFuYqIWs0AmOlMQ0lRy1RBBbN9brV0aaT4yZqOoDOt0=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN3P287MB1070:EE_
+x-ms-office365-filtering-correlation-id: 2c4759c8-292f-440b-4f62-08dc9c07668b
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|8060799006|4302099013|440099028|3412199025|102099032|1602099012;
+x-microsoft-antispam-message-info:
+ tLCLmvS7Ou1a9hVp9VHo1j5w1MPv38QfqJt0v9adQyg2R9mkeu41JE6volW5Ue72fANSuXCX5kYOKQL7XB/76qefYQA3MxPttxYw2AHI5pZhi2C7/CxQmL14iMuRkB1TcWyNjtquPSxlVZxYqbv1VcRi/n9Orn+14lUXjrA9oVvB7Thsw2s82S6bisiJEZxeZN6B+VdcZoCI2mTBtblWu/pAwp6J+Un+Uan1R8YNyuAIKyedukBxmT6joLTKgMkccCZhU7L1ESCg5Ev7KLnOKwJt6DcqaWHqRVS29PxlDaRBwfHKu6YlPmHHSp5887pJ+tvL0sJ0Ns6JoQYsUFCLQ9xO3NXfUoniojQ9jxWPWu4gCv/bPLE76Ui+D4iCniAFcEI40ZDj7yU2Dj0ZvNW9/NgS/2fIodSuHnvrAFRAUJg+D0i+cFF47EfJxg9N3Zn6nHMsYQevPeIH3wXZHJmtrfIcL6UbBMYy8x3SooKzcu7/EW8EnCu0vxKo9L2g5paU8J88dzNEnrao8DYRzoCcHExg57horbCIX+czyI5YqfAGY+ErE+0pI3NIWI5/b0KT1l+37qlAFxxamPNMcq8rRPEn3fYOZnXZ3oQB2S8rN/r4hwsJJA07e4rpcVuEed8VHAtrP6/khB6CHS+5YrNqBEy3rGGhWE+ZCrrVQi7n1qMWqqXcze3mRCK2+GZPSrjjpRNivESx9rPKafPhl5U0u1AyKscx1ziXxUgc2OelNWU=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?c1Vtb3FwaDdHQzk2cmtkT3lyM1o0UzFIYVdDQ3pXY2tXd0pFL1c4UjFZaU9R?=
+ =?utf-8?B?YVhIc210S3pIRFV6dHdOMHByMi9acUxQdEFXbTdIL0orL3hVemIrNmYweGd0?=
+ =?utf-8?B?eUlKUVorcURzWlROYU9pQkc2RytISWY4SDFDYlBuYzlkWVdzMzczcVZONXQ1?=
+ =?utf-8?B?OGNZZ1l6S3VFZlZHZDNxbGYrM2hPV3c2a0dxQU03S0JJQldkNjhNUmE3MHpz?=
+ =?utf-8?B?Y0ljVExza1VwYVVIZUdCd0loWlNZcjFMSWpUSUIybldoeFVZbHpBaWpFVmhZ?=
+ =?utf-8?B?OGdUV1FwbldPYi9YL0t2ZHhrOExFMDlBczRlOTcxb0NNYzlXMnJ6OHJod2ti?=
+ =?utf-8?B?Z0c4NmNibUowN0I1cXJyZzR0VExqRHhlZDJMankxYUdIeXo1c29PMnZJN2tv?=
+ =?utf-8?B?MjFHMlpWamNCMGxQQlRUUHVUUmVKZWY2VXI2ZWpDNkR6cVNtSmhVUS81QTVh?=
+ =?utf-8?B?dFRIOUdFQUVRTmk5OVdlaUxhUUFPeVI0b2JGNGhNL3JNQlM4aG50SlIwT2pp?=
+ =?utf-8?B?ek45blNTeGVGTmV2Q0tPMUNQTEo0WnNvSmhHclNhUmpLZmlMWFZzL3RWeGY3?=
+ =?utf-8?B?Y3EyTHhQa2JEbnZtS3R6cU5lQUtLdVlPcmdodzdOQk1YYmtibTdmYU5XeHdG?=
+ =?utf-8?B?ZkZ0bWZCeVA3aEZtbGFzWWszd0xjNmpYaStTZEtmSk5DeXB1UitjR2JiTGpV?=
+ =?utf-8?B?eXJuTFRrc2FIWGNheDZMcG1HeGt0cGUrZ2JXLzJNMEdla1c1R3RTSkg0bTRT?=
+ =?utf-8?B?S0V4b3dEUDVEa2locERKbFk3NnpLUFEzc0NQeXFNa21YcVNIYlpUSTRuQ0t2?=
+ =?utf-8?B?Zk1Eb2ZiZWR1TzZ2L2I4UjFCUGRsTHVlSzlKUFYrbTUrRktMU3BWckdIY2dv?=
+ =?utf-8?B?SU5vRmdCRVBXZWlIS2pkbFp2a05BMC85bzdvYUlTV1d4b3FwdGR3RFluK2hH?=
+ =?utf-8?B?cUpkeU9EQ3BSaEoyaERFajgwNjRzS3NjcC9haGN4VUpoRFpWT1JDNTU4VU5q?=
+ =?utf-8?B?V0VnL2lQbTJ2QlA4c3A2T0RlVi9id3d6OU54K0thbkJSY3Y5OU9jU3R1M1Vl?=
+ =?utf-8?B?bHdtbmhtRWhBNXVmSmZKYVN6OUMvU0Nad1o1OEhHUk5ibkVvdmRFaDNVUXNY?=
+ =?utf-8?B?WW9OY2l0ays4QUpzeVdGL21TcGcxQ1oraUg3TmJRekpvMCtrck1BeUI3SnVO?=
+ =?utf-8?B?dFNqTVMxWk9SV3lzMVBzamJnSUZrUzdpOW1Sc0RiSk1YT205WitFMGE0SWpw?=
+ =?utf-8?B?SzBlNFhJamNFVTF4TGRjYlhGZjN6WUgvWDVCeXdJZWlZT3JMektnbDg4eWZE?=
+ =?utf-8?B?d2plMWtwU0JUSjN1WTZIckg3NnFjMk9ORFFjWXF0cHJseTlkaFJNZDl4bVdt?=
+ =?utf-8?B?OUpCR0l1eWhGNXlKRDZZNWhndmlCSUVkWmV1UGQrRm42Q3JWVGxWWXcyMlBT?=
+ =?utf-8?B?YmI3Qm9jT2VFVUVEbW1QNHZpSlVTRkhsYU9INFVCNGtPWHBhSm1yRjVLYkN3?=
+ =?utf-8?B?RzU3YU1Xb3FBUVAyRStYcVViU1JzNG12R2NBR2YzSkxoU3FJZld2aS81Tmh6?=
+ =?utf-8?B?VldrWkhiTUxJaVd6Q1hMY05RSFZudkQxWFhpeGVYTk1zdGNnOHpoa0NaeXhy?=
+ =?utf-8?B?d2lxa1U1N0NtVXhBRkdPaUd0NVcwNTBzenBTNzlDZWRHOCtxdUMyV0JDd2hO?=
+ =?utf-8?B?K3hBZitMTU1ONUR3VVMrU2VxbXBZQnlubTQzYndRTzA3M3JSR01oK0RkWXZw?=
+ =?utf-8?Q?LWaki3/aSwhYAyknGY=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c4759c8-292f-440b-4f62-08dc9c07668b
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2024 08:57:57.8276
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1070
 
-Unless tpm_chip_bootstrap() was called by the driver, !chip->auth can
-cause a null derefence in tpm_buf_hmac_session*().  Thus, address
-!chip->auth in tpm_buf_hmac_session*() and remove the fallback
-implementation for !TCG_TPM2_HMAC.
-
-Cc: stable@vger.kernel.org # v6.9+
-Reported-by: Stefan Berger <stefanb@linux.ibm.com>
-Closes: https://lore.kernel.org/linux-integrity/20240617193408.1234365-1-stefanb@linux.ibm.com/
-Fixes: 1085b8276bb4 ("tpm: Add the rest of the session HMAC API")
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v3:
-* Address:
-  https://lore.kernel.org/linux-integrity/922603265d61011dbb23f18a04525ae973b83ffd.camel@HansenPartnership.com/
-v2:
-* Use auth in place of chip->auth.
----
- drivers/char/tpm/tpm2-sessions.c | 184 ++++++++++++++++++-------------
- include/linux/tpm.h              |  68 ++++--------
- 2 files changed, 128 insertions(+), 124 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index 179bcaac06ce..e0be22b8ae70 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -270,6 +270,108 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
- }
- EXPORT_SYMBOL_GPL(tpm_buf_append_name);
- 
-+/**
-+ * tpm_buf_append_hmac_session() - Append a TPM session element
-+ * @chip: the TPM chip structure
-+ * @buf: The buffer to be appended
-+ * @attributes: The session attributes
-+ * @passphrase: The session authority (NULL if none)
-+ * @passphrase_len: The length of the session authority (0 if none)
-+ *
-+ * This fills in a session structure in the TPM command buffer, except
-+ * for the HMAC which cannot be computed until the command buffer is
-+ * complete.  The type of session is controlled by the @attributes,
-+ * the main ones of which are TPM2_SA_CONTINUE_SESSION which means the
-+ * session won't terminate after tpm_buf_check_hmac_response(),
-+ * TPM2_SA_DECRYPT which means this buffers first parameter should be
-+ * encrypted with a session key and TPM2_SA_ENCRYPT, which means the
-+ * response buffer's first parameter needs to be decrypted (confusing,
-+ * but the defines are written from the point of view of the TPM).
-+ *
-+ * Any session appended by this command must be finalized by calling
-+ * tpm_buf_fill_hmac_session() otherwise the HMAC will be incorrect
-+ * and the TPM will reject the command.
-+ *
-+ * As with most tpm_buf operations, success is assumed because failure
-+ * will be caused by an incorrect programming model and indicated by a
-+ * kernel message.
-+ */
-+void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
-+				 u8 attributes, u8 *passphrase,
-+				 int passphrase_len)
-+{
-+	u8 __maybe_unused nonce[SHA256_DIGEST_SIZE];
-+	struct tpm2_auth __maybe_unused *auth;
-+	u32 __maybe_unused len;
-+
-+	if (!__and(IS_ENABLED(CONFIG_TCG_TPM2_HMAC), chip->auth)) {
-+		/* offset tells us where the sessions area begins */
-+		int offset = buf->handles * 4 + TPM_HEADER_SIZE;
-+		u32 len = 9 + passphrase_len;
-+
-+		if (tpm_buf_length(buf) != offset) {
-+			/* not the first session so update the existing length */
-+			len += get_unaligned_be32(&buf->data[offset]);
-+			put_unaligned_be32(len, &buf->data[offset]);
-+		} else {
-+			tpm_buf_append_u32(buf, len);
-+		}
-+		/* auth handle */
-+		tpm_buf_append_u32(buf, TPM2_RS_PW);
-+		/* nonce */
-+		tpm_buf_append_u16(buf, 0);
-+		/* attributes */
-+		tpm_buf_append_u8(buf, 0);
-+		/* passphrase */
-+		tpm_buf_append_u16(buf, passphrase_len);
-+		tpm_buf_append(buf, passphrase, passphrase_len);
-+		return;
-+	}
-+
-+#ifdef CONFIG_TCG_TPM2_HMAC
-+	/*
-+	 * The Architecture Guide requires us to strip trailing zeros
-+	 * before computing the HMAC
-+	 */
-+	while (passphrase && passphrase_len > 0 && passphrase[passphrase_len - 1] == '\0')
-+		passphrase_len--;
-+
-+	auth = chip->auth;
-+	auth->attrs = attributes;
-+	auth->passphrase_len = passphrase_len;
-+	if (passphrase_len)
-+		memcpy(auth->passphrase, passphrase, passphrase_len);
-+
-+	if (auth->session != tpm_buf_length(buf)) {
-+		/* we're not the first session */
-+		len = get_unaligned_be32(&buf->data[auth->session]);
-+		if (4 + len + auth->session != tpm_buf_length(buf)) {
-+			WARN(1, "session length mismatch, cannot append");
-+			return;
-+		}
-+
-+		/* add our new session */
-+		len += 9 + 2 * SHA256_DIGEST_SIZE;
-+		put_unaligned_be32(len, &buf->data[auth->session]);
-+	} else {
-+		tpm_buf_append_u32(buf, 9 + 2 * SHA256_DIGEST_SIZE);
-+	}
-+
-+	/* random number for our nonce */
-+	get_random_bytes(nonce, sizeof(nonce));
-+	memcpy(auth->our_nonce, nonce, sizeof(nonce));
-+	tpm_buf_append_u32(buf, auth->handle);
-+	/* our new nonce */
-+	tpm_buf_append_u16(buf, SHA256_DIGEST_SIZE);
-+	tpm_buf_append(buf, nonce, SHA256_DIGEST_SIZE);
-+	tpm_buf_append_u8(buf, auth->attrs);
-+	/* and put a placeholder for the hmac */
-+	tpm_buf_append_u16(buf, SHA256_DIGEST_SIZE);
-+	tpm_buf_append(buf, nonce, SHA256_DIGEST_SIZE);
-+#endif /* CONFIG_TCG_TPM2_HMAC */
-+}
-+EXPORT_SYMBOL_GPL(tpm_buf_append_hmac_session);
-+
- #ifdef CONFIG_TCG_TPM2_HMAC
- 
- static int tpm2_create_primary(struct tpm_chip *chip, u32 hierarchy,
-@@ -455,82 +557,6 @@ static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *chip)
- 	crypto_free_kpp(kpp);
- }
- 
--/**
-- * tpm_buf_append_hmac_session() - Append a TPM session element
-- * @chip: the TPM chip structure
-- * @buf: The buffer to be appended
-- * @attributes: The session attributes
-- * @passphrase: The session authority (NULL if none)
-- * @passphrase_len: The length of the session authority (0 if none)
-- *
-- * This fills in a session structure in the TPM command buffer, except
-- * for the HMAC which cannot be computed until the command buffer is
-- * complete.  The type of session is controlled by the @attributes,
-- * the main ones of which are TPM2_SA_CONTINUE_SESSION which means the
-- * session won't terminate after tpm_buf_check_hmac_response(),
-- * TPM2_SA_DECRYPT which means this buffers first parameter should be
-- * encrypted with a session key and TPM2_SA_ENCRYPT, which means the
-- * response buffer's first parameter needs to be decrypted (confusing,
-- * but the defines are written from the point of view of the TPM).
-- *
-- * Any session appended by this command must be finalized by calling
-- * tpm_buf_fill_hmac_session() otherwise the HMAC will be incorrect
-- * and the TPM will reject the command.
-- *
-- * As with most tpm_buf operations, success is assumed because failure
-- * will be caused by an incorrect programming model and indicated by a
-- * kernel message.
-- */
--void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
--				 u8 attributes, u8 *passphrase,
--				 int passphrase_len)
--{
--	u8 nonce[SHA256_DIGEST_SIZE];
--	u32 len;
--	struct tpm2_auth *auth = chip->auth;
--
--	/*
--	 * The Architecture Guide requires us to strip trailing zeros
--	 * before computing the HMAC
--	 */
--	while (passphrase && passphrase_len > 0
--	       && passphrase[passphrase_len - 1] == '\0')
--		passphrase_len--;
--
--	auth->attrs = attributes;
--	auth->passphrase_len = passphrase_len;
--	if (passphrase_len)
--		memcpy(auth->passphrase, passphrase, passphrase_len);
--
--	if (auth->session != tpm_buf_length(buf)) {
--		/* we're not the first session */
--		len = get_unaligned_be32(&buf->data[auth->session]);
--		if (4 + len + auth->session != tpm_buf_length(buf)) {
--			WARN(1, "session length mismatch, cannot append");
--			return;
--		}
--
--		/* add our new session */
--		len += 9 + 2 * SHA256_DIGEST_SIZE;
--		put_unaligned_be32(len, &buf->data[auth->session]);
--	} else {
--		tpm_buf_append_u32(buf, 9 + 2 * SHA256_DIGEST_SIZE);
--	}
--
--	/* random number for our nonce */
--	get_random_bytes(nonce, sizeof(nonce));
--	memcpy(auth->our_nonce, nonce, sizeof(nonce));
--	tpm_buf_append_u32(buf, auth->handle);
--	/* our new nonce */
--	tpm_buf_append_u16(buf, SHA256_DIGEST_SIZE);
--	tpm_buf_append(buf, nonce, SHA256_DIGEST_SIZE);
--	tpm_buf_append_u8(buf, auth->attrs);
--	/* and put a placeholder for the hmac */
--	tpm_buf_append_u16(buf, SHA256_DIGEST_SIZE);
--	tpm_buf_append(buf, nonce, SHA256_DIGEST_SIZE);
--}
--EXPORT_SYMBOL(tpm_buf_append_hmac_session);
--
- /**
-  * tpm_buf_fill_hmac_session() - finalize the session HMAC
-  * @chip: the TPM chip structure
-@@ -561,6 +587,9 @@ void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
- 	u8 cphash[SHA256_DIGEST_SIZE];
- 	struct sha256_state sctx;
- 
-+	if (!auth)
-+		return;
-+
- 	/* save the command code in BE format */
- 	auth->ordinal = head->ordinal;
- 
-@@ -719,6 +748,9 @@ int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
- 	u32 cc = be32_to_cpu(auth->ordinal);
- 	int parm_len, len, i, handles;
- 
-+	if (!auth)
-+		return rc;
-+
- 	if (auth->session >= TPM_HEADER_SIZE) {
- 		WARN(1, "tpm session not filled correctly\n");
- 		goto out;
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index d9a6991b247d..e47f5d65935e 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -493,10 +493,6 @@ static inline void tpm_buf_append_empty_auth(struct tpm_buf *buf, u32 handle)
- 
- void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
- 			 u32 handle, u8 *name);
--
--#ifdef CONFIG_TCG_TPM2_HMAC
--
--int tpm2_start_auth_session(struct tpm_chip *chip);
- void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
- 				 u8 attributes, u8 *passphrase,
- 				 int passphraselen);
-@@ -506,9 +502,27 @@ static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
- 						   u8 *passphrase,
- 						   int passphraselen)
- {
--	tpm_buf_append_hmac_session(chip, buf, attributes, passphrase,
--				    passphraselen);
-+	struct tpm_header *head;
-+	int offset;
-+
-+	if (__and(IS_ENABLED(CONFIG_TCG_TPM2_HMAC), chip->auth)) {
-+		tpm_buf_append_hmac_session(chip, buf, attributes, passphrase, passphraselen);
-+	} else  {
-+		offset = buf->handles * 4 + TPM_HEADER_SIZE;
-+		head = (struct tpm_header *)buf->data;
-+
-+		/*
-+		 * If the only sessions are optional, the command tag must change to
-+		 * TPM2_ST_NO_SESSIONS.
-+		 */
-+		if (tpm_buf_length(buf) == offset)
-+			head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-+	}
- }
-+
-+#ifdef CONFIG_TCG_TPM2_HMAC
-+
-+int tpm2_start_auth_session(struct tpm_chip *chip);
- void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf);
- int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
- 				int rc);
-@@ -523,48 +537,6 @@ static inline int tpm2_start_auth_session(struct tpm_chip *chip)
- static inline void tpm2_end_auth_session(struct tpm_chip *chip)
- {
- }
--static inline void tpm_buf_append_hmac_session(struct tpm_chip *chip,
--					       struct tpm_buf *buf,
--					       u8 attributes, u8 *passphrase,
--					       int passphraselen)
--{
--	/* offset tells us where the sessions area begins */
--	int offset = buf->handles * 4 + TPM_HEADER_SIZE;
--	u32 len = 9 + passphraselen;
--
--	if (tpm_buf_length(buf) != offset) {
--		/* not the first session so update the existing length */
--		len += get_unaligned_be32(&buf->data[offset]);
--		put_unaligned_be32(len, &buf->data[offset]);
--	} else {
--		tpm_buf_append_u32(buf, len);
--	}
--	/* auth handle */
--	tpm_buf_append_u32(buf, TPM2_RS_PW);
--	/* nonce */
--	tpm_buf_append_u16(buf, 0);
--	/* attributes */
--	tpm_buf_append_u8(buf, 0);
--	/* passphrase */
--	tpm_buf_append_u16(buf, passphraselen);
--	tpm_buf_append(buf, passphrase, passphraselen);
--}
--static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
--						   struct tpm_buf *buf,
--						   u8 attributes,
--						   u8 *passphrase,
--						   int passphraselen)
--{
--	int offset = buf->handles * 4 + TPM_HEADER_SIZE;
--	struct tpm_header *head = (struct tpm_header *) buf->data;
--
--	/*
--	 * if the only sessions are optional, the command tag
--	 * must change to TPM2_ST_NO_SESSIONS
--	 */
--	if (tpm_buf_length(buf) == offset)
--		head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
--}
- static inline void tpm_buf_fill_hmac_session(struct tpm_chip *chip,
- 					     struct tpm_buf *buf)
- {
--- 
-2.45.2
-
+DQoNCj4gT24gNCBKdWwgMjAyNCwgYXQgMjoyNOKAr1BNLCBCZW5qYW1pbiBUaXNzb2lyZXMgPGJl
+bnRpc3NAa2VybmVsLm9yZz4gd3JvdGU6DQo+IA0KPiDvu79PbiBXZWQsIDAzIEp1bCAyMDI0IDE3
+OjU0OjExICswMDAwLCBBZGl0eWEgR2FyZyB3cm90ZToNCj4+IFVubGlrZSBUMiBNYWNzIHdpdGgg
+QnV0dGVyZmx5IGtleWJvYXJkLCB3aG8gaGF2ZSB0aGVpciBrZXlib2FyZCBiYWNrbGlnaHQNCj4+
+IG9uIHRoZSBVU0IgZGV2aWNlIHRoZSBUMiBNYWNzIHdpdGggTWFnaWMga2V5Ym9hcmQgaGF2ZSB0
+aGVpciBiYWNrbGlnaHQgb24NCj4+IHRoZSBUb3VjaGJhciBiYWNrbGlnaHQgZGV2aWNlICgwNWFj
+OjgxMDIpLg0KPj4gDQo+PiBTdXBwb3J0IGZvciBCdXR0ZXJmbHkga2V5Ym9hcmRzIGhhcyBhbHJl
+YWR5IGJlZW4gYWRkZWQgaW4gOTAxOGVhY2JlNjIzDQo+PiAoIkhJRDogYXBwbGU6IEFkZCBzdXBw
+b3J0IGZvciBrZXlib2FyZCBiYWNrbGlnaHQgb24gY2VydGFpbiBUMiBNYWNzLiIpLg0KPj4gVGhp
+cyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9yIHRoZSBNYWdpYyBrZXlib2FyZHMuDQo+PiANCj4+IFsu
+Li5dDQo+IA0KPiBBcHBsaWVkIHRvIGhpZC9oaWQuZ2l0IChmb3ItNi4xMS9hcHBsZSksIHRoYW5r
+cyENCj4gDQpUaGFua3MhDQo+IFsxLzFdIEhJRDogYXBwbGU6IEFkZCBzdXBwb3J0IGZvciBtYWdp
+YyBrZXlib2FyZCBiYWNrbGlnaHQgb24gVDIgTWFjcw0KPiAgICAgIGh0dHBzOi8vZ2l0Lmtlcm5l
+bC5vcmcvaGlkL2hpZC9jLzM5NGJhNjEyZjk0MQ0KPiANCj4gQ2hlZXJzLA0KPiAtLQ0KPiBCZW5q
+YW1pbiBUaXNzb2lyZXMgPGJlbnRpc3NAa2VybmVsLm9yZz4NCj4gDQo=
 
