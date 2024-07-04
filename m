@@ -1,125 +1,206 @@
-Return-Path: <linux-kernel+bounces-240672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 771DF9270C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:39:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2149270C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB42A1F24CFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:39:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 626741C23874
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E9A1A2564;
-	Thu,  4 Jul 2024 07:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AEB1A255E;
+	Thu,  4 Jul 2024 07:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvjEPDNt"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wak+oT4g"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0931195395;
-	Thu,  4 Jul 2024 07:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BA91A2548
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 07:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720078778; cv=none; b=e84LIHSmdVWLgGi9nZX0SFpC/fvBpwptGSrksPNWPhUQ/vZ/XKFyR/zPADgrGIGu76Mxx6CEihBKhyoR6r6RcDj1/16cU831r2fOWT8+YbYIl35ITdGqmrTZgabr+XPEVsR7vBlBbixoXWTegXtXtBRe4DNG69gEQ75aynuK6To=
+	t=1720078788; cv=none; b=cLh1bHz6dEreuu1vk9Ozd/nY06AZfRo9wY1cqjYL5eQTXwJlH/cTQdYBWtOamAnOJyx/kUOq4DIXEICDnA48ccgh4yjnBfL/Kj9XQYdZbMZjvSlhECK49B9gZ+rwvLa3gAIA4G9rV+F3xKaZp0ANwFrWcZS6l/mxu5nMY+8qDc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720078778; c=relaxed/simple;
-	bh=sH1ULTf0dpBYABTaExBv0LmCvOgNVkAEiLcvBN/Xt4Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pDtCantyyEHmReJL/k8YS9UqwSW07PiNLrP3uYep1dy0mjoAvmdMaCRGxt4UuekVDtPtQd8J5M3G96X4IFe0q0oKrrqRHOJfQ2uAvCBxxGCFvAw1C9FAzi3UmgrLP2n4QfdTlTfEygf+qRYtkXiOtJOBEMJiyvItRMfnylI9XhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvjEPDNt; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-36798e62aeeso219299f8f.1;
-        Thu, 04 Jul 2024 00:39:36 -0700 (PDT)
+	s=arc-20240116; t=1720078788; c=relaxed/simple;
+	bh=KapxeyYzAQKK9VihCD8Q2JtVxMe/HKtCBlSBlzUDaGk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ki+2HvF+YaBVywJKMdTAmyLtMlStvDSeWnEAnnfqduoH8qzku29lE6qNzSNMafdm4lo4y75qnC1V2PrPceGAo1W6mcyyEprmvBQYkSVwNL49p1CQUnUTzh3xz4oBfqJ76rvoUqRwkMr8CdPNk9L8n9WTaO8KbuwrwXcXks7hoqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wak+oT4g; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52db11b1d31so466182e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 00:39:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720078775; x=1720683575; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ud8q8tEe5YtJOR70f54uhrUy07klpZD5lmdiCHaTMLo=;
-        b=DvjEPDNt66h6BleLJzIthlkgSBbkWtoY1PqngU2kVidXJA+cBfV2/noUatWivVZb7x
-         JHUXLULMphsgWf+2FTPWJn2BfzGxXqPokFruf5kjvIlOFtyAv/pT81mvPhkJvN+LsCHo
-         nV17Rep6SYqsdM4IAGPxesjDYv4tgtlF4xlKCy+uBmTNwoSTn2Z9fWRC6NzSURwidDSp
-         vC2AcggB4//OMLHLuaI5kfqs3SuqL3JKIcfJxVvWU6I9KdWVwjVz3UEg4HsGbCyjV4jR
-         hn2O0CCADiKQqoLXTfvNQ/xMLbhK5+GZ0C7SQ2muu3wxDj4TBCoAZXlwP59kA83gfzBV
-         6Mrw==
+        d=linaro.org; s=google; t=1720078783; x=1720683583; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PApFyRu0/EMQaGECbDmooQHO9ebJuXOQ4gSJ19eO3PM=;
+        b=Wak+oT4gbPMiNk7JQRAQJhzI425lG7Gp0ywRO5GGHHZ/Tegu9acjPxiaTlp3GCk9nj
+         lF6Q6t5p86QYSE6Oc68c4ftsrJf/xYUsMmNFel46PeNVI7MOvX0ro6UnbY+7tkDau/OX
+         18PL0iiNb3TYYVESwGVGX8S/FldRuRkJ8YwFctUwISuNmh/MpppAmp2gvtlU7KYz0oA+
+         W8UqxfMuSbt4pl6zZBUuS8PMeOwwbwnbUt8WTyAz/BVpAlWxiYTmhwBYgtSWaWuKsv46
+         vSYv6UVb4X9nCVoV5KhhJwroTqJyEmm55jMAqwMnpZNRSQUk2lyp6CSl5jEnPZS2x6Mi
+         5leg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720078775; x=1720683575;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ud8q8tEe5YtJOR70f54uhrUy07klpZD5lmdiCHaTMLo=;
-        b=YE6yGOD4iMzz6tu1z7zjvKgy9jLEfw8R5RKj75i95Dk0oFjhtM1E6mRVVsgnU2kMNN
-         ePWgn4v9+QMgstq+OM7y/u6yfs1jqPK8XrnlXBzGxgjarN9w6HU0oeVASvijtsnGmYky
-         7kP/jlNWqNp2HPrmLoAlf+vvnnC7KgXiY+wy5YdV3CVdgS4Za10zgFd0TANyuFBPcRzJ
-         XTubUOOxyon+mc2ojot8wzwhRFcZEvj5TZAbdwb+7a9JJIm2gM2feGtPgXRiteVSBRbg
-         b8NSTL6mjnUl9ofQiiUDf1iqnFY1R6uYz2bt3cmk4Y/FXCM2rEDUX4eKYCDTQYhFvhBY
-         L2kw==
-X-Forwarded-Encrypted: i=1; AJvYcCURbDZ8DJI2Bmo0TmDxv7v+CU4B5N/+IyWASXzSy97p/Sny8Y10w0eg+gXNnmKlYGmQqkcpnrc0jB/bLecqGXupfwry1MBV39uQUqxcA6HX7w5m9p6m74RxqvMPdXsxGUq9+QB/A++meg==
-X-Gm-Message-State: AOJu0Yxe2ACuNwJiUblmr4Cxshrp7thQvOdgcjbbkI8w1KXPQyfVPrrB
-	9xnDTewvQ3FX1NCLxNUiz0sx44Nvp9iGHFPlbI/vulTZU0+H1oonn8uJ579wK6ppLoS29D4rggb
-	tRJljsLaUGtX9MO5Jzn/XhOcWTXA=
-X-Google-Smtp-Source: AGHT+IHPyreorZod622o7grhoTIcWg9YvTN6bsC8lmqvqqPxkVLCIbpIHjCaLNrwMsg0Znq04jF9qE46pLJuWilgu9E=
-X-Received: by 2002:a5d:5915:0:b0:367:9b8b:5365 with SMTP id
- ffacd0b85a97d-3679dd5460bmr619359f8f.35.1720078774768; Thu, 04 Jul 2024
- 00:39:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720078783; x=1720683583;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PApFyRu0/EMQaGECbDmooQHO9ebJuXOQ4gSJ19eO3PM=;
+        b=sHGbI/m+kW4RA73iDYmDY9A7UdRYvto7DY6KVMO6rLQAz//BuzuZ61v62JALMLolQb
+         mssqISuamBq8gUDRDTdKMkt28VNS1/V+RsQ8vfLvSYFIY4myNNdoKVkaqAE192aU/MiY
+         wJJHduI+Y/zGIRP7i7SYSaG+TJfenRBINsoCB0lvZbJugsc5k8KUVXVwMo+qRXZT9AD8
+         xpI5U7pTa+P9fgsW6E7IQZe4EgCe0bYbteYxD+TgzYgisoNsNgZlILYNXKHqbES2l9Lz
+         BtwJZEou3IvC3amWtzySkF82csISsuqdJkqV+aoALxDh8SvAoIw+bWY6Tt7LXj0WPbi6
+         oAjg==
+X-Gm-Message-State: AOJu0YwajCFe0JMM1kRAAAPlWCw8JSZm7BNaLK/LZHZIfqBuL7KW9nLy
+	Z/F3R4SCdrzt/NdwKR0lPpqspwbm2cfXMgA+MMcnKj1bh/AM4vAKbk8dBABZZj4=
+X-Google-Smtp-Source: AGHT+IFDsgws2ZUxwzfIfmeK6zGAw/81QNzfDvM8ZKA8y7lQzsk4mTBSR6dikk2P2JaZtN7BZmfD5A==
+X-Received: by 2002:ac2:5a41:0:b0:52c:84d1:180e with SMTP id 2adb3069b0e04-52ea06ddeefmr468360e87.67.1720078782969;
+        Thu, 04 Jul 2024 00:39:42 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:bf0c:e5a4:4535:f45c? ([2a01:e0a:982:cbb0:bf0c:e5a4:4535:f45c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2fc8bcsm12665685e9.44.2024.07.04.00.39.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 00:39:42 -0700 (PDT)
+Message-ID: <636922b4-96d4-49cb-9020-2359e7497f56@linaro.org>
+Date: Thu, 4 Jul 2024 09:39:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702-mainline_sdp500-v3-0-0902047b3eee@gmail.com>
- <20240702-mainline_sdp500-v3-3-0902047b3eee@gmail.com> <5cfb4e36-545f-4d17-9b06-c18cdae9f0c0@linaro.org>
-In-Reply-To: <5cfb4e36-545f-4d17-9b06-c18cdae9f0c0@linaro.org>
-From: Petar Stoykov <pd.pstoykov@gmail.com>
-Date: Thu, 4 Jul 2024 09:39:24 +0200
-Message-ID: <CADFWO8HCbzRY++tjBxE1SudEJi7UO0aOmpsJRub-3ogieuu1XQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] MAINTAINERS: Add Sensirion SDP500
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>,
+ linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <2764814.mvXUDI8C0e@rjwysocki.net>
+ <2ed4c630-204a-4f80-a37f-f2ca838eb455@linaro.org>
+ <8d91a3c1-018f-495b-83be-979b795b5548@linaro.org>
+ <12c5c133-9519-4a26-b9a3-2da1d3466e94@linaro.org>
+ <15b67ce6-3238-435d-ad28-7c06efbe9153@linaro.org>
+ <ce6c2e8a-65a7-4cb2-a91d-fbcaeef6edc1@linaro.org>
+ <0c4b401e-86b8-4169-af88-475433012d67@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <0c4b401e-86b8-4169-af88-475433012d67@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 2, 2024 at 5:15=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 02/07/2024 16:59, Petar Stoykov via B4 Relay wrote:
-> > From: Petar Stoykov <pd.pstoykov@gmail.com>
-> >
-> > Add myself as a maintainer for Sensirion SDP500 pressure sensor driver
-> >
-> > Signed-off-by: Petar Stoykov <pd.pstoykov@gmail.com>
-> > ---
-> >  MAINTAINERS | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 40c754b4c39c..65f9479ac343 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19533,6 +19533,12 @@ S:   Maintained
-> >  F:   Documentation/devicetree/bindings/iio/chemical/sensirion,scd4x.ya=
-ml
-> >  F:   drivers/iio/chemical/scd4x.c
-> >
-> > +SENSIRION SDP500 DIFFERENTIAL PRESSURE SENSOR DRIVER
-> > +M:   Petar Stoykov <petar.stoykov@prodrive-technologies.com>
-> > +S:   Maintained
-> > +F:   Documentation/devicetree/bindings/iio/pressure/sdp500.yaml
->
-> There is no such file.
+On 03/07/2024 17:12, Daniel Lezcano wrote:
+> On 03/07/2024 16:42, neil.armstrong@linaro.org wrote:
+>> On 03/07/2024 16:00, Daniel Lezcano wrote:
+>>> On 03/07/2024 14:43, neil.armstrong@linaro.org wrote:
+>>>> Hi,
+>>>>
+>>>> On 03/07/2024 14:25, Daniel Lezcano wrote:
+>>>>>
+>>>>> Hi Neil,
+>>>>>
+>>>>> it seems there is something wrong with the driver actually.
+>>>>>
+>>>>> There can be a moment where the sensor is not yet initialized for different reason, so reading the temperature fails. The routine will just retry until the sensor gets ready.
+>>>>>
+>>>>> Having these errors seem to me that the sensor for this specific thermal zone is never ready which may be the root cause of your issue. The change is spotting this problem IMO.
+>>>>
+>>>> Probably, but it gets printed every second until system shutdown, but only for a single thermal_zone.
+>>>>
+>>>> Using v1 of Rafael's patch makes the message disappear completely.
+>>>
+>>> Yes, because you have probably the thermal zone polling delay set to zero, thus it fails the first time and does no longer try to set it up again. The V1 is an incomplete fix.
+>>>
+>>> Very likely the problem is in the sensor platform driver, or in the thermal zone description in the device tree which describes a non functional thermal zone.
+>>>
+>>
+>> It was at 0 but the delay was removed recently:
+>> https://lore.kernel.org/all/20240510-topic-msm-polling-cleanup-v2-0-436ca4218da2@linaro.org/
+> 
+> Yes, these changes are because another change did:
+> 
+> commit 488164006a281986d95abbc4b26e340c19c4c85b
+> Author: Konrad Dybcio <konrad.dybcio@linaro.org>
+> 
+>      thermal/of: Assume polling-delay(-passive) 0 when absent
+> 
+> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+> 
+>> That doesn't explain it because only the last platforms have this error message printed.
+> 
+> Let me recap.
+> 
+> It has been reported if a thermal-zone with zero delay fails to initialize because the sensor returns an error, then there is no more attempt to initialize it and the thermal zone won't be functional.
+> 
+> The provided fix will periodically read the sensor temperature until there is a valid temperature. When there is a valid temperature, then the interrupts are set for the previous and the next temperature thresholds. That leads to the end of the routine of initializing the thermal zone and cancels the timer.
+> 
+> The platforms you reported, the delay is zero (before and after the 'polling cleanup').
+> 
+> My hypothesis is the following:
+> 
+> The thermal-zone29 describes a sensor which does not operate.
+> 
+> Before the patch:
+> 
+> First attempt to initialize it, the temperature is invalid, then because the delay is zero, the routine stops, and there is no more attempts to initialize it. Nothing will happen to this thermal zone and it will stay stuck silently. So at this point, the thermal zone is broken and you don't notice it.
+> 
+> After the patch:
+> 
+> The initialization routine is constantly retrying to init the thermal zone.
+> 
+> -------------------
+> 
+> If you revert the fix and you try to read the thermal zone 29, it should always fail to return an error.
+> 
+> If I'm correct, then I suggest to identify what thermal zone is 29 (type file), identify the node name in the DT, find the tsens channel and double check if it really describes an existing sensor
+> 
+> 
+> 
+OK I just found out, it's the `qcom-battmgr-bat` thermal zone, and in CI we do not have the firmwares so the
+temperature is never available, this is why it fails in a loop.
 
-Ops, I forgot to update both references to the file after it got renamed.
-Here and in the bindings file.
+Before this patch it would fail silently, but would be useless if we start the firmware too late.
 
->
-> Best regards,
-> Krzysztof
->
+So since it's firmware based, valid data could arrive very late in the boot stage, and sending an
+error message in a loop until the firmware isn't started doesn't seem right.
+
+I think Rafael's new patch is good, but perhaps it should send an error when it finally stops monitoring.
+
+Neil
+
+
 
