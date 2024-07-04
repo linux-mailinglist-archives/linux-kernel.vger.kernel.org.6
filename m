@@ -1,245 +1,351 @@
-Return-Path: <linux-kernel+bounces-240379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9ABB926D14
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:23:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D47926D17
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68DD328417C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388C91C216BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E4EFC0B;
-	Thu,  4 Jul 2024 01:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C0CDF59;
+	Thu,  4 Jul 2024 01:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sz98+7TI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DUbT8hka"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A90C8FE
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1700C2581
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720056214; cv=none; b=jEt44/sblvAaIB9ltTNDque8MloBSBpFI1NUnhmDLVxQr7xB0QW2vhMM+z7+UYuxukH1LJpVrHBNnFaoSpqZlnTAEydCpFQw6j+xG7dllSMSvu3vC6Lnfr38aCyw7uS+T/wYLwrbaSmQnvLWThQGF0+PBxoIisV2VIHERNcqX/g=
+	t=1720056348; cv=none; b=jwzZoH64M0C+buDA4Nl2gcIQ17bz/3qS9oKzzSbgeKdgE066yR4F7wFzGjL85ahCNaiMHoRQNzYOa+edRs91LJAz7Q2AD/z09BMafNISpcs9mkw8ZbKQtqQuk8CN82+pqVnDnFDjKj21mnyw8X9Oli6MIm7fdFZKXtgC15DBv8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720056214; c=relaxed/simple;
-	bh=BJuD4oAjNQoCbhV7ixlJNa0Tqo9H+rGhCNfLXI3JiFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D0lgQDokZuNWbYWincuztzUKbnaB+/TV18oZDin7gigtXSK6HJsp7X144nDcKGY1KALU/S55zmnf1zvuSn+iwfy8E5K+zHslQ+WPai8co0YGJWNdHpo4YyP3rk+KrzwV2GYu5YIgZNddeC8NLhqph7t5Mw7oiwRZj85QdqlhvoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sz98+7TI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720056212;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=FRVKU5kn7p5hiRZbKq//TD3FV740MSwrSEc3Yw2owhc=;
-	b=Sz98+7TIWa/puJo60HehjZ51xzLUJBf5r2mlXHSF6GBoBQRbg2fWnLVi/BjJk1gb4cK/sC
-	4GNLwHK9YQ4+yzX5BzKwjjLEIO0x4Rl/ZI0TGYv6POR47P7p4wvLSuyE4Z6jq5bbU9QLWx
-	hkffI/X6vOONWfGtqjKsZJMb3hQb3SA=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-644-oChz6qfHNeOcDtEtvvi5HQ-1; Wed, 03 Jul 2024 21:23:30 -0400
-X-MC-Unique: oChz6qfHNeOcDtEtvvi5HQ-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1faf6f0854eso715595ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 18:23:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720056209; x=1720661009;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FRVKU5kn7p5hiRZbKq//TD3FV740MSwrSEc3Yw2owhc=;
-        b=snCDPcwKtD/k2LCB0AjCgNFKCKqxglzfzCEZ4A0hIkolc9g3Zi6jGgLdiQPNBz28AI
-         C7BKzGNb0LLZkTHsz/XekomAuYVCeYMwhWM1iKKxBtymhyzabRRyTUEhSrqKlhrafsHZ
-         p2VoDzZ7eKjRs2YFtYdkZ4PHzSJb/cQnRXN2qI876TwD56UMydND/TcXQ83n+guuntlJ
-         HCY9owEtvmD4Y+Dz/29K8HRQui8sQQLglBqX2BuNA8Y1w0l2MNqNKegE6ljK+3ULdH37
-         ZY8vXlJg5iezght8NwCY4l5hKgxAz2a6AyVIYpXJjv8CREfYBqF54QHKhd5khSF4F4sZ
-         1tOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvIpMrsvF+/Ku2eZ76NYOpp4K7g1DYOLnfHTyod7iPb70s+stC49PA65WhpGEcs6x93I9Omn/kBku1pAtdPysX1M6l0hAoFdV15+g7
-X-Gm-Message-State: AOJu0YymT+ezRnqy49Y5fADgA7hEu7SkwvtQFML8O3Oji+WfmXnoJO+6
-	kQiu2o4oXYogAyqbMLzr0v8SOPqZBGJUU3l5HLmrLM1oR4nQu8xPlD4WBexc85IbClw1EvljpU/
-	0Sq9bkSH29yQw/fXJdj8TH18WlEe4Xc5X/ljermirXRs1KTvEwPBVe1sr/OgO8A==
-X-Received: by 2002:a17:903:249:b0:1fb:3107:ec4b with SMTP id d9443c01a7336-1fb33e1834fmr2829405ad.17.1720056209143;
-        Wed, 03 Jul 2024 18:23:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFszBYXZNwZtza786wpYXfORflgdeux+IguQTTUJ9knX2GD8dRgjr1QGJ/LO6MayT4S1BpZig==
-X-Received: by 2002:a17:903:249:b0:1fb:3107:ec4b with SMTP id d9443c01a7336-1fb33e1834fmr2829205ad.17.1720056208654;
-        Wed, 03 Jul 2024 18:23:28 -0700 (PDT)
-Received: from [192.168.1.229] (159-196-82-144.9fc452.per.static.aussiebb.net. [159.196.82.144])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fafc656e96sm38854365ad.65.2024.07.03.18.23.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 18:23:27 -0700 (PDT)
-Message-ID: <9781c2a8-7ee5-44f4-8218-dcd59e4a172d@redhat.com>
-Date: Thu, 4 Jul 2024 09:23:21 +0800
+	s=arc-20240116; t=1720056348; c=relaxed/simple;
+	bh=KmHwntjfoh548MYxF2gaKvlgIfLxehlCWOkxGkzuKZ4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qRoPN3qgWZkUFB6WN3ifOo1rPdl+X3ghIibhRf+aTCpewkAzfqVwix5h5sO3/eWO2a5S91SJo3NAltCv6CYpd0vLDfTlNXP8/b8UKN7727UfUZSgRzUcAAhNokYGjroy73KJHPZW/wgQvHKgCUw8aJlF9CW5MMjQS5ljyFglYCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DUbT8hka; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720056345; x=1751592345;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=KmHwntjfoh548MYxF2gaKvlgIfLxehlCWOkxGkzuKZ4=;
+  b=DUbT8hkacFuJS3sox6B7+C0nva/bMPBtcgqvxj0F3t8LPZd/SHgi5IdQ
+   G8WADwhbb5rLejgDI4xyP7GUK+ce6qmx7AJGTfQlDBoWcXwBA6CzZLir+
+   JuH6vo2kas9fuHfSgYron0oW0KB7Lspp+Vw55pw2SPAH8WYMemyohyTdZ
+   WOeVvhZlzKRwLuCPsEHCmUv2jU5wdR5s9mEpeWuzgAc7CaUA/BpOV/Wjg
+   4FMA6NvfvuVSKeRRSnE7xTW7Uic+PG5kQF75BlDiW/VVuULC9yqXBfggV
+   U2foxNduf/kReNXMvBQZI+v2jpJ5gHkKAavR5GVavwSRwPenWXP9O1PQc
+   g==;
+X-CSE-ConnectionGUID: LMndM1nJRc6xr1mo2xQfkg==
+X-CSE-MsgGUID: Qo49wTrhQJWwdsrBBa7Fjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="17427686"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="17427686"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 18:25:44 -0700
+X-CSE-ConnectionGUID: rs6IqsqkSwOyj5hZtI3gZg==
+X-CSE-MsgGUID: u9RiaY7yRsaozAseJu0eig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="46863250"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 18:25:41 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: Tvrtko Ursulin <tursulin@igalia.com>,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  kernel-dev@igalia.com,  Mel Gorman
+ <mgorman@suse.de>,  Peter Zijlstra <peterz@infradead.org>,  Ingo Molnar
+ <mingo@redhat.com>,  Rik van Riel <riel@surriel.com>,  Johannes Weiner
+ <hannes@cmpxchg.org>,  "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+  Dave Hansen <dave.hansen@intel.com>,  Andi Kleen <ak@linux.intel.com>,
+  Michal Hocko <mhocko@suse.com>,  David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH v2] mm/numa_balancing: Teach mpol_to_str about the
+ balancing mode
+In-Reply-To: <a95b70c0-b386-4189-a06a-008d58a8c2ae@igalia.com> (Tvrtko
+	Ursulin's message of "Wed, 3 Jul 2024 09:34:01 +0100")
+References: <20240702150006.35206-1-tursulin@igalia.com>
+	<87o77fkprp.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<2fe66068-4419-4bfc-a92b-2ece3cfcb2ad@igalia.com>
+	<87ed8akivq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<a95b70c0-b386-4189-a06a-008d58a8c2ae@igalia.com>
+Date: Thu, 04 Jul 2024 09:23:49 +0800
+Message-ID: <874j96j6fu.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
-To: Christian Brauner <brauner@kernel.org>,
- Alexander Larsson <alexl@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
- Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk,
- raven@themaw.net, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Eric Chanudet <echanude@redhat.com>
-References: <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
- <20240627115418.lcnpctgailhlaffc@quack3>
- <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
- <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
- <20240628-gelingen-erben-0f6e14049e68@brauner>
- <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
- <97cf3ef4-d2b4-4cb0-9e72-82ca42361b13@redhat.com>
- <20240701-zauber-holst-1ad7cadb02f9@brauner>
- <CAL7ro1FOYPsN3Y18tgHwpg+VB=rU1XB8Xds9P89Mh4T9N98jyA@mail.gmail.com>
- <20240701-treue-irrtum-e695ee5efe83@brauner>
- <20240703-mahnung-bauland-ffcacea4101e@brauner>
-Content-Language: en-US
-From: Ian Kent <ikent@redhat.com>
-Autocrypt: addr=ikent@redhat.com; keydata=
- xsFNBE6c/ycBEADdYbAI5BKjE+yw+dOE+xucCEYiGyRhOI9JiZLUBh+PDz8cDnNxcCspH44o
- E7oTH0XPn9f7Zh0TkXWA8G6BZVCNifG7mM9K8Ecp3NheQYCk488ucSV/dz6DJ8BqX4psd4TI
- gpcs2iDQlg5CmuXDhc5z1ztNubv8hElSlFX/4l/U18OfrdTbbcjF/fivBkzkVobtltiL+msN
- bDq5S0K2KOxRxuXGaDShvfbz6DnajoVLEkNgEnGpSLxQNlJXdQBTE509MA30Q2aGk6oqHBQv
- zxjVyOu+WLGPSj7hF8SdYOjizVKIARGJzDy8qT4v/TLdVqPa2d0rx7DFvBRzOqYQL13/Zvie
- kuGbj3XvFibVt2ecS87WCJ/nlQxCa0KjGy0eb3i4XObtcU23fnd0ieZsQs4uDhZgzYB8LNud
- WXx9/Q0qsWfvZw7hEdPdPRBmwRmt2O1fbfk5CQN1EtNgS372PbOjQHaIV6n+QQP2ELIa3X5Z
- RnyaXyzwaCt6ETUHTslEaR9nOG6N3sIohIwlIywGK6WQmRBPyz5X1oF2Ld9E0crlaZYFPMRH
- hQtFxdycIBpTlc59g7uIXzwRx65HJcyBflj72YoTzwchN6Wf2rKq9xmtkV2Eihwo8WH3XkL9
- cjVKjg8rKRmqIMSRCpqFBWJpT1FzecQ8EMV0fk18Q5MLj441yQARAQABzRtJYW4gS2VudCA8
- aWtlbnRAcmVkaGF0LmNvbT7CwXgEEwECACIFAk6eM44CGwMGCwkIBwMCBhUIAgkKCwQWAgMB
- Ah4BAheAAAoJEOdnc4D1T9ipMWwP/1FJJWjVYZekg0QOBixULBQ9Gx2TQewOp1DW/BViOMb7
- uYxrlsnvE7TDyqw5yQz6dfb8/b9dPn68qhDecW9bsu72e9i143Cd4shTlkZfORiZjX70196j
- r2LiI6L11uSoVhDGeikSdfRtNWyEwAx2iLstwi7FccslNE4cWIIH2v0dxDYSpcfMaLmT9a7f
- xdoMLW58nwIz0GxQs/2OMykn/VISt25wrepmBiacWu6oqQrpIYh3jyvMQYTBtdalUDDJqf+W
- aUO3+sNFRRysLGcCvEnNuWC3CeTTqU74XTUhf4cmAOyk+seA3MkPyzjVFufLipoYcCnjUavs
- MKBXQ8SCVdDxYxZwS8/FOhB8J2fN8w6gC5uK0ZKAzTj2WhJdxGe+hjf7zdyOcxMl5idbOOFu
- 5gIm0Y5Q4mXz4q5vfjRlhQKvcqBc2HBTlI6xKAP/nxCAH4VzR5J9fhqxrWfcoREyUFHLMBuJ
- GCRWxN7ZQoTYYPl6uTRVbQMfr/tEck2IWsqsqPZsV63zhGLWVufBxg88RD+YHiGCduhcKica
- 8UluTK4aYLt8YadkGKgy812X+zSubS6D7yZELNA+Ge1yesyJOZsbpojdFLAdwVkBa1xXkDhH
- BK0zUFE08obrnrEUeQDxAhIiN9pctG0nvqyBwTLGFoE5oRXJbtNXcHlEYcUxl8BizsFNBE6c
- /ycBEADZzcb88XlSiooYoEt3vuGkYoSkz7potX864MSNGekek1cwUrXeUdHUlw5zwPoC4H5J
- F7D8q7lYoelBYJ+Mf0vdLzJLbbEtN5+v+s2UEbkDlnUQS1yRo1LxyNhJiXsQVr7WVA/c8qcD
- WUYX7q/4Ckg77UO4l/eHCWNnHu7GkvKLVEgRjKPKroIEnjI0HMK3f6ABDReoc741RF5XX3qw
- mCgKZx0AkLjObXE3W769dtbNbWmW0lgFKe6dxlYrlZbq25Aubhcu2qTdQ/okx6uQ41+vQDxg
- YtocsT/CG1u0PpbtMeIm3mVQRXmjDFKjKAx9WOX/BHpk7VEtsNQUEp1lZo6hH7jeo5meCYFz
- gIbXdsMA9TjpzPpiWK9GetbD5KhnDId4ANMrWPNuGC/uPHDjtEJyf0cwknsRFLhL4/NJKvqA
- uiXQ57x6qxrkuuinBQ3S9RR3JY7R7c3rqpWyaTuNNGPkIrRNyePky/ZTgTMA5of8Wioyz06X
- Nhr6mG5xT+MHztKAQddV3xFy9f3Jrvtd6UvFbQPwG7Lv+/UztY5vPAzp7aJGz2pDbb0QBC9u
- 1mrHICB4awPlja/ljn+uuIb8Ow3jSy+Sx58VFEK7ctIOULdmnHXMFEihnOZO3NlNa6q+XZOK
- 7J00Ne6y0IBAaNTM+xMF+JRc7Gx6bChES9vxMyMbXwARAQABwsFfBBgBAgAJBQJOnP8nAhsM
- AAoJEOdnc4D1T9iphf4QAJuR1jVyLLSkBDOPCa3ejvEqp4H5QUogl1ASkEboMiWcQJQdLaH6
- zHNySMnsN6g/UVhuviANBxtW2DFfANPiydox85CdH71gLkcOE1J7J6Fnxgjpc1Dq5kxhimBS
- qa2hlsKUt3MLXbjEYL5OTSV2RtNP04KwlGS/xMfNwQf2O2aJoC4mSs4OeZwsHJFVF8rKXDvL
- /NzMCnysWCwjVIDhHBBIOC3mecYtXrasv9nl77LgffyyaAAQZz7yZcvn8puj9jH9h+mrL02W
- +gd+Sh6Grvo5Kk4ngzfT/FtscVGv9zFWxfyoQHRyuhk0SOsoTNYN8XIWhosp9GViyDtEFXmr
- hiazz7XHc32u+o9+WugpTBZktYpORxLVwf9h1PY7CPDNX4EaIO64oyy9O3/huhOTOGhanVvq
- lYHyEYCFY7pIfaSNhgZs2aV0oP13XV6PGb5xir5ah+NW9gQk/obnvY5TAVtgTjAte5tZ+coC
- SBkOU1xMiW5Td7QwkNmtXKHyEF6dxCAMK1KHIqxrBaZO27PEDSHaIPHePi7y4KKq9C9U8k5V
- 5dFA0mqH/st9Sw6tFbqPkqjvvMLETDPVxOzinpU2VBGhce4wufSIoVLOjQnbIo1FIqWgDx24
- eHv235mnNuGHrG+EapIh7g/67K0uAzwp17eyUYlE5BMcwRlaHMuKTil6
-In-Reply-To: <20240703-mahnung-bauland-ffcacea4101e@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ascii
 
+Tvrtko Ursulin <tvrtko.ursulin@igalia.com> writes:
 
-On 3/7/24 17:22, Christian Brauner wrote:
-> On Mon, Jul 01, 2024 at 02:10:31PM GMT, Christian Brauner wrote:
->> On Mon, Jul 01, 2024 at 10:41:40AM GMT, Alexander Larsson wrote:
->>> On Mon, Jul 1, 2024 at 7:50 AM Christian Brauner <brauner@kernel.org> wrote:
->>>>> I always thought the rcu delay was to ensure concurrent path walks "see" the
->>>>>
->>>>> umount not to ensure correct operation of the following mntput()(s).
->>>>>
->>>>>
->>>>> Isn't the sequence of operations roughly, resolve path, lock, deatch,
->>>>> release
->>>>>
->>>>> lock, rcu wait, mntput() subordinate mounts, put path.
->>>> The crucial bit is really that synchronize_rcu_expedited() ensures that
->>>> the final mntput() won't happen until path walk leaves RCU mode.
+> On 03/07/2024 08:57, Huang, Ying wrote:
+>> Tvrtko Ursulin <tvrtko.ursulin@igalia.com> writes:
+>> 
+>>> On 03/07/2024 06:28, Huang, Ying wrote:
+>>>> Tvrtko Ursulin <tursulin@igalia.com> writes:
 >>>>
->>>> This allows caller's like legitimize_mnt() which are called with only
->>>> the RCU read-lock during lazy path walk to simple check for
->>>> MNT_SYNC_UMOUNT and see that the mnt is about to be killed. If they see
->>>> that this mount is MNT_SYNC_UMOUNT then they know that the mount won't
->>>> be freed until an RCU grace period is up and so they know that they can
->>>> simply put the reference count they took _without having to actually
->>>> call mntput()_.
->>>>
->>>> Because if they did have to call mntput() they might end up shutting the
->>>> filesystem down instead of umount() and that will cause said EBUSY
->>>> errors I mentioned in my earlier mails.
->>> But such behaviour could be kept even without an expedited RCU sync.
->>> Such as in my alternative patch for this:
->>> https://www.spinics.net/lists/linux-fsdevel/msg270117.html
+>>>>> From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+>>>>>
+>>>>> Since balancing mode was added in
+>>>>> bda420b98505 ("numa balancing: migrate on fault among multiple bound nodes"),
+>>>>> it was possible to set this mode but it wouldn't be shown in
+>>>>> /proc/<pid>/numa_maps since there was no support for it in the
+>>>>> mpol_to_str() helper.
+>>>>>
+>>>>> Furthermore, because the balancing mode sets the MPOL_F_MORON flag, it
+>>>>> would be displayed as 'default' due a workaround introduced a few years
+>>>>> earlier in
+>>>>> 8790c71a18e5 ("mm/mempolicy.c: fix mempolicy printing in numa_maps").
+>>>>>
+>>>>> To tidy this up we implement two changes:
+>>>>>
+>>>>> First we introduce a new internal flag MPOL_F_KERNEL and with it mark the
+>>>>> kernel's internal default and fallback policies (for tasks and/or VMAs
+>>>>> with no explicit policy set). By doing this we generalise the current
+>>>>> special casing and replace the incorrect 'default' with the correct
+>>>>> 'bind'.
+>>>>>
+>>>>> Secondly, we add a string representation and corresponding handling for
+>>>>> MPOL_F_NUMA_BALANCING. We do this by adding a sparse mapping array of
+>>>>> flags to names. With the sparseness being the downside, but with the
+>>>>> advantage of generalising and removing the "policy" from flags display.
+>>>> Please split these 2 changes into 2 patches.  Because we will need
+>>>> to
+>>>> back port the first one to -stable kernel.
 >>>
->>> I.e. we would still guarantee the final mput is called, but not block
->>> the return of the unmount call.
->> That's fine but the patch as sent doesn't work is my point. It'll cause
->> exactly the issues described earlier, no? So I'm confused why this
->> version simply ended up removing synchronize_rcu_expedited() when
->> the proposed soluton seems to have been to use queue_rcu_work().
->>
->> But anyway, my concern with this is still that this changes the way
->> MNT_DETACH behaves when you shut down a non-busy filesystem with
->> MNT_DETACH as outlined in my other mail.
->>
->> If you find a workable version I'm not entirely opposed to try this but
->> I wouldn't be surprised if this causes user visible issues for anyone
->> that uses MNT_DETACH on a non-used filesystem.
-> Correction: I misremembered that umount_tree() is called with
-> UMOUNT_SYNC only in the case that umount() isn't called with MNT_DETACH.
-> I mentioned this yesterday in the thread but just in case you missed it
-> I want to spell it out in detail as well.
-
-Thanks Christian, I did see that, yep.
-
-There's also the seqlock in there to alert the legitimize that it needs
-
-to restart using ref-walk.
-
-
+>>> Why two? AFAICT there wasn't a issue until bda420b98505, and to fix it
+>>> all changes from this patch are needed.
+>> After bda420b98505, MPOL_BIND with MPOL_F_NUMA_BALANCING will be
+>> shown
+>> as "default", which is a bug.  While it's a new feature to show
+>> "balancing".  The first fix should be back-ported to -stable kernel
+>> after bda420b98505.  While we don't need to do that for the second one.
 >
-> This is relevant because UMOUNT_SYNC will raise MNT_SYNC_UMOUNT on all
-> mounts it unmounts. And that ends up being checked in legitimize_mnt()
-> to ensure that legitimize_mnt() doesn't call mntput() during path lookup
-> and risking EBUSY for a umount(..., 0) + mount() sequence for the same
-> filesystem.
+> You lost me but it could be I am not at my best today so if you could
+> please explain more precisely what you mean?
 >
-> But for umount(.., MNT_DETACH) UMOUNT_SYNC isn't passed and so
-> MNT_SYNC_UMOUNT isn't raised on the mount and so legitimize_mnt() may
-> end up doing the last mntput() and cleaning up the filesystem.
+> When bda420b98505 got in, it added MPOL_F_NUMA_BALANCING. But there
+> was no "balancing" in mpol_to_str(). That's one fix for bda420b98505.
+
+IMO, it's not a big issue to miss "balancing" in mpol_to_str().  It's
+not absolutely necessary to backport this part.
+
+> But also it did not change the pre-existing check for MPOL_F_MORON
+> added in 8790c71a18e5, many years before it, which was the thing
+> causing bind+balancing to be printed as default. So that's the second
+> part of the fix. But also AFAICS to tag as fixes bda420b98505.
 >
-> In other words, a umount(..., MNT_DETACH) caller needs to be prepared to
-> deal with EBUSY for a umount(..., MNT_DETACH) + mount() sequence.
+> Making 8790c71a18e5 target of Fixes: does not IMO make sense though
+> because *at the time* of that patch it wasn't broken. What am I
+> missing?
+
+Yes, we should use "Fixes: bda420b98505 ..." for this part.  This is a
+big issue, because "default" will be shown for MPOL_BIND, which is
+totally wrong.  We need to backport this fix.  It's good for backporting
+to keep it small and focused.
+
+>>>>> End result:
+>>>>>
+>>>>> $ numactl -b -m 0-1,3 cat /proc/self/numa_maps
+>>>>> 555559580000 bind=balancing:0-1,3 file=/usr/bin/cat mapped=3 active=0 N0=3 kernelpagesize_kB=16
+>>>>> ...
+>>>>>
+>>>>> v2:
+>>>>>    * Fully fix by introducing MPOL_F_KERNEL.
+>>>>>
+>>>>> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+>>>>> Fixes: bda420b98505 ("numa balancing: migrate on fault among multiple bound nodes")
+>>>>> References: 8790c71a18e5 ("mm/mempolicy.c: fix mempolicy printing in numa_maps")
+>>>>> Cc: Huang Ying <ying.huang@intel.com>
+>>>>> Cc: Mel Gorman <mgorman@suse.de>
+>>>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>>>> Cc: Ingo Molnar <mingo@redhat.com>
+>>>>> Cc: Rik van Riel <riel@surriel.com>
+>>>>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>>>>> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>>>>> Cc: Dave Hansen <dave.hansen@intel.com>
+>>>>> Cc: Andi Kleen <ak@linux.intel.com>
+>>>>> Cc: Michal Hocko <mhocko@suse.com>
+>>>>> Cc: David Rientjes <rientjes@google.com>
+>>>>> ---
+>>>>>    include/uapi/linux/mempolicy.h |  1 +
+>>>>>    mm/mempolicy.c                 | 44 ++++++++++++++++++++++++----------
+>>>>>    2 files changed, 32 insertions(+), 13 deletions(-)
+>>>>>
+>>>>> diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
+>>>>> index 1f9bb10d1a47..bcf56ce9603b 100644
+>>>>> --- a/include/uapi/linux/mempolicy.h
+>>>>> +++ b/include/uapi/linux/mempolicy.h
+>>>>> @@ -64,6 +64,7 @@ enum {
+>>>>>    #define MPOL_F_SHARED  (1 << 0)	/* identify shared policies */
+>>>>>    #define MPOL_F_MOF	(1 << 3) /* this policy wants migrate on fault */
+>>>>>    #define MPOL_F_MORON	(1 << 4) /* Migrate On protnone Reference On Node */
+>>>>> +#define MPOL_F_KERNEL   (1 << 5) /* Kernel's internal policy */
+>>>>>      /*
+>>>>>     * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
+>>>>> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+>>>>> index aec756ae5637..8ecc6d9f100a 100644
+>>>>> --- a/mm/mempolicy.c
+>>>>> +++ b/mm/mempolicy.c
+>>>>> @@ -134,6 +134,7 @@ enum zone_type policy_zone = 0;
+>>>>>    static struct mempolicy default_policy = {
+>>>>>    	.refcnt = ATOMIC_INIT(1), /* never free it */
+>>>>>    	.mode = MPOL_LOCAL,
+>>>>> +	.flags = MPOL_F_KERNEL,
+>>>>>    };
+>>>>>      static struct mempolicy preferred_node_policy[MAX_NUMNODES];
+>>>>> @@ -3095,7 +3096,7 @@ void __init numa_policy_init(void)
+>>>>>    		preferred_node_policy[nid] = (struct mempolicy) {
+>>>>>    			.refcnt = ATOMIC_INIT(1),
+>>>>>    			.mode = MPOL_PREFERRED,
+>>>>> -			.flags = MPOL_F_MOF | MPOL_F_MORON,
+>>>>> +			.flags = MPOL_F_MOF | MPOL_F_MORON | MPOL_F_KERNEL,
+>>>>>    			.nodes = nodemask_of_node(nid),
+>>>>>    		};
+>>>>>    	}
+>>>>> @@ -3150,6 +3151,12 @@ static const char * const policy_modes[] =
+>>>>>    	[MPOL_PREFERRED_MANY]  = "prefer (many)",
+>>>>>    };
+>>>>>    +static const char * const policy_flags[] = {
+>>>>> +	[ilog2(MPOL_F_STATIC_NODES)] = "static",
+>>>>> +	[ilog2(MPOL_F_RELATIVE_NODES)] = "relative",
+>>>>> +	[ilog2(MPOL_F_NUMA_BALANCING)] = "balancing",
+>>>>> +};
+>>>>> +
+>>>>>    #ifdef CONFIG_TMPFS
+>>>>>    /**
+>>>>>     * mpol_parse_str - parse string to mempolicy, for tmpfs mpol mount option.
+>>>>> @@ -3293,17 +3300,18 @@ int mpol_parse_str(char *str, struct mempolicy **mpol)
+>>>>>     * @pol:  pointer to mempolicy to be formatted
+>>>>>     *
+>>>>>     * Convert @pol into a string.  If @buffer is too short, truncate the string.
+>>>>> - * Recommend a @maxlen of at least 32 for the longest mode, "interleave", the
+>>>>> - * longest flag, "relative", and to display at least a few node ids.
+>>>>> + * Recommend a @maxlen of at least 42 for the longest mode, "weighted
+>>>>> + * interleave", the longest flag, "balancing", and to display at least a few
+>>>>> + * node ids.
+>>>>>     */
+>>>>>    void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
+>>>>>    {
+>>>>>    	char *p = buffer;
+>>>>>    	nodemask_t nodes = NODE_MASK_NONE;
+>>>>>    	unsigned short mode = MPOL_DEFAULT;
+>>>>> -	unsigned short flags = 0;
+>>>>> +	unsigned long flags = 0;
+>>>>>    -	if (pol && pol != &default_policy && !(pol->flags &
+>>>>> MPOL_F_MORON)) {
+>>>>> +	if (!(pol->flags & MPOL_F_KERNEL)) {
+>>>> Can we avoid to introduce a new flag?  Whether the following code
+>>>> work?
+>>>>           if (pol && pol != &default_policy && !(pol->mode !=
+>>>>               MPOL_PREFERRED) && !(pol->flags & MPOL_F_MORON))
+>>>> But I think that this is kind of fragile.  A flag is better.  But
+>>>> personally, I don't think MPOL_F_KERNEL is a good name, maybe
+>>>> MPOL_F_DEFAULT?
+>>>
+>>> I thought along the same lines, but as you have also shown we need to
+>>> exclude both default and preferred fallbacks so naming the flag
+>>> default did not feel best. MPOL_F_INTERNAL? MPOL_F_FALLBACK?
+>>> MPOL_F_SHOW_AS_DEFAULT? :))
+>>>
+>>> What I dislike about the flag more is the fact internal flags are for
+>>> some reason in the uapi headers. And presumably we cannot zap them.
+>>>
+>>> But I don't think we can check for MPOL_PREFERRED since it can be a
+>>> legitimate user set policy.
+>> It's not legitimate (yet) to use MPOL_PREFERRED +
+>> MPOL_F_NUMA_BALANCING.
+>> 
+>>>
+>>> We could check for the address of preferred_node_policy[] members with
+>>> a loop covering all possible nids? If that will be the consensus I am
+>>> happy to change it. But flag feels more elegant and robust.
+>> Yes.  I think that this is doable.
+>>          (unsigned long)addr >= (unsigned
+>> long)(preferred_node_policy) && \
+>>                  (unsigned long)addr < (unsigned long)(preferred_node_policy) + \
+>>                  sizeof(preferred_node_policy)
 >
-> So I think we can certainly try this as long as we make it via
-> queue_rcu_work() to handle the other mntput_no_expire() grace period
-> dependency we discussed upthread.
+> Not the prettiest but at least in the spirit of the existing
+> &default_policy check. I can do that, no problem. If someone has a
+> different opinion please shout soon.
 >
-> Thanks for making take a closer look.
+>>>>>    		mode = pol->mode;
+>>>>>    		flags = pol->flags;
+>>>>>    	}
+>>>>> @@ -3328,15 +3336,25 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
+>>>>>    	p += snprintf(p, maxlen, "%s", policy_modes[mode]);
+>>>>>      	if (flags & MPOL_MODE_FLAGS) {
+>>>>> -		p += snprintf(p, buffer + maxlen - p, "=");
+>>>>> +		unsigned int bit, cnt = 0;
+>>>>>    -		/*
+>>>>> -		 * Currently, the only defined flags are mutually exclusive
+>>>>> -		 */
+>>>>> -		if (flags & MPOL_F_STATIC_NODES)
+>>>>> -			p += snprintf(p, buffer + maxlen - p, "static");
+>>>>> -		else if (flags & MPOL_F_RELATIVE_NODES)
+>>>>> -			p += snprintf(p, buffer + maxlen - p, "relative");
+>>>>> +		for_each_set_bit(bit, &flags, ARRAY_SIZE(policy_flags)) {
+>>>>> +			if (bit <= ilog2(MPOL_F_KERNEL))
+>>>>> +				continue;
+>>>>> +
+>>>>> +			if (cnt == 0)
+>>>>> +				p += snprintf(p, buffer + maxlen - p, "=");
+>>>>> +			else
+>>>>> +				p += snprintf(p, buffer + maxlen - p, ",");
+>>>>> +
+>>>>> +			if (WARN_ON_ONCE(!policy_flags[bit]))
+>>>>> +				p += snprintf(p, buffer + maxlen - p, "bit%u",
+>>>>> +					      bit);
+>>>>> +			else
+>>>>> +				p += snprintf(p, buffer + maxlen - p,
+>>>>> +					      policy_flags[bit]);
+>>>>> +			cnt++;
+>>>>> +		}
+>>>> Please refer to commit 2291990ab36b ("mempolicy: clean-up
+>>>> mpol-to-str()
+>>>> mempolicy formatting") for the original format.
+>>>
+>>> That was in 2008 so long time ago and in the meantime there were no
+>>> bars. The format in this patch tries to align with the input format
+>>> and I think it manages, apart from deciding to print unknown flags as
+>>> bit numbers (which is most probably an irrelevant difference). Why do
+>>> you think the pre-2008 format is better?
+>> If you think that your format is better, please explain why you not
+>> use
+>> the original format in the patch description.  You can also show
+>> examples to compare.
+>
+> Because there is no "old" format? If you refer to the one which ended
+> in 2008. Or if you refer to the one this patch replaces, then it is
+> effectively the same format for a single flag. And for multiple flags
+> before this patch that wasn't a possibility. So I am not sure what I
+> would include as a comparison. Broken "default" vs
+> "bind=balancing:0-1"? Am I missing something?
 
-I'm still not sure I fully understand the subtleties of how this works, I
+In the old format (not in the old code), it is,
 
-think I'll need to do a deep dive into the rcu code and then revisit the
+bind=relative|balancing:0-1
 
-umount code. At least I won't be idle, ;(
+while in your format,
 
+bind=relative,balancing:0-1
 
-Nevertheless I have to thank both you and Honza for your efforts and 
-tolerance.
+Please explain why you make the change.
 
+[snip]
 
-Ian
-
-Ian
-
-
+--
+Best Regards,
+Huang, Ying
 
