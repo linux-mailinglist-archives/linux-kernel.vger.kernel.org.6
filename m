@@ -1,162 +1,132 @@
-Return-Path: <linux-kernel+bounces-240711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4431992718A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:16:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4C2927190
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B381C20CF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F24283A4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3621A2FA6;
-	Thu,  4 Jul 2024 08:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9425D1A3BBC;
+	Thu,  4 Jul 2024 08:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cRrfuczB"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oOYmZ+0M"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0935740BF2
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 08:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A2940BF2;
+	Thu,  4 Jul 2024 08:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720080954; cv=none; b=Hi8I8bo/GbxL7eboZK0thEb5YWrLOrnZGa9P+5Xhsh7ITNiixAKbsCJI26xwpYfYx9tTMpvCxpjlK/a7Nrk3o4zxtMBP5lFIngC0qKlHr2QW7DLWpLAY0RaQsAsgA4SifTNI65KDchAp98d4XipUrS3743TVVQWJrkdZ4bjmnC4=
+	t=1720081164; cv=none; b=fse9wiwqMMNItjN7WSWWUpemJl5IPTZE5UogPBPVzVLXFWtH9X0MWr4qlKVM7mK4jpsivyTN5AJTUL49oAgRtp27mqDyzSoU2kuW7sIX0tFp8L8mLSEoyrQYgRcOiXwkiGUXePAeX8OzPzKgSbtAuNTp1KQwwb5pbNcjcNiLV3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720080954; c=relaxed/simple;
-	bh=XHqGwaQmYmQMgT5UnwbhL5emw0ca+fdWudPrSxTUdhA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HEnfMX0xyQyX1Iyb8WDCSAAA1jk2d/gBeAbr3n6qlt/u0b7wOj0ai+iR30nb2ERtpjJ7TS+qAdYEvd4UIWzC0nhQ30kcD1JYAFU+gxJhehDgkenyz5QeHv3H3xDSkt8NhAhVQKrR0LaJLTuM/2t0QoO2z4w7VLpa0jIlqJxYVRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cRrfuczB; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720080948; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=vXW1yzEsOtMBP6VZGMkwSIPS5R14JQHEPFwNunTTdEw=;
-	b=cRrfuczB8wshhQ2TWLlN3Cd3JrBVtYEzF2BZ1YIq/d7cyiaJE4s3JsIaTEx+AKYZdn8J5pp9o5iIgyELrO37Kwfqf0c0tzi97nT8P+SHdyR+tye9xMSTRbSOtNvPXM1jlfzIEi2DN09nC0+epDOPV9F+6J+eWOH10mOmVnJVkmU=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R451e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=dtcccc@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W9pvh2H_1720080946;
-Received: from 30.97.49.49(mailfrom:dtcccc@linux.alibaba.com fp:SMTPD_---0W9pvh2H_1720080946)
-          by smtp.aliyun-inc.com;
-          Thu, 04 Jul 2024 16:15:48 +0800
-Message-ID: <8fea90cc-8a57-4cd7-8b60-6179a8eb9cfd@linux.alibaba.com>
-Date: Thu, 4 Jul 2024 16:15:45 +0800
+	s=arc-20240116; t=1720081164; c=relaxed/simple;
+	bh=3knMpZHgzR7f69CQVQ68vB+p7FEWmq4/tjkWzISEutM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uWBhF07fWH4XirKy1sN1QaCtL2n4fpJfxNrfZujDzzlgkN/26r7N+T1swzzjZnmN1ODIBQ5gBByMfmw6jqG2zS+VabV9HdFtxKpF+2OLR2hAsEmcslHPDsrdRlSBtl78ZCf6PFRcsuGhQwuIydsco51di8IhC4y97dgcMwc+Tvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oOYmZ+0M; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 463JPdMo006059;
+	Thu, 4 Jul 2024 08:18:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=1TWDs8bthjJxV46juERV9k
+	GY3wi9oWria9K9paXfeEg=; b=oOYmZ+0MEVv2wcUpT4Nj8V47VtZT1pjZ8VhvV5
+	FGTXhQJS+CcFv5yTt1G6HPrTGi+vlZOAab4qyt1nOIP43jaVoDYxQ5OyG7TvXX1d
+	U8Kl3qMzeCSsipANB6W7ziYdLglwyK3KKErNOZ5HIEYTXOwX/Ic5bqhUPYUe8MhZ
+	YPSYgPv0df62BrZUGdQ1xrwqN0wGIhZXQWRCG8Ct/vPWSjeb1IHPTkbD3xaOfHpT
+	YAfeG8gL9zU/2FM3yMgHb+TkQ+bDX1UDGuM5d6cmNhtP/4SUeGiILhVgjidf2Png
+	/HKLXQi81RTkwWffx/uIC3B59A4odTDvIIjh50y9Soo1d2qw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4029uxjv0x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Jul 2024 08:18:54 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4648IrEw029958
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 4 Jul 2024 08:18:53 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 4 Jul 2024 01:18:50 -0700
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "Mohammad
+ Rafi Shaik" <quic_mohs@quicinc.com>,
+        Prasad Kumpatla
+	<quic_pkumpatl@quicinc.com>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>
+Subject: [PATCH v2 0/3] Fix the unbalanced pm_runtime_enable in wcd937x-sdw soundwire slave
+Date: Thu, 4 Jul 2024 13:47:20 +0530
+Message-ID: <20240704081723.3394153-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/fair: Make SCHED_IDLE entity be preempted in
- strict hierarchy
-From: Tianchen Ding <dtcccc@linux.alibaba.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
- <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
- Josh Don <joshdon@google.com>
-References: <20240626023505.1332596-1-dtcccc@linux.alibaba.com>
-Content-Language: en-US
-In-Reply-To: <20240626023505.1332596-1-dtcccc@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MQcdktzic7wLO2nI32H81Ykq6f_jXYtu
+X-Proofpoint-ORIG-GUID: MQcdktzic7wLO2nI32H81Ykq6f_jXYtu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_18,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=816
+ priorityscore=1501 impostorscore=0 bulkscore=0 spamscore=0 mlxscore=0
+ clxscore=1015 phishscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407040057
 
-gentle ping...
+This patch set change will fix the unbalanced pm_runtime_enable in wcd937x-sdw soundwire slave.
 
-On 2024/6/26 10:35, Tianchen Ding wrote:
-> Consider the following cgroup:
-> 
->                         root
->                          |
->               ------------------------
->               |                      |
->         normal_cgroup            idle_cgroup
->               |                      |
->     SCHED_IDLE task_A           SCHED_NORMAL task_B
-> 
-> According to the cgroup hierarchy, A should preempt B. But current
-> check_preempt_wakeup_fair() treats cgroup se and task separately, so B
-> will preempt A unexpectedly.
-> Unify the wakeup logic by {c,p}se_is_idle only. This makes SCHED_IDLE of
-> a task a relative policy that is effective only within its own cgroup,
-> similar to the behavior of NICE.
-> 
-> Also fix se_is_idle() definition when !CONFIG_FAIR_GROUP_SCHED.
-> 
-> Fixes: 304000390f88 ("sched: Cgroup SCHED_IDLE support")
-> Signed-off-by: Tianchen Ding <dtcccc@linux.alibaba.com>
-> Reviewed-by: Josh Don <joshdon@google.com>
-> Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
-> v2:
-> Use entity_is_task() to check whether pse is a task.
-> Improve comments and commit log.
-> 
-> v1: https://lore.kernel.org/all/20240624073900.10343-1-dtcccc@linux.alibaba.com/
-> ---
->   kernel/sched/fair.c | 24 ++++++++++++------------
->   1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 41b58387023d..f0b038de99ce 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -511,7 +511,7 @@ static int cfs_rq_is_idle(struct cfs_rq *cfs_rq)
->   
->   static int se_is_idle(struct sched_entity *se)
->   {
-> -	return 0;
-> +	return task_has_idle_policy(task_of(se));
->   }
->   
->   #endif	/* CONFIG_FAIR_GROUP_SCHED */
-> @@ -8382,16 +8382,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->   	if (test_tsk_need_resched(curr))
->   		return;
->   
-> -	/* Idle tasks are by definition preempted by non-idle tasks. */
-> -	if (unlikely(task_has_idle_policy(curr)) &&
-> -	    likely(!task_has_idle_policy(p)))
-> -		goto preempt;
-> -
-> -	/*
-> -	 * Batch and idle tasks do not preempt non-idle tasks (their preemption
-> -	 * is driven by the tick):
-> -	 */
-> -	if (unlikely(p->policy != SCHED_NORMAL) || !sched_feat(WAKEUP_PREEMPTION))
-> +	if (!sched_feat(WAKEUP_PREEMPTION))
->   		return;
->   
->   	find_matching_se(&se, &pse);
-> @@ -8401,7 +8392,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->   	pse_is_idle = se_is_idle(pse);
->   
->   	/*
-> -	 * Preempt an idle group in favor of a non-idle group (and don't preempt
-> +	 * Preempt an idle entity in favor of a non-idle entity (and don't preempt
->   	 * in the inverse case).
->   	 */
->   	if (cse_is_idle && !pse_is_idle)
-> @@ -8409,6 +8400,15 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->   	if (cse_is_idle != pse_is_idle)
->   		return;
->   
-> +	/*
-> +	 * Batch tasks do not preempt non-idle tasks (their preemption
-> +	 * is driven by the tick).
-> +	 * We've done the check about "only one of the entities is idle",
-> +	 * so cse must be non-idle if p is a batch task.
-> +	 */
-> +	if (unlikely(entity_is_task(pse) && p->policy == SCHED_BATCH))
-> +		return;
-> +
->   	cfs_rq = cfs_rq_of(se);
->   	update_curr(cfs_rq);
->   
+And removed the string compare with widget name in MIC BIAS settings, instead
+of string compare use the MIC BIAS id's as value.
+
+Removed separate handling for vdd-buck regulator supply which is not
+required. The vdd-buck regulator supply enabled using bulk enable.
+
+Added the error handling in wcd937x_probe() and disable the regulators in error case.
+
+Changes in v2:
+ - Remove Unrelated devm_free_irq change as suggested by Mark Brown
+ - Link to v1: https://lore.kernel.org/linux-sound/a8a670f9-f03f-eff8-5cb2-b40b06267bc6@quicinc.com/
+  
+Changes in v1:
+ - Fixed the unbalanced pm_runtime_enable in wcd937x-sdw soundwire slave
+ - Removed the string compare with widget name in MIC BIAS widget settings
+   suggested by Srinivas Kandagatla
+   https://lore.kernel.org/all/33772eab-74c6-c5c3-fa25-3a643a2f9c57@quicinc.com/
+ - Removed separate handling for vdd-buck supply
+   Suggested by Christophe JAILLET
+   https://lore.kernel.org/all/834d31cc-f4bc-4db7-a25b-f9869e550eb6@wanadoo.fr/
+   https://lore.kernel.org/all/288156b9-2f72-6929-3422-c3aecb9c2c07@quicinc.com/   
+
+Mohammad Rafi Shaik (3):
+  ASoC: codecs: wcd937x-sdw: Fix Unbalanced pm_runtime_enable
+  ASoC: codecs: wcd937x: Remove the string compare in MIC BIAS widget
+    settings
+  ASoC: codecs: wcd937x: Remove separate handling for vdd-buck supply
+
+ sound/soc/codecs/wcd937x-sdw.c | 18 +++----
+ sound/soc/codecs/wcd937x.c     | 95 ++++++++--------------------------
+ sound/soc/codecs/wcd937x.h     |  2 +-
+ 3 files changed, 30 insertions(+), 85 deletions(-)
+
+
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+-- 
+2.25.1
 
 
