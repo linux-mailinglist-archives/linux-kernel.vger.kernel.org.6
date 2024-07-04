@@ -1,261 +1,144 @@
-Return-Path: <linux-kernel+bounces-241188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96440927813
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:18:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC6D927816
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44EBE280C94
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF861C20B8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEA11AEFFC;
-	Thu,  4 Jul 2024 14:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="AJzCAeej"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1951AEFF0;
+	Thu,  4 Jul 2024 14:18:20 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D041AEFEC
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82721AEFDD
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720102674; cv=none; b=QWl65VHZgGzSLGFAFaq/VskvSsoMem5QOp4xKlh3taon0ZxfQM8m1/aLiohT1X/JakozJ11Ia0vKC/dzq547DYGMs+oFSYikbUW4WHm88VvJpfNQeM2XWB3AyR0xiWeJyiRiD2RvOPcTJ6zuwSvUnT9ThLAVdbcTkrS7uDuICd8=
+	t=1720102700; cv=none; b=AaEyeN8SLZtWpELtXGY3IScd5qxbn1Yc45LCAeX+XPB3UhpqB1iSCRLtXAm7JiwBIsbhP9UcPASGi08JjYB0Zwgo1QcmTP+nDfXEwsGQDkI6k22T1Jszh3YoqTBhdXtMVChuxLSV3bNhN9WzpKl5fLfrhzWnsKvXJX8gNOS5SS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720102674; c=relaxed/simple;
-	bh=mIwJOo/thg6eswlntfHGseXZQKjuKnvwQ9EsdsnrYiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZqcQZNcMxHEi2bGeFaZwLlKJXGxXP4PqdeZtaNF+wmVirLPLQZ7Xa5KjZsGA7gyKbHjP3Y0DjMJ0PjS4gBfIS01dpyeSE8JDaXzP6w5/ojGI9Gh5WoNUlKfWBrAKrVsMa4FvBvANK2FSiHrNXQKVahwbhSyk41ZseyN7B+6exc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=AJzCAeej; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4212b102935so541825e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 07:17:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1720102671; x=1720707471; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L0ZB9SPmWHe++T+xhsKZNHL3OjgwIY/NrZzmnYZSBGs=;
-        b=AJzCAeejXy1EfWt1vILoolVqMTdWjeCNyIfpv0BL2zcMayctzOlKIskiEmZDqQgrlz
-         hRvsWAPx/kmraYX07kVepsrhSYBERQJdABNThFIFX5S7rBdsG95foo9kz/WqY/KeUWZf
-         o4qNtRLfq5GyXpr792I6bPyfapTaaKVt8T0RU=
+	s=arc-20240116; t=1720102700; c=relaxed/simple;
+	bh=1smwYFCQdFQQ+pWuZhmovy2EI8RvSR9Ox32GS+V1Eqs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QB8C7RMPmzQG/HkiiKwDFsQCXMZmyS1xPNfVCGTSz3RP353RPDa17VMZL9KnfodQ8Q3scCScadVeX4YzFTc8XizZc+jWMBv3lcLG2zCaemAyAc3IqTQE6Pp6y+Sfp+4h5RwRl35aLafRGAiWh5VSkFOJ2wa/LdjUYISc9ZZefRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f664993edbso93646439f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 07:18:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720102671; x=1720707471;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L0ZB9SPmWHe++T+xhsKZNHL3OjgwIY/NrZzmnYZSBGs=;
-        b=wAgGev9hBUVyRYFIT0Q4qGvJSiSOpiRivkLiOs2UoajUsDwxnoFHTCCu3zHrSTF5uH
-         KaNzS9PMe4ns1L/xCOgF/TZX+biDY6ihKUiBsTHgntgyoM/5/Z9Jr1EN92IOpkno/Oma
-         dqRW5lpv21vLKUKqzRKeMH8jz9HjB+GP7hNDs7Zk3rC9lVwKGdEGd71qR5dUaa1v6F1u
-         jPk7efGYdAsexJC/Grn0quCdVj4hi3rGPmjv4M2DHR3kRMTOoNKAgBcz4HOxwUCxHXNz
-         th5Iqs7541N8qhtnDI0B13pb0Z55pE85crMOaJiZANpplt0aBl6I4f3YLfF6iJbzHGW1
-         KzuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZNRDAac3TqvJ//XplD1P6QYNiemes+kTPQjTylJbzUQRNV+O+llVxBGG1Wp4qImtYjN/2EWDWR2X6X6gs6ZCxZqzze2wJl6vUPuhM
-X-Gm-Message-State: AOJu0YwBlc8XRdOjglTdKQ6in2u2XC3ol1XcSbDQHC1IgRhlzPoRk1OT
-	SgyWGq6cCr35hLBLwBdoLqBYW6I2YXnWcKO5PjIa4qqOwHBsRELAtl7DuO8RiN+X4xHiraINg9f
-	spDc=
-X-Google-Smtp-Source: AGHT+IHYI3M0AqLQEbsMFGUPr4JmSMbfApAdZickScDTsVffRC4UEDurfcOp1BnzhtaAgO9ijjyF9A==
-X-Received: by 2002:a05:6000:1847:b0:35f:2584:76e9 with SMTP id ffacd0b85a97d-3679dd170acmr1350067f8f.2.1720102670961;
-        Thu, 04 Jul 2024 07:17:50 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a28355csm25936565e9.43.2024.07.04.07.17.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 07:17:50 -0700 (PDT)
-Date: Thu, 4 Jul 2024 16:17:48 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/panic: Fix uninitialized spinlock acquisition with
- CONFIG_DRM_PANIC=n
-Message-ID: <ZoavDPu94EOgcqCq@phenom.ffwll.local>
-Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
-	dri-devel@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240702233451.1238645-1-lyude@redhat.com>
+        d=1e100.net; s=20230601; t=1720102698; x=1720707498;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OdkZATJ7OGmsuHw198PHVJ2z9yJtklx34ktzk5b34qM=;
+        b=HF5kf1UzPf6HPf6fh0JwpL2LgqxM8cODAGpgNaufaddV6QCbgKG6KBwZAjwQAbgOXp
+         1X2IfSpAdu5a+n5SPavXsiOsPvQyRzprZBNFWn6leUUKsUr0FqZ/0MfWMW1KByEYaOss
+         ShZuTb+4LSqxqDSaecTw9+fffQqHCbCXwjDRHEoHI6afnP35LCkrQMFKSRcnJL9Ry3CJ
+         y2ByKIyR3s4sWIlLgqgaRfqusKKNdLmadm/cDQGcy+sO+XabxK+OOmJ/KenO0zkSQHox
+         lQ21FMPqpdUkOsvb6DktH0D1KVB7b1kexmGs9mlGlHZKL83eMZPRgiEzRmlfzWMSQhUu
+         dmLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwhqWpHXxcCoZXH8c+8SgLPztTz8TIEU1+4y4JVxbEcAeo+SNfRk0wlLOx6dTRZW5W6WB94aXpwTuM9ZmN13dP7p1eQsrjhSb3kc1+
+X-Gm-Message-State: AOJu0YwZ9Mi9t962m5LOKgxFwMp6Z9NCwYqStNW3tuY5CHceKlmxjY1K
+	0e74KJ38Z7o2/gCk7i0ak3ioUffJkKwYnionjYEDLn7HFUHTBZct9Q6vkvDye57zvOETmdIYK7P
+	kaqewQmlkzhamX/9Ij3hExdkGpxkappOV46mXIsxEOnSRoCMFmSHn3kI=
+X-Google-Smtp-Source: AGHT+IHt7B2//ng4CP9pxz/XHbuJQsdbZaMaQQF0GUJZb5OndszSfzXEAxtT8oIGTFDMeWPyXe7aFdP1l7ua6pzOFF3QX5ZxVkEc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702233451.1238645-1-lyude@redhat.com>
-X-Operating-System: Linux phenom 6.8.9-amd64 
+X-Received: by 2002:a05:6638:24c7:b0:4b9:6c10:36c1 with SMTP id
+ 8926c6da1cb9f-4bf60de4273mr218703173.2.1720102698181; Thu, 04 Jul 2024
+ 07:18:18 -0700 (PDT)
+Date: Thu, 04 Jul 2024 07:18:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004d74cd061c6c9e68@google.com>
+Subject: [syzbot] [lsm?] [keyrings?] KCSAN: data-race in __se_sys_keyctl /
+ key_task_permission (3)
+From: syzbot <syzbot+8c446f45cf5815e9110a@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 02, 2024 at 07:34:50PM -0400, Lyude Paul wrote:
-> It turns out that if you happen to have a kernel config where
-> CONFIG_DRM_PANIC is disabled and spinlock debugging is enabled, along with
-> KMS being enabled - we'll end up trying to acquire an uninitialized
-> spin_lock with drm_panic_lock() when we try to do a commit:
-> 
->   rvkms rvkms.0: [drm:drm_atomic_commit] committing 0000000068d2ade1
->   INFO: trying to register non-static key.
->   The code is fine but needs lockdep annotation, or maybe
->   you didn't initialize this object before use?
->   turning off the locking correctness validator.
->   CPU: 4 PID: 1347 Comm: modprobe Not tainted 6.10.0-rc1Lyude-Test+ #272
->   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20240524-3.fc40 05/24/2024
->   Call Trace:
->    <TASK>
->    dump_stack_lvl+0x77/0xa0
->    assign_lock_key+0x114/0x120
->    register_lock_class+0xa8/0x2c0
->    __lock_acquire+0x7d/0x2bd0
->    ? __vmap_pages_range_noflush+0x3a8/0x550
->    ? drm_atomic_helper_swap_state+0x2ad/0x3a0
->    lock_acquire+0xec/0x290
->    ? drm_atomic_helper_swap_state+0x2ad/0x3a0
->    ? lock_release+0xee/0x310
->    _raw_spin_lock_irqsave+0x4e/0x70
->    ? drm_atomic_helper_swap_state+0x2ad/0x3a0
->    drm_atomic_helper_swap_state+0x2ad/0x3a0
->    drm_atomic_helper_commit+0xb1/0x270
->    drm_atomic_commit+0xaf/0xe0
->    ? __pfx___drm_printfn_info+0x10/0x10
->    drm_client_modeset_commit_atomic+0x1a1/0x250
->    drm_client_modeset_commit_locked+0x4b/0x180
->    drm_client_modeset_commit+0x27/0x50
->    __drm_fb_helper_restore_fbdev_mode_unlocked+0x76/0x90
->    drm_fb_helper_set_par+0x38/0x40
->    fbcon_init+0x3c4/0x690
->    visual_init+0xc0/0x120
->    do_bind_con_driver+0x409/0x4c0
->    do_take_over_console+0x233/0x280
->    do_fb_registered+0x11f/0x210
->    fbcon_fb_registered+0x2c/0x60
->    register_framebuffer+0x248/0x2a0
->    __drm_fb_helper_initial_config_and_unlock+0x58a/0x720
->    drm_fbdev_generic_client_hotplug+0x6e/0xb0
->    drm_client_register+0x76/0xc0
->    _RNvXs_CsHeezP08sTT_5rvkmsNtB4_5RvkmsNtNtCs1cdwasc6FUb_6kernel8platform6Driver5probe+0xed2/0x1060 [rvkms]
->    ? _RNvMs_NtCs1cdwasc6FUb_6kernel8platformINtB4_7AdapterNtCsHeezP08sTT_5rvkms5RvkmsE14probe_callbackBQ_+0x2b/0x70 [rvkms]
->    ? acpi_dev_pm_attach+0x25/0x110
->    ? platform_probe+0x6a/0xa0
->    ? really_probe+0x10b/0x400
->    ? __driver_probe_device+0x7c/0x140
->    ? driver_probe_device+0x22/0x1b0
->    ? __device_attach_driver+0x13a/0x1c0
->    ? __pfx___device_attach_driver+0x10/0x10
->    ? bus_for_each_drv+0x114/0x170
->    ? __device_attach+0xd6/0x1b0
->    ? bus_probe_device+0x9e/0x120
->    ? device_add+0x288/0x4b0
->    ? platform_device_add+0x75/0x230
->    ? platform_device_register_full+0x141/0x180
->    ? rust_helper_platform_device_register_simple+0x85/0xb0
->    ? _RNvMs2_NtCs1cdwasc6FUb_6kernel8platformNtB5_6Device13create_simple+0x1d/0x60
->    ? _RNvXs0_CsHeezP08sTT_5rvkmsNtB5_5RvkmsNtCs1cdwasc6FUb_6kernel6Module4init+0x11e/0x160 [rvkms]
->    ? 0xffffffffc083f000
->    ? init_module+0x20/0x1000 [rvkms]
->    ? kernfs_xattr_get+0x3e/0x80
->    ? do_one_initcall+0x148/0x3f0
->    ? __lock_acquire+0x5ef/0x2bd0
->    ? __lock_acquire+0x5ef/0x2bd0
->    ? __lock_acquire+0x5ef/0x2bd0
->    ? put_cpu_partial+0x51/0x1d0
->    ? lock_acquire+0xec/0x290
->    ? put_cpu_partial+0x51/0x1d0
->    ? lock_release+0xee/0x310
->    ? put_cpu_partial+0x51/0x1d0
->    ? fs_reclaim_acquire+0x69/0xf0
->    ? lock_acquire+0xec/0x290
->    ? fs_reclaim_acquire+0x69/0xf0
->    ? kfree+0x22f/0x340
->    ? lock_release+0xee/0x310
->    ? kmalloc_trace_noprof+0x48/0x340
->    ? do_init_module+0x22/0x240
->    ? kmalloc_trace_noprof+0x155/0x340
->    ? do_init_module+0x60/0x240
->    ? __se_sys_finit_module+0x2e0/0x3f0
->    ? do_syscall_64+0xa4/0x180
->    ? syscall_exit_to_user_mode+0x108/0x140
->    ? do_syscall_64+0xb0/0x180
->    ? vma_end_read+0xd0/0xe0
->    ? do_user_addr_fault+0x309/0x640
->    ? clear_bhb_loop+0x45/0xa0
->    ? clear_bhb_loop+0x45/0xa0
->    ? clear_bhb_loop+0x45/0xa0
->    ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
->    </TASK>
-> 
-> Fix this by stubbing these macros out when this config option isn't
-> enabled, along with fixing the unused variable warning that introduces.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c | 2 +-
->  include/drm/drm_panic.h             | 8 ++++++--
->  2 files changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index fb97b51b38f15..dd5caa8030aa3 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -3017,7 +3017,7 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
->  				  bool stall)
->  {
->  	int i, ret;
-> -	unsigned long flags;
-> +	unsigned long __maybe_unused flags;
+Hello,
 
-Using static inline functions instead of macros should avoid the need for
-the __maybe_unused here. With that:
+syzbot found the following issue on:
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+HEAD commit:    8a9c6c40432e Merge tag 'io_uring-6.10-20240703' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=113817ae980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5b9537cd00be479e
+dashboard link: https://syzkaller.appspot.com/bug?extid=8c446f45cf5815e9110a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
->  	struct drm_connector *connector;
->  	struct drm_connector_state *old_conn_state, *new_conn_state;
->  	struct drm_crtc *crtc;
-> diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
-> index 822dbb1aa9d6f..9cd4239f09286 100644
-> --- a/include/drm/drm_panic.h
-> +++ b/include/drm/drm_panic.h
-> @@ -52,6 +52,8 @@ struct drm_scanout_buffer {
->  	unsigned int pitch[DRM_FORMAT_MAX_PLANES];
->  };
->  
-> +#ifdef CONFIG_DRM_PANIC
-> +
->  /**
->   * drm_panic_trylock - try to enter the panic printing critical section
->   * @dev: struct drm_device
-> @@ -137,13 +139,15 @@ struct drm_scanout_buffer {
->  #define drm_panic_unlock(dev, flags) \
->  	raw_spin_unlock_irqrestore(&(dev)->mode_config.panic_lock, flags)
->  
-> -#ifdef CONFIG_DRM_PANIC
-> -
->  void drm_panic_register(struct drm_device *dev);
->  void drm_panic_unregister(struct drm_device *dev);
->  
->  #else
->  
-> +#define drm_panic_trylock(dev, flags) (true)
-> +#define drm_panic_lock(dev, flags)
-> +#define drm_panic_unlock(dev, flags)
-> +
->  static inline void drm_panic_register(struct drm_device *dev) {}
->  static inline void drm_panic_unregister(struct drm_device *dev) {}
->  
-> -- 
-> 2.45.2
-> 
+Unfortunately, I don't have any reproducer for this issue yet.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f01153f3ec8e/disk-8a9c6c40.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/04b88663a824/vmlinux-8a9c6c40.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/63c518cc63c5/bzImage-8a9c6c40.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8c446f45cf5815e9110a@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in __se_sys_keyctl / key_task_permission
+
+write to 0xffff88812277dd70 of 4 bytes by task 19442 on cpu 0:
+ keyctl_setperm_key security/keys/keyctl.c:1098 [inline]
+ __do_sys_keyctl security/keys/keyctl.c:1926 [inline]
+ __se_sys_keyctl+0xab5/0xbb0 security/keys/keyctl.c:1874
+ __x64_sys_keyctl+0x67/0x80 security/keys/keyctl.c:1874
+ x64_sys_call+0x2bf5/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:251
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+read to 0xffff88812277dd70 of 4 bytes by task 19441 on cpu 1:
+ key_task_permission+0x14a/0x2c0 security/keys/permission.c:55
+ lookup_user_key+0x9ea/0xdf0 security/keys/process_keys.c:803
+ keyctl_setperm_key security/keys/keyctl.c:1083 [inline]
+ __do_sys_keyctl security/keys/keyctl.c:1926 [inline]
+ __se_sys_keyctl+0x829/0xbb0 security/keys/keyctl.c:1874
+ __x64_sys_keyctl+0x67/0x80 security/keys/keyctl.c:1874
+ x64_sys_call+0x2bf5/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:251
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x3d010000 -> 0x00000000
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 19441 Comm: syz.1.4799 Tainted: G        W          6.10.0-rc6-syzkaller-00067-g8a9c6c40432e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
