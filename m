@@ -1,246 +1,322 @@
-Return-Path: <linux-kernel+bounces-240785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6950B9272BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:11:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2351F9272BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDEA31F245C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:11:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7986CB243FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB321A2575;
-	Thu,  4 Jul 2024 09:11:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEC9748F;
-	Thu,  4 Jul 2024 09:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437901A4F27;
+	Thu,  4 Jul 2024 09:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a9B2yUUF"
+Received: from mail-lj1-f202.google.com (mail-lj1-f202.google.com [209.85.208.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246901A070D
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720084264; cv=none; b=ZaT4puvWo92Bfp5B83fm/J6nVmacmbzZTqsCTHsw+/OW+2kJYfO3z69zJZdKURbt2ElSBaGtRE4KN7vkDpJFwg71dkELgVct9X6nMZpjTJGakDWT/hhl09WmZF3+8sd8QXM6J0NcsHvEWy9EDjP1fclbEGHnKzhDFoHv3XjdGMk=
+	t=1720084278; cv=none; b=XHgqILYzPE9aey7xChsyrYStxOqukbcqHMsLc4UCq5PrGSwm3YDz3w+kYLptxhA0SYoYb7TIyKXhTk2Mr7iJBjgr0eUA3IM7gh/UTv8riGj/S1JvJiX3uIRpup4ydvu+qvL09QVqHDl5a0ZNiajXe34rWn7NUiXCoXhc6EVvq5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720084264; c=relaxed/simple;
-	bh=2C4nJli9jjkTSqsqCp+4oprA8/Ggyz23HV53vwQzczc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RLOIbzw/sZk+3TO/WFHwOGz+5w+Zk4/330qSQy79zJnzdM1Y8AP9fgCOZ6PF1A7Ku/Rokyszzun/JJL4jfFbUj7c9e5jaQE/adpcUQRn08AXPghKvFQsve4fJ1V2Em+XH90O0Y/mLHYMk7W4XPJFKo4IO10XmtOT+fs1M3ItK7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3570367;
-	Thu,  4 Jul 2024 02:11:24 -0700 (PDT)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C89E3F766;
-	Thu,  4 Jul 2024 02:10:58 -0700 (PDT)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	David Hildenbrand <david@redhat.com>,
-	Barry Song <baohua@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Yang Shi <shy828301@gmail.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] mm: Fix khugepaged activation policy
-Date: Thu,  4 Jul 2024 10:10:50 +0100
-Message-ID: <20240704091051.2411934-1-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720084278; c=relaxed/simple;
+	bh=Ud/1AS2j4foZUiRqh4aU13GPvKeL1T8yDgCXaeWHMZQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MPLBgWEVr03TIwCFLl9Q6lrALh0jCDzheQ7Y7BKcHZXmW+QeJ8W4tTEEixvLEqj4gsos4LsfyMDwzzAMnD1D1Ss4czw42yVFYJgVP27HIqNrGdsg/FoafJWfqc0uzVVhiA4bCXCFC73L/HDBwD3LJOPKrklqrqIYFVdTl19Q8Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a9B2yUUF; arc=none smtp.client-ip=209.85.208.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-lj1-f202.google.com with SMTP id 38308e7fff4ca-2ee91b8addfso2221fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:11:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720084272; x=1720689072; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/k5yW7njE2R/PfLs7fU8DbQAAwgkp7DP3LCTZqCvZqE=;
+        b=a9B2yUUFE3k84UNcWeI6Hi4AXJK0JSJZSjyh8GxsWW/G+HFYUvai+Pezt4hMcAaqSw
+         haOOw/1wGiHAnZCVbdFE6zEBPukn+GWiNn925CktIxgHQ5tyzR4Jp36XsvimMmd+dEMB
+         DhkrsdxocoOf+qUh47HAWti63snjjQS8ujxjzU8kHarRHc+Tm9q4MvMJM5uDEPgamwJE
+         OcmJ28r1GJaYAUhyv09f3GktPRkmkJpNp11YUaH5j/3/D6atPl33ka42WW7RO+YUctU3
+         tzK+/m9alHVR+9VzML83YxGMIZPELbRfVHAskApIYyTvaOk02gOi6tugBvrQbWUsQKdR
+         X7tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720084272; x=1720689072;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/k5yW7njE2R/PfLs7fU8DbQAAwgkp7DP3LCTZqCvZqE=;
+        b=sOK0tazp63k5XEksRjCptBth4+59cI7LtG+3BY/5kDTzof3bSI4to4N8wmQwqRPbIB
+         9gEeuQtdjJVhDURAEtWhYQ/hQxp/entlhieGKfEGXcjqqmrSLQmGus7IbNbHElT3+z1A
+         XMjO2DSqH7omMLoO2NPNUVhwW6jf8/j5srJM2trWfVpUgbM84LpcCH5Op7GJ/KAZup/V
+         JTX+O+2y0d7rK+1UNJImnApHduB5SARyOYuUV39ysFOdnj7VoAdAtMkRCcP8Kbc8yLt3
+         KOQOAKvkc99nRWfmM91szck1v0l17FdboyXYcWugXBnsTp60oozBTAJzqfuvS2d6V2SO
+         HORg==
+X-Forwarded-Encrypted: i=1; AJvYcCVev0c51kRgub/r7AEKloNd55DcHCdxSzRWTiapwvBH9JQBfCO/NnPoM1jzZ/dlXSvH3xavNV3QWKi/IQTg/N9HreJXs8l/nvXrI0Fa
+X-Gm-Message-State: AOJu0YxxA1g/8aysdVQmm1HnfvMVsGRzIaQHqLaXq1WhG3S18v9AQxTs
+	+wlFG5jD8m1gmVL37xRWTHMOvRoVWKyyS8sOst3IdMo545j4E+JJoMRtitcdUJyJfBxuULKuuOr
+	lv3eCLwpL/XWirg==
+X-Google-Smtp-Source: AGHT+IHIX3KAnppFnXG7zdcgIKEUqgww4g00ahMarsdngiYYBW2KQq/OnHyNv9pyh3EqBSNmwomqScUE04WUSOE=
+X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
+ (user=aliceryhl job=sendgmr) by 2002:a2e:9608:0:b0:2ee:8cd4:63d4 with SMTP id
+ 38308e7fff4ca-2ee8f2e4020mr8141fa.4.1720084271688; Thu, 04 Jul 2024 02:11:11
+ -0700 (PDT)
+Date: Thu,  4 Jul 2024 09:11:09 +0000
+In-Reply-To: <20240703154309.426867-5-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240703154309.426867-5-jfalempe@redhat.com>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240704091109.1453809-1-aliceryhl@google.com>
+Subject: Re: [PATCH 4/4] drm/panic: Add a qr_code panic screen
+From: Alice Ryhl <aliceryhl@google.com>
+To: jfalempe@redhat.com
+Cc: a.hindborg@samsung.com, airlied@gmail.com, alex.gaynor@gmail.com, 
+	aliceryhl@google.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, dakr@redhat.com, daniel@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, gary@garyguo.net, 
+	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, ojeda@kernel.org, rust-for-linux@vger.kernel.org, 
+	tzimmermann@suse.de, wedsonaf@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Since the introduction of mTHP, the docuementation has stated that
-khugepaged would be enabled when any mTHP size is enabled, and disabled
-when all mTHP sizes are disabled. There are 2 problems with this; 1.
-this is not what was implemented by the code and 2. this is not the
-desirable behavior.
+Jocelyn Falempe <jfalempe@redhat.com> wrote:
+> This patch adds a new panic screen, with a QR code and the kmsg data
+> embedded.
+> If DRM_PANIC_SCREEN_QR_CODE_URL is set, then the kmsg data will be
+> compressed with zlib and encoded as a numerical segment, and appended
+> to the url as a url parameter. This allows to save space, and put
+> about ~7500 bytes of kmsg data, in a V40 QR code.
+> Linux distributions can customize the url, and put a web frontend to
+> directly open a bug report with the kmsg data.
+> 
+> Otherwise the kmsg data will be encoded as binary segment (ie raw
+> ascii) and only a maximum of 2953 bytes of kmsg data will be
+> available in the QR code.
+> 
+> You can also limit the QR code size with DRM_PANIC_SCREEN_QR_VERSION.
+> 
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
 
-Desirable behavior is for khugepaged to be enabled when any PMD-sized
-THP is enabled, anon or file. (Note that file THP is still controlled by
-the top-level control so we must always consider that, as well as the
-PMD-size mTHP control for anon). khugepaged only supports collapsing to
-PMD-sized THP so there is no value in enabling it when PMD-sized THP is
-disabled. So let's change the code and documentation to reflect this
-policy.
+This is pretty cool! The Rust code looks reasonable, and it's really
+nice that you've isolated all of the unsafe code to a single place. That
+makes it much easier to review.
 
-Further, per-size enabled control modification events were not
-previously forwarded to khugepaged to give it an opportunity to start or
-stop. Consequently the following was resulting in khugepaged eroneously
-not being activated:
+I have a few comments on Rust style below:
 
-  echo never > /sys/kernel/mm/transparent_hugepage/enabled
-  echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
+> new file mode 100644
+> index 000000000000..f4d7a3b8a01e
+> --- /dev/null
+> +++ b/drivers/gpu/drm/drm_panic_qr.rs
+> @@ -0,0 +1,989 @@
+> +// SPDX-License-Identifier: MIT
+> +
+> +//! This is a simple qr encoder for DRM panic
+> +//! Due to the Panic constraint, it doesn't allocate memory and does all the work
+> +//! on the stack or on the provided buffers.
+> +//! For simplification, it only supports Low error correction, and apply the
+> +//! first mask (checkboard). It will draw the smallest QRcode that can contain
+> +//! the string passed as parameter.
+> +//! To get the most compact QR-code, the start of the url is encoded as binary,
+> +//! and the compressed kmsg is encoded as numeric.
+> +//! The binary data must be a valid url parameter, so the easiest way is to use
+> +//! base64 encoding. But this waste 25% of data space, so the whole stack trace
+> +//! won't fit in the QR-Code. So instead it encodes every 13bits of input into
+> +//! 4 decimal digits, and then use the efficient numeric encoding, that encode 3
+> +//! decimal digits into 10bits. This makes 39bits of compressed data into 12
+> +//! decimal digits, into 40bits in the QR-Code, so wasting only 2.5%.
+> +//! And numbers are valid url parameter, so the website can do the reverse, to
+> +//! get the binary data.
+> +//!
+> +//! Inspired by this 3 projects, all under MIT license:
+> +//! https://github.com/kennytm/qrcode-rust
+> +//! https://github.com/erwanvivien/fast_qr
+> +//! https://github.com/bjguillot/qr
 
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-Fixes: 3485b88390b0 ("mm: thp: introduce multi-size THP sysfs interface")
-Closes: https://lore.kernel.org/linux-mm/7a0bbe69-1e3d-4263-b206-da007791a5c4@redhat.com/
-Cc: stable@vger.kernel.org
----
+Generally, documentation under //! or /// comments should be written
+using markdown. In markdown, line breaks are ignored and do not actually
+show up as a line break in the rendered documentation. If you want an
+actual line break, then you need an empty line.
 
-Hi All,
+I would format it like this:
 
-Applies on top of mm-unstable from a couple of days ago (9bb8753acdd8). No
-regressions observed in mm selftests.
+//! This is a simple qr encoder for DRM panic.
+//!
+//! Due to the Panic constraint, it doesn't allocate memory and does all
+//! the work on the stack or on the provided buffers. For
+//! simplification, it only supports Low error correction, and apply the
+//! first mask (checkboard). It will draw the smallest QRcode that can
+//! contain the string passed as parameter. To get the most compact
+//! QR-code, the start of the url is encoded as binary, and the
+//! compressed kmsg is encoded as numeric.
+//!
+//! The binary data must be a valid url parameter, so the easiest way is
+//! to use base64 encoding. But this waste 25% of data space, so the
+//! whole stack trace won't fit in the QR-Code. So instead it encodes
+//! every 13bits of input into 4 decimal digits, and then use the
+//! efficient numeric encoding, that encode 3 decimal digits into
+//! 10bits. This makes 39bits of compressed data into 12 decimal digits,
+//! into 40bits in the QR-Code, so wasting only 2.5%. And numbers are
+//! valid url parameter, so the website can do the reverse, to get the
+//! binary data.
+//!
+//! Inspired by this 3 projects, all under MIT license:
+//!
+//! * https://github.com/kennytm/qrcode-rust
+//! * https://github.com/erwanvivien/fast_qr
+//! * https://github.com/bjguillot/qr
 
-When fixing this I also noticed that khugepaged doesn't get (and never has been)
-activated/deactivated by `shmem_enabled=`. I've concluded that this is
-definitely a (separate) bug. But I'm waiting for the conclusion of the
-conversation at [2] before fixing, so will send separately.
+> +/// drm_panic_qr_generate()
+> +///
+> +/// C entry point for the rust QR Code generator
+> +///
+> +/// Write the QR code image in the data buffer, and return the qrcode size, or 0
+> +/// if the data doesn't fit in a QR code.
+> +///
+> +/// url: the base url of the QR code. will be encoded as Binary segment.
+> +/// data: pointer to the binary data, to be encoded. if url is NULL, it will be
+> +///       encoded as Binary segment. otherwise it will be encoded efficiently as
+> +///       Numeric segment, and appendended to the url.
+> +/// data_len: length of the data, that needs to be encoded.
+> +/// data_size: size of data buffer, it should be at least 4071 bytes to hold a
+> +///            V40 QR-code. it will then be overwritten with the QR-code image.
+> +/// tmp: a temporary buffer that the QR-code encoder will use, to write the
+> +///      segments data and ECC.
+> +/// tmp_size: size of the tmp buffer, it must be at least 3706 bytes long for V40
 
-Changes since v1 [1]
-====================
+The same applies here. When rendered using markdown, the above will be
+rendered like this:
 
-  - hugepage_pmd_enabled() now considers CONFIG_READ_ONLY_THP_FOR_FS as part of
-    decision; means that for kernels without this config, khugepaged will not be
-    started when only the top-level control is enabled.
+url: the base url of the QR code. will be encoded as Binary segment.
+data: pointer to the binary data, to be encoded. if url is NULL, it will
+be encoded as Binary segment. otherwise it will be encoded efficiently
+as Numeric segment, and appendended to the url. data_len: length of the
+data, that needs to be encoded. data_size: size of data buffer, it
+should be at least 4071 bytes to hold a V40 QR-code. it will then be
+overwritten with the QR-code image. tmp: a temporary buffer that the
+QR-code encoder will use, to write the segments data and ECC. tmp_size:
+size of the tmp buffer, it must be at least 3706 bytes long for V40
 
-[1] https://lore.kernel.org/linux-mm/20240702144617.2291480-1-ryan.roberts@arm.com/
-[2] https://lore.kernel.org/linux-mm/65c37315-2741-481f-b433-cec35ef1af35@arm.com/
+I don't think that's what you wanted.
 
-Thanks,
-Ryan
+> +#[no_mangle]
+> +pub extern "C" fn drm_panic_qr_generate(
+> +    url: *const i8,
+> +    data: *mut u8,
+> +    data_len: usize,
+> +    data_size: usize,
+> +    tmp: *mut u8,
+> +    tmp_size: usize,
+> +) -> u8 {
+> +    if data_size <= 4071 || tmp_size <= 3706 {
+> +        return 0;
+> +    }
+> +    let data_slice: &mut [u8] = unsafe { core::slice::from_raw_parts_mut(data, data_size) };
+> +    let tmp_slice: &mut [u8] = unsafe { core::slice::from_raw_parts_mut(tmp, tmp_size) };
+> +    if url.is_null() {
+> +        match EncodedMsg::new(&[&Segment::Binary(&data_slice[0..data_len])], tmp_slice) {
+> +            None => 0,
+> +            Some(em) => {
+> +                let qr_image = QrImage::new(&em, data_slice);
+> +                qr_image.width
+> +            }
+> +        }
+> +    } else {
+> +        let url_str: &str = unsafe { CStr::from_char_ptr(url).as_str_unchecked() };
+> +        let segments = &[
+> +            &Segment::Binary(url_str.as_bytes()),
+> +            &Segment::Numeric(&data_slice[0..data_len]),
+> +        ];
+> +        match EncodedMsg::new(segments, tmp_slice) {
+> +            None => 0,
+> +            Some(em) => {
+> +                let qr_image = QrImage::new(&em, data_slice);
+> +                qr_image.width
+> +            }
+> +        }
+> +    }
+> +}
 
- Documentation/admin-guide/mm/transhuge.rst | 11 +++++------
- include/linux/huge_mm.h                    | 15 ++++++++-------
- mm/huge_memory.c                           |  7 +++++++
- mm/khugepaged.c                            | 13 ++++++-------
- 4 files changed, 26 insertions(+), 20 deletions(-)
+It's very nice that you've isolated all of the unsafe code to this
+function. That makes it very easy to review.
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 709fe10b60f4..fc321d40b8ac 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -202,12 +202,11 @@ PMD-mappable transparent hugepage::
+A few comments:
 
- 	cat /sys/kernel/mm/transparent_hugepage/hpage_pmd_size
+First, all unsafe blocks must be annotated with a safety comment. For
+example:
 
--khugepaged will be automatically started when one or more hugepage
--sizes are enabled (either by directly setting "always" or "madvise",
--or by setting "inherit" while the top-level enabled is set to "always"
--or "madvise"), and it'll be automatically shutdown when the last
--hugepage size is disabled (either by directly setting "never", or by
--setting "inherit" while the top-level enabled is set to "never").
-+khugepaged will be automatically started when PMD-sized THP is enabled
-+(either of the per-size anon control or the top-level control are set
-+to "always" or "madvise"), and it'll be automatically shutdown when
-+PMD-sized THP is disabled (when both the per-size anon control and the
-+top-level control are "never")
+// SAFETY: The caller ensures that `data` is valid for `data_size`
+// bytes, and that it is valid for writing.
+let data_slice: &mut [u8] = unsafe { core::slice::from_raw_parts_mut(data, data_size) };
 
- Khugepaged controls
- -------------------
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 4d155c7a4792..6debd8b6fd7d 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -128,16 +128,17 @@ static inline bool hugepage_global_always(void)
- 			(1<<TRANSPARENT_HUGEPAGE_FLAG);
- }
+Unsafe functions are those that can trigger memory safety problems if
+you call them incorrectly, and you must annotate calls with a safety
+comment that explains why this call cannot result in memory safety
+issues. In this case, you can just say that the caller promises to pass
+you reasonable arguments.
 
--static inline bool hugepage_flags_enabled(void)
-+static inline bool hugepage_pmd_enabled(void)
- {
- 	/*
--	 * We cover both the anon and the file-backed case here; we must return
--	 * true if globally enabled, even when all anon sizes are set to never.
--	 * So we don't need to look at huge_anon_orders_inherit.
-+	 * We cover both the anon and the file-backed case here; file-backed
-+	 * hugepages, when configured in, are determined by the global control.
-+	 * Anon pmd-sized hugepages are determined by the pmd-size control.
- 	 */
--	return hugepage_global_enabled() ||
--	       READ_ONCE(huge_anon_orders_always) ||
--	       READ_ONCE(huge_anon_orders_madvise);
-+	return (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && hugepage_global_enabled()) ||
-+	       test_bit(PMD_ORDER, &huge_anon_orders_always) ||
-+	       test_bit(PMD_ORDER, &huge_anon_orders_madvise) ||
-+	       (test_bit(PMD_ORDER, &huge_anon_orders_inherit) && hugepage_global_enabled());
- }
 
- static inline int highest_order(unsigned long orders)
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 251d6932130f..085f5e973231 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -502,6 +502,13 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
- 	} else
- 		ret = -EINVAL;
+The next unsafe block is a bit more interesting.
 
-+	if (ret > 0) {
-+		int err;
-+
-+		err = start_stop_khugepaged();
-+		if (err)
-+			ret = err;
-+	}
- 	return ret;
- }
+> +        let url_str: &str = unsafe { CStr::from_char_ptr(url).as_str_unchecked() };
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 409f67a817f1..708d0e74b61f 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -449,7 +449,7 @@ void khugepaged_enter_vma(struct vm_area_struct *vma,
- 			  unsigned long vm_flags)
- {
- 	if (!test_bit(MMF_VM_HUGEPAGE, &vma->vm_mm->flags) &&
--	    hugepage_flags_enabled()) {
-+	    hugepage_pmd_enabled()) {
- 		if (thp_vma_allowable_order(vma, vm_flags, TVA_ENFORCE_SYSFS,
- 					    PMD_ORDER))
- 			__khugepaged_enter(vma->vm_mm);
-@@ -2462,8 +2462,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
+Here, you call two unsafe functions:
 
- static int khugepaged_has_work(void)
- {
--	return !list_empty(&khugepaged_scan.mm_head) &&
--		hugepage_flags_enabled();
-+	return !list_empty(&khugepaged_scan.mm_head) && hugepage_pmd_enabled();
- }
+* `CStr::from_char_ptr`
+* `CStr::as_str_unchecked`
 
- static int khugepaged_wait_event(void)
-@@ -2536,7 +2535,7 @@ static void khugepaged_wait_work(void)
- 		return;
- 	}
+If you read the documentation, you will find these safety requirements:
 
--	if (hugepage_flags_enabled())
-+	if (hugepage_pmd_enabled())
- 		wait_event_freezable(khugepaged_wait, khugepaged_wait_event());
- }
+/// # Safety
+///
+/// `ptr` must be a valid pointer to a `NUL`-terminated C string, and it must
+/// last at least `'a`. When `CStr` is alive, the memory pointed by `ptr`
+/// must not be mutated.
 
-@@ -2567,7 +2566,7 @@ static void set_recommended_min_free_kbytes(void)
- 	int nr_zones = 0;
- 	unsigned long recommended_min;
+/// # Safety
+///
+/// The contents must be valid UTF-8.
 
--	if (!hugepage_flags_enabled()) {
-+	if (!hugepage_pmd_enabled()) {
- 		calculate_min_free_kbytes();
- 		goto update_wmarks;
- 	}
-@@ -2617,7 +2616,7 @@ int start_stop_khugepaged(void)
- 	int err = 0;
+Your unsafe block *must* have a safety comment that explains why the
+above things are satisfied. The requirements of `from_char_ptr` are
+okay, but is it really the case that `url` is necessarily valid UTF-8?
 
- 	mutex_lock(&khugepaged_mutex);
--	if (hugepage_flags_enabled()) {
-+	if (hugepage_pmd_enabled()) {
- 		if (!khugepaged_thread)
- 			khugepaged_thread = kthread_run(khugepaged, NULL,
- 							"khugepaged");
-@@ -2643,7 +2642,7 @@ int start_stop_khugepaged(void)
- void khugepaged_min_free_kbytes_update(void)
- {
- 	mutex_lock(&khugepaged_mutex);
--	if (hugepage_flags_enabled() && khugepaged_thread)
-+	if (hugepage_pmd_enabled() && khugepaged_thread)
- 		set_recommended_min_free_kbytes();
- 	mutex_unlock(&khugepaged_mutex);
- }
---
-2.43.0
+You never actually use the fact that it's UTF-8 anywhere, so you can
+just not call `as_str_unchecked`. The `CStr` type also has an `as_bytes`
+method, so there's no reason to go through the `&str` type.
 
+
+
+Finally, `drm_panic_qr_generate` should really be marked unsafe. By not
+marking it unsafe, you are saying that no matter what the arguments are,
+calling the function will not result in memory safety problems. That's
+not really true. If I call it with `data` being a null pointer, you're
+going to have a bad time.
+
+You probably want something along these lines:
+
+/// # Safety
+///
+/// * `url` must be null or point at a nul-terminated string.
+/// * `data` must be valid for reading and writing for `data_size` bytes.
+/// * `tmp` must be valid for reading and writing for `tmp_size` bytes.
+#[no_mangle]
+pub unsafe extern "C" fn drm_panic_qr_generate(
+
+As long as the above requirements are satisfied, calling
+`drm_panic_qr_generate` should never cause memory unsafety, so this is
+an appropriate list of safety requirements.
+
+(You also require that `data_len <= data_size`, but if this is violated
+you get a kernel panic which isn't a memory safety problem, so it does
+not need to be listed in the safety requirements.)
+
+Alice
 
