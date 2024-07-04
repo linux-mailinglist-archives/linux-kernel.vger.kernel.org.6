@@ -1,104 +1,50 @@
-Return-Path: <linux-kernel+bounces-240845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE58092739A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:03:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C6692739B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D2BF1C22418
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:03:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 337F61C23813
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90991AB905;
-	Thu,  4 Jul 2024 10:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gnkZMc2O";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cL+OAbFF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gnkZMc2O";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cL+OAbFF"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AAA1AB8E5;
+	Thu,  4 Jul 2024 10:03:53 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C46118637;
-	Thu,  4 Jul 2024 10:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEC818637
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 10:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720087400; cv=none; b=GfixAorNn5UVYFofApN6hnBstdlTpIMseTP40BRL69o1gVUCLudONuVEtnpaEI78LbP8a6+KtuxVXt/+sC6uugtnjBBrYOsZJxYKfYvyDtPWSidwhxX7bMuIEDU4QrMJ9NiPT2GySY0Ulcpd+4Cy89j2jQbD7BZd+8QCGBgAkAM=
+	t=1720087433; cv=none; b=EcKpaGAisXE1IrvsPryTJcf+v5BTXS9+hT/H4gfu5X4NLNNxzrzsCWvjYNO64ERwkx5gjoCvIGEc6i8AULcjA8iy/pacXe2erB+jrpwrxt1q37w3IK5kCx9J5B9k2f+WPRa2c7DQhECIgfJhrcJ+9tiBIBjdWcTek6v63+8qhBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720087400; c=relaxed/simple;
-	bh=9qeb1KifPEkMCIQIEObJxjpZiClWg0yHe4ksMUqPBoY=;
+	s=arc-20240116; t=1720087433; c=relaxed/simple;
+	bh=BqlpIIIYSQoeUdSwfhLix4qHTiPRRJNuEP8fTva0WdQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmL+2K3DpL1ECc2OYHOPv6H9EP/URM/zpOzivyFA8pt/Vb+ldKqXtbvvKSid1tBhWZVjucG8lzVN2MRBJzHxnhFn3nr1CiThxbRMYrJzJEw5uBapjFUUmFZd/kxZqIlsgxVWpqNdSz2IkG+ZtM2q06RNbViOxb2LsVV138Z44Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gnkZMc2O; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cL+OAbFF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gnkZMc2O; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cL+OAbFF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4D22821999;
-	Thu,  4 Jul 2024 10:03:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720087397; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+XRSc+Zeoy42L8D2dFx6phJ360HhYwVquKQssa5tLjQ=;
-	b=gnkZMc2OxX+7QlPyAg7GBaZboZgMdnLvn4lS15YIO2rbxVg2J7t5gjsSwqCRahLz4LyhDL
-	HRxuwkQtjZv2gXMMWZN1hVr9Rmd+FUq2NVbfBljk5qiRPxF9LVhkK/POzobnvy58Ik2GR7
-	I0RmwGci/vtaL5GDv1TZX3BWMUMhEMI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720087397;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+XRSc+Zeoy42L8D2dFx6phJ360HhYwVquKQssa5tLjQ=;
-	b=cL+OAbFFh0v2FRbypkbZLEKKGpNWqV9YMR5NHLl/9WI+URTlQGlomrGnaZVIZ8ci61DuYj
-	eB3RSPAA7Zja5xDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=gnkZMc2O;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cL+OAbFF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720087397; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+XRSc+Zeoy42L8D2dFx6phJ360HhYwVquKQssa5tLjQ=;
-	b=gnkZMc2OxX+7QlPyAg7GBaZboZgMdnLvn4lS15YIO2rbxVg2J7t5gjsSwqCRahLz4LyhDL
-	HRxuwkQtjZv2gXMMWZN1hVr9Rmd+FUq2NVbfBljk5qiRPxF9LVhkK/POzobnvy58Ik2GR7
-	I0RmwGci/vtaL5GDv1TZX3BWMUMhEMI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720087397;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+XRSc+Zeoy42L8D2dFx6phJ360HhYwVquKQssa5tLjQ=;
-	b=cL+OAbFFh0v2FRbypkbZLEKKGpNWqV9YMR5NHLl/9WI+URTlQGlomrGnaZVIZ8ci61DuYj
-	eB3RSPAA7Zja5xDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3DFE51369F;
-	Thu,  4 Jul 2024 10:03:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id f7seD2VzhmacYAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 04 Jul 2024 10:03:17 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E5C62A088E; Thu,  4 Jul 2024 12:03:08 +0200 (CEST)
-Date: Thu, 4 Jul 2024 12:03:08 +0200
-From: Jan Kara <jack@suse.cz>
-To: Yu Ma <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	mjguzik@gmail.com, edumazet@google.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
-Message-ID: <20240704100308.6hczzyqhmpty4avx@quack3>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240703143311.2184454-1-yu.ma@intel.com>
- <20240703143311.2184454-4-yu.ma@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCv9Fr14QI2cg3ar2NgKbfLgoe86+xqkqUE4fjTmiiRXXc/N3iU503SWDAxC+xGgoRwUFzNrz3bxRI+ANniYsiZhbkQZoEmnGfj7x/W6HYQ9rhlQAEl/hUGT1PDpShHcJKx8rFazNgKtZX6rxccmfpn9XPgzRl6qSAwJhrcqWQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CCE8C3277B;
+	Thu,  4 Jul 2024 10:03:51 +0000 (UTC)
+Date: Thu, 4 Jul 2024 11:03:49 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, will@kernel.org,
+	anshuman.khandual@arm.com, david@redhat.com,
+	scott@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
+ instructions
+Message-ID: <ZoZzhf9gGQxADLFM@arm.com>
+References: <20240626191830.3819324-1-yang@os.amperecomputing.com>
+ <Zn7q3oL1AE8jdM-g@arm.com>
+ <773c8be7-eb73-010c-acea-1c2fefd65b84@gentwo.org>
+ <Zn7xs6OYZz4dyA8a@arm.com>
+ <200c5d06-c551-4847-adaf-287750e6aac4@os.amperecomputing.com>
+ <ZoMG6n4hQp5XMhUN@arm.com>
+ <1689cd26-514a-4d72-a1bd-b67357aab3e0@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,93 +53,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240703143311.2184454-4-yu.ma@intel.com>
-X-Rspamd-Queue-Id: 4D22821999
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	URIBL_BLOCKED(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,intel.com:email,suse.com:email];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,gmail.com,google.com,vger.kernel.org,intel.com,linux.intel.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.com:email]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+In-Reply-To: <1689cd26-514a-4d72-a1bd-b67357aab3e0@os.amperecomputing.com>
 
-On Wed 03-07-24 10:33:11, Yu Ma wrote:
-> There is available fd in the lower 64 bits of open_fds bitmap for most cases
-> when we look for an available fd slot. Skip 2-levels searching via
-> find_next_zero_bit() for this common fast path.
+On Tue, Jul 02, 2024 at 03:21:41PM -0700, Yang Shi wrote:
+> On 7/1/24 12:43 PM, Catalin Marinas wrote:
+> > I don't follow OpenJDK development but I heard that updates are dragging
+> > quite a lot. I can't tell whether people have picked up the
+> > atomic_add(0) feature and whether, by the time a kernel patch would make
+> > it into distros, they'd also move to the MADV_POPULATE_WRITE pattern.
 > 
-> Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
-> free slot is available there, as:
-> (1) The fd allocation algorithm would always allocate fd from small to large.
-> Lower bits in open_fds bitmap would be used much more frequently than higher
-> bits.
-> (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
-> it would never be shrunk. The search size increases but there are few open fds
-> available here.
-> (3) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
-> searching.
+> As Christopher said there may be similar use of atomic in other
+> applications, so I don't worry too much about dead code problem IMHO.
+> OpenJDK is just the usecase that we know. There may be unknown unknowns. And
+> the distros typically backport patches from mainline kernel to their kernel
+> so there should be combos like old kernel + backported patch + old OpenJDK.
+
+That's a somewhat valid argument I heard internally as well. People tend
+to change or patch kernel versions more often than OpenJDK versions
+because of the risk of breaking their Java stack. But, arguably, one can
+backport the madvise() OpenJDK change since it seems to have other
+benefits on x86 as well.
+
+> AFAICT, the users do expect similar behavior as x86 (one fault instead of
+> two faults). Actually we noticed this problem due to a customer report.
+
+It's not a correctness problem, only a performance one. Big part of that
+could be mitigated by some adjustment to how THP pages are allocated on
+a write fault (though we'd still have an unnecessary read fault and some
+TLBI). See Ryan's sub-thread.
+
+> > There's a point (c) as well on the overhead of reading the faulting
+> > instruction. I hope that's negligible but I haven't measured it.
 > 
-> As suggested by Mateusz Guzik <mjguzik gmail.com> and Jan Kara <jack@suse.cz>,
-> update the fast path from alloc_fd() to find_next_fd(). With which, on top of
-> patch 1 and 2, pts/blogbench-1.1.0 read is improved by 13% and write by 7% on
-> Intel ICX 160 cores configuration with v6.10-rc6.
-> 
-> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Yu Ma <yu.ma@intel.com>
+> I think I showed benchmark data requested by Anshuman in the earlier email
+> discussion.
 
-Nice! The patch looks good to me. Feel free to add:
+Do you mean this:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+https://lore.kernel.org/r/328c4c86-96c8-4896-8b6d-94f2facdac9a@os.amperecomputing.com
 
-One style nit below:
+I haven't figured out what the +24% case is in there, it seems pretty
+large.
 
-> diff --git a/fs/file.c b/fs/file.c
-> index a15317db3119..f25eca311f51 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -488,6 +488,11 @@ struct files_struct init_files = {
->  
->  static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
->  {
-> +	unsigned int bit;
+What you haven't benchmarked (I think) is the case where the instruction
+is in an exec-only mapping. The subsequent instruction read will fault
+and it adds to the overhead. Currently exec-only mappings are not
+widespread but I heard some people planning to move in this direction as
+a default build configuration.
 
-Empty line here please to separate variable declaration and code...
+It could be worked around with a new flavour of get_user() that uses the
+non-T LDR instruction and the user mapping is readable by the kernel
+(that's the case with EPAN, prior to PIE and I think we can change this
+for PIE configurations as well). But it adds to the complexity of this
+patch when the kernel already offers a MADV_POPULATE_WRITE solution.
 
-> +	bit = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
-> +	if (bit < BITS_PER_LONG)
-> +		return bit;
-> +
->  	unsigned int maxfd = fdt->max_fds; /* always multiple of BITS_PER_LONG */
->  	unsigned int maxbit = maxfd / BITS_PER_LONG;
->  	unsigned int bitbit = start / BITS_PER_LONG;
-
-									Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Catalin
 
