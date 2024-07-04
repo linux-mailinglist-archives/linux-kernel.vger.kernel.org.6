@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-240685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BEC29270FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:56:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0070927100
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6106B21CC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:56:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 799B61F21C94
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A031A38DE;
-	Thu,  4 Jul 2024 07:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B321A00EE;
+	Thu,  4 Jul 2024 07:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YeBeMj5w"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Q3SHzsJA"
 Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58610FC02;
-	Thu,  4 Jul 2024 07:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFC31A3BAE;
+	Thu,  4 Jul 2024 07:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720079757; cv=none; b=U8Sk+F7d2eRoT3+RGMD7EWckYidDlAiCl243YJooTbuHooUp2XBdswsuBxvFCEKmEUcDKqQZMzLsWXxcscbRPJQXhSVsNVsYcvf6BeCcBHj1VycSfQs5lFa1GWhsTModQUxin2lueETmFqCzJQBI57ReBlJ2vMgQKYenvueJUL8=
+	t=1720079762; cv=none; b=QOuUub4m7Dn3PwCt10to4q/brgTDW1dAz8Mr9GPSWruWrxxjulGpbb03KCw1jIe9j/1LyK8LFJTFpYhof9Pv5SkBf9YF0pje1cCekzCEdB1MrwEvXGh/hizw3/F0HN/cUjab7AHikgg/7XReon1lcqRXbUTxke2XLmsJ+dbYYfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720079757; c=relaxed/simple;
-	bh=hjCpRoltlgqohI/BAnQn3IDnQGTnuNH84vw40iv7jtM=;
+	s=arc-20240116; t=1720079762; c=relaxed/simple;
+	bh=KghN883jBh6Io5Y0eUMvv1zE2TWd+NJpL2wG6Pr2joM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o3yExa8qbMa1AX5YxF1pazkJPHgjX675EFYaNVbDGRhnsxbluHjkSwACLx56MZOGQIaon9VQmAwWZn7SNft/E5qVdQJpuxpHGf04WAIkgvr7Xw2gR1QAWy1xEbet988IlBJGXEJgHBWRtCYiJ1hjlBRkcNWA5pmel876DtFMnBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YeBeMj5w; arc=none smtp.client-ip=198.47.23.249
+	 MIME-Version:Content-Type; b=PBT71pu9IKEJhIOp9XSt8/1GJbWHNA1JhMNq6uBRFDhMmyqHWAffuX9FkqufZJZGWDgQcrAtuvmNHBlIQvB2RuzunuDbzsf/V9s0AKv0I2j5TKJ2F2ZujdukZ7WqkG141Ekp1BOTsgh+4mSnxQM47gOCqbGMjX88kOuPlqnp2gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Q3SHzsJA; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4647tppT106320;
-	Thu, 4 Jul 2024 02:55:51 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4647tu20106344;
+	Thu, 4 Jul 2024 02:55:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720079751;
-	bh=YZuxeGF3GdY/dlHGqX/6qpAicX07ZBtugn0l33LKaRw=;
+	s=ti-com-17Q1; t=1720079756;
+	bh=NvsVZrqJ6tnujUyNaW5tV2ZXzfEk6NnluF7d1uCaboo=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=YeBeMj5w3RWmE6hvcHQ6yLtXAI8FAiIbKBEl9R616KFXj0B0Oq9n0NFwiIElsqryx
-	 gHKYQAyfjEt0mzHW5EA4ooqS03C8kjbWj9WB44mvHVxbQhBPT1PylCFAocBQuPfpSX
-	 zwRj94WAaZKjP8CQrckDpy9hrPUNmX2TFjDJVCvE=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4647tpIO116698
+	b=Q3SHzsJAIyNLLoD5GigKUhnJUD2uK9XJEsHvHiKF0bJ9SLzkkuEL3ggxcdzOt1ixF
+	 3e7oD9UQ+hJD4a5RhH/T2g2lnMZ9l2DTjbAD/88AdmsKJeD1pNAz7R3UItcYyZ0wVC
+	 DhZU2dkh5QkBGDnQBzSvgZC+rO7qQyQyfyDW3bH8=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4647tuDS021726
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 4 Jul 2024 02:55:51 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 4 Jul 2024 02:55:56 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 4
- Jul 2024 02:55:50 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2024 02:55:56 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 4 Jul 2024 02:55:50 -0500
+ Frontend Transport; Thu, 4 Jul 2024 02:55:55 -0500
 Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4647tkPT055890;
-	Thu, 4 Jul 2024 02:55:47 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4647tkPU055890;
+	Thu, 4 Jul 2024 02:55:52 -0500
 From: Vignesh Raghavendra <vigneshr@ti.com>
 To: <linux-kernel@vger.kernel.org>, <nm@ti.com>, <j-luthra@ti.com>,
         Jayesh
@@ -63,12 +63,12 @@ CC: Vignesh Raghavendra <vigneshr@ti.com>, <kristo@kernel.org>,
         <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <u-kumar1@ti.com>
-Subject: Re: [PATCH v2 0/3] Enable audio for J784S4-EVM platform
-Date: Thu, 4 Jul 2024 13:25:41 +0530
-Message-ID: <171984950182.3152309.11906676054269729748.b4-ty@ti.com>
+Subject: Re: [PATCH v3 0/2] Enable audio support for J722S-EVM
+Date: Thu, 4 Jul 2024 13:25:42 +0530
+Message-ID: <171984950181.3152309.14393845920250640127.b4-ty@ti.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240626101645.36764-1-j-choudhary@ti.com>
-References: <20240626101645.36764-1-j-choudhary@ti.com>
+In-Reply-To: <20240625113301.217369-1-j-choudhary@ti.com>
+References: <20240625113301.217369-1-j-choudhary@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,24 +81,29 @@ X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 Hi Jayesh Choudhary,
 
-On Wed, 26 Jun 2024 15:46:42 +0530, Jayesh Choudhary wrote:
-> These three patches enable audio on J784S4-EVM platform.
-> - First patch adds the McASP nodes.
-> - Second patch adds the audio_refclk1 node that is required
->   to configure the CTRL_MMR register for the external clock
-> - Third patch enables the analog audio
+On Tue, 25 Jun 2024 17:02:59 +0530, Jayesh Choudhary wrote:
+> These 2 patches enable audio on J722S-EVM platform.
+> 
+> This patch depends upon the bcdma driver fix posted upstream:
+> <https://lore.kernel.org/all/20240607-bcdma_chan_cnt-v2-1-bf1a55529d91@ti.com/>
+> 
+> Changelog v2->v3:
+> - Move audio_refclk1 node to SOC level dtsi (k3-j722s-main.dtsi)
+>   in a separate patch
+> - Rename vcc_3v3_aud to vsys_io_3v3
+> - Fix ball number for McASP pins in comments
+> - Fix padding for audio_ext_refclk1_pins_default pinmux
+> - Pick up R-by from Jai
 > 
 > [...]
 
 I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[1/3] arm64: dts: ti: k3-j784s4-main: Add McASP nodes
-      commit: 5095ec4aa1ea3d253c09486eaab42fa1a8b48c9a
-[2/3] arm64: dts: ti: k3-j784s4-main: Add audio_refclk node
-      commit: 3ea5142a97346653ed797438495503025062ec02
-[3/3] arm64: dts: ti: k3-j784s4-evm: Enable analog audio support
-      commit: 479112c9f5315604b5a96e10efddcd375a0e56a3
+[1/2] arm64: dts: ti: k3-j722s-main: Add audio_refclk node
+      commit: a5cd7067e45c33907afe20c0d1ab5e75b09a1ee2
+[2/2] arm64: dts: ti: k3-j722s-evm: Enable analog audio support
+      commit: 3a36c535dfd279ff093cc9271f474a99531bea21
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
