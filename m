@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-240375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7976F926D09
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:15:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 700F8926CF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F86A2841A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:15:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3569C28416E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF4917C98;
-	Thu,  4 Jul 2024 01:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEB69461;
+	Thu,  4 Jul 2024 01:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I0UgO50r"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fVqzWQAk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5C7632;
-	Thu,  4 Jul 2024 01:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2587BD2FF
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720055711; cv=none; b=adguVh7r2U/9iKh/b8NrHTB5/05KZ33RlPp4taNfciQemlu6KbFMcI7NxOE6dLOA4KPqAaygFPFEr1XyWrnouVd5xiA8iQ8C2Yedu2ZR2wumPK6gMGDKxc9B9TsHA6hr/URZ0OL7JmeAb3dIWVa0I9FQ1Am3eyqVLbkpRmw/KuM=
+	t=1720055693; cv=none; b=LG+ny+8La7F/VRvkUBkkIA8vVRUjK34hO3ccNoehrghb9ID/L1AzVV3fM2jSbDcTZEelMz3OVxWuCWheE7vhNCqHpJiOmineLnlf8WoZUqZ15+qBT5M2Xod0w4JT+u2ezAAUbDznJuuqTTY03/CTX9iEdrESTFO/e9Et4I2TmYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720055711; c=relaxed/simple;
-	bh=rMBJ1PmabKWenqjBIEI5AJNNZs15S+sLP8qDr93PA78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=evrirs0vLGqPYa1QJ7TtGH685ayxGlBGqeXDmhmp0qon3IZl1aYLeF4wCPorYZRBOyThm4udgT/siJudsPJOr9aD+4T7P/gyf7gXM3D4RHYeNrJi/R4Wzc4H8gjSEYv5d0l1PUVq5k1Ce6WUuODTj4pjYof1mTdJG2qWINsXjiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I0UgO50r; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 463J5REs004615;
-	Thu, 4 Jul 2024 01:14:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uRpXLfcsvuxp+p8SsgPzPXaUhVpL09CJ831wMJ2Y/vg=; b=I0UgO50rDrjeRMJF
-	BILIdUuwdLmbrSNFIfaTFtwmz/KxMj7Dr6CWyrNVYFR0TFK8Y5yzTbDVbOCv5vEy
-	CR1zZtsFcUGSEiHucqt04C6VOIk7bXUZL9ciyCgE5LRCW/mmjBzqzBI+9PkFWx90
-	ZyNCgKv1Hb+HsiZs5zKItolFMIsURCjHg+RhnXW6j4kIVi4Xo2MPbz5ve5e/jayg
-	l8qtMhya6USe188vSIG2yyCNddQSRJxXlrblHfo8Zz3nPJRYJwI5lXEOq++PbpTe
-	Da6XnoIOhmWzfwIsVmhuhwfea12Ni235a9aIxG0PY/fidynTiw7q/iIpYMXM621n
-	xXSQkQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 405cg28gk6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Jul 2024 01:14:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4641EMjB015598
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 4 Jul 2024 01:14:22 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
- 18:14:01 -0700
-Message-ID: <f4162b7f-d957-4dd6-90a0-f65c1cbc213a@quicinc.com>
-Date: Thu, 4 Jul 2024 09:13:59 +0800
+	s=arc-20240116; t=1720055693; c=relaxed/simple;
+	bh=B23C3TKWnVzvDysg3RcVZDOhd0lm/LDvBPga9YohyDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=knmRQXTDqdNy2Iy/otoZvzcFeUfwArUgHNo/aucV89S8sOrOANpC33FeSeCKCB9pZCatR0gavLE75LgQxZAhiDT0n96Igac2AN3dqSSClnj4HR2rCORJrw5wf+JZJoL7Z85cWq86ypmv3xExvgRCZF4eq/IJdghJysOLC3eE+4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fVqzWQAk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720055691;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/8RMfWJwFDkET+gxtH7rr9d29nRTeO240HVdwdgkVS0=;
+	b=fVqzWQAkhPdfBiOMEgDgh858LbC+FTCTyQbH43BoZpQmHNxx2oRxK9tUO65LmHfow6a173
+	m/u1DoigZ7an5Ryb0z8UerMcgO7oBuLOQa3AkSqN+70ENUvDcq1lwdhF1d0O94IXkoNWDL
+	qSsTbqVbRZIaVXVvN4JlG71D8PrAcRY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-467-gNgNiRW-Numj8cs-3h_jYg-1; Wed,
+ 03 Jul 2024 21:14:47 -0400
+X-MC-Unique: gNgNiRW-Numj8cs-3h_jYg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D465A1956077;
+	Thu,  4 Jul 2024 01:14:45 +0000 (UTC)
+Received: from [10.22.16.16] (unknown [10.22.16.16])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 525661954B0D;
+	Thu,  4 Jul 2024 01:14:43 +0000 (UTC)
+Message-ID: <55c508cf-9bc0-49a5-a286-8a9f3ff55220@redhat.com>
+Date: Wed, 3 Jul 2024 21:14:43 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,144 +64,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 29/47] dt-bindings: net: qcom,ethqos: add description for
- qcs9100
-To: Andrew Halaney <ahalaney@redhat.com>
-CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <djakov@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <jassisinghbrar@gmail.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <manivannan.sadhasivam@linaro.org>,
-        <will@kernel.org>, <joro@8bytes.org>, <conor@kernel.org>,
-        <tglx@linutronix.de>, <amitk@kernel.org>, <thara.gopinath@gmail.com>,
-        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
-        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>,
-        <robimarko@gmail.com>, <bartosz.golaszewski@linaro.org>,
-        <kishon@kernel.org>, <quic_wcheng@quicinc.com>,
-        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <agross@kernel.org>, <gregkh@linuxfoundation.org>,
-        <quic_tdas@quicinc.com>, <robin.murphy@arm.com>,
-        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <quic_rjendra@quicinc.com>,
-        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
-        <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>,
-        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
-        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
-        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
-        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <bhelgaas@google.com>, <krzysztof.kozlowski@linaro.org>,
-        <u.kleine-koenig@pengutronix.de>, <dmitry.baryshkov@linaro.org>,
-        <quic_cang@quicinc.com>, <danila@jiaxyga.com>,
-        <quic_nitirawa@quicinc.com>, <mantas@8devices.com>,
-        <athierry@redhat.com>, <quic_kbajaj@quicinc.com>,
-        <quic_bjorande@quicinc.com>, <quic_msarkar@quicinc.com>,
-        <quic_devipriy@quicinc.com>, <quic_tsoni@quicinc.com>,
-        <quic_rgottimu@quicinc.com>, <quic_shashim@quicinc.com>,
-        <quic_kaushalk@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        <quic_aiquny@quicinc.com>, <srinivas.kandagatla@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-crypto@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
-References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
- <20240703025850.2172008-30-quic_tengfan@quicinc.com>
- <u5ekupjqvgoehkl76pv7ljyqqzbnnyh6ci2dilfxfkcdvdy3dp@ehdujhkul7ow>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <u5ekupjqvgoehkl76pv7ljyqqzbnnyh6ci2dilfxfkcdvdy3dp@ehdujhkul7ow>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH v3 -next] cgroup/rstat: add force idle show helper
+To: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
+ lizefan.x@bytedance.com, hannes@cmpxchg.org
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240704005007.1400414-1-chenridong@huawei.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240704005007.1400414-1-chenridong@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2ToY-VFWJVX4PxSXMxm7v7m6lN_KrTeg
-X-Proofpoint-ORIG-GUID: 2ToY-VFWJVX4PxSXMxm7v7m6lN_KrTeg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_18,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 spamscore=0 mlxscore=0 bulkscore=0 mlxlogscore=915
- malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407040008
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
 
+On 7/3/24 20:50, Chen Ridong wrote:
+> In the function cgroup_base_stat_cputime_show, there are five
+> instances of #ifdef, which makes the code not concise.
+> To address this, add the function cgroup_force_idle_show
+> to make the code more succinct.
+>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>   kernel/cgroup/rstat.c | 36 ++++++++++++++++--------------------
+>   1 file changed, 16 insertions(+), 20 deletions(-)
+>
+> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+> index fb8b49437573..1568558e36e5 100644
+> --- a/kernel/cgroup/rstat.c
+> +++ b/kernel/cgroup/rstat.c
+> @@ -594,49 +594,45 @@ static void root_cgroup_cputime(struct cgroup_base_stat *bstat)
+>   	}
+>   }
+>   
+> +
+> +static void cgroup_force_idle_show(struct seq_file *seq, struct cgroup_base_stat *bstat)
+> +{
+> +#ifdef CONFIG_SCHED_CORE
+> +	u64 forceidle_time = bstat->forceidle_sum;
+> +
+> +	do_div(forceidle_time, NSEC_PER_USEC);
+> +	seq_printf(seq, "core_sched.force_idle_usec %llu\n", forceidle_time);
+> +#endif
+> +}
+> +
+>   void cgroup_base_stat_cputime_show(struct seq_file *seq)
+>   {
+>   	struct cgroup *cgrp = seq_css(seq)->cgroup;
+>   	u64 usage, utime, stime;
+> -	struct cgroup_base_stat bstat;
+> -#ifdef CONFIG_SCHED_CORE
+> -	u64 forceidle_time;
+> -#endif
+>   
+>   	if (cgroup_parent(cgrp)) {
+>   		cgroup_rstat_flush_hold(cgrp);
+>   		usage = cgrp->bstat.cputime.sum_exec_runtime;
+>   		cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime,
+>   			       &utime, &stime);
+> -#ifdef CONFIG_SCHED_CORE
+> -		forceidle_time = cgrp->bstat.forceidle_sum;
+> -#endif
+>   		cgroup_rstat_flush_release(cgrp);
+>   	} else {
+> -		root_cgroup_cputime(&bstat);
+> -		usage = bstat.cputime.sum_exec_runtime;
+> -		utime = bstat.cputime.utime;
+> -		stime = bstat.cputime.stime;
+> -#ifdef CONFIG_SCHED_CORE
+> -		forceidle_time = bstat.forceidle_sum;
+> -#endif
+> +		root_cgroup_cputime(&cgrp->bstat);
+> +		usage = cgrp->bstat.cputime.sum_exec_runtime;
+> +		utime = cgrp->bstat.cputime.utime;
+> +		stime = cgrp->bstat.cputime.stime;
 
-On 7/3/2024 11:09 PM, Andrew Halaney wrote:
-> On Wed, Jul 03, 2024 at 10:58:32AM GMT, Tengfei Fan wrote:
->> Add the compatible for the MAC controller on qcs9100 platforms. This MAC
->> works with a single interrupt so add minItems to the interrupts property.
->> The fourth clock's name is different here so change it. Enable relevant
->> PHY properties. Add the relevant compatibles to the binding document for
->> snps,dwmac as well.
-> 
-> This description doesn't match what was done in this patch, its what
-> Bart did when he made changes to add the sa8775 changes. Please consider
-> using a blurb indicating that this is the same SoC as sa8775p, just with
-> different firmware strategies or something along those lines?
+Just a simple comment saying that you are reusing the root cgroup bstat 
+which is otherwise not being used will help readability.
 
-I will update this commit message as you suggested.
+Other than that, the change LGTM.
 
-> 
->>
->> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->> ---
->>   Documentation/devicetree/bindings/net/qcom,ethqos.yaml | 1 +
->>   Documentation/devicetree/bindings/net/snps,dwmac.yaml  | 3 +++
->>   2 files changed, 4 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
->> index 6672327358bc..8ab11e00668c 100644
->> --- a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
->> +++ b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
->> @@ -20,6 +20,7 @@ properties:
->>     compatible:
->>       enum:
->>         - qcom,qcs404-ethqos
->> +      - qcom,qcs9100-ethqos
->>         - qcom,sa8775p-ethqos
->>         - qcom,sc8280xp-ethqos
->>         - qcom,sm8150-ethqos
->> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
->> index 3bab4e1f3fbf..269c21779396 100644
->> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
->> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
->> @@ -67,6 +67,7 @@ properties:
->>           - loongson,ls2k-dwmac
->>           - loongson,ls7a-dwmac
->>           - qcom,qcs404-ethqos
->> +        - qcom,qcs9100-ethqos
->>           - qcom,sa8775p-ethqos
->>           - qcom,sc8280xp-ethqos
->>           - qcom,sm8150-ethqos
->> @@ -582,6 +583,7 @@ allOf:
->>                 - ingenic,x1600-mac
->>                 - ingenic,x1830-mac
->>                 - ingenic,x2000-mac
->> +              - qcom,qcs9100-ethqos
->>                 - qcom,sa8775p-ethqos
->>                 - qcom,sc8280xp-ethqos
->>                 - snps,dwmac-3.50a
->> @@ -639,6 +641,7 @@ allOf:
->>                 - ingenic,x1830-mac
->>                 - ingenic,x2000-mac
->>                 - qcom,qcs404-ethqos
->> +              - qcom,qcs9100-ethqos
->>                 - qcom,sa8775p-ethqos
->>                 - qcom,sc8280xp-ethqos
->>                 - qcom,sm8150-ethqos
->> -- 
->> 2.25.1
->>
-> 
+Cheers,
+Longman
 
--- 
-Thx and BRs,
-Tengfei Fan
+>   	}
+>   
+>   	do_div(usage, NSEC_PER_USEC);
+>   	do_div(utime, NSEC_PER_USEC);
+>   	do_div(stime, NSEC_PER_USEC);
+> -#ifdef CONFIG_SCHED_CORE
+> -	do_div(forceidle_time, NSEC_PER_USEC);
+> -#endif
+>   
+>   	seq_printf(seq, "usage_usec %llu\n"
+>   		   "user_usec %llu\n"
+>   		   "system_usec %llu\n",
+>   		   usage, utime, stime);
+>   
+> -#ifdef CONFIG_SCHED_CORE
+> -	seq_printf(seq, "core_sched.force_idle_usec %llu\n", forceidle_time);
+> -#endif
+> +	cgroup_force_idle_show(seq, &cgrp->bstat);
+>   }
+>   
+>   /* Add bpf kfuncs for cgroup_rstat_updated() and cgroup_rstat_flush() */
+
 
