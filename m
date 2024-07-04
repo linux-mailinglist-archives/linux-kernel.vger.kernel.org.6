@@ -1,98 +1,139 @@
-Return-Path: <linux-kernel+bounces-240674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B637F9270D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:43:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6489270BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB8671C21F62
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:43:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CA8CB21476
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38461A2570;
-	Thu,  4 Jul 2024 07:43:38 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC671A254F;
+	Thu,  4 Jul 2024 07:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntFiyolL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16963143871;
-	Thu,  4 Jul 2024 07:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A13156679;
+	Thu,  4 Jul 2024 07:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720079018; cv=none; b=sxdhl2sBaO69qsBdXy5zI3v192GrRZBZZAYK0PDA/36J+FgT/5vfBzvpnFsESWFiqgEaEGtsqRpCWY5bfsv9W30fMf7VAd/TeiRoQpVOmikABVKIZ/GuiS6JwmqMEnTdIZVj1ZauxbFRFPiAOiOyDWQtyyd/kMsTolFdVi5yNr4=
+	t=1720078659; cv=none; b=itIVDZEo5GvfCdKpwhdUBh5r3IOrj7Mb5fy0QEvtXYkSE1oTpr1hiKSATEvQESnybsY0UYX66sidKqSPBvm1I630F5TIo1+/j7BH2aBf6sZ6H6eDVwDvIHXROoKmGTZ79cFqh24745e37WjJWUZjJIk6lavljg+AsS09sV6q4mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720079018; c=relaxed/simple;
-	bh=aLvPUr6ct/l1w6Xw+7pvRDuLqnCTPtfIyAVjtJ/tQL4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Uvtm7uz751QfTA6UIVqS7CmE4GXe3yvziv6ArA1R9z94HdxVfduY7crkvtNAyQOHpZOv2VetLGhgE+zj1Jp/IujUa7kPqaMWY82FEC/vmBH9U9WMoVVNfWzs53WjvwPEWt17rDXHB/ile3wIDI1n5mPDF2W7Jc3LnFNyCHG4ssk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowABHKE2bUoZmJEeDAQ--.3809S2;
-	Thu, 04 Jul 2024 15:43:24 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: andersson@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	ansuelsmth@gmail.com
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] clk: qcom: kpss-xcc: Return of_clk_add_hw_provider to transfer the error
-Date: Thu,  4 Jul 2024 15:36:06 +0800
-Message-Id: <20240704073606.1976936-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720078659; c=relaxed/simple;
+	bh=4b8M2Kr1D8wWFbEG11gulaaYlKoocvWNkaRYNPG4rX8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BtxxDukI1Edl1vcUPiq+CiJS0ythIh4owQ201zZQIrGVoVyL+d5lDG3mriEg1SKaC/N+qcN6gH8ItlHRlsnhMdveEp9gK+qmRjhytphzv9gKuI5llOUNHmpO6mkWu97NVjEbpzxkqDOZn0vPcqqmX9tsYZjMdVqExMm/B2B2Lpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntFiyolL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9FADC4AF13;
+	Thu,  4 Jul 2024 07:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720078658;
+	bh=4b8M2Kr1D8wWFbEG11gulaaYlKoocvWNkaRYNPG4rX8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ntFiyolL4XzVk9jl29/9X3ioFhy4aeS69BJzLHxmKM/29sWYFvI2vTFnsI8o4mqyj
+	 ZPNqrXzLt4rkKhmngB1hgLYUhrxQls1mPTk7Ehf14SZRE0MSxd1A89GQsKDWwrBLm6
+	 5iGMyyT73zEJhd1Kt4jdvQQP0VTKacAEuhS6XBTq4lZx0EzJbx4KUOIFP8jCfMd3rx
+	 i3F4v1fp2tiO1ECJDQddvHpa24cnLtPDtBQlOWlx9R1aemTSP70gyiiO1DEH+7Zcsg
+	 xUC1tisL/dJQ5hyG7lYzZxOp3xt2n2j4z3Iebeul7Rzyhs1A0KhKrkIEFa5S8bIJWL
+	 umr8qUZe+HCYA==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-58b447c5112so370936a12.3;
+        Thu, 04 Jul 2024 00:37:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVbJ3tEJ5uGLL0YDCADzvzGsmABTQa9vHNg5ZTqoNbAH3n9bKPOo2iuJ3yLxYuz7O7vY5r8VVzHrVEsUr16fatGSFnCJ+dbdQWiCiJWCqVmCKaIezd2aXgw10yCoLoninlgYc4+JEE=
+X-Gm-Message-State: AOJu0YwMl3FfIviaDm5zvReCENhm5ZgrJf/X4bbSsuz0rCnbGVQ3aqCd
+	V8ykQKp/h8wlzGOZJ5QDLHikwXgFJgPwDyUrKZ8/uKQvfdNozSmg365St4hgCn3K4S5we2OLKtL
+	4o8ftUvPsECxnH3aZ1Rv3Ku4DJio=
+X-Google-Smtp-Source: AGHT+IGv5wn4a6TI1CPUD8KsvqfV8JNoexVkDkXwdzMRAPLV8uUZztDLHe8kJIUE6xbMcSQzf7IFTkDSXG2N/w0LFVg=
+X-Received: by 2002:a17:906:5acd:b0:a77:b052:877e with SMTP id
+ a640c23a62f3a-a77ba46af61mr57544066b.19.1720078657344; Thu, 04 Jul 2024
+ 00:37:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABHKE2bUoZmJEeDAQ--.3809S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZF43XrW8Zw45CryDuF4fuFg_yoWfJwc_Cr
-	18WFWxXw18CF4FkF18Jw45Ar9IyasIvrsa9F4jga4akryxXr1jqry7ZFs3Cw45Jw4UJF90
-	gry3GrW3CrWrGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb2AFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_GF4l
-	42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
-	WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAK
-	I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
-	4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
-	6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUBpB-UUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+References: <20240702152737.1184244-1-chenhuacai@loongson.cn>
+ <20240702152737.1184244-3-chenhuacai@loongson.cn> <20240703101850.dtck223pleiiwfxp@vireshk-i7>
+ <CAAhV-H74HJr0=8g0GtHj=zZH5nJijRpc90zLLRY_sXJfKFVtHA@mail.gmail.com> <20240704031532.5bkh4nr7d3vcvzwq@vireshk-i7>
+In-Reply-To: <20240704031532.5bkh4nr7d3vcvzwq@vireshk-i7>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 4 Jul 2024 15:37:13 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4HbZ02BdtE47gVyZGdNKj4QWzMSuZgHR6d9RHE36Nv=A@mail.gmail.com>
+Message-ID: <CAAhV-H4HbZ02BdtE47gVyZGdNKj4QWzMSuZgHR6d9RHE36Nv=A@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] cpufreq: Add Loongson-3 CPUFreq driver support
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, "Rafael J . Wysocki" <rafael@kernel.org>, loongarch@lists.linux.dev, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Return of_clk_add_hw_provider() in order to transfer the error if it
-fails.
+On Thu, Jul 4, 2024 at 11:15=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> On 03-07-24, 22:37, Huacai Chen wrote:
+> > On Wed, Jul 3, 2024 at 6:18=E2=80=AFPM Viresh Kumar <viresh.kumar@linar=
+o.org> wrote:
+> > > > +static int loongson3_cpufreq_target(struct cpufreq_policy *policy,=
+ unsigned int index)
+> > > > +{
+> > > > +     /* setting the cpu frequency */
+> > > > +     return loongson3_cpufreq_set(policy, index);
+> > >
+> > > Why use a separate function for calling do_service_request() ? Just
+> > > open code it here.
+> > Hmm, there is a loongson3_cpufreq_get() function, so I make a
+> > loongson3_cpufreq_set() function, too.
+>
+> The counterpart of _get is _target and so a separate set function
+> isn't required at all. Just get rid of it.
+OK, will do.
 
-Fixes: 09be1a39e685 ("clk: qcom: kpss-xcc: register it as clk provider")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/clk/qcom/kpss-xcc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> > > > +static int loongson3_cpufreq_get_freq_table(int cpu)
+> > > > +{
+> > > > +     int i, ret, boost_level, max_level, freq_level;
+> > > > +     struct cpufreq_frequency_table *table;
+> > > > +
+> > > > +     if (per_cpu(freq_table, cpu))
+> > > > +             return 0;
+> > > > +
+> > > > +     ret =3D do_service_request(cpu, 0, CMD_GET_FREQ_LEVEL_NUM, 0,=
+ 0);
+> > > > +     if (ret < 0)
+> > > > +             return ret;
+> > > > +     max_level =3D ret;
+> > > > +
+> > > > +     ret =3D do_service_request(cpu, 0, CMD_GET_FREQ_BOOST_LEVEL, =
+0, 0);
+> > > > +     if (ret < 0)
+> > > > +             return ret;
+> > > > +     boost_level =3D ret;
+> > > > +
+> > > > +     freq_level =3D min(max_level, FREQ_MAX_LEVEL);
+> > > > +     table =3D kzalloc(sizeof(struct cpufreq_frequency_table) * (f=
+req_level + 1), GFP_KERNEL);
+> > >
+> > > devm_kcalloc(pdev, ...) instead ?
+> > I remember you told me this in V1, but devm_kalloc() needs a pdev
+> > instance, which doesn't exist here, so I keep kzalloc().
+>
+> See how drivers/cpufreq/brcmstb-avs-cpufreq.c stores the pdev in
+> cpufreq_driver's driver_data and reuses later on.
+OK, I have learned that devm_kzalloc() allocated memory will be
+automatically freed at driver dettach.
+But I have another question: can the "kfree(table)" after
+do_service_request() fail be removed?  Because I think in this case
+the probe will fail, then no driver detach happens.
 
-diff --git a/drivers/clk/qcom/kpss-xcc.c b/drivers/clk/qcom/kpss-xcc.c
-index 23b0b11f0007..e7cfa8d22044 100644
---- a/drivers/clk/qcom/kpss-xcc.c
-+++ b/drivers/clk/qcom/kpss-xcc.c
-@@ -58,9 +58,7 @@ static int kpss_xcc_driver_probe(struct platform_device *pdev)
- 	if (IS_ERR(hw))
- 		return PTR_ERR(hw);
- 
--	of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get, hw);
--
--	return 0;
-+	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get, hw);
- }
- 
- static struct platform_driver kpss_xcc_driver = {
--- 
-2.25.1
+Huacai
 
+>
+> --
+> viresh
 
