@@ -1,66 +1,56 @@
-Return-Path: <linux-kernel+bounces-241696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E9F927E0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:57:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CA4927E0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5827EB23701
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:57:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3CB01F2440F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAF613D289;
-	Thu,  4 Jul 2024 19:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA7D13D276;
+	Thu,  4 Jul 2024 19:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZML/0wn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgZtqB/+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05952F23;
-	Thu,  4 Jul 2024 19:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF762F23;
+	Thu,  4 Jul 2024 19:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720123058; cv=none; b=b8Pqxn1PYhwzr8M+t3XyL7lnIvnE/NhZ54irr3BPZ0razKFu7EaHVCx3ft57NliBgMPULZw+CSm3Htx6+yEhNmtflRcsN265hxvx/RubfoVhjRhRZBECEAeD/L8WPNs5krbUtJE3XdivNQ27wMM5yudMRsBhXbJFtXa10VSjlI8=
+	t=1720123142; cv=none; b=GzB0u2cFSVvjyTXTmHZWK2kQ1zmM+7kbEDDC10vXyIBxexRCQI8Qk+dxP9QsK3GklbROcpK3URmuSezdb6h6ZaiD90+VHP0uS2RtZGgBR8t+YS8lEFkbqWky6Ahabu+o0nciXm3iizak+oF7PMt8ySU5aNnCRMSNa6mWg1a3QsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720123058; c=relaxed/simple;
-	bh=31fAkgTaScFRc2itOPGOEvyV6GsdONtUkGifgrsCSPo=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PV7kEd+aDoXEu6nSGqI5AccV5I6FC91K5KrrnYYDb4GvnHPZdmUmf9xiTriuANwnhiEJ5A+rV/OkqTQXiv1q5r7pLvt80aaPM5xB/w4P663J4VQ/ttXxwFr80qzXXeYHC+lMRE2Ig1ZJdA94fvhYlMLvbzfi7mSvGB5NAvQFWJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZML/0wn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B38FC3277B;
-	Thu,  4 Jul 2024 19:57:37 +0000 (UTC)
+	s=arc-20240116; t=1720123142; c=relaxed/simple;
+	bh=apep1Q9DkKcZcxF/SQGxA71cyB/fMtchWOgXl4gMPCI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Bs+5HOp0dhGJ27RbVcjiSUB9Ac2quNKXDbdnEWY5FpZ8dudTPYIb9h9Jwz++8BOYaIYmQMdkYFc61LFwY1UnqcPU5kMcI3oepj4jCYWDXpl4JjuPG81w+xs/HMbWNzakS65lSaiugQXMHV2jQS3ZIEgvOzSQfYdo2iynbRBJXh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VgZtqB/+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5753C32786;
+	Thu,  4 Jul 2024 19:59:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720123057;
-	bh=31fAkgTaScFRc2itOPGOEvyV6GsdONtUkGifgrsCSPo=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=jZML/0wnaVDRjxteO1OmAGJxU8D1C/88ALvOkQJwbtOOGN/Dfp6f2n+Kgix1MpDdl
-	 OZbg34VbWOn+YuMY6T7uIG7W8fSVVJyuc9llMImM+8tIqBSfzOCcBb+0yqDCv6gZi/
-	 00XblfZez9h8kKW0QHBe7r+sVvb1S6qiS70PfchyV26OlRFe8r7aU8OpcDmjANABxs
-	 bXDM4+V0l09wz7u8mIdSL8qMnQAzVgbnMG93sutfi3j5dErIxll9vzvQWqZOErm4HM
-	 XtFDcTDsK4/5sOJZyECXM/jpUPaDKCNIb9HtlVl+32/b8Qo+MXx/Gk/b6vHx5S6c7z
-	 TGwufRHc5nMgA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Steinar Gunderson <sesse@google.com>,
-	Matt Fleming <matt@readmodwrite.com>,
-	Ian Rogers <irogers@google.com>
-Subject: Re: [PATCH v1 0/2] Try to avoid some qsorts
-Date: Thu,  4 Jul 2024 12:57:33 -0700
-Message-ID: <172012303630.184013.1986960651509995819.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-In-Reply-To: <20240703172117.810918-1-irogers@google.com>
-References: <20240703172117.810918-1-irogers@google.com>
+	s=k20201202; t=1720123142;
+	bh=apep1Q9DkKcZcxF/SQGxA71cyB/fMtchWOgXl4gMPCI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=VgZtqB/+5P+OjYEvPtgheKZWolSMXxKZWcg9HO7e8CR8b7vnqdKYmVisOx9Hs2IM/
+	 XsPucPIjUYAhGwCzLyVHhlJJKZwbto+uh9hR40DKnS+GgqIn3eoaqudoFHuth+Mgq2
+	 PSNeUKTTRN5tM8Cgpa1zCL7nyBHa3NEImB5Wsk8pnlMrXx3jN2XtuUMU0xI0n0zyYm
+	 wq5ANihj2CqsfY/yusmYU4MAHEXcWwKeJ7izuXExTZ+HCoSF8oY8kFkMkT+zlJUphS
+	 yS4YYGwTfdeyP3CA/zbzrvwFZfu576gKowNTWnRX3mTh1BOMaADvqLHFL+kBtXsn4j
+	 AodR+ELyIeNPg==
+From: Mark Brown <broonie@kernel.org>
+To: Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Mark Brown <broonie@kernel.org>
+Cc: Colin Foster <colin.foster@in-advantage.com>, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>, 
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240704-spi-revert-omap2-multi-v1-1-69357ef13fdc@kernel.org>
+References: <20240704-spi-revert-omap2-multi-v1-1-69357ef13fdc@kernel.org>
+Subject: Re: [PATCH] spi: omap2-mcspi: Revert multi mode support
+Message-Id: <172012314050.120154.11791655671608343293.b4-ty@kernel.org>
+Date: Thu, 04 Jul 2024 20:59:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,21 +58,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-On Wed, 03 Jul 2024 10:21:15 -0700, Ian Rogers wrote:
-
-> Reference count checking doesn't work well with rbtree due to the need
-> for counts on each child and parent edge. As such the reference count
-> checking changes removed rbtree and replaced them with sorted
-> arrays. There have been instances where sorting has been shown to be a
-> regression:
-> https://lore.kernel.org/lkml/20240521165109.708593-1-irogers@google.com/
+On Thu, 04 Jul 2024 13:05:48 +0100, Mark Brown wrote:
+> There have been multiple reports that the multi-mode support in the
+> OMAP2 McSPI driver has caused regressions on existing systems.  There's
+> been some discussion and some proposed changes but nothing that's been
+> tested by all the reporters.  Drop the patch for v6.10, hopefully we can
+> get to the bottom of the issue and reenable the feature for v6.11.
+> 
 > 
 > [...]
 
-Applied to perf-tools-next, thanks!
+Applied to
 
-Best regards,
-Namhyung
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: omap2-mcspi: Revert multi mode support
+      commit: 8221545c440b5f83f00b3e5a92bbc86bf268bad4
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
