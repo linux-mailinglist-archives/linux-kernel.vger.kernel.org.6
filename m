@@ -1,117 +1,133 @@
-Return-Path: <linux-kernel+bounces-240690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990A3927109
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:57:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362A292710E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E1BCB21A52
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:57:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 680811C232ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A0219DF4A;
-	Thu,  4 Jul 2024 07:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB811A4F06;
+	Thu,  4 Jul 2024 07:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="fJiyy4fm"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MwsV5FcE"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4053D174EC0
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 07:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4E41A38E8
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 07:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720079868; cv=none; b=RoTW+shO9rC9vTgjZsfMGuW6QOQtSHgjd89fyOV0X9gFX29LYB0ZFDxiVNEIZJ2M8gUGaLElUHcrmg8p/ni+y1MSuxM/rImfZDfifCrVyoX012h++jt+sWaPtxeCGsMTPPSbvRfa8/xZ5NMqT1iiA130nQGiI+ywosgD1PZ6wFw=
+	t=1720079881; cv=none; b=uwLvjwcaeDkr1ZUg5zKXyootMpSlmjTsu4X38Wyb1s1NyYAmq/nPsBqvsj2oNIzI+wy2ck3IXNT33kX7ybgqKcHmKvJ3W47F8+zAKvugWYJQ2Xdz3LsOvcTfMKU7irPpBVXNEL9uaMlA3wLjkP/apPUwNgmVKIbJVYSBMcQm3Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720079868; c=relaxed/simple;
-	bh=8kDMT9EBYm9HC1LZq4DHZqjchUB2docd4HQCzcQ6Qlg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TtPt0sgjGjvVS+pPWSXqVgDhU1gNGEz3X0+HtUO3A2bq32PzLmZ1SMGLPL0Db0P56EqGYtPd/o0GqZB58a+OAMnv08EfUtPOD7L98Qb/n02xoFCWjJwIHeJdPckE5uKeLsxa1gdbfmaaoqo4+Dx1YBXh5Q0tuZHJ9osBvIV/daQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=fJiyy4fm; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so3465171fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 00:57:46 -0700 (PDT)
+	s=arc-20240116; t=1720079881; c=relaxed/simple;
+	bh=UGMJ44RQRK5L7aXCmLcCVD3t3Ew+7rZXgNHMCelmG4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CCwnz7auCXG6jkRhj4YYGgZ1+GJNnN7Z/c2Fl9RdNFT44ICet20YyRsop6bCPEOFnBP3aRk4nj7Zjn7l/ptodX5zKLAqcIXpeENfTsX3i36f0gW8h8Q8HIta8pej2eMK6kn+YOuLFuItAAexQoQtFHCPAfyw9nL/yVNWpedpXVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MwsV5FcE; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-35f06861ae6so212580f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 00:57:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720079864; x=1720684664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8kDMT9EBYm9HC1LZq4DHZqjchUB2docd4HQCzcQ6Qlg=;
-        b=fJiyy4fmf42yluCMlIfU34kaCRi82eIL6UUBnVofh+NXQ/2Xuxpt895xCDP1nbhmit
-         35Aegw/kHqY/Nqq1bcmnxSvnPm2nRIqcYPZcLNTnTF7YqRAP1LiDzoIou8b7IX752rvu
-         x2XElA1DrKn+v6oyzQim4qlEXQCAemqR55NjD2P4w+P+QIWKoeVwpCq3sabieIpagCtX
-         XZitgydW82PW+V2faUkuSA4gW6agGe7SzfgUMAbkNlAxxeubLO8KJVJcffrlWladMvDE
-         d+58p7d5j3CW/jb86gpPHeJq9+peM3Jvc3TFjV7IUwUJrGmXHxBWQegZm0sfxEPO/R7q
-         hT6w==
+        d=linaro.org; s=google; t=1720079878; x=1720684678; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Yh+wWDEWyvWxK+Dc2ccAVMOd+nezcfUI+rK+tEbS35s=;
+        b=MwsV5FcExI5ZVPlVgKEcePwkYok+WfzdvNtwPkvHmvo8Z+xoG5hA0cs3BpRVw1xuf5
+         88D23HyHCcn0PQyC9/wmqqdsgajtk2eTfHIV+CltYNUZFWurZrvOkY+ZlmdWgNKpp+7F
+         iSvDtJeXNbB7vU7VZEH2PPLxGec8wUo0X2saav5lpatRJXqPj85sw5EN4wsFNOCYt3ya
+         h/UBgy+x0fuSij329hqJcgWBau2BLi3ZPX/D7gZxChtCo8L/9MXlLPUZnIlRjnT6Gxmj
+         4Nk2sY/Ts2XexPX3v7t1Z/KjkZbPsMo8aA4Ca3PsKoT04ijKZd9L6Dxk8JZFdb1DkxJ2
+         HEjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720079864; x=1720684664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8kDMT9EBYm9HC1LZq4DHZqjchUB2docd4HQCzcQ6Qlg=;
-        b=ljNpzVijZPBBnVPogZHWtOUXGyummyoogJThE62JU3zoVwuXkDrdymx3BpSxbH7xpG
-         Zag2kZ/cAqP4+wKBo3BQZ++wMyqb2U3srde1fOf35tGTM3jccU8qjoO0RO7RtOdJjrTW
-         bTFlTsY6TUcLRBLoX8X6BcxDtFGWgT0dqH+F/jWJXi3vVo3DAYRQP4UmpgX8OsrJjqEA
-         JWeEvrJY61zk+fchoDKxz00IZFEHHRIra7ZQBDw4U3DC4f4S1cKb4oI6L8hLkhHsVpYr
-         uujdiy6kPsG+vktuWHWuo4HZd9xBzxDuqUoSPJzfHynu5oIkrEjngUHqz1niFh10FW5m
-         dS9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXA9aPrG10RWSS2+0HzDWldnuvAevpmtCG7Yj/xfCole6lMbKSy9pJNQVsKU8oC+v1ayNzORvEfzD5sigqXAN6qUa9bH9fvLlyB7q7Z
-X-Gm-Message-State: AOJu0YyczyDwJnP88O7iLHxSq8lDEYFrjvyfFSYOJpACGuFykiZVJYpi
-	bzT4jba5pigWswU8uqGQiEbbs6SLg/p0ozGJ3Gvd/Ln1vTkfo781lwskg/jJuZuI3TiidDqIfva
-	de6SJnauXUL7Q/8tUdHVmWJiWD8a5kc6lHWHA/Q==
-X-Google-Smtp-Source: AGHT+IG1wqcWg35yvJEx2/20Ma4xVBOJwLAVOcYMZ4HlosRwRg09Ym1gzUAGNNPbS1DQb/Q4bIjU2gdwVStnn2k+THg=
-X-Received: by 2002:a05:651c:2120:b0:2ec:419b:429e with SMTP id
- 38308e7fff4ca-2ee8ed3ceffmr6724021fa.2.1720079864457; Thu, 04 Jul 2024
- 00:57:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720079878; x=1720684678;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yh+wWDEWyvWxK+Dc2ccAVMOd+nezcfUI+rK+tEbS35s=;
+        b=nghDKMvLvT2FvlkPnBwPdTwNOAQE11Jx5NzWlIQuehvKjOPhNnSZYmfsmh3MQSf5R5
+         jqKhDJKcsCMcPgGwvyHoFeLukLBjYqdJTAd7QjLGe7cxf3cRRvpDE+Op9tFRtLM/IHWY
+         iBbP97C9mXnJRaTRHnsho/V8HowKJm2ixrzcDTRJAoWVqM6cMnlcBnt2TVkY9HtpDY3e
+         cljJ21F2/Bl+yaRj+e4MyAb8sLVXKV0nNqtjFasrfgV7yK2U7/GccZjNe+rEFn1GTHNf
+         p1By1BUZb/LTnGLBlR/VYHw+nmRZqG80Y7m/b6CptdLA9wVGLxHUKtDjrcC4cuKsulbF
+         1A3w==
+X-Gm-Message-State: AOJu0YzfwMLwVCsEW4z1U/SbRZObUjLBt38RdcenJdc7yDPYUMrbn2HB
+	K+DENzZBiPs0ThwsfWHYBomqe23wgTPCbUD+h5Y40XfypDk66rPXTmDggQpxOomWX15aDdJ/I9g
+	C
+X-Google-Smtp-Source: AGHT+IHfWjqPwEJhWwd/bHs46j5WWXDlgt+XZ6rBtRnO7nRiiCBSFw8hpTuo6iaafsU3L46ZlgLJCA==
+X-Received: by 2002:a5d:5489:0:b0:367:911b:ff6f with SMTP id ffacd0b85a97d-3679dd29485mr583989f8f.18.1720079877647;
+        Thu, 04 Jul 2024 00:57:57 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3678ec6ff64sm4952189f8f.3.2024.07.04.00.57.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 00:57:55 -0700 (PDT)
+Message-ID: <50390ee7-20df-4be1-9cda-639981bf4ca7@linaro.org>
+Date: Thu, 4 Jul 2024 09:57:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627115112.25769-1-brgl@bgdev.pl>
-In-Reply-To: <20240627115112.25769-1-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 4 Jul 2024 09:57:33 +0200
-Message-ID: <CAMRc=Md+j4Ah0sOzKXNNbDdF-YBbVyKsiZa+2zSbmM+5Zw0uzQ@mail.gmail.com>
-Subject: Re: [PATCH v9] gpio: virtuser: new virtual testing driver for the
- GPIO API
-To: Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+To: neil.armstrong@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>,
+ linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <2764814.mvXUDI8C0e@rjwysocki.net>
+ <2ed4c630-204a-4f80-a37f-f2ca838eb455@linaro.org>
+ <8d91a3c1-018f-495b-83be-979b795b5548@linaro.org>
+ <12c5c133-9519-4a26-b9a3-2da1d3466e94@linaro.org>
+ <15b67ce6-3238-435d-ad28-7c06efbe9153@linaro.org>
+ <ce6c2e8a-65a7-4cb2-a91d-fbcaeef6edc1@linaro.org>
+ <0c4b401e-86b8-4169-af88-475433012d67@linaro.org>
+ <636922b4-96d4-49cb-9020-2359e7497f56@linaro.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <636922b4-96d4-49cb-9020-2359e7497f56@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 27, 2024 at 1:51=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> The GPIO subsystem used to have a serious problem with undefined behavior
-> and use-after-free bugs on hot-unplug of GPIO chips. This can be
-> considered a corner-case by some as most GPIO controllers are enabled
-> early in the boot process and live until the system goes down but most
-> GPIO drivers do allow unbind over sysfs, many are loadable modules that
-> can be (force) unloaded and there are also GPIO devices that can be
-> dynamically detached, for instance CP2112 which is a USB GPIO expender.
->
-> Bugs can be triggered both from user-space as well as by in-kernel users.
-> We have the means of testing it from user-space via the character device
-> but the issues manifest themselves differently in the kernel.
->
-> This is a proposition of adding a new virtual driver - a configurable
-> GPIO consumer that can be configured over configfs (similarly to
-> gpio-sim) or described on the device-tree.
->
-> This driver is aimed as a helper in spotting any regressions in
-> hot-unplug handling in GPIOLIB.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+On 04/07/2024 09:39, neil.armstrong@linaro.org wrote:
 
-With no objections, I'll queue it early next week.
+[ ... ]
 
-Bart
+> OK I just found out, it's the `qcom-battmgr-bat` thermal zone, and in CI 
+> we do not have the firmwares so the
+> temperature is never available, this is why it fails in a loop.
+> 
+> Before this patch it would fail silently, but would be useless if we 
+> start the firmware too late.
+> 
+> So since it's firmware based, valid data could arrive very late in the 
+> boot stage, and sending an
+> error message in a loop until the firmware isn't started doesn't seem 
+> right.
+
+Yeah, there was a similar bug with iwlwifi. They fixed it by registering 
+the thermal zone after the firmware was successfully loaded.
+
+Is that possible to do the same ?
+
+> I think Rafael's new patch is good, but perhaps it should send an error 
+> when it finally stops monitoring.
+
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
