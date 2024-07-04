@@ -1,109 +1,111 @@
-Return-Path: <linux-kernel+bounces-241083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B72E9276E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:10:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D79A9276DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00EB1B2181C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCA341C21F94
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA131AE860;
-	Thu,  4 Jul 2024 13:10:28 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246A21AE84B;
+	Thu,  4 Jul 2024 13:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="FWDMpn8J"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6A71A3BDA;
-	Thu,  4 Jul 2024 13:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02C01A0AE5
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720098628; cv=none; b=gRdE5wzj4+uhpPwHtSzFXaqS8G1TBOcDsIY9f4A4iKrqRdmACOXjC8b8OX/BVC5QYT+tOVTrz0LsF71sNg4K8C8EV7bj1NX9mQqQR3B9cxKw6LDVvk9EFqrNt1UlMm7JumDrnaJaGXKCzXQvmRoedK6ExwnI39DM3e+Nqt+CBEM=
+	t=1720098614; cv=none; b=XgtLJfrNOHFSf4SHD0/R09nq+ztFqhCW3e5tcEPOrEBDX2s7o9xyKfAeZWUg6bTUqvBR/FEzFerUunN8WrVUPCWHjjAvkDRsye4YyvXTyaVXCnC8r40TJbr4Y4ndUKF0r3zzIRfUPZ8PiIwvXJLjGzC+4HxW5WiTDet1XNRSQBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720098628; c=relaxed/simple;
-	bh=4cppBpggKQiTT9YosisQcXCeFU4EB35BHeE90Z+tBds=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OdF0ISo309o3uGqmeEV8QhZp5ZvuwT5yOPkeeFQFZYb65vAlpVYTVGthxDESA8XxVNXNaeiCo0EQpNnTaEPh21ze85rnr/fgEe4fLeY8aQtRbDlBqosSdp1ws4mYaMPJxjrGRbb9DpDLSNh94UsBtfjL3DOh76L472RdS51AG78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowAAX+Ewon4ZmobiNAQ--.19012S2;
-	Thu, 04 Jul 2024 21:10:14 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: patrik.r.jakobsson@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	alan@linux.intel.com,
-	airlied@redhat.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 RESEND] drm/gma500: fix null pointer dereference in psb_intel_lvds_get_modes
-Date: Thu,  4 Jul 2024 21:09:58 +0800
-Message-Id: <20240704130958.297170-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720098614; c=relaxed/simple;
+	bh=1CDGB69UHFEw3XzkNuVDc1VX8QtbcXOxGcKZ6MzsdRQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Xl3osobDeNgOLWIK0pjSkP0uRZ0fWn3C00kuuD8rmVWevMxM7Nkiq0TZeLLvq8DF2GXsoHm/D7W40O18l33A2WbzOjmIb87fu8njE3Aslb0/le54ioDesTMtFgqBKnp4f4ogE6fkJstnKxoFDEFoGs9hYJ8xxsRb1/sNLwxlVvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=FWDMpn8J; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1720098610;
+	bh=ktD7Ha3VJC6ylAvsp6i9aJB04xtxImlbVah9Wk9oUdk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=FWDMpn8Jy2xbMsZMuOl4tkksRAKiM2V9NQfTC2G6ugWEbBpObF74amfCqOGq+ky01
+	 jpO9qzpXXOPALsrFHLQLpuUYtkIjoXf4UojeD2S5L6KwGIc9+IGazjYJ1vUgac0p9v
+	 vGI5TXZF91Ni6V8KbHKiBep4d51W4DtUT/vq452aRtRH9Lc6LgKXNlJIqgMR9I6ZLb
+	 L2ERP6vCxXneBzQmzt0xd4qTmaavkxnyVAev+vRaikx3ELwfKm+rl6eDw50JF6WYhB
+	 6x241zDyYcnWpRPX8sEbVkslJ9ioyLWOsQbR3RamU+b+ZdgPcot6hqQ5de5VauJlR3
+	 OHtaA+DyxJiIg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WFH7Q0Wt4z4w2M;
+	Thu,  4 Jul 2024 23:10:10 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Anatolij Gustschin
+ <agust@denx.de>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: pdm360ng and touchscreen set up
+In-Reply-To: <ZoNHLjmSvCN12vU5@google.com>
+References: <ZoNHLjmSvCN12vU5@google.com>
+Date: Thu, 04 Jul 2024 23:10:09 +1000
+Message-ID: <87r0c9i9qm.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAX+Ewon4ZmobiNAQ--.19012S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw1xZFy7AFyxAr13uw18AFb_yoWkWFb_uF
-	10vr9rWFWDu3Z5Cr4xAw4fur1SkF10yF4kJr4rKaySy34DJr15XryaqFy5WF18uFy8GrWD
-	J3Wj9Fy8Zr4xGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb38FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjfUFYFADUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain
 
-In psb_intel_lvds_get_modes(), the return value of drm_mode_duplicate() is
-assigned to mode, which will lead to a possible NULL pointer dereference
-on failure of drm_mode_duplicate(). Add a check to avoid npd.
+Dmitry Torokhov <dmitry.torokhov@gmail.com> writes:
+> Hi Anatolij, Michael,
+>
+> I hope you can shed some light for me: why does pdm360ng have very
+> elaborate set up for the "pendown" GPIO of the touchscreen? Can we
+> simply fix the DTS in arch/powerpc/boot/dts/pdm360ng.dts and specify
+> correct pendown GPIO there, as well as correct interrupt trigger,
+> and remove most of arch/powerpc/platforms/512x/pdm360ng.c ?
 
-Cc: stable@vger.kernel.org
-Fixes: 89c78134cc54 ("gma500: Add Poulsbo support")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the patch according to suggestions;
-- added Fixes line;
-- added Cc stable.
----
- drivers/gpu/drm/gma500/psb_intel_lvds.c | 3 +++
- 1 file changed, 3 insertions(+)
+Sorry, I don't know anything about this platform.
 
-diff --git a/drivers/gpu/drm/gma500/psb_intel_lvds.c b/drivers/gpu/drm/gma500/psb_intel_lvds.c
-index 8486de230ec9..8d1be94a443b 100644
---- a/drivers/gpu/drm/gma500/psb_intel_lvds.c
-+++ b/drivers/gpu/drm/gma500/psb_intel_lvds.c
-@@ -504,6 +504,9 @@ static int psb_intel_lvds_get_modes(struct drm_connector *connector)
- 	if (mode_dev->panel_fixed_mode != NULL) {
- 		struct drm_display_mode *mode =
- 		    drm_mode_duplicate(dev, mode_dev->panel_fixed_mode);
-+		if (!mode)
-+			return 0;
-+
- 		drm_mode_probed_add(connector, mode);
- 		return 1;
- 	}
--- 
-2.25.1
+It looks like it's some sort of embedded display device? It's pretty old
+and hasn't seen much activity for ~10 years.
 
+> Something like this:
+>
+> diff --git a/arch/powerpc/boot/dts/pdm360ng.dts b/arch/powerpc/boot/dts/pdm360ng.dts
+> index 67c3b9db75d7..5651bd9d9db3 100644
+> --- a/arch/powerpc/boot/dts/pdm360ng.dts
+> +++ b/arch/powerpc/boot/dts/pdm360ng.dts
+> @@ -176,11 +176,12 @@ psc@11900 {
+>  
+>  			/* ADS7845 touch screen controller */
+>  			ts@0 {
+> -				compatible = "ti,ads7846";
+> +				compatible = "ti,ads7845";
+>  				reg = <0x0>;
+>  				spi-max-frequency = <3000000>;
+>  				/* pen irq is GPIO25 */
+> -				interrupts = <78 0x8>;
+> +				interrupts = <78 IRQ_TYPE_LEVEL_LOW>;
+> +				pendown-gpios = <&gpio 25 GPIO_ACTIVE_LOW>;
+>  			};
+>  		};
+>  
+>
+>
+> The reason I'm asking is that I want to remove support for platform
+> data in ads7846 driver and pdm360ng is one of the last 3 users of it in
+> the kernel.
+
+I think go ahead with the change, and if anyone is still using this
+device they can speak up if there's any problems.
+
+cheers
 
