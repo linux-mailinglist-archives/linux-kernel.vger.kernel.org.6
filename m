@@ -1,85 +1,77 @@
-Return-Path: <linux-kernel+bounces-240399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D761926D37
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:49:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D41926D3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 288C1282705
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:49:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7737C1C21A2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A17F17591;
-	Thu,  4 Jul 2024 01:49:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BE9DDC3;
+	Thu,  4 Jul 2024 01:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FS1laYF4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE767168DE
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586F52581
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720057745; cv=none; b=Ivuy772WTEpKuLhdroIX9EPxm+oR+jWbLGv/ORtNGSXSAXF2G6cMulX3lja5oKrrjgXsTdvKIwYHC1Grzm/i7/Pp99adQlGIyYnGEfojOs9tVvMd9vKsbRLgJlrpg3copeK1VISL4osPPVOakF45xuY//F+T1+TpSt5aRNuGTUM=
+	t=1720057972; cv=none; b=NqfDipl3QRUAkO+cwV9+N0AGJQq9TvRxGfzHDW206wYOIyjwwi0u06xBo1VD2y0YZBJ4zZFFtATB00hcLXX+mvNThAeZKtjrfdr/w4LM+l1Jw0euDeIZ26RmzZ+9T98IrE0sJXMQ0uwQVbnWXQYD7CHYyXL8IByyn8ym4gnCRic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720057745; c=relaxed/simple;
-	bh=P85Fsn54URz1BW30+zBEdBEALosAIwR12LEsi759PhU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZXLsle+T4cZjviKcCSl5AXwQfHY8r+pvGl46HjfMcKvtuJx89TOuJaEaALcDitMsCYRNDdYRIK2g793Hm8SRcdz4YJvxkFKJtt3FuC7zMjRvfBzjA5f03MuEGPs39kdV3B4/bmYAzwd8pq7OcwNFnI47ExYgBiYEyroU1GVdUiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f6486e0fabso20464539f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 18:49:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720057743; x=1720662543;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rIb7/VSpVEKxjgrbang4njEEWdG+CdQPQUSBYkBxNiw=;
-        b=Nur3AUKSHTxIkzkF1cUTa4LGMH7KGJZOphkw1bCq2ivU82kBzS00rWcLQytsDz/8z8
-         NPuou/nnAixPkRWKUrhOcmRQH+vb/MxVsc0mmfB4FRxyLggjCmKP7z5oOKOcMsL8d8CF
-         6Ca6nVVeNEAsH2RDCQJbobzjXdpskuspA1x7BuIcUDus03oOl6NtrMOnNMM3z4KY1ltP
-         vzpY3KN7oY/Vug0g6fRVYMkR0BCqGodVdEoRQscSD6WQUvMk2gO/stPgmTSq0J4qxITg
-         g7oCeGRbcUfpWU9MpSFMWYDFvrE8fNwcGE58IAYqe+JSztEt5I/m6/992pbJXR0XgYLf
-         7v/A==
-X-Gm-Message-State: AOJu0Yyh6bmGd4tUeKsgWCkMSa6jcSbHw29v2A/FsSp+rrk2yoj/ZMFj
-	Vsavppibbp6Pf5db1g5nOojy8/SHWVABeD2vUAIow3m45A5p4PawMF/F9IWvWBLEpXoYg4+m9eL
-	d2oGeSbVdh+RHDfIXJbq61un78FGF4ogjREqEkuifY4v55/C3VfnOXbo=
-X-Google-Smtp-Source: AGHT+IHGQLevyabFoVR0aPFs3IK2r8BRocT/Hf40j1K3mFi0yUoaanvixznb4kkiCSHnHJQ9Q9yC7W/mBmlLeQgkCzDCJz7ZcKmk
+	s=arc-20240116; t=1720057972; c=relaxed/simple;
+	bh=F2j2b220f0kH6ASBWQuxfwQDqDRaPBMclWh3MbAtpkY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=cTUCu0dqGWoA9Ho+BQIrCwvlAWXgZi3Km9VSuu//9UMS+TeS7CT85Wg6w3UGH+ytN/lOEv5oZqu9dDIJbp40nCeCa8+Weug5dQwSFsX67tkvgdv8eEkypOPrFTbI+Pgnhdzi7EJyWcaxwQy1NwMMJ5imNiqro3X7JV30XJPidFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FS1laYF4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F552C2BD10;
+	Thu,  4 Jul 2024 01:52:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1720057971;
+	bh=F2j2b220f0kH6ASBWQuxfwQDqDRaPBMclWh3MbAtpkY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FS1laYF4xPIP8MvziXSKpZ0B6nzToMKWGFhFUaAO0dDn+b2e83ijM0JDu4s7sn6WF
+	 Keh0h+ZN1nDmqnMrTmuAGIZEVpZ44oI6zMUFWRI5UFfFxoGdMxpR2l1wWLKGHeLA2z
+	 A/vtA0K97oQ3w7cLqXCiNT0JuLC5BSk1wuNlcP70=
+Date: Wed, 3 Jul 2024 18:52:50 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, Michal
+ Hocko <mhocko@kernel.org>, Muchun Song <muchun.song@linux.dev>
+Subject: Re: [PATCH] mm: memcg: move cgroup v1 oom handling code into
+ memcontrol-v1.c: fixup
+Message-Id: <20240703185250.ab96286a5e4747665520ddb0@linux-foundation.org>
+In-Reply-To: <20240704002712.2077812-1-roman.gushchin@linux.dev>
+References: <20240704002712.2077812-1-roman.gushchin@linux.dev>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8419:b0:4b9:b9a4:848b with SMTP id
- 8926c6da1cb9f-4bf62e92aeemr2218173.3.1720057742920; Wed, 03 Jul 2024 18:49:02
- -0700 (PDT)
-Date: Wed, 03 Jul 2024 18:49:02 -0700
-In-Reply-To: <20240704013031.977091-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c29a51061c6226ec@google.com>
-Subject: Re: [syzbot] [kernel?] WARNING in follow_pte
-From: syzbot <syzbot+35a4414f6e247f515443@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu,  4 Jul 2024 00:27:12 +0000 Roman Gushchin <roman.gushchin@linux.dev> wrote:
 
-syzbot tried to test the proposed patch but the build/boot failed:
+> This is a small fixup for the commit
+> "mm: memcg: move cgroup v1 oom handling code into memcontrol-v1.c".
+> 
+> I forgot to actually move two functions mem_cgroup_node_nr_lru_pages()
+> and mem_cgroup_nr_lru_pages() into mm/memcontrol-v1.c, so that they remain
+> in mm/memcontrol.c and their commented out duplicated versions in
+> mm/memcontrol-v1.c.
+> 
+> Andrew, can you, please, squash it into the original commit?
+> 
 
-arch/x86/mm/pat/memtype.c:957:27: error: 'struct vm_area_struct' has no member named 'mm'
-arch/x86/mm/pat/memtype.c:962:29: error: 'struct vm_area_struct' has no member named 'mm'
-
-
-Tested on:
-
-commit:         73461051 Merge tag 'erofs-for-6.10-rc7-fixes' of git:/..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=de2d4dc103148cd6
-dashboard link: https://syzkaller.appspot.com/bug?extid=35a4414f6e247f515443
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=152339d1980000
+Seems this wants to live behind "mm: memcg: move cgroup v1 interface
+files to memcontrol-v1.c" so that's where I placed it.
 
 
