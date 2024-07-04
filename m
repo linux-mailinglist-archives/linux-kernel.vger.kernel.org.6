@@ -1,236 +1,136 @@
-Return-Path: <linux-kernel+bounces-240407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51D0926D49
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:58:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EEA8926D4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DC9E1F215D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E77121F225FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCE8125B9;
-	Thu,  4 Jul 2024 01:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BA410A19;
+	Thu,  4 Jul 2024 02:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBxb/Rvq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="JKs7+zda"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB1A17BA7;
-	Thu,  4 Jul 2024 01:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720058294; cv=none; b=pXbEUzlv9jaOtHjsvlLTVFGyFsJyuycBPj2HJCukXB1/j+laH4ovls+/E8ggpvBH7hik+XQ+uhEesGtHuySaOSCL2UtKjtq8SBF068VKT+H5DNR0g1RsMTtGMZvL2M6rrfxla1nYildw+Qc1nSEe/b9Tul7TfTBD71Hc5gzi4NU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720058294; c=relaxed/simple;
-	bh=9jF6F3MMNeVOPesJEW+yzmMWdqItusb8YjWwWgBcPss=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uz0Q2taoTb33ZN9wo93MifE7+kptVviqZipsAkqXprqIx+WysJyOSAbyvuKg7B/AuwbE4zVJL+U1Sc5SzLPLb9jBtYsuK3QHAFHMPS/wCg35zBw57NPmIe8xojh85bpS88MYwDNCGYojTraoV4rpk2JFFVQhlLG2ubNhYdktjVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBxb/Rvq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB9AC2BD10;
-	Thu,  4 Jul 2024 01:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720058293;
-	bh=9jF6F3MMNeVOPesJEW+yzmMWdqItusb8YjWwWgBcPss=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jBxb/Rvq6sWLA18P1lrzAW64f6aslM/crrOfE4dFhYAawZctCYncugVzrujGoNJZs
-	 hAuk6Lvf9R7W3v5tR/gt/kGzVo/aUv8QPzu9c1ivFl4VZIPMkmjfwN9tLzk+eQkeCR
-	 B6pmeewBuQUNldXFC1jtL5ua0mKA9+RPJ3XkxtIsZE/36qZoXknOi8E34CkBIT6E6u
-	 ZIFZVDTaRlj99KY2Rw9o+GoLv6mYCJjM35Wi5sCq45CxaSDxBMi3KocttorFsTAvsV
-	 MnyionQGEb4gxn7g0Z/mG1H8/ngJYG3s3uPn5l0FxFkzYZwuOpBLOSx/AcdupdHu82
-	 oqNNGpm6Ei0cQ==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Subject: [PATCH] perf annotate: Cache debuginfo for data type profiling
-Date: Wed,  3 Jul 2024 18:58:12 -0700
-Message-ID: <20240704015812.2119457-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FFC23BB;
+	Thu,  4 Jul 2024 02:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720058482; cv=pass; b=DXQN/iNnHS+fqTaJK9RSHLJ4AO1sTEQQ1EQ14amTo9LJ+e6VaPO5UN5Bvc8RMhTuZZqrqfrij+rYbjWn3lRlP8szD3mDL2NE8Y5FoBogXzST42ejCpXFQ13olxuIABFSKkzaf0VUk2GUqS4mjgYxctje6pZ9WStaqSfpAtkBxss=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720058482; c=relaxed/simple;
+	bh=W9OqunnTPDg38IVBRFQeGAZEa+FOMhVSSOueR/HZRCM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u676BY893ZXdgMAAZ3ionCjCnFd9eL2J6u5lboFxQL0BhQhLu7FmGGO8qKUh5WALBigFxgRPUeuu9aSWpb0ODVuFDyP1aVdiVXVMt5Fr7024fBUblxVyU0GZtO+BpqIDoTa36u3NdKIw8XJX6BlZiNU7UjeepOyJZ2dRb73XdWs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=JKs7+zda; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1720058458; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jTPPN3UWqhQUDqQtg3DjdoaPCUaAPjQz1EhA4whcnVIT9tLBl4ph0YhVUVe8l79AmG+cXYpWr/cI5wdVk9MYsCIDVjI34Ns4aLWgkK6Lg1JYJKsCz0cMHStP1tMyBwjvQLxz90jzw0RymHF77jIWlgisR28c1Rsyk88uH1zIk6A=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1720058458; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=W9OqunnTPDg38IVBRFQeGAZEa+FOMhVSSOueR/HZRCM=; 
+	b=ljpvD26QvxfwKCCSx1FyIOscIXBDcoDhM0Be1ehzJ/BF+tY7nTjJ6dhNc/YFnGDYLC8wzDVrhD1RUVCWZ9ZDgAk9SnjnYtuQfBjOX7Cgc6E69vBQXgOHTpFXG+gNQvitNKgWP8ssw/xnKed6whao/Zr0URPTW3jqU4eeBO2VG1U=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1720058458;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=W9OqunnTPDg38IVBRFQeGAZEa+FOMhVSSOueR/HZRCM=;
+	b=JKs7+zda2gRlGQPNroBAk6XPtG+JU6IsNrK8x6DlfWcwUEZH5QLZUposwTfB9Jgx
+	5vCmgJpE/b3EStejE0mRewFRXW1GW+/CniuIFQ0NbNbufeoUpDt6hbU5n3rQak3rBmm
+	te3iTzjZg6ptiWXnJg1QhaosWyLU9RRnnwPhfkKQMYHGWOOUZJwhKfdOZ4wkI91Vlg6
+	iDLKv3cXcD2nDAgZKd6uySxMaSXmyX6MG0N1VS0DY1milWSdVRXiFfuUPkwAUone5l2
+	tiB65K0RkQ0DtKokAIPo8lvEP0ou+DHMj31aH2TkLho69N6iEfimtOXEUrtACmneu0B
+	5A6s2i1zFg==
+Received: by mx.zohomail.com with SMTPS id 17200584565631004.9071576656763;
+	Wed, 3 Jul 2024 19:00:56 -0700 (PDT)
+Message-ID: <99ff395019901c5c1a7b298481c8261b30fdbd01.camel@icenowy.me>
+Subject: Re: PCIe coherency in spec (was: [RFC PATCH 2/2] drm/ttm: downgrade
+ cached to write_combined when snooping not available)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Bjorn Helgaas <helgaas@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Huang Rui
+ <ray.huang@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,  Daniel Vetter
+ <daniel@ffwll.ch>, bhelgaas@google.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Date: Thu, 04 Jul 2024 10:00:52 +0800
+In-Reply-To: <20240703210831.GA63958@bhelgaas>
+References: <20240703210831.GA63958@bhelgaas>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-In find_data_type(), it creates and deletes a debug info whenver it
-tries to find data type for a sample.  This is inefficient and it most
-likely accesses the same binary again and again.
+=E5=9C=A8 2024-07-03=E6=98=9F=E6=9C=9F=E4=B8=89=E7=9A=84 16:08 -0500=EF=BC=
+=8CBjorn Helgaas=E5=86=99=E9=81=93=EF=BC=9A
+> On Wed, Jul 03, 2024 at 04:52:30PM +0800, Jiaxun Yang wrote:
+> > =E5=9C=A82024=E5=B9=B47=E6=9C=882=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
+=E5=8D=886:03=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+> > > =E5=9C=A82024=E5=B9=B47=E6=9C=882=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=
+=8B=E5=8D=885:27=EF=BC=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
+> > > > Am 02.07.24 um 11:06 schrieb Icenowy Zheng:
+> > > > > [SNIP] However I don't think the definition of the AGP spec
+> > > > > could apply on all
+> > > > > PCI(e) implementations. The AGP spec itself don't apply on
+> > > > > implementations that do not implement AGP (which is the most
+> > > > > PCI(e)
+> > > > > implementations today), and it's not in the reference list of
+> > > > > the PCIe
+> > > > > spec, so it does no help on this context.=20
+> > > > No, exactly that is not correct.
+> > > >=20
+> > > > See as I explained the No-Snoop extension to PCIe was created
+> > > > to help=20
+> > > > with AGP support and later merged into the base PCIe
+> > > > specification.
+> > > >=20
+> > > > So the AGP spec is now part of the PCIe spec.
+> >=20
+> > Hi Bjorn & linux-pci folks,
+> >=20
+> > It seems like we have some disputes on interpretation pf PCIe
+> > specification.
+> >=20
+> > We are seeking your expertise on the question: Does PCIe
+> > specification mandate Cache coherency via snoop?
+>=20
+> I'm not qualified to opine on this.=C2=A0 I'd say it's a question for the
+> PCI SIG protocol workgroup.=C2=A0 https://forum.pcisig.com/=C2=A0is a pla=
+ce to
+> start.
 
-Let's add a single entry cache the debug info structure for the last DSO.
-Depending on sample data, it usually gives me 2~3x (and sometimes more)
-speed ups.
+Sorry for the disturbance.
 
-Note that this will introduce a little difference in the output due to
-the order of checking stack operations.  It used to check the stack ops
-before checking the availability of debug info but I moved it after the
-symbol check.  So it'll report stack operations in DSOs without debug
-info as unknown.  But I think it's ok and better to have the checking
-near the caching logic.
+As individual hacker, I am not eligble of being a PCI-SIG member and
+join the discussion there.
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/annotate-data.c | 15 ++-------------
- tools/perf/util/annotate-data.h |  2 +-
- tools/perf/util/annotate.c      | 29 +++++++++++++++++++++++++++++
- tools/perf/util/annotate.h      |  2 ++
- tools/perf/util/session.c       |  2 ++
- 5 files changed, 36 insertions(+), 14 deletions(-)
+So I here want to ask a question as an individual hacker: what's the
+policy of linux-pci towards these non-coherent PCIe implementations?
 
-diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
-index 965da6c0b542..24c03475b3f2 100644
---- a/tools/perf/util/annotate-data.c
-+++ b/tools/perf/util/annotate-data.c
-@@ -1764,16 +1764,9 @@ static int find_data_type_die(struct data_loc_info *dloc, Dwarf_Die *type_die)
-  */
- struct annotated_data_type *find_data_type(struct data_loc_info *dloc)
- {
--	struct annotated_data_type *result = NULL;
- 	struct dso *dso = map__dso(dloc->ms->map);
- 	Dwarf_Die type_die;
- 
--	dloc->di = debuginfo__new(dso__long_name(dso));
--	if (dloc->di == NULL) {
--		pr_debug_dtp("cannot get the debug info\n");
--		return NULL;
--	}
--
- 	/*
- 	 * The type offset is the same as instruction offset by default.
- 	 * But when finding a global variable, the offset won't be valid.
-@@ -1783,13 +1776,9 @@ struct annotated_data_type *find_data_type(struct data_loc_info *dloc)
- 	dloc->fbreg = -1;
- 
- 	if (find_data_type_die(dloc, &type_die) < 0)
--		goto out;
--
--	result = dso__findnew_data_type(dso, &type_die);
-+		return NULL;
- 
--out:
--	debuginfo__delete(dloc->di);
--	return result;
-+	return dso__findnew_data_type(dso, &type_die);
- }
- 
- static int alloc_data_type_histograms(struct annotated_data_type *adt, int nr_entries)
-diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
-index 0a57d9f5ee78..40c9377fa1a5 100644
---- a/tools/perf/util/annotate-data.h
-+++ b/tools/perf/util/annotate-data.h
-@@ -100,9 +100,9 @@ struct data_loc_info {
- 	u64 var_addr;
- 	u8 cpumode;
- 	struct annotated_op_loc *op;
-+	struct debuginfo *di;
- 
- 	/* These are used internally */
--	struct debuginfo *di;
- 	int fbreg;
- 	bool fb_cfa;
- 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 1451caf25e77..821e4b2c3bcd 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -25,6 +25,7 @@
- #include "srcline.h"
- #include "units.h"
- #include "debug.h"
-+#include "debuginfo.h"
- #include "annotate.h"
- #include "annotate-data.h"
- #include "evsel.h"
-@@ -2313,6 +2314,20 @@ u64 annotate_calc_pcrel(struct map_symbol *ms, u64 ip, int offset,
- 	return map__rip_2objdump(ms->map, addr);
- }
- 
-+static struct debuginfo_cache {
-+	struct dso *dso;
-+	struct debuginfo *dbg;
-+} di_cache;
-+
-+void debuginfo_cache__delete(void)
-+{
-+	dso__put(di_cache.dso);
-+	di_cache.dso = NULL;
-+
-+	debuginfo__delete(di_cache.dbg);
-+	di_cache.dbg = NULL;
-+}
-+
- /**
-  * hist_entry__get_data_type - find data type for given hist entry
-  * @he: hist entry
-@@ -2347,6 +2362,19 @@ struct annotated_data_type *hist_entry__get_data_type(struct hist_entry *he)
- 		return NULL;
- 	}
- 
-+	if (map__dso(ms->map) != di_cache.dso) {
-+		dso__put(di_cache.dso);
-+		di_cache.dso = dso__get(map__dso(ms->map));
-+
-+		debuginfo__delete(di_cache.dbg);
-+		di_cache.dbg = debuginfo__new(dso__long_name(di_cache.dso));
-+	}
-+
-+	if (di_cache.dbg == NULL) {
-+		ann_data_stat.no_dbginfo++;
-+		return NULL;
-+	}
-+
- 	/* Make sure it has the disasm of the function */
- 	if (symbol__annotate(ms, evsel, &arch) < 0) {
- 		ann_data_stat.no_insn++;
-@@ -2391,6 +2419,7 @@ struct annotated_data_type *hist_entry__get_data_type(struct hist_entry *he)
- 			.ip = ms->sym->start + dl->al.offset,
- 			.cpumode = he->cpumode,
- 			.op = op_loc,
-+			.di = di_cache.dbg,
- 		};
- 
- 		if (!op_loc->mem_ref && op_loc->segment == INSN_SEG_NONE)
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index d5c821c22f79..0686af637ed9 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -540,4 +540,6 @@ struct annotated_basic_block {
- int annotate_get_basic_blocks(struct symbol *sym, s64 src, s64 dst,
- 			      struct list_head *head);
- 
-+void debuginfo_cache__delete(void);
-+
- #endif	/* __PERF_ANNOTATE_H */
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 5596bed1b8c8..f9072e003367 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -36,6 +36,7 @@
- #include "util.h"
- #include "arch/common.h"
- #include "units.h"
-+#include "annotate.h"
- #include <internal/lib.h>
- 
- #ifdef HAVE_ZSTD_SUPPORT
-@@ -304,6 +305,7 @@ void perf_session__delete(struct perf_session *session)
- 		return;
- 	auxtrace__free(session);
- 	auxtrace_index__free(&session->auxtrace_index);
-+	debuginfo_cache__delete();
- 	perf_session__destroy_kernel_maps(session);
- 	perf_decomp__release_events(session->decomp_data.decomp);
- 	perf_env__exit(&session->header.env);
--- 
-2.45.2.803.g4e1b14247a-goog
+If the sentences of Christian is right, these implementations are just
+out-of-spec, should them get purged out of the kernel, or at least
+raising a warning that some HW won't work because of inconformant
+implementation?
+
+>=20
+> Bjorn
 
 
