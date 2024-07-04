@@ -1,111 +1,103 @@
-Return-Path: <linux-kernel+bounces-240800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 665F49272F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:26:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B48A9272FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8273B1C22016
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:26:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A8021C2247D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30E01AB511;
-	Thu,  4 Jul 2024 09:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X1LQkm1q"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC861AAE0F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBE51AB53F;
+	Thu,  4 Jul 2024 09:26:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5D11AAE29;
+	Thu,  4 Jul 2024 09:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720085187; cv=none; b=PKfWdQbCVFEwGb3yyap/t7ZCMdLk1fT20YbXVX+CccRdQ/SAhTOCfQJ5QayozM1noqIy0zRMJ8KmOO2eIUqaIWZueV25jftWFCyyDVpCu6E87fG2Es3/00B3dt6CWiXzcNeSFnRZ7xMfKjecDjIcB1daAuSiQ8k2ynuRLLM7Eew=
+	t=1720085196; cv=none; b=l2izSEnNUAJZaYkW+UtLhNaJKMsEE0jPCPO3XB8zsV0CJPqh0RUWGx1EY2JODMn8gNHyhTZHqZjzJe93DkOwvLEMNxq+8ewHDN5sbockupzajcVZSYwzUF5AcPBHCJmrYMtPNe8bVFHa1uxdYQpgqBKhVzHKuHEgSg3FwYpOR+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720085187; c=relaxed/simple;
-	bh=jK4QiJYgMpqZHuOiFOYJ7LRloe0aUPmvOMr7gZdKz2M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GyXEQmFs7qr7pFklntZh9bw7Ma1H1CMdU6uJMqL8yDr+CjmeDj3fMPkjGuLea4nQcSZQAmEvSdaifyvPIUKNWTllQx8WnLS7+SQbvyuMtUzv+IBEEqqRZhOstcOu6UrsFLFLEYHlExV1tMkA6tpTHkE+0zpdaiRUtWbmnFGWQ7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X1LQkm1q; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42567ddf099so2680345e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:26:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720085184; x=1720689984; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jK4QiJYgMpqZHuOiFOYJ7LRloe0aUPmvOMr7gZdKz2M=;
-        b=X1LQkm1qIhKmx2cXHDWcmiIyZH7j1qfnh6QbGyfLyyIevj3VsoKYxEEr70fXHRrJCH
-         GoMAeqoV/WGnX3PhaJMozwPy0QnS2FvD+MRKKvBTpYHSPtjW5hJY/D9I39Ribv/jbGXQ
-         z3BJftDmqwarjuta1GYq1mO+ZbI0uh7B9tbhdzbJgUhNMR0zmnPIZ99uQTLTRe+eINea
-         grb9FoSBlY/UasLH5qKn1UVRPYSLeqSKmHG9XKO9WREvZTJlszyRrlJzQ6o9CFwL40Xd
-         Bo6G4HeM4IOq7nxQYJxDggaPIb1Xvrwf0CycQQHcR4HcPw8yO56CfchaRXIppmUJWdfw
-         3pDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720085184; x=1720689984;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jK4QiJYgMpqZHuOiFOYJ7LRloe0aUPmvOMr7gZdKz2M=;
-        b=PAHztiQhn9LfX7mpFDCHMCHF7sdHdkSHDekmuRHyvZqsP1hyiflGXgyJECUvic0Oki
-         fuoZhiowGF9j3ZZtRGMMIiprUQmsgWfZJE10XACdBG2ExslQJbpFqaPK8JIbQZzLyPJv
-         L0WNzQGCeUKkjRa6Plvifa5MCfFJsWN/H4io/s74bARK4VK69vyAqPYl9/8mhmX1be/y
-         noWmZ7O2u6yoGzC16sF6JcZWlXdb+uVRlCOEQPyMBLlumGdX3Jj8gT4sNE4QWCTW9l5T
-         29Le4bDqvqkkqQkI5dMbLb2AoN5PTger0kzWjIcLdFZB5ZPBiC94fRmLNOR4O3BcorZV
-         3IdQ==
-X-Gm-Message-State: AOJu0Yx9IVZAAxIQkulCuuM//51nXI3A7/qnOsFD4l/KGsY8yqQPIRxF
-	HmR0a24EvjgyLIFalDGVK5EWaLeWE1aKUB5+BkLjirOylGs8PHeg4Qf/eK3scuYuUQyFFm1gIz2
-	FzTUSKwGAx9T7QJR75w3UmlG+mljijkEwnRs4
-X-Google-Smtp-Source: AGHT+IFv88LNQ+GBGvy774X0W9nVuAppKr5CisW/ZF3NA8NQh92OFnzT9hs2dwXxiuMzIoeI82UfG3HBNYc2ycinAtg=
-X-Received: by 2002:a05:600c:4891:b0:425:6f96:8bde with SMTP id
- 5b1f17b1804b1-4264a44d7e5mr8270825e9.29.1720085183623; Thu, 04 Jul 2024
- 02:26:23 -0700 (PDT)
+	s=arc-20240116; t=1720085196; c=relaxed/simple;
+	bh=kK96TeKGcssH878y2ucEpd6cY3M4B7FOVaLWCw4mfVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7ufLtArPMPS4/CDBuRJUV0oXp8NZ5LxoFBaQOkapnAx38C4G+kFO08KoKSTYQstm7yr2XbkpQs+pFtCry39ZJSLCrB6I6BeDCHit5D7mJp2E5G6h1Rjab5gU2nUKQ/9LtSlKddB8ZtItOUOuj/pHPsnYl1PwDVzldAx9A7ZH7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2C4C367;
+	Thu,  4 Jul 2024 02:26:57 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E27D83F766;
+	Thu,  4 Jul 2024 02:26:27 -0700 (PDT)
+Date: Thu, 4 Jul 2024 10:26:25 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Huang Rui <ray.huang@amd.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>, Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Markus Mayer <mmayer@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Len Brown <lenb@kernel.org>, Kevin Hilman <khilman@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Lizhe <sensor1010@163.com>, linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 4/4] cpufreq: Make cpufreq_driver->exit() return void
+Message-ID: <ZoZqwb8LdQQohQHM@bogus>
+References: <cover.1720075640.git.viresh.kumar@linaro.org>
+ <3f73fda736818128558b61ad5fe2bed5dce3ddc4.1720075640.git.viresh.kumar@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2dbd1491-149d-443c-9802-75786a6a3b73@gmail.com>
-In-Reply-To: <2dbd1491-149d-443c-9802-75786a6a3b73@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 4 Jul 2024 11:26:12 +0200
-Message-ID: <CAH5fLgiyDsmG-YvsxvPPS9dAnKb7jJ2iapQQ3eWXnBPDOiA=LQ@mail.gmail.com>
-Subject: Re: [PATCH v2] arm: rust: Enable Rust support for ARMv7
-To: Christian Schrefl <chrisi.schrefl@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sven Van Asbroeck <thesven73@gmail.com>, 
-	Geert Stappers <stappers@stappers.nl>, Andrew Lunn <andrew@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3f73fda736818128558b61ad5fe2bed5dce3ddc4.1720075640.git.viresh.kumar@linaro.org>
 
-On Mon, Jun 17, 2024 at 6:04=E2=80=AFPM Christian Schrefl
-<chrisi.schrefl@gmail.com> wrote:
->
-> This commit allows building ARMv7 kernels with Rust support.
->
-> The rust core library expects some __eabi_... functions
-> that are not implemented in the kernel.
-> Those functions are some float operations and __aeabi_uldivmod.
-> For now those are implemented with define_panicking_intrinsics!.
->
-> This is based on the code by Sven Van Asbroeck from the original
-> rust branch and inspired by the AArch64 version by Jamie Cunliffe.
->
-> I have tested the rust samples and a custom simple MMIO module
-> on hardware (De1SoC FPGA + Arm A9 CPU).
->
-> This only includes support for ARMv7, but supporting other
-> sub-architectures in the future should be as simple as setting
-> the correct rustc target.
->
-> Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
+On Thu, Jul 04, 2024 at 12:23:55PM +0530, Viresh Kumar wrote:
+> From: Lizhe <sensor1010@163.com>
+> 
+> The cpufreq core doesn't check the return type of the exit() callback
+> and there is not much the core can do on failures at that point. Just
+> drop the returned value and make it return void.
+> 
+> Signed-off-by: Lizhe <sensor1010@163.com>
+> [ Viresh: Reworked the patches to fix all missing changes together. ]
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
 
-With the clarification from Ard, I give:
+[...]
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>  drivers/cpufreq/scmi-cpufreq.c         |  4 +---
+>  drivers/cpufreq/scpi-cpufreq.c         |  4 +---
+>  drivers/cpufreq/vexpress-spc-cpufreq.c |  5 ++---
+
+(For the above 3 files)
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+
+--
+Regards,
+Sudeep
 
