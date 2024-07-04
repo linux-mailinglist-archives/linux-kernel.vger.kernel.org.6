@@ -1,119 +1,104 @@
-Return-Path: <linux-kernel+bounces-241729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB729927EBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 23:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2314927EBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 23:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6BD1C22604
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:45:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4A321C22540
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04129143C63;
-	Thu,  4 Jul 2024 21:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7018143C46;
+	Thu,  4 Jul 2024 21:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="n/69CsbT"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llXqSlCm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F341411E9;
-	Thu,  4 Jul 2024 21:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E28D1411E9;
+	Thu,  4 Jul 2024 21:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720129535; cv=none; b=Xcox3U2yeMoaoMVBxeySILyjgLcia5n/9JUt8nI51yPyPihm2zVBdD0B9rSItbNuUirSAVvssGK4pD/zlrvlMHhCwDSjC7ZBoDllsnEr/CE3DxUFi9EQZXVhC9Z4zIJumx5xQAUrChXs2dscOS343FVJmlvDYQyfIxPVKr0/A1M=
+	t=1720129546; cv=none; b=f6YTxpTOfmXW+NtHM/uW9ss1CfWEwdJSnGN2EkJWhzZZzOVHnuFzbu47rhvSgZIz62GHhekNZ7/qLgv29AvMw+JHvea99+dm9fmo90/TIsSETxuImBIe86Ag0+7qQrddNA9cODoTRrvrHqNd5u3GXAoAW4iriz+LEJZ48d3gZWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720129535; c=relaxed/simple;
-	bh=CQYRZeEJYehwol1s8+mG6Q+2ubuR3CvZFq0eup2MD64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ExjSlFs+wGHFjll5y5gLhYRuaqcPs240+94NScFsjQX3wBNLo95DI3zS4sQBeOqPKEMJ4tmeR0fgrTjlYM3cQWk03D/rHiC0GsXiiWxZyO+HIm0q+ljiWNZZHYfoM43RVl2DzSYM7MXx+/RInQuaO6X1t+cRil7BS5BJadcpFsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=n/69CsbT; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1720129521;
-	bh=CQYRZeEJYehwol1s8+mG6Q+2ubuR3CvZFq0eup2MD64=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n/69CsbTkiO93w/BWlUW309bIbnR67JDjVvSm5YJ88PM8D0Rw7HwIQwikGTMczCE/
-	 vQjWZRsKwOe1/dL/4nqN7NPNmQo81yFsx4xt9bg4yR+6K5Hzy/AzRHBmjNW0dOmGwE
-	 Cmp4jwrh3eUwJZvKUfuHL7DUuVO13IXpGpft4dnfCWjYEgOgM2ZMDV3FJRW2Vv6XQg
-	 WDaKB81bXBAPW6d+hXGvkm/IKbtx6amFziijSXEBt7yEMpKCnUazOIbk0So5hbswUd
-	 W+lQWSrW7eJJ9bo24fyKHPF6MQHDLZ4czU8f/bMsEhDe8g+XaKf9mfG5AOMrugVfmZ
-	 JN9o5+na0tkKg==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id E3C8360079;
-	Thu,  4 Jul 2024 21:45:20 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by x201s (Postfix) with ESMTP id AEDB4201F16;
-	Thu, 04 Jul 2024 21:45:14 +0000 (UTC)
-Message-ID: <7db43f91-80d5-4034-ab25-f589e5510024@fiberby.net>
-Date: Thu, 4 Jul 2024 21:45:14 +0000
+	s=arc-20240116; t=1720129546; c=relaxed/simple;
+	bh=Ey+fvMBk2XKmPtksOy/IQh1U+nD1O5MKaDaE4dC+1YA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=esvRCAtQoPSAUzQ7jt19QUcrRfYY21ynhZRBJ2zDaNc4PicAM+TuPtU0CNLPafCRd++rltGQ+nX1Euk9sYxBtyHr++npAFAcrtcFWZqgFnNO2GoQT+/iUtaqODco/JhFtNdwTh3X4apCsIuLLLIyYXMMctwTRiIVJb0Dfh7uqMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llXqSlCm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D8B7C3277B;
+	Thu,  4 Jul 2024 21:45:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720129545;
+	bh=Ey+fvMBk2XKmPtksOy/IQh1U+nD1O5MKaDaE4dC+1YA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=llXqSlCm/tOglH46VGKH31HePaNPCkbmpW4gNhX5a4jh1h+9aaKrPJpGhJGyXRA6t
+	 F2py2FKlwSemUpxMy+7FDW8uG41ltmrm9ws1kI5auXxvW8Vvx5nkEtKtEN8I77S6LI
+	 Cd+QyHKjMSYtnLa2khKd22KHSwupKIFdYAkYOo0ZZVBmIeX6ozV0JojxBCByXM7Toz
+	 MR/eGk2kysazJp/jLGbrGig5Ldl6GDFuWWh39kawMsTw5mrcXnS9Zhw1AvOm29bC8P
+	 gIZFU1ZbYdxLqXNjrPyrYDKQIRKZGRR2j6V+61CbceKydQjKBQHncebN38g4Y9h5Qt
+	 iGFkzJ03s3dBg==
+Date: Thu, 4 Jul 2024 23:45:41 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v2 4/4] i2c: piix4: Register SPDs
+Message-ID: <mzyik2wq7v72ohuhho75nm775fkgtgpkxq2tlkpx5xhuizfovh@pak6gj2d3fn2>
+References: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net>
+ <20240627-piix4-spd-v2-4-617ce47b8ff4@weissschuh.net>
+ <2bbdb1bd-ea4d-4c14-9ea7-9fce09ac76b7@roeck-us.net>
+ <afd11870-eab1-4b90-9b81-2a7c84be46e5@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/9] net/sched: flower: define new tunnel flags
-To: Jakub Kicinski <kuba@kernel.org>,
- Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: netdev@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
- Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>,
- Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>,
- Simon Horman <horms@kernel.org>, Ratheesh Kannoth <rkannoth@marvell.com>,
- Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org
-References: <20240703104600.455125-1-ast@fiberby.net>
- <20240703104600.455125-2-ast@fiberby.net>
- <b501f628-695a-488e-8581-fa28f4c20923@intel.com>
- <20240703172039.55658e68@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
-In-Reply-To: <20240703172039.55658e68@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <afd11870-eab1-4b90-9b81-2a7c84be46e5@t-8ch.de>
 
-Hi Kuba and Alexander,
+Hi Thomas,
 
-On 7/4/24 12:20 AM, Jakub Kicinski wrote:
-> On Wed, 3 Jul 2024 12:59:54 +0200 Alexander Lobakin wrote:
->>>   enum {
->>>   	TCA_FLOWER_KEY_FLAGS_IS_FRAGMENT = (1 << 0),
->>>   	TCA_FLOWER_KEY_FLAGS_FRAG_IS_FIRST = (1 << 1),
->>> +	/* FLOW_DIS_ENCAPSULATION (1 << 2) is not exposed to userspace */
->>
->> Should uAPI header contain this comment? FLOW_DIS_ENCAPSULATION is an
->> internal kernel definition, so I believe its name shouldn't leak to the
->> userspace header.
+On Sat, Jun 29, 2024 at 09:19:48AM GMT, Thomas Weiﬂschuh wrote:
+> On 2024-06-28 16:09:09+0000, Guenter Roeck wrote:
+> > On 6/27/24 10:48, Thomas Weiﬂschuh wrote:
+> > > The piix4 I2C bus can carry SPDs, register them if present.
+> > > Only look on bus 0, as this is where the SPDs seem to be located.
+> > > 
+> > > Only the first 8 slots are supported. If the system has more,
+> > > then these will not be visible.
+> > > 
+> > > The AUX bus can not be probed as on some platforms it reports all
+> > > devices present and all reads return "0".
+> > > This would allow the ee1004 to be probed incorrectly.
+> > 
+> > Was this reported somewhere ? I don't see it happen on any of my systems
+> > (of course that doesn't really mean anything).
 > 
-> Also since it's internal, can avoid the gap in uAPI and make
-> ENCAPSULATION be something like "last uAPI bit + 1" ?
+> It happened on one of the big server systems I tested on.
+> 
+> > > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> > 
+> > Reviewed-and-tested-by: Guenter Roeck <linux@roeck-us.net>
+> 
+> Thanks!
+> 
+> FYI, combined tags are discouraged by
+> Documentation/process/maintainer-tip.rst:
+> 
+>   Please do not use combined tags, e.g. ``Reported-and-tested-by``, as
+>   they just complicate automated extraction of tags.
+> 
+> I'll add the tags in split form to the patch.
 
-Would the below work?
+No worries, I'll take care of it.
 
--#define FLOW_DIS_IS_FRAGMENT   BIT(0)
--#define FLOW_DIS_FIRST_FRAG    BIT(1)
--#define FLOW_DIS_ENCAPSULATION BIT(2)
-+/* The control flags are kept in sync with TCA_FLOWER_KEY_FLAGS_*, as those
-+ * flags are exposed to userspace in some error paths, ie. unsupported flags.
-+ */
-+enum flow_dissector_ctrl_flags {
-+       FLOW_DIS_IS_FRAGMENT            = TCA_FLOWER_KEY_FLAGS_IS_FRAGMENT,
-+       FLOW_DIS_FIRST_FRAG             = TCA_FLOWER_KEY_FLAGS_FRAG_IS_FIRST,
-+       FLOW_DIS_F_TUNNEL_CSUM          = TCA_FLOWER_KEY_FLAGS_TUNNEL_CSUM,
-+       FLOW_DIS_F_TUNNEL_DONT_FRAGMENT = TCA_FLOWER_KEY_FLAGS_TUNNEL_DONT_FRAGMENT,
-+       FLOW_DIS_F_TUNNEL_OAM           = TCA_FLOWER_KEY_FLAGS_TUNNEL_OAM,
-+       FLOW_DIS_F_TUNNEL_CRIT_OPT      = TCA_FLOWER_KEY_FLAGS_TUNNEL_CRIT_OPT,
-+
-+       /* These flags are internal to the kernel */
-+       FLOW_DIS_ENCAPSULATION          = (TCA_FLOWER_KEY_FLAGS_MAX << 1),
-+};
-
--- 
-Best regards
-Asbj√∏rn Sloth T√∏nnesen
-Network Engineer
-Fiberby - AS42541
+Thanks,
+Andi
 
