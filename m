@@ -1,121 +1,115 @@
-Return-Path: <linux-kernel+bounces-240796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2797D9272F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:23:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AFB9272C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97CB28A0EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:23:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2902285C2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB621AB510;
-	Thu,  4 Jul 2024 09:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92E61AAE07;
+	Thu,  4 Jul 2024 09:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XdQl5w4h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ljnrOMw1"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDA01AAE2A;
-	Thu,  4 Jul 2024 09:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9DD1822EC
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720084983; cv=none; b=Y8L+J3V7xL9bdov4OoBLjKhjdvGCrH40AVbCWOZr/7MG6C1V36Nc1y9fuK/55fXXq5EecNF8baRMBz9oA/4EbtwS4SuwBvxcaTRTF/d5K6JzndPPE+21oGB27l6qW3+vIDcnD+Q4bDS8lFYzpAGSCsgIPCg5IqRilS40QS8PV9U=
+	t=1720084526; cv=none; b=nEv4JrLLNK/7HCbYSNdNC8y3dH3KYfy1G2QVeErAXR36wdv6Yhq8R7GM0i8vpV4Q5XDPGDOzeWSp2taUo5FYHSwl/xrvtWQD/rCXFh0DjgIrQDyDTKinbdyOWd3gvAe0zlmnd4WtbZADIvwkW0/wXXxbeWuIXlyYaYRM5VgGJgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720084983; c=relaxed/simple;
-	bh=06as5BSvzilWjvhyp+ERYWakzCKolExpyqn7MKb+tp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o6hmCHI9Kgm5eSmRaU2HJcuq+rIOxQurR+Q9Sdy2lkvk6h/SBtaWPyTgxjcRroPAS/KkTzfhvL76OFHOnpnWpe9oSQODK6RSWIS+kV7o17XT3PUm2qCgRoW2TiJs4gatMgiELx9qORcP2HAS+yFr6MQfbsH1+qAKI9YRcBBLd9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XdQl5w4h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E05D9C3277B;
-	Thu,  4 Jul 2024 09:23:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720084983;
-	bh=06as5BSvzilWjvhyp+ERYWakzCKolExpyqn7MKb+tp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XdQl5w4hibwsvoFcvyqbIF6922YZwN8ioFVVi1XjsiUP57Cc/N6U5OmyiCfiDLjw4
-	 SLMIgxen0L/I+Qyf5u0rKUTHPAlMHeJT/f9T+GtrONuSjpbLBh5lyf3wxPM2WTIVI9
-	 CzPt34rPX6MvAimaC+M5eN1Dg9DEKaHFbpCppPqs=
-Date: Thu, 4 Jul 2024 11:12:41 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rhyland Klein <rklein@nvidia.com>,
-	Anton Vorontsov <cbouatmailru@gmail.com>,
-	Jenny TC <jenny.tc@intel.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Subject: Re: [PATCH] power: supply: core: return -EAGAIN on uninitialized
- read temp
-Message-ID: <2024070430-backer-cedar-f1ea@gregkh>
-References: <20240704-topic-sm8x50-upstream-fix-battmgr-temp-tz-warn-v1-1-9d66d6f6efde@linaro.org>
+	s=arc-20240116; t=1720084526; c=relaxed/simple;
+	bh=vLvhozs5FjGScJTUM3o90oqywyCN+6LZPhKN49utzhw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fSbISUQnJvSgOMAB/DDevP+hklbvw7TQ5dft1886upRp7FArT4cCvvpVq18RhcccQJ4ZaCueA1JSid5H3hkMoLNWlhX/kogYMoBmplFVkv6dpv4p5HLHMlpKvYP+nlToRGn8R4wge0ZxOunercZJ5CRpdksvNHapzaOh2j6HZrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ljnrOMw1; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3678f36f154so232654f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:15:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720084523; x=1720689323; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sEcu3TbmNikaAxXTCEPk6N6lySiOq4MWvGXvQXKI8Us=;
+        b=ljnrOMw1AS+gkHkkrg+sQs1HUNLksGmTCXYn/7MNJRVaPUwrbzlj76BV4/ZV9nYT7x
+         AzI0LopSQyVvNZMt1S+O+JxjV4eltdtxg32rHG6NZ7gU9hY7/nGqjFAGX9y7zFQckb6G
+         +GALOYtI8XgUx+0jGz93PHC0v5isJVhfme5Ya9J3e0BdGPavAm/t2XSPDV+PmRaoXOIs
+         K0oxaU1ivefUG0qct8uWvNfJyzSKa/XfRAZhbCxm7ViZvARDy+jrVb0T5+/LnTQxgy8/
+         p8I1bRiD9oQyNjkVMpOa5yoWj2DQIKZyMWLLPqTk+mRZEsuhqsgnd5wvAciN+CmMCknN
+         jYgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720084523; x=1720689323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sEcu3TbmNikaAxXTCEPk6N6lySiOq4MWvGXvQXKI8Us=;
+        b=GNBrjR72FwrAUzx1KJkD/neJkG1UfwtCpWCs8KTeda0hwdycNdgIvWzGTfuM8+g08A
+         Ma9d7tAA/3t2YfWaItx0AgeiZBa+UNAde+NmX0N2AHJgdr4sE3F8i1kQj9SvLNwE3a7N
+         3EIRM2bhnaOigCPpV2gXejQbmenzfc+63zTA/Kl51EKYyEgtQ5zpmmQ6V95c/tIWpR29
+         TQhD7Ac78qWsSu+jfYAVurKQkFl1GlmsXpoA/rvnbbMpFp8m5KHqEoYtSbPkpt5Plsz0
+         v5j4hr/C9OQJr/tQygEGzbJL54gzOYYNqsahiv/HiCw7Qqo31HxANFXN6FcRYWPeWRW3
+         mGFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVV19GnPgfm71aNK8bMmhVK5KX4G/HpPkpoFIXTGNVIj4Z887Q6BIg0mN+GjBLJhtMqc0cNKsN3hgWFOP8UwRswmlYYXFqR0M1gw39E
+X-Gm-Message-State: AOJu0Yx/jF8/5696OjXpb2tgY1Zc9sNMcjmTcvl7SC4KwqXSpL6/fHFB
+	30qXUuQJTVIc+PMFQNqHs07hIq71lJy6INfG6i24I40wwkh29WLSOzJm4svMhWbt+a/g9bqobCQ
+	GML6aAwxr/frxbjrVd0VnS3AkfD8cdtI1Ci+F
+X-Google-Smtp-Source: AGHT+IE/247r/RY0UrlCo6aEEA7oWQssQzwGwJkUeqjFdh0tQShwvHV1WozYijQBpev7QJs4+kVGYg1txqGiSZWkMaM=
+X-Received: by 2002:adf:f3cc:0:b0:367:947a:a491 with SMTP id
+ ffacd0b85a97d-3679dd443a0mr835906f8f.26.1720084522530; Thu, 04 Jul 2024
+ 02:15:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704-topic-sm8x50-upstream-fix-battmgr-temp-tz-warn-v1-1-9d66d6f6efde@linaro.org>
+References: <20240703154309.426867-1-jfalempe@redhat.com> <2024070417-husked-edgy-f527@gregkh>
+In-Reply-To: <2024070417-husked-edgy-f527@gregkh>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 4 Jul 2024 11:15:10 +0200
+Message-ID: <CAH5fLgip4foLGkjzUT4vOCR1m3OgHuOq8u7=Zh+o2Zk2V45FKw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] drm/panic: Add a qr_code panic screen
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
+	Danilo Krummrich <dakr@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 04, 2024 at 10:52:08AM +0200, Neil Armstrong wrote:
-> If the thermal core tries to update the temperature from an
-> uninitialized power supply, it will swawn the following warning:
-> thermal thermal_zoneXX: failed to read out thermal zone (-19)
-> 
-> But reading from an uninitialized power supply should not be
-> considered as a fatal error, but the thermal core expects
-> the -EAGAIN error to be returned in this particular case.
-> 
-> So convert -ENODEV as -EAGAIN to express the fact that reading
-> temperature from an uninitialized power supply shouldn't be
-> a fatal error, but should indicate to the thermal zone it should
-> retry later.
-> 
-> It notably removes such messages on Qualcomm platforms using the
-> qcom_battmgr driver spawning warnings until the aDSP firmware
-> gets up and the battery manager reports valid data.
-> 
-> Link: https://lore.kernel.org/all/2ed4c630-204a-4f80-a37f-f2ca838eb455@linaro.org/
-> Fixes: 5bc28b93a36e ("power_supply: power_supply_read_temp only if use_cnt > 0")
-> Fixes: 3be330bf8860 ("power_supply: Register battery as a thermal zone")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/power/supply/power_supply_core.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+On Thu, Jul 4, 2024 at 7:03=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org>=
+ wrote:
+>
+> On Wed, Jul 03, 2024 at 05:33:57PM +0200, Jocelyn Falempe wrote:
+> > Jocelyn Falempe (4):
+> >   drm/panic: Add integer scaling to blit()
+> >   drm/rect: add drm_rect_overlap()
+> >   drm/panic: simplify logo handling
+> >   drm/panic: Add a qr_code panic screen
+> >
+> >  drivers/gpu/drm/Kconfig         |  29 +
+> >  drivers/gpu/drm/Makefile        |   1 +
+> >  drivers/gpu/drm/drm_drv.c       |   3 +
+> >  drivers/gpu/drm/drm_panic.c     | 338 +++++++++--
+> >  drivers/gpu/drm/drm_panic_qr.rs | 989 ++++++++++++++++++++++++++++++++
+>
+> Wait, we can put .rs files in any directory now?  I didn't think that
+> worked properly yet.
 
-Hi,
+Yes, but Rust code outside of rust/ cannot expose a Rust API that Rust
+code elsewhere can use. Only C apis can be exposed.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+Alice
 
