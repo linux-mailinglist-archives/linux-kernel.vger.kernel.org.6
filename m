@@ -1,150 +1,98 @@
-Return-Path: <linux-kernel+bounces-240983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DA0927551
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:41:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC0C92754F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4E161F24DF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:41:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C0B1F24DCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D141AC45F;
-	Thu,  4 Jul 2024 11:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56EA1AC44B;
+	Thu,  4 Jul 2024 11:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OZK3/FWa"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Ni8own68"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2C01AC427;
-	Thu,  4 Jul 2024 11:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527451AC420;
+	Thu,  4 Jul 2024 11:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720093257; cv=none; b=T4hIqg0lPYk+BMybeoIpedSk69gz+W8ObFMhCDlwvkTd1yypXZc/nh82Ah0LMvdLDQ0YHn4OeA/aVRFJCxTIxWiFiJNmUxNolcFEQMfiaewQReydBqlJKeuVnKPbs7USKIoE7EwYkHH90WMiNuGpqHSWBH/bpBQMoPsL/NI4EM4=
+	t=1720093256; cv=none; b=ngwNoU9XkRrkSSoe1lX718SJUsC5UROdVQ6mLKH4n0eALaN2au8UTp2YLkGf51Oh7A0mmkG4vTCLXw7H6djXsFxBmGJ7D5LAejTsZeBXBZ6H8SDZHqNu2wGuZLSBiskeDVPTY6b9y9/pznUr6jDZdaxWuNShXQPxbXLlXfJab0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720093257; c=relaxed/simple;
-	bh=0t5V8hGpWOJtneO7w5BxKJ5cMBWLj2YmpoYFdgKhhJ4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qUIPj4r8kavU0F/DoXdLXz2WA1DEY9FfvgpRPKTYtGiLyvuIMCvNUziBlBYe3xKXqxD4ekyyaHA5sWAH62cekzRk4x9IbBATFFiVU1dgPRN411UJtKrdUojaZ9Z/I1MbiZJdKlyspgpG5S5JTx6E/gfk0Bk0jTvH7sfurE3JWnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OZK3/FWa; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720093225; x=1720698025; i=markus.elfring@web.de;
-	bh=eHPsQyXMv+fdN2eJFWuA9EeCEwuGrpNdVdYusCYWAas=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=OZK3/FWa2MGNwyWHZ8eTEIucLKs6nxHp35hxJcby7u4aCdMN14vWVHntgn+RZ7Xx
-	 ITmdeyF9dMPzUPyMfjnGWTHnhiqnU+c0zsErpfa4LRCHr6lkprsDXKVrW5l3Mtm1b
-	 zpZKx/c0I9s8pqwNJRBkry0k1LCRZqJbYRydcFIKY1tGdMt+cGPBMOxvfG3gR60dA
-	 m5QzpJ0kWtXiVJfmoPkuA/LI+b6pcjBZBgkc2ErXvVDM5kO0f38GVIdK/WhFrsRp5
-	 gfZCXnL7iIW0VeruFY7MEb9ZuoRWGOp3FNQFYADYjVr+Vc8WAreqt2ge9KOrVkPga
-	 MbwpIlh7w8AEZ2zJ/g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MgiXO-1rvVqv2Noq-00j6Tf; Thu, 04
- Jul 2024 13:40:25 +0200
-Message-ID: <54dc90df-fc31-457d-a18d-b2070b055d60@web.de>
-Date: Thu, 4 Jul 2024 13:40:22 +0200
+	s=arc-20240116; t=1720093256; c=relaxed/simple;
+	bh=MuPW+ImjGoXmGawP+0Ix6HcFeNqZiJNOpS+wMjoJTK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=onIkqSaItx/MBcOt1YBycODKoH/qx3aiOUh2h0WMD1JMRoRnaYQZxuPvGdlonU9pUzdNTKSwxof/R9aAyR7E2DPTPIaRqcWR1IFVRYSc8XKIaRPX/bdENOX6/6G6knLnthicTGEhn2r6bT2Qby/6C++ADr2x0Z9EMeBqPcO4tS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Ni8own68; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=l7kIOQ7U9whmVzcXksdbQ0HHHC/NbDC/JzmH/l2qmpo=; b=Ni8own68G3SfOJUosPZiMSNYT4
+	57ezfWIGYC9RZKmNJ0ToBoz6m4GI1oTOERfcE9TQXMLAM27DEmIIHxsWQmPSpf3yC9W0Q9ZckyQRa
+	EdtnLb3JF3Pqol2nhoH/RU3P/SYnGrqe3StL+TVByWMPHPEd8vXdwisjZz0+8bm5CdYfLsK6oOKpJ
+	GYFMDIowvI4+Ywz3LbRxRL/f1qdw5tdXOfbp18phpxMJeocAiFcu7uyD/QQ3LwqKa2RNAfAta5CKd
+	av5NbGmT8dDaH2lRGM5LGvOtj7w0g1L+QnnKfAUmqvaofx5VbhtU7jsyF1bTImdmfGo9GUQ70SaeU
+	qt7HqohA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60514)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sPKpD-0006ps-0P;
+	Thu, 04 Jul 2024 12:40:31 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sPKpB-0003ta-2v; Thu, 04 Jul 2024 12:40:29 +0100
+Date: Thu, 4 Jul 2024 12:40:28 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: John Crispin <john@phrozen.org>, Felix Fietkau <nbd@nbd.name>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net-next] net: ethernet: mtk_eth_soc: implement
+ .{get,set}_pauseparam ethtool ops
+Message-ID: <ZoaKLKl9cFkhmJKU@shell.armlinux.org.uk>
+References: <e3ece47323444631d6cb479f32af0dfd6d145be0.1720088047.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>,
- Cyril Brulebois <kibi@debian.org>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Stanimir Varbanov <svarbanov@suse.de>
-Cc: Jim Quinlan <jim2101024@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>
-References: <20240703180300.42959-3-james.quinlan@broadcom.com>
-Subject: Re: [PATCH v2 02/12] PCI: brcmstb: Use "clk_out" error path label
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240703180300.42959-3-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wFzxrPxvHc3jR+5oeOUWhDC+27wywMwXg1v28CkwWXzxj6HqIwN
- szjygXKEBIPIAoKgUsSGWyLNCQYC30GkKqPcxUcCrO+/r0CFNzzrECeISUPYFfyWq6ldd/z
- v4OQOuCl/sVHXfnr5lXdwlf7YattVGTodwudESgn0AyCFhEAjrNx+J16OZAFrJ2h4pynXJe
- bxuNw37pFEF2n4n85ymlA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VBgHkCdOBcA=;6wT380QZCi8u1Ubr53ZAKOMXK/5
- Gm8/hqXRmLIuNIxKTfLkP7GgPbEEq77t7q/gl5dq+lgTtuw2c6izvudaU7PYk8spmx+DdG3Jj
- 2gnZwjZ1kQ1f8JGFMdO9K1A9CjYrJdT0nVintaSXLKzWRktf1E/wpo0ZrI2FYnGv174iX0t2X
- eMTLCqLB1kKTpDqBddQ13ygmcOhFLQpYJ1ppQGG5pwHGd++h8+R//WhNbizqDL6bfoLHCg2b7
- 1THQ0+vh+ypZdfJ/OUBaIw+gUbQXyN9TIQdoStLUpoH3vFYYkPqP8fb6QLVqtVYi+vuMVheCC
- MsWeZiL5uiZdMy76KrJHD5xpPzW37zIz33tKISHYOzb1sD06UVkW1PrKjruBjsR4s6QSIk7/p
- wbo5+PysatPVYvegmurZADvnhnxG/u3DdqSQQdp/DMYO3awnxuOZj1SLimYov02zE8FWGME0U
- X38X0AVuttjqJOYamH51RYd61GBsvBxDOBPRkC+29byuZ5PiiYRKBT10l71+wgpj9iEZ++eSm
- SHaQHGweGOak+1yVexmivlLWXLsRqvNOVSjmUAs3nGrdfDB2Rc54uijqGMMjn7riRG68P+vQT
- 7Q9lee5kI5yGne/YaAUlVuZUe7UBut3S81m8x3sHbkWVX9lUe/9Euv9YRTKnpBOptQTya88Fc
- mpJbRm7pu/vxoHyz3N+kEen7sRkXWSdu8d/aOq7dZWxvA3ahg4+gAs7xLcWmTH6HxzKRduoZ3
- ++eI19JUXjfiaucJpQ46wxVA94mI+Cf/qeEqjbKCl2pZz4vrud6ipEr92/ij8/lMA0XniWYoi
- T+9LMo8Ba58E50eVbcOEcZ6cEFhrVMz5qaTKdGzrciTQk=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3ece47323444631d6cb479f32af0dfd6d145be0.1720088047.git.daniel@makrotopia.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-> [-- Attachment #1: Type: text/plain, Size: 1685 bytes --]
+On Thu, Jul 04, 2024 at 11:14:55AM +0100, Daniel Golle wrote:
+> Implement operations to get and set flow-control link parameters.
+> Both is done by simply calling phylink_ethtool_{get,set}_pauseparam().
+> Fix whitespace in mtk_ethtool_ops while at it.
+> 
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-Can improved adjustments be provided as regular diff data
-(without an extra attachment)?
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
+Thanks!
 
-> Instead of invoking "clk_disable_unprepare(pcie->clk)" in
-> a number of error paths, we can just use a "clk_out" label
-> and goto the label after setting the return value.
-
-* Please improve such a change description with imperative wordings.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n94
-
-* How do you think about to use a summary phrase like
-  =E2=80=9CUse more common error handling code in brcm_pcie_probe()=E2=80=
-=9D?
-
-
-=E2=80=A6
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-=E2=80=A6
->  	ret =3D reset_control_reset(pcie->rescal);
-> -	if (ret)
-> +	if (ret) {
->  		dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
-> +		goto clk_out;
-> +	}
->
->  	ret =3D brcm_phy_start(pcie);
-=E2=80=A6
-
-Does this software update complete the exception handling?
-
-Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=9C=
-Cc=E2=80=9D) accordingly?
-
-
-=E2=80=A6
-> @@ -1676,6 +1677,9 @@ static int brcm_pcie_probe(struct platform_device =
-*pdev)
->
->  	return 0;
->
-> +clk_out:
-> +	clk_disable_unprepare(pcie->clk);
-> +	return ret;
->  fail:
-=E2=80=A6
-
-I suggest to add a blank line before the second label.
-
-Regards,
-Markus
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
