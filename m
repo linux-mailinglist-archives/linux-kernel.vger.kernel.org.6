@@ -1,98 +1,187 @@
-Return-Path: <linux-kernel+bounces-240994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B671927575
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:48:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E520927577
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C89328261D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:48:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D279FB21694
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE381AD3F4;
-	Thu,  4 Jul 2024 11:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0608F1AD3F7;
+	Thu,  4 Jul 2024 11:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IoyZ3fM2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rmU1cJKQ"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B49F16A945;
-	Thu,  4 Jul 2024 11:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B7416F0D5;
+	Thu,  4 Jul 2024 11:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720093719; cv=none; b=TGcDyzvcT5iKRbXBK9ytVi1b9MyX9cmyk8mUuGioRO73vXW8Pw4dZ8P/9QVX1T9Ou6wNxtdoJzWqkZ7xLHLtUvXe+J2eNs67ytfFAxvgOYcLqy5tUQegOlGKkElQRzf9maiuBI5oytmUwhUSSNeEvvfRt7Km+tNpxBWnEDHhn48=
+	t=1720093754; cv=none; b=TLzNLy4uGQagpRFioIb1fVp8phkKccvHF7z/1P18T2LiRZiSEei4kd8K4zDk4GSPQyQL/jir76xmaxR3BJgkGxkWITpUdNJ+DPBIMma4zwXLHaU45ReDtaSXncNIeIcykpKhdr7VSYWmo9smWjedt7dwDEMKzUh+QMui/iMKNJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720093719; c=relaxed/simple;
-	bh=c4OshHpTxBAdoC0PCCGARRV97ciDLNCp+eTfY08+D8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mxG1SVInaayVpyKZFoUvQJ6khiZdKKIeUbv4LgHM2hcDqyBY1dAWZRnl9ZKjV8Wq0B9hAwF9wZry9HgF77oxTKsvJ/uCnHNw+02PIymHExvUf8xXgt2qRRLmsPLQ/wVYFM6W+d7GGwLwN18cNKQui+G7t5HEUsvM2SyaOJ6UCt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IoyZ3fM2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B2DC3277B;
-	Thu,  4 Jul 2024 11:48:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720093718;
-	bh=c4OshHpTxBAdoC0PCCGARRV97ciDLNCp+eTfY08+D8w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IoyZ3fM2L8dLuiR+jLFo4RN3qwSY8fZ4Blc4SBotEqbxybfC91Xyl8mMLJBCl3ixN
-	 EmEzGDBN5Dd04NGlNtX+wrspAPikfUvw5DJoZHjan5FvNo9ejyzdJTq5X4WJbcl9RN
-	 VJBLpd0G827Lnmzo/6/lB2LDDNZYYZekn4u1Yusc=
-Date: Thu, 4 Jul 2024 13:48:35 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Akshay Gupta <akshay.gupta@amd.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux@roeck-us.net, arnd@arndb.de, naveenkrishna.chatradhi@amd.com
-Subject: Re: [PATCH 0/6] misc: add amd side-band functionality
-Message-ID: <2024070416-cosponsor-barrack-6125@gregkh>
-References: <20240704111624.1583460-1-akshay.gupta@amd.com>
+	s=arc-20240116; t=1720093754; c=relaxed/simple;
+	bh=+ZO4E8s2E70xagRUNoHmxIKLlEHfBkwR8G9jUKMb5R4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YwiICrCxK0hUssfzr3b1LwxThdnHRkm6DTiqee+wGToGL5+udpShZXoBK+1apzZ6XQigSnnYEAIkc3PoL1W6C2WD54J9XwoVSEA9Tcuga79UNe4WPbTNl9jUaeCo2yYeKfFw88HkXO1BuvsSUl8A/H73j8sZUkrO+MaRrQ+DDWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rmU1cJKQ; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720093749; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=/8KlDc1Q1lXOp6OasZ6L+XmlH+f8Rq5x2AV+s1uBmwE=;
+	b=rmU1cJKQ9dKI6r3Bo9/h9FB3aBjHLFngWe2Ky8XBDTK2l2xYdQ4O55DtYtbmDFhGaTOxbS9M/ZthtRE8K9s8M6y6umU6wjpvDFwqzrLDHVAkvm6rbQmBkhhiwhg38YxIYpSiZK0usnnLa3pqg7z68CT6MEOJ+9+WU4EZerfe2lc=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R401e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W9qn9fg_1720093748;
+Received: from 30.97.56.65(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9qn9fg_1720093748)
+          by smtp.aliyun-inc.com;
+          Thu, 04 Jul 2024 19:49:08 +0800
+Message-ID: <648b121e-149c-417a-afd5-848348923721@linux.alibaba.com>
+Date: Thu, 4 Jul 2024 19:49:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704111624.1583460-1-akshay.gupta@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: timer: sprd-timer: convert to YAML
+To: Stanislav Jakubek <stano.jakubek@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang7@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <ZoU95lBgoyF/8Md3@standask-GA-A55M-S2HP>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <ZoU95lBgoyF/8Md3@standask-GA-A55M-S2HP>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 04, 2024 at 11:16:18AM +0000, Akshay Gupta wrote:
-> AMD's APML interface provides system management functionality accessed by
-> the BMC. Sbrmi driver under hwmon subsystem, which is probed as an i2c
-> driver and reports power using APML specified protocol.
 
-What is "APML"?  What is "BMC"?
 
-> However, APML interface defines few other protocols to support
-> full system management functionality out-of-band.
+On 2024/7/3 20:02, Stanislav Jakubek wrote:
+> Convert the Spreadtrum SC9860 timer bindings to DT schema.
+> 
+> Changes during conversion:
+>    - rename file to match compatible
+>    - add sprd,sc9860-suspend-timer which was previously undocumented
+>    - minor grammar fix in description
+> 
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 
-What is out-of-band here?
+Thanks.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-> This patchset is an attempt to add all APML core functionality in one place
-> and provide hwmon and user interface
-> 1. Move the i2c client probe and sbrmi core functionality from drivers/hwmon
->    to drivers/misc/
-> 2. Add a platform device, which probes the hwmon/sbrmi and continues to
->    report power using the symbol exported by the misc/sbrmi-core.
-
-Are you sure this is a platform device?  It better not be a pci one...
-
-> 3. Convert i2c to regmap which provides multiple benefits
->    over direct smbus APIs.
-
-What are those?
-
-> 4. Register a misc device which provides 
->     a. An ioctl interface through node /dev/sbrmiX
-
-Why?
-
->     b. Open-sourced and widely used https://github.com/amd/esmi_oob_library
->        will continue to provide user-space programmable API.
-
-Will this use the new ioctl api?  If it's not present, what will it use
-instead?
-
-thanks,
-
-greg k-h
+> ---
+>   .../bindings/timer/sprd,sc9860-timer.yaml     | 68 +++++++++++++++++++
+>   .../bindings/timer/spreadtrum,sprd-timer.txt  | 20 ------
+>   2 files changed, 68 insertions(+), 20 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/timer/sprd,sc9860-timer.yaml
+>   delete mode 100644 Documentation/devicetree/bindings/timer/spreadtrum,sprd-timer.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/sprd,sc9860-timer.yaml b/Documentation/devicetree/bindings/timer/sprd,sc9860-timer.yaml
+> new file mode 100644
+> index 000000000000..62c6da8bab5a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/sprd,sc9860-timer.yaml
+> @@ -0,0 +1,68 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/timer/sprd,sc9860-timer.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Spreadtrum SC9860 timer
+> +
+> +maintainers:
+> +  - Orson Zhai <orsonzhai@gmail.com>
+> +  - Baolin Wang <baolin.wang7@gmail.com>
+> +  - Chunyan Zhang <zhang.lyra@gmail.com>
+> +
+> +description:
+> +  The Spreadtrum SC9860 platform provides 3 general-purpose timers.
+> +  These timers can support 32bit or 64bit counter, as well as supporting
+> +  period mode or one-shot mode, and they can be a wakeup source
+> +  during deep sleep.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - sprd,sc9860-timer
+> +      - sprd,sc9860-suspend-timer
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: sprd,sc9860-timer
+> +    then:
+> +      required:
+> +        - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    soc {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      timer@40050000 {
+> +        compatible = "sprd,sc9860-timer";
+> +        reg = <0 0x40050000 0 0x20>;
+> +        interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&ext_32k>;
+> +      };
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/timer/spreadtrum,sprd-timer.txt b/Documentation/devicetree/bindings/timer/spreadtrum,sprd-timer.txt
+> deleted file mode 100644
+> index 6d97e7d0f6e8..000000000000
+> --- a/Documentation/devicetree/bindings/timer/spreadtrum,sprd-timer.txt
+> +++ /dev/null
+> @@ -1,20 +0,0 @@
+> -Spreadtrum timers
+> -
+> -The Spreadtrum SC9860 platform provides 3 general-purpose timers.
+> -These timers can support 32bit or 64bit counter, as well as supporting
+> -period mode or one-shot mode, and they are can be wakeup source
+> -during deep sleep.
+> -
+> -Required properties:
+> -- compatible: should be "sprd,sc9860-timer" for SC9860 platform.
+> -- reg: The register address of the timer device.
+> -- interrupts: Should contain the interrupt for the timer device.
+> -- clocks: The phandle to the source clock (usually a 32.768 KHz fixed clock).
+> -
+> -Example:
+> -	timer@40050000 {
+> -		compatible = "sprd,sc9860-timer";
+> -		reg = <0 0x40050000 0 0x20>;
+> -		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+> -		clocks = <&ext_32k>;
+> -	};
 
