@@ -1,104 +1,135 @@
-Return-Path: <linux-kernel+bounces-240925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6E09274B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:12:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E88B9274BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A402B23182
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:12:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E56286395
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B8E1AC243;
-	Thu,  4 Jul 2024 11:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1621AC424;
+	Thu,  4 Jul 2024 11:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yn/RqVcS"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="njearGOw"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E871A2555;
-	Thu,  4 Jul 2024 11:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B80210EE;
+	Thu,  4 Jul 2024 11:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720091559; cv=none; b=IUDp2er1OSQ6EqsLDH+KnR79vos2tcOnzFcsm7C2xwlwWwJ3fJKg94xdqCGKR1ykLgyj/hfxd4TMmuEF2z3JrygKiH1HBxHt5ZkK5bR/9+uZ4hoNIq+c+BjffH9cpNawWa9fg1tTxLpWzJ7i0zuePFygncpwA7Y28wOMBNF/dv8=
+	t=1720091801; cv=none; b=KQIzOA51Bw+g9p5mJ4gsgg3L6WzJ/NeS/Wh7gORf1iGE6nQqIrMES9d3BTR0A+i+IJJNduk4yjVWnlbn9d+3xChAogDhVnWlcPnt6zTMloEW+mEHuYr2VlL3d7IHKEpTwXRBOoKBGhZ8yK07QRTdxRkJY5y1Dah9xH7d3SY8nM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720091559; c=relaxed/simple;
-	bh=BnBRTBk9+SJHSF1mQcVfRDaxS2dfZurj/v37IwkL+p0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J4vbD7jbPNPJxHNmIlcoIjYJKDcusLnPj83pYYYRoqQjXbaKL2m9wSdWDdxPbZu2FmUkD379eFRHgRIxYChVZ79Fnzk1eNbQTiPIqqfvvMW0fhJowPrHHFHsLvpgSXjUiXWG0ur4Uy5m3Kf+PsSErtTxOO6ZpLMUiXUnwMqr8Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yn/RqVcS; arc=none smtp.client-ip=209.85.208.51
+	s=arc-20240116; t=1720091801; c=relaxed/simple;
+	bh=OlUPwbm3C0naWrFm94xQDd2733KQLboF4jpJiDriZCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UsYYSFELs6x/03v4gHyoyQ3E8K+UI7KBgxxVQFY8lozL34LFDnxF8/RcPDdp0q45JwUdRwu7osGjBRwUm4XCT6Ix+6H40tXh32Ei7MLDR3sXkeiaaitCi33I842uhUZXjS4TuDSw7NcEDhFbccocDoPSkZxSfZils4YNGH0h/b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=njearGOw; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57cc30eaf0aso343840a12.2;
-        Thu, 04 Jul 2024 04:12:37 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fb3cf78ff3so1875875ad.0;
+        Thu, 04 Jul 2024 04:16:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720091556; x=1720696356; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BnBRTBk9+SJHSF1mQcVfRDaxS2dfZurj/v37IwkL+p0=;
-        b=Yn/RqVcSW/GkpXmRNxL9CDAjLNeranaqhiGBHHx2e3fe1xpOV3+r6nMdXnfvScIxzW
-         XPVBHZwIGj54EvnGF7GQvBQr4TE0jTPxFBAZVzBv49frD1Sux0KgGFRes2eVgUKtrXTi
-         toV1RVuma8Dr4pvrNxebdLgtbnU2Dl3832Uxmn0F0u4lnV7rzmFL/WgBd/1UqAYa6xab
-         7F1bCpjrU5l97pfXusNUrgcfXrD1VuP0MKMfTvQHVpu3rq3/kYUuiNggZ8YQemKv4MrI
-         RpsNkKeSDbvaDDep/3epdkLX+j8dKd81JcWJTVZ/tEMUSzHhuiZmXoJAH/CuLJ7+BkBw
-         YiuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720091556; x=1720696356;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=gmail.com; s=20230601; t=1720091799; x=1720696599; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BnBRTBk9+SJHSF1mQcVfRDaxS2dfZurj/v37IwkL+p0=;
-        b=FuGjRaiH2CUy03wfoIJ+/PoRSf1YYEVf5Sjk1u7ZUJado0T4gWQz4a518XPEGligUn
-         4OtD3xBnZX8rVTIWaWr2TlKSYy96sIWJQUn+ZSChj5mG7WslDRvB/kFYFjSEZp78FTBq
-         icHM6xTTJgGWfhyuXqUqiEXDnmdb6i9YvXWce20/FrVbrw0OO7DTnd7X//SSUSCQjSiV
-         a32ov0bGDCnAa1m+3LGgbKDPEPMVYGXh93eYIXena125hY5vBFcbsqV4X7gGBzBhrO1Q
-         V6pY/GFEnjQRvJlKxX+0Kg57rto5WmXPY6X+8BNexO+YsXPJgCIzpP2RUV79tLNnLU0T
-         UApA==
-X-Forwarded-Encrypted: i=1; AJvYcCWj7uWIIro15O9YCzM/M6spwzNCBOdH8IAMCyjJBl+8p/7z8dFZlWWMunhgsD6c+hngqMnM1pou3pbr4CTZ5V87PkrZm4/tEN2vaghX
-X-Gm-Message-State: AOJu0Ywr4YOlc0vcge6iTw+AeNdT6Mh35B8lB2iUQI5T5uaAItW968LT
-	+b+aJWQRpq7SWLskAnbfOwcGPmlIRBhCXYS4WmXxxgy1HhTXzWCj
-X-Google-Smtp-Source: AGHT+IGsH406YtT6ofg0bm00Lbm6uPc7tvsMKNj57uHp/K3zGu5KpLHW0DtPO9SChhDMSaF8w362vw==
-X-Received: by 2002:a05:6402:354b:b0:57d:3df:f881 with SMTP id 4fb4d7f45d1cf-58e5994de19mr1587321a12.3.1720091555885;
-        Thu, 04 Jul 2024 04:12:35 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58614d503b1sm8252921a12.67.2024.07.04.04.12.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 04:12:35 -0700 (PDT)
-Message-ID: <d74451d360a2d629ff08ef541ae48141a7f5b0e5.camel@gmail.com>
-Subject: Re: [PATCH 04/10] iio: adc: ad7091r8: Constify struct regmap_bus
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron
- <jic23@kernel.org>, Dan Robertson <dan@dlrobertson.com>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>, Jagath Jog J <jagathjog1996@gmail.com>, Linus Walleij
- <linus.walleij@linaro.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 04 Jul 2024 13:16:29 +0200
-In-Reply-To: <20240703-iio-cont-regmap_bus-v1-4-34754f355b65@gmail.com>
-References: <20240703-iio-cont-regmap_bus-v1-0-34754f355b65@gmail.com>
-	 <20240703-iio-cont-regmap_bus-v1-4-34754f355b65@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+        bh=VRWUHckXq3BNRPnOd0HDIJh7WrGHyU1e90iq+AknEGE=;
+        b=njearGOwZJf5/GjHOT/9PdYw1p4HGgM4Zf5z9G2wP317FzsbBF63rKHcNORaTIPLcx
+         GaIC1tDkfiWuL1MFl9VTBdqX8Mgm3CvG0S4idyqE3KpcDu1vXvOIT6jkWb1nfd7O7+ck
+         lwXGrKz23TUo7QRhIDAslLInNTVeToh25ppY6o0iz3Is+ZN/gJEqLFYIUT1cUeNYQqHe
+         5asCBQy414fME+M/ylQYxMOsJ5yQ3E+WDB/XI/mLWN/kWbgZYQ/hg0bocxLHw2u8qSCu
+         B+JtLRfSn90gMN2uykWii5P6BS92dx0F9H8CAWL8c5NEJs+GEHSWSSy2sbg2h6u5Y7DI
+         lVAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720091799; x=1720696599;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VRWUHckXq3BNRPnOd0HDIJh7WrGHyU1e90iq+AknEGE=;
+        b=FTTxkE4nTAqC32iweqJYtkFZpmonC/H9R5COzNqps19CxmvTyREY+/lzQPNPwSA3bJ
+         z2u3zWPf1OIWgSasKdHgWYXk4hK6I7e5qe/ZudVWBe4Xx/BO7cujCPiGz54GQDPZspEq
+         c2AcqZUmhOklm36TY1f2ma+Cut6IWf8YuGa9FF4VUa6UrtBFVn7LX5ftClqT6Bx5KZ9W
+         nJQCKmWALk/QRGviL1/XIxsJ1iEfPOs2X3XWLtbaV9RNpMY4YH9GPioPUkUueUtNEMrP
+         3KdWTtSUm6tscK58J/Xjf45K7WNDPs3F+N0MLIv5ACMMmvSOsO+0iB6cC8USldari0/H
+         oNRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyodfBdZP3tP6q5XdB0HR03YA/Kn3UD1gx7Ti96+YP2Y/mn+UD7nxqR/tG2EEzPgAcJ/KwvRsE8V5t+PnBpL1kgGSkDKMrKUUTPitjKd4yenUg5W9mzXKr1zyiVti2Mnawcth1bnbY16X1qbOFJ2lAwkDoOlm3OM2YbZjBFykucJIImsDTMFmm
+X-Gm-Message-State: AOJu0YyIwQ+2zf3nqw1KIKaipA3nd///7jJ0usghJQYifxt6k9gr/NAJ
+	GsVz1uUc2TT1MMCq+n6bG9YeDM28cVstwqFLAsSdluXdpYfRnMZ0
+X-Google-Smtp-Source: AGHT+IGWNH/d4DiodPEdB26qrebgsENU+INw6QtOxlRY2mFtLN0Dgz4d/3ACwf2nEdp+Zxpu9Y8Ymw==
+X-Received: by 2002:a17:902:e54f:b0:1fa:ff88:894a with SMTP id d9443c01a7336-1fb33e199bemr9149485ad.20.1720091799398;
+        Thu, 04 Jul 2024 04:16:39 -0700 (PDT)
+Received: from [10.150.96.32] ([14.34.86.36])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faceb78c6csm112263165ad.271.2024.07.04.04.16.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 04:16:38 -0700 (PDT)
+Message-ID: <6391f34a-b401-47e8-8093-d3b067f26c1b@gmail.com>
+Date: Thu, 4 Jul 2024 20:16:34 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tracing/net_sched: NULL pointer dereference in
+ perf_trace_qdisc_reset()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+ Sasha Levin <sashal@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Taehee Yoo <ap420073@gmail.com>, Pedro Tammela <pctammela@mojatatu.com>,
+ Austin Kim <austindh.kim@gmail.com>, MichelleJin <shjy180909@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, ppbuk5246@gmail.com,
+ Yeoreum Yun <yeoreum.yun@arm.com>
+References: <20240702180146.5126-2-yskelg@gmail.com>
+ <20240703191835.2cc2606f@kernel.org>
+ <2024070400-slideshow-professor-af80@gregkh>
+Content-Language: en-US
+From: Yunseong Kim <yskelg@gmail.com>
+In-Reply-To: <2024070400-slideshow-professor-af80@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-07-03 at 23:04 +0200, Javier Carrasco wrote:
-> `ad7091r8_regmap_bus` is not modified and can be declared as const to
-> move its data to a read-only section.
->=20
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
+Hi Greg, Hi Jakub
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+On 7/4/24 6:32 오후, Greg Kroah-Hartman wrote:
+> On Wed, Jul 03, 2024 at 07:18:35PM -0700, Jakub Kicinski wrote:
+>> On Wed,  3 Jul 2024 03:01:47 +0900 Yunseong Kim wrote:
+>>> Support backports for stable version. There are two places where null
+>>> deref could happen before
+>>> commit 2c92ca849fcc ("tracing/treewide: Remove second parameter of __assign_str()")
+>>> Link: https://lore.kernel.org/linux-trace-kernel/20240516133454.681ba6a0@rorschach.local.home/
+>>>
+>>> I've checked +v6.1.82 +v6.6.22 +v6.7.10, +v6.8, +6.9, this version need
+>>> to be applied, So, I applied the patch, tested it again, and confirmed
+>>> working fine.
+>>
+>> You're missing the customary "[ Upstream commit <upstream commit> ]"
+>> line, not sure Greg will pick this up.
+>>
+> 
+> Yeah, I missed this, needs to be very obvious what is happening here.
+> I'll replace the version in the queues with this one now, thanks.
+> 
+> greg k-h
+
+
+Thank you for your hard work.
+
+
+This fix need to be applied versions in +v5.10.213, +v5.15.152, +v6.1.82
++v6.6.22, +v6.7.10, +v6.8, +6.9
+
+
+Warm regards,
+
+Yunseong Kim
+
 
 
 
