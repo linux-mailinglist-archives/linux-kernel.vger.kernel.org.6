@@ -1,84 +1,150 @@
-Return-Path: <linux-kernel+bounces-241218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF30E92785F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:30:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A111927861
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CDED1C21C4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:30:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA591F251F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F391B0121;
-	Thu,  4 Jul 2024 14:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF4E1AED35;
+	Thu,  4 Jul 2024 14:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vm8Ngrou"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iEJuLrVk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63ABB1AE0AB;
-	Thu,  4 Jul 2024 14:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872421DA22
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720103401; cv=none; b=T9YjfrTBEquS5MWTQlu1wUh7USduLV6dHJX0TNS1+HjgykJNFMPoOJg5O0gtcLbGCqAxQL6BDjmArJ13PdtsccRZ2Cb8AqT4qFRzXrdPiBqtgQUagqMBMysOa8Mwq+A+QG3c7tL5Sg93zYXn2Effg+LKEpJjnCCZOZ0/LfQBods=
+	t=1720103422; cv=none; b=Uz0G4EYwNlLwyNkFnX5TWQsulVLqFEQKT8wfIZMWb/jvqYzEkrzzgjBD1Oea5OzMj22wVWV+Ev8TJh5iP/EIHk4Nn2b0cGYVF9nCVzpZHTW2g4VmUFG0SYS0nOsrBDfbsKISqtnROVKtcjyjG05XSnVDlyvcZhY2uKjuX3jV0Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720103401; c=relaxed/simple;
-	bh=eSy8SYdM2M3cyMC6FwpAcsaHVc53RoA/LXllcgBPfIY=;
+	s=arc-20240116; t=1720103422; c=relaxed/simple;
+	bh=rxkoVLANAgsiRg1BdlHYZ9ggrSz46s9m15oRQWmwMJ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TtaWYQ+6teJ3fwCaLoUICmfhyZQ9+EdviKDmMeSEVC3i0y/R9Sv8WynnEv27rcdRXC2acKPhgl99pKOJ+k6NigWY+xCWvw77GYNd+L7x+DKZg5q5zFvXfOdJ62eQoHfsXXb3rvcuubgSGcOE9d6w2A2e4r5EC0O/6UqFDT7DR/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vm8Ngrou; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Enu1N6gk1voQoov0gxRGHrtuHCfIvfGXa28Px1K5WpM=; b=vm8Ngrou02qz4Ib5mffZwNGQZl
-	IyaFQ3g17dLdwT8o+mc8kq8K1iuGCFU6/DwMXKkWeDCu+ln7bMJyl/jMqN6i1dynQImA/pHHP4pvY
-	2Ktm0BxsEy5JnNZGDr7GViK1/fQrzlJzPW5+ildcGB1eGQKdtvUd4Ga1R635z9bSN9RlbUIE6njyq
-	KSoyUFoDFIobHWvVBF1jV1SgwqI2ys7PU8eNZbofKaLcAt0kx3PfCXT+eXVyDcBImMt1IHXGRcP+K
-	lYYl5L6DjuSSj7LtgWvc2YAonwrhpJRSseSgkJ+jNHELCIY2TsAIP5L99YQX66FYVBsUB8O2TKGhQ
-	+9vF92DQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sPNSZ-00000002vlv-41mX;
-	Thu, 04 Jul 2024 14:29:20 +0000
-Date: Thu, 4 Jul 2024 15:29:19 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 03/10] readahead: allocate folios with
- mapping_min_order in readahead
-Message-ID: <Zoaxv23qdu4T84Sm@casper.infradead.org>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-4-kernel@pankajraghav.com>
- <98790338-0f86-4658-8dec-95e94b6d5c18@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RurjokVT9ag7dOwSjMmA7ZlIk7YImQUzojaUv7T2N0xViuBkqLfBHy7EAp1DvFjod9cZb8X55wnMLRP7HqDDJdASroUtGW4AxsRWvZfcId4y5QwRpi/qAvwSbHk+YW/4CxOUpdJXboEFEJqpMZ8R9EIJWwVMfkhz/ISfqlq3pg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iEJuLrVk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720103419;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w/AAPZgMjlC+NouAvQxaat3L1IUvbO4yc2zitpvelSI=;
+	b=iEJuLrVk8yN1I43ak2F+1nTz4dlcrRSc6E4nqvq5VLb9aEHNJJ6io7jx4utRYmtMnrDnyA
+	tPnxJKr6FQzRkUQWdURyWJ+SGXgnUE+QkipaYr40yZppIkBxxPgaDIHfm0028Fs5HOyhcd
+	D+wq4ewrGALhW/xcWjFSTD4fmU179tg=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-AF2siz_MPaqraf0t0EXHbA-1; Thu, 04 Jul 2024 10:30:18 -0400
+X-MC-Unique: AF2siz_MPaqraf0t0EXHbA-1
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-444f87a6c3cso1709161cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 07:30:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720103417; x=1720708217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w/AAPZgMjlC+NouAvQxaat3L1IUvbO4yc2zitpvelSI=;
+        b=RyU8KqyDyHzZruuB342gDsE8beaKFCFz1r/WmQrTPjyyWyk3vH+M+oCXJATLk/o7gN
+         injxw142NUDwSDTE57FbPXl3Isccniy3WzrWfRpEBNOA/od66aEg7nUPEf7ot5A/A7xx
+         zU3lTaN+ItEwCjFrD4k4ufUnKBdhqYdHfNsjSyGs10jvWKjNIRUJL5czjXG47XI9FCEN
+         iXfW40XcSeeZcIApiYnhnpJGJKjuD+BRlyIXlseAc7OFuCG5crM2ehVwrMzZwtmOgjm/
+         UFSEHgwjI3NCtFotvZMOqBIBZy+E1sWbpW/fscN5fguZdqjEbXzRiHOi7wW3c+sjkmx7
+         T6mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXlkwcaCXrn9kbNeY8s0viUAca7DKJTz0eotiDeGoRWdScecRiJAePKYVWpK0utlkf6KN3/ziRBNXaYWV3ivEmw8ROvZOGgRJqr+J0
+X-Gm-Message-State: AOJu0YyeoHmyh9jtrLwzOb1sq+0FmOvZGbF5P5Q/Zds6ttITGz0EbY1h
+	bRpTzWsRxdykcwJIdFEf8B1JOD43u/9vMDrPPg2hgTeUriZ32N24Dy+2NqnU3reTHfhYIydc7+y
+	xHZx5hmywwQJTRPllaFU8KOQMjACCfXo+/ww/iCf/Gm9XbmzL44K2D9FlYX1tkA==
+X-Received: by 2002:a05:620a:5373:b0:79d:6273:9993 with SMTP id af79cd13be357-79eee26ee8dmr156438285a.6.1720103417642;
+        Thu, 04 Jul 2024 07:30:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFj0u2XdT5CTZX+Koii9wFhsrVmpQ6ohxOQzjPcSeWjkjtqMUBPFWDoI8rAxzOAQLrY6Nq4MQ==
+X-Received: by 2002:a05:620a:5373:b0:79d:6273:9993 with SMTP id af79cd13be357-79eee26ee8dmr156435385a.6.1720103417282;
+        Thu, 04 Jul 2024 07:30:17 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d693060b2sm679117385a.104.2024.07.04.07.30.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 07:30:16 -0700 (PDT)
+Date: Thu, 4 Jul 2024 10:30:14 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Oscar Salvador <osalvador@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Muchun Song <muchun.song@linux.dev>, SeongJae Park <sj@kernel.org>,
+	Miaohe Lin <linmiaohe@huawei.com>, Michal Hocko <mhocko@suse.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH 00/45] hugetlb pagewalk unification
+Message-ID: <Zoax9nwi5qmgTQR4@x1n>
+References: <20240704043132.28501-1-osalvador@suse.de>
+ <617169bc-e18c-40fa-be3a-99c118a6d7fe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <98790338-0f86-4658-8dec-95e94b6d5c18@arm.com>
+In-Reply-To: <617169bc-e18c-40fa-be3a-99c118a6d7fe@redhat.com>
 
-On Thu, Jul 04, 2024 at 03:24:10PM +0100, Ryan Roberts wrote:
-> > @@ -240,12 +257,13 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
-> >  			 * not worth getting one just for that.
-> >  			 */
+Hey, David,
+
+On Thu, Jul 04, 2024 at 12:44:38PM +0200, David Hildenbrand wrote:
+> There are roughly two categories of page table walkers we have:
 > 
-> For the case that the folio is already in the xarray, perhaps its worth
-> asserting that the folio is at least min_nrpages?
+> 1) We actually only want to walk present folios (to be precise, page
+>    ranges of folios). We should look into moving away from the walk the
+>    page walker API where possible, and have something better that
+>    directly gives us the folio (page ranges). Any PTE batching would be
+>    done internally.
+> 
+> 2) We want to deal with non-present folios as well (swp entries and all
+>    kinds of other stuff). We should maybe implement our custom page
+>    table walker and move away from walk_page_range(). We are not walking
+>    "pages" after all but everything else included :)
+> 
+> Then, there is a subset of 1) where we only want to walk to a single address
+> (a single folio). I'm working on that right now to get rid of follow_page()
+> and some (IIRC 3: KSM an daemon) walk_page_range() users. Hugetlb will still
+> remain a bit special, but I'm afraid we cannot hide that completely.
 
-We'd have to get a reference on the folio to be able to do that safely.
-Not worth it.
+Maybe you are talking about the generic concept of "page table walker", not
+walk_page_range() explicitly?
+
+I'd agree if it's about the generic concept. For example, follow_page()
+definitely is tailored for getting the page/folio.  But just to mention
+Oscar's series is only working on the page_walk API itself.  What I see so
+far is most of the walk_page API users aren't described above - most of
+them do not fall into category 1) at all, if any. And they either need to
+fetch something from the pgtable where having the folio isn't enough, or
+modify the pgtable for different reasons.
+
+A generic pgtable walker looks still wanted at some point, but it can be
+too involved to be introduced together with this "remove hugetlb_entry"
+effort.
+
+To me, that future work is not yet about "get the folio, ignore the
+pgtable", but about how to abstract different layers of pgtables, so the
+caller may get a generic concept of "one pgtable entry" with the level/size
+information attached, and process it at a single place / hook, and perhaps
+hopefully even work with a device pgtable, as long as it's a radix tree.
+
+[Adding Jason into the loop too. PS: Oscar, please consider copying Jason
+ for the works too; Jason provided great lots of useful discussions in the
+ past on relevant topics]
+
+Thanks,
+
+-- 
+Peter Xu
 
 
