@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-240778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CDFA927280
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:01:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A7D592724E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A860B25863
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:01:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5BB61F220F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFA11AC454;
-	Thu,  4 Jul 2024 08:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA50616C6A4;
+	Thu,  4 Jul 2024 08:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d6PO2rpR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GtNsBPMG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCB31AC42D
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 08:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010FE145FE2;
+	Thu,  4 Jul 2024 08:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720083518; cv=none; b=OWo/Z4h73FFpKRE0u9oXqUlIps8WcfSKfmB+0kCIRLosCnLeaSp/ygSdxpZ3WVdMqJ2wAftGkHM9D5hGybOk9zHqCbZjKRyfs/BvzTaw4XI+6WP2CZ8Z7ciQb8Qn1C8XqNYA/KezY/Zpulbnk4AmCG4+BnFeOHayB0ZjG6/ThZo=
+	t=1720083445; cv=none; b=ddbsW9eUlqGidbL33XVN/WYe3gwKtLN6NJOhTOS1eyagZZ8pVNWmeQNQFtIO3kJWq/UJzP6sDJFFPHr0I6pNmsUid90maPi+BevxT73MCwYtUer4dGq/wyaLriWOF9LjJ95RnAbmbNKR5szqGhW2B8zfVSa4RUpBSRfggeAJq9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720083518; c=relaxed/simple;
-	bh=rhrUK4kSWPb2+QOzvaLUotusmiPqRE5EK/ab8QLEDrs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=As7HgK0eB0pRY7XybZGUpGAXhCANTlb4zTunZS5H9WvqRWUD7UVFLCAKqAyti27XvkgCigXPm1Jk39B4aZk197tKG7ovWLp02GoIzvD0987xToQR3Pru1tRaHx/T9rpot9YxOr4Hj4tVxddWJuH5TrkM0JyCCCF97FQbvXcDJgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d6PO2rpR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720083515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TCsarsE51WIWuJR3kqpDN3VLDdV6+uotyzVsuXmGHHw=;
-	b=d6PO2rpRKE84etXj2bN5Zz3Xj33r03zjIFIImbmf1MYIv/O13DhIAc+ku4WaCmp++DbqUH
-	opoq3Vu86T7IzMjdmZ5QdYR4DjOArvCZiC3pdyKX5Dik9VHQewq/eZyvYZqQ0DVXw3AaYd
-	BDeXbI0up85/415ImbJy+3kUwOeToJg=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-582-SYhQ_q6UNRO4vDgw4xyv9Q-1; Thu,
- 04 Jul 2024 04:58:30 -0400
-X-MC-Unique: SYhQ_q6UNRO4vDgw4xyv9Q-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E7DE019560B0;
-	Thu,  4 Jul 2024 08:58:28 +0000 (UTC)
-Received: from antares.redhat.com (unknown [10.39.194.59])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B6697195605F;
-	Thu,  4 Jul 2024 08:58:24 +0000 (UTC)
-From: Adrian Moreno <amorenoz@redhat.com>
-To: netdev@vger.kernel.org
-Cc: aconole@redhat.com,
-	echaudro@redhat.com,
-	horms@kernel.org,
-	i.maximets@ovn.org,
-	dev@openvswitch.org,
-	Adrian Moreno <amorenoz@redhat.com>,
-	Pravin B Shelar <pshelar@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1720083445; c=relaxed/simple;
+	bh=2SNsrirCRAM+Duro9c+Ph0X+ZRzsiprVuMF6Kwy+zR4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FLcmgo2hWvy7RH4p75zBoLB6RZrCZmKtrTqi+v53jK13L9GEuMriXZxhKZtI4WXBbv+Sz2ACFEmPUMoVLcreRpbCgaAtnwl/MCbi6G6TeHbEYhz7Qac5/n434NWl1/R+MKq9G1A9UdNHY58g+UeX2/iRtYBPB58lYU8b+1rVrVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GtNsBPMG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A321C3277B;
+	Thu,  4 Jul 2024 08:57:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720083444;
+	bh=2SNsrirCRAM+Duro9c+Ph0X+ZRzsiprVuMF6Kwy+zR4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GtNsBPMGFbKMe/pAZerR6r3Fg9dkhSa5M6O7Xy6sOrM4wQEhKWlpTlaNzIu1Rr7WS
+	 /Hyit/oDRhx1bBf9fjQKHLzzEwtS8Sp0TmJ8iZHR0ywI/r0Z+G5rHd58GbaYEuHvnk
+	 A80THzVx2Gl806sB3xEDLF2BPqt+TqP/Cd/lkX9rdYcrn36IjzZH1BYNTT77Pzm5xT
+	 oH3dGVKBrUbleb+KAB7p2c82+IM1/yN8S1mkxQ1jE114/HVd4YFnD1LnWJKBzlZrC+
+	 wy++VZhsyq5rBFEE8mYJiaKVNlJWLAKisJbGT2MK2PQclsgq0TkGxwkAhec3992fBz
+	 N6GhqroE8UyTA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v9 09/10] selftests: openvswitch: parse trunc action
-Date: Thu,  4 Jul 2024 10:57:00 +0200
-Message-ID: <20240704085710.353845-10-amorenoz@redhat.com>
-In-Reply-To: <20240704085710.353845-1-amorenoz@redhat.com>
-References: <20240704085710.353845-1-amorenoz@redhat.com>
+Subject: [PATCH v3 0/3] Address !chip->auth
+Date: Thu,  4 Jul 2024 11:57:01 +0300
+Message-ID: <20240704085708.661142-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,41 +64,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-The trunc action was supported decode-able but not parse-able. Add
-support for parsing the action string.
+Unless tpm2_sessions_init() is called, then chip->auth ends up being a null
+pointer, which is ignored by authenticated sessions code. These patches aim
+to fully address the bug, and hopefully still make into 6.10-rc7.
 
-Reviewed-by: Aaron Conole <aconole@redhat.com>
-Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
----
- .../testing/selftests/net/openvswitch/ovs-dpctl.py  | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Tested on x86-64 with:
 
-diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-index 4ccf26f96327..e8dc9af10d4d 100644
---- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-+++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-@@ -863,6 +863,19 @@ class ovsactions(nla):
-                 self["attrs"].append(["OVS_ACTION_ATTR_USERSPACE", uact])
-                 parsed = True
- 
-+            elif parse_starts_block(actstr, "trunc(", False):
-+                parencount += 1
-+                actstr, val = parse_extract_field(
-+                    actstr,
-+                    "trunc(",
-+                    r"([0-9]+)",
-+                    int,
-+                    False,
-+                    None,
-+                )
-+                self["attrs"].append(["OVS_ACTION_ATTR_TRUNC", val])
-+                parsed = True
-+
-             actstr = actstr[strspn(actstr, ", ") :]
-             while parencount > 0:
-                 parencount -= 1
+- TCG_TPM2_HMAC disabled.
+- TCG_TPM2_HMAC enabled.
+- TCG_TPM2_HMAC enabled, and "/* rc = tpm2_sessions_init(chip); */".
+
+For drivers that do not initialize with tpm2_chip_bootstrap(), the lack of
+auth sessions is reported once per power cycle by:
+
+"tpm tpm0: auth session is not active"
+
+This is expected output for the following drivers:
+
+* tpm_ftpm_tee.c
+* tpm_i2c_nuvoton.c
+* tpm_ibmvtpm.c
+* tpm_tis_i2c_cr50.c
+* tpm_vtpm_proxy.c
+
+They need to later on enable auth sessions, if they eager to. This
+patch set only fixes any collateral damage of not doing so.
+
+v3
+* Address:
+  https://lore.kernel.org/linux-integrity/922603265d61011dbb23f18a04525ae973b83ffd.camel@HansenPartnership.com/
+* Git: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=auth-null-3
+* Did a full QA run given the changes in config flag handling.
+
+v2:
+* Rebase to commit 8a9c6c40432e ("Merge tag 'io_uring-6.10-20240703' of git://git.kernel.dk/linux").
+* Couple of cosmetic fixes.
+
+Jarkko Sakkinen (3):
+  tpm: Address !chip->auth in tpm2_*_auth_session()
+  tpm: Address !chip->auth in tpm_buf_append_name()
+  tpm: Address !chip->auth in tpm_buf_append_hmac_session*()
+
+ drivers/char/tpm/Makefile        |   2 +-
+ drivers/char/tpm/tpm2-sessions.c | 415 ++++++++++++++++++-------------
+ include/linux/tpm.h              |  74 ++----
+ 3 files changed, 257 insertions(+), 234 deletions(-)
+
 -- 
 2.45.2
 
