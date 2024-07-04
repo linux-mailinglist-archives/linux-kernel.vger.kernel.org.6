@@ -1,125 +1,70 @@
-Return-Path: <linux-kernel+bounces-241191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F3E927819
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:19:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89ABA927817
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A25031C22612
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:19:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BABB81C22201
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BE61AEFF0;
-	Thu,  4 Jul 2024 14:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGcZvGhp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D021AEFEC;
+	Thu,  4 Jul 2024 14:19:01 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5BE1AED39;
-	Thu,  4 Jul 2024 14:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3441ABC25;
+	Thu,  4 Jul 2024 14:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720102751; cv=none; b=I6QYp/eTJ6VTvkpTq4StUw95ZBJZn0F9dGMOYR45kFRLovpH1hwP+8HNLDNovNGBEp70aO39YT4RXPuOEq+2NBX6u6HMMj3dMgRGp/57JFWYkDiQcaWDDD4zgxpCSu8Mv2H6Qxk3lrhtHnDjIbpRo8YhjdChMl2aNvjJXbWE+5M=
+	t=1720102741; cv=none; b=WX+bnHIuf5EkFdvyhvJdfyr8UUydcNMzBvs1UnHsxixoOoHzMZKGN8Wbb3GierGgZ/y1brpy2NRhm3Tu0b7gdapqWfKDhj4NJIMiHgenSRq2q2djySNOV6z52Cjxl1hQnv/pAeQj30ZfG9cVfo7uREjXMqC3LD5VY8qPacp/NFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720102751; c=relaxed/simple;
-	bh=4TqqG+6gW7sExbSc1fa3XwDb/nyy6iV4f8aqglDYIS8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=clucMDup7ZYHwBMHUJ3Pp/gcI9q7pzoBFCD0+46xTJf/cPid2sdHgYWsw9bqpag5fDskXjmwoa4MNByXWttJSrVXkqkXk4rCnGhnUc8aLw6PVXgCZsijIjGzAbzuh/sy9yxZ8XagtDB9TJ5geCJ7uaq66pImJrcQEiv6TQ4pmJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGcZvGhp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22FC1C3277B;
-	Thu,  4 Jul 2024 14:19:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720102749;
-	bh=4TqqG+6gW7sExbSc1fa3XwDb/nyy6iV4f8aqglDYIS8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mGcZvGhpiCFJxCg5MFKIgFwN0DjdrJzgg305KWBMNwcvSwheMjvg2+DMCwiYNlRMO
-	 8wezWa3GlSRKqZtHGmERCrSRGBJ7pGKpwlngEspfCif86OY6EUt2SN4ESIwkpoI1VD
-	 0+REjFXfs2ImiHANv2CM91Ic4PxkUsiM8vAotyUD4n5VFHBc7yF9Pk6GszNM3DJ5ja
-	 egCGJEAu8lAySsVBZQty5h/GV+K+e1XfbRo+0eQuJSDfEuezuPY129BrwhnhCxMSYa
-	 Akmrv0zLO4CTeVBxV12AT1rIF0Vcztq/kposhNyOyzGaIk+p7v/NR85DQeOJrtgVcv
-	 4QZx3A5e/eFQA==
-From: Will Deacon <will@kernel.org>
-To: Joerg Roedel <joro@8bytes.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	Yi Liu <yi.l.liu@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Kalle Valo <kvalo@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	mst@redhat.com,
-	Jason Wang <jasowang@redhat.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	ath10k@lists.infradead.org,
-	ath11k@lists.infradead.org,
-	iommu@lists.linux.dev,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/21] iommu: Refactoring domain allocation interface
-Date: Thu,  4 Jul 2024 15:18:56 +0100
-Message-Id: <172009858593.2049787.5200500337719932334.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240610085555.88197-1-baolu.lu@linux.intel.com>
-References: <20240610085555.88197-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1720102741; c=relaxed/simple;
+	bh=ye510cXC3aVwECKsVGygh7Jks+sL52CExzDAGCpTe58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fk9yyrHEhVtf3MQbgky2SvKW1kCv3bc+b4K9oEZEOykTJEvBoMKcMqNe1hEvNANSkFBZ6kmChDeKSrq/uCiB360lxB++aFSIFCCNFS9LEUIl5hs/E+pi+iyHsWKoFJWP2qhpyZvMgDmgTnEx5S3AQe4870aNcAnuoSdd2C5z5BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8585C3277B;
+	Thu,  4 Jul 2024 14:18:58 +0000 (UTC)
+Date: Thu, 4 Jul 2024 15:18:56 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v2 2/4] arm64/fpsimd: Discover maximum vector length
+ implemented by any CPU
+Message-ID: <ZoavUGcYLULHpVfg@arm.com>
+References: <20240606-kvm-arm64-fix-pkvm-sve-vl-v2-0-c88f4eb4b14b@kernel.org>
+ <20240606-kvm-arm64-fix-pkvm-sve-vl-v2-2-c88f4eb4b14b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606-kvm-arm64-fix-pkvm-sve-vl-v2-2-c88f4eb4b14b@kernel.org>
 
-On Mon, 10 Jun 2024 16:55:34 +0800, Lu Baolu wrote:
-> The IOMMU subsystem has undergone some changes, including the removal
-> of iommu_ops from the bus structure. Consequently, the existing domain
-> allocation interface, which relies on a bus type argument, is no longer
-> relevant:
+On Thu, Jun 06, 2024 at 04:21:44PM +0100, Mark Brown wrote:
+> When discovering the vector lengths for SVE and SME we do not currently
+> record the maximum VL supported on any individual CPU.  This is expected
+> to be the same for all CPUs but the architecture allows asymmetry, if we
+> do encounter an asymmetric system then some CPUs may support VLs higher
+> than the maximum Linux will use.  Since the pKVM hypervisor needs to
+> support saving and restoring anything the host can physically set it
+> needs to know the maximum value any CPU could have, add support for
+> enumerating it and validation for late CPUs.
 > 
->     struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
-> 
-> [...]
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-Applied a few of these to iommu (iommufd/paging-domain-alloc), thanks!
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
-[01/21] iommu: Add iommu_paging_domain_alloc() interface
-        https://git.kernel.org/iommu/c/a27bf2743cb8
-[02/21] iommufd: Use iommu_paging_domain_alloc()
-        https://git.kernel.org/iommu/c/26a581606fab
-[03/21] vfio/type1: Use iommu_paging_domain_alloc()
-        https://git.kernel.org/iommu/c/60ffc4501722
-[04/21] vhost-vdpa: Use iommu_paging_domain_alloc()
-        https://git.kernel.org/iommu/c/9c159f6de1ae
-[05/21] drm/msm: Use iommu_paging_domain_alloc()
-        https://git.kernel.org/iommu/c/45acf35af200
-
-[10/21] wifi: ath10k: Use iommu_paging_domain_alloc()
-        https://git.kernel.org/iommu/c/d5b7485588df
-[11/21] wifi: ath11k: Use iommu_paging_domain_alloc()
-        https://git.kernel.org/iommu/c/ef50d41fbf1c
-
-[14/21] RDMA/usnic: Use iommu_paging_domain_alloc()
-        https://git.kernel.org/iommu/c/3b10f25704be
-[15/21] iommu/vt-d: Add helper to allocate paging domain
-        https://git.kernel.org/iommu/c/9e9ba576c259
-
-Cheers,
--- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+I guess the %lu suggested by Fuad can be done when applying the patch.
 
