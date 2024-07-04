@@ -1,117 +1,153 @@
-Return-Path: <linux-kernel+bounces-240842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06EB92737C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:59:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B2A927386
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E25921C21D2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:59:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E559283E99
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1661AB8F6;
-	Thu,  4 Jul 2024 09:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AE31AB902;
+	Thu,  4 Jul 2024 09:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lGzONv9m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s8FQsX16"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7AD18FC81;
-	Thu,  4 Jul 2024 09:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA69D1AB506;
+	Thu,  4 Jul 2024 09:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720087143; cv=none; b=MSW0VHEGIDHRE8si+RTB4EzIssCsUhLyjfFy3J5qbL0UI+Z7YDiNaIu7oQmTuR6psGc7X1c7Ergj4nP7glYFvM6rh0MftslnuHeG1J8q0w11gr2PVOkIG3wCqNTCqyLDSSRqgXgbTcsvp7kGRdeW8Qi7ZalrhaOYKpd7dYvaBxU=
+	t=1720087193; cv=none; b=SVBPxJiCAy+BYAo9cp4miSnBvYLAZBDm9mV4OKAbiDkgiHsLowV2I9/3cyUiq3KCD2slxXrMvwIliexH4vMTGP6+u057OL4fFqN4oNeScWsFNT9WvEfvlF4WkQEfUP/UiFZ4jXfUBPZfLJ7tnlMECsgiI68vukz2sxPENYBYaVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720087143; c=relaxed/simple;
-	bh=qwr0HlQT+E3A2hy1BA/HWVICCAADse5XNZIpsoHJffU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mX3xkLKnBA1nt5E3L6RUJHphp43tZEBzyggkGAhaja5sZsARTMOrEnEC3P5ZlBhC8FhogV4TOJjHri2pHly0BIRo3Wio82WXgis8Wy/qj8RwkSVzIc5Txwni+1hNZkbn17GC5SCdf8+uKXD+H5lS7jxn8Eswu+Ut/yxCYpaP1nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lGzONv9m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB81C3277B;
-	Thu,  4 Jul 2024 09:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720087142;
-	bh=qwr0HlQT+E3A2hy1BA/HWVICCAADse5XNZIpsoHJffU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lGzONv9m4mYXt24+d067cOIRY3kEXZWZE+UrGj8RfjMB7mu8B68bEj5Q+zfS6QhKp
-	 lFXxg3kOqVAwM6O8k5G2E0i4J0Z/Qjm6f8Ep312Wy74HrzLeiLJgW9VQfmJizA59J3
-	 v6H9U/Z2HNTrkO1PtvkaMJGD7eWWEvV6k6ey31dz4SX7ynl4m4PM7CSAEBjJLzTH5P
-	 mimkOxbXCg8UbyvnQ7vrTF93vI3kuyEhdg3ULjRgd+5U3ppMpDNYC3pDo3wIiZFIY1
-	 aR8sZE2GSwsuNj2OZfh3kF3/gygUk2mspCjA0mnDEISdrg566irxQipw3VmRKbGm9T
-	 rEaBH9VsIMZLw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sPJEz-000000007iG-28dB;
-	Thu, 04 Jul 2024 11:59:02 +0200
-Date: Thu, 4 Jul 2024 11:59:01 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] serial: qcom-geni: fix hard lockup on buffer flush
-Message-ID: <ZoZyZcVyLvI9t4fH@hovoldconsulting.com>
-References: <20240624133135.7445-1-johan+linaro@kernel.org>
- <20240624133135.7445-2-johan+linaro@kernel.org>
- <CAD=FV=VZXnnbwTNc6dSqZvyCUc0=Wjg9mvBYsA1FJK3xR6bDEg@mail.gmail.com>
- <ZnrW5EcGKGYzS8qf@hovoldconsulting.com>
+	s=arc-20240116; t=1720087193; c=relaxed/simple;
+	bh=UF47+XUuv9s9PwibAJ5mZ7A9Nmb6w9fEqaLcPaPyT6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lvaQQwu0Xw0dOg83978B5aI9ED7vAgD0EqtMWjiIZ7uoj9t+fbOEs7s56PGC8nVWXA+tamzQ+ciG4E0rpL0/PX34+MmmZbV3Exek+/L48MyG4FSyE84YSMQY4iHIiXFKT/+FWd/AsBPKdjaGypwVTogGF97VtouLpGKN3GN0Es4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=s8FQsX16; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4649xNIJ042282;
+	Thu, 4 Jul 2024 04:59:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1720087163;
+	bh=MBQIYIi7yNxKONGlWf4PZynY85z1j+VFsd0JANSa7lQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=s8FQsX160NRNDL439QkMuqTP5+SOdLbAuxFwGWSr5YSIKzpuc9oa33B0LmRLwEyg4
+	 +tG54OrhoaABwCX3e+tRo2vNBjfyBcpqIbNh2BjuWpxHSrOtYCFIwvfEVXUlitxjS5
+	 wtCGpiNebtrgPwgavRtvVZqHgiSIUiNHzChog4jY=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4649xNjr080739
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 4 Jul 2024 04:59:23 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 4
+ Jul 2024 04:59:22 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 4 Jul 2024 04:59:22 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4649xHxt063842;
+	Thu, 4 Jul 2024 04:59:18 -0500
+Message-ID: <8aabc426-4dd2-43ce-bb79-9aef43eb1ac2@ti.com>
+Date: Thu, 4 Jul 2024 15:29:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZnrW5EcGKGYzS8qf@hovoldconsulting.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 0/6] net: ethernet: ti: am65-cpsw: Add multi
+ queue RX support
+To: Roger Quadros <rogerq@kernel.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>,
+        Julien Panis <jpanis@baylibre.com>
+CC: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        <srk@ti.com>, <vigneshr@ti.com>, pekka Varis <p-varis@ti.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20240703-am65-cpsw-multi-rx-v3-0-f11cd860fd72@kernel.org>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20240703-am65-cpsw-multi-rx-v3-0-f11cd860fd72@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Jun 25, 2024 at 04:40:36PM +0200, Johan Hovold wrote:
-> On Mon, Jun 24, 2024 at 10:39:07AM -0700, Doug Anderson wrote:
-> > On Mon, Jun 24, 2024 at 6:31 AM Johan Hovold <johan+linaro@kernel.org> wrote:
-> > >
-> > > The Qualcomm GENI serial driver does not handle buffer flushing and used
-> > > to print garbage characters when the circular buffer was cleared. Since
-> > > commit 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo") this
-> > > instead results in a lockup due to qcom_geni_serial_send_chunk_fifo()
-> > > spinning indefinitely in the interrupt handler.
-> > >
-> > > This is easily triggered by interrupting a command such as dmesg in a
-> > > serial console but can also happen when stopping a serial getty on
-> > > reboot.
-> > >
-> > > Fix the immediate issue by printing NUL characters until the current TX
-> > > command has been completed.
 
-> > I don't love this, though it's better than a hard lockup. I will note
-> > that it doesn't exactly restore the old behavior which would have
-> > (most likely) continued to output data that had previously been in the
-> > FIFO but that had been cancelled.
+
+On 03/07/24 7:21 pm, Roger Quadros wrote:
+> Hi,
 > 
-> Ah, yes, you're right. I went back and compared with 6.9 and the effect
-> was indeed (often) that the machine felt sluggish when you hit ctrl-c to
-> interrupt something like dmesg and the driver would continue to print up
-> to 4k characters after that (e.g. 350 ms at 115200).
+> am65-cpsw can support up to 8 queues at Rx. So far we have
+> been using only one queue (i.e. default flow) for all RX traffic.
 > 
-> The idea here was to fix the lockup regression separately and then have
-> the third patch address the buffer flush failure, which could also be
-> backported without depending on the kfifo conversion.
+> This series adds multi-queue support. The driver starts with
+> 1 RX queue by default. User can increase the RX queues via ethtool,
+> e.g. 'ethtool -L ethx rx <N>'
 > 
-> But running with this series since yesterday, I realise there are still
-> some unresolved interaction with the console code, which can now trigger
-> a soft (instead of hard) lockup on reboot...
+> The series also adds regmap and regfield support to some of the
+> ALE registers. It adds Policer/Classifier registers and fields.
+> 
+> Converting the existing ALE control APIs to regfields can be a separate
+> exercise.
+> 
+> Some helper functions are added to read/write to the Policer/Classifier
+> registers and a default Classifier setup function is added that
+> routes packets based on their PCP/DSCP priority to different RX queues.
+> 
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+> ---
+> Changes in v3:
+> - code style fixes
+> - squashed patches 5 and 6
+> - added comment about priority to thread mapping table.
+> - Added Reviewed-by Simon Horman.
+> - Link to v2: https://lore.kernel.org/r/20240628-am65-cpsw-multi-rx-v2-0-c399cb77db56@kernel.org
+> 
+> Changes in v2:
+> - rebase to net/next
+> - fixed RX stall issue during iperf
+> - Link to v1: https://lore.kernel.org/r/20240606-am65-cpsw-multi-rx-v1-0-0704b0cb6fdc@kernel.org
+> 
+> ---
+> Roger Quadros (6):
+>       net: ethernet: ti: am65-cpsw: Introduce multi queue Rx
+>       net: ethernet: ti: cpsw_ale: use regfields for ALE registers
+>       net: ethernet: ti: cpsw_ale: use regfields for number of Entries and Policers
+>       net: ethernet: ti: cpsw_ale: add Policer and Thread control register fields
+>       net: ethernet: ti: cpsw_ale: add policer/classifier helpers and setup defaults
+>       net: ethernet: ti: am65-cpsw: setup priority to flow mapping
+> 
+>  drivers/net/ethernet/ti/am65-cpsw-ethtool.c |  62 +++--
+>  drivers/net/ethernet/ti/am65-cpsw-nuss.c    | 370 ++++++++++++++++------------
+>  drivers/net/ethernet/ti/am65-cpsw-nuss.h    |  36 +--
+>  drivers/net/ethernet/ti/cpsw_ale.c          | 287 +++++++++++++++++++--
+>  drivers/net/ethernet/ti/cpsw_ale.h          |  62 ++++-
+>  5 files changed, 609 insertions(+), 208 deletions(-)
+> ---
+> base-commit: 84562f9953ec5f91a4922baa2bd4f2d4f64fac31
+> change-id: 20240606-am65-cpsw-multi-rx-fb6cf8dea5eb
+> 
+> Best regards,
 
-I've reworked my series to avoid the remaining lockup, which was due to
-v1 not handling some cases where cancelling a command left stale data in
-the fifo.
+For this series,
+Reviewed-by: MD Danish Anwar <danishanwar@ti.com>
 
-I've also reordered the patches to avoid printing NUL characters as an
-intermediate fix.
-
-Johan
+-- 
+Thanks and Regards,
+Danish
 
