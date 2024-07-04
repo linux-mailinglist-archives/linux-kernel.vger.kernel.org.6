@@ -1,941 +1,819 @@
-Return-Path: <linux-kernel+bounces-241356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E5C927A2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:32:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B850927A37
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB921C21E40
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:32:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6591285975
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320491B29AD;
-	Thu,  4 Jul 2024 15:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982691B121D;
+	Thu,  4 Jul 2024 15:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mC3mZc4T"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jHRr7FSJ"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D66A1B3F18;
-	Thu,  4 Jul 2024 15:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C731B012B
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 15:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720107035; cv=none; b=Oxf/Zh7NifZsoZg9vv6OUlKQljpayQtbt/QSqnd4fLQlyMQkPHy/ZXxKt/IDMc2g59qY8p+d86TUygCGl1NYS6Y1VaHWI55pM3/CU7/CLIGvE8YqaHZnhFWTZKq8KHjCEuSt5UDNKX9HuYFWoqm5mME/Uf3IsgVpITe/GRyUsqo=
+	t=1720107145; cv=none; b=UzkswHDuZIeAPM3aUcxMqOFia8GdgmKvppHy60N4My8Vh1OpMgrn/woMNSOPndsNGh+pn/5/A7GWdqJijEUTqpDsNSW9d1TZNRK9sR42nQFFy/ioO6y4ucD7da+z2G/IlJSRsWW1rwrNU+zzJybYEvfsI45IDjN0Q2ZyeR4syYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720107035; c=relaxed/simple;
-	bh=j2GcriT/VxgWg4szRd9Pkb05CGhj3ItaZ89P8nYEWmM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oo6MYg8qblLfonkxnNCu6N0CdMoEGE2vWoQwRpoStcXiFvmO38yfGvj/kFT2zxz5Wxza2b5AWPPmBQ3O83HitGSTKmNK8b98xP/nTGfoeAv7c6VopmS6Z7fPMRD3e/tBffP77UgCKmHgl5fuvs0U7wo9qXU59GLoYxttGVyLw94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mC3mZc4T; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6b3so248970a12.1;
-        Thu, 04 Jul 2024 08:30:32 -0700 (PDT)
+	s=arc-20240116; t=1720107145; c=relaxed/simple;
+	bh=9R+/eButOiyXvYeNw5y2exZZfnTt7jpirhYe5WasaAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q3Y98nhKm2+74r5m66AyCvLgA7HIsNFuYw0ZzjlPcYqT8u4ckTsTsqoyjss+4Se/I8TpMc2ijSsKXsDBiB3ua2HD7A27XE2kzgYjlrHuMVbcrHkj8wND/nYc8MYAI7YZHC3j/CbIO65iEXWiOEMCTcJVhiM1Y8WKOD8Byxy6b8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jHRr7FSJ; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70b09cb7776so144035b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 08:32:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720107031; x=1720711831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uSwZnqxpWej0+u9YwzFF6rBtGvZLPjnW92AVUoJT8F8=;
-        b=mC3mZc4TfRvKVDAk8wcMz1W16Y0eRt6mNRzDWtekIKBVlhbkwB1pz+uZ4axyKvJGH2
-         erpPFqs40RhLESqw0W2tWmWLBXDS9Pfql3izqQm7ylQ2SukfoBZP92YCdLrlP/wDnMTM
-         KuIs/BoDtnPLTn4LCT3IJtZ1NWfCs439ue3gVt1UUvzjBLW8qwoj75y3YxpG7iaagFP+
-         ij63kv17IQNNT29ITV+xIlHDurHaAcJQR9fyS14I+SEKclOUCfFdRof5bD0r33+OXw6F
-         a7Ye2r1RWztAB+TYiCVJuq8jteqgzlzjhkdDtZafzDWnD03vX2l8aNELYj2Ir2jlhwsn
-         +GjA==
+        d=linaro.org; s=google; t=1720107143; x=1720711943; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mSGrEQy0aX8f6J+8RE+ql5gImC+IeH9xrmKA3ykCTuA=;
+        b=jHRr7FSJBmak00Qn7UnENtXZP8gn0PLg2kVLPb/RAVyj+Ryw4DGrGH4R2byfV4rO+X
+         Dq34/jj/GMpZSVeOSuo2rOWdGTumkt7qrAAmxVbxPNFpGYr7Gmial1j3iXl3QHMbk+JM
+         qKqhZt0oHCQP4u7Q4jQ8DyFcZLFgk9HwtuXqqdKUR30N18WitSuFImer7dZHGByIa07X
+         ANw7JCA1hBZRZUN419zw0Ify7yiqmRrp0X9CnRX7MxYiIu3reKpeeV+sKPApz4w2QcYv
+         2650vHyuShG793egRmiaauLhWWG9uSBs4/ekulgZj6N4NQSZ+rCNus28zoslo3pQ6WTY
+         QryA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720107031; x=1720711831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uSwZnqxpWej0+u9YwzFF6rBtGvZLPjnW92AVUoJT8F8=;
-        b=jU9cM339moqouWMiMLq8ZoRyxwysETkj4CRPcFCdW1ULFIoNlAMwek35jf8hHGsHTe
-         KIANv94V2GtY/+GCnz27SHsRCnGjqkbA2fIwMpFbVnHN/kgNKI+Gi9EHrtr9cZd2/BdC
-         IhyC+FTlM1mU64tQGduvkflQwimx8ffE0tPJzLjjz3zgEq0v9mymh4OUJTGn/eYYqmJE
-         HncGa65EecHDYyzK2SoCOyDjk3cu+Q6AoH0qhKoYSwz6cXfADHDVPkvLPmhIBche/WH0
-         UnOJtfDW/DABI9fEcEGjSCfLMBKOceFm5S8O7vMwI1e/iIolVQkulgkQfEM+cys6GM0F
-         unCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHMM7A66tb7tMmhl8Nxtm+TyACBEQet+WfmQF9tdi7mG3NvSRsLtGJxC1o4vD6sgk4i6CffvSO0/LRYRRYQ4Qn1n+cjunvN0t5+0Rlw5AbcerCg5rV1LBB8P9SeOzCneNNNPvUIeBm2SJM+LKnu6yCaEqWNc/MHv0dqQPUjSRiYmwkHw57klH7Pf4jCnrFnjQGWXT1WSRlqh9fSqH8fOi0cn50j2j9cUa2Co37d/fXbSoM9MVsq2X7Riw4SmtVj84JYyjJlFWlaxnuoM4vK19w48W+wgZuejWHRdq4ntpidpZxmt523ORzO+dTw1YvqsTTvUAlfOZ9RXq6a0b4FyVqfXMDYOVw3KG5kS9/UEyz9RHuVXihb1THftuAum5z8xm2C5/v8EO1xg3aZmNl+UHkKsw1+c11nL6bipBN1jOiPu6sx3TaMmHY+Rl8TxqF0mLMkd4Fr833lQjkscPdTX0NvKSsyg+eaNiyO60wtA==
-X-Gm-Message-State: AOJu0Yzu1j3+PU03IfKADGJhIKZdbLCZLe143SNM0FKifTmBrOAGqLNW
-	HiiWFemxS1nBg939ACgWHSk7aVsbPAVGOrMbSIATmazvBSSMxamSmDlR3wElkFoTA5K6pt0ogqn
-	n9SqrpNNh5nMk03lFN11fQ/uX5CY=
-X-Google-Smtp-Source: AGHT+IHoY2xMo6fT8IqjMMjJ/GvwXVBMRDoHcNkGaj5nt7hJV06IONAaQUKGC+5NMBKt5AONzoUyc2GS1FfdjfZJVNk=
-X-Received: by 2002:a05:6402:b29:b0:58c:3252:3ab8 with SMTP id
- 4fb4d7f45d1cf-58e5bd7d6f3mr1729511a12.37.1720107030590; Thu, 04 Jul 2024
- 08:30:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720107143; x=1720711943;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mSGrEQy0aX8f6J+8RE+ql5gImC+IeH9xrmKA3ykCTuA=;
+        b=kVW0UFjXEkfcjsqWkHlQj/erp3ycp/aFzNCj9gBb3uMg2RLVIMXs6xU0hPAeYvUSc0
+         uHHIHXZnuiINOC19GyYm+3yoIcbSk8fdThXz3lZkEe9AJxSNuQQB6npeXRnFt5v+s6wC
+         HJQcR5ipvUR+o6mG/g3i03ynWOXwS7y9FJSzRz4Da8/5H5u8RSdtyFTkKeEfQgnDrgt5
+         +QUDvfVJos9w9YhUTMu1ePeHvfrjXcjM+sJ3uf7v6ZdH0nVMR/YpnUTiIsvh4vTBaAHN
+         JaiEbYCSCD08n0aLKBbbezlHTjs+YNu7FuFNn3TBnaTDp3E9TaYNXNc/ogI6Xx5UYfOv
+         /o1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVi0LXFnW2Li57JHLVkURYYpEOKdJ41b3aE5sAXZfa/0FIQuNjlyoYGRkoL/3/WmaiK/SRnZsyA8tHcbuk2AknHUdGTJgan2uqrLibm
+X-Gm-Message-State: AOJu0YyYyLBs3v2ia1RLwtrVvcO9bsP8ejRyEmiSg/jrBtHKZRou4TqT
+	MOegy4J24RaP4m1JhBc+FQerRcGgvC3NF2zm9eJyVEO6vSWiNCK2BRDp78E9hUM=
+X-Google-Smtp-Source: AGHT+IHpS1sn8J/iLtv6ptUbbfqFeJ0YNsQT6HSW8xlzuJBZVpw810Ec7tKZetqYSxE7MGp7MgqFaA==
+X-Received: by 2002:a05:6a00:3e12:b0:705:d755:a9d5 with SMTP id d2e1a72fcca58-70b00b622bamr2068971b3a.27.1720107142713;
+        Thu, 04 Jul 2024 08:32:22 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:fb65:8622:7ca1:51c8])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-75e51aaf3f2sm1454080a12.15.2024.07.04.08.32.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 08:32:22 -0700 (PDT)
+Date: Thu, 4 Jul 2024 09:32:19 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 2/5] remoteproc: Add TEE support
+Message-ID: <ZobAg1ftbLXFBXD5@p14s>
+References: <20240621143759.547793-1-arnaud.pouliquen@foss.st.com>
+ <20240621143759.547793-3-arnaud.pouliquen@foss.st.com>
+ <ZoQuW7lXZlYf+kEF@p14s>
+ <97eee634-1b11-490f-9d96-f1564b022b34@foss.st.com>
+ <ZoVq0Dx5VVUgKzRg@p14s>
+ <6c075817-10c4-4787-a486-b59a5330fdb6@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628003253.1694510-1-almasrymina@google.com> <20240628003253.1694510-4-almasrymina@google.com>
-In-Reply-To: <20240628003253.1694510-4-almasrymina@google.com>
-From: Taehee Yoo <ap420073@gmail.com>
-Date: Fri, 5 Jul 2024 00:30:19 +0900
-Message-ID: <CAMArcTXw9oZ9me8yzrAduM_6nziCQE+-aj46NS813tG7Gv=3_Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v15 03/14] netdev: support binding dma-buf to netdevice
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6c075817-10c4-4787-a486-b59a5330fdb6@foss.st.com>
 
-On Fri, Jun 28, 2024 at 9:43=E2=80=AFAM Mina Almasry <almasrymina@google.co=
-m> wrote:
->
+On Thu, Jul 04, 2024 at 10:05:24AM +0200, Arnaud POULIQUEN wrote:
+> 
+> 
+> On 7/3/24 17:14, Mathieu Poirier wrote:
+> > On Wed, Jul 03, 2024 at 09:19:44AM +0200, Arnaud POULIQUEN wrote:
+> >> Hello Mathieu
+> >>
+> >> On 7/2/24 18:44, Mathieu Poirier wrote:
+> >>> Good morning,
+> >>>
+> >>> On Fri, Jun 21, 2024 at 04:37:56PM +0200, Arnaud Pouliquen wrote:
+> >>>> Add a remoteproc TEE (Trusted Execution Environment) driver
+> >>>> that will be probed by the TEE bus. If the associated Trusted
+> >>>> application is supported on secure part this driver offers a client
+> >>>> interface to load a firmware by the secure part.
+> >>>> This firmware could be authenticated by the secure trusted application.
+> >>>>
+> >>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >>>> ---
+> >>>> Updates vs previous version:
+> >>>> - rename tee_remoteproc.* file to rmeoteproc_tee.*,
+> >>>> - rename TEE_REMOTEPROC config to REMOTEPROC_TEE,
+> >>>> - remove "stm32" in some variable declarations,
+> >>>> - remove useless "remoteproc_internal.h" include,
+> >>>> - fix tee_rproc_ctx devm_kzalloc.
+> >>>> - rework module description
+> >>>> ---
+> >>>>  drivers/remoteproc/Kconfig          |  10 +
+> >>>>  drivers/remoteproc/Makefile         |   1 +
+> >>>>  drivers/remoteproc/remoteproc_tee.c | 446 ++++++++++++++++++++++++++++
+> >>>>  include/linux/remoteproc.h          |   4 +
+> >>>>  include/linux/remoteproc_tee.h      | 100 +++++++
+> >>>>  5 files changed, 561 insertions(+)
+> >>>>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
+> >>>>  create mode 100644 include/linux/remoteproc_tee.h
+> >>>>
+> >>>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> >>>> index 48845dc8fa85..278f197acb90 100644
+> >>>> --- a/drivers/remoteproc/Kconfig
+> >>>> +++ b/drivers/remoteproc/Kconfig
+> >>>> @@ -365,6 +365,16 @@ config XLNX_R5_REMOTEPROC
+> >>>>  
+> >>>>  	  It's safe to say N if not interested in using RPU r5f cores.
+> >>>>  
+> >>>> +
+> >>>> +config REMOTEPROC_TEE
+> >>>> +	tristate "Remoteproc support by a TEE application"
+> >>>> +	depends on OPTEE
+> >>>> +	help
+> >>>> +	  Support a remote processor with a TEE application. The Trusted
+> >>>> +	  Execution Context is responsible for loading the trusted firmware
+> >>>> +	  image and managing the remote processor's lifecycle.
+> >>>> +	  This can be either built-in or a loadable module.
+> >>>> +
+> >>>>  endif # REMOTEPROC
+> >>>>  
+> >>>>  endmenu
+> >>>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> >>>> index 91314a9b43ce..b4eb37177005 100644
+> >>>> --- a/drivers/remoteproc/Makefile
+> >>>> +++ b/drivers/remoteproc/Makefile
+> >>>> @@ -36,6 +36,7 @@ obj-$(CONFIG_RCAR_REMOTEPROC)		+= rcar_rproc.o
+> >>>>  obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+> >>>>  obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
+> >>>>  obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
+> >>>> +obj-$(CONFIG_REMOTEPROC_TEE)		+= remoteproc_tee.o
+> >>>>  obj-$(CONFIG_TI_K3_DSP_REMOTEPROC)	+= ti_k3_dsp_remoteproc.o
+> >>>>  obj-$(CONFIG_TI_K3_R5_REMOTEPROC)	+= ti_k3_r5_remoteproc.o
+> >>>>  obj-$(CONFIG_XLNX_R5_REMOTEPROC)	+= xlnx_r5_remoteproc.o
+> >>>> diff --git a/drivers/remoteproc/remoteproc_tee.c b/drivers/remoteproc/remoteproc_tee.c
+> >>>> new file mode 100644
+> >>>> index 000000000000..70cb67451767
+> >>>> --- /dev/null
+> >>>> +++ b/drivers/remoteproc/remoteproc_tee.c
+> >>>> @@ -0,0 +1,446 @@
+> >>>> +// SPDX-License-Identifier: GPL-2.0-or-later
+> >>>> +/*
+> >>>> + * Copyright (C) STMicroelectronics 2024
+> >>>> + * Author: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >>>> + */
+> >>>> +
+> >>>> +#include <linux/firmware.h>
+> >>>> +#include <linux/io.h>
+> >>>> +#include <linux/module.h>
+> >>>> +#include <linux/remoteproc.h>
+> >>>> +#include <linux/remoteproc_tee.h>
+> >>>> +#include <linux/slab.h>
+> >>>> +#include <linux/tee_drv.h>
+> >>>> +
+> >>>> +#define MAX_TEE_PARAM_ARRY_MEMBER	4
+> >>>> +
+> >>>> +/*
+> >>>> + * Authentication of the firmware and load in the remote processor memory
+> >>>> + *
+> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >>>> + * [in]	 params[1].memref:	buffer containing the image of the buffer
+> >>>> + */
+> >>>> +#define TA_RPROC_FW_CMD_LOAD_FW		1
+> >>>> +
+> >>>> +/*
+> >>>> + * Start the remote processor
+> >>>> + *
+> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >>>> + */
+> >>>> +#define TA_RPROC_FW_CMD_START_FW	2
+> >>>> +
+> >>>> +/*
+> >>>> + * Stop the remote processor
+> >>>> + *
+> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >>>> + */
+> >>>> +#define TA_RPROC_FW_CMD_STOP_FW		3
+> >>>> +
+> >>>> +/*
+> >>>> + * Return the address of the resource table, or 0 if not found
+> >>>> + * No check is done to verify that the address returned is accessible by
+> >>>> + * the non secure context. If the resource table is loaded in a protected
+> >>>> + * memory the access by the non secure context will lead to a data abort.
+> >>>> + *
+> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >>>> + * [out]  params[1].value.a:	32bit LSB resource table memory address
+> >>>> + * [out]  params[1].value.b:	32bit MSB resource table memory address
+> >>>> + * [out]  params[2].value.a:	32bit LSB resource table memory size
+> >>>> + * [out]  params[2].value.b:	32bit MSB resource table memory size
+> >>>> + */
+> >>>> +#define TA_RPROC_FW_CMD_GET_RSC_TABLE	4
+> >>>> +
+> >>>> +/*
+> >>>> + * Return the address of the core dump
+> >>>> + *
+> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >>>> + * [out] params[1].memref:	address of the core dump image if exist,
+> >>>> + *				else return Null
+> >>>> + */
+> >>>> +#define TA_RPROC_FW_CMD_GET_COREDUMP	5
+> >>>> +
+> >>>> +struct tee_rproc_context {
+> >>>> +	struct list_head sessions;
+> >>>> +	struct tee_context *tee_ctx;
+> >>>> +	struct device *dev;
+> >>>> +};
+> >>>> +
+> >>>> +static struct tee_rproc_context *tee_rproc_ctx;
+> >>>> +
+> >>>> +static void tee_rproc_prepare_args(struct tee_rproc *trproc, int cmd,
+> >>>> +				   struct tee_ioctl_invoke_arg *arg,
+> >>>> +				   struct tee_param *param,
+> >>>> +				   unsigned int num_params)
+> >>>> +{
+> >>>> +	memset(arg, 0, sizeof(*arg));
+> >>>> +	memset(param, 0, MAX_TEE_PARAM_ARRY_MEMBER * sizeof(*param));
+> >>>> +
+> >>>> +	arg->func = cmd;
+> >>>> +	arg->session = trproc->session_id;
+> >>>> +	arg->num_params = num_params + 1;
+> >>>> +
+> >>>> +	param[0] = (struct tee_param) {
+> >>>> +		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> >>>> +		.u.value.a = trproc->rproc_id,
+> >>>> +	};
+> >>>> +}
+> >>>> +
+> >>>> +int tee_rproc_load_fw(struct rproc *rproc, const struct firmware *fw)
+> >>>> +{
+> >>>> +	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+> >>>> +	struct tee_rproc *trproc = rproc->tee_interface;
+> >>>> +	struct tee_ioctl_invoke_arg arg;
+> >>>> +	struct tee_shm *fw_shm;
+> >>>> +	int ret;
+> >>>> +
+> >>>> +	if (!trproc)
+> >>>> +		return -EINVAL;
+> >>>> +
+> >>>> +	fw_shm = tee_shm_register_kernel_buf(tee_rproc_ctx->tee_ctx, (void *)fw->data, fw->size);
+> >>>> +	if (IS_ERR(fw_shm))
+> >>>> +		return PTR_ERR(fw_shm);
+> >>>> +
+> >>>> +	tee_rproc_prepare_args(trproc, TA_RPROC_FW_CMD_LOAD_FW, &arg, param, 1);
+> >>>> +
+> >>>> +	/* Provide the address of the firmware image */
+> >>>> +	param[1] = (struct tee_param) {
+> >>>> +		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT,
+> >>>> +		.u.memref = {
+> >>>> +			.shm = fw_shm,
+> >>>> +			.size = fw->size,
+> >>>> +			.shm_offs = 0,
+> >>>> +		},
+> >>>> +	};
+> >>>> +
+> >>>> +	ret = tee_client_invoke_func(tee_rproc_ctx->tee_ctx, &arg, param);
+> >>>> +	if (ret < 0 || arg.ret != 0) {
+> >>>> +		dev_err(tee_rproc_ctx->dev,
+> >>>> +			"TA_RPROC_FW_CMD_LOAD_FW invoke failed TEE err: %x, ret:%x\n",
+> >>>> +			arg.ret, ret);
+> >>>> +		if (!ret)
+> >>>> +			ret = -EIO;
+> >>>> +	}
+> >>>> +
+> >>>> +	tee_shm_free(fw_shm);
+> >>>> +
+> >>>> +	return ret;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(tee_rproc_load_fw);
+> >>>> +
+> >>>> +static int tee_rproc_get_loaded_rsc_table(struct rproc *rproc, phys_addr_t *rsc_pa,
+> >>>> +					  size_t *table_sz)
+> >>>> +{
+> >>>> +	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+> >>>> +	struct tee_rproc *trproc = rproc->tee_interface;
+> >>>> +	struct tee_ioctl_invoke_arg arg;
+> >>>> +	int ret;
+> >>>> +
+> >>>> +	tee_rproc_prepare_args(trproc, TA_RPROC_FW_CMD_GET_RSC_TABLE, &arg, param, 2);
+> >>>> +
+> >>>> +	param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
+> >>>> +	param[2].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
+> >>>> +
+> >>>> +	ret = tee_client_invoke_func(tee_rproc_ctx->tee_ctx, &arg, param);
+> >>>> +	if (ret < 0 || arg.ret != 0) {
+> >>>> +		dev_err(tee_rproc_ctx->dev,
+> >>>> +			"TA_RPROC_FW_CMD_GET_RSC_TABLE invoke failed TEE err: %x, ret:%x\n",
+> >>>> +			arg.ret, ret);
+> >>>> +		return -EIO;
+> >>>> +	}
+> >>>> +
+> >>>> +	*table_sz = param[2].u.value.a;
+> >>>> +
+> >>>> +	if (*table_sz)
+> >>>> +		*rsc_pa = param[1].u.value.a;
+> >>>> +	else
+> >>>> +		*rsc_pa  = 0;
+> >>>> +
+> >>>> +	return 0;
+> >>>> +}
+> >>>> +
+> >>>> +int tee_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> >>>> +{
+> >>>> +	phys_addr_t rsc_table;
+> >>>> +	void __iomem *rsc_va;
+> >>>> +	size_t table_sz;
+> >>>> +	int ret;
+> >>>> +
+> >>>> +	ret = tee_rproc_load_fw(rproc, fw);
+> >>>> +	if (ret)
+> >>>> +		return ret;
+> >>>> +
+> >>>> +	ret = tee_rproc_get_loaded_rsc_table(rproc, &rsc_table, &table_sz);
+> >>>> +	if (ret)
+> >>>> +		return ret;
+> >>>
+> >>> Do we need an API to unload the firware from memory too?  If anything fails we
+> >>> still have firmware loaded into memory.
+> >>
+> >> For the time being, the clean-up of the memory is not implemented in OP-TEE.
+> > 
+> > In my opinion cleaning up the firmware image loaded to memory when something
+> > fails is important and should be part of this patchset.  Looking at the error
+> > path in this function, it is clear something is missing.
+> 
+> 
+> Please, could you detail what risks you see in not implementing the memory
+> clean-up at this first step?
+> 
 
-Hi Mina,
-Thanks a lot for this work!
+Almost everything in the Linux kernel is about allocation and release of
+resources, the pattern is ubiquitous.  Reading function tee_rproc_parse_fw(),
+the firmware is loaded by tee_rproc_load_fw() but never released - people
+reading this driver will wonder about that.  There is also the possibility that
+other implementations will use the free'd memory for other purposes.  This
+interface driver is meant to be generic and as such needs to take care of those
+corner cases.
 
-> Add a netdev_dmabuf_binding struct which represents the
-> dma-buf-to-netdevice binding. The netlink API will bind the dma-buf to
-> rx queues on the netdevice. On the binding, the dma_buf_attach
-> & dma_buf_map_attachment will occur. The entries in the sg_table from
-> mapping will be inserted into a genpool to make it ready
-> for allocation.
->
-> The chunks in the genpool are owned by a dmabuf_chunk_owner struct which
-> holds the dma-buf offset of the base of the chunk and the dma_addr of
-> the chunk. Both are needed to use allocations that come from this chunk.
->
-> We create a new type that represents an allocation from the genpool:
-> net_iov. We setup the net_iov allocation size in the
-> genpool to PAGE_SIZE for simplicity: to match the PAGE_SIZE normally
-> allocated by the page pool and given to the drivers.
->
-> The user can unbind the dmabuf from the netdevice by closing the netlink
-> socket that established the binding. We do this so that the binding is
-> automatically unbound even if the userspace process crashes.
->
-> The binding and unbinding leaves an indicator in struct netdev_rx_queue
-> that the given queue is bound, but the binding doesn't take effect until
-> the driver actually reconfigures its queues, and re-initializes its page
-> pool.
->
-> The netdev_dmabuf_binding struct is refcounted, and releases its
-> resources only when all the refs are released.
->
-> Signed-off-by: Willem de Bruijn <willemb@google.com>
-> Signed-off-by: Kaiyuan Zhang <kaiyuanz@google.com>
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
-> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com> # excluding netlink
->
-> ---
->
-> v13:
-> - Fixed a couple of places that still listed DMA_BIDIRECTIONAL (Pavel).
-> - Added reviewed-by from Pavel.
->
-> v11:
-> - Fix build error with CONFIG_DMA_SHARED_BUFFER &&
->   !CONFIG_GENERIC_ALLOCATOR
-> - Rebased on top of no memory provider ops.
->
-> v10:
-> - Moved net_iov_dma_addr() to devmem.h and made it devmem specific
->   helper (David).
->
-> v9: https://lore.kernel.org/all/20240403002053.2376017-5-almasrymina@goog=
-le.com/
-> - Removed net_devmem_restart_rx_queues and put it in its own patch
->   (David).
->
-> v8:
-> - move dmabuf_devmem_ops usage to later patch to avoid patch-by-patch
->   build error.
->
-> v7:
-> - Use IS_ERR() instead of IS_ERR_OR_NULL() for the dma_buf_get() return
->   value.
-> - Changes netdev_* naming in devmem.c to net_devmem_* (Yunsheng).
-> - DMA_BIDIRECTIONAL -> DMA_FROM_DEVICE (Yunsheng).
-> - Added a comment around recovering of the old rx queue in
->   net_devmem_restart_rx_queue(), and added freeing of old_mem if the
->   restart of the old queue fails. (Yunsheng).
-> - Use kernel-family sock-priv (Jakub).
-> - Put pp_memory_provider_params in netdev_rx_queue instead of the
->   dma-buf specific binding (Pavel & David).
-> - Move queue management ops to queue_mgmt_ops instead of netdev_ops
->   (Jakub).
-> - Remove excess whitespaces (Jakub).
-> - Use genlmsg_iput (Jakub).
->
-> v6:
-> - Validate rx queue index
-> - Refactor new functions into devmem.c (Pavel)
->
-> v5:
-> - Renamed page_pool_iov to net_iov, and moved that support to devmem.h
->   or netmem.h.
->
-> v1:
-> - Introduce devmem.h instead of bloating netdevice.h (Jakub)
-> - ENOTSUPP -> EOPNOTSUPP (checkpatch.pl I think)
-> - Remove unneeded rcu protection for binding->list (rtnl protected)
-> - Removed extraneous err_binding_put: label.
-> - Removed dma_addr +=3D len (Paolo).
-> - Don't override err on netdev_bind_dmabuf_to_queue failure.
-> - Rename devmem -> dmabuf (David).
-> - Add id to dmabuf binding (David/Stan).
-> - Fix missing xa_destroy bound_rq_list.
-> - Use queue api to reset bound RX queues (Jakub).
-> - Update netlink API for rx-queue type (tx/re) (Jakub).
->
-> RFC v3:
-> - Support multi rx-queue binding
->
-> ---
->  Documentation/netlink/specs/netdev.yaml |   4 +
->  include/net/devmem.h                    | 111 +++++++++++
->  include/net/netdev_rx_queue.h           |   2 +
->  include/net/netmem.h                    |  10 +
->  include/net/page_pool/types.h           |   6 +
->  net/core/Makefile                       |   2 +-
->  net/core/dev.c                          |   3 +
->  net/core/devmem.c                       | 252 ++++++++++++++++++++++++
->  net/core/netdev-genl-gen.c              |   4 +
->  net/core/netdev-genl-gen.h              |   4 +
->  net/core/netdev-genl.c                  | 101 +++++++++-
->  11 files changed, 496 insertions(+), 3 deletions(-)
->  create mode 100644 include/net/devmem.h
->  create mode 100644 net/core/devmem.c
->
-> diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netl=
-ink/specs/netdev.yaml
-> index 899ac0882a098..d6d7cb01c145c 100644
-> --- a/Documentation/netlink/specs/netdev.yaml
-> +++ b/Documentation/netlink/specs/netdev.yaml
-> @@ -673,6 +673,10 @@ operations:
->              - tx-packets
->              - tx-bytes
->
-> +kernel-family:
-> +  headers: [ "linux/list.h"]
-> +  sock-priv: struct list_head
-> +
->  mcast-groups:
->    list:
->      -
-> diff --git a/include/net/devmem.h b/include/net/devmem.h
-> new file mode 100644
-> index 0000000000000..eaf3fd965d7a8
-> --- /dev/null
-> +++ b/include/net/devmem.h
-> @@ -0,0 +1,111 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + * Device memory TCP support
-> + *
-> + * Authors:    Mina Almasry <almasrymina@google.com>
-> + *             Willem de Bruijn <willemb@google.com>
-> + *             Kaiyuan Zhang <kaiyuanz@google.com>
-> + *
-> + */
-> +#ifndef _NET_DEVMEM_H
-> +#define _NET_DEVMEM_H
-> +
-> +struct net_devmem_dmabuf_binding {
-> +       struct dma_buf *dmabuf;
-> +       struct dma_buf_attachment *attachment;
-> +       struct sg_table *sgt;
-> +       struct net_device *dev;
-> +       struct gen_pool *chunk_pool;
-> +
-> +       /* The user holds a ref (via the netlink API) for as long as they=
- want
-> +        * the binding to remain alive. Each page pool using this binding=
- holds
-> +        * a ref to keep the binding alive. Each allocated net_iov holds =
-a
-> +        * ref.
-> +        *
-> +        * The binding undos itself and unmaps the underlying dmabuf once=
- all
-> +        * those refs are dropped and the binding is no longer desired or=
- in
-> +        * use.
-> +        */
-> +       refcount_t ref;
-> +
-> +       /* The list of bindings currently active. Used for netlink to not=
-ify us
-> +        * of the user dropping the bind.
-> +        */
-> +       struct list_head list;
-> +
-> +       /* rxq's this binding is active on. */
-> +       struct xarray bound_rxq_list;
-> +
-> +       /* ID of this binding. Globally unique to all bindings currently
-> +        * active.
-> +        */
-> +       u32 id;
-> +};
-> +
-> +/* Owner of the dma-buf chunks inserted into the gen pool. Each scatterl=
-ist
-> + * entry from the dmabuf is inserted into the genpool as a chunk, and ne=
-eds
-> + * this owner struct to keep track of some metadata necessary to create
-> + * allocations from this chunk.
-> + */
-> +struct dmabuf_genpool_chunk_owner {
-> +       /* Offset into the dma-buf where this chunk starts.  */
-> +       unsigned long base_virtual;
-> +
-> +       /* dma_addr of the start of the chunk.  */
-> +       dma_addr_t base_dma_addr;
-> +
-> +       /* Array of net_iovs for this chunk. */
-> +       struct net_iov *niovs;
-> +       size_t num_niovs;
-> +
-> +       struct net_devmem_dmabuf_binding *binding;
-> +};
-> +
-> +#if defined(CONFIG_DMA_SHARED_BUFFER) && defined(CONFIG_GENERIC_ALLOCATO=
-R)
-> +void __net_devmem_dmabuf_binding_free(struct net_devmem_dmabuf_binding *=
-binding);
-> +int net_devmem_bind_dmabuf(struct net_device *dev, unsigned int dmabuf_f=
-d,
-> +                          struct net_devmem_dmabuf_binding **out);
-> +void net_devmem_unbind_dmabuf(struct net_devmem_dmabuf_binding *binding)=
-;
-> +int net_devmem_bind_dmabuf_to_queue(struct net_device *dev, u32 rxq_idx,
-> +                                   struct net_devmem_dmabuf_binding *bin=
-ding);
-> +#else
-> +static inline void
-> +__net_devmem_dmabuf_binding_free(struct net_devmem_dmabuf_binding *bindi=
-ng)
-> +{
-> +}
-> +
-> +static inline int net_devmem_bind_dmabuf(struct net_device *dev,
-> +                                        unsigned int dmabuf_fd,
-> +                                        struct net_devmem_dmabuf_binding=
- **out)
-> +{
-> +       return -EOPNOTSUPP;
-> +}
-> +static inline void
-> +net_devmem_unbind_dmabuf(struct net_devmem_dmabuf_binding *binding)
-> +{
-> +}
-> +
-> +static inline int
-> +net_devmem_bind_dmabuf_to_queue(struct net_device *dev, u32 rxq_idx,
-> +                               struct net_devmem_dmabuf_binding *binding=
-)
-> +{
-> +       return -EOPNOTSUPP;
-> +}
-> +#endif
-> +
-> +static inline void
-> +net_devmem_dmabuf_binding_get(struct net_devmem_dmabuf_binding *binding)
-> +{
-> +       refcount_inc(&binding->ref);
-> +}
-> +
-> +static inline void
-> +net_devmem_dmabuf_binding_put(struct net_devmem_dmabuf_binding *binding)
-> +{
-> +       if (!refcount_dec_and_test(&binding->ref))
-> +               return;
-> +
-> +       __net_devmem_dmabuf_binding_free(binding);
-> +}
-> +
-> +#endif /* _NET_DEVMEM_H */
-> diff --git a/include/net/netdev_rx_queue.h b/include/net/netdev_rx_queue.=
-h
-> index e78ca52d67fbf..ac34f5fb4f71d 100644
-> --- a/include/net/netdev_rx_queue.h
-> +++ b/include/net/netdev_rx_queue.h
-> @@ -6,6 +6,7 @@
->  #include <linux/netdevice.h>
->  #include <linux/sysfs.h>
->  #include <net/xdp.h>
-> +#include <net/page_pool/types.h>
->
->  /* This structure contains an instance of an RX queue. */
->  struct netdev_rx_queue {
-> @@ -25,6 +26,7 @@ struct netdev_rx_queue {
->          * Readers and writers must hold RTNL
->          */
->         struct napi_struct              *napi;
-> +       struct pp_memory_provider_params mp_params;
->  } ____cacheline_aligned_in_smp;
->
->  /*
-> diff --git a/include/net/netmem.h b/include/net/netmem.h
-> index d8b810245c1da..72e932a1a9489 100644
-> --- a/include/net/netmem.h
-> +++ b/include/net/netmem.h
-> @@ -8,6 +8,16 @@
->  #ifndef _NET_NETMEM_H
->  #define _NET_NETMEM_H
->
-> +#include <net/devmem.h>
-> +
-> +/* net_iov */
-> +
-> +struct net_iov {
-> +       struct dmabuf_genpool_chunk_owner *owner;
-> +};
-> +
-> +/* netmem */
-> +
->  /**
->   * typedef netmem_ref - a nonexistent type marking a reference to generi=
-c
->   * network memory.
-> diff --git a/include/net/page_pool/types.h b/include/net/page_pool/types.=
-h
-> index 7e8477057f3d1..9f3c3ee2ee755 100644
-> --- a/include/net/page_pool/types.h
-> +++ b/include/net/page_pool/types.h
-> @@ -128,6 +128,10 @@ struct page_pool_stats {
->  };
->  #endif
->
-> +struct pp_memory_provider_params {
-> +       void *mp_priv;
-> +};
-> +
->  struct page_pool {
->         struct page_pool_params_fast p;
->
-> @@ -194,6 +198,8 @@ struct page_pool {
->          */
->         struct ptr_ring ring;
->
-> +       void *mp_priv;
-> +
->  #ifdef CONFIG_PAGE_POOL_STATS
->         /* recycle stats are per-cpu to avoid locking */
->         struct page_pool_recycle_stats __percpu *recycle_stats;
-> diff --git a/net/core/Makefile b/net/core/Makefile
-> index f82232b358a2c..6b43611fb4a43 100644
-> --- a/net/core/Makefile
-> +++ b/net/core/Makefile
-> @@ -13,7 +13,7 @@ obj-y              +=3D dev.o dev_addr_lists.o dst.o ne=
-tevent.o \
->                         neighbour.o rtnetlink.o utils.o link_watch.o filt=
-er.o \
->                         sock_diag.o dev_ioctl.o tso.o sock_reuseport.o \
->                         fib_notifier.o xdp.o flow_offload.o gro.o \
-> -                       netdev-genl.o netdev-genl-gen.o gso.o
-> +                       netdev-genl.o netdev-genl-gen.o gso.o devmem.o
->
->  obj-$(CONFIG_NETDEV_ADDR_LIST_TEST) +=3D dev_addr_lists_test.o
->
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 0a23d7da7fbc6..5e5e2d266b83f 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -158,6 +158,9 @@
->  #include <net/page_pool/types.h>
->  #include <net/page_pool/helpers.h>
->  #include <net/rps.h>
-> +#include <linux/genalloc.h>
-> +#include <linux/dma-buf.h>
-> +#include <net/devmem.h>
->
->  #include "dev.h"
->  #include "net-sysfs.h"
-> diff --git a/net/core/devmem.c b/net/core/devmem.c
-> new file mode 100644
-> index 0000000000000..cfb5a2f69dcd2
-> --- /dev/null
-> +++ b/net/core/devmem.c
-> @@ -0,0 +1,252 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + *      Devmem TCP
-> + *
-> + *      Authors:       Mina Almasry <almasrymina@google.com>
-> + *                     Willem de Bruijn <willemdebruijn.kernel@gmail.com=
->
-> + *                     Kaiyuan Zhang <kaiyuanz@google.com
-> + */
-> +
-> +#include <linux/types.h>
-> +#include <linux/mm.h>
-> +#include <linux/netdevice.h>
-> +#include <trace/events/page_pool.h>
-> +#include <net/netdev_rx_queue.h>
-> +#include <net/page_pool/types.h>
-> +#include <net/page_pool/helpers.h>
-> +#include <linux/genalloc.h>
-> +#include <linux/dma-buf.h>
-> +#include <net/devmem.h>
-> +#include <net/netdev_queues.h>
-> +
-> +/* Device memory support */
-> +
-> +#if defined(CONFIG_DMA_SHARED_BUFFER) && defined(CONFIG_GENERIC_ALLOCATO=
-R)
-> +static void net_devmem_dmabuf_free_chunk_owner(struct gen_pool *genpool,
-> +                                              struct gen_pool_chunk *chu=
-nk,
-> +                                              void *not_used)
-> +{
-> +       struct dmabuf_genpool_chunk_owner *owner =3D chunk->owner;
-> +
-> +       kvfree(owner->niovs);
-> +       kfree(owner);
-> +}
-> +
-> +void __net_devmem_dmabuf_binding_free(struct net_devmem_dmabuf_binding *=
-binding)
-> +{
-> +       size_t size, avail;
-> +
-> +       gen_pool_for_each_chunk(binding->chunk_pool,
-> +                               net_devmem_dmabuf_free_chunk_owner, NULL)=
-;
-> +
-> +       size =3D gen_pool_size(binding->chunk_pool);
-> +       avail =3D gen_pool_avail(binding->chunk_pool);
-> +
-> +       if (!WARN(size !=3D avail, "can't destroy genpool. size=3D%zu, av=
-ail=3D%zu",
-> +                 size, avail))
-> +               gen_pool_destroy(binding->chunk_pool);
-> +
-> +       dma_buf_unmap_attachment(binding->attachment, binding->sgt,
-> +                                DMA_FROM_DEVICE);
-> +       dma_buf_detach(binding->dmabuf, binding->attachment);
-> +       dma_buf_put(binding->dmabuf);
-> +       xa_destroy(&binding->bound_rxq_list);
-> +       kfree(binding);
-> +}
-> +
-> +/* Protected by rtnl_lock() */
-> +static DEFINE_XARRAY_FLAGS(net_devmem_dmabuf_bindings, XA_FLAGS_ALLOC1);
-> +
-> +void net_devmem_unbind_dmabuf(struct net_devmem_dmabuf_binding *binding)
-> +{
-> +       struct netdev_rx_queue *rxq;
-> +       unsigned long xa_idx;
-> +       unsigned int rxq_idx;
-> +
-> +       if (!binding)
-> +               return;
-> +
-> +       if (binding->list.next)
-> +               list_del(&binding->list);
-> +
-> +       xa_for_each(&binding->bound_rxq_list, xa_idx, rxq) {
-> +               if (rxq->mp_params.mp_priv =3D=3D binding) {
-> +                       /* We hold the rtnl_lock while binding/unbinding
-> +                        * dma-buf, so we can't race with another thread =
-that
-> +                        * is also modifying this value. However, the pag=
-e_pool
-> +                        * may read this config while it's creating its
-> +                        * rx-queues. WRITE_ONCE() here to match the
-> +                        * READ_ONCE() in the page_pool.
-> +                        */
-> +                       WRITE_ONCE(rxq->mp_params.mp_priv, NULL);
-> +
-> +                       rxq_idx =3D get_netdev_rx_queue_index(rxq);
-> +
-> +                       netdev_rx_queue_restart(binding->dev, rxq_idx);
-> +               }
-> +       }
-> +
-> +       xa_erase(&net_devmem_dmabuf_bindings, binding->id);
-> +
-> +       net_devmem_dmabuf_binding_put(binding);
-> +}
-> +
-> +int net_devmem_bind_dmabuf_to_queue(struct net_device *dev, u32 rxq_idx,
-> +                                   struct net_devmem_dmabuf_binding *bin=
-ding)
-> +{
-> +       struct netdev_rx_queue *rxq;
-> +       u32 xa_idx;
-> +       int err;
-> +
-> +       if (rxq_idx >=3D dev->num_rx_queues)
-> +               return -ERANGE;
-> +
-
-I think it should be dev->real_num_rx_queues, not dev->num_rx_queues.
-And I think we need to check whether an interface is up somewhere here.
-
-> +       rxq =3D __netif_get_rx_queue(dev, rxq_idx);
-> +       if (rxq->mp_params.mp_priv)
-> +               return -EEXIST;
-> +
-> +       err =3D xa_alloc(&binding->bound_rxq_list, &xa_idx, rxq, xa_limit=
-_32b,
-> +                      GFP_KERNEL);
-> +       if (err)
-> +               return err;
-> +
-> +       /* We hold the rtnl_lock while binding/unbinding dma-buf, so we c=
-an't
-> +        * race with another thread that is also modifying this value. Ho=
-wever,
-> +        * the driver may read this config while it's creating its * rx-q=
-ueues.
-> +        * WRITE_ONCE() here to match the READ_ONCE() in the driver.
-> +        */
-> +       WRITE_ONCE(rxq->mp_params.mp_priv, binding);
-> +
-> +       err =3D netdev_rx_queue_restart(dev, rxq_idx);
-> +       if (err)
-> +               goto err_xa_erase;
-> +
-> +       return 0;
-> +
-> +err_xa_erase:
-> +       WRITE_ONCE(rxq->mp_params.mp_priv, NULL);
-> +       xa_erase(&binding->bound_rxq_list, xa_idx);
-> +
-> +       return err;
-> +}
-> +
-> +int net_devmem_bind_dmabuf(struct net_device *dev, unsigned int dmabuf_f=
-d,
-> +                          struct net_devmem_dmabuf_binding **out)
-> +{
-> +       struct net_devmem_dmabuf_binding *binding;
-> +       static u32 id_alloc_next;
-> +       struct scatterlist *sg;
-> +       struct dma_buf *dmabuf;
-> +       unsigned int sg_idx, i;
-> +       unsigned long virtual;
-> +       int err;
-> +
-> +       dmabuf =3D dma_buf_get(dmabuf_fd);
-> +       if (IS_ERR(dmabuf))
-> +               return -EBADFD;
-> +
-> +       binding =3D kzalloc_node(sizeof(*binding), GFP_KERNEL,
-> +                              dev_to_node(&dev->dev));
-> +       if (!binding) {
-> +               err =3D -ENOMEM;
-> +               goto err_put_dmabuf;
-> +       }
-> +
-> +       binding->dev =3D dev;
-> +
-> +       err =3D xa_alloc_cyclic(&net_devmem_dmabuf_bindings, &binding->id=
-,
-> +                             binding, xa_limit_32b, &id_alloc_next,
-> +                             GFP_KERNEL);
-> +       if (err < 0)
-> +               goto err_free_binding;
-> +
-> +       xa_init_flags(&binding->bound_rxq_list, XA_FLAGS_ALLOC);
-> +
-> +       refcount_set(&binding->ref, 1);
-> +
-> +       binding->dmabuf =3D dmabuf;
-> +
-> +       binding->attachment =3D dma_buf_attach(binding->dmabuf, dev->dev.=
-parent);
-> +       if (IS_ERR(binding->attachment)) {
-> +               err =3D PTR_ERR(binding->attachment);
-> +               goto err_free_id;
-> +       }
-> +
-> +       binding->sgt =3D
-> +               dma_buf_map_attachment(binding->attachment, DMA_FROM_DEVI=
-CE);
-> +       if (IS_ERR(binding->sgt)) {
-> +               err =3D PTR_ERR(binding->sgt);
-> +               goto err_detach;
-> +       }
-> +
-> +       /* For simplicity we expect to make PAGE_SIZE allocations, but th=
-e
-> +        * binding can be much more flexible than that. We may be able to
-> +        * allocate MTU sized chunks here. Leave that for future work...
-> +        */
-> +       binding->chunk_pool =3D
-> +               gen_pool_create(PAGE_SHIFT, dev_to_node(&dev->dev));
-> +       if (!binding->chunk_pool) {
-> +               err =3D -ENOMEM;
-> +               goto err_unmap;
-> +       }
-> +
-> +       virtual =3D 0;
-> +       for_each_sgtable_dma_sg(binding->sgt, sg, sg_idx) {
-> +               dma_addr_t dma_addr =3D sg_dma_address(sg);
-> +               struct dmabuf_genpool_chunk_owner *owner;
-> +               size_t len =3D sg_dma_len(sg);
-> +               struct net_iov *niov;
-> +
-> +               owner =3D kzalloc_node(sizeof(*owner), GFP_KERNEL,
-> +                                    dev_to_node(&dev->dev));
-> +               owner->base_virtual =3D virtual;
-> +               owner->base_dma_addr =3D dma_addr;
-> +               owner->num_niovs =3D len / PAGE_SIZE;
-> +               owner->binding =3D binding;
-> +
-> +               err =3D gen_pool_add_owner(binding->chunk_pool, dma_addr,
-> +                                        dma_addr, len, dev_to_node(&dev-=
->dev),
-> +                                        owner);
-> +               if (err) {
-> +                       err =3D -EINVAL;
-> +                       goto err_free_chunks;
-> +               }
-> +
-> +               owner->niovs =3D kvmalloc_array(owner->num_niovs,
-> +                                             sizeof(*owner->niovs),
-> +                                             GFP_KERNEL);
-> +               if (!owner->niovs) {
-> +                       err =3D -ENOMEM;
-> +                       goto err_free_chunks;
-> +               }
-> +
-> +               for (i =3D 0; i < owner->num_niovs; i++) {
-> +                       niov =3D &owner->niovs[i];
-> +                       niov->owner =3D owner;
-> +               }
-> +
-> +               virtual +=3D len;
-> +       }
-> +
-> +       *out =3D binding;
-> +
-> +       return 0;
-> +
-> +err_free_chunks:
-> +       gen_pool_for_each_chunk(binding->chunk_pool,
-> +                               net_devmem_dmabuf_free_chunk_owner, NULL)=
-;
-> +       gen_pool_destroy(binding->chunk_pool);
-> +err_unmap:
-> +       dma_buf_unmap_attachment(binding->attachment, binding->sgt,
-> +                                DMA_FROM_DEVICE);
-> +err_detach:
-> +       dma_buf_detach(dmabuf, binding->attachment);
-> +err_free_id:
-> +       xa_erase(&net_devmem_dmabuf_bindings, binding->id);
-> +err_free_binding:
-> +       kfree(binding);
-> +err_put_dmabuf:
-> +       dma_buf_put(dmabuf);
-> +       return err;
-> +}
-> +#endif
-> diff --git a/net/core/netdev-genl-gen.c b/net/core/netdev-genl-gen.c
-> index 9acd0d893765a..3dcd25049e593 100644
-> --- a/net/core/netdev-genl-gen.c
-> +++ b/net/core/netdev-genl-gen.c
-> @@ -9,6 +9,7 @@
->  #include "netdev-genl-gen.h"
->
->  #include <uapi/linux/netdev.h>
-> +#include <linux/list.h>
->
->  /* Integer value ranges */
->  static const struct netlink_range_validation netdev_a_page_pool_id_range=
- =3D {
-> @@ -187,4 +188,7 @@ struct genl_family netdev_nl_family __ro_after_init =
-=3D {
->         .n_split_ops    =3D ARRAY_SIZE(netdev_nl_ops),
->         .mcgrps         =3D netdev_nl_mcgrps,
->         .n_mcgrps       =3D ARRAY_SIZE(netdev_nl_mcgrps),
-> +       .sock_priv_size =3D sizeof(struct list_head),
-> +       .sock_priv_init =3D (void *)netdev_nl_sock_priv_init,
-> +       .sock_priv_destroy =3D (void *)netdev_nl_sock_priv_destroy,
->  };
-> diff --git a/net/core/netdev-genl-gen.h b/net/core/netdev-genl-gen.h
-> index ca5a0983f2834..2c431b7dcbc84 100644
-> --- a/net/core/netdev-genl-gen.h
-> +++ b/net/core/netdev-genl-gen.h
-> @@ -10,6 +10,7 @@
->  #include <net/genetlink.h>
->
->  #include <uapi/linux/netdev.h>
-> +#include <linux/list.h>
->
->  /* Common nested types */
->  extern const struct nla_policy netdev_page_pool_info_nl_policy[NETDEV_A_=
-PAGE_POOL_IFINDEX + 1];
-> @@ -40,4 +41,7 @@ enum {
->
->  extern struct genl_family netdev_nl_family;
->
-> +void netdev_nl_sock_priv_init(struct list_head *priv);
-> +void netdev_nl_sock_priv_destroy(struct list_head *priv);
-> +
->  #endif /* _LINUX_NETDEV_GEN_H */
-> diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-> index 2d726e65211dd..133884eb13349 100644
-> --- a/net/core/netdev-genl.c
-> +++ b/net/core/netdev-genl.c
-> @@ -10,6 +10,7 @@
->  #include <net/netdev_rx_queue.h>
->  #include <net/netdev_queues.h>
->  #include <net/busy_poll.h>
-> +#include <net/devmem.h>
->
->  #include "netdev-genl-gen.h"
->  #include "dev.h"
-> @@ -721,10 +722,92 @@ int netdev_nl_qstats_get_dumpit(struct sk_buff *skb=
-,
->         return err;
->  }
->
-> -/* Stub */
->  int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
->  {
-> -       return 0;
-> +       struct nlattr *tb[ARRAY_SIZE(netdev_queue_dmabuf_nl_policy)];
-> +       struct net_devmem_dmabuf_binding *out_binding;
-> +       struct list_head *sock_binding_list;
-> +       u32 ifindex, dmabuf_fd, rxq_idx;
-> +       struct net_device *netdev;
-> +       struct sk_buff *rsp;
-> +       struct nlattr *attr;
-> +       int rem, err =3D 0;
-> +       void *hdr;
-> +
-> +       if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_DEV_IFINDEX) ||
-> +           GENL_REQ_ATTR_CHECK(info, NETDEV_A_BIND_DMABUF_DMABUF_FD) ||
-> +           GENL_REQ_ATTR_CHECK(info, NETDEV_A_BIND_DMABUF_QUEUES))
-> +               return -EINVAL;
-> +
-> +       ifindex =3D nla_get_u32(info->attrs[NETDEV_A_DEV_IFINDEX]);
-> +       dmabuf_fd =3D nla_get_u32(info->attrs[NETDEV_A_BIND_DMABUF_DMABUF=
-_FD]);
-> +
-> +       rtnl_lock();
-> +
-> +       netdev =3D __dev_get_by_index(genl_info_net(info), ifindex);
-> +       if (!netdev) {
-> +               err =3D -ENODEV;
-> +               goto err_unlock;
-> +       }
-> +
-> +       err =3D net_devmem_bind_dmabuf(netdev, dmabuf_fd, &out_binding);
-> +       if (err)
-> +               goto err_unlock;
-> +
-> +       nla_for_each_attr(attr, genlmsg_data(info->genlhdr),
-> +                         genlmsg_len(info->genlhdr), rem) {
-> +               if (nla_type(attr) !=3D NETDEV_A_BIND_DMABUF_QUEUES)
-> +                       continue;
-> +
-> +               err =3D nla_parse_nested(
-> +                       tb, ARRAY_SIZE(netdev_queue_dmabuf_nl_policy) - 1=
-, attr,
-> +                       netdev_queue_dmabuf_nl_policy, info->extack);
-> +               if (err < 0)
-> +                       goto err_unbind;
-> +
-> +               rxq_idx =3D nla_get_u32(tb[NETDEV_A_QUEUE_DMABUF_IDX]);
-> +
-> +               err =3D net_devmem_bind_dmabuf_to_queue(netdev, rxq_idx,
-> +                                                     out_binding);
-> +               if (err)
-> +                       goto err_unbind;
-> +       }
-> +
-> +       sock_binding_list =3D genl_sk_priv_get(&netdev_nl_family,
-> +                                            NETLINK_CB(skb).sk);
-> +       if (IS_ERR(sock_binding_list)) {
-> +               err =3D PTR_ERR(sock_binding_list);
-> +               goto err_unbind;
-> +       }
-> +
-> +       list_add(&out_binding->list, sock_binding_list);
-> +
-> +       rsp =3D genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_KERNEL);
-> +       if (!rsp) {
-> +               err =3D -ENOMEM;
-> +               goto err_unbind;
-> +       }
-> +
-> +       hdr =3D genlmsg_iput(rsp, info);
-> +       if (!hdr) {
-> +               err =3D -EMSGSIZE;
-> +               goto err_genlmsg_free;
-> +       }
-> +
-> +       nla_put_u32(rsp, NETDEV_A_BIND_DMABUF_DMABUF_ID, out_binding->id)=
-;
-> +       genlmsg_end(rsp, hdr);
-> +
-> +       rtnl_unlock();
-> +
-> +       return genlmsg_reply(rsp, info);
-> +
-> +err_genlmsg_free:
-> +       nlmsg_free(rsp);
-> +err_unbind:
-> +       net_devmem_unbind_dmabuf(out_binding);
-> +err_unlock:
-> +       rtnl_unlock();
-> +       return err;
->  }
->
->  static int netdev_genl_netdevice_event(struct notifier_block *nb,
-> @@ -771,3 +854,17 @@ static int __init netdev_genl_init(void)
->  }
->
->  subsys_initcall(netdev_genl_init);
-> +
-> +void netdev_nl_sock_priv_init(struct list_head *priv)
-> +{
-> +       INIT_LIST_HEAD(priv);
-> +}
-> +
-> +void netdev_nl_sock_priv_destroy(struct list_head *priv)
-> +{
-> +       struct net_devmem_dmabuf_binding *binding;
-> +       struct net_devmem_dmabuf_binding *temp;
-> +
-> +       list_for_each_entry_safe(binding, temp, priv, list)
-> +               net_devmem_unbind_dmabuf(binding);
-> +}
-> --
-> 2.45.2.803.g4e1b14247a-goog
->
->
-
-Thanks a lot!
-Taehee Yoo
+> Currently, OP-TEE upstream does not clean the memory. Upon the next load, it
+> will either be overwritten or left unused by the newly authenticated firmware.
+> 
+> If your concern is about the ability to read the code, the code is already
+> accessible in the binary firmware image on the Linux filesystem.
+> 
+> As a next step a platform-dependent strategy has to be implemented to enhance
+> firmware protection:
+> - Ensure the integrity of the code.
+> - Preserve secrets.
+> 
+> However, OP-TEE cannot trust the Non-secure context for this. Expecting Linux to
+> call a clean-up service does not seem reliable to me.
+> 
+> In the downstream stm32mp platform, we have implemented the clean-up but above
+> all, ensured that Linux never has access to the remote processor firmware code
+> and data by using firewall configurations.
+> For time being we print a warning message on OP-TEE upstream[1]
+> 
+> [1]https://elixir.bootlin.com/op-tee/latest/source/core/drivers/remoteproc/stm32_remoteproc.c#L361
+> 
+> 
+> Thanks,
+> Arnaud
+> 
+> > 
+> >> I plan to upstream this part in a second step, associated with a memory protection
+> >> strategy. This should be directly implemented in the OP-TEE service to avoid
+> >> reliance on Linux error management.
+> >> Nonetheless, an API could be added to clean the memory if needed.
+> >>
+> >> Thanks,
+> >> Arnaud
+> >>
+> >>>
+> >>> More comments to come later.
+> >>>
+> >>> Mathieu
+> >>>
+> >>>> +
+> >>>> +	/*
+> >>>> +	 * We assume here that the memory mapping is the same between the TEE and Linux kernel
+> >>>> +	 * contexts. Else a new TEE remoteproc service could be needed to get a copy of the
+> >>>> +	 * resource table
+> >>>> +	 */
+> >>>> +	rsc_va = ioremap_wc(rsc_table, table_sz);
+> >>>> +	if (IS_ERR_OR_NULL(rsc_va)) {
+> >>>> +		dev_err(tee_rproc_ctx->dev, "Unable to map memory region: %pa+%zx\n",
+> >>>> +			&rsc_table, table_sz);
+> >>>> +		return -ENOMEM;
+> >>>> +	}
+> >>>> +
+> >>>> +	/*
+> >>>> +	 * Create a copy of the resource table to have the same behavior as the elf loader.
+> >>>> +	 * This cached table will be used after the remoteproc stops to free resources, and for
+> >>>> +	 * crash recovery to reapply the settings.
+> >>>> +	 */
+> >>>> +	rproc->cached_table = kmemdup((__force void *)rsc_va, table_sz, GFP_KERNEL);
+> >>>> +	if (!rproc->cached_table) {
+> >>>> +		ret = -ENOMEM;
+> >>>> +		goto out;
+> >>>> +	}
+> >>>> +
+> >>>> +	rproc->table_ptr = rproc->cached_table;
+> >>>> +	rproc->table_sz = table_sz;
+> >>>> +
+> >>>> +out:
+> >>>> +	iounmap(rsc_va);
+> >>>> +	return ret;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(tee_rproc_parse_fw);
+> >>>> +
+> >>>> +struct resource_table *tee_rproc_find_loaded_rsc_table(struct rproc *rproc,
+> >>>> +						       const struct firmware *fw)
+> >>>> +{
+> >>>> +	struct tee_rproc *trproc = rproc->tee_interface;
+> >>>> +	phys_addr_t rsc_table;
+> >>>> +	size_t table_sz;
+> >>>> +	int ret;
+> >>>> +
+> >>>> +	if (!trproc)
+> >>>> +		return ERR_PTR(-EINVAL);
+> >>>> +
+> >>>> +	ret = tee_rproc_get_loaded_rsc_table(rproc, &rsc_table, &table_sz);
+> >>>> +	if (ret)
+> >>>> +		return ERR_PTR(ret);
+> >>>> +
+> >>>> +	rproc->table_sz = table_sz;
+> >>>> +	if (!table_sz)
+> >>>> +		return NULL;
+> >>>> +
+> >>>> +	/*
+> >>>> +	 * At this step the memory area that contains the resource table should have be declared
+> >>>> +	 * in the remote proc platform driver and allocated by rproc_alloc_registered_carveouts().
+> >>>> +	 */
+> >>>> +	return (struct resource_table *)rproc_pa_to_va(rproc, rsc_table, table_sz, NULL);
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(tee_rproc_find_loaded_rsc_table);
+> >>>> +
+> >>>> +int tee_rproc_start(struct rproc *rproc)
+> >>>> +{
+> >>>> +	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+> >>>> +	struct tee_rproc *trproc = rproc->tee_interface;
+> >>>> +	struct tee_ioctl_invoke_arg arg;
+> >>>> +	int ret = 0;
+> >>>> +
+> >>>> +	if (!trproc)
+> >>>> +		return -EINVAL;
+> >>>> +
+> >>>> +	tee_rproc_prepare_args(trproc, TA_RPROC_FW_CMD_START_FW, &arg, param, 0);
+> >>>> +
+> >>>> +	ret = tee_client_invoke_func(tee_rproc_ctx->tee_ctx, &arg, param);
+> >>>> +	if (ret < 0 || arg.ret != 0) {
+> >>>> +		dev_err(tee_rproc_ctx->dev,
+> >>>> +			"TA_RPROC_FW_CMD_START_FW invoke failed TEE err: %x, ret:%x\n",
+> >>>> +			arg.ret, ret);
+> >>>> +		if (!ret)
+> >>>> +			return  -EIO;
+> >>>> +	}
+> >>>> +
+> >>>> +	return 0;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(tee_rproc_start);
+> >>>> +
+> >>>> +int tee_rproc_stop(struct rproc *rproc)
+> >>>> +{
+> >>>> +	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+> >>>> +	struct tee_rproc *trproc = rproc->tee_interface;
+> >>>> +	struct tee_ioctl_invoke_arg arg;
+> >>>> +	int ret;
+> >>>> +
+> >>>> +	if (!trproc)
+> >>>> +		return -EINVAL;
+> >>>> +
+> >>>> +	tee_rproc_prepare_args(trproc, TA_RPROC_FW_CMD_STOP_FW, &arg, param, 0);
+> >>>> +
+> >>>> +	ret = tee_client_invoke_func(tee_rproc_ctx->tee_ctx, &arg, param);
+> >>>> +	if (ret < 0 || arg.ret != 0) {
+> >>>> +		dev_err(tee_rproc_ctx->dev,
+> >>>> +			"TA_RPROC_FW_CMD_STOP_FW invoke failed TEE err: %x, ret:%x\n",
+> >>>> +			arg.ret, ret);
+> >>>> +		if (!ret)
+> >>>> +			ret = -EIO;
+> >>>> +	}
+> >>>> +
+> >>>> +	return ret;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(tee_rproc_stop);
+> >>>> +
+> >>>> +static const struct tee_client_device_id tee_rproc_id_table[] = {
+> >>>> +	{UUID_INIT(0x80a4c275, 0x0a47, 0x4905, 0x82, 0x85, 0x14, 0x86, 0xa9, 0x77, 0x1a, 0x08)},
+> >>>> +	{}
+> >>>> +};
+> >>>> +
+> >>>> +struct tee_rproc *tee_rproc_register(struct device *dev, struct rproc *rproc, unsigned int rproc_id)
+> >>>> +{
+> >>>> +	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+> >>>> +	struct tee_ioctl_open_session_arg sess_arg;
+> >>>> +	struct tee_client_device *tee_device;
+> >>>> +	struct tee_rproc *trproc, *p_err;
+> >>>> +	int ret;
+> >>>> +
+> >>>> +	/*
+> >>>> +	 * Test if the device has been probed by the TEE bus. In case of failure, we ignore the
+> >>>> +	 * reason. The bus could be not yet probed or the service not available in the secure
+> >>>> +	 * firmware.The assumption in such a case is that the TEE remoteproc is not probed.
+> >>>> +	 */
+> >>>> +	if (!tee_rproc_ctx)
+> >>>> +		return ERR_PTR(-EPROBE_DEFER);
+> >>>> +
+> >>>> +	/* Prevent tee rproc module from being removed */
+> >>>> +	if (!try_module_get(THIS_MODULE)) {
+> >>>> +		dev_err(tee_rproc_ctx->dev, "can't get owner\n");
+> >>>> +		return ERR_PTR(-ENODEV);
+> >>>> +	}
+> >>>> +
+> >>>> +	trproc =  devm_kzalloc(dev, sizeof(*trproc), GFP_KERNEL);
+> >>>> +	if (!trproc) {
+> >>>> +		p_err = ERR_PTR(-ENOMEM);
+> >>>> +		goto module_put;
+> >>>> +	}
+> >>>> +	tee_device = to_tee_client_device(tee_rproc_ctx->dev);
+> >>>> +	memset(&sess_arg, 0, sizeof(sess_arg));
+> >>>> +
+> >>>> +	memcpy(sess_arg.uuid, tee_device->id.uuid.b, TEE_IOCTL_UUID_LEN);
+> >>>> +
+> >>>> +	sess_arg.clnt_login = TEE_IOCTL_LOGIN_REE_KERNEL;
+> >>>> +	sess_arg.num_params = 1;
+> >>>> +
+> >>>> +	param[0] = (struct tee_param) {
+> >>>> +		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> >>>> +		.u.value.a = rproc_id,
+> >>>> +	};
+> >>>> +
+> >>>> +	ret = tee_client_open_session(tee_rproc_ctx->tee_ctx, &sess_arg, param);
+> >>>> +	if (ret < 0 || sess_arg.ret != 0) {
+> >>>> +		dev_err(dev, "tee_client_open_session failed, err: %x\n", sess_arg.ret);
+> >>>> +		p_err = ERR_PTR(-EINVAL);
+> >>>> +		goto module_put;
+> >>>> +	}
+> >>>> +
+> >>>> +	trproc->parent = dev;
+> >>>> +	trproc->rproc_id = rproc_id;
+> >>>> +	trproc->session_id = sess_arg.session;
+> >>>> +
+> >>>> +	trproc->rproc = rproc;
+> >>>> +	rproc->tee_interface = trproc;
+> >>>> +
+> >>>> +	list_add_tail(&trproc->node, &tee_rproc_ctx->sessions);
+> >>>> +
+> >>>> +	return trproc;
+> >>>> +
+> >>>> +module_put:
+> >>>> +	module_put(THIS_MODULE);
+> >>>> +	return p_err;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(tee_rproc_register);
+> >>>> +
+> >>>> +int tee_rproc_unregister(struct tee_rproc *trproc)
+> >>>> +{
+> >>>> +	struct rproc *rproc = trproc->rproc;
+> >>>> +	int ret;
+> >>>> +
+> >>>> +	ret = tee_client_close_session(tee_rproc_ctx->tee_ctx, trproc->session_id);
+> >>>> +	if (ret < 0)
+> >>>> +		dev_err(trproc->parent,	"tee_client_close_session failed, err: %x\n", ret);
+> >>>> +
+> >>>> +	list_del(&trproc->node);
+> >>>> +	rproc->tee_interface = NULL;
+> >>>> +
+> >>>> +	module_put(THIS_MODULE);
+> >>>> +
+> >>>> +	return ret;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(tee_rproc_unregister);
+> >>>> +
+> >>>> +static int tee_rproc_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+> >>>> +{
+> >>>> +	/* Today we support only the OP-TEE, could be extend to other tees */
+> >>>> +	return (ver->impl_id == TEE_IMPL_ID_OPTEE);
+> >>>> +}
+> >>>> +
+> >>>> +static int tee_rproc_probe(struct device *dev)
+> >>>> +{
+> >>>> +	struct tee_context *tee_ctx;
+> >>>> +	int ret;
+> >>>> +
+> >>>> +	/* Open context with TEE driver */
+> >>>> +	tee_ctx = tee_client_open_context(NULL, tee_rproc_ctx_match, NULL, NULL);
+> >>>> +	if (IS_ERR(tee_ctx))
+> >>>> +		return PTR_ERR(tee_ctx);
+> >>>> +
+> >>>> +	tee_rproc_ctx = devm_kzalloc(dev, sizeof(*tee_rproc_ctx), GFP_KERNEL);
+> >>>> +	if (!tee_rproc_ctx) {
+> >>>> +		ret = -ENOMEM;
+> >>>> +		goto err;
+> >>>> +	}
+> >>>> +
+> >>>> +	tee_rproc_ctx->dev = dev;
+> >>>> +	tee_rproc_ctx->tee_ctx = tee_ctx;
+> >>>> +	INIT_LIST_HEAD(&tee_rproc_ctx->sessions);
+> >>>> +
+> >>>> +	return 0;
+> >>>> +err:
+> >>>> +	tee_client_close_context(tee_ctx);
+> >>>> +
+> >>>> +	return ret;
+> >>>> +}
+> >>>> +
+> >>>> +static int tee_rproc_remove(struct device *dev)
+> >>>> +{
+> >>>> +	struct tee_rproc *entry, *tmp;
+> >>>> +
+> >>>> +	list_for_each_entry_safe(entry, tmp, &tee_rproc_ctx->sessions, node) {
+> >>>> +		tee_client_close_session(tee_rproc_ctx->tee_ctx, entry->session_id);
+> >>>> +		list_del(&entry->node);
+> >>>> +		kfree(entry);
+> >>>> +	}
+> >>>> +
+> >>>> +	tee_client_close_context(tee_rproc_ctx->tee_ctx);
+> >>>> +
+> >>>> +	return 0;
+> >>>> +}
+> >>>> +
+> >>>> +MODULE_DEVICE_TABLE(tee, tee_rproc_id_table);
+> >>>> +
+> >>>> +static struct tee_client_driver tee_rproc_fw_driver = {
+> >>>> +	.id_table	= tee_rproc_id_table,
+> >>>> +	.driver		= {
+> >>>> +		.name		= KBUILD_MODNAME,
+> >>>> +		.bus		= &tee_bus_type,
+> >>>> +		.probe		= tee_rproc_probe,
+> >>>> +		.remove		= tee_rproc_remove,
+> >>>> +	},
+> >>>> +};
+> >>>> +
+> >>>> +static int __init tee_rproc_fw_mod_init(void)
+> >>>> +{
+> >>>> +	return driver_register(&tee_rproc_fw_driver.driver);
+> >>>> +}
+> >>>> +
+> >>>> +static void __exit tee_rproc_fw_mod_exit(void)
+> >>>> +{
+> >>>> +	driver_unregister(&tee_rproc_fw_driver.driver);
+> >>>> +}
+> >>>> +
+> >>>> +module_init(tee_rproc_fw_mod_init);
+> >>>> +module_exit(tee_rproc_fw_mod_exit);
+> >>>> +
+> >>>> +MODULE_DESCRIPTION(" remote processor support with a TEE application");
+> >>>> +MODULE_LICENSE("GPL");
+> >>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >>>> index 8fd0d7f63c8e..fbe1d6793709 100644
+> >>>> --- a/include/linux/remoteproc.h
+> >>>> +++ b/include/linux/remoteproc.h
+> >>>> @@ -503,6 +503,8 @@ enum rproc_features {
+> >>>>  	RPROC_MAX_FEATURES,
+> >>>>  };
+> >>>>  
+> >>>> +struct tee_rproc;
+> >>>> +
+> >>>>  /**
+> >>>>   * struct rproc - represents a physical remote processor device
+> >>>>   * @node: list node of this rproc object
+> >>>> @@ -545,6 +547,7 @@ enum rproc_features {
+> >>>>   * @cdev: character device of the rproc
+> >>>>   * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+> >>>>   * @features: indicate remoteproc features
+> >>>> + * @tee_interface: pointer to the remoteproc tee context
+> >>>>   */
+> >>>>  struct rproc {
+> >>>>  	struct list_head node;
+> >>>> @@ -586,6 +589,7 @@ struct rproc {
+> >>>>  	struct cdev cdev;
+> >>>>  	bool cdev_put_on_release;
+> >>>>  	DECLARE_BITMAP(features, RPROC_MAX_FEATURES);
+> >>>> +	struct tee_rproc *tee_interface;
+> >>>>  };
+> >>>>  
+> >>>>  /**
+> >>>> diff --git a/include/linux/remoteproc_tee.h b/include/linux/remoteproc_tee.h
+> >>>> new file mode 100644
+> >>>> index 000000000000..ccf34a218d54
+> >>>> --- /dev/null
+> >>>> +++ b/include/linux/remoteproc_tee.h
+> >>>> @@ -0,0 +1,100 @@
+> >>>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> >>>> +/*
+> >>>> + * Copyright(c) 2024 STMicroelectronics
+> >>>> + */
+> >>>> +
+> >>>> +#ifndef REMOTEPROC_TEE_H
+> >>>> +#define REMOTEPROC_TEE_H
+> >>>> +
+> >>>> +#include <linux/tee_drv.h>
+> >>>> +#include <linux/firmware.h>
+> >>>> +#include <linux/remoteproc.h>
+> >>>> +
+> >>>> +struct rproc;
+> >>>> +
+> >>>> +/**
+> >>>> + * struct tee_rproc - TEE remoteproc structure
+> >>>> + * @node:		Reference in list
+> >>>> + * @rproc:		Remoteproc reference
+> >>>> + * @parent:		Parent device
+> >>>> + * @rproc_id:		Identifier of the target firmware
+> >>>> + * @session_id:		TEE session identifier
+> >>>> + */
+> >>>> +struct tee_rproc {
+> >>>> +	struct list_head node;
+> >>>> +	struct rproc *rproc;
+> >>>> +	struct device *parent;
+> >>>> +	u32 rproc_id;
+> >>>> +	u32 session_id;
+> >>>> +};
+> >>>> +
+> >>>> +#if IS_REACHABLE(CONFIG_REMOTEPROC_TEE)
+> >>>> +
+> >>>> +struct tee_rproc *tee_rproc_register(struct device *dev, struct rproc *rproc,
+> >>>> +				     unsigned int rproc_id);
+> >>>> +int tee_rproc_unregister(struct tee_rproc *trproc);
+> >>>> +int tee_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw);
+> >>>> +int tee_rproc_load_fw(struct rproc *rproc, const struct firmware *fw);
+> >>>> +struct resource_table *tee_rproc_find_loaded_rsc_table(struct rproc *rproc,
+> >>>> +						       const struct firmware *fw);
+> >>>> +int tee_rproc_start(struct rproc *rproc);
+> >>>> +int tee_rproc_stop(struct rproc *rproc);
+> >>>> +
+> >>>> +#else
+> >>>> +
+> >>>> +static inline struct tee_rproc *tee_rproc_register(struct device *dev, struct rproc *rproc,
+> >>>> +						   unsigned int rproc_id)
+> >>>> +{
+> >>>> +	return ERR_PTR(-ENODEV);
+> >>>> +}
+> >>>> +
+> >>>> +static int tee_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> >>>> +{
+> >>>> +	/* This shouldn't be possible */
+> >>>> +	WARN_ON(1);
+> >>>> +
+> >>>> +	return 0;
+> >>>> +}
+> >>>> +
+> >>>> +static inline int tee_rproc_unregister(struct tee_rproc *trproc)
+> >>>> +{
+> >>>> +	/* This shouldn't be possible */
+> >>>> +	WARN_ON(1);
+> >>>> +
+> >>>> +	return 0;
+> >>>> +}
+> >>>> +
+> >>>> +static inline int tee_rproc_load_fw(struct rproc *rproc,  const struct firmware *fw)
+> >>>> +{
+> >>>> +	/* This shouldn't be possible */
+> >>>> +	WARN_ON(1);
+> >>>> +
+> >>>> +	return 0;
+> >>>> +}
+> >>>> +
+> >>>> +static inline int tee_rproc_start(struct rproc *rproc)
+> >>>> +{
+> >>>> +	/* This shouldn't be possible */
+> >>>> +	WARN_ON(1);
+> >>>> +
+> >>>> +	return 0;
+> >>>> +}
+> >>>> +
+> >>>> +static inline int tee_rproc_stop(struct rproc *rproc)
+> >>>> +{
+> >>>> +	/* This shouldn't be possible */
+> >>>> +	WARN_ON(1);
+> >>>> +
+> >>>> +	return 0;
+> >>>> +}
+> >>>> +
+> >>>> +static inline struct resource_table *
+> >>>> +tee_rproc_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *fw)
+> >>>> +{
+> >>>> +	/* This shouldn't be possible */
+> >>>> +	WARN_ON(1);
+> >>>> +
+> >>>> +	return NULL;
+> >>>> +}
+> >>>> +#endif /* CONFIG_REMOTEPROC_TEE */
+> >>>> +#endif /* REMOTEPROC_TEE_H */
+> >>>> -- 
+> >>>> 2.25.1
+> >>>>
 
