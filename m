@@ -1,250 +1,280 @@
-Return-Path: <linux-kernel+bounces-240556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC59D926EFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:43:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF045926EFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DC7C1F223FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 05:43:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE47284E9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 05:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F41B1A01C7;
-	Thu,  4 Jul 2024 05:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9AC1A01CF;
+	Thu,  4 Jul 2024 05:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0KsCSY6"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VTdhMVPx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C89FBF6;
-	Thu,  4 Jul 2024 05:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88635FBF6;
+	Thu,  4 Jul 2024 05:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720071778; cv=none; b=GZGfAdiFFnTZIKMPtHK2yVeK53MFxZdAM00OCFspUa6KAE6XsxEK8Qw+sxcuQlO8KjreiMZ/sArF4urDesEFKcKit0asZmP0po0CcOWMU6I/+LJPwyNbZKAvsaFAo7SZnQ0kjwnBFqhfPk4IwPjJc+2XbgJl6EtjVmH50PZ0Ql0=
+	t=1720071892; cv=none; b=lA2f/XnCfJAqRJWUDd8kxsWFN9gFmk4l0xGiKGJYh2NqdhtvOjxvA9fYxQILkDnKCsGBCxOzy+Jsen4YBgrWyI/V+/ru0pspVpf9ycI8fjULx0GBhRfgcTQWrtpcZolUAFsdRQdNgF3akvlTIyoi3+jBl5OWx6kxa3J9u/VEwXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720071778; c=relaxed/simple;
-	bh=7D1WYB2toSHakmy4+rbGJLYS5K2VC1xaYZBRJPiKUbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hxJ9nUDO65Az0wGOi2OnC+GyTqboQoLFu1AvMvCniS+arq3sJ7egJ1xAzIRd6vWHoTTrov5sz4Vncn3qwI1vidqcceul/DDdmJmB/3M4a/uEbTCHjtvYMS4QipJTDHodWp1pDfZROsWhNHu+jCzXyd4k5CWAjXhNWYlaNgsb7YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0KsCSY6; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111aeso286073a12.0;
-        Wed, 03 Jul 2024 22:42:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720071775; x=1720676575; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2c/+Q9nS+xoM8+OHdZVaW7nYRO1GVfCIQiZ/xNi76w0=;
-        b=O0KsCSY6KL+ZFnCPUUZnE+l7uEXG/O4vW9v9SCKU2SZrjdw1WElX1xj9kUQom19Dzh
-         VVChyRBvh5sa1L89p/+esVW9PTwBVRvuHU/OE4ipId3SmrWkF4ufklm/zrHSbg/kQK3L
-         ajpSyQPCeLMEp2vQ5tjQ0MWzMe8ZrmMHefbuzsJ/1auTa0qQoZamHZpUp9snYlS9GzzA
-         vF3ohAnumKuo0c/SqfXlStexeihcas1icw1GlwBbUAeD7BoMR9ydGLNjVzdDIX6SM+f/
-         1bZBh6Ckl3X28DvO9ujdYNEWKhscdRS3zWPnTu5mFAwNKzyBnmsZ7Y5wU/PBJAdtGFh0
-         Sq6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720071775; x=1720676575;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2c/+Q9nS+xoM8+OHdZVaW7nYRO1GVfCIQiZ/xNi76w0=;
-        b=JJHXU5MqCQ2s62Ol8av2PYiLLizWOiDHh+KXt8qSdw2VMzpJe+U/Jf+f759+n9PZyE
-         kQcyWJxKJ019ziO4SFsFt9ukOZpSbaXpnGCW8bUpH+x9wPZ6/MH1fCwPx9XGFcCiW00Z
-         EcJ7AxH/SE/6iDJqPqbgXcXKRFRmDzryvER3CEy54ML8lGYEYUbXZBGcvYE8NbXvpDd2
-         WP+y+yGYILicjueoQyE9RlF1hLSFmG0RyYpA2dXTVfYDg9HctOCwKa7mqJiv/2qoIz8P
-         XT/lqxNE/tTmRpLJCuZUkFV6mjFv8I0CvlKKt3Q+Wqp01NCOl4yG6ByOqJM50fj+iN4c
-         SxSg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1GfPhyKjW+zWWrRnMRyMImlOgmTYIJIuiz6pFWRh+e0c6QiBtNlHtiPmoG+ELyP94SoRBDcSrkmLPFzeJf6sYmvCfkiZ3O7rabtL4Hc46AaQKf+P7OYbF0xRpCTW+SlFNX271VzqtreYzdjxWQXa4cZ4xEv9+eJNM4g7erHV67PMhGw==
-X-Gm-Message-State: AOJu0Yy73JyoEgwnjJJpjvCzCpEZMBkG8bBwOu81SReS0uRjhC4D/QQN
-	bLbe9StrfpPU0XKSgCoD2yn7x3eC+SyAVz3BkmlIRVYgXFI2wP9g1EYjL6nZjWHEklCPl4tmhDO
-	Xygp27BWJKFLigNkw9W9tHbPBrOA=
-X-Google-Smtp-Source: AGHT+IH+oZ9eq9ibdelDbiyyU9I7yRc+N1gUCalQ7B8pON06oHDFUPonn5DyQdiYwH2BKwt/klYV/jcBFxzToz/Yp5Q=
-X-Received: by 2002:a05:6402:3594:b0:57c:6740:f47c with SMTP id
- 4fb4d7f45d1cf-58e5c6366a2mr332180a12.27.1720071774803; Wed, 03 Jul 2024
- 22:42:54 -0700 (PDT)
+	s=arc-20240116; t=1720071892; c=relaxed/simple;
+	bh=G1WNzHX80B6ZKYD01BL36u/3JzQG51AN0hYgbjiRbeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IohU1kxkaFYq/d0y6vMAJo1icyhB19q04b5QWIfAMf1LvHJ3yXNuGZxcXb2dRx1WaGaPkEopzDpIH+xDw3A46SHwdxEmDFGJyoB3x+1OaoohsvH7YvIG9cjjYMtiDx05K706/qUFnZev98a8UvkRCXi09b/g2sYidJB7hD/pXbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VTdhMVPx; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720071891; x=1751607891;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=G1WNzHX80B6ZKYD01BL36u/3JzQG51AN0hYgbjiRbeU=;
+  b=VTdhMVPxNRkD+vvWuHuu1+p4coRRu4XOip0nlkGXftWyxwkkWltcVQjm
+   qXWta/h4WcnMgYTxyYkbrw7vzDeLZ+ZskSyDTgRS4Hh5ryNhE8EOeW87p
+   q43pMAXAiiYhyuRO+DqJN2TDNFGKLF9tzAXT5F+rKRfNppiMSy5c3mzgc
+   5/PtNXT++h2GgeeHvHX6qABfTN0G18iLzEjNXDN5gan5giO3PsekwGMH0
+   6lM8/4+sfGjZdFPP6iJD2ndC8tpxlV/LedizMnqShy9cmRRm0jRUjEYVm
+   +NG9/vgXpVIUFepkmGoabjcIKB653VX5tN6vGr1pLfP2uYKWaAci86UzS
+   A==;
+X-CSE-ConnectionGUID: IESK8mlJT2yq0qvCN9qtSA==
+X-CSE-MsgGUID: 1oHcNQwWQGK/QjCIlfNlYg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="17197686"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="17197686"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 22:44:50 -0700
+X-CSE-ConnectionGUID: xRx0A1yvSUeQRVUQ+7BoRA==
+X-CSE-MsgGUID: mZdgxAyuScCYaSFoH81emw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="46628159"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 03 Jul 2024 22:44:46 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sPFGt-000QcD-27;
+	Thu, 04 Jul 2024 05:44:43 +0000
+Date: Thu, 4 Jul 2024 13:43:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH v4 3/3] mctp pcc: Implement MCTP over PCC Transport
+Message-ID: <202407041311.rvCLf6kZ-lkp@intel.com>
+References: <20240702225845.322234-4-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701121355.262259-2-kanakshilledar@gmail.com>
- <20240701121355.262259-5-kanakshilledar@gmail.com> <20240703-juice-refreeze-62c468a56ea5@spud>
-In-Reply-To: <20240703-juice-refreeze-62c468a56ea5@spud>
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-Date: Thu, 4 Jul 2024 11:12:43 +0530
-Message-ID: <CAGLn_=tVZ3StW3uB+CkcHBpSJG8PfNGSM6zOVV6OSJeL2Pz56A@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] riscv: dts: thead: add basic spi node
-To: Conor Dooley <conor@kernel.org>
-Cc: Serge Semin <fancer.lancer@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702225845.322234-4-admiyo@os.amperecomputing.com>
 
-Hi
+Hi,
 
-On Wed, Jul 3, 2024 at 8:15=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
-e:
->
-> Kanak, Drew,
->
-> On Mon, Jul 01, 2024 at 05:43:54PM +0530, Kanak Shilledar wrote:
-> > created spi0 node with fixed clock. the spi0 node
-> > uses synopsis designware driver and has the following
-> > compatible "snps,dw-apb-ssi". the spi0 node is connected
-> > to a SPI NOR flash pad which is left unpopulated on the back
-> > side of the board.
-> >
-> > Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
-> > ---
-> > Changes in v2:
-> > - Separated from a single patch file
-> > ---
-> >  .../boot/dts/thead/th1520-beaglev-ahead.dts      |  9 +++++++++
-> >  .../boot/dts/thead/th1520-lichee-module-4a.dtsi  |  4 ++++
-> >  .../riscv/boot/dts/thead/th1520-lichee-pi-4a.dts |  5 +++++
->
-> Didn't you say there was a flash on one of these two boards?
-Yes, there is a SPI nor flash pad left unpopulated on the bottom side
-of the LicheePi 4a
-carrier board. https://wiki.sipeed.com/hardware/en/lichee/th1520/lpi4a/2_un=
-box.html#Board-hardware-overview
-notice the reserved pad in the bottom part of the image.
+kernel test robot noticed the following build errors:
 
-> >  arch/riscv/boot/dts/thead/th1520.dtsi            | 16 ++++++++++++++++
-> >  4 files changed, 34 insertions(+)
-> >
-> > diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/=
-riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-> > index d9b4de9e4757..3103b74e0288 100644
-> > --- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-> > +++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-> > @@ -17,6 +17,7 @@ aliases {
-> >               gpio1 =3D &gpio1;
-> >               gpio2 =3D &gpio2;
-> >               gpio3 =3D &gpio3;
-> > +             spi0 =3D &spi0;
->
-> "spi" would sort after "serial".
-i will fix that.
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.10-rc6 next-20240703]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> >               serial0 =3D &uart0;
-> >               serial1 =3D &uart1;
-> >               serial2 =3D &uart2;
-> > @@ -52,6 +53,10 @@ &sdhci_clk {
-> >       clock-frequency =3D <198000000>;
-> >  };
-> >
-> > +&spi_clk {
-> > +     clock-frequency =3D <396000000>;
-> > +};
->
-> I'm pretty sceptical about adding more of these fixed clocks, rather
-> than waiting for the clock driver. Drew, what do you think? Should we
-> just add one more to your fixup list or would you rather delay? Guess it
-> depends on how long more you think that clock driver is likely to take.
->
-> Thanks,
-> Conor.
->
+url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20240703-163558
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20240702225845.322234-4-admiyo%40os.amperecomputing.com
+patch subject: [PATCH v4 3/3] mctp pcc: Implement MCTP over PCC Transport
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20240704/202407041311.rvCLf6kZ-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240704/202407041311.rvCLf6kZ-lkp@intel.com/reproduce)
 
-Thanks and Regards,
-Kanak Shilledar
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407041311.rvCLf6kZ-lkp@intel.com/
 
-> > +
-> >  &uart_sclk {
-> >       clock-frequency =3D <100000000>;
-> >  };
-> > @@ -79,3 +84,7 @@ &sdio0 {
-> >  &uart0 {
-> >       status =3D "okay";
-> >  };
-> > +
-> > +&spi0 {
-> > +     status =3D "okay";
-> > +};
-> > diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/a=
-rch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-> > index 1365d3a512a3..6939bd36560c 100644
-> > --- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-> > +++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-> > @@ -33,6 +33,10 @@ &sdhci_clk {
-> >       clock-frequency =3D <198000000>;
-> >  };
-> >
-> > +&spi_clk {
-> > +     clock-frequency =3D <396000000>;
-> > +};
-> > +
-> >  &uart_sclk {
-> >       clock-frequency =3D <100000000>;
-> >  };
-> > diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/r=
-iscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> > index 9a3884a73e13..14b06dd81a9a 100644
-> > --- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> > +++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> > @@ -14,6 +14,7 @@ aliases {
-> >               gpio1 =3D &gpio1;
-> >               gpio2 =3D &gpio2;
-> >               gpio3 =3D &gpio3;
-> > +             spi0 =3D &spi0;
-> >               serial0 =3D &uart0;
-> >               serial1 =3D &uart1;
-> >               serial2 =3D &uart2;
-> > @@ -30,3 +31,7 @@ chosen {
-> >  &uart0 {
-> >       status =3D "okay";
-> >  };
-> > +
-> > +&spi0 {
-> > +     status =3D "okay";
-> > +};
-> > diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dt=
-s/thead/th1520.dtsi
-> > index d2fa25839012..f962de663e7e 100644
-> > --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> > +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> > @@ -140,6 +140,12 @@ apb_clk: apb-clk-clock {
-> >               #clock-cells =3D <0>;
-> >       };
-> >
-> > +     spi_clk: spi-clock {
-> > +             compatible =3D "fixed-clock";
-> > +             clock-output-names =3D "spi_clk";
-> > +             #clock-cells =3D <0>;
-> > +     };
-> > +
-> >       uart_sclk: uart-sclk-clock {
-> >               compatible =3D "fixed-clock";
-> >               clock-output-names =3D "uart_sclk";
-> > @@ -183,6 +189,16 @@ clint: timer@ffdc000000 {
-> >                                             <&cpu3_intc 3>, <&cpu3_intc=
- 7>;
-> >               };
-> >
-> > +             spi0: spi@ffe700c000 {
-> > +                     compatible =3D "thead,th1520-spi", "snps,dw-apb-s=
-si";
-> > +                     reg =3D <0xff 0xe700c000 0x0 0x1000>;
-> > +                     interrupts =3D <54 IRQ_TYPE_LEVEL_HIGH>;
-> > +                     clocks =3D <&spi_clk>;
-> > +                     #address-cells =3D <1>;
-> > +                     #size-cells =3D <0>;
-> > +                     status =3D "disabled";
-> > +             };
-> > +
-> >               uart0: serial@ffe7014000 {
-> >                       compatible =3D "snps,dw-apb-uart";
-> >                       reg =3D <0xff 0xe7014000 0x0 0x100>;
-> > --
-> > 2.45.2
-> >
+All error/warnings (new ones prefixed by >>):
+
+   In file included from drivers/net/mctp/mctp-pcc.c:17:
+   include/acpi/acpi_drivers.h:72:43: warning: 'struct acpi_pci_root' declared inside parameter list will not be visible outside of this definition or declaration
+      72 | struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root);
+         |                                           ^~~~~~~~~~~~~
+   In file included from include/linux/printk.h:570,
+                    from include/asm-generic/bug.h:22,
+                    from arch/sh/include/asm/bug.h:112,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/asm-generic/preempt.h:5,
+                    from ./arch/sh/include/generated/asm/preempt.h:1,
+                    from include/linux/preempt.h:79,
+                    from include/linux/spinlock.h:56,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/slab.h:16,
+                    from include/linux/resource_ext.h:11,
+                    from include/linux/acpi.h:13,
+                    from drivers/net/mctp/mctp-pcc.c:7:
+   drivers/net/mctp/mctp-pcc.c: In function 'mctp_pcc_driver_add':
+   drivers/net/mctp/mctp-pcc.c:207:26: error: invalid use of undefined type 'struct acpi_device'
+     207 |         dev_dbg(&acpi_dev->dev, "Adding mctp_pcc device for HID  %s\n",
+         |                          ^~
+   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dynamic_debug.h:273:9: note: in expansion of macro '_dynamic_func_call'
+     273 |         _dynamic_func_call(fmt, __dynamic_dev_dbg,              \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/dev_printk.h:165:9: note: in expansion of macro 'dynamic_dev_dbg'
+     165 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:207:9: note: in expansion of macro 'dev_dbg'
+     207 |         dev_dbg(&acpi_dev->dev, "Adding mctp_pcc device for HID  %s\n",
+         |         ^~~~~~~
+   drivers/net/mctp/mctp-pcc.c:208:17: error: implicit declaration of function 'acpi_device_hid'; did you mean 'acpi_device_dep'? [-Werror=implicit-function-declaration]
+     208 |                 acpi_device_hid(acpi_dev));
+         |                 ^~~~~~~~~~~~~~~
+   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dynamic_debug.h:273:9: note: in expansion of macro '_dynamic_func_call'
+     273 |         _dynamic_func_call(fmt, __dynamic_dev_dbg,              \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/dev_printk.h:165:9: note: in expansion of macro 'dynamic_dev_dbg'
+     165 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:207:9: note: in expansion of macro 'dev_dbg'
+     207 |         dev_dbg(&acpi_dev->dev, "Adding mctp_pcc device for HID  %s\n",
+         |         ^~~~~~~
+   drivers/net/mctp/mctp-pcc.c:209:22: error: implicit declaration of function 'acpi_device_handle'; did you mean 'acpi_device_dep'? [-Werror=implicit-function-declaration]
+     209 |         dev_handle = acpi_device_handle(acpi_dev);
+         |                      ^~~~~~~~~~~~~~~~~~
+         |                      acpi_device_dep
+   drivers/net/mctp/mctp-pcc.c:209:20: warning: assignment to 'acpi_handle' {aka 'void *'} from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     209 |         dev_handle = acpi_device_handle(acpi_dev);
+         |                    ^
+   In file included from include/linux/device.h:15,
+                    from include/linux/acpi.h:14:
+   drivers/net/mctp/mctp-pcc.c:213:34: error: invalid use of undefined type 'struct acpi_device'
+     213 |                 dev_err(&acpi_dev->dev, "FAILURE to lookup PCC indexes from CRS");
+         |                                  ^~
+   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                         ^~~
+   drivers/net/mctp/mctp-pcc.c:213:17: note: in expansion of macro 'dev_err'
+     213 |                 dev_err(&acpi_dev->dev, "FAILURE to lookup PCC indexes from CRS");
+         |                 ^~~~~~~
+   drivers/net/mctp/mctp-pcc.c:218:24: error: invalid use of undefined type 'struct acpi_device'
+     218 |         dev = &acpi_dev->dev;
+         |                        ^~
+   drivers/net/mctp/mctp-pcc.c:264:17: error: invalid use of undefined type 'struct acpi_device'
+     264 |         acpi_dev->driver_data = mctp_pcc_dev;
+         |                 ^~
+   drivers/net/mctp/mctp-pcc.c: In function 'mctp_pcc_driver_remove':
+>> drivers/net/mctp/mctp-pcc.c:293:47: error: implicit declaration of function 'acpi_driver_data'; did you mean 'acpi_get_data'? [-Werror=implicit-function-declaration]
+     293 |         struct mctp_pcc_ndev *mctp_pcc_ndev = acpi_driver_data(adev);
+         |                                               ^~~~~~~~~~~~~~~~
+         |                                               acpi_get_data
+>> drivers/net/mctp/mctp-pcc.c:293:47: warning: initialization of 'struct mctp_pcc_ndev *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   drivers/net/mctp/mctp-pcc.c: At top level:
+   drivers/net/mctp/mctp-pcc.c:305:15: error: variable 'mctp_pcc_driver' has initializer but incomplete type
+     305 | static struct acpi_driver mctp_pcc_driver = {
+         |               ^~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:306:10: error: 'struct acpi_driver' has no member named 'name'
+     306 |         .name = "mctp_pcc",
+         |          ^~~~
+   drivers/net/mctp/mctp-pcc.c:306:17: warning: excess elements in struct initializer
+     306 |         .name = "mctp_pcc",
+         |                 ^~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:306:17: note: (near initialization for 'mctp_pcc_driver')
+   drivers/net/mctp/mctp-pcc.c:307:10: error: 'struct acpi_driver' has no member named 'class'
+     307 |         .class = "Unknown",
+         |          ^~~~~
+   drivers/net/mctp/mctp-pcc.c:307:18: warning: excess elements in struct initializer
+     307 |         .class = "Unknown",
+         |                  ^~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:307:18: note: (near initialization for 'mctp_pcc_driver')
+   drivers/net/mctp/mctp-pcc.c:308:10: error: 'struct acpi_driver' has no member named 'ids'
+     308 |         .ids = mctp_pcc_device_ids,
+         |          ^~~
+   drivers/net/mctp/mctp-pcc.c:308:16: warning: excess elements in struct initializer
+     308 |         .ids = mctp_pcc_device_ids,
+         |                ^~~~~~~~~~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:308:16: note: (near initialization for 'mctp_pcc_driver')
+   drivers/net/mctp/mctp-pcc.c:309:10: error: 'struct acpi_driver' has no member named 'ops'
+     309 |         .ops = {
+         |          ^~~
+   drivers/net/mctp/mctp-pcc.c:309:16: error: extra brace group at end of initializer
+     309 |         .ops = {
+         |                ^
+   drivers/net/mctp/mctp-pcc.c:309:16: note: (near initialization for 'mctp_pcc_driver')
+   drivers/net/mctp/mctp-pcc.c:309:16: warning: excess elements in struct initializer
+   drivers/net/mctp/mctp-pcc.c:309:16: note: (near initialization for 'mctp_pcc_driver')
+   drivers/net/mctp/mctp-pcc.c:313:10: error: 'struct acpi_driver' has no member named 'owner'
+     313 |         .owner = THIS_MODULE,
+         |          ^~~~~
+   In file included from arch/sh/include/asm/cache.h:12,
+                    from include/linux/cache.h:6,
+                    from include/linux/slab.h:15:
+   include/linux/init.h:180:21: warning: excess elements in struct initializer
+     180 | #define THIS_MODULE (&__this_module)
+         |                     ^
+   drivers/net/mctp/mctp-pcc.c:313:18: note: in expansion of macro 'THIS_MODULE'
+     313 |         .owner = THIS_MODULE,
+         |                  ^~~~~~~~~~~
+   include/linux/init.h:180:21: note: (near initialization for 'mctp_pcc_driver')
+     180 | #define THIS_MODULE (&__this_module)
+         |                     ^
+   drivers/net/mctp/mctp-pcc.c:313:18: note: in expansion of macro 'THIS_MODULE'
+     313 |         .owner = THIS_MODULE,
+         |                  ^~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:316:1: warning: data definition has no type or storage class
+     316 | module_acpi_driver(mctp_pcc_driver);
+         | ^~~~~~~~~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:316:1: error: type defaults to 'int' in declaration of 'module_acpi_driver' [-Werror=implicit-int]
+   drivers/net/mctp/mctp-pcc.c:316:1: warning: parameter names (without types) in function declaration
+   drivers/net/mctp/mctp-pcc.c:305:27: error: storage size of 'mctp_pcc_driver' isn't known
+     305 | static struct acpi_driver mctp_pcc_driver = {
+         |                           ^~~~~~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:305:27: warning: 'mctp_pcc_driver' defined but not used [-Wunused-variable]
+   cc1: some warnings being treated as errors
+
+
+vim +293 drivers/net/mctp/mctp-pcc.c
+
+   290	
+   291	static void mctp_pcc_driver_remove(struct acpi_device *adev)
+   292	{
+ > 293		struct mctp_pcc_ndev *mctp_pcc_ndev = acpi_driver_data(adev);
+   294	
+   295		pcc_mbox_free_channel(mctp_pcc_ndev->out_chan);
+   296		pcc_mbox_free_channel(mctp_pcc_ndev->in_chan);
+   297		mctp_unregister_netdev(mctp_pcc_ndev->mdev.dev);
+   298	}
+   299	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
