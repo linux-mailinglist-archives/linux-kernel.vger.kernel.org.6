@@ -1,204 +1,122 @@
-Return-Path: <linux-kernel+bounces-241713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A360927E45
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 22:17:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD417927E4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 22:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C18285AA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:17:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 626141F22CA4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3E013DB88;
-	Thu,  4 Jul 2024 20:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8E3142E9D;
+	Thu,  4 Jul 2024 20:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LSUU4jt7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gt5746Pj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pQ78c23w";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hMHRGD1q"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="U+3b5vDR"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C4D2BCF6;
-	Thu,  4 Jul 2024 20:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF1113DB88
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 20:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720124264; cv=none; b=LzM2axN2G76lRr8/EhsMhD957z9Qcxv9ZX/3gdCPb0swZFWzBZ0fCGso3PRB2+T9gtSdQ0Vy8+ur/Cr8yN9E0BRWu/wMtF65EmXYcwz3dXIFE1eaVYVbM7ZkLrwGqrRf8w+4y3JJXulz6cJ5gCMK/3IqpgoY7UR1aXTQexcFH3I=
+	t=1720124910; cv=none; b=PhcvFD95KD9S1JIz7uer0AadoXrBB+Ip2caaqDsjDTubRHUG4jgONBSkfcG883CNzQy4OSQ2jItoKMxKjrNL7nSbYl2L2cn95bjnFaNygTZGW32b+t5eefrCnKgZLhHa70Qc9GELW5nZ7sTv0JJk1jX0W7fSRSS+UA6xEeSNnl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720124264; c=relaxed/simple;
-	bh=aPS529UnB7EmMrhnyLAWwkwIUUmMaXMl9CHOyB7UieQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OFDHMFUfTCuu6qjqSNi5XHH+lMoW0qOqcsRNh9G9O/cFjsBVgz76PEx6ImgMeBajv+O6W0Sodu3ag+XTwGYtSn1CSe1ZR1kPPsGn8Memvt1wMHv05OL2Y3crk2J+EV7kGnbm8i0/q+z0fT/FLMgGuudVQLRZaHbq2/b2JoV+ynI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LSUU4jt7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gt5746Pj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pQ78c23w; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hMHRGD1q; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D6D4221B59;
-	Thu,  4 Jul 2024 20:17:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720124259; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHOCWE3EkhiNlL1wxuvq4tBlp7GGItSDi5bJBhDYXuI=;
-	b=LSUU4jt7Yz+Lfj6s/xdgwJizkfQWnDJv8cu47oYTtpSk4jwXsCTQUevr8psghqx04QQC0i
-	+QQ86sSD7jFXL2J/zATBToJBxtkGic73XN8/2GWl8bDzHYdMUOMu0SKKqKTxpvbwzpW5Fw
-	/i7rWfJIACtI+9h9BaoBePPXcUzV2TE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720124259;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHOCWE3EkhiNlL1wxuvq4tBlp7GGItSDi5bJBhDYXuI=;
-	b=gt5746PjnRm7GZmMg4sw7kAzfqUXDshMAlM6y314VBHiZi/c8ZxwB4axsDyt/uSLVX6y9t
-	z4LJyf1Z7VehjbBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720124258; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHOCWE3EkhiNlL1wxuvq4tBlp7GGItSDi5bJBhDYXuI=;
-	b=pQ78c23wqqTk3xkf/Ew1f6CzX2t+4g6x2XSEHXCwZYhN7Q/hGms95+9m697d4AVoqxkDEZ
-	PcmbwklUnWaxpU+BGaos5mhGOvSNEZRdu6zvbsRYx94dVebR3L5NZl0wHf995DMB5UGgv+
-	K2Tfi/TeoAOiId+U/B7jGbsQawDUjCg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720124258;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHOCWE3EkhiNlL1wxuvq4tBlp7GGItSDi5bJBhDYXuI=;
-	b=hMHRGD1qkKymzqBVFSLVcyk/SZf+JAfwEm912j15nMRel0PFP/UaBJ7pkWCsc+IDy+YluX
-	2jbSFgm1l9Zy2hAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 14DBA1369F;
-	Thu,  4 Jul 2024 20:17:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id X6zZAWIDh2ZDCgAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Thu, 04 Jul 2024 20:17:38 +0000
-Message-ID: <ffbf19f4-d213-4133-84a9-02bbf760b925@suse.de>
-Date: Thu, 4 Jul 2024 23:17:37 +0300
+	s=arc-20240116; t=1720124910; c=relaxed/simple;
+	bh=fUPBk3zzISzAf3skQXsmHg1VVEQ+VeidBR6394fqi0M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R+tDOqQtnJzSGeuorHiYC1pDh0ouyzgdNWHguO2y+2MwS1oVAD8FmLQLaP/DvCG1ePlWaz+VXVed36CJvQBrQ/F2Gjgk0+V3d/YgGnSCNfOFIt32scDdKIOGCw6znWGpSeg/S9NCr5O8P0bxDRVkWQHMTxMD1EgqEXU4szjOrqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=U+3b5vDR; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-701b0b0be38so738084b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 13:28:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1720124907; x=1720729707; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f0ZFq4yZrqfjqzGRa4e6FCFvF4vx3j+7fOsbx7TFpEA=;
+        b=U+3b5vDRxvPsJFe140KaFUm3kPnx2GogA0TO0sjsA7/rXd9C7BVJ8zU0u28WgEZ306
+         XgNm+PxDfLIxZpoNMji6WzxZT3ZX11IaEglWy1H2OXigVU23JkBGdqfmINtqVxziZXV8
+         7AW37zW0XdKPZ1Wr6RdEMd8vX0EhpejP7bjmelDJu/C6n/YfqreR40tt+ujN7lUYD1/j
+         mysPi9MVhwCg54aaLBctGVhIg6F2MEqETHrJ7FMin0mRlrJ1qfa3DO197Kh9SBJ+L1pc
+         ZGwieCgyyzQ9nL0GsLjvIFUhvrkrb9gMfivnvZGjWFCmCKpKYfiyYBU8DAPJHxVfc7BB
+         0PrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720124907; x=1720729707;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f0ZFq4yZrqfjqzGRa4e6FCFvF4vx3j+7fOsbx7TFpEA=;
+        b=R66vURSrzj9YNxPrO01nTEqcz4g31RRyykt14upIE8o7HzvKjJdQBcXgtHF42hGLoQ
+         5vQBXKEI+64O4hLWEL4G5snvREJLX0DINV3AZ+juyfwHSMW8VOBNVuppn6T1pi37Uhsc
+         fcdC+71DUzkRz6hXae1vGqVO/4cOVUsW5w4S2155DJu5l+cVjFiL+kb+HpzD4eZmIRQO
+         KjC8s/i8eultMmL8qvbxLHDRp0Z7RMPApMldovWfbElTvLNsiZuZJe+iEVWOPecdTAbi
+         dmr33cLV2HNKtEpkUF34OCGyep8WscaeXOvYDV+f6+X0UHgVwf7oBFA/W/dHjy+wtYad
+         b4Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvrETdU1PJbN4rBk9pq2PGclDhL14AaIeSstAv5sg3cQrHgAN+gQCrLgT2Rr/1SpjMApysETiWe3bJh0xn3zz+jrLJmVi6S4zKIHRO
+X-Gm-Message-State: AOJu0YxAS0GImwrzDN3bftOkDyAbfZnuiajAAz3G+Bjfa4s8hf+An8lQ
+	t8gW/Dotxe3qJsWLb7Gx81LrExRjsMg2+Kf9lrjtvZK5bpkMSi2hJHDvOp3dTz4=
+X-Google-Smtp-Source: AGHT+IEWAl6PNGgwoM5iOt5iPlgXU4LmkI72bTkWiRe/ok/Q+VF2wIhTl2HS7Qutfcrht+J1XgIQTg==
+X-Received: by 2002:a05:6a21:339a:b0:1bd:260e:be9d with SMTP id adf61e73a8af0-1c0cc90bed5mr3157315637.39.1720124906817;
+        Thu, 04 Jul 2024 13:28:26 -0700 (PDT)
+Received: from fedora.vc.shawcable.net (S0106c09435b54ab9.vc.shawcable.net. [24.85.107.15])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-759b1c426dfsm2942087a12.9.2024.07.04.13.28.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 13:28:26 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: marcelo.leitner@gmail.com,
+	lucien.xin@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-sctp@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH net-next] sctp: Fix typos and improve comments
+Date: Thu,  4 Jul 2024 22:25:59 +0200
+Message-ID: <20240704202558.62704-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/12] PCI: brcmstb: Refactor for chips with many
- regular inbound BARs
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240703180300.42959-1-james.quinlan@broadcom.com>
- <20240703180300.42959-10-james.quinlan@broadcom.com>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <20240703180300.42959-10-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.29
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	FREEMAIL_TO(0.00)[broadcom.com,vger.kernel.org,kernel.org,google.com,arm.com,debian.org,suse.de,gmail.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
+Content-Transfer-Encoding: 8bit
 
-Hi Jim,
+Fix typos s/steam/stream/ and spell out Schedule/Unschedule in the
+comments.
 
-On 7/3/24 21:02, Jim Quinlan wrote:
-> Previously, our chips provided three inbound "BARS" with fixed purposes:
-> the first was for mapping SOC registers, the second was for memory, and the
-> third was for memory but with the endian swapped.  We typically only used
-> one of these BARs.
-> 
-> Complicating that BARs usage was the fact that the PCIe HW would do a
-> baroque internal mapping of system memory, and concatenate the regions of
-> multiple memory controllers.
-> 
-> Newer chips such as the 7712 and Cable Modem SOCs have taken a step forward
-> and now provide multiple inbound BARs.  This works in concert with the
-> dma-ranges property, where each provided range becomes an inbound BAR.
-> 
-> This commit provides support for these new chips and their multiple
-> inbound BARs but also keeps the legacy support for the older system.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 199 +++++++++++++++++++-------
->  1 file changed, 150 insertions(+), 49 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index ffb3e8d8fb2a..5f632fdc0052 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -75,15 +75,12 @@
->  #define PCIE_MEM_WIN0_HI(win)	\
->  		PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI + ((win) * 8)
->  
-> +#define PCIE_BRCM_MAX_RC_BARS				16
->  #define PCIE_MISC_RC_BAR1_CONFIG_LO			0x402c
->  #define  PCIE_MISC_RC_BAR1_CONFIG_LO_SIZE_MASK		0x1f
->  
-> -#define PCIE_MISC_RC_BAR2_CONFIG_LO			0x4034
-> -#define  PCIE_MISC_RC_BAR2_CONFIG_LO_SIZE_MASK		0x1f
-> -#define PCIE_MISC_RC_BAR2_CONFIG_HI			0x4038
-> +#define PCIE_MISC_RC_BAR4_CONFIG_LO			0x40d4
->  
-> -#define PCIE_MISC_RC_BAR3_CONFIG_LO			0x403c
-> -#define  PCIE_MISC_RC_BAR3_CONFIG_LO_SIZE_MASK		0x1f
->  
->  #define PCIE_MISC_MSI_BAR_CONFIG_LO			0x4044
->  #define PCIE_MISC_MSI_BAR_CONFIG_HI			0x4048
-> @@ -130,6 +127,10 @@
->  	  (PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK | \
->  	   PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK)
->  
-> +#define PCIE_MISC_UBUS_BAR1_CONFIG_REMAP			0x40ac
-> +#define  PCIE_MISC_UBUS_BAR1_CONFIG_REMAP_ACCESS_EN_MASK	0x1
+Compile-tested only.
 
-could you use BIT(0)
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ include/net/sctp/stream_sched.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-~Stan
+diff --git a/include/net/sctp/stream_sched.h b/include/net/sctp/stream_sched.h
+index 572d73fdcd5e..8034bf5febbe 100644
+--- a/include/net/sctp/stream_sched.h
++++ b/include/net/sctp/stream_sched.h
+@@ -35,10 +35,10 @@ struct sctp_sched_ops {
+ 	struct sctp_chunk *(*dequeue)(struct sctp_outq *q);
+ 	/* Called only if the chunk fit the packet */
+ 	void (*dequeue_done)(struct sctp_outq *q, struct sctp_chunk *chunk);
+-	/* Sched all chunks already enqueued */
+-	void (*sched_all)(struct sctp_stream *steam);
+-	/* Unched all chunks already enqueued */
+-	void (*unsched_all)(struct sctp_stream *steam);
++	/* Schedule all chunks already enqueued */
++	void (*sched_all)(struct sctp_stream *stream);
++	/* Unschedule all chunks already enqueued */
++	void (*unsched_all)(struct sctp_stream *stream);
+ };
+ 
+ int sctp_sched_set_sched(struct sctp_association *asoc,
+-- 
+2.45.2
+
 
