@@ -1,263 +1,233 @@
-Return-Path: <linux-kernel+bounces-241750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58E6927F1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:19:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D95D927F21
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49521C21A29
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 23:19:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE51E284DFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 23:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85DA143C6A;
-	Thu,  4 Jul 2024 23:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CD1143C69;
+	Thu,  4 Jul 2024 23:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ImfJbMA8"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2046.outbound.protection.outlook.com [40.107.92.46])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Dz1kDJ0T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E151D13D275
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 23:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720135155; cv=fail; b=WKMDX25+kalFRR4HEI6RTHCihsJK2121y8MO0WpCO3fiJhEHIueOi1n+PJ6JuckZ5/ZIqQ9weZ1en1FKHTgzszT2yC8z8m+pMyn9ZooTuQPy/eYmE8/drO2Bgv0Qwc8TUmRK6ER7fykB7lIYD247obssO9f+5fPdQ8z4+I5JvS8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720135155; c=relaxed/simple;
-	bh=lzXfi9ZflQSFvZYdLvpzIdw/echpmjiY+zo6edEzVbk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rlNXP1cWYB7WNN85h0h1dkvKdJDprlgs2rzcrpSPq16RZF+2LipodnX2d07UsgE3Okyrp9WN6PaIdFx7Gd6UzJKclXs529oHtG6u4DQQBKwElNGwxn8lbV3Js6ps5UVjfB5KmvrEMBl1dROqA6VkV0y708MPguq4L5RzyYRJcig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ImfJbMA8; arc=fail smtp.client-ip=40.107.92.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LWUPN5D543G2W8RNS2PMsfiCjxK7BIpmtis6BbQeYwgWW9CUkv1K/d4Nx+w8B7YOYB2DannZqt6szlkUOUFjI3b33Xai2eYYqzTNumnWjhkRdc6r+ud+mBk/LBdyI/Q5pYqr8e/gNSxBuXEn1YRWrxl4pkmXtcMm598aKaRVzQhOgSbnMYAmSQddACQQt88XheKrZUoZpiWgBjUGlk0x+o7nMljlRfCWRnXpC44UortsFviAEcwawwUk7/em8ZO8ucfG1ZxKNOi/FwGx/enpDgrJY4yKxv0jJxJ/Ed2fSRtKwuSNZqswpYhiEfqUWmcuanWn128V3WiXNE3te6JHRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ilbMOsbd+a1Wf0jibFOMfvmsZO77LBBjB/STe/h1tZ8=;
- b=l366e4wUPljWIzKvZNMMzAwJPrI/R6oELILZkWtKtmnYOF7Mf0/B+WwF63x6IX9c51C1dpj9Cv7s4Gpqjr3fv8bvD+1WaQPvZFD6+lknZGs+Z12eSHJq5Hu/xL2T09kIuiCGXWgphx6AyBzLs83D+UbXQ625DZ04G0x+DXcyyNOBajaW017glDa2Tbe01eCGrtDgeuNblyHS7gip1XHVExUaKWibslLPeT2UCsnkydQQ5XNTxXD7ofgODw8Insy72KzRMsO8otbw/qxxQe4Y/l06q1ySGWt4q4r6H6mbu2kYxlQw5NLei0nffcOWSgvpLqx7O7SEll0VJkCt01012g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ilbMOsbd+a1Wf0jibFOMfvmsZO77LBBjB/STe/h1tZ8=;
- b=ImfJbMA8ZUWP53Xd1qlUmmIs1PgxoukhkQIW+SU9cmDMSfShdOfv4DTXQybuF7z4dodN8EQtqnZSW98KmmDdEl81SEhc0hCH/RDw7fjG3xUMF0elMhbFrFr8Yfppg49+I2HgDFGYMWYPgJQI/ueHR2+a5pgnjIVu3ZWfsrrBfZO2WDrxlV1+4AMMTzuPtxx1JkDR9ogYSDh2kkfouCvSriiltjE3GPG5yPp4TXNpbmZipLPRYYQUw9/EwqcV2wFC4AEUqDVjUGNNmSrJC80xkGtGzJ8AohFeHFWVHtGdXXZ2DA2SPJOnZgOVcFgmIA6zHz3z7ZrjX0pBk0JInHgXzw==
-Received: from MN2PR14CA0025.namprd14.prod.outlook.com (2603:10b6:208:23e::30)
- by DS7PR12MB8229.namprd12.prod.outlook.com (2603:10b6:8:ea::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.26; Thu, 4 Jul
- 2024 23:19:08 +0000
-Received: from BL6PEPF00020E60.namprd04.prod.outlook.com
- (2603:10b6:208:23e:cafe::d6) by MN2PR14CA0025.outlook.office365.com
- (2603:10b6:208:23e::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.30 via Frontend
- Transport; Thu, 4 Jul 2024 23:19:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BL6PEPF00020E60.mail.protection.outlook.com (10.167.249.21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7741.18 via Frontend Transport; Thu, 4 Jul 2024 23:19:07 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 4 Jul 2024
- 16:18:55 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 4 Jul 2024
- 16:18:54 -0700
-Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Thu, 4 Jul 2024 16:18:53 -0700
-Date: Thu, 4 Jul 2024 16:18:52 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>, Baolu Lu <baolu.lu@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, Joerg Roedel <joro@8bytes.org>, "Will
- Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	"Jean-Philippe Brucker" <jean-philippe@linaro.org>, "Liu, Yi L"
-	<yi.l.liu@intel.com>, "Jacob Pan" <jacob.jun.pan@linux.intel.com>, Joel
- Granados <j.granados@samsung.com>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "virtualization@lists.linux-foundation.org"
-	<virtualization@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v8 06/10] iommufd: Add iommufd fault object
-Message-ID: <Zoct3LVVHhDNbPBT@Asurada-Nvidia>
-References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
- <20240702063444.105814-7-baolu.lu@linux.intel.com>
- <ZoXZZ2SJ/WdlMJaX@Asurada-Nvidia>
- <309e37d1-6066-4ba1-b30c-402a3c3e7c76@linux.intel.com>
- <ZoY01iLmzoV4fIPG@Asurada-Nvidia>
- <BN9PR11MB52769E10ED0741F5ED3E5B668CDE2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <fc7f5bb1-25b7-4a5f-8d6b-1fa17b1af534@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7C5481B1
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 23:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720135378; cv=none; b=YtMMELpe90BRSWgRHh/8DATzYYKKgq1kCErZfWLy6j+ZN9ypae8oiUDb8hRwkllXdTnc+GxnVB9utjouE7ct/YUqKEO5n0FtRousVvVbAWy2j8yFiBlK4FbfT9ymChuRxS4yXv4VF2IHWtg5Wlw/SYSXveUOZJLc+DjxRMOUMFQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720135378; c=relaxed/simple;
+	bh=WcyGzBDPm08jDqw9VW7mWQ1QgDFVUCZ5sEiUBFTEALY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=YxUjAzllA4n91mnXt+/dzjTyw6vsN3ZC6iYDd2fCHCk0gNoDwKDADAbn8OLfs30Ryj737hIjPRz2LecDvLYL91BVXSXp5ua8WXhfy3Yji2Bce7rKcqlImEgjq6FDbP0hbh5GMaDNAuTH4b4k4YUa1zeAeI5lp4Hu23+drnAUQ3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Dz1kDJ0T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18DECC3277B;
+	Thu,  4 Jul 2024 23:22:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1720135377;
+	bh=WcyGzBDPm08jDqw9VW7mWQ1QgDFVUCZ5sEiUBFTEALY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Dz1kDJ0TGUKuQxQI0YRdtxhLnMEAjmd05nT+q/gspjPw1TfnMUwr5t0zrJ3dmmj6C
+	 FTz6hJCYInPVC7ygaRAAkUsj3NV8OQO+ebkTDuq5FiWRyrqXfiQinc9yJsOxm4Pm64
+	 2OYItLZ0tzEtlrUC7YEjNM8n5qEFW/xhhYT7cCzE=
+Date: Thu, 4 Jul 2024 16:22:56 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, shakeel.butt@linux.dev,
+ david@redhat.com, ying.huang@intel.com, hughd@google.com,
+ willy@infradead.org, yosryahmed@google.com, nphamcs@gmail.com,
+ chengming.zhou@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ kernel-team@meta.com, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v7 1/2] mm: store zero pages to be swapped out in a
+ bitmap
+Message-Id: <20240704162256.f64fa9b6752d0d5e003f9c18@linux-foundation.org>
+In-Reply-To: <6f8b64f8-b7b0-42f4-a1d4-bf79624cff1e@gmail.com>
+References: <20240627105730.3110705-1-usamaarif642@gmail.com>
+	<20240627105730.3110705-2-usamaarif642@gmail.com>
+	<20240627161852.GA469122@cmpxchg.org>
+	<44a57df4-e54c-47ee-96b8-e2361c549239@gmail.com>
+	<aa573e39-8d27-475d-a3a1-27fdcfdcef56@gmail.com>
+	<5743d4e4-3e34-4ac1-b4a9-0ddc4f0e624d@gmail.com>
+	<6f8b64f8-b7b0-42f4-a1d4-bf79624cff1e@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <fc7f5bb1-25b7-4a5f-8d6b-1fa17b1af534@linux.intel.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00020E60:EE_|DS7PR12MB8229:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c9e9666-84ed-44c5-86b2-08dc9c7fb41c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XJkvCbTmxGadi7sMc3SD0aPusH/ZxGFFpnyp6u5tIcEpeU8KVG4LTMP91TAd?=
- =?us-ascii?Q?v1d1Ny0j3DUHQJxQVSaUvAN82y7Wp6Eg8Ex1ZHp+zmdszrcDrujrfeGKFu2U?=
- =?us-ascii?Q?9WoVjxvTjPDQlzhL+kEqeTwz/trLmEv6znS1QABcNYW5i1oULPRR/eiwZ534?=
- =?us-ascii?Q?zTn3/buHqYSVinFA/EuEXjwnn5SgxlqHZMPfWSvGIZ+KOc1svjf7hbIkczyY?=
- =?us-ascii?Q?njiUJq3V27fPNGKy8pC07RvgVL6ToBlLUytu20PF8FbcZC0SSawnmKUYzkVS?=
- =?us-ascii?Q?LljgucBvxr9D27ajMm4q9lslA1YwEQPHvtDLHNKeqm/O75o7F4I5YYnJJw15?=
- =?us-ascii?Q?BsKsAeDSsYw6dRPthA4Ltf+Rirs5nGNKE8H638E7UfvU3ll2P/hi1bhm/UaT?=
- =?us-ascii?Q?Xdmogz4EXtYIDYHTr7UGzRBvf9Qt37Sl3mYZ0jBfCH+zd5PMD0pcbflkwu98?=
- =?us-ascii?Q?ibyd38E2GqR4uIWxGH6zdTOslKpUJtLSvF3g7tZQyCO+lR0fil04rNFDdvdB?=
- =?us-ascii?Q?IT+42xpANzAWUE1916cLYB8KGy8BftF6G7hQQMJag1YVp0ARkATOXofUVMSh?=
- =?us-ascii?Q?9/Gs6PsON6PlDcCI/eJcAkG2fGUxmOlYwa3Z1b0goElxV/HGi2GbLIp8xbAI?=
- =?us-ascii?Q?buD1Q1TnhoWLKZxlHESTLr4Nx/xcViAYEjKLmMN1VXm4JiDjLE3GMZt5bSRT?=
- =?us-ascii?Q?5AWzJ0KL7qDrlQ7qREbE4KptRFGJJY6LolkjNEWUkPabc6LHuT2LpCkl3UNe?=
- =?us-ascii?Q?g3gDoiORl6Xn0BM0gfSagTPFsHuq2FA5GbMNCwWl+ZadzHZw/CTdkhUKl+KC?=
- =?us-ascii?Q?9r7feTi9w222tbhULzbQEioE+AS/V8+kHgoyZYxnpUZQVBf2fcco68RG53xf?=
- =?us-ascii?Q?WYEHqqpWI9884O2W8GuFWiD5VHP5+7Jusnb2UgakYYHhBPMRT0W2CgtmKTut?=
- =?us-ascii?Q?EKErUjCcn1OVJYRDqvAT5EQsGj+gMTg3nGBHrLqGd0K0f2S0KaONijDEDRJF?=
- =?us-ascii?Q?teTO1BjNidnKPb1kNI2WriFe3XCAbI6/cqtEqYmb80yAFxSADXoLCsXeOPdU?=
- =?us-ascii?Q?w7uyUngD/FJ709h80NMPlWzMzT5+EdWlYblkbSi4o/kzfQOLRLQtWk29sfLW?=
- =?us-ascii?Q?CK9F7gl3HsSN43sdj5jdl8VCgSBH25DQpkPJJ7Q1AnAwsZDacenU7cK9J+gc?=
- =?us-ascii?Q?XFX2LZNCUoztthm6ott9LvTprxpkBUCY+b4JulokkW2v5m6iBZSbSsAQ0VB/?=
- =?us-ascii?Q?nMlRlrNR5qxsTQrKZJGSTXz5YkZLsIeIjwT8NMZPankxC2Di6UueY+JQhzaB?=
- =?us-ascii?Q?joTJqkf7aYLwKBZUFQd/XRf97eEoV5FCs48DSw7mo4O3yXvP759wZh31wOpg?=
- =?us-ascii?Q?7Iey7O+cghubd8pZH0RafiHl0x6HUITYTCBscr+3wqEyLZE0DTlxgjygGBFH?=
- =?us-ascii?Q?291zdaePAxVOWaTCze+WFE4F3lUfah6c?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 23:19:07.4284
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c9e9666-84ed-44c5-86b2-08dc9c7fb41c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00020E60.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8229
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 04, 2024 at 03:32:32PM +0800, Baolu Lu wrote:
-> On 2024/7/4 14:37, Tian, Kevin wrote:
-> > > From: Nicolin Chen<nicolinc@nvidia.com>
-> > > Sent: Thursday, July 4, 2024 1:36 PM
-> > > 
-> > > On Thu, Jul 04, 2024 at 10:59:45AM +0800, Baolu Lu wrote:
-> > > > > On Tue, Jul 02, 2024 at 02:34:40PM +0800, Lu Baolu wrote:
-> > > > > 
-> > > > > +enum iommu_fault_type {
-> > > > > +     IOMMU_FAULT_TYPE_HWPT_IOPF,
-> > > > > +     IOMMU_FAULT_TYPE_VIOMMU_IRQ,
-> > > > > +};
-> > > > > 
-> > > > >    struct iommu_fault_alloc {
-> > > > >        __u32 size;
-> > > > >        __u32 flags;
-> > > > > +     __u32 type;  /* enum iommu_fault_type */
-> > > > >        __u32 out_fault_id;
-> > > > >        __u32 out_fault_fd;
-> > and need a new reserved field for alignment.
+On Mon, 1 Jul 2024 20:15:46 +0300 Usama Arif <usamaarif642@gmail.com> wrote:
 
-Hmm, what's the reason for enforcing a 64-bit alignment to an
-all-u32 struct though? I thought we need a reserved field only
-for padding. The struct iommu_ioas_alloc has three u32 members
-for example?
+> Changes from v7 (Johannes):
+> - Give overview and explain how locking works in zeromap in comments
+> - Add comment for why last word is checked first when checking if
+>   folio is zero-filled
+> - Merge is_folio_zero_filled and is_folio_page_zero_filled into
+>   1 function.
+> - Use folio_zero_range to fill a folio with zero at readtime.
+> - Put swap_zeromap_folio_clear in an else branch (even if checkpatch
+>   gives warning) and add comment to make it explicitly clear that it
+>   needs to happen if folio is not zero filled.
+> - add missing kvfree for zeromap incase swapon fails.
 
-> > > > >    };
-> > > > > 
-> > > > > I understand that this is already v8. So, maybe we can, for now,
-> > > > > apply the small diff above with an IOMMU_FAULT_TYPE_HWPT_IOPF
-> > > type
-> > > > > check in the ioctl handler. And a decoupling for the iopf fops in
-> > > > > the ioctl handler can come later in the viommu series:
-> > > > >        switch (type) {
-> > > > >        case IOMMU_FAULT_TYPE_HWPT_IOPF:
-> > > > >                filep = anon_inode_getfile("[iommufd-pgfault]",
-> > > > >                                           &iommufd_fault_fops_iopf);
-> > > > >        case IOMMU_FAULT_TYPE_VIOMMU_IRQ:
-> > > > >                filep = anon_inode_getfile("[iommufd-viommu-irq]",
-> > > > >                                           &iommufd_fault_fops_viommu);
-> > > > >        default:
-> > > > >                return -EOPNOSUPP;
-> > > > >        }
-> > > > > 
-> > > > > Since you are the designer here, I think you have a better 10000
-> > > > > foot view -- maybe I am missing something here implying that the
-> > > > > fault object can't be really reused by viommu.
-> > > > > 
-> > > > > Would you mind sharing some thoughts here?
-> > > > I think this is a choice between "two different objects" vs. "same
-> > > > object with different FD interfaces". If I understand it correctly, your
-> > > > proposal of unrecoverable fault delivery is not limited to vcmdq, but
-> > > > generic to all unrecoverable events that userspace should be aware of
-> > > > when the passed-through device is affected.
-> > > It's basically IRQ forwarding, not confined to unrecoverable
-> > > faults. For example, a VCMDQ used by the guest kernel would
-> > > raise an HW IRQ if the guest kernel issues an illegal command
-> > > to the HW Queue assigned to it. The host kernel will receive
-> > > the IRQ, so it needs a way to forward it to the VM for guest
-> > > kernel to recover the HW queue.
-> > > 
-> > > The way that we define the structure can follow what we have
-> > > for hwpt_alloc/invalidate uAPIs, i.e. driver data/event. And
-> > > such an event can carry unrecoverable translation faults too.
-> > > SMMU at least reports DMA translation faults using an eventQ
-> > > in its own native language.
-> > > 
-> > > >  From a hardware architecture perspective, the interfaces for
-> > > > unrecoverable events don't always match the page faults. For example,
-> > > > VT-d architecture defines a PR queue for page faults, but uses a
-> > > > register set to report unrecoverable events. The 'reason', 'request id'
-> > > > and 'pasid' fields of the register set indicate what happened on the
-> > > > hardware. New unrecoverable events will not be reported until the
-> > > > previous one has been fetched.
-> > > Understood. I don't think we can share the majority pieces in
-> > > the fault.c. Just the "IOMMU_FAULT_QUEUE_ALLOC" ioctl itself
-> > > looks way too general to be limited to page-fault usage only.
-> > > So, I feel we can share, for example:
-> > >      IOMMU_FAULT_QUEUE_ALLOC (type=hwpt_iopf) -> fault_id=1
-> > >      IOMMU_HWPT_ALLOC (fault_id=1) -> hwpt_id=2
-> > >      IOMMU_FAULT_QUEUE_ALLOC (type=viommu_irq) -> fault_id=3
-> > >      IOMMU_VIOMMU_ALLOC (fault_id=2) -> viommu_id=4
-> > > The handler will direct to different fops as I drafted in my
-> > > previous mail.
-> > > 
-> > > > With the above being said, I have no strong opinions between these two
-> > > > choices. Jason and Kevin should have more insights.
-> > > Thanks. Jason is out of office this week, so hopefully Kevin
-> > > may shed some light. I personally feel that we don't need to
-> > > largely update this series until we add VIOMMU. Yet, it would
-> > > be convenient if we add a "type" in the uAPI with this series.
-> > > 
-> > This is ok to me.
-> 
-> So
-> 
-> Nicolin, perhaps can you please cook an additional patch on top of this
-> series and post it for further review?
+I queued the below as a delta against what was in mm-unstable.
 
-Thank you both for the inputs. Yea, so long as we merge them
-in the same cycle, it won't be a uAPI breakage. I will draft
-an incremental one. And Jason can make a final call.
+Can we please get this nailed down?  It has been nearly three weeks and
+this patch is getting in the way of the "mm/zsmalloc: change back to
+per-size_class lock" series, at least.
 
-Nicolin
+ include/linux/swap.h |    2 -
+ mm/page_io.c         |   64 +++++++++++++++++++++--------------------
+ mm/swapfile.c        |    9 +++--
+ 3 files changed, 40 insertions(+), 35 deletions(-)
+
+--- a/include/linux/swap.h~mm-store-zero-pages-to-be-swapped-out-in-a-bitmap-v8
++++ a/include/linux/swap.h
+@@ -299,7 +299,7 @@ struct swap_info_struct {
+ 	signed char	type;		/* strange name for an index */
+ 	unsigned int	max;		/* extent of the swap_map */
+ 	unsigned char *swap_map;	/* vmalloc'ed array of usage counts */
+-	unsigned long *zeromap;		/* vmalloc'ed bitmap to track zero pages */
++	unsigned long *zeromap;		/* kvmalloc'ed bitmap to track zero pages */
+ 	struct swap_cluster_info *cluster_info; /* cluster info. Only for SSD */
+ 	struct swap_cluster_list free_clusters; /* free clusters list */
+ 	unsigned int lowest_bit;	/* index of first free in swap_map */
+--- a/mm/page_io.c~mm-store-zero-pages-to-be-swapped-out-in-a-bitmap-v8
++++ a/mm/page_io.c
+@@ -172,42 +172,34 @@ bad_bmap:
+ 	goto out;
+ }
+ 
+-static bool is_folio_page_zero_filled(struct folio *folio, int i)
+-{
+-	unsigned long *data;
+-	unsigned int pos, last_pos = PAGE_SIZE / sizeof(*data) - 1;
+-	bool ret = false;
+-
+-	data = kmap_local_folio(folio, i * PAGE_SIZE);
+-	if (data[last_pos])
+-		goto out;
+-	for (pos = 0; pos < PAGE_SIZE / sizeof(*data); pos++) {
+-		if (data[pos])
+-			goto out;
+-	}
+-	ret = true;
+-out:
+-	kunmap_local(data);
+-	return ret;
+-}
+-
+ static bool is_folio_zero_filled(struct folio *folio)
+ {
++	unsigned int pos, last_pos;
++	unsigned long *data;
+ 	unsigned int i;
+ 
++	last_pos = PAGE_SIZE / sizeof(*data) - 1;
+ 	for (i = 0; i < folio_nr_pages(folio); i++) {
+-		if (!is_folio_page_zero_filled(folio, i))
++		data = kmap_local_folio(folio, i * PAGE_SIZE);
++		/*
++		 * Check last word first, incase the page is zero-filled at
++		 * the start and has non-zero data at the end, which is common
++		 * in real-world workloads.
++		 */
++		if (data[last_pos]) {
++			kunmap_local(data);
+ 			return false;
++		}
++		for (pos = 0; pos < last_pos; pos++) {
++			if (data[pos]) {
++				kunmap_local(data);
++				return false;
++			}
++		}
++		kunmap_local(data);
+ 	}
+-	return true;
+-}
+ 
+-static void folio_zero_fill(struct folio *folio)
+-{
+-	unsigned int i;
+-
+-	for (i = 0; i < folio_nr_pages(folio); i++)
+-		clear_highpage(folio_page(folio, i));
++	return true;
+ }
+ 
+ static void swap_zeromap_folio_set(struct folio *folio)
+@@ -278,12 +270,24 @@ int swap_writepage(struct page *page, st
+ 		return ret;
+ 	}
+ 
++	/*
++	 * Use a bitmap (zeromap) to avoid doing IO for zero-filled pages.
++	 * The bits in zeromap are protected by the locked swapcache folio
++	 * and atomic updates are used to protect against read-modify-write
++	 * corruption due to other zero swap entries seeing concurrent updates.
++	 */
+ 	if (is_folio_zero_filled(folio)) {
+ 		swap_zeromap_folio_set(folio);
+ 		folio_unlock(folio);
+ 		return 0;
++	} else {
++		/*
++		 * Clear bits this folio occupies in the zeromap to prevent
++		 * zero data being read in from any previous zero writes that
++		 * occupied the same swap entries.
++		 */
++		swap_zeromap_folio_clear(folio);
+ 	}
+-	swap_zeromap_folio_clear(folio);
+ 	if (zswap_store(folio)) {
+ 		folio_unlock(folio);
+ 		return 0;
+@@ -528,7 +532,7 @@ static bool swap_read_folio_zeromap(stru
+ 	if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
+ 		return true;
+ 
+-	folio_zero_fill(folio);
++	folio_zero_range(folio, 0, folio_size(folio));
+ 	folio_mark_uptodate(folio);
+ 	return true;
+ }
+--- a/mm/swapfile.c~mm-store-zero-pages-to-be-swapped-out-in-a-bitmap-v8
++++ a/mm/swapfile.c
+@@ -3181,11 +3181,11 @@ SYSCALL_DEFINE2(swapon, const char __use
+ 	}
+ 
+ 	/*
+-	 * Use kvmalloc_array instead of bitmap_zalloc as the allocation order
+-	 * might be above MAX_PAGE_ORDER incase of a large swap file.
++	 * Use kvmalloc_array instead of bitmap_zalloc as the allocation order might
++	 * be above MAX_PAGE_ORDER incase of a large swap file.
+ 	 */
+-	p->zeromap = kvmalloc_array(BITS_TO_LONGS(maxpages),
+-				sizeof(unsigned long), GFP_KERNEL | __GFP_ZERO);
++	p->zeromap = kvmalloc_array(BITS_TO_LONGS(maxpages), sizeof(long),
++				    GFP_KERNEL | __GFP_ZERO);
+ 	if (!p->zeromap) {
+ 		error = -ENOMEM;
+ 		goto bad_swap_unlock_inode;
+@@ -3345,6 +3345,7 @@ bad_swap:
+ 	p->flags = 0;
+ 	spin_unlock(&swap_lock);
+ 	vfree(swap_map);
++	kvfree(p->zeromap);
+ 	kvfree(cluster_info);
+ 	if (inced_nr_rotate_swap)
+ 		atomic_dec(&nr_rotate_swap);
+_
+
 
