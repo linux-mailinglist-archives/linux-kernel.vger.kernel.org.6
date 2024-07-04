@@ -1,167 +1,165 @@
-Return-Path: <linux-kernel+bounces-241723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EE53927E88
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 23:29:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C4F927E94
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 23:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5EF1F22B7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB00F1C228DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A6914386B;
-	Thu,  4 Jul 2024 21:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC97143C5F;
+	Thu,  4 Jul 2024 21:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="e2Ryhnwc"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S0JEVBhI"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43B7C2ED;
-	Thu,  4 Jul 2024 21:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E7D7346E;
+	Thu,  4 Jul 2024 21:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720128527; cv=none; b=BihEFH8n0rFbjHOB8p9nZqe1OVOjEL5AsdK9MJKer83nkoBXkVVqdt9RwqbZ94uhjNqdf9ymduME7f8rbC7AhKjhThpTDqW6f974oqwFcStDC79iXGHw7baBffyh5fn0eSPLEGr4AQ3/WBMVB9sgYooHtF1OT7kP40K75wi/u+g=
+	t=1720128735; cv=none; b=DZGw/OcogMQof1U3M+hlIY6X5j6CVY1XLLiEmj75OJ4vNcH67GwiW1Q8fhQ15g8G+XXA0LR330OR5vyKarSVOeeg2a9p7t47Zdes1N8Kw5+CT0kprR4Kqnmi38L02p2yYojUV/pX6wjtUxiYvnbv5yLeeGt0ZrDb0+wz78d0MAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720128527; c=relaxed/simple;
-	bh=2qj+dUg+yyWMiMbBXBUwi14q3KfTSmV7ohWQBkf4O/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aRpZ9A5u8rWhIRla/1s61/P4NR0q0jXGIApBC+Jn6FRLRVTqYqje7JTtldlnvmjQHP3o54o8FrHqe1CjO/d4D3ZKOTQPBIFdFovxgebl+dthjJapXNivDAZApGgoGgD4xFTxRbjGIPyJGfa8snifrSDlJv9Ezfw/eTqzk0yIyAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=e2Ryhnwc; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WFVBX0DWkz9sST;
-	Thu,  4 Jul 2024 23:28:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1720128516;
+	s=arc-20240116; t=1720128735; c=relaxed/simple;
+	bh=jEOP4tmTJgNwT4VJJ/H4/e/Pm5Ggkrq6iv0SA5dQ8ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aEdY1vZXnp4q1ZgWKD8Vx0Yl1lmjGa63OpOWxBKnb1JMPmzahNymJaKTYM9dMXW3sfI3/I92OfBmhKNRocf2tGVCwclQLhO8sRY17opnqDGp/7nA+2sF6W46EPjS0rfT1qULVpw7otozRNkiTDVerLmxMvlGOfheEWGOHH9tEiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S0JEVBhI; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BD86AFF802;
+	Thu,  4 Jul 2024 21:32:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720128729;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LCjoDPUbBuAc5cYe3hsTKSsm/SW417S4g2RIPjxg9Qs=;
-	b=e2RyhnwcEB/2WIfuol6lyKxOGyvhqnPGS21glSV6Cjyg8Uli24x7nPVYoWmgChLIpXzt11
-	bRMLi8MpZDZ0HD50MBBL7rm06NW6MBiq8+8uLOxZ1tmQMou8vDRgTjPutIw2Pn9/567LYg
-	jVOAhGtXQa4M0/OZg47XF0gfDctcl87am4R2jjeJC23a2/Hr7o5oY4wIG3Ft8pp7WGcs2q
-	8Pis0O1xGuojt3wg9lSdy7Y9NGxiutrAVgRURv1rKSJr74bQGZc6gsssIzQnGOnOTyc/tk
-	nBedjImbJdAf0W4JefXXg/uAa420yBC9BL1SAi5895iJp2Zn9Lyf9LnsF5wDoQ==
-Date: Thu, 4 Jul 2024 21:28:30 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, david@fromorbit.com,
-	chandan.babu@oracle.com, djwong@kernel.org, brauner@kernel.org,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, linux-mm@kvack.org,
-	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
-	hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org,
-	gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
-Message-ID: <20240704212830.xtakuw57wonas42u@quentin>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-2-kernel@pankajraghav.com>
- <cb644a36-67a7-4692-b002-413e70ac864a@arm.com>
- <Zoa9rQbEUam467-q@casper.infradead.org>
+	bh=Rey18xTlnMgOgIPL25ImB7B15sMWYzxAsvnHNthV5S0=;
+	b=S0JEVBhI3tfc5ntPMObRrKKeyUXsGRrO+dmrSHHiA/CXiaTrDzUnuWN/8RLan/W8yEPBYy
+	WTaC4P67s78ijbrvczP1KnuPtKQbrRcwlYEqUPZPpZW0nhX/siqNP/GhziUB79nYOQPi8r
+	PhP0fpq9va52mSjevxSqg9gaf/S2Ukug9XtKh8mzSUYLpNZp80MAwL96mMkrYY7WNzzmay
+	5AT/X7DCWHP8tVhsE6o3C1PHb0Q9g3z2DXN4uHMidHU5Rwoaz4Y/LepANuZA6Uuvs21L3L
+	95mP/Ounvba0aITTStBPv4Esd+fhuzK/5YdBxhSIiG700JAP0NMtF9NGxcnshQ==
+Date: Thu, 4 Jul 2024 23:31:55 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ Nathan Chancellor <nathan@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Tony Lindgren
+ <tony@atomide.com>, Bjorn Andersson <andersson@kernel.org>, Emilio
+ =?UTF-8?Q?L=C3=B3pez?= <emilio@elopez.com.ar>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Krzysztof Kozlowski <krzk@kernel.org>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel
+ review list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan
+ Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Uwe
+ =?UTF-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Richard
+ Leitner <richard.leitner@linux.dev>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
+ <naveen.n.rao@linux.ibm.com>, Damien Le Moal <dlemoal@kernel.org>, "Peng
+ Fan (OSS)" <peng.fan@oss.nxp.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, llvm@lists.linux.dev,
+ linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-usb@vger.kernel.org, patches@opensource.cirrus.com,
+ linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 00/20] Simplify of_property_for_each_u32()
+Message-ID: <20240704233155.61b5323c@booty>
+In-Reply-To: <20240703180742.GB1245093-robh@kernel.org>
+References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
+	<20240703180742.GB1245093-robh@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zoa9rQbEUam467-q@casper.infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Thu, Jul 04, 2024 at 04:20:13PM +0100, Matthew Wilcox wrote:
-> On Thu, Jul 04, 2024 at 01:23:20PM +0100, Ryan Roberts wrote:
-> > > -	AS_LARGE_FOLIO_SUPPORT = 6,
+Hello Rob,
+
+On Wed, 3 Jul 2024 12:07:42 -0600
+Rob Herring <robh@kernel.org> wrote:
+
+> On Wed, Jul 03, 2024 at 12:36:44PM +0200, Luca Ceresoli wrote:
+> > [Note: to reduce the noise I have trimmed the get_maintainers list
+> > manually. Should you want to be removed, or someone else added, to future
+> > versions, just tell me. Sorry for the noise.]
 > > 
-> > nit: this removed enum is still referenced in a comment further down the file.
-Good catch.
-> 
-> Thanks.  Pankaj, let me know if you want me to send you a patch or if
-> you'll do it directly.
-Yes, I will fold the changes.
-> 
-> > > +static inline void mapping_set_folio_order_range(struct address_space *mapping,
-> > > +						 unsigned int min,
-> > > +						 unsigned int max)
-> > > +{
-> > > +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> > > +		return;
-> > > +
-> > > +	if (min > MAX_PAGECACHE_ORDER)
-> > > +		min = MAX_PAGECACHE_ORDER;
-> > > +	if (max > MAX_PAGECACHE_ORDER)
-> > > +		max = MAX_PAGECACHE_ORDER;
-> > > +	if (max < min)
-> > > +		max = min;
+> > This series aims at simplifying of_property_for_each_u32() as well as
+> > making it more difficult to misuse it in the future.
 > > 
-> > It seems strange to silently clamp these? Presumably for the bs>ps usecase,
-> > whatever values are passed in are a hard requirement? So wouldn't want them to
-> > be silently reduced. (Especially given the recent change to reduce the size of
-> > MAX_PAGECACHE_ORDER to less then PMD size in some cases).
+> > The long-term goal is changing this pattern:
+> > 
+> >   struct property *prop;
+> >   const __be32 *p;
+> >   u32 val;
+> >  
+> >   of_property_for_each_u32(np, "xyz", prop, p, val) { ... }
+> > 
+> > to this:
+> > 
+> >   u32 val;
+> > 
+> >   of_property_for_each_u32(np, "xyz", val) { ... }
+> > 
+> > So, removing the 3rd and 4th arguments which are typically meant to be
+> > internal. Those two parameters used to be unavoidable until the kernel
+> > moved to building with the C11 standard unconditionally. Since then, it is
+> > now possible to get rid of them. However a few users of
+> > of_property_for_each_u32() do actually use those arguments, which
+> > complicates the transition. For this reason this series does the following:
+> > 
+> >  * Add of_property_for_each_u32_new(), which does not have those two
+> >    arguments (patch 1)
+> >  * Convert _almost_ every usage to of_property_for_each_u32_new()
+> >  * Rename of_property_for_each_u32() to of_property_for_each_u32_old() and
+> >    deprecate it, as a incentive to code not (yet) in mainline to upgrade
+> >    to the *_new() version (last patch)  
 > 
-> Hm, yes.  We should probably make this return an errno.  Including
-> returning an errno for !IS_ENABLED() and min > 0.
+> I don't really see the point of introducing the _old variant. Let's get 
+> this done in one step.
 > 
+> > 
+> > The plan for the next series is to additionally:
+> > 
+> >  * Convert the few remaining of_property_for_each_u32_old() instantes to
+> >    of_property_for_each_u32_new()
+> >  * Remove of_property_for_each_u32_old()
+> >  * Rename of_property_for_each_u32_new() to of_property_for_each_u32()  
+> 
+> Honestly, I think there's few enough users we could just convert the 
+> whole thing in one patch. It's all got to go thru 1 tree anyways. If 
+> there's new cases in -next, then I'd be happy to send it to Linus at the 
+> end of the merge window.
 
-Something like this? (I also need to change the xfs_icache.c to
-use this return value in the last patch)
+Sure, make sense. I'll need to convert the few remaining users, then
+I'm sending a squashed v2.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 14e1415f7dcf..04916720f807 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -390,28 +390,27 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
-  * Context: This should not be called while the inode is active as it
-  * is non-atomic.
-  */
--static inline void mapping_set_folio_order_range(struct address_space *mapping,
-+static inline int mapping_set_folio_order_range(struct address_space *mapping,
-                                                 unsigned int min,
-                                                 unsigned int max)
- {
-        if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
--               return;
-+               return -EINVAL;
- 
--       if (min > MAX_PAGECACHE_ORDER)
--               min = MAX_PAGECACHE_ORDER;
--       if (max > MAX_PAGECACHE_ORDER)
--               max = MAX_PAGECACHE_ORDER;
-+       if (min > MAX_PAGECACHE_ORDER || max > MAX_PAGECACHE_ORDER)
-+               return -EINVAL;
-        if (max < min)
-                max = min;
- 
-        mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
-                (min << AS_FOLIO_ORDER_MIN) | (max << AS_FOLIO_ORDER_MAX);
-+       return 0;
- }
- 
--static inline void mapping_set_folio_min_order(struct address_space *mapping,
-+static inline int mapping_set_folio_min_order(struct address_space *mapping,
-                                               unsigned int min)
- {
--       mapping_set_folio_order_range(mapping, min, MAX_PAGECACHE_ORDER);
-+       return mapping_set_folio_order_range(mapping, min, MAX_PAGECACHE_ORDER);
- }
- 
- 
-@@ -428,6 +427,10 @@ static inline void mapping_set_folio_min_order(struct address_space *mapping,
-  */
- static inline void mapping_set_large_folios(struct address_space *mapping)
- {
-+       /*
-+        * The return value can be safely ignored because this range
-+        * will always be supported by the page cache.
-+        */
-        mapping_set_folio_order_range(mapping, 0, MAX_PAGECACHE_ORDER);
- }
+Luca
 
- --
- Pankaj
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
