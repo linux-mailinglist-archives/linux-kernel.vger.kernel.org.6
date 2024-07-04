@@ -1,147 +1,297 @@
-Return-Path: <linux-kernel+bounces-241440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6DC8927B78
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:50:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4661927B7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D88161C21708
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:50:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66F0B1F22ADB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118181B373F;
-	Thu,  4 Jul 2024 16:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F4E1AB52A;
+	Thu,  4 Jul 2024 16:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qR2Q1RE2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wm/kTnma"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554FF1B29C0;
-	Thu,  4 Jul 2024 16:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13041B29C2
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 16:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720111805; cv=none; b=mWaBHUcBldOZ8Cv0yNM1YHkjsepqw/2WRJFhyGnBH9zzsxNObb3LAQ9kF+vgUE5+4Y+h+lBdJ1rdfsqZYInTKATqYxhP1B2IJgtkCrXHwwiLwlAZ5+0qD1s7DeqIGwBMpoJocxKXKTrh2V+yPlwRQ7rEjbvzZSh8s3EGJPHS9go=
+	t=1720111990; cv=none; b=XkAG8lvuRH93Q5V4YXpExoSh7wxkKuucLE2UirjhSXo7yZDxeni99i3nFMQgqrZDTBXr5TLTAuiH5ukcOIamZmeIu6Fe3nOJAUMw10sgocmWdhDJyPVH52/+QnKD+5xm+1mtcQqWmr5sZrtzbPpHcuaEt7Z4RDBtVYKjUlj08T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720111805; c=relaxed/simple;
-	bh=M32rWEsF2jgLzr9GzWVSV/ALWkQHAj71fx8QBNAzwjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r2v+B24id9hxrQFbwz90ZR8dpCRtZe6v17nzC07HJeHVMBc0lGc8wG3dKhcMomcztlgKO7/PKiAqshAOzOQ/VQXFcsvp8SHJm2I7UuvTRfIN8bbIjYfc3JDxUHDo85H5bAyXFmHa2xOJuIBo8lkYqzJV6GOg5Mlr/Kd5KxPo3D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qR2Q1RE2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517E2C3277B;
-	Thu,  4 Jul 2024 16:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720111804;
-	bh=M32rWEsF2jgLzr9GzWVSV/ALWkQHAj71fx8QBNAzwjs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qR2Q1RE29nfcHw3C8czz56kPt2ywRb2DG1mAsJlLWuwjC2byn+qF1fbUTiF1YW2/R
-	 yhI4/CTfdYSEhIjZRVgRamv5MCl9Xfd3mokI968dpxtjojg1NajzsddkguOJYErYSU
-	 Qq7t/6XwLbj93nbXbEVnP+FA/uw46x8+Pqowjo37VLPdZsDaSIsRDbXjkKvvGZtIib
-	 UmbdjtWx1s70Bb9TnblkAiHvww/PNiOmb1IDjaymEp5nuhx2fmn+n/aoFARlF/B78O
-	 6Y+OLh8tTBgzCzXhTXS9u4mgi7C9lR/mXTm4m+f9VCNFYUQa0jVmkL/LlxBBg3D0D/
-	 nit4kYLgT6O7w==
-Date: Thu, 4 Jul 2024 17:50:00 +0100
-From: Lee Jones <lee@kernel.org>
-To: Jack Chen <zenghuchen@google.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Mark Brown <broonie@kernel.org>,
-	Vadim Pasternak <vadimp@nvidia.com>,
-	Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH] leds:lm3601x:calculate max_brightness and brightness
- properly
-Message-ID: <20240704165000.GA501857@google.com>
-References: <20240703164635.221203-1-zenghuchen@google.com>
+	s=arc-20240116; t=1720111990; c=relaxed/simple;
+	bh=vNml4V8TqWsITsu2939Ir5Wz/Im777PXky6vZIiWlM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IMcuOitloeAtsnPa8SpOtVk8egQLexTkorYjzVyLrzd/1eENrOGnGlpHmqIiU1UeUiPG9qB+WPKx3VswbEddfCsURTPC0rbt4Tzu5f4A7Qjbt3Znn0iMGzvisLKtqoGZAPqVuuVI5vdCoQFysIvsjIyGIZOz0ppsKJyLTqmapKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wm/kTnma; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4264a3847b6so5580435e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 09:53:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720111987; x=1720716787; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DkTSiyMRMYh6Bw6K4VHRPTD1+iOzdzxDtGfcT/N811U=;
+        b=wm/kTnmas09qKDBlHLxUYStjS+QpmASiXdI+r5tp8QIP/+F11i53nQt28/06EhMQEC
+         k3KSfR+aVZinR1RH4vSjUuVJqBA+e6Q8qrcmjZOZZtnQ0OckI4aef9f4Y/tSplyHdFHB
+         VTDKdKo7UktY8Ak/5x8QYCN6yIKVJn2YRcHryNk/lGbtzGQ7rRaGvCsQg/ori0S5GX9y
+         tcf1GlCSJJ9PMtFM+pusjKk0R1GtNESX3Dk+o4pPjTYLTShuCMsPM49AZMBluEbjTylb
+         bJf2yyvdFtU9tiND6Q0rAJy+IEsexCGKUkLIkJy0hElmUD6mtzQyeSVb/n7oWaLccgwv
+         UiKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720111987; x=1720716787;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DkTSiyMRMYh6Bw6K4VHRPTD1+iOzdzxDtGfcT/N811U=;
+        b=nNR0geiJp3hyDs1DKNwW8tmRIr/C3PSKctgcbi0fg7IbFLmNQqkyuV5FiMJt+JcWh0
+         h21V+Ohht+/iywp5jg/SY/9KzEEmj5eEHMxv5Fj5cVyBBg7MkzD43IMOnlkvApFycPWg
+         SXGpJUM5DirvzRFGuQgBQqZHhFzsb8TRZfzr0S9H9ho9qoIiWs41EE8Pi0I3gC2IKnSD
+         dtGwNyPzxxyW9bKqnO5hRTWRxQ8+Qy85AGmz7RV8R0U4xKJevtV3ETilHr40xoLh4c+P
+         42rQVZWjPUnPGE0N3tYkUomIZffnielcGo8FQBlhw7S7iDy5vE+ccBiMZh2AvvqaaTSr
+         +NgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxa7kMzdU2dUXMkq1zrU4ZZcqxvCl4GUAiVz3cFoYG/6UGc+nJky+B4Vrt95PYcvOIMyHPxDGvh8qT7nWuwnKWvOY2YvUz/rqnPQuW
+X-Gm-Message-State: AOJu0Yz9NzrL1nC2TCiIZ3dZrttOxpoNN3lFBoNTqXWqGo9Gq5l96oW3
+	DufLQPBpr8MCCqswYhxky4RUUgmHujFswumRmpXfuRQP/fVQG4CeLFargGZm8T8=
+X-Google-Smtp-Source: AGHT+IEGxXUW+N8GPopc/bN3lz6X+A1LZm+R2JSgWqEMWXCPDVOLWpIAE8hiTSFY5aIWFGMQf1XCoA==
+X-Received: by 2002:a05:600c:4a17:b0:425:6f96:8bcd with SMTP id 5b1f17b1804b1-4264a34fe75mr17909055e9.0.1720111986968;
+        Thu, 04 Jul 2024 09:53:06 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367a2ee695csm936999f8f.98.2024.07.04.09.53.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 09:53:06 -0700 (PDT)
+Message-ID: <db358fd0-4163-48c2-b6f2-66c0357fc064@linaro.org>
+Date: Thu, 4 Jul 2024 18:53:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>
+References: <6064157.lOV4Wx5bFT@rjwysocki.net>
+ <218d45a8-4c3d-453b-aded-d232c366da2c@linaro.org>
+ <CAJZ5v0gRoy0+LD0EgwbS0NL8kHhas4T6itgawGjE8iNf57MOcg@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAJZ5v0gRoy0+LD0EgwbS0NL8kHhas4T6itgawGjE8iNf57MOcg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240703164635.221203-1-zenghuchen@google.com>
 
-Subject line needs fixing.
-
-`git log --oneline -- drivers/<subsystem>` is your friend.
-
-> 1) check the range of torch_current_max,
-> 2) calcualtes max_brightness precisely,
-> 3) lm3601x torch brightness register starts from 0 (2.4 mA).
-
-Please write this out as a proper paragraph.
-
-This isn't really a numbered list type situation.
-
-> Tested: tested with a lm36011 and it can set its brightness to lowest
-> value (2.4 mA)
-
-What is the Tested: trailer?  Again, please write this out properly.
-
-> Signed-off-by: Jack Chen <zenghuchen@google.com>
-> ---
->  drivers/leds/flash/leds-lm3601x.c | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
+On 04/07/2024 16:21, Rafael J. Wysocki wrote:
+> On Thu, Jul 4, 2024 at 2:49 PM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>
+>> On 04/07/2024 13:46, Rafael J. Wysocki wrote:
+>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>>> Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
+>>> if zone temperature is invalid") caused __thermal_zone_device_update()
+>>> to return early if the current thermal zone temperature was invalid.
+>>>
+>>> This was done to avoid running handle_thermal_trip() and governor
+>>> callbacks in that case which led to confusion.  However, it went too
+>>> far because monitor_thermal_zone() still needs to be called even when
+>>> the zone temperature is invalid to ensure that it will be updated
+>>> eventually in case thermal polling is enabled and the driver has no
+>>> other means to notify the core of zone temperature changes (for example,
+>>> it does not register an interrupt handler or ACPI notifier).
+>>>
+>>> Also if the .set_trips() zone callback is expected to set up monitoring
+>>> interrupts for a thermal zone, it needs to be provided with valid
+>>> boundaries and that can only be done if the zone temperature is known.
+>>>
+>>> Accordingly, to ensure that __thermal_zone_device_update() will
+>>> run again after a failing zone temperature check, make it call
+>>> monitor_thermal_zone() regardless of whether or not the zone
+>>> temperature is valid and make the latter schedule a thermal zone
+>>> temperature update if the zone temperature is invalid even if
+>>> polling is not enabled for the thermal zone (however, if this
+>>> continues to fail, give up after some time).
+>>
+>> Rafael,
+>>
+>> do we agree that we should fix somehow the current issue in this way
+>> because we are close to the merge window,
 > 
-> diff --git a/drivers/leds/flash/leds-lm3601x.c b/drivers/leds/flash/leds-lm3601x.c
-> index 7e93c447fec5..fc4df904ea90 100644
-> --- a/drivers/leds/flash/leds-lm3601x.c
-> +++ b/drivers/leds/flash/leds-lm3601x.c
-> @@ -190,7 +190,7 @@ static int lm3601x_brightness_set(struct led_classdev *cdev,
->  		goto out;
->  	}
->  
-> -	ret = regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightness);
-> +	ret = regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightness - 1);
-
-Why is there now a need to start adding/subtracting 1s to make the maths work?
-
->  	if (ret < 0)
->  		goto out;
->  
-> @@ -341,8 +341,9 @@ static int lm3601x_register_leds(struct lm3601x_led *led,
->  
->  	led_cdev = &led->fled_cdev.led_cdev;
->  	led_cdev->brightness_set_blocking = lm3601x_brightness_set;
-> -	led_cdev->max_brightness = DIV_ROUND_UP(led->torch_current_max,
-> -						LM3601X_TORCH_REG_DIV);
-> +	led_cdev->max_brightness = DIV_ROUND_UP(
-
-This is no place to break a line.
-
-Break after the '=' and wrap at 100-chars instead.
-
-> +			led->torch_current_max - LM3601X_MIN_TORCH_I_UA + 1,
-> +			LM3601X_TORCH_REG_DIV);
->  	led_cdev->flags |= LED_DEV_CAP_FLASH;
->  
->  	init_data.fwnode = fwnode;
-> @@ -386,6 +387,14 @@ static int lm3601x_parse_node(struct lm3601x_led *led,
->  		goto out_err;
->  	}
->  
-> +	if (led->torch_current_max > LM3601X_MAX_TORCH_I_UA) {
-> +		dev_warn(&led->client->dev,
-> +			 "led-max-microamp cannot be higher than %d\n",
-> +			 LM3601X_MAX_TORCH_I_UA);
-
-"Max torch current set too high (%d vs %d)"
-
-> +		led->torch_current_max = LM3601X_MAX_TORCH_I_UA;
-> +	}
-> +
-> +
-
-2 lines?
-
->  	ret = fwnode_property_read_u32(child, "flash-max-microamp",
->  				&led->flash_current_max);
->  	if (ret) {
-> -- 
-> 2.45.2.803.g4e1b14247a-goog
+> Yes.
 > 
+>> but the proper fix is not doing that ?
+> 
+> We need to decide what to do in general when __thermal_zone_get_temp()
+> returns an error.  A proper fix would result from that, but it would
+> require more time than is available IMV.  We can properly fix this in
+> 6.11.
+
+Right, in general we should take care of returning values from the 
+different functions, update_temperature(), etc... in order to have the 
+thermal_zone_device_update() returning a value.
+
+So from there we can catch the result in the initialization function and 
+do the proper actions.
+
+ From a higher perspective, IMO the code contains too many returning 
+void functions. We should convert that into returning values and handle 
+the error cases.
+
+> For 6.10 I see two options:
+> 
+> 1. Apply the v2 of this patch:
+> 
+> https://lore.kernel.org/linux-pm/2764814.mvXUDI8C0e@rjwysocki.net/
+> 
+> I slightly prefer it because it is simpler and doesn't change the size
+> of struct thermal_zone_device.
+
+I agree
+
+>  However, the clear disadvantage of it
+> is that it will poke at dead thermal zones indefinitely.
+
+Yes, but the advantage of this disadvantage is it is so visible that 
+buggy routine will be brought to the light, so they can be fixed. I 
+don't think we should have so many, perhaps none.
+
+> The THERMAL_RECHECK_DELAY_MS value in it can be adjusted.  Maybe 250
+> ms would be a better choice?
+
+Yes
+
+> 2. Apply this patch (ie. v3)
+> 
+> It is nicer to thermal zones that never become operational, but it may
+> miss thermal zones that become operational very late.
+
+I would keep this v3 as a backup in case there are too many complaints, 
+but I doubt
+
+>>> Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip() if zone temperature is invalid")
+>>> Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>> Link: https://lore.kernel.org/linux-pm/dc1e6cba-352b-4c78-93b5-94dd033fca16@linaro.org
+>>> Link: https://lore.kernel.org/linux-pm/2764814.mvXUDI8C0e@rjwysocki.net
+>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>> ---
+>>>    drivers/thermal/thermal_core.c |   13 ++++++++++++-
+>>>    drivers/thermal/thermal_core.h |    9 +++++++++
+>>>    2 files changed, 21 insertions(+), 1 deletion(-)
+>>>
+>>> Index: linux-pm/drivers/thermal/thermal_core.c
+>>> ===================================================================
+>>> --- linux-pm.orig/drivers/thermal/thermal_core.c
+>>> +++ linux-pm/drivers/thermal/thermal_core.c
+>>> @@ -300,6 +300,14 @@ static void monitor_thermal_zone(struct
+>>>                thermal_zone_device_set_polling(tz, tz->passive_delay_jiffies);
+>>>        else if (tz->polling_delay_jiffies)
+>>>                thermal_zone_device_set_polling(tz, tz->polling_delay_jiffies);
+>>> +     else if (tz->temperature == THERMAL_TEMP_INVALID &&
+>>> +              tz->recheck_delay_jiffies <= THERMAL_MAX_RECHECK_DELAY) {
+>>> +             thermal_zone_device_set_polling(tz, tz->recheck_delay_jiffies);
+>>> +             /* Double the recheck delay for the next attempt. */
+>>> +             tz->recheck_delay_jiffies += tz->recheck_delay_jiffies;
+>>> +             if (tz->recheck_delay_jiffies > THERMAL_MAX_RECHECK_DELAY)
+>>> +                     dev_info(&tz->device, "Temperature unknown, giving up\n");
+>>> +     }
+>>>    }
+>>>
+>>>    static struct thermal_governor *thermal_get_tz_governor(struct thermal_zone_device *tz)
+>>> @@ -430,6 +438,7 @@ static void update_temperature(struct th
+>>>
+>>>        tz->last_temperature = tz->temperature;
+>>>        tz->temperature = temp;
+>>> +     tz->recheck_delay_jiffies = 1;
+>>>
+>>>        trace_thermal_temperature(tz);
+>>>
+>>> @@ -514,7 +523,7 @@ void __thermal_zone_device_update(struct
+>>>        update_temperature(tz);
+>>>
+>>>        if (tz->temperature == THERMAL_TEMP_INVALID)
+>>> -             return;
+>>> +             goto monitor;
+>>>
+>>>        tz->notify_event = event;
+>>>
+>>> @@ -536,6 +545,7 @@ void __thermal_zone_device_update(struct
+>>>
+>>>        thermal_debug_update_trip_stats(tz);
+>>>
+>>> +monitor:
+>>>        monitor_thermal_zone(tz);
+>>>    }
+>>>
+>>> @@ -1438,6 +1448,7 @@ thermal_zone_device_register_with_trips(
+>>>
+>>>        thermal_set_delay_jiffies(&tz->passive_delay_jiffies, passive_delay);
+>>>        thermal_set_delay_jiffies(&tz->polling_delay_jiffies, polling_delay);
+>>> +     tz->recheck_delay_jiffies = 1;
+>>>
+>>>        /* sys I/F */
+>>>        /* Add nodes that are always present via .groups */
+>>> Index: linux-pm/drivers/thermal/thermal_core.h
+>>> ===================================================================
+>>> --- linux-pm.orig/drivers/thermal/thermal_core.h
+>>> +++ linux-pm/drivers/thermal/thermal_core.h
+>>> @@ -67,6 +67,8 @@ struct thermal_governor {
+>>>     * @polling_delay_jiffies: number of jiffies to wait between polls when
+>>>     *                  checking whether trip points have been crossed (0 for
+>>>     *                  interrupt driven systems)
+>>> + * @recheck_delay_jiffies: delay after a failed thermal zone temperature check
+>>> + *                   before attempting to check it again
+>>>     * @temperature:    current temperature.  This is only for core code,
+>>>     *                  drivers should use thermal_zone_get_temp() to get the
+>>>     *                  current temperature
+>>> @@ -108,6 +110,7 @@ struct thermal_zone_device {
+>>>        int num_trips;
+>>>        unsigned long passive_delay_jiffies;
+>>>        unsigned long polling_delay_jiffies;
+>>> +     unsigned long recheck_delay_jiffies;
+>>>        int temperature;
+>>>        int last_temperature;
+>>>        int emul_temperature;
+>>> @@ -133,6 +136,12 @@ struct thermal_zone_device {
+>>>        struct thermal_trip_desc trips[] __counted_by(num_trips);
+>>>    };
+>>>
+>>> +/*
+>>> + * Maximum delay after a failing thermal zone temperature check before
+>>> + * attempting to check it again (in jiffies).
+>>> + */
+>>> +#define THERMAL_MAX_RECHECK_DELAY    (30 * HZ)
+>>> +
+>>>    /* Default Thermal Governor */
+>>>    #if defined(CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE)
+>>>    #define DEFAULT_THERMAL_GOVERNOR       "step_wise"
+>>>
+>>>
+>>>
+>>
+>> --
+>> <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+>>
+>> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+>> <http://twitter.com/#!/linaroorg> Twitter |
+>> <http://www.linaro.org/linaro-blog/> Blog
+>>
+>>
 
 -- 
-Lee Jones [李琼斯]
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
