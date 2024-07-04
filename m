@@ -1,72 +1,79 @@
-Return-Path: <linux-kernel+bounces-240976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C560927535
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:33:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A1A92753A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFE371F24CDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:33:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58A9C28699E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5491AC42F;
-	Thu,  4 Jul 2024 11:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F751AC42D;
+	Thu,  4 Jul 2024 11:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BQm5NC0+"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e78+/SQm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCDD1AC42A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 11:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1764D14B078
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 11:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720092756; cv=none; b=SgTJTbl67lIVoAAJFp/eiiKRBotsWMNpeSaIO+/D6sWHsBzK2RzKd7jskeF2NAAZic+73gkjF7w5toW+43vX5uXpfFcZQtzoP6ecDUZJnrPNOvNZy/fWeOXlbztpxaFjLIccNA8R5gZ0P3+Wes9lQ+asTAmS5ZdrQjjNkDgBEgE=
+	t=1720093046; cv=none; b=HjKyF9VVrBOafNwsMx5lSPVpTibC2SkX+ZGtpmACnJ3xYvNALesgbUb3GMqafo0O8y2O9K6yXM5kC5Yiq/1AJWsPreL40d77cJauCykPkqLM9TLJfc+A3CD2l0mbzXHNOi1uxtO+F/QN70pWZoHer/dUgfjYHf81nTw1edCOJ1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720092756; c=relaxed/simple;
-	bh=BLi9cpRdI8r2rsx7X99fvWGZxFHNzE6du74kqz4Nejo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=bsIvFFObW0YGCfcjM7OHLSdYicO+Gu8uRmbx2hbjmR9HPyBrWQHy50HK1hqisTk89Xf0K9i6d3aJ7qh+aqvkxUHMi79V69Gi85QY9dic43CYVOE+7D5+XaWPYvPNG9AUKSkmAf4aOlgCsQJ6jfQuAj0/KhWlNWJBI93BeFScqYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BQm5NC0+; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so7138071fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 04:32:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1720092753; x=1720697553; darn=vger.kernel.org;
-        h=content-transfer-encoding:autocrypt:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OyFi9x9INtIv4d9qpzSvgmCuzNnPn55s3NPB9qeKEL8=;
-        b=BQm5NC0+3r2LKWLOIdy2GnH9aUWq7jRD2ng7aSaTmuMP9xk8gTxnlrc84uQIl2Xnwm
-         UiMwO8OlDJmGDmvQH74gq6bGydoF3ROVZ85XHXLguaC/ViTMVMp6XLtmG/ritSi8Fj+K
-         v5npOelDZ3nGBjp9bdU5rQE/PHGyMcORoqN7D+GZ3aOj6ixKSWRuMHDICn2eGAreF9k2
-         ImYYOErLt/f2MXhT5he3S1bmjeppNWbWjHLTtC2QnLL86R+M3Q2VpHF8nW+svbO5meD8
-         xKfVJE75dfwoeFSvmpDgyBKK6Otha0mZE3IgXVgZ2BpcEU0tZhktvlQve3M2eRZcWXOC
-         hUoQ==
+	s=arc-20240116; t=1720093046; c=relaxed/simple;
+	bh=WGdd1IuYyevNR0+ntRFyrYUo9pUJE79CWZqS/30oJHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GXuAx9DmMa8UOjE31f6ZOdcxI/1zrAsc1oqVkZ3Pxc9szzNg3JD5PidJGto2FAbutfKKzXomcLpYRWBRu2/jXurUAo5WULr4zN0+ut8UMVB4+HCoG/dxqE3gTpo1PcBU9gTe98dcqc93REbviYx7vJ/CXCJim10B6R4/U4DaINc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e78+/SQm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720093041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uqyBX3zArIOTroiktpF738HmfBUreaQ6KV57xDF+BEU=;
+	b=e78+/SQmMJke7r/aSf4wxLws1JxR6gYUd9S+nARMEcIl19IY09s/CI2qzgJW9DteKK24Cx
+	rDcdZ0SiemR7bU+0lxm7HiCPY0iTfTci9ps4YKRUhOzAKspYSQAYpI/E+Jv5d7TSStY8IV
+	tP7bblb6q/p2fonF56QvuhZHQVwoxIk=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-418-rKboA_k7Mc6G910KDLO6gw-1; Thu, 04 Jul 2024 07:37:17 -0400
+X-MC-Unique: rKboA_k7Mc6G910KDLO6gw-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52e98697a27so621866e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 04:37:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720092753; x=1720697553;
-        h=content-transfer-encoding:autocrypt:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1720093034; x=1720697834;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OyFi9x9INtIv4d9qpzSvgmCuzNnPn55s3NPB9qeKEL8=;
-        b=SPKbfzygiGWSllH8BDa5U76qniOsT4IKj8SAUwUxO6PWWdmK/tCfnYnqHi8O6t/kII
-         CJUTX7bGnFdwS9h8EIGwBzzxqNsW3pZmb+520GxLmo6RjAhm2E3c7mnGzSrrT/8kHnaR
-         F8bZy9xEag66A/ypSYNWbogS7st/qJl10PL0uILcT28LxHuu70sSquv2r1fYSB3HQRef
-         vR/EJFB7Ylm7/rzx7rzMH6WarEr0jgRBbmgm85488eIrC1PEqKvQr2osRY/oSC1D6dC5
-         3ejXkX3Z3mxN2BAhuBacm5QnowAWs3x1bCLTummxe11JhKPUHMshn0BTJSB85HQ6rIoh
-         olUA==
-X-Gm-Message-State: AOJu0YzUhH2cG3zCp/06lFsx7rDiglj+W8bKAJvoci+LAnTr38kY5V3a
-	0wxxBkpOSyH6Df/BMgPB7vh0KtmUY2Rnxq/Qs5jMEEr3OB3Bd4Le6Re059zdnL+8iMXKQ0p/s0A
-	=
-X-Google-Smtp-Source: AGHT+IFFBKNUobxfeZRLGuNTCj9q1DhSbiyymcMH/RMhWkpZ+vdYGYihWQfAL4zucOkDBRlp9rCCxg==
-X-Received: by 2002:a2e:8789:0:b0:2ee:8817:422d with SMTP id 38308e7fff4ca-2ee8ed69ce3mr10879491fa.5.1720092752701;
-        Thu, 04 Jul 2024 04:32:32 -0700 (PDT)
-Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a93e499sm1283903a91.2.2024.07.04.04.32.29
+        bh=uqyBX3zArIOTroiktpF738HmfBUreaQ6KV57xDF+BEU=;
+        b=auTMMngUKeCWjGW+zsyZH8BQQi5nPIgj9tSrri79NGjuD0sEtLIrJWg+KZfIPsEZ2D
+         QNHxNOYMRnWfPjLeyhg82xiVXAZWO1m9Y8IJMmUG+z9yNmXvRpabq+RJEg+xvgcuzLje
+         L5q25q0evbnjEr/HVCKeqbB8J9BOTvHGlFsfj7uXbzUgCD7Ow9Nb9pBHojOYAdGEU/bN
+         knKfK4l7PbGkwNcVcINju/+9bz2p8bdCz5aGCCSzHzI11OxBv+qd8vPc7IMqo6cqDzGq
+         RKbcMzA/r7kPLRYZm2m8OWkRs/Dk+DdtnK4yaLE9FGCWOp3QjeMbtfUwB0QnlDf1wCPe
+         RLXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXP6lxbQ2bA8tO3y+OE6YijLdHRdwZySXQHWqtnExuS1Vi4DUdCM2KGbBC5d2Ah6V/+q0YWhkDEgd2iYGywFVhHYjtXC0eKOj9NPFzM
+X-Gm-Message-State: AOJu0YzONdZBYBVpadPXVCY7sKUTvcSpRCP+czbums8s0TWH0vlbW2Jq
+	PEvPTes6M20baU0yijllbuAHpLGajLU8cZtDWdHULjHEZ9DyKAz+a/r6PMmtp9phL8KmygNchBE
+	Fm7oBfBKC39XosUbFWmdQGvFXxcMkarof2wwzCPZkaAhFFDp1cjueLnzelIx5gw==
+X-Received: by 2002:ac2:5924:0:b0:52e:9d60:7b4c with SMTP id 2adb3069b0e04-52ea06e48cfmr845859e87.61.1720093034220;
+        Thu, 04 Jul 2024 04:37:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHAC+hNiL1prnnUa5FO1O3uWyIwQgxomTMRgam+LYoxR1V6bY9ndbxw7Fh3Zy/p1THh1JG3CQ==
+X-Received: by 2002:ac2:5924:0:b0:52e:9d60:7b4c with SMTP id 2adb3069b0e04-52ea06e48cfmr845825e87.61.1720093033739;
+        Thu, 04 Jul 2024 04:37:13 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:d5:a000:680e:9bf4:b6a9:959b? ([2a01:e0a:d5:a000:680e:9bf4:b6a9:959b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d16b0sm20944305e9.7.2024.07.04.04.37.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 04:32:32 -0700 (PDT)
-Message-ID: <32f5ce15-e9e8-4351-a231-c23ebb4b083c@suse.com>
-Date: Thu, 4 Jul 2024 13:32:24 +0200
+        Thu, 04 Jul 2024 04:37:12 -0700 (PDT)
+Message-ID: <d35ed036-209d-43fe-bcf3-91b218df4142@redhat.com>
+Date: Thu, 4 Jul 2024 13:37:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,82 +81,282 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- the arch/x86 maintainers <x86@kernel.org>
-From: Jan Beulich <jbeulich@suse.com>
-Subject: [PATCH] x86/xstate: don't globally disable TILE_DATA just on its own
-Autocrypt: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
- e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
- hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
- IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
- FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
- t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
- AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
- HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
- mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
- m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
- EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
- wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
- nAuWpQkjM1ASeQwSHEeAWPgskBQL
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 4/4] drm/panic: Add a qr_code panic screen
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: a.hindborg@samsung.com, airlied@gmail.com, alex.gaynor@gmail.com,
+ benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
+ dakr@redhat.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+ gary@garyguo.net, linux-kernel@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, ojeda@kernel.org,
+ rust-for-linux@vger.kernel.org, tzimmermann@suse.de, wedsonaf@gmail.com
+References: <20240703154309.426867-5-jfalempe@redhat.com>
+ <20240704091109.1453809-1-aliceryhl@google.com>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20240704091109.1453809-1-aliceryhl@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-In XCR0 certain bits need to be simultaneously set / clear. Since
-fpu__init_cpu_xstate() wants to pass fpu_user_cfg.max_features to
-XSETBV, make sure invalid values cannot end up there in case XFD is not
-available. Do the clearing right for fpu_kernel_cfg.max_features (which
-fpu_user_cfg.max_features is derived from), to avoid that field holding
-an invalid combination of bits either.
 
-Fixes: 2ae996e0c1a3 ("x86/fpu: Calculate the default sizes independently")
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
----
-#GP observed in a virtualized environment with AMX enabled, but XFD off
-(which is an architecturally legal combination of features, afaict).
 
---- a/arch/x86/include/asm/fpu/xstate.h
-+++ b/arch/x86/include/asm/fpu/xstate.h
-@@ -49,6 +49,9 @@
- /* Features which are dynamically enabled for a process on request */
- #define XFEATURE_MASK_USER_DYNAMIC	XFEATURE_MASK_XTILE_DATA
- 
-+/* Features which the above ones are tied to. */
-+#define XFEATURE_MASK_USER_DYN_DEPS	XFEATURE_MASK_XTILE_CFG
-+
- /* All currently supported supervisor features */
- #define XFEATURE_MASK_SUPERVISOR_SUPPORTED (XFEATURE_MASK_PASID | \
- 					    XFEATURE_MASK_CET_USER)
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -799,8 +799,15 @@ void __init fpu__init_system_xstate(unsi
- 			fpu_kernel_cfg.max_features &= ~BIT_ULL(i);
- 	}
- 
--	if (!cpu_feature_enabled(X86_FEATURE_XFD))
--		fpu_kernel_cfg.max_features &= ~XFEATURE_MASK_USER_DYNAMIC;
-+	if (!cpu_feature_enabled(X86_FEATURE_XFD)) {
-+		/*
-+		 * Besides disabling all dynamic features, also disable all
-+		 * of their dependents, such that the resulting value can be
-+		 * handed to XSETBV without causing #GP.
-+		 */
-+		fpu_kernel_cfg.max_features &= ~(XFEATURE_MASK_USER_DYNAMIC |
-+						 XFEATURE_MASK_USER_DYN_DEPS);
-+	}
- 
- 	if (!cpu_feature_enabled(X86_FEATURE_XSAVES))
- 		fpu_kernel_cfg.max_features &= XFEATURE_MASK_USER_SUPPORTED;
+On 04/07/2024 11:11, Alice Ryhl wrote:
+> Jocelyn Falempe <jfalempe@redhat.com> wrote:
+>> This patch adds a new panic screen, with a QR code and the kmsg data
+>> embedded.
+>> If DRM_PANIC_SCREEN_QR_CODE_URL is set, then the kmsg data will be
+>> compressed with zlib and encoded as a numerical segment, and appended
+>> to the url as a url parameter. This allows to save space, and put
+>> about ~7500 bytes of kmsg data, in a V40 QR code.
+>> Linux distributions can customize the url, and put a web frontend to
+>> directly open a bug report with the kmsg data.
+>>
+>> Otherwise the kmsg data will be encoded as binary segment (ie raw
+>> ascii) and only a maximum of 2953 bytes of kmsg data will be
+>> available in the QR code.
+>>
+>> You can also limit the QR code size with DRM_PANIC_SCREEN_QR_VERSION.
+>>
+>> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> 
+> This is pretty cool! The Rust code looks reasonable, and it's really
+> nice that you've isolated all of the unsafe code to a single place. That
+> makes it much easier to review.
+> 
+> I have a few comments on Rust style below:
+> 
+>> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
+>> new file mode 100644
+>> index 000000000000..f4d7a3b8a01e
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/drm_panic_qr.rs
+>> @@ -0,0 +1,989 @@
+>> +// SPDX-License-Identifier: MIT
+>> +
+>> +//! This is a simple qr encoder for DRM panic
+>> +//! Due to the Panic constraint, it doesn't allocate memory and does all the work
+>> +//! on the stack or on the provided buffers.
+>> +//! For simplification, it only supports Low error correction, and apply the
+>> +//! first mask (checkboard). It will draw the smallest QRcode that can contain
+>> +//! the string passed as parameter.
+>> +//! To get the most compact QR-code, the start of the url is encoded as binary,
+>> +//! and the compressed kmsg is encoded as numeric.
+>> +//! The binary data must be a valid url parameter, so the easiest way is to use
+>> +//! base64 encoding. But this waste 25% of data space, so the whole stack trace
+>> +//! won't fit in the QR-Code. So instead it encodes every 13bits of input into
+>> +//! 4 decimal digits, and then use the efficient numeric encoding, that encode 3
+>> +//! decimal digits into 10bits. This makes 39bits of compressed data into 12
+>> +//! decimal digits, into 40bits in the QR-Code, so wasting only 2.5%.
+>> +//! And numbers are valid url parameter, so the website can do the reverse, to
+>> +//! get the binary data.
+>> +//!
+>> +//! Inspired by this 3 projects, all under MIT license:
+>> +//! https://github.com/kennytm/qrcode-rust
+>> +//! https://github.com/erwanvivien/fast_qr
+>> +//! https://github.com/bjguillot/qr
+> 
+> Generally, documentation under //! or /// comments should be written
+> using markdown. In markdown, line breaks are ignored and do not actually
+> show up as a line break in the rendered documentation. If you want an
+> actual line break, then you need an empty line.
+
+Thanks, I didn't know about this. I'm now playing with rustdoc, and the 
+output is really not what I expected. I will fix the rust comments in v2
+> I would format it like this:
+> 
+> //! This is a simple qr encoder for DRM panic.
+> //!
+> //! Due to the Panic constraint, it doesn't allocate memory and does all
+> //! the work on the stack or on the provided buffers. For
+> //! simplification, it only supports Low error correction, and apply the
+> //! first mask (checkboard). It will draw the smallest QRcode that can
+> //! contain the string passed as parameter. To get the most compact
+> //! QR-code, the start of the url is encoded as binary, and the
+> //! compressed kmsg is encoded as numeric.
+> //!
+> //! The binary data must be a valid url parameter, so the easiest way is
+> //! to use base64 encoding. But this waste 25% of data space, so the
+> //! whole stack trace won't fit in the QR-Code. So instead it encodes
+> //! every 13bits of input into 4 decimal digits, and then use the
+> //! efficient numeric encoding, that encode 3 decimal digits into
+> //! 10bits. This makes 39bits of compressed data into 12 decimal digits,
+> //! into 40bits in the QR-Code, so wasting only 2.5%. And numbers are
+> //! valid url parameter, so the website can do the reverse, to get the
+> //! binary data.
+> //!
+> //! Inspired by this 3 projects, all under MIT license:
+> //!
+> //! * https://github.com/kennytm/qrcode-rust
+> //! * https://github.com/erwanvivien/fast_qr
+> //! * https://github.com/bjguillot/qr
+> 
+>> +/// drm_panic_qr_generate()
+>> +///
+>> +/// C entry point for the rust QR Code generator
+>> +///
+>> +/// Write the QR code image in the data buffer, and return the qrcode size, or 0
+>> +/// if the data doesn't fit in a QR code.
+>> +///
+>> +/// url: the base url of the QR code. will be encoded as Binary segment.
+>> +/// data: pointer to the binary data, to be encoded. if url is NULL, it will be
+>> +///       encoded as Binary segment. otherwise it will be encoded efficiently as
+>> +///       Numeric segment, and appendended to the url.
+>> +/// data_len: length of the data, that needs to be encoded.
+>> +/// data_size: size of data buffer, it should be at least 4071 bytes to hold a
+>> +///            V40 QR-code. it will then be overwritten with the QR-code image.
+>> +/// tmp: a temporary buffer that the QR-code encoder will use, to write the
+>> +///      segments data and ECC.
+>> +/// tmp_size: size of the tmp buffer, it must be at least 3706 bytes long for V40
+> 
+> The same applies here. When rendered using markdown, the above will be
+> rendered like this:
+
+Yes I will fix that too.
+> 
+> url: the base url of the QR code. will be encoded as Binary segment.
+> data: pointer to the binary data, to be encoded. if url is NULL, it will
+> be encoded as Binary segment. otherwise it will be encoded efficiently
+> as Numeric segment, and appendended to the url. data_len: length of the
+> data, that needs to be encoded. data_size: size of data buffer, it
+> should be at least 4071 bytes to hold a V40 QR-code. it will then be
+> overwritten with the QR-code image. tmp: a temporary buffer that the
+> QR-code encoder will use, to write the segments data and ECC. tmp_size:
+> size of the tmp buffer, it must be at least 3706 bytes long for V40
+> 
+> I don't think that's what you wanted.
+> 
+>> +#[no_mangle]
+>> +pub extern "C" fn drm_panic_qr_generate(
+>> +    url: *const i8,
+>> +    data: *mut u8,
+>> +    data_len: usize,
+>> +    data_size: usize,
+>> +    tmp: *mut u8,
+>> +    tmp_size: usize,
+>> +) -> u8 {
+>> +    if data_size <= 4071 || tmp_size <= 3706 {
+>> +        return 0;
+>> +    }
+>> +    let data_slice: &mut [u8] = unsafe { core::slice::from_raw_parts_mut(data, data_size) };
+>> +    let tmp_slice: &mut [u8] = unsafe { core::slice::from_raw_parts_mut(tmp, tmp_size) };
+>> +    if url.is_null() {
+>> +        match EncodedMsg::new(&[&Segment::Binary(&data_slice[0..data_len])], tmp_slice) {
+>> +            None => 0,
+>> +            Some(em) => {
+>> +                let qr_image = QrImage::new(&em, data_slice);
+>> +                qr_image.width
+>> +            }
+>> +        }
+>> +    } else {
+>> +        let url_str: &str = unsafe { CStr::from_char_ptr(url).as_str_unchecked() };
+>> +        let segments = &[
+>> +            &Segment::Binary(url_str.as_bytes()),
+>> +            &Segment::Numeric(&data_slice[0..data_len]),
+>> +        ];
+>> +        match EncodedMsg::new(segments, tmp_slice) {
+>> +            None => 0,
+>> +            Some(em) => {
+>> +                let qr_image = QrImage::new(&em, data_slice);
+>> +                qr_image.width
+>> +            }
+>> +        }
+>> +    }
+>> +}
+> 
+> It's very nice that you've isolated all of the unsafe code to this
+> function. That makes it very easy to review.
+> 
+> A few comments:
+> 
+> First, all unsafe blocks must be annotated with a safety comment. For
+> example:
+> 
+> // SAFETY: The caller ensures that `data` is valid for `data_size`
+> // bytes, and that it is valid for writing.
+> let data_slice: &mut [u8] = unsafe { core::slice::from_raw_parts_mut(data, data_size) };
+> 
+> Unsafe functions are those that can trigger memory safety problems if
+> you call them incorrectly, and you must annotate calls with a safety
+> comment that explains why this call cannot result in memory safety
+> issues. In this case, you can just say that the caller promises to pass
+> you reasonable arguments.
+
+Yes, all these buffers come from the C side, so you need to trust the 
+caller. I will add these safety comments.
+> 
+> 
+> The next unsafe block is a bit more interesting.
+> 
+>> +        let url_str: &str = unsafe { CStr::from_char_ptr(url).as_str_unchecked() };
+> 
+> Here, you call two unsafe functions:
+> 
+> * `CStr::from_char_ptr`
+> * `CStr::as_str_unchecked`
+> 
+> If you read the documentation, you will find these safety requirements:
+> 
+> /// # Safety
+> ///
+> /// `ptr` must be a valid pointer to a `NUL`-terminated C string, and it must
+> /// last at least `'a`. When `CStr` is alive, the memory pointed by `ptr`
+> /// must not be mutated.
+> 
+> /// # Safety
+> ///
+> /// The contents must be valid UTF-8.
+> 
+> Your unsafe block *must* have a safety comment that explains why the
+> above things are satisfied. The requirements of `from_char_ptr` are
+> okay, but is it really the case that `url` is necessarily valid UTF-8?
+> 
+> You never actually use the fact that it's UTF-8 anywhere, so you can
+> just not call `as_str_unchecked`. The `CStr` type also has an `as_bytes`
+> method, so there's no reason to go through the `&str` type.
+
+Yes, I can use directly the CStr, so one less unsafe call :)
+
+> 
+> Finally, `drm_panic_qr_generate` should really be marked unsafe. By not
+> marking it unsafe, you are saying that no matter what the arguments are,
+> calling the function will not result in memory safety problems. That's
+> not really true. If I call it with `data` being a null pointer, you're
+> going to have a bad time.
+
+Sure, we can't guarantee that the pointers are valid, when they come 
+from the C side. So I agree this should be unsafe.
+
+> 
+> You probably want something along these lines:
+> 
+> /// # Safety
+> ///
+> /// * `url` must be null or point at a nul-terminated string.
+> /// * `data` must be valid for reading and writing for `data_size` bytes.
+> /// * `tmp` must be valid for reading and writing for `tmp_size` bytes.
+> #[no_mangle]
+> pub unsafe extern "C" fn drm_panic_qr_generate(
+> 
+> As long as the above requirements are satisfied, calling
+> `drm_panic_qr_generate` should never cause memory unsafety, so this is
+> an appropriate list of safety requirements.
+
+Ok, I will add this in v2
+> 
+> (You also require that `data_len <= data_size`, but if this is violated
+> you get a kernel panic which isn't a memory safety problem, so it does
+> not need to be listed in the safety requirements.)
+
+Sure, I will add this check too.
+
+> 
+> Alice
+> 
+
+
+Thanks a lot for this detailed review, that's really helpful.
+
+-- 
+
+Jocelyn
+
 
