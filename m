@@ -1,165 +1,132 @@
-Return-Path: <linux-kernel+bounces-240967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B92927524
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:31:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84ABF927527
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C44A283D29
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:31:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F1D72834E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C081ABCD7;
-	Thu,  4 Jul 2024 11:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DEF1AC25D;
+	Thu,  4 Jul 2024 11:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Xp6zJVhH"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="HKXiIJp/"
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD05E1DA30D;
-	Thu,  4 Jul 2024 11:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907E019306C;
+	Thu,  4 Jul 2024 11:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720092682; cv=none; b=OaY0Qaw4n2FKFFabLozer9vS+CRLuFDMLoy/u1Y/ckSeJMXBlA4Gqf13JATBlGU5yDjIAS1rJESwOy8SU2J8bBA1MHy8a5XokzgTvN6wLXGmb48T5fcO92Q/YzmpMaFVFK+I13EtBrnS+u/FSakseHCq7rZc2iP01klakl6I+Rc=
+	t=1720092712; cv=none; b=P+rLNxOmmvMXi3AT0LVXvgU0XBp9F4hd5hbgsRs8rMGBhAFnnNiAyx4WT+MZ4ndwzlojdQOkvN0bJH8KFpPx5BGB5kLecuOcTm7PzTFwV0p+kv9fZddjHe/tUtrUjayK5J7wAHgJ6i2FfoUiLB9OzT4roBgJPD1zeDFISgFYNIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720092682; c=relaxed/simple;
-	bh=gA0QjNnLmRhml1iZJ2B3tlltYB33iuMEn55tUD0Hj4A=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=NPOOK0BTK7rqCrurN4yw1dPaetTXheEKiC4uR8savBkYdsazII9MBQhHppgUweBrY50zmZXUEeFPIY4u8D7EoqbTtuUIrtO+1rWxbuHeEU9Sxo9W5MhdLJ2DcLXCXecv0x8R8r/6jO5TjPkg1mbKMZMsfVCcfAEGcHmIkzdgRig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Xp6zJVhH; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	s=arc-20240116; t=1720092712; c=relaxed/simple;
+	bh=IJfjkch6ZzOcdc7z7UdkuGLyWiaKV+g2YUH+4LnB3Jw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jfwYyigpczUGI1dG/Hn27WK+E2fZqDkB0PrmEiAK1rT/ao3HCwO6w7BuzW5F7V4FH5q1n91KTymA3451uoNn/j3a6Z+rgWG24WkL92cpS2xggx5ZeZnATRXVRJOPO/fxJb3hC45BxAm37Y0zUEuG/Oge5ALlmRLhd9o32ReoRqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=HKXiIJp/; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8588940E019C;
-	Thu,  4 Jul 2024 11:31:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 9ur-PWNcwGlc; Thu,  4 Jul 2024 11:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720092674; bh=OHMquNuMMQHx7ddHPRPVlHWYBUhFIjdeJqDW7Swm+ao=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Xp6zJVhHNfzZ8NGkEedT5qPUXiqUTwG5hUg51+bSAX41c6etMHOABF3jL0u9LL3Ps
-	 hRqOphLkVKy9RzMH3H7ukwcGlEdBsDOLaGF6RfvBbPugAOy2WFgedoZujFlnmVoCxt
-	 HH0csMBU3JuOoDOlTUnHN4ePT1haEjza7itj43GlZTxxfAeFuHk2JUPtmRNxTD0tTl
-	 9EvnQU6yPkTOfFn+5arY60A1eOG2itqHrS7OSeORihxG0HWzwWGb7B/iO2ElwssJ0D
-	 5XtSxTGhX8Cqra0TK2wlOYfWrGcTUXrG9DkeEWdz4rHUrlcHy3CXOh079BxUJFDjxV
-	 uVMua+x0fQz+bHMG5UOJUGX9A8Aqs0xe4V+CBZUtk75a+fWDslUkZ+0x2hAJxR4Aar
-	 ISi7mmXhRBeX9s8tVXLlhZxKbJwcICXnYL4D3EqmjbxgL8aBcLoXlUGZNayctCydx1
-	 FqOMbTp+kgtq+VxYGFoHlp+JNO/Gr5Sa4zgCL90Xs8Ovbwn8l/8+HX9r0vw0IXVK5o
-	 vD0BZa6ATLfnKPI8Bzz0oHHzLHzS7YSrhx8ri0cfKZjf0zKht0KlDIVDoqonU7NIBb
-	 PewBDzOxXlLEnOYwe3njLuLwP10n6FWHBjEjVhVaOqoF9oP5444UYtFyaVR5aO9Wvc
-	 lshbJgvQbP8qynZWXgTQLSgA=
-Received: from [127.0.0.1] (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9C04440E0187;
-	Thu,  4 Jul 2024 11:31:02 +0000 (UTC)
-Date: Thu, 04 Jul 2024 13:31:00 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Zhiquan Li <zhiquan1.li@intel.com>, "Huang, Kai" <kai.huang@intel.com>
-CC: "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "rafael@kernel.org" <rafael@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "mingo@redhat.com" <mingo@redhat.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3=5D_x86/acpi=3A_fix_panic_while_AP_?=
- =?US-ASCII?Q?online_later_with_kernel_parameter_maxcpus=3D1?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <2ce73ea8-bd1e-4148-8206-ffac8926a5d1@intel.com>
-References: <20240702005800.622910-1-zhiquan1.li@intel.com> <41ee5438e8059c299f5722e386cdc1457ddc16eb.camel@intel.com> <20240702124524.GEZoP2ZKcTcKl1ca1R@fat_crate.local> <1b716b14c52a89c254108df1cee85306c786c52b.camel@intel.com> <2ce73ea8-bd1e-4148-8206-ffac8926a5d1@intel.com>
-Message-ID: <9774DEAE-8E9E-40CD-B5A5-0A19243BB432@alien8.de>
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id AEB486003433;
+	Thu,  4 Jul 2024 12:31:41 +0100 (WEST)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id tP9km0J9U4n2; Thu,  4 Jul 2024 12:31:39 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 0A535600022E;
+	Thu,  4 Jul 2024 12:31:39 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1720092699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=x0y+4GnWMSOhZmejSsHhOCWDnBmzLxHwcFZLRk0LV4A=;
+	b=HKXiIJp/ANQFjJqOm2h5OQ4tORFpzfzU9h8OCfDfKqGl4z6AAk7eHmMM8F5EDyYJBoB+DB
+	IAtvV+NSj+k03L1Iu/+qxOxFNhtBEL+gig0kjQt+HtWf5DfvnqTS+G+mRU42+4I0hpZSCs
+	R5QhGmwAk9wIspkhUif45m1ThxOTp48=
+Received: from [192.168.1.53] (unknown [IPv6:2a01:14:8073:1e10:c362:ff08:aa85:54c6])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id BE7303600D3;
+	Thu,  4 Jul 2024 12:31:38 +0100 (WEST)
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Subject: [PATCH v4 0/7] memory: tegra: Cleanup Tegra210 EMC frequency
+ scaling
+Date: Thu, 04 Jul 2024 12:31:19 +0100
+Message-Id: <20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAeIhmYC/yWNyw6CMBBFf4XM2jZ9gcGV/2GIwTLAJMpgW4mG8
+ O9WXJ6T3HNXiBgII5yKFQIuFImnDO5QgB/baUBBXWYwyjh1VE4kHEJrtLriw/cBn6LujKsqq5V
+ HD3k2B+zpvScvTeaRYuLw2R8W97P/WJlztVVlJW1ttNCiIx5Y0sLnhH4iz/J1p3jjVs4Jmm3bv
+ pj2eqitAAAA
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720092698; l=1885;
+ i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
+ bh=IJfjkch6ZzOcdc7z7UdkuGLyWiaKV+g2YUH+4LnB3Jw=;
+ b=koNPevSTqaTND3vgiadpazuzNFj6Nk7bT9Jvo+VN+S3NBmxaw1vwDu847rSBOkSS7XYg4mdNU
+ 3AhD8ulgHxNAaJ1m5FTgnBskCIif49qe57WSovXfuUdUdebKFrVmvez
+X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
+ pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
 
-On July 3, 2024 4:39:43 AM GMT+02:00, Zhiquan Li <zhiquan1=2Eli@intel=2Ecom=
-> wrote:
->
->On 2024/7/3 07:55, Huang, Kai wrote:
->>> This happens to us maintainers at least once a week=2E Well, I don't w=
-ant
->>> that to happen in my tree anymore=2E
->>>
->>> So none of this text above still doesn't explain to me *why* this is
->>> happening=2E
->>>
->>> Why do APs need to update acpi_mp_wake_mailbox?
->
->Not AP needs to update acpi_mp_wake_mailbox, but BSP might need to
->update it after the init stage=2E  In the encrypted guest CPU hot-plug
->scenario, BSP memremap() the acpi_mp_wake_mailbox_paddr, and writes APIC
->ID of APs, wakeup vector and the ACPI_MP_WAKE_COMMAND_WAKEUP command
->into mailbox=2E  Firmware will listen on mailbox command address, and onc=
-e
->it receives the wakeup command, the CPU associated with the given apicid
->will be booted=2E
->
->We cannot assume that all APs will be brought up in the init stage=2E
->
->> They don't need to if acpi_mp_wake_mailbox can be setup before smp_init=
-()
->> once for all=2E
->>=20
->> But currently the setup of acpi_mp_wake_mailbox is done when the first =
-AP is
->> brought up because memremap() doesn't work in acpi_parse_mp_wake(), as
->> mentioned in the changelog of this patch=2E
->>=20
->> I also feel it's not ideal to setup acpi_mp_wake_mailbox when bringing =
-up
->> the first AP, so I provided my diff=2E  IIUC, if memremap() works for
->> acpi_mp_wake_mailbox when bringing up the first AP, then it should also=
- work
->> in
->> the early_initcall()=2E
->
->Besides the factor that whether memremap() is functional at the point in
->the boot process, another reason I can think of is, if the intention is
->just to work with BSP, then the remapping is a redundant step=2E
->Especially in the kexec & kdump case, the capture kernel only needs
->single CPU to work usually with the "maxcpus=3D1" option=2E
->
->IMHO, the solution that postpone the remapping while really needs to
->bring up APs is reasonable, just don't make acpi_mp_wake_mailbox
->read-only=2E  The APs might be brought up later, might be never=2E
->
->
->>=20
->>> Which patch is this fixing?
->> It fiexes below commit AFAICT:
->>=20
->>   24dd05da8c79 ("x86/apic: Mark acpi_mp_wake_* variables as
->> __ro_after_init")
->>=20
->> Which didn't consider 'maxvcpus=3Dxx' case=2E
->>=20
->
->Thanks a lot for checking this, Kai=2E
->
->>=20
->> But I will leave to Kirill to confirm=2E
->
->Best Regards,
->Zhiquan
+Hello,
 
-Then please extend the commit message with the "why", add the Fixes tag an=
-d resend=2E
+This patch series consists of a general cleanup of the Tegra210 EMC
+frequency scaling code for revision 7.
 
-Thx=2E
---=20
-Sent from a small device: formatting sucks and brevity is inevitable=2E 
+Currently the code is relying heavily on a function, update_clock_tree_delay(),
+that is responsible for too many things, making it long and confusing.
+The general idea with these patches is to simplify this function and its
+surrounding code, making it more modular.
+
+The motivation behind these changes (besides improving readability and
+maintainability) is to make it simpler to add support in the future for
+frequency change revisions other than 7, where we can reuse a large
+portion of the modularized code rather than essentially repeating 2k
+lines of code with minimal changes.
+
+There are no functional changes with this patch set, as it is only meant
+as preparation for following patches where revision 6 support is added.
+
+Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+---
+Changes in v4:
+- PATCH 07/07: Add missing parenthesis around operands when calculating
+  delay
+- Link to v3: https://lore.kernel.org/r/20240507093056.3921-1-diogo.ivo@tecnico.ulisboa.pt
+
+---
+Diogo Ivo (7):
+      memory: tegra: Remove periodic compensation duplicate calls
+      memory: tegra: Move DQSOSC measurement to common place
+      memory: tegra: Reword and correct comments
+      memory: tegra: Change macros to interpret parameter as integer
+      memory: tegra: Loop update_clock_tree_delay()
+      memory: tegra: Move compare/update current delay values to a function
+      memory: tegra: Rework update_clock_tree_delay()
+
+ drivers/memory/tegra/tegra210-emc-cc-r21021.c | 429 ++++++--------------------
+ 1 file changed, 86 insertions(+), 343 deletions(-)
+---
+base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
+change-id: 20240704-tegra210_emcfreq-9d2466310cec
+
+Best regards,
+-- 
+Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+
 
