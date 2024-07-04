@@ -1,87 +1,146 @@
-Return-Path: <linux-kernel+bounces-241746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D0C927F11
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:36:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 979C4927F17
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7F24282C67
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 22:36:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50275284384
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 22:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC87143C75;
-	Thu,  4 Jul 2024 22:36:07 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448833F9C5;
-	Thu,  4 Jul 2024 22:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A53144317;
+	Thu,  4 Jul 2024 22:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HkWnDiCs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6A93F9C5;
+	Thu,  4 Jul 2024 22:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720132566; cv=none; b=SQ+qWn4wjGgBoXvnYEBSghlNAqfXkmhnWM/jWAe69KbRWKd1XOvOuE5N9d/swg1rWEe7PRmYPLjhQDtvnp9LoxfCyx70LKHglAhjxDbkpgW6In076FD7oo8VoY3nbA/NBpb5z82oKahnvs5CUXai96t9TicwXvMEZjS+uczNE9A=
+	t=1720132966; cv=none; b=QO9PPQDyyQ+9fy6NoGaBjca5wC67rDkGCmUnaJzmL5PM7csMmbkBRuY0OJqxFoWd16JekQtBnW+51vT2srkz0gA3oL6SLulmHWM8HihBvqcTrBSa+Z9nh2IBWgiAtgf9tLJcChE+scevf0rrXDCXIHp0rSPqWMZkeWEOxWbP6Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720132566; c=relaxed/simple;
-	bh=sjJcYABZyOR6FDEBheK8kNzPomh3KWnD6TI3P5yZdiY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=OT2ZryGaSR8iLOeaLkCA1LqAvb0cjFm7cXj0qduAdJtBchicZ4sEdtw6/8jaRwa279UmnU6tRyloa+VrawdKR+py9CMYJMK4MT0qsFV6N9XLz+q25PXKmeC2nQFSYTCtrT9qiTxWFzXCX+1P/nlRKJ+doLOlRMkT8CrAJ7GvH3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 1E4CE92009C; Fri,  5 Jul 2024 00:36:02 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 147A992009B;
-	Thu,  4 Jul 2024 23:36:02 +0100 (BST)
-Date: Thu, 4 Jul 2024 23:36:02 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Florian Fainelli <florian.fainelli@broadcom.com>, 
-    Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-    Huacai Chen <chenhuacai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-    Serge Semin <fancer.lancer@gmail.com>, 
-    "paulburton@kernel.org" <paulburton@kernel.org>, 
-    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] MIPS: smp: Make IPI interrupts scalable
-In-Reply-To: <e54ec104-2e19-46da-8c3d-b6b7f620f563@app.fastmail.com>
-Message-ID: <alpine.DEB.2.21.2407042324300.38148@angie.orcam.me.uk>
-References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com> <20240616-b4-mips-ipi-improvements-v1-1-e332687f1692@flygoat.com> <ZoVokcDYqZnuqd2X@alpha.franken.de> <7a822a33-dd67-4827-bbd0-01e75e203951@app.fastmail.com>
- <alpine.DEB.2.21.2407032204331.38148@angie.orcam.me.uk> <e54ec104-2e19-46da-8c3d-b6b7f620f563@app.fastmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1720132966; c=relaxed/simple;
+	bh=CmVw1bey5YPzVe3/R6YwZS4suLuLgLxIa6Vt6CGJt+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FD0Z5E8rXPVy8mhQJMzJvnkXZdksYjTt3jOJ1awfil0FyYpfQjG7O4RS1sITXzPSFaOxNIB4cTVvB0iYF/QvvP+bsFOTTh2dEYJD2+FDX0WVVbDLTg3/eGplYhShdvld9DYNJcxEzXbbwsBK6K0Sjb7ECu+wHazqT1VngjjsZYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HkWnDiCs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE3F7C3277B;
+	Thu,  4 Jul 2024 22:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720132965;
+	bh=CmVw1bey5YPzVe3/R6YwZS4suLuLgLxIa6Vt6CGJt+I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HkWnDiCscmbcRWlsB8Ax2OTPnzy0xPe8Ek9d9deMA8u1qAmTmk4kMsELa0XH4k5Y2
+	 /3ltzYt7y7y1ZHABbNWZ2rhpRtTaGHlSTm9/pgO9HaTGIJ0ZozQhG6f8QGk/ZAJoxm
+	 +MRrzAgM/b44I2Xp270QxG9TH/W4u0lT8WyCS+wstfdMMfEIE0kJ4p4SxoAa8J4877
+	 4pnZxYS378yKauqmJYSDKyQ0+xssHFQKlRHAUnCBpqk6aiMiTaiH0OIrfM82feRV4d
+	 Z8jbaJSkg1sGoLzMBJfPVN9wgsF3MmqJXWzK8wTR9Ycsl3wGJM3f0O/tcEZFJCFVP/
+	 ybCYnMKRrSe5A==
+Date: Fri, 5 Jul 2024 00:42:41 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: chris.brandt@renesas.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 04/12] i2c: riic: Use pm_runtime_resume_and_get()
+Message-ID: <2wm6vd4dib7tqpdq2eusjhyvfl3sofyvy65w6axvdjbkmgm5cn@bjltpbwwilc2>
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-5-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625121358.590547-5-claudiu.beznea.uj@bp.renesas.com>
 
-On Thu, 4 Jul 2024, Jiaxun Yang wrote:
+Hi Claudiu,
 
-> >  SOC-it (or SOC-it 101 to be precise) is the name of a bus controller:
-> >
-> > System controller/revision =    MIPS SOC-it 101 OCP / 1.3   SDR-FW-4:1
-> >
-> > used across numerous platforms from the M4K core onwards, UP, MT, or MP.  
-> > I think it would make sense if you revealed the processor type instead.
+> diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+> index 83e4d5e14ab6..002b11b020fa 100644
+> --- a/drivers/i2c/busses/i2c-riic.c
+> +++ b/drivers/i2c/busses/i2c-riic.c
+> @@ -113,6 +113,8 @@ struct riic_irq_desc {
+>  	char *name;
+>  };
+>  
+> +static const char * const riic_rpm_err_msg = "Failed to runtime resume";
+
+Please, don't do this. Much clearer to write the message
+explicitly.
+
+> +
+>  static inline void riic_writeb(struct riic_dev *riic, u8 val, u8 offset)
+>  {
+>  	writeb(val, riic->base + riic->info->regs[offset]);
+> @@ -133,10 +135,14 @@ static int riic_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+>  	struct riic_dev *riic = i2c_get_adapdata(adap);
+>  	struct device *dev = adap->dev.parent;
+>  	unsigned long time_left;
+> -	int i;
+> +	int i, ret;
+>  	u8 start_bit;
+>  
+> -	pm_runtime_get_sync(dev);
+> +	ret = pm_runtime_resume_and_get(dev);
+
+In principle I like the error message to be always checked and I
+will always approve it. Whenever there is a return value, even
+when we are sure it's always '0', it needs to be checked.
+
+I had lots of discussions in the past about this topic but I
+haven't always found support. I'd love to have the ack from a
+renesas maintainer here.
+
+> +	if (ret) {
+> +		dev_err(dev, riic_rpm_err_msg);
+> +		return ret;
+> +	}
+>  
+>  	if (riic_readb(riic, RIIC_ICCR2) & ICCR2_BBSY) {
+>  		riic->err = -EBUSY;
+
+...
+
+> @@ -498,11 +509,18 @@ static void riic_i2c_remove(struct platform_device *pdev)
+>  {
+>  	struct riic_dev *riic = platform_get_drvdata(pdev);
+>  	struct device *dev = &pdev->dev;
+> +	int ret;
+>  
+> -	pm_runtime_get_sync(dev);
+> -	riic_writeb(riic, 0, RIIC_ICIER);
+> -	pm_runtime_put(dev);
+>  	i2c_del_adapter(&riic->adapter);
+
+You swapped the position of this. Please put the
+i2c_del_adapter() at the end.
+
+Thanks,
+Andi
+
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret) {
+> +		dev_err(dev, riic_rpm_err_msg);
+> +	} else {
+> +		riic_writeb(riic, 0, RIIC_ICIER);
+> +		pm_runtime_put(dev);
+> +	}
+> +
+>  	pm_runtime_disable(dev);
+>  }
+>  
+> -- 
+> 2.39.2
 > 
-> Sure, sorry to be vague on the platform detail.
-> 
-> I actually tried on two Malta configurations, CoreFPGA6 interAptiv 2MPF (2 cores, 2 VPE, 4TC),
-> and CoreFPGA3 34Kc MT (2VPE 9TC).
-
- This is much better, thanks, and the choice of CPUs feels adequate.  The 
-mention of the 34K CPU brings fond memories too, as I was a member of the 
-development team for this design, very innovative at its time, and still 
-nowadays I believe.
-
-> >  Technically I could run it on my SB1250, but I'm too overloaded now to 
-> > commit to any timescale.  Sorry.
-> 
-> No worries, I'll try to fetch a BMIPS3000 SMP router to get Broadcom platform
-> undercover.
-
- But that's a completely different design from the SB-1 line, isn't it?
-
-  Maciej
 
