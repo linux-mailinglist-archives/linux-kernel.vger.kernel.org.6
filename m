@@ -1,241 +1,230 @@
-Return-Path: <linux-kernel+bounces-240647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE4B992705E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:16:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CBA927055
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 731481F24B6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974321F22C25
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1681A0AFD;
-	Thu,  4 Jul 2024 07:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C511A0AFA;
+	Thu,  4 Jul 2024 07:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="E9tF0cyR"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLCfexAb"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FE0FBF6
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 07:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECC8FBF6;
+	Thu,  4 Jul 2024 07:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720077399; cv=none; b=DQfZYERjEmhj3RZq2no/uHfTvFOkGxEgMYCtKUDRML13oIbKwrAbRFgrRgBj/ECJtpqH1O091aBndOuxBmbOlSu336YSIg6maojHh3eGt7SHw61H5sNS7TorNTwieigBfhHvRhDvxYg7lgtF6E77kdnwr7Z0Q5ICtdwdwDiEIBE=
+	t=1720077334; cv=none; b=HhYLdPS0xRRWTsWFqb4BsIZGVZ5EWqV4BVeRHB+Nnl9pWV5fNaQKMA2K0/BfxrQlN/ZeZpiVhuI+1GvTHSR0L2rNcvS+PxND+xlZkNgR/2QCUW633mgGGHU5V15BYaGEJZNEuZmGWSWyhV0WkouVq3aZQWU2VponHCHgNhIEV70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720077399; c=relaxed/simple;
-	bh=LjsrTi2z4CRnVuzdIQm+l232jl550YGPl6TpAJ00+q0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CqM2WzKZowA627kVDdEjMZUtjH2/P+5xoGEEKb2WRnVPaWcnjp17kUp3WH/m17xhytAbfieL1QmgG+6wRBr/I66556qq08wNjuv3y2xdfnMaujigmqCW0N7MghnVf/2FdAoXQNkYoI4vslcPV/bqu8QHehMx9CzXPaSUC9CNsns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=E9tF0cyR; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-75ebcd9d586so7583a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 00:16:36 -0700 (PDT)
+	s=arc-20240116; t=1720077334; c=relaxed/simple;
+	bh=lZ/lqchbV1ZqzGPk3v4UVJ9pBGXfkyVEn4YOVaxcOk0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=njiM/IUoa5j8P1Xs2K4HIQmnZqR0cNU0TxrWTM6Ofa3WIeKXgdAS5nJFb6y49811sE/nkUGuX4u5LS1KaqQuxgnuUwgZRgSi9+gRsC9+fvqdcmeqBuJrvr4JfXeiUQiTga1taEo3Y4h1doP//YfYuZ3qUdRaSVisGWvJFuJKu9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLCfexAb; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-58b0dddab8cso478365a12.0;
+        Thu, 04 Jul 2024 00:15:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1720077396; x=1720682196; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TvyZAWnNNxx/fwTfnUe4tHKME28aoZVHnncLaVmTBU4=;
-        b=E9tF0cyRazVYn0OjCTxHNfTJ8YPBAMyY/2t39a6/ZnNkpRG2xLEinhwVZBdKFHEZJV
-         gZ6GNaOHSI3OcwxsOluSuedeXSTFChJ60BaZRxEAHKv3mgURpdW38MZx5C2NNXSPxfZe
-         Aig4DsJFwxL6olFRdS2mWiM4GX71mVyGIRG0O1e/PnZgKMqTxqCrDYreg6wCTAQZcV05
-         PvFVobbgysXG75P0ry4tdVLdRWIEZft9eqlsNkqP6Olni6RpMMhZxER3+Ka894wNAJQv
-         rY/KVz9ez0r/Fjv36KkfnWQxeLX/H6buvBZBK1e9LTytydbb7z1H+FhdO3LInYKtrZrq
-         SNzw==
+        d=gmail.com; s=20230601; t=1720077331; x=1720682131; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pqqPxi9GFea+OeTvn8PO5uRaTOTc+yG0hq5j6l0g4FE=;
+        b=lLCfexAb0igdrUx6jiknUx0avGfJOK60ZbLHZ+eYdBdfqDFTLN+mtvbDB6+kKR0alW
+         2ry00rKcbzqV9uiWeWkFULvCidCfZhn/kxEh9U68V5TmkM1CSvsa45FKKo+W+C4ah0St
+         NhECwTVFXs9qXijffk4f7hu61poACdzIYD35dpSsAGdr0RcerYsGQ690WVGjEPR2fskx
+         afuTAzNsfMKYRVL7QJLS5YZxuLwwTL7qKa/ruWYKlTy8peJdV3LaXMLRRuD8RcL0cgxh
+         GxRvoY3GbcT/YpzAefuINz7fAoqaPf6nZur58ay9YNCXnVYLOW0sSuvr1bYSqSJvr1sY
+         Dfaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720077396; x=1720682196;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TvyZAWnNNxx/fwTfnUe4tHKME28aoZVHnncLaVmTBU4=;
-        b=F7A5hOnBQWppS9apteg6AxxKBB+y34neym6ZJmTr0egfwfJQdCm92Lc8n2CHam85qj
-         TY7pnhxahovxtU+43H7vy73VPjIMX9ABRGYJ57q+GWZPoVCqa2nfJ4Q0LDt6dLIEmU42
-         IXzYslHiXJuDE6VIs4mrtwAfoIM7vnamxNFfISa8vB0c/r724rPrdBZP1OLSvpHfBql1
-         o8lEh1Ak6ZChtAShIaI/jbeR5Z4T4jbV/V7XRydfaKe5GEQrTZevR8JqD/7DcXNsWYMs
-         bmeV7MhF/eyNeHn1YM2lbgODYLu6aaTBgq260PzEGlISl4m2OXEBRhAdchlq1PUNVmvB
-         +v8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXIovgtsxwtBuvTx2C07yCor+YFEBHsI5Unp3XhNdUB5k3m2nLizDr4Zl1fjf4ZdP607sWYHiWNfSF4s0QgUI5+aw6ozYLVKxOCdwql
-X-Gm-Message-State: AOJu0YyXzO4c64kwroQEQmEJg5hT/npVPepBbYeqnsgUoKVqA8M61EHv
-	jkxVpC3UgCwwbZL0k1k00KwcXB/q4HDL5M1JTKaaMW6lfvEVUeEJ7c8r1mMYyXE=
-X-Google-Smtp-Source: AGHT+IHPhEdFOtrGOq2so3f8fczbnDBB6HPj0uqaZE26HNY2schGIgbSlQBBjMxKmLniz35MD8p+4Q==
-X-Received: by 2002:a17:902:e74c:b0:1f8:6e3f:9e7 with SMTP id d9443c01a7336-1fb33e18421mr8824975ad.1.1720077396279;
-        Thu, 04 Jul 2024 00:16:36 -0700 (PDT)
-Received: from [10.255.188.228] ([139.177.225.243])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1599c44sm115243885ad.273.2024.07.04.00.16.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 00:16:35 -0700 (PDT)
-Message-ID: <e7a8ddb2-52b5-4267-859b-e212644440b1@bytedance.com>
-Date: Thu, 4 Jul 2024 15:16:29 +0800
+        d=1e100.net; s=20230601; t=1720077331; x=1720682131;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pqqPxi9GFea+OeTvn8PO5uRaTOTc+yG0hq5j6l0g4FE=;
+        b=VcojGu37cXie0JySDPnR5zpYnmkLJYDAvA359SrTsP/lDP478LHRM36o5a1myrgsPv
+         roQnWshRYDwOnHYe0UaaHlAB8+7A4ybPdkVY/3fCiXkc1oO/QwDDbgI81rbrXDi+I3nv
+         8a/edy8Fc400BzQb0zq8fgPO22wdMS/OHzTqPdA706ZSp/+5LoOfzud5LGnG2ABU42mg
+         fj02Pu0MfjsXocD/W6SKn7Tbm/0xMXFZX0BjGlFHvarNGvSP4lgJ9igUY84Ka8tCUmmT
+         n7qKVV1VB0ahxKkDX2fVohsbCRTgLR0yq0JRuu8pHkAXTKkjsDsp1T3QUlqOQv78AyXI
+         yxFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNryGzYoZVoUlPcWkthF2wmvwe3841uOgflBUpGsNdubVe4IvHJrnb2w3iz9vnlmM7ye6sIfsEehbAxmSbCjeCkdllqaFvdmKmNhYqu8U1mWHeJgUEO/tUh/8L413wMDmHZ1R+ocAGp3gsROENe2mpDoV8XWit/C1go0+nx7kx0hFl0Wpi
+X-Gm-Message-State: AOJu0Yz8XjA8to/pi/7xgluZoDNJ0RTAjGhtaxgx9ux8t3arKm+9KFjX
+	7Rn/TyMc9rSqZv/NRhFiI2a4AGedqZn8yCAx+LybScz4pEfYvYSd
+X-Google-Smtp-Source: AGHT+IG3F2ZpfqdQldXn+rgvvAvq07dW1pZfkDqUzfdoBfCR0uLBmCANZoclVDTGLfrrrtCQUNxIyg==
+X-Received: by 2002:a05:6402:2105:b0:58c:2a57:b230 with SMTP id 4fb4d7f45d1cf-58e5955a333mr616316a12.13.1720077329339;
+        Thu, 04 Jul 2024 00:15:29 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58614f3d415sm8129864a12.85.2024.07.04.00.15.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 00:15:29 -0700 (PDT)
+Message-ID: <b9a57a014cab9ff7d9578f52bc7faef1dbea6ff6.camel@gmail.com>
+Subject: Re: [PATCH v5 3/3] dt-bindings: input: Update dtbinding for adp5588
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Conor Dooley <conor@kernel.org>, "Agarwal, Utsav"
+ <Utsav.Agarwal@analog.com>
+Cc: "Hennerich, Michael" <Michael.Hennerich@analog.com>, Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Sa,
+ Nuno" <Nuno.Sa@analog.com>, "linux-input@vger.kernel.org"
+ <linux-input@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "Artamonovs, Arturs"
+ <Arturs.Artamonovs@analog.com>, "Bimpikas, Vasileios"
+ <Vasileios.Bimpikas@analog.com>, "Gaskell, Oliver"
+ <Oliver.Gaskell@analog.com>
+Date: Thu, 04 Jul 2024 09:19:22 +0200
+In-Reply-To: <20240703-mandate-hardy-281ddd048b40@spud>
+References: <20240703-adp5588_gpio_support-v5-0-49fcead0d390@analog.com>
+	 <20240703-adp5588_gpio_support-v5-3-49fcead0d390@analog.com>
+	 <20240703-safehouse-flame-0b751b853623@spud>
+	 <SJ0PR03MB63432316EE8382033A4396369BDD2@SJ0PR03MB6343.namprd03.prod.outlook.com>
+	 <20240703-mandate-hardy-281ddd048b40@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/7] synchronously scan and reclaim empty user PTE
- pages
-To: the arch/x86 maintainers <x86@kernel.org>
-Cc: david@redhat.com, hughd@google.com, willy@infradead.org, mgorman@suse.de,
- muchun.song@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1719570849.git.zhengqi.arch@bytedance.com>
-Content-Language: en-US
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <cover.1719570849.git.zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Add the x86 mailing list that I forgot to CC before.
+On Wed, 2024-07-03 at 16:57 +0100, Conor Dooley wrote:
+> On Wed, Jul 03, 2024 at 03:55:11PM +0000, Agarwal, Utsav wrote:
+> > Hi Conor,
+> >=20
+> > Thank you for your feedback.
+> > > -----Original Message-----
+> > > From: Conor Dooley <conor@kernel.org>
+> > > Sent: Wednesday, July 3, 2024 4:20 PM
+> > > To: Agarwal, Utsav <Utsav.Agarwal@analog.com>
+> > > Cc: Hennerich, Michael <Michael.Hennerich@analog.com>; Dmitry Torokho=
+v
+> > > <dmitry.torokhov@gmail.com>; Rob Herring <robh@kernel.org>; Krzysztof
+> > > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; S=
+a,
+> > > Nuno <Nuno.Sa@analog.com>; linux-input@vger.kernel.org;
+> > > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Artamonovs,
+> > > Arturs <Arturs.Artamonovs@analog.com>; Bimpikas, Vasileios
+> > > <Vasileios.Bimpikas@analog.com>; Gaskell, Oliver
+> > > <Oliver.Gaskell@analog.com>
+> > > Subject: Re: [PATCH v5 3/3] dt-bindings: input: Update dtbinding for
+> > > adp5588
+> > >=20
+> > > On Wed, Jul 03, 2024 at 11:58:16AM +0100, Utsav Agarwal via B4 Relay
+> > > wrote:
+> > > > From: Utsav Agarwal <utsav.agarwal@analog.com>
+> > > >=20
+> > > > Updating dt bindings for adp5588. Since the device can now function=
+ in a
+> > > > purely gpio mode, the following keypad specific properties are now =
+made
+> > > > optional:
+> > > > 	- interrupts
+> > > > 	- keypad,num-rows
+> > > > 	- keypad,num-columns
+> > > > 	- linux,keymap
+> > > >=20
+> > > > However since the above properties are required to be specified whe=
+n
+> > > > configuring the device as a keypad, dependencies have been added
+> > > > such that specifying either one would require the remaining as well=
+.
+> > > >=20
+> > > > Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+> > > > ---
+> > > > =C2=A0.../devicetree/bindings/input/adi,adp5588.yaml=C2=A0=C2=A0=C2=
+=A0=C2=A0 | 33
+> > > ++++++++++++++++++----
+> > > > =C2=A01 file changed, 28 insertions(+), 5 deletions(-)
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.ya=
+ml
+> > > b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> > > > index 26ea66834ae2..6c06464f822b 100644
+> > > > --- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> > > > +++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> > > > @@ -49,7 +49,10 @@ properties:
+> > > > =C2=A0=C2=A0 interrupt-controller:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0 description:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This property applies if eithe=
+r keypad,num-rows lower than 8 or
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 keypad,num-columns lower than 10.
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 keypad,num-columns lower than 10. T=
+his property does not apply if
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 keypad,num-rows or keypad,num-colum=
+ns are not specified since the
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device then acts as gpio only, duri=
+ng which interrupts are not
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 utilized.
+> > > >=20
+> > > > =C2=A0=C2=A0 '#interrupt-cells':
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0 const: 2
+> > > > @@ -65,13 +68,15 @@ properties:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0 minItems: 1
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 2
+> > > >=20
+> > > > +dependencies:
+> > > > +=C2=A0 keypad,num-rows: ["keypad,num-columns"]
+> > > > +=C2=A0 keypad,num-cols: ["keypad,num-rows"]
+> > > > +=C2=A0 linux,keymap: ["keypad,num-rows"]
+> > >=20
+> > > Is what you've got here sufficient? Adding "keypad,num-rows" won't
+> > > mandate "linux,keymap" which I think is wrong. I think all 3 entries
+> > > here need to contain both of the other two.
+> > >=20
+> >=20
+> > Ah, I can see the issue, thank you for pointing it out - I will be
+> > correcting that.
+> >=20
+> > > > +=C2=A0 interrupts: ["linux,keymap"]
+> > >=20
+> > > I still don't understand why interrupts are only allowed when the key=
+map
+> > > is present. I'd cover the interrupts with something like
+> > >=20
+> > > if:
+> > > =C2=A0 required:
+> > > =C2=A0=C2=A0=C2=A0 - linux,keymap
+> > > =C2=A0 then:
+> > > =C2=A0=C2=A0=C2=A0 required:
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - interrupts
+> > >=20
+> > > so that interrupts can be used while not in keypad mode. Unless of
+> > > course there's something (unmentioned in this patch) that prevents th=
+at.
+> >=20
+> > In case when the device is not in keypad mode, i.e, is purely using gpi=
+o -
+> > it doesn't trigger the interrupt.
+> > Due to this, I had restricted the same to keypad mode only(as a
+> > requirement). This was mentioned=20
+> > here:
+> > https://lore.kernel.org/all/d4661ddc1d253678fd62be4c7e19eb0cff4174f6.ca=
+mel@gmail.com/
+>=20
+> This says "not required", not "not functional". How come generating
+> interrupts becomes impossible when not in keypad mode? That's what needs
+> to be explained.
+>=20
 
-On 2024/7/1 16:46, Qi Zheng wrote:
-> Hi all,
-> 
-> Previously, we tried to use a completely asynchronous method to reclaim empty
-> user PTE pages [1]. After discussing with David Hildenbrand, we decided to
-> implement synchronous reclaimation in the case of madvise(MADV_DONTNEED) as the
-> first step.
-> 
-> So this series aims to synchronously scan and reclaim empty user PTE pages in
-> zap_page_range_single() (madvise(MADV_DONTNEED) etc will invoke this). In
-> zap_page_range_single(), mmu_gather is used to perform batch tlb flushing and
-> page freeing operations. Therefore, if we want to free the empty PTE page in
-> this path, the most natural way is to add it to mmu_gather as well. There are
-> two problems that need to be solved here:
-> 
-> 1. Now, if CONFIG_MMU_GATHER_RCU_TABLE_FREE is selected, mmu_gather will free
->     page table pages by semi RCU:
-> 
->     - batch table freeing: asynchronous free by RCU
->     - single table freeing: IPI + synchronous free
-> 
->     But this is not enough to free the empty PTE page table pages in paths other
->     that munmap and exit_mmap path, because IPI cannot be synchronized with
->     rcu_read_lock() in pte_offset_map{_lock}(). So we should let single table
->     also be freed by RCU like batch table freeing.
-> 
-> 2. When we use mmu_gather to batch flush tlb and free PTE pages, the TLB is not
->     flushed before pmd lock is unlocked. This may result in the following two
->     situations:
-> 
->     1) Userland can trigger page fault and fill a huge page, which will cause
->        the existence of small size TLB and huge TLB for the same address.
-> 
->     2) Userland can also trigger page fault and fill a PTE page, which will
->        cause the existence of two small size TLBs, but the PTE page they map
->        are different.
-> 
->     For case 1), according to Intel's TLB Application note (317080), some CPUs of
->     x86 do not allow it:
-> 
->     ```
->     If software modifies the paging structures so that the page size used for a
->     4-KByte range of linear addresses changes, the TLBs may subsequently contain
->     both ordinary and large-page translations for the address range.12 A reference
->     to a linear address in the address range may use either translation. Which of
->     the two translations is used may vary from one execution to another and the
->     choice may be implementation-specific.
-> 
->     Software wishing to prevent this uncertainty should not write to a paging-
->     structure entry in a way that would change, for any linear address, both the
->     page size and either the page frame or attributes. It can instead use the
->     following algorithm: first mark the relevant paging-structure entry (e.g.,
->     PDE) not present; then invalidate any translations for the affected linear
->     addresses (see Section 5.2); and then modify the relevant paging-structure
->     entry to mark it present and establish translation(s) for the new page size.
->     ```
-> 
->     We can also learn more information from the comments above pmdp_invalidate()
->     in __split_huge_pmd_locked().
-> 
->     For case 2), we can see from the comments above ptep_clear_flush() in
->     wp_page_copy() that this situation is also not allowed. Even without
->     this patch series, madvise(MADV_DONTNEED) can also cause this situation:
-> 
->             CPU 0                         CPU 1
-> 
->     madvise (MADV_DONTNEED)
->     -->  clear pte entry
->          pte_unmap_unlock
->                                        touch and tlb miss
-> 				      --> set pte entry
->          mmu_gather flush tlb
-> 
->     But strangely, I didn't see any relevant fix code, maybe I missed something,
->     or is this guaranteed by userland?
-> 
->     Anyway, this series defines the following two functions to be implemented by
->     the architecture. If the architecture does not allow the above two situations,
->     then define these two functions to flush the tlb before set_pmd_at().
-> 
->     - arch_flush_tlb_before_set_huge_page
->     - arch_flush_tlb_before_set_pte_page
-> 
-> As a first step, we supported this feature on x86_64 and selectd the newly
-> introduced CONFIG_ARCH_SUPPORTS_PT_RECLAIM.
-> 
-> In order to reduce overhead, we only handle the cases with a high probability
-> of generating empty PTE pages, and other cases will be filtered out, such as:
-> 
->   - hugetlb vma (unsuitable)
->   - userfaultfd_wp vma (may reinstall the pte entry)
->   - writable private file mapping case (COW-ed anon page is not zapped)
->   - etc
-> 
-> For userfaultfd_wp and writable private file mapping cases (and MADV_FREE case,
-> of course), consider scanning and freeing empty PTE pages asynchronously in
-> the future.
-> 
-> This series is based on next-20240627.
-> 
-> Comments and suggestions are welcome!
-> 
-> Thanks,
-> Qi
-> 
-> [1]. https://lore.kernel.org/lkml/cover.1718267194.git.zhengqi.arch@bytedance.com/
-> 
-> Qi Zheng (7):
->    mm: pgtable: make pte_offset_map_nolock() return pmdval
->    mm: introduce CONFIG_PT_RECLAIM
->    mm: pass address information to pmd_install()
->    mm: pgtable: try to reclaim empty PTE pages in zap_page_range_single()
->    x86: mm: free page table pages by RCU instead of semi RCU
->    x86: mm: define arch_flush_tlb_before_set_huge_page
->    x86: select ARCH_SUPPORTS_PT_RECLAIM if X86_64
-> 
->   Documentation/mm/split_page_table_lock.rst |   3 +-
->   arch/arm/mm/fault-armv.c                   |   2 +-
->   arch/powerpc/mm/pgtable.c                  |   2 +-
->   arch/x86/Kconfig                           |   1 +
->   arch/x86/include/asm/pgtable.h             |   6 +
->   arch/x86/include/asm/tlb.h                 |  23 ++++
->   arch/x86/kernel/paravirt.c                 |   7 ++
->   arch/x86/mm/pgtable.c                      |  15 ++-
->   include/linux/hugetlb.h                    |   2 +-
->   include/linux/mm.h                         |  13 +-
->   include/linux/pgtable.h                    |  14 +++
->   mm/Kconfig                                 |  14 +++
->   mm/Makefile                                |   1 +
->   mm/debug_vm_pgtable.c                      |   2 +-
->   mm/filemap.c                               |   4 +-
->   mm/gup.c                                   |   2 +-
->   mm/huge_memory.c                           |   3 +
->   mm/internal.h                              |  17 ++-
->   mm/khugepaged.c                            |  24 +++-
->   mm/memory.c                                |  21 ++--
->   mm/migrate_device.c                        |   2 +-
->   mm/mmu_gather.c                            |   2 +-
->   mm/mprotect.c                              |   8 +-
->   mm/mremap.c                                |   4 +-
->   mm/page_vma_mapped.c                       |   2 +-
->   mm/pgtable-generic.c                       |  21 ++--
->   mm/pt_reclaim.c                            | 131 +++++++++++++++++++++
->   mm/userfaultfd.c                           |  10 +-
->   mm/vmscan.c                                |   2 +-
->   29 files changed, 307 insertions(+), 51 deletions(-)
->   create mode 100644 mm/pt_reclaim.c
-> 
+I should have read the patch before replying in v4. Yes, I agree with Conor=
+ that
+what we need is to make the interrupt __required__ when using the keypad. I=
+n the
+case we have gpios, it's optional but it does not mean we should remove it.=
+ One
+usecase would be to use gpios still as inputs through gpio-keys.
+
+- Nuno S=C3=A1
+
 
