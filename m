@@ -1,110 +1,194 @@
-Return-Path: <linux-kernel+bounces-241063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 960A79276A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:00:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 484859276AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50068283273
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:00:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDFD81F24B8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D8D1AE849;
-	Thu,  4 Jul 2024 13:00:33 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8BF1AE84B;
+	Thu,  4 Jul 2024 13:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sbEWGAbJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rFTWPRpZ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sbEWGAbJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rFTWPRpZ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD9D41A81
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391D37E9;
+	Thu,  4 Jul 2024 13:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720098033; cv=none; b=gXH54fBI8nyQCmk9cCs1/BkVU18KLmGBGxgEMnyisb03CxEhx7Ve7GK2Pnvlb4aFrvQ4lTnSZCrgM0PGjAHyxWZUfzv3BH/X7rYqJb5WLr9uWP/W0lFDk9RqFOF0GmRoetrbfn9mODX18GXbLKKlRYACn10Z60XACBa79g8K9yU=
+	t=1720098060; cv=none; b=YuRmi1RaKjeokVNPp+1zLVoWP552vF3TZ4fPR+6I1iZiM/pQWerH97L3G5j/WGzfEfJxSoU+4d+/+DyIOGtrjJ1Xo4DTOhCm1Q0asoQ6PCrFDR5hy3pPSRmy8TQ+pBUGlCHf1LZmqTeYUxHwh43w6ztMF2sCvu59lzqqHxkrRrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720098033; c=relaxed/simple;
-	bh=YYVhrcsfZ0vEB6KqnZlngZZFqp5pxACsU+ykzL+008A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IKJuiCCcVnREPTQMPoGQ2Nqo7qRJwZFx+snFeCweUQQAKsKZEN/4dup4EyKY+evwAVnb6ykaqWTUIc0yB2Sfusoj4QAWUti3qoRqNUwfVluXiNDKvKRnIWmIGQoMpy49XIOnicx858HX79bEU/kFsq9gUX8NillqcLQEAP28rU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowACXncngnIZm316NAQ--.1350S2;
-	Thu, 04 Jul 2024 21:00:24 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	Rodrigo.Siqueira@amd.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	wenjing.liu@amd.com,
-	jun.lei@amd.com,
-	hamza.mahfooz@amd.com,
-	alex.hung@amd.com,
-	alvin.lee2@amd.com,
-	george.shen@amd.com,
-	dillon.varone@amd.com,
-	roman.li@amd.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH RESEND] drm/amd/display: Check pipe_ctx before it is used
-Date: Thu,  4 Jul 2024 21:00:15 +0800
-Message-Id: <20240704130015.295645-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720098060; c=relaxed/simple;
+	bh=c+fU3icWBiTQt4AHFwhZp2eFHRMUlRaZydFPjgyQ5jA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oCNb6xHcq3b5bX1aUfWHm2QUEi+eN59L+LpMa6p+BD3CpfW7RPl64KOA6HwTFF40nHbky2jFzwpfjhtOWiYW8VlV/+/XRcKjcT+mDEQ+5v+CfrM7nr9XNdUwl2BvCx/ejH4o42xad3yPxbUdA77sgWiZMOjIc5dhkVcNNXtQDjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sbEWGAbJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rFTWPRpZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sbEWGAbJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rFTWPRpZ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 568891F7BC;
+	Thu,  4 Jul 2024 13:00:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720098057; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LqxVYzgl/rHw+s+BWRzpBzVsp4eAcq71WWPLsHaqS/s=;
+	b=sbEWGAbJf/UiX1Wrrarr4Nxjngefo/RdlQE4ZJgXs7O6AY3zQ0gcAfjDCmVGdst49OX1Jw
+	O+uBId4Ym5x1DUht09eSx9GWAlgA4s93qXwR9B4yKjJDWcaZ9QyT9oosEHp/6OtVcJ301R
+	SAAsgmI23FDonVlHOOYELtD80kgB3XA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720098057;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LqxVYzgl/rHw+s+BWRzpBzVsp4eAcq71WWPLsHaqS/s=;
+	b=rFTWPRpZDi0a3VLPq9Th75eyAo5Wt2zzmmsprTfuTFp1JSN1DeD4Rp5M0ZbzghAB/iuc3E
+	/3PJwxa8nIZuseAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720098057; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LqxVYzgl/rHw+s+BWRzpBzVsp4eAcq71WWPLsHaqS/s=;
+	b=sbEWGAbJf/UiX1Wrrarr4Nxjngefo/RdlQE4ZJgXs7O6AY3zQ0gcAfjDCmVGdst49OX1Jw
+	O+uBId4Ym5x1DUht09eSx9GWAlgA4s93qXwR9B4yKjJDWcaZ9QyT9oosEHp/6OtVcJ301R
+	SAAsgmI23FDonVlHOOYELtD80kgB3XA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720098057;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LqxVYzgl/rHw+s+BWRzpBzVsp4eAcq71WWPLsHaqS/s=;
+	b=rFTWPRpZDi0a3VLPq9Th75eyAo5Wt2zzmmsprTfuTFp1JSN1DeD4Rp5M0ZbzghAB/iuc3E
+	/3PJwxa8nIZuseAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4387013889;
+	Thu,  4 Jul 2024 13:00:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lCspDgidhmbqFwAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Thu, 04 Jul 2024 13:00:56 +0000
+Message-ID: <c3576d2a-53c8-41f9-a825-13e9bc6417ee@suse.de>
+Date: Thu, 4 Jul 2024 16:00:51 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACXncngnIZm316NAQ--.1350S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtry7XrWUur15AryfWFy8Xwb_yoWkArc_KF
-	429r95tF47CF1DAa4jyr4ru3ySya1kurWkWF9FvayS9r17Wry8Z34IvrZ8Wr18ZFnrJa4D
-	A34DKFyru3sxGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb38FF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjfUrBMNUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/12] PCI: brcmstb: Get resource before we start
+ asserting reset controllers
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240703180300.42959-1-james.quinlan@broadcom.com>
+ <20240703180300.42959-6-james.quinlan@broadcom.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20240703180300.42959-6-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.28
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.28 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.19)[-0.974];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[broadcom.com,vger.kernel.org,kernel.org,google.com,arm.com,debian.org,suse.de,gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-resource_get_otg_master_for_stream() could return NULL, we
-should check the return value of 'otg_master' before it is
-used in resource_log_pipe_for_stream().
+Hi Jim,
 
-Fixes: 5db346c256bb ("drm/amd/display: update pipe topology log to support subvp")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/gpu/drm/amd/display/dc/core/dc_resource.c | 2 ++
- 1 file changed, 2 insertions(+)
+On 7/3/24 21:02, Jim Quinlan wrote:
+> Place all of the devm_reset_contol_get*() calls above the calls that
+> assert the reset controllers.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 69926ee5c961..59daa4b2e6c5 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -1644,6 +1644,11 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  		ret = PTR_ERR(pcie->perst_reset);
+>  		goto clk_out;
+>  	}
+> +	pcie->bridge = devm_reset_control_get_optional_exclusive(&pdev->dev, "bridge");
+> +	if (IS_ERR(pcie->bridge)) {
+> +		ret = PTR_ERR(pcie->bridge);
+> +		goto clk_out;
+> +	}
+>  
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-index 15819416a2f3..597ca9f369c6 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-@@ -2279,6 +2279,8 @@ void resource_log_pipe_topology_update(struct dc *dc, struct dc_state *state)
- 					state->stream_status[stream_idx].mall_stream_config.paired_stream);
- 			otg_master = resource_get_otg_master_for_stream(
- 					&state->res_ctx, state->streams[phantom_stream_idx]);
-+			if (!otg_master)
-+				continue;
- 			resource_log_pipe_for_stream(dc, state, otg_master, stream_idx);
- 		}
- 	}
--- 
-2.25.1
+This change must be merged in 3/12 - "PCI: brcmstb: Use bridge reset if
+available"
 
+~Stan
+>  	ret = reset_control_assert(pcie->swinit);
+>  	if (ret) {
+> @@ -1662,12 +1667,6 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  		goto clk_out;
+>  	}
+>  
+> -	pcie->bridge = devm_reset_control_get_optional_exclusive(&pdev->dev, "bridge");
+> -	if (IS_ERR(pcie->bridge)) {
+> -		ret = PTR_ERR(pcie->bridge);
+> -		goto clk_out;
+> -	}
+> -
+>  	ret = brcm_phy_start(pcie);
+>  	if (ret) {
+>  		reset_control_rearm(pcie->rescal);
 
