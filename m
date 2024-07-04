@@ -1,118 +1,234 @@
-Return-Path: <linux-kernel+bounces-241375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D19C927A8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:55:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1B3927A97
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDFFDB22355
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:55:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE61A1F26D81
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFDD1B11F4;
-	Thu,  4 Jul 2024 15:54:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043131A2C1E
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 15:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D341B14EF;
+	Thu,  4 Jul 2024 15:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="s37utGms"
+Received: from mail-40138.protonmail.ch (mail-40138.protonmail.ch [185.70.40.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C271AD403
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 15:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720108498; cv=none; b=ozfVQa3A9L/yoo0TuMyZZiAIvJhSo3aLfWdEtM8ChGhETzn6qVUvngghU9PThKPWUc9+eajYOz72qNghUMgTgeLpsqnDwiCrgXK29fiGnk7vVzj/2h24rBVjyoK8kz97asvuUOKrkh/kCaw+9eeE1nNi8SRNXkkScLYOezIg86g=
+	t=1720108554; cv=none; b=lefOFVz/gspIX1nOQnzKqZ+APyX7bIWPc5dEfbLa7FREEomSg/bDAyF7ZTd7vu2K3JMHQJC8Zmk1FIc2EAGJlZ81E+ipx0MeLhfiYb0jyLw1AlHJT7HZFLxF3bxshx5vE9Oo8NKi9cWzG7dE/w/tg3eEU4ZIIiWwDaXxOQDlB5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720108498; c=relaxed/simple;
-	bh=GYVjXUMXWOSB0S5uEJ5hsnw6MGDS9cy7pdS0qsPlUFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aMd/vbQxYye5EqGutdtuKkAEqawM7t+rRcEaBZFh6EitdtvI2yUKU4WoXHx+oO5sTrJniSZOzU6TcZ7kFc5bbNeEn5WLjg+oD5ZBDNqbCKXeun4+QggW9fsdhxTch5Dddm/vcmG5lTmBRoJftYTSM9H9P1p+7J+dvLMtyxUmgo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E862367;
-	Thu,  4 Jul 2024 08:55:21 -0700 (PDT)
-Received: from [10.1.29.168] (XHFQ2J9959.cambridge.arm.com [10.1.29.168])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F399A3F762;
-	Thu,  4 Jul 2024 08:54:53 -0700 (PDT)
-Message-ID: <ed383686-e71a-453c-b751-182531b46a76@arm.com>
-Date: Thu, 4 Jul 2024 16:54:52 +0100
+	s=arc-20240116; t=1720108554; c=relaxed/simple;
+	bh=NQBXm07UgisIZcKAKlLXrr/ih/lhjv1PKO0rzT0aANo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RHFDIzomNV0MX7TJRUeLrNnulyYm+Ajh88sIBCMl5oG4Z4jQv4BoJF8pdyyE5Vn2CyLXMuHlEfJJsAwgKGKLapEh+VnaZooNx84UvOtahl6WAQAV8KeRyAfgCmrCcCSs1FgtWV0WzcxdyuJin0BUVOl2uzIt/xNz6qojduue5FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=s37utGms; arc=none smtp.client-ip=185.70.40.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1720108544; x=1720367744;
+	bh=Vf4EBtRpfOHSJIVm4HDyh243ysNrpJBCZq4+gPHvMd4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=s37utGmsss6uYVMBve8RQDmW6zdTAvNMYJlSxy08MuzSzWOiDQfQtzHFfK24z6aaN
+	 00NDFx/gVvZO3EBvPgrZ/8A4K3h8QS16ekEZDoOfFqMdoCZ0SGoUZLcPsD5ZEs1HMf
+	 SO8wkm0IL/qLTqUsPzh/mZk1LHV5rOviwESptHlO3iBoorud4FwMz4oEjQkuqQHZMC
+	 73yBxgM35/Me6HNOKXdQ0g6bZ97BhOQkQzb4eWu/FttbmfzU4NpaHM2E96B6pOi6U7
+	 TxCUhzSf0o6xxJuyKCVReGiIk4hB9LnX5LHdfE3v1QKvVSSvwP/vT1Og0splqw2CZi
+	 6MNivvW0e4jVg==
+Date: Thu, 04 Jul 2024 15:55:37 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, Martin Rodriguez
+	Reboredo <yakoyoku@gmail.com>
+Subject: Re: [PATCH v7 1/8] rust: types: add `NotThreadSafe`
+Message-ID: <0GQUdWtJ1sJSw0JSoR4NqDUt9vO2S3G9Y2JqaHX_8BW5O0FB3lfHXwC1mbYNgSBh4t1MIFFyocJGyKUgB7CnJsZK_TvRnL1R61TOsLV1gb0=@protonmail.com>
+In-Reply-To: <20240628-alice-file-v7-1-4d701f6335f3@google.com>
+References: <20240628-alice-file-v7-0-4d701f6335f3@google.com> <20240628-alice-file-v7-1-4d701f6335f3@google.com>
+Feedback-ID: 27884398:user:proton
+X-Pm-Message-ID: a9fcff4144967cc27072678e1f6fdc577680704a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/6] mm: shmem: add mTHP support for anonymous shmem
-Content-Language: en-GB
-To: Bang Li <libang.linux@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, david@redhat.com, wangkefeng.wang@huawei.com,
- ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
- ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
- p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
- <65796c1e72e51e15f3410195b5c2d5b6c160d411.1718090413.git.baolin.wang@linux.alibaba.com>
- <65c37315-2741-481f-b433-cec35ef1af35@arm.com>
- <475332ea-a80b-421c-855e-a663d1d5bfc7@linux.alibaba.com>
- <b33b94bb-38c7-4b54-bdd3-51dec0535438@arm.com>
- <33d04365-c129-453e-b3b3-0691cfecd36e@gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <33d04365-c129-453e-b3b3-0691cfecd36e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 04/07/2024 16:05, Bang Li wrote:
-> Hey Ryan,
-> 
-> On 2024/7/4 21:58, Ryan Roberts wrote:
->>>> Then for tmpfs, which doesn't support non-PMD-sizes yet, we just always use the
->>>> PMD-size control for decisions.
->>>>
->>>> I'm also really struggling with the concept of shmem_is_huge() existing along
->>>> side shmem_allowable_huge_orders(). Surely this needs to all be refactored into
->>>> shmem_allowable_huge_orders()?
->>> I understood. But now they serve different purposes: shmem_is_huge() will be
->>> used to check the huge orders for the top level, for*tmpfs*  and anon shmem;
->>> whereas shmem_allowable_huge_orders() will only be used to check the per-size
->>> huge orders for anon shmem (excluding tmpfs now). However, as I plan to add mTHP
->>> support for tmpfs, I think we can perform some cleanups.
->>>
->>>>> +    /* Allow mTHP that will be fully within i_size. */
->>>>> +    order = highest_order(within_size_orders);
->>>>> +    while (within_size_orders) {
->>>>> +        index = round_up(index + 1, order);
->>>>> +        i_size = round_up(i_size_read(inode), PAGE_SIZE);
->>>>> +        if (i_size >> PAGE_SHIFT >= index) {
->>>>> +            mask |= within_size_orders;
->>>>> +            break;
->>>>> +        }
->>>>> +
->>>>> +        order = next_order(&within_size_orders, order);
->>>>> +    }
->>>>> +
->>>>> +    if (vm_flags & VM_HUGEPAGE)
->>>>> +        mask |= READ_ONCE(huge_shmem_orders_madvise);
->>>>> +
->>>>> +    if (global_huge)
->>>> Perhaps I've misunderstood global_huge, but I think its just the return value
->>>> from shmem_is_huge()? But you're also using shmem_huge directly in this
->>> Yes.
->>>
->>>> function. I find it all rather confusing.
->>> I think I have explained why need these logics as above. Since mTHP support for
->>> shmem has just started (tmpfs is still in progress). I will make it more clear
->>> in the following patches.
->> OK as long as you have a plan for the clean up, that's good enough for me.
-> 
-> Can I continue to push the following patch [1]? When other types of shmem mTHP
-> are supported, we will perform cleanups uniformly.
+> This introduces a new marker type for types that shouldn't be thread
+> safe. By adding a field of this type to a struct, it becomes non-Send
+> and non-Sync, which means that it cannot be accessed in any way from
+> threads other than the one it was created on.
+>=20
+> This is useful for APIs that require globals such as `current` to remain
+> constant while the value exists.
+>=20
+> We update two existing users in the Kernel to use this helper:
+>=20
+>  * `Task::current()` - moving the return type of this value to a
+>    different thread would not be safe as you can no longer be guaranteed
+>    that the `current` pointer remains valid.
+>  * Lock guards. Mutexes and spinlocks should be unlocked on the same
+>    thread as where they were locked, so we enforce this using the Send
+>    trait.
+>=20
+> There are also additional users in later patches of this patchset. See
+> [1] and [2] for the discussion that led to the introduction of this
+> patch.
+>=20
+> Link: https://lore.kernel.org/all/nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQf=
+WIlN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=3D@pro=
+ton.me/ [1]
+> Link: https://lore.kernel.org/all/nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQf=
+WIlN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=3D@pro=
+ton.me/ [2]
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Trevor Gross <tmgross@umich.edu>
+> Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/sync/lock.rs | 13 +++++++++----
+>  rust/kernel/task.rs      | 10 ++++++----
+>  rust/kernel/types.rs     | 18 ++++++++++++++++++
+>  3 files changed, 33 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+> index f6c34ca4d819..d6e9bab114b8 100644
+> --- a/rust/kernel/sync/lock.rs
+> +++ b/rust/kernel/sync/lock.rs
+> @@ -6,8 +6,13 @@
+>  //! spinlocks, raw spinlocks) to be provided with minimal effort.
+>=20
+>  use super::LockClassKey;
+> -use crate::{init::PinInit, pin_init, str::CStr, types::Opaque, types::Sc=
+opeGuard};
+> -use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned}=
+;
+> +use crate::{
+> +    init::PinInit,
+> +    pin_init,
+> +    str::CStr,
+> +    types::{NotThreadSafe, Opaque, ScopeGuard},
+> +};
+> +use core::{cell::UnsafeCell, marker::PhantomPinned};
+>  use macros::pin_data;
+>=20
+>  pub mod mutex;
+> @@ -139,7 +144,7 @@ pub fn lock(&self) -> Guard<'_, T, B> {
+>  pub struct Guard<'a, T: ?Sized, B: Backend> {
+>      pub(crate) lock: &'a Lock<T, B>,
+>      pub(crate) state: B::GuardState,
+> -    _not_send: PhantomData<*mut ()>,
+> +    _not_send: NotThreadSafe,
+>  }
+>=20
+>  // SAFETY: `Guard` is sync when the data protected by the lock is also s=
+ync.
+> @@ -191,7 +196,7 @@ pub(crate) unsafe fn new(lock: &'a Lock<T, B>, state:=
+ B::GuardState) -> Self {
+>          Self {
+>              lock,
+>              state,
+> -            _not_send: PhantomData,
+> +            _not_send: NotThreadSafe,
+>          }
+>      }
+>  }
+> diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+> index 55dff7e088bf..278c623de0c6 100644
+> --- a/rust/kernel/task.rs
+> +++ b/rust/kernel/task.rs
+> @@ -4,10 +4,12 @@
+>  //!
+>  //! C header: [`include/linux/sched.h`](srctree/include/linux/sched.h).
+>=20
+> -use crate::types::Opaque;
+> +use crate::{
+> +    bindings,
+> +    types::{NotThreadSafe, Opaque},
+> +};
+>  use core::{
+>      ffi::{c_int, c_long, c_uint},
+> -    marker::PhantomData,
+>      ops::Deref,
+>      ptr,
+>  };
+> @@ -106,7 +108,7 @@ impl Task {
+>      pub unsafe fn current() -> impl Deref<Target =3D Task> {
+>          struct TaskRef<'a> {
+>              task: &'a Task,
+> -            _not_send: PhantomData<*mut ()>,
+> +            _not_send: NotThreadSafe,
+>          }
+>=20
+>          impl Deref for TaskRef<'_> {
+> @@ -125,7 +127,7 @@ fn deref(&self) -> &Self::Target {
+>              // that `TaskRef` is not `Send`, we know it cannot be transf=
+erred to another thread
+>              // (where it could potentially outlive the caller).
+>              task: unsafe { &*ptr.cast() },
+> -            _not_send: PhantomData,
+> +            _not_send: NotThreadSafe,
+>          }
+>      }
+>=20
+> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> index 2e7c9008621f..93734677cfe7 100644
+> --- a/rust/kernel/types.rs
+> +++ b/rust/kernel/types.rs
+> @@ -409,3 +409,21 @@ pub enum Either<L, R> {
+>      /// Constructs an instance of [`Either`] containing a value of type =
+`R`.
+>      Right(R),
+>  }
+> +
+> +/// Zero-sized type to mark types not [`Send`].
+> +///
+> +/// Add this type as a field to your struct if your type should not be s=
+ent to a different task.
+> +/// Since [`Send`] is an auto trait, adding a single field that is `!Sen=
+d` will ensure that the
+> +/// whole type is `!Send`.
+> +///
+> +/// If a type is `!Send` it is impossible to give control over an instan=
+ce of the type to another
+> +/// task. This is useful to include in types that store or reference tas=
+k-local information. A file
+> +/// descriptor is an example of such task-local information.
+> +pub type NotThreadSafe =3D PhantomData<*mut ()>;
 
-I guess that makes sense.
+This also makes the type not Sync. For mutex guards it should be fine to
+be Sync if the wrapped type is Sync. Mutex guards not being Sync is
+pre-existing, so not something to fix in this patch. NotThreadSafe should
+probably document that it also markes a type as not Sync though.
 
-> 
-> [1] https://lore.kernel.org/linux-mm/20240702023401.41553-1-libang.li@antgroup.com/
-> 
-> Thanks,
-> Bang
+(For those not familiar with the difference, Send indicates that ownership
+of a value can be transferred to another thread, while Sync indicates that
+a value can be accessed from another thread through a shared reference,
+but not necessarily dropped from said thread.)
 
+Having a dedicated type for this makes things clearer.
+
+Reviewed-by: Bj=C3=B6rn Roy Baron <bjorn3_gh@protonmail.com>
+with the docs updated to mention Sync.
+
+> +
+> +/// Used to construct instances of type [`NotThreadSafe`] similar to how=
+ `PhantomData` is
+> +/// constructed.
+> +///
+> +/// [`NotThreadSafe`]: type@NotThreadSafe
+> +#[allow(non_upper_case_globals)]
+> +pub const NotThreadSafe: NotThreadSafe =3D PhantomData;
+>=20
+> --
+> 2.45.2.803.g4e1b14247a-goog
 
