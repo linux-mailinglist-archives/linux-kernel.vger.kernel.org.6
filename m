@@ -1,104 +1,81 @@
-Return-Path: <linux-kernel+bounces-241173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D9F9277CB
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E539277CC
 	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC001F250DD
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C4EA285028
 	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6D91AEFD7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB911AEFDD;
 	Thu,  4 Jul 2024 14:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wyDArH+t"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00501ABC25
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4851AED5F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720102137; cv=none; b=JVPJQx9CDOU/wXPdiRZQYSpcWodBZrI5q46pfJEcTYyv5E0GZRsOykKTK45BQSvZkajdGfEjTeUWLFWrrK+fwEV+YeO2iZXScgCkyHsa1BhZDLT2h9rW8Trs0eD8Ba1x1v36VDp/FvdwWJNqGAKYOHvZFmDrk6lEA2oKm7mtV1g=
+	t=1720102137; cv=none; b=etiZDtzMJ17aYy47POy25912K8dUQwVDTnMf3UBrsvvr7SYdvM8hpbMOggv0GHuMCOPkyp42sob2QrNG3ZeMrPQVYHI9kyXDNRaw2TwC4kCNtzoHQngmA/VZ7ulXgleclOXWrnQC4ZwvDNT9Kc3CvTJxG62i1SS/RfRWHNxTWIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720102137; c=relaxed/simple;
-	bh=OjnbuG9TO3j0bqvuijnRXhWJSCu36Kq2cDcGRW+hUIA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CmQidQ2IRF4MQ+/B6CtNTdXNWUNrWLO4hXJSjeanO6kzlChAwLTRb1ajzCt1k/eXaquYt1JZShOQeMA/oxoo/HM7gY0ndWc9ijLtwFpB2wjOtxSHthsxoqK9GlXgVu9hKhhli7MfOlj3qBpINK5RFeHnz38Ax731aCRBOAzOVCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wyDArH+t; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58c92e77ac7so9878a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 07:08:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720102134; x=1720706934; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OjnbuG9TO3j0bqvuijnRXhWJSCu36Kq2cDcGRW+hUIA=;
-        b=wyDArH+tf1Df/l2NMx4gT9QOH5+MpABv6flQObIFKHaEDelV8WFn3v/0nYfbCrIz6N
-         zcysWf2jjTyUw5LE6fKu41EH9/drrYPFnr1duVrut3an/ZE3Tyvr1QN6pJJJLQFv7YeN
-         JuzaMFZn3MFUabp2m+7p4LcjCdrzemIbHjgnfShBBRxlc901XnmZy4zWLFextSKn71n/
-         BqUK+Z92hbZwFeiWEe7ad5KvpPiv9RHW/JPdbY2yZJXT5E+31D8POC5CNHl7LDqw1jVQ
-         HzuBZ+WfQpcPN9XcrfitVkKvhZaTo1U4cZhIlU7xQD16vONH7dadL/A1EFWRFeAyjWzr
-         82oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720102134; x=1720706934;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OjnbuG9TO3j0bqvuijnRXhWJSCu36Kq2cDcGRW+hUIA=;
-        b=hK+fJx7SnwNyHxDAvjRcj61BNl92k2BHSlal0CpQ3avtu/ps0qfpP1EnbJxYujq4Ql
-         MGbETlK1IrPTyfi88yik9sc2se9pQczlD9L+TvG/SXMTyMpNcgNW8FA/8EiOK92NlIvy
-         viMIDWrM0qkH2vT2zbNsbEw8Bim0T0krunAAQ0BvVvCZVgMDy/iFG1TvxmwKK8P/47rC
-         yg4/tO1lX/7K/TBuLx+hKTr5OjklRvTv10xSqDaCm8Odm4KxGEAaggvuceysM8Qs2Pkv
-         Pui4agSUsgrAusbLLcHvIkspchnWEvnQbVUv9gJ84rOIHSr4r8f4Rtbfu5ZpRS2qnlq+
-         PhTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWD609ce9ovv2S9hq89xcrhkfC/4sqmsbb+H7CMgQclg8Te2jIB+mFs62K8PmCTdp2j2gdNsoV0Pd5l/jumXvsx5KhgCEp5l3BO7eC
-X-Gm-Message-State: AOJu0YxpmkmIbkDfWbO3RlHbrGmsACsGtAepHiuamVh2sBtxdFfaLaHn
-	grP4eI3AVZ/MrbMyrt/T+l8z4lpwUQ+JR8de22Lio2Hoqx96ShN+yqOnygZieC1ZZXLVYlyp1dQ
-	L/khlsaH92wMBusa+5EMh0sTtx4LZEsVHc0TJ
-X-Google-Smtp-Source: AGHT+IFNnwi98SKMXkQJ3oJUKdSHHCJvcB2RfS4C3O9g2BWDLdJHEL3niZX6BcFP4guB/up0cv3ENf2NQHdkJ1jjNaw=
-X-Received: by 2002:a50:d49c:0:b0:58b:5725:dedc with SMTP id
- 4fb4d7f45d1cf-58e02738dbamr140013a12.4.1720102132332; Thu, 04 Jul 2024
- 07:08:52 -0700 (PDT)
+	bh=uHYJt87bnSQ3GbKcUHWE6Dnc9MYbDQlJOZ46YD2boTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kFV+SHIUu2Vt7WThcyxdHySPK69+/y0xMBAz34bjLAu7Qu8YubiJDg8gHRAZiiimnpijwAhLxYOcUcOus/9WzeNGn9fmObWMlIWjs1CtAPVg+jD7oh4wALH6hhMVMOnPQG7yIbd9jqj7V+QeyQpm3fBsu03N66bY13hWxNLElHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A75B8C3277B;
+	Thu,  4 Jul 2024 14:08:55 +0000 (UTC)
+Date: Thu, 4 Jul 2024 15:08:53 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: D Scott Phillips <scott@os.amperecomputing.com>,
+	linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org, patches@amperecomputing.com
+Subject: Re: [PATCH] arm64: limit MAX_PHYSMEM_BITS based on vmemmap
+Message-ID: <Zoas9V3sLEOzULhs@arm.com>
+References: <20240703210707.1986816-1-scott@os.amperecomputing.com>
+ <7d7134fe-f97d-453d-b90d-fb81008fff40@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2023082746-antelope-drop-down-5562@gregkh> <20240704135057.1174408-1-dvyukov@google.com>
- <2024070416-hatbox-playlist-9886@gregkh>
-In-Reply-To: <2024070416-hatbox-playlist-9886@gregkh>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 4 Jul 2024 16:08:40 +0200
-Message-ID: <CACT4Y+arKNML2gLvmXzqdfyJY5ydj0yjfk-NbrZpOLgTOTNH6A@mail.gmail.com>
-Subject: Re: [PATCH] fs/befs: fix shift-out-of-bounds in befs_check_sb
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: 88c258bd-3d0c-de79-b411-6552841eb8d0@gmail.com, 
-	Linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	luisbg@kernel.org, salah.triki@gmail.com, 
-	syzbot+fc26c366038b54261e53@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7d7134fe-f97d-453d-b90d-fb81008fff40@arm.com>
 
-On Thu, 4 Jul 2024 at 16:04, Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Jul 04, 2024 at 03:50:57PM +0200, Dmitry Vyukov wrote:
-> > Hi,
-> >
-> > What's the kernel policy for such cases?
->
-> What "case"?
->
-> There is no context here at all, and I can't find any patch on lore at
-> all.
->
-> Please always properly quote stuff...
+On Thu, Jul 04, 2024 at 08:42:52AM +0530, Anshuman Khandual wrote:
+> On 7/4/24 02:37, D Scott Phillips wrote:
+> > diff --git a/arch/arm64/include/asm/sparsemem.h b/arch/arm64/include/asm/sparsemem.h
+> > index 8a8acc220371c..8387301f2e206 100644
+> > --- a/arch/arm64/include/asm/sparsemem.h
+> > +++ b/arch/arm64/include/asm/sparsemem.h
+> > @@ -5,7 +5,7 @@
+> >  #ifndef __ASM_SPARSEMEM_H
+> >  #define __ASM_SPARSEMEM_H
+> >  
+> > -#define MAX_PHYSMEM_BITS	CONFIG_ARM64_PA_BITS
+> > +#define MAX_PHYSMEM_BITS	ilog2(VMEMMAP_RANGE)
+> 
+> Just wondering if there is another method, which avoids selecting physical
+> memory ranges not backed with vmemmap. Also will reducing MAX_PHYSMEM_BITS
+> below ARM64_PA_BITS have other side effects ? Do other platforms have this
+> exact same co-relation between MAX_PHYSMEM_BITS and vmemmap range ?
 
-It's not easy with kernel lists. I used the lore suggested reply-to
-command. Here is full thread:
-https://lore.kernel.org/all/20240704135057.1174408-1-dvyukov@google.com/
+That's indeed a pretty weird workaround. MAX_PHYSMEM_BITS, as the name
+implies, is about the physical bits supported for memory while
+VMEMMAP_RANGE tells us the virtual address range. There is a correlation
+between them but they are different things conceptually.
+
+The memory hotplug code uses arch_get_mappable_range(). This should be
+called from the amdgpu code rather than changing MAX_PHYSMEM_BITS.
+
+-- 
+Catalin
 
