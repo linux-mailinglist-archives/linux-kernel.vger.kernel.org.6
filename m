@@ -1,152 +1,225 @@
-Return-Path: <linux-kernel+bounces-241463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B8F927BA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:09:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8C5927B9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD4F21F26DC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:09:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE163286DB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A111B6A68;
-	Thu,  4 Jul 2024 17:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="BjoT3JNc";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="BjoT3JNc"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB581B4C3A;
+	Thu,  4 Jul 2024 17:08:30 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320FD1B6A42;
-	Thu,  4 Jul 2024 17:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6D91B375B;
+	Thu,  4 Jul 2024 17:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720112915; cv=none; b=qHnME3Mbc/d15bbRsgL7WXUcU9ZlEO3ZOPMaB/KniIzLI779He6AEXDABIatbVOnTE0T8vPnw3o8Wcz6WowgQM2xwYgjfumv03zwgH8HJlhw5gUlcUA3s0Rhp78xFLzbNrKgYxR51YUTVQ2dZul+dpzDCryW3Jw/9TmTeBWFZ9k=
+	t=1720112910; cv=none; b=RYWlCdseXGYRhHrcoBOgoKNqyZgYpE2y3xhfRL7KzjPfsmqPSBOUJn07apiVEvBMaZevNsWbCLmce9LaMCyuVLbTRCNtGu6aQGoEi1P2M4MbPCsxcISlxx1lE/W8ngSV905bt+Mos69i3Qi3IklGvsWuUwTTtqqvMETXLUFze4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720112915; c=relaxed/simple;
-	bh=yYVAQVfefVPAizfXvsFybpBijNlmD1qU13nE5cjAJVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S/F1X5ODtiPJB22NywovxuPHDJFFYb206j9exsayJGY8h/1awB0KaG6kleA0IGWwxLt8rBsO4NRmIz4SpRRyRFOtgjW8s1vJfyCqXGfY2kLtGn+s4pX39JTqE2iKOqUvQ8EsOCz290GD6PUVlwCcLvVEmfB4K+mk8n45HIpukQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=BjoT3JNc; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=BjoT3JNc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3348721BAC;
-	Thu,  4 Jul 2024 17:08:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1720112910; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=WTQvVo1gqLBLZnjrXLwhOKXabapyuxzQ7DU2T+72XC4=;
-	b=BjoT3JNcNhZ0r6M0kLZxWYI8JMujbSOIt3yj1xHJlhDEefuIbFu5dFMsUjzIFIlgCO5BAW
-	raki6CjjUU40afP9E8kNP2D/I7KZDtZIFIQ2C314dAjWsv3teRZFrkBAp4IYfDWPJJrbXg
-	7haNeHGGnD7qQEHXMJ7cwENspNUnLVI=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1720112910; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=WTQvVo1gqLBLZnjrXLwhOKXabapyuxzQ7DU2T+72XC4=;
-	b=BjoT3JNcNhZ0r6M0kLZxWYI8JMujbSOIt3yj1xHJlhDEefuIbFu5dFMsUjzIFIlgCO5BAW
-	raki6CjjUU40afP9E8kNP2D/I7KZDtZIFIQ2C314dAjWsv3teRZFrkBAp4IYfDWPJJrbXg
-	7haNeHGGnD7qQEHXMJ7cwENspNUnLVI=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2CCB513889;
-	Thu,  4 Jul 2024 17:08:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hTDsCg7XhmbiXAAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Thu, 04 Jul 2024 17:08:30 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 6.10.rc7, part 2
-Date: Thu,  4 Jul 2024 19:08:16 +0200
-Message-ID: <cover.1720111779.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1720112910; c=relaxed/simple;
+	bh=QiLJeBMBiVux1LfvRktK0NFIY7T3PnMvUz3RB/H8SM4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Sk4NnhrUn6lHgVmH1maRbl68LvR3S5marA0g/q+Peo5jJG7j+a8KZUgIvVmorbKp/60nwbxmUIx6ftENddKEAmuw4bZKNsRLrJXEx4CDYJ3hskkbaBvtIVcbqUtPtfMZGeWlSnX3KBtxVP+uPwLeH4M4yo4ITVe8qEO7SBRPTjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WFNP12qNzz67Hm8;
+	Fri,  5 Jul 2024 01:07:17 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id C7BFF14065C;
+	Fri,  5 Jul 2024 01:08:24 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 4 Jul
+ 2024 18:08:24 +0100
+Date: Thu, 4 Jul 2024 18:08:23 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev>
+CC: "Huang, Ying" <ying.huang@intel.com>, Gregory Price
+	<gourry.memverge@gmail.com>, <aneesh.kumar@linux.ibm.com>, <mhocko@suse.com>,
+	<tj@kernel.org>, <john@jagalactic.com>, Eishan Mirakhur
+	<emirakhur@micron.com>, Vinicius Tavares Petrucci <vtavarespetr@micron.com>,
+	Ravis OpenSrc <Ravis.OpenSrc@micron.com>, Alistair Popple
+	<apopple@nvidia.com>, Srinivasulu Thanneeru <sthanneeru@micron.com>,
+	"SeongJae  Park" <sj@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, "Andrew Morton" <akpm@linux-foundation.org>,
+	Dave Jiang <dave.jiang@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, "Ho-Ren (Jack) Chuang" <horenc@vt.edu>, "Ho-Ren (Jack)
+  Chuang" <horenchuang@bytedance.com>, "Ho-Ren (Jack) Chuang"
+	<horenchuang@gmail.com>, <linux-cxl@vger.kernel.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v2 1/1] memory tier: consolidate the initialization of
+ memory tiers
+Message-ID: <20240704180823.0000212d@Huawei.com>
+In-Reply-To: <84b43294411bb1fe0ed58f2da59abf554ef48f7d@linux.dev>
+References: <20240628060925.303309-1-horen.chuang@linux.dev>
+	<20240628060925.303309-2-horen.chuang@linux.dev>
+	<20240702142535.00003dc0@Huawei.com>
+	<84b43294411bb1fe0ed58f2da59abf554ef48f7d@linux.dev>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+
 
 Hi,
 
-please pull a few more fixes for bugs reported recently. Thanks.
+> > > 
+> > >  static int __init memory_tier_init(void)
+> > > 
+> > >  {
+> > > 
+> > >  - int ret, node;
+> > > 
+> > >  - struct memory_tier *memtier;
+> > > 
+> > >  + int ret;
+> > > 
+> > >  
+> > > 
+> > >  ret = subsys_virtual_register(&memory_tier_subsys, NULL);
+> > > 
+> > >  if (ret)
+> > > 
+> > >  @@ -887,7 +897,8 @@ static int __init memory_tier_init(void)
+> > > 
+> > >  GFP_KERNEL);
+> > > 
+> > >  WARN_ON(!node_demotion);
+> > > 
+> > >  #endif
+> > > 
+> > >  - mutex_lock(&memory_tier_lock);
+> > > 
+> > >  +
+> > > 
+> > >  + guard(mutex)(&memory_tier_lock);
+> > >   
+> > 
+> > If this was safe to do without the rest of the change (I think so)
+> > 
+> > then better to pull that out as a trivial precursor so less noise
+> > 
+> > in here.
+> >   
+> 
+> Do you mean instead of using guard(mutex)(),
+> use mutex_lock() as it was? or?
+> 
 
-- fix folio refcounting when releasing them (encoded write, dummy extent
-  buffer)
+Code as here, but possibly pull the guard(mutex) part out as
+a patch 1 as it's an unrelated improvement to the rest of the set
+which would be in patch 2.
 
-- fix out of bounds read when checking qgroup inherit data
+Not particularly important though as you've sent a v3 in the
+meantime and it's fine to have it in one patch.
 
-- fix how configurable chunk size is handled in zoned mode
+> > > 
+> > > /*
+> > > 
+> > >  * For now we can have 4 faster memory tiers with smaller adistance
+> > > 
+> > >  * than default DRAM tier.
+> > > 
+> > >  @@ -897,29 +908,9 @@ static int __init memory_tier_init(void)
+> > > 
+> > >  if (IS_ERR(default_dram_type))
+> > > 
+> > >  panic("%s() failed to allocate default DRAM tier\n", __func__);
+> > > 
+> > >  
+> > > 
+> > >  - /*
+> > > 
+> > >  - * Look at all the existing N_MEMORY nodes and add them to
+> > > 
+> > >  - * default memory tier or to a tier if we already have memory
+> > > 
+> > >  - * types assigned.
+> > > 
+> > >  - */
+> > > 
+> > >  - for_each_node_state(node, N_MEMORY) {
+> > > 
+> > >  - if (!node_state(node, N_CPU))
+> > > 
+> > >  - /*
+> > > 
+> > >  - * Defer memory tier initialization on
+> > > 
+> > >  - * CPUless numa nodes. These will be initialized
+> > > 
+> > >  - * after firmware and devices are initialized.
+> > > 
+> > >  - */
+> > > 
+> > >  - continue;
+> > > 
+> > >  -
+> > > 
+> > >  - memtier = set_node_memory_tier(node);
+> > > 
+> > >  - if (IS_ERR(memtier))
+> > > 
+> > >  - /*
+> > > 
+> > >  - * Continue with memtiers we are able to setup
+> > > 
+> > >  - */
+> > > 
+> > >  - break;
+> > > 
+> > >  - }
+> > > 
+> > >  - establish_demotion_targets();
+> > > 
+> > >  - mutex_unlock(&memory_tier_lock);
+> > > 
+> > >  + /* Record nodes with memory and CPU to set default DRAM performance. */
+> > > 
+> > >  + nodes_and(default_dram_nodes, node_states[N_MEMORY],
+> > > 
+> > >  + node_states[N_CPU]);
+> > >   
+> > 
+> > There are systems where (for various esoteric reasons, such as describing an
+> > 
+> > association with some other memory that isn't DRAM where the granularity
+> > 
+> > doesn't match) the CPU nodes contain no DRAM but rather it's one node away.
+> > 
+> > Handling that can be a job for another day though.
+> >   
+> 
+> Thank you for informing me of this situation.
+> Sounds like handling that also requires a mapping table between
+> the CPU and the corresponding DRAM.
 
-- in the ref-verify tool, fix uninitialized return value when checking
-  extent owner ref and simple quota are not enabled
+I've not yet looked at how it interacts with this, but
+from an ACPI point of view it's just 'near' in SLIT and
+HMAT.  The nearest thing to a description is
+Memory Proximity Domain Attributes structures in HMAT.
+That allows you to describe the location of the memory
+controller, but in this type of system there may be
+a many to 1 mapping (interleaving across memory controllers
+in some CPU only nodes) for example.
 
-----------------------------------------------------------------
-The following changes since commit 48f091fd50b2eb33ae5eaea9ed3c4f81603acf38:
+Anyhow, guess I need to spin up some emulated machines and
+see what breaks :)
 
-  btrfs: fix adding block group to a reclaim list and the unused list during reclaim (2024-07-01 17:33:15 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.10-rc6-tag
-
-for you to fetch changes up to a56c85fa2d59ab0780514741550edf87989a66e9:
-
-  btrfs: fix folio refcount in __alloc_dummy_extent_buffer() (2024-07-04 02:19:10 +0200)
-
-----------------------------------------------------------------
-Boris Burkov (2):
-      btrfs: fix folio refcount in btrfs_do_encoded_write()
-      btrfs: fix folio refcount in __alloc_dummy_extent_buffer()
-
-Filipe Manana (1):
-      btrfs: fix uninitialized return value in the ref-verify tool
-
-Naohiro Aota (1):
-      btrfs: zoned: fix calc_available_free_space() for zoned mode
-
-Qu Wenruo (1):
-      btrfs: always do the basic checks for btrfs_qgroup_inherit structure
-
- fs/btrfs/extent_io.c  |  2 +-
- fs/btrfs/inode.c      |  2 +-
- fs/btrfs/qgroup.c     | 10 ++++++++--
- fs/btrfs/ref-verify.c |  9 +++++++--
- fs/btrfs/space-info.c | 24 +++++++++++++++++++++---
- 5 files changed, 38 insertions(+), 9 deletions(-)
+Jonathan
 
