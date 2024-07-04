@@ -1,138 +1,164 @@
-Return-Path: <linux-kernel+bounces-240926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6438C9274B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:12:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD19927491
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953A71C217CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:12:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46F6A281E30
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEB61AC245;
-	Thu,  4 Jul 2024 11:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BA51AC237;
+	Thu,  4 Jul 2024 11:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zc8x2B4N"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+nmxWzv"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88561A2555
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 11:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45212157A43;
+	Thu,  4 Jul 2024 11:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720091572; cv=none; b=qDBkXgeuH2K5vjiej6AUofhR9N6Z6iOQnOdyK303R2TNODQ+9dUAfh4JS33VYLTon3vs8K7THnOCk1PsZsM/zvDokaJG8aOl67qvDWfcN+zaH6Te4VVyCT5J6yMo4ii2pZfDrxAEF/NEuvs8+Jgoj6ZYcDS5P26nZ+/ACoh3BKk=
+	t=1720091354; cv=none; b=mcCUHnEo7VgvMJdpkf9J4bLeHlqp5l8eSp8Ovk5ssFAlB2qXRN0oX0BbKggItEAccJUd4TXNIniF555UZ5uxjVSi7G05568baFahWxsmYrei2gjVlhuFBGyTl1nj90DEi2rVhUbWkgpJKBP8J6ddFFhG/zd61jzW1OEPy2U8iLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720091572; c=relaxed/simple;
-	bh=kwlzyQko3YrlL9qqxe77HjjjJn+6EPX3Akye8+HUD68=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sy7mClvY6tO61/fEGYg6qfXg2D4X2e9yyoSw0pY7mwpMXqMqLyf0CrWElE+hrYLeo2WzG0/BnXLCDKntX83JQvuGsFMHBLCPY6M+9d/Gg5Sdmrt4gtZG2XmUb3yNIzJPaRHqy9ZL0ZS9UcB6gVFpdrsTTZcfxW3Xp1RWnDtwvYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zc8x2B4N; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so5786961fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 04:12:50 -0700 (PDT)
+	s=arc-20240116; t=1720091354; c=relaxed/simple;
+	bh=DIDz+v/YNYXCr9N5diE1OUTLocg3rPp4XlgQBYIT6iE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Qgf/1obg3WOqzizi+VBbEjfAUC2cUU+y/Htoxj6qDFNnQiTValnbvuMY2qCpIWl6bDiSUK0ojTv9j8FVDr2cuXJHPvSImtkq8Vums8FZB5PgTAj0BS9sBzLQH9HoUEwGTvezLFD/THdFDmjGbhCeKjUhcKz+OZ74JLF4VwXSAfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H+nmxWzv; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ee910d6a8bso1987581fa.0;
+        Thu, 04 Jul 2024 04:09:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720091569; x=1720696369; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tPC43rasB/6PLGfsWyLsHpREn7UhdyM0rRDUzfTMoaw=;
-        b=Zc8x2B4Nhj0vNk5z8ePe4ReNaOvU/FyZ1Q4mHE5CK4FqarS7Fz06f7a8MkafRPyanY
-         t68uQFxMdEwM0HxWbe11a1rp8MliDMw6eadyxKw9NTmanN7kovxcs+SqM5AYM3oWDCra
-         n4/bgrdYP4nkONXzdf6fiM35Ru+Lr1AjAp2Pp+WXcf0I+i7nACNF6udOOSQA0tisbBPt
-         b0EbYXyYyEnioL49crz956U6HV21CdX7AqoEvC2kAxhf5wFXCXksNgvUsuMDotROP/u4
-         oS/vNEWnxRHQOy1X8R5M6JGEM5iNEWVyr2vZDE54NhtJO0xETdQjPq/HCAtRm6sOpwvr
-         +RJQ==
+        d=gmail.com; s=20230601; t=1720091351; x=1720696151; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5E9+RPdyUmQP3+v/4PJ49tPYPsmQMBFAH+k6jQWc/X0=;
+        b=H+nmxWzvDByNwCIipoQhq7HTYQ9FbfmY6QaVGrP/QdnWR20IRtuKUN1N51nZ6/R99m
+         4EE+6OfNZC4vPPbY2/OZshevv/lWJxvAVEKPFnNQV7J9+TekzIGUBFq4tGXUsY3vs709
+         ZZ+0gd+zXv0EvLczwbPDwhPvicQcwnwJxyq//4vEC4gxNQ0QCefDE0lxbMDytVGK6SGy
+         yaIjagorj5Vxa675B6nxBAeHXfZuBQSh6YeRWWmyAZzyn784tY2MeLRiyJKgDWeMVYrC
+         B7ou9+k976Qpn+9wS5I76h1Pp56hJf4FPuqwM364YneQXdVMJZP2PVuhv3Ckj0pI2WgO
+         j3sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720091569; x=1720696369;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tPC43rasB/6PLGfsWyLsHpREn7UhdyM0rRDUzfTMoaw=;
-        b=VLfKeavXa73H18Spn6+Y46U3wcQ9cY3O70rEA9zGWbhZl47WSKtdlKZaEPJ3eMjy77
-         lreXzL/6ATxNLfOr3EHnm8+AXArFfdKRZ5aLdPmL7TXn7BwZ73ChyQE2I+WXcqBERHnX
-         1e+SejYY9Y5nJUXrXa0Z5KRL8Q408K+Z4om1reVSXZMze9Mlh56bUdQR+Xgn+x3mbuK+
-         OmOytLZ/4E+8RXUkK7rtlXg6ThoVtI1QflPQZWdgh42LspU6+4biirVyCSsaKXJNowTS
-         k4CFSAbwUp2KrqnTPg0HBFL+W5u1NMhcyypdvhO4QA85SDLWmgLn9OJcSxnxJxhYmycK
-         nqGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPKWnuHLe1oVMtrkm+SBe5qe5FdqfpEzE8KtdqJk1b2QGDSW07wpBNWSGHI4x4ZYPdo/L9VwSwEyVVKxZIWzc1Ma7RG2lIxU4s/zI+
-X-Gm-Message-State: AOJu0YwPCzKEHEY61DtTqMxMZGsUjyv7LWErXBqJ2d7zURJPoUCnXDED
-	DSBHC0QPAnDMwch0PgnRhB9m4okVUsg9LAMire8VcteeKf5mX9tt9F8uswYDNH4=
-X-Google-Smtp-Source: AGHT+IFms/l9EmzZxMph8D1Drc8PuDALxOm8EuU40LrFeEyesL8Xp6EbT7z6hzNTjKi0IszFb3Au2w==
-X-Received: by 2002:a2e:b049:0:b0:2ec:57c7:c72c with SMTP id 38308e7fff4ca-2ee8ee01fd8mr7848291fa.35.1720091569001;
-        Thu, 04 Jul 2024 04:12:49 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee8d0396a3sm2113881fa.68.2024.07.04.04.12.48
+        d=1e100.net; s=20230601; t=1720091351; x=1720696151;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5E9+RPdyUmQP3+v/4PJ49tPYPsmQMBFAH+k6jQWc/X0=;
+        b=UuZymI7eeg1oBnPPkF2zLZbbtehJI+9JwixuUYEBOinIiR3X9XzCCHMWE3sb6J4clu
+         wk9bo254T30cXR24Ssuhc8/JgLmALhZ83GmrcWqVu+x8rpEt9b0eVU11BM+pWIXXCdP9
+         ExipJLh0VykJ1UHQ3WcwHbLAqb4cHLQVz3t68YvgUER0jLyaFg62EVr1AggyW+YTXpEB
+         bDGEpNK367f73SxWyYNLy+sX2oIrZQA9jTaKJ2gvHJhATbiyp+wXJ3hATtLPELfZOMQ8
+         2LR2xb4EHJwn7ijgBJlN5eiyS09Y1WGHPyo4IRmitIoPYCV4NwJ5cxPK0Vzp6GVfsf5v
+         Lueg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4rWKKTzNENxpZzmvdrGpM0gYby1x6gm+Km/rrPmjsp2wdZn3FKMwusZ09BmeTRkXsngtb//nkRrEIW7QPvYK8WFx2JwQXK3nO5CC1nMuiy+Re5AxwurNwHJqSqz0yo7tPLbtc82I9dQ==
+X-Gm-Message-State: AOJu0Yw900ay/oVkzNl2kwO5oIFvlUs/SScJlYELMR6ql4RkEM6zyMgN
+	d2wxLAlUsskntotfUfcdRqE13DSmEJIxVJtrGgqg1mCdtKn52CLsJhBgRDeb
+X-Google-Smtp-Source: AGHT+IEejNKDD+WdFx74F/4/WZzlSYRgCYTjD7ohCLjJk2Zqb7qGI9MGIdhNJfJBjRbqEL9ELCBr7A==
+X-Received: by 2002:a2e:86cd:0:b0:2ec:5073:5816 with SMTP id 38308e7fff4ca-2ee8eda803fmr8554471fa.31.1720091350889;
+        Thu, 04 Jul 2024 04:09:10 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a25b724sm20265265e9.38.2024.07.04.04.09.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 04:12:48 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 04 Jul 2024 14:12:46 +0300
-Subject: [PATCH] firmware: qcom: tzmem: blacklist more platforms for SHM
- Bridge
+        Thu, 04 Jul 2024 04:09:10 -0700 (PDT)
+Message-ID: <2ed1b75e1eb470c9d4d85ff1485c5461d7ec9384.camel@gmail.com>
+Subject: Re: [PATCH v6 3/3] dt-bindings: input: Update dtbinding for adp5588
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: utsav.agarwal@analog.com, Michael Hennerich
+ <michael.hennerich@analog.com>,  Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Arturs Artamonovs
+ <arturs.artamonovs@analog.com>,  Vasileios Bimpikas
+ <vasileios.bimpikas@analog.com>, Oliver Gaskell <oliver.gaskell@analog.com>
+Date: Thu, 04 Jul 2024 13:13:04 +0200
+In-Reply-To: <20240704-adp5588_gpio_support-v6-3-cb65514d714b@analog.com>
+References: <20240704-adp5588_gpio_support-v6-0-cb65514d714b@analog.com>
+	 <20240704-adp5588_gpio_support-v6-3-cb65514d714b@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240704-shmbridge-blacklist-v1-1-14b027b3b2dc@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAK2DhmYC/x2MSQqAMBDAviJztlBrQetXxEOX0Q6udEQE8e8Wj
- yEkDzAmQoaueCDhRUz7lqEqC/DRbhMKCplBSaVlI7XguLpEIQu3WD8vxKeQqnLBNK61poZcHgl
- Huv9rP7zvB3IiPBplAAAA
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Elliot Berman <quic_eberman@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1354;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=kwlzyQko3YrlL9qqxe77HjjjJn+6EPX3Akye8+HUD68=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmhoOwm1V5jQ1hxjuCBndjf0/vDRv6bE6MnpyJ+
- adV5W46kCGJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZoaDsAAKCRCLPIo+Aiko
- 1ZJXCACusvt3u67ChJfBSVHOT/JoRoltQEburmBUDlSvNJSEVvbU9u3pJ+Kg4W0yfSBVQXKEtfp
- B2zhCPFT/1/nOzxVmv5IZHp9diWBDeiDvCjxvSqagj2QirpQRmMd+ANy0KTYTDWhfmNDTkbYuR+
- LbfOticztug72JKVKat0PTY9SXBGIFnyT75Cvf0adm1jrOyWT/G0wgoR5UjwsGSExIk3Z1ytfCF
- 6Z63KbkSsLn/1AX3dESoThPwIskEUTXdEhCu4lgagAcnIKkW7RANV4Sq8fnGxTmZh7ZlVhAvhnN
- x93nYIDEASo6FLjGW/+1VJowJW2OM77sq+IO3ptsOD1zBK+2
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The SHM bridge makes the Qualcomm RB3 and SM8150-HDK reset while probing
-the RMTFS (in qcom_scm_assign_mem()). Blacklist the SHM Bridge on
-corresponding platforms using SoC-level compat string. If later it's
-found that the bad behaviour is limited just to the particular boards
-rather than SoC, the compat strings can be adjusted.
+On Thu, 2024-07-04 at 11:45 +0100, Utsav Agarwal via B4 Relay wrote:
+> From: Utsav Agarwal <utsav.agarwal@analog.com>
+>=20
+> Updating dt bindings for adp5588. Since the device can now function in a
+> purely gpio mode, the following keypad specific properties are now made
+> optional:
+> 	- interrupts
+> 	- keypad,num-rows
+> 	- keypad,num-columns
+> 	- linux,keymap
+>=20
+> However the above properties are required to be specified when
+> configuring the device as a keypad, dependencies have been added
+> such that specifying either one would require the remaining as well.
+>=20
+> Note that interrupts are optional, but required when the device has been
+> configured in keypad mode.
+>=20
+> Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+> ---
+> =C2=A0.../devicetree/bindings/input/adi,adp5588.yaml=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 46 +++++++++++++++++++--
+> -
+> =C2=A01 file changed, 41 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> index 26ea66834ae2..83d1fe19e300 100644
+> --- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> +++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> @@ -49,7 +49,10 @@ properties:
+> =C2=A0=C2=A0 interrupt-controller:
+> =C2=A0=C2=A0=C2=A0=C2=A0 description:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This property applies if either keyp=
+ad,num-rows lower than 8 or
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 keypad,num-columns lower than 10.
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 keypad,num-columns lower than 10. This pr=
+operty is optional if
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 keypad,num-rows or keypad,num-columns are=
+ not specified since the
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device then acts as gpio only, during whi=
+ch interrupts may or may
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 not be utilized.
+> =C2=A0
+> =C2=A0=C2=A0 '#interrupt-cells':
+> =C2=A0=C2=A0=C2=A0=C2=A0 const: 2
+> @@ -65,13 +68,28 @@ properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0 minItems: 1
+> =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 2
+> =C2=A0
+> +
+> +dependencies:
+> +=C2=A0 keypad,num-rows:
+> +=C2=A0=C2=A0=C2=A0 - linux,keymap
+> +=C2=A0=C2=A0=C2=A0 - keypad,num-columns
+> +=C2=A0 keypad,num-columns:
+> +=C2=A0=C2=A0=C2=A0 - linux,keymap
+> +=C2=A0=C2=A0=C2=A0 - keypad,num-rows
+> +=C2=A0 linux,keymap:
+> +=C2=A0=C2=A0=C2=A0 - keypad,num-rows
+> +=C2=A0=C2=A0=C2=A0 - keypad,num-columns
 
-Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
-Fixes: f86c61498a57 ("firmware: qcom: tzmem: enable SHM Bridge support")
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/firmware/qcom/qcom_tzmem.c | 2 ++
- 1 file changed, 2 insertions(+)
+The above seems pretty generic. Maybe it could be moved into matrix-keymap.=
+yaml
+at some point...
 
-diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
-index 5d526753183d..c715729f071c 100644
---- a/drivers/firmware/qcom/qcom_tzmem.c
-+++ b/drivers/firmware/qcom/qcom_tzmem.c
-@@ -78,6 +78,8 @@ static bool qcom_tzmem_using_shm_bridge;
- /* List of machines that are known to not support SHM bridge correctly. */
- static const char *const qcom_tzmem_blacklist[] = {
- 	"qcom,sc8180x",
-+	"qcom,sdm845", /* reset in rmtfs memory assignment */
-+	"qcom,sm8150", /* reset in rmtfs memory assignment */
- 	NULL
- };
- 
+- Nuno S=C3=A1
 
----
-base-commit: 82e4255305c554b0bb18b7ccf2db86041b4c8b6e
-change-id: 20240704-shmbridge-blacklist-021bd97b8a93
-
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
