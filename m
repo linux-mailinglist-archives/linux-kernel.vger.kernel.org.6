@@ -1,161 +1,287 @@
-Return-Path: <linux-kernel+bounces-241486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B1C927BC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:16:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E2B5927BCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D07BD1F24379
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:16:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050ED28BB8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0347D3BB23;
-	Thu,  4 Jul 2024 17:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7623B481A5;
+	Thu,  4 Jul 2024 17:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CaAwoQJr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q1hJevEy"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5EDA20;
-	Thu,  4 Jul 2024 17:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A5044C7E;
+	Thu,  4 Jul 2024 17:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720113368; cv=none; b=p+6vB3T7+FYdSI83BE/iskMHeukX6UcZzT0dzn9jfj3v2C5PRxfAvhzaSysVSQiDn8yjDJPFJDK8mAhUwJfs9lhAHT9mpqBWEC89vgWTFHrVQYhFnN6twsyaN9DmR99vd8/J82X4sYrWeHgi55h4onmYlk63dyVMTOvpDxt4TIw=
+	t=1720113372; cv=none; b=LhcY8uuviuHLuVfiHHgEEHxO0OXpaofL13JFb31M25pcrSxNhkL+sLUFgWqu/T1vDEf0e4ho0BXu/G0B9bbMDqHOD83FT+AuEqRwsl2lFlLwGOtNRU1Ii4fWfL3cTQA/o4nVpTfPNIhjzs+2DA3RkyZfKpmKNjL60zDcwpREGF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720113368; c=relaxed/simple;
-	bh=pNA8/Q/+goKs7oTKt+a3Cw9yHcXIncdaNs7gbU3axuo=;
+	s=arc-20240116; t=1720113372; c=relaxed/simple;
+	bh=3x8lP/aTiF5WqSbnLsl7dbOKsbYQj2t1Eh7lHauCaek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fBUia8SHkmAOliNqojRLTQThukET53mIvX5tr+DV+G7FISNT7JUNypgOOPLSq1TonrE71ArH83tmNzOhPO6FxSMzJJ7q9uPcspqbIyNZ8PvdSOR2ahICWPgTj4KpPIY3+fGsxb6fmSceueM7vpUce2qLjt4TP8fiPyq/z/S1MQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CaAwoQJr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33CBDC3277B;
-	Thu,  4 Jul 2024 17:16:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720113368;
-	bh=pNA8/Q/+goKs7oTKt+a3Cw9yHcXIncdaNs7gbU3axuo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CaAwoQJrZLArTEOfKusmY+hI3dr6PuiWIDAGemB23zwQ/bD7VJTzy3rb1U9K40ZyB
-	 /otipiTe+bwUNsaC6ZuVc/FviZm+4xAk2xQacK3lQNi9b9C6Rc7h/wCI7BS0VScrsf
-	 4tpxSoBJ33RZtNcI49felKJ65GDyJxoFFc0vfS3DWE0TZBsc0CA7zajLlHMMZq2nJ1
-	 BWwTxUhNOiJTR9T9zELEmujZkVJUUwVvWzO3p2r1Bum7+UJPdGxvl/n/B2MHdq+XCm
-	 MP6AVd9901F70GjDlGUnmWKECr+ExRRv6xOr2s0RZ4V/pVSadlxpSNJHRlLbIQ94pP
-	 b/fDR1hY0KIrA==
-Date: Thu, 4 Jul 2024 20:16:02 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	"Zeng, Oak" <oak.zeng@intel.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 18/18] nvme-pci: use new dma API
-Message-ID: <20240704171602.GE95824@unreal>
-References: <cover.1719909395.git.leon@kernel.org>
- <47eb0510b0a6aa52d9f5665d75fa7093dd6af53f.1719909395.git.leon@kernel.org>
- <249ec228-4ffd-4121-bd51-f4a19275fee1@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZwu3aDdJuxQkx9u6Q3X1LKX502liF5Ruf7qqUgdQT7rhPHuQnFqa+ns84NfMB/ebd5lenBIjr8S/DXOaFbulujBLXDiFmRMaSkAqYknW7H/kt0iFemwBknNqabxPBNtHGqMDQNSvBXtgVH/bBWrihHftCW0FB/A9geWdc+Szos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q1hJevEy; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec1ac1aed2so9047301fa.3;
+        Thu, 04 Jul 2024 10:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720113369; x=1720718169; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=akj1yGVTlXRj2mY3MwoGNS6aRJcCL4nmykWEYKR6h6Q=;
+        b=Q1hJevEyTpL5w6Xlq4QLBfkySlH5p09tFZfg9ZVqJU4G6fmB7nsJoxyAV8J73T+G4T
+         yYltIfvSQ+spVIh6WiJAMcURvF2cXL7dVpTeFRgYCUH/DQ+M4VZTHiU6fmjz3y/5qkxN
+         ojPk5y6EcYBUiC9hhOXPZgirgzVEBLJ5kBA/CcKdfh/dNryk2l5GXvSakvh4wykRn5gy
+         DqLEJ7t9sgv+UhQLOMiAnmnOSa+YvF87ogFeP1eX+RZPZeTGy7sEVCdQn089eO/DOfUR
+         SxoAb38+L371ZD7xTo8+3e53CRmoSSJFl3M8FSxHRsH5wGXzwI3Fi6Mh0pnniCWC5pX9
+         3IVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720113369; x=1720718169;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=akj1yGVTlXRj2mY3MwoGNS6aRJcCL4nmykWEYKR6h6Q=;
+        b=vB/7gKHFbnZdjaTXydQ56RWMBcNlQZqwhoJA6I1nXcsLpWnROxfpJ9g8VNXKjhMzEA
+         vVJjwoy0dRjmaCuwpKGu3qQfuYW1T9WHv/e1Wndcs0ysy9lFwZAfA91QL7I+GQFXwDZ4
+         UNooL+bZ/9YHTY4WZu4T6XzUZKdBJ2CibbOYZRm3DqsY4eTU/zF5iy6ylCQRsgS2eL9D
+         9N1r7L8c/tkgQqe/LBA02+/nQTf29zg2h+/5FFP/N7sJLef/P+h8VEydzFEJOJhoC6XO
+         29EJ6eFVGByq7m8lZTU3bbjJ7W/kkrj9QQNnKCdRV5VZUQQPh1XCiM5/FMqT2ysVnKdx
+         KgQw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4/qjbaHkyIWdwXOlUIG1iZglZeJvRQ9vmmuRef3/NZ8YT2lH76fx155DClojWmpaMauZ+6+jJwSJWYobzjYQp437UkmY07Wp/xvNB9+398i2IB2nxQ36hzmU2WtJMLaABDgB7
+X-Gm-Message-State: AOJu0YwQeaMND3tgK9AB4sYENXr8Dg8oDjk39UWWYGQ/nPIIwdeUqRXB
+	UUTi59E8oFzu7MQ6BYZZpRef1QPKNuS0wIczaS10fpFzt4WHKPKC
+X-Google-Smtp-Source: AGHT+IFTA8kd9mjM2p40e2ZtadZbcVKxwDbfrWZ/Shn/mauifxOtKFwqzRmFtdoxFS3r+DxEPLODog==
+X-Received: by 2002:a2e:9515:0:b0:2eb:f472:e7d3 with SMTP id 38308e7fff4ca-2ee8ed22c62mr15348351fa.6.1720113368407;
+        Thu, 04 Jul 2024 10:16:08 -0700 (PDT)
+Received: from skbuf ([188.25.110.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42649dec1cbsm12327265e9.1.2024.07.04.10.16.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 10:16:07 -0700 (PDT)
+Date: Thu, 4 Jul 2024 20:16:04 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Landen Chao <Landen.Chao@mediatek.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net v4] net: dsa: mt7530: fix impossible MDIO address and
+ issue warning
+Message-ID: <20240704171604.3ownsxasch5hokty@skbuf>
+References: <1c378be54d0fb76117f6d72dadd4a43a9950f0dc.1720105125.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <249ec228-4ffd-4121-bd51-f4a19275fee1@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1c378be54d0fb76117f6d72dadd4a43a9950f0dc.1720105125.git.daniel@makrotopia.org>
 
-On Thu, Jul 04, 2024 at 04:23:47PM +0100, Robin Murphy wrote:
-> On 02/07/2024 10:09 am, Leon Romanovsky wrote:
-> [...]
-> > +static inline dma_addr_t nvme_dma_link_page(struct page *page,
-> > +					   unsigned int poffset,
-> > +					   unsigned int len,
-> > +					   struct nvme_iod *iod)
-> >   {
-> > -	int i;
-> > -	struct scatterlist *sg;
-> > +	struct dma_iova_attrs *iova = &iod->dma_map->iova;
-> > +	struct dma_iova_state *state = &iod->dma_map->state;
-> > +	dma_addr_t dma_addr;
-> > +	int ret;
-> > +
-> > +	if (iod->dma_map->use_iova) {
-> > +		phys_addr_t phys = page_to_phys(page) + poffset;
-> 
-> Yeah, there's no way this can possibly work. You can't do the
-> dev_use_swiotlb() check up-front based on some overall DMA operation size,
-> but then build that operation out of arbitrarily small fragments of
-> different physical pages that *could* individually need bouncing to not
-> break coherency.
+On Thu, Jul 04, 2024 at 04:08:22PM +0100, Daniel Golle wrote:
+> The MDIO address of the MT7530 and MT7531 switch ICs can be configured
+> using bootstrap pins. However, there are only 4 possible options for the
+> switch itself: 7, 15, 23 and 31. As in MediaTek's SDK the address of the
+> switch is wrongly stated in the device tree as 0 (while in reality it is
+> 31), warn the user about such broken device tree and make a good guess
+> what was actually intended.
 
-This is exactly how dma_map_sg() works. It checks in advance all SG and
-proceeds with bounce buffer if needed. In our case all checks which
-exists in dev_use_sg_swiotlb() will give "false". In v0, Christoph said
-that NVMe guarantees alignment, which is only one "dynamic" check in
-that function.
-
-   600 static bool dev_use_sg_swiotlb(struct device *dev, struct scatterlist *sg,
-   601                                int nents, enum dma_data_direction dir)
-   602 {
-   603         struct scatterlist *s;
-   604         int i;
-   605
-   606         if (!IS_ENABLED(CONFIG_SWIOTLB))
-   607                 return false;
-   608
-   609         if (dev_is_untrusted(dev))
-   610                 return true;
-   611
-   612         /*
-   613          * If kmalloc() buffers are not DMA-safe for this device and
-   614          * direction, check the individual lengths in the sg list. If any
-   615          * element is deemed unsafe, use the swiotlb for bouncing.
-   616          */
-   617         if (!dma_kmalloc_safe(dev, dir)) {
-   618                 for_each_sg(sg, s, nents, i)
-   619                         if (!dma_kmalloc_size_aligned(s->length))
-   620                                 return true;
-   621         }
-   622
-   623         return false;
-   624 }
-
-   ...
-  1338 static int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
-  1339                 int nents, enum dma_data_direction dir, unsigned long attrs)
-  ...
-  1360         if (dev_use_sg_swiotlb(dev, sg, nents, dir))                          
-  1361                 return iommu_dma_map_sg_swiotlb(dev, sg, nents, dir, attrs);   
-
-Thanks
+Zero is the MDIO broadcast address. Doesn't the switch respond to it, or
+what's exactly the problem?
 
 > 
-> Thanks,
-> Robin.
+> This is imporant also to not break compatibility with older Device Trees
+
+important
+
+> as with commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of
+> switch from device tree") the address in device tree will be taken into
+> account, while before it was hard-coded to 0x1f.
 > 
-> > +
-> > +		dma_addr = state->iova->addr + state->range_size;
-> > +		ret = dma_link_range(&iod->dma_map->state, phys, len);
-> > +		if (ret)
-> > +			return DMA_MAPPING_ERROR;
-> > +	} else {
-> > +		dma_addr = dma_map_page_attrs(iova->dev, page, poffset, len,
-> > +					      iova->dir, iova->attrs);
-> > +	}
-> > +	return dma_addr;
-> > +}
+> Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
+
+I fail to understand the logic behind blaming this commit. There was no
+observable issue prior to 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY
+address of switch from device tree"), was there? That's what 'git bisect'
+with a broken device tree would point towards?
+
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+> Reviewed-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+> ---
+> Changes since v3 [3]:
+>  - simplify calculation of correct address
 > 
+> Changes since v2 [2]:
+>  - use macros instead of magic numbers
+>  - introduce helper functions
+>  - register new device on MDIO bus instead of messing with the address
+>    and schedule delayed_work to unregister the "wrong" device.
+>    This is a slightly different approach than suggested by Russell, but
+>    imho makes things much easier than keeping the "wrong" device and
+>    having to deal with keeping the removal of both devices linked.
+>  - improve comments
+> 
+> Changes since v1 [1]:
+>  - use FW_WARN as suggested.
+>  - fix build on net tree which doesn't have 'mdiodev' as member of the
+>    priv struct. Imho including this patch as fix makes sense to warn
+>    users about broken firmware, even if the change introducing the
+>    actual breakage is only present in net-next for now.
+> 
+> [1]: https://patchwork.kernel.org/project/netdevbpf/patch/e615351aefba25e990215845e4812e6cb8153b28.1714433716.git.daniel@makrotopia.org/
+> [2]: https://patchwork.kernel.org/project/netdevbpf/patch/11f5f127d0350e72569c36f9060b6e642dfaddbb.1714514208.git.daniel@makrotopia.org/
+> [3]: https://patchwork.kernel.org/project/netdevbpf/patch/7e3fed489c0bbca84a386b1077c61589030ff4ab.1719963228.git.daniel@makrotopia.org/
+> 
+>  drivers/net/dsa/mt7530-mdio.c | 91 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 91 insertions(+)
+> 
+> diff --git a/drivers/net/dsa/mt7530-mdio.c b/drivers/net/dsa/mt7530-mdio.c
+> index 51df42ccdbe6..2037ed944801 100644
+> --- a/drivers/net/dsa/mt7530-mdio.c
+> +++ b/drivers/net/dsa/mt7530-mdio.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/regmap.h>
+>  #include <linux/reset.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/workqueue.h>
+>  #include <net/dsa.h>
+>  
+>  #include "mt7530.h"
+> @@ -136,6 +137,92 @@ static const struct of_device_id mt7530_of_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, mt7530_of_match);
+>  
+> +static int
+> +mt7530_correct_addr(int phy_addr)
+
+The prototype fits onto a single line.
+
+> +{
+> +	/* The corrected address is calculated as stated below:
+> +	 * 0~6, 31 -> 31
+> +	 * 7~14    -> 7
+> +	 * 15~22   -> 15
+> +	 * 23~30   -> 23
+> +	 */
+> +return (phy_addr - MT7530_NUM_PORTS & ~MT7530_NUM_PORTS) + MT7530_NUM_PORTS & PHY_MAX_ADDR - 1;
+
+In addition to being weirdly indented and having difficult to follow
+logic.. Why not opt for the simple, self-documenting variant below?
+
+	switch (phy_addr) {
+	case 0 ... 6:
+	case 31:
+		return 31;
+	case 7 ... 14:
+		return 7;
+	case 15 ... 22:
+		return 15;
+	case 23 ... 30:
+		return 23;
+	default:
+		return -EINVAL ???
+	}
+
+> +}
+> +
+> +static bool
+> +mt7530_is_invalid_addr(int phy_addr)
+> +{
+> +	/* Only MDIO bus addresses 7, 15, 23, and 31 are valid options,
+> +	 * which all have the least significant three bits set. Check
+> +	 * for this.
+> +	 */
+> +	return (phy_addr & MT7530_NUM_PORTS) != MT7530_NUM_PORTS;
+
+Why not implement this in terms of phy_addr != mt7530_correct_addr(phy_addr)?
+
+> +}
+> +
+> +struct remove_impossible_priv {
+> +	struct delayed_work remove_impossible_work;
+> +	struct mdio_device *mdiodev;
+> +};
+> +
+> +static void
+> +mt7530_remove_impossible(struct work_struct *work)
+
+Fits onto a single line.
+
+> +{
+> +	struct remove_impossible_priv *priv = container_of(work, struct remove_impossible_priv,
+> +							   remove_impossible_work.work);
+> +	struct mdio_device *mdiodev = priv->mdiodev;
+> +
+> +	mdio_device_remove(mdiodev);
+> +	mdio_device_free(mdiodev);
+> +	kfree(priv);
+> +}
+> +
+> +static int
+> +mt7530_reregister(struct mdio_device *mdiodev)
+> +{
+> +	/* If the address in DT must be wrong, make a good guess about
+> +	 * the most likely intention, issue a warning, register a new
+> +	 * MDIO device at the correct address and schedule the removal
+> +	 * of the device having an impossible address.
+> +	 */
+> +	struct fwnode_handle *fwnode = dev_fwnode(&mdiodev->dev);
+> +	int corrected_addr = mt7530_correct_addr(mdiodev->addr);
+> +	struct remove_impossible_priv *rem_priv;
+> +	struct mdio_device *new_mdiodev;
+> +	int ret;
+> +
+> +	rem_priv = kmalloc(sizeof(*rem_priv), GFP_KERNEL);
+> +	if (!rem_priv)
+> +		return -ENOMEM;
+> +
+> +	new_mdiodev = mdio_device_create(mdiodev->bus, corrected_addr);
+> +	if (IS_ERR(new_mdiodev)) {
+> +		ret = PTR_ERR(new_mdiodev);
+> +		goto out_free_work;
+> +	}
+> +	device_set_node(&new_mdiodev->dev, fwnode);
+> +
+> +	ret = mdio_device_register(new_mdiodev);
+> +	if (WARN_ON(ret))
+> +		goto out_free_dev;
+> +
+> +	dev_warn(&mdiodev->dev, FW_WARN
+> +		 "impossible switch MDIO address in device tree, assuming %d\n",
+> +		 corrected_addr);
+> +
+> +	/* schedule impossible device for removal from mdio bus */
+> +	rem_priv->mdiodev = mdiodev;
+> +	INIT_DELAYED_WORK(&rem_priv->remove_impossible_work, mt7530_remove_impossible);
+> +	schedule_delayed_work(&rem_priv->remove_impossible_work, 0);
+
+What makes it so that mt7530_remove_impossible() is actually guaranteed
+to run after the probing of the mdio_device @ the incorrect address
+_finishes_? mdio_device_remove() will not work on a device which has
+probing in progress, will it?
+
+There's also the more straightforward option of fixing up priv->mdiodev->addr
+in mt7530.c to be something like priv->switch_base, which is derived
+from priv->mdiodev->addr, with a fallback to 0x1f if the latter is zero,
+and a FW_WARN().
 
