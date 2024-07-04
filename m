@@ -1,150 +1,284 @@
-Return-Path: <linux-kernel+bounces-241020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C55B59275DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C70739275E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81A59282366
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:23:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E524285658
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFE51AE0B9;
-	Thu,  4 Jul 2024 12:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7Jf/G1w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0B625779;
-	Thu,  4 Jul 2024 12:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070681AE84F;
+	Thu,  4 Jul 2024 12:23:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0586C1DFF8;
+	Thu,  4 Jul 2024 12:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720095790; cv=none; b=ewWPmmKPL4IAtXCx1oNkhyFBNdd+BfCJdTXEeTHVnM6uPvSD73sfEyEHQ67A9WB1SXWdSfut4DunKAALNRPQxJpRGpTPhBiC6rTQvU5kveJTX8LTukWczkRKIhvzWywEraYXd5qEdiWrXN1RLqZEY88wUv6+hcypFTi4F5J21RU=
+	t=1720095809; cv=none; b=FQryqjM+1d6sNXP9J8fImcWSHigomRGKFCUt5c2hAEWg3OPELTxdR+xWvMLXySM+xJ86lm09HqnjL4anLZoT0wfHxsInEcsZtW5xgRcN6NERqDpO1lcPYEm1deGsHmYUMYNaqbR8x9iEssvJlAwxhgzJFp6nh3Yyb0VnvA7OMOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720095790; c=relaxed/simple;
-	bh=OBq3eQPG9TxPfc8abkT5qDvctPHPhVyt9XRVmZjHeys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mcg5ojgGx95PtZF4G0z1H44zSqM70Fhgt2AoQbnfkx0sqYehgg2xmMJgKPT0o8UNVy67Fu9dYxcGE6giWMsY6xSTx+w70CDHCz/sKB06XGxbRsFB5jhvVtoX+RzMqoOoVQO71059t0shhNL4XzP54hHiokc5L2XXyMA9+F/PmPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7Jf/G1w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F42EC3277B;
-	Thu,  4 Jul 2024 12:23:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720095789;
-	bh=OBq3eQPG9TxPfc8abkT5qDvctPHPhVyt9XRVmZjHeys=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=D7Jf/G1wodoKXYVvAEFAUFEH0CtnlNbXBhmsjuMz+GXUS0oRpMGot5WFf2aCSipaV
-	 i0kMnSbztXhVkYJuBqLX837buvNqT5njOivYFUlTfCXAoz1D5tKTshYWQHPPT8pStP
-	 n/5tpjAveCOEMeVPhKs/UZxCxx0ACd8SUZDk7Yk99UIkLSJ9XP5b5dm6RO3b9xdALu
-	 48qmrKOL9OH8JCcE9pAdoaIQ5a625+bWN1QG6qoRll1xGpGbfZ77E6EVtyb3/MV6mj
-	 OEmQm7wNahTQwAfGRrXSFiY+o3rI6VgGlKOlK3uppFIQfG5VnUMygKQ9gdFXwDbenT
-	 Tm6k8o9SNvE5g==
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d1b8bacf67so104874b6e.2;
-        Thu, 04 Jul 2024 05:23:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVGp4vAl/ChDSxYGxiniPcCss4nBh6c6+ZuQcDFk7tOKkZQUXhyc7jVX6vLT6Wbq9sxSWWeHcxWmookC57PL/ahx07wj0x3mPbOu9ZUiUCjJ55WtZ+VpunHKKWyKaO8KK6PK4T6UoX2Vg==
-X-Gm-Message-State: AOJu0YwDyXRIaoYNrpoBzZO6Q5QWJ4KBY3uSp/Bs/pfBV1729NoEPlt1
-	rxDB5f4Cp10R8NkLPVLyk1vKiUH+qPG94IXBOszbcllY2CXzVp7sIxHF2BydlNU/rCZsD+QCXVh
-	Nl3pO7HMSXdJXUGG5MxwQIJMIrPE=
-X-Google-Smtp-Source: AGHT+IGvsu7oRzVyox4mAN8dC55AZABk7sl5pDrzNy42RwZdz4te+sDZ9QcSbuMPbi0gg8Tx/rjqulFSpspWXJwKgC8=
-X-Received: by 2002:a05:6820:2c07:b0:5c4:5cbf:a255 with SMTP id
- 006d021491bc7-5c646a9379emr1295874eaf.0.1720095788913; Thu, 04 Jul 2024
- 05:23:08 -0700 (PDT)
+	s=arc-20240116; t=1720095809; c=relaxed/simple;
+	bh=Y5QjDjXX0VA+8pkrBV75lbIfi099/i/j1WUgt1fHJGI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RL0KFQfz5/iWJnBapDi/0gQAi3hfWLvcUFZCnWph/UEUEzfwgDPamV2sCzZZca2O/q9QocB6IZ/mp7FOzmwAksVMTkNwyoME5WbYpuEA2khabLfyaP1orTgD+jKW53g2icQ40XeNV797Rfb9tiONzanY/qyPnDVJ1Ryx240W9rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40A14367;
+	Thu,  4 Jul 2024 05:23:50 -0700 (PDT)
+Received: from [10.1.29.168] (XHFQ2J9959.cambridge.arm.com [10.1.29.168])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D8933F762;
+	Thu,  4 Jul 2024 05:23:22 -0700 (PDT)
+Message-ID: <cb644a36-67a7-4692-b002-413e70ac864a@arm.com>
+Date: Thu, 4 Jul 2024 13:23:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240703084124.11530-1-qasim.majeed20@gmail.com>
-In-Reply-To: <20240703084124.11530-1-qasim.majeed20@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Jul 2024 14:22:57 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hyROLY9aR+5vqBWzwy3O0ncCapAYuAMp0X_HkWaj=ecQ@mail.gmail.com>
-Message-ID: <CAJZ5v0hyROLY9aR+5vqBWzwy3O0ncCapAYuAMp0X_HkWaj=ecQ@mail.gmail.com>
-Subject: Re: [PATCH v3] Updating a deprecated use of strcpy.
-To: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
+Content-Language: en-GB
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, david@fromorbit.com,
+ willy@infradead.org, chandan.babu@oracle.com, djwong@kernel.org,
+ brauner@kernel.org, akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+ linux-mm@kvack.org, john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
+ hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org, gost.dev@samsung.com,
+ cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
+ Zi Yan <zi.yan@sent.com>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-2-kernel@pankajraghav.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240625114420.719014-2-kernel@pankajraghav.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 3, 2024 at 10:49=E2=80=AFAM Muhammad Qasim Abdul Majeed
-<qasim.majeed20@gmail.com> wrote:
->
-> Replacing strcpy with strscpy.
-> strcpy is a deprecated function.
-> It should be removed from the kernel source.
->
-> Link: https://github.com/KSPP/linux/issues/88
->
-> Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
->
-> > Replacing strcpy with strscpy and memory bound the copy.
->
-> > Why?  In this particular case, it is not fundamentally necessary.
->
-> > strcpy is a deprecated function. It should be removed from the kernel s=
-ource.
->
-> > If the goal is to get rid of all strcpy() calls from the kernel
-> > because using it is generally unsafe, just say so in the changelog and
-> > it will be fine.
-> changelog has been updated.
->
-> > So is it necessary to use the size argument here and below?
-> Size argument is not necessary as destination is an array of 40 bytes. Pa=
-tch has been updated.
->
-> > for that to work, shouldn't the size of the *destination* buffer be
-> > passed, instead of the length of the string we want to copy?
-> Yes, size of the destination should be passed.
->
-> > Not tested, but the 3rd argument of strscpy () is optional.
-> > (https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/string=
-.h#L87),
-> > so maybe just:
->
-> >        strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
-> Thank you for sharing the reference, this suggestion will do the work and=
- accomodated in the patch.
->
+Hi,
+
+Here are some drive-by review comments as I'm evaluating whether these patches
+can help me with what I'm trying to do at
+https://lore.kernel.org/linux-mm/20240215154059.2863126-1-ryan.roberts@arm.com/...
+
+
+On 25/06/2024 12:44, Pankaj Raghav (Samsung) wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> We need filesystems to be able to communicate acceptable folio sizes
+> to the pagecache for a variety of uses (e.g. large block sizes).
+> Support a range of folio sizes between order-0 and order-31.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Co-developed-by: Pankaj Raghav <p.raghav@samsung.com>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 > ---
->         v2 -> v3: Changelog has been updated. size argument has been remo=
-ved.
->
->  drivers/acpi/acpi_video.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-> index 1fda30388297..8274a17872ed 100644
-> --- a/drivers/acpi/acpi_video.c
-> +++ b/drivers/acpi/acpi_video.c
-> @@ -1128,8 +1128,8 @@ static int acpi_video_bus_get_one_device(struct acp=
-i_device *device, void *arg)
->                 return -ENOMEM;
->         }
->
-> -       strcpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
-> -       strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
-> +       strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
-> +       strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
->
->         data->device_id =3D device_id;
->         data->video =3D video;
-> @@ -2010,8 +2010,8 @@ static int acpi_video_bus_add(struct acpi_device *d=
-evice)
->         }
->
->         video->device =3D device;
-> -       strcpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
-> -       strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
-> +       strscpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
-> +       strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
->         device->driver_data =3D video;
->
->         acpi_video_bus_find_cap(video);
-> --
+>  include/linux/pagemap.h | 86 ++++++++++++++++++++++++++++++++++-------
+>  mm/filemap.c            |  6 +--
+>  mm/readahead.c          |  4 +-
+>  3 files changed, 77 insertions(+), 19 deletions(-)
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 4b71d581091f..0c51154cdb57 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -204,14 +204,21 @@ enum mapping_flags {
+>  	AS_EXITING	= 4, 	/* final truncate in progress */
+>  	/* writeback related tags are not used */
+>  	AS_NO_WRITEBACK_TAGS = 5,
+> -	AS_LARGE_FOLIO_SUPPORT = 6,
 
-Applied as 6.11 material with edited subject and changelog, thanks!
+nit: this removed enum is still referenced in a comment further down the file.
+
+> -	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
+> -	AS_STABLE_WRITES,	/* must wait for writeback before modifying
+> +	AS_RELEASE_ALWAYS = 6,	/* Call ->release_folio(), even if no private data */
+> +	AS_STABLE_WRITES = 7,	/* must wait for writeback before modifying
+>  				   folio contents */
+> -	AS_UNMOVABLE,		/* The mapping cannot be moved, ever */
+> -	AS_INACCESSIBLE,	/* Do not attempt direct R/W access to the mapping */
+> +	AS_UNMOVABLE = 8,	/* The mapping cannot be moved, ever */
+> +	AS_INACCESSIBLE = 9,	/* Do not attempt direct R/W access to the mapping */
+> +	/* Bits 16-25 are used for FOLIO_ORDER */
+> +	AS_FOLIO_ORDER_BITS = 5,
+> +	AS_FOLIO_ORDER_MIN = 16,
+> +	AS_FOLIO_ORDER_MAX = AS_FOLIO_ORDER_MIN + AS_FOLIO_ORDER_BITS,
+
+nit: These 3 new enums seem a bit odd. It might be clearer if you just reserve
+the bits for the fields here? AS_FOLIO_ORDER_BITS isn't actually a flags bit and
+the MAX value is currently the start of the max field, not the end.
+
+#define AS_FOLIO_ORDER_BITS 5
+
+enum mapping_flags {
+	...
+	AS_FOLIO_ORDERS_FIRST = 16,
+	AS_FOLIO_ORDERS_LAST = AS_FOLIO_ORDERS_FIRST+(2*AS_FOLIO_ORDER_BITS)-1,
+	...
+};
+
+#define AS_FOLIO_ORDER_MIN_MASK \
+	GENMASK(AS_FOLIO_ORDERS_FIRST + AS_FOLIO_ORDER_BITS - 1, \
+		AS_FOLIO_ORDERS_FIRST)
+#define AS_FOLIO_ORDER_MAX_MASK \
+	GENMASK(AS_FOLIO_ORDERS_LAST, \
+		AS_FOLIO_ORDERS_LAST - AS_FOLIO_ORDER_BITS + 1)
+
+>  };
+>  
+> +#define AS_FOLIO_ORDER_MASK     ((1u << AS_FOLIO_ORDER_BITS) - 1)
+> +#define AS_FOLIO_ORDER_MIN_MASK (AS_FOLIO_ORDER_MASK << AS_FOLIO_ORDER_MIN)
+> +#define AS_FOLIO_ORDER_MAX_MASK (AS_FOLIO_ORDER_MASK << AS_FOLIO_ORDER_MAX)
+> +
+>  /**
+>   * mapping_set_error - record a writeback error in the address_space
+>   * @mapping: the mapping in which an error should be set
+> @@ -360,9 +367,49 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+>  #define MAX_PAGECACHE_ORDER	8
+>  #endif
+>  
+> +/*
+> + * mapping_set_folio_order_range() - Set the orders supported by a file.
+> + * @mapping: The address space of the file.
+> + * @min: Minimum folio order (between 0-MAX_PAGECACHE_ORDER inclusive).
+> + * @max: Maximum folio order (between @min-MAX_PAGECACHE_ORDER inclusive).
+> + *
+> + * The filesystem should call this function in its inode constructor to
+> + * indicate which base size (min) and maximum size (max) of folio the VFS
+> + * can use to cache the contents of the file.  This should only be used
+> + * if the filesystem needs special handling of folio sizes (ie there is
+> + * something the core cannot know).
+> + * Do not tune it based on, eg, i_size.
+> + *
+> + * Context: This should not be called while the inode is active as it
+> + * is non-atomic.
+> + */
+> +static inline void mapping_set_folio_order_range(struct address_space *mapping,
+> +						 unsigned int min,
+> +						 unsigned int max)
+> +{
+> +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> +		return;
+> +
+> +	if (min > MAX_PAGECACHE_ORDER)
+> +		min = MAX_PAGECACHE_ORDER;
+> +	if (max > MAX_PAGECACHE_ORDER)
+> +		max = MAX_PAGECACHE_ORDER;
+> +	if (max < min)
+> +		max = min;
+
+It seems strange to silently clamp these? Presumably for the bs>ps usecase,
+whatever values are passed in are a hard requirement? So wouldn't want them to
+be silently reduced. (Especially given the recent change to reduce the size of
+MAX_PAGECACHE_ORDER to less then PMD size in some cases).
+
+> +
+> +	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
+> +		(min << AS_FOLIO_ORDER_MIN) | (max << AS_FOLIO_ORDER_MAX);
+> +}
+> +
+> +static inline void mapping_set_folio_min_order(struct address_space *mapping,
+> +					       unsigned int min)
+> +{
+> +	mapping_set_folio_order_range(mapping, min, MAX_PAGECACHE_ORDER);
+> +}
+> +
+>  /**
+>   * mapping_set_large_folios() - Indicate the file supports large folios.
+> - * @mapping: The file.
+> + * @mapping: The address space of the file.
+>   *
+>   * The filesystem should call this function in its inode constructor to
+>   * indicate that the VFS can use large folios to cache the contents of
+> @@ -373,7 +420,23 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+>   */
+>  static inline void mapping_set_large_folios(struct address_space *mapping)
+>  {
+> -	__set_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
+> +	mapping_set_folio_order_range(mapping, 0, MAX_PAGECACHE_ORDER);
+> +}
+> +
+> +static inline
+> +unsigned int mapping_max_folio_order(const struct address_space *mapping)
+> +{
+> +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> +		return 0;
+> +	return (mapping->flags & AS_FOLIO_ORDER_MAX_MASK) >> AS_FOLIO_ORDER_MAX;
+> +}
+> +
+> +static inline
+> +unsigned int mapping_min_folio_order(const struct address_space *mapping)
+> +{
+> +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> +		return 0;
+> +	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
+>  }
+>  
+>  /*
+> @@ -386,16 +449,13 @@ static inline bool mapping_large_folio_support(struct address_space *mapping)
+>  	VM_WARN_ONCE((unsigned long)mapping & PAGE_MAPPING_ANON,
+>  			"Anonymous mapping always supports large folio");
+>  
+> -	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+> -		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
+> +	return mapping_max_folio_order(mapping) > 0;
+>  }
+>  
+>  /* Return the maximum folio size for this pagecache mapping, in bytes. */
+> -static inline size_t mapping_max_folio_size(struct address_space *mapping)
+> +static inline size_t mapping_max_folio_size(const struct address_space *mapping)
+>  {
+> -	if (mapping_large_folio_support(mapping))
+> -		return PAGE_SIZE << MAX_PAGECACHE_ORDER;
+> -	return PAGE_SIZE;
+> +	return PAGE_SIZE << mapping_max_folio_order(mapping);
+>  }
+>  
+>  static inline int filemap_nr_thps(struct address_space *mapping)
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 0b8c732bb643..d617c9afca51 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -1933,10 +1933,8 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  		if (WARN_ON_ONCE(!(fgp_flags & (FGP_LOCK | FGP_FOR_MMAP))))
+>  			fgp_flags |= FGP_LOCK;
+>  
+> -		if (!mapping_large_folio_support(mapping))
+> -			order = 0;
+> -		if (order > MAX_PAGECACHE_ORDER)
+> -			order = MAX_PAGECACHE_ORDER;
+> +		if (order > mapping_max_folio_order(mapping))
+> +			order = mapping_max_folio_order(mapping);
+>  		/* If we're not aligned, allocate a smaller folio */
+>  		if (index & ((1UL << order) - 1))
+>  			order = __ffs(index);
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index c1b23989d9ca..66058ae02f2e 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -503,9 +503,9 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>  
+>  	limit = min(limit, index + ra->size - 1);
+>  
+> -	if (new_order < MAX_PAGECACHE_ORDER) {
+> +	if (new_order < mapping_max_folio_order(mapping)) {
+>  		new_order += 2;
+> -		new_order = min_t(unsigned int, MAX_PAGECACHE_ORDER, new_order);
+> +		new_order = min(mapping_max_folio_order(mapping), new_order);
+>  		new_order = min_t(unsigned int, new_order, ilog2(ra->size));
+
+I wonder if its possible that ra->size could ever be less than
+mapping_min_folio_order()? Do you need to handle that?
+
+Thanks,
+Ryan
+
+>  	}
+>  
+
 
