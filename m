@@ -1,221 +1,140 @@
-Return-Path: <linux-kernel+bounces-240429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C798926D83
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:35:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B82926D85
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01C27B22AA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:35:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12DE1C20873
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7C614285;
-	Thu,  4 Jul 2024 02:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66761B7F7;
+	Thu,  4 Jul 2024 02:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="0L7gFjY0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rOfEcrIg"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC0B14F90
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 02:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957A019478
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 02:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720060538; cv=none; b=Ykq0vIMdMU6+CMn8DSPDQJBCXVh96sR1HNoj7u/9gysZ2n/zrkGsmIB6YODks8X/MkTVhxxQbp1+vvpvDPT/aCaZPwB7UgJOeyo+QztXASwrwQTprN0wxo0Ht1osPZtyTkvpZbJAXe0BWc2SNMCIM/DtDkYxqkAWxZ/CGj5OvVM=
+	t=1720060585; cv=none; b=dg2ZHE5pgj44o5Jo48X8eSUY+bQx+xYKzX40q344Iwyqi2GzjJ1xXjaxOzKKMQ/GgDO7ArAfnHzTcqxVHRFv+fiDYzB3HRzCLNV4adqYI40/2dmNk8bZDOUNanEC8VOf+UCASHL57qlMSi30wZYLrwo3N0aFRAsKN+JPY87s6OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720060538; c=relaxed/simple;
-	bh=CCdptDblgEDJMwdJ2hZx/MZmumuPKe3fT1gLmOBxzCQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=fG8wk153qO0egIYBO5RLiG/3Af/9QbJTG1qTiHKNHLaWyqJ4Oc2bj7kqReOMw4oE/2NULX9/KtIlRtENoQrdSiyAto5PfXo4OqlYI3zF0XuFoTZNHStI3OUCkGBSoUx/8PeYI+JiebVnNB6hUGdCYXqB4S4/Jx+6lTch3X8Poxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=0L7gFjY0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F8F1C2BD10;
-	Thu,  4 Jul 2024 02:35:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1720060537;
-	bh=CCdptDblgEDJMwdJ2hZx/MZmumuPKe3fT1gLmOBxzCQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=0L7gFjY0jppfIMjs4LcHJgPXYk/O9ZobxUzbn20XCZ/thrU9PJRTfAo2xN6iQqSqe
-	 /Hmt0K+E89a98lfBuBxj/tFNsy4WiQ3kNT0pE1TAIJD+hHBJnS6FH3p9a9nicBO5w+
-	 kIJtRQG6DPAVHL2hrBljqFBWd/DR8GY6rYsQ9XJg=
-Date: Wed, 3 Jul 2024 19:35:36 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, Nhat Pham
- <nphamcs@gmail.com>, Yang Shi <shy828301@gmail.com>, Zi Yan
- <ziy@nvidia.com>, Barry Song <baohua@kernel.org>, Kefeng Wang
- <wangkefeng.wang@huawei.com>, David Hildenbrand <david@redhat.com>, Matthew
- Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: Re: [PATCH hotfix] mm: fix crashes from deferred split racing folio
- migration
-Message-Id: <20240703193536.78bce768a9330da3a361ca8a@linux-foundation.org>
-In-Reply-To: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com>
-References: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720060585; c=relaxed/simple;
+	bh=DsoTPuY+Mlw38Zh6KcROkMmGuczQeyFRUBJkQ9vgri8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eta+uTVZ28wIy1+VSeVb3wTw8pgzt6MIK5sKglUcJHSoaiShbJyrCRXhRtmzKL93M3PnKb8ZISE2gb4EtVFmwyEBpOP95bPZzHzjnmSmRMxqcwNlBwMDvD1hNyGJXj7KZJkJXhk31T5R5AQxFdRCf/bbJDMaiktYsjuMfYWe09s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rOfEcrIg; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-64b101294c0so1375737b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 19:36:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720060582; x=1720665382; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UEh0gK6W3eXmJNVDPEVBYcQUqxq7EVnGFyHcoyRQKks=;
+        b=rOfEcrIgd0kI6bVapWaRFOs2AApwdz93d5xdEbepvYaRZj242c91WKxEf0yeedfBZW
+         aOzzk76DxlO+FW7Oj/4pFgUoKnWjPQs1yj3siCELVeQ/f6MlGXBlWCwZ4QZ+IbP08THv
+         lAtch4MvKAJ6FDVquWirzVcHBxWK6G50LF516DX6SoktH06/aIbGcWzVdAxgs6PIASWh
+         pjtN5qdm6abyvVm9SQYgExYpFQtwTYeW0JlTuqWwtCtNisnhbEm5/JztexywTLLpmJWA
+         OsKS1Dnk6+x8/1jLcigtKQrBZFxjDWY+sQELllTEYel1iJjT+4edD2wqHAfjdswTPfrK
+         QQKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720060582; x=1720665382;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UEh0gK6W3eXmJNVDPEVBYcQUqxq7EVnGFyHcoyRQKks=;
+        b=Wkwrkm1L0+1lS60WuyvJPMaPNwq3MIaC5t7ExWi/llcFVdMITNkWQ0vJDh9ed9MssO
+         Lazzd0AXQISmDI/i+BzSPUwt3co380hxXDgMfroPxzYBtSc3HZ/X9II0JnoDVd9Ga5RT
+         QLF9WSM9PI5AvFpHNiDP1KsQ40XU6WRAbkCfynd1lx3yg4wUjsyPQo6S6NPJqeEOR7MR
+         RAhPdco5WBbfDOXJH2vPuBhSz5j8eYRvFEfIg9ua96whc0yMhphrxuozXWLCU2aNQ8iw
+         NZ8An2Jf4saBglaF8bOQnCCccZlWgEoVlHIRnLr9UwEXtRGLoc8SmIdeXVfXaCbZPaXu
+         9gqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVueeDRPgG4BX6qLNqchQVEN3oIKWUW+2kCJ0WnxoTWdbc1GnIc+M1y+N0G8GWjbAk9QmIkRLLBoQEVAw8W5d/m7vPFbd0zcUAI0u0m
+X-Gm-Message-State: AOJu0Yz63o/IebzXwLayOB3q7alKMUBiksyTwYcJSfYtvYyqff2Vaw+/
+	2zB7Om4vr/u95r3WIfXayXdOTJ722yPX2OUdJdVm9CLPfFPbCcXf5XZZFQQieXt84D7TPaIO5nm
+	+wCUv7FaBcKLlc7O26BdhzGiOrXxFQMFoFPwP
+X-Google-Smtp-Source: AGHT+IFc87uvZjuArZcbPdjOl2P4ymw36uHXy0/6csN+CE8LQDhKMoaWlHNbmX7k0msSoryHyYVy32kodkhEfs9Q+hQ=
+X-Received: by 2002:a81:fe04:0:b0:64b:42f1:4518 with SMTP id
+ 00721157ae682-652d8535362mr3460797b3.45.1720060582303; Wed, 03 Jul 2024
+ 19:36:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <87msmyt8zh.fsf@trenco.lwn.net> <20240703230040.90283-1-sj@kernel.org>
+ <CAJuCfpFO_C_LgxrRWrxG9o==RRtYAbkbP3ZJULwdmTjDcAJNrg@mail.gmail.com> <1d805df8-748a-4bbc-a3d9-d6aa01a0b16e@infradead.org>
+In-Reply-To: <1d805df8-748a-4bbc-a3d9-d6aa01a0b16e@infradead.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 3 Jul 2024 19:36:09 -0700
+Message-ID: <CAJuCfpF0+JzuFMUVrit7QOReCL3H69Ek4KGaPkMCQ3O284paNQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] Docs/mm/index: move allocation profiling document to
+ unsorted documents chapter
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: SeongJae Park <sj@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kent Overstreet <kent.overstreet@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2 Jul 2024 00:40:55 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
+On Wed, Jul 3, 2024 at 7:18=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org>=
+ wrote:
+>
+>
+>
+> On 7/3/24 7:10 PM, Suren Baghdasaryan wrote:
+> > On Wed, Jul 3, 2024 at 4:00=E2=80=AFPM SeongJae Park <sj@kernel.org> wr=
+ote:
+> >>
+> >> On Wed, 03 Jul 2024 16:18:42 -0600 Jonathan Corbet <corbet@lwn.net> wr=
+ote:
+> >>
+> >>> SeongJae Park <sj@kernel.org> writes:
+> >>>
+> >>>> The memory allocation profiling document was added to the bottom of =
+the
+> >>>> new outline.  Apparently it was not decided by well-defined guidelin=
+es
+> >>>> or a thorough discussions.  Rather than that, it was added there jus=
+t
+> >>>> because there was no place for such unsorted documents.  Now there i=
+s
+> >>>> the chapter.  Move the document to the new place.
+> >>>
+> >>> I'll take this for now, but it's truly sad to see new documentation
+> >>> being added to the slushpile at the end.  It seems better to create a
+> >>> "development tools" section in the new outline and put the allocation
+> >>> profiling document there?
+> >>
+> >> I have no strong opinions about that.  Cc-ing Suren and Kent, as they =
+are the
+> >> author of the allocation profiling document and hence might have some =
+opinion.
+> >
+> > IMHO if this would be the only document belonging to "development
+> > tools" then keeping it under unsorted is fine.
+> > If more documents will fall into that category then Jonathan's
+> > suggestion makes sense to me. Looking at the current list, page_owner
+> > and maybe damon might be considered for this category as well.
+> > SeongJae, WDYT?
+> > Thanks,
+> > Suren.
+> >
+>
+> Documentation/dev-tools/ already contains 20 files.
+> Unless you want to keep it under Documentation/mm/, that is.
 
-> Even on 6.10-rc6, I've been seeing elusive "Bad page state"s (often on
-> flags when freeing, yet the flags shown are not bad: PG_locked had been
-> set and cleared??), and VM_BUG_ON_PAGE(page_ref_count(page) == 0)s from
-> deferred_split_scan()'s folio_put(), and a variety of other BUG and WARN
-> symptoms implying double free by deferred split and large folio migration.
-> 
-> 6.7 commit 9bcef5973e31 ("mm: memcg: fix split queue list crash when large
-> folio migration") was right to fix the memcg-dependent locking broken in
-> 85ce2c517ade ("memcontrol: only transfer the memcg data for migration"),
-> but missed a subtlety of deferred_split_scan(): it moves folios to its own
-> local list to work on them without split_queue_lock, during which time
-> folio->_deferred_list is not empty, but even the "right" lock does nothing
-> to secure the folio and the list it is on.
-> 
-> Fortunately, deferred_split_scan() is careful to use folio_try_get(): so
-> folio_migrate_mapping() can avoid the race by folio_undo_large_rmappable()
-> while the old folio's reference count is temporarily frozen to 0 - adding
-> such a freeze in the !mapping case too (originally, folio lock and
-> unmapping and no swap cache left an anon folio unreachable, so no freezing
-> was needed there: but the deferred split queue offers a way to reach it).
+I think it belongs more to mm than dev-tools TBH.
 
-There's a conflict when applying Kefeng's "mm: refactor
-folio_undo_large_rmappable()"
-(https://lkml.kernel.org/r/20240521130315.46072-1-wangkefeng.wang@huawei.com)
-on top of this hotfix.
-
---- mm/memcontrol.c~mm-refactor-folio_undo_large_rmappable
-+++ mm/memcontrol.c
-@@ -7832,8 +7832,7 @@ void mem_cgroup_migrate(struct folio *ol
- 	 * In addition, the old folio is about to be freed after migration, so
- 	 * removing from the split queue a bit earlier seems reasonable.
- 	 */
--	if (folio_test_large(old) && folio_test_large_rmappable(old))
--		folio_undo_large_rmappable(old);
-+	folio_undo_large_rmappable(old);
- 	old->memcg_data = 0;
- }
-
-I'm resolving this by simply dropping the above hunk.  So Kefeng's
-patch is now as below.  Please check.
-
---- a/mm/huge_memory.c~mm-refactor-folio_undo_large_rmappable
-+++ a/mm/huge_memory.c
-@@ -3258,22 +3258,11 @@ out:
- 	return ret;
- }
- 
--void folio_undo_large_rmappable(struct folio *folio)
-+void __folio_undo_large_rmappable(struct folio *folio)
- {
- 	struct deferred_split *ds_queue;
- 	unsigned long flags;
- 
--	if (folio_order(folio) <= 1)
--		return;
--
--	/*
--	 * At this point, there is no one trying to add the folio to
--	 * deferred_list. If folio is not in deferred_list, it's safe
--	 * to check without acquiring the split_queue_lock.
--	 */
--	if (data_race(list_empty(&folio->_deferred_list)))
--		return;
--
- 	ds_queue = get_deferred_split_queue(folio);
- 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
- 	if (!list_empty(&folio->_deferred_list)) {
---- a/mm/internal.h~mm-refactor-folio_undo_large_rmappable
-+++ a/mm/internal.h
-@@ -622,7 +622,22 @@ static inline void folio_set_order(struc
- #endif
- }
- 
--void folio_undo_large_rmappable(struct folio *folio);
-+void __folio_undo_large_rmappable(struct folio *folio);
-+static inline void folio_undo_large_rmappable(struct folio *folio)
-+{
-+	if (folio_order(folio) <= 1 || !folio_test_large_rmappable(folio))
-+		return;
-+
-+	/*
-+	 * At this point, there is no one trying to add the folio to
-+	 * deferred_list. If folio is not in deferred_list, it's safe
-+	 * to check without acquiring the split_queue_lock.
-+	 */
-+	if (data_race(list_empty(&folio->_deferred_list)))
-+		return;
-+
-+	__folio_undo_large_rmappable(folio);
-+}
- 
- static inline struct folio *page_rmappable_folio(struct page *page)
- {
---- a/mm/page_alloc.c~mm-refactor-folio_undo_large_rmappable
-+++ a/mm/page_alloc.c
-@@ -2661,8 +2661,7 @@ void free_unref_folios(struct folio_batc
- 		unsigned long pfn = folio_pfn(folio);
- 		unsigned int order = folio_order(folio);
- 
--		if (order > 0 && folio_test_large_rmappable(folio))
--			folio_undo_large_rmappable(folio);
-+		folio_undo_large_rmappable(folio);
- 		if (!free_pages_prepare(&folio->page, order))
- 			continue;
- 		/*
---- a/mm/swap.c~mm-refactor-folio_undo_large_rmappable
-+++ a/mm/swap.c
-@@ -123,8 +123,7 @@ void __folio_put(struct folio *folio)
- 	}
- 
- 	page_cache_release(folio);
--	if (folio_test_large(folio) && folio_test_large_rmappable(folio))
--		folio_undo_large_rmappable(folio);
-+	folio_undo_large_rmappable(folio);
- 	mem_cgroup_uncharge(folio);
- 	free_unref_page(&folio->page, folio_order(folio));
- }
-@@ -1021,10 +1020,7 @@ void folios_put_refs(struct folio_batch
- 			free_huge_folio(folio);
- 			continue;
- 		}
--		if (folio_test_large(folio) &&
--		    folio_test_large_rmappable(folio))
--			folio_undo_large_rmappable(folio);
--
-+		folio_undo_large_rmappable(folio);
- 		__page_cache_release(folio, &lruvec, &flags);
- 
- 		if (j != i)
---- a/mm/vmscan.c~mm-refactor-folio_undo_large_rmappable
-+++ a/mm/vmscan.c
-@@ -1439,9 +1439,7 @@ free_it:
- 		 */
- 		nr_reclaimed += nr_pages;
- 
--		if (folio_test_large(folio) &&
--		    folio_test_large_rmappable(folio))
--			folio_undo_large_rmappable(folio);
-+		folio_undo_large_rmappable(folio);
- 		if (folio_batch_add(&free_folios, folio) == 0) {
- 			mem_cgroup_uncharge_folios(&free_folios);
- 			try_to_unmap_flush();
-@@ -1848,9 +1846,7 @@ static unsigned int move_folios_to_lru(s
- 		if (unlikely(folio_put_testzero(folio))) {
- 			__folio_clear_lru_flags(folio);
- 
--			if (folio_test_large(folio) &&
--			    folio_test_large_rmappable(folio))
--				folio_undo_large_rmappable(folio);
-+			folio_undo_large_rmappable(folio);
- 			if (folio_batch_add(&free_folios, folio) == 0) {
- 				spin_unlock_irq(&lruvec->lru_lock);
- 				mem_cgroup_uncharge_folios(&free_folios);
-_
-
+>
+> --
+> ~Randy
 
