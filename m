@@ -1,110 +1,83 @@
-Return-Path: <linux-kernel+bounces-241196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261A6927828
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:20:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724D0927829
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A411F245EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:20:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A5C01C216EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4176C1B0114;
-	Thu,  4 Jul 2024 14:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9KKVb4z"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E945D1AEFF0;
+	Thu,  4 Jul 2024 14:20:59 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727AA1B121F;
-	Thu,  4 Jul 2024 14:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E6A1AED39;
+	Thu,  4 Jul 2024 14:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720102766; cv=none; b=nqR4RKz75iDRwUHNqgpCunNaWK9A8sztO4s+F2hlsbXWkuK+dobj3xTpOr/9GvA9lgO9/tr/Maztw87psmF1zbJdZa0f6xnrTWCqWBVqH+QVQZEEFFftk8jGSSP++WkSvLu3Hv69W4k3AfPO6fDna/WnVw4J5BxqW8ulI4Sg0Fk=
+	t=1720102859; cv=none; b=uOdgF4pKfSQAbR3PD9vcPIO4j6P6c9PcJCriDEMlQfnDjzRDidSnnJ13Dbc5KvMfvC4waOJ7k5oYMBQOm3kb1dediwtrbcTVerJaImWGT+HKbQOStfHXwqR6Z53hA66cClgbgqiLI2bFVwb57ceZopc549bf5rOe1kVyPv5wSKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720102766; c=relaxed/simple;
-	bh=rhtBhS/CBJwV8ITSg9IDBvbJbDtnj2UkM1J450xWCtY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H2fklJapiKaU6Ibw9psOBetkRUYEhXHofWjsPYWqQvK82wUyMbQ5h+TwH0ai2v4uTNiwMoQySiWRaT2RAJQovY3TL93VF3WOpOeUDSRN8ilfFniKNuQFGBrGGTsQlddK+9yKRa9c0bWjkUnYjINHanZ7/lJbQ83unI0f5iUPICg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S9KKVb4z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A70D0C4AF0D;
-	Thu,  4 Jul 2024 14:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720102766;
-	bh=rhtBhS/CBJwV8ITSg9IDBvbJbDtnj2UkM1J450xWCtY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S9KKVb4zR4ws4a4Ey1hdFcsOGe8qLy0xkejIdZvgG7OAEoXgzdWX6TM+hXVjmmTN1
-	 fsL4p1AEIEFJLKQckvIuKUih+RFCofhKka9wfVtybFfnFskAC7rJbXF/+2fRY+wh0t
-	 UWSWBycthso418WA90A344JZ5WEQzTuWVSka4VsRTtG6E6cvzCUnRZNUCFx7wDHEKN
-	 mEasV/UwQMeWeEmPZAQ1FA+CNd+DmU7r3dZtXmrGxMpsNZF5myzfp8NLTcuOwQ09zM
-	 nG5b03J68sPWoEpUeNgPn3T3Eq9wPeyw2jVQebxT1yp5pxa6Th0aPjCLRdRf7bSq2f
-	 obUBrjWV6kAfg==
-From: Will Deacon <will@kernel.org>
-To: Joerg Roedel <joro@8bytes.org>,
-	Robin Murphy <robin.murphy@arm.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>
-Subject: Re: [PATCH v3 0/5] iommu: Remove iommu_fwspec ops
-Date: Thu,  4 Jul 2024 15:19:01 +0100
-Message-Id: <172010016495.204079.11503801872554345950.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1719919669.git.robin.murphy@arm.com>
-References: <cover.1719919669.git.robin.murphy@arm.com>
+	s=arc-20240116; t=1720102859; c=relaxed/simple;
+	bh=X1wVDYSFUcylugE6Z6QPG//9bPbOUIaqnUCUF4kAxS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rWrFqP4LwSpSCWFwn4QBMfahtv4ENF3CLr5PdoD6CqsLqkYoKcZkqVY2UjAm0RCDQ7bfeBDTXcaazXJOsgDnZi+qPd9yScyjd/J8bhAQaEOIyQ6M9oIfcI72rT6EO0hE+NrqmnOwKIhmudgteXBEKlCcTwjRdyk12x4NJFTxQ5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47ED2C3277B;
+	Thu,  4 Jul 2024 14:20:57 +0000 (UTC)
+Date: Thu, 4 Jul 2024 15:20:55 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v2 0/4] KVM: arm64: Fix underallocation of storage for
+ SVE state
+Message-ID: <Zoavx64l_slLUvfR@arm.com>
+References: <20240606-kvm-arm64-fix-pkvm-sve-vl-v2-0-c88f4eb4b14b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606-kvm-arm64-fix-pkvm-sve-vl-v2-0-c88f4eb4b14b@kernel.org>
 
-On Tue, 02 Jul 2024 12:40:46 +0100, Robin Murphy wrote:
-> v2: https://lore.kernel.org/linux-iommu/cover.1718994350.git.robin.murphy@arm.com/
+On Thu, Jun 06, 2024 at 04:21:42PM +0100, Mark Brown wrote:
+> As observed during review the pKVM support for saving host SVE state is
+> broken if an asymmetric system has VLs larger than the maximum shared
+> VL, fix this by discovering then using the maximum VL for allocations
+> and using RDVL during the save/restore process.
 > 
-> Hi all,
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+> Changes in v2:
+> - Downgrade check for a late CPU increasing maximum VL to a warning only
+>   but do it unconditionally since pKVM prevents late CPUs anyway.
+> - Commit log tweaks.
+> - Link to v1: https://lore.kernel.org/r/20240605-kvm-arm64-fix-pkvm-sve-vl-v1-0-680d6b43b4c1@kernel.org
 > 
-> Just a quick update with an extra patch to avoid the mediatek-v1 driver
-> breaking (and I have now build-tested ARCH=arm to make sure, apologies
-> for being lazy before...)
-> 
-> [...]
+> ---
+> Mark Brown (4):
+>       arm64/fpsimd: Introduce __bit_to_vl() helper
+>       arm64/fpsimd: Discover maximum vector length implemented by any CPU
+>       KVM: arm64: Fix FFR offset calculation for pKVM host state save and restore
+>       KVM: arm64: Avoid underallocating storage for host SVE state
 
-Applied to arm64 (fwspec-ops-removal), thanks!
+Since the patches address a KVM issue, I think it should go via
+Oliver/Marc's tree. But happy to queue it via the arm64 tree if people
+think otherwise.
 
-[1/5] iommu/mediatek-v1: Clean up redundant fwspec checks
-      https://git.kernel.org/iommu/c/e7acc36f26b0
-[2/5] iommu: Resolve fwspec ops automatically
-      https://git.kernel.org/iommu/c/3f7c32091628
-[3/5] ACPI: Retire acpi_iommu_fwspec_ops()
-      https://git.kernel.org/iommu/c/78596b5c321c
-[4/5] OF: Simplify of_iommu_configure()
-      https://git.kernel.org/iommu/c/5f937bc48a6a
-[5/5] iommu: Remove iommu_fwspec ops
-      https://git.kernel.org/iommu/c/3e36c15fc1cc
+Thanks.
 
-Cheers,
 -- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+Catalin
 
