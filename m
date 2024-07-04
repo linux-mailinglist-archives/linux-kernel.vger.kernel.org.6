@@ -1,107 +1,288 @@
-Return-Path: <linux-kernel+bounces-240639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FC3927043
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:08:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 588F492704B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96EABB2420B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:08:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE3A1C230B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7FF1A0B0B;
-	Thu,  4 Jul 2024 07:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7811849C6;
+	Thu,  4 Jul 2024 07:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VeSiIw3F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pe5w0rdR"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E4B1A0711;
-	Thu,  4 Jul 2024 07:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D7E13E024
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 07:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720076912; cv=none; b=Udf+wqUp9okMC05MvI9LmpTqshd4s47pF+PMuTB5V4vcKfQCKaLUfItdGLOuza7ck71NCOeZmJ3mB3f+JLSbl0Un4l0RMPzKWfhPUmB4tr4mANz5AXx2Eod38R1b36fCYhBVGc9vodWdNDD+AmPSQqTtIZoGE0OAcMrz4gRDzeo=
+	t=1720077032; cv=none; b=d47dXf9P9m6Mx0LvpLiLmvA3p3087L9//7dFLAhS0VRXE590yn4GkE0JkF0jACLBpdqqiqceubHLRFSMN3BLoY0Rg0A7/rWG20fpBQRCqzD9RoPnsxgVw1OerCLQdVl0AHh3CQU2AVNMdfxKr2ulb2Z3MLuVC3IWfSX7zMwauE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720076912; c=relaxed/simple;
-	bh=5+rcqn9+rh6E0yZ3vaxBWdR5YscXhhj+nwQh+D3SEL4=;
+	s=arc-20240116; t=1720077032; c=relaxed/simple;
+	bh=7aZN3kbNF0zje/oWEbA909za1b4FkCwJbJgHTUDAOe8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mnx124zRUbdFfSfL+3FL2YdSIlC4tqyNLkk6euHveEZwTWbsiDHqaRmvSjyJGRFlCRmjwHCBluUSkezkI8x3DEP52pZpdi02mS84iJkEW6dBWLaYX8SqPE+IeeS+tpJ2F0sQT3JowKP7Wrf6aRqUuSBsCEdzrOu83OcjVcC/hPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VeSiIw3F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D07EC32786;
-	Thu,  4 Jul 2024 07:08:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720076912;
-	bh=5+rcqn9+rh6E0yZ3vaxBWdR5YscXhhj+nwQh+D3SEL4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VeSiIw3FY+VlACrFYStJDk8V1HLom6KrWgUyIFix+YSk4+5bZ10sTmZ06GhsATEC/
-	 ItkMjbJnP8zEU6oxOuuBSUqVYHwJoDAmjG3jZzTmNsW/p628f3BQZwRt1gByw7Tq7L
-	 08vtZMVWg4ftqFHgPwGCAgtFlm8aqt0DWbzff2Vo6BGpkx0vByD1dyiNoWPtU3W3Qs
-	 S6lAzxr5UiYFmktH4GATm/Zx5McMGH27Uz8Cbx+is1vLtJBKlm2fSkBrIp7Xx9vTBK
-	 ZF0h0yNyOp0JVKS768ug/0uWSHRwaT4IOoWKY/al18zX5YLM2ZnQ/S1wMKPrba0HyL
-	 KdifWK9BiUCXA==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52e991fb456so324515e87.0;
-        Thu, 04 Jul 2024 00:08:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXl2iYWxZMWECHQLHKd7fRBismbc+XfyZ1SaW2OsNBTsWF+oI8R2eBUtqwLuT/gwnfaiDi59Ht7+anQRgkPcFJ3ki636gwyapfDKLzWR/41d5zGxsKsqxYahWQOYvJjBfYCyWXyTcNtdg==
-X-Gm-Message-State: AOJu0YzBRm/3LsKfHvLFy+S08pJjqCztwQT1yQeHTk3+LIDuStez7I9r
-	qO8t9mG+Ga+2kn3kNQ/lXYd3zJSSWEhMvx/GNmlJ7ZkvDdghF4TZvsabZ3/mmnyR/cNmxm8+hZJ
-	2O9H2wGElINFXCELAPZmN190wRks=
-X-Google-Smtp-Source: AGHT+IHaxn7o7s1EVfWyi9BkDO+k9zfBeYb2JovJXDSJlhKW3pabXDhJ4xuVaHMSFmJeG1gmkR4fzNjcuGufU83Cdk0=
-X-Received: by 2002:ac2:551d:0:b0:52c:daa7:a421 with SMTP id
- 2adb3069b0e04-52ea0dcdc6fmr177198e87.4.1720076910384; Thu, 04 Jul 2024
- 00:08:30 -0700 (PDT)
+	 To:Cc:Content-Type; b=GqqyY/C60TAMzPjcVb2Lr+rOk/MrUP10+StddZWrtaVSGxiOmsMExnI1l1g4XHULRjDsK8PZ4U24jQzULdtBq4ALX3/zHT6OUy+GYCZAl8RJ6tguKUR1OB0Tx4QYl9qNJXCSXVFotAgYd8OxxE+NLsNNdSnmZdupShuyTTddtzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pe5w0rdR; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-447bee1aef5so180621cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 00:10:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720077030; x=1720681830; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MhzktMaelI4rMoQecvrOfWks4qtHgbDsOV7QesmwcGg=;
+        b=Pe5w0rdR13wgysD3mR8HYl3qoeXewjK6juxNbANHtUS+E5dSoDWAYPwBiLhJlAhxug
+         aqDB0s7McUAj37b5wDrOf4/2CHkblDx9gdVVyK1cxBWd8p4J/U8LJYcliLdLZkHZcvqu
+         byx2/J18TfbAfSMD+7Jn9z0VqQhvkbZVDm46tb1IFDUgVOIgLMIM714g1g9ODVkIN+iC
+         tx+Ndg0NK9EXIMdCgqMMkHT7sn/W9pawBhqZ82C2qXSuCrCrwHNpAHIC+G83Q33TTeX+
+         wegYfv+ZDXe2rxlCkXkCciy1tM/4QLYLp3MptitH664sVMbIrCHzH3nRorogr6nqCIWC
+         0Ngw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720077030; x=1720681830;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MhzktMaelI4rMoQecvrOfWks4qtHgbDsOV7QesmwcGg=;
+        b=QS/J6S5gHCVdGqBITs4y1kddhc9u4skWguiNm+XOl94Qq5Mw2MnQaSHQ4xkx3tb+9g
+         zNTSX9Hw6E/AL+w85/RXz54Nels0So+BE6pAciRdLJrjF/dXodL1gX7u9LPYVhAuFH2y
+         Mst/GkgznIIgHWxMI5wIyXpJhxmP5foKofoAheWnWhzyUkuqpUSvHmbS9rK8W9EqWUSe
+         S0UHw1Gg2CmMTOfK2b2rxJDYAN9WD7VlWMUkzt+DuPBJqMkWxA47vdCITMgLPHOilCpA
+         fKgXE3pavQNyxeHMq37nZEG74byYS5Wd/DooavyLOc+AeaM006dLIEQrqs/HKUqrVIEl
+         5vPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhXP+jLWJP921EhdIniSLAATAfiX4O1X9J1FsjcT6ykxxSPpdPz6Gs8wtPFf+YW0I+JsOUvmKhZBSHK/Sgy9O6zTZBAcFgIIiiA3E5
+X-Gm-Message-State: AOJu0Yx0rUUKwCJGW5bxvUG2V/0eLBA3pFvcHFUsN/yrp6ueEIq+1mpA
+	VSc9kF2fYiGXAFHq+I3/dqSuK9OWf5WD9YBo+H9XeXdj444nFXHXlgm8/bC4Ch3ZHuQWhH4E4MC
+	w6A1r98FsrnhxZpSmeybZIB6hRN1hH9SNJWI6
+X-Google-Smtp-Source: AGHT+IFvuRzd63Pu6wp4YjsjI4rrjnpAGKl7fdaYiicdv0lxlQM8WTpWdWOgF4fksHss6qgvj8OcH9/AJ3AK6OWFCoA=
+X-Received: by 2002:a05:622a:448b:b0:444:f66a:c199 with SMTP id
+ d75a77b69052e-447c9044f60mr1830111cf.26.1720077029463; Thu, 04 Jul 2024
+ 00:10:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627112321.3044744-1-yukuai1@huaweicloud.com>
-In-Reply-To: <20240627112321.3044744-1-yukuai1@huaweicloud.com>
-From: Song Liu <song@kernel.org>
-Date: Thu, 4 Jul 2024 15:08:17 +0800
-X-Gmail-Original-Message-ID: <CAPhsuW7H3=pLA0PKpGhYxa-W-6fOeJLzCkFMLQsLOOS1KZ3tUQ@mail.gmail.com>
-Message-ID: <CAPhsuW7H3=pLA0PKpGhYxa-W-6fOeJLzCkFMLQsLOOS1KZ3tUQ@mail.gmail.com>
-Subject: Re: [PATCH -next] md: don't wait for MD_RECOVERY_NEEDED for
- HOT_REMOVE_DISK ioctl
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: mateusz.kusiak@linux.intel.com, mariusz.tkaczyk@linux.intel.com, 
-	nfbrown@suse.de, hare@suse.de, linux-raid@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com, 
-	yangerkun@huawei.com
+References: <1a41caa5-561e-415f-85f3-01b52b233506@lucifer.local> <20240703225636.90190-1-sj@kernel.org>
+In-Reply-To: <20240703225636.90190-1-sj@kernel.org>
+From: David Gow <davidgow@google.com>
+Date: Thu, 4 Jul 2024 15:10:16 +0800
+Message-ID: <CABVgOSk9XTM2kHbTF-Su8fXxCcNzu=8vF4iUbC=2x-+O_MNUWg@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Make core VMA operations internal and testable
+To: SeongJae Park <sj@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Shuah Khan <shuah@kernel.org>, 
+	Brendan Higgins <brendanhiggins@google.com>, Rae Moar <rmoar@google.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000005cd5d1061c66a409"
+
+--0000000000005cd5d1061c66a409
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 7:24=E2=80=AFPM Yu Kuai <yukuai1@huaweicloud.com> w=
-rote:
->
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> Commit 90f5f7ad4f38 ("md: Wait for md_check_recovery before attempting
-> device removal.") explained in the commit message that failed device
-> must be reomoved from the personality first by md_check_recovery(),
-> before it can be removed from the array. That's the reason the commit
-> add the code to wait for MD_RECOVERY_NEEDED.
->
-> However, this is not the case now, because remove_and_add_spares() is
-> called directly from hot_remove_disk() from ioctl path, hence failed
-> device(marked faulty) can be removed from the personality by ioctl.
->
-> On the other hand, the commit introduced a performance problem that
-> if MD_RECOVERY_NEEDED is set and the array is not running, ioctl will
-> wait for 5s before it can return failure to user.
->
-> Since the waiting is not needed now, fix the problem by removing the
-> waiting.
->
-> Fixes: 90f5f7ad4f38 ("md: Wait for md_check_recovery before attempting de=
-vice removal.")
-> Reported-by: Mateusz Kusiak <mateusz.kusiak@linux.intel.com>
-> Closes: https://lore.kernel.org/all/814ff6ee-47a2-4ba0-963e-cf256ee4ecfa@=
-linux.intel.com/
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Thanks, SJ.
 
-Applied to md-6.11. Thanks!
+While I'd love to have the VMA tests be KUnit tests (and there are
+several advantages, particularly for tooling and automation), I do
+think the more self-contained userspace tests are great in
+circumstances like this where the code is self-contained enough to
+make it possible. Ideally, we'd have some standards and helpers to
+make these consistent =E2=80=94 kselftest and KUnit are both not quite perf=
+ect
+for this case =E2=80=94 but I don't think we should hold up a useful set of
+changes so we can write a whole new framework.
 
-Song
+(Personally, I think a userspace implementation of a subset of KUnit
+or a KUnit-like API would be useful, see below.)
+
+On Thu, 4 Jul 2024 at 06:56, SeongJae Park <sj@kernel.org> wrote:
+>
+> On Wed, 3 Jul 2024 21:33:00 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle=
+.com> wrote:
+>
+> > On Wed, Jul 03, 2024 at 01:26:53PM GMT, Andrew Morton wrote:
+> > > On Wed,  3 Jul 2024 12:57:31 +0100 Lorenzo Stoakes <lorenzo.stoakes@o=
+racle.com> wrote:
+> > >
+
+[... snip ...]
+
+> Also, I haven't had enough time to read the patches in detail but just th=
+e
+> cover letter a little bit.  My humble impression from that is that this m=
+ight
+> better to eventually be kunit tests.  I know there was a discussion with =
+Kees
+> on RFC v1 [1] which you kindly explained why you decide to implement this=
+ in
+> user space.  To my understanding, at least some of the problems are not r=
+eal
+> problems.  For two things as examples,
+>
+> 1. I understand that you concern the test speed [2].  I think Kunit could=
+ be
+> slower than the dedicated user space tests, but to my experience, it's no=
+t that
+> bad when using the default UML-based execution.
+
+KUnit/UML can be quite fast, but I do agree that a totally isolated
+test will be faster.
+
+
+> 2. My next humble undrestanding is that you want to test functions that y=
+ou
+> don't want to export [2,3] to kernel modules.  To my understanding it's n=
+ot
+> limited on Kunit.  I'm testing such DAMON functions using KUnit by includ=
+ing
+> test code in the c file but protecting it via a config.  For an example, =
+please
+> refer to DAMON_KUNIT_TEST.
+>
+> I understand above are only small parts of the reason for your decision, =
+and
+> some of those would really unsupported by Kunit.  In the case, I think ad=
+ding
+> this user space tests as is is good.  Nonetheless, I think it would be go=
+od to
+> hear some comments from Kunit developers.  IMHO, letting them know the
+> limitations will hopefully help setting their future TODO items.  Cc-ing
+> Brendan, David and Rae for that.
+
+There are a few different ways of working around this, including the
+'#include the source' method, and conditionally exporting symbols to a
+separate namespace (e.g., using VISIBLE_IF_KUNIT and
+EXPORT_SYMBOL_IF_KUNIT()).
+
+Obviously, it's always going to be slightly nasty, but I don't think
+KUnit will fundamentally be uglier than any other similar hack.
+
+>
+> To recap, I have no strong opinions about this patch, but I think knowing=
+ how
+> Selftests and KUnit developers think could be helpful.
+>
+>
+
+More generally, we've seen quite a few cases where we want to compile
+a small chunk of kernel code and some tests as a userspace binary, for
+a few different reasons, including:
+- Improved speed/debuggability from being a "normal" userspace binary
+- The desire to test userspace code which lives in the kernel tree
+(e.g., the perf tool)
+- Smaller reproducable test cases to give to other parties (e.g.,
+compiler developers)
+
+So I think there's definitely a case for having these sorts of tests,
+it'd just be nice to be as consistent as we can. There are a few
+existing patches out there (most recently [1]) which implement a
+subset of the KUnit API in userspace, which has the twin advantages of
+making test code more consistent overall, and allowing some tests to
+be available both as KUnit tests and separate userspace tests (so we
+get the best of both worlds). Having a standard 'userspace kunit'
+implementation is definitely something I've thought about before, so
+I'll probably play around with that when I get some time.
+
+Otherwise, if Shuah's okay with it, having these userspace tests be
+selftests seems at the very least an appropriate stopgap measure,
+which gets us some tooling and CI. I've always thought of selftests as
+"testing the running kernel", rather than the tree under test, but as
+long as it's clear that this is happening, there's no technical reason
+to avoid it,.
+
+Cheers,
+-- David
+
+[1]: https://lore.kernel.org/all/20240625211803.2750563-5-willy@infradead.o=
+rg/
+
+--0000000000005cd5d1061c66a409
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
+BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
+BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
+Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
+FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
+YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
+AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
+DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
+4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
+GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
+kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
+MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
+IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
+hvcNAQkEMSIEILO2dCVvPVz+qtILjt7+iN79ZxGVUffilaCbP4x4tYPgMBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDcwNDA3MTAzMFowaQYJKoZIhvcNAQkPMVww
+WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAMavB4
+1h5njIvmCiQ3Klrc3pzEWAIPuuUs+zmjwqdFDNeOKmlaswHb4/b5E88QEM21YtWdRgKFTMfB1ZVn
+wWFaeBrx69k70IxFhHz4Z7PogmAaRdjwSVsUWkxr9vObaKy7s62qMAbJZR+7jxDwNVAtOHkrluDB
+NzbRFijy3//EjDdyk2akuvhZWy4jTBOC2elMr27Fyq57Fcw7AkD/rKxMjLjTF+2MBoryx6byZQfy
+r6fcEg6qKbFYZInyNRkbSrOWFcjXbJng98wpDkf9T4K6Gbh0Uo6S1WwW6j/t/oIVPuWNBAGGJYQD
+ccsFmY4Ha6Q5uezGZ7bg2mGEuBBituGA
+--0000000000005cd5d1061c66a409--
 
