@@ -1,205 +1,82 @@
-Return-Path: <linux-kernel+bounces-241423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F198E927B47
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:39:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D70927B4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FFCAB24F1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E5EC1F23ACE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA1D1B3F0E;
-	Thu,  4 Jul 2024 16:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831AE1B3742;
+	Thu,  4 Jul 2024 16:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNI0T/Pf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OT1KJhzo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6701B374F;
-	Thu,  4 Jul 2024 16:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70561B29CA;
+	Thu,  4 Jul 2024 16:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720111151; cv=none; b=q9O05syLJ/k1TsjwrBD73qZtFK4IB+yo9mipKtIn+qpk/OHpOSbH27k80/dPNNqM1/kYgi8I5fI6w/G46/AhFvOMWZQIIkgL5ndJeBW9M70NznWdLJrlEvDry5FWlT4haetaqlQLoPBAMEy3DfvFIRqs+r4OpFNxjn3rZeNpHZc=
+	t=1720111178; cv=none; b=iYgIvQPv2L+uDPKLu3xyg96pPQgJ35nAJJWYiJMBtFaZ6RJD2rV72Haw0U3GsLE5UxmO6drLZ/RqVwrbPaXIxgrhFHEm1unUfzgsDfxzYWQuXUurxYxYGNwu7AKnrVMe9zddzTU9G7l/wA4OPQkQOviIbbbZDOjoHplv53xSMc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720111151; c=relaxed/simple;
-	bh=Bs5sRfDrSxaaIvkIerZLN3dXVAr5INLyWGwt4rreui8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lRNYDasCHLMPfXPWIaoo63LFTibSETVicLn3fBO6cWocuijEid75B+X7bm7KEU5TCVL5RltbYDW7dn10GmAcJBTHyp1EwOScmf46ZXing5jdLtVlcgKf8MOBt3B/TICFzttNZO7fZFlBTHUrA4KBX9n6rPGil5pS8pOm/7rsUXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNI0T/Pf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEF8EC4AF0E;
-	Thu,  4 Jul 2024 16:39:09 +0000 (UTC)
+	s=arc-20240116; t=1720111178; c=relaxed/simple;
+	bh=F5PUltn6ApzAxg/bkmpszqzCRC+BjMIEoLjRzNsshGI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bBscvJw1K5XU6E6eKkSAULrDpyg2Ks9LwRA9V6L1aPI+zBlfO8/aS+Q8ihRAlR2ulfhlaFNEifZK6Wh3elX9wg6AkQFROeVTNDCbHVo7prh1noBeN4a1FOTz5Sc+i911D8nul8QvChntkC8SmKsHVX2oFqlRRDsyf0BcEJymzHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OT1KJhzo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89D8EC3277B;
+	Thu,  4 Jul 2024 16:39:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720111151;
-	bh=Bs5sRfDrSxaaIvkIerZLN3dXVAr5INLyWGwt4rreui8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WNI0T/Pffc6B3iSRMiZPlG8zDplMPuzvnoqo0GJ334XC5B2XgSX031T6dBiIB7fuv
-	 eCAhTZmTJvoPNopI0xgqtjIPCOBhvjQHSCjQkfpDk5ONQMxD2McfzTsFjK6BBS+COs
-	 opCHlYojwbsYmhXsaDZUrfnPC5xX1Y364/AYT7PvYCq6O3bBhsLdVBzNrGJENi+Wth
-	 K0jocA5kxTwj15uVdaZp7gJ8h408lZMfqOiLZlUuO3AYbL8u4P7J5CGouOdL+HDR8h
-	 WXpVmafGFur+LmEx6Z1Q/MvOHSDWJvJZ2l+xWLIo0CVFWvX7NRDxskKvr7/Zwykx3a
-	 Kd9asDK6i+/lA==
-Date: Thu, 4 Jul 2024 09:39:08 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Kees Cook <keescook@chromium.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] rust: add flags for shadow call stack sanitizer
-Message-ID: <20240704163908.GA1394865@thelio-3990X>
-References: <20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com>
- <20240704-shadow-call-stack-v3-2-d11c7a6ebe30@google.com>
+	s=k20201202; t=1720111178;
+	bh=F5PUltn6ApzAxg/bkmpszqzCRC+BjMIEoLjRzNsshGI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=OT1KJhzoBvCT1OYKZu/rk/giJMK9nsUWCW7PfNfTacGAoXTLftkwqp/Yn9gAwSEUL
+	 0WA1q/19a002H9N7MalrAkr5kuXorV+2oFB417hMfjR+a/AhM/tZW5MArGscqsgLGD
+	 JqkXBPQWgIjIzjfnFUUQRDcV/e0mHqL4AxJdOhGA3QuzillNxzmnUsvXSvCXMHFnAA
+	 B9Q/rIRuAAqkjtqhTa0wmLDAA+QztaZNRIEwGLvuV+T3/mMynMgg990aI+vlS+U6nk
+	 8aQiWNpJDNdmjAa9nCuAuvdfqxDTLaf7Pk8K9GM3zUzx3Fm9+TwOxhWsNY2KeaIaVB
+	 uRwEe75D45Tbg==
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+In-Reply-To: <ZoJhQVF-U6sSJ_Sg@fedora>
+References: <ZoJhQVF-U6sSJ_Sg@fedora>
+Subject: Re: (subset) [PATCH] watchdog: Add missing include for FIELD_*()
+Message-Id: <172011117629.538139.7683719128595286537.b4-ty@kernel.org>
+Date: Thu, 04 Jul 2024 17:39:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704-shadow-call-stack-v3-2-d11c7a6ebe30@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-Hi Alice,
-
-On Thu, Jul 04, 2024 at 03:07:58PM +0000, Alice Ryhl wrote:
-> As of rustc 1.80.0, the Rust compiler supports the -Zfixed-x18 flag, so
-> we can now use Rust with the shadow call stack sanitizer.
+On Mon, 01 Jul 2024 10:56:49 +0300, Matti Vaittinen wrote:
+> The FIELD_PREP() and FIELD_GET() macros are defined in the
+> linux/bitfield.h. Include this header to avoid missing the macro
+> definitions.
 > 
-> On older versions of Rust, it is possible to use shadow call stack by
-> passing -Ctarget-feature=+reserve-x18 instead of -Zfixed-x18. However,
-> this flag emits a warning, so this patch does not add support for that.
 > 
-> Currently, the compiler thinks that the aarch64-unknown-none target
-> doesn't support -Zsanitizer=shadow-call-stack, so the build will fail if
-> you enable shadow call stack in non-dynamic mode. See [2] for the
 
-                                                        ^ this should be [1]?
+Applied, thanks!
 
-> feature request to add this. Kconfig is not configured to reject this
-> configuration because that leads to cyclic Kconfig rules.
+[1/1] watchdog: Add missing include for FIELD_*()
+      commit: e53cb372d75b5912fc72d9eebe8d37620fb58056
 
-While it probably does not matter much given Rust for Linux is still "in
-the works", I think it would be good to avoid these build failures.
-Perhaps something like this could work (which basically just forces on
-UNWIND_PATCH_PAC_INTO_SCS when Rust is enabled).
+--
+Lee Jones [李琼斯]
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 5d91259ee7b5..a9f08a2bd1c6 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -89,7 +89,7 @@ config ARM64
- 	select ARCH_SUPPORTS_DEBUG_PAGEALLOC
- 	select ARCH_SUPPORTS_HUGETLBFS
- 	select ARCH_SUPPORTS_MEMORY_FAILURE
--	select ARCH_SUPPORTS_SHADOW_CALL_STACK if CC_HAVE_SHADOW_CALL_STACK
-+	select ARCH_SUPPORTS_SHADOW_CALL_STACK if CC_HAVE_SHADOW_CALL_STACK && (!RUST || CAN_UNWIND_PATCH_PAC_INTO_SCS)
- 	select ARCH_SUPPORTS_LTO_CLANG if CPU_LITTLE_ENDIAN
- 	select ARCH_SUPPORTS_LTO_CLANG_THIN
- 	select ARCH_SUPPORTS_CFI_CLANG
-@@ -2262,12 +2262,16 @@ config STACKPROTECTOR_PER_TASK
- 	def_bool y
- 	depends on STACKPROTECTOR && CC_HAVE_STACKPROTECTOR_SYSREG
- 
--config UNWIND_PATCH_PAC_INTO_SCS
--	bool "Enable shadow call stack dynamically using code patching"
-+config CAN_UNWIND_PATCH_PAC_INTO_SCS
-+	def_bool y
- 	# needs Clang with https://github.com/llvm/llvm-project/commit/de07cde67b5d205d58690be012106022aea6d2b3 incorporated
- 	depends on CC_IS_CLANG && CLANG_VERSION >= 150000
- 	depends on ARM64_PTR_AUTH_KERNEL && CC_HAS_BRANCH_PROT_PAC_RET
--	depends on SHADOW_CALL_STACK
-+
-+config UNWIND_PATCH_PAC_INTO_SCS
-+	bool "Enable shadow call stack dynamically using code patching" if !RUST
-+	depends on SHADOW_CALL_STACK && CAN_UNWIND_PATCH_PAC_INTO_SCS
-+	default y if RUST
- 	select UNWIND_TABLES
- 	select DYNAMIC_SCS
- 
-
-Otherwise, it might be good to wait to enable this until [1] is
-addressed, but I don't really feel that strongly about it.
-
-From a Kconfig/Kbuild perspective, the rest of the patch seems fine.
-
-> Link: https://github.com/rust-lang/rust/issues/121972 [1]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  Makefile            | 1 +
->  arch/Kconfig        | 2 +-
->  arch/arm64/Makefile | 3 +++
->  3 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index c11a10c8e710..4ae741601a1c 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -945,6 +945,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
->  ifndef CONFIG_DYNAMIC_SCS
->  CC_FLAGS_SCS	:= -fsanitize=shadow-call-stack
->  KBUILD_CFLAGS	+= $(CC_FLAGS_SCS)
-> +KBUILD_RUSTFLAGS += -Zsanitizer=shadow-call-stack
->  endif
->  export CC_FLAGS_SCS
->  endif
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 238448a9cb71..5a6e296df5e6 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -690,7 +690,7 @@ config SHADOW_CALL_STACK
->  	bool "Shadow Call Stack"
->  	depends on ARCH_SUPPORTS_SHADOW_CALL_STACK
->  	depends on DYNAMIC_FTRACE_WITH_ARGS || DYNAMIC_FTRACE_WITH_REGS || !FUNCTION_GRAPH_TRACER
-> -	depends on !RUST
-> +	depends on !RUST || RUSTC_VERSION >= 108000
->  	depends on MMU
->  	help
->  	  This option enables the compiler's Shadow Call Stack, which
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 3f0f35fd5bb7..bbf313ddd700 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -57,9 +57,11 @@ KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
->  ifneq ($(CONFIG_UNWIND_TABLES),y)
->  KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
->  KBUILD_AFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
-> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=n
->  else
->  KBUILD_CFLAGS	+= -fasynchronous-unwind-tables
->  KBUILD_AFLAGS	+= -fasynchronous-unwind-tables
-> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=y -Zuse-sync-unwind=n
->  endif
->  
->  ifeq ($(CONFIG_STACKPROTECTOR_PER_TASK),y)
-> @@ -114,6 +116,7 @@ endif
->  
->  ifeq ($(CONFIG_SHADOW_CALL_STACK), y)
->  KBUILD_CFLAGS	+= -ffixed-x18
-> +KBUILD_RUSTFLAGS += -Zfixed-x18
->  endif
->  
->  ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
-> 
-> -- 
-> 2.45.2.803.g4e1b14247a-goog
-> 
 
