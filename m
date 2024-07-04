@@ -1,126 +1,79 @@
-Return-Path: <linux-kernel+bounces-241677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE65927DE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:37:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF62927DE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48422B228E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:37:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DD00B21962
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759E513C9C8;
-	Thu,  4 Jul 2024 19:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E225813B5A2;
+	Thu,  4 Jul 2024 19:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SmW5ikpX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="moLC8QlR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58EE8135A69
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 19:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C3E4CB28;
+	Thu,  4 Jul 2024 19:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720121816; cv=none; b=qpt6iCv4kx5BTAgcaL6QaNQZnLM841nVjhcHoMTQh2DOExtcL8xEdEhaEa4Yv+gDCeClgz/j+0wozNxqnyd3Ryd9P8rlgWTya8cUEVLT9T8ZEgIgkTDfRm0GhsAl2zg1peIgGKOiovw4Cc+j/CtRPPPbHMjF2nQOGTRhn8PCdBE=
+	t=1720121815; cv=none; b=H33OohxdsvlaGvZr2RWnKdI1R5FwM/w5I6NTs2ecRjKlxXsEEZNKxVnn3EWg2QRYqhEnU6BfgH5/0hu4bXl6+hoMaGoX/dcM7XOohY5OQLvMycYzysrnVtfgfCUR/aGGEcIfuq8MgSYLsuckdSHkRHyVEfuikjsA62lXzUswZc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720121816; c=relaxed/simple;
-	bh=t9ofOP0ze4UGyGJ8kmTyeN6SMDorzz2HRfkn0CJ0UCc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nuVYOXdzRC4RPvdxsZOfQMoOHT9KUxqvQZfuNEjVPHVCEP3ls0IijjzdOzCRaiSSdSpm7lNxHaceuAwZG9k0O16hV71fmEaDq0QGzL2lCHQGu59tv9QIbjdBziPp9/6jZfsCAyOWyJjkAOaG4WJ2emtjYf/o+0yZHvaeNDR9tHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SmW5ikpX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720121814;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e2mM608hXRB0tkzS3eDg++O9P9yskvc9elF7/0eVFFw=;
-	b=SmW5ikpXqbnd2lDz1oNCKtIDdjmOrlKR8iAaexTBVHem4YSynmYSSxH3hlR8qn9Laka5Br
-	TwZAdOsaQzFXb+3Yu2cGLrgm8ELlpI2ucXYCRpYMeCkUELBO6q6vP93czSZ9zzleuTFjQi
-	+P8qjrj5IhOPgxm3tB5r45sE1FnEBTo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-524-0t6-TQvWO66YqMRUsHwbWg-1; Thu,
- 04 Jul 2024 15:36:52 -0400
-X-MC-Unique: 0t6-TQvWO66YqMRUsHwbWg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 154F71955F3B;
-	Thu,  4 Jul 2024 19:36:51 +0000 (UTC)
-Received: from optiplex-lnx.redhat.com (unknown [10.22.9.99])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C2F7B1956046;
-	Thu,  4 Jul 2024 19:36:48 +0000 (UTC)
-From: Rafael Aquini <aquini@redhat.com>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	aquini@redhat.com
-Subject: [PATCH v2 2/2] kbuild: rpm-pkg: introduce a simple changelog section for kernel.spec
-Date: Thu,  4 Jul 2024 15:36:42 -0400
-Message-ID: <20240704193642.1929491-1-aquini@redhat.com>
-In-Reply-To: <CAK7LNAQba5CDetpwevSoaOLJ21s1tO9ZHh=7gJpPCNK0AnHfJw@mail.gmail.com>
-References: <CAK7LNAQba5CDetpwevSoaOLJ21s1tO9ZHh=7gJpPCNK0AnHfJw@mail.gmail.com>
+	s=arc-20240116; t=1720121815; c=relaxed/simple;
+	bh=TatNQtxn5JyqmX3Ox0iKpM8SH6exsf48BoqyvDPWe5g=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=rIvaSFiJME3V1MQrhMlRIj5otkH/ZCE3oi+p3kSonGhcrhh89KSkqBRFEFWBRB1k+X8hOVPFGy0tVdrIeLVZ/1/d3xgVYONTndm79nMYj0muq5q+6LorFxLtz4amormbW4qErxjkskguEDsRVtTJZPYqFUJOng0gtAG6wJuBgS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=moLC8QlR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A96FFC3277B;
+	Thu,  4 Jul 2024 19:36:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720121814;
+	bh=TatNQtxn5JyqmX3Ox0iKpM8SH6exsf48BoqyvDPWe5g=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=moLC8QlRspJNwkVtBnauz0eSgdNHwCs2eGOFqJC8kcWQZSWm8i3sQqpnWkjxwwWpq
+	 YwUV2/E3tEJBwh0OAzdq3WY5Ij9+Xukjg7MZAvORJUkxT1jSoaL4RYDH+nhQM3P7Vs
+	 dk3URQpqelgHpgkbweTCKgPIVvSi9LZNI76JvDqPKHveJHdVhOCWzY0KpTpEdhxwgK
+	 TmQZc8KZITgGA/Npr81QTBMltMrtn71E6VvYZBSage0vWTAz7yD2B+zne9PyFGS0zB
+	 DS/9I7WY8q5QlUr5DcGlWWdlS4o41e2SG/NLZ0Qwpeh3UGEoBDE00EoEH595riZtmX
+	 0wiEtnNlYe5DA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 98BE5C433A2;
+	Thu,  4 Jul 2024 19:36:54 +0000 (UTC)
+Subject: Re: [GIT PULL] Kselftest fixes for v6.10
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240704123816.669022-1-mic@digikod.net>
+References: <20240704123816.669022-1-mic@digikod.net>
+X-PR-Tracked-List-Id: <kvm.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240704123816.669022-1-mic@digikod.net>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/kselftest-fix-2024-07-04
+X-PR-Tracked-Commit-Id: 130e42806773013e9cf32d211922c935ae2df86c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4d85acef10252c59e3b6c197c61d9252ff950431
+Message-Id: <172012181461.16688.4465728826585876343.pr-tracker-bot@kernel.org>
+Date: Thu, 04 Jul 2024 19:36:54 +0000
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Brendan Higgins <brendanhiggins@google.com>, Christian Brauner <brauner@kernel.org>, David Gow <davidgow@google.com>, "David S . Miller" <davem@davemloft.net>, Florian Fainelli <florian.fainelli@broadcom.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Jakub Kicinski <kuba@kernel.org>, Johannes Berg <johannes@sipsolutions.net>, Jon Hunter <jonathanh@nvidia.com>, Kees Cook <keescook@chromium.org>, Mark Brown <broonie@kernel.org>, Richard Weinberger <richard@nod.at>, Ron Economos <re@w6rz.net>, Ronald Warsow <rwarsow@gmx.de>, Sasha Levin <sashal@kernel.org>, Sean Christopherson <seanjc@google.com>, Shengyu Li <shengyu.li.evgeny@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Will Drewry <wad@chromiu
+ m.org>, kernel test robot <oliver.sang@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-um@lists.infradead.org, netdev@vger.kernel.org, stable@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Fix the following rpmbuild warning:
+The pull request you sent on Thu,  4 Jul 2024 14:38:16 +0200:
 
-  $ make srcrpm-pkg
-  ...
-  RPM build warnings:
-      source_date_epoch_from_changelog set but %changelog is missing
+> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/kselftest-fix-2024-07-04
 
-Signed-off-by: Rafael Aquini <aquini@redhat.com>
----
-v2: move the changelog stub generator to mkspec (masahiroy)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4d85acef10252c59e3b6c197c61d9252ff950431
 
- scripts/package/mkspec | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Thank you!
 
-diff --git a/scripts/package/mkspec b/scripts/package/mkspec
-index ce201bfa8377..6abbfef700fd 100755
---- a/scripts/package/mkspec
-+++ b/scripts/package/mkspec
-@@ -28,3 +28,25 @@ cat<<EOF
- EOF
- 
- cat "${srctree}/scripts/package/kernel.spec"
-+
-+# collect the user's name and email addr for the changelog entry
-+if [ "$(command -v git)" ]; then
-+	name=$(git config user.name) || true
-+	email=$(git config user.email) || true
-+fi
-+
-+if [ ! "${name:+set}" ]; then
-+	name=${KBUILD_BUILD_USER:-$(id -nu)}
-+fi
-+
-+if [ ! "${email:+set}" ]; then
-+	buildhost=${KBUILD_BUILD_HOST:-$(hostname -f 2>/dev/null || hostname)}
-+	email="${name}@${buildhost}"
-+fi
-+
-+cat << EOF
-+
-+%changelog
-+* $(LC_ALL=C; date +'%a %b %d %Y') ${name} <${email}> - ${KERNELRELEASE}
-+- Custom built Linux kernel.
-+EOF
 -- 
-2.45.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
