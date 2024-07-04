@@ -1,109 +1,99 @@
-Return-Path: <linux-kernel+bounces-240406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77653926D48
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:58:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA62D926D47
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CCFB1F225F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2F71F21552
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAB8DF51;
-	Thu,  4 Jul 2024 01:58:03 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8F310A35;
+	Thu,  4 Jul 2024 01:57:56 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC27A168B7
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B30101C4
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720058282; cv=none; b=bAwHv9JrPOl/zVeE4R6v3xO4RSuvr6lcrYN8S9qh+qHyqAO+iJUEUJkibY9t7NoZig1rF6g5kPR/SQh/qMkICqvJjVBBh1HCWASqouRr+WI3rhZVuvc2RTKS+dIzZvz/BM4AGKgzpyivvBnOKOLa1jzBT9Zq+UChhbq4KJ9stm4=
+	t=1720058276; cv=none; b=uyKQKZF2BPELYNZCUwyIpiAY/1Yjsn9GOmOmr93EzN83+L5UZVs0si4/k0lOx/JOlBUQxjtHCGB/LiRYCDZOk4bSx482C5fqEr/RP7tgIqvA+yfkEoJIwT8MNDVE88grymmueUVQ1LoxB7A+EYBZ4jvSkWfBFHjlQ3Or3c1dGU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720058282; c=relaxed/simple;
-	bh=4VRj+kijjSJj2Fdr88o6cAz3I0adkI9ew6ictpb5PGo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=KVYyjkbpe1fCoYfLeW9yd7SmgRrcgQ8DStcJmlD+jB8UilpzDaaEb5IOzIAv/WtStu3Vbuec7/8t+Asba62db2ibAXdak4fi1ugCtInOJM40ST9Ok7fUvp840blBtFdHGcvfZ+sOJPrlSIvRVU5Aq29HTVmLvMlYkh77D7MdUWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WF06x1n8lz2CkwM;
-	Thu,  4 Jul 2024 09:53:45 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0BF8514010C;
-	Thu,  4 Jul 2024 09:57:52 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
- kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 4 Jul 2024 09:57:51 +0800
-Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
- kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
- Thu, 4 Jul 2024 09:57:51 +0800
-From: duchangbin <changbin.du@huawei.com>
-To: duchangbin <changbin.du@huawei.com>
-CC: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
-	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] riscv: vdso: do not strip debugging info for vdso.so.dbg
-Thread-Topic: [PATCH] riscv: vdso: do not strip debugging info for vdso.so.dbg
-Thread-Index: AQHau7U7yIu3oUXsbUGaQgARcdrle7Hl86SA
-Date: Thu, 4 Jul 2024 01:57:51 +0000
-Message-ID: <ef2b1430475140c88a929b1678338726@huawei.com>
-References: <20240611040947.3024710-1-changbin.du@huawei.com>
-In-Reply-To: <20240611040947.3024710-1-changbin.du@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
-x-ms-exchange-messagesentrepresentingtype: 1
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C5A0E03790833640B3CA9AEEE9FF2CC6@huawei.com>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1720058276; c=relaxed/simple;
+	bh=J2fhp56jyLoNNn8tR+ek+4RUcwSOplpbrILC1834nsc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jf4ORBIBHAt5hs/WA/PLO4s02aYi52LKeaoyre/HAob6CwU79yLvkaOw1Z2Dzjuim0ExBnObJxNVPGJaZkz81IO764VcBSDLnG+Yc0nLWUQnbGkO3n1FOaNbd+RJk92TomqFllkkvPziw8vkb/Y2t8ghNf37lnBDOMGowBvFfhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f63eb9f141so100314839f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 18:57:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720058274; x=1720663074;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v3tHtIel9pncAl2PITb4/16Iy0jcNmaP0As6+p0J6Ow=;
+        b=tK+UYTu3LLWetHj+y1+y/gP/GOXhOYPFxuZmZ2V1tg1+jGPpgb/iw1KtNnqTgLmycy
+         26SXqJJGfnbzV/JAG7l2YTYGBqnXqX26G2nwKd4/FqTLTq1APRJmjglCtao/Mca4BbDf
+         9TLEcOc4uDmAy4NKghkKFd5ArOHR3BQcaAs6KVpUL9sSupqPDLaPtwVa3qpS48JAvrKg
+         5B+eLEMhuLpqbhfR1U8ZL0mxhmrEu6P4WO/rufB6poec7TFDohSpAw8sMWqQK1/dqfdR
+         BB4vKZrIDjwRGA6V7DQnq6rd8y98Nb5li+wRHtXIk8lOYomdtH0qiP78EvfxeGOMJ/hc
+         3B2w==
+X-Gm-Message-State: AOJu0YyUacmXxC91FMI2KyFeEz1ovpAODCz7T3xbI4aTYoY7HbKNb6k4
+	CsHF/TJBHMmVl1ULN26LoFgTayk+zKlfYizn+tNEgoseOUs8csiEw+LMwsBBcxQmjKGJQmdScWR
+	t0CZn6TnLloJHnEXl1CiA0yrDt29IIjir8QuY7J1bPSPEGN3VN++OZkk=
+X-Google-Smtp-Source: AGHT+IHAUCCra6hrAliN92R9ISb1JGqx5kOPZ8nIFV9OT1O4QgWkBkHSZn8O10VSe9ylgBGNnCtBz0/XjaKAusysS4gZb2w7mWvz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6602:6012:b0:7f3:9d1d:7340 with SMTP id
+ ca18e2360f4ac-7f66f6afe7cmr219639f.0.1720058272892; Wed, 03 Jul 2024 18:57:52
+ -0700 (PDT)
+Date: Wed, 03 Jul 2024 18:57:52 -0700
+In-Reply-To: <00000000000047cef3061c5be92d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000595608061c62464a@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [kernel?] WARNING in follow_pte
+From: syzbot <syzbot+35a4414f6e247f515443@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
-Is there any problem with this change? Ping~
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-On Tue, Jun 11, 2024 at 12:09:47PM +0800, Changbin Du wrote:
-> The vdso.so.dbg is a debug version of vdso and could be used for debuggin=
-g
-> purpose. For example, perf-annotate requires debugging info to show sourc=
-e
-> lines. So let's keep its debugging info.
->=20
-> Signed-off-by: Changbin Du <changbin.du@huawei.com>
-> ---
->  arch/riscv/kernel/vdso/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Mak=
-efile
-> index f7ef8ad9b550..960feb1526ca 100644
-> --- a/arch/riscv/kernel/vdso/Makefile
-> +++ b/arch/riscv/kernel/vdso/Makefile
-> @@ -45,7 +45,7 @@ $(obj)/vdso.o: $(obj)/vdso.so
->  # link rule for the .so file, .lds has to be first
->  $(obj)/vdso.so.dbg: $(obj)/vdso.lds $(obj-vdso) FORCE
->  	$(call if_changed,vdsold)
-> -LDFLAGS_vdso.so.dbg =3D -shared -S -soname=3Dlinux-vdso.so.1 \
-> +LDFLAGS_vdso.so.dbg =3D -shared -soname=3Dlinux-vdso.so.1 \
->  	--build-id=3Dsha1 --hash-style=3Dboth --eh-frame-hdr
-> =20
->  # strip rule for the .so file
-> --=20
-> 2.34.1
->=20
+***
 
---=20
-Cheers,
-Changbin Du
+Subject: Re: [syzbot] [kernel?] WARNING in follow_pte
+Author: lizhi.xu@windriver.com
+
+Fixes: c5541ba378e3 ("mm: follow_pte() improvements")
+It introduced mmap_assert_locked(mm) in follow_pte.
+This case content does not hold mm lock.
+
+#syz test: upstream 734610514cb0
+
+diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
+index bdc2a240c2aa..0b215d1b89a7 100644
+--- a/arch/x86/mm/pat/memtype.c
++++ b/arch/x86/mm/pat/memtype.c
+@@ -954,8 +954,12 @@ static int follow_phys(struct vm_area_struct *vma, unsigned long *prot,
+ 	pte_t *ptep, pte;
+ 	spinlock_t *ptl;
+ 
+-	if (follow_pte(vma, vma->vm_start, &ptep, &ptl))
++	mmap_read_lock(vma->vm_mm);
++	if (follow_pte(vma, vma->vm_start, &ptep, &ptl)) {
++		mmap_read_unlock(vma->vm_mm);
+ 		return -EINVAL;
++	}
++	mmap_read_unlock(vma->vm_mm);
+ 
+ 	pte = ptep_get(ptep);
+ 
 
