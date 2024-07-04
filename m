@@ -1,127 +1,171 @@
-Return-Path: <linux-kernel+bounces-241269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E919D92793C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:49:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD7A927937
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 261B91C229F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:49:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C608EB25AAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634531B1400;
-	Thu,  4 Jul 2024 14:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2D61B010C;
+	Thu,  4 Jul 2024 14:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cZjZdmss"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bm7ZRajf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5163C1B1207;
-	Thu,  4 Jul 2024 14:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BBC1A0721
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720104529; cv=none; b=SLHgCsdqpY1Iip/VM3ZsKUIwiAimdTXX2WQj3hZ0T1cvlNOCq5O6YcdSAqv+H7G92S01ZOKopZyY8nhI7bQpkGEByhDoSjj0ERi5pvXC2zf4XANVrvJXMORMtAmnhwfluFpkoMWpxl0HXl50l2ZvL1EmZv2Q5/PSj71jPlXQbek=
+	t=1720104523; cv=none; b=FZpSkCgSClZ1N6AfXv6ABOAZIQleP6eYaNB4s3Js9vYP2qTCdGfM3TxqZPIgG2BNsFSHdNLmlLsbz0xZMzzf0Wg1vbWBgdrpot/A/zKZw4KMUBDMnBJa5JsBINqDr5ibfCsB6InYYt5IFH0RJtyHWsjIt77ThAoPh1i2sDYJ6Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720104529; c=relaxed/simple;
-	bh=hTQ5+Ju5PD+FvRF1hnYejUZPbE8kNPGJFeDeitAPK5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=poaEF9WOKSouT3nW1rR7BMCzH4s00X9qi+r/3H74ChKsN/OKk1OdriRyL3IgRq/I6wN+Fr/pmqEjk7bb5VD3oGqahmI+fvhFsDtn2LRbuMDT93mhPgSijCRtNIvwL0vn0pHraTlUrtt7JLZb1gd1mL1gjYhPxCrGqH16KTwZgMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cZjZdmss; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-64f4fd64773so8186587b3.0;
-        Thu, 04 Jul 2024 07:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720104527; x=1720709327; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cp5edY4coh4CGekIA4INUCYnmNceA0sPbADqg4C7PGY=;
-        b=cZjZdmssC3ZIJoV4qR8gNDuJGBDwbRsBMYN2ShNilh/UeWZioaqYp6E/9ArHPXXPgt
-         1y9x4WO+YoBn7QEJ7irYujbqvbe0PfWvFF9wBB7BsU5UQvlWkBTvt2bRFawNlgDnhtEE
-         +YBEvgvSdiP2ZeAFBJgiA4xKaJWVfky8lwgnlBBxENBpLQq9CEWYh09n8XX7nT9Es91T
-         eu60aH2cDATFAZyVXHxcBn3Ulye0nH+9VvvuStHJVTAbOqYrNgpGWVY8sGAmOVkw42Z7
-         digb+t7vZpO1lhYLjq4BE34SipSpVRrGyItLiw+apqn00ixMdhvLF+r5pL6+XunIjQpn
-         xr1A==
+	s=arc-20240116; t=1720104523; c=relaxed/simple;
+	bh=NF9VhcfY2kP2qNky7RDCR2XtVIfpxkQd9KpLvuUa1x4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yxl4yQ5sC1W9sbPyZI6DOZF88VVIW+8kyNwSc0GlhjvtYteZjA7JeYd06xVTyIb3qfEj1us5VMmGxh/y+L6qdYeC6GdBHbgyJlMJLphAaR1pEjPgjq3Fa1uVKuTYLyFyrOBoELC70puMFnMG4Fwk4G2KgsRqRoe6L8j/+AoRqg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bm7ZRajf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720104520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vXECjDJrtIl4BpVTyYC6fwJS8w+7LK06QJNYlI1sP8Y=;
+	b=Bm7ZRajfsLaY1QQV7VFpRVsCp0krxkVBh8qXXjTY8Ta1WJCip4VXN/mQoe5wMaSLfvXB1L
+	UkhlOEU6uJhY12ATPlfYMFGo7A1iysMC4Uu4au3RkGQXYXllXJ9x7QiqvQ8XjUR1Sea+0M
+	nQqCWpk/Dbq7JR1jBwrA7HTZ/O7IDs4=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-590--K2qquZfNRSZycdr5iT1eg-1; Thu, 04 Jul 2024 10:48:38 -0400
+X-MC-Unique: -K2qquZfNRSZycdr5iT1eg-1
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-444f87a6c3cso1749631cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 07:48:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720104527; x=1720709327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cp5edY4coh4CGekIA4INUCYnmNceA0sPbADqg4C7PGY=;
-        b=dcZQ15Gp/vuMEM4pkEzY6wml4NLr9FUdt5LBQuLwfLCKpTaNWYhM/nmVhO1wfAxaUo
-         M8YBhIlurbDoP3oSNHsmdyJxXLRYGkuupPK/kLVcGghVNrlyl2n79Oi7ax+4hI42bOVf
-         6ebu+o1srG6HnJUeihvifHd163uL1R8b9BANVhNyFxJ4SJKSbpKdmf3jYKKcIpg1pT42
-         IGdPy2fo44YAlnbxkHUa4mVUmr0KuyElQV5fff4CotKonIb+XNhEYiQfbFy0GN4jVYNz
-         1WJWwEPwhmZ4La/ssRz+w04jhidEkAkbKnT9oaGIvP1f/SqVF5HysBhdk1SZC/izMUWe
-         BCYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhofD340nqRGHn0x2sGlbzcVkFtQVGcZzrGMfr8r0a/pVoL3duc+/2q0so5QAuf3aXTy1TZnNeUkRWq2S2AX3c+jNw5DJ4WwgL176XramAS5FXnYdJxHMa4Aqxsc+oDp/FhcNciX3T0Dg=
-X-Gm-Message-State: AOJu0YyQk5qZyMEB++hAOb6crRtSPxeS9RCs/33KYthxgDYZ3JbmKROc
-	2muLQ4Av3KigNDh3i/WqcW2LiqDC1I2wB2EbCbcRyboNmbNBeLbINm4p9R/sj9a++WCVKkQ4VeK
-	yUfFhA9++EqcMflENeRPBCGEidvI=
-X-Google-Smtp-Source: AGHT+IHPh8VBc7TGunrBIhkcZ45omy48LyXKyt7ZQZfzz/Ure6Rsthc0HV+ttveS0aTA5+Sur0JRJSuNsRm78pF9IDs=
-X-Received: by 2002:a05:690c:4d82:b0:64a:9832:48a with SMTP id
- 00721157ae682-652d29025f0mr24371487b3.0.1720104527343; Thu, 04 Jul 2024
- 07:48:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720104518; x=1720709318;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vXECjDJrtIl4BpVTyYC6fwJS8w+7LK06QJNYlI1sP8Y=;
+        b=ugZuPCJv+xsMfqL29Kg6x42/jT/TGd9D9qQzLRTZg44ZcviTgCBFaCj2jtwrMQHQES
+         CSCljJ4EZgTKfrybvFaHp2chMjAt2R66BJ5f4qGm25hGzBxQz4pVTmP/f4NuM2geBd55
+         z++g/uIaQUbA30jcrm/vvaF1npSGXIohAErAjG3gQXx2vxyLMBDnmTo26bVbn7+408cn
+         CTQJcFWCc+v/T1qW2bi8c2296GisIyrpLnSjna9RozD+EbNAXrJYiO1lVKd1yE/PGZar
+         8KUQodgbdMb8022aBKDooUwqDSt7RPur7vPIYEKOxet8Gs6ndVc2dtB3UG2z0MjoIqlK
+         qUNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfnDNrfKZkO61ep03+c502YcYEjKi6lWtDDMpvGyLwJQeKk7yTxRVaPPI6nt61EMyc04jtehXqi8YbrDM0F+fXw6q+6TH8U48HMaNT
+X-Gm-Message-State: AOJu0YzKZaknvHP/l2lmJDHYmKMoAH2BC24zON4vPAH4J2wnCrwa/9Rl
+	KQc6guTR6jShydxN9iYuMXeMMJp4NNeQshqgO+UW+Ua8LsBPLjLRFPaGKIDzvdrmFmKkEoWDtgH
+	3Im6SMwms+GHlUN6ibRKcgaNQAPiy5kRxKneBUjtUzMlhM5yqcNfxiq5xoFLrSQ==
+X-Received: by 2002:a05:6214:19ca:b0:6b5:de38:d6ee with SMTP id 6a1803df08f44-6b5ed25fef8mr17983536d6.3.1720104518271;
+        Thu, 04 Jul 2024 07:48:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbfJ4Dl8q9Di4ADjKh3fKHELg53QNLbtDJ7V6Dfgq9r/AZUi3Tjq7eYCPt4FX3A5juSme39A==
+X-Received: by 2002:a05:6214:19ca:b0:6b5:de38:d6ee with SMTP id 6a1803df08f44-6b5ed25fef8mr17983356d6.3.1720104517861;
+        Thu, 04 Jul 2024 07:48:37 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5f04c9fdcsm3194276d6.34.2024.07.04.07.48.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 07:48:37 -0700 (PDT)
+Date: Thu, 4 Jul 2024 10:48:34 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, x86@kernel.org, linux-riscv@lists.infradead.org,
+	Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH 3/3] mm: Add p{g/4}d_leaf() in
+ asm-generic/pgtable-nop{4/u}d.h
+Message-ID: <Zoa2Qnpzl97hmpHC@x1n>
+References: <b601e1a88e3a5d4d93b130fa20184b555e2a2bea.1720074307.git.christophe.leroy@csgroup.eu>
+ <c8cb83b709740f7ac835997b88c5ddda610f66ab.1720074307.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com> <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
-In-Reply-To: <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
-From: Andrea Gelmini <andrea.gelmini@gmail.com>
-Date: Thu, 4 Jul 2024 16:48:30 +0200
-Message-ID: <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c8cb83b709740f7ac835997b88c5ddda610f66ab.1720074307.git.christophe.leroy@csgroup.eu>
 
-Il giorno gio 4 lug 2024 alle ore 15:47 Andrea Gelmini
-<andrea.gelmini@gmail.com> ha scritto:
-> I send you everything when I collect enough data.
+On Thu, Jul 04, 2024 at 08:30:05AM +0200, Christophe Leroy wrote:
+> Commit 2c8a81dc0cc5 ("riscv/mm: fix two page table check related
+> issues") added pud_leaf() in include/asm-generic/pgtable-nopmd.h
+> 
+> Do the same for p4d_leaf() and pgd_leaf() to avoid getting them
+> erroneously defined by architectures that do not implement the
+> related page level.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+>  include/asm-generic/pgtable-nop4d.h | 1 +
+>  include/asm-generic/pgtable-nopud.h | 1 +
+>  include/linux/pgtable.h             | 6 +++---
+>  3 files changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/asm-generic/pgtable-nop4d.h b/include/asm-generic/pgtable-nop4d.h
+> index 03b7dae47dd4..75c96bbc5a96 100644
+> --- a/include/asm-generic/pgtable-nop4d.h
+> +++ b/include/asm-generic/pgtable-nop4d.h
+> @@ -21,6 +21,7 @@ typedef struct { pgd_t pgd; } p4d_t;
+>  static inline int pgd_none(pgd_t pgd)		{ return 0; }
+>  static inline int pgd_bad(pgd_t pgd)		{ return 0; }
+>  static inline int pgd_present(pgd_t pgd)	{ return 1; }
+> +static inline int pgd_leaf(pgd_t pgd)		{ return 0; }
+>  static inline void pgd_clear(pgd_t *pgd)	{ }
+>  #define p4d_ERROR(p4d)				(pgd_ERROR((p4d).pgd))
+>  
+> diff --git a/include/asm-generic/pgtable-nopud.h b/include/asm-generic/pgtable-nopud.h
+> index eb70c6d7ceff..14aeb8ef2d8a 100644
+> --- a/include/asm-generic/pgtable-nopud.h
+> +++ b/include/asm-generic/pgtable-nopud.h
+> @@ -28,6 +28,7 @@ typedef struct { p4d_t p4d; } pud_t;
+>  static inline int p4d_none(p4d_t p4d)		{ return 0; }
+>  static inline int p4d_bad(p4d_t p4d)		{ return 0; }
+>  static inline int p4d_present(p4d_t p4d)	{ return 1; }
+> +static inline int p4d_leaf(p4d_t p4d)		{ return 0; }
+>  static inline void p4d_clear(p4d_t *p4d)	{ }
+>  #define pud_ERROR(pud)				(p4d_ERROR((pud).p4d))
+>  
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index 2a6a3cccfc36..b27e66f542d6 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -1882,13 +1882,13 @@ typedef unsigned int pgtbl_mod_mask;
+>   * - It should cover all kinds of huge mappings (e.g., pXd_trans_huge(),
+>   *   pXd_devmap(), or hugetlb mappings).
+>   */
+> -#ifndef pgd_leaf
+> +#if !defined(__PAGETABLE_P4D_FOLDED) && !defined(pgd_leaf)
+>  #define pgd_leaf(x)	false
+>  #endif
+> -#ifndef p4d_leaf
+> +#if !defined(__PAGETABLE_PUD_FOLDED) && !defined(p4d_leaf)
+>  #define p4d_leaf(x)	false
+>  #endif
+> -#ifndef pud_leaf
+> +#if !defined(__PAGETABLE_PMD_FOLDED) && !defined(pud_leaf)
+>  #define pud_leaf(x)	false
+>  #endif
+>  #ifndef pmd_leaf
 
-Here we are.
+Is it possible to do it the other way round, so that we can still rely on
+"ifdef pxx_leaf" to decide whether to provide a fallback, and define them
+properly when needed?
 
-Kernel rc6+branch:
-    Output of bfptrace:
-    https://pastebin.com/P9RFp5mg
+IMHO it was a neat way to avoid worrying on any macro defined; it'll be as
+simple as "if function xxx not defined, let's define a fallback for xxx".
+Per my limited experience it helped a lot on avoid compile issues here and
+there..
 
-    Recording of tar session: (summary: start fast, then flipping super slow)
-    https://asciinema.org/a/BxYI83TkrlOhEe42IWXNY135D
+Thanks,
 
-    Recording of htop session: (summary: PSI high and two threads at 100%)
-    https://asciinema.org/a/ZwGSepZZ8TSpFfPssACUUXcCB
+-- 
+Peter Xu
 
-
-Kernel 6.6.36:
-    Recording of tar session: (summary: tar always fast)
-    https://asciinema.org/a/a6dOkbjyPFkkQ5aNTaRiFD3H8
-
-    Recording of htop session: (summary: no threads and PSI load)
-    https://asciinema.org/a/mFsypWzHfSdsjrIQf8zpzNpKo
-
-If you need to run for longer time, I can do it in the weekend.
-If you need dump of my BTRFS fs, no problem, but I need 'btrfs image
--s" working (point is: scrambling filenames).
-
-Thanks a lot,
-Gelma
 
