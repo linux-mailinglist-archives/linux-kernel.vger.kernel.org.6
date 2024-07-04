@@ -1,133 +1,90 @@
-Return-Path: <linux-kernel+bounces-240692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362A292710E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 565C1927110
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 680811C232ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:58:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 837F91C220AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB811A4F06;
-	Thu,  4 Jul 2024 07:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B551A38E8;
+	Thu,  4 Jul 2024 07:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MwsV5FcE"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="ZdFL+0i1"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4E41A38E8
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 07:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38668174EC0
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 07:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720079881; cv=none; b=uwLvjwcaeDkr1ZUg5zKXyootMpSlmjTsu4X38Wyb1s1NyYAmq/nPsBqvsj2oNIzI+wy2ck3IXNT33kX7ybgqKcHmKvJ3W47F8+zAKvugWYJQ2Xdz3LsOvcTfMKU7irPpBVXNEL9uaMlA3wLjkP/apPUwNgmVKIbJVYSBMcQm3Gg=
+	t=1720079980; cv=none; b=qXI2U90qlgylk+gleBXY3Lvpyyu8sMd1InsLc9Dl3APVaER88j7fVSQXzxGRgOUyS4hlQJhxckNTsL8/AgGMqOksg107Nm3V3sRvpxtZykcebrtaXU66oTu6TdjCeYzEKBBweRGQXORUtk2nFPxw2h0yCbn5S5hFH6+Qo/PEkoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720079881; c=relaxed/simple;
-	bh=UGMJ44RQRK5L7aXCmLcCVD3t3Ew+7rZXgNHMCelmG4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CCwnz7auCXG6jkRhj4YYGgZ1+GJNnN7Z/c2Fl9RdNFT44ICet20YyRsop6bCPEOFnBP3aRk4nj7Zjn7l/ptodX5zKLAqcIXpeENfTsX3i36f0gW8h8Q8HIta8pej2eMK6kn+YOuLFuItAAexQoQtFHCPAfyw9nL/yVNWpedpXVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MwsV5FcE; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-35f06861ae6so212580f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 00:57:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720079878; x=1720684678; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yh+wWDEWyvWxK+Dc2ccAVMOd+nezcfUI+rK+tEbS35s=;
-        b=MwsV5FcExI5ZVPlVgKEcePwkYok+WfzdvNtwPkvHmvo8Z+xoG5hA0cs3BpRVw1xuf5
-         88D23HyHCcn0PQyC9/wmqqdsgajtk2eTfHIV+CltYNUZFWurZrvOkY+ZlmdWgNKpp+7F
-         iSvDtJeXNbB7vU7VZEH2PPLxGec8wUo0X2saav5lpatRJXqPj85sw5EN4wsFNOCYt3ya
-         h/UBgy+x0fuSij329hqJcgWBau2BLi3ZPX/D7gZxChtCo8L/9MXlLPUZnIlRjnT6Gxmj
-         4Nk2sY/Ts2XexPX3v7t1Z/KjkZbPsMo8aA4Ca3PsKoT04ijKZd9L6Dxk8JZFdb1DkxJ2
-         HEjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720079878; x=1720684678;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yh+wWDEWyvWxK+Dc2ccAVMOd+nezcfUI+rK+tEbS35s=;
-        b=nghDKMvLvT2FvlkPnBwPdTwNOAQE11Jx5NzWlIQuehvKjOPhNnSZYmfsmh3MQSf5R5
-         jqKhDJKcsCMcPgGwvyHoFeLukLBjYqdJTAd7QjLGe7cxf3cRRvpDE+Op9tFRtLM/IHWY
-         iBbP97C9mXnJRaTRHnsho/V8HowKJm2ixrzcDTRJAoWVqM6cMnlcBnt2TVkY9HtpDY3e
-         cljJ21F2/Bl+yaRj+e4MyAb8sLVXKV0nNqtjFasrfgV7yK2U7/GccZjNe+rEFn1GTHNf
-         p1By1BUZb/LTnGLBlR/VYHw+nmRZqG80Y7m/b6CptdLA9wVGLxHUKtDjrcC4cuKsulbF
-         1A3w==
-X-Gm-Message-State: AOJu0YzfwMLwVCsEW4z1U/SbRZObUjLBt38RdcenJdc7yDPYUMrbn2HB
-	K+DENzZBiPs0ThwsfWHYBomqe23wgTPCbUD+h5Y40XfypDk66rPXTmDggQpxOomWX15aDdJ/I9g
-	C
-X-Google-Smtp-Source: AGHT+IHfWjqPwEJhWwd/bHs46j5WWXDlgt+XZ6rBtRnO7nRiiCBSFw8hpTuo6iaafsU3L46ZlgLJCA==
-X-Received: by 2002:a5d:5489:0:b0:367:911b:ff6f with SMTP id ffacd0b85a97d-3679dd29485mr583989f8f.18.1720079877647;
-        Thu, 04 Jul 2024 00:57:57 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3678ec6ff64sm4952189f8f.3.2024.07.04.00.57.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 00:57:55 -0700 (PDT)
-Message-ID: <50390ee7-20df-4be1-9cda-639981bf4ca7@linaro.org>
-Date: Thu, 4 Jul 2024 09:57:55 +0200
+	s=arc-20240116; t=1720079980; c=relaxed/simple;
+	bh=uCHLNn9xW6DSGJxm2VvdezS3o/2wBq8N3JtHJLSItQ0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=aRIOdJVakUtEffCC2GYxEb+FB/SgiSn2rRtdOBz9H4vV58toYnAiWagW0m1MRPnihwgmk+Rbtu7usgXtpo8OERb+iEHGTuZfUDQNrvIA4iIghTdajXkaMr804czMa0+odHDDiS9yPssLIAlbq9KAqoKx6cQHgDXrwVn7jxcWpps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=ZdFL+0i1; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 4647wvQp1325117
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 4 Jul 2024 00:58:58 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4647wvQp1325117
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024061501; t=1720079939;
+	bh=TEQkEq5fwuA0kITHZp4giwTncsUgvpmrSlBYawflwQk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=ZdFL+0i18i6PPQaxlfiU4r04LCx+59xPAg3LyoMUMaKq7NRDhHSr6GguEvbUEXO7i
+	 jhEnIUwxRobrrEJYv6+vAaFTicRCPGnLYW1WojtMKyJhnLG66C7j7IfZ6DPOx7GvDr
+	 oYe7dDxhOi3jeYoGRac3I5Gi9ZvWqh0md+CPRqtnjuQ+/nLMfPlhB9IrCbtI8IXNQ5
+	 0t4yPtGrLWKKhD8SYkMgpf9DF10lc+YrfZaYUVo8FmCdlJRHTBmpuTYi9wtxNjAbTZ
+	 +CYIaM7lB8l8S2RAKcHDL1ir/nNpEiz/MZMbD9eqPo9MhkcP8tkWpTntg2p7XSuSG+
+	 Osj4+UeVyZ8Qw==
+Date: Thu, 04 Jul 2024 00:58:55 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
+        Borislav Petkov <bp@alien8.de>, dave.hansen@intel.com
+CC: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
+        nik.borisov@suse.com, houwenlong.hwl@antgroup.com
+Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
+User-Agent: K-9 Mail for Android
+In-Reply-To: <ada20b3c-2935-4d4f-8daf-ba7b9a533877@zytor.com>
+References: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com> <172002205406.3280081.14523962650685954182@Ubuntu-2204-jammy-amd64-base> <15f56e6a-6edd-43d0-8e83-bb6430096514@citrix.com> <AD99CE51-62B3-494D-9107-7C9093126138@zytor.com> <56909a1e-b360-4090-945e-cf6ec623cccc@citrix.com> <ada20b3c-2935-4d4f-8daf-ba7b9a533877@zytor.com>
+Message-ID: <AC8AACE5-7A77-479A-B776-AE65BFA241FF@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] thermal: core: Call monitor_thermal_zone() if zone
- temperature is invalid
-To: neil.armstrong@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <2764814.mvXUDI8C0e@rjwysocki.net>
- <2ed4c630-204a-4f80-a37f-f2ca838eb455@linaro.org>
- <8d91a3c1-018f-495b-83be-979b795b5548@linaro.org>
- <12c5c133-9519-4a26-b9a3-2da1d3466e94@linaro.org>
- <15b67ce6-3238-435d-ad28-7c06efbe9153@linaro.org>
- <ce6c2e8a-65a7-4cb2-a91d-fbcaeef6edc1@linaro.org>
- <0c4b401e-86b8-4169-af88-475433012d67@linaro.org>
- <636922b4-96d4-49cb-9020-2359e7497f56@linaro.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <636922b4-96d4-49cb-9020-2359e7497f56@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 04/07/2024 09:39, neil.armstrong@linaro.org wrote:
+On July 3, 2024 10:57:29 PM PDT, Xin Li <xin@zytor=2Ecom> wrote:
+>On 7/3/2024 9:18 AM, Andrew Cooper wrote:
+>> On 03/07/2024 5:06 pm, H=2E Peter Anvin wrote:
+>>> I believe tglx declared53  to use them unconditionally since FRED depe=
+nds on WRMSRNS (and the kernel enforces that=2E)
+>>=20
+>> I know that Linux has chosen to have this as a software-enforced
+>> requirement=2E
+>>=20
+>> The dependency does not exist architecturally, and just because it
+>> happens to be true on Intel processors doesn't mean it's true of other
+>> implementations=2E
+>
+>Won't it be way better if we could have all x86 vendors agree on it?
+>
+>
 
-[ ... ]
-
-> OK I just found out, it's the `qcom-battmgr-bat` thermal zone, and in CI 
-> we do not have the firmwares so the
-> temperature is never available, this is why it fails in a loop.
-> 
-> Before this patch it would fail silently, but would be useless if we 
-> start the firmware too late.
-> 
-> So since it's firmware based, valid data could arrive very late in the 
-> boot stage, and sending an
-> error message in a loop until the firmware isn't started doesn't seem 
-> right.
-
-Yeah, there was a similar bug with iwlwifi. They fixed it by registering 
-the thermal zone after the firmware was successfully loaded.
-
-Is that possible to do the same ?
-
-> I think Rafael's new patch is good, but perhaps it should send an error 
-> when it finally stops monitoring.
-
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+It was tglx' explicit request to keep it simple unless someone objects=2E =
+All it would take is for someone to come up with a countercase=2E
 
