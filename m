@@ -1,159 +1,122 @@
-Return-Path: <linux-kernel+bounces-241152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C5A927797
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:00:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC4A927799
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1934A1F25112
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:00:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27674282CBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B080F1AEFEE;
-	Thu,  4 Jul 2024 14:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC651AD9E0;
+	Thu,  4 Jul 2024 14:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="26Aj+Ih3"
-Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCCE1AEFD9;
-	Thu,  4 Jul 2024 14:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQTXxXQ1"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E572F37;
+	Thu,  4 Jul 2024 14:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720101608; cv=none; b=Su9r6407ls9xYWD/WRwJeOK2QroUzWZ23zc3D18cRssvuoaTZQg8ZTB31i7UDSwvoCDpwRW7s5fjA5KV0zIG2zM56pIPxgSqmCjuf+eELdojqB3Pk+LERg4CoEwCwKZLS2m+91P3Gq9Z6jW1Jth7T+bmjafiLMAEzaI44zG7fkM=
+	t=1720101638; cv=none; b=jKPD47XxPg6pLxCx3Pt82PJIEJMRDjvCkCsxc5dD3jimcV7+AyxbVYlpRrSrhxJZT3L12nWlW1z+RvEk2PDwHsafh/sTql73gwqucR8qUKOM9+YW+o4HCwvgtMFFB1KxhHgT6zPcITqyCiBtSLMbPyo3LgUI4Z1SnHWAgFAIIC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720101608; c=relaxed/simple;
-	bh=NL4y4Vxm3N+KiIzZR5ru/bHBDfPngIH5NU6qtzx4NEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hYu1ieU3w3e52U7tjrMFBjeA3NZzCf41FJqG3L/6NDrwqYhHwZ72GxpvGRRJQDR5RajjSupm+ZDayr90qOhnvizXzp4bx9tER//e8BHE3qdA4SoVii5TcRiIQLbADUVXRx8ILklUxkB1aXeytUwAaeGEGNhxIqCpkgyrWqEf5j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=26Aj+Ih3; arc=none smtp.client-ip=3.9.82.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
-Received: from localhost (unknown [IPv6:2a02:8012:909b:0:a8e6:1543:faf0:bfe2])
-	(Authenticated sender: tom)
-	by mail.katalix.com (Postfix) with ESMTPSA id 2D7EA7D582;
-	Thu,  4 Jul 2024 15:00:00 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
-	t=1720101600; bh=NL4y4Vxm3N+KiIzZR5ru/bHBDfPngIH5NU6qtzx4NEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Disposition:In-Reply-To:From;
-	z=Date:=20Thu,=204=20Jul=202024=2014:59:59=20+0100|From:=20Tom=20Pa
-	 rkin=20<tparkin@katalix.com>|To:=20Hillf=20Danton=20<hdanton@sina.
-	 com>|Cc:=20syzbot=20<syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspot
-	 mail.com>,=0D=0A=09linux-kernel@vger.kernel.org,=20netdev@vger.ker
-	 nel.org,=0D=0A=09James=20Chapman=20<jchapman@katalix.com>,=0D=0A=0
-	 9syzkaller-bugs@googlegroups.com|Subject:=20Re:=20[syzbot]=20[net?
-	 ]=20KASAN:=20slab-use-after-free=20Write=20in=0D=0A=20l2tp_session
-	 _delete|Message-ID:=20<Zoaq358lbnpyHPUq@katalix.com>|References:=2
-	 0<ZoVGfR6Gx7PLbnn1@katalix.com>=0D=0A=20<20240704112303.3092-1-hda
-	 nton@sina.com>|MIME-Version:=201.0|Content-Disposition:=20inline|I
-	 n-Reply-To:=20<20240704112303.3092-1-hdanton@sina.com>;
-	b=26Aj+Ih33jEIr1loN/x04M8950DbCo7Lfou9XtxjcOYTq0zpbs/I2foZZxQsH6Yy0
-	 krq4dTuQO//PSwqIi+haaxBO/dTHTK4phezHo5zEBY1cvheBSlhgfJlt1qvBxm3r0Q
-	 j4sGzpMbiwYachPXZEn81Nlz2DAsGg7C/CuemeOu2OHoGPruaIWpwkAY/czGNy10+u
-	 KHkLmCBKewRcNO2wtPjVRSnqeZu9XbrQ9qHjeGXKjkOoKhHiu9RwY2mS8HKNMFlpZb
-	 Y2/A36E1aPqLk6QTM44YSjmGtSjZNGZKeYxyasLfKwkwAQdIb/4yL2gBDL8sba9vZf
-	 lpZgp7DKZIc2w==
-Date: Thu, 4 Jul 2024 14:59:59 +0100
-From: Tom Parkin <tparkin@katalix.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	James Chapman <jchapman@katalix.com>,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in
- l2tp_session_delete
-Message-ID: <Zoaq358lbnpyHPUq@katalix.com>
-References: <ZoVGfR6Gx7PLbnn1@katalix.com>
- <20240704112303.3092-1-hdanton@sina.com>
+	s=arc-20240116; t=1720101638; c=relaxed/simple;
+	bh=BI3K9B4fHdsqsHWD9vA0RUdsadmFzyQ94cYJLOtuDUw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NNLF3WycQVlnM88M6txw/Qp6J1H13CgZv9GoWwVEHkoHTbvRww1+4EFBuPp8MGbKrbU1zwS6oC46G9HVhGj5vaW8jII9DLmpS5SoGSoMy00ACL4VRvGcpEzBFVZe8Gp0t73mra0YinnQmxuY/OO8DHWBYbkDWhO+UHNY2RLjFoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQTXxXQ1; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57cc1c00ba6so1003156a12.1;
+        Thu, 04 Jul 2024 07:00:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720101635; x=1720706435; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BI3K9B4fHdsqsHWD9vA0RUdsadmFzyQ94cYJLOtuDUw=;
+        b=VQTXxXQ1x64rzqNcU3ulfo3ndw6OP1/a9OFyN1vuSdb81kMuqPBfwpL/mZc2TBu7YR
+         /T3fjBwE9R+WvX9aReCJG9y6d/4UIIelAFkXG2traAo808Qse62wzD/+a5BpJvxwuAVc
+         a+rIwLSgI2ZndZmgHvRXEMSxNLihF7xkdoHRwTzGWmCqZ7WoVFjosMf7WrGhehyIbByV
+         +UnSJhjSQDRBJ31TEdjjXuLMre41X6DGe5DGoghOHadawlkHWPkrs2KHw3CYxW+j5sju
+         nVPFpGwkg9wsCGN1zo8WFG0BfnLaJw5c2LGaScfbAxUKGWpHE7Nnp4XV5Qbb/azAiDQc
+         L/aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720101635; x=1720706435;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BI3K9B4fHdsqsHWD9vA0RUdsadmFzyQ94cYJLOtuDUw=;
+        b=KsTIbpCF72Edi5dpdQVf+3ofzFv0w6rxLSmysgVwahShHoA/FiP1cYyDHiEL/A93B5
+         92TprEqgbmXEFFHr+tlj2PmbBYxrCUZQ8suzi7CCr+0yNt1yG+gq9Javn++19RnlNtEt
+         443o8czMyhzc4TiS3SCl/SmVr17qVm7xIfbozwUpJHOKTTKMdvufz4mwRuJISU65m6ij
+         pECbAZMEV6/CKJG3JCbPemgMq9M1taSfPDNIBVLDKthaAvPyGf1Ufw9V5Z41v35F3ktc
+         DMCSDSdFQnILBWULv3aWd4/h50CTpgjL9WD8tZQLXFS6vDNBHYxmoWUHMdEbYwShyDqR
+         1MtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkZMuJT3oz0F+So8m/04x1TOd9d0jK9ywNOt1NregJMZLBFsmKx5x53dtlFgfweO/V1bJAPIoXTK1ClP0tPEu3/GvRGQVRptUCVKvNDdcA6xvZkixzv2Ajo8CMXZAQJODXEYzPA1OL
+X-Gm-Message-State: AOJu0YwR+xacPwMg8fNVhkmYf2x1sKmR7jEe7o9Jr0spIYnc3c18sOPf
+	2QPUkE7W5hTqMqYLQYKR1//5MR03AzvFUMk+XrkCcPPTdH5y2PtV
+X-Google-Smtp-Source: AGHT+IEQxWoQEdIqpOkEDDklRMrrllojJRx4vtnOba5QfkjeMPJhS52NS3hiUZx/2dMDFf8CR3JUxg==
+X-Received: by 2002:a17:906:cb8b:b0:a72:7bd6:7e4a with SMTP id a640c23a62f3a-a77ba478995mr122294366b.24.1720101635396;
+        Thu, 04 Jul 2024 07:00:35 -0700 (PDT)
+Received: from A13PC04R.einet.ad.eivd.ch ([193.134.219.72])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a77b8195453sm55100866b.1.2024.07.04.07.00.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 07:00:34 -0700 (PDT)
+From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: abaci@linux.alibaba.com,
+	arnd@arndb.de,
+	jiapeng.chong@linux.alibaba.com,
+	kishon@kernel.org,
+	kw@linux.com,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	manivannan.sadhasivam@linaro.org,
+	Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Subject: Re: Re: [PATCH -next v2] misc: pci_endpoint_test: Remove some unused functions
+Date: Thu,  4 Jul 2024 16:00:21 +0200
+Message-Id: <20240704140021.2363403-1-rick.wertenbroek@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <2024070442-garden-visa-a7d0@gregkh>
+References: <2024070442-garden-visa-a7d0@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RnLWkKV2K9RyjKPH"
-Content-Disposition: inline
-In-Reply-To: <20240704112303.3092-1-hdanton@sina.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Thu, Jul 04, 2024 at 02:58:10PM +0200, Greg KH wrote:
+> On Thu, Jul 04, 2024 at 04:14:06PM +0900, Krzysztof Wilczyński wrote:
+> > Hello,
+> >
+> > > These functions are defined in the pci_endpoint_test.c file, but not
+> > > called elsewhere, so delete these unused functions.
+> > >
+> > > drivers/misc/pci_endpoint_test.c:144:19: warning: unused function 'pci_endpoint_test_bar_readl'.
+> > > drivers/misc/pci_endpoint_test.c:150:20: warning: unused function 'pci_endpoint_test_bar_writel'.
+> >
+> > Have you see my question to the first version of this patch?
+>
+> Yeah, I don't understand this at all, how is this patch even building?
+>
+> What tree/branch is it made against?
+>
+> thanks,
+>
+> greg k-h
 
---RnLWkKV2K9RyjKPH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
+I can confirm in linux-next tag next-20240703 the functions are indeed removed.
+See commit 0ace3d3b70ed6a474d52fc44ee9b0b1f16ca3724
+misc: pci_endpoint_test: Use memcpy_toio()/memcpy_fromio() for BAR tests
 
-On  Thu, Jul 04, 2024 at 19:23:03 +0800, Hillf Danton wrote:
-> On Wed, 3 Jul 2024 13:39:25 +0100 Tom Parkin <tparkin@katalix.com>
-> >=20
-> > The specific UAF that syzbot hits is due to the list node that the
-> > list_for_each_safe temporary variable points to being modified while
-> > the list_for_each_safe walk is in process.
-> >=20
-> > This is possible due to l2tp_tunnel_closeall dropping the spin lock
-> > that protects the list mid way through the list_for_each_safe loop.
-> > This opens the door for another thread to call list_del_init on the
-> > node that list_for_each_safe is planning to process next, causing
-> > l2tp_tunnel_closeall to repeatedly iterate on that node forever.
-> >=20
-> Yeah the next node could race with other thread because of the door.
-
-Exactly, yes.
-
-> > In the context of l2tp_ppp, this eventually leads to UAF because the
-> > session structure itself is freed when the pppol2tp socket is
-> > destroyed and the pppol2tp sk_destruct handler unrefs the session
-> > structure to zero.
-> >=20
-> > So to avoid the UAF, the list can safely be processed using a loop
-> > which accesses the first entry in the tunnel session list under
-> > spin lock protection, removing that entry, then dropping the lock
-> > to call l2tp_session_delete.
->=20
-> Race exists after your patch.
->=20
-> 	cpu1				cpu2
-> 	---				---
-> 					pppol2tp_release()
->=20
-> 	spin_lock_bh(&tunnel->list_lock);
-> 	while (!list_empty(&tunnel->session_list)) {
-> 		session =3D list_first_entry(&tunnel->session_list,
-> 					struct l2tp_session, list);
->  		list_del_init(&session->list);
->  		spin_unlock_bh(&tunnel->list_lock);
->=20
->  					l2tp_session_delete(session);
->=20
->  		l2tp_session_delete(session);
->  		spin_lock_bh(&tunnel->list_lock);
->  	}
->  	spin_unlock_bh(&tunnel->list_lock);
-
-I take your point.  Calling l2tp_session_delete() on the same session
-twice isn't a problem per-se, but if cpu2 manages to destruct the
-socket and unref the session to zero before cpu1 progresses then we
-have the same sort of problem.
-
-To be honest, cleanup generally could use some TLC (the dancing around
-the list lock in _closeall is not ideal), but a minimal patch to
-address the UAF makes sense in the short term IMO -- so to that end
-holding a session reference around l2tp_session_delete in _closeall is
-probably the least invasive thing to do.
-
---RnLWkKV2K9RyjKPH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEsUkgyDzMwrj81nq0lIwGZQq6i9AFAmaGqtsACgkQlIwGZQq6
-i9BNXQf/bpKvkmGlwUefekQYEVJouMll0xdfE14o9PWiT8zEwZd/A9BxTsXxVUru
-81C6K0F6otF+WgZw2HfFQcueMO6IULt4PK7VeXhy8D8uCtod6fbCr2DvRmMatGlY
-5POVyervFyGElR+sgieUIIoBgclXaG5g2mHKn/O7cgDjGRrgXP3gzQucgywYzAVP
-MkvZVV4d+OpUWlIW+D/a96r1U4POJIrRrm9GkPf+OnIxvgagpv5q+QJdItPwU9CL
-9pCNUzqDi4Yw+jo4tmmj050/KeRxQRL4RpQWugLhJVeN8imx94Q6PUfX+UcHHsbA
-CaHO+fmbyhv2zhm3TNX4bYXI7oun/Q==
-=nc6Q
------END PGP SIGNATURE-----
-
---RnLWkKV2K9RyjKPH--
+Regards,
+Rick
 
