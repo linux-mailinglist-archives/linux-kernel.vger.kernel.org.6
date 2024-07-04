@@ -1,89 +1,124 @@
-Return-Path: <linux-kernel+bounces-241438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B00B927B73
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F019927B76
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 269531F23FDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:48:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09DA61F23FCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D851B3743;
-	Thu,  4 Jul 2024 16:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B241B3749;
+	Thu,  4 Jul 2024 16:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Iz1Qx73x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChPzUC53"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25F71B29B3;
-	Thu,  4 Jul 2024 16:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7A4182D8;
+	Thu,  4 Jul 2024 16:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720111725; cv=none; b=ExQnzPPRqnVE04ciBM4BZANUiHhqjcTwoUXGgaJ4E/HH8GZx10A3eeZZVEYAnSTXQnpBV+61VI50VNcXTswMv1niFkGoFqTEjk78sB5qgksE0H0Fsl6+oHEx1YW6T1bwRcj37pO924+/7I0uRDSucYJuo51vJk56ONQUl8sfgG8=
+	t=1720111764; cv=none; b=JjXSUB7jT/R5NKaA4C80q6d6W98HdCJOpWfjzBQV+GimIRxeTYOeWZpYS8igZgj6le6YOv5Zr+4sCbviFnDlMQ9nmvYamNDo699253EQDyM8BUdVeYo1xALgCUww5cJb4JM5QonOaCg7ZJ08QVd8FS+fmBaB0NK6H2bc2XZd1t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720111725; c=relaxed/simple;
-	bh=fws0HiGmamLZEZZjubszO9u8aqlHTHOAwe7LhWHHqWU=;
+	s=arc-20240116; t=1720111764; c=relaxed/simple;
+	bh=V/hNryxYUoqX/3hr4qkJMKJe/sxOnEhMLqbIa0w1mOw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pXsi+1I91mFR3rOXLHMZD+k+EaJYdixylImsHdL/QOe7ZXefk0OxXRVooezx9bZvYfc78U7pR7/dDcXcOCg+z9+KAdRrXAq/rh6bRMUhartbNOKS5/PqFgGtkrrt0whVB0hetMI2v8vLuXYhoazaWQHVZ3N06M0CIGgVMZ+Npqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Iz1Qx73x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9551DC3277B;
-	Thu,  4 Jul 2024 16:48:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720111725;
-	bh=fws0HiGmamLZEZZjubszO9u8aqlHTHOAwe7LhWHHqWU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=WYaztPo3MbYtggFO5MYbtWhAcyMTdNHoGjPmsVoTJqw1ZVk/khe9Ibuf34YirbNlxeImFEfk5rvOQGOkrb419t9bVQ4a+OEzPKKXuG9CykQDB07WHJdNlS/bJxgyuTNdOQU0hsCn00JXrAMb3wTT/uru7eDcDxq/FHQkv8p8yQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChPzUC53; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B306C3277B;
+	Thu,  4 Jul 2024 16:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720111763;
+	bh=V/hNryxYUoqX/3hr4qkJMKJe/sxOnEhMLqbIa0w1mOw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Iz1Qx73xmcMl1yR+IY4nIYNphQlCVh1WMzcNcBPEqtrbJPSqklaUJJbeIzn0jtSoz
-	 zNM3MW1SeY/SzjMB8kSkXkPqFqjv1RVRS/BNEcEY117j89sf69i0IrsJqyeRK+3Fgu
-	 DeSdr/iDtOWXvhhcqGHKYee8sHJCz3+2bVorgggo=
-Date: Thu, 4 Jul 2024 18:48:42 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Martin Oliveira <martin.oliveira@eideticom.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-rdma@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Artemy Kovalyov <artemyko@nvidia.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Sloan <david.sloan@eideticom.com>
-Subject: Re: [PATCH v3 1/3] kernfs: remove page_mkwrite() from
- vm_operations_struct
-Message-ID: <2024070435-powwow-steadier-de07@gregkh>
-References: <20240704163724.2462161-1-martin.oliveira@eideticom.com>
- <20240704163724.2462161-2-martin.oliveira@eideticom.com>
+	b=ChPzUC53rna8olX5yXkpeizcxuhdkvoYsJyKcGnFlIstZh48N3YMeD2dM6zNSfUlL
+	 CGeSlmXr1KfvsdCQRDKBFX7d8Id0oUlHq1awnegoPAgSHebCDicc7n8NOp9mSgaTfD
+	 BTMFfS8WoRS4JOx7tARRw6R5tE1DBOySbN+u+qDIQcp7XPwOYHwjAwVubSj5DNfFW7
+	 79QrD59o3EGx0QxC9SKZ6p3iani42yt9C7CH/x2lqyXhmNx8R5As7bfGWWSMVbBIIK
+	 7LM3cryE5eYoY4wv2Q8RhLX0sFVHDTDQWvhGOqhS+vaMrHbpijgf45c3pBP2zCaQaN
+	 xc/Dfk/nPyyWA==
+Date: Thu, 4 Jul 2024 17:49:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: Serge Semin <fancer.lancer@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] riscv: dts: thead: add basic spi node
+Message-ID: <20240704-nifty-footman-a0b21ee461e0@spud>
+References: <20240701121355.262259-2-kanakshilledar@gmail.com>
+ <20240701121355.262259-5-kanakshilledar@gmail.com>
+ <20240703-juice-refreeze-62c468a56ea5@spud>
+ <CAGLn_=tVZ3StW3uB+CkcHBpSJG8PfNGSM6zOVV6OSJeL2Pz56A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iudhDWt6j+LdvUYo"
 Content-Disposition: inline
-In-Reply-To: <20240704163724.2462161-2-martin.oliveira@eideticom.com>
+In-Reply-To: <CAGLn_=tVZ3StW3uB+CkcHBpSJG8PfNGSM6zOVV6OSJeL2Pz56A@mail.gmail.com>
 
-On Thu, Jul 04, 2024 at 10:37:22AM -0600, Martin Oliveira wrote:
-> The .page_mkwrite operator of kernfs just calls file_update_time().
-> This is the same behaviour that the fault code does if .page_mkwrite is
-> not set.
-> 
-> Furthermore, having the page_mkwrite() operator causes
-> writable_file_mapping_allowed() to fail due to
-> vma_needs_dirty_tracking() on the gup flow, which is a pre-requisite for
-> enabling P2PDMA over RDMA.
-> 
-> There are no users of .page_mkwrite and no known valid use cases, so
-> just remove the .page_mkwrite from kernfs_ops and WARN_ON() if an mmap()
-> implementation sets .page_mkwrite.
-> 
-> Co-developed-by: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Martin Oliveira <martin.oliveira@eideticom.com>
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+--iudhDWt6j+LdvUYo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jul 04, 2024 at 11:12:43AM +0530, Kanak Shilledar wrote:
+> Hi
+>=20
+> On Wed, Jul 3, 2024 at 8:15=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
+> >
+> > Kanak, Drew,
+> >
+> > On Mon, Jul 01, 2024 at 05:43:54PM +0530, Kanak Shilledar wrote:
+> > > created spi0 node with fixed clock. the spi0 node
+> > > uses synopsis designware driver and has the following
+> > > compatible "snps,dw-apb-ssi". the spi0 node is connected
+> > > to a SPI NOR flash pad which is left unpopulated on the back
+> > > side of the board.
+> > >
+> > > Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+> > > ---
+> > > Changes in v2:
+> > > - Separated from a single patch file
+> > > ---
+> > >  .../boot/dts/thead/th1520-beaglev-ahead.dts      |  9 +++++++++
+> > >  .../boot/dts/thead/th1520-lichee-module-4a.dtsi  |  4 ++++
+> > >  .../riscv/boot/dts/thead/th1520-lichee-pi-4a.dts |  5 +++++
+> >
+> > Didn't you say there was a flash on one of these two boards?
+> Yes, there is a SPI nor flash pad left unpopulated on the bottom side
+> of the LicheePi 4a
+> carrier board. https://wiki.sipeed.com/hardware/en/lichee/th1520/lpi4a/2_=
+unbox.html#Board-hardware-overview
+> notice the reserved pad in the bottom part of the image.
+
+Ah right, unpopulated. That makes sense, thanks.
+
+--iudhDWt6j+LdvUYo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZobSjgAKCRB4tDGHoIJi
+0hWfAP4uT4pgwm2LlqNsYq0IrYwSClAiEbvyWGLDIpcB45LO4wEA/iWiNXaMCveq
+fX/ADDYJWod2qCc/NImHzdaaCxqBKQk=
+=fj/5
+-----END PGP SIGNATURE-----
+
+--iudhDWt6j+LdvUYo--
 
