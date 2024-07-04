@@ -1,379 +1,231 @@
-Return-Path: <linux-kernel+bounces-241385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06847927ABC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:59:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 154FF927AC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 275A61C23F63
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:59:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372D81C217CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0FE1B14E2;
-	Thu,  4 Jul 2024 15:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B5B1AE0A6;
+	Thu,  4 Jul 2024 16:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WUuhV4bH"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="klClIM5y"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2059.outbound.protection.outlook.com [40.107.22.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96111B1504;
-	Thu,  4 Jul 2024 15:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720108721; cv=none; b=FsUcoLeGB0DvrfYiN4iQBZ1vy5+OxyHUaOrKhA4nsB46OQRKTcqjMKsxNB5xULryr4mwDWKfBEXRHCN87yfbB75+G73PBWJXl3HukHXEcMnt9RDKdtoTpnMu0vKgzC+NScPXCmeYjFIiAEeH5VX+srJgggKwvgeinScyxP8T7ls=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720108721; c=relaxed/simple;
-	bh=Vw9cYiWmBWfb8TTsaP6MPM8WxWX5thyZbtwBWEFIH6A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nYKHWl9rj5xcOsu6iE90tJURny6pdE8O69x90wdprkt4rlvwpA45Kj7S+Mt4mvF4u9klKggY+jouBHrbRrYqUptVQlDqHsy6utsSOxkVuVJv9U9Zxsbbv5u56iFlmVcJoCHyI47so/ZaRqrh7Zvddx3NnN8RXLcVwVsw3KMzljU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WUuhV4bH; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6b3so265243a12.1;
-        Thu, 04 Jul 2024 08:58:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720108718; x=1720713518; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mGlL/uE7TDzKfiVbTPhEKK0ePrDxqpfFWq/HFd9CIio=;
-        b=WUuhV4bHvFhNQCyQyarav8gCNSsqOrOGqGOKoY4T8uNL0nz1kgZ+n9cvUr/8rg+Rdo
-         Rb4y/W9UR1G/2+nab8QCV6iORRoOo90Aurh5JKbhlKz2E9oJ+egbcdrxuy6vjHEO4nj2
-         s5WZ0eT6eG+SOCdlHYKwDCdWkfjE7XiDd3jAraHpnl17TrWk4i74Pg8HtzRGRJMG+qkN
-         Dvon3U5bEGCOoe62BjWgnpNZNsMsxvr6YcWp6rCDAU3qq21O3ORFCilZVk+0o2OmT4RE
-         JgMgMeZ3nCsNZWEMXEC8X+xsFPSrDU6lKHt8QcfW9XSQ/t3D/+IdZIunYUVABpnMgYXQ
-         PcaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720108718; x=1720713518;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mGlL/uE7TDzKfiVbTPhEKK0ePrDxqpfFWq/HFd9CIio=;
-        b=EzkWNHgaWv3QcpvmqLIlRCG0nL0RStCDOCQlHmeK01lh1oP3NLYkTfb4UQL+Q5qjRJ
-         /vWZ8W62xLDzFfQ8OmLOW0Y6v7D+1fZn9wNzSVJcXtgiCEQVy/uo4DW2uJLINKL1L02Q
-         Pl6PsFq6/SghiNNxd+kQjZZpvfABgw5UuRGpxrdKQsy3PCFzOhBL/AuJYHSdY3ALIdg0
-         AgK0g6tSdvfDUMe/Ua68yyzmdBmh8aI1Ly0AejGx66N5Si0+TQ79nXiq4JnafytH3jMc
-         7ow+uIKm8W8wJCXz3pyP9gKdE3y//uqnF4OgPIu4mATUR6UBgM6v7C0PaJwDwwNWMCFy
-         qYQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWoi9fxBXTA/+uzviEc4jhPSjKOswT092ighSuttnROEwPqmj1kKuh2UOB02uXDCxgNpvJyz56SO/cz+IDVAAPdLZ7rvSRKaK6Uvg/XxY+bY/YNOUKMqXzJkSSqOG+aw4j8Xm3FolBZ6zUeEg==
-X-Gm-Message-State: AOJu0Ywi/pzXMuGEVF7e0WOpMy+HZDNVd5vdqNYPeAWRbzMvFrWFnkxj
-	K6yQ4lDokyfJgmBOlOiG5R1Ut3H0m0MIexpqK/l8EWmcHXuflkZh4b//HWX3j223b6I8Mm1qW7K
-	AdUpJYUeXGK2yv8qdfy670H/wwQroOg==
-X-Google-Smtp-Source: AGHT+IErblZt7bgFomQcrLEXumFkfKSXuHPwhtBd2lP9n6LZzEj45+6eygT0JdMZl+luoWXHBcNvx4nQ61KnR9k20lo=
-X-Received: by 2002:a05:6402:27d0:b0:57a:3046:1cd8 with SMTP id
- 4fb4d7f45d1cf-58e5994dfc1mr1915766a12.7.1720108717922; Thu, 04 Jul 2024
- 08:58:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE96F1A2C1E;
+	Thu,  4 Jul 2024 16:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720108870; cv=fail; b=tN2YPbYYohd75QxNvRA08C5J3x9qFab5uuEMwAOslqR0R+JkyhpYDcOzeuS/Icf9/UvNB/3mvu/fEy5CtYCEbHSQ0KaFcLtd8/DojBu47Q4LrYTfq6XIw6KPvy8H7uyShjZaasVvCP15wcK9MNgVSKtyqTHwx8VkPN2EFerM29s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720108870; c=relaxed/simple;
+	bh=IXV2qV30cSXeucJALgM0nDZoHXr5+Ymfs4Kia8vG2QI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=j2FRZXn9fkcBaAaDZ1CbyIJ0utRhxxzh4VfsTibU9xwFTNELW5kunSG1xzRGj7KEg3Y+oxxipZGfQGU8PKCHvZ2QshGqeH7Uj1q2aWRxrVFHsMlKM7T/v/K3ZAcy63vKfi4ecbkHqdU5XVbzWl7AhoGeIrVy6OVMAto1r2tTKxo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=klClIM5y; arc=fail smtp.client-ip=40.107.22.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nW6Al1cZqDE8OcmXM9m14UZT5ftRd0rbrA9CzeQMdiAPP8B0YVdmnMNa8YMCto5xJQMZ+qjwy+Wf3GaNexdS6UJB0PlXqxL9MC2iZ6P0In1h+epBL18xcnfBaz4ww4hDG9VWfB++BDiJqSMPzh3CYOuIqh4Zb2Iwocgz6wenRHmpBT7NEr4MMfXE2E6Ul09ybtOvHpSgerOLs4rofIdqyiqCB5BEOdU4GkkMJKSXbq/dwBxrJaLGvFZPLlxkfQ0F+A8ObGdwzEeSrCQQzP1PWEBFUusymjqfWdDuuHdr7Rl+ZXhJbnrrU+lD+5LCpV2aZSgvuC6nESGsSmTFPyGuFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xF0RzoyMYT9jmvmtScpSlGi8X6Gy4KiLtnyr9+mNJys=;
+ b=Y2ndYkiEBRI2Vr3gfDkbqD9eNJ08qBjU9qiW762Zcs+itj9TSBJkxWmf4PrbYEvK4EDj4X2AlLep8kPK7slZL5VakicO59lYUv7a4TGcZL2b0X/DuIzzLAaFc6r7liAJXJjCf4MT6xOCoYRzBtwWkuBu61i7D1g5vQsSh2fL5tkCIwO64WtaDxTaIK+GxyW/Dh/LtxGAobfPCauoW/QSUXivNI70f+IdWyUhyKWV1a/ktud2DL3pd/rCMBv+CxISEiFFtNkmiYZQ3csXjbTlpGwP2r59odPjUTw58MMNP+DgMXn+mbSbKy9hjL6AhS2pUiqoscMsLxz44oZ7SKXyzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xF0RzoyMYT9jmvmtScpSlGi8X6Gy4KiLtnyr9+mNJys=;
+ b=klClIM5ygDtAaTqLmTmvdVsxDX80BU8uFpImbfEmuaF6l5yEYrLtNd/Brnqspbb9Du3US0OIz7mijHLBVMzFxGvNawlka5XmiU79G9HgVAwjCX7+DkRER4S37/sRQ/uPOYiQ/BiE37vPkQV1aiSkVgs/6oSfyh4DxtOQieYK0o4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GVXPR04MB9950.eurprd04.prod.outlook.com (2603:10a6:150:11a::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.34; Thu, 4 Jul
+ 2024 16:01:02 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7741.027; Thu, 4 Jul 2024
+ 16:01:02 +0000
+Date: Thu, 4 Jul 2024 12:00:53 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	Ran Wang <ran.wang_1@nxp.com>, Jun Li <jun.li@nxp.com>
+Subject: Re: [PATCH 0/2] usb: dwc3: Add cache type configuration support for
+ freescale layerscape
+Message-ID: <ZobHNfI9doRyd+nj@lizhi-Precision-Tower-5810>
+References: <20240703-dwc-v1-0-9cbc93d49180@nxp.com>
+ <20240703233310.2oxguahed2g2lknm@synopsys.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703233310.2oxguahed2g2lknm@synopsys.com>
+X-ClientProxiedBy: SJ0PR03CA0149.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c::34) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628140435.1652374-1-quic_bibekkum@quicinc.com>
- <20240628140435.1652374-7-quic_bibekkum@quicinc.com> <CAF6AEGvroi8rJimFv95tkWmRFa5_aTpBJ7GFcRAuZpLGdSyEYQ@mail.gmail.com>
- <0650ba0a-4453-4e2d-8a76-0f396ac1999c@quicinc.com> <CAF6AEGv_9e-TDW1r0N4-db6pY_aV_EZFqrpNbATVS5Vy6+fs1g@mail.gmail.com>
- <4a5f54c7-120e-427d-8a0a-9fb83e13a72e@quicinc.com> <CAF6AEGtrtFNxDWtuADA4oOHhZJ=dJZcGaJ1XLFJt4fe4Xp=pTA@mail.gmail.com>
- <3b7c05b1-8f36-4c81-a55c-dbb467314099@quicinc.com> <CAF6AEGuRKU+DkL0-b3xdR1R45_MiiKQYRRXEXYz-xohu8rUaEQ@mail.gmail.com>
-In-Reply-To: <CAF6AEGuRKU+DkL0-b3xdR1R45_MiiKQYRRXEXYz-xohu8rUaEQ@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 4 Jul 2024 08:58:25 -0700
-Message-ID: <CAF6AEGtbw06-gOSvX9gAbi=SA801gmD3_8c5xkOU-G9g2qKptQ@mail.gmail.com>
-Subject: Re: [PATCH v13 6/6] iommu/arm-smmu: add support for PRR bit setup
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca, 
-	jsnitsel@redhat.com, robh@kernel.org, krzysztof.kozlowski@linaro.org, 
-	quic_c_gdjako@quicinc.com, dmitry.baryshkov@linaro.org, 
-	konrad.dybcio@linaro.org, iommu@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB9950:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e6795cd-1296-4833-569d-08dc9c428105
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3XLGbUf42UDmzfUoF+3B4a9CSUYHAfsXcRFjlganpODT1jLYwrbw/39N9Nkl?=
+ =?us-ascii?Q?X4rTg48wxCCzc73Io0vrSZHJrGlTPVpdWndoizlSRPjw5wJZEZqrMn+rB1LL?=
+ =?us-ascii?Q?W+T76fiHUjNUHQl4cNqsbfdUGB4wQz/j6xtsYEedCq9vkuwE0yCNQ2d8OvIN?=
+ =?us-ascii?Q?/3NrXPZii/USfR0ql3ogbzh+yB8WDz7dybgjnTN6soMlhqUTVVZ/QzFbRozG?=
+ =?us-ascii?Q?+RNHN9OFew1sITBOYUKFTDC1OZnHAgXhrM802VGIdhTXwXNW1W/YXDEo4hS1?=
+ =?us-ascii?Q?ip5nP6t9RH1dVo/O4W+CIZlJ7pRhWv/BA6NjhtqwZ5tb61SdRsXcT6ZMbTZb?=
+ =?us-ascii?Q?FsrmUbIFBqsubSAX964uqysSbllAkS4YTNGaSWBIWJw+oQrzP4vpRhF0ELMm?=
+ =?us-ascii?Q?d04yRxvLul5KQb1MEhDpI4augE3uvMgHmVGt/phwWgsrSAxAQV9BL6tFuYFg?=
+ =?us-ascii?Q?YTKcfOZ5osx2eo6/UKFZuRYbNdp/sqvEOkg0OpH9mGm7ZBnbTDi4QqjnJQWE?=
+ =?us-ascii?Q?3JIp6kV0BW4mnej2p0oAG/5wC4ftbMlIx0ezcv3Mdd/AZO4vwHYNpT1szFc9?=
+ =?us-ascii?Q?wxwiPt7fV6RMtCHi8BDiq3W9Fvw4gHRzCJpNokU2Y0uVrQvjaApLAFgMwYIG?=
+ =?us-ascii?Q?Q1oART+dFddR3W284xiAJ0CxYVgyFPPnIBtD1WRIMer/h1Ot0OKbHQLHRpxJ?=
+ =?us-ascii?Q?ebplGkMxOAH9VNyhlMbaTvEKvuVekm3rmzV4PxSPXKtd/Ku3VL6NBhWo87Bc?=
+ =?us-ascii?Q?BnVcQM/m48I+wx4ygaDXKwPKR9xtxK0tdfXRonHd45oPfetOtHH8NuMFQo8b?=
+ =?us-ascii?Q?HWD1wKjDlUAGmSWpSQFTsQR/Y37GrwLfHdqk6eVy4rzQTo2FclfLOKEfa+kh?=
+ =?us-ascii?Q?NtFr2h5xqZv7JmXZzPjMGVUxmGERj8En2Zrl8CdtMEsF2pp/y1oLnSpQgNpN?=
+ =?us-ascii?Q?pNZLcxlerTPBDXZUKnxU8lEqErXlUJKkDquoeFRQOHM3KpVhpIlripT4UMmC?=
+ =?us-ascii?Q?rgQ7BkDJLgdoAjbZdMQD1+rMN77qkrNRbeSaGSFrbbBkRYQTzG7808PZNg8k?=
+ =?us-ascii?Q?npQ+u7xylKkkO0B3kDg/i+bBnaZxLl0+/ZnZiBjjFXtHFbw2BvQjtbtVsurq?=
+ =?us-ascii?Q?dUW/DjU0o6pVmSlfvwwiVr73hjZUa8KPqrRCQOzZnSiccOn8C/7cn0pI3/sO?=
+ =?us-ascii?Q?L3eP1Cxiq2RrzqiJwfKq/WYYVUn69d2SvyQBvrSLBSuAJnaCe7SFAE/sSlIs?=
+ =?us-ascii?Q?L8jdvyxsyjbpWnwND60TL0iQrqE92BbrMEljxi3voR4Akn4grwm7ztL5Z6i5?=
+ =?us-ascii?Q?SfWI3HvkXBGofzFrzb/AXF1xYG9C2imJe0RdlJP5lDvBLx/3GCr0+ROaK6E7?=
+ =?us-ascii?Q?SqLS5Hc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?39bgXEE2UBcKr6Rrx2R+ksOlatb6NWXchzVYgOAw6Nj4oJQY5NmHiZF9YsgP?=
+ =?us-ascii?Q?vnjGqjmF+Z2oFiqlmUUkKNeuvuCuFcYSeAn7AXoMKFuHWxeYP/DcM986BdD2?=
+ =?us-ascii?Q?Ernn5AAcJRsrbviaR0BsxmEfwdtiMrPO8y/7ZJyP9CnwCJD28KS9E0cfR12n?=
+ =?us-ascii?Q?UKLVkH2sgyeKSXq7q+Ed2Iupw6NaVUlTL1gqsrK9RUY3QC0CUxdGfVtsEkRz?=
+ =?us-ascii?Q?1DTlGUsB0sCkF+xAK5gjR5Tc73lBtlt1XYVrdEz/i2Y4LTvTF7ak17uHW2YL?=
+ =?us-ascii?Q?Xn8scHLbhcHLUxVBYO/UbtF5WZLGSVvhP9WWW3gN9MXWPxICnJLVebWH2gzs?=
+ =?us-ascii?Q?MvxCMoYMqp9BBAIcO+frrw9GIB6jO93C448umbPF3hm4nHa/QViH+In78Zwg?=
+ =?us-ascii?Q?d7kCAr/d90yGM+9Ygz41tP6d9Pinj7+atB2aES1dlFRGEEeWO5xuFQLzOYWs?=
+ =?us-ascii?Q?6uiUnXdBtZmg/eNtnBmpD4TFsQpHHEIQM0lRf6eWuwTXrPbMbEKDxJTxuBit?=
+ =?us-ascii?Q?YNxGSb7n6EzbuDryvoGvzQrR6F8oZtgIsj7qYTQiNs9ex7tY102Wi1fl5jWJ?=
+ =?us-ascii?Q?K0Mcrjang9BzL/OaIE5pafhJPCOgI5ekyIySqbeAnOmtdgG4pyDv3MAEc0Ep?=
+ =?us-ascii?Q?93svg7eJY3NLImZ1CbTX4CECPjMKOliH14v5n3QlBWvXCtz0NsNA14nh+qki?=
+ =?us-ascii?Q?pcRG3B8QxEUm7F61AkSnqnn1H4c2aI0/QLDPvnL3tyfjXc0GeS+5wFaYxpUQ?=
+ =?us-ascii?Q?lMYa8Z5HLaW2RbzfbrG6hycanVOU2Zyd9RIVF7mFHze20Ps2YJ/Izm/jNGe8?=
+ =?us-ascii?Q?fBzdG5EZUca6uCfT1yvhyBVArV5NUZb3HQadBKdJfLKYWMI3RZIqUXkQwhdS?=
+ =?us-ascii?Q?HpXGBnNacPXD7wjQuCUuN1RmTqK2MwaHolXr+4E4fIlzzHyK5J9sm9rNDPMW?=
+ =?us-ascii?Q?Ukrn82ZzwJ8wYqSbUIgpEnPqjHP29H825xsSoLIPF0zOHpZUe8V0OxQt0IUR?=
+ =?us-ascii?Q?2UawznS9o2Hae7v2uPKFx2rjgE0i8CjxqTLecYe80GYO7h7jY1e23K1y1Vzo?=
+ =?us-ascii?Q?0Ba2DxLYApRWEJXliPH088DpQWxJFeReMUoeg4IDqI9yIhiP1xdRj6GWWLPy?=
+ =?us-ascii?Q?fkkmMaC+7U85GBCjXL7eOR3NTBdWoHt0xU/YnsWKjVf9bEykU1iQeVaoNwVE?=
+ =?us-ascii?Q?fEZwgIsyYEt4rBuoezd6cK39tTzDmCc6S1zySdaJsfVaypwdalo9jYgPXa3V?=
+ =?us-ascii?Q?ql8ULxzGTysFV16TvzpQs9yf3OXobbNoMpqTU5riD/WQYdGxbTMK4X1M09Bm?=
+ =?us-ascii?Q?JxZ6R2wxB7RxCd54djW0km6wzu8efnQyHkBhlliZ4jk12V92zNv8oimmjji4?=
+ =?us-ascii?Q?bEiaNnkas7wXpFuuqmdaBp9EfNLsbJ3A5aheB/A4GLRPsTeVG0kUzl2QZ2WL?=
+ =?us-ascii?Q?9g3Z/RMd9w2exBNEJOcoxXb/q8WZwyTuBKcSLNrsket9zHGTW0GS9YhX0wvT?=
+ =?us-ascii?Q?QZTmB8LoHc0IH9ggvh2AGKnZZXcRXYBVk/DUbBQMUYtqOvEfqge9G2pkimzA?=
+ =?us-ascii?Q?X2/pujB6KtJCjcrbW176eX0i02s+zCmd4zCTqyo0?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e6795cd-1296-4833-569d-08dc9c428105
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 16:01:02.7298
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V0Olf1DUyYUU0hQVX5+9bGrZ1AlJylooyRSlhqbdZ7DBK/9yurtUQ6mNKrFdoBeReVZ2RU/zoyp/oP+7mJxW8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9950
 
-On Thu, Jul 4, 2024 at 7:46=E2=80=AFAM Rob Clark <robdclark@gmail.com> wrot=
-e:
->
-> On Wed, Jul 3, 2024 at 4:38=E2=80=AFAM Bibek Kumar Patro
-> <quic_bibekkum@quicinc.com> wrote:
-> >
-> >
-> >
-> > On 7/2/2024 2:01 AM, Rob Clark wrote:
-> > > On Mon, Jul 1, 2024 at 4:01=E2=80=AFAM Bibek Kumar Patro
-> > > <quic_bibekkum@quicinc.com> wrote:
-> > >>
-> > >>
-> > >>
-> > >> On 6/28/2024 9:14 PM, Rob Clark wrote:
-> > >>> On Fri, Jun 28, 2024 at 8:10=E2=80=AFAM Bibek Kumar Patro
-> > >>> <quic_bibekkum@quicinc.com> wrote:
-> > >>>>
-> > >>>>
-> > >>>>
-> > >>>> On 6/28/2024 7:47 PM, Rob Clark wrote:
-> > >>>>> On Fri, Jun 28, 2024 at 7:05=E2=80=AFAM Bibek Kumar Patro
-> > >>>>> <quic_bibekkum@quicinc.com> wrote:
-> > >>>>>>
-> > >>>>>> Add an adreno-smmu-priv interface for drm/msm to call
-> > >>>>>> into arm-smmu-qcom and initiate the PRR bit setup or reset
-> > >>>>>> sequence as per request.
-> > >>>>>>
-> > >>>>>> This will be used by GPU to setup the PRR bit and related
-> > >>>>>> configuration registers through adreno-smmu private
-> > >>>>>> interface instead of directly poking the smmu hardware.
-> > >>>>>>
-> > >>>>>> Suggested-by: Rob Clark <robdclark@gmail.com>
-> > >>>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-> > >>>>>> ---
-> > >>>>>>     drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 23 ++++++++++++=
-++++++++++
-> > >>>>>>     drivers/iommu/arm/arm-smmu/arm-smmu.h      |  2 ++
-> > >>>>>>     include/linux/adreno-smmu-priv.h           |  6 +++++-
-> > >>>>>>     3 files changed, 30 insertions(+), 1 deletion(-)
-> > >>>>>>
-> > >>>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/driver=
-s/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> > >>>>>> index bd101a161d04..64571a1c47b8 100644
-> > >>>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> > >>>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> > >>>>>> @@ -28,6 +28,7 @@
-> > >>>>>>     #define PREFETCH_SHALLOW       (1 << PREFETCH_SHIFT)
-> > >>>>>>     #define PREFETCH_MODERATE      (2 << PREFETCH_SHIFT)
-> > >>>>>>     #define PREFETCH_DEEP          (3 << PREFETCH_SHIFT)
-> > >>>>>> +#define GFX_ACTLR_PRR          (1 << 5)
-> > >>>>>>
-> > >>>>>>     static const struct actlr_config sc7280_apps_actlr_cfg[] =3D=
- {
-> > >>>>>>            { 0x0800, 0x04e0, PREFETCH_DEFAULT | CMTLB },
-> > >>>>>> @@ -235,6 +236,27 @@ static void qcom_adreno_smmu_resume_transla=
-tion(const void *cookie, bool termina
-> > >>>>>>            arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_RESUM=
-E, reg);
-> > >>>>>>     }
-> > >>>>>>
-> > >>>>>> +static void qcom_adreno_smmu_set_prr(const void *cookie, phys_a=
-ddr_t page_addr, bool set)
-> > >>>>>> +{
-> > >>>>>> +       struct arm_smmu_domain *smmu_domain =3D (void *)cookie;
-> > >>>>>> +       struct arm_smmu_cfg *cfg =3D &smmu_domain->cfg;
-> > >>>>>> +       struct arm_smmu_device *smmu =3D smmu_domain->smmu;
-> > >>>>>> +       u32 reg =3D 0;
-> > >>>>>> +
-> > >>>>>> +       writel_relaxed(lower_32_bits(page_addr),
-> > >>>>>> +                               smmu->base + ARM_SMMU_GFX_PRR_CF=
-G_LADDR);
-> > >>>>>> +
-> > >>>>>> +       writel_relaxed(upper_32_bits(page_addr),
-> > >>>>>> +                               smmu->base + ARM_SMMU_GFX_PRR_CF=
-G_UADDR);
-> > >>>>>> +
-> > >>>>>> +       reg =3D  arm_smmu_cb_read(smmu, cfg->cbndx, ARM_SMMU_CB_=
-ACTLR);
-> > >>>>>> +       reg &=3D ~GFX_ACTLR_PRR;
-> > >>>>>> +       if (set)
-> > >>>>>> +               reg |=3D FIELD_PREP(GFX_ACTLR_PRR, 1);
-> > >>>>>> +       arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, r=
-eg);
-> > >>>>>> +
-> > >>>>>
-> > >>>>> nit, extra line
-> > >>>>>
-> > >>>>
-> > >>>> Ack, will remove this. Thanks for pointing out.
-> > >>>>
-> > >>>>> Also, if you passed a `struct page *` instead, then you could dro=
-p the
-> > >>>>> bool param, ie. passing NULL for the page would disable PRR.  But=
- I
-> > >>>>> can go either way if others have a strong preference for phys_add=
-r_t.
-> > >>>>>
-> > >>>>
-> > >>>> Oh okay, this looks simple to reset the prr bit.
-> > >>>> But since this page is allocated and is used inside gfx driver
-> > >>>> before being utilized for prr bit operation, would it be safe for
-> > >>>> drm/gfx driver to keep a reference to this page in smmu driver?
-> > >>>>
-> > >>>> Since we only need the page address for configuring the
-> > >>>> CFG_UADDR/CFG_LADDR registers so passed the phys_addr_t.
-> > >>>
-> > >>> I don't think the smmu driver needs to keep a reference to the page=
-..
-> > >>> we can just say it is the responsibility of the drm driver to call
-> > >>> set_prr(NULL) before freeing the page
-> > >>>
-> > >>
-> > >> That makes sense. If we go by this NULL page method to disable the P=
-RR,
-> > >> we would have to set the address registers to reset value as well.
-> > >>
-> > >> The sequence would be like the following as per my understaning:
-> > >> - Check if it's NULL page
-> > >> - Set the PRR_CFG_UADDR/PRR_CFG_LADDR to reset values i.e - 0x0 for
-> > >>     these registers
-> > >> - Reset the PRR bit in actlr register
-> > >>
-> > >> Similar to this snippet:
-> > >>
-> > >> #PRR_RESET_ADDR 0x0
-> > >>
-> > >> --------------
-> > >> reg =3D  arm_smmu_cb_read(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR);
-> > >> reg &=3D ~GFX_ACTLR_PRR;
-> > >> arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
-> > >>
-> > >> if (!prr_page) {
-> > >>          writel_relaxed(PRR_RESET_ADDR,
-> > >>                          smmu->base + ARM_SMMU_GFX_PRR_CFG_LADDR);
-> > >>          writel_relaxed(PRR_RESET_ADDR),
-> > >>                           smmu->base + ARM_SMMU_GFX_PRR_CFG_UADDR);
-> > >>          return;
-> > >> }
-> > >>
-> > >>
-> > >> writel_relaxed(lower_32_bits(page_to_phys(prr_page)),
-> > >>                  smmu->base + ARM_SMMU_GFX_PRR_CFG_LADDR);
-> > >>
-> > >> writel_relaxed(upper_32_bits(page_to_phys(prr_page)),
-> > >>                  smmu->base + ARM_SMMU_GFX_PRR_CFG_UADDR);
-> > >>
-> > >> reg |=3D FIELD_PREP(GFX_ACTLR_PRR, 1);
-> > >> arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
-> > >> -----------------
-> > >>
-> > >> If looks good, will implement the same in next version.
-> > >
-> > > yeah, that looks like it could work..
-> > >
-> > > you probably don't need to zero out the PRR_CFG_*ADDR when disabling,
-> > > and probably could avoid double writing ACTLR, but that is getting
-> > > into bikeshedding
-> > >
-> >
-> > Actually Rob, since you rightly pointed this out.
-> > I crosschecked again on these registers.
-> > PRR_CFG_*ADDR is a global register in SMMU space but
-> > ACTLR register including PRR bit is a per-domain register.
-> > There might also be a situation where PRR feature need to be
-> > disabled or enabled separately for each domain.
-> > So I think it would be cleaner to have two apis, set_prr_addr(),
-> > set_prr_bit().
-> > set_prr_addr() will be used only to set this PRR_CFG_*ADDR
-> > register by passing a 'struct page *'
-> > set_prr_bit() will be used as a switch for PRR feature,
-> > where required smmu_domain will be passed along with
-> > the bool value to set/reset the PRR bit depending on which this
-> > feature will be enabled/disabled for the selected domain.
->
-> on a related note, adreno has been using arm-smmu for a number of
-> generations, I guess not all support PRR?  The drm driver will need to
-> know whether PRR is supported (and expose that to userspace to let the
-> UMD know whether to expose certain extensions).  How should this work?
+On Wed, Jul 03, 2024 at 11:33:23PM +0000, Thinh Nguyen wrote:
+> Hi Frank,
+> 
+> On Wed, Jul 03, 2024, Frank Li wrote:
+> > There are several attempt to upstream this code in past year.
+> > 
+> > The first attempt:
+> > https://urldefense.com/v3/__https://lore.kernel.org/linux-usb/20191121095356.GB7503@b29397-desktop/__;!!A4F2R9G_pg!cdNydVZ64br9EHG13lgP3lKWe5VuXQvvfvA1CzKJqhXZZB1H9vcJlwI1vj1EF3ynRFl2u8tD3lYqRvrJFSs2$ 
+> > 
+> > cache type is dwc core setting, not glue layer. So It'd better change in
+> > dwc core instead of glue layer code.
+> 
+> Why not glue layer?
 
-So, I noticed in the x1e80100.dtsi that there is a gpu_prr_mem
-reserved section..  maybe we should be connecting this to the smmu
-driver in dt, and using that to detect presence of PRR?  Ie. the smmu
-driver would configure PRR_CFG_*ADDR based on the reserved mem, and
-the interface to drm would just be to enable/disable PRR, returning an
-error code if the reserved mem section isn't there.
+I understand glue layer is what provide clock, reset, power and other
+control for dwc usb core and have a seperate mmio register space. All dwc
+core register access should belong to dwc-core part. You may have
+difference defination for glue layer.
 
-This simplifies the interface, and handles the question of how to
-detect if PRR is supported.
+> 
+> > 
+> > The second attempt:
+> > https://urldefense.com/v3/__https://lore.kernel.org/linux-usb/20240123170206.3702413-1-Frank.Li@nxp.com/*t__;Iw!!A4F2R9G_pg!cdNydVZ64br9EHG13lgP3lKWe5VuXQvvfvA1CzKJqhXZZB1H9vcJlwI1vj1EF3ynRFl2u8tD3lYqRh7SiHmM$ 
+> > 
+> > DT team think there are not variable for property 'snps,dat-wr-reqinfo'.
+> > And suggest use vendor compatible string.
+> > 
+> > This is third attempt:
+> > Compared with first attempt:
+> > - reduce compatible string to one 'fsl,ls-dwc3' because all setting are the
+> > same.
+> > - move update burst type code into dwc3_set_incr_burst_type(). and check
+> > compatible string 'fsl,ls-dwc3'.
+> > - Using bit field help macro.
+> > 
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> > Ran Wang (2):
+> >       dt-bindings: usb: Add chip-specific compatible string 'fsl,ls-dwc3'
+> >       usb: dwc3: Set cache type to 'snoop' for freescale layerscape chip
+> > 
+> >  Documentation/devicetree/bindings/usb/snps,dwc3.yaml |  1 +
+> >  drivers/usb/dwc3/core.c                              | 12 ++++++++++++
+> >  drivers/usb/dwc3/core.h                              |  4 ++++
+> >  3 files changed, 17 insertions(+)
+> > ---
+> > base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> > change-id: 20240703-dwc-5be3e378ddbe
+> > 
+> > Best regards,
+> > ---
+> > Frank Li <Frank.Li@nxp.com>
+> > 
+> 
+> This may blow up the dwc3 core from various platforms and compatible
+> strings. This can be handled in the glue driver and create the software
+> property instead.
+> 
+> Radhey Shyam is working on this also. You can check his work here:
+> 
+> https://lore.kernel.org/linux-usb/1717657279-2631757-1-git-send-email-radhey.shyam.pandey@amd.com/
 
-BR,
--R
+This is quite good.
 
-> BR,
-> -R
->
-> > Thanks & regards,
-> > Bibek
-> >
-> > > BR,
-> > > -R
-> > >
-> > >>
-> > >> Thanks & regards,
-> > >> Bibek
-> > >>
-> > >>> BR,
-> > >>> -R
-> > >>>
-> > >>>>> Otherwise, lgtm
-> > >>>>>
-> > >>>>> BR,
-> > >>>>> -R
-> > >>>>>
-> > >>>>
-> > >>>> Thanks & regards,
-> > >>>> Bibek
-> > >>>>
-> > >>>>>> +}
-> > >>>>>> +
-> > >>>>>>     #define QCOM_ADRENO_SMMU_GPU_SID 0
-> > >>>>>>
-> > >>>>>>     static bool qcom_adreno_smmu_is_gpu_device(struct device *de=
-v)
-> > >>>>>> @@ -407,6 +429,7 @@ static int qcom_adreno_smmu_init_context(str=
-uct arm_smmu_domain *smmu_domain,
-> > >>>>>>            priv->get_fault_info =3D qcom_adreno_smmu_get_fault_i=
-nfo;
-> > >>>>>>            priv->set_stall =3D qcom_adreno_smmu_set_stall;
-> > >>>>>>            priv->resume_translation =3D qcom_adreno_smmu_resume_=
-translation;
-> > >>>>>> +       priv->set_prr =3D qcom_adreno_smmu_set_prr;
-> > >>>>>>
-> > >>>>>>            actlrvar =3D qsmmu->data->actlrvar;
-> > >>>>>>            if (!actlrvar)
-> > >>>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iom=
-mu/arm/arm-smmu/arm-smmu.h
-> > >>>>>> index d9c2ef8c1653..3076bef49e20 100644
-> > >>>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> > >>>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> > >>>>>> @@ -154,6 +154,8 @@ enum arm_smmu_cbar_type {
-> > >>>>>>     #define ARM_SMMU_SCTLR_M               BIT(0)
-> > >>>>>>
-> > >>>>>>     #define ARM_SMMU_CB_ACTLR              0x4
-> > >>>>>> +#define ARM_SMMU_GFX_PRR_CFG_LADDR     0x6008
-> > >>>>>> +#define ARM_SMMU_GFX_PRR_CFG_UADDR     0x600C
-> > >>>>>>
-> > >>>>>>     #define ARM_SMMU_CB_RESUME             0x8
-> > >>>>>>     #define ARM_SMMU_RESUME_TERMINATE      BIT(0)
-> > >>>>>> diff --git a/include/linux/adreno-smmu-priv.h b/include/linux/ad=
-reno-smmu-priv.h
-> > >>>>>> index c637e0997f6d..d6e2ca9f8d8c 100644
-> > >>>>>> --- a/include/linux/adreno-smmu-priv.h
-> > >>>>>> +++ b/include/linux/adreno-smmu-priv.h
-> > >>>>>> @@ -49,7 +49,10 @@ struct adreno_smmu_fault_info {
-> > >>>>>>      *                 before set_ttbr0_cfg().  If stalling on f=
-ault is enabled,
-> > >>>>>>      *                 the GPU driver must call resume_translati=
-on()
-> > >>>>>>      * @resume_translation: Resume translation after a fault
-> > >>>>>> - *
-> > >>>>>> + * @set_prr:      Extendible interface to be used by GPU to mod=
-ify the
-> > >>>>>> + *                 ACTLR register bits, currently used to confi=
-gure
-> > >>>>>> + *                 Partially-Resident-Region (PRR) feature's
-> > >>>>>> + *                 setup and reset sequence as requested.
-> > >>>>>>      *
-> > >>>>>>      * The GPU driver (drm/msm) and adreno-smmu work together fo=
-r controlling
-> > >>>>>>      * the GPU's SMMU instance.  This is by necessity, as the GP=
-U is directly
-> > >>>>>> @@ -67,6 +70,7 @@ struct adreno_smmu_priv {
-> > >>>>>>         void (*get_fault_info)(const void *cookie, struct adreno=
-_smmu_fault_info *info);
-> > >>>>>>         void (*set_stall)(const void *cookie, bool enabled);
-> > >>>>>>         void (*resume_translation)(const void *cookie, bool term=
-inate);
-> > >>>>>> +    void (*set_prr)(const void *cookie, phys_addr_t page_addr, =
-bool set);
-> > >>>>>>     };
-> > >>>>>>
-> > >>>>>>     #endif /* __ADRENO_SMMU_PRIV_H */
-> > >>>>>> --
-> > >>>>>> 2.34.1
-> > >>>>>>
+Frank
+
+> 
+> Thanks,
+> Thinh
 
