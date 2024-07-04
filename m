@@ -1,180 +1,261 @@
-Return-Path: <linux-kernel+bounces-240446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68344926DAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:54:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C28926DBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ED3A1C20F91
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:54:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B166281CA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05C917C6C;
-	Thu,  4 Jul 2024 02:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="S4XgmKub"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010003.outbound.protection.outlook.com [52.101.229.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916C117C6C;
+	Thu,  4 Jul 2024 02:59:04 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29908179A8;
-	Thu,  4 Jul 2024 02:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720061638; cv=fail; b=rQLwFTaxNnSXXpkGRNPgUDYbABH7j/6du/ZINYt5D7AMXIvYP0CzZ7XSeUF5KzRSk2qt2xSARXX6Vrt5Q7nf1UVFD6T9EXgUxDMSx6XxF2di61tElvzdsSKbyjxRQdqICDXsivgQz/092M8RwGuG1VuLGyyYdpf4/ze7CJ3D638=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720061638; c=relaxed/simple;
-	bh=V2iOgzXgIHmBNiiqYXq/fjdT02+J89ER2dn04lUduVQ=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=E5TKVpUrVsy//OZjD+FDWW+01Mm7LyS+6jOkwvTITE/0K4HjCGsZGpXCpPBE+OmnuSvL1g2+ttfF4O7igs613bRjJtQ3groGGICE2vRZ1ktGKnkO7LrqunNgzuYcHFy3eqHE5ps+oOLEarjqOTOzxbSZDmspc1mTDKhfR2TR/9g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=S4XgmKub; arc=fail smtp.client-ip=52.101.229.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CbDN0mjCY6YRBVNloZKwRauuFCr769GrckjizwW8UPcPCPHT+kk2nVlvT6l7xMZ/hiM+Rksc/AxJlLd+5w35Qb6Ezk+Gtj1KBSd4HaiRjUZhcMopDh62PJCHYZK3m0f38jeYah3/iB9Q0ZV3wfe7XaOSg3XE33+w+z6zbDpnC5Uh5kq9Kk6m/Q5gju+7/zjwYIowqjnhnlmNkHsJvx6PRf8AsiKVp9hW2GvSQZeo/gKRmFsroL5C1kk68wZwFN3081/3fEZX7EK9ZUzPMm1Aad2mQD/PC7pQQua1I8zQCZOZQZwA762qu8tFdjTYwSPi3lQsp9LWOs5q9kJP8BowtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hPeEvk3F2QfdYVy6icxAF81gZvEoG+nbeyejm1TEH18=;
- b=OTDmdxgSJo8dxHfNXCOFTo0ljEN8WBsw1E9XEFt8Bu6oXk3Hcalme7KhP8qltYtas/sEM6wFRFIT9blFuxLKBqfxrYnkXHMuMF8WEmcsCDpAv65eXyzK/jyOoWLuNuIQ6gwaU7DWvDaJaxoWiW6kH7MxPgCHiljgbqPQMKSTmVuuet9cRhVgoJuhDYYJeg8BdysF8ZEKOdcLsyAh16u8DGtXchuI1eoBYr1pAK0IJEqpILmYXianDEPlLsvH+cp4MS3VnuINmLOhQ0EsHVCm3lvHfwo7GsfoReek6yixXihBy+Gs/c0MmkQ2SSI8fh4as50Xl0lRycSiVNQgUWwFmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hPeEvk3F2QfdYVy6icxAF81gZvEoG+nbeyejm1TEH18=;
- b=S4XgmKubGabfUI+A6zPdHmbxh8fjCG14yBNnudlRwfKpESMBzjJ9Qj7wCluhbe8C9TugvGERP1eqEMwmzjmVSo/Rp1Wjw3y8y1xk1BTtnZVCpNiVccA26htAdVahbm9ZLrhwDakOk0X0R8GhcvVzcCuRWVN2+44zUxiGijPx4yk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by TYCPR01MB9652.jpnprd01.prod.outlook.com
- (2603:1096:400:220::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.29; Thu, 4 Jul
- 2024 02:53:54 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%5]) with mapi id 15.20.7741.027; Thu, 4 Jul 2024
- 02:53:54 +0000
-Message-ID: <87r0c9ooji.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 08/11] ASoC: simple-card: Use cleanup.h instead of devm_kfree()
-In-Reply-To: <20240703-asoc-cleanup-h-v1-8-71219dfd0aef@linaro.org>
-References: <20240703-asoc-cleanup-h-v1-0-71219dfd0aef@linaro.org>
-	<20240703-asoc-cleanup-h-v1-8-71219dfd0aef@linaro.org>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 4 Jul 2024 02:53:54 +0000
-X-ClientProxiedBy: TYCP286CA0258.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:455::6) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314961755B;
+	Thu,  4 Jul 2024 02:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720061944; cv=none; b=uhvQ2o03mTgRgUzHHcDp8FlI1giTer/lIUOTrf9njqS6WWqrjyBVPizBVVxBBbbNGc5UxWKEFy6hme9xY/u/w0iW/BndbKP+m7N8ILb37/ZoF59JG+uWmD4QsGLBBXd0cDKONqrwOd7hOZcmONZ84cwDFM22gMVWnSaCwXMlCCE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720061944; c=relaxed/simple;
+	bh=Wfir6/7/cOx45D+PX6OLX76WJL7xGjTpxoe/CmkriRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aaWH8EklHKSGEu+8deF1TgiaOYKNM/FvsAgl29E/l6NdeLpMp3CmQ/5y/ZwrhxilWe7QR+ZquCCo7JTjiJ5K0/SEKdVPAEdJ9Aw3eqnydNg/ZUNLa/pOiIjRpO2PgGx4CC3a2CUKpmAHvhTKJoRaAYgZUukJoBw3nJPpvVCTOzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WF1XH4VH8zdgH2;
+	Thu,  4 Jul 2024 10:57:19 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 15B3514011A;
+	Thu,  4 Jul 2024 10:58:57 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 4 Jul 2024 10:58:56 +0800
+Message-ID: <001e41c2-0f88-7bc1-2972-bd5cc036941c@huawei.com>
+Date: Thu, 4 Jul 2024 10:58:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYCPR01MB9652:EE_
-X-MS-Office365-Filtering-Correlation-Id: 10216d57-eb90-49fe-6fc0-08dc9bd48ab5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Rmt0st+6GFAhOogB15hXfcaJA4O5bxVoxRdeGkVIHb9ZCVEwGtkE+OSPR81/?=
- =?us-ascii?Q?uFP/2s89/R07XhwxuZyYGU2wA2sqm1SNuJdYIVbBGkTGN45QlKle7rdOXeYQ?=
- =?us-ascii?Q?DaRVZUnAdCgv/uuZQjuYKtrTfymEBdpZT03WHJSKigzdo6UqIR+zMnaXG+wg?=
- =?us-ascii?Q?leJmBY/M9/5dDc4PCIhZSbUnq1NTv6WAy0qWOIlhOU8Uo+9slLLYdOHtLJ+Q?=
- =?us-ascii?Q?zGcBDZHXxe8HHp8KtXVaU2L7MEY1xrTgFD8hjORONxGsFD6fdFEWgLvv87a2?=
- =?us-ascii?Q?YEcKlOwgmapTrj6ZCK/n7D7AGlteOFOoexxih4/RHqAChu8+so5CLxa3IeAv?=
- =?us-ascii?Q?jAcQJ8Lr7XWZ7A4ijXW7gd4P5YkHiIbp5I/cRhT/r25WGJMyj2sO6/SubfCG?=
- =?us-ascii?Q?TGK4zOMM2YJMxPuqSHrOZmD3nI/2tlnwlLDzG03l2FQ8Riv9M1jSqhN0jLSa?=
- =?us-ascii?Q?lUJa6SRvVTKlPgBtW3yStz3NXyEaHDBJ7emnTnRPFadHPHAhEtksCUuYaprI?=
- =?us-ascii?Q?MeyX5dBr5MfXecb8IdGdgkviPduUIuBSs1ihDzrwQeHGI+8039SuBVd3++11?=
- =?us-ascii?Q?tXsGSZbhnfH2hCKs5LIXHCjUPfnCrNtPD2m1a+ZAceFWQhh++vT+CbOvpJCK?=
- =?us-ascii?Q?Ax2IliC2iacnGaQLsU4DjPG4daD9HYandGfuw3ExZYe2GzWK3K84365rmBJ3?=
- =?us-ascii?Q?4l8JBDuC7Q9lPj3PCJppFnWpltqcAPA4UnqZz0z5OBntoEOfLTBwcWjUCQNH?=
- =?us-ascii?Q?SFVhH6Mliz4syCQ7e6Wvjg55b2XK7RK+Rnk161EHljq3kxA4E+RL3fyycfyi?=
- =?us-ascii?Q?9DjAZu+y1cnWyKhoSwMZ3xGkxQJ/E7l0+dQbLPsl0TDB1OmiLztcp4URNqyr?=
- =?us-ascii?Q?sug9LD6qdDBxBU5r/xfeIQrr+18u0Hvc+0ki/YF7/RgcBbJ8OodeN4HLDoyP?=
- =?us-ascii?Q?fYKXEkaKhrRF5A6qk64d9hlUUfRyUYE1BnF6ePNj3t+T1On/63NXdJiIsvTU?=
- =?us-ascii?Q?YAsMIXvfFtHpMlbDv00+ZgWojGdFbqA+/4uyfqCOwYIxn203SSuVKgqdvrT/?=
- =?us-ascii?Q?kz9UIF6fFImaAAUg4FoHRcOEjTzfwN8PfzZ3KyxOPkNHgSyPKtuAU+sdLC1o?=
- =?us-ascii?Q?QGUnnzGPykQvO7c6eACyi2Nd54DOE5I9kU+nJXo/cVshxxt+Y98ag9Mhe8qY?=
- =?us-ascii?Q?Eq5xVJ9sNEx+wV89+XO5TWlLcdzrxflimM0rW5PIzVeaCi5I35RmrrojqPMT?=
- =?us-ascii?Q?eoBVZrjdDMvVwuV77Sv+O0pjnv9fjRCqTwpaup2Bjcg+D15dWo9O0D33UQ0Z?=
- =?us-ascii?Q?GZDxz0ZF2PGQhCH3A3qka01/mmoxpHMVoq7pHkob7pJVZsMnvqrCZcYQIJ3c?=
- =?us-ascii?Q?nAN4GQ6no5AIKhO9GXVwGJlcOefNpy8pMFuV9hG2qGCVbJv/mw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?y6Y1Vxq3CxTeRitHq+l/AR1I31P71bxXnKYsWy05aqY+Zs6adxts0Vgy7mmA?=
- =?us-ascii?Q?SnBwyKoTG/Csbx0GTFowFPJ5/vuu/gtFS6uJ+tWxRSPvReCAT6fDgx1ODxHH?=
- =?us-ascii?Q?dpFg0JjnGe3VME3uRANR4mVUH8RoND/jxZz0GTwqNiDlvLOoFILU2tTKymvQ?=
- =?us-ascii?Q?xY2fzIC+H/QMRKbQ4rgLqx7QF2V1IZvcFNl/UBBuClUjM35Zrz6dsGcZeFjn?=
- =?us-ascii?Q?E/IXa+ZLMHn81HhpydcLK3bLW1+OlUuS7zK5k4NAfN0Mz9jX7WEj2ufA5gpE?=
- =?us-ascii?Q?YrGWadpCgrev4DMbFJMpmU921vFqeVM9BEE3y4RhpkXmOru4cTdlXlILuFjX?=
- =?us-ascii?Q?r7wuPbbi7fh+23G2zxKxERW3KhsSLR2Bic2BtcXAS4LOO4NPc/aXWrlGkg+R?=
- =?us-ascii?Q?7jVaBN1HFGrg6NM9aJcsy45Hc/1SOTBcW7tDGmkqOo99Qx6hx6yNGBmmAPG5?=
- =?us-ascii?Q?p3xVV+GOcGgnSwLsPuPKBJfiWRyyZ8YfgWhcl7m5Mr/PmsBQJKBbua68HRPP?=
- =?us-ascii?Q?7yPsqM+tHSQ0TrP0W2fBrMS/ZNigJmUP1t0V68J+KlQNx0RrOvdLXS5wlf5E?=
- =?us-ascii?Q?WrxxeNyn7THObfT94uWw5fp19KXxJS6HSlXZ67uGDRwOrUS8/m9HlmS7g6Oc?=
- =?us-ascii?Q?73ZlHM92GZLKAIgu00RvuXUxwDbEM05IKo0zgX13T9zbCEHA6Ux2pspj//Xf?=
- =?us-ascii?Q?XqAvJTd3XOYLzl5JNWEQ1LlbNowvb9q52yYxjTqnqStvbKE75ELouEl6OuN1?=
- =?us-ascii?Q?vIxtZ/wF6Y1c4ORN9V8iXQfNgPBwss7PlHNe5CnCfUQkKj8R6ilk5LARJl6h?=
- =?us-ascii?Q?O7CrOgWUGks+ramK2J99jRGkQ51UgWMn8hfWH+JmnnOYvcPjovcqS5pfjyWS?=
- =?us-ascii?Q?h0oPaabbN6s9Me2qj7XAvpBPOVmShN6vYoMzC6mh5zTuh0TAgEiw2X5+7z4o?=
- =?us-ascii?Q?Mk9UEar15TzoEDtc4j5kUtqx++b3oyKkjoiD6bWutRa4nUh0Sp7GyERC31/0?=
- =?us-ascii?Q?kiodLpRs0+Gw2mXS0KL1szyhBIb/FUaAd/a+lFyyUHuBJSj4D8n59j+M9n+u?=
- =?us-ascii?Q?kVCeMoZe5Kj21WwsxPDIhhe0YSymqpfmDODPg6Yr3CEB3jq/4D0PvDqAOlid?=
- =?us-ascii?Q?HjtXDE53i1qrPFA2IUABH6gqoIRmzmRJdV8WvqZbGGaevupJYZLqpz39f6B9?=
- =?us-ascii?Q?VcSGXd7XHeIVHupF7vInohThtDmgWsz86AFruAlew0WGbp9j6YgPMA6Wdy7L?=
- =?us-ascii?Q?DDSFzSS62cWhB1Tq3vzqt5pvDVzLvuWz032Rrb0Wjt6m2WhQUdeHA0dm6RxC?=
- =?us-ascii?Q?pP0FbGBsar/1yviOdqqkJYGBnXAkFZ2Nnngz1xfSl6pYhkgBqY/OmcLBGeoq?=
- =?us-ascii?Q?Ukam45x5OwcvkXZ0TkvCBL/YOFgX71ekSsrI3DGn24ICCts+yHGJzZRWq7x3?=
- =?us-ascii?Q?k7peFnhj/agJeKNX5vrKwQ1QY7nmOd315W5SQq/nTD45I3sJYGE2BoQvq8xg?=
- =?us-ascii?Q?bpyKHwmHpvcplnC2yGmKQwvgUqo35403EWmDahCgV5HSOvvq8CgM/UIf1d4S?=
- =?us-ascii?Q?3LuyIRoGdWHnJuvCAFUGacGQ/kjAKoZ3p4lj7zu6HXLHQPtpRDgHfC4Miw8d?=
- =?us-ascii?Q?hWEZ28PKjpD0g2ippsk5Z+k=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10216d57-eb90-49fe-6fc0-08dc9bd48ab5
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 02:53:54.3454
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: W6SfBQaT2OMedDQlBAk3mM2O2SVDmjJlkL86YEyHkyYDdqMl5Fj0mlRkTqTjcU9OG0oCM7CWINT1fGYQVYetxvfGUXleyBOrwmK/0zvwgPlmi/sMQ8uoXyyaqbeCrbqO
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9652
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2] riscv: stacktrace: Add USER_STACKTRACE support
+Content-Language: en-US
+To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<dev.mbstr@gmail.com>, <samuel.holland@sifive.com>,
+	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>
+References: <20240604034729.841930-1-ruanjinjie@huawei.com>
+ <87wmm2y22u.fsf@all.your.base.are.belong.to.us>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <87wmm2y22u.fsf@all.your.base.are.belong.to.us>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
 
-Hi
 
-> Allocate the memory with scoped/cleanup.h, instead of devm interface, to
-> make the code more obvious that memory is not used outside this scope.
+On 2024/7/3 22:36, Björn Töpel wrote:
+> Jinjie Ruan <ruanjinjie@huawei.com> writes:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+>> Currently, userstacktrace is unsupported for riscv. So use the
+>> perf_callchain_user() code as blueprint to implement the
+>> arch_stack_walk_user() which add userstacktrace support on riscv.
+>> Meanwhile, we can use arch_stack_walk_user() to simplify the implementation
+>> of perf_callchain_user().
+>>
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202406012109.PDAjXm2i-lkp@intel.com/
+> 
+> For future reference: The LTP tags shouldn't be used when you're
+> spinning a new version.
 
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Thank you! I'll remove it.
 
-Thank you for your help !!
+> 
+>> ---
+>> v2:
+>> - Fix the cocci warning, !A || A && B is equivalent to !A || B.
+>> ---
+>>  arch/riscv/Kconfig                 |  1 +
+>>  arch/riscv/kernel/perf_callchain.c | 46 ++----------------------------
+>>  arch/riscv/kernel/stacktrace.c     | 43 ++++++++++++++++++++++++++++
+>>  3 files changed, 47 insertions(+), 43 deletions(-)
+> 
+> [...]
+> 
+>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> index 0525ee2d63c7..6ed96d935b8f 100644
+>> --- a/arch/riscv/Kconfig
+>> +++ b/arch/riscv/Kconfig
+>> @@ -193,6 +193,7 @@ config RISCV
+>>  	select THREAD_INFO_IN_TASK
+>>  	select TRACE_IRQFLAGS_SUPPORT
+>>  	select UACCESS_MEMCPY if !MMU
+>> +	select USER_STACKTRACE_SUPPORT
+>>  	select ZONE_DMA32 if 64BIT
+>>  
+>>  config CLANG_SUPPORTS_DYNAMIC_FTRACE
+>> diff --git a/arch/riscv/kernel/perf_callchain.c b/arch/riscv/kernel/perf_callchain.c
+>> index 3348a61de7d9..c7468af77c66 100644
+>> --- a/arch/riscv/kernel/perf_callchain.c
+>> +++ b/arch/riscv/kernel/perf_callchain.c
+>> @@ -6,37 +6,9 @@
+>>  
+>>  #include <asm/stacktrace.h>
+>>  
+>> -/*
+>> - * Get the return address for a single stackframe and return a pointer to the
+>> - * next frame tail.
+>> - */
+>> -static unsigned long user_backtrace(struct perf_callchain_entry_ctx *entry,
+>> -				    unsigned long fp, unsigned long reg_ra)
+>> +static bool fill_callchain(void *entry, unsigned long pc)
+>>  {
+>> -	struct stackframe buftail;
+>> -	unsigned long ra = 0;
+>> -	unsigned long __user *user_frame_tail =
+>> -		(unsigned long __user *)(fp - sizeof(struct stackframe));
+>> -
+>> -	/* Check accessibility of one struct frame_tail beyond */
+>> -	if (!access_ok(user_frame_tail, sizeof(buftail)))
+>> -		return 0;
+>> -	if (__copy_from_user_inatomic(&buftail, user_frame_tail,
+>> -				      sizeof(buftail)))
+>> -		return 0;
+>> -
+>> -	if (reg_ra != 0)
+>> -		ra = reg_ra;
+>> -	else
+>> -		ra = buftail.ra;
+>> -
+>> -	fp = buftail.fp;
+>> -	if (ra != 0)
+>> -		perf_callchain_store(entry, ra);
+>> -	else
+>> -		return 0;
+>> -
+>> -	return fp;
+>> +	return perf_callchain_store(entry, pc) == 0;
+>>  }
+>>  
+>>  /*
+>> @@ -56,19 +28,7 @@ static unsigned long user_backtrace(struct perf_callchain_entry_ctx *entry,
+>>  void perf_callchain_user(struct perf_callchain_entry_ctx *entry,
+>>  			 struct pt_regs *regs)
+>>  {
+>> -	unsigned long fp = 0;
+>> -
+>> -	fp = regs->s0;
+>> -	perf_callchain_store(entry, regs->epc);
+>> -
+>> -	fp = user_backtrace(entry, fp, regs->ra);
+>> -	while (fp && !(fp & 0x3) && entry->nr < entry->max_stack)
+>> -		fp = user_backtrace(entry, fp, 0);
+>> -}
+>> -
+>> -static bool fill_callchain(void *entry, unsigned long pc)
+>> -{
+>> -	return perf_callchain_store(entry, pc) == 0;
+>> +	arch_stack_walk_user(fill_callchain, entry, regs);
+>>  }
+>>  
+>>  void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+>> diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
+>> index 528ec7cc9a62..9685a2baa5d9 100644
+>> --- a/arch/riscv/kernel/stacktrace.c
+>> +++ b/arch/riscv/kernel/stacktrace.c
+>> @@ -161,3 +161,46 @@ noinline void arch_stack_walk(stack_trace_consume_fn consume_entry, void *cookie
+>>  {
+>>  	walk_stackframe(task, regs, consume_entry, cookie);
+>>  }
+>> +
+>> +/*
+>> + * Get the return address for a single stackframe and return a pointer to the
+>> + * next frame tail.
+>> + */
+>> +static unsigned long unwind_user_frame(stack_trace_consume_fn consume_entry,
+>> +				       void *cookie, unsigned long fp,
+>> +				       unsigned long reg_ra)
+>> +{
+>> +	struct stackframe buftail;
+>> +	unsigned long ra = 0;
+>> +	unsigned long __user *user_frame_tail =
+>> +		(unsigned long __user *)(fp - sizeof(struct stackframe));
+>> +
+>> +	/* Check accessibility of one struct frame_tail beyond */
+>> +	if (!access_ok(user_frame_tail, sizeof(buftail)))
+>> +		return 0;
+>> +	if (__copy_from_user_inatomic(&buftail, user_frame_tail,
+>> +				      sizeof(buftail)))
+>> +		return 0;
+>> +
+>> +	ra = reg_ra ? : buftail.ra;
+>> +
+>> +	fp = buftail.fp;
+>> +	if (!ra || !consume_entry(cookie, ra))
+>> +		return 0;
+>> +
+>> +	return fp;
+>> +}
+>> +
+>> +void arch_stack_walk_user(stack_trace_consume_fn consume_entry, void *cookie,
+>> +			  const struct pt_regs *regs)
+>> +{
+>> +	unsigned long fp = 0;
+>> +
+>> +	fp = regs->s0;
+>> +	if (!consume_entry(cookie, regs->epc))
+>> +		return;
+>> +
+>> +	fp = unwind_user_frame(consume_entry, cookie, fp, regs->ra);
+>> +	while (fp && !(fp & 0x3))
+> 
+> Just an observation that the "entry->nr < entry->max_stack" check was
+> removed in this generalization, but that's OK since it's checked in
+> perf_callchain_store().
 
-Best regards
----
-Kuninori Morimoto
+Yes, the checked is not necessary, because perf_callchain_store() check
+"entry->nr < entry->max_stack"
+
+Also the caller function stack_trace_save_user() registers the
+consume_entry callback "stack_trace_consume_entry" for saving user stack
+traces into a storage array, in which entry->nr against entry->max_stack
+is put.
+
+> 
+> Not really part of your change, but shouldn't the check be 0x7 (checking
+> for 16B sp/fp alignment), rather than 0x3?
+
+You are right! From the below "RISCV Calling Convention" :
+
+    "In the standard RISC-V calling convention, the stack grows downward
+
+     and the stack pointer is always kept 16-byte aligned"
+
+So the sp should be 16-byte aligned, and the "PT_SIZE_ON_STACK" is also
+16-byte aligned, so I think the fp is also 16-byte aligned.
+
+Link: https://riscv.org/wp-content/uploads/2015/01/riscv-calling.pdf
+> 
+> 
+> Björn
+> 
+> 
 
