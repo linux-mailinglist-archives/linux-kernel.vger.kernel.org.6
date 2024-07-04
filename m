@@ -1,97 +1,125 @@
-Return-Path: <linux-kernel+bounces-241288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5209927965
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:59:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99EDD927966
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0258D1C21F72
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51861280E3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0541B1400;
-	Thu,  4 Jul 2024 14:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6F21B11F9;
+	Thu,  4 Jul 2024 14:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Aingwe3S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bxYldRAv"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FF91A0721
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B76215491
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720105129; cv=none; b=qn9LPzZfZwxblKSJXevOA81l8Txlvjh605yyz221feKWpqir8a4Dcb5qv58cVXXRd+3uF+aTtXhvUNsPN8EoMpzWtU5dNS+D0GVMpqbGk7xkEjEDjG4sor7CMOFV/zoDueEKt/HoopvZIiQ7WchwC1ad0zlSpPhXd7dlRdBfHiw=
+	t=1720105149; cv=none; b=Y8aJO3keMwJPdJlfXiMO6OM4hi+3XOdlQ3SUC7SRfK6yfxVlDPQxZDdRYKp5Y9t7GjsPdqd8erp1uEyN+uNLYMYhfBDT4LhRvA5kOjL1ilRkB5V6heAQn3EZ0SubD4urbwvjVJUck4WfZgOrHibpsQVLRu3lR8/ueQQ7k1kj94E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720105129; c=relaxed/simple;
-	bh=ShJwbW3WR/RLZ5Lf9ChwJdrMelDZwDBgn186WpNaogM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sCtPOPF8x4J+XjaaR8CXngzrtGyDIJyU3l0noCF5vxQwMkbbpnCib9taZNmIx7sGS1OlhKhlL4m/dVNCRm870ehTgrDJm/ZfwATL25jdgdt5EWRh709GK2AmiXLR+FLoLnQoP4CisKitXad2htESrx4i1CHZGMj6IvvWbJi7kvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Aingwe3S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF8ECC3277B;
-	Thu,  4 Jul 2024 14:58:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720105129;
-	bh=ShJwbW3WR/RLZ5Lf9ChwJdrMelDZwDBgn186WpNaogM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Aingwe3S+0NOyj/n+uzSZ9xFVXWfWKlGl7DQZIR/7qHkZiAQLe+T4vyhQiqq3W5wk
-	 4rFU/q5WGg/kDWBsDMzVC84HOlKXBxUU4HXwIKC+yzA0q2xhZdesqIzPoIwId7Rcqn
-	 +sCafHz5T1fR32kB4yq85oxFnDiUK8X/HzKrtZAM=
-Date: Thu, 4 Jul 2024 16:58:46 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: 88c258bd-3d0c-de79-b411-6552841eb8d0@gmail.com,
-	Linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org, luisbg@kernel.org,
-	salah.triki@gmail.com,
-	syzbot+fc26c366038b54261e53@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] fs/befs: fix shift-out-of-bounds in befs_check_sb
-Message-ID: <2024070419-calamity-blade-02fb@gregkh>
-References: <2023082746-antelope-drop-down-5562@gregkh>
- <20240704135057.1174408-1-dvyukov@google.com>
- <2024070416-hatbox-playlist-9886@gregkh>
- <CACT4Y+arKNML2gLvmXzqdfyJY5ydj0yjfk-NbrZpOLgTOTNH6A@mail.gmail.com>
- <2024070430-smell-cornhusk-1d6c@gregkh>
- <CACT4Y+az44BGCQ_DjOoCjfcQHEt6YEPi=pksFCRj=-zMrPwSQQ@mail.gmail.com>
+	s=arc-20240116; t=1720105149; c=relaxed/simple;
+	bh=WATt3D7J/IVmxltuxLMBwEcE4iWsmNPb4qKThKSzr2o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mpAufE3a66d7brynWTsVisPNhHbXozRSIjpkP1rNDFDR1ZPJ0Y0Rzowzz7OhNPRsZRvvWSuwk/fZTS0wwhMx4g4cvCIjy+wcVDmxUElOy73Dzkhd35eejUYSwwvHYtMWGWMugakTeATG5SnXVFbA/B/+hRwJtF6HPYLG9+28CzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bxYldRAv; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-36733f09305so446598f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 07:59:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720105147; x=1720709947; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ipW5yF2l0h3JDASUEZRIOOwGfpjoQU4vCS+os4NDlfs=;
+        b=bxYldRAv6Vt7ItneTQy/pcQsdJnrYyv84EsKjlQ4hQ5MAyTeYijtBAH/9poltQhBJy
+         VBKsJ/BAQw5xjfs7l4eHRrTyDY66lcy0uMxrg2fgs8MubeHfhrGJIM3SzhG1His+MR+A
+         7FOn5Vhu/qUNpg6pvT7vUq9ZvpbEkiTDAKxmz7OqgthD/m0cE0V70Imr3x+DO/hdvPsi
+         N8SrxTOzILTerHWrsVWWZGpg1rxrxzzgkmpdOgYZMtUhWWX3ac3xYeBDDWKrOjlI5Qms
+         5Si9KRPy8rJGxabwZXAd/YogktxyD/6aXwirJdxd4OO4IJiSSgpBm8WBOf47s2uc/YoZ
+         q3TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720105147; x=1720709947;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ipW5yF2l0h3JDASUEZRIOOwGfpjoQU4vCS+os4NDlfs=;
+        b=PdW/mMUp433VUF+iVDznPd17aMBaNDs/PBoys+p9anHrfa6+NiG1cguACTocs/xz8A
+         KPwp4ihIOED3V4xDIGGkHUE5Sb1nQqRS4XSEVAGGGwLfZSgRAUC5TYtqVTofeXa61BqF
+         h6NCa7S3N2BBkaHnJ7xjuIxAsYTI9LFEebr+NC3TLKXEfQmxnzztkZm/qt4sUgK6xWJP
+         kFQ9/HjyKE6FTlFJqGgAbZhUU27HhpT8YIVnvVmTjblug+UfFOzwDjhHf6Mnj9eBPaQw
+         2gW5dNdlvD/uXnXxH0+aTEHOjNueHxvIL/ulzc1APQhi9RGQZoj1y8T18tdiHPKsx2tL
+         5JBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEcIqIltV4pQ4suF+8axz2E2UWRQAHOkAcUG4hhmHf9olNx6Q6umQsCmkR5Q7XYTrr3o+OhE/4CTa9lEwa+17clqjS8O8IHnrzXUG9
+X-Gm-Message-State: AOJu0YwPo9LEv9HlIIfjaQ5/e4B0oG/wUZC5KqmOtY5EjoFsIvBpZ/sk
+	yCCENpwYMVB8JMUtyO8UX8W+aI/dxlNGBJGjXjQdRjGPCWBJm+0zmn7B9ZOcFXL6d8eV62PkeVV
+	gjlb3KcqzkiF4WGDpo8zt5NWZGlCQ5FCz2ps0
+X-Google-Smtp-Source: AGHT+IHiGxLMhUSTF5OSbTLNnCaVI7g8cxF0kLlNGQwwQL9PZ17CqMlQ4bzjGShedrKKcdwCCgJYMl/YYBc5f5VGRgE=
+X-Received: by 2002:adf:ff83:0:b0:367:4d9d:568b with SMTP id
+ ffacd0b85a97d-3679de96b24mr1510125f8f.68.1720105146546; Thu, 04 Jul 2024
+ 07:59:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+az44BGCQ_DjOoCjfcQHEt6YEPi=pksFCRj=-zMrPwSQQ@mail.gmail.com>
+References: <20240701112448.28638-1-ethan.twardy@gmail.com>
+ <20240701112448.28638-5-ethan.twardy@gmail.com> <CAH5fLgi5HdoPzJHZUrS7r3wdQ6GheJDbzGRGKZpk9oC=U6SdHA@mail.gmail.com>
+ <D2GU6M1F3QN4.31TYYGTCNHJ9F@gmail.com>
+In-Reply-To: <D2GU6M1F3QN4.31TYYGTCNHJ9F@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 4 Jul 2024 16:58:53 +0200
+Message-ID: <CAH5fLgi=PPX5aUiN7=kh+z8KHRmbFLLtwGw+XK1Qmf4_-Ye+_g@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] rust: macros: Enable the rest of the tests
+To: "Ethan D. Twardy" <ethan.twardy@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, 
+	Aswin Unnikrishnan <aswinunni01@gmail.com>, "open list:RUST" <rust-for-linux@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 04, 2024 at 04:13:52PM +0200, Dmitry Vyukov wrote:
-> On Thu, 4 Jul 2024 at 16:11, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > On Thu, Jul 04, 2024 at 03:50:57PM +0200, Dmitry Vyukov wrote:
-> > > > > Hi,
-> > > > >
-> > > > > What's the kernel policy for such cases?
-> > > >
-> > > > What "case"?
-> > > >
-> > > > There is no context here at all, and I can't find any patch on lore at
-> > > > all.
-> > > >
-> > > > Please always properly quote stuff...
+On Thu, Jul 4, 2024 at 4:49=E2=80=AFPM Ethan D. Twardy <ethan.twardy@gmail.=
+com> wrote:
+>
+> On Thu Jul 4, 2024 at 4:43 AM CDT, Alice Ryhl wrote:
+> > On Mon, Jul 1, 2024 at 1:28=E2=80=AFPM Ethan D. Twardy <ethan.twardy@gm=
+ail.com> wrote:
 > > >
-> > > It's not easy with kernel lists. I used the lore suggested reply-to
-> > > command. Here is full thread:
-> > > https://lore.kernel.org/all/20240704135057.1174408-1-dvyukov@google.com/
+> > > Now that the rusttest target for the macros crate is compiled with th=
+e
+> > > kernel crate as a dependency, the rest of the rustdoc tests can be
+> > > enabled.
+> > >
+> > > Signed-off-by: Ethan D. Twardy <ethan.twardy@gmail.com>
 > >
-> > I see no patch on lore on this thread :(
-> 
-> Oh, it wasn't properly threaded, sorry.
-> Here is the patch:
-> https://lore.kernel.org/all/20230801155823.206985-1-ghandatmanas@gmail.com/
+> > I would drop the newline before `fn main()` here:
+> >
+> > > @@ -221,6 +248,8 @@ pub fn concat_idents(ts: TokenStream) -> TokenStr=
+eam {
+> > >  ///         unsafe { bindings::destroy_info(self.raw_info) };
+> > >  ///     }
+> > >  /// }
+> > > +///
+> > > +/// # fn main() {}
+> > >  /// ```
+>
+> So close! v3 incoming :). Thank you for your review!
 
-Ah, ok, resend it and cc: the vfs maintainer, it should probably go
-through their tree for other abandoned filesystems.
+You're welcome :)
 
-thanks,
+Unfortunately, I'm not really able to review the first patch in this series=
+.
 
-greg k-h
+Alice
 
