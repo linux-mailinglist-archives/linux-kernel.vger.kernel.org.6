@@ -1,119 +1,143 @@
-Return-Path: <linux-kernel+bounces-241129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B72392775E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8615992775D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44851F23AEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 420C9282B5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38071AE872;
-	Thu,  4 Jul 2024 13:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25881AED3B;
+	Thu,  4 Jul 2024 13:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NgP1S1oB"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h1BsKCVL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B94F28373
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4733528373;
+	Thu,  4 Jul 2024 13:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720100658; cv=none; b=c7i3C7jVCW3AbsBWGaGzIa69wuLaNihu8f6WZiHSkFAi5Xir64oJF1vJZf0DYx/ryug2SDO2wd9poXMZc4v5FiBw5Al9B0+BcHyGvicrCoMjbMIDmAjphkNwwbQ62iPPs1kt3IWRf0g+I7fd2A6q7bmbX9hGAU4GdszWNV3N+zo=
+	t=1720100653; cv=none; b=OPsNSXCej3FKKwG3MwbNZ9mzjcvAtmM0lEgeTKXMBY5XVu1p7GMlZGsLP+E+yvpZnyE9wI7nMp2A8mPPYjcIGjzUnTNF5bTrmlgGYYkzavSCC226Sjxk2XiMxwKZx1sUkzt49NSwJOFaNtDsHR4TO/i5N32XXY0JkvdGheVsUKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720100658; c=relaxed/simple;
-	bh=zoKgRBUb7kuDaMtXW8wz7v4HHutoPtOHRRz+Vq0hYh4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LixOPeDFwGr0Fk4fn2CQ/BdVcsJzgOya9R80Tk0FryxJHKXDSnGoypwQcFUPU1nvLcG4OG5QFbhBM9bhvPk2jhWrcEigIGz28ltldihEXuiyjlB5KhEJmsxY75OUVe7LWGkSeBhLVReVjjUYOAllgyTGvjdvUDjQiXbzVW/rkNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NgP1S1oB; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52ce08616a9so2546e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 06:44:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720100654; x=1720705454; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7+vp+msh6RVYJW0VzGFNvL6QlCbOInjkhWL54qzwHAs=;
-        b=NgP1S1oBVck55hYpqq+azeAt8sLhMM1KEpg56bkrBlexsPlgla14SUEM94S/8S6TYL
-         MkZmzFIAuxZudUn/l+V0N92kSicHBngEVLUb/er27sMXgAGh9RVNel/e0jYEfWortXcZ
-         tpW6F0oj3cicYeg4Ct+LQl3Rn/rOV2OyEw0pHh1XfJTAUT0k1H53yJKJ/J8xDth8VauY
-         WTVguT0uO4ugQJuFsVxYCWzgcYe/Re+IeARKbjuRMO1d7v2wYwI2dK3mTJWuZ+9f0ek5
-         eRXzquvotYdI4KifQaAxdoIp62uIhGmmsHj3q2NChL+QKPPcQFlw1xF1u/eUmsXpyOB7
-         x7kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720100654; x=1720705454;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7+vp+msh6RVYJW0VzGFNvL6QlCbOInjkhWL54qzwHAs=;
-        b=cGNA4+CSUcygtmo9I4LtGyVhLFuty9AbjHhFdTK/qf6uM2+uRZoqtGFDBSumoYwoxF
-         FRN36y+KrvslFwIEoKCdTKjSBf1utQTBNu0NbJYW9r1//p4DFUyXjPLLiD8XtCbaEmiV
-         vXBMTj+q56VGp0Sm9ib1mybdY1FKP7AOntrqnodAh53b6nDUJuX1K9R/CChr6J4rKmvh
-         beq7XwCsip92mQXuJKruGyk1cqDESpLrWOJ/0+AE4Hdkw8m2886XBCHanTlawRNWsh7D
-         wgG57+14wk/iST2DBtzTu4elcmzY26puwJ6tl53Z4Q0WOoStautpKHMGVAutx/FaYWqj
-         P/WA==
-X-Gm-Message-State: AOJu0YynblB4PRmUFX/ujullIW6GB+PTwPq37g4e6e7JkGoEKz4rHX0p
-	wEOEqM7Nvo2rOVi3hVYkpl0gz5oPLmY4S6J7G6BPeatUPUWxb0oDStpPYWbhG/UnXhHgqGjGpdO
-	GW1nF8FRDaw6DCC/kQ07QMgJSLX30H3i6KzO5
-X-Google-Smtp-Source: AGHT+IEQEFNmS5/guB2ZeMf7QrGTvy2SJmUx0h6RIuIFJyk7uzgPCWgMud5O7qY6/THnSjJr5Nk3L3Df5LZjlKCNr+o=
-X-Received: by 2002:a05:6512:3582:b0:52e:8475:7c23 with SMTP id
- 2adb3069b0e04-52e9f2bb8e2mr88833e87.7.1720100654191; Thu, 04 Jul 2024
- 06:44:14 -0700 (PDT)
+	s=arc-20240116; t=1720100653; c=relaxed/simple;
+	bh=vd6ZMMbCUn2U39zAqJ5QeXI+KZCVWJVSSyj9T80YrJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N7eXiBO2Z+wGDxsczAe/Eh263vZAPnb93RRxf0N9a+Oth8pK9CdjXJXjWtpSqW0EGM0hwktZInfdXy9nMcubcxzgg41iYFqCSzrtpON3IXvIIn2j3DHGYcGkx2U7EvxkxanhgVP5Qexi0dsLgjSJnvUstl6kzQEF+dXe1gXeOSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h1BsKCVL; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720100651; x=1751636651;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vd6ZMMbCUn2U39zAqJ5QeXI+KZCVWJVSSyj9T80YrJM=;
+  b=h1BsKCVLBIFomz0G1tr0EVcKOg38JREn0mewiY/9myKYmnFM/Cz0LBd+
+   VmWztR19ExBSJ3XUlGnZnxBrCKay8mRUgq5c/sBDYtkUToNp9Ng3bBKUr
+   DToyhrr/Roe+Rn47a9opXSFfBZumo95lP+R5+VJ74wZrcSQ5sSq3SSNhJ
+   7Y6Bu6Pqte1rSldEGzNdgT+frCgDyiHW3m/dThByvyowG5a2WlETyKU+v
+   sFzvX62B1RDkpdxUc1qRui7Zev3qX9Sj6cLsWtBVKvQwFsleG8ZvbYzDR
+   CDst7kDdA/JPDEdoFadpkiNKLg8XNn2Q9XeWO4DdJ/+LDfToIBeKPlJpV
+   Q==;
+X-CSE-ConnectionGUID: GIjmXhWyRIutQvBdJ9/qag==
+X-CSE-MsgGUID: XkSV36XVRYyNPNG+Ey0b8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="17217109"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="17217109"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 06:44:09 -0700
+X-CSE-ConnectionGUID: XeQQC8IgQiOO66rDYk+aYw==
+X-CSE-MsgGUID: qAyT9sa+TaKk8jCwTK5edw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="77734900"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 04 Jul 2024 06:44:05 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id C66B160D; Thu, 04 Jul 2024 16:44:03 +0300 (EEST)
+Date: Thu, 4 Jul 2024 16:44:03 +0300
+From: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+To: "Huang, Kai" <kai.huang@intel.com>
+Cc: "luto@kernel.org" <luto@kernel.org>, 
+	"rafael@kernel.org" <rafael@kernel.org>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
+	"bp@alien8.de" <bp@alien8.de>, "peterz@infradead.org" <peterz@infradead.org>, 
+	"hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "bhe@redhat.com" <bhe@redhat.com>, 
+	"x86@kernel.org" <x86@kernel.org>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"ardb@kernel.org" <ardb@kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>
+Subject: Re: [PATCH 3/3] x86/64/kexec: Rewrite init_transition_pgtable() with
+ kernel_ident_mapping_init()
+Message-ID: <vyvbvham7qcj2pnotfn4mocozx6x33zkvuks63w3ymzk4w6sjc@2gk5xbtb5xrb>
+References: <20240701124334.1855981-1-kirill.shutemov@linux.intel.com>
+ <20240701124334.1855981-4-kirill.shutemov@linux.intel.com>
+ <cd655676d5e81ca9b1de0a66f5f5c719ef816c89.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000012d4ed0610537e34@google.com> <000000000000b7606506105d2a70@google.com>
-In-Reply-To: <000000000000b7606506105d2a70@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 4 Jul 2024 15:44:02 +0200
-Message-ID: <CACT4Y+ZWjUE6-q1YF=ZaPjKgGZBw4JLD1v2DphSgCAVf1RzE8g@mail.gmail.com>
-Subject: Re: [syzbot] Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in mi_enum_attr
-To: syzbot <syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd655676d5e81ca9b1de0a66f5f5c719ef816c89.camel@intel.com>
 
-On Fri, 2 Feb 2024 at 03:49, syzbot
-<syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com> wrote:
->
-> For archival purposes, forwarding an incoming command email to
-> linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
->
-> ***
->
-> Subject: Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in mi_enum_attr
-> Author: lizhi.xu@windriver.com
->
-> #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
->
-> diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
-> index 53629b1f65e9..a435df98c2b1 100644
-> --- a/fs/ntfs3/record.c
-> +++ b/fs/ntfs3/record.c
-> @@ -243,14 +243,14 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
->                 off += asize;
->         }
->
-> -       asize = le32_to_cpu(attr->size);
-> -
->         /* Can we use the first field (attr->type). */
->         if (off + 8 > used) {
->                 static_assert(ALIGN(sizeof(enum ATTR_TYPE), 8) == 8);
->                 return NULL;
->         }
->
-> +       asize = le32_to_cpu(attr->size);
-> +
->         if (attr->type == ATTR_END) {
->                 /* End of enumeration. */
->                 return NULL;
+On Wed, Jul 03, 2024 at 11:06:21AM +0000, Huang, Kai wrote:
+> >  static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+> >  {
+> > -	pgprot_t prot = PAGE_KERNEL_EXEC_NOENC;
+> > -	unsigned long vaddr, paddr;
+> > -	int result = -ENOMEM;
+> > -	p4d_t *p4d;
+> > -	pud_t *pud;
+> > -	pmd_t *pmd;
+> > -	pte_t *pte;
+> > +	struct x86_mapping_info info = {
+> > +		.alloc_pgt_page	= alloc_transition_pgt_page,
+> > +		.context	= image,
+> > +		.page_flag	= __PAGE_KERNEL_LARGE_EXEC,
+> > +		.kernpg_flag	= _KERNPG_TABLE_NOENC,
+> > +		.offset = __START_KERNEL_map - phys_base,
+> > +	};
+> > +	unsigned long mstart = PAGE_ALIGN_DOWN(__pa(relocate_kernel));
+> > +	unsigned long mend = mstart + PAGE_SIZE;
+> >  
+> > -	vaddr = (unsigned long)relocate_kernel;
+> > -	paddr = __pa(page_address(image->control_code_page)+PAGE_SIZE);
+> 
+> Perhaps I am missing something, but this seems a functional change to me.
+> 
+> IIUC the page after image->control_code_page is allocated when loading the
+> kexec kernel image.  It is a different page from the page where the
+> relocate_kernel code resides in.
+> 
+> The old code maps relocate_kernel kernel VA to the page after the
+> control_code_page.  Later in machine_kexec(), the relocate_kernel code is
+> copied to that page so the mapping can work for that:
+> 
+> 	control_page = page_address(image->control_code_page) + PAGE_SIZE;
+> 	__memcpy(control_page, relocate_kernel,
+> KEXEC_CONTROL_CODE_MAX_SIZE);
+> 
+> The new code in this patch, however, seems just maps the relocate_kernel VA
+> to the PA of the relocate_kernel, which should be different from the old
+> mapping.
 
-Hi Lizhi,
+Yes, original code maps at relocate_kernel() VA the page with copy of the
+relocate_kernel() in control_code_page. But it is safe to map original
+relocate_kernel() page there as well as it is not going to be overwritten
+until swap_pages(). We are not going to use original relocate_kernel()
+page after RET at the end of relocate_kernel().
 
-I don't see this fix mailed as a patch. Do you plan to submit it officially?
+Does it make any sense?
+
+I will try to explain it in the commit message in the next version.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
