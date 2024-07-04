@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-241451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB43D927B8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:05:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DC24927B90
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 963CD285BE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:05:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F6C51F2450F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230F51B47BD;
-	Thu,  4 Jul 2024 17:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A4F1B5818;
+	Thu,  4 Jul 2024 17:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1BvjwNtL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BzOH1PyB"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qczxi2jD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+0cLXatt"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF731B3F06;
-	Thu,  4 Jul 2024 17:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A055F1B3F22;
+	Thu,  4 Jul 2024 17:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720112674; cv=none; b=fN2yKMfqXfNQuJV/JLA6IPQYwkwX+cLLZv/eX+eoF0A41ot+ONYBg2NkcRdp0ZPVWahwzNUFR784OodVtfi+OVxA/IhaNz4o+XTaRksX/wrRuXWBiEWz/1fH0JIZlST5tCDSI5tw1VH0jrNSmZ8QV4aFDlQZTlXDkIOvBHLCNbg=
+	t=1720112675; cv=none; b=rAOA8+mzrRmRBkbrGJdjU4iYB19uJ7Kp2dZYFEo1qG9pft8Cuo99BDVS5fuPvdFopjyzQSQwF8QNy3m66PIcctGnhA8SqvHyE5kJTwWMTuSbMbNowV3u823rnOxHfSISnIO9vLgzWmYn/q/1+ejpoRU/Vu6ulAygiih1s7MZqZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720112674; c=relaxed/simple;
-	bh=aH/OGvLUI9SJrDSPzGOMJ+Bjl+QQ78TExgwXePwAdS4=;
+	s=arc-20240116; t=1720112675; c=relaxed/simple;
+	bh=7Qm+cOVAwIQaBTwwWubJEe9rJl3c3MGGBcBHZMgHC68=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T+67qzquwrQsIha+quyM58k0hmISCVGxH5yR1q2+HIuK27IZfQW1MmzDuox0BfsmKS+2/rvXYPZ9uTCAPd3rVGQ5j60BC0RswzGdxEwCjtYpAU9X37T0rIbyCTaBul0Uy/7KNmpzgrENQVWgBuN9K4zYVgjWMy0Qh85ZfaYWkXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1BvjwNtL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BzOH1PyB; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=F4yQrN3rTlF22ou+e3DjGTD7KdWaNHD0zPbCHuvj6WqoBDZr/cKZNXPIC9aWwErGODS5mosDsMseRWq+p2y3qTt9rdWa2R9aLn7hChjA0y1Een3EeK+fEaT3eFs6jX/3jGc/2zloxk9oWn2U77a8GsW8hRjeRYA5p5BVSfdmOS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qczxi2jD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+0cLXatt; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1720112670;
+	s=2020; t=1720112671;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MHWQ5GgUYoJtg5IuAZ3WhjnGiXq5JPhWYhqyDGJpC1Y=;
-	b=1BvjwNtLyO2iJGLwlK0SZK0RFlhFekkVP17WSg7czIyyP9gDOU0lBbOv1CyqnCBw9sov0m
-	vRKtsREuAMBRHYBoXkJCNa7vSlEFb+NjhcI5P3KCHC7iL6ZRpAOHPdhOM63t9vrpwRZeQm
-	DpZh1pkMfvbHOQoZ0wqHsKw42Qd4Th6T81vcuiLl5BZS45i994+FyupPTYN4EL9QDlgDuf
-	7tVH54bOz/0XOde8ibtJl/FQLbDtsfYmp211EY7/5WtYirVNXPHcx1o/TEgYA7qyPO7zgW
-	rteAarjZBpqnJ1Gc/qk4IXMNLHmSL5gW9DxlnTggjrTdJ0lWXMZveJMRsLIjqQ==
+	bh=4BmoEiKHdjgFDrhp3mcuYFn54BZ+zNx9uZzc00KIUtM=;
+	b=Qczxi2jDFOjvCDvHvage20Ub2s719/uPdRXZmz2FgqI/tkNfilq/IIx3FZbW7cJTdbAWHN
+	uwkpTLdVW60UljVISBmfgSmDJxI9lmvYswYIPy7b9pBZmLRvWbudfKEMS+rgWwRJHgPcqI
+	5tDFzuIGDpgNRb/omxmeveXCqlJsOEu1MkW3kl93emk8aX2HTV6oTLSjSr1J2TD/5fzzo3
+	LvYnpLFl4OPkQGhvsJZy4ByCWnw9t9wHZuxXT8xERSId0IQSyOnmcvXkuaUgTb0iavFeVO
+	ygT7WUcvUtZ5v/SEHmtMjw5OZtZbNuPP2VQz3sjoy5C/vM2iyg9cD7fjtX8YPw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1720112670;
+	s=2020e; t=1720112671;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MHWQ5GgUYoJtg5IuAZ3WhjnGiXq5JPhWYhqyDGJpC1Y=;
-	b=BzOH1PyBNSVd6ur7CbdUDdPBVz/8DWbcCnFPzNiks5GrqiyDSlVxmMhieFfKGW3Gw/SapY
-	TkEbquVojCLDh/Bg==
+	bh=4BmoEiKHdjgFDrhp3mcuYFn54BZ+zNx9uZzc00KIUtM=;
+	b=+0cLXatt4AzL2iRwmfoOr9T2FKYm49DfTFZysv07N/QNTS/lEPFENg6yIofvXtXlL7NLYw
+	nFGCSRg/RwfmGYCQ==
 To: linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Adrian Hunter <adrian.hunter@intel.com>,
@@ -69,9 +69,9 @@ Cc: Adrian Hunter <adrian.hunter@intel.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v5 4/7] perf: Shrink the size of the recursion counter.
-Date: Thu,  4 Jul 2024 19:03:38 +0200
-Message-ID: <20240704170424.1466941-5-bigeasy@linutronix.de>
+Subject: [PATCH v5 5/7] perf: Move swevent_htable::recursion into task_struct.
+Date: Thu,  4 Jul 2024 19:03:39 +0200
+Message-ID: <20240704170424.1466941-6-bigeasy@linutronix.de>
 In-Reply-To: <20240704170424.1466941-1-bigeasy@linutronix.de>
 References: <20240704170424.1466941-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -82,69 +82,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-There are four recursion counter, one for each context. The type of the
-counter is `int' but the counter is used as `bool' since it is only
-incremented if zero.
-The main goal here is to shrink the whole struct into 32bit int which
-can later be added task_struct into an existing hole.
+The swevent_htable::recursion counter is used to avoid creating an
+swevent while an event is processed to avoid recursion. The counter is
+per-CPU and preemption must be disabled to have a stable counter.
+perf_pending_task() disables preemption to access the counter and then
+signal. This is problematic on PREEMPT_RT because sending a signal uses
+a spinlock_t which must not be acquired in atomic on PREEMPT_RT because
+it becomes a sleeping lock.
 
-Reduce the type of the recursion counter to an unsigned char, keep the
-increment/ decrement operation.
+The atomic context can be avoided by moving the counter into the
+task_struct. There is a 4 byte hole between futex_state (usually always
+on) and the following perf pointer (perf_event_ctxp). After the
+recursion lost some weight it fits perfectly.
+
+Move swevent_htable::recursion into task_struct.
 
 Tested-by: Marco Elver <elver@google.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- kernel/events/callchain.c | 2 +-
- kernel/events/core.c      | 2 +-
- kernel/events/internal.h  | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ include/linux/perf_event.h |  6 ------
+ include/linux/sched.h      |  7 +++++++
+ kernel/events/core.c       | 13 +++----------
+ kernel/events/internal.h   |  2 +-
+ 4 files changed, 11 insertions(+), 17 deletions(-)
 
-diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-index 1273be84392cf..ad57944b6c40e 100644
---- a/kernel/events/callchain.c
-+++ b/kernel/events/callchain.c
-@@ -29,7 +29,7 @@ static inline size_t perf_callchain_entry__sizeof(void)
- 				 sysctl_perf_event_max_contexts_per_stack));
- }
-=20
--static DEFINE_PER_CPU(int, callchain_recursion[PERF_NR_CONTEXTS]);
-+static DEFINE_PER_CPU(u8, callchain_recursion[PERF_NR_CONTEXTS]);
- static atomic_t nr_callchain_events;
- static DEFINE_MUTEX(callchain_mutex);
- static struct callchain_cpus_entries *callchain_cpus_entries;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index c278aefa94e76..bd4b81bf63b6d 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9776,7 +9776,7 @@ struct swevent_htable {
- 	int				hlist_refcount;
-=20
- 	/* Recursion avoidance in each contexts */
--	int				recursion[PERF_NR_CONTEXTS];
-+	u8				recursion[PERF_NR_CONTEXTS];
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index ea0d82418d854..99a7ea1d29ed5 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -970,12 +970,6 @@ struct perf_event_context {
+ 	local_t				nr_pending;
  };
 =20
+-/*
+- * Number of contexts where an event can trigger:
+- *	task, softirq, hardirq, nmi.
+- */
+-#define PERF_NR_CONTEXTS	4
+-
+ struct perf_cpu_pmu_context {
+ 	struct perf_event_pmu_context	epc;
+ 	struct perf_event_pmu_context	*task_epc;
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 61591ac6eab6d..afb1087f5831b 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -734,6 +734,12 @@ enum perf_event_task_context {
+ 	perf_nr_task_contexts,
+ };
+=20
++/*
++ * Number of contexts where an event can trigger:
++ *      task, softirq, hardirq, nmi.
++ */
++#define PERF_NR_CONTEXTS	4
++
+ struct wake_q_node {
+ 	struct wake_q_node *next;
+ };
+@@ -1256,6 +1262,7 @@ struct task_struct {
+ 	unsigned int			futex_state;
+ #endif
+ #ifdef CONFIG_PERF_EVENTS
++	u8				perf_recursion[PERF_NR_CONTEXTS];
+ 	struct perf_event_context	*perf_event_ctxp;
+ 	struct mutex			perf_event_mutex;
+ 	struct list_head		perf_event_list;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index bd4b81bf63b6d..1a26a9c33306a 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9774,11 +9774,7 @@ struct swevent_htable {
+ 	struct swevent_hlist		*swevent_hlist;
+ 	struct mutex			hlist_mutex;
+ 	int				hlist_refcount;
+-
+-	/* Recursion avoidance in each contexts */
+-	u8				recursion[PERF_NR_CONTEXTS];
+ };
+-
  static DEFINE_PER_CPU(struct swevent_htable, swevent_htable);
+=20
+ /*
+@@ -9976,17 +9972,13 @@ DEFINE_PER_CPU(struct pt_regs, __perf_regs[4]);
+=20
+ int perf_swevent_get_recursion_context(void)
+ {
+-	struct swevent_htable *swhash =3D this_cpu_ptr(&swevent_htable);
+-
+-	return get_recursion_context(swhash->recursion);
++	return get_recursion_context(current->perf_recursion);
+ }
+ EXPORT_SYMBOL_GPL(perf_swevent_get_recursion_context);
+=20
+ void perf_swevent_put_recursion_context(int rctx)
+ {
+-	struct swevent_htable *swhash =3D this_cpu_ptr(&swevent_htable);
+-
+-	put_recursion_context(swhash->recursion, rctx);
++	put_recursion_context(current->perf_recursion, rctx);
+ }
+=20
+ void ___perf_sw_event(u32 event_id, u64 nr, struct pt_regs *regs, u64 addr)
+@@ -13653,6 +13645,7 @@ int perf_event_init_task(struct task_struct *child,=
+ u64 clone_flags)
+ {
+ 	int ret;
+=20
++	memset(child->perf_recursion, 0, sizeof(child->perf_recursion));
+ 	child->perf_event_ctxp =3D NULL;
+ 	mutex_init(&child->perf_event_mutex);
+ 	INIT_LIST_HEAD(&child->perf_event_list);
 diff --git a/kernel/events/internal.h b/kernel/events/internal.h
-index 5150d5f84c033..f9a3244206b20 100644
+index f9a3244206b20..f0daaa6f2a33b 100644
 --- a/kernel/events/internal.h
 +++ b/kernel/events/internal.h
-@@ -208,7 +208,7 @@ arch_perf_out_copy_user(void *dst, const void *src, uns=
-igned long n)
-=20
- DEFINE_OUTPUT_COPY(__output_copy_user, arch_perf_out_copy_user)
-=20
--static inline int get_recursion_context(int *recursion)
-+static inline int get_recursion_context(u8 *recursion)
- {
- 	unsigned char rctx =3D interrupt_context_level();
-=20
-@@ -221,7 +221,7 @@ static inline int get_recursion_context(int *recursion)
+@@ -221,7 +221,7 @@ static inline int get_recursion_context(u8 *recursion)
  	return rctx;
  }
 =20
--static inline void put_recursion_context(int *recursion, int rctx)
-+static inline void put_recursion_context(u8 *recursion, int rctx)
+-static inline void put_recursion_context(u8 *recursion, int rctx)
++static inline void put_recursion_context(u8 *recursion, unsigned char rctx)
  {
  	barrier();
  	recursion[rctx]--;
