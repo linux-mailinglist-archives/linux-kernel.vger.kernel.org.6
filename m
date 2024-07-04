@@ -1,73 +1,53 @@
-Return-Path: <linux-kernel+bounces-241114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9397392772D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:29:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CA8B92772F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E33871F24B8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:29:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EACC2854E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3814C1AED20;
-	Thu,  4 Jul 2024 13:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="27svKP75"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA7C1AE874;
+	Thu,  4 Jul 2024 13:30:17 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7F71A0B1D
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206D21AC22E;
+	Thu,  4 Jul 2024 13:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720099785; cv=none; b=InOCIwvK4KSr7I7VZKMPDRzn8HGgRsT6d0Dbsu1+26F69gXCWT+OmCPq3QZU7deGVj/fVgyQJSaCs+nDK9cfSQsbyRyBkTESPFuZzKX7I7boXcjuGJ7hCgGK1kMu3FBN2TiXsA8zhRcR2S6VHdYLhv50lfXKYe+Xx7rAYxBNANI=
+	t=1720099816; cv=none; b=G7B0cXElhMeBrsFQGkXKPfwDXOqLXaJShKvpJvjl7aCc4jVMI/rZB6tVQXYQ9RF2u/R3HBrgKqM1v+r6PXvVHY7qTteg9Vk832B/4DbRBY+9qlUJ5V7GyC+Nk2UYWDlCIj/OUT6gheq7a5Eejzw4BT848eaChuEGrDN8v10gAIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720099785; c=relaxed/simple;
-	bh=DuHm9YqDAtXLrZa9R6Z8EyUhv9Q7HdAR9NpVkAQm7iM=;
+	s=arc-20240116; t=1720099816; c=relaxed/simple;
+	bh=qyw+9BOLPFjApliCjvgcZJ9WV8peDn8Gi2IZ1+bzG5c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W5UM8toDGsV6aheqiT5hBtg769appTPt367Z/newjq3LX0mEavG2twU9cs0poeVvAFT06AJAxjkr10dgshLtTVZVa0asEF13A+336h/T0003upAxNeaSDkzskpeiH8ljMjTfmbxst139k6No4lHKnNPmMf1cYJYxgu++lZeLags=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=27svKP75; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7eeecebb313so3328739f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 06:29:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1720099781; x=1720704581; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/MZG63Ap6wFSly7nWcSpyYWAg0/zjm1KJcnRMvcDoNk=;
-        b=27svKP75U7vawTTGk0Oz1Cn30K0LvG6nZMX1JeL27BKH8HUTPaNKA/KvveGidUluXk
-         /SlbUp7qchQJCKJkRIrXsWjveCWRcNYQtFLok1eN5gskoOWODwBEzRPeoz77L4saqYa0
-         awJNE/tktrf/UEW9rCZ1IKwVycu8958ACajuaNrEsgTT1qQbDQpkA0x4LZVlpw5zfGfs
-         ZZnQGmGVb1ruzZn802hVANshYLEULKNee2Dw9fIZeJTgKiqZkGNlQ5pCDKnt+fc2dyUy
-         WMDD3kJFF6vp3qbEhMNuXeQMP1e2pbZ8VASQZ62kSTABhmBJWn49aEETwPZcRYZAbim0
-         C1/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720099781; x=1720704581;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/MZG63Ap6wFSly7nWcSpyYWAg0/zjm1KJcnRMvcDoNk=;
-        b=MoqMwS+Qd1POxPd/2vD9lwDXj3LREXgimQSQRsBbOqa5k3lQ4aTvxQFRglwxnvEWIp
-         /W85x6BUQqULv6LS7MM5RrmgHpueRFSI+S322MR7ULXvgfO99sXCDwrufzTez3MjINZQ
-         PCCAb1CDK0GCrc84kitBvImOy9JtqLVgYCTtrUAgQPpdT2nCG64F0c2EIHF5kTFx0HLO
-         CZgM/tyAmSuXMFkP+ihIw/dRUa3bUW/QhtST6yQ0rNvNB6wFuSaqKPm1uO3s5HQ2zrCk
-         EkPqsutknFkISTh0K19cif7+0HrgBo9jYrsXR3wgY+AosCrZQjC7hjky1VkjZdiQkQyf
-         n4TA==
-X-Forwarded-Encrypted: i=1; AJvYcCUooeqDWMz194voGuh0rpOyb5QvA+BPYlwmhD53IAGut3tC9KbguSOh3BLlMWFjjHLrfpCI2umgl0u/azvspTKp2VhNcdimY7dDt/fK
-X-Gm-Message-State: AOJu0YzllVpRXzWhbdmARsKO7XIuSVZArFiraH4Hst53YNPuRzTdwTK/
-	mbeZTkoFGi72hYvY4xMaQgyFk2xGqsq+nU5wP34JQQwrFkOvRPGLL2mr7H/7RA==
-X-Google-Smtp-Source: AGHT+IGE2Kn38ZjfKcMb1t/TMP7AB6ho5lYWEiXel+/CwhSR9s4NO6A3R9FmNyoNz/qEzi3cccMnMA==
-X-Received: by 2002:a05:6e02:170c:b0:376:3907:4912 with SMTP id e9e14a558f8ab-38398051e3cmr24448265ab.1.1720099781395;
-        Thu, 04 Jul 2024 06:29:41 -0700 (PDT)
-Received: from ?IPV6:2401:4900:1f3f:cba4:e1a3:7d47:549c:8f33? ([2401:4900:1f3f:cba4:e1a3:7d47:549c:8f33])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf70asm12207124b3a.102.2024.07.04.06.29.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 06:29:41 -0700 (PDT)
-Message-ID: <06ba9d89-255a-437f-816d-ec8004168c63@beagleboard.org>
-Date: Thu, 4 Jul 2024 18:59:33 +0530
+	 In-Reply-To:Content-Type; b=TddBsFYshU/TO0EwBgIHqz0GZmFcHEsek4lCE2LUx8J1fv4jeU5555eSUwVTsvbghMCm7ZVpvHiJQ6phaeg7xTKJKn5KshIdquAEcjngWfffBqKCzdx5zUBYii1RB+S6oiRpNP2ofR0FAHnBZulB0Pb1uZdcypqvcQ8SCJE/ggc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 46C5D21A5B;
+	Thu,  4 Jul 2024 13:30:12 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 74BB41369F;
+	Thu,  4 Jul 2024 13:30:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 870IGuOjhmbAIAAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Thu, 04 Jul 2024 13:30:11 +0000
+Message-ID: <8433a148-47d5-49a0-b7ed-75801060bce7@suse.de>
+Date: Thu, 4 Jul 2024 16:30:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,492 +55,426 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/7] mikrobus: Add mikroBUS driver
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Vaishnav M A <vaishnav@beagleboard.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>,
- Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Tero Kristo <kristo@kernel.org>, Michael Walle <mwalle@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, jkridner@beagleboard.org,
- robertcnelson@beagleboard.org, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
- <20240627-mikrobus-scratch-spi-v5-6-9e6c148bf5f0@beagleboard.org>
- <2024070400-grievance-unmolded-fa66@gregkh>
+Subject: Re: [PATCH v2 09/12] PCI: brcmstb: Refactor for chips with many
+ regular inbound BARs
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240703180300.42959-1-james.quinlan@broadcom.com>
+ <20240703180300.42959-10-james.quinlan@broadcom.com>
 Content-Language: en-US
-From: Ayush Singh <ayush@beagleboard.org>
-In-Reply-To: <2024070400-grievance-unmolded-fa66@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20240703180300.42959-10-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Queue-Id: 46C5D21A5B
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-If Grove Sunlight patches become the primary way of handling connector 
-addon-board design, then most of this driver will probably be redundant. 
-Still, I will try answer the questions as much as I can.
+Hi Jim,
 
-On 7/4/24 18:36, Greg Kroah-Hartman wrote:
-> On Thu, Jun 27, 2024 at 09:56:16PM +0530, Ayush Singh wrote:
->> Adds support for SPI mikroBUS addon boards with configuration based on
->> device tree. The goal is to get a minimal version in mainline to sort
->> out the device tree structure that should be used.
->>
->> A mikroBUS board can use any combination of the following based protocols:
->> I2C, SPI, UART, PWM, Analog, GPIO with possibility of all pins being used
->> as GPIO instead of their original purpose. This requires the driver to be
->> flexible and identify the type of board based on the compatible string.
-> So this has nothing to do with greybus?  Or am I thinking of something
-> else?
+On 7/3/24 21:02, Jim Quinlan wrote:
+> Previously, our chips provided three inbound "BARS" with fixed purposes:
+> the first was for mapping SOC registers, the second was for memory, and the
+> third was for memory but with the endian swapped.  We typically only used
+> one of these BARs.
+> 
+> Complicating that BARs usage was the fact that the PCIe HW would do a
+> baroque internal mapping of system memory, and concatenate the regions of
+> multiple memory controllers.
+> 
+> Newer chips such as the 7712 and Cable Modem SOCs have taken a step forward
+> and now provide multiple inbound BARs.  This works in concert with the
+> dma-ranges property, where each provided range becomes an inbound BAR.
+> 
+> This commit provides support for these new chips and their multiple
+> inbound BARs but also keeps the legacy support for the older system.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 199 +++++++++++++++++++-------
+>  1 file changed, 150 insertions(+), 49 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index ffb3e8d8fb2a..5f632fdc0052 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -75,15 +75,12 @@
+>  #define PCIE_MEM_WIN0_HI(win)	\
+>  		PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI + ((win) * 8)
+>  
+> +#define PCIE_BRCM_MAX_RC_BARS				16
+>  #define PCIE_MISC_RC_BAR1_CONFIG_LO			0x402c
+>  #define  PCIE_MISC_RC_BAR1_CONFIG_LO_SIZE_MASK		0x1f
+>  
+> -#define PCIE_MISC_RC_BAR2_CONFIG_LO			0x4034
+> -#define  PCIE_MISC_RC_BAR2_CONFIG_LO_SIZE_MASK		0x1f
+> -#define PCIE_MISC_RC_BAR2_CONFIG_HI			0x4038
+> +#define PCIE_MISC_RC_BAR4_CONFIG_LO			0x40d4
+>  
+> -#define PCIE_MISC_RC_BAR3_CONFIG_LO			0x403c
+> -#define  PCIE_MISC_RC_BAR3_CONFIG_LO_SIZE_MASK		0x1f
+>  
+>  #define PCIE_MISC_MSI_BAR_CONFIG_LO			0x4044
+>  #define PCIE_MISC_MSI_BAR_CONFIG_HI			0x4048
+> @@ -130,6 +127,10 @@
+>  	  (PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK | \
+>  	   PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK)
+>  
+> +#define PCIE_MISC_UBUS_BAR1_CONFIG_REMAP			0x40ac
+> +#define  PCIE_MISC_UBUS_BAR1_CONFIG_REMAP_ACCESS_EN_MASK	0x1
+> +#define PCIE_MISC_UBUS_BAR4_CONFIG_REMAP			0x410c
+> +
+>  #define PCIE_MSI_INTR2_BASE		0x4500
+>  
+>  /* Offsets from INTR2_CPU and MSI_INTR2 BASE offsets */
+> @@ -217,6 +218,13 @@ enum pcie_type {
+>  	BCM4908,
+>  	BCM7278,
+>  	BCM2711,
+> +	BCM7712,
+> +};
+> +
+> +struct rc_bar {
+> +	u64 size;
+> +	u64 pci_offset;
+> +	u64 cpu_addr;
+>  };
+>  
+>  struct pcie_cfg_data {
+> @@ -274,6 +282,7 @@ struct brcm_pcie {
+>  	struct subdev_regulators *sr;
+>  	bool			ep_wakeup_capable;
+>  	bool			has_phy;
+> +	int			num_inbound;
+>  };
+>  
+>  static inline bool is_bmips(const struct brcm_pcie *pcie)
+> @@ -789,23 +798,60 @@ static void brcm_pcie_perst_set_generic(struct brcm_pcie *pcie, u32 val)
+>  	writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+>  }
+>  
+> -static int brcm_pcie_get_rc_bar2_size_and_offset(struct brcm_pcie *pcie,
+> -							u64 *rc_bar2_size,
+> -							u64 *rc_bar2_offset)
+> +static inline void set_bar(struct rc_bar *b, int *count, u64 size,
+> +			   u64 cpu_addr, u64 pci_offset)
+> +{
+> +	b->size = size;
+> +	b->cpu_addr = cpu_addr;
+> +	b->pci_offset = pci_offset;
+> +	(*count)++;
+> +}
+> +
+> +static int brcm_pcie_get_rc_bar_sizes_and_offsets(struct brcm_pcie *pcie,
+> +						  struct rc_bar rc_bars[])
+>  {
+>  	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(pcie);
+> +	u64 pci_offset, cpu_addr, size = 0, tot_size = 0;
+>  	struct resource_entry *entry;
+>  	struct device *dev = pcie->dev;
+>  	u64 lowest_pcie_addr = ~(u64)0;
+> -	int ret, i = 0;
+> -	u64 size = 0;
+> +
 
-MikroBUS is it's own connector. But most of the prior work on MikroBUS 
-was done in relation to using it over greybus. So you are not completely 
-wrong. These patches approach to solve the local mikroBUS connector 
-problem, but should be extendable enough to allow support over greybus 
-in future.
+Drop this ^^^ blank line.
 
->> +menuconfig MIKROBUS
->> +	tristate "Module for instantiating devices on mikroBUS ports"
->> +	depends on GPIOLIB
->> +	help
->> +	  This option enables the mikroBUS driver. mikroBUS is an add-on
->> +	  board socket standard that offers maximum expandability with
->> +	  the smallest number of pins. The mikroBUS driver instantiates
->> +	  devices on a mikroBUS port described mikroBUS manifest which is
->> +	  passed using a sysfs interface.
->> +
->> +
-> Remove extra blank line.
->
->> +	  Say Y here to enable support for this driver.
-> This isn't needed.
->
->> +
->> +	  To compile this code as a module, chose M here: the module
->> +	  will be called mikrobus.ko
->> +
->>   source "drivers/misc/c2port/Kconfig"
->>   source "drivers/misc/eeprom/Kconfig"
->>   source "drivers/misc/cb710/Kconfig"
->> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
->> index 153a3f4837e8..f10f1414270b 100644
->> --- a/drivers/misc/Makefile
->> +++ b/drivers/misc/Makefile
->> @@ -69,3 +69,4 @@ obj-$(CONFIG_TMR_INJECT)	+= xilinx_tmr_inject.o
->>   obj-$(CONFIG_TPS6594_ESM)	+= tps6594-esm.o
->>   obj-$(CONFIG_TPS6594_PFSM)	+= tps6594-pfsm.o
->>   obj-$(CONFIG_NSM)		+= nsm.o
->> +obj-$(CONFIG_MIKROBUS)		+= mikrobus.o
->> diff --git a/drivers/misc/mikrobus.c b/drivers/misc/mikrobus.c
->> new file mode 100644
->> index 000000000000..bf160a0e8903
->> --- /dev/null
->> +++ b/drivers/misc/mikrobus.c
->> @@ -0,0 +1,361 @@
->> +// SPDX-License-Identifier: GPL-2.0:
->> +/*
->> + * Copyright 2024 Ayush Singh <ayush@beagleboard.org>
->> + */
->> +
->> +#define pr_fmt(fmt) "mikrobus:%s: " fmt, __func__
-> KBUILD_MODNAME?  Also, why is this needed at all, as you are a
-> bus/subsystem you should never need a pr_*() call, but instead just use
-> dev_*() ones instead.
->
->> +
->> +#include <linux/device.h>
->> +#include <linux/pinctrl/consumer.h>
->> +#include <linux/of.h>
->> +#include <linux/module.h>
->> +#include <linux/kernel.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/mod_devicetable.h>
->> +#include <linux/spi/spi.h>
->> +
->> +struct mikrobus_spi_cs_item {
->> +	const char *cs_name;
->> +	u32 cs;
-> Documentation?  What is "cs"?  More vowels please...
->
->> +};
->> +
->> +/**
->> + * struct mikrobus_port - MikroBUS Driver
->> + *
->> + * @dev: underlying platform_device
-> Why must this be a platform device?  What requires that?
+> +	int ret, i = 0, n = 0;
+> +
+> +	/*
+> +	 * The HW registers (and PCIe) use order-1 numbering for BARs. As
+> +	 * such, we have rc_bars[0] unused and BAR1 starts at rc_bars[1].
+> +	 */
+> +	struct rc_bar *b_begin = &rc_bars[1];
+> +	struct rc_bar *b = b_begin;
+> +
+> +	/*
+> +	 * STB chips beside 7712 disable BAR1 by default.  It is mapped not
+> +	 * to system memory but to a regiion all of the SOC registers.  No
 
-That is a bit of a hack. My bad.
+typo.
 
->> + * @board_ocs: board device tree changeset
->> + * @pinctrl: mikroBUS pinctrl
->> + * @mikrobus_spi_cs: list of supported chipselect address and name
->> + * @mikrobus_spi_cs_count: length of mikrobus_spi_cs
->> + * @spi_ctrl: spi controller of mikroBUS connector
->> + * @spi_dev: spi mikroBUS board
->> + */
->> +struct mikrobus_port {
->> +	struct platform_device *dev;
->> +	struct of_changeset board_ocs;
->> +	struct pinctrl *pctrl;
->> +
->> +	struct mikrobus_spi_cs_item *spi_cs;
->> +	int spi_cs_count;
->> +	struct spi_controller *spi_ctrl;
->> +	struct spi_device *spi_dev;
-> What controls the lifespan of this object?  You have multiple devices
-> pointed to here with different lifecycles, what controls this one?
+Also I really do not understand the sentence "but to a regiion all of
+the SOC registers" can you improve it, please?
 
-Yes, so the lifecycle is supposed to be tied to the addon-board. Since 
-they are not hot plugable, it is the same as the lifecycle of the port 
-unless there is a sysfs entry for runtime detection of board. Still it 
-should be moved to a `mikrobus_board` struct or somewhere else, if we 
-are not going to use the Grove Patch setup.
+> +	 * one uses this anymore.
+> +	 */
+> +	if (pcie->type != BCM7712)
+> +		set_bar(b++, &n, 0, 0, 0);
 
->> +};
->> +
->> +/*
->> + * mikrobus_pinctrl_select: Select pinctrl state for mikrobus pin
-> Either use kerneldoc or not, should be /** right?
->
->> + *
->> + * @port: mikrobus port
->> + * @pinctrl_selected: pinctrl state to be selected
->> + */
->> +static int mikrobus_pinctrl_select(struct device *dev,
->> +				   const char *pinctrl_selected)
->> +{
->> +	int ret;
->> +	struct pinctrl_state *state;
->> +	struct mikrobus_port *mb = dev_get_drvdata(dev);
->> +
->> +	state = pinctrl_lookup_state(mb->pctrl, pinctrl_selected);
->> +	if (IS_ERR(state))
->> +		return dev_err_probe(dev, PTR_ERR(state),
->> +				     "failed to find state %s",
->> +				     pinctrl_selected);
->> +
->> +	ret = pinctrl_select_state(mb->pctrl, state);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "failed to select state %s",
->> +				     pinctrl_selected);
->> +
->> +	dev_dbg_ratelimited(dev, "setting pinctrl %s", pinctrl_selected);
-> Why rate limited?  What is going to cause this to spam the log?
->
->> +
->> +	return 0;
->> +}
->> +
->> +/*
->> + * mikrobus_lookup_cs - lookup mikroBUS SPI chipselect by name
->> + *
->> + * @mb: mikroBUS port
->> + * @cs_name: chipselect name
-> Use "chipselect" instead of "cs" everywhere please.
->
->> + */
->> +static int mikrobus_lookup_cs(const struct mikrobus_port *mb,
->> +			      const char *cs_name)
->> +{
->> +	for (int i = 0; i < mb->spi_cs_count; ++i) {
->> +		if (strcmp(cs_name, mb->spi_cs[i].cs_name) == 0)
->> +			return mb->spi_cs[i].cs;
->> +	}
->> +
->> +	return -1;
-> what does -1 mean?  Use real error numbers please.
->
->> +}
->> +
->> +static int mikrobus_spi_set_cs(struct device *dev, struct device_node *np)
->> +{
->> +	struct mikrobus_port *mb = dev_get_drvdata(dev);
->> +	const char *temp_str;
->> +	int reg_len;
->> +	int ret, i;
->> +	u32 *reg = NULL;
->> +
->> +	reg_len = of_property_count_strings(np, "spi-cs");
->> +	/* Use default cs if spi-cs property not present */
->> +	if (reg_len <= 0) {
->> +		reg_len = 1;
->> +		reg = devm_kmalloc_array(dev, reg_len, sizeof(*reg),
->> +					 GFP_KERNEL);
->> +		if (!reg)
->> +			return -ENOMEM;
->> +
->> +		ret = mikrobus_lookup_cs(mb, "default");
->> +		if (ret < 0)
->> +			goto free_reg;
->> +
->> +		reg[0] = ret;
->> +	} else {
->> +		reg = devm_kmalloc_array(dev, reg_len, sizeof(*reg),
->> +					 GFP_KERNEL);
->> +		if (!reg)
->> +			return -ENOMEM;
->> +
->> +		for (i = 0; i < reg_len; ++i) {
->> +			ret = of_property_read_string_index(np, "spi-cs", i,
->> +							    &temp_str);
->> +			if (ret < 0)
->> +				goto free_reg;
->> +
->> +			ret = mikrobus_lookup_cs(mb, temp_str);
->> +			if (ret < 0)
->> +				goto free_reg;
->> +
->> +			reg[i] = ret;
->> +		}
->> +	}
->> +
->> +	ret = of_changeset_add_prop_u32_array(&mb->board_ocs, np, "reg", reg,
->> +					      reg_len);
->> +	if (ret < 0)
->> +		goto free_reg;
->> +
->> +	ret = of_changeset_apply(&mb->board_ocs);
->> +	if (ret < 0)
->> +		goto free_reg;
->> +
->> +	devm_kfree(dev, reg);
->> +	return 0;
->> +
->> +free_reg:
->> +	devm_kfree(dev, reg);
->> +	return ret;
->> +}
->> +
->> +static int of_register_mikrobus_device(struct mikrobus_port *mb,
->> +				       struct device_node *np)
->> +{
->> +	const char *temp_str;
->> +	int i, pinctrl_count, ret;
->> +	struct spi_device *spi_dev;
->> +	struct device *dev = &mb->dev->dev;
-> That's some pointer dereferencing without checking anything, what could
-> go wrong...
->
-> Why don't you have your own real device?  Why are you relying on a
-> platform device without actually showing your device anywhere in the
-> kernel's device topology?  Are you sure that is ok?
+It'd be nice if we can avoid such type (model) checks in the common
+functions, but I don't have better idea.
 
-Yes, it should be a real device. I do have patches locally where I am 
-creating and registering a device on mikrobus bus, so will do that in 
-the next patch series.
+>  
+>  	resource_list_for_each_entry(entry, &bridge->dma_ranges) {
+>  		u64 pcie_beg = entry->res->start - entry->offset;
+> +		u64 cpu_beg = entry->res->start;
+>  
+> -		size += entry->res->end - entry->res->start + 1;
+> +		size = entry->res->end - entry->res->start + 1;
 
->> +
->> +	pinctrl_count = of_property_count_strings(np, "pinctrl-apply");
->> +	if (pinctrl_count < 0)
->> +		return dev_err_probe(dev, pinctrl_count,
->> +				     "Missing required property pinctrl-apply");
->> +
->> +	for (i = 0; i < pinctrl_count; ++i) {
->> +		ret = of_property_read_string_index(np, "pinctrl-apply", i,
->> +						    &temp_str);
->> +		if (ret < 0)
->> +			return ret;
->> +
->> +		ret = mikrobus_pinctrl_select(dev, temp_str);
->> +		if (ret < 0)
->> +			return dev_err_probe(dev, ret, "Failed to set pinctrl");
->> +	}
->> +
->> +	if (mb->spi_ctrl && !mb->spi_dev &&
->> +	    of_device_is_compatible(np, "mikrobus-spi")) {
->> +		ret = mikrobus_spi_set_cs(dev, np);
->> +		if (ret < 0)
->> +			return dev_err_probe(dev, ret,
->> +					     "Failed to set SPI chipselect");
->> +
->> +		spi_dev = of_register_spi_device(mb->spi_ctrl, np);
->> +		if (IS_ERR(spi_dev))
->> +			return dev_err_probe(dev, PTR_ERR(spi_dev),
->> +					     "Failed to register SPI device");
->> +		mb->spi_dev = spi_dev;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int of_register_mikrobus_board(struct mikrobus_port *mb)
->> +{
->> +	struct device *dev = &mb->dev->dev;
->> +	int board_len, i, ret;
->> +	struct device_node *np;
->> +
->> +	board_len = of_count_phandle_with_args(dev->of_node, "board", NULL);
->> +	for (i = 0; i < board_len; ++i) {
->> +		np = of_parse_phandle(dev->of_node, "board", i);
->> +		if (!np) {
->> +			ret = dev_err_probe(dev, -ENODEV, "Board not found");
->> +			goto free_np;
->> +		}
->> +
->> +		ret = of_register_mikrobus_device(mb, np);
->> +		if (ret < 0)
->> +			goto free_np;
->> +
->> +		of_node_put(np);
->> +	}
->> +
->> +	return 0;
->> +free_np:
->> +	of_node_put(np);
->> +	return ret;
->> +}
->> +
->> +static int mikrobus_port_probe(struct platform_device *pdev)
->> +{
->> +	int ret, i;
->> +	struct mikrobus_port *mb;
->> +	struct device_node *np;
->> +	struct device *dev = &pdev->dev;
->> +
->> +	mb = devm_kmalloc(dev, sizeof(*mb), GFP_KERNEL);
->> +	if (!mb)
->> +		return -ENOMEM;
->> +
->> +	dev_set_drvdata(dev, mb);
->> +
->> +	of_changeset_init(&mb->board_ocs);
->> +	mb->dev = pdev;
->> +	mb->pctrl = NULL;
->> +	mb->spi_ctrl = NULL;
->> +	mb->spi_dev = NULL;
->> +	mb->spi_cs = NULL;
->> +	mb->spi_cs_count = 0;
->> +
->> +	mb->pctrl = devm_pinctrl_get(dev);
->> +	if (IS_ERR(mb->pctrl))
->> +		return dev_err_probe(dev, PTR_ERR(mb->pctrl),
->> +				     "failed to get pinctrl [%ld]",
->> +				     PTR_ERR(mb->pctrl));
->> +
->> +	np = of_parse_phandle(dev->of_node, "spi-controller", 0);
->> +	if (np) {
->> +		mb->spi_ctrl = of_find_spi_controller_by_node(np);
->> +		if (mb->spi_ctrl) {
->> +			ret = of_property_count_u32_elems(dev->of_node,
->> +							  "spi-cs");
->> +			if (ret < 0) {
->> +				dev_err(dev, "Missing property spi-cs");
->> +				goto free_np;
->> +			}
->> +
->> +			mb->spi_cs_count = ret;
->> +
->> +			ret = of_property_count_strings(dev->of_node,
->> +							"spi-cs-names");
->> +			if (ret < 0) {
->> +				dev_err(dev, "Missing property spi-cs-names");
->> +				goto free_np;
->> +			}
->> +
->> +			if (mb->spi_cs_count != ret) {
->> +				ret = dev_err_probe(
->> +					dev, -EINVAL,
->> +					"spi-cs and spi-cs-names out of sync");
->> +				goto free_np;
->> +			}
->> +
->> +			mb->spi_cs = devm_kmalloc_array(dev, mb->spi_cs_count,
->> +							sizeof(*mb->spi_cs),
->> +							GFP_KERNEL);
->> +			if (!mb->spi_cs) {
->> +				ret = -ENOMEM;
->> +				goto free_np;
->> +			}
->> +
->> +			for (i = 0; i < mb->spi_cs_count; ++i) {
->> +				of_property_read_u32_index(dev->of_node,
->> +							   "spi-cs", i,
->> +							   &mb->spi_cs->cs);
->> +				of_property_read_string_index(
->> +					dev->of_node, "spi-cs-names", i,
->> +					&mb->spi_cs->cs_name);
->> +			}
->> +		}
->> +	}
->> +	of_node_put(np);
->> +
->> +	ret = of_register_mikrobus_board(mb);
->> +	if (ret < 0)
->> +		return dev_err_probe(dev, -EINVAL,
->> +				     "Failed to register mikrobus board");
->> +
->> +	return 0;
->> +
->> +free_np:
->> +	of_node_put(np);
->> +	return ret;
->> +}
->> +
->> +static void mikrobus_port_remove(struct platform_device *pdev)
->> +{
->> +	struct mikrobus_port *mb = dev_get_drvdata(&pdev->dev);
->> +
->> +	spi_unregister_device(mb->spi_dev);
->> +
->> +	of_changeset_revert(&mb->board_ocs);
->> +}
->> +
->> +static const struct of_device_id mikrobus_port_of_match[] = {
->> +	{ .compatible = "mikrobus-connector" },
->> +	{},
->> +};
->> +MODULE_DEVICE_TABLE(of, mikrobus_port_of_match);
->> +
->> +static struct platform_driver mikrobus_port_driver = {
->> +	.probe = mikrobus_port_probe,
->> +	.remove = mikrobus_port_remove,
-> Again, why is this a platform driver?  Why is a platform device used at
-> all here?
+resource_size(entry->res) ?
 
-You mean it will be better to have a mikrobus bus driver similar to SPI 
-and I2C? While creating the mikrobus bus device seems simple, I will 
-need to look at how creating a driver from scratch works.
+> +		tot_size += size;
+>  		if (pcie_beg < lowest_pcie_addr)
+>  			lowest_pcie_addr = pcie_beg;
+> +		/*
+> +		 * 7712 and newer chips may have many BARs, with each
+> +		 * offering a non-overlapping viewport to system memory.
+> +		 * That being said, each BARs size must still be a power of
+> +		 * two.
+> +		 */
+> +		if (pcie->type == BCM7712)
+> +			set_bar(b++, &n, size, cpu_beg, pcie_beg);
+> +
+> +		if (n > pcie->num_inbound)
+> +			break;
+>  	}
+>  
+>  	if (lowest_pcie_addr == ~(u64)0) {
+> @@ -813,13 +859,20 @@ static int brcm_pcie_get_rc_bar2_size_and_offset(struct brcm_pcie *pcie,
+>  		return -EINVAL;
+>  	}
+>  
+> +	/*
+> +	 * 7712 and newer chips do not have an internal memory mapping system
+> +	 * that enables multiple memory controllers.  As such, it can return
+> +	 * now w/o doing special configuration.
+> +	 */
+> +	if (pcie->type == BCM7712)
+> +		return n;
+> +
+>  	ret = of_property_read_variable_u64_array(pcie->np, "brcm,scb-sizes", pcie->memc_size, 1,
+>  						  PCIE_BRCM_MAX_MEMC);
+> -
+>  	if (ret <= 0) {
+>  		/* Make an educated guess */
+>  		pcie->num_memc = 1;
+> -		pcie->memc_size[0] = 1ULL << fls64(size - 1);
+> +		pcie->memc_size[0] = 1ULL << fls64(tot_size - 1);
+>  	} else {
+>  		pcie->num_memc = ret;
+>  	}
+> @@ -828,10 +881,15 @@ static int brcm_pcie_get_rc_bar2_size_and_offset(struct brcm_pcie *pcie,
+>  	for (i = 0, size = 0; i < pcie->num_memc; i++)
+>  		size += pcie->memc_size[i];
+>  
+> -	/* System memory starts at this address in PCIe-space */
+> -	*rc_bar2_offset = lowest_pcie_addr;
+> -	/* The sum of all memc views must also be a power of 2 */
+> -	*rc_bar2_size = 1ULL << fls64(size - 1);
+> +	/* Our HW mandates that the window size must be a power of 2 */
+> +	size = 1ULL << fls64(size - 1);
+> +
+> +	/*
+> +	 * For STB chips, the BAR2 cpu_addr is hardwired to the start
+> +	 * of system memory, so we set it to 0.
+> +	 */
+> +	cpu_addr = 0;
+> +	pci_offset = lowest_pcie_addr;
+>  
+>  	/*
+>  	 * We validate the inbound memory view even though we should trust
+> @@ -866,25 +924,50 @@ static int brcm_pcie_get_rc_bar2_size_and_offset(struct brcm_pcie *pcie,
+>  	 *   outbound memory @ 3GB). So instead it will  start at the 1x
+>  	 *   multiple of its size
+>  	 */
+> -	if (!*rc_bar2_size || (*rc_bar2_offset & (*rc_bar2_size - 1)) ||
+> -	    (*rc_bar2_offset < SZ_4G && *rc_bar2_offset > SZ_2G)) {
+> +	if (!size || (pci_offset & (size - 1)) ||
+> +	    (pci_offset < SZ_4G && pci_offset > SZ_2G)) {
+>  		dev_err(dev, "Invalid rc_bar2_offset/size: size 0x%llx, off 0x%llx\n",
+> -			*rc_bar2_size, *rc_bar2_offset);
+> +			size, pci_offset);
+>  		return -EINVAL;
+>  	}
+>  
+> -	return 0;
+> +	/* Enable BAR2, the inbound window for STB chips */
+> +	set_bar(b++, &n, size, cpu_addr, pci_offset);
+> +
+> +	/*
+> +	 * Disable BAR3.  On some chips presents the same window as BAR2
+> +	 * but the data appears in a settable endianness.
+> +	 */
+> +	set_bar(b++, &n, 0, 0, 0);
+> +
+> +	return n;
+> +}
+> +
+> +static unsigned int brcm_calc_bar_reg_offset(int bar)
 
->> +	.driver = {
->> +		.name = "mikrobus",
->> +		.of_match_table = mikrobus_port_of_match,
->> +	},
->> +};
->> +
->> +static const struct bus_type mikrobus_bus_type = {
->> +	.name = "mikrobus",
->> +};
->> +
->> +static int mikrobus_init(void)
->> +{
->> +	int ret;
->> +
->> +	ret = bus_register(&mikrobus_bus_type);
->> +	if (ret) {
->> +		pr_err("bus_register failed (%d)", ret);
->> +		return ret;
->> +	}
->> +
->> +	ret = platform_driver_register(&mikrobus_port_driver);
->> +	if (ret)
->> +		pr_err("driver register failed [%d]", ret);
-> It fails yet you leave your bus around?  Not good :(
->
-> thanks,
->
-> greg k-h
+IMO brcm_bar_reg_offset name is better, i.e. drop "calc"
 
+> +{
+> +	if (bar <= 3)
+> +		return PCIE_MISC_RC_BAR1_CONFIG_LO + 8 * (bar - 1);
+> +	else
+> +		return PCIE_MISC_RC_BAR4_CONFIG_LO + 8 * (bar - 4);
+> +}
+> +
+> +static unsigned int brcm_calc_ubus_reg_offset(int bar)
 
-I will be observing the Grove Sunlight Patch series and adopt it if it 
-gets merged in mainline, so almost all of this might go away. Let's wait 
-and see I guess.
+ditto
 
+> +{
+> +	if (bar <= 3)
+> +		return PCIE_MISC_UBUS_BAR1_CONFIG_REMAP + 8 * (bar - 1);
+> +	else
+> +		return PCIE_MISC_UBUS_BAR4_CONFIG_REMAP + 8 * (bar - 4);
+>  }
+>  
+>  static int brcm_pcie_setup(struct brcm_pcie *pcie)
+>  {
+> -	u64 rc_bar2_offset, rc_bar2_size;
+> +	struct rc_bar rc_bars[PCIE_BRCM_MAX_RC_BARS];
+>  	void __iomem *base = pcie->base;
+>  	struct pci_host_bridge *bridge;
+>  	struct resource_entry *entry;
+>  	u32 tmp, burst, aspm_support;
+> -	int num_out_wins = 0;
+> -	int ret, memc;
+> +	int num_out_wins = 0, num_rc_bars = 0;
+> +	int i, memc;
+>  
+>  	/* Reset the bridge */
+>  	pcie->bridge_sw_init_set(pcie, 1);
+> @@ -933,17 +1016,47 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+>  	u32p_replace_bits(&tmp, 1, PCIE_MISC_MISC_CTRL_PCIE_RCB_64B_MODE_MASK);
+>  	writel(tmp, base + PCIE_MISC_MISC_CTRL);
+>  
+> -	ret = brcm_pcie_get_rc_bar2_size_and_offset(pcie, &rc_bar2_size,
+> -						    &rc_bar2_offset);
+> -	if (ret)
+> -		return ret;
+> +	num_rc_bars = brcm_pcie_get_rc_bar_sizes_and_offsets(pcie, rc_bars);
 
-Ayush Singh
+Can we change the function name to brcm_pcie_get_inbound_regions? ...
 
+> +	if (num_rc_bars < 0)
+> +		return num_rc_bars;
+> +
+> +	for (i = 1; i <= num_rc_bars; i++) {
+> +		u64 pci_offset = rc_bars[i].pci_offset;
+> +		u64 cpu_addr = rc_bars[i].cpu_addr;
+> +		u64 size = rc_bars[i].size;
+> +		u32 reg_offset = brcm_calc_bar_reg_offset(i);
 
-Grove Sunlight Patch: 
-https://lore.kernel.org/linux-arm-kernel/20240702164403.29067-1-afd@ti.com/
+u32 is good type for reg offset but brcm_calc_bar_reg_offset() is
+returning "unsigned int", could you unify the types to u32?
 
+> +
+> +		tmp = lower_32_bits(pci_offset);
+> +		u32p_replace_bits(&tmp, brcm_pcie_encode_ibar_size(size),
+> +				  PCIE_MISC_RC_BAR1_CONFIG_LO_SIZE_MASK);
+> +
+> +		/* Write low */
+> +		writel(tmp, base + reg_offset);
+> +		/* Write high */
+> +		writel(upper_32_bits(pci_offset),
+> +		       base + reg_offset + 4);
+
+no need of a new line for the second function argument.
+
+> +
+> +		/*
+> +		 * Most STB chips:
+> +		 *     Do nothing.
+> +		 * 7712:
+> +		 *     All of their BARs need to be set.
+> +		 */
+> +		if (pcie->type == BCM7712) {
+> +			/* BUS remap register settings */
+> +			reg_offset = brcm_calc_ubus_reg_offset(i);
+> +			tmp = lower_32_bits(cpu_addr) & ~0xfff;
+> +			tmp |= PCIE_MISC_UBUS_BAR1_CONFIG_REMAP_ACCESS_EN_MASK;
+> +			writel(tmp, base + reg_offset);
+> +			tmp = upper_32_bits(cpu_addr);
+> +			writel(tmp, base + reg_offset + 4);
+> +		}
+> +	}
+>  
+
+... and move this for loop in separate brcm_pcie_set_inbound_regions()
+function?
+
+> -	tmp = lower_32_bits(rc_bar2_offset);
+> -	u32p_replace_bits(&tmp, brcm_pcie_encode_ibar_size(rc_bar2_size),
+> -			  PCIE_MISC_RC_BAR2_CONFIG_LO_SIZE_MASK);
+> -	writel(tmp, base + PCIE_MISC_RC_BAR2_CONFIG_LO);
+> -	writel(upper_32_bits(rc_bar2_offset),
+> -	       base + PCIE_MISC_RC_BAR2_CONFIG_HI);
+> +	if (!brcm_pcie_rc_mode(pcie)) {
+> +		dev_err(pcie->dev, "PCIe RC controller misconfigured as Endpoint\n");
+> +		return -EINVAL;
+> +	}
+>  
+>  	tmp = readl(base + PCIE_MISC_MISC_CTRL);
+>  	for (memc = 0; memc < pcie->num_memc; memc++) {
+> @@ -965,25 +1078,12 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+>  	 * 4GB or when the inbound area is smaller than 4GB (taking into
+>  	 * account the rounding-up we're forced to perform).
+>  	 */
+> -	if (rc_bar2_offset >= SZ_4G || (rc_bar2_size + rc_bar2_offset) < SZ_4G)
+> +	if (rc_bars[2].pci_offset >= SZ_4G ||
+> +	    (rc_bars[2].size + rc_bars[2].pci_offset) < SZ_4G)
+>  		pcie->msi_target_addr = BRCM_MSI_TARGET_ADDR_LT_4GB;
+>  	else
+>  		pcie->msi_target_addr = BRCM_MSI_TARGET_ADDR_GT_4GB;
+>  
+> -	if (!brcm_pcie_rc_mode(pcie)) {
+> -		dev_err(pcie->dev, "PCIe RC controller misconfigured as Endpoint\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	/* disable the PCIe->GISB memory window (RC_BAR1) */
+> -	tmp = readl(base + PCIE_MISC_RC_BAR1_CONFIG_LO);
+> -	tmp &= ~PCIE_MISC_RC_BAR1_CONFIG_LO_SIZE_MASK;
+> -	writel(tmp, base + PCIE_MISC_RC_BAR1_CONFIG_LO);
+> -
+> -	/* disable the PCIe->SCB memory window (RC_BAR3) */
+> -	tmp = readl(base + PCIE_MISC_RC_BAR3_CONFIG_LO);
+> -	tmp &= ~PCIE_MISC_RC_BAR3_CONFIG_LO_SIZE_MASK;
+> -	writel(tmp, base + PCIE_MISC_RC_BAR3_CONFIG_LO);
+>  
+>  	/* Don't advertise L0s capability if 'aspm-no-l0s' */
+>  	aspm_support = PCIE_LINK_STATE_L1;
+> @@ -1623,6 +1723,7 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  	pcie->perst_set = data->perst_set;
+>  	pcie->bridge_sw_init_set = data->bridge_sw_init_set;
+>  	pcie->has_phy = data->has_phy;
+> +	pcie->num_inbound = (pcie->type == BCM7712) ? 10 : 3;
+
+num_inbound could be part of struct pcie_cfg_data ?
+
+>  
+>  	pcie->base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(pcie->base))
+
+regards,
+Stan
 
