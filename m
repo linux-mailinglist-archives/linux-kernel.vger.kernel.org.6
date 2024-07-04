@@ -1,49 +1,51 @@
-Return-Path: <linux-kernel+bounces-241030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A36F6927617
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:32:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7332F92761A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2B31F24357
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:32:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C80282D18
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F5B1AE86F;
-	Thu,  4 Jul 2024 12:32:34 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id AD62A1822FB;
-	Thu,  4 Jul 2024 12:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8771AE847;
+	Thu,  4 Jul 2024 12:32:47 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67041AD9DE;
+	Thu,  4 Jul 2024 12:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720096354; cv=none; b=galaTWH1VeP2QfMru8W3lsqBgVsifjJlPARstgQccp30t3Y2i++yeloW5/pkx7vMr8HJ+NaDewUOtmQzdrCQ+BRqq7AYh5DRVrRTBNAmdb5BL/XVMH+JEskyCQmNwZ5lEdW34EDOLhjLzLujj07u9vrYFviOmhinqZGdmPzsZCM=
+	t=1720096367; cv=none; b=YcVkRL8DgYyG4fcss7EWAMDN5VNJ/Y6bO+km/f/hEB9PaordPDnlYsBr2BZmJAQ60CpNGT3vVyiofrkindZp2rZ3PqrbvTKjSjwsaHwFtrFkpSeNllesiXviKGB9J9tbcS1D/92AoNH0u39fpt9PG4/H550elQUg4TxCtK/cin0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720096354; c=relaxed/simple;
-	bh=fqDu8pYK9AkqEy53xImbufF/zeWILv9N9MLM8NviZwU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q/y3/xo4RvG1oJh9hp/O2p0sSN0qTgXSZgkRVH3ggJ5cR5giLIthxcjeV/udDO7gDrX0UBPjs9Nwo4pbf1bvsdS0syfL0rX3lCiuMDC2XybEzJSyAt6R931ueCGsHzx2nT9PBsol19Otv156J41NlyQtd6r4YUTE2yrsoNJcSkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [103.163.180.3])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPA id 880BA606D1292;
-	Thu,  4 Jul 2024 20:32:13 +0800 (CST)
-X-MD-Sfrom: youwan@nfschina.com
-X-MD-SrcIP: 103.163.180.3
-From: Youwan Wang <youwan@nfschina.com>
-To: andrew@lunn.ch
-Cc: hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1720096367; c=relaxed/simple;
+	bh=ad13uWHtYL/MVj0k81LHiOGU3vJiYjag66b7jIf1asc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mIeQj7dQ+y2dA8OWCaGgIX4pQVLTujUKEAjhs/69qHD/nJ6OvDqCM0xMfbukFL4St6miixZohRLOrK2dRHbwV9vHADyEGDcMB66AT3lQ/6UjX/wfWUXESR2bvTIhfbzXePpkliOiHzFvi4mv+H7G4pWBIrV7YZt436QfcBiUEKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowAAX+ExXloZm+2KMAQ--.18813S2;
+	Thu, 04 Jul 2024 20:32:31 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: patrik.r.jakobsson@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	airlied@redhat.com,
+	alan@linux.intel.com
+Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Youwan Wang <youwan@nfschina.com>
-Subject: [net-next,v1] net: phy: phy_device: fix PHY WOL enabled, PM failed to suspend
-Date: Thu,  4 Jul 2024 20:32:00 +0800
-Message-Id: <20240704123200.603654-1-youwan@nfschina.com>
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2 RESEND] drm/gma500: fix null pointer dereference in cdv_intel_lvds_get_modes
+Date: Thu,  4 Jul 2024 20:32:21 +0800
+Message-Id: <20240704123221.291438-1-make24@iscas.ac.cn>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,91 +54,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAX+ExXloZm+2KMAQ--.18813S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrtF1rCw4fWFWDtFWkWr13XFb_yoW8Jryfpr
+	47GFyjyr4FqFZFgFW8C3WvgF4Yqa43KFn7KryDZws3uFn0yF1UXryru3yfWrW3CFZxGrZY
+	yrnxtay5Ga10kF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUbHa0DUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-If the PHY of the mido bus is enabled with Wake-on-LAN (WOL),
-we cannot suspend the PHY. Although the WOL status has been
-checked in phy_suspend(), returning -EBUSY(-16) would cause
-the Power Management (PM) to fail to suspend. Since
-phy_suspend() is an exported symbol (EXPORT_SYMBOL),
-timely error reporting is needed. Therefore, an additional
-check is performed here. If the PHY of the mido bus is enabled
-with WOL, we skip calling phy_suspend() to avoid PM failure.
+In cdv_intel_lvds_get_modes(), the return value of drm_mode_duplicate()
+is assigned to mode, which will lead to a NULL pointer dereference on
+failure of drm_mode_duplicate(). Add a check to avoid npd.
 
-Thank you all for your analysis.
-I am using the Linux kernel version 6.6, the current system is
-utilizing ACPI firmware. However, in terms of configuration,
-the system only includes MAC layer configuration while lacking
-PHY configuration. Furthermore, it has been observed that the
-phydev->attached_dev is NULL, phydev is "stmmac-0:01", it not
-attached, but it will affect suspend and resume. The actually
-attached "stmmac-0:00" will not dpm_run_callback():
-mdio_bus_phy_suspend().
-
-The current modification is solely aimed at ensuring that PHY
-have WOL enabled but are not attached are calling phy_suspend()
-
-log:
-[    5.932502] YT8521 Gigabit Ethernet stmmac-0:00: attached PHY driver
-(mii_bus:phy_addr=stmmac-0:00, irq=POLL)
-[    5.932512] YT8521 Gigabit Ethernet stmmac-0:01: attached PHY driver
-(mii_bus:phy_addr=stmmac-0:01, irq=POLL)
-[   24.566289] YT8521 Gigabit Ethernet stmmac-0:00: yt8521_read_status,
-link down, media: UTP
-
-log:
-[  322.631362] OOM killer disabled.
-[  322.631364] Freezing remaining freezable tasks
-[  322.632536] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
-[  322.632540] printk: Suspending console(s) (use no_console_suspend to debug)
-[  322.633052] YT8521 Gigabit Ethernet stmmac-0:01:
-PM: dpm_run_callback(): mdio_bus_phy_suspend+0x0/0x110 [libphy] returns -16
-[  322.633071] YT8521 Gigabit Ethernet stmmac-0:01:
-PM: failed to suspend: error -16
-[  322.669699] PM: Some devices failed to suspend, or early wake event detected
-[  322.669949] OOM killer enabled.
-[  322.669951] Restarting tasks ... done.
-[  322.671008] random: crng reseeded on system resumption
-[  322.671014] PM: suspend exit
-
-log:
-[  260.814763] YT8521 Gigabit Ethernet stmmac-0:01:
-PM: dpm_run_callback():mdio_bus_phy_resume+0x0/0x160 [libphy] returns -95
-[  260.814782] YT8521 Gigabit Ethernet stmmac-0:01:
-PM: failed to resume: error -95
-
-Signed-off-by: Youwan Wang <youwan@nfschina.com>
+Cc: stable@vger.kernel.org
+Fixes: 6a227d5fd6c4 ("gma500: Add support for Cedarview")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- drivers/net/phy/phy_device.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Changes in v2:
+- modified the patch according to suggestions from other patchs;
+- added Fixes line;
+- added Cc stable;
+- Link: https://lore.kernel.org/lkml/20240622072514.1867582-1-make24@iscas.ac.cn/T/
+---
+ drivers/gpu/drm/gma500/cdv_intel_lvds.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 2ce74593d6e4..0564decf701f 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -270,6 +270,7 @@ static DEFINE_MUTEX(phy_fixup_lock);
- 
- static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
- {
-+	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
- 	struct device_driver *drv = phydev->mdio.dev.driver;
- 	struct phy_driver *phydrv = to_phy_driver(drv);
- 	struct net_device *netdev = phydev->attached_dev;
-@@ -277,6 +278,15 @@ static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
- 	if (!drv || !phydrv->suspend)
- 		return false;
- 
-+	/* If the PHY on the mido bus is not attached but has WOL enabled
-+	 * we cannot suspend the PHY.
-+	 */
-+	phy_ethtool_get_wol(phydev, &wol);
-+	phydev->wol_enabled = !!(wol.wolopts);
-+	if (!netdev && phydev->wol_enabled &&
-+	    !(phydrv->flags & PHY_ALWAYS_CALL_SUSPEND))
-+		return false;
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_lvds.c b/drivers/gpu/drm/gma500/cdv_intel_lvds.c
+index f08a6803dc18..3adc2c9ab72d 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_lvds.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_lvds.c
+@@ -311,6 +311,9 @@ static int cdv_intel_lvds_get_modes(struct drm_connector *connector)
+ 	if (mode_dev->panel_fixed_mode != NULL) {
+ 		struct drm_display_mode *mode =
+ 		    drm_mode_duplicate(dev, mode_dev->panel_fixed_mode);
++		if (!mode)
++			return 0;
 +
- 	/* PHY not attached? May suspend if the PHY has not already been
- 	 * suspended as part of a prior call to phy_disconnect() ->
- 	 * phy_detach() -> phy_suspend() because the parent netdev might be the
+ 		drm_mode_probed_add(connector, mode);
+ 		return 1;
+ 	}
 -- 
 2.25.1
 
