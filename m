@@ -1,138 +1,110 @@
-Return-Path: <linux-kernel+bounces-241589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F43927CEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:19:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9205927CEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4A7DB2150B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:19:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 260941C21F34
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4366DD0D;
-	Thu,  4 Jul 2024 18:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647A58287F;
+	Thu,  4 Jul 2024 18:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TXv+9XZc"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="GIyWfvOs"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B65A46447
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5801562171;
+	Thu,  4 Jul 2024 18:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720117138; cv=none; b=Nq6XkVV8cY/HZuidxOlf2kF2VsuTw1qnufklZUHAOAu95PBDPkPsRj18lfSTF/po3wWLP8EbcJps8qaj9tPCs9Mh3T1WVjg0p4sFxTCxeevI2GgNjvsF5XkvN7nsYJ/zkIPEqbNN6AqGfILAYb0bKPzbT83//Zgh2p3w4iLuPyg=
+	t=1720117177; cv=none; b=EzctsGhFPrKoPQdyEk39CIwPQse2Sg77X4MQc/7wUiyvIRCnMNy0JA+JF+LBtpVzr2XQ2Evh9jUjrDbfFLnNi4+Iy2MzMXiNZNJo74kMV+VKuOQwXddb9BT5jQHtGnoOmVeK7S9zCKWgB/0y2Wo65BON4oVFzhXeQoiEda8FTB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720117138; c=relaxed/simple;
-	bh=Jqk5AHHKAZBRsZ84VySQ8SKhY3vVvvQTU67u5VgKl9o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lBTHsUseyVYK8HEQNuMVcvIc/axZei+wABHS2mVvT0/3HGyYbz5Dulz/PYO+WnBo50BL0wjyfDNx1LBeb9fcLI81FpLsJZho/rHRi0kg/0ubKoeK6c1VyjKihnp6dnwba5X0swEvqAyg4ODZmwgQE3SSGrB8W4goHNpb2V+uxO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TXv+9XZc; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77c349bb81so45163666b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 11:18:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1720117134; x=1720721934; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/u/21+exbv8kr2CIBigcyw4XXMdj7U9g8Cet7QwWi8c=;
-        b=TXv+9XZcktWvSuBS+cXwyPYEszynipLoSg1KGJnNpZaCWqxiHtQJqwbMtU3K6f9H0K
-         FoEnYP0EU0tiZnO3a2v0C66n491KomLpGLbJfd6/hqc145lXvbkx8kx+IHsdz9r6tJxU
-         ENU1Lt4XMw5Tpq4ZglBctnbV3OpOd0E0LuUBM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720117134; x=1720721934;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/u/21+exbv8kr2CIBigcyw4XXMdj7U9g8Cet7QwWi8c=;
-        b=CJuhikK7QVQ3MfGo9keFWsHPVMjpWezRxrsvlEXuFoijrLh7Yf6GEC632BDPp50hgP
-         8PAbGlW3lEvPEI8QiKR7TTGG9Gucxb0T4pYdDkSlXlgXUGujR2Ip71u72c5ijrDbVhKq
-         n50soWxyXuZr5Eo81mndNXHY3Q81wEfj1YPciIoxlrBjOq9LEn9/lvgu7zGq3cxfaq2c
-         sGtMgxhhlG8e6MUGNSYNxnwKpd+luCrsd7fMEuKPRrCRGtZxnJ2Cb2/SKWeXtIFvWqYH
-         6JHX/jRy+JqxfT1c2Clef6ezqnO1XAC37YmvxPU4q0fFFlohgpGADhCL/rKvZWwIjwSy
-         RBUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXm5Pm5eXj6t2s0SUligVcoMDbLqt4VmZEsRmOLyKJh4agoHnx8idVRXjUhH1GIHMn43La91RIaOambesfsym+bMfNSo5txhqeIUkyr
-X-Gm-Message-State: AOJu0YwpskOA1Z0g0IPwXrPzASzUO4JQEOMYvY1euWryuuYJW39TzcX8
-	2YEMaBtsLHPBi3V7f3GDd8EH4wTCsQa/nnBr/Cgj+LNB3tXC/NcHBsXnxmysaWsOkpX8YF6gcya
-	dG7hXOg==
-X-Google-Smtp-Source: AGHT+IH3PM7YkDjdqU2omq1uo5ZEP23GbR5WHn2x6F3PJh4K0wdGJeD1tFTIKF9AdYOwv8BzQyOkLw==
-X-Received: by 2002:a17:906:5293:b0:a77:b054:ba7d with SMTP id a640c23a62f3a-a77ba48eb17mr156345466b.46.1720117134296;
-        Thu, 04 Jul 2024 11:18:54 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf60447sm612677966b.59.2024.07.04.11.18.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 11:18:53 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a77b4387302so115587166b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 11:18:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXP4xJUxPiQzOj+rXLBFc3d1kYigzXqRggrk8d1IBKIJSl5vfYckjKf5RaoHZxpeTQl6s8x6a/vLt9GNcqGfkArr0MUMb0XJf6ShZye
-X-Received: by 2002:a17:907:97c8:b0:a72:8c15:c73e with SMTP id
- a640c23a62f3a-a77ba7099dbmr171178966b.55.1720117132936; Thu, 04 Jul 2024
- 11:18:52 -0700 (PDT)
+	s=arc-20240116; t=1720117177; c=relaxed/simple;
+	bh=pWtII7theaktCzlZ4eN742XXnIUqYR3Cg5v7uSpJRNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OJrFI491InUFrMYnGFYsPDAV87/3Ozru4vvUdCrICpGyCQAlWu+IV2rV+Q9hrZY8ONQVVgrPdqhfj28PUKmP0pU+iz/Etr3+T6SSaCLvwbmTIyX5xTZ0nO0uxfM4uqlAgt6cViWHPlR0QOlz9yYOh62DWv72mIMHc5WjeBPylAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=GIyWfvOs; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D6AC420007;
+	Thu,  4 Jul 2024 18:19:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
+	t=1720117173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ehU1NmAgichp4m8MzuZQfqjkE5PpzEKSy+xvBxKSSM=;
+	b=GIyWfvOsTGUSv1/hsEaQVUE21GVQxnlG9LLyOmGhlOs7w1X1KeauR8lrmiY2n2Pl/kDnxu
+	SL8ZpoW2YP8tfX/vRHE1nn/qME2Xq17RjKRxcdk1LLZDf1s36vtnQbPg/4Rv3q+G6Epf+t
+	b+rGBRLglsMjoBRhBcguxOkpLIWgsmc6oetK4kfpzzOwHCA0PiknZDyQtvvpz9US6lRADC
+	jp1RSOpkOW04ZsNt2EbLJntTgjVy6rqMrSPjA3gD0aH1TLh+QelkOB/RIFyLQtfCLQiAqE
+	W3ktQqovAEuhBgpIyksbbXE1mCkv/x+ZjhB089n3IDS2eOj4/fSpt7FgEQQwtQ==
+Message-ID: <a57dd43e-0798-4dab-853f-da84a19ee153@arinc9.com>
+Date: Thu, 4 Jul 2024 21:19:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZobXdDCYBi8OM-Fo@zx2c4.com> <CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
- <Zobf3fZOuvOJOGPN@zx2c4.com> <CAHk-=whf2Pb8fSmUsLRSn6CnYvQoyUkLikKpFDWN_xnTJqix=A@mail.gmail.com>
- <CAHmME9pm+ZE2_qf1DNxukB6ufPrjTAsnwin05-VX_gS03Yq-ag@mail.gmail.com>
-In-Reply-To: <CAHmME9pm+ZE2_qf1DNxukB6ufPrjTAsnwin05-VX_gS03Yq-ag@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 4 Jul 2024 11:18:36 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whTjdO6szgRKp51ZeDLDmA1+YYSbg+vEUt9OsxTMDUtjQ@mail.gmail.com>
-Message-ID: <CAHk-=whTjdO6szgRKp51ZeDLDmA1+YYSbg+vEUt9OsxTMDUtjQ@mail.gmail.com>
-Subject: Re: deconflicting new syscall numbers for 6.11
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: jolsa@kernel.org, mhiramat@kernel.org, cgzones@googlemail.com, 
-	brauner@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3] net: dsa: mt7530: fix impossible MDIO address and
+ issue warning
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
+ Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Landen Chao <Landen.Chao@mediatek.com>, Frank Wunderlich <linux@fw-web.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ regressions@lists.linux.dev
+References: <7e3fed489c0bbca84a386b1077c61589030ff4ab.1719963228.git.daniel@makrotopia.org>
+ <d3ac5584-8e52-46e0-b690-ad5faa1ede61@arinc9.com>
+ <20240704172154.opqyrv2mfgbxj7ce@skbuf>
+Content-Language: en-US
+From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <20240704172154.opqyrv2mfgbxj7ce@skbuf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: arinc.unal@arinc9.com
 
-On Thu, 4 Jul 2024 at 11:04, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->
-> >
-> > I want to hear *from* those users. Because I would have expected all
-> > those users to already have perfectly working setups in place already.
->
-> What do you want me to do here?
+On 04/07/2024 20:21, Vladimir Oltean wrote:
+> On Wed, Jul 03, 2024 at 10:03:09AM +0300, Arınç ÜNAL wrote:
+>> Works on standalone MT7530, MT7621's MCM MT7530, and MT7531. From MT7621's
+>> MCM MT7530:
+>>
+>> [    1.357287] mt7530-mdio mdio-bus:1f: MT7530 adapts as multi-chip module
+> 
+> Why is the device corresponding to the first print located at address 1f,
+> then 0?
 
-You literally said "those users exist".
+Because mdio_device_register() in mt7530_reregister() runs with new_mdiodev
+after dev_warn() runs with mdiodev.
 
-Make them pipe up.
+> 
+>> [    1.364065] mt7530-mdio mdio-bus:00: [Firmware Warn]: impossible switch MDIO address in device tree, assuming 31
+>> [    1.374303] mt7530-mdio mdio-bus:00: probe with driver mt7530-mdio failed with error -14
+>> [...]
+>> [    1.448370] mt7530-mdio mdio-bus:1f: MT7530 adapts as multi-chip module
+>> [    1.477676] mt7530-mdio mdio-bus:1f: configuring for fixed/rgmii link mode
+>> [    1.485687] mt7530-mdio mdio-bus:1f: Link is Up - 1Gbps/Full - flow control rx/tx
+>> [    1.493480] mt7530-mdio mdio-bus:1f: configuring for fixed/trgmii link mode
+>> [    1.502680] mt7530-mdio mdio-bus:1f lan1 (uninitialized): PHY [mt7530-0:00] driver [MediaTek MT7530 PHY] (irq=17)
+>> [    1.513620] mt7530-mdio mdio-bus:1f: Link is Up - 1Gbps/Full - flow control rx/tx
+>> [    1.519671] mt7530-mdio mdio-bus:1f lan2 (uninitialized): PHY [mt7530-0:01] driver [MediaTek MT7530 PHY] (irq=18)
+>> [    1.533072] mt7530-mdio mdio-bus:1f lan3 (uninitialized): PHY [mt7530-0:02] driver [MediaTek MT7530 PHY] (irq=19)
+>> [    1.545042] mt7530-mdio mdio-bus:1f lan4 (uninitialized): PHY [mt7530-0:03] driver [MediaTek MT7530 PHY] (irq=20)
+>> [    1.557031] mt7530-mdio mdio-bus:1f wan (uninitialized): PHY [mt7530-0:04] driver [MediaTek MT7530 PHY] (irq=21)
 
-Make them explain why what they don't have now doesn't work. What this
-solves. In real terms.
-
-Make them explain why that random "we duplicated the VM, and now we
-worry that mixing in TSC doesn't help" is an actual real-world
-concern, rather than something COMPLETELY MADE UP BY RANDOM NUMBER
-PEOPLE.
-
-See what my argument is? My argument is literally that theoretical
-random number people will make up arguments that aren't actually
-relevant in real life.
-
-Do real people migrate VMs? Hell yes they do. Do they care about the
-numbers being magically "stale" after said migration? I seriously
-doubt that.
-
-Do real people start multiple VMs from one single starting image?
-Again, hell yes they do.
-
-But do they start those multiple VMs from some random slapdash
-snapshot that they just picked without any concern and cannot just
-reseed in user space? And if they do, why should *WE* clean up after
-their mindbogglingly stupid setup?
-
-See what my argument is? I suspect _strongly_ that this is all
-completely over-engineered based on theoretical grounds that aren't
-actually practical grounds.
-
-And dammit, I'm asking for the practical grounds. For the actual users.
-
-And if you have trouble finding those, you just proved my point.
-
-           Linus
+Arınç
 
