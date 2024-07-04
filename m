@@ -1,162 +1,269 @@
-Return-Path: <linux-kernel+bounces-241126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99760927754
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F7592775A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455311F22057
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCC68281B8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0591AED42;
-	Thu,  4 Jul 2024 13:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1A11AED4C;
+	Thu,  4 Jul 2024 13:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tHneWBKj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Uhwsozec"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3733419B3FF;
-	Thu,  4 Jul 2024 13:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C50F1ABCD9
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720100336; cv=none; b=cYt6YF1uaCD93VdEKT30OO+V7bEcKXMhKWUFyMLlOMOf+x4itnXOSDCgc66720CvsXa5AiWN9bnVIfBUHC+JChYouOvtyp4loFxSpbNBA9tNexM1ynCBrO1sIZgUky46aASGxAJ0h9FqivB4klnfUUAG4MlEvv+quLpmpsDDsq4=
+	t=1720100520; cv=none; b=hRG3BZ6oUKg4oCXYdCt25w7eiax0SyOfNsDjImY5Snu3UZV9jIEyNEs3IZ8nWs26J/7vLynfD/xXzbuY0ZzY2FgIg0zh35rzXjqobDLQ0cAhhm0ayY54j+9kbNJ64D4obVV6Jn4SZAcvh3huKHL41ED9Uh9Wm/eZdnpqenChvtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720100336; c=relaxed/simple;
-	bh=SDS3JwI8uIwueZHrycc2kurJPpeiYqV+PQztqKE6RKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bI9iXrMO3dE5LIAzglPIu6ykYgu0Z9a/xDNKWfpJeWFOq9Logq78zgeEQL/Rw85pSuB/mw9hbi9P86fyuZFRS1Py9yPLOFiqApPrUrRdZtQc4IBVizvW/v7NdLXBXDokjKEjA+cc3baNL8zXo1YxsCCztfGexBxar/kF/CHDTrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tHneWBKj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0AF7C3277B;
-	Thu,  4 Jul 2024 13:38:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720100335;
-	bh=SDS3JwI8uIwueZHrycc2kurJPpeiYqV+PQztqKE6RKQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tHneWBKjLuV8M+BPBEa1/R4iapFaVInRzRQ8xuNq8fL0AVxEQKPEY7KvSMF28W38w
-	 th9ihIGF2VK/YN8stSMqdKdInpsSAPkXgWcUuX5UkyfvRCORQBRD63e1ruEEChz9tv
-	 bBTQGlypWyR8rQaduw0qUwPwm1DHDWffSpxA5mlcYtsdGREvUBC9oWrulepBw8JDwH
-	 aj0RM6mhInWhpJqMMVwMlD0eoGIK2oij7tD9oADCDQNhVKZ6/YtQkbVSeMqG7NJZgB
-	 EZBGSBodBgitMpFlivykPlMTLthjNKrcLf7ZphiM2tDEIMTv4SEGxHo9ZAgZDJGaBS
-	 FhqwPy9/EY2oQ==
-Message-ID: <d0b3248d-ef2d-4583-98d0-6b4b28a75ef6@kernel.org>
-Date: Thu, 4 Jul 2024 15:38:48 +0200
+	s=arc-20240116; t=1720100520; c=relaxed/simple;
+	bh=ZurutrlF5DSOS29VhgpoQ512JwNEuhthUV5Dn8eNNzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RFvg5xkAPmYmsCvwzo+ozzzEp4PS4gStoxoW69MDOPND0dQcXmqmP/cdBCKkp7DACpYCFAzwotm9MJa+0k1XxvyoD6+DTXteus0nGqT3hhb5utUBqViYgaFd8HAw151sYmkPjXYZ6iZfEEmu6Ez323PQatfzqcvXE459VMNZ05Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Uhwsozec; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-64d408a5d01so6243327b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 06:41:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720100517; x=1720705317; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DqZuuHffUIBiAfDiTFS5HFgQJZKEzHNjVKNJ49rRTBQ=;
+        b=UhwsozecxMkYBXQ4KtoQF9cOwJ0TkNvKECjCciMvP+QoSvF9dIuQJFZ0MEwKESR10e
+         ewCQg08wr137F0QIj9Q0+fXUmg4XMXqkggiMpXT2bdlbO257iL2lLwGgCNpX1Pn9J3f3
+         kC7uEN6TWLTritaM7t7KiNmMwPku6JkKLpTJIYvBvYbMEkYQOcwRcna9nef9xBff+gKu
+         Ad8dnThGTUo3GkSXiECkQYcXC6FkGwhvh76+fBJeyJuuWkMs8ihQFqARVSkXwdTxBETG
+         VyLRyKMcRGf6uSbZrPpVCEmc5U42wabTlF5mlWyqIunePLtl7aRz+FziEQjHVwD6I6Ot
+         M9gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720100517; x=1720705317;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DqZuuHffUIBiAfDiTFS5HFgQJZKEzHNjVKNJ49rRTBQ=;
+        b=EgWqvxD1TZIa7byz7gQ/uhudSPnlzGZyBJ9u7Eh2d7SgOi+VSRrg6MFU7noUfXLWRn
+         egAEKal8Vx1YVWn30tLOtCz4OidXjWP6fQqq+ys8WYDN88B1Vaogk6ReiMiifoHxHj5I
+         Qio5yIEiYAlF1pNGTTIOab0sjozC1TrG0gJ3bO2StGyUsuB1o5cM2Kf+hz3KvwxmaZ9m
+         dARgMQWWoLPZUMYbmbdOBZJBimlHrxZ25b49IsvwjxrBfZMb6nrTuULi5mLgCEBCBgUg
+         sDM3mdqbqtT+ZGahe6WyH0asIKpmXV1xFbIHLLL0nBpr5XU4pVpkRhsZO6XEjYtcNEVO
+         sxZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCfmBCEtHZ0flHd0XF+tBf5p23obHB55snbwVAz/4J7NvhfEGjAzIeEjmChsR8iJ94XP8PgYT56AELL44eTz55ouOJW6eN7/mvYags
+X-Gm-Message-State: AOJu0Yyh7dxdBP3wcB04obdyNqToawZ+/VZlozlMt6pTOX2N8Mx5zdAu
+	O2kWInv/RDRAOekYhHU5PoI+Kb6Jc4Sk6l0AB+O0y20EYvmOW6vC2jpQI1qu/cklQnPZ3IXpuYi
+	dNW7vjiBNY1T2hef44biyw1+ENTd+xzlogj2+9g==
+X-Google-Smtp-Source: AGHT+IHEKBkMrwGk47g3+CpUgb4d7hqbP14eAiw/Im3iHfhAjIi1ra45CRslQTJFnzek/489H7UK13rqOIN82fDaWek=
+X-Received: by 2002:a0d:d0c2:0:b0:64b:3f2c:c73f with SMTP id
+ 00721157ae682-652d853062fmr15759017b3.45.1720100517327; Thu, 04 Jul 2024
+ 06:41:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: clock: sprd,sc9860-clk: convert to YAML
-To: Stanislav Jakubek <stano.jakubek@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Baolin Wang <baolin.wang7@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <ZoaYPg2avtYpKQjB@standask-GA-A55M-S2HP>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZoaYPg2avtYpKQjB@standask-GA-A55M-S2HP>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240110141443.364655-1-jstephan@baylibre.com>
+ <20240110141443.364655-4-jstephan@baylibre.com> <3c2bee40-3792-409c-b42f-f8b013ff641c@collabora.com>
+ <CAEHHSvaT_U+HNzWQUoK9EuqGuqEd11+Lu0CLz_rL7uQf0Q5isw@mail.gmail.com>
+ <53838e76-bfa4-41f5-a015-a37472e98991@collabora.com> <CAEHHSvaRqZM9c8oD05WKkhOHdjKLBkR6tXp2Q1b8OMiDxDsDhQ@mail.gmail.com>
+ <20240614123345.GN6019@pendragon.ideasonboard.com> <CAEHHSvaWO7m=n5_f0BM7gwuDMfh_GMX=x3DknG28PnmtZbrGQw@mail.gmail.com>
+ <20240614144248.GA20136@pendragon.ideasonboard.com> <CAEHHSvZPATFV=w451KaaT+e__EK9u3Vc5ORPRQ-Gfa4rJ_o8hA@mail.gmail.com>
+ <20240615004705.GI9171@pendragon.ideasonboard.com>
+In-Reply-To: <20240615004705.GI9171@pendragon.ideasonboard.com>
+From: Julien Stephan <jstephan@baylibre.com>
+Date: Thu, 4 Jul 2024 15:41:45 +0200
+Message-ID: <CAEHHSvb2Ceu8nxs1W6Xi3F6uHQhe9B=CLRZiYQEGnHdajMqGSw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] media: platform: mediatek: isp_30: add mediatek
+ ISP3.0 sensor interface
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Louis Kuo <louis.kuo@mediatek.com>, Phi-bang Nguyen <pnguyen@baylibre.com>, 
+	Florian Sylvestre <fsylvestre@baylibre.com>, Andy Hsieh <andy.hsieh@mediatek.com>, 
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-media@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Paul Elder <paul.elder@ideasonboard.com>, 
+	Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/07/2024 14:40, Stanislav Jakubek wrote:
-> Convert the Spreadtrum SC9860 clock bindings to DT schema.
-> 
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+Le sam. 15 juin 2024 =C3=A0 02:47, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> a =C3=A9crit :
+>
+> On Fri, Jun 14, 2024 at 04:54:47PM +0200, Julien Stephan wrote:
+> > Le ven. 14 juin 2024 =C3=A0 16:43, Laurent Pinchart a =C3=A9crit :
+> > > On Fri, Jun 14, 2024 at 04:14:52PM +0200, Julien Stephan wrote:
+> > > > Le ven. 14 juin 2024 =C3=A0 14:34, Laurent Pinchart a =C3=A9crit :
+> > > > > On Fri, Jun 14, 2024 at 12:38:15PM +0200, Julien Stephan wrote:
+> > > > > > Le mer. 12 juin 2024 =C3=A0 10:06, AngeloGioacchino Del Regno a=
+ =C3=A9crit :
+> > > > > > >
+> > > > > > > Il 10/06/24 16:39, Julien Stephan ha scritto:
+> > > > > > [...]
+> > > > > > > >>
+> > > > > > > >>> +     writel(0x10001, input->base + SENINF_TG1_SEN_CK);
+> > > > > > > >>
+> > > > > > > >> Unroll this one... this is the TG1 sensor clock divider.
+> > > > > > > >>
+> > > > > > > >> CLKFL GENMASK(5, 0)
+> > > > > > > >> CLKRS GENMASK(13, 8)
+> > > > > > > >> CLKCNT GENMASK(21,16)
+> > > > > > > >>
+> > > > > > > >> Like this, I don't get what you're trying to set, because =
+you're using a fixed
+> > > > > > > >> sensor clock rate, meaning that only a handful of camera s=
+ensors will be usable.
+> > > > > > > >>
+> > > > > > > >> Is this 8Mhz? 16? 24? what? :-)
+> > > > > > > >>
+> > > > > > > >> Two hints:
+> > > > > > > >>    - sensor_clk =3D clk_get_rate(isp_clk) / (tg1_sen_ck_cl=
+kcnt + 1);
+> > > > > > > >>    - int mtk_seninf_set_sensor_clk(u8 rate_mhz);
+> > > > > > > >>
+> > > > > > > >> Please :-)
+> > > > > > > >
+> > > > > > > > Hi Angelo,
+> > > > > > > >
+> > > > > > > > I think I get your point about not hardcoding the sensor ra=
+te, but I
+> > > > > > > > am not sure how to use
+> > > > > > > > a mtk_seninf_set_sensor_clk(u8 rate_mhz); function.
+> > > > > > > >
+> > > > > > > > Where would it be called? How is it exposed to the user?
+> > > > > > > >
+> > > > > > >
+> > > > > > > As for where: setup, streaming start, resolution change (whic=
+h may be covered
+> > > > > > > by streaming start anyway, as a change should be calling stop=
+->start anyway).
+> > > > > > >
+> > > > > > > And for the how is it exposed to the user - well, depends wha=
+t you mean for user,
+> > > > > > > but it's all standard V4L2 API :-)
+> > > > > > >
+> > > > > > > Last but not least, I can give you another hint....
+> > > > > > >
+> > > > > > > struct media_entity *entity =3D (something_here);
+> > > > > > > struct media_pad *mpad;
+> > > > > > > struct v4l2_subdev *cam_subdev;
+> > > > > > > struct v4l2_ctrl *ctl;
+> > > > > > > s64 link_frequency, pixel_clock;
+> > > > > > >
+> > > > > > > if (entity->pads[0].flags & MEDIA_PAD_FL_SINK)
+> > > > > > >     return -E_NOT_A_CAMERA_SENSOR_WE_IGNORE_THIS_ONE;
+> > > > > > >
+> > > > > > > pad =3D media_pad_remote_pad_first(&entity->pads[0]);
+> > > > > > > if (!pad)
+> > > > > > >    return -ENOENT;
+> > > > > > >
+> > > > > > > if (!is_media_entity_v4l2_subdev(pad->entity))
+> > > > > > >    return -ENOENT;
+> > > > > > >
+> > > > > > > if (pad->entity->function !=3D MEDIA_ENT_F_CAM_SENSOR)
+> > > > > > >    return -ENOENT;
+> > > > > > >
+> > > > > >
+> > > > > > Hi Angelo,
+> > > > > >
+> > > > > > Thank you for the detailed explanation :)
+> > > > > > However, I can't make it work because in my case, seninf is con=
+nected
+> > > > > > to an external ISP
+> > > > > > so pad->entity->function =3D=3D MEDIA_ENT_F_PROC_VIDEO_ISP.
+> > > > > >
+> > > > > > How can I get the pad corresponding to the sensor?
+> > > > >
+> > > > > You don't have to. You can drop that check, and get the link freq=
+uency
+> > > > > of the source subdev with v4l2_get_link_freq(), whatever it is.
+> > > > >
+> > > > > > > cam_subdev =3D media_entity_to_v4l2_subdev(pad->entity);
+> > > > > > > ctl =3D v4l2_ctrl_find(subdev->ctrl_handler, V4L2_CID_PIXEL_R=
+ATE);
+> > > > > >
+> > > > > > Is this mandatory to implement V4L2_CID_PIXEL_RATE ?
+> > > > > > Should I return an error if not found?
+> > > > >
+> > > > > Does SENINF need to know both the pixel rate and link frequency ?
+> > > > > V4L2_CID_PIXEL_RATE is very ill-defined, at the moment it only ma=
+kes
+> > > > > sense as a value relative to the sensor pixel array, and doesn't =
+really
+> > > > > apply further down in the pipeline. What information do you need =
+to
+> > > > > program the SENINF ?
+> > > >
+> > > > Hi Laurent,
+> > > >
+> > > > I need to know the clock divider for the sensor
+> > >
+> > > Could you provide some details on how the SENINF uses that divisor ?
+> > > What does it control, and what are the constraints ?
+> >
+> > According to the datasheet,  SENINF_TG1_SEN_CK[21:16] :CLKCNT : Sensor
+> > master clock will be ISP_clock/(CLKCNT+1) where CLKCNT >=3D 1
+>
+> I'll need more information. My guess so far is that there's a FIFO
+> somewhere in the SENINF, with the pixel bus clocked by the CSI-2 clock
+> before the FIFO, and by the "Sensor master clock" after the FIFO. Is
+> that right ? If so, the simplest approach would be to use the link
+> frequency to compute the pixel clock before the FIFO, and make sure that
+> the sensor master clock will be larger than or equal to that.
+>
+> A better approach from a power consumption point of view would be to
+> consider horizontal blanking. The FIFO can fill faster than it gets
+> emptied during the active portion of the line and then drain during
+> blanking. This allows for a slower clock on the output side. You will
+> need to pick an output clock frequency that
+>
+> - on average is larger than the number of active pixels per line divided
+>   by the line duration ; and
+>
+> - ensures the FIFO never overflows during the active portion of the line,
+>   for cases where the line length is larger than the FIFO size.
+>
 
-Thank you for your patch. There is something to discuss/improve.
+Hi Laurent and Angelo,
 
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - sprd,sc9860-aonsecure-clk
-> +              - sprd,sc9860-aon-prediv
-> +              - sprd,sc9860-ap-clk
-> +              - sprd,sc9860-cam-clk
-> +              - sprd,sc9860-disp-clk
-> +              - sprd,sc9860-gpu-clk
-> +              - sprd,sc9860-vsp-clk
-> +    then:
-> +      required:
-> +        - reg
+Thank you for your help on this. I just sent a v5 with such a
+function. But it seems like changing
+this register has no effect. I asked some feedback from mediatek's app
+engineer but they are OoO
+until 16/7. I am waiting for them.
 
-  properties:
-    sprd,syscon: false
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - sprd,sc9860-agcp-gate
-> +              - sprd,sc9860-aon-gate
-> +              - sprd,sc9860-apahb-gate
-> +              - sprd,sc9860-apapb-gate
-> +              - sprd,sc9860-cam-gate
-> +              - sprd,sc9860-disp-gate
-> +              - sprd,sc9860-pll
-> +              - sprd,sc9860-pmu-gate
-> +              - sprd,sc9860-vsp-gate
-> +    then:
-> +      required:
-> +        - sprd,syscon
-
-  properties:
-    reg: false
-
-Best regards,
-Krzysztof
-
+Cheers
+Julien
+> > > > > > > /* multiplier is usually bits per pixel, divider is usually n=
+um of lanes */
+> > > > > > > link_frequency =3D v4l2_get_link_freq(cam_subdev->ctrl_handle=
+r, multiplier, divider);
+> > > > > > > pixel_clock =3D v4l2_ctrl_g_ctrl_int64(ctl);
+> > > > > >
+> > > > > > How to know the sensor clock given link_frequency and pixel_clo=
+ck?
+> > > > > > Can you point me to drivers doing something similar?
+> > > > > >
+> > > > > > >
+> > > > > > > ....now you know what the sensor wants, set the seninf sensor=
+ clock accordingly.
+> > > > > > >
+> > > > > > > Cheers
+> > > > > > > Angelo
+> > > > > > >
+> > > > > > [...]
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
