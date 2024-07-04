@@ -1,131 +1,69 @@
-Return-Path: <linux-kernel+bounces-241221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3A9927863
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:30:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1908D927866
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA10D288126
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:30:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49DF21C23655
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94F91AEFFB;
-	Thu,  4 Jul 2024 14:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1281B11E2;
+	Thu,  4 Jul 2024 14:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="RESvNLgk"
-Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FjCh0YUN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E761AED35;
-	Thu,  4 Jul 2024 14:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910141DA58;
+	Thu,  4 Jul 2024 14:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720103449; cv=none; b=VQ+CVrnKhFJmyiaWGpPaMFYSe1yRba24KDy1452H+XP+hqlbA3AwAzpi/Wdrr/5U1idFRk6meY8cYK83Pk8fq53Z0Y5Z/+LmzHqHGupwTc38xRMDfA5qnSu8ImzYqyH3jXycPG5TkT9JL50OExOMcCaM+EyL1VNj8jdiT3gngC0=
+	t=1720103461; cv=none; b=VwirzLK9VSK7UM8j7lqQIMY+C3eiL5fuVC/JGqUGy5SjBDvrbXC9i7BDXk0Tmtno68h954WZLMyMRq0H85sTmQ1UAyB2P5znVT/RvCguC1b7lOiF3tvm3NQfIAIYkmWXOWrPplutqRh21VtYezaGk9z6tlzf0QQxkSbAHVpMvBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720103449; c=relaxed/simple;
-	bh=/YfCTdnQGm2e8OteT+w3ZReS3qKp7v0iVq6bSYgaw8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BAMd+Nk6W7BFe/F8zAtUgnGZwJEey6EhObs3Mm3YAoFPDurpQbUYB6eR9vJucEwDGqxpgPYm/Lp1UtuAxBF3ko24f+6GQPKeJvxs30KK9YxELzFVSoNww6aec4fg0Fy8Te55gwIcoaptG18xGYBTWnkfN83wOnQ62X6j6GXAEVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=RESvNLgk; arc=none smtp.client-ip=49.12.72.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
-From: Finn Behrens <me@kloenk.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1720103444; bh=K5wwMCMBuM9kqaDI2K/jUVHFm330IHcLZCFjZvDmBOw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=RESvNLgkzNEYWo0uOI7+z0PK3dxr+TJM5aPbh52iMnWb3y9EWWePhSC67u0MN5iDV
-	 o7hkNVkdGYfaL6guLXM8S6j0FW4ijvF2NV8afoS9VsuOA2PKMAWMWIkSjDUsB4nYEB
-	 ncFgKDYVdfYz8jAViMHzeu9zMcb7PRQ7GMDCg7UE=
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Subject: Re: [PATCH 03/13] rust: allow `dead_code` for never constructed
- bindings
-Date: Thu, 04 Jul 2024 16:30:43 +0200
-Message-ID: <B8FF33D5-07E4-433A-AB35-EAE83265595B@kloenk.dev>
-In-Reply-To: <20240701183625.665574-4-ojeda@kernel.org>
-References: <20240701183625.665574-1-ojeda@kernel.org>
- <20240701183625.665574-4-ojeda@kernel.org>
+	s=arc-20240116; t=1720103461; c=relaxed/simple;
+	bh=oQAmUrRfhx4B6Tl3H9BetcyAPDwKs4yCMdkTWEMTkvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OIcNwg92pGX3D+gA5F9DjpD7qckpNgnGisrnotKw7tazGz5JdrAB5LHEgsKeKLsPGzSnazTDO/204Tj1myHBs8mibs5K1oyZ+ck2Zail+nFY2z6L9NC4dGME5+rOWos10q6K1A/+CgsvKGu0B/iCff1hN5U0JhjaoDVLUHCrTRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FjCh0YUN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51B3FC3277B;
+	Thu,  4 Jul 2024 14:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720103461;
+	bh=oQAmUrRfhx4B6Tl3H9BetcyAPDwKs4yCMdkTWEMTkvM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FjCh0YUNvR5uY24+D7Rzui72wZ2fWYxVxGCxS+qkSJifbaKwFZMavgKlnN6PiXuVB
+	 ozG22XFcQJtb2w1djehUOOaG1CU2TqzuaxSA692Nw8vzwyZhtoR4iAV2veOwVOJkcj
+	 nAWaq6F1//EBITGTHuwTP/VHuz0kYuLOxpnSMFgVuZnERdCruaDlm70kt/Oc/ffpvs
+	 CVT0kQRFHW73S+9jxDeN3y91xBbiCn0Kj3vXSX7RPd3gskVAmEDLdwIW05CqopMGOF
+	 Reesbm7Cu9y9eqHh1SmlftqYtSEV6wwJq5mOvjawQWKLs1Zer23e1J6DG0VRSkD5Za
+	 aKGD3yuS7oamg==
+Date: Thu, 4 Jul 2024 07:30:59 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Michal Kubiak <michal.kubiak@intel.com>
+Cc: Chengen Du <chengen.du@canonical.com>, <jhs@mojatatu.com>,
+ <xiyou.wangcong@gmail.com>, <jiri@resnulli.us>, <davem@davemloft.net>,
+ <edumazet@google.com>, <pabeni@redhat.com>, <ozsh@nvidia.com>,
+ <paulb@nvidia.com>, <marcelo.leitner@gmail.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, Gerald Yang <gerald.yang@canonical.com>
+Subject: Re: [PATCH] net/sched: Fix UAF when resolving a clash
+Message-ID: <20240704073059.2e797f2d@kernel.org>
+In-Reply-To: <ZoaAH/R8NM1rtYFt@localhost.localdomain>
+References: <20240704093458.39198-1-chengen.du@canonical.com>
+	<ZoaAH/R8NM1rtYFt@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 4 Jul 2024 12:57:35 +0200 Michal Kubiak wrote:
+> Please check the patchwork warning for details.
 
-
-On 1 Jul 2024, at 20:36, Miguel Ojeda wrote:
-
-> Starting with the upcoming Rust 1.80.0 (since upstream commit 35130d7233e9
-> ("Detect pub structs never constructed and unused associated constants
-> in traits")), the `dead_code` pass detects more cases, which triggers
-> in the `bindings` crate:
->
->     warning: struct `boot_params` is never constructed
->         --> rust/bindings/bindings_generated.rs:10684:12
->         |
->     10684 | pub struct boot_params {
->         |            ^^^^^^^^^^^
->         |
->         = note: `#[warn(dead_code)]` on by default
->
-> As well as in the `uapi` one:
->
->     warning: struct `boot_params` is never constructed
->         --> rust/uapi/uapi_generated.rs:10392:12
->         |
->     10392 | pub struct boot_params {
->         |            ^^^^^^^^^^^
->         |
->         = note: `#[warn(dead_code)]` on by default
->
-> These are all expected, since we do not use all the structs in the
-> bindings that `bindgen` generates from the C headers.
->
-> Therefore, allow them.
->
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-
-Reviewed-by: Finn Behrens <me@kloenk.dev>
-
-> ---
->  rust/bindings/lib.rs | 1 +
->  rust/uapi/lib.rs     | 1 +
->  2 files changed, 2 insertions(+)
->
-> diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-> index 40ddaee50d8b..93a1a3fc97bc 100644
-> --- a/rust/bindings/lib.rs
-> +++ b/rust/bindings/lib.rs
-> @@ -24,6 +24,7 @@
->      unsafe_op_in_unsafe_fn
->  )]
->
-> +#[allow(dead_code)]
->  mod bindings_raw {
->      // Use glob import here to expose all helpers.
->      // Symbols defined within the module will take precedence to the glob import.
-> diff --git a/rust/uapi/lib.rs b/rust/uapi/lib.rs
-> index 0caad902ba40..80a00260e3e7 100644
-> --- a/rust/uapi/lib.rs
-> +++ b/rust/uapi/lib.rs
-> @@ -14,6 +14,7 @@
->  #![cfg_attr(test, allow(unsafe_op_in_unsafe_fn))]
->  #![allow(
->      clippy::all,
-> +    dead_code,
->      missing_docs,
->      non_camel_case_types,
->      non_upper_case_globals,
-> -- 
-> 2.45.2
+Please don't direct people to patchwork checks, it's not a public CI.
 
