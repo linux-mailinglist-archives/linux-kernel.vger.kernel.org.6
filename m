@@ -1,94 +1,122 @@
-Return-Path: <linux-kernel+bounces-241116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85600927731
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:30:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F761927735
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70841C228E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F03051F232C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212A51AED22;
-	Thu,  4 Jul 2024 13:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D748A1AED30;
+	Thu,  4 Jul 2024 13:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHSu4LaN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFLkUHj8"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646084C70;
-	Thu,  4 Jul 2024 13:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FAE28373;
+	Thu,  4 Jul 2024 13:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720099830; cv=none; b=TdF/KrsrHtkJU/cEkcqbtmwph0ZaVQEAtvOc22UOnskXMzWx9a24htpViFzzIcH1tAtIK7aWkQxXYNUtQ8CkshI+Jh0doF7jCkZRjT1k7qdeOyjdSjlH4VoWZRDZ5qW51yi1ij+23EqOuvoJdGzQLqGEuXDHr3ODkU8Cu5yzWSI=
+	t=1720100029; cv=none; b=oI38M6VhfwpgsJVDf6l6zndPtglyUruWcd5+iOECExcuc7ykkhJUrqVPnfCJdNtUKityxZ0w9OhKqDtqySI3buExnnc7367jRCUdwQRHgKrbrIoK3UF4zC1W/DDAZ0qRhZX4BoxaEeGqLC45cEwiC7Rh/zr3VnJ9VM29/8/F+iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720099830; c=relaxed/simple;
-	bh=oEEA/VHkH+uWWv466RtkE9FrCA6zYPpRID8sNfEaRpE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=EXR89ZuUgrkKcoqiXHbJG8wfqb5PM91+8gtiRBwYOBcACWX+Xe+I61oE2wMl00gxDdS7SXdJXkhIIXsCMt8nNzyxVtJe+w1sRaRNvjLIP6BlAlA7CP248wNnhd48KfaAZkWp+nXN/9v2EhJzAUKMtjvn/DgdKcOgWTCeXTamoU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHSu4LaN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DDEFFC4AF0A;
-	Thu,  4 Jul 2024 13:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720099829;
-	bh=oEEA/VHkH+uWWv466RtkE9FrCA6zYPpRID8sNfEaRpE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=CHSu4LaNO9sEDAZj0jTu/an+1ZGmSjnPe9npjPeKWCtpgP7qudGYsU3ZxE/ghdJXq
-	 TI2yrzw4J8mND+ELc4/6oXd+0SdL0mYmiLneSn7XbsVAw6XZUDA3OcITDGRYJV3HAB
-	 n2xHyvMbWwJk60H+d4Nexw4+Ljn5Z/ekICRh9se3hI+KKIkTjA+AAFS2q7auZU4odB
-	 j3NzmIcefkASZ322iSyL7T5R0j1/AneYdG55lu7YRul/o8IL4G3GqyUdecoeNFBJyS
-	 PbTsHVCUdoB38T9IE8lK6l1Fbej5vXDBrMDRJKjBp7TNBsv4HK0mSUQpeAH1CoJXxu
-	 7pr07gAkoL7rw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CDFBCC43331;
-	Thu,  4 Jul 2024 13:30:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720100029; c=relaxed/simple;
+	bh=YTpdR8BWwbMhfLGFsScSQ+dfvCM1UcGB7JaHRWuCLtg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fDc28cwVvFems9+9f8O1kIcORmDDclOYoLA/LrunUGpskGSPCO60SNOjx37JbsEVulbn5cXhA72LmqFaPxD3pn/Zs9H5Xi/meNdIfCpFcKL6WYLMcXcnaF2KYPZMhEhSsU66MIyh/Mkzbu9TLmOHJnXw+S0hYsM1sdQHL9oZVfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFLkUHj8; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-64e81cd12cdso5324877b3.0;
+        Thu, 04 Jul 2024 06:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720100027; x=1720704827; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YTpdR8BWwbMhfLGFsScSQ+dfvCM1UcGB7JaHRWuCLtg=;
+        b=iFLkUHj8kYHnbUUkvb9T7d3m5BYtIcclHHIpID1xMx98j7l9uKwpH0agcy/0awLYfX
+         xCOtmR+hnaD2lDUaZ1VR2dLWy3QUoY1EzwDyB4hSk8oHqbpOo7nFPEIqghkFZ9NGmor5
+         kwWStsIp8whvANAIYljtIl+lVlEvRZtYsqBmkJvtsbI3tVEL5zWo+odu0EjzR91SUuIM
+         jtpPB9y58FAlXbYGDwtk+Fo1Yjx9WsIm/c5TNaSzjQhCMu5ctOBlMa7ERym7lfLfSmXn
+         qkno/a6g3y3+qvf8jqecUyAt8phCKtC86tVoMyyzjuEkMDVYC6g0l/O9d7DCb1BRmARW
+         R1gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720100027; x=1720704827;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YTpdR8BWwbMhfLGFsScSQ+dfvCM1UcGB7JaHRWuCLtg=;
+        b=RbgKJ5GpvIsPFl3iGxC9Cc0axnb1RmYecTALYXxMupUIKu44Ww6KaHBvVD8ybEePzx
+         Bk5kSUv/9PYaRJ1MfzS8lwYMveZzXc5eslpdorRjKqLBzTOaIOCo7lsQrduUYULjEh/v
+         D+4/sYRo7Ygi9KaG9/PSpUixY6jZ0D2SExIu1EN0PI4bS0Ek1yvkB0ZHxibTm0PYcxM0
+         n0Txmc8U4LG4wFKWiSdf3HUffowAbYCXdEsDk+Ut1N8GsPrJXLH791lLvJ9FwJ+DoOSl
+         tarhN0H5AbPXFN4OAHvfprTS3tqhvGlAV5KrT30n6+1aqTN790Gr5gx/nojSL1hS2wHw
+         60uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIwUJyGJBKaYo/c10brc1C8Q0Im4D1spUMlMDwzJt0Efn1zY1DSZwDvS56Nbha9NMostSTlSKrfJmUpvVulonCep3gOVWDt6TldvDWwGHPys5ra39NvPXU3R/jlOsPfIhYxom6qvPD1uY=
+X-Gm-Message-State: AOJu0YyirdbAXn+7ObyWx91UKrGVjgqqilxDeQB5E0hglkCVzV7XvMPp
+	bVdm0QYCYYQTTCAy/+sfC/X2qWdVu1UEkGLkRlJ05a4QORLdJ+d9eGeocABy7mKkV/drABPZO7W
+	jDITI/kSW8DpQSUl8RcMCrVG7FHk=
+X-Google-Smtp-Source: AGHT+IEnPiXYKGoZAEcWbV0vplxMesyCar7SVTa8AM31q8atEL/J3INWycW/KyiHzI5JnUxFQ7SXn4y6RT/9fhMRiCM=
+X-Received: by 2002:a05:690c:ec4:b0:651:4b29:403c with SMTP id
+ 00721157ae682-652f5778b8dmr10432037b3.2.1720100026775; Thu, 04 Jul 2024
+ 06:33:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] inet_diag: Initialize pad field in struct
- inet_diag_req_v2
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172009982983.30398.11491339248404155106.git-patchwork-notify@kernel.org>
-Date: Thu, 04 Jul 2024 13:30:29 +0000
-References: <20240703091649.111773-1-syoshida@redhat.com>
-In-Reply-To: <20240703091649.111773-1-syoshida@redhat.com>
-To: Shigeru Yoshida <syoshida@redhat.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
+References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
+ <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
+ <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
+ <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
+ <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
+ <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
+ <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
+ <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
+ <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
+ <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com> <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
+In-Reply-To: <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
+From: Andrea Gelmini <andrea.gelmini@gmail.com>
+Date: Thu, 4 Jul 2024 15:33:30 +0200
+Message-ID: <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
+Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
+ execution time of the kswapd0 process and symptoms as if there is not enough memory
+To: Filipe Manana <fdmanana@kernel.org>
+Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
+	dsterba@suse.com, josef@toxicpanda.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+Il giorno gio 4 lug 2024 alle ore 11:57 Filipe Manana
+<fdmanana@kernel.org> ha scritto:
+> I wonder if you have bpftrace installed and can run the following
+> script while doing the test:
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Yeap, no problem. It worked. I mean, recorded on external usb stick... But...
+On my laptop I have kernel 6.6.36 and rc6+branch...
+Uhm... Yesterday I switched back to 6.6.36 after wrote the email,
+well, not exactly, I usually work with 6.6.36 and yesterday rebooted
+with rc6 to test the branch patches (so the sluggish issue weeks ago,
+so I didn't move from 6.6.36).
+Anyway, after wrote you the report while watching the "live action", I
+rebooted 6.6.36.
 
-On Wed,  3 Jul 2024 18:16:49 +0900 you wrote:
-> KMSAN reported uninit-value access in raw_lookup() [1]. Diag for raw
-> sockets uses the pad field in struct inet_diag_req_v2 for the
-> underlying protocol. This field corresponds to the sdiag_raw_protocol
-> field in struct inet_diag_req_raw.
-> 
-> inet_diag_get_exact_compat() converts inet_diag_req to
-> inet_diag_req_v2, but leaves the pad field uninitialized. So the issue
-> occurs when raw_lookup() accesses the sdiag_raw_protocol field.
-> 
-> [...]
+Anyway, tried right now with bpftrace and I can't replicate it. Kernel
+exactly the same. No recompilo or so on...
 
-Here is the summary with links:
-  - [net] inet_diag: Initialize pad field in struct inet_diag_req_v2
-    https://git.kernel.org/netdev/net/c/61cf1c739f08
+I just can think about a few LibreOffice git subvolume deleted
+(~215000 files), and a few created.
+A few tens of giga deleted of files (mp4 and mkv). Uhm... dunno if it
+could be related or something changed on BTRFS layout.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Well, I have the nighlty snapshot (well, it's not on every subvolume
+of the fs). I ran tar on that, and we see.
 
-
+I tell you in a few hours. In the meanwhile I keep running rc6+ and
+see if something happens.
 
