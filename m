@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-240599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D610A926F8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:28:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB83A926F8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791E11F211DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:28:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 944CE1F210F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5082D1A0736;
-	Thu,  4 Jul 2024 06:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565D71A08A7;
+	Thu,  4 Jul 2024 06:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUdZVRod"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UT0pWTsS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C17125BA;
-	Thu,  4 Jul 2024 06:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD441A0716;
+	Thu,  4 Jul 2024 06:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720074514; cv=none; b=cr4CFEhcNpsy1X9tKfPXHyF6lMqdqMHfKunqNkkmCEMPAoPZpIDDCjX4Pi/TMlcKba2mr8aQFNW3XvCZkuV/v1Dtu7XlusHiPjNeR+IbMsfMqTzXISvFQOemffozgQ+iKm0F+6//95Rl7Xvw5bdI7WrLqDOmp4ixGEAskiXl8rk=
+	t=1720074536; cv=none; b=JHGzS6Q3z9D7jqOkzAjNCHn2S1gBa+F9qe2Amt8KXmj2d5snWfu7ZYcalEhl+M4cETa5/7dQS7xlo3oD9cdr3XD+9BUqYHUV1AyIiH9/T7dmRCgdm7gAM8uz2jHu/jbssdlR6dy/cQPYANFdVh+RJOYSerQLo+Ix1ppBUYHQgMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720074514; c=relaxed/simple;
-	bh=mVcqR0CA/a5g7mOdibHsaIrHd9R02SuX6t2jM6J9Lo8=;
+	s=arc-20240116; t=1720074536; c=relaxed/simple;
+	bh=mPVJptoIsNKHgSsjOvxl1ovsVe1BixjOnBIaYBnndEk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m19kF9alQWJGctbkpLYIEJxnPbNd4PpS7ztH5pIT+O0KFm9+R+viHWu3WFrJymas2KRS7OH8vOZCZq5bSWOcqIjxt+OrJqhkRIShhOuHmV1qPKbqmWS1fe+cS7oypSl5ozTU1uiVn5+7YraqHkxwiCo8rVCZS2ZbxKb02aLErCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUdZVRod; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89FC9C3277B;
-	Thu,  4 Jul 2024 06:28:31 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=PspRwPujtJJJQc+XajyDouNlFLe3LXTdpHqSkYcFEIOTAAaYTzsxRFoKTBjeuhssFYVP2tr1Yrk/nxxHdxX4R0zZFrzmUpeAJPc2QVvIbMm2HutK2o0KffPSUe0+7y5TxTpE1qf3h2vGt4cUO9eQK3mnXqylHno8fs64loaGhCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UT0pWTsS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED579C3277B;
+	Thu,  4 Jul 2024 06:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720074514;
-	bh=mVcqR0CA/a5g7mOdibHsaIrHd9R02SuX6t2jM6J9Lo8=;
+	s=k20201202; t=1720074536;
+	bh=mPVJptoIsNKHgSsjOvxl1ovsVe1BixjOnBIaYBnndEk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hUdZVRodpdTgzxZY5yyT+Hkoa1GkX20oZkl8eJVhghBLWEEdnoapxsPhuCQzBKIkG
-	 CnOnuAni5yhxdjJxUOpyHMfUWhb//eL+M10w4WVBC7ybtVemKibLhUoSAqemPzJTSA
-	 p1WvxCb7v5JETW9WKB0UlVovvMqzFeKnlBJn9VcaWTgN/N6jFXXkx7V2u+Nt9wu8lV
-	 MvY4wm+36qfunc599atxnDM17TRFV1j7xfabdKfteBDatSwMKSrkNaQZSjsGyd7buz
-	 CunqZ8dWcURbtVx2aqCjyy14HAj2CWxX7daYBhzo/e3i7EWz00z5rLa3tIIsQWaGeD
-	 z3ZAovSfOF+4Q==
-Message-ID: <a508cc82-5596-4771-af49-ff994ce59a57@kernel.org>
-Date: Thu, 4 Jul 2024 08:28:29 +0200
+	b=UT0pWTsSjsUd7Y+Qx2SAJ3F2PW4Zj29FBwsM3n18u9sVOtHia3T+IMZAzEPjhR/Fm
+	 +mt4N4o1XrJPmPfmPKQ1RNMogYnC04+P+el+KBABXDsgxoZJAJohzbaPdz4FK7sxHc
+	 5zhvgtDemNXFasuVFkSR2M9cy+ljr/OZSmTaGX7JLOorwtRRb+ydULn4KAJLNJPFw4
+	 wbKDF7oRRAmZ7ifC7Rnd2X4U/7ifWWTLGkmFtG3hb17TWwwfjdrojCpGkuFyadtUbC
+	 VDoXV353F+ffCu2yJLl2RDdoixS6ntp6t+EDWOlCQAiuTI+c6gpGvdmXi2az9kszOb
+	 8lCSLpM33gatA==
+Message-ID: <463a4d6e-ee2e-45b2-b9c0-19d2ba2ba49f@kernel.org>
+Date: Thu, 4 Jul 2024 08:28:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: rockchip: add rock5 itx board
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240703210524.776455-1-heiko@sntech.de>
- <20240703210524.776455-3-heiko@sntech.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] dt-bindings: regulator: ti,tps65132: document VIN supply
+To: Stanislav Jakubek <stano.jakubek@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+References: <ZoWxnEY944ht2EWf@standask-GA-A55M-S2HP>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -101,44 +102,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240703210524.776455-3-heiko@sntech.de>
+In-Reply-To: <ZoWxnEY944ht2EWf@standask-GA-A55M-S2HP>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/07/2024 23:05, Heiko Stuebner wrote:
+On 03/07/2024 22:16, Stanislav Jakubek wrote:
+> TPS65132 is powered by its VIN supply, document it.
+> 
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> ---
 
-> +/ {
-> +	model = "Radxa ROCK 5 ITX";
-> +	compatible = "radxa,rock-5itx", "rockchip,rk3588";
-> +
-> +	aliases {
-> +		mmc0 = &sdhci;
-> +		mmc1 = &sdmmc;
-> +		mmc2 = &sdio;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial2:1500000n8";
-> +	};
-> +
-> +	adc_keys: adc-keys {
-> +		compatible = "adc-keys";
-> +		io-channels = <&saradc 0>;
-> +		io-channel-names = "buttons";
-> +		keyup-threshold-microvolt = <1800000>;
-> +		poll-interval = <100>;
-> +		status = "okay";
-
-Looks like status can be dropped.
-
-> +
-> +		button-maskrom {
-> +			label = "Mask Rom";
-> +			linux,code = <KEY_SETUP>;
-> +			press-threshold-microvolt = <1750>;
-> +		};
-> +	};
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
