@@ -1,118 +1,79 @@
-Return-Path: <linux-kernel+bounces-240393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71CB1926D2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:42:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D96926D25
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D231C2181C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B907F282F24
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B943418E1F;
-	Thu,  4 Jul 2024 01:42:13 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1DFFC0A;
+	Thu,  4 Jul 2024 01:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vk8nuN+d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DADD748D;
-	Thu,  4 Jul 2024 01:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635532581;
+	Thu,  4 Jul 2024 01:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720057333; cv=none; b=kBlX2V9aQ4UZ4ifWtgMHXMqgZQwZmVlr1qrVv+AkKsJMyKLS/5/e4xmcnVwCJlXkK1DclVddLasZzPL/Z0lYn1PlnNBF278ymBC0L+PoJONrc8WCfpXOUUw+ElL5tYM/BeG2K2Ja8NWptOwP2HIha+I7z9DnEgMtGtVX0Ii00+w=
+	t=1720057305; cv=none; b=QJ26qxNCGxlltobXoa64Eq3h6dekH/ewSm9FWOoTaJIznsqztkoLQZzbB8XCi1tAnCPnPoL2QQPgAnSljNpevwayFRk7qkuJW4zuc6NRinpl43FHLMyTksxMUijLaLGo8/kUmXUrVKrBpAMqvIgP92Bt31yHehcw0MDsx1eZ2Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720057333; c=relaxed/simple;
-	bh=b426e6oGVVh+vaTeePmL2JbGmIogG4PydvIJ3ZMsQII=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tFM+VL/3xQjzdrSuvvSMpNn5hF7mR6KUKQ0JyIPwtidS/Dp9kTBx57dO7ZjhU0zbARIY++ODetNYL8lFpIPw4CBAK2bMp59R6XnX+EkMVaSIUxon5jz5w4R0eJqoeUEZGLcWrm5FVDIrUZ8Q29514hncPUQP8obAVchIJu6Cgp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 9d3c280039a611ef93f4611109254879-20240704
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED
-	SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
-	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
-	ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:dd17342a-16fc-44ae-a306-6f8cdb8c6657,IP:20,
-	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-11,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:4
-X-CID-INFO: VERSION:1.1.38,REQID:dd17342a-16fc-44ae-a306-6f8cdb8c6657,IP:20,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-11,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:4
-X-CID-META: VersionHash:82c5f88,CLOUDID:4a31ea16592e290cf674e5909c9da95b,BulkI
-	D:2407040858227AE2U9YK,BulkQuantity:1,Recheck:0,SF:38|25|17|19|44|66|102,T
-	C:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,
-	COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 9d3c280039a611ef93f4611109254879-20240704
-X-User: mengfanhui@kylinos.cn
-Received: from localhost.localdomain [(223.70.160.255)] by mailgw.kylinos.cn
-	(envelope-from <mengfanhui@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 776967633; Thu, 04 Jul 2024 09:42:03 +0800
-From: Fanhui Meng <mengfanhui@kylinos.cn>
-To: kashyap.desai@broadcom.com,
-	sumit.saxena@broadcom.com,
-	shivasharan.srikanteshwara@broadcom.com,
-	chandrakanth.patil@broadcom.com,
-	martin.petersen@oracle.com,
-	James.Bottomley@HansenPartnership.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geliang Tang <geliang@kernel.org>,
-	Jackie Liu <liuyun01@kylinos.cn>
-Subject: [scsi-next v2 2/2] scsi: megaraid_sas: make dcmd_timeout_ocr_possible static
-Date: Thu,  4 Jul 2024 09:40:49 +0800
-Message-Id: <87bee5805ca11e64045e05210f8afdcf895a89c8.1720056514.git.mengfanhui@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1720056514.git.mengfanhui@kylinos.cn>
-References: <cover.1720056514.git.mengfanhui@kylinos.cn>
+	s=arc-20240116; t=1720057305; c=relaxed/simple;
+	bh=x7Hf/tllTlDBBa3y/YrnYgYV/HhyT5DXOrpAPUTqH08=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V2LmO+++5TWV2BmlRn1QsVZxMORFNOHZrCttYWiEwOxuz12oh5L2FTHbWh1FA+AflpFKF4lzacNPlIbjeNeHA7lRYWYWiUzi63a9mu6HPdJB/dv+vLKHTB/ca0+LsGoCUBLkZYy7UhxUvYdN67xCDZe7LI9DMgCAgD0BWvG+rzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vk8nuN+d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517A8C2BD10;
+	Thu,  4 Jul 2024 01:41:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720057304;
+	bh=x7Hf/tllTlDBBa3y/YrnYgYV/HhyT5DXOrpAPUTqH08=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Vk8nuN+dWNVKc5e7F2nsakHaZz+GOxj1SyRqTRGR8h3iNHBhAUrqvd0QDw9UN2uAo
+	 sHphAAsMLDOereCBasn9Et4bWIYPUAZLe0CINZrQfHxD/5r5d/qiu6UEFI8F57Z7Fh
+	 0U63yzc+BQMyHFTsQ5CPK/yU3rbfSODn+IbIkxlfJJ4a9q14fG+EQC/SODtMcqcmsa
+	 tmHdQj4c1xXhjUwn/WR+KVNMxW3gGFQ+5NqO4g+3hboVcAz8lET/NQPsCHbhSjth8l
+	 w1FWEbCVhAPJCDkuj03HlIDwfeix5E994k34NFoDj+XAazwCO7Uln4KfwG5f+foukF
+	 kkSW59MZJXURw==
+Date: Wed, 3 Jul 2024 18:41:43 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Konstantin Taranov <kotaranov@linux.microsoft.com>
+Cc: kotaranov@microsoft.com, pabeni@redhat.com, haiyangz@microsoft.com,
+ kys@microsoft.com, edumazet@google.com, davem@davemloft.net,
+ decui@microsoft.com, wei.liu@kernel.org, sharmaajay@microsoft.com,
+ longli@microsoft.com, jgg@ziepe.ca, leon@kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 0/2] Provide master netdev to mana_ib
+Message-ID: <20240703184143.3340207d@kernel.org>
+In-Reply-To: <1719838736-20338-1-git-send-email-kotaranov@linux.microsoft.com>
+References: <1719838736-20338-1-git-send-email-kotaranov@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-dcmd_timeout_ocr_possible is only used in megaraid_sas_base.c, this
-patch makes it static. Furthermore, drop the useless "inline" label
-too.
+On Mon,  1 Jul 2024 05:58:54 -0700 Konstantin Taranov wrote:
+> This patch series aims to allow mana_ib to get master netdev
+> from mana. In the netvsc deployment, the VF netdev is enslaved
+> by netvsc and the upper device should be considered for the network
+> state. In the baremetal case, the VF netdev is a master device.
+> 
+> I would appreciate if I could get Acks on it from:
+> * netvsc maintainers (e.g., Haiyang)
+> * net maintainers (e.g., Jakub, David, Eric, Paolo)
 
-Suggested-by: Geliang Tang <geliang@kernel.org>
-Co-developed-by: Jackie Liu <liuyun01@kylinos.cn>
-Signed-off-by: Jackie Liu <liuyun01@kylinos.cn>
-Signed-off-by: Fanhui Meng <mengfanhui@kylinos.cn>
----
- drivers/scsi/megaraid/megaraid_sas_base.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index e6a9cef027c0..c9f6e691128e 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -4516,8 +4516,9 @@ int megasas_alloc_cmds(struct megasas_instance *instance)
-  * Return 0 for only Fusion adapter, if driver load/unload is not in progress
-  * or FW is not under OCR.
-  */
--inline int
--dcmd_timeout_ocr_possible(struct megasas_instance *instance) {
-+static int
-+dcmd_timeout_ocr_possible(struct megasas_instance *instance)
-+{
- 
- 	if (instance->adapter_type == MFI_SERIES)
- 		return KILL_ADAPTER;
--- 
-2.25.1
-
+Would you like us to take this via net-next?
+ - it doesn't apply cleanly
+ - the patches should be squashed, they aren't separate logical changes
+ - please find a better word than master
 
