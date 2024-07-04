@@ -1,118 +1,490 @@
-Return-Path: <linux-kernel+bounces-240682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533879270F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:52:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75CF49270FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 091981F23517
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:52:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 944EE1C21D05
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E479B1A38F0;
-	Thu,  4 Jul 2024 07:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528021A38E8;
+	Thu,  4 Jul 2024 07:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ryyx9q92"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBrvef3M"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6842A1A00EE;
-	Thu,  4 Jul 2024 07:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C2BFC02;
+	Thu,  4 Jul 2024 07:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720079560; cv=none; b=GOdcdxMOa6fAqR21uAoGUnzpwoY7sxCvihfUX+4jeJB/13Zvl6ZhOs4x8nuzgSrOnjPxPDLadj6E056vtUwhUj/jjat6h5SqsnBbb2pD0W2a24/t0Is0NsFtkXTfpAGeYiV8WGRDh7xIShUAQ5e5KfsizhLGIPNWjV6rh3EuuH4=
+	t=1720079720; cv=none; b=e+pUzEAwJ9fQK22TgVQHb53AVq4CnnO2YCXSE7V9dYR39zgZo+pJT8nQENfxSdvfrc4TguTjgBeFlba/xjx5rbxKVqU99/bNOibraQz3/dO0TA5wIuyI/l44E9bF6HIwpE+oV6l0jrGfmW7R5sSqpX/tTu6pqqig1zj2Eprw7nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720079560; c=relaxed/simple;
-	bh=vx7r9RithsTIhoBsWcjaukr8mhq/fU/31SBMkA8+NoA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bcIbxaMvqJ+YwWrnF6mMV1uDKyurwmF3Vrj9Yuu9fD0udYSnBL0rvVXIiecQgbPVwp39yuckd7ZIq1Ce/174XsKcJrsm157Zg3y9lp2RfDatpSS9mUT3wN2XAiR26B4Pm6e2bJEOWGWoI0ttHSp98p1L5GOms3pe2+B6IQCELvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ryyx9q92; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4647qXQk105647;
-	Thu, 4 Jul 2024 02:52:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720079553;
-	bh=dOWPr76nHuyM/N/Bfc2Za4VDRa5JsS3ea3bngrwNCKs=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ryyx9q92STncayalwoDELA++yxbiyJH4m4e29iz3fabHowRfuAlM9TK9AndSnD7ST
-	 HkjSxwv2cY2tQKC2vvgcFURu66OIZ1XDTfvDH79F/w4n/7+xhH7NYC2zjLFDcVTHiG
-	 jKgJPg0Xa8FuZG5PzfICzwsI1RMUzM/Ys4yO6sFs=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4647qXNQ115339
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 4 Jul 2024 02:52:33 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 4
- Jul 2024 02:52:32 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 4 Jul 2024 02:52:32 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4647qSjl005732;
-	Thu, 4 Jul 2024 02:52:29 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Roger Quadros <rogerq@kernel.org>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, <srk@ti.com>, <praneeth@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] arm: dts: k3-am642-evm-nand: Add bootph-all to NAND related nodes
-Date: Thu, 4 Jul 2024 13:22:13 +0530
-Message-ID: <171984950183.3152309.6737334326106721786.b4-ty@ti.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240628-am642-evm-nand-bootph-v2-1-387bfa1533a6@kernel.org>
-References: <20240628-am642-evm-nand-bootph-v2-1-387bfa1533a6@kernel.org>
+	s=arc-20240116; t=1720079720; c=relaxed/simple;
+	bh=VFF+HeeWXNjRwQLfKhg4IAkGpnqgW/GHtEvlIQ9T+f0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tPQOjhE9JG4UMuZ18AYDf3eNnpjOTLk0t2nXVM6kCfrg6r8/v5HSiZEiXyDqUHjAq8E/MXkJ1LnnOZA1Qbah2EZZFuWlGe0byLsgZESJ2VOz+x+qQrO8SoaaTJSvlIqkqF2o6bqirKJCigdhf9LZ7NmcPV2ujshKaP+n6VX3vYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BBrvef3M; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3d55ed47cc6so232656b6e.2;
+        Thu, 04 Jul 2024 00:55:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720079717; x=1720684517; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ta1uMwhlM6Hnrl7VtiRoXXUn0L8NwQA3nKU9EyK86OU=;
+        b=BBrvef3Mi/swDfX3A3L2Wv+gqyRq2hzYVg7zhf4ulwvyk53pVtfmWmXr5pMBOQNJnE
+         LjhLYDi8caAHrv82QGxHV9bwN/A1foWb9BTV1XpiIrvG8832z5f/2BdCfPpi1s/vVEHF
+         iyIjSy7Xi9ksYTPFdkxZXKurvez5yjblhvRrF8rYx/RtVQn1TJE+rr2BKjHhR8v4h3pg
+         qug+Q3U3YC6YJOltSPgorQYEKS1AiJUsvE1WHgmg+bhfEhGZKNW4zTQvH7HCROhi8b5E
+         +d6JWVHCffT52yttdjwi7ePriV5cywu2dRvcm7/Mm92+yGk7nPptDWvPYuNKUQ6PKN3C
+         mhEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720079717; x=1720684517;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ta1uMwhlM6Hnrl7VtiRoXXUn0L8NwQA3nKU9EyK86OU=;
+        b=o9VdWl/PLCv73Iv2xEMADm9to5Ss9maI0umG0FIbuQ7KgRqAK8x8c7BtNtUJJQFd9q
+         DD+K9ukYdR29fdkFvCiytBk0SqrVhIepOhkeRp8TIXxdzMsyCmF0I5yaqmk76+W1rKE8
+         2NAVHQUjyPgy2i5v0gD5sD8DbbKj/wi75J31SlO2OtsjvjQVQXI7KkjHI5w9oST3rljD
+         0Sl1W/n7ujCQKDxtP4ajXNCL5o0Cac8Be1Z6L/ZdafQ7irXSWD2WSYh2qLo7Wa4agrrB
+         WlW1PgczJ8avXrLcxlqqACXkmyAXUqx85B8oyQeCG5suo05h3wOLNeRNwLkCgjJGqDo3
+         hEKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBy8G9fwq9qsC9/thYgM+gOCGFq14tpdw5vD+wLvaLp+Q/GWS5Wn4vLhyClrI/J1itaCeSJgcSnZHGXABQ+r3mAMBjbn6acQyu49cztjL5SV3J6VuDh+gLl8WvgYOU/Ysn4YuvgRK/pTY=
+X-Gm-Message-State: AOJu0YwF6TsCWYVjMfSZt5WhpIL5mgPtdTKhlwS4I9XTb6Chx7FXjlM5
+	1j82ObDWk1sxbbCtM6L8sO1O5V3rfwKxDVUibDZzIFFAW32gv8GkOHSwFh1o
+X-Google-Smtp-Source: AGHT+IGku++d3RzoNy4tQT5GTrJWke0DhhzkNoX2AVhpma4OyFVzwXVxRSOR0wzdUXIb80uXI8Zjqg==
+X-Received: by 2002:a05:6808:4cc:b0:3d2:2b43:1804 with SMTP id 5614622812f47-3d914c5e901mr813473b6e.19.1720079717211;
+        Thu, 04 Jul 2024 00:55:17 -0700 (PDT)
+Received: from JammyHuang-PC.aspeed.com ([118.99.208.177])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708029582fasm11634646b3a.88.2024.07.04.00.55.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 00:55:16 -0700 (PDT)
+From: Jammy Huang <orbit.huang@gmail.com>
+X-Google-Original-From: Jammy Huang <jammy_huang@aspeedtech.com>
+To: eajames@linux.ibm.com,
+	mchehab@kernel.org,
+	joel@jms.id.au,
+	andrew@aj.id.au,
+	linux-media@vger.kernel.org,
+	openbmc@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: Jammy Huang <jammy_huang@aspeedtech.com>
+Subject: [PATCH] media: aspeed: Add additional input type, GFX, to capture
+Date: Thu,  4 Jul 2024 15:55:10 +0800
+Message-Id: <20240704075510.27034-1-jammy_huang@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Roger Quadros,
+ASPEED BMC IC has 2 different display engines.
+1. VGA on PCIe
+2. SoC Display(GFX)
 
-On Fri, 28 Jun 2024 13:30:38 +0300, Roger Quadros wrote:
-> NAND boot would require these nodes to be present at early stage.
-> Ensure that by adding "bootph-all" to relevant nodes.
-> 
-> 
+By default, video engine(VE) will capture video from VGA. This patch
+adds an option to caputre video from GFX with standard ioctl,
+vidioc_s_input.
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
+An enum, aspeed_video_input, is added for this purpose.
+enum aspeed_video_input {
+	VIDEO_INPUT_VGA = 0,
+	VIDEO_INPUT_GFX,
+	VIDEO_INPUT_MAX
+};
 
-[1/1] arm: dts: k3-am642-evm-nand: Add bootph-all to NAND related nodes
-      commit: 447f85b70f6553218e0aa7889e8615e4b31c8a2f
+Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
+---
+ drivers/media/platform/aspeed/aspeed-video.c | 177 ++++++++++++++++---
+ include/uapi/linux/aspeed-video.h            |   7 +
+ 2 files changed, 158 insertions(+), 26 deletions(-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+diff --git a/drivers/media/platform/aspeed/aspeed-video.c b/drivers/media/platform/aspeed/aspeed-video.c
+index fc6050e3be0d..da5bf512a8ab 100644
+--- a/drivers/media/platform/aspeed/aspeed-video.c
++++ b/drivers/media/platform/aspeed/aspeed-video.c
+@@ -25,6 +25,8 @@
+ #include <linux/workqueue.h>
+ #include <linux/debugfs.h>
+ #include <linux/ktime.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-dev.h>
+ #include <media/v4l2-device.h>
+@@ -203,6 +205,25 @@
+ #define VE_MEM_RESTRICT_START		0x310
+ #define VE_MEM_RESTRICT_END		0x314
+ 
++// SCU's registers
++#define SCU_MISC_CTRL			0xC0
++#define  SCU_DPLL_SOURCE		BIT(20)
++
++// GFX's registers
++#define GFX_CTRL			0x60
++#define  GFX_CTRL_ENABLE		BIT(0)
++#define  GFX_CTRL_FMT			GENMASK(9, 7)
++
++#define GFX_H_DISPLAY			0x70
++#define  GFX_H_DISPLAY_DE		GENMASK(28, 16)
++#define  GFX_H_DISPLAY_TOTAL		GENMASK(12, 0)
++
++#define GFX_V_DISPLAY			0x78
++#define  GFX_V_DISPLAY_DE		GENMASK(27, 16)
++#define  GFX_V_DISPLAY_TOTAL		GENMASK(11, 0)
++
++#define GFX_DISPLAY_ADDR		0x80
++
+ /*
+  * VIDEO_MODE_DETECT_DONE:	a flag raised if signal lock
+  * VIDEO_RES_CHANGE:		a flag raised if res_change work on-going
+@@ -273,6 +294,7 @@ struct aspeed_video_perf {
+  * yuv420:		a flag raised if JPEG subsampling is 420
+  * format:		holds the video format
+  * hq_mode:		a flag raised if HQ is enabled. Only for VIDEO_FMT_ASPEED
++ * input:		holds the video input
+  * frame_rate:		holds the frame_rate
+  * jpeg_quality:	holds jpeq's quality (0~11)
+  * jpeg_hq_quality:	holds hq's quality (1~12) only if hq_mode enabled
+@@ -298,6 +320,8 @@ struct aspeed_video {
+ 	struct video_device vdev;
+ 	struct mutex video_lock;	/* v4l2 and videobuf2 lock */
+ 
++	struct regmap *scu;
++	struct regmap *gfx;
+ 	u32 jpeg_mode;
+ 	u32 comp_size_read;
+ 
+@@ -316,6 +340,7 @@ struct aspeed_video {
+ 	bool yuv420;
+ 	enum aspeed_video_format format;
+ 	bool hq_mode;
++	enum aspeed_video_input input;
+ 	unsigned int frame_rate;
+ 	unsigned int jpeg_quality;
+ 	unsigned int jpeg_hq_quality;
+@@ -485,6 +510,7 @@ static const struct v4l2_dv_timings_cap aspeed_video_timings_cap = {
+ 
+ static const char * const format_str[] = {"Standard JPEG",
+ 	"Aspeed JPEG"};
++static const char * const input_str[] = {"VGA", "BMC GFX"};
+ 
+ static unsigned int debug;
+ 
+@@ -609,6 +635,14 @@ static int aspeed_video_start_frame(struct aspeed_video *video)
+ 		aspeed_video_free_buf(video, &video->bcd);
+ 	}
+ 
++	if (video->input == VIDEO_INPUT_GFX) {
++		u32 val;
++
++		// update input buffer address as gfx's
++		regmap_read(video->gfx, GFX_DISPLAY_ADDR, &val);
++		aspeed_video_write(video, VE_TGS_0, val);
++	}
++
+ 	spin_lock_irqsave(&video->lock, flags);
+ 	buf = list_first_entry_or_null(&video->buffers,
+ 				       struct aspeed_video_buffer, link);
+@@ -1026,9 +1060,23 @@ static void aspeed_video_get_timings(struct aspeed_video *v,
+ 	}
+ }
+ 
++static void aspeed_video_get_resolution_gfx(struct aspeed_video *video,
++					    struct v4l2_bt_timings *det)
++{
++	u32 h_val, v_val;
++
++	regmap_read(video->gfx, GFX_H_DISPLAY, &h_val);
++	regmap_read(video->gfx, GFX_V_DISPLAY, &v_val);
++
++	det->width = FIELD_GET(GFX_H_DISPLAY_DE, h_val) + 1;
++	det->height = FIELD_GET(GFX_V_DISPLAY_DE, v_val) + 1;
++	video->v4l2_input_status = 0;
++}
++
+ #define res_check(v) test_and_clear_bit(VIDEO_MODE_DETECT_DONE, &(v)->flags)
+ 
+-static void aspeed_video_get_resolution(struct aspeed_video *video)
++static void aspeed_video_get_resolution_vga(struct aspeed_video *video,
++					    struct v4l2_bt_timings *det)
+ {
+ 	bool invalid_resolution = true;
+ 	int rc;
+@@ -1036,7 +1084,6 @@ static void aspeed_video_get_resolution(struct aspeed_video *video)
+ 	u32 mds;
+ 	u32 src_lr_edge;
+ 	u32 src_tb_edge;
+-	struct v4l2_bt_timings *det = &video->detected_timings;
+ 
+ 	det->width = MIN_WIDTH;
+ 	det->height = MIN_HEIGHT;
+@@ -1113,14 +1160,20 @@ static void aspeed_video_get_resolution(struct aspeed_video *video)
+ 
+ 	aspeed_video_get_timings(video, det);
+ 
+-	/*
+-	 * Enable mode-detect watchdog, resolution-change watchdog and
+-	 * automatic compression after frame capture.
+-	 */
++	/* Enable mode-detect watchdog, resolution-change watchdog */
+ 	aspeed_video_update(video, VE_INTERRUPT_CTRL, 0,
+ 			    VE_INTERRUPT_MODE_DETECT_WD);
+-	aspeed_video_update(video, VE_SEQ_CTRL, 0,
+-			    VE_SEQ_CTRL_AUTO_COMP | VE_SEQ_CTRL_EN_WATCHDOG);
++	aspeed_video_update(video, VE_SEQ_CTRL, 0, VE_SEQ_CTRL_EN_WATCHDOG);
++}
++
++static void aspeed_video_get_resolution(struct aspeed_video *video)
++{
++	struct v4l2_bt_timings *det = &video->detected_timings;
++
++	if (video->input == VIDEO_INPUT_GFX)
++		aspeed_video_get_resolution_gfx(video, det);
++	else
++		aspeed_video_get_resolution_vga(video, det);
+ 
+ 	v4l2_dbg(1, debug, &video->v4l2_dev, "Got resolution: %dx%d\n",
+ 		 det->width, det->height);
+@@ -1156,7 +1209,7 @@ static void aspeed_video_set_resolution(struct aspeed_video *video)
+ 	aspeed_video_write(video, VE_SRC_SCANLINE_OFFSET, act->width * 4);
+ 
+ 	/* Don't use direct mode below 1024 x 768 (irqs don't fire) */
+-	if (size < DIRECT_FETCH_THRESHOLD) {
++	if (video->input == VIDEO_INPUT_VGA && size < DIRECT_FETCH_THRESHOLD) {
+ 		v4l2_dbg(1, debug, &video->v4l2_dev, "Capture: Sync Mode\n");
+ 		aspeed_video_write(video, VE_TGS_0,
+ 				   FIELD_PREP(VE_TGS_FIRST,
+@@ -1171,10 +1224,20 @@ static void aspeed_video_set_resolution(struct aspeed_video *video)
+ 				    VE_CTRL_INT_DE | VE_CTRL_DIRECT_FETCH,
+ 				    VE_CTRL_INT_DE);
+ 	} else {
++		u32 ctrl, val, bpp;
++
+ 		v4l2_dbg(1, debug, &video->v4l2_dev, "Capture: Direct Mode\n");
++		ctrl = VE_CTRL_DIRECT_FETCH;
++		if (video->input == VIDEO_INPUT_GFX) {
++			regmap_read(video->gfx, GFX_CTRL, &val);
++			bpp = FIELD_GET(GFX_CTRL_FMT, val) ? 32 : 16;
++			if (bpp == 16)
++				ctrl |= VE_CTRL_INT_DE;
++			aspeed_video_write(video, VE_TGS_1, act->width * (bpp >> 3));
++		}
+ 		aspeed_video_update(video, VE_CTRL,
+ 				    VE_CTRL_INT_DE | VE_CTRL_DIRECT_FETCH,
+-				    VE_CTRL_DIRECT_FETCH);
++				    ctrl);
+ 	}
+ 
+ 	size *= 4;
+@@ -1207,6 +1270,22 @@ static void aspeed_video_set_resolution(struct aspeed_video *video)
+ 		aspeed_video_free_buf(video, &video->srcs[0]);
+ }
+ 
++/*
++ * Update relative parameters when timing changed.
++ *
++ * @video: the struct of aspeed_video
++ * @timings: the new timings
++ */
++static void aspeed_video_update_timings(struct aspeed_video *video, struct v4l2_bt_timings *timings)
++{
++	video->active_timings = *timings;
++	aspeed_video_set_resolution(video);
++
++	video->pix_fmt.width = timings->width;
++	video->pix_fmt.height = timings->height;
++	video->pix_fmt.sizeimage = video->max_compressed_size;
++}
++
+ static void aspeed_video_update_regs(struct aspeed_video *video)
+ {
+ 	u8 jpeg_hq_quality = clamp((int)video->jpeg_hq_quality - 1, 0,
+@@ -1219,6 +1298,8 @@ static void aspeed_video_update_regs(struct aspeed_video *video)
+ 	u32 ctrl = 0;
+ 	u32 seq_ctrl = 0;
+ 
++	v4l2_dbg(1, debug, &video->v4l2_dev, "input(%s)\n",
++		 input_str[video->input]);
+ 	v4l2_dbg(1, debug, &video->v4l2_dev, "framerate(%d)\n",
+ 		 video->frame_rate);
+ 	v4l2_dbg(1, debug, &video->v4l2_dev, "jpeg format(%s) subsample(%s)\n",
+@@ -1234,6 +1315,9 @@ static void aspeed_video_update_regs(struct aspeed_video *video)
+ 	else
+ 		aspeed_video_update(video, VE_BCD_CTRL, VE_BCD_CTRL_EN_BCD, 0);
+ 
++	if (video->input == VIDEO_INPUT_VGA)
++		ctrl |= VE_CTRL_AUTO_OR_CURSOR;
++
+ 	if (video->frame_rate)
+ 		ctrl |= FIELD_PREP(VE_CTRL_FRC, video->frame_rate);
+ 
+@@ -1252,7 +1336,9 @@ static void aspeed_video_update_regs(struct aspeed_video *video)
+ 	aspeed_video_update(video, VE_SEQ_CTRL,
+ 			    video->jpeg_mode | VE_SEQ_CTRL_YUV420,
+ 			    seq_ctrl);
+-	aspeed_video_update(video, VE_CTRL, VE_CTRL_FRC, ctrl);
++	aspeed_video_update(video, VE_CTRL,
++			    VE_CTRL_FRC | VE_CTRL_AUTO_OR_CURSOR |
++			    VE_CTRL_SOURCE, ctrl);
+ 	aspeed_video_update(video, VE_COMP_CTRL,
+ 			    VE_COMP_CTRL_DCT_LUM | VE_COMP_CTRL_DCT_CHR |
+ 			    VE_COMP_CTRL_EN_HQ | VE_COMP_CTRL_HQ_DCT_LUM |
+@@ -1280,6 +1366,7 @@ static void aspeed_video_init_regs(struct aspeed_video *video)
+ 	aspeed_video_write(video, VE_JPEG_ADDR, video->jpeg.dma);
+ 
+ 	/* Set control registers */
++	aspeed_video_write(video, VE_SEQ_CTRL, VE_SEQ_CTRL_AUTO_COMP);
+ 	aspeed_video_write(video, VE_CTRL, ctrl);
+ 	aspeed_video_write(video, VE_COMP_CTRL, VE_COMP_CTRL_RSVD);
+ 
+@@ -1311,12 +1398,7 @@ static void aspeed_video_start(struct aspeed_video *video)
+ 	aspeed_video_get_resolution(video);
+ 
+ 	/* Set timings since the device is being opened for the first time */
+-	video->active_timings = video->detected_timings;
+-	aspeed_video_set_resolution(video);
+-
+-	video->pix_fmt.width = video->active_timings.width;
+-	video->pix_fmt.height = video->active_timings.height;
+-	video->pix_fmt.sizeimage = video->max_compressed_size;
++	aspeed_video_update_timings(video, &video->detected_timings);
+ }
+ 
+ static void aspeed_video_stop(struct aspeed_video *video)
+@@ -1414,15 +1496,44 @@ static int aspeed_video_enum_input(struct file *file, void *fh,
+ 
+ static int aspeed_video_get_input(struct file *file, void *fh, unsigned int *i)
+ {
+-	*i = 0;
++	struct aspeed_video *video = video_drvdata(file);
++
++	*i = video->input;
+ 
+ 	return 0;
+ }
+ 
+ static int aspeed_video_set_input(struct file *file, void *fh, unsigned int i)
+ {
+-	if (i)
++	struct aspeed_video *video = video_drvdata(file);
++
++	if (i >= VIDEO_INPUT_MAX)
++		return -EINVAL;
++
++	if (IS_ERR(video->scu)) {
++		v4l2_dbg(1, debug, &video->v4l2_dev, "%s: scu isn't ready for input-control\n", __func__);
++		return -EINVAL;
++	}
++
++	if (IS_ERR(video->gfx) && i == VIDEO_INPUT_GFX) {
++		v4l2_dbg(1, debug, &video->v4l2_dev, "%s: gfx isn't ready for GFX input\n", __func__);
+ 		return -EINVAL;
++	}
++
++	video->input = i;
++
++	// modify dpll source per current input
++	if (video->input == VIDEO_INPUT_VGA)
++		regmap_update_bits(video->scu, SCU_MISC_CTRL, SCU_DPLL_SOURCE, 0);
++	else
++		regmap_update_bits(video->scu, SCU_MISC_CTRL, SCU_DPLL_SOURCE, SCU_DPLL_SOURCE);
++
++	aspeed_video_update_regs(video);
++
++	// update signal status
++	aspeed_video_get_resolution(video);
++	if (!video->v4l2_input_status)
++		aspeed_video_update_timings(video, &video->detected_timings);
+ 
+ 	return 0;
+ }
+@@ -1527,13 +1638,7 @@ static int aspeed_video_set_dv_timings(struct file *file, void *fh,
+ 	if (vb2_is_busy(&video->queue))
+ 		return -EBUSY;
+ 
+-	video->active_timings = timings->bt;
+-
+-	aspeed_video_set_resolution(video);
+-
+-	video->pix_fmt.width = timings->bt.width;
+-	video->pix_fmt.height = timings->bt.height;
+-	video->pix_fmt.sizeimage = video->max_compressed_size;
++	aspeed_video_update_timings(video, &timings->bt);
+ 
+ 	timings->type = V4L2_DV_BT_656_1120;
+ 
+@@ -1911,6 +2016,7 @@ static int aspeed_video_debugfs_show(struct seq_file *s, void *data)
+ 	val08 = aspeed_video_read(v, VE_CTRL);
+ 	if (FIELD_GET(VE_CTRL_DIRECT_FETCH, val08)) {
+ 		seq_printf(s, "  %-20s:\tDirect fetch\n", "Mode");
++		seq_printf(s, "  %-20s:\t%s\n", "Input", input_str[v->input]);
+ 		seq_printf(s, "  %-20s:\t%s\n", "VGA bpp mode",
+ 			   FIELD_GET(VE_CTRL_INT_DE, val08) ? "16" : "32");
+ 	} else {
+@@ -2070,12 +2176,31 @@ static int aspeed_video_setup_video(struct aspeed_video *video)
+ 	return 0;
+ }
+ 
++// Get regmap without checking res, such as clk/reset, that could lead to conflict.
++static struct regmap *aspeed_regmap_lookup(struct device_node *np, const char *property)
++{
++	struct device_node *syscon_np;
++	struct regmap *regmap;
++
++	syscon_np = of_parse_phandle(np, property, 0);
++	if (!syscon_np)
++		return ERR_PTR(-ENODEV);
++
++	regmap = device_node_to_regmap(syscon_np);
++	of_node_put(syscon_np);
++
++	return regmap;
++}
++
+ static int aspeed_video_init(struct aspeed_video *video)
+ {
+ 	int irq;
+ 	int rc;
+ 	struct device *dev = video->dev;
+ 
++	video->scu = aspeed_regmap_lookup(dev->of_node, "aspeed,scu");
++	video->gfx = aspeed_regmap_lookup(dev->of_node, "aspeed,gfx");
++
+ 	irq = irq_of_parse_and_map(dev->of_node, 0);
+ 	if (!irq) {
+ 		dev_err(dev, "Unable to find IRQ\n");
+diff --git a/include/uapi/linux/aspeed-video.h b/include/uapi/linux/aspeed-video.h
+index 6586a65548c4..44173be4c8dd 100644
+--- a/include/uapi/linux/aspeed-video.h
++++ b/include/uapi/linux/aspeed-video.h
+@@ -8,6 +8,13 @@
+ 
+ #include <linux/v4l2-controls.h>
+ 
++// enum for aspeed video's v4l2 s_input
++enum aspeed_video_input {
++	VIDEO_INPUT_VGA = 0,
++	VIDEO_INPUT_GFX,
++	VIDEO_INPUT_MAX
++};
++
+ #define V4L2_CID_ASPEED_HQ_MODE			(V4L2_CID_USER_ASPEED_BASE  + 1)
+ #define V4L2_CID_ASPEED_HQ_JPEG_QUALITY		(V4L2_CID_USER_ASPEED_BASE  + 2)
+ 
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
+base-commit: e9d22f7a6655941fc8b2b942ed354ec780936b3e
+-- 
+2.25.1
 
 
