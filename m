@@ -1,197 +1,214 @@
-Return-Path: <linux-kernel+bounces-241177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 699DC9277E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:11:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC059277E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4B53B229BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:11:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9714285DD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BB61ABC25;
-	Thu,  4 Jul 2024 14:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W/BKqZ57"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2087.outbound.protection.outlook.com [40.107.223.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEED1AEFE8;
+	Thu,  4 Jul 2024 14:11:59 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380B21AEFC5;
-	Thu,  4 Jul 2024 14:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720102288; cv=fail; b=OmR61/k+zYfTY1TVqv0nqTjb2reqm9p5Dgvsnxg7tXOxbh1n6FxyXqbvvLN/inu/9p/Id96HkeU4Bh7MeUMpRd1nldQoCc5HQpQnfq7+hO4VdB8VfTKPWMAP/eTX7Xsz17ayw3QmwzvdL2tW/4zGiAI85VswJl4ymardDfa/kFw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720102288; c=relaxed/simple;
-	bh=7U4rxJiKq7qqu2qCYbEEhmq4BEIU4RhLZ3k63m/lLG4=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=d7xWCTj4V1IpCKhVcglqyA69atuDpU5shuRUTyLzs27zt5uB6sg3JbfCGRbZy+4xtwJgGOiIaCoJ1z8UHVBmED9MhZTiMb/qLeyZ4JB3q71NHOI6fXT/NFDXKHb/b587Gm7OQ4WJKdnSEbxQPgL6VB5UjFrZhEyrk0/YnQkR8jM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W/BKqZ57; arc=fail smtp.client-ip=40.107.223.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gc168jydrARTVQ4k+L9vGI9XALuWIyEfxwAxgsDpFSK1PyUc80g4mkkcMZ2iWqQd/Vn+lBmmzIzNIXB8ZMxISUK3fM/TEwxW4AeNtjVCKt+RwIMhGE32kMMFpbWp9+CjueTE8mBuVfZWUFw79/VEJYHPR/4yl/FfmqBr4RBRhOo6kIiFuUv6TSlgmKLdyipbY73HM/lfj7zfhmlKfHHPIAmnza1RmaLzqzFDdEGPGJOuh7AkAEQlzixy1n2d+94yMSmJvr3Qu5aBuJUD1mtqGG1ieiQYWzWtZ7uOUztlpqJ9VYVvybVZoPfNtgYps8w6MFGZKC/FoylqEfteZZEv1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Zzgam0ZqLdd2IYu3tFgqnhKYlHEBZRkX7j6fl5frNpA=;
- b=M48TGanfM6314BjO8NoZrLxvQE2qMadTsu8HOjpES6MiOoXMS42BQizjVs9SOS+NuDgMfWCe5a0ibQGn+0Yo3oALpLYqNW0I1Z69rz0FyTCUBcyvdoyzHPsEPSnWfmBM9Bfq/yGvHjk1dh7b275snp46vwdatnnUoaaohSdSccaago11iYoM3mGD6mzJa/vlhOwjisu8swpW1ugYkC+Y6qLXgmlvHNwnMvBEWQdoBYdptefqeyrrA9UFeZBnbd+1PjmxGUunUzStbNACoLJMM3h/laetm0unmHMFXwIwl+GVGubMqJbvs9diUU3x/gaQ6tsoytGjUGrZvE39plbO/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Zzgam0ZqLdd2IYu3tFgqnhKYlHEBZRkX7j6fl5frNpA=;
- b=W/BKqZ577x2No5JpwB9wycAklu5LJ4hkYE03C8aKAZNU+d8fV0ltOYRY5Tn8FIQJNvLinOZMW9snr13LPww0FfM4+Pt8tUK3a/S5RCi/1zZOFiDgz8w5bxGF4LmcInopnTnfzEHvsXPxp8cQ5u6kRHhuTCze65ps9JjYn1O2tAAerr8plm4NbOe8nDeeHkc0YpZPEUP1yi62lSfxEDyXulun//fJzaYIfNJHVV8riwEE2lJTl4sPX1xtP+ybm+smmdbq/QwRFdnDGBzZIc2hohFbs3yGaOA3eIjR9JUs242pPWM5ljMdefqWRN/y4KWYJ50eb0PqaGIDWluZ+gxp7Q==
-Received: from BN9PR03CA0777.namprd03.prod.outlook.com (2603:10b6:408:13a::32)
- by LV8PR12MB9232.namprd12.prod.outlook.com (2603:10b6:408:182::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.23; Thu, 4 Jul
- 2024 14:11:23 +0000
-Received: from BN2PEPF00004FC0.namprd04.prod.outlook.com
- (2603:10b6:408:13a:cafe::df) by BN9PR03CA0777.outlook.office365.com
- (2603:10b6:408:13a::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.30 via Frontend
- Transport; Thu, 4 Jul 2024 14:11:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BN2PEPF00004FC0.mail.protection.outlook.com (10.167.243.186) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7741.18 via Frontend Transport; Thu, 4 Jul 2024 14:11:23 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 4 Jul 2024
- 07:11:17 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 4 Jul 2024 07:11:17 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Thu, 4 Jul 2024 07:11:17 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.10 000/284] 5.10.221-rc2 review
-In-Reply-To: <20240704094505.095988824@linuxfoundation.org>
-References: <20240704094505.095988824@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B011AE87F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720102318; cv=none; b=JsvKpRiPo/TZ7eHd1vs7nVYNJCm+fJLXLWfNKVI1iU5LzbRvjpYzlVNdPFLb13MZnVcyXge3IjpAJv5QqsCiWb2QgN+egBdS8Yo0sGawsqxUBegJtVQLEEM9SfxmsGcKXfgvUYd+sllbhYCiNQ1b60zKTPWt/gSdDYrj8OlSp0s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720102318; c=relaxed/simple;
+	bh=cPX++j2S4Jk/GmeKf+5cVvytg9xauOiavPcAKYsMmxY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=owLl/8LzHn7iwQ8/1VRLMG4hprbXkqtTcoA6BzCD4IsQlg5VKrWlhvUZv5maLapZ2UPXbeL80L61/4v2MbiCNQWlWt6CfgcHJYfJgNNn4tmZP5hmbFKLLmZbGXm0/AXfqovzxeu6yiBhiwapNLjY2mADu5vrj1m47aWlqGyiWpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 822E461E6477A;
+	Thu,  4 Jul 2024 16:11:21 +0200 (CEST)
+Message-ID: <7666eb01-b609-4eee-b331-8fbf689a1961@molgen.mpg.de>
+Date: Thu, 4 Jul 2024 16:11:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <52c52c9b-3f4d-40a5-a808-99424d9975dd@drhqmail202.nvidia.com>
-Date: Thu, 4 Jul 2024 07:11:17 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FC0:EE_|LV8PR12MB9232:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6afed6fe-262e-4e39-9de5-08dc9c332fb9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SHUyTEtwbDhRZGkvZGRueHBjMGIzdGlGdWVyejJBQ3JpRTBXOHQ0bzJVTGd2?=
- =?utf-8?B?Y3JCYTMxMVlOUzJ1VFdtaGQxd2RGSjYwR0FNV09Wb3lsL20wWmNadVFmcDNz?=
- =?utf-8?B?UzlUOEtock1RcXVtNXVFUGlseTQzeUNxanlTSFNEeHZBWnkreFVDVEdNRkRy?=
- =?utf-8?B?WVhiUzZ6alExNXBQUG1rSFdBendMdmRpRlVwZEFVRzZZa1FwdWM4c1h4bGJa?=
- =?utf-8?B?dzFQWThaRHdUTU1YVUhtYkFvUklJRlRjUkJRd2hzU0hTK3dhUmh2dThzRGJF?=
- =?utf-8?B?VmxiWEd3RUhhaXRKcjRqejBDNE80S3F2UG1KMS9CRHdVTWh1STM1ZFlZNXpM?=
- =?utf-8?B?bFhJc2k2dVNuMk1WaitUL0ZDYitKbW03ZWFwanQzYkY3L3BqTUl5c1h4eU1S?=
- =?utf-8?B?cHBmSTdNMXdoWEVBSXJSbG0rNG9qU2daL0paN0tvQkVwMzNCOEIxaTV5L21W?=
- =?utf-8?B?RVEvOGo0bzl6a2N3ZmgydFFlNWxaaEcxem5MQm9NMVFWRUxBenRrQ3g3eFYx?=
- =?utf-8?B?dWMzOStyM2tZYnBmT2Q1RFZTRlU4ZkFsbkRGZ0RYdzZCZ2lyZHZxR2dERENJ?=
- =?utf-8?B?V0hzQmJnKy95NGdKQkdybEtHN0ZKVkxRL3huanBnVVRHcGpPdktaamY0TjFM?=
- =?utf-8?B?N1h4MXEyNk50aVc5Nm03NlRuQ1NJS0E3RXRmU3dOOHRTSTdPTkVZM3BML0FU?=
- =?utf-8?B?THp4TmJzT0ZMQW4xK3pQQzNsbGRIbExDMXhtV1RvTzhTdkt4c2Z4K1BDVzFw?=
- =?utf-8?B?ZnZHZ0hsd2xSTHBKSGJtUnREMityL0tYMGcvRjZITUdDTXMzM2k5VFYwd0hI?=
- =?utf-8?B?aXZoQWNMeW5neVJtb003SHI5YW9sb0lGSGFsV1ZrMmluSnhaTzhOanpGZmlP?=
- =?utf-8?B?RHFmTjloUmd6U1JCSTdKdFZCWGc0UW1RWm9VY0hBT0lLUDMxbEZsMkVFYkNt?=
- =?utf-8?B?SThadHVValFlemduSmFGei91UlpHd3pBK2ZvZnRLYUtSZVc1TkNTeDdIOHdx?=
- =?utf-8?B?anVWSEYzaFVKQ1lWdWhPRE1SSG84T3AxcHFCVjZabkFmcDRBcUhVWkpmYU01?=
- =?utf-8?B?d1YzTmwzN0Fnb21TZ3g0MFZjMzBQQU1vTCtFanJGd0o3ckNsY2ZSV3ZLbnZo?=
- =?utf-8?B?SUZxUDJrU042WEptcDRuUTdiUnRsTm40eWFpVE5wUVRPVUN4TFhETW5BOFpO?=
- =?utf-8?B?QmtkTzZVb1MybUM1S041RU9taDJ2dVJET1pBREF1MndmSUcvcGdWTmZvOVB2?=
- =?utf-8?B?OXAxREhVdGgzUWNGZHVKWFBDN3FzVTBWVTBUemp4K2FWL2xKYW9mT0MrN2V0?=
- =?utf-8?B?MDE5L0FLcEliaSs5bm9vejBtdENlSTNBNUQ4dmIyZklQbCsySFQ3d2tHZ3NV?=
- =?utf-8?B?UWtmVExCRmtNbnNjQ2V1Y2VkejJWYlRPdkhIczM5RDhBNjdwQWxCZmVZb05j?=
- =?utf-8?B?Q3JBN3U1N1poa1pycENha0hqNEs3R1dISTFjS2xURjlaUWFzSWhKNVRBdDhh?=
- =?utf-8?B?Y3NMZWFLNExDd3hHcUc0cWlaVmYwd1JKbkZvblJNNVVUYm84bEhrSkRHSnZl?=
- =?utf-8?B?NmZjMXhLZVlmRkNzNlFrY1JZREcrYmV6YXBrVnJ4Q0NpV0hXcE04WDNSVVVM?=
- =?utf-8?B?K3h2bGpOeGl1YU5VbnZlQytJZUFHZytaOW1aUHNGcmduZi9weVBoSlB5YWcx?=
- =?utf-8?B?b3Y2U0FxZ1ZNdkhPZFEwdFJ2S1VzSGFhZGQ1aHNjT2NxNVhnYzFwTHNjK21P?=
- =?utf-8?B?MkhUZW1UMGdmWE1udmdSY201NExFdmo5NkxYVXV3VGwxa3FDMHZlcWs0UTZ0?=
- =?utf-8?B?QWhWVTArT2pPSURUblg3dUZBemljdE5SbmdXMGQ2MGU5NTFEWG83eGVONHpY?=
- =?utf-8?B?emtHcjNZSWM1T3dyR2VMQmdwUWJBemc2YmczeGVlZ242L0pPekkwNUdEL2pa?=
- =?utf-8?Q?p3ol8XQS4zaBcZwuPuwTCgoTnaixnN8z?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 14:11:23.5695
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6afed6fe-262e-4e39-9de5-08dc9c332fb9
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FC0.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9232
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: Freezing user space processes failed after 20.006 seconds
+ (systemd-journal, udev-worker)
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 04 Jul 2024 11:48:18 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.221 release.
-> There are 284 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 06 Jul 2024 09:44:13 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.221-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Dear Linux folks,
 
-All tests passing for Tegra ...
 
-Test results for stable-v5.10:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    68 tests:	68 pass, 0 fail
+Using Linux 6.10-rc6 on the Intel Kaby Lake laptop Dell XPS 13 9360, I 
+was unable to suspend the system:
 
-Linux version:	5.10.221-rc2-g6db6c4ec363b
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+```
+[    0.000000] Linux version 6.10.0-rc6 
+(build@bohemianrhapsody.molgen.mpg.de) (gcc (Debian 13.3.0-1) 13.3.0, 
+GNU ld (GNU Binutils for Debian) 2.42.50.20240625) #211 SMP 
+PREEMPT_DYNAMIC Mon Jul  1 08:23:19 CEST 2024
+[    0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.10.0-rc6 
+root=UUID=32e29882-d94d-4a92-9ee4-4d03002bfa29 ro quiet pci=noaer 
+mem_sleep_default=deep log_buf_len=8M cryptomgr.notests
+[…]
+[42576.003324] Freezing user space processes
+[42596.009937] Freezing user space processes failed after 20.006 seconds 
+(2 tasks refusing to freeze, wq_busy=0):
+[42596.010034] task:systemd-journal state:D stack:0     pid:405 
+tgid:405   ppid:1      flags:0x00000006
+[42596.010060] Call Trace:
+[42596.010068]  <TASK>
+[42596.010082]  __schedule+0x3e8/0xb10
+[42596.010117]  schedule+0x27/0xe0
+[42596.010137]  schedule_preempt_disabled+0x15/0x20
+[42596.010157]  __mutex_lock.constprop.0+0x335/0x620
+[42596.010183]  uevent_show+0xa6/0x120
+[42596.010208]  dev_attr_show+0x19/0x50
+[42596.010225]  sysfs_kf_seq_show+0xa1/0xf0
+[42596.010248]  seq_read_iter+0x1c5/0x490
+[42596.010262]  ? security_file_permission+0x30/0x40
+[42596.010284]  vfs_read+0x289/0x360
+[42596.010312]  ksys_read+0x6f/0xf0
+[42596.010333]  do_syscall_64+0x82/0x160
+[42596.010351]  ? syscall_exit_to_user_mode+0x73/0x200
+[42596.010373]  ? do_syscall_64+0x8e/0x160
+[42596.010383]  ? do_sys_openat2+0x93/0xe0
+[42596.010404]  ? syscall_exit_to_user_mode+0x73/0x200
+[42596.010423]  ? do_syscall_64+0x8e/0x160
+[42596.010434]  ? __mod_memcg_state+0x95/0x130
+[42596.010452]  ? __memcg_slab_free_hook+0xf9/0x140
+[42596.010470]  ? kmem_cache_free+0x256/0x4b0
+[42596.010490]  ? syscall_exit_to_user_mode+0x73/0x200
+[42596.010508]  ? do_syscall_64+0x8e/0x160
+[42596.010519]  ? kmem_cache_free+0x256/0x4b0
+[42596.010536]  ? syscall_exit_to_user_mode+0x73/0x200
+[42596.010554]  ? do_syscall_64+0x8e/0x160
+[42596.010564]  ? do_syscall_64+0x8e/0x160
+[42596.010574]  ? do_syscall_64+0x8e/0x160
+[42596.010583]  ? exc_page_fault+0x81/0x190
+[42596.010602]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[42596.010621] RIP: 0033:0x7f0883b19a5c
+[42596.010704] RSP: 002b:00007ffdb5179de0 EFLAGS: 00000246 ORIG_RAX: 
+0000000000000000
+[42596.010720] RAX: ffffffffffffffda RBX: 000055d7fa3042a0 RCX: 
+00007f0883b19a5c
+[42596.010731] RDX: 0000000000001008 RSI: 000055d7fa3042a0 RDI: 
+0000000000000026
+[42596.010741] RBP: 0000000000000026 R08: 0000000000000000 R09: 
+0000000000000001
+[42596.010749] R10: 0000000000000003 R11: 0000000000000246 R12: 
+0000000000001007
+[42596.010758] R13: 0000000000001008 R14: ffffffffffffffff R15: 
+0000000000000002
+[42596.010777]  </TASK>
+[42596.011098] task:(udev-worker)   state:D stack:0     pid:109961 
+tgid:109961 ppid:426    flags:0x00000006
+[42596.011120] Call Trace:
+[42596.011126]  <TASK>
+[42596.011133]  __schedule+0x3e8/0xb10
+[42596.011158]  schedule+0x27/0xe0
+[42596.011175]  schedule_preempt_disabled+0x15/0x20
+[42596.011194]  __mutex_lock.constprop.0+0x335/0x620
+[42596.011219]  uevent_show+0xa6/0x120
+[42596.011240]  dev_attr_show+0x19/0x50
+[42596.011256]  sysfs_kf_seq_show+0xa1/0xf0
+[42596.011277]  seq_read_iter+0x1c5/0x490
+[42596.011289]  ? security_file_permission+0x30/0x40
+[42596.011307]  vfs_read+0x289/0x360
+[42596.011334]  ksys_read+0x6f/0xf0
+[42596.011355]  do_syscall_64+0x82/0x160
+[42596.011366]  ? do_readlinkat+0x105/0x140
+[42596.011384]  ? syscall_exit_to_user_mode+0x73/0x200
+[42596.011404]  ? do_syscall_64+0x8e/0x160
+[42596.011414]  ? syscall_exit_to_user_mode+0x73/0x200
+[42596.011432]  ? do_syscall_64+0x8e/0x160
+[42596.011441]  ? do_syscall_64+0x8e/0x160
+[42596.011450]  ? do_syscall_64+0x8e/0x160
+[42596.011458]  ? do_syscall_64+0x8e/0x160
+[42596.011467]  ? exc_page_fault+0x81/0x190
+[42596.011486]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[42596.011501] RIP: 0033:0x7eff70fefa1d
+[42596.011532] RSP: 002b:00007ffcfc8777a8 EFLAGS: 00000246 ORIG_RAX: 
+0000000000000000
+[42596.011546] RAX: ffffffffffffffda RBX: 0000561c75620fc0 RCX: 
+00007eff70fefa1d
+[42596.011555] RDX: 0000000000001008 RSI: 0000561c75620fc0 RDI: 
+0000000000000015
+[42596.011563] RBP: 0000000000000015 R08: 0000000000000000 R09: 
+00007eff710c7b50
+[42596.011571] R10: 0000000000000010 R11: 0000000000000246 R12: 
+0000000000001007
+[42596.011579] R13: 0000000000001008 R14: ffffffffffffffff R15: 
+0000000000000002
+[42596.011594]  </TASK>
+```
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+The system came back (took some time to get GNOME’s screensaver screen 
+to show) and powering off the system seems to have worked, but the 
+journal does not contain these messages due to being impacted by the error:
 
-Jon
+```
+[…]
+Jul 04 09:03:23 abreu kernel: ACPI: EC: interrupt unblocked
+Jul 04 09:03:23 abreu kernel: xhci_hcd 0000:39:00.0: Unable to change 
+power state from D3hot to D0, device inaccessible
+Jul 04 09:03:23 abreu kernel: ACPI: EC: event unblocked
+Jul 04 09:03:23 abreu kernel: xhci_hcd 0000:39:00.0: Unable to change 
+power state from D3cold to D0, device inaccessible
+Jul 04 09:03:23 abreu kernel: xhci_hcd 0000:39:00.0: Controller not 
+ready at resume -19
+Jul 04 09:03:23 abreu kernel: xhci_hcd 0000:39:00.0: PCI post-resume 
+error -19!
+Jul 04 09:03:23 abreu kernel: xhci_hcd 0000:39:00.0: HC died; cleaning up
+Jul 04 09:03:23 abreu kernel: xhci_hcd 0000:39:00.0: PM: 
+dpm_run_callback(): pci_pm_resume returns -19
+Jul 04 09:03:23 abreu kernel: xhci_hcd 0000:39:00.0: PM: failed to 
+resume async: error -19
+Jul 04 09:03:23 abreu kernel: nvme nvme0: 4/0/0 default/read/poll queues
+Jul 04 09:03:23 abreu kernel: i915 0000:00:02.0: [drm] [ENCODER:98:DDI 
+A/PHY A] is disabled/in DSI mode with an ungated DDI clock, gate it
+Jul 04 09:03:23 abreu kernel: i915 0000:00:02.0: [drm] [ENCODER:106:DDI 
+B/PHY B] is disabled/in DSI mode with an ungated DDI clock, gate it
+Jul 04 09:03:23 abreu kernel: i915 0000:00:02.0: [drm] [ENCODER:117:DDI 
+C/PHY C] is disabled/in DSI mode with an ungated DDI clock, gate it
+Jul 04 09:03:23 abreu kernel: usb 1-5: reset high-speed USB device 
+number 4 using xhci_hcd
+Jul 04 09:03:23 abreu kernel: usb 1-3: reset full-speed USB device 
+number 2 using xhci_hcd
+Jul 04 09:03:23 abreu kernel: usb 1-4: reset full-speed USB device 
+number 3 using xhci_hcd
+Jul 04 09:03:23 abreu kernel: OOM killer enabled.
+Jul 04 09:03:23 abreu kernel: Restarting tasks ... done.
+Jul 04 09:03:23 abreu kernel: random: crng reseeded on system resumption
+-- Boot cd4eeb2265834de6ba3c3b5d747d9481 --
+Jul 04 09:09:36 abreu kernel: Linux version 6.10.0-rc6 
+(build@bohemianrhapsody.molgen.mpg.de) (gcc (Debian 13.3.0-1) 13.3.0, 
+GNU ld (GNU Binutils for Debian) 2.42.50.20240625) #211 SMP 
+PREEMPT_DYNAMIC Mon Jul  1 08:23:19 CEST 2024
+[…]
+```
+
+I think it is *not* a regression, but – as the logs do not contain any 
+hints – I am not sure.
+
+
+Kind regards,
+
+Paul
 
