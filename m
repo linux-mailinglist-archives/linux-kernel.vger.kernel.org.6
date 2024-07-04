@@ -1,64 +1,119 @@
-Return-Path: <linux-kernel+bounces-241337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6709279EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:21:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7A69279E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AE01283D56
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:21:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 244651F25910
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A58C1B14FA;
-	Thu,  4 Jul 2024 15:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB1A1B1401;
+	Thu,  4 Jul 2024 15:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hUt/QK6Q"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fu1hIWQC"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A131B0122;
-	Thu,  4 Jul 2024 15:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD0F1B0122
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 15:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720106438; cv=none; b=R14qL7qQIZiICA92+s380FKaw1o4ppwrLoqGB/8NrTmyggEIR91E3PM74ZtlAmztCNVG4Kd1ZfHYQVy2mbvQ49KhULYcNzr8Tgs8dhwL8DoWC+heV0+GcDyESiMfzI2zeYLzDgoqD7QG3WNXbR3Kni84FVllTTOEmBlRvnicv+s=
+	t=1720106431; cv=none; b=INJynP8ObR4zLb83iQZBiGZwtQ29mxAv28ap+cbhIFBOD/ogDKlVCpIqOiM6FUgfabZYIpdPIDaLfbC8PlPIBiMdIe88TZ8PySXKnxb2XPuG/U4dFU9uVuy0VhsnMtt5gZsa0sFHS2srfm7G+vt3GOxzPDgBe/CSvQJtg0vXg9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720106438; c=relaxed/simple;
-	bh=uLrqDxpb+tvF7mkqkCnn0LFKeFwLUAS1XvCZnPc3+hk=;
+	s=arc-20240116; t=1720106431; c=relaxed/simple;
+	bh=/PizTQVDlkIyNELY350ZONH8Gfc08NYf27/JwjBxgRI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDYplMEcYZz0COENriFvP7U3AaVURNeaYDwp4gSlM7PeVIHFvPC+YPhwPH1q7g96l9jO0lH9a2VA90gyzWiCvwsCOhMa0vY3JQbe1UnAfgHUVSL1ERY2coI3/C2outVWdSupjwUoJwzmIUM6KXPt/g5UkcfPc+qEvD9TgZr4M/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hUt/QK6Q; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=T1W+cwrYdEZzgH6Ohx8queoWljwDE94ghf7And0NMPQ=; b=hUt/QK6QIkaT0GDYXczMay3Z5A
-	pmDxONmeAqHPE6Ljy1yY/Vm91+/doA5NrrDK0Qwhwytnxn7Ylg0sFitz55Gm0ZLgPkMCwAvCfjr6n
-	3a1HI8Dn9MsAoLjYVdcTyGWA2WIn8fmctH4PCnIbpZ3hX41eDAdm8bUziFfCU6z7OCmo3Mn1mzZaI
-	vnSZj65ciww3h03aGnLAS30sfEl1Bm5eCEC/HSZZ6Hy3FFxu/3HcekPS0lfRLoUwNGfuYjqu26tCL
-	/myW50CvKTFe+tNi0TCOWfObPVA4DuLa2NhuatSohg5GHb39arRD1HzbIvryZZcBQOMCd3LMo4T5u
-	1Gt5maMg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sPOFp-00000002yac-1247;
-	Thu, 04 Jul 2024 15:20:13 +0000
-Date: Thu, 4 Jul 2024 16:20:13 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
-Message-ID: <Zoa9rQbEUam467-q@casper.infradead.org>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-2-kernel@pankajraghav.com>
- <cb644a36-67a7-4692-b002-413e70ac864a@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQ8YUdQHCL0LcKvX7OrUE9euaSWCWRJNXmwFeT7bEYvEUNKOvWKY/1PMSQ7OvAHI8V1bbpytirz7CnCAJnEARpKLvko4S60yMB5S6nd1+ROX6hBWcSIRc4Wi85nc4tf4rjxQB6kCrWJAEpEq5blSaBpCTbTwyEIVu0kx+ZZpTLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fu1hIWQC; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1faad2f1967so13899695ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 08:20:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720106429; x=1720711229; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wMtQ8G7gYG0PtXSm+9oSte5ras/tptARhMk8vAyTBpM=;
+        b=Fu1hIWQC/Sh/lpNuKEDxDoKokku3Y7aOEw1EuiIfNAFF3DTgfpsDw0pYkpgzopT6Xt
+         7UECkjZaO5+TPym0K8iv7eoNWcZrmT9O5jfpKVGSkISRGVKggSoes7aGcev7nTsp9gA8
+         fPXKDpkUfOp7Txy04cbUv9T5KDpQ6JLfrObHuQYnVGXn5kpt3jiphDkj0hnbapEDZFpr
+         6ncJvtDOLQAtaBAZhDLGfZmSg0jeGVZD4R3WFlFeJwXmbQtYWUfYHfN8G7RG2/KTM16i
+         Fh8SjLY45v6AX/qx64phLWH/9KLyYu1+/8RZwyMDiRV+Z9dffxfFgA+787OpAisg5HaL
+         k1xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720106429; x=1720711229;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wMtQ8G7gYG0PtXSm+9oSte5ras/tptARhMk8vAyTBpM=;
+        b=ItY7oMcfCtr0kqONMjcWJdbn7X6eSgmw4E+OCckWD+F75E4exSYVEEdCTLtIfIpXuE
+         O+M7yw1wPQea5IlMIOZveQqNJLmPxGMngT6hiNLLFziNxRlQaxyv7BZpG4tZqQTSEWvW
+         XYY1LDm4NE4lV1KZzii8lwGWJtFJVw45EExoax1x4sEQ+jfY4ZxMU2OfJyUQ7Nhm02oc
+         aEXqraMOTGqhmPjM+2tsewwiEELuoJp0cu88BN0XPgTbhW3cDhuQ9gVolJBUlkoz4hOH
+         ydAgXZB7xErHaUaWoitQhL/4bJFJKnwdyz9TugdV2h2OjD6/h9acg/P3apoQy8EnkYKR
+         wvFg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7/GnLXo59SWPGwcjfar3ltzqTnrbweHMQb2ECq3yWzNIBkD3Ge8+zS34VNbi7UDy0ryPxQ4u7EFwjyewwK9kA+hzPlDVZs4tBAP1K
+X-Gm-Message-State: AOJu0YyLOxxSn1smVSve+9+dWnqnzjUC6F0Wab+Q9KvxZ0UxYfT1/woB
+	vSkjilIjTEEAwGF9hh6pDXnYR0qONcvxubmQ8WUEkTgh7gyxkoa290tQn32gcw==
+X-Google-Smtp-Source: AGHT+IGCoEg+2iwgq2yFecGonukG4K9qxoer7A69funkZsv0Vc/pIw4JkTQQWYN93RAWKE9BO0pBlQ==
+X-Received: by 2002:a17:902:dacd:b0:1fa:1a78:b5a9 with SMTP id d9443c01a7336-1fb3700ccffmr27138855ad.3.1720106429108;
+        Thu, 04 Jul 2024 08:20:29 -0700 (PDT)
+Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15388bdsm124081885ad.168.2024.07.04.08.20.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 08:20:28 -0700 (PDT)
+Date: Thu, 4 Jul 2024 15:20:24 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradaed.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-riscv@lists.infradead.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
+Subject: Re: [PATCH v4 2/2] rust: add tracepoint support
+Message-ID: <Zoa9uMODCjTfM741@google.com>
+References: <20240628-tracepoint-v4-0-353d523a9c15@google.com>
+ <20240628-tracepoint-v4-2-353d523a9c15@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,61 +122,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cb644a36-67a7-4692-b002-413e70ac864a@arm.com>
+In-Reply-To: <20240628-tracepoint-v4-2-353d523a9c15@google.com>
 
-On Thu, Jul 04, 2024 at 01:23:20PM +0100, Ryan Roberts wrote:
-> > -	AS_LARGE_FOLIO_SUPPORT = 6,
+On Fri, Jun 28, 2024 at 01:23:32PM +0000, Alice Ryhl wrote:
+> Make it possible to have Rust code call into tracepoints defined by C
+> code. It is still required that the tracepoint is declared in a C
+> header, and that this header is included in the input to bindgen.
 > 
-> nit: this removed enum is still referenced in a comment further down the file.
-
-Thanks.  Pankaj, let me know if you want me to send you a patch or if
-you'll do it directly.
-
-> > +	/* Bits 16-25 are used for FOLIO_ORDER */
-> > +	AS_FOLIO_ORDER_BITS = 5,
-> > +	AS_FOLIO_ORDER_MIN = 16,
-> > +	AS_FOLIO_ORDER_MAX = AS_FOLIO_ORDER_MIN + AS_FOLIO_ORDER_BITS,
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  include/linux/tracepoint.h      | 18 +++++++++++++++-
+>  include/trace/define_trace.h    | 12 +++++++++++
+>  rust/bindings/bindings_helper.h |  1 +
+>  rust/kernel/lib.rs              |  1 +
+>  rust/kernel/tracepoint.rs       | 47 +++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 78 insertions(+), 1 deletion(-)
 > 
-> nit: These 3 new enums seem a bit odd.
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index 689b6d71590e..d82af4d77c9f 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -238,6 +238,20 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+>  #define __DECLARE_TRACE_RCU(name, proto, args, cond)
+>  #endif
+>  
+> +/*
+> + * Declare an exported function that Rust code can call to trigger this
+> + * tracepoint. This function does not include the static branch; that is done
+> + * in Rust to avoid a function call when the tracepoint is disabled.
+> + */
+> +#define DEFINE_RUST_DO_TRACE(name, proto, args)
+> +#define DEFINE_RUST_DO_TRACE_REAL(name, proto, args)			\
+nit: IMO using a __* prefix would be a better option to describe the
+internal use of the macro instead of the _REAL suffix.
 
-Yes, this is "too many helpful suggestions" syndrome.  It made a lot
-more sense originally.
+Other than that, this patch looks good to me:
 
-https://lore.kernel.org/linux-fsdevel/ZlUQcEaP3FDXpCge@dread.disaster.area/
-
-> > +static inline void mapping_set_folio_order_range(struct address_space *mapping,
-> > +						 unsigned int min,
-> > +						 unsigned int max)
-> > +{
-> > +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> > +		return;
-> > +
-> > +	if (min > MAX_PAGECACHE_ORDER)
-> > +		min = MAX_PAGECACHE_ORDER;
-> > +	if (max > MAX_PAGECACHE_ORDER)
-> > +		max = MAX_PAGECACHE_ORDER;
-> > +	if (max < min)
-> > +		max = min;
-> 
-> It seems strange to silently clamp these? Presumably for the bs>ps usecase,
-> whatever values are passed in are a hard requirement? So wouldn't want them to
-> be silently reduced. (Especially given the recent change to reduce the size of
-> MAX_PAGECACHE_ORDER to less then PMD size in some cases).
-
-Hm, yes.  We should probably make this return an errno.  Including
-returning an errno for !IS_ENABLED() and min > 0.
-
-> > -	if (new_order < MAX_PAGECACHE_ORDER) {
-> > +	if (new_order < mapping_max_folio_order(mapping)) {
-> >  		new_order += 2;
-> > -		new_order = min_t(unsigned int, MAX_PAGECACHE_ORDER, new_order);
-> > +		new_order = min(mapping_max_folio_order(mapping), new_order);
-> >  		new_order = min_t(unsigned int, new_order, ilog2(ra->size));
-> 
-> I wonder if its possible that ra->size could ever be less than
-> mapping_min_folio_order()? Do you need to handle that?
-
-I think we take care of that in later patches?  This patch is mostly
-about honouring the max properly and putting in the infrastructure for
-the min, but not doing all the necessary work for min.
+Reviewed-by: Carlos Llamas <cmllamas@google.com>
 
