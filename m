@@ -1,221 +1,127 @@
-Return-Path: <linux-kernel+bounces-240814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480A6927323
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:35:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E496C927328
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0653628240F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:35:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662451F21E4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E271AAE04;
-	Thu,  4 Jul 2024 09:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342691AB51B;
+	Thu,  4 Jul 2024 09:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="BqeXAgxq"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TK1ypddT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DF6748F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D544A1422D3
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720085752; cv=none; b=Rpbo7nx5pvswgk5/BQ2VxzaNPXJ2PwGsaXn0EJHHjGGhH4tlw+ZwAfKi1tsuU90I39+xSCmlLd2FK50WKZsFWZtqnKkqYs7xfLNfGo2REVQSTrmCMRwlKuOvJiWoW9gXKrOH6ormm20naop3rmEtmbrYuD/4sp/3nLKRS/o8JpY=
+	t=1720085807; cv=none; b=eR+nnzMGGtIcWlHT4L/6I9Qc0LKtEDSvZyLrGDbzhEE8XGHSqXOq+RGSI/2H8OPVkRxyzBuqCSni0bq84Iy38Xa5pt6NvqTtEAC3xsW4+tpbD3upobG+Yr/VyiaQtQqqM0QfHbyl++88spfKpTKJong0n44lTqnJumwc/n/2NDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720085752; c=relaxed/simple;
-	bh=Oy7dKvHiGFYXx+I7lg+7RcbtYemeYKr5TDO40BXEiQU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iUa4i5PVXxFMvFul8xVPsyTfEzc8iQdLt3F85X1JzjZ4UwDsictgLKfr2GBj7Z+HLH5+92xafvPNk4tPa+een1aESfa/cTHWlp1OdTWd9r3rZZBuYOSxtMkWWAWXaccv0iKna5Ps7mJHNxYG6nu3th2jrOAiabNfzpiUZe/3mLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=BqeXAgxq; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 0BB6041339
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1720085743;
-	bh=wiJxNUkYycJsSDpu62b6poSEZxZfrfFCF631xd6P5LQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=BqeXAgxqcrdV45sk9xOM7lRosB1soHhpNIWWVM7GBGLNspO6K8ZhDvhcv7ytlM62Y
-	 BikOrPveuJh9DIt2PRcvrwNIefEyRdb/4iwCMaQGTWL8bWeF2aXMXd+AMBHzUb/7Df
-	 5RRrqmAf0/sEBkj8g2+ctslk9UsLOoYwC26Roq9Oz1WJE4CzHBB7XeEvmHFE1qUhTU
-	 gVu7TIHe1pfKm2UNsMoP2hiW3vNV0s3eMnbXuTT7dNMVbm83sS956Z2aCKvn/TAMIk
-	 nkQTCCj+aHA3sM4/cS5fiQrJAEfn0b5gSXwcnenaRagwdOgeV9syLV4ccfWhjIu05w
-	 oqf5P/GsYRt8g==
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1faad2eb0a3so12530345ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:35:42 -0700 (PDT)
+	s=arc-20240116; t=1720085807; c=relaxed/simple;
+	bh=UYHgdrm5mVpms80udoSPFvlRdflG4BHyFvKupYGXpkE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=k1a879ZvN0GQG+vIf74E8W65+RuhHiYHvIj9ACa1MmA7SzY2v2G98ohlDOkVEFQwJ1lOcO0pdehK+VnCqk45hFKVNCvGm9CFWGwKNgmzYbId0VZ6l19fdxkMRvYFVf+iJCVda63pKeO+2xHdx5IeTDJ4CjFpQJc0bvPJUm5v5wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TK1ypddT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720085804;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UYHgdrm5mVpms80udoSPFvlRdflG4BHyFvKupYGXpkE=;
+	b=TK1ypddTj+ZV+eustK5nxcvQuz47t8DhmXkhgEuvYhhYek/DZS8Q6WomR1eIkFwBZNw7+M
+	/M+SaK1yTn8kZszkTaWTw3bIUzo/0dfqOy/zwmBexwwDvOEIjWoCq7n/kr04WvUdmq4v54
+	5cmQtagZZMFIU+CmFw2GvWWrnaOkZF8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-154-S4Cf1fUHPpmcAjoNRcBqWw-1; Thu, 04 Jul 2024 05:36:39 -0400
+X-MC-Unique: S4Cf1fUHPpmcAjoNRcBqWw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-36795758ce3so80779f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:36:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720085733; x=1720690533;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wiJxNUkYycJsSDpu62b6poSEZxZfrfFCF631xd6P5LQ=;
-        b=FUtJPEJ+TceGJIaiNeffb4yOG8W1gTCc0GGl/hewqKogYkt6Qs8F+DpeyGz2hrxIPL
-         /wXgoLndfC0gjjpzlTOuRs+nik8D/gvHvV8oo2kcFqOW4rx+I0IAhtz2YKzd3N0UWy5v
-         Xn+6NxYj7cT4lFEy0oMashAXBZ6VQ1+R7D++qXWm8nE/MTfHnb5vnnUqfwQflJtbuH6j
-         FVk3J5zvFX1ix1Rtcc+DhzdSnCx/cNY/vbo1ng4YwtvJktiCA7n5c89OHNm+fTyhhIjF
-         yyVhKohuCrnk4YiedLOUG9RPYqe9ZihdX/WGP8dyYZVBBXx/gXduV0ws6id/1FonQwPM
-         EvQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWHlByzIDQkWyAsQnFAiLbqA2lCxbw4dSrE+Zz+yuhAtx2BZlEt49DPCraAj3dVfeVyLKpfipu5xPG4inl1+V6/XDRDdqdYHvU7ICZ
-X-Gm-Message-State: AOJu0YyNcMhYymwm5JionRkz8aRnrZ4u2k7XxiXpylzTNn7LvQLW37/p
-	KuQtdUpQ1Za2RTaQIsPK/SWdC5bNa0scPONRb3KlKl3UbmbzrftdO6WHZOGzS7o1A2dSDMqdFUB
-	E1Q5VE9ZY61oe1O9tcuh+nYTyfTNa8+uD2Yb4ljgyJEq/tnSH6KlnuWvaLztvQMzViDFl2jEmC5
-	3lVQ==
-X-Received: by 2002:a17:902:cecb:b0:1fb:2e1d:acdb with SMTP id d9443c01a7336-1fb37047770mr13990575ad.12.1720085733622;
-        Thu, 04 Jul 2024 02:35:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEOXt2HSyqcWAnEGOSShpHjEDdGJVAIPy5yyNQs45QakgMU34R+QMFUZG8sl5Weo2rhUKkcsg==
-X-Received: by 2002:a17:902:cecb:b0:1fb:2e1d:acdb with SMTP id d9443c01a7336-1fb37047770mr13990185ad.12.1720085733186;
-        Thu, 04 Jul 2024 02:35:33 -0700 (PDT)
-Received: from chengendu.. (2001-b011-381c-3667-42c0-8e79-026a-04b5.dynamic-ip6.hinet.net. [2001:b011:381c:3667:42c0:8e79:26a:4b5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15992a0sm118498515ad.263.2024.07.04.02.35.26
+        d=1e100.net; s=20230601; t=1720085798; x=1720690598;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UYHgdrm5mVpms80udoSPFvlRdflG4BHyFvKupYGXpkE=;
+        b=VbiK7KYoZEx8OaTFIJY1uJY61LSveIVK69QGdPMd753RZEoQzWvYrPkIcxAMtyoLXA
+         I4NQ0ixRJVOfmkIRC5K8SGJWuu7I1+i1j6OsqBOGuX/mhy3OnB6oneqpr3rE3t0NKvwh
+         oXNcg/dPlulUMb5i9LXNLiiyNdrsNeX+WF11Sx9eETf5PgKOhAla6M+J6U2nHpxA2jQw
+         w8uJ4srYuJJ2fSIt/s4SaWQfGz5WnatvYIzKQut64ME2sG+5XWDTtD43We1r/vFJh90t
+         kX3t1H2JDkKCf5d9DYcqOt7V2t0OOpJ9y4e/6KATdI2O9r3vq6InrswrhzhBIb8qHwKV
+         Enig==
+X-Forwarded-Encrypted: i=1; AJvYcCXQsjDKEVEyskitlZDRekrWQW3XIvUpNl+zo53C3lm2LttVldO3pse6zrSIYGgg33CPOya9IsVwXY6PvihgiYyeXy0IC0anqDrT55DX
+X-Gm-Message-State: AOJu0YwM/Ep/OLUZcpVC4wIKlini4+rAwyerDtPTQZPnbp4GetIuIzBh
+	c8PQPUe8qI6LPfDIXuqbiq2KO0Fdy33+D2mncEF8pgqTQXhiYewNlF9ELzywv8/clz1pPMiqy5t
+	itejk4Y0BpBRR9BAvvdgC9RjqnP5TRw4a5EOrZxU6e1U5+XSI/+gZ4gBz0m87jQ==
+X-Received: by 2002:a05:6000:1847:b0:35f:2584:76e9 with SMTP id ffacd0b85a97d-3679dd170acmr808230f8f.2.1720085798720;
+        Thu, 04 Jul 2024 02:36:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqMYfRCeOduG8hmxDn1os8aMqWyFiuk1czJ0qPOICA/k5l/iFZ0n0rpzcYV6E3kNOasUJjEg==
+X-Received: by 2002:a05:6000:1847:b0:35f:2584:76e9 with SMTP id ffacd0b85a97d-3679dd170acmr808204f8f.2.1720085798363;
+        Thu, 04 Jul 2024 02:36:38 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:172b:1510:dd78:6ccd:a776:5943])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd784sm18022859f8f.7.2024.07.04.02.36.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 02:35:32 -0700 (PDT)
-From: Chengen Du <chengen.du@canonical.com>
-To: jhs@mojatatu.com
-Cc: xiyou.wangcong@gmail.com,
-	jiri@resnulli.us,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ozsh@nvidia.com,
-	paulb@nvidia.com,
-	marcelo.leitner@gmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chengen Du <chengen.du@canonical.com>,
-	Gerald Yang <gerald.yang@canonical.com>
-Subject: [PATCH] net/sched: Fix UAF when resolving a clash
-Date: Thu,  4 Jul 2024 17:34:58 +0800
-Message-ID: <20240704093458.39198-1-chengen.du@canonical.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 04 Jul 2024 02:36:37 -0700 (PDT)
+Message-ID: <65153ac3f432295a89b42c8b9de83fcabdefe19c.camel@redhat.com>
+Subject: Re: [PATCH net-next] ntp: fix size argument for kcalloc
+From: Paolo Abeni <pabeni@redhat.com>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Chen Ni
+ <nichen@iscas.ac.cn>
+Cc: oss-drivers@corigine.com, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, louis.peens@corigine.com, kuba@kernel.org, 
+ davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+ yinjun.zhang@corigine.com, johannes.berg@intel.com,
+ ryno.swart@corigine.com,  ziyang.chen@corigine.com, linma@zju.edu.cn,
+ niklas.soderlund@corigine.com
+Date: Thu, 04 Jul 2024 11:36:36 +0200
+In-Reply-To: <5cafbf6e-37ad-4792-963e-568bcc20640d@intel.com>
+References: <20240703025625.1695052-1-nichen@iscas.ac.cn>
+	 <5cafbf6e-37ad-4792-963e-568bcc20640d@intel.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-KASAN reports the following UAF:
+On Wed, 2024-07-03 at 11:16 +0200, Przemek Kitszel wrote:
+> On 7/3/24 04:56, Chen Ni wrote:
+> > The size argument to kcalloc should be the size of desired structure,
+>=20
+> xsk_pools is a double pointer, so not "desired structure" but rather you
+> should talk about an element size.
+>=20
+> > not the pointer to it.
+> >=20
+> > Fixes: 6402528b7a0b ("nfp: xsk: add AF_XDP zero-copy Rx and Tx support"=
+)
+>=20
+> even if the the behavior is not changed, the fix should be targeted to
+> net tree
 
- BUG: KASAN: slab-use-after-free in tcf_ct_flow_table_process_conn+0x12b/0x380 [act_ct]
- Read of size 1 at addr ffff888c07603600 by task handler130/6469
+This patch is IMHO more a cleanup than a real fix. As such it's more
+suited for net-next. For the same reason I think it should not go to
+stable, so I'm dropping the fixes tag, too.
 
- Call Trace:
-  <IRQ>
-  dump_stack_lvl+0x48/0x70
-  print_address_description.constprop.0+0x33/0x3d0
-  print_report+0xc0/0x2b0
-  kasan_report+0xd0/0x120
-  __asan_load1+0x6c/0x80
-  tcf_ct_flow_table_process_conn+0x12b/0x380 [act_ct]
-  tcf_ct_act+0x886/0x1350 [act_ct]
-  tcf_action_exec+0xf8/0x1f0
-  fl_classify+0x355/0x360 [cls_flower]
-  __tcf_classify+0x1fd/0x330
-  tcf_classify+0x21c/0x3c0
-  sch_handle_ingress.constprop.0+0x2c5/0x500
-  __netif_receive_skb_core.constprop.0+0xb25/0x1510
-  __netif_receive_skb_list_core+0x220/0x4c0
-  netif_receive_skb_list_internal+0x446/0x620
-  napi_complete_done+0x157/0x3d0
-  gro_cell_poll+0xcf/0x100
-  __napi_poll+0x65/0x310
-  net_rx_action+0x30c/0x5c0
-  __do_softirq+0x14f/0x491
-  __irq_exit_rcu+0x82/0xc0
-  irq_exit_rcu+0xe/0x20
-  common_interrupt+0xa1/0xb0
-  </IRQ>
-  <TASK>
-  asm_common_interrupt+0x27/0x40
+Thanks,
 
- Allocated by task 6469:
-  kasan_save_stack+0x38/0x70
-  kasan_set_track+0x25/0x40
-  kasan_save_alloc_info+0x1e/0x40
-  __kasan_krealloc+0x133/0x190
-  krealloc+0xaa/0x130
-  nf_ct_ext_add+0xed/0x230 [nf_conntrack]
-  tcf_ct_act+0x1095/0x1350 [act_ct]
-  tcf_action_exec+0xf8/0x1f0
-  fl_classify+0x355/0x360 [cls_flower]
-  __tcf_classify+0x1fd/0x330
-  tcf_classify+0x21c/0x3c0
-  sch_handle_ingress.constprop.0+0x2c5/0x500
-  __netif_receive_skb_core.constprop.0+0xb25/0x1510
-  __netif_receive_skb_list_core+0x220/0x4c0
-  netif_receive_skb_list_internal+0x446/0x620
-  napi_complete_done+0x157/0x3d0
-  gro_cell_poll+0xcf/0x100
-  __napi_poll+0x65/0x310
-  net_rx_action+0x30c/0x5c0
-  __do_softirq+0x14f/0x491
-
- Freed by task 6469:
-  kasan_save_stack+0x38/0x70
-  kasan_set_track+0x25/0x40
-  kasan_save_free_info+0x2b/0x60
-  ____kasan_slab_free+0x180/0x1f0
-  __kasan_slab_free+0x12/0x30
-  slab_free_freelist_hook+0xd2/0x1a0
-  __kmem_cache_free+0x1a2/0x2f0
-  kfree+0x78/0x120
-  nf_conntrack_free+0x74/0x130 [nf_conntrack]
-  nf_ct_destroy+0xb2/0x140 [nf_conntrack]
-  __nf_ct_resolve_clash+0x529/0x5d0 [nf_conntrack]
-  nf_ct_resolve_clash+0xf6/0x490 [nf_conntrack]
-  __nf_conntrack_confirm+0x2c6/0x770 [nf_conntrack]
-  tcf_ct_act+0x12ad/0x1350 [act_ct]
-  tcf_action_exec+0xf8/0x1f0
-  fl_classify+0x355/0x360 [cls_flower]
-  __tcf_classify+0x1fd/0x330
-  tcf_classify+0x21c/0x3c0
-  sch_handle_ingress.constprop.0+0x2c5/0x500
-  __netif_receive_skb_core.constprop.0+0xb25/0x1510
-  __netif_receive_skb_list_core+0x220/0x4c0
-  netif_receive_skb_list_internal+0x446/0x620
-  napi_complete_done+0x157/0x3d0
-  gro_cell_poll+0xcf/0x100
-  __napi_poll+0x65/0x310
-  net_rx_action+0x30c/0x5c0
-  __do_softirq+0x14f/0x491
-
-The ct may be dropped if a clash has been resolved but is still passed to
-the tcf_ct_flow_table_process_conn function for further usage. This issue
-can be fixed by retrieving ct from skb again after confirming conntrack.
-
-Fixes: 0cc254e5aa37 ("net/sched: act_ct: Offload connections with commit action")
-Co-developed-by: Gerald Yang <gerald.yang@canonical.com>
-Signed-off-by: Gerald Yang <gerald.yang@canonical.com>
-Signed-off-by: Chengen Du <chengen.du@canonical.com>
----
- net/sched/act_ct.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/net/sched/act_ct.c b/net/sched/act_ct.c
-index 2a96d9c1db65..079562f6ca71 100644
---- a/net/sched/act_ct.c
-+++ b/net/sched/act_ct.c
-@@ -1077,6 +1077,13 @@ TC_INDIRECT_SCOPE int tcf_ct_act(struct sk_buff *skb, const struct tc_action *a,
- 		 */
- 		if (nf_conntrack_confirm(skb) != NF_ACCEPT)
- 			goto drop;
-+		/* The ct may be dropped if a clash has been resolved,
-+		 * so it's necessary to retrieve it from skb again to
-+		 * prevent UAF.
-+		 */
-+		ct = nf_ct_get(skb, &ctinfo);
-+		if (!ct)
-+			goto drop;
- 	}
- 
- 	if (!skip_add)
--- 
-2.43.0
+Paolo
 
 
