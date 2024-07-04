@@ -1,290 +1,101 @@
-Return-Path: <linux-kernel+bounces-240610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FFF6926FB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:38:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B223F926FBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92EE21C223B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:38:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BB6BB219C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8119B1A0B09;
-	Thu,  4 Jul 2024 06:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B031A08BC;
+	Thu,  4 Jul 2024 06:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cXNwHENw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h0Hl6A63"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7271A073E
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 06:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720075064; cv=fail; b=PcG8VW1DEwtOBvuer8haYe6YS1cIcm1CvILxO7MVOV35GM2ZfItgEOuA9VTLw8Vk4us67BPGhVvuGQzWJMIED4sPEYd3p/nTcJMTK/QVyARncbBwT1PZ9lMw42tbBrr9kLVZL0q5KLzhXyO7REc9Kqez29D64CsUdjqL02SQyP0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720075064; c=relaxed/simple;
-	bh=1N7xbQJ9AWw9lxoolaiPQMdw5FrKi0vjuLTTXC8nSb8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=q7x0FDjBfUxZP0kdVSQIo7whR7CracmZOaCd2APTVAS9K9FgIA877y0AJUNFjemhcAiwr1pgCDIMQ28+Ix9OatbEYDC+r5SMLzT3zBvncB5dlgSmccyWjkKqRKcWQT218v4uNqq2pNU2JR0QQIDAuQvO12z442TQ57dHb5bDUxM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cXNwHENw; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720075062; x=1751611062;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=1N7xbQJ9AWw9lxoolaiPQMdw5FrKi0vjuLTTXC8nSb8=;
-  b=cXNwHENwnG0yfi4qOqUXsEIyuVRKplcKepW0y8o4mgkMikie45Bn9lV0
-   KoUcZLg0zNVXrDbMimcL2YNnaUtbrK2egpbE5dWXXGHnctMp1O3dUP0Jj
-   LJMktDfbRQA1JAKogUiGG6KA81WC30k4yGo2icPRBpx1wbke6cnYfgAAW
-   ASiIaXDqB30v6k9qjssBWyf0F+/mf80HEMS9TsPJiYl6BuroMQws65x+U
-   Bh7xPN5wnL2A6BsTzTelKj7Uhu8nfQIXz9Wro1Vyxk3sWyqE43H8ZM/0x
-   ygglX0oc0gTFeXPfmp4xHBbXpa1kN8v+UDryOLY0zUxF6wTdWN8dkpU8F
-   w==;
-X-CSE-ConnectionGUID: dtZMcArMTKiYBMzoH9rN4g==
-X-CSE-MsgGUID: NttTo4yqQqW7rHMW9UX7xg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="17171557"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="17171557"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 23:37:33 -0700
-X-CSE-ConnectionGUID: 4G+H0brmQkKEMz9x58hh2A==
-X-CSE-MsgGUID: FaAHkOdaRKSaOM25e6BYyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="51670110"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Jul 2024 23:37:32 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 3 Jul 2024 23:37:32 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 3 Jul 2024 23:37:32 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.41) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 3 Jul 2024 23:37:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nTqM9ZI6gC68RbejEmfDwQwDfWYF6G3GFEWSjOj8PxW8KjvS+fgi3C1QpSQow1LmQEnjJUSOr7F9enwV4xG+eQneGI6Wc5NgZAIJvql2FXljNYg56SLiUzG5yMfNxfy53CM4q7vfeZRoqlbUhDol8YkPqCjch6cszAzlPKF7pVCg8EZ+bf1kPBEIzV/tDxHdH/yo9qYrm5QriEAr4Z5+Xb96hVmyOzG/z3NqoIgIf7AOxadMKU3x0yKuTACv4Q0V2O5v0+zIuR6z6+RofEIZxHkEwl2ZVq2H9gtsVXCwecABMJs/kWcwI6m6l772ucirCpufqAWFqPImeirlrSc5Sw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jn/L3FyBgmCafUVXqb+YeIXREInmGGg6gLQ9omd2fwQ=;
- b=L9w/L0melHLy5r1mnwOxwN3jiHquX/XxlbmWC7M9XyhM8C+9mHOTAuOvlZ3use2IYK4MBvIrk8k7AkfZqTcFB+jr1gMTLE9+bC9ogf45tP7tsfnPP3W6LGP0PB3ABa30+zKk3ch2qkbZnxKdGYddnHRqcADGl3c3KxCcQaWP9okbvMFE5PCCJV6ccPiD7PnSH2aFCRWthVmjRKG8Pwqxd8U0c677cI6h2heDtFvUF9kMGxsmH2Ax9lAX9581waiW2cWxHg5YdBXA7pOSy7GjO6rnTsj3QGCnqVoNRNpWrNkbs7+HgaRdtg/KHWeyxmXyp5PiIA/KtS+trnkg6ZuCKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by SA3PR11MB7535.namprd11.prod.outlook.com (2603:10b6:806:307::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.29; Thu, 4 Jul
- 2024 06:37:29 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%6]) with mapi id 15.20.7741.025; Thu, 4 Jul 2024
- 06:37:29 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, Baolu Lu <baolu.lu@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, Joerg Roedel <joro@8bytes.org>, "Will
- Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jean-Philippe
- Brucker <jean-philippe@linaro.org>, "Liu, Yi L" <yi.l.liu@intel.com>, Jacob
- Pan <jacob.jun.pan@linux.intel.com>, "Joel Granados"
-	<j.granados@samsung.com>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"virtualization@lists.linux-foundation.org"
-	<virtualization@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@nvidia.com>
-Subject: RE: [PATCH v8 06/10] iommufd: Add iommufd fault object
-Thread-Topic: [PATCH v8 06/10] iommufd: Add iommufd fault object
-Thread-Index: AQHazEpuGCgtLFWT+U2ig4MVK/B+ILHloqCAgABBPYCAACvCAIAAD2FA
-Date: Thu, 4 Jul 2024 06:37:29 +0000
-Message-ID: <BN9PR11MB52769E10ED0741F5ED3E5B668CDE2@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
- <20240702063444.105814-7-baolu.lu@linux.intel.com>
- <ZoXZZ2SJ/WdlMJaX@Asurada-Nvidia>
- <309e37d1-6066-4ba1-b30c-402a3c3e7c76@linux.intel.com>
- <ZoY01iLmzoV4fIPG@Asurada-Nvidia>
-In-Reply-To: <ZoY01iLmzoV4fIPG@Asurada-Nvidia>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SA3PR11MB7535:EE_
-x-ms-office365-filtering-correlation-id: e45dde74-8a8b-425f-fdb5-08dc9bf3c6fd
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?D3bT7yvqtpUwmi6vOfMAyCAxqrCHaQj+TbKJrb0c8wullHxHZDTB+UqEAx2H?=
- =?us-ascii?Q?lIDWGXJFXrvMwn+cEOHYH4vkcOcrY7v3JaMZ1acgF2whu0JBsr2MlRV1Vomu?=
- =?us-ascii?Q?Sj8zxI21LdDzPc8nDqmVk7t9PYWFhXG1B7iWPdw87awTflGSg8OmMoqAd1UT?=
- =?us-ascii?Q?AteU1ut/9heP/9QJIYXwCBs+ifQ5Zy5QiSxcYfvNVrqPz/WVxiXnlEevqZed?=
- =?us-ascii?Q?hahAuQficd4JBGDqQnI5R0p0uKk54sPvKDsP73bHmZZfwMrRAGRIc9LFQpt/?=
- =?us-ascii?Q?pBnUoC1fhxSZpY0a4QTsET/K2lWnwX42yp7sfanma9qvPa2lvevNGSh4Bho0?=
- =?us-ascii?Q?1eDX7MhRCfBDK1aEPROz6ViUMH93T5NTgLZI9QOoP7VvnM/GGQRy+jNVCZoP?=
- =?us-ascii?Q?Y2G1Ma8KbeUUj2h4di21j9yINccgRPVJ5nwM3I5Ca6Z7ORqCLOcLJKQoqtr6?=
- =?us-ascii?Q?2wVu58G/MHW0oD32ZyIAJmYLYTin5J6XLX/23nvN33TnEEQa3HlX2QOMcBdO?=
- =?us-ascii?Q?T3kM9jRi8L5N6pyllb0DocAGyJ5/HNCD3m3t5qEpgSd4EjY1mFd6J3Zgaiid?=
- =?us-ascii?Q?DTSdhKuzor4zI2zAnZsmRoLso8XCe7Y93BGFKIOBILmXA4kDlr4p/u+4hN5x?=
- =?us-ascii?Q?lQ3TgFZltOg+Bjsa4rIkzYLY1Q/fcmROj6vJJQL8t+DJWFGgk8QcDC6lVePZ?=
- =?us-ascii?Q?RSq1ixrjHigzsq+dLUF8gE8CZ1yE0Xq8woz1D3seOFAjhqHdwr1mYuny1NfG?=
- =?us-ascii?Q?zhXMLqlSgQbT4nGzdywQx/xOLM9O1beFhgN5zI9G9l+1pDimDRm77QLzLocY?=
- =?us-ascii?Q?ElaJPTd7dbG/NL/zeZMQOhNZwOeML9RajmShJld6xSX/Kyz+UVHicSqIUUrX?=
- =?us-ascii?Q?pSDL9U/h9yYYQS7kLD2b0ihJYxWfpm55Ret7428y9Jr05YAj4ijfOQbT/o/5?=
- =?us-ascii?Q?kjFDzcNvyhBQwS51GjvBUClDd/StNP5NYe/03HEIfC22vr3fVu1u0AULFK5S?=
- =?us-ascii?Q?EYMVJGJwBGxWfJWnjhqncYHBC2iGPK5JJ4M6ZaHHCjXzSQ0i/sNL6aUaamRn?=
- =?us-ascii?Q?Vm7q7dN3sMM7lNlchIEFUjQe/MdC3vrNPOouz07dwbySUhur8o1jY/5ZWbDg?=
- =?us-ascii?Q?Qa7IZswRXMPQYNCpcnADrsZRYOGTyuon/n7w2vzAv1anrg0LLZxlh9z4TyMa?=
- =?us-ascii?Q?p7VUIqX8lfLfymJIRWF/WT5xHCHxAXTzIzWmt3BaGduhHuc1CBHR4W1yxl0w?=
- =?us-ascii?Q?5JxtU/PmeQ2DOLsHcNuUBucX15Thx7cFv+bL+cQo93HRVhKgAQGGcc8mzy5D?=
- =?us-ascii?Q?MWT4r31f794B5RYmtaiU3qj/Hlh/rE8tRRgnPWQp83Eo/ZbUIZ87dM2Swjnu?=
- =?us-ascii?Q?wllKMQ55VXOUIQ8A8Xk8eVh1bjweDimzY9ixRn4+HC0iYTflEQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?jMuPhAtFkRJkorxUkHqZpVxYZwMd/HKTCrMTn1dYFSVP1d5pAmA7CzKjnNUg?=
- =?us-ascii?Q?M77FLJvquboQcX3zKuJRlXn37KbxYVlQOQGLQuxkvc/o+ocdU7WFNqlixlYh?=
- =?us-ascii?Q?IzXdUffdOMgE3t5iZEnyUHJT4z2xeCJEDflvwg0ch5W3Zr+BtyeEzhyFwqnE?=
- =?us-ascii?Q?tULLDzuIGfikLmlFTRgk8+HlrBhwa6S75ngHXNNpwlx+41X+NST2BuoYNKQt?=
- =?us-ascii?Q?XNjt0D+8i1qnNmovG0YDG3cLawkWBRI29eWnzksBcgFhBzYdpxpMyunycV4G?=
- =?us-ascii?Q?jECvDEkSA+vS5Szu1IMuPD9pZ5aOSjzo4Jkck5x12+PJQqsqSx/vd+kJFO0B?=
- =?us-ascii?Q?Z3Cu2NlUPOSpi/LQeftXDDHYwkkWkIdbmf2956vsuvNctJBj/tc50YoxDjUW?=
- =?us-ascii?Q?QvbnX7bjdVU+dKDoYrzmlsXwbzoblypgMAMAfpf14gIwS4WdUco7J2tTXtwL?=
- =?us-ascii?Q?YIEy+sBonb7zJmDZvqqnbANkdT4LjQiMJKdQvosneAcF0ruoC2XdQZ7MUVI2?=
- =?us-ascii?Q?TGQzh66uGT71jZVKKTVwImTQHEsSP4jbOquE3lxUSDy7gatHxmj8hBd8opn4?=
- =?us-ascii?Q?e0/rtITJBCwxHM5lRoCe/LI3PZ4rnBAMZDBnVSKz6h1JvlNa7HckKohXQRob?=
- =?us-ascii?Q?m5zIy0S6KoJLfjmbCmyDhgdxv6HXFdFqQS3oNMLYVDnoENdSf/y1XbIbPH1d?=
- =?us-ascii?Q?M66CPTJlTUV65TJv4i3OkEZ6xs+xnjYFppUhwrsz6v2cd0liUt9dItK9OnXr?=
- =?us-ascii?Q?HbENleCFh5iVtGWOZY6jgHc0r1LyzAVOb4deJ/UavlQOL7RQV+rRW+I4nQ9s?=
- =?us-ascii?Q?zZMYw3KgNNJ/pp7OxOaN8NFcXWTpURDqZRPy9Km366NaqNtzWyLJZY8Fkghh?=
- =?us-ascii?Q?ReflJdQMh8V12czDS1KyY40YTeQqB5iIsDnRCzMdyJXuDC04Xc57ZXF3yd36?=
- =?us-ascii?Q?K60zGjh3HVerfDYIV/Lj9kDnK4u6DU7H0vVrf4xTWSUONavLoe9RIOiW1YQ0?=
- =?us-ascii?Q?psmpQSpeYVcRYMOGSp666xPuIxeQ37lOJo+AfwWkoG9wkvsSBVoi/VsWOGYb?=
- =?us-ascii?Q?CniV8EQU636Lcbcgl873r5yd3902MHlIU65ExKQ4Aa6H8ydZrD4ju70IcVqH?=
- =?us-ascii?Q?cU72KEiFeQS79AYOwXBJFmvD6KfXiJi86zUSxXT0JQEulb+c4m5oV3gosarV?=
- =?us-ascii?Q?1Q3oRcrachQpCEk5C++HBlzW9zXrcqq2ep8G02IxC2pJyxIejpEw+nWZZVzv?=
- =?us-ascii?Q?RIAaBCRY5iTKwcQYCFXE1JIk/BV4JCcCmnr/WtgGPLLLyt8ecyLh+HoCc4f7?=
- =?us-ascii?Q?9+1B4G3J5j6I2vSfHNHmbhQ0wjA6aIkOAYal11vnmpfUSza/lbfQxsKxI3Wk?=
- =?us-ascii?Q?faWTxMkFdDuGLdsphV0svcHIiBeggyGdE3Sghf9je/kiaICJ2Unn4oVeMkUz?=
- =?us-ascii?Q?T9jUXDd/D1kkgnQ7y8SquH5dTRvUySw7hB8QbJ84rcBdY7pSdWLW1Ls2ee0C?=
- =?us-ascii?Q?mMG21lVgDsS1O7CXt4rJiH3LrZ68GBwrX94ouQKBE3aeksgEbxBuxBQ93O/f?=
- =?us-ascii?Q?TcYKzzXJQP5Na/SKj9QZV1M3FrB7GvyQPKnWxfGk?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D2B200A3;
+	Thu,  4 Jul 2024 06:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720075204; cv=none; b=WSYAwxmob0sK9eOGMA0ht/U+rl3K4EjHZKy6r+wpK3xGPN1qehJc+9zECL0YEGyA6QI1yKnIHtghOp0iKvCwgfEHWUht6Du0PIxGHAT9JhKLugB6o+zjvoVdE8oay1NRpOYov7kB0Ncw+/uqa3RBdkIbgEsHEr/cI/2aiqk0Bh0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720075204; c=relaxed/simple;
+	bh=lKbMaNJkLUVocG1e6FxVa282qh0hksbV3LzEAbQM4hM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kNHUxCOmEvItX7poSAhEe6+dB8qiPfX02Yku16Ybvnd8AsGageJ49x8Uaobc0ib5m9zarByNbp1ZuGpPrcBStUp29Pvf0f3b2oTz+h+vJrctG1y/E+NW5EwZvERhFEQej2O6q2RkArk/4jb0q2ZGd27shKMvbA7tWe/Xm1WIB2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h0Hl6A63; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5402BC3277B;
+	Thu,  4 Jul 2024 06:40:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720075203;
+	bh=lKbMaNJkLUVocG1e6FxVa282qh0hksbV3LzEAbQM4hM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h0Hl6A63TDTsrQG3QlAxNO5fqljBBOKeD9DwBBZKxz+JcqTNicDzE6Toc8fJFIMmJ
+	 Yxfa7CxDUAnvbodwQAVh8W98UDtzF9kvNwTvfEaN5YsSGoVIYHkrPfzDH7R+TYj8Lr
+	 55Kmj+uzWfzRiy+tqTijjTqCqN4IDix+xuS0pwTk=
+Date: Thu, 4 Jul 2024 08:40:00 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>
+Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
+	quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org,
+	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org,
+	arnd@arndb.de
+Subject: Re: [PATCH v1] misc: fastrpc: Add support for multiple PD from one
+ process
+Message-ID: <2024070427-squash-antiviral-8c81@gregkh>
+References: <20240703065200.1438145-1-quic_ekangupt@quicinc.com>
+ <2024070353-giggly-stardom-7b6d@gregkh>
+ <c4a184cb-46d5-49cc-ad42-3d5d7828f06b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e45dde74-8a8b-425f-fdb5-08dc9bf3c6fd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2024 06:37:29.7435
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 01xc15nM1gOYKxz9mAXd/JsL7m8s1mf1Z09p6Na+b11+QwOiL9opCxdLDmCRonsUfs47xoJ0AAv4tOwP/AHbHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7535
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c4a184cb-46d5-49cc-ad42-3d5d7828f06b@quicinc.com>
 
-> From: Nicolin Chen <nicolinc@nvidia.com>
-> Sent: Thursday, July 4, 2024 1:36 PM
->=20
-> On Thu, Jul 04, 2024 at 10:59:45AM +0800, Baolu Lu wrote:
-> > > On Tue, Jul 02, 2024 at 02:34:40PM +0800, Lu Baolu wrote:
-> > >
-> > > +enum iommu_fault_type {
-> > > +     IOMMU_FAULT_TYPE_HWPT_IOPF,
-> > > +     IOMMU_FAULT_TYPE_VIOMMU_IRQ,
-> > > +};
-> > >
-> > >   struct iommu_fault_alloc {
-> > >       __u32 size;
-> > >       __u32 flags;
-> > > +     __u32 type;  /* enum iommu_fault_type */
-> > >       __u32 out_fault_id;
-> > >       __u32 out_fault_fd;
+On Thu, Jul 04, 2024 at 11:47:22AM +0530, Ekansh Gupta wrote:
+> 
+> 
+> On 7/3/2024 4:09 PM, Greg KH wrote:
+> > On Wed, Jul 03, 2024 at 12:22:00PM +0530, Ekansh Gupta wrote:
+> >> @@ -268,6 +272,7 @@ struct fastrpc_channel_ctx {
+> >>  	struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
+> >>  	spinlock_t lock;
+> >>  	struct idr ctx_idr;
+> >> +	struct ida dsp_pgid_ida;
+> > You have an idr and an ida?  Why two different types for the same
+> > driver?
+> Using ida for this because for this I just need to allocate and manage unique IDs
+> without any associated data. So this looks more space efficient that idr.
+> Should I keep it uniform for a driver?
 
-and need a new reserved field for alignment.
+Be consistant, it will make your life easier over the next 10+ years
+that you have to maintain it.
 
-> > >   };
-> > >
-> > > I understand that this is already v8. So, maybe we can, for now,
-> > > apply the small diff above with an IOMMU_FAULT_TYPE_HWPT_IOPF
-> type
-> > > check in the ioctl handler. And a decoupling for the iopf fops in
-> > > the ioctl handler can come later in the viommu series:
-> > >       switch (type) {
-> > >       case IOMMU_FAULT_TYPE_HWPT_IOPF:
-> > >               filep =3D anon_inode_getfile("[iommufd-pgfault]",
-> > >                                          &iommufd_fault_fops_iopf);
-> > >       case IOMMU_FAULT_TYPE_VIOMMU_IRQ:
-> > >               filep =3D anon_inode_getfile("[iommufd-viommu-irq]",
-> > >                                          &iommufd_fault_fops_viommu);
-> > >       default:
-> > >               return -EOPNOSUPP;
-> > >       }
-> > >
-> > > Since you are the designer here, I think you have a better 10000
-> > > foot view -- maybe I am missing something here implying that the
-> > > fault object can't be really reused by viommu.
-> > >
-> > > Would you mind sharing some thoughts here?
-> >
-> > I think this is a choice between "two different objects" vs. "same
-> > object with different FD interfaces". If I understand it correctly, you=
-r
-> > proposal of unrecoverable fault delivery is not limited to vcmdq, but
-> > generic to all unrecoverable events that userspace should be aware of
-> > when the passed-through device is affected.
->=20
-> It's basically IRQ forwarding, not confined to unrecoverable
-> faults. For example, a VCMDQ used by the guest kernel would
-> raise an HW IRQ if the guest kernel issues an illegal command
-> to the HW Queue assigned to it. The host kernel will receive
-> the IRQ, so it needs a way to forward it to the VM for guest
-> kernel to recover the HW queue.
->=20
-> The way that we define the structure can follow what we have
-> for hwpt_alloc/invalidate uAPIs, i.e. driver data/event. And
-> such an event can carry unrecoverable translation faults too.
-> SMMU at least reports DMA translation faults using an eventQ
-> in its own native language.
->=20
-> > From a hardware architecture perspective, the interfaces for
-> > unrecoverable events don't always match the page faults. For example,
-> > VT-d architecture defines a PR queue for page faults, but uses a
-> > register set to report unrecoverable events. The 'reason', 'request id'
-> > and 'pasid' fields of the register set indicate what happened on the
-> > hardware. New unrecoverable events will not be reported until the
-> > previous one has been fetched.
->=20
-> Understood. I don't think we can share the majority pieces in
-> the fault.c. Just the "IOMMU_FAULT_QUEUE_ALLOC" ioctl itself
-> looks way too general to be limited to page-fault usage only.
-> So, I feel we can share, for example:
->     IOMMU_FAULT_QUEUE_ALLOC (type=3Dhwpt_iopf) -> fault_id=3D1
->     IOMMU_HWPT_ALLOC (fault_id=3D1) -> hwpt_id=3D2
->     IOMMU_FAULT_QUEUE_ALLOC (type=3Dviommu_irq) -> fault_id=3D3
->     IOMMU_VIOMMU_ALLOC (fault_id=3D2) -> viommu_id=3D4
-> The handler will direct to different fops as I drafted in my
-> previous mail.
->=20
-> > With the above being said, I have no strong opinions between these two
-> > choices. Jason and Kevin should have more insights.
->=20
-> Thanks. Jason is out of office this week, so hopefully Kevin
-> may shed some light. I personally feel that we don't need to
-> largely update this series until we add VIOMMU. Yet, it would
-> be convenient if we add a "type" in the uAPI with this series.
->=20
+> >>  	struct list_head users;
+> >>  	struct kref refcount;
+> >>  	/* Flag if dsp attributes are cached */
+> >> @@ -299,6 +304,7 @@ struct fastrpc_user {
+> >>  	struct fastrpc_buf *init_mem;
+> >>  
+> >>  	int tgid;
+> >> +	int dsp_pgid;
+> > Are you sure this fits in an int?
+> I think this should be fine for IDs in rage of 1000-1064.
 
-This is ok to me.
+Where is that range specified anywhere?  I don't see it documented here
+for us to know that :(
+
+And if that's all you care about, then use a u16.
+
+thanks,
+
+greg k-h
 
