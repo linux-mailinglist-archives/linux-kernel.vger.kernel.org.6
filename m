@@ -1,330 +1,86 @@
-Return-Path: <linux-kernel+bounces-241407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAD6927B1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:27:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B484927B20
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12F22845B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:27:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19E40B25D5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFC11B3746;
-	Thu,  4 Jul 2024 16:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrDUa8n+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C981B29DF;
+	Thu,  4 Jul 2024 16:28:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4001B3721;
-	Thu,  4 Jul 2024 16:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419971B29C5
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 16:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720110421; cv=none; b=PbNm9/Z8kGPxnQJiGrcBy1CX+Q5kjsQno6U9SvxGDHvW28oS+vFnZD35x3U8XocBQwaRhxBNkSBalXDVGbkZCCc6Ekwm7sddPvAi62FkANnpDBnYujRYhCXJDd+BGKVZ/BDE1g9NaR5LKTgZseRaW8bOURepgjWJRGaKYUDlJaQ=
+	t=1720110486; cv=none; b=YhnkiHmQ+GQDnMdw0jOwjiZmBr746dl4C2egpwYEin3jL4xZ29RVDo+ABVYk7mBuCo7OI3nR+XzDDoaRV9l5FWxAwB4k1F++sXmikP4zG+g8HZB+o8iiaOn9Jw67NfkZWWa9vt3ZlU0siJKEsX+5b976NKnXeht8UHZ4PyxgQ+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720110421; c=relaxed/simple;
-	bh=OJmz8+6ALNKIZuZiA3L7XZYVfl4eHNDpzxBW8RqwYCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m6woeuwyFGFcOqQ9PAV3zEWXU3+G9/Q7p7PZhecopEvDNG+wRSMnriyUgHc2VDZAw0DI2kC44GOSd+Jg1Tcq5dLI5x9JX90lwF7+GEAFaLVyumOCc6dpHsThYaMpYLIudz68HW7nFI4UE4bUYqsNKszlP6VwYMbnjYpYqx9gAAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrDUa8n+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CDFDC3277B;
-	Thu,  4 Jul 2024 16:26:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720110421;
-	bh=OJmz8+6ALNKIZuZiA3L7XZYVfl4eHNDpzxBW8RqwYCw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OrDUa8n+RnwzJxAa0YTpcTYvjdnrMog/75aNlJNG5oj0fBL9j91MXxE1+Q1mRDAb6
-	 Yj8LuH/zQXwKEh3njCx7Q1x9MSPQDOGz68fSYbliJTtpC8RBC63uzqy+URgqkNaDgJ
-	 8bgq+SeoubL1oGEb1DLUb1fttr8/CwKzK613L/q3R1SvZL0Fw/RCqmkGVfxD4aR2qp
-	 8lXGA203OPoOdIvWqpGuiHFUtjvAOx1BbcUscY/IpQ9wB63AO+FMkFGDrD7qdzOGyo
-	 Ys4HNl26qcwvstAg2XaOUhkUF+fqt+bjTIQz5UD/TqerHeehIO2Mn88M7V4F7zv1eP
-	 IGeLbBQg4Xxkg==
-Date: Thu, 4 Jul 2024 17:26:56 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Andy Hsieh <andy.hsieh@mediatek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Louis Kuo <louis.kuo@mediatek.com>,
-	Phi-Bang Nguyen <pnguyen@baylibre.com>
-Subject: Re: [PATCH v5 1/5] dt-bindings: media: add mediatek ISP3.0 sensor
- interface
-Message-ID: <20240704-catcall-stubbly-9258b056e42e@spud>
-References: <20240704-add-mtk-isp-3-0-support-v5-0-bfccccc5ec21@baylibre.com>
- <20240704-add-mtk-isp-3-0-support-v5-1-bfccccc5ec21@baylibre.com>
+	s=arc-20240116; t=1720110486; c=relaxed/simple;
+	bh=LA7+AkXGX6lG+kB7PeQYSn5eNo8hyKnXt+PodWs1w1Q=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oK6P9O4wJyrMJILbIToVs/INz6YW4yODV5YOVYw7b2liurDH/jSpZc1ct0JgIQwyRXrmx48LJ0jFIkpsVivC7JGRw8lH2Lyx9BDdUCuNT5OLUI4lD63lohOorFdMtRDZytEMo/udDEkuwiTYq+6oPyejUyUcW95odZNcrbP9f0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f3c9711ce9so91939139f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 09:28:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720110484; x=1720715284;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z0PsN+14R4XPmzHfvv0lxWeqpJo4NECYb3Gj1ZDxrik=;
+        b=ZQ8Ly4vtbTT2N9cpfpjoM+hT/IsK5S6eZH6KrfCYELd/7Af026BLSX6hIsuru6/Wq2
+         r2rQiMvoyodUNWqyW+7iRgiqHOVGBsAhE799gSp3ShyBH+k8j5qLRKYnRSFDhCrhnhDB
+         vsnfq5R6Sqek9+63or4MqF2coo6QiqjIB4F7btSvWob/Pf3Oryg6+Zz/HAcqNQTWx9oA
+         eOvdvXc4EtHY3IDOPCJI6K1gAL8MRrG+zytDV/aPHQBTfPpZ7iSRJRuguv/QWmmxhXdO
+         E/pFS7wPDfd5vZJzTxHPMZB9Cf1SyeTUc+YzqW2O7Xt08qsiwBDCC1+NEUbRB6U0NMmz
+         8p0w==
+X-Forwarded-Encrypted: i=1; AJvYcCX35ibeTY+VDKDBD2pYrImrbCQaoZ4XenOXjbi02u+fFbIWLsu/W3nRCSuAJZClxwD6Jc6yhQY9BpQwliQLyNd9bFuDybrX5P82P+cm
+X-Gm-Message-State: AOJu0Yw6W7/3o7rYTVp1JUbY7K2lyMMqWAXqaQJXcva97t+fbM2o1NOW
+	HO30YfmKkqZp65VH8z1kXLWAo5vqi3CsBjxLtFhtGf9u7PjEPE4cZw8IUyntbodJHG3z0e004BS
+	iLvUX7hNs3vtJj9ndVMna0dnPwxDkFBCWZHOtwmkDpueiAqGrwIyODEI=
+X-Google-Smtp-Source: AGHT+IG00d1VfDS0iAhB0XvDIrCrb23RFTBNxAhPcdGZExfqWAUFENmW1qwWSvs25GmCxIvIZALCdkDmx813nrv8djLS+VcwWX/p
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="voVV9R7vNjAajsoC"
-Content-Disposition: inline
-In-Reply-To: <20240704-add-mtk-isp-3-0-support-v5-1-bfccccc5ec21@baylibre.com>
+X-Received: by 2002:a05:6638:2043:b0:4b9:ad96:2ae1 with SMTP id
+ 8926c6da1cb9f-4bf5bd59404mr125811173.0.1720110482396; Thu, 04 Jul 2024
+ 09:28:02 -0700 (PDT)
+Date: Thu, 04 Jul 2024 09:28:02 -0700
+In-Reply-To: <20240704110254.91612-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000472ac0061c6e6e50@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in team_del_slave (3)
+From: syzbot <syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---voVV9R7vNjAajsoC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Thu, Jul 04, 2024 at 03:36:40PM +0200, Julien Stephan wrote:
-> From: Louis Kuo <louis.kuo@mediatek.com>
->=20
-> This adds the bindings, for the mediatek ISP3.0 SENINF module embedded in
-> some Mediatek SoC, such as the mt8365
->=20
-> Signed-off-by: Louis Kuo <louis.kuo@mediatek.com>
-> Signed-off-by: Phi-Bang Nguyen <pnguyen@baylibre.com>
-> Link: https://lore.kernel.org/r/20230807094940.329165-2-jstephan@baylibre=
-=2Ecom
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+Reported-and-tested-by: syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com
 
-I'm really confused by the link tag here. At first glance this looked
-like you were sending out something that had been applied by Laurent,
-given the Link, Rb and SoB from him. Why does he have a SoB on this
-patch? What did Phi-Bang Nguyen do with this patch, and should they have
-a Co-developed-by tag?
+Tested on:
 
-> ---
->  .../bindings/media/mediatek,mt8365-seninf.yaml     | 275 +++++++++++++++=
-++++++
->  MAINTAINERS                                        |   7 +
->  2 files changed, 282 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8365-seni=
-nf.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8365-seninf.ya=
-ml
-> new file mode 100644
-> index 000000000000..aeabea9f956a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8365-seninf.yaml
-> @@ -0,0 +1,275 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (c) 2023 MediaTek, BayLibre
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/mediatek,mt8365-seninf.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek Sensor Interface 3.0
-> +
-> +maintainers:
-> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> +  - Julien Stephan <jstephan@baylibre.com>
-> +  - Andy Hsieh <andy.hsieh@mediatek.com>
-> +
-> +description:
-> +  The ISP3.0 SENINF is the CSI-2 and parallel camera sensor interface fo=
-und in
-> +  multiple MediaTek SoCs. It can support up to three physical CSI-2 inpu=
-t ports,
-> +  configured in DPHY (2 or 4 data lanes) or CPHY depending on the SoC.
-> +  On the output side, SENINF can be connected either to CAMSV instance or
-> +  to the internal ISP. CAMSV is used to bypass the internal ISP processi=
-ng
-> +  in order to connect either an external ISP, or a sensor (RAW, YUV).
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt8365-seninf
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Seninf camsys clock
-> +      - description: Seninf top mux clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: camsys
-> +      - const: top_mux
-> +
-> +  phys: true
-> +
-> +  phy-names: true
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description: CSI0 or CSI0A port
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              clock-lanes:
-> +                maxItems: 1
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description: CSI1 port
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              clock-lanes:
-> +                maxItems: 1
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +      port@2:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description: CSI2 port
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              clock-lanes:
-> +                maxItems: 1
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +      port@3:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description: CSI0B port
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              clock-lanes:
-> +                maxItems: 1
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 2
-> +
-> +      port@4:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: connection point for cam0
-> +
-> +      port@5:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: connection point for cam1
-> +
-> +      port@6:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: connection point for camsv0
-> +
-> +      port@7:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: connection point for camsv1
-> +
-> +      port@8:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: connection point for camsv2
-> +
-> +      port@9:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: connection point for camsv3
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +      - port@2
-> +      - port@3
-> +      - port@4
-> +      - port@5
-> +      - port@6
-> +      - port@7
-> +      - port@8
-> +      - port@9
-> +
-> +required:
-> +  - compatible
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: mediatek,mt8365-seninf
+commit:         795c58e4 Merge tag 'trace-v6.10-rc6' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13bf4581980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=864caee5f78cab51
+dashboard link: https://syzkaller.appspot.com/bug?extid=705c61d60b091ef42c04
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=104920a5980000
 
-The binding supports only a single compatible, why is this complexity
-required? I don't see other devices being added in this series.
-
-Cheers,
-Conor.
-
-> +then:
-> +  properties:
-> +    phys:
-> +      minItems: 2
-> +      maxItems: 2
-> +      description:
-> +        phandle to the PHYs connected to CSI0/A, CSI1, CSI0B
-> +
-> +    phy-names:
-> +      description:
-> +        list of PHYs names
-> +      minItems: 2
-> +      maxItems: 2
-> +      items:
-> +        type: string
-> +        enum:
-> +          - csi0
-> +          - csi1
-> +          - csi0b
-> +      uniqueItems: true
-
---voVV9R7vNjAajsoC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZobNUAAKCRB4tDGHoIJi
-0pbHAP9oyb3VVfiOce+y/RlLWtTgU60hGLandmi6ztVG/wGCjgEA7nzUqczM/a/v
-53cqRK4JMbZsvZhR3V+fZ+JdSynKGgI=
-=vYDF
------END PGP SIGNATURE-----
-
---voVV9R7vNjAajsoC--
+Note: testing is done by a robot and is best-effort only.
 
