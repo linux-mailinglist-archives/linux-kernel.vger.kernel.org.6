@@ -1,179 +1,172 @@
-Return-Path: <linux-kernel+bounces-241549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D216927C75
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:44:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A82DE927C74
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD6DF1F217FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:44:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3475EB226E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C69F4EB38;
-	Thu,  4 Jul 2024 17:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D194779F;
+	Thu,  4 Jul 2024 17:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H1Uf2aDr"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fp04a8kh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1334962A;
-	Thu,  4 Jul 2024 17:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7974B3D3AC;
+	Thu,  4 Jul 2024 17:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720115067; cv=none; b=iXFEQ44KXHHIah2m92LKlxyQAl7IdOUe1fPoNhDNf6BdRQ64+LcXeI0ufOG/vkGsIBAOzPVU21S7ANieubAW0F6O15yJQXisn5Nch+MLHYEj8tmqYSM9EIYsZMPR7gV0N4SfvNxZS8yKOq5OPmMaQ60sSEnVrQFnx1KKBmaWCKQ=
+	t=1720115063; cv=none; b=aRHDFzh1P/2KX+bIg23wD6BIXIBbkDew1sPwfut7sE1OxmzwSj/sUjrQSwqI+xqwi8++FGKyXuzPSYij0hcoor0C+AXSYqQW5VU/Hg8ZnNB4CLhNFgtvXky6nNbpwOoL/rDOCESt645bqt/cufwHje404QsWhN8+bsmvmQ6Ma4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720115067; c=relaxed/simple;
-	bh=9OEohVoOHp7ONwqat1DbjfbKll05SHnUm4vHkbNilOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uDpdOUGay2T8gkqOr2+DdYkhDrqUUj4uZgCYJUc/lUw5mWRHKNr5px0AsACSBCqWnbrvUqGKq+nI8FoXR/BWrVbuWIvBZnYjM3RFfO+jLLuMWIlIuALgXfoagv6YhwPuN9kia4jR4/x2MB5f9T2ODQ770p23IVIl07OJnPKfCQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H1Uf2aDr; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-58b447c5112so1061980a12.3;
-        Thu, 04 Jul 2024 10:44:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720115064; x=1720719864; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p/ICCxXD8DFSBJSvnIefNzr4Mlp1WXZIIEXOl9gBP5Q=;
-        b=H1Uf2aDr/h+TCokntzQJQGt/3TgUnHe56M2RLn38MOiwUE4IWH5vbn+2cJNJVItK+s
-         1a54Fiy29UOiKGNs7z53Vxd2nXl5zryh6BFOzYHBjfhHMmB9frBEsHrsqIQOxjIA23s8
-         dC/lQnnlFtZJmRlzUX1c8EBeGCykQk7Wy8YgzS1aA7fPY3ecjWWNRtWwLFj1Lo64C7xf
-         PJpVH+waXlNKkkGbJISka2qNEJuE4P+k2PO8E1jjCaSyxS5yi7NQrSpMnY6qMVDm5+s3
-         RgOK7aPTgRRk6y6kBtS/t5y6hGiYlBh3lXDRStu7qmmQW6gbVsee5kcD5cjaEgz4FTiH
-         RHHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720115064; x=1720719864;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p/ICCxXD8DFSBJSvnIefNzr4Mlp1WXZIIEXOl9gBP5Q=;
-        b=LuUdszaDKj4aZu7apYtRhQMbUeO2quE2bNMHCDWNNVyHC0l2dMySSRuR+Z3SUWSn1F
-         Wb4N3olvrmbVJkPpWwlHt5ZAkWiYxVWiOKiiVzgZHKgbm0i2Zu9tGia0Gu7q4dRoHwvU
-         avRZ9xGotsQdcJHmIueqEs1hYz1+1c8OaYG8d1rNCGs1L0kH+X+Zfn/TqEmN91dCZZvR
-         9cVGqjw6nFN/kfxP8AiCkhZgKlMrohyoTHvvFOt1PHzKLmtRqozJ6Lqc3WiVHOyem4iQ
-         RjAXXwwWCqTBLHpR2iZtX175yWMAIDmxzxVceSeE+u9gVT5WJ7omuTXzv7hdvZgIQlA6
-         2Njw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhfIlrsKbKLCwLjXmxtHhHRp0IKaVSShRAba/dCWmt1M5LKlklCeDvtwuGWJh9IkInabcn5QhPWZISD5QD405uGm8ll9aKJKGzqOqkNw1fPlCfq+0gBsE7/6By7DXpzskOiaeq4WLY1PB2xA==
-X-Gm-Message-State: AOJu0Yz9+NBtp2C+psSpunTcX3JPfqkLv+S6fFHwXx+h+KkrIrR8+sgl
-	2yR/dJ602pomt3l5fd7x7CY+xZ9nfHfAbRGN0asQ4MdcsbHchMHaON0HZhtDHA7rt720taSFHok
-	W7lSeBDnwVAn7LeIL5btIX1YYSPaTMXQELik=
-X-Google-Smtp-Source: AGHT+IFVorgdyabSVYQdv+WoEM+LSfcE2ygWrtpA1sx7rpmpEZto/8sJYdffCwq4xoaYmYhuE62OetDh63Qm/FMKct4=
-X-Received: by 2002:a05:6402:2108:b0:57c:fda3:b669 with SMTP id
- 4fb4d7f45d1cf-58e5abdd399mr1523307a12.17.1720115063714; Thu, 04 Jul 2024
- 10:44:23 -0700 (PDT)
+	s=arc-20240116; t=1720115063; c=relaxed/simple;
+	bh=AzVLN5s8m2pR07hkp4MUmLEh08g3IkzD0iu13g2nOIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PSNiSSX6ElzmmmbEtuEh2A2SvsAZpl5FPRsOEa3HmFF2Jygl0j8lDEMRGD0kDsOl5yOw1mKjsRJQWpnDiuTm7HYE/Q7/Pz3IrCPg8hdVPxZ4C7/DNtnNHHKWOheLT8pNGn70F8zGIhhBc/08mvNMO7Yuyh8/VKmna+ZEnSTrV4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fp04a8kh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBF0BC3277B;
+	Thu,  4 Jul 2024 17:44:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720115063;
+	bh=AzVLN5s8m2pR07hkp4MUmLEh08g3IkzD0iu13g2nOIo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fp04a8khZ0ndBddqA0DLvSs631FmVud72skRkUs8zP/6w+757aMn5psgiVA14HIre
+	 fchF+ee7Y9F5LJSElxVE7mlRVdCTCYIglkzqTD4N2oZUGbOlsbPxsY77cnZcyXKZNA
+	 3MDlgXwMHkX9637NcxJVWNnRNIdqkPabyo27JHud/gNUYn3GfNqZk0GvP8JkKlMOhX
+	 nK2tm6xpN73P9O+DbdyV+7PQGJ9IDkaMNFCHqeMDGkiUqqNZAP05AI2roPkHBUjWUE
+	 sY69eyvc9+Yret1FjSWXFO/O6vMG0Xz2ofudBVZowajTVWwtXMQ7jEcJnrNe9n74hN
+	 osSCiwLuT6bVQ==
+Date: Thu, 4 Jul 2024 12:44:19 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Odelu Kukatla <quic_okukatla@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, cros-qcom-dts-watchers@chromium.org, 
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	quic_rlaggysh@quicinc.com, quic_mdtipton@quicinc.com
+Subject: Re: [PATCH] interconnect: qcom: Fix DT backwards compatibility for
+ QoS
+Message-ID: <jhfya4mjnckrmogtmusyvwjv4mlyycgqj3apt2kaj5umxprhtv@rfew7c5w3zf5>
+References: <20240704125515.22194-1-quic_okukatla@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614163416.728752-1-yu.ma@intel.com> <20240703143311.2184454-1-yu.ma@intel.com>
- <20240703143311.2184454-4-yu.ma@intel.com>
-In-Reply-To: <20240703143311.2184454-4-yu.ma@intel.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 4 Jul 2024 19:44:10 +0200
-Message-ID: <CAGudoHH_P4LGaVN1N4j8FNTH_eDm3SDL7azMc25+HY2_XgjvJQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
-To: Yu Ma <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	edumazet@google.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, 
-	tim.c.chen@intel.com, tim.c.chen@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704125515.22194-1-quic_okukatla@quicinc.com>
 
-On Wed, Jul 3, 2024 at 4:07=E2=80=AFPM Yu Ma <yu.ma@intel.com> wrote:
->
-> There is available fd in the lower 64 bits of open_fds bitmap for most ca=
-ses
-> when we look for an available fd slot. Skip 2-levels searching via
-> find_next_zero_bit() for this common fast path.
->
-> Look directly for an open bit in the lower 64 bits of open_fds bitmap whe=
-n a
-> free slot is available there, as:
-> (1) The fd allocation algorithm would always allocate fd from small to la=
-rge.
-> Lower bits in open_fds bitmap would be used much more frequently than hig=
-her
-> bits.
-> (2) After fdt is expanded (the bitmap size doubled for each time of expan=
-sion),
-> it would never be shrunk. The search size increases but there are few ope=
-n fds
-> available here.
-> (3) There is fast path inside of find_next_zero_bit() when size<=3D64 to =
-speed up
-> searching.
->
-> As suggested by Mateusz Guzik <mjguzik gmail.com> and Jan Kara <jack@suse=
-.cz>,
-> update the fast path from alloc_fd() to find_next_fd(). With which, on to=
-p of
-> patch 1 and 2, pts/blogbench-1.1.0 read is improved by 13% and write by 7=
-% on
-> Intel ICX 160 cores configuration with v6.10-rc6.
->
-> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Yu Ma <yu.ma@intel.com>
+On Thu, Jul 04, 2024 at 06:25:15PM GMT, Odelu Kukatla wrote:
+> Add qos_clks_required flag to skip QoS configuration if clocks property
+> is not populated in devicetree for providers which require clocks to be
+> enabled for accessing registers. This is to keep the QoS configuration
+> backwards compatible with devices that have older DTB.
+> 
+
+Please read "Describe your changes" [1], and make your commit message
+start with the problem description - establish to the reader why this
+change is needed, then follow that with a technical description of the
+solution (likely in a separate paragraph).
+
+[1] https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+
+> Reported-by: Bjorn Andersson <andersson@kernel.org>
+> Closes: https://lore.kernel.org/all/ciji6nlxn752ina4tmh6kwvek52nxpnguomqek6plwvwgvoqef@yrtexkpmn5br/
+> Signed-off-by: Odelu Kukatla <quic_okukatla@quicinc.com>
 > ---
->  fs/file.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/fs/file.c b/fs/file.c
-> index a15317db3119..f25eca311f51 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -488,6 +488,11 @@ struct files_struct init_files =3D {
->
->  static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start=
-)
->  {
-> +       unsigned int bit;
-> +       bit =3D find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
-> +       if (bit < BITS_PER_LONG)
-> +               return bit;
-> +
->         unsigned int maxfd =3D fdt->max_fds; /* always multiple of BITS_P=
-ER_LONG */
->         unsigned int maxbit =3D maxfd / BITS_PER_LONG;
->         unsigned int bitbit =3D start / BITS_PER_LONG;
-> --
-> 2.43.0
->
+>  drivers/interconnect/qcom/icc-rpmh.c | 2 +-
+>  drivers/interconnect/qcom/icc-rpmh.h | 1 +
+>  drivers/interconnect/qcom/sc7280.c   | 2 ++
+>  3 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
+> index 93047defd5e2..f49a8e0cb03c 100644
+> --- a/drivers/interconnect/qcom/icc-rpmh.c
+> +++ b/drivers/interconnect/qcom/icc-rpmh.c
+> @@ -311,7 +311,7 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
+>  		}
+>  
+>  		qp->num_clks = devm_clk_bulk_get_all(qp->dev, &qp->clks);
+> -		if (qp->num_clks < 0) {
+> +		if (qp->num_clks < 0 || (!qp->num_clks && desc->qos_clks_required)) {
 
-I had something like this in mind:
-diff --git a/fs/file.c b/fs/file.c
-index a3b72aa64f11..4d3307e39db7 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -489,6 +489,16 @@ static unsigned int find_next_fd(struct fdtable
-*fdt, unsigned int start)
-        unsigned int maxfd =3D fdt->max_fds; /* always multiple of
-BITS_PER_LONG */
-        unsigned int maxbit =3D maxfd / BITS_PER_LONG;
-        unsigned int bitbit =3D start / BITS_PER_LONG;
-+       unsigned int bit;
-+
-+       /*
-+        * Try to avoid looking at the second level map.
-+        */
-+       bit =3D find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
-+                               start & (BITS_PER_LONG - 1));
-+       if (bit < BITS_PER_LONG) {
-+               return bit + bitbit * BITS_PER_LONG;
-+       }
+For this new case, I think the dev_info() below makes total sense. I.e.
+this looks good to me.
 
-        bitbit =3D find_next_zero_bit(fdt->full_fds_bits, maxbit,
-bitbit) * BITS_PER_LONG;
-        if (bitbit >=3D maxfd)
 
-can you please test it out. I expect it to provide a tiny improvement
-over your patch.
+However, the num_clks < 0 case would represent finding a devicetree node
+with clocks specified, but failing to get these clocks. I believe that
+this would include EPROBE_DEFER.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+I don't think it's correct to print a informational message and continue
+without QoS. I think we should fail here.
+
+Also, in this case devm_clk_bulk_get_all() would have pr_err() a message
+about which clock it failed to acquire and why, so printing again here
+doesn't seem useful.
+
+But I think that is a separate follow up patch.
+
+>  			dev_info(dev, "Skipping QoS, failed to get clk: %d\n", qp->num_clks);
+>  			goto skip_qos_config;
+>  		}
+> diff --git a/drivers/interconnect/qcom/icc-rpmh.h b/drivers/interconnect/qcom/icc-rpmh.h
+> index 9a5142c70486..14db89850fb3 100644
+> --- a/drivers/interconnect/qcom/icc-rpmh.h
+> +++ b/drivers/interconnect/qcom/icc-rpmh.h
+> @@ -153,6 +153,7 @@ struct qcom_icc_desc {
+>  	size_t num_nodes;
+>  	struct qcom_icc_bcm * const *bcms;
+>  	size_t num_bcms;
+> +	bool qos_clks_required;
+>  };
+>  
+>  int qcom_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
+> diff --git a/drivers/interconnect/qcom/sc7280.c b/drivers/interconnect/qcom/sc7280.c
+> index 759c609a20bf..167971f8e8be 100644
+> --- a/drivers/interconnect/qcom/sc7280.c
+> +++ b/drivers/interconnect/qcom/sc7280.c
+> @@ -1691,6 +1691,7 @@ static const struct qcom_icc_desc sc7280_aggre1_noc = {
+>  	.num_nodes = ARRAY_SIZE(aggre1_noc_nodes),
+>  	.bcms = aggre1_noc_bcms,
+>  	.num_bcms = ARRAY_SIZE(aggre1_noc_bcms),
+> +	.qos_clks_required = true,
+>  };
+>  
+>  static struct qcom_icc_bcm * const aggre2_noc_bcms[] = {
+> @@ -1722,6 +1723,7 @@ static const struct qcom_icc_desc sc7280_aggre2_noc = {
+>  	.num_nodes = ARRAY_SIZE(aggre2_noc_nodes),
+>  	.bcms = aggre2_noc_bcms,
+>  	.num_bcms = ARRAY_SIZE(aggre2_noc_bcms),
+> +	.qos_clks_required = true,
+
+When reading the commit message and the name of this property, my first
+reaction was "aggre2_noc requires qos clocks".
+
+As such, I'd prefer if this was renamed "qos_requires_clocks" to more
+clearly document what the requirement entails and hint the future reader
+that the interconnect might still be operational.
+
+
+With that said, thanks for your quick reply to my regression report!
+
+Tested-by: Bjorn Andersson <andersson@kernel.org>
+
+Regards,
+Bjorn
+
+>  };
+>  
+>  static struct qcom_icc_bcm * const clk_virt_bcms[] = {
+> -- 
+> 2.17.1
+> 
 
