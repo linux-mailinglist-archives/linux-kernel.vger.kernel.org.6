@@ -1,133 +1,104 @@
-Return-Path: <linux-kernel+bounces-241067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4D39276B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:03:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6C59276B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 480F21F2204E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:03:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ECA11C22201
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E73B1AE851;
-	Thu,  4 Jul 2024 13:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98BA1AED2C;
+	Thu,  4 Jul 2024 13:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MSxntTHM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="qy7tJxS3"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACBE13BADF;
-	Thu,  4 Jul 2024 13:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06A113BADF;
+	Thu,  4 Jul 2024 13:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720098222; cv=none; b=L4DqS9eF01OSRrFkjuIRBbOJ9XcxUWXMfEm0tnZ1Z0niiP4CicwRXI7MZNQPZ/UCZi7UeXbOfLDd4WZvo8AwGRMXTFNtNSyJyGWlDOmDoUFEQAq9Vh9Hh2zs7wD15ZLxQ5z47r2YmvC5yHcXfdqUPP2IIN6JstPxd+OlfrZQ450=
+	t=1720098230; cv=none; b=Xu3DL9VfZrkVJpSQVuX1gCars5DPSJNESwdGKPcRkPHhpOgoUhlV7krKF2v1WbSUzsSe9If/lwzvQ8IoNgfRl9Y1iWiDYNnW3CluZZTC51Jndo5blyr41HsZqBSdJy3XIwGkln+hvFR5W7Q/CHcF/0e2mPkwM75jKBpSZOAHzq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720098222; c=relaxed/simple;
-	bh=uZ9UsEweFbXbxOBABtQ/dWLo0fnez7wNxhKZkX2xznc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UzW3XlHPHfAuTimZ/Vv3gsbeQHAM2yDa5U4l7d/+oJxZT9p6JHdOd5fHCvdhhI9GN4JwEcvkWUcroM3fACATHW27o1BrUdXFP8/KYREW0LiTTUAr/VWcjWw2m6g+6fcR5PAa3CaHbv3BqgMJkZLkHQL6eO5T1nGADIKRX+gk9tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MSxntTHM; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720098221; x=1751634221;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uZ9UsEweFbXbxOBABtQ/dWLo0fnez7wNxhKZkX2xznc=;
-  b=MSxntTHM4MELE4RbKvYvSglpUEN9MrOPcNAL9NEbUO6A65+V5Gqy11ev
-   EijSvw44DysoEwiFzlXVMqlsd9CQWYl8GrZ3hcrZtkavYtdlGJSZhRUXa
-   uU3gHaMOWGdq01YIBdlkOCxmbD+pr87g9s8wLHun1Y7H72myWsYbqhHoR
-   uQtLX/5JQK93RmnHUXOmwTlg28iT5yvceF6WoY8Fwr+AMJibjCr8C+gJB
-   qd1iUrMg4YC3PaQaQPTzzChKWejWMaFf81ieQTK6hLFSpH8uHDgiadfUP
-   ZByIJNAZk3Bws8Rrdh5yvT1LrLVQ6QV8CoIeCISTOeUIjsIxcuhmblluw
-   g==;
-X-CSE-ConnectionGUID: 4E6mSGVsQyyDkSgXutWh0w==
-X-CSE-MsgGUID: NRCPQEdKS52+yNXiO971IA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="27980951"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="27980951"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 06:03:40 -0700
-X-CSE-ConnectionGUID: o/YWOEYtTSOuRT37J1hNvw==
-X-CSE-MsgGUID: +XbghcdiQr67hCyYBw/pcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="77335407"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 04 Jul 2024 06:03:38 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 783F522B; Thu, 04 Jul 2024 16:03:36 +0300 (EEST)
-Date: Thu, 4 Jul 2024 16:03:36 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Nikolay Borisov <nik.borisov@suse.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Subject: Re: [PATCHv5 3/4] x86/tdx: Dynamically disable SEPT violations from
- causing #VEs
-Message-ID: <4sqvd3zghwp5o23r2s47i56qg34obammtggbtneof26ghbwrxv@rskezsmaqgim>
-References: <20240624114149.377492-1-kirill.shutemov@linux.intel.com>
- <20240624114149.377492-4-kirill.shutemov@linux.intel.com>
- <05d0b24a-2e21-48c0-85b7-a9dd935ac449@suse.com>
- <oujihwk2ghwpobsuivxlgflalwxigctjp6nld2jdtz4cbwoqnp@7v3s7ap4ul6u>
- <3b164525-f797-478a-a75c-1c2bd83086af@intel.com>
+	s=arc-20240116; t=1720098230; c=relaxed/simple;
+	bh=klDO4/0U/vbGsv3gt7DQ6MnOPmWNXXpzrcflYCa9vB8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nYXQc4ndTp5lF/yCOhAAsPfFHxbuqaIkVpi9zDLsGNCoMUQVIOBPU4RRE405rcsTYSrvQdaMjtsxcwGR0Ou95oezNCpcpr9Ueepu7vDaBm9zTTHntPvaCdCfBiHNvk8GJe6OI4JBP1mqSRtmwbi/L/w/cfnFMMtBIIEBYVeZxBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=qy7tJxS3; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1720098224;
+	bh=0wJ0thRf7utBZ6y1Ms5sJbvCz7hTW8OVR6SsUnnt3kI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qy7tJxS3ZX6A0h77MmM8sUm0/3VYqXFsEQraTYZHkt7bZj6nqly9q0kyO0tZozxKy
+	 3xgfnqi0OL+DOsRT9IyYfbqVSXICMaGrVFRxWXe4OrU3aDAfb3eGNKvwtKiemvP0Uv
+	 9U6I/lzS/iTqu98mNw6A+XATmnh5NqnI3agh1DmCKW80zIMJ1HTVdVbp6yTlYnPqJ7
+	 jg2k2RVo6XFSliMsMXO1bTshBiB/6cyywB6qB39P2kqRj1EuAGoP8OpT38nOr585H3
+	 XDc7yb7M8U5T1by/MQP2Yki1HZ+wJzpzEhbuApKrGTJF+VIBcZcrcbbNAjFCqGOTWs
+	 ILQcyoI5LRlpg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WFGzy6ypwz4wbp;
+	Thu,  4 Jul 2024 23:03:42 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Jarkko Sakkinen
+ <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Mimi Zohar
+ <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Linus
+ Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 0/3] Address !chip->auth
+In-Reply-To: <D2G2QR0DMG8B.R0B95Z5T5YAF@kernel.org>
+References: <20240703170815.1494625-1-jarkko@kernel.org>
+ <D2G2QR0DMG8B.R0B95Z5T5YAF@kernel.org>
+Date: Thu, 04 Jul 2024 23:03:42 +1000
+Message-ID: <87v81lia1d.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b164525-f797-478a-a75c-1c2bd83086af@intel.com>
+Content-Type: text/plain
 
-On Wed, Jul 03, 2024 at 07:49:48AM -0700, Dave Hansen wrote:
-> On 7/3/24 06:04, Kirill A. Shutemov wrote:
-> >>> -/* TDCS fields. To be used by TDG.VM.WR and TDG.VM.RD module calls */
-> >>> +/* TDX TD-Scope Metadata. To be used by TDG.VM.WR and TDG.VM.RD */
-> >>> +#define TDCS_CONFIG_FLAGS		0x1110000300000016
-> >> 0x9110000300000016
-> >>> +#define TDCS_TD_CTLS			0x11104800000017
-> >> 0x9110000300000017
-> > Setting bit 63 in these field id is regression in new TDX spec and TDX
-> > module. It is going to be fixed in next version. Both versions of field
-> > ids are going to be valid.
-> 
-> I kinda never liked the big ol' magic numbers approach here.  But could
-> we please introduce some helpers here?
-> 
-> Then we'll end up with something like this (if the 0x111 can't be
-> decomposed):
-> 
-> #define _TDCS_CMD(c)	((0x1110UL << 48) | (c))
-> 
-> #define TDCS_CONFIG_FLAGS _TDCS_CMD(0x16)
-> #define TDCS_TD_CTLS	  _TDCS_CMD(0x17)
-> 
-> Then when folks change their mind about what should be in the TDX spec,
-> we have one place to go fix it up in addition to making this all more
-> readable.
+"Jarkko Sakkinen" <jarkko@kernel.org> writes:
+> On Wed Jul 3, 2024 at 8:08 PM EEST, Jarkko Sakkinen wrote:
+>> Tested on x86-64 with:
+>>
+>> - TCG_TPM2_HMAC disabled.
+>> - TCG_TPM2_HMAC enabled.
+>> - TCG_TPM2_HMAC enabled, and "/* rc = tpm2_sessions_init(chip); */".
+>>
+>> Jarkko Sakkinen (3):
+>>   tpm: Address !chip->auth in tpm2_*_auth_session()
+>>   tpm: Address !chip->auth in tpm_buf_append_name()
+>>   tpm: Address !chip->auth in tpm_buf_append_hmac_session*()
+>>
+>>  drivers/char/tpm/Makefile        |   2 +-
+>>  drivers/char/tpm/tpm2-sessions.c | 400 +++++++++++++++++--------------
+>>  include/linux/tpm.h              |  75 ++----
+>>  3 files changed, 245 insertions(+), 232 deletions(-)
+>
+> Aiming these still to 6.10 so that there would not be known regressions
+> in hmac authenticated sessions. Note that issue is wider than "just"
+> tpm_ibmvtpm.
 
-Hm. I am not sure about this. It can be tedious if we want to encode all
-info this way. Like, size of the field, number of elements in the
-field, number of elements in the sequence, etc. It is going to be macro on
-the macro on the macro. I don't think it would improve readability.
+This seems OK on my PowerVM box using tpm_ibmvtpm and TCG_TPM2_HMAC=y.
+I do see one new message:
 
-On related note, I think the TDX 1.5 definitions of field ids are more
-useful as you can infer more info from them. I consider to switching all
-definitions to the new format. It effectively drops TDX 1.0 support as the
-newly used bits are reserved in 1.0.
+  [    2.475208] tpm2_start_auth_session: encryption is not active
 
-TDX module 1.0 is no longer supported, but kernel haven't broken anything
-from the guest side yet. I don't think anybody actually uses it and I need
-to jump hoops to get it running for validation.
+But no error messages like on mainline.
 
-Any objections for dropping TDX 1.0 support?
+Tested-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+cheers
 
