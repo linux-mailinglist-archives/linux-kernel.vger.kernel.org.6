@@ -1,234 +1,215 @@
-Return-Path: <linux-kernel+bounces-241376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1B3927A97
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:56:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF838927AB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE61A1F26D81
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E1E284F66
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D341B14EF;
-	Thu,  4 Jul 2024 15:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82DB1B3730;
+	Thu,  4 Jul 2024 15:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="s37utGms"
-Received: from mail-40138.protonmail.ch (mail-40138.protonmail.ch [185.70.40.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fzah5f2j"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C271AD403
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 15:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677311ACE67;
+	Thu,  4 Jul 2024 15:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720108554; cv=none; b=lefOFVz/gspIX1nOQnzKqZ+APyX7bIWPc5dEfbLa7FREEomSg/bDAyF7ZTd7vu2K3JMHQJC8Zmk1FIc2EAGJlZ81E+ipx0MeLhfiYb0jyLw1AlHJT7HZFLxF3bxshx5vE9Oo8NKi9cWzG7dE/w/tg3eEU4ZIIiWwDaXxOQDlB5c=
+	t=1720108692; cv=none; b=o6xzWEqFc+4tKtKaAGYvmxL+oZu+QaLIV90aAAj0GTMUEp4kkWgTWGYZzzEPPblAeJ8+Gq3Vz1tyWb03+zbh+eCGnYljpugTuF54+mAT/2T4zxO65fkoctLrOzR+NjqOzRCFsPzrzS7UoIHm+sP6RoMAwnCMR2HQsbq9nj8oWvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720108554; c=relaxed/simple;
-	bh=NQBXm07UgisIZcKAKlLXrr/ih/lhjv1PKO0rzT0aANo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RHFDIzomNV0MX7TJRUeLrNnulyYm+Ajh88sIBCMl5oG4Z4jQv4BoJF8pdyyE5Vn2CyLXMuHlEfJJsAwgKGKLapEh+VnaZooNx84UvOtahl6WAQAV8KeRyAfgCmrCcCSs1FgtWV0WzcxdyuJin0BUVOl2uzIt/xNz6qojduue5FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=s37utGms; arc=none smtp.client-ip=185.70.40.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1720108544; x=1720367744;
-	bh=Vf4EBtRpfOHSJIVm4HDyh243ysNrpJBCZq4+gPHvMd4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=s37utGmsss6uYVMBve8RQDmW6zdTAvNMYJlSxy08MuzSzWOiDQfQtzHFfK24z6aaN
-	 00NDFx/gVvZO3EBvPgrZ/8A4K3h8QS16ekEZDoOfFqMdoCZ0SGoUZLcPsD5ZEs1HMf
-	 SO8wkm0IL/qLTqUsPzh/mZk1LHV5rOviwESptHlO3iBoorud4FwMz4oEjQkuqQHZMC
-	 73yBxgM35/Me6HNOKXdQ0g6bZ97BhOQkQzb4eWu/FttbmfzU4NpaHM2E96B6pOi6U7
-	 TxCUhzSf0o6xxJuyKCVReGiIk4hB9LnX5LHdfE3v1QKvVSSvwP/vT1Og0splqw2CZi
-	 6MNivvW0e4jVg==
-Date: Thu, 04 Jul 2024 15:55:37 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, Martin Rodriguez
-	Reboredo <yakoyoku@gmail.com>
-Subject: Re: [PATCH v7 1/8] rust: types: add `NotThreadSafe`
-Message-ID: <0GQUdWtJ1sJSw0JSoR4NqDUt9vO2S3G9Y2JqaHX_8BW5O0FB3lfHXwC1mbYNgSBh4t1MIFFyocJGyKUgB7CnJsZK_TvRnL1R61TOsLV1gb0=@protonmail.com>
-In-Reply-To: <20240628-alice-file-v7-1-4d701f6335f3@google.com>
-References: <20240628-alice-file-v7-0-4d701f6335f3@google.com> <20240628-alice-file-v7-1-4d701f6335f3@google.com>
-Feedback-ID: 27884398:user:proton
-X-Pm-Message-ID: a9fcff4144967cc27072678e1f6fdc577680704a
+	s=arc-20240116; t=1720108692; c=relaxed/simple;
+	bh=wJE7HlCPQ2VZ9sr7/loD0hwkFhbboA9WmXEnW4+ChsQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=orgkQGoQCEx7Ffkguj34NQy7tQWkLxTfo9ebzOtFShuNqrcgGqMIDQd44+QVcVLKvCbwTDvdva7ZmTqE74F0GyYDEMikDmjKMYwILtF4E0yKgIces+tEhfsSGOQh5Fyp4j356eZx/4pX1SsP/0rniwo9W+mz80trEcDzQPAA+qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fzah5f2j; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4ef6c8e3602so326850e0c.0;
+        Thu, 04 Jul 2024 08:58:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720108689; x=1720713489; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n97CqCq+SpioBUdMovQEEVaZXmKGUSWX+N+6ZspvJ5Y=;
+        b=fzah5f2jPp6xeoFelee2+jl1Jn3hKibubDigkvbQsHgv5GzFC0+nFQris9eZwQ+NOv
+         C8r4OwujqbDFBfGp5PuYGdFVygq9IjqdKzsZhOn6MarqHKJHmQI8OVZYjfXf4u+d0e/A
+         niNupZ9nwSJa1XuVz78JbSbP/4X7322uh8tfjRZpbSkkYcN2mde8al0O0GS6auW89S7X
+         XrME3v8yxfjby9iiEEcmFuKbxEFVY+nl+iPNCiiVN72FldRTEedUwDc9eSvE+zmPaLvK
+         YjakGdyZD3zLSWeOY7JftCVArKFCuq4qOmda6m7TNJrRhW854H1JGVf37RpktRXFOPyT
+         vmvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720108689; x=1720713489;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n97CqCq+SpioBUdMovQEEVaZXmKGUSWX+N+6ZspvJ5Y=;
+        b=c47otx7njgEewVCWLFfCNjnj+cPMLfUatpFJK9a7D/ra1IX9FtyEWg9YBTl3XblmoV
+         lBqz0sw0iI70GJK5xmxP8F9oJF1x8GqKSMowfybKSePAbpCy4hst8KRVE2aZLDke4/ft
+         zIjqFxVqjO9rLnS7pOR7dT78hvM4KGmEisP3Zqni4aa4GhGXnYNALUIrfkmqaQdvK+pD
+         7mofMNUIIS1i119+MmLkvU+3VqXl26ChyB8Y2pi+dtI8UGzHUJ1PLxHOMDgAPKo0vYZO
+         sE/1gJLyfLI4oJfCPyf6eSS2jkl7XBv6RueKhOwy1/IP7mmxF6zbB9sLDMGgUcoxcnTY
+         USLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPnMaayVI6UqPSkxl/wWWdcUDZmXaVfjhjGJEgDNfLOthlhUZaQFGu/CGFjd+/cvRMGq11Y2DVpyAYv+Uf1u4qKTeYLJ/qzf3hqqvtHD8BBZnVr6qvylWV7zrnecE8A2r/9gpsuViln+EYorvAuShD+rNNeVmFfnB30Sl72QWDFeFnsEVjpgE0JPLTf5qlNreQEZRKYaw31oNqC1j0+z3GYAk6b9B/
+X-Gm-Message-State: AOJu0Yw0vS/g5Zst0KfddZGebQi5AmWoBPDhKvM/euNn54qeBbTvkD9e
+	y6XLeEWTtndTw4u6rlx96s64GewRznvOTreCrHzJ/t5kxBt+Ow0cvLnGO4WN0rF5bCUX0o08RO1
+	zhuzpqqDaMV9J1LKg7ZVwlK/BBq4=
+X-Google-Smtp-Source: AGHT+IFZ1AIkhnIlR1F2PajHwGmAM3QHm7zYfUYNlGkAcCt+TyLYZj4pGDx0Qw5zZbScstvZjUXz2fAMKekKDEkjrCQ=
+X-Received: by 2002:a05:6122:3887:b0:4ef:4b35:896f with SMTP id
+ 71dfb90a1353d-4f2f3e9ea73mr2621613e0c.7.1720108688497; Thu, 04 Jul 2024
+ 08:58:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240626132341.342963-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240626132341.342963-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <ZoUdUyrld2kZorvU@shikoro>
+In-Reply-To: <ZoUdUyrld2kZorvU@shikoro>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 4 Jul 2024 16:56:56 +0100
+Message-ID: <CA+V-a8v5VcBRjp-kPGp2pKXZ2RhCSXHdsL9X5YDOxjL6W1Mg=Q@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P) SoC
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Prabhakar <prabhakar.csengg@gmail.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	Magnus Damm <magnus.damm@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-> This introduces a new marker type for types that shouldn't be thread
-> safe. By adding a field of this type to a struct, it becomes non-Send
-> and non-Sync, which means that it cannot be accessed in any way from
-> threads other than the one it was created on.
->=20
-> This is useful for APIs that require globals such as `current` to remain
-> constant while the value exists.
->=20
-> We update two existing users in the Kernel to use this helper:
->=20
->  * `Task::current()` - moving the return type of this value to a
->    different thread would not be safe as you can no longer be guaranteed
->    that the `current` pointer remains valid.
->  * Lock guards. Mutexes and spinlocks should be unlocked on the same
->    thread as where they were locked, so we enforce this using the Send
->    trait.
->=20
-> There are also additional users in later patches of this patchset. See
-> [1] and [2] for the discussion that led to the introduction of this
-> patch.
->=20
-> Link: https://lore.kernel.org/all/nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQf=
-WIlN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=3D@pro=
-ton.me/ [1]
-> Link: https://lore.kernel.org/all/nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQf=
-WIlN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=3D@pro=
-ton.me/ [2]
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Trevor Gross <tmgross@umich.edu>
-> Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/sync/lock.rs | 13 +++++++++----
->  rust/kernel/task.rs      | 10 ++++++----
->  rust/kernel/types.rs     | 18 ++++++++++++++++++
->  3 files changed, 33 insertions(+), 8 deletions(-)
->=20
-> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-> index f6c34ca4d819..d6e9bab114b8 100644
-> --- a/rust/kernel/sync/lock.rs
-> +++ b/rust/kernel/sync/lock.rs
-> @@ -6,8 +6,13 @@
->  //! spinlocks, raw spinlocks) to be provided with minimal effort.
->=20
->  use super::LockClassKey;
-> -use crate::{init::PinInit, pin_init, str::CStr, types::Opaque, types::Sc=
-opeGuard};
-> -use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned}=
-;
-> +use crate::{
-> +    init::PinInit,
-> +    pin_init,
-> +    str::CStr,
-> +    types::{NotThreadSafe, Opaque, ScopeGuard},
-> +};
-> +use core::{cell::UnsafeCell, marker::PhantomPinned};
->  use macros::pin_data;
->=20
->  pub mod mutex;
-> @@ -139,7 +144,7 @@ pub fn lock(&self) -> Guard<'_, T, B> {
->  pub struct Guard<'a, T: ?Sized, B: Backend> {
->      pub(crate) lock: &'a Lock<T, B>,
->      pub(crate) state: B::GuardState,
-> -    _not_send: PhantomData<*mut ()>,
-> +    _not_send: NotThreadSafe,
->  }
->=20
->  // SAFETY: `Guard` is sync when the data protected by the lock is also s=
-ync.
-> @@ -191,7 +196,7 @@ pub(crate) unsafe fn new(lock: &'a Lock<T, B>, state:=
- B::GuardState) -> Self {
->          Self {
->              lock,
->              state,
-> -            _not_send: PhantomData,
-> +            _not_send: NotThreadSafe,
->          }
->      }
->  }
-> diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
-> index 55dff7e088bf..278c623de0c6 100644
-> --- a/rust/kernel/task.rs
-> +++ b/rust/kernel/task.rs
-> @@ -4,10 +4,12 @@
->  //!
->  //! C header: [`include/linux/sched.h`](srctree/include/linux/sched.h).
->=20
-> -use crate::types::Opaque;
-> +use crate::{
-> +    bindings,
-> +    types::{NotThreadSafe, Opaque},
-> +};
->  use core::{
->      ffi::{c_int, c_long, c_uint},
-> -    marker::PhantomData,
->      ops::Deref,
->      ptr,
->  };
-> @@ -106,7 +108,7 @@ impl Task {
->      pub unsafe fn current() -> impl Deref<Target =3D Task> {
->          struct TaskRef<'a> {
->              task: &'a Task,
-> -            _not_send: PhantomData<*mut ()>,
-> +            _not_send: NotThreadSafe,
->          }
->=20
->          impl Deref for TaskRef<'_> {
-> @@ -125,7 +127,7 @@ fn deref(&self) -> &Self::Target {
->              // that `TaskRef` is not `Send`, we know it cannot be transf=
-erred to another thread
->              // (where it could potentially outlive the caller).
->              task: unsafe { &*ptr.cast() },
-> -            _not_send: PhantomData,
-> +            _not_send: NotThreadSafe,
->          }
->      }
->=20
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index 2e7c9008621f..93734677cfe7 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -409,3 +409,21 @@ pub enum Either<L, R> {
->      /// Constructs an instance of [`Either`] containing a value of type =
-`R`.
->      Right(R),
->  }
-> +
-> +/// Zero-sized type to mark types not [`Send`].
-> +///
-> +/// Add this type as a field to your struct if your type should not be s=
-ent to a different task.
-> +/// Since [`Send`] is an auto trait, adding a single field that is `!Sen=
-d` will ensure that the
-> +/// whole type is `!Send`.
-> +///
-> +/// If a type is `!Send` it is impossible to give control over an instan=
-ce of the type to another
-> +/// task. This is useful to include in types that store or reference tas=
-k-local information. A file
-> +/// descriptor is an example of such task-local information.
-> +pub type NotThreadSafe =3D PhantomData<*mut ()>;
+Hi Wolfram,
 
-This also makes the type not Sync. For mutex guards it should be fine to
-be Sync if the wrapped type is Sync. Mutex guards not being Sync is
-pre-existing, so not something to fix in this patch. NotThreadSafe should
-probably document that it also markes a type as not Sync though.
+Thank you for the review.
 
-(For those not familiar with the difference, Send indicates that ownership
-of a value can be transferred to another thread, while Sync indicates that
-a value can be accessed from another thread through a shared reference,
-but not necessarily dropped from said thread.)
+On Wed, Jul 3, 2024 at 10:43=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Hi Prabhakar,
+>
+> On Wed, Jun 26, 2024 at 02:23:41PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > The SDHI/eMMC IPs found in the RZ/V2H(P) (a.k.a. r9a09g057) are very
+> > similar to those found in R-Car Gen3. However, they are not identical,
+> > necessitating an SoC-specific compatible string for fine-tuning driver
+> > support.
+> >
+> > Key features of the RZ/V2H(P) SDHI/eMMC IPs include:
+> > - Voltage level control via the IOVS bit.
+> > - PWEN pin support via SD_STATUS register.
+> > - Lack of HS400 support.
+> > - Fixed address mode operation.
+> >
+> > internal regulator support is added to control the voltage levels of SD
+> > pins via sd_iovs/sd_pwen bits in SD_STATUS register.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com> # on RZ/G3=
+S
+> > ---
+> > v3->v4
+> > - Dropped using 'renesas,sdhi-use-internal-regulator' property
+> > - Now using of_device_is_available() to check if regulator is available=
+ and enabled
+> > - Dropped extra spaces during operations
+> > - Included tested by tag from Claudiu
+> > - Rebased patch on top of https://patchwork.kernel.org/project/linux-re=
+nesas-soc/patch/20240626085015.32171-2-wsa+renesas@sang-engineering.com/
+> >
+> > v2->v3
+> > - Moved regulator info to renesas_sdhi_of_data instead of quirks
+> > - Added support to configure the init state of regulator
+> > - Added function pointers to configure regulator
+> > - Added REGULATOR_CHANGE_VOLTAGE mask
+> >
+> > v1->v2
+> > - Now controlling PWEN bit get/set_voltage
+> > ---
+> >  drivers/mmc/host/renesas_sdhi.h               |  13 ++
+> >  drivers/mmc/host/renesas_sdhi_core.c          |  98 ++++++++++++
+> >  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 147 ++++++++++++++++++
+> >  drivers/mmc/host/tmio_mmc.h                   |   5 +
+> >  4 files changed, 263 insertions(+)
+> >
+> > diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas=
+_sdhi.h
+> > index f12a87442338..cd509e7142ba 100644
+> > --- a/drivers/mmc/host/renesas_sdhi.h
+> > +++ b/drivers/mmc/host/renesas_sdhi.h
+> > @@ -11,6 +11,8 @@
+> >
+> >  #include <linux/dmaengine.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/regulator/driver.h>
+> > +#include <linux/regulator/machine.h>
+> >  #include <linux/workqueue.h>
+> >  #include "tmio_mmc.h"
+> >
+> > @@ -36,6 +38,12 @@ struct renesas_sdhi_of_data {
+> >       unsigned int max_blk_count;
+> >       unsigned short max_segs;
+> >       unsigned long sdhi_flags;
+> > +     struct regulator_desc *rdesc;
+> > +     struct regulator_init_data *reg_init_data;
+> > +     bool regulator_init_state;
+> > +     unsigned int regulator_init_voltage;
+> > +     int (*regulator_force_endis)(struct regulator_dev *rdev, bool ena=
+ble);
+> > +     int (*regulator_force_voltage)(struct regulator_dev *rdev, unsign=
+ed int voltage);
+>
+> I am open for discussing this but maybe here only
+>
+> +       struct renesas_sdhi_regulator *internal_regulator
+>
+> or something and create the new struct with the additions above?
+>
+> > +     int (*regulator_force_endis)(struct regulator_dev *rdev, bool ena=
+ble);
+> > +     int (*regulator_force_voltage)(struct regulator_dev *rdev, unsign=
+ed int voltage);
+>
+> Do we need these functions because the regulator framework cannot force
+> these actions because it caches the old state? I wonder if we can avoid
+> these functions...
+>
+Yes, for the voltage setting, it caches the values. However, for the
+regulator enable/disable, we can use is_enabled(), which probes the
+hardware.
 
-Having a dedicated type for this makes things clearer.
+The reset value for PWEN is 1. The regulator_force_endis() callback is
+mainly added for a scenario where, consider a code flow where the
+regulator is disabled (using regulator_disable()) and now we land in
+the reset callback (i.e., renesas_sdhi_reset()). Here, after issuing
+the reset, the PWEN value will be 1, but we need to restore it back.
+Hence, this callback is necessary. Note that is_enabled() cannot be
+used, as it probes the hardware when it switches states after a reset.
 
-Reviewed-by: Bj=C3=B6rn Roy Baron <bjorn3_gh@protonmail.com>
-with the docs updated to mention Sync.
+The reset value for IOVS is 3.3V. Below is the scenario for which
+regulator_force_voltage() is added:
 
-> +
-> +/// Used to construct instances of type [`NotThreadSafe`] similar to how=
- `PhantomData` is
-> +/// constructed.
-> +///
-> +/// [`NotThreadSafe`]: type@NotThreadSafe
-> +#[allow(non_upper_case_globals)]
-> +pub const NotThreadSafe: NotThreadSafe =3D PhantomData;
->=20
-> --
-> 2.45.2.803.g4e1b14247a-goog
+-----> Current value: 1.8V (cached by the regulator)
+--------------> After reset:
+------------------> Hardware has 3.3V, but the regulator core cache
+still has 1.8V.
+----------------------> When requested to switch to 1.8V from MMC
+core: The regulator core returns success, as it sees 1.8V in the
+cached state.
+----------------------------> As a result, the SD card won't work.
+
+Cheers,
+Prabhakar
 
