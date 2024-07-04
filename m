@@ -1,185 +1,192 @@
-Return-Path: <linux-kernel+bounces-240874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF7A9273FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:26:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA139273ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9140A1C21343
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4195B1F22544
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738A11ABC52;
-	Thu,  4 Jul 2024 10:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629221AB916;
+	Thu,  4 Jul 2024 10:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P+VJVlXA"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="l3mca594"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771391AB908
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 10:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2491C1AB53B;
+	Thu,  4 Jul 2024 10:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720088783; cv=none; b=Hgr9hb/7y6N7/427GLUlHbq/3kTy4lm0y8AnXBJE8T84cGZxDIRemFksXu9nDF+GDrjLULXW3PSAtGzAlTG3FwOc5b1kLfpbcJBxqwCqIJmOgkWZd6qem49fkfNx3qyN6EZ61qF8gE3sUHv0NrJxtp79uaNTeO9jaq49Y6R2RwU=
+	t=1720088590; cv=none; b=aM1VqeSn2YTcDfamLiEwAJE8RnruaVeT0cPdreV+uUiSKRRHUi75PTzpEers4SVdu4wrYNKPKkuL2UtyNTjVji1UxSR9HhjHyBaStbHFbx/J/OmnzHUxmoV2JPOL734H/9PrvjZhqSzoYpUkiGECS3L3KyFSrOBhNZ1wFgAFuxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720088783; c=relaxed/simple;
-	bh=h3E4WT2pJxswg3rBZtjgjLVx5HnJRGBne7qKSl90+QA=;
-	h=Subject:From:To:Cc:Date:Message-ID:Content-Type:MIME-Version; b=AVF09XjHGpIiOkt+4l1TE7kB1o8Yjv4lB/bajCFHxgSfmw33qmzueN8pzPQ2KLsudgFtoSpThtJQep/xsz5ZT1IXL/MBDzjJkhy+ppfhdGVW9Nj2PeHwlwQYWINaVbU13vyFjV+3hHfQ2U4/ytpDGBz9tYVp1afsrM/goGkN5EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P+VJVlXA; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4649vdbj014367;
-	Thu, 4 Jul 2024 10:25:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	subject:from:to:cc:date:message-id:content-type
-	:content-transfer-encoding:mime-version; s=pp1; bh=beaAn83Z14Fgy
-	nHM1T6PvGwI5Mpl48BF0FwSGHvL8Ms=; b=P+VJVlXAdZEj6SSUUjOPbGMAJcsao
-	GmSJlR2cpJy/6c1M3dFv7IKDwKx1Sy4ft873vw6P7qUlGEYUN7+DVN+6OSACJFvl
-	af53qWaKj285p0bBK+kOUNZLUabSQxYqWgONXqEKeDB/MDLfM3JHzaVngxu5dQ8C
-	VU+cuqCBKS8qvGo5ORi5zqlK3DpS46MTQ09FohZWngRu93cqL92mCOC500z327al
-	4mI+IOg6S9oO6u8huE2WPQ0tjkI3MTEN5S4hpOauqlApSFlkOxK2tJDuc9wESfHR
-	Y33Dklksl9IPUj2+Pj6HVgs+wGsVeB4T9kvsq9WzU0HkhYE0z8IPFqcFA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 405r8m892s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Jul 2024 10:25:57 +0000 (GMT)
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 464APu2U023834;
-	Thu, 4 Jul 2024 10:25:56 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 405r8m8911-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Jul 2024 10:25:56 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4647YRf3026386;
-	Thu, 4 Jul 2024 10:22:45 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 402wkq7jjk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Jul 2024 10:22:45 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 464AMdm039125310
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 4 Jul 2024 10:22:41 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C04E820043;
-	Thu,  4 Jul 2024 10:22:39 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1A9B320040;
-	Thu,  4 Jul 2024 10:22:38 +0000 (GMT)
-Received: from [172.17.0.2] (unknown [9.3.101.175])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  4 Jul 2024 10:22:37 +0000 (GMT)
-Subject: [PATCH] powerpc/pseries/iommu: Define spapr_tce_table_group_ops only
- with CONFIG_IOMMU_API
-From: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-To: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org
-Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, gbatra@linux.vnet.ibm.com,
-        sbhat@linux.ibm.com, jgg@ziepe.ca, ruscur@russell.cc,
-        linux-kernel@vger.kernel.org, tpearson@raptorengineering.com,
-        msuchanek@suse.de, vaibhav@linux.ibm.com
-Date: Thu, 04 Jul 2024 10:22:37 +0000
-Message-ID: <172008854222.784.13666247605789409729.stgit@linux.ibm.com>
-User-Agent: StGit/1.5
-Content-Type: text/plain; charset="utf-8"
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: X3dxyxVRaFXE-JkPkAQcVZ3EaetPX8DY
-X-Proofpoint-ORIG-GUID: FQCHDyXwtnorQwBRYtnOW0e3msDtdnlE
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1720088590; c=relaxed/simple;
+	bh=7nyOpKME690gkvlBcGeJF0SLp1Y4QA/z18+829pfKwg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FYkurxbWqvUbLiUMYDMA9w0lLRQCGDve3VHKaXLjBXKRMBCrcYqZVbdglRvac2/sV41JBoZkAEx7KlYtBs6oK4oYjWF1Jbu6hJPvSBLvrGisLfGKxVbrcs6e+LwazQYJ64D6gVr/yfNIPWeY9E9L5GGuxzIDfpFtsv5S7XQvBs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=l3mca594; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8A9AC200E9;
+	Thu,  4 Jul 2024 18:23:03 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1720088585;
+	bh=7nyOpKME690gkvlBcGeJF0SLp1Y4QA/z18+829pfKwg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=l3mca594A+J75xqCfbb8jWGh8SOWpbzVHF08kUhIZ81tD2orne5B6vF19VFYx5VD3
+	 D+6FaMqwBheR/TmKEcpzGBI+Q5kkbOjXNKdINEOUpIDbBHUXtVo3SaQPqMTTinoAyO
+	 AHpVndrY4Qm6urEgvhpJmskSU5gEgVffNPDDWq+zvOoy8APicNrbwVR6GlX/GKxIqB
+	 ZHnG1JEBBGAKqwSxPfGBIz7AWOitZXeZXhCOeNx5VBLfYh9k9tuD38xOEe7Djh4P1c
+	 OF9lF5caWsjCTkiZxMsmx5G20+kHRWOfjA9wpcKwqY5iegynPRuBnJxZDHPQUtB32w
+	 RehSnSN/2fTww==
+Message-ID: <35d8f28ef8d7de30733da7d8b1b16da39545879e.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v4 3/3] mctp pcc: Implement MCTP over PCC Transport
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: admiyo@os.amperecomputing.com, Matt Johnston
+ <matt@codeconstruct.com.au>,  "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla
+	 <sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Huisong Li <lihuisong@huawei.com>
+Date: Thu, 04 Jul 2024 18:23:03 +0800
+In-Reply-To: <20240702225845.322234-4-admiyo@os.amperecomputing.com>
+References: <20240702225845.322234-1-admiyo@os.amperecomputing.com>
+	 <20240702225845.322234-4-admiyo@os.amperecomputing.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-04_06,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=812 bulkscore=0
- priorityscore=1501 lowpriorityscore=0 suspectscore=0 impostorscore=0
- phishscore=0 clxscore=1015 adultscore=0 malwarescore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407040072
 
-The patch fixes the below warning,
-arch/powerpc/platforms/pseries/iommu.c:1824:37: warning: 'spapr_tce_table_group_ops' defined but not used [-Wunused-variable]
-
-The other error reported by the test robot no longer exists on the top
-of the tree due to later changes on the file.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202407020357.Hz8kQkKf-lkp@intel.com/
-Fixes: b09c031d9433 ("powerpc/iommu: Move pSeries specific functions to pseries/iommu.c")
-Signed-off-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
----
- arch/powerpc/platforms/pseries/iommu.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-index 672199ba7400..534cd159e9ab 100644
---- a/arch/powerpc/platforms/pseries/iommu.c
-+++ b/arch/powerpc/platforms/pseries/iommu.c
-@@ -68,7 +68,9 @@ static struct iommu_table *iommu_pseries_alloc_table(int node)
- 	return tbl;
- }
- 
-+#ifdef CONFIG_IOMMU_API
- static struct iommu_table_group_ops spapr_tce_table_group_ops;
-+#endif
- 
- static struct iommu_table_group *iommu_pseries_alloc_group(int node)
- {
-@@ -165,6 +167,7 @@ static unsigned long tce_get_pseries(struct iommu_table *tbl, long index)
- 	return be64_to_cpu(*tcep);
- }
- 
-+#ifdef CONFIG_IOMMU_API
- static long pseries_tce_iommu_userspace_view_alloc(struct iommu_table *tbl)
- {
- 	unsigned long cb = ALIGN(sizeof(tbl->it_userspace[0]) * tbl->it_size, PAGE_SIZE);
-@@ -183,6 +186,7 @@ static long pseries_tce_iommu_userspace_view_alloc(struct iommu_table *tbl)
- 
- 	return 0;
- }
-+#endif
- 
- static void tce_iommu_userspace_view_free(struct iommu_table *tbl)
- {
-@@ -738,6 +742,7 @@ struct iommu_table_ops iommu_table_lpar_multi_ops = {
- 	.free = tce_free_pSeries
- };
- 
-+#ifdef CONFIG_IOMMU_API
- /*
-  * When the DMA window properties might have been removed,
-  * the parent node has the table_group setup on it.
-@@ -757,6 +762,7 @@ static struct device_node *pci_dma_find_parent_node(struct pci_dev *dev,
- 
- 	return NULL;
- }
-+#endif
- 
- /*
-  * Find nearest ibm,dma-window (default DMA window) or direct DMA window or
-@@ -1845,6 +1851,7 @@ static bool iommu_bypass_supported_pSeriesLP(struct pci_dev *pdev, u64 dma_mask)
- 	return false;
- }
- 
-+#ifdef CONFIG_IOMMU_API
- /*
-  * A simple iommu_table_group_ops which only allows reusing the existing
-  * iommu_table. This handles VFIO for POWER7 or the nested KVM.
-@@ -2327,6 +2334,7 @@ static struct iommu_table_group_ops spapr_tce_table_group_ops = {
- 	.take_ownership = spapr_tce_take_ownership,
- 	.release_ownership = spapr_tce_release_ownership,
- };
-+#endif
- 
- static int iommu_mem_notifier(struct notifier_block *nb, unsigned long action,
- 		void *data)
-
+SGkgQWRhbSwKClN0aWxsIHNvbWUgbWlub3IgdGhpbmdzLCBhbmQgbG9ja2luZyBxdWVyeSwgaW5s
+aW5lLgoKWW91J2xsIHdhbnQgdG8gYWRkcmVzcyB0aGUga2VybmVsLXRlc3Qtcm9ib3QgZmFpbHVy
+ZSB0b287IGl0IGxvb2tzIGxpa2UKdGhlIGNvbmZpZyBpdCdzIGhpdHRpbmcgZW5kcyB1cCB3aXRo
+b3V0IHRoZSBhY3BpIGRlZmluaXRpb25zIGF2YWlsYWJsZTsKcG9zc2libHkgQ09ORklHX0FDUEkg
+aXMgbm90IHNldC4gTWF5YmUgeW91IG5lZWQgYSBkZXBlbmRzIGluc3RlYWQgb2YgYQpzZWxlY3Q/
+Cgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9tY3RwL0tjb25maWcgYi9kcml2ZXJzL25ldC9t
+Y3RwL0tjb25maWcKPiBpbmRleCBjZTlkMmQyY2NmM2IuLmZmNGVmZmQ4ZTk5YyAxMDA2NDQKPiAt
+LS0gYS9kcml2ZXJzL25ldC9tY3RwL0tjb25maWcKPiArKysgYi9kcml2ZXJzL25ldC9tY3RwL0tj
+b25maWcKPiBAQCAtNDIsNiArNDIsMTkgQEAgY29uZmlnIE1DVFBfVFJBTlNQT1JUX0kzQwo+IMKg
+wqDCoMKgwqDCoMKgwqDCoCBBIE1DVFAgcHJvdG9jb2wgbmV0d29yayBkZXZpY2UgaXMgY3JlYXRl
+ZCBmb3IgZWFjaCBJM0MgYnVzCj4gwqDCoMKgwqDCoMKgwqDCoMKgIGhhdmluZyBhICJtY3RwLWNv
+bnRyb2xsZXIiIGRldmljZXRyZWUgcHJvcGVydHkuCj4gwqAKPiArY29uZmlnIE1DVFBfVFJBTlNQ
+T1JUX1BDQwo+ICvCoMKgwqDCoMKgwqDCoHRyaXN0YXRlICJNQ1RQwqAgUENDIHRyYW5zcG9ydCIK
+Ck5pdDogeW91IGhhdmUgdHdvIHNwYWNlcyB0aGVyZS4KCj4gK3N0cnVjdCBtY3RwX3BjY19oZHIg
+ewo+ICvCoMKgwqDCoMKgwqDCoHUzMiBzaWduYXR1cmU7Cj4gK8KgwqDCoMKgwqDCoMKgdTMyIGZs
+YWdzOwo+ICvCoMKgwqDCoMKgwqDCoHUzMiBsZW5ndGg7Cj4gK8KgwqDCoMKgwqDCoMKgY2hhciBt
+Y3RwX3NpZ25hdHVyZVs0XTsKPiArfTsKCkkgc2VlIHlvdSd2ZSBhZGRlZCB0aGUgX19sZSBhbm5v
+dGF0aW9ucyB0aGF0IEkgbWVudGlvbmVkLCBidXQgdG8gYQpkaWZmZXJlbnQgcGF0Y2ggaW4gdGhl
+IHNlcmllcy4gV2FzIHRoYXQgaW50ZW50aW9uYWw/Cgo+ICsKPiArc3RydWN0IG1jdHBfcGNjX2h3
+X2FkZHIgewo+ICvCoMKgwqDCoMKgwqDCoHUzMiBpbmJveF9pbmRleDsKPiArwqDCoMKgwqDCoMKg
+wqB1MzIgb3V0Ym94X2luZGV4Owo+ICt9Owo+ICsKPiArLyogVGhlIG5ldGRldiBzdHJ1Y3R1cmUu
+IE9uZSBvZiB0aGVzZSBwZXIgUENDIGFkYXB0ZXIuICovCj4gK3N0cnVjdCBtY3RwX3BjY19uZGV2
+IHsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgbGlzdF9oZWFkIG5leHQ7CgpUaGlzIGlzIG5vdyB1
+bnVzZWQuCgo+ICvCoMKgwqDCoMKgwqDCoC8qIHNwaW5sb2NrIHRvIHNlcmlhbGl6ZSBhY2Nlc3Mg
+dG8gcGNjIGJ1ZmZlciBhbmQgcmVnaXN0ZXJzKi8KPiArwqDCoMKgwqDCoMKgwqBzcGlubG9ja190
+IGxvY2s7CgpUaGUgYWRkaXRpb24gb2YgdGhlIGNvbW1lbnQgaXMgZ29vZCwgYnV0IEknbSBzdGls
+bCBub3QgY2xlYXIgb24gd2hhdApkYXRhIHRoaXMgbG9jayBpcyBzZXJpYWxpc2luZyBhY2Nlc3Mg
+dG8uIERvZXMgInBjYyBidWZmZXIiIHJlZmVyIHRvIGJvdGgKdGhlIHBjY19jb21tX2luYm94X2Fk
+ZHIgYW5kIHBjY19jb21tX291dGJveF9hZGRyIGJ1ZmZlcj8KCklmIHNvLCB5b3UgbWF5IGJlIG1p
+c3NpbmcgbG9ja2luZyBvbiB0aGUgY2xpZW50X3J4X2NhbGxiYWNrLgoKQW5kIHdoYXQgYXJlIHRo
+ZSAicmVnaXN0ZXJzIiByZWZlcnJpbmcgdG8gaGVyZT8gZXZlcnl0aGluZyBzZWVtcyB0byBiZQph
+Y2Nlc3NlZCB0aHJvdWdoIHRoZSBtYm94IGludGVyZmFjZS4gRG9lcyB0aGF0IHJlcXVpcmUgc2Vy
+aWFsaXNhdGlvbj8KCihpZiB5b3UgY2FuIGxpc3QgYWN0dWFsIHN0cnVjdCBtZW1iZXJzIHRoYXQg
+YXJlIG9ubHkgYWNjZXNzZWQgdW5kZXIgdGhlCmxvY2ssIHRoYXQgbWF5IG1ha2UgdGhpbmdzIG1v
+cmUgY2xlYXIgLSBidXQgaXQgY2FuIGJlIGEgYml0IG9mIGEgYmFsYW5jZQppbiBub3QgZ29pbmcg
+KnRvbyogb3ZlcmJvYXJkIHdpdGggdGhlIGRlc2NyaXB0aW9uISkKCj4gK8KgwqDCoMKgwqDCoMKg
+c3RydWN0IG1jdHBfZGV2IG1kZXY7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IGFjcGlfZGV2aWNl
+ICphY3BpX2RldmljZTsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgcGNjX21ib3hfY2hhbiAqaW5f
+Y2hhbjsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgcGNjX21ib3hfY2hhbiAqb3V0X2NoYW47Cj4g
+K8KgwqDCoMKgwqDCoMKgc3RydWN0IG1ib3hfY2xpZW50IG91dGJveF9jbGllbnQ7Cj4gK8KgwqDC
+oMKgwqDCoMKgc3RydWN0IG1ib3hfY2xpZW50IGluYm94X2NsaWVudDsKPiArwqDCoMKgwqDCoMKg
+wqB2b2lkIF9faW9tZW0gKnBjY19jb21tX2luYm94X2FkZHI7Cj4gK8KgwqDCoMKgwqDCoMKgdm9p
+ZCBfX2lvbWVtICpwY2NfY29tbV9vdXRib3hfYWRkcjsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3Qg
+bWN0cF9wY2NfaHdfYWRkciBod19hZGRyOwo+ICt9Owo+ICsKPiArc3RhdGljIHZvaWQgbWN0cF9w
+Y2NfY2xpZW50X3J4X2NhbGxiYWNrKHN0cnVjdCBtYm94X2NsaWVudCAqYywgdm9pZCAqYnVmZmVy
+KQo+ICt7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1jdHBfcGNjX25kZXYgKm1jdHBfcGNjX2Rl
+djsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgbWN0cF9wY2NfaGRyIG1jdHBfcGNjX2hkcjsKPiAr
+wqDCoMKgwqDCoMKgwqBzdHJ1Y3QgbWN0cF9za2JfY2IgKmNiOwo+ICvCoMKgwqDCoMKgwqDCoHN0
+cnVjdCBza19idWZmICpza2I7Cj4gK8KgwqDCoMKgwqDCoMKgdm9pZCAqc2tiX2J1ZjsKPiArwqDC
+oMKgwqDCoMKgwqB1MzIgZGF0YV9sZW47Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoG1jdHBfcGNjX2Rl
+diA9IGNvbnRhaW5lcl9vZihjLCBzdHJ1Y3QgbWN0cF9wY2NfbmRldiwgaW5ib3hfY2xpZW50KTsK
+PiArwqDCoMKgwqDCoMKgwqBtZW1jcHlfZnJvbWlvKCZtY3RwX3BjY19oZHIsIG1jdHBfcGNjX2Rl
+di0+cGNjX2NvbW1faW5ib3hfYWRkciwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCBzaXplb2Yoc3RydWN0IG1jdHBfcGNjX2hkcikpOwo+ICvCoMKgwqDCoMKgwqDC
+oGRhdGFfbGVuID0gbWN0cF9wY2NfaGRyLmxlbmd0aCArIE1DVFBfSEVBREVSX0xFTkdUSDsKPiAr
+Cj4gK8KgwqDCoMKgwqDCoMKgaWYgKGRhdGFfbGVuID4gbWN0cF9wY2NfZGV2LT5tZGV2LmRldi0+
+bWF4X210dSkgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBtY3RwX3BjY19kZXYt
+Pm1kZXYuZGV2LT5zdGF0cy5yeF9kcm9wcGVkKys7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoHJldHVybjsKPiArwqDCoMKgwqDCoMKgwqB9CgpTaG91bGRuJ3QgdGhpcyBiZSBjb21w
+YXJpbmcgb24gdGhlIGN1cnJlbnRseS1zZXQgTVRVLCByYXRoZXIgdGhhbiB0aGUKbWF4PwoKW2lu
+IGVpdGhlciBjYXNlLCB0aGlzIGFzc3VtZXMgdGhhdCB3ZSB3YW50IHRvIGVuZm9yY2UgUlggcGFj
+a2V0cyB0byBiZQp3aXRoaW4gdGhlIHRyYW5zbWl0IGxpbWl0LCB3aGljaCBtYXkgYmUgcmVhc29u
+YWJsZSwgYnV0IG1heWJlIG5vdApzdHJpY3RseSBuZWNlc3NhcnldCgo+ICsKPiArwqDCoMKgwqDC
+oMKgwqBza2IgPSBuZXRkZXZfYWxsb2Nfc2tiKG1jdHBfcGNjX2Rldi0+bWRldi5kZXYsIGRhdGFf
+bGVuKTsKPiArwqDCoMKgwqDCoMKgwqBpZiAoIXNrYikgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqBtY3RwX3BjY19kZXYtPm1kZXYuZGV2LT5zdGF0cy5yeF9kcm9wcGVkKys7Cj4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybjsKPiArwqDCoMKgwqDCoMKgwqB9
+Cj4gK8KgwqDCoMKgwqDCoMKgbWN0cF9wY2NfZGV2LT5tZGV2LmRldi0+c3RhdHMucnhfcGFja2V0
+cysrOwo+ICvCoMKgwqDCoMKgwqDCoG1jdHBfcGNjX2Rldi0+bWRldi5kZXYtPnN0YXRzLnJ4X2J5
+dGVzICs9IGRhdGFfbGVuOwo+ICvCoMKgwqDCoMKgwqDCoHNrYi0+cHJvdG9jb2wgPSBodG9ucyhF
+VEhfUF9NQ1RQKTsKPiArwqDCoMKgwqDCoMKgwqBza2JfYnVmID0gc2tiX3B1dChza2IsIGRhdGFf
+bGVuKTsKPiArwqDCoMKgwqDCoMKgwqBtZW1jcHlfZnJvbWlvKHNrYl9idWYsIG1jdHBfcGNjX2Rl
+di0+cGNjX2NvbW1faW5ib3hfYWRkciwgZGF0YV9sZW4pOwo+ICsKPiArwqDCoMKgwqDCoMKgwqBz
+a2JfcmVzZXRfbWFjX2hlYWRlcihza2IpOwo+ICvCoMKgwqDCoMKgwqDCoHNrYl9wdWxsKHNrYiwg
+c2l6ZW9mKHN0cnVjdCBtY3RwX3BjY19oZHIpKTsKPiArwqDCoMKgwqDCoMKgwqBza2JfcmVzZXRf
+bmV0d29ya19oZWFkZXIoc2tiKTsKPiArwqDCoMKgwqDCoMKgwqBjYiA9IF9fbWN0cF9jYihza2Ip
+Owo+ICvCoMKgwqDCoMKgwqDCoGNiLT5oYWxlbiA9IDA7Cj4gK8KgwqDCoMKgwqDCoMKgbmV0aWZf
+cngoc2tiKTsKPiArfQo+ICsKPiArc3RhdGljIG5ldGRldl90eF90IG1jdHBfcGNjX3R4KHN0cnVj
+dCBza19idWZmICpza2IsIHN0cnVjdCBuZXRfZGV2aWNlICpuZGV2KQo+ICt7Cj4gK8KgwqDCoMKg
+wqDCoMKgc3RydWN0IG1jdHBfcGNjX2hkciBwY2NfaGVhZGVyOwo+ICvCoMKgwqDCoMKgwqDCoHN0
+cnVjdCBtY3RwX3BjY19uZGV2ICptcG5kOwo+ICvCoMKgwqDCoMKgwqDCoHZvaWQgX19pb21lbSAq
+YnVmZmVyOwo+ICvCoMKgwqDCoMKgwqDCoHVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4gKwo+ICvCoMKg
+wqDCoMKgwqDCoG5kZXYtPnN0YXRzLnR4X2J5dGVzICs9IHNrYi0+bGVuOwo+ICvCoMKgwqDCoMKg
+wqDCoG5kZXYtPnN0YXRzLnR4X3BhY2tldHMrKzsKPiArwqDCoMKgwqDCoMKgwqBtcG5kID0gbmV0
+ZGV2X3ByaXYobmRldik7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoHNwaW5fbG9ja19pcnFzYXZlKCZt
+cG5kLT5sb2NrLCBmbGFncyk7Cj4gK8KgwqDCoMKgwqDCoMKgYnVmZmVyID0gbXBuZC0+cGNjX2Nv
+bW1fb3V0Ym94X2FkZHI7Cj4gK8KgwqDCoMKgwqDCoMKgcGNjX2hlYWRlci5zaWduYXR1cmUgPSBQ
+Q0NfTUFHSUMgfCBtcG5kLT5od19hZGRyLm91dGJveF9pbmRleDsKPiArwqDCoMKgwqDCoMKgwqBw
+Y2NfaGVhZGVyLmZsYWdzID0gUENDX0hFQURFUl9GTEFHUzsKPiArwqDCoMKgwqDCoMKgwqBtZW1j
+cHkocGNjX2hlYWRlci5tY3RwX3NpZ25hdHVyZSwgTUNUUF9TSUdOQVRVUkUsIFNJR05BVFVSRV9M
+RU5HVEgpOwo+ICvCoMKgwqDCoMKgwqDCoHBjY19oZWFkZXIubGVuZ3RoID0gc2tiLT5sZW4gKyBT
+SUdOQVRVUkVfTEVOR1RIOwoKQXJlIHRoZXJlIGFueSBjb25zdHJhaW50cyBvbiB0aGlzIGxlbmd0
+aD8KCj4gK8KgwqDCoMKgwqDCoMKgbWVtY3B5X3RvaW8oYnVmZmVyLCAmcGNjX2hlYWRlciwgc2l6
+ZW9mKHN0cnVjdCBtY3RwX3BjY19oZHIpKTsKPiArwqDCoMKgwqDCoMKgwqBtZW1jcHlfdG9pbyhi
+dWZmZXIgKyBzaXplb2Yoc3RydWN0IG1jdHBfcGNjX2hkciksIHNrYi0+ZGF0YSwgc2tiLT5sZW4p
+Owo+ICvCoMKgwqDCoMKgwqDCoG1wbmQtPm91dF9jaGFuLT5tY2hhbi0+bWJveC0+b3BzLT5zZW5k
+X2RhdGEobXBuZC0+b3V0X2NoYW4tPm1jaGFuLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIE5VTEwpOwo+ICvCoMKgwqDCoMKgwqDCoHNwaW5fdW5sb2NrX2ly
+cXJlc3RvcmUoJm1wbmQtPmxvY2ssIGZsYWdzKTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgZGV2X2Nv
+bnN1bWVfc2tiX2FueShza2IpOwo+ICvCoMKgwqDCoMKgwqDCoHJldHVybiBORVRERVZfVFhfT0s7
+Cj4gK30KPiArCj4gK3N0YXRpYyB2b2lkCj4gK21jdHBfcGNjX25ldF9zdGF0cyhzdHJ1Y3QgbmV0
+X2RldmljZSAqbmV0X2RldiwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBz
+dHJ1Y3QgcnRubF9saW5rX3N0YXRzNjQgKnN0YXRzKQo+ICt7Cj4gK8KgwqDCoMKgwqDCoMKgc3Ry
+dWN0IG1jdHBfcGNjX25kZXYgKm1wbmQ7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoG1wbmQgPSBuZXRk
+ZXZfcHJpdihuZXRfZGV2KTsKPiArwqDCoMKgwqDCoMKgwqBzdGF0cy0+cnhfZXJyb3JzID0gMDsK
+PiArwqDCoMKgwqDCoMKgwqBzdGF0cy0+cnhfcGFja2V0cyA9IG1wbmQtPm1kZXYuZGV2LT5zdGF0
+cy5yeF9wYWNrZXRzOwo+ICvCoMKgwqDCoMKgwqDCoHN0YXRzLT50eF9wYWNrZXRzID0gbXBuZC0+
+bWRldi5kZXYtPnN0YXRzLnR4X3BhY2tldHM7Cj4gK8KgwqDCoMKgwqDCoMKgc3RhdHMtPnJ4X2Ry
+b3BwZWQgPSAwOwo+ICvCoMKgwqDCoMKgwqDCoHN0YXRzLT50eF9ieXRlcyA9IG1wbmQtPm1kZXYu
+ZGV2LT5zdGF0cy50eF9ieXRlczsKPiArwqDCoMKgwqDCoMKgwqBzdGF0cy0+cnhfYnl0ZXMgPSBt
+cG5kLT5tZGV2LmRldi0+c3RhdHMucnhfYnl0ZXM7CgpJc24ndCBtcG5kLT5tZGV2LmRldiBqdXN0
+IG5ldF9kZXY/CgpTaG91bGQgd2UgYmUgZG9pbmcgdGhpcyAoYXMgd2VsbCBhcyB0aGUgc3RhdHMg
+dXBkYXRlcykgd2l0aCBtcG5kLT5sb2NrCmhlbGQ/IAoKPiArc3RhdGljIHZvaWQgbWN0cF9wY2Nf
+ZHJpdmVyX3JlbW92ZShzdHJ1Y3QgYWNwaV9kZXZpY2UgKmFkZXYpCj4gK3sKPiArwqDCoMKgwqDC
+oMKgwqBzdHJ1Y3QgbWN0cF9wY2NfbmRldiAqbWN0cF9wY2NfbmRldiA9IGFjcGlfZHJpdmVyX2Rh
+dGEoYWRldik7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoHBjY19tYm94X2ZyZWVfY2hhbm5lbChtY3Rw
+X3BjY19uZGV2LT5vdXRfY2hhbik7Cj4gK8KgwqDCoMKgwqDCoMKgcGNjX21ib3hfZnJlZV9jaGFu
+bmVsKG1jdHBfcGNjX25kZXYtPmluX2NoYW4pOwo+ICvCoMKgwqDCoMKgwqDCoG1jdHBfdW5yZWdp
+c3Rlcl9uZXRkZXYobWN0cF9wY2NfbmRldi0+bWRldi5kZXYpOwo+ICt9CgpOaWNlIQoKQ2hlZXJz
+LAoKCkplcmVteQo=
 
 
