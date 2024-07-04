@@ -1,124 +1,97 @@
-Return-Path: <linux-kernel+bounces-241064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3103A9276AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:00:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8784A9276A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B238728569A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 365521F23D09
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18181AE858;
-	Thu,  4 Jul 2024 13:00:49 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F451850B2;
+	Thu,  4 Jul 2024 13:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0lX2sPAt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88867E9;
-	Thu,  4 Jul 2024 13:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D9641A81
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720098049; cv=none; b=ptX4K0XhIxiOdjHCgh4NN3hYePbChXs2t5pN2CoRgIZd5whF/XPf6a+Zwlz9NtpyX7FB/oFx0ogOoOE0sguQHCgnlktnGl6rHi7/xGITkDpcTbQgXqBGKxFSYiKvW9Yy+QgvU7wI+haInflTX6DSU1m0Wrym3joG9InJzIVdR1M=
+	t=1720098011; cv=none; b=AHV+Fs8a8+As3y6iBRfRtCaRfRCkogEV2uF7NJpYWBhposapCV90nYHluMYiMAO8bufhU1punIHlFJ/Swc/ekP+vz1qVkp5f1rqaf3W2xNnVDcrs7L1vghE+P110tFUpm1yERnAXCZHcHbu2kw5vHACGaVtakctJ/kklF01opII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720098049; c=relaxed/simple;
-	bh=6iEPaEZmh+B842HzffrRpZPpysqpM05orObQ1SfKGdk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BpDPFC/jMoxqySN7IQYiJBnLA7JAp2fBx1aG1VEOUC7SksxI7A/gMtiaQma5u6fbDwdE6tHTsMFPRMVlZB0Q+HREs7gm49TznXrPreQo5UVak8MqpiZOPjYubPpfeKNm0ii4rOsjwzNSMahu1P9BgH3A/UHwh5Ec/gyA/vcYcjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 71E4A2013AD;
-	Thu,  4 Jul 2024 15:00:40 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 42EBD2013B7;
-	Thu,  4 Jul 2024 15:00:40 +0200 (CEST)
-Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id BAA13180222B;
-	Thu,  4 Jul 2024 21:00:38 +0800 (+08)
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	rohit.fule@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com,
-	haibo.chen@nxp.com,
-	LnxRevLi@nxp.com
-Subject: [PATCH v1] Bluetooth: btnxpuart: Add system suspend and resume handlers
-Date: Thu,  4 Jul 2024 18:28:26 +0530
-Message-Id: <20240704125826.715387-1-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720098011; c=relaxed/simple;
+	bh=LqqBoTPJhx2EEB+1QmuivYZgdQgFAwkpT2zWOPv2KNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=awPfNp4vP3w1IPt4ylfQV1o8e3Zgtrt5jy9MbQVB+cfYQKNmoHyoYXjt+VwJ9mq9OdGIyEP2uxlMtTrP7MieD4BjB8oDKRFEWpkhCiTFc+W9eSYTinGlbkGORe2/BlPeDr3z/Nolyg+1Jc7YPtu+diisRoFpoDAlT8ax9EOGh10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0lX2sPAt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EF6EC3277B;
+	Thu,  4 Jul 2024 13:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720098010;
+	bh=LqqBoTPJhx2EEB+1QmuivYZgdQgFAwkpT2zWOPv2KNE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0lX2sPAteihf1iDwcGMeukmGFoUJoxIYx/JUxt4mEfcCGpowYfL20e9s1UmFd+7eP
+	 87Zxk69pLm0ihfmp/fXz0Izp1I/WLq4BkfR1akOshrkEBBsTKF1tX61sXMCRu7ODNI
+	 moUUg/joEom8dPMnwHtGj/eL+ZFFi6zsUJM2YWP4=
+Date: Thu, 4 Jul 2024 15:00:07 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Yu-Ting Tseng <yutingtseng@google.com>
+Cc: cmllamas@google.com, tkjos@google.com, arve@android.com,
+	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+	surenb@google.com, aliceryhl@google.com, kernel-team@android.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] binder: frozen notification
+Message-ID: <2024070439-expanse-usual-434f@gregkh>
+References: <CAN5Drs06fbditeSaVLc6i6wEY+A47HHzQmhCS1rzJgacNs1Tjw@mail.gmail.com>
+ <20240703175843.3639568-2-yutingtseng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703175843.3639568-2-yutingtseng@google.com>
 
-This adds handling for system suspend and resume. While the host enters
-suspend state, the driver will drive the chip into low power state.
+On Wed, Jul 03, 2024 at 10:58:42AM -0700, Yu-Ting Tseng wrote:
+> Separated the binder_features change into its own patch.
+> 
+> Yu-Ting Tseng (2):
+>   binder: frozen notification
+>   binder: frozen notification binder_features flag
+> 
+>  drivers/android/binder.c                      | 284 +++++++++++++++++-
+>  drivers/android/binder_internal.h             |  21 +-
+>  drivers/android/binderfs.c                    |   8 +
+>  include/uapi/linux/android/binder.h           |  36 +++
+>  .../filesystems/binderfs/binderfs_test.c      |   1 +
+>  5 files changed, 346 insertions(+), 4 deletions(-)
+> 
+> 
+> base-commit: 14d7c92f8df9c0964ae6f8b813c1b3ac38120825
 
-Similarly when system is resuming, the driver will wake up the chip.
+This email thread is crazy, sorry, look at how it shows up in sane email
+clients:
+	https://lore.kernel.org/all/20240703175843.3639568-2-yutingtseng@google.com/
 
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
----
- drivers/bluetooth/btnxpuart.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Please just send a new series, as it's own thread, so we can figure out
+what to do here.
 
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index da18fd4f54f3..acd360fcc3b8 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -1498,6 +1498,24 @@ static void nxp_serdev_remove(struct serdev_device *serdev)
- 	hci_free_dev(hdev);
- }
- 
-+static int nxp_suspend(struct device *dev)
-+{
-+	struct btnxpuart_dev *nxpdev = dev_get_drvdata(dev);
-+	struct ps_data *psdata = &nxpdev->psdata;
-+
-+	ps_control(psdata->hdev, PS_STATE_SLEEP);
-+	return 0;
-+}
-+
-+static int nxp_resume(struct device *dev)
-+{
-+	struct btnxpuart_dev *nxpdev = dev_get_drvdata(dev);
-+	struct ps_data *psdata = &nxpdev->psdata;
-+
-+	ps_control(data->hdev, PS_STATE_AWAKE);
-+	return 0;
-+}
-+
- static struct btnxpuart_data w8987_data __maybe_unused = {
- 	.helper_fw_name = NULL,
- 	.fw_name = FIRMWARE_W8987,
-@@ -1517,12 +1535,17 @@ static const struct of_device_id nxpuart_of_match_table[] __maybe_unused = {
- };
- MODULE_DEVICE_TABLE(of, nxpuart_of_match_table);
- 
-+static const struct dev_pm_ops nxp_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(nxp_suspend, nxp_resume)
-+};
-+
- static struct serdev_device_driver nxp_serdev_driver = {
- 	.probe = nxp_serdev_probe,
- 	.remove = nxp_serdev_remove,
- 	.driver = {
- 		.name = "btnxpuart",
- 		.of_match_table = of_match_ptr(nxpuart_of_match_table),
-+		.pm = &nxp_pm_ops,
- 	},
- };
- 
--- 
-2.34.1
+And for some reason I have 2 different copies of the v6 series, one sent
+to the list, and one not, which makes no sense either.  For that reason
+alone I can't take this :(
 
+Please, realize what this looks like from a reviewer's point of view,
+you want to make it simple and easy for us to know what to do...
+
+Please fix up and send a v7.
+
+thanks,
+
+greg k-h
 
