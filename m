@@ -1,233 +1,330 @@
-Return-Path: <linux-kernel+bounces-241406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8853927B1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:27:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAD6927B1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D97351C22203
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:27:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12F22845B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E6E1B3722;
-	Thu,  4 Jul 2024 16:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFC11B3746;
+	Thu,  4 Jul 2024 16:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="fqktYgRE"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrDUa8n+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352661AEFC9;
-	Thu,  4 Jul 2024 16:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4001B3721;
+	Thu,  4 Jul 2024 16:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720110421; cv=none; b=Q4zQ4M6K+Y2BsPzTvK372YySUMFY6uEcY7l3xWWgU9OgR2TmtLvOKzW5kgikaC4q0TaCC/pSz1K5MFJ7cVvZMkvfT65OQGw24GFStLsFO0H7Seb34E62QZ4O/u7u1EndlKbfNBpMn6QaCcQIHp7HPTeQ+NQy6ue4IAUPwk4P5kw=
+	t=1720110421; cv=none; b=PbNm9/Z8kGPxnQJiGrcBy1CX+Q5kjsQno6U9SvxGDHvW28oS+vFnZD35x3U8XocBQwaRhxBNkSBalXDVGbkZCCc6Ekwm7sddPvAi62FkANnpDBnYujRYhCXJDd+BGKVZ/BDE1g9NaR5LKTgZseRaW8bOURepgjWJRGaKYUDlJaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720110421; c=relaxed/simple;
-	bh=5pNezDxTRTgWQ3fPoix/Z760fcy8zD638XqFcSStAmM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ar7KUvhmvdR5O+T2rxNBGxrOeM/9kiXdatpa9xG+h2YIPG0A89U4mJEZBvM5AG1ReDJqMfmSXdtZZMawSeuF9dd6/GiIq3DkOdR3XzaJAcG0VajjXHKhEXw20cFmXw4UN5foVwtCJ8E4Opw1i/oxqCelV/V4qT7bNM8FheeKvLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=fqktYgRE reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 28ce5c95349cd6ad; Thu, 4 Jul 2024 18:26:55 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 338FCA20EA8;
-	Thu,  4 Jul 2024 18:26:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1720110415;
-	bh=5pNezDxTRTgWQ3fPoix/Z760fcy8zD638XqFcSStAmM=;
-	h=From:To:Cc:Subject:Date;
-	b=fqktYgRERVexuBPNcUYl4auemwL716Urnnb2ED/l4fbogpc9JHdLsCFnUDOr8c3xH
-	 XGyN5c2G8XnQsCkOdY4+A7MJmXVIiST/s15Mhrifvq/zQRB+o9nbc/acMm+SodxjvR
-	 nUscyC0rrkf/tR/o+JuEgDNnxxdcVDeaOnhLIX98s+FeB1LzN9kKabdMVSHvsk/kPJ
-	 um4wQpuAMD5FCoEOAeQ0k28VK/o1ARjfCpvZf3aZHTyLGt4/FaQkuImobFk6+3VEMm
-	 RZeD7IGdjvtOuYY5GLPLHwpQGszgztQ3C3+rRQYIFam2H/KdWxK6/zJ9M19twC+fHZ
-	 a7GIUbbtTB6QA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>,
- Armin Wolf <w_armin@gmx.de>
-Subject:
- [PATCH v1] ACPI: EC: Do not release locks during operation region accesses
-Date: Thu, 04 Jul 2024 18:26:54 +0200
-Message-ID: <12473338.O9o76ZdvQC@rjwysocki.net>
+	bh=OJmz8+6ALNKIZuZiA3L7XZYVfl4eHNDpzxBW8RqwYCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m6woeuwyFGFcOqQ9PAV3zEWXU3+G9/Q7p7PZhecopEvDNG+wRSMnriyUgHc2VDZAw0DI2kC44GOSd+Jg1Tcq5dLI5x9JX90lwF7+GEAFaLVyumOCc6dpHsThYaMpYLIudz68HW7nFI4UE4bUYqsNKszlP6VwYMbnjYpYqx9gAAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrDUa8n+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CDFDC3277B;
+	Thu,  4 Jul 2024 16:26:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720110421;
+	bh=OJmz8+6ALNKIZuZiA3L7XZYVfl4eHNDpzxBW8RqwYCw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OrDUa8n+RnwzJxAa0YTpcTYvjdnrMog/75aNlJNG5oj0fBL9j91MXxE1+Q1mRDAb6
+	 Yj8LuH/zQXwKEh3njCx7Q1x9MSPQDOGz68fSYbliJTtpC8RBC63uzqy+URgqkNaDgJ
+	 8bgq+SeoubL1oGEb1DLUb1fttr8/CwKzK613L/q3R1SvZL0Fw/RCqmkGVfxD4aR2qp
+	 8lXGA203OPoOdIvWqpGuiHFUtjvAOx1BbcUscY/IpQ9wB63AO+FMkFGDrD7qdzOGyo
+	 Ys4HNl26qcwvstAg2XaOUhkUF+fqt+bjTIQz5UD/TqerHeehIO2Mn88M7V4F7zv1eP
+	 IGeLbBQg4Xxkg==
+Date: Thu, 4 Jul 2024 17:26:56 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Andy Hsieh <andy.hsieh@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Louis Kuo <louis.kuo@mediatek.com>,
+	Phi-Bang Nguyen <pnguyen@baylibre.com>
+Subject: Re: [PATCH v5 1/5] dt-bindings: media: add mediatek ISP3.0 sensor
+ interface
+Message-ID: <20240704-catcall-stubbly-9258b056e42e@spud>
+References: <20240704-add-mtk-isp-3-0-support-v5-0-bfccccc5ec21@baylibre.com>
+ <20240704-add-mtk-isp-3-0-support-v5-1-bfccccc5ec21@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudelgdellecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeffffffkefgheehffelteeiveeffeevhfelteejvddvieejjeelvdeiheeuveeuffenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeegpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopeifpggrrhhmihhnsehgmhigrdguvg
-X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-It is not particularly useful to release locks (the EC mutex and the
-ACPI global lock, if present) and re-acquire them immediately thereafter
-during EC address space accesses in acpi_ec_space_handler().
-
-First, releasing them for a while before grabbing them again does not
-really help anyone because there may not be enough time for another
-thread to acquire them.
-
-Second, if another thread successfully acquires them and carries out
-a new EC write or read in the middle if an operation region access in
-progress, it may confuse the EC firmware, especially after the burst
-mode has been enabled.
-
-Finally, manipulating the locks after writing or reading every single
-byte of data is overhead that it is better to avoid.
-
-Accordingly, modify the code to carry out EC address space accesses
-entirely without releasing the locks.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-For 6.12.
-
----
- drivers/acpi/ec.c |   55 ++++++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 49 insertions(+), 6 deletions(-)
-
-Index: linux-pm/drivers/acpi/ec.c
-===================================================================
---- linux-pm.orig/drivers/acpi/ec.c
-+++ linux-pm/drivers/acpi/ec.c
-@@ -783,6 +783,9 @@ static int acpi_ec_transaction_unlocked(
- 	unsigned long tmp;
- 	int ret = 0;
- 
-+	if (t->rdata)
-+		memset(t->rdata, 0, t->rlen);
-+
- 	/* start transaction */
- 	spin_lock_irqsave(&ec->lock, tmp);
- 	/* Enable GPE for command processing (IBF=0/OBF=1) */
-@@ -819,8 +822,6 @@ static int acpi_ec_transaction(struct ac
- 
- 	if (!ec || (!t) || (t->wlen && !t->wdata) || (t->rlen && !t->rdata))
- 		return -EINVAL;
--	if (t->rdata)
--		memset(t->rdata, 0, t->rlen);
- 
- 	mutex_lock(&ec->mutex);
- 	if (ec->global_lock) {
-@@ -847,7 +848,7 @@ static int acpi_ec_burst_enable(struct a
- 				.wdata = NULL, .rdata = &d,
- 				.wlen = 0, .rlen = 1};
- 
--	return acpi_ec_transaction(ec, &t);
-+	return acpi_ec_transaction_unlocked(ec, &t);
- }
- 
- static int acpi_ec_burst_disable(struct acpi_ec *ec)
-@@ -857,7 +858,7 @@ static int acpi_ec_burst_disable(struct
- 				.wlen = 0, .rlen = 0};
- 
- 	return (acpi_ec_read_status(ec) & ACPI_EC_FLAG_BURST) ?
--				acpi_ec_transaction(ec, &t) : 0;
-+				acpi_ec_transaction_unlocked(ec, &t) : 0;
- }
- 
- static int acpi_ec_read(struct acpi_ec *ec, u8 address, u8 *data)
-@@ -873,6 +874,19 @@ static int acpi_ec_read(struct acpi_ec *
- 	return result;
- }
- 
-+static int acpi_ec_read_unlocked(struct acpi_ec *ec, u8 address, u8 *data)
-+{
-+	int result;
-+	u8 d;
-+	struct transaction t = {.command = ACPI_EC_COMMAND_READ,
-+				.wdata = &address, .rdata = &d,
-+				.wlen = 1, .rlen = 1};
-+
-+	result = acpi_ec_transaction_unlocked(ec, &t);
-+	*data = d;
-+	return result;
-+}
-+
- static int acpi_ec_write(struct acpi_ec *ec, u8 address, u8 data)
- {
- 	u8 wdata[2] = { address, data };
-@@ -883,6 +897,16 @@ static int acpi_ec_write(struct acpi_ec
- 	return acpi_ec_transaction(ec, &t);
- }
- 
-+static int acpi_ec_write_unlocked(struct acpi_ec *ec, u8 address, u8 data)
-+{
-+	u8 wdata[2] = { address, data };
-+	struct transaction t = {.command = ACPI_EC_COMMAND_WRITE,
-+				.wdata = wdata, .rdata = NULL,
-+				.wlen = 2, .rlen = 0};
-+
-+	return acpi_ec_transaction_unlocked(ec, &t);
-+}
-+
- int ec_read(u8 addr, u8 *val)
- {
- 	int err;
-@@ -1323,6 +1347,7 @@ acpi_ec_space_handler(u32 function, acpi
- 	struct acpi_ec *ec = handler_context;
- 	int result = 0, i, bytes = bits / 8;
- 	u8 *value = (u8 *)value64;
-+	u32 glk;
- 
- 	if ((address > 0xFF) || !value || !handler_context)
- 		return AE_BAD_PARAMETER;
-@@ -1330,13 +1355,25 @@ acpi_ec_space_handler(u32 function, acpi
- 	if (function != ACPI_READ && function != ACPI_WRITE)
- 		return AE_BAD_PARAMETER;
- 
-+	mutex_lock(&ec->mutex);
-+
-+	if (ec->global_lock) {
-+		acpi_status status;
-+
-+		status = acpi_acquire_global_lock(ACPI_EC_UDELAY_GLK, &glk);
-+		if (ACPI_FAILURE(status)) {
-+			result = -ENODEV;
-+			goto unlock;
-+		}
-+	}
-+
- 	if (ec->busy_polling || bits > 8)
- 		acpi_ec_burst_enable(ec);
- 
- 	for (i = 0; i < bytes; ++i, ++address, ++value) {
- 		result = (function == ACPI_READ) ?
--			acpi_ec_read(ec, address, value) :
--			acpi_ec_write(ec, address, *value);
-+			acpi_ec_read_unlocked(ec, address, value) :
-+			acpi_ec_write_unlocked(ec, address, *value);
- 		if (result < 0)
- 			break;
- 	}
-@@ -1344,6 +1381,12 @@ acpi_ec_space_handler(u32 function, acpi
- 	if (ec->busy_polling || bits > 8)
- 		acpi_ec_burst_disable(ec);
- 
-+	if (ec->global_lock)
-+		acpi_release_global_lock(glk);
-+
-+unlock:
-+	mutex_unlock(&ec->mutex);
-+
- 	switch (result) {
- 	case -EINVAL:
- 		return AE_BAD_PARAMETER;
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="voVV9R7vNjAajsoC"
+Content-Disposition: inline
+In-Reply-To: <20240704-add-mtk-isp-3-0-support-v5-1-bfccccc5ec21@baylibre.com>
 
 
+--voVV9R7vNjAajsoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 04, 2024 at 03:36:40PM +0200, Julien Stephan wrote:
+> From: Louis Kuo <louis.kuo@mediatek.com>
+>=20
+> This adds the bindings, for the mediatek ISP3.0 SENINF module embedded in
+> some Mediatek SoC, such as the mt8365
+>=20
+> Signed-off-by: Louis Kuo <louis.kuo@mediatek.com>
+> Signed-off-by: Phi-Bang Nguyen <pnguyen@baylibre.com>
+> Link: https://lore.kernel.org/r/20230807094940.329165-2-jstephan@baylibre=
+=2Ecom
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+
+I'm really confused by the link tag here. At first glance this looked
+like you were sending out something that had been applied by Laurent,
+given the Link, Rb and SoB from him. Why does he have a SoB on this
+patch? What did Phi-Bang Nguyen do with this patch, and should they have
+a Co-developed-by tag?
+
+> ---
+>  .../bindings/media/mediatek,mt8365-seninf.yaml     | 275 +++++++++++++++=
+++++++
+>  MAINTAINERS                                        |   7 +
+>  2 files changed, 282 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8365-seni=
+nf.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8365-seninf.ya=
+ml
+> new file mode 100644
+> index 000000000000..aeabea9f956a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8365-seninf.yaml
+> @@ -0,0 +1,275 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (c) 2023 MediaTek, BayLibre
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/mediatek,mt8365-seninf.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek Sensor Interface 3.0
+> +
+> +maintainers:
+> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> +  - Julien Stephan <jstephan@baylibre.com>
+> +  - Andy Hsieh <andy.hsieh@mediatek.com>
+> +
+> +description:
+> +  The ISP3.0 SENINF is the CSI-2 and parallel camera sensor interface fo=
+und in
+> +  multiple MediaTek SoCs. It can support up to three physical CSI-2 inpu=
+t ports,
+> +  configured in DPHY (2 or 4 data lanes) or CPHY depending on the SoC.
+> +  On the output side, SENINF can be connected either to CAMSV instance or
+> +  to the internal ISP. CAMSV is used to bypass the internal ISP processi=
+ng
+> +  in order to connect either an external ISP, or a sensor (RAW, YUV).
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt8365-seninf
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Seninf camsys clock
+> +      - description: Seninf top mux clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: camsys
+> +      - const: top_mux
+> +
+> +  phys: true
+> +
+> +  phy-names: true
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description: CSI0 or CSI0A port
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description: CSI1 port
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +      port@2:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description: CSI2 port
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +      port@3:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description: CSI0B port
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 2
+> +
+> +      port@4:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: connection point for cam0
+> +
+> +      port@5:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: connection point for cam1
+> +
+> +      port@6:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: connection point for camsv0
+> +
+> +      port@7:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: connection point for camsv1
+> +
+> +      port@8:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: connection point for camsv2
+> +
+> +      port@9:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: connection point for camsv3
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +      - port@2
+> +      - port@3
+> +      - port@4
+> +      - port@5
+> +      - port@6
+> +      - port@7
+> +      - port@8
+> +      - port@9
+> +
+> +required:
+> +  - compatible
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - power-domains
+> +  - ports
+> +
+> +additionalProperties: false
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: mediatek,mt8365-seninf
+
+The binding supports only a single compatible, why is this complexity
+required? I don't see other devices being added in this series.
+
+Cheers,
+Conor.
+
+> +then:
+> +  properties:
+> +    phys:
+> +      minItems: 2
+> +      maxItems: 2
+> +      description:
+> +        phandle to the PHYs connected to CSI0/A, CSI1, CSI0B
+> +
+> +    phy-names:
+> +      description:
+> +        list of PHYs names
+> +      minItems: 2
+> +      maxItems: 2
+> +      items:
+> +        type: string
+> +        enum:
+> +          - csi0
+> +          - csi1
+> +          - csi0b
+> +      uniqueItems: true
+
+--voVV9R7vNjAajsoC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZobNUAAKCRB4tDGHoIJi
+0pbHAP9oyb3VVfiOce+y/RlLWtTgU60hGLandmi6ztVG/wGCjgEA7nzUqczM/a/v
+53cqRK4JMbZsvZhR3V+fZ+JdSynKGgI=
+=vYDF
+-----END PGP SIGNATURE-----
+
+--voVV9R7vNjAajsoC--
 
