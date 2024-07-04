@@ -1,81 +1,67 @@
-Return-Path: <linux-kernel+bounces-240779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08D9927285
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:01:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7333C927253
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 357B41F22678
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:01:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DE0F28C49B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0700119B3D6;
-	Thu,  4 Jul 2024 08:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9321AAE10;
+	Thu,  4 Jul 2024 08:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VthO5z7u"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XaGrUAJe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D51E1AC45C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 08:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF6D17084A;
+	Thu,  4 Jul 2024 08:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720083524; cv=none; b=VDM88aqpCzAkVKAuVw3py+685WZh6Xz5NreJDrJNAfPbOFGu8m1/DqNk4OeEeC2/P8sna2e9PW8PEzAMXNXxWSR6pJXeH6Ob6+/0EFSDalPRvG4A/JE8DYA6FcKH1dR7PT+L9HAEXRSCfLFZoxtkd9dG+zZfq6QrWO3gYgkRCPw=
+	t=1720083449; cv=none; b=VWhtbjiquRAf6jsNYLlegBB+aBk1U2uDUgw1JjN0UuhNddv6JDBhLSYY+mb8bh57fmDZQ2v/vv9oZEtKUTn3YRWrndyBTzQjvl07UgbB+JD2cMKS2LwnxM/kH/zy3BDg5pg+XSdEKX0B02hd2q5K5qf2yrO+zTEw6dw2O14IXSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720083524; c=relaxed/simple;
-	bh=gXYyJAtFATkjz93RgGVL4XAb3nglHPwb/RYHBs1Zbbg=;
+	s=arc-20240116; t=1720083449; c=relaxed/simple;
+	bh=urQk/W7QgAkmeUdca4VhY2EisitaIXwv21mu/blon6o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WfWJFz5zeO4ud9MDWGGttgOsJnlWU4SzufiAMyzIvivEONU2yaNRwnnIFLK71GY4tUsD68kpqNSxqu7SMesj1kJrkyDTEJV+Liaudur/flknu3WbS6QeuzKM1uo2F5J88eMXFhr0ASruGhRePC1hP+E3gs0LDUNXVp85LKlldkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VthO5z7u; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720083521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8jeNLSBugI0M1dRtmXMBFqt3/bH4xQpzUzLsQB473u4=;
-	b=VthO5z7uIxlsQCR3c9f3Eqa6359NdGnilxSvGW1qo5HTcr5pweWaDUspc2wfswuvHM5UvS
-	8lpRGTz4Tg4LBl6nWrnnqDzG0lXpK+1AxmLqdGbf07BA+8MtXKmZi6BfN3tTBK/2vSZTI0
-	x91ogQAErgePWWoOUVbbqk/7ULrHlq8=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-632-SANUMPCfOAOWJcs0yXUfFA-1; Thu,
- 04 Jul 2024 04:58:36 -0400
-X-MC-Unique: SANUMPCfOAOWJcs0yXUfFA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 360E019560BA;
-	Thu,  4 Jul 2024 08:58:34 +0000 (UTC)
-Received: from antares.redhat.com (unknown [10.39.194.59])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A8C26195605A;
-	Thu,  4 Jul 2024 08:58:29 +0000 (UTC)
-From: Adrian Moreno <amorenoz@redhat.com>
-To: netdev@vger.kernel.org
-Cc: aconole@redhat.com,
-	echaudro@redhat.com,
-	horms@kernel.org,
-	i.maximets@ovn.org,
-	dev@openvswitch.org,
-	Adrian Moreno <amorenoz@redhat.com>,
-	Pravin B Shelar <pshelar@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org,
+	 MIME-Version; b=twntbI8ZQvO345OPHY14zwEdd+6Vn+8/OcHd2g8SgajVTNYaQwz6izdqPdl8El/wF1jjiF+a/fcFHAE/ce4dGR5B0/ENYgM2fH6OkME61qmmq9MQMGlj6IuA2L0hYxWm9pIboXNjVCNfK2lizESEaMtsex1jLJ5QszoqEf79Pq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XaGrUAJe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFD5BC3277B;
+	Thu,  4 Jul 2024 08:57:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720083449;
+	bh=urQk/W7QgAkmeUdca4VhY2EisitaIXwv21mu/blon6o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XaGrUAJeFZW6Pjxa2pWT6qViw8ngk7vdm11z4lV3A3edk5pYhABC1Yp5FAHieIWjp
+	 5cpFfMzVvLhN9/oPKlAXjCkEA3k1H6Rp6LczpINw3J9c2Yi3UKE9W7lzwFwIJxneOB
+	 Det7u3bKk7Lr3jpQclllLzzoEhEPZLYrG8iaLBZAufUXvSTG9SVm8FhMY2trVPjBLO
+	 flLoDTw+B4QJbLp5Mi/tX6DM/9pxHFFbUzqPzBt0EWNto3M79FD7gYn/iLcJV8iTYK
+	 y0xrDjYd0g/3hkd2SuEeseh2iTlZDNcg4dFwtUZSKxugMYfXTd6DsFFYu9EI1XWT8h
+	 jDrM5mNsHBqpQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	stable@vger.kernel.org,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v9 10/10] selftests: openvswitch: add psample test
-Date: Thu,  4 Jul 2024 10:57:01 +0200
-Message-ID: <20240704085710.353845-11-amorenoz@redhat.com>
-In-Reply-To: <20240704085710.353845-1-amorenoz@redhat.com>
-References: <20240704085710.353845-1-amorenoz@redhat.com>
+Subject: [PATCH v3 1/3] tpm: Address !chip->auth in tpm2_*_auth_session()
+Date: Thu,  4 Jul 2024 11:57:02 +0300
+Message-ID: <20240704085708.661142-2-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240704085708.661142-1-jarkko@kernel.org>
+References: <20240704085708.661142-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,288 +69,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Add a test to verify sampling packets via psample works.
+Unless tpm_chip_bootstrap() was called by the driver, !chip->auth can cause
+a null derefence in tpm2_*_auth_session(). Thus, address !chip->auth in
+tpm2_*_auth_session().
 
-In order to do that, create a subcommand in ovs-dpctl.py to listen to
-on the psample multicast group and print samples.
-
-Reviewed-by: Aaron Conole <aconole@redhat.com>
-Tested-by: Ilya Maximets <i.maximets@ovn.org>
-Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+Cc: stable@vger.kernel.org # v6.9+
+Reported-by: Stefan Berger <stefanb@linux.ibm.com>
+Closes: https://lore.kernel.org/linux-integrity/20240617193408.1234365-1-stefanb@linux.ibm.com/
+Fixes: 699e3efd6c64 ("tpm: Add HMAC session start and end functions")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- .../selftests/net/openvswitch/openvswitch.sh  | 115 +++++++++++++++++-
- .../selftests/net/openvswitch/ovs-dpctl.py    |  73 ++++++++++-
- 2 files changed, 182 insertions(+), 6 deletions(-)
+v2:
+* Use dev_warn_once() instead of pr_warn_once().
+---
+ drivers/char/tpm/tpm2-sessions.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/net/openvswitch/openvswitch.sh b/tools/testing/selftests/net/openvswitch/openvswitch.sh
-index 531951086d9c..bc71dbc18b21 100755
---- a/tools/testing/selftests/net/openvswitch/openvswitch.sh
-+++ b/tools/testing/selftests/net/openvswitch/openvswitch.sh
-@@ -20,7 +20,8 @@ tests="
- 	nat_related_v4				ip4-nat-related: ICMP related matches work with SNAT
- 	netlink_checks				ovsnl: validate netlink attrs and settings
- 	upcall_interfaces			ovs: test the upcall interfaces
--	drop_reason				drop: test drop reasons are emitted"
-+	drop_reason				drop: test drop reasons are emitted
-+	psample					psample: Sampling packets with psample"
- 
- info() {
- 	[ "${ovs_dir}" != "" ] &&
-@@ -105,12 +106,21 @@ ovs_netns_spawn_daemon() {
- 	shift
- 	netns=$1
- 	shift
--	info "spawning cmd: $*"
--	ip netns exec $netns $*  >> $ovs_dir/stdout  2>> $ovs_dir/stderr &
-+	if [ "$netns" == "_default" ]; then
-+		$*  >> $ovs_dir/stdout  2>> $ovs_dir/stderr &
-+	else
-+		ip netns exec $netns $*  >> $ovs_dir/stdout  2>> $ovs_dir/stderr &
-+	fi
- 	pid=$!
- 	ovs_sbx "$sbx" on_exit "kill -TERM $pid 2>/dev/null"
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index 907ac9956a78..2f1d96a5a5a7 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -824,8 +824,13 @@ EXPORT_SYMBOL(tpm_buf_check_hmac_response);
+  */
+ void tpm2_end_auth_session(struct tpm_chip *chip)
+ {
+-	tpm2_flush_context(chip, chip->auth->handle);
+-	memzero_explicit(chip->auth, sizeof(*chip->auth));
++	struct tpm2_auth *auth = chip->auth;
++
++	if (!auth)
++		return;
++
++	tpm2_flush_context(chip, auth->handle);
++	memzero_explicit(auth, sizeof(*auth));
  }
+ EXPORT_SYMBOL(tpm2_end_auth_session);
  
-+ovs_spawn_daemon() {
-+	sbx=$1
-+	shift
-+	ovs_netns_spawn_daemon $sbx "_default" $*
-+}
-+
- ovs_add_netns_and_veths () {
- 	info "Adding netns attached: sbx:$1 dp:$2 {$3, $4, $5}"
- 	ovs_sbx "$1" ip netns add "$3" || return 1
-@@ -173,6 +183,19 @@ ovs_drop_reason_count()
- 	return `echo "$perf_output" | grep "$pattern" | wc -l`
- }
+@@ -907,6 +912,11 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
+ 	int rc;
+ 	u32 null_key;
  
-+ovs_test_flow_fails () {
-+	ERR_MSG="Flow actions may not be safe on all matching packets"
++	if (!auth) {
++		dev_warn_once(&chip->dev, "auth session is not active\n");
++		return 0;
++	}
 +
-+	PRE_TEST=$(dmesg | grep -c "${ERR_MSG}")
-+	ovs_add_flow $@ &> /dev/null $@ && return 1
-+	POST_TEST=$(dmesg | grep -c "${ERR_MSG}")
-+
-+	if [ "$PRE_TEST" == "$POST_TEST" ]; then
-+		return 1
-+	fi
-+	return 0
-+}
-+
- usage() {
- 	echo
- 	echo "$0 [OPTIONS] [TEST]..."
-@@ -187,6 +210,92 @@ usage() {
- 	exit 1
- }
- 
-+
-+# psample test
-+# - use psample to observe packets
-+test_psample() {
-+	sbx_add "test_psample" || return $?
-+
-+	# Add a datapath with per-vport dispatching.
-+	ovs_add_dp "test_psample" psample -V 2:1 || return 1
-+
-+	info "create namespaces"
-+	ovs_add_netns_and_veths "test_psample" "psample" \
-+		client c0 c1 172.31.110.10/24 -u || return 1
-+	ovs_add_netns_and_veths "test_psample" "psample" \
-+		server s0 s1 172.31.110.20/24 -u || return 1
-+
-+	# Check if psample actions can be configured.
-+	ovs_add_flow "test_psample" psample \
-+	'in_port(1),eth(),eth_type(0x0806),arp()' 'psample(group=1)' &> /dev/null
-+	if [ $? == 1 ]; then
-+		info "no support for psample - skipping"
-+		ovs_exit_sig
-+		return $ksft_skip
-+	fi
-+
-+	ovs_del_flows "test_psample" psample
-+
-+	# Test action verification.
-+	OLDIFS=$IFS
-+	IFS='*'
-+	min_key='in_port(1),eth(),eth_type(0x0800),ipv4()'
-+	for testcase in \
-+		"cookie to large"*"psample(group=1,cookie=1615141312111009080706050403020100)" \
-+		"no group with cookie"*"psample(cookie=abcd)" \
-+		"no group"*"psample()";
-+	do
-+		set -- $testcase;
-+		ovs_test_flow_fails "test_psample" psample $min_key $2
-+		if [ $? == 1 ]; then
-+			info "failed - $1"
-+			return 1
-+		fi
-+	done
-+	IFS=$OLDIFS
-+
-+	ovs_del_flows "test_psample" psample
-+	# Allow ARP
-+	ovs_add_flow "test_psample" psample \
-+		'in_port(1),eth(),eth_type(0x0806),arp()' '2' || return 1
-+	ovs_add_flow "test_psample" psample \
-+		'in_port(2),eth(),eth_type(0x0806),arp()' '1' || return 1
-+
-+	# Sample first 14 bytes of all traffic.
-+	ovs_add_flow "test_psample" psample \
-+	    "in_port(1),eth(),eth_type(0x0800),ipv4()" \
-+            "trunc(14),psample(group=1,cookie=c0ffee),2"
-+
-+	# Sample all traffic. In this case, use a sample() action with both
-+	# psample and an upcall emulating simultaneous local sampling and
-+	# sFlow / IPFIX.
-+	nlpid=$(grep -E "listening on upcall packet handler" \
-+            $ovs_dir/s0.out | cut -d ":" -f 2 | tr -d ' ')
-+
-+	ovs_add_flow "test_psample" psample \
-+            "in_port(2),eth(),eth_type(0x0800),ipv4()" \
-+            "sample(sample=100%,actions(psample(group=2,cookie=eeff0c),userspace(pid=${nlpid},userdata=eeff0c))),1"
-+
-+	# Record psample data.
-+	ovs_spawn_daemon "test_psample" python3 $ovs_base/ovs-dpctl.py psample-events
-+
-+	# Send a single ping.
-+	sleep 1
-+	ovs_sbx "test_psample" ip netns exec client ping -I c1 172.31.110.20 -c 1 || return 1
-+	sleep 1
-+
-+	# We should have received one userspace action upcall and 2 psample packets.
-+	grep -E "userspace action command" $ovs_dir/s0.out >/dev/null 2>&1 || return 1
-+
-+	# client -> server samples should only contain the first 14 bytes of the packet.
-+	grep -E "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f]{28}$" \
-+			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
-+	grep -E "rate:4294967295,group:2,cookie:eeff0c" \
-+			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
-+
-+	return 0
-+}
-+
- # drop_reason test
- # - drop packets and verify the right drop reason is reported
- test_drop_reason() {
-diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-index e8dc9af10d4d..1e15b0818074 100644
---- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-+++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-@@ -28,8 +28,10 @@ try:
-     from pyroute2.netlink import genlmsg
-     from pyroute2.netlink import nla
-     from pyroute2.netlink import nlmsg_atoms
-+    from pyroute2.netlink.event import EventSocket
-     from pyroute2.netlink.exceptions import NetlinkError
-     from pyroute2.netlink.generic import GenericNetlinkSocket
-+    from pyroute2.netlink.nlsocket import Marshal
-     import pyroute2
-     import pyroute2.iproute
- 
-@@ -2460,10 +2462,70 @@ class OvsFlow(GenericNetlinkSocket):
-         print("MISS upcall[%d/%s]: %s" % (seq, pktpres, keystr), flush=True)
- 
-     def execute(self, packetmsg):
--        print("userspace execute command")
-+        print("userspace execute command", flush=True)
- 
-     def action(self, packetmsg):
--        print("userspace action command")
-+        print("userspace action command", flush=True)
-+
-+
-+class psample_sample(genlmsg):
-+    nla_map = (
-+        ("PSAMPLE_ATTR_IIFINDEX", "none"),
-+        ("PSAMPLE_ATTR_OIFINDEX", "none"),
-+        ("PSAMPLE_ATTR_ORIGSIZE", "none"),
-+        ("PSAMPLE_ATTR_SAMPLE_GROUP", "uint32"),
-+        ("PSAMPLE_ATTR_GROUP_SEQ", "none"),
-+        ("PSAMPLE_ATTR_SAMPLE_RATE", "uint32"),
-+        ("PSAMPLE_ATTR_DATA", "array(uint8)"),
-+        ("PSAMPLE_ATTR_GROUP_REFCOUNT", "none"),
-+        ("PSAMPLE_ATTR_TUNNEL", "none"),
-+        ("PSAMPLE_ATTR_PAD", "none"),
-+        ("PSAMPLE_ATTR_OUT_TC", "none"),
-+        ("PSAMPLE_ATTR_OUT_TC_OCC", "none"),
-+        ("PSAMPLE_ATTR_LATENCY", "none"),
-+        ("PSAMPLE_ATTR_TIMESTAMP", "none"),
-+        ("PSAMPLE_ATTR_PROTO", "none"),
-+        ("PSAMPLE_ATTR_USER_COOKIE", "array(uint8)"),
-+    )
-+
-+    def dpstr(self):
-+        fields = []
-+        data = ""
-+        for (attr, value) in self["attrs"]:
-+            if attr == "PSAMPLE_ATTR_SAMPLE_GROUP":
-+                fields.append("group:%d" % value)
-+            if attr == "PSAMPLE_ATTR_SAMPLE_RATE":
-+                fields.append("rate:%d" % value)
-+            if attr == "PSAMPLE_ATTR_USER_COOKIE":
-+                value = "".join(format(x, "02x") for x in value)
-+                fields.append("cookie:%s" % value)
-+            if attr == "PSAMPLE_ATTR_DATA" and len(value) > 0:
-+                data = "data:%s" % "".join(format(x, "02x") for x in value)
-+
-+        return ("%s %s" % (",".join(fields), data)).strip()
-+
-+
-+class psample_msg(Marshal):
-+    PSAMPLE_CMD_SAMPLE = 0
-+    PSAMPLE_CMD_GET_GROUP = 1
-+    PSAMPLE_CMD_NEW_GROUP = 2
-+    PSAMPLE_CMD_DEL_GROUP = 3
-+    PSAMPLE_CMD_SET_FILTER = 4
-+    msg_map = {PSAMPLE_CMD_SAMPLE: psample_sample}
-+
-+
-+class PsampleEvent(EventSocket):
-+    genl_family = "psample"
-+    mcast_groups = ["packets"]
-+    marshal_class = psample_msg
-+
-+    def read_samples(self):
-+        while True:
-+            try:
-+                for msg in self.get():
-+                    print(msg.dpstr(), flush=True)
-+            except NetlinkError as ne:
-+                raise ne
- 
- 
- def print_ovsdp_full(dp_lookup_rep, ifindex, ndb=NDB(), vpl=OvsVport()):
-@@ -2530,7 +2592,7 @@ def main(argv):
-         help="Increment 'verbose' output counter.",
-         default=0,
-     )
--    subparsers = parser.add_subparsers()
-+    subparsers = parser.add_subparsers(dest="subcommand")
- 
-     showdpcmd = subparsers.add_parser("show")
-     showdpcmd.add_argument(
-@@ -2605,6 +2667,8 @@ def main(argv):
-     delfscmd = subparsers.add_parser("del-flows")
-     delfscmd.add_argument("flsbr", help="Datapath name")
- 
-+    subparsers.add_parser("psample-events")
-+
-     args = parser.parse_args()
- 
-     if args.verbose > 0:
-@@ -2619,6 +2683,9 @@ def main(argv):
- 
-     sys.setrecursionlimit(100000)
- 
-+    if args.subcommand == "psample-events":
-+        PsampleEvent().read_samples()
-+
-     if hasattr(args, "showdp"):
-         found = False
-         for iface in ndb.interfaces:
+ 	rc = tpm2_load_null(chip, &null_key);
+ 	if (rc)
+ 		goto out;
 -- 
 2.45.2
 
