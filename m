@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-241086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F709276EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:11:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E3F9276E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13F0B1C22077
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11EDF281ADB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14B81AED54;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A1A1AED4B;
 	Thu,  4 Jul 2024 13:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fo2jZkvc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYcypi+6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3949E1AD9DE
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1963B1A0AE5;
+	Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720098657; cv=none; b=MOSwK8SnFMZVaPeiIaa+JfbEewgPSRTQEwy3oefIULdzp177KicjDGUbIbOhaEyIJX7Q2RUKaY2aZDfFrX/ZTaiwuyGZPKf9S68i2/qcblJK6ldSkh5M9Z9SSn0il+7gvOPxoA24rpgR2SWdsYFq5ax7yg3h5GbZg7KrXh4OBIA=
+	t=1720098657; cv=none; b=OLqirINuO2Owrt/Up4LZw7m3DotNwcXn9t1pZe/oJQwHFepNwTOoK2xOTEkeh/bzd8JN/e7NYP+aTHLpnk6x1kNmLX2ZW/F6D0lkgRwXPjpqyU+UhrhCjGUTiq8vLJGbRfmnm/6Tb4gViToPdvgWnNmQQ9LM+KOq97Nbx1uoK00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720098657; c=relaxed/simple;
-	bh=d1R6VyIbkJ6U7w801EO8l21bk3qkW3imoEOlfi6mJ0o=;
+	bh=5Z/JhMWlZOiA4gMPtEvpcd72gMvcEm+EciKo2a/8g/0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GQXAWzKzy9KE1dNCyvhRYqQXQcA79vBgR/qWuPbgHRai/QCHGXYdzit+LXHLdcRwmQcSCczRHZuV3eoMzi69ABcJs1KOfzlYnK1yCGtAacSejItg+YdPborDkM/auKp5e5immdZHGBVQQoFSjLDowmPC4V0OaeTsw9ZidupcJD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fo2jZkvc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CB4A9C4AF0C;
+	 In-Reply-To:To:Cc; b=Ovmca77DqbNzszTPyc8afsoBHFW60Ned404vvxieX3d7htXQ4aP1/USlG2ZUXqWc9CF4dBjNMMLj/3FPEWNmon+uHqVE2Mr8G61eqR9w1+i8LWkjpASdXkAyBSRyBoSXmn1gfGU8g/o3K6ZaWY5nmth411lbIEHy51WCXO0rt6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYcypi+6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B8979C4AF07;
 	Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1720098656;
-	bh=d1R6VyIbkJ6U7w801EO8l21bk3qkW3imoEOlfi6mJ0o=;
+	bh=5Z/JhMWlZOiA4gMPtEvpcd72gMvcEm+EciKo2a/8g/0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=fo2jZkvcZSDt1fGr5ZrtsubKDg0lm7xDjMC9jQnY4iYDYlIxVv8JLu59v3NRhkhb3
-	 +31IvMoMqRPLlLD5TnKhcbpCo+WEl+FmkFY3ULZtIzz0lmwEu8T+L/OkXcGagr4DYd
-	 CsoqzJteqGJOKYigMc5UDq+YNWx+UgHY9sVD08nqjFvsweG2GUZ4gRb5AGXYlvkorr
-	 g254OZ7RieYGkdAlQPCGpbG61KIRqBnBqZuq/bicQ9M4WMOnl//qrOUT1t9sCRdq08
-	 KHsOzteSG9RJ7k1Uhhha9F5VoIwT2QOUpQQ+mj2gwc9CdFhS3nzsXh5VWho1I3KNVl
-	 y1rXL7FyCDNZA==
+	b=TYcypi+6JnHBpY4lZ+cKwjZQXSNSWSdg1CMGaYgL6jNS/VWlfNA5H0c8BOxNzmE/u
+	 Ken1JVEeKRQvpC6ysrZ/awEHnBd0sHH0w0KO0ZrLT4GH1l8K8HXt9ALEiY0w8sSGpe
+	 bKNzYA+Bp+c+CmYrH/zsEsTx2bliYMnRwl/9AkaasfTTlfQ7KQ3kBCpaigfLMdi9WC
+	 6MyCwml9mDKAv0Y8HSG8UgLHEtCm86vI4CstzqwIP61t18YHjL9iKipLL4ReikrbOg
+	 TwXkGINP5tVXCLqEGHJ8QdsI6OgD9V9T/J3Wy/fHQlz4gh+U+GPISJKRe/o9aAjuVb
+	 troCPvtdDExzg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B9FA3C43331;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A5FACC43332;
 	Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,39 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V2 -fixes] riscv: kexec: Avoid deadlock in kexec crash path
+Subject: Re: [PATCH v4 0/3] Assorted fixes in RISC-V PMU driver
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172009865675.17306.18375440466203340384.git-patchwork-notify@kernel.org>
+ <172009865667.17306.8198164921917389320.git-patchwork-notify@kernel.org>
 Date: Thu, 04 Jul 2024 13:10:56 +0000
-References: <20240626023316.539971-1-songshuaishuai@tinylab.org>
-In-Reply-To: <20240626023316.539971-1-songshuaishuai@tinylab.org>
-To: Song Shuai <songshuaishuai@tinylab.org>
-Cc: linux-riscv@lists.infradead.org, takakura@valinux.co.jp, alex@ghiti.fr,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- bhe@redhat.com, akpm@linux-foundation.org, guoren@kernel.org,
- xianting.tian@linux.alibaba.com, linux-kernel@vger.kernel.org
+References: <20240628-misc_perf_fixes-v4-0-e01cfddcf035@rivosinc.com>
+In-Reply-To: <20240628-misc_perf_fixes-v4-0-e01cfddcf035@rivosinc.com>
+To: Atish Patra <atishp@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
+ atishp@atishpatra.org, anup@brainfault.org, will@kernel.org,
+ mark.rutland@arm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ ajones@ventanamicro.com, conor.dooley@microchip.com,
+ samuel.holland@sifive.com, palmer@rivosinc.com, alexghiti@rivosinc.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, garthlei@pku.edu.cn
 
 Hello:
 
-This patch was applied to riscv/linux.git (fixes)
+This series was applied to riscv/linux.git (fixes)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Wed, 26 Jun 2024 10:33:16 +0800 you wrote:
-> If the kexec crash code is called in the interrupt context, the
-> machine_kexec_mask_interrupts() function will trigger a deadlock while
-> trying to acquire the irqdesc spinlock and then deactivate irqchip in
-> irq_set_irqchip_state() function.
-> 
-> Unlike arm64, riscv only requires irq_eoi handler to complete EOI and
-> keeping irq_set_irqchip_state() will only leave this possible deadlock
-> without any use. So we simply remove it.
+On Fri, 28 Jun 2024 00:51:40 -0700 you wrote:
+> This series contains 3 fixes out of which the first one is a new fix
+> for invalid event data reported in lkml[2]. The last two are v3 of Samuel's
+> patch[1]. I added the RB/TB/Fixes tag and moved 1 unrelated change
+> to its own patch. I also changed an error message in kvm vcpu_pmu from
+> pr_err to pr_debug to avoid redundant failure error messages generated
+> due to the boot time quering of events implemented in the patch[1]
 > 
 > [...]
 
 Here is the summary with links:
-  - [V2,-fixes] riscv: kexec: Avoid deadlock in kexec crash path
-    https://git.kernel.org/riscv/c/c562ba719df5
+  - [v4,1/3] drivers/perf: riscv: Do not update the event data if uptodate
+    https://git.kernel.org/riscv/c/a3f24e83d11d
+  - [v4,2/3] drivers/perf: riscv: Reset the counter to hpmevent mapping while starting cpus
+    https://git.kernel.org/riscv/c/7dd646cf745c
+  - [v4,3/3] perf: RISC-V: Check standard event availability
+    https://git.kernel.org/riscv/c/16d3b1af0944
 
 You are awesome, thank you!
 -- 
