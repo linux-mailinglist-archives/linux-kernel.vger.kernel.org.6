@@ -1,180 +1,128 @@
-Return-Path: <linux-kernel+bounces-240963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA3DB92751A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:29:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD247927514
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB4761C23FE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE3FD1C215FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECEA1AC44A;
-	Thu,  4 Jul 2024 11:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51991AD41B;
+	Thu,  4 Jul 2024 11:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rahRraVq"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k+iyaGdx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57311AED53
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 11:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5501AC449;
+	Thu,  4 Jul 2024 11:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720092325; cv=none; b=K8KYzs7+Kz3OVC0Q17EPeCFImAaj2Bs9Ji9hrJrevQAPGHNz0xG1YKCRWqo23yq2jJtZaBQXv1UkCW+VIr3ZK8YxdFe++TRQb/1Hd5NO+2fG04SyDAtrHt7lZ7S7UczOvRRjNNUSzRldRgeAt3VHM/heZu4oYPI21yy68Jc+WmQ=
+	t=1720092321; cv=none; b=GdfqZ8FuFf/P0feXW6SYopWUoVNcX6d95PL0CEjla/hTewFr5ie7fOjs9AOhgz36ZHvT2LFRynepC07nXhn7FIzhBbDBb7hzaWdHKZYuzpa4YLTnjV1oM22m8VfE2Do+RCM2vO0Xotvbjhnc+XZyFZtqXYkBOUr+XObgMGv7ZY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720092325; c=relaxed/simple;
-	bh=T1PxFhfeoVzvfEoF2oD8v+l1dcHo9xC7R4RRV2eQEyM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rz3fEhF57uSd+rlhfWAyriJcMYagmtmil1mo20qpPBVmAF6yA+/db37vGDYM0W7VD0z81pAS5KjTaeNYcOV0o/MNGJ+b/TEzc3FuKqQu6Z3mpulTnmmETJy/LYyLyzJLFmpW5OeCVM6vh6QYsfwraevWq/CU4/3+VpLf35N+f04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rahRraVq; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720092321; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=dbFBoHDVwoZIsZWEIcvlBAvgPzWvo4rCLj+4qVnfJRg=;
-	b=rahRraVqHt0JvpZS3K8rdTtqhqlQd8VPlNtyDEvQc3rIWtNQQKzJiRkpGxDizbzu0dW/ZgObddbO175QUlviHudZedR5yNLYVkn2gy09R3Euh6zCS8zazvS9t0uUcBcmQx7q6LydK6cf3gTT3IulNOPrk4Yd7Un4DBQcqDF7QXI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033023225041;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0W9qjnPn_1720092317;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9qjnPn_1720092317)
-          by smtp.aliyun-inc.com;
-          Thu, 04 Jul 2024 19:25:18 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: willy@infradead.org,
-	david@redhat.com,
-	wangkefeng.wang@huawei.com,
-	chrisl@kernel.org,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	shy828301@gmail.com,
-	ziy@nvidia.com,
-	ioworker0@gmail.com,
-	da.gomez@samsung.com,
-	p.raghav@samsung.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 10/10] mm: shmem: support large folio swap out
-Date: Thu,  4 Jul 2024 19:24:59 +0800
-Message-Id: <99a38bff0f562fe4844162f8abbe3840d1fcbbdc.1720079976.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <cover.1720079976.git.baolin.wang@linux.alibaba.com>
-References: <cover.1720079976.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1720092321; c=relaxed/simple;
+	bh=jkDP8M9nS6zbeKG8Ls4A6Gkiqj2sTDusTpp/rBGe0V8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K1r4zA9H4hYxwVCbLCgHspU4Xdk4YHu3BMekApe63F96/MZQKQDT1S9eltIxGeFyw5NYw7vQwtJZGbUqVprSKBXVxMq3bxpF1xmm3IyYU3QpyX7Ov3d3ujZwvFgNpZn+Qm21IZjpmiAlZKaBNWf9rErcM6tezWQS8qpTNBuKCgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k+iyaGdx; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720092319; x=1751628319;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=jkDP8M9nS6zbeKG8Ls4A6Gkiqj2sTDusTpp/rBGe0V8=;
+  b=k+iyaGdxIEE+bEjjCbngFqguf9ZVanRXNGituaRAbFsY8+naKNzNnEf9
+   LiBHVI0wOlH1/pXTIA/Ox2V6biHD/ZzWlvhEyjoNL3fvDq5KhOgwVhmwb
+   hh48MQTtWtl/f46nF6BmmTPiVsAoIGu0DS0QfHhECe1VydMwBn0zuz//p
+   lJSRKrp4d82MpSrysQTyGrEc810L6R745wpnj4VNoEhVKwdnYosx0ZxRB
+   XRRqMh0WbJRPeaQ96/d4BDqp9dWFWeN5WEUfvyu1AOghrgd3fKOwpeZ67
+   Scam5T7W+3X4YyaOAvB+0OO5v8yaB9aPAwW/F43r+GrAEKoVU/OiwIW24
+   g==;
+X-CSE-ConnectionGUID: Hn0X33VeTmeKrDWy1OdVMA==
+X-CSE-MsgGUID: 3cHolDtUQoiCJ41gtJS2TA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="17477832"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="17477832"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 04:25:18 -0700
+X-CSE-ConnectionGUID: ws7LtSdaR264xMczHG3i8g==
+X-CSE-MsgGUID: K9y0McSiT7qKUb2J70jrew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="69759893"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO [10.245.246.90]) ([10.245.246.90])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 04:25:12 -0700
+Message-ID: <f9923336-3dd3-4f36-b5f6-f45f4ed09e0c@linux.intel.com>
+Date: Thu, 4 Jul 2024 13:25:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB
+To: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>, Wesley Cheng
+ <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
+ robh@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
+ alsa-devel@alsa-project.org
+References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
+ <5be51e1f-70c9-4bbc-96fa-1e50e441bd35@linux.intel.com>
+ <408d9e8e-0f40-7e66-54be-2f8d2c0783a3@quicinc.com>
+ <ca1e1063-e1bd-4e03-a7cd-91985e9954e9@linux.intel.com>
+ <096d59a0-5e18-092c-c9ae-d98130226f06@quicinc.com>
+ <368d9019-2c96-468e-b472-7e1127f76213@linux.intel.com>
+ <eb6370ea-47a0-3659-3c10-cb7f95e3e520@quicinc.com>
+ <510468c7-b181-48d0-bf2d-3e478b2f2aca@linux.intel.com>
+ <c7a95157-1b71-1489-3657-8fe67f9acb4e@quicinc.com>
+ <90463a4e-c2e7-4b59-9a79-23533b4acd1e@linux.intel.com>
+ <fd8f1eb0-4b21-4697-8175-a61bc3858852@quicinc.com>
+ <f982842a-1804-420b-a539-a609ecf8fb8a@linux.intel.com>
+ <3c358604-6926-4f90-8fc8-8139c68c3418@quicinc.com>
+ <70bf10a7-7f87-4fd1-bd44-1733d3b2b15e@linux.intel.com>
+ <b1fcef2a-2af9-4985-ae00-f348ca5df3f1@linux.intel.com>
+ <ab734271-58ee-4981-926c-9b57f36b8ac6@linux.intel.com>
+ <ccbf9366-f3de-4a80-bffc-e32a8409e1a7@quicinc.com>
+ <adb4e27b-b328-4eef-87ca-9b8bad6639e6@linux.intel.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <adb4e27b-b328-4eef-87ca-9b8bad6639e6@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Shmem will support large folio allocation [1] [2] to get a better performance,
-however, the memory reclaim still splits the precious large folios when trying
-to swap out shmem, which may lead to the memory fragmentation issue and can not
-take advantage of the large folio for shmeme.
 
-Moreover, the swap code already supports for swapping out large folio without
-split, hence this patch set supports the large folio swap out for shmem.
+>> Just so I understand...is it really desired that userspace doesn't
+>> have the flexibility to choose which USB device is offloaded?  I know
+>> it complicates what needs to be done, but it could be just an
+>> additional feature that can be added later on.  Again, by default, we
+>> select the last USB headset plugged in to be enabled for offload by
+>> default.
+> 
+> If it chooses endpoint by itself perhaps you can send patch set without
+> controls first? This has added benefit of less patches in series, making
+> it easier to review and it won't block whole patch set by discussion on
+> controls feature. Controls can be added in followup series.
 
-Note the i915_gem_shmem driver still need to be split when swapping, thus
-add a new flag 'split_large_folio' for writeback_control to indicate spliting
-the large folio.
+We do need read-only controls for userspace to know that offload is
+possible and which card/device to use. That can be done in a first step
+assuming there's a single device plugged-in.
 
-[1] https://lore.kernel.org/all/cover.1717495894.git.baolin.wang@linux.alibaba.com/
-[2] https://lore.kernel.org/all/20240515055719.32577-1-da.gomez@samsung.com/
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- drivers/gpu/drm/i915/gem/i915_gem_shmem.c |  1 +
- include/linux/writeback.h                 |  1 +
- mm/shmem.c                                |  3 +--
- mm/vmscan.c                               | 14 ++++++++++++--
- 4 files changed, 15 insertions(+), 4 deletions(-)
+Dealing with multiple devices and defining rules or configuration
+options to select the offloaded device is a second-level problem.
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-index c5e1c718a6d2..c66cb9c585e1 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-@@ -308,6 +308,7 @@ void __shmem_writeback(size_t size, struct address_space *mapping)
- 		.range_start = 0,
- 		.range_end = LLONG_MAX,
- 		.for_reclaim = 1,
-+		.split_large_folio = 1,
- 	};
- 	unsigned long i;
- 
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index 112d806ddbe4..6f2599244ae0 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -63,6 +63,7 @@ struct writeback_control {
- 	unsigned range_cyclic:1;	/* range_start is cyclic */
- 	unsigned for_sync:1;		/* sync(2) WB_SYNC_ALL writeback */
- 	unsigned unpinned_netfs_wb:1;	/* Cleared I_PINNING_NETFS_WB */
-+	unsigned split_large_folio:1;	/* Split large folio for shmem writeback */
- 
- 	/*
- 	 * When writeback IOs are bounced through async layers, only the
-diff --git a/mm/shmem.c b/mm/shmem.c
-index b4468076f0e9..d93efcc64c3d 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -786,7 +786,6 @@ static int shmem_add_to_page_cache(struct folio *folio,
- 	VM_BUG_ON_FOLIO(index != round_down(index, nr), folio);
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	VM_BUG_ON_FOLIO(!folio_test_swapbacked(folio), folio);
--	VM_BUG_ON(expected && folio_test_large(folio));
- 
- 	folio_ref_add(folio, nr);
- 	folio->mapping = mapping;
-@@ -1473,7 +1472,7 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
- 	 * "force", drivers/gpu/drm/i915/gem/i915_gem_shmem.c gets huge pages,
- 	 * and its shmem_writeback() needs them to be split when swapping.
- 	 */
--	if (folio_test_large(folio)) {
-+	if (wbc->split_large_folio && folio_test_large(folio)) {
- 		/* Ensure the subpages are still dirty */
- 		folio_test_set_dirty(folio);
- 		if (split_huge_page(page) < 0)
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 61465f92283f..fd503506262d 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1245,8 +1245,12 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 			if (!total_swap_pages)
- 				goto activate_locked;
- 
--			/* Split shmem folio */
--			if (split_folio_to_list(folio, folio_list))
-+			/*
-+			 * Only split shmem folio when CONFIG_THP_SWAP
-+			 * is not enabled.
-+			 */
-+			if (!IS_ENABLED(CONFIG_THP_SWAP) &&
-+			    split_folio_to_list(folio, folio_list))
- 				goto keep_locked;
- 		}
- 
-@@ -1348,10 +1352,16 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 			 * starts and then write it out here.
- 			 */
- 			try_to_unmap_flush_dirty();
-+try_pageout:
- 			switch (pageout(folio, mapping, &plug)) {
- 			case PAGE_KEEP:
- 				goto keep_locked;
- 			case PAGE_ACTIVATE:
-+				if (shmem_mapping(mapping) && folio_test_large(folio) &&
-+				    !split_folio_to_list(folio, folio_list)) {
-+					nr_pages = 1;
-+					goto try_pageout;
-+				}
- 				goto activate_locked;
- 			case PAGE_SUCCESS:
- 				stat->nr_pageout += nr_pages;
--- 
-2.39.3
-
+In most cases the only thing that will be offloaded is a headset
+anyways, so the selection could be rather static based on a
+vendor/system ID, all other USB devices would be ignored.
 
