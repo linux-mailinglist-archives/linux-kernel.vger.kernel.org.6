@@ -1,134 +1,156 @@
-Return-Path: <linux-kernel+bounces-241003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E758092759C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:59:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE879275A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A449A2810DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:59:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE40282DA9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60E31AD9E3;
-	Thu,  4 Jul 2024 11:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAA81AE0BB;
+	Thu,  4 Jul 2024 12:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="QMkPnL5R"
-Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNCv11qt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA341AC435;
-	Thu,  4 Jul 2024 11:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83C619409E;
+	Thu,  4 Jul 2024 12:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720094333; cv=none; b=MQg1bJ85e+28tThR7Xk4YXwG7Z3yl5rXUaOEdXJW3o/d+hEZzKdQOH8GD68/YPwYX4a3wRODdEWZSKnxjK9hZYT6RzkrPOq5ND64oAoEgLLviUNpDLhn5mTj5Z9p3sce2eTUs4yEdWF/Ow9nu8rI1EFv9lYin4mLXkpnXKZ1mHw=
+	t=1720094541; cv=none; b=UsyycmdmrwJ9wJfn/WkgT/v4k6KH3RaVCfoFeGpiXt+4nBvHYTmlgOLTuU7rJLInkd2NOS6FovxoJizSuyggxRllozXHwtaapJHtHOLQ9XQw7AnZZShACCAJuvdGlCzB6aanS51k82enlBvwgW2H7zn1o7pxgNqGdf7BR4/aLEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720094333; c=relaxed/simple;
-	bh=p/6k71i6v8OdPnGY+lv9/vmvcEoCpDcg+67YsCBN4x4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uRAV8add5PSu/BA6F0TlJioM9QPxFOCZH1I5kiTdpugKpNUZcCDBRstt2U4h8oJHTRXNWZGyNJNO6AVzflFoXPBQ31wLf2W/zJryvyGz3dBKdfYTsp89/PkU/aIGKPAzBQfcl1/NPcqtDqjuBJxvWq8SuWbjbZM7jkYJc41ajcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=QMkPnL5R; arc=none smtp.client-ip=139.165.32.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
-Received: from [192.168.1.55] (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id EC1CF200CD06;
-	Thu,  4 Jul 2024 13:58:40 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be EC1CF200CD06
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
-	s=ulg20190529; t=1720094321;
-	bh=U/ywlGjkek4RHAQwTk9TPOPL3yDvvLL40zoLmh8F3xs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QMkPnL5RgiJBOV2MK3Je7CaEVDQVDRYrOJpjotw0bQk1aEzDbCX3YAdbM+k9LfloP
-	 KpJ+YALf12xveJONlNZ87+60vsAXXcdjarOqVEhlzjoh+rQClM20x2ix3IwUQY6LCv
-	 M4FNUjn1EyK6g2yWb/nojTW1RH8ns2tZk6e2SVJNOs9r0YAwt04q1sLtQdBzkI0air
-	 Oup1d8fRRoyx/hS2PpzYO8wWHLLI8AWINwLgScNBLqxjrZcWP/hP0oElfZwVhB4ki/
-	 r+aYj39WczB6dvm1390ayNB85zFBhChFfXLUQ2B5kue3HZxjW9FMTjTXlND3wnbF5b
-	 /sRnaLDN0yYuQ==
-Message-ID: <08784a20-48a4-40ec-a641-95a474673a3c@uliege.be>
-Date: Thu, 4 Jul 2024 13:58:40 +0200
+	s=arc-20240116; t=1720094541; c=relaxed/simple;
+	bh=Sy6IDYHgPf8XKe3WtHb2MUaaZ8EMExF1AN4pG9iz1S8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sKm2EOJO4qClTD+7D8NpJhHt664fM9usEFFPQKiMWwvXY5A4rYGlk+VD63BXXpoGxffGpD+RSzALts6MhyEhk01JKtfkNvySI/sl4Za6Y1u58sTtQ5Pchn4NuoZbrfpgW7v1ZSjNvC5VjPNEm/0SxFU2Il+IxBA6uRQc7La73bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNCv11qt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32BFDC4AF1D;
+	Thu,  4 Jul 2024 12:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720094540;
+	bh=Sy6IDYHgPf8XKe3WtHb2MUaaZ8EMExF1AN4pG9iz1S8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iNCv11qt9ePmqAuMW8uUfuzNzF6tsSDb6lAXurGr9AJmo8z8m90621twv6pX8WwUH
+	 Ve+1dTdxgRe79dgI2nUWm+esEeb+bXoNgN7s2je7hDrTuMuwhQZ3N+CzuLTcJGoz9J
+	 Rnws+IMhP7Sb0PXo/W1nwmwqr6k9L5mb0frp0FfYRfie2uuB1zmITD6g2wMk4gE46e
+	 L7W3Y8faWoENSgK3lRPBS+GJNE7NpnJ017UioXGVkgjebrpXm+h92NGOWAAWDIystH
+	 Du7G8n0R+6mgfoM6vpHVeWjCzgzrDNr6bZwR+2uH6eHNoPt/RcNi53Yr6dOgHRKD2l
+	 DdKIJOC2JLS7w==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5c2247207a9so10860eaf.2;
+        Thu, 04 Jul 2024 05:02:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXskQeEjeBtOXUFqCtIXfU2JSCHcePRzxm4fZQa+iM1ex6FY/Z5DEhdRoR/jXMHYMKWYBXf6NV74DKMxlg/jybLYsHPZJkNtJ5utAnmYzMiphha5t7W2pOB5UJ+ErtHtrepw9KWxlOwOj0ZU4G73VYVURD53jbkeINJUYfBxbVNBJHHYyWR8cna2/ANZY/AQ7cDlHB+CnMjIAXEtUB127EIi4beAU7kyzWc4BRiKNKHDvbH6frAXyXY6V7nSITPrK1dyVQ+1c5+rfSFdem7T2voSa8zCq6bfc2B0w==
+X-Gm-Message-State: AOJu0Yy3nl1pN1H2E19yDMo++0zhCSnj4vA5gyBH4k3qbn0a/82jb+Xq
+	QdGTaBDnVXqqZsL4cCO65l2/3cSBuyR+KdR1HmuICrlXyWhauljRlLPvxkYd1Cu49RoBx3dATme
+	KUB2hDvJcjwd+ge4mCOvYGPHCjEs=
+X-Google-Smtp-Source: AGHT+IEfXE0YhC0CadkHrUUKROvpyKyoONSuJxCmj7JBStJTkzTzhM7c6J8p1w9Caa82QdMwYxDdg2XwqcNfaJBeOS0=
+X-Received: by 2002:a05:6820:2c07:b0:5c4:5cbf:a255 with SMTP id
+ 006d021491bc7-5c646a9379emr1242627eaf.0.1720094539244; Thu, 04 Jul 2024
+ 05:02:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 2/2] net: ioam6: mitigate the two reallocations
- problem
-To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org, justin.iurman@uliege.be
-References: <20240702174451.22735-1-justin.iurman@uliege.be>
- <20240702174451.22735-3-justin.iurman@uliege.be>
- <54d30d951eddf0846b88b7f9f73ce16994550bd7.camel@redhat.com>
-Content-Language: en-US
-From: Justin Iurman <justin.iurman@uliege.be>
-In-Reply-To: <54d30d951eddf0846b88b7f9f73ce16994550bd7.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1720075640.git.viresh.kumar@linaro.org>
+In-Reply-To: <cover.1720075640.git.viresh.kumar@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Jul 2024 14:02:07 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hvA3WvhXgKB0qAL_vXy1sJxeRJid=yfTcgePYGqX8uyg@mail.gmail.com>
+Message-ID: <CAJZ5v0hvA3WvhXgKB0qAL_vXy1sJxeRJid=yfTcgePYGqX8uyg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] cpufreq: Make cpufreq_driver->exit() return void
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Cristian Marussi <cristian.marussi@arm.com>, 
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Hector Martin <marcan@marcan.st>, Huang Rui <ray.huang@amd.com>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Kevin Hilman <khilman@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Markus Mayer <mmayer@broadcom.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, 
+	Perry Yuan <perry.yuan@amd.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>, linux-pm@vger.kernel.org, 
+	Vincent Guittot <vincent.guittot@linaro.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-mips@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org, 
+	Lizhe <sensor1010@163.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/4/24 11:23, Paolo Abeni wrote:
-> On Tue, 2024-07-02 at 19:44 +0200, Justin Iurman wrote:
->> @@ -313,6 +316,10 @@ static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
->>   
->>   	orig_daddr = ipv6_hdr(skb)->daddr;
->>   
->> +	local_bh_disable();
->> +	dst = dst_cache_get(&ilwt->cache);
->> +	local_bh_enable();
->> +
->>   	switch (ilwt->mode) {
->>   	case IOAM6_IPTUNNEL_MODE_INLINE:
-> 
-> I now see that the way you coded patch 1/2 makes this one easier.
+On Thu, Jul 4, 2024 at 8:54=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.or=
+g> wrote:
+>
+> Make exit() return void, since it isn't used by the core.
+>
+> Based on initial patches sent by Lizhe [1].
+>
+> Rafael, I will take this through my tree for 6.11.
 
-Hi Paolo,
+Sure.
 
-Indeed. I originally had it as a single two-in-one patch, then I thought 
-it would be clearer to split it up (looks like I was wrong, sorry).
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 
-> Still I think it's quite doubtful to make the dst cache access
-> unconditional.
+for the series.
 
-By unconditional, you mean to get the cache _before_ the switch, right? 
-If so, that's indeed the only solution to provide it to the encap/inline 
-function for the mitigation. However, I don't see it as a problem. 
-Instead of having (a) call encap/fill function, then (b) get cache; 
-you'd have (a) get cache, then (b) call encap/fill function. IMHO, it's 
-the same. I'll re-run our measurements and compare them to our previous 
-results in order to confirm getting the cache early does not impact 
-performance. The only exception would be when skb_cow_head returns an 
-error in encap/fill functions: in that case, getting the cache early 
-would be a waste of time, but this situation suggests there is a problem 
-already so it's probably fine.
+Thanks!
 
-> Given the above I suggest to replace the 2 patches with a single one
-> moving the whole dst_cache logic before the switch statement.
-
-Will do!
-
-> Also this does not address a functional issue, IMHO it's more a
-> performance improvement, could as well target net-next with no fixes
-> tag.
-
-Hmmm, it's indeed OK to target net-next for patch #2 since it could be 
-considered as an improvement (not really a functional issue per se). 
-However, I'm not sure for patch #1. Wouldn't the kernel crash if not 
-enough headroom was allocated (assuming no check is done before writing 
-in the driver)?
-
-> WRT seg6 and rpl tunnels, before any patch, I think we first need
-> confirmation the problem is present there, too.
-
-Ack. I'll try to run some tests to check that.
-
-Thanks,
-Justin
-
-> Thanks,
-> 
-> Paolo
-> 
+> --
+> Viresh
+>
+> [1] https://lore.kernel.org/all/20240410132132.3526-1-sensor1010@163.com/
+>
+> Lizhe (1):
+>   cpufreq: Make cpufreq_driver->exit() return void
+>
+> Viresh Kumar (3):
+>   cpufreq: nforce2: Remove empty exit() callback
+>   cpufreq: loongson2: Remove empty exit() callback
+>   cpufreq: pcc: Remove empty exit() callback
+>
+>  drivers/cpufreq/acpi-cpufreq.c         |  4 +---
+>  drivers/cpufreq/amd-pstate.c           |  7 ++-----
+>  drivers/cpufreq/apple-soc-cpufreq.c    |  4 +---
+>  drivers/cpufreq/bmips-cpufreq.c        |  4 +---
+>  drivers/cpufreq/cppc_cpufreq.c         |  3 +--
+>  drivers/cpufreq/cpufreq-dt.c           |  3 +--
+>  drivers/cpufreq/cpufreq-nforce2.c      |  6 ------
+>  drivers/cpufreq/e_powersaver.c         |  3 +--
+>  drivers/cpufreq/intel_pstate.c         |  8 +++-----
+>  drivers/cpufreq/loongson2_cpufreq.c    |  6 ------
+>  drivers/cpufreq/mediatek-cpufreq-hw.c  |  4 +---
+>  drivers/cpufreq/mediatek-cpufreq.c     |  4 +---
+>  drivers/cpufreq/omap-cpufreq.c         |  3 +--
+>  drivers/cpufreq/pasemi-cpufreq.c       |  6 ++----
+>  drivers/cpufreq/pcc-cpufreq.c          |  6 ------
+>  drivers/cpufreq/powernow-k6.c          |  5 ++---
+>  drivers/cpufreq/powernow-k7.c          |  3 +--
+>  drivers/cpufreq/powernow-k8.c          |  6 ++----
+>  drivers/cpufreq/powernv-cpufreq.c      |  4 +---
+>  drivers/cpufreq/ppc_cbe_cpufreq.c      |  3 +--
+>  drivers/cpufreq/qcom-cpufreq-hw.c      |  4 +---
+>  drivers/cpufreq/qoriq-cpufreq.c        |  4 +---
+>  drivers/cpufreq/scmi-cpufreq.c         |  4 +---
+>  drivers/cpufreq/scpi-cpufreq.c         |  4 +---
+>  drivers/cpufreq/sh-cpufreq.c           |  4 +---
+>  drivers/cpufreq/sparc-us2e-cpufreq.c   |  3 +--
+>  drivers/cpufreq/sparc-us3-cpufreq.c    |  3 +--
+>  drivers/cpufreq/speedstep-centrino.c   | 10 +++-------
+>  drivers/cpufreq/tegra194-cpufreq.c     |  4 +---
+>  drivers/cpufreq/vexpress-spc-cpufreq.c |  5 ++---
+>  include/linux/cpufreq.h                |  2 +-
+>  31 files changed, 37 insertions(+), 102 deletions(-)
+>
+> --
+> 2.31.1.272.g89b43f80a514
+>
+>
 
