@@ -1,166 +1,112 @@
-Return-Path: <linux-kernel+bounces-240462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A1F926DFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 05:21:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8C0926E03
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 05:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFDC92825CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:21:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE8D8B2136C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0362F182D8;
-	Thu,  4 Jul 2024 03:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760411B7F4;
+	Thu,  4 Jul 2024 03:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QwXeOmdc"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="D6HYxOgq"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B960A171AA
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 03:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667FA182B2;
+	Thu,  4 Jul 2024 03:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720063297; cv=none; b=EOnd2lKuE4SDJcOCGT3tOGovFktCbxIOr/pKNHW45CnujVx34Eo/r1Dw085Iee/fKKLfB6xDCFTpGS/1qxWV/LDJcUzmAKUHmDC3QanNYIDW++3ntf9xc7oGP73YzXHdCWlXbDjhL0+eP9LcWCOZhXgyOBuuqm1CemQ60v3cZHE=
+	t=1720063404; cv=none; b=InCgoW/WrqFGoXORoTJ7UmqmQRd7HHPhrAMZExs3rpBoABjuX5rDjhvKxLcVgAvH3nbMwrQhQnuHjjG/sKI6jsiLAMnl4HhvRJ20lqQtIkbZt92cQfq9kNdrgKilkB9fUStJF2tcF1pXwhZ0HShcEwkkd/CIq1DoalfloqQCnqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720063297; c=relaxed/simple;
-	bh=Lm7e7bSdY+bRxF6w2oz/kqxztrTpK8p6WiefU+GmyBI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KCf34+ZZAgl8zSoXktVyfAlWsFQ3FAiQUp6RO1t32NwEzrhT07iuhMehdUs9Lg+vB3xsewUrv8hUMTWiKiY8Dz406qzp15OPTVj5Kn75mr4AP6eXacNiwEmTIMpF7pMrEkMpW6fP3UvEXMNjqXUkyOtivVhuIxNG4XasiDX1ydo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QwXeOmdc; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfab4779d95so200960276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 20:21:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720063294; x=1720668094; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gtybbuyYj0RpGRJub+zYJT/1C0NwLxoj7Nw9OPQ82Cc=;
-        b=QwXeOmdcYyo5YCM9SlNY3buyrwHT+4GEbMz5mxgye4wfW138D0qCsDlEYhIFTTQjln
-         eA9GnXyxjNBvkuXg+qHiG1ogRNgH+xxZKkDVHLxbC3nB/EtBA54L6lGTln1e5DzVEUdS
-         ar6RftbS/eVI/f6VQsu1dshecnjeVWvscNz8SYyRKT0/UnHLoKrfR9Fgz2QCjw392AZu
-         cFYx5lUobl4D1EGSLbeszqsfhRcfhRajImO4YBwW275qExpdEcEJ3Ykds9cAqZZVL+MJ
-         EfLXoZgbybF4CsIyK0ixi4X326NnWhBKimzkI64gKe33+jDqvUuxScha36BqnM9eJNtJ
-         E3Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720063294; x=1720668094;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gtybbuyYj0RpGRJub+zYJT/1C0NwLxoj7Nw9OPQ82Cc=;
-        b=WBtS9cnp6naSLLIYWmSIqTAyjfiASRctD4N57ZKxBNkpybYIIB287Zl4eR6e66PgHh
-         U6E/iq7xdwtOua34SULeD/f1FHkglP2Hxz8AslJhZiZ41JKaybF4fr2tO1J9YN4Waul4
-         MtAcMCXG3clbLELwsSL1YcFmqP62Zr/byOHK3YlE1FS1TNAYN77Cjsd+bqWOQZXZ768I
-         ZpcVNx7GtnpJvCC7QB+n3hy5GpGXk7xYtIdhwQYLfAG1vetDDn3T6X1qoj+JWpKzrCDK
-         Voo9QkaCZbW+eDYu0pnzY+vYvSBoF4TUAEOB61h8o8GQoKxcKAfQvewb3Wp8ZrXAtZcC
-         NxMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYfJlnXHF4LLyaaL9sPgYIwM5t/h6AGFqQKFQ9wMcoP1abaJZXK9BrdS0xkwLTkG77rZlGshOg98UahMI+65cSjZTFXuMc4u+fXMXb
-X-Gm-Message-State: AOJu0Yy3VAOFc5KBz81/gcievdSWlihLbXbSC6d5LJTV1EX+CCqFWUJV
-	tI7c7eiP0jjm2S8Zhy8FVPM5E7Ub+ZpYYTFU9WdWBdHFsRZjnXTpFLEBHybD0Q==
-X-Google-Smtp-Source: AGHT+IHnJ1NbLRUDL+3UZk9Ox3VgOwK38XIyefROX7DwVkkKJ4mohoG+Hsg/LH5OIf0SW21rIhtijQ==
-X-Received: by 2002:a25:874e:0:b0:e03:6442:e6a8 with SMTP id 3f1490d57ef6-e03c1907dd0mr419063276.5.1720063294483;
-        Wed, 03 Jul 2024 20:21:34 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e03a45f2e66sm681417276.50.2024.07.03.20.21.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 20:21:33 -0700 (PDT)
-Date: Wed, 3 Jul 2024 20:21:22 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Hugh Dickins <hughd@google.com>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, Nhat Pham <nphamcs@gmail.com>, 
-    Yang Shi <shy828301@gmail.com>, Zi Yan <ziy@nvidia.com>, 
-    Barry Song <baohua@kernel.org>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-    David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH hotfix] mm: fix crashes from deferred split racing folio
- migration
-In-Reply-To: <20240703193536.78bce768a9330da3a361ca8a@linux-foundation.org>
-Message-ID: <825653a7-a4d4-89f2-278f-4b18f8f8da5d@google.com>
-References: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com> <20240703193536.78bce768a9330da3a361ca8a@linux-foundation.org>
+	s=arc-20240116; t=1720063404; c=relaxed/simple;
+	bh=53fepz8ZVbxIlcp3kjh7KlVSnkO3U05UcRI1647roAY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hOxD8Wb28mapHV5ovR7hGHnq2ECZFct2Vfh3n8tCNGRstpw3tUqjFRJdzJRfQNdUtDXOR5NyjbEu47cpQHGdngs/mLuynWoOSlgsK2GtQLf5zGBlJCBJ9SVUggKBmWT8QwTTts6dv+pO3/Whw1NlXIvMWz1DLfe3wcTLHBTLOGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=D6HYxOgq; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1720063401;
+	bh=53fepz8ZVbxIlcp3kjh7KlVSnkO3U05UcRI1647roAY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=D6HYxOgqaJ4vtiXeD9CCrm+zu9TkU7Zn6K36z8wAUnjX6uij8Q+H1/9VwOJc92e/c
+	 76hDJVUBkSUOksnfzDq8xGZQ5IM/+rROLojhnv55PxH+8Wiq0PCun7GYnFQWu28855
+	 GX7v9ueRKkzmJ7OBMFgK7bVjZOtA9nf5DDkqLCyY=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id E19FC6591E;
+	Wed,  3 Jul 2024 23:23:18 -0400 (EDT)
+Message-ID: <ae7309e4fe38896402c282b87b6a2b6c21ff12f2.camel@xry111.site>
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+From: Xi Ruoyao <xry111@xry111.site>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner
+ <brauner@kernel.org>, libc-alpha@sourceware.org, "Andreas K. Huettel"
+ <dilfridge@gentoo.org>, Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik
+ <mjguzik@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara
+ <jack@suse.cz>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org,  io-uring@vger.kernel.org, Jens Axboe
+ <axboe@kernel.dk>,  loongarch@lists.linux.dev
+Date: Thu, 04 Jul 2024 11:23:17 +0800
+In-Reply-To: <CAAhV-H7vJ69GD5RWOAtVVMAriGX8eVfqSTp_XadV9PTZJuoSAQ@mail.gmail.com>
+References: <20240625110029.606032-1-mjguzik@gmail.com>
+	 <20240625110029.606032-3-mjguzik@gmail.com>
+	 <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+	 <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+	 <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+	 <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+	 <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+	 <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+	 <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
+	 <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
+	 <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
+	 <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
+	 <CAAhV-H7vJ69GD5RWOAtVVMAriGX8eVfqSTp_XadV9PTZJuoSAQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 
-On Wed, 3 Jul 2024, Andrew Morton wrote:
-> On Tue, 2 Jul 2024 00:40:55 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
-> 
-> > Even on 6.10-rc6, I've been seeing elusive "Bad page state"s (often on
-> > flags when freeing, yet the flags shown are not bad: PG_locked had been
-> > set and cleared??), and VM_BUG_ON_PAGE(page_ref_count(page) == 0)s from
-> > deferred_split_scan()'s folio_put(), and a variety of other BUG and WARN
-> > symptoms implying double free by deferred split and large folio migration.
-> > 
-> > 6.7 commit 9bcef5973e31 ("mm: memcg: fix split queue list crash when large
-> > folio migration") was right to fix the memcg-dependent locking broken in
-> > 85ce2c517ade ("memcontrol: only transfer the memcg data for migration"),
-> > but missed a subtlety of deferred_split_scan(): it moves folios to its own
-> > local list to work on them without split_queue_lock, during which time
-> > folio->_deferred_list is not empty, but even the "right" lock does nothing
-> > to secure the folio and the list it is on.
-> > 
-> > Fortunately, deferred_split_scan() is careful to use folio_try_get(): so
-> > folio_migrate_mapping() can avoid the race by folio_undo_large_rmappable()
-> > while the old folio's reference count is temporarily frozen to 0 - adding
-> > such a freeze in the !mapping case too (originally, folio lock and
-> > unmapping and no swap cache left an anon folio unreachable, so no freezing
-> > was needed there: but the deferred split queue offers a way to reach it).
-> 
-> There's a conflict when applying Kefeng's "mm: refactor
-> folio_undo_large_rmappable()"
-> (https://lkml.kernel.org/r/20240521130315.46072-1-wangkefeng.wang@huawei.com)
-> on top of this hotfix.
+On Thu, 2024-07-04 at 10:38 +0800, Huacai Chen wrote:
+> > So if a LoongArch Glibc is built with Linux kernel headers >=3D 6.11,
+> > it'll use fstatat **even configured --with-kernel=3D5.19** and fail to =
+run
+> > on Linux kernel <=3D 6.10.=C2=A0 This will immediately blow up building=
+ Linux
+> > From Scratch on a host distro with an "old" kernel.
+> The patch which adds newstat back will CC the stable list and be
+> backported to old kernels.
 
-Yes, anticipated in my "below the --- line" comments:
-sorry for giving you this nuisance.
+AFAIK in Glibc --enable-kernel=3Dx.y (not with, I was too sleepy
+yesterday) means it'll work with even x.y.0.  And even if we "re-
+purpose" x.y to mean "the latest x.y patch release" people can still
+explicitly spell the patch level, like --enable-kernel=3D5.19.0.
 
-And perhaps a conflict with another one of Kefeng's, which deletes a hunk
-in mm/migrate.c just above where I add a hunk: and that's indeed how it
-should end up, hunk deleted by Kefeng, hunk added by me.
+Thus we still need to handle this in Glibc.
 
-> 
-> --- mm/memcontrol.c~mm-refactor-folio_undo_large_rmappable
-> +++ mm/memcontrol.c
-> @@ -7832,8 +7832,7 @@ void mem_cgroup_migrate(struct folio *ol
->  	 * In addition, the old folio is about to be freed after migration, so
->  	 * removing from the split queue a bit earlier seems reasonable.
->  	 */
-> -	if (folio_test_large(old) && folio_test_large_rmappable(old))
-> -		folio_undo_large_rmappable(old);
-> +	folio_undo_large_rmappable(old);
->  	old->memcg_data = 0;
->  }
-> 
-> I'm resolving this by simply dropping the above hunk.  So Kefeng's
-> patch is now as below.  Please check.
+And the backport will raise another question: assume 6.6.40 gets the
+backport, what should we do with --enable-kernel=3D6.6.40?  Maybe we
+should we assume newfstatat is available but then people will start to
+complain "hey 6.9.7 > 6.6.40 but my Glibc configured with --enable-
+kernel=3D6.6.40 does not work on 6.9.7"...
 
-Checked, and that is correct, thank you Andrew.  Correct, but not quite
-complete: because I'm sure that if Kefeng had written his patch after
-mine, he would have made the equivalent change in mm/migrate.c:
+To me the only rational way seems only assuming 6.11 or later has
+newfstatat on LoongArch.
 
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -443,8 +443,7 @@ int folio_migrate_mapping(struct address_space *mapping,
- 	}
- 
- 	/* Take off deferred split queue while frozen and memcg set */
--	if (folio_test_large(folio) && folio_test_large_rmappable(folio))
--		folio_undo_large_rmappable(folio);
-+	folio_undo_large_rmappable(folio);
- 
- 	/*
- 	 * Now we know that no one else is looking at the folio:
-
-But there's no harm done if you push out a tree without that additional
-mod: we can add it as a fixup afterwards, it's no more than a cleanup.
-
-(I'm on the lookout for an mm.git update, hope to give it a try when it
-appears.)
-
-Thanks,
-Hugh
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
