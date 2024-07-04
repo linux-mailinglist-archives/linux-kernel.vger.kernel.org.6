@@ -1,196 +1,112 @@
-Return-Path: <linux-kernel+bounces-240840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116B5927372
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:57:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 859AE927375
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E9F1C20CA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:57:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE93A1C21C2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473781AB8F6;
-	Thu,  4 Jul 2024 09:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB7D1AB901;
+	Thu,  4 Jul 2024 09:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMfXuc3g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FXiYq9Nn"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4831AB506;
-	Thu,  4 Jul 2024 09:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1801AB515
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720087051; cv=none; b=WoJpDhurVht+geHM3V+KAyupUIrbrEVzuAt7KjZTEPwN4M3jFPJTkL2IeB3iTgK2SI2ePnPkxR2Bku4KZMhUA7PXAkVysM3eyKdH/3O6I1OfHVDCXlaEuLVHxaK2fkGrvufMxFxaQaXKG5iemznb7ooqgtrSbXKHDqCG1XjvQr4=
+	t=1720087080; cv=none; b=nDNP686LQoEEIYXGy3H+QzT/8zo6CHJ7SViWnd/tEvD9Z/7cMAPROVzZDYxE1vAu9prB+Fup3ny1OjQrenYdZzWbg7Lh8UPxvimFmhhIgfLyAMgIFIo68Q4vIlTZPZPcnpO42Nj0N7SE8CqWlctF8P930wuOELHRrYsqXxNN1hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720087051; c=relaxed/simple;
-	bh=Xr6B17nW/I57xdcXG07JqJqh4hldNLJBk9kDAFf/DQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BhR7MpE3krkD3w3+D/HKX3vTP9apvtNhlLh93/c+y/E9B3rAbbT+YAYvX5GiJyjRX3ZcX1lG86nneZJufaYeXubgPQuCFfIGG7noQWDItRNyr52+zoHZhsDPjW/Q9oVivkC3AEkcGSiv1Kwlmn4uPeIRyX9ncFZCCjSyXX5+7Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMfXuc3g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A4DAC4AF0B;
-	Thu,  4 Jul 2024 09:57:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720087051;
-	bh=Xr6B17nW/I57xdcXG07JqJqh4hldNLJBk9kDAFf/DQ4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HMfXuc3gOBpVU4VmafZvgD5uTTlSiE/zeE6fbrXg4zCb6Ir1Yu3EEgihMP10agEqB
-	 1c4gNs3ASl968ey8wUXzo9/pTmsbz6p9wNxO7kdt6aVn07LsnSnzJ6UEf1HXkiFYly
-	 Xj1RxUjQNOw2taYfEsP0lTggZ69kwRFEvtFsmwseXkK121LQgwkkJAmKH7VdxmX75a
-	 wcY5hUsEqWrvG6CB+gY7oyLQwXyl5XHCvzh1QU6eO0dPARxnUbgy3mauUx9Uw+nAQD
-	 +yz7tTgnA6DguwzMI8TMbyrzWI571Ho6EhvCygYKTRKqDRLpawnFTNDV5MA9EHiqEJ
-	 /xxV+osxiiNNg==
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a72988749f0so59533466b.0;
-        Thu, 04 Jul 2024 02:57:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVa8Y6YGSrneEBz+ALmKuokXx+u2FtH9rmL8adrH0xbroAebOJOCoQr6CaWe8wS+iqkuXjPflVHAwnRpc8J4+s0QuEsjET0jYJDubxUa6ddAQvdz19ljC5OvTRBszI7/zM2S7DS8C/fKpU=
-X-Gm-Message-State: AOJu0YxKcUuKypM/uE/nNv1r4tzPnVZCsdgoZPwsyXLysrtH62LRjRNO
-	pc/1oy6Te/y5DiRDpROerKjB9MshUya2deQxdyr/Tyg/k5B7X8ga/wM6VHFaktiS8R9vKlwYbe8
-	jL3xe8eK17fnAWnF3KutID6PkMVE=
-X-Google-Smtp-Source: AGHT+IFM2J4ZPmhN4lgXEZMzfk3lH5FGbKSx2yLA5OmBD93zi4PSvy7DVElSaZMfWeTsYNWheM3Zw0ujj9A+44w+1+g=
-X-Received: by 2002:a17:907:3d9f:b0:a6f:5318:b8f0 with SMTP id
- a640c23a62f3a-a77ba48df9dmr89454066b.37.1720087049692; Thu, 04 Jul 2024
- 02:57:29 -0700 (PDT)
+	s=arc-20240116; t=1720087080; c=relaxed/simple;
+	bh=YmOK4m5U6cknSGVhyDKOumu5MtRiP66NRo0AL7Q58Rc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XxwbBfAcVBHAyTtExaaGUpGDdGLdwnlAbwTaVqavNeH00eCnTp/ePQACMr/V8JwyFphkuDgDtww9z4ACjWUrFRTs5R6OaZLnVDiifIOQs2UDHYXR4H7PtoJgcBSjiOl6+xHCFryhv4PGtFp4n2RPQODLl1SKCW7Kv1UZ/pxHtPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FXiYq9Nn; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=YmOK
+	4m5U6cknSGVhyDKOumu5MtRiP66NRo0AL7Q58Rc=; b=FXiYq9NnYgeLYeH48jgZ
+	29xI2S96eODs/TZidl+XUBpi00eVU1OCBBDFn1zSO75nlzwyRkCVPQk9tQE+svrf
+	L00M41Q6umF2vxRpkUgXLkrbYhqOXwYjpDN5S/dykHmbmInqL0OmnC8fAYQaScYG
+	JfMW44BP1/Q+br+y40Ly81oGb42WWbXFiA4Msf7B6x3ZlwYqOPxfgDA1wZZzvOcH
+	vOHVSzkkQwBPI4O9aFyX7umKP40Gs0OaUKiYJUtc+f2Q9J/3CV9SZJaUY/RWE3fT
+	W4omk3/qnj6qOceuBrWFIO5UCl6o9ZiLLSfa3i4RZkZfi2qI/Tn14Q92lKE8Biso
+	vg==
+Received: (qmail 3114843 invoked from network); 4 Jul 2024 11:57:48 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Jul 2024 11:57:48 +0200
+X-UD-Smtp-Session: l3s3148p1@M7mn+mgcwZJtKPBS
+Date: Thu, 4 Jul 2024 11:57:47 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] i2c: rcar: bring hardware to known state when probing
+Message-ID: <ZoZyGzMquiIMwAni@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240703071625.5389-1-wsa+renesas@sang-engineering.com>
+ <g6mthbu3bbg2vl3aobci2gx7lbfy4qbiy7cy43v7wwgjldauc3@qv4yrctu2bmf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com> <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
-In-Reply-To: <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Thu, 4 Jul 2024 10:56:52 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
-Message-ID: <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Andrea Gelmini <andrea.gelmini@gmail.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Q0VeMWD0tWzjOhbn"
+Content-Disposition: inline
+In-Reply-To: <g6mthbu3bbg2vl3aobci2gx7lbfy4qbiy7cy43v7wwgjldauc3@qv4yrctu2bmf>
 
-On Thu, Jul 4, 2024 at 10:48=E2=80=AFAM Filipe Manana <fdmanana@kernel.org>=
- wrote:
->
-> On Wed, Jul 3, 2024 at 10:07=E2=80=AFPM Andrea Gelmini <andrea.gelmini@gm=
-ail.com> wrote:
-> >
-> > Il giorno mer 3 lug 2024 alle ore 13:59 Filipe Manana
-> > <fdmanana@kernel.org> ha scritto:
-> > >
-> > > I'm collecting all the patches in this branch:
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/fdmanana/linux.git/lo=
-g/?h=3Dem_shrinker_6.10
-> > >
-> > > They apply cleanly to 6.10-rc.
-> >
-> > Yeap, as I wrote before, same problem here.
-> > I tried the branch over today Linus git (master), and nothing changed.
-> > But, good news, I can provide a few more details.
-> >
-> > So, no need to use restic. On my laptop (nvme + ssd, 32GB RAM, Lenovo T=
-480):
-> > a) boot up;
-> > b) just open Window Maker and two Konsole, one with htop (with a few
-> > tricks to view PSI and so on);
-> > c) on one terminal run: tar cp /home/ | pv > /dev/null
-> > d) wait less than one minutes, and I see "PSI full memory" increase
-> > more than 50, memory pressure on swap, and two CPU threads (out of
-> > eight) busy at  100%;
->
-> I'll try that soon and see if I can reproduce.
->
-> In the meanwhile, just curious: are you using swapfiles on btrfs?
 
-I wonder if you have bpftrace installed and can run the following
-script while doing the test:
+--Q0VeMWD0tWzjOhbn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-$ cat bpftrace-em-shrinker.sh
-#!/usr/bin/bpftrace
 
-tracepoint:btrfs:btrfs_extent_map_shrinker_scan_enter
-{
-time("%H:%M:%S ");
-@start_em_scan[tid] =3D nsecs;
-printf("%s enter shrinker scan %ld nr %ld root %llu ino %llu\n",
-       comm, args->nr_to_scan, args->nr, args->last_root_id, args->last_ino=
-);
-}
+> Do we need the Fixes tag here?
 
-tracepoint:btrfs:btrfs_extent_map_shrinker_scan_exit
-/@start_em_scan[tid]/
-{
-time("%H:%M:%S ");
-$dur =3D (nsecs - @start_em_scan[tid]) / 1000;
-delete(@start_em_scan[tid]);
-printf("%s exit shrinker drop %ld nr %ld root %llu ino %llu | %llu us\n",
-       comm, args->nr_dropped, args->nr, args->last_root_id,
-args->last_ino, $dur);
-}
+We can add the initial commit for this driver. That means the commit
+message is wrong because refactorization is not the culprit. So, I will
+resend with Fixes-tag and updated commit message.
 
-END
-{
-clear(@start_em_scan);
-}
+> Looks reasonable. If testing is fine I can queue this up for this
+> week's pull request.
 
-The run it like:
+First testing looks good. I will do some more.
 
-$ ./bpftrace-em-shrinker.sh 2>&1 | tee em_shrinker_log.txt
 
-And provide the log file.
+--Q0VeMWD0tWzjOhbn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks.
+-----BEGIN PGP SIGNATURE-----
 
->
-> Thanks.
->
-> > e) system get sluggish (on htop I see no process eating CPU);
-> > f) if I kill tar, PSI memory keeps going up and down, so the threads.
-> > After lots of minutes, everything get back to no activity. In these
-> > minutes I see by iotop there's no activity nor on ssd or nvme. Until
-> > the end, the system is unresponsive, oh well, really slow.
-> >
-> > My / is BTRFS. Not many years of aging. Usually with daily snapshots
-> > and forced compression.
-> >
-> > Less than 4.000.000 files on the system. Usually .git and source code.
-> >
-> > root@glen:/home/gelma# btrfs filesystem usage /
-> > Overall:
-> >    Device size:                   3.54TiB
-> >    Device allocated:              2.14TiB
-> >    Device unallocated:            1.40TiB
-> >    Device missing:                  0.00B
-> >    Device slack:                    0.00B
-> >    Used:                          2.03TiB
-> >    Free (estimated):              1.50TiB      (min: 1.50TiB)
-> >    Free (statfs, df):             1.50TiB
-> >    Data ratio:                       1.00
-> >    Metadata ratio:                   1.00
-> >    Global reserve:              512.00MiB      (used: 0.00B)
-> >    Multiple profiles:                  no
-> >
-> > Data,single: Size:2.12TiB, Used:2.02TiB (95.09%)
-> >   /dev/mapper/sda6_crypt          2.12TiB
-> >
-> > Metadata,single: Size:16.00GiB, Used:14.73GiB (92.04%)
-> >   /dev/mapper/sda6_crypt         16.00GiB
-> >
-> > System,single: Size:32.00MiB, Used:320.00KiB (0.98%)
-> >   /dev/mapper/sda6_crypt         32.00MiB
-> >
-> > Unallocated:
-> >   /dev/mapper/sda6_crypt          1.40TiB
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaGchcACgkQFA3kzBSg
+KbZEaw/+KSzAAXpVn6oMqen9AX/HHUDoFwzhp+2JzAnLG8MS9FA7mznH4INlKByj
+fb23DkO5qm7JOt/eoAhjV69kSrQYusFNbz/UbjVZV6R717+rzhEDmi6InOlgF0cA
+W3WBQ6sTUPAv8ts0X5crBKVr4YQ3sK+mB+RPXJfUn9FjW/RzTHJkWOuVAP7RFIEv
+nR1yu946og0uhpuieSfF55cp+hjFby9NLOMROmSgUcslrr6tjiQSFvS1h678tFYZ
+eBogpPwDo2vrBkMM+5o90C6dNLieFTSCS5PLrXkMQOtJoRD8GCkTsBM1sRHwH2/0
+JVl938Pdd1S862z2Q03rFQEkEU7H9Z3xI189CBpTYNHMiudZfhgBbKGH1pAEPsZG
+AqxWGW1WAi25aERNnb7l/OHQ8kRItnaNofyR+MTGKuHcDXcOi442pxECi2hrYlSz
+d8MKsUXZ2TI6xWw+MpZ2wAXClwaKAAD2PLBVDntLyrJlXpPO9cSNfeuRL9CpF8p5
+RBEf0ftFcKsGoumr+1VWT4g/EcLJTZ1co5yhcLdP40cOUzn9s4fJIPzsUHdK2JcY
+45/R/xHYlsoN0rM32JryqUt8X9LzhWj8avVygAO8p+i+l7bBgKgY/0lv3Mt9HWJS
+KuaUtKeoZ81MqIur4upYkC8pW3grgph/ELObrZ+3Vj/aVVy394w=
+=Yhm0
+-----END PGP SIGNATURE-----
+
+--Q0VeMWD0tWzjOhbn--
 
