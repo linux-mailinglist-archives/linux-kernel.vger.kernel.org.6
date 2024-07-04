@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-240383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8F1926D1B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:29:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADBB926D1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D681EB21851
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:29:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1159A282028
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579E2C2ED;
-	Thu,  4 Jul 2024 01:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D539011CA0;
+	Thu,  4 Jul 2024 01:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZWn0lli"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m3pbaPsl"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C85C13C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C801A107A0
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720056571; cv=none; b=XLOvZNMxWMOX2z3SmDjK5551e2/lEVzfavUP+hPdkglwyHoAY7IgIyLxoFV/f3RpOXs3MohZ7+ctbQIegAjnaCLRCUC0ycp/yQ/fjXU84c5VmNHdVqcs2dF/CHq5anOtYpDfEjYYGLfgQffC8kAkEw6M/PIhijj+vHrKM9aZ0PM=
+	t=1720056577; cv=none; b=P28VQ6PCi2u/e5+MjNP48F3Qr/QxZBZ3PaLtTUKHR93zjTX2XJvD0hhQ9N8/QWojtk/hREs+zLSCv5ANOZgOgZPYUw5x0ghO9w40KHti+Xzprfj6rzf9vvCQ7J8KF8YHIV62ujvipSPyjw8buGWtIGC/iLKNo2vNP2FZaK6Fjy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720056571; c=relaxed/simple;
-	bh=1LLigQzRJcZ7jTodrMY3Nqf5PRQqvpWiqzUgy6EV33M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XbCY546sdWIqM4Ht0mRJzVMFobAmcRJanGy3n/UjbSjl6PMyN5nBu8kHf7ELv4JlVXzi7GXV8/jUrXLcfvKc2DljvTGotcjUwolaEic4DcoS3g8B8OVtct7CFfNGKcMj5ZpPaLfPeWu6shpUunz93sHDZfmlVMKQqAgt4dW0vA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZWn0lli; arc=none smtp.client-ip=209.85.214.173
+	s=arc-20240116; t=1720056577; c=relaxed/simple;
+	bh=k32WDnHi5U945AuRce984UDpc4BdZz37WC+JhOGhmf0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bMWJixjrsRSEx6eKBCwCX4+tnmboJbXgXE0OpeYE0nqQfqKezwWy/qPZOR9LO/8Po/uvPs8uUkhDb2J9bM/3WoL9SzbVR+spCLYRtMwzoGrwV8sbASRd+p4xYhb7pH8azgYGuXBkE1SJQsjsnMEz7kvhLNA17BZR0uLOnSqD5cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m3pbaPsl; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fb0d88fdc8so357935ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 18:29:30 -0700 (PDT)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6e7e23b42c3so50256a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 18:29:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720056569; x=1720661369; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+2zTWVQnMIKGjMTvK0RHwj0LBB/WZaUJ/hC6BYDoEtU=;
-        b=IZWn0lliBXQ+DMluQ5ZrU+5EQJvvSr3ZHDbG5AQT5YnOUMD99F3vCKnwVKwf/chVCy
-         m61RZVrK1POo9Vj/LYRBaV3LSiW/OjyYT46Tf4xGJzi6p0rJy+lkYwG/6jQxLiaSlnez
-         40FO++fAirJCU0odBfmRWsUaAShKq+ozubN8434yx1afgRbKVuUGzbZf+EZOatT5zlUb
-         T5V15fiPitXUHPV7h0zSAuOpkiCY6uGcSXCeKeIfG2uR8U25mgr6Odv4eKlX6NElshXx
-         IQU2SadzHK7uahYdaUcolbMr+8UGZiRLcNF/PeIShinw1Kq1X2vY99dVNqd2ASS2wdJM
-         wbUA==
+        d=gmail.com; s=20230601; t=1720056574; x=1720661374; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=en/S1K7ufPc3QQhnQIZMOSOA2N5wr5GPlScNLierXSU=;
+        b=m3pbaPslZ3rHAWb30k++0aOyjKsb11xzTJ6qkX9rmy2wqSZn2OjTwBH6AS6HjVol3Z
+         g4xLm3tc1N2Hrj0JHMPIouL8nfz0PpH6ju0SGgY6o9zzCgXNWOhFBJlSNqmuncoirZdN
+         5D39e+ozXICWoODtX6ocnA0BfRs6bR66wMr4gDXTweL0LXnjIZUhYNnAuMvP/AhQVGRE
+         XrapjTxwv3oZbktPo3vdpmQyPK1yusvN559qBpw2OZQomW3e1XD0UzRVUhK8j9ApW5t1
+         zG45V6Lfl+P6gRwcbwTi2Ou9fzuaqwvL/5sJJvtrt+hPlCFtvDCUSFK0KwjI0QYnFwvN
+         2SgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720056569; x=1720661369;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+2zTWVQnMIKGjMTvK0RHwj0LBB/WZaUJ/hC6BYDoEtU=;
-        b=LfvH5gPMoJ+b9N8gEVFXlByhPQU3c58tHURbIV39l5oF1/B+9Hx60TrkSPpjEUanN6
-         r89pMOMYnx6/VgtIA4afsPbxL4YJzmiagzOal5Xb7qTABApAG3yFNgadrTS1Xjbuyovs
-         44BIKccQ/nFL6uWhSChNrHpEvdug25zgZrICxuOYBNoN96X5jevAM/y2I4J4weOm67U7
-         TfawziTFsNCU4M/j4sk8m9CoLWZGPCPB982F4ZHQ80fU17/vT5FTfwidB8zYVgEySKPz
-         l5gfoZp8HCYCYwDNPYj5m64HO85DH9JOiREYG6YtN+KL05epVIRHUVDhEAgmsp0vMjwC
-         scTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbM3kNo9FeYlYBLjCukov4YxLRC5NoOTH+9mKS4vZ4AkvrfZ+I8JWcAuz7YJ/ZoLIK5agAhRv/aBPm0Op5Jp0i4IZx/ubyNOoD2R/D
-X-Gm-Message-State: AOJu0Yw1PH1a5fNacmkw7Q84aYiRliUBJfM/LkKMAzZJLhjHZzev8Kdr
-	SpMR7iuARpDrXL4DVXQCIsNOn+eFSuQmI/3gHQHOgx9NdpYdMkWq8TUEg4BlzhA=
-X-Google-Smtp-Source: AGHT+IFk8sUO3gZ4OE83nufv5PWvkhVcaMyMcCFBxB+4LU28n+00ozyhyHdSki+6s2j6yMQcng0nUQ==
-X-Received: by 2002:a17:902:dac8:b0:1fb:ee0:d996 with SMTP id d9443c01a7336-1fb33e9414amr2782235ad.38.1720056569387;
-        Wed, 03 Jul 2024 18:29:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720056574; x=1720661374;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=en/S1K7ufPc3QQhnQIZMOSOA2N5wr5GPlScNLierXSU=;
+        b=HhmzE9zrPUDcRb0PqXzdoW+4hV+fA6c4HhF0iXusDIq3+/daNmtP1K+VYiHhuHX9Id
+         bwcTnxsli7xWlvbAxgFhJjWbpf3aSho0EZUsNdh2kDx1CtrU4g41Xzd3Wyrl3XyQKBMH
+         NO1hvUXIRceztoodelveJ3IAzEze7CXGu2eTl9D+7wL/RpmFAGGtEYHjFpKpxjDeF9t+
+         kmBhMfPdftRYPxYEXcoNp7lxreFRnnFqQI6nTEtw/veYxlJHzfu6v+MF5fCx4RgOOX/L
+         MEZIkoEup+k4MIWiDT2rkPAKyNdasOJV88pkJKnX4PPANdCcWVBPhXbTiAycYjaqh47h
+         7M8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXbwgxA1ZDMdn9dW75BMPZaEKI8QvSJ6CPEFI1AdW+KhWPgdNumJy58P0VvYNVy5a7fVVKsUGQNEj2mraX9SQ4gQiGa7CfaipHxUMFl
+X-Gm-Message-State: AOJu0YxcGbxhkzUkpRRSalCtq5lFGvnhyx2kV5DiaVnLnATUS4YEn19m
+	SImpcTnDtt9Ll79zaGnwgrwB5QwbsuFTVgrBOL1bX//PoMOnkWtF
+X-Google-Smtp-Source: AGHT+IH8h2nR3XKUpaLoYTVF/0kMtRKeMW80TtrbBrxF+W4lZJ6aIxPIG8j8eHodbQfKLiXVzHYJhw==
+X-Received: by 2002:a05:6a20:12d4:b0:1be:c3c1:7be8 with SMTP id adf61e73a8af0-1c0cc742f4amr152039637.26.1720056573824;
+        Wed, 03 Jul 2024 18:29:33 -0700 (PDT)
 Received: from EBJ9932692.tcent.cn ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac153767dsm110162735ad.148.2024.07.03.18.29.25
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac153767dsm110162735ad.148.2024.07.03.18.29.29
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 03 Jul 2024 18:29:28 -0700 (PDT)
+        Wed, 03 Jul 2024 18:29:33 -0700 (PDT)
 From: Lance Yang <ioworker0@gmail.com>
 To: akpm@linux-foundation.org
 Cc: dj456119@gmail.com,
@@ -76,11 +78,15 @@ Cc: dj456119@gmail.com,
 	baolin.wang@linux.alibaba.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
-	Lance Yang <ioworker0@gmail.com>
-Subject: [PATCH v3 0/2] mm: introduce per-order mTHP split counters
-Date: Thu,  4 Jul 2024 09:29:03 +0800
-Message-ID: <20240704012905.42971-1-ioworker0@gmail.com>
+	Lance Yang <ioworker0@gmail.com>,
+	Barry Song <baohua@kernel.org>,
+	Mingzhe Yang <mingzhe.yang@ly.com>
+Subject: [PATCH v3 1/2] mm: add per-order mTHP split counters
+Date: Thu,  4 Jul 2024 09:29:04 +0800
+Message-ID: <20240704012905.42971-2-ioworker0@gmail.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240704012905.42971-1-ioworker0@gmail.com>
+References: <20240704012905.42971-1-ioworker0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,56 +95,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi all,
-
-At present, the split counters in THP statistics no longer include
-PTE-mapped mTHP. Therefore, we want to introduce per-order mTHP split
-counters to monitor the frequency of mTHP splits. This will assist
-developers in better analyzing and optimizing system performance.
+Currently, the split counters in THP statistics no longer include
+PTE-mapped mTHP. Therefore, we propose introducing per-order mTHP split
+counters to monitor the frequency of mTHP splits. This will help developers
+better analyze and optimize system performance.
 
 /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats
         split
         split_failed
         split_deferred
 
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Acked-by: Barry Song <baohua@kernel.org>
+Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+Signed-off-by: Lance Yang <ioworker0@gmail.com>
 ---
+ include/linux/huge_mm.h |  3 +++
+ mm/huge_memory.c        | 12 ++++++++++--
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-Changes since v2 [2]
-====================
- - mm: add per-order mTHP split counters
-   - Pick AB from Barry - thanks!
-   - Pick RB from Baolin - thanks!
-   - Pick RB from Ryan - thanks!
-   - Make things more readable (per Barry and Baolin)
- - mm: add docs for per-order mTHP split counters
-   - Pick RB from Barry - thanks!
-   - Improve the doc as suggested by Ryan
-   - Remove the outdated note (per Ryan)
-
-Changes since v1 [1]
-====================
- - mm: add per-order mTHP split counters
-   - Update the changelog
-   - Drop '_page' from mTHP split counter names (per David and Ryan)
-   - Store the order of the folio in a variable and reuse it later
-     (per Bang)
- - mm: add docs for per-order mTHP split counters
-   - Improve the doc as suggested by Ryan
-
-[1] https://lore.kernel.org/linux-mm/20240424135148.30422-1-ioworker0@gmail.com
-[2] https://lore.kernel.org/linux-mm/20240628130750.73097-1-ioworker0@gmail.com
-
-Lance Yang (2):
-  mm: add per-order mTHP split counters
-  mm: add docs for per-order mTHP split counters
-
- Documentation/admin-guide/mm/transhuge.rst | 20 ++++++++++++++++----
- include/linux/huge_mm.h                    |  3 +++
- mm/huge_memory.c                           | 12 ++++++++++--
- 3 files changed, 29 insertions(+), 6 deletions(-)
-
-
-base-commit: ec34ecf3924f09a694e5c7d8d7e785b82f67f9f0
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 212cca384d7e..cee3c5da8f0e 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -284,6 +284,9 @@ enum mthp_stat_item {
+ 	MTHP_STAT_FILE_ALLOC,
+ 	MTHP_STAT_FILE_FALLBACK,
+ 	MTHP_STAT_FILE_FALLBACK_CHARGE,
++	MTHP_STAT_SPLIT,
++	MTHP_STAT_SPLIT_FAILED,
++	MTHP_STAT_SPLIT_DEFERRED,
+ 	__MTHP_STAT_COUNT
+ };
+ 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 954c63575917..5cbd838e96e6 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -559,6 +559,9 @@ DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+ DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
+ DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
+ DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
++DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
++DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
++DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+ 
+ static struct attribute *stats_attrs[] = {
+ 	&anon_fault_alloc_attr.attr,
+@@ -569,6 +572,9 @@ static struct attribute *stats_attrs[] = {
+ 	&file_alloc_attr.attr,
+ 	&file_fallback_attr.attr,
+ 	&file_fallback_charge_attr.attr,
++	&split_attr.attr,
++	&split_failed_attr.attr,
++	&split_deferred_attr.attr,
+ 	NULL,
+ };
+ 
+@@ -3068,7 +3074,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 	XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new_order);
+ 	struct anon_vma *anon_vma = NULL;
+ 	struct address_space *mapping = NULL;
+-	bool is_thp = folio_test_pmd_mappable(folio);
++	int order = folio_order(folio);
+ 	int extra_pins, ret;
+ 	pgoff_t end;
+ 	bool is_hzp;
+@@ -3253,8 +3259,9 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 		i_mmap_unlock_read(mapping);
+ out:
+ 	xas_destroy(&xas);
+-	if (is_thp)
++	if (order >= HPAGE_PMD_ORDER)
+ 		count_vm_event(!ret ? THP_SPLIT_PAGE : THP_SPLIT_PAGE_FAILED);
++	count_mthp_stat(order, !ret ? MTHP_STAT_SPLIT : MTHP_STAT_SPLIT_FAILED);
+ 	return ret;
+ }
+ 
+@@ -3307,6 +3314,7 @@ void deferred_split_folio(struct folio *folio)
+ 	if (list_empty(&folio->_deferred_list)) {
+ 		if (folio_test_pmd_mappable(folio))
+ 			count_vm_event(THP_DEFERRED_SPLIT_PAGE);
++		count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFERRED);
+ 		list_add_tail(&folio->_deferred_list, &ds_queue->split_queue);
+ 		ds_queue->split_queue_len++;
+ #ifdef CONFIG_MEMCG
 -- 
 2.45.2
 
