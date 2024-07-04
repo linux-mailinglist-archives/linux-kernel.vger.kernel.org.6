@@ -1,201 +1,310 @@
-Return-Path: <linux-kernel+bounces-241420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A8F927B40
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7E4927B42
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85234B24B05
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:38:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86229B23F2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241DD1B3F3C;
-	Thu,  4 Jul 2024 16:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281161B1201;
+	Thu,  4 Jul 2024 16:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=eideticcom.onmicrosoft.com header.i=@eideticcom.onmicrosoft.com header.b="ao5uGO4B"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2103.outbound.protection.outlook.com [40.107.223.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aFx4gNyf"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9252D1B3F09;
-	Thu,  4 Jul 2024 16:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.103
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720111079; cv=fail; b=OtrngivLc8StZCgm2HCKxWnFiGXZ4xth6MsdRRwYZ/YO2tfVilyN950RNPVA3ZTZdhf/I8vAORyd0iNvKq5I0JTTf8kLANHxpZEroTcsJ6cqQdmllyzsDoqPyAOqFExddgRDRwvVbxNNn+Gqy6k0z+sqc+m2mnIfXtWs7fdvcaQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720111079; c=relaxed/simple;
-	bh=szLQRnqhp3lsW0d8v40eokUGOw6zDrK50Xox6WfGvgY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TCL9TIDHG1PutU2kt5lbgHBTosBaKHZSj08YUWMiNBdbgKNdsSXxkbBBtgtfApeESyigIu+nq45MoJoWiZQavddndvTT9p1Bb7psDf1PN6nyQczSeI1nyx7Qb9ok9d5SvKmMGcMkfm6uqF3bnmUmxQnH8dgKakzIXHrBE6sDsGo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eideticom.com; spf=pass smtp.mailfrom=eideticom.com; dkim=pass (1024-bit key) header.d=eideticcom.onmicrosoft.com header.i=@eideticcom.onmicrosoft.com header.b=ao5uGO4B; arc=fail smtp.client-ip=40.107.223.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eideticom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eideticom.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NssNFLK76PWVM8nRhYfj98qgVcJwUN0Z0kLLF3Nib9UBGU5kS/x6t3KxY/DJzr9iZbOUMF2aC+O2PwOhOz89swGOjvO6oIRVytbdErjp1kiTzJ7nmWhe/n0+tD2MhQyVcT39Khur+1HRpISTChIkOBmobkrffhloEAiQla0NXyV5ln+aiYof82SRaI1qfMmmPHhFAOg2drA2OEfoXGZ7z6hvAGHL2vjB6CIuy5TLs0EnlFa9ke2klQfiqJSj4187vS1/7PQoZjcveA6lJV9hx2gDRijTIbO1tW+ankSj+Y5jq3VNGexEY6KbqtoepwGWTRrw7QjT+k7hWN1564q1jw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YueMmbvCvTSA1MKV+udXlu2nutuaCG4yOb4CpEEFNc0=;
- b=WKmeA+GMx7yTMbGvUrDt15a2Cfws5E8ACHuWZ869DUYvRIFOJthxWVOgSbmeJAyBFXouE/+3c8c3diMW2CVu78bQXp31J3AIUIaPwiXrMiaHu6rSMlh8989Ex+RZT39Sm4ckfTs9GNW83/ZiDYwR5sF4Mk4KJhEWT+7iigUiBgPi4e0uz7uWBDAFMvShvdknuJ4fKdZpB2lYu1GwYYYNbAn3lzja0TpFu1+ptvO0X9oeLJwVPnq5Pz8yL1OAUy63j9vvbaBv/HvWLo4yWIOEifruuetyzrRm61lGaNPUB+jyqJbeE0SZq5TSCJNfM8cI1RZs2zQ96hQuhlYJItrnDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=eideticom.com; dmarc=pass action=none
- header.from=eideticom.com; dkim=pass header.d=eideticom.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25E91B29CA;
+	Thu,  4 Jul 2024 16:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720111083; cv=none; b=pNbw4TKbb1cfHq3kFCqF7BbxV1YRydl0uUbdX6b0A9NtsXyDmcGHyoQ7Mcst0MqGwD1qXbhAERn1LU+qfGexxr9XGbCUUhRc2Qzh9JlvtC6cnpb9b9y8qKXC7L5eSINqU0vinfFt8rGHzAB+lndiTDKFjBMGkYcsjdtxpZPtO6Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720111083; c=relaxed/simple;
+	bh=bw0lXjeb2JqqnyFcXKoaNwKvdifgMVsRC+I/BWbzTOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OoluMcdtm300QxnCr68KelL4LIgwR8KwTNKep+JY+xjT8Bl7mWy23a9wPjHUnRfUGyG7glsVcZM/Hiu+Jh/BFLhlbEawPltqsNRBEEIZE5mZMDSAm4b51nAKsfaRsWktxCm6JqcSUrByOwePfbO2BIysvl5g0RacSqtdpEb68Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aFx4gNyf; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so9853971fa.0;
+        Thu, 04 Jul 2024 09:38:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=eideticcom.onmicrosoft.com; s=selector2-eideticcom-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YueMmbvCvTSA1MKV+udXlu2nutuaCG4yOb4CpEEFNc0=;
- b=ao5uGO4B1MVpMILxKMNbYBN6GzyAmPjGCSnplrCTjFWIHvDxBJmup+tkA7nnLxDo/LCIk2ekA7GGT1n6e9l7odt3GXMLVoTGZMN4sj4IQKn+mo/25xXgyJkEqhQANpjK/eB3TAQAwnlBpPqXiFUZ4UZAeYhpEP+xu67nh8hrWkw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=eideticom.com;
-Received: from MW3PR19MB4250.namprd19.prod.outlook.com (2603:10b6:303:46::16)
- by CH0PR19MB7850.namprd19.prod.outlook.com (2603:10b6:610:189::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Thu, 4 Jul
- 2024 16:37:52 +0000
-Received: from MW3PR19MB4250.namprd19.prod.outlook.com
- ([fe80::3280:d8d:de43:6376]) by MW3PR19MB4250.namprd19.prod.outlook.com
- ([fe80::3280:d8d:de43:6376%5]) with mapi id 15.20.7741.029; Thu, 4 Jul 2024
- 16:37:52 +0000
-From: Martin Oliveira <martin.oliveira@eideticom.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-rdma@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Artemy Kovalyov <artemyko@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Martin Oliveira <martin.oliveira@eideticom.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Tejun Heo <tj@kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Sloan <david.sloan@eideticom.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH v3 3/3] RDMA/umem: add support for P2P RDMA
-Date: Thu,  4 Jul 2024 10:37:24 -0600
-Message-Id: <20240704163724.2462161-4-martin.oliveira@eideticom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240704163724.2462161-1-martin.oliveira@eideticom.com>
-References: <20240704163724.2462161-1-martin.oliveira@eideticom.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR03CA0078.namprd03.prod.outlook.com
- (2603:10b6:303:b6::23) To MW3PR19MB4250.namprd19.prod.outlook.com
- (2603:10b6:303:46::16)
+        d=gmail.com; s=20230601; t=1720111079; x=1720715879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u1Bzg7q44fWmiuPcAxgvBF+HSIsC8B6+wxYaMJzZh8U=;
+        b=aFx4gNyfl0MtJLrUfN3lgxSaYRqkWZZF8P6BnwGhm5TRufx4FbTNwvBqf9RELIefom
+         wmzsh4x1PGUean0V1sw5GpdbauPXKe72SywOY0+Sisv99nDFS7n1fpGHrOD+c4YU7EFs
+         b6xLV+S1j4hBPQvNfVhH+qsLZCyejtR3YkTJeOsW48nfW1U4XJUkk/icG8vD1NqioAN+
+         U75cykHQ9ZT3VMoBFJiNWmqTKMeagkW+2NyS+qUD7koUDaTSUHFpb4hRfsSLzFU8A8Bb
+         l9UykX4bhCVi76QgeR04dBvD5LLisYEsUZ9Ebym4EM0nwPdTdSo/jTbNpoFqQ6r/bHEA
+         xgCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720111079; x=1720715879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u1Bzg7q44fWmiuPcAxgvBF+HSIsC8B6+wxYaMJzZh8U=;
+        b=hYLTxHUEghweyW6kSIOBdxC3owJ7Ho09VcHFPy1wD3DeXJ8J1p5vd6xBfGYGeTD5mD
+         NklvXdRGpIyes7RIGeDOF7SxTmEaBSEd1pscE1RV718PsoRvyvFvyDhLqjZRKWkpwtQ+
+         wWT4xEOsi0bmEQLbKFZ9JXjpPb2Xs3vAZeyQ4CfkG8Z4PshFTzLO54Ut9/d0vrbySMWf
+         3uwrnhQ3OGYV5MiTACSNFQ1myV1f2VI7Wz3vPRlFc87UWN+EZegXFP2zD9WESVSJXbQk
+         89HNvXECB7UFYmOSXL92bpYdOslwYwD+H1LtgAxtVnXEhKOtrdZq5PXHy3SqMA2BI7Pb
+         YOKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVutJZccP6Ug9cFnqXe2EdmqwX7j2Gn1SewzHjaewpEEKyaStAMa168meIEtHTGkYnz2ROZX3ChlLzsvJwStz1pMecP5NoHUx5X44Y=
+X-Gm-Message-State: AOJu0YwzsgBlONu8lwA5+INi2Vlp4DLy26aaW9GenAqPA6sGkm8u5L4A
+	WLw4aMqsYx3SyI9HXY6Sgn+vRi7ZIo9260tTKB7VZcwrUjzdHwwDzggDZLlRD84obph16tTDVbe
+	YKri9bgRo4YT4dqY5oO116r56N2g=
+X-Google-Smtp-Source: AGHT+IH3LQkdxnix7MBzwDqukbYCoEp+HgNrOCI6UbB5olsoHJ/F0kECOuh4UlN1FHZ9irzUQcBhNubpfzUvIeYCmdg=
+X-Received: by 2002:a2e:be03:0:b0:2ee:8555:4742 with SMTP id
+ 38308e7fff4ca-2ee8eda4a6fmr18417471fa.27.1720111078822; Thu, 04 Jul 2024
+ 09:37:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR19MB4250:EE_|CH0PR19MB7850:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5de9dfb-cf45-4925-6519-08dc9c47a5cf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|7416014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?T46nsiwx1A7Y1lTFHcrR+KB5C95vi+7pEF/KvWB+habevjHSET3dlp43hu6j?=
- =?us-ascii?Q?oXokqmbZAFgqqso34+hbMpl/QQqt/4LCxJiR1XK/h5yH/3KvA5PogVImG9Gw?=
- =?us-ascii?Q?O0Qy5bgExmxxwBCCUx6JW4h8SEPy8hK6IdDKAOHymjoJhnbvlK640Ga3AwbS?=
- =?us-ascii?Q?xwRC8Ljhm5wJoTNc36NnqcexmkpqN3G7LECO6RG+9XhTOZ5YOdsY1wZXYh8k?=
- =?us-ascii?Q?MR4jFws6cKOKQ5Q/4MiKVLb+SDjAB5EdfhPT+ZbpiRNUuu8DYBM4gbMXlfaR?=
- =?us-ascii?Q?YAU39fVb3CjbUDk5GwIlLGOo5xVwDWnfLLZCCJJ3YAb2gn7auei+r0+3j3zc?=
- =?us-ascii?Q?Zg6mA19vb/l080sg8p3o2/sSr9imVugg3qfFeMWOAMMIAoQVmKdPiDmDYopC?=
- =?us-ascii?Q?k4xcSFt6ELSfGrqNhGirAZyRaHeFTlo/nE/gxpwpR0bIOd6UNmSTZb5QR8jw?=
- =?us-ascii?Q?OyvMRuDvaAHxgGxi9KDgOLRKGpF1ziCLO9mbBnIJwZowi/GkB5jaiTSBF6gq?=
- =?us-ascii?Q?bLc1CF4TpDz6QhFZvDldbIIfw/pmh0ZVUMSNkeU0YZPtnvCGO0sVISBipizq?=
- =?us-ascii?Q?26W3JDVhWZ8Cj2nDp6awxF065ujbvk57A0NSeUnGfZlPO74vOpOLozw4qQC/?=
- =?us-ascii?Q?hoEXx/8u2Sx8J6eTb8+dBKNLJ70OvUgj8gm9npAME28tCdCZEwWKjSqgsSOW?=
- =?us-ascii?Q?DAkoq2dPAYlNZvipMUc5jSbrhNrCtLPO9aYo79T8HUtxsqq1tRsRvrdNqoOB?=
- =?us-ascii?Q?iElCLQW6NIOPYvOhg0r356zBuNKq2VOgY8b47V9AyfWYXcO/NZ8otD+U14D7?=
- =?us-ascii?Q?VqjsSSBsvI0e2jI8Phd/n3SQIej1aqe1XT7OPUUD4+GD+uVCkhBeH0GAFXy/?=
- =?us-ascii?Q?6MH2Uu5abprUkV7LMDuHIQ2Ga4cywWJ4Wlcll4Xk+4wvzEazoWPVJfzPt0m4?=
- =?us-ascii?Q?oz/ct/068VQZ7POLyf7NmO69I28+0Cbr0uVbdznbix7+E0YvXDqgtOq6jufm?=
- =?us-ascii?Q?aVNWf4KxBsItMGtxjChAfrKm9kOrvG0manLvsS+E8PlU+k6p+3HkDvk8M42w?=
- =?us-ascii?Q?lE4hThpjdFYBeJfeOGmicDrkAP5H+S4ZypSPtYJP8ME9lJ1/6tyv02mFdoRc?=
- =?us-ascii?Q?kqEyH2EMSkXYAo9LVlqytngKFyJ8yJ4pDi66ptvOoYprn23g0TvINLtushMx?=
- =?us-ascii?Q?2j+1siXUonroewggFS4D4Cn05r4KmMJheMLf10iZ/6FTpb2i0QrBGuf+iklw?=
- =?us-ascii?Q?2dp4PsUx0VKKeraZ6x5lIj2dd4Ff3j86XN5H6EQUL5Qt5j2sEzr3y3P/XfpS?=
- =?us-ascii?Q?D2BSdEXjG0UahJvEEyBkZFSmW1uTthLUY4L/X2YW35hG6LIJ9jyryzkL/Neu?=
- =?us-ascii?Q?a6Ji6yfPDNprDxnUYVZK8VrGFBJstD8EErxUnkdN24TjJEJeDQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR19MB4250.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?iYV9ErrjxIeQIOsHo/0csBdP7EmNTFTsUWPXryGmIRAXUkrjpTXY/RXWNGS0?=
- =?us-ascii?Q?lZ1v4YGgu14NqjFvDIrqNpfZ9N6GkUwA2pb1nS3eYDZ19n318evOVZUDBWQT?=
- =?us-ascii?Q?lvJcjETUaA/+8/JmKbiMjg1HdUWSi2ytUIzSiSUjSGp2XuS9w/WjGsaWmFPE?=
- =?us-ascii?Q?MEXijPSYXYA6WsR2G7IChTZqbrn4n60dpLrv+HOa7Q8IsUy9VoA0pT574LLp?=
- =?us-ascii?Q?mJ++5t/M1ehzsJ/6D50O6+bj+o/B/a7R55+jKREp8o4zrkPkpM9RQqHDD6Hb?=
- =?us-ascii?Q?bHc4HQEaS9I/icPnYKwWvnUoCSmFuudWrSFrQxhPyx5i8VNKCFb8I9pZZwYt?=
- =?us-ascii?Q?MNP3sxyoC9pTc0RMCK8YnNPLsnDKZ88/YQNykbJSUEnnDpKsvDwT5C8QgPYR?=
- =?us-ascii?Q?VwJcOEb/0nW8+p3bDW5+mioMTfOEKawbFLZKXwc/O+PI50uWeoMCYAVDzvoD?=
- =?us-ascii?Q?01dHbJudn1hnygccrz+3hnNCpTzkcrjWX/3YE7an2l2Oyu6ViF/OvOUepgt/?=
- =?us-ascii?Q?DwU7bsgd6OPxjTwi7HQciTqpbvICRkwJua8tzPY4QC79iPTV/diCGJnWUQV4?=
- =?us-ascii?Q?6qa0tHKhallCyGeC91HAuJG8gPR6SySAiNDNtrYrV5uvSFqmrxxfOzKwVsou?=
- =?us-ascii?Q?rkdW89gJAO/oSnjtRmENN4on/upWe58KiPqcEwQ3nyIAzK0gyfPaIDv2VpTm?=
- =?us-ascii?Q?D66OqIXk5EuZ8qKh0C4C1c6t/o1opGM1HlRqEe5fwR3PxPXXM8y9vq+UGNLi?=
- =?us-ascii?Q?SHLtuWXnjp5ww/9oDBlsk1RambUrp3jlB0OJj2Fl4V3I+rqt/zaA7B/mTcBD?=
- =?us-ascii?Q?fIKRVZHDGTuEF8fqpfxBqoByyC2HRXC4iA2qBWUbQk1/GiA/9AiEw1viUXtA?=
- =?us-ascii?Q?hApoD0DwQzP5BZ7m2DBREuZKRSdX8ZnY+R6nD3XcRXolpAcJLsWw9qLOXG38?=
- =?us-ascii?Q?qlHiP+oOR7V9j1vT5g7UH4Jlw34iTOsX3BMLmd3p01Ew95JjsXTuFoLDqImR?=
- =?us-ascii?Q?iyOe23wH9dUicjYhf736AtV38ttglHnmVodRcKOoRPAMQyfuMfscRhq/Ht0h?=
- =?us-ascii?Q?+tHvkyxvNjDlj9leWzyi2oiPNjevqKdW8VzRL/u1PXCmvG55Z9B4mivue4bJ?=
- =?us-ascii?Q?QIHGsjPwqj0h+lyXZzvZQcr587Sq/NIwiXzSxIcJmjyGc91vLtV7Dt1fxpei?=
- =?us-ascii?Q?2v+sADJh0VQQSXaI5h1MmVk68SCw3wE2flSLS33b5YFveGxiPRRScQsre8Dm?=
- =?us-ascii?Q?RHAfFXtuYNdGVW6wrmxbgtB9Tp9aOMhx8f92FS6C+0/+zLDbBTYzgAy0BODH?=
- =?us-ascii?Q?2gqETfvZ31drBFqxTNVSGiFgGwGrE9ApPWkcuo0Wj9EBqLHwlhmlwBx15U3L?=
- =?us-ascii?Q?iMb8xAsDKrAdGUIcp6nEv4poylYQHbma2CZyWXgwahkLV3GpPLjJf1G6mD/X?=
- =?us-ascii?Q?wcSdPWmufacj1ajv1HRTBt0HFlHtdPvE9TTwnfqNFmzxMJfxiRp1GpWC7khV?=
- =?us-ascii?Q?ZtM8lIbg9Fk9FX7yIaVwSOfqi/+b4cwYq8hLKyXK7ull66q6GiCVXSYTgRh+?=
- =?us-ascii?Q?budvZHkmd2NPKGC7zSdUAhOrI0vO8/q1FE7D0iIoP0cN9EqLgCDh/c6O7ByY?=
- =?us-ascii?Q?vQ=3D=3D?=
-X-OriginatorOrg: eideticom.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5de9dfb-cf45-4925-6519-08dc9c47a5cf
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR19MB4250.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 16:37:51.9383
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3490cd4b-0360-4377-abb1-15f8c5af8fc2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t+csYIwx7YAmDc0SyasvTCBKH5jlY56NwjLs78GcE8GogcFcGy10XcmUwRRa9efwo17qA1jb+inwu8TKWqw4AeO4JVyYpg8oKWzAioeQk4Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR19MB7850
+References: <000000000000bdd06e06173b0ae7@google.com>
+In-Reply-To: <000000000000bdd06e06173b0ae7@google.com>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Fri, 5 Jul 2024 01:37:42 +0900
+Message-ID: <CAKFNMonwXBR0Z0dMfM5tfu32gEvpGuue_7JpWkUts0SUCLUGhQ@mail.gmail.com>
+Subject: Re: [syzbot] [nilfs?] possible deadlock in nilfs_dirty_inode (3)
+To: syzbot <syzbot+ca73f5a22aec76875d85@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If the device supports P2PDMA, add the FOLL_PCI_P2PDMA flag
+On Mon, Apr 29, 2024 at 9:03=E2=80=AFPM syzbot
+<syzbot+ca73f5a22aec76875d85@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    e88c4cfcb7b8 Merge tag 'for-6.9-rc5-tag' of git://git.ker=
+n..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D10f9238098000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D19891bd776e81=
+b8b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dca73f5a22aec768=
+75d85
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> userspace arch: i386
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7=
+bc7510fe41f/non_bootable_disk-e88c4cfc.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/3d83e80db525/vmlinu=
+x-e88c4cfc.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/847604848213/b=
+zImage-e88c4cfc.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+ca73f5a22aec76875d85@syzkaller.appspotmail.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> WARNING: possible circular locking dependency detected
+> 6.9.0-rc5-syzkaller-00042-ge88c4cfcb7b8 #0 Not tainted
+> ------------------------------------------------------
+> kswapd0/110 is trying to acquire lock:
+> ffff88806d060610 (sb_internal#3){.+.+}-{0:0}, at: nilfs_dirty_inode+0x1a4=
+/0x270 fs/nilfs2/inode.c:1153
+>
+> but task is already holding lock:
+> ffffffff8d9373c0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10=
+ mm/vmscan.c:6782
+>
+> which lock already depends on the new lock.
+>
+>
+> the existing dependency chain (in reverse order) is:
+>
+> -> #2 (fs_reclaim){+.+.}-{0:0}:
+>        __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
+>        fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3712
+>        might_alloc include/linux/sched/mm.h:312 [inline]
+>        prepare_alloc_pages.constprop.0+0x155/0x560 mm/page_alloc.c:4346
+>        __alloc_pages+0x194/0x2460 mm/page_alloc.c:4564
+>        alloc_pages_mpol+0x275/0x610 mm/mempolicy.c:2264
+>        folio_alloc+0x1e/0x40 mm/mempolicy.c:2342
+>        filemap_alloc_folio+0x3ba/0x490 mm/filemap.c:984
+>        __filemap_get_folio+0x52b/0xa90 mm/filemap.c:1926
+>        pagecache_get_page+0x2c/0x260 mm/folio-compat.c:93
+>        block_write_begin+0x38/0x4a0 fs/buffer.c:2209
+>        nilfs_write_begin+0x9f/0x1a0 fs/nilfs2/inode.c:262
+>        page_symlink+0x356/0x450 fs/namei.c:5229
+>        nilfs_symlink+0x23c/0x3c0 fs/nilfs2/namei.c:153
+>        vfs_symlink fs/namei.c:4481 [inline]
+>        vfs_symlink+0x3e8/0x630 fs/namei.c:4465
+>        do_symlinkat+0x263/0x310 fs/namei.c:4507
+>        __do_sys_symlink fs/namei.c:4528 [inline]
+>        __se_sys_symlink fs/namei.c:4526 [inline]
+>        __ia32_sys_symlink+0x78/0xa0 fs/namei.c:4526
+>        do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+>        __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
+>        do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+>        entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+>
+> -> #1 (&nilfs->ns_segctor_sem){++++}-{3:3}:
+>        down_read+0x9a/0x330 kernel/locking/rwsem.c:1526
+>        nilfs_transaction_begin+0x326/0xa40 fs/nilfs2/segment.c:223
+>        nilfs_symlink+0x114/0x3c0 fs/nilfs2/namei.c:140
+>        vfs_symlink fs/namei.c:4481 [inline]
+>        vfs_symlink+0x3e8/0x630 fs/namei.c:4465
+>        do_symlinkat+0x263/0x310 fs/namei.c:4507
+>        __do_sys_symlink fs/namei.c:4528 [inline]
+>        __se_sys_symlink fs/namei.c:4526 [inline]
+>        __ia32_sys_symlink+0x78/0xa0 fs/namei.c:4526
+>        do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+>        __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
+>        do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+>        entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+>
+> -> #0 (sb_internal#3){.+.+}-{0:0}:
+>        check_prev_add kernel/locking/lockdep.c:3134 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+>        validate_chain kernel/locking/lockdep.c:3869 [inline]
+>        __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+>        lock_acquire kernel/locking/lockdep.c:5754 [inline]
+>        lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+>        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+>        __sb_start_write include/linux/fs.h:1664 [inline]
+>        sb_start_intwrite include/linux/fs.h:1847 [inline]
+>        nilfs_transaction_begin+0x21b/0xa40 fs/nilfs2/segment.c:220
+>        nilfs_dirty_inode+0x1a4/0x270 fs/nilfs2/inode.c:1153
+>        __mark_inode_dirty+0x1f0/0xe70 fs/fs-writeback.c:2477
+>        mark_inode_dirty_sync include/linux/fs.h:2410 [inline]
+>        iput.part.0+0x5b/0x7f0 fs/inode.c:1764
+>        iput+0x5c/0x80 fs/inode.c:1757
+>        dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
+>        __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+>        shrink_kill fs/dcache.c:1048 [inline]
+>        shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+>        prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+>        super_cache_scan+0x32a/0x550 fs/super.c:221
+>        do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+>        shrink_slab_memcg mm/shrinker.c:548 [inline]
+>        shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+>        shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+>        shrink_many mm/vmscan.c:4835 [inline]
+>        lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
+>        shrink_node mm/vmscan.c:5894 [inline]
+>        kswapd_shrink_node mm/vmscan.c:6704 [inline]
+>        balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
+>        kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
+>        kthread+0x2c1/0x3a0 kernel/kthread.c:388
+>        ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> other info that might help us debug this:
+>
+> Chain exists of:
+>   sb_internal#3 --> &nilfs->ns_segctor_sem --> fs_reclaim
+>
+>  Possible unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(fs_reclaim);
+>                                lock(&nilfs->ns_segctor_sem);
+>                                lock(fs_reclaim);
+>   rlock(sb_internal#3);
+>
+>  *** DEADLOCK ***
+>
+> 2 locks held by kswapd0/110:
+>  #0: ffffffff8d9373c0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0=
+x1a10 mm/vmscan.c:6782
+>  #1: ffff88806d0600e0 (&type->s_umount_key#55){++++}-{3:3}, at: super_try=
+lock_shared fs/super.c:561 [inline]
+>  #1: ffff88806d0600e0 (&type->s_umount_key#55){++++}-{3:3}, at: super_cac=
+he_scan+0x96/0x550 fs/super.c:196
+>
+> stack backtrace:
+> CPU: 2 PID: 110 Comm: kswapd0 Not tainted 6.9.0-rc5-syzkaller-00042-ge88c=
+4cfcb7b8 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.=
+16.2-1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+>  check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+>  check_prev_add kernel/locking/lockdep.c:3134 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+>  validate_chain kernel/locking/lockdep.c:3869 [inline]
+>  __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+>  lock_acquire kernel/locking/lockdep.c:5754 [inline]
+>  lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+>  percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+>  __sb_start_write include/linux/fs.h:1664 [inline]
+>  sb_start_intwrite include/linux/fs.h:1847 [inline]
+>  nilfs_transaction_begin+0x21b/0xa40 fs/nilfs2/segment.c:220
+>  nilfs_dirty_inode+0x1a4/0x270 fs/nilfs2/inode.c:1153
+>  __mark_inode_dirty+0x1f0/0xe70 fs/fs-writeback.c:2477
+>  mark_inode_dirty_sync include/linux/fs.h:2410 [inline]
+>  iput.part.0+0x5b/0x7f0 fs/inode.c:1764
+>  iput+0x5c/0x80 fs/inode.c:1757
+>  dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
+>  __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+>  shrink_kill fs/dcache.c:1048 [inline]
+>  shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+>  prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+>  super_cache_scan+0x32a/0x550 fs/super.c:221
+>  do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+>  shrink_slab_memcg mm/shrinker.c:548 [inline]
+>  shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+>  shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+>  shrink_many mm/vmscan.c:4835 [inline]
+>  lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
+>  shrink_node mm/vmscan.c:5894 [inline]
+>  kswapd_shrink_node mm/vmscan.c:6704 [inline]
+>  balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
+>  kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
+>  kthread+0x2c1/0x3a0 kernel/kthread.c:388
+>  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-This allows ibv_reg_mr() and friends to use P2PDMA memory that has been
-mmaped into userspace for MRs in IB and RDMA transactions.
+#syz dup: possible deadlock in nilfs_transaction_begin
 
-Co-developed-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Martin Oliveira <martin.oliveira@eideticom.com>
-Acked-by: Jason Gunthorpe <jgg@nvidia.com>
----
- drivers/infiniband/core/umem.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
-index 07c571c7b699..b59bb6e1475e 100644
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -208,6 +208,9 @@ struct ib_umem *ib_umem_get(struct ib_device *device, unsigned long addr,
- 	if (umem->writable)
- 		gup_flags |= FOLL_WRITE;
- 
-+	if (ib_dma_pci_p2p_dma_supported(device))
-+		gup_flags |= FOLL_PCI_P2PDMA;
-+
- 	while (npages) {
- 		cond_resched();
- 		pinned = pin_user_pages_fast(cur_base,
--- 
-2.34.1
-
+Ryusuke Konishi
 
