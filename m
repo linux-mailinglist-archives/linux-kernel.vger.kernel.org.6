@@ -1,287 +1,231 @@
-Return-Path: <linux-kernel+bounces-241644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04589927D87
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:03:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03098927D72
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:02:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB59F282030
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C4961F24CF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123721428FA;
-	Thu,  4 Jul 2024 19:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D6F131E2D;
+	Thu,  4 Jul 2024 19:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="sz775JKN"
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T0doIfOC"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F411131E2D;
-	Thu,  4 Jul 2024 19:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98A67344D;
+	Thu,  4 Jul 2024 19:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720119738; cv=none; b=nQE8SkKg8p8R3sLOwVMN0AkvU74rMgQaof943rb5nqObJnRH0mgT+bhL2hOv+qsYk3+BQwOvpujS/1l9DNEZ4jpRaNTiJ09D3kNWuGg3x4Auvi06x1kTa1s0H5IAxwMJhBr4mO4Rn5VwkFk+vUOrbaww4F+A6tsjBMcjHbbmpwY=
+	t=1720119720; cv=none; b=hGzHwYAKC4FSv/y+I5isojw5FjFIreNvuBMJyijg/9JTVtUA+ZYQYY6zXr2hB0XrJsWmEx/Im7TUj3gDoy9xT7QqU7UxTdricRzKVnSQQDVcimHFcFm97WsX976PRqxGzmqwGD3ojw4m/W5SIDP2eUMBDiTBdYI7E4qpxLfmbrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720119738; c=relaxed/simple;
-	bh=oF6rZ0nuBxG6YDixlM9cat48r0Oum2JdP1zOs4FQ5/c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q0POiA2RqZ2HfXYwIq5SGQxkI06ubZi9nVtXXw6MQcKSUICtvmUCbJ0CXXnjvvE+8TLuTcUFgPEskrs2WqrdlqP8YCclEQwM76hNTuy22+AR58gXscDezPbeY3jwBxL8BSWJxS2Ihon4VZwTytRpJ8lklhJXR0U7fafWbkhVrs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=sz775JKN; arc=none smtp.client-ip=84.16.66.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WFQxd4WXSz114p;
-	Thu,  4 Jul 2024 21:02:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720119733;
-	bh=v0fxaXOdLtc/Ju12bV32vY14OcdVSThIgNKjl9+i++A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sz775JKNODOr34yQ+Cv6KYcDvi+5ptHtkytGJ4G92ILUZoxk4zmBBIN1RY/1M1tms
-	 ZO3bjuRTATAsvIlizxMEmtFYYYIpG6mKsV5ckhQqA6RKyNXIXh9DUoYxtxxVrb/Yc1
-	 MGjtdlShlQavT56SM7tKhkep7CajraMh20U4V77E=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WFQxc5zxzzTK7;
-	Thu,  4 Jul 2024 21:02:12 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Theodore Ts'o <tytso@mit.edu>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Alejandro Colomar <alx.manpages@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Christian Heimes <christian@python.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Eric Chiang <ericchiang@google.com>,
-	Fan Wu <wufan@linux.microsoft.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Jan Kara <jack@suse.cz>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jordan R Abrahams <ajordanr@google.com>,
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-	Luca Boccassi <bluca@debian.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Scott Shell <scottsh@microsoft.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Steve Dower <steve.dower@python.org>,
-	Steve Grubb <sgrubb@redhat.com>,
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-	Xiaoming Ni <nixiaoming@huawei.com>,
-	Yin Fengwei <fengwei.yin@intel.com>,
-	kernel-hardening@lists.openwall.com,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [RFC PATCH v19 5/5] samples/should-exec: Add set-should-exec
-Date: Thu,  4 Jul 2024 21:01:37 +0200
-Message-ID: <20240704190137.696169-6-mic@digikod.net>
-In-Reply-To: <20240704190137.696169-1-mic@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
+	s=arc-20240116; t=1720119720; c=relaxed/simple;
+	bh=nmMRH5pXrMMRKuug0BuIt4QE4BnydUTQpv/mMb3qEJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rMiQX9P/vavZsMzXzOgo4mrOCguQPy3r4rsg4+TenPWxusFpWttimOCC65+TevLIfOfK3CSu4n7ut8F0CQNXY6kHWsl2ILaVfU9+3SjFoI+a9OXc4GswWBS+Qllol+cxXG1pA//f7PetEqajPQdVJgxDcrvckOHsBFy5Wy+TwAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T0doIfOC; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-367a23462e6so422288f8f.3;
+        Thu, 04 Jul 2024 12:01:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720119717; x=1720724517; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YEliSMC16j7aM+RT12WbhyFPc+cpM+7NR5Vb+5oa/1w=;
+        b=T0doIfOCWbfCM0uSzB6OKzB3a9ynCTgT/u20enp4rZTBpfnlmCojhdlu3qsq15PbQp
+         87gKpgQWfzChf8vd21dt9VDa8Sm/roGjSb0d4aFBfL65oreJW/2/wUxybaHPVB7wpWDV
+         xig7nXqXBb+xSrqMAir/5qeRKGSvr/f/6uqpKk9ok2rBPlLWUmodkYDBv3qOnX1r2wPy
+         kC4c0/m8DbHpn6M/xjDF28JWozaREzR4pQitYUnUBFDjKfrNWyvh482QQA8cqb5Ze4bv
+         vwhHMmqE/7tY+wmAIo0m09PJsv+74G4jhFoxIQcyvmXe9DxN30e6LNuTq2IUSGddh9xp
+         Ud7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720119717; x=1720724517;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YEliSMC16j7aM+RT12WbhyFPc+cpM+7NR5Vb+5oa/1w=;
+        b=cEfUZfAHBntt8UKCy08IHcTLF28DIEsw+3r0MIOK57HaLHavY7WZJ9VIDyc9259cG6
+         Rba7yw+F0egdpwW1rgIUFBNWLkZ9UyjlSqgzcKS/SFOiasssF5VXKwTcsHTqTNQgbnPc
+         9MDmeJ2+Dm4rNTLQmXpOO5+96/lTi0cD5tZxU9DlgNr+P+hU/tLD279GzDHgaA/fLQzu
+         hjG/1mToSS1wokm0E0RSk34TnCVG7KKIm9/oGPRgo5tBUgjYbb6+ZK3Z3xErvpvQPrSD
+         T/Ej2yrFSETKqYMXu9SwoBzbeeGbIHrYQy5YoGakTOxOxnwLvfpHarqWpcd9PgNQaJLH
+         rPtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXUikAJsKbdSfxeCGzznS/KQCc3SzqRIAlTIgCdvoCap3LFHlxco9yZ0W1rOlgFiKGhNBHKMsXnoMdzsKL5b+T59A5YK7VM+awDA==
+X-Gm-Message-State: AOJu0YwRrkTRd9ZrmTz8Gs3jdhLhcWFyBSaf4pdirc6PzLtfZS3dBpAY
+	ZvLlb/TJtHeVdH5WeSnUSgQr8MweljurvXUTYjqYP0ffoXj+x+g5
+X-Google-Smtp-Source: AGHT+IE9o2urE3a2f9G2KQXy1ofKL771HQTP7bu92yZO6KSXO8w4D7Y8Zf4OKZRL1AyQIvyv9ZnAEg==
+X-Received: by 2002:a05:6000:1245:b0:367:88c2:bcfc with SMTP id ffacd0b85a97d-3679dd15b9bmr1983390f8f.1.1720119717032;
+        Thu, 04 Jul 2024 12:01:57 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3679224d11dsm5098853f8f.12.2024.07.04.12.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 12:01:56 -0700 (PDT)
+Date: Thu, 4 Jul 2024 21:01:54 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH] dt-bindings: regulator: sprd,sc2731-regulator: convert to
+ YAML
+Message-ID: <ZobxoobZvA8k3pyi@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add a simple tool to set SECBIT_SHOULD_EXEC_CHECK,
-SECBIT_SHOULD_EXEC_RESTRICT, and their lock counterparts before
-executing a command.  This should be useful to easily test against
-script interpreters.
+Convert the Spreadtrum SC2731 regulator bindings to DT schema.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20240704190137.696169-6-mic@digikod.net
+Change during conversion:
+  - switch compatible from sprd,sc27xx-regulator to sprd,sc2731-regulator,
+    same as the only in-tree user has done back in 2019 [1]
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/arch/arm64/boot/dts/sprd/sc2731.dtsi?h=v6.9&id=0419a75b1808dda225b17ba1509f195f23c0db88
+
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 ---
- samples/Kconfig                       |  7 +++
- samples/Makefile                      |  1 +
- samples/should-exec/.gitignore        |  1 +
- samples/should-exec/Makefile          | 13 ++++
- samples/should-exec/set-should-exec.c | 88 +++++++++++++++++++++++++++
- 5 files changed, 110 insertions(+)
- create mode 100644 samples/should-exec/.gitignore
- create mode 100644 samples/should-exec/Makefile
- create mode 100644 samples/should-exec/set-should-exec.c
+ .../regulator/sprd,sc2731-regulator.txt       | 43 ------------
+ .../regulator/sprd,sc2731-regulator.yaml      | 67 +++++++++++++++++++
+ 2 files changed, 67 insertions(+), 43 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/regulator/sprd,sc2731-regulator.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/sprd,sc2731-regulator.yaml
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index b288d9991d27..d8f2639bc830 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -180,6 +180,13 @@ config SAMPLE_SECCOMP
- 	  Build samples of seccomp filters using various methods of
- 	  BPF filter construction.
- 
-+config SAMPLE_SHOULD_EXEC
-+	bool "Should-exec secure bits examples"
-+	depends on CC_CAN_LINK && HEADERS_INSTALL
-+	help
-+	  Build a tool to easily configure SECBIT_SHOULD_EXEC_CHECK,
-+	  SECBIT_SHOULD_EXEC_RESTRICT and their lock counterparts.
-+
- config SAMPLE_TIMER
- 	bool "Timer sample"
- 	depends on CC_CAN_LINK && HEADERS_INSTALL
-diff --git a/samples/Makefile b/samples/Makefile
-index b85fa64390c5..0e7a97fb222d 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -19,6 +19,7 @@ subdir-$(CONFIG_SAMPLE_PIDFD)		+= pidfd
- obj-$(CONFIG_SAMPLE_QMI_CLIENT)		+= qmi/
- obj-$(CONFIG_SAMPLE_RPMSG_CLIENT)	+= rpmsg/
- subdir-$(CONFIG_SAMPLE_SECCOMP)		+= seccomp
-+subdir-$(CONFIG_SAMPLE_SHOULD_EXEC)	+= should-exec
- subdir-$(CONFIG_SAMPLE_TIMER)		+= timers
- obj-$(CONFIG_SAMPLE_TRACE_EVENTS)	+= trace_events/
- obj-$(CONFIG_SAMPLE_TRACE_CUSTOM_EVENTS) += trace_events/
-diff --git a/samples/should-exec/.gitignore b/samples/should-exec/.gitignore
+diff --git a/Documentation/devicetree/bindings/regulator/sprd,sc2731-regulator.txt b/Documentation/devicetree/bindings/regulator/sprd,sc2731-regulator.txt
+deleted file mode 100644
+index 63dc07877cd6..000000000000
+--- a/Documentation/devicetree/bindings/regulator/sprd,sc2731-regulator.txt
++++ /dev/null
+@@ -1,43 +0,0 @@
+-Spreadtrum SC2731 Voltage regulators
+-
+-The SC2731 integrates low-voltage and low quiescent current DCDC/LDO.
+-14 LDO and 3 DCDCs are designed for external use. All DCDCs/LDOs have
+-their own bypass (power-down) control signals. External tantalum or MLCC
+-ceramic capacitors are recommended to use with these LDOs.
+-
+-Required properties:
+- - compatible: should be "sprd,sc27xx-regulator".
+-
+-List of regulators provided by this controller. It is named according to
+-its regulator type, BUCK_<name> and LDO_<name>. The definition for each
+-of these nodes is defined using the standard binding for regulators at
+-Documentation/devicetree/bindings/regulator/regulator.txt.
+-
+-The valid names for regulators are:
+-BUCK:
+-	BUCK_CPU0, BUCK_CPU1, BUCK_RF
+-LDO:
+-	LDO_CAMA0, LDO_CAMA1, LDO_CAMMOT, LDO_VLDO, LDO_EMMCCORE, LDO_SDCORE,
+-	LDO_SDIO, LDO_WIFIPA, LDO_USB33, LDO_CAMD0, LDO_CAMD1, LDO_CON,
+-	LDO_CAMIO, LDO_SRAM
+-
+-Example:
+-	regulators {
+-		compatible = "sprd,sc27xx-regulator";
+-
+-		vddarm0: BUCK_CPU0 {
+-			regulator-name = "vddarm0";
+-			regulator-min-microvolt = <400000>;
+-			regulator-max-microvolt = <1996875>;
+-			regulator-ramp-delay = <25000>;
+-			regulator-always-on;
+-		};
+-
+-		vddcama0: LDO_CAMA0 {
+-			regulator-name = "vddcama0";
+-			regulator-min-microvolt = <1200000>;
+-			regulator-max-microvolt = <3750000>;
+-			regulator-enable-ramp-delay = <100>;
+-		};
+-		...
+-	};
+diff --git a/Documentation/devicetree/bindings/regulator/sprd,sc2731-regulator.yaml b/Documentation/devicetree/bindings/regulator/sprd,sc2731-regulator.yaml
 new file mode 100644
-index 000000000000..ac46c614ec80
+index 000000000000..ffb2924dde36
 --- /dev/null
-+++ b/samples/should-exec/.gitignore
-@@ -0,0 +1 @@
-+/set-should-exec
-diff --git a/samples/should-exec/Makefile b/samples/should-exec/Makefile
-new file mode 100644
-index 000000000000..c4294278dd07
---- /dev/null
-+++ b/samples/should-exec/Makefile
-@@ -0,0 +1,13 @@
-+# SPDX-License-Identifier: BSD-3-Clause
++++ b/Documentation/devicetree/bindings/regulator/sprd,sc2731-regulator.yaml
+@@ -0,0 +1,67 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/sprd,sc2731-regulator.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+userprogs-always-y := set-should-exec
++title: Spreadtrum SC2731 Power Management IC regulators
 +
-+userccflags += -I usr/include
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
 +
-+.PHONY: all clean
++description: |
++  The SC2731 integrates low-voltage and low quiescent current DCDC/LDO.
++  14 LDO and 3 DCDCs are designed for external use. All DCDCs/LDOs have
++  their own bypass (power-down) control signals. It is recommended to use
++  external tantalum or MLCC ceramic capacitors with these LDOs.
++  Valid names for the regulators are:
++    BUCK:
++      BUCK_CPU0, BUCK_CPU1, BUCK_RF
++    LDO:
++      LDO_CAMA0, LDO_CAMA1, LDO_CAMD0, LDO_CAMD1, LDO_CAMIO, LDO_CAMMOT,
++      LDO_CON, LDO_EMMCCORE, LDO_SDCORE, LDO_SDIO, LDO_SRAM, LDO_USB33,
++      LDO_VLDO, LDO_WIFIPA
 +
-+all:
-+	$(MAKE) -C ../.. samples/should-exec/
++properties:
++  compatible:
++    const: sprd,sc2731-regulator
 +
-+clean:
-+	$(MAKE) -C ../.. M=samples/should-exec/ clean
-diff --git a/samples/should-exec/set-should-exec.c b/samples/should-exec/set-should-exec.c
-new file mode 100644
-index 000000000000..b3c31106d916
---- /dev/null
-+++ b/samples/should-exec/set-should-exec.c
-@@ -0,0 +1,88 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Simple tool to set SECBIT_SHOULD_EXEC_CHECK,  SECBIT_SHOULD_EXEC_RESTRICT,
-+ * and their lock counterparts before executing a command.
-+ *
-+ * Copyright © 2024 Microsoft Corporation
-+ */
++patternProperties:
++  "^BUCK_(CPU[0-1]|RF)$":
++    type: object
++    $ref: regulator.yaml#
++    unevaluatedProperties: false
 +
-+#define _GNU_SOURCE
-+#define __SANE_USERSPACE_TYPES__
-+#include <errno.h>
-+#include <linux/prctl.h>
-+#include <linux/securebits.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/prctl.h>
-+#include <unistd.h>
++  "^LDO_(CAM(A0|A1|D0|D1|IO|MOT)|CON|EMMCCORE|SD(CORE|IO)|SRAM|USB33|VLDO|WIFIPA)$":
++    type: object
++    $ref: regulator.yaml#
++    unevaluatedProperties: false
 +
-+static void print_usage(const char *argv0)
-+{
-+	fprintf(stderr, "usage: %s -c|-r [-l] -- <cmd> [args]...\n\n", argv0);
-+	fprintf(stderr, "Execute a command with\n");
-+	fprintf(stderr, "- SECBIT_SHOULD_EXEC_CHECK set: -c\n");
-+	fprintf(stderr, "- SECBIT_SHOULD_EXEC_RESTRICT set: -r\n");
-+	fprintf(stderr, "- SECBIT_SHOULD_EXEC_*_LOCKED set: -l\n");
-+}
++required:
++  - compatible
 +
-+int main(const int argc, char *const argv[], char *const *const envp)
-+{
-+	const char *cmd_path;
-+	char *const *cmd_argv;
-+	int opt, secbits, err;
-+	bool has_policy = false;
++additionalProperties: false
 +
-+	secbits = prctl(PR_GET_SECUREBITS);
++examples:
++  - |
++    regulators {
++      compatible = "sprd,sc2731-regulator";
 +
-+	while ((opt = getopt(argc, argv, "crl")) != -1) {
-+		switch (opt) {
-+		case 'c':
-+			secbits |= SECBIT_SHOULD_EXEC_CHECK;
-+			has_policy = true;
-+			break;
-+		case 'r':
-+			secbits |= SECBIT_SHOULD_EXEC_RESTRICT;
-+			has_policy = true;
-+			break;
-+		case 'l':
-+			secbits |= SECBIT_SHOULD_EXEC_CHECK_LOCKED;
-+			secbits |= SECBIT_SHOULD_EXEC_RESTRICT_LOCKED;
-+			break;
-+		default:
-+			print_usage(argv[0]);
-+			return 1;
-+		}
-+	}
++      BUCK_CPU0 {
++        regulator-name = "vddarm0";
++        regulator-min-microvolt = <400000>;
++        regulator-max-microvolt = <1996875>;
++        regulator-ramp-delay = <25000>;
++        regulator-always-on;
++      };
 +
-+	if (!argv[optind] || !has_policy) {
-+		print_usage(argv[0]);
-+		return 1;
-+	}
-+
-+	err = prctl(PR_SET_SECUREBITS, secbits);
-+	if (err) {
-+		perror("Failed to set secure bit(s).");
-+		fprintf(stderr,
-+			"Hint: The running kernel may not support this feature.\n");
-+		return 1;
-+	}
-+
-+	fprintf(stderr, "SECBIT_SHOULD_EXEC_CHECK: %d\n",
-+		!!(secbits & SECBIT_SHOULD_EXEC_CHECK));
-+	fprintf(stderr, "SECBIT_SHOULD_EXEC_CHECK_LOCKED: %d\n",
-+		!!(secbits & SECBIT_SHOULD_EXEC_CHECK_LOCKED));
-+	fprintf(stderr, "SECBIT_SHOULD_EXEC_RESTRICT: %d\n",
-+		!!(secbits & SECBIT_SHOULD_EXEC_RESTRICT));
-+	fprintf(stderr, "SECBIT_SHOULD_EXEC_RESTRICT_LOCKED: %d\n",
-+		!!(secbits & SECBIT_SHOULD_EXEC_RESTRICT_LOCKED));
-+
-+	cmd_path = argv[optind];
-+	cmd_argv = argv + optind;
-+	fprintf(stderr, "Executing command...\n");
-+	execvpe(cmd_path, cmd_argv, envp);
-+	fprintf(stderr, "Failed to execute \"%s\": %s\n", cmd_path,
-+		strerror(errno));
-+	return 1;
-+}
++      LDO_CAMA0 {
++        regulator-name = "vddcama0";
++        regulator-min-microvolt = <1200000>;
++        regulator-max-microvolt = <3750000>;
++        regulator-enable-ramp-delay = <100>;
++      };
++    };
++...
 -- 
-2.45.2
+2.34.1
 
 
