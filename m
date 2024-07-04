@@ -1,189 +1,153 @@
-Return-Path: <linux-kernel+bounces-240668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620459270AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:32:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F13419270B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE744289172
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBB3E2839E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C2F19D89F;
-	Thu,  4 Jul 2024 07:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223341A0AF2;
+	Thu,  4 Jul 2024 07:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BPhCciv8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TLCg/vkR"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A855175552
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 07:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D13146581
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 07:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720078360; cv=none; b=jrI22NqToyE3H4Q8reDb6OjOGK1fCKHzYUQRXLBZf9XBKq5oZnXWaN2SaBcBeJR20x7zqATEZ/brmzb4V4Dp3ZSFnceHNXgxF3FJJhfJi9RqRuN53Lv/0wr9Nzjlm4FUAo2xkCY90LMdco5hnoR0pPmuD6L/0zpUIyBDx27G+No=
+	t=1720078482; cv=none; b=U9YYTz/Vel4O6UA2mPgpC0pnuce/4inTvPdewwe8/b4ZF7YaNLSsh4oiCnkwFX9qdp4pYtlgdS1k3DWvryDZhTh1DiYvJAddjeJXjRojX66SiW6UupPpXz1x036B23TIAUVbpAXzcg0uCSpsyWSZqozg0tYqgSxwC7JVsvR0eGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720078360; c=relaxed/simple;
-	bh=8HlmpJMCXUdLQJpNWUAEVrqJS0MrfXPhDJstgMIWOsw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mz3jF5O02YqMgu5XCTilvIvAOSFpVFEyEQ3xpaRrkA7mA0uf7ALy27hRwa3kr6cJH4PTSdwKN5khCOKQy+YqdUseFVY0EcIXeaZEr9QEnNSi1hFy5yqNaNWgF3aNntoh6x/OaK8zdKSM2A7JV3nIygV2+KFU/buRH1yqBQ2zxmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BPhCciv8; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720078359; x=1751614359;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8HlmpJMCXUdLQJpNWUAEVrqJS0MrfXPhDJstgMIWOsw=;
-  b=BPhCciv8qsnY17RK1ZM9i06lnazFs/zd3s+eo/uItNMrcWIpC+RId3Pt
-   JPQfKpECmT4nVUcL6v7koj/ScqLVqvi0Hs4MeK4X2vPpNE+D3+rsUz2C6
-   tVkolUWCKtKVr+Rq4AwcpiESNJfYdeEe9tL5+++0fFNuNydSXei7kFMiG
-   X9Kx0N1u59jDWpeI+D1RGD0nBwg9O92bhJ9sQC1zFQ+vUSrTauS1GZ1Fn
-   ZDm69UDTf7X2VZfLrE9St5/bd+ebAn0LiwqenP8cWp4DGbdbeQsJd56on
-   U5FYMdqRhdN4d0QGm/Xtjp6h55/lZiJi385lJGzCPhbkBHsLlo25NVKwc
-   Q==;
-X-CSE-ConnectionGUID: rfl6QmSMQmql8t33wtApQA==
-X-CSE-MsgGUID: q0ZLH1WhTEKxu4EWaEDu8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="17476679"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="17476679"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 00:32:39 -0700
-X-CSE-ConnectionGUID: hdEgb+MBQFOD37NcQY3N4w==
-X-CSE-MsgGUID: H+fHHzmfRBq+AaDMDklizQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="47166851"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 00:32:35 -0700
-Message-ID: <fc7f5bb1-25b7-4a5f-8d6b-1fa17b1af534@linux.intel.com>
-Date: Thu, 4 Jul 2024 15:32:32 +0800
+	s=arc-20240116; t=1720078482; c=relaxed/simple;
+	bh=VpoVS15y2XzQcFZvsnd8dfEx4qTU+ufCG2U//TBJJec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tjugrvl8LRzc6fA1e+R4ZVn7KmlAUUw72ty8AI8s7sqlcOfhcfZHYq3xhFKXMx7JbDWLxdusl+aPOnt3CNrOPCHjlrgGiZPCCyxnaxBetrRoo7wkF8stH3dY23VED67iYH3WmEsPlZrtv0TjG4yf5pRVTERh5WxHbnp3b9w2wk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TLCg/vkR; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-650b8e0a6ceso3111687b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 00:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720078480; x=1720683280; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZSJbA3DiJ1YzPD3LPw7LD0YqK/n1egS96uxWCsi6+XA=;
+        b=TLCg/vkRTTtUFKkKRTeCs2qyoehhCLmiONSC1OzuwdGy4Qr4e3K2l30r/vLYIo7i27
+         XybKLsFJOwtb0xTeS5Eg3jsmZu5B3xPjv0Bdi2/QO6CQXVl3A6Hrpr+89qIV5+a4R/ZF
+         M1da+vDW9IdmDjVjrKP77AvvlF4k065yib33dym6lhGQr/lgi53yhK+tZ7T3V/7vna1Q
+         RKfl436r5r4HTrevjLzJJgK44NX1uYNfx8WRtToYdLrkPRTKl1UchnWUnajYGDMUE9TH
+         Bs2h9INYwRS7vceQ9ZELNM/bziuk4+pfXhcZAITYfvcelvFLOzSpG2OnAYYIwQJLdIpF
+         UrBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720078480; x=1720683280;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZSJbA3DiJ1YzPD3LPw7LD0YqK/n1egS96uxWCsi6+XA=;
+        b=LYclX77CD7gUwZbwOBFki8syuoxpJKgBEBWnYm5PKkBw9p76TNQX/1Cgm1KhsiwGsM
+         7+f7iD5STB4LRqwEJD6c7u/OB5ZZTYl8vL/l37bK9PRmjK28WOEJKNqqYoqpe9GBMkJ8
+         a1LneHVjw6HQ7ovjD2iaVNfZG5kXiGzYCXiuB6Qxmt2ecr0xk3ifRsHeIfK//mrumHwB
+         vAr5E2Edf1AzfIHJKu9y5qoROMlV3KQglmwBAwi0awN2gilcZgUmHOTjGtYDhE90QHn9
+         UC6qCnkUIPJph6xlHcDuuvkwumvvJL0v8a8zndqUOzmDWinNY0clSn4XrgUojFWPb8Hs
+         XbGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWisYKxG3W3eOnn5igFZQorpGmoEFM+Ft9Y6jUFyW9GzadV3C84jXnFlwx2P1hrXcdgJOakjA/6ZSojnpuNt6N8Gy3row0BbsW8D4CQ
+X-Gm-Message-State: AOJu0Yxz9bOcplCzlMgyFLnzNiX3mihcSqRXXrI4MMHSHeOfqRe10HpW
+	Zu23ofi2dOwUvDB/VyJKiFvOC1/Rf9aACkpnw29hDGK5tlLF+v8PV80mlXc+QvFdJCdG/OHkPJa
+	w0pCkkHJQj3lqtlN/ru+8r6J7nkw/ElgNnUsWQivoNSP+sSCuLHQ=
+X-Google-Smtp-Source: AGHT+IHhzigWq58lUOH6s/Jt2RBqXA0UUUMkvO30rPZCplWLfh0mEABxieG1yDWZSLhKM2T0i2/FZBaIpwaJfjilpU0=
+X-Received: by 2002:a05:690c:7483:b0:631:2ebf:b8dc with SMTP id
+ 00721157ae682-652d5333721mr10121657b3.4.1720078479809; Thu, 04 Jul 2024
+ 00:34:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- "Liu, Yi L" <yi.l.liu@intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v8 06/10] iommufd: Add iommufd fault object
-To: "Tian, Kevin" <kevin.tian@intel.com>, Nicolin Chen <nicolinc@nvidia.com>
-References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
- <20240702063444.105814-7-baolu.lu@linux.intel.com>
- <ZoXZZ2SJ/WdlMJaX@Asurada-Nvidia>
- <309e37d1-6066-4ba1-b30c-402a3c3e7c76@linux.intel.com>
- <ZoY01iLmzoV4fIPG@Asurada-Nvidia>
- <BN9PR11MB52769E10ED0741F5ED3E5B668CDE2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB52769E10ED0741F5ED3E5B668CDE2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com>
+ <20240702-qcom-tee-object-and-ioctls-v1-1-633c3ddf57ee@quicinc.com>
+ <ink4tq3wk2jkpybiisaudkun3g2x2drfogrdw43zdpi6yh2u5g@yrvrxzxsi46g> <836dab13-9c59-4d87-a600-a0be6506deb2@quicinc.com>
+In-Reply-To: <836dab13-9c59-4d87-a600-a0be6506deb2@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 4 Jul 2024 10:34:28 +0300
+Message-ID: <CAA8EJprp2veCaQq8GsYv4Mu1HQbx8nWv0XWtxcE4cu5kxkA16w@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/3] firmware: qcom: implement object invoke support
+To: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	srinivas.kandagatla@linaro.org, bartosz.golaszewski@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/7/4 14:37, Tian, Kevin wrote:
->> From: Nicolin Chen<nicolinc@nvidia.com>
->> Sent: Thursday, July 4, 2024 1:36 PM
->>
->> On Thu, Jul 04, 2024 at 10:59:45AM +0800, Baolu Lu wrote:
->>>> On Tue, Jul 02, 2024 at 02:34:40PM +0800, Lu Baolu wrote:
->>>>
->>>> +enum iommu_fault_type {
->>>> +     IOMMU_FAULT_TYPE_HWPT_IOPF,
->>>> +     IOMMU_FAULT_TYPE_VIOMMU_IRQ,
->>>> +};
->>>>
->>>>    struct iommu_fault_alloc {
->>>>        __u32 size;
->>>>        __u32 flags;
->>>> +     __u32 type;  /* enum iommu_fault_type */
->>>>        __u32 out_fault_id;
->>>>        __u32 out_fault_fd;
-> and need a new reserved field for alignment.
-> 
->>>>    };
->>>>
->>>> I understand that this is already v8. So, maybe we can, for now,
->>>> apply the small diff above with an IOMMU_FAULT_TYPE_HWPT_IOPF
->> type
->>>> check in the ioctl handler. And a decoupling for the iopf fops in
->>>> the ioctl handler can come later in the viommu series:
->>>>        switch (type) {
->>>>        case IOMMU_FAULT_TYPE_HWPT_IOPF:
->>>>                filep = anon_inode_getfile("[iommufd-pgfault]",
->>>>                                           &iommufd_fault_fops_iopf);
->>>>        case IOMMU_FAULT_TYPE_VIOMMU_IRQ:
->>>>                filep = anon_inode_getfile("[iommufd-viommu-irq]",
->>>>                                           &iommufd_fault_fops_viommu);
->>>>        default:
->>>>                return -EOPNOSUPP;
->>>>        }
->>>>
->>>> Since you are the designer here, I think you have a better 10000
->>>> foot view -- maybe I am missing something here implying that the
->>>> fault object can't be really reused by viommu.
->>>>
->>>> Would you mind sharing some thoughts here?
->>> I think this is a choice between "two different objects" vs. "same
->>> object with different FD interfaces". If I understand it correctly, your
->>> proposal of unrecoverable fault delivery is not limited to vcmdq, but
->>> generic to all unrecoverable events that userspace should be aware of
->>> when the passed-through device is affected.
->> It's basically IRQ forwarding, not confined to unrecoverable
->> faults. For example, a VCMDQ used by the guest kernel would
->> raise an HW IRQ if the guest kernel issues an illegal command
->> to the HW Queue assigned to it. The host kernel will receive
->> the IRQ, so it needs a way to forward it to the VM for guest
->> kernel to recover the HW queue.
->>
->> The way that we define the structure can follow what we have
->> for hwpt_alloc/invalidate uAPIs, i.e. driver data/event. And
->> such an event can carry unrecoverable translation faults too.
->> SMMU at least reports DMA translation faults using an eventQ
->> in its own native language.
->>
->>>  From a hardware architecture perspective, the interfaces for
->>> unrecoverable events don't always match the page faults. For example,
->>> VT-d architecture defines a PR queue for page faults, but uses a
->>> register set to report unrecoverable events. The 'reason', 'request id'
->>> and 'pasid' fields of the register set indicate what happened on the
->>> hardware. New unrecoverable events will not be reported until the
->>> previous one has been fetched.
->> Understood. I don't think we can share the majority pieces in
->> the fault.c. Just the "IOMMU_FAULT_QUEUE_ALLOC" ioctl itself
->> looks way too general to be limited to page-fault usage only.
->> So, I feel we can share, for example:
->>      IOMMU_FAULT_QUEUE_ALLOC (type=hwpt_iopf) -> fault_id=1
->>      IOMMU_HWPT_ALLOC (fault_id=1) -> hwpt_id=2
->>      IOMMU_FAULT_QUEUE_ALLOC (type=viommu_irq) -> fault_id=3
->>      IOMMU_VIOMMU_ALLOC (fault_id=2) -> viommu_id=4
->> The handler will direct to different fops as I drafted in my
->> previous mail.
->>
->>> With the above being said, I have no strong opinions between these two
->>> choices. Jason and Kevin should have more insights.
->> Thanks. Jason is out of office this week, so hopefully Kevin
->> may shed some light. I personally feel that we don't need to
->> largely update this series until we add VIOMMU. Yet, it would
->> be convenient if we add a "type" in the uAPI with this series.
->>
-> This is ok to me.
+On Thu, 4 Jul 2024 at 00:40, Amirreza Zarrabi <quic_azarrabi@quicinc.com> wrote:
+>
+>
+>
+> On 7/3/2024 10:13 PM, Dmitry Baryshkov wrote:
+> > On Tue, Jul 02, 2024 at 10:57:36PM GMT, Amirreza Zarrabi wrote:
+> >> Qualcomm TEE hosts Trusted Applications and Services that run in the
+> >> secure world. Access to these resources is provided using object
+> >> capabilities. A TEE client with access to the capability can invoke
+> >> the object and request a service. Similarly, TEE can request a service
+> >> from nonsecure world with object capabilities that are exported to secure
+> >> world.
+> >>
+> >> We provide qcom_tee_object which represents an object in both secure
+> >> and nonsecure world. TEE clients can invoke an instance of qcom_tee_object
+> >> to access TEE. TEE can issue a callback request to nonsecure world
+> >> by invoking an instance of qcom_tee_object in nonsecure world.
+> >
+> > Please see Documentation/process/submitting-patches.rst on how to write
+> > commit messages.
+>
+> Ack.
+>
+> >
+> >>
+> >> Any driver in nonsecure world that is interested to export a struct (or a
+> >> service object) to TEE, requires to embed an instance of qcom_tee_object in
+> >> the relevant struct and implements the dispatcher function which is called
+> >> when TEE invoked the service object.
+> >>
+> >> We also provids simplified API which implements the Qualcomm TEE transport
+> >> protocol. The implementation is independent from any services that may
+> >> reside in nonsecure world.
+> >
+> > "also" usually means that it should go to a separate commit.
+>
+> I will split this patch to multiple smaller ones.
+>
 
-So
+[...]
 
-Nicolin, perhaps can you please cook an additional patch on top of this
-series and post it for further review?
+> >
+> >> +    } in, out;
+> >> +};
+> >> +
+> >> +int qcom_tee_object_do_invoke(struct qcom_tee_object_invoke_ctx *oic,
+> >> +    struct qcom_tee_object *object, unsigned long op, struct qcom_tee_arg u[], int *result);
+> >
+> > What's the difference between a result that gets returned by the
+> > function and the result that gets retuned via the pointer?
+>
+> The function result, is local to kernel, for instance memory allocation failure,
+> or failure to issue the smc call. The result in pointer, is the remote result,
+> for instance return value from TA, or the TEE itself.
+>
+> I'll use better name, e.g. 'remote_result'?
 
-Thanks,
-baolu
+See how this is handled by other parties. For example, PSCI. If you
+have a standard set of return codes, translate them to -ESOMETHING in
+your framework and let everybody else see only the standard errors.
+
+
+-- 
+With best wishes
+Dmitry
 
