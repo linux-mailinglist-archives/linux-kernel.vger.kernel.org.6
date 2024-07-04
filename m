@@ -1,177 +1,190 @@
-Return-Path: <linux-kernel+bounces-241739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 947E4927EF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:15:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33061927EFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13FD71F23C48
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 22:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD33828443E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 22:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16118143C63;
-	Thu,  4 Jul 2024 22:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED230143875;
+	Thu,  4 Jul 2024 22:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iX8C2fRl"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqlSwBzX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3875405F8;
-	Thu,  4 Jul 2024 22:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD0E10A35;
+	Thu,  4 Jul 2024 22:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720131319; cv=none; b=GpZn82ak9slVY+B42/pFzUAcSo52Ydeq34wWqWW9X4filQUlL3FMe+LA/KO40x5nWhHSvfi2r8PWEHEB1fx+EkklRhbnjoN7jRBkio5uehXK3nOhyGGsjoVqlEawkFkshTWlCXbspAysGYkc5fuYOlp+pOK+YMooOGguoBgzfMg=
+	t=1720131505; cv=none; b=l+dDbKZCGTHYfwgArATbn+WCOQMQDi/llw1CBBdrT/igrefRyatZOOJJnkfc08iYxrzRGt9cO3u16w1My+1j29qyODrh6Jkd8VLCq2BKSZSHExYTGkCjgehYfoNCo3cs6bGHVNxfm00s0HzPV+T0pgZI6kYvvt2GX3VgScC4b/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720131319; c=relaxed/simple;
-	bh=67Gv27oRvUM28aoRGZ2xRjsYjiCrsxJ4J7h+O1P7zME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H+I0+HoGq93nm6D5y1wZh/l3oltkUtuABt0E+NJzF65n1ud53wZAX+jI3jJK5Z3QxCQrdPV7+SzlhuPThk020VYyM94h+W56KINWCUPtiNJCDU8OQZRWGm/J9knWs0+oukWLdlt0Js9gruu90a2mdtk4VsjmDzVWlIIT2SGAF70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iX8C2fRl; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6325b04c275so9910587b3.3;
-        Thu, 04 Jul 2024 15:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720131317; x=1720736117; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oxXjn/jIsgvTSGdEC5QHKUrLmHLOo/k7SsI87His1V8=;
-        b=iX8C2fRl35HmA3L9BQqlFMrKzVKwaUkWV3ZbVAROZIxKRgVx4feUYgeRajaEC408D1
-         DUPEDQYeRthZ8piFZyfLVdpc0xEEi7zgIR+jopoVLXaYZ09vE42IqqPjs2P+wY7SXGoH
-         RA/zSlfBs+g13fm6w1zQ+kvE8HZhS6uWliXsM8WY586Fg+f+TwFQ+rQoKcz7wacHfAnq
-         NLBUu1U6dzfctzjLnFFgIKoUvN/lVstUje9Z9a2RsCHrfc5iCYDvr4cu0dq21tho6+df
-         22ChVVbVFOwnBFRZqPBqlcNuwieyjhLelP0qUlssRJnATXTmaoEsx3VR4zjRpuNyOlVJ
-         b4nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720131317; x=1720736117;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oxXjn/jIsgvTSGdEC5QHKUrLmHLOo/k7SsI87His1V8=;
-        b=DsgiK4ofhZeO2DKgMPFIIqMzx0gDJcEKsuMd4TsAoGdPHKUzSXUTfojNRg8FzTZGkZ
-         +EN3D68Rxp7BqlvTmVRBLr4eSTVUteob8/ha+7x/8k4PkPvkZkEydlTt25l4mCTq5+iw
-         YQ/PwLRq/nnZIK5nSAbHEzlqQ5q1c0HFFqdstkWxBsYslCv5lhlfo1nYkwt7anVFUdlw
-         JNZTdzp/L+FpyBstael4vM02R2Xgssb3jjtFuBkl2JIsUgwE2wDD5Ks6hNZy3ZqEvN3B
-         voyx1prPLM/tFashP0/wAlBqPphL4hRAXQntdSgp9o/luWpP4zMwuSfP55lz8pHD6Fnj
-         A2GA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwxs8FZjBPLDOaRBCAsZoia2rWQFYpotMxbch/ATYtj2vV1YOndftPHY1kNzVuMf3tIQ3Z7VLwacBkUqaj8Pw5RjQGXcRm7c2+XGH0sUhzYtkbolhsUTmxP/19rkeekDasf8hSK2V08K0=
-X-Gm-Message-State: AOJu0YwneUugLiZNyRr5kKHiI9FFQ3rnU7/NOvK/A9gXlPqBMNR2S0T+
-	RQB/taJnOZIpjvHSBraoeHviW3VvGom93nOWqB95oZR8PQS1dVi5vivO8VLm8acMNWX215QJ2Z0
-	Ton5kLV9FTGH5wTGxsAw0h3L6iWo=
-X-Google-Smtp-Source: AGHT+IH613J1GVyVRVdw29iI1LtkdZWWQUclw6lnVqPqVppzm0gPrW066fO4DgEKjI1yqYnu2Eas4yojnFsHo8oObpk=
-X-Received: by 2002:a05:690c:812:b0:649:fa54:1f8c with SMTP id
- 00721157ae682-652d823eae9mr27342717b3.48.1720131316740; Thu, 04 Jul 2024
- 15:15:16 -0700 (PDT)
+	s=arc-20240116; t=1720131505; c=relaxed/simple;
+	bh=d+BVCpHA/lgf3h4px7dfugKp3IyudFXyWxITiIszq7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ecdLPFbpWijcKU9wjCk9Rcr18Vyq9Sg8HfDHflJ3bnJSXqQ8GRPk1r4go7d1wiUohtzxeonGTV6Gpgn6GlAR6LwOefXAwncCuryz7PTnGEvyOquZuHZOX5vJZlldd2RhMbgM+cH7mJDxnSgPjQT64ncSStDT7h3zvydrcDUqeNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqlSwBzX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F8C6C3277B;
+	Thu,  4 Jul 2024 22:18:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720131504;
+	bh=d+BVCpHA/lgf3h4px7dfugKp3IyudFXyWxITiIszq7Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bqlSwBzXivSz4uFlXc2O81bTCSQSdkmAgIj4j0uO/P3SEpvU+Y4RJJOxrVgKQU5ms
+	 eYLEyimz8bdWQBbaRuOeShbi7LwXMVfVQqEYCF8EJIf4PkLYwIHyindr2ygkK7a4N6
+	 0A6GRpXNC2wGgIkx2p48lTmw0MWC5YVAQQcpsJy2PoriFRl/csslbQC9fMp7kyF0WG
+	 d6tg1PokKlVh6xOlFBiE6mY8BSBYqp0yJTOZc8zN4N5IfzQxg70vb5s4aZi735tfyP
+	 gu2KfzF/onKBq+qhjqq3SDJ7CCBMRzt1TCk6MAHh5jQPObDm6J7ZMtoAfegROTHMOP
+	 rkRzCtmiPQ9dQ==
+Date: Fri, 5 Jul 2024 00:18:22 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, Leonardo Bras <leobras@redhat.com>,
+	Sean Christopherson <seanjc@google.com>
+Subject: Re: [PATCH rcu 6/9] rcu: Add rcutree.nocb_patience_delay to reduce
+ nohz_full OS jitter
+Message-ID: <ZocfrlMurvbl-JbY@pavilion.home>
+References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
+ <20240604222355.2370768-6-paulmck@kernel.org>
+ <ZoV6bTj0xvGopEao@localhost.localdomain>
+ <99721e1b-8752-4381-af2d-526f9b5c325c@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
- <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
- <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com> <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com>
-In-Reply-To: <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com>
-From: Andrea Gelmini <andrea.gelmini@gmail.com>
-Date: Fri, 5 Jul 2024 00:15:00 +0200
-Message-ID: <CAK-xaQa2NP0kfwQZoko-FUsSCbW31F1S48SJy8+94aSs7PCd3w@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <99721e1b-8752-4381-af2d-526f9b5c325c@paulmck-laptop>
 
-Il giorno gio 4 lug 2024 alle ore 19:25 Filipe Manana
-<fdmanana@kernel.org> ha scritto:
-> 2) In some cases we get very large negative numbers for the number of
-> extent maps to scan.
->     This shouldn't happen and either our own btrfs counter might have
-> overflowed or some other bug,
+Le Wed, Jul 03, 2024 at 10:25:57AM -0700, Paul E. McKenney a écrit :
+> On Wed, Jul 03, 2024 at 06:21:01PM +0200, Frederic Weisbecker wrote:
+> > Le Tue, Jun 04, 2024 at 03:23:52PM -0700, Paul E. McKenney a écrit :
+> > > If a CPU is running either a userspace application or a guest OS in
+> > > nohz_full mode, it is possible for a system call to occur just as an
+> > > RCU grace period is starting.  If that CPU also has the scheduling-clock
+> > > tick enabled for any reason (such as a second runnable task), and if the
+> > > system was booted with rcutree.use_softirq=0, then RCU can add insult to
+> > > injury by awakening that CPU's rcuc kthread, resulting in yet another
+> > > task and yet more OS jitter due to switching to that task, running it,
+> > > and switching back.
+> > > 
+> > > In addition, in the common case where that system call is not of
+> > > excessively long duration, awakening the rcuc task is pointless.
+> > > This pointlessness is due to the fact that the CPU will enter an extended
+> > > quiescent state upon returning to the userspace application or guest OS.
+> > > In this case, the rcuc kthread cannot do anything that the main RCU
+> > > grace-period kthread cannot do on its behalf, at least if it is given
+> > > a few additional milliseconds (for example, given the time duration
+> > > specified by rcutree.jiffies_till_first_fqs, give or take scheduling
+> > > delays).
+> > > 
+> > > This commit therefore adds a rcutree.nocb_patience_delay kernel boot
+> > > parameter that specifies the grace period age (in milliseconds)
+> > > before which RCU will refrain from awakening the rcuc kthread.
+> > > Preliminary experiementation suggests a value of 1000, that is,
+> > > one second.  Increasing rcutree.nocb_patience_delay will increase
+> > > grace-period latency and in turn increase memory footprint, so systems
+> > > with constrained memory might choose a smaller value.  Systems with
+> > > less-aggressive OS-jitter requirements might choose the default value
+> > > of zero, which keeps the traditional immediate-wakeup behavior, thus
+> > > avoiding increases in grace-period latency.
+> > > 
+> > > [ paulmck: Apply Leonardo Bras feedback.  ]
+> > > 
+> > > Link: https://lore.kernel.org/all/20240328171949.743211-1-leobras@redhat.com/
+> > > 
+> > > Reported-by: Leonardo Bras <leobras@redhat.com>
+> > > Suggested-by: Leonardo Bras <leobras@redhat.com>
+> > > Suggested-by: Sean Christopherson <seanjc@google.com>
+> > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > Reviewed-by: Leonardo Bras <leobras@redhat.com>
+> > > ---
+> > >  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
+> > >  kernel/rcu/tree.c                               | 10 ++++++++--
+> > >  kernel/rcu/tree_plugin.h                        | 10 ++++++++++
+> > >  3 files changed, 26 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > > index 500cfa7762257..2d4a512cf1fc6 100644
+> > > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > > @@ -5018,6 +5018,14 @@
+> > >  			the ->nocb_bypass queue.  The definition of "too
+> > >  			many" is supplied by this kernel boot parameter.
+> > >  
+> > > +	rcutree.nocb_patience_delay= [KNL]
+> > > +			On callback-offloaded (rcu_nocbs) CPUs, avoid
+> > > +			disturbing RCU unless the grace period has
+> > > +			reached the specified age in milliseconds.
+> > > +			Defaults to zero.  Large values will be capped
+> > > +			at five seconds.  All values will be rounded down
+> > > +			to the nearest value representable by jiffies.
+> > > +
+> > >  	rcutree.qhimark= [KNL]
+> > >  			Set threshold of queued RCU callbacks beyond which
+> > >  			batch limiting is disabled.
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > index 35bf4a3736765..408b020c9501f 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -176,6 +176,9 @@ static int gp_init_delay;
+> > >  module_param(gp_init_delay, int, 0444);
+> > >  static int gp_cleanup_delay;
+> > >  module_param(gp_cleanup_delay, int, 0444);
+> > > +static int nocb_patience_delay;
+> > > +module_param(nocb_patience_delay, int, 0444);
+> > > +static int nocb_patience_delay_jiffies;
+> > >  
+> > >  // Add delay to rcu_read_unlock() for strict grace periods.
+> > >  static int rcu_unlock_delay;
+> > > @@ -4344,11 +4347,14 @@ static int rcu_pending(int user)
+> > >  		return 1;
+> > >  
+> > >  	/* Is this a nohz_full CPU in userspace or idle?  (Ignore RCU if so.) */
+> > > -	if ((user || rcu_is_cpu_rrupt_from_idle()) && rcu_nohz_full_cpu())
+> > > +	gp_in_progress = rcu_gp_in_progress();
+> > > +	if ((user || rcu_is_cpu_rrupt_from_idle() ||
+> > > +	     (gp_in_progress &&
+> > > +	      time_before(jiffies, READ_ONCE(rcu_state.gp_start) + nocb_patience_delay_jiffies))) &&
+> > > +	    rcu_nohz_full_cpu())
+> > 
+> > The rcu_nohz_full_cpu() test should go before anything in order to benefit from
+> > the static key in tick_nohz_full_cpu().
+> 
+> That has had the wrong order since forever.  ;-)
+> 
+> But good to fix.  I will queue a separate patch for Neeraj to consider
+> for the v6.12 merge window.
+> 
+> > And since it only applies to nohz_full, should it be called
+> > nohz_full_patience_delay ?
+> > 
+> > Or do we want to generalize it to all nocb uses
+> > (which means only rely on rcu_is_cpu_rrupt_from_idle() if not nohz_full). Not
+> > sure if that would make sense...
+> 
+> I don't believe that this makes sense except for nohz_full guest OSes.
+> 
+> I am good with nohz_full_patience_delay_jiffies.  (Or did you really
+> want to drop "_jiffies", and if so, did you also want some other units?)
+> 
+> Last chance to object to the name.  ;-)
 
-Well, I was thinking about my specific odds, and I tried this:
-a) kernel 6.6.36;
-b) on spare partition nvme created a new shiny btrfs;
-c) then mount it forcing compression;
-d) multiple parallel cp of kernel and libreoffice src;
-e) reboot with same rc6+branch already used;
-f) tar of the new btrfs: no problem at all;
-g) let it finish;
-h) tar of /.snapshots: PSI memory skyrocket, and usual slowdown reading;
-i) stop it;
-l) again tar of the new btrfs: no problem
-m) repeat a few times.
+A bit long but I don't have a better proposal :-)
 
-You can see the output here:
-https://asciinema.org/a/rJpGWvXYH6IDBXWYhtJckkKWo
+> 
+> And next time we go through the patches a bit longer before the merge
+> window!
 
-In the end you see I kill tar and let the PSI going down to zero, if
-you are interested.
+My bad, I overlooked that one when it was posted.
 
-> Ok, so maybe I missed it, but I haven't kswapd0 in there, or nothing
-> taking 100% CPU.
-> Maybe it was just Mikhail running into that?
-
-To have this effect and the extreme luggish response (I mean, click
-something and it takes more than 30 seconds to react)
-I need to work at least one day on my laptop. At this point also
-cycling to virtual desktop takes a lot.
-
-Thinking about my different use case:
-a) i always suspend. I just reboot when change kernel. So, I can work
-for weeks with same kernel. Suspend2RAM, not disk, btw;
-b) months ago I let run beesd for a day.
-
-> So I'm surprised that you get an unresponsive desktop.
-Same point as before. In this case is not so luggish, but - i.e. - if
-I click for screenlock it doesn't start immediately, it waits for a
-little bit more than one second.
-
-> Interestingly, here the memory PSI stays at 0% or very close to that,
-> it never reaches anything close to the 60%.
-
-You see the same thing with the last test with new btrfs partition.
-New partition: ~0%
-/.snapshots/: near 60%.
-
-
-> With htop in parallel, the bpftrace script, and since my htop version
-> doesn't show PSI information (probably an older version than yours), I
-> kept monitoring PSI like this:
-
-Well, mine is taken from here:
-https://github.com/htop-dev/htop.git
-Compiled with:
-./configure --enable-capabilities --enable-delayacct --enable-sensors
---enable-werror   --enable-affinity
-And tweaked config file. If you want I can send it.
-
-
-> So several different things to try here:
-
-I stop here for the moment. I have to sleep.
-In the weekend I do the rest and reply to you!
-
-> Thanks a lot to you and Mikhail, not just for the reporting but also
-> to apply patches, compile a kernel, run the tests and do all those
-> valuable observations which are all very time consuming.
-
-My little contribution to free software!
-
-Ciao,
-Gelma
+Thanks.
 
