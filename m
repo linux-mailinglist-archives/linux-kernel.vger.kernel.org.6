@@ -1,196 +1,150 @@
-Return-Path: <linux-kernel+bounces-241019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BAED9275D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:21:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C55B59275DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A96C1F23451
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:21:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81A59282366
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A54C1AE867;
-	Thu,  4 Jul 2024 12:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFE51AE0B9;
+	Thu,  4 Jul 2024 12:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h3JHz1DA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7Jf/G1w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEBE1AE842;
-	Thu,  4 Jul 2024 12:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0B625779;
+	Thu,  4 Jul 2024 12:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720095684; cv=none; b=itTpTZ25CEQIfhd0Yz1rFuxK7CHl09Ib8AGJan9x1H8sB6xBWVLyX7A+BwgxlWvBG2yKNwRtb01EoDK7nhnF8VHkCfgCQQcCdHuZqDMJu2968rYsiKR/BVpbM82KKT2Bxf+ocKuKBx/YWutlIAUH3JLyXoG5LdjiqZiexlJtO/E=
+	t=1720095790; cv=none; b=ewWPmmKPL4IAtXCx1oNkhyFBNdd+BfCJdTXEeTHVnM6uPvSD73sfEyEHQ67A9WB1SXWdSfut4DunKAALNRPQxJpRGpTPhBiC6rTQvU5kveJTX8LTukWczkRKIhvzWywEraYXd5qEdiWrXN1RLqZEY88wUv6+hcypFTi4F5J21RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720095684; c=relaxed/simple;
-	bh=XtcAzSjR7cd/L8cGrfT98oaBS5Sbc/RdMZNnzv7jvnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BsRZOerwy5Ln8l90tjR7IGAsbJon4GGoDadK1bQxImJCV9UoFm1mgZ1+bW5odePiAwf053jpdjrlWSID2GFLuqAlkZi1UKY+pgtPoF7qVMTaxwOgkTRJ2hLh8j+qywgWeo7hWMCi2Kah9LtfVUaGixanWJqN9xrydIsPMfr+v04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h3JHz1DA; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720095683; x=1751631683;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=XtcAzSjR7cd/L8cGrfT98oaBS5Sbc/RdMZNnzv7jvnY=;
-  b=h3JHz1DAm2zU6EIVl20+jt+xdrjqbUEtjazWQp09JT7egEbAEdQ94mx/
-   zKTELhjaoP+vT1E4L/KnDmkqNSk0MrVG4dF+Vm1H+eQ07QrdTrCfNsUu7
-   8wH/lI/D21+6/afg1DBRHFBcroKcq2Xfn/C9eNTM3bPb0mcLn4YeeWvnB
-   +FP5m8lC9hxz0fIaXlJ0Ah+avdV2CnV/8YxGHO6gGNWKjpUdPX3endSAG
-   zalYgNGI6ZaDiMVfvIZUCeGWL37jxKos9PRR/2xEB4L+Ify7k2zwIoPK7
-   Qp+BQtOIVtJFBctk8BpQrj8qiRfMU4NelY4rUJFy4r3rBq6YNc2oWDOEY
-   A==;
-X-CSE-ConnectionGUID: ZPK/4WSDTB6BF20p7IOBGw==
-X-CSE-MsgGUID: dapSDcGbRCmP7UNkqnPmQg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="17208566"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="17208566"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 05:21:22 -0700
-X-CSE-ConnectionGUID: d5d2AiCISYqk15aa3/AURw==
-X-CSE-MsgGUID: k2s/5gstQf6paHkwtZ7jXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="51022379"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.225.1]) ([10.124.225.1])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 05:21:18 -0700
-Message-ID: <a00be0fa-1dbc-4873-85f9-958f5ea0ad7a@linux.intel.com>
-Date: Thu, 4 Jul 2024 20:21:15 +0800
+	s=arc-20240116; t=1720095790; c=relaxed/simple;
+	bh=OBq3eQPG9TxPfc8abkT5qDvctPHPhVyt9XRVmZjHeys=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mcg5ojgGx95PtZF4G0z1H44zSqM70Fhgt2AoQbnfkx0sqYehgg2xmMJgKPT0o8UNVy67Fu9dYxcGE6giWMsY6xSTx+w70CDHCz/sKB06XGxbRsFB5jhvVtoX+RzMqoOoVQO71059t0shhNL4XzP54hHiokc5L2XXyMA9+F/PmPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7Jf/G1w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F42EC3277B;
+	Thu,  4 Jul 2024 12:23:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720095789;
+	bh=OBq3eQPG9TxPfc8abkT5qDvctPHPhVyt9XRVmZjHeys=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=D7Jf/G1wodoKXYVvAEFAUFEH0CtnlNbXBhmsjuMz+GXUS0oRpMGot5WFf2aCSipaV
+	 i0kMnSbztXhVkYJuBqLX837buvNqT5njOivYFUlTfCXAoz1D5tKTshYWQHPPT8pStP
+	 n/5tpjAveCOEMeVPhKs/UZxCxx0ACd8SUZDk7Yk99UIkLSJ9XP5b5dm6RO3b9xdALu
+	 48qmrKOL9OH8JCcE9pAdoaIQ5a625+bWN1QG6qoRll1xGpGbfZ77E6EVtyb3/MV6mj
+	 OEmQm7wNahTQwAfGRrXSFiY+o3rI6VgGlKOlK3uppFIQfG5VnUMygKQ9gdFXwDbenT
+	 Tm6k8o9SNvE5g==
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d1b8bacf67so104874b6e.2;
+        Thu, 04 Jul 2024 05:23:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVGp4vAl/ChDSxYGxiniPcCss4nBh6c6+ZuQcDFk7tOKkZQUXhyc7jVX6vLT6Wbq9sxSWWeHcxWmookC57PL/ahx07wj0x3mPbOu9ZUiUCjJ55WtZ+VpunHKKWyKaO8KK6PK4T6UoX2Vg==
+X-Gm-Message-State: AOJu0YwDyXRIaoYNrpoBzZO6Q5QWJ4KBY3uSp/Bs/pfBV1729NoEPlt1
+	rxDB5f4Cp10R8NkLPVLyk1vKiUH+qPG94IXBOszbcllY2CXzVp7sIxHF2BydlNU/rCZsD+QCXVh
+	Nl3pO7HMSXdJXUGG5MxwQIJMIrPE=
+X-Google-Smtp-Source: AGHT+IGvsu7oRzVyox4mAN8dC55AZABk7sl5pDrzNy42RwZdz4te+sDZ9QcSbuMPbi0gg8Tx/rjqulFSpspWXJwKgC8=
+X-Received: by 2002:a05:6820:2c07:b0:5c4:5cbf:a255 with SMTP id
+ 006d021491bc7-5c646a9379emr1295874eaf.0.1720095788913; Thu, 04 Jul 2024
+ 05:23:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v5 12/18] x86: pmu: Improve instruction and branches
- events verification
-To: Sandipan Das <sandipan.das@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>,
- Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang
- <zhenyuw@linux.intel.com>, Like Xu <like.xu.linux@gmail.com>,
- Jinrong Liang <cloudliang@tencent.com>, Dapeng Mi <dapeng1.mi@intel.com>,
- ravi.bangoria@amd.com, manali.shukla@amd.com,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-References: <20240703095712.64202-1-dapeng1.mi@linux.intel.com>
- <20240703095712.64202-13-dapeng1.mi@linux.intel.com>
- <6d512a14-ace1-41a3-801e-0beb41425734@amd.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <6d512a14-ace1-41a3-801e-0beb41425734@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240703084124.11530-1-qasim.majeed20@gmail.com>
+In-Reply-To: <20240703084124.11530-1-qasim.majeed20@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Jul 2024 14:22:57 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hyROLY9aR+5vqBWzwy3O0ncCapAYuAMp0X_HkWaj=ecQ@mail.gmail.com>
+Message-ID: <CAJZ5v0hyROLY9aR+5vqBWzwy3O0ncCapAYuAMp0X_HkWaj=ecQ@mail.gmail.com>
+Subject: Re: [PATCH v3] Updating a deprecated use of strcpy.
+To: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 7/4/2024 4:02 PM, Sandipan Das wrote:
-> On 7/3/2024 3:27 PM, Dapeng Mi wrote:
->> If HW supports GLOBAL_CTRL MSR, enabling and disabling PMCs are moved in
->> __precise_count_loop(). Thus, instructions and branches events can be
->> verified against a precise count instead of a rough range.
->>
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> ---
->>  x86/pmu.c | 31 +++++++++++++++++++++++++++++++
->>  1 file changed, 31 insertions(+)
->>
->> diff --git a/x86/pmu.c b/x86/pmu.c
->> index d005e376..ffb7b4a4 100644
->> --- a/x86/pmu.c
->> +++ b/x86/pmu.c
->> @@ -19,6 +19,11 @@
->>  #define EXPECTED_INSTR 17
->>  #define EXPECTED_BRNCH 5
->>  
->> +
->> +/* Enable GLOBAL_CTRL + disable GLOBAL_CTRL instructions */
->> +#define EXTRA_INSTRNS  (3 + 3)
->> +#define LOOP_INSTRNS   (N * 10 + EXTRA_INSTRNS)
->> +#define LOOP_BRANCHES  (N)
->>  #define LOOP_ASM(_wrmsr)						\
->>  	_wrmsr "\n\t"							\
->>  	"mov %%ecx, %%edi; mov %%ebx, %%ecx;\n\t"			\
->> @@ -122,6 +127,24 @@ static inline void loop(u64 cntrs)
->>  		__precise_loop(cntrs);
->>  }
->>  
->> +static void adjust_events_range(struct pmu_event *gp_events,
->> +				int instruction_idx, int branch_idx)
->> +{
->> +	/*
->> +	 * If HW supports GLOBAL_CTRL MSR, enabling and disabling PMCs are
->> +	 * moved in __precise_loop(). Thus, instructions and branches events
->> +	 * can be verified against a precise count instead of a rough range.
->> +	 */
->> +	if (this_cpu_has_perf_global_ctrl()) {
-> This causes some intermittent failures on AMD processors using PerfMonV2
-> due to variance in counts. This probably has to do with the way instructions
-> leading to a VM-Entry or VM-Exit are accounted when counting retired
-> instructions and branches. Adding the following change makes all the tests
-> pass again.
-
-Thanks to verify on AMD platforms. Would add it in next version.
-
-
+On Wed, Jul 3, 2024 at 10:49=E2=80=AFAM Muhammad Qasim Abdul Majeed
+<qasim.majeed20@gmail.com> wrote:
 >
-> diff --git a/x86/pmu.c b/x86/pmu.c
-> index 0658a1c1..09a34a3f 100644
-> --- a/x86/pmu.c
-> +++ b/x86/pmu.c
-> @@ -222,7 +222,7 @@ static void adjust_events_range(struct pmu_event *gp_events,
->          * moved in __precise_loop(). Thus, instructions and branches events
->          * can be verified against a precise count instead of a rough range.
->          */
-> -       if (this_cpu_has_perf_global_ctrl()) {
-> +       if (pmu.is_intel && this_cpu_has_perf_global_ctrl()) {
->                 /* instructions event */
->                 gp_events[instruction_idx].min = LOOP_INSTRNS;
->                 gp_events[instruction_idx].max = LOOP_INSTRNS;
+> Replacing strcpy with strscpy.
+> strcpy is a deprecated function.
+> It should be removed from the kernel source.
 >
+> Link: https://github.com/KSPP/linux/issues/88
 >
->> +		/* instructions event */
->> +		gp_events[instruction_idx].min = LOOP_INSTRNS;
->> +		gp_events[instruction_idx].max = LOOP_INSTRNS;
->> +		/* branches event */
->> +		gp_events[branch_idx].min = LOOP_BRANCHES;
->> +		gp_events[branch_idx].max = LOOP_BRANCHES;
->> +	}
->> +}
->> +
->>  volatile uint64_t irq_received;
->>  
->>  static void cnt_overflow(isr_regs_t *regs)
->> @@ -823,6 +846,9 @@ static void check_invalid_rdpmc_gp(void)
->>  
->>  int main(int ac, char **av)
->>  {
->> +	int instruction_idx;
->> +	int branch_idx;
->> +
->>  	setup_vm();
->>  	handle_irq(PMI_VECTOR, cnt_overflow);
->>  	buf = malloc(N*64);
->> @@ -836,13 +862,18 @@ int main(int ac, char **av)
->>  		}
->>  		gp_events = (struct pmu_event *)intel_gp_events;
->>  		gp_events_size = sizeof(intel_gp_events)/sizeof(intel_gp_events[0]);
->> +		instruction_idx = INTEL_INSTRUCTIONS_IDX;
->> +		branch_idx = INTEL_BRANCHES_IDX;
->>  		report_prefix_push("Intel");
->>  		set_ref_cycle_expectations();
->>  	} else {
->>  		gp_events_size = sizeof(amd_gp_events)/sizeof(amd_gp_events[0]);
->>  		gp_events = (struct pmu_event *)amd_gp_events;
->> +		instruction_idx = AMD_INSTRUCTIONS_IDX;
->> +		branch_idx = AMD_BRANCHES_IDX;
->>  		report_prefix_push("AMD");
->>  	}
->> +	adjust_events_range(gp_events, instruction_idx, branch_idx);
->>  
->>  	printf("PMU version:         %d\n", pmu.version);
->>  	printf("GP counters:         %d\n", pmu.nr_gp_counters);
+> Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
 >
+> > Replacing strcpy with strscpy and memory bound the copy.
+>
+> > Why?  In this particular case, it is not fundamentally necessary.
+>
+> > strcpy is a deprecated function. It should be removed from the kernel s=
+ource.
+>
+> > If the goal is to get rid of all strcpy() calls from the kernel
+> > because using it is generally unsafe, just say so in the changelog and
+> > it will be fine.
+> changelog has been updated.
+>
+> > So is it necessary to use the size argument here and below?
+> Size argument is not necessary as destination is an array of 40 bytes. Pa=
+tch has been updated.
+>
+> > for that to work, shouldn't the size of the *destination* buffer be
+> > passed, instead of the length of the string we want to copy?
+> Yes, size of the destination should be passed.
+>
+> > Not tested, but the 3rd argument of strscpy () is optional.
+> > (https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/string=
+.h#L87),
+> > so maybe just:
+>
+> >        strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
+> Thank you for sharing the reference, this suggestion will do the work and=
+ accomodated in the patch.
+>
+> ---
+>         v2 -> v3: Changelog has been updated. size argument has been remo=
+ved.
+>
+>  drivers/acpi/acpi_video.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+> index 1fda30388297..8274a17872ed 100644
+> --- a/drivers/acpi/acpi_video.c
+> +++ b/drivers/acpi/acpi_video.c
+> @@ -1128,8 +1128,8 @@ static int acpi_video_bus_get_one_device(struct acp=
+i_device *device, void *arg)
+>                 return -ENOMEM;
+>         }
+>
+> -       strcpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
+> -       strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
+> +       strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
+> +       strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
+>
+>         data->device_id =3D device_id;
+>         data->video =3D video;
+> @@ -2010,8 +2010,8 @@ static int acpi_video_bus_add(struct acpi_device *d=
+evice)
+>         }
+>
+>         video->device =3D device;
+> -       strcpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
+> -       strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
+> +       strscpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
+> +       strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
+>         device->driver_data =3D video;
+>
+>         acpi_video_bus_find_cap(video);
+> --
+
+Applied as 6.11 material with edited subject and changelog, thanks!
 
