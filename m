@@ -1,103 +1,252 @@
-Return-Path: <linux-kernel+bounces-240457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA430926DF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 05:12:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A73B926DF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 05:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84236B214A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:12:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DDC51F22301
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BA21946B;
-	Thu,  4 Jul 2024 03:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7853218EA1;
+	Thu,  4 Jul 2024 03:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z4iByv/z"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="AtcCGeLB"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16691AAD7
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 03:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6477318637
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 03:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720062724; cv=none; b=aOT32EczGzPq2HJSbymtbq0AlFn2AsR7Y7myp8hM7b+4h6i5NWVjiXfi/JB/8ndwLe+UXswm3YtTVdPxKT1R0j03S/KF2aH5NBctF3BDrfyxCSfYYG4JrQLZw7kgZs+iJrEU2UzVgvww4MbU+DeFzODbxpLZmVETKK0BKuez6N4=
+	t=1720062772; cv=none; b=A9MVE9sAmgvNZpSP3V5aOpeq42c9sB/SGf4kO13nGc51ps3RWhJ8Ye3cScgPOUa6mF7DjvZGPyai5ZytdCVBas+Tc0Bb3Nto2QlF8rLrVCjQ+w8MtZ5huLK+3/2EcFtnKEQ79MLzsnSMcna4900HFasNV/LyAdqsUdvk3d8Rh5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720062724; c=relaxed/simple;
-	bh=/UiwJ7vry61dcxTQxjF50Ei9WLGwz7HSh/uxSqg+XYw=;
+	s=arc-20240116; t=1720062772; c=relaxed/simple;
+	bh=N3jvDr3JfXpSH80XKHxOYUSM+5NMqWRrjE1KfKN8c/w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g7AsXzUAsVHOXNG899TLn+mFORQRZLZ6IQloYI31eUwvZz13hU1BHG+TJVII/UoMEoEdWVDqgDtzso1m4hM4kA3BmlzAiRUmuIk5jqPwQVe+f8KKikj4V7ks0CT9SiDFWcNvjfUDmBdeoGnGutJ63xNwDpLwN66W9GFl25f+lvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z4iByv/z; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-424a3cb87f1so24445e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 20:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720062721; x=1720667521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8hnV4ceST/LkaHatjT0/UaxHlRuB0JU9sQidd8Wmj6I=;
-        b=Z4iByv/zXiVDuaheyR+bt6aCY8mWaSpcLkxQH2yEocRuAplkyNUg+xmibxIWellg57
-         TprFBItVSsGSfJJxafUIdeitftSPMqWxod9ZbgkwRqMibeBqg351ToGXOnq1/tGviLkm
-         GfqTmvQnvFlU3bWmYrmzYM8S9ySvw0ItWiUy0QOvP6VZBsEJgdQxMHTtjVeai+sUKrVS
-         m8WlQxUwpGi/Vp8lADElhljxhiq32ptYKARnJfXWfr0lRz9NhOPCqOt2hBxWBBOetf2S
-         OeRtT0r9Wx4EolbYje2E2Ct+WVWW12HM2faTFPPK46cOyYxio/koiRuZiGSbITZhUBp4
-         T1zA==
+	 To:Cc:Content-Type; b=TrJS/xwQyI+rfVYm/9apmkeYscA7hX+bsAUAnS3Yr4FEgNKX8d/2DUEGl1wTa4Zftx5ZQmSZ+o/B6fmVifHv46HQkxm6c2NsN4E6XbNFG+ilr5TcyfaY8Co8NC3G9MSwipJE71Xcar7AIXsmapt5DVAB3WRtTJSn7touGDeBQ4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=AtcCGeLB; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 95C093F183
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 03:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1720062767;
+	bh=9CRBUg6uYodxq5mWT1CMKFQBlvPAVSqkA4Ock1rCT/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=AtcCGeLBNkGnBvopOIgkC56xjnhecuZJzoF2EE1NnTa1Gi11scCFnhRkwmke8NGE9
+	 gTbJpXGquPDXwOG3ls3W/jgyxSksKDJ29oYXdXoTskPkwhnFKI6wdDzcK1rT84l2DB
+	 Ab/elgNaRee5W8R7gqCS3slAcuuRBKu6qzQbhlGJQstz45SntMVDqSPTspDiGhyndr
+	 K/KX9gwPKJU0wzd5Wm/n899A/wTdP1EpppL/jUntOA8yqxQ2K24Vzj491IRMP62cmD
+	 BSKmH5/xE27j+Fsi4+47leLkhnUKAZPZ/WWz15SA2CGc+grV+zgp1BK9Ws4dAMXass
+	 nlvhNaZb8c9eQ==
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-367960f4673so591484f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 20:12:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720062721; x=1720667521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8hnV4ceST/LkaHatjT0/UaxHlRuB0JU9sQidd8Wmj6I=;
-        b=GDi8ZAJZ/YOvT/Lp74riHo2uQoM4JiZMu6NAKbm+h3K8QMAjQHkjPe/NEhcMLkMA1p
-         aXC+b89rMfFDje5t88qeU4scA4wl2d8jAaYiPErlSgc9zqjzebdP6tvJp0jky4isPK5c
-         QM3fXiAX1TUnh5Ji1oc/zI9+0l+4CAv+FFMdUXKsuJCeGovl9YRmE7d6cEB1MZT+QXYT
-         uuMCFUer+CnObS2wGN/NaqSW6nuYs/q2tc3e4SXUaBq07yg4v0mJiBL1UTPNxrKkzznT
-         K5iwKMlIUhxB8zRCOf1j9aATytloSVc7KKAAWfcXiTyVJEoLl88sFomoYxSmlhbAi4mb
-         Jg+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVGKlUCUkYMMJbBLhHyGdoforg694XNJfVnkuhSSv3fk1vNyBNbBB7DIPOEc4tQ95JZGSXZIJ3Ok0oU3vf8p8wSIpGWSOmM10mqEnE3
-X-Gm-Message-State: AOJu0YwsHm2IiEmMSWd3we5lDzYzOxg94tlTv3o8RtHBoMPjvWwD0kWM
-	hsO62AJkkCR1gA0IEGvG+/osIJgzsQirKWiUEvN6WUkZLdbhe2qFW6UISnCUoBSZa10v25b4DK+
-	oUa2Qksc8o5huQ16y+DfAXAL5yz+KAG8/ijg=
-X-Google-Smtp-Source: AGHT+IEuX2Qz/ogfT5gJgXQfb0LHWMxBUBN7AnqQd97K/HY1a2IRM5fhYc2R9zomHzZzKODquS0fRmSqFZrrC30XS4c=
-X-Received: by 2002:a05:600c:45c8:b0:422:ff8d:5d25 with SMTP id
- 5b1f17b1804b1-42649a552b0mr614825e9.5.1720062720857; Wed, 03 Jul 2024
- 20:12:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720062766; x=1720667566;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9CRBUg6uYodxq5mWT1CMKFQBlvPAVSqkA4Ock1rCT/I=;
+        b=Orb+oGjCttRMtkRUgSz/EKhA8yqPZfeA72MfTeokd4xo8tgs91ProsJJGvOFN5nGRn
+         86s6ywgp1r5ITMZMm+1aVgM/2Zsg3bXJfCH0bTiUNVugR+povHUyb4Obq0sPXpu7wx9u
+         +VazWy5eirBHmUjGRRkew7TfKJcOXuUgKjvk73Ehnm449MGPaq8th+M932vCujfYSAAK
+         zkFfEvStSJHvZioU5v+s60RipEZr7xlsYq7OE3F5JkCm4UyH9rh+wevh8RzoNrKjCbUp
+         cLPsX1qR2imex0oQxgc+NDflxS/BxPUa7KcwIukw3IRc+9ZZlSIzrngEkB9ljr2Qmeem
+         nPEw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1TBG2vSyh02obRFFdOearys2qi70HmdVhwzNjzj1TqgyuvMO0mnKFaHf4YsP1z+fGPZk7qHUNubNRQfA2UJ56pCrHhs9lWkTWbpkX
+X-Gm-Message-State: AOJu0YxljOLDytRI2etLga/A8SjWTvgeqviByW1TekJaRinOnP/uwCFs
+	QXSVTXeKHRJODWj1ykISH/lE+kkGXs2QSVbna8a3l7HOkfjwu2OmLsOyA0vQ+PXT13wAuJOlpiY
+	4+VGgDOOgETUom359jNHEvS0Z/DG0hV4082hXiKrlWu188DB+3/l/ehcT02eKTDVMiq9PYeOFL7
+	FTydf9hIBaSwTeFImkQ4y+jUotDq3IpvHqbr0/22tLktPsxBL7ggaS
+X-Received: by 2002:adf:ab08:0:b0:363:1c9d:d853 with SMTP id ffacd0b85a97d-3679f76ff77mr101466f8f.32.1720062766195;
+        Wed, 03 Jul 2024 20:12:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHn6MiLj8RUEc8lEGjRSroyBGNAuvBKodyxkFScqCVq3jn3pc7i39ziH4b/m9XkweOdBJGRi8WttaTMVbS+zA0=
+X-Received: by 2002:adf:ab08:0:b0:363:1c9d:d853 with SMTP id
+ ffacd0b85a97d-3679f76ff77mr101460f8f.32.1720062765721; Wed, 03 Jul 2024
+ 20:12:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704024202.84726-1-jhubbard@nvidia.com>
-In-Reply-To: <20240704024202.84726-1-jhubbard@nvidia.com>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 3 Jul 2024 20:11:49 -0700
-Message-ID: <CANDhNCpEvPL+b1mve-YJp4+yzQU-BAaAQLr1-G6Br7i83zaQaw@mail.gmail.com>
-Subject: Re: [PATCH v3] selftests/timers: remove unused irqcount variable
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Shuah Khan <shuah@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Stephen Boyd <sboyd@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Valentin Obst <kernel@valentinobst.de>, 
-	linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	llvm@lists.linux.dev
+References: <20240704030304.16213-1-en-wei.wu@canonical.com>
+In-Reply-To: <20240704030304.16213-1-en-wei.wu@canonical.com>
+From: En-Wei WU <en-wei.wu@canonical.com>
+Date: Thu, 4 Jul 2024 11:12:34 +0800
+Message-ID: <CAMqyJG1=uCoYzy12ONEoxh3Oc_VSLVJGqzwwxfj2JqL8LPneEg@mail.gmail.com>
+Subject: Re: [PATCH] wifi: virt_wifi: avoid reporting connection success with
+ wrong SSID
+To: kvalo@kernel.org, edumazet@google.com, davem@davemloft.net, 
+	en-wei.wu@canonical.com, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: rickywu0421@gmail.com, 
+	syzbot+d6eb9cee2885ec06f5e3@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 3, 2024 at 7:42=E2=80=AFPM John Hubbard <jhubbard@nvidia.com> w=
-rote:
->
-> When building with clang, via:
->
->     make LLVM=3D1 -C tools/testing/selftest
->
-> ...clang warns about an unused irqcount variable. clang is correct: the
-> variable is incremented and then ignored.
->
-> Fix this by deleting the irqcount variable.
->
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Hi,
 
-Acked-by: John Stultz <jstultz@google.com>
+After applying this patch and testing on the machines of syzbot, the
+original warning is gone. However, syzbot reported that there is
+another warning generated:
+
+     create_new_namespaces+0x425/0x7b0 kernel/nsproxy.c:110
+     unshare_nsproxy_namespaces+0x124/0x180 kernel/nsproxy.c:228
+     ksys_unshare+0x619/0xc10 kernel/fork.c:3323
+     __do_sys_unshare kernel/fork.c:3394 [inline]
+     __se_sys_unshare kernel/fork.c:3392 [inline]
+     __x64_sys_unshare+0x38/0x40 kernel/fork.c:3392
+     do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+     do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+     entry_SYSCALL_64_after_hwframe+0x77/0x7f
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 11 at lib/ref_tracker.c:179
+ref_tracker_dir_exit+0x411/0x550 lib/ref_tracker.c:179
+Modules linked in:
+CPU: 1 PID: 11 Comm: kworker/u8:0 Not tainted
+6.10.0-rc5-syzkaller-01200-gcda91d5b911a-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine,
+BIOS Google 06/07/2024
+Workqueue: netns cleanup_net
+RIP: 0010:ref_tracker_dir_exit+0x411/0x550 lib/ref_tracker.c:179
+Code: 48 8b 1c 24 48 89 df 48 8b 74 24 20 e8 88 f2 ab 06 eb 1a e8 f1
+b7 ad fc 48 8b 1c 24 48 89 df 48 8b 74 24 20 e8 70 f2 ab 06 90 <0f> 0b
+90 48 83 c3 44 48 89 df be 04 00 00 00 e8 5b 7f 13 fd 48 89
+RSP: 0018:ffffc900001079e0 EFLAGS: 00010246
+RAX: 2ba763440467a200 RBX: ffff8880296b9ed8 RCX: 0000000000000001
+RDX: dffffc0000000000 RSI: ffffffff8bcabb40 RDI: 0000000000000001
+RBP: ffffc90000107ab0 R08: ffffffff92fbc66f R09: 1ffffffff25f78cd
+R10: dffffc0000000000 R11: fffffbfff25f78ce R12: 1ffff1100da640d8
+R13: dead000000000100 R14: ffff8880296b9f28 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055b2700a0950 CR3: 000000002c8b0000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ net_free net/core/net_namespace.c:465 [inline]
+ cleanup_net+0xbf3/0xcc0 net/core/net_namespace.c:661
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
+ worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+It looks like it's not related to the changes I have made, since the
+new warning is probably describing a leak when doing net_free. I will
+look at the new warning soon, and maybe we can just focus on the
+original warning now.
+
+En-Wei.
+
+
+On Thu, 4 Jul 2024 at 11:03, En-Wei Wu <en-wei.wu@canonical.com> wrote:
+>
+> When user issues a connection with a different SSID than the one
+> virt_wifi has advertised, the __cfg80211_connect_result() will
+> trigger the warning: WARN_ON(bss_not_found).
+>
+> The issue is because the connection code in virt_wifi does not
+> check the SSID from user space (it only checks the BSSID), and
+> virt_wifi will call cfg80211_connect_result() with WLAN_STATUS_SUCCESS
+> even if the SSID is different from the one virt_wifi has advertised.
+> Eventually cfg80211 won't be able to find the cfg80211_bss and generate
+> the warning.
+>
+> Fixed it by checking the SSID (from user space) in the connection code.
+>
+> Fixes: c7cdba31ed8b ("mac80211-next: rtnetlink wifi simulation device")
+> Reported-by: syzbot+d6eb9cee2885ec06f5e3@syzkaller.appspotmail.com
+> Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
+> ---
+>  drivers/net/wireless/virtual/virt_wifi.c | 24 +++++++++++++++++++++---
+>  1 file changed, 21 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/net/wireless/virtual/virt_wifi.c b/drivers/net/wireless/virtual/virt_wifi.c
+> index 6a84ec58d618..86a8f74be654 100644
+> --- a/drivers/net/wireless/virtual/virt_wifi.c
+> +++ b/drivers/net/wireless/virtual/virt_wifi.c
+> @@ -136,6 +136,9 @@ static struct ieee80211_supported_band band_5ghz = {
+>  /* Assigned at module init. Guaranteed locally-administered and unicast. */
+>  static u8 fake_router_bssid[ETH_ALEN] __ro_after_init = {};
+>
+> +#define VIRT_WIFI_SSID_LEN 8
+> +#define VIRT_WIFI_SSID "VirtWifi"
+> +
+>  static void virt_wifi_inform_bss(struct wiphy *wiphy)
+>  {
+>         u64 tsf = div_u64(ktime_get_boottime_ns(), 1000);
+> @@ -146,8 +149,8 @@ static void virt_wifi_inform_bss(struct wiphy *wiphy)
+>                 u8 ssid[8];
+>         } __packed ssid = {
+>                 .tag = WLAN_EID_SSID,
+> -               .len = 8,
+> -               .ssid = "VirtWifi",
+> +               .len = VIRT_WIFI_SSID_LEN,
+> +               .ssid = VIRT_WIFI_SSID,
+>         };
+>
+>         informed_bss = cfg80211_inform_bss(wiphy, &channel_5ghz,
+> @@ -213,6 +216,8 @@ struct virt_wifi_netdev_priv {
+>         struct net_device *upperdev;
+>         u32 tx_packets;
+>         u32 tx_failed;
+> +       u32 connect_requested_ssid_len;
+> +       u8 connect_requested_ssid[IEEE80211_MAX_SSID_LEN];
+>         u8 connect_requested_bss[ETH_ALEN];
+>         bool is_up;
+>         bool is_connected;
+> @@ -224,11 +229,21 @@ static int virt_wifi_connect(struct wiphy *wiphy, struct net_device *netdev,
+>                              struct cfg80211_connect_params *sme)
+>  {
+>         struct virt_wifi_netdev_priv *priv = netdev_priv(netdev);
+> +       u32 ssid_len;
+>         bool could_schedule;
+>
+>         if (priv->being_deleted || !priv->is_up)
+>                 return -EBUSY;
+>
+> +       if (!sme->ssid) {
+> +               wiphy_err(wiphy, "invalid SSID\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       ssid_len = min_t(u32, sme->ssid_len, IEEE80211_MAX_SSID_LEN);
+> +       priv->connect_requested_ssid_len = ssid_len;
+> +       memcpy(priv->connect_requested_ssid, sme->ssid, ssid_len);
+> +
+>         could_schedule = schedule_delayed_work(&priv->connect, HZ * 2);
+>         if (!could_schedule)
+>                 return -EBUSY;
+> @@ -252,12 +267,15 @@ static void virt_wifi_connect_complete(struct work_struct *work)
+>                 container_of(work, struct virt_wifi_netdev_priv, connect.work);
+>         u8 *requested_bss = priv->connect_requested_bss;
+>         bool right_addr = ether_addr_equal(requested_bss, fake_router_bssid);
+> +       bool right_ssid = (priv->connect_requested_ssid_len == VIRT_WIFI_SSID_LEN ?
+> +                         !memcmp(priv->connect_requested_ssid, VIRT_WIFI_SSID,
+> +                                 priv->connect_requested_ssid_len) : false);
+>         u16 status = WLAN_STATUS_SUCCESS;
+>
+>         if (is_zero_ether_addr(requested_bss))
+>                 requested_bss = NULL;
+>
+> -       if (!priv->is_up || (requested_bss && !right_addr))
+> +       if (!priv->is_up || (requested_bss && !right_addr) || !right_ssid)
+>                 status = WLAN_STATUS_UNSPECIFIED_FAILURE;
+>         else
+>                 priv->is_connected = true;
+> --
+> 2.43.0
+>
 
