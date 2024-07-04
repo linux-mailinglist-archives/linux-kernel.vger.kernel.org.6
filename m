@@ -1,117 +1,115 @@
-Return-Path: <linux-kernel+bounces-241583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AFAA927CDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:09:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC28F927CE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06EC61F2439A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:09:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97AAF2824D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5900F757E7;
-	Thu,  4 Jul 2024 18:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C9847A53;
+	Thu,  4 Jul 2024 18:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZ0j/Maf"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cZQk64Zs"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4D439FC1;
-	Thu,  4 Jul 2024 18:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A00101DB
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720116555; cv=none; b=Uf4eKizKJIsIaYPNJpdaUlhLY7bQ15Ycbgaj+UbcbmDMhvA3Z6mHW3k+XmUmsdl+AwTEA6Sx5r0qhUvGUX0B3UETVS6qv/3s7m2Wvelv5ANRynCT3SipYobqd4fxQETy+LChlIQq3TwMENO5Ta3oR5PoZL4UolVSQ1q9B3BEh2o=
+	t=1720116793; cv=none; b=fDTr3mvD3RG2DoeDU7XVe0WoMMAk8Ap554aXHDTI5a20XDvgkre2aqAJup6UYr/j7oMcjqJJZC7zRLTBr4ZL2YBt+6Gzp9/3/RM8I/yrVHFPU7csPUJGgXModut+XYwGciWb5qiOHpKB/8sW/r5WceAhYKl6oqptN1wLOdhRja4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720116555; c=relaxed/simple;
-	bh=QCsD6s+u0aExCYRBKpNVR1hOsGWSC9BM3te+aNP96Kc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KD29NOUFnymptvzyzFCamfsY4BhXvLpRqyn5ap+wWZUVbJkhEX4I3j2M0/nQIjl2agS9bZnTQCTAG7OgnYlWgy9Jaaya3/oW4dhU3gmctBMutoI7SOd/jfDecLUzR4tgMnKD31AB19d7PZYChkk8QtRSDso/jiT0cjUyVlnPyXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZ0j/Maf; arc=none smtp.client-ip=209.85.208.176
+	s=arc-20240116; t=1720116793; c=relaxed/simple;
+	bh=CpLK/Sxc92K19alngbXkZuKCqkTbIngvnO+WtGWh2FU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Au7SaTesTq5ALXTxQSC1YT7ZKd3ef1dX6h5lCrp+v159BnLWimB1B/Vx8wev3cv/3E/zWZ06lpAY9mpexEZR1fph4I6tmVfr7gK6hoyTj+DSmpVULptKl1OzpXdgW4mfpkYC3aWaDQXNrxWLfcpiXlV8saugadjBfYfxT8spqgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cZQk64Zs; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ee910d6a8bso5479561fa.0;
-        Thu, 04 Jul 2024 11:09:13 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42578fe58a6so5916595e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 11:13:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720116552; x=1720721352; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QCsD6s+u0aExCYRBKpNVR1hOsGWSC9BM3te+aNP96Kc=;
-        b=HZ0j/Maf/qlozCBMUr6bfNUkZC9vIwVCBHClwE42R73KUZTDIGDTZXWOEBB8sJ58xG
-         rB46EiK5+DLpM+tqLP1QB65nWx6QnuFOyKjloFvbX0rDSUGYEqWY0dBcOoubuK/7X5Ex
-         G1DdLDLw1epfTw6DEEdhEdxtFTgG2pa6YqaR/aYN3r4o3iBETDTKnvyRsqfd9jZReWV6
-         yRBDfiBcN0JPbZa9GqogRWFvAfKd3IcL3xQyKJtGeYi9Ib4sxtt6n1DNcVuvkG+o/F/w
-         V361edo0O/VrFU6kRJsHsYAC8RChGXpmyBI4HC30jfAvDoVgBouGa8nA+WMeJOO4/Fei
-         QEgA==
+        d=gmail.com; s=20230601; t=1720116790; x=1720721590; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1c3emy1MSAOHwaj2khLcexIGaDcNUblGT92MLUxkzl8=;
+        b=cZQk64ZsAwxkek0e9rccLNLICRzAXrsuHB0hBtoqutG0Sihu8DWGX+gOHHiXBdfF/g
+         +QEh6gy7+aYQ20hVgjng8D6mmWY5YnKEyzGKPhjoGTDudUf9Dz5X2scIrV+8RTXmIZJU
+         yVySHJhBRfVtbLMHzVzqBQR6HPYIyhKWWpcRAQ7CDyWCNOx+1ebF+ths4FtRghwUq68B
+         OVKvAsN9dmT30lw4pNbrgKXfVDJdQwpPac1ydFRQVGW5neyLUFE3JhRFO33G/Vqf7ZeT
+         xZ/D0+W+Tbp6PIzjPD1FDBaguNE0p3ncMV+UkrPr8i8mhhy/BgqwLLKlrH3f9+gtKjUS
+         Kteg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720116552; x=1720721352;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QCsD6s+u0aExCYRBKpNVR1hOsGWSC9BM3te+aNP96Kc=;
-        b=n944hatxFWT9OI3Fo2bFIZFYwrV/YXWUyCoYl756leLv94K5LrBSz0JQ92knvln3hm
-         1mKrefQCwvqxsvUuqabRRlD+LQejdYG0UdUuObX3rFcCBHIajz6NaZkwJIm/lIOzXhYm
-         yAIYCLjWaRsXDRGhtmNcY7Gbi72YFUUxU7lPRNtYvV0m233XXM4/IzP2SRQsBK/o5XFD
-         jDAWOFN6BIDkK4XZECThSZpKyGp7iAiRmlgWx4hsOaWZzeL/t5DWW1AQaQW9Coqkb/Vu
-         XmOjE4aw1pGi/Zzj6t263yWVb6L8pIr7fLBjiqNA1Tajx7kJJI5DDEJ4BaOlAPReCeiU
-         gn0w==
-X-Forwarded-Encrypted: i=1; AJvYcCW+CnBfrlwjhJsmXd8qw9BnAfNkzvGxpGOE2Fa7v96rmzH9YMDVUKsFjtwfNxxlvYeEzjBn2E0EWD2iJEFBbSJHr1cOGaZZMm7dwOu/eMSV2fHey7p9N4DSseE9qN7W82FO9fn6l4wNTfLzF4Dv7AmOJ7uUR3lvqLS1o1YSjIdY5cgx
-X-Gm-Message-State: AOJu0Yw7zDmpACF0fROUg/fWDX8fg+ufOpYfLvAYviuEAMPqCGNAzkpi
-	ICDBvSSaYdOCo5vvt7dLZKAwDYdh94Nqqn2goKafNg8K1QPwgrYkNuM3fCnbhJAHPNWYtqLbMyZ
-	zUuntJOcIucqjcIpTCdsLZI1S7M4=
-X-Google-Smtp-Source: AGHT+IH/9UA/m4pjF/4HSNRx8SVcH8Asf6Tf6JEX1guGPE9+2Z/kc5Mga4FYeXUELSP3XjSH+LHnrbrxBno3nFaOGSc=
-X-Received: by 2002:a2e:a58a:0:b0:2ec:5fe1:c762 with SMTP id
- 38308e7fff4ca-2ee8ee14ecamr17959011fa.46.1720116551800; Thu, 04 Jul 2024
- 11:09:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720116790; x=1720721590;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1c3emy1MSAOHwaj2khLcexIGaDcNUblGT92MLUxkzl8=;
+        b=YOI5P6jbzJV7GVyDshFZ66GOAuwRvt2dODNpUOvzNtz634fSRuRaQCPJ8pc4s1fjd+
+         /93/1nGp7mqj96O8C5MHRrHajbB6gZPSGfd/lxSw/goq8bGiZJBqF57xGYx4jJSHgIuw
+         PX/PpFH4o3S5gtlxBVL2pmtXJo1O+Ui/3Dg40QF9fuq4H7MNX8xOisc76N456Agv4+OV
+         DNYYbN6b0sqv9ErkcrTNzVOlrfGQSXARgg6NUFoa8SyjiTqvWquXBrcw1Aixh1yvt/GA
+         3Vl9VDOl+4QGmoGMITsEKpxInLLrIozyEoWsQoGtgBbri3HdULVtg/YZ+rTntGX8agx7
+         fGtA==
+X-Gm-Message-State: AOJu0YxbT0saDXXaqtYj3OXLK7R6mKDylm2zdBJpXRZvYVFoxSHDfnLI
+	SdQI7v8KiLgwizem8e8P6nAxep3PLfdg2mnCSx3fsmL25Ohjwt7z
+X-Google-Smtp-Source: AGHT+IFnZTR41bV/gBghYptPVAOALKujpP+8j8qMbsHCpVN+Si+PtRTl7MMvUEyfyUoWR/mQ0ghupg==
+X-Received: by 2002:a05:600c:1d16:b0:423:668:4c39 with SMTP id 5b1f17b1804b1-4264a3d768cmr18880405e9.1.1720116790337;
+        Thu, 04 Jul 2024 11:13:10 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-0b06-a203-2f25-a0f6.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:b06:a203:2f25:a0f6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a25198dsm32993855e9.32.2024.07.04.11.13.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 11:13:09 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] regulator: Constify read-only regmap_config struct
+Date: Thu, 04 Jul 2024 20:13:06 +0200
+Message-Id: <20240704-regulator-const-regmap-v1-0-bce0ddef63ea@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704173227.130491-1-puranjay@kernel.org>
-In-Reply-To: <20240704173227.130491-1-puranjay@kernel.org>
-From: Puranjay Mohan <puranjay12@gmail.com>
-Date: Thu, 4 Jul 2024 20:09:00 +0200
-Message-ID: <CANk7y0gjBh7F=_woAEs3pQXgCqeX5ojEm3g7=4tyWsc-vmjBfA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] arm64, bpf: Add 12-argument support for bpf trampoline
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Xu Kuohai <xukuohai@huaweicloud.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, bpf@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADLmhmYC/x3MQQqAIBBA0avErBPMAqOrRAvRyQZKY6wIpLtnL
+ d/i/wwJmTDBUGVgvChRDAVNXYFdTPAoyBWDkqqTWnaC0Z+rOSILG0M6Pm9mF0rLZlZtr51xUOK
+ dcab7H4/T87yx5YGHaAAAAA==
+To: Support Opensource <support.opensource@diasemi.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720116789; l=761;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=CpLK/Sxc92K19alngbXkZuKCqkTbIngvnO+WtGWh2FU=;
+ b=eTb17YXSBW19K+8iDRAz7jAYi1uFI6e/KsdEVUQQYSGOik9pmogZTIq6jxa7yfzCxFgBRjPqI
+ rNRLspt4G2IDQqqywmTUihUec6UtG6cHKohQd88la3MHFlHBlxJlViM
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Thu, Jul 4, 2024 at 7:33=E2=80=AFPM Puranjay Mohan <puranjay@kernel.org>=
- wrote:
->
-> The arm64 bpf JIT currently supports attaching the trampoline to
-> functions with <=3D 8 arguments. This is because up to 8 arguments can be
-> passed in registers r0-r7. If there are more than 8 arguments then the
-> 9th and later arguments are passed on the stack, with SP pointing to the
-> first stacked argument. See aapcs64[1] for more details.
->
-> Add the support of storing and restoring arguments passed on the stack
-> to the arm64 bpf trampoline. This will allow attaching the trampoline to
-> functions that take 12 arguments.
->
-> [1] https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst#=
-parameter-passing
->
-> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+This series adds the const modifier to the remaining regmap_config
+structs in the regulator subsystem that are effectively used as const
+(i.e., only read after their declaration), but kept ad writtable data.
 
-Please ignore this patch, it doesn't work correctly for tracing_struct self=
-test.
-Sorry for the noise.
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      regulator: da9121: Constify struct regmap_config
+      regulator: max77857: Constify struct regmap_config
 
-Thanks,
-Puranjay
+ drivers/regulator/da9121-regulator.c   | 6 +++---
+ drivers/regulator/max77857-regulator.c | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240704-regulator-const-regmap-2701f2387dad
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
