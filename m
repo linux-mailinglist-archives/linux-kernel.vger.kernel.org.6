@@ -1,139 +1,134 @@
-Return-Path: <linux-kernel+bounces-240615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FC8926FC9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:41:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B53926FCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A5A71C216C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552371C216EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F0F1A08D8;
-	Thu,  4 Jul 2024 06:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95501A08C8;
+	Thu,  4 Jul 2024 06:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWzOgCP/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xz/Srpr9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC27C1A08C5;
-	Thu,  4 Jul 2024 06:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04078200A3;
+	Thu,  4 Jul 2024 06:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720075275; cv=none; b=K6i/ORGagmiLmrnRarx/w2MRsITTWkUyb1WdSHhJjLPrVggoTcCYgfSQGtH7mYIcL08xAYtP6tLqiRCgc1S8+62x1ambRPgBRScAo0957Kg3rf8iOHbREe2rPxSm7ku//SdF0op0edjW8CONoi0eNEF3Xpvs7wLiH9Ztv46mhQo=
+	t=1720075343; cv=none; b=Ts4DxB6Bx80PZm1uzRXCve8OBq+BCPt3/ElqxBKkLj1Glp7bUpXWnEmwgulOwRjLz1mRbjRQt0TOFuoVAcES2kMJIYg4LjMcBeK9bu3MwFWOqgVLt1sjYeMKhVO2BvRo44cLQfRqWAj4WIqf9ffntOXQBJ7Fm7tBw9NKUQ111as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720075275; c=relaxed/simple;
-	bh=+bWi1+if3WErd1/KnsdGciJEtBFRJDW87a6ElQhCzz8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=K3YHKaU5P2t37EW4OF7Jn3Tq8hgTokvrQVThEi5Mt5sjGC5ihe9uCOkKQkOnvPluXvXh1uowW8qtWcv4GcHdC9E6cUM3e1ajtiwJHFV2sg5xTbBNjTJR5f0mUogYU/G/BsrtS5w2At0LcMDZ7I8DLYPuENyB6DoUWnDoYgo+edQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWzOgCP/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E51C32781;
-	Thu,  4 Jul 2024 06:41:10 +0000 (UTC)
+	s=arc-20240116; t=1720075343; c=relaxed/simple;
+	bh=mEcx7gzb3oXAPtuaQcYIpFg5tcTgZumTilQBHIc62BY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RGFOCbQ+bG/As0VIgs/vUWz5FJISIisAXKEulhgvrdcqt1q9BlMZ9z2yX0mhqtnBK74/9GqTz9nvdplumHJzlRXEqfueBR+IXqb6OuAaXbm93/Mm/qofOgIESaCQlkfzZe8WQczd+Pbm6S58m/5nvaCydWVnc/ZNKahzKWJTGCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xz/Srpr9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0290C3277B;
+	Thu,  4 Jul 2024 06:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720075275;
-	bh=+bWi1+if3WErd1/KnsdGciJEtBFRJDW87a6ElQhCzz8=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=tWzOgCP/EY25airxSQYJHCskq3zPKTdAWsRYJtzuTtc9khjy++FWX4h8GHPI3mflO
-	 LYgUCUgPvjeQcUF4+qkBTLIBmG7e6IWgD0Am2KngPakPJWA51tYv3gLPm/qgSN22Q1
-	 46MjU+0SCzJgJWGOlcq1e+fi5opQGcEVCZsknvtYlZUKjRyP9Jyh0cR4hNxmSZJlHM
-	 pykWqKay0aReMRchPSwqgk0uQqXSGc3enLT0QnjPJXBVV6YvOXVIOIxS5YIia9WHDP
-	 w/apUz0Nd7mCkdvUdKlZReK4V6Z5Idu10Uy2RHYoIZvO6VfDjAHKrMIWMI4Q0T0G4X
-	 62KRI7TjeGgHw==
+	s=k20201202; t=1720075342;
+	bh=mEcx7gzb3oXAPtuaQcYIpFg5tcTgZumTilQBHIc62BY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Xz/Srpr9M3EfMndkgvIfCh2T4pxbJ4KZwzyONQDf5J93+hN5JyKkHssuzSkTjeFvh
+	 1Vjkt0mXCKIbhPCE52czltMun5ygSz+6HnuKTBXgH6FwMcklTe6EbEGyHBhSsp/FSH
+	 RrYybu5DiHgatji0u5nu5RDyEuSIDcCNrCDIPOgRUAi+hCtHxV84YBqEKCJqc9Iwmy
+	 74BqcVlXxstcK1GY1VxSJ0htIw2OO9h5YvSOPE2mT2oN9nTjzNCjyOFEtWHVIanJqX
+	 4IizZkRdLUARxofF+fV43Y9OB+oHEpb4KWWneMSEfllp+M+/who61Kn/dQlPrL5jB/
+	 vqCo3EpjLM+xg==
+Message-ID: <bf0b9250-d45c-4f8e-907f-e7cec401dd68@kernel.org>
+Date: Thu, 4 Jul 2024 08:42:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: arm: fsl: Add Kontron i.MX8MP OSM-S
+ based boards
+To: Frieder Schrempf <frieder@fris.de>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>,
+ Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Marco Felsch <m.felsch@pengutronix.de>,
+ Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+ Tim Harvey <tharvey@gateworks.com>
+References: <20240702154413.968044-1-frieder@fris.de>
+ <20240702154413.968044-2-frieder@fris.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240702154413.968044-2-frieder@fris.de>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 04 Jul 2024 09:41:08 +0300
-Message-Id: <D2GJSLLC0LSF.2RP57L3ALBW38@kernel.org>
-Cc: "Thorsten Leemhuis" <regressions@leemhuis.info>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, <stable@vger.kernel.org>, "Peter Huewe"
- <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Ard Biesheuvel" <ardb@kernel.org>, "Mario
- Limonciello" <mario.limonciello@amd.com>, <linux-kernel@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] tpm: Address !chip->auth in
- tpm_buf_append_hmac_session*()
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Stefan Berger" <stefanb@linux.ibm.com>,
- <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240703182453.1580888-1-jarkko@kernel.org>
- <20240703182453.1580888-4-jarkko@kernel.org>
- <c90ce151-c6e5-40c6-8d3d-ccec5a97d10f@linux.ibm.com>
-In-Reply-To: <c90ce151-c6e5-40c6-8d3d-ccec5a97d10f@linux.ibm.com>
+Content-Transfer-Encoding: 7bit
 
-On Thu Jul 4, 2024 at 4:56 AM EEST, Stefan Berger wrote:
->
->
-> On 7/3/24 14:24, Jarkko Sakkinen wrote:
-> > Unless tpm_chip_bootstrap() was called by the driver, !chip->auth can
->
-> Doesn't tpm_chip_register() need to be called by all drivers? This=20
-> function then calls tpm_chip_bootstrap().
->
-> > cause a null derefence in tpm_buf_hmac_session*().  Thus, address
-> > !chip->auth in tpm_buf_hmac_session*() and remove the fallback
-> > implementation for !TCG_TPM2_HMAC.
-> >=20
-> > Cc: stable@vger.kernel.org # v6.9+
-> > Reported-by: Stefan Berger <stefanb@linux.ibm.com>
-> > Closes: https://lore.kernel.org/linux-integrity/20240617193408.1234365-=
-1-stefanb@linux.ibm.com/
-> > Fixes: 1085b8276bb4 ("tpm: Add the rest of the session HMAC API")
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->
-> I applied this series now but it doesn't solve the reported problem. The=
-=20
+On 02/07/2024 17:43, Frieder Schrempf wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> 
+> Add the bindings for the Kontron i.MX8MP OSM-S SoM and carrier
+> boards.
+> 
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-It fixes the issues of which symptoms was shown by your transcript:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM error 0x01C4
-[    2.987140] ima: Error Communicating to TPM chip, result: -14
+Best regards,
+Krzysztof
 
-Your original thread identified zero problems, so thus your claim here
-is plain untrue.
-
-Before the null derefence is fixed all other patches related are
-blocked, including ibm_tpmvtpm patches, because it would be insane
-to accept them when there is known memory corruption bug, which
-this patch set fixes.
-
-What is so difficult to understand in this?
-
-> error message is gone but the feature can still be enabled=20
-> (CONFIG_TCG_TPM2_HMAC=3Dy) but is unlikely actually doing what it is=20
-> promising to do with this config option. So you either still have to=20
-> apply my patch, James's patch, or your intended "depends on=20
-> !TCG_IBMVTPM" patch.
-
-Well this somewhat misleading imho...
-
-None of the previous patches, including your, do nothing to fix the null
-derefence bug and that is the *only* bug we care about ATM. With these
-fixes drivers that do not call tpm_chip_bootstrap() will be fully
-working still but without encryption.
-
-There's five drivers which would require update for that:
-
-drivers/char/tpm/tpm_ftpm_tee.c:        pvt_data->chip->flags |=3D TPM_CHIP=
-_FLAG_TPM2;
-drivers/char/tpm/tpm_i2c_nuvoton.c:             chip->flags |=3D TPM_CHIP_F=
-LAG_TPM2;
-drivers/char/tpm/tpm_ibmvtpm.c:         chip->flags |=3D TPM_CHIP_FLAG_TPM2=
-;
-drivers/char/tpm/tpm_tis_i2c_cr50.c:    chip->flags |=3D TPM_CHIP_FLAG_TPM2=
-;
-drivers/char/tpm/tpm_vtpm_proxy.c:              proxy_dev->chip->flags |=3D=
- TPM_CHIP_FLAG_TPM2;
-
-
-BR, Jarkko
 
