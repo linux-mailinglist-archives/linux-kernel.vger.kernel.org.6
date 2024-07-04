@@ -1,301 +1,185 @@
-Return-Path: <linux-kernel+bounces-240870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E25A9273EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF7A9273FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B198A1C2130B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:22:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9140A1C21343
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABBD1AB911;
-	Thu,  4 Jul 2024 10:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738A11ABC52;
+	Thu,  4 Jul 2024 10:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p1MfI5Sj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P+VJVlXA"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A50A41;
-	Thu,  4 Jul 2024 10:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771391AB908
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 10:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720088558; cv=none; b=GfX6vLsTjldUVPyvrfEAkmE1iEcArPSoYkBvbXNukEeJnmKQNDZPPLMkKlsgcLINMJLVUxKkeZ2KDV/lDqMJx4HMDKRUjQQA74QfEwL6kbsHhSHDXIYc0sht/18DFIE8s3XPeLgrmvkp0qux531kRj6+RHBys521LJBUr3o1OyU=
+	t=1720088783; cv=none; b=Hgr9hb/7y6N7/427GLUlHbq/3kTy4lm0y8AnXBJE8T84cGZxDIRemFksXu9nDF+GDrjLULXW3PSAtGzAlTG3FwOc5b1kLfpbcJBxqwCqIJmOgkWZd6qem49fkfNx3qyN6EZ61qF8gE3sUHv0NrJxtp79uaNTeO9jaq49Y6R2RwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720088558; c=relaxed/simple;
-	bh=RrseeKsIw4zTkLal4NO5ir7XI5QFiSYTEFrSIo6M9BQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=H8hMU1xiWOMwAkvPvLlif3swMJpAn/BmSLL+qP8m+pc24q50XAOGBl0JN5FFTC/DWaXzOnzpxvF6iEoQhPQ3AHLxJ6OcuoACDtFqZFxaxmv8wCJJ9F0tSA1ZATuQ9pI60P7E/Fi54k2tUY9eISHTMERO9J4gEuhhEjjZsNu0gIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p1MfI5Sj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4645jbXH023219;
-	Thu, 4 Jul 2024 10:22:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9cggr0TA87Qww/pVCkSy8RIFZHHrOSFsCB8KjZ4LaSw=; b=p1MfI5Sjpuxh6qvm
-	n5C5jf4rkOxCNkzdjfKjFf+/Ki6P2ezZlNWC6m/TmzUKr7sOpk95jH7fpONx4uR6
-	Rex9C3NeA3X6i9kP/6S6Ef9esRDvRqwkG7bbkaxN+9tayhCYMIXeZis6b/qPyTau
-	yRwJI8KASfxb+PK/7K3k0LFc9evNDLudMlQvcPYkq1w3CjT8xWbWbgQd52BJJZZc
-	jI1NNrYz5kdewiZe47FOsXkDjcngRQsVFNH5rhhxbS457xhcBIpLxAnNn9myguG8
-	GlnZ7MR/eLbMUCYv512tIdon2rEh8/ud8w49yse0nfwV1Dg5sDswotw+TjYNFyUE
-	iwRKxw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4050cybd1d-1
+	s=arc-20240116; t=1720088783; c=relaxed/simple;
+	bh=h3E4WT2pJxswg3rBZtjgjLVx5HnJRGBne7qKSl90+QA=;
+	h=Subject:From:To:Cc:Date:Message-ID:Content-Type:MIME-Version; b=AVF09XjHGpIiOkt+4l1TE7kB1o8Yjv4lB/bajCFHxgSfmw33qmzueN8pzPQ2KLsudgFtoSpThtJQep/xsz5ZT1IXL/MBDzjJkhy+ppfhdGVW9Nj2PeHwlwQYWINaVbU13vyFjV+3hHfQ2U4/ytpDGBz9tYVp1afsrM/goGkN5EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P+VJVlXA; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4649vdbj014367;
+	Thu, 4 Jul 2024 10:25:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	subject:from:to:cc:date:message-id:content-type
+	:content-transfer-encoding:mime-version; s=pp1; bh=beaAn83Z14Fgy
+	nHM1T6PvGwI5Mpl48BF0FwSGHvL8Ms=; b=P+VJVlXAdZEj6SSUUjOPbGMAJcsao
+	GmSJlR2cpJy/6c1M3dFv7IKDwKx1Sy4ft873vw6P7qUlGEYUN7+DVN+6OSACJFvl
+	af53qWaKj285p0bBK+kOUNZLUabSQxYqWgONXqEKeDB/MDLfM3JHzaVngxu5dQ8C
+	VU+cuqCBKS8qvGo5ORi5zqlK3DpS46MTQ09FohZWngRu93cqL92mCOC500z327al
+	4mI+IOg6S9oO6u8huE2WPQ0tjkI3MTEN5S4hpOauqlApSFlkOxK2tJDuc9wESfHR
+	Y33Dklksl9IPUj2+Pj6HVgs+wGsVeB4T9kvsq9WzU0HkhYE0z8IPFqcFA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 405r8m892s-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Jul 2024 10:22:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 464AMJ4o027188
+	Thu, 04 Jul 2024 10:25:57 +0000 (GMT)
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 464APu2U023834;
+	Thu, 4 Jul 2024 10:25:56 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 405r8m8911-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 4 Jul 2024 10:22:19 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 4 Jul 2024
- 03:22:13 -0700
-Message-ID: <e647ae63-2f30-c55f-7124-ecef1d0d74d3@quicinc.com>
-Date: Thu, 4 Jul 2024 15:52:10 +0530
+	Thu, 04 Jul 2024 10:25:56 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4647YRf3026386;
+	Thu, 4 Jul 2024 10:22:45 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 402wkq7jjk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Jul 2024 10:22:45 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 464AMdm039125310
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 4 Jul 2024 10:22:41 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C04E820043;
+	Thu,  4 Jul 2024 10:22:39 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1A9B320040;
+	Thu,  4 Jul 2024 10:22:38 +0000 (GMT)
+Received: from [172.17.0.2] (unknown [9.3.101.175])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  4 Jul 2024 10:22:37 +0000 (GMT)
+Subject: [PATCH] powerpc/pseries/iommu: Define spapr_tce_table_group_ops only
+ with CONFIG_IOMMU_API
+From: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+To: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, gbatra@linux.vnet.ibm.com,
+        sbhat@linux.ibm.com, jgg@ziepe.ca, ruscur@russell.cc,
+        linux-kernel@vger.kernel.org, tpearson@raptorengineering.com,
+        msuchanek@suse.de, vaibhav@linux.ibm.com
+Date: Thu, 04 Jul 2024 10:22:37 +0000
+Message-ID: <172008854222.784.13666247605789409729.stgit@linux.ibm.com>
+User-Agent: StGit/1.5
+Content-Type: text/plain; charset="utf-8"
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: X3dxyxVRaFXE-JkPkAQcVZ3EaetPX8DY
+X-Proofpoint-ORIG-GUID: FQCHDyXwtnorQwBRYtnOW0e3msDtdnlE
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V6 5/5] arm64: dts: qcom: x1e80100: Enable cpufreq
-Content-Language: en-US
-To: Nikunj Kela <quic_nkela@quicinc.com>, Johan Hovold <johan@kernel.org>
-CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <jassisinghbrar@gmail.com>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <dmitry.baryshkov@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
-        <conor+dt@kernel.org>, <quic_psodagud@quicinc.com>,
-        <abel.vesa@linaro.org>
-References: <20240612124056.39230-1-quic_sibis@quicinc.com>
- <20240612124056.39230-6-quic_sibis@quicinc.com>
- <ZoQjAWse2YxwyRJv@hovoldconsulting.com>
- <f53bc00f-8217-1dc8-5203-1a83c24d353d@quicinc.com>
- <1fcea728-6ee6-4361-b3c5-63d8a2facd74@quicinc.com>
- <65ce72e1-7106-0872-88f7-bfdfcef7a24b@quicinc.com>
- <0f94978c-dad7-418b-b911-edf7e81d7460@quicinc.com>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <0f94978c-dad7-418b-b911-edf7e81d7460@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: R77jCa3RnW-CSyz4PketkcN7Pd0I10S2
-X-Proofpoint-ORIG-GUID: R77jCa3RnW-CSyz4PketkcN7Pd0I10S2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-04_06,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- mlxlogscore=999 priorityscore=1501 adultscore=0 mlxscore=0 impostorscore=0
- spamscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407040072
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=812 bulkscore=0
+ priorityscore=1501 lowpriorityscore=0 suspectscore=0 impostorscore=0
+ phishscore=0 clxscore=1015 adultscore=0 malwarescore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407040072
+
+The patch fixes the below warning,
+arch/powerpc/platforms/pseries/iommu.c:1824:37: warning: 'spapr_tce_table_group_ops' defined but not used [-Wunused-variable]
+
+The other error reported by the test robot no longer exists on the top
+of the tree due to later changes on the file.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407020357.Hz8kQkKf-lkp@intel.com/
+Fixes: b09c031d9433 ("powerpc/iommu: Move pSeries specific functions to pseries/iommu.c")
+Signed-off-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+---
+ arch/powerpc/platforms/pseries/iommu.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+index 672199ba7400..534cd159e9ab 100644
+--- a/arch/powerpc/platforms/pseries/iommu.c
++++ b/arch/powerpc/platforms/pseries/iommu.c
+@@ -68,7 +68,9 @@ static struct iommu_table *iommu_pseries_alloc_table(int node)
+ 	return tbl;
+ }
+ 
++#ifdef CONFIG_IOMMU_API
+ static struct iommu_table_group_ops spapr_tce_table_group_ops;
++#endif
+ 
+ static struct iommu_table_group *iommu_pseries_alloc_group(int node)
+ {
+@@ -165,6 +167,7 @@ static unsigned long tce_get_pseries(struct iommu_table *tbl, long index)
+ 	return be64_to_cpu(*tcep);
+ }
+ 
++#ifdef CONFIG_IOMMU_API
+ static long pseries_tce_iommu_userspace_view_alloc(struct iommu_table *tbl)
+ {
+ 	unsigned long cb = ALIGN(sizeof(tbl->it_userspace[0]) * tbl->it_size, PAGE_SIZE);
+@@ -183,6 +186,7 @@ static long pseries_tce_iommu_userspace_view_alloc(struct iommu_table *tbl)
+ 
+ 	return 0;
+ }
++#endif
+ 
+ static void tce_iommu_userspace_view_free(struct iommu_table *tbl)
+ {
+@@ -738,6 +742,7 @@ struct iommu_table_ops iommu_table_lpar_multi_ops = {
+ 	.free = tce_free_pSeries
+ };
+ 
++#ifdef CONFIG_IOMMU_API
+ /*
+  * When the DMA window properties might have been removed,
+  * the parent node has the table_group setup on it.
+@@ -757,6 +762,7 @@ static struct device_node *pci_dma_find_parent_node(struct pci_dev *dev,
+ 
+ 	return NULL;
+ }
++#endif
+ 
+ /*
+  * Find nearest ibm,dma-window (default DMA window) or direct DMA window or
+@@ -1845,6 +1851,7 @@ static bool iommu_bypass_supported_pSeriesLP(struct pci_dev *pdev, u64 dma_mask)
+ 	return false;
+ }
+ 
++#ifdef CONFIG_IOMMU_API
+ /*
+  * A simple iommu_table_group_ops which only allows reusing the existing
+  * iommu_table. This handles VFIO for POWER7 or the nested KVM.
+@@ -2327,6 +2334,7 @@ static struct iommu_table_group_ops spapr_tce_table_group_ops = {
+ 	.take_ownership = spapr_tce_take_ownership,
+ 	.release_ownership = spapr_tce_release_ownership,
+ };
++#endif
+ 
+ static int iommu_mem_notifier(struct notifier_block *nb, unsigned long action,
+ 		void *data)
 
 
-
-On 7/3/24 19:35, Nikunj Kela wrote:
-> 
-> On 7/3/2024 4:23 AM, Sibi Sankar wrote:
->>
->>
->> On 7/3/24 01:43, Nikunj Kela wrote:
->>>
->>> On 7/2/2024 12:59 PM, Sibi Sankar wrote:
->>>>
->>>>
->>>> On 7/2/24 21:25, Johan Hovold wrote:
->>>>> On Wed, Jun 12, 2024 at 06:10:56PM +0530, Sibi Sankar wrote:
->>>>>> Enable cpufreq on X1E80100 SoCs through the SCMI perf protocol node.
->>>>>>
->>>>>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
->>>>>> ---
->>>>>>     arch/arm64/boot/dts/qcom/x1e80100.dtsi | 63
->>>>>> ++++++++++++++++----------
->>>>>>     1 file changed, 39 insertions(+), 24 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>>>>> b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>>>>> index 7b619db07694..d134dc4c7425 100644
->>>>>> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>>>>> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>>>>> @@ -69,8 +69,8 @@ CPU0: cpu@0 {
->>>>>>                 reg = <0x0 0x0>;
->>>>>>                 enable-method = "psci";
->>>>>>                 next-level-cache = <&L2_0>;
->>>>>> -            power-domains = <&CPU_PD0>;
->>>>>> -            power-domain-names = "psci";
->>>>>> +            power-domains = <&CPU_PD0>, <&scmi_dvfs 0>;
->>>>>> +            power-domain-names = "psci", "perf";
->>>>>>                 cpu-idle-states = <&CLUSTER_C4>;
->>>>>
->>>>>> +        scmi {
->>>>>> +            compatible = "arm,scmi";
->>>>>> +            mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
->>>>>> +            mbox-names = "tx", "rx";
->>>>>> +            shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
->>>>>> +
->>>>>> +            #address-cells = <1>;
->>>>>> +            #size-cells = <0>;
->>>>>> +
->>>>>> +            scmi_dvfs: protocol@13 {
->>>>>> +                reg = <0x13>;
->>>>>> +                #power-domain-cells = <1>;
->>>>>> +            };
->>>>>> +        };
->>>>>>         };
->>>>>
->>>>
->>>> Hey Johan,
->>>>
->>>> Thanks for trying out the series.
->>>>
->>>>> This series gives a nice performance boost on the x1e80100 CRD, but
->>>>> I'm
->>>>> seeing a bunch of warnings and errors that need to be addressed:
->>>>>
->>>>> [    9.533053] arm-scmi firmware:scmi: Failed to get FC for protocol
->>>>> 13 [MSG_ID:6 / RES_ID:0] - ret:-95. Using regular messaging.
->>>>> [    9.549458] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
->>>>> 3417600 for NCC - ret:-16
->>>>> [    9.563925] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
->>>>> 3417600 for NCC - ret:-16
->>>>> [    9.572835] arm-scmi firmware:scmi: Failed to get FC for protocol
->>>>> 13 [MSG_ID:6 / RES_ID:1] - ret:-95. Using regular messaging.
->>>>> [    9.609471] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
->>>>> 3417600 for NCC - ret:-16
->>>>> [    9.633341] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
->>>>> 3417600 for NCC - ret:-16
->>>>> [    9.650000] arm-scmi firmware:scmi: Failed to get FC for protocol
->>>>> 13 [MSG_ID:6 / RES_ID:2] - ret:-95. Using regular messaging.
->>>>
->>>> X1E uses fast channels only for message-id: 7 (level set) and regular
->>>> channels for all the other messages. The spec doesn't mandate fast
->>>> channels for any of the supported message ids for the perf protocol.
->>>> So nothing to fix here.
->>>>
->>>>> [    9.727098] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected.
->>>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
->>>>> 3417600000, volt: 0, enabled: 1
->>>>> [    9.737157] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected.
->>>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
->>>>> 3417600000, volt: 0, enabled: 1
->>>>> [    9.875039] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected.
->>>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
->>>>> 3417600000, volt: 0, enabled: 1
->>>>> [    9.888428] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected.
->>>>> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
->>>>> 3417600000, volt: 0, enabled: 1
->>>>
->>>> The duplicate entries reported by the perf protocol come directly from
->>>> the speed bins. I was told the duplicate entry with volt 0 is meant to
->>>> indicate a lower power way of achieving the said frequency at a lower
->>>> core count. We have no way of using it in the kernel and it gets safely
->>>> discarded. So again nothing to fix in the kernel.
->>>
->>> Hi Sibi,
->>>
->>> Can you try increasing the max_msg_size to 256 bytes in mailbox
->>> transport? We saw the same issue but got resolved by increasing the
->>> max_msg_size for the transport(obviously, I reduced the max_msg to 10 to
->>> keep the total shmem size same). Even the opps_by_lvl warning went away
->>> with this for us.
->>
->> Nikunj,
->> Thanks for taking time to review the series :)
->>
->> Not sure if we are talking about the same things here, are you
->> suggesting that tweaking with the max_msg size will stop the SCMI
->> controller from reporting duplicate OPPs? Even if it does go away
->> magically wouldn't it mean you are dropping messages? Also opps_by_lvl
->> failing with -16 and duplicate opps detected in the opp core have the
->> same root cause i.e. duplicate entries reported by the controller.
-> 
-> 
-> Sibi,
-> 
-> My observation was that only 12 OPPs could fit it 128bytes msg_size and
-> our platform was sending 16 OPPs in one go. OPPs above 12 were getting
-> clobbered so the duplicate warning/error were not genuine. You may need
-> to tweak platform to send only 12(or less) OPPs in one go.
-
-Nikunj,
-
-The platform we are talking abt in this thread is X1E and the number
-of performance levels returned by the PERFORMANCE_DESCRIBE_LEVELS
-is just one. I relies on the skip_index and iterator ops to get
-all the available levels. So the clobbering you are talking abt
-in whatever platform you are referring to does not apply here.
-Please find the logs below for Domain 1. Hope this clears up
-whatever misunderstanding you had about X1E.
-
-Logs Domain -1:
-arm-scmi: iter_perf_levels_update_state num_returned: 1 num_remaining: 15
-arm-scmi firmware:scmi: Level 710400 Power 23243 Latency 30us Ifreq 
-710400 Index 0
-...
-[snip]
-...
-arm-scmi: iter_perf_levels_update_state num_returned: 1 num_remaining: 3
-arm-scmi firmware:scmi: Level 3417600 Power 307141 Latency 30us Ifreq 
-3417600 Index 12
-arm-scmi: iter_perf_levels_update_state num_returned: 1 num_remaining: 2
-arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - 
-ret:-16
-arm-scmi firmware:scmi: Level 3417600 Power 307141 Latency 30us Ifreq 
-3417600 Index 13
-arm-scmi: iter_perf_levels_update_state num_returned: 1 num_remaining: 1
-arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - 
-ret:-16
-arm-scmi firmware:scmi: Level 3417600 Power 307141 Latency 30us Ifreq 
-3417600 Index 14
-arm-scmi: iter_perf_levels_update_state num_returned: 1 num_remaining: 0
-arm-scmi firmware:scmi: Level 4012800 Power 539962 Latency 30us Ifreq 
-4012800 Index 15
-
-
--Sibi
-
-> 
-> 
->>
->>>
->>> Thanks,
->>>
->>> -Nikunj
->>>
->>>>
->>>>> [    9.913506] debugfs: Directory 'NCC' with parent 'pm_genpd'
->>>>> already present!
->>>>> [    9.922198] debugfs: Directory 'NCC' with parent 'pm_genpd'
->>>>> already present!
->>>>
->>>> Yeah I did notice ^^ during dev, the series isn't the one
->>>> introducing it
->>>> so it shouldn't block the series acceptance. Meanwhile I'll spend some
->>>> cycles to get this warn fixed.
->>
->> Johan,
->>
->> https://lore.kernel.org/lkml/20240703110741.2668800-1-quic_sibis@quicinc.com/
->>
->>
->> Posted a fix for the warn ^^
->>
->>>>
->>>> -Sibi
->>>>
->>>>>
->>>>> Johan
->>>>>
 
