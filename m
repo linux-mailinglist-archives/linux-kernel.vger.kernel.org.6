@@ -1,190 +1,193 @@
-Return-Path: <linux-kernel+bounces-240979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7837792753F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:38:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2808E927543
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38D26287805
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C56DC1F24D6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529111AC434;
-	Thu,  4 Jul 2024 11:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625D816A397;
+	Thu,  4 Jul 2024 11:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQZ2UcmW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEJ9T4Rz"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CF916A397;
-	Thu,  4 Jul 2024 11:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6C51A4F39;
+	Thu,  4 Jul 2024 11:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720093117; cv=none; b=qBgvOccrWpUM42jE0DfTcnHvl430Wfo3hYULdZYBYME/aqFfmQ4XDI2B8xNm42xu9eCHMwWlHCtZjsCa0aAG7j8QKqCgnHGh6f26dRYvNpbcH0tOprKSlLCRWOFQoXMbBZIVrDFXRCtqvyFPw6MlJFFT/IyYs9GH/+OQy2+ssXQ=
+	t=1720093145; cv=none; b=MYntWJB80ilrm+b/iPApJ41r3r+5OFCP4aGanh5DhGlBYowKzwt71E0YEz7KdY9iZ2KXZRtVlDWC4Yl1xuLikg3fmUtfuWxrM7oKijv6DTwm7eDxnleRCOHmM2/3A3Jl6BDeBElAHqKBXey05wg6yy2t0RHyXa9H82uSOOQX++E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720093117; c=relaxed/simple;
-	bh=UxjWql28toiPuz8U2UObVRmU6by2h2Dosj9Dk8engTE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Buc1tqb6pL7rOQTkK6GaXqBgPrhVyJ0tnk8sQHgu6I4hYNXfcwkoIx8w9v+wO6TU9NfSi98BDT5q2Px7czaq1XIU86rmMb440PnPX12Qc3vSsnZQq6LQRWUMeQyL93o6Hd1TpW88pUWZ2o+o6ZA5KzPjGTwvEhkgr0XFucdlaso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQZ2UcmW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACF3C4AF0B;
-	Thu,  4 Jul 2024 11:38:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720093116;
-	bh=UxjWql28toiPuz8U2UObVRmU6by2h2Dosj9Dk8engTE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QQZ2UcmWC0iKCTuBPp/fZF2G/l+dOwDvSgs713TfHV3qDm+NCNRRrZ5dj8iWFnWwR
-	 WmAaIkmr7E/h4uoW6WXxAPF04+EDH0t6EP0/AHV6mTWJXlD/i8j/XvfP65rqK9rmef
-	 ovfuovl6IFK9tzdv1pkt/n30kJ3figByYu/KSwHMqqe/4dC98XkCW+5EXtsd46aAwP
-	 LFrjo+odw/bJoCDI6d9tR6mxYoveWjTO7TUZ3NvBaYlqVljvCmIxCgrtygTiqot3A9
-	 y4W+B9orN2+DfPzzRdl3zKpqXJEiKFZGUJuSBt3dw3hTJFCbMh/2qEr6UlDJHs6DPZ
-	 ITaaEA1fEtVAw==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-254925e6472so107043fac.0;
-        Thu, 04 Jul 2024 04:38:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGZrh/4ZZHbdu3fOaLKQoIs6BHXMwFON8eCm8WeJZT3VEFWvuqL+PAt1AN20upEBrAD5VRAno9sCXXDIy/Ev/B4sXt46K4kHvvLN0SsEqv1RmWizpGb5itCAgFrpQXXJ5sFdZ6t1U=
-X-Gm-Message-State: AOJu0YzPDwhVPpoBGgnimD+PGxZHKSYx7o2lj9Y4rBWllX0rt1wf9BAL
-	lKlVgadTqhIhUtv2h1+P3Ixn6hdmxF5u7aaa1HfXO8+UH6KSis3rUrWf+e13fgZ8edtbmxXgksL
-	ofX2PhPF7pthkODayPTKtHkcBFdQ=
-X-Google-Smtp-Source: AGHT+IEicJ7mapfZzDhtYfCdNktn/cvbLbJKh2NZkvRmakchSZIBd9AXbsvAYwIm/M7PcXxBGxSL09djGQp4fmGtFhA=
-X-Received: by 2002:a05:6870:5590:b0:25e:1817:e4a8 with SMTP id
- 586e51a60fabf-25e2bf93ebcmr1381939fac.4.1720093116076; Thu, 04 Jul 2024
- 04:38:36 -0700 (PDT)
+	s=arc-20240116; t=1720093145; c=relaxed/simple;
+	bh=zb2UtwgR4nZobCStOCzyvKYLA4QVMrx25u7MFUVL+1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Gq4Pf95EiHfDJIYI6Zkebw7CateZALO+n5lE6ibClm8I4ZLyuKxWCO/3EfQn6ajOtC8Cs4kvc1gHrwG55GVlGE2b9L7qvqtNMVrnsBjdlU39rZeg2MbG93MyOXB8IQinJU/8EUkzmrHA/8yp9OU8JvMPNjVV1TGyb1AwyVNweVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TEJ9T4Rz; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-36740e64749so319356f8f.0;
+        Thu, 04 Jul 2024 04:39:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720093142; x=1720697942; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6fYLZa4HHF1b9p/c/tnP9OoRCPiUlr8s0XzaHZbBLZA=;
+        b=TEJ9T4Rz84XzuhCdljrwawGtWPs99qxE937GEYw5w9kn5J+qO+zmRVLOqC3kQwCUZs
+         Tq2DDISTuMe/lwKxPPknH5yoMiUBFomtx8poH4H2RCL+iyRPw0oj5A4dtJphzxNr9QBK
+         KTqhHiMH/ca7wr5Md04tyHRYRzgujMTn8imvpguaoHXc8UYvUJKZcroWMklOZQ+u8wvs
+         3tJbn7S29Pj9oQ4d4N3mRSvzUr/Tt5iFb9ph0mIFeRDVrPajskSJW3zuf+7/VO1TWvex
+         sG+XHeqFtxtvztgaOY4EDhAU6yG5G2kZAg9M71NcyBZFA4G7Nr1ZPVDHrRa4z7xSt9gs
+         F7JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720093142; x=1720697942;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6fYLZa4HHF1b9p/c/tnP9OoRCPiUlr8s0XzaHZbBLZA=;
+        b=I6rNYUVs4M2h5J9Rp/CDp0XSytu3xesZ4gukpZbH9Tuxi87KbvtJVx3CcDEu01MIcF
+         4AVciIGupuJUisfFuqdI/CPimTHPgs7HpbGI/Gh7WrxKUnctP2crJM6JRxyqBlPm0yJI
+         56tzN7h/C+1E+iSAIfG5AKkkx12EM+ejMImOscnxR14QiRW83fw6C9jPlp1hX1y9kJ+c
+         QQVxHyNxinZV8BdhIjhZbgADrBI4biaw0yl7psEt0UmZkSJVCMN8SF+yIPr8FsO5zmsc
+         6Q3gMXTfoX0q7bF9QPDLogmhfd1J8HjrfSrElv0zSW+PniCoju4+QyN/0fmcRRDf0C8i
+         x3tA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZQkQlD4ejw3nOmPhjmjvwGrbPcY2E7qaazx2iqkR3sFT1ZeQLa8gppY1Wz12FwDnmAIjIXDcqOQqdDUa9RSBuC6g4aZD/retVygdysTUPN3ooT39biVhJM2dJFaa66wdur5EwEpwJwg==
+X-Gm-Message-State: AOJu0YyjsWXeEnxLW2WIsizCYrGAkULEtQtjqOhd9vWmN3n0JjdexjME
+	UtY3eKJMns7hE8lIRkUpVAxiuvWIOTjXCcjJ7uf8YHCWUE4zMSNa
+X-Google-Smtp-Source: AGHT+IGiAuo18UNK1htUlJ8y7qww4/M1cpsp0NG4pEBPoLNYgn01/ktpjlibsxE8k0XCW4HG3z//aA==
+X-Received: by 2002:a5d:5489:0:b0:367:911b:ff6f with SMTP id ffacd0b85a97d-3679dd29485mr965923f8f.18.1720093142121;
+        Thu, 04 Jul 2024 04:39:02 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb92fsm18382943f8f.88.2024.07.04.04.39.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 04:39:01 -0700 (PDT)
+Date: Thu, 4 Jul 2024 13:38:59 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>, baolin.wang7@gmail.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: hwlock: sprd-hwspinlock: convert to YAML
+Message-ID: <ZoaJ04kASEs9M4f6@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702-power-allocator-null-trip-max-v1-1-47a60dc55414@collabora.com>
-In-Reply-To: <20240702-power-allocator-null-trip-max-v1-1-47a60dc55414@collabora.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Jul 2024 13:38:24 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gO45HrVkO5cqh2B3p_emsAyhf-G1HWfprc2cEzXkZu6w@mail.gmail.com>
-Message-ID: <CAJZ5v0gO45HrVkO5cqh2B3p_emsAyhf-G1HWfprc2cEzXkZu6w@mail.gmail.com>
-Subject: Re: [PATCH] thermal: gov_power_allocator: Return early in manage if
- trip_max is null
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: Lukasz Luba <lukasz.luba@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Nikita Travkin <nikita@trvn.ru>, kernel@collabora.com, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, Jul 2, 2024 at 11:25=E2=80=AFPM N=C3=ADcolas F. R. A. Prado
-<nfraprado@collabora.com> wrote:
->
-> Commit da781936e7c3 ("thermal: gov_power_allocator: Allow binding
-> without trip points") allowed the governor to bind even when trip_max
-> is null. This allows a null pointer dereference to happen in the manage
-> callback. Add an early return to prevent it, since the governor is
-> expected to not do anything in this case.
->
-> Fixes: da781936e7c3 ("thermal: gov_power_allocator: Allow binding without=
- trip points")
-> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
-> This issue was noticed by KernelCI during a boot test on the
-> mt8195-cherry-tomato-r2 platform with the config in [1]. The stack trace
-> is attached below.
->
-> [1] http://0x0.st/XaON.txt
->
-> [    4.015786] Unable to handle kernel NULL pointer dereference at virtua=
-l address 0000000000000000
-> [    4.015791] Mem abort info:
-> [    4.015793]   ESR =3D 0x0000000096000004
-> [    4.015796]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-> [    4.015799]   SET =3D 0, FnV =3D 0
-> [    4.015802]   EA =3D 0, S1PTW =3D 0
-> [    4.015804]   FSC =3D 0x04: level 0 translation fault
-> [    4.015807] Data abort info:
-> [    4.015809]   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
-> [    4.015811]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-> [    4.015814]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> [    4.015818] user pgtable: 4k pages, 48-bit VAs, pgdp=3D000000010980900=
-0
-> [    4.015821] [0000000000000000] pgd=3D0000000000000000, p4d=3D000000000=
-0000000
-> [    4.015835] Modules linked in: mt8195_mt6359(+) mt6577_auxadc snd_soc_=
-mt8195_afe mtk_scp_ipi snd_sof_utils mtk_wdt(+)
-> [    4.015852] CPU: 2 PID: 13 Comm: kworker/u32:1 Not tainted 6.10.0-rc6 =
-#1 c5d519ae8e7fec6bbe67cb8c50bfebcb89dfa54e
-> [    4.015859] Hardware name: Acer Tomato (rev2) board (DT)
-> [    4.015862] Workqueue: events_unbound deferred_probe_work_func
-> [    4.015875] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYP=
-E=3D--)
-> [    4.015880] pc : power_allocator_manage+0x110/0x6a0
-> [    4.015888] lr : __thermal_zone_device_update+0x1dc/0x400
-> [    4.015893] sp : ffff8000800eb800
-> [    4.015895] x29: ffff8000800eb810 x28: 0000000000000001 x27: 000000000=
-0000001
-> [    4.015903] x26: aaaaaaaaaaaaaaab x25: ffff07a0461c15a0 x24: ffffb5853=
-0ca67c0
-> [    4.015911] x23: 0000000000000000 x22: ffff07a04098fcc0 x21: ffffb5853=
-2eec848
-> [    4.015918] x20: ffff8000800eb920 x19: ffff07a0461c1000 x18: 000000000=
-0000b4b
-> [    4.015926] x17: 5359534255530031 x16: ffffb585310352e4 x15: 000000000=
-0000020
-> [    4.015933] x14: 0000000000000000 x13: ffffffff00000000 x12: 000000000=
-0000040
-> [    4.015940] x11: 0101010101010101 x10: ffffffffffffffff x9 : ffffb5853=
-0ca8d78
-> [    4.015948] x8 : 0101010101010101 x7 : 7f7f7f7f7f7f7f7f x6 : 000000000=
-0001388
-> [    4.015955] x5 : 0000000000000000 x4 : 0000000000000384 x3 : 000000000=
-0000000
-> [    4.015962] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 000000000=
-0000000
-> [    4.015970] Call trace:
-> [    4.015972]  power_allocator_manage+0x110/0x6a0
-> [    4.015978]  __thermal_zone_device_update+0x1dc/0x400
-> [    4.015983]  thermal_zone_device_set_mode+0x7c/0xa0
-> [    4.015987]  thermal_zone_device_enable+0x1c/0x28
-> [    4.015991]  thermal_of_zone_register+0x43c/0x498
-> [    4.015996]  devm_thermal_of_zone_register+0x6c/0xb8
-> [    4.016001]  gadc_thermal_probe+0x140/0x214
-> [    4.016007]  platform_probe+0x70/0xc4
-> [    4.016012]  really_probe+0x140/0x270
-> [    4.016018]  __driver_probe_device+0xfc/0x114
-> [    4.016024]  driver_probe_device+0x44/0x100
-> [    4.016029]  __device_attach_driver+0x64/0xdc
-> [    4.016035]  bus_for_each_drv+0xb4/0xdc
-> [    4.016041]  __device_attach+0xdc/0x16c
-> [    4.016046]  device_initial_probe+0x1c/0x28
-> [    4.016052]  bus_probe_device+0x44/0xac
-> [    4.016057]  deferred_probe_work_func+0xb0/0xc4
-> [    4.016063]  process_scheduled_works+0x114/0x330
-> [    4.016070]  worker_thread+0x1c0/0x20c
-> [    4.016076]  kthread+0xf8/0x108
-> [    4.016081]  ret_from_fork+0x10/0x20
-> [    4.016090] Code: d1030294 17ffffdd f94012c0 f9401ed7 (b9400000)
-> [    4.016095] ---[ end trace 0000000000000000 ]---
-> ---
->  drivers/thermal/gov_power_allocator.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_=
-power_allocator.c
-> index 45f04a25255a..1b2345a697c5 100644
-> --- a/drivers/thermal/gov_power_allocator.c
-> +++ b/drivers/thermal/gov_power_allocator.c
-> @@ -759,6 +759,9 @@ static void power_allocator_manage(struct thermal_zon=
-e_device *tz)
->                 return;
->         }
->
-> +       if (!params->trip_max)
-> +               return;
-> +
->         allocate_power(tz, params->trip_max->temperature);
->         params->update_cdevs =3D true;
->  }
->
-> ---
+Convert the Spreadtrum hardware spinlock bindings to DT schema.
 
-Applied as 6.10-rc material, thanks!
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+Changes in V2:
+  - fix double space in example
+  - switch to #address-cells = <1> and #size-cells = <1> in example
+  - add Conor's R-b
+
+ .../bindings/hwlock/sprd,hwspinlock-r3p0.yaml | 50 +++++++++++++++++++
+ .../bindings/hwlock/sprd-hwspinlock.txt       | 23 ---------
+ 2 files changed, 50 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml
+ delete mode 100644 Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
+
+diff --git a/Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml b/Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml
+new file mode 100644
+index 000000000000..abe11df25761
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml
+@@ -0,0 +1,50 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwlock/sprd,hwspinlock-r3p0.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spreadtrum hardware spinlock
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  compatible:
++    const: sprd,hwspinlock-r3p0
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: enable
++
++  '#hwlock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#hwlock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/sprd,sc9860-clk.h>
++
++    hwlock@40500000 {
++      compatible = "sprd,hwspinlock-r3p0";
++      reg = <0x40500000 0x1000>;
++      clocks = <&aon_gate CLK_SPLK_EB>;
++      clock-names = "enable";
++      #hwlock-cells = <1>;
++    };
++...
+diff --git a/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
+deleted file mode 100644
+index 581db9d941ba..000000000000
+--- a/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
++++ /dev/null
+@@ -1,23 +0,0 @@
+-SPRD Hardware Spinlock Device Binding
+--------------------------------------
+-
+-Required properties :
+-- compatible : should be "sprd,hwspinlock-r3p0".
+-- reg : the register address of hwspinlock.
+-- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
+-	hwlock, so the number of cells should be <1> here.
+-- clock-names : Must contain "enable".
+-- clocks : Must contain a phandle entry for the clock in clock-names, see the
+-	common clock bindings.
+-
+-Please look at the generic hwlock binding for usage information for consumers,
+-"Documentation/devicetree/bindings/hwlock/hwlock.txt"
+-
+-Example of hwlock provider:
+-	hwspinlock@40500000 {
+-		compatible  = "sprd,hwspinlock-r3p0";
+-		reg = <0 0x40500000 0 0x1000>;
+-		#hwlock-cells = <1>;
+-		clock-names = "enable";
+-		clocks = <&clk_aon_apb_gates0 22>;
+-	};
+-- 
+2.34.1
+
 
