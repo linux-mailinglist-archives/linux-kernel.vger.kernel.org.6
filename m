@@ -1,161 +1,319 @@
-Return-Path: <linux-kernel+bounces-241444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A111927B81
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1314F927B83
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A6E0B21D63
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:59:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C5801C20ADF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592F41B3751;
-	Thu,  4 Jul 2024 16:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfDIMo5B"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3855D1B29DA;
-	Thu,  4 Jul 2024 16:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D960A1B1201;
+	Thu,  4 Jul 2024 17:01:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74BF18AED
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 17:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720112365; cv=none; b=R0XQQU5yQKuyFOnk4iqUTOlv19TW/dH32ox7wpEn9UuIxTS2bEJWpJviEdKD7VXvL2msnGKhKd9Ihf95CeOrz2GYSBCzkINrj0eroZt89vTlmXa8ntWg8WqqwKHxa+NpvTI4Z4m2yqQaQZoAAbYSlTOyxgqN+mY/nJtJGukf3c8=
+	t=1720112500; cv=none; b=Q/qEtDFYRktha6jY2J0Ei4VbvEfkEvj7QyMd5QPZntFfoPhvBO6P2a/VTyhjfTMRd+xEVsx0d+OtAk3ixQCb2qyzgNgLyjDA84zltMMBmGnKNcZL1s+nh6VizL0S8QXgrBx9tQiumAM7ztW0n0e0nfpED527J/2UOZ4LyVey6Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720112365; c=relaxed/simple;
-	bh=bvh4PuQIuYwyGjq205P+pImBCUy091RMzaW7C+y2JT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZrUNK5eU0ZFNUvg5Us6tt8vCOlFhb68OPoGh34rS/8VqtOl4BMbuArdhHiygQmbbUIlTAgLDvoMaCtAilTcHkljwjZJfXhiZq0gb3mrN8uzGHCPqmiQHPMCfbvZ4jg/Z7vW5TpRT/n7yZ8VnaI6WHgQdrIYO6n9C2mIyIt9wT+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DfDIMo5B; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f9de13d6baso5412155ad.2;
-        Thu, 04 Jul 2024 09:59:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720112363; x=1720717163; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hbx+rexi+bkisDvN1JHt83FrZQeG/TdSXxtwh8uu4R4=;
-        b=DfDIMo5BNd8DArGrFNTpCs8DElwjVWDjo1UnNf7mzHGL29EjHsZFVL8CAxGVig7uhD
-         GOm1sAa4JOj/1zwYjHkfBfkCKgksH26z9u9tkD1AI5Y84M2R0Wjqlmum5DqS02Bj9PRQ
-         g+E88PoHJCz3Dm7sfmiGlhhVKzojJdIKTmbkWZ+GD8YiarJtYp/CBxOXHToB5VXG4+3z
-         LqlDvomi9IgxFEMN3SYhyvuYpQ51oJOoJ4guXyjcvc/sKuO06vbvqQYbyulWKIZA/BxW
-         HjyjXlH8Nq0Jho9ZdXc5+4095yBeNr+rUMbQ5Skm6Dgi8zt5TV1qWi+QJf5b3Hh29hiq
-         pRGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720112363; x=1720717163;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hbx+rexi+bkisDvN1JHt83FrZQeG/TdSXxtwh8uu4R4=;
-        b=pjUxfXDHjz40kyJ/MTv8Nn9tkrm56AkYEwADhGQ80EOXiXu49Y7s6Xk/6iYeyL0omn
-         djXgi0hkDcS8f4KftQv5GKVEtN45R7BjwT4sl8ImSQmSahYY702TwQPWeOAdQ0OJHA8u
-         FFF7G799Z9CVUQoYjL+hg7FIbS3KQlvvV5DpNaNnRhphDASYScmC6CWuYapLVF0nb4He
-         fMMs6PAvSSZ3bR0OJ3G+inE/CyGISEsVLdYxFL+O67LQXdtW4dsgm3EhUblAQkFwd0JN
-         TPKzzl8ZzRVmOP2cs40/VPprA+PTCwnkZOJfvNDtv8okH8w6qHG+DOBkKD9Gdkx5oBHv
-         3+YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPonm81lpyuboBXTY+zmeyDJtsgzc6OWUimn7Ry4w2H45nR9FgwaH8+/0V/fKTBfL4Og0fWuMqLKJ+49kwMmSsLPJ4326NL+ct61JiEmVLJ3sy8vIDhix129TbUN/j7OW6kzriTCgRioLM+pky00HjZx1Tf2qFsJ1eGH1UAvTzsA9QXA==
-X-Gm-Message-State: AOJu0Yy/inGnUVTRuHsL3Nn56E15hohlHD4rIyxq2j5DNLMfGky6OduS
-	s7RMI8lg+J78FvQ1oX0TH9c5kirEVNeyKJL2u5leT2jg3gVXlruG
-X-Google-Smtp-Source: AGHT+IFpNMXcHa+uUusED4LID/clJgWo2VKFAANu9IISFIFSGHyMQF87TT1HKT00VSFY3N8gXegW3A==
-X-Received: by 2002:a17:903:32cb:b0:1fb:1a0f:44d3 with SMTP id d9443c01a7336-1fb33e94f14mr19752315ad.39.1720112363237;
-        Thu, 04 Jul 2024 09:59:23 -0700 (PDT)
-Received: from x1 ([2601:1c2:1802:170:8756:5e46:4951:e2d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb1a596822sm34936475ad.163.2024.07.04.09.59.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 09:59:22 -0700 (PDT)
-Date: Thu, 4 Jul 2024 09:59:20 -0700
-From: Drew Fustini <pdp7pdp7@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Kanak Shilledar <kanakshilledar@gmail.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] riscv: dts: thead: add basic spi node
-Message-ID: <ZobU6K/R3pfHrK9c@x1>
-References: <20240701121355.262259-2-kanakshilledar@gmail.com>
- <20240701121355.262259-5-kanakshilledar@gmail.com>
- <20240703-juice-refreeze-62c468a56ea5@spud>
+	s=arc-20240116; t=1720112500; c=relaxed/simple;
+	bh=q1v/3HwifHVlanOAwb5VRa6ZwetJnfkDjt/xMF1cJNo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uCqfXqNPMWc2VEC/ZdqaXiBPQRi5nVLOmFKklsgNwsUMC/BI9ggkJNRr+bkkmyr5fjLsLj6HiE2CcpL7xJ1ZvjegOmtD/BgQ9mCk60yg8tOVvKziNj4mYvsiXC2mCcQrBYA6/Gug6AXRlpVWnJq55N2nL0OsvMi+4kmWpaPqL0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA433367;
+	Thu,  4 Jul 2024 10:02:01 -0700 (PDT)
+Received: from [192.168.1.13] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 218F83F73B;
+	Thu,  4 Jul 2024 10:01:32 -0700 (PDT)
+Message-ID: <c4eaadcd-e563-41cf-b174-cd0fb4453c6f@arm.com>
+Date: Thu, 4 Jul 2024 19:01:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703-juice-refreeze-62c468a56ea5@spud>
+User-Agent: Mozilla Thunderbird
+From: Pierre Gondois <pierre.gondois@arm.com>
+Subject: Re: [PATCH V2 1/2] sched/fair: Prevent cpu_busy_time from exceeding
+ actual_cpu_capacity
+To: Vincent Guittot <vincent.guittot@linaro.org>,
+ Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, dietmar.eggemann@arm.com,
+ mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ qyousef@layalina.io, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+ christian.loehle@arm.com, vincent.donnefort@arm.com, ke.wang@unisoc.com,
+ di.shen@unisoc.com, linux-kernel@vger.kernel.org
+References: <20240624082011.4990-1-xuewen.yan@unisoc.com>
+ <20240624082011.4990-2-xuewen.yan@unisoc.com>
+ <CAKfTPtB=Yk8Bp4sSanr4fCdyWA9PVROM+uiWsQSh+QjFpKb+Aw@mail.gmail.com>
+ <CAB8ipk-yAoX5EJ975ZVKfgZP7rP-vzuc3bLVr6yiLtMv26Lxjw@mail.gmail.com>
+ <CAKfTPtDuuF8XX3gbsjF_Vgys2UtbzwtaX9QFgA-3kZ7+eqk02w@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAKfTPtDuuF8XX3gbsjF_Vgys2UtbzwtaX9QFgA-3kZ7+eqk02w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 03, 2024 at 03:45:37PM +0100, Conor Dooley wrote:
-> Kanak, Drew,
-> 
-> On Mon, Jul 01, 2024 at 05:43:54PM +0530, Kanak Shilledar wrote:
-> > created spi0 node with fixed clock. the spi0 node
-> > uses synopsis designware driver and has the following
-> > compatible "snps,dw-apb-ssi". the spi0 node is connected
-> > to a SPI NOR flash pad which is left unpopulated on the back
-> > side of the board.
-> > 
-> > Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
-> > ---
-> > Changes in v2:
-> > - Separated from a single patch file
-> > ---
-> >  .../boot/dts/thead/th1520-beaglev-ahead.dts      |  9 +++++++++
-> >  .../boot/dts/thead/th1520-lichee-module-4a.dtsi  |  4 ++++
-> >  .../riscv/boot/dts/thead/th1520-lichee-pi-4a.dts |  5 +++++
-> 
-> Didn't you say there was a flash on one of these two boards?
-> 
-> >  arch/riscv/boot/dts/thead/th1520.dtsi            | 16 ++++++++++++++++
-> >  4 files changed, 34 insertions(+)
-> > 
-> > diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-> > index d9b4de9e4757..3103b74e0288 100644
-> > --- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-> > +++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-> > @@ -17,6 +17,7 @@ aliases {
-> >  		gpio1 = &gpio1;
-> >  		gpio2 = &gpio2;
-> >  		gpio3 = &gpio3;
-> > +		spi0 = &spi0;
-> 
-> "spi" would sort after "serial".
-> 
-> >  		serial0 = &uart0;
-> >  		serial1 = &uart1;
-> >  		serial2 = &uart2;
-> > @@ -52,6 +53,10 @@ &sdhci_clk {
-> >  	clock-frequency = <198000000>;
-> >  };
-> >  
-> > +&spi_clk {
-> > +	clock-frequency = <396000000>;
-> > +};
-> 
-> I'm pretty sceptical about adding more of these fixed clocks, rather
-> than waiting for the clock driver. Drew, what do you think? Should we
-> just add one more to your fixup list or would you rather delay? Guess it
-> depends on how long more you think that clock driver is likely to take.
+Hello,
 
-I think the clk driver [1] is in good shape but it has not been reviewed
-by the clk maintainer yet. Thus it is hard to predict any timeline for
-it getting merged.
+On 6/27/24 18:15, Vincent Guittot wrote:
+> On Thu, 27 Jun 2024 at 04:02, Xuewen Yan <xuewen.yan94@gmail.com> wrote:
+>>
+>> On Tue, Jun 25, 2024 at 9:05 PM Vincent Guittot
+>> <vincent.guittot@linaro.org> wrote:
+>>>
+>>> On Mon, 24 Jun 2024 at 10:22, Xuewen Yan <xuewen.yan@unisoc.com> wrote:
+>>>>
+>>>> Commit 3e8c6c9aac42 ("sched/fair: Remove task_util from effective utilization in feec()")
+>>>> changed the PD's util from per-CPU to per-PD capping. But because
+>>>> the effective_cpu_util() would return a util which maybe bigger
+>>>> than the actual_cpu_capacity, this could cause the pd_busy_time
+>>>> calculation errors.
+>>>
+>>> I'm still not convinced that this is an error. Your example used for v1 is :
+>>>
+>>> The pd cpus are 4-7, and the arch_scale_capacity is 1024, and because
+>>> of cpufreq-limit, the cpu_actual_cap = 512.
+>>>
+>>> Then the eenv->cpu_cap = 512, the eenv->pd_cap = 2048;
+>>> effective_cpu_util(4) = 1024;
+>>> effective_cpu_util(5) = 1024;
+>>> effective_cpu_util(6) = 256;
+>>> effective_cpu_util(7) = 0;
+>>>
+>>> so env->pd_busy_time = 2304
 
-SPI support doesn't require any driver changes so I'd be inclined to
-allow the fixed clock in this case. It will be simple to change it over
-to a real clock once the clk driver is upstream.
+IIUC, with this configuration:
+Before patch:
+- env->pd_busy_time = 2304
+After patch:
+- env->pd_busy_time = 512 + 512 + 256 + 0 = 1280
 
-Acked-by: Drew Fustini <drew@pdp7.com>
+But when computing the energy for the task to place:
+compute_energy()
+{
+   if (dst_cpu >= 0)
+     busy_time = min(eenv->pd_cap, busy_time + eenv->task_busy_time);
+}
 
-Thanks,
-Drew
+the contribution of the task might be truncated.
+E.g.:
+Trying to place a task on CPU7 with task_busy_time=300.
+Then in compute_energy():
+
+Before patch:
+busy_time = min(2048, 2304 + 300)
+busy_time = 2048
+-> busy_time delta = 2048 - 2304 = 256
+
+After patch:
+busy_time = min(2048, 1280 + 300)
+busy_time = 1580
+-> busy_time delta = 1580 - 1280 = 300
+
+>>>
+>>> Even if effective_cpu_util(4) = 1024; is above the current max compute
+>>> capacity of 512, this also means that activity of cpu4 will run twice
+>>> longer . If you cap effective_cpu_util(4) to 512 you miss the
+>>> information that it will run twice longer at the selected OPP. The
+>>> extreme case being:
+>>> effective_cpu_util(4) = 1024;
+>>> effective_cpu_util(5) = 1024;
+>>> effective_cpu_util(6) = 1024;
+>>> effective_cpu_util(7) = 1024;
+>>>
+>>> in this case env->pd_busy_time = 4096
+>>>
+>>> If we cap, we can't make any difference between the 2 cases
+>>>
+>>> Do you have more details about the problem you are facing ?
+>>
+>> Because of the cpufreq-limit, the opp was also limited, and when compute_energy:
+>>
+>> energy =  ps->cost * sum_util =  ps->cost * eenv->pd_busy_time;
+>>
+>> Because of the cpufreq-limit, the ps->cost is the limited-freq's opp's
+>> cost instead of the max freq's cost.
+>> So the energy is determined by pd_busy_time.
+>>
+>> Still the example above:
+>>
+>> The pd cpus are 4-7, and the arch_scale_capacity is 1024, and because
+>> of cpufreq-limit, the cpu_actual_cap = 512.
+>>
+>> Then the eenv->cpu_cap = 512, the eenv->pd_cap = 2048;
+>> effective_cpu_util(4) = 1024;
+>> effective_cpu_util(5) = 1024;
+>> effective_cpu_util(6) = 256;
+>> effective_cpu_util(7) = 0;
+>>
+>> Before the patch:
+>> env->pd_busy_time = min(1024+1024+256, eenv->pd_cap) = 2048.
+>> However, because the effective_cpu_util(7) = 0, indeed, the 2048 is bigger than
+>> the actual_cpu_cap.
+>>
+>> After the patch:
+>> cpu_util(4) = min(1024, eenv->cpu_cap) = 512;
+>> cpu_util(5) = min(1024, eenv->cpu_cap) = 512;
+>> cpu_util(6) = min(256, eenv->cpu_cap) = 256;
+>> cpu_util(7) = 0;
+>> env->pd_busy_time = min(512+512+256, eenv->pd_cap) = 1280.
+
+If we take a similar example, on a pd with 2 CPUs and:
+- effective_cpu_util(0) = 1024
+- effective_cpu_util(1) = 0
+and:
+- eenv->cpu_cap = 100
+- eenv->pd_cap = 100 + 100 = 200
+
+Before the patch:
+- env->pd_busy_time = min(1024 + 0, eenv->pd_cap) = 200
+
+After the patch:
+- cpu_util(0) = min(1024, eenv->cpu_cap) = 100
+- cpu_util(1) = min(0, eenv->cpu_cap) = 0
+and:
+- env->pd_busy_time = min(100 + 0, eenv->pd_cap) = 100
+
+-------------
+
+Same example while adding additional empty CPUs:
+- effective_cpu_util(0) = 1024
+- effective_cpu_util(1) = 0
+- effective_cpu_util(2) = 0
+- effective_cpu_util(3) = 0
+and:
+- eenv->cpu_cap = 100
+- eenv->pd_cap = 100 * 4 = 400
+
+Before the patch:
+- env->pd_busy_time = min(1024 + 0 + 0 + 0, eenv->pd_cap) = 400
+
+After the patch:
+- cpu_util(0) = min(1024, eenv->cpu_cap) = 100
+- cpu_util(1) = min(0, eenv->cpu_cap) = 0
+- ...
+and:
+- env->pd_busy_time = min(100 + 0 + 0 + 0, eenv->pd_cap) = 100
+
+-------------
+
+What seems strange is that the more we add empty CPUs in a pd,
+the more energy is spent in the first computation, which seems
+indeed incorrect (unless I missed something).
+
+>>
+>> As a result, without this patch, the energy is bigger than actual_energy.
+>>
+>> And even if cpu4 would run twice longer, the energy may not be equal.
+>> Because:
+>>   *             ps->power * cpu_max_freq
+>> *   cpu_nrg = ------------------------ * cpu_util           (3)
+>> *               ps->freq * scale_cpu
+>>
+>> the ps->power = cfv2, and then:
+>>
+>> *                  cv2 * cpu_max_freq
+>> *   cpu_nrg = ------------------------ * cpu_util           (3)
+>> *                    scale_cpu
+>>
+>> because the limited-freq's voltage is not equal to the max-freq's voltage.
+> 
+> I'm still struggling to understand why it's wrong. If the frequency is
+> capped, we will never go above this limited frequency and its
+> associated voltage so there is no reason to consider max-freq's
+> voltage. If there is more things to do than the actual capacity can do
+> per unit of time then we will run more than 1 unit of time.
+> 
+> nrg of PD = /Sum(cpu) ps->power * cpu-running-time
+> 
+> ps->power is fixed because of the limited frequency constraint
+> 
+> we estimate cpu-running-time = utilization / ps->performance
+> with
+> - utilization = util_avg
+> - performance = ps->freq / cpu_max_freq * arch_scale_cpu_capacity() =
+> ps->performance
+> 
+> Up to now we were assuming that utilization was always lower than
+> performance otherwise the system was overutilized andwe fallback in
+> performance mode. But when the frequency of a cpu is limited by
+> userspace or thermal mitigation, the utilization can become higher
+> than the limited capacity which can be translated by cpu will run
+> longer.
+
+I thought the EAS was comparing instantaneous power and not energy,
+i.e. how the energy computation is done:
+
+   *             ps->power * cpu_max_freq
+   *   cpu_nrg = ------------------------ * cpu_util           (3)
+   *               ps->freq * scale_cpu
+
+cpu_nrg should have the same dimension as ps->power (i.e. energy/s).
+  From this PoV, the energy computation should not take into account how
+much time a task is expected to run. But it might be a side discussion,
+
+Regards,
+Pierre
+
+
+> 
+>>
+>>>
+>>>
+>>>
+>>>> So clamp the cpu_busy_time with the eenv->cpu_cap, which is
+>>>> the actual_cpu_capacity.
+>>>>
+>>>> Fixes: 3e8c6c9aac42 ("sched/fair: Remove task_util from effective utilization in feec()")
+>>>> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+>>>> Tested-by: Christian Loehle <christian.loehle@arm.com>
+>>>> ---
+>>>> V2:
+>>>> - change commit message.
+>>>> - remove the eenv->pd_cap capping in eenv_pd_busy_time(). (Dietmar)
+>>>> - add Tested-by.
+>>>> ---
+>>>>   kernel/sched/fair.c | 9 +++++----
+>>>>   1 file changed, 5 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>> index 8a5b1ae0aa55..5ca6396ef0b7 100644
+>>>> --- a/kernel/sched/fair.c
+>>>> +++ b/kernel/sched/fair.c
+>>>> @@ -7864,16 +7864,17 @@ static inline void eenv_pd_busy_time(struct energy_env *eenv,
+>>>>                                       struct cpumask *pd_cpus,
+>>>>                                       struct task_struct *p)
+>>>>   {
+>>>> -       unsigned long busy_time = 0;
+>>>>          int cpu;
+>>>>
+>>>> +       eenv->pd_busy_time = 0;
+>>>> +
+>>>>          for_each_cpu(cpu, pd_cpus) {
+>>>>                  unsigned long util = cpu_util(cpu, p, -1, 0);
+>>>>
+>>>> -               busy_time += effective_cpu_util(cpu, util, NULL, NULL);
+>>>> +               util = effective_cpu_util(cpu, util, NULL, NULL);
+>>>> +               util = min(eenv->cpu_cap, util);
+>>>> +               eenv->pd_busy_time += util;
+>>>>          }
+>>>> -
+>>>> -       eenv->pd_busy_time = min(eenv->pd_cap, busy_time);
+>>>>   }
+>>>>
+>>>>   /*
+>>>> --
+>>>> 2.25.1
+>>>>
+>>>>
+> 
 
