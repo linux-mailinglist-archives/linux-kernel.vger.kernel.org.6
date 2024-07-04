@@ -1,82 +1,85 @@
-Return-Path: <linux-kernel+bounces-240688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FBD927104
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:56:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569CA927107
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 729D21C22077
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:56:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD55EB2339C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E84A1A3BC4;
-	Thu,  4 Jul 2024 07:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DDF1A3BAC;
+	Thu,  4 Jul 2024 07:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BtspfWWm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bKCBaGzk"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2991A38F0;
-	Thu,  4 Jul 2024 07:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7551A0B07;
+	Thu,  4 Jul 2024 07:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720079793; cv=none; b=Mjq71/9/CJGophxnb8rpRHZEfGZ0pCHAGcScvY5PNeqerV92BPFq0O9Q76jDpc+9lyLQhAcU8mHRiEF49b6hDr5nxBiAxm8lH3MvkDeqfwHKkVb6HASkI261VkUigriU+Lpo2XQbpYxEe9pxEV/T75aCF46POqAX6u1t4TA72eY=
+	t=1720079812; cv=none; b=s4APc/ke0sZW6IoobitxPo4D3vSJMltANvxttTGpBKqxxGDYA4JCS1o0L5KIc1h2K+5/BeZPa8SUCY4zCw1jY6dPYhwYuDFNy3WE/y9UC0MkqbH6qXMdPO5LXf3SqG5OqX+mBK8mEVDTEkgEUh7ckLy/IbyEhuSnKcrNtE0KR+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720079793; c=relaxed/simple;
-	bh=AjQyGUJZ0vfY7qZ8Lmdw5nPCnEsUxgopR1OuiDeFoYo=;
+	s=arc-20240116; t=1720079812; c=relaxed/simple;
+	bh=hoVFwIi7Lm83goOEWi8wU9f6EkbdjoADWbfAuZTwfJI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kObpRadKKgwbp37XVqLtWKRAdbKFwA9YjVnH3mMnbE09xr8/J76phBuAUKBPFa3iA+gcwcKUHdOUynSTmpiPjmThBvznEUBOJ1kicCSmFTZ31ja9yuZ19zWmiKlBYcuCzWsPhsi/p2ob8QHdhrbjZa9RJ57FWmNLuO/kH8YXfSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BtspfWWm; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720079792; x=1751615792;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AjQyGUJZ0vfY7qZ8Lmdw5nPCnEsUxgopR1OuiDeFoYo=;
-  b=BtspfWWm5GdwRPevBZL1NwW08bHIw8+eIvF48K3T2OyHQk4j7qDHsgZa
-   AUaLAbLqIk8CzOK4fiJnG6I74YVI/VJvlqCJHMzHl/IqHqlq6YaKjNqoL
-   LrmoFMisI+O/q3xOoqo97msvnfNETJgm1KsYZfJ7Lt64CIs9biiQN7VcO
-   EExlWwQfYcYKdo8DmqExU9PRHTLMxQLXtnX6m8ocSshhzQYrQjtyqANma
-   xKdc0aEUnq5XYGIc62q5BBFOtY35fynJKwF/eO2Xr3cR7z7Kz3YC0GSIc
-   XzuDh1BhgNklYByU7PO9D+3MhmCOauZIUOOq+pO5hSgWKL9fBj0sHsEXf
-   w==;
-X-CSE-ConnectionGUID: HJrNDj0OQqeZ0lIK8ZDYyw==
-X-CSE-MsgGUID: OvJK8L1URKikbdt/OzDAJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="34792118"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="34792118"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 00:56:15 -0700
-X-CSE-ConnectionGUID: 2YDfhjTxQdCe2Yn4QD7Jkw==
-X-CSE-MsgGUID: 01nKX0/rTTqXDDG/vnNDOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="46660403"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 04 Jul 2024 00:56:11 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sPHK4-000QjA-1y;
-	Thu, 04 Jul 2024 07:56:08 +0000
-Date: Thu, 4 Jul 2024 15:56:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: zelong dong <zelong.dong@amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	kelvin.zhang@amlogic.com, Zelong Dong <zelong.dong@amlogic.com>
-Subject: Re: [PATCH 3/3] arm64: dts: amlogic: Add Amlogic A5 reset controller
-Message-ID: <202407041520.P9v4H7Sq-lkp@intel.com>
-References: <20240703061610.37217-4-zelong.dong@amlogic.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=omwjkoBOg44qoGkg6xJkr7m+0LlrtqyM0ejefa5Aa3MGIlUf/EF2b1wn30kuSE5+8OJg6ddnZfi+ElSiJs3D0WGfuwF2M4XF6eMurwFffVHUod+46QVvHDfGAlhd98EAf+1iJvYYK3m0w7QKXTDI/O8Ha3fd/ko3eLF7uQUK4QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bKCBaGzk; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ee910d6a9dso404101fa.1;
+        Thu, 04 Jul 2024 00:56:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720079809; x=1720684609; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MC//Jt155OtPzEJgjMqdaEMtRJLJr6GW0gLkD4HSAFU=;
+        b=bKCBaGzkZyY8fT7HpBbUZu6MzhAtqd7K3GDe1wNqUurWOpuqiwreE8FaU20LYIUjPP
+         5+ehTDnhaPwZ9p9nbPv6BZbp/1FOWOjGz7wf5ThCB74N8m8Qf3zpE6+6+yx28n/yNNTS
+         8BfBFAIBEzerY7jzQnYJNW6p2y+vliiZXdbzQUe0KDYTULXjf2RsSJzKWkDVoY16YMZE
+         HKT8q9gJ3X1MHRdhqgCY0BxmwqFd4cY1LCKNhZWrMnUyGhCnrhXzQ2yZ3QT4hkE9sn81
+         zvbdp+eBl3FJoG1RXzC42mJr6cIKIQuPDCyMcOMQy8M7QLeme+mcUXtcq5IpJ1E9vptT
+         ofbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720079809; x=1720684609;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MC//Jt155OtPzEJgjMqdaEMtRJLJr6GW0gLkD4HSAFU=;
+        b=i4OZ56L9x83YX0zBoVKsS282mG8D20oBo8fRq1Ls0wHwqfFOKjs14bGU6EIhVFpQgk
+         ebJ7V4aOVTQ/RjVgFQ2dNGjL+/TrWGARKHBbtIoD/zDu3r9tKg1Ao07deBWO1KB/5fjQ
+         wXvJOwnGTsJH8/4bSUDHTMxvYae4PFhUOPnSpARlkFQUUIV4x59gVGmyl4kNSLUA2ptR
+         aWVsr2jLe9zr1QcCLxSD+bMvDeHkCbP81Rjk9W0xbU2vPFYj25qXCYV5ZRG9Do4UAswG
+         LhIStZAgcu4olfe+AucdPfTLhyAFUs97w/AxGgdKJqdhmSms88soWzUOKpPXxUXFNepY
+         96Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFlRS4tQNnUwbuy+ZUblcQkQNirz+RfcteixU73sxyjplsfbE17r15RTuuODQy71ZFJTR1Ot2QV97mZBaZhBPtROcNNghckdrfAWlUDpLimwBDtU2tFI2bh5IUIG/3e0nq4NiF4dtlJO6NiDHKc3iSFwAhUELrxowPSAEBhrjl2A==
+X-Gm-Message-State: AOJu0Yxs6eV2uJ3vNCtKUavUh7lS4+OEYe1fVFJ9oWr7JivCaUt6yYiR
+	SuOScOXH34kNLzyyk/vW85yKHP77h0SOIfnCRTt49R8AsLgUn69Z
+X-Google-Smtp-Source: AGHT+IH8vHXEt7rohBJbbN7OKP60OIDN216n0d2ah1Y2BHFfUgWWLvZXMIjfXlFhDQmaAcBu5FuhJw==
+X-Received: by 2002:a05:651c:990:b0:2ec:5172:dbc4 with SMTP id 38308e7fff4ca-2ee8ed8b7efmr6265731fa.12.1720079808427;
+        Thu, 04 Jul 2024 00:56:48 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee81c79a73sm4026811fa.45.2024.07.04.00.56.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 00:56:47 -0700 (PDT)
+Date: Thu, 4 Jul 2024 10:56:45 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Felix Fietkau <nbd@nbd.name>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2] dt-bindings: net: Define properties at top-level
+Message-ID: <c7oamspfai2zd347vbvmwg4lyqw32hfkwwcl2u5trg55apijew@hskr6tm5mfjy>
+References: <20240703195827.1670594-2-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,46 +88,175 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240703061610.37217-4-zelong.dong@amlogic.com>
+In-Reply-To: <20240703195827.1670594-2-robh@kernel.org>
 
-Hi zelong,
+On Wed, Jul 03, 2024 at 01:58:27PM -0600, Rob Herring (Arm) wrote:
+> Convention is DT schemas should define all properties at the top-level
+> and not inside of if/then schemas. That minimizes the if/then schemas
+> and is more future proof.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> v2:
+>  - Drop the parts already applied from Serge
+> ---
+>  .../devicetree/bindings/net/mediatek,net.yaml | 28 +++++---
 
-kernel test robot noticed the following build warnings:
+>  .../devicetree/bindings/net/snps,dwmac.yaml   | 67 ++++++++++---------
 
-[auto build test WARNING on next-20240703]
-[cannot apply to robh/for-next pza/reset/next pza/imx-drm/next v6.10-rc6 v6.10-rc5 v6.10-rc4 linus/master v6.10-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+For the DW *MAC bindings.
+Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/zelong-dong/dt-bindings-reset-Add-compatible-and-DT-bindings-for-Amlogic-A4-A5-Reset-Controller/20240703-184517
-base:   next-20240703
-patch link:    https://lore.kernel.org/r/20240703061610.37217-4-zelong.dong%40amlogic.com
-patch subject: [PATCH 3/3] arm64: dts: amlogic: Add Amlogic A5 reset controller
-config: arm64-randconfig-051-20240704 (https://download.01.org/0day-ci/archive/20240704/202407041520.P9v4H7Sq-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-dtschema version: 2024.6.dev3+g650bf2d
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240704/202407041520.P9v4H7Sq-lkp@intel.com/reproduce)
+-Serge(y)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407041520.P9v4H7Sq-lkp@intel.com/
-
-dtcheck warnings: (new ones prefixed by >>)
->> arch/arm64/boot/dts/amlogic/amlogic-a4-a113l2-ba400.dtb: reset-controller@2000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['amlogic,a4-reset', 'amlogic,a5-reset', 'amlogic,meson-s4-reset'] is too long
-   	'amlogic,a4-reset' is not one of ['amlogic,meson8b-reset', 'amlogic,meson-gxbb-reset', 'amlogic,meson-axg-reset', 'amlogic,meson-a1-reset', 'amlogic,meson-s4-reset', 'amlogic,t7-reset']
-   	'amlogic,meson-s4-reset' was expected
-   	from schema $id: http://devicetree.org/schemas/reset/amlogic,meson-reset.yaml#
---
->> arch/arm64/boot/dts/amlogic/amlogic-a5-a113x2-av400.dtb: reset-controller@2000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['amlogic,a4-reset', 'amlogic,a5-reset', 'amlogic,meson-s4-reset'] is too long
-   	'amlogic,a4-reset' is not one of ['amlogic,meson8b-reset', 'amlogic,meson-gxbb-reset', 'amlogic,meson-axg-reset', 'amlogic,meson-a1-reset', 'amlogic,meson-s4-reset', 'amlogic,t7-reset']
-   	'amlogic,meson-s4-reset' was expected
-   	from schema $id: http://devicetree.org/schemas/reset/amlogic,meson-reset.yaml#
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  2 files changed, 52 insertions(+), 43 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/mediatek,net.yaml b/Documentation/devicetree/bindings/net/mediatek,net.yaml
+> index 3202dc7967c5..686b5c2fae40 100644
+> --- a/Documentation/devicetree/bindings/net/mediatek,net.yaml
+> +++ b/Documentation/devicetree/bindings/net/mediatek,net.yaml
+> @@ -68,6 +68,17 @@ properties:
+>        Phandle to the syscon node that handles the path from GMAC to
+>        PHY variants.
+>  
+> +  mediatek,pcie-mirror:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the mediatek pcie-mirror controller.
+> +
+> +  mediatek,pctl:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the syscon node that handles the ports slew rate and
+> +      driver current.
+> +
+>    mediatek,sgmiisys:
+>      $ref: /schemas/types.yaml#/definitions/phandle-array
+>      minItems: 1
+> @@ -131,15 +142,12 @@ allOf:
+>  
+>          mediatek,infracfg: false
+>  
+> -        mediatek,pctl:
+> -          $ref: /schemas/types.yaml#/definitions/phandle
+> -          description:
+> -            Phandle to the syscon node that handles the ports slew rate and
+> -            driver current.
+> -
+>          mediatek,wed: false
+>  
+>          mediatek,wed-pcie: false
+> +    else:
+> +      properties:
+> +        mediatek,pctl: false
+>  
+>    - if:
+>        properties:
+> @@ -201,12 +209,10 @@ allOf:
+>            minItems: 1
+>            maxItems: 1
+>  
+> -        mediatek,pcie-mirror:
+> -          $ref: /schemas/types.yaml#/definitions/phandle
+> -          description:
+> -            Phandle to the mediatek pcie-mirror controller.
+> -
+>          mediatek,wed-pcie: false
+> +    else:
+> +      properties:
+> +        mediatek,pcie-mirror: false
+>  
+>    - if:
+>        properties:
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> index 0ab124324eec..3eb65e63fdae 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> @@ -512,6 +512,12 @@ properties:
+>      description:
+>        Frequency division factor for MDC clock.
+>  
+> +  snps,tso:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Enables the TSO feature otherwise it will be managed by MAC HW capability
+> +      register.
+> +
+>    mdio:
+>      $ref: mdio.yaml#
+>      unevaluatedProperties: false
+> @@ -595,41 +601,38 @@ allOf:
+>    - if:
+>        properties:
+>          compatible:
+> -          contains:
+> -            enum:
+> -              - allwinner,sun7i-a20-gmac
+> -              - allwinner,sun8i-a83t-emac
+> -              - allwinner,sun8i-h3-emac
+> -              - allwinner,sun8i-r40-gmac
+> -              - allwinner,sun8i-v3s-emac
+> -              - allwinner,sun50i-a64-emac
+> -              - loongson,ls2k-dwmac
+> -              - loongson,ls7a-dwmac
+> -              - ingenic,jz4775-mac
+> -              - ingenic,x1000-mac
+> -              - ingenic,x1600-mac
+> -              - ingenic,x1830-mac
+> -              - ingenic,x2000-mac
+> -              - qcom,qcs404-ethqos
+> -              - qcom,sa8775p-ethqos
+> -              - qcom,sc8280xp-ethqos
+> -              - qcom,sm8150-ethqos
+> -              - snps,dwmac-4.00
+> -              - snps,dwmac-4.10a
+> -              - snps,dwmac-4.20a
+> -              - snps,dwmac-5.10a
+> -              - snps,dwmac-5.20
+> -              - snps,dwxgmac
+> -              - snps,dwxgmac-2.10
+> -              - st,spear600-gmac
+> +          not:
+> +            contains:
+> +              enum:
+> +                - allwinner,sun7i-a20-gmac
+> +                - allwinner,sun8i-a83t-emac
+> +                - allwinner,sun8i-h3-emac
+> +                - allwinner,sun8i-r40-gmac
+> +                - allwinner,sun8i-v3s-emac
+> +                - allwinner,sun50i-a64-emac
+> +                - loongson,ls2k-dwmac
+> +                - loongson,ls7a-dwmac
+> +                - ingenic,jz4775-mac
+> +                - ingenic,x1000-mac
+> +                - ingenic,x1600-mac
+> +                - ingenic,x1830-mac
+> +                - ingenic,x2000-mac
+> +                - qcom,qcs404-ethqos
+> +                - qcom,sa8775p-ethqos
+> +                - qcom,sc8280xp-ethqos
+> +                - qcom,sm8150-ethqos
+> +                - snps,dwmac-4.00
+> +                - snps,dwmac-4.10a
+> +                - snps,dwmac-4.20a
+> +                - snps,dwmac-5.10a
+> +                - snps,dwmac-5.20
+> +                - snps,dwxgmac
+> +                - snps,dwxgmac-2.10
+> +                - st,spear600-gmac
+>  
+>      then:
+>        properties:
+> -        snps,tso:
+> -          $ref: /schemas/types.yaml#/definitions/flag
+> -          description:
+> -            Enables the TSO feature otherwise it will be managed by
+> -            MAC HW capability register.
+> +        snps,tso: false
+>  
+>  additionalProperties: true
+>  
+> -- 
+> 2.43.0
+> 
 
