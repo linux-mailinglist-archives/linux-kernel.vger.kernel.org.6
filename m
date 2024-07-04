@@ -1,128 +1,172 @@
-Return-Path: <linux-kernel+bounces-241208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F70927846
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:26:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C75A992784F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1856C1F245DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:26:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8365528B2F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C721B010F;
-	Thu,  4 Jul 2024 14:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EED1B11ED;
+	Thu,  4 Jul 2024 14:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="Wvpig7nN"
-Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpRBuEq1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1B71AED3B;
-	Thu,  4 Jul 2024 14:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1956C1AEFF9;
+	Thu,  4 Jul 2024 14:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720103172; cv=none; b=Ivra6ZQwl5LVFADNNWDZ0ydS+tO3SLaR9hPpkgz16zvPwaFqkSMQhNxtqsBIys9F3x5TAlemxX0Iyyo4PlogHfCgtc7WRoNH+JgEBKcdwCKLULpitaOn/BClIqWR02mDrNVhu6yOAqncLOxAhE3vX00+7VBWZVuLjXGjV+YN8U4=
+	t=1720103199; cv=none; b=lgLfa0HuMV2usxCpS8x7v/uddAZ8uT2lwZgFEkvoQGMUXSwzGSou1ibx0V4Lqbv5JPEuv1EWCgzRoux8aRYpKqrMzDflYywye++fpqaWgC6ul3khIia/wQlY+BsqDwt267qrhFmGgfgOW+HXL/87TVlTGIk+Vdz9hQROyY+ddgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720103172; c=relaxed/simple;
-	bh=uWs+KI/NnNRYahU8cZs7MxLdZZhTS8AEn/oPUiUEj8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LFCNLKiaBDK2ZseokGf/Wv+8i68aSg6K6lQ7ayvo8y2HAkKQVzwcuCoNsegKCcoAswQdmOtdSNeGZSKv2XtanynZqlvVnQx2zU8qfkV5DPxIQMP2FWcE5cVnYjJ4SxC3L4Z2hCzcz9fay6yjeV2TDWE2kdWzzys6qx0gDNgEBos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=Wvpig7nN; arc=none smtp.client-ip=49.12.72.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
-From: Finn Behrens <me@kloenk.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1720103160; bh=klEyNORmTUCopsPqwvQ4SusCT6WUx2UKJes8fXdkRVM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Wvpig7nN4lrs7VsYh/M3O45Lg3AnmUcPuxZQYexSIJck67xx6x0BQcdxk8qs6WGav
-	 1s6gBDc5m3Go3ZRPEMuQ7zT5gVdMu16xsruZyW5X9ndKUxnn0BVE4gZcLYZxK7XFLY
-	 5/Gh4axfm8Wnm3dfBkZY2zORWBqxFN6ifcOhbDRQ=
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Subject: Re: [PATCH 01/13] rust: macros: indent list item in `paste!`'s docs
-Date: Thu, 04 Jul 2024 16:25:58 +0200
-Message-ID: <E3504594-6CD3-4D12-B0DA-92B032CD73AA@kloenk.dev>
-In-Reply-To: <20240701183625.665574-2-ojeda@kernel.org>
-References: <20240701183625.665574-1-ojeda@kernel.org>
- <20240701183625.665574-2-ojeda@kernel.org>
+	s=arc-20240116; t=1720103199; c=relaxed/simple;
+	bh=IIERsF64c/WJrUYOJ4diDo3qtmD4lFTeKkEBt7Ts4v8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LfMDNszO+70yem45NPDUwAjOKZbmPMTOmxcFrz4k3hl1sHKqIM2xObE5oqzGUG2MJPnYw+qIrcpR3s0/gBC3VNGBVOSraYOr4NLP11yaVZ6sbgk8P/suKKr/TylWziqwmeO7ebRFc8SNbSeZUOdyeNMGGhS0L8ovQ1uBMpC52a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BpRBuEq1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8CAF4C3277B;
+	Thu,  4 Jul 2024 14:26:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720103198;
+	bh=IIERsF64c/WJrUYOJ4diDo3qtmD4lFTeKkEBt7Ts4v8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=BpRBuEq1Wxme1d1AK1EW17nT3jlM84S+3jKEZLmH85DTZV1VnLIYKqnwO4lcKwoQQ
+	 AwTKmksnxDPOslb4zkkgk7D/nr1AJS1Zm0D5BmatmKt9y3Ifp1QWqEOvB6FYzpoC7S
+	 hQAS1rEN9+Vxl0sIYj8kdshocRd2JtXf05PRpdUfLLZfAZpDk0y7VGj9g6lvOh9FfN
+	 s1fJ07t3lNBB4ywaLgo2ZN3pQFgbVMcNoMsZQZBvHTzmwajZYnq3ZurFcSuNlSegDG
+	 MrZN4B4O9Q+qUUx0cDHtvDcPy5lSbijpTLyAhVyJpeeyzyd0hknWsABU+kjxyrspNH
+	 J6pazESNOTuug==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F5FC30653;
+	Thu,  4 Jul 2024 14:26:38 +0000 (UTC)
+From: Utsav Agarwal via B4 Relay <devnull+utsav.agarwal.analog.com@kernel.org>
+Subject: [PATCH v8 0/3] adp5588-keys: Support for dedicated gpio operation
+Date: Thu, 04 Jul 2024 15:26:29 +0100
+Message-Id: <20240704-adp5588_gpio_support-v8-0-208cf5d4c2d6@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABWxhmYC/43NwYrCMBDG8VeRnM2StjNN62nfYxGZNNMa0CYkt
+ ewiffdNPbmsosf/B/Obq0gcHSex21xF5Nkl58cczXYjuiONA0tnc4tSlaC0KiTZgNg0hyE4f0i
+ XEHycZI3WlMaWBbW9yKchcu++b+zXPvfRpcnHn9uXGdb1BTiDVBLAGFIAyK36pJFOfvjo/Fms4
+ oz3SvVEwVVp+47JKls9UOp7BZ4odVY6UyMWYHUB5p+i31F0VrgCNpoNIf1VlmX5Bbq7DJGLAQA
+ A
+To: Utsav Agarwal <utsav.agarwal@analog.com>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Arturs Artamonovs <arturs.artamonovs@analog.com>, 
+ Vasileios Bimpikas <vasileios.bimpikas@analog.com>, 
+ Oliver Gaskell <oliver.gaskell@analog.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720103192; l=3320;
+ i=utsav.agarwal@analog.com; s=20240701; h=from:subject:message-id;
+ bh=IIERsF64c/WJrUYOJ4diDo3qtmD4lFTeKkEBt7Ts4v8=;
+ b=z4MOCfGayCuk90djoSzYVTfI7HW1CgloVcwWxVvjelg3PIhwsseAY6zetjayZ7WTsxHql8NCY
+ uYUrtYNq6jgBoAWlrED6ELf7iH4yFZj+TUx7jof4rtz8pBpdMdJpvWF
+X-Developer-Key: i=utsav.agarwal@analog.com; a=ed25519;
+ pk=mIG5Dmd3TO5rcICwTsixl2MoUcf/i2u+jYqifd7+fmI=
+X-Endpoint-Received: by B4 Relay for utsav.agarwal@analog.com/20240701 with
+ auth_id=178
+X-Original-From: Utsav Agarwal <utsav.agarwal@analog.com>
+Reply-To: utsav.agarwal@analog.com
+
+Current state of the driver for the ADP5588/87 only allows partial
+I/O to be used as GPIO. This support was previously present as a
+separate gpio driver, which was dropped with the commit
+5ddc896088b0 ("gpio: gpio-adp5588: drop the driver") since the
+functionality was deemed to have been merged with adp5588-keys.
+
+This series of patches re-enables this support by allowing the driver to 
+relax the requirement for registering a keymap and enable pure GPIO 
+operation. 
+
+Changelog
+==========
+
+V2: 
+	-  Changed gpio_only from a local variable to a member of struct
+	adp5588_kpad
+	-  Removed condition from adp5588_probe() to skip adp5588_fw_parse() if 
+	gpio-only specified. adp558_fw_parse() now handles and returns
+	0 if gpio-only has been specified.
+	-  Added a check in adp5588_fw_parse() to make sure keypad 
+	properties(keypad,num-columns and keypad,num-rows) were not defined when 
+	gpio-only specified
+
+V3:
+	-  Moved device_property_present() for reading "gpio-only" into 
+	adp558_fw_parse()
+	-  Added print statements in case of error
+
+V4:
+	- Added dt-bindings patch
+
+Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+---
+V5:
+	- Removed extra property "gpio-only", now pure gpio mode is
+	  detected via the adbsence of keypad specific properties.
+	- Added dependencies for keypad properties to preserve
+	  the original requirements in case a pure gpio mode is not
+	  being used.
+	- Added additional description for why the "interrupts" property
+	  was made optional
+	- Rebased current work based on https://lore.kernel.org/linux-input/ZoLt_qBCQS-tG8Ar@google.com/
+- Link to v4: https://lore.kernel.org/r/20240701-adp5588_gpio_support-v4-0-44bba0445e90@analog.com
+
+---
+Changes in v8:
+	- Fixed indentation in document example (removed extra spaces)
+- Link to v7: https://lore.kernel.org/r/20240704-adp5588_gpio_support-v7-0-e34eb7eba5ab@analog.com
+
+Changes in v7:
+	- Fixed commit subject for transported patch 
+	- Driver now does not setup gpio_irq_chip if 
+	  interrupt has not been provided
+	- Fixed indentation for dtbinding example
+- Link to v6: https://lore.kernel.org/r/20240704-adp5588_gpio_support-v6-0-cb65514d714b@analog.com
+
+Changes in v6:
+	- Restored functionality to register interrupts in GPIO
+	  mode(i.e, these are optional but not exclusive to keypad mode
+	  since even in pure gpio mode, they can be used as inputs via 
+	  gpio-keys)
+	- Updated dt-bindings such that each keypad property depends on
+	  the others. Interrupts, although optional are now required by 
+	  keypad mode but are not limited to it.
+- Link to v5: https://lore.kernel.org/r/20240703-adp5588_gpio_support-v5-0-49fcead0d390@analog.com
+
+---
+Dmitry Torokhov (1):
+      Input: adp5588-keys - use guard notation when acquiring mutexes
+
+Utsav Agarwal (2):
+      Input: adp5588-keys - add support for pure gpio
+      dt-bindings: input: Update dtbinding for adp5588
+
+ .../devicetree/bindings/input/adi,adp5588.yaml     | 45 +++++++++--
+ drivers/input/keyboard/adp5588-keys.c              | 86 +++++++++++++---------
+ 2 files changed, 90 insertions(+), 41 deletions(-)
+---
+base-commit: 1c52cf5e79d30ac996f34b64284f2c317004d641
+change-id: 20240701-adp5588_gpio_support-65db2bd21a9f
+
+Best regards,
+-- 
+Utsav Agarwal <utsav.agarwal@analog.com>
 
 
-
-On 1 Jul 2024, at 20:36, Miguel Ojeda wrote:
-
-> A new style lint, `doc_lazy_continuation` [1], has been introduced in t=
-he
-> upcoming Rust 1.80 (currently in beta), which detects missing indentati=
-on
-> in code documentation.
->
-> We have one such case:
->
->     error: doc list item missing indentation
->     --> rust/macros/lib.rs:315:5
->         |
->     315 | /// default the span of the `[< >]` group is used.
->         |     ^
->         |
->         =3D help: if this is supposed to be its own paragraph, add a bl=
-ank line
->         =3D help: for further information visit https://rust-lang.githu=
-b.io/rust-clippy/master/index.html#doc_lazy_continuation
->         =3D note: `-D clippy::doc-lazy-continuation` implied by `-D cli=
-ppy::style`
->         =3D help: to override `-D clippy::style` add `#[allow(clippy::d=
-oc_lazy_continuation)]`
->     help: indent this line
->         |
->     315 | ///   default the span of the `[< >]` group is used.
->         |     ++
->
-> While the rendering of the docs by `rustdoc` is not affected, we apply
-> this kind of indentation elsewhere since it looks better.
->
-> Thus clean it up.
->
-> Link: https://rust-lang.github.io/rust-clippy/master/index.html#/doc_la=
-zy_continuation [1]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-
-Reviewed-by: Finn Behrens <me@kloenk.dev>
-
-> ---
->  rust/macros/lib.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-> index 520eae5fd792..05d976b3c09a 100644
-> --- a/rust/macros/lib.rs
-> +++ b/rust/macros/lib.rs
-> @@ -312,7 +312,7 @@ pub fn pinned_drop(args: TokenStream, input: TokenS=
-tream) -> TokenStream {
->  ///
->  /// Currently supported modifiers are:
->  /// * `span`: change the span of concatenated identifier to the span o=
-f the specified token. By
-> -/// default the span of the `[< >]` group is used.
-> +///   default the span of the `[< >]` group is used.
->  /// * `lower`: change the identifier to lower case.
->  /// * `upper`: change the identifier to upper case.
->  ///
-> -- =
-
-> 2.45.2
 
