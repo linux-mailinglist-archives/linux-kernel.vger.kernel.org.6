@@ -1,207 +1,132 @@
-Return-Path: <linux-kernel+bounces-241059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B7F92768E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 440E292768C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96072B230AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:57:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D718FB21A17
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397E11AED24;
-	Thu,  4 Jul 2024 12:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278121AE847;
+	Thu,  4 Jul 2024 12:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cILsAUD9";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vkQPGR33";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cILsAUD9";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vkQPGR33"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqGnOcgY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC571AE87E;
-	Thu,  4 Jul 2024 12:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F74E1AC221
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 12:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720097813; cv=none; b=isQu5IUthksSY34/Vss9MmSQ9Y/UxNBhO/S5aNFYW8m4oxjcm/39L7/EKqmcf3vc4AdHWgSYfWG3Uu0oSzzJuTT9z5QU0sDvN5MiZ/CnEgIYME5t3fSOEhKGugCe2x5pgqFKHe4TH8Lbmu09/j5iT+HU6d3N7cH36fnOeDFCcdU=
+	t=1720097807; cv=none; b=amJebfMX4nTknkC80YL9qV8viFVPTd7CtLdRiCv2jz4wJBOHS+RRURAm5PFnKkgwK08VbCaq7mvC/jGRyWAMd30PTRh3CPdh3O8dfSZuP+gSBLcfcxm5gHFCJdD0E7pdziblumumF727R06BpkkNP5MOK8Op42tvTugV2ri93GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720097813; c=relaxed/simple;
-	bh=xxQFluIuPAcwiS2zQBjjned5eFTKDzR0fJWIs4myPzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FM+pfABuji2cN3dCYRLkkl1C6xknIfe901isBhOv03baFUkC+3BSrXooI/J6jySWrkmjf6FBn27f2UITlNDpknl6O2PElrz2Mc0DGv4pFeIYBM1zUJVJ/ZlnBB8EYt4DWOHHyYyGNK3NuAZj9aX7Qv39Cp2Cv2vHgCGE3/48pxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cILsAUD9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vkQPGR33; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cILsAUD9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vkQPGR33; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F2E0421C08;
-	Thu,  4 Jul 2024 12:56:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720097810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HA0Sq4hCjEH+fEIEKa7J7k8zC8cdafIFAs9CKmuIpW0=;
-	b=cILsAUD9lag1kNhIjfOszM81kM6U7HBb8a477v6iJyvIFEgjSsxiASWM7GdPOvoxZ8ZPsN
-	8o5ldAk4xDlixm0fi+EuFUuylYlYiB5iczVAeolvdwMhoUFC8ilqL5QB2Je0Leg9raongd
-	wGktYO01e/Hvnqp3eHMEJ4wyrFQ4rXI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720097810;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HA0Sq4hCjEH+fEIEKa7J7k8zC8cdafIFAs9CKmuIpW0=;
-	b=vkQPGR33gc8KYMggPRxXrtDFmL3IrnwVumgmv0HhHKX+uIuzaxUEWERfMA8k4yCV59Iw4s
-	2/y0MR0cqAONS3Cg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720097810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HA0Sq4hCjEH+fEIEKa7J7k8zC8cdafIFAs9CKmuIpW0=;
-	b=cILsAUD9lag1kNhIjfOszM81kM6U7HBb8a477v6iJyvIFEgjSsxiASWM7GdPOvoxZ8ZPsN
-	8o5ldAk4xDlixm0fi+EuFUuylYlYiB5iczVAeolvdwMhoUFC8ilqL5QB2Je0Leg9raongd
-	wGktYO01e/Hvnqp3eHMEJ4wyrFQ4rXI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720097810;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HA0Sq4hCjEH+fEIEKa7J7k8zC8cdafIFAs9CKmuIpW0=;
-	b=vkQPGR33gc8KYMggPRxXrtDFmL3IrnwVumgmv0HhHKX+uIuzaxUEWERfMA8k4yCV59Iw4s
-	2/y0MR0cqAONS3Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1515613889;
-	Thu,  4 Jul 2024 12:56:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wq2AAhGchmZnFgAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Thu, 04 Jul 2024 12:56:49 +0000
-Message-ID: <362a728f-5487-47da-b7b9-a9220b27d567@suse.de>
-Date: Thu, 4 Jul 2024 15:56:40 +0300
+	s=arc-20240116; t=1720097807; c=relaxed/simple;
+	bh=PVroVr5VS+tv2unXGroLj7wH6BRx+DmoasU5vVT6qLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCm56PouYqOFX/bHMzWLF9qEsHqeZAcam48kk6IZBer40cx37qItcm4uwUR6xWt8ChGArtfljuqLlYbnO3+Ku5Mr2AnuDkz+A+oPqcz+Pm+N/NZth1EB7+p+3sbwLq/qw98/cPUpq/SgbZ7Td/mJOFbnZ3L8gcSV0NBCSjyDmLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqGnOcgY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7268C3277B;
+	Thu,  4 Jul 2024 12:56:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720097807;
+	bh=PVroVr5VS+tv2unXGroLj7wH6BRx+DmoasU5vVT6qLI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RqGnOcgYwZ4oi1+bFCrkwSYSjnxslsfvgCnM91eu3i8YszOa5kuzhMvNnYIs4ZsiY
+	 NIy1PScgBGrwy6x2GMBOZIpoNEcUeZ0hi5HpBUrZqMrKiH/KhyOdCsehGimmynDdsk
+	 dNGi24wLnqPuKeBup5dIKJMun9IhC0HWLRLIfIfS/wt4dM5uFWPOpJJip5SYqxuLWF
+	 64i7GMNADdv3Iyb4WYoAfdNPSXrGlMd7Mbp6qhKOfP1ZjljOQv04xcnHXfgVUzGDih
+	 IIX+edxeQzsC4ZnPSQNevoejUTgaavvsAgud2AygURl+E3Sc4Q2BGsuVXhul+XW0Fa
+	 3/CdFAUftT52Q==
+Date: Thu, 4 Jul 2024 14:56:44 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	dri-devel@lists.freedesktop.org, igt-dev@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] drm/bridge-connector: reset the HDMI connector
+ state
+Message-ID: <20240704-jumping-saffron-shrew-d5f3b7@houat>
+References: <20240702-drm-bridge-connector-fix-hdmi-reset-v3-0-12b0e3124ca4@linaro.org>
+ <20240702-drm-bridge-connector-fix-hdmi-reset-v3-4-12b0e3124ca4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/12] PCI: brcmstb: Use swinit reset if available
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240703180300.42959-1-james.quinlan@broadcom.com>
- <20240703180300.42959-5-james.quinlan@broadcom.com>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <20240703180300.42959-5-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.28 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.19)[-0.975];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[broadcom.com,vger.kernel.org,kernel.org,google.com,arm.com,debian.org,suse.de,gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.28
-X-Spam-Level: 
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7vwtwdy7kgdsohoy"
+Content-Disposition: inline
+In-Reply-To: <20240702-drm-bridge-connector-fix-hdmi-reset-v3-4-12b0e3124ca4@linaro.org>
 
-Hi Jim,
 
-On 7/3/24 21:02, Jim Quinlan wrote:
-> The 7712 SOC adds a software init reset device for the PCIe HW.
-> If found in the DT node, use it.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+--7vwtwdy7kgdsohoy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+hi,
+
+On Tue, Jul 02, 2024 at 12:48:55PM GMT, Dmitry Baryshkov wrote:
+> On HDMI connectors which use drm_bridge_connector and DRM_BRIDGE_OP_HDMI
+> IGT chokes on the max_bpc property in several kms_properties tests due
+> to the the drm_bridge_connector failing to reset HDMI-related
+> properties.
+>=20
+> Call __drm_atomic_helper_connector_hdmi_reset() if the
+> drm_bridge_connector has bridge_hdmi.
+>=20
+> It is impossible to call this function from HDMI bridges, there is is no
+> function that corresponds to the drm_connector_funcs::reset().
+>=20
+> Fixes: 6b4468b0c6ba ("drm/bridge-connector: implement glue code for HDMI =
+connector")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  drivers/pci/controller/pcie-brcmstb.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 4104c3668fdb..69926ee5c961 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -266,6 +266,7 @@ struct brcm_pcie {
->  	struct reset_control	*rescal;
->  	struct reset_control	*perst_reset;
->  	struct reset_control	*bridge;
-> +	struct reset_control	*swinit;
->  	int			num_memc;
->  	u64			memc_size[PCIE_BRCM_MAX_MEMC];
->  	u32			hw_rev;
-> @@ -1626,6 +1627,13 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->  		dev_err(&pdev->dev, "could not enable clock\n");
->  		return ret;
->  	}
-> +
-> +	pcie->swinit = devm_reset_control_get_optional_exclusive(&pdev->dev, "swinit");
-> +	if (IS_ERR(pcie->swinit)) {
-> +		ret = dev_err_probe(&pdev->dev, PTR_ERR(pcie->swinit),
-> +				    "failed to get 'swinit' reset\n");
-> +		goto clk_out;
-> +	}
->  	pcie->rescal = devm_reset_control_get_optional_shared(&pdev->dev, "rescal");
->  	if (IS_ERR(pcie->rescal)) {
->  		ret = PTR_ERR(pcie->rescal);
-> @@ -1637,6 +1645,17 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->  		goto clk_out;
->  	}
->  
-> +	ret = reset_control_assert(pcie->swinit);
-> +	if (ret) {
-> +		dev_err_probe(&pdev->dev, ret, "could not assert reset 'swinit'\n");
-> +		goto clk_out;
-> +	}
-> +	ret = reset_control_deassert(pcie->swinit);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "could not de-assert reset 'swinit' after asserting\n");
-> +		goto clk_out;
-> +	}
+>  drivers/gpu/drm/display/Kconfig                |  1 +
+>  drivers/gpu/drm/display/drm_bridge_connector.c | 13 ++++++++++++-
+>  2 files changed, 13 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/display/Kconfig b/drivers/gpu/drm/display/Kc=
+onfig
+> index 1a192a45961b..bfd025f8c7b5 100644
+> --- a/drivers/gpu/drm/display/Kconfig
+> +++ b/drivers/gpu/drm/display/Kconfig
+> @@ -9,6 +9,7 @@ config DRM_DISPLAY_HELPER
+>  config DRM_BRIDGE_CONNECTOR
+>  	bool
+>  	depends on DRM && DRM_BRIDGE && DRM_DISPLAY_HELPER
+> +	select DRM_DISPLAY_HDMI_STATE_HELPER
 
-why not call reset_control_reset(pcie->swinit) directly?
+Sorry, I notice it on that patch, but it's really on the previous one:
+both DRM_BRIDGE and DRM_DISPLAY_HELPER are meant to be selected, not
+depended on.
 
-~Stan
-> +
->  	ret = reset_control_reset(pcie->rescal);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
+Otherwise,
+
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+
+Maxime
+
+--7vwtwdy7kgdsohoy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZoacCwAKCRDj7w1vZxhR
+xanRAQColvBTOI0QEUf8DcGVNjKDA1/UU+PpylKjFBS+1Af3UwD+NRXO6kyzueZq
+/yJoJX5gAP4jYt81QeQl/Vb8tObX3g8=
+=F6fl
+-----END PGP SIGNATURE-----
+
+--7vwtwdy7kgdsohoy--
 
