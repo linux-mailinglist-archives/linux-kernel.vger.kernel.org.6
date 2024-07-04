@@ -1,39 +1,51 @@
-Return-Path: <linux-kernel+bounces-240730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116E89271D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:35:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C84EA9271D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C663F284BA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:35:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7FC1F24360
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9F31A3BD5;
-	Thu,  4 Jul 2024 08:35:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0304431
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 08:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6860D1A4F36;
+	Thu,  4 Jul 2024 08:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WUyqWIIg"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0931A4F1C;
+	Thu,  4 Jul 2024 08:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720082128; cv=none; b=Lrmd++6BAwKPu+AOSKtj1pMPqFAXVWg1WJ6dbJBZ7BOfdnq9ZZ8NroQwPvljfS1feqL7NDcmX5jTu2p5TkPnpuFs2YUQmFxHxjACqDr9neJirWeISpfHUObYc4YM+PkbbfxXu+27rfAtgg5MbsdCAvJWyNT2ZOaAeFhEZIzOQNY=
+	t=1720082132; cv=none; b=F6+p18tf2S02BVYISEEDyp7090ffbf9hgKl4VFDWMFupndTVESPLrwkvUPTMm+HAyv4dMDs9JoqqPRkBv6lqITISRWkXuHMmnNyo+amRMX5lrmWJL0ku324QOyZVgSrUTQ9dUbSjks3NgKjRVoEJS6zdCICWquJ9+OYx6hmgFcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720082128; c=relaxed/simple;
-	bh=IgZFKoNHGHwPrTwQiBpPaPlJmFgB3AioeqMRFw11oHk=;
+	s=arc-20240116; t=1720082132; c=relaxed/simple;
+	bh=ha80nLRuPkxl6TD3WGhJxFUjmnwZGetl3R4YGxxUPRg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nkmTWDPvXczC4BittLMTIsuwwfCs8pXaocD6d1KSCKTJ9BW/FhHrm8G3V0nZ4hcO8APN2qEU1mkZnihoVfNT/Q6cuPxv4Ru3RoHu95JyCKUjWQj6wPCWm7e+YNdc8pmijNP1Je+aKOR2lR/3tpMc6LjcXecVeGD8OWKw/wFT/Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5568367;
-	Thu,  4 Jul 2024 01:35:49 -0700 (PDT)
-Received: from [10.1.36.26] (e122027.cambridge.arm.com [10.1.36.26])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FD5B3F766;
-	Thu,  4 Jul 2024 01:35:23 -0700 (PDT)
-Message-ID: <957a0c8e-f80b-4f6f-ac6f-70398abafd6f@arm.com>
-Date: Thu, 4 Jul 2024 09:35:22 +0100
+	 In-Reply-To:Content-Type; b=K5cuqUwYjdJlQyaJ1KlYHAFcJ6QgLPD+x3q4nmRLz1Cv3nNMkCat11CCbG0GTPv5QJSepsydn4jqxwTae+v54jh5ikYuKN6LHlSrQKDeCXxU294hvsT7NVEEJ8eUoE8wZ+LWtNQ6n2V0xajTSaZLe88VRoyEOZS6imsJYYe6PQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WUyqWIIg; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A56C3E0006;
+	Thu,  4 Jul 2024 08:35:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720082128;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VWar8m3O4fo/jZOi8A6VIxRWgKYWwe4SDSJKBXm4MU8=;
+	b=WUyqWIIgLtb7ykFLsUTyM+0/eHHcIhl5IRjvw2bfVzhIjxXfCwGVhH1pwDAF7crb5ffXu4
+	cORDlXxTlzHgnTdNGHo8uxhVGRZKgXBA9owVfPuSPdG3tcV8HN1G8CBnQopHwcG5SJeK8H
+	BvBfeOHHL9L9NoEuDbh24zce/yRjNMbY6HLX39ovWFAXjSe9Jr40Veeuu209ulSqFDaSFD
+	X1hUKGz6XVt34aElqd5YYkObjRogHKEAdZqAXHnDnLp2kP6g5wEHE6qv59gLVmY/SCSMkZ
+	SABmtWRB7y6xLa1EKLnaz0mID5g2lObdb/lF9i6JUanYXdQi+TFsY1yJaQlrlQ==
+Message-ID: <8d368347-7cee-41af-a033-c495eeb62e2a@bootlin.com>
+Date: Thu, 4 Jul 2024 10:35:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,51 +53,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panthor: Record devfreq busy as soon as a job is
- started
-To: Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-References: <20240703155646.80928-1-steven.price@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240703155646.80928-1-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml: Add
+ Sophgo SARADC binding documentation
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicorn_wang@outlook.com>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <20240702-sg2002-adc-v1-0-ac66e076a756@bootlin.com>
+ <20240702-sg2002-adc-v1-1-ac66e076a756@bootlin.com>
+ <b7913f90-7405-4a77-9c57-97ef124de6e1@kernel.org>
+Content-Language: en-US
+From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+In-Reply-To: <b7913f90-7405-4a77-9c57-97ef124de6e1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-On 03/07/2024 16:56, Steven Price wrote:
-> If a queue is already assigned to the hardware, then a newly submitted
-> job can start straight away without waiting for the tick. However in
-> this case the devfreq infrastructure isn't notified that the GPU is
-> busy. By the time the tick happens the job might well have finished and
-> no time will be accounted for the GPU being busy.
-> 
-> Fix this by recording the GPU as busy directly in queue_run_job() in the
-> case where there is a CSG assigned and therefore we just ring the
-> doorbell.
-> 
-> Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_sched.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index 951ff7e63ea8..e7afaa1ad8dc 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -2942,6 +2942,7 @@ queue_run_job(struct drm_sched_job *sched_job)
->  			pm_runtime_get(ptdev->base.dev);
->  			sched->pm.has_ref = true;
->  		}
-> +		panthor_devfreq_record_busy(sched->ptdev);
->  	}
->  
->  	/* Update the last fence. */
+Hello Krzysztof,
+Thank you for your feedback
 
-Pushed to drm-misc-next
+On 7/3/24 7:08 AM, Krzysztof Kozlowski wrote:
+> On 02/07/2024 13:52, Thomas Bonnefille wrote:
+>> The Sophgo SARADC is a Successive Approximation ADC that can be found in
+>> the Sophgo SoC.
+>>
+>> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+>> ---
+>>   .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     | 51 ++++++++++++++++++++++
+>>   MAINTAINERS                                        |  5 +++
+>>   2 files changed, 56 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
+>> new file mode 100644
+>> index 000000000000..21fd5dc8e24e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
+>> @@ -0,0 +1,51 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/iio/adc/sophgo,cv18xx-adc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Sophgo 3 channels Successive Approximation Analog to Digital Converters
+>> +
+>> +maintainers:
+>> +  - Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+>> +
+>> +description:
+>> +  Datasheet at https://github.com/sophgo/sophgo-doc/releases
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: sophgo,cv18xx-saradc
+> 
+> Except that this was never tested... wild-cards are generally not allowed.
+> 
 
-Thanks,
-Steve
+I realized I made a mistake when using the "make dt_binding_check" 
+command, which led to some errors in this dt_binding. I have now 
+addressed all of them, but I'm not sure I understand your comment.
+
+I don't see any wildcards in the YAML file. Could you please provide 
+more details on what you expect?
+
+Best regards,
+Thomas
 
