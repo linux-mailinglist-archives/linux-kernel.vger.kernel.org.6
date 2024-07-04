@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-240384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADBB926D1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:29:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C9C926D1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1159A282028
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:29:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB7551C2177F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D539011CA0;
-	Thu,  4 Jul 2024 01:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B69168DE;
+	Thu,  4 Jul 2024 01:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m3pbaPsl"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GpRWV8FZ"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C801A107A0
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE1512E7E
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720056577; cv=none; b=P28VQ6PCi2u/e5+MjNP48F3Qr/QxZBZ3PaLtTUKHR93zjTX2XJvD0hhQ9N8/QWojtk/hREs+zLSCv5ANOZgOgZPYUw5x0ghO9w40KHti+Xzprfj6rzf9vvCQ7J8KF8YHIV62ujvipSPyjw8buGWtIGC/iLKNo2vNP2FZaK6Fjy0=
+	t=1720056580; cv=none; b=TDXpVi7d2ns2SAzdZH2xO8l6+FONzO3h9Hqh7LBfgeUJlI/IfYmGE98fpXudwNIVDtCr8ZCexF+5FCrqB6nH6cg4sTN1bxZTxj7JqYrYIe2//TGXhkbnDtz+D3cjB2dVb8Z2VsWSTa5MfQ0/MxFA6rR6V1kLnjida4H0sGQuLeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720056577; c=relaxed/simple;
-	bh=k32WDnHi5U945AuRce984UDpc4BdZz37WC+JhOGhmf0=;
+	s=arc-20240116; t=1720056580; c=relaxed/simple;
+	bh=LU/LafobfTgNIX0MyQnzmm5MPJP0lywWJfdCihEy1uA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bMWJixjrsRSEx6eKBCwCX4+tnmboJbXgXE0OpeYE0nqQfqKezwWy/qPZOR9LO/8Po/uvPs8uUkhDb2J9bM/3WoL9SzbVR+spCLYRtMwzoGrwV8sbASRd+p4xYhb7pH8azgYGuXBkE1SJQsjsnMEz7kvhLNA17BZR0uLOnSqD5cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m3pbaPsl; arc=none smtp.client-ip=209.85.215.173
+	 MIME-Version; b=CBluhJraybB4an9RE6G/oWfQZpOIPWYjBzBbY1vwX3KHrA2DWIVDuf0hqoC8PaRXrOoq1TYAWaJcBuv/3On2plNYodVP1m2yhjAWpLlgwe/FuAM3jF08fd0w1uIn34/7HpxIvl1tkUw8ygpOfR0zItkMn5uU5Gf7EUTfTd87+h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GpRWV8FZ; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6e7e23b42c3so50256a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 18:29:34 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f4a5344ec7so1093615ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 18:29:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720056574; x=1720661374; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720056578; x=1720661378; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=en/S1K7ufPc3QQhnQIZMOSOA2N5wr5GPlScNLierXSU=;
-        b=m3pbaPslZ3rHAWb30k++0aOyjKsb11xzTJ6qkX9rmy2wqSZn2OjTwBH6AS6HjVol3Z
-         g4xLm3tc1N2Hrj0JHMPIouL8nfz0PpH6ju0SGgY6o9zzCgXNWOhFBJlSNqmuncoirZdN
-         5D39e+ozXICWoODtX6ocnA0BfRs6bR66wMr4gDXTweL0LXnjIZUhYNnAuMvP/AhQVGRE
-         XrapjTxwv3oZbktPo3vdpmQyPK1yusvN559qBpw2OZQomW3e1XD0UzRVUhK8j9ApW5t1
-         zG45V6Lfl+P6gRwcbwTi2Ou9fzuaqwvL/5sJJvtrt+hPlCFtvDCUSFK0KwjI0QYnFwvN
-         2SgQ==
+        bh=BTYAZdivsHjBzXP9vp5pmO/cchsVNESwksg5bZfIdNg=;
+        b=GpRWV8FZd4Houxw4icUBF1OVaocGoQK0Fj81INIHoN7y9NjbiFhp3FHx43ToV/X4vh
+         gkUPJ0Kvsi3Txkscc/0nfwhBL/k5Tn6PeY0mC7ib8VyALj7z01V5htwwbuMq9jff8fmG
+         gXHMAJ2kdk3idRxk5bTWHIY9rm241O917sg04oinWxMZ+zDUTxs4xSGogBIL5UJzWBXT
+         PnBHfHMkpTkCZIYgQkNPfHZJWiI55FJ6QLWpbgMQ0p2nj5e8WdhFtwNka7aPbxIkTQkd
+         MosinobgyChwEaKbQfzNv8c9CLwrQkVsOe3CWs6GgAlbTgiNc5ME1JZ6t3Oxu2AcEwBz
+         BGqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720056574; x=1720661374;
+        d=1e100.net; s=20230601; t=1720056578; x=1720661378;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=en/S1K7ufPc3QQhnQIZMOSOA2N5wr5GPlScNLierXSU=;
-        b=HhmzE9zrPUDcRb0PqXzdoW+4hV+fA6c4HhF0iXusDIq3+/daNmtP1K+VYiHhuHX9Id
-         bwcTnxsli7xWlvbAxgFhJjWbpf3aSho0EZUsNdh2kDx1CtrU4g41Xzd3Wyrl3XyQKBMH
-         NO1hvUXIRceztoodelveJ3IAzEze7CXGu2eTl9D+7wL/RpmFAGGtEYHjFpKpxjDeF9t+
-         kmBhMfPdftRYPxYEXcoNp7lxreFRnnFqQI6nTEtw/veYxlJHzfu6v+MF5fCx4RgOOX/L
-         MEZIkoEup+k4MIWiDT2rkPAKyNdasOJV88pkJKnX4PPANdCcWVBPhXbTiAycYjaqh47h
-         7M8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXbwgxA1ZDMdn9dW75BMPZaEKI8QvSJ6CPEFI1AdW+KhWPgdNumJy58P0VvYNVy5a7fVVKsUGQNEj2mraX9SQ4gQiGa7CfaipHxUMFl
-X-Gm-Message-State: AOJu0YxcGbxhkzUkpRRSalCtq5lFGvnhyx2kV5DiaVnLnATUS4YEn19m
-	SImpcTnDtt9Ll79zaGnwgrwB5QwbsuFTVgrBOL1bX//PoMOnkWtF
-X-Google-Smtp-Source: AGHT+IH8h2nR3XKUpaLoYTVF/0kMtRKeMW80TtrbBrxF+W4lZJ6aIxPIG8j8eHodbQfKLiXVzHYJhw==
-X-Received: by 2002:a05:6a20:12d4:b0:1be:c3c1:7be8 with SMTP id adf61e73a8af0-1c0cc742f4amr152039637.26.1720056573824;
-        Wed, 03 Jul 2024 18:29:33 -0700 (PDT)
+        bh=BTYAZdivsHjBzXP9vp5pmO/cchsVNESwksg5bZfIdNg=;
+        b=PU06t7Sk6JX5EntyDSklbhc4lMgin0FEbnrbCXR//MKnxQ2AfNaQtP6MOt38woJggZ
+         KDO8rVuLghAUbDXiBo4E3rlQ1IUBK43/SOpPnugnL8mVHwzJmGrk/85nalGg6yYGy+Px
+         7D507Ccl8MawoEEEhPj1A6os9++dEEcqvNDZiYotMCf0xt3iz8lDrdIQW5H1QO3eoLpL
+         V90tzCT6TwKC1xL/bUEnSLvmqvGNKS+03GMiOpPN3aLOc4q2+AqCih5hG8a19Ok554N7
+         RJLweFWWSXfthFmKVagMSO7RqLirvPsNbkNjVRw9AtvlcAVwFfBHORBLwwXaWRvqDjvi
+         kyfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWrZXDjNeiUv8yS6ABv8UAAiHIfZ4F527nGmN6zDYVnm4QnBXP7nXCiR4Ap+hzg63b4q25iit45TKiL3Yn9U1Lfol646AR+F/WGowh
+X-Gm-Message-State: AOJu0YwqPbZaOzl4tVR0FfpJHjZ7ZoxaIXhVYKvGEARfO/bCvpKx6Swh
+	ZX4SV8Bov2HaH8DBhEkmH1CniAdKw4vtT8RNa/UufUoXl1XJN/+5
+X-Google-Smtp-Source: AGHT+IGY0yPT+zHZTfE83IvT3tjkGOP/4CZzxM5op9vPgkY0O7Su3xXQfWK8rAUNvo6/V70lKKe6OQ==
+X-Received: by 2002:a17:903:8c8:b0:1f0:8c5e:ffdd with SMTP id d9443c01a7336-1fb3440b4d9mr3459145ad.4.1720056578292;
+        Wed, 03 Jul 2024 18:29:38 -0700 (PDT)
 Received: from EBJ9932692.tcent.cn ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac153767dsm110162735ad.148.2024.07.03.18.29.29
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac153767dsm110162735ad.148.2024.07.03.18.29.34
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 03 Jul 2024 18:29:33 -0700 (PDT)
+        Wed, 03 Jul 2024 18:29:38 -0700 (PDT)
 From: Lance Yang <ioworker0@gmail.com>
 To: akpm@linux-foundation.org
 Cc: dj456119@gmail.com,
@@ -81,9 +81,9 @@ Cc: dj456119@gmail.com,
 	Lance Yang <ioworker0@gmail.com>,
 	Barry Song <baohua@kernel.org>,
 	Mingzhe Yang <mingzhe.yang@ly.com>
-Subject: [PATCH v3 1/2] mm: add per-order mTHP split counters
-Date: Thu,  4 Jul 2024 09:29:04 +0800
-Message-ID: <20240704012905.42971-2-ioworker0@gmail.com>
+Subject: [PATCH v3 2/2] mm: add docs for per-order mTHP split counters
+Date: Thu,  4 Jul 2024 09:29:05 +0800
+Message-ID: <20240704012905.42971-3-ioworker0@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240704012905.42971-1-ioworker0@gmail.com>
 References: <20240704012905.42971-1-ioworker0@gmail.com>
@@ -95,92 +95,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, the split counters in THP statistics no longer include
-PTE-mapped mTHP. Therefore, we propose introducing per-order mTHP split
-counters to monitor the frequency of mTHP splits. This will help developers
-better analyze and optimize system performance.
+This commit introduces documentation for mTHP split counters in
+transhuge.rst.
 
-/sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats
-        split
-        split_failed
-        split_deferred
-
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-Acked-by: Barry Song <baohua@kernel.org>
+Reviewed-by: Barry Song <baohua@kernel.org>
 Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
 Signed-off-by: Lance Yang <ioworker0@gmail.com>
 ---
- include/linux/huge_mm.h |  3 +++
- mm/huge_memory.c        | 12 ++++++++++--
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ Documentation/admin-guide/mm/transhuge.rst | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 212cca384d7e..cee3c5da8f0e 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -284,6 +284,9 @@ enum mthp_stat_item {
- 	MTHP_STAT_FILE_ALLOC,
- 	MTHP_STAT_FILE_FALLBACK,
- 	MTHP_STAT_FILE_FALLBACK_CHARGE,
-+	MTHP_STAT_SPLIT,
-+	MTHP_STAT_SPLIT_FAILED,
-+	MTHP_STAT_SPLIT_DEFERRED,
- 	__MTHP_STAT_COUNT
- };
+diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+index 1f72b00af5d3..0830aa173a8b 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -369,10 +369,6 @@ also applies to the regions registered in khugepaged.
+ Monitoring usage
+ ================
  
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 954c63575917..5cbd838e96e6 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -559,6 +559,9 @@ DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
- DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
-+DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
-+DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
-+DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+-.. note::
+-   Currently the below counters only record events relating to
+-   PMD-sized THP. Events relating to other THP sizes are not included.
+-
+ The number of PMD-sized anonymous transparent huge pages currently used by the
+ system is available by reading the AnonHugePages field in ``/proc/meminfo``.
+ To identify what applications are using PMD-sized anonymous transparent huge
+@@ -514,6 +510,22 @@ file_fallback_charge
+ 	falls back to using small pages even though the allocation was
+ 	successful.
  
- static struct attribute *stats_attrs[] = {
- 	&anon_fault_alloc_attr.attr,
-@@ -569,6 +572,9 @@ static struct attribute *stats_attrs[] = {
- 	&file_alloc_attr.attr,
- 	&file_fallback_attr.attr,
- 	&file_fallback_charge_attr.attr,
-+	&split_attr.attr,
-+	&split_failed_attr.attr,
-+	&split_deferred_attr.attr,
- 	NULL,
- };
- 
-@@ -3068,7 +3074,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 	XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new_order);
- 	struct anon_vma *anon_vma = NULL;
- 	struct address_space *mapping = NULL;
--	bool is_thp = folio_test_pmd_mappable(folio);
-+	int order = folio_order(folio);
- 	int extra_pins, ret;
- 	pgoff_t end;
- 	bool is_hzp;
-@@ -3253,8 +3259,9 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		i_mmap_unlock_read(mapping);
- out:
- 	xas_destroy(&xas);
--	if (is_thp)
-+	if (order >= HPAGE_PMD_ORDER)
- 		count_vm_event(!ret ? THP_SPLIT_PAGE : THP_SPLIT_PAGE_FAILED);
-+	count_mthp_stat(order, !ret ? MTHP_STAT_SPLIT : MTHP_STAT_SPLIT_FAILED);
- 	return ret;
- }
- 
-@@ -3307,6 +3314,7 @@ void deferred_split_folio(struct folio *folio)
- 	if (list_empty(&folio->_deferred_list)) {
- 		if (folio_test_pmd_mappable(folio))
- 			count_vm_event(THP_DEFERRED_SPLIT_PAGE);
-+		count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFERRED);
- 		list_add_tail(&folio->_deferred_list, &ds_queue->split_queue);
- 		ds_queue->split_queue_len++;
- #ifdef CONFIG_MEMCG
++split
++	is incremented every time a huge page is successfully split into
++	smaller orders. This can happen for a variety of reasons but a
++	common reason is that a huge page is old and is being reclaimed.
++	This action implies splitting any block mappings into PTEs.
++
++split_failed
++	is incremented if kernel fails to split huge
++	page. This can happen if the page was pinned by somebody.
++
++split_deferred
++	is incremented when a huge page is put onto split
++	queue. This happens when a huge page is partially unmapped and
++	splitting it would free up some memory. Pages on split queue are
++	going to be split under memory pressure.
++
+ As the system ages, allocating huge pages may be expensive as the
+ system uses memory compaction to copy data around memory to free a
+ huge page for use. There are some counters in ``/proc/vmstat`` to help
 -- 
 2.45.2
 
