@@ -1,56 +1,59 @@
-Return-Path: <linux-kernel+bounces-241290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73574927969
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:02:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597EC92796F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D6281F2192A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:02:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A7AB1C20CBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8324A1B1205;
-	Thu,  4 Jul 2024 15:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22151B142E;
+	Thu,  4 Jul 2024 15:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+CqAF47"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSh6sHGm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23531B0117;
-	Thu,  4 Jul 2024 15:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF251B1410;
+	Thu,  4 Jul 2024 15:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720105318; cv=none; b=hCoS+ZH5m7UN5Y4BVDo1QeDHRZ+DQHx/3XIDlXrg4TV8Aa6ygqEHcRW/gYnG0rC5rvOfhSfrlzpVgKf2me9/1kXw8FtqqQN6cBRPH/eTrHjjj+GEhKAfUkEl1CO/7Ud54FKRi2ZVj/4VbvmG1aaCZPE+WSiR5ueAEsk7e4j9cZ8=
+	t=1720105321; cv=none; b=S17IMvxf83M/zcKqIVzJgoSWeKmpvAPRXp+nwn1Ss9jnj5rGRdiQG46br8SOeAx29cWaj9IpEfOiLrX761t/cPBgUiUNgcgMxmdpoiP68gHfNOISblgrSdBp5nITRGIgQzzaML4MO6lJM21LSbcpbSLlF1at6jUMNLVM/qi3cJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720105318; c=relaxed/simple;
-	bh=GD38v98uEi0utGYisW2QYjJqD4Hgh4wQJEQUjjOKZFA=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jRypIRGoJQ+xMSChO//smGvpkwMY8vwhoDxLTCXpDsfGgUYl95SzhKr1or5lCQNET2p9s7ljyEHjnVTCFBbf7VghsS9NJMTQrEBxOhYteioXhxBCz+bE6IKBpfW/U18QttKLXQq8RX8OY0GtHGwPTi4uJoGpSiflhoHx8TjZLeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+CqAF47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 696E0C4AF0A;
-	Thu,  4 Jul 2024 15:01:56 +0000 (UTC)
+	s=arc-20240116; t=1720105321; c=relaxed/simple;
+	bh=Kb6Bg3h/wyL/yJijCF3T8Ygmjctgt3DijUcQ0c+p20E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=YXLvblAF5XyvjMqv9XAl8bzXkvLeMEZqYEYXQxC58a1W5zG0WgGwbGng0b5r6eztmdEReFCo/t8p5ojSYoC9Jn0Elpq8kWJBlm/CH5fpUS9do8rI/1mxXKtryDklbf+g6LgIbycT774KUF629pYJbpNWRnivVb2NS1NH/HQwEGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSh6sHGm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05DC9C4AF12;
+	Thu,  4 Jul 2024 15:01:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720105318;
-	bh=GD38v98uEi0utGYisW2QYjJqD4Hgh4wQJEQUjjOKZFA=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=F+CqAF47A923IQmQNjQ27xkQ6SW5Zd2kFaXfJDvsChXEnG6+0TBrRkKyWN7V6HLu0
-	 ziDESXcO/N/NBHgGsH8SkO9y9KIk+zJsXkjIgT6DK0Dh6nUF4FppPDlcqY6BQd6fNp
-	 6RHM2vQzcrtWMHPMe2QOBSpkyvbnoe+2VNu1w+4qUSr9Gqbdd/Hcis/zFs03iV/uEs
-	 5rTic+ZvEoyhaPMhVVi8OZxsUPHoWOOrSaurXeYvRfEcZusPCoHiohG5ezJ0uTkpDJ
-	 u2GntCvu/fhem6l1AZSfYwNPqQCD/umaDvon5wFBMXFM9xzEnFhzk/+r+fiyhXt+2I
-	 ly7YBQ497pejg==
+	s=k20201202; t=1720105320;
+	bh=Kb6Bg3h/wyL/yJijCF3T8Ygmjctgt3DijUcQ0c+p20E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=hSh6sHGmu76Q8A4/5Wx4hKaveyEAmppSlgyT9aP4gTWQnURYA/IldGnCT+JPCO0ny
+	 C+ZEjNV1zdMdQrlAfJsL8sNwbvjBqSUV7VUY3TUZ4RUY8iS2kO0eDmqGEO7gcxV4yW
+	 UQWCT0pbpP1JzCiaVU/h/A5Vw8dazyUxEKNuH8Zoa+pQo+FzCVlACxiVLcY173CofK
+	 x8qtGdfpD3RHtqnio8zvikASnd2oVS9CDNREUY3KWZGvxpAPA8JjsNVVSDEA3rhxYJ
+	 aUm1de+d7+DetYP9BWx5B3dxECPZgHdOg2mpG1uZ0tvmIMd/wZdzKSJXVX6l7Vlark
+	 0HQLiGScpRdog==
 From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- ckeepax@opensource.cirrus.com, andriy.shevchenko@linux.intel.com, 
- heiko@sntech.de, robh@kernel.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com, 
- Shengjiu Wang <shengjiu.wang@nxp.com>
-In-Reply-To: <1720009575-11677-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1720009575-11677-1-git-send-email-shengjiu.wang@nxp.com>
-Subject: Re: [PATCH] ASoC: ak4458: remove "reset-gpios" property handler
-Message-Id: <172010531616.64240.2044968074924246988.b4-ty@kernel.org>
-Date: Thu, 04 Jul 2024 16:01:56 +0100
+To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
+ Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ lvc-project@linuxtesting.org
+In-Reply-To: <20240703191007.8524-1-amishin@t-argos.ru>
+References: <20240703191007.8524-1-amishin@t-argos.ru>
+Subject: Re: [PATCH v2] ASoC: amd: Adjust error handling in case of absent
+ codec device
+Message-Id: <172010531874.64240.1946699241818022514.b4-ty@kernel.org>
+Date: Thu, 04 Jul 2024 16:01:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,14 +64,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Wed, 03 Jul 2024 20:26:15 +0800, Shengjiu Wang wrote:
-> commit c721f189e89c0 ("reset: Instantiate reset GPIO controller for
-> shared reset-gpios") check if there is no "resets" property
-> will fallback to "reset-gpios".
+On Wed, 03 Jul 2024 22:10:07 +0300, Aleksandr Mishin wrote:
+> acpi_get_first_physical_node() can return NULL in several cases (no such
+> device, ACPI table error, reference count drop to 0, etc).
+> Existing check just emit error message, but doesn't perform return.
+> Then this NULL pointer is passed to devm_acpi_dev_add_driver_gpios()
+> where it is dereferenced.
 > 
-> So don't need to handle "reset-gpios" separately in the driver,
-> the "reset-gpios" handler is duplicated with "resets" control handler,
-> remove it.
+> Adjust this error handling by adding error code return.
 > 
 > [...]
 
@@ -78,8 +81,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: ak4458: remove "reset-gpios" property handler
-      commit: 1e0dff741b0a8af35645e5c3ffc4050893002a9c
+[1/1] ASoC: amd: Adjust error handling in case of absent codec device
+      commit: 5080808c3339de2220c602ab7c7fa23dc6c1a5a3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
