@@ -1,138 +1,183 @@
-Return-Path: <linux-kernel+bounces-241014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4499275C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:16:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8159275C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18B3D2843F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:16:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 535D81F24029
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1880D1AC23E;
-	Thu,  4 Jul 2024 12:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8713E1AE0BA;
+	Thu,  4 Jul 2024 12:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cSRx0WJ7"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9uDYZNz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704A51A072E
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 12:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F015A11D;
+	Thu,  4 Jul 2024 12:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720095361; cv=none; b=txaTH6yJzKWwT/qAEIFqlTJLZRWk2/Y/fxphizJJES40MK5xwXrzCP4orvin5taW1wsBwE6PDIglH5R3RY9cY6DV76sgWxu/WzYXmT2YXIf88DT26UMzZTGIkqQBrliDs7z+r89mGXoNgLE+Cg3fggkQ73MvnitumdJnZuk2ViY=
+	t=1720095390; cv=none; b=f3O2JLWfqMa3GZJBiWAnC2/0fahkUqQfvrC4h0EhbhJEMsfnLevFrsx1Y9e22YZhW/b+b0n3/kBnDu4eF9qvTuzP9/vrhvyENHfRPwJrKe07XdGh56dMGDS+kj4yJOGXCmBJ6qmMekxf2v9rVzdI13AKJ82D9JN2CY6hQVg55+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720095361; c=relaxed/simple;
-	bh=9re+ZPkirRwtA9q72yJ4ZBfrbSVVaq/MY2+zhm6rnEQ=;
+	s=arc-20240116; t=1720095390; c=relaxed/simple;
+	bh=W31QLCmsBH+N23WsVFp6vLfxTlySqxr6oI2EDkb0Bxs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OT7i4GKcvImCQhV8Aj4DE7vgOpnG0lRT5D0ae0kDCcRWY7OtdsaLWb/AnERNGVpAEyP6JG2fgtWvsQA3NFYjPd6mtW7eUJcQkXtm84qioI+h7ICthCwv1NE3bZMW8Pg7v/KovKpPJJ7R5PsOsahjbhmECWA/a8VjZvdk0MvNc7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cSRx0WJ7; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ee920b0781so761351fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 05:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720095357; x=1720700157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pxaBCPEGtzR3/vGobWG/WXT7hli0Br1nEUmusrFo3kM=;
-        b=cSRx0WJ75+JuiLpHux9A34DaHj3cBZEF2LUxJ33Rvlszyc2UHpMg84WnnuhaLi+ItS
-         HYxRmYut1SvLyVQue+zlfhClwe5Y7LVkqO2ShrMeRh3aG7yGhrWEZwT2Ps+5FhOUnR3H
-         lwXZSzRhHbtpsqNGn6J+6MNnm0SyqEh1hHVGW5xJV/aWxsDxnAUbJH7Y6sOzLD1RWHaQ
-         Xj1QGe76AzRh2F2D0T6tyruiLS3hinO1SOPJRn7GMnbxAOWC5W/Vb7FgKAapjQixkXXf
-         uf9MuH6a0MUY06gWr1flvxqxv4qENPewokA/brPfPZPyrQGgjgar3ANo2SFZj+JCpRPM
-         snPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720095357; x=1720700157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pxaBCPEGtzR3/vGobWG/WXT7hli0Br1nEUmusrFo3kM=;
-        b=SpLhKvOPO0wuY3SFzcd1z/woEJrBTsa9Cc2FB1+elQmh1WshyLXkXJ9aZZ//21pxrb
-         AikUJNXQTp751y5oMujIYWRQOqwiGf1oT0CcgSPoMtvwN1paQhEx3PjcKHy3rSuMoEIM
-         +XAHEZ+YV9ozhVCAjkNmJAUdWPR9o38D6djotLSiCaHDWoGmfijNZHXGUQ/Qhz1OLUZQ
-         VFcw9ZDH1xn2tbjE64Ff6gSoIRQG7NpriaMguyk8VOTkVLlQcDzUzt3hCaZvzjiRXAKH
-         jIqRDyI1F/CxWtDa+lSKIhpDIcfDm1q7BMro4CaS9PBTnhMB5eB86L3diQIlooJ0/G2f
-         TvhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXplXC6vTuYFsAE3+a2MCRdxGqfd6naOwiRKmCGrjdKPgaN2/c1wt0bgn+eYmqSouPWNtK0/L3lMrg4fYzsebDfccjfQ60pEDzH+aDa
-X-Gm-Message-State: AOJu0YxmzbmW3bJJIVS9avJLJAySRTLJjViFokacUwbsC2i9VZRj+hA4
-	uuCCA32pBOZvrwBPq2JxP41SVE+ADjdGamKmDXhqO3OIeJP0Eq14Xpj6qkah32QBbjREasqEA2d
-	7oqi8aNjbEgMIB18lpLgkGsENKzw6fp+ueDoxPI07wdpfsuuQ
-X-Google-Smtp-Source: AGHT+IHrxcdp9tSDSTnbT0CEN4kOmSsHbK2wdi9lcOLJ/Qc2ZO8wqheJLZl5EDpk6Ys4tt63eobTezcbCEYujZRpYT0=
-X-Received: by 2002:a05:651c:b95:b0:2ee:7caf:db5d with SMTP id
- 38308e7fff4ca-2ee8ee2a014mr8177331fa.51.1720095357422; Thu, 04 Jul 2024
- 05:15:57 -0700 (PDT)
+	 To:Cc:Content-Type; b=TF23Ljg7/D+2L3f82ZUuuErYqTLgTZ5U8yGCGkpP2DL9FD5enMq/2Mc+O1u/vZeoxX2dcpUVhVtWIICz6OpnaEV0APWI5ADTUZ75Quq4qvo7n/b2afJUkbCMqRQSLkne8G9gPhlF8Q6cFVTR2nXZPGreyAnhj9/eiDPriU/bG60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9uDYZNz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D25FC4AF0A;
+	Thu,  4 Jul 2024 12:16:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720095390;
+	bh=W31QLCmsBH+N23WsVFp6vLfxTlySqxr6oI2EDkb0Bxs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=O9uDYZNzfjbL20BPce0SBXAc/6RLb5luVbNL9iCTQkFLPB99LpWgM5nctRQ/1XVji
+	 nshJkaGwdzZDbyDUMoQHt/xAifrlNytJgUgH6VnItp/6hHsVmsGSLvWiDX9FRgYiWJ
+	 pjXcA7iVvKNESo3x4n19MGOsweMqlzElVf8p8SpN/ndYxkPx6CNZyT5m2ejHEsMNDq
+	 MJMpk2qp981GKj6XP19yo4c7GEZjxVCQmGhtXwTjsllc4b+11ALcxgMT/6Qvtxbrty
+	 ogK2aquxqjOS0h2jxDo1XXCmGHd4yeZDgS6s+QAvgeok/s4MCOIPUh5rq3q/uM+rzT
+	 qyQVilGGdzmvA==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-25989f87e20so86127fac.1;
+        Thu, 04 Jul 2024 05:16:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVFlMKkWyhXBGzcp8xsFWTbCpvO6FDEgdQHbUVFlY2hBKuI6/fckHSB8fYTKPpimPWAyJx7R0LAyQwMDKcGywlRp4tvKnLRn6uHKtKsWFSz2QxwYOeixDF3xS7vAm4utocSOwiDjv8IvCHnsqc/X4y4fDqnPpWoqfP+4cLKTS4FEw==
+X-Gm-Message-State: AOJu0Yzj7jIcyr7B0PlmQSOWbgyBsvteSe6HL7ddYYIkr+JRoHuUcMKk
+	AXYW2z/H9yzrw/Hbb3iKSvYv9eQbDH8HICeXTKGUZOMTbyj/a7ji5NUrYurxftEd3sbF1hKgyYZ
+	qvUl9zTJ3sAG+3zcyHNImmg90CIA=
+X-Google-Smtp-Source: AGHT+IFtXfqhDha8ognSJPCS7ZjL1umAb0rhhN7ePNkKKBtyEecApBtNtccw9KOd6T0xU7AAFVDa0ziWjPibVSlRSUc=
+X-Received: by 2002:a05:6820:2c07:b0:5c4:5cbc:b1b4 with SMTP id
+ 006d021491bc7-5c646a91827mr1360390eaf.0.1720095389853; Thu, 04 Jul 2024
+ 05:16:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704-shmbridge-blacklist-v1-1-14b027b3b2dc@linaro.org>
-In-Reply-To: <20240704-shmbridge-blacklist-v1-1-14b027b3b2dc@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 4 Jul 2024 14:15:46 +0200
-Message-ID: <CAMRc=MeczCNfRN_8T6YLja-8He-K6ESH82f1eNvxw-1w7_s_-g@mail.gmail.com>
-Subject: Re: [PATCH] firmware: qcom: tzmem: blacklist more platforms for SHM Bridge
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Elliot Berman <quic_eberman@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Neil Armstrong <neil.armstrong@linaro.org>
+References: <20240613211011.413120-1-surajjs@amazon.com> <CAJZ5v0iLtYOWc0w202kq8Tb-n=8ToQj2xHQ2_socwqqTyXufSw@mail.gmail.com>
+ <703fd8504ca9541898ec920e15c05d673233218f.camel@amazon.com>
+In-Reply-To: <703fd8504ca9541898ec920e15c05d673233218f.camel@amazon.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Jul 2024 14:16:19 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hXADyd57jAujYSb5gXWoPJpEAyUPXi_mcJdpORcpg7KQ@mail.gmail.com>
+Message-ID: <CAJZ5v0hXADyd57jAujYSb5gXWoPJpEAyUPXi_mcJdpORcpg7KQ@mail.gmail.com>
+Subject: Re: [PATCH] acpi: Support CONFIG_ACPI without CONFIG_PCI
+To: "Jitindar Singh, Suraj" <surajjs@amazon.com>
+Cc: "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>, 
+	"acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "okaya@kernel.org" <okaya@kernel.org>, 
+	"rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, "robert.moore@intel.com" <robert.moore@intel.com>, 
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 4, 2024 at 1:13=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
+On Wed, Jul 3, 2024 at 1:01=E2=80=AFAM Jitindar Singh, Suraj <surajjs@amazo=
+n.com> wrote:
 >
-> The SHM bridge makes the Qualcomm RB3 and SM8150-HDK reset while probing
-> the RMTFS (in qcom_scm_assign_mem()). Blacklist the SHM Bridge on
-> corresponding platforms using SoC-level compat string. If later it's
-> found that the bad behaviour is limited just to the particular boards
-> rather than SoC, the compat strings can be adjusted.
+> On Fri, 2024-06-14 at 13:08 +0200, Rafael J. Wysocki wrote:
+> > On Thu, Jun 13, 2024 at 11:10=E2=80=AFPM Suraj Jitindar Singh
+> > <surajjs@amazon.com> wrote:
+> > >
+> > > Make is possible to use ACPI without having CONFIG_PCI set.
+> > >
+> > > When initialising ACPI the following call chain occurs:
+> > >
+> > >   acpi_init() ->
+> > >     acpi_bus_init() ->
+> > >       acpi_load_tables() ->
+> > >         acpi_ev_install_region_handlers() ->
+> > >
+> > > acpi_ev_install_region_handlers() calls
+> > > acpi_ev_install_space_handler() on
+> > > each of the default address spaces defined as:
+> > >
+> > >   u8 acpi_gbl_default_address_spaces[ACPI_NUM_DEFAULT_SPACES] =3D {
+> > >           ACPI_ADR_SPACE_SYSTEM_MEMORY,
+> > >           ACPI_ADR_SPACE_SYSTEM_IO,
+> > >           ACPI_ADR_SPACE_PCI_CONFIG,
+> > >           ACPI_ADR_SPACE_DATA_TABLE
+> > >   };
+> > >
+> > > However in acpi_ev_install_space_handler() the case statement for
+> > > ACPI_ADR_SPACE_PCI_CONFIG is ifdef'd as:
+> > >
+> > >   #ifdef ACPI_PCI_CONFIGURED
+> > >                   case ACPI_ADR_SPACE_PCI_CONFIG:
+> > >
+> > >                           handler =3D
+> > > acpi_ex_pci_config_space_handler;
+> > >                           setup =3D acpi_ev_pci_config_region_setup;
+> > >                           break;
+> > >   #endif
+> > >
+> > > ACPI_PCI_CONFIGURED is not defined if CONFIG_PCI is not enabled,
+> > > thus the
+> > > attempt to install the handler fails.
+> > >
+> > > Fix this by ifdef'ing ACPI_ADR_SPACE_PCI_CONFIG in the list of
+> > > default
+> > > address spaces.
+> >
+> > What if there are PCI operation regions in the AML on the platform?
+> > How are they going to be handled?
 >
-> Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Fixes: f86c61498a57 ("firmware: qcom: tzmem: enable SHM Bridge support")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/firmware/qcom/qcom_tzmem.c | 2 ++
->  1 file changed, 2 insertions(+)
+> Hi,
 >
-> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/q=
-com_tzmem.c
-> index 5d526753183d..c715729f071c 100644
-> --- a/drivers/firmware/qcom/qcom_tzmem.c
-> +++ b/drivers/firmware/qcom/qcom_tzmem.c
-> @@ -78,6 +78,8 @@ static bool qcom_tzmem_using_shm_bridge;
->  /* List of machines that are known to not support SHM bridge correctly. =
-*/
->  static const char *const qcom_tzmem_blacklist[] =3D {
->         "qcom,sc8180x",
-> +       "qcom,sdm845", /* reset in rmtfs memory assignment */
-> +       "qcom,sm8150", /* reset in rmtfs memory assignment */
+> Appreciate the response.
+>
+> I think the short answer is that if there are PCI operation regions in
+> the AML on the platform then the kernel will need to be built with PCI
+> support (CONFIG_PCI) and if it isn't then there won't be a handler
+> installed and the operation will error.
 
-Like I said on IRC: both these platforms were tested at some point
-during development so it's worth figuring out what changed.
+A problem with this approach is that AML has no good way of handling
+such errors.  It accesses a location in an address space of some sort
+and expects the access to be successful.
 
-Ok for disabling them for now.
+The interpreter can catch them, but then the only thing it can do is
+to abort the AML which then may lead to all sorts of unexpected
+behavior of the platform.
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Correct me if I'm wrong but it seems the intention of the patch series:
+>
+> 36ad7d2b9e9b ACPI: Move PCI reset to a separate function
+> 86689776878f ACPI: Allow CONFIG_PCI to be unset for reboot
+> bd23fac3eaaa ACPICA: Remove PCI bits from ACPICA when CONFIG_PCI is
+> unset
+> 5d32a66541c4 PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set
+>
+> was to decouple the dependency between CONFIG_PCI and CONFIG_ACPI.
 
-Bart
+Yes, and as per the above, it was a mistake.
 
->         NULL
->  };
+> bd23fac3eaaa ("ACPICA: Remove PCI bits from ACPICA when CONFIG_PCI is
+> unset") added an ifdef around the code to install the handler for the
+> PCI CONFIG region making it dependent on ACPI_PCI_CONFIGURED (and thus
+> CONFIG_PCI). Thus it is not possible to install the default handler for
+> the PCI CONFIG region unless CONFIG_PCI is set meaning it makes no
+> sense to have it in the list of default address spaces.
 >
+> I can gather that this leads to 2 possibilities:
 >
-> ---
-> base-commit: 82e4255305c554b0bb18b7ccf2db86041b4c8b6e
-> change-id: 20240704-shmbridge-blacklist-021bd97b8a93
+> 1. If there are PCI operation regions in the AML on the platform then
+> these will error on a kernel not compiled with CONFIG_PCI.
+
+But as I said, there is no good way of handling such errors.
+Basically, the kernel should panic() in those cases.
+
+> or,
 >
-> Best regards,
-> --
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->
->
+> 2. The code to install the handler for the PCI CONFIG region should not
+> be ifdef'ed and should be executed irrespective of if the kernel is
+> compiled with CONFIG_PCI to allow for PCI CONFIG regions in the AML.
+
+That doesn't work either because the PCI config address space may not
+be really accessible without CONFIG_PCI.
+
+IOW, I don't see how this can be made work.
+
+Can you please remind me what the use case for ACPI without PCI is?
 
