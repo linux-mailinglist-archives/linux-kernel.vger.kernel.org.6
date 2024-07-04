@@ -1,251 +1,190 @@
-Return-Path: <linux-kernel+bounces-240978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643F392753C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:38:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7837792753F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205AF2866A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:38:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38D26287805
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE18E1AC431;
-	Thu,  4 Jul 2024 11:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529111AC434;
+	Thu,  4 Jul 2024 11:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i937GvF+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQZ2UcmW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B4114B078;
-	Thu,  4 Jul 2024 11:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720093104; cv=fail; b=bhjanvFhDXcK0zNkCBDkd1zlxpUBtwx9+h1LAeocPBCtBOz5OsBjsGTO66/nRln62tEfVAt2pBcQRP73+KqpZtVzHL9I/ckJpuiSJfJIPeLJQXnKJOFhkx8p5fw54pTfANcPqs/q3o2lX6bk7J4dnIy/p7DpcvOn686XrglRHqM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720093104; c=relaxed/simple;
-	bh=DP3NtCUaWaBvENk19cm0OOYcsDpBlJHfYuQ/Z9eMjn0=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=BrsWx1XO1KSREVnv7dOIRhi3zdfdp5TyIJo9EMvlHX9IO9qGRCTbUSAje9hLY0SE1ah2d/21s2nGp0TYKgsurMWborgKtHerMqVNh8y3HI1rHY56bElFd1QjIEWz0CuR4E19QxHN2y5uIiqZv6vnjjlU4QGkmjX3DNw5KznmE8w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i937GvF+; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720093103; x=1751629103;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=DP3NtCUaWaBvENk19cm0OOYcsDpBlJHfYuQ/Z9eMjn0=;
-  b=i937GvF+gU0bDccnymKYurM6pmBtSnkhzvBuiNfIIcAx763L8Q1zN8DT
-   mslK0vJlm1CYzNB+jajmt9khRYHhWE/n8DAh2Qe1lPGLurcxpTb/3FnLy
-   Srao/SgVAUi3z+/6DPDV5MwPAuoRKucuaslJgMkGfWzWBwkqpzNnXFFnX
-   /66Ec7wCGLohA4H1BgS6pStCLZvipONGMCnM9EnDMe1TKWo/VLfvYjnLl
-   0Yl1hdmXmtReeSXpwgdgpgTCeuvJO98U/LMr8F/ntfrTHR+nJrfZnpTFO
-   CZu0yEe5NdWUDJ+nUhjV7uwGomLYDxgTmnJ9CSX4wI4fzJIjGyOipC3z3
-   A==;
-X-CSE-ConnectionGUID: lmuVq2zcQKynilTy9PVTBA==
-X-CSE-MsgGUID: KyY/0cpFTCmCork3+K0g3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="17496113"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="17496113"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 04:38:22 -0700
-X-CSE-ConnectionGUID: b38pS3BNRvuKCM0o3BnCTw==
-X-CSE-MsgGUID: abaHsuz5Q6K2W3TCYAkVZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="84129156"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Jul 2024 04:38:22 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 4 Jul 2024 04:38:21 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 4 Jul 2024 04:38:21 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 4 Jul 2024 04:38:20 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hfJD46DuFRmqfUXk/MhCu5Rkv2k0szdnGtDCqZHd3St6gvbdv2aYn+pnsIMZKc8AzooVX+kZTeMs0VmhVoFvbRyjoTxoqLBc2gb7MgxvVZ5v4VGu9FtlLbBnLfQQZ4qEV7M8Vv+wK+ig9eB1r9ttuYYq14JNtjKTUU6cDnScMgSvbSa7zwvdC2faImrSpiofxFM6NR2JSB6hER4eru5t3shVlRlrtjfMO40nqgxQraXZCvkRGniZ/TPzfmoV90Ph8Uc5+YuBW1lpJSIhw//lEFcPZ8SrI+drFtzEoXbWMcOoZuxBY5mro3jddxHq8z55fzBJBngohvfoV+S0infaDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AxGgboELsfy0IpZisONJ+S7e3EZOvg5hNHdnwOsx2n4=;
- b=SLegHz7wOLLQfUKHhjeSRy+eaGwk7GWmNNn2geYequ3O59QHrzS5AWC8yGN7dJgwSSiuR247mWLyi3ZQHKOGyzblTvbKx8y4Tg3xn5A4fNwOIQBN/Q0rXQMiRRI93Nhw1ysEtkGI+T4ydKnFdEjk4+mdNDaJvRgKY7rZT/M9OtpdZ94Yu5jFu0AvgbFCNonbrBBoXU+P32rIQ26S959wOmUZxYv+pRB29AUCgV20+zsWnoe/TD2iTHeT/f80t7xVBEDFqgbb6il7SdpAOUBIfxRv9MaWIVK344ThUxpMttDQuaWeCYqR1EVfY57Wb0D7Z6MWfXfYhc75TycLhgjvoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV8PR11MB8722.namprd11.prod.outlook.com (2603:10b6:408:207::12)
- by SJ0PR11MB6743.namprd11.prod.outlook.com (2603:10b6:a03:47c::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.29; Thu, 4 Jul
- 2024 11:38:18 +0000
-Received: from LV8PR11MB8722.namprd11.prod.outlook.com
- ([fe80::314a:7f31:dfd4:694c]) by LV8PR11MB8722.namprd11.prod.outlook.com
- ([fe80::314a:7f31:dfd4:694c%3]) with mapi id 15.20.7741.027; Thu, 4 Jul 2024
- 11:38:18 +0000
-Message-ID: <27fb4f62-d656-449c-9f3c-5d0b61a88cca@intel.com>
-Date: Thu, 4 Jul 2024 13:38:04 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] zram: Replace bit spinlocks with a spinlock_t.
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Minchan Kim
-	<minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, "Jens
- Axboe" <axboe@kernel.dk>, Thomas Gleixner <tglx@linutronix.de>, Mike
- Galbraith <umgwanakikbuti@gmail.com>
-References: <20240620153556.777272-1-bigeasy@linutronix.de>
- <20240620153556.777272-2-bigeasy@linutronix.de>
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240620153556.777272-2-bigeasy@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR07CA0249.eurprd07.prod.outlook.com
- (2603:10a6:803:b4::16) To CYXPR11MB8712.namprd11.prod.outlook.com
- (2603:10b6:930:df::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CF916A397;
+	Thu,  4 Jul 2024 11:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720093117; cv=none; b=qBgvOccrWpUM42jE0DfTcnHvl430Wfo3hYULdZYBYME/aqFfmQ4XDI2B8xNm42xu9eCHMwWlHCtZjsCa0aAG7j8QKqCgnHGh6f26dRYvNpbcH0tOprKSlLCRWOFQoXMbBZIVrDFXRCtqvyFPw6MlJFFT/IyYs9GH/+OQy2+ssXQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720093117; c=relaxed/simple;
+	bh=UxjWql28toiPuz8U2UObVRmU6by2h2Dosj9Dk8engTE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Buc1tqb6pL7rOQTkK6GaXqBgPrhVyJ0tnk8sQHgu6I4hYNXfcwkoIx8w9v+wO6TU9NfSi98BDT5q2Px7czaq1XIU86rmMb440PnPX12Qc3vSsnZQq6LQRWUMeQyL93o6Hd1TpW88pUWZ2o+o6ZA5KzPjGTwvEhkgr0XFucdlaso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQZ2UcmW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACF3C4AF0B;
+	Thu,  4 Jul 2024 11:38:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720093116;
+	bh=UxjWql28toiPuz8U2UObVRmU6by2h2Dosj9Dk8engTE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QQZ2UcmWC0iKCTuBPp/fZF2G/l+dOwDvSgs713TfHV3qDm+NCNRRrZ5dj8iWFnWwR
+	 WmAaIkmr7E/h4uoW6WXxAPF04+EDH0t6EP0/AHV6mTWJXlD/i8j/XvfP65rqK9rmef
+	 ovfuovl6IFK9tzdv1pkt/n30kJ3figByYu/KSwHMqqe/4dC98XkCW+5EXtsd46aAwP
+	 LFrjo+odw/bJoCDI6d9tR6mxYoveWjTO7TUZ3NvBaYlqVljvCmIxCgrtygTiqot3A9
+	 y4W+B9orN2+DfPzzRdl3zKpqXJEiKFZGUJuSBt3dw3hTJFCbMh/2qEr6UlDJHs6DPZ
+	 ITaaEA1fEtVAw==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-254925e6472so107043fac.0;
+        Thu, 04 Jul 2024 04:38:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGZrh/4ZZHbdu3fOaLKQoIs6BHXMwFON8eCm8WeJZT3VEFWvuqL+PAt1AN20upEBrAD5VRAno9sCXXDIy/Ev/B4sXt46K4kHvvLN0SsEqv1RmWizpGb5itCAgFrpQXXJ5sFdZ6t1U=
+X-Gm-Message-State: AOJu0YzPDwhVPpoBGgnimD+PGxZHKSYx7o2lj9Y4rBWllX0rt1wf9BAL
+	lKlVgadTqhIhUtv2h1+P3Ixn6hdmxF5u7aaa1HfXO8+UH6KSis3rUrWf+e13fgZ8edtbmxXgksL
+	ofX2PhPF7pthkODayPTKtHkcBFdQ=
+X-Google-Smtp-Source: AGHT+IEicJ7mapfZzDhtYfCdNktn/cvbLbJKh2NZkvRmakchSZIBd9AXbsvAYwIm/M7PcXxBGxSL09djGQp4fmGtFhA=
+X-Received: by 2002:a05:6870:5590:b0:25e:1817:e4a8 with SMTP id
+ 586e51a60fabf-25e2bf93ebcmr1381939fac.4.1720093116076; Thu, 04 Jul 2024
+ 04:38:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR11MB8722:EE_|SJ0PR11MB6743:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a7ac6f2-164e-4c5f-4e6d-08dc9c1dcbb9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?cEJheEFxdkx0RjJzWnV1dkNxcDJTaEIxQzRYdVF6R0plZEJtSHNtdm1Ba3Zl?=
- =?utf-8?B?Wjk5UHBYajFlTUxHQU8reTBrbklWbFFqYm5kMVpZbThvWUJwMTRDY1ZscWlL?=
- =?utf-8?B?K3hKUFU0eDBlSUErb1dmUjlQZVNuQS9TNC9HWElURElGUmY3SXVoMzVJdFVP?=
- =?utf-8?B?ckw2R0J6cDE4NWhScVpKcjdZcXYzQ3A5eEVQN2IzNVFhVUozaHJrcVAwYzl2?=
- =?utf-8?B?dFdoRXBRMkppZDc1QVN6ajV5OEZhU2UxeVRZa2U3NktlT2NLekt2TElxdCtt?=
- =?utf-8?B?WWdseGZudC9HSFFCS2loOCtFcWZHQnVQRUk2bXZsVlE2aUhHZHFPNjBraytW?=
- =?utf-8?B?eHExQUNhU2NlOENwakk3U3p1U1d0TGN0clZUY3ZXdE5ZUC9MNUgvQlhzb05t?=
- =?utf-8?B?ODR2OXV3OGNLckp3ZWh4TTgrNzVmZ1BIWm1leHFTRUtsaGFkeVVnMzhSblJG?=
- =?utf-8?B?dHQxamtQNExDamlORUNWTG82Mm51YW5HOG54aWdOTmZzaTZNUHVvOEZycVZ5?=
- =?utf-8?B?M2RCTGI2ejhPeGFSN29ScXV4WHJUeWRVblNkTnRvREZNVkZOR1hSTzAzbjZk?=
- =?utf-8?B?OXRiRU5uOGNXVmNIdmo2R1U1MGVpUHRSUUdkRldhckFqbUtyMTdHd0FaL2Rk?=
- =?utf-8?B?SVgvdVRxSXg4dU9XcWF0MUt2V2t3eXl4eHhpU2lneTRGZTByZHJTUWdMbjJS?=
- =?utf-8?B?ZW9mREZaV1BqWkxnVlBIQzhCajJjQU05cmhwbW11ZHRnRGFkNENNRVhHTVkz?=
- =?utf-8?B?bjlGU0lVUGJrdXdqbmFmU01maFFmSlRQdTh4d3EzenQ2SGhqMklQUENKRWZp?=
- =?utf-8?B?UWJuK2hyRUE5RjB5MnU5NEpqWUtWMkFLS1FBYS9jUDExWUNseEpkZGVBenJx?=
- =?utf-8?B?OWZNMjJuZjRsVjlIeVBWSU8yUkwyZnpFWVNQQzVHbVNuZEVUNzdpNW95OHU0?=
- =?utf-8?B?UzgwMTYxZnFIbnpmb3ZmSG1uOFdQVTFoc0ZrTlFySGxlSjZQZDUzV2Zpd3cw?=
- =?utf-8?B?dkdBcERjSHJUTVRGdUxLOHpFeGd4dmN2MXA4L1VVUmJLM2VrbzNjdEc1VEVz?=
- =?utf-8?B?L1FRTW1OOW9QOTVzd3VjQnA4VG02ZHV4RlJjd2wxT3RiaG9abEEwak9NbExr?=
- =?utf-8?B?Zi82aWkreDR5Q2U5S0pyKzJ3QVZSKytxUGxsb3NTQktkd3ozUmZaZFdrdUVI?=
- =?utf-8?B?akxBeUpoT3QzcWpYcVJVbG5Ba0pIS1cycEhnVzhaS0k3L3h0Tkp4QXFNN0lO?=
- =?utf-8?B?czRVQ1BQTEhGVmtrTjgwdklrVnRUZXc4S1gxQVkvVG5aUk9YUUNuYUowSGxS?=
- =?utf-8?B?Nk5sMlF0bW5DOXRwUnNaWCthRVlISFlOcTB5ZHhzdDIzdVZ3MmlnMjV2NWp1?=
- =?utf-8?B?WnNFcnB3NFFGMWpVSzlQV0ptemFGSXJNYTJtL3dLRXMzWXRUclpkUDBOUWJn?=
- =?utf-8?B?WktwNlFOUTJyY2tucVhjOUJuY0hHcHBucVVQNnAwR0prSFhybXVBeWpiVnBY?=
- =?utf-8?B?Z1pzczNTYVJXTFVYaWFYbXhmd1hFVEU4TUgzSG9JTUdOOFRZNGU3RHNQZTNp?=
- =?utf-8?B?OU55aUwybTNNTGFvdjduTTdzUWRZQS9QNzJtNzBSMkN6TVEvZ3FkTi8zaXhq?=
- =?utf-8?B?NENBYnJDc2JwZ2Ficzc2MXMwL0syWm1oYlpSYVZlQzZ5SWpqbVNnRUJWc2lX?=
- =?utf-8?B?djYvcVlLQjhqZjdxOW4yeXpjOG0rNHRsejF5dlhzL1ZxaXJGZlBvc2podzc1?=
- =?utf-8?B?amZmSkp6YlVSemhHcDFmbUJVVmlITk1xQ1pNRTRpYUVRVVEyMzQwUnNNSFAv?=
- =?utf-8?B?bXhVQVVEMDlxZ1dVZHd0QT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR11MB8722.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UTE3ME1CR2JEUkVqYXkwMU9XM2c3M2hSSkZSQkFQUklJdjBhdDZjVnBlazNQ?=
- =?utf-8?B?bTk2VjJQSnM2dXE0d0Q0dGlBSlBIWGpNeUV0c1VFays4UjFlK1p2dGRtd3pI?=
- =?utf-8?B?amNBWmkrVFRZRXlhY0dHUjBIbkpMS2JreU9YYlBXRzB3S2l1M1JEOTZqRGRR?=
- =?utf-8?B?eVhoSm55WFR3NXcyTXZQVENqVkwwdnZNVTlVNUdKemlObVMrc0gyTDBSei9T?=
- =?utf-8?B?Mzd0YnMwdU55T0VHRktseVpuaFIweTVQWlo3SXBnVGxsWXRKZklTQTZCMEZE?=
- =?utf-8?B?UXBhK2RBVWNRN3d3a1haempBZkNjQXVkbjlZUUl4S3BaYjFFeTRsSEc4L0x1?=
- =?utf-8?B?NnIvZW9DcmRFNk5LWXVGUnpJWnYwWUxteFR5MEVFQnVYUGxxR0l5RmlBdGR0?=
- =?utf-8?B?ZEgwR2RxU3BIL01QeG4zTk1qYlFSc3hBZFBtaC9mZTMvbm83aUpQNHpxelZl?=
- =?utf-8?B?MmR4T21wZ2NYRHA4aHFSQUR2Q24wY0RKWTBnbldiejlCNkQyRk1NTC9vek1q?=
- =?utf-8?B?ajFRdk1oQVg2aWVSV0RDK1RWWTZ2dXlwQzVKMG9USFhRN3pNZjQ2TUVDaHln?=
- =?utf-8?B?SUIrYjBPN2tsZXc4ejROb045dDNCS3pqME1XcCtsenFKUmpFYU9CaytiSlQ3?=
- =?utf-8?B?dkd5SWo0Sk5RaHhjTTZHbW9KL2cxbTN3UEx5cXF6SDhFakZlRitnYnlidUxX?=
- =?utf-8?B?SzFwMHpUMjZFaUxnaGdQdDVsNFpBWkR2NzJ0OGp6em1Oc29iaTJlN01HV0Jh?=
- =?utf-8?B?NVlJV3VYWHB0LzR3d2FSV2FRZ0lLMEpNeUhGZWVIYzR1NkdWL2FOVEhObExY?=
- =?utf-8?B?ZjBjaS9PNWExSU9ycWxhbjRPdHZMazRIYzdNaEI2TExna0ZXWTlZQldhRWVD?=
- =?utf-8?B?U1dhWmtTOVIwTVpKUE5LR2hOWGhIWHp0b04xVGJ1c0cweVU4ejE1RWpRbUlO?=
- =?utf-8?B?aUwvUE41MkNmSGFreXg2NmRxYkFQZHpCTFJidGR2WVQzMXB5VHJoanJzbWVF?=
- =?utf-8?B?TTkzU0luRE81TGpwWDlRZnc0YVdkaWxLSmhVVkI1dWVTd2Qra3U5ZmpQbTNO?=
- =?utf-8?B?VU1UNTdpNXYwZ3JmRExmSHBQcnRYbnc3V3JtU0FWVkpJak1QcWtTV1VlblJm?=
- =?utf-8?B?Tzl1MzNBWStadXZMeTkyTnNRMUZEc05tYmlrNHZEM3FPa1JSYkhBdDFtSWlm?=
- =?utf-8?B?OTEvNmkyYmREZmorbGtQdnpNT21jSVBKZ3JJSEE0Z0JKYjE0bmpnaGtQWFRJ?=
- =?utf-8?B?VE1RUzRtTUMvZDdZQzJTbkRNQWpTZm1vWmdQc2JsNWNING5TaXBVSTRGc3Zk?=
- =?utf-8?B?Q1RXbGs4LzY5MktTcVJGTkx2QUdKVlFibVFmWUxVR2kwWkpmcHFUYVVucXVC?=
- =?utf-8?B?RnRZaEtnMFJkQnhkQ2l4RFpxMkhHbjhYdGQrVmFKQnc1ZEMvNXhjTkJ1NzBk?=
- =?utf-8?B?eWRyU2tFVlVvWVFaaEE2dit4ODRQMlBxY1Y5c3FVd3BteVFjcjR4VU1YWExa?=
- =?utf-8?B?VXVjMVp2TWJmRzNydkl0RS9YcDJ4M1EzVGhyS2hqMTZzTEpPRXhkRVprRzJH?=
- =?utf-8?B?OE8zMitMZVNvRGlzT0dMY2MraEh1eERWeVlqU09Gb3ZheHB5R2h2NmwzcS9o?=
- =?utf-8?B?SzAzb21LVHJvM0lYTSsyOGhDTUI5ZTAybnBjZHFNS3QrRFdUdkI0dXVzaVRs?=
- =?utf-8?B?MmozdWlWV1hnNWZlMXBiMlFqU2s0UkQ1Y0xvTHRaazNVa2N2alNCZ0U3eHRX?=
- =?utf-8?B?VWYxeE0rZFBFWlc2cjJnWVlzTm5jUVZHQWR0cG9kakZEOFpnUzFNYS9RbU5W?=
- =?utf-8?B?Uzc0ZzgxRjVLL0RSU3k3dUU4ZnRNSm5RUkR5K0czZ0E3Wmpuek5tUkpINFB1?=
- =?utf-8?B?WnBxSXhvTzhYdWRxVU5yemxWRjJIUmo3TGVVZmdYUkhqcGlSWkxlSFFiOW5i?=
- =?utf-8?B?MGlicThGblY0SG11bHVkRTY4TnFYODdSeTMyVDJKeUtTUUdkVjJLU2VBVGtv?=
- =?utf-8?B?eVFNWkt0c2x6cWs5NzVzWHc3eUxZYWRacjBmS3d6ZzhJOVRTSFJSbHNCazJT?=
- =?utf-8?B?UGxsZzBwaXhaWURnVkxGTGY2bW5zcy9EeFZ5a3pJRUI5SHRMT1F2Z1Z1aFlv?=
- =?utf-8?B?VjIwa1NlbWpUTTdFbXR2VzcvdHp6ZWQra2E1WUJrc3o5dVRHWWtIMUFzWDBI?=
- =?utf-8?B?N3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a7ac6f2-164e-4c5f-4e6d-08dc9c1dcbb9
-X-MS-Exchange-CrossTenant-AuthSource: CYXPR11MB8712.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 11:38:18.7819
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wT50szfXfIuT8giR4fL4kW+ePuaH0+ObTgUK/yccaAZAYiSOB5Nl9733MYWqtKkVKDa6g6mktENFJQkiRkn1pFLaUggMQXAhCCgH3Y0VshQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6743
-X-OriginatorOrg: intel.com
+References: <20240702-power-allocator-null-trip-max-v1-1-47a60dc55414@collabora.com>
+In-Reply-To: <20240702-power-allocator-null-trip-max-v1-1-47a60dc55414@collabora.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Jul 2024 13:38:24 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gO45HrVkO5cqh2B3p_emsAyhf-G1HWfprc2cEzXkZu6w@mail.gmail.com>
+Message-ID: <CAJZ5v0gO45HrVkO5cqh2B3p_emsAyhf-G1HWfprc2cEzXkZu6w@mail.gmail.com>
+Subject: Re: [PATCH] thermal: gov_power_allocator: Return early in manage if
+ trip_max is null
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Lukasz Luba <lukasz.luba@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Nikita Travkin <nikita@trvn.ru>, kernel@collabora.com, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Date: Thu, 20 Jun 2024 17:28:50 +0200
-
-> From: Mike Galbraith <umgwanakikbuti@gmail.com>
-> 
-> The bit spinlock disables preemption. The spinlock_t lock becomes a sleeping
-> lock on PREEMPT_RT and it can not be acquired in this context. In this locked
-> section, zs_free() acquires a zs_pool::lock, and there is access to
-> zram::wb_limit_lock.
-> 
-> Add a spinlock_t for locking. Keep the set/ clear ZRAM_LOCK bit after
-> the lock has been acquired/ dropped. The size of struct zram_table_entry
-> increases by 4 bytes due to lock and additional 4 bytes padding with
-> CONFIG_ZRAM_TRACK_ENTRY_ACTIME enabled.
-> 
-> Signed-off-by: Mike Galbraith <umgwanakikbuti@gmail.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+On Tue, Jul 2, 2024 at 11:25=E2=80=AFPM N=C3=ADcolas F. R. A. Prado
+<nfraprado@collabora.com> wrote:
+>
+> Commit da781936e7c3 ("thermal: gov_power_allocator: Allow binding
+> without trip points") allowed the governor to bind even when trip_max
+> is null. This allows a null pointer dereference to happen in the manage
+> callback. Add an early return to prevent it, since the governor is
+> expected to not do anything in this case.
+>
+> Fixes: da781936e7c3 ("thermal: gov_power_allocator: Allow binding without=
+ trip points")
+> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
 > ---
->  drivers/block/zram/zram_drv.c | 22 +++++++++++++++++++---
->  drivers/block/zram/zram_drv.h |  1 +
->  2 files changed, 20 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> index 3acd7006ad2cc..036845cd4f25e 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -57,19 +57,34 @@ static void zram_free_page(struct zram *zram, size_t index);
->  static int zram_read_page(struct zram *zram, struct page *page, u32 index,
->  			  struct bio *parent);
->  
-> +static void zram_meta_init_table_locks(struct zram *zram, size_t num_pages)
-> +{
-> +	size_t index;
+> This issue was noticed by KernelCI during a boot test on the
+> mt8195-cherry-tomato-r2 platform with the config in [1]. The stack trace
+> is attached below.
+>
+> [1] http://0x0.st/XaON.txt
+>
+> [    4.015786] Unable to handle kernel NULL pointer dereference at virtua=
+l address 0000000000000000
+> [    4.015791] Mem abort info:
+> [    4.015793]   ESR =3D 0x0000000096000004
+> [    4.015796]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+> [    4.015799]   SET =3D 0, FnV =3D 0
+> [    4.015802]   EA =3D 0, S1PTW =3D 0
+> [    4.015804]   FSC =3D 0x04: level 0 translation fault
+> [    4.015807] Data abort info:
+> [    4.015809]   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
+> [    4.015811]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
+> [    4.015814]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
+> [    4.015818] user pgtable: 4k pages, 48-bit VAs, pgdp=3D000000010980900=
+0
+> [    4.015821] [0000000000000000] pgd=3D0000000000000000, p4d=3D000000000=
+0000000
+> [    4.015835] Modules linked in: mt8195_mt6359(+) mt6577_auxadc snd_soc_=
+mt8195_afe mtk_scp_ipi snd_sof_utils mtk_wdt(+)
+> [    4.015852] CPU: 2 PID: 13 Comm: kworker/u32:1 Not tainted 6.10.0-rc6 =
+#1 c5d519ae8e7fec6bbe67cb8c50bfebcb89dfa54e
+> [    4.015859] Hardware name: Acer Tomato (rev2) board (DT)
+> [    4.015862] Workqueue: events_unbound deferred_probe_work_func
+> [    4.015875] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYP=
+E=3D--)
+> [    4.015880] pc : power_allocator_manage+0x110/0x6a0
+> [    4.015888] lr : __thermal_zone_device_update+0x1dc/0x400
+> [    4.015893] sp : ffff8000800eb800
+> [    4.015895] x29: ffff8000800eb810 x28: 0000000000000001 x27: 000000000=
+0000001
+> [    4.015903] x26: aaaaaaaaaaaaaaab x25: ffff07a0461c15a0 x24: ffffb5853=
+0ca67c0
+> [    4.015911] x23: 0000000000000000 x22: ffff07a04098fcc0 x21: ffffb5853=
+2eec848
+> [    4.015918] x20: ffff8000800eb920 x19: ffff07a0461c1000 x18: 000000000=
+0000b4b
+> [    4.015926] x17: 5359534255530031 x16: ffffb585310352e4 x15: 000000000=
+0000020
+> [    4.015933] x14: 0000000000000000 x13: ffffffff00000000 x12: 000000000=
+0000040
+> [    4.015940] x11: 0101010101010101 x10: ffffffffffffffff x9 : ffffb5853=
+0ca8d78
+> [    4.015948] x8 : 0101010101010101 x7 : 7f7f7f7f7f7f7f7f x6 : 000000000=
+0001388
+> [    4.015955] x5 : 0000000000000000 x4 : 0000000000000384 x3 : 000000000=
+0000000
+> [    4.015962] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 000000000=
+0000000
+> [    4.015970] Call trace:
+> [    4.015972]  power_allocator_manage+0x110/0x6a0
+> [    4.015978]  __thermal_zone_device_update+0x1dc/0x400
+> [    4.015983]  thermal_zone_device_set_mode+0x7c/0xa0
+> [    4.015987]  thermal_zone_device_enable+0x1c/0x28
+> [    4.015991]  thermal_of_zone_register+0x43c/0x498
+> [    4.015996]  devm_thermal_of_zone_register+0x6c/0xb8
+> [    4.016001]  gadc_thermal_probe+0x140/0x214
+> [    4.016007]  platform_probe+0x70/0xc4
+> [    4.016012]  really_probe+0x140/0x270
+> [    4.016018]  __driver_probe_device+0xfc/0x114
+> [    4.016024]  driver_probe_device+0x44/0x100
+> [    4.016029]  __device_attach_driver+0x64/0xdc
+> [    4.016035]  bus_for_each_drv+0xb4/0xdc
+> [    4.016041]  __device_attach+0xdc/0x16c
+> [    4.016046]  device_initial_probe+0x1c/0x28
+> [    4.016052]  bus_probe_device+0x44/0xac
+> [    4.016057]  deferred_probe_work_func+0xb0/0xc4
+> [    4.016063]  process_scheduled_works+0x114/0x330
+> [    4.016070]  worker_thread+0x1c0/0x20c
+> [    4.016076]  kthread+0xf8/0x108
+> [    4.016081]  ret_from_fork+0x10/0x20
+> [    4.016090] Code: d1030294 17ffffdd f94012c0 f9401ed7 (b9400000)
+> [    4.016095] ---[ end trace 0000000000000000 ]---
+> ---
+>  drivers/thermal/gov_power_allocator.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_=
+power_allocator.c
+> index 45f04a25255a..1b2345a697c5 100644
+> --- a/drivers/thermal/gov_power_allocator.c
+> +++ b/drivers/thermal/gov_power_allocator.c
+> @@ -759,6 +759,9 @@ static void power_allocator_manage(struct thermal_zon=
+e_device *tz)
+>                 return;
+>         }
+>
+> +       if (!params->trip_max)
+> +               return;
 > +
-> +	for (index = 0; index < num_pages; index++)
+>         allocate_power(tz, params->trip_max->temperature);
+>         params->update_cdevs =3D true;
+>  }
+>
+> ---
 
-Maybe declare @index right here?
-
-> +		spin_lock_init(&zram->table[index].lock);
-> +}
-
-[...]
-
-Thanks,
-Olek
+Applied as 6.10-rc material, thanks!
 
