@@ -1,287 +1,160 @@
-Return-Path: <linux-kernel+bounces-241487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E2B5927BCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:16:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9118E927BCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050ED28BB8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:16:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C27BD1C22FC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7623B481A5;
-	Thu,  4 Jul 2024 17:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D1238F9A;
+	Thu,  4 Jul 2024 17:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q1hJevEy"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/IJ5KxP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A5044C7E;
-	Thu,  4 Jul 2024 17:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECCC262A8;
+	Thu,  4 Jul 2024 17:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720113372; cv=none; b=LhcY8uuviuHLuVfiHHgEEHxO0OXpaofL13JFb31M25pcrSxNhkL+sLUFgWqu/T1vDEf0e4ho0BXu/G0B9bbMDqHOD83FT+AuEqRwsl2lFlLwGOtNRU1Ii4fWfL3cTQA/o4nVpTfPNIhjzs+2DA3RkyZfKpmKNjL60zDcwpREGF4=
+	t=1720113425; cv=none; b=pTILyUCvMxNVjeavcHGd7McGYEcK0lFyMrOCWHKkNqqDuhWYrofvy490sTmdqCjqYvFlj4hw8DEL95ds9WWm7DysQkYLfeeYS7v2uplUr7JlmU9vuyLwMB3HSwevHPU5MOjfOyMO+UrBmLc1YDJJotBZRXpGOuQFHZu2Q3eAqvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720113372; c=relaxed/simple;
-	bh=3x8lP/aTiF5WqSbnLsl7dbOKsbYQj2t1Eh7lHauCaek=;
+	s=arc-20240116; t=1720113425; c=relaxed/simple;
+	bh=6KBZ6d3b2y4heC9NhfRu6FvZmJNP5IgVVL6D6CaLHHY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EZwu3aDdJuxQkx9u6Q3X1LKX502liF5Ruf7qqUgdQT7rhPHuQnFqa+ns84NfMB/ebd5lenBIjr8S/DXOaFbulujBLXDiFmRMaSkAqYknW7H/kt0iFemwBknNqabxPBNtHGqMDQNSvBXtgVH/bBWrihHftCW0FB/A9geWdc+Szos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q1hJevEy; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec1ac1aed2so9047301fa.3;
-        Thu, 04 Jul 2024 10:16:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720113369; x=1720718169; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=akj1yGVTlXRj2mY3MwoGNS6aRJcCL4nmykWEYKR6h6Q=;
-        b=Q1hJevEyTpL5w6Xlq4QLBfkySlH5p09tFZfg9ZVqJU4G6fmB7nsJoxyAV8J73T+G4T
-         yYltIfvSQ+spVIh6WiJAMcURvF2cXL7dVpTeFRgYCUH/DQ+M4VZTHiU6fmjz3y/5qkxN
-         ojPk5y6EcYBUiC9hhOXPZgirgzVEBLJ5kBA/CcKdfh/dNryk2l5GXvSakvh4wykRn5gy
-         DqLEJ7t9sgv+UhQLOMiAnmnOSa+YvF87ogFeP1eX+RZPZeTGy7sEVCdQn089eO/DOfUR
-         SxoAb38+L371ZD7xTo8+3e53CRmoSSJFl3M8FSxHRsH5wGXzwI3Fi6Mh0pnniCWC5pX9
-         3IVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720113369; x=1720718169;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=akj1yGVTlXRj2mY3MwoGNS6aRJcCL4nmykWEYKR6h6Q=;
-        b=vB/7gKHFbnZdjaTXydQ56RWMBcNlQZqwhoJA6I1nXcsLpWnROxfpJ9g8VNXKjhMzEA
-         vVJjwoy0dRjmaCuwpKGu3qQfuYW1T9WHv/e1Wndcs0ysy9lFwZAfA91QL7I+GQFXwDZ4
-         UNooL+bZ/9YHTY4WZu4T6XzUZKdBJ2CibbOYZRm3DqsY4eTU/zF5iy6ylCQRsgS2eL9D
-         9N1r7L8c/tkgQqe/LBA02+/nQTf29zg2h+/5FFP/N7sJLef/P+h8VEydzFEJOJhoC6XO
-         29EJ6eFVGByq7m8lZTU3bbjJ7W/kkrj9QQNnKCdRV5VZUQQPh1XCiM5/FMqT2ysVnKdx
-         KgQw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4/qjbaHkyIWdwXOlUIG1iZglZeJvRQ9vmmuRef3/NZ8YT2lH76fx155DClojWmpaMauZ+6+jJwSJWYobzjYQp437UkmY07Wp/xvNB9+398i2IB2nxQ36hzmU2WtJMLaABDgB7
-X-Gm-Message-State: AOJu0YwQeaMND3tgK9AB4sYENXr8Dg8oDjk39UWWYGQ/nPIIwdeUqRXB
-	UUTi59E8oFzu7MQ6BYZZpRef1QPKNuS0wIczaS10fpFzt4WHKPKC
-X-Google-Smtp-Source: AGHT+IFTA8kd9mjM2p40e2ZtadZbcVKxwDbfrWZ/Shn/mauifxOtKFwqzRmFtdoxFS3r+DxEPLODog==
-X-Received: by 2002:a2e:9515:0:b0:2eb:f472:e7d3 with SMTP id 38308e7fff4ca-2ee8ed22c62mr15348351fa.6.1720113368407;
-        Thu, 04 Jul 2024 10:16:08 -0700 (PDT)
-Received: from skbuf ([188.25.110.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42649dec1cbsm12327265e9.1.2024.07.04.10.16.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 10:16:07 -0700 (PDT)
-Date: Thu, 4 Jul 2024 20:16:04 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Landen Chao <Landen.Chao@mediatek.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net v4] net: dsa: mt7530: fix impossible MDIO address and
- issue warning
-Message-ID: <20240704171604.3ownsxasch5hokty@skbuf>
-References: <1c378be54d0fb76117f6d72dadd4a43a9950f0dc.1720105125.git.daniel@makrotopia.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FlRJ8Zlf5CL6uEPhr88AwC4z58IlpRU2hCGKIVmAPdK+95vkopAddNhfUKViaZWtpf9SomPKOLLzaL9/1ZxuCHovaYLZgNmsmNQRN73zjXmnI5HQcM65j3Tn3Gdhhj6BMNjrXmzc1trFNpNQJrbyFuPJ9BflWDy46uNJ+T1xsOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/IJ5KxP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F33C3277B;
+	Thu,  4 Jul 2024 17:16:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720113425;
+	bh=6KBZ6d3b2y4heC9NhfRu6FvZmJNP5IgVVL6D6CaLHHY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E/IJ5KxPMbOiZFO8Yr3ndkeiBUqJM/u94mYyMeSZp3KhKpSf4jXJtz3sGcDCAzOxp
+	 JCvfpuwAr6ywDGpeSMJxsTkqYzV0A7vxBgDjpqlK9n8qKT3bsG/bNIlQRfhIkrRUpJ
+	 aAV9Vct6jstAVQR5uba29phm+3ylyzkhwuQPT2fQFksz1iaeA+nS3WHY9OYpMWVLK2
+	 46XXkV7zHaECXBLFtS+6NOoclLfZvw8LqnoZP2uiYtp6B1VD06R1zhYVazDmYakJTK
+	 XHLjJS7YQR2D8E0/EbjKVAdcYTSRK76TtyYxGDfmA5TSDcHzU4gaF30SONys7SenJN
+	 wzzyNDgCrDu8g==
+Date: Thu, 4 Jul 2024 18:16:58 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Kees Cook <keescook@chromium.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] rust: add flags for shadow call stack sanitizer
+Message-ID: <20240704-unless-cache-8a971c244348@spud>
+References: <20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com>
+ <20240704-shadow-call-stack-v3-2-d11c7a6ebe30@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="pilQx93eD8hL4hZr"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1c378be54d0fb76117f6d72dadd4a43a9950f0dc.1720105125.git.daniel@makrotopia.org>
+In-Reply-To: <20240704-shadow-call-stack-v3-2-d11c7a6ebe30@google.com>
 
-On Thu, Jul 04, 2024 at 04:08:22PM +0100, Daniel Golle wrote:
-> The MDIO address of the MT7530 and MT7531 switch ICs can be configured
-> using bootstrap pins. However, there are only 4 possible options for the
-> switch itself: 7, 15, 23 and 31. As in MediaTek's SDK the address of the
-> switch is wrongly stated in the device tree as 0 (while in reality it is
-> 31), warn the user about such broken device tree and make a good guess
-> what was actually intended.
 
-Zero is the MDIO broadcast address. Doesn't the switch respond to it, or
-what's exactly the problem?
+--pilQx93eD8hL4hZr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> This is imporant also to not break compatibility with older Device Trees
-
-important
-
-> as with commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of
-> switch from device tree") the address in device tree will be taken into
-> account, while before it was hard-coded to 0x1f.
-> 
-> Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
-
-I fail to understand the logic behind blaming this commit. There was no
-observable issue prior to 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY
-address of switch from device tree"), was there? That's what 'git bisect'
-with a broken device tree would point towards?
-
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
-> Reviewed-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+On Thu, Jul 04, 2024 at 03:07:58PM +0000, Alice Ryhl wrote:
+> As of rustc 1.80.0, the Rust compiler supports the -Zfixed-x18 flag, so
+> we can now use Rust with the shadow call stack sanitizer.
+>=20
+> On older versions of Rust, it is possible to use shadow call stack by
+> passing -Ctarget-feature=3D+reserve-x18 instead of -Zfixed-x18. However,
+> this flag emits a warning, so this patch does not add support for that.
+>=20
+> Currently, the compiler thinks that the aarch64-unknown-none target
+> doesn't support -Zsanitizer=3Dshadow-call-stack, so the build will fail if
+> you enable shadow call stack in non-dynamic mode. See [2] for the
+> feature request to add this. Kconfig is not configured to reject this
+> configuration because that leads to cyclic Kconfig rules.
+>=20
+> Link: https://github.com/rust-lang/rust/issues/121972 [1]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
-> Changes since v3 [3]:
->  - simplify calculation of correct address
-> 
-> Changes since v2 [2]:
->  - use macros instead of magic numbers
->  - introduce helper functions
->  - register new device on MDIO bus instead of messing with the address
->    and schedule delayed_work to unregister the "wrong" device.
->    This is a slightly different approach than suggested by Russell, but
->    imho makes things much easier than keeping the "wrong" device and
->    having to deal with keeping the removal of both devices linked.
->  - improve comments
-> 
-> Changes since v1 [1]:
->  - use FW_WARN as suggested.
->  - fix build on net tree which doesn't have 'mdiodev' as member of the
->    priv struct. Imho including this patch as fix makes sense to warn
->    users about broken firmware, even if the change introducing the
->    actual breakage is only present in net-next for now.
-> 
-> [1]: https://patchwork.kernel.org/project/netdevbpf/patch/e615351aefba25e990215845e4812e6cb8153b28.1714433716.git.daniel@makrotopia.org/
-> [2]: https://patchwork.kernel.org/project/netdevbpf/patch/11f5f127d0350e72569c36f9060b6e642dfaddbb.1714514208.git.daniel@makrotopia.org/
-> [3]: https://patchwork.kernel.org/project/netdevbpf/patch/7e3fed489c0bbca84a386b1077c61589030ff4ab.1719963228.git.daniel@makrotopia.org/
-> 
->  drivers/net/dsa/mt7530-mdio.c | 91 +++++++++++++++++++++++++++++++++++
->  1 file changed, 91 insertions(+)
-> 
-> diff --git a/drivers/net/dsa/mt7530-mdio.c b/drivers/net/dsa/mt7530-mdio.c
-> index 51df42ccdbe6..2037ed944801 100644
-> --- a/drivers/net/dsa/mt7530-mdio.c
-> +++ b/drivers/net/dsa/mt7530-mdio.c
-> @@ -11,6 +11,7 @@
->  #include <linux/regmap.h>
->  #include <linux/reset.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/workqueue.h>
->  #include <net/dsa.h>
->  
->  #include "mt7530.h"
-> @@ -136,6 +137,92 @@ static const struct of_device_id mt7530_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, mt7530_of_match);
->  
-> +static int
-> +mt7530_correct_addr(int phy_addr)
+>  Makefile            | 1 +
+>  arch/Kconfig        | 2 +-
+>  arch/arm64/Makefile | 3 +++
+>  3 files changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Makefile b/Makefile
+> index c11a10c8e710..4ae741601a1c 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -945,6 +945,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
+>  ifndef CONFIG_DYNAMIC_SCS
+>  CC_FLAGS_SCS	:=3D -fsanitize=3Dshadow-call-stack
+>  KBUILD_CFLAGS	+=3D $(CC_FLAGS_SCS)
+> +KBUILD_RUSTFLAGS +=3D -Zsanitizer=3Dshadow-call-stack
+>  endif
+>  export CC_FLAGS_SCS
+>  endif
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index 238448a9cb71..5a6e296df5e6 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -690,7 +690,7 @@ config SHADOW_CALL_STACK
+>  	bool "Shadow Call Stack"
+>  	depends on ARCH_SUPPORTS_SHADOW_CALL_STACK
+>  	depends on DYNAMIC_FTRACE_WITH_ARGS || DYNAMIC_FTRACE_WITH_REGS || !FUN=
+CTION_GRAPH_TRACER
+> -	depends on !RUST
+> +	depends on !RUST || RUSTC_VERSION >=3D 108000
+>  	depends on MMU
+>  	help
+>  	  This option enables the compiler's Shadow Call Stack, which
 
-The prototype fits onto a single line.
+For these security related options, like CFI_CLANG or RANDSTRUCT, I'm
+inclined to say that RUST is actually what should grow the depends on.
+That way it'll be RUST that gets silently disabled in configs when patch
+1 gets backported (where it is mostly useless anyway) rather than SCS
+nor will it disable SCS when someone enables RUST in their config,
+instead it'd be a conscious choice.
 
-> +{
-> +	/* The corrected address is calculated as stated below:
-> +	 * 0~6, 31 -> 31
-> +	 * 7~14    -> 7
-> +	 * 15~22   -> 15
-> +	 * 23~30   -> 23
-> +	 */
-> +return (phy_addr - MT7530_NUM_PORTS & ~MT7530_NUM_PORTS) + MT7530_NUM_PORTS & PHY_MAX_ADDR - 1;
+Cheers,
+Conor.
 
-In addition to being weirdly indented and having difficult to follow
-logic.. Why not opt for the simple, self-documenting variant below?
+--pilQx93eD8hL4hZr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	switch (phy_addr) {
-	case 0 ... 6:
-	case 31:
-		return 31;
-	case 7 ... 14:
-		return 7;
-	case 15 ... 22:
-		return 15;
-	case 23 ... 30:
-		return 23;
-	default:
-		return -EINVAL ???
-	}
+-----BEGIN PGP SIGNATURE-----
 
-> +}
-> +
-> +static bool
-> +mt7530_is_invalid_addr(int phy_addr)
-> +{
-> +	/* Only MDIO bus addresses 7, 15, 23, and 31 are valid options,
-> +	 * which all have the least significant three bits set. Check
-> +	 * for this.
-> +	 */
-> +	return (phy_addr & MT7530_NUM_PORTS) != MT7530_NUM_PORTS;
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZobZCQAKCRB4tDGHoIJi
+0op3AQDGn+hWppfWYDd7g/Ck3at4aD+SwbMd/jUQuQ9pL+qLpgD+MahETrfZpXoA
+f/6oMzXX33g7xHjyqSsL73pnqhMoBQU=
+=7i1H
+-----END PGP SIGNATURE-----
 
-Why not implement this in terms of phy_addr != mt7530_correct_addr(phy_addr)?
-
-> +}
-> +
-> +struct remove_impossible_priv {
-> +	struct delayed_work remove_impossible_work;
-> +	struct mdio_device *mdiodev;
-> +};
-> +
-> +static void
-> +mt7530_remove_impossible(struct work_struct *work)
-
-Fits onto a single line.
-
-> +{
-> +	struct remove_impossible_priv *priv = container_of(work, struct remove_impossible_priv,
-> +							   remove_impossible_work.work);
-> +	struct mdio_device *mdiodev = priv->mdiodev;
-> +
-> +	mdio_device_remove(mdiodev);
-> +	mdio_device_free(mdiodev);
-> +	kfree(priv);
-> +}
-> +
-> +static int
-> +mt7530_reregister(struct mdio_device *mdiodev)
-> +{
-> +	/* If the address in DT must be wrong, make a good guess about
-> +	 * the most likely intention, issue a warning, register a new
-> +	 * MDIO device at the correct address and schedule the removal
-> +	 * of the device having an impossible address.
-> +	 */
-> +	struct fwnode_handle *fwnode = dev_fwnode(&mdiodev->dev);
-> +	int corrected_addr = mt7530_correct_addr(mdiodev->addr);
-> +	struct remove_impossible_priv *rem_priv;
-> +	struct mdio_device *new_mdiodev;
-> +	int ret;
-> +
-> +	rem_priv = kmalloc(sizeof(*rem_priv), GFP_KERNEL);
-> +	if (!rem_priv)
-> +		return -ENOMEM;
-> +
-> +	new_mdiodev = mdio_device_create(mdiodev->bus, corrected_addr);
-> +	if (IS_ERR(new_mdiodev)) {
-> +		ret = PTR_ERR(new_mdiodev);
-> +		goto out_free_work;
-> +	}
-> +	device_set_node(&new_mdiodev->dev, fwnode);
-> +
-> +	ret = mdio_device_register(new_mdiodev);
-> +	if (WARN_ON(ret))
-> +		goto out_free_dev;
-> +
-> +	dev_warn(&mdiodev->dev, FW_WARN
-> +		 "impossible switch MDIO address in device tree, assuming %d\n",
-> +		 corrected_addr);
-> +
-> +	/* schedule impossible device for removal from mdio bus */
-> +	rem_priv->mdiodev = mdiodev;
-> +	INIT_DELAYED_WORK(&rem_priv->remove_impossible_work, mt7530_remove_impossible);
-> +	schedule_delayed_work(&rem_priv->remove_impossible_work, 0);
-
-What makes it so that mt7530_remove_impossible() is actually guaranteed
-to run after the probing of the mdio_device @ the incorrect address
-_finishes_? mdio_device_remove() will not work on a device which has
-probing in progress, will it?
-
-There's also the more straightforward option of fixing up priv->mdiodev->addr
-in mt7530.c to be something like priv->switch_base, which is derived
-from priv->mdiodev->addr, with a fallback to 0x1f if the latter is zero,
-and a FW_WARN().
+--pilQx93eD8hL4hZr--
 
