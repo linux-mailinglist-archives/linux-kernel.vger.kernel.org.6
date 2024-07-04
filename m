@@ -1,135 +1,132 @@
-Return-Path: <linux-kernel+bounces-240929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E88B9274BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:16:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA9E9274CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E56286395
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:16:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBDF41C222DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1621AC424;
-	Thu,  4 Jul 2024 11:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D531AC25C;
+	Thu,  4 Jul 2024 11:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="njearGOw"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrLyJkrz"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B80210EE;
-	Thu,  4 Jul 2024 11:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD831AC239;
+	Thu,  4 Jul 2024 11:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720091801; cv=none; b=KQIzOA51Bw+g9p5mJ4gsgg3L6WzJ/NeS/Wh7gORf1iGE6nQqIrMES9d3BTR0A+i+IJJNduk4yjVWnlbn9d+3xChAogDhVnWlcPnt6zTMloEW+mEHuYr2VlL3d7IHKEpTwXRBOoKBGhZ8yK07QRTdxRkJY5y1Dah9xH7d3SY8nM4=
+	t=1720091945; cv=none; b=q4NOqj2QYigjVRO+PJKkGjbk/eGiK+B0SDc1TyNIywwywQq8abJlMmywt6Ie7KOR1tiRwprVUvJG4FSOB2KUwr5c7eFZYoByADboA70AHNNhDeYTKSVLpbpUrbl28S+QyScSmtZgYP4qF1aV1TPiMLO4T1xlnHc+DKXWLokhKNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720091801; c=relaxed/simple;
-	bh=OlUPwbm3C0naWrFm94xQDd2733KQLboF4jpJiDriZCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UsYYSFELs6x/03v4gHyoyQ3E8K+UI7KBgxxVQFY8lozL34LFDnxF8/RcPDdp0q45JwUdRwu7osGjBRwUm4XCT6Ix+6H40tXh32Ei7MLDR3sXkeiaaitCi33I842uhUZXjS4TuDSw7NcEDhFbccocDoPSkZxSfZils4YNGH0h/b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=njearGOw; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1720091945; c=relaxed/simple;
+	bh=GCT0mvqtioHryCpvymDplb3ffd2k3pxu02LXeW77bLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uuNqL1V+lCOgzqXXxKwCORYJBQtI6bhGqii4IV/nKIpLZpBhFeGamGAMjPSBPjZREP1H1xXONkVIXByEMcP7kaRSpSJlpG2adhMmKBGyD5uAN1iACEMd+DASf2i3SYNlDi3Grn3GAmuk2fNN7Qp+NyAqghJEYQvADfdh4SG+W6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jrLyJkrz; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fb3cf78ff3so1875875ad.0;
-        Thu, 04 Jul 2024 04:16:40 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-643f3130ed1so4915617b3.2;
+        Thu, 04 Jul 2024 04:19:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720091799; x=1720696599; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VRWUHckXq3BNRPnOd0HDIJh7WrGHyU1e90iq+AknEGE=;
-        b=njearGOwZJf5/GjHOT/9PdYw1p4HGgM4Zf5z9G2wP317FzsbBF63rKHcNORaTIPLcx
-         GaIC1tDkfiWuL1MFl9VTBdqX8Mgm3CvG0S4idyqE3KpcDu1vXvOIT6jkWb1nfd7O7+ck
-         lwXGrKz23TUo7QRhIDAslLInNTVeToh25ppY6o0iz3Is+ZN/gJEqLFYIUT1cUeNYQqHe
-         5asCBQy414fME+M/ylQYxMOsJ5yQ3E+WDB/XI/mLWN/kWbgZYQ/hg0bocxLHw2u8qSCu
-         B+JtLRfSn90gMN2uykWii5P6BS92dx0F9H8CAWL8c5NEJs+GEHSWSSy2sbg2h6u5Y7DI
-         lVAw==
+        d=gmail.com; s=20230601; t=1720091943; x=1720696743; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fNCmxKLZEKdnaIo1lzCkGEq0IJ2TD99MH/XAb7ZGOQc=;
+        b=jrLyJkrz/0hi1HTB8w3bNOIF8jNPyqf4totEL3IuRADWQUzz063vu82/vyHrcetI8y
+         XJ0UV4Mbyi8dBDDpCw4fGtKxxHqBhQkIajjO88f28uh3+GBK6Vf4cYTLO/ExDi/GIM7a
+         LDai3zpxxSI7Isglb9h+TnEwnNiQUsyga2xn7Er1Z53Grwj3ZihuIVLuqhoN7T2Nmf5f
+         ev0sAtmXhgyAHekqMBemkzKfQ5Fu1kPPedhLEPDmg1j2GBZ8GACLn/SSrWUauZagvY3S
+         +SE30BIAc2dTFRmdij8wzVkbs2u3pLyljZzzMVXC0qQmBcUEuSkFrGNkiDeYSryTcHwg
+         3sPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720091799; x=1720696599;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VRWUHckXq3BNRPnOd0HDIJh7WrGHyU1e90iq+AknEGE=;
-        b=FTTxkE4nTAqC32iweqJYtkFZpmonC/H9R5COzNqps19CxmvTyREY+/lzQPNPwSA3bJ
-         z2u3zWPf1OIWgSasKdHgWYXk4hK6I7e5qe/ZudVWBe4Xx/BO7cujCPiGz54GQDPZspEq
-         c2AcqZUmhOklm36TY1f2ma+Cut6IWf8YuGa9FF4VUa6UrtBFVn7LX5ftClqT6Bx5KZ9W
-         nJQCKmWALk/QRGviL1/XIxsJ1iEfPOs2X3XWLtbaV9RNpMY4YH9GPioPUkUueUtNEMrP
-         3KdWTtSUm6tscK58J/Xjf45K7WNDPs3F+N0MLIv5ACMMmvSOsO+0iB6cC8USldari0/H
-         oNRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyodfBdZP3tP6q5XdB0HR03YA/Kn3UD1gx7Ti96+YP2Y/mn+UD7nxqR/tG2EEzPgAcJ/KwvRsE8V5t+PnBpL1kgGSkDKMrKUUTPitjKd4yenUg5W9mzXKr1zyiVti2Mnawcth1bnbY16X1qbOFJ2lAwkDoOlm3OM2YbZjBFykucJIImsDTMFmm
-X-Gm-Message-State: AOJu0YyIwQ+2zf3nqw1KIKaipA3nd///7jJ0usghJQYifxt6k9gr/NAJ
-	GsVz1uUc2TT1MMCq+n6bG9YeDM28cVstwqFLAsSdluXdpYfRnMZ0
-X-Google-Smtp-Source: AGHT+IGWNH/d4DiodPEdB26qrebgsENU+INw6QtOxlRY2mFtLN0Dgz4d/3ACwf2nEdp+Zxpu9Y8Ymw==
-X-Received: by 2002:a17:902:e54f:b0:1fa:ff88:894a with SMTP id d9443c01a7336-1fb33e199bemr9149485ad.20.1720091799398;
-        Thu, 04 Jul 2024 04:16:39 -0700 (PDT)
-Received: from [10.150.96.32] ([14.34.86.36])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faceb78c6csm112263165ad.271.2024.07.04.04.16.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 04:16:38 -0700 (PDT)
-Message-ID: <6391f34a-b401-47e8-8093-d3b067f26c1b@gmail.com>
-Date: Thu, 4 Jul 2024 20:16:34 +0900
+        d=1e100.net; s=20230601; t=1720091943; x=1720696743;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fNCmxKLZEKdnaIo1lzCkGEq0IJ2TD99MH/XAb7ZGOQc=;
+        b=ESik7uAJ9rq+WiTahK+GS/LSIGHuB247Mq/xP4y3cPcpBtk5XN/wD0atHcP7uPQq90
+         v0KqkOCEzE8aO1Ud0HUYpMJFtx0TrznoXmDnss3toyYYHZdDhcTMX42Nn8jE4/2PY68b
+         aHi7CIWmJoECjDxV0mztoemctSJyPLOTryxBkGeOUzBQpSnQ5YCGaPcwnucCcDUg8W9V
+         2UDYm9vMjh6oA7F0bvBcMdYotacxkwz5DyXXW6aiSwYsrHqn0yL0wAwc5k4zIyvJMWMv
+         li262btrdFWjWIGj0dawEs0Mrx2urwnFESBqsYcThhuwbm6f++c8cFvtqCcJh+Ino5Zw
+         Joiw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7C7cR2Eevyqawuf+Ju72vc5gJwCT6F69GDpsUqkbxkyNqdHp9Y/s8Zxd/8UArRLSBniIP42z00lfzUMArVZofwSrSS/eIXFdiJoL/aYvBsXh4lYJKhatNJkp0mexu+HHIQVEOFXUYlB4=
+X-Gm-Message-State: AOJu0Yw4zdDvpPJ3A2Wo57bik5ou3mCrp87OwVc15pMejm+g4ZMXm1gd
+	jUrULMRL7KS/76NP/b6Y0AvjCi5E+HKXEJO7csDYZC4AWYWJBWLYPAuH2ZvPqCJ7HF/G3pooPIO
+	rb958dgm6/kQqoI49YN3vLwXx87M=
+X-Google-Smtp-Source: AGHT+IF2+QptZ2rBGc+sGQL3cR8V9h89I+bSi+rn6CRax7iFo5NdO1YA6DZd3WbbDoPf4L2Oi2e81nz0cOU2hWQjIqg=
+X-Received: by 2002:a0d:e605:0:b0:64b:a57:8441 with SMTP id
+ 00721157ae682-652d67c500bmr11259537b3.19.1720091943252; Thu, 04 Jul 2024
+ 04:19:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tracing/net_sched: NULL pointer dereference in
- perf_trace_qdisc_reset()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
- Sasha Levin <sashal@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Taehee Yoo <ap420073@gmail.com>, Pedro Tammela <pctammela@mojatatu.com>,
- Austin Kim <austindh.kim@gmail.com>, MichelleJin <shjy180909@gmail.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- netdev@vger.kernel.org, ppbuk5246@gmail.com,
- Yeoreum Yun <yeoreum.yun@arm.com>
-References: <20240702180146.5126-2-yskelg@gmail.com>
- <20240703191835.2cc2606f@kernel.org>
- <2024070400-slideshow-professor-af80@gregkh>
-Content-Language: en-US
-From: Yunseong Kim <yskelg@gmail.com>
-In-Reply-To: <2024070400-slideshow-professor-af80@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
+ <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
+ <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
+ <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
+ <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
+ <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
+ <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
+ <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
+ <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com> <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
+In-Reply-To: <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
+From: Andrea Gelmini <andrea.gelmini@gmail.com>
+Date: Thu, 4 Jul 2024 13:18:46 +0200
+Message-ID: <CAK-xaQagqS0kePozkim7sB_Zi+8NrDRnbqFuLVQ3s4F+0WZ+DQ@mail.gmail.com>
+Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
+ execution time of the kswapd0 process and symptoms as if there is not enough memory
+To: Filipe Manana <fdmanana@kernel.org>
+Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
+	dsterba@suse.com, josef@toxicpanda.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Greg, Hi Jakub
+Il giorno gio 4 lug 2024 alle ore 11:49 Filipe Manana
+<fdmanana@kernel.org> ha scritto:
+> I'll try that soon and see if I can reproduce.
 
-On 7/4/24 6:32 오후, Greg Kroah-Hartman wrote:
-> On Wed, Jul 03, 2024 at 07:18:35PM -0700, Jakub Kicinski wrote:
->> On Wed,  3 Jul 2024 03:01:47 +0900 Yunseong Kim wrote:
->>> Support backports for stable version. There are two places where null
->>> deref could happen before
->>> commit 2c92ca849fcc ("tracing/treewide: Remove second parameter of __assign_str()")
->>> Link: https://lore.kernel.org/linux-trace-kernel/20240516133454.681ba6a0@rorschach.local.home/
->>>
->>> I've checked +v6.1.82 +v6.6.22 +v6.7.10, +v6.8, +6.9, this version need
->>> to be applied, So, I applied the patch, tested it again, and confirmed
->>> working fine.
->>
->> You're missing the customary "[ Upstream commit <upstream commit> ]"
->> line, not sure Greg will pick this up.
->>
-> 
-> Yeah, I missed this, needs to be very obvious what is happening here.
-> I'll replace the version in the queues with this one now, thanks.
-> 
-> greg k-h
+I'm creating a qcow installation with everything, to replicate this.
+Sorry, it takes time.
 
+By the way, it's just me? (latest git master btrfs-progs)
+ btrfs-image /dev/blah-blah loop.dd
+works perfectly, but
+  btrfs-image -s  /dev/blah-blah loop.dd
+generate an image impossible to mount:
+[gio lug  4 11:20:05 2024] BTRFS info (device loop40): first mount of
+filesystem 496b800d-2f32-46bb-b8d0-03d6f71cf4b2
+[gio lug  4 11:20:05 2024] BTRFS info (device loop40): using crc32c
+(crc32c-intel) checksum algorithm
+[gio lug  4 11:20:05 2024] BTRFS info (device loop40): using free space tree
+[gio lug  4 11:20:05 2024] BTRFS critical (device loop40): corrupt
+leaf: root=1 block=40297906176 slot=6 ino=6, name hash mismatch with
+key,
+have 0x00000000365ce506 expect 0x000000008dbfc2d2
+[gio lug  4 11:20:05 2024] BTRFS error (device loop40): read time tree
+block corruption detected on logical 40297906176 mirror 1
+[gio lug  4 11:20:05 2024] BTRFS critical (device loop40): corrupt
+leaf: root=1 block=40297906176 slot=6 ino=6, name hash mismatch with
+key,
+have 0x00000000365ce506 expect 0x000000008dbfc2d2
+[gio lug  4 11:20:05 2024] BTRFS error (device loop40): read time tree
+block corruption detected on logical 40297906176 mirror 2
+[gio lug  4 11:20:05 2024] BTRFS warning (device loop40): couldn't
+read tree root
+[gio lug  4 11:20:05 2024] BTRFS error (device loop40): open_ctree failed
 
-Thank you for your hard work.
+> In the meanwhile, just curious: are you using swapfiles on btrfs?
 
+never used on BTRFS (i have a dedicated nvme partition).
 
-This fix need to be applied versions in +v5.10.213, +v5.15.152, +v6.1.82
-+v6.6.22, +v6.7.10, +v6.8, +6.9
-
-
-Warm regards,
-
-Yunseong Kim
-
-
-
+Same effect also disabling the swap, btw, and thp.
 
