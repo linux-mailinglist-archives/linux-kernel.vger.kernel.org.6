@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-241608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8C4927D13
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:33:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD10927D17
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C2821C222F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:33:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B62ED1F240FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B8074BF5;
-	Thu,  4 Jul 2024 18:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023D213790F;
+	Thu,  4 Jul 2024 18:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0wNcCVro";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cutM0pz2"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2QbzUE1x";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WjiQjLEr"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336A44962E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336DA4964A;
 	Thu,  4 Jul 2024 18:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720117976; cv=none; b=V/kEtBPAC0GzNU2nz1pZ6TdJaIPmk9E7p2DdneTqtwSbh0LNyMzA7QYb8PN0OQGbFCMoymk/ZoVvzRT81TJKubSmnHVAETJjF5oAVRDFfEvoDIkRN/RMv2XGOBv5ODvHB+ZgfPHeCf1rm2Mijfd8p1qQc6aR51nDqCTst/yNGks=
+	t=1720117977; cv=none; b=M/EDmq72LCGfBnsAoxAL+SIn+v6YQVqheGMnn5L6baDVucDnBXe67vBUdWGX1IsnRigK8BILyc9+3+iV0PU2yJsJQpfANbPvRtwamCXDwuQUlgXC59wwZRbQ18NCDRlqOuqScv9TumI25piN8kWUJxYnAknyRTwz4vbNI1nMbyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720117976; c=relaxed/simple;
-	bh=X2oSqWZdJWrR8wnNZNZT7RHldCwbVgyTInEsBl0IEx4=;
+	s=arc-20240116; t=1720117977; c=relaxed/simple;
+	bh=1+X1oCcDvCWATdr7qSa1yTuIOhQgeE5s9z49A16omkI=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=PFbec1vo/QSDDoGsCm6EJDG7XQdAYwvI320xdpTOmNiRKAqT8aUE4PG3mrrqSV6p+XEM/WDqHzWm5EcHhlk3EBre0B2rHql8Dh0K5TidcNc/Vwl/gu1ZFxtgl4Vg2iWV2Q2A6xTLZjApDiscR75N8hY+mvEXkCWo+/ZKSGToCe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0wNcCVro; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cutM0pz2; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=DJjcQrRaJzWxu5y7mtdYzPzI9S1oAtW+8h4wYBrBs4CuKGAxz95BMRz6Cvbcn5JnhOIZ25GuoWcT9U914zwzqK/vtnh0Fpq/48DZFJzlbG1+LnzYpkvjYiHFA3tARrVmeBVkt4YYPvKniAeVTFFzuN6c2pJ3o+liKu/Wlyu3rE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2QbzUE1x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WjiQjLEr; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 04 Jul 2024 18:32:52 -0000
+Date: Thu, 04 Jul 2024 18:32:53 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1720117973;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=okMXq/ozh97/UGleFCWrro3p4Qvqxr2CmducT06H44U=;
-	b=0wNcCVroqTVqsFbY6OU66hQCzPDbIUvJxf5Ctnsfib0iATUMMsfkDuHr+JduLzEgst4AJ2
-	Z8V00S83HNTPzvAKxP6dPU0ugIzrKkUVXRCDFGOQ+SAsKHl+3fgx8fMCF2RYl/JNkUpJvD
-	yfCLYA21is6sfwq2gTzNNVizcrlN7BRHV4iUSuSxyJ+wqkEAyra/xNStLVvYgTRBMeW6n6
-	d+nc9t4xUDkEV+ABeqX35Rmfs6YlXu2JIHsoidE77vXfaiZ/otSfsEV083RNS0EhcAn9x7
-	2R1ZoJaNSepb9QGmPft/bVtxJFo1YbsM8UOdZCu36NU3swzZen8p9d6Jylo+rA==
+	bh=K7ilNo4XAnyWs+5oKulgVr0bEO0PJ45PnWrV8YRHpIQ=;
+	b=2QbzUE1xdJN4HbhZnI+rRiE9YRgNWlfAucBgmebqwYIxWkpSPto7dx6SRbrWYlf9ptN94i
+	mmZnqpLhH0t3gUN/GhEZ+q0++aumbm6eRsASuingo6x6eudSo5NqwPRMhgnog2QTiwO++5
+	GwR01QcyDAcV/747crobwMtATS809ifoYh8sR1qM4OmpOFqm05EGHV7SSQf3t+g5byQNpt
+	zldEq6OqNIVTdHDn/5wYt2P57nhin/Yw7ERMLvQDbHoU0K303ijg9NOUIu5W9v9+3II3o8
+	jAdbVabaE7UVkIXqHvLSGaMdP0WeURAshS21djQVxUEmVmeR/piplcwIoIUOsw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1720117973;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,27 +52,27 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=okMXq/ozh97/UGleFCWrro3p4Qvqxr2CmducT06H44U=;
-	b=cutM0pz2TGXCnAOpmVVTt/dT7eY8s0qYekfE5MNvxR62XYzAEB01ym7acsm6NmMxWSiTNj
-	Sj1hDLC7wI9wTtCg==
+	bh=K7ilNo4XAnyWs+5oKulgVr0bEO0PJ45PnWrV8YRHpIQ=;
+	b=WjiQjLEr+O5Oqu5Z0LxL90r0GdIw8+WpP+adD89qittKYQ5+Ov/wLhhPeedZXAUgqFI2x1
+	D/ejZAOa4iFYjkBg==
 From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] timers/migration: Fix grammar in comment
+Subject: [tip: timers/core] timers/migration: Spare write when nothing changed
 Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
  Thomas Gleixner <tglx@linutronix.de>,
  Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240701-tmigr-fixes-v3-8-25cd5de318fb@linutronix.de>
-References: <20240701-tmigr-fixes-v3-8-25cd5de318fb@linutronix.de>
+In-Reply-To: <20240701-tmigr-fixes-v3-7-25cd5de318fb@linutronix.de>
+References: <20240701-tmigr-fixes-v3-7-25cd5de318fb@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172011797280.2215.10987705574256890329.tip-bot2@tip-bot2>
+Message-ID: <172011797324.2215.7387357188188957218.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,37 +82,52 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     746770499be55cf375a108a321a818b238182446
-Gitweb:        https://git.kernel.org/tip/746770499be55cf375a108a321a818b238182446
+Commit-ID:     2e0bd37f7b395173f879225b9d8b1811af4a8a35
+Gitweb:        https://git.kernel.org/tip/2e0bd37f7b395173f879225b9d8b1811af4a8a35
 Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
-AuthorDate:    Mon, 01 Jul 2024 12:18:44 +02:00
+AuthorDate:    Mon, 01 Jul 2024 12:18:43 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Thu, 04 Jul 2024 20:24:57 +02:00
 
-timers/migration: Fix grammar in comment
+timers/migration: Spare write when nothing changed
 
+The wakeup value is written unconditionally in tmigr_cpu_new_timer(). When
+there was no new next timer expiry that needs to be propagated, then the
+value that was read before is written. This is not required.
 
+Move write to the place where wakeup value could have changed.
 
 Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Link: https://lore.kernel.org/r/20240701-tmigr-fixes-v3-8-25cd5de318fb@linutronix.de
+Link: https://lore.kernel.org/r/20240701-tmigr-fixes-v3-7-25cd5de318fb@linutronix.de
 
 ---
- kernel/time/timer_migration.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/time/timer_migration.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index a2d156b..23c5bbc 100644
+index 9ff61f9..a2d156b 100644
 --- a/kernel/time/timer_migration.c
 +++ b/kernel/time/timer_migration.c
-@@ -1368,7 +1368,7 @@ u64 tmigr_cpu_deactivate(u64 nextexp)
-  *			  the only one in the level 0 group; and if it is the
-  *			  only one in level 0 group, but there are more than a
-  *			  single group active on the way to top level)
-- * * nextevt		- when CPU is offline and has to handle timer on his own
-+ * * nextevt		- when CPU is offline and has to handle timer on its own
-  *			  or when on the way to top in every group only a single
-  *			  child is active but @nextevt is before the lowest
-  *			  next_expiry encountered while walking up to top level.
+@@ -1215,14 +1215,13 @@ u64 tmigr_cpu_new_timer(u64 nextexp)
+ 		if (nextexp != tmc->cpuevt.nextevt.expires ||
+ 		    tmc->cpuevt.ignore) {
+ 			ret = tmigr_new_timer(tmc, nextexp);
++			/*
++			 * Make sure the reevaluation of timers in idle path
++			 * will not miss an event.
++			 */
++			WRITE_ONCE(tmc->wakeup, ret);
+ 		}
+ 	}
+-	/*
+-	 * Make sure the reevaluation of timers in idle path will not miss an
+-	 * event.
+-	 */
+-	WRITE_ONCE(tmc->wakeup, ret);
+-
+ 	trace_tmigr_cpu_new_timer_idle(tmc, nextexp);
+ 	raw_spin_unlock(&tmc->lock);
+ 	return ret;
 
