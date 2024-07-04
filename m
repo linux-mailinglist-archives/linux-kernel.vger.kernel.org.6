@@ -1,143 +1,215 @@
-Return-Path: <linux-kernel+bounces-241128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8615992775D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:44:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95CF792775F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 420C9282B5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:44:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9089B22D66
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25881AED3B;
-	Thu,  4 Jul 2024 13:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h1BsKCVL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02521AED4D;
+	Thu,  4 Jul 2024 13:44:28 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4733528373;
-	Thu,  4 Jul 2024 13:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BF61AED39
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720100653; cv=none; b=OPsNSXCej3FKKwG3MwbNZ9mzjcvAtmM0lEgeTKXMBY5XVu1p7GMlZGsLP+E+yvpZnyE9wI7nMp2A8mPPYjcIGjzUnTNF5bTrmlgGYYkzavSCC226Sjxk2XiMxwKZx1sUkzt49NSwJOFaNtDsHR4TO/i5N32XXY0JkvdGheVsUKw=
+	t=1720100668; cv=none; b=UHuWVnPyB9k/IiqkByB/MFjaJmyCI95HAdZOeQYUTlI6n/BuLbnipwQY/NSxI5qm5rrJ4j9yyz/+KKRdzSQkRw0dfp5FbTyJPA/ztLYEa6bRDSMOpw/Nh8jHhlf5y6uhh8oo2JRaesbWOmZJfVqypSSPYAvfn6kvTxVZNItRJao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720100653; c=relaxed/simple;
-	bh=vd6ZMMbCUn2U39zAqJ5QeXI+KZCVWJVSSyj9T80YrJM=;
+	s=arc-20240116; t=1720100668; c=relaxed/simple;
+	bh=IOLw4Ke9P2gvCmPtKCvxwi5KAeia0MwABdV2lhg5nsk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7eXiBO2Z+wGDxsczAe/Eh263vZAPnb93RRxf0N9a+Oth8pK9CdjXJXjWtpSqW0EGM0hwktZInfdXy9nMcubcxzgg41iYFqCSzrtpON3IXvIIn2j3DHGYcGkx2U7EvxkxanhgVP5Qexi0dsLgjSJnvUstl6kzQEF+dXe1gXeOSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h1BsKCVL; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720100651; x=1751636651;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vd6ZMMbCUn2U39zAqJ5QeXI+KZCVWJVSSyj9T80YrJM=;
-  b=h1BsKCVLBIFomz0G1tr0EVcKOg38JREn0mewiY/9myKYmnFM/Cz0LBd+
-   VmWztR19ExBSJ3XUlGnZnxBrCKay8mRUgq5c/sBDYtkUToNp9Ng3bBKUr
-   DToyhrr/Roe+Rn47a9opXSFfBZumo95lP+R5+VJ74wZrcSQ5sSq3SSNhJ
-   7Y6Bu6Pqte1rSldEGzNdgT+frCgDyiHW3m/dThByvyowG5a2WlETyKU+v
-   sFzvX62B1RDkpdxUc1qRui7Zev3qX9Sj6cLsWtBVKvQwFsleG8ZvbYzDR
-   CDst7kDdA/JPDEdoFadpkiNKLg8XNn2Q9XeWO4DdJ/+LDfToIBeKPlJpV
-   Q==;
-X-CSE-ConnectionGUID: GIjmXhWyRIutQvBdJ9/qag==
-X-CSE-MsgGUID: XkSV36XVRYyNPNG+Ey0b8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="17217109"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="17217109"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 06:44:09 -0700
-X-CSE-ConnectionGUID: XeQQC8IgQiOO66rDYk+aYw==
-X-CSE-MsgGUID: qAyT9sa+TaKk8jCwTK5edw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="77734900"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa001.fm.intel.com with ESMTP; 04 Jul 2024 06:44:05 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id C66B160D; Thu, 04 Jul 2024 16:44:03 +0300 (EEST)
-Date: Thu, 4 Jul 2024 16:44:03 +0300
-From: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: "luto@kernel.org" <luto@kernel.org>, 
-	"rafael@kernel.org" <rafael@kernel.org>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
-	"bp@alien8.de" <bp@alien8.de>, "peterz@infradead.org" <peterz@infradead.org>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "bhe@redhat.com" <bhe@redhat.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"ardb@kernel.org" <ardb@kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>
-Subject: Re: [PATCH 3/3] x86/64/kexec: Rewrite init_transition_pgtable() with
- kernel_ident_mapping_init()
-Message-ID: <vyvbvham7qcj2pnotfn4mocozx6x33zkvuks63w3ymzk4w6sjc@2gk5xbtb5xrb>
-References: <20240701124334.1855981-1-kirill.shutemov@linux.intel.com>
- <20240701124334.1855981-4-kirill.shutemov@linux.intel.com>
- <cd655676d5e81ca9b1de0a66f5f5c719ef816c89.camel@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GSpXPs/0gNBj/Fly22N2NzDs6UNsEbVPGFSSmwDKARP4w97Ng0U/BL/QwuCgtGukLnu1r7sGNmrnFDKCO48YPZvUy1wlzj6Kj4F9+cBgpLWBiC+zINfopQTL5HTDLbLL5OgYlEUFHFK1Ayil7nXpWvnsOw9r63ov40IPelLAJ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5024DC3277B;
+	Thu,  4 Jul 2024 13:44:26 +0000 (UTC)
+Date: Thu, 4 Jul 2024 14:44:23 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: muchun.song@linux.dev, will@kernel.org, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hugetlbfs: add MTE support
+Message-ID: <ZoanN7hkWDBjCTu3@arm.com>
+References: <20240625233717.2769975-1-yang@os.amperecomputing.com>
+ <ZoPz14fYSqVyvRTw@arm.com>
+ <7a4a60af-e471-484b-a4a3-ed31daaca30b@os.amperecomputing.com>
+ <546bf8d4-3680-4af3-8d4d-af2d7c192d04@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <cd655676d5e81ca9b1de0a66f5f5c719ef816c89.camel@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <546bf8d4-3680-4af3-8d4d-af2d7c192d04@os.amperecomputing.com>
 
-On Wed, Jul 03, 2024 at 11:06:21AM +0000, Huang, Kai wrote:
-> >  static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
-> >  {
-> > -	pgprot_t prot = PAGE_KERNEL_EXEC_NOENC;
-> > -	unsigned long vaddr, paddr;
-> > -	int result = -ENOMEM;
-> > -	p4d_t *p4d;
-> > -	pud_t *pud;
-> > -	pmd_t *pmd;
-> > -	pte_t *pte;
-> > +	struct x86_mapping_info info = {
-> > +		.alloc_pgt_page	= alloc_transition_pgt_page,
-> > +		.context	= image,
-> > +		.page_flag	= __PAGE_KERNEL_LARGE_EXEC,
-> > +		.kernpg_flag	= _KERNPG_TABLE_NOENC,
-> > +		.offset = __START_KERNEL_map - phys_base,
-> > +	};
-> > +	unsigned long mstart = PAGE_ALIGN_DOWN(__pa(relocate_kernel));
-> > +	unsigned long mend = mstart + PAGE_SIZE;
-> >  
-> > -	vaddr = (unsigned long)relocate_kernel;
-> > -	paddr = __pa(page_address(image->control_code_page)+PAGE_SIZE);
+On Tue, Jul 02, 2024 at 05:15:12PM -0700, Yang Shi wrote:
+> On 7/2/24 5:04 PM, Yang Shi wrote:
+> > On 7/2/24 5:34 AM, Catalin Marinas wrote:
+> > > Last time I checked, about a year ago, this was not sufficient. One
+> > > issue is that there's no arch_clear_hugetlb_flags() implemented by your
+> > > patch, leaving PG_arch_{2,3} set on a page. The other issue was that I
+> > > initially tried to do this only on the head page but this did not go
+> > > well with the folio_copy() -> copy_highpage() which expects the
+> > > PG_arch_* flags on each individual page. The alternative was for
+> > > arch_clear_hugetlb_flags() to iterate over all the pages in a folio.
+> > 
+> > Thanks for pointing this out. I did miss this point. I took a quick look
+> > at when the PG_ flags are set. IIUC, it is set by post_alloc_hook() for
+> > order-0 anonymous folio (clearing page and tags) and set_ptes() for
+> > others (just clear tags), for example, THP and hugetlb.
+> > 
+> > I can see THP does set the PG_mte_tagged flag for each sub pages. But it
+> > seems it does not do it for hugetlb if I read the code correctly. The
+> > call path is:
+> > 
+> > hugetlb_fault() ->
+> >   hugetlb_no_page->
+> >     set_huge_pte_at ->
+> >       __set_ptes() ->
+> >         __sync_cache_and_tags() ->
+> > 
+> > 
+> > The __set_ptes() is called in a loop:
+> > 
+> > if (!pte_present(pte)) {
+> >         for (i = 0; i < ncontig; i++, ptep++, addr += pgsize)
+> >             __set_ptes(mm, addr, ptep, pte, 1);
+> >         return;
+> >     }
+> > 
+> > The ncontig and pgsize are returned by num_contig_ptes(). For example,
+> > 2M hugetlb, ncontig is 1 and pgsize is 2M IIUC. So it means actually
+> > just the head page has PG_mte_tagged set. If so the copy_highpage() will
+> > just copy the old head page's flag to the new head page, and the tag.
+> > All the sub pages don't have PG_mte_tagged set.
+> > 
+> > Is it expected behavior? I'm supposed we need tags for every sub pages
+> > too, right?
 > 
-> Perhaps I am missing something, but this seems a functional change to me.
+> We should need something like the below to have tags and page flag set up
+> for each sub page:
 > 
-> IIUC the page after image->control_code_page is allocated when loading the
-> kexec kernel image.  It is a different page from the page where the
-> relocate_kernel code resides in.
+> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+> index 3f09ac73cce3..528164deef27 100644
+> --- a/arch/arm64/mm/hugetlbpage.c
+> +++ b/arch/arm64/mm/hugetlbpage.c
+> @@ -228,9 +228,12 @@ void set_huge_pte_at(struct mm_struct *mm, unsigned
+> long addr,
+>         int ncontig;
+>         unsigned long pfn, dpfn;
+>         pgprot_t hugeprot;
+> +       unsigned long nr = sz >> PAGE_SHIFT;
 > 
-> The old code maps relocate_kernel kernel VA to the page after the
-> control_code_page.  Later in machine_kexec(), the relocate_kernel code is
-> copied to that page so the mapping can work for that:
+>         ncontig = num_contig_ptes(sz, &pgsize);
 > 
-> 	control_page = page_address(image->control_code_page) + PAGE_SIZE;
-> 	__memcpy(control_page, relocate_kernel,
-> KEXEC_CONTROL_CODE_MAX_SIZE);
-> 
-> The new code in this patch, however, seems just maps the relocate_kernel VA
-> to the PA of the relocate_kernel, which should be different from the old
-> mapping.
+> +       __sync_cache_and_tags(pte, nr);
+> +
+>         if (!pte_present(pte)) {
+>                 for (i = 0; i < ncontig; i++, ptep++, addr += pgsize)
+>                         __set_ptes(mm, addr, ptep, pte, 1);
 
-Yes, original code maps at relocate_kernel() VA the page with copy of the
-relocate_kernel() in control_code_page. But it is safe to map original
-relocate_kernel() page there as well as it is not going to be overwritten
-until swap_pages(). We are not going to use original relocate_kernel()
-page after RET at the end of relocate_kernel().
+We only need this for the last loop when we have a present pte. I'd also
+avoid calling __set_ptes(...., 1) if we call the __sync_cache_and_tags()
+here already. Basically just unroll __set_ptes() in set_huge_pte_at()
+and call __set_pte() directly.
 
-Does it make any sense?
+It might be better to convert those page flag checks to only happen on
+the head page. My stashed changes from over a year ago (before we had
+more folio conversions) below. However, as I mentioned, I got stuck on
+folio_copy() which also does a cond_resched() between copy_highpage().
 
-I will try to explain it in the commit message in the next version.
+---------8<--------------------------------
+diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
+index f5bcb0dc6267..a84ad0e46f12 100644
+--- a/arch/arm64/kernel/mte.c
++++ b/arch/arm64/kernel/mte.c
+@@ -49,7 +49,9 @@ static void mte_sync_page_tags(struct page *page, pte_t old_pte,
+ 		return;
+ 
+ 	if (try_page_mte_tagging(page)) {
+-		mte_clear_page_tags(page_address(page));
++		unsigned long i, nr_pages = compound_nr(page);
++		for (i = 0; i < nr_pages; i++)
++			mte_clear_page_tags(page_address(page + i));
+ 		set_page_mte_tagged(page);
+ 	}
+ }
+@@ -57,22 +59,23 @@ static void mte_sync_page_tags(struct page *page, pte_t old_pte,
+ void mte_sync_tags(pte_t old_pte, pte_t pte)
+ {
+ 	struct page *page = pte_page(pte);
+-	long i, nr_pages = compound_nr(page);
+-	bool check_swap = nr_pages == 1;
++	bool check_swap = !PageCompound(page);
+ 	bool pte_is_tagged = pte_tagged(pte);
+ 
+ 	/* Early out if there's nothing to do */
+ 	if (!check_swap && !pte_is_tagged)
+ 		return;
+ 
++	/*
++	 * HugeTLB pages are always fully mapped, so only setting head page's
++	 * PG_mte_* flags is enough.
++	 */
++	if (PageHuge(page))
++		page = compound_head(page);
++
+ 	/* if PG_mte_tagged is set, tags have already been initialised */
+-	for (i = 0; i < nr_pages; i++, page++) {
+-		if (!page_mte_tagged(page)) {
+-			mte_sync_page_tags(page, old_pte, check_swap,
+-					   pte_is_tagged);
+-			set_page_mte_tagged(page);
+-		}
+-	}
++	if (!page_mte_tagged(page))
++		mte_sync_page_tags(page, old_pte, check_swap, pte_is_tagged);
+ 
+ 	/* ensure the tags are visible before the PTE is set */
+ 	smp_wmb();
+diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+index 5626ddb540ce..692198d8c0d2 100644
+--- a/arch/arm64/kvm/guest.c
++++ b/arch/arm64/kvm/guest.c
+@@ -1079,7 +1079,7 @@ long kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
+ 
+ 			/* uaccess failed, don't leave stale tags */
+ 			if (num_tags != MTE_GRANULES_PER_PAGE)
+-				mte_clear_page_tags(page);
++				mte_clear_page_tags(page_address(page));
+ 			set_page_mte_tagged(page);
+ 
+ 			kvm_release_pfn_dirty(pfn);
+diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+index 31d7fa4c7c14..b531b1d75cda 100644
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
+@@ -1173,11 +1173,10 @@ static void sanitise_mte_tags(struct kvm *kvm, kvm_pfn_t pfn,
+ 	if (!kvm_has_mte(kvm))
+ 		return;
+ 
+-	for (i = 0; i < nr_pages; i++, page++) {
+-		if (try_page_mte_tagging(page)) {
+-			mte_clear_page_tags(page_address(page));
+-			set_page_mte_tagged(page);
+-		}
++	if (try_page_mte_tagging(page)) {
++		for (i = 0; i < nr_pages; i++)
++			mte_clear_page_tags(page_address(page + i));
++		set_page_mte_tagged(page);
+ 	}
+ }
+ 
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Catalin
 
