@@ -1,111 +1,83 @@
-Return-Path: <linux-kernel+bounces-240625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838A592700F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:54:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E189A927012
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFA29B226AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:54:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DE5B28580D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67FD1A08D3;
-	Thu,  4 Jul 2024 06:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B711A0B11;
+	Thu,  4 Jul 2024 06:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jyRLZnwp"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MRBavK1J"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC461A0AE0
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 06:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126C31A0B10
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 06:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720076053; cv=none; b=R6yE3fODQFwVx03icxRZWBhY0rXkxxK1x7PYRXcMEwMu7PD9b3yctVV5xrC+KW6D6ArN7ZGqkcU8jjMDr3RUMuVLkUSQbZ/4oY9zMzbgokGlM9VFU8lRDNkzRvV+X7GsMi1+rCPF9SoY6sBLfM792u0F6gVkb3rUtDtKwVfQs/8=
+	t=1720076056; cv=none; b=MQflDSpTy2OV2NsngGai07x3O2q7+HL2ygHfoJxJqHYrRX944HmsCVKwCKofqnWCKFpqWuEFkeLDSErwYonmBv0fasAx+AWz8XjM1Z164VLG7nJfdclu06hv6de9BESsI1a40xurDdWjuKoLASaXe8g7k+6gXZHAJHGkKXv4WGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720076053; c=relaxed/simple;
-	bh=+acP1k0Nkw7OnsyYvGJb6tDt5gJNkeqeIL3W8k34Rd8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LKvXGuMsJ4Tg3rIoQfLivuVjYB+lGnw2/EkDp9ZjLjv0WW5md/kR0aycBi842lt8LnfZULvu5tRuXdybCNTIb8KVwlVMfuz/NuWVn8T89mKdW7vkFNB2pcr0rkVpNIS2HFn2HsjEYUDx+TY1/6Q+oyu+p9Tt8YpN9ZsYXYamzkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jyRLZnwp; arc=none smtp.client-ip=209.85.215.170
+	s=arc-20240116; t=1720076056; c=relaxed/simple;
+	bh=TZ8lUJ+EdtbvrUI0mVlJgpMBTSp9t3SM/Ev/g7RgE8Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BiEwq8bvzRMegkJBoJRwUR+v+PxTM9M7FPXz6roq8YQ8aKqDwIyMZwlEQtBN6xluugwVto0fNHl+xaBwFxnJVcIuQXi+TPGTFrKAB8JBH4ldhM0OmmlHqjBzvwbKoBddFL8vg4JEceUPFpZkK5C97AAxFf/ESZhyDyn4+mEtlqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MRBavK1J; arc=none smtp.client-ip=209.85.160.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6e7e23b42c3so163874a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 23:54:11 -0700 (PDT)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-25da8a19acaso196477fac.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 23:54:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720076051; x=1720680851; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OaHuA4w4nVtdao/fLWo0eQBQ8CqjNDauvvbmii8lIbw=;
-        b=jyRLZnwpjkOdnBn4D5akngZ4DnqIj/v8KX8z/18vBF55UFSm6P/gv/mRsr/qseExRG
-         kR5kbZqqoU+ps3+95XFjrhMutJvehOg3rSxqyF0dHxfBu8g+cVpbOVCtEthz6KophVLo
-         O2UQriFQ0iLASVKrqGZ8+XrZ8mPHHQs2XQlK7Y3KOMkeL+wmwwd0vTAYPucD0I5GCum4
-         v93ejIBc2cVAt3GtCuZLuiZVTcYBXuM+gX3qlwxHVrdoB1FyRpI0mT0Ii6JnrlILkNeS
-         zciZfHGq6n2jgx1otgOpQQ9bn0W1BImhojqf5UllQYLGEXaWBeN4RjzKjX6urGukrF4+
-         BWsw==
+        d=linaro.org; s=google; t=1720076054; x=1720680854; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=646R/nei8b6Pjif+wq+djuFAbamOolETBvkXxk7jQQ0=;
+        b=MRBavK1JZPakSgqoy4vTWxOX76XkauuQIrDUA5J5mELIglsym0dlX+aRPFKgkblf2J
+         c+13Zp1ZCOvsKmvkENeJRom3KhDFb+7KYetyjJkNH0PZPUysXXu1ImP6NbktVQW4/9EM
+         uttPyuH0dkQ0ccnuNHlBN3EIMJvZaqJWlKH6W+0e2qDq8aqndTpMeYO2Hc9qkSXSrkxo
+         9BwmVuxOEaKdGUJDWM8r9GvFPS9DCo0L6mPVn/zSDOYKf7shA0bJmqZrXix5aEwJSWF/
+         WlA8AlUsqru07w3GnlpkjUytmDE96obAKLB01zRPVlcR6Th9dPn3oSYsdres9imwqQOR
+         3WjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720076051; x=1720680851;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OaHuA4w4nVtdao/fLWo0eQBQ8CqjNDauvvbmii8lIbw=;
-        b=RTGmf9X5QsNCvBTiMLRvKvD9Yl6uzc/ncGW23QOGCdXFdMRHm0l0OLOXbhC3ytV0Pr
-         iLduQnQqNggmkzIhgRU0vMX3Om/Z6CDD95r/Mnr1ERIUpojdlbU4IrSskblk3QrD7Oov
-         CcxQkcDgPi5qEwm2pi5+AC3BmCoe01p6SvrniGkdH2wVXP5T5FjHO7amNERVuPnrKWPK
-         UC/IgIHaT/iisLhYnWKTFbKbrsgCrzj1GettgZF3jYCJVQkRKcl2Mjipc3HFODxH7yz6
-         vRrNHoyRMQpbNWBYBaMPi67iJ9XcLry9mtil2Xv7tePih6/NOckKpmnVBIB4Qia1Vktj
-         pe8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXw14zlnG5oC7QbN/Kh9YencnC+9QlsxX6bkWENduvQaZWSQ+keuuiMAn7Hb9sG2EAjPBgbYFuEzoFUerbgykF1hX3Y5JhwjBspzGIr
-X-Gm-Message-State: AOJu0YzuMMttECBwaMch05qJHbF9aQvYgM/qjg3Il+5127S4Wi7GdJKK
-	Paany0eRf59DHi/cI04rxDlQKl35bGdL2je/KQzp7lLKg9gHN+kxIMNA/GmK7fY=
-X-Google-Smtp-Source: AGHT+IFgHGJtYuDCHwF2hfQyaKB/hypmybNqgZV2mdKvHoDVjRkC1GVw1vaa0cTn5Yput+q/r8OwGA==
-X-Received: by 2002:a05:6a20:2594:b0:1be:f080:6d27 with SMTP id adf61e73a8af0-1c0cc742219mr739965637.22.1720076050677;
-        Wed, 03 Jul 2024 23:54:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720076054; x=1720680854;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=646R/nei8b6Pjif+wq+djuFAbamOolETBvkXxk7jQQ0=;
+        b=HtD99KV+QjlONeRz9byda5d/7Kg/9eUA9UXoddUkm/JClKfd0O58xGtxHmtJntZXza
+         znKHuvXAiVy4DjjBIfpiw9RB7pe+zOJOqhSCeg/Mq8xsCmgVPE3u8anwCPcLJeVazl5h
+         yT0wVAoGDmybBvCRS2PUWePbSomt5Q6OfTU3ngqmrpAetzCVIhLQQdFDnAaivTsgOzED
+         WbzEX0QZIIvdk6R2gq2aULRgpYZdTHun1UiNpr6GFUdA1biowVPJqkiKCah4ZcynBbMx
+         2bEY4ui451fCrCVEf68r985MOGPWu6ZiGjWnqs+l62ZvCJBqGURM2EXVDAJrmNR/YCJf
+         GlVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVe1QNiBJebLcyzawgPXUULYq2UzX+pCLxgmlJEt2mJNREr8fIJPwKTIj830PeCgDGLR404riDFiMI5l14exwGp1a9JW3gEj+HPIJSX
+X-Gm-Message-State: AOJu0YwZ//QFmIiO7aES3Pv9nGhhqd7tZFRZfBpQgA7XPCnUPVJVZAYt
+	dhCEarMhoX89YwEqtQWTTpytXsp1C+qR8g6rGNGzU27oEGNSpFgs/gz9m3nTvts=
+X-Google-Smtp-Source: AGHT+IGjYh1lTXxVRjoahxmOdu63Hv9FjAowD7DcCHLak2Or+s2oM/b9Q24N9BhJjSId5owDNnm2wQ==
+X-Received: by 2002:a05:6870:8a0d:b0:254:9ba7:488b with SMTP id 586e51a60fabf-25e2bed77a3mr690546fac.40.1720076054170;
+        Wed, 03 Jul 2024 23:54:14 -0700 (PDT)
 Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a989416sm711460a91.29.2024.07.03.23.54.09
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70802565b3asm11476391b3a.53.2024.07.03.23.54.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 23:54:10 -0700 (PDT)
+        Wed, 03 Jul 2024 23:54:13 -0700 (PDT)
 From: Viresh Kumar <viresh.kumar@linaro.org>
 To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Hector Martin <marcan@marcan.st>,
-	Huang Rui <ray.huang@amd.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Markus Mayer <mmayer@broadcom.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Sven Peter <sven@svenpeter.dev>,
-	Thierry Reding <thierry.reding@gmail.com>,
 	Viresh Kumar <viresh.kumar@linaro.org>
 Cc: linux-pm@vger.kernel.org,
 	Vincent Guittot <vincent.guittot@linaro.org>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-tegra@vger.kernel.org,
-	Lizhe <sensor1010@163.com>
-Subject: [PATCH 0/4] cpufreq: Make cpufreq_driver->exit() return void
-Date: Thu,  4 Jul 2024 12:23:51 +0530
-Message-Id: <cover.1720075640.git.viresh.kumar@linaro.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] cpufreq: nforce2: Remove empty exit() callback
+Date: Thu,  4 Jul 2024 12:23:52 +0530
+Message-Id: <5f62b0af67ca9ebe2f28a379d807b47a7f54a824.1720075640.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+In-Reply-To: <cover.1720075640.git.viresh.kumar@linaro.org>
+References: <cover.1720075640.git.viresh.kumar@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,58 +86,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make exit() return void, since it isn't used by the core.
+The exit() callback is optional, remove the empty one.
 
-Based on initial patches sent by Lizhe [1].
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/cpufreq/cpufreq-nforce2.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Rafael, I will take this through my tree for 6.11.
-
---
-Viresh
-
-[1] https://lore.kernel.org/all/20240410132132.3526-1-sensor1010@163.com/
-
-Lizhe (1):
-  cpufreq: Make cpufreq_driver->exit() return void
-
-Viresh Kumar (3):
-  cpufreq: nforce2: Remove empty exit() callback
-  cpufreq: loongson2: Remove empty exit() callback
-  cpufreq: pcc: Remove empty exit() callback
-
- drivers/cpufreq/acpi-cpufreq.c         |  4 +---
- drivers/cpufreq/amd-pstate.c           |  7 ++-----
- drivers/cpufreq/apple-soc-cpufreq.c    |  4 +---
- drivers/cpufreq/bmips-cpufreq.c        |  4 +---
- drivers/cpufreq/cppc_cpufreq.c         |  3 +--
- drivers/cpufreq/cpufreq-dt.c           |  3 +--
- drivers/cpufreq/cpufreq-nforce2.c      |  6 ------
- drivers/cpufreq/e_powersaver.c         |  3 +--
- drivers/cpufreq/intel_pstate.c         |  8 +++-----
- drivers/cpufreq/loongson2_cpufreq.c    |  6 ------
- drivers/cpufreq/mediatek-cpufreq-hw.c  |  4 +---
- drivers/cpufreq/mediatek-cpufreq.c     |  4 +---
- drivers/cpufreq/omap-cpufreq.c         |  3 +--
- drivers/cpufreq/pasemi-cpufreq.c       |  6 ++----
- drivers/cpufreq/pcc-cpufreq.c          |  6 ------
- drivers/cpufreq/powernow-k6.c          |  5 ++---
- drivers/cpufreq/powernow-k7.c          |  3 +--
- drivers/cpufreq/powernow-k8.c          |  6 ++----
- drivers/cpufreq/powernv-cpufreq.c      |  4 +---
- drivers/cpufreq/ppc_cbe_cpufreq.c      |  3 +--
- drivers/cpufreq/qcom-cpufreq-hw.c      |  4 +---
- drivers/cpufreq/qoriq-cpufreq.c        |  4 +---
- drivers/cpufreq/scmi-cpufreq.c         |  4 +---
- drivers/cpufreq/scpi-cpufreq.c         |  4 +---
- drivers/cpufreq/sh-cpufreq.c           |  4 +---
- drivers/cpufreq/sparc-us2e-cpufreq.c   |  3 +--
- drivers/cpufreq/sparc-us3-cpufreq.c    |  3 +--
- drivers/cpufreq/speedstep-centrino.c   | 10 +++-------
- drivers/cpufreq/tegra194-cpufreq.c     |  4 +---
- drivers/cpufreq/vexpress-spc-cpufreq.c |  5 ++---
- include/linux/cpufreq.h                |  2 +-
- 31 files changed, 37 insertions(+), 102 deletions(-)
-
+diff --git a/drivers/cpufreq/cpufreq-nforce2.c b/drivers/cpufreq/cpufreq-nforce2.c
+index f7a7bcf6f52e..fedad1081973 100644
+--- a/drivers/cpufreq/cpufreq-nforce2.c
++++ b/drivers/cpufreq/cpufreq-nforce2.c
+@@ -359,11 +359,6 @@ static int nforce2_cpu_init(struct cpufreq_policy *policy)
+ 	return 0;
+ }
+ 
+-static int nforce2_cpu_exit(struct cpufreq_policy *policy)
+-{
+-	return 0;
+-}
+-
+ static struct cpufreq_driver nforce2_driver = {
+ 	.name = "nforce2",
+ 	.flags = CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING,
+@@ -371,7 +366,6 @@ static struct cpufreq_driver nforce2_driver = {
+ 	.target = nforce2_target,
+ 	.get = nforce2_get,
+ 	.init = nforce2_cpu_init,
+-	.exit = nforce2_cpu_exit,
+ };
+ 
+ #ifdef MODULE
 -- 
 2.31.1.272.g89b43f80a514
 
