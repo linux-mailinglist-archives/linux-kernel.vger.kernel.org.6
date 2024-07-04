@@ -1,212 +1,219 @@
-Return-Path: <linux-kernel+bounces-240787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A5B9272BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A5E9272C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A886828C036
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:11:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938F728C5A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8051A2FDB;
-	Thu,  4 Jul 2024 09:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0370C1A4F0B;
+	Thu,  4 Jul 2024 09:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z7sJhPV4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lsozSrId"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AFA1649CC
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB4A748F;
+	Thu,  4 Jul 2024 09:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720084301; cv=none; b=Slsty+QA0BWsq/s7gY2tdIlkaZ/qflYchqjTNp7xMveMDcJXtqGA7u7I8Vty790L0U4FjMvQ22C6otPQ5O2lxta5OZBB4rf/p1opwIS2RtIbs4C4FJbhJPonMJqCIwBUYOVrtAem5ep4aBjYE4AdyRDHPoOpMHvzaIgd1nYLE4Q=
+	t=1720084377; cv=none; b=XpQAEc9TAIKMR/4zuRBo4vf2TD0CdojV1h7u1RPKDYX1ZtoG/zsq6ES0+cmNpqYdg1yesIEbw/WphfmT7EY6S85SoG1GmJBm0kBkE5/xtXOxso/efQlQf8Y+qSmBzicdzsjEW/7BAEuemxpzgfqQXpaPYXHgY3o5wM+7IIq76d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720084301; c=relaxed/simple;
-	bh=e67yf1Q42Zg2csADwuOu1a5oq5PDAevc5N87FgyiAgM=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=BIT7HENbFnqZ4eqZB25gSD3NoQlC1DWVAXqyXnpOhKfFg76w2yLvdNX1r4ec/R9zPqRgb6tA1VKpT5Kousn6GGBHhrOiprNTLVELjWYt9GAlEKEQ4XPKIJxwAR8GV9/L4VXD8QkPHV32Re9hi53y0E9ildvkTLtXA2Uaus660/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z7sJhPV4; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720084299; x=1751620299;
-  h=date:from:to:cc:subject:message-id;
-  bh=e67yf1Q42Zg2csADwuOu1a5oq5PDAevc5N87FgyiAgM=;
-  b=Z7sJhPV4aLdUo+RqgYe1rxV4p7gRaKLAr/teqjJTxTIY11zSD2jYIMQA
-   9Dk3711y62hG2gDjxB9YIAojrd2mHGuadCx9xE+d0hMVzS+Hml8xepTVj
-   hfVDTyRfaaRu9rwagk1jWTZco37YwAFPpvGSxXbfUizXDLUYL0q9s1ooi
-   1oUAhPknMP338a9LAeK3kBuyRNmpXyOfuDXAN4EDxGAyQb/vnrLbskx82
-   aMm0uQ+b1czv4Yi/ERqy6dxHBr+eV690oqByGvAROScsHPY718nz7F6mD
-   7OtPf4F+5UaWoGgyyZsDjA8K0zqxKiIYS3oTMd7SEIGFNJbISnOt2YCfJ
-   g==;
-X-CSE-ConnectionGUID: vrNOyk7bQneJg3u1Q1GDBA==
-X-CSE-MsgGUID: 9YkPqiXERCeGV+S712DQ3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="21116774"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="21116774"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 02:11:39 -0700
-X-CSE-ConnectionGUID: LDXpDLCGT6qMElAmXIPs1g==
-X-CSE-MsgGUID: 2wHfLI6UR1OAI+fWQCCTDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="47191427"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 04 Jul 2024 02:11:39 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sPIV5-000QnY-1y;
-	Thu, 04 Jul 2024 09:11:35 +0000
-Date: Thu, 04 Jul 2024 17:11:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- fbfd4bcefc65041ce0c6352eb5019e73150c0bf1
-Message-ID: <202407041725.C9F8WSRB-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1720084377; c=relaxed/simple;
+	bh=OYLPfV+8NtDWkziPQDKG29MfY5TjzbBDOQq/oZSSnmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r+XVZuniDVZ0x8bS+0gU3e13DAonu+r6oC/aUljvpSoyyoUZj/hwLKbzPVEWB+HXPiy9rpa+jr6mcn9RomzgymRNz5TVV0w5cTLMzUsOvjd22XoFdpNNcrOSHdAVy3ErS6/RhmIdSfVcsBy9gt8ymHrcnmDGmQMfKZ/CmVuL4Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lsozSrId; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4644Hvpl028769;
+	Thu, 4 Jul 2024 09:12:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jG0Ib8Vn317l2flbKFBoO2J1QolULszJacV0GDH3cRw=; b=lsozSrId1LkKQpOe
+	wUOv51LWOdGuFHeocdddqO+vnwh7+jzRKxljoktjzA1D2AhQI7x9TvsKP0s1HKFD
+	XS92xqa9rnBa5M/bpbwp3B+WcinILEZEpVmOXoqMoHXzDqiMPkKaKONhW4hmAAiA
+	1oCvCrMt7/iBC6H4cUyM4DuSFL0NwuGEzQYsFsedUztKnoLqTzlDwxCUTXptfjiE
+	P/I2z8QITw1ROlUFA8ZbpES7xGyBLseVMUof6i26SEyuv8Gckutwc5NUmJ5F58aA
+	6ODt7qQsrlLg2rRponLkAkvSzwUUGLrAfah1k4YAeZIKe7WUBhzFrYL40jCyc6MJ
+	YUd2zg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404kctn7vs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Jul 2024 09:12:35 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4649CYxb013234
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 4 Jul 2024 09:12:34 GMT
+Received: from [10.214.66.253] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 4 Jul 2024
+ 02:12:30 -0700
+Message-ID: <6ad2e62d-8672-4b64-848a-6634d7a9410e@quicinc.com>
+Date: Thu, 4 Jul 2024 14:42:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 4/6] iommu/arm-smmu: add ACTLR data and support for
+ SM8550
+To: Will Deacon <will@kernel.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, <robdclark@gmail.com>,
+        <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@ziepe.ca>,
+        <jsnitsel@redhat.com>, <robh@kernel.org>,
+        <krzysztof.kozlowski@linaro.org>, <quic_c_gdjako@quicinc.com>,
+        <konrad.dybcio@linaro.org>, <iommu@lists.linux.dev>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240628140435.1652374-1-quic_bibekkum@quicinc.com>
+ <20240628140435.1652374-5-quic_bibekkum@quicinc.com>
+ <ueuhu5xfzp2rnuxzeqqd6cho476adidztgx7oq2tbiufauv6h4@obblpxvqwnno>
+ <6da77880-2ba4-4b02-8b3e-cb0fbd0a9daf@quicinc.com>
+ <20240703130209.GA5750@willie-the-truck>
+Content-Language: en-US
+From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+In-Reply-To: <20240703130209.GA5750@willie-the-truck>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: e2Sxmnfg0-J0NMOvYal-1fw0fJpnlbN3
+X-Proofpoint-ORIG-GUID: e2Sxmnfg0-J0NMOvYal-1fw0fJpnlbN3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-04_05,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ bulkscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
+ suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407040063
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: fbfd4bcefc65041ce0c6352eb5019e73150c0bf1  Merge branch into tip/master: 'x86/vmware'
 
-elapsed time: 1446m
 
-configs tested: 120
-configs skipped: 2
+On 7/3/2024 6:32 PM, Will Deacon wrote:
+> On Wed, Jul 03, 2024 at 05:45:23PM +0530, Bibek Kumar Patro wrote:
+>>
+>>
+>> On 7/2/2024 12:04 AM, Dmitry Baryshkov wrote:
+>>> On Fri, Jun 28, 2024 at 07:34:33PM GMT, Bibek Kumar Patro wrote:
+>>>> Add ACTLR data table for SM8550 along with support for
+>>>> same including SM8550 specific implementation operations.
+>>>>
+>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+>>>> ---
+>>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 89 ++++++++++++++++++++++
+>>>>    1 file changed, 89 insertions(+)
+>>>>
+>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> index 77c9abffe07d..b4521471ffe9 100644
+>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> @@ -23,6 +23,85 @@
+>>>>
+>>>>    #define CPRE			(1 << 1)
+>>>>    #define CMTLB			(1 << 0)
+>>>> +#define PREFETCH_SHIFT		8
+>>>> +#define PREFETCH_DEFAULT	0
+>>>> +#define PREFETCH_SHALLOW	(1 << PREFETCH_SHIFT)
+>>>> +#define PREFETCH_MODERATE	(2 << PREFETCH_SHIFT)
+>>>> +#define PREFETCH_DEEP		(3 << PREFETCH_SHIFT)
+>>>> +
+>>>> +static const struct actlr_config sm8550_apps_actlr_cfg[] = {
+>>>> +	{ 0x18a0, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+>>>> +	{ 0x18e0, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+>>>> +	{ 0x0800, 0x0020, PREFETCH_DEFAULT | CMTLB },
+>>>> +	{ 0x1800, 0x00c0, PREFETCH_DEFAULT | CMTLB },
+>>>> +	{ 0x1820, 0x0000, PREFETCH_DEFAULT | CMTLB },
+>>>> +	{ 0x1860, 0x0000, PREFETCH_DEFAULT | CMTLB },
+>>>> +	{ 0x0c01, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+>>>
+>>> - Please keep the list sorted
+>>
+>> Sure Dmitry, will sort this list in reverse-christmas-tree order
+>> in next iteration. Thanks for this input.
+>>
+>>> - Please comment, which devices use these settings.
+>>
+>> As discussed in earlier versions of this patch, these table entries
+>> are kind of just blind values for SMMU device, where SMMU do not have
+>> idea on which SID belong to which client. During probe time when the
+>> clients' Stream-ID has corresponding ACTLR entry then the driver would
+>> set value in register.
+> 
+> I'm still firmly of the opinion that this stuff needs a higher-level
+> description in the device-tree and should not be hard-coded in the driver
+> like this. It's not just a list of opaque values; it describes
+> SoC-specific topological information that should not be this rigid.
+> 
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+As per my understanding since ACTLR register is an implementation
+defined register,
+so I think the placement can also depend on factor of how these
+registers are used?
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                               defconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                   randconfig-001-20240704   gcc-13.2.0
-arc                   randconfig-002-20240704   gcc-13.2.0
-arc                        vdk_hs38_defconfig   gcc-13.2.0
-arm                               allnoconfig   clang-19
-arm                             mxs_defconfig   clang-19
-arm                         orion5x_defconfig   clang-19
-arm                          pxa168_defconfig   clang-19
-arm                   randconfig-001-20240704   gcc-13.2.0
-arm                   randconfig-002-20240704   gcc-13.2.0
-arm                   randconfig-003-20240704   clang-19
-arm                   randconfig-004-20240704   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                 randconfig-001-20240704   clang-19
-arm64                 randconfig-002-20240704   gcc-13.2.0
-arm64                 randconfig-003-20240704   clang-19
-arm64                 randconfig-004-20240704   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240704   gcc-13.2.0
-csky                  randconfig-002-20240704   gcc-13.2.0
-hexagon                          alldefconfig   clang-15
-hexagon                           allnoconfig   clang-19
-hexagon               randconfig-001-20240704   clang-19
-hexagon               randconfig-002-20240704   clang-19
-i386         buildonly-randconfig-001-20240704   clang-18
-i386         buildonly-randconfig-002-20240704   gcc-13
-i386         buildonly-randconfig-003-20240704   gcc-13
-i386         buildonly-randconfig-004-20240704   gcc-12
-i386         buildonly-randconfig-005-20240704   gcc-12
-i386         buildonly-randconfig-006-20240704   gcc-12
-i386                  randconfig-001-20240704   clang-18
-i386                  randconfig-002-20240704   gcc-13
-i386                  randconfig-003-20240704   clang-18
-i386                  randconfig-004-20240704   gcc-13
-i386                  randconfig-005-20240704   clang-18
-i386                  randconfig-006-20240704   gcc-12
-i386                  randconfig-011-20240704   gcc-13
-i386                  randconfig-012-20240704   clang-18
-i386                  randconfig-013-20240704   clang-18
-i386                  randconfig-014-20240704   clang-18
-i386                  randconfig-015-20240704   clang-18
-i386                  randconfig-016-20240704   clang-18
-loongarch                        allmodconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch             randconfig-001-20240704   gcc-13.2.0
-loongarch             randconfig-002-20240704   gcc-13.2.0
-m68k                             allmodconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                         db1xxx_defconfig   clang-19
-mips                           ip28_defconfig   gcc-13.2.0
-nios2                         3c120_defconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                 randconfig-001-20240704   gcc-13.2.0
-nios2                 randconfig-002-20240704   gcc-13.2.0
-openrisc                          allnoconfig   gcc-13.2.0
-openrisc                            defconfig   gcc-13.2.0
-openrisc                       virt_defconfig   gcc-13.2.0
-parisc                            allnoconfig   gcc-13.2.0
-parisc                              defconfig   gcc-13.2.0
-parisc                randconfig-001-20240704   gcc-13.2.0
-parisc                randconfig-002-20240704   gcc-13.2.0
-powerpc                           allnoconfig   gcc-13.2.0
-powerpc                     ksi8560_defconfig   gcc-13.2.0
-powerpc               randconfig-001-20240704   gcc-13.2.0
-powerpc               randconfig-002-20240704   gcc-13.2.0
-powerpc               randconfig-003-20240704   clang-19
-powerpc                    sam440ep_defconfig   gcc-13.2.0
-powerpc                     sequoia_defconfig   clang-19
-powerpc64             randconfig-001-20240704   gcc-13.2.0
-powerpc64             randconfig-002-20240704   gcc-13.2.0
-powerpc64             randconfig-003-20240704   gcc-13.2.0
-riscv                             allnoconfig   gcc-13.2.0
-riscv                               defconfig   clang-19
-riscv                 randconfig-001-20240704   clang-19
-riscv                 randconfig-002-20240704   clang-16
-s390                             allmodconfig   clang-19
-s390                              allnoconfig   clang-19
-s390                             allyesconfig   gcc-13.2.0
-s390                                defconfig   clang-19
-s390                  randconfig-001-20240704   clang-19
-s390                  randconfig-002-20240704   gcc-13.2.0
-sh                               allmodconfig   gcc-13.2.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               allyesconfig   gcc-13.2.0
-sh                                  defconfig   gcc-13.2.0
-sh                    randconfig-001-20240704   gcc-13.2.0
-sh                    randconfig-002-20240704   gcc-13.2.0
-sparc                            allmodconfig   gcc-13.2.0
-sparc64                             defconfig   gcc-13.2.0
-sparc64               randconfig-001-20240704   gcc-13.2.0
-sparc64               randconfig-002-20240704   gcc-13.2.0
-um                                allnoconfig   clang-17
-um                                  defconfig   clang-19
-um                             i386_defconfig   gcc-13
-um                    randconfig-001-20240704   gcc-10
-um                    randconfig-002-20240704   gcc-12
-x86_64                            allnoconfig   clang-18
-x86_64       buildonly-randconfig-001-20240704   clang-18
-x86_64       buildonly-randconfig-002-20240704   gcc-12
-x86_64       buildonly-randconfig-003-20240704   clang-18
-x86_64       buildonly-randconfig-004-20240704   gcc-13
-x86_64       buildonly-randconfig-005-20240704   gcc-12
-x86_64       buildonly-randconfig-006-20240704   gcc-13
-x86_64                              defconfig   gcc-13
-x86_64                randconfig-001-20240704   clang-18
-x86_64                randconfig-002-20240704   gcc-11
-x86_64                randconfig-003-20240704   clang-18
-x86_64                randconfig-004-20240704   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                  nommu_kc705_defconfig   gcc-13.2.0
-xtensa                randconfig-001-20240704   gcc-13.2.0
-xtensa                randconfig-002-20240704   gcc-13.2.0
+For Qualcomm SoCs, it stores prefetch values for each client, improving
+performance without defining hardware design.
+Even without setting this value, clients on these Stream-IDs would still
+function, albeit with reduced performance.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+The SteamID/Mask pair in first two columns <which is a SoC topology> is
+only used as reference to find preferred prefetch setting for the
+corresponding client on this StreamID
+
+To refer initial discussion and Robin's thoughts on device-tree approach
+for this property which we proposed as a part of RFC:
+https://lore.kernel.org/all/a01e7e60-6ead-4a9e-ba90-22a8a6bbd03f@quicinc.com/
+
+" On 9/18/2023 4:49 PM, Robin Murphy wrote: "
+ >
+ > At the very least this would need to be in a implementation-specific
+ > backend, since everything about ACTLR is implementation-defined; there
+ > could be bits in there that the driver needs to manage itself and
+ > clients have absolutely no business overriding (e.g. the MMU-500 errata
+ > workarounds). The generic driver can't know what's valid, nor what the
+ > consequences are of not being able to satisfy a particular setting. Then
+ > there's still the question of what if two clients ask for different
+ > settings but want to attach to the same context?
+ >
+ > It's also questionable whether this would belong in DT at all, since it
+ > has a bit of a smell of software policv about it.
+ >
+ > If it could be
+ > sufficiently justified then it would need a proper binding proposal, and
+ > "write this opaque value into this register" type properties are
+ > generally not approved of.
+ >
+ > Thanks,
+ > Robin.
+ >
+
+So as per the initial discussions it felt right to have this data stored
+inside driver.
+One potential downside is that the driver file could become cluttered
+with this data, but this can be mitigated by storing the table in a
+separate file if necessary.
+
+For use cases or vendor that implement the ACTLR register differently,
+deeply involving SoC topology values or defining hardware design
+(something similar to Stream Matching Register),then it might be more
+appropriate to place it in the devicetree?
+
+This is just my understanding. I’d appreciate your further thoughts on 
+this - Will, Robin, Dmitry, Rob.
+
+Thanks & regards,
+Bibek
+
+> Will
 
