@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-241010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 572F49275B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:08:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70479275BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBD88B21895
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:08:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E5711C21B89
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC95B1AE0B5;
-	Thu,  4 Jul 2024 12:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36A81AE0A6;
+	Thu,  4 Jul 2024 12:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+4gmk4F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="eIC8EBds"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ADC1AB503;
-	Thu,  4 Jul 2024 12:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1453519409E
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 12:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720094874; cv=none; b=PDxSILXmcT9QlaSH/GA0L2YXffH4YS1gwKjrqjXFBktEdIZeN+AvdChz9vjxy6vCRkVSu9KYCLbVwTUcXB0Y8ZM1SPF+E8uYzay8dtTCeWhlkO5x4Mc0NHIxW9rWm9dSAmjWupebxYZ7xDwYgms54m3mcqFCOweKVvotYxkWfZ0=
+	t=1720095034; cv=none; b=cZCnpuNHA/hNisYNO7qis35U0VL4bfVP3Xd5PRed/tHl2cnB1zUPngQeyeKyw3LRhdiOQt7tGuvlgjuhOswzzTRIF9tJ+MjkZZ/AQCpIzHXhXBkIDMeB8vbWZcOYt2jTT4LrFvsbXvYWJ37I14wdQMYqSGKf7hDMtzJl+x2eA1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720094874; c=relaxed/simple;
-	bh=8yRea6Ea5Kn0J7oYIT188SB3HJQbtEuhkGaOzAcbyzo=;
+	s=arc-20240116; t=1720095034; c=relaxed/simple;
+	bh=BAf5VAA3Uw6QdJNR9ZGFb03WBNfn2L5SWcXmeMhKAQQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gPD5LSxvPjBjz/vhxMQ5SGVmR80lQ7CWA5CzMIo8UaZC92RBPB6mr1pxli37uWd1Wqr5zX8n8FditoJxxlSXqRcqpwZRHZbHSDIN3GbZ3e065P3toysDPyTyMyduAPc4r/lqC2PC1UlCYNpUHfl3cS4gV04N7WdWS9k7WtMMrd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+4gmk4F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B425CC3277B;
-	Thu,  4 Jul 2024 12:07:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720094873;
-	bh=8yRea6Ea5Kn0J7oYIT188SB3HJQbtEuhkGaOzAcbyzo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E+4gmk4Fu92J+JbPQujstTnxK9d6gu2myvGtIOgYgeSa0c3IunEI3PNuySZY8mwex
-	 coG1zJH7OJDCEB6wybXnLMa82hHgiWRtiUPONJak2ILKI+54dd69eIRMh6Kfogd8Xs
-	 I12L3Rtb7XQZ27yvogiQzlkK7PVlTod4kqZEc0o1ZWkB4+pL9mtEhi3dUQ5Ie5YUwe
-	 KQfqqlGspDm39kHsr2+tZdtaPcvTpbqakmay9RaUmijEwfN5HW5Iceuwka86ORq5S/
-	 yp8x7By8EjtEQCZPI6Ovmht3q56gtftauU6GsVMRwtcv8oCkHYYGChHqHHxg63WEzW
-	 ncOa25cXwpFLA==
-Message-ID: <ed68c600-aca8-4773-94e3-92347e79877c@kernel.org>
-Date: Thu, 4 Jul 2024 14:07:49 +0200
+	 In-Reply-To:Content-Type; b=KQrE1LuhoZxwRE3HRcm4CNIpVRCpMaigx0BKhPsHv2DKFtLHRUdnY/lF/LRK19wxR+9zgA/I+z41WMFGSubkLGsY7efRxTsxsN5ZT4Pup/lRysINvfVsjJNxjbRc27eTXMM+ajKf4ClZzPNLr89zaFCJUK4IWbkdj81JYm9NngI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=eIC8EBds; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wvGPA+uFp9q5GPv2Hy9Yn5IXdEOa9ACphERR99unxkQ=; b=eIC8EBds9Za8+6toLlsI+Gt55E
+	APf4QxvuAmD3cMe+4yGrUMvrfgfahXE3mTCRdiXgpJ4Q6V9avv0SwxqS/Qs0zISIWNxUznJ/wXhgV
+	AUQM8xayQYpRnoCncMkl8YSgzEMDIHZiGOyII3UWHt9pjG6yd+yvr84UxgIsnkE3B2CO/MFQaJc8b
+	nmXoc993GOPfHGimBy94ff1q6xlSmE+VLiJ3bjs6RsvWa4kKl5GHCdf2WrgE16sqhx8xkQOF1Eatq
+	BB8az0u3KNDNN6Mi5+aWZ9SfOXdhzvFvi55nBzIxCmt+v+kGYOmvZTEYrmIbh96TRcVOvhjhl4RjR
+	04hECBjA==;
+Received: from [187.36.213.55] (helo=[192.168.1.212])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1sPLHv-00B5Zl-Si; Thu, 04 Jul 2024 14:10:12 +0200
+Message-ID: <bdebd2b3-d1e3-4d01-b6da-ec369aa8b0b8@igalia.com>
+Date: Thu, 4 Jul 2024 09:10:04 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,92 +55,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nfc: pn533: Add poll mod list filling check
-To: Aleksandr Mishin <amishin@t-argos.ru>,
- Samuel Ortiz <sameo@linux.intel.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-References: <20240702093924.12092-1-amishin@t-argos.ru>
- <d146fb2c-50bb-4339-b330-155f22879446@kernel.org>
- <4899faf4-14cc-4e68-86e5-8745b38e5ab1@t-argos.ru>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] drm/vkms: Remove event from vkms_output
+To: Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, open list <linux-kernel@vger.kernel.org>
+References: <20240703160458.1303872-1-lyude@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4899faf4-14cc-4e68-86e5-8745b38e5ab1@t-argos.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Autocrypt: addr=mcanal@igalia.com; keydata=
+ xjMEZIsaeRYJKwYBBAHaRw8BAQdAGU6aY8oojw61KS5rGGMrlcilFqR6p6ID45IZ6ovX0h3N
+ H01haXJhIENhbmFsIDxtY2FuYWxAaWdhbGlhLmNvbT7CjwQTFggANxYhBDMCqFtIvFKVRJZQ
+ hDSPnHLaGFVuBQJkixp5BQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQNI+cctoYVW5u
+ GAEAwpaC5rI3wD8zqETKwGVoXd6+AbmGfZuVD40xepy7z/8BAM5w95/oyPsHUqOsg/xUTlNp
+ rlbhA+WWoaOXA3XgR+wCzjgEZIsaeRIKKwYBBAGXVQEFAQEHQGoOK0jgh0IorMAacx6WUUWb
+ s3RLiJYWUU6iNrk5wWUbAwEIB8J+BBgWCAAmFiEEMwKoW0i8UpVEllCENI+cctoYVW4FAmSL
+ GnkFCQWjmoACGwwACgkQNI+cctoYVW6cqwD/Q9R98msvkhgRvi18fzUPFDwwogn+F+gQJJ6o
+ pwpgFkAA/R2zOfla3IT6G3SBoV5ucdpdCpnIXFpQLbmfHK7dXsAC
+In-Reply-To: <20240703160458.1303872-1-lyude@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 03/07/2024 09:26, Aleksandr Mishin wrote:
+On 7/3/24 13:04, Lyude Paul wrote:
+> While working on rvkms, I noticed that there's no code that actually uses
+> the drm_pending_vblank_event that's embedded in vkms_output. So, just drop
+> the member from the struct.
 > 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+
+Reviewed-by: Maíra Canal <mcanal@igalia.com>
+
+Feel free to apply it to drm-misc/drm-misc-next! Otherwise, I'll apply
+it over the weekend.
+
+Best Regards,
+- Maíra
+
+> ---
+>   drivers/gpu/drm/vkms/vkms_drv.h | 1 -
+>   1 file changed, 1 deletion(-)
 > 
-> On 03.07.2024 8:02, Krzysztof Kozlowski wrote:
->> On 02/07/2024 11:39, Aleksandr Mishin wrote:
->>> In case of im_protocols value is 1 and tm_protocols value is 0 this
->>
->> Which im protocol has value 1 in the mask?
->>
->> The pn533_poll_create_mod_list() handles all possible masks, so your
->> case is just not possible to happen.
-> 
-> Exactly. pn533_poll_create_mod_list() handles all possible specified 
-> masks. No im protocol has value 1 in the mask. In case of 'im_protocol' 
-
-Which cannot happen.
-
-> parameter has value of 1, no mod will be added. So dev->poll_mod_count 
-> will remain 0.
-
-Which cannot happen.
-
-> I assume 'im_protocol' parameter is "external" to this driver, it comes 
-> from outside and can contain any value, so driver has to be able to 
-> protect itself from incorrect values.
-
-Did you read what I wrote? It cannot happen.
-
-Best regards,
-Krzysztof
-
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 8f5710debb1eb..5e46ea5b96dcc 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -103,7 +103,6 @@ struct vkms_output {
+>   	struct drm_writeback_connector wb_connector;
+>   	struct hrtimer vblank_hrtimer;
+>   	ktime_t period_ns;
+> -	struct drm_pending_vblank_event *event;
+>   	/* ordered wq for composer_work */
+>   	struct workqueue_struct *composer_workq;
+>   	/* protects concurrent access to composer */
 
