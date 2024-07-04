@@ -1,278 +1,106 @@
-Return-Path: <linux-kernel+bounces-240619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9886A926FE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:47:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B736F927002
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 259D91F242B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:47:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70CAB284C76
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4286C1A08CB;
-	Thu,  4 Jul 2024 06:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DBF1A0B0C;
+	Thu,  4 Jul 2024 06:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSJtHY7V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LUcVL8qX"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48914DF51;
-	Thu,  4 Jul 2024 06:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F101BC4E
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 06:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720075647; cv=none; b=VXnZ3RJBW5421vmRz+b6T/PAeJZ7I23JiVZ/orV1KOIKP27jtQjOHq7lfBK7g49zPGR59KjKw15yJv4st3KoSCulasFjBGWtYsijzQhWOOjiaaC+JBYzJQgdIKdD1mmzzLQvobKn6JlPm2MHRBIRxg6z286lTKXPidLyRiiD+dA=
+	t=1720075944; cv=none; b=tSeGikvqAkdnyi9f+kvzmwrzr7Ri/DlRndcTxtvnEb2FRzjnBX6vL1NdkpPNM4PyXNL0whITLd9ewgaWBSVmUudXNml+9yX5QCN4xHy0rONIRwmmfxIC/RYqtx7EglSY5nCZSjZq8q3C71rnkOUubw7vqncAn5b1sY2pWbD5oGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720075647; c=relaxed/simple;
-	bh=PiomyUmGl6plnWsEmsQogpCVgMK71XeKNayFAg2gpfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fgSjEd0N2RqYPpYsM8SFcIMMRBPh2QVgVTczoDoUJb8zBPrlxKU69EjBcwwsBXVgitmKhlCNmsHx0Hqu6Yjy1ccVWNhF3B9O2kUduzDnIlnsSUHdQTstkJKnCZlQXFMcBNOv1LqanWR2xFsYwXa0mTKO9qhakZnJPIjoXffNMhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LSJtHY7V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E149C3277B;
-	Thu,  4 Jul 2024 06:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720075646;
-	bh=PiomyUmGl6plnWsEmsQogpCVgMK71XeKNayFAg2gpfM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LSJtHY7Vm2Byz+C+t2S4O3kkYEkZoRt6A6azq+XmEnx8NG70IAEdTjjsK+Vi2ggif
-	 Kdqem3ajvdy9dLkPwS74P7Tp24aZvB2MV1+r/Wpfl0BdD5epTznHvh1fIH2uUs2aHZ
-	 x/AlX2zwEDvX8OMoE/1Fa4CphaQogY34uaj75kPZ/8+KzfHsG8ux2ByqD9FDMjLBrX
-	 yiWCoW/JUg6h7gtsUNrhOmwq4bqDnkDC/7Hm/4fCgM+2LfGZBShidOTVYerifwril/
-	 JYPpT1eC3dbjkaJT6csZBd2uyGnDcaqOuKbakhqpHxIEBtwlPc0U0B3hyGYU6KaNMN
-	 x82SHRdEBvyMA==
-Message-ID: <e73a86fc-b2ff-4007-b1e2-17063338bd88@kernel.org>
-Date: Thu, 4 Jul 2024 08:47:19 +0200
+	s=arc-20240116; t=1720075944; c=relaxed/simple;
+	bh=HJDaGmoijA8IivDlw4ITokq/M9xuWc6aBVPFDUB0iYg=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=uGkEGRPkvfFymF0RQzMMuq/bM+dQoni7KdsfotzOiCJQ02UV/U9hHadcYILfGRuoA3XlL6H4dRA0y4+1ANeNAt5mgiNjMj2rLfUlvaDGFVvDlTZNgw8MxwIPXWSdpVFT9l5Z+2ohYr425uEIGvB8FlPsPGESnyr94g0S9jd9iHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LUcVL8qX; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fa244db0b2so1998895ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 23:52:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720075942; x=1720680742; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qb7qEMakmFij5zhdLHflF693Oy2d+rmi2NgGIv7uThI=;
+        b=LUcVL8qXzpTX+kcwSueVLz+Vc22VkxONUFrQo+qpSKw1+wXdksjaNdg7RasC+XNbPn
+         QOuW8fc8k3/p6ZSQSvVqnt3JKLRZJ6bzB+AnNxzrsX7g0y6yPYshCb+MwQPIPey1saDP
+         C7y9Mj/te7VUHvLjT6EBtyo08qXyT0Dzbq31S8i828Zyx3y4nvWnPowfOql7Zx6O72y/
+         +mNfCEfG6KGvBUMMn8+ibyYOfoglUfNVA50J3twrOA9K+VOuRHnYkDXShP/v3WwaPR98
+         PJBOA0rkNKC9VdqnnS41hwynjtkKPXlwIVyCpKXakaqK8mXHNuU5lsRkTbT6gXvuSrdc
+         uJ8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720075942; x=1720680742;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qb7qEMakmFij5zhdLHflF693Oy2d+rmi2NgGIv7uThI=;
+        b=ASKKlZL3tiugydjtK7MP9zio4oaZgsPX/d+yGg43iTCLyLRTb3M9ZW8a7I4MM2A8Mr
+         thDq3WEC+W2bP895qz0SOemLiJ8u6j0NpbTYVldOARBUWc4i1DKVBrgvBtWoeDjIrczR
+         AOm/Jdn+A3p2B1Dymwe4j+56WkEAOfHd9dyRvfrRyzycq8ux2yLDN7hPCIN2mL962QA+
+         ocymqnDxdKP3JqUKdu9SIKmDF5wPLFgvH/EyGTiZdCGy4rEI0A6FrHad6XLSeGfg3/FY
+         g1PAhFjrKSNlmUx4xq9c1FZd4oF8/cW3iy4MtInPFDX6Ca16Ox0Oz0wjr/994fFgZuTd
+         RYUw==
+X-Gm-Message-State: AOJu0Yy3eQLe5u8yUU+Gsq+3q7u+MPc+/QShxFLzNKXsvWQQQ9bop+dv
+	k4Zz8IpEPHvtkFlb+k5PYDCay11Ki0piDh0PEH4vXRU+ADHpXOrB
+X-Google-Smtp-Source: AGHT+IFGhuYncYUd5lCY/Rs8aSDcoWkdWxNKb66fdLNPpmPLF28xg8Jzo48BCnbCswA2XTGI3/LRCA==
+X-Received: by 2002:a17:902:f690:b0:1f7:1b42:431d with SMTP id d9443c01a7336-1fb33e7a014mr6436945ad.30.1720075941786;
+        Wed, 03 Jul 2024 23:52:21 -0700 (PDT)
+Received: from MSCND1355B05.fareast.nevint.com ([117.128.58.94])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb1cad5b4dsm22615155ad.105.2024.07.03.23.52.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 23:52:21 -0700 (PDT)
+From: Zqiang <qiang.zhang1211@gmail.com>
+To: paulmck@kernel.org,
+	imran.f.khan@oracle.com,
+	tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] smp: Fix missed destroy_work_on_stack() calls in smp_call_on_cpu()
+Date: Thu,  4 Jul 2024 14:52:13 +0800
+Message-Id: <20240704065213.13559-1-qiang.zhang1211@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: sprd,sc9860-clk: convert to YAML
-To: Stanislav Jakubek <stano.jakubek@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Baolin Wang <baolin.wang7@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <ZoVS1GAC28Zpzok4@standask-GA-A55M-S2HP>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZoVS1GAC28Zpzok4@standask-GA-A55M-S2HP>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 03/07/2024 15:32, Stanislav Jakubek wrote:
-> Convert the Spreadtrum SC9860 clock bindings to DT schema.
-> 
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
-> ---
->  .../bindings/clock/sprd,sc9860-clk.txt        | 63 -------------
->  .../bindings/clock/sprd,sc9860-clk.yaml       | 90 +++++++++++++++++++
->  2 files changed, 90 insertions(+), 63 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt
-> deleted file mode 100644
-> index aaaf02ca2a6a..000000000000
-> --- a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt
-> +++ /dev/null
-> @@ -1,63 +0,0 @@
-> -Spreadtrum SC9860 Clock Binding
-> -------------------------
-> -
-> -Required properties:
-> -- compatible: should contain the following compatible strings:
-> -	- "sprd,sc9860-pmu-gate"
-> -	- "sprd,sc9860-pll"
-> -	- "sprd,sc9860-ap-clk"
-> -	- "sprd,sc9860-aon-prediv"
-> -	- "sprd,sc9860-apahb-gate"
-> -	- "sprd,sc9860-aon-gate"
-> -	- "sprd,sc9860-aonsecure-clk"
-> -	- "sprd,sc9860-agcp-gate"
-> -	- "sprd,sc9860-gpu-clk"
-> -	- "sprd,sc9860-vsp-clk"
-> -	- "sprd,sc9860-vsp-gate"
-> -	- "sprd,sc9860-cam-clk"
-> -	- "sprd,sc9860-cam-gate"
-> -	- "sprd,sc9860-disp-clk"
-> -	- "sprd,sc9860-disp-gate"
-> -	- "sprd,sc9860-apapb-gate"
-> -
-> -- #clock-cells: must be 1
-> -
-> -- clocks : Should be the input parent clock(s) phandle for the clock, this
-> -	   property here just simply shows which clock group the clocks'
-> -	   parents are in, since each clk node would represent many clocks
-> -	   which are defined in the driver.  The detailed dependency
-> -	   relationship (i.e. how many parents and which are the parents)
-> -	   are implemented in driver code.
-> -
-> -Optional properties:
-> -
-> -- reg:	Contain the registers base address and length. It must be configured
-> -	only if no 'sprd,syscon' under the node.
-> -
-> -- sprd,syscon: phandle to the syscon which is in the same address area with
-> -	       the clock, and so we can get regmap for the clocks from the
-> -	       syscon device.
-> -
-> -Example:
-> -
-> -	pmu_gate: pmu-gate {
-> -		compatible = "sprd,sc9860-pmu-gate";
-> -		sprd,syscon = <&pmu_regs>;
-> -		clocks = <&ext_26m>;
-> -		#clock-cells = <1>;
-> -	};
-> -
-> -	pll: pll {
-> -		compatible = "sprd,sc9860-pll";
-> -		sprd,syscon = <&ana_regs>;
-> -		clocks = <&pmu_gate 0>;
-> -		#clock-cells = <1>;
-> -	};
-> -
-> -	ap_clk: clock-controller@20000000 {
-> -		compatible = "sprd,sc9860-ap-clk";
-> -		reg = <0 0x20000000 0 0x400>;
-> -		clocks = <&ext_26m>, <&pll 0>,
-> -			 <&pmu_gate 0>;
-> -		#clock-cells = <1>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
-> new file mode 100644
-> index 000000000000..21ed023a928c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
-> @@ -0,0 +1,90 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/sprd,sc9860-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Spreadtrum SC9860 clock
-> +
-> +maintainers:
-> +  - Orson Zhai <orsonzhai@gmail.com>
-> +  - Baolin Wang <baolin.wang7@gmail.com>
-> +  - Chunyan Zhang <zhang.lyra@gmail.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - sprd,sc9860-agcp-gate
-> +      - sprd,sc9860-aonsecure-clk
-> +      - sprd,sc9860-aon-gate
-> +      - sprd,sc9860-aon-prediv
-> +      - sprd,sc9860-apahb-gate
-> +      - sprd,sc9860-apapb-gate
-> +      - sprd,sc9860-ap-clk
-> +      - sprd,sc9860-cam-clk
-> +      - sprd,sc9860-cam-gate
-> +      - sprd,sc9860-disp-clk
-> +      - sprd,sc9860-disp-gate
-> +      - sprd,sc9860-gpu-clk
-> +      - sprd,sc9860-pll
-> +      - sprd,sc9860-pmu-gate
-> +      - sprd,sc9860-vsp-clk
-> +      - sprd,sc9860-vsp-gate
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 3
-> +    description:
-> +      Should be the input parent clock(s) phandle for the clock, this
-> +      property just simply shows which clock group the clocks' parents
-> +      are in, since each clk node would represent many clocks which are
-> +      defined in the driver. The detailed dependency relationship
-> +      (i.e. how many parents and which are the parents) are implemented
-> +      in driver code.
+For builts with CONFIG_DEBUG_OBJECTS_WORK=y kernels, the sscs.work
+defined using INIT_WORK_ONSTACK() will be initialized by
+debug_object_init_on_stack() for debug check in __init_work().
+This commit therefore invoke destroy_work_on_stack() to free
+sscs.work debug objects before smp_call_on_cpu() returns.
 
-Description is redundant and not accurate. Which clocks are needed
-cannot be defined by the driver, but by binding.
+Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+---
+ kernel/smp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-This should be constrained per variant and each item explicitly listed.
-
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  sprd,syscon:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      phandle to the syscon which is in the same address area with the
-> +      clock, and so we can get regmap for the clocks from the syscon device
-> +
-> +oneOf:
-> +  - required:
-> +      - reg
-> +  - required:
-> +      - sprd,syscon
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - '#clock-cells'
-
-allOf:if:then:, instead above oneOf, so you narrow which variant has reg
-and which uses regmap.
-
-
-Best regards,
-Krzysztof
+diff --git a/kernel/smp.c b/kernel/smp.c
+index cc13e73a887c..61f10f982341 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -1135,6 +1135,7 @@ int smp_call_on_cpu(unsigned int cpu, int (*func)(void *), void *par, bool phys)
+ 
+ 	queue_work_on(cpu, system_wq, &sscs.work);
+ 	wait_for_completion(&sscs.done);
++	destroy_work_on_stack(&sscs.work);
+ 
+ 	return sscs.ret;
+ }
+-- 
+2.17.1
 
 
