@@ -1,136 +1,189 @@
-Return-Path: <linux-kernel+bounces-240634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A57992702E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:02:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F50892702B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82F3B1C22ECB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:02:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85902B2387A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF9B1A0AE1;
-	Thu,  4 Jul 2024 07:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BA71A0AF5;
+	Thu,  4 Jul 2024 07:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NT1XRMFH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gpg3nJdH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8508613E024;
-	Thu,  4 Jul 2024 07:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C3E146A70;
+	Thu,  4 Jul 2024 07:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720076548; cv=none; b=Ihk8awMGpkin+XVP8gVvhMCQw97dxKd5+DVOjcbUyEwhnLlHN73suC+j+tqsLmV6Ig+aPuZ6krDjpMfJAYs8PUBggMsoxb1/LKIHJtIfaHxTpG2Zogd2aj01B/oBn8fJb5+x9NCmr3Vd7foNdvHVmX5bvAfleMQOFTxRvN22N4w=
+	t=1720076525; cv=none; b=p5daZf8R8cbWIH48rkVueGwNHOU7RPV4WM/tBsrfKeVLW3U2PiUYjylUdd3TiGzgeG5h8/yj55GPG9TMhnUwH7aAlySZ98hx09bskWpCmYPR3H3LbjjwDYEDzk3q9DmKqWWGjUYNbyRF2eE1IHFSD/RyQxj+uqsk8KAnzHj//DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720076548; c=relaxed/simple;
-	bh=HTB1sePIud3c4rcPIx03gGOAyz7Lyhr/bfLJjJkcDk8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XOWDjr6t5Ku5atnDuHZ4XsccIVCKMqGOs+pODX7dRfqW5vuD2oh79n+tzyWeXuI+2wWw+3Gh0TaAKrNSiA7RxkyqBfFf7H/40yg3YzhgyHiFfIzDHXRWV/LDSvlY9ojmwownR+2LDj7sDvmNgbwQk28m+mxO4FdREWpNjeQ/dA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NT1XRMFH; arc=none smtp.client-ip=192.198.163.13
+	s=arc-20240116; t=1720076525; c=relaxed/simple;
+	bh=nyWNxViiwALsERwQ9nojUZ5qQSyykv/r8vPqJF9JqL0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=k1p7bI3JU0QNZYTRtWstyC/4WMfHPR3AS52uWRZGysfABOL072ZsgRutDLjdEJtchyoqzvuqdSoLH4i64QS0XvqQnMQwpMEwHKwFiARiPtEoIlUcmJe9ZOcsLp2eHRpsuu8gRj2hZ/UqMR2lDY+JdMvUZtg9rFkn8+fmQf7Gbgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gpg3nJdH; arc=none smtp.client-ip=192.198.163.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720076546; x=1751612546;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=HTB1sePIud3c4rcPIx03gGOAyz7Lyhr/bfLJjJkcDk8=;
-  b=NT1XRMFHxJSJj1NM83HIbuPPsU4XyfcVuLD0l5BRhfFmcN9/taMuuSJu
-   xQmvqYcDgJDtx8kdcoI1GYb/se+rZp53IFyZFJQGdrnawDRKfTgG/NmpY
-   Mu9nQfsImFAzT2wzZqje+/8xDW9Y9WUmuarIHbyQbl1Mrfd+x2rcWWRW+
-   QgoqSw6+3Omk2FSb5Shgq/3m/SuQnRdfeV8Y1A5e8L4iLh3LbG1MrU/AP
-   znZm5fiUBjs2SVxgXHzm1u+0rmOvuBKuji0WE/eXxHtbCbnq6clovZhr1
-   D7zqx2INdpk20DFtnyY4939oz68UM/C1PHP/czlSlI4sxJfR+Osl4UYB0
-   g==;
-X-CSE-ConnectionGUID: 54n5I2dLSeChtKtZl4U9oQ==
-X-CSE-MsgGUID: ogsdIr4jSwu1ehTWkgAEQg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="20241796"
+  t=1720076524; x=1751612524;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=nyWNxViiwALsERwQ9nojUZ5qQSyykv/r8vPqJF9JqL0=;
+  b=Gpg3nJdHBADn6TwuAFlqFW0f0zbbiobbUILs8k7qRxX7ZCQ0zlv8/pgX
+   njO5WqEMDgtnGo1esloc8evjI4rnZ2ND0B1msKYiFqAKsH0/E/p3Ecl3I
+   W14PT9fAIYZN0RvW5ilDEH86dvgUWZZwzivvR2lzEl47bIbuVfqk8Gkdh
+   pNN0vtlbgEHFxcXEn/7LIu1kuxWup4mHUYm46LpUXsotswspiFajLYUk7
+   K/C9TkZYK3THlPJtBoSSx0UeF6qs9sZeN6RewQjCMSZ7iHrwL8RmwRcEA
+   6XM9EZgXbhBAOgJm8PxWFjbqen3oDgRQ3BiISQmX/q6YK46C87BRMvtPD
+   w==;
+X-CSE-ConnectionGUID: QJkerVuXSrmNtsSqEzxGXA==
+X-CSE-MsgGUID: K8FJGRouTt26hwHEMOxVaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="27953962"
 X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="20241796"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 00:02:26 -0700
-X-CSE-ConnectionGUID: bq0nrWTxSw60uPvQdaXmhw==
-X-CSE-MsgGUID: Ym0juRbYSuOgUTjJN9j4VA==
+   d="scan'208";a="27953962"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 00:02:03 -0700
+X-CSE-ConnectionGUID: 0iFJ5pprS0a1eYhTS3kPPg==
+X-CSE-MsgGUID: WflacbwXTkKXRJH6ZAxpLQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="46518039"
-Received: from oandoniu-mobl3.ger.corp.intel.com (HELO [10.245.245.56]) ([10.245.245.56])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 00:02:23 -0700
-Message-ID: <8de22d252014aa52e631eb1bcf8e85d50e96c29e.camel@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the drm
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Michal Wajdeczko <michal.wajdeczko@intel.com>, Stephen Rothwell
-	 <sfr@canb.auug.org.au>, Dave Airlie <airlied@redhat.com>, Rodrigo Vivi
-	 <rodrigo.vivi@intel.com>
-Cc: Mark Brown <broonie@kernel.org>, DRI <dri-devel@lists.freedesktop.org>, 
-	Piotr =?ISO-8859-1?Q?Pi=F3rkowski?=
-	 <piotr.piorkowski@intel.com>, 
-	buildfailureaftermergeofthedrmtree@sirena.org.uk, Linux Kernel Mailing List
-	 <linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	 <linux-next@vger.kernel.org>
-Date: Thu, 04 Jul 2024 09:02:21 +0200
-In-Reply-To: <10c3d9b8-bf5b-42c1-9c87-36828f5c995c@intel.com>
-References: <Zn7s611xnutUFxR0@sirena.org.uk>
-	 <20240703123643.5b4dc83f@canb.auug.org.au>
-	 <10c3d9b8-bf5b-42c1-9c87-36828f5c995c@intel.com>
-Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
- keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+   d="scan'208";a="51462679"
+Received: from ipu5-build.bj.intel.com (HELO [10.238.232.136]) ([10.238.232.136])
+  by orviesa005.jf.intel.com with ESMTP; 04 Jul 2024 00:02:00 -0700
+Subject: Re: [PATCH v1 3/3] staging: media: ipu3: Stop streaming in inverse
+ order of starting
+To: Max Staudt <mstaudt@chromium.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ricardo Ribalda <ribalda@chromium.org>
+References: <20240620145820.3910239-1-mstaudt@chromium.org>
+ <20240620145820.3910239-4-mstaudt@chromium.org>
+From: Bingbu Cao <bingbu.cao@linux.intel.com>
+Message-ID: <e6ff8ad5-933d-fbbb-0c4b-ae19c65e8439@linux.intel.com>
+Date: Thu, 4 Jul 2024 15:03:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240620145820.3910239-4-mstaudt@chromium.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-Hi
+Max,
 
-On Wed, 2024-07-03 at 13:46 +0200, Michal Wajdeczko wrote:
-> + Rodrigo for help
->=20
-> On 03.07.2024 04:36, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > On Fri, 28 Jun 2024 18:03:39 +0100 Mark Brown <broonie@kernel.org>
-> > wrote:
-> > >=20
-> > > After merging the drm tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > >=20
-> > > /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c: In
-> > > function 'pf_get_threshold':
-> > > /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c:1788:2
-> > > 7: error: unused variable 'xe' [-Werror=3Dunused-variable]
-> > > =C2=A01788 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct x=
-e_device *xe =3D gt_to_xe(gt);
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^~
-> > > cc1: all warnings being treated as errors
-> > >=20
-> > > Caused by commit
-> > >=20
-> > > =C2=A0 629df234bfe73d ("drm/xe/pf: Introduce functions to configure V=
-F
-> > > thresholds")
-> > >=20
-> > > I have used the tree from 20240627 instead.
-> >=20
-> > I am still seeing that build failure.
-> >=20
+Thanks for your patch.
 
-I see that git for an unknown reason introduces this line as an
-automatic resolve merging drm-next into the drm-tip build. Later there
-was a manual fixup for this after merging another branch into drm-tip
-but that's too late.
+On 6/20/24 10:45 PM, Max Staudt wrote:
+> imgu_vb2_stop_streaming() did not order shutdown items in the inverse
+> order and count of what imgu_vb2_start_streaming() does. Consequently,
+> v6.7's new WARN_ON in call_s_stream() started screaming because it was
+> called multiple times on the entire pipe, yet it should only be called
+> when the pipe is interrupted by any first node being taken offline.
+> 
+> This reorders streamoff to be the inverse of streamon, and uses
+> analogous conditions to decide when and how often to call additional
+> teardown functions.
+> 
+> v4l2_subdev_call(s_stream, 0) remains outside the streaming_lock,
+> analogously to imgu_vb2_start_streaming().
+> 
+> Signed-off-by: Max Staudt <mstaudt@chromium.org>
+> ---
+>  drivers/staging/media/ipu3/ipu3-v4l2.c | 36 +++++++++++++++++++++-----
+>  1 file changed, 29 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/staging/media/ipu3/ipu3-v4l2.c b/drivers/staging/media/ipu3/ipu3-v4l2.c
+> index 3ff390b04e1a..e7aee7e3db5b 100644
+> --- a/drivers/staging/media/ipu3/ipu3-v4l2.c
+> +++ b/drivers/staging/media/ipu3/ipu3-v4l2.c
+> @@ -535,29 +535,51 @@ static void imgu_vb2_stop_streaming(struct vb2_queue *vq)
+>  		container_of(vq, struct imgu_video_device, vbq);
+>  	int r;
+>  	unsigned int pipe;
+> +	bool stop_streaming = false;
+>  
+> +	/* Verify that the node had been setup with imgu_v4l2_node_setup() */
+>  	WARN_ON(!node->enabled);
+>  
+>  	pipe = node->pipe;
+>  	dev_dbg(dev, "Try to stream off node [%u][%u]", pipe, node->id);
+> -	imgu_pipe = &imgu->imgu_pipe[pipe];
+> -	r = v4l2_subdev_call(&imgu_pipe->imgu_sd.subdev, video, s_stream, 0);
+> -	if (r)
+> -		dev_err(&imgu->pci_dev->dev,
+> -			"failed to stop subdev streaming\n");
 
-So I've added a manual fixup to drm-rerere to remove this line just
-after the merge that somehow introduces it.
+I guess the subdev streams API can help us on this, but current fix
+looks fine for me.
 
-/Thomas
+>  
+> +	/*
+> +	 * When the first node of a streaming setup is stopped, the entire
+> +	 * pipeline needs to stop before individual nodes are disabled.
+> +	 * Perform the inverse of the initial setup.
+> +	 *
+> +	 * Part 1 - s_stream on the entire pipeline
 
+stream on or off? it is a little confusing.
+
+> +	 */
+>  	mutex_lock(&imgu->streaming_lock);
+> -	/* Was this the first node with streaming disabled? */
+>  	if (imgu->streaming) {
+>  		/* Yes, really stop streaming now */
+>  		dev_dbg(dev, "IMGU streaming is ready to stop");
+>  		r = imgu_s_stream(imgu, false);
+>  		if (!r)
+>  			imgu->streaming = false;
+> +		stop_streaming = true;
+>  	}
+> -
+>  	mutex_unlock(&imgu->streaming_lock);
+>  
+> +	/* Part 2 - s_stream on subdevs
+> +	 *
+> +	 * If we call s_stream multiple times, Linux v6.7's call_s_stream()
+> +	 * WARNs and aborts. Thus, disable all pipes at once, and only once.
+> +	 */
+> +	if (stop_streaming) {
+
+> +		for_each_set_bit(pipe, imgu->css.enabled_pipes,
+> +				 IMGU_MAX_PIPE_NUM) {
+> +			imgu_pipe = &imgu->imgu_pipe[pipe];
+> +
+> +			r = v4l2_subdev_call(&imgu_pipe->imgu_sd.subdev,
+> +					     video, s_stream, 0);
+> +			if (r)
+> +				dev_err(&imgu->pci_dev->dev,
+> +					"failed to stop subdev streaming\n");
+> +		}
+
+Is it possible to move this loop into 'if (imgu->streaming)' above?
+
+> +	}
+> +
+> +	/* Part 3 - individual node teardown */
+>  	video_device_pipeline_stop(&node->vdev);
+>  	imgu_return_all_buffers(imgu, node, VB2_BUF_STATE_ERROR);
+>  }
+> 
+
+-- 
+Best regards,
+Bingbu Cao
 
