@@ -1,402 +1,156 @@
-Return-Path: <linux-kernel+bounces-240465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2612926E07
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 05:26:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD95926E09
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 05:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EDCA28230A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:26:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91F5B1C21470
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFD618B04;
-	Thu,  4 Jul 2024 03:26:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6AC28689;
+	Thu,  4 Jul 2024 03:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N+EjkFUc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D9D1755B
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 03:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FD1224D7
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 03:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720063565; cv=none; b=hb36pKJ+QmBZgAfE2P9oD9OUy8TD7Nq4avjBs00aRr0I5huCtw7ZGe+g3x1roI6MAKAD0jCdUaB5PUjUKDHGlGornIs5BBNDgB6SFyxr2uOtzlOtqQlZqhDOl9fBilB/PXTyYErSM1ul5IB1YdJj87CoCtKmH8jw6/U1B4S6/LI=
+	t=1720063723; cv=none; b=rG1m1RQ7xywLhJfz31HgKpGSfONAUa0WF0r+MIwb8AwZwaGtoB2SlHUH+v87duPoFU1CyN4KHmFvEginbXh8tYqVNruySVEtKbHkMunpZfEp9XYNgOTy0lGCay+cbW/SuSZRR3fFLtIga7fPyE3tHRxE3226M22rkmXWO5J9tKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720063565; c=relaxed/simple;
-	bh=rZWE/a5wzzh4UvLAAeHM7Ntb13X1xTbcOsCzpAWtm7M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=A4xZcW7pLg5RywJQtoFS171m64Tt4INd8v8Da5n7bUHU+1E3Bb75mQGQ81K1x1eN5c5llrNB8x1f8kC9FwaRyJ6ScqY4lfG54KdC+nIECWzWELB2SpGfs9sYTGCdlbqskE+qaimkRpARjCXNdOhfG1gHlv34Bx4umDwRbb/stew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f4cff1d3d5so25816439f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 20:26:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720063562; x=1720668362;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aQM4p9Bvj0v57VZI37qpRfnyIDPtMuy0bXDyf6c8fmc=;
-        b=aQiykAYpNilVxPO/YqgaK6kV897HedhB/6gdbCb4HjA0/HtG8URUK5E07SI391F+zK
-         SyqKFh0UUORe5wTg8DMlskwsllXAumEvFReWvJ18bSUAc0Q89q3D5rmHgTldZOEexeOK
-         NWOEbvHuCnU/xfQXmdBIHpsSrVWXXRZaKpUgXRvgS64X5YXz+24IkKAk3WFi5YiQGBA0
-         N6x0Y6NrjSUFEFHuZRk6DZ3TB7PZNUPTgQXmJCykUARES3zV9Il18PX2kstL6ZBiLP3/
-         hVamQV7lISKHiESCg9AYGiuuiXiGjcMm07a6LmoaYvjdbSgca6sAmMRG4F4W7Z5MRxht
-         nCuw==
-X-Gm-Message-State: AOJu0YxNPoyUV9jCB9+l3BN4JeEdaP8S8He70m6mMWps6JmZaN/uAxzs
-	8MXzAlug7BDq/qwVORj/fsLipU/qsHP9RK6+nlNjtaNtipn+YoR3wWx24+L9Vjl6q52HZT3fR0x
-	GjPaGlSNIeBxeqCA1cqfbiEq6HaG0ucG7OZVJbZ/7ID846FxP0notDS4=
-X-Google-Smtp-Source: AGHT+IEqHTfkK2O6I68cFfXH2vkPk8g7vem54r4VmqR6e5tx0M0ourBPbnFmKhHXr5idAda1cnRA+rU1TBZj7xTd5lh7nHFA8sfk
+	s=arc-20240116; t=1720063723; c=relaxed/simple;
+	bh=5fXgIYSCBeWnApcXJyPKIVtz9r/QMZkA/T0lGQu2Wdc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Rvhh8xhMGGylg6c3t7xk7SeD4eRU6yGcShEtcckl7JgumL4HZIKbtVZgAAKgu0mNJ3JhTvCokunkYo9awBJvXzmwSadA1YMXQvypx3axumeUSXcGLudbcu+lBzD384HeBY0cwywyEH2Cp/iPDV0krXKKHTagrFnOIRUWiOYmhVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=N+EjkFUc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7BCEC3277B;
+	Thu,  4 Jul 2024 03:28:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1720063723;
+	bh=5fXgIYSCBeWnApcXJyPKIVtz9r/QMZkA/T0lGQu2Wdc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=N+EjkFUc93iGPNLFFxaHJuGjS0cjYqXzi7rjARm20vooFV3VijeSswcXpG3J8QPKq
+	 DJFXv85U6dAlm2eUgRQmmzm4BDt/lfg6t9N/TCrgwAyRkKlF9JF8Ho/gPORQmpZezs
+	 6Rmj2SvbwNPQXS5ROyRZqs9bHWFon8imyjemTGO4=
+Date: Wed, 3 Jul 2024 20:28:42 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Hugh Dickins <hughd@google.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, Nhat Pham
+ <nphamcs@gmail.com>, Yang Shi <shy828301@gmail.com>, Zi Yan
+ <ziy@nvidia.com>, Barry Song <baohua@kernel.org>, Kefeng Wang
+ <wangkefeng.wang@huawei.com>, David Hildenbrand <david@redhat.com>, Matthew
+ Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [PATCH hotfix] mm: fix crashes from deferred split racing folio
+ migration
+Message-Id: <20240703202842.e9e50fbeba1ea0cd3a4605f1@linux-foundation.org>
+In-Reply-To: <825653a7-a4d4-89f2-278f-4b18f8f8da5d@google.com>
+References: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com>
+	<20240703193536.78bce768a9330da3a361ca8a@linux-foundation.org>
+	<825653a7-a4d4-89f2-278f-4b18f8f8da5d@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8419:b0:4b9:eee6:40d with SMTP id
- 8926c6da1cb9f-4bf63752e9bmr23428173.4.1720063562515; Wed, 03 Jul 2024
- 20:26:02 -0700 (PDT)
-Date: Wed, 03 Jul 2024 20:26:02 -0700
-In-Reply-To: <20240704024831.1805587-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a296af061c6381fc@google.com>
-Subject: Re: [syzbot] [kernel?] WARNING in follow_pte
-From: syzbot <syzbot+35a4414f6e247f515443@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Wed, 3 Jul 2024 20:21:22 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
 
-syzbot tried to test the proposed patch but the build/boot failed:
+> On Wed, 3 Jul 2024, Andrew Morton wrote:
+> > On Tue, 2 Jul 2024 00:40:55 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
+> > 
+> > > Even on 6.10-rc6, I've been seeing elusive "Bad page state"s (often on
+> > > flags when freeing, yet the flags shown are not bad: PG_locked had been
+> > > set and cleared??), and VM_BUG_ON_PAGE(page_ref_count(page) == 0)s from
+> > > deferred_split_scan()'s folio_put(), and a variety of other BUG and WARN
+> > > symptoms implying double free by deferred split and large folio migration.
+> > > 
+> > > 6.7 commit 9bcef5973e31 ("mm: memcg: fix split queue list crash when large
+> > > folio migration") was right to fix the memcg-dependent locking broken in
+> > > 85ce2c517ade ("memcontrol: only transfer the memcg data for migration"),
+> > > but missed a subtlety of deferred_split_scan(): it moves folios to its own
+> > > local list to work on them without split_queue_lock, during which time
+> > > folio->_deferred_list is not empty, but even the "right" lock does nothing
+> > > to secure the folio and the list it is on.
+> > > 
+> > > Fortunately, deferred_split_scan() is careful to use folio_try_get(): so
+> > > folio_migrate_mapping() can avoid the race by folio_undo_large_rmappable()
+> > > while the old folio's reference count is temporarily frozen to 0 - adding
+> > > such a freeze in the !mapping case too (originally, folio lock and
+> > > unmapping and no swap cache left an anon folio unreachable, so no freezing
+> > > was needed there: but the deferred split queue offers a way to reach it).
+> > 
+> > There's a conflict when applying Kefeng's "mm: refactor
+> > folio_undo_large_rmappable()"
+> > (https://lkml.kernel.org/r/20240521130315.46072-1-wangkefeng.wang@huawei.com)
+> > on top of this hotfix.
+> 
+> Yes, anticipated in my "below the --- line" comments:
+> sorry for giving you this nuisance.
 
-442 004144454141424e
-ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 282b2e2fdf37342d 280bbfbf23243324 26312033fc040f18 1317140d080b0412
-ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 343133bffc121104 1214041204110814 100411bffc040f18 1317140d080b0412
-ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4141414141414141 4141414141414141 4141414141414141 4141414141414141
-ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a
-ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 2020202020202020 2020202020202020 2020202020202020 2020202020202020
-info registers vcpu 2
+np
 
-CPU#2
-RAX=3D0000000000025c7c RBX=3D0000000000000002 RCX=3Dffffffff8ae75899 RDX=3D=
-ffffed100d646fde
-RSI=3Dffffffff8b8ff580 RDI=3Dffffffff8166387c RBP=3Dffffed1002fd9000 RSP=3D=
-ffffc90000197e08
-R8 =3D0000000000000000 R9 =3Dffffed100d646fdd R10=3Dffff88806b237eeb R11=3D=
-0000000000000000
-R12=3D0000000000000002 R13=3Dffff888017ec8000 R14=3Dffffffff8fe44110 R15=3D=
-0000000000000000
-RIP=3Dffffffff8ae76c8f RFL=3D00000246 [---Z-P-] CPL=3D0 II=3D0 A20=3D1 SMM=
-=3D0 HLT=3D1
-ES =3D0000 0000000000000000 ffffffff 00c00000
-CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
-SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
-DS =3D0000 0000000000000000 ffffffff 00c00000
-FS =3D0000 0000000000000000 ffffffff 00c00000
-GS =3D0000 ffff88806b200000 ffffffff 00c00000
-LDT=3D0000 0000000000000000 ffffffff 00c00000
-TR =3D0040 fffffe0000091000 00004087 00008b00 DPL=3D0 TSS64-busy
-GDT=3D     fffffe000008f000 0000007f
-IDT=3D     fffffe0000000000 00000fff
-CR0=3D80050033 CR2=3D00007f8cbb1a9b50 CR3=3D000000002a590000 CR4=3D00350ef0
-DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
-0000000000000000=20
-DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
-EFER=3D0000000000000d01
-FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
-FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
-FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
-FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
-FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
-Opmask00=3D000000001000c0d0 Opmask01=3D0000000080000000 Opmask02=3D00000000=
-0000ffdf Opmask03=3D0000000000000000
-Opmask04=3D00000000ffdfffff Opmask05=3D00000000004007ff Opmask06=3D00000000=
-07ffe7ff Opmask07=3D0000000000000000
-ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 000055de380b4540 000055de3808da00
-ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f
-ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000ff0000000000 00000000ff000000
-ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 00000000ff000000
-ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 3130323a30696368 2f306963682f6874 6f6f7465756c622f 6c6175747269762f
-ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 6f6f742079617272 6120656c75722079 7261726f706d6574 002a3f005b3f2a00
-ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4a4a51055c445757 440540495057055c 5744574a55484051 000f1a005b1a0f00
-ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000041 0000000000000000 000000003130323a 306963682f306963
-ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 3031313837333033 0000000000000021 0000000000007374
-ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 68303e3b3a38253b 3a253e3a6e68303b 21383b657a687438 2739243c3b243b27
-ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 69305f474f5b647c 6930382432273f39 7b27697a787c7a30 23333a3a38263342
-ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4f45454d41490054 454e5f4449692e6e 6524004452414f42 4e4f5f454d414e5f
-ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4445414d41450000 454e4c4449452e41 002400444c414442 004144454141424e
-ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 282b2e2fdf37342d 280bbfbf23243324 26312033fc040f18 1317140d080b0412
-ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 343133bffc121104 1214041204110814 100411bffc040f18 1317140d080b0412
-ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4141414141414141 4141414141414141 4141414141414141 4141414141414141
-ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a
-ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 2020202020202020 2020202020202020 2020202020202020 2020202020202020
-info registers vcpu 3
+> And perhaps a conflict with another one of Kefeng's, which deletes a hunk
+> in mm/migrate.c just above where I add a hunk: and that's indeed how it
+> should end up, hunk deleted by Kefeng, hunk added by me.
 
-CPU#3
-RAX=3D00000000000277bc RBX=3D0000000000000003 RCX=3Dffffffff8ae75899 RDX=3D=
-ffffed100d666fde
-RSI=3Dffffffff8b8ff580 RDI=3Dffffffff8166387c RBP=3Dffffed1002fd9488 RSP=3D=
-ffffc900001a7e08
-R8 =3D0000000000000000 R9 =3Dffffed100d666fdd R10=3Dffff88806b337eeb R11=3D=
-0000000000000000
-R12=3D0000000000000003 R13=3Dffff888017eca440 R14=3Dffffffff8fe44110 R15=3D=
-0000000000000000
-RIP=3Dffffffff8ae76c8f RFL=3D00000246 [---Z-P-] CPL=3D0 II=3D0 A20=3D1 SMM=
-=3D0 HLT=3D1
-ES =3D0000 0000000000000000 ffffffff 00c00000
-CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
-SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
-DS =3D0000 0000000000000000 ffffffff 00c00000
-FS =3D0000 0000000000000000 ffffffff 00c00000
-GS =3D0000 ffff88806b300000 ffffffff 00c00000
-LDT=3D0000 0000000000000000 ffffffff 00c00000
-TR =3D0040 fffffe00000d8000 00004087 00008b00 DPL=3D0 TSS64-busy
-GDT=3D     fffffe00000d6000 0000007f
-IDT=3D     fffffe0000000000 00000fff
-CR0=3D80050033 CR2=3D00007f94bd905a6c CR3=3D000000002a590000 CR4=3D00350ef0
-DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
-0000000000000000=20
-DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
-EFER=3D0000000000000d01
-FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
-FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
-FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
-FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
-FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
-Opmask00=3D000000001000c0d0 Opmask01=3D0000000080000000 Opmask02=3D00000000=
-0000ffdf Opmask03=3D0000000000000000
-Opmask04=3D00000000ffdfffff Opmask05=3D00000000004007ff Opmask06=3D00000000=
-07ffe7ff Opmask07=3D0000000000000000
-ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 000055de380b4540 000055de3808da00
-ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f
-ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000ff0000000000 00000000ff000000
-ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 00000000ff000000
-ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 3130323a30696368 2f306963682f6874 6f6f7465756c622f 6c6175747269762f
-ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 6f6f742079617272 6120656c75722079 7261726f706d6574 002a3f005b3f2a00
-ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4a4a51055c445757 440540495057055c 5744574a55484051 000f1a005b1a0f00
-ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000041 0000000000000000 000000003130323a 306963682f306963
-ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 3031313837333033 0000000000000021 0000000000007374
-ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 68303e3b3a38253b 3a253e3a6e68303b 21383b657a687438 2739243c3b243b27
-ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 69305f474f5b647c 6930382432273f39 7b27697a787c7a30 23333a3a38263342
-ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4f45454d41490054 454e5f4449692e6e 6524004452414f42 4e4f5f454d414e5f
-ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4445414d41450000 454e4c4449452e41 002400444c414442 004144454141424e
-ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 282b2e2fdf37342d 280bbfbf23243324 26312033fc040f18 1317140d080b0412
-ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 343133bffc121104 1214041204110814 100411bffc040f18 1317140d080b0412
-ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4141414141414141 4141414141414141 4141414141414141 4141414141414141
-ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a
-ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 2020202020202020 2020202020202020 2020202020202020 2020202020202020
+Sorted, I hope.
 
+> > 
+> > --- mm/memcontrol.c~mm-refactor-folio_undo_large_rmappable
+> > +++ mm/memcontrol.c
+> > @@ -7832,8 +7832,7 @@ void mem_cgroup_migrate(struct folio *ol
+> >  	 * In addition, the old folio is about to be freed after migration, so
+> >  	 * removing from the split queue a bit earlier seems reasonable.
+> >  	 */
+> > -	if (folio_test_large(old) && folio_test_large_rmappable(old))
+> > -		folio_undo_large_rmappable(old);
+> > +	folio_undo_large_rmappable(old);
+> >  	old->memcg_data = 0;
+> >  }
+> > 
+> > I'm resolving this by simply dropping the above hunk.  So Kefeng's
+> > patch is now as below.  Please check.
+> 
+> Checked, and that is correct, thank you Andrew.
 
-syzkaller build log:
-go env (err=3D<nil>)
-GO111MODULE=3D'auto'
-GOARCH=3D'amd64'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFLAGS=3D''
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/usr/local/go'
-GOSUMDB=3D'sum.golang.org'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.21.4'
-GCCGO=3D'gccgo'
-GOAMD64=3D'v1'
-AR=3D'ar'
-CC=3D'gcc'
-CXX=3D'g++'
-CGO_ENABLED=3D'1'
-GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
-d'
-GOWORK=3D''
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-PKG_CONFIG=3D'pkg-config'
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build2952157381=3D/tmp/go-build -gno-record-gc=
-c-switches'
+great.
 
-git status (err=3D<nil>)
-HEAD detached at 1ecfa2d85
-nothing to commit, working tree clean
+> Correct, but not quite
+> complete: because I'm sure that if Kefeng had written his patch after
+> mine, he would have made the equivalent change in mm/migrate.c:
+> 
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -443,8 +443,7 @@ int folio_migrate_mapping(struct address_space *mapping,
+>  	}
+>  
+>  	/* Take off deferred split queue while frozen and memcg set */
+> -	if (folio_test_large(folio) && folio_test_large_rmappable(folio))
+> -		folio_undo_large_rmappable(folio);
+> +	folio_undo_large_rmappable(folio);
+>  
+>  	/*
+>  	 * Now we know that no one else is looking at the folio:
+> 
+> But there's no harm done if you push out a tree without that additional
+> mod: we can add it as a fixup afterwards, it's no more than a cleanup.
 
+OK, someone please send that along?  I'll queue it as a -fix so a
+single line of changelog is all that I shall retain (but more is
+welcome!  People can follow the Link:)
 
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
-s/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-go fmt ./sys/... >/dev/null
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D1ecfa2d8506efdae0483eedc0b425db8537b6e80 -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20240702-162210'" "-tags=
-=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
-og github.com/google/syzkaller/tools/syz-execprog
-mkdir -p ./bin/linux_amd64
-g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
-	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
-ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
-t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
-static-pie -std=3Dc++17 -I. -Iexecutor/_include -fpermissive -w -DGOOS_linu=
-x=3D1 -DGOARCH_amd64=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"1ecfa2d8506efdae0483eedc0b425db853=
-7b6e80\"
-/usr/bin/ld: /tmp/ccFcxoKa.o: in function `test_cover_filter()':
-executor.cc:(.text+0x133fb): warning: the use of `tempnam' is dangerous, be=
-tter use `mkstemp'
-/usr/bin/ld: /tmp/ccFcxoKa.o: in function `Connection::Connect(char const*,=
- char const*)':
-executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
-KcS1_]+0x1a0): warning: Using 'gethostbyname' in statically linked applicat=
-ions requires at runtime the shared libraries from the glibc version used f=
-or linking
-# Temporal hack to pre-created removed syz-fuzzer,
-# since old version of syz-ci still wants to copy it.
-touch ./bin/linux_amd64/syz-fuzzer
+> (I'm on the lookout for an mm.git update, hope to give it a try when it
+> appears.)
 
-
-Error text is too large and was truncated, full error text is at:
-https://syzkaller.appspot.com/x/error.txt?x=3D15574d15980000
-
-
-Tested on:
-
-commit:         73461051 Merge tag 'erofs-for-6.10-rc7-fixes' of git:/..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu=
-x.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dde2d4dc103148cd=
-6
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D35a4414f6e247f515=
-443
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D168779c19800=
-00
-
+12 seconds ago.
 
