@@ -1,490 +1,161 @@
-Return-Path: <linux-kernel+bounces-240684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75CF49270FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:55:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B48D3927101
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 944EE1C21D05
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:55:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63872B225E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528021A38E8;
-	Thu,  4 Jul 2024 07:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB731A38E4;
+	Thu,  4 Jul 2024 07:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBrvef3M"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hUZo2lFO"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C2BFC02;
-	Thu,  4 Jul 2024 07:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685E419DF4A
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 07:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720079720; cv=none; b=e+pUzEAwJ9fQK22TgVQHb53AVq4CnnO2YCXSE7V9dYR39zgZo+pJT8nQENfxSdvfrc4TguTjgBeFlba/xjx5rbxKVqU99/bNOibraQz3/dO0TA5wIuyI/l44E9bF6HIwpE+oV6l0jrGfmW7R5sSqpX/tTu6pqqig1zj2Eprw7nc=
+	t=1720079790; cv=none; b=jRLxKqf6Eo6VhWTL3HHGR/OYJu6CuT99kq73MWEXSW0bsv+LHwDj9JB1A8Z3KFkcTBlBfN/qcPbOXCfCO+n9u8kbYhpqm2j/IE+QSZdR37x2alHWBM9GxM0kkKTfBlP1sPeY6DzSfdr5Mox8LsxcWvq6dgjmJMr7m7XZmNGXaT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720079720; c=relaxed/simple;
-	bh=VFF+HeeWXNjRwQLfKhg4IAkGpnqgW/GHtEvlIQ9T+f0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tPQOjhE9JG4UMuZ18AYDf3eNnpjOTLk0t2nXVM6kCfrg6r8/v5HSiZEiXyDqUHjAq8E/MXkJ1LnnOZA1Qbah2EZZFuWlGe0byLsgZESJ2VOz+x+qQrO8SoaaTJSvlIqkqF2o6bqirKJCigdhf9LZ7NmcPV2ujshKaP+n6VX3vYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BBrvef3M; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3d55ed47cc6so232656b6e.2;
-        Thu, 04 Jul 2024 00:55:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720079717; x=1720684517; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ta1uMwhlM6Hnrl7VtiRoXXUn0L8NwQA3nKU9EyK86OU=;
-        b=BBrvef3Mi/swDfX3A3L2Wv+gqyRq2hzYVg7zhf4ulwvyk53pVtfmWmXr5pMBOQNJnE
-         LjhLYDi8caAHrv82QGxHV9bwN/A1foWb9BTV1XpiIrvG8832z5f/2BdCfPpi1s/vVEHF
-         iyIjSy7Xi9ksYTPFdkxZXKurvez5yjblhvRrF8rYx/RtVQn1TJE+rr2BKjHhR8v4h3pg
-         qug+Q3U3YC6YJOltSPgorQYEKS1AiJUsvE1WHgmg+bhfEhGZKNW4zTQvH7HCROhi8b5E
-         +d6JWVHCffT52yttdjwi7ePriV5cywu2dRvcm7/Mm92+yGk7nPptDWvPYuNKUQ6PKN3C
-         mhEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720079717; x=1720684517;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ta1uMwhlM6Hnrl7VtiRoXXUn0L8NwQA3nKU9EyK86OU=;
-        b=o9VdWl/PLCv73Iv2xEMADm9to5Ss9maI0umG0FIbuQ7KgRqAK8x8c7BtNtUJJQFd9q
-         DD+K9ukYdR29fdkFvCiytBk0SqrVhIepOhkeRp8TIXxdzMsyCmF0I5yaqmk76+W1rKE8
-         2NAVHQUjyPgy2i5v0gD5sD8DbbKj/wi75J31SlO2OtsjvjQVQXI7KkjHI5w9oST3rljD
-         0Sl1W/n7ujCQKDxtP4ajXNCL5o0Cac8Be1Z6L/ZdafQ7irXSWD2WSYh2qLo7Wa4agrrB
-         WlW1PgczJ8avXrLcxlqqACXkmyAXUqx85B8oyQeCG5suo05h3wOLNeRNwLkCgjJGqDo3
-         hEKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBy8G9fwq9qsC9/thYgM+gOCGFq14tpdw5vD+wLvaLp+Q/GWS5Wn4vLhyClrI/J1itaCeSJgcSnZHGXABQ+r3mAMBjbn6acQyu49cztjL5SV3J6VuDh+gLl8WvgYOU/Ysn4YuvgRK/pTY=
-X-Gm-Message-State: AOJu0YwF6TsCWYVjMfSZt5WhpIL5mgPtdTKhlwS4I9XTb6Chx7FXjlM5
-	1j82ObDWk1sxbbCtM6L8sO1O5V3rfwKxDVUibDZzIFFAW32gv8GkOHSwFh1o
-X-Google-Smtp-Source: AGHT+IGku++d3RzoNy4tQT5GTrJWke0DhhzkNoX2AVhpma4OyFVzwXVxRSOR0wzdUXIb80uXI8Zjqg==
-X-Received: by 2002:a05:6808:4cc:b0:3d2:2b43:1804 with SMTP id 5614622812f47-3d914c5e901mr813473b6e.19.1720079717211;
-        Thu, 04 Jul 2024 00:55:17 -0700 (PDT)
-Received: from JammyHuang-PC.aspeed.com ([118.99.208.177])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708029582fasm11634646b3a.88.2024.07.04.00.55.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 00:55:16 -0700 (PDT)
-From: Jammy Huang <orbit.huang@gmail.com>
-X-Google-Original-From: Jammy Huang <jammy_huang@aspeedtech.com>
-To: eajames@linux.ibm.com,
-	mchehab@kernel.org,
-	joel@jms.id.au,
-	andrew@aj.id.au,
-	linux-media@vger.kernel.org,
-	openbmc@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Cc: Jammy Huang <jammy_huang@aspeedtech.com>
-Subject: [PATCH] media: aspeed: Add additional input type, GFX, to capture
-Date: Thu,  4 Jul 2024 15:55:10 +0800
-Message-Id: <20240704075510.27034-1-jammy_huang@aspeedtech.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720079790; c=relaxed/simple;
+	bh=nJsXcRh8QdAcnpMVPzgSJc5Ql2XpNsjVAnlyj6Jj21k=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=bYb16TN9JPE84Bf/fgXIyfyyNJsDrD1Ovjfq1LFLsVfeBzHwpX0rjb/G1v+u5VEE+e/n51VWuULBgPnnFzRtYqD5S+fg61+TwwMjc5zEBIZmQqf2t7a/wUDXc5vBJMmU92VghZzWnPEqN27V1o2NEt/6tYil927GMhErFFxsuss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hUZo2lFO; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240704075623epoutp03f2a90459912633e6bbbcda702d9270cb~e83MWd2Q41204912049epoutp03o
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 07:56:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240704075623epoutp03f2a90459912633e6bbbcda702d9270cb~e83MWd2Q41204912049epoutp03o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720079783;
+	bh=nJsXcRh8QdAcnpMVPzgSJc5Ql2XpNsjVAnlyj6Jj21k=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=hUZo2lFO9JAVBbmKdTLqah9esllONPctYb0vygtxRSltCrxU436cg2pvLEsu9hWfr
+	 uO6gRfZCVjjVH+9b125cD+h8W2J22sfJXeY2cq9m71M3ZFHPE0EavW2TIB667n37Xe
+	 OwCEICWBRKLdLR/stWFHH3dxhreIAtHhd949UBxE=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20240704075622epcas2p3878696583b1c0cb0147035b39ab9565e~e83MAG6Bt1605416054epcas2p3X;
+	Thu,  4 Jul 2024 07:56:22 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.99]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WF89L41yWz4x9Q4; Thu,  4 Jul
+	2024 07:56:22 +0000 (GMT)
+X-AuditID: b6c32a46-f3bff7000000250d-e2-668655a60689
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A5.A5.09485.6A556866; Thu,  4 Jul 2024 16:56:22 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Subject: RE:(2) [PATCH] f2fs: fix null reference error when checking end of
+ zone
+Reply-To: daejun7.park@samsung.com
+Sender: Daejun Park <daejun7.park@samsung.com>
+From: Daejun Park <daejun7.park@samsung.com>
+To: Chao Yu <chao@kernel.org>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+	"daehojeong@google.com" <daehojeong@google.com>,
+	"linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Seokhwan Kim <sukka.kim@samsung.com>, Dongjin Kim
+	<dongjin_.kim@samsung.com>, Yonggil Song <yonggil.song@samsung.com>, Jaeyoon
+	Choi <j_yoon.choi@samsung.com>, Nayeon Kim <nayeoni.kim@samsung.com>, Siwoo
+	Jung <siu.jung@samsung.com>, Daejun Park <daejun7.park@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <460c4708-3ec6-4fbc-8f6c-7f8e5f901061@kernel.org>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20240704075521epcms2p49cc9985b6624e4e1129907e883fbc1d9@epcms2p4>
+Date: Thu, 04 Jul 2024 16:55:21 +0900
+X-CMS-MailID: 20240704075521epcms2p49cc9985b6624e4e1129907e883fbc1d9
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmme6y0LY0g4XPOCxOTz3LZPHykKbF
+	1Pa9jBarHoRb/DhpYtG/u53F4sn6WcwWlxa5W1zeNYfNouWPk8X5ia+ZLFZ1zGW0mHr+CJMD
+	r8eCTaUem1Z1snnsXvCZyaNvyypGj8+b5AJYo7JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403N
+	DAx1DS0tzJUU8hJzU22VXHwCdN0yc4DOU1IoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUW
+	pOQUmBfoFSfmFpfmpevlpZZYGRoYGJkCFSZkZ5xct4W9YK5URfvGScwNjEcluxg5OSQETCR2
+	/l7C3MXIxSEksINR4uD+j+xdjBwcvAKCEn93CIPUCAsESdw++ZgJxBYSUJJYf3EWO0RcT+LW
+	wzWMIDabgI7E9BP3weIiApOZJPbdzwaZySwwg0li3uleNohlvBIz2p+yQNjSEtuXbwVr5hSw
+	kzjw+jUTRFxD4seyXmYIW1Ti5uq37DD2+2PzGSFsEYnWe2ehagQlHvzcDRWXlLg9dxNUfb7E
+	/yvLoewaiW0H5kHZ+hLXOjaC3cAr4Csxp7sP7DYWAVWJc4fnQc1xkWjfcxHsHmYBbYllC18z
+	g8KEWUBTYv0ufRBTQkBZ4sgtFogKPomOw3/ZYT5s2PgbK3vHvCdQH6pJrPu5nmkCo/IsREDP
+	QrJrFsKuBYzMqxjFUguKc9NTi40KjOBxm5yfu4kRnFC13HYwTnn7Qe8QIxMH4yFGCQ5mJRFe
+	qffNaUK8KYmVValF+fFFpTmpxYcYTYG+nMgsJZqcD0zpeSXxhiaWBiZmZobmRqYG5krivPda
+	56YICaQnlqRmp6YWpBbB9DFxcEo1MKkk/9aJXRJufO5QuvNJHRbGdRfWOjL9Lzfn97l4KVtw
+	g2PUua+Hj9j58pnZXti6/hnLybDj+n92m3Fl2v1i33whNPPC4rf7GZ7xtbX5HD+X1G4rdJnx
+	S0zpW8OZgoy+78ytb+cbPGrcb5wdPblcB5gT8vlu/uWpXCbI8/12itWV6qXvVjhd8UnIm7us
+	cnJ0XFae8XGT+xNEFszaXchZ6boqcULL04kbC0V87zWf0byouvT5tCcuv5funNUQPmu/zLcb
+	D2vtCucW1Ok0CnxYvauxlmVC1OOrphNMl/7yEjuuccxvR73jEXbHu3t9fI4Fc0pFTNbhXPzJ
+	ba77ln1bm5nqziWtFPP/v37p5YYZMkosxRmJhlrMRcWJAJrXiIYxBAAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90
+References: <460c4708-3ec6-4fbc-8f6c-7f8e5f901061@kernel.org>
+	<20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90@epcms2p4>
+	<CGME20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90@epcms2p4>
 
-ASPEED BMC IC has 2 different display engines.
-1. VGA on PCIe
-2. SoC Display(GFX)
-
-By default, video engine(VE) will capture video from VGA. This patch
-adds an option to caputre video from GFX with standard ioctl,
-vidioc_s_input.
-
-An enum, aspeed_video_input, is added for this purpose.
-enum aspeed_video_input {
-	VIDEO_INPUT_VGA = 0,
-	VIDEO_INPUT_GFX,
-	VIDEO_INPUT_MAX
-};
-
-Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
----
- drivers/media/platform/aspeed/aspeed-video.c | 177 ++++++++++++++++---
- include/uapi/linux/aspeed-video.h            |   7 +
- 2 files changed, 158 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/media/platform/aspeed/aspeed-video.c b/drivers/media/platform/aspeed/aspeed-video.c
-index fc6050e3be0d..da5bf512a8ab 100644
---- a/drivers/media/platform/aspeed/aspeed-video.c
-+++ b/drivers/media/platform/aspeed/aspeed-video.c
-@@ -25,6 +25,8 @@
- #include <linux/workqueue.h>
- #include <linux/debugfs.h>
- #include <linux/ktime.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-dev.h>
- #include <media/v4l2-device.h>
-@@ -203,6 +205,25 @@
- #define VE_MEM_RESTRICT_START		0x310
- #define VE_MEM_RESTRICT_END		0x314
- 
-+// SCU's registers
-+#define SCU_MISC_CTRL			0xC0
-+#define  SCU_DPLL_SOURCE		BIT(20)
-+
-+// GFX's registers
-+#define GFX_CTRL			0x60
-+#define  GFX_CTRL_ENABLE		BIT(0)
-+#define  GFX_CTRL_FMT			GENMASK(9, 7)
-+
-+#define GFX_H_DISPLAY			0x70
-+#define  GFX_H_DISPLAY_DE		GENMASK(28, 16)
-+#define  GFX_H_DISPLAY_TOTAL		GENMASK(12, 0)
-+
-+#define GFX_V_DISPLAY			0x78
-+#define  GFX_V_DISPLAY_DE		GENMASK(27, 16)
-+#define  GFX_V_DISPLAY_TOTAL		GENMASK(11, 0)
-+
-+#define GFX_DISPLAY_ADDR		0x80
-+
- /*
-  * VIDEO_MODE_DETECT_DONE:	a flag raised if signal lock
-  * VIDEO_RES_CHANGE:		a flag raised if res_change work on-going
-@@ -273,6 +294,7 @@ struct aspeed_video_perf {
-  * yuv420:		a flag raised if JPEG subsampling is 420
-  * format:		holds the video format
-  * hq_mode:		a flag raised if HQ is enabled. Only for VIDEO_FMT_ASPEED
-+ * input:		holds the video input
-  * frame_rate:		holds the frame_rate
-  * jpeg_quality:	holds jpeq's quality (0~11)
-  * jpeg_hq_quality:	holds hq's quality (1~12) only if hq_mode enabled
-@@ -298,6 +320,8 @@ struct aspeed_video {
- 	struct video_device vdev;
- 	struct mutex video_lock;	/* v4l2 and videobuf2 lock */
- 
-+	struct regmap *scu;
-+	struct regmap *gfx;
- 	u32 jpeg_mode;
- 	u32 comp_size_read;
- 
-@@ -316,6 +340,7 @@ struct aspeed_video {
- 	bool yuv420;
- 	enum aspeed_video_format format;
- 	bool hq_mode;
-+	enum aspeed_video_input input;
- 	unsigned int frame_rate;
- 	unsigned int jpeg_quality;
- 	unsigned int jpeg_hq_quality;
-@@ -485,6 +510,7 @@ static const struct v4l2_dv_timings_cap aspeed_video_timings_cap = {
- 
- static const char * const format_str[] = {"Standard JPEG",
- 	"Aspeed JPEG"};
-+static const char * const input_str[] = {"VGA", "BMC GFX"};
- 
- static unsigned int debug;
- 
-@@ -609,6 +635,14 @@ static int aspeed_video_start_frame(struct aspeed_video *video)
- 		aspeed_video_free_buf(video, &video->bcd);
- 	}
- 
-+	if (video->input == VIDEO_INPUT_GFX) {
-+		u32 val;
-+
-+		// update input buffer address as gfx's
-+		regmap_read(video->gfx, GFX_DISPLAY_ADDR, &val);
-+		aspeed_video_write(video, VE_TGS_0, val);
-+	}
-+
- 	spin_lock_irqsave(&video->lock, flags);
- 	buf = list_first_entry_or_null(&video->buffers,
- 				       struct aspeed_video_buffer, link);
-@@ -1026,9 +1060,23 @@ static void aspeed_video_get_timings(struct aspeed_video *v,
- 	}
- }
- 
-+static void aspeed_video_get_resolution_gfx(struct aspeed_video *video,
-+					    struct v4l2_bt_timings *det)
-+{
-+	u32 h_val, v_val;
-+
-+	regmap_read(video->gfx, GFX_H_DISPLAY, &h_val);
-+	regmap_read(video->gfx, GFX_V_DISPLAY, &v_val);
-+
-+	det->width = FIELD_GET(GFX_H_DISPLAY_DE, h_val) + 1;
-+	det->height = FIELD_GET(GFX_V_DISPLAY_DE, v_val) + 1;
-+	video->v4l2_input_status = 0;
-+}
-+
- #define res_check(v) test_and_clear_bit(VIDEO_MODE_DETECT_DONE, &(v)->flags)
- 
--static void aspeed_video_get_resolution(struct aspeed_video *video)
-+static void aspeed_video_get_resolution_vga(struct aspeed_video *video,
-+					    struct v4l2_bt_timings *det)
- {
- 	bool invalid_resolution = true;
- 	int rc;
-@@ -1036,7 +1084,6 @@ static void aspeed_video_get_resolution(struct aspeed_video *video)
- 	u32 mds;
- 	u32 src_lr_edge;
- 	u32 src_tb_edge;
--	struct v4l2_bt_timings *det = &video->detected_timings;
- 
- 	det->width = MIN_WIDTH;
- 	det->height = MIN_HEIGHT;
-@@ -1113,14 +1160,20 @@ static void aspeed_video_get_resolution(struct aspeed_video *video)
- 
- 	aspeed_video_get_timings(video, det);
- 
--	/*
--	 * Enable mode-detect watchdog, resolution-change watchdog and
--	 * automatic compression after frame capture.
--	 */
-+	/* Enable mode-detect watchdog, resolution-change watchdog */
- 	aspeed_video_update(video, VE_INTERRUPT_CTRL, 0,
- 			    VE_INTERRUPT_MODE_DETECT_WD);
--	aspeed_video_update(video, VE_SEQ_CTRL, 0,
--			    VE_SEQ_CTRL_AUTO_COMP | VE_SEQ_CTRL_EN_WATCHDOG);
-+	aspeed_video_update(video, VE_SEQ_CTRL, 0, VE_SEQ_CTRL_EN_WATCHDOG);
-+}
-+
-+static void aspeed_video_get_resolution(struct aspeed_video *video)
-+{
-+	struct v4l2_bt_timings *det = &video->detected_timings;
-+
-+	if (video->input == VIDEO_INPUT_GFX)
-+		aspeed_video_get_resolution_gfx(video, det);
-+	else
-+		aspeed_video_get_resolution_vga(video, det);
- 
- 	v4l2_dbg(1, debug, &video->v4l2_dev, "Got resolution: %dx%d\n",
- 		 det->width, det->height);
-@@ -1156,7 +1209,7 @@ static void aspeed_video_set_resolution(struct aspeed_video *video)
- 	aspeed_video_write(video, VE_SRC_SCANLINE_OFFSET, act->width * 4);
- 
- 	/* Don't use direct mode below 1024 x 768 (irqs don't fire) */
--	if (size < DIRECT_FETCH_THRESHOLD) {
-+	if (video->input == VIDEO_INPUT_VGA && size < DIRECT_FETCH_THRESHOLD) {
- 		v4l2_dbg(1, debug, &video->v4l2_dev, "Capture: Sync Mode\n");
- 		aspeed_video_write(video, VE_TGS_0,
- 				   FIELD_PREP(VE_TGS_FIRST,
-@@ -1171,10 +1224,20 @@ static void aspeed_video_set_resolution(struct aspeed_video *video)
- 				    VE_CTRL_INT_DE | VE_CTRL_DIRECT_FETCH,
- 				    VE_CTRL_INT_DE);
- 	} else {
-+		u32 ctrl, val, bpp;
-+
- 		v4l2_dbg(1, debug, &video->v4l2_dev, "Capture: Direct Mode\n");
-+		ctrl = VE_CTRL_DIRECT_FETCH;
-+		if (video->input == VIDEO_INPUT_GFX) {
-+			regmap_read(video->gfx, GFX_CTRL, &val);
-+			bpp = FIELD_GET(GFX_CTRL_FMT, val) ? 32 : 16;
-+			if (bpp == 16)
-+				ctrl |= VE_CTRL_INT_DE;
-+			aspeed_video_write(video, VE_TGS_1, act->width * (bpp >> 3));
-+		}
- 		aspeed_video_update(video, VE_CTRL,
- 				    VE_CTRL_INT_DE | VE_CTRL_DIRECT_FETCH,
--				    VE_CTRL_DIRECT_FETCH);
-+				    ctrl);
- 	}
- 
- 	size *= 4;
-@@ -1207,6 +1270,22 @@ static void aspeed_video_set_resolution(struct aspeed_video *video)
- 		aspeed_video_free_buf(video, &video->srcs[0]);
- }
- 
-+/*
-+ * Update relative parameters when timing changed.
-+ *
-+ * @video: the struct of aspeed_video
-+ * @timings: the new timings
-+ */
-+static void aspeed_video_update_timings(struct aspeed_video *video, struct v4l2_bt_timings *timings)
-+{
-+	video->active_timings = *timings;
-+	aspeed_video_set_resolution(video);
-+
-+	video->pix_fmt.width = timings->width;
-+	video->pix_fmt.height = timings->height;
-+	video->pix_fmt.sizeimage = video->max_compressed_size;
-+}
-+
- static void aspeed_video_update_regs(struct aspeed_video *video)
- {
- 	u8 jpeg_hq_quality = clamp((int)video->jpeg_hq_quality - 1, 0,
-@@ -1219,6 +1298,8 @@ static void aspeed_video_update_regs(struct aspeed_video *video)
- 	u32 ctrl = 0;
- 	u32 seq_ctrl = 0;
- 
-+	v4l2_dbg(1, debug, &video->v4l2_dev, "input(%s)\n",
-+		 input_str[video->input]);
- 	v4l2_dbg(1, debug, &video->v4l2_dev, "framerate(%d)\n",
- 		 video->frame_rate);
- 	v4l2_dbg(1, debug, &video->v4l2_dev, "jpeg format(%s) subsample(%s)\n",
-@@ -1234,6 +1315,9 @@ static void aspeed_video_update_regs(struct aspeed_video *video)
- 	else
- 		aspeed_video_update(video, VE_BCD_CTRL, VE_BCD_CTRL_EN_BCD, 0);
- 
-+	if (video->input == VIDEO_INPUT_VGA)
-+		ctrl |= VE_CTRL_AUTO_OR_CURSOR;
-+
- 	if (video->frame_rate)
- 		ctrl |= FIELD_PREP(VE_CTRL_FRC, video->frame_rate);
- 
-@@ -1252,7 +1336,9 @@ static void aspeed_video_update_regs(struct aspeed_video *video)
- 	aspeed_video_update(video, VE_SEQ_CTRL,
- 			    video->jpeg_mode | VE_SEQ_CTRL_YUV420,
- 			    seq_ctrl);
--	aspeed_video_update(video, VE_CTRL, VE_CTRL_FRC, ctrl);
-+	aspeed_video_update(video, VE_CTRL,
-+			    VE_CTRL_FRC | VE_CTRL_AUTO_OR_CURSOR |
-+			    VE_CTRL_SOURCE, ctrl);
- 	aspeed_video_update(video, VE_COMP_CTRL,
- 			    VE_COMP_CTRL_DCT_LUM | VE_COMP_CTRL_DCT_CHR |
- 			    VE_COMP_CTRL_EN_HQ | VE_COMP_CTRL_HQ_DCT_LUM |
-@@ -1280,6 +1366,7 @@ static void aspeed_video_init_regs(struct aspeed_video *video)
- 	aspeed_video_write(video, VE_JPEG_ADDR, video->jpeg.dma);
- 
- 	/* Set control registers */
-+	aspeed_video_write(video, VE_SEQ_CTRL, VE_SEQ_CTRL_AUTO_COMP);
- 	aspeed_video_write(video, VE_CTRL, ctrl);
- 	aspeed_video_write(video, VE_COMP_CTRL, VE_COMP_CTRL_RSVD);
- 
-@@ -1311,12 +1398,7 @@ static void aspeed_video_start(struct aspeed_video *video)
- 	aspeed_video_get_resolution(video);
- 
- 	/* Set timings since the device is being opened for the first time */
--	video->active_timings = video->detected_timings;
--	aspeed_video_set_resolution(video);
--
--	video->pix_fmt.width = video->active_timings.width;
--	video->pix_fmt.height = video->active_timings.height;
--	video->pix_fmt.sizeimage = video->max_compressed_size;
-+	aspeed_video_update_timings(video, &video->detected_timings);
- }
- 
- static void aspeed_video_stop(struct aspeed_video *video)
-@@ -1414,15 +1496,44 @@ static int aspeed_video_enum_input(struct file *file, void *fh,
- 
- static int aspeed_video_get_input(struct file *file, void *fh, unsigned int *i)
- {
--	*i = 0;
-+	struct aspeed_video *video = video_drvdata(file);
-+
-+	*i = video->input;
- 
- 	return 0;
- }
- 
- static int aspeed_video_set_input(struct file *file, void *fh, unsigned int i)
- {
--	if (i)
-+	struct aspeed_video *video = video_drvdata(file);
-+
-+	if (i >= VIDEO_INPUT_MAX)
-+		return -EINVAL;
-+
-+	if (IS_ERR(video->scu)) {
-+		v4l2_dbg(1, debug, &video->v4l2_dev, "%s: scu isn't ready for input-control\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	if (IS_ERR(video->gfx) && i == VIDEO_INPUT_GFX) {
-+		v4l2_dbg(1, debug, &video->v4l2_dev, "%s: gfx isn't ready for GFX input\n", __func__);
- 		return -EINVAL;
-+	}
-+
-+	video->input = i;
-+
-+	// modify dpll source per current input
-+	if (video->input == VIDEO_INPUT_VGA)
-+		regmap_update_bits(video->scu, SCU_MISC_CTRL, SCU_DPLL_SOURCE, 0);
-+	else
-+		regmap_update_bits(video->scu, SCU_MISC_CTRL, SCU_DPLL_SOURCE, SCU_DPLL_SOURCE);
-+
-+	aspeed_video_update_regs(video);
-+
-+	// update signal status
-+	aspeed_video_get_resolution(video);
-+	if (!video->v4l2_input_status)
-+		aspeed_video_update_timings(video, &video->detected_timings);
- 
- 	return 0;
- }
-@@ -1527,13 +1638,7 @@ static int aspeed_video_set_dv_timings(struct file *file, void *fh,
- 	if (vb2_is_busy(&video->queue))
- 		return -EBUSY;
- 
--	video->active_timings = timings->bt;
--
--	aspeed_video_set_resolution(video);
--
--	video->pix_fmt.width = timings->bt.width;
--	video->pix_fmt.height = timings->bt.height;
--	video->pix_fmt.sizeimage = video->max_compressed_size;
-+	aspeed_video_update_timings(video, &timings->bt);
- 
- 	timings->type = V4L2_DV_BT_656_1120;
- 
-@@ -1911,6 +2016,7 @@ static int aspeed_video_debugfs_show(struct seq_file *s, void *data)
- 	val08 = aspeed_video_read(v, VE_CTRL);
- 	if (FIELD_GET(VE_CTRL_DIRECT_FETCH, val08)) {
- 		seq_printf(s, "  %-20s:\tDirect fetch\n", "Mode");
-+		seq_printf(s, "  %-20s:\t%s\n", "Input", input_str[v->input]);
- 		seq_printf(s, "  %-20s:\t%s\n", "VGA bpp mode",
- 			   FIELD_GET(VE_CTRL_INT_DE, val08) ? "16" : "32");
- 	} else {
-@@ -2070,12 +2176,31 @@ static int aspeed_video_setup_video(struct aspeed_video *video)
- 	return 0;
- }
- 
-+// Get regmap without checking res, such as clk/reset, that could lead to conflict.
-+static struct regmap *aspeed_regmap_lookup(struct device_node *np, const char *property)
-+{
-+	struct device_node *syscon_np;
-+	struct regmap *regmap;
-+
-+	syscon_np = of_parse_phandle(np, property, 0);
-+	if (!syscon_np)
-+		return ERR_PTR(-ENODEV);
-+
-+	regmap = device_node_to_regmap(syscon_np);
-+	of_node_put(syscon_np);
-+
-+	return regmap;
-+}
-+
- static int aspeed_video_init(struct aspeed_video *video)
- {
- 	int irq;
- 	int rc;
- 	struct device *dev = video->dev;
- 
-+	video->scu = aspeed_regmap_lookup(dev->of_node, "aspeed,scu");
-+	video->gfx = aspeed_regmap_lookup(dev->of_node, "aspeed,gfx");
-+
- 	irq = irq_of_parse_and_map(dev->of_node, 0);
- 	if (!irq) {
- 		dev_err(dev, "Unable to find IRQ\n");
-diff --git a/include/uapi/linux/aspeed-video.h b/include/uapi/linux/aspeed-video.h
-index 6586a65548c4..44173be4c8dd 100644
---- a/include/uapi/linux/aspeed-video.h
-+++ b/include/uapi/linux/aspeed-video.h
-@@ -8,6 +8,13 @@
- 
- #include <linux/v4l2-controls.h>
- 
-+// enum for aspeed video's v4l2 s_input
-+enum aspeed_video_input {
-+	VIDEO_INPUT_VGA = 0,
-+	VIDEO_INPUT_GFX,
-+	VIDEO_INPUT_MAX
-+};
-+
- #define V4L2_CID_ASPEED_HQ_MODE			(V4L2_CID_USER_ASPEED_BASE  + 1)
- #define V4L2_CID_ASPEED_HQ_JPEG_QUALITY		(V4L2_CID_USER_ASPEED_BASE  + 2)
- 
-
-base-commit: e9d22f7a6655941fc8b2b942ed354ec780936b3e
--- 
-2.25.1
-
+Hi=C2=A0Chao=20Yu,=0D=0A>=C2=A0=0D=0A>---------=20Original=20Message=20----=
+-----=0D=0A>Sender=20:=20Chao=20Yu=20<chao=40kernel.org>=0D=0A>Date=20:=202=
+024-07-04=2016:16=20(GMT+9)=0D=0A>Title=20:=20Re:=20=5BPATCH=5D=20f2fs:=20f=
+ix=20null=20reference=20error=20when=20checking=20end=20of=20zone=0D=0A>=C2=
+=A0=0D=0A>On=202024/7/4=209:01,=20Daejun=20Park=20wrote:=0D=0A>>=20This=20p=
+atch=20fixes=20a=20potentially=20null=20pointer=20being=20accessed=20by=0D=
+=0A>>=20is_end_zone_blkaddr()=20that=20checks=20the=20last=20block=20of=20a=
+=20zone=0D=0A>>=20when=20f2fs=20is=20mounted=20as=20a=20single=20device.=0D=
+=0A>=0D=0A>blkzoned=20feature=20depends=20on=20multiple=20device=20feature?=
+=20One=20regular=0D=0A>device=20and=20one=20seq-zone=20device?=0D=0A=0D=0AA=
+ccording=20to=20mkfs.f2fs,=20if=20there=20are=20a=20sufficient=20number=20o=
+f=0D=0Aconventional=20zones,=20a=20single=20zoned=20device=20can=20be=20use=
+d.=0D=0A=0D=0AThanks,=0D=0ADaejun=0D=0A=0D=0A>=0D=0A>Thanks,=0D=0A>=0D=0A>>=
+=0D=0A>>=20Fixes:=20e067dc3c6b9c=20(=22f2fs:=20maintain=20six=20open=20zone=
+s=20for=20zoned=20devices=22)=0D=0A>>=20Signed-off-by:=20Daejun=20Park=20<d=
+aejun7.park=40samsung.com>=0D=0A>>=20---=0D=0A>>=C2=A0=20fs/f2fs/data.c=204=
+=20+++-=0D=0A>>=C2=A0=201=20file=20changed,=203=20insertions(+),=201=20dele=
+tion(-)=0D=0A>>=0D=0A>>=20diff=20--git=20a/fs/f2fs/data.c=20b/fs/f2fs/data.=
+c=0D=0A>>=20index=20b6dcb3bcaef7..1aa7eefa659c=20100644=0D=0A>>=20---=20a/f=
+s/f2fs/data.c=0D=0A>>=20+++=20b/fs/f2fs/data.c=0D=0A>>=20=40=40=20-925,6=20=
++925,7=20=40=40=20int=20f2fs_merge_page_bio(struct=20f2fs_io_info=20*fio)=
+=0D=0A>>=C2=A0=20=23ifdef=20CONFIG_BLK_DEV_ZONED=0D=0A>>=C2=A0=20static=20b=
+ool=20is_end_zone_blkaddr(struct=20f2fs_sb_info=20*sbi,=20block_t=20blkaddr=
+)=0D=0A>>=C2=A0=20=7B=0D=0A>>=20+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0struct=
+=20block_device=20*bdev=20=3D=20sbi->sb->s_bdev;=0D=0A>>=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0int=20devi=20=3D=200;=0D=0A>>=C2=A0=0D=0A>=
+>=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0if=20(f2fs_is_multi_dev=
+ice(sbi))=20=7B=0D=0A>>=20=40=40=20-935,8=20+936,9=20=40=40=20static=20bool=
+=20is_end_zone_blkaddr(struct=20f2fs_sb_info=20*sbi,=20block_t=20blkaddr)=
+=0D=0A>>=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0return=20false;=0D=
+=0A>>=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=7D=0D=0A>>=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0blkaddr=20-=3D=20FDEV(devi).start=
+_blk;=0D=0A>>=20+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0bdev=20=3D=20FDEV(devi).bdev;=0D=0A>>=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=7D=0D=0A>>=20-=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0return=20bdev_is_zoned(FDEV(devi).bdev)=20&&=0D=0A>>=20+=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0return=20bdev_is_zoned(bdev)=20&&=0D=0A>>=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0f2fs_blkz_is_seq(sbi,=20devi,=20blkaddr)=20&&=0D=0A>>=C2=A0=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0(blkad=
+dr=20%=20sbi->blocks_per_blkz=20=3D=3D=20sbi->blocks_per_blkz=20-=201);=0D=
+=0A>>=C2=A0=20=7D
 
