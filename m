@@ -1,197 +1,294 @@
-Return-Path: <linux-kernel+bounces-241403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF9AE927B11
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:24:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 643EF927B1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75C81284435
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:24:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85E051C22528
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14ED1B3726;
-	Thu,  4 Jul 2024 16:23:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF441B29AC;
-	Thu,  4 Jul 2024 16:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686C91B3726;
+	Thu,  4 Jul 2024 16:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nr7PuG3B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7542E4C70;
+	Thu,  4 Jul 2024 16:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720110238; cv=none; b=enG2GjIEerl2oF9Q5RAaBAK61o9cMeMNVMzCBAAiO31yGg21XkQuou342C91Dz1GxEFNKYOglRI/ayXpwHBKCaGvHU1nlzHUYv2P1dPjyJLvkwylDf/4wS/GSSxVP6Lk/u19OWwZsqgdCZE8mpMGwjC9dwLlNbOXn03OAkAtlL8=
+	t=1720110357; cv=none; b=gCSC7M85w/wLz91QB1rJQrSizBp/aAWprmzJGSsHA1Uzrmsxt/jIIX691j1QUGVutqootidBOT19p1thIIK61/hHDrg0BABcViVKSzDZehC7ZnvdDUJd91eUwqhpowTHiSk9Lvnp0Ko1Fjdv40XH6VVpEZ1UroZK5M5DyLpFzZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720110238; c=relaxed/simple;
-	bh=UtL1heITcTwWfe8XxOhwZmht8CQevgoJ0LRWrx5WrWw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZMcyYob/KeQas7nCDtn8dAYgqS6kiAQaO1+wAnbJ54tGy0Z+F8x0KI7CtA4uSXFwTfFA649zXUOlK0oNJoX3MU+3nFHfQvPbQwjeWOKYitkMtbXRvL2TxzatkgVy0vxHaTx6aXbJ/zpcevo2WrPQIdv7nWiGITkDQ0wJN7eAiAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2431A367;
-	Thu,  4 Jul 2024 09:24:20 -0700 (PDT)
-Received: from [10.1.29.168] (XHFQ2J9959.cambridge.arm.com [10.1.29.168])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 27F073F762;
-	Thu,  4 Jul 2024 09:23:53 -0700 (PDT)
-Message-ID: <bdde4008-60db-4717-a6b5-53d77ab76bdb@arm.com>
-Date: Thu, 4 Jul 2024 17:23:51 +0100
+	s=arc-20240116; t=1720110357; c=relaxed/simple;
+	bh=iCXqnvh6cbIUfDjetXYNLtKQ0NiMc2Tgha15dKs5h48=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F5A7zrzrmJP6b0Ar73ZE6NH5awBDRuqjsQNvt6lASwUrSKcpkb/vwqHnXmA4DD+9RVEJtNwScls4E+7ud45qN5j7pzptLleEa5QDqBGWKUG8Gd1Mq7d3OeeqwJ94ue0Xpsw4h/5aUA/ooSg5BsghyyxaIyKkw3bL/H18184gKp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nr7PuG3B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C30C4AF0C;
+	Thu,  4 Jul 2024 16:25:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720110356;
+	bh=iCXqnvh6cbIUfDjetXYNLtKQ0NiMc2Tgha15dKs5h48=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Nr7PuG3BoKXFh4CWpakGR0ZxCBuKKr5sqz0lc2n4VtYQTaeh5KUBCe+BQwQyS13vS
+	 0+z4LHxRd4jc1oxE+rPGT5mzROD1Iwk1lGTJQjCXfnmBZgbidnvGi5WMgl4kM7BrAA
+	 SbXkImQk6MG5qbtfwlSf6xFRK0boTSBKuQngtBfMXJtlHaHQa8hoKugZxWJeYR9jDQ
+	 Ii3lR41wbaGYVqshVHPO0ugujJZfsX+/4R2qDPCOAvi/mWLA7NcvXZYJSykKrL4jEX
+	 1GLG8hvm/AkluDaRnBFOcklOO7pRz5fMJM/rRZqdQ1M1S95IizZAxIlZo8ZWLKuIpP
+	 2ja8mAH83LaBA==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so9715891fa.0;
+        Thu, 04 Jul 2024 09:25:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYPO/izoiKXjLLCAqlL6DnnkdHmIDRNgGKW31Qzwwd3cjRUwhihEkU88eVyQoMTV22aK6xoYlIeyvvzqKzPdrxMEH9wXJJ6pFvoXb4jeLZ8xQ1uWH5uUg/PcMI/TN1hUrKNa1qxPyxFa1r
+X-Gm-Message-State: AOJu0YwzFhJba52TVkDU8ANhaLpZ5GK0Sm6e/N1aT6vaKXg6CMh3hQEA
+	VCsJtFHgUSzxt9XQ3sPiplEDs5RtS+hliTn0c2X/TNWxkSXLZg0D0wY2O07+wbfd2MDAwQ7GIEQ
+	v/Wp/HoDA1TMzOm8b6Q1ZYf6x0vY=
+X-Google-Smtp-Source: AGHT+IGD86Y3yNSBwHLJxoaxiEmt4dcexOXB2GCuahH50y0/b4u8e6BoPe+EPtPiuZcc61PgqP+Jpim9CUp7D50EsZE=
+X-Received: by 2002:a05:651c:1694:b0:2eb:d816:7a67 with SMTP id
+ 38308e7fff4ca-2ee8ed8f6d2mr14474271fa.16.1720110355568; Thu, 04 Jul 2024
+ 09:25:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/filemap: Allow arch to request folio size for exec
- memory
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <21cnbao@gmail.com>,
- John Hubbard <jhubbard@nvidia.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240215154059.2863126-1-ryan.roberts@arm.com>
- <Zc6mcDlcnOZIjqGm@dread.disaster.area>
- <58a67051-6d61-4d16-b073-266522907e05@arm.com>
-In-Reply-To: <58a67051-6d61-4d16-b073-266522907e05@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240627231919.2461945-1-elsk@google.com>
+In-Reply-To: <20240627231919.2461945-1-elsk@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 5 Jul 2024 01:25:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR_=AWh1aE4iev1xtcfTAAHNOhwq3gF+h6DFzz9x39qPw@mail.gmail.com>
+Message-ID: <CAK7LNAR_=AWh1aE4iev1xtcfTAAHNOhwq3gF+h6DFzz9x39qPw@mail.gmail.com>
+Subject: Re: [PATCH v3] kconfig: recursive checks drop file/lineno
+To: HONG Yifan <elsk@google.com>
+Cc: kernel-team@android.com, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+On Fri, Jun 28, 2024 at 8:19=E2=80=AFAM HONG Yifan <elsk@google.com> wrote:
+>
+> This prevents segfault when getting filename and lineno in recursive
+> checks.
+>
+> If the following snippet is found in Kconfig:
+>
+> [Test code 1]
+>
+> config FOO
+>         bool
+>         depends on BAR
+>         select BAR
+>
+> ... without BAR defined; then if one runs `make tinyconfig`, there is a
+> segfault.
 
-I'm reviving this thread, hoping to make some progress on this. I'd appreciate
-your thoughts...
 
 
-On 16/02/2024 11:18, Ryan Roberts wrote:
-> Hi Dave,
-> 
-> Thanks for taking a look at this! Some comments below...
-> 
-> On 16/02/2024 00:04, Dave Chinner wrote:
->> On Thu, Feb 15, 2024 at 03:40:59PM +0000, Ryan Roberts wrote:
->>> Change the readahead config so that if it is being requested for an
->>> executable mapping, do a synchronous read of an arch-specified size in a
->>> naturally aligned manner.
->>>
->>> On arm64 if memory is physically contiguous and naturally aligned to the
->>> "contpte" size, we can use contpte mappings, which improves utilization
->>> of the TLB. When paired with the "multi-size THP" changes, this works
->>> well to reduce dTLB pressure. However iTLB pressure is still high due to
->>> executable mappings having a low liklihood of being in the required
->>> folio size and mapping alignment, even when the filesystem supports
->>> readahead into large folios (e.g. XFS).
->>>
->>> The reason for the low liklihood is that the current readahead algorithm
->>> starts with an order-2 folio and increases the folio order by 2 every
->>> time the readahead mark is hit. But most executable memory is faulted in
->>> fairly randomly and so the readahead mark is rarely hit and most
->>> executable folios remain order-2.
->>
->> Yup, this is a bug in the readahead code, and really has nothing to
->> do with executable files, mmap or the architecture.  We don't want
->> some magic new VM_EXEC min folio size per architecture thingy to be
->> set - we just want readahead to do the right thing.
-> 
-> It sounds like we agree that there is a bug but we don't agree on what the bug
-> is? My view is that executable segments are accessed in a ~random manner and
-> therefore readahead (as currently configured) is not very useful. But data may
-> well be accessed more sequentially and therefore readahead is useful. Given both
-> data and text can come from the same file, I don't think this can just be a
-> mapping setting? (my understanding is that there is one "mapping" for the whole
-> file?) So we need to look to VM_EXEC for that decision.
+You do not need to mention tinyconfig because the same error happens
+on any command.
 
-Additionally, what is "the right thing" in your view?
 
-> 
->>
->> Indeed, we are already adding a mapping minimum folio order
->> directive to the address space to allow for filesystem block sizes
->> greater than PAGE_SIZE. That's the generic mechanism that this
->> functionality requires. See here:
->>
->> https://lore.kernel.org/linux-xfs/20240213093713.1753368-5-kernel@pankajraghav.com/
-> 
-> Great, I'm vaguely aware of this work, but haven't looked in detail. I'll go
-> read it. But from your brief description, IIUC, this applies to the whole file,
-> and is a constraint put in place by the filesystem? Applying to the whole file
-> may make sense - that means more opportunity for contpte mappings for data pages
-> too, although I guess this adds more scope for write amplificaiton because data
-> tends to be writable, and text isn't. But for my use case, its not a hard
-> constraint, its just a preference which can improve performance. And the
-> filesystem is the wrong place to make the decision; its the arch that knows
-> about the performacne opportunities with different block mapping sizes.
 
-Having finally taken a proper look at this, I still have the same opinion. I
-don't think this (hard) minimum folio order work is the right fit for what I'm
-trying to achieve. I need a soft minimum that can still fall back to order-0 (or
-the min mapping order), and ideally I want a different soft minimum to be
-applied to different parts of the file (exec vs other).
+... without BAR defined, there is a segfault.
 
-I'm currently thinking about abandoning the arch hook and replacing with sysfs
-ABI akin to the mTHP interface. The idea would be that for each size, you could
-specify 'never', 'always', 'exec' or 'always+exec'. A maximum one size would be
-allowed be marked as 'exec' at a time. The set of sizes marked 'always' would be
-the ones considered in page_cache_ra_order(), with fallback to order-0 (or min
-mapping order) still allowed. If a size is marked 'exec' then we would take
-VM_EXEC path added by this patch and do sync read into folio of that size.
 
-This obviously expands the scope somewhat, but I suspect having the ability to
-control the folio orders that get allocated by the pagecache will also help
-reduce large folio allocation failure due to fragmentation; if only a couple
-folios sizes are in operation in a given system, you are more likely to be able
-to reclaim the size that you need.
 
-All just a thought experiment at the moment, and I'll obviously do some
-prototyping and large folio allocation success rate measurements. I appreciate
-that we don't want to add sysfs controls without good justification. But I
-wonder if this could be a more pallatable solution to people, at least in principle?
 
-Thanks,
-Ryan
 
-> 
-> As a side note, concerns have been expressed about the possibility of physical
-> memory fragmentation becoming problematic, meaning we degrade back to small
-> folios over time with my mTHP work. The intuituon is that if the whole system is
-> using a few folio sizes in ~equal quantities then we might be ok, but I don't
-> have any data yet. Do you have any data on fragmentation? I guess this could be
-> more concerning for your use case?
-> 
->>
->> (Probably worth reading some of the other readahead mods in that
->> series and the discussion because readahead needs to ensure that it
->> fill entire high order folios in a single IO to avoid partial folio
->> up-to-date states from partial reads.)
->>
->> IOWs, it seems to me that we could use this proposed generic mapping
->> min order functionality when mmap() is run and VM_EXEC is set to set
->> the min order to, say, 64kB. Then the readahead code would simply do
->> the right thing, as would all other reads and writes to that
->> mapping.
-> 
-> Ahh yes, hooking into your new logic to set a min order based on VM_EXEC sounds
-> perfect...
-> 
->>
->> We could trigger this in the ->mmap() method of the filesystem so
->> that filesysetms that can use large folios can turn it on, whilst
->> other filesystems remain blissfully unaware of the functionality.
->> Filesystems could also do smarter things here, too. eg. enable PMD
->> alignment for large mapped files....
-> 
-> ...but I don't think the filesystem is the right place. The size preference
-> should be driven by arch IMHO.
-> 
-> Thanks,
-> Ryan
-> 
->>
->> -Dave.
-> 
 
+
+>
+>   Kconfig:34:error: recursive dependency detected!
+>   Kconfig:34:   symbol FOO depends on BAR
+>   make[4]: *** [scripts/kconfig/Makefile:85: allnoconfig] Segmentation fa=
+ult
+>
+> This is because of the following. BAR is a fake entry created by
+> sym_lookup() with prop being NULL. In the recursive check, there is a
+> NULL check for prop to fall back to stack->sym->prop if stack->prop is
+> NULL. However, in this case, stack->sym points to the fake BAR entry
+> created by sym_lookup(), so prop is still NULL. prop was then referenced
+> without additional NULL checks, causing segfault.
+>
+> As the previous email thread suggests, the file and lineno for select is
+> also wrong:
+>
+> [Test code 2]
+>
+> config FOO
+>        bool
+>
+> config BAR
+>        bool
+>
+> config FOO
+>        bool "FOO"
+>        depends on BAR
+>        select BAR
+>
+>   $ make defconfig
+>   *** Default configuration is based on 'x86_64_defconfig'
+>   Kconfig:1:error: recursive dependency detected!
+>   Kconfig:1: symbol FOO depends on BAR
+>   Kconfig:4: symbol BAR is selected by FOO
+>   [...]
+>
+> Kconfig:4 should be Kconfig:10.
+>
+> This patch deletes the wrong and segfault-prone filename/lineno
+> inference completely. With this patch, Test code 1 yields:
+>
+> error: recursive dependency detected!
+>         symbol FOO depends on BAR
+>         symbol BAR is selected by FOO
+>
+> Link: https://lore.kernel.org/linux-kbuild/20240620211112.500465-1-elsk@g=
+oogle.com/
+> Signed-off-by: HONG Yifan <elsk@google.com>
+>
+> --
+> v3: Rebase on top of
+>     https://lore.kernel.org/linux-kbuild/20240626182212.3758235-1-masahir=
+oy@kernel.org/T/#t
+>     & resolve merge conflicts. Fix
+>     scripts/kconfig/tests/err_recursive_dep/expected_stderr
+> v2: Delete all filenames/lineno completely as suggested by
+>     masahiroy@kernel.org
+> ---
+>  scripts/kconfig/symbol.c                      | 40 +++++++------------
+>  .../tests/err_recursive_dep/expected_stderr   | 36 ++++++++---------
+>  2 files changed, 33 insertions(+), 43 deletions(-)
+>
+> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+> index c05d188a1857..e22c8769f44f 100644
+> --- a/scripts/kconfig/symbol.c
+> +++ b/scripts/kconfig/symbol.c
+> @@ -1068,10 +1068,10 @@ static void sym_check_print_recursive(struct symb=
+ol *last_sym)
+>  {
+>         struct dep_stack *stack;
+>         struct symbol *sym, *next_sym;
+> -       struct menu *menu =3D NULL;
+>         struct menu *choice;
+>         struct property *prop;
+>         struct dep_stack cv_stack;
+> +       enum prop_type type;
+>
+>         choice =3D sym_get_choice_menu(last_sym);
+>         if (choice) {
+> @@ -1094,49 +1094,39 @@ static void sym_check_print_recursive(struct symb=
+ol *last_sym)
+>                 if (prop =3D=3D NULL)
+>                         prop =3D stack->sym->prop;
+
+
+As I said in the v2 review, please remove:
+
+
+                if (prop =3D=3D NULL)
+                         prop =3D stack->sym->prop;
+
+These two lines are useless.
+
+
+
+
+
+
+
+> -               /* for choice values find the menu entry (used below) */
+> -               if (sym_is_choice(sym) || sym_is_choice_value(sym)) {
+> -                       for (prop =3D sym->prop; prop; prop =3D prop->nex=
+t) {
+> -                               menu =3D prop->menu;
+> -                               if (prop->menu)
+> -                                       break;
+> -                       }
+> -               }
+> +               if (prop =3D=3D NULL)
+> +                       type =3D P_UNKNOWN;
+> +               else
+> +                       type =3D prop->type;
+> +
+
+
+Bikeshed:
+
+I personally prefer this:
+
+
+                 type =3D prop ? prop->type : P_UNKNOWN;
+
+
+
+
+
+>                 if (stack->sym =3D=3D last_sym)
+> -                       fprintf(stderr, "%s:%d:error: recursive dependenc=
+y detected!\n",
+> -                               prop->filename, prop->lineno);
+> +                       fprintf(stderr, "error: recursive dependency dete=
+cted!\n");
+>
+>                 if (sym_is_choice(next_sym)) {
+>                         choice =3D list_first_entry(&next_sym->menus, str=
+uct menu, link);
+>
+> -                       fprintf(stderr, "%s:%d:\tsymbol %s is part of cho=
+ice block at %s:%d\n",
+> -                               menu->filename, menu->lineno,
+> +                       fprintf(stderr, "\tsymbol %s is part of choice bl=
+ock at %s:%d\n",
+>                                 sym->name ? sym->name : "<choice>",
+>                                 choice->filename, choice->lineno);
+>                 } else if (stack->expr =3D=3D &sym->dir_dep.expr) {
+> -                       fprintf(stderr, "%s:%d:\tsymbol %s depends on %s\=
+n",
+> -                               prop->filename, prop->lineno,
+> +                       fprintf(stderr, "\tsymbol %s depends on %s\n",
+>                                 sym->name ? sym->name : "<choice>",
+>                                 next_sym->name);
+>                 } else if (stack->expr =3D=3D &sym->rev_dep.expr) {
+> -                       fprintf(stderr, "%s:%d:\tsymbol %s is selected by=
+ %s\n",
+> -                               prop->filename, prop->lineno,
+> +                       fprintf(stderr, "\tsymbol %s is selected by %s\n"=
+,
+>                                 sym->name, next_sym->name);
+>                 } else if (stack->expr =3D=3D &sym->implied.expr) {
+> -                       fprintf(stderr, "%s:%d:\tsymbol %s is implied by =
+%s\n",
+> -                               prop->filename, prop->lineno,
+> +                       fprintf(stderr, "\tsymbol %s is implied by %s\n",
+>                                 sym->name, next_sym->name);
+>                 } else if (stack->expr) {
+> -                       fprintf(stderr, "%s:%d:\tsymbol %s %s value conta=
+ins %s\n",
+> -                               prop->filename, prop->lineno,
+> +                       fprintf(stderr, "\tsymbol %s %s value contains %s=
+\n",
+>                                 sym->name ? sym->name : "<choice>",
+> -                               prop_get_type_name(prop->type),
+> +                               prop_get_type_name(type),
+>                                 next_sym->name);
+>                 } else {
+> -                       fprintf(stderr, "%s:%d:\tsymbol %s %s is visible =
+depending on %s\n",
+> -                               prop->filename, prop->lineno,
+> +                       fprintf(stderr, "\tsymbol %s %s is visible depend=
+ing on %s\n",
+>                                 sym->name ? sym->name : "<choice>",
+> -                               prop_get_type_name(prop->type),
+> +                               prop_get_type_name(type),
+>                                 next_sym->name);
+>                 }
+>         }
+
+--=20
+Best Regards
+Masahiro Yamada
 
