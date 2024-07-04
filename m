@@ -1,113 +1,236 @@
-Return-Path: <linux-kernel+bounces-241012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70479275BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1219275B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E5711C21B89
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:10:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833CC1F2233D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36A81AE0A6;
-	Thu,  4 Jul 2024 12:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5251AE0B6;
+	Thu,  4 Jul 2024 12:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="eIC8EBds"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cSXBitAk"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1453519409E
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 12:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F213D17995;
+	Thu,  4 Jul 2024 12:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720095034; cv=none; b=cZCnpuNHA/hNisYNO7qis35U0VL4bfVP3Xd5PRed/tHl2cnB1zUPngQeyeKyw3LRhdiOQt7tGuvlgjuhOswzzTRIF9tJ+MjkZZ/AQCpIzHXhXBkIDMeB8vbWZcOYt2jTT4LrFvsbXvYWJ37I14wdQMYqSGKf7hDMtzJl+x2eA1k=
+	t=1720095014; cv=none; b=Rdx82D0KZ7TT0O1Bp7y4XETWUtF7REYU3g+mwT5yr1ysVpKb9XMcUriHw5TvE+JSRs9kaAqX6cVpfiGNxW0XGSL/YSXUIEy5v125Pk3yVse3osO485e82i7bfBnLu+uL2n2GWPCUYvuUx5KbfvOUGjpsgNYrHOUTh0pz7mEqsqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720095034; c=relaxed/simple;
-	bh=BAf5VAA3Uw6QdJNR9ZGFb03WBNfn2L5SWcXmeMhKAQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KQrE1LuhoZxwRE3HRcm4CNIpVRCpMaigx0BKhPsHv2DKFtLHRUdnY/lF/LRK19wxR+9zgA/I+z41WMFGSubkLGsY7efRxTsxsN5ZT4Pup/lRysINvfVsjJNxjbRc27eTXMM+ajKf4ClZzPNLr89zaFCJUK4IWbkdj81JYm9NngI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=eIC8EBds; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wvGPA+uFp9q5GPv2Hy9Yn5IXdEOa9ACphERR99unxkQ=; b=eIC8EBds9Za8+6toLlsI+Gt55E
-	APf4QxvuAmD3cMe+4yGrUMvrfgfahXE3mTCRdiXgpJ4Q6V9avv0SwxqS/Qs0zISIWNxUznJ/wXhgV
-	AUQM8xayQYpRnoCncMkl8YSgzEMDIHZiGOyII3UWHt9pjG6yd+yvr84UxgIsnkE3B2CO/MFQaJc8b
-	nmXoc993GOPfHGimBy94ff1q6xlSmE+VLiJ3bjs6RsvWa4kKl5GHCdf2WrgE16sqhx8xkQOF1Eatq
-	BB8az0u3KNDNN6Mi5+aWZ9SfOXdhzvFvi55nBzIxCmt+v+kGYOmvZTEYrmIbh96TRcVOvhjhl4RjR
-	04hECBjA==;
-Received: from [187.36.213.55] (helo=[192.168.1.212])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sPLHv-00B5Zl-Si; Thu, 04 Jul 2024 14:10:12 +0200
-Message-ID: <bdebd2b3-d1e3-4d01-b6da-ec369aa8b0b8@igalia.com>
-Date: Thu, 4 Jul 2024 09:10:04 -0300
+	s=arc-20240116; t=1720095014; c=relaxed/simple;
+	bh=QO7Jb1iEQ+V6p6XmkF0p47Xfs1xtuglwyapZXD8gCe4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=aKknIKOWZAZgh4AqmstcSEqKmaCpAPFmBKvqO3Iwn6igQ5D7GEosSyZQi45rOJ22mHPXpVHXUz74hyk1WYugEfJ8MQpLOaz2MV5NgF5Nj4mlC9aO49lOwk+YSWTvzuMHEFfemzmY0WgfUSuFNoIYanYnEpEKNsUPK091Pe+85Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cSXBitAk; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-726d9b3bcf8so446969a12.0;
+        Thu, 04 Jul 2024 05:10:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720095012; x=1720699812; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KS8912iTY0xW9afn3Y1NFj6von6GR2I+TxZx9FsjCOo=;
+        b=cSXBitAkxTs6QXyp9Tna8aIAiuOhSUn1iTycqhBl7X+K1ZEHx518rZ7xnjmKc07GPn
+         IjtHI9AZKmm7wCtOBL7CbLsO3tuoRxIp5lTo10q3gMTvHAAYCUxPy8NbTYt3x1uw1G+o
+         IamKfqEFRcHxPdZvyIdfAw8yLCExY1YtXhp2WLJ2YUh196/yy7SMDwa5ggWs3IXCgCeS
+         PEpJsHPzLykiNmif5p0zHnmrawdMiSzL2NI+u8wxvT7KdmXs9Tdh3c7VLbLnt9bu5szv
+         p/Yxp5J/nIOjim6shWbFrWoSNlI8oKHsRXIiv4X0v/HR0WXjyUZD0lN1ia0Usw6RLXm1
+         YIIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720095012; x=1720699812;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KS8912iTY0xW9afn3Y1NFj6von6GR2I+TxZx9FsjCOo=;
+        b=CQgOTIVtiLyeXfEHMGPmXDu2RvrLFSP1F6v5b9SGSuwHI2LRVwi024pyk9JelXAixe
+         bVbyuzkMKya94+AVahoTfld2wCMD56p7bqUbgEq6T8i9iR36+ZdrncNZb0yArpPrXV+F
+         Y/UKBOH3N3aYXC43Z/9Tascz+H/GRHrrGYnph3+ryt4O3EEBVJsYRJ5hQizie4rFVShD
+         M9qgFRVg0TlvdTILE907NxTsMGadF0YsADaxQzqeaLdLNGgnRgUGjDp1HQPVM76CJcZe
+         PA6yiCs+8GnpXa5Me49AhRb84/uShwuUE/dLjHTwzypVg/jlVLSa92hCOzIIbe/szsZs
+         D0pw==
+X-Forwarded-Encrypted: i=1; AJvYcCXp8d5VSEfRjVvZOjGv3ClTgQyhUI2aX3zvsFpq1naXU5xKHk8efoaTzOAMCj6jqM8/4BWooClug6Zl0fbY+lGr/kitqG2zzt7nnA/OLHRMljPfSEAgntrSMQGrMeE4lrOk
+X-Gm-Message-State: AOJu0YwZT9XlzXn0QSixOpMdxHSyTGlRsBkLIlU7nCPHZBkgVNJ+f5Q3
+	QuYWckaZFyCtJSuo8LZmZCxSwru/zaAV0antwQYimepiDvGo8QME
+X-Google-Smtp-Source: AGHT+IGcWrJqtZ43V+s8BIoH/VOJWFVfMjaAJrAMjYxsFFcshcsaLm5j7uSV+h6i+eHEuIvhwXgutA==
+X-Received: by 2002:a05:6a20:6a11:b0:1be:cbe9:f765 with SMTP id adf61e73a8af0-1c0cc73ea5dmr1319914637.18.1720095012149;
+        Thu, 04 Jul 2024 05:10:12 -0700 (PDT)
+Received: from localhost (118-211-5-80.tpgi.com.au. [118.211.5.80])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c999e13eedsm758458a91.1.2024.07.04.05.10.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 05:10:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/vkms: Remove event from vkms_output
-To: Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, open list <linux-kernel@vger.kernel.org>
-References: <20240703160458.1303872-1-lyude@redhat.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xjMEZIsaeRYJKwYBBAHaRw8BAQdAGU6aY8oojw61KS5rGGMrlcilFqR6p6ID45IZ6ovX0h3N
- H01haXJhIENhbmFsIDxtY2FuYWxAaWdhbGlhLmNvbT7CjwQTFggANxYhBDMCqFtIvFKVRJZQ
- hDSPnHLaGFVuBQJkixp5BQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQNI+cctoYVW5u
- GAEAwpaC5rI3wD8zqETKwGVoXd6+AbmGfZuVD40xepy7z/8BAM5w95/oyPsHUqOsg/xUTlNp
- rlbhA+WWoaOXA3XgR+wCzjgEZIsaeRIKKwYBBAGXVQEFAQEHQGoOK0jgh0IorMAacx6WUUWb
- s3RLiJYWUU6iNrk5wWUbAwEIB8J+BBgWCAAmFiEEMwKoW0i8UpVEllCENI+cctoYVW4FAmSL
- GnkFCQWjmoACGwwACgkQNI+cctoYVW6cqwD/Q9R98msvkhgRvi18fzUPFDwwogn+F+gQJJ6o
- pwpgFkAA/R2zOfla3IT6G3SBoV5ucdpdCpnIXFpQLbmfHK7dXsAC
-In-Reply-To: <20240703160458.1303872-1-lyude@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 04 Jul 2024 22:10:05 +1000
+Message-Id: <D2GQSGNWNGX4.2R8TH3M64POGJ@gmail.com>
+Cc: <linuxppc-dev@lists.ozlabs.org>, <kvm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/2] arch/powerpc/kvm: Fix doorbells for nested KVM
+ guests on PowerNV
+From: "Nicholas Piggin" <npiggin@gmail.com>
+To: "Gautam Menghani" <gautam@linux.ibm.com>, <mpe@ellerman.id.au>,
+ <christophe.leroy@csgroup.eu>, <naveen.n.rao@linux.ibm.com>
+X-Mailer: aerc 0.17.0
+References: <20240627180342.110238-1-gautam@linux.ibm.com>
+ <20240627180342.110238-3-gautam@linux.ibm.com>
+In-Reply-To: <20240627180342.110238-3-gautam@linux.ibm.com>
 
-On 7/3/24 13:04, Lyude Paul wrote:
-> While working on rvkms, I noticed that there's no code that actually uses
-> the drm_pending_vblank_event that's embedded in vkms_output. So, just drop
-> the member from the struct.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
-
-Feel free to apply it to drm-misc/drm-misc-next! Otherwise, I'll apply
-it over the weekend.
-
-Best Regards,
-- Maíra
-
+On Fri Jun 28, 2024 at 4:03 AM AEST, Gautam Menghani wrote:
+> commit 6398326b9ba1("KVM: PPC: Book3S HV P9: Stop using vc->dpdes")
+> introduced an optimization to use only vcpu->doorbell_request for SMT
+> emulation for Power9 and above guests, but the code for nested guests=20
+> still relies on the old way of handling doorbells, due to which an L2
+> guest cannot be booted with XICS with SMT>1. The command to repro
+> this issue is:
+>
+> qemu-system-ppc64 \
+> 	-drive file=3Drhel.qcow2,format=3Dqcow2 \
+> 	-m 20G \
+> 	-smp 8,cores=3D1,threads=3D8 \
+> 	-cpu  host \
+> 	-nographic \
+> 	-machine pseries,ic-mode=3Dxics -accel kvm
+>
+> Fix the plumbing to utilize vcpu->doorbell_request instead of vcore->dpde=
+s=20
+> on P9 and above.
+>
+> Fixes: 6398326b9ba1 ("KVM: PPC: Book3S HV P9: Stop using vc->dpdes")
+> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
 > ---
->   drivers/gpu/drm/vkms/vkms_drv.h | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> index 8f5710debb1eb..5e46ea5b96dcc 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> @@ -103,7 +103,6 @@ struct vkms_output {
->   	struct drm_writeback_connector wb_connector;
->   	struct hrtimer vblank_hrtimer;
->   	ktime_t period_ns;
-> -	struct drm_pending_vblank_event *event;
->   	/* ordered wq for composer_work */
->   	struct workqueue_struct *composer_workq;
->   	/* protects concurrent access to composer */
+>  arch/powerpc/kvm/book3s_hv.c        |  9 ++++++++-
+>  arch/powerpc/kvm/book3s_hv_nested.c | 20 ++++++++++++++++----
+>  2 files changed, 24 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+> index cea28ac05923..0586fa636707 100644
+> --- a/arch/powerpc/kvm/book3s_hv.c
+> +++ b/arch/powerpc/kvm/book3s_hv.c
+> @@ -4178,6 +4178,9 @@ static int kvmhv_vcpu_entry_p9_nested(struct kvm_vc=
+pu *vcpu, u64 time_limit, uns
+>  	}
+>  	hvregs.hdec_expiry =3D time_limit;
+> =20
+> +	// clear doorbell bit as hvregs already has the info
+> +	vcpu->arch.doorbell_request =3D 0;
+> +
+>  	/*
+>  	 * When setting DEC, we must always deal with irq_work_raise
+>  	 * via NMI vs setting DEC. The problem occurs right as we
+> @@ -4694,6 +4697,7 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u6=
+4 time_limit,
+>  	struct kvm_nested_guest *nested =3D vcpu->arch.nested;
+>  	unsigned long flags;
+>  	u64 tb;
+> +	bool doorbell_pending;
+> =20
+>  	trace_kvmppc_run_vcpu_enter(vcpu);
+> =20
+> @@ -4752,6 +4756,9 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u6=
+4 time_limit,
+>  	 */
+>  	smp_mb();
+> =20
+> +	doorbell_pending =3D !cpu_has_feature(CPU_FTR_ARCH_300) &&
+> +				vcpu->arch.doorbell_request;
+
+Hmm... is the feature test flipped here?
+
+> +
+>  	if (!nested) {
+>  		kvmppc_core_prepare_to_enter(vcpu);
+>  		if (test_bit(BOOK3S_IRQPRIO_EXTERNAL,
+> @@ -4769,7 +4776,7 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u6=
+4 time_limit,
+>  				lpcr |=3D LPCR_MER;
+>  		}
+>  	} else if (vcpu->arch.pending_exceptions ||
+> -		   vcpu->arch.doorbell_request ||
+> +		   doorbell_pending ||
+>  		   xive_interrupt_pending(vcpu)) {
+>  		vcpu->arch.ret =3D RESUME_HOST;
+>  		goto out;
+> diff --git a/arch/powerpc/kvm/book3s_hv_nested.c b/arch/powerpc/kvm/book3=
+s_hv_nested.c
+> index 05f5220960c6..b34eefa6b268 100644
+> --- a/arch/powerpc/kvm/book3s_hv_nested.c
+> +++ b/arch/powerpc/kvm/book3s_hv_nested.c
+> @@ -32,7 +32,10 @@ void kvmhv_save_hv_regs(struct kvm_vcpu *vcpu, struct =
+hv_guest_state *hr)
+>  	struct kvmppc_vcore *vc =3D vcpu->arch.vcore;
+> =20
+>  	hr->pcr =3D vc->pcr | PCR_MASK;
+> -	hr->dpdes =3D vc->dpdes;
+> +	if (cpu_has_feature(CPU_FTR_ARCH_300))
+> +		hr->dpdes =3D vcpu->arch.doorbell_request;
+> +	else
+> +		hr->dpdes =3D vc->dpdes;
+>  	hr->hfscr =3D vcpu->arch.hfscr;
+>  	hr->tb_offset =3D vc->tb_offset;
+>  	hr->dawr0 =3D vcpu->arch.dawr0;
+
+Great find.
+
+Nested is all POWER9 and later only, so I think you can just
+change to using doorbell_request always.
+
+And probably don't have to do anything for book3s_hv.c unless
+I'm mistaken about the feature test.
+
+Thanks,
+Nick
+
+> @@ -105,7 +108,10 @@ static void save_hv_return_state(struct kvm_vcpu *vc=
+pu,
+>  {
+>  	struct kvmppc_vcore *vc =3D vcpu->arch.vcore;
+> =20
+> -	hr->dpdes =3D vc->dpdes;
+> +	if (cpu_has_feature(CPU_FTR_ARCH_300))
+> +		hr->dpdes =3D vcpu->arch.doorbell_request;
+> +	else
+> +		hr->dpdes =3D vc->dpdes;
+>  	hr->purr =3D vcpu->arch.purr;
+>  	hr->spurr =3D vcpu->arch.spurr;
+>  	hr->ic =3D vcpu->arch.ic;
+> @@ -143,7 +149,10 @@ static void restore_hv_regs(struct kvm_vcpu *vcpu, c=
+onst struct hv_guest_state *
+>  	struct kvmppc_vcore *vc =3D vcpu->arch.vcore;
+> =20
+>  	vc->pcr =3D hr->pcr | PCR_MASK;
+> -	vc->dpdes =3D hr->dpdes;
+> +	if (cpu_has_feature(CPU_FTR_ARCH_300))
+> +		vcpu->arch.doorbell_request =3D hr->dpdes;
+> +	else
+> +		vc->dpdes =3D hr->dpdes;
+>  	vcpu->arch.hfscr =3D hr->hfscr;
+>  	vcpu->arch.dawr0 =3D hr->dawr0;
+>  	vcpu->arch.dawrx0 =3D hr->dawrx0;
+> @@ -170,7 +179,10 @@ void kvmhv_restore_hv_return_state(struct kvm_vcpu *=
+vcpu,
+>  {
+>  	struct kvmppc_vcore *vc =3D vcpu->arch.vcore;
+> =20
+> -	vc->dpdes =3D hr->dpdes;
+> +	if (cpu_has_feature(CPU_FTR_ARCH_300) && !vcpu->arch.doorbell_request)
+> +		vcpu->arch.doorbell_request =3D hr->dpdes;
+> +	else
+> +		vc->dpdes =3D hr->dpdes;
+>  	vcpu->arch.hfscr =3D hr->hfscr;
+>  	vcpu->arch.purr =3D hr->purr;
+>  	vcpu->arch.spurr =3D hr->spurr;
+
 
