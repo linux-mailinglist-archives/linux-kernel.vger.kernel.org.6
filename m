@@ -1,165 +1,158 @@
-Return-Path: <linux-kernel+bounces-241054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A6F92767B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:55:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94340927686
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66B81C20FCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:55:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 491D328239B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A071AE0BC;
-	Thu,  4 Jul 2024 12:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693401AED22;
+	Thu,  4 Jul 2024 12:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0+zJB/X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l3qk7iYb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDA91DA316
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 12:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD171AE861;
+	Thu,  4 Jul 2024 12:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720097697; cv=none; b=EwzNCtaAdhnBnV022mBrxcLFmsUQIxv2oP0MdxUazK2H4h/fuyk5+oq+QPdf2L8BWpMhOQAgdxNpc/pOuE5VjKFO1SqC7ofW8uWkVK1l/yCP4BqIVh7398z0POX2MDr4fPmDbFbQdfeYMDjOHgSLSRnolqfwKQk57maZEG1ceds=
+	t=1720097754; cv=none; b=n8yypXpdQAx+ORxrEZKvfNP3rXxSlGUJtV2lHvQ9DuD1lSOZvIRFZe7Hd++HiFVf0pB1O876rtXiRiEiU+wYJDZVPUgssMvPxxZDt+nny4A+s1FLUJo7FgDqf1l2uYLZtvyVMhPARUOqO7tcIUeWEOueeU8a3B2WR7cJe32i3mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720097697; c=relaxed/simple;
-	bh=ILajwhC59+opIAZWjmIhHmcIsJqEnvwOwuO3gniO6zE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ejqTmZEFsWHua81O1JLaLRrwon2IyzFcfIesTLa9uxcoakO+m2amKdxDcNcN/b2j3n033upNLDjrprDqWpklQtDjODjSiUrFIcUErW0QaJ0+FidBUcYeeS+q7WQz3QVhnrg2MgDt12jaQcD9zGKaKgh94iqa1+q9vqPNr5hApmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0+zJB/X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAB88C3277B;
-	Thu,  4 Jul 2024 12:54:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720097697;
-	bh=ILajwhC59+opIAZWjmIhHmcIsJqEnvwOwuO3gniO6zE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W0+zJB/XTUP0SS4KNMmps+Q4v6tiTpFbTSKIZCQZ4XBVDYl/hIpQC8V8F07SaUMld
-	 l8EQohBBNGPoumtKE5mmLBqnGJRANF5qFVxMOivfNuWmFXuAsu9uB89BtAKnkCuDWQ
-	 bkAn0Bo38QRkj2qV3jTZN4NgEmPlylaClkEZu9IHBI541G+5xl7JgpBjd4QtzjZ1Uk
-	 4iBYVBsZ6I6oVBesMU7QjoXesk5UQoi+nwd98uZPbCNrWNTp3qPjAhfSlpQO4tcZLX
-	 noO/cG+hVeA9BN+ZXeDMZbkdR8I5HPOfMWFJw1GNBzb9b+j6PLrWL44ZGzq+uoPOOz
-	 D3TCE1Ebdo4ng==
-Date: Thu, 4 Jul 2024 14:54:54 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	dri-devel@lists.freedesktop.org, igt-dev@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] drm/bridge-connector: move to DRM_DISPLAY_HELPER
- module
-Message-ID: <20240704-roaring-aromatic-seal-d046af@houat>
-References: <20240702-drm-bridge-connector-fix-hdmi-reset-v3-0-12b0e3124ca4@linaro.org>
- <20240702-drm-bridge-connector-fix-hdmi-reset-v3-3-12b0e3124ca4@linaro.org>
+	s=arc-20240116; t=1720097754; c=relaxed/simple;
+	bh=3Gn+5X8kApPn/TQHUrXkCfhIU8vbH4qzNoznN0rMLNw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ke7UfqyTuF/lPdRqyWDCCEAJFSNU62/hIkTHf/cFRmEUvzIbIqhIuvzROEj2yzjQ8qCiUWRbwRqf5eTqInk7pd8iXlU4AYwfXOAMQsLyY/SouGKgZsLuMQ7wf7hcxMiDD94zQo2nX+JpQZKUvaPzFNEwItR01QFiRJ0G9OTqReU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l3qk7iYb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4648bkRD000337;
+	Thu, 4 Jul 2024 12:55:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=nFqrxVv5j0XXUicQugiyuQ7XNx0h0LFXvHKht5Lk8gM=; b=l3
+	qk7iYbvmy6XZFdIUZ5xyNuIZp3pU+r1ghTijs1lc/Vy7lKxy1S2tmD3sIyBFlorq
+	UkeE2EiZ8kSd2B/n7VQeAZBjJyh5iS/qWco4iS9IGD2zU18YDgmLTmt8Kr1f2I3O
+	b4s5vvfSAP7TDDGwhqDQIC+dlHzx1Z+D3/t0janRbvPM1vzqdwOhbQacRg/KlfJJ
+	vJqY6CrSwCttaz1Rasm3zPbQS74SsPXr/dbQc3v8XUZv93d6u5QfPUEwxis3VvZv
+	3NGlLalaZXTbbGU7ibJnBIxKX7dwlKuudl+urJWqv1sDYE6oUhiRgco4BFKJm2pq
+	oUdiZHpl+RtkddHETR7g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402abtuh34-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Jul 2024 12:55:46 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 464Ctjxw031604
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 4 Jul 2024 12:55:45 GMT
+Received: from hu-okukatla-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 4 Jul 2024 05:55:40 -0700
+From: Odelu Kukatla <quic_okukatla@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Kees Cook <keescook@chromium.org>, <cros-qcom-dts-watchers@chromium.org>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>, <quic_rlaggysh@quicinc.com>,
+        <quic_mdtipton@quicinc.com>, <quic_okukatla@quicinc.com>
+Subject: [PATCH] interconnect: qcom: Fix DT backwards compatibility for QoS
+Date: Thu, 4 Jul 2024 18:25:15 +0530
+Message-ID: <20240704125515.22194-1-quic_okukatla@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="maf4l2nobzwgnwrm"
-Content-Disposition: inline
-In-Reply-To: <20240702-drm-bridge-connector-fix-hdmi-reset-v3-3-12b0e3124ca4@linaro.org>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qWI9-P1L0w6GS7MJ0lnPkwwiJiQtu9Dg
+X-Proofpoint-ORIG-GUID: qWI9-P1L0w6GS7MJ0lnPkwwiJiQtu9Dg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-04_09,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407040092
 
+Add qos_clks_required flag to skip QoS configuration if clocks property
+is not populated in devicetree for providers which require clocks to be
+enabled for accessing registers. This is to keep the QoS configuration
+backwards compatible with devices that have older DTB.
 
---maf4l2nobzwgnwrm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reported-by: Bjorn Andersson <andersson@kernel.org>
+Closes: https://lore.kernel.org/all/ciji6nlxn752ina4tmh6kwvek52nxpnguomqek6plwvwgvoqef@yrtexkpmn5br/
+Signed-off-by: Odelu Kukatla <quic_okukatla@quicinc.com>
+---
+ drivers/interconnect/qcom/icc-rpmh.c | 2 +-
+ drivers/interconnect/qcom/icc-rpmh.h | 1 +
+ drivers/interconnect/qcom/sc7280.c   | 2 ++
+ 3 files changed, 4 insertions(+), 1 deletion(-)
 
-On Tue, Jul 02, 2024 at 12:48:54PM GMT, Dmitry Baryshkov wrote:
-> drm_bridge_connector is a "leaf" driver, belonging to the display
-> helper, rather than the "CRTC" drm_kms_helper module. Move the driver
-> to the drm/display and add necessary Kconfig selection clauses.
->=20
-> Suggested-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/Makefile                             | 1 -
->  drivers/gpu/drm/bridge/Kconfig                       | 1 +
->  drivers/gpu/drm/display/Kconfig                      | 6 ++++++
->  drivers/gpu/drm/display/Makefile                     | 2 ++
->  drivers/gpu/drm/{ =3D> display}/drm_bridge_connector.c | 0
->  drivers/gpu/drm/imx/dcss/Kconfig                     | 2 ++
->  drivers/gpu/drm/imx/lcdc/Kconfig                     | 2 ++
->  drivers/gpu/drm/ingenic/Kconfig                      | 2 ++
->  drivers/gpu/drm/kmb/Kconfig                          | 2 ++
->  drivers/gpu/drm/mediatek/Kconfig                     | 2 ++
->  drivers/gpu/drm/meson/Kconfig                        | 2 ++
->  drivers/gpu/drm/msm/Kconfig                          | 1 +
->  drivers/gpu/drm/omapdrm/Kconfig                      | 2 ++
->  drivers/gpu/drm/renesas/rcar-du/Kconfig              | 2 ++
->  drivers/gpu/drm/renesas/rz-du/Kconfig                | 2 ++
->  drivers/gpu/drm/renesas/shmobile/Kconfig             | 2 ++
->  drivers/gpu/drm/rockchip/Kconfig                     | 4 ++++
->  drivers/gpu/drm/tegra/Kconfig                        | 1 +
->  drivers/gpu/drm/tidss/Kconfig                        | 2 ++
->  drivers/gpu/drm/xlnx/Kconfig                         | 1 +
->  20 files changed, 38 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-> index 68cc9258ffc4..fa432a1ac9e2 100644
-> --- a/drivers/gpu/drm/Makefile
-> +++ b/drivers/gpu/drm/Makefile
-> @@ -128,7 +128,6 @@ obj-$(CONFIG_DRM_TTM_HELPER) +=3D drm_ttm_helper.o
->  drm_kms_helper-y :=3D \
->  	drm_atomic_helper.o \
->  	drm_atomic_state_helper.o \
-> -	drm_bridge_connector.o \
->  	drm_crtc_helper.o \
->  	drm_damage_helper.o \
->  	drm_encoder_slave.o \
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kcon=
-fig
-> index c621be1a99a8..3eb955333c80 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -390,6 +390,7 @@ config DRM_TI_SN65DSI86
->  	depends on OF
->  	select DRM_DISPLAY_DP_HELPER
->  	select DRM_DISPLAY_HELPER
-> +	select DRM_BRIDGE_CONNECTOR
->  	select DRM_KMS_HELPER
->  	select REGMAP_I2C
->  	select DRM_PANEL
-> diff --git a/drivers/gpu/drm/display/Kconfig b/drivers/gpu/drm/display/Kc=
-onfig
-> index 479e62690d75..1a192a45961b 100644
-> --- a/drivers/gpu/drm/display/Kconfig
-> +++ b/drivers/gpu/drm/display/Kconfig
-> @@ -6,6 +6,12 @@ config DRM_DISPLAY_HELPER
->  	help
->  	  DRM helpers for display adapters.
-> =20
-> +config DRM_BRIDGE_CONNECTOR
-> +	bool
-> +	depends on DRM && DRM_BRIDGE && DRM_DISPLAY_HELPER
-> +	help
-> +	  DRM connector implementation terminating DRM bridge chains.
-> +
+diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
+index 93047defd5e2..f49a8e0cb03c 100644
+--- a/drivers/interconnect/qcom/icc-rpmh.c
++++ b/drivers/interconnect/qcom/icc-rpmh.c
+@@ -311,7 +311,7 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		qp->num_clks = devm_clk_bulk_get_all(qp->dev, &qp->clks);
+-		if (qp->num_clks < 0) {
++		if (qp->num_clks < 0 || (!qp->num_clks && desc->qos_clks_required)) {
+ 			dev_info(dev, "Skipping QoS, failed to get clk: %d\n", qp->num_clks);
+ 			goto skip_qos_config;
+ 		}
+diff --git a/drivers/interconnect/qcom/icc-rpmh.h b/drivers/interconnect/qcom/icc-rpmh.h
+index 9a5142c70486..14db89850fb3 100644
+--- a/drivers/interconnect/qcom/icc-rpmh.h
++++ b/drivers/interconnect/qcom/icc-rpmh.h
+@@ -153,6 +153,7 @@ struct qcom_icc_desc {
+ 	size_t num_nodes;
+ 	struct qcom_icc_bcm * const *bcms;
+ 	size_t num_bcms;
++	bool qos_clks_required;
+ };
+ 
+ int qcom_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
+diff --git a/drivers/interconnect/qcom/sc7280.c b/drivers/interconnect/qcom/sc7280.c
+index 759c609a20bf..167971f8e8be 100644
+--- a/drivers/interconnect/qcom/sc7280.c
++++ b/drivers/interconnect/qcom/sc7280.c
+@@ -1691,6 +1691,7 @@ static const struct qcom_icc_desc sc7280_aggre1_noc = {
+ 	.num_nodes = ARRAY_SIZE(aggre1_noc_nodes),
+ 	.bcms = aggre1_noc_bcms,
+ 	.num_bcms = ARRAY_SIZE(aggre1_noc_bcms),
++	.qos_clks_required = true,
+ };
+ 
+ static struct qcom_icc_bcm * const aggre2_noc_bcms[] = {
+@@ -1722,6 +1723,7 @@ static const struct qcom_icc_desc sc7280_aggre2_noc = {
+ 	.num_nodes = ARRAY_SIZE(aggre2_noc_nodes),
+ 	.bcms = aggre2_noc_bcms,
+ 	.num_bcms = ARRAY_SIZE(aggre2_noc_bcms),
++	.qos_clks_required = true,
+ };
+ 
+ static struct qcom_icc_bcm * const clk_virt_bcms[] = {
+-- 
+2.17.1
 
-Is there any reason to put it in there instead of under DRM_BRIDGE like
-DRM_PANEL_BRIDGE?
-
-Maxime
-
---maf4l2nobzwgnwrm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZoabnQAKCRDj7w1vZxhR
-xVF4AQCZGUdy5RSxRNia33KLSVe6JlbEwmPRPfCDXIxddM0AuAD+NAnI7f0ZL1Up
-42ruWE1J6+8pytttkHv86vqf50lp0wc=
-=h9NG
------END PGP SIGNATURE-----
-
---maf4l2nobzwgnwrm--
 
