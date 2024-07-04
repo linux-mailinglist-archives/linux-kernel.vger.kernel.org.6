@@ -1,59 +1,46 @@
-Return-Path: <linux-kernel+bounces-241626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A1D927D42
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:43:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70ADF927D4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E833C285E7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:43:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C718284683
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EF074BF5;
-	Thu,  4 Jul 2024 18:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MdOagRrY"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133024964A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AC773442;
+	Thu,  4 Jul 2024 18:52:47 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AE373452
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720118627; cv=none; b=lWgm7eo2FTsb2OQmznqdyemkegzagDon/5vOtQHPpbepmgv58rskxNhAVgonzvzpZCJyx+dPgAbCP09gBSUnRPVjRlqqgsWskAq/J1k1L9r0/JKozXiMECUhJ/GpTigl+q7DHrbHgIJ0F6Po6ta9dRKu9brJYqJDWC5MLyVTbGI=
+	t=1720119167; cv=none; b=kcgViWZyiBal1Y2SVz3QUI8a2SFnVKvtV20ga6GOMYkFdwG+p42SKcXhszJ78kYGqNnC03Vfn6le1d8OrEUbo7Hecm/yxO48Cvls6W4AmEAneQiXhfshK8oTObbflqFzKh5RQf57l0nmaPXiYn8TwzAgiEcSTwQCCk9vtCIOPPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720118627; c=relaxed/simple;
-	bh=rzKbnaZUmIdktLW7DeqDQh/+ZOewtJWOKFWPTVfkCWE=;
+	s=arc-20240116; t=1720119167; c=relaxed/simple;
+	bh=GQBx1MxgEDAe5DdKAvCgpIEoVogab7OgI3MQjkxoDZ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VDFnE+EQii4fPcj6/RYg3EcSUVNLU0RzenSgfplcb9ONr5yFBSB3MLD8DBlGeYUyIdslybeDmRyPEVkcpRkgvGUgWcn7eOzI5eIauDqac7sjyf3rq9uLJQ6TRpxMZQsOgC1heNjkqZwYVryAaXoh0OC/EL8pSP4EmUswfbJ3k0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MdOagRrY; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=sNKtxBcfq1FOj6FTpkpQvKnBvmpEW5e+Aixwe6zCgS0=; b=MdOagRrY9qMVl0YUfx5iwBc0EE
-	0P1KFELrr68trhEYby80unYdLWGwZY5N0u0YpRLhVlL6IEnPzuwSLdigi3cOVSS3wn+kScJfSw+h5
-	w1sDlmuAIK+0W7M6umWLTTAsO8h9Dn1FzwMWR3cCMiIoXCaCvEvjX8DqP2tLlxOt6gxDxDyyQ7AY+
-	aWq5cx3r2fh4tOgkRPVVOBwrsoeU/twYCEkcU2M4mkZzJd1Nn8x3Prj7/FwE3NziISXnft/matHFc
-	zx8bzFhPHBBrkmBClkKgh2WGbxx3PSKmDTGmOhXPfNoB7KihOQ7+8ioMSBxinnpbgJiZ9oUokqYBY
-	Wry0GP4w==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sPRQU-000000038qQ-0kqN;
-	Thu, 04 Jul 2024 18:43:26 +0000
-Date: Thu, 4 Jul 2024 19:43:26 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
-	wangkefeng.wang@huawei.com, ying.huang@intel.com, 21cnbao@gmail.com,
-	ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com,
-	ioworker0@gmail.com, da.gomez@samsung.com, p.raghav@samsung.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] add mTHP support for anonymous shmem
-Message-ID: <ZobtTmzj0AmNXcav@casper.infradead.org>
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zc53UqDJxJDYvG0rcYiyVMxxDJzthX/vfnDEqHxxMQnTg0v5lUt6qSAhp6MHklehhh2+ifKE6yf5kMwCDhnKDW8g/eCEs0VsuJRUmZihrW3Tz4fZ1Ync2DmrOqUN06uX4/ubf6u7co0qsnY3+tJpdi1dK3bdmUwzXb7t2oqrRC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by mail.home.local (8.17.1/8.17.1/Submit) id 464IiPxH012837;
+	Thu, 4 Jul 2024 20:44:25 +0200
+Date: Thu, 4 Jul 2024 20:44:25 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, jolsa@kernel.org,
+        mhiramat@kernel.org, cgzones@googlemail.com, brauner@kernel.org,
+        linux-kernel@vger.kernel.org, arnd@arndb.de
+Subject: Re: deconflicting new syscall numbers for 6.11
+Message-ID: <Zobtia2Zsaamh9KQ@1wt.eu>
+References: <ZobXdDCYBi8OM-Fo@zx2c4.com>
+ <CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
+ <Zobf3fZOuvOJOGPN@zx2c4.com>
+ <CAHk-=whf2Pb8fSmUsLRSn6CnYvQoyUkLikKpFDWN_xnTJqix=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,50 +49,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAHk-=whf2Pb8fSmUsLRSn6CnYvQoyUkLikKpFDWN_xnTJqix=A@mail.gmail.com>
 
-On Tue, Jun 11, 2024 at 06:11:04PM +0800, Baolin Wang wrote:
-> Anonymous pages have already been supported for multi-size (mTHP) allocation
-> through commit 19eaf44954df, that can allow THP to be configured through the
-> sysfs interface located at '/sys/kernel/mm/transparent_hugepage/hugepage-XXkb/enabled'.
-> 
-> However, the anonymous shmem will ignore the anonymous mTHP rule configured
-> through the sysfs interface, and can only use the PMD-mapped THP, that is not
-> reasonable. Many implement anonymous page sharing through mmap(MAP_SHARED |
-> MAP_ANONYMOUS), especially in database usage scenarios, therefore, users expect
-> to apply an unified mTHP strategy for anonymous pages, also including the
-> anonymous shared pages, in order to enjoy the benefits of mTHP. For example,
-> lower latency than PMD-mapped THP, smaller memory bloat than PMD-mapped THP,
-> contiguous PTEs on ARM architecture to reduce TLB miss etc.
+On Thu, Jul 04, 2024 at 10:55:46AM -0700, Linus Torvalds wrote:
+> A trivial google for "rdrand library" finds lots of hits for things
+> that then use the AES-NI instructions to whiten things etc.
 
-OK, this makes sense.
+As a userland developer, I can say that dealing with external libs for
+low-level stuff, which themselves sometimes even come with their own
+set of dependencies, is always a pain. There must be compelling reasons
+for adding dependencies. It's reinforced when you have to deal with
+long term support on your software that goes beyond the lib's.
 
-> As discussed in the bi-weekly MM meeting[1], the mTHP controls should control
-> all of shmem, not only anonymous shmem, but support will be added iteratively.
-> Therefore, this patch set starts with support for anonymous shmem.
+And having to go through instruction support detection and open-coding
+all that stuff with runtime fallbacks for older CPUs is also a pain. Not
+to mention the cases where you run in VMs where features are there but
+not listed or presented but slowly emulated.
 
-But then this doesn't.  You say first that users want the same controls
-to control all anonymous memory, then you introduce a completely
-separate set of controls for shared anonymous memory.
+I'm using a lot of arch-specific code at build time, I'm often fine with
+detecting -ENOSYS at run time to fall back to an older implementation of
+a syscall, but I've not crossed the barrier of runtime CPU features
+detection which adds further burden and further fragments bug reports
+between users.
 
-shmem has two uses:
+Regarding VM migration, my code is not concerned because I'm not aware
+of users migrating such VMs. BUT I've got complains in the past from
+some users generating UUIDs for each forwarded request that they were
+seeing duplicates in their logs due to the lack of thread safety on
+random(), which made me work on an alternative. Thus I can easily
+imagine that equivalent applications that just want to assign a unique
+ID to an event that ends up in a log, and when such applications suffer
+a VM migration could face a similar problem that is not easy to address
+in userland.
 
- - MAP_ANONYMOUS | MAP_SHARED (this patch set)
- - tmpfs
+In my opinion, abstracting the hardware is the role of the kernel. If
+getrandom() is fast enough for my uses, why not. If it's not, I find
+value in having a much faster proposal that offers the same API to all
+applications without each having to reinvent the wheel. I can't judge
+on the merits of vgetrandom() vs getrandom() though. But to give you an
+idea, years ago for portability reasons (random() thread safety, multiple
+OS support, performance), I ended up writing my own xoroshiro128 generator
+to address multiple problems at once and I must confess I was a bit sad
+to see that randoms remain so little portable between operating systems
+and their various versions, and that the work left to be done for users
+is non trivial.
 
-For the second use case we don't want controls *at all*, we want the
-same heiristics used for all other filesystems to apply to tmpfs.
+I can imagine that users with higher expectations than mine would want
+to adopt vgetrandom() when available.
 
-There's no reason to have separate controls for choosing folio size
-in shmem.
+Now would I replace my existing RNG with this new syscall when it gets
+widely available ? Maybe, if it brings some value. It's easy enough to
+deal with two code branches, one with the new, optimal syscall, and the
+legacy generic fallback.
 
-> The primary strategy is similar to supporting anonymous mTHP. Introduce
-> a new interface '/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled',
-> which can have almost the same values as the top-level
-> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', with adding a new
-> additional "inherit" option and dropping the testing options 'force' and
-> 'deny'. By default all sizes will be set to "never" except PMD size, which
-> is set to "inherit". This ensures backward compatibility with the anonymous
-> shmem enabled of the top level, meanwhile also allows independent control of
-> anonymous shmem enabled for each mTHP.
+Hoping this matches the type of feedback you were looking for.
+
+Willy
 
