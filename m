@@ -1,123 +1,181 @@
-Return-Path: <linux-kernel+bounces-241492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387FE927BDD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 209F7927BE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6B3EB225FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:22:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A3AEB219FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4C33A8F0;
-	Thu,  4 Jul 2024 17:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA133AC0F;
+	Thu,  4 Jul 2024 17:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fWBXAUA+"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMPDo4AD"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F041144C9E;
-	Thu,  4 Jul 2024 17:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410C32BCF6;
+	Thu,  4 Jul 2024 17:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720113721; cv=none; b=F2H/BmSCeP9eKEPTzCBQWx4IKxTgWC67MH3dnqanOhHECrpRzy3IAiRh5Zj4murt2EZUupTxW+urW6/SpRWBayJ3gp3CIz1IRwYMoKqioUFbN8dwqFQR7LZrOo9qbzEoigBPy1zt5arVI8FvGslIKbEA2UD732nAPD9XXE1KRSQ=
+	t=1720113809; cv=none; b=A0ULz26jzhBQd7QrgzNNOMvuwR3erpYemkQR8txB3Hqa7OvpZqgRttK0DbJojSdLGqq44SOYPAJmnTyx9TnWTpqBTA/e8/T4gRDNUpeBkaVrN0WdfOlbmfgM7rGnlThrzdFp+wOxHtuC4qNaVd1vPGXEtvQcaA0PWu3YWajorag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720113721; c=relaxed/simple;
-	bh=N5Rrw2MRuk1dzaCiuF3YDvfjUvsE9TiN6DdBtTtQZ8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a1qTv6wdizsGbeljo5/hf56xM9vFc4J1qEUwSNrfmBjeItrQujFfXfgUbed8gHNH+gQ7nuxIR9Q0aSUC6XZJF5bV9RWMNUFrpYW60LJlMJmiWfT7QvoUW1vZxYkBZ/oEjp5H9x4KOScspzFIYp3QT3/3rBvwfGO+Wu+nSBZZCaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fWBXAUA+; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1720113809; c=relaxed/simple;
+	bh=rm6V+HkqrAt3iBzlQj+eKYG83FB37ocahkPR5ID/Gns=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ItC7B9WpdLrtBuroeyvM4EH4WCJqWiM6+icPJC94DN6mQhCKTo6ANeuZgSGDpGt91sNMqcZH1NN26++FXlUIStd0tOrq4kR1lvBeFcZzMiyxFbWorCeZZu0V0Im02x7v0iMjx6J/h338cCCSfBSgBYf32XvkLxhQW6Vaa8GB6sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMPDo4AD; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-367975543a8so565947f8f.3;
-        Thu, 04 Jul 2024 10:21:59 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so10383081fa.2;
+        Thu, 04 Jul 2024 10:23:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720113718; x=1720718518; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xbMuRw1sQkRSiFh279rXdYSfGjfdwITvelsunE8eQ+o=;
-        b=fWBXAUA+lTkpfUxhEbgPnjQ+/Jn4U+iYC8hWavjcHfKbJMSSiBQOJOqif47utsbmR0
-         B+u3aVwKy34iFogc8rmFiFgN2MJdiBQJR/uWqanGx9emwmBAp/VKHn9Qo3AlPbhEBUaC
-         RWtqkTFbzbvuJ639vAd2CqdjsofY33S1nZLNmrDBONPKzJGhVijtMNXB27NNgW/YB074
-         scJ0DE/f0lqm5F8s2nJpeKCyVmxn5OZZEToCB+JDMhtWpeMDoYeGwcj8BoLaG6DIwFZQ
-         p6xHM88Voyh+h7qRSNo+TSKlczsr6Ai+zORxO5i9rDfXNXt2AB1alCHROGorP7xVKBRo
-         7XDA==
+        d=gmail.com; s=20230601; t=1720113806; x=1720718606; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=H5ioC1B7C90z2GxGmkOViXNkTNH2Pib8pP+e0Gm1Tpg=;
+        b=PMPDo4ADWnOzKKsdk2N7j/HCaaPXG2CCMrX1O8LoR4cZ0GPkfXftELPA2J7KUQqlFT
+         CxaX5HNOdWPzaRuxzcMIYAr+jyEGK0AXQ4OL5fe2m46rWExHC9+V45hFaRH2vc2EUjhc
+         iitMH+NijcfyGDVfn/xKRFrYJkbyNylzP+5cnHBNLWFU7c8u/ktTKPTdhsYQ51VI15x9
+         TgnBeK5xa5MUdButAxPrixa/us1nzZgE0DYCFdDd7gPKVNLLd/wUGvQdZ6ac3C3i1jua
+         xbkPXRG9dvsBP0bHclbOz5kooWscbHlY+BgVw79jRrZFaP+JCieEL8AXGrXq8Vca8zSf
+         P0dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720113718; x=1720718518;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xbMuRw1sQkRSiFh279rXdYSfGjfdwITvelsunE8eQ+o=;
-        b=lNhpp8QK8TcR1+x8zaUrIKupPok6G1pP/NCylw0rxJqQETjCtSJgTiitO1/dcLMxxO
-         ydTOchNfiEzsvhsz0aHpmsvEtTvMWnPT/IaVS4q50fQiF8GapH8mDcQunC8fSMvCE9Sg
-         ++oYIM7KUAevdtApOvnEpGTrCprT2+WY+HNaFRZgol+h0RrbfYXQoa+9vOS+L4uzPcS5
-         XyU88n5bHQsuW3EC4+8VGcuSHF+JVFMNx4VT5hubcNjVXU7DYIj0qW2V/5X5+kMsg0Ii
-         d1PHXUrLiw5U4VOrGnCDByoZCmIrmjePCfOoTVvznzK5SSpEmNni4aawduoDCfRSK0rU
-         ttcA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUIBnK6pXU0sexpksdPYnZD+I/rVgTCgoLJNknfF60ccGapHthG51pyyjYPEQJ7o09Nf/WPzbaLSruMkz+xalMp5KXgcTNs/bmk/c61KCCSMFGzguR3zJadLI5Zj7SXKELnd2k
-X-Gm-Message-State: AOJu0YygRSr8FkmiPZh+GDDCb1D5ytXow61r4Ws0D7NHoupUdSfAsYyL
-	yGEmomzbZteCjAXSGZ6fZDGA14x64OsHx2UOylq/OobzDRuPSjIi
-X-Google-Smtp-Source: AGHT+IGdluLbnk0hTBC/jWbHuttDDQoIzwdZNIhKDlVq3XycWj2L2MDyVC25gNmwdtGq+W6484Ov3g==
-X-Received: by 2002:adf:e94a:0:b0:367:88c2:23a5 with SMTP id ffacd0b85a97d-3679dd2b344mr1283829f8f.27.1720113717962;
-        Thu, 04 Jul 2024 10:21:57 -0700 (PDT)
-Received: from skbuf ([188.25.110.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367947ddebfsm4574672f8f.34.2024.07.04.10.21.56
+        d=1e100.net; s=20230601; t=1720113806; x=1720718606;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H5ioC1B7C90z2GxGmkOViXNkTNH2Pib8pP+e0Gm1Tpg=;
+        b=jqKjRokz+h1G2qXSsXFlV3dkUTF73rWlBbpq63wq0CMRGdUGiGr/S1xpyT9I8bYSMs
+         5fxc1dpkIFIjLNa8buVwPIqSurnSczQ5TJZQYJGVZfIfe8jr7rFI0CnPc3uYUhM5ZxxP
+         veVgaPsRQ8lke4tn2Jwiv9CqXHtJt9OKXIBTpFMHMi1Vs7T2WHNQWPVOZparIho7/9Za
+         caa4ThR7MeHgP30yUAQtTsGN8+vdp3zPUQNllvyVwam15NyCKr6m4rPcSD8Jf98IXyVR
+         RvR1aRM1ffZMzXwle9oPEpgungua4LIyz+mxU/YgJS4pFe9KM9qB/4dIRze/JkzrzWb7
+         xjjg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8J9jwXGhFp+Q+95rEWGNqAS5b0Hm4tAJQjG8IzJd+gglQd0gKzy7l9EktBMVI7kgr52FIQs/eSZ3YmyZ+n+l82U5M1m/HHS0DCOR45ZGHXTKkcIcS7N7my3oytPdGJvCBw7CPV5vzY0acfM1u
+X-Gm-Message-State: AOJu0YyfzkhoJStXER4LlxcYd/MeGorM4lxZCQflVMkTbsYskAalmOzA
+	UE8mkxTRlAnEZFlRibfsRXGa+FW8IL2nhXg/Gei6QOkfCgr9dtcp
+X-Google-Smtp-Source: AGHT+IHxpM+9xvXLDW81oYndN0iZXo5BCpV4N7sqVQvlL7P+4TIcvLG8Y0qZI6MvjWcccMRwTZBcNA==
+X-Received: by 2002:a2e:2a46:0:b0:2e1:2169:a5cc with SMTP id 38308e7fff4ca-2ee8ed42730mr17076041fa.15.1720113806204;
+        Thu, 04 Jul 2024 10:23:26 -0700 (PDT)
+Received: from [127.0.1.1] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d6133sm32330965e9.13.2024.07.04.10.23.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 10:21:57 -0700 (PDT)
-Date: Thu, 4 Jul 2024 20:21:54 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-Cc: Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Landen Chao <Landen.Chao@mediatek.com>,
-	Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, regressions@lists.linux.dev
-Subject: Re: [PATCH net v3] net: dsa: mt7530: fix impossible MDIO address and
- issue warning
-Message-ID: <20240704172154.opqyrv2mfgbxj7ce@skbuf>
-References: <7e3fed489c0bbca84a386b1077c61589030ff4ab.1719963228.git.daniel@makrotopia.org>
- <d3ac5584-8e52-46e0-b690-ad5faa1ede61@arinc9.com>
+        Thu, 04 Jul 2024 10:23:25 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH v2 00/24] mfd: Constify read-only regmap structs
+Date: Thu, 04 Jul 2024 19:23:10 +0200
+Message-Id: <20240704-mfd-const-regmap_config-v2-0-0c8785b1331d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d3ac5584-8e52-46e0-b690-ad5faa1ede61@arinc9.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH7ahmYC/4WNUQ6CMBBEr0L22zULCKJf3sMQs7Zb2EQoaQnRE
+ O5u5QJ+vpnMmxWiBJUI12yFIItG9WOC4pCB6XnsBNUmhoKKE52pxMFZNH6MMwbpBp4eCZx2eKk
+ tV5I33FQO0noK4vS9m+9t4l7j7MNnP1ryX/rfueRIyFwbS8RUPu0ttfo6Gj9Au23bF1KGvO++A
+ AAA
+To: Support Opensource <support.opensource@diasemi.com>, 
+ Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, Xu Yilun <yilun.xu@intel.com>, 
+ Tom Rix <trix@redhat.com>, Marek Vasut <marek.vasut+renesas@gmail.com>, 
+ Andy Shevchenko <andy@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ Tim Harvey <tharvey@gateworks.com>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+ linux-omap@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720113803; l=3366;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=rm6V+HkqrAt3iBzlQj+eKYG83FB37ocahkPR5ID/Gns=;
+ b=jiqTx6tSOfA604GU0jTEgspr6vMPK41qCW2J7KSX8WeC+Cfd43af+Iyi1jHlB4L6VToCSUUIQ
+ hk+lFyALj85DmYDNks2goHvTf5kC1tScvZse5SWvGRbMFsj/iQrqHay
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Wed, Jul 03, 2024 at 10:03:09AM +0300, Arınç ÜNAL wrote:
-> Works on standalone MT7530, MT7621's MCM MT7530, and MT7531. From MT7621's
-> MCM MT7530:
-> 
-> [    1.357287] mt7530-mdio mdio-bus:1f: MT7530 adapts as multi-chip module
+This series adds the const modifier to the remaining regmap_bus,
+regmap_config, regmap_irq and regmap_irq_chip structs within mfd
+that are effectively used as const (i.e., only read after their
+declaration), but kept as writtable data.
 
-Why is the device corresponding to the first print located at address 1f,
-then 0?
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-> [    1.364065] mt7530-mdio mdio-bus:00: [Firmware Warn]: impossible switch MDIO address in device tree, assuming 31
-> [    1.374303] mt7530-mdio mdio-bus:00: probe with driver mt7530-mdio failed with error -14
-> [...]
-> [    1.448370] mt7530-mdio mdio-bus:1f: MT7530 adapts as multi-chip module
-> [    1.477676] mt7530-mdio mdio-bus:1f: configuring for fixed/rgmii link mode
-> [    1.485687] mt7530-mdio mdio-bus:1f: Link is Up - 1Gbps/Full - flow control rx/tx
-> [    1.493480] mt7530-mdio mdio-bus:1f: configuring for fixed/trgmii link mode
-> [    1.502680] mt7530-mdio mdio-bus:1f lan1 (uninitialized): PHY [mt7530-0:00] driver [MediaTek MT7530 PHY] (irq=17)
-> [    1.513620] mt7530-mdio mdio-bus:1f: Link is Up - 1Gbps/Full - flow control rx/tx
-> [    1.519671] mt7530-mdio mdio-bus:1f lan2 (uninitialized): PHY [mt7530-0:01] driver [MediaTek MT7530 PHY] (irq=18)
-> [    1.533072] mt7530-mdio mdio-bus:1f lan3 (uninitialized): PHY [mt7530-0:02] driver [MediaTek MT7530 PHY] (irq=19)
-> [    1.545042] mt7530-mdio mdio-bus:1f lan4 (uninitialized): PHY [mt7530-0:03] driver [MediaTek MT7530 PHY] (irq=20)
-> [    1.557031] mt7530-mdio mdio-bus:1f wan (uninitialized): PHY [mt7530-0:04] driver [MediaTek MT7530 PHY] (irq=21)
+Changes in v2:
+- Cover regmap_bus, regmap_irq and regmap_irq_chip too.
+- Link to v1: https://lore.kernel.org/r/20240703-mfd-const-regmap_config-v1-0-aa6cd00a03bd@gmail.com
+
+---
+Javier Carrasco (24):
+      mfd: da9062-core: Constify read-only regmap structs
+      mfd: fsl-imx25-tsadc: Constify struct regmap_config
+      mfd: hi655x-pmic: Constify struct regmap_config
+      mfd: wcd934x: Constify struct regmap_config
+      mfd: tps6105x: Constify struct regmap_config
+      mfd: rohm-bd9576: Constify read-only regmap structs
+      mfd: intel-m10-bmc: Constify struct regmap_config
+      mfd: 88pm80x: Constify read-only regmap structs
+      mfd: bd9571mwv: Constify struct regmap_irq_chip
+      mfd: intel_soc_pmic_bxtwc: Constify struct regmap_irq_chip
+      mfd: retu: Constify read-only regmap structs
+      mfd: rk8xx-core: Constify struct regmap_irq_chip
+      mfd: rohm-bd71828: Constify read-only regmap structs
+      mfd: rohm-bd718x7: Constify struct regmap_irq_chip
+      mfd: tps65086: Constify struct regmap_irq_chip
+      mfd: tps65090: Constify struct regmap_irq_chip
+      mfd: tps65218: Constify struct regmap_irq_chip
+      mfd: tps65219: Constify read-only regmap structs
+      mfd: tps65910: Constify struct regmap_irq_chip
+      mfd: tps65912: Constify struct regmap_irq_chip
+      mfd: twl6040: Constify struct regmap_irq_chip
+      mfd: gateworks-gsc: Constify struct regmap_bus
+      mfd: mc13xxx-spi: Constify struct regmap_bus
+      mfd: sprd-sc27xx-spi: Constify struct regmap_bus
+
+ drivers/mfd/88pm800.c              |  2 +-
+ drivers/mfd/88pm805.c              |  4 ++--
+ drivers/mfd/bd9571mwv.c            |  4 ++--
+ drivers/mfd/da9062-core.c          | 12 ++++++------
+ drivers/mfd/fsl-imx25-tsadc.c      |  2 +-
+ drivers/mfd/gateworks-gsc.c        |  2 +-
+ drivers/mfd/hi655x-pmic.c          |  2 +-
+ drivers/mfd/intel-m10-bmc-pmci.c   |  2 +-
+ drivers/mfd/intel-m10-bmc-spi.c    |  2 +-
+ drivers/mfd/intel_soc_pmic_bxtwc.c | 14 +++++++-------
+ drivers/mfd/mc13xxx-spi.c          |  2 +-
+ drivers/mfd/retu-mfd.c             | 12 ++++++------
+ drivers/mfd/rk8xx-core.c           |  6 +++---
+ drivers/mfd/rohm-bd71828.c         |  8 ++++----
+ drivers/mfd/rohm-bd718x7.c         |  2 +-
+ drivers/mfd/rohm-bd9576.c          |  6 +++---
+ drivers/mfd/sprd-sc27xx-spi.c      |  2 +-
+ drivers/mfd/tps6105x.c             |  2 +-
+ drivers/mfd/tps65086.c             |  2 +-
+ drivers/mfd/tps65090.c             |  2 +-
+ drivers/mfd/tps65218.c             |  2 +-
+ drivers/mfd/tps65219.c             |  4 ++--
+ drivers/mfd/tps65910.c             |  6 +++---
+ drivers/mfd/tps65912-core.c        |  2 +-
+ drivers/mfd/twl6040.c              |  2 +-
+ drivers/mfd/wcd934x.c              |  2 +-
+ include/linux/mfd/88pm80x.h        |  2 +-
+ 27 files changed, 55 insertions(+), 55 deletions(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240703-mfd-const-regmap_config-96da5e18a85f
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
