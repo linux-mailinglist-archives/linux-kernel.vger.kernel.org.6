@@ -1,190 +1,123 @@
-Return-Path: <linux-kernel+bounces-241522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A5A927C37
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:31:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3AF927C3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81372B24D4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:31:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF1D1F23292
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2439132122;
-	Thu,  4 Jul 2024 17:26:59 +0000 (UTC)
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2802013C693;
+	Thu,  4 Jul 2024 17:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixopY0S8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4918C131E2D;
-	Thu,  4 Jul 2024 17:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6903F49640;
+	Thu,  4 Jul 2024 17:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720114019; cv=none; b=IiIFn8JH9ZWQB4JfkvyCFx21XvfwanA1af87UoD/S3vRFYOC4CIr9GMHUiJd48aW6lCXHmxt556f+2ZiXgu2/iWBifBb4mNGqGMggg3WVQ7ifnKALdPp+TDwd32KgGkXcX3k5kmDKZkUHtoJPMZKIwbBrUo1s7UayTXZyjKE8lQ=
+	t=1720114123; cv=none; b=N2aBdeSD7keUNouFHjrgbAjL1fvP4t+twtLBwec2dXoO73sA7JzQjlq3HFc7lP5oMVi7ZcCuH+QhLWS/W685G9FyN98c0LVBDf6DH+YAsyRNywVS7jRZF7WNFGGpQV5fOg9mUL/UTbYy4Lqsze9bPuj5GqTnqrXBv3MWQN9n3aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720114019; c=relaxed/simple;
-	bh=cz6Upd+dHHABfV89RVRO1EV25BE9bNOPkOXs4JdKxwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DQhkCUuWS8PXVEF9oAk/Iz1QLpnbBmax4UV+gh2r3wVpfDrxc4F8mhy5gM8yna9mYYM59VjYOhCU/9iWvCFoKl3bz3aZDOupR4cOxSFqaObWdkUhtxAcO4n7sQxCm42yYZUqAS4cZc4hJIAjRAnhMJEUKpQCvkBEzh759U5rwa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AF825240003;
-	Thu,  4 Jul 2024 17:26:52 +0000 (UTC)
-Message-ID: <c6c305a7-37d0-4834-ac65-1ac5d32014d1@ghiti.fr>
-Date: Thu, 4 Jul 2024 19:26:52 +0200
+	s=arc-20240116; t=1720114123; c=relaxed/simple;
+	bh=tAfv1BaL1iUUqXnX9Z5FvigYgE4xYEQucoc/CaZ1L6k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=n0vYzDTeRkCLtHN8WtvwCN5W3M2vyWuYKtjkPMklrbHHSasdeH6cavFIgJGDzRATwkW2Fr83e8HEO7XSWVMppJ8bb0RsOysXW7SqCZqxcvAJXQQ/Ly9u8Qi+1N+WxFYu1ST0wQHC02zm5n6vFYiU9TY5/aroYas5/H5wZJ6KgWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixopY0S8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5E9CC3277B;
+	Thu,  4 Jul 2024 17:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720114122;
+	bh=tAfv1BaL1iUUqXnX9Z5FvigYgE4xYEQucoc/CaZ1L6k=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ixopY0S8I3pDbvaHEwwlvybyzT7wY8SOEyc03XGKGvSSqyyKIZN13TNL8vL+J6AXU
+	 jC/N6/zsV81jQBLUkWkor9eFCGqz+cgZd84mVZziThOJHK/X+hfv6rTsJM8XN9QXRj
+	 pvOK8kjcs23VYIy6NFChLSP2Ncstcw7F1kemtsXmMz55rdWVFRPn0c82a21xqOcDTS
+	 QBf1WjnF0PXl9nkRTRvqx9io4UKh/02aarx2J4GyIsx2eCQJiuvanpFHtdC0HIId5z
+	 /Gap+LDt+KfWJg+cHVAtDHJLCSSzV7F0/iIV13wX9BPabmiTOF8799tSFKwDwPPnDm
+	 z3BwMVt7i8DnA==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v4 0/4] KVM: arm64: Fix underallocation of storage for SVE
+ state
+Date: Thu, 04 Jul 2024 18:28:15 +0100
+Message-Id: <20240704-kvm-arm64-fix-pkvm-sve-vl-v4-0-b6898ab23dc4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/10] riscv: Improve amoswap.X use in xchg()
-Content-Language: en-US
-To: Andrea Parri <parri.andrea@gmail.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Nathan Chancellor <nathan@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
- Andrea Parri <andrea@rivosinc.com>
-References: <20240626130347.520750-1-alexghiti@rivosinc.com>
- <20240626130347.520750-8-alexghiti@rivosinc.com> <Zn1wDAXjBdJu48Oi@andrea>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <Zn1wDAXjBdJu48Oi@andrea>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+X-B4-Tracking: v=1; b=H4sIALDbhmYC/33NzQrCMAzA8VcZPRtpu6ydnnwP8WDXbCv7pJWiy
+ N7dThAUYcd/SH55skDeUWDH7Mk8RRfcNKbAXcaq9jo2BM6mZpJL5IojdHGAqx8UQu3uMK8ZIkH
+ sQeSV1aK22hrO0v3sKa287fMldevCbfKP96so1+lHVRtqlMChKssayaARaE4d+ZH6/eQbtrJRf
+ FPFFiUSpUpulcHcYCX+qPyb0ltUnqjiQLoUmiurih9qWZYXCmQaqVkBAAA=
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Fuad Tabba <tabba@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kvmarm@lists.linux.dev, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.14-dev-d4707
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1908; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=tAfv1BaL1iUUqXnX9Z5FvigYgE4xYEQucoc/CaZ1L6k=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmhtvE5jQaTpD8ZhDPn8DqiYalF5DszeadfNNtlx+f
+ foCRQCmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZobbxAAKCRAk1otyXVSH0B+1B/
+ 9rJLpd/MmNXdmbQYsLI2+RCatIbty19wmYGq6fYC7YOCwE7WuhCXUDOCqlX5W/2FzQDHqQBmDALnIE
+ EYYYQ7nBIE129bO9I3iQUrJz0wJP0hpkXm/ywCjjGujTPNe/+jE5477w7jaoN+thvcfwTfYybHyKno
+ oxykg8ddVmYxKJ9YJwB6Oe7oNeJbHD22a5DcAPfCz+olj7eypIX5dada+7ongd/X4/HVnIDbcNxDFV
+ UqWKekxNN38yRf4OvtNHfRSaf48c+MnIUnTf6XZwR3gx4padpJyZX83wKlWbhmcwgAxbItbs6sX1vs
+ zQAJdT+iSOXfVcToIQqx56L/y8Bwb9
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 27/06/2024 15:58, Andrea Parri wrote:
-> On Wed, Jun 26, 2024 at 03:03:44PM +0200, Alexandre Ghiti wrote:
->> xchg() uses amoswap.X instructions from Zabha but still uses
->> the LR/SC acquire/release semantics which require barriers.
->>
->> Let's improve that by using proper amoswap acquire/release semantics in
->> order to avoid any of those barriers.
->>
->> Suggested-by: Andrea Parri <andrea@rivosinc.com>
->> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->> ---
->>   arch/riscv/include/asm/cmpxchg.h | 35 +++++++++++++-------------------
->>   1 file changed, 14 insertions(+), 21 deletions(-)
->>
->> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
->> index eb35e2d30a97..0e57d5fbf227 100644
->> --- a/arch/riscv/include/asm/cmpxchg.h
->> +++ b/arch/riscv/include/asm/cmpxchg.h
->> @@ -11,8 +11,8 @@
->>   #include <asm/fence.h>
->>   #include <asm/alternative.h>
->>   
->> -#define __arch_xchg_masked(sc_sfx, swap_sfx, prepend, sc_append,	\
->> -			   swap_append, r, p, n)			\
->> +#define __arch_xchg_masked(sc_sfx, swap_sfx, sc_prepend, sc_append,	\
->> +			   r, p, n)					\
->>   ({									\
->>   	__label__ zabha, end;						\
->>   									\
->> @@ -31,7 +31,7 @@
->>   	ulong __rc;							\
->>   									\
->>   	__asm__ __volatile__ (						\
->> -	       prepend							\
->> +	       sc_prepend							\
->>   	       "0:	lr.w %0, %2\n"					\
->>   	       "	and  %1, %0, %z4\n"				\
->>   	       "	or   %1, %1, %z3\n"				\
->> @@ -48,9 +48,7 @@
->>   zabha:									\
->>   	if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA)) {			\
->>   		__asm__ __volatile__ (					\
->> -			prepend						\
->>   			"	amoswap" swap_sfx " %0, %z2, %1\n"	\
->> -			swap_append						\
->>   			: "=&r" (r), "+A" (*(p))			\
->>   			: "rJ" (n)					\
->>   			: "memory");					\
->> @@ -58,19 +56,17 @@ zabha:									\
->>   end:;									\
->>   })
->>   
->> -#define __arch_xchg(sfx, prepend, append, r, p, n)			\
->> +#define __arch_xchg(sfx, r, p, n)					\
->>   ({									\
->>   	__asm__ __volatile__ (						\
->> -		prepend							\
->>   		"	amoswap" sfx " %0, %2, %1\n"			\
->> -		append							\
->>   		: "=r" (r), "+A" (*(p))					\
->>   		: "r" (n)						\
->>   		: "memory");						\
->>   })
->>   
->> -#define _arch_xchg(ptr, new, sc_sfx, swap_sfx, prepend,			\
->> -		   sc_append, swap_append)				\
->> +#define _arch_xchg(ptr, new, sc_sfx, swap_sfx,				\
->> +		   sc_prepend, sc_append)				\
->>   ({									\
->>   	__typeof__(ptr) __ptr = (ptr);					\
->>   	__typeof__(*(__ptr)) __new = (new);				\
->> @@ -79,21 +75,19 @@ end:;									\
->>   	switch (sizeof(*__ptr)) {					\
->>   	case 1:								\
->>   		__arch_xchg_masked(sc_sfx, ".b" swap_sfx,		\
->> -				   prepend, sc_append, swap_append,	\
->> +				   sc_prepend, sc_append,		\
->>   				   __ret, __ptr, __new);		\
->>   		break;							\
->>   	case 2:								\
->>   		__arch_xchg_masked(sc_sfx, ".h" swap_sfx,		\
->> -				   prepend, sc_append, swap_append,	\
->> +				   sc_prepend, sc_append,		\
->>   				   __ret, __ptr, __new);		\
->>   		break;							\
->>   	case 4:								\
->> -		__arch_xchg(".w" swap_sfx, prepend, swap_append,	\
->> -			      __ret, __ptr, __new);			\
->> +		__arch_xchg(".w" swap_sfx,  __ret, __ptr, __new);	\
->>   		break;							\
->>   	case 8:								\
->> -		__arch_xchg(".d" swap_sfx, prepend, swap_append,	\
->> -			      __ret, __ptr, __new);			\
->> +		__arch_xchg(".d" swap_sfx,  __ret, __ptr, __new);	\
->>   		break;							\
->>   	default:							\
->>   		BUILD_BUG();						\
->> @@ -102,17 +96,16 @@ end:;									\
->>   })
->>   
->>   #define arch_xchg_relaxed(ptr, x)					\
->> -	_arch_xchg(ptr, x, "", "", "", "", "")
->> +	_arch_xchg(ptr, x, "", "", "", "")
->>   
->>   #define arch_xchg_acquire(ptr, x)					\
->> -	_arch_xchg(ptr, x, "", "", "",					\
->> -		   RISCV_ACQUIRE_BARRIER, RISCV_ACQUIRE_BARRIER)
->> +	_arch_xchg(ptr, x, "", ".aq", "", RISCV_ACQUIRE_BARRIER)
->>   
->>   #define arch_xchg_release(ptr, x)					\
->> -	_arch_xchg(ptr, x, "", "", RISCV_RELEASE_BARRIER, "", "")
->> +	_arch_xchg(ptr, x, "", ".rl", RISCV_RELEASE_BARRIER, "")
->>   
->>   #define arch_xchg(ptr, x)						\
->> -	_arch_xchg(ptr, x, ".rl", ".aqrl", "", RISCV_FULL_BARRIER, "")
->> +	_arch_xchg(ptr, x, ".rl", ".aqrl", "", RISCV_FULL_BARRIER)
-> I actually see no reason for this patch, please see also my remarks
-> /question on patch #4.
+As observed during review the pKVM support for saving host SVE state is
+broken if an asymmetric system has VLs larger than the maximum shared
+VL, fix this by discovering then using the maximum VL for allocations
+and using RDVL during the save/restore process.
 
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v4:
+- Roll in Catalin's acks.
+- Link to v3: https://lore.kernel.org/r/20240607-kvm-arm64-fix-pkvm-sve-vl-v3-0-59e781706d65@kernel.org
 
-You mean that we can't improve the fully-ordered version here?
+Changes in v3:
+- Replace %u with %lu in late CPU error message.
+Changes in v2:
+- Downgrade check for a late CPU increasing maximum VL to a warning only
+  but do it unconditionally since pKVM prevents late CPUs anyway.
+- Commit log tweaks.
+- Link to v1: https://lore.kernel.org/r/20240605-kvm-arm64-fix-pkvm-sve-vl-v1-0-680d6b43b4c1@kernel.org
 
+---
+Mark Brown (4):
+      arm64/fpsimd: Introduce __bit_to_vl() helper
+      arm64/fpsimd: Discover maximum vector length implemented by any CPU
+      KVM: arm64: Fix FFR offset calculation for pKVM host state save and restore
+      KVM: arm64: Avoid underallocating storage for host SVE state
 
->
->    Andrea
->
+ arch/arm64/include/asm/fpsimd.h         | 17 +++++++++++++++
+ arch/arm64/include/asm/kvm_host.h       |  2 +-
+ arch/arm64/include/asm/kvm_hyp.h        |  3 ++-
+ arch/arm64/include/asm/kvm_pkvm.h       |  2 +-
+ arch/arm64/kernel/fpsimd.c              | 38 +++++++++++++++++++++++++++------
+ arch/arm64/kvm/hyp/fpsimd.S             |  5 +++++
+ arch/arm64/kvm/hyp/include/hyp/switch.h |  2 +-
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c      |  6 +++---
+ arch/arm64/kvm/hyp/nvhe/pkvm.c          |  2 +-
+ arch/arm64/kvm/reset.c                  |  6 +++---
+ 10 files changed, 65 insertions(+), 18 deletions(-)
+---
+base-commit: afb91f5f8ad7af172d993a34fde1947892408f53
+change-id: 20240604-kvm-arm64-fix-pkvm-sve-vl-13cd71fd7db0
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
