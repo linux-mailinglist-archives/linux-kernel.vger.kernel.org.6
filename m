@@ -1,214 +1,145 @@
-Return-Path: <linux-kernel+bounces-241118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412E792773C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:36:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD81492774C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64A081C22472
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:36:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67511284692
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0E31AED33;
-	Thu,  4 Jul 2024 13:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A671B11ED;
+	Thu,  4 Jul 2024 13:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9AEsbiy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pzz7/Ilj"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B42119B3FF;
-	Thu,  4 Jul 2024 13:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80AF21B011B
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720100189; cv=none; b=KrsdpTR6w7Kd8ZZrwsrqOCFM5BkSkXwE04CWJftgHUO0IPFTHWBNYxTc7NdcJ0otapGqoDaSaLb4zbJM51UcMAr/LH4Rqqe9n2MQftxYj0ky845/zsKHpn02+LYjcJGniv8R9hxdTOcqwfuHtQQOyq/oTfL5rXfZHNtBa2eK3HU=
+	t=1720100213; cv=none; b=mbYYLuTH/RfDpOtUR8dG6tveUFoAqxKKE1pg7WLzmdDRwJgf7mrtP2VOQ8B/HLhKMiyUZxLegJi/8imJ47MCPpeEyG/4yb8eNLSnmJX4wBkaALsa/bSp3uyZH07zXu6EMy+QHQ6gArsm8DZH2NI7k9Bvt3hnM3sT4natJ1ku0Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720100189; c=relaxed/simple;
-	bh=06N+dy5yGVfEX5kHj7Fo14pFgqUOSQBJnG+lGDKRRhQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mdnkEmAC8o8yy1xTa0NjWWaRSYunsp3K12VlwDwBWNt+Lw//CXXfysrdhsYtucm2hEDQmd/V71ZvnQ6VQungz178npOYw33ja5VVpRbR2Qz5Ca1HkhnkSMRNgiulexSMM6gepOzz+gLEAEAnuY81hm6LicorBd4XimNZX9LOKN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9AEsbiy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4964AC3277B;
-	Thu,  4 Jul 2024 13:36:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720100189;
-	bh=06N+dy5yGVfEX5kHj7Fo14pFgqUOSQBJnG+lGDKRRhQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I9AEsbiyC8txX+EYPohPJ2OLc0C31bftUTvoEsPIe4YuRMlWP/RmhhnjwPEbtovxN
-	 1m0P+Su6Bt71Bhzo/DgqmyfQt6QKzGZwKvtVSy/+mk4OhEmd7+RHqQMXXW/e7utMah
-	 tXkPxp/7Vo+5RkcpZJmD1uU+tRGrX1/gTDRxFR7c11GVwTqNDJkOipDFudm7GrToy2
-	 fmr6j4j44wxxy+bLPbNlR92yyPp1mpOaoHBz0LvfnN2Bv25bDKo+emOYwrVtivTtkH
-	 D+ZT3FcKBnEdtuEsb5E3Hohtgp9rhJ+GXWGCXe+Gg1eB73cCucxbYIWVPpUntKWKyv
-	 X4ssROhB073LQ==
-Message-ID: <25e29357-8976-4471-af95-08056e8652de@kernel.org>
-Date: Thu, 4 Jul 2024 15:36:21 +0200
+	s=arc-20240116; t=1720100213; c=relaxed/simple;
+	bh=V2tOAHaVrYonStI9abDwgL3tFaJn3HXhUBB56LP2hL0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UHX2pCqCTncXI1n+gb4OzPpxe4qXsdmgFgN7u++8qdl2/zroYc7r6P1CQCVtBQ/4ai+sM+mgxsntgED4Ef4ppJnF48QO/smj0dUdt1hrW6GPRduED/OsmhpSjMkIt0oPrIoIUSeyK1SGxdUCte77wEss3lL+ZImFVf/P3xUBfxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pzz7/Ilj; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ce08616a9so2519e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 06:36:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720100209; x=1720705009; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GqKWhDVIpU54/3Lm4p0n8dZsoucJ9m4r5oxiQez9CN0=;
+        b=Pzz7/Ilj1w04GL34Szws4M9O6AreAnw47HuYtYKtPbzSgtaLgjMhYQUKP03R8it125
+         CYku+anocFMD7gmgIa8lQL3cIe4W+DyixYgNqG/KMJGOB3rN4Xz/dWTIeAlkfsA6yjlI
+         vFdJ59kY8stS/aWTud/fBaGAyjnhAU6svvqsse4JxUd+OXxKNdrErB6xnj7oaFCdbI9o
+         PUuXgF5D/srTGjaP6DZcpTWtArdR4eCCnT4sScXZDl6f/1WH6cpqWUGngeqFxprsFTGz
+         4djQvDjQtvWY1a6Xksaaq+Ko9oAWDjrkCbLdMoAS+pmv2lWCrUN7THMFYI0s9lgKVmRT
+         dZRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720100209; x=1720705009;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GqKWhDVIpU54/3Lm4p0n8dZsoucJ9m4r5oxiQez9CN0=;
+        b=JZxBqIZhEj6BmEgv+MCOqNazckhZ5n+uhi6JfO07JfTHywbI9ruigh9wtd2h3QEvRU
+         4R4QXicC7hCYFOieZfPLsNY0dNqcXrwXknlGi1x+Q2j5IbOR5pGfDtY8yjMl7sMPjeDp
+         D9VWmj5ApfxP5SHXWbPCNANWjUa9/wMO62KpXwZn66klPCOpCxHQs6bN+hgJ9SmuuN0j
+         JPE3sAqJwhwA6GQVBtkYwDcmPIJPOdd96/7+VxmpXTVgprQOooOvqwoHYxoDAwGKTk+0
+         JkSIZRKF9NS1b6H8JbczQPW7Zw2NwwkZkdUsRB6E74PFJX5ZoR2bNYE62juG+7bhHK6r
+         vuGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXK1bYCYMISCG1GALxt5DUDYE1eEdjeHZalCLtMGlUOUP2Wjx9T3T/u6X6p+C43+PpmXhiiXAhtVuEWsOIwePMuKNtE8PAOBhPQfh1p
+X-Gm-Message-State: AOJu0Yyoepl7Dvg1y/Va+dr0YOUzVXSUbVr2aqrZ5/OTdVOx7GO/8xut
+	v9RinHrIX1QbXqemLtX2DFhfY/gQzGZXsCcNh8oBE7EZJaBmRyZuOUbiE6Uf8F66xpzrzRVoapx
+	nDcc/C/GHu/OCIkyivEPq08nya7tE5eJaP0mOZcPM9wnQsAz9u9aF
+X-Google-Smtp-Source: AGHT+IH6SWc1AXTl+5ysSGba6hAiJwdZ9zfcwMC0vSQ9DYlubLUsWHEgrhDgFV9pvmLBGi0YR6GhhmlJxdASvzp4g1A=
+X-Received: by 2002:ac2:596a:0:b0:52c:dd94:73f3 with SMTP id
+ 2adb3069b0e04-52e9f2a8ea6mr93485e87.3.1720100209127; Thu, 04 Jul 2024
+ 06:36:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/3] dt-bindings: input: Update dtbinding for adp5588
-To: utsav.agarwal@analog.com, Michael Hennerich
- <michael.hennerich@analog.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Arturs Artamonovs <arturs.artamonovs@analog.com>,
- Vasileios Bimpikas <vasileios.bimpikas@analog.com>,
- Oliver Gaskell <oliver.gaskell@analog.com>
-References: <20240704-adp5588_gpio_support-v7-0-e34eb7eba5ab@analog.com>
- <20240704-adp5588_gpio_support-v7-3-e34eb7eba5ab@analog.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240704-adp5588_gpio_support-v7-3-e34eb7eba5ab@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <00000000000037162f0618b6fefb@google.com> <tencent_8BBB6433BC9E1C1B7B4BDF1BF52574BA8808@qq.com>
+In-Reply-To: <tencent_8BBB6433BC9E1C1B7B4BDF1BF52574BA8808@qq.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 4 Jul 2024 15:36:37 +0200
+Message-ID: <CACT4Y+agurcHCQnLTrVjLXr1-kEj1wbmXCHX6LPM=J1-o5wT2g@mail.gmail.com>
+Subject: Re: [PATCH] hfsplus: fix uninit-value in copy_name
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+efde959319469ff8d4d7@syzkaller.appspotmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 04/07/2024 15:03, Utsav Agarwal via B4 Relay wrote:
-> From: Utsav Agarwal <utsav.agarwal@analog.com>
-
-Subject: everything is an update, be more specific.
-
-> 
-> Updating dt bindings for adp5588. Since the device can now function in a
-> purely gpio mode, the following keypad specific properties are now made
-> optional:
-> 	- interrupts
-> 	- keypad,num-rows
-> 	- keypad,num-columns
-> 	- linux,keymap
-> 
-> However the above properties are required to be specified when
-> configuring the device as a keypad, dependencies have been added
-> such that specifying either one would require the remaining as well.
-> 
-> Note that interrupts are optional, but required when the device has been
-> configured in keypad mode.
-> 
-> Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+On Tue, 21 May 2024 at 07:28, 'Edward Adam Davis' via syzkaller-bugs
+<syzkaller-bugs@googlegroups.com> wrote:
+>
+> [syzbot reported]
+> BUG: KMSAN: uninit-value in sized_strscpy+0xc4/0x160
+>  sized_strscpy+0xc4/0x160
+>  copy_name+0x2af/0x320 fs/hfsplus/xattr.c:411
+>  hfsplus_listxattr+0x11e9/0x1a50 fs/hfsplus/xattr.c:750
+>  vfs_listxattr fs/xattr.c:493 [inline]
+>  listxattr+0x1f3/0x6b0 fs/xattr.c:840
+>  path_listxattr fs/xattr.c:864 [inline]
+>  __do_sys_listxattr fs/xattr.c:876 [inline]
+>  __se_sys_listxattr fs/xattr.c:873 [inline]
+>  __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
+>  x64_sys_call+0x2ba0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:195
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Uninit was created at:
+>  slab_post_alloc_hook mm/slub.c:3877 [inline]
+>  slab_alloc_node mm/slub.c:3918 [inline]
+>  kmalloc_trace+0x57b/0xbe0 mm/slub.c:4065
+>  kmalloc include/linux/slab.h:628 [inline]
+>  hfsplus_listxattr+0x4cc/0x1a50 fs/hfsplus/xattr.c:699
+>  vfs_listxattr fs/xattr.c:493 [inline]
+>  listxattr+0x1f3/0x6b0 fs/xattr.c:840
+>  path_listxattr fs/xattr.c:864 [inline]
+>  __do_sys_listxattr fs/xattr.c:876 [inline]
+>  __se_sys_listxattr fs/xattr.c:873 [inline]
+>  __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
+>  x64_sys_call+0x2ba0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:195
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> [Fix]
+> When allocating memory to strbuf, initialize memory to 0.
+>
+> Reported-and-tested-by: syzbot+efde959319469ff8d4d7@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 > ---
->  .../devicetree/bindings/input/adi,adp5588.yaml     | 46 +++++++++++++++++++---
->  1 file changed, 41 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.yaml b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-> index 26ea66834ae2..481c37595ebb 100644
-> --- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-> +++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-> @@ -49,7 +49,10 @@ properties:
->    interrupt-controller:
->      description:
->        This property applies if either keypad,num-rows lower than 8 or
-> -      keypad,num-columns lower than 10.
-> +      keypad,num-columns lower than 10. This property is optional if
-> +      keypad,num-rows or keypad,num-columns are not specified since the
-> +      device then acts as gpio only, during which interrupts may or may
-> +      not be utilized.
->  
->    '#interrupt-cells':
->      const: 2
-> @@ -65,13 +68,28 @@ properties:
->      minItems: 1
->      maxItems: 2
->  
-> +
-> +dependencies:
-> +  keypad,num-rows:
-> +    - linux,keymap
-> +    - keypad,num-columns
-> +  keypad,num-columns:
-> +    - linux,keymap
-> +    - keypad,num-rows
-> +  linux,keymap:
-> +    - keypad,num-rows
-> +    - keypad,num-columns
-> +
-> +if:
-> +  required:
-> +    - linux,keymap
-> +then:
-> +  required:
-> +    - interrupts
-> +
->  required:
->    - compatible
->    - reg
-> -  - interrupts
-> -  - keypad,num-rows
-> -  - keypad,num-columns
-> -  - linux,keymap
->  
->  unevaluatedProperties: false
->  
-> @@ -108,4 +126,22 @@ examples:
->              >;
->          };
->      };
-> +
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/input/input.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        gpio@34 {
-> +              compatible = "adi,adp5588";
-> +              reg = <0x34>;
+>  fs/hfsplus/xattr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+> index 9c9ff6b8c6f7..858029b1c173 100644
+> --- a/fs/hfsplus/xattr.c
+> +++ b/fs/hfsplus/xattr.c
+> @@ -698,7 +698,7 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
+>                 return err;
+>         }
+>
+> -       strbuf = kmalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN +
+> +       strbuf = kzalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN +
+>                         XATTR_MAC_OSX_PREFIX_LEN + 1, GFP_KERNEL);
+>         if (!strbuf) {
+>                 res = -ENOMEM;
 
-Still messed indentation.
+Hi Edward,
 
-Didn't you get already such feedback?
-
-
-Best regards,
-Krzysztof
-
+Was this ever merged anywhere? I still don't see it upstream.
 
