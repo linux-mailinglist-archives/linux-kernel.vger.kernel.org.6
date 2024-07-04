@@ -1,110 +1,133 @@
-Return-Path: <linux-kernel+bounces-240366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A34926CD0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:55:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D45926CCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06C272843B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:55:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02D871C21449
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08358BE0;
-	Thu,  4 Jul 2024 00:55:27 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF318BE0;
+	Thu,  4 Jul 2024 00:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="rrcR++WZ"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2009523AD;
-	Thu,  4 Jul 2024 00:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC6D2F2B
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 00:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720054527; cv=none; b=Ufmbalm2FkBmL735sqdFdQUCUCnwLlr9hdQKunHlkc92mVavIeDkq4XT5/ozc5d2s5R1GjhuvSDtm6FRZVwqobkBwnCxM1f2g0EsZ/BXuA4Qopq3Tn8JFoBSkEeiNpy8VbDzby/KbFOU9XwX3OcP/XTNlNQNS1u02tjE7wAqq0w=
+	t=1720054122; cv=none; b=c5Z2TPDmW9FuuJgg4u2bQrVtzen3jHPZTdWVvqo58AAnO0ItaJ2D6HRRlOADHZIRWjxR1nECLufiP87yThnOhfErlEh5BeaGlUKmHeuljYhFeAsCLH475O5wV7KNLBZElDrn7IloDfkfmeF7yVrrnuv/PvUqoSaRmg49D3TtAkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720054527; c=relaxed/simple;
-	bh=axQyEzblYvbHETJ0gbmBRA+rd+VfcEu1m3BvOP9jEHI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SgCsofL7ZK5uFajvTGBAvvNy5ihNTz3UAgumYTRRh0t0wXFwEgTGOzmitiZvWaruCvv1dM2fqkRd7Hz2/JMKReLURBq6Q9yDc8f7c1kf55b91jntjTmKP0GQIyndDReL7umTXcUNqQVsPGdoh1j+D9RWpP1gLW8NwAwDZ6/Wl+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: db2219da399d11ef93f4611109254879-20240704
-X-CID-CACHE: Type:Local,Time:202407040836+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:609fb93d-499c-441d-bd66-d59e0adbce4c,IP:0,U
-	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-30
-X-CID-META: VersionHash:82c5f88,CLOUDID:d57457d2ed1d8ecb447419be162a7b40,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:2,IP:nil,URL:0,
-	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
-	O,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: db2219da399d11ef93f4611109254879-20240704
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <liuhuan01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1909068126; Thu, 04 Jul 2024 08:39:22 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id E46EB16002082;
-	Thu,  4 Jul 2024 08:39:21 +0800 (CST)
-X-ns-mid: postfix-6685EF39-6795893
-Received: from localhost.localdomain (unknown [172.29.156.133])
-	by node4.com.cn (NSMail) with ESMTPA id 649E916002082;
-	Thu,  4 Jul 2024 00:39:21 +0000 (UTC)
-From: liuh <liuhuan01@kylinos.cn>
-To: trondmy@kernel.org,
-	anna@kernel.org
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liuh <liuhuan01@kylinos.cn>
-Subject: [PATCH] NFS: AIO doesn't require revert iterator
-Date: Thu,  4 Jul 2024 08:40:02 +0800
-Message-ID: <20240704004002.5787-1-liuhuan01@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720054122; c=relaxed/simple;
+	bh=2COa0HWJqWitOaZ8dVW69x5naK4O3xfqMmhxjvE1qdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C8K+E7hW2FRWc/GgPrEwwLEX/cSrKUHkmhBvzfEdT0BmAmyAiRLdSE8W0LpfO/CYQMNj34YlBETECWU01EodGo0drWwsl8mlcZt2GTOWHMFG2oQ7nfAR9PTzKHeTCTFrRFihO3zrhrcVnICnv0VPDBcoi6pPjB5FNe0PomFGmso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=rrcR++WZ; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1faad2f1967so9560865ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 17:48:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720054120; x=1720658920; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j8cn2ejmCXJ6G+eZPnZq9ZYI/4KIpY2mI/Ezi+jalfM=;
+        b=rrcR++WZEjPDOoq/Jtccbm1U4aQ8XyCwHRf1xZGYNzRQ6tv5u2rYo3D73xPiFFqQXm
+         t6mHXVPjdRRJpHVh3So/rmc1rXbM9uOMN14nD5vZ3/ZHtG8kVFfkpEE9IsHR48Cp5hLC
+         93uT4gXEOpHQl4hs+2NtNObx193XxFy4RbG+BB1Edzd00VfYu/UpY7MqVlRSM6dOFOhc
+         KR6XKtbCwEhCzwbWCdV7VFTmfL72HO60Yt/FM6AaPeNJCkGPTwlxlt38tU/vE1hs8J6T
+         Bm8vHsyjAfteTHKjZN1wby7V46RIOkb/kZ8nvtpiriusZ8dEzNxRYF8dajX5/7sY07y6
+         0vlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720054120; x=1720658920;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j8cn2ejmCXJ6G+eZPnZq9ZYI/4KIpY2mI/Ezi+jalfM=;
+        b=Va+x7dF6kqsaKnYhbHUwCM7fOEeQEDYncMCHuTSr2EUfE38LkCzJfu3grraR5WrUKi
+         GUEGWn9bcvz/aDmCXIjk593IxyICRMpGSOylT+1lZXTPQfave1zEEXmcQIQJSc8ch6EO
+         EefvJGZ4orcEjV9/n5gHLP5CU8TrD4plUCBI6duduaUVPOOHIkb+BlhjGA/PD26ehTwU
+         py7BFVaQL0pWHnb+emd0BXQp7chSGG3lZ1Th8QxTBC2YW2XI/Lk++nm7lCs1hy7J9KUN
+         AFA+cxn5IKcA2ZT2etH9MfyCxxfsoGGY0/WEd6w88iWeDIEAi47PrVtyAVwhvb97nfKk
+         cuuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdTXqZrbhOeiAQ6aZJ3xqxsw2FTYMuD6anEXzOYO23V1J3jKI4H5vMiluQ0KWf9orVKJisTRrQ5LkcWorhj51mA0ZzaYftKprPyXm2
+X-Gm-Message-State: AOJu0YwxXDb80VWIkgMIXSnEtd/O/Soj6e6CD4w8/mfm1ualB13q4gUD
+	S7z4iAitPmXPl+5fcyEJUNjawBtVAs3Mk1VS6u/d7BT8LDAPPOQWau4QO8qkliA=
+X-Google-Smtp-Source: AGHT+IFZ3U86C/lboDH2rxZfJ1yaega9D0tCmZ+SV9C8fIfhnpir2evwRGIG7EXufs9qWN9lYP/GPg==
+X-Received: by 2002:a17:902:d583:b0:1f7:1d71:25aa with SMTP id d9443c01a7336-1fb345044a2mr2175645ad.6.1720054120423;
+        Wed, 03 Jul 2024 17:48:40 -0700 (PDT)
+Received: from [10.4.10.38] (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb18b1fde8sm20274345ad.297.2024.07.03.17.48.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 17:48:40 -0700 (PDT)
+Message-ID: <6be424e0-c746-48e8-94fe-8d5d2eb6cc03@rivosinc.com>
+Date: Wed, 3 Jul 2024 20:48:25 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/11] riscv: defconfig: enable SpacemiT SoC
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Yangyu Chen <cyy@cyyself.name>, Anup Patel <anup@brainfault.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>,
+ Lubomir Rintel <lkundrak@v3.sk>, devicetree@vger.kernel.org,
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-serial@vger.kernel.org,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Inochi Amaoto <inochiama@outlook.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Meng Zhang <zhangmeng.kevin@spacemit.com>
+References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
+ <20240703-k1-01-basic-dt-v3-10-12f73b47461e@gentoo.org>
+Content-Language: en-US
+From: Jesse Taube <jesse@rivosinc.com>
+In-Reply-To: <20240703-k1-01-basic-dt-v3-10-12f73b47461e@gentoo.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For AIO, nfs_direct_wait return -EIOCBQUEUED would be expected.
-Revert iter is redundant.
 
-Signed-off-by: liuh <liuhuan01@kylinos.cn>
----
- fs/nfs/direct.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
-index 90079ca13..1483f1965 100644
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -469,7 +469,8 @@ ssize_t nfs_file_direct_read(struct kiocb *iocb, stru=
-ct iov_iter *iter,
- 			requested -=3D result;
- 			iocb->ki_pos +=3D result;
- 		}
--		iov_iter_revert(iter, requested);
-+		if (is_sync_kiocb(iocb))
-+			iov_iter_revert(iter, requested);
- 	} else {
- 		result =3D requested;
- 	}
-@@ -1028,7 +1029,8 @@ ssize_t nfs_file_direct_write(struct kiocb *iocb, s=
-truct iov_iter *iter,
- 			/* XXX: should check the generic_write_sync retval */
- 			generic_write_sync(iocb, result);
- 		}
--		iov_iter_revert(iter, requested);
-+		if (is_sync_kiocb(iocb))
-+			iov_iter_revert(iter, requested);
- 	} else {
- 		result =3D requested;
- 	}
---=20
-2.27.0
+On 7/3/24 10:55, Yixun Lan wrote:
+> From: Yangyu Chen <cyy@cyyself.name>
+> 
+> Enable SpacemiT SoC config in defconfig to allow the default upstream
+> kernel to boot on Banana Pi BPI-F3 board.
+> 
+> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+Tested-by: Jesse Taube <jesse@rivosinc.com>
 
+Thanks,
+Jesse Taube
+> ---
+>   arch/riscv/configs/defconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> index 12dc8c73a8acf..5287ae81bbb78 100644
+> --- a/arch/riscv/configs/defconfig
+> +++ b/arch/riscv/configs/defconfig
+> @@ -29,6 +29,7 @@ CONFIG_ARCH_MICROCHIP=y
+>   CONFIG_ARCH_RENESAS=y
+>   CONFIG_ARCH_SIFIVE=y
+>   CONFIG_ARCH_SOPHGO=y
+> +CONFIG_ARCH_SPACEMIT=y
+>   CONFIG_SOC_STARFIVE=y
+>   CONFIG_ARCH_SUNXI=y
+>   CONFIG_ARCH_THEAD=y
+> 
 
