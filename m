@@ -1,143 +1,105 @@
-Return-Path: <linux-kernel+bounces-241531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB1FE927C48
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:33:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54F6E927C44
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EC831F22177
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:33:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBC3AB2447D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C84814375C;
-	Thu,  4 Jul 2024 17:29:50 +0000 (UTC)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B74C381C7;
+	Thu,  4 Jul 2024 17:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qew1tsvS"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4F04964E;
-	Thu,  4 Jul 2024 17:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B2B4964A;
+	Thu,  4 Jul 2024 17:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720114189; cv=none; b=ayq6hKh4l7gIksWc5er2XfLiY2fFOCSfHXiF1gJZVEEA4shuzbDUGlOCgkBEdoa9qt0ODuDeNPZdoxVz53jeWTVQAnyWVWXfEj5uHspw5gcDbZwbJcS5kTusYa0ITASsuK/2hrx40EjIJiTMu1kF4hiUA1A9IFY6wndxcaRh9MA=
+	t=1720114188; cv=none; b=TNrIeCiZJYjXE5ZaDHE4ly8f72jX/vqoQtnFuABCI/SXlDHwZpP+25xkKkTjFNmGnhupYe7IqXnDLu+kQ0IbnEMEzJ/EzXxftDTKRv5yoHMGyRSJhZmAKaXujpvdgT5p8r/sQKiZJDPB7mogST2TGW75CJubC3h7pegfgJu1YEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720114189; c=relaxed/simple;
-	bh=4Wsbr2NxsRTX2OtbK42P57QdvwytpLHmffqyJLEMNlA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ke3EyGN0H+6F9tC85HcKFLqYTP/EdDuIjRZZKnAANwNvNM08YSF1DtXIBsrMuOUMs34fkm+wpuFnFWXL930dCdbExW10z2T3JzP+QiBsmgAdobuS+fS3JBONIHIJvfc1kR7HTB5AabTr5awRgsyThjmdJl/KiW2r1++tN15Id8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1720114188; c=relaxed/simple;
+	bh=kaN3N0MIwqNSx0hi3vzzqJ/FoE01l/AEDHEIYSWfiWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qkbib/Af4+nt6gpXwjOvIirpXYbN4iiEs+RcpoBI8jkdPVk33RJfPMOf9QasVWmxfI9MOXhCmO5AYwiMzZNKLp79iiM0rznVdxthDuUBcXR/ucuWBW585PK1kTkbL9VHVkH7I/9rbLA6GeYnQw0adkeLKNnbhjrvpsRAAstvDN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qew1tsvS; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e03a17a50a9so905747276.1;
-        Thu, 04 Jul 2024 10:29:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720114186; x=1720718986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RgbAK2gmsO/PF4jPJxOEopv4w1e21JKoV2IL1BCw5Go=;
-        b=UKWhNAiwF6oXMfUC8eDVzR774bDPv60zJ8TIfhWMuloW/R32i9TvV5tt/GazHazSlz
-         bPtiZnW1LJImMJWzkdKs1pnys+c65kzv3Kv5VL+H7YfztpmBEtAcOLJIiAqOAsj26vON
-         cxyAs1yB1OF1JTTXLvZ1U9nKDdMSGOIG8Jz9d0F+HwrXxK5MgjBV8tMT4ia8/YsOe6EF
-         vLRUUJiZnFFGvkNwFkKCfmvxy7Qn6GSV8dnlEglYPyV9p0FbZfsRjC8GRubZ/5mXBDs8
-         y4A15kJBRbwzj6n4Th9r1QTQG+1BvxNcsqT6IYI8MgHjigOnr8+Mbj58Zf+3Vktk33+4
-         F9tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpZQgAGH10Zw3+wD0PabTbJ0hLLWjm8zkysCjAzkDGadvh8ygpBlIRVqqcTJCcTLPrluCcis0k+Tcgo0skK1s3SHcBJUNX+6pU5M586DXH46+QPn1+ZRbWUrX7ATrttyKOU3KQHPVVxtLtnmv2ilqtTzCwrUgS8tzxTrPoO9fkNyRRn8yBzHYKn4q0cXmUzBceXrBmcGXQXhxGn/+9ilOp39uwDE2s2g==
-X-Gm-Message-State: AOJu0Yyn9ZgcIhPLQhm7DU2AleiDV1qTfni7UAHzyQthb/qdycoHuAXz
-	vt0VUaEzH+6sgTIQBV/J53UnEDRC2o+h3vTXXF8/hV78nF8IHlh3TkiqJp70
-X-Google-Smtp-Source: AGHT+IFZjsO9ewiEjzbgBpzemu3XQvaSNNPVO6kLW3HNuSidg0ssPZtMGo+f9sd+cX1cuGQfWH2KAA==
-X-Received: by 2002:a25:aa71:0:b0:e03:adcb:f8e8 with SMTP id 3f1490d57ef6-e03c1934e9emr2503622276.30.1720114186257;
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-367963ea053so661691f8f.2;
         Thu, 04 Jul 2024 10:29:46 -0700 (PDT)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e037fc7a070sm1564902276.51.2024.07.04.10.29.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720114185; x=1720718985; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fsiK+KmSYV8z6SFjkI4mN7mIXblChvysTAUcYs9wVCg=;
+        b=Qew1tsvSlZqwDyBbWXLrujvHKRTUb6qcB/FWvBT1B/zkYeM0qNIorXX3MsgpCWIg0F
+         dxzS76IuqGxLqULQtq4uYXj7D+pP8vuA7Wb/seyNAKh3Yts9Q1DZUMYq7kW5Hel9sNf+
+         EeWPxsrSyyuGQCRKpV1N70isdXANjxpfgMHv75ZCs6TPFYuISYs9+C1bG9/c9i5mvd+J
+         irbZkRSheDZQq9SDFREYAEfR7jzcDGBXXTqx+9UwF5X8JDALj3tINZ51VE5MzGr5BMua
+         ssvi4gUR+4o8Kz24jcEEsRFbN96HbXJpo/wwpW05veIygApSgmSfOBsvMUp8BCSmHSBl
+         ye3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720114185; x=1720718985;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fsiK+KmSYV8z6SFjkI4mN7mIXblChvysTAUcYs9wVCg=;
+        b=nWJulcIZ50uHNqDVvMMcNvoksgPD49I4rybIGVmjmpcMkfMRzThHSZFOXc5dnM81Mk
+         qmjeWLchwmrFB7lGUe0BN8BjWt4xl5swtvjFL6TRjWG/yK60rHB6ruoH9QQ2EmeNjZNW
+         KKwWXeGnq8wVcJ65rPZPQAkgv0gjHE3rlioZFCBEZ4wUTX9K7Pe1D37j7vvaRWe3eQGC
+         wTBReNbpPNi+MU4TV+1nLwxxmz4U1qN0qQK8lkVE0C5iMY779+28aLuqXIrWO48qLpO1
+         hz9tPMBuZVYqpXPh+Oc5J4RV2YrPCdvuzkVW+JB70O1fFGjX2U9cHWwF6eQalNIRexjS
+         JktA==
+X-Forwarded-Encrypted: i=1; AJvYcCWztPAVsC03PhyuJV20iR878VYG7j7HsbkzfnoeJleVrfbkUNEPNL92SRyqYQD/Gj4csbJqb7+b6bT7GBB8/etuNrPd6kPzLoO2y86r8c4r5U5hhWaX8dYWTRLrNvIMsCDjjEIf
+X-Gm-Message-State: AOJu0YzmOuXP3kf7xoFOg3S+IPFswjqQM08tnQz1P/uhlnrNvt65qJGN
+	uM8V3u40qUKPERdzbu6ljqeWAc8SFRBMWQHl1+ZcqN0vz0z7FBi1
+X-Google-Smtp-Source: AGHT+IF0HwPl+iKjLbIAWd1rFNmtIUCz9ZJZ5KCuwbq23zL6zdlXsKGiTxnvWrakSjR3/q3zvZvAEQ==
+X-Received: by 2002:adf:ebd2:0:b0:367:8f98:c501 with SMTP id ffacd0b85a97d-3679dd318a4mr1932828f8f.38.1720114185363;
         Thu, 04 Jul 2024 10:29:45 -0700 (PDT)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-650469f59d7so7798887b3.2;
-        Thu, 04 Jul 2024 10:29:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWFG5ZkEK472Np8QaqEpEkEfBtf6AKNM24b4ZBadS1iYYpV1N0muAtF+BOpw7iTr7P/rd0c55BFJpwKFRqea3tQksAEM+SceUd/vBm/7J0e7SlX5A/npKwWhiTjLxaROJ+7eoRTXHzP5xPyE66vGa0Zw1CeziE94u5YmtgrpaE4cDWT/LuxYu8zDIe/BlXzP5ILorxK3E6Xq7MnqvGg1+xNYNA5b6apRA==
-X-Received: by 2002:a05:690c:498a:b0:646:25c7:178e with SMTP id
- 00721157ae682-652d53481d4mr26390677b3.5.1720114185422; Thu, 04 Jul 2024
- 10:29:45 -0700 (PDT)
+Received: from skbuf ([188.25.110.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a40a6d4bsm686553f8f.51.2024.07.04.10.29.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 10:29:44 -0700 (PDT)
+Date: Thu, 4 Jul 2024 20:29:42 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Christian Eggers <ceggers@arri.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Juergen Beisert <jbe@pengutronix.de>, Stefan Roese <sr@denx.de>,
+	Juergen Borleis <kernel@pengutronix.de>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 1/2] dsa: lan9303: Fix mapping between DSA port
+ number and PHY address
+Message-ID: <20240704172942.lngit56pv4xewlc3@skbuf>
+References: <20240703145718.19951-1-ceggers@arri.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625200316.4282-1-paul.barker.ct@bp.renesas.com> <20240625200316.4282-4-paul.barker.ct@bp.renesas.com>
-In-Reply-To: <20240625200316.4282-4-paul.barker.ct@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 4 Jul 2024 19:29:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWbq_L1o3WxeHoD4n12DjEYV_k9RzGQbYP1EzhX6tr6_A@mail.gmail.com>
-Message-ID: <CAMuHMdWbq_L1o3WxeHoD4n12DjEYV_k9RzGQbYP1EzhX6tr6_A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/9] pinctrl: renesas: rzg2l: Support output enable on RZ/G2L
-To: Paul Barker <paul.barker.ct@bp.renesas.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703145718.19951-1-ceggers@arri.de>
 
-Hi Paul,
-
-On Tue, Jun 25, 2024 at 10:03=E2=80=AFPM Paul Barker
-<paul.barker.ct@bp.renesas.com> wrote:
-> On the RZ/G2L SoC family, the direction of the Ethernet TXC/TX_CLK
-> signal is selectable to support an Ethernet PHY operating in either MII
-> or RGMII mode. By default, the signal is configured as an input and MII
-> mode is supported. The ETH_MODE register can be modified to configure
-> this signal as an output to support RGMII mode.
->
-> As this signal is by default an input, and can optionally be switched to
-> an output, it maps neatly onto an `output-enable` property in the device
-> tree.
->
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+On Wed, Jul 03, 2024 at 04:57:17PM +0200, Christian Eggers wrote:
+> The 'phy' parameter supplied to lan9303_phy_read/_write was sometimes a
+> DSA port number and sometimes a PHY address. This isn't a problem as
+> long as they are equal.  But if the external phy_addr_sel_strap pin is
+> wired to 'high', the PHY addresses change from 0-1-2 to 1-2-3 (CPU,
+> slave0, slave1).  In this case, lan9303_phy_read/_write must translate
+> between DSA port numbers and the corresponding PHY address.
+> 
+> Fixes: a1292595e006 ("net: dsa: add new DSA switch driver for the SMSC-LAN9303")
+> Signed-off-by: Christian Eggers <ceggers@arri.de>
 > ---
-> Changes v2->v3:
->   * Picked up Linus W's Acked-by tag & Geert's Reviewed-by tag.
->   * Simplify arguments to rzg2l_pin_to_oen_bit() and decode pin/caps
->     inside this function. No check is needed for dedicated pins as no
->     dedicated pins support OEN in the RZ/G2L family.
 
-Thanks for the update!
-
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -994,6 +994,61 @@ static bool rzg2l_ds_is_supported(struct rzg2l_pinct=
-rl *pctrl, u32 caps,
->         return false;
->  }
->
-> +static int rzg2l_pin_to_oen_bit(struct rzg2l_pinctrl *pctrl, unsigned in=
-t _pin)
-> +{
-> +       u64 *pin_data =3D pctrl->desc.pins[_pin].drv_data;
-> +       u64 caps =3D FIELD_GET(PIN_CFG_MASK, *pin_data);
-> +       u8 max_pin =3D pctrl->data->hwcfg->oen_max_pin;
-> +       u8 pin =3D RZG2L_PIN_ID_TO_PIN(_pin);
-> +
-> +       if (pin > max_pin)
-
-Likewise 2/9, just use the original directly.
-No need to resend, I can do this while applying.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
