@@ -1,259 +1,162 @@
-Return-Path: <linux-kernel+bounces-241123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702F792774B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:38:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99760927754
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AABA6B23DF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:38:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455311F22057
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55521B11E4;
-	Thu,  4 Jul 2024 13:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0591AED42;
+	Thu,  4 Jul 2024 13:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KKpOXSoV"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tHneWBKj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC10E1B0114
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3733419B3FF;
+	Thu,  4 Jul 2024 13:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720100213; cv=none; b=OGLXRz2cQcayplgRWZ8WLhNCi/5jwnQi+UwiY54DT8/55t0vy3bg1xC4kqOeeCMSQxpyeyyZ2JSXEdNkAaQY++Uvi7K00/tm+vp1Re10i7grldzYwuFv5xK+685ziyPJ/5Jlhi0B5USs9T2zchpONheuU3eUtOiUUvOcrQwfp0w=
+	t=1720100336; cv=none; b=cYt6YF1uaCD93VdEKT30OO+V7bEcKXMhKWUFyMLlOMOf+x4itnXOSDCgc66720CvsXa5AiWN9bnVIfBUHC+JChYouOvtyp4loFxSpbNBA9tNexM1ynCBrO1sIZgUky46aASGxAJ0h9FqivB4klnfUUAG4MlEvv+quLpmpsDDsq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720100213; c=relaxed/simple;
-	bh=NWQ/+FxNiWlPrriG/RCWg4yhrkTbbHsDm3/fAZGeotE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qgBRG24zIEp8sSuzmw0slr0GttAeB97Dj1kAHyiT+20jmfHqBKPbIUhe4/rxsx3Y23LYK44HVPR2aCcnwnZ6O8XHXIhm3QqEZcZrSnwSbB2cAfGJspe3iRB91Yrlzw0N4uRHKcLyh3bu9y+tomcLuM9Rit0ZDVpbyOUycPixDq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KKpOXSoV; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e7693c369so843506e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 06:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720100209; x=1720705009; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/0KWVZAazUejIoLcfyGV2EIZ0xgocIz1579DC73ilE8=;
-        b=KKpOXSoVnp2QDTvF3K8wxmq9d3gtRlXSwCWGAi6+yf121e4/4X6oHnEfDtoxiMVmkq
-         BDRXHKYR8bgSyDfrrRPFLDTTGHpLIjNTY8TeO+VdvwZCPEw2IePLabLsNqp2wtbe48od
-         rbooE/IM8csD5PF3IDsMkdw6+qq8lJeBFF9cfk/2tAL8foCXWzD++YzAz3mjzx31Zhgm
-         JeOc6lvMjwjtlDgOk0ewHC0hw5mdVGv5puBPRD2oqmK6Sbjt9G8oJ5tQpHMMDYr53xJn
-         wWa5M7nH8ImM0AWSGgjBzc3y0u8f5m+Kjh0Wcm2db4z8Vv1YKiQIzlVSvaQkkZny5y4S
-         ICYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720100209; x=1720705009;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/0KWVZAazUejIoLcfyGV2EIZ0xgocIz1579DC73ilE8=;
-        b=ifp9q/omIYZgKvj8+zifK3PiEawiUjGp/0M8QlEucoXAr9pZ7Ylb8qt1JR/EnEchRG
-         jocjgsiGdjhDjJ8NOAGKRYP2ju95biIMG7jytusU3HOgo+joYADFmsKL3J9SuT+oJBiF
-         gHQRU7wdPYycL8gun+31ASNSqvXLuw5HC3kaSDU/LuwSIpalgfV3+zaGJIBvvDxf5Od7
-         f2utPIL/UBpAax3lPknaWQunjIAOtN9APgf7LnxJu9LISN+znhLZCSqWPjSPdUKD7x27
-         23otGPmzMToktD83s3imreSXSoglMe258wktEUHB0NTF7PoRp/YgKpsOH2ljrS5wkcSY
-         /SpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwmtCGT465jXEgDi6XR5exxcFYNPsyNgckGS+NEz/fruTUsMeSV3xEM1koGAvsXq06NW7UTJFKG++dhS4Z4MTD2LeRLBKrYWlqZ4DC
-X-Gm-Message-State: AOJu0Yy/SzS0uA7b5EqjdTZ1ilM49RoFzJnDawp2qJgVYtzp7qg+vwxz
-	sHuF4se4UIDPEinvrxZ111sCW3QoF1La6fe5fqBzaDRFlEtLnUafK91Yv+RQUVU=
-X-Google-Smtp-Source: AGHT+IE+XUgzIP2fhSWzqNdccIr/yDFzS1seo1QGzBE8M/IswaP+OxSP7/SNQRIVCTgrLI5teEx4UA==
-X-Received: by 2002:a19:c20b:0:b0:52e:768e:4d1f with SMTP id 2adb3069b0e04-52ea0643b98mr1166545e87.36.1720100207994;
-        Thu, 04 Jul 2024 06:36:47 -0700 (PDT)
-Received: from [192.168.42.0] ([2a02:8428:e55b:1101:1e41:304e:170b:482f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2ca5d5sm25382025e9.30.2024.07.04.06.36.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 06:36:47 -0700 (PDT)
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Thu, 04 Jul 2024 15:36:44 +0200
-Subject: [PATCH v5 5/5] arm64: dts: mediatek: mt8365: Add support for
- camera
+	s=arc-20240116; t=1720100336; c=relaxed/simple;
+	bh=SDS3JwI8uIwueZHrycc2kurJPpeiYqV+PQztqKE6RKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bI9iXrMO3dE5LIAzglPIu6ykYgu0Z9a/xDNKWfpJeWFOq9Logq78zgeEQL/Rw85pSuB/mw9hbi9P86fyuZFRS1Py9yPLOFiqApPrUrRdZtQc4IBVizvW/v7NdLXBXDokjKEjA+cc3baNL8zXo1YxsCCztfGexBxar/kF/CHDTrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tHneWBKj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0AF7C3277B;
+	Thu,  4 Jul 2024 13:38:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720100335;
+	bh=SDS3JwI8uIwueZHrycc2kurJPpeiYqV+PQztqKE6RKQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tHneWBKjLuV8M+BPBEa1/R4iapFaVInRzRQ8xuNq8fL0AVxEQKPEY7KvSMF28W38w
+	 th9ihIGF2VK/YN8stSMqdKdInpsSAPkXgWcUuX5UkyfvRCORQBRD63e1ruEEChz9tv
+	 bBTQGlypWyR8rQaduw0qUwPwm1DHDWffSpxA5mlcYtsdGREvUBC9oWrulepBw8JDwH
+	 aj0RM6mhInWhpJqMMVwMlD0eoGIK2oij7tD9oADCDQNhVKZ6/YtQkbVSeMqG7NJZgB
+	 EZBGSBodBgitMpFlivykPlMTLthjNKrcLf7ZphiM2tDEIMTv4SEGxHo9ZAgZDJGaBS
+	 FhqwPy9/EY2oQ==
+Message-ID: <d0b3248d-ef2d-4583-98d0-6b4b28a75ef6@kernel.org>
+Date: Thu, 4 Jul 2024 15:38:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: clock: sprd,sc9860-clk: convert to YAML
+To: Stanislav Jakubek <stano.jakubek@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Baolin Wang <baolin.wang7@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <ZoaYPg2avtYpKQjB@standask-GA-A55M-S2HP>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZoaYPg2avtYpKQjB@standask-GA-A55M-S2HP>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240704-add-mtk-isp-3-0-support-v5-5-bfccccc5ec21@baylibre.com>
-References: <20240704-add-mtk-isp-3-0-support-v5-0-bfccccc5ec21@baylibre.com>
-In-Reply-To: <20240704-add-mtk-isp-3-0-support-v5-0-bfccccc5ec21@baylibre.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Andy Hsieh <andy.hsieh@mediatek.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, Julien Stephan <jstephan@baylibre.com>
-X-Mailer: b4 0.13.0
 
-Add base support for cameras for mt8365 platforms. This requires nodes
-for the sensor interface, camsv, and CSI receivers.
+On 04/07/2024 14:40, Stanislav Jakubek wrote:
+> Convert the Spreadtrum SC9860 clock bindings to DT schema.
+> 
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Julien Stephan <jstephan@baylibre.com>
----
- arch/arm64/boot/dts/mediatek/mt8365.dtsi | 125 +++++++++++++++++++++++++++++++
- 1 file changed, 125 insertions(+)
+Thank you for your patch. There is something to discuss/improve.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8365.dtsi b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-index 24581f7410aa..cabdb51f4041 100644
---- a/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-@@ -10,6 +10,7 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/phy/phy.h>
- #include <dt-bindings/power/mediatek,mt8365-power.h>
-+#include <dt-bindings/memory/mediatek,mt8365-larb-port.h>
- 
- / {
- 	compatible = "mediatek,mt8365";
-@@ -703,6 +704,23 @@ ethernet: ethernet@112a0000 {
- 			status = "disabled";
- 		};
- 
-+		mipi_csi0: mipi-csi0@11c10000 {
-+			compatible = "mediatek,mt8365-csi-rx";
-+			reg = <0 0x11c10000 0 0x2000>;
-+			status = "disabled";
-+			num-lanes = <4>;
-+			#phy-cells = <1>;
-+		};
-+
-+		mipi_csi1: mipi-csi1@11c12000 {
-+			compatible = "mediatek,mt8365-csi-rx";
-+			reg = <0 0x11c12000 0 0x2000>;
-+			phy-type = <PHY_TYPE_DPHY>;
-+			status = "disabled";
-+			num-lanes = <4>;
-+			#phy-cells = <0>;
-+		};
-+
- 		u3phy: t-phy@11cc0000 {
- 			compatible = "mediatek,mt8365-tphy", "mediatek,generic-tphy-v2";
- 			#address-cells = <1>;
-@@ -773,6 +791,113 @@ larb2: larb@15001000 {
- 			mediatek,larb-id = <2>;
- 		};
- 
-+		seninf: seninf@15040000 {
-+			compatible = "mediatek,mt8365-seninf";
-+			reg = <0 0x15040000 0 0x6000>;
-+			interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&camsys CLK_CAM_SENIF>,
-+				 <&topckgen CLK_TOP_SENIF_SEL>;
-+			clock-names = "camsys", "top_mux";
-+
-+			power-domains = <&spm MT8365_POWER_DOMAIN_CAM>;
-+
-+			phys = <&mipi_csi0 PHY_TYPE_DPHY>, <&mipi_csi1>;
-+			phy-names = "csi0", "csi1";
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+				};
-+
-+				port@3 {
-+					reg = <3>;
-+				};
-+
-+				port@4 {
-+					reg = <4>;
-+					seninf_camsv1_endpoint: endpoint {
-+						remote-endpoint =
-+							<&camsv1_endpoint>;
-+					};
-+				};
-+
-+				port@5 {
-+					reg = <5>;
-+					seninf_camsv2_endpoint: endpoint {
-+						remote-endpoint =
-+							<&camsv2_endpoint>;
-+					};
-+				};
-+			};
-+		};
-+
-+		camsv1: camsv@15050000 {
-+			compatible = "mediatek,mt8365-camsv";
-+			reg = <0 0x15050000 0 0x0040>,
-+			      <0 0x15050208 0 0x0020>,
-+			      <0 0x15050400 0 0x0100>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&camsys CLK_CAM>,
-+				 <&camsys CLK_CAMTG>,
-+				 <&camsys CLK_CAMSV0>;
-+			clock-names = "cam", "camtg", "camsv";
-+			iommus = <&iommu M4U_PORT_CAM_IMGO>;
-+			mediatek,larb = <&larb2>;
-+			power-domains = <&spm MT8365_POWER_DOMAIN_CAM>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					camsv1_endpoint: endpoint {
-+						remote-endpoint = <&seninf_camsv1_endpoint>;
-+					};
-+				};
-+			};
-+		};
-+
-+		camsv2: camsv@15050800 {
-+			compatible = "mediatek,mt8365-camsv";
-+			reg = <0 0x15050800 0 0x0040>,
-+			      <0 0x15050228 0 0x0020>,
-+			      <0 0x15050c00 0 0x0100>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&camsys CLK_CAM>,
-+				 <&camsys CLK_CAMTG>,
-+				 <&camsys CLK_CAMSV1>;
-+			clock-names = "cam", "camtg", "camsv";
-+			iommus = <&iommu M4U_PORT_CAM_IMGO>;
-+			mediatek,larb = <&larb2>;
-+			power-domains = <&spm MT8365_POWER_DOMAIN_CAM>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					camsv2_endpoint: endpoint {
-+						remote-endpoint = <&seninf_camsv2_endpoint>;
-+					};
-+				};
-+			};
-+		};
-+
- 		vdecsys: syscon@16000000 {
- 			compatible = "mediatek,mt8365-vdecsys", "syscon";
- 			reg = <0 0x16000000 0 0x1000>;
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - sprd,sc9860-aonsecure-clk
+> +              - sprd,sc9860-aon-prediv
+> +              - sprd,sc9860-ap-clk
+> +              - sprd,sc9860-cam-clk
+> +              - sprd,sc9860-disp-clk
+> +              - sprd,sc9860-gpu-clk
+> +              - sprd,sc9860-vsp-clk
+> +    then:
+> +      required:
+> +        - reg
 
--- 
-2.45.1
+  properties:
+    sprd,syscon: false
+
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - sprd,sc9860-agcp-gate
+> +              - sprd,sc9860-aon-gate
+> +              - sprd,sc9860-apahb-gate
+> +              - sprd,sc9860-apapb-gate
+> +              - sprd,sc9860-cam-gate
+> +              - sprd,sc9860-disp-gate
+> +              - sprd,sc9860-pll
+> +              - sprd,sc9860-pmu-gate
+> +              - sprd,sc9860-vsp-gate
+> +    then:
+> +      required:
+> +        - sprd,syscon
+
+  properties:
+    reg: false
+
+Best regards,
+Krzysztof
 
 
