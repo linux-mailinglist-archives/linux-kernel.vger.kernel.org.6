@@ -1,120 +1,148 @@
-Return-Path: <linux-kernel+bounces-241624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7FA927D3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:37:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B68B927D41
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B9511C22000
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:37:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558CE1C22016
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C615113BAE4;
-	Thu,  4 Jul 2024 18:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664857347A;
+	Thu,  4 Jul 2024 18:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIYcCoW3"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PWhx7M6v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978A0131736;
-	Thu,  4 Jul 2024 18:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84A345979
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720118219; cv=none; b=r0UwKYOpyizfrp3wKpBDIb4fXIS6NJD6XrVeEjKGgbfpQQdf+7Hw1Sb21/nrlHlQ+FAeP/ab5hWMdNhBd2Hu2vmQaD3fNvPvpFnderavL6YDDVN6JZQrY71afaLNN+sG/7eSggMt7iZW68sZVlMsVjCsZWbjKVn55O0+P2f2EAg=
+	t=1720118440; cv=none; b=rc4dHDhgGlwS00gR/UNVmIIzL8a0jV1NLhXHcC7z+zj7f5M/NDMRwQK/DxsEvJ7pwSKenlJmJ+V4RTSEr1qsHxkmd5C2p1/Mfk4WKUY1w1B48QUVQNpTYj08aKruPYnb1dK+UP+QT1rEpORO66aRKJdhvwKhKp5kx9gdfgvDWcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720118219; c=relaxed/simple;
-	bh=Y53Q/T/fuLbEh7wWjD5G1enpjBzQbtnONr6j89ypyW0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BPwv7ij3U/PF8UgEvzQjES1taV0kqz4u1ptqOICdda5NYvANOT0BVb1EPoVd0QBw9swQUmuABF51bf/vQHsiNfF4QwF3vNH4iTtkDZVSyB4AuwuuCP/2j8gC759RRH54g0d+yLNExehqU+KJABW9Jy8Rl3usE7353THFAJPx4wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIYcCoW3; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42562e4b5d1so6123235e9.1;
-        Thu, 04 Jul 2024 11:36:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720118216; x=1720723016; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b3VvNKkzsu8gPwxh9V6GDq6OKl9DellqqDzdq2dyxII=;
-        b=mIYcCoW3S6vapgrVkYQXsUVrnl6devvvcX4Ic5WTfWNUMs1w1cEWzWXoU2YphB89Zz
-         OJig1qLKqBHmfm0FCRc2cLtE6OXBwTA3Tj+N+rmw7korYnBXiZketkRnJoLl+bTz3HYB
-         yHkapyX5ogpHL8iklC8ZVXtoc/7C+GNiNpUI9jbDYN9YNNFu41vyXBI8wr2IY1OrcRE5
-         84mp2/UHD2xqle9SoZQPHN7jc48/VtZCBANDnOlOr3xib+yZRJ92RegWA0g4ri1Ec7yo
-         HwBecXg6hlLKaugHnJxCemP+vk6x6rjY+dECUGKJFrlDmvk6ULzi1G2j3W0hsI6ckY7w
-         qV+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720118216; x=1720723016;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b3VvNKkzsu8gPwxh9V6GDq6OKl9DellqqDzdq2dyxII=;
-        b=j5DWWXqwAp+Pzepr2ZTxXmL4+fPUiBKnbtVgg4F4D1gYMNIH7VzVpnbwv8hYSkxxbV
-         iSgxbxH4AULi5+a3e+V7XdHc6VPEy9kZRYLhccRAMxvmcXcl3XX8aqLaLrqEumSGiwL8
-         q+hRNjXG9VLNxv0LVLOkaGVEu82KPjb3D6YeFFrPNIge3/X7zhljw18XYyc5h278nB0B
-         7N3ZLY6UHJZGU1/ch+1kVWEQZR7tHtK8C0FohWW4cSZ7IfqgS1WWWBRm6mweaKclWXq6
-         dshuCy8U/k/XEGaxiy7/K2PH2zqh4WHD9Uk29bjJSM713/kxm7gJvhExFBzZqxrQtiFd
-         DiHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCOgHkJA2n5t3DTEz0wCNXGj5M0R8bTNgPGhW2fqR9zhY4ryas9oRkw57RaSouVOxrlbkcwf9y/D+YrG8FgonkyoXnN+WWSvM4Mdfu
-X-Gm-Message-State: AOJu0YyJzboHTsqW9n4krVsSHJHPGxurYHIOPnAubiKQdx8xSbRWFzl8
-	zTRcb4Nf/n45bAr03CO9ylLkh6PKopW18yjODkvZ6J41R0jxPY0ZHvGHl9bn
-X-Google-Smtp-Source: AGHT+IHGVFN/WNB1xDM0kbxb0JUixv8Fa00JriXAi1hZAE6k58GN0z4DMPti3xBxP1W/R48nEKhwNA==
-X-Received: by 2002:a05:600c:12cc:b0:425:65b1:abbc with SMTP id 5b1f17b1804b1-4264a3d96f8mr17468195e9.1.1720118215730;
-        Thu, 04 Jul 2024 11:36:55 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-0b06-a203-2f25-a0f6.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:b06:a203:2f25:a0f6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a28333dsm33823075e9.40.2024.07.04.11.36.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 11:36:55 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 04 Jul 2024 20:36:44 +0200
-Subject: [PATCH 2/2] pinctrl: realtek: Constify struct regmap_config
+	s=arc-20240116; t=1720118440; c=relaxed/simple;
+	bh=nhg+Bi09+TPPdWbw61GDrYuj2tqg++lywQVcHOgIO+g=;
+	h=Date:From:To:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=r8rmKFHO7sPVkDns/Pbeebg2B42+6F8PEQfd78e8qlaCI+UmYvJk7vh3CIXm/u7SztIDxfDX7J41dOB/vBB0EpAZ0ulukncHhGXq1MR6Cx4ZndCJetFyDT/jNTDEm6o7oDrpRZplfthxydjAe+tlV71LDd5BBybDgL9+WpHtkg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PWhx7M6v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4AE0C3277B;
+	Thu,  4 Jul 2024 18:40:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1720118440;
+	bh=nhg+Bi09+TPPdWbw61GDrYuj2tqg++lywQVcHOgIO+g=;
+	h=Date:From:To:Subject:In-Reply-To:References:From;
+	b=PWhx7M6v0H2jvvAPaDzQTKcyjy7tQ7/R70XHudmBNfID8Iwa3Ke30BBG3P15WknlF
+	 Thx3VYDp4lK0pz5NWTFj+58PzZX/RQJfhs1hAiai4R7nspy0ko3cF4B38zUjJXvPf8
+	 66FLDn8uVLDBx6YLribdSAENqz4UX8cwm6SdvZDM=
+Date: Thu, 4 Jul 2024 11:40:39 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Peng Zhang <zhangpeng362@huawei.com>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, <willy@infradead.org>,
+ <ying.huang@intel.com>, <fengwei.yin@intel.com>, <david@redhat.com>,
+ <aneesh.kumar@linux.ibm.com>, <shy828301@gmail.com>, <hughd@google.com>,
+ <wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
+Subject: Re: [PATCH] filemap: replace pte_offset_map() with
+ pte_offset_map_nolock()
+Message-Id: <20240704114039.4fd0739593cd0a96fe428496@linux-foundation.org>
+In-Reply-To: <20240625140643.bf4a1a19b0d534d802764610@linux-foundation.org>
+References: <20240313012913.2395414-1-zhangpeng362@huawei.com>
+	<20240625140643.bf4a1a19b0d534d802764610@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240704-pinctrl-const-regmap_config-v1-2-9d5570f0b9f3@gmail.com>
-References: <20240704-pinctrl-const-regmap_config-v1-0-9d5570f0b9f3@gmail.com>
-In-Reply-To: <20240704-pinctrl-const-regmap_config-v1-0-9d5570f0b9f3@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720118212; l=841;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=Y53Q/T/fuLbEh7wWjD5G1enpjBzQbtnONr6j89ypyW0=;
- b=szkwson3fK65ZvDNZzu8hNCgmpAZ9YoFEsE/eFKR7IpOpFGq8KIICZBiJWavFKb/ZHBlvCiaC
- rxFojJTqHGwBaRE76kn3zxVin+tYJ+JWGN1AepHZ4QM/is0OnXXVZeF
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-`rtd_pinctrl_regmap_config` is not modified and can be declared as const
-to move its data to a read-only section.
+On Tue, 25 Jun 2024 14:06:43 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> On Wed, 13 Mar 2024 09:29:13 +0800 Peng Zhang <zhangpeng362@huawei.com> wrote:
+> 
+> > From: ZhangPeng <zhangpeng362@huawei.com>
+> > 
+> > The vmf->ptl in filemap_fault_recheck_pte_none() is still set from
+> > handle_pte_fault(). But at the same time, we did a pte_unmap(vmf->pte).
+> > After a pte_unmap(vmf->pte) unmap and rcu_read_unlock(), the page table
+> > may be racily changed and vmf->ptl maybe fails to protect the actual
+> > page table.
+> > Fix this by replacing pte_offset_map() with pte_offset_map_nolock().
+> > 
+> > ...
+> >
+> > --- a/mm/filemap.c
+> > +++ b/mm/filemap.c
+> > @@ -3207,7 +3207,8 @@ static vm_fault_t filemap_fault_recheck_pte_none(struct vm_fault *vmf)
+> >  	if (!(vmf->flags & FAULT_FLAG_ORIG_PTE_VALID))
+> >  		return 0;
+> >  
+> > -	ptep = pte_offset_map(vmf->pmd, vmf->address);
+> > +	ptep = pte_offset_map_nolock(vma->vm_mm, vmf->pmd, vmf->address,
+> > +				     &vmf->ptl);
+> >  	if (unlikely(!ptep))
+> >  		return VM_FAULT_NOPAGE;
+> >  
+> 
+> whoops, I'm still sitting on this because I didn't know whether we
+> should backport it.
+> 
+> And...  guess what I say next.  Can we please describe what are the
+> userspace visible effects of the bug?
+> 
+
+Nobody?
+
+Oh well, I'll add cc:stable amd move this into mm-hotfixes.
+
+
+From: ZhangPeng <zhangpeng362@huawei.com>
+Subject: filemap: replace pte_offset_map() with pte_offset_map_nolock()
+Date: Wed, 13 Mar 2024 09:29:13 +0800
+
+The vmf->ptl in filemap_fault_recheck_pte_none() is still set from
+handle_pte_fault().  But at the same time, we did a pte_unmap(vmf->pte). 
+After a pte_unmap(vmf->pte) unmap and rcu_read_unlock(), the page table
+may be racily changed and vmf->ptl maybe fails to protect the actual page
+table.  Fix this by replacing pte_offset_map() with
+pte_offset_map_nolock().
+
+Link: https://lkml.kernel.org/r/20240313012913.2395414-1-zhangpeng362@huawei.com
+Fixes: 58f327f2ce80 ("filemap: avoid unnecessary major faults in filemap_fault()")
+Signed-off-by: ZhangPeng <zhangpeng362@huawei.com>
+Suggested-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Nanyong Sun <sunnanyong@huawei.com>
+Cc: Yang Shi <shy828301@gmail.com>
+Cc: Yin Fengwei <fengwei.yin@intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- drivers/pinctrl/realtek/pinctrl-rtd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/realtek/pinctrl-rtd.c b/drivers/pinctrl/realtek/pinctrl-rtd.c
-index 208896593b61..244060486332 100644
---- a/drivers/pinctrl/realtek/pinctrl-rtd.c
-+++ b/drivers/pinctrl/realtek/pinctrl-rtd.c
-@@ -533,7 +533,7 @@ static const struct pinconf_ops rtd_pinconf_ops = {
- 	.pin_config_group_set = rtd_pin_config_group_set,
- };
+ mm/filemap.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/mm/filemap.c~filemap-replace-pte_offset_map-with-pte_offset_map_nolock
++++ a/mm/filemap.c
+@@ -3231,7 +3231,8 @@ static vm_fault_t filemap_fault_recheck_
+ 	if (!(vmf->flags & FAULT_FLAG_ORIG_PTE_VALID))
+ 		return 0;
  
--static struct regmap_config rtd_pinctrl_regmap_config = {
-+static const struct regmap_config rtd_pinctrl_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
-
--- 
-2.40.1
+-	ptep = pte_offset_map(vmf->pmd, vmf->address);
++	ptep = pte_offset_map_nolock(vma->vm_mm, vmf->pmd, vmf->address,
++				     &vmf->ptl);
+ 	if (unlikely(!ptep))
+ 		return VM_FAULT_NOPAGE;
+ 
+_
 
 
