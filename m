@@ -1,195 +1,84 @@
-Return-Path: <linux-kernel+bounces-241217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A533B92785B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:29:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF30E92785F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8036FB20FCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:29:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CDED1C21C4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545741B0112;
-	Thu,  4 Jul 2024 14:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F391B0121;
+	Thu,  4 Jul 2024 14:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VstVa8Wp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eqSzaHTk";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZsALTNvt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="i0JZ95Gc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vm8Ngrou"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A28A1AE0AB
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63ABB1AE0AB;
+	Thu,  4 Jul 2024 14:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720103357; cv=none; b=p6sIAj1G1PT+iHzwsB5mosSjOoY4x99DXlHKvQeAY//LrByhjBVciFkmSYRCUvW1dwbmJqPKx0be7rmrVmd4idMCCMgdoXEFYdGZDJGwHsHnHWh3AbfwgXqVx9qxAJ+sxbCtU0MddtRKDrfDMd4fNWQpHhmyYmyl1ZwOhI2AjIc=
+	t=1720103401; cv=none; b=T9YjfrTBEquS5MWTQlu1wUh7USduLV6dHJX0TNS1+HjgykJNFMPoOJg5O0gtcLbGCqAxQL6BDjmArJ13PdtsccRZ2Cb8AqT4qFRzXrdPiBqtgQUagqMBMysOa8Mwq+A+QG3c7tL5Sg93zYXn2Effg+LKEpJjnCCZOZ0/LfQBods=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720103357; c=relaxed/simple;
-	bh=1Sis2K8lhZ05V+ouL6BSIUysrNHJrLU+VqisulON750=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pJoojRaudBAQil76u4ypQ9gGxrwhBzrxnbSdY0cK2EzQnNn/hOTPA5puYyn61NS1eJn9tNAFQ5WCLyZv9YtzWR3xDtYRN3D9SWM4iOR1LDCfciIKvHdFAiRONHABEOgtBhQZnIQvfIUiksHCXyGUAP06QUoczGIwkWN8owPzKzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VstVa8Wp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eqSzaHTk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZsALTNvt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=i0JZ95Gc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A07D21F7C4;
-	Thu,  4 Jul 2024 14:29:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720103353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=832Lzqim7/obHeO9w9EXiKXT7pVbNhfHe6I34TjlALM=;
-	b=VstVa8WpitUFGYqpTzvXGrK/Th5lj6EiExqaf6vrWN8e1Rv6du4vCNgPx7eInQQ5PnpUTE
-	nRtFM4mGsn0MsiTr80gGnSmvL2jK1qGoT0AyOaogFKcCkWINmPfk5OzCNAIhETgY08QkZl
-	4AmkDlGbeYaNh9pQO5GYJmfoARWXVWg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720103353;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=832Lzqim7/obHeO9w9EXiKXT7pVbNhfHe6I34TjlALM=;
-	b=eqSzaHTkWhFyLdR5M+r7m48fTy+qgAXOWruhLupaKVIpxcoB27M5Oabqryhg1w/DPH0teX
-	AL/xYS0TVfAjquCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ZsALTNvt;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=i0JZ95Gc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720103352; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=832Lzqim7/obHeO9w9EXiKXT7pVbNhfHe6I34TjlALM=;
-	b=ZsALTNvtz3DPz79CS5O4vbnlRplWBbCDLrg9SyE7HeYfvTsqIe7QR5IhDgyC9UPXjNgH+a
-	armluqgDbDQBxNGA1EnfeDZlk6AcBzAo8DPzGtbp/1mnlEj3yzNc0ebo9Wi86cOYOaKdj/
-	ujm06bQBpNV3ojg2JmQ8IP17tetl/Fg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720103352;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=832Lzqim7/obHeO9w9EXiKXT7pVbNhfHe6I34TjlALM=;
-	b=i0JZ95Gcp/N0wWV8phqTQjxQx7RBeOyrMCDvPbMFYVJi4JiN4NOp5rFstjpEEpGBb8/QEA
-	ReN5b3WiM/RQifBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C89713889;
-	Thu,  4 Jul 2024 14:29:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id g+42FbixhmaIMQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 04 Jul 2024 14:29:12 +0000
-Message-ID: <b3c6f05d-ad09-43a6-b9db-93a20e240260@suse.cz>
-Date: Thu, 4 Jul 2024 16:29:12 +0200
+	s=arc-20240116; t=1720103401; c=relaxed/simple;
+	bh=eSy8SYdM2M3cyMC6FwpAcsaHVc53RoA/LXllcgBPfIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TtaWYQ+6teJ3fwCaLoUICmfhyZQ9+EdviKDmMeSEVC3i0y/R9Sv8WynnEv27rcdRXC2acKPhgl99pKOJ+k6NigWY+xCWvw77GYNd+L7x+DKZg5q5zFvXfOdJ62eQoHfsXXb3rvcuubgSGcOE9d6w2A2e4r5EC0O/6UqFDT7DR/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vm8Ngrou; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Enu1N6gk1voQoov0gxRGHrtuHCfIvfGXa28Px1K5WpM=; b=vm8Ngrou02qz4Ib5mffZwNGQZl
+	IyaFQ3g17dLdwT8o+mc8kq8K1iuGCFU6/DwMXKkWeDCu+ln7bMJyl/jMqN6i1dynQImA/pHHP4pvY
+	2Ktm0BxsEy5JnNZGDr7GViK1/fQrzlJzPW5+ildcGB1eGQKdtvUd4Ga1R635z9bSN9RlbUIE6njyq
+	KSoyUFoDFIobHWvVBF1jV1SgwqI2ys7PU8eNZbofKaLcAt0kx3PfCXT+eXVyDcBImMt1IHXGRcP+K
+	lYYl5L6DjuSSj7LtgWvc2YAonwrhpJRSseSgkJ+jNHELCIY2TsAIP5L99YQX66FYVBsUB8O2TKGhQ
+	+9vF92DQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sPNSZ-00000002vlv-41mX;
+	Thu, 04 Jul 2024 14:29:20 +0000
+Date: Thu, 4 Jul 2024 15:29:19 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
+	brauner@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
+Subject: Re: [PATCH v8 03/10] readahead: allocate folios with
+ mapping_min_order in readahead
+Message-ID: <Zoaxv23qdu4T84Sm@casper.infradead.org>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-4-kernel@pankajraghav.com>
+ <98790338-0f86-4658-8dec-95e94b6d5c18@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] mm, slab: move allocation tagging code in the
- alloc path into a hook
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, cl@linux.com, penberg@kernel.org,
- rientjes@google.com, iamjoonsoo.kim@lge.com, roman.gushchin@linux.dev,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240704135941.1145038-1-surenb@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240704135941.1145038-1-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.49 / 50.00];
-	BAYES_HAM(-2.99)[99.96%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: A07D21F7C4
-X-Spam-Flag: NO
-X-Spam-Score: -4.49
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <98790338-0f86-4658-8dec-95e94b6d5c18@arm.com>
 
-On 7/4/24 3:59 PM, Suren Baghdasaryan wrote:
-> Move allocation tagging specific code in the allocation path into
-> alloc_tagging_slab_alloc_hook, similar to how freeing path uses
-> alloc_tagging_slab_free_hook. No functional changes, just code
-> cleanup.
+On Thu, Jul 04, 2024 at 03:24:10PM +0100, Ryan Roberts wrote:
+> > @@ -240,12 +257,13 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+> >  			 * not worth getting one just for that.
+> >  			 */
 > 
-> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> For the case that the folio is already in the xarray, perhaps its worth
+> asserting that the folio is at least min_nrpages?
 
-Thanks, merged to slab/for-next
+We'd have to get a reference on the folio to be able to do that safely.
+Not worth it.
 
 
