@@ -1,249 +1,188 @@
-Return-Path: <linux-kernel+bounces-240927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574E09274B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:15:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E1E9274C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CD03286158
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:15:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 342D7286557
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE97D1ABC53;
-	Thu,  4 Jul 2024 11:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8EB1AC422;
+	Thu,  4 Jul 2024 11:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sl/d/jMW"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kCPxjI9J"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197B11DA316
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 11:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720091749; cv=none; b=QFRxpafOQuYxrNzlgKeEwSIWXo6c3vmX1JScTSgv6JldBUkmkn/rFJRfJuw2khfPbEr7bI3z7j5WIHIN1cclmvdVFbK8A7gxA9na2rnAmazrMlaki57ygGzIEOMtc6RkojwPLXzC3x6mkAZTBr0LFt4VZa455GMe2+nuQJkytX8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720091749; c=relaxed/simple;
-	bh=+c2Z9nXq552SGTlYIIN1S61we7LtJBg9zjGjgC2Qk3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FS/jrokR6ZSd2wycLQVvXHpKTXFV6tnPr0WoxwykGu1X+1MyQDh7xI5vpy+omxejtQ84Use2OmKMISFIj4PDVxkRivx0kMOTUJLTnTXVFRYGU6IxrgYt721dkq5x9qnScinaRav6JPJ32+S8giFEaRBAfFESmY+Whrhy8kIan7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sl/d/jMW; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720091738; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=tN2ns8uWQRiOe8zzqBAzmjny+TBw0IJAiT3hxJ8URBU=;
-	b=sl/d/jMWYaxG4WGiHOmDkkEXSk0QCnLiWRtpTbmuxcSA7yMb+A4M7OGQGKMvtsXDbMwxY14G1U2eK4Zv0K+2l5nL4UR9NJP+zvKmrpPJCP9FWj9HaJYc/T7YKLtwbdCip5qRoShfah8EtgwCLksvTAiFTXtAx6iB2y4Ac4iez1w=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045220184;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W9qjM-5_1720091735;
-Received: from 30.97.56.65(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9qjM-5_1720091735)
-          by smtp.aliyun-inc.com;
-          Thu, 04 Jul 2024 19:15:36 +0800
-Message-ID: <475332ea-a80b-421c-855e-a663d1d5bfc7@linux.alibaba.com>
-Date: Thu, 4 Jul 2024 19:15:35 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540651ABCAB;
+	Thu,  4 Jul 2024 11:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720091815; cv=fail; b=OuTMIyz9Iy5TCu1B/Ew29p11IIDe2uVeEXl3zgfoGfLzV2I2SbuJHW3rfxeXuvdk11mzlosptVwqQqSRFTkCoDs0RmgmUp+TyRmOg3WBCEDlVoRPuKm8ill5CABvUPzTPPPxDxwhqKTEVwuUS7gXNkBTkh9KJcL6a8RWWZyMg2Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720091815; c=relaxed/simple;
+	bh=QfIQqEcaV94cRTu8DZA/Kl8qzx5lBDPM6wijwJeBbiw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Spza7/rhoGy36EWuR3u0Dw6L0r6I4EkD/2nBW82t7s7ZZLyp0kgbU3K6wqpCQGvHRE/oDDaKI8a+pq7Ab5Eilxdz213BMhsmB+TSVFxJrQVCZAuE1l7XPh9YF8IGcYgWuamST+LoA/BfwXHXPnEoVCJ5jNFCJsgH5uQgy6PeSTA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kCPxjI9J; arc=fail smtp.client-ip=40.107.236.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZjlmnWSsZ/3vJkm+sccnGJSnQJ/dWbHeY1ElyhDcFay/HO8aWLuZh/T/VahQpz3wMIIfySKMK6x/beyergatsrP0fUO20gOvN9Ad63KMX8OZq3IQIFqChacLHcueGq4LBuFlAlTuJI/sO/oeYMBnHuI0OBgH9fVFjVWcktk9AK38ppHkGAO71tfhWE9/APlLtCEUlmpkc3qFl5kW01vqoxD0Ggob26O2lY27RpvwvEvYIxg6IZzjHgJ3EoYPr55ULwmleG+hJ3FrsPOvu0llqIbJySp/KvpFXD7Wu4jFFfNA5rY7EjOTuVVfV6drJauV6d4QHB/hxoVfIefcEPl/nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nARJ225W+O0xBwW7Z5tNiIP4Ra/rDKCLuXoyU45k3/E=;
+ b=dUabNJA0najKd+7PhangvXsGEV5ca5bIke7+bnjSVplOxHiTCHYzLtJeYOTLYrKtKFjwmSDA5hP3FyDCBRedivO0slzSd6bqTusoeBSjXuZyj+Lbqv5FkAt0tPkoOkrSZhORqEpvp5f0h8F4G8d5Sf3qJ5hKkl37yarZ09ttYF4NP+noC6a+MHlYTSEOwloIFQPPL4z65rzSfZScM8eItvK7z67q63GzR9lvfHSapY0IFI0sAWhcAVBvVL0t7OGObVeroxjAksIdH+ilZzgNH70eHy8Tf+JOiS/OSRv+d/Tskes9CRWSrUHbXx/B8PMUJKobjuF2euEaA84Z61MXTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nARJ225W+O0xBwW7Z5tNiIP4Ra/rDKCLuXoyU45k3/E=;
+ b=kCPxjI9JCJg2nf1lLeTCsZX4YxEqHf2Om3yJAgLKc4obNn0vwhW18R7RPbwxcsrF45KoCPjI1pEOX009siNokzjzVR+cJDS91Jp3X78E6Mr7IYMABdrYhBoFfTZstsueePJFyA+si+aI7iladogEa5ATYL29hPvPIBIr2/JMc7Q=
+Received: from DM6PR06CA0054.namprd06.prod.outlook.com (2603:10b6:5:54::31) by
+ IA1PR12MB8078.namprd12.prod.outlook.com (2603:10b6:208:3f1::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.23; Thu, 4 Jul
+ 2024 11:16:50 +0000
+Received: from DS2PEPF00003440.namprd02.prod.outlook.com
+ (2603:10b6:5:54:cafe::3) by DM6PR06CA0054.outlook.office365.com
+ (2603:10b6:5:54::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.29 via Frontend
+ Transport; Thu, 4 Jul 2024 11:16:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS2PEPF00003440.mail.protection.outlook.com (10.167.18.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7741.18 via Frontend Transport; Thu, 4 Jul 2024 11:16:50 +0000
+Received: from amd.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 4 Jul
+ 2024 06:16:45 -0500
+From: Akshay Gupta <akshay.gupta@amd.com>
+To: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux@roeck-us.net>, <gregkh@linuxfoundation.org>, <arnd@arndb.de>
+CC: <naveenkrishna.chatradhi@amd.com>, Akshay Gupta <akshay.gupta@amd.com>
+Subject: [PATCH 0/6] misc: add amd side-band functionality
+Date: Thu, 4 Jul 2024 11:16:18 +0000
+Message-ID: <20240704111624.1583460-1-akshay.gupta@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/6] mm: shmem: add mTHP support for anonymous shmem
-To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, david@redhat.com, wangkefeng.wang@huawei.com,
- ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
- ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
- p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
- <65796c1e72e51e15f3410195b5c2d5b6c160d411.1718090413.git.baolin.wang@linux.alibaba.com>
- <65c37315-2741-481f-b433-cec35ef1af35@arm.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <65c37315-2741-481f-b433-cec35ef1af35@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003440:EE_|IA1PR12MB8078:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4587fb0e-603f-454f-3a90-08dc9c1acd06
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xWqcz+oE0pgBM/f0590WhD+5GVhdJKMJj53yFhm6eWeVv3wyzZIjj3KIOtJ0?=
+ =?us-ascii?Q?YjCL1CyKayNCrdvyv0v2ZFp2POvV0/eiiIWFRLjOIigIND0ap7A0/0k6Dggy?=
+ =?us-ascii?Q?M43Lw6K6B719hbb7TNXcUSzYd/uPO/HTS1sdGU7HgmdodY0lRzZZ2W9WUm7r?=
+ =?us-ascii?Q?qU8L3UXQns/hLDpoBkZTBGGr08p7/X8ad5zmikeRvJzxYRho8L1acHL7gw4t?=
+ =?us-ascii?Q?jMkCcoQRM/J4t/OGjCKCzxn+mizz4OZerZrj2v2ZkK0OQco/oshMDSeAcPCJ?=
+ =?us-ascii?Q?rBRIoREGea+ldosiddsGwFOLhjptn8MI3xkTwT1CRUQsOEb7bOn9hCvEw0YM?=
+ =?us-ascii?Q?bFpzuAJAmXWVrvSyFypKjPy9ZyjHRwWhDzLeWFejw7gNLvNjVJtt+3PZd/Ok?=
+ =?us-ascii?Q?7t/xAxvYkJsRgXCmzejUiY+fTklTH92yjPoEzpJy6EighbJ6QvPv58a2CCzg?=
+ =?us-ascii?Q?tXxbF8FmDKPLTzddXofjsCybIqmKVbY0CyyvUk/1awyAtBkpCNYlXxiSf6/I?=
+ =?us-ascii?Q?q+Yeiko/LqdwCVssIw+FDHk71b9aiLtC/pQsaQf2EO/c8J//yy1tHSvbdsJX?=
+ =?us-ascii?Q?raMEwF38WuTPvy0Piv5Lu8JMt5Jw2O9jiDSeruncNtMH2WBgFxYx+s1Q2m0s?=
+ =?us-ascii?Q?SmKjwlUjrIWIMc6wgnJXrVJVXtM7sfwDQY60Qeq7YIi2yFp1N38rJDzS+5KT?=
+ =?us-ascii?Q?tWZBz4wkbYqzfJq2HpFasOwm+MnP9PHOLK267k4NygfheLpGPgwIbMMoS1hE?=
+ =?us-ascii?Q?+1luOcuZVRMUS60i+sg4vVm1SVKvwIAqQubAGmY2LpW0HvHzZAV0U0gw2rRg?=
+ =?us-ascii?Q?GiUsqFPPlOcK1obCVdktKMlrM9/gpdJ/y+kVThA3k2Yjh9jjUjFMsmQvcFPo?=
+ =?us-ascii?Q?96wkTIURwsNJzmdIr+MDfWBAGcSd/Yw5ctqE9mAMuGII1u1iHdzuX/vcB/5W?=
+ =?us-ascii?Q?ALC9W/TpCWDpmebrtetN8kUYLY8lwwr5jJemWLEPvfX1NHVN7KI0v6hcBl62?=
+ =?us-ascii?Q?4khHoVj34fBRei5yeDsDSMVJjjZDH7TYS8i9I+Qxgd+B3U9MtUGsV0eRIprp?=
+ =?us-ascii?Q?01TSqNXkQ3I8kuQRlrb1d1nPfx4PLEXj0oUzkiw1kjHdx3lqpktDitSqsTkd?=
+ =?us-ascii?Q?ww6Pw7MYSsK4OeT5q1fMJPBNVPznceTKR5dJvM6D98pHjpjmGDm/pqDfXUsE?=
+ =?us-ascii?Q?b3qR+GNoys5FIrQggsgQvMfyg9Miw4kBH2PHE/FpqwhIQDBGzqLEUZHk0PGg?=
+ =?us-ascii?Q?8QPSkeEhoa6H8I4zOjIYAY2XyPqWU29o9dnZIE3JMNF65icl3YLDdS6SSf3O?=
+ =?us-ascii?Q?qaBZnCb3bvm7YYyBY0MfiJFKTfR8wv0BhQH8F43DAqu4GqzC32lZ7RsenAj7?=
+ =?us-ascii?Q?+cLQ3qa+g/XaYrbOblL/Hq3YBe/XuSNu/kvAnUZGOGmaaZQeiA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 11:16:50.1494
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4587fb0e-603f-454f-3a90-08dc9c1acd06
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003440.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8078
 
+AMD's APML interface provides system management functionality accessed by
+the BMC. Sbrmi driver under hwmon subsystem, which is probed as an i2c
+driver and reports power using APML specified protocol.
 
+However, APML interface defines few other protocols to support
+full system management functionality out-of-band.
 
-On 2024/7/4 01:25, Ryan Roberts wrote:
-> On 11/06/2024 11:11, Baolin Wang wrote:
->> Commit 19eaf44954df adds multi-size THP (mTHP) for anonymous pages, that
->> can allow THP to be configured through the sysfs interface located at
->> '/sys/kernel/mm/transparent_hugepage/hugepage-XXkb/enabled'.
->>
->> However, the anonymous shmem will ignore the anonymous mTHP rule
->> configured through the sysfs interface, and can only use the PMD-mapped
->> THP, that is not reasonable. Users expect to apply the mTHP rule for
->> all anonymous pages, including the anonymous shmem, in order to enjoy
->> the benefits of mTHP. For example, lower latency than PMD-mapped THP,
->> smaller memory bloat than PMD-mapped THP, contiguous PTEs on ARM architecture
->> to reduce TLB miss etc. In addition, the mTHP interfaces can be extended
->> to support all shmem/tmpfs scenarios in the future, especially for the
->> shmem mmap() case.
->>
->> The primary strategy is similar to supporting anonymous mTHP. Introduce
->> a new interface '/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled',
->> which can have almost the same values as the top-level
->> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', with adding a new
->> additional "inherit" option and dropping the testing options 'force' and
->> 'deny'. By default all sizes will be set to "never" except PMD size,
->> which is set to "inherit". This ensures backward compatibility with the
->> anonymous shmem enabled of the top level, meanwhile also allows independent
->> control of anonymous shmem enabled for each mTHP.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> 
-> [...]
-> 
-> Hi Baolin,
-> 
-> I'm currently trying to fix a bug where khugepaged is not started if only shmem
-> is enabled for THP. See discussion at [1]. It's been broken like this forever.
-> 
-> Assuming anon and shmem THP are initially both disabled:
-> 
-> # echo never > /sys/kernel/mm/transparent_hugepage/shmem_enabled
-> # echo never > /sys/kernel/mm/transparent_hugepage/enabled
-> <khugepaged is stopped here>
-> 
-> Then shemem THP is enabled:
-> 
-> # echo always > /sys/kernel/mm/transparent_hugepage/shmem_enabled
-> <khugepaged is not started, this is a bug>
+This patchset is an attempt to add all APML core functionality in one place
+and provide hwmon and user interface
+1. Move the i2c client probe and sbrmi core functionality from drivers/hwmon
+   to drivers/misc/
+2. Add a platform device, which probes the hwmon/sbrmi and continues to
+   report power using the symbol exported by the misc/sbrmi-core.
+3. Convert i2c to regmap which provides multiple benefits
+   over direct smbus APIs.
+4. Register a misc device which provides 
+    a. An ioctl interface through node /dev/sbrmiX
+    b. Open-sourced and widely used https://github.com/amd/esmi_oob_library
+       will continue to provide user-space programmable API.
 
-Thanks Ryan. Yes, this is a real problem.
+Akshay Gupta (6):
+  hwmon/misc sbrmi: Move core sbrmi from hwmon to misc
+  misc: sbrmi: Add platform device add to create platform device
+  misc: sbrmi: Use regmap subsystem
+  misc: sbrmi: Clear sbrmi status register bit SwAlertSts
+  misc/hwmon: sbrmi: Add support for APML protocols
+  misc: sbrmi: Add support for EPYC platform Family: 0x1A and Model:
+    0x0~0x1F
 
-> As part of investigating the fix, I stumbled upon this patch, which I remember
-> reviewing an early version of but I've been out for a while and missed the
-> latter versions. See below for comments and questions; the answers to which will
-> help me figure out how to fix the above...
-> 
-> [1] https://lore.kernel.org/linux-mm/20240702144617.2291480-1-ryan.roberts@arm.com/
-> 
-> 
->>   
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +static unsigned long shmem_allowable_huge_orders(struct inode *inode,
->> +				struct vm_area_struct *vma, pgoff_t index,
->> +				bool global_huge)
->> +{
->> +	unsigned long mask = READ_ONCE(huge_shmem_orders_always);
->> +	unsigned long within_size_orders = READ_ONCE(huge_shmem_orders_within_size);
->> +	unsigned long vm_flags = vma->vm_flags;
->> +	/*
->> +	 * Check all the (large) orders below HPAGE_PMD_ORDER + 1 that
->> +	 * are enabled for this vma.
->> +	 */
->> +	unsigned long orders = BIT(PMD_ORDER + 1) - 1;
->> +	loff_t i_size;
->> +	int order;
->> +
->> +	if ((vm_flags & VM_NOHUGEPAGE) ||
->> +	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
->> +		return 0;
->> +
->> +	/* If the hardware/firmware marked hugepage support disabled. */
->> +	if (transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_UNSUPPORTED))
->> +		return 0;
->> +
->> +	/*
->> +	 * Following the 'deny' semantics of the top level, force the huge
->> +	 * option off from all mounts.
->> +	 */
->> +	if (shmem_huge == SHMEM_HUGE_DENY)
->> +		return 0;
-> 
-> I don't quite get this, I don't think its the desirable behaviour. This is
-> saying that if the top-level shemem_enabled control is set to 'deny', then all
-> mTHP sizes, regardless of their control's setting are disabled?
-> 
-> The anon controls don't work like that; you can set the top-level control to
-> anything you like, but its only consumed if the per-size controls are inheriting it.
+ drivers/hwmon/Kconfig            |   1 +
+ drivers/hwmon/sbrmi.c            | 271 ++------------
+ drivers/misc/Kconfig             |   1 +
+ drivers/misc/Makefile            |   1 +
+ drivers/misc/amd-sb/Kconfig      |   9 +
+ drivers/misc/amd-sb/Makefile     |   3 +
+ drivers/misc/amd-sb/sbrmi-core.c | 617 +++++++++++++++++++++++++++++++
+ drivers/misc/amd-sb/sbrmi-core.h |  36 ++
+ drivers/misc/amd-sb/sbrmi-i2c.c  | 239 ++++++++++++
+ include/misc/amd-sb.h            |  57 +++
+ include/uapi/linux/amd-apml.h    |  74 ++++
+ 11 files changed, 1072 insertions(+), 237 deletions(-)
+ create mode 100644 drivers/misc/amd-sb/Kconfig
+ create mode 100644 drivers/misc/amd-sb/Makefile
+ create mode 100644 drivers/misc/amd-sb/sbrmi-core.c
+ create mode 100644 drivers/misc/amd-sb/sbrmi-core.h
+ create mode 100644 drivers/misc/amd-sb/sbrmi-i2c.c
+ create mode 100644 include/misc/amd-sb.h
+ create mode 100644 include/uapi/linux/amd-apml.h
 
-IMO, 'deny' option is not similar like 'never' option.
+-- 
+2.25.1
 
-> 
-> So for the deny case, wouldn't it be better to allow that as an option on all
-> the per-size controls (and implicitly let it be inherrited from the top-level)?
-
- From 'deny' option's semantics:
-"disables huge on shm_mnt and all mounts, for emergency use;"
-
-It is usually used for testing to shut down all huge pages from the old 
-ages. Moreover, mTHP interfaces will be used as a huge order filter to 
-support tmpfs, so I think it will make life easier to disable all huge 
-orders for testing or emergency use, as well as to maintain the original 
-semantics.
-
->> +
->> +	/*
->> +	 * Only allow inherit orders if the top-level value is 'force', which
->> +	 * means non-PMD sized THP can not override 'huge' mount option now.
->> +	 */
->> +	if (shmem_huge == SHMEM_HUGE_FORCE)
->> +		return READ_ONCE(huge_shmem_orders_inherit);
-> 
-> I vaguely recall that we originally discussed that trying to set 'force' on the
-> top level control while any per-size controls were set to 'inherit' would be an
-> error, and trying to set 'force' on any per-size control except the PMD-size
-> would be an error?
-
-Right.
-
-> I don't really understand this logic. Shouldn't we just be looking at the
-> per-size control settings (or the top-level control as a proxy for every
-> per-size control that has 'inherit' set)?
-
-‘force’ will apply the huge orders for anon shmem and tmpfs, so now we 
-only allow pmd-mapped THP to be forced. We should not look at per-size 
-control settings for tmpfs now (mTHP for tmpfs will be discussed in future).
-
-> 
-> Then for tmpfs, which doesn't support non-PMD-sizes yet, we just always use the
-> PMD-size control for decisions.
-> 
-> I'm also really struggling with the concept of shmem_is_huge() existing along
-> side shmem_allowable_huge_orders(). Surely this needs to all be refactored into
-> shmem_allowable_huge_orders()?
-
-I understood. But now they serve different purposes: shmem_is_huge() 
-will be used to check the huge orders for the top level, for *tmpfs* and 
-anon shmem; whereas shmem_allowable_huge_orders() will only be used to 
-check the per-size huge orders for anon shmem (excluding tmpfs now). 
-However, as I plan to add mTHP support for tmpfs, I think we can perform 
-some cleanups.
-
->> +	/* Allow mTHP that will be fully within i_size. */
->> +	order = highest_order(within_size_orders);
->> +	while (within_size_orders) {
->> +		index = round_up(index + 1, order);
->> +		i_size = round_up(i_size_read(inode), PAGE_SIZE);
->> +		if (i_size >> PAGE_SHIFT >= index) {
->> +			mask |= within_size_orders;
->> +			break;
->> +		}
->> +
->> +		order = next_order(&within_size_orders, order);
->> +	}
->> +
->> +	if (vm_flags & VM_HUGEPAGE)
->> +		mask |= READ_ONCE(huge_shmem_orders_madvise);
->> +
->> +	if (global_huge)
-> 
-> Perhaps I've misunderstood global_huge, but I think its just the return value
-> from shmem_is_huge()? But you're also using shmem_huge directly in this
-
-Yes.
-
-> function. I find it all rather confusing.
-
-I think I have explained why need these logics as above. Since mTHP 
-support for shmem has just started (tmpfs is still in progress). I will 
-make it more clear in the following patches.
-
-> Sorry if all this was discussed and agreed in my absence! But I think this needs
-> to be sorted in order to do the bug fix for khugepaged properly.
-
-No worries. Thanks for your input.
 
