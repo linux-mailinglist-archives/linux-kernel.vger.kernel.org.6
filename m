@@ -1,115 +1,158 @@
-Return-Path: <linux-kernel+bounces-240789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AFB9272C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:15:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC2B9272C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2902285C2B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:15:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67471F22EC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92E61AAE07;
-	Thu,  4 Jul 2024 09:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118A91AAE1B;
+	Thu,  4 Jul 2024 09:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ljnrOMw1"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l+et9/WP"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9DD1822EC
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC8616C6BA;
+	Thu,  4 Jul 2024 09:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720084526; cv=none; b=nEv4JrLLNK/7HCbYSNdNC8y3dH3KYfy1G2QVeErAXR36wdv6Yhq8R7GM0i8vpV4Q5XDPGDOzeWSp2taUo5FYHSwl/xrvtWQD/rCXFh0DjgIrQDyDTKinbdyOWd3gvAe0zlmnd4WtbZADIvwkW0/wXXxbeWuIXlyYaYRM5VgGJgA=
+	t=1720084572; cv=none; b=iO759uGt4tmOA+jrOfBAEabZeoXe9lqIpOR0ALvE1qSus/xITEVd/Lk0Y1y/kVp6dog+MFPvNHFTs/XGNiwyKJiYijfROAwWZeDbtDujTA40hsr783hrLtOeUu3bbPrWg312yLRBGN/zz4Zi5hjTZXv/wW134URFdA5SkrzFkto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720084526; c=relaxed/simple;
-	bh=vLvhozs5FjGScJTUM3o90oqywyCN+6LZPhKN49utzhw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fSbISUQnJvSgOMAB/DDevP+hklbvw7TQ5dft1886upRp7FArT4cCvvpVq18RhcccQJ4ZaCueA1JSid5H3hkMoLNWlhX/kogYMoBmplFVkv6dpv4p5HLHMlpKvYP+nlToRGn8R4wge0ZxOunercZJ5CRpdksvNHapzaOh2j6HZrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ljnrOMw1; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3678f36f154so232654f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:15:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720084523; x=1720689323; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sEcu3TbmNikaAxXTCEPk6N6lySiOq4MWvGXvQXKI8Us=;
-        b=ljnrOMw1AS+gkHkkrg+sQs1HUNLksGmTCXYn/7MNJRVaPUwrbzlj76BV4/ZV9nYT7x
-         AzI0LopSQyVvNZMt1S+O+JxjV4eltdtxg32rHG6NZ7gU9hY7/nGqjFAGX9y7zFQckb6G
-         +GALOYtI8XgUx+0jGz93PHC0v5isJVhfme5Ya9J3e0BdGPavAm/t2XSPDV+PmRaoXOIs
-         K0oxaU1ivefUG0qct8uWvNfJyzSKa/XfRAZhbCxm7ViZvARDy+jrVb0T5+/LnTQxgy8/
-         p8I1bRiD9oQyNjkVMpOa5yoWj2DQIKZyMWLLPqTk+mRZEsuhqsgnd5wvAciN+CmMCknN
-         jYgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720084523; x=1720689323;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sEcu3TbmNikaAxXTCEPk6N6lySiOq4MWvGXvQXKI8Us=;
-        b=GNBrjR72FwrAUzx1KJkD/neJkG1UfwtCpWCs8KTeda0hwdycNdgIvWzGTfuM8+g08A
-         Ma9d7tAA/3t2YfWaItx0AgeiZBa+UNAde+NmX0N2AHJgdr4sE3F8i1kQj9SvLNwE3a7N
-         3EIRM2bhnaOigCPpV2gXejQbmenzfc+63zTA/Kl51EKYyEgtQ5zpmmQ6V95c/tIWpR29
-         TQhD7Ac78qWsSu+jfYAVurKQkFl1GlmsXpoA/rvnbbMpFp8m5KHqEoYtSbPkpt5Plsz0
-         v5j4hr/C9OQJr/tQygEGzbJL54gzOYYNqsahiv/HiCw7Qqo31HxANFXN6FcRYWPeWRW3
-         mGFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVV19GnPgfm71aNK8bMmhVK5KX4G/HpPkpoFIXTGNVIj4Z887Q6BIg0mN+GjBLJhtMqc0cNKsN3hgWFOP8UwRswmlYYXFqR0M1gw39E
-X-Gm-Message-State: AOJu0Yx/jF8/5696OjXpb2tgY1Zc9sNMcjmTcvl7SC4KwqXSpL6/fHFB
-	30qXUuQJTVIc+PMFQNqHs07hIq71lJy6INfG6i24I40wwkh29WLSOzJm4svMhWbt+a/g9bqobCQ
-	GML6aAwxr/frxbjrVd0VnS3AkfD8cdtI1Ci+F
-X-Google-Smtp-Source: AGHT+IE/247r/RY0UrlCo6aEEA7oWQssQzwGwJkUeqjFdh0tQShwvHV1WozYijQBpev7QJs4+kVGYg1txqGiSZWkMaM=
-X-Received: by 2002:adf:f3cc:0:b0:367:947a:a491 with SMTP id
- ffacd0b85a97d-3679dd443a0mr835906f8f.26.1720084522530; Thu, 04 Jul 2024
- 02:15:22 -0700 (PDT)
+	s=arc-20240116; t=1720084572; c=relaxed/simple;
+	bh=ihatN4AJ5XqzTEMYL7tfSvzND3MrgRo5Gw/35iMssV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZGmwf0gwbrqUXpfLcHxtMZVqYJQzI6FXI1F6fSqkFPnOmfW4gTaX/6ccKv6cwH7zmzIlLp31x2Dql4x93s9zunJx9Ej2oebgXQ5x/pSIaFxznc1kHjNxSRTZBa8u2YFAvg730SJJ1Q+pLKegjDARMQFo25+IxOafGv/Lt9fNDMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l+et9/WP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EqNsEuxV/l/0e6GLDEy/5SmhvWKF+eO2yu493ws1VK4=; b=l+et9/WPwX8ueU339iK1+KMyB0
+	bOnduWl49NdtOeRDGEEuHiMYr54MZlCHKlWL1V0qNYny0oFYM1V3BVKzFjzOc4c34jGIEFIn2mCfE
+	1SJpol6tX8dw9VnIBmEE3x/AKsNLsy+IUy58QHsYk91AZ/VfmSbPpIVVAuJDgqLfgaLYceJFSrCsX
+	iRZ2cj3kFNMcXbMfdCQkW0B6Vgha88fzMuMrQ4zuMFl4EuTesbdhnKDWu1v6LPHfVEFXYbJOvP8rl
+	+dEiK7KY+SUqIwPrvnupMvDwyor+qwCTeGZOVUDHRjUXmo7FvuuHLQ76dA6MXtj8hZV22rtxGjdtf
+	Hv4rNWEw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sPIZQ-00000002gs3-1fca;
+	Thu, 04 Jul 2024 09:16:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D6A8C3003FF; Thu,  4 Jul 2024 11:15:59 +0200 (CEST)
+Date: Thu, 4 Jul 2024 11:15:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, oleg@redhat.com,
+	mingo@redhat.com, bpf@vger.kernel.org, jolsa@kernel.org,
+	paulmck@kernel.org, clm@meta.com,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
+ and per-CPU RW semaphore
+Message-ID: <20240704091559.GS11386@noisy.programming.kicks-ass.net>
+References: <20240701223935.3783951-1-andrii@kernel.org>
+ <CAEf4BzaZhi+_MZ0M4Pz-1qmej6rrJeLO9x1+nR5QH9pnQXzwdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240703154309.426867-1-jfalempe@redhat.com> <2024070417-husked-edgy-f527@gregkh>
-In-Reply-To: <2024070417-husked-edgy-f527@gregkh>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 4 Jul 2024 11:15:10 +0200
-Message-ID: <CAH5fLgip4foLGkjzUT4vOCR1m3OgHuOq8u7=Zh+o2Zk2V45FKw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] drm/panic: Add a qr_code panic screen
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Jocelyn Falempe <jfalempe@redhat.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
-	Danilo Krummrich <dakr@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzaZhi+_MZ0M4Pz-1qmej6rrJeLO9x1+nR5QH9pnQXzwdw@mail.gmail.com>
 
-On Thu, Jul 4, 2024 at 7:03=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org>=
- wrote:
->
-> On Wed, Jul 03, 2024 at 05:33:57PM +0200, Jocelyn Falempe wrote:
-> > Jocelyn Falempe (4):
-> >   drm/panic: Add integer scaling to blit()
-> >   drm/rect: add drm_rect_overlap()
-> >   drm/panic: simplify logo handling
-> >   drm/panic: Add a qr_code panic screen
-> >
-> >  drivers/gpu/drm/Kconfig         |  29 +
-> >  drivers/gpu/drm/Makefile        |   1 +
-> >  drivers/gpu/drm/drm_drv.c       |   3 +
-> >  drivers/gpu/drm/drm_panic.c     | 338 +++++++++--
-> >  drivers/gpu/drm/drm_panic_qr.rs | 989 ++++++++++++++++++++++++++++++++
->
-> Wait, we can put .rs files in any directory now?  I didn't think that
-> worked properly yet.
+On Wed, Jul 03, 2024 at 02:33:06PM -0700, Andrii Nakryiko wrote:
 
-Yes, but Rust code outside of rust/ cannot expose a Rust API that Rust
-code elsewhere can use. Only C apis can be exposed.
+> 2. More tactically, RCU protection seems like the best way forward. We
+> got hung up on SRCU vs RCU Tasks Trace. Thanks to Paul, we also
+> clarified that RCU Tasks Trace has nothing to do with Tasks Rude
+> flavor (whatever that is, I have no idea).
+> 
+> Now, RCU Tasks Trace were specifically designed for least overhead
+> hotpath (reader side) performance, at the expense of slowing down much
+> rarer writers. My microbenchmarking does show at least 5% difference.
+> Both flavors can handle sleepable uprobes waiting for page faults.
+> Tasks Trace flavor is already used for tracing in the BPF realm,
+> including for sleepable uprobes and works well. It's not going away.
 
-Alice
+I need to look into this new RCU flavour and why it exists -- for
+example, why can't SRCU be improved to gain the same benefits. This is
+what we've always done, improve SRCU.
+
+> Now, you keep pushing for SRCU instead of RCU Tasks Trace, but I
+> haven't seen a single argument why. Please provide that, or let's
+> stick to RCU Tasks Trace, because uprobe's use case is an ideal case
+> of what Tasks Trace flavor was designed for.
+
+Because I actually know SRCU, and because it provides a local scope.
+It isolates the unregister waiters from other random users. I'm not
+going to use this funky new flavour until I truly understand it.
+
+Also, we actually want two scopes here, there is no reason for the
+consumer unreg to wait for the retprobe stuff.
+
+> 3. Regardless of RCU flavor, due to RCU protection, we have to add
+> batched register/unregister APIs, so we can amortize sync_rcu cost
+> during deregistration. Can we please agree on that as well? This is
+> the main goal of this patch set and I'd like to land it before working
+> further on changing and improving the rest of the locking schema.
+
+See my patch here:
+
+  https://lkml.kernel.org/r/20240704084524.GC28838@noisy.programming.kicks-ass.net
+
+I don't think it needs to be more complicated than that.
+
+> I won't be happy about it, but just to move things forward, I can drop
+> a) custom refcounting and/or b) percpu RW semaphore. Both are
+> beneficial but not essential for batched APIs work. But if you force
+> me to do that, please state clearly your reasons/arguments.
+
+The reason I'm pushing RCU here is because AFAICT uprobes doesn't
+actually need the stronger serialisation that rwlock (any flavour)
+provide. It is a prime candidate for RCU, and I think you'll find plenty
+papers / articles (by both Paul and others) that show that RCU scales
+better.
+
+As a bonus, you avoid that horrific write side cost that per-cpu rwsem
+has.
+
+The reason I'm not keen on that refcount thing was initially because I
+did not understand the justification for it, but worse, once I did read
+your justification, your very own numbers convinced me that the refcount
+is fundamentally problematic, in any way shape or form.
+
+> No one had yet pointed out why refcounting is broken 
+
+Your very own numbers point out that refcounting is a problem here. 
+
+> and why percpu RW semaphore is bad. 
+
+Literature and history show us that RCU -- where possible -- is
+always better than any reader-writer locking scheme.
+
+> 4. Another tactical thing, but an important one. Refcounting schema
+> for uprobes. I've replied already, but I think refcounting is
+> unavoidable for uretprobes,
+
+I think we can fix that, I replied here:
+
+  https://lkml.kernel.org/r/20240704083152.GQ11386@noisy.programming.kicks-ass.net
+
+> and current refcounting schema is
+> problematic for batched APIs due to race between finding uprobe and
+> there still being a possibility we'd need to undo all that and retry
+> again.
+
+Right, I've not looked too deeply at that, because I've not seen a
+reason to actually change that. I can go think about it if you want, but
+meh.
 
