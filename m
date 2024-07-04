@@ -1,106 +1,111 @@
-Return-Path: <linux-kernel+bounces-241587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456C0927CE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:16:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E181927CE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F36282541
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:16:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E9B71C22500
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3770A12FF89;
-	Thu,  4 Jul 2024 18:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BC773476;
+	Thu,  4 Jul 2024 18:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="dYnVuHGX"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KIWnlJzG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4FE15491;
-	Thu,  4 Jul 2024 18:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0916249659
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720116984; cv=none; b=UXl6s9WwgKOSQclRexMdw624vnpBOqvTVmIBWAFY8gAs/wXQ+4cq9NQxkfzDPZfgBHUvI6UWiCkFniJGxV+0flxC+DVTcvXbkXt9VR+xvB6YpMhDV1uLJjUmVWsFxSrPeaBVY1exqUKH6dG1Qv8T34Eoa6OMIksDIWpc4O2Ukuo=
+	t=1720117009; cv=none; b=Y45NOM6fBTpMVKK3KGjREy3rpSlx0WyTHDFIUsTAM1lJ2htMv7vLTQC/fKSpEzKSoRkPsckQrI1qMAyIBNMLX4kWXqqqb4C327BvWVGzW+jqJhjLx+dc/IKpvu8JSNs9ylvSruW8bxU3ws4SxCMRwOltNmxXc9KA9cwij5tkGo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720116984; c=relaxed/simple;
-	bh=5d/dB4AsLDLrUV0iB98Gfxiyh26yO3HZ8Hx1w+E/ZNU=;
+	s=arc-20240116; t=1720117009; c=relaxed/simple;
+	bh=K1T6ZawzBlBnfgQGA6b/NDi26XjCQM/zwcbsfUJHPo8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DgwcviE0svh9N8caMNlYxhIaB1oSLBt6x0BlAEhZRFBYa+X3jWdKvyE/V7mcyzJPhsi0OEzgXfUVbJvVjVpzE7xEe7S/l3pUHP9g5xzJ4uRQKLHlJHOvKe62iF/5W0T888p4Eme2qRiLHgi2ZhPWq5JEygyvxGXec0YWvU9acdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=dYnVuHGX; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1720116978;
-	bh=5d/dB4AsLDLrUV0iB98Gfxiyh26yO3HZ8Hx1w+E/ZNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dYnVuHGX5hdWPRFDaQopLHp/LP69wqpUd+usfunfEK/X/17gWqtMzdoHKz//7Gr1C
-	 PFtoBAsH7OAy+0dwk3EYG82ysadfethxc45svz6nPUwD4EOqaGQlZWDNF/83ztVwaw
-	 Ru/oLroh7CexjOHBCljggFDw2V3QGmr0RM0MVPh8=
-Date: Thu, 4 Jul 2024 20:16:18 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Sebastian Reichel <sre@kernel.org>, 
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] power: supply: cros_charge-control: Fix signedness bug
- in charge_behaviour_store()
-Message-ID: <48a348a0-0489-45bb-874b-246c7683a5a5@t-8ch.de>
-References: <ZoWKEs4mCqeLyTOB@stanley.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lrJDkPONp3canXqXrylVJqqQMwcW3MIoogrW6Ea2f1IHBOgZnumxcXrea9vUON2V82R8A+RNwHPj0ro6TIIhHtLkKFdHM/cvqGjyugKz5C73XN3mwrjIpDevLRnf8L7QxBTdkbA8Io0UGzQFVkImvJn95ymw/rdIr5AgKyeYNxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KIWnlJzG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720117006;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m/tL4EMiXTDJKBrPbp1fE5+l3HieNY6sEKsGtIXGNJU=;
+	b=KIWnlJzGcXpiwe74WKNP6XHOcxrK+dfl2V2rC/Ypd0IEcjzwzk4sExNgU4/r/CIYbhCLtO
+	mcE1xNONty+cdM180JZerLevMcUvX8EWdw80vfUCElHGgiUbZzQ5BxMYerUW3LzjQwn7XL
+	6CZlWr7J0T+epHrkFnLdjfsPNmv17jo=
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
+ [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-689-qzt0tcpkNDecvsuJ0ZLOTw-1; Thu, 04 Jul 2024 14:16:45 -0400
+X-MC-Unique: qzt0tcpkNDecvsuJ0ZLOTw-1
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-48a33435f58so523750137.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 11:16:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720117005; x=1720721805;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m/tL4EMiXTDJKBrPbp1fE5+l3HieNY6sEKsGtIXGNJU=;
+        b=ILcFPQoLZRvNUqNF3rV3zZx+zLaE9kYykBOQVma06k1bnKETv/3ObBKhNjblOUUGKx
+         7Am3RmKybNIjjPkLiluXw1mIcMQs/QYYLwjvLgNjWmES3L3xPPrglck+Q1H+v0HMChYG
+         I4id1v+xzLUJqLb3qHGjG6E9bYZyv9RcNgdDvRnVYOTP1V3R3atd8aSIq2WH/nS+UMue
+         yl4jdadn4Sy9yERPDmM5tRQ89X8tTdKg0W/WIOKPgh2junRGpCnbigsjTKNOblBg6FBw
+         ekvYfwhPom7DzB43ktyBhSz3JghK99PzUZJMHOWQjtli9MQJVBokc4kwS2Xft036ODby
+         B4mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXG2khhXkJE+Tb2gyZVn5w6YW6S2/6qxLsBuhhAAoHDI3QjO1GHiw4b6MoRyplFbhjH1LDjvjMse6P0npBFlzcEw26TAzJY6mZqPvKe
+X-Gm-Message-State: AOJu0YzCrh2AwOk8GTRviHADRAn+EwElOHAq6ygSUo8dZ/iXe+O9iBFh
+	9O3/e+tqXRbPQkrLQh6o6g+u8LGwcWrec7CKF0eh++TKp70gF+SzcStfnnd5qTN+oFV7nfP6A70
+	ZRqKFe79/HEnZD9SelKXaOg4IZ+yrdcPFQUnO23JekNwVbvQooBpjvSAqipx8LQ==
+X-Received: by 2002:a67:ff14:0:b0:48f:90f8:efda with SMTP id ada2fe7eead31-48fee91a190mr2269673137.32.1720117005057;
+        Thu, 04 Jul 2024 11:16:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGwugEbb61NqUslFCARGx4L7HhqAn7ddwElVnvoUUZKyi49wHMTutsymkPb2xLcooJsvWfxgQ==
+X-Received: by 2002:a67:ff14:0:b0:48f:90f8:efda with SMTP id ada2fe7eead31-48fee91a190mr2269653137.32.1720117004755;
+        Thu, 04 Jul 2024 11:16:44 -0700 (PDT)
+Received: from optiplex-fbsd (c-174-169-122-120.hsd1.nh.comcast.net. [174.169.122.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-446514cdd81sm61539511cf.97.2024.07.04.11.16.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 11:16:44 -0700 (PDT)
+Date: Thu, 4 Jul 2024 14:16:41 -0400
+From: Rafael Aquini <aquini@redhat.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: Re: [PATCH 2/2] kbuild: rpm-pkg: introduce a simple changelog section
+ for kernel.spec
+Message-ID: <ZobnCTZl0qWL93YY@optiplex-fbsd>
+References: <CAK7LNATxSePzOrHaQvS1MQo4mpAwdfwrDu3iuUsYZ+RL=LiirA@mail.gmail.com>
+ <20240611211123.959459-3-aquini@redhat.com>
+ <CAK7LNAQba5CDetpwevSoaOLJ21s1tO9ZHh=7gJpPCNK0AnHfJw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZoWKEs4mCqeLyTOB@stanley.mountain>
+In-Reply-To: <CAK7LNAQba5CDetpwevSoaOLJ21s1tO9ZHh=7gJpPCNK0AnHfJw@mail.gmail.com>
 
-Hi Dan,
+On Fri, Jul 05, 2024 at 12:52:41AM +0900, Masahiro Yamada wrote:
+[...]
+> Using 'git config' is OK, but git is optional for 'make binrpm-pkg'.
+>
+> So, you need to add fallback defaults in case git is not available.
+> (this code is available in scripts/package/mkdebian)
+>
+Alright, that's a fair point. I was originally under the impression 
+that check-git would always run on Makefile.package target calls, 
+but I see where/why I was mistaken, now. 
+I'll get it done in scripts/package/mkspec, as suggested. 
 
-Thanks!
+Thank you!
+-- Rafael
 
-On 2024-07-04 10:20:03+0000, Dan Carpenter wrote:
-> The C standard is vague about the signedness of enums, but in this case
-> here, they are treated as unsigned so the error handling does not work.
-> Use an int type to fix this.
-> 
-> Fixes: c6ed48ef5259 ("power: supply: add ChromeOS EC based charge control driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Acked-by: Thomas Weißschuh <linux@weissschuh.net>
-
-> ---
->  drivers/power/supply/cros_charge-control.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/power/supply/cros_charge-control.c b/drivers/power/supply/cros_charge-control.c
-> index 73d7f2dc0fa3..3183a13eefd0 100644
-> --- a/drivers/power/supply/cros_charge-control.c
-> +++ b/drivers/power/supply/cros_charge-control.c
-> @@ -204,14 +204,13 @@ static ssize_t charge_behaviour_store(struct device *dev, struct device_attribut
->  {
->  	struct cros_chctl_priv *priv = cros_chctl_attr_to_priv(&attr->attr,
->  							       CROS_CHCTL_ATTR_CHARGE_BEHAVIOUR);
-> -	enum power_supply_charge_behaviour behaviour;
->  	int ret;
->  
-> -	behaviour = power_supply_charge_behaviour_parse(EC_CHARGE_CONTROL_BEHAVIOURS, buf);
-> -	if (behaviour < 0)
-> -		return behaviour;
-> +	ret = power_supply_charge_behaviour_parse(EC_CHARGE_CONTROL_BEHAVIOURS, buf);
-> +	if (ret < 0)
-> +		return ret;
->  
-> -	priv->current_behaviour = behaviour;
-> +	priv->current_behaviour = ret;
->  
->  	ret = cros_chctl_configure_ec(priv);
->  	if (ret < 0)
-> -- 
-> 2.43.0
-> 
 
