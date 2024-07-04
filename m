@@ -1,82 +1,165 @@
-Return-Path: <linux-kernel+bounces-240588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C255926F69
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:18:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04841926F6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D835F282C13
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:18:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D141C224A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650AC1A01BD;
-	Thu,  4 Jul 2024 06:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D06F1A01D4;
+	Thu,  4 Jul 2024 06:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jn/6o6oq"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ivBebod6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705E12F23;
-	Thu,  4 Jul 2024 06:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71F42F23;
+	Thu,  4 Jul 2024 06:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720073929; cv=none; b=RziOSmM+Fm7EtswXHQuVTGhjlkIsHLr8u9++1dUevD4hePq26BM1FDw1mcbCYkhjDAPraPcUpdCcqn2cTpyI0R5JXt6i1cChKQ90rRvk3kRnsHfFVza2mwIdc3POD/zjybMyf8sLKeKBMq4Dzz8RYxyk1veLkomn2/XmX/JuYRA=
+	t=1720074072; cv=none; b=iq6+Yw9TyJairTG/8oCtZ7ia+ydj2liH0xScl1C8jBi9qvxA72sVX/li7EkjChqE2olQovjDinScUr9vOdT70nsfiz6seY3cwogEBgbtSUuuxVn/im2OuWfib37H0J/IfekWrfONzrKIfXSswXR/jy0c2SHfDGKNWp1sep5Hays=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720073929; c=relaxed/simple;
-	bh=vpbOpISekpKvtUgymf67XtTxfvfyNXM+06PSwqJXh5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cm+maLdm17UweI610wLOqwtxYYYwCAYXauozBwkgtykTH9sH/2gFbroNEJtEhjDJ9fRJDAqagfQi9NnipOvrHfg7/nvJBR1iagx4PspMBu25vnsaVIjI2Mcs7/hAb44FJPMZELWKAsuMXW4OBGcUUhWRhCwuPOYwQrSRMD+xRmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jn/6o6oq; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vpbOpISekpKvtUgymf67XtTxfvfyNXM+06PSwqJXh5I=; b=jn/6o6oqZuaWLVLRsK1kWuUPZk
-	3SdU16q5AMCvPlpQzee/i18+FtGPnCXw+XeTW7byShE0XFb4LrPpwzcgcXDyRrf10JhgeAXPTbb05
-	JtxlfWISv/Vz8geO1NBzq4Xn/8ZZvpJ4aSWv/Afov4C7mPRKJMqX4CtdUGdEjDrmDGlBmGE9A3BXG
-	jLt2moYpFTjDyEYG+XkPAgu4SBWvYZGPz0Cwl+mq+t/rsZz93G6r0jrdbW3dYkLyDDWOOKwKX0tDo
-	aQ3KGbPbk4meOBtRjaJEbyI9Wdr5wsJQ7Poch+RCYuzgRYbATqGKqrczj5FPGaNvrVEF7D2wrNJkq
-	e9S7Tq6Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sPFnr-0000000CJDt-39nR;
-	Thu, 04 Jul 2024 06:18:47 +0000
-Date: Wed, 3 Jul 2024 23:18:47 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: blk_validate_limits validation of block size (was Re: [PATCH v2]
- null_blk: fix validation of block size)
-Message-ID: <ZoY-x-mtBoLW30yb@infradead.org>
-References: <20240603192645.977968-1-nmi@metaspace.dk>
- <Zl4dxaQgPbw19Irk@kbusch-mbp.dhcp.thefacebook.com>
- <Zl6cHI48ye7Tp1-C@infradead.org>
- <8f8f8f78-fcd4-4e71-8dd5-bae03a627a34@oracle.com>
- <Zn-Wpq2AzBo6rcgd@infradead.org>
- <43aab70c-8521-4dfa-847a-1175d31a55d1@oracle.com>
- <ZoVP5NZhCmMH6qBp@infradead.org>
- <b7054e7b-9db1-46d4-ad19-8ced0eecf2e5@oracle.com>
+	s=arc-20240116; t=1720074072; c=relaxed/simple;
+	bh=l0jXg9Z37c7YXtzxXyO5KhWqS9Dyjj1FQkZJMk2TBmI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=CQyph8FxPXmmXBU2PtglUwpeV4IOcbqC6+mvXm4QGA5+2WNS8GChr7zD43PhQSXCY2mn9cJ9bAOROW/TtwyXV5K8NZqx4hgbL0w3J6uf3R0UZ8S7fmjPAjJOSw9Ko/6Os8sUuCfEdJEMZ4xYZ9e91Px5DKL92DDPWhPZmgA//7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ivBebod6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 463Jg0Sa015265;
+	Thu, 4 Jul 2024 06:21:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EFlplKsC2U4laB+KrH0cH5+kAdnVOXbiGsTloY1PRoQ=; b=ivBebod6pQ3RuNmq
+	qJhf5gwIpxhTkqkxyFvqU2kXqJvSojd4pUsNhSKEV/NLed0e30vgYSSdUKKIwWEb
+	m8Rq1bi0k0wfHHucvRddZgq+6bjYkH2FESCJN40DCrAZAzTM1nw0qeUroNA9h4nS
+	XoXLTGyy3xl1nVc/Iog+dBx2Qw88GEVsUl/n6unoiBmH6/H/2lM2LwkGrZ45z+cH
+	0S7yb4ALN/gGH4LhStDjGI6YEe9iOl9cC//TjbOZlN5U+371+oPBJ3W+Xjp7NeuW
+	lEcQ3+9nI2qW2tOk13/VOER4zKlvDO8Go+dGuQ6wIxU+2ulg1GLA8GNypYcl+34C
+	8aRbCA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4052yhjcfc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Jul 2024 06:21:04 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4646L38L026997
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 4 Jul 2024 06:21:03 GMT
+Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 23:21:00 -0700
+Message-ID: <05a87604-af26-4755-9740-7af157e12099@quicinc.com>
+Date: Thu, 4 Jul 2024 11:50:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7054e7b-9db1-46d4-ad19-8ced0eecf2e5@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] misc: fastrpc: Add support for multiple PD from one
+ process
+Content-Language: en-US
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
+        <arnd@arndb.de>
+References: <20240703065200.1438145-1-quic_ekangupt@quicinc.com>
+ <2024070353-giggly-stardom-7b6d@gregkh>
+ <c4a184cb-46d5-49cc-ad42-3d5d7828f06b@quicinc.com>
+In-Reply-To: <c4a184cb-46d5-49cc-ad42-3d5d7828f06b@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: FpRFOUq01CFQk1vxffzAtJjAxd395DNG
+X-Proofpoint-GUID: FpRFOUq01CFQk1vxffzAtJjAxd395DNG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_18,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 mlxscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=999 impostorscore=0 clxscore=1015
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407040045
 
-On Wed, Jul 03, 2024 at 06:28:48PM +0100, John Garry wrote:
-> ok, fine. It's a bit unfortunate that blk_validate_block_size() won't be
-> internal to the block layer.
 
-It is a completely trivial helper not really exposing any internals.
-In theory we could just open code, but with the PAGE_SIZE limit that
-people are trying to remove with large block size support that might
-actually create more problems than it solves.
+
+On 7/4/2024 11:47 AM, Ekansh Gupta wrote:
+>
+> On 7/3/2024 4:09 PM, Greg KH wrote:
+>> On Wed, Jul 03, 2024 at 12:22:00PM +0530, Ekansh Gupta wrote:
+>>> @@ -268,6 +272,7 @@ struct fastrpc_channel_ctx {
+>>>  	struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
+>>>  	spinlock_t lock;
+>>>  	struct idr ctx_idr;
+>>> +	struct ida dsp_pgid_ida;
+>> You have an idr and an ida?  Why two different types for the same
+>> driver?
+> Using ida for this because for this I just need to allocate and manage unique IDs
+> without any associated data. So this looks more space efficient that idr.
+> Should I keep it uniform for a driver?
+>>>  	struct list_head users;
+>>>  	struct kref refcount;
+>>>  	/* Flag if dsp attributes are cached */
+>>> @@ -299,6 +304,7 @@ struct fastrpc_user {
+>>>  	struct fastrpc_buf *init_mem;
+>>>  
+>>>  	int tgid;
+>>> +	int dsp_pgid;
+>> Are you sure this fits in an int?
+> I think this should be fine for IDs in rage of 1000-1064.
+changing this to u32 as won't be storin any negative values here if allocation fails.
+>>> +static int fastrpc_pgid_alloc(struct fastrpc_channel_ctx *cctx)
+>>> +{
+>>> +	int ret = -1;
+>> No need to initialize this.
+> I'll update this.
+>>> +
+>>> +	/* allocate unique id between MIN_FRPC_PGID and MAX_FRPC_PGID */
+>>> +	ret = ida_alloc_range(&cctx->dsp_pgid_ida, MIN_FRPC_PGID,
+>>> +					MAX_FRPC_PGID, GFP_ATOMIC);
+>>> +	if (ret < 0)
+>>> +		return -1;
+>> Why is -1 a specific value here?  Return a real error please.
+>> Or return 0 if that's not allowed.
+> Sure, will fix this in next spin.
+>> v
+>>> +
+>>> +	return ret;
+>>> +}
+>>> +
+>>>  static int fastrpc_device_open(struct inode *inode, struct file *filp)
+>>>  {
+>>>  	struct fastrpc_channel_ctx *cctx;
+>>> @@ -1582,6 +1605,12 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
+>>>  	fl->cctx = cctx;
+>>>  	fl->is_secure_dev = fdevice->secure;
+>>>  
+>>> +	fl->dsp_pgid = fastrpc_pgid_alloc(cctx);
+>>> +	if (fl->dsp_pgid == -1) {
+>>> +		dev_dbg(&cctx->rpdev->dev, "too many fastrpc clients, max %u allowed\n", MAX_DSP_PD);
+>>> +		return -EUSERS;
+>> Why -EUSERS?
+> This should be -EBUSY, I'll correct this.
+>> And you obviously did not test this as you just leaked memory :(
+> My bad, I ran basic fastrpc tests and the working of this use case. Sorry for the miss.
+>
+> --Ekansh
+>> thanks,
+>>
+>> greg k-h
+>
+
 
