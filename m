@@ -1,155 +1,104 @@
-Return-Path: <linux-kernel+bounces-241257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C32D927918
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:45:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECB792791C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C361FB23F17
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:45:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFF1B1C228DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606C51B0120;
-	Thu,  4 Jul 2024 14:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A3C1B0126;
+	Thu,  4 Jul 2024 14:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bWAQ8mEB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxJiLyDO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3524615491;
-	Thu,  4 Jul 2024 14:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121EF1AE0AB;
+	Thu,  4 Jul 2024 14:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720104339; cv=none; b=d6azgT4c+cm7EL6MixoqoWhkP/kbLuuvb3U15WS+C50FYzeYfSrBs6fLuVsd1BLrPM9CV6XVQqx2pX3sgv5N9DEpCDLSG4hpnucPL585VIZHxXVH4IgBGG7m2wEiUyGafsV8oMsglFXnBRIsDQVUItUnBbagz+EdMFN8hPb6Oco=
+	t=1720104358; cv=none; b=sRIymJfShbzb9UZ+rRY64yj1BenRUMrQjNJVBCan8+X8rPl77DYOBoF6v4JYa369JiJPlSoxiDvTmSJHVqvF1zehEQAdQ2JZkzcv7l/bCo0eypGqSyZs/ekiCn4bHSMQZ+5UBinwRiMqkEWXnGh02sdhfifzXUCOMnusbhWym0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720104339; c=relaxed/simple;
-	bh=IgMzbmEA/bk+LqRjGxJA13KtdyCS5f9kczciDYp3QvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VMA7clTGtaVCgxzsTUtVJIziemkM6hhSGAhMrtUndo9xFArB75IdTp9dRXCTcDSZDeHFveP/ij1eEPFpO5I0s/hU01y8G8MWCobeB52fBP+ZVfcVEVI3qeJE5HmSbzQ1cpyZ7fNVwGFKYqFmJS6tOkZA2hwjoTdaEuB1Y/ckyQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bWAQ8mEB; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720104338; x=1751640338;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IgMzbmEA/bk+LqRjGxJA13KtdyCS5f9kczciDYp3QvQ=;
-  b=bWAQ8mEB9ibACH1uChASaOHDin0m3AMMLuGbZuZ8m+F7QQuRi/Ut0Jhz
-   wqieDvUbuvKmWbH6wzfxZHM/UP572RmX/Z3SdMBIY167LYe40Ep03sgIF
-   4gCCUDxL5BK7/i0/bS0jc7EV9Tf4EhU6QgirtwHHQD3+X6iG5Py2GkqUo
-   hZZVElcq3pf6Fh9pSXHgRPWy3TT06BSwWAmZWaSF2srM24vLHFkgdPdDN
-   VitJEIoRku7YV7m2h8FLWalIY/HC3cSFPL1K4cjaEKsVRCXTqsTgs0IJw
-   rpvxS02GKvP2oO70RaqNMi20Iiq+sEO/AhF8jjqDAJZNr3V8+ENg7Fg51
-   g==;
-X-CSE-ConnectionGUID: ziNUlGRgTFeb3ZE8uZUe4A==
-X-CSE-MsgGUID: jF1LVh32RzOTJ8WbRVaDyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="28059583"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="28059583"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 07:45:37 -0700
-X-CSE-ConnectionGUID: nzJLzc7zSxiCui9sixtncA==
-X-CSE-MsgGUID: KCMyKMjLTq2/WFUKszPBpA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="46391413"
-Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.248.81]) ([10.124.248.81])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 07:45:35 -0700
-Message-ID: <8fd90ebb-5d47-4630-a972-386a9caed976@intel.com>
-Date: Thu, 4 Jul 2024 22:45:32 +0800
+	s=arc-20240116; t=1720104358; c=relaxed/simple;
+	bh=VNx0ZjDb8+kmHLzs3w/SQLmxZ0fgDInqhkK3KV20yJ4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=JbiNHpUfluVpwlqgR6XPopH7+nqzim+LmMF/HtWr6Q20334t2SUzqYpv9z2z/Y+L1G5fl8cZfhpzui2QXoSVUlMT/BOFFTOOpQasfFDOmsdPUFIKGXdwReDNAXLztjeijMhXJoUCbXZfBA83oeps5PSc9QsS4ewGRnbLlm5wSbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxJiLyDO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE8BC3277B;
+	Thu,  4 Jul 2024 14:45:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720104357;
+	bh=VNx0ZjDb8+kmHLzs3w/SQLmxZ0fgDInqhkK3KV20yJ4=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=YxJiLyDO1LviZNkUfgCBFmukLUJQv7uznSUB+E4eqnKPoc5/L2KhEZ7Fs8/e4ZlF1
+	 w5wzheSyUgxWuIVb2Erx2TnbpuX4aaK/L8e4gB1hdZQnHFNf6YdsQid2uiJO5m0r6L
+	 ZgMof75k7DCWitUEfO0szLfKD6Ay6g/xmcxmm8NrV4zMU4S2JeW3FMqT+2HqGNuvLo
+	 VGfkkPeBYYcZcXg823H2+wR/Elv+yjgFfFVkJs1jIdHbQFulDeKDu4Yx4kW8gumAAq
+	 zGac+VEZG5sH/o3PdOXIGiENnwpkYFBBhleIJYpxqa+XHJpMlLxGccj1y1NkyGyjfG
+	 ft6dsUOy7X3/A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] fs/file.c: remove sanity_check and add
- likely/unlikely in alloc_fd()
-To: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, mjguzik@gmail.com, edumazet@google.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
- tim.c.chen@linux.intel.com, yu.ma@intel.com
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240703143311.2184454-1-yu.ma@intel.com>
- <20240703143311.2184454-2-yu.ma@intel.com>
- <20240703-ketchup-aufteilen-3e4c648b20c8@brauner>
- <20240704101104.btkwwnhwf3mnfsvj@quack3>
-Content-Language: en-US
-From: "Ma, Yu" <yu.ma@intel.com>
-In-Reply-To: <20240704101104.btkwwnhwf3mnfsvj@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 04 Jul 2024 17:45:52 +0300
+Message-Id: <D2GU3QOR9Y2O.2OXK62J2V9C2T@kernel.org>
+Cc: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, <keyrings@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 0/3] Address !chip->auth
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Michael Ellerman" <mpe@ellerman.id.au>,
+ <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240703170815.1494625-1-jarkko@kernel.org>
+ <D2G2QR0DMG8B.R0B95Z5T5YAF@kernel.org> <87v81lia1d.fsf@mail.lhotse>
+In-Reply-To: <87v81lia1d.fsf@mail.lhotse>
 
-
-On 7/4/2024 6:11 PM, Jan Kara wrote:
-> On Wed 03-07-24 16:34:49, Christian Brauner wrote:
->> On Wed, Jul 03, 2024 at 10:33:09AM GMT, Yu Ma wrote:
->>> alloc_fd() has a sanity check inside to make sure the struct file mapping to the
->>> allocated fd is NULL. Remove this sanity check since it can be assured by
->>> exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
->>> likely/unlikely and expand_file() call avoidance to reduce the work under
->>> file_lock.
->>>
->>> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
->>> Signed-off-by: Yu Ma <yu.ma@intel.com>
->>> ---
->>>   fs/file.c | 38 ++++++++++++++++----------------------
->>>   1 file changed, 16 insertions(+), 22 deletions(-)
->>>
->>> diff --git a/fs/file.c b/fs/file.c
->>> index a3b72aa64f11..5178b246e54b 100644
->>> --- a/fs/file.c
->>> +++ b/fs/file.c
->>> @@ -515,28 +515,29 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->>>   	if (fd < files->next_fd)
->>>   		fd = files->next_fd;
->>>   
->>> -	if (fd < fdt->max_fds)
->>> +	if (likely(fd < fdt->max_fds))
->>>   		fd = find_next_fd(fdt, fd);
->>>   
->>> +	error = -EMFILE;
->>> +	if (unlikely(fd >= fdt->max_fds)) {
->>> +		error = expand_files(files, fd);
->>> +		if (error < 0)
->>> +			goto out;
->>> +		/*
->>> +		 * If we needed to expand the fs array we
->>> +		 * might have blocked - try again.
->>> +		 */
->>> +		if (error)
->>> +			goto repeat;
->>> +	}
->> So this ends up removing the expand_files() above the fd >= end check
->> which means that you can end up expanding the files_struct even though
->> the request fd is past the provided end. That seems odd. What's the
->> reason for that reordering?
-> Yeah, not only that but also:
+On Thu Jul 4, 2024 at 4:03 PM EEST, Michael Ellerman wrote:
+> "Jarkko Sakkinen" <jarkko@kernel.org> writes:
+> > On Wed Jul 3, 2024 at 8:08 PM EEST, Jarkko Sakkinen wrote:
+> >> Tested on x86-64 with:
+> >>
+> >> - TCG_TPM2_HMAC disabled.
+> >> - TCG_TPM2_HMAC enabled.
+> >> - TCG_TPM2_HMAC enabled, and "/* rc =3D tpm2_sessions_init(chip); */".
+> >>
+> >> Jarkko Sakkinen (3):
+> >>   tpm: Address !chip->auth in tpm2_*_auth_session()
+> >>   tpm: Address !chip->auth in tpm_buf_append_name()
+> >>   tpm: Address !chip->auth in tpm_buf_append_hmac_session*()
+> >>
+> >>  drivers/char/tpm/Makefile        |   2 +-
+> >>  drivers/char/tpm/tpm2-sessions.c | 400 +++++++++++++++++-------------=
+-
+> >>  include/linux/tpm.h              |  75 ++----
+> >>  3 files changed, 245 insertions(+), 232 deletions(-)
+> >
+> > Aiming these still to 6.10 so that there would not be known regressions
+> > in hmac authenticated sessions. Note that issue is wider than "just"
+> > tpm_ibmvtpm.
 >
->>>   	/*
->>>   	 * N.B. For clone tasks sharing a files structure, this test
->>>   	 * will limit the total number of files that can be opened.
->>>   	 */
->>> -	error = -EMFILE;
->>> -	if (fd >= end)
->>> -		goto out;
->>> -
->>> -	error = expand_files(files, fd);
->>> -	if (error < 0)
->>> +	if (unlikely(fd >= end))
->>>   		goto out;
-> We could then exit here with error set to 0 instead of -EMFILE. So this
-> needs a bit of work. But otherwise the patch looks good to me.
+> This seems OK on my PowerVM box using tpm_ibmvtpm and TCG_TPM2_HMAC=3Dy.
+> I do see one new message:
 >
-> 								Honza
+>   [    2.475208] tpm2_start_auth_session: encryption is not active
+>
+> But no error messages like on mainline.
+>
+> Tested-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-Do you mean that we return 0 here is fd >=end, I'm afraid that might 
-broke the original design of this function. And all the callers of it 
-are using ret < 0 for error handling, if ret=0, that should mean the fd 
-allocated is 0 ...
+Thank you, appreciate this!
 
+BR, Jarkko
 
