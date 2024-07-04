@@ -1,331 +1,130 @@
-Return-Path: <linux-kernel+bounces-241023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA8D9275E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:25:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9339275ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED101F2448C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:25:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2F72815ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA98A1AE865;
-	Thu,  4 Jul 2024 12:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352371AE0BB;
+	Thu,  4 Jul 2024 12:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7Fe/FvY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RM9/1U+u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913194C76;
-	Thu,  4 Jul 2024 12:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7680C4C76;
+	Thu,  4 Jul 2024 12:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720095892; cv=none; b=hXsbYb/rRlvuMLOwEz744+EA/f5XxQmYUc4ecnK5gCZOd1HwEnsklart+GtVao1wxXX4fLhn5GO/WrJ72/J1Wiz1sm8hNBf5eEU5+rizHaUUKni8amCHxecMRmuJhoRgKQwIbHB/tQN6SZs5oUSV4v8cQl24ZpqMjU1kwDu7uDw=
+	t=1720096001; cv=none; b=qHikNJF2lE/s3KZFrQ3YaeX2wM5mNA3SLpiGIKAacqNrfUTfMzTPaFjQV1iaJ07RMcuW2JQpcjBw5uNOP3vywnv6KC6+HSj+ui6K303YawRYx06CFWdN3ltueicVe53HClgzL/rnQsBrCP9JUy/vEgeVujYw3rAn+TqvJfNxQv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720095892; c=relaxed/simple;
-	bh=3b40u6v5Fy9XpFfO4zO7dcgm2QhDnwRA7H1kJYZa6KA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PXmchNSH3gThXNs6zFy3GZv2SoQfkSujZSN3blOmykNMG3cX9FNRO1Br8XmYcfh0Mhp9qJgfGWc/uJuispMwcAQkyKjpOO8OGETyDaBED2IzvGC+D3twwo7RLGlBjHhyykJLRN0Q4WsIOCyLD+qO6sh2EzB/N2byVC1ll7a0cco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7Fe/FvY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B81C7C4AF07;
-	Thu,  4 Jul 2024 12:24:51 +0000 (UTC)
+	s=arc-20240116; t=1720096001; c=relaxed/simple;
+	bh=Ol59wRsiQ2j9IWEiSxxfL5HPw8wR16SoFWRvc59G4tg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ap311DKy5eKZ44+P6X47ytz+xhkAmPTQVIMzJF2MiLOzQRQVRS+XH3QsxUsJbufRu1tbunTOKAhY1RSnVz7xeTlYwUotZvMczF+HjIA0G6vfHHRx9v6NZUQI8yuIeiDTU3DMm2T1AZhigTl7fpKxavZCyYNePZDr84HRiEC+IfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RM9/1U+u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08832C4AF07;
+	Thu,  4 Jul 2024 12:26:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720095892;
-	bh=3b40u6v5Fy9XpFfO4zO7dcgm2QhDnwRA7H1kJYZa6KA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j7Fe/FvY0DkICipoXNHJvqk1H7Z1fodo2GSY1Dyf6Ej53sR+86873wcmFiHOZSAAw
-	 obEdQoiZS8eBs4bY259a78GTsT7RksDGZsjVU9vO8BTjWVHpSVDOxNCBXvb1SFOc+i
-	 FZAVhBKzekCJZVyqn3CFSeZHGeyozeCgxLHN/C7JN6sQ0dcv7o160RDur20/2uh/xI
-	 PDbYjrAUkB+0bweOUOT0nPR9CYsE0IkIs3z0UdxPJY785rFCZnRsHpxcRMQEXgLnnz
-	 lwV+WRvlAzMvaxOjr1pS8Y1MtHS9m1pkmjaWtHMbu4TI4JTMWbKcqNzTAxjhm3GN6G
-	 HvHOeTN4CNtLQ==
-Date: Thu, 4 Jul 2024 14:24:49 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: John Stultz <jstultz@google.com>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC
- related-flags
-Message-ID: <20240704-therapeutic-maroon-coucal-f61a63@houat>
-References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
- <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com>
- <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
- <CANDhNCo5hSC-sLwdkBi3e-Ja-MzdqcGGbn-4G3XNYwCzZUwscw@mail.gmail.com>
- <ZkyOOwpM57HIiO3v@phenom.ffwll.local>
- <qy7aczeu6kumv5utemoevi7omp5ryq55zmgzxh5hrz5orf2osp@wypg66awof4n>
- <20240628-resilient-resolute-rook-0fc531@houat>
- <3e37rhrcqogix5obsu2gq7jar7bcoamx4bbd376az5z3zdkwvm@jstirwdl5efm>
+	s=k20201202; t=1720096001;
+	bh=Ol59wRsiQ2j9IWEiSxxfL5HPw8wR16SoFWRvc59G4tg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RM9/1U+u9zb6ni6iEl7rMSfQaNseyNwAp5z6yLPlkhnc/MHEfWkuZHf//lBTpgUGv
+	 hC/YL8FDc94dWPiMBuz+m2WHGfACwPKWCuHlyR+emie35mRLh2q7Gt/iwXmyr1LrgP
+	 ckxXjUbsltr4jo9RnhORaw+DueA0nQk2lStJtB/B4jvsMqx2NvG4n/Hm3s5MRw658Y
+	 Kjewb1V2nt9YdeFjYLguDWmWr1WWPLCJw2KgL78rpKatfH1QxWnoIzfeoWlFIbrK7/
+	 sQbmkjT9AfuGsaDq6JL1fARhKffDA3PzdWjx3pIOrXVotS65cU1j5pd4CQpW4tV7Ln
+	 K4MT0clDCh8Iw==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-25e23e0492dso101038fac.3;
+        Thu, 04 Jul 2024 05:26:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXAuLQz4cz3wCBkvdDb1qO6i4NKbtKXhC59YvdOo/quSV1E6QTQw0G4eZ2DBWYNxfYmyiO8OteVD6ugojBLNcCq6RxgRWfWw3lktEaNex+HpVBqTCgrmZ89SST8nlp9E5kXYeYI8Aw=
+X-Gm-Message-State: AOJu0Yy2LKLWHPrCsdGJJOeqwktmoa3u5lXAJnknzyjK2GDeQjCYpIsx
+	T8sC3O3B17Fik6248iJi6G1R2QEVV9LmAs75kQk80Wn/qga+dHvvY8W5P6+Y/TPkPfdTOcDwuDG
+	+oLH4Gzm/gknXNVxT2CY45/Gamss=
+X-Google-Smtp-Source: AGHT+IE0nlVQZC0eK4Kf15Rg9nA0DHs7RMKa3liL4gNSoysZh7Ye3+nogqNGp8r41o/wLW4/dast0CC3YEinfYYGrvg=
+X-Received: by 2002:a05:6820:2c07:b0:5c4:5cbc:b1b4 with SMTP id
+ 006d021491bc7-5c646a91827mr1382273eaf.0.1720096000243; Thu, 04 Jul 2024
+ 05:26:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cjxzfvvdyt3vz7rd"
-Content-Disposition: inline
-In-Reply-To: <3e37rhrcqogix5obsu2gq7jar7bcoamx4bbd376az5z3zdkwvm@jstirwdl5efm>
-
-
---cjxzfvvdyt3vz7rd
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240703083141.96013-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240703083141.96013-1-krzysztof.kozlowski@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Jul 2024 14:26:29 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iCEE1z8jV-+iRgXgHr8SNkeGioUCEij7w_T+H0rzKtbQ@mail.gmail.com>
+Message-ID: <CAJZ5v0iCEE1z8jV-+iRgXgHr8SNkeGioUCEij7w_T+H0rzKtbQ@mail.gmail.com>
+Subject: Re: [PATCH] thermal: constify 'type' in devm_thermal_of_cooling_device_register()
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 28, 2024 at 04:42:35PM GMT, Thierry Reding wrote:
-> On Fri, Jun 28, 2024 at 03:08:46PM GMT, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Fri, Jun 28, 2024 at 01:29:17PM GMT, Thierry Reding wrote:
-> > > On Tue, May 21, 2024 at 02:06:19PM GMT, Daniel Vetter wrote:
-> > > > On Thu, May 16, 2024 at 09:51:35AM -0700, John Stultz wrote:
-> > > > > On Thu, May 16, 2024 at 3:56=E2=80=AFAM Daniel Vetter <daniel@ffw=
-ll.ch> wrote:
-> > > > > > On Wed, May 15, 2024 at 11:42:58AM -0700, John Stultz wrote:
-> > > > > > > But it makes me a little nervous to add a new generic allocat=
-ion flag
-> > > > > > > for a feature most hardware doesn't support (yet, at least). =
-So it's
-> > > > > > > hard to weigh how common the actual usage will be across all =
-the
-> > > > > > > heaps.
-> > > > > > >
-> > > > > > > I apologize as my worry is mostly born out of seeing vendors =
-really
-> > > > > > > push opaque feature flags in their old ion heaps, so in provi=
-ding a
-> > > > > > > flags argument, it was mostly intended as an escape hatch for
-> > > > > > > obviously common attributes. So having the first be something=
- that
-> > > > > > > seems reasonable, but isn't actually that common makes me fre=
-t some.
-> > > > > > >
-> > > > > > > So again, not an objection, just something for folks to stew =
-on to
-> > > > > > > make sure this is really the right approach.
-> > > > > >
-> > > > > > Another good reason to go with full heap names instead of opaqu=
-e flags on
-> > > > > > existing heaps is that with the former we can use symlinks in s=
-ysfs to
-> > > > > > specify heaps, with the latter we need a new idea. We haven't y=
-et gotten
-> > > > > > around to implement this anywhere, but it's been in the dma-buf=
-/heap todo
-> > > > > > since forever, and I like it as a design approach. So would be =
-a good idea
-> > > > > > to not toss it. With that display would have symlinks to cma-ec=
-c and cma,
-> > > > > > and rendering maybe cma-ecc, shmem, cma heaps (in priority orde=
-r) for a
-> > > > > > SoC where the display needs contig memory for scanout.
-> > > > >=20
-> > > > > So indeed that is a good point to keep in mind, but I also think =
-it
-> > > > > might re-inforce the choice of having ECC as a flag here.
-> > > > >=20
-> > > > > Since my understanding of the sysfs symlinks to heaps idea is abo=
-ut
-> > > > > being able to figure out a common heap from a collection of devic=
-es,
-> > > > > it's really about the ability for the driver to access the type of
-> > > > > memory. If ECC is just an attribute of the type of memory (as in =
-this
-> > > > > patch series), it being on or off won't necessarily affect
-> > > > > compatibility of the buffer with the device.  Similarly "uncached"
-> > > > > seems more of an attribute of memory type and not a type itself.
-> > > > > Hardware that can access non-contiguous "system" buffers can acce=
-ss
-> > > > > uncached system buffers.
-> > > >=20
-> > > > Yeah, but in graphics there's a wide band where "shit performance" =
-is
-> > > > defacto "not useable (as intended at least)".
-> > > >=20
-> > > > So if we limit the symlink idea to just making sure zero-copy acces=
-s is
-> > > > possible, then we might not actually solve the real world problem w=
-e need
-> > > > to solve. And so the symlinks become somewhat useless, and we need =
-to
-> > > > somewhere encode which flags you need to use with each symlink.
-> > > >=20
-> > > > But I also see the argument that there's a bit a combinatorial expl=
-osion
-> > > > possible. So I guess the question is where we want to handle it ...
-> > >=20
-> > > Sorry for jumping into this discussion so late. But are we really
-> > > concerned about this combinatorial explosion in practice? It may be
-> > > theoretically possible to create any combination of these, but do we
-> > > expect more than a couple of heaps to exist in any given system?
-> >=20
-> > I don't worry too much about the number of heaps available in a given
-> > system, it would indeed be fairly low.
-> >=20
-> > My concern is about the semantics combinatorial explosion. So far, the
-> > name has carried what semantics we were supposed to get from the buffer
-> > we allocate from that heap.
-> >=20
-> > The more variations and concepts we'll have, the more heap names we'll
-> > need, and with confusing names since we wouldn't be able to change the
-> > names of the heaps we already have.
->=20
-> What I was trying to say is that none of this matters if we make these
-> names opaque. If these names are contextual for the given system it
-> doesn't matter what the exact capabilities are. It only matters that
-> their purpose is known and that's what applications will be interested
-> in.
-
-If the names are opaque, and we don't publish what the exact
-capabilities are, how can an application figure out which heap to use in
-the first place?
-
-> > > Would it perhaps make more sense to let a platform override the heap
-> > > name to make it more easily identifiable? Maybe this is a naive
-> > > assumption, but aren't userspace applications and drivers not primari=
-ly
-> > > interested in the "type" of heap rather than whatever specific flags
-> > > have been set for it?
-> >=20
-> > I guess it depends on what you call the type of a heap. Where we
-> > allocate the memory from, sure, an application won't care about that.
-> > How the buffer behaves on the other end is definitely something
-> > applications are going to be interested in though.
->=20
-> Most of these heaps will be very specific, I would assume.
-
-We don't have any specific heap upstream at the moment, only generic
-ones.
-
-> For example a heap that is meant to be protected for protected video
-> decoding is both going to be created in such a way as to allow that
-> use-case (i.e. it doesn't make sense for it to be uncached, for
-> example) and it's also not going to be useful for any other use-case
-> (i.e. there's no reason to use that heap for GPU jobs or networking,
-> or whatever).
-
-Right. But also, libcamera has started to use dma-heaps to allocate
-dma-capable buffers and do software processing on it before sending it
-to some hardware controller.
-
-Caches are critical here, and getting a non-cacheable buffer would be
-a clear regression.
-
-How can it know which heap to allocate from on a given platform?
-
-Similarly with the ECC support we started that discussion with. ECC will
-introduce a significant performance cost. How can a generic application,
-such as a compositor, will know which heap to allocate from without:
-
-a) Trying to bundle up a list of heaps for each platform it might or
-   might not run
-
-b) and handling the name difference between BSPs and mainline.
-
-If some hardware-specific applications / middleware want to take a
-shortcut and use the name, that's fine. But we need to find a way for
-generic applications to discover which heap is best suited for their
-needs without the name.
-
-> > And if we allow any platform to change a given heap name, then a generic
-> > application won't be able to support that without some kind of
-> > platform-specific configuration.
->=20
-> We could still standardize on common use-cases so that applications
-> would know what heaps to allocate from. But there's also no need to
-> arbitrarily restrict this. For example there could be cases that are
-> very specific to a particular platform and which just doesn't exist
-> anywhere else. Platform designers could then still use this mechanism to
-> define that very particular heap and have a very specialized userspace
-> application use that heap for their purpose.
-
-We could just add a different capabitily flag to make sure those would
-get ignored.
-
-> > > For example, if an applications wants to use a protected buffer, the
-> > > application doesn't (and shouldn't need to) care about whether the he=
-ap
-> > > for that buffer supports ECC or is backed by CMA. All it really needs=
- to
-> > > know is that it's the system's "protected" heap.
-> >=20
-> > I mean... "protected" very much means backed by CMA already, it's pretty
-> > much the only thing we document, and we call it as such in Kconfig.
->=20
-> Well, CMA is really just an implementation detail, right? It doesn't
-> make sense to advertise that to anything outside the kernel. Maybe it's
-> an interesting fact that buffers allocated from these heaps will be
-> physically contiguous?
-
-CMA itself might be an implementation detail, but it's still right there
-in the name on ARM.
-
-And being able to get physically contiguous buffers is critical on
-platforms without an IOMMU.
-
-> In the majority of cases that's probably not even something that
-> matters because we get a DMA-BUF anyway and we can map that any way we
-> want.
+On Wed, Jul 3, 2024 at 10:31=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> Irrespective of that, physically contigous buffers could be allocated in
-> any number of ways, CMA is just a convenient implementation of one such
-> allocator.
->=20
-> > But yeah, I agree that being backed by CMA is probably not what an
-> > application cares about (and we even have might some discussions about
-> > that), but if the ECC protection comes at a performance cost then it
-> > will very much care about it. Or if it comes with caches enabled or not.
->=20
-> True, no doubt about that. However, I'm saying there may be advantages
-> in hiding all of this from applications. Let's say we're trying to
-> implement video decoding. We can create a special "protected-video" heap
-> that is specifically designed to allocate encrypted/protected scanout
-> buffers from.
->=20
-> When you design that system, you would most certainly not enable ECC
-> protection on that heap because it leads to bad performance. You would
-> also want to make sure that all of the buffers in that heap are cached
-> and whatever other optimizations your chip may provide.
->=20
-> Your application doesn't have to care about this, though, because it can
-> simply look for a heap named "protected-video" and allocate buffers from
-> it.
+> The 'type' string passed to thermal_of_cooling_device_register() is a
+> 'const char *', so make the same in the devm interface.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/thermal/thermal_core.c | 2 +-
+>  include/linux/thermal.h        | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_cor=
+e.c
+> index 3fb55060646e..4ea27dd25477 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -1132,7 +1132,7 @@ static void thermal_cooling_device_release(struct d=
+evice *dev, void *res)
+>  struct thermal_cooling_device *
+>  devm_thermal_of_cooling_device_register(struct device *dev,
+>                                 struct device_node *np,
+> -                               char *type, void *devdata,
+> +                               const char *type, void *devdata,
+>                                 const struct thermal_cooling_device_ops *=
+ops)
+>  {
+>         struct thermal_cooling_device **ptr, *tcd;
+> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> index f1155c0439c4..f732dab20368 100644
+> --- a/include/linux/thermal.h
+> +++ b/include/linux/thermal.h
+> @@ -261,7 +261,7 @@ thermal_of_cooling_device_register(struct device_node=
+ *np, const char *, void *,
+>  struct thermal_cooling_device *
+>  devm_thermal_of_cooling_device_register(struct device *dev,
+>                                 struct device_node *np,
+> -                               char *type, void *devdata,
+> +                               const char *type, void *devdata,
+>                                 const struct thermal_cooling_device_ops *=
+ops);
+>  void thermal_cooling_device_update(struct thermal_cooling_device *);
+>  void thermal_cooling_device_unregister(struct thermal_cooling_device *);
+> @@ -305,7 +305,7 @@ thermal_of_cooling_device_register(struct device_node=
+ *np,
+>  static inline struct thermal_cooling_device *
+>  devm_thermal_of_cooling_device_register(struct device *dev,
+>                                 struct device_node *np,
+> -                               char *type, void *devdata,
+> +                               const char *type, void *devdata,
+>                                 const struct thermal_cooling_device_ops *=
+ops)
+>  {
+>         return ERR_PTR(-ENODEV);
+> --
 
-I mean, I disagree. Or rather, in an environment where you have a system
-architect, and the application is targeted for a particular system only,
-and where "protected-video" means whatever the team decided in general,
-yeah, that works.
-
-So, in a BSP or Android, that works fine.
-
-On a mainline based system, with generic stacks like libcamera, it just
-doesn't fly anymore.
-
-Let's use the two heaps we currently support: their name isn't stable
-across architectures, nobody ever documented the set of attributes that
-particular heap has, and since it's not documented, good luck trying to
-avoid regressions.
-
-So, today, with a very limited number of heaps and no vendor involvement
-so far, the "let's just use the name" policy doesn't work already.
-
-Maxime
-
---cjxzfvvdyt3vz7rd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZoaUkAAKCRDj7w1vZxhR
-xXADAQCgqah3v2QYITrpPKh5bzDxBC1BhjxqRAsqI12N+CX4AgD8DJw0bMiupQN+
-a6V6YFBeSup3/JhldqCEsMkeHmT7Pw4=
-=Zj5I
------END PGP SIGNATURE-----
-
---cjxzfvvdyt3vz7rd--
+Applied as 6.11 material, thanks!
 
