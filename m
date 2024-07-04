@@ -1,163 +1,115 @@
-Return-Path: <linux-kernel+bounces-241621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A8E927D33
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:36:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3296927D3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8971F21322
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:36:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C2C1B23167
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1070073443;
-	Thu,  4 Jul 2024 18:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AAB12E1D2;
+	Thu,  4 Jul 2024 18:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="N2/U+gj2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUvrfPY4"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23EF7344C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CE045979;
+	Thu,  4 Jul 2024 18:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720118179; cv=none; b=BKa98SbT0JemNseGzTJCiwUPAHuCvlIy6wrfD/Zbzm+oGV+6LEGUM+nnovqQPXpzgVaO3DNCTHcTpmUL9DkjNElom94kKGvriangIMEqPOGblZGTji0n8QFQ6M/Wh85xFGv8lbY8To1FzRu+piLWsQN4y/td7oT2SRlIg+JNFiQ=
+	t=1720118216; cv=none; b=owyqrKXXnB8GO8SNiW/uwnPD6V4Ud/52izUnKFvXzpxVvy9qpN3DLjW9YDou6Ly8trgGED7l5FRg8OQ9STzWSyIzsrh4OkbqiMwHNxGaxs7v0BrlgkpfR7u27Llwgeq57l2B/I4/ORlxSaecW+osM30ifO/qPqWK2XVrea7H/ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720118179; c=relaxed/simple;
-	bh=OuiuIk/uej5hD6ctUQ0sHEHyXJx0Mi7ACNO0r9tkxOk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E64r26kqJOZmmGplbRYwPRX68kmPPLKukcabA3s8DIrjOi9QqAnHtgyx1efwSLC2e2RWSfDbrIf2LppRVNlVeCTjyu4UT3hbko4G3rahAFd/ZKLLTqpqGU+i7XHq2/C/KN4YN6YsdjPbWFzNhr20vAmFoKjrLIHyjJzM2EPJLZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=N2/U+gj2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FAECC4AF0A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:36:18 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="N2/U+gj2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1720118175;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OuiuIk/uej5hD6ctUQ0sHEHyXJx0Mi7ACNO0r9tkxOk=;
-	b=N2/U+gj2TgBpNkbDSsuYiRPakmOJQVFz4V/8W2qFGxPSJmki1NXuWKGEhhDB5tPmbDmi9z
-	mnz+lih34tSNwPOdcwV0/UKUJZm8I2cxCxBTG2DzvgZNo7eFYKLhWOCygf547EBQoJIZCc
-	uFeugMNMZ9Mi63V0TB+srLPgCMlAL1E=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9e5391b0 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO)
-	for <linux-kernel@vger.kernel.org>;
-	Thu, 4 Jul 2024 18:36:15 +0000 (UTC)
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-700cc366e0dso428901a34.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 11:36:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUPtpeSsyUTLFjHus0izsm0TB6lQEYUvvJpMX4HzUMMdmuyXozkmWXSUqg0CWV2XwLIBxyvcKcXD9plfGYRQfKLXwDAeF04B/JFmub0
-X-Gm-Message-State: AOJu0YzHryB77q0/pg8kd5DorDMRHJeKz2VE3OWIlKFcvdJkAYIjyz/E
-	FoSbuutaxkxbALOazBd8wUuiPdRtgP4qA/jqdcS2yq9SKSMptu+VHb1xAg7s9WZHxoXzbbQyMkN
-	q4IwklbsuT2HeS9GAy5h/yDM0WDs=
-X-Google-Smtp-Source: AGHT+IFbtFgg7L97e+n0cgFnXAuyoEI+bq0oAKVrVHmyzTuWovsSVjMbELnp+2Vlb/gNNeCcr/92vXFzi98cshdt1Zk=
-X-Received: by 2002:a05:6870:d624:b0:24c:b0bd:7eb8 with SMTP id
- 586e51a60fabf-25e2b8dd7c9mr2373124fac.6.1720118174065; Thu, 04 Jul 2024
- 11:36:14 -0700 (PDT)
+	s=arc-20240116; t=1720118216; c=relaxed/simple;
+	bh=2+vWKkD6NaDssBT+shr8RNi81lkdPvXcuXk+iWlx8No=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rHQHHF8qdJ1HEdggSi97AuvFtiUa0O71yC9fsWVsoOL1PWxFXhrjJnFmshelw+fkCMej1swwwDQwahizhOa34DvWSVDQ4iFHOinvSw0btAngiejKgAj4A/FjtJPfsv3PZja2VBwUQT4kTvwmQMEJmVk1rKMzcGWDtDpmLzUiKwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FUvrfPY4; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-425809eef0eso5940985e9.3;
+        Thu, 04 Jul 2024 11:36:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720118214; x=1720723014; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FpkFfjiADJS0EPLlwf7BKxwjayUopZBP/ZK8yqdHasY=;
+        b=FUvrfPY4OAo9wDP0DlLr011I4i3MyxiKiNPxi2431X8UvopzpznH6IrJW8r95GN0J1
+         FZDNldh+SGs0plTDGgc3X2fCoEfJCEWfVTeIQyduSK3fOING8hlA2xsSTH2H8XO4lmZU
+         sqL/q0YAt9mCtEGFMxQ/Bnrad2t5gtJQjIKkuSXfsoqH1tPSjnOpv3IKaNASv6vF4EIn
+         ymTkZXLYK+kBX9JgvQYI3B6gOKjtdyNoe+tV8t/0BiZ6IbEM7CSMQ8183QEfnmYDk9yZ
+         5G0uSr7Rk4DoNttfDZ8+KiTSP8AKTK/XzNlG9siXvAx4IrGbGHRpFeLd+IcNJ2uPC41N
+         OZQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720118214; x=1720723014;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FpkFfjiADJS0EPLlwf7BKxwjayUopZBP/ZK8yqdHasY=;
+        b=fNRveeBdkXfNzgmKlWjL3pTzS9cLsYSIZkMz9TvRUWEOtAPn1YZvqX763rvnXmc8fh
+         CRMCKobjDN64g3uZHDP0G3VPTyyOBmexMcFJW2WMns4yih178MYaeduw8HiKzIXG4aRP
+         mizM/6dXO/WdU+CD0MHYwhf2OuoLdgVpLtuhnS5xnJNIxunNYsNUTUi2/AIW9Sx8/DjR
+         hbCD7HHFjDVrRI2V7KoAmDjidTi91pNoQZnJLkc+n++enDJxfZnFDxvG+1NvgTlQ58J+
+         FeUZ8akv03BvQyEGm4sbFp66cofAt0QMYwHKaPB4tl1GAh7C2h7rgS3FGiEc+SJuTC9Z
+         jALg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8bCMfZ19UjXJN83Ubbya/BwWwo6Mb2DcJUTA1MWdQX7uh2dDP+SBggOilG4bO7xYjqXZrwpv7A7QkublNHpq63Q+tLUzTT1eIUynQ
+X-Gm-Message-State: AOJu0Yxa3C6bt/cAiUcn/nRyGT9prcpErj1L7iaHNt2i9dcGrzvPbu91
+	tLKijUoEjK+1n2I42Fx96E3NDLDJmHOne6XdkQ5KtazdNR1OMtoe
+X-Google-Smtp-Source: AGHT+IHiXwZAu0cOxOthEcXTh6/WJTUfeUSNnFNQp/JPkIEBDAtNLGaseVXSBW8/Rts72j1TS7dk0g==
+X-Received: by 2002:a05:600c:6a0a:b0:425:65b2:76b3 with SMTP id 5b1f17b1804b1-4264a3e7c28mr19267625e9.17.1720118213699;
+        Thu, 04 Jul 2024 11:36:53 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-0b06-a203-2f25-a0f6.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:b06:a203:2f25:a0f6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a28333dsm33823075e9.40.2024.07.04.11.36.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 11:36:53 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] pinctrl: Constify read-only struct regmap_config
+Date: Thu, 04 Jul 2024 20:36:42 +0200
+Message-Id: <20240704-pinctrl-const-regmap_config-v1-0-9d5570f0b9f3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZobXdDCYBi8OM-Fo@zx2c4.com> <CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
- <Zobf3fZOuvOJOGPN@zx2c4.com> <CAHk-=whf2Pb8fSmUsLRSn6CnYvQoyUkLikKpFDWN_xnTJqix=A@mail.gmail.com>
- <CAHmME9pm+ZE2_qf1DNxukB6ufPrjTAsnwin05-VX_gS03Yq-ag@mail.gmail.com> <CAHk-=whTjdO6szgRKp51ZeDLDmA1+YYSbg+vEUt9OsxTMDUtjQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whTjdO6szgRKp51ZeDLDmA1+YYSbg+vEUt9OsxTMDUtjQ@mail.gmail.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Thu, 4 Jul 2024 20:36:02 +0200
-X-Gmail-Original-Message-ID: <CAHmME9qwrGUCC35Z7rNrqDANJN2Zr7q-T24=8od0cy7O3xi4Dw@mail.gmail.com>
-Message-ID: <CAHmME9qwrGUCC35Z7rNrqDANJN2Zr7q-T24=8od0cy7O3xi4Dw@mail.gmail.com>
-Subject: Re: deconflicting new syscall numbers for 6.11
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: jolsa@kernel.org, mhiramat@kernel.org, cgzones@googlemail.com, 
-	brauner@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALrrhmYC/x3MSwqAIBAA0KvErBuwr9FVIkJssoEyGSOC6O5Jy
+ 7d5D0QSpgh99oDQxZEPn1DkGdjVeEfIczKUqqyVVjUG9vaUDe3h44lCbjdhSljYYVe1ptOzJk0
+ NpCEILXz/+zC+7wcYXQJpbQAAAA==
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720118212; l=763;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=2+vWKkD6NaDssBT+shr8RNi81lkdPvXcuXk+iWlx8No=;
+ b=5IDbA41awAubEdhhKiqXOvRCEpEq9QB0YfRpzhjS0sV4xF6z1bD13sRLI0yuiqQgBXFnyK5Ar
+ xiin2JX4DV7BXYxabVYQJVjbjUv1fS4lUz/jgS+ttvmF6dyK9DyAd3M
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hi Linus,
+This series adds the const modifier to the remaining regmap_config
+structs in the pinctrl subsystem that are effectively used as const
+(i.e., only read after their declaration), but kept ad writtable data.
 
-On Thu, Jul 4, 2024 at 8:18=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> > What do you want me to do here?
->
-> You literally said "those users exist".
->
-> Make them pipe up.
->
-> Make them explain why what they don't have now doesn't work. What this
-> solves. In real terms.
->
-> Make them explain why that random "we duplicated the VM, and now we
-> worry that mixing in TSC doesn't help" is an actual real-world
-> concern, rather than something COMPLETELY MADE UP BY RANDOM NUMBER
-> PEOPLE.
->
-> See what my argument is? My argument is literally that theoretical
-> random number people will make up arguments that aren't actually
-> relevant in real life.
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      pinctrl: ti-iodelay: Constify struct regmap_config
+      pinctrl: realtek: Constify struct regmap_config
 
-No, I don't think this is made up by random number nutsos. I believe
-this is a real actual concern.
+ drivers/pinctrl/realtek/pinctrl-rtd.c   | 2 +-
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240704-pinctrl-const-regmap_config-836a87d7e7e5
 
-> Do real people migrate VMs? Hell yes they do. Do they care about the
-> numbers being magically "stale" after said migration? I seriously
-> doubt that.
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Yes! They do!
-
->
-> Do real people start multiple VMs from one single starting image?
-> Again, hell yes they do.
->
-> But do they start those multiple VMs from some random slapdash
-> snapshot that they just picked without any concern and cannot just
-> reseed in user space? And if they do, why should *WE* clean up after
-> their mindbogglingly stupid setup?
-
-Except userspace isn't really in a great position to do that. There's
-no need to suggest that people proliferate these foot guns either.
-
-> See what my argument is? I suspect _strongly_ that this is all
-> completely over-engineered based on theoretical grounds that aren't
-> actually practical grounds.
->
-> And dammit, I'm asking for the practical grounds. For the actual users.
->
-> And if you have trouble finding those, you just proved my point.
-
-And I think what you're missing here is that these concerns come _from
-actual users_. This *isn't* theoretical.
-
-Look, I am not some "random number" nut job. I've worked very hard to
-move the kernel's RNG far outside the realm of that world. And I'm not
-looking for things to do or code to write or ways to occupy my time,
-just 'cuz. I'm working on this because there's a real, tangible, need
-for it. This has come out of countless recurring discussions with
-folks at conferences and elsewhere. I am very much part of the world
-where people are writing code that makes use of getrandom(), or would
-like to make use of getrandom() but can't, and this pickle comes up
-repeatedly. "Oh but we can't because of syscall speed, so we've got
-this userspace thing, but it's not optimal, so we're just kind of
-hoping for the best, but yea one of these days somebody should do
-something..."
-
-It's okay that people aren't having those discussions with you. That's
-why I'm maintaining this thing and talking to folks and caring about
-it and thinking carefully about it. And because people are having
-these conversations with me, that's *also* why I am very sensitive to,
-"is this guy a random number nut?" concerns, because lord I've met a
-lot of them and they all have their little hang up. I don't want to
-add code "just because we can." But I think this here will solve a
-very real problem for very real users, and everytime the fact that I'm
-working on this comes up, there are real people with real concerns who
-are glad to hear it's coming finally.
-
-Alternatively, you can say, "well until they talk to me directly, no
-way jos=C3=A9", and that'd be your prerogative, I guess. But that'd be
-pretty darn disappointing.
-
-Jason
 
