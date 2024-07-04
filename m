@@ -1,140 +1,205 @@
-Return-Path: <linux-kernel+bounces-241422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEA08927B44
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:39:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F198E927B47
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D53AB251A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:39:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FFCAB24F1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40031B3744;
-	Thu,  4 Jul 2024 16:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA1D1B3F0E;
+	Thu,  4 Jul 2024 16:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gq4+JFU9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNI0T/Pf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156061B0138;
-	Thu,  4 Jul 2024 16:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6701B374F;
+	Thu,  4 Jul 2024 16:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720111150; cv=none; b=YdoWbSSBBNCjGn9g0FNmqigUEQidO2vuEhXOI4ZJFnWWxa+PVx56wmpC+8UJHBH7SmBcbR/48D2OhHt7hSP/9WKRETI4nBimYz3q2qlPeMufFsdEsOxfrD5W8TVU0Z2akWEY2a5WT+pWWF5Sg42LBu1YyXofN6hGF1lZQ86ap3o=
+	t=1720111151; cv=none; b=q9O05syLJ/k1TsjwrBD73qZtFK4IB+yo9mipKtIn+qpk/OHpOSbH27k80/dPNNqM1/kYgi8I5fI6w/G46/AhFvOMWZQIIkgL5ndJeBW9M70NznWdLJrlEvDry5FWlT4haetaqlQLoPBAMEy3DfvFIRqs+r4OpFNxjn3rZeNpHZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720111150; c=relaxed/simple;
-	bh=gRd4H9HAoXj9VT9zFnuZwGS9i7FBkfx85UHjFSlbhJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i+nifBaxhOGEnSuGPQ77vSJFxTHArXJF0d2m2q+9Cs5dWUV9xduIMjwuTgX6tasNmfHpeMBn05DGpLTrQTQTbVnztUSctiHqdaHo1iXqnX0wsoCizIrHJHqkQKpx/rP3u2TG2PFs45vfC6VrRGLQoU6boAGJ6/9Fzp24kZTSfLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gq4+JFU9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE1EAC32781;
+	s=arc-20240116; t=1720111151; c=relaxed/simple;
+	bh=Bs5sRfDrSxaaIvkIerZLN3dXVAr5INLyWGwt4rreui8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lRNYDasCHLMPfXPWIaoo63LFTibSETVicLn3fBO6cWocuijEid75B+X7bm7KEU5TCVL5RltbYDW7dn10GmAcJBTHyp1EwOScmf46ZXing5jdLtVlcgKf8MOBt3B/TICFzttNZO7fZFlBTHUrA4KBX9n6rPGil5pS8pOm/7rsUXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNI0T/Pf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEF8EC4AF0E;
 	Thu,  4 Jul 2024 16:39:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720111149;
-	bh=gRd4H9HAoXj9VT9zFnuZwGS9i7FBkfx85UHjFSlbhJg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Gq4+JFU9Sr+KM1guFQ2TBMv3IwWpLOiOpkfyTZk1N+J+739UlBedXKjFxrAyVJ8/p
-	 /lo5+zZ4u3Af3KHCohdb6PgbWj8iRBW9sorQy/U33rOmehzaIZOYpv/qMmJoloiU5G
-	 TixTww2wWiyv030+bQ5tWIb4EHfNB3akgp0MwnaHiYQJ0LXdyyX7o4OEdNZf23Ky2l
-	 f3d82KjlZHj/IFmo/qNr8fyDJu2OJChKajBf87rtWGyWnRZBULAgPIlYe+8HD+qhZ1
-	 plKqF/2Hh0SeA4n14yAP/0HgML3nsiub1LJXHRkRgoZxXja2PwtwAc2rVjS9Sz+kY4
-	 1inAB4kWMIrOw==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a728f74c23dso100384166b.1;
-        Thu, 04 Jul 2024 09:39:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVldxnWxk9nv4yndLjEW9OjKH+QGnuW0DbVSKLqgG19mlZ7PlxpsvsISBcPLrpT2hAo5R2lzMhXLpeNXdAsNajqlHyeePT+yqPR5mOFi/xmMYPYJmddMf7anZ2u6s+Vx4sZf/Eo05ekyiQ=
-X-Gm-Message-State: AOJu0YzeBqH0Eu7C+WhTDxCibxbOuPFOhcqFzTVp4sbA+oJQEJsYcI8C
-	+mwlFNpfTap+nYrdfHmJsXm9y7evORIOZOIq9hvKnza8nW3DmfTYmZ5SDGm/lXpxMtEaEeUOgOG
-	dEULr69dOuNcqIwILQSXDitx/Eqg=
-X-Google-Smtp-Source: AGHT+IFoSHc48vw315GWCxZCeNwg7EaRGveE0Zaf/jsFIyoF0QggQomlhorwuzycIttmq4Bt17saZFGYhQtMdoFfmiA=
-X-Received: by 2002:a17:907:684:b0:a77:c3b5:9e5d with SMTP id
- a640c23a62f3a-a77c3b59f8cmr69408066b.47.1720111148322; Thu, 04 Jul 2024
- 09:39:08 -0700 (PDT)
+	s=k20201202; t=1720111151;
+	bh=Bs5sRfDrSxaaIvkIerZLN3dXVAr5INLyWGwt4rreui8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WNI0T/Pffc6B3iSRMiZPlG8zDplMPuzvnoqo0GJ334XC5B2XgSX031T6dBiIB7fuv
+	 eCAhTZmTJvoPNopI0xgqtjIPCOBhvjQHSCjQkfpDk5ONQMxD2McfzTsFjK6BBS+COs
+	 opCHlYojwbsYmhXsaDZUrfnPC5xX1Y364/AYT7PvYCq6O3bBhsLdVBzNrGJENi+Wth
+	 K0jocA5kxTwj15uVdaZp7gJ8h408lZMfqOiLZlUuO3AYbL8u4P7J5CGouOdL+HDR8h
+	 WXpVmafGFur+LmEx6Z1Q/MvOHSDWJvJZ2l+xWLIo0CVFWvX7NRDxskKvr7/Zwykx3a
+	 Kd9asDK6i+/lA==
+Date: Thu, 4 Jul 2024 09:39:08 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Kees Cook <keescook@chromium.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] rust: add flags for shadow call stack sanitizer
+Message-ID: <20240704163908.GA1394865@thelio-3990X>
+References: <20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com>
+ <20240704-shadow-call-stack-v3-2-d11c7a6ebe30@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com> <CAK-xaQagqS0kePozkim7sB_Zi+8NrDRnbqFuLVQ3s4F+0WZ+DQ@mail.gmail.com>
-In-Reply-To: <CAK-xaQagqS0kePozkim7sB_Zi+8NrDRnbqFuLVQ3s4F+0WZ+DQ@mail.gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Thu, 4 Jul 2024 17:38:31 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H5AFbSy0JC=u_MAfNR-J_kFQkaG6_pXJimD80tchFXytg@mail.gmail.com>
-Message-ID: <CAL3q7H5AFbSy0JC=u_MAfNR-J_kFQkaG6_pXJimD80tchFXytg@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Andrea Gelmini <andrea.gelmini@gmail.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com, Qu Wenruo <wqu@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704-shadow-call-stack-v3-2-d11c7a6ebe30@google.com>
 
-On Thu, Jul 4, 2024 at 12:19=E2=80=AFPM Andrea Gelmini <andrea.gelmini@gmai=
-l.com> wrote:
->
-> Il giorno gio 4 lug 2024 alle ore 11:49 Filipe Manana
-> <fdmanana@kernel.org> ha scritto:
-> > I'll try that soon and see if I can reproduce.
->
-> I'm creating a qcow installation with everything, to replicate this.
-> Sorry, it takes time.
->
-> By the way, it's just me? (latest git master btrfs-progs)
->  btrfs-image /dev/blah-blah loop.dd
-> works perfectly, but
->   btrfs-image -s  /dev/blah-blah loop.dd
-> generate an image impossible to mount:
-> [gio lug  4 11:20:05 2024] BTRFS info (device loop40): first mount of
-> filesystem 496b800d-2f32-46bb-b8d0-03d6f71cf4b2
-> [gio lug  4 11:20:05 2024] BTRFS info (device loop40): using crc32c
-> (crc32c-intel) checksum algorithm
-> [gio lug  4 11:20:05 2024] BTRFS info (device loop40): using free space t=
-ree
-> [gio lug  4 11:20:05 2024] BTRFS critical (device loop40): corrupt
-> leaf: root=3D1 block=3D40297906176 slot=3D6 ino=3D6, name hash mismatch w=
-ith
-> key,
+Hi Alice,
 
-Sorry I have no idea about that. I don't use btrfs-image myself and I
-don't think I even ever looked at its source code.
-CC'ing Qu who might be interested in that.
+On Thu, Jul 04, 2024 at 03:07:58PM +0000, Alice Ryhl wrote:
+> As of rustc 1.80.0, the Rust compiler supports the -Zfixed-x18 flag, so
+> we can now use Rust with the shadow call stack sanitizer.
+> 
+> On older versions of Rust, it is possible to use shadow call stack by
+> passing -Ctarget-feature=+reserve-x18 instead of -Zfixed-x18. However,
+> this flag emits a warning, so this patch does not add support for that.
+> 
+> Currently, the compiler thinks that the aarch64-unknown-none target
+> doesn't support -Zsanitizer=shadow-call-stack, so the build will fail if
+> you enable shadow call stack in non-dynamic mode. See [2] for the
 
-I'll reply very soon to the emails about the performance issues that
-correlated to related to the shrinker, there are some interesting
-things to look for.
+                                                        ^ this should be [1]?
 
-Thanks.
+> feature request to add this. Kconfig is not configured to reject this
+> configuration because that leads to cyclic Kconfig rules.
 
+While it probably does not matter much given Rust for Linux is still "in
+the works", I think it would be good to avoid these build failures.
+Perhaps something like this could work (which basically just forces on
+UNWIND_PATCH_PAC_INTO_SCS when Rust is enabled).
 
-> have 0x00000000365ce506 expect 0x000000008dbfc2d2
-> [gio lug  4 11:20:05 2024] BTRFS error (device loop40): read time tree
-> block corruption detected on logical 40297906176 mirror 1
-> [gio lug  4 11:20:05 2024] BTRFS critical (device loop40): corrupt
-> leaf: root=3D1 block=3D40297906176 slot=3D6 ino=3D6, name hash mismatch w=
-ith
-> key,
-> have 0x00000000365ce506 expect 0x000000008dbfc2d2
-> [gio lug  4 11:20:05 2024] BTRFS error (device loop40): read time tree
-> block corruption detected on logical 40297906176 mirror 2
-> [gio lug  4 11:20:05 2024] BTRFS warning (device loop40): couldn't
-> read tree root
-> [gio lug  4 11:20:05 2024] BTRFS error (device loop40): open_ctree failed
->
-> > In the meanwhile, just curious: are you using swapfiles on btrfs?
->
-> never used on BTRFS (i have a dedicated nvme partition).
->
-> Same effect also disabling the swap, btw, and thp.
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 5d91259ee7b5..a9f08a2bd1c6 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -89,7 +89,7 @@ config ARM64
+ 	select ARCH_SUPPORTS_DEBUG_PAGEALLOC
+ 	select ARCH_SUPPORTS_HUGETLBFS
+ 	select ARCH_SUPPORTS_MEMORY_FAILURE
+-	select ARCH_SUPPORTS_SHADOW_CALL_STACK if CC_HAVE_SHADOW_CALL_STACK
++	select ARCH_SUPPORTS_SHADOW_CALL_STACK if CC_HAVE_SHADOW_CALL_STACK && (!RUST || CAN_UNWIND_PATCH_PAC_INTO_SCS)
+ 	select ARCH_SUPPORTS_LTO_CLANG if CPU_LITTLE_ENDIAN
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
+ 	select ARCH_SUPPORTS_CFI_CLANG
+@@ -2262,12 +2262,16 @@ config STACKPROTECTOR_PER_TASK
+ 	def_bool y
+ 	depends on STACKPROTECTOR && CC_HAVE_STACKPROTECTOR_SYSREG
+ 
+-config UNWIND_PATCH_PAC_INTO_SCS
+-	bool "Enable shadow call stack dynamically using code patching"
++config CAN_UNWIND_PATCH_PAC_INTO_SCS
++	def_bool y
+ 	# needs Clang with https://github.com/llvm/llvm-project/commit/de07cde67b5d205d58690be012106022aea6d2b3 incorporated
+ 	depends on CC_IS_CLANG && CLANG_VERSION >= 150000
+ 	depends on ARM64_PTR_AUTH_KERNEL && CC_HAS_BRANCH_PROT_PAC_RET
+-	depends on SHADOW_CALL_STACK
++
++config UNWIND_PATCH_PAC_INTO_SCS
++	bool "Enable shadow call stack dynamically using code patching" if !RUST
++	depends on SHADOW_CALL_STACK && CAN_UNWIND_PATCH_PAC_INTO_SCS
++	default y if RUST
+ 	select UNWIND_TABLES
+ 	select DYNAMIC_SCS
+ 
+
+Otherwise, it might be good to wait to enable this until [1] is
+addressed, but I don't really feel that strongly about it.
+
+From a Kconfig/Kbuild perspective, the rest of the patch seems fine.
+
+> Link: https://github.com/rust-lang/rust/issues/121972 [1]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  Makefile            | 1 +
+>  arch/Kconfig        | 2 +-
+>  arch/arm64/Makefile | 3 +++
+>  3 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index c11a10c8e710..4ae741601a1c 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -945,6 +945,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
+>  ifndef CONFIG_DYNAMIC_SCS
+>  CC_FLAGS_SCS	:= -fsanitize=shadow-call-stack
+>  KBUILD_CFLAGS	+= $(CC_FLAGS_SCS)
+> +KBUILD_RUSTFLAGS += -Zsanitizer=shadow-call-stack
+>  endif
+>  export CC_FLAGS_SCS
+>  endif
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index 238448a9cb71..5a6e296df5e6 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -690,7 +690,7 @@ config SHADOW_CALL_STACK
+>  	bool "Shadow Call Stack"
+>  	depends on ARCH_SUPPORTS_SHADOW_CALL_STACK
+>  	depends on DYNAMIC_FTRACE_WITH_ARGS || DYNAMIC_FTRACE_WITH_REGS || !FUNCTION_GRAPH_TRACER
+> -	depends on !RUST
+> +	depends on !RUST || RUSTC_VERSION >= 108000
+>  	depends on MMU
+>  	help
+>  	  This option enables the compiler's Shadow Call Stack, which
+> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> index 3f0f35fd5bb7..bbf313ddd700 100644
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -57,9 +57,11 @@ KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
+>  ifneq ($(CONFIG_UNWIND_TABLES),y)
+>  KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
+>  KBUILD_AFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
+> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=n
+>  else
+>  KBUILD_CFLAGS	+= -fasynchronous-unwind-tables
+>  KBUILD_AFLAGS	+= -fasynchronous-unwind-tables
+> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=y -Zuse-sync-unwind=n
+>  endif
+>  
+>  ifeq ($(CONFIG_STACKPROTECTOR_PER_TASK),y)
+> @@ -114,6 +116,7 @@ endif
+>  
+>  ifeq ($(CONFIG_SHADOW_CALL_STACK), y)
+>  KBUILD_CFLAGS	+= -ffixed-x18
+> +KBUILD_RUSTFLAGS += -Zfixed-x18
+>  endif
+>  
+>  ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
+> 
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
 
