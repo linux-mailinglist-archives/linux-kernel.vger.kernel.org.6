@@ -1,111 +1,172 @@
-Return-Path: <linux-kernel+bounces-240624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A27B92700A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:53:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 838A592700F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35D552837A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:53:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFA29B226AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E571E1A0AF4;
-	Thu,  4 Jul 2024 06:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67FD1A08D3;
+	Thu,  4 Jul 2024 06:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWXH+V1t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jyRLZnwp"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FB51A08D3;
-	Thu,  4 Jul 2024 06:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC461A0AE0
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 06:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720076026; cv=none; b=D1ZLYkF19MUOfLm9clupd3LMNCuukDatEu71AD2D7leo3zhHiirItDXt3dvRN3SbCMCBe92Vpl7AwKH+vVtsGWrZG32JgaFiRcEf5/85Sjv7KkIUN4AR5KMCus0F4cZYszf79F41PWTfcGjXPIcPaI6U9nZLXUa9MMIp9gYkJB4=
+	t=1720076053; cv=none; b=R6yE3fODQFwVx03icxRZWBhY0rXkxxK1x7PYRXcMEwMu7PD9b3yctVV5xrC+KW6D6ArN7ZGqkcU8jjMDr3RUMuVLkUSQbZ/4oY9zMzbgokGlM9VFU8lRDNkzRvV+X7GsMi1+rCPF9SoY6sBLfM792u0F6gVkb3rUtDtKwVfQs/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720076026; c=relaxed/simple;
-	bh=XpBKHREWWrOpAVmrr3cqwhW8eNYjs451N1BNIUwh8YU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=tDzsifMCj+EANZJTPEmI1UnP8YhCDkKAOS0wuAfy/bD2r5nldf78CxCSFqKSVHui1YTmEO6/iBTcB2guatk0p/CJAnVjmObAkh4MQfwq5mPD310WG5Wj79fwtVuFeBR7Jj2Zf/X2rQVLDwu355W3QUXINYdKPTIGelgxM1KHxdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWXH+V1t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D89AC3277B;
-	Thu,  4 Jul 2024 06:53:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720076025;
-	bh=XpBKHREWWrOpAVmrr3cqwhW8eNYjs451N1BNIUwh8YU=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=hWXH+V1tdGCGnN4DgKdjCeM9e0YJA1R0ng/htnVdsG8xll7rxBCIdOak2G8X8yi0b
-	 CMyNXGqDxbtHyCzxWQpcZTYUJ7MuE1Zs82XKDlKtQO6H3wIHSY16NKDvb7YuhulteS
-	 WSwY/Nm7Ocrzp6kTvWVNB7ZBs98khoMo/09ZxWxyTXkf1/DM6I5dQ5/tERbXp/iwSL
-	 pATwz3S1tiXyiykumhHwEvyZ+EddLWch2p0bxD+NUsWZbMMQu2QTfjTqaf/gI12+cU
-	 i3L+9+K9/uJfLYGO75OPIesYF8DutZQRocLXgI0wqCvo/uhTQe9k1u7NtHUpdgusgx
-	 Um4mb9sOheKIA==
+	s=arc-20240116; t=1720076053; c=relaxed/simple;
+	bh=+acP1k0Nkw7OnsyYvGJb6tDt5gJNkeqeIL3W8k34Rd8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LKvXGuMsJ4Tg3rIoQfLivuVjYB+lGnw2/EkDp9ZjLjv0WW5md/kR0aycBi842lt8LnfZULvu5tRuXdybCNTIb8KVwlVMfuz/NuWVn8T89mKdW7vkFNB2pcr0rkVpNIS2HFn2HsjEYUDx+TY1/6Q+oyu+p9Tt8YpN9ZsYXYamzkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jyRLZnwp; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6e7e23b42c3so163874a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 23:54:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720076051; x=1720680851; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OaHuA4w4nVtdao/fLWo0eQBQ8CqjNDauvvbmii8lIbw=;
+        b=jyRLZnwpjkOdnBn4D5akngZ4DnqIj/v8KX8z/18vBF55UFSm6P/gv/mRsr/qseExRG
+         kR5kbZqqoU+ps3+95XFjrhMutJvehOg3rSxqyF0dHxfBu8g+cVpbOVCtEthz6KophVLo
+         O2UQriFQ0iLASVKrqGZ8+XrZ8mPHHQs2XQlK7Y3KOMkeL+wmwwd0vTAYPucD0I5GCum4
+         v93ejIBc2cVAt3GtCuZLuiZVTcYBXuM+gX3qlwxHVrdoB1FyRpI0mT0Ii6JnrlILkNeS
+         zciZfHGq6n2jgx1otgOpQQ9bn0W1BImhojqf5UllQYLGEXaWBeN4RjzKjX6urGukrF4+
+         BWsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720076051; x=1720680851;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OaHuA4w4nVtdao/fLWo0eQBQ8CqjNDauvvbmii8lIbw=;
+        b=RTGmf9X5QsNCvBTiMLRvKvD9Yl6uzc/ncGW23QOGCdXFdMRHm0l0OLOXbhC3ytV0Pr
+         iLduQnQqNggmkzIhgRU0vMX3Om/Z6CDD95r/Mnr1ERIUpojdlbU4IrSskblk3QrD7Oov
+         CcxQkcDgPi5qEwm2pi5+AC3BmCoe01p6SvrniGkdH2wVXP5T5FjHO7amNERVuPnrKWPK
+         UC/IgIHaT/iisLhYnWKTFbKbrsgCrzj1GettgZF3jYCJVQkRKcl2Mjipc3HFODxH7yz6
+         vRrNHoyRMQpbNWBYBaMPi67iJ9XcLry9mtil2Xv7tePih6/NOckKpmnVBIB4Qia1Vktj
+         pe8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXw14zlnG5oC7QbN/Kh9YencnC+9QlsxX6bkWENduvQaZWSQ+keuuiMAn7Hb9sG2EAjPBgbYFuEzoFUerbgykF1hX3Y5JhwjBspzGIr
+X-Gm-Message-State: AOJu0YzuMMttECBwaMch05qJHbF9aQvYgM/qjg3Il+5127S4Wi7GdJKK
+	Paany0eRf59DHi/cI04rxDlQKl35bGdL2je/KQzp7lLKg9gHN+kxIMNA/GmK7fY=
+X-Google-Smtp-Source: AGHT+IFgHGJtYuDCHwF2hfQyaKB/hypmybNqgZV2mdKvHoDVjRkC1GVw1vaa0cTn5Yput+q/r8OwGA==
+X-Received: by 2002:a05:6a20:2594:b0:1be:f080:6d27 with SMTP id adf61e73a8af0-1c0cc742219mr739965637.22.1720076050677;
+        Wed, 03 Jul 2024 23:54:10 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a989416sm711460a91.29.2024.07.03.23.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 23:54:10 -0700 (PDT)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Hector Martin <marcan@marcan.st>,
+	Huang Rui <ray.huang@amd.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Markus Mayer <mmayer@broadcom.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-tegra@vger.kernel.org,
+	Lizhe <sensor1010@163.com>
+Subject: [PATCH 0/4] cpufreq: Make cpufreq_driver->exit() return void
+Date: Thu,  4 Jul 2024 12:23:51 +0530
+Message-Id: <cover.1720075640.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 04 Jul 2024 09:53:40 +0300
-Message-Id: <D2GK2755HE3O.2IGY7W4280Z90@kernel.org>
-Cc: "Thorsten Leemhuis" <regressions@leemhuis.info>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, <stable@vger.kernel.org>, "Stefan Berger"
- <stefanb@linux.ibm.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Ard
- Biesheuvel" <ardb@kernel.org>, "Mario Limonciello"
- <mario.limonciello@amd.com>, <linux-kernel@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] tpm: Address !chip->auth in
- tpm_buf_append_name()
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
- <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240703182453.1580888-1-jarkko@kernel.org>
- <20240703182453.1580888-3-jarkko@kernel.org>
- <922603265d61011dbb23f18a04525ae973b83ffd.camel@HansenPartnership.com>
-In-Reply-To: <922603265d61011dbb23f18a04525ae973b83ffd.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Jul 3, 2024 at 11:11 PM EEST, James Bottomley wrote:
-> On Wed, 2024-07-03 at 21:24 +0300, Jarkko Sakkinen wrote:
-> [...]
-> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> > index 21a67dc9efe8..2844fea4a12a 100644
-> > --- a/include/linux/tpm.h
-> > +++ b/include/linux/tpm.h
-> > @@ -211,8 +211,8 @@ struct tpm_chip {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 null_key_name[TPM2_N=
-AME_SIZE];
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 null_ec_key_x[EC_PT_=
-SZ];
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 null_ec_key_y[EC_PT_=
-SZ];
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct tpm2_auth *auth;
-> > =C2=A0#endif
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct tpm2_auth *auth;
-> > =C2=A0};
->
-> Since auth should only be present if CONFIG_TCG_TPM2_HMAC this is
-> clearly an undesirable thing to do.  I think you did it because in a
-> later patch you want to collapse the hmac sessions to use a single
-> routine, but you can make that check with the preprocessor __and
-> function defined in kconfig.h:
->
-> if (__and(IS_ENABLED(CONFIG_TCG_TPM2_HMAC), chip->auth))
->
-> Which will become 0 if the config is not enabled and chip->auth if it
-> is, thus eliminating the code in the former case while not causing the
-> compiler to complain about chip->auth not being defined even if it's
-> under the config parameter.
+Make exit() return void, since it isn't used by the core.
 
-I did not know about '__and()'. Thanks I'll use this!
+Based on initial patches sent by Lizhe [1].
 
->
-> James
+Rafael, I will take this through my tree for 6.11.
 
-BR, Jarkko
+--
+Viresh
+
+[1] https://lore.kernel.org/all/20240410132132.3526-1-sensor1010@163.com/
+
+Lizhe (1):
+  cpufreq: Make cpufreq_driver->exit() return void
+
+Viresh Kumar (3):
+  cpufreq: nforce2: Remove empty exit() callback
+  cpufreq: loongson2: Remove empty exit() callback
+  cpufreq: pcc: Remove empty exit() callback
+
+ drivers/cpufreq/acpi-cpufreq.c         |  4 +---
+ drivers/cpufreq/amd-pstate.c           |  7 ++-----
+ drivers/cpufreq/apple-soc-cpufreq.c    |  4 +---
+ drivers/cpufreq/bmips-cpufreq.c        |  4 +---
+ drivers/cpufreq/cppc_cpufreq.c         |  3 +--
+ drivers/cpufreq/cpufreq-dt.c           |  3 +--
+ drivers/cpufreq/cpufreq-nforce2.c      |  6 ------
+ drivers/cpufreq/e_powersaver.c         |  3 +--
+ drivers/cpufreq/intel_pstate.c         |  8 +++-----
+ drivers/cpufreq/loongson2_cpufreq.c    |  6 ------
+ drivers/cpufreq/mediatek-cpufreq-hw.c  |  4 +---
+ drivers/cpufreq/mediatek-cpufreq.c     |  4 +---
+ drivers/cpufreq/omap-cpufreq.c         |  3 +--
+ drivers/cpufreq/pasemi-cpufreq.c       |  6 ++----
+ drivers/cpufreq/pcc-cpufreq.c          |  6 ------
+ drivers/cpufreq/powernow-k6.c          |  5 ++---
+ drivers/cpufreq/powernow-k7.c          |  3 +--
+ drivers/cpufreq/powernow-k8.c          |  6 ++----
+ drivers/cpufreq/powernv-cpufreq.c      |  4 +---
+ drivers/cpufreq/ppc_cbe_cpufreq.c      |  3 +--
+ drivers/cpufreq/qcom-cpufreq-hw.c      |  4 +---
+ drivers/cpufreq/qoriq-cpufreq.c        |  4 +---
+ drivers/cpufreq/scmi-cpufreq.c         |  4 +---
+ drivers/cpufreq/scpi-cpufreq.c         |  4 +---
+ drivers/cpufreq/sh-cpufreq.c           |  4 +---
+ drivers/cpufreq/sparc-us2e-cpufreq.c   |  3 +--
+ drivers/cpufreq/sparc-us3-cpufreq.c    |  3 +--
+ drivers/cpufreq/speedstep-centrino.c   | 10 +++-------
+ drivers/cpufreq/tegra194-cpufreq.c     |  4 +---
+ drivers/cpufreq/vexpress-spc-cpufreq.c |  5 ++---
+ include/linux/cpufreq.h                |  2 +-
+ 31 files changed, 37 insertions(+), 102 deletions(-)
+
+-- 
+2.31.1.272.g89b43f80a514
+
 
