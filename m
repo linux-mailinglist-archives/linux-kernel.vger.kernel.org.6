@@ -1,112 +1,117 @@
-Return-Path: <linux-kernel+bounces-240841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859AE927375
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:58:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B06EB92737C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE93A1C21C2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:58:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E25921C21D2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB7D1AB901;
-	Thu,  4 Jul 2024 09:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1661AB8F6;
+	Thu,  4 Jul 2024 09:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FXiYq9Nn"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lGzONv9m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1801AB515
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7AD18FC81;
+	Thu,  4 Jul 2024 09:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720087080; cv=none; b=nDNP686LQoEEIYXGy3H+QzT/8zo6CHJ7SViWnd/tEvD9Z/7cMAPROVzZDYxE1vAu9prB+Fup3ny1OjQrenYdZzWbg7Lh8UPxvimFmhhIgfLyAMgIFIo68Q4vIlTZPZPcnpO42Nj0N7SE8CqWlctF8P930wuOELHRrYsqXxNN1hA=
+	t=1720087143; cv=none; b=MSW0VHEGIDHRE8si+RTB4EzIssCsUhLyjfFy3J5qbL0UI+Z7YDiNaIu7oQmTuR6psGc7X1c7Ergj4nP7glYFvM6rh0MftslnuHeG1J8q0w11gr2PVOkIG3wCqNTCqyLDSSRqgXgbTcsvp7kGRdeW8Qi7ZalrhaOYKpd7dYvaBxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720087080; c=relaxed/simple;
-	bh=YmOK4m5U6cknSGVhyDKOumu5MtRiP66NRo0AL7Q58Rc=;
+	s=arc-20240116; t=1720087143; c=relaxed/simple;
+	bh=qwr0HlQT+E3A2hy1BA/HWVICCAADse5XNZIpsoHJffU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxwbBfAcVBHAyTtExaaGUpGDdGLdwnlAbwTaVqavNeH00eCnTp/ePQACMr/V8JwyFphkuDgDtww9z4ACjWUrFRTs5R6OaZLnVDiifIOQs2UDHYXR4H7PtoJgcBSjiOl6+xHCFryhv4PGtFp4n2RPQODLl1SKCW7Kv1UZ/pxHtPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FXiYq9Nn; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=YmOK
-	4m5U6cknSGVhyDKOumu5MtRiP66NRo0AL7Q58Rc=; b=FXiYq9NnYgeLYeH48jgZ
-	29xI2S96eODs/TZidl+XUBpi00eVU1OCBBDFn1zSO75nlzwyRkCVPQk9tQE+svrf
-	L00M41Q6umF2vxRpkUgXLkrbYhqOXwYjpDN5S/dykHmbmInqL0OmnC8fAYQaScYG
-	JfMW44BP1/Q+br+y40Ly81oGb42WWbXFiA4Msf7B6x3ZlwYqOPxfgDA1wZZzvOcH
-	vOHVSzkkQwBPI4O9aFyX7umKP40Gs0OaUKiYJUtc+f2Q9J/3CV9SZJaUY/RWE3fT
-	W4omk3/qnj6qOceuBrWFIO5UCl6o9ZiLLSfa3i4RZkZfi2qI/Tn14Q92lKE8Biso
-	vg==
-Received: (qmail 3114843 invoked from network); 4 Jul 2024 11:57:48 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Jul 2024 11:57:48 +0200
-X-UD-Smtp-Session: l3s3148p1@M7mn+mgcwZJtKPBS
-Date: Thu, 4 Jul 2024 11:57:47 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] i2c: rcar: bring hardware to known state when probing
-Message-ID: <ZoZyGzMquiIMwAni@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240703071625.5389-1-wsa+renesas@sang-engineering.com>
- <g6mthbu3bbg2vl3aobci2gx7lbfy4qbiy7cy43v7wwgjldauc3@qv4yrctu2bmf>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mX3xkLKnBA1nt5E3L6RUJHphp43tZEBzyggkGAhaja5sZsARTMOrEnEC3P5ZlBhC8FhogV4TOJjHri2pHly0BIRo3Wio82WXgis8Wy/qj8RwkSVzIc5Txwni+1hNZkbn17GC5SCdf8+uKXD+H5lS7jxn8Eswu+Ut/yxCYpaP1nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lGzONv9m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB81C3277B;
+	Thu,  4 Jul 2024 09:59:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720087142;
+	bh=qwr0HlQT+E3A2hy1BA/HWVICCAADse5XNZIpsoHJffU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lGzONv9m4mYXt24+d067cOIRY3kEXZWZE+UrGj8RfjMB7mu8B68bEj5Q+zfS6QhKp
+	 lFXxg3kOqVAwM6O8k5G2E0i4J0Z/Qjm6f8Ep312Wy74HrzLeiLJgW9VQfmJizA59J3
+	 v6H9U/Z2HNTrkO1PtvkaMJGD7eWWEvV6k6ey31dz4SX7ynl4m4PM7CSAEBjJLzTH5P
+	 mimkOxbXCg8UbyvnQ7vrTF93vI3kuyEhdg3ULjRgd+5U3ppMpDNYC3pDo3wIiZFIY1
+	 aR8sZE2GSwsuNj2OZfh3kF3/gygUk2mspCjA0mnDEISdrg566irxQipw3VmRKbGm9T
+	 rEaBH9VsIMZLw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sPJEz-000000007iG-28dB;
+	Thu, 04 Jul 2024 11:59:02 +0200
+Date: Thu, 4 Jul 2024 11:59:01 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] serial: qcom-geni: fix hard lockup on buffer flush
+Message-ID: <ZoZyZcVyLvI9t4fH@hovoldconsulting.com>
+References: <20240624133135.7445-1-johan+linaro@kernel.org>
+ <20240624133135.7445-2-johan+linaro@kernel.org>
+ <CAD=FV=VZXnnbwTNc6dSqZvyCUc0=Wjg9mvBYsA1FJK3xR6bDEg@mail.gmail.com>
+ <ZnrW5EcGKGYzS8qf@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Q0VeMWD0tWzjOhbn"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <g6mthbu3bbg2vl3aobci2gx7lbfy4qbiy7cy43v7wwgjldauc3@qv4yrctu2bmf>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZnrW5EcGKGYzS8qf@hovoldconsulting.com>
 
+On Tue, Jun 25, 2024 at 04:40:36PM +0200, Johan Hovold wrote:
+> On Mon, Jun 24, 2024 at 10:39:07AM -0700, Doug Anderson wrote:
+> > On Mon, Jun 24, 2024 at 6:31 AM Johan Hovold <johan+linaro@kernel.org> wrote:
+> > >
+> > > The Qualcomm GENI serial driver does not handle buffer flushing and used
+> > > to print garbage characters when the circular buffer was cleared. Since
+> > > commit 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo") this
+> > > instead results in a lockup due to qcom_geni_serial_send_chunk_fifo()
+> > > spinning indefinitely in the interrupt handler.
+> > >
+> > > This is easily triggered by interrupting a command such as dmesg in a
+> > > serial console but can also happen when stopping a serial getty on
+> > > reboot.
+> > >
+> > > Fix the immediate issue by printing NUL characters until the current TX
+> > > command has been completed.
 
---Q0VeMWD0tWzjOhbn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > I don't love this, though it's better than a hard lockup. I will note
+> > that it doesn't exactly restore the old behavior which would have
+> > (most likely) continued to output data that had previously been in the
+> > FIFO but that had been cancelled.
+> 
+> Ah, yes, you're right. I went back and compared with 6.9 and the effect
+> was indeed (often) that the machine felt sluggish when you hit ctrl-c to
+> interrupt something like dmesg and the driver would continue to print up
+> to 4k characters after that (e.g. 350 ms at 115200).
+> 
+> The idea here was to fix the lockup regression separately and then have
+> the third patch address the buffer flush failure, which could also be
+> backported without depending on the kfifo conversion.
+> 
+> But running with this series since yesterday, I realise there are still
+> some unresolved interaction with the console code, which can now trigger
+> a soft (instead of hard) lockup on reboot...
 
+I've reworked my series to avoid the remaining lockup, which was due to
+v1 not handling some cases where cancelling a command left stale data in
+the fifo.
 
-> Do we need the Fixes tag here?
+I've also reordered the patches to avoid printing NUL characters as an
+intermediate fix.
 
-We can add the initial commit for this driver. That means the commit
-message is wrong because refactorization is not the culprit. So, I will
-resend with Fixes-tag and updated commit message.
-
-> Looks reasonable. If testing is fine I can queue this up for this
-> week's pull request.
-
-First testing looks good. I will do some more.
-
-
---Q0VeMWD0tWzjOhbn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaGchcACgkQFA3kzBSg
-KbZEaw/+KSzAAXpVn6oMqen9AX/HHUDoFwzhp+2JzAnLG8MS9FA7mznH4INlKByj
-fb23DkO5qm7JOt/eoAhjV69kSrQYusFNbz/UbjVZV6R717+rzhEDmi6InOlgF0cA
-W3WBQ6sTUPAv8ts0X5crBKVr4YQ3sK+mB+RPXJfUn9FjW/RzTHJkWOuVAP7RFIEv
-nR1yu946og0uhpuieSfF55cp+hjFby9NLOMROmSgUcslrr6tjiQSFvS1h678tFYZ
-eBogpPwDo2vrBkMM+5o90C6dNLieFTSCS5PLrXkMQOtJoRD8GCkTsBM1sRHwH2/0
-JVl938Pdd1S862z2Q03rFQEkEU7H9Z3xI189CBpTYNHMiudZfhgBbKGH1pAEPsZG
-AqxWGW1WAi25aERNnb7l/OHQ8kRItnaNofyR+MTGKuHcDXcOi442pxECi2hrYlSz
-d8MKsUXZ2TI6xWw+MpZ2wAXClwaKAAD2PLBVDntLyrJlXpPO9cSNfeuRL9CpF8p5
-RBEf0ftFcKsGoumr+1VWT4g/EcLJTZ1co5yhcLdP40cOUzn9s4fJIPzsUHdK2JcY
-45/R/xHYlsoN0rM32JryqUt8X9LzhWj8avVygAO8p+i+l7bBgKgY/0lv3Mt9HWJS
-KuaUtKeoZ81MqIur4upYkC8pW3grgph/ELObrZ+3Vj/aVVy394w=
-=Yhm0
------END PGP SIGNATURE-----
-
---Q0VeMWD0tWzjOhbn--
+Johan
 
