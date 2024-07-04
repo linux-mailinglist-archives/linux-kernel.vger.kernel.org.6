@@ -1,195 +1,153 @@
-Return-Path: <linux-kernel+bounces-241639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DF2927D70
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:02:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57AE6927D6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACF49B222F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:02:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8882A1C2318A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC43132122;
-	Thu,  4 Jul 2024 19:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9820813958F;
+	Thu,  4 Jul 2024 19:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="mQxfqbiW";
-	dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="PfbQKpq/"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.81])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T0AlOo1M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479F861FE7;
-	Thu,  4 Jul 2024 19:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720119713; cv=pass; b=h6ZZHvg3LP9UK0U5hDhRIiKami96/yHLhdf26WMordHK6pPruejGwYfk3Cws9fAS8Hw8t6wbRPjlbRuv0NJuRkrt0Mzkl2jThegcK4Q5PCqq3WAKXb7w1RI4gZo5LrweK+8Bn0qeIl3ziZYKQXGEk/WijltFygKNPsDIubHj1kE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720119713; c=relaxed/simple;
-	bh=k1nFAQI+oZ1dJfJaPTdzgzXQOrsrZGBEskWuZjoPA5o=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=I48vR361hxqjHkDw1rBW2atuptllM9kKRMmXgOiilBtDt5rglVDc0+Ijgkaodz9ax67FZlXdybzLfj/ESLzSLMikzWwFtcfzsIp+FDLlY3o7xA4OTGtCFtLkqbbQFa1WG9K0oTPeAXwm0Q8lMYjZC2/n9agdMPMCg9fR5v0D2qc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de; spf=none smtp.mailfrom=xenosoft.de; dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=mQxfqbiW; dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=PfbQKpq/; arc=pass smtp.client-ip=85.215.255.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=xenosoft.de
-ARC-Seal: i=1; a=rsa-sha256; t=1720119521; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=R2OKa8uar4LMLdXGcdJNgLtz/M2pzcV12YyN2a99fJazWGNB+oQS8R6X53/jwiqt6D
-    lVv8/gjgvzdQMNj0oTdxwOBNN2ZMB4yAMNY38qFBqCZDWvd5AAq50Rdb4PpatJTbIEzg
-    AM9emp5n9m/1gEwoMR8xGZIKF2wbv+4FifozK6a/F89nwf09HgmKY0lfDt/PbPsWD1sj
-    /cx9ksb2jxL3G+k5jPQ/14tfWfE0pBwjzh2I5WpLnUxOVhEfnC1m63lr2FJct4tGr7Ba
-    nwVcD50Hyu2NFIYHcu/4WERxKwHMbylkjiy9SNVXH9CbYQBZSA6P9BUDNdH41nZwnWnU
-    l7cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1720119521;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Cc:To:From:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=BslT/2fg7mlj0cn70yAR1at5reI4vwwa/29bm/p6uqU=;
-    b=d9irVQE4EGOQoaZS0oVve+ubnoYzO6XoEvjM0TWxExpKT+zA9rcdu+3X4WLypfNNFQ
-    PVZtooFBYMxkiyUGDUtuq/u7Gasjvd6KThOU7eEJx/bHLDIEVWmipHCcHhB65bEwYcQr
-    zXSjstrIwWjedcTojYn99cGj/s3tcRoptG7ppkjswScJBoCZtTzY+kUne5qyZgFyOJr1
-    OAfvtly6Sj+XrS4dzBb7JWuhcdk6IGCBiA5C8LxMQ2xCVn6lDdBGTBokPhiExH9oab5F
-    DLG6mmERKHcQHAbxBdATKlNF5SWS9hk69rC4nwo1wtBmC490zjAmTNacJi3U5sfjVFno
-    i3fQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1720119521;
-    s=strato-dkim-0002; d=xenosoft.de;
-    h=In-Reply-To:References:Cc:To:From:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=BslT/2fg7mlj0cn70yAR1at5reI4vwwa/29bm/p6uqU=;
-    b=mQxfqbiWoPlYiRW5yDXDyjwlMXq8Dbfyfm4b6S7p7ZI0P8Jcwem22SRu2/gUb2xKGK
-    0c4iSZQrBDR01yMAYxcBeX8V/AUIC5IoIEMYuXMf5zB8igM3F0qstsxdmxy/HCBUp2K1
-    lHW58SJy8JpesvcWl7kT+voYO8+qjRGmxi3IUGLbrbSjBj+Koj9Pat6tX/xdAxGa21aJ
-    I0hjPdMyg2dOBjfuESKwyiSnV2iRPPNrWsrZ4oCHfv6hzfcqcCIIWeXXVi+DZKH4qlIT
-    al6RcRQ6eLm8ibu6SyaED7boopjXGG2+Wa4FndtLqsYc9fSjQujz9bi7b2vVZPjan8sX
-    0y3w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1720119521;
-    s=strato-dkim-0003; d=xenosoft.de;
-    h=In-Reply-To:References:Cc:To:From:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=BslT/2fg7mlj0cn70yAR1at5reI4vwwa/29bm/p6uqU=;
-    b=PfbQKpq/Ofcrmk17ZZrVeSZH5Z6shH5tqBKS3UTGHKt84AXQFfULB5fc+/6+HHkwgL
-    ONksLpEDqLwb4qB1QVBg==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHvJzedR43JwnbXz/kFsuSUCat82PJROdEuWUwpcR8HY5"
-Received: from [IPV6:2a01:599:806:6955:6d1:546c:8e64:4d8]
-    by smtp.strato.de (RZmta 50.5.0 AUTH)
-    with ESMTPSA id e08389064IwfUB2
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 4 Jul 2024 20:58:41 +0200 (CEST)
-Message-ID: <dfc7ec00-5216-4590-9347-ee10cd1e8380@xenosoft.de>
-Date: Thu, 4 Jul 2024 20:59:16 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA086CDA1
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 19:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720119651; cv=none; b=AUtmE8f5O1KBzVWpxQJTQdHD7AfLcmJlz8psUnfl73B0pcr5Y36lmNtJzXwGLtqd5RTnUlGiftmNek1mZLCS3EQg60de7ZFzZScETyRiWjg4sfEWM/jXj+IBz3lMpF9Mbcx8BRowEXXkQcyxakqT6FDQH/LgGeWeiLxiDMHFaV0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720119651; c=relaxed/simple;
+	bh=NtItNwO/2aCZjg4nZ5dSSeFSK1mQZv/1XB0GzdvLLhc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cX23Qrsv3LOS7xnPaYat90iiu5EqtNQ/bRuNrePTffV5sb6BP6uWXYAHoXdJVFLB3xZNMZr2Nk3Dzv03pXtlE+9H9VnhPBWPWOLRD6P/MAWOivdw2jvgd60XQNDTf7I9Hj4aOEbCQRD4WF5OdkhKNPjOJfS6RPzPFkEKndnzqcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T0AlOo1M; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720119649;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W/qwYn98KjC1XCfQ1ZEHhXRILHt8fBZuMz3Loy8zZv8=;
+	b=T0AlOo1MYZs+2lGmHgIjeZs/vOmESOoMMaOe1+GfG0FqolfJC3FJFX4s2RUK64jS9F6J7w
+	0UbYGYhey2uZRAVJK991g+oRGUrzZBUvJTXEI0B8Pt8XANV5BIwu1t0B3BGmT9RYXiDPqC
+	ik2ynn/WCoRA9Pqy6uAslQR+dMJ5oDU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-513-9qNX2hRbPFeIQ2o1uxLQ2A-1; Thu,
+ 04 Jul 2024 15:00:45 -0400
+X-MC-Unique: 9qNX2hRbPFeIQ2o1uxLQ2A-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5622B1955F49;
+	Thu,  4 Jul 2024 19:00:43 +0000 (UTC)
+Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D70F3000180;
+	Thu,  4 Jul 2024 19:00:42 +0000 (UTC)
+Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
+	id EB62130C1C14; Thu,  4 Jul 2024 19:00:40 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id E8BE23FB5B;
+	Thu,  4 Jul 2024 21:00:40 +0200 (CEST)
+Date: Thu, 4 Jul 2024 21:00:40 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Li Dong <lidong@vivo.com>, Damien Le Moal <dlemoal@kernel.org>, 
+    Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, 
+    Jens Axboe <axboe@kernel.dk>
+cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    "open list:DEVICE-MAPPER  (LVM)" <dm-devel@lists.linux.dev>, 
+    open list <linux-kernel@vger.kernel.org>, opensource.kernel@vivo.com, 
+    linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Non-power-of-2 zone size (was: [PATCH] dm-table:fix zone block_device
+ not aligned with zonesize)
+In-Reply-To: <cd05398-cffa-f4ca-2ac3-74433be2316c@redhat.com>
+Message-ID: <c4ee654e-3120-e1a9-80b6-cb7073aa5c1a@redhat.com>
+References: <20240704151549.1365-1-lidong@vivo.com> <cd05398-cffa-f4ca-2ac3-74433be2316c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives
- after the of/irq updates 2024-05-29
-Content-Language: en-US
-From: Christian Zigotzky <chzigotzky@xenosoft.de>
-To: Michael Ellerman <mpe@ellerman.id.au>, Marc Zyngier <maz@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, apatel@ventanamicro.com,
- DTML <devicetree@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
- mad skateman <madskateman@gmail.com>, "R.T.Dickinson" <rtd2@xtra.co.nz>,
- Matthew Leaman <matthew@a-eon.biz>, Darren Stevens
- <darren@stevens-zone.net>, Christian Zigotzky <info@xenosoft.de>
-References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
- <86zfqzhgys.wl-maz@kernel.org>
- <ccf14173-9818-44ef-8610-db2900c67ae8@xenosoft.de>
- <874j95jrur.fsf@mail.lhotse>
- <3baff554-e8f6-42b0-b931-207175a4d8fd@xenosoft.de>
-In-Reply-To: <3baff554-e8f6-42b0-b931-207175a4d8fd@xenosoft.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 04.07.24 20:27, Christian Zigotzky wrote:
-> On 04.07.24 13:53, Michael Ellerman wrote:
->> Christian Zigotzky <chzigotzky@xenosoft.de> writes:
->>> On 02.07.24 18:54, Marc Zyngier wrote:
->>>> On Sun, 30 Jun 2024 11:21:55 +0100,
->>>> Christian Zigotzky <chzigotzky@xenosoft.de> wrote:
->>>>> Hello,
->>>>>
->>>>> There is an issue with the identification of ATA drives with our
->>>>> P.A. Semi Nemo boards [1] after the
->>>>> commit "of/irq: Factor out parsing of interrupt-map parent
->>>>> phandle+args from of_irq_parse_raw()" [2].
->> ...
->>>> --- a/drivers/of/irq.c
->>>> +++ b/drivers/of/irq.c
->>>> @@ -282,8 +282,10 @@ int of_irq_parse_raw(const __be32 *addr, 
->>>> struct of_phandle_args *out_irq)
->>>>                   oldimap = imap;
->>>>                imap = of_irq_parse_imap_parent(oldimap, imaplen, 
->>>> out_irq);
->>>> -            if (!imap)
->>>> -                goto fail;
->>>> +            if (!imap) {
->>>> +                match = 0;
->>>> +                break;
->>>> +            }
->>>>                   match &= of_device_is_available(out_irq->np);
->>>>                if (match)
->>>>
->>>>
->>> We tested this patch yesterday and it solves the boot problem.
->> Hi Christian,
->>
->> Instead of that patch, can you try the one below. AFAICS the device tree
->> fixups done in early boot mean the interrupt-map is not needed, and also
->> has the wrong content, so if we can remove it entirely that might avoid
->> the problems in the parsing code.
->>
->> I don't know if your firmware actually implements those methods, I
->> couldn't find anything online to confirm or deny it. Seems the only
->> option is to test it.
->>
->> cheers
->>
->>
->> diff --git a/arch/powerpc/kernel/prom_init.c 
->> b/arch/powerpc/kernel/prom_init.c
->> index fbb68fc28ed3..28fe082ede57 100644
->> --- a/arch/powerpc/kernel/prom_init.c
->> +++ b/arch/powerpc/kernel/prom_init.c
->> @@ -3138,6 +3138,14 @@ static void __init fixup_device_tree_pasemi(void)
->>         prom_setprop(iob, name, "interrupt-controller", &val, 0);
->>   +    prom_printf("nemo: deleting interrupt-map properties\n");
->> +    rc = call_prom("interpret", 1, 1,
->> +              " s\" /pxp@0,e0000000\" find-device"
->> +              " s\" interrupt-map\" delete-property"
->> +              " s\" interrupt-map-mask\" delete-property"
->> +              " device-end");
->> +    prom_printf("nemo: interpret returned %d\n", rc);
->> +
->>       pci_name = "/pxp@0,e0000000/pci@11";
->>       node = call_prom("finddevice", 1, 1, ADDR(pci_name));
->>       parent = ADDR(iob);
-> Hi Michael,
->
-> Many thanks for your patch. We will test it as soon as possible.
->
-> Christian
-Michael,
 
-Unfortunately, the kernel 6.10-rc6 doesn't compile with your patch. "rc" 
-is undeclared.
 
-Error messages:
+> On Thu, 4 Jul 2024, Li Dong wrote:
+> 
+> > For zone block devices, device_area_is_invalid may return an incorrect 
+> > value.
+> > 
+> > Failure log:
+> > [   19.337657]: device-mapper: table: 254:56: len=836960256 not aligned to
+> > h/w zone size 3244032 of sde
+> > [   19.337665]: device-mapper: core: Cannot calculate initial queue limits
+> > [   19.337667]: device-mapper: ioctl: unable to set up device queue for 
+> > new table.
+> > 
+> > Actually, the device's zone length is aligned to the zonesize.
+> > 
+> > Fixes: 5dea271b6d87 ("dm table: pass correct dev area size to device_area_is_valid")
+> > Signed-off-by: Li Dong <lidong@vivo.com>
+> > ---
+> >  drivers/md/dm-table.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+> > index 33b7a1844ed4..0bddae0bee3c 100644
+> > --- a/drivers/md/dm-table.c
+> > +++ b/drivers/md/dm-table.c
+> > @@ -257,7 +257,7 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
+> >  	if (bdev_is_zoned(bdev)) {
+> >  		unsigned int zone_sectors = bdev_zone_sectors(bdev);
+> >  
+> > -		if (start & (zone_sectors - 1)) {
+> > +		if (start % zone_sectors) {
+> >  			DMERR("%s: start=%llu not aligned to h/w zone size %u of %pg",
+> >  			      dm_device_name(ti->table->md),
+> >  			      (unsigned long long)start,
+> > @@ -274,7 +274,7 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
+> >  		 * devices do not end up with a smaller zone in the middle of
+> >  		 * the sector range.
+> >  		 */
+> > -		if (len & (zone_sectors - 1)) {
+> > +		if (len % zone_sectors) {
+> >  			DMERR("%s: len=%llu not aligned to h/w zone size %u of %pg",
+> >  			      dm_device_name(ti->table->md),
+> >  			      (unsigned long long)len,
+> > -- 
+> > 2.31.1.windows.1
 
-arch/powerpc/kernel/prom_init.c: In function ‘fixup_device_tree_pasemi’:
-arch/powerpc/kernel/prom_init.c:3142:2: error: ‘rc’ undeclared (first 
-use in this function); did you mean ‘rq’?
-  3142 |  rc = call_prom("interpret", 1, 1,
-       |  ^~
-       |  rq
+I grepped the kernel for bdev_zone_sectors and there are more assumptions 
+that bdev_zone_sectors is a power of 2.
 
-Christian
+drivers/md/dm-zone.c:           sector_t mask = bdev_zone_sectors(disk->part0) - 1
+drivers/nvme/target/zns.c:      if (get_capacity(bd_disk) & (bdev_zone_sectors(ns->bdev) - 1))
+drivers/nvme/target/zns.c:      if (sect & (bdev_zone_sectors(req->ns->bdev) - 1)) {
+fs/zonefs/super.c:      sbi->s_zone_sectors_shift = ilog2(bdev_zone_sectors(sb->s_bdev));
+fs/btrfs/zoned.c:       return (sector_t)zone_number << ilog2(bdev_zone_sectors(bdev));
+fs/btrfs/zoned.c:	zone_info->zone_size_shift = ilog2(zone_info->zone_size);
+include/linux/blkdev.h: return sector & (bdev_zone_sectors(bdev) - 1);
+fs/f2fs/super.c:	if (nr_sectors & (zone_sectors - 1))
+
+So, if we want to support non-power-of-2 zone size, we need some 
+systematic fix. Now it appears that Linux doesn't even attempt to support 
+disks non-power-of-2 zone size.
+
+I added Damien Le Moal so that he can help with testing disks with 
+non-power-of-2 zone size (if WD is actually making them).
+
+Mikulas
+
 
