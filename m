@@ -1,778 +1,159 @@
-Return-Path: <linux-kernel+bounces-240629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CA792701E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:55:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74DCE927023
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAFEA1C21201
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:55:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0774428308E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232C71A0B06;
-	Thu,  4 Jul 2024 06:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00521A0AFB;
+	Thu,  4 Jul 2024 06:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ja+0u+nl"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="gglCOG7u"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7893D1A0B0B
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 06:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C78187349;
+	Thu,  4 Jul 2024 06:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720076071; cv=none; b=XALGmFOEZcithDJe+kRI6xaYs6FcqDpoO/pQRAYQw4BjpxYc2TE4UYzCBgUNx0pn0rp8kQ2OU7sOkxGQHfQmUmxi9LildrnKRRccvRhxBQKZyOSDI9CK/08ascKBNNYj8G7qLOZijeIZmaRGIDzRt0N/fAYzjTTLYIwq1HweJ9M=
+	t=1720076315; cv=none; b=LHEM5hDHOyFGSp8pE9UlWeySqZT2qxL43185rw9w62EF3b83D9lxsfkkmhRqtfF41GTrPdhmSBF8EfakJrdME+Ok0q6+q/C6Og5O00fjputJXmI+/ZL/+EpoVD0JhK0WQsYysvwoPQlLsvL0hcd6JK2TV9Dwanjj4lWW1D5Hzns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720076071; c=relaxed/simple;
-	bh=UgJntJJItwRPbmZ3drnB27BIpgrdHOlMLVcS1e3gkOQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VMc6V0uMC7Me+cBl21A+ytQK5iTxB+8vT3k1GjDNwCwL7WP8MuSpo+bszq32Y0Bwj7sSigXd+kNq2hoblYFrQ10kw+4n+9yzJjMzYTW6g99b+S9vB8/ayYC1nD03QOTPpu+VVv5nRkmSFfkyoKSxxsLyoeZ4Jnuj5GYnP5N0Y5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ja+0u+nl; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70683d96d0eso228140b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 23:54:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720076069; x=1720680869; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cX8buroefB8E6dbxaZ62ekQqAJPRBxFIJid/1WsNJSU=;
-        b=ja+0u+nlxDsYombBfEPbouRtoiU0KvmNPOH5rlBbBi/jVT2aJ7rNz4ZpVS4rkIOFAs
-         DO/+MkkUUKoWjn3k4JAf+I9DUp19VGDFJYEIJxJOLoFXBPcYR6YC3OnwCBG3kfEvNkn3
-         Zmt7N0ucAMqbjZPsF5zdMRkWxkI3b7HXu7hdjDsN8QlYEZucFyZRyWHFiDQboOQrMlvT
-         9JEy+sfQjYIgGz2An+9ksfGE9H+qjdO61XYidpOsDclZH9QM1qqzD36aQ02dSYXopRDD
-         4DgwJb1Pn9sjlpjdmfZu1+prs4BbIkJgZ5o9kuJl8tiwysAdIkT81L6HkZ+4MBUxSVIb
-         HBcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720076069; x=1720680869;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cX8buroefB8E6dbxaZ62ekQqAJPRBxFIJid/1WsNJSU=;
-        b=eg5VjFSB5x4ztqEyOejDM+XBh7WDesm9YvkaoZIalYe1g7D2UCtf1AVcMH1jHlhpIM
-         fS4TSFec5HyI8YLLd3orpBkTPY01CfO2BPCP9/O/c2dj6vMw09QJ7En6590sXfgW9oV3
-         nWj6H8hf9O9ITDH+EZJZtghNSujorVbz78X+7ByEmWioBLca1e3NcrRnB8p6HS8vN6Mc
-         L18gpC9ljq/UW3sECpeCx2YcfRs1yrMkMV9GH+ipJTaYvt0Ykh7Zw13ApTnqWxitVSz0
-         RT3hLpjCZzxEz4QX2uRrNQ2GnsTkCV/eI/elWc+gXwjU9i6X7Z0quk/FvmVNR7engUs2
-         ePnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXE1q3Fnru2wKk/bSsRLn88X3TSfgDqWwTHVVVgBYJy6XEn4UbOstQYBPxx6417MCqUbwMeybp1yVv4F3Wt+/GmMlG6o+NRkIrtXGm7
-X-Gm-Message-State: AOJu0YygHkSrk03loEuxmSMcpFJH3gISizMDT38rjQLUYGX1vCvcwJVj
-	9txVhNoKKPMHWLmNv+CTHGoAg193X80O922b+wQ1shevLE5jdQIBHWzfnTdacKA=
-X-Google-Smtp-Source: AGHT+IHb/ish9+ohH5ub0e29qxY/FTfbV+gjRAhLMOTo0HY1LhCudPsfofUDHf6hNsZZN9GoTmmEZQ==
-X-Received: by 2002:a05:6a00:2d0c:b0:70a:f0f1:480f with SMTP id d2e1a72fcca58-70b0092ada1mr888903b3a.3.1720076068495;
-        Wed, 03 Jul 2024 23:54:28 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf878sm11466999b3a.135.2024.07.03.23.54.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 23:54:27 -0700 (PDT)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Huang Rui <ray.huang@amd.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Markus Mayer <mmayer@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Len Brown <lenb@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Lizhe <sensor1010@163.com>,
-	linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH 4/4] cpufreq: Make cpufreq_driver->exit() return void
-Date: Thu,  4 Jul 2024 12:23:55 +0530
-Message-Id: <3f73fda736818128558b61ad5fe2bed5dce3ddc4.1720075640.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-In-Reply-To: <cover.1720075640.git.viresh.kumar@linaro.org>
-References: <cover.1720075640.git.viresh.kumar@linaro.org>
+	s=arc-20240116; t=1720076315; c=relaxed/simple;
+	bh=3UgLpSJokSXHz03kcWhO4MDgWt9anQgFe2EtKmPtrhU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMSvBMfY5YSYmajpBscK9rMXDU6E31ayJTghO92Th5hpiqSIxYDzmg5Am9MwS9A6vEXkP5DUqyLigdIK3y5Pp1dJjmQwgj/FNI9ZHvH86JFmAkJbYFbSc7VHr4eTW4jO2knemTwGBJRPMyGzg8SjA1KYAeahGk9juJi/AAIUlj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=gglCOG7u; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1720076313; x=1751612313;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3UgLpSJokSXHz03kcWhO4MDgWt9anQgFe2EtKmPtrhU=;
+  b=gglCOG7uq72bb1HEfGXyLj6W4XSizqJopYV1SUK6+7+h44ESUglITDKN
+   RT39TBrAFmyt0d/GfAq+Zs79pjFeSJhoCJOlWK4PPQvedzGMNolbUN+Po
+   ubgcyQBwzVwjQdyfMZ2k8NLJTfs9uLz/HA8cnG7o75s0iw3VvpM/J9Jkh
+   abWMGO7nzM0eFHtXRVsZ8PaKy/zR7YmyeWeu0TrjFIkn5lmrS8SuUvd/m
+   jQMYUhBrhHWsU4+CyV4fdUp0ym3m11t3/7yK2p+VJRnFxC43OME0+Hs/k
+   ITzcdaWxWl0NKC6o0sbP/ooma5+P1UqZxJG/+V+Hc9TwNa6Uk6fcctjkf
+   g==;
+X-CSE-ConnectionGUID: iv4bRy3fTFqIlUfcw5UgKw==
+X-CSE-MsgGUID: 0TbRDD8NR8CjV9LrSEDbHw==
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="asc'?scan'208";a="196237195"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Jul 2024 23:58:32 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 3 Jul 2024 23:58:14 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Wed, 3 Jul 2024 23:58:12 -0700
+Date: Thu, 4 Jul 2024 07:57:52 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Frank Li <Frank.Li@nxp.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>, Thinh Nguyen
+	<Thinh.Nguyen@synopsys.com>, <linux-usb@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<imx@lists.linux.dev>, Ran Wang <ran.wang_1@nxp.com>, Jun Li <jun.li@nxp.com>
+Subject: Re: [PATCH 1/2] dt-bindings: usb: Add chip-specific compatible
+ string 'fsl,ls-dwc3'
+Message-ID: <20240704-ladies-economy-1adc905930bf@wendy>
+References: <20240703-dwc-v1-0-9cbc93d49180@nxp.com>
+ <20240703-dwc-v1-1-9cbc93d49180@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rDYC5f6Mi3xyoxwn"
+Content-Disposition: inline
+In-Reply-To: <20240703-dwc-v1-1-9cbc93d49180@nxp.com>
 
-From: Lizhe <sensor1010@163.com>
+--rDYC5f6Mi3xyoxwn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The cpufreq core doesn't check the return type of the exit() callback
-and there is not much the core can do on failures at that point. Just
-drop the returned value and make it return void.
+On Wed, Jul 03, 2024 at 07:06:54PM -0400, Frank Li wrote:
+> From: Ran Wang <ran.wang_1@nxp.com>
+>=20
+> Some Layerscape paltforms (such as LS1088A, LS2088A, etc) require update =
+HW
+> default cache type configuration to fix DWC3 init failure when applying
+> property dma-coherent.
 
-Signed-off-by: Lizhe <sensor1010@163.com>
-[ Viresh: Reworked the patches to fix all missing changes together. ]
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/acpi-cpufreq.c         |  4 +---
- drivers/cpufreq/amd-pstate.c           |  7 ++-----
- drivers/cpufreq/apple-soc-cpufreq.c    |  4 +---
- drivers/cpufreq/bmips-cpufreq.c        |  4 +---
- drivers/cpufreq/cppc_cpufreq.c         |  3 +--
- drivers/cpufreq/cpufreq-dt.c           |  3 +--
- drivers/cpufreq/e_powersaver.c         |  3 +--
- drivers/cpufreq/intel_pstate.c         |  8 +++-----
- drivers/cpufreq/mediatek-cpufreq-hw.c  |  4 +---
- drivers/cpufreq/mediatek-cpufreq.c     |  4 +---
- drivers/cpufreq/omap-cpufreq.c         |  3 +--
- drivers/cpufreq/pasemi-cpufreq.c       |  6 ++----
- drivers/cpufreq/powernow-k6.c          |  5 ++---
- drivers/cpufreq/powernow-k7.c          |  3 +--
- drivers/cpufreq/powernow-k8.c          |  6 ++----
- drivers/cpufreq/powernv-cpufreq.c      |  4 +---
- drivers/cpufreq/ppc_cbe_cpufreq.c      |  3 +--
- drivers/cpufreq/qcom-cpufreq-hw.c      |  4 +---
- drivers/cpufreq/qoriq-cpufreq.c        |  4 +---
- drivers/cpufreq/scmi-cpufreq.c         |  4 +---
- drivers/cpufreq/scpi-cpufreq.c         |  4 +---
- drivers/cpufreq/sh-cpufreq.c           |  4 +---
- drivers/cpufreq/sparc-us2e-cpufreq.c   |  3 +--
- drivers/cpufreq/sparc-us3-cpufreq.c    |  3 +--
- drivers/cpufreq/speedstep-centrino.c   | 10 +++-------
- drivers/cpufreq/tegra194-cpufreq.c     |  4 +---
- drivers/cpufreq/vexpress-spc-cpufreq.c |  5 ++---
- include/linux/cpufreq.h                |  2 +-
- 28 files changed, 37 insertions(+), 84 deletions(-)
+Your driver patch looks odd because it doesn't actually check if
+dma-coherent is present before setting this configuration. Is it okay to
+set this configuration when dma-coherent is not present?
 
-diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
-index fa2664f9f259..a8ca625a98b8 100644
---- a/drivers/cpufreq/acpi-cpufreq.c
-+++ b/drivers/cpufreq/acpi-cpufreq.c
-@@ -906,7 +906,7 @@ static int acpi_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	return result;
- }
- 
--static int acpi_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-+static void acpi_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	struct acpi_cpufreq_data *data = policy->driver_data;
- 
-@@ -919,8 +919,6 @@ static int acpi_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- 	free_cpumask_var(data->freqdomain_cpus);
- 	kfree(policy->freq_table);
- 	kfree(data);
--
--	return 0;
- }
- 
- static int acpi_cpufreq_resume(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 80eaa58f1405..c1f48a0d69b6 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -1090,7 +1090,7 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
- 	return ret;
- }
- 
--static int amd_pstate_cpu_exit(struct cpufreq_policy *policy)
-+static void amd_pstate_cpu_exit(struct cpufreq_policy *policy)
- {
- 	struct amd_cpudata *cpudata = policy->driver_data;
- 
-@@ -1098,8 +1098,6 @@ static int amd_pstate_cpu_exit(struct cpufreq_policy *policy)
- 	freq_qos_remove_request(&cpudata->req[0]);
- 	policy->fast_switch_possible = false;
- 	kfree(cpudata);
--
--	return 0;
- }
- 
- static int amd_pstate_cpu_resume(struct cpufreq_policy *policy)
-@@ -1542,7 +1540,7 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
- 	return ret;
- }
- 
--static int amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)
-+static void amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)
- {
- 	struct amd_cpudata *cpudata = policy->driver_data;
- 
-@@ -1552,7 +1550,6 @@ static int amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)
- 	}
- 
- 	pr_debug("CPU %d exiting\n", policy->cpu);
--	return 0;
- }
- 
- static void amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/apple-soc-cpufreq.c b/drivers/cpufreq/apple-soc-cpufreq.c
-index 021f423705e1..af34c22fa273 100644
---- a/drivers/cpufreq/apple-soc-cpufreq.c
-+++ b/drivers/cpufreq/apple-soc-cpufreq.c
-@@ -305,7 +305,7 @@ static int apple_soc_cpufreq_init(struct cpufreq_policy *policy)
- 	return ret;
- }
- 
--static int apple_soc_cpufreq_exit(struct cpufreq_policy *policy)
-+static void apple_soc_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct apple_cpu_priv *priv = policy->driver_data;
- 
-@@ -313,8 +313,6 @@ static int apple_soc_cpufreq_exit(struct cpufreq_policy *policy)
- 	dev_pm_opp_remove_all_dynamic(priv->cpu_dev);
- 	iounmap(priv->reg_base);
- 	kfree(priv);
--
--	return 0;
- }
- 
- static struct cpufreq_driver apple_soc_cpufreq_driver = {
-diff --git a/drivers/cpufreq/bmips-cpufreq.c b/drivers/cpufreq/bmips-cpufreq.c
-index 39221a9a187a..17a4c174553d 100644
---- a/drivers/cpufreq/bmips-cpufreq.c
-+++ b/drivers/cpufreq/bmips-cpufreq.c
-@@ -121,11 +121,9 @@ static int bmips_cpufreq_target_index(struct cpufreq_policy *policy,
- 	return 0;
- }
- 
--static int bmips_cpufreq_exit(struct cpufreq_policy *policy)
-+static void bmips_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	kfree(policy->freq_table);
--
--	return 0;
- }
- 
- static int bmips_cpufreq_init(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index 15f1d41920a3..17aeb3785446 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -688,7 +688,7 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	return ret;
- }
- 
--static int cppc_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-+static void cppc_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	struct cppc_cpudata *cpu_data = policy->driver_data;
- 	struct cppc_perf_caps *caps = &cpu_data->perf_caps;
-@@ -705,7 +705,6 @@ static int cppc_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- 			 caps->lowest_perf, cpu, ret);
- 
- 	cppc_cpufreq_put_cpu_data(policy);
--	return 0;
- }
- 
- static inline u64 get_delta(u64 t1, u64 t0)
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index 907e22632fda..6532c4d71338 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -157,10 +157,9 @@ static int cpufreq_offline(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int cpufreq_exit(struct cpufreq_policy *policy)
-+static void cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	clk_put(policy->clk);
--	return 0;
- }
- 
- static struct cpufreq_driver dt_cpufreq_driver = {
-diff --git a/drivers/cpufreq/e_powersaver.c b/drivers/cpufreq/e_powersaver.c
-index ab93bce8ae77..6e958b09e1b5 100644
---- a/drivers/cpufreq/e_powersaver.c
-+++ b/drivers/cpufreq/e_powersaver.c
-@@ -360,14 +360,13 @@ static int eps_cpu_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int eps_cpu_exit(struct cpufreq_policy *policy)
-+static void eps_cpu_exit(struct cpufreq_policy *policy)
- {
- 	unsigned int cpu = policy->cpu;
- 
- 	/* Bye */
- 	kfree(eps_cpu[cpu]);
- 	eps_cpu[cpu] = NULL;
--	return 0;
- }
- 
- static struct cpufreq_driver eps_driver = {
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 25389e43c392..392a8000b238 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -2715,13 +2715,11 @@ static int intel_pstate_cpu_offline(struct cpufreq_policy *policy)
- 	return intel_cpufreq_cpu_offline(policy);
- }
- 
--static int intel_pstate_cpu_exit(struct cpufreq_policy *policy)
-+static void intel_pstate_cpu_exit(struct cpufreq_policy *policy)
- {
- 	pr_debug("CPU %d exiting\n", policy->cpu);
- 
- 	policy->fast_switch_possible = false;
--
--	return 0;
- }
- 
- static int __intel_pstate_cpu_init(struct cpufreq_policy *policy)
-@@ -3052,7 +3050,7 @@ static int intel_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	return ret;
- }
- 
--static int intel_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-+static void intel_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	struct freq_qos_request *req;
- 
-@@ -3062,7 +3060,7 @@ static int intel_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- 	freq_qos_remove_request(req);
- 	kfree(req);
- 
--	return intel_pstate_cpu_exit(policy);
-+	intel_pstate_cpu_exit(policy);
- }
- 
- static int intel_cpufreq_suspend(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/mediatek-cpufreq-hw.c b/drivers/cpufreq/mediatek-cpufreq-hw.c
-index 8d097dcddda4..8925e096d5b9 100644
---- a/drivers/cpufreq/mediatek-cpufreq-hw.c
-+++ b/drivers/cpufreq/mediatek-cpufreq-hw.c
-@@ -260,7 +260,7 @@ static int mtk_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int mtk_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
-+static void mtk_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
- {
- 	struct mtk_cpufreq_data *data = policy->driver_data;
- 	struct resource *res = data->res;
-@@ -270,8 +270,6 @@ static int mtk_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
- 	writel_relaxed(0x0, data->reg_bases[REG_FREQ_ENABLE]);
- 	iounmap(base);
- 	release_mem_region(res->start, resource_size(res));
--
--	return 0;
- }
- 
- static void mtk_cpufreq_register_em(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-index 518606adf14e..102cfaa3b7e5 100644
---- a/drivers/cpufreq/mediatek-cpufreq.c
-+++ b/drivers/cpufreq/mediatek-cpufreq.c
-@@ -599,13 +599,11 @@ static int mtk_cpufreq_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int mtk_cpufreq_exit(struct cpufreq_policy *policy)
-+static void mtk_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct mtk_cpu_dvfs_info *info = policy->driver_data;
- 
- 	dev_pm_opp_free_cpufreq_table(info->cpu_dev, &policy->freq_table);
--
--	return 0;
- }
- 
- static struct cpufreq_driver mtk_cpufreq_driver = {
-diff --git a/drivers/cpufreq/omap-cpufreq.c b/drivers/cpufreq/omap-cpufreq.c
-index 895690856665..3458d5cc9b7f 100644
---- a/drivers/cpufreq/omap-cpufreq.c
-+++ b/drivers/cpufreq/omap-cpufreq.c
-@@ -135,11 +135,10 @@ static int omap_cpu_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int omap_cpu_exit(struct cpufreq_policy *policy)
-+static void omap_cpu_exit(struct cpufreq_policy *policy)
- {
- 	freq_table_free();
- 	clk_put(policy->clk);
--	return 0;
- }
- 
- static struct cpufreq_driver omap_driver = {
-diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
-index 039a66bbe1be..ee925b53b6b9 100644
---- a/drivers/cpufreq/pasemi-cpufreq.c
-+++ b/drivers/cpufreq/pasemi-cpufreq.c
-@@ -204,21 +204,19 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	return err;
- }
- 
--static int pas_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-+static void pas_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	/*
- 	 * We don't support CPU hotplug. Don't unmap after the system
- 	 * has already made it to a running state.
- 	 */
- 	if (system_state >= SYSTEM_RUNNING)
--		return 0;
-+		return;
- 
- 	if (sdcasr_mapbase)
- 		iounmap(sdcasr_mapbase);
- 	if (sdcpwr_mapbase)
- 		iounmap(sdcpwr_mapbase);
--
--	return 0;
- }
- 
- static int pas_cpufreq_target(struct cpufreq_policy *policy,
-diff --git a/drivers/cpufreq/powernow-k6.c b/drivers/cpufreq/powernow-k6.c
-index 41eefef95d87..f0a4a6c31204 100644
---- a/drivers/cpufreq/powernow-k6.c
-+++ b/drivers/cpufreq/powernow-k6.c
-@@ -219,7 +219,7 @@ static int powernow_k6_cpu_init(struct cpufreq_policy *policy)
- }
- 
- 
--static int powernow_k6_cpu_exit(struct cpufreq_policy *policy)
-+static void powernow_k6_cpu_exit(struct cpufreq_policy *policy)
- {
- 	unsigned int i;
- 
-@@ -234,10 +234,9 @@ static int powernow_k6_cpu_exit(struct cpufreq_policy *policy)
- 			cpufreq_freq_transition_begin(policy, &freqs);
- 			powernow_k6_target(policy, i);
- 			cpufreq_freq_transition_end(policy, &freqs, 0);
--			break;
-+			return;
- 		}
- 	}
--	return 0;
- }
- 
- static unsigned int powernow_k6_get(unsigned int cpu)
-diff --git a/drivers/cpufreq/powernow-k7.c b/drivers/cpufreq/powernow-k7.c
-index 5d515fc34836..4271446c8725 100644
---- a/drivers/cpufreq/powernow-k7.c
-+++ b/drivers/cpufreq/powernow-k7.c
-@@ -644,7 +644,7 @@ static int powernow_cpu_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int powernow_cpu_exit(struct cpufreq_policy *policy)
-+static void powernow_cpu_exit(struct cpufreq_policy *policy)
- {
- #ifdef CONFIG_X86_POWERNOW_K7_ACPI
- 	if (acpi_processor_perf) {
-@@ -655,7 +655,6 @@ static int powernow_cpu_exit(struct cpufreq_policy *policy)
- #endif
- 
- 	kfree(powernow_table);
--	return 0;
- }
- 
- static struct cpufreq_driver powernow_driver = {
-diff --git a/drivers/cpufreq/powernow-k8.c b/drivers/cpufreq/powernow-k8.c
-index b10f7a1b77f1..a01170f7d01c 100644
---- a/drivers/cpufreq/powernow-k8.c
-+++ b/drivers/cpufreq/powernow-k8.c
-@@ -1089,13 +1089,13 @@ static int powernowk8_cpu_init(struct cpufreq_policy *pol)
- 	return -ENODEV;
- }
- 
--static int powernowk8_cpu_exit(struct cpufreq_policy *pol)
-+static void powernowk8_cpu_exit(struct cpufreq_policy *pol)
- {
- 	struct powernow_k8_data *data = per_cpu(powernow_data, pol->cpu);
- 	int cpu;
- 
- 	if (!data)
--		return -EINVAL;
-+		return;
- 
- 	powernow_k8_cpu_exit_acpi(data);
- 
-@@ -1104,8 +1104,6 @@ static int powernowk8_cpu_exit(struct cpufreq_policy *pol)
- 	/* pol->cpus will be empty here, use related_cpus instead. */
- 	for_each_cpu(cpu, pol->related_cpus)
- 		per_cpu(powernow_data, cpu) = NULL;
--
--	return 0;
- }
- 
- static void query_values_on_cpu(void *_err)
-diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
-index fddbd1ea1635..50c62929f7ca 100644
---- a/drivers/cpufreq/powernv-cpufreq.c
-+++ b/drivers/cpufreq/powernv-cpufreq.c
-@@ -874,7 +874,7 @@ static int powernv_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int powernv_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-+static void powernv_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	struct powernv_smp_call_data freq_data;
- 	struct global_pstate_info *gpstates = policy->driver_data;
-@@ -886,8 +886,6 @@ static int powernv_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- 		del_timer_sync(&gpstates->timer);
- 
- 	kfree(policy->driver_data);
--
--	return 0;
- }
- 
- static int powernv_cpufreq_reboot_notifier(struct notifier_block *nb,
-diff --git a/drivers/cpufreq/ppc_cbe_cpufreq.c b/drivers/cpufreq/ppc_cbe_cpufreq.c
-index 88afc49941b7..5ee4c7bfdcc5 100644
---- a/drivers/cpufreq/ppc_cbe_cpufreq.c
-+++ b/drivers/cpufreq/ppc_cbe_cpufreq.c
-@@ -113,10 +113,9 @@ static int cbe_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int cbe_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-+static void cbe_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	cbe_cpufreq_pmi_policy_exit(policy);
--	return 0;
- }
- 
- static int cbe_cpufreq_target(struct cpufreq_policy *policy,
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-index ec8df5496a0c..370fe6a0104b 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -573,7 +573,7 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
- 	return qcom_cpufreq_hw_lmh_init(policy, index);
- }
- 
--static int qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
-+static void qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
- {
- 	struct device *cpu_dev = get_cpu_device(policy->cpu);
- 	struct qcom_cpufreq_data *data = policy->driver_data;
-@@ -583,8 +583,6 @@ static int qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
- 	qcom_cpufreq_hw_lmh_exit(data);
- 	kfree(policy->freq_table);
- 	kfree(data);
--
--	return 0;
- }
- 
- static void qcom_cpufreq_ready(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
-index 0aecaecbb0e6..3519bf34d397 100644
---- a/drivers/cpufreq/qoriq-cpufreq.c
-+++ b/drivers/cpufreq/qoriq-cpufreq.c
-@@ -225,7 +225,7 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	return -ENODEV;
- }
- 
--static int qoriq_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-+static void qoriq_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	struct cpu_data *data = policy->driver_data;
- 
-@@ -233,8 +233,6 @@ static int qoriq_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- 	kfree(data->table);
- 	kfree(data);
- 	policy->driver_data = NULL;
--
--	return 0;
- }
- 
- static int qoriq_cpufreq_target(struct cpufreq_policy *policy,
-diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-index 3b4f6bfb2f4c..bf5f17f0dfb1 100644
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@ -308,7 +308,7 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
- 	return ret;
- }
- 
--static int scmi_cpufreq_exit(struct cpufreq_policy *policy)
-+static void scmi_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct scmi_data *priv = policy->driver_data;
- 
-@@ -316,8 +316,6 @@ static int scmi_cpufreq_exit(struct cpufreq_policy *policy)
- 	dev_pm_opp_remove_all_dynamic(priv->cpu_dev);
- 	free_cpumask_var(priv->opp_shared_cpus);
- 	kfree(priv);
--
--	return 0;
- }
- 
- static void scmi_cpufreq_register_em(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
-index d33be56983ed..8d73e6e8be2a 100644
---- a/drivers/cpufreq/scpi-cpufreq.c
-+++ b/drivers/cpufreq/scpi-cpufreq.c
-@@ -167,7 +167,7 @@ static int scpi_cpufreq_init(struct cpufreq_policy *policy)
- 	return ret;
- }
- 
--static int scpi_cpufreq_exit(struct cpufreq_policy *policy)
-+static void scpi_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct scpi_data *priv = policy->driver_data;
- 
-@@ -175,8 +175,6 @@ static int scpi_cpufreq_exit(struct cpufreq_policy *policy)
- 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
- 	dev_pm_opp_remove_all_dynamic(priv->cpu_dev);
- 	kfree(priv);
--
--	return 0;
- }
- 
- static struct cpufreq_driver scpi_cpufreq_driver = {
-diff --git a/drivers/cpufreq/sh-cpufreq.c b/drivers/cpufreq/sh-cpufreq.c
-index b8704232c27b..aa74036d0420 100644
---- a/drivers/cpufreq/sh-cpufreq.c
-+++ b/drivers/cpufreq/sh-cpufreq.c
-@@ -135,14 +135,12 @@ static int sh_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int sh_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-+static void sh_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	unsigned int cpu = policy->cpu;
- 	struct clk *cpuclk = &per_cpu(sh_cpuclk, cpu);
- 
- 	clk_put(cpuclk);
--
--	return 0;
- }
- 
- static struct cpufreq_driver sh_cpufreq_driver = {
-diff --git a/drivers/cpufreq/sparc-us2e-cpufreq.c b/drivers/cpufreq/sparc-us2e-cpufreq.c
-index 2783d3d55fce..8a0cd5312a59 100644
---- a/drivers/cpufreq/sparc-us2e-cpufreq.c
-+++ b/drivers/cpufreq/sparc-us2e-cpufreq.c
-@@ -296,10 +296,9 @@ static int us2e_freq_cpu_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int us2e_freq_cpu_exit(struct cpufreq_policy *policy)
-+static void us2e_freq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	us2e_freq_target(policy, 0);
--	return 0;
- }
- 
- static struct cpufreq_driver cpufreq_us2e_driver = {
-diff --git a/drivers/cpufreq/sparc-us3-cpufreq.c b/drivers/cpufreq/sparc-us3-cpufreq.c
-index 6c3657679a88..b50f9d13e6d2 100644
---- a/drivers/cpufreq/sparc-us3-cpufreq.c
-+++ b/drivers/cpufreq/sparc-us3-cpufreq.c
-@@ -140,10 +140,9 @@ static int us3_freq_cpu_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int us3_freq_cpu_exit(struct cpufreq_policy *policy)
-+static void us3_freq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	us3_freq_target(policy, 0);
--	return 0;
- }
- 
- static struct cpufreq_driver cpufreq_us3_driver = {
-diff --git a/drivers/cpufreq/speedstep-centrino.c b/drivers/cpufreq/speedstep-centrino.c
-index ddd6f53bfd2a..3fafedb983b5 100644
---- a/drivers/cpufreq/speedstep-centrino.c
-+++ b/drivers/cpufreq/speedstep-centrino.c
-@@ -400,16 +400,12 @@ static int centrino_cpu_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int centrino_cpu_exit(struct cpufreq_policy *policy)
-+static void centrino_cpu_exit(struct cpufreq_policy *policy)
- {
- 	unsigned int cpu = policy->cpu;
- 
--	if (!per_cpu(centrino_model, cpu))
--		return -ENODEV;
--
--	per_cpu(centrino_model, cpu) = NULL;
--
--	return 0;
-+	if (per_cpu(centrino_model, cpu))
-+		per_cpu(centrino_model, cpu) = NULL;
- }
- 
- /**
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index 59865ea455a8..07ea7ed61b68 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -551,14 +551,12 @@ static int tegra194_cpufreq_offline(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int tegra194_cpufreq_exit(struct cpufreq_policy *policy)
-+static void tegra194_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct device *cpu_dev = get_cpu_device(policy->cpu);
- 
- 	dev_pm_opp_remove_all_dynamic(cpu_dev);
- 	dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
--
--	return 0;
- }
- 
- static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
-diff --git a/drivers/cpufreq/vexpress-spc-cpufreq.c b/drivers/cpufreq/vexpress-spc-cpufreq.c
-index 9ac4ea50b874..3fadf536c429 100644
---- a/drivers/cpufreq/vexpress-spc-cpufreq.c
-+++ b/drivers/cpufreq/vexpress-spc-cpufreq.c
-@@ -447,7 +447,7 @@ static int ve_spc_cpufreq_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int ve_spc_cpufreq_exit(struct cpufreq_policy *policy)
-+static void ve_spc_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct device *cpu_dev;
- 
-@@ -455,11 +455,10 @@ static int ve_spc_cpufreq_exit(struct cpufreq_policy *policy)
- 	if (!cpu_dev) {
- 		pr_err("%s: failed to get cpu%d device\n", __func__,
- 		       policy->cpu);
--		return -ENODEV;
-+		return;
- 	}
- 
- 	put_cluster_clk_and_freq_table(cpu_dev, policy->related_cpus);
--	return 0;
- }
- 
- static struct cpufreq_driver ve_spc_cpufreq_driver = {
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 6f57de7de433..d4d2f4d1d7cb 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -396,7 +396,7 @@ struct cpufreq_driver {
- 
- 	int		(*online)(struct cpufreq_policy *policy);
- 	int		(*offline)(struct cpufreq_policy *policy);
--	int		(*exit)(struct cpufreq_policy *policy);
-+	void		(*exit)(struct cpufreq_policy *policy);
- 	int		(*suspend)(struct cpufreq_policy *policy);
- 	int		(*resume)(struct cpufreq_policy *policy);
- 
--- 
-2.31.1.272.g89b43f80a514
+> The cache type configuration is actually native feature of DWC3, not
+> additional desgin (or glue layer) coming from SoC, so add compatible stri=
+ng
+> 'fsl,ls-dwc3'.
 
+You'd need to add specific compatibles here for the broken platforms,
+otherwise it is not clear to users what platforms to actually use this
+one.
+
+> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> Reviewed-by: Jun Li <jun.li@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml b/Docum=
+entation/devicetree/bindings/usb/snps,dwc3.yaml
+> index 1cd0ca90127d9..02cb986d0fd32 100644
+> --- a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
+> +++ b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
+> @@ -32,6 +32,7 @@ properties:
+>    compatible:
+>      contains:
+>        oneOf:
+> +        - const: fsl,ls-dwc3
+
+This clearly was not actually tested properly - your driver patch never
+changes of_dwc3_match, so providing only this property won't work & your
+expectation is actually that there is a fallback to snps,dwc3. The
+binding does not allow that fallback as written.
+
+Thanks,
+Conor.
+
+>          - const: snps,dwc3
+>          - const: synopsys,dwc3
+>            deprecated: true
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--rDYC5f6Mi3xyoxwn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoZH7wAKCRB4tDGHoIJi
+0i6nAQCkZy/zco37CZqlrgT7inFam7MhyjRdvvMhrg+P/2/8WAEAv+CiekNGPqHM
+VnQaM4xxKBfi3ZcK+G6O9dhws0B8iwQ=
+=WAI2
+-----END PGP SIGNATURE-----
+
+--rDYC5f6Mi3xyoxwn--
 
