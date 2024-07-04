@@ -1,141 +1,118 @@
-Return-Path: <linux-kernel+bounces-241490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C6A927BD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:21:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C41927BDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0FC1C22F7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:21:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81E821C231CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4433B79F;
-	Thu,  4 Jul 2024 17:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F79F3B79F;
+	Thu,  4 Jul 2024 17:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Fl/0hM+d";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="oolnUM2r"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="J13W3Cxc"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EF523746;
-	Thu,  4 Jul 2024 17:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7CC39FD6
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 17:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720113685; cv=none; b=i/nxVi+/0dE6WiuPGzrUVb+vHghfUiyPF8k2p9Irl2z76BQY4N64W6tUWdtcKCN8+UfxREbzY9MhqUgHEWyWx+nr6DfU1qkeQgBKbApt9pqNGulgQqZpi+Vowr108fsP9n6j2HFwUDb/BV0BRnK80Z0o01DlOwgZvGsxLHDBrck=
+	t=1720113715; cv=none; b=bfZ52fM7U9vESVXfHx/g0qsPFTOZIyIB2sJugyfb96p+ps0vIXqaigmS8HERBny+FSCLWrFbSW+P3sWLS6VKec6yBNw579ri8nx10+/n5xxEyPFg/XCfI/BKCuCKIliWAmKTHYLKlBabxtHxJVoO9ggA5k7INTykRYeTCll3M1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720113685; c=relaxed/simple;
-	bh=vJQzy0Q8OJqhIkEv+KaZBm3Uu+AYIen7ID7ZraKwjrw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RU/Sb7NgHaQ+UDsxbJjKRb2/WOnjzjeu3FEbINIjTYRfAnpftIhfyLfqRkzIWfzRQuvhqJ711giAl3BsfNUwQ33bsZF9l4bmFU5R/LwVxnayA8WV2mrjzBBwwy6lhZ1EID85QfsyPv6ch+6C2KLZ6FUA+Is92Qm20OA4jF5cynA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Fl/0hM+d; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=oolnUM2r; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1720113682;
-	bh=vJQzy0Q8OJqhIkEv+KaZBm3Uu+AYIen7ID7ZraKwjrw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=Fl/0hM+dyGxr2Yx8FXgJfkWl0SRN6cXS3oFKNuikyK98zMSF6ym+UWILzwqixD+6I
-	 goE892ezUMpVuy7scQW7C+21UgoIlnb/4LIB/y7fC3bJuNbcUZLIUzz3UEbc0yYQLh
-	 XuPKtfhYITQ2rWcfZTO2gZrYDHIrYbw9Q+OB5PZs=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4E4581285E26;
-	Thu, 04 Jul 2024 13:21:22 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id L7KcQKRYgeQI; Thu,  4 Jul 2024 13:21:22 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1720113681;
-	bh=vJQzy0Q8OJqhIkEv+KaZBm3Uu+AYIen7ID7ZraKwjrw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=oolnUM2rI+9SFsFDREg7z10HYlvicWDoBXwbBZmtyyrOblh5z8GoLfD3JPxhH1eoN
-	 YbtH0EezP7acAQ6kWzE8vy+D5f7UAi7fp4o0TGZqWiomfPggJsk3e5yoho3m5ktAJo
-	 WuRsG6GMPF9VVf7iZx/y/IErMiRPQ+sso8YsULsU=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 53BF51285E10;
-	Thu, 04 Jul 2024 13:21:20 -0400 (EDT)
-Message-ID: <91ccd10c3098782d540a3e9f5c70c5034f867928.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 2/3] tpm: Address !chip->auth in tpm_buf_append_name()
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org, 
- Thorsten Leemhuis <regressions@leemhuis.info>, stable@vger.kernel.org,
- Stefan Berger <stefanb@linux.ibm.com>, Peter Huewe <peterhuewe@gmx.de>,
- Jason Gunthorpe <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>,  David
- Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James
- Morris <jmorris@namei.org>,  "Serge E. Hallyn" <serge@hallyn.com>, Ard
- Biesheuvel <ardb@kernel.org>, Mario Limonciello
- <mario.limonciello@amd.com>, linux-kernel@vger.kernel.org, 
- keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Date: Thu, 04 Jul 2024 13:21:18 -0400
-In-Reply-To: <CAHk-=wiM=Cyw-07EkbAH66pE50VzJiT3bVHv9CS=kYR6zz5mTQ@mail.gmail.com>
-References: <20240703182453.1580888-1-jarkko@kernel.org>
-	 <20240703182453.1580888-3-jarkko@kernel.org>
-	 <922603265d61011dbb23f18a04525ae973b83ffd.camel@HansenPartnership.com>
-	 <CAHk-=wiM=Cyw-07EkbAH66pE50VzJiT3bVHv9CS=kYR6zz5mTQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1720113715; c=relaxed/simple;
+	bh=9ef5A7y80msba590+oipUmON56QOJUNR/WjFyH/KUVY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F7a2o3/5Eiwv0a9feV83v69YP7W+IAdkKp6p07Oa0iDQIyWcIOW6AvuWo5p/Ts1g641jTsro5L9GJYMP0sgNJpPzR75Xu8MrW5ytCi5ed6cKPkdQImgtt/jtm7x/pc7CDYTLeq9CPO2oXbKfEdvrz1mE9QkVzRDvJpOlblPfoEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=J13W3Cxc; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ee75ffce77so10468881fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 10:21:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1720113711; x=1720718511; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DetDEHP2EiTR5k+8vmbxRHmyuu1O/rRB95hogFXnegU=;
+        b=J13W3Cxc882rmyJzsAtI5b+UfxL8v53iY9EF28pqX8DCnzENtz4a53VBMZgTaa5mg3
+         NCtx9ERM1P5BOWns0K5qemq93KZyMRnzXXWiE/4FYQkqdYBZsSNIecoslW85Jobvjsi3
+         ebOtaAtNqxnOALIDJvhoDwLm5u/Oem7FpS1Kk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720113711; x=1720718511;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DetDEHP2EiTR5k+8vmbxRHmyuu1O/rRB95hogFXnegU=;
+        b=OBN3Z3Ntqb4Z6Ad3apcdKiRqAlhNv47GKITOAfHYtMEkysXniJ8ntofz45AJddr9JW
+         L9t6UAuX//IAo2Vfn9Il1CHKL1jBshkgDnWG8ZLX5cJKNlpVDQQ0vHvPL2uMEWEngE6D
+         Z/t7ujmZiXblIhcqj1hTCd2v6e0BZJKOq4K1mRF6hivAE+L0S1b1igTxX0RuNYVd43Zl
+         4tLizRGLkhxL0w7sEfv/BPxVE96rp5RL7fEVDFeyfBGEpMyZmNy070PWwuYjAhZRnT9A
+         S2xHTEAf0wOQnAdgrFVdw8ByAkCIMoRRpYjA0DlvFYzogzDVRFAsvLuhu+ckhmMdisc8
+         ZQwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOgnIyPBKgWsxyMhRY97l7dO5Q/Yp6EEEhc65iz9UQNCjLAf6+bdZW8YMBDoxix5OL+LPsS5xBgG7vV9KVj3p8jB12xoF7Ac8Bj4Mn
+X-Gm-Message-State: AOJu0YxWtScVa1OZqoFpDcg0td1UjRp6n4jDJON1ICb5rIYO3UYdSNfo
+	QTENW87a5eGvcnRI5iVLNnwpiTmvwl0MGxUPol1uyTVuce4SsmmEPuvc3BBPsVqot1nymygvJv5
+	9F1YLwA==
+X-Google-Smtp-Source: AGHT+IFdZ0XvQvTapn2ZuRYZVz9MOwjiZxq1BcxSyNSCbB4S3HU1dht5yoL8Vi4+G+SLzhNQBUBHrA==
+X-Received: by 2002:a2e:2205:0:b0:2ec:165a:224d with SMTP id 38308e7fff4ca-2ee8ee0e7a1mr19369971fa.38.1720113711480;
+        Thu, 04 Jul 2024 10:21:51 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee8aa4ba62sm4026971fa.64.2024.07.04.10.21.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 10:21:50 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ee75ffce77so10468551fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 10:21:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUEvh5MqAmIehPXzENKHXLh7cTn+2KH2ONyeRrC/VkJV0FuSVRnflUDMvYTvagOrdpMAQ8YY1N8YZjRgXWlgVHEnKe5zGwrX8mqHx6/
+X-Received: by 2002:a2e:8789:0:b0:2ee:8817:422d with SMTP id
+ 38308e7fff4ca-2ee8ed69ce3mr18811771fa.5.1720113710184; Thu, 04 Jul 2024
+ 10:21:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <ZobXdDCYBi8OM-Fo@zx2c4.com>
+In-Reply-To: <ZobXdDCYBi8OM-Fo@zx2c4.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 4 Jul 2024 10:21:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
+Message-ID: <CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
+Subject: Re: deconflicting new syscall numbers for 6.11
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: jolsa@kernel.org, mhiramat@kernel.org, cgzones@googlemail.com, 
+	brauner@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 2024-07-04 at 10:07 -0700, Linus Torvalds wrote:
-> On Wed, 3 Jul 2024 at 13:11, James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> > 
-> > if (__and(IS_ENABLED(CONFIG_TCG_TPM2_HMAC), chip->auth))
-> 
-> Augh. Please don't do this.
-> 
-> That "__and()" thing may work, but it's entirely accidental that it
-> does.
-> 
-> It's designed for config options _only_, and the fact that it then
-> happens to work for "first argument is config option, second argument
-> is C conditional".
-> 
-> The comment says that it's implementing "&&" using preprocessor
-> expansion only, but it's a *really* limited form of it. The arguments
-> are *not* arbitrary.
-> 
-> So no. Don't do this.
-> 
-> Just create a helper inline like
-> 
->     static inline struct tpm2_auth *chip_auth(struct tpm_chip *chip)
->     {
->     #ifdef CONFIG_TCG_TPM2_HMAC
->         return chip->auth;
->     #else
->         return NULL;
->     #endif
->     }
-> 
-> and if we really want to have some kind of automatic way of doing
-> this, we will *NOT* be using __and(), we'd do something like
-> 
->         /* Return zero or 'value' depending on whether OPTION is
-> enabled or not */
->         #define IF_ENABLED(option, value) __and(IS_ENABLED(option),
-> value)
-> 
-> that actually would be documented and meaningful.
-> 
-> Not this internal random __and() implementation that is purely a
-> kconfig.h helper macro and SHOULD NOT be used anywhere else.
+On Thu, 4 Jul 2024 at 10:10, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> The three of us all have new syscalls planned for 6.11. Arnd suggested
+> that we coordinate to deconflict, to make the merge easier.
 
-I actually like the latter version, but instinct tells me that if this
-is the first time the kernel has ever needed something like this then
-perhaps we should go with the former because that's how everyone must
-have handled it in the past.
+Nobody has explained to me what has changed since your last vdso
+getrandom, and I'm not planning on pulling it unless that fundamental
+flaw is fixed.
 
-James
+Why is this _so_ critical that it needs a vdso?
 
+Why isn't user space just doing it itself?
+
+What's so magical about this all?
+
+This all seems entirely pointless to me still, because it's optimizing
+something that nobody seems to care about, adding new VM
+infrastructure, new magic system calls, yadda yadda.
+
+I was very sceptical last time, and absolutely _nothing_ has changed.
+Not a peep on why it's now suddenly so hugely important again.
+
+We don't add stuff "just because we can". We need to have a damn good
+reason for it. And I still don't see the reason, and I haven't seen
+anybody even trying to explain the reason.
+
+              Linus
 
