@@ -1,153 +1,122 @@
-Return-Path: <linux-kernel+bounces-241265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDD592792F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC59E927932
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 095221C23667
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18F281C23789
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E211B1208;
-	Thu,  4 Jul 2024 14:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="nwu2Twgx"
-Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914881AEFF7;
-	Thu,  4 Jul 2024 14:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481C61B11EE;
+	Thu,  4 Jul 2024 14:48:07 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41D01B0119;
+	Thu,  4 Jul 2024 14:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720104463; cv=none; b=J3spJNc3SOpzmQtHeQEhyuGTtXo5/iQsh07OI4aYZDc9KNy9Akz24Liz0OQgDkd8ensNHNWq4o1zBDcDPGjeDciCVWDu9EpEv5nv3PJ29plxba4vXsxhksyx/EAMGLSIZGlIzCKlUhAW23eQvLSyk0CBiI7LMzCeBvWHfIimDnQ=
+	t=1720104486; cv=none; b=rFEoSM/T6Gx15Mh5YQMfq4jgl23ByoxLVmb7qCTN90KOCeKxrRdw72kG1VbBg4FBgmbfUBLlyXmpvmHkAjpUC70GM2pztkHJGN66eYSaflUOJThjyEDuiINGbrInyuRSLCPdWKW3rQWXONmSXzexmkaXZz18A9vAeQKUUu3EaGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720104463; c=relaxed/simple;
-	bh=/x8J24Gd7MAb2ei7OJV0iflNkUAoN6f9qXBif0ICwgw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a1JOVEt6EiTGwue63R11m6Z5hKf4dpvxUoeFaGsWIHbo5K4lKCTO+LDjb4ICdjqkTVksL4zZGIdKwiO4jv1DT6Nc4V9ouU991wSzWCfdEwve2ctJ6HgVy++QpxI2MGOBIa9Owvr/cJQlDmEyRfI/hCz5h+AdR2g65MBbrWQQ7Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=nwu2Twgx; arc=none smtp.client-ip=49.12.72.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
-From: Finn Behrens <me@kloenk.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1720104458; bh=Rkh9Gxrbd+RcHt6HdDYebnkryyNZqEZzX12Z6Dir7BU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=nwu2Twgxxr13nOBVdrqqZ86A8fiU1W3t8C49bdSUsb7GjkIMsPyE8ruf/Gm+MCRKv
-	 /3eSC47VSuz3T/FUSMGQ54hcLwiz21mEauOcmiaRSA0uEqMQ1tSSfuDBMmd1dBTqaI
-	 OHO7XcRQ2+KC28gaRgwHTXPq3NH1gF4J/21a3w+o=
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Subject: Re: [PATCH 07/13] rust: warn about `bindgen` versions 0.66.0 and
- 0.66.1
-Date: Thu, 04 Jul 2024 16:47:37 +0200
-Message-ID: <68C4DE68-D996-43FA-BC16-06F13557E494@kloenk.dev>
-In-Reply-To: <20240701183625.665574-8-ojeda@kernel.org>
-References: <20240701183625.665574-1-ojeda@kernel.org>
- <20240701183625.665574-8-ojeda@kernel.org>
+	s=arc-20240116; t=1720104486; c=relaxed/simple;
+	bh=bZYIFkT1L0I1lV75J4LbB9X5PX2ui0qO0qhHQb9jdn4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jBfVuCr9dM5kr/ihk0BKFPEtNeXPUZ43Zu91xgsDxO09qrbJloG1UcoaDOZScE7EGVZvxAj4ye/XVWIozjl3cMfmJF8T1V0F9Rt8zlFCSxJxU7OfAeBSJama1uPhTN2OL9hKJ43TRXa9ki7Ks8GcjTUnupjKZX4wOhRaQ1f69Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [117.22.85.168])
+	by gateway (Coremail) with SMTP id _____8DxfeshtoZmMv0AAA--.3074S3;
+	Thu, 04 Jul 2024 22:48:01 +0800 (CST)
+Received: from [192.168.0.109] (unknown [117.22.85.168])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxRcUetoZmmi87AA--.60231S3;
+	Thu, 04 Jul 2024 22:48:00 +0800 (CST)
+Message-ID: <5ab53836-5a11-a47b-042e-96c5c9e70974@loongson.cn>
+Date: Thu, 4 Jul 2024 22:47:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH v2 0/3] hw_breakpoint: Save privilege of access control
+ via ptrace
+Content-Language: en-US
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Oleg Nesterov <oleg@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240621073910.8465-1-yangtiezhu@loongson.cn>
+In-Reply-To: <20240621073910.8465-1-yangtiezhu@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:AQAAf8AxRcUetoZmmi87AA--.60231S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Cw18JF43WF4xKw1xAFyxWFX_yoW8Xr47pr
+	W3u3ZxKw4DGayUu3ZIqw4Dua4S9w1kXrWjqa4DGw4Fyrn09Fy3WFZ2q3ZI9rZrZr1Iq34f
+	t3yqvrWqy3WUZ3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUcbAwUU
+	UUU
 
+On 6/21/24 15:39, Tiezhu Yang wrote:
+> Hi all,
+> 
+> Thank you very much for your feedbacks in the v1 patch.
+> This series is based on 6.10-rc4, cross compile tested only.
+> 
+> As far as I can tell, these changes are not relevant with tools/perf,
+> on some archs such as ARM, ARM64 and LoongArch which have privilege
+> level of breakpoint, the initial aim is to make use of the value of
+> ctrl->privilege saved in decode_ctrl_reg() and then remove the check
+> whether bp virtual address is in kernel space to assign value for
+> hw->ctrl.privilege in arch_build_bp_info().
+> 
+> v2:
+>    -- Put the new member "bp_priv" at the end of the uapi
+>       struct perf_event_attr and add PERF_ATTR_SIZE_VER9.
+>    -- Update the commit message to make the goal clear.
+> 
+> Tiezhu Yang (3):
+>    perf: Add perf_event_attr::bp_priv
+>    arm: hw_breakpoint: Save privilege of access control via ptrace
+>    arm64: hw_breakpoint: Save privilege of access control via ptrace
+> 
+>   arch/arm/kernel/hw_breakpoint.c   |  4 +---
+>   arch/arm/kernel/ptrace.c          |  2 ++
+>   arch/arm64/kernel/hw_breakpoint.c | 11 ++---------
+>   arch/arm64/kernel/ptrace.c        |  2 ++
+>   include/uapi/linux/perf_event.h   |  3 +++
+>   kernel/events/hw_breakpoint.c     |  1 +
+>   6 files changed, 11 insertions(+), 12 deletions(-)
 
+Ping, any more comments? Is it possible to merge this series
+for the coming merge window?
 
-On 1 Jul 2024, at 20:36, Miguel Ojeda wrote:
+If this patch series has no value and is not acceptable,
+or what should I do to update, please let me know.
 
-> `bindgen` versions 0.66.0 and 0.66.1 panic due to C string literals wit=
-h
-> NUL characters [1]:
->
->     panicked at .cargo/registry/src/index.crates.io-6f17d22bba15001f/bi=
-ndgen-0.66.0/codegen/mod.rs:717:71:
->     called `Result::unwrap()` on an `Err` value: FromBytesWithNulError =
-{ kind: InteriorNul(4) }
->
-> Thus, in preparation for supporting several `bindgen` versions, add a
-> version check to warn the user about it.
->
-> We could make it an error, but 1) it is going to fail anyway later in t=
-he
-> build, 2) we would disable `RUST` automatically, which is also painful,=
+Thanks,
+Tiezhu
 
-> 3) someone could be using a patched `bindgen` at that version, 4) the
-> interior NUL may go away in the headers (however unlikely). Thus just
-> warn about it so that users know why it is failing.
->
-> In addition, add a test for the new case.
->
-> Link: https://github.com/rust-lang/rust-bindgen/pull/2567 [1]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-
-Reviewed-by: Finn Behrens <me@kloenk.dev>
-
-> ---
->  scripts/rust_is_available.sh      | 8 ++++++++
->  scripts/rust_is_available_test.py | 7 +++++++
->  2 files changed, 15 insertions(+)
->
-> diff --git a/scripts/rust_is_available.sh b/scripts/rust_is_available.s=
-h
-> index 67cb900124cc..33bbd01ffe51 100755
-> --- a/scripts/rust_is_available.sh
-> +++ b/scripts/rust_is_available.sh
-> @@ -165,6 +165,14 @@ if [ "$rust_bindings_generator_cversion" -gt "$rus=
-t_bindings_generator_min_cvers
->  	echo >&2 "***"
->  	warning=3D1
->  fi
-> +if [ "$rust_bindings_generator_cversion" -eq 6600 ] || [ "$rust_bindin=
-gs_generator_cversion" -eq 6601 ]; then
-> +	echo >&2 "***"
-> +	echo >&2 "*** Rust bindings generator '$BINDGEN' versions 0.66.0 and =
-0.66.1 may not"
-> +	echo >&2 "*** work due to a bug (https://github.com/rust-lang/rust-bi=
-ndgen/pull/2567)."
-> +	echo >&2 "***   Your version:     $rust_bindings_generator_version"
-> +	echo >&2 "***"
-> +	warning=3D1
-> +fi
->
->  # Check that the `libclang` used by the Rust bindings generator is sui=
-table.
->  #
-> diff --git a/scripts/rust_is_available_test.py b/scripts/rust_is_availa=
-ble_test.py
-> index a255f79aafc2..2b887098c19d 100755
-> --- a/scripts/rust_is_available_test.py
-> +++ b/scripts/rust_is_available_test.py
-> @@ -226,6 +226,13 @@ else:
->          result =3D self.run_script(self.Expected.SUCCESS_WITH_WARNINGS=
-, { "BINDGEN": bindgen })
->          self.assertIn(f"Rust bindings generator '{bindgen}' is too new=
-=2E This may or may not work.", result.stderr)
->
-> +    def test_bindgen_bad_version_0_66_0_and_0_66_1(self):
-> +        for version in ("0.66.0", "0.66.1"):
-> +            with self.subTest(version=3Dversion):
-> +                bindgen =3D self.generate_bindgen_version(f"bindgen {v=
-ersion}")
-> +                result =3D self.run_script(self.Expected.SUCCESS_WITH_=
-WARNINGS, { "BINDGEN": bindgen })
-> +                self.assertIn(f"Rust bindings generator '{bindgen}' ve=
-rsions 0.66.0 and 0.66.1 may not", result.stderr)
-> +
->      def test_bindgen_libclang_failure(self):
->          for env in (
->              { "LLVM_CONFIG_PATH": self.missing },
-> -- =
-
-> 2.45.2
 
