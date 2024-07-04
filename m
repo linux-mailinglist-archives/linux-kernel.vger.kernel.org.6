@@ -1,217 +1,289 @@
-Return-Path: <linux-kernel+bounces-241615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC20927D24
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:34:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 122D2927D28
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA0E228337C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:34:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355EA1C21A17
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDBE14264F;
-	Thu,  4 Jul 2024 18:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD4912E1D2;
+	Thu,  4 Jul 2024 18:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rj1F0iWf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y/4JWEMV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="eC8XFyJA"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BCF13BAC2;
-	Thu,  4 Jul 2024 18:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1EC143887;
+	Thu,  4 Jul 2024 18:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720117980; cv=none; b=loxpFLV8p53wwe8M/YyYzlkjw2EN3tDzpqivo0zaCAABhjkyJvAz1oRUnHfn/X2WGyiZcRufGGqVWsylwT10vakEORibgZI6Qa+uHdY4kP+ZkTmmfYKF/IshY9+Qn46OED2sw362/p66uUoEfiDWadkDIDaCXAfyCnPYDHGqOW0=
+	t=1720117987; cv=none; b=n27O7UiaCgAJwN0gWTDEv/et6iWIZDaQOSYXkNN+6ZgHgexOByEZ1CnNGUPbN0XtPfd+Mrxj+0fZ+0ht5Pm0ehzXilc+i1lDzWyRglYXL5Pvn5VNUpVDHWkJ5uq+byzT6/11Htimt1KE4p5TF69N++P9FvyH6KUQriXQdX+sd/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720117980; c=relaxed/simple;
-	bh=XS0rqq/ldLIWk9phy0MHpj5V3/wx9Sti78sx8aiqZxc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=jkhktbdhW7oNO1Gc/qokg1KNUfrifgRmf6MxHx1fuXMh6OcZp0vSWQ2KCJg3zNMTr1HWBUa0vQNi0Wma/oGB8E8qhqixyHhkUvnqC5Q1hqkKMUw4iwbAYFWFIzlQQEjv80qSyKxp1IiAFeAGw4ZgYQOXootaS5pPRpnncj9p1Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rj1F0iWf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y/4JWEMV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 04 Jul 2024 18:32:55 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1720117975;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AGMoAgHkPuwvGNyaxGxuPZjCVaDLQHu+G9lycbfyLds=;
-	b=Rj1F0iWf6owLQBbjS2EHD31MStQfMCU9lR6hJ7+2bgw83H0Er+if6qzLNl672MeBNp7Hov
-	hsZfUYEu6G26P2HE5zypb67Hm3VDPK3Ymac/Vy5yD5GlWSB80I6IrGvnaVIo2cCNGleDKe
-	31KoARCU1o+RVBpjLyB2DIFOFolVZezDKujWAyZ8jecBVbbr4GC4Abkimb+pSL9nwI4KLL
-	YtbPa9iS0Zeb3XJEfn70rL/MCPShpY8V21sQBhET0YddQ87TGwgioVUxeyesmCxxYfQD+z
-	Wxv5syPrD1Jld94G9WJAAUVuslr2rRNpuH/IVlKV1viOEnHLLtpOxYyVD/Vv4g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1720117975;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AGMoAgHkPuwvGNyaxGxuPZjCVaDLQHu+G9lycbfyLds=;
-	b=Y/4JWEMVylg00yoPng/shxLT8jegnLGpdtTZoHEvoDPAzgsWputOFg3UA/Nw8ZvcfKW8lh
-	vaGo2ULQjaj3/FAw==
-From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/core] timers/migration: Do not rely always on group->parent
-Cc: Borislav Petkov <bp@alien8.de>,
- "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240701-tmigr-fixes-v3-1-25cd5de318fb@linutronix.de>
-References: <20240701-tmigr-fixes-v3-1-25cd5de318fb@linutronix.de>
+	s=arc-20240116; t=1720117987; c=relaxed/simple;
+	bh=VDWWjNgoXv2+npNrbBZ8gNifMvHga4rn8kJmApgzkNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NvDl7AJg105t+3mhNjuvGGDPRkglm8nC7siGWiGTcHzCwQuWk1M+6YcznXIjFU8BMTui3QkbXsRCW7YRKq8F1Ur2Mrn3XGjKo63Wot7RtlhedblnTU072TLBifcjDaII9JLbhGFCSz1ZOrPlamCeYjBTHknRQ+hiiepIg6K4D98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=eC8XFyJA; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1720117982;
+	bh=VDWWjNgoXv2+npNrbBZ8gNifMvHga4rn8kJmApgzkNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eC8XFyJAj+Kh//LcEiSPT3MPBSo/GkNYhRwH89ZfQyO+Y0Yci55CR1E1Hymh/T8TA
+	 +/2NP5H8bbi0ow9u/A6jidhDtd91Qv49ZZLcEvR7cd0n2HRPYJa8Ky6AbBMTC9teKO
+	 AJ3B3imOmFanfpUrfvRP3/Xx12lmXeE4zbZM3ojM=
+Date: Thu, 4 Jul 2024 20:33:02 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH] kbuild: add script and target to generate pacman package
+Message-ID: <48949ab7-7fac-4be1-b28f-87a3e3b6d6a6@t-8ch.de>
+References: <20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net>
+ <20240704182115.GA300903@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172011797531.2215.17201816570227765021.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240704182115.GA300903@thelio-3990X>
 
-The following commit has been merged into the timers/core branch of tip:
+On 2024-07-04 11:21:15+0000, Nathan Chancellor wrote:
+> Hi Thomas,
+> 
+> On Thu, Jul 04, 2024 at 06:36:34PM +0200, Thomas Weißschuh wrote:
+> > pacman is the package manager used by Arch Linux and its derivates.
+> > Creating native packages from the kernel tree has multiple advantages:
+> > 
+> > * The package triggers the correct hooks for initramfs generation and
+> >   bootloader configuration
+> > * Uninstallation is complete and also invokes the relevant hooks
+> > * New UAPI headers can be installed without any manual bookkeeping
+> > 
+> > The PKGBUILD file is a simplified version of the one used for the
+> > downstream Arch Linux "linux" package.
+> > Extra steps that should not be necessary for a development kernel have
+> > been removed and an UAPI header package has been added.
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> 
+> This is pretty awesome and much needed I think, it would allow me to
+> replace my own home grown "build an Arch Linux kernel package" script.
+> It should also make it much easier for users of Arch Linux and related
+> distributions to build and test mainline kernels for issue reproduction
+> and bisecting, which is one of the biggest hurdles I have encountered
+> when it comes to working with those users.
 
-Commit-ID:     cabe7ebd57a0bfd0ef8e74f0c70423ae8d4d9171
-Gitweb:        https://git.kernel.org/tip/cabe7ebd57a0bfd0ef8e74f0c70423ae8d4d9171
-Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
-AuthorDate:    Mon, 01 Jul 2024 12:18:37 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 04 Jul 2024 20:22:21 +02:00
+Nice to hear!
 
-timers/migration: Do not rely always on group->parent
+> The resulting package that I get boots in my virtual machine (I can't
+> take down my workstation at the moment).
 
-When reading group->parent without holding the group lock it is racy
-against CPUs coming online the first time and thereby creating another
-level of the hierarchy. This is not a problem when this value is read once
-to decide whether to abort a propagation or not. The worst outcome is an
-unnecessary/early CPU wake up. But it is racy when reading it several times
-during a single 'action' (like activation, deactivation, checking for
-remote timer expiry,...) and relying on the consitency of this value
-without holding the lock. This happens at the moment e.g. in
-tmigr_inactive_up() which is also calling tmigr_udpate_events(). Code relys
-on group->parent not to change during this 'action'.
+For the record: It works on my physical machine.
 
-Update parent struct member description to explain the above only
-once. Remove parent pointer checks when they are not mandatory (like update
-of data->childmask). Remove a warning, which would be nice but the trigger
-of this warning is not reliable and add expand the data structure member
-description instead. Expand a comment, why it is safe to rely on parent
-pointer here (inside hierarchy update).
+> I notice one warning during the build phase that appears to come from makepkg
+> itself? The permissions of the pkg folder are execute only. This is building
+> using O=, I haven't had much time to look into it aside from that.
+> 
+>   $ make -skj"$(nproc)" ARCH=x86_64 LLVM=1 O=... olddefconfig pacman-pkg
+>   ==> Making package: linux-upstream 6.10.0_rc6_00051_g1dfe225e9af5_dirty-1 (Thu 04 Jul 2024 10:02:14 AM MST)
+>   ==> Checking runtime dependencies...
+>   ==> Checking buildtime dependencies...
+>   ==> Retrieving sources...
+>   ==> Extracting sources...
+>   ==> Starting build()...
+>   find: ‘./pacman/linux-upstream/pkg’: Permission denied
+>   ...
+> 
+>   $ ls -al .../pacman/linux-upstream
+>   total 16
+>   drwxr-xr-x 4 nathan nathan 4096 Jul  4 10:02 .
+>   drwxr-xr-x 3 nathan nathan 4096 Jul  4 10:02 ..
+>   d--x--x--x 2 nathan nathan 4096 Jul  4 10:02 pkg
+>   drwxr-xr-x 2 nathan nathan 4096 Jul  4 10:02 src
+> 
+> Not a big deal to me though, it's only a warning.
 
-Fixes: 7ee988770326 ("timers: Implement the hierarchical pull model")
-Reported-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20240701-tmigr-fixes-v3-1-25cd5de318fb@linutronix.de
+I'll try to fix it up for v2.
 
----
- kernel/time/timer_migration.c | 33 +++++++++++++++------------------
- kernel/time/timer_migration.h | 12 +++++++++++-
- 2 files changed, 26 insertions(+), 19 deletions(-)
+> 
+> > ---
+> >  .gitignore               |  6 ++++
+> >  scripts/Makefile.package | 15 ++++++++++
+> >  scripts/package/PKGBUILD | 72 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 93 insertions(+)
+> > 
+> > diff --git a/.gitignore b/.gitignore
+> > index c59dc60ba62e..7902adf4f7f1 100644
+> > --- a/.gitignore
+> > +++ b/.gitignore
+> > @@ -92,6 +92,12 @@ modules.order
+> >  #
+> >  /tar-install/
+> >  
+> > +#
+> > +# pacman files (make pacman-pkg)
+> > +#
+> > +/PKGBUILD
+> > +/pacman/
+> > +
+> >  #
+> >  # We don't want to ignore the following even if they are dot-files
+> >  #
+> > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> > index bf016af8bf8a..8c0c80f8bec0 100644
+> > --- a/scripts/Makefile.package
+> > +++ b/scripts/Makefile.package
+> > @@ -141,6 +141,20 @@ snap-pkg:
+> >  	cd $(objtree)/snap && \
+> >  	snapcraft --target-arch=$(UTS_MACHINE)
+> >  
+> > +# pacman-pkg
+> > +# ---------------------------------------------------------------------------
+> > +
+> > +PHONY += pacman-pkg
+> > +pacman-pkg:
+> > +	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+> > +	cd $(objtree) && \
+> > +		srctree="$(realpath $(srctree))" \
+> > +		objtree="$(realpath $(objtree))" \
+> > +		BUILDDIR="$(realpath $(objtree))/pacman" \
+> > +		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
+> > +		KBUILD_REVISION="$(shell $(srctree)/init/build-version)" \
+> > +		makepkg
+> > +
+> >  # dir-pkg tar*-pkg - tarball targets
+> >  # ---------------------------------------------------------------------------
+> >  
+> > @@ -221,6 +235,7 @@ help:
+> >  	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
+> >  	@echo '  snap-pkg            - Build only the binary kernel snap package'
+> >  	@echo '                        (will connect to external hosts)'
+> > +	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
+> >  	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
+> >  	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
+> >  	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
+> > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > new file mode 100644
+> > index 000000000000..29daf357edc1
+> > --- /dev/null
+> > +++ b/scripts/package/PKGBUILD
+> > @@ -0,0 +1,72 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> > +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
+> > +
+> > +pkgbase=linux-upstream
+> > +pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
+> > +pkgver="${KERNELRELEASE//-/_}"
+> > +pkgrel="$KBUILD_REVISION"
+> > +pkgdesc='Linux'
+> > +url='https://www.kernel.org/'
+> > +arch=("$UTS_MACHINE")
+> > +options=(!strip)
+> > +license=(GPL-2.0-only)
+> > +
+> > +build() {
+> > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> > +  cd "$objtree"
+> > +
+> > +  ${MAKE} -f "${srctree}/Makefile"
+> > +
+> > +}
+> > +
+> > +package_linux-upstream() {
+> > +  pkgdesc="The $pkgdesc kernel and modules"
+> > +
+> > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> > +  cd "$objtree"
+> > +  local modulesdir="$pkgdir/usr/$MODLIB"
+> > +
+> > +  echo "Installing boot image..."
+> > +  # systemd expects to find the kernel here to allow hibernation
+> > +  # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
+> > +  install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
+> 
+> should this be ${MAKE}? I suppose it does not really matter much.
 
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index 8441311..d91efe1 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -507,7 +507,14 @@ static void walk_groups(up_f up, void *data, struct tmigr_cpu *tmc)
-  *			(get_next_timer_interrupt())
-  * @firstexp:		Contains the first event expiry information when last
-  *			active CPU of hierarchy is on the way to idle to make
-- *			sure CPU will be back in time.
-+ *			sure CPU will be back in time. It is updated in top
-+ *			level group only. Be aware, there could occur a new top
-+ *			level of the hierarchy between the 'top level call' in
-+ *			tmigr_update_events() and the check for the parent group
-+ *			in walk_groups(). Then @firstexp might contain a value
-+ *			!= KTIME_MAX even if it was not the final top
-+ *			level. This is not a problem, as the worst outcome is a
-+ *			CPU which might wake up a little early.
-  * @evt:		Pointer to tmigr_event which needs to be queued (of idle
-  *			child group)
-  * @childmask:		childmask of child group
-@@ -649,7 +656,7 @@ static bool tmigr_active_up(struct tmigr_group *group,
- 
- 	} while (!atomic_try_cmpxchg(&group->migr_state, &curstate.state, newstate.state));
- 
--	if ((walk_done == false) && group->parent)
-+	if (walk_done == false)
- 		data->childmask = group->childmask;
- 
- 	/*
-@@ -1317,20 +1324,9 @@ static bool tmigr_inactive_up(struct tmigr_group *group,
- 	/* Event Handling */
- 	tmigr_update_events(group, child, data);
- 
--	if (group->parent && (walk_done == false))
-+	if (walk_done == false)
- 		data->childmask = group->childmask;
- 
--	/*
--	 * data->firstexp was set by tmigr_update_events() and contains the
--	 * expiry of the first global event which needs to be handled. It
--	 * differs from KTIME_MAX if:
--	 * - group is the top level group and
--	 * - group is idle (which means CPU was the last active CPU in the
--	 *   hierarchy) and
--	 * - there is a pending event in the hierarchy
--	 */
--	WARN_ON_ONCE(data->firstexp != KTIME_MAX && group->parent);
--
- 	trace_tmigr_group_set_cpu_inactive(group, newstate, childmask);
- 
- 	return walk_done;
-@@ -1552,10 +1548,11 @@ static void tmigr_connect_child_parent(struct tmigr_group *child,
- 		data.childmask = child->childmask;
- 
- 		/*
--		 * There is only one new level per time. When connecting the
--		 * child and the parent and set the child active when the parent
--		 * is inactive, the parent needs to be the uppermost
--		 * level. Otherwise there went something wrong!
-+		 * There is only one new level per time (which is protected by
-+		 * tmigr_mutex). When connecting the child and the parent and
-+		 * set the child active when the parent is inactive, the parent
-+		 * needs to be the uppermost level. Otherwise there went
-+		 * something wrong!
- 		 */
- 		WARN_ON(!tmigr_active_up(parent, child, &data) && parent->parent);
- 	}
-diff --git a/kernel/time/timer_migration.h b/kernel/time/timer_migration.h
-index 6c37d94..494f68c 100644
---- a/kernel/time/timer_migration.h
-+++ b/kernel/time/timer_migration.h
-@@ -22,7 +22,17 @@ struct tmigr_event {
-  * struct tmigr_group - timer migration hierarchy group
-  * @lock:		Lock protecting the event information and group hierarchy
-  *			information during setup
-- * @parent:		Pointer to the parent group
-+ * @parent:		Pointer to the parent group. Pointer is updated when a
-+ *			new hierarchy level is added because of a CPU coming
-+ *			online the first time. Once it is set, the pointer will
-+ *			not be removed or updated. When accessing parent pointer
-+ *			lock less to decide whether to abort a propagation or
-+ *			not, it is not a problem. The worst outcome is an
-+ *			unnecessary/early CPU wake up. But do not access parent
-+ *			pointer several times in the same 'action' (like
-+ *			activation, deactivation, check for remote expiry,...)
-+ *			without holding the lock as it is not ensured that value
-+ *			will not change.
-  * @groupevt:		Next event of the group which is only used when the
-  *			group is !active. The group event is then queued into
-  *			the parent timer queue.
+Make sense for consistency.
+
+> 
+> Would it be worth copying the .config and System.map to $modulesdir like
+> kernel.spec here as well? I know that upstream does not do this, as it
+> enables IKCONFIG in /proc but it would be potentially useful in certain
+> scenarios.
+
+Ack.
+
+> One other minor suggestion would be installing the dtbs somewhere if
+> the architecture supports them, maybe to $modulesdir/dtbs? Not super
+> critical but I know Arch Linux Ports is gaining traction, so it might be
+> good to future proof this a little bit.
+
+Ack.
+
+> > +  # Used by mkinitcpio to name the kernel
+> > +  echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
+> > +
+> > +  echo "Installing modules..."
+> > +  ${MAKE} INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+> > +    DEPMOD=/doesnt/exist modules_install  # Suppress depmod
+> > +
+> > +  # remove build link
+> 
+> Perhaps it is worth mentioning that this is done because it will be
+> created again/properly in the headers package?
+
+Ack.
+
+> 
+> > +  rm -f "$modulesdir/build"
+> > +}
+> > +
+> > +package_linux-upstream-headers() {
+> > +  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
+> > +
+> > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> > +  cd "$objtree"
+> > +  local builddir="$pkgdir/usr/$MODLIB/build"
+> > +
+> > +  echo "Installing build files..."
+> > +  "$srctree/scripts/package/install-extmod-build" "$builddir"
+> > +
+> > +  echo "Adding symlink..."
+> > +  mkdir -p "$pkgdir/usr/src"
+> > +  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
+> > +}
+> > +
+> > +package_linux-upstream-api-headers() {
+> > +  pkgdesc="Kernel headers sanitized for use in userspace"
+> > +  provides=(linux-api-headers)
+> > +  conflicts=(linux-api-headers)
+> > +
+> > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> > +  cd "$objtree"
+> > +
+> > +  ${MAKE} headers_install INSTALL_HDR_PATH="$pkgdir/usr"
+> > +}
+> > +
+> > +# vim:set ts=8 sts=2 sw=2 et:
+> > 
+> > ---
+> > base-commit: 795c58e4c7fc6163d8fb9f2baa86cfe898fa4b19
+> > change-id: 20240625-kbuild-pacman-pkg-b4f87e19d036
+> > 
+> > Best regards,
+> > -- 
+> > Thomas Weißschuh <linux@weissschuh.net>
+> > 
 
