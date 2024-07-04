@@ -1,154 +1,128 @@
-Return-Path: <linux-kernel+bounces-241009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50539275B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:06:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29ADE9275B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43161282AE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:06:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B38F8281C61
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08B71AE840;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3011E1AE0AB;
 	Thu,  4 Jul 2024 12:05:57 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrsWYMDc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D121AB503;
-	Thu,  4 Jul 2024 12:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700EC1ACE7E;
+	Thu,  4 Jul 2024 12:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720094757; cv=none; b=aHSlQgv0VBun4mWRZDrmisSJvXKq871rvHw+eCVuJKsN329mnfiZklSfsHTk30S6SBc98CLRjZgulcs+peh2bM3QpX77dMqs3ewSYpS+VinuUNOI7RglQjxGf84tsg+AUI4l1SprYvUJFlQI+t74aHwIEKchzl0MbZZTBM9ehg8=
+	t=1720094756; cv=none; b=jicbnwclPjec1y4nBZbEVLXug04lnwM8592e8+rkP/KVghwVGfdw5qarWRHBdBjmxvEQIOhLber6/yeHvW+ZJ4EXY+O5upkKhR3sESTkf7sMpS7o9Lme3/OY/qs1ncenToPvffBL5cQOFIlC/6Txny4USce3HBrJydWxDbLUe48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720094757; c=relaxed/simple;
-	bh=L+Sz0ZouYi21bliJnhv4trBwcjkjzcxkmiWNOR4Bjko=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t71sWlbfex/CLe/JJGNAAicZAICj8yJFtNMb+wIMlRx3ue6ivXv+BRmhg3fJmWjWYfFFFPC1R3pVk/M8mjb2v6ngqTIy9P7Llu4WHer5WhzpDtykVxfFf6DbQfXX2wx4YdsneXaM1L60GZFd+jfoHiV1Pe9GJeQVJIlcD9EnMpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875ac2.versanet.de ([83.135.90.194] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sPLDg-0000bm-60; Thu, 04 Jul 2024 14:05:48 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org,
- Diederik de Haas <didi.debian@cknow.org>, Alex Bee <knaerzche@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: rockchip: add rock5 itx board
-Date: Thu, 04 Jul 2024 14:05:47 +0200
-Message-ID: <2004736.8hb0ThOEGa@diego>
-In-Reply-To: <2c46dfb7-5ef3-494f-8cf1-413033e73412@gmail.com>
-References:
- <20240703210524.776455-1-heiko@sntech.de> <4552794.8F6SAcFxjW@diego>
- <2c46dfb7-5ef3-494f-8cf1-413033e73412@gmail.com>
+	s=arc-20240116; t=1720094756; c=relaxed/simple;
+	bh=tgabevy+QP/BxviO8/iWVUYEucraiguvzRh3eXny1PA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WrFLYboZ3vEYHM1Q6rfCGwMJl+pVTFQlBzLx2zizDgCZ8X2Gwc4aD7IHPPKC2UuG7tdjAXfAheTwMQXn3WFGVWGftGDIOqj686Yowant3bgectZlnZ7/rhLJwpKjOgNq38Aw4KLes8e0JHug/TDPi7p0iuruKca6R+Xdym0/Rns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrsWYMDc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9A8C3277B;
+	Thu,  4 Jul 2024 12:05:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720094756;
+	bh=tgabevy+QP/BxviO8/iWVUYEucraiguvzRh3eXny1PA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=WrsWYMDc/BdKLy+XmcQf0ZQnz2QSh/UCm3KXhbthTeh/lyKk8OGjbRpKLv5XPOBvK
+	 fjGyVX3PVqVWhuCroFVaDXwP6BT/OqZm7kejJzWPnI8wQ79tLRnWGRzd0qhVTLEWB7
+	 01CDUC7m3Die9hdh46AMDJLbBu9ypC8f5w2Jqtjs3+YSd49n1EAVDIkyFPG9w3+Cm7
+	 iv2JlH9gD4gnY4BHQtqr+PK2Jc9us/kY2F4LohwwgUVzJz5iN0cOGPVGeirVW6u1bE
+	 q8HVERoYZZLG2ze2tPXaU1Eui2SiVIrFGphu0eRki+53gjPztMyV4pwPc252jIWQ7Z
+	 W0HXYLlOZNv6w==
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 04 Jul 2024 13:05:48 +0100
+Subject: [PATCH] spi: omap2-mcspi: Revert multi mode support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240704-spi-revert-omap2-multi-v1-1-69357ef13fdc@kernel.org>
+X-B4-Tracking: v=1; b=H4sIABuQhmYC/x2MSQqAMAwAvyI5G4i1LvgV8SAaNeBS2ipC6d8tH
+ gdmJoBjK+ygywJYfsTJdSYo8gymbTxXRpkTgyKlqaESnRFMIluP1zEahce9e0Ei1eqWuK4mDSk
+ 2lhd5/3E/xPgBZM9Gj2gAAAA=
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Colin Foster <colin.foster@in-advantage.com>, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>, 
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.14-dev-d4707
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2590; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=tgabevy+QP/BxviO8/iWVUYEucraiguvzRh3eXny1PA=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmhpAhKeMAIs0yia3pRJRyhC9V4ldg1ZaZrwpOh2GO
+ 0VNxlgSJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZoaQIQAKCRAk1otyXVSH0H+mB/
+ 4j9uBvFrWjX3vmvuoAdjJ1ornsYlNKtIXy7XnEnnlNRETF6QJKsurpL4k78WR6ot4xHJ7P3y+BbyJp
+ 5iIuhOotbDilmx9f3SPEDio+63rwyFCyxsWftG+wQh97G3ivk6NKyxSFbAemary7KJ66LtDYxUNzjH
+ qCpBkl7BWe8J0WWQphnA1agE7RL4ijsZJwfby+mL4KyyR9PGzn1R3hO9hRDXKXli+r7I1cO9zVDFUk
+ cddOTCjdZaW4LjRFJx2ipexe30sWpunzelIeiHSGQE5lSoYOKGQO4JxeZX1IDgP7B601K6EJwY2OqN
+ atM/Uqpb+TeXrFnkJr8s55U6dDtfKZ
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Am Donnerstag, 4. Juli 2024, 13:43:47 CEST schrieb Alex Bee:
-> Am 04.07.24 um 12:05 schrieb Heiko St=FCbner:
-> > Hi Diederik,
-> >=20
-> > Am Donnerstag, 4. Juli 2024, 11:38:51 CEST schrieb Diederik de Haas:
-> >> Thanks for submitting this. A quick scan indicates it should work with=
- a
-> >> (recent) Debian kernel OOTB :-)
-> >>
-> >> On Wednesday, 3 July 2024 23:05:24 CEST Heiko Stuebner wrote:
-> >>> +&sdhci {
-> >>> +       bus-width =3D <8>;
-> >>> +       no-sdio;
-> >>> +       no-sd;
-> >>> +       non-removable;
-> >>> +       max-frequency =3D <200000000>;
-> >>> +       mmc-hs400-1_8v;
-> >>> +       mmc-hs400-enhanced-strobe;
-> >>> +       mmc-hs200-1_8v;
-> >>> +       status =3D "okay";
-> >>> +};
-> >>> +
-> >>> +&sdmmc {
-> >>> +       max-frequency =3D <200000000>;
-> >>> +       no-sdio;
-> >>> +       no-mmc;
-> >>> +       bus-width =3D <4>;
-> >>> +       cap-mmc-highspeed;
-> >>> +       cap-sd-highspeed;
-> >>> +       disable-wp;
-> >>> +       sd-uhs-sdr104;
-> >>> +       vmmc-supply =3D <&vcc_3v3_s3>;
-> >>> +       vqmmc-supply =3D <&vccio_sd_s0>;
-> >>> +       pinctrl-names =3D "default";
-> >>> +       pinctrl-0 =3D <&sdmmc_bus4 &sdmmc_clk &sdmmc_cmd &sdmmc_det>;
-> >>> +       status =3D "okay";
-> >>> +};
-> >>> +
-> >>> +/* M.2 E-KEY */
-> >>> +&sdio {
-> >>> +       broken-cd;
-> >>> +       bus-width =3D <4>;
-> >>> +       cap-sdio-irq;
-> >>> +       disable-wp;
-> >>> +       keep-power-in-suspend;
-> >>> +       max-frequency =3D <150000000>;
-> >>> +       mmc-pwrseq =3D <&sdio_pwrseq>;
-> >>> +       no-sd;
-> >>> +       no-mmc;
-> >>> +       non-removable;
-> >>> +       pinctrl-names =3D "default";
-> >>> +       pinctrl-0 =3D <&sdiom0_pins>;
-> >>> +       sd-uhs-sdr104;
-> >>> +       vmmc-supply =3D <&vcc3v3_ekey>;
-> >>> +       status =3D "okay";
-> >>> +};
-> >>> +
-> >>> +&sfc {
-> >>> +       pinctrl-names =3D "default";
-> >>> +       pinctrl-0 =3D <&fspim2_pins>;
-> >>> +       status =3D "okay";
-> >>
-> >> Shouldn't those properties be sorted alphabetically? Or at least consi=
-stently?
-> >> Note that the same issue is present on other places too, but I believe=
- the
-> >> above quoted part shows the issue enough.
-> >=20
-> > The main sorting is
-> > - compatible
-> > - reg
-> > [... alphabetically ...]
-> > - status
-> >=20
-> Yeah ... that's always the question when adding new board files. Do it li=
-ke
-> "it's always been done" or re-sort the properties alphanumeric _everywher=
-e_
-> which looks quite strange at times. If I'm getting the newly added dt
-> coding style correctly common (subsystem?) properties should also be plac=
-ed
-> before vendor (driver?) specific ones. Yet I didn't see a board file which
-> places 'regulator-max-microvolt' before 'regulator-min-microvolt'. So I
-> guess it's fine if it's done consistently within the same file?
+There have been multiple reports that the multi-mode support in the
+OMAP2 McSPI driver has caused regressions on existing systems.  There's
+been some discussion and some proposed changes but nothing that's been
+tested by all the reporters.  Drop the patch for v6.10, hopefully we can
+get to the bottom of the issue and reenable the feature for v6.11.
 
-I always see it as a best-effort thing. If all regulator-* stuff is grouped
-together it will be mostly fine. I'm not going to haggle over the sorting
-of the 10th character of property names ;-) .
+Reported-by: Colin Foster <colin.foster@in-advantage.com>
+Reported-by: João Paulo Gonçalves <jpaulo.silvagoncalves@gmail.com>
+Fixes: e64d3b6fc9a3 ("spi: omap2-mcpsi: Enable MULTI-mode in more situations")
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-omap2-mcspi.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
-(and of course reading min before max, is sort of more intuitive)
+diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
+index 7e3083b83534..002f29dbcea6 100644
+--- a/drivers/spi/spi-omap2-mcspi.c
++++ b/drivers/spi/spi-omap2-mcspi.c
+@@ -1277,24 +1277,11 @@ static int omap2_mcspi_prepare_message(struct spi_controller *ctlr,
+ 
+ 		/*
+ 		 * Check if this transfer contains only one word;
+-		 * OR contains 1 to 4 words, with bits_per_word == 8 and no delay between each word
+-		 * OR contains 1 to 2 words, with bits_per_word == 16 and no delay between each word
+-		 *
+-		 * If one of the two last case is true, this also change the bits_per_word of this
+-		 * transfer to make it a bit faster.
+-		 * It's not an issue to change the bits_per_word here even if the multi-mode is not
+-		 * applicable for this message, the signal on the wire will be the same.
+ 		 */
+ 		if (bits_per_word < 8 && tr->len == 1) {
+ 			/* multi-mode is applicable, only one word (1..7 bits) */
+-		} else if (tr->word_delay.value == 0 && bits_per_word == 8 && tr->len <= 4) {
+-			/* multi-mode is applicable, only one "bigger" word (8,16,24,32 bits) */
+-			tr->bits_per_word = tr->len * bits_per_word;
+-		} else if (tr->word_delay.value == 0 && bits_per_word == 16 && tr->len <= 2) {
+-			/* multi-mode is applicable, only one "bigger" word (16,32 bits) */
+-			tr->bits_per_word = tr->len * bits_per_word / 2;
+ 		} else if (bits_per_word >= 8 && tr->len == bits_per_word / 8) {
+-			/* multi-mode is applicable, only one word (9..15,17..32 bits) */
++			/* multi-mode is applicable, only one word (8..32 bits) */
+ 		} else {
+ 			/* multi-mode is not applicable: more than one word in the transfer */
+ 			mcspi->use_multi_mode = false;
 
-And of course leaf-things (board dts) are less "important" than the core
-nodes in soc devicetrees.
+---
+base-commit: 1762dc01fc78ef5f19693e9317eae7491c6c7e1b
+change-id: 20240703-spi-revert-omap2-multi-0028480e65c4
 
-
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
 
