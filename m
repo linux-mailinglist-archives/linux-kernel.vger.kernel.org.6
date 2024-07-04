@@ -1,356 +1,145 @@
-Return-Path: <linux-kernel+bounces-241045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6254F92763A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:46:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031BB927639
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8639B1C23595
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:45:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B30E62841E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B181AEFE5;
-	Thu,  4 Jul 2024 12:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267081B010C;
+	Thu,  4 Jul 2024 12:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="htB/cbBj"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cpxxz5P2"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E111B0111;
-	Thu,  4 Jul 2024 12:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41811AEFE5;
+	Thu,  4 Jul 2024 12:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720097071; cv=none; b=Qv1JkIcFL4D2GtHY4VJI7agq2puLykV48qaxajTlmJsEIEzYWnysAKHTx/y7yvoscFZE047I7vM+XxubqQKppxcjQjVeEyTCRSGNODtP4mak15QtkjgxxOStLdEsexq6AHG+MOT/UH1EO4hl1tqiCE6Sqq75uGo6/dMHni4gFaQ=
+	t=1720097069; cv=none; b=o6pX0N6bufak/UJWhuutbRnBIul1Na9pzlQV2AwMmSp+WJdqJsSWcwnLpvSv9JRk9XIXTy4Ovy4JolLEyWu/iDwVI55d2/HiYaW5zGZfK5Q+OEuzpPWPV21XtWYuMJy2zk2bfhMDX6PHFTqR2GEx/QN8cNO7+6gi8rtJpAjpItU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720097071; c=relaxed/simple;
-	bh=nNpo0ZuXzYf3+WtjOjL0cQD9p4VX8Z4rtX7xIBWGZnA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c10dmNxXxHYh7rj7QITOFcC+ziJiL7s0XQZwjY2wHHKStZG6edEogYt5KbsKaUGEAwSm0SB1YgCJ3+67wSqE98/8jjc5n/Nt7HGvIMUJLd2TZFsQkphGmHA38bF8H4+SbPxFiYEzmYeybMCI1dKB3VrnTcie7u7QRw7lYPxUirE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=htB/cbBj; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1720097069; c=relaxed/simple;
+	bh=y/HsSvOsh+wSPPsva/vntMH7pEcZmfES+GyQgqd8Ntc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AF2RqZ92oQ18ElKAmGMG6MBTsVfzcuVwyKoG8MPpJs5ADSERDhtqVDfF4xyXT2eCVd78eTWWCDW8s/E+6iOWX0o+NJSxh/I/k+H5c8rtEqE+ol4v0RFRGiZ0+1bZegKysHxaEqcgfZZ2sdYVVHlYg+9yIzgpC26ZiS9D2vAvaH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cpxxz5P2; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fa3bdd91c1so3788055ad.2;
-        Thu, 04 Jul 2024 05:44:30 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a77abe5c709so74183666b.2;
+        Thu, 04 Jul 2024 05:44:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720097070; x=1720701870; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720097066; x=1720701866; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dOZZRsIMsFCEeUFHxyJsA3wcVIrREBOvAUEAQZ8gA8w=;
-        b=htB/cbBjgpOdESnDp9Fkqr/CaXdoX6Z7S4b7R/7a9j5jeQ8PAs1hn6mkrbSc6Ijr8M
-         0BxRNKWjdOajjKVyZ/THys7QDcn/wsjwJ0ZZh51JEA7hywPVswjFOSoYLwWZl40BQ/1t
-         4uNFQ3BN9AXgo56LCTKtf1QMP3mmrSV/ILP9nlXQeuDN7XmuX+bKZvqZfE4A+HrKt+4P
-         c8P/JFdkgQMAwgdUPlxGfHsD8HFxnXAtg8hpfG8Y2tuOUokvhgnOYFqf0dfpr3lVyklJ
-         TRItiBORI0ysaD3/+CYNs09PxbFHi2KJUrk0/cnrHKBp9s+kZoceaUjKF/Lqm4zL3wfT
-         c/Qg==
+        bh=WkfUMcSsV+/cyyr0qSLUuAVHTphAAYzuKlDg7eow7nI=;
+        b=Cpxxz5P24CVCXfR6QBFh/jy8/JIhBSsr4c0lv4W4tqtmd500XKUGt/zdM9iBSc5wcW
+         GzFUQqkoiQdFBHJ6tvAnBW+KAA4A5jBzkwMjh6v3hhpf7WqyJojXHxNCU5zMDobAH6wY
+         W8tdIDQFTbVQI4OB8rGaJZo8YmdGxqwIF+Pgc1/fwif4PslrYJUnL/pAOAlwgsoKC52b
+         awkI/p9Q0ZuyDCXvgXdtaGf9kMPm2U5oSJp2Fij2NHz1U6rWH9hUhOxY8Dr/hgfElkpU
+         6H0GIkwb1BLNirzBjbiSqadPRqc4chSonZe+mPnalfHPiuY4bH9v5+PGiJye5SOVQbkL
+         DHdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720097070; x=1720701870;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720097066; x=1720701866;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dOZZRsIMsFCEeUFHxyJsA3wcVIrREBOvAUEAQZ8gA8w=;
-        b=XzBIDuqzOHE8q0Y9uzD4iJ7r1fJT/OmL6ciCVxAS8GUpUu93eBcLAb266ngoWRNJkG
-         i/VjXxeZpojP1N6ar0Dz3URK3+7rr0mAVWE580fID46AfgLN9W/28AuR+vTT42+3TW/Y
-         7tziAoYVBn4Lv08KsxUpenY6f9FpQQX/u4zP+R8Jqf3076JbXJpXjUcferulpt0ClN6s
-         9oJFBXvgi26WURgE1/cUxgVbLbapZOZIQIeFW2VTHYK5hqF6BdTiOWmAGc7jF2w6Rd73
-         I7BpikpvnoebxYgTXkT4ExHBk2YrqIm/udYSgzS90RJhuNliKK6FSLWo5KC5YWt1sXSC
-         qQpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOENkYMCOD1NdZXSWWTYjhPkSQUS0o1hTBvVsp4F1qPeD763BlgDfUdHCunEZMZpefn9cJ71OUBaJq7P1U51IBVlKAzumg9WVSCfltls2Jh11gZdUvy9UPqFyM6T3vg7xZfpWxqWwB0yrYi40d1A==
-X-Gm-Message-State: AOJu0YxYiDcuK6dfn1GsALrIUnoArcZoIg9KDImHwL39RSGgM4/Zq6Hv
-	9w8vUzh290hB5jJMv219lG6IIOvBADaf40e+ZSI5lN3YDS4QIt0d
-X-Google-Smtp-Source: AGHT+IEREQa3V1TZYqMuGAY3TF8kKhDOTUkaY1pjSYNzaZUov6MNMKlJxwunKwFWZ7sRkP3iD/g/xA==
-X-Received: by 2002:a17:902:d2d1:b0:1f9:d6cc:e504 with SMTP id d9443c01a7336-1fb33e1890fmr16190015ad.24.1720097069478;
-        Thu, 04 Jul 2024 05:44:29 -0700 (PDT)
-Received: from localhost.localdomain ([120.229.49.158])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1598d35sm121578245ad.285.2024.07.04.05.44.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 05:44:29 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: acme@kernel.org
-Cc: adrian.hunter@intel.com,
-	irogers@google.com,
-	jolsa@kernel.org,
-	kan.liang@linux.intel.com,
-	namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH v4 8/8] perf trace: Remove arg_fmt->is_enum, we can get that from the BTF type
-Date: Thu,  4 Jul 2024 20:43:54 +0800
-Message-ID: <20240704124354.904540-9-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240704124354.904540-1-howardchu95@gmail.com>
-References: <20240704124354.904540-1-howardchu95@gmail.com>
+        bh=WkfUMcSsV+/cyyr0qSLUuAVHTphAAYzuKlDg7eow7nI=;
+        b=INI4HrAhdHNK8HFNPy8CR8O42k/ctu7YNdpZxKsTbCgXXbTKOKOL7wXzkHoB3hjbkb
+         BZpfhppRBgDknswKGimmilpUJts49yeLDW6jijK87wQ0qz10S1Q5otB2HjlK7mILXPEL
+         gzGt8kMfffOcWm1fluul9FxHQUg8jWVQCv9yujLdeQkvMC1N7FxQ6QaBRIdr6CyJtr6X
+         xwC10zvMyaabcyWIVQ6jKH6DeTqkyVnWd08vVRiqeFZypkZXueYy+4/yV4eSv0vV8hne
+         99SAH7TPTT6RFjq4fg7REIkE7qqByRbQ9xo3AbpDK0HxA1+lcetCmBWwL5cf2Ds+Z4R7
+         Rp/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUEKDE2gSd240l/dcc3JuDIzknOtXaHysJahVCPXgGMmP/KDY6tslCzyJDUOVbat1MOYoDzpm2hv5R1hQU0DC+QwBGCFVJu7qJtSXFFUj9JgXQa6JnPVtlbgrvYigO2l5HHVEFUCeWyet1rtNRVrCuvFWuuV3w4gzSeJNvdXXhqQoKoOK9s
+X-Gm-Message-State: AOJu0Yz9H4+bnaoQYHdfUBnyftOusE2AiYuNj6BHlvWjDoTrt6FbQyWL
+	hVwInCZsNi7peAc9HvR1v+2yjB8ttlmLpUc/o0CSqwm29dfqKF00GXXnbMY/V0eRqdmqyTmcEL5
+	lX0RFObZcnb7P2kEiWWUlP4lAGqg=
+X-Google-Smtp-Source: AGHT+IHFmYCKgNY1r2DGoJqg9mycJo12H8wKTENfBuwuWClUZZSD55krwAQWiym2HlVp5aZfkeM/sJwbR95fBp60Y6I=
+X-Received: by 2002:a17:906:19c9:b0:a6f:b080:cf79 with SMTP id
+ a640c23a62f3a-a77ba848085mr110339066b.67.1720097065822; Thu, 04 Jul 2024
+ 05:44:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240606172813.2755930-1-isaacmanjarres@google.com>
+ <4x5wsktkcwt7einzjowricl27pzusx6ggls43zionql7ixi5cz@icbegmuqqxcl> <ZoXEiCvdNRr_tj2N@google.com>
+In-Reply-To: <ZoXEiCvdNRr_tj2N@google.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 4 Jul 2024 14:44:12 +0200
+Message-ID: <CAGudoHFH+bCK6+tjgFRSfUvKhPwPTY6AGcD_S1pWy5ESYKUw2g@mail.gmail.com>
+Subject: Re: [PATCH v5] fs: Improve eventpoll logging to stop indicting timerfd
+To: Isaac Manjarres <isaacmanjarres@google.com>
+Cc: tglx@linutronix.de, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	saravanak@google.com, Manish Varma <varmam@google.com>, 
+	Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Wed, Jul 3, 2024 at 11:37=E2=80=AFPM Isaac Manjarres
+<isaacmanjarres@google.com> wrote:
+>
+> On Tue, Jun 25, 2024 at 07:58:43PM +0200, Mateusz Guzik wrote:
+> > On Thu, Jun 06, 2024 at 10:28:11AM -0700, Isaac J. Manjarres wrote:
+> > > +static atomic_t wakesource_create_id  =3D ATOMIC_INIT(0);
+> > >  static const struct file_operations eventpoll_fops;
+> > >
+> > >  static inline int is_file_epoll(struct file *f)
+> > > @@ -1545,15 +1546,21 @@ static int ep_create_wakeup_source(struct epi=
+tem *epi)
+> > >  {
+> > >     struct name_snapshot n;
+> > >     struct wakeup_source *ws;
+> > > +   pid_t task_pid;
+> > > +   int id;
+> > > +
+> > > +   task_pid =3D task_pid_nr(current);
+> > >
+> > >     if (!epi->ep->ws) {
+> > > -           epi->ep->ws =3D wakeup_source_register(NULL, "eventpoll")=
+;
+> > > +           id =3D atomic_inc_return(&wakesource_create_id);
+> > > +           epi->ep->ws =3D wakeup_source_register(NULL, "epoll:%d:%d=
+", id, task_pid);
+> >
+> > How often does this execute? Is it at most once per task lifespan?
+> Thank you for your feedback! This can execute multiple times throughout
+> a task's lifespan. However, I haven't seen it execute that often.
+>
+> > The var probably wants to be annotated with ____cacheline_aligned_in_sm=
+p
+> > so that it does not accidentally mess with other stuff.
+> >
+> > I am assuming there is no constant traffic on it.
+> Right, I don't see much traffic on it. Can you please elaborate a bit
+> more on what interaction you're concerned with here? If it's a
+> concern about false sharing, I'm worried that we may be prematurely
+> optimizing this.
+>
 
-This is to pave the way for other BTF types, i.e. we try to find BTF
-type then use things like btf_is_enum(btf_type) that we cached to find
-the right strtoul and scnprintf routines.
+I am concerned with false sharing indeed, specifically with this
+landing with something unrelated to epoll.
 
-For now only enum is supported, all the other types simple return zero
-for scnprintf which makes it have the same behaviour as when BTF isn't
-available, i.e. fallback to no pretty printing. Ditto for strtoul.
+Preferably the linker would not merge cachelines across different .o
+files and that would make the problem mostly sorted out.
 
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~#
+In the meantime I would argue basic multicore hygiene dictates vars
+like this one get moved out of the way if only to not accidentally
+mess with other stuff.
 
-Tested-by: Howard Chu <howardchu95@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Howard Chu <howardchu95@gmail.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
----
- tools/perf/builtin-trace.c       | 101 +++++++++++++++++--------------
- tools/perf/trace/beauty/beauty.h |   1 +
- 2 files changed, 56 insertions(+), 46 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index d9104fc4f61f..488c2cedc110 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -111,7 +111,6 @@ struct syscall_arg_fmt {
- 	const char *name;
- 	u16	   nr_entries; // for arrays
- 	bool	   show_zero;
--	bool	   is_enum;
- #ifdef HAVE_LIBBPF_SUPPORT
- 	const struct btf_type *type;
- #endif
-@@ -910,33 +909,46 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
- #define SCA_GETRANDOM_FLAGS syscall_arg__scnprintf_getrandom_flags
- 
- #ifdef HAVE_LIBBPF_SUPPORT
--static int syscall_arg_fmt__cache_btf_enum(struct syscall_arg_fmt *arg_fmt, struct btf *btf, char *type)
-+static void syscall_arg_fmt__cache_btf_enum(struct syscall_arg_fmt *arg_fmt, struct btf *btf, char *type)
- {
- 	int id;
- 
--	// Already cached?
--	if (arg_fmt->type != NULL)
--		return 0;
--
- 	type = strstr(type, "enum ");
- 	if (type == NULL)
--		return -1;
-+		return;
- 
- 	type += 5; // skip "enum " to get the enumeration name
- 
- 	id = btf__find_by_name(btf, type);
- 	if (id < 0)
--		return -1;
-+		return;
- 
- 	arg_fmt->type = btf__type_by_id(btf, id);
--	return arg_fmt->type == NULL ? -1 : 0;
- }
- 
- static bool syscall_arg__strtoul_btf_enum(char *bf, size_t size, struct syscall_arg *arg, u64 *val)
-+{
-+	const struct btf_type *bt = arg->fmt->type;
-+	struct btf *btf = arg->trace->btf;
-+	struct btf_enum *be = btf_enum(bt);
-+
-+	for (int i = 0; i < btf_vlen(bt); ++i, ++be) {
-+		const char *name = btf__name_by_offset(btf, be->name_off);
-+		int max_len = max(size, strlen(name));
-+
-+		if (strncmp(name, bf, max_len) == 0) {
-+			*val = be->val;
-+			return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+static bool syscall_arg__strtoul_btf_type(char *bf, size_t size, struct syscall_arg *arg, u64 *val)
- {
- 	const struct btf_type *bt;
--	char *type = arg->parm;
--	struct btf_enum *be;
-+	char *type = arg->type_name;
- 	struct btf *btf;
- 
- 	trace__load_vmlinux_btf(arg->trace);
-@@ -945,20 +957,19 @@ static bool syscall_arg__strtoul_btf_enum(char *bf, size_t size, struct syscall_
- 	if (btf == NULL)
- 		return false;
- 
--	if (syscall_arg_fmt__cache_btf_enum(arg->fmt, btf, type) < 0)
--		return false;
-+	if (arg->fmt->type == NULL) {
-+		// See if this is an enum
-+		syscall_arg_fmt__cache_btf_enum(arg->fmt, btf, type);
-+	}
- 
-+	// Now let's see if we have a BTF type resolved
- 	bt = arg->fmt->type;
--	be = btf_enum(bt);
--	for (int i = 0; i < btf_vlen(bt); ++i, ++be) {
--		const char *name = btf__name_by_offset(btf, be->name_off);
--		int max_len = max(size, strlen(name));
-+	if (bt == NULL)
-+		return false;
- 
--		if (strncmp(name, bf, max_len) == 0) {
--			*val = be->val;
--			return true;
--		}
--	}
-+	// If it is an enum:
-+	if (btf_is_enum(arg->fmt->type))
-+		return syscall_arg__strtoul_btf_enum(bf, size, arg, val);
- 
- 	return false;
- }
-@@ -978,23 +989,23 @@ static size_t btf_enum_scnprintf(const struct btf_type *type, struct btf *btf, c
- 	return 0;
- }
- 
--static size_t trace__btf_enum_scnprintf(struct trace *trace, struct syscall_arg_fmt *arg_fmt, char *bf,
--					size_t size, int val, char *type)
--{
--	if (syscall_arg_fmt__cache_btf_enum(arg_fmt, trace->btf, type) < 0)
--		return 0;
--
--	return btf_enum_scnprintf(arg_fmt->type, trace->btf, bf, size, val);
--}
--
- static size_t trace__btf_scnprintf(struct trace *trace, struct syscall_arg_fmt *arg_fmt, char *bf,
- 				   size_t size, int val, char *type)
- {
- 	if (trace->btf == NULL)
- 		return 0;
- 
--	if (arg_fmt->is_enum)
--		return trace__btf_enum_scnprintf(trace, arg_fmt, bf, size, val, type);
-+	if (arg_fmt->type == NULL) {
-+		// Check if this is an enum and if we have the BTF type for it.
-+		syscall_arg_fmt__cache_btf_enum(arg_fmt, trace->btf, type);
-+	}
-+
-+	// Did we manage to find a BTF type for the syscall/tracepoint argument?
-+	if (arg_fmt->type == NULL)
-+		return 0;
-+
-+	if (btf_is_enum(arg_fmt->type))
-+		return btf_enum_scnprintf(arg_fmt->type, trace->btf, bf, size, val);
- 
- 	return 0;
- }
-@@ -1007,14 +1018,14 @@ static size_t trace__btf_scnprintf(struct trace *trace __maybe_unused, struct sy
- 	return 0;
- }
- 
--static bool syscall_arg__strtoul_btf_enum(char *bf __maybe_unused, size_t size __maybe_unused,
-+static bool syscall_arg__strtoul_btf_type(char *bf __maybe_unused, size_t size __maybe_unused,
- 					  struct syscall_arg *arg __maybe_unused, u64 *val __maybe_unused)
- {
- 	return false;
- }
- #endif // HAVE_LIBBPF_SUPPORT
- 
--#define STUL_BTF_ENUM syscall_arg__strtoul_btf_enum
-+#define STUL_BTF_TYPE syscall_arg__strtoul_btf_type
- 
- #define STRARRAY(name, array) \
- 	  { .scnprintf	= SCA_STRARRAY, \
-@@ -1887,7 +1898,6 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 			continue;
- 
- 		len = strlen(field->name);
--		arg->is_enum = false;
- 
- 		if (strcmp(field->type, "const char *") == 0 &&
- 		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
-@@ -1915,8 +1925,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 			 */
- 			arg->scnprintf = SCA_FD;
- 		} else if (strstr(field->type, "enum") && use_btf != NULL) {
--			*use_btf = arg->is_enum = true;
--			arg->strtoul = STUL_BTF_ENUM;
-+			*use_btf = true;
-+			arg->strtoul = STUL_BTF_TYPE;
- 		} else {
- 			const struct syscall_arg_fmt *fmt =
- 				syscall_arg_fmt__find_by_name(field->name);
-@@ -2236,10 +2246,13 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
- 			/*
- 			 * Suppress this argument if its value is zero and show_zero
- 			 * property isn't set.
-+			 *
-+			 * If it has a BTF type, then override the zero suppression knob
-+			 * as the common case is for zero in an enum to have an associated entry.
- 			 */
- 			if (val == 0 && !trace->show_zeros &&
- 			    !(sc->arg_fmt && sc->arg_fmt[arg.idx].show_zero) &&
--			    !(sc->arg_fmt && sc->arg_fmt[arg.idx].is_enum))
-+			    !(sc->arg_fmt && sc->arg_fmt[arg.idx].strtoul == STUL_BTF_TYPE))
- 				continue;
- 
- 			printed += scnprintf(bf + printed, size - printed, "%s", printed ? ", " : "");
-@@ -2942,7 +2955,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
- 		val = syscall_arg_fmt__mask_val(arg, &syscall_arg, val);
- 
- 		/* Suppress this argument if its value is zero and show_zero property isn't set. */
--		if (val == 0 && !trace->show_zeros && !arg->show_zero && !arg->is_enum)
-+		if (val == 0 && !trace->show_zeros && !arg->show_zero && arg->strtoul != STUL_BTF_TYPE)
- 			continue;
- 
- 		printed += scnprintf(bf + printed, size - printed, "%s", printed ? ", " : "");
-@@ -3910,14 +3923,10 @@ static int trace__expand_filter(struct trace *trace, struct evsel *evsel)
- 				struct syscall_arg syscall_arg = {
- 					.trace = trace,
- 					.fmt   = fmt,
-+					.type_name = type,
-+					.parm = fmt->parm,
- 				};
- 
--				if (fmt->is_enum) {
--					syscall_arg.parm = type;
--				} else {
--					syscall_arg.parm = fmt->parm;
--				}
--
- 				if (fmt->strtoul(right, right_size, &syscall_arg, &val)) {
- 					char *n, expansion[19];
- 					int expansion_lenght = scnprintf(expansion, sizeof(expansion), "%#" PRIx64, val);
-diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
-index 78d10d92d351..3ed11e18ee2d 100644
---- a/tools/perf/trace/beauty/beauty.h
-+++ b/tools/perf/trace/beauty/beauty.h
-@@ -113,6 +113,7 @@ struct syscall_arg {
- 	struct thread *thread;
- 	struct trace  *trace;
- 	void	      *parm;
-+	char	      *type_name;
- 	u16	      len;
- 	u8	      idx;
- 	u8	      mask;
--- 
-2.45.2
-
+But I am not going to pester you about it, It's not my call for this
+code either.
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
