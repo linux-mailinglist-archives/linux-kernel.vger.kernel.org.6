@@ -1,108 +1,278 @@
-Return-Path: <linux-kernel+bounces-240618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F39926FDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:44:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9886A926FE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73718B23456
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:44:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 259D91F242B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201541A0AFF;
-	Thu,  4 Jul 2024 06:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4286C1A08CB;
+	Thu,  4 Jul 2024 06:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXOW/ZUk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSJtHY7V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C561A08D2;
-	Thu,  4 Jul 2024 06:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48914DF51;
+	Thu,  4 Jul 2024 06:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720075452; cv=none; b=NvDzwEMRQqypsmgHhL8JFK3uf+RPPqz0MHMWofjgtzgiTg3K4tWdGIbCsST03wlrkhRIFRZ7IPJONIbTDkeE1wf6ZtWf2v0e4sXt/Eyl3HGOpSOxINkuVM275VjcDrObRkNm63MRVobphwnsnAApnloL4EmIL0c6K7PGqGBsOvQ=
+	t=1720075647; cv=none; b=VXnZ3RJBW5421vmRz+b6T/PAeJZ7I23JiVZ/orV1KOIKP27jtQjOHq7lfBK7g49zPGR59KjKw15yJv4st3KoSCulasFjBGWtYsijzQhWOOjiaaC+JBYzJQgdIKdD1mmzzLQvobKn6JlPm2MHRBIRxg6z286lTKXPidLyRiiD+dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720075452; c=relaxed/simple;
-	bh=rvXyG9sJTCPpTYgjZbIeCmBobKRKTbNnXbiaWepNIm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X3wRABkKTh+409/zbMUDHBdaZzNClvVslkFccth+u4I7P6kLqePW8kYvKijTjiJDmugti/pgRXqx5S24LbUGoHzojyiszKZdTuc4hkFSxHrlsa8fhEHMkHHt8tRsOwP34S5DOFpyVRzBTGeu1ZXMr7R0QmWIz/lXT/Ya0oHLFY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TXOW/ZUk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B64C4AF0D;
-	Thu,  4 Jul 2024 06:44:10 +0000 (UTC)
+	s=arc-20240116; t=1720075647; c=relaxed/simple;
+	bh=PiomyUmGl6plnWsEmsQogpCVgMK71XeKNayFAg2gpfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fgSjEd0N2RqYPpYsM8SFcIMMRBPh2QVgVTczoDoUJb8zBPrlxKU69EjBcwwsBXVgitmKhlCNmsHx0Hqu6Yjy1ccVWNhF3B9O2kUduzDnIlnsSUHdQTstkJKnCZlQXFMcBNOv1LqanWR2xFsYwXa0mTKO9qhakZnJPIjoXffNMhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LSJtHY7V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E149C3277B;
+	Thu,  4 Jul 2024 06:47:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720075451;
-	bh=rvXyG9sJTCPpTYgjZbIeCmBobKRKTbNnXbiaWepNIm0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TXOW/ZUkPB+Wes/HFQ2z6SBVVUiGzt9ObQ3AMkCuh0XBBbhsGi8pGLcQrAUEcoJEj
-	 Yovp920ZejtzD+0lC2Jk6HijN5M+bnOAFKmC7+/bZg3Ig/UbnQ5ffn1+Tmg8smp1us
-	 QdFG/8fhMbR1/EmRk/gYRzj9+F0Igfnor9Pw8TgXUxDbSrrietuVFnZpVEF81mlCMa
-	 rJQMQX2d1TIseostMZI5RZG56nlGhVv/BeVeAdBDO4uLTD34r5QURRstPe1JsqFoth
-	 gIKuVevQP7NVoEHMQhEr/K6MkSioDrCCRm2S9/tW9DjhcWR4uXVJfIEXYCOQ/FRwcv
-	 /FnQDxK6HeGNQ==
-Date: Thu, 4 Jul 2024 08:44:07 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] Simplify event handling logic in input core
-Message-ID: <csyxz5pcep5hxtliwhbxmzpgbwr4fpo3ckybsvtzuowgij4yym@ql77o4jlfell>
-References: <20240703213756.3375978-1-dmitry.torokhov@gmail.com>
+	s=k20201202; t=1720075646;
+	bh=PiomyUmGl6plnWsEmsQogpCVgMK71XeKNayFAg2gpfM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LSJtHY7Vm2Byz+C+t2S4O3kkYEkZoRt6A6azq+XmEnx8NG70IAEdTjjsK+Vi2ggif
+	 Kdqem3ajvdy9dLkPwS74P7Tp24aZvB2MV1+r/Wpfl0BdD5epTznHvh1fIH2uUs2aHZ
+	 x/AlX2zwEDvX8OMoE/1Fa4CphaQogY34uaj75kPZ/8+KzfHsG8ux2ByqD9FDMjLBrX
+	 yiWCoW/JUg6h7gtsUNrhOmwq4bqDnkDC/7Hm/4fCgM+2LfGZBShidOTVYerifwril/
+	 JYPpT1eC3dbjkaJT6csZBd2uyGnDcaqOuKbakhqpHxIEBtwlPc0U0B3hyGYU6KaNMN
+	 x82SHRdEBvyMA==
+Message-ID: <e73a86fc-b2ff-4007-b1e2-17063338bd88@kernel.org>
+Date: Thu, 4 Jul 2024 08:47:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703213756.3375978-1-dmitry.torokhov@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: sprd,sc9860-clk: convert to YAML
+To: Stanislav Jakubek <stano.jakubek@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Baolin Wang <baolin.wang7@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <ZoVS1GAC28Zpzok4@standask-GA-A55M-S2HP>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZoVS1GAC28Zpzok4@standask-GA-A55M-S2HP>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Jul 03 2024, Dmitry Torokhov wrote:
-> This series tries to untangle somewhat convoluted logic in the input
-> event processing in the input core by realizing that input handler can
-> be either a filter, or a handler that handles a single event at a time,
-> or a handler that can handle a sequence of events, but should not mix
-> the 3 behaviors in one handler. This allows us to reduce both filter
-> functionality and single-event handling functionality to batch handling
-> and have the main event handling path to only deal with
-> input_handle->events() batch method.
+On 03/07/2024 15:32, Stanislav Jakubek wrote:
+> Convert the Spreadtrum SC9860 clock bindings to DT schema.
 > 
-> v2: addressed comments from Benjamin:
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> ---
+>  .../bindings/clock/sprd,sc9860-clk.txt        | 63 -------------
+>  .../bindings/clock/sprd,sc9860-clk.yaml       | 90 +++++++++++++++++++
+>  2 files changed, 90 insertions(+), 63 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
 > 
-> - added missing patch to remove evdev->event() implementation
-> - allow not specifying any event handling method to satisfy kgdboc
->   handler
-> - expanded comment on order of running input handlers when passing
->   events
-> - split pre-allocation into 2 patches and moved removal of count check
->   into 3rd patch.
+> diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt
+> deleted file mode 100644
+> index aaaf02ca2a6a..000000000000
+> --- a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt
+> +++ /dev/null
+> @@ -1,63 +0,0 @@
+> -Spreadtrum SC9860 Clock Binding
+> -------------------------
+> -
+> -Required properties:
+> -- compatible: should contain the following compatible strings:
+> -	- "sprd,sc9860-pmu-gate"
+> -	- "sprd,sc9860-pll"
+> -	- "sprd,sc9860-ap-clk"
+> -	- "sprd,sc9860-aon-prediv"
+> -	- "sprd,sc9860-apahb-gate"
+> -	- "sprd,sc9860-aon-gate"
+> -	- "sprd,sc9860-aonsecure-clk"
+> -	- "sprd,sc9860-agcp-gate"
+> -	- "sprd,sc9860-gpu-clk"
+> -	- "sprd,sc9860-vsp-clk"
+> -	- "sprd,sc9860-vsp-gate"
+> -	- "sprd,sc9860-cam-clk"
+> -	- "sprd,sc9860-cam-gate"
+> -	- "sprd,sc9860-disp-clk"
+> -	- "sprd,sc9860-disp-gate"
+> -	- "sprd,sc9860-apapb-gate"
+> -
+> -- #clock-cells: must be 1
+> -
+> -- clocks : Should be the input parent clock(s) phandle for the clock, this
+> -	   property here just simply shows which clock group the clocks'
+> -	   parents are in, since each clk node would represent many clocks
+> -	   which are defined in the driver.  The detailed dependency
+> -	   relationship (i.e. how many parents and which are the parents)
+> -	   are implemented in driver code.
+> -
+> -Optional properties:
+> -
+> -- reg:	Contain the registers base address and length. It must be configured
+> -	only if no 'sprd,syscon' under the node.
+> -
+> -- sprd,syscon: phandle to the syscon which is in the same address area with
+> -	       the clock, and so we can get regmap for the clocks from the
+> -	       syscon device.
+> -
+> -Example:
+> -
+> -	pmu_gate: pmu-gate {
+> -		compatible = "sprd,sc9860-pmu-gate";
+> -		sprd,syscon = <&pmu_regs>;
+> -		clocks = <&ext_26m>;
+> -		#clock-cells = <1>;
+> -	};
+> -
+> -	pll: pll {
+> -		compatible = "sprd,sc9860-pll";
+> -		sprd,syscon = <&ana_regs>;
+> -		clocks = <&pmu_gate 0>;
+> -		#clock-cells = <1>;
+> -	};
+> -
+> -	ap_clk: clock-controller@20000000 {
+> -		compatible = "sprd,sc9860-ap-clk";
+> -		reg = <0 0x20000000 0 0x400>;
+> -		clocks = <&ext_26m>, <&pll 0>,
+> -			 <&pmu_gate 0>;
+> -		#clock-cells = <1>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
+> new file mode 100644
+> index 000000000000..21ed023a928c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
+> @@ -0,0 +1,90 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/sprd,sc9860-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Spreadtrum SC9860 clock
+> +
+> +maintainers:
+> +  - Orson Zhai <orsonzhai@gmail.com>
+> +  - Baolin Wang <baolin.wang7@gmail.com>
+> +  - Chunyan Zhang <zhang.lyra@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - sprd,sc9860-agcp-gate
+> +      - sprd,sc9860-aonsecure-clk
+> +      - sprd,sc9860-aon-gate
+> +      - sprd,sc9860-aon-prediv
+> +      - sprd,sc9860-apahb-gate
+> +      - sprd,sc9860-apapb-gate
+> +      - sprd,sc9860-ap-clk
+> +      - sprd,sc9860-cam-clk
+> +      - sprd,sc9860-cam-gate
+> +      - sprd,sc9860-disp-clk
+> +      - sprd,sc9860-disp-gate
+> +      - sprd,sc9860-gpu-clk
+> +      - sprd,sc9860-pll
+> +      - sprd,sc9860-pmu-gate
+> +      - sprd,sc9860-vsp-clk
+> +      - sprd,sc9860-vsp-gate
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
+> +    description:
+> +      Should be the input parent clock(s) phandle for the clock, this
+> +      property just simply shows which clock group the clocks' parents
+> +      are in, since each clk node would represent many clocks which are
+> +      defined in the driver. The detailed dependency relationship
+> +      (i.e. how many parents and which are the parents) are implemented
+> +      in driver code.
 
-Thanks for the respin.
+Description is redundant and not accurate. Which clocks are needed
+cannot be defined by the driver, but by binding.
 
-This series is:
-Reviewed-by: Benjamin Tissoires <bentiss@kernel.org>
+This should be constrained per variant and each item explicitly listed.
 
-Cheers,
-Benjamin
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  sprd,syscon:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      phandle to the syscon which is in the same address area with the
+> +      clock, and so we can get regmap for the clocks from the syscon device
+> +
+> +oneOf:
+> +  - required:
+> +      - reg
+> +  - required:
+> +      - sprd,syscon
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - '#clock-cells'
+
+allOf:if:then:, instead above oneOf, so you narrow which variant has reg
+and which uses regmap.
 
 
-> 
-> Dmitry Torokhov (7):
->   Input: evdev - remove ->event() method
->   Input: make sure input handlers define only one processing method
->   Input: make events() method return number of events processed
->   Input: simplify event handling logic
->   Input: rearrange input_alloc_device() to prepare for preallocating of vals
->   Input: preallocate memory to hold event values
->   Input: do not check number of events in input_pass_values()
-> 
->  drivers/input/evdev.c |  16 +--
->  drivers/input/input.c | 230 ++++++++++++++++++++++++++++--------------
->  include/linux/input.h |   7 +-
->  3 files changed, 163 insertions(+), 90 deletions(-)
-> 
-> -- 
-> 2.45.2.803.g4e1b14247a-goog
-> 
+Best regards,
+Krzysztof
+
 
