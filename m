@@ -1,51 +1,92 @@
-Return-Path: <linux-kernel+bounces-240505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7451926E62
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 108D1926E63
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35B44B2333C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:34:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FD9EB24348
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3F913D2BC;
-	Thu,  4 Jul 2024 04:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA13B142E6F;
+	Thu,  4 Jul 2024 04:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="reCsEU+x";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cWSSs/Dz";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="reCsEU+x";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cWSSs/Dz"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0920F13C9DE
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 04:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9218913D244
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 04:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720067530; cv=none; b=b4DmDS1OKdYmZUM1tw1cszEj0BVn8A/zbSLFiAK9avS40iCNPYrShvV8ly9oWzSikutx1LM5rBn2rUs4iBvkBEsLF3TM0z8dZwoIeDEAc+Z/r1nu17JN1QJrrcybUICVpj8BxC9vv1uhlpeoXF1Bwau8d8YI5zADNCAYtMgnA+w=
+	t=1720067532; cv=none; b=EbzTnSXTylcgz7BsLtuC3Mp6Xveqrz48fh6LHvGmATUwozCznbT6/W62JU5OLxoAvcPd29BfW2nyOFCMGWBc8eGWD+tWZWT+aPEt+X7KXDx8DEGeGIFFmKGrD6gTMSXQQrqbXgcOKWyZmPFNLDyQ/nRyK5jCw8ndfGhEqmNjerE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720067530; c=relaxed/simple;
-	bh=6i0AByUNPycn/ZqdJjY0fr8AnD7wB3gAtGhx/AMwE5U=;
+	s=arc-20240116; t=1720067532; c=relaxed/simple;
+	bh=eyJY9NWoZ4hgVK9bByr04uTn+2RTeLXcPqA2C30/qTI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JaSeI2EherWVMzkPd9dJBcf/VI1ztBIbkCM0udI7Cq6oEk4bKgtWBNMxqK/OTLSzZ4DkRjQdYRzui5sGWFuPcXJGsHsJht1PddcY3gcXJxQSmrb7MxSAKNd5NElCEIzQ6/VxAGctRNa+sZOIm9COOx+0lfS6Jk4BZWyTi3qptPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=gNhVHK2iQoVyG6xrH0TCiIhBGuUqlOdUct54iCWKFMgKBXhHc0aKAFD5vtCkrlCJKkl0AOrsrLPpbNIgxYMwsfHXa5S91sA4enw2IyxVQO8JEs/EgpcmuddlM6mZb1AwGat05gsesudYtcqUpd9yiD2M5Xgk0j1W4J8LZEG9G/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=reCsEU+x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cWSSs/Dz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=reCsEU+x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cWSSs/Dz; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 820001FCF7;
-	Thu,  4 Jul 2024 04:32:07 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E2CC31FCFB;
+	Thu,  4 Jul 2024 04:32:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720067528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fM4emcZ2cxXRGcFoZk72IXVFIB/7cc45xsWWyiF4u+4=;
+	b=reCsEU+xOf0IC135atdv1qtTW7GwE3KuG5U1k4v+SluCIY6H3D2FUi8FAWIyXYCZIx84yW
+	2P3PP6oHEwHguqWCpYJ2Wi1pGYR41wpaVnU4D4lDnskSWrRP5eI4/8eoAU1cZhaAgG1ovS
+	/ddxekibmWnrHYkaVCjv2+cJtRQFDJs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720067528;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fM4emcZ2cxXRGcFoZk72IXVFIB/7cc45xsWWyiF4u+4=;
+	b=cWSSs/Dz6GKtXty5+7bttcX9oK91QygswkqdEf4rRjRzvfkLm/fnE40h99EAYCwuc44cs1
+	Y9XuXXYLWDeZrCBA==
 Authentication-Results: smtp-out2.suse.de;
 	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720067528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fM4emcZ2cxXRGcFoZk72IXVFIB/7cc45xsWWyiF4u+4=;
+	b=reCsEU+xOf0IC135atdv1qtTW7GwE3KuG5U1k4v+SluCIY6H3D2FUi8FAWIyXYCZIx84yW
+	2P3PP6oHEwHguqWCpYJ2Wi1pGYR41wpaVnU4D4lDnskSWrRP5eI4/8eoAU1cZhaAgG1ovS
+	/ddxekibmWnrHYkaVCjv2+cJtRQFDJs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720067528;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fM4emcZ2cxXRGcFoZk72IXVFIB/7cc45xsWWyiF4u+4=;
+	b=cWSSs/Dz6GKtXty5+7bttcX9oK91QygswkqdEf4rRjRzvfkLm/fnE40h99EAYCwuc44cs1
+	Y9XuXXYLWDeZrCBA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5043013889;
-	Thu,  4 Jul 2024 04:32:06 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A7B8713889;
+	Thu,  4 Jul 2024 04:32:07 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cPLADsYlhmbnDAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 04 Jul 2024 04:32:06 +0000
+	id cGPCI8clhmbnDAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 04 Jul 2024 04:32:07 +0000
 From: Oscar Salvador <osalvador@suse.de>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org,
@@ -59,9 +100,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Matthew Wilcox <willy@infradead.org>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
 	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH 14/45] fs/proc: Create pagemap_pud_range to handle PUD-mapped hugetlb vmas
-Date: Thu,  4 Jul 2024 06:31:01 +0200
-Message-ID: <20240704043132.28501-15-osalvador@suse.de>
+Subject: [PATCH 15/45] fs/proc: Adjust pte_to_pagemap_entry for hugetlb vmas
+Date: Thu,  4 Jul 2024 06:31:02 +0200
+Message-ID: <20240704043132.28501-16-osalvador@suse.de>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240704043132.28501-1-osalvador@suse.de>
 References: <20240704043132.28501-1-osalvador@suse.de>
@@ -72,107 +113,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: 820001FCF7
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
+X-Spam-Score: -6.80
 X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-6.80 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	R_RATELIMIT(0.00)[to_ip_from(RLghcz9uomn9ay1xnuhrww8uur)];
+	RCVD_TLS_ALL(0.00)[]
 
-Normal THP cannot be PUD-mapped (besides devmap) but hugetlb can,
-so create pagemap_pud_range in order to handle PUD-mapped hugetlb vmas
+HugeTLB pages cannot be swapped , so do not mark them as that.
 
 Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
- fs/proc/task_mmu.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ fs/proc/task_mmu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index ec429d82b921..5965a074467e 100644
+index 5965a074467e..22200018371d 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -1924,6 +1924,65 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
- 	return err;
- }
- 
-+#ifdef CONFIG_HUGETLB_PAGE
-+static int pagemap_pud_range(pud_t *pudp, unsigned long addr, unsigned long end,
-+			     struct mm_walk *walk)
-+{
-+	pud_t pud;
-+	int err = 0;
-+	spinlock_t *ptl;
-+	u64 flags = 0, frame = 0;
-+	struct pagemapread *pm = walk->private;
-+	struct vm_area_struct *vma = walk->vma;
-+
-+	ptl = pud_huge_lock(pudp, vma);
-+	if (!ptl)
-+		return err;
-+
-+	pud = *pudp;
-+
-+	if (vma->vm_flags & VM_SOFTDIRTY)
-+		flags |= PM_SOFT_DIRTY;
-+	if (pud_present(pud)) {
-+		struct folio *folio = page_folio(pud_page(pud));
-+
-+		flags |= PM_PRESENT;
-+		if (!folio_test_anon(folio))
-+			flags |= PM_FILE;
-+
-+		if (!folio_likely_mapped_shared(folio))
-+			flags |= PM_MMAP_EXCLUSIVE;
-+
-+		if (pud_soft_dirty(pud))
-+			flags |= PM_SOFT_DIRTY;
-+		if (pud_uffd_wp(pud))
-+			flags |= PM_UFFD_WP;
-+		if (pm->show_pfn)
-+			frame = pud_pfn(pud) +
-+				((addr & ~PUD_MASK) >> PAGE_SHIFT);
-+	} else if (pud_swp_uffd_wp(pud)) {
-+		/* Only hugetlb can have swap entries at PUD level*/
-+		flags |= PM_UFFD_WP;
-+	}
-+
-+	for (; addr != end; addr += PAGE_SIZE) {
-+		pagemap_entry_t pme = make_pme(frame, flags);
-+
-+		err = add_to_pagemap(&pme, pm);
-+		if (err)
-+			return err;
-+		if (pm->show_pfn && (flags & PM_PRESENT))
-+			frame++;
-+	}
-+	spin_unlock(ptl);
-+
-+	cond_resched();
-+	return err;
-+}
-+#else
-+#define pagemap_pud_range NULL
-+#endif
-+
- #ifdef CONFIG_HUGETLB_PAGE
- /* This function walks within one hugetlb entry in the single call */
- static int pagemap_hugetlb_range(pte_t *ptep, unsigned long hmask,
-@@ -1980,6 +2039,7 @@ static int pagemap_hugetlb_range(pte_t *ptep, unsigned long hmask,
- #endif /* HUGETLB_PAGE */
- 
- static const struct mm_walk_ops pagemap_ops = {
-+	.pud_entry      = pagemap_pud_range,
- 	.pmd_entry	= pagemap_pmd_range,
- 	.pte_hole	= pagemap_pte_hole,
- 	.hugetlb_entry	= pagemap_hugetlb_range,
+@@ -1795,7 +1795,8 @@ static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
+ 			frame = swp_type(entry) |
+ 			    (offset << MAX_SWAPFILES_SHIFT);
+ 		}
+-		flags |= PM_SWAP;
++		if (!is_vm_hugetlb_page(vma))
++			flags |= PM_SWAP;
+ 		if (is_pfn_swap_entry(entry))
+ 			page = pfn_swap_entry_to_page(entry);
+ 		if (pte_marker_entry_uffd_wp(entry))
 -- 
 2.26.2
 
