@@ -1,106 +1,131 @@
-Return-Path: <linux-kernel+bounces-241131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC7C927768
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4199692776A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3F028382F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1E4128376D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5401AED33;
-	Thu,  4 Jul 2024 13:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78761AE852;
+	Thu,  4 Jul 2024 13:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jIYD2mAp"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AoinLBuY"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676C81822E2;
-	Thu,  4 Jul 2024 13:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250881822E2
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720100844; cv=none; b=I5QJko6UdXL0mW2BPmxMtpLb4zr6YjP462oFZgbX+f+avcEkBBPF74sGyF0nnIJ+xMzcoOrVw84uy/moBdzSQFgl4GjNA6utDVUJFUWU49NOefcX1d9UJQkmNC6EKPQNcl3U5iEpA3wrU3XCfawmerawxn0jjZ0J+v4cC2wUIGA=
+	t=1720100857; cv=none; b=VdR9bncR3e28u0W5DY+E+MPpVeGpQdnyzVGErGu626yq9EoWnkqnnY4L9i8HXvjWTu9Dhjreb42Y8ke8fJBaz0bY0/MQ5djzzeJAilhkF7CgQRjHBGEWOoHg1AHhI1bsyiZGHm4hzka0sRYB3SlqMJYPCnS4NkHzWUtxkWDQLVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720100844; c=relaxed/simple;
-	bh=UI3dF8OYMSUWU9X9suKWJKp7BkGBDJB8qJBGh0o1NCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H2EbjMRQfBqG/Acictv8BkKgGMER85/PNQbdDAZ7dX4lkq0E9oF1a3iPLOXyauOApipFExGJKMRBXI5KGubIsw6Qgya/WtMpdOYvgkr9sHaIr78lD9K8f66L//nwNhcWsZk7hfP9348LiPPGe5W1xG7+2ma357Zzp40YigpoBTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jIYD2mAp; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-64b5617ba47so6238197b3.3;
-        Thu, 04 Jul 2024 06:47:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720100842; x=1720705642; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UI3dF8OYMSUWU9X9suKWJKp7BkGBDJB8qJBGh0o1NCQ=;
-        b=jIYD2mApLnki36+FRFCLpRPx1VHiiADPsjE4quJXRR2SDQPIza12/Hrp/A4t1bWIpN
-         UEGRTAdnT3oO+SsB9eaKzEtCp16fIIK930POvSTJVTCrfnYytQ3rUroAbMURcuyz+lru
-         g7GZSd0RziVPNYztI1iYh2RThuRv+4o10wppCMIQhj06SroO2mGsthhl6tawZZUBdVPW
-         3xx+2U3dfOk+ERLvFJvgGZ8D+FVB3l+fI6LH1f78zxwthPKYdgqxiDThHo05u3UIZczd
-         M31Dpzpq1IbKF9u4p5SDdTnpBf0fN4VCTtEW9qM10+GlOnuJ6UBZLXTRc22g5vna9SeY
-         efOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720100842; x=1720705642;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UI3dF8OYMSUWU9X9suKWJKp7BkGBDJB8qJBGh0o1NCQ=;
-        b=fj6+T/rxdqJLaltx0v6u932HvWkN78HtN2K+GH9unqiCJE1nZdvjak+8ZW71JXWR6m
-         VZWa/KbtgICYER60BgjibjjUgbSObhStjzOex7f2ZIJZ4+Gvi9IJBJZWWBbxp965kCA5
-         dedU72hDswbLXE311arOZShVitfnl9XMhA0BFenq1gs6X6y0T/V6AGVrotdA0VN42/cI
-         9vtXjbTVpGt0KUqK6QTdxiStbjE8KjCN3xxpBFVMVlciklzzDmscpFW6fQqMHTvMMfHx
-         UFWcbXDTx6KF78JUkLrgqV+lwM8Yizf37eHh7BpdksKN8scs1Nb9RxbOL4qrBj7hoCuw
-         X9zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUxTLJibev4aH8gGJnFb2RpSeGVgemUqRe+oWUQO7i49pwYy5mhX95LP0TF4ilKySIMVMLdkVbXqAJHTq3KVl5251/c7NBSpSqd1U/RqrwEHd2ygYpaScg8CAb/eb+EFVNGjgaJiEjuLw=
-X-Gm-Message-State: AOJu0YweFxB8X7AG/1NdQQg0BVMGPRm8tQsPz+YVB8gythBs9znP8oAg
-	jQdrs9cAoFqzx6Nv0KQ0mw1RJhd8vlNXYXOhLexSLqOfpO4RSMohCMTt98O+cEfpLm3DsxMhjSU
-	Pvq9IcS6Ax9dBPceBuNo3r6f+X4Y=
-X-Google-Smtp-Source: AGHT+IH6YM6GLafKg9XBe0axWFXO3AhGkvxdQYhJOJum9ZzTHvtWe5dJcPzvzcyam1htB/hWj7nXRx0+wUWo96dItps=
-X-Received: by 2002:a81:ab52:0:b0:62c:c65d:8d1c with SMTP id
- 00721157ae682-652d8636094mr15666627b3.52.1720100842308; Thu, 04 Jul 2024
- 06:47:22 -0700 (PDT)
+	s=arc-20240116; t=1720100857; c=relaxed/simple;
+	bh=eDM9jT/qNbI/zcyvdUC6pQzI5yk1dMRNa8g9ZFxgmIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=feQc2MOi1rFChIiEwXmRa8L9kIA3U7yQfaRYKJ0gy4Rbk85c/A+XSflv0C9W8YnBrRGvYiyy92ShALLjVuPKyFE/XWC5awonfQcsDLwm809YfqWi6RoVa6hFXAK+DAQ9hhyD07Cwfap8LwwiGbr9SLq3+xQKx6622zBV2ggOc4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AoinLBuY; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NLQzzal07EqgcX0VPVS91kE6C8Bk6zJGZq+107oJ8b0=; b=AoinLBuYpduMh7WvV25MYcFQ2r
+	M9c7+h+mBlrqEwYkleh9KL4LxjMqN6EvHWlRHRgK7T6GlMS6fETFkUxb/xLCJG+bY/TAFFu8s1dQ8
+	OAgrm+KFxhk846WQiKtzgpzSthF/QUOglAkZej/efR0b0zlD3XesOs2c1e2K2Q6sWeqvaGFIjbVX7
+	9v1YIfeEhLfkbCtGOjSxm1nLeNKNry4M94N6YaeUhQAHMcYxx9w7V3/8YugZPR3ZaDJkk4N9KbNvC
+	GOwzPqI4Xchgu7judRCte9qVP9gkC62LOXjMbYvLmbfVh25SSgeh/UZ2x2U9nMVvcEdB5cgm0sX28
+	VT0y2/hA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sPMnw-0000000AE1n-0BsE;
+	Thu, 04 Jul 2024 13:47:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E1BB3300694; Thu,  4 Jul 2024 15:47:16 +0200 (CEST)
+Date: Thu, 4 Jul 2024 15:47:16 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: xu.xin16@zte.com.cn
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, he.peilin@zte.com.cn, yang.yang29@zte.com.cn,
+	tu.qiang35@zte.com.cn, jiang.kun2@zte.com.cn,
+	zhang.yunkai@zte.com.cn, liu.chun2@zte.com.cn, fan.yu9@zte.com.cn,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH linux-next v2] sched/core: Add WARN() to check overflow
+ in migrate_disable()
+Message-ID: <20240704134716.GU11386@noisy.programming.kicks-ass.net>
+References: <202407032053257877vuVsFfB1hh0DKSowPd8p@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com> <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
-In-Reply-To: <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
-From: Andrea Gelmini <andrea.gelmini@gmail.com>
-Date: Thu, 4 Jul 2024 15:47:06 +0200
-Message-ID: <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202407032053257877vuVsFfB1hh0DKSowPd8p@zte.com.cn>
 
-Il giorno gio 4 lug 2024 alle ore 15:33 Andrea Gelmini
-<andrea.gelmini@gmail.com> ha scritto:
-> Well, I have the nighlty snapshot (well, it's not on every subvolume
-> of the fs). I ran tar on that, and we see.
+On Wed, Jul 03, 2024 at 08:53:25PM +0800, xu.xin16@zte.com.cn wrote:
 
-Well, using the laptop for daily work and running tar on snapshots,
-recreate the issue.
-I am collecting the htop output and bfptrace.
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 8cc4975d6b2b..327010af6ce9 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2259,6 +2259,7 @@ void migrate_disable(void)
+>  	struct task_struct *p = current;
+> 
+>  	if (p->migration_disabled) {
+> +		WARN(p->migration_disabled == USHRT_MAX, "migration_disabled has encountered an overflow.");
+>  		p->migration_disabled++;
+>  		return;
+>  	}
 
-I send you everything when I collect enough data.
+How about we do something like this?
+
+---
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 7a5ea8fc8abb..06a559532ed6 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2237,6 +2237,12 @@ void migrate_disable(void)
+ 
+ 	if (p->migration_disabled) {
+ 		p->migration_disabled++;
++#ifdef CONFIG_DEBUG_PREEMPT
++		/*
++		 * Warn about overflow half-way through the range.
++		 */
++		WARN_ON_ONCE((s16)p->migration_disabled < 0);
++#endif
+ 		return;
+ 	}
+ 
+@@ -2254,14 +2260,20 @@ void migrate_enable(void)
+ 		.flags     = SCA_MIGRATE_ENABLE,
+ 	};
+ 
++#ifdef CONFIG_DEBUG_PREEMPT
++	/*
++	 * Check both overflow from migrate_disable() and superfluous
++	 * migrate_enable().
++	 */
++	if (WARN_ON_ONCE((s16)p->migration_disabled <= 0))
++		return;
++#endif
++
+ 	if (p->migration_disabled > 1) {
+ 		p->migration_disabled--;
+ 		return;
+ 	}
+ 
+-	if (WARN_ON_ONCE(!p->migration_disabled))
+-		return;
+-
+ 	/*
+ 	 * Ensure stop_task runs either before or after this, and that
+ 	 * __set_cpus_allowed_ptr(SCA_MIGRATE_ENABLE) doesn't schedule().
 
