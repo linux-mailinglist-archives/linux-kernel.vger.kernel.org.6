@@ -1,132 +1,211 @@
-Return-Path: <linux-kernel+bounces-241518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656FB927C2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:30:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E3F2927C2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F5F3282EEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:30:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA6491F22B48
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BE9146A87;
-	Thu,  4 Jul 2024 17:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BhqP26br"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD96A1465B3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C03C14659C;
 	Thu,  4 Jul 2024 17:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQahnVdO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7121A145A1D;
+	Thu,  4 Jul 2024 17:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720113853; cv=none; b=K0aeFIdH4okS7s6vuDPCRoZcHI8Tn1KN5YdwlHkLKPRPlkyyeqJ3j7nyJMZ0QNacFObxkQYuCYHR/8NiDplUHfR8QkG3mkWBB3P21kYsSJY4RlKhbLHNOutF2OuDqmFLsF/1+uvhVpP0m9aIlOyrSWql7EJe18Va8pGucxunVGQ=
+	t=1720113850; cv=none; b=PGynsVMspCMX1NKNPf2Scc0I8fUF8hztmLwJ1/nK/QEDxTpl/402utqfRSIhjBcMuhbood5E7B5fsmBz4OGpdiE/Fs6+Wnoy+bWRLIzSGJM/VkZToGpNMNWIMTzOoZdojxiK+daSN2XGPae5YNnTPW4C2k/7Kr4Dx0Kk40tHvlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720113853; c=relaxed/simple;
-	bh=bSrh6dRMhrjSnNp2eZHSzRWT+oe0XS3yo9fzlNPFI3o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AodKa5yB28crxewM9hCrLaTvKUTnDrGQz5MIxFp9MNoWHpLCrSXaf6hIHwgHgsuldIXuNFdH4zahl8V3e7Apfq6yK9gWexa/jAjXwFBHdsQQwKjFAwugi65SYtAmgL6VFS7LHH1L0nYZJh2gECKjkafOg/khIa5HXfuOM0+gWLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BhqP26br; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee7885aa5fso9062611fa.1;
-        Thu, 04 Jul 2024 10:24:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720113850; x=1720718650; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cY6xfOZvlcet+ySjb9JWf/+SsmV4UTmCb1l/EHDXfC8=;
-        b=BhqP26brsmr8A6NhQ0l5flhVvJHbg7EfE/q6HB/kpEw/DvY6xxYvv50zkSbc5cwFFy
-         JNS51kJH+F5uCqyhJXJK+d9DdCCwmhchscTKOuDiD8k0UyzhgDBB7U7Jfy/1krfKcdBS
-         NrX1cKKTwKXPEkrK7ENNBvSuzIL7dKQhyRq9HcrQbHmd4gEcneif/0CY2Gm2ExBZ9O2k
-         4qLlrQJ11k7RLbc5vjdLRTJuYWhDHKFuYBNmw9BxqFsLT89Yyfa9IKmFOhRdTlTqcEc4
-         vnPI5Aki6kxhKNIzDkALgX8ECFMuVQTc6XaR3jMF+08qlXjz/mqi/cLr6/AkGp3XmlYE
-         g1zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720113850; x=1720718650;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cY6xfOZvlcet+ySjb9JWf/+SsmV4UTmCb1l/EHDXfC8=;
-        b=l+Z4DWX1gPhSEo0oG3XIiMJ4cBvYGhcNYg55T2t53SB1fvxHj4vIdqADCHC/587etq
-         hISQZNB8XUQriZTZhjQYqLJxzcW9UthHkzFfagPGaNODt3oULvjTjVEf2jjx5BP/mIgQ
-         W0/vpM3z5ejJLhzNUls3Kngy889SoFNTOIhhC7w8sL3ONMossJlDOnOGx5FSqzbhKI5T
-         RvDKBGVsVN8Ycjp43VtS52GmvxzIgo9tOJdTtOfFmV9mt1PjoHp8QOokfRobkZBG0d42
-         iWEKznQBoFR1i8lsvHNWU00s0x+VQVa2m4J2FedBCPLOIVv3A/tAesHatrQ0nr1WQrOn
-         AUwg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/5imTQ43J9D5n34/tExo+r7/ezfVEmIAHqa7eDzBy2UGlCSDAqj/PASqb17CMArE+ecEfwszDuiCn+rgn8/SNsMPz9m7NMJ6jTxT8F6GOkX5bd/vvqjoLq4w8PhuCxAUBaGjTzV8AYotYQ3aM
-X-Gm-Message-State: AOJu0YzJgMzoupTwAZkCzXaHhFOgaJ3LrMxiKZqefda8cilRthjJNjkU
-	TuaQW4luYwOxpAK9LuM1EWq5WHue/VqaN8YUdwVWj9iOet4cUdNj
-X-Google-Smtp-Source: AGHT+IGtnAvbW4no2BJkVizF7QyWI4V6mUEbSxAj8vrlcD/ecnkkHDmGxX/0R/e7YeC7WvAUoP8myQ==
-X-Received: by 2002:a2e:8889:0:b0:2ec:3d2e:2408 with SMTP id 38308e7fff4ca-2ee8ee00250mr15810741fa.33.1720113848939;
-        Thu, 04 Jul 2024 10:24:08 -0700 (PDT)
-Received: from [127.0.1.1] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d6133sm32330965e9.13.2024.07.04.10.24.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 10:24:08 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 04 Jul 2024 19:23:34 +0200
-Subject: [PATCH v2 24/24] mfd: sprd-sc27xx-spi: Constify struct regmap_bus
+	s=arc-20240116; t=1720113850; c=relaxed/simple;
+	bh=2fTJHOD0LmlLeFBahSLAZCFIrq9XRHWFq2bL1v5L4qg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sP+OkjuGDVEw36Mj0sD3Oc6eJWGXubKspRwPeDd+XaM0fwsDCv6N+U013M0IqUpq4QEIkM19VDzGkp5YULwtaeTphJsmClgUsknxScSZ5pxGI2FGM7nMqdT/riwcNRjjNScZ3fiQa/kpDenw12zy6gyMkQnOKK0SegbzfzAJ1BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQahnVdO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899D6C3277B;
+	Thu,  4 Jul 2024 17:24:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720113849;
+	bh=2fTJHOD0LmlLeFBahSLAZCFIrq9XRHWFq2bL1v5L4qg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uQahnVdOL66bv7TOymBsqzQpuyXL705H26noZTrUSW00gz5Ueuv5yMgHTdQkpENou
+	 BPmAHXnbd8+gFKYpmbYl2zGXPLjgaE+f8gtDH29r3UWTaQoK1+RMtp5yyfTHEoVUq4
+	 HpzFuALk+Sij49DH+8kILF7nDA3gijVZeQnESaPLzDsfepXqXFK9tXhwDF5tJhe06y
+	 bCH/VqvNcr0EUp7R8esuTAqZ5bjhFOkt2xAWEGgccUur/+4UVaGvjr2lRlUnQ7FCKh
+	 z2/NQxMRoYismnsw3H56uqAOkgYnRx69SK2FwsnKxDQzHczf+vpiXRNvY6E9mH5gZC
+	 y57riYTojPU7g==
+Date: Thu, 4 Jul 2024 18:24:05 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: dma: sprd,sc9860-dma: convert to YAML
+Message-ID: <20240704-broadways-phoniness-3d494c4ef09b@spud>
+References: <Zoa9MfYsAuqgh2Vb@standask-GA-A55M-S2HP>
+ <20240704-underuse-preacher-b5bb77f92ebf@spud>
+ <ZobXOPW33bLHF+Jv@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240704-mfd-const-regmap_config-v2-24-0c8785b1331d@gmail.com>
-References: <20240704-mfd-const-regmap_config-v2-0-0c8785b1331d@gmail.com>
-In-Reply-To: <20240704-mfd-const-regmap_config-v2-0-0c8785b1331d@gmail.com>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Matti Vaittinen <mazziesaccount@gmail.com>, Xu Yilun <yilun.xu@intel.com>, 
- Tom Rix <trix@redhat.com>, Marek Vasut <marek.vasut+renesas@gmail.com>, 
- Andy Shevchenko <andy@kernel.org>, Tony Lindgren <tony@atomide.com>, 
- Tim Harvey <tharvey@gateworks.com>, Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
- linux-omap@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720113803; l=780;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=bSrh6dRMhrjSnNp2eZHSzRWT+oe0XS3yo9fzlNPFI3o=;
- b=DezkfXYqRxh+l8xH0kAqtfFdbmPbZ6IPk/AWxl17e20cmNX8etXGB8bY4Kz0Nd43R0lo58BHn
- Zy45XHOUm9nArbuXRULBjg/edSFn9HKpD5rSni6VE2XuT+YjdZnsqq2
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uSELkERQuZQ/S7b2"
+Content-Disposition: inline
+In-Reply-To: <ZobXOPW33bLHF+Jv@standask-GA-A55M-S2HP>
 
-`sprd_pmic_regmap` is not modified and can be declared as const to
-move its data to a read-only section.
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/mfd/sprd-sc27xx-spi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--uSELkERQuZQ/S7b2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/mfd/sprd-sc27xx-spi.c b/drivers/mfd/sprd-sc27xx-spi.c
-index 81e517cdfb27..7186e2108108 100644
---- a/drivers/mfd/sprd-sc27xx-spi.c
-+++ b/drivers/mfd/sprd-sc27xx-spi.c
-@@ -135,7 +135,7 @@ static int sprd_pmic_spi_read(void *context,
- 	return 0;
- }
- 
--static struct regmap_bus sprd_pmic_regmap = {
-+static const struct regmap_bus sprd_pmic_regmap = {
- 	.write = sprd_pmic_spi_write,
- 	.read = sprd_pmic_spi_read,
- 	.reg_format_endian_default = REGMAP_ENDIAN_NATIVE,
+On Thu, Jul 04, 2024 at 07:09:12PM +0200, Stanislav Jakubek wrote:
+> Hi Conor,
+> see below.
+>=20
+> On Thu, Jul 04, 2024 at 05:42:39PM +0100, Conor Dooley wrote:
+> > On Thu, Jul 04, 2024 at 05:18:09PM +0200, Stanislav Jakubek wrote:
+> > > Convert the Spreadtrum SC9860 DMA bindings to DT schema.
+> > >=20
+> > > Changes during conversion:
+> > >   - rename file to match compatible
+> > >   - make interrupts optional, the AGCP DMA controller doesn't need it
+> > >   - describe the optional ashb_eb clock for the AGCP DMA controller
+> > >=20
+> > > Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> > > ---
+> > >  .../bindings/dma/sprd,sc9860-dma.yaml         | 92 +++++++++++++++++=
+++
+> > >  .../devicetree/bindings/dma/sprd-dma.txt      | 44 ---------
+> > >  2 files changed, 92 insertions(+), 44 deletions(-)
+> > >  create mode 100644 Documentation/devicetree/bindings/dma/sprd,sc9860=
+-dma.yaml
+> > >  delete mode 100644 Documentation/devicetree/bindings/dma/sprd-dma.txt
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/dma/sprd,sc9860-dma.ya=
+ml b/Documentation/devicetree/bindings/dma/sprd,sc9860-dma.yaml
+> > > new file mode 100644
+> > > index 000000000000..e1639593d26d
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/dma/sprd,sc9860-dma.yaml
+> > > @@ -0,0 +1,92 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/dma/sprd,sc9860-dma.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Spreadtrum SC9860 DMA controller
+> > > +
+> > > +description: |
+> > > +  There are three DMA controllers: AP DMA, AON DMA and AGCP DMA. For=
+ AGCP
+> > > +  DMA controller, it can or do not request the IRQ, which will save
+> > > +  system power without resuming system by DMA interrupts if AGCP DMA
+> > > +  does not request the IRQ.
+> > > +
+> > > +maintainers:
+> > > +  - Orson Zhai <orsonzhai@gmail.com>
+> > > +  - Baolin Wang <baolin.wang7@gmail.com>
+> > > +  - Chunyan Zhang <zhang.lyra@gmail.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: sprd,sc9860-dma
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks:
+> > > +    minItems: 1
+> > > +    maxItems: 2
+> > > +
+> > > +  clock-names:
+> > > +    oneOf:
+> > > +      - const: enable
+> > > +      # The ashb_eb clock is optional and only for AGCP DMA controll=
+er
+> > > +      - items:
+> > > +          - const: enable
+> > > +          - const: ashb_eb
+> >=20
+> > This is better written as:
+> >   clock-names:
+> >     minItems: 1
+> >     items:
+> >       - const: enable
+> >       - const: ashb_eb
+>=20
+> Ok, should I keep the comment?
 
--- 
-2.40.1
+If you like. Another option would be to define the items for clocks
+also, instead of this comment, like:
 
+clocks:
+  minItems: 1
+  items:
+    - main DMA controller clock
+    - optional clock for the ashb_eb, only for the AGCP DMA controller
+
+
+>=20
+> >=20
+> > > +
+> > > +  '#dma-cells':
+> > > +    const: 1
+> > > +
+> > > +  dma-channels:
+> > > +    const: 32
+> > > +
+> > > +  '#dma-channels':
+> > > +    const: 32
+> > > +    deprecated: true
+> >=20
+> > If there are no users of this, I'd be inclined to just drop it from the
+> > binding.
+> >=20
+> > Cheers,
+> > Conor.
+>=20
+> It is specified in DT "For backwards compatibility", see e.g. [1]
+> I'm not sure if it's still required, I'm not very familiar with this plat=
+form.
+>=20
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/arch/arm64/boot/dts/sprd/whale2.dtsi?h=3Dv6.10-rc6#n124
+
+Then keep it, that's a user ;)
+
+Cheers,
+Conor.
+
+--uSELkERQuZQ/S7b2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZobatQAKCRB4tDGHoIJi
+0s/3AP9dQP+kIFaRv2BtnVP/5AiGxafqK3MQlGNX8jVThom3/QEA5agKbit8A2cO
+T7mK3+YdEwuupRUnu373hwbDNDL6cgw=
+=VLMy
+-----END PGP SIGNATURE-----
+
+--uSELkERQuZQ/S7b2--
 
