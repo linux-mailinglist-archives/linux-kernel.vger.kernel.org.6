@@ -1,93 +1,80 @@
-Return-Path: <linux-kernel+bounces-241143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F32927782
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:53:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DFBB927787
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A376528174F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:53:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 221A92816B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B81E1AED43;
-	Thu,  4 Jul 2024 13:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxI1lfv8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AA91AED5B;
+	Thu,  4 Jul 2024 13:56:41 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEE01ABC25;
-	Thu,  4 Jul 2024 13:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C251AED2F;
+	Thu,  4 Jul 2024 13:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720101190; cv=none; b=oshiUTn80JOp55N2HbGB97i3Zr6c+bZlNB8EAWyvPkwBpLoAGGBwKwyxDf04LnmjonHNfw8pH8GD+ypKZVPdoTCoh8vJDgbK3tP1mSsCSQ2QGA8ZGPnq+0TeAd9a0/snL0vpFwPYlYuyEEjyiottxyv26Qco65R700TOC9yeh/w=
+	t=1720101401; cv=none; b=RS1YjyZsZmZZA6HRt8JzMI175okRURubdzEAxnMT6NHDpCJYSdjbPrDHL7tBDVEMyTbFrf+etsiqUATH5/FI9MW3fM7RKc3CIt09EZGY3e/hF0tV2mE5tmcyb9usVwUEhzdy7MA2L7epv98Nxq79ID+zm9KzPYcU3637+OxfLFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720101190; c=relaxed/simple;
-	bh=eQz2IBKd/Q7hCL1YjwIbirGf/hcd4Pso5HkourWlFN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U0+jmAM/FwxC7frzaqNg/WKQtftg1x0rq2uCcNRKSGNyc3NRG4fbOIUFYJGTPKsA0J6kr1pYWIxLGUWanfVKXTXzbLJkL/krTtQDNIeWpee++4vbh2U3ol/hXm0kLLWtFejsdGZIp4rk7b4GyaqgBtfz3jbL0ZexYRp//KGEK8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxI1lfv8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EF1AC3277B;
-	Thu,  4 Jul 2024 13:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720101189;
-	bh=eQz2IBKd/Q7hCL1YjwIbirGf/hcd4Pso5HkourWlFN8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XxI1lfv80rJr1/7yGA95ZgA6CrbvweUqIvqiuT+zxsy9TX1ELTFYRkh+Om5FfvySF
-	 5tnVPH8EUJhdjVlF72YJiBiCmvE4rjE+vYF+VyoZoWWr10m/Z54aZX3SmdRHUqFlqe
-	 Q3VX52GRIRKUrAc+18kBK18UjNQfqAQdvSiWavQjFgz95e7tLq7Sl06OTz6YxpthPK
-	 aqYUSEWs4dOfQPE5wpWbqxuhBB0RW8TrF5/TyXZKbd00ypWocDnYibNw+WGF7sj+Il
-	 WO49vWsPz9I4WJIa6FgAqLc9l9+XQLye7cjdkS23vbjuczwn7WJj5DZEh2hbyD15c3
-	 gSFfx8okA3upA==
-Date: Thu, 4 Jul 2024 14:53:01 +0100
-From: Will Deacon <will@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Kalle Valo <kvalo@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	ath10k@lists.infradead.org, ath11k@lists.infradead.org,
-	iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 04/21] vhost-vdpa: Use iommu_paging_domain_alloc()
-Message-ID: <20240704135300.GA7854@willie-the-truck>
-References: <20240610085555.88197-1-baolu.lu@linux.intel.com>
- <20240610085555.88197-5-baolu.lu@linux.intel.com>
- <20240703123146-mutt-send-email-mst@kernel.org>
+	s=arc-20240116; t=1720101401; c=relaxed/simple;
+	bh=VsItbA+2tCk5jvnBDCPCGCM7fjfdCiKMICq/1XcljAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kZ/ERz8k08tkL/pW+2ycvisErsIjQ/B25KePODENdO27aQb07pqf+OBWlPqB/h/9KRBT/xHspCI5cQKGsRgT8bcuZQLXp8qAJohHr/CHdPhL4K3JZp5FZ1087VE0IRr1XBbIYAcMh7AITfUym3xQX+v2s+SijJ7WUEw/rYjyjiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71B45C3277B;
+	Thu,  4 Jul 2024 13:56:39 +0000 (UTC)
+Date: Thu, 4 Jul 2024 09:56:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Andrii Nakryiko
+ <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+ mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com,
+ bpf@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, clm@meta.com,
+ open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
+ and per-CPU RW semaphore
+Message-ID: <20240704095637.0dbf9483@rorschach.local.home>
+In-Reply-To: <20240704091559.GS11386@noisy.programming.kicks-ass.net>
+References: <20240701223935.3783951-1-andrii@kernel.org>
+	<CAEf4BzaZhi+_MZ0M4Pz-1qmej6rrJeLO9x1+nR5QH9pnQXzwdw@mail.gmail.com>
+	<20240704091559.GS11386@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703123146-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 03, 2024 at 12:32:06PM -0400, Michael S. Tsirkin wrote:
-> On Mon, Jun 10, 2024 at 04:55:38PM +0800, Lu Baolu wrote:
-> > Replace iommu_domain_alloc() with iommu_paging_domain_alloc().
-> > 
-> > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> 
-> Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> 
-> 
-> I assume it's merged with the rest of the stuff, right?
+On Thu, 4 Jul 2024 11:15:59 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Sure, I can grab this one in the iommu tree. It has to go along with
-the patch adding iommu_paging_domain_alloc() anyway.
+> > Now, RCU Tasks Trace were specifically designed for least overhead
+> > hotpath (reader side) performance, at the expense of slowing down much
+> > rarer writers. My microbenchmarking does show at least 5% difference.
+> > Both flavors can handle sleepable uprobes waiting for page faults.
+> > Tasks Trace flavor is already used for tracing in the BPF realm,
+> > including for sleepable uprobes and works well. It's not going away.  
+> 
+> I need to look into this new RCU flavour and why it exists -- for
+> example, why can't SRCU be improved to gain the same benefits. This is
+> what we've always done, improve SRCU.
 
-Will
+I don't know about this use case, but for the trampoline use case SRCU
+doesn't work as it requires calling a srcu_read_lock() which isn't
+possible when you need to take that lock from all function calls just
+before it jumps to the ftrace trampoline. That is, it needs to be taken
+before "call fentry".
+
+I'm just stating this to provide the reason why we needed that flavor
+of RCU.
+
+-- Steve
 
