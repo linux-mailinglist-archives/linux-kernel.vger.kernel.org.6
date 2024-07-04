@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-241087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF6F9276EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:11:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131619276E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8C3282435
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44ED91C222FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAA91AED56;
-	Thu,  4 Jul 2024 13:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AE21AED4D;
+	Thu,  4 Jul 2024 13:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="paZrJQyA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="InBIbUHd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394FB1AE848;
-	Thu,  4 Jul 2024 13:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196A91A3BDA
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720098657; cv=none; b=Wh9HcWg0uyI/3uKSfcnIMTMclN0+nb8VbC30yw6fktl+rnHO3733cCsp00XI/EvzJr9waGeiuIFXOu2OUeLWi1lAmuKL6bxin9KgvyHkg4J0o85l0lE5ZwT3dixW+LbZD42xnEfaDJU8X3LRy4AYXYUgseasJKvKNj3T3WUVfko=
+	t=1720098657; cv=none; b=ZeTq1JXYZU1gp1GUfvBvnKGwyC81Elm4F9f7gM37FcXsAtHN3iW7ilnp+bQ82aJoHyXeQ4Y44UxNdAw7VbWB0rSEojlg/N0bUUhHtjxvBA5pqJJI1alseEEknZ4pNArLjLFWUnBVavcpBpuumx7dXhJTx4kxWZVa9YRJlc8sx6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720098657; c=relaxed/simple;
-	bh=LgXnJFsYyRvjaEK1ntPm88fL7Wm+lyk5mTRJwn5WJdg=;
+	bh=dlHwO2nGfEIPQRND3XuHL5U3U23kIOrurw+F13qm/ZQ=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=swGvLiif/eJiSOgzak0tQ218pmikXRlh50OYjNcr0byIjlzEZpMjFMBSAdmT7aa37pEbbLiYjtJ6S/zNfWlAzhWRtusXtoq4vUiGjtmYQ2CEl+b5RWNgwiqjCSWWErb2pubRndqge027TqN9CW9iPkFBYRTPsbSOfePvAQos+CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=paZrJQyA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D6BDBC4AF0D;
+	 In-Reply-To:To:Cc; b=ncdRpk93FR75FPN50PnVOTFCNFSwNwzzo/pEh7ZjgEf73TnXyvc6cnwwEICO0aeNuWa1+6YGp267edKHo7aWn2i4McGTMjRmym1oTPcC1drpfBgevsQohZBq61yfJDBSo1jGbEZ7K1tYEY0ab5BkeKfogGI0K9/WxK5gv/F63HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=InBIbUHd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C0D5FC4AF0B;
 	Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1720098656;
-	bh=LgXnJFsYyRvjaEK1ntPm88fL7Wm+lyk5mTRJwn5WJdg=;
+	bh=dlHwO2nGfEIPQRND3XuHL5U3U23kIOrurw+F13qm/ZQ=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=paZrJQyAWMUf3S9qd1u1maQM6otdP/Ej229Xc/6APRWTyHd9CYXxmXvkow2LijCvB
-	 xwXJUdLqcAM6e00HmrI8z+OpimD6hTFvVEQ2QH1kMmDAvuR/kVpGGWbvXObh28F4I+
-	 HngTCDSU9HlYOh4j1BNg4tVHE8By8lZGQkdhD2D9kFmv0YmdWK6Pqa0NM8Cww2vFsU
-	 LB+IwQVV4liBIt9A2TiXD3dOgmaSNr+06FKfTZzPS0wgDGCVlBraKVRjKLSN9WHybI
-	 b/TqoPHrOYhLEirInV5azf06QiqZ41gVT0NKy4j6iRFwNg49nHpvTH4IxSJ+FgwVtI
-	 MlPMDBOyElgBg==
+	b=InBIbUHdpMnMo7f1ektkDLglWqxh9mBUdbKu9I8TEsJvLdwk1i5Boy8crJvO30KXJ
+	 b7LxBNJTKdxW6HEb0Wm3eGokL6O8gDR/fnw7iraRCRofIXZP93T5FJ1kipm67ktLkb
+	 pFMTBZk9ZoAowQ7AcjjfFupZwW3nN5qqzFXIbcJtLLCdN86pmls3mRsblbUqRHDivD
+	 mAbTQLzqSmAmP4WYyZ1DXo2CYtdtIXitJdFeXmiYaNRJqH5rff0YtQr4Lo87EpwVRa
+	 HeqWLQvqYHmOIqgsJrPG05Bo0ARM9a36Uz0n2prZJzBn1Ie/TehuDgn05k6Fjvify+
+	 pkyZbQVJNcfZg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C4DE3C43614;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B246CC43612;
 	Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,41 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: selftests: Fix vsetivli args for clang
+Subject: Re: [PATCH] riscv: stacktrace: fix usage of ftrace_graph_ret_addr()
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172009865679.17306.1065674073385433619.git-patchwork-notify@kernel.org>
+ <172009865672.17306.10078143988695346844.git-patchwork-notify@kernel.org>
 Date: Thu, 04 Jul 2024 13:10:56 +0000
-References: <20240702-fix_sigreturn_test-v1-1-485f88a80612@rivosinc.com>
-In-Reply-To: <20240702-fix_sigreturn_test-v1-1-485f88a80612@rivosinc.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, shuah@kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
- justinstitt@google.com, andy.chiu@sifive.com, bjorn@rivosinc.com,
- palmer@rivosinc.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20240618145820.62112-1-puranjay@kernel.org>
+In-Reply-To: <20240618145820.62112-1-puranjay@kernel.org>
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, samuel.holland@sifive.com,
+ dev.mbstr@gmail.com, linux-kernel@vger.kernel.org, puranjay12@gmail.com,
+ rostedt@goodmis.org
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Tue, 02 Jul 2024 18:54:48 -0700 you wrote:
-> Clang does not support implicit LMUL in the vset* instruction sequences.
-> Introduce an explicit LMUL in the vsetivli instruction.
+On Tue, 18 Jun 2024 14:58:20 +0000 you wrote:
+> ftrace_graph_ret_addr() takes an `idx` integer pointer that is used to
+> optimize the stack unwinding. Pass it a valid pointer to utilize the
+> optimizations that might be available in the future.
 > 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Fixes: 9d5328eeb185 ("riscv: selftests: Add signal handling vector tests")
-> ---
-> There is one more error that occurs when the test cases for riscv are
-> compiled with llvm:
+> The commit is making riscv's usage of ftrace_graph_ret_addr() match
+> x86_64.
 > 
 > [...]
 
 Here is the summary with links:
-  - riscv: selftests: Fix vsetivli args for clang
-    https://git.kernel.org/riscv/c/3582ce0d7ccf
+  - riscv: stacktrace: fix usage of ftrace_graph_ret_addr()
+    https://git.kernel.org/riscv/c/393da6cbb2ff
 
 You are awesome, thank you!
 -- 
