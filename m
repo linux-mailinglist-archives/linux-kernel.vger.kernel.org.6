@@ -1,143 +1,120 @@
-Return-Path: <linux-kernel+bounces-241171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3C69277C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:08:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE8C92780F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296821F22396
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:08:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 448E0285687
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864571AEFD2;
-	Thu,  4 Jul 2024 14:08:11 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D0A1AEFF7;
+	Thu,  4 Jul 2024 14:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sVW9hvGh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6701ABC25;
-	Thu,  4 Jul 2024 14:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8B3D2F5;
+	Thu,  4 Jul 2024 14:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720102091; cv=none; b=cx0g6UfyiG1IF/wQ+6TVmqHYMpppipA79A5DClrpye+kxrb1IFpDxcVFleSZsTq6TJoV1zURayI0sQwMP6o1/z2wanFHbUVA2XZ6siJxNfHgwyH+PWLRxbeYLxGhJ62XalM6Qo0DdeTOjfvZAqGzKKDd1AEcIL1EK5zvmiJjwWU=
+	t=1720102659; cv=none; b=gRsY1T/CK0jrp3hmQT4QDBLXLuR+JPTDCADgVQPlESD4y5CJCPI+tYpuyBxCEkMQpsQGioeXDJVILyu7cao2qvGQGgdc2xXEbBf05whpAnGrLpaEjEiHiWE3bjTHxJwDrWY/wey8/N8nP1DO3SK2gOicJObjhuwGuiZOme0jcAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720102091; c=relaxed/simple;
-	bh=5vauRKs+mI0HCOqYXSQH5t3rrarEc79hnDKBjFJzNNk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LMnbZDswAcVYZjTD8bOYQzZjB+DvCO/DHmbMp+t8Jk48h0xK6ZfO32m8WWA1mixIrgzMKFDIT4xITlaCiMnAiNdWcOcS9uP/ybNy2dHNmZvwixxklOQpFMAvAwHAJCM5OfxCRk+Wi7NJf+ta3MtMqgSs8Iv4iFoK1YIAZT7m19E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WFJPs288yznYT3;
-	Thu,  4 Jul 2024 22:07:45 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id DD69C140417;
-	Thu,  4 Jul 2024 22:08:03 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 4 Jul
- 2024 22:08:03 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<longman@redhat.com>
-CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 -next] cgroup/rstat: add force idle show helper
-Date: Thu, 4 Jul 2024 14:01:19 +0000
-Message-ID: <20240704140119.1423196-1-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720102659; c=relaxed/simple;
+	bh=SusMqoQix19RFodccF+ktpMi/I4/Jwdyx6c19a7rm2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=frbMYd0AyIbrO/ohZsop2XGQX+CYxQqFrmXUtOSDW+RLSjdtzn2vN/M/jQAy9V6OjGlmLGkdzHyUZTGj2yQe3L7ATU201UN/UdlwD4h4CbZe0MylSoj4eokmpWgj6l13MRHSpusnP8YzVtgIE9EzLg+LB2T6TMX58/wcBEeSlns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sVW9hvGh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D02DC3277B;
+	Thu,  4 Jul 2024 14:17:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720102658;
+	bh=SusMqoQix19RFodccF+ktpMi/I4/Jwdyx6c19a7rm2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sVW9hvGhah5nixxTU7OuPnLSMWSdHN4ZlsVpGf7jARG4mwYV2VEQ6BxAgV1Dtzq1+
+	 ULPw8uHgLPJyCcdg96j3HrkBk/oPAwK0qMKzI0nJPScqns+Y3s2FL1XqN1ev+I/M7I
+	 TTEmBpGna7qBjqx3fXTeJEnmzBpZGCfvybDT4bNZXce7mR2J2qfhoVomHgcSsKFrd5
+	 RL7ssrxm+lbuw0y2aAPK7Acehtwk52T6RNJgUYW2c/WxSRLgbXr4SAIbV1f4TXGMkE
+	 tZCe/CE/IKayIGoegNxSYqg90Zi6kq278eiNHQwuM34McuPZ8wivV2xiemfvtldz8C
+	 CLUxhh33YctWg==
+Date: Thu, 4 Jul 2024 22:03:29 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yangyu Chen <cyy@cyyself.name>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Inochi Amaoto <inochiama@outlook.com>, linux-serial@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>
+Subject: Re: [PATCH v3 06/11] dt-bindings: serial: 8250: Add SpacemiT K1 uart
+ compatible
+Message-ID: <ZoarsYMNJRu1-_wn@xhacker>
+References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
+ <20240703-k1-01-basic-dt-v3-6-12f73b47461e@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240703-k1-01-basic-dt-v3-6-12f73b47461e@gentoo.org>
 
-In the function cgroup_base_stat_cputime_show, there are five
-instances of #ifdef, which makes the code not concise.
-To address this, add the function cgroup_force_idle_show
-to make the code more succinct.
+On Wed, Jul 03, 2024 at 02:55:09PM +0000, Yixun Lan wrote:
+> Found SpacemiT's K1 uart controller is compatible with
+> Intel's Xscale uart, but it's still worth to introduce a new compatible.
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/rstat.c | 37 +++++++++++++++++--------------------
- 1 file changed, 17 insertions(+), 20 deletions(-)
+Per vendor's kernel source code, all the uarts support 64Bytes FIFO.
+So if it's compatible with Xscale, it's a xscale uart 64 Bytes FIFO.
+From this PoV, the uart isn't a Xscale but a mrvl pxa.
 
-diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-index fb8b49437573..a06b45272411 100644
---- a/kernel/cgroup/rstat.c
-+++ b/kernel/cgroup/rstat.c
-@@ -594,49 +594,46 @@ static void root_cgroup_cputime(struct cgroup_base_stat *bstat)
- 	}
- }
- 
-+
-+static void cgroup_force_idle_show(struct seq_file *seq, struct cgroup_base_stat *bstat)
-+{
-+#ifdef CONFIG_SCHED_CORE
-+	u64 forceidle_time = bstat->forceidle_sum;
-+
-+	do_div(forceidle_time, NSEC_PER_USEC);
-+	seq_printf(seq, "core_sched.force_idle_usec %llu\n", forceidle_time);
-+#endif
-+}
-+
- void cgroup_base_stat_cputime_show(struct seq_file *seq)
- {
- 	struct cgroup *cgrp = seq_css(seq)->cgroup;
- 	u64 usage, utime, stime;
--	struct cgroup_base_stat bstat;
--#ifdef CONFIG_SCHED_CORE
--	u64 forceidle_time;
--#endif
- 
- 	if (cgroup_parent(cgrp)) {
- 		cgroup_rstat_flush_hold(cgrp);
- 		usage = cgrp->bstat.cputime.sum_exec_runtime;
- 		cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime,
- 			       &utime, &stime);
--#ifdef CONFIG_SCHED_CORE
--		forceidle_time = cgrp->bstat.forceidle_sum;
--#endif
- 		cgroup_rstat_flush_release(cgrp);
- 	} else {
--		root_cgroup_cputime(&bstat);
--		usage = bstat.cputime.sum_exec_runtime;
--		utime = bstat.cputime.utime;
--		stime = bstat.cputime.stime;
--#ifdef CONFIG_SCHED_CORE
--		forceidle_time = bstat.forceidle_sum;
--#endif
-+		/* cgrp->bstat of root is not actually used, reuse it */
-+		root_cgroup_cputime(&cgrp->bstat);
-+		usage = cgrp->bstat.cputime.sum_exec_runtime;
-+		utime = cgrp->bstat.cputime.utime;
-+		stime = cgrp->bstat.cputime.stime;
- 	}
- 
- 	do_div(usage, NSEC_PER_USEC);
- 	do_div(utime, NSEC_PER_USEC);
- 	do_div(stime, NSEC_PER_USEC);
--#ifdef CONFIG_SCHED_CORE
--	do_div(forceidle_time, NSEC_PER_USEC);
--#endif
- 
- 	seq_printf(seq, "usage_usec %llu\n"
- 		   "user_usec %llu\n"
- 		   "system_usec %llu\n",
- 		   usage, utime, stime);
- 
--#ifdef CONFIG_SCHED_CORE
--	seq_printf(seq, "core_sched.force_idle_usec %llu\n", forceidle_time);
--#endif
-+	cgroup_force_idle_show(seq, &cgrp->bstat);
- }
- 
- /* Add bpf kfuncs for cgroup_rstat_updated() and cgroup_rstat_flush() */
--- 
-2.34.1
+But I have one question: is the uart really a mrvl/intel pxa uart? or is just
+reg programming compatible with pxa?
 
+> 
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> ---
+>  Documentation/devicetree/bindings/serial/8250.yaml | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/8250.yaml b/Documentation/devicetree/bindings/serial/8250.yaml
+> index 692aa05500fd5..0bde2379e8647 100644
+> --- a/Documentation/devicetree/bindings/serial/8250.yaml
+> +++ b/Documentation/devicetree/bindings/serial/8250.yaml
+> @@ -111,7 +111,9 @@ properties:
+>                - mediatek,mt7623-btif
+>            - const: mediatek,mtk-btif
+>        - items:
+> -          - const: mrvl,mmp-uart
+> +          - enum:
+> +              - mrvl,mmp-uart
+> +              - spacemit,k1-uart
+>            - const: intel,xscale-uart
+>        - items:
+>            - enum:
+> 
+> -- 
+> 2.45.2
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
