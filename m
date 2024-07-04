@@ -1,225 +1,194 @@
-Return-Path: <linux-kernel+bounces-241460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8C5927B9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:09:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D6E927BB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE163286DB8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:09:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDD8B1F27B2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB581B4C3A;
-	Thu,  4 Jul 2024 17:08:30 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5EF1C8FC9;
+	Thu,  4 Jul 2024 17:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ET+luebl"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6D91B375B;
-	Thu,  4 Jul 2024 17:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435021C2DF0;
+	Thu,  4 Jul 2024 17:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720112910; cv=none; b=RYWlCdseXGYRhHrcoBOgoKNqyZgYpE2y3xhfRL7KzjPfsmqPSBOUJn07apiVEvBMaZevNsWbCLmce9LaMCyuVLbTRCNtGu6aQGoEi1P2M4MbPCsxcISlxx1lE/W8ngSV905bt+Mos69i3Qi3IklGvsWuUwTTtqqvMETXLUFze4M=
+	t=1720112958; cv=none; b=anf8pfhW8xFnG0BpllDWjTK5Fv73WqXYEA3+iwiYn9uv/qsSpPfRWLFpeCL/SqTX3rJSb8FSvgG6fS0CpI5ukrZ0fHq5ABqITPjSDWDos0FxyLIgz2xXfTR1cvz6c7w6pD8TdhZqMvIFfDTebLqxizEL8yblpXVoyquNA9Ybvmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720112910; c=relaxed/simple;
-	bh=QiLJeBMBiVux1LfvRktK0NFIY7T3PnMvUz3RB/H8SM4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sk4NnhrUn6lHgVmH1maRbl68LvR3S5marA0g/q+Peo5jJG7j+a8KZUgIvVmorbKp/60nwbxmUIx6ftENddKEAmuw4bZKNsRLrJXEx4CDYJ3hskkbaBvtIVcbqUtPtfMZGeWlSnX3KBtxVP+uPwLeH4M4yo4ITVe8qEO7SBRPTjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WFNP12qNzz67Hm8;
-	Fri,  5 Jul 2024 01:07:17 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id C7BFF14065C;
-	Fri,  5 Jul 2024 01:08:24 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 4 Jul
- 2024 18:08:24 +0100
-Date: Thu, 4 Jul 2024 18:08:23 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev>
-CC: "Huang, Ying" <ying.huang@intel.com>, Gregory Price
-	<gourry.memverge@gmail.com>, <aneesh.kumar@linux.ibm.com>, <mhocko@suse.com>,
-	<tj@kernel.org>, <john@jagalactic.com>, Eishan Mirakhur
-	<emirakhur@micron.com>, Vinicius Tavares Petrucci <vtavarespetr@micron.com>,
-	Ravis OpenSrc <Ravis.OpenSrc@micron.com>, Alistair Popple
-	<apopple@nvidia.com>, Srinivasulu Thanneeru <sthanneeru@micron.com>,
-	"SeongJae  Park" <sj@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, "Andrew Morton" <akpm@linux-foundation.org>,
-	Dave Jiang <dave.jiang@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, "Ho-Ren (Jack) Chuang" <horenc@vt.edu>, "Ho-Ren (Jack)
-  Chuang" <horenchuang@bytedance.com>, "Ho-Ren (Jack) Chuang"
-	<horenchuang@gmail.com>, <linux-cxl@vger.kernel.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v2 1/1] memory tier: consolidate the initialization of
- memory tiers
-Message-ID: <20240704180823.0000212d@Huawei.com>
-In-Reply-To: <84b43294411bb1fe0ed58f2da59abf554ef48f7d@linux.dev>
-References: <20240628060925.303309-1-horen.chuang@linux.dev>
-	<20240628060925.303309-2-horen.chuang@linux.dev>
-	<20240702142535.00003dc0@Huawei.com>
-	<84b43294411bb1fe0ed58f2da59abf554ef48f7d@linux.dev>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1720112958; c=relaxed/simple;
+	bh=LEsw1djjLDPzbcwHuPkOWyFvHvp7EErfVZzqkRPiIZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CagLF0DEu0H2M7mbRxywZnsukPc0vVmf+3rJuDdYn6GPvYxOhMp+An/0ePD/ad3XbAOlgFpBkA3vRq9LH8Y7F6sKwp4oU3kMtxP1nyepR11qezldvJt/yaoQKhwVQ34/EI/G065Nv6sILdZOpsBMy3UXDcbCz6l8HywBtKeYBeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ET+luebl; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-367818349a0so485795f8f.1;
+        Thu, 04 Jul 2024 10:09:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720112954; x=1720717754; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A+xE066BndiqNDkiZTJopivcn1cUAHZ+D5Sl17iDBZQ=;
+        b=ET+lueblA4j/pxiQvo7SEPNcexxwsaYj8Xj4Av8Lt4DS2VvIFzUwFAScZkChTV4SDX
+         HaOV1lF9jt13iOPz45J/x41YuGYV2Enp4TTxMZBB9IvA7lGcpVKkh44aLc3k33ZBWnC/
+         lr2oeypJpTRXc9mHUzhFv1VTSolTGD+LIUeGerePrddIFYbokGm9d8v8CBJG10WyUHTg
+         cKvrr1j5b0EpWt8SJIYrULwk48o4yn0k8jH52ZjUY9XWybmXZT9K5drTBhkGxLuf0K+a
+         AGc0yO7Pw9cARCy3FTC6/uTokvQ8O8JJCkene5jd7KZT5GZachZqNdypzRokT8XFDQts
+         /HLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720112954; x=1720717754;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A+xE066BndiqNDkiZTJopivcn1cUAHZ+D5Sl17iDBZQ=;
+        b=W6rxp99ae8WGLnTvXknrnTOf7qt9twV1BbAA/JzERAws+G47KGpaESTpEkTj5PV0IG
+         ei88T1pCOTtuZQQT9FFr1pY4yEIMo6fDMZsIGVBtnbR5of0NpR0lYvWasi5Hea1evNwH
+         9bwCWX3HsCfWPaK/kyatNrqG34KoX1LLWp+gyFcpR0U8UXQfScaLP7VFuEX/cFbv3C+s
+         T3ExEWZ3GCY0eoH6ILXonrN5cMr4NDJIjkpIJAAMoqKJ30pinjmdiGLY7sf2B7+wioD4
+         44P8boOTYbGx0yKC/Z/HcglPiYK4AZgiCkhjZ3qG7Iim/mGSOOdD8IU+PU/5J/SFbHTD
+         f99w==
+X-Forwarded-Encrypted: i=1; AJvYcCWROJg5l1K2fNGQ81DUltfrvH362Duze88+e6YXiaQsucgpJQLchlFxH6GjmxUBTgOenmqXoAz1Up2Ped88eUsIRcRXX3SiUe1jyJhHV4GDq5P87VhXkrird+bkwNvP28D7xPwkuxW5zpM4BYj6NYWvsN+yrVdsCGeszZPjGvys80dSRg==
+X-Gm-Message-State: AOJu0YxRs9eIWgqFBKlGNCeWfrKlAxXFg7z8Lf7GsKVdm+LapTkYpLHV
+	h69/z1xtiq61kgnmSEm6xBSfpzuUMPKEDJYEBrMUWDYrG1cG9JGj
+X-Google-Smtp-Source: AGHT+IFa+qEhxwqUFnREpYr1xHXmdEfjKT/ZhhbJR8sv4pU9Q+Vr0L28884m3r9nAxQPW2a0gj96sA==
+X-Received: by 2002:a5d:4c4e:0:b0:367:892e:c6a0 with SMTP id ffacd0b85a97d-3679dd336f1mr1823463f8f.34.1720112954386;
+        Thu, 04 Jul 2024 10:09:14 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3678a648dd3sm6968358f8f.89.2024.07.04.10.09.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 10:09:14 -0700 (PDT)
+Date: Thu, 4 Jul 2024 19:09:12 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: dma: sprd,sc9860-dma: convert to YAML
+Message-ID: <ZobXOPW33bLHF+Jv@standask-GA-A55M-S2HP>
+References: <Zoa9MfYsAuqgh2Vb@standask-GA-A55M-S2HP>
+ <20240704-underuse-preacher-b5bb77f92ebf@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704-underuse-preacher-b5bb77f92ebf@spud>
 
+Hi Conor,
+see below.
 
-Hi,
-
-> > > 
-> > >  static int __init memory_tier_init(void)
-> > > 
-> > >  {
-> > > 
-> > >  - int ret, node;
-> > > 
-> > >  - struct memory_tier *memtier;
-> > > 
-> > >  + int ret;
-> > > 
-> > >  
-> > > 
-> > >  ret = subsys_virtual_register(&memory_tier_subsys, NULL);
-> > > 
-> > >  if (ret)
-> > > 
-> > >  @@ -887,7 +897,8 @@ static int __init memory_tier_init(void)
-> > > 
-> > >  GFP_KERNEL);
-> > > 
-> > >  WARN_ON(!node_demotion);
-> > > 
-> > >  #endif
-> > > 
-> > >  - mutex_lock(&memory_tier_lock);
-> > > 
-> > >  +
-> > > 
-> > >  + guard(mutex)(&memory_tier_lock);
-> > >   
+On Thu, Jul 04, 2024 at 05:42:39PM +0100, Conor Dooley wrote:
+> On Thu, Jul 04, 2024 at 05:18:09PM +0200, Stanislav Jakubek wrote:
+> > Convert the Spreadtrum SC9860 DMA bindings to DT schema.
 > > 
-> > If this was safe to do without the rest of the change (I think so)
+> > Changes during conversion:
+> >   - rename file to match compatible
+> >   - make interrupts optional, the AGCP DMA controller doesn't need it
+> >   - describe the optional ashb_eb clock for the AGCP DMA controller
 > > 
-> > then better to pull that out as a trivial precursor so less noise
+> > Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> > ---
+> >  .../bindings/dma/sprd,sc9860-dma.yaml         | 92 +++++++++++++++++++
+> >  .../devicetree/bindings/dma/sprd-dma.txt      | 44 ---------
+> >  2 files changed, 92 insertions(+), 44 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/dma/sprd,sc9860-dma.yaml
+> >  delete mode 100644 Documentation/devicetree/bindings/dma/sprd-dma.txt
 > > 
-> > in here.
-> >   
+> > diff --git a/Documentation/devicetree/bindings/dma/sprd,sc9860-dma.yaml b/Documentation/devicetree/bindings/dma/sprd,sc9860-dma.yaml
+> > new file mode 100644
+> > index 000000000000..e1639593d26d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/dma/sprd,sc9860-dma.yaml
+> > @@ -0,0 +1,92 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/dma/sprd,sc9860-dma.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Spreadtrum SC9860 DMA controller
+> > +
+> > +description: |
+> > +  There are three DMA controllers: AP DMA, AON DMA and AGCP DMA. For AGCP
+> > +  DMA controller, it can or do not request the IRQ, which will save
+> > +  system power without resuming system by DMA interrupts if AGCP DMA
+> > +  does not request the IRQ.
+> > +
+> > +maintainers:
+> > +  - Orson Zhai <orsonzhai@gmail.com>
+> > +  - Baolin Wang <baolin.wang7@gmail.com>
+> > +  - Chunyan Zhang <zhang.lyra@gmail.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: sprd,sc9860-dma
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +
+> > +  clock-names:
+> > +    oneOf:
+> > +      - const: enable
+> > +      # The ashb_eb clock is optional and only for AGCP DMA controller
+> > +      - items:
+> > +          - const: enable
+> > +          - const: ashb_eb
 > 
-> Do you mean instead of using guard(mutex)(),
-> use mutex_lock() as it was? or?
+> This is better written as:
+>   clock-names:
+>     minItems: 1
+>     items:
+>       - const: enable
+>       - const: ashb_eb
+
+Ok, should I keep the comment?
+
 > 
-
-Code as here, but possibly pull the guard(mutex) part out as
-a patch 1 as it's an unrelated improvement to the rest of the set
-which would be in patch 2.
-
-Not particularly important though as you've sent a v3 in the
-meantime and it's fine to have it in one patch.
-
-> > > 
-> > > /*
-> > > 
-> > >  * For now we can have 4 faster memory tiers with smaller adistance
-> > > 
-> > >  * than default DRAM tier.
-> > > 
-> > >  @@ -897,29 +908,9 @@ static int __init memory_tier_init(void)
-> > > 
-> > >  if (IS_ERR(default_dram_type))
-> > > 
-> > >  panic("%s() failed to allocate default DRAM tier\n", __func__);
-> > > 
-> > >  
-> > > 
-> > >  - /*
-> > > 
-> > >  - * Look at all the existing N_MEMORY nodes and add them to
-> > > 
-> > >  - * default memory tier or to a tier if we already have memory
-> > > 
-> > >  - * types assigned.
-> > > 
-> > >  - */
-> > > 
-> > >  - for_each_node_state(node, N_MEMORY) {
-> > > 
-> > >  - if (!node_state(node, N_CPU))
-> > > 
-> > >  - /*
-> > > 
-> > >  - * Defer memory tier initialization on
-> > > 
-> > >  - * CPUless numa nodes. These will be initialized
-> > > 
-> > >  - * after firmware and devices are initialized.
-> > > 
-> > >  - */
-> > > 
-> > >  - continue;
-> > > 
-> > >  -
-> > > 
-> > >  - memtier = set_node_memory_tier(node);
-> > > 
-> > >  - if (IS_ERR(memtier))
-> > > 
-> > >  - /*
-> > > 
-> > >  - * Continue with memtiers we are able to setup
-> > > 
-> > >  - */
-> > > 
-> > >  - break;
-> > > 
-> > >  - }
-> > > 
-> > >  - establish_demotion_targets();
-> > > 
-> > >  - mutex_unlock(&memory_tier_lock);
-> > > 
-> > >  + /* Record nodes with memory and CPU to set default DRAM performance. */
-> > > 
-> > >  + nodes_and(default_dram_nodes, node_states[N_MEMORY],
-> > > 
-> > >  + node_states[N_CPU]);
-> > >   
-> > 
-> > There are systems where (for various esoteric reasons, such as describing an
-> > 
-> > association with some other memory that isn't DRAM where the granularity
-> > 
-> > doesn't match) the CPU nodes contain no DRAM but rather it's one node away.
-> > 
-> > Handling that can be a job for another day though.
-> >   
+> > +
+> > +  '#dma-cells':
+> > +    const: 1
+> > +
+> > +  dma-channels:
+> > +    const: 32
+> > +
+> > +  '#dma-channels':
+> > +    const: 32
+> > +    deprecated: true
 > 
-> Thank you for informing me of this situation.
-> Sounds like handling that also requires a mapping table between
-> the CPU and the corresponding DRAM.
+> If there are no users of this, I'd be inclined to just drop it from the
+> binding.
+> 
+> Cheers,
+> Conor.
 
-I've not yet looked at how it interacts with this, but
-from an ACPI point of view it's just 'near' in SLIT and
-HMAT.  The nearest thing to a description is
-Memory Proximity Domain Attributes structures in HMAT.
-That allows you to describe the location of the memory
-controller, but in this type of system there may be
-a many to 1 mapping (interleaving across memory controllers
-in some CPU only nodes) for example.
+It is specified in DT "For backwards compatibility", see e.g. [1]
+I'm not sure if it's still required, I'm not very familiar with this platform.
 
-Anyhow, guess I need to spin up some emulated machines and
-see what breaks :)
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/sprd/whale2.dtsi?h=v6.10-rc6#n124
 
-Jonathan
+Regards,
+Stanislav
 
