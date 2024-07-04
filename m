@@ -1,145 +1,142 @@
-Return-Path: <linux-kernel+bounces-241249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2309278FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:41:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E5ED9278FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2523BB25CB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:41:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B76BD28F0D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAB51B1412;
-	Thu,  4 Jul 2024 14:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F221AEFFE;
+	Thu,  4 Jul 2024 14:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MclbTZY5"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Nao2Iybp"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D12B1B0121
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04A31AC247;
+	Thu,  4 Jul 2024 14:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720103953; cv=none; b=CyD6SpGqbLtUfYyzULJCZhzBLpeXA+b3d6Bd/KtYYSShX0UNpT/pU2lU9qOnL45Y1vudbxEVbFPLqePpSpEiTnO0eXiuF+cNSMubfbZf5HCzcepeXtLIsDiZvuavYEzDfmJTST+QYbCAIGW90Vw5zX7ipQjZ3WIxtyHY4kz1H94=
+	t=1720103984; cv=none; b=lM/yMXqZ8wAchSS9a1l1ao74tTkTg5DSeSuz46pPB+aidcPT4/7EQMRMpzEyEUwIjs8jWoQK6jG7X9709BezYR1sNOvunTiWMkWQvjy1G4nXkcGe7xALBE37WqH6uBBFRnHby88qjlusViiMLF2bLIcj7Ah180QtLl9IeqTcAS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720103953; c=relaxed/simple;
-	bh=Cv66tffKqVjlVA5t+Lzf7KRgBGmH3LESz2m7EDSv8Z4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A2Swv2NJ7bc7xAJZaGcGRU2Y/G3hKo0OTXqbcCzwZrwUS9shc3FEwa6n88q36BjOpM+eYbGKbk29yHK9qyUB1temjCmUiZ0uiywOce0dHm2B/+sxeyJx6of/A4m5WwBoPdVbZPiGewYQshL+QzFTJQr5aQh4Ho7ZX5dMgfUuvnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MclbTZY5; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ce08616a9so2715e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 07:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720103950; x=1720708750; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=72SMMalQNaOPc00MRqfDjh4U4jrxEFf+MGhtcT7Z8UI=;
-        b=MclbTZY5wewoVb+DdQkI9n/cwoGJKArbcsEOh9tZBmvb+43akRbVJZDgynxfeNXmDP
-         +8UvIJqauDXCHWUfgbGX2lufKmveVKA59ZfXpeSOr0ClCRARQtGlESfrqGSnv6flhtZl
-         7cAJDyTzyILkN/6USJteO/xZu3A939jq1vyZ2j1r3UQsFwHB8AZwy1v0/A1N1qIDQteJ
-         2mLZvb15f8ZgbqiA8A41sDdcykfdQtDvltBDnFMHLEHeGTmffuSvo7Xrww1i5r6wwZPJ
-         fp4sdZH2vn9zEzUZCZwyMCEIBrBwVor8PmRKXlDLHZUwMiiyYuMRcL6vQPRdaZvuxfSA
-         EnxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720103950; x=1720708750;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=72SMMalQNaOPc00MRqfDjh4U4jrxEFf+MGhtcT7Z8UI=;
-        b=rrjF9+5hycSM5zVedqFHSwK993BkMu1boc2RnK+ykaTs/C39S8gUQ11CGKc2j786DY
-         4KdiCbcj+a4jgm4XIXVGYBYIztaPjT5/ArIIv8E+yPEy5KmfeD6XMqdH8WIzc0QwYGgv
-         ph6w1xNhcos5iMn6sFuTONi41eXJflaph/m6vR0aGL/SYMv5070QlzLf+WRI5y04XCpO
-         EQaj0ITFPZIYVKs5oeZ9lobaNGmAHURSdAvQk+gj7IfrpDXOwPTa567RdfTTZSKs6w/W
-         5niVdJIvyk/bi9fWmE89OX5Hu8yhuDtqbMo3JG3g0jgzpXDncF5GcEvx/Hpjnc2KqtsQ
-         F0uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWycPAFLiNgqIMNEWU+8gJBGBaiEPophqVmv6E1+3reIWwxTTiVRCfot5e6V8XY3EFgUW7Itzhmc0HEt7dtSW0W2w89lktgxlzNSI46
-X-Gm-Message-State: AOJu0YwhcUAJvmNjHdqSe40j5CQHOqhrTOj97Lv4JleN5A4ztSAfIEDD
-	ZMh38D6yTFS+SSH5OoNGBjKNJSr8HM8j3bqWbjN6sEgnY6QSmDlSEpS/w5jbe/NYPGEnzBxYZlP
-	MYSV7nHUnRD1R0qscHLy70ExBqaoV87h1RejI
-X-Google-Smtp-Source: AGHT+IHvh/l3PY7Tetrekb9ks9k4jfyMvlkTGrTTzBBDdKnbqA0KAJiEdqQ1LvOflC1Al32bSxuVnleb9pQfLeQP7pw=
-X-Received: by 2002:ac2:5589:0:b0:52b:c1e7:dad7 with SMTP id
- 2adb3069b0e04-52e9f2b8cbbmr105206e87.5.1720103949983; Thu, 04 Jul 2024
- 07:39:09 -0700 (PDT)
+	s=arc-20240116; t=1720103984; c=relaxed/simple;
+	bh=EzNZhz0DbqUlvx+gqEFXHxBmkIniIVt6C6lgkGg7KKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=Z5fQ8Dly0PRDHnpx2UcPC2lI98/hEo2FTiT0QTSMQqrOte3J0dY7Yy63LyWQNFTMhh++wX7BiaNCKZZoGquXDABZDZmU7f62wbNujd0aounG/CPlOfMK4ywKvQngV6L5AC+yGLGE5QzdYPW5RICiS7L+kcoFdgNAfrjP5XgZCxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Nao2Iybp; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 464EJsWO026937;
+	Thu, 4 Jul 2024 14:39:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:content-type:mime-version; s=pp1;
+	 bh=mRZCo68afgatdH8vXo2NpCQ8H9u7he8+kkBGtWIcG4Q=; b=Nao2IybpOPVo
+	bzgLg4QtbV8UzFQ3pRzQNlfcLISGuve77Q/tsVajFBCkkUvEVSYtmIo65o2sQ0lm
+	pUE3aiObtvzOyAfMO+ZzDxFGzGGPuDMT1opRo5kKihyQaS12NTNkOI5pJEhcaB1e
+	vqXunWBn5ngK0xJbpIM3Io3f8kpk7dLYSncTYCFbbuF83Cf1r4Je9G8clgPe4EnI
+	vYwqsSUzEQ3UvdF92x6xJnqpzbxi00CvRmKKypqK66+sNJP5Z3LdQeh3tE0o4sgz
+	UmzEPq5TgzLvpFK5ioaX0uY2s940kbjNvHncB9i2Xjz26p5VZqqaKeVDhDFhTthL
+	t1c8+JT0AA==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 405us5g9x6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Jul 2024 14:39:39 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 464Bp5Xd009477;
+	Thu, 4 Jul 2024 14:39:39 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 402xtn0c2e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Jul 2024 14:39:38 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 464EdXmm58655190
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 4 Jul 2024 14:39:35 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9BE0A2004B;
+	Thu,  4 Jul 2024 14:39:33 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 755A420043;
+	Thu,  4 Jul 2024 14:39:33 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  4 Jul 2024 14:39:33 +0000 (GMT)
+Date: Thu, 4 Jul 2024 16:39:32 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] s390 fixes for 6.10-rc7
+Message-ID: <20240704143932.7696-F-hca@linux.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: xFqokvbO-s0HOuTPhe0JtYf0Ngc2QPPq
+X-Proofpoint-ORIG-GUID: xFqokvbO-s0HOuTPhe0JtYf0Ngc2QPPq
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000004d74cd061c6c9e68@google.com>
-In-Reply-To: <0000000000004d74cd061c6c9e68@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 4 Jul 2024 16:38:58 +0200
-Message-ID: <CACT4Y+a1QqOO7XbZrTkppopg3hiUdBkpQLwN8+67PmHJcRHJsQ@mail.gmail.com>
-Subject: Re: [syzbot] [lsm?] [keyrings?] KCSAN: data-race in __se_sys_keyctl /
- key_task_permission (3)
-To: syzbot <syzbot+8c446f45cf5815e9110a@syzkaller.appspotmail.com>
-Cc: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-04_10,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=362 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407040103
 
-On Thu, 4 Jul 2024 at 16:18, syzbot
-<syzbot+8c446f45cf5815e9110a@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    8a9c6c40432e Merge tag 'io_uring-6.10-20240703' of git://g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=113817ae980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5b9537cd00be479e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8c446f45cf5815e9110a
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/f01153f3ec8e/disk-8a9c6c40.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/04b88663a824/vmlinux-8a9c6c40.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/63c518cc63c5/bzImage-8a9c6c40.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+8c446f45cf5815e9110a@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KCSAN: data-race in __se_sys_keyctl / key_task_permission
->
-> write to 0xffff88812277dd70 of 4 bytes by task 19442 on cpu 0:
->  keyctl_setperm_key security/keys/keyctl.c:1098 [inline]
->  __do_sys_keyctl security/keys/keyctl.c:1926 [inline]
->  __se_sys_keyctl+0xab5/0xbb0 security/keys/keyctl.c:1874
->  __x64_sys_keyctl+0x67/0x80 security/keys/keyctl.c:1874
->  x64_sys_call+0x2bf5/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:251
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> read to 0xffff88812277dd70 of 4 bytes by task 19441 on cpu 1:
->  key_task_permission+0x14a/0x2c0 security/keys/permission.c:55
->  lookup_user_key+0x9ea/0xdf0 security/keys/process_keys.c:803
->  keyctl_setperm_key security/keys/keyctl.c:1083 [inline]
->  __do_sys_keyctl security/keys/keyctl.c:1926 [inline]
->  __se_sys_keyctl+0x829/0xbb0 security/keys/keyctl.c:1874
->  __x64_sys_keyctl+0x67/0x80 security/keys/keyctl.c:1874
->  x64_sys_call+0x2bf5/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:251
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> value changed: 0x3d010000 -> 0x00000000
->
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 1 PID: 19441 Comm: syz.1.4799 Tainted: G        W          6.10.0-rc6-syzkaller-00067-g8a9c6c40432e #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-> ==================================================================
+Hi Linus,
 
-The code in key_task_permission() looks fishy if it can race with
-key->perm updates.
-There is possibility for TOCTOU and unintentional re-reads of the field.
+please pull s390 fixes for 6.10-rc7.
+
+Thanks,
+Heiko
+
+The following changes since commit cea5589e958f8aef301ce9d004bc73fa5bb3b304:
+
+  s390/boot: Do not adjust GOT entries for undef weak sym (2024-06-25 14:39:42 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.10-8
+
+for you to fetch changes up to b3a58f3b90f564f42a5c35778d8c5107b2c2150b:
+
+  s390/dasd: Fix invalid dereferencing of indirect CCW data pointer (2024-07-03 16:27:06 +0200)
+
+----------------------------------------------------------------
+s390 fixes for 6.10-rc7
+
+- Fix and add physical to virtual address translations in dasd and
+  virtio_ccw drivers. For virtio_ccw this is just a minimal fix.
+  More code cleanup will follow.
+
+- Small defconfig updates
+
+----------------------------------------------------------------
+Eric Farman (1):
+      s390/vfio_ccw: Fix target addresses of TIC CCWs
+
+Heiko Carstens (1):
+      s390: Update defconfigs
+
+Stefan Haberland (1):
+      s390/dasd: Fix invalid dereferencing of indirect CCW data pointer
+
+ arch/s390/configs/debug_defconfig | 5 ++---
+ arch/s390/configs/defconfig       | 5 ++---
+ drivers/s390/block/dasd_eckd.c    | 4 ++--
+ drivers/s390/block/dasd_fba.c     | 2 +-
+ drivers/s390/cio/vfio_ccw_cp.c    | 9 +++++----
+ 5 files changed, 12 insertions(+), 13 deletions(-)
 
