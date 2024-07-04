@@ -1,122 +1,92 @@
-Return-Path: <linux-kernel+bounces-241193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8995927820
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:19:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B197C9277C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61BF61F242B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:19:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C489C1C22BB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44241B010A;
-	Thu,  4 Jul 2024 14:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F7C1AEFFB;
+	Thu,  4 Jul 2024 14:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbTclH35"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VxSYCyp+"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0B01B0109;
-	Thu,  4 Jul 2024 14:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A4C1AD9E0
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720102757; cv=none; b=XAIuEiBCB7gHTmAoMXvKnyX8ox50uHev/qLrcwrB+HctkNj0/JXdsg+cn/pKJoFfP62/ZVeFe6Ksnpc+vKHr4LATGKh3Lhu0AP6XrF+37uoYlnZ5KWElevbooX2BHoAy8pSfZbx4tK8IE9O+SXGNrR0wzb6xTcpEPyxgHz2CPWs=
+	t=1720101927; cv=none; b=pEGk6+YaNTYFEcFEebG1qk+55TYaF8rsG+p5aU8XZ6veQ4uWcgInJeqWmg4LjUI/wR7X4WHcijQLT3WBRfWiTlbiODAG3PAGmtMMscasYdv1Q/l8ejoeGoZQt3OfUJN/j2Jd5ncaKWIudFNJHKD/2QQh1fEgnEjC4BdqdZ02460=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720102757; c=relaxed/simple;
-	bh=OwRVZY+f9veGOGoR06mRiZvZ/R/K4T/tjGiz7dFM/24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EG4BFmtXBFLJgwQ3qGRN3ryfDfUEPidcCEhDzQsMv6nc3BlBWpcV5Ilzo+YiVHCmm2huz2/g247bvaZS0P5rDcdhOX67JRo3xcpmqVdz1gya7AL3q7HXY6SpeqxdLk05Q+KvkfxmV8eWq+IjaBd5t64Gt6qG8MUTuC5BJcr9mBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hbTclH35; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71AE1C32781;
-	Thu,  4 Jul 2024 14:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720102756;
-	bh=OwRVZY+f9veGOGoR06mRiZvZ/R/K4T/tjGiz7dFM/24=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hbTclH35SnvUdR4hFK5/Ro8n9I3duUwlcnH+GdPeTzb6igHteP2I2pKjkRze1turk
-	 dQgOopkNNnnIGMgS3bkVFBXdupG7Lt21Eh8jIucIXUjt5Xi5TVXVQy8ZMQrfGkAgIr
-	 Iu2ZM0oykY8fYBRFmNKfEgQFI1u/0Lb5CZBzhiguuVnQ0fnJcrbK4YJc/cc44ScpPR
-	 ezveUi+K4inDtXVuCIGCYRSv/0pNKLidOJDqUnzXEQN3TsiQbfk+Mgo3Ly9W1j8POU
-	 bDSQwhGeSEDYbD7TG/LzdnCCoWqdxUbk8eYdeW4debYK3+tXXXRireCuOUHSu0Z2/E
-	 /tCSYACMDGPhQ==
-Date: Thu, 4 Jul 2024 22:05:03 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yangyu Chen <cyy@cyyself.name>,
-	Inochi Amaoto <inochiama@outlook.com>, linux-serial@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Meng Zhang <zhangmeng.kevin@spacemit.com>
-Subject: Re: [PATCH v3 11/11] riscv: dts: spacemit: add uart1 node for K1 SoC
-Message-ID: <ZoasDzbOfQjxk9QZ@xhacker>
-References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
- <20240703-k1-01-basic-dt-v3-11-12f73b47461e@gentoo.org>
+	s=arc-20240116; t=1720101927; c=relaxed/simple;
+	bh=nT+rTBnl+HSl4DwG+DFLS3z8vwGzIsSiEg7GOm/JOpw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gTFcb2kmJyCeoG5iDb3tFCGW05KR4muG5KkP63/A80//eA86A2CKIKHYyw+Syz/SVqZqR+yS+hILeJ7Nd0pnGJbkxSH9c8femvQAn6Y7UBO1+lOelE2H/JHPnlLrgbqkhqHX7XQEp1S8EaPE8qrhQvjHJyFTjmJQSi86QVH1/SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VxSYCyp+; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6513899bbdcso11205737b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 07:05:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720101925; x=1720706725; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nT+rTBnl+HSl4DwG+DFLS3z8vwGzIsSiEg7GOm/JOpw=;
+        b=VxSYCyp+5aPScQeE8OnbJvYcUvekY/PO0Ss9nqYUklx8bs7+M77E3qAlwVuBc3RVUl
+         BNyQjQ9+VdeZaBJPQsjvHvPs633hZw1cxdzXFtAaifXcHo+wRPh/oE3WYIM4foVY9HVH
+         Am74hlPlASnY3sJ6O4I/lW0E5K3LJh9J2SB3qCclKI3bs8o3zCmgsQzMd8EDK7ZKNByG
+         hqviJwUIzJ5mbzWDPazDBXUrilQ2jyDIHsBc44bmRSYEyYjpLKCRAThenVv3NKva0jLU
+         yTGqQlFg87amBG+fOIHvCN07LJwfzKXTvxMK6ECYB3y+F6moWVrbvYj/2g0ZdsV9qsj6
+         w01A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720101925; x=1720706725;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nT+rTBnl+HSl4DwG+DFLS3z8vwGzIsSiEg7GOm/JOpw=;
+        b=uX/RSyU6Wffskg2Gcf42figWPQ+BxSp/IdETPBDxlHd+vUfETME1nn73+EvqYZFv9+
+         aWadNsxU5Pg2GFZiYQHhjjJGrtwMs8J3GQ9Xv33PLJpeclHHzwum2sszgiNhYkCk9PQI
+         +41hGRNlq9BZBh85Qw6ctSt1INtIaPytv1nnUbWwTVnEVofHnBphWHXLXLfJ2uNRiroz
+         iL2sBpr7EMBqZm9z0t0iUE6Uf5KCle72fykWRNtFrBurnV0SjfxPDEH1gyYkBzoo7qc6
+         VDZgG6Q9ip5kdSqZK+10So7220LfYRlaTM53BegRfkXCKsttFpgP4JOcxtnBsHU3uFtq
+         mDgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKBwOI2ghsXQ5kZQU7gAWUeBug+wbF1pO/f2OumA2fA6KM4uHqDN8auL+CowiLsr3+CpKisohNqDLUR4wJo+5s4I++0iHh/9MEGAyT
+X-Gm-Message-State: AOJu0Yz48CYbpOHmwBzvrwh1MxMfOlvQPWnhENessJvd7qAOrf0CNXts
+	NqRb5Smkc3kEjCv0KKzmugDAV72Wa+BTLS+gsYwXIjX0VA1Re4D08MD91JZ6z90G6SYrKnMZbp9
+	tLuY8Cw==
+X-Google-Smtp-Source: AGHT+IEUTx9gA7idJniZJ43DFyy9iaha2T2C5xdXkzxMT+Hu+WTsx0gWO2mYAGlalubEcYYltx3s+A5MabGu
+X-Received: from dvyukov-desk.muc.corp.google.com ([2a00:79e0:9c:201:ef38:74e6:67b5:dcc0])
+ (user=dvyukov job=sendgmr) by 2002:a05:6902:100b:b0:dff:396c:c457 with SMTP
+ id 3f1490d57ef6-e03c195ece8mr3031276.3.1720101924876; Thu, 04 Jul 2024
+ 07:05:24 -0700 (PDT)
+Date: Thu,  4 Jul 2024 16:05:20 +0200
+In-Reply-To: <20230926102454.992535-2-twuufnxlz@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240703-k1-01-basic-dt-v3-11-12f73b47461e@gentoo.org>
+Mime-Version: 1.0
+References: <20230926102454.992535-2-twuufnxlz@gmail.com>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240704140520.1178714-1-dvyukov@google.com>
+Subject: Re: [PATCH] fs/hfsplus: expand s_vhdr_buf size to avoid slab oob
+From: Dmitry Vyukov <dvyukov@google.com>
+To: twuufnxlz@gmail.com
+Cc: akpm@linux-foundation.org, hughd@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzbot+4a2376bc62e59406c414@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 03, 2024 at 02:55:14PM +0000, Yixun Lan wrote:
-> Devices in 0xf000,0000 - 0xf080,0000 are reserved for TEE purpose,
-> so add uart1 here but mark its status as reserved.
+Hi Edward,
 
-This patch doesn't deserve a seperate patch, it's better to fold it
-into the dtsi one.
+Was this patch lost? I don't see it merged anywhere.
+This bug is still present in most kernels out there.
 
-> 
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> 
-> ---
-> This patch can be folded into "riscv: dts: add initial SpacemiT K1 SoC device tree",
-> if maintainer finds it's too trivial to have an independent patch..
-> ---
->  arch/riscv/boot/dts/spacemit/k1.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> index a076e35855a2e..fee8921513c1f 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> @@ -372,5 +372,15 @@ clint: timer@e4000000 {
->  					      <&cpu6_intc 3>, <&cpu6_intc 7>,
->  					      <&cpu7_intc 3>, <&cpu7_intc 7>;
->  		};
-> +
-> +		sec_uart1: serial@f0612000 {
-> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> +			reg = <0x0 0xf0612000 0x0 0x100>;
-> +			interrupts = <43>;
-> +			clock-frequency = <14857000>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			status = "reserved"; /* for TEE usage */
-> +		};
->  	};
->  };
-> 
-> -- 
-> 2.45.2
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
 
