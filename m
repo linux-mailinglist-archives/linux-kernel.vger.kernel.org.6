@@ -1,128 +1,220 @@
-Return-Path: <linux-kernel+bounces-241555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865AA927C84
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:50:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FDA927C82
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F67E1F237CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:50:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 619E02841BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CE64E1CA;
-	Thu,  4 Jul 2024 17:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4F950A63;
+	Thu,  4 Jul 2024 17:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="LifcrDUZ"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4cE2MG7"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D1073456
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 17:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5960739FC1;
+	Thu,  4 Jul 2024 17:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720115412; cv=none; b=EFy/sjW8gcWqDX8YYjbjO07fvrZ/b9+3j6D2SSu/VaQJGc7VajE+gkIfIJICY3J3d/YeibaYfoh3xu0jnjD5JnMkQTjollxl3NjRfQe1zQyEd1FmuXCq/VSSbcz3MRQz+iNhMcGCD/cX13DfATs+RKHhdGvjYWOr4UZAEXjqwj4=
+	t=1720115407; cv=none; b=coQYTuXqNCL+TUQD0+Dcsx/cCIIWoaHjmN0D+AyQAc05nfmFhuvZXOEoFQJ/Y6wAajhYNd3/yQdRJYdz45lbOlRXPcMObAQzYo3Qpit+lT+bFpLHfciwTXm85RkaiDC8kyjVR8qtd2/Uquv//FXUOP+ZJCTZtz5ChzP7Scqyfnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720115412; c=relaxed/simple;
-	bh=nUom0qLxMPGp2up9CnruaiVjIjcb/QyFMpGO91rE9mM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H8C2d5+VWZisvrteqqgnhSsNLSc0us2wv084SC8TOYnH6ZYEqjCuDHs4209dsHFC2JXYOFN65xbUTLu6MphORnCMkDKvqG0gxO/lThHzmdFwq5exLzvPVE8DpJ8Xrpda5mhn9KLCs7aiMwQC9DHKlGLJHMiqzzDeFjcpnigw6WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=LifcrDUZ; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-115-17.bstnma.fios.verizon.net [173.48.115.17])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 464HnHV8014631
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 4 Jul 2024 13:49:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1720115362; bh=WPuRfg5i2QUmJI+blsG4PPUd4hX8D48Cv5VVTqWmnUA=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=LifcrDUZVZ313tEZ2vFpCnySwZ/MMyfHEz4sx5LrJ/WU+mS4EALs4kWCT4mXKS54d
-	 o2TOjZcsmUAQpK6fPwBJbhAadpgBZ5pCrThPX0zO/IacxSrPd4KFaNX6cRtSEhG3B7
-	 Q7RFBT9dF7dHO6NZfx9WxtclEpwfJYch5M1VAI2KdhoS6hYehFiatVmItplhmI6/LY
-	 HRm+UPAy/6kXQYCHzIiX9x7n3Hu0OG3jyhs+ON1q0zswyf01EY7HN7NbGP8me82ys8
-	 bTr7B5uKxxfniMSFog3JB7ncbU3Wu7TdL9ddqToauMraEQar8Y+YPnRFT10rOxR5fL
-	 clCcQbo4BS+8Q==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 5B2A415C026C; Thu, 04 Jul 2024 13:49:17 -0400 (EDT)
-Date: Thu, 4 Jul 2024 13:49:17 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: David Polakovic <email@dpolakovic.space>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Alexander Lobakin <alexandr.lobakin@intel.com>,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: Re: proposition for fixing Y292B bug
-Message-ID: <20240704174917.GB973460@mit.edu>
-References: <3be3235a-dea7-a5ca-b5ea-4047bdeb695d@dpolakovic.space>
- <ZoFgga45QCh2uA0i@archie.me>
- <9e3b638d-76f2-8520-2a24-7de0cd0bc149@dpolakovic.space>
- <ZoJx5GaBDHg7nayw@archie.me>
- <cef39a6f-426d-4c4d-950e-edbbe5e95acf@intel.com>
- <d88861a6-ccd9-3fe5-67e0-b50a72ca1e51@dpolakovic.space>
+	s=arc-20240116; t=1720115407; c=relaxed/simple;
+	bh=HVgcWe0qTyiaehe+NbUAH2Ic7vUQvKGqeeo0q+/fh4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XDA50GWVEl7ExDZWdzOck7D0WNUIwLzC7Ok4nk8EcHREhifHFgRDm4dqQsBJoQCuvbuzrG1I91IShV8C5tkzWEaqN73VjmgvxEpYsDK5Cr1OBaRmdfVXdyEBEln4NsgCsdgwpnWle29hYQ6FBgmYGk5b+QNSPUH3HblaoWVrL7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4cE2MG7; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fafc9e07f8so5558465ad.0;
+        Thu, 04 Jul 2024 10:50:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720115404; x=1720720204; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=DdhqWX65Yn1Fxl0pNOiGXktgdN2Ej4vHP2xLPm1fR8k=;
+        b=Y4cE2MG7y5Irk7V5ax2zvd6c/Ii2+wL09Lpz4HTTEjFkQiS3gw6xfJKwTc9Ih822wq
+         JFtpyamHcGgeI1xYb4bUC2iyQ2w7cLziXy5LZT/jsxORvt4jP5v6xwHdEjYPgbY4M2i8
+         NYxweQKxudnFfFuw5T78d8B4ImNjhw1vJ9R/TuX4GU+jvaOL5mPOGbBZjOS07HthfsF+
+         ehCFgHmXWvM1pF4GigMRwYkji+asCMwrkHCFsR/UFkeEamgTIuDzL4tVMb5LuYfKNCk5
+         f3wTV5LQawERhavbg085HS0txkIQHPoEvZt8iq1cJRBcZjAPj9HvUvDRK8FBj2JVJe+y
+         yNEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720115404; x=1720720204;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DdhqWX65Yn1Fxl0pNOiGXktgdN2Ej4vHP2xLPm1fR8k=;
+        b=P8GOU/i/3tJrD5gycapSj+8Ld2O6O4fVcdpuEWD6GoZK3LgLKS5vlivoHkJBYCJB/Q
+         8ufnTYiRnms5nVnn8dI9tPMB58BFOi5IDib4UYECsxkbw7y22kFJ6xBDNl0uPxMGTGjS
+         W+V9YNfqYwcV9tjQMfUYctUP/6MnQu+gtOT42JKKIMs5uqaxRvrNRwOBJwtfjxi9Ja6+
+         hDMKfzgZYqIeqZUnmEVqS9nHwtMWBoehgFq+Rycwfu7zXEoCg8OSn12j0wE9l+iK+nLA
+         bJAMXSla3FS6ASaK+sjiAbL/UmlJ+w6Uv9z2TfwdZM9Sr3IpDUU2//TExusqgj/QUYy8
+         YZqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAhckNjldJT2n4kExtbutMUp7/bmv1E1i0q5yQTw9m97TA4gok904PVokPWNnsUBm+v01hfoKgnJ4IN+YMsHcT+k5ul2kE2neJirQ=
+X-Gm-Message-State: AOJu0YxfRyydAmQNWAIzvJKZtJJVTR6uROfEhDBkqc6uLn6ocrlD+VT+
+	w9BehsvguFSyW1kNWvzOANIJzLf3r5bQrHLK8hcxmMViZj0+b8c3
+X-Google-Smtp-Source: AGHT+IGQvaca3khDAdN+47geUA+yvPBXhdtS/XZ288uqkPrAZBusHsX6cVrI4/55QMs235g9hafDiQ==
+X-Received: by 2002:a17:902:f682:b0:1fb:39cf:fe6d with SMTP id d9443c01a7336-1fb39d00203mr15266935ad.32.1720115404349;
+        Thu, 04 Jul 2024 10:50:04 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb438a7890sm3713395ad.185.2024.07.04.10.50.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 10:50:03 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <b556e39d-93f4-42e6-a702-715f5498d3d9@roeck-us.net>
+Date: Thu, 4 Jul 2024 10:50:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d88861a6-ccd9-3fe5-67e0-b50a72ca1e51@dpolakovic.space>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/11] hwmon: (amc6821) Make reading and writing fan
+ speed limits consistent
+To: Quentin Schulz <quentin.schulz@cherry.de>, linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Farouk Bouabid <farouk.bouabid@cherry.de>
+References: <20240701212348.1670617-1-linux@roeck-us.net>
+ <20240701212348.1670617-3-linux@roeck-us.net>
+ <750d28c7-4d90-4bd6-a910-4d5e73828e55@cherry.de>
+ <8cb9dc38-499e-4f10-93a4-c07898a776b4@roeck-us.net>
+ <56ed417c-1dc2-474b-a2bc-5f17e1d2bd60@cherry.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <56ed417c-1dc2-474b-a2bc-5f17e1d2bd60@cherry.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 03, 2024 at 05:29:58PM +0200, David Polakovic wrote:
+On 7/4/24 00:52, Quentin Schulz wrote:
+> Hi Guenter,
 > 
-> I am not sure if I don't understand your solution, but extending the
-> memory designation from 64 to 128 bits, is another temporary
-> solution, which will again overflow one day.
+> On 7/3/24 11:48 PM, Guenter Roeck wrote:
+>> On 7/3/24 07:35, Quentin Schulz wrote:
+>>> Hi Guenter,
+>>>
+>>> On 7/1/24 11:23 PM, Guenter Roeck wrote:
+>>>> The default value of the maximum fan speed limit register is 0,
+>>>> essentially translating to an unlimited fan speed. When reading
+>>>> the limit, a value of 0 is reported in this case. However, writing
+>>>> a value of 0 results in writing a value of 0xffff into the register,
+>>>> which is inconsistent.
+>>>>
+>>>> To solve the problem, permit writing a limit of 0 for the maximim fan
+>>>> speed, effectively translating to "no limit". Write 0 into the register
+>>>> if a limit value of 0 is written. Otherwise limit the range to
+>>>> <1..6000000> and write 1..0xffff into the register. This ensures that
+>>>> reading and writing from and to a limit register return the same value
+>>>> while at the same time not changing reported values when reading the
+>>>> speed or limits.
+>>>>
+>>>> While at it, restrict fan limit writes to non-negative numbers; writing
+>>>> a negative limit does not make sense and should be reported instead of
+>>>> being corrected.
+>>>>
+>>>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>>>> ---
+>>>> v2: Do not accept negative fan speed values
+>>>>      Display fan speed and speed limit as 0 if register value is 0
+>>>>      (instead of 6000000), as in original code.
+>>>>      Only permit writing 0 (unlimited) for the maximum fan speed.
+>>>>
+>>>>   drivers/hwmon/amc6821.c | 13 +++++++++----
+>>>>   1 file changed, 9 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
+>>>> index eb2d5592a41a..9c19d4d278ec 100644
+>>>> --- a/drivers/hwmon/amc6821.c
+>>>> +++ b/drivers/hwmon/amc6821.c
+>>>> @@ -617,15 +617,20 @@ static ssize_t fan_store(struct device *dev, struct device_attribute *attr,
+>>>>   {
+>>>>       struct amc6821_data *data = dev_get_drvdata(dev);
+>>>>       struct i2c_client *client = data->client;
+>>>> -    long val;
+>>>> +    unsigned long val;
+>>>>       int ix = to_sensor_dev_attr(attr)->index;
+>>>> -    int ret = kstrtol(buf, 10, &val);
+>>>> +    int ret = kstrtoul(buf, 10, &val);
+>>>>       if (ret)
+>>>>           return ret;
+>>>> -    val = 1 > val ? 0xFFFF : 6000000/val;
+>>>> +
+>>>> +    /* The minimum fan speed must not be unlimited (0) */
+>>>> +    if (ix == IDX_FAN1_MIN && !val)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    val = val > 0 ? 6000000 / clamp_val(val, 1, 6000000) : 0;
+>>>
+>>> I'm wondering if we shouldn't check !val for min after this line instead? Otherwise we allow 6000001+RPM speeds... which is technically unlimited.
+>>>
+>>
+>> If ix == IDX_FAN1_MIN, val must be positive because of the check above.
+>> The expression "6000000 / clamp_val(val, 1, 6000000)" is therefore always
+>> positive as well because val is clamped. Its minimum result would be
+>> 6000000/6000000 = 1. The alternate case of the ternary expression would
+>> never hit because it is guaranteed that val > 0. Am I missing something ?
+>>
 > 
-> The sole reason why I was proposing the new "BigInt" type was to
-> store each digit of the time_c as separate element of array, which
-> could be resized (added one digit) as needed. The only limit would
-> then be the physical amount of memory in the machine.
+> No, I misread the code and I didn't see the clamp_val, which means we cannot have the denominator be > 6000000, meaning val cannot be 0 after that line (well, except if it is 0 **before** already).
+> 
+> So no, just brain fart.
+> 
+> Also, we probably could swap clamp_val(val, 1, 6000000) for min(val, 6000000) as val > 0 because of the ternary operator condition. But that's nothing important nor interesting.
+> 
 
-You state that you're not experienced enough to be able to send "a
-merge request".  Fair enough; you also apparently don't know that
-github merges is not how kernel patches are submitted, reviewed, and
-integrated.
+Good point. I may do that if I have to send v4 (if I remember), but for now the
+existing code should be good enough.
 
-What you apparently don't appreciate it is that performance is
-something that is critically important for the Linux kernel, and using
-multiple precision integers is not really compatible with the best and
-highest performance.  Computer Science is an engineering discipline,
-and it's all about tradeoffs.  You could enginere a plane that can
-travel faster than the speed of sound, but if that compromises fuel
-efficiency and annoying people who are below its flight path, pursuing
-speed at all costs is not going to lead to commercial success.
-(Exhibit 1: The Concorde).
+Thanks,
+Guenter
 
-Similarly, trying to make sure that software will work in the year 292
-Billion AD might not be all something that most people would consider
-high priority.  After all, it's.... unlikely... that the x86_64
-architecture will still be what we will be using 290 billion years
-from now.  So if we need recompile the kernel sometime in the next 100
-billion years for some new CPU architecture, and if it's unlikely that
-hard drives brought brand new are likely to be still in operation a
-decade or two from now --- there is plenty of time to evolve the
-on-disk format before a billion years go by, let alone 100 billion or
-200 billion years.
-
-Finally, kernel development is driven by people who are willing to do
-the work.  If you want to demonstrate that it's possible to use MP
-integer mathematicswithout horribly comprmising performance, then you
-need to do the work.  (BTW, if you don't know what the term "cache
-line" means, then I encourage that you understand that first.)  But
-dropping a pointer to a blog post and expecting that people to do your
-homework for you is not really realistic.
-
-Cheers,
-
-					- Ted
 
