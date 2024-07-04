@@ -1,187 +1,196 @@
-Return-Path: <linux-kernel+bounces-240900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80AF6927456
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:47:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F3DD92745A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFE7281FD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5668528396A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BFE1ABC5D;
-	Thu,  4 Jul 2024 10:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2321AC220;
+	Thu,  4 Jul 2024 10:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/YoHxB1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="niGz4OCW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D6112D76E;
-	Thu,  4 Jul 2024 10:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E28E12D76E;
+	Thu,  4 Jul 2024 10:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720090067; cv=none; b=sjoH5qprkArbmtjm7zvZJQdMMCD4PTdXRwWNTZi0QR6IOhmWgO94izHzj3TWVHp/kM4AzqQ1wiLbZOHk0YXHbqHXVNYck9em0wtQNDXMTFPF38BvTpy71ZVVeWKCbjAzoVv2bZQrOps94SJ+yihzQ/xazqiFaTlgmKcQBpl6yfs=
+	t=1720090103; cv=none; b=o3DNLEndYW5NJ/AfqNvoG3altGRZzIt6k6Ipkp8/yg4FYGeHQarXXKf81cLsXL5Mh0LCuJLYiaLYayGJnTFxeiDVeN/67r/XVqCwusifM59AcnVYppWkoYZ9ISaJwbWCVBhSDwvxQEkiN287UTpgEZxb9ADin/xazlE5BqUjwbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720090067; c=relaxed/simple;
-	bh=pY45yYldwW47Trj7xJ3qAVBLYPUNu/TkSH4X6ZZde0M=;
+	s=arc-20240116; t=1720090103; c=relaxed/simple;
+	bh=pHmfRCuwMzlTf/SrE8es8VdRuWYaIyylTLdUsdR6xLc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YBHdABgLhRRchZokntsAftZHB7MqsoHf55kaRTD6fEfewg8ILu1aR574S03lxznFQXSkhMcx0Bl5Sg2baIr8Br07cNb9+5/SBP4QIezNaEjfCeZUH19PrHQI8gyL2MGopfe1hsHzryP55qJjOnJLUi0v7fjyDl4VJNSEmZZRmAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/YoHxB1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B34C3277B;
-	Thu,  4 Jul 2024 10:47:42 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=JgEQJCX0RksSYtu1PKYinHIFkbbgEXLj73ZNITzh8S/KLMKLaEXfpcPqs8vfKXXCc+hzeJcEZ92Ss+TlEW/8zmw6cj1xEWR59nb3wBf5/ur9PnK6RS/9txfMZqE3DLuHwDLFcPLIHnWUKUorHOwjGYi+UdODAiRk0ZsI9+G08kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=niGz4OCW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6AF3C3277B;
+	Thu,  4 Jul 2024 10:48:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720090067;
-	bh=pY45yYldwW47Trj7xJ3qAVBLYPUNu/TkSH4X6ZZde0M=;
+	s=k20201202; t=1720090102;
+	bh=pHmfRCuwMzlTf/SrE8es8VdRuWYaIyylTLdUsdR6xLc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N/YoHxB1kTqCN7bW73FO6Xa7kuZWF3hT9tn5x/XeRziL/QXJA5fCCkLwIRZwT7r4C
-	 R44FQEkSEtNuyk/8OGarvAuCWijJsoJD3snnXIc6tZQOy9toqmRCmeKR1y5iqI7WUE
-	 8aEcu/obFTV1oz0ectj8GOekqyaTkbNpDHFXX8805Km8Dvitcie/AxiJ9QsJilgpBA
-	 cpnVixMdlzbCcnNtSqGVAL101aAF4NfyY/EOrcA8g80eUXCxeMcpacmkHvbpSoDQV2
-	 2drd/0RVEwSAQEmwEjNg93IHOqx/52l3Ro07yRxeNVj3hY7XSPu3bIh5Q+QcryAdZJ
-	 XRIwmMkpfr/rA==
-Message-ID: <3121cd5e-7fcd-4daf-b51c-afba8074d5a3@kernel.org>
-Date: Thu, 4 Jul 2024 12:47:40 +0200
+	b=niGz4OCWan6TmdGNbh4XQ0HcPjIRNC72+MnRyLIhpBlXcx4v6kKZdY+pjNbrVN+GV
+	 Y/9FpOYd95L9uAa96tuiMG0goT/ESAYBJoAnpiWI9ns71EY0Usp79wmviPbclw9piG
+	 44SgCxQEderNIWjG0ZwZXaEIJv/9xVfioAqDYk4FnrmOi+EVIZ6K+YkoD7XUEvaeYX
+	 xLHa/TemmerjJsGkV6cMcg0ruVr21IHyCbz06IL7az4d0+jDGHcbhyAqcWZyyoTJdq
+	 Ngm1TK710+QujknQOMzllWzH3Ipd64kgQK/OtoI48pALQr8oum2Hlv85Z7/zr4z0WJ
+	 K0ivdQu/rs28w==
+Message-ID: <08f925cd-e267-4a6b-84b1-792515c4e199@kernel.org>
+Date: Thu, 4 Jul 2024 12:48:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml: Add
- Sophgo SARADC binding documentation
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicorn_wang@outlook.com>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20240702-sg2002-adc-v1-0-ac66e076a756@bootlin.com>
- <20240702-sg2002-adc-v1-1-ac66e076a756@bootlin.com>
- <b7913f90-7405-4a77-9c57-97ef124de6e1@kernel.org>
- <8d368347-7cee-41af-a033-c495eeb62e2a@bootlin.com>
- <577a5623-6dd8-4229-9c07-61e131a01aa8@kernel.org>
- <0d50df10-4b4e-47c4-930f-cd8f645a7e2d@bootlin.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <0d50df10-4b4e-47c4-930f-cd8f645a7e2d@bootlin.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH bpf-next v3 2/3] selftests/bpf: Add mptcp pm_nl_ctl link
+To: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Geliang Tang <tanggeliang@kylinos.cn>, mptcp@lists.linux.dev,
+ Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ Shuah Khan <shuah@kernel.org>
+References: <20240703-upstream-bpf-next-20240506-mptcp-subflow-test-v3-0-ebdc2d494049@kernel.org>
+ <20240703-upstream-bpf-next-20240506-mptcp-subflow-test-v3-2-ebdc2d494049@kernel.org>
+Content-Language: en-GB
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20240703-upstream-bpf-next-20240506-mptcp-subflow-test-v3-2-ebdc2d494049@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/07/2024 10:52, Thomas Bonnefille wrote:
-> 
-> 
-> On 7/4/24 10:39 AM, Krzysztof Kozlowski wrote:
->> On 04/07/2024 10:35, Thomas Bonnefille wrote:
->>> Hello Krzysztof,
->>> Thank you for your feedback
->>>
->>> On 7/3/24 7:08 AM, Krzysztof Kozlowski wrote:
->>>> On 02/07/2024 13:52, Thomas Bonnefille wrote:
->>>>> The Sophgo SARADC is a Successive Approximation ADC that can be found in
->>>>> the Sophgo SoC.
->>>>>
->>>>> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
->>>>> ---
->>>>>    .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     | 51 ++++++++++++++++++++++
->>>>>    MAINTAINERS                                        |  5 +++
->>>>>    2 files changed, 56 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
->>>>> new file mode 100644
->>>>> index 000000000000..21fd5dc8e24e
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
->>>>> @@ -0,0 +1,51 @@
->>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>> +%YAML 1.2
->>>>> +---
->>>>> +$id: http://devicetree.org/schemas/iio/adc/sophgo,cv18xx-adc.yaml#
->>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>> +
->>>>> +title: Sophgo 3 channels Successive Approximation Analog to Digital Converters
->>>>> +
->>>>> +maintainers:
->>>>> +  - Thomas Bonnefille <thomas.bonnefille@bootlin.com>
->>>>> +
->>>>> +description:
->>>>> +  Datasheet at https://github.com/sophgo/sophgo-doc/releases
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    const: sophgo,cv18xx-saradc
->>>>
->>>> Except that this was never tested... wild-cards are generally not allowed.
->>>>
->>>
->>> I realized I made a mistake when using the "make dt_binding_check"
->>> command, which led to some errors in this dt_binding. I have now
->>> addressed all of them, but I'm not sure I understand your comment.
->>>
->>> I don't see any wildcards in the YAML file. Could you please provide
->>> more details on what you expect?
->>
->> What is "xx"? Sounds like wildcard. I do not see such SoC compatible.
->>
-> 
-> The point of cv18xx is to have a single compatible for all SoCs of the 
-> cv18xx series from Sophgo (cv1800b, cv1812h but also sg2000 and sg2002). 
-> I used that as a reflection of the cv18xx.dtsi used for all those SoCs.
-> 
-> Should I create multiple compatible for all the SoCs of a same brand ?
+Hello,
 
-See writing bindings (and numerous presentation on this topic).
+@BPF people: this new tool doesn't compile on the BPF CI [1]. Can I have
+a hand to find the best way to fix this please? (see below)
 
-Best regards,
-Krzysztof
+[1] https://github.com/kernel-patches/bpf/pull/7296
+
+On 03/07/2024 20:57, Matthieu Baerts (NGI0) wrote:
+> From: Geliang Tang <tanggeliang@kylinos.cn>
+> 
+> This patch adds a symlink to MPTCP's pm_nl_ctl tool into bpf selftests,
+> and updates Makefile to compile it.
+> 
+> This is useful to run MPTCP BPF selftests on systems with an old version
+> of IPRoute2. This tool can be used as an alternative to 'ip mptcp'.
+
+(...)
+
+> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+> index e0b3887b3d2d..204269d0b5b8 100644
+> --- a/tools/testing/selftests/bpf/Makefile
+> +++ b/tools/testing/selftests/bpf/Makefile
+> @@ -144,7 +144,7 @@ TEST_GEN_PROGS_EXTENDED = test_skb_cgroup_id_user \
+>  	flow_dissector_load test_flow_dissector test_tcp_check_syncookie_user \
+>  	test_lirc_mode2_user xdping test_cpp runqslower bench bpf_testmod.ko \
+>  	xskxceiver xdp_redirect_multi xdp_synproxy veristat xdp_hw_metadata \
+> -	xdp_features bpf_test_no_cfi.ko
+> +	xdp_features bpf_test_no_cfi.ko mptcp_pm_nl_ctl
+On the BPF CI, we have such errors:
+
+   mptcp_pm_nl_ctl.c:20:10: fatal error: 'linux/mptcp.h' file not found
+     20 | #include "linux/mptcp.h"
+        |          ^~~~~~~~~~~~~~~
+
+On my side, I don't have any issue, because the compiler uses the
+mptcp.h file from the system: /usr/include/linux/mptcp.h
+
+I suppose that's not OK on the BPF CI, as it looks like it doesn't have
+this file there, probably because it still uses Ubuntu 20.04 as base,
+which doesn't include this file in the linux-libc-dev package.
+
+When I look at how this 'mptcp_pm_nl_ctl' tool -- and all the other
+programs from that list -- is compiled (V=1), I see that the following
+"-I" options are given:
+
+  -I${PWD}/tools/testing/selftests/bpf
+  -I${BUILD}//tools/include
+  -I${BUILD}/include/generated
+  -I${PWD}/tools/lib
+  -I${PWD}/tools/include
+  -I${PWD}/tools/include/uapi
+  -I${BUILD}/
+
+It will then not look at -I${PWD}/usr/include or the directory generated
+with:
+
+  make headers_install INSTALL_HDR_PATH=(...)
+
+I guess that's why people have duplicated files in 'tools/include/uapi',
+but I also understood from Jakub that it is not a good idea to continue
+to do so.
+
+What would be the best solution to avoid a copy? A symlink still looks
+like a workaround.
+
+In the other selftests, KHDR_INCLUDES is used to be able to include the
+path containing the UAPI headers. So if someone built the headers in a
+seperated directory -- INSTALL_HDR_PATH=(...) -- KHDR_INCLUDES can be
+overridden to look there, instead of ${KERNEL_SRC}/usr/include. Would it
+be OK to do that? Would it work for the CI without extra changes? Or do
+you still prefer a copy/symlink to 'tools/include/uapi' instead?
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
 
 
