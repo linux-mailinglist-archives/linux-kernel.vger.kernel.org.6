@@ -1,258 +1,160 @@
-Return-Path: <linux-kernel+bounces-241663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE587927DBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:20:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44DE927DBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DA581C233EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:20:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F529286FA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1252813790F;
-	Thu,  4 Jul 2024 19:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE76B74BF5;
+	Thu,  4 Jul 2024 19:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7cfKon3"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4uRWr2du"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7836B136995;
-	Thu,  4 Jul 2024 19:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B884130A7C
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 19:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720120832; cv=none; b=TOr7hvL+7HOCB3gKretT0zfSgp4E6/KcmmD8t8p1iOYhVh0XQmzbbWdhIW6p4C3F6TehBUbLv7Z4+nqXfXNaQwH97IMSDi7H6bxOrWItzwSzXda4qnoH2QBOvi3TTgnL1NuPMsVMFnSLqZws/mIlVYdkZWVpfPJUsJm+haMEjao=
+	t=1720120849; cv=none; b=fwCqQB9zu9crGozMaMJffxY9v5sI7/jDx2K+lwzGdsUREhQfk2aaZp3KhMSLcZDgw6sHjlzxoDq57aJZqpteCXxxzK/4bwjqvp1L4n07xf/sd8f0GQxfzDAYgKHl/rp8pNvsDYM+vASUwRXXju1l1ADY7N2fIZOcz8XTo87ui7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720120832; c=relaxed/simple;
-	bh=C7n8SF9Yy0W8Wqsogc/ADklPy1DxlEbaXcIgrDMBVzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HXviCGi5HNORrYL+rq0V+m+Z4Wgnx9984qR65DW2lg/uLKhIfHUC6a733qBIoJrezycJEsfO/CAMz4YRBk8sjydqdC4DD8oP20WYXJ2fra59gv9nNDRkgCh7xiWSSU2wlKz9VENNrkZyUutWiyYEn0i7c4AlebC8lwuQc8nHT9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7cfKon3; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ee90f56e02so6068191fa.2;
-        Thu, 04 Jul 2024 12:20:30 -0700 (PDT)
+	s=arc-20240116; t=1720120849; c=relaxed/simple;
+	bh=pdQ92OMMTEq5PGIJkQVEUfXc8WTGjI5vKokjizORJEM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GAhnNxIQKTFJtUbh/sb65VEsXsgj/dMr3NSQDNmh2JA7ecnvtzYH0F0WRBBO9KtoSmd7MhmZ+AFoahOs+I7T6J7hhr6CDY1KBZxbcq3tvZ4GeL7nU9vva5CCCncJhsIrpCHnxcJ3L+aSlBtaD/XthV9ol8d1Smrh/ifeZ4+DBW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4uRWr2du; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58c2e5e8649so3072320a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 12:20:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720120829; x=1720725629; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=49WF/G+olApH1oz6KDU9yQLMCw9oaA68O+yMVenGtgk=;
-        b=f7cfKon3USEQq6ntSoVtTb2P/52u2H6Nf/WtSb3pZqBHO9+yexHwKO44hyVDZeiusQ
-         DEbj3US4LLOLq2XyRa9QFlx6XRK5QqT8QVv+F/QTuiJM5DikwYrr9U9QJzK+ZGBisP4l
-         dm7JEEJiC2rMG5QTexudXL6LTt5MCsjmBSqtGpWK8E4y5F3a+WpvkC9TDX2BrlrLsYZ6
-         2mNFV5og1RvFyHimGZ3qMrtmOkCK0al6+j8NvLdCgC5m5li4d1+V/f3HwJ6xPJ3G6n+Y
-         7dwKpvcgsFL32n89jeFL6ecLyJ0/FvHTh+xkoj/TBNgwX5/X8xDzgiUKyY9ir5aoIqlF
-         6Q4w==
+        d=google.com; s=20230601; t=1720120845; x=1720725645; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rFVzqIP4AMw5JrIPrVfFN5P1f2wJA/ZHy4AxSravv60=;
+        b=4uRWr2duBgYDRQ1DIF29Vis5bAU2T+3qq/xLa/i/MQvsuuQhmZzazMRUnIrB31OtSO
+         wj2Hi7c5eKhP9KTBdw5WbQuOSQ58EmcS13Vt/sJN7Ot1Ua55miOE/umhgdh1poNVkAgH
+         cArfskpTB5IVrS3MM8NOBed2z84XOP5jn6Vmzxr7/S9WGo7lafNhoopTnTYid82kvzMR
+         X0kCXtyMqh2QlM/r8a2GF3l5/f9VdwvEMM8il+6aST08RnOPdwARqug2nI+0fUMnKFcA
+         yb0aEhAxyFIgx+h/zge28xv3kN2vv8AMh8VVRHduF85ilvPnr9o5sfhwbi3bDRNw5NEe
+         xDbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720120829; x=1720725629;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=49WF/G+olApH1oz6KDU9yQLMCw9oaA68O+yMVenGtgk=;
-        b=qU/Mkp+l2RnVPYBEshAJ2Wc/JLzDRRG1eVa+iq6yCU+fP24selb7888ftJTpjCtbdP
-         H5GS4ibEbsaDDoE2QCTWCf3lGfWiIcvtYxvpnQkdnVXy8wjXVIginm5KeYWCb13DWAUj
-         uPjbMa4CqFs284DFV4RoHVxnipTS9/5kp5xFcu/g1QXLnNRMIEswPvoC+4DSk9lzLnX4
-         P5iujYTqC/AUqvjWKVjMgFuMHjPsgAPZi+x4P8mZbmJX0hxAFfJ2v6uszmPtta9JGP1P
-         AhzIb8R04fIVu2Hxe8vFZSJUvvNDjKcYUP3BDCJd6WQrsSzoZiKkuES3iiSpvjqVGC6+
-         TO1g==
-X-Forwarded-Encrypted: i=1; AJvYcCX9yZw92FM+IF7BBBIgevoTikm0l6eRyzm1L7BYQ7sUkw2vqv7iNIiPXG+yckXvDaEWOhxMb9/eJyKMBKGzXJ2V1xGgpQW5cPLuQyi6fKIA1niUd+m+jsNiOw5MkGhB9XWkn47iBUBI4g==
-X-Gm-Message-State: AOJu0YzKxY1hYotWmpQk2SxtAaXZ8l+IKzJ7ZRse0qdXbQpHReF+FRzA
-	jVePbmrqx6pOHNnjxpCGWko74IPT87IIwEuA/s9dtnIh6JHwhIxY
-X-Google-Smtp-Source: AGHT+IGEc5Ox24Iuy+ng6AX2B2GFe2auxjFis+01tI7qkSYcPt6iIrJdnwlk3IoN5jYoOJqBtnCHMA==
-X-Received: by 2002:a05:651c:30b:b0:2ec:3d74:88ca with SMTP id 38308e7fff4ca-2ee8eda710emr17496311fa.25.1720120828357;
-        Thu, 04 Jul 2024 12:20:28 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a28355csm33818625e9.43.2024.07.04.12.20.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 12:20:28 -0700 (PDT)
-Date: Thu, 4 Jul 2024 21:20:26 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Baolin Wang <baolin.wang7@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: dma: sprd,sc9860-dma: convert to YAML
-Message-ID: <Zob1+kGW1xeBKehA@standask-GA-A55M-S2HP>
+        d=1e100.net; s=20230601; t=1720120845; x=1720725645;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rFVzqIP4AMw5JrIPrVfFN5P1f2wJA/ZHy4AxSravv60=;
+        b=A1QjHfmet0m5A/aFgU1nS8A/IiwW6nOKaoOgOcI+i3gmENQNN+f8UQVH0R9Bj05kaT
+         jM9HK+uKRc3Qv9xmVUQiaq9WD9P8tsHHSbeSULY1qcusbShImNpDVcCmTAx7aIIPvPGj
+         3r5bnD+tMPkpQABLHZF8GtJBIm0Xwip8pwPeEPhK7mEyicO8vjuXF8WWGvtNNER1GQLH
+         /7psuTl4+g2o2k9SUO2VE7S1YVLI+Vbg2gNaADmyVqwkha4xxjTkblun0WtpMGmZB/57
+         9mghfnDkyCSr3LOoeQ+XtZ1wSJzD4qo3p5ls9CALtJNvaqMyvRq3RjZICRlVJVMRxEnt
+         tyBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOAkgQCrni5MGnFL+81SNm6h8lVdeOj36f3aH5kPW3Kcl+VOfF3PmkQ2iZz1GdHFBLW6UNUKazTBSMJuubp9/DN5VX0zgnT3b3hlmx
+X-Gm-Message-State: AOJu0YySlvrlgkbIrNlGfG5ennHFEu0CM8r7XLzRoDPTXwTvBXidU72O
+	qNcjWzRMtTIZoR8VNip7If1DTT13NJLkwP/Imlyc+FIWMBqNpxn4Vf1B5VA00lXqTVUJlcKOo/c
+	gzGGppiCuIMIYzIfaSpjgS572pz2+wJFJLZH7
+X-Google-Smtp-Source: AGHT+IF582EidK8pknJt2i3nAI5dvJyeL9MiWxnnV1XpXpxgLcuvQLDkYFc9KQEBELNB9zP5yO0l+bOMhjmdP43kwiQ=
+X-Received: by 2002:a17:906:16d0:b0:a77:ba2a:3c67 with SMTP id
+ a640c23a62f3a-a77bdd94c28mr166843466b.38.1720120844472; Thu, 04 Jul 2024
+ 12:20:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240704190157.712590-1-zenghuchen@google.com>
+In-Reply-To: <20240704190157.712590-1-zenghuchen@google.com>
+From: Jack Chen <zenghuchen@google.com>
+Date: Thu, 4 Jul 2024 15:20:33 -0400
+Message-ID: <CALvyBcWJpmU51sDiPRFFMWx0Ongw8_2T0EbsTR6q7zsHcyhHAQ@mail.gmail.com>
+Subject: Re: [PATCH] leds: lm3601x: Calculate max_brightness and brightness properly
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Vadim Pasternak <vadimp@nvidia.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the Spreadtrum SC9860 DMA bindings to DT schema.
+Sorry, but I mistakenly sent the wrong patch.
 
-Changes during conversion:
-  - rename file to match compatible
-  - make interrupts optional, the AGCP DMA controller doesn't need it
-  - describe the optional ashb_eb clock for the AGCP DMA controller
+Please take a look at the v2 patch instead: [PATCH v2] leds: lm3601x:
+Calculate max_brightness and brightness properly.
 
-Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
----
-Changes in V2:
-  - rework clocks, clock-names (Conor)
+I apologize for the error and any confusion it may have caused.
 
- .../bindings/dma/sprd,sc9860-dma.yaml         | 92 +++++++++++++++++++
- .../devicetree/bindings/dma/sprd-dma.txt      | 44 ---------
- 2 files changed, 92 insertions(+), 44 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/sprd,sc9860-dma.yaml
- delete mode 100644 Documentation/devicetree/bindings/dma/sprd-dma.txt
-
-diff --git a/Documentation/devicetree/bindings/dma/sprd,sc9860-dma.yaml b/Documentation/devicetree/bindings/dma/sprd,sc9860-dma.yaml
-new file mode 100644
-index 000000000000..94647219c021
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/sprd,sc9860-dma.yaml
-@@ -0,0 +1,92 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/sprd,sc9860-dma.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Spreadtrum SC9860 DMA controller
-+
-+description: |
-+  There are three DMA controllers: AP DMA, AON DMA and AGCP DMA. For AGCP
-+  DMA controller, it can or do not request the IRQ, which will save
-+  system power without resuming system by DMA interrupts if AGCP DMA
-+  does not request the IRQ.
-+
-+maintainers:
-+  - Orson Zhai <orsonzhai@gmail.com>
-+  - Baolin Wang <baolin.wang7@gmail.com>
-+  - Chunyan Zhang <zhang.lyra@gmail.com>
-+
-+properties:
-+  compatible:
-+    const: sprd,sc9860-dma
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    items:
-+      - description: DMA enable clock
-+      - description: optional ashb_eb clock, only for the AGCP DMA controller
-+
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - const: enable
-+      - const: ashb_eb
-+
-+  '#dma-cells':
-+    const: 1
-+
-+  dma-channels:
-+    const: 32
-+
-+  '#dma-channels':
-+    const: 32
-+    deprecated: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#dma-cells'
-+  - dma-channels
-+
-+allOf:
-+  - $ref: dma-controller.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/sprd,sc9860-clk.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    /* AP DMA controller */
-+    dma-controller@20100000 {
-+      compatible = "sprd,sc9860-dma";
-+      reg = <0x20100000 0x4000>;
-+      interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-+      clocks = <&apahb_gate CLK_DMA_EB>;
-+      clock-names = "enable";
-+      #dma-cells = <1>;
-+      dma-channels = <32>;
-+    };
-+
-+    /* AGCP DMA controller */
-+    dma-controller@41580000 {
-+      compatible = "sprd,sc9860-dma";
-+      reg = <0x41580000 0x4000>;
-+      clocks = <&agcp_gate CLK_AGCP_DMAAP_EB>,
-+               <&agcp_gate CLK_AGCP_AP_ASHB_EB>;
-+      clock-names = "enable", "ashb_eb";
-+      #dma-cells = <1>;
-+      dma-channels = <32>;
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/dma/sprd-dma.txt b/Documentation/devicetree/bindings/dma/sprd-dma.txt
-deleted file mode 100644
-index c7e9b5fd50e7..000000000000
---- a/Documentation/devicetree/bindings/dma/sprd-dma.txt
-+++ /dev/null
-@@ -1,44 +0,0 @@
--* Spreadtrum DMA controller
--
--This binding follows the generic DMA bindings defined in dma.txt.
--
--Required properties:
--- compatible: Should be "sprd,sc9860-dma".
--- reg: Should contain DMA registers location and length.
--- interrupts: Should contain one interrupt shared by all channel.
--- #dma-cells: must be <1>. Used to represent the number of integer
--	cells in the dmas property of client device.
--- dma-channels : Number of DMA channels supported. Should be 32.
--- clock-names: Should contain the clock of the DMA controller.
--- clocks: Should contain a clock specifier for each entry in clock-names.
--
--Deprecated properties:
--- #dma-channels : Number of DMA channels supported. Should be 32.
--
--Example:
--
--Controller:
--apdma: dma-controller@20100000 {
--	compatible = "sprd,sc9860-dma";
--	reg = <0x20100000 0x4000>;
--	interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
--	#dma-cells = <1>;
--	dma-channels = <32>;
--	clock-names = "enable";
--	clocks = <&clk_ap_ahb_gates 5>;
--};
--
--
--Client:
--DMA clients connected to the Spreadtrum DMA controller must use the format
--described in the dma.txt file, using a two-cell specifier for each channel.
--The two cells in order are:
--1. A phandle pointing to the DMA controller.
--2. The slave id.
--
--spi0: spi@70a00000{
--	...
--	dma-names = "rx_chn", "tx_chn";
--	dmas = <&apdma 11>, <&apdma 12>;
--	...
--};
--- 
-2.34.1
-
+On Thu, Jul 4, 2024 at 3:02=E2=80=AFPM Jack Chen <zenghuchen@google.com> wr=
+ote:
+>
+> The torch_current_max should be checked not exceeding the upper bound.
+> If it does, throw a warning message and set to LM3601X_MAX_TORCH_I_UA.
+>
+> LM3601x torch brigthness register (LM3601X_LED_TORCH_REG) takes 0 as the
+> minimum output (2.4 mA). However, 0 of led_brightness means LED_OFF.
+> Adding a -1 offset to brightness before writing to brightness
+> register, so when users write minimum brightness (1), it sets lm3601x
+> output the minimum.
+>
+> Signed-off-by: Jack Chen <zenghuchen@google.com>
+> ---
+>  drivers/leds/flash/leds-lm3601x.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/leds/flash/leds-lm3601x.c b/drivers/leds/flash/leds-=
+lm3601x.c
+> index 7e93c447fec5..fc4df904ea90 100644
+> --- a/drivers/leds/flash/leds-lm3601x.c
+> +++ b/drivers/leds/flash/leds-lm3601x.c
+> @@ -190,7 +190,7 @@ static int lm3601x_brightness_set(struct led_classdev=
+ *cdev,
+>                 goto out;
+>         }
+>
+> -       ret =3D regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightne=
+ss);
+> +       ret =3D regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightne=
+ss - 1);
+>         if (ret < 0)
+>                 goto out;
+>
+> @@ -341,8 +341,9 @@ static int lm3601x_register_leds(struct lm3601x_led *=
+led,
+>
+>         led_cdev =3D &led->fled_cdev.led_cdev;
+>         led_cdev->brightness_set_blocking =3D lm3601x_brightness_set;
+> -       led_cdev->max_brightness =3D DIV_ROUND_UP(led->torch_current_max,
+> -                                               LM3601X_TORCH_REG_DIV);
+> +       led_cdev->max_brightness =3D DIV_ROUND_UP(
+> +                       led->torch_current_max - LM3601X_MIN_TORCH_I_UA +=
+ 1,
+> +                       LM3601X_TORCH_REG_DIV);
+>         led_cdev->flags |=3D LED_DEV_CAP_FLASH;
+>
+>         init_data.fwnode =3D fwnode;
+> @@ -386,6 +387,14 @@ static int lm3601x_parse_node(struct lm3601x_led *le=
+d,
+>                 goto out_err;
+>         }
+>
+> +       if (led->torch_current_max > LM3601X_MAX_TORCH_I_UA) {
+> +               dev_warn(&led->client->dev,
+> +                        "led-max-microamp cannot be higher than %d\n",
+> +                        LM3601X_MAX_TORCH_I_UA);
+> +               led->torch_current_max =3D LM3601X_MAX_TORCH_I_UA;
+> +       }
+> +
+> +
+>         ret =3D fwnode_property_read_u32(child, "flash-max-microamp",
+>                                 &led->flash_current_max);
+>         if (ret) {
+> --
+> 2.45.2.803.g4e1b14247a-goog
+>
 
