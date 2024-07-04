@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-240362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EA6926CC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:31:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93132926CC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B396B21C7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:31:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504CB1F22F07
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 00:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F0C746E;
-	Thu,  4 Jul 2024 00:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBB979DC;
+	Thu,  4 Jul 2024 00:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ckBodjt9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h+GM3/74"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A1638C;
-	Thu,  4 Jul 2024 00:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33827748F;
+	Thu,  4 Jul 2024 00:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720053068; cv=none; b=I/g3anqGfWjohD8VNUPi6eKnpSkn/ydLl2zL3Z8IDoWIPVh9dgrFHPpA6eauMvWpLqpv05LthwlRKOMLTMHShW096XaSNyAO+b4zmyDoL8yrLqRSDL6KPC2dYGwZyjGmIWxywzEguKDCYpwxL0wZ82ImhOrsQVQCG3npUdRw/u0=
+	t=1720053277; cv=none; b=hadJlg0vkWFgSuWh+YMinkd2XKp3njcGFijyqeAE8bVnBCQcZ35OsU74cVZ9SX+sgaS/+kVJnVOTK0SoMWBmzle0XHP42WJgtPjtdi3Rlc+qx7EDJeS80M8mrlo5IYUl0ZmH0AaFsSezKb+lAeOkyc3giE0At51NZGwNaWNO5ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720053068; c=relaxed/simple;
-	bh=OCSlpA0xUjy0FM75x+w+MK0yXeQZ1m/eWOyDdcH3YfQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f+l+GOb3mTWohufpQoQYZrIfYduywBRD/GX8lWM/9foFYuX4RS8ZEDhw6BuddqlN6vS5ix5qYqSlpeL3brpaf+V+wUjL4BtUD/5vAM9tmBDV+dZ16//T2hz9UeFIp+5Cma1THuFfyNxCBy+KN46mlJFZeWFupEtjGnggVF3dKcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ckBodjt9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A058C2BD10;
-	Thu,  4 Jul 2024 00:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720053068;
-	bh=OCSlpA0xUjy0FM75x+w+MK0yXeQZ1m/eWOyDdcH3YfQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ckBodjt9BYfV2CpKs4tR1O6u4JF8kP4JstM6hr4KHGtNkLcxGq/8N0dT7c/SwAtzk
-	 /Qh+XCLbGeWS7sRp4K1VX0jcIbsoIFIMPuzdO7+J6vx8/wPpZEaASjjxxEs3tSei8+
-	 Fw0fxa1AmLVojKPXhYCEoZ3xwdk9XB7JvbD+mXcc88BGTAgv116n14dMmjImxRo9Bo
-	 qsBVuKThbx0ukwzVlg34tIcyltBQ8FPzRnCon1ApHw/dv90/QyDqi2cNJvIfQHA5Zy
-	 mEljk0ZVuhz4/Nnle6mAwAgVjg9BB/AqqQ+54jxfWepa1ggvR+EXaZqFmsHCLa+WGG
-	 HzsN7hC5e+3BQ==
-From: SeongJae Park <sj@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1720053277; c=relaxed/simple;
+	bh=iduZoLfEe6fCd6EV59/339DKsF+6HAe/yjTx7nWTOmI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GIUUy7Y9QQphN6AKvPYFE8Kn7KQ+5l9ASlpLe4hKwaBbbfPeYCHaCfVsv9SWJH6kd+Jp2UUrDAXlH+/eowj/HopPrWLabTHd5RrFcHliHZqjJa7mSgyqlTiuQD5dJrF5einQwj+q5LIqdoeMPvCbgA3vtGnOuETNpyp7K64dw8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h+GM3/74; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720053276; x=1751589276;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iduZoLfEe6fCd6EV59/339DKsF+6HAe/yjTx7nWTOmI=;
+  b=h+GM3/74LtcpKwb2fwI6smHT/shWlodkxgKY+pDe91ZIunoMyItLXO8f
+   tuob90OHWl6ee09gqqam97U2hkqYIhZ85qYMJJe+4C8uO6iaLqBMLX0w+
+   Ixo7qEWAbqJ/8Af/HhZbVlZyTrAO9O+E+fgUVOXQuX/D+kmqvj4jXw9yc
+   tfzPYNeqFtZM+rub96bVeE/7yOlPqcmKxk5V53zO/mtRkHjNEltfEINkW
+   IPbq0fxpFPvrsBde/KRtDhRsg/fQXpr3rsSbyxAGkxQIs61eeg8fIdBXt
+   q6S+/SJ2NW/duqMOixVHBH1+QN/i4metJE/P9IUSOGjK9s5OlueyDwjfJ
+   w==;
+X-CSE-ConnectionGUID: x+0dAvLlS4m2IO7rAVA2Yw==
+X-CSE-MsgGUID: 2CsJKb9WQI2/ByKPZyDXjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11122"; a="21118870"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="21118870"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 17:34:36 -0700
+X-CSE-ConnectionGUID: 9p2x86pBRoygUSwNfQD/VA==
+X-CSE-MsgGUID: IJPEtiz/QICKl7sH4hpcWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="46364525"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.119.127])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 17:34:33 -0700
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: linux-sound@vger.kernel.org,
+	vkoul@kernel.org
+Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>
-Subject: Re: [PATCH 0/7] Make core VMA operations internal and testable
-Date: Wed,  3 Jul 2024 17:31:03 -0700
-Message-Id: <20240704003104.90855-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <1edfc11c-ab99-4e9d-bf5d-b10f34b3f1da@lucifer.local>
-References: 
+	pierre-louis.bossart@linux.intel.com,
+	bard.liao@intel.com
+Subject: [PATCH] soundwire: intel_auxdevice: start the bus at default frequency
+Date: Thu,  4 Jul 2024 08:34:11 +0800
+Message-ID: <20240704003411.10347-1-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,145 +75,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Thu, 4 Jul 2024 00:24:15 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-> On Wed, Jul 03, 2024 at 03:56:36PM GMT, SeongJae Park wrote:
-> > On Wed, 3 Jul 2024 21:33:00 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-> >
-> > > On Wed, Jul 03, 2024 at 01:26:53PM GMT, Andrew Morton wrote:
-> > > > On Wed,  3 Jul 2024 12:57:31 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-> > > >
-> > > > > Kernel functionality is stubbed and shimmed as needed in tools/testing/vma/
-> > > > > which contains a fully functional userland vma_internal.h file and which
-> > > > > imports mm/vma.c and mm/vma.h to be directly tested from userland.
-> > > >
-> > > > Cool stuff.
-> > >
-> > > Thanks :)
-> > >
-> > > >
-> > > > Now we need to make sure that anyone who messes with vma code has run
-> > > > the tests.  And has added more testcases, if appropriate.
-> > > >
-> > > > Does it make sense to execute this test under selftests/ in some
-> > > > fashion?  Quite a few people appear to be running the selftest code
-> > > > regularly and it would be good to make them run this as well.
-> > >
-> > > I think it will be useful to do that, yes, but as the tests are currently a
-> > > skeleton to both provide the stubbing out and to provide essentially an
-> > > example of how you might test (though enough that it'd now be easy to add a
-> > > _ton_ of tests), it's not quite ready to be run just yet.
-> >
-> > If we will eventually move the files under selftests/, why dont' we place the
-> > files there from the beginning?  Is there a strict rule saying files that not
-> > really involved with running tests or not ready cannot be added there?  If so,
-> > could adding the files after the tests are ready to be run be an option?
-> > Cc-ing Shuah since I think she might have a comment.
-[...]
-> My point to Andrew was that we could potentially automatically run these
-> tests as part of a self-test run as they are so quick, at least in the
-> future, if that made sense.
+When platform firmware exposes multiple supported bus frequencies, the
+existing SoundWire support selects the maximum frequency. This is not
+aligned with the SoundWire 1.2 directions: the MIPI recommendation is
+to start at a 'safe' speed, compatible with the default frame rate and
+shape, and only increase the clock when vendor and codec PHY
+parameters are updated.
 
-Ok, I think I was misunderstanding your point on the reply to Andrew.  I was
-thinking you will eventually move the tests to selftests, but not for now, only
-because it is not ready to run.  I understand your points now.
+However, clock changes are not supported for now by the SoundWire
+core, so in practice this patch has the effect of discarding
+frequencies different to the implicit default. Dynamic clock changes
+will be required at some point, and this limitation will be removed
+after the core is updated, specifically to perform synchronous clock
+scale changes on manager and peripheral sides with a bank switch.
 
-> 
-> >
-> > Also, I haven't had enough time to read the patches in detail but just the
-> > cover letter a little bit.  My humble impression from that is that this might
-> > better to eventually be kunit tests.  I know there was a discussion with Kees
-> > on RFC v1 [1] which you kindly explained why you decide to implement this in
-> > user space.  To my understanding, at least some of the problems are not real
-> > problems.  For two things as examples,
-> 
-> They are real problems. And I totally disagree that these should be kunit
-> tests. I'm surprised you didn't find my and Liam's arguments compelling?
-> 
-> I suggest you try actually running tools/testing/vma/vma and putting a
-> break point in gdb in vma_merge(), able to observe all state in great
-> detail with no interrupts and see for yourself.
-> 
-> >
-> > 1. I understand that you concern the test speed [2].  I think Kunit could be
-> > slower than the dedicated user space tests, but to my experience, it's not that
-> > bad when using the default UML-based execution.
-> 
-> I'm sorry but running VMA code in the smallest possible form in userland is
-> very clearly faster and you are missing the key point that we can _isolate_
-> anything we _don't need_.
-> 
-> There's no setup/teardown whatsoever, no clever tricks needed, we get to
-> keep entirely internal interfaces internal and clean. It's compelling.
-> 
-> You are running the code as fast as you possibly can and that allows for
-> lots of interesting things like being able to fuzz at scale, being able to
-> run thousands of cases with basically zero setup/teardown or limits,
-> etc. etc.
+On Intel LunarLake platforms with a 'standard' DSDT, this forces the
+use of 4.8MHz. On older platforms this patch has no effect.
 
-I read this from the previous thread, and this is really cool.  I was thinking
-it would be really nice if more kernel subsystems and features be able to do
-this kind of great testing with minimum duplicated efforts.  That was one of
-the motivations of my previous reply.
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+---
+ drivers/soundwire/intel_auxdevice.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-> 
-> Also, it's basically impossible to explicitly _unit_ test vma merge and vma
-> split and friends without invoking kernel stuff like TLB handling, MMU
-> notifier, huge page handling, process setup/teardown, mm setup/teardown,
-> rlimits, anon vma name handling, uprobes, memory policy handling, interval
-> tree handling, lock contention, THP behaviour, etc. etc. etc.
-> 
-> With this test we can purely _unit_ test these fundamental operations, AND
-> have the ability to for example in future - dump maple tree state from a
-> buggy kernel situation that would result in a panic for instance - and
-> recreate it immediately for debug.
-> 
-> We also then have the ability to have strong guarantees about the behaviour
-> of these operations at a fundamental level.
-> 
-> If we want _system_ tests that bring in other kernel components then it
-> makes more sense to use kunit/selftests. But this offers something else.
+diff --git a/drivers/soundwire/intel_auxdevice.c b/drivers/soundwire/intel_auxdevice.c
+index 54cb455ed870..64ca55c1c94b 100644
+--- a/drivers/soundwire/intel_auxdevice.c
++++ b/drivers/soundwire/intel_auxdevice.c
+@@ -209,9 +209,30 @@ static int sdw_master_read_intel_prop(struct sdw_bus *bus)
+ 
+ static int intel_prop_read(struct sdw_bus *bus)
+ {
++	struct sdw_master_prop *prop;
++
+ 	/* Initialize with default handler to read all DisCo properties */
+ 	sdw_master_read_prop(bus);
+ 
++	/*
++	 * Only one bus frequency is supported so far, filter
++	 * frequencies reported in the DSDT
++	 */
++	prop = &bus->prop;
++	if (prop->clk_freq && prop->num_clk_freq > 1) {
++		unsigned int default_bus_frequency;
++
++		default_bus_frequency =
++			prop->default_frame_rate *
++			prop->default_row *
++			prop->default_col /
++			SDW_DOUBLE_RATE_FACTOR;
++
++		prop->num_clk_freq = 1;
++		prop->clk_freq[0] = default_bus_frequency;
++		prop->max_clk_freq = default_bus_frequency;
++	}
++
+ 	/* read Intel-specific properties */
+ 	sdw_master_read_intel_prop(bus);
+ 
+-- 
+2.43.0
 
-As I also previously mentioned, I was assuming you made the decision to not use
-KUnit based on real limitations of KUnit you found.  Thank you so much for this
-detailed explanations with nice examples.
-
-[...]
-> > To recap, I have no strong opinions about this patch, but I think knowing how
-> > Selftests and KUnit developers think could be helpful.
-> 
-> With respect it strikes me that you have rather strong feelings on
-> this. But again I make the plea that we don't hold this up on the basis of
-> a debate about this vs. other options re: testing.
-
-No worry, I'm not willing to delay this work with unnecessary discussions.
-That's why I'm saying I have no strong opinion.  I'm rather regret that I don't
-have enough time to get a credit on this great work by reading the details and
-provide my Reviewed-by:.
-
-What I want to say is that it would be nice to ensure the developers of
-Kselftest and Kunit, who obviously have experiences on testing, get a chance to
-be involved in this discussion.  I believe that would be nice since they might
-find something we're misunderstanding about Kselftest and/or Kunit.  Also they
-might find some unknown limitations of Kselftest and/or Kunit that you found.
-I personally hope it is the latter case and it helps evolving KUnit, so that
-not only vma but also other kernel subsystems and features be able to enhance
-their test setups with minimum efforts.
-
-Again, I don't think such discussions and possible future works sould be
-blockers of this work.
-
-> 
-> Kees was agreeable with this approach so I don't think we should really see
-> too much objection to this.
-
-You're right.  Nonetheless, I found the mail is not Cc-ing KUnit developers,
-and then I thought giving KUnit developers more chances to be involved would be
-nice.
-
-
-Thanks,
-SJ
-
-[...]
 
