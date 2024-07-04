@@ -1,156 +1,250 @@
-Return-Path: <linux-kernel+bounces-240555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E78926EEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:40:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC59D926EFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 07:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD347B211C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 05:40:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DC7C1F223FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 05:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5EC1A01C3;
-	Thu,  4 Jul 2024 05:40:26 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F41B1A01C7;
+	Thu,  4 Jul 2024 05:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0KsCSY6"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB46FBF6
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 05:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C89FBF6;
+	Thu,  4 Jul 2024 05:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720071626; cv=none; b=qtOkLTusEMDmGfsTl7oo1deJCMIyvKFrYOzHHosieyRe3BgO42QSR2GyhDf0jX6ycZBLW+jXI+Lac9fv/bg0xeYYqifVlcoDqRVsmkHty3Oskkl5J/VLxMyFvnYCWOtMGWQvPJpYmbbQcal4I3pKJy02ZqyyU+qbPF26+eor91g=
+	t=1720071778; cv=none; b=GZGfAdiFFnTZIKMPtHK2yVeK53MFxZdAM00OCFspUa6KAE6XsxEK8Qw+sxcuQlO8KjreiMZ/sArF4urDesEFKcKit0asZmP0po0CcOWMU6I/+LJPwyNbZKAvsaFAo7SZnQ0kjwnBFqhfPk4IwPjJc+2XbgJl6EtjVmH50PZ0Ql0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720071626; c=relaxed/simple;
-	bh=RxYhbKxDFWrB9aIz/ch+jfVzAZ+tULj6Z/kHMQNrK7Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F156MzVoez2ONEzSGHgPzmkokcytIQLiKaaNsgpcC2YDZTh+c5sodtfrkWzdAWuPeBFb7JRL7/kYo5/7RVByv4Tc5lNyFqdkmmpC6eOGKnXmK3YrYnaHTYL1nQm1bPJyduh56e96OWINKEwB4Pau7bqeKaWxCW8okw2aGZCJwVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sPFCU-0002Q3-MW; Thu, 04 Jul 2024 07:40:10 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sPFCT-00717s-4G; Thu, 04 Jul 2024 07:40:09 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sPFCT-0044EP-0B;
-	Thu, 04 Jul 2024 07:40:09 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Michal Kubecek <mkubecek@suse.cz>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Woojung.Huh@microchip.com
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v1 1/1] ethtool: netlink: do not return SQI value if link is down
-Date: Thu,  4 Jul 2024 07:40:07 +0200
-Message-Id: <20240704054007.969557-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1720071778; c=relaxed/simple;
+	bh=7D1WYB2toSHakmy4+rbGJLYS5K2VC1xaYZBRJPiKUbQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hxJ9nUDO65Az0wGOi2OnC+GyTqboQoLFu1AvMvCniS+arq3sJ7egJ1xAzIRd6vWHoTTrov5sz4Vncn3qwI1vidqcceul/DDdmJmB/3M4a/uEbTCHjtvYMS4QipJTDHodWp1pDfZROsWhNHu+jCzXyd4k5CWAjXhNWYlaNgsb7YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0KsCSY6; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111aeso286073a12.0;
+        Wed, 03 Jul 2024 22:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720071775; x=1720676575; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2c/+Q9nS+xoM8+OHdZVaW7nYRO1GVfCIQiZ/xNi76w0=;
+        b=O0KsCSY6KL+ZFnCPUUZnE+l7uEXG/O4vW9v9SCKU2SZrjdw1WElX1xj9kUQom19Dzh
+         VVChyRBvh5sa1L89p/+esVW9PTwBVRvuHU/OE4ipId3SmrWkF4ufklm/zrHSbg/kQK3L
+         ajpSyQPCeLMEp2vQ5tjQ0MWzMe8ZrmMHefbuzsJ/1auTa0qQoZamHZpUp9snYlS9GzzA
+         vF3ohAnumKuo0c/SqfXlStexeihcas1icw1GlwBbUAeD7BoMR9ydGLNjVzdDIX6SM+f/
+         1bZBh6Ckl3X28DvO9ujdYNEWKhscdRS3zWPnTu5mFAwNKzyBnmsZ7Y5wU/PBJAdtGFh0
+         Sq6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720071775; x=1720676575;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2c/+Q9nS+xoM8+OHdZVaW7nYRO1GVfCIQiZ/xNi76w0=;
+        b=JJHXU5MqCQ2s62Ol8av2PYiLLizWOiDHh+KXt8qSdw2VMzpJe+U/Jf+f759+n9PZyE
+         kQcyWJxKJ019ziO4SFsFt9ukOZpSbaXpnGCW8bUpH+x9wPZ6/MH1fCwPx9XGFcCiW00Z
+         EcJ7AxH/SE/6iDJqPqbgXcXKRFRmDzryvER3CEy54ML8lGYEYUbXZBGcvYE8NbXvpDd2
+         WP+y+yGYILicjueoQyE9RlF1hLSFmG0RyYpA2dXTVfYDg9HctOCwKa7mqJiv/2qoIz8P
+         XT/lqxNE/tTmRpLJCuZUkFV6mjFv8I0CvlKKt3Q+Wqp01NCOl4yG6ByOqJM50fj+iN4c
+         SxSg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1GfPhyKjW+zWWrRnMRyMImlOgmTYIJIuiz6pFWRh+e0c6QiBtNlHtiPmoG+ELyP94SoRBDcSrkmLPFzeJf6sYmvCfkiZ3O7rabtL4Hc46AaQKf+P7OYbF0xRpCTW+SlFNX271VzqtreYzdjxWQXa4cZ4xEv9+eJNM4g7erHV67PMhGw==
+X-Gm-Message-State: AOJu0Yy73JyoEgwnjJJpjvCzCpEZMBkG8bBwOu81SReS0uRjhC4D/QQN
+	bLbe9StrfpPU0XKSgCoD2yn7x3eC+SyAVz3BkmlIRVYgXFI2wP9g1EYjL6nZjWHEklCPl4tmhDO
+	Xygp27BWJKFLigNkw9W9tHbPBrOA=
+X-Google-Smtp-Source: AGHT+IH+oZ9eq9ibdelDbiyyU9I7yRc+N1gUCalQ7B8pON06oHDFUPonn5DyQdiYwH2BKwt/klYV/jcBFxzToz/Yp5Q=
+X-Received: by 2002:a05:6402:3594:b0:57c:6740:f47c with SMTP id
+ 4fb4d7f45d1cf-58e5c6366a2mr332180a12.27.1720071774803; Wed, 03 Jul 2024
+ 22:42:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240701121355.262259-2-kanakshilledar@gmail.com>
+ <20240701121355.262259-5-kanakshilledar@gmail.com> <20240703-juice-refreeze-62c468a56ea5@spud>
+In-Reply-To: <20240703-juice-refreeze-62c468a56ea5@spud>
+From: Kanak Shilledar <kanakshilledar@gmail.com>
+Date: Thu, 4 Jul 2024 11:12:43 +0530
+Message-ID: <CAGLn_=tVZ3StW3uB+CkcHBpSJG8PfNGSM6zOVV6OSJeL2Pz56A@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] riscv: dts: thead: add basic spi node
+To: Conor Dooley <conor@kernel.org>
+Cc: Serge Semin <fancer.lancer@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Do not attach SQI value if link is down. "SQI values are only valid if link-up
-condition is present" per OpenAlliance specification of 100Base-T1
-Interoperability Test suite [1]. The same rule would apply for other link
-types.
+Hi
 
-[1] https://opensig.org/automotive-ethernet-specifications/#
+On Wed, Jul 3, 2024 at 8:15=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
+e:
+>
+> Kanak, Drew,
+>
+> On Mon, Jul 01, 2024 at 05:43:54PM +0530, Kanak Shilledar wrote:
+> > created spi0 node with fixed clock. the spi0 node
+> > uses synopsis designware driver and has the following
+> > compatible "snps,dw-apb-ssi". the spi0 node is connected
+> > to a SPI NOR flash pad which is left unpopulated on the back
+> > side of the board.
+> >
+> > Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+> > ---
+> > Changes in v2:
+> > - Separated from a single patch file
+> > ---
+> >  .../boot/dts/thead/th1520-beaglev-ahead.dts      |  9 +++++++++
+> >  .../boot/dts/thead/th1520-lichee-module-4a.dtsi  |  4 ++++
+> >  .../riscv/boot/dts/thead/th1520-lichee-pi-4a.dts |  5 +++++
+>
+> Didn't you say there was a flash on one of these two boards?
+Yes, there is a SPI nor flash pad left unpopulated on the bottom side
+of the LicheePi 4a
+carrier board. https://wiki.sipeed.com/hardware/en/lichee/th1520/lpi4a/2_un=
+box.html#Board-hardware-overview
+notice the reserved pad in the bottom part of the image.
 
-Fixes: 8066021915924 ("ethtool: provide UAPI for PHY Signal Quality Index (SQI)")
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- net/ethtool/linkstate.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+> >  arch/riscv/boot/dts/thead/th1520.dtsi            | 16 ++++++++++++++++
+> >  4 files changed, 34 insertions(+)
+> >
+> > diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/=
+riscv/boot/dts/thead/th1520-beaglev-ahead.dts
+> > index d9b4de9e4757..3103b74e0288 100644
+> > --- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
+> > +++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
+> > @@ -17,6 +17,7 @@ aliases {
+> >               gpio1 =3D &gpio1;
+> >               gpio2 =3D &gpio2;
+> >               gpio3 =3D &gpio3;
+> > +             spi0 =3D &spi0;
+>
+> "spi" would sort after "serial".
+i will fix that.
 
-diff --git a/net/ethtool/linkstate.c b/net/ethtool/linkstate.c
-index b2de2108b356a..370ae628b13a4 100644
---- a/net/ethtool/linkstate.c
-+++ b/net/ethtool/linkstate.c
-@@ -37,6 +37,8 @@ static int linkstate_get_sqi(struct net_device *dev)
- 	mutex_lock(&phydev->lock);
- 	if (!phydev->drv || !phydev->drv->get_sqi)
- 		ret = -EOPNOTSUPP;
-+	else if (!phydev->link)
-+		ret = -ENETDOWN;
- 	else
- 		ret = phydev->drv->get_sqi(phydev);
- 	mutex_unlock(&phydev->lock);
-@@ -55,6 +57,8 @@ static int linkstate_get_sqi_max(struct net_device *dev)
- 	mutex_lock(&phydev->lock);
- 	if (!phydev->drv || !phydev->drv->get_sqi_max)
- 		ret = -EOPNOTSUPP;
-+	else if (!phydev->link)
-+		ret = -ENETDOWN;
- 	else
- 		ret = phydev->drv->get_sqi_max(phydev);
- 	mutex_unlock(&phydev->lock);
-@@ -93,12 +97,12 @@ static int linkstate_prepare_data(const struct ethnl_req_info *req_base,
- 	data->link = __ethtool_get_link(dev);
- 
- 	ret = linkstate_get_sqi(dev);
--	if (ret < 0 && ret != -EOPNOTSUPP)
-+	if (ret < 0 && ret != -EOPNOTSUPP && ret != -ENETDOWN)
- 		goto out;
- 	data->sqi = ret;
- 
- 	ret = linkstate_get_sqi_max(dev);
--	if (ret < 0 && ret != -EOPNOTSUPP)
-+	if (ret < 0 && ret != -EOPNOTSUPP && ret != -ENETDOWN)
- 		goto out;
- 	data->sqi_max = ret;
- 
-@@ -136,10 +140,10 @@ static int linkstate_reply_size(const struct ethnl_req_info *req_base,
- 	len = nla_total_size(sizeof(u8)) /* LINKSTATE_LINK */
- 		+ 0;
- 
--	if (data->sqi != -EOPNOTSUPP)
-+	if (data->sqi != -EOPNOTSUPP && data->sqi != -ENETDOWN)
- 		len += nla_total_size(sizeof(u32));
- 
--	if (data->sqi_max != -EOPNOTSUPP)
-+	if (data->sqi_max != -EOPNOTSUPP && data->sqi_max != -ENETDOWN)
- 		len += nla_total_size(sizeof(u32));
- 
- 	if (data->link_ext_state_provided)
-@@ -164,11 +168,11 @@ static int linkstate_fill_reply(struct sk_buff *skb,
- 	    nla_put_u8(skb, ETHTOOL_A_LINKSTATE_LINK, !!data->link))
- 		return -EMSGSIZE;
- 
--	if (data->sqi != -EOPNOTSUPP &&
-+	if (data->sqi != -EOPNOTSUPP && data->sqi != -ENETDOWN &&
- 	    nla_put_u32(skb, ETHTOOL_A_LINKSTATE_SQI, data->sqi))
- 		return -EMSGSIZE;
- 
--	if (data->sqi_max != -EOPNOTSUPP &&
-+	if (data->sqi_max != -EOPNOTSUPP && data->sqi_max != -ENETDOWN &&
- 	    nla_put_u32(skb, ETHTOOL_A_LINKSTATE_SQI_MAX, data->sqi_max))
- 		return -EMSGSIZE;
- 
--- 
-2.39.2
+> >               serial0 =3D &uart0;
+> >               serial1 =3D &uart1;
+> >               serial2 =3D &uart2;
+> > @@ -52,6 +53,10 @@ &sdhci_clk {
+> >       clock-frequency =3D <198000000>;
+> >  };
+> >
+> > +&spi_clk {
+> > +     clock-frequency =3D <396000000>;
+> > +};
+>
+> I'm pretty sceptical about adding more of these fixed clocks, rather
+> than waiting for the clock driver. Drew, what do you think? Should we
+> just add one more to your fixup list or would you rather delay? Guess it
+> depends on how long more you think that clock driver is likely to take.
+>
+> Thanks,
+> Conor.
+>
 
+Thanks and Regards,
+Kanak Shilledar
+
+> > +
+> >  &uart_sclk {
+> >       clock-frequency =3D <100000000>;
+> >  };
+> > @@ -79,3 +84,7 @@ &sdio0 {
+> >  &uart0 {
+> >       status =3D "okay";
+> >  };
+> > +
+> > +&spi0 {
+> > +     status =3D "okay";
+> > +};
+> > diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/a=
+rch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+> > index 1365d3a512a3..6939bd36560c 100644
+> > --- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+> > +++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+> > @@ -33,6 +33,10 @@ &sdhci_clk {
+> >       clock-frequency =3D <198000000>;
+> >  };
+> >
+> > +&spi_clk {
+> > +     clock-frequency =3D <396000000>;
+> > +};
+> > +
+> >  &uart_sclk {
+> >       clock-frequency =3D <100000000>;
+> >  };
+> > diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/r=
+iscv/boot/dts/thead/th1520-lichee-pi-4a.dts
+> > index 9a3884a73e13..14b06dd81a9a 100644
+> > --- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
+> > +++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
+> > @@ -14,6 +14,7 @@ aliases {
+> >               gpio1 =3D &gpio1;
+> >               gpio2 =3D &gpio2;
+> >               gpio3 =3D &gpio3;
+> > +             spi0 =3D &spi0;
+> >               serial0 =3D &uart0;
+> >               serial1 =3D &uart1;
+> >               serial2 =3D &uart2;
+> > @@ -30,3 +31,7 @@ chosen {
+> >  &uart0 {
+> >       status =3D "okay";
+> >  };
+> > +
+> > +&spi0 {
+> > +     status =3D "okay";
+> > +};
+> > diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dt=
+s/thead/th1520.dtsi
+> > index d2fa25839012..f962de663e7e 100644
+> > --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> > +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> > @@ -140,6 +140,12 @@ apb_clk: apb-clk-clock {
+> >               #clock-cells =3D <0>;
+> >       };
+> >
+> > +     spi_clk: spi-clock {
+> > +             compatible =3D "fixed-clock";
+> > +             clock-output-names =3D "spi_clk";
+> > +             #clock-cells =3D <0>;
+> > +     };
+> > +
+> >       uart_sclk: uart-sclk-clock {
+> >               compatible =3D "fixed-clock";
+> >               clock-output-names =3D "uart_sclk";
+> > @@ -183,6 +189,16 @@ clint: timer@ffdc000000 {
+> >                                             <&cpu3_intc 3>, <&cpu3_intc=
+ 7>;
+> >               };
+> >
+> > +             spi0: spi@ffe700c000 {
+> > +                     compatible =3D "thead,th1520-spi", "snps,dw-apb-s=
+si";
+> > +                     reg =3D <0xff 0xe700c000 0x0 0x1000>;
+> > +                     interrupts =3D <54 IRQ_TYPE_LEVEL_HIGH>;
+> > +                     clocks =3D <&spi_clk>;
+> > +                     #address-cells =3D <1>;
+> > +                     #size-cells =3D <0>;
+> > +                     status =3D "disabled";
+> > +             };
+> > +
+> >               uart0: serial@ffe7014000 {
+> >                       compatible =3D "snps,dw-apb-uart";
+> >                       reg =3D <0xff 0xe7014000 0x0 0x100>;
+> > --
+> > 2.45.2
+> >
 
