@@ -1,234 +1,159 @@
-Return-Path: <linux-kernel+bounces-241151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01ACA927794
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:59:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C5A927797
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AABD9283A83
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:59:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1934A1F25112
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3777D1AE87A;
-	Thu,  4 Jul 2024 13:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B080F1AEFEE;
+	Thu,  4 Jul 2024 14:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CTZLy6Qx"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A861A3BC5
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="26Aj+Ih3"
+Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCCE1AEFD9;
+	Thu,  4 Jul 2024 14:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720101586; cv=none; b=DtfBfLsxCV5qJdNbJyEnFLHg4V/pVx50Zvqeexuz7U7RimEQFmUUXFIRgRYZXNMXtrZK27Hp+N2gjKYmW8N62UZN3AkWJwT6IAvYdzJe8uF85x9sQQgk2oXrMO+tLTgp4d1HV1XZvwcpTRKqU/tv+dQalGyjJAyH1X8t1s6QrJE=
+	t=1720101608; cv=none; b=Su9r6407ls9xYWD/WRwJeOK2QroUzWZ23zc3D18cRssvuoaTZQg8ZTB31i7UDSwvoCDpwRW7s5fjA5KV0zIG2zM56pIPxgSqmCjuf+eELdojqB3Pk+LERg4CoEwCwKZLS2m+91P3Gq9Z6jW1Jth7T+bmjafiLMAEzaI44zG7fkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720101586; c=relaxed/simple;
-	bh=jJpKvMzKe1sB481o8pdT2BZ3KwviXgpzUqZNHuSnBIs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=EiwhJbqv2MTehQxWdf66OJDT5I0bbqvtdfoDFnSLeKTpQQsl3C/XLMCjd10NY6bFJU3GO76c7kuafZvCQIJmsK7Yp3BPyd++rGhuNvHpJXz1/VyDA528zIQh5lIy7oHkGeHGCSNUv2HiTIyYTevBY/wDoKXmmV5swEyf2f0rCak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CTZLy6Qx; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-652c6e92147so11726487b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 06:59:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720101584; x=1720706384; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LAtQdKc3DWjogtnJ0IRwxqFJsxK6c7FwoZ+WvIyW3Xo=;
-        b=CTZLy6QxzyAH5K8HD7f0SBZ/1kgu+ImyboaHJTRE/Iw/ZGW7GK9TXt+Lczx+Kq8cXX
-         VPBE/dcv1tW4D7XP9W2ppOfaECDvKOWP8Ziv0o3a3+/1HzagBBlqsv0UUgsqHQvRyR0m
-         81b3uuxo3m3lZZA47Qq50/BqUG6cSTRCXIUNaVslCrZeyz8KdASyWqEfzFowHsxEqPzR
-         DA1Yp2+UnlkpmIUlz1pv9OM7+P7of0nOx9HV4qUSbZVoHeL4VHDo5Xa2/KUZFVHTK4Pe
-         /b69fGELKQPKdH2n7JWmDevZeH3XUnOckxusG6Q288fmbgOze+ln2hTdlw8wgHjzndXQ
-         pECw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720101584; x=1720706384;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LAtQdKc3DWjogtnJ0IRwxqFJsxK6c7FwoZ+WvIyW3Xo=;
-        b=m9aRjcGmlmXCFwI7qRNj9TUayuCZPS+PqmXmIKU/z9ai6lCxNAJcFIN3vcFwf4Muqk
-         6qitlYQIGwcsbZGGXBYcED80JyWvMp0f1LqQLd0fOD7o5g0aEcTmnCQggHEUMwiqcWJK
-         37bwc7GtpBkD5HT3sqqhAA0yQdVxN4Y6FQhsqn/wR9eMLluQI7ODAf0jBSjJ/pEtOl45
-         E0C12mePkHEinDMsmywjwg0NgDqhxIMuGg7HfveYJpgNNbyHRDyCp8v3kRAgXh8xQhnF
-         kkDBTQmQigCpjRpltb/Ap6/xgckSrRU0alQYU/mIrghgZKmPy3nyRlVbbSiCRZkWBIuo
-         zOKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeYx/m/xKinlLj4U/c9fOrBGOdTCN4PZs2unBW5hwMPKIF8VI61AM69ATycpR6sG5Lqv3Gta8PBzPRiaJlhgACjNnq0Hc7PAHO/nxV
-X-Gm-Message-State: AOJu0Yxx5pLvAHP6WAJRAfGuUPenIQbTd/HvpdZVXk7buYD4F1Uhxfay
-	cQVTdVrUcZXVFnL2ugTFqyMRtKvb7ADf06LfvpojPWVffnjEqP5U0nMk3uSWL9zKozV1NCUZR9G
-	Peg==
-X-Google-Smtp-Source: AGHT+IHKp+9v7/1jkX7RG5nnKgjFqzydqFYM1oxQOc7v96Ao5/MWhucQyLSdycDsJ6Fj0xxeXCWOwAFBRvc=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:f773:f667:425:1c44])
- (user=surenb job=sendgmr) by 2002:a81:84ca:0:b0:64a:bd29:c5cf with SMTP id
- 00721157ae682-652d572cf58mr79517b3.1.1720101583822; Thu, 04 Jul 2024 06:59:43
- -0700 (PDT)
-Date: Thu,  4 Jul 2024 06:59:41 -0700
+	s=arc-20240116; t=1720101608; c=relaxed/simple;
+	bh=NL4y4Vxm3N+KiIzZR5ru/bHBDfPngIH5NU6qtzx4NEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hYu1ieU3w3e52U7tjrMFBjeA3NZzCf41FJqG3L/6NDrwqYhHwZ72GxpvGRRJQDR5RajjSupm+ZDayr90qOhnvizXzp4bx9tER//e8BHE3qdA4SoVii5TcRiIQLbADUVXRx8ILklUxkB1aXeytUwAaeGEGNhxIqCpkgyrWqEf5j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=26Aj+Ih3; arc=none smtp.client-ip=3.9.82.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
+Received: from localhost (unknown [IPv6:2a02:8012:909b:0:a8e6:1543:faf0:bfe2])
+	(Authenticated sender: tom)
+	by mail.katalix.com (Postfix) with ESMTPSA id 2D7EA7D582;
+	Thu,  4 Jul 2024 15:00:00 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
+	t=1720101600; bh=NL4y4Vxm3N+KiIzZR5ru/bHBDfPngIH5NU6qtzx4NEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Disposition:In-Reply-To:From;
+	z=Date:=20Thu,=204=20Jul=202024=2014:59:59=20+0100|From:=20Tom=20Pa
+	 rkin=20<tparkin@katalix.com>|To:=20Hillf=20Danton=20<hdanton@sina.
+	 com>|Cc:=20syzbot=20<syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspot
+	 mail.com>,=0D=0A=09linux-kernel@vger.kernel.org,=20netdev@vger.ker
+	 nel.org,=0D=0A=09James=20Chapman=20<jchapman@katalix.com>,=0D=0A=0
+	 9syzkaller-bugs@googlegroups.com|Subject:=20Re:=20[syzbot]=20[net?
+	 ]=20KASAN:=20slab-use-after-free=20Write=20in=0D=0A=20l2tp_session
+	 _delete|Message-ID:=20<Zoaq358lbnpyHPUq@katalix.com>|References:=2
+	 0<ZoVGfR6Gx7PLbnn1@katalix.com>=0D=0A=20<20240704112303.3092-1-hda
+	 nton@sina.com>|MIME-Version:=201.0|Content-Disposition:=20inline|I
+	 n-Reply-To:=20<20240704112303.3092-1-hdanton@sina.com>;
+	b=26Aj+Ih33jEIr1loN/x04M8950DbCo7Lfou9XtxjcOYTq0zpbs/I2foZZxQsH6Yy0
+	 krq4dTuQO//PSwqIi+haaxBO/dTHTK4phezHo5zEBY1cvheBSlhgfJlt1qvBxm3r0Q
+	 j4sGzpMbiwYachPXZEn81Nlz2DAsGg7C/CuemeOu2OHoGPruaIWpwkAY/czGNy10+u
+	 KHkLmCBKewRcNO2wtPjVRSnqeZu9XbrQ9qHjeGXKjkOoKhHiu9RwY2mS8HKNMFlpZb
+	 Y2/A36E1aPqLk6QTM44YSjmGtSjZNGZKeYxyasLfKwkwAQdIb/4yL2gBDL8sba9vZf
+	 lpZgp7DKZIc2w==
+Date: Thu, 4 Jul 2024 14:59:59 +0100
+From: Tom Parkin <tparkin@katalix.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	James Chapman <jchapman@katalix.com>,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in
+ l2tp_session_delete
+Message-ID: <Zoaq358lbnpyHPUq@katalix.com>
+References: <ZoVGfR6Gx7PLbnn1@katalix.com>
+ <20240704112303.3092-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240704135941.1145038-1-surenb@google.com>
-Subject: [PATCH v2 1/1] mm, slab: move allocation tagging code in the alloc
- path into a hook
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: vbabka@suse.cz, kent.overstreet@linux.dev, cl@linux.com, 
-	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com, 
-	roman.gushchin@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RnLWkKV2K9RyjKPH"
+Content-Disposition: inline
+In-Reply-To: <20240704112303.3092-1-hdanton@sina.com>
 
-Move allocation tagging specific code in the allocation path into
-alloc_tagging_slab_alloc_hook, similar to how freeing path uses
-alloc_tagging_slab_free_hook. No functional changes, just code
-cleanup.
 
-Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
-Changes since v1 [1]
-- Moved entire profiling code portion from the slab_post_alloc_hook into
-alloc_tagging_slab_alloc_hook, per Vlastimil Babka
-- Moved alloc_tagging_slab_free_hook out of CONFIG_SLAB_OBJ_EXT section
-and into CONFIG_MEM_ALLOC_PROFILING one, per Vlastimil Babka
+--RnLWkKV2K9RyjKPH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[1] https://lore.kernel.org/all/20240703015354.3370503-1-surenb@google.com/
+On  Thu, Jul 04, 2024 at 19:23:03 +0800, Hillf Danton wrote:
+> On Wed, 3 Jul 2024 13:39:25 +0100 Tom Parkin <tparkin@katalix.com>
+> >=20
+> > The specific UAF that syzbot hits is due to the list node that the
+> > list_for_each_safe temporary variable points to being modified while
+> > the list_for_each_safe walk is in process.
+> >=20
+> > This is possible due to l2tp_tunnel_closeall dropping the spin lock
+> > that protects the list mid way through the list_for_each_safe loop.
+> > This opens the door for another thread to call list_del_init on the
+> > node that list_for_each_safe is planning to process next, causing
+> > l2tp_tunnel_closeall to repeatedly iterate on that node forever.
+> >=20
+> Yeah the next node could race with other thread because of the door.
 
- mm/slub.c | 86 ++++++++++++++++++++++++++++++++-----------------------
- 1 file changed, 50 insertions(+), 36 deletions(-)
+Exactly, yes.
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 4927edec6a8c..98c47ad7ceba 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2033,11 +2033,54 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
- 	return slab_obj_exts(slab) + obj_to_index(s, slab, p);
- }
- 
-+#else /* CONFIG_SLAB_OBJ_EXT */
-+
-+static int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
-+			       gfp_t gfp, bool new_slab)
-+{
-+	return 0;
-+}
-+
-+static inline void free_slab_obj_exts(struct slab *slab)
-+{
-+}
-+
-+static inline bool need_slab_obj_ext(void)
-+{
-+	return false;
-+}
-+
-+static inline struct slabobj_ext *
-+prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
-+{
-+	return NULL;
-+}
-+
-+#endif /* CONFIG_SLAB_OBJ_EXT */
-+
-+#ifdef CONFIG_MEM_ALLOC_PROFILING
-+
-+static inline void
-+alloc_tagging_slab_alloc_hook(struct kmem_cache *s, void *object, gfp_t flags)
-+{
-+	if (need_slab_obj_ext()) {
-+		struct slabobj_ext *obj_exts;
-+
-+		obj_exts = prepare_slab_obj_exts_hook(s, flags, object);
-+		/*
-+		 * Currently obj_exts is used only for allocation profiling.
-+		 * If other users appear then mem_alloc_profiling_enabled()
-+		 * check should be added before alloc_tag_add().
-+		 */
-+		if (likely(obj_exts))
-+			alloc_tag_add(&obj_exts->ref, current->alloc_tag, s->size);
-+	}
-+}
-+
- static inline void
- alloc_tagging_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
- 			     int objects)
- {
--#ifdef CONFIG_MEM_ALLOC_PROFILING
- 	struct slabobj_ext *obj_exts;
- 	int i;
- 
-@@ -2053,30 +2096,13 @@ alloc_tagging_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
- 
- 		alloc_tag_sub(&obj_exts[off].ref, s->size);
- 	}
--#endif
--}
--
--#else /* CONFIG_SLAB_OBJ_EXT */
--
--static int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
--			       gfp_t gfp, bool new_slab)
--{
--	return 0;
--}
--
--static inline void free_slab_obj_exts(struct slab *slab)
--{
- }
- 
--static inline bool need_slab_obj_ext(void)
--{
--	return false;
--}
-+#else /* CONFIG_MEM_ALLOC_PROFILING */
- 
--static inline struct slabobj_ext *
--prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
-+static inline void
-+alloc_tagging_slab_alloc_hook(struct kmem_cache *s, void *object, gfp_t flags)
- {
--	return NULL;
- }
- 
- static inline void
-@@ -2085,7 +2111,8 @@ alloc_tagging_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
- {
- }
- 
--#endif /* CONFIG_SLAB_OBJ_EXT */
-+#endif /* CONFIG_MEM_ALLOC_PROFILING */
-+
- 
- #ifdef CONFIG_MEMCG_KMEM
- 
-@@ -3944,20 +3971,7 @@ bool slab_post_alloc_hook(struct kmem_cache *s, struct list_lru *lru,
- 		kmemleak_alloc_recursive(p[i], s->object_size, 1,
- 					 s->flags, init_flags);
- 		kmsan_slab_alloc(s, p[i], init_flags);
--#ifdef CONFIG_MEM_ALLOC_PROFILING
--		if (need_slab_obj_ext()) {
--			struct slabobj_ext *obj_exts;
--
--			obj_exts = prepare_slab_obj_exts_hook(s, flags, p[i]);
--			/*
--			 * Currently obj_exts is used only for allocation profiling.
--			 * If other users appear then mem_alloc_profiling_enabled()
--			 * check should be added before alloc_tag_add().
--			 */
--			if (likely(obj_exts))
--				alloc_tag_add(&obj_exts->ref, current->alloc_tag, s->size);
--		}
--#endif
-+		alloc_tagging_slab_alloc_hook(s, p[i], flags);
- 	}
- 
- 	return memcg_slab_post_alloc_hook(s, lru, flags, size, p);
+> > In the context of l2tp_ppp, this eventually leads to UAF because the
+> > session structure itself is freed when the pppol2tp socket is
+> > destroyed and the pppol2tp sk_destruct handler unrefs the session
+> > structure to zero.
+> >=20
+> > So to avoid the UAF, the list can safely be processed using a loop
+> > which accesses the first entry in the tunnel session list under
+> > spin lock protection, removing that entry, then dropping the lock
+> > to call l2tp_session_delete.
+>=20
+> Race exists after your patch.
+>=20
+> 	cpu1				cpu2
+> 	---				---
+> 					pppol2tp_release()
+>=20
+> 	spin_lock_bh(&tunnel->list_lock);
+> 	while (!list_empty(&tunnel->session_list)) {
+> 		session =3D list_first_entry(&tunnel->session_list,
+> 					struct l2tp_session, list);
+>  		list_del_init(&session->list);
+>  		spin_unlock_bh(&tunnel->list_lock);
+>=20
+>  					l2tp_session_delete(session);
+>=20
+>  		l2tp_session_delete(session);
+>  		spin_lock_bh(&tunnel->list_lock);
+>  	}
+>  	spin_unlock_bh(&tunnel->list_lock);
 
-base-commit: 795c58e4c7fc6163d8fb9f2baa86cfe898fa4b19
--- 
-2.45.2.803.g4e1b14247a-goog
+I take your point.  Calling l2tp_session_delete() on the same session
+twice isn't a problem per-se, but if cpu2 manages to destruct the
+socket and unref the session to zero before cpu1 progresses then we
+have the same sort of problem.
 
+To be honest, cleanup generally could use some TLC (the dancing around
+the list lock in _closeall is not ideal), but a minimal patch to
+address the UAF makes sense in the short term IMO -- so to that end
+holding a session reference around l2tp_session_delete in _closeall is
+probably the least invasive thing to do.
+
+--RnLWkKV2K9RyjKPH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEsUkgyDzMwrj81nq0lIwGZQq6i9AFAmaGqtsACgkQlIwGZQq6
+i9BNXQf/bpKvkmGlwUefekQYEVJouMll0xdfE14o9PWiT8zEwZd/A9BxTsXxVUru
+81C6K0F6otF+WgZw2HfFQcueMO6IULt4PK7VeXhy8D8uCtod6fbCr2DvRmMatGlY
+5POVyervFyGElR+sgieUIIoBgclXaG5g2mHKn/O7cgDjGRrgXP3gzQucgywYzAVP
+MkvZVV4d+OpUWlIW+D/a96r1U4POJIrRrm9GkPf+OnIxvgagpv5q+QJdItPwU9CL
+9pCNUzqDi4Yw+jo4tmmj050/KeRxQRL4RpQWugLhJVeN8imx94Q6PUfX+UcHHsbA
+CaHO+fmbyhv2zhm3TNX4bYXI7oun/Q==
+=nc6Q
+-----END PGP SIGNATURE-----
+
+--RnLWkKV2K9RyjKPH--
 
