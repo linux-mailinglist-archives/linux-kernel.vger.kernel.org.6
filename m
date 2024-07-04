@@ -1,100 +1,89 @@
-Return-Path: <linux-kernel+bounces-241536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00CAA927C53
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:34:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568A7927C56
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3218F1C2356A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:34:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8823F1C220AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA067347A;
-	Thu,  4 Jul 2024 17:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QilgLYzc"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5678313791C;
+	Thu,  4 Jul 2024 17:33:25 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F25481DD;
-	Thu,  4 Jul 2024 17:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F6C4964C;
+	Thu,  4 Jul 2024 17:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720114393; cv=none; b=i157TK9rz5PRF28P38JYtlPFYqfKkZ/7FB66dMAolqqqFsg5J5X7t5YKd0tN34fUhaiJtUdEaMrBid8ASDdGyhauTSDsmf8T8zxrwwLfwgJJvTEG3nNyFZOwHAHJdlBm0v2Mr88hW7MOY+yLuR5jfhrho1Womv//dM8ouTbPs1M=
+	t=1720114404; cv=none; b=WROlHPPqlWM8jg/84GYHtd4hLtABLGA9enMaTzPI9xxdJKmFOVRY1XioLE+I40K064neCDBslTpzHgSnzWnN3kZa8G6ewKfCcWE51ps9n7Cx0aK7o7zphfKZkIPi9bbfwBkwCa2OySwnNiKNG47thPnuGSzCifd/NMarlYWJLsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720114393; c=relaxed/simple;
-	bh=uOjGimoUuqmHkIRe8mqL1ywdQq3G4j3DbYhME/q+F/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m59zfYKueadKzCnFy47MaLjNTEUwI4GfJ2S6HFADwvLq1lCdp8JRJbNPJuyIt020I1p+6KQ/LtR+wHCbjVqVNuwIdH4rQ1+UbML4rOu7KaZrBN7xEERX5nFwbGfk27zr3EH3M46gDJoe1Qxs1SLyS2PY5n+NkGyxuLvUbxB3P4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QilgLYzc; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ee4ae13aabso8635281fa.2;
-        Thu, 04 Jul 2024 10:33:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720114390; x=1720719190; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HVYRaNZH3y9ziR5T7ty/SWXI2sYNIiKPBk3pwNTSSn4=;
-        b=QilgLYzc/mbfq1FNi9TZqNyzLOMe0rf/iW2xtCejIMofljOWt96G8AMibV3ex42KIH
-         5s2N4G+1k7teE8hcyR0t1UtHIoSMMERrddDAXZWcXcvtMnryPEUY3WlHH3oqWOLD/EyZ
-         j8sCIM4MPWbMBukmEx4jdtt4dZIvQFbk/uSLioYxOo9csMrdCmeV+cZO8bmpgBf7ogQY
-         HJitQ97z3EN1AgH+Bych9Q40ZdBjIMhNV3CElxa2pYxLBoMq7wA0Q7n+XtRIoWR/ch49
-         fE1HUyfVdfOjDSaiO5Szx0IrupmNNYW9XhGXB1kGxFLb0HtoyZhS7lXgie4mFWRgnjtP
-         bhZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720114390; x=1720719190;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HVYRaNZH3y9ziR5T7ty/SWXI2sYNIiKPBk3pwNTSSn4=;
-        b=S19KaPvGtnRc4iD9pb41b52oaNl2ieGrqo0tm7a87aV5ORCczzH/lWve1prsVhAnu/
-         AfZxJxmAAJvpUNTHiXqJliFu4h36JZEU4Juy00I5X2WTKKO67z9xmpqegFK4FewuI1ti
-         09yOEwmafhHGjIto/Pq0d0q3M9A5N47GTppbFO+HthZ29rPeymbRkP/1Fp2RQp2+0SDx
-         HvSRIBRHhXWESGnyenYrjkKVHSOFmsT70CWKLez9UR6YOPInbeXdjtgIbbgNUP454NKE
-         fI4FWuHL5iF2YfmBLDHAR01VnzNAQSIe65ww3V+QkqWQZLtr6f8GGgTWsEgO5B6WzYmk
-         brEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTB1XSIPTyOcghgwn3BxM/RRpglXMIwLCGpphMZGx6zbI8RwDuEblBeqFgwAELeubRveHpBEcaZE/uzUKm0CXVnoeK1rqjy/h2EnnIDL+VB3VwVt7wTcbiuMOwgpZafQIZguPG
-X-Gm-Message-State: AOJu0YzSsF3xt9iqpWXmob9r05lodk+VHZbDmZOOK3OYtox3vhPljYh1
-	uFQSDfvQUxY2lqSfBOCjKUfLA7nQ+xe8HC2gDRouEaPYKSe8/mJVt7roMg==
-X-Google-Smtp-Source: AGHT+IE6j35srePOnKjG8C7MRp1ASp1+rhCl8ONqWVeI3a/7229HAFHKCSb9MIAr+SNjY/DuaZL0IQ==
-X-Received: by 2002:a2e:900b:0:b0:2ee:86c1:f743 with SMTP id 38308e7fff4ca-2ee8ed8cd97mr16136701fa.15.1720114390163;
-        Thu, 04 Jul 2024 10:33:10 -0700 (PDT)
-Received: from skbuf ([188.25.110.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d1668sm31765315e9.1.2024.07.04.10.33.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 10:33:09 -0700 (PDT)
-Date: Thu, 4 Jul 2024 20:33:07 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	MD Danish Anwar <danishanwar@ti.com>,
-	Roger Quadros <rogerq@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/4] net: dsa: qca8k: constify struct regmap_config
-Message-ID: <20240704173307.wz4wfrfv6rshyqe6@skbuf>
-References: <20240703-net-const-regmap-v1-0-ff4aeceda02c@gmail.com>
- <20240703-net-const-regmap-v1-1-ff4aeceda02c@gmail.com>
+	s=arc-20240116; t=1720114404; c=relaxed/simple;
+	bh=xs6JzRjCQXbfSMshDcpOesOxGunDcEhzbocdxzU2ZCQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L6z02huBMexETcgY+v+6UYD4SjS0IhYyFqohaqMgMA2btkGI+vgTiRw0oMQpHmMh4v6DsljwpFnrtWOkeVlp1TcpTzAsXyOZUjZiUWOSlz59gk937pyZ+Aq5xV19kepItBVlaQYtcuOXQx6VcnnO5iN5hoNrm6zA2xTKyqZHTTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AB89120008;
+	Thu,  4 Jul 2024 17:33:18 +0000 (UTC)
+Message-ID: <98df164e-62d2-4592-a777-2a8182583c1b@ghiti.fr>
+Date: Thu, 4 Jul 2024 19:33:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703-net-const-regmap-v1-1-ff4aeceda02c@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/10] riscv: Add qspinlock support based on Zabha
+ extension
+Content-Language: en-US
+To: Andrea Parri <parri.andrea@gmail.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Nathan Chancellor <nathan@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+ Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
+References: <20240626130347.520750-1-alexghiti@rivosinc.com>
+ <20240626130347.520750-11-alexghiti@rivosinc.com> <Zn2C+NXNZ/sj0wI6@andrea>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <Zn2C+NXNZ/sj0wI6@andrea>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-On Wed, Jul 03, 2024 at 11:46:33PM +0200, Javier Carrasco wrote:
-> `qca8k_regmap_config` is not modified and can be declared as const to
-> move its data to a read-only section.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+On 27/06/2024 17:19, Andrea Parri wrote:
+>> This is largely based on Guo's work and Leonardo reviews at [1].
+> Guo, could/should this have your Co-developed-by:/Signed-off-by:?
+
+
+Indeed, I'll add a SoB from Guo.
+
+
+>
+> (disclaimer: I haven't looked at the last three patches of this submission
+> with due calm and probably won't before ~mid-July...)
+>
+>
+>> Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638-1-guoren@kernel.org/ [1]
+> There seems to be a distinct lack of experimental results, compared to the
+> previous/cited submission (and numbers are good to have!!  ;-)). Maybe Guo
+> /others can provide some? to confirm this is going in the right direction.
+>
+>    Andrea
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
