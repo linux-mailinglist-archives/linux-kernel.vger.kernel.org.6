@@ -1,187 +1,225 @@
-Return-Path: <linux-kernel+bounces-241415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD881927B35
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:36:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 468DA927B37
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6620C1F23B8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:36:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C922C1F23CC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B81A1B3745;
-	Thu,  4 Jul 2024 16:36:41 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2B21B29DF;
+	Thu,  4 Jul 2024 16:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="SlECBilG"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3761B29C7;
-	Thu,  4 Jul 2024 16:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8831B29C2;
+	Thu,  4 Jul 2024 16:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720111000; cv=none; b=HV9pR+pixoSMMKglMp075l1DYaUGNeBy56uHYoag/8GaxUGA+vXlkiRpzU+Q4gartbtIaWS5zs2W9cjLUqDBGwiJjsPBO0WeevJNtOvOX053M1GBxm3kmoR/BPsHAd1p+g/Ph/u8w1fpz4pdQEIItaclfL22DxpPWF7WaNEUyYg=
+	t=1720111021; cv=none; b=jNt9NpEAWjHIX9wMYQgTygsJKrIfDiEBsaeGDpG9cR2APmV1gCM4XogVaj05PycTSdIDF2udZLouJSaCyJujIsPypxZcmTh0bRJKvRaPP35DarY4vkvngyHeYetYRwm+ksQ6CxeU06XS1Sun8ELX3RdPnQuorl4i5gLuWaqV9vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720111000; c=relaxed/simple;
-	bh=Sq5sZlWOJ5cxOL6fNrvlElfWwOopQZLPbYTsSYU7u/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q+glnZxDWl9B2Ivq5juoTxhoqUHs+cETI2v2gr/+roF0FxwfPt9qz9MpqgiWkRDdFT1plFGs97wBaXuyWzRXcqDYqgNmtVz7+yr9sDYWzfDEvMgDjbuR7w0dIyQMeCkWzWc5n3aF80oEkaW2vhqufXU7+9T6YmTcpA2uerqfbWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E251A1C0003;
-	Thu,  4 Jul 2024 16:36:26 +0000 (UTC)
-Message-ID: <1cd452af-58cd-468c-9bb6-90f67711d0b0@ghiti.fr>
-Date: Thu, 4 Jul 2024 18:36:26 +0200
+	s=arc-20240116; t=1720111021; c=relaxed/simple;
+	bh=31GGUpmsfkVr21LcPtsZRWSs4jts+3kNoJ70mCIHSO0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bMVGCvN83j4WHb5Ar19XjIBQfMlYgUCBGUt4sBlVDkqNVPEzG5qdHCVruhlGwKn6bZIC6aRr19nWAWgdW4Et/JHmEebbllwKPSUwcS9/NLMjEkb3rMsC9DRV9aGcZqSCcF5Y0UDTKlJVAOpULMTksbHbTwGRAA1f79xlFez2B6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=SlECBilG; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1720111007;
+	bh=31GGUpmsfkVr21LcPtsZRWSs4jts+3kNoJ70mCIHSO0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=SlECBilGwuMqBt70Nv3y+4baymi5s5SL+g32TnUOWrPNxoRcTLYW/Wd1c0IQ9PLbT
+	 gvHt5HOEo7MmyRGQk13JWLIE0aQaN1NwO1As60ftNH6XMKIb1RdRTunWUhdMFEHc7L
+	 DD00TiVYRLz7P69UTvhUtUV3jXvJjch190DNg524=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Thu, 04 Jul 2024 18:36:34 +0200
+Subject: [PATCH] kbuild: add script and target to generate pacman package
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/10] riscv: Implement cmpxchg8/16() using Zabha
-Content-Language: en-US
-To: Andrea Parri <parri.andrea@gmail.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Nathan Chancellor <nathan@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
-References: <20240626130347.520750-1-alexghiti@rivosinc.com>
- <20240626130347.520750-4-alexghiti@rivosinc.com> <Zn1StcN3H0r/eHjh@andrea>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <Zn1StcN3H0r/eHjh@andrea>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAJHPhmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMyNT3eyk0sycFN2CxOTcxDzdgux03SSTNAvzVEPLFANjMyWgvoKi1LT
+ MCrCZ0bG1tQCMimmUYwAAAA==
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Cc: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
+ linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720111006; l=5131;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=31GGUpmsfkVr21LcPtsZRWSs4jts+3kNoJ70mCIHSO0=;
+ b=xDpRl3Q9UNV9jP51K5Zynufad+jJYYMhZgczlxr+C+AssCZoHmzAq0PQzaye7kmNrlB5VLSyJ
+ hhUZAqZwtbnDfPQ97wY+LQGbdkxkC9fAO964XYEGMVepAPFlx61e5XZ
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
+pacman is the package manager used by Arch Linux and its derivates.
+Creating native packages from the kernel tree has multiple advantages:
 
-On 27/06/2024 13:53, Andrea Parri wrote:
->> -#define __arch_cmpxchg_masked(sc_sfx, prepend, append, r, p, o, n)	\
->> +#define __arch_cmpxchg_masked(sc_sfx, cas_sfx, prepend, append, r, p, o, n)	\
->>   ({									\
->> +	__label__ no_zacas, zabha, end;					\
->> +									\
->> +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA)) {			\
->> +		asm goto(ALTERNATIVE("j %[no_zacas]", "nop", 0,		\
->> +				     RISCV_ISA_EXT_ZACAS, 1)		\
->> +			 : : : : no_zacas);				\
->> +		asm goto(ALTERNATIVE("nop", "j %[zabha]", 0,		\
->> +				     RISCV_ISA_EXT_ZABHA, 1)		\
->> +			 : : : : zabha);				\
->> +	}								\
->> +									\
->> +no_zacas:;								\
->>   	u32 *__ptr32b = (u32 *)((ulong)(p) & ~0x3);			\
->>   	ulong __s = ((ulong)(p) & (0x4 - sizeof(*p))) * BITS_PER_BYTE;	\
->>   	ulong __mask = GENMASK(((sizeof(*p)) * BITS_PER_BYTE) - 1, 0)	\
->> @@ -133,6 +145,19 @@
->>   		: "memory");						\
->>   									\
->>   	r = (__typeof__(*(p)))((__retx & __mask) >> __s);		\
->> +	goto end;							\
->> +									\
->> +zabha:									\
->> +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA)) {			\
->> +		__asm__ __volatile__ (					\
->> +			prepend						\
->> +			"	amocas" cas_sfx " %0, %z2, %1\n"	\
->> +			append						\
->> +			: "+&r" (r), "+A" (*(p))			\
->> +			: "rJ" (n)					\
->> +			: "memory");					\
->> +	}								\
->> +end:;									\
->>   })
-> I admit that I found this all quite difficult to read; IIUC, this is
-> missing an IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) check.
+* The package triggers the correct hooks for initramfs generation and
+  bootloader configuration
+* Uninstallation is complete and also invokes the relevant hooks
+* New UAPI headers can be installed without any manual bookkeeping
 
+The PKGBUILD file is a simplified version of the one used for the
+downstream Arch Linux "linux" package.
+Extra steps that should not be necessary for a development kernel have
+been removed and an UAPI header package has been added.
 
-I'm not sure we need the zacas check here, since we could use a 
-toolchain that supports zabha but not zacas, run this on a zabha/zacas 
-platform and it would work.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ .gitignore               |  6 ++++
+ scripts/Makefile.package | 15 ++++++++++
+ scripts/package/PKGBUILD | 72 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 93 insertions(+)
 
+diff --git a/.gitignore b/.gitignore
+index c59dc60ba62e..7902adf4f7f1 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -92,6 +92,12 @@ modules.order
+ #
+ /tar-install/
+ 
++#
++# pacman files (make pacman-pkg)
++#
++/PKGBUILD
++/pacman/
++
+ #
+ # We don't want to ignore the following even if they are dot-files
+ #
+diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+index bf016af8bf8a..8c0c80f8bec0 100644
+--- a/scripts/Makefile.package
++++ b/scripts/Makefile.package
+@@ -141,6 +141,20 @@ snap-pkg:
+ 	cd $(objtree)/snap && \
+ 	snapcraft --target-arch=$(UTS_MACHINE)
+ 
++# pacman-pkg
++# ---------------------------------------------------------------------------
++
++PHONY += pacman-pkg
++pacman-pkg:
++	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
++	cd $(objtree) && \
++		srctree="$(realpath $(srctree))" \
++		objtree="$(realpath $(objtree))" \
++		BUILDDIR="$(realpath $(objtree))/pacman" \
++		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
++		KBUILD_REVISION="$(shell $(srctree)/init/build-version)" \
++		makepkg
++
+ # dir-pkg tar*-pkg - tarball targets
+ # ---------------------------------------------------------------------------
+ 
+@@ -221,6 +235,7 @@ help:
+ 	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
+ 	@echo '  snap-pkg            - Build only the binary kernel snap package'
+ 	@echo '                        (will connect to external hosts)'
++	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
+ 	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
+ 	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
+ 	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
+diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+new file mode 100644
+index 000000000000..29daf357edc1
+--- /dev/null
++++ b/scripts/package/PKGBUILD
+@@ -0,0 +1,72 @@
++# SPDX-License-Identifier: GPL-2.0-only
++# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
++# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
++
++pkgbase=linux-upstream
++pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
++pkgver="${KERNELRELEASE//-/_}"
++pkgrel="$KBUILD_REVISION"
++pkgdesc='Linux'
++url='https://www.kernel.org/'
++arch=("$UTS_MACHINE")
++options=(!strip)
++license=(GPL-2.0-only)
++
++build() {
++  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++  cd "$objtree"
++
++  ${MAKE} -f "${srctree}/Makefile"
++
++}
++
++package_linux-upstream() {
++  pkgdesc="The $pkgdesc kernel and modules"
++
++  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++  cd "$objtree"
++  local modulesdir="$pkgdir/usr/$MODLIB"
++
++  echo "Installing boot image..."
++  # systemd expects to find the kernel here to allow hibernation
++  # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
++  install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
++
++  # Used by mkinitcpio to name the kernel
++  echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
++
++  echo "Installing modules..."
++  ${MAKE} INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
++    DEPMOD=/doesnt/exist modules_install  # Suppress depmod
++
++  # remove build link
++  rm -f "$modulesdir/build"
++}
++
++package_linux-upstream-headers() {
++  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
++
++  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++  cd "$objtree"
++  local builddir="$pkgdir/usr/$MODLIB/build"
++
++  echo "Installing build files..."
++  "$srctree/scripts/package/install-extmod-build" "$builddir"
++
++  echo "Adding symlink..."
++  mkdir -p "$pkgdir/usr/src"
++  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
++}
++
++package_linux-upstream-api-headers() {
++  pkgdesc="Kernel headers sanitized for use in userspace"
++  provides=(linux-api-headers)
++  conflicts=(linux-api-headers)
++
++  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++  cd "$objtree"
++
++  ${MAKE} headers_install INSTALL_HDR_PATH="$pkgdir/usr"
++}
++
++# vim:set ts=8 sts=2 sw=2 et:
 
->    How about adding
-> such a check under the zabha: label (replacing/in place of the second
-> IS_ENABLED(CONFIG_RISCV_ISA_ZABHA) check) and moving the corresponding
-> asm goto statement there, perhaps as follows? (on top of this patch)
+---
+base-commit: 795c58e4c7fc6163d8fb9f2baa86cfe898fa4b19
+change-id: 20240625-kbuild-pacman-pkg-b4f87e19d036
 
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
-If that makes things clearer for you, sure, I can do that.
-
-
->
-> Also, the patch presents the first occurrence of RISCV_ISA_EXT_ZABHA;
-> perhaps worth moving the hwcap/cpufeature changes from patch #6 here?
->
->    Andrea
->
-> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-> index b9a3fdcec919..3c913afec150 100644
-> --- a/arch/riscv/include/asm/cmpxchg.h
-> +++ b/arch/riscv/include/asm/cmpxchg.h
-> @@ -110,15 +110,12 @@
->   	__label__ no_zacas, zabha, end;					\
->   									\
->   	if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA)) {			\
-> -		asm goto(ALTERNATIVE("j %[no_zacas]", "nop", 0,		\
-> -				     RISCV_ISA_EXT_ZACAS, 1)		\
-> -			 : : : : no_zacas);				\
->   		asm goto(ALTERNATIVE("nop", "j %[zabha]", 0,		\
->   				     RISCV_ISA_EXT_ZABHA, 1)		\
->   			 : : : : zabha);				\
->   	}								\
->   									\
-> -no_zacas:;								\
-> +no_zacas:								\
->   	u32 *__ptr32b = (u32 *)((ulong)(p) & ~0x3);			\
->   	ulong __s = ((ulong)(p) & (0x4 - sizeof(*p))) * BITS_PER_BYTE;	\
->   	ulong __mask = GENMASK(((sizeof(*p)) * BITS_PER_BYTE) - 1, 0)	\
-> @@ -148,16 +145,20 @@ no_zacas:;								\
->   	goto end;							\
->   									\
->   zabha:									\
-> -	if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA)) {			\
-
-
-But we need to keep this check, otherwise it would fail to compile on 
-toolchains without Zabha support.
-
-
-> -		__asm__ __volatile__ (					\
-> -			prepend						\
-> -			"	amocas" cas_sfx " %0, %z2, %1\n"	\
-> -			append						\
-> -			: "+&r" (r), "+A" (*(p))			\
-> -			: "rJ" (n)					\
-> -			: "memory");					\
-> +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZAZAS)) {			\
-> +		asm goto(ALTERNATIVE("j %[no_zacas]", "nop", 0,		\
-> +				     RISCV_ISA_EXT_ZACAS, 1)		\
-> +			 : : : : no_zacas);				\
->   	}								\
-> -end:;									\
-> +									\
-> +	__asm__ __volatile__ (						\
-> +		prepend							\
-> +		"	amocas" cas_sfx " %0, %z2, %1\n"		\
-> +		append							\
-> +		: "+&r" (r), "+A" (*(p))				\
-> +		: "rJ" (n)						\
-> +		: "memory");						\
-> +end:									\
->   })
->   
->   #define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o, n)	\
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
