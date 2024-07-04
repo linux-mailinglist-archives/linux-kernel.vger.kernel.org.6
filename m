@@ -1,110 +1,274 @@
-Return-Path: <linux-kernel+bounces-241590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9205927CEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:19:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E512927CF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 260941C21F34
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:19:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B614928454E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647A58287F;
-	Thu,  4 Jul 2024 18:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A9773476;
+	Thu,  4 Jul 2024 18:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="GIyWfvOs"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcvIG2yv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5801562171;
-	Thu,  4 Jul 2024 18:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CD049637;
+	Thu,  4 Jul 2024 18:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720117177; cv=none; b=EzctsGhFPrKoPQdyEk39CIwPQse2Sg77X4MQc/7wUiyvIRCnMNy0JA+JF+LBtpVzr2XQ2Evh9jUjrDbfFLnNi4+Iy2MzMXiNZNJo74kMV+VKuOQwXddb9BT5jQHtGnoOmVeK7S9zCKWgB/0y2Wo65BON4oVFzhXeQoiEda8FTB8=
+	t=1720117278; cv=none; b=E+CmPMu06lPITy4bbayG11IxvIbdBpR9zabxPknwKVs0KxF09EsYB/zNbl/tihY61oDzQ2bpqKe5+546ZbUAxK7l5yM4kzmgmcXhNYvJt5vFInreSSr9J7N2PNgetzcjDJ7MHaEnyCBQfRBEKcURFwfbesjtSTD7GKANhqjd7+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720117177; c=relaxed/simple;
-	bh=pWtII7theaktCzlZ4eN742XXnIUqYR3Cg5v7uSpJRNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OJrFI491InUFrMYnGFYsPDAV87/3Ozru4vvUdCrICpGyCQAlWu+IV2rV+Q9hrZY8ONQVVgrPdqhfj28PUKmP0pU+iz/Etr3+T6SSaCLvwbmTIyX5xTZ0nO0uxfM4uqlAgt6cViWHPlR0QOlz9yYOh62DWv72mIMHc5WjeBPylAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=GIyWfvOs; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D6AC420007;
-	Thu,  4 Jul 2024 18:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1720117173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ehU1NmAgichp4m8MzuZQfqjkE5PpzEKSy+xvBxKSSM=;
-	b=GIyWfvOsTGUSv1/hsEaQVUE21GVQxnlG9LLyOmGhlOs7w1X1KeauR8lrmiY2n2Pl/kDnxu
-	SL8ZpoW2YP8tfX/vRHE1nn/qME2Xq17RjKRxcdk1LLZDf1s36vtnQbPg/4Rv3q+G6Epf+t
-	b+rGBRLglsMjoBRhBcguxOkpLIWgsmc6oetK4kfpzzOwHCA0PiknZDyQtvvpz9US6lRADC
-	jp1RSOpkOW04ZsNt2EbLJntTgjVy6rqMrSPjA3gD0aH1TLh+QelkOB/RIFyLQtfCLQiAqE
-	W3ktQqovAEuhBgpIyksbbXE1mCkv/x+ZjhB089n3IDS2eOj4/fSpt7FgEQQwtQ==
-Message-ID: <a57dd43e-0798-4dab-853f-da84a19ee153@arinc9.com>
-Date: Thu, 4 Jul 2024 21:19:28 +0300
+	s=arc-20240116; t=1720117278; c=relaxed/simple;
+	bh=6WEu4OIBexUQMzi2SJjppCDTIMAnxr7vhkDdK0UPQqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TcFgtXRXo2NORiwtRQbhGOMXQbhKzHY85Qsp0uQgjQ31Rt+DUCJoK/C0b3ptgpCMGbk86TYnzrZAcMeaa5h42s72K0bLgZkqUwtPum6508aCwG5C4ADMr+otBoGXZf+66Nk5QHdCVzufE2X0S5IrGlF9tJ5zBeBpWtYDBygbbVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qcvIG2yv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 291ADC3277B;
+	Thu,  4 Jul 2024 18:21:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720117277;
+	bh=6WEu4OIBexUQMzi2SJjppCDTIMAnxr7vhkDdK0UPQqk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qcvIG2yvyuRDjnFk1vRH8pUfrEC+DaWqbxzc2M/5tIjeD6h3wMOpxVt6Pp5ciBBBA
+	 AOpYdEupBTdNxiTi8YXLPPuiEiuuHo9Mr7DXcwEeydVrS7PcrN0EPhEBJqby5fm2Sz
+	 gV0hwaGU+gIbQnjm7r6MdtWRXTYosVdch1FEjafRyBwbTsi6iTdYX0JrdzkijBxtLN
+	 wrNsnwa+zAQzCquqaDyeqLzOXLh0yyzXkehVK1WOu3fM3j2z0OORxDPiZGVtZ0gYCT
+	 vAIf9+0qF7qqhuu7hSTSn+ecM+4yaGT989oDjbBMnD4bwdAP6FmYxy5E2ufp9GgVPu
+	 plRgtupbJBB7g==
+Date: Thu, 4 Jul 2024 11:21:15 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH] kbuild: add script and target to generate pacman package
+Message-ID: <20240704182115.GA300903@thelio-3990X>
+References: <20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3] net: dsa: mt7530: fix impossible MDIO address and
- issue warning
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
- Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
- Florian Fainelli <f.fainelli@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Landen Chao <Landen.Chao@mediatek.com>, Frank Wunderlich <linux@fw-web.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- regressions@lists.linux.dev
-References: <7e3fed489c0bbca84a386b1077c61589030ff4ab.1719963228.git.daniel@makrotopia.org>
- <d3ac5584-8e52-46e0-b690-ad5faa1ede61@arinc9.com>
- <20240704172154.opqyrv2mfgbxj7ce@skbuf>
-Content-Language: en-US
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <20240704172154.opqyrv2mfgbxj7ce@skbuf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+In-Reply-To: <20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net>
 
-On 04/07/2024 20:21, Vladimir Oltean wrote:
-> On Wed, Jul 03, 2024 at 10:03:09AM +0300, Arınç ÜNAL wrote:
->> Works on standalone MT7530, MT7621's MCM MT7530, and MT7531. From MT7621's
->> MCM MT7530:
->>
->> [    1.357287] mt7530-mdio mdio-bus:1f: MT7530 adapts as multi-chip module
+Hi Thomas,
+
+On Thu, Jul 04, 2024 at 06:36:34PM +0200, Thomas Weißschuh wrote:
+> pacman is the package manager used by Arch Linux and its derivates.
+> Creating native packages from the kernel tree has multiple advantages:
 > 
-> Why is the device corresponding to the first print located at address 1f,
-> then 0?
-
-Because mdio_device_register() in mt7530_reregister() runs with new_mdiodev
-after dev_warn() runs with mdiodev.
-
+> * The package triggers the correct hooks for initramfs generation and
+>   bootloader configuration
+> * Uninstallation is complete and also invokes the relevant hooks
+> * New UAPI headers can be installed without any manual bookkeeping
 > 
->> [    1.364065] mt7530-mdio mdio-bus:00: [Firmware Warn]: impossible switch MDIO address in device tree, assuming 31
->> [    1.374303] mt7530-mdio mdio-bus:00: probe with driver mt7530-mdio failed with error -14
->> [...]
->> [    1.448370] mt7530-mdio mdio-bus:1f: MT7530 adapts as multi-chip module
->> [    1.477676] mt7530-mdio mdio-bus:1f: configuring for fixed/rgmii link mode
->> [    1.485687] mt7530-mdio mdio-bus:1f: Link is Up - 1Gbps/Full - flow control rx/tx
->> [    1.493480] mt7530-mdio mdio-bus:1f: configuring for fixed/trgmii link mode
->> [    1.502680] mt7530-mdio mdio-bus:1f lan1 (uninitialized): PHY [mt7530-0:00] driver [MediaTek MT7530 PHY] (irq=17)
->> [    1.513620] mt7530-mdio mdio-bus:1f: Link is Up - 1Gbps/Full - flow control rx/tx
->> [    1.519671] mt7530-mdio mdio-bus:1f lan2 (uninitialized): PHY [mt7530-0:01] driver [MediaTek MT7530 PHY] (irq=18)
->> [    1.533072] mt7530-mdio mdio-bus:1f lan3 (uninitialized): PHY [mt7530-0:02] driver [MediaTek MT7530 PHY] (irq=19)
->> [    1.545042] mt7530-mdio mdio-bus:1f lan4 (uninitialized): PHY [mt7530-0:03] driver [MediaTek MT7530 PHY] (irq=20)
->> [    1.557031] mt7530-mdio mdio-bus:1f wan (uninitialized): PHY [mt7530-0:04] driver [MediaTek MT7530 PHY] (irq=21)
+> The PKGBUILD file is a simplified version of the one used for the
+> downstream Arch Linux "linux" package.
+> Extra steps that should not be necessary for a development kernel have
+> been removed and an UAPI header package has been added.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 
-Arınç
+This is pretty awesome and much needed I think, it would allow me to
+replace my own home grown "build an Arch Linux kernel package" script.
+It should also make it much easier for users of Arch Linux and related
+distributions to build and test mainline kernels for issue reproduction
+and bisecting, which is one of the biggest hurdles I have encountered
+when it comes to working with those users.
+
+The resulting package that I get boots in my virtual machine (I can't
+take down my workstation at the moment).
+
+I notice one warning during the build phase that appears to come from makepkg
+itself? The permissions of the pkg folder are execute only. This is building
+using O=, I haven't had much time to look into it aside from that.
+
+  $ make -skj"$(nproc)" ARCH=x86_64 LLVM=1 O=... olddefconfig pacman-pkg
+  ==> Making package: linux-upstream 6.10.0_rc6_00051_g1dfe225e9af5_dirty-1 (Thu 04 Jul 2024 10:02:14 AM MST)
+  ==> Checking runtime dependencies...
+  ==> Checking buildtime dependencies...
+  ==> Retrieving sources...
+  ==> Extracting sources...
+  ==> Starting build()...
+  find: ‘./pacman/linux-upstream/pkg’: Permission denied
+  ...
+
+  $ ls -al .../pacman/linux-upstream
+  total 16
+  drwxr-xr-x 4 nathan nathan 4096 Jul  4 10:02 .
+  drwxr-xr-x 3 nathan nathan 4096 Jul  4 10:02 ..
+  d--x--x--x 2 nathan nathan 4096 Jul  4 10:02 pkg
+  drwxr-xr-x 2 nathan nathan 4096 Jul  4 10:02 src
+
+Not a big deal to me though, it's only a warning.
+
+> ---
+>  .gitignore               |  6 ++++
+>  scripts/Makefile.package | 15 ++++++++++
+>  scripts/package/PKGBUILD | 72 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 93 insertions(+)
+> 
+> diff --git a/.gitignore b/.gitignore
+> index c59dc60ba62e..7902adf4f7f1 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -92,6 +92,12 @@ modules.order
+>  #
+>  /tar-install/
+>  
+> +#
+> +# pacman files (make pacman-pkg)
+> +#
+> +/PKGBUILD
+> +/pacman/
+> +
+>  #
+>  # We don't want to ignore the following even if they are dot-files
+>  #
+> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> index bf016af8bf8a..8c0c80f8bec0 100644
+> --- a/scripts/Makefile.package
+> +++ b/scripts/Makefile.package
+> @@ -141,6 +141,20 @@ snap-pkg:
+>  	cd $(objtree)/snap && \
+>  	snapcraft --target-arch=$(UTS_MACHINE)
+>  
+> +# pacman-pkg
+> +# ---------------------------------------------------------------------------
+> +
+> +PHONY += pacman-pkg
+> +pacman-pkg:
+> +	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+> +	cd $(objtree) && \
+> +		srctree="$(realpath $(srctree))" \
+> +		objtree="$(realpath $(objtree))" \
+> +		BUILDDIR="$(realpath $(objtree))/pacman" \
+> +		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
+> +		KBUILD_REVISION="$(shell $(srctree)/init/build-version)" \
+> +		makepkg
+> +
+>  # dir-pkg tar*-pkg - tarball targets
+>  # ---------------------------------------------------------------------------
+>  
+> @@ -221,6 +235,7 @@ help:
+>  	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
+>  	@echo '  snap-pkg            - Build only the binary kernel snap package'
+>  	@echo '                        (will connect to external hosts)'
+> +	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
+>  	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
+>  	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
+>  	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> new file mode 100644
+> index 000000000000..29daf357edc1
+> --- /dev/null
+> +++ b/scripts/package/PKGBUILD
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
+> +
+> +pkgbase=linux-upstream
+> +pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
+> +pkgver="${KERNELRELEASE//-/_}"
+> +pkgrel="$KBUILD_REVISION"
+> +pkgdesc='Linux'
+> +url='https://www.kernel.org/'
+> +arch=("$UTS_MACHINE")
+> +options=(!strip)
+> +license=(GPL-2.0-only)
+> +
+> +build() {
+> +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> +  cd "$objtree"
+> +
+> +  ${MAKE} -f "${srctree}/Makefile"
+> +
+> +}
+> +
+> +package_linux-upstream() {
+> +  pkgdesc="The $pkgdesc kernel and modules"
+> +
+> +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> +  cd "$objtree"
+> +  local modulesdir="$pkgdir/usr/$MODLIB"
+> +
+> +  echo "Installing boot image..."
+> +  # systemd expects to find the kernel here to allow hibernation
+> +  # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
+> +  install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
+
+should this be ${MAKE}? I suppose it does not really matter much.
+
+Would it be worth copying the .config and System.map to $modulesdir like
+kernel.spec here as well? I know that upstream does not do this, as it
+enables IKCONFIG in /proc but it would be potentially useful in certain
+scenarios.
+
+One other minor suggestion would be installing the dtbs somewhere if
+the architecture supports them, maybe to $modulesdir/dtbs? Not super
+critical but I know Arch Linux Ports is gaining traction, so it might be
+good to future proof this a little bit.
+
+> +  # Used by mkinitcpio to name the kernel
+> +  echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
+> +
+> +  echo "Installing modules..."
+> +  ${MAKE} INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+> +    DEPMOD=/doesnt/exist modules_install  # Suppress depmod
+> +
+> +  # remove build link
+
+Perhaps it is worth mentioning that this is done because it will be
+created again/properly in the headers package?
+
+> +  rm -f "$modulesdir/build"
+> +}
+> +
+> +package_linux-upstream-headers() {
+> +  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
+> +
+> +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> +  cd "$objtree"
+> +  local builddir="$pkgdir/usr/$MODLIB/build"
+> +
+> +  echo "Installing build files..."
+> +  "$srctree/scripts/package/install-extmod-build" "$builddir"
+> +
+> +  echo "Adding symlink..."
+> +  mkdir -p "$pkgdir/usr/src"
+> +  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
+> +}
+> +
+> +package_linux-upstream-api-headers() {
+> +  pkgdesc="Kernel headers sanitized for use in userspace"
+> +  provides=(linux-api-headers)
+> +  conflicts=(linux-api-headers)
+> +
+> +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> +  cd "$objtree"
+> +
+> +  ${MAKE} headers_install INSTALL_HDR_PATH="$pkgdir/usr"
+> +}
+> +
+> +# vim:set ts=8 sts=2 sw=2 et:
+> 
+> ---
+> base-commit: 795c58e4c7fc6163d8fb9f2baa86cfe898fa4b19
+> change-id: 20240625-kbuild-pacman-pkg-b4f87e19d036
+> 
+> Best regards,
+> -- 
+> Thomas Weißschuh <linux@weissschuh.net>
+> 
 
