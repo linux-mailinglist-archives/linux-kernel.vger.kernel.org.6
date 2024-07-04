@@ -1,62 +1,73 @@
-Return-Path: <linux-kernel+bounces-240373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700F8926CF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:15:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B796F926D0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3569C28416E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E0A12841D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEB69461;
-	Thu,  4 Jul 2024 01:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693EC4C6E;
+	Thu,  4 Jul 2024 01:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fVqzWQAk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="tN6ogvuf"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2587BD2FF
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E3C4C92
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720055693; cv=none; b=LG+ny+8La7F/VRvkUBkkIA8vVRUjK34hO3ccNoehrghb9ID/L1AzVV3fM2jSbDcTZEelMz3OVxWuCWheE7vhNCqHpJiOmineLnlf8WoZUqZ15+qBT5M2Xod0w4JT+u2ezAAUbDznJuuqTTY03/CTX9iEdrESTFO/e9Et4I2TmYk=
+	t=1720055855; cv=none; b=MnNP85odZKW5IPDcVPtlD7JRJTqLalAcljBRZ8BsnfqWKvM+6Us56tolGQ68X4b/ouLUcsN5dXPAH2hG2ezZaMdlOA6bUcaMsEbVCT0XEDsKqtOUs0N/waCgHYoJTknMi8BWHYBOt+6hrLY7zi0q9LezXV0jo8VvdXsctejP4/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720055693; c=relaxed/simple;
-	bh=B23C3TKWnVzvDysg3RcVZDOhd0lm/LDvBPga9YohyDk=;
+	s=arc-20240116; t=1720055855; c=relaxed/simple;
+	bh=ZW9c+7cThg76Bpjh2CuTSsgjuNHvCSmp6oKxpWYNNjs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=knmRQXTDqdNy2Iy/otoZvzcFeUfwArUgHNo/aucV89S8sOrOANpC33FeSeCKCB9pZCatR0gavLE75LgQxZAhiDT0n96Igac2AN3dqSSClnj4HR2rCORJrw5wf+JZJoL7Z85cWq86ypmv3xExvgRCZF4eq/IJdghJysOLC3eE+4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fVqzWQAk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720055691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/8RMfWJwFDkET+gxtH7rr9d29nRTeO240HVdwdgkVS0=;
-	b=fVqzWQAkhPdfBiOMEgDgh858LbC+FTCTyQbH43BoZpQmHNxx2oRxK9tUO65LmHfow6a173
-	m/u1DoigZ7an5Ryb0z8UerMcgO7oBuLOQa3AkSqN+70ENUvDcq1lwdhF1d0O94IXkoNWDL
-	qSsTbqVbRZIaVXVvN4JlG71D8PrAcRY=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-467-gNgNiRW-Numj8cs-3h_jYg-1; Wed,
- 03 Jul 2024 21:14:47 -0400
-X-MC-Unique: gNgNiRW-Numj8cs-3h_jYg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D465A1956077;
-	Thu,  4 Jul 2024 01:14:45 +0000 (UTC)
-Received: from [10.22.16.16] (unknown [10.22.16.16])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 525661954B0D;
-	Thu,  4 Jul 2024 01:14:43 +0000 (UTC)
-Message-ID: <55c508cf-9bc0-49a5-a286-8a9f3ff55220@redhat.com>
-Date: Wed, 3 Jul 2024 21:14:43 -0400
+	 In-Reply-To:Content-Type; b=bmy00nqjBLnWEEVf8dHoGY64TJ67xEO2YJr6tvt8ZmbktKfXwA2MWYuAxE8W1WQJuc8LA8lhg+R+wOU0xm83FhXN94TsxuB+D5VfvtiJuRuE0ELEggVALeKA+sC87/OJh77mp8TH32hXAp3pIEholM3nEg7kxGfj+OZGW33aUnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=tN6ogvuf; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7066f68e22cso114720b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2024 18:17:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720055852; x=1720660652; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GchNVzqdAV7cGwozEZB1uJZyrUjxQFj7IMhO/rcOGNo=;
+        b=tN6ogvuf2sOyVsyVEVqis3efVcfyFS/VDlJK8nsuW9B9YhL0tOvUSj6K0Dvd2tVj02
+         KdliQWXYFtAaEzH2AqOTJqwoII2MkccqxyNaWbcnrfwVRYlPZEZDgSvocVC5fCWuh9HC
+         nmdLlXxOUo5N98kOdxmRd3Urdsc+7M/32LtB3V0SStrgZk38yiyRxIRNhzxeWTRsFPQK
+         14OaIqJVnwJaK/vi9nVHkfvTsplTj4c4WcCaMqEC5Ez3vp8FncZmY32uCj4VL+Xfa8oE
+         6r74DrOnSPyCoSgBR638Cz+15UNedTuOQdVDrr91DXcXu2VTwhpjiz6pY9AXeI5xcPbd
+         BLPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720055852; x=1720660652;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GchNVzqdAV7cGwozEZB1uJZyrUjxQFj7IMhO/rcOGNo=;
+        b=TMzl/kr3cV49G93VOJYB8+M+FZlcNeeCLo252VXumoJ5G5TA+UeF7/Q8bL1gszteph
+         IlM3NLAWbF8rYD3lS7lrOXYgzWBW4NYWTEc1y6W37eIJfPgBL4uDGZROYCTvcqMHq3hr
+         KzjY8mDbvayOMWZckap5vKu0T0dL5rdtFrd5k78BwhW+uOXP0hj7Xe2l/COiWF++LAEX
+         IrZU74UZGM26ckgHVWjhZTkRt6+7Nep867AOLY2PYY0g8+HK9yxp8sbNrSV8iHI7DA8U
+         1A9dMiFp/hWQkqW5TZqHz7EEYif8ZdbDlR3shurVi60JVqPs+0TPvkJMXmOYs80n0Baz
+         zz8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVLxDrRaweHIQ8tSkWjplJILPcOlUR6l5qzvLwXr6uAUUFbg77hjQoCS4YpOrMcUNWYXeRCes+2G/pDE5cWmkGOyA9aR35tBhTWg7MH
+X-Gm-Message-State: AOJu0YympQFk2DI0UxC0tWALScKYGs1WHuRadG6+rXxthF6IJpRsQZnf
+	RZSYwEtOnjHPp/tsA/3fkY+8hn2vxxFYPCtzPW7xVCcuxFU+c4g7pjiAyJDF4W8=
+X-Google-Smtp-Source: AGHT+IHflovwLox+gYizsFOo0FroOFPwG2pwz/xDQSoy/LpWJ0Zxv9lGfHmEtY3ULUx+cEJpcQZ4FQ==
+X-Received: by 2002:a05:6a20:6a22:b0:1c0:bd6c:aabe with SMTP id adf61e73a8af0-1c0cc742239mr132519637.14.1720055851937;
+        Wed, 03 Jul 2024 18:17:31 -0700 (PDT)
+Received: from [10.4.10.38] (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a992c43sm180077a91.30.2024.07.03.18.17.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 18:17:31 -0700 (PDT)
+Message-ID: <dd619ad4-86f4-4ddd-be16-fbbaa197d551@rivosinc.com>
+Date: Wed, 3 Jul 2024 21:17:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,108 +75,472 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 -next] cgroup/rstat: add force idle show helper
-To: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240704005007.1400414-1-chenridong@huawei.com>
+Subject: Re: [PATCH v3 08/11] riscv: dts: add initial SpacemiT K1 SoC device
+ tree
+To: Yixun Lan <dlan@gentoo.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Samuel Holland <samuel.holland@sifive.com>, Anup Patel
+ <anup@brainfault.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yangyu Chen <cyy@cyyself.name>, Inochi Amaoto <inochiama@outlook.com>,
+ linux-serial@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Meng Zhang <zhangmeng.kevin@spacemit.com>
+References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
+ <20240703-k1-01-basic-dt-v3-8-12f73b47461e@gentoo.org>
 Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240704005007.1400414-1-chenridong@huawei.com>
+From: Jesse Taube <jesse@rivosinc.com>
+In-Reply-To: <20240703-k1-01-basic-dt-v3-8-12f73b47461e@gentoo.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-
-On 7/3/24 20:50, Chen Ridong wrote:
-> In the function cgroup_base_stat_cputime_show, there are five
-> instances of #ifdef, which makes the code not concise.
-> To address this, add the function cgroup_force_idle_show
-> to make the code more succinct.
->
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+On 7/3/24 10:55, Yixun Lan wrote:
+> From: Yangyu Chen <cyy@cyyself.name>
+> 
+> Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
+> 
+> Key features:
+> - 4 cores per cluster, 2 clusters on chip
+> - UART IP is Intel XScale UART
+> 
+> Some key considerations:
+> - ISA string is inferred from vendor documentation[2]
+> - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
+> - No coherent DMA on this board
+>      Inferred by taking vendor ethernet and MMC drivers to the mainline
+>      kernel. Without dma-noncoherent in soc node, the driver fails.
+> - No cache nodes now
+>      The parameters from vendor dts are likely to be wrong. It has 512
+>      sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
+>      When the size of the cache line is 64B, it is a directly mapped
+>      cache rather than a set-associative cache, the latter is commonly
+>      used. Thus, I didn't use the parameters from vendor dts.
+> 
+> Currently only support booting into console with only uart, other
+> features will be added soon later.
+> 
+> Link: https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1_datasheet [1]
+> Link: https://developer.spacemit.com/#/documentation?token=BWbGwbx7liGW21kq9lucSA6Vnpb [2]
+> Link: https://gitee.com/bianbu-linux/linux-6.1/blob/bl-v1.0.y/arch/riscv/boot/dts/spacemit/k1-x.dtsi [3]
+> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
 > ---
->   kernel/cgroup/rstat.c | 36 ++++++++++++++++--------------------
->   1 file changed, 16 insertions(+), 20 deletions(-)
->
-> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-> index fb8b49437573..1568558e36e5 100644
-> --- a/kernel/cgroup/rstat.c
-> +++ b/kernel/cgroup/rstat.c
-> @@ -594,49 +594,45 @@ static void root_cgroup_cputime(struct cgroup_base_stat *bstat)
->   	}
->   }
->   
+>   arch/riscv/boot/dts/spacemit/k1.dtsi | 376 +++++++++++++++++++++++++++++++++++
+>   1 file changed, 376 insertions(+)
+> 
+> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> new file mode 100644
+> index 0000000000000..a076e35855a2e
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> @@ -0,0 +1,376 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +/*
+> + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
+> + */
 > +
-> +static void cgroup_force_idle_show(struct seq_file *seq, struct cgroup_base_stat *bstat)
-> +{
-> +#ifdef CONFIG_SCHED_CORE
-> +	u64 forceidle_time = bstat->forceidle_sum;
+> +/dts-v1/;
+> +/ {
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +	model = "SpacemiT K1";
+> +	compatible = "spacemit,k1";
 > +
-> +	do_div(forceidle_time, NSEC_PER_USEC);
-> +	seq_printf(seq, "core_sched.force_idle_usec %llu\n", forceidle_time);
-> +#endif
-> +}
+> +	aliases {
+> +		serial0 = &uart0;
+> +		serial1 = &uart2;
+> +		serial2 = &uart3;
+> +		serial3 = &uart4;
+> +		serial4 = &uart5;
+> +		serial5 = &uart6;
+> +		serial6 = &uart7;
+> +		serial7 = &uart8;
+> +		serial8 = &uart9;
+> +	};
 > +
->   void cgroup_base_stat_cputime_show(struct seq_file *seq)
->   {
->   	struct cgroup *cgrp = seq_css(seq)->cgroup;
->   	u64 usage, utime, stime;
-> -	struct cgroup_base_stat bstat;
-> -#ifdef CONFIG_SCHED_CORE
-> -	u64 forceidle_time;
-> -#endif
->   
->   	if (cgroup_parent(cgrp)) {
->   		cgroup_rstat_flush_hold(cgrp);
->   		usage = cgrp->bstat.cputime.sum_exec_runtime;
->   		cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime,
->   			       &utime, &stime);
-> -#ifdef CONFIG_SCHED_CORE
-> -		forceidle_time = cgrp->bstat.forceidle_sum;
-> -#endif
->   		cgroup_rstat_flush_release(cgrp);
->   	} else {
-> -		root_cgroup_cputime(&bstat);
-> -		usage = bstat.cputime.sum_exec_runtime;
-> -		utime = bstat.cputime.utime;
-> -		stime = bstat.cputime.stime;
-> -#ifdef CONFIG_SCHED_CORE
-> -		forceidle_time = bstat.forceidle_sum;
-> -#endif
-> +		root_cgroup_cputime(&cgrp->bstat);
-> +		usage = cgrp->bstat.cputime.sum_exec_runtime;
-> +		utime = cgrp->bstat.cputime.utime;
-> +		stime = cgrp->bstat.cputime.stime;
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		timebase-frequency = <24000000>;
+> +
+> +		cpu-map {
+> +			cluster0 {
+> +				core0 {
+> +					cpu = <&cpu_0>;
+> +				};
+> +				core1 {
+> +					cpu = <&cpu_1>;
+> +				};
+> +				core2 {
+> +					cpu = <&cpu_2>;
+> +				};
+> +				core3 {
+> +					cpu = <&cpu_3>;
+> +				};
+> +			};
+> +
+> +			cluster1 {
+> +				core0 {
+> +					cpu = <&cpu_4>;
+> +				};
+> +				core1 {
+> +					cpu = <&cpu_5>;
+> +				};
+> +				core2 {
+> +					cpu = <&cpu_6>;
+> +				};
+> +				core3 {
+> +					cpu = <&cpu_7>;
+> +				};
+> +			};
+> +		};
+> +
+> +		cpu_0: cpu@0 {
+> +			compatible = "spacemit,x60", "riscv";
+> +			device_type = "cpu";
+> +			reg = <0>;
+> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> +			riscv,isa-base = "rv64i";
+> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> +			riscv,cbom-block-size = <64>;
+> +			riscv,cbop-block-size = <64>;
+> +			riscv,cboz-block-size = <64>;
 
-Just a simple comment saying that you are reusing the root cgroup bstat 
-which is otherwise not being used will help readability.
+Is there a reson not to add the I and D cache sizes.
 
-Other than that, the change LGTM.
+			i-cache-block-size = <64>;
+			i-cache-size = <32768>;
+			i-cache-sets = <512>;
+			d-cache-block-size = <64>;
+			d-cache-size = <32768>;
+			d-cache-sets = <512>;
+			next-level-cache = <&cluster0_l2_cache>;
+......
 
-Cheers,
-Longman
+		cluster0_l2_cache: l2-cache0 {
+			compatible = "cache";
+			cache-block-size = <64>;
+			cache-level = <2>;
+			cache-size = <524288>;
+			cache-sets = <1024>;
+			cache-unified;
+		};
 
->   	}
->   
->   	do_div(usage, NSEC_PER_USEC);
->   	do_div(utime, NSEC_PER_USEC);
->   	do_div(stime, NSEC_PER_USEC);
-> -#ifdef CONFIG_SCHED_CORE
-> -	do_div(forceidle_time, NSEC_PER_USEC);
-> -#endif
->   
->   	seq_printf(seq, "usage_usec %llu\n"
->   		   "user_usec %llu\n"
->   		   "system_usec %llu\n",
->   		   usage, utime, stime);
->   
-> -#ifdef CONFIG_SCHED_CORE
-> -	seq_printf(seq, "core_sched.force_idle_usec %llu\n", forceidle_time);
-> -#endif
-> +	cgroup_force_idle_show(seq, &cgrp->bstat);
->   }
->   
->   /* Add bpf kfuncs for cgroup_rstat_updated() and cgroup_rstat_flush() */
+> +			mmu-type = "riscv,sv39";
+> +
+> +			cpu0_intc: interrupt-controller {
+> +				compatible = "riscv,cpu-intc";
+> +				interrupt-controller;
+> +				#interrupt-cells = <1>;
+> +			};
+> +		};
+> +
+> +		cpu_1: cpu@1 {
+> +			compatible = "spacemit,x60", "riscv";
+> +			device_type = "cpu";
+> +			reg = <1>;
+> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> +			riscv,isa-base = "rv64i";
+> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> +			riscv,cbom-block-size = <64>;
+> +			riscv,cbop-block-size = <64>;
+> +			riscv,cboz-block-size = <64>;
+> +			mmu-type = "riscv,sv39";
+> +
+> +			cpu1_intc: interrupt-controller {
+> +				compatible = "riscv,cpu-intc";
+> +				interrupt-controller;
+> +				#interrupt-cells = <1>;
+> +			};
+> +		};
+> +
+> +		cpu_2: cpu@2 {
+> +			compatible = "spacemit,x60", "riscv";
+> +			device_type = "cpu";
+> +			reg = <2>;
+> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> +			riscv,isa-base = "rv64i";
+> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> +			riscv,cbom-block-size = <64>;
+> +			riscv,cbop-block-size = <64>;
+> +			riscv,cboz-block-size = <64>;
+> +			mmu-type = "riscv,sv39";
+> +
+> +			cpu2_intc: interrupt-controller {
+> +				compatible = "riscv,cpu-intc";
+> +				interrupt-controller;
+> +				#interrupt-cells = <1>;
+> +			};
+> +		};
+> +
+> +		cpu_3: cpu@3 {
+> +			compatible = "spacemit,x60", "riscv";
+> +			device_type = "cpu";
+> +			reg = <3>;
+> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> +			riscv,isa-base = "rv64i";
+> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> +			riscv,cbom-block-size = <64>;
+> +			riscv,cbop-block-size = <64>;
+> +			riscv,cboz-block-size = <64>;
+> +			mmu-type = "riscv,sv39";
+> +
+> +			cpu3_intc: interrupt-controller {
+> +				compatible = "riscv,cpu-intc";
+> +				interrupt-controller;
+> +				#interrupt-cells = <1>;
+> +			};
+> +		};
+> +
+> +		cpu_4: cpu@4 {
+> +			compatible = "spacemit,x60", "riscv";
+> +			device_type = "cpu";
+> +			reg = <4>;
+> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> +			riscv,isa-base = "rv64i";
+> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> +			riscv,cbom-block-size = <64>;
+> +			riscv,cbop-block-size = <64>;
+> +			riscv,cboz-block-size = <64>;
+> +			mmu-type = "riscv,sv39";
+> +
+> +			cpu4_intc: interrupt-controller {
+> +				compatible = "riscv,cpu-intc";
+> +				interrupt-controller;
+> +				#interrupt-cells = <1>;
+> +			};
+> +		};
+> +
+> +		cpu_5: cpu@5 {
+> +			compatible = "spacemit,x60", "riscv";
+> +			device_type = "cpu";
+> +			reg = <5>;
+> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> +			riscv,isa-base = "rv64i";
+> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> +			riscv,cbom-block-size = <64>;
+> +			riscv,cbop-block-size = <64>;
+> +			riscv,cboz-block-size = <64>;
+> +			mmu-type = "riscv,sv39";
+> +
+> +			cpu5_intc: interrupt-controller {
+> +				compatible = "riscv,cpu-intc";
+> +				interrupt-controller;
+> +				#interrupt-cells = <1>;
+> +			};
+> +		};
+> +
+> +		cpu_6: cpu@6 {
+> +			compatible = "spacemit,x60", "riscv";
+> +			device_type = "cpu";
+> +			reg = <6>;
+> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> +			riscv,isa-base = "rv64i";
+> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> +			riscv,cbom-block-size = <64>;
+> +			riscv,cbop-block-size = <64>;
+> +			riscv,cboz-block-size = <64>;
+> +			mmu-type = "riscv,sv39";
+> +
+> +			cpu6_intc: interrupt-controller {
+> +				compatible = "riscv,cpu-intc";
+> +				interrupt-controller;
+> +				#interrupt-cells = <1>;
+> +			};
+> +		};
+> +
+> +		cpu_7: cpu@7 {
+> +			compatible = "spacemit,x60", "riscv";
+> +			device_type = "cpu";
+> +			reg = <7>;
+> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> +			riscv,isa-base = "rv64i";
+> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> +			riscv,cbom-block-size = <64>;
+> +			riscv,cbop-block-size = <64>;
+> +			riscv,cboz-block-size = <64>;
+> +			mmu-type = "riscv,sv39";
+> +
+> +			cpu7_intc: interrupt-controller {
+> +				compatible = "riscv,cpu-intc";
+> +				interrupt-controller;
+> +				#interrupt-cells = <1>;
+> +			};
+> +		};
+> +
+> +	};
+> +
+> +	soc {
+> +		compatible = "simple-bus";
+> +		interrupt-parent = <&plic>;
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		dma-noncoherent;
+> +		ranges;
+> +
+> +		uart0: serial@d4017000 {
+> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> +			reg = <0x0 0xd4017000 0x0 0x100>;
+> +			interrupts = <42>;
 
+			interrupt-parent = <&plic>;
+
+Thanks,
+Jesse Taube
+
+> +			clock-frequency = <14857000>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart2: serial@d4017100 {
+> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> +			reg = <0x0 0xd4017100 0x0 0x100>;
+> +			interrupts = <44>;
+> +			clock-frequency = <14857000>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart3: serial@d4017200 {
+> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> +			reg = <0x0 0xd4017200 0x0 0x100>;
+> +			interrupts = <45>;
+> +			clock-frequency = <14857000>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart4: serial@d4017300 {
+> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> +			reg = <0x0 0xd4017300 0x0 0x100>;
+> +			interrupts = <46>;
+> +			clock-frequency = <14857000>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart5: serial@d4017400 {
+> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> +			reg = <0x0 0xd4017400 0x0 0x100>;
+> +			interrupts = <47>;
+> +			clock-frequency = <14857000>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart6: serial@d4017500 {
+> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> +			reg = <0x0 0xd4017500 0x0 0x100>;
+> +			interrupts = <48>;
+> +			clock-frequency = <14857000>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart7: serial@d4017600 {
+> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> +			reg = <0x0 0xd4017600 0x0 0x100>;
+> +			interrupts = <49>;
+> +			clock-frequency = <14857000>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart8: serial@d4017700 {
+> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> +			reg = <0x0 0xd4017700 0x0 0x100>;
+> +			interrupts = <50>;
+> +			clock-frequency = <14857000>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart9: serial@d4017800 {
+> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> +			reg = <0x0 0xd4017800 0x0 0x100>;
+> +			interrupts = <51>;
+> +			clock-frequency = <14857000>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		plic: interrupt-controller@e0000000 {
+> +			compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
+> +			reg = <0x0 0xe0000000 0x0 0x4000000>;
+> +			interrupts-extended = <&cpu0_intc 11>, <&cpu0_intc 9>,
+> +					      <&cpu1_intc 11>, <&cpu1_intc 9>,
+> +					      <&cpu2_intc 11>, <&cpu2_intc 9>,
+> +					      <&cpu3_intc 11>, <&cpu3_intc 9>,
+> +					      <&cpu4_intc 11>, <&cpu4_intc 9>,
+> +					      <&cpu5_intc 11>, <&cpu5_intc 9>,
+> +					      <&cpu6_intc 11>, <&cpu6_intc 9>,
+> +					      <&cpu7_intc 11>, <&cpu7_intc 9>;
+> +			interrupt-controller;
+> +			#address-cells = <0>;
+> +			#interrupt-cells = <1>;
+> +			riscv,ndev = <159>;
+> +		};
+> +
+> +		clint: timer@e4000000 {
+> +			compatible = "spacemit,k1-clint", "sifive,clint0";
+> +			reg = <0x0 0xe4000000 0x0 0x10000>;
+> +			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>,
+> +					      <&cpu1_intc 3>, <&cpu1_intc 7>,
+> +					      <&cpu2_intc 3>, <&cpu2_intc 7>,
+> +					      <&cpu3_intc 3>, <&cpu3_intc 7>,
+> +					      <&cpu4_intc 3>, <&cpu4_intc 7>,
+> +					      <&cpu5_intc 3>, <&cpu5_intc 7>,
+> +					      <&cpu6_intc 3>, <&cpu6_intc 7>,
+> +					      <&cpu7_intc 3>, <&cpu7_intc 7>;
+> +		};
+> +	};
+> +};
+> 
 
