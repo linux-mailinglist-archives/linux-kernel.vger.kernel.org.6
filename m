@@ -1,144 +1,394 @@
-Return-Path: <linux-kernel+bounces-241189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC6D927816
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:18:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A87392786D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF861C20B8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DA661C23550
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1951AEFF0;
-	Thu,  4 Jul 2024 14:18:20 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ADE1AEFEC;
+	Thu,  4 Jul 2024 14:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JclKHbiu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82721AEFDD
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1EF1DA58;
+	Thu,  4 Jul 2024 14:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720102700; cv=none; b=AaEyeN8SLZtWpELtXGY3IScd5qxbn1Yc45LCAeX+XPB3UhpqB1iSCRLtXAm7JiwBIsbhP9UcPASGi08JjYB0Zwgo1QcmTP+nDfXEwsGQDkI6k22T1Jszh3YoqTBhdXtMVChuxLSV3bNhN9WzpKl5fLfrhzWnsKvXJX8gNOS5SS0=
+	t=1720103555; cv=none; b=aaAoY3g/EHs1/4NWD5kuu+dhYwWvm+GYWDsezdwXIJbb1v4qmrDEaTV7Ge9CgaBwu+4elxzr7mNgBoipg5TvdXH485w5hZ1+8O87R0CTZjmikmTaQveycFP8lG8z6nc6Re0Tq9Lu2iz6mE9zm6aSUsnKULsPjqhE4lf4Ds4Q41I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720102700; c=relaxed/simple;
-	bh=1smwYFCQdFQQ+pWuZhmovy2EI8RvSR9Ox32GS+V1Eqs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QB8C7RMPmzQG/HkiiKwDFsQCXMZmyS1xPNfVCGTSz3RP353RPDa17VMZL9KnfodQ8Q3scCScadVeX4YzFTc8XizZc+jWMBv3lcLG2zCaemAyAc3IqTQE6Pp6y+Sfp+4h5RwRl35aLafRGAiWh5VSkFOJ2wa/LdjUYISc9ZZefRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f664993edbso93646439f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 07:18:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720102698; x=1720707498;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OdkZATJ7OGmsuHw198PHVJ2z9yJtklx34ktzk5b34qM=;
-        b=HF5kf1UzPf6HPf6fh0JwpL2LgqxM8cODAGpgNaufaddV6QCbgKG6KBwZAjwQAbgOXp
-         1X2IfSpAdu5a+n5SPavXsiOsPvQyRzprZBNFWn6leUUKsUr0FqZ/0MfWMW1KByEYaOss
-         ShZuTb+4LSqxqDSaecTw9+fffQqHCbCXwjDRHEoHI6afnP35LCkrQMFKSRcnJL9Ry3CJ
-         y2ByKIyR3s4sWIlLgqgaRfqusKKNdLmadm/cDQGcy+sO+XabxK+OOmJ/KenO0zkSQHox
-         lQ21FMPqpdUkOsvb6DktH0D1KVB7b1kexmGs9mlGlHZKL83eMZPRgiEzRmlfzWMSQhUu
-         dmLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwhqWpHXxcCoZXH8c+8SgLPztTz8TIEU1+4y4JVxbEcAeo+SNfRk0wlLOx6dTRZW5W6WB94aXpwTuM9ZmN13dP7p1eQsrjhSb3kc1+
-X-Gm-Message-State: AOJu0YwZ9Mi9t962m5LOKgxFwMp6Z9NCwYqStNW3tuY5CHceKlmxjY1K
-	0e74KJ38Z7o2/gCk7i0ak3ioUffJkKwYnionjYEDLn7HFUHTBZct9Q6vkvDye57zvOETmdIYK7P
-	kaqewQmlkzhamX/9Ij3hExdkGpxkappOV46mXIsxEOnSRoCMFmSHn3kI=
-X-Google-Smtp-Source: AGHT+IHt7B2//ng4CP9pxz/XHbuJQsdbZaMaQQF0GUJZb5OndszSfzXEAxtT8oIGTFDMeWPyXe7aFdP1l7ua6pzOFF3QX5ZxVkEc
+	s=arc-20240116; t=1720103555; c=relaxed/simple;
+	bh=qIIdd4Y2oSY8Kqi9SCeYIA0qIOCeR/Y3ZDNe/1fwS/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fL5J8Zh7gojAQwsRgo52LYf+/9HSUVg9wJY0T4dzJiIE1i9krCZF8LBvyWK7HDuiBB+ZMCVg9uN6NU1WJC23PPGwYsT5/7bLJlEABkTV7K0g0liWzMf3o5Uth1FIpDDFjUKjF76an0ZkJ4Ppva+fZgUNteBn1hwjk9h8vEVAZcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JclKHbiu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72EFBC3277B;
+	Thu,  4 Jul 2024 14:32:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720103555;
+	bh=qIIdd4Y2oSY8Kqi9SCeYIA0qIOCeR/Y3ZDNe/1fwS/Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JclKHbiulTCgPGr8fznFvQ5IC+es8m7ecL4fUPNuet/7E3qRXOrPYbOKvKF1WKXmw
+	 GOJbYUthGWeq+FowyuJokOdkrGPwi2Q328AJZUIfqbEstrCTy/B3uszJzzxQKJsYgd
+	 k3jsCzGYEttELvM72ydv6OGRjDR217kRFiNY6HEpnrdB7GN7gtlgS4TkM2eZZuusX+
+	 Xl7uDcogSiISdbm+99VsBlau3Y4jLT0Bp4W+XnsIz9e6MLJsEsXfKl3auVE6CBAmDb
+	 MA6H+7e2OgmBVis5yxP9P9a+Ca04sAL3f2ThS41cjVpySATHIu4xQty6m9Dx20J7iN
+	 +I7Mkg5/TsB8A==
+Date: Thu, 4 Jul 2024 22:18:26 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yangyu Chen <cyy@cyyself.name>,
+	Inochi Amaoto <inochiama@outlook.com>, linux-serial@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>
+Subject: Re: [PATCH v3 08/11] riscv: dts: add initial SpacemiT K1 SoC device
+ tree
+Message-ID: <ZoavMt1zrVV5Urof@xhacker>
+References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
+ <20240703-k1-01-basic-dt-v3-8-12f73b47461e@gentoo.org>
+ <Zoanxksn0nio4MPg@xhacker>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:24c7:b0:4b9:6c10:36c1 with SMTP id
- 8926c6da1cb9f-4bf60de4273mr218703173.2.1720102698181; Thu, 04 Jul 2024
- 07:18:18 -0700 (PDT)
-Date: Thu, 04 Jul 2024 07:18:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004d74cd061c6c9e68@google.com>
-Subject: [syzbot] [lsm?] [keyrings?] KCSAN: data-race in __se_sys_keyctl /
- key_task_permission (3)
-From: syzbot <syzbot+8c446f45cf5815e9110a@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zoanxksn0nio4MPg@xhacker>
 
-Hello,
+On Thu, Jul 04, 2024 at 09:48:01PM +0800, Jisheng Zhang wrote:
+> On Wed, Jul 03, 2024 at 02:55:11PM +0000, Yixun Lan wrote:
+> > From: Yangyu Chen <cyy@cyyself.name>
+> > 
+> > Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
+> > 
+> > Key features:
+> > - 4 cores per cluster, 2 clusters on chip
+> > - UART IP is Intel XScale UART
+> > 
+> > Some key considerations:
+> > - ISA string is inferred from vendor documentation[2]
+> > - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
+> > - No coherent DMA on this board
+> >     Inferred by taking vendor ethernet and MMC drivers to the mainline
+> >     kernel. Without dma-noncoherent in soc node, the driver fails.
+> > - No cache nodes now
+> >     The parameters from vendor dts are likely to be wrong. It has 512
+> >     sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
+> >     When the size of the cache line is 64B, it is a directly mapped
+> >     cache rather than a set-associative cache, the latter is commonly
+> >     used. Thus, I didn't use the parameters from vendor dts.
+> > 
+> > Currently only support booting into console with only uart, other
+> > features will be added soon later.
+> > 
+> > Link: https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1_datasheet [1]
+> > Link: https://developer.spacemit.com/#/documentation?token=BWbGwbx7liGW21kq9lucSA6Vnpb [2]
+> > Link: https://gitee.com/bianbu-linux/linux-6.1/blob/bl-v1.0.y/arch/riscv/boot/dts/spacemit/k1-x.dtsi [3]
+> > Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> > ---
+> >  arch/riscv/boot/dts/spacemit/k1.dtsi | 376 +++++++++++++++++++++++++++++++++++
+> >  1 file changed, 376 insertions(+)
+> > 
+> > diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > new file mode 100644
+> > index 0000000000000..a076e35855a2e
+> > --- /dev/null
+> > +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > @@ -0,0 +1,376 @@
+> > +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> > +/*
+> > + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
+> > + */
+> > +
+> > +/dts-v1/;
+> > +/ {
+> > +	#address-cells = <2>;
+> > +	#size-cells = <2>;
+> > +	model = "SpacemiT K1";
+> > +	compatible = "spacemit,k1";
+> > +
+> > +	aliases {
+> > +		serial0 = &uart0;
+> > +		serial1 = &uart2;
+> > +		serial2 = &uart3;
+> > +		serial3 = &uart4;
+> > +		serial4 = &uart5;
+> > +		serial5 = &uart6;
+> > +		serial6 = &uart7;
+> > +		serial7 = &uart8;
+> > +		serial8 = &uart9;
+> > +	};
+> > +
+> > +	cpus {
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> > +		timebase-frequency = <24000000>;
+> > +
+> > +		cpu-map {
+> > +			cluster0 {
+> > +				core0 {
+> > +					cpu = <&cpu_0>;
+> > +				};
+> > +				core1 {
+> > +					cpu = <&cpu_1>;
+> > +				};
+> > +				core2 {
+> > +					cpu = <&cpu_2>;
+> > +				};
+> > +				core3 {
+> > +					cpu = <&cpu_3>;
+> > +				};
+> > +			};
+> > +
+> > +			cluster1 {
+> > +				core0 {
+> > +					cpu = <&cpu_4>;
+> > +				};
+> > +				core1 {
+> > +					cpu = <&cpu_5>;
+> > +				};
+> > +				core2 {
+> > +					cpu = <&cpu_6>;
+> > +				};
+> > +				core3 {
+> > +					cpu = <&cpu_7>;
+> > +				};
+> > +			};
+> > +		};
+> > +
+> > +		cpu_0: cpu@0 {
+> > +			compatible = "spacemit,x60", "riscv";
+> > +			device_type = "cpu";
+> > +			reg = <0>;
+> > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> > +			riscv,isa-base = "rv64i";
+> > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> > +			riscv,cbom-block-size = <64>;
+> > +			riscv,cbop-block-size = <64>;
+> > +			riscv,cboz-block-size = <64>;
+> > +			mmu-type = "riscv,sv39";
+> > +
+> > +			cpu0_intc: interrupt-controller {
+> > +				compatible = "riscv,cpu-intc";
+> > +				interrupt-controller;
+> > +				#interrupt-cells = <1>;
+> > +			};
+> > +		};
+> > +
+> > +		cpu_1: cpu@1 {
+> > +			compatible = "spacemit,x60", "riscv";
+> > +			device_type = "cpu";
+> > +			reg = <1>;
+> > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> > +			riscv,isa-base = "rv64i";
+> > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> > +			riscv,cbom-block-size = <64>;
+> > +			riscv,cbop-block-size = <64>;
+> > +			riscv,cboz-block-size = <64>;
+> > +			mmu-type = "riscv,sv39";
+> > +
+> > +			cpu1_intc: interrupt-controller {
+> > +				compatible = "riscv,cpu-intc";
+> > +				interrupt-controller;
+> > +				#interrupt-cells = <1>;
+> > +			};
+> > +		};
+> > +
+> > +		cpu_2: cpu@2 {
+> > +			compatible = "spacemit,x60", "riscv";
+> > +			device_type = "cpu";
+> > +			reg = <2>;
+> > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> > +			riscv,isa-base = "rv64i";
+> > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> > +			riscv,cbom-block-size = <64>;
+> > +			riscv,cbop-block-size = <64>;
+> > +			riscv,cboz-block-size = <64>;
+> > +			mmu-type = "riscv,sv39";
+> > +
+> > +			cpu2_intc: interrupt-controller {
+> > +				compatible = "riscv,cpu-intc";
+> > +				interrupt-controller;
+> > +				#interrupt-cells = <1>;
+> > +			};
+> > +		};
+> > +
+> > +		cpu_3: cpu@3 {
+> > +			compatible = "spacemit,x60", "riscv";
+> > +			device_type = "cpu";
+> > +			reg = <3>;
+> > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> > +			riscv,isa-base = "rv64i";
+> > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> > +			riscv,cbom-block-size = <64>;
+> > +			riscv,cbop-block-size = <64>;
+> > +			riscv,cboz-block-size = <64>;
+> > +			mmu-type = "riscv,sv39";
+> > +
+> > +			cpu3_intc: interrupt-controller {
+> > +				compatible = "riscv,cpu-intc";
+> > +				interrupt-controller;
+> > +				#interrupt-cells = <1>;
+> > +			};
+> > +		};
+> > +
+> > +		cpu_4: cpu@4 {
+> > +			compatible = "spacemit,x60", "riscv";
+> > +			device_type = "cpu";
+> > +			reg = <4>;
+> > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> > +			riscv,isa-base = "rv64i";
+> > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> > +			riscv,cbom-block-size = <64>;
+> > +			riscv,cbop-block-size = <64>;
+> > +			riscv,cboz-block-size = <64>;
+> > +			mmu-type = "riscv,sv39";
+> > +
+> > +			cpu4_intc: interrupt-controller {
+> > +				compatible = "riscv,cpu-intc";
+> > +				interrupt-controller;
+> > +				#interrupt-cells = <1>;
+> > +			};
+> > +		};
+> > +
+> > +		cpu_5: cpu@5 {
+> > +			compatible = "spacemit,x60", "riscv";
+> > +			device_type = "cpu";
+> > +			reg = <5>;
+> > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> > +			riscv,isa-base = "rv64i";
+> > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> > +			riscv,cbom-block-size = <64>;
+> > +			riscv,cbop-block-size = <64>;
+> > +			riscv,cboz-block-size = <64>;
+> > +			mmu-type = "riscv,sv39";
+> > +
+> > +			cpu5_intc: interrupt-controller {
+> > +				compatible = "riscv,cpu-intc";
+> > +				interrupt-controller;
+> > +				#interrupt-cells = <1>;
+> > +			};
+> > +		};
+> > +
+> > +		cpu_6: cpu@6 {
+> > +			compatible = "spacemit,x60", "riscv";
+> > +			device_type = "cpu";
+> > +			reg = <6>;
+> > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> > +			riscv,isa-base = "rv64i";
+> > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> > +			riscv,cbom-block-size = <64>;
+> > +			riscv,cbop-block-size = <64>;
+> > +			riscv,cboz-block-size = <64>;
+> > +			mmu-type = "riscv,sv39";
+> > +
+> > +			cpu6_intc: interrupt-controller {
+> > +				compatible = "riscv,cpu-intc";
+> > +				interrupt-controller;
+> > +				#interrupt-cells = <1>;
+> > +			};
+> > +		};
+> > +
+> > +		cpu_7: cpu@7 {
+> > +			compatible = "spacemit,x60", "riscv";
+> > +			device_type = "cpu";
+> > +			reg = <7>;
+> > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
+> > +			riscv,isa-base = "rv64i";
+> > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
+> > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
+> > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
+> > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
+> > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
+> > +			riscv,cbom-block-size = <64>;
+> > +			riscv,cbop-block-size = <64>;
+> > +			riscv,cboz-block-size = <64>;
+> > +			mmu-type = "riscv,sv39";
+> > +
+> > +			cpu7_intc: interrupt-controller {
+> > +				compatible = "riscv,cpu-intc";
+> > +				interrupt-controller;
+> > +				#interrupt-cells = <1>;
+> > +			};
+> > +		};
+> > +
+> > +	};
+> > +
+> > +	soc {
+> > +		compatible = "simple-bus";
+> > +		interrupt-parent = <&plic>;
+> > +		#address-cells = <2>;
+> > +		#size-cells = <2>;
+> > +		dma-noncoherent;
+> > +		ranges;
+> > +
+> > +		uart0: serial@d4017000 {
+> > +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> 
+> no, this is not a correct hw modeling.
 
-syzbot found the following issue on:
+Vendor's linux kernel source code also clearly indicates the FIFO size
+is 64B.
 
-HEAD commit:    8a9c6c40432e Merge tag 'io_uring-6.10-20240703' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=113817ae980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5b9537cd00be479e
-dashboard link: https://syzkaller.appspot.com/bug?extid=8c446f45cf5815e9110a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> IIRC, 8250_pxa is a xscale uart with 64 bytes FIFO, so this should be
+> "mrvl,pxa-uart" or "mrvl,mmp-uart"
+> 
+> > +			reg = <0x0 0xd4017000 0x0 0x100>;
+> > +			interrupts = <42>;
+> > +			clock-frequency = <14857000>;
+> 
+> once clk is ready, you will remove this property and add clk phandles,
+> so why not bring clk, pinctrl, reset before hand?
+> 
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f01153f3ec8e/disk-8a9c6c40.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/04b88663a824/vmlinux-8a9c6c40.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/63c518cc63c5/bzImage-8a9c6c40.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8c446f45cf5815e9110a@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in __se_sys_keyctl / key_task_permission
-
-write to 0xffff88812277dd70 of 4 bytes by task 19442 on cpu 0:
- keyctl_setperm_key security/keys/keyctl.c:1098 [inline]
- __do_sys_keyctl security/keys/keyctl.c:1926 [inline]
- __se_sys_keyctl+0xab5/0xbb0 security/keys/keyctl.c:1874
- __x64_sys_keyctl+0x67/0x80 security/keys/keyctl.c:1874
- x64_sys_call+0x2bf5/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:251
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-read to 0xffff88812277dd70 of 4 bytes by task 19441 on cpu 1:
- key_task_permission+0x14a/0x2c0 security/keys/permission.c:55
- lookup_user_key+0x9ea/0xdf0 security/keys/process_keys.c:803
- keyctl_setperm_key security/keys/keyctl.c:1083 [inline]
- __do_sys_keyctl security/keys/keyctl.c:1926 [inline]
- __se_sys_keyctl+0x829/0xbb0 security/keys/keyctl.c:1874
- __x64_sys_keyctl+0x67/0x80 security/keys/keyctl.c:1874
- x64_sys_call+0x2bf5/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:251
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0x3d010000 -> 0x00000000
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 19441 Comm: syz.1.4799 Tainted: G        W          6.10.0-rc6-syzkaller-00067-g8a9c6c40432e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
