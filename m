@@ -1,145 +1,156 @@
-Return-Path: <linux-kernel+bounces-241717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC34927E54
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 22:47:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082A5927E75
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 23:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 843441F24A48
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:47:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA3CB284D01
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E49143755;
-	Thu,  4 Jul 2024 20:47:22 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68A113C69C;
+	Thu,  4 Jul 2024 21:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gATVg5se"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C76131736
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 20:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0298873454
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 21:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720126041; cv=none; b=HCa0hsBT5N3UTHYb8K9F7fOuf3m+ip9agGpGB69Vk+NfsDWrjKc7zyZW4u8poF4yi5ClI200NOVBbohbrbI8qQo6V2tZKJ8sh9IxOK8AJHb8bxGqSMYZr+kk/5kV/9Fidac81KeeEXRiegMNhedQg6M0ETFs8Ijx4ZjVxGW6zYg=
+	t=1720127283; cv=none; b=cfFeMAJCrd1PvCnBX3n9OXyhY9pnfUyivAhI9UfZnHxPEwL0HdREAtmbBxud9v1XTPcIEvejMuiR4IUbHrPFPEhscOhy7DNisRHFiMIBii/Y6t2YzkbM2jECbTOt5Ld2HvgpD5qjNTvYoua40lqEtk3R9bKdjO/oXAXs3KyOg2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720126041; c=relaxed/simple;
-	bh=S5HqlRk3b/2Q4kQjCtQP6F2tRnwAPUUFU+bMUaAHsoM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gqd8Vz1nYzx2LZCf1rOQfLpTjbbslL8gBwrVNtcvPG+bXlRSZjGnLokYEhOLLYbcb4XeLDutZzDWEnpRXGJXBgGCVpi8DtfOZx7eYAAPV3m8HezZUNnkqiwCcUwC/dL8vsjiUQ9mrc1IXrbKns4fVPQdfV3uiQuP5nzbLNaYGO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f61da2de1eso116642939f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 13:47:20 -0700 (PDT)
+	s=arc-20240116; t=1720127283; c=relaxed/simple;
+	bh=tsSeSJw/wskqqIQ95nhOCClgJITWSQXmHVQgcE3x0fU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OWmgaPvfjCnftb6THO9Vtz7x1+8xaUkayK9lS4NOuANJJIRxWWbWr2wr4L3v4CfPrtQx48yWz/YGKei7lLDBnrMEzOqpMp7VGACYoqdm0aJHdLDzktcLny2bdM37YPs2U1m9yo8vrUfBNIbUlO5Uz7qqAEf591ughm5/nsJo7gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gATVg5se; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so14019471fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 14:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1720127280; x=1720732080; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PAwkodzaV7fvFpdWbJ56Wv8CLAuFVUCXlI2rcaicgMo=;
+        b=gATVg5seAL5NonkTgcKp8WW+ToYjd+ZHSQDRcEZXs/OzASnl8kdRtmvxaIjPolB59Q
+         fEtyltYML8psu+EEbx/296UMzi0JM1zQ4/t1KTY717TH1AA0n+EY6TrchoX+VFT18R84
+         GrCroJjJWj2Y9gTRp+r8HT3DzTk3EIajp8WJM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720126039; x=1720730839;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mpHVdTz7dNOJp1MZT9ljgUFnR3O7FBNavr4wLDa+DUo=;
-        b=aJ5wEWx8WJl2TKG1lI+eNSi8gyuErbAFTgClZdkHxeKJE7HOnRB0x00mVql/gIYvEf
-         EpBDaLl246MHOhUFbH33RlxIzN8bV+DilMVZcGiWqTcyKvMUkmi38ccXoFpLhjnexCwR
-         jmr4Mjrrzyv5frt+vfDhCFFXUxFOE2EmWi5FXLLN8M1tQ+6O3EsnLLqVsxynxngJ+cse
-         hgqLcrjTgZiY5MC/CcWzZVp1ivBVvb84v1RuQV+1ljECYSqAhuZ8z84bYcn6nPze/uYa
-         NKGgRrfX1MA4baUJBmk76srTvHCf1TYuEL237xtQDHTcWTVdm141oXNq9cn377OkuL2S
-         a5Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/VTV59RvmV/kIqE1syxKjH2kobO+MncCppLicXyUaOkff5Oe275u/XzsPn2QDAZRM0Mvux7zCQ2Tv+vFmQ4tQO5jXrMtrv1aDIuO0
-X-Gm-Message-State: AOJu0YwC1he4P/sCPC8/93T4nwMKiyheOYpyQ6kZOv2Us4WzqXCWm0Rd
-	arMnWJdg3F1ZgNHdUxG6i9PqhbOP/2WnFvTCOQ85AcY8inGjNsxDrrpitUMPfgS7mNOOE18nS2Y
-	RYiZAAekwzQeotWVHVxOtY/39wN92L65MNKVyfirXIlqjhm/Qh9NQisM=
-X-Google-Smtp-Source: AGHT+IH0kCTIvS4rZWt8o3gZK8z59LI0fYO8NQFmNKPoqmFdRaAqg0dEFkYXCHXqs6s9ZCbjJAojzO1riJhiLXaYHM0YNuEq8oJ/
+        d=1e100.net; s=20230601; t=1720127280; x=1720732080;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PAwkodzaV7fvFpdWbJ56Wv8CLAuFVUCXlI2rcaicgMo=;
+        b=CemsXY/V5V9zg/QbU1eTd0if+vuOSSamibXy56JP+hOup0eBGIOkECN8rnFDVAR9cp
+         b95pkZ+1eGTHq20YRCwCJrt4qUpVCKIESWiNH+e4TBlvucDXko5KQKGOk2S8Kvuwl1sU
+         XGkFPpSnuNQVTcPmI5+2WgZ20Ua1whpeFerbHD8djIyF6wAx8zM6Dy/aQoJOuSiptH58
+         xFpLBk3mpGpYmHtwHjw4qoHLCpqn0CBUFk8peyYEtDyZhMyojTWJL3iPrZklXrCte5hr
+         QUc6FoS6lRFeAPzjjt8qdAJWZ1g12XSoq7Cutz3H3CDayVGxCJLlNmmSGHtchwT25JHv
+         qECQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRIndhESzfyLY4T7p7ZpBbWEEH4YLUY6Ch0GGESCpXipgQXNcGb6rlXaeaoaB+YvqXLo96lXiqXtQsVEiioaNVaJGGKRD2d9v/VV9u
+X-Gm-Message-State: AOJu0YyOeNBwmcFUXF34PrQlxhUJ1aixdpQu8K4lrnAYtZ+xExE+n2t9
+	SXnVcRRMJZ96QU7970p6N6Ggp/qIVe+xEVz968ouU54z2OI7/ydkVOb+3mxCjtNHzjJB30fsUaK
+	T6IDwzQ==
+X-Google-Smtp-Source: AGHT+IF6tDppXEmkKibCH0LmKeFiR9Z6lDJz8RYoJImrxmBZTCTuyHsCWl7hmopYcKkKCYi+EYlTaw==
+X-Received: by 2002:a2e:7e07:0:b0:2ee:4cd8:94b6 with SMTP id 38308e7fff4ca-2ee8ed90e17mr21796061fa.15.1720127279851;
+        Thu, 04 Jul 2024 14:07:59 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee8d815d47sm3858361fa.83.2024.07.04.14.07.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 14:07:59 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52ea5dc3c66so63099e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 14:07:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6kEaZmFlAmlVAWnQC6nwMMT8AjrwXw0nzchGECpztI5L92CrUUwQYCAKUYyeiyblmwLhGcPHKKNYQnYfQRnaUXAqcRRbKJ7GPL6RW
+X-Received: by 2002:a05:6512:15e:b0:52c:76ac:329b with SMTP id
+ 2adb3069b0e04-52ea0632400mr2207288e87.35.1720127278580; Thu, 04 Jul 2024
+ 14:07:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2d90:b0:7eb:98cb:d769 with SMTP id
- ca18e2360f4ac-7f66e023d09mr16466839f.3.1720126039669; Thu, 04 Jul 2024
- 13:47:19 -0700 (PDT)
-Date: Thu, 04 Jul 2024 13:47:19 -0700
-In-Reply-To: <000000000000ce42b9061c54d76a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000904fae061c720d44@google.com>
-Subject: Re: [syzbot] [wireless?] WARNING in rate_control_rate_init (3)
-From: syzbot <syzbot+9bdc0c5998ab45b05030@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <ZobXdDCYBi8OM-Fo@zx2c4.com> <CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
+ <Zobf3fZOuvOJOGPN@zx2c4.com> <CAHk-=whf2Pb8fSmUsLRSn6CnYvQoyUkLikKpFDWN_xnTJqix=A@mail.gmail.com>
+ <CAHmME9pm+ZE2_qf1DNxukB6ufPrjTAsnwin05-VX_gS03Yq-ag@mail.gmail.com>
+ <CAHk-=whTjdO6szgRKp51ZeDLDmA1+YYSbg+vEUt9OsxTMDUtjQ@mail.gmail.com>
+ <CAHk-=wgqD9h0Eb-n94ZEuK9SugnkczXvX497X=OdACVEhsw5xQ@mail.gmail.com>
+ <Zobt_M91PEnVobML@zx2c4.com> <CAHk-=wh47WSNQYuSWqdu_8XeRzfpWbozzTDL6KtkGbSmLrWU4g@mail.gmail.com>
+ <CAHmME9pgFXhSdWpTwt_x51pFu2Qm878dhcQjG9WhPXV_XFXm9w@mail.gmail.com> <CAHk-=wjCmw1L42W-o=pW7_i=nJK5r0_HFQTWD_agKWGt4hE7JQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wjCmw1L42W-o=pW7_i=nJK5r0_HFQTWD_agKWGt4hE7JQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 4 Jul 2024 14:07:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=win2mesMNEfL-KZQ_jk1YH8N8dL9r=7XOLp28_WMazpVg@mail.gmail.com>
+Message-ID: <CAHk-=win2mesMNEfL-KZQ_jk1YH8N8dL9r=7XOLp28_WMazpVg@mail.gmail.com>
+Subject: Re: deconflicting new syscall numbers for 6.11
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: jolsa@kernel.org, mhiramat@kernel.org, cgzones@googlemail.com, 
+	brauner@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has found a reproducer for the following issue on:
+On Thu, 4 Jul 2024 at 12:19, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Bah. I guess I'll have to walk through the patch series once again.
 
-HEAD commit:    aa77b1128016 net: dsa: microchip: lan937x: Add error handl..
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12e4f06e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5264b58fdff6e881
-dashboard link: https://syzkaller.appspot.com/bug?extid=9bdc0c5998ab45b05030
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e4644e980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=108cedc1980000
+Ok, I went through it once. First comments:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c24cba42b8d2/disk-aa77b112.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/988109eb0cd8/vmlinux-aa77b112.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f7845e638463/bzImage-aa77b112.xz
+The system call additions look really random. You don't add them to
+all architectures, but the ones you *do* add them to seem positively
+pointless:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9bdc0c5998ab45b05030@syzkaller.appspotmail.com
+ - I don't think you should introduce the system all on 32-bit
+architectures, and that includes as a compat call on 64-bit.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5095 at net/mac80211/rate.c:48 rate_control_rate_init+0x588/0x5f0 net/mac80211/rate.c:48
-Modules linked in:
-CPU: 0 PID: 5095 Comm: syz-executor313 Not tainted 6.10.0-rc5-syzkaller-01209-gaa77b1128016 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:rate_control_rate_init+0x588/0x5f0 net/mac80211/rate.c:48
-Code: 00 00 00 e8 1a 72 01 f7 f0 41 80 8d 82 01 00 00 20 48 83 c4 20 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 39 aa 9b f6 90 <0f> 0b 90 48 83 c4 20 5b 41 5c 41 5d 41 5e 41 5f 5d eb 65 89 e9 80
-RSP: 0018:ffffc90003627058 EFLAGS: 00010293
-RAX: ffffffff8afa7ce7 RBX: ffff88802262eb98 RCX: ffff88802c188000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffffffff8afa7952 R09: 1ffffffff25f78b0
-R10: dffffc0000000000 R11: fffffbfff25f78b1 R12: ffff8880227d8e20
-R13: ffff888021078000 R14: 1ffff1100420f00a R15: 0000000000000000
-FS:  0000555575af5380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020001080 CR3: 000000001f8c2000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- sta_apply_auth_flags+0x1b6/0x410 net/mac80211/cfg.c:1711
- sta_apply_parameters+0xe23/0x1550 net/mac80211/cfg.c:2061
- ieee80211_add_station+0x3da/0x630 net/mac80211/cfg.c:2127
- rdev_add_station+0x11b/0x2b0 net/wireless/rdev-ops.h:201
- nl80211_new_station+0x1d53/0x2550 net/wireless/nl80211.c:7683
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
- ___sys_sendmsg net/socket.c:2639 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f465b7bbb99
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe52ee7d48 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f465b7bbb99
-RDX: 0000000000000000 RSI: 0000000020001080 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000006 R09: 0000000000000006
-R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000003a28
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+    The VM_DROPPABLE infrastructure doesn't even exist on 32-bit, and
+while that might not be technically a requirement, it does seem to
+argue against doing this on 32-bit architectures. Plus nobody sane
+cares.
 
+    You didn't even enable it on 32-bit x86 in the vdso, so why did
+you enable it as a syscall?
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ - even 64-bit architectures don't necessarily have anything like a
+vdso, eg alpha.
+
+It looks like you randomly just picked the architectures that have a
+syscall.tbl file, rather than architectures where this made sense. I
+thin kyou should drop all of them except possibly arm64, s390 and
+powerpc.
+
+I'm very ambivalent about the VM_DROPPABLE code.
+
+On one hand, it's something we've discussed many times, and I don't
+hate it. On the other hand, the discussions have always been about
+actually exposing it to user space as a MAP_DROPPABLE so that user
+space can do caching.
+
+In fact, I'm almost certain that *because* you didn't expose it to
+mmap(), people will now then instead mis-use vgetrandom_alloc()
+instead to allocate random MAP_DROPPABLE pages. That is going to be a
+nightmare.
+
+And that nightmare has to be avoided. Which in turn means that I think
+vgetrandom_alloc() has to go, and you just need to expose
+MAP_DROPPABLE instead that obly works for private anonymous mappings,
+and make sure glibc uses that.
+
+Because as your patch series stands now, the semantics are unacceptable.
+
+This is a non-starter. When I see a new system call where my reaction
+is not just "this should have been just a mmap()", but then
+immediately followed by "Oh, and people will mis-use this as a cool
+mmap", I'm not merging that system call.
+
+So I don't hate VM_DROPPABLE per se, but the interface is simply not
+ok. vgetrandom_alloc() absolutely *has* to go, and needs to just be a
+user-space wrapper around regular mmap.
+
+                 Linus
 
