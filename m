@@ -1,142 +1,93 @@
-Return-Path: <linux-kernel+bounces-241250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E5ED9278FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:41:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91042927905
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B76BD28F0D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:41:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0254BB213C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F221AEFFE;
-	Thu,  4 Jul 2024 14:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BFD1B1436;
+	Thu,  4 Jul 2024 14:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Nao2Iybp"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Il9/toL5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04A31AC247;
-	Thu,  4 Jul 2024 14:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D821A070D;
+	Thu,  4 Jul 2024 14:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720103984; cv=none; b=lM/yMXqZ8wAchSS9a1l1ao74tTkTg5DSeSuz46pPB+aidcPT4/7EQMRMpzEyEUwIjs8jWoQK6jG7X9709BezYR1sNOvunTiWMkWQvjy1G4nXkcGe7xALBE37WqH6uBBFRnHby88qjlusViiMLF2bLIcj7Ah180QtLl9IeqTcAS4=
+	t=1720104029; cv=none; b=EnwP3qZ8woFRBqQvPD1IAaeE77/3kndWSGlH61xGjwJaiRN4ifNHOSdeUPcar7c22Io7m4jP/PZR9nwVNtsAhsmzetE0FwvB6IcGrGN2x9oIcSrD/Xu86zrgbPr7M26DjnOCWz5wS/NQUKlO9S9Jfc47UgE7FrKX3MACt9g/DC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720103984; c=relaxed/simple;
-	bh=EzNZhz0DbqUlvx+gqEFXHxBmkIniIVt6C6lgkGg7KKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=Z5fQ8Dly0PRDHnpx2UcPC2lI98/hEo2FTiT0QTSMQqrOte3J0dY7Yy63LyWQNFTMhh++wX7BiaNCKZZoGquXDABZDZmU7f62wbNujd0aounG/CPlOfMK4ywKvQngV6L5AC+yGLGE5QzdYPW5RICiS7L+kcoFdgNAfrjP5XgZCxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Nao2Iybp; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 464EJsWO026937;
-	Thu, 4 Jul 2024 14:39:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:content-type:mime-version; s=pp1;
-	 bh=mRZCo68afgatdH8vXo2NpCQ8H9u7he8+kkBGtWIcG4Q=; b=Nao2IybpOPVo
-	bzgLg4QtbV8UzFQ3pRzQNlfcLISGuve77Q/tsVajFBCkkUvEVSYtmIo65o2sQ0lm
-	pUE3aiObtvzOyAfMO+ZzDxFGzGGPuDMT1opRo5kKihyQaS12NTNkOI5pJEhcaB1e
-	vqXunWBn5ngK0xJbpIM3Io3f8kpk7dLYSncTYCFbbuF83Cf1r4Je9G8clgPe4EnI
-	vYwqsSUzEQ3UvdF92x6xJnqpzbxi00CvRmKKypqK66+sNJP5Z3LdQeh3tE0o4sgz
-	UmzEPq5TgzLvpFK5ioaX0uY2s940kbjNvHncB9i2Xjz26p5VZqqaKeVDhDFhTthL
-	t1c8+JT0AA==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 405us5g9x6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Jul 2024 14:39:39 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 464Bp5Xd009477;
-	Thu, 4 Jul 2024 14:39:39 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 402xtn0c2e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Jul 2024 14:39:38 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 464EdXmm58655190
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 4 Jul 2024 14:39:35 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9BE0A2004B;
-	Thu,  4 Jul 2024 14:39:33 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 755A420043;
-	Thu,  4 Jul 2024 14:39:33 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  4 Jul 2024 14:39:33 +0000 (GMT)
-Date: Thu, 4 Jul 2024 16:39:32 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] s390 fixes for 6.10-rc7
-Message-ID: <20240704143932.7696-F-hca@linux.ibm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: xFqokvbO-s0HOuTPhe0JtYf0Ngc2QPPq
-X-Proofpoint-ORIG-GUID: xFqokvbO-s0HOuTPhe0JtYf0Ngc2QPPq
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1720104029; c=relaxed/simple;
+	bh=AtRUNVr/TofFL7xGiLJlbcevdK0eBQ/BfqT4mYmpybQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=uFFY/1PicW2g1d5jIFY3MtvE+J+fYrd69fZ4gzovSlH6PlDPiiyl5PTKZDYcHTZAKokZPKRd/fQZMxJiTg0E6X8yAtFx7W9omjo0pyGmKAP9J91/TywTvWQsL3M3C71oaFhhS5aweGdnmgF2WimUEhFbrAErVKsbkV7FFLVToJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Il9/toL5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 80236C4AF0C;
+	Thu,  4 Jul 2024 14:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720104029;
+	bh=AtRUNVr/TofFL7xGiLJlbcevdK0eBQ/BfqT4mYmpybQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Il9/toL5+dKBJwF1+gdGzHaKEcntCACtLzP4tLYl/aEG8kjrE3ZeeY5Cfm6OSb9zq
+	 4PfvznLuZBlFirIJ7y/JzfzK/d4HzEseFB9hmt0pZsco7ci0QzsOII6QnDiw/xSvqp
+	 ZFFIei49GPHLfbxsV8caV0/o5+Pb15lIqVbSRvmKYVWIsHWqFAYDEjjAPP9eTLq1Dc
+	 eX/UsImFrMmS6l2Xxwz/T7REHBwvFJ7FaZiZJJtMC6wSl2cQD+5q3tzRX+5xqjkA7Z
+	 3L5iYZ5jql91R9rpu9FamPJeMF+YSu0iqY+/xd2kBJpZvgrQxY3M0IIIrq2QXV7/CV
+	 KfVZEnvaUQ7Kg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6CE47C43446;
+	Thu,  4 Jul 2024 14:40:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-04_10,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- impostorscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
- priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=362 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407040103
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2] mlxsw: core_linecards: Fix double memory deallocation
+ in case of invalid INI file
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172010402944.7153.11697585580866205532.git-patchwork-notify@kernel.org>
+Date: Thu, 04 Jul 2024 14:40:29 +0000
+References: <20240703203251.8871-1-amishin@t-argos.ru>
+In-Reply-To: <20240703203251.8871-1-amishin@t-argos.ru>
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: jiri@resnulli.us, idosch@nvidia.com, petrm@nvidia.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org, przemyslaw.kitszel@intel.com
 
-Hi Linus,
+Hello:
 
-please pull s390 fixes for 6.10-rc7.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Thanks,
-Heiko
+On Wed, 3 Jul 2024 23:32:51 +0300 you wrote:
+> In case of invalid INI file mlxsw_linecard_types_init() deallocates memory
+> but doesn't reset pointer to NULL and returns 0. In case of any error
+> occurred after mlxsw_linecard_types_init() call, mlxsw_linecards_init()
+> calls mlxsw_linecard_types_fini() which performs memory deallocation again.
+> 
+> Add pointer reset to NULL.
+> 
+> [...]
 
-The following changes since commit cea5589e958f8aef301ce9d004bc73fa5bb3b304:
+Here is the summary with links:
+  - [net,v2] mlxsw: core_linecards: Fix double memory deallocation in case of invalid INI file
+    https://git.kernel.org/netdev/net/c/8ce34dccbe8f
 
-  s390/boot: Do not adjust GOT entries for undef weak sym (2024-06-25 14:39:42 +0200)
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.10-8
-
-for you to fetch changes up to b3a58f3b90f564f42a5c35778d8c5107b2c2150b:
-
-  s390/dasd: Fix invalid dereferencing of indirect CCW data pointer (2024-07-03 16:27:06 +0200)
-
-----------------------------------------------------------------
-s390 fixes for 6.10-rc7
-
-- Fix and add physical to virtual address translations in dasd and
-  virtio_ccw drivers. For virtio_ccw this is just a minimal fix.
-  More code cleanup will follow.
-
-- Small defconfig updates
-
-----------------------------------------------------------------
-Eric Farman (1):
-      s390/vfio_ccw: Fix target addresses of TIC CCWs
-
-Heiko Carstens (1):
-      s390: Update defconfigs
-
-Stefan Haberland (1):
-      s390/dasd: Fix invalid dereferencing of indirect CCW data pointer
-
- arch/s390/configs/debug_defconfig | 5 ++---
- arch/s390/configs/defconfig       | 5 ++---
- drivers/s390/block/dasd_eckd.c    | 4 ++--
- drivers/s390/block/dasd_fba.c     | 2 +-
- drivers/s390/cio/vfio_ccw_cp.c    | 9 +++++----
- 5 files changed, 12 insertions(+), 13 deletions(-)
 
