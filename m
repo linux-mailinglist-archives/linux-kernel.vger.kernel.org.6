@@ -1,57 +1,52 @@
-Return-Path: <linux-kernel+bounces-241674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34082927DDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:32:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87EC6927DDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B37621F235BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7CD1F23BC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4571369B8;
-	Thu,  4 Jul 2024 19:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD4F135A69;
+	Thu,  4 Jul 2024 19:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3eyWKeV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="pigS2z5e"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FFA4C637;
-	Thu,  4 Jul 2024 19:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA94F131736;
+	Thu,  4 Jul 2024 19:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720121524; cv=none; b=ueDxWyxxCVsKWdLj2N19QnsjAlWbJXA1IhVuXMy4EOfNHKwvM5CZSUVJ34i+iU7yMJvxi+PqXERm9HtGHCAlXOTtotPavGehajzeX5q+KgwLG+WnloTPw2MUTwuXnhSyZO6E4Dqzdr9UsGgy0BbB5yv4sXt+WN/yH3fccx6mM8E=
+	t=1720121611; cv=none; b=MuPMheS3zpzWkU6R3pXmnW2MmkyeI1x/AmehAG3m7Boyug8XIyJMsuM3JA9Xnzyg6i7AXYHx8SVEo1ZAHVs7IjFiwodlJeMkF43I2n+BBweNB3Gc+zR7qNatbw1MfJffOUu/PPYvoQVNJ6BchZehSmXSTLrvRv+Ea1EFNMD6VmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720121524; c=relaxed/simple;
-	bh=M0uXPR9ycNgJf5jr/rA13njhPJWhWwUcDrjHugy4if4=;
+	s=arc-20240116; t=1720121611; c=relaxed/simple;
+	bh=JUEzBsblFz0LTrgNHbshd4E+vAIOOPSbCwfybvfKwoU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lotm1NnqY4MZ1xLP72vSkJq2JlFC3UGtrDnGWwTnFur658qC7O3MJLDPX6dFcWYO0Kf2PPG3G4901aGQ90LlV+DalCM1yrClkpf/UluWlNkMjw7by9FPqGTOO9NmmxaKLOxPWpEe1N36k8Sg692zuXEavSsAEqcjlHNEE1LFz+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3eyWKeV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6514C3277B;
-	Thu,  4 Jul 2024 19:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720121523;
-	bh=M0uXPR9ycNgJf5jr/rA13njhPJWhWwUcDrjHugy4if4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y2CHtweGwzT9BHfcykZQs3cGum9uBHWcjOTmE5lDXzPK+bdmt7pWTDzdQQvORONOyj464I7nhd1qHa31bV5X9hJOg/0xRea4LhI71D7/aHh68st2hYjH4BNiXQS+7ZqNV29uWxyk9ejg5JgEy9I4pxY3+TiK9QspwLI3C/ybJ1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=pigS2z5e; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1720121606;
+	bh=JUEzBsblFz0LTrgNHbshd4E+vAIOOPSbCwfybvfKwoU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y3eyWKeVdYgaIApJ+6CAaV2f1JvStkcIV8bNu2+kCQT/e6Qv7y8iORlR3Np/4VPeO
-	 dPRZtZVBPgA4mL3HaO32Di+D2zt/yT/tOErCUtOnH7v+69o4Ug1lVNt5UAkEWk2GBQ
-	 UwU49bGhG/Xul+/DDLIjHv9XyP+mlTDSfvZzqDknpEIFyYazMIsJJtZR8FHsnefMZI
-	 kM3IqLk29nxKfEBYUiKitNO68Xc1WkRVnewDPa5TVajGuuuh8CZ9Ow3tU1H8kGyv1s
-	 ckyR8xXJFyB2oMGrUaFR3Pw++mCKGezjGyq17s7YaXBE4q9XUATThyF5ZHqQMZB4KJ
-	 QE6vMH2mK69IQ==
-Date: Thu, 4 Jul 2024 16:32:00 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v4 5/8] perf test: Add landlock workload
-Message-ID: <Zob4sO8-D-hepgD2@x1>
-References: <20240704124354.904540-1-howardchu95@gmail.com>
- <20240704124354.904540-6-howardchu95@gmail.com>
+	b=pigS2z5ezmgcE1AhiGiLJUZ7hPRIA5OPsGBouaMkxm4vz0vW0eWv434JKct0QrORm
+	 /5qDwxDevK0Ir3p/MkDZaA+qqU/vZC9xBIavUH0sKCbYl5K9LtGHpXwvX0nEge0j/i
+	 LcwJ6nEYKUCpKbnLgTdghMGSQEOZZ618fNWu8G6g=
+Date: Thu, 4 Jul 2024 21:33:25 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH] kbuild: add script and target to generate pacman package
+Message-ID: <c1aa960c-27de-41f9-bdb3-d5cad954047a@t-8ch.de>
+References: <20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net>
+ <63c53ab962254e49d0eb3a67a067b48023d679b0.camel@archlinux.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,162 +56,136 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240704124354.904540-6-howardchu95@gmail.com>
+In-Reply-To: <63c53ab962254e49d0eb3a67a067b48023d679b0.camel@archlinux.org>
 
-On Thu, Jul 04, 2024 at 08:43:51PM +0800, Howard Chu wrote:
-> We'll use it to add a regression test for the BTF augmentation of enum
-> arguments for tracepoints in 'perf trace':
-> 
->   root@x1:~# perf trace -e landlock_add_rule perf test -w landlock
->        0.000 ( 0.009 ms): perf/747160 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7ffd8e258594, flags: 45) = -1 EINVAL (Invalid argument)
->        0.011 ( 0.002 ms): perf/747160 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_NET_PORT, rule_attr: 0x7ffd8e2585a0, flags: 45) = -1 EINVAL (Invalid argument)
->   root@x1:~#
-> 
-> Committer notes:
-> 
-> It was agreed on the discussion (see Link1 below) to shorten then name of
-> the workload from 'landlock_add_rule' to 'landlock', and I moved it to a
-> separate patch.
-> 
-> Howard fixed the build error found by Namhyung (see Link2 below),
-> changing the landlock.h header to the one in source tree, and including
-> syscall.h for the '__NR_landlock_add_rule' syscall number.
-> 
-> However, there is another problem. Because of this line in Makefile.config:
-> INC_FLAGS += -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi ,
-> we'll include 'tools/arch/x86/include/uapi/asm/unistd_64.h' in the source
-> tree. But what we want is '/usr/include/asm/unistd_64.h'.
-> This hardcoded unistd_64.h in the source tree is not cool for the landlock
-> workload because it is a simplified list of syscall numbers for particular
-> use cases, we need to discard this search path if we want the
-> __NR_landlock_add_rule macro. To solve this problem, Howard added a
-> CFLAGS_REMOVE_landlock.o to remove the flag of
-> -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi.
-> 
-> The problem above will not occur in some arch, say arm64
-> and riscv because they include asm-generic/unistd.h instead. The arch
-> that it really affects is the ones that include asm/unistd_32.h and
-> asm/unistd_64.h.
-> 
-> linux $ find . -regex './arch/.*/include/uapi/asm/unistd.h' | xargs grep -H --color=auto 'include <asm'
-> ./arch/x86/include/uapi/asm/unistd.h:#  include <asm/unistd_32.h>
-> ./arch/x86/include/uapi/asm/unistd.h:#  include <asm/unistd_x32.h>
-> ./arch/x86/include/uapi/asm/unistd.h:#  include <asm/unistd_64.h>
-> ./arch/parisc/include/uapi/asm/unistd.h:#include <asm/unistd_64.h>
-> ./arch/parisc/include/uapi/asm/unistd.h:#include <asm/unistd_32.h>
-> ./arch/nios2/include/uapi/asm/unistd.h:#include <asm-generic/unistd.h>
-> ./arch/mips/include/uapi/asm/unistd.h:#include <asm/sgidefs.h>
-> ./arch/mips/include/uapi/asm/unistd.h:#include <asm/unistd_o32.h>
-> ./arch/mips/include/uapi/asm/unistd.h:#include <asm/unistd_n64.h>
-> ./arch/mips/include/uapi/asm/unistd.h:#include <asm/unistd_n32.h>
-> ./arch/s390/include/uapi/asm/unistd.h:#include <asm/unistd_64.h>
-> ./arch/s390/include/uapi/asm/unistd.h:#include <asm/unistd_32.h>
-> ./arch/arm64/include/uapi/asm/unistd.h:#include <asm-generic/unistd.h>
-> ./arch/riscv/include/uapi/asm/unistd.h:#include <asm-generic/unistd.h>
-> ./arch/sparc/include/uapi/asm/unistd.h:#include <asm/unistd_64.h>
-> ./arch/sparc/include/uapi/asm/unistd.h:#include <asm/unistd_32.h>
-> ./arch/xtensa/include/uapi/asm/unistd.h:#include <asm/unistd_32.h>
-> ./arch/hexagon/include/uapi/asm/unistd.h:#include <asm-generic/unistd.h>
-> ./arch/openrisc/include/uapi/asm/unistd.h:#include <asm-generic/unistd.h>
-> ./arch/arm/include/uapi/asm/unistd.h:#include <asm/unistd-eabi.h>
-> ./arch/arm/include/uapi/asm/unistd.h:#include <asm/unistd-oabi.h>
-> ./arch/alpha/include/uapi/asm/unistd.h:#include <asm/unistd_32.h>
-> ./arch/sh/include/uapi/asm/unistd.h:#include <asm/unistd_32.h>
-> ./arch/m68k/include/uapi/asm/unistd.h:#include <asm/unistd_32.h>
-> ./arch/microblaze/include/uapi/asm/unistd.h:#include <asm/unistd_32.h>
-> ./arch/arc/include/uapi/asm/unistd.h:#include <asm-generic/unistd.h>
-> ./arch/powerpc/include/uapi/asm/unistd.h:#include <asm/unistd_32.h>
-> ./arch/powerpc/include/uapi/asm/unistd.h:#include <asm/unistd_64.h>
-> ./arch/csky/include/uapi/asm/unistd.h:#include <asm-generic/unistd.h>
-> ./arch/loongarch/include/uapi/asm/unistd.h:#include <asm-generic/unistd.h>
-> 
-> Reported-by: Namhyung Kim <namhyung@kernel.org>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/r/202406250302.E4WaX9Ud-lkp@intel.com/
-> Closes: https://lore.kernel.org/linux-perf-users/Zn8TfuQi0iq7bMVD@google.com/
-> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> Tested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Link1: https://lore.kernel.org/lkml/CAH0uvohaypdTV6Z7O5QSK+va_qnhZ6BP6oSJ89s1c1E0CjgxDA@mail.gmail.com
-> Link2: https://lore.kernel.org/linux-perf-users/Zn8TfuQi0iq7bMVD@google.com/
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/tests/builtin-test.c       |  1 +
->  tools/perf/tests/tests.h              |  1 +
->  tools/perf/tests/workloads/Build      |  2 ++
->  tools/perf/tests/workloads/landlock.c | 38 +++++++++++++++++++++++++++
->  4 files changed, 42 insertions(+)
->  create mode 100644 tools/perf/tests/workloads/landlock.c
-> 
-> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-> index c3d84b67ca8e..470a9709427d 100644
-> --- a/tools/perf/tests/builtin-test.c
-> +++ b/tools/perf/tests/builtin-test.c
-> @@ -152,6 +152,7 @@ static struct test_workload *workloads[] = {
->  	&workload__sqrtloop,
->  	&workload__brstack,
->  	&workload__datasym,
-> +	&workload__landlock,
->  };
->  
->  static int num_subtests(const struct test_suite *t)
-> diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-> index 3aa7701ee0e9..6ea2be86b7bf 100644
-> --- a/tools/perf/tests/tests.h
-> +++ b/tools/perf/tests/tests.h
-> @@ -205,6 +205,7 @@ DECLARE_WORKLOAD(leafloop);
->  DECLARE_WORKLOAD(sqrtloop);
->  DECLARE_WORKLOAD(brstack);
->  DECLARE_WORKLOAD(datasym);
-> +DECLARE_WORKLOAD(landlock);
->  
->  extern const char *dso_to_test;
->  extern const char *test_objdump_path;
-> diff --git a/tools/perf/tests/workloads/Build b/tools/perf/tests/workloads/Build
-> index 48bf0d3b0f3d..e132d5d95983 100644
-> --- a/tools/perf/tests/workloads/Build
-> +++ b/tools/perf/tests/workloads/Build
-> @@ -6,8 +6,10 @@ perf-test-y += leafloop.o
->  perf-test-y += sqrtloop.o
->  perf-test-y += brstack.o
->  perf-test-y += datasym.o
-> +perf-test-y += landlock.o
->  
->  CFLAGS_sqrtloop.o         = -g -O0 -fno-inline -U_FORTIFY_SOURCE
->  CFLAGS_leafloop.o         = -g -O0 -fno-inline -fno-omit-frame-pointer -U_FORTIFY_SOURCE
->  CFLAGS_brstack.o          = -g -O0 -fno-inline -U_FORTIFY_SOURCE
->  CFLAGS_datasym.o          = -g -O0 -fno-inline -U_FORTIFY_SOURCE
-> +CFLAGS_REMOVE_landlock.o  = -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi
-> diff --git a/tools/perf/tests/workloads/landlock.c b/tools/perf/tests/workloads/landlock.c
-> new file mode 100644
-> index 000000000000..c4f29b17f2a7
-> --- /dev/null
-> +++ b/tools/perf/tests/workloads/landlock.c
-> @@ -0,0 +1,38 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#include <sys/syscall.h> // for __NR_landlock_add_rule
-> +#include <linux/compiler.h>
-> +#include <unistd.h>
-> +#include "../tests.h"
-> +#ifdef __NR_landlock_add_rule
-> +#include "../../../../include/uapi/linux/landlock.h"
+Hi,
 
-We can't access files outside tools/
+thanks for the review!
 
-⬢[acme@toolbox linux]$ cd tools/perf/tests/workloads
-⬢[acme@toolbox workloads]$ ls -la ../../../../include/uapi/linux/landlock.h
--rw-r--r--. 1 acme acme 9309 Dec  8  2023 ../../../../include/uapi/linux/landlock.h
-⬢[acme@toolbox workloads]$ realpath ../../../../include/uapi/linux/landlock.h
-/home/acme/git/linux/include/uapi/linux/landlock.h
-⬢[acme@toolbox workloads]$
+On 2024-07-04 21:02:50+0000, Jan Alexander Steffens (heftig) wrote:
+> On Thu, 2024-07-04 at 18:36 +0200, Thomas Weißschuh wrote:
+> > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > new file mode 100644
+> > index 000000000000..29daf357edc1
+> > --- /dev/null
+> > +++ b/scripts/package/PKGBUILD
+> > @@ -0,0 +1,72 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> > +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
+> 
+> Nitpick: Normally these lines are sorted newest to oldest, with the
+> current maintainer(s) at the top.
 
-Take a look at the alternative patch I just sent, this was a real "mid
-air collision" :-)
+Ack.
 
-- Arnaldo
+> > +
+> > +pkgbase=linux-upstream
+> > +pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
+> > +pkgver="${KERNELRELEASE//-/_}"
+> > +pkgrel="$KBUILD_REVISION"
+> > +pkgdesc='Linux'
+> > +url='https://www.kernel.org/'
+> > +arch=("$UTS_MACHINE")
+> > +options=(!strip)
+> 
+> You should have !debug !strip here, otherwise makepkg can attempt (and
+> will fail) to gather source files, creating an empty
+> /usr/src/debug/$pkgbase.
+
+Ack.
+
+> Might also be worth considering !buildflags (to turn off injection of
+> CFLAGS etc) and !makeflags (to turn off injection of MAKEFLAGS).
+
+Ack.
+
+!makeflags doesn't really help because the MAKEFLAGS inherited from
+Kbuild are still overwritten, but with empty values.
+Which is why the KBUILD_MAKEFLAGS variable is used.
+
+But it's still better to have for safety.
+
+> 
+> > +license=(GPL-2.0-only)
+> > +
+> > +build() {
+> > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> 
+> I think you can have this export at the top level instead of in each
+> function.
+
+That doesn't seem to work, MAKEFLAGS seem to be set before the function
+is called.
+
+> 
+> > +  cd "$objtree"
+> > +
+> > +  ${MAKE} -f "${srctree}/Makefile"
+> > +
+> > +}
+> > +
+> > +package_linux-upstream() {
+> > +  pkgdesc="The $pkgdesc kernel and modules"
+> > +
+> > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> > +  cd "$objtree"
+> > +  local modulesdir="$pkgdir/usr/$MODLIB"
+> > +
+> > +  echo "Installing boot image..."
+> > +  # systemd expects to find the kernel here to allow hibernation
+> > +  # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
+> > +  install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
+> 
+> An invocation of make that could also use ${MAKE} for consistency.
+
+Ack, Nathan also proposed this.
+
+> > +
+> > +  # Used by mkinitcpio to name the kernel
+> > +  echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
+> > +
+> > +  echo "Installing modules..."
+> > +  ${MAKE} INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+> > +    DEPMOD=/doesnt/exist modules_install  # Suppress depmod
+> > +
+> > +  # remove build link
+> > +  rm -f "$modulesdir/build"
+> > +}
+> > +
+> > +package_linux-upstream-headers() {
+> > +  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
+> > +
+> > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> > +  cd "$objtree"
+> > +  local builddir="$pkgdir/usr/$MODLIB/build"
+> > +
+> > +  echo "Installing build files..."
+> > +  "$srctree/scripts/package/install-extmod-build" "$builddir"
+> 
+> Should we be using this script upstream as well instead of our
+> homegrown mess of install commands?
+
+Maybe. It is missing a few things like resolve_btfids.
+In the kernel repo if something is missing we can fix the script itself.
+Downstream would still require custom logic.
+
+> > +
+> > +  echo "Adding symlink..."
+> > +  mkdir -p "$pkgdir/usr/src"
+> > +  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
+> > +}
+> > +
+> > +package_linux-upstream-api-headers() {
+> > +  pkgdesc="Kernel headers sanitized for use in userspace"
+> > +  provides=(linux-api-headers)
+> > +  conflicts=(linux-api-headers)
+> > +
+> > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> > +  cd "$objtree"
+> > +
+> > +  ${MAKE} headers_install INSTALL_HDR_PATH="$pkgdir/usr"
+> > +}
+> > +
+> > +# vim:set ts=8 sts=2 sw=2 et:
 
