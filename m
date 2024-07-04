@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-240810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9402D927317
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:31:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E69092731C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B731C20D6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:31:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC9822822EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1841AB50E;
-	Thu,  4 Jul 2024 09:31:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1332A171A7;
-	Thu,  4 Jul 2024 09:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469F21AB902;
+	Thu,  4 Jul 2024 09:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK5kdrdb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D13613B29D
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720085497; cv=none; b=AReX6EEZRkrpfmtWqk4/pYWJ2cWrzi02ZY7hisxfwptCKJTJEu6c5EaRSC2FcXUpTrXDX8pscJEp6vS2IzUBMu0YJFwk2EqA/FpZBa0/Meq+77ZgOo/UL9QfkHqjO3K7JsLCkG9vGCYvj2pZr5PiPBdXq5+RIShuYCHft1HfGEo=
+	t=1720085550; cv=none; b=Rq3rDcv3NHvx4JB1C7Wr5xGGMzYwsJH/xDIprckP67J/dng8CfqGpwlWFIfQ/EYBFDmS6EhRAxyA7M7vP52TTWnlJt7Fh6PwuRx3QseEn8+/fvstwL9cDjbJqwGy8WseSs7LpNLaPMlYWFAd9FTJNcOur33rd9Aa169GLKY2JDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720085497; c=relaxed/simple;
-	bh=6JvIoGeJYxTilGdyGLvutd4vO5hzpifvREfdh9Tlzy4=;
+	s=arc-20240116; t=1720085550; c=relaxed/simple;
+	bh=/UU6dlcInhejLosomtZUum1OVKmIQu5j7w157Dwp7As=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oRiB/L0TpxZzasuYemmdU3b8VZfaU2P4PmxAemcRoUw/iTtJn6TcH5WtCazGYNMqenSBULC7jqZartGPrBPe3/ozp9ljFZ3p87oVudSLX4byDkZvkjlQOgbZsk7LqUqaK5NGEY+i+H7xRJTk9wSRiYxgLehqjLIckVKJ3irJubE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74E3ADA7;
-	Thu,  4 Jul 2024 02:32:00 -0700 (PDT)
-Received: from [10.1.29.168] (XHFQ2J9959.cambridge.arm.com [10.1.29.168])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FF323F766;
-	Thu,  4 Jul 2024 02:31:34 -0700 (PDT)
-Message-ID: <92b7375f-7239-4fbd-bedd-b3b8d55bf7a1@arm.com>
-Date: Thu, 4 Jul 2024 10:31:32 +0100
+	 In-Reply-To:Content-Type; b=CqiVjnc6tEqv7e6ZxyGZMmxhvxqtslSzE20KsNj5sQuCFSXBYjws8i+ybzqVmIn+arJbeSgF9Lj6U2uetPa92i04kScRV/hqgro0nLAUbE0SSz9+99Tki8eYXcmRTp5fS4br40C0H+Qi4Cj/yY3f4kNPsws28jpt3tJXPouWZ5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BK5kdrdb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BEEC4AF0D;
+	Thu,  4 Jul 2024 09:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720085550;
+	bh=/UU6dlcInhejLosomtZUum1OVKmIQu5j7w157Dwp7As=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BK5kdrdbNdTvEC7iAaYKdBelQ26rM8ln0nP1Beo6FBfcBBlUkQzyplzsA/kCs234z
+	 RclB0PwQecPq0a9dM7XO/T4YpogaujgDKJZ+SdGnvb6L69fTd0/LVTgjum/T8jQf4b
+	 6vKeF+OaBZ5ivLzqGghecpxgjHdL/ozvFaZrcMDb8sN+QLT3eBytlvI4ySxfovx29p
+	 fEgTiPSo0YlI7ellIUlzpJC7JcfIBCkdqYwls6iBzJPZ/I1SdY52ChA07vYsTpWdz1
+	 CbfZoCnrFKby6N6Q2cbZXMhJYjZ+nFbyA+dKK6gtsPrYSW4ufsOYAZcflZLqkmEdLM
+	 dVuRoB3E10jCA==
+Message-ID: <5c312ebb-a202-45e5-a82b-7b7c3f080d67@kernel.org>
+Date: Thu, 4 Jul 2024 17:32:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,176 +49,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] selftests: introduce and use SELFTESTS_CC_IS_CLANG
- instead of LLVM
-Content-Language: en-GB
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- linux-kselftest@vger.kernel.org, llvm@lists.linux.dev,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240704030452.88793-1-jhubbard@nvidia.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240704030452.88793-1-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: (2) [PATCH] f2fs: fix null reference error when checking end of
+ zone
+To: daejun7.park@samsung.com, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+ "daehojeong@google.com" <daehojeong@google.com>,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Seokhwan Kim <sukka.kim@samsung.com>,
+ Dongjin Kim <dongjin_.kim@samsung.com>,
+ Yonggil Song <yonggil.song@samsung.com>,
+ Jaeyoon Choi <j_yoon.choi@samsung.com>, Nayeon Kim
+ <nayeoni.kim@samsung.com>, Siwoo Jung <siu.jung@samsung.com>
+References: <460c4708-3ec6-4fbc-8f6c-7f8e5f901061@kernel.org>
+ <20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90@epcms2p4>
+ <CGME20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90@epcms2p4>
+ <20240704075521epcms2p49cc9985b6624e4e1129907e883fbc1d9@epcms2p4>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240704075521epcms2p49cc9985b6624e4e1129907e883fbc1d9@epcms2p4>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 04/07/2024 04:04, John Hubbard wrote:
-> Current practice in the selftests Makefiles is to use $(LLVM) as a way
-> to decide if clang is being used as the compiler (and/or the linker
-> front end). Unfortunately, this does not cover all of the use cases:
+On 2024/7/4 15:55, Daejun Park wrote:
+> Hi Chao Yu,
+>>   
+>> --------- Original Message ---------
+>> Sender : Chao Yu <chao@kernel.org>
+>> Date : 2024-07-04 16:16 (GMT+9)
+>> Title : Re: [PATCH] f2fs: fix null reference error when checking end of zone
+>>   
+>> On 2024/7/4 9:01, Daejun Park wrote:
+>>> This patch fixes a potentially null pointer being accessed by
+>>> is_end_zone_blkaddr() that checks the last block of a zone
+>>> when f2fs is mounted as a single device.
+>>
+>> blkzoned feature depends on multiple device feature? One regular
+>> device and one seq-zone device?
 > 
-> 1) CC could have been set within selftests/lib.mk, by inferring it from
-> LLVM==1, or
-> 
-> 2) CC could have been set externally, such as when cross compiling.
-> 
-> Solution: In order to allow subsystem selftests to more accurately
-> control clang-specific behavior, such as compiler options, provide a new
-> Makefile variable: SELFTESTS_CC_IS_CLANG. If $(CC) contains an
-> invocation of clang in any form, then SELFTESTS_CC_IS_CLANG will be
-> non-empty.
-> 
-> SELFTESTS_CC_IS_CLANG does not specify which linker is being used.
-> However, it can still help with linker options, because $(CC) is often
-> used to do both the compile and link steps (often in the same step).
-> 
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
-> 
-> Hi,
-> 
-> If this looks reasonable, I'll break it up into separate patches and
-> post it as a non-RFC.
+> According to mkfs.f2fs, if there are a sufficient number of
+> conventional zones, a single zoned device can be used.
 
-I'm makefile-illiterate so not really qualified to review. But the concept
-certainly looks fine to me.
+Correct.
+
+Anyway, the code looks clean.
+
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
-Ryan
 
 > 
-> thanks,
-> John Hubbard
+> Thanks,
+> Daejun
 > 
->  tools/testing/selftests/bpf/Makefile       |  2 +-
->  tools/testing/selftests/fchmodat2/Makefile | 12 +++++++-----
->  tools/testing/selftests/hid/Makefile       |  2 +-
->  tools/testing/selftests/lib.mk             | 15 +++++++++++++++
->  tools/testing/selftests/openat2/Makefile   | 16 +++++++++-------
->  5 files changed, 33 insertions(+), 14 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-> index dd49c1d23a60..6b924297ab71 100644
-> --- a/tools/testing/selftests/bpf/Makefile
-> +++ b/tools/testing/selftests/bpf/Makefile
-> @@ -55,7 +55,7 @@ progs/test_sk_lookup.c-CFLAGS := -fno-strict-aliasing
->  progs/timer_crash.c-CFLAGS := -fno-strict-aliasing
->  progs/test_global_func9.c-CFLAGS := -fno-strict-aliasing
->  
-> -ifneq ($(LLVM),)
-> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
->  # Silence some warnings when compiled with clang
->  CFLAGS += -Wno-unused-command-line-argument
->  endif
-> diff --git a/tools/testing/selftests/fchmodat2/Makefile b/tools/testing/selftests/fchmodat2/Makefile
-> index 4373cea79b79..d00b01be5d96 100644
-> --- a/tools/testing/selftests/fchmodat2/Makefile
-> +++ b/tools/testing/selftests/fchmodat2/Makefile
-> @@ -2,14 +2,16 @@
->  
->  CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined $(KHDR_INCLUDES)
->  
-> +TEST_GEN_PROGS := fchmodat2_test
-> +
-> +include ../lib.mk
-> +
->  # gcc requires -static-libasan in order to ensure that Address Sanitizer's
->  # library is the first one loaded. However, clang already statically links the
->  # Address Sanitizer if -fsanitize is specified. Therefore, simply omit
->  # -static-libasan for clang builds.
-> -ifeq ($(LLVM),)
-> +# This check must be done after including ../lib.mk, in order to pick up the
-> +# correct value of SELFTESTS_CC_IS_CLANG.
-> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
->      CFLAGS += -static-libasan
->  endif
-> -
-> -TEST_GEN_PROGS := fchmodat2_test
-> -
-> -include ../lib.mk
-> diff --git a/tools/testing/selftests/hid/Makefile b/tools/testing/selftests/hid/Makefile
-> index 2b5ea18bde38..734a53dc8ad9 100644
-> --- a/tools/testing/selftests/hid/Makefile
-> +++ b/tools/testing/selftests/hid/Makefile
-> @@ -27,7 +27,7 @@ CFLAGS += -I$(OUTPUT)/tools/include
->  LDLIBS += -lelf -lz -lrt -lpthread
->  
->  # Silence some warnings when compiled with clang
-> -ifneq ($(LLVM),)
-> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
->  CFLAGS += -Wno-unused-command-line-argument
->  endif
->  
-> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-> index 429535816dbd..f321ad5a1d0c 100644
-> --- a/tools/testing/selftests/lib.mk
-> +++ b/tools/testing/selftests/lib.mk
-> @@ -43,6 +43,21 @@ else
->  CC := $(CROSS_COMPILE)gcc
->  endif # LLVM
->  
-> +# SELFTESTS_CC_IS_CLANG allows subsystem selftests to more accurately control
-> +# clang-specific behavior, such as compiler options. If CC is an invocation of
-> +# clang in any form, then SELFTESTS_CC_IS_CLANG will be non-empty. Notes:
-> +#
-> +# 1) CC could have been set above, by inferring it from LLVM==1, or externally,
-> +# from the CC shell environment variable.
-> +#
-> +# 2) SELFTESTS_CC_IS_CLANG does not specify which linker is being used. However,
-> +#    it can still help with linker options, if clang or gcc is used for the
-> +#    linker front end.
-> +SELFTESTS_CC_IS_CLANG :=
-> +ifeq ($(findstring clang,$(CC)),clang)
-> +    SELFTESTS_CC_IS_CLANG := 1
-> +endif
-> +
->  ifeq (0,$(MAKELEVEL))
->      ifeq ($(OUTPUT),)
->  	OUTPUT := $(shell pwd)
-> diff --git a/tools/testing/selftests/openat2/Makefile b/tools/testing/selftests/openat2/Makefile
-> index 185dc76ebb5f..7acb85a8f2ac 100644
-> --- a/tools/testing/selftests/openat2/Makefile
-> +++ b/tools/testing/selftests/openat2/Makefile
-> @@ -3,16 +3,18 @@
->  CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined
->  TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test
->  
-> +LOCAL_HDRS += helpers.h
-> +
-> +include ../lib.mk
-> +
-> +$(TEST_GEN_PROGS): helpers.c
-> +
->  # gcc requires -static-libasan in order to ensure that Address Sanitizer's
->  # library is the first one loaded. However, clang already statically links the
->  # Address Sanitizer if -fsanitize is specified. Therefore, simply omit
->  # -static-libasan for clang builds.
-> -ifeq ($(LLVM),)
-> +# This check must be done after including ../lib.mk, in order to pick up the
-> +# correct value of SELFTESTS_CC_IS_CLANG.
-> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
->      CFLAGS += -static-libasan
->  endif
-> -
-> -LOCAL_HDRS += helpers.h
-> -
-> -include ../lib.mk
-> -
-> -$(TEST_GEN_PROGS): helpers.c
-> 
-> base-commit: 9a5cd459be8a425d70cda1fa1c89af7875a35d17
-
+>>
+>> Thanks,
+>>
+>>>
+>>> Fixes: e067dc3c6b9c ("f2fs: maintain six open zones for zoned devices")
+>>> Signed-off-by: Daejun Park <daejun7.park@samsung.com>
+>>> ---
+>>>    fs/f2fs/data.c 4 +++-
+>>>    1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index b6dcb3bcaef7..1aa7eefa659c 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -925,6 +925,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+>>>    #ifdef CONFIG_BLK_DEV_ZONED
+>>>    static bool is_end_zone_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr)
+>>>    {
+>>> +        struct block_device *bdev = sbi->sb->s_bdev;
+>>>             int devi = 0;
+>>>   
+>>>             if (f2fs_is_multi_device(sbi)) {
+>>> @@ -935,8 +936,9 @@ static bool is_end_zone_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr)
+>>>                             return false;
+>>>                     }
+>>>                     blkaddr -= FDEV(devi).start_blk;
+>>> +                bdev = FDEV(devi).bdev;
+>>>             }
+>>> -        return bdev_is_zoned(FDEV(devi).bdev) &&
+>>> +        return bdev_is_zoned(bdev) &&
+>>>                     f2fs_blkz_is_seq(sbi, devi, blkaddr) &&
+>>>                     (blkaddr % sbi->blocks_per_blkz == sbi->blocks_per_blkz - 1);
+>>>    }
 
