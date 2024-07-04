@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-241272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016E1927945
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:50:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1D9927948
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250651C20E06
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:50:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30D281F22342
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0590B1B11F4;
-	Thu,  4 Jul 2024 14:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3FC1B11E9;
+	Thu,  4 Jul 2024 14:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WWIlscDS"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKJDyBBf"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951791A3BDA;
-	Thu,  4 Jul 2024 14:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC851B0100;
+	Thu,  4 Jul 2024 14:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720104633; cv=none; b=cRuQzcOk3X0wCeLp008uZBhOAGUSsFC0TyLkb28zF1YfsZxYEB32gXFDvOnPrsbhTDOL1qQsN7ZsSIptXvC4F09hjsSxdHG3ff1Qw0u1VKOjXItrDSoW2Kv6I8j1xXwtpyUIOOYaXecgtvU4hiyX7bpfE4jC1HeOAUw948Yxi3s=
+	t=1720104660; cv=none; b=VZJjCWkwQupbbvfUyh+tG7bP2+esLXZEh3sgI7dAZeiOMCVBH1pMR5zSisgoLYOaB42GNo+lttzbpLDYoLnf6e4ttb3HITVYhQi48W1VLgelo5Xb9BKM1pmmMecWDKvW9OD3d62lo/ThZ3EtscqK6cfOWnqJaJutVketzWvB/9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720104633; c=relaxed/simple;
-	bh=si/MNdaKQ5RN0Ou8FI/P3JxXnTW7I6dza5KbazBRGp8=;
+	s=arc-20240116; t=1720104660; c=relaxed/simple;
+	bh=osGTrPVzcqkxHZ3n3L3DSQUiwmQ0IiX+piE4kgIPEFM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UDkG1lK4allKOMnQd26Ep+/UFOc9IaX2keoFbRwov/cGlN6f26GRN3wnAcFedVJ8K4Mk7RHmbiz7Q3fivJbPVqJ5f3rGV5fdnasN2za0XkknBtgpag+JHWGiJ8yHdKE6tmuXQox3Lpw+0OKzC9OR889rAZ8PsU7tefk6Ecd/56s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WWIlscDS; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:Content-Type; b=OwbEg6GJPu4zrdSixyDGRfZBgP2wTCnQoAYUNGcWDpH27wQgFZEJP5bzuVOB2IOmaTRkDNoUJ2BXfhV9n6qSGutVDXGCUd341+i+TlhKtECv5sOrtSmh0tNvAapHPUG0fxEalKLnJjde8rMyvB55YPBHEdXOPBp24l2+O2wpavY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PKJDyBBf; arc=none smtp.client-ip=209.85.210.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-424ad289949so4817585e9.2;
-        Thu, 04 Jul 2024 07:50:31 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7021dd7ffebso413091a34.3;
+        Thu, 04 Jul 2024 07:50:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720104630; x=1720709430; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gyv5bEBx0v3sKJzqVfj3oAivspk6SkN1NANENmR71Mc=;
-        b=WWIlscDStiJQ/0wgHrJad2+53aJ8fxO8ngvVgelAAQn6Nh+ZCKMoAWy1/HQNzjVpp8
-         OPsi2k9xigMWB8mhDs6V6MApDWsSKU9q5cO5+3oYJT1fcE+wYHgySfWpIuQg/K/rRSnE
-         2XEiZC2KtnztAIQqKxnMO/Dgaxwt9ptthuvPiFSj3+bJzqKN6SpbWBNpTPO+NnvdGcNV
-         dBgqwguZDMC17e1iqb05gyitFojld7Huw3gexFOz2acNjKW1P5YDYBJzrsdj05oFVJMG
-         714i29mcxzxdHLCvrEAfbY7BkJwLLeFYnzdS4tQ3nC6cwD7Ayh0RohZmc1JLK1Ic5toa
-         nyBQ==
+        d=gmail.com; s=20230601; t=1720104658; x=1720709458; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=n7Ak2uR/dWTZjvtNbmJG4Hg5R/nijnavlw2ab/tTrrA=;
+        b=PKJDyBBfZ7oEkWHsRSVzTDnUXLusxBW9FuqHVtuSzY/uDmDi+brtRoL89ShclDYz6F
+         FwMbogkdhJXYk8Tn+sRgXY52QEeQwqAdXQsEuXWCLwRZ2Ay3yOXRdc9zP+9TQfuW1x6o
+         joTmBQ8X6aA/G3dKUQInVHdio8xlDCJeMp2ateRleHIplwZLbqMctAGjpKjgPC5pm/Yh
+         30sAxKqF2Qjgj3xtJ3qSt4Vsvsi8VREs9Hqqwad4Ofn6a0WowzdSQzMCnl4zCeILC9i1
+         tXWBI+P77EUTLr6w/2y79RhPSDCjhhRtlBzlw05JHROExZZX7NaXSF933/feouIxBu6Y
+         EfAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720104630; x=1720709430;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gyv5bEBx0v3sKJzqVfj3oAivspk6SkN1NANENmR71Mc=;
-        b=U7C0kjUbmUcKPeYVGqgyBG9BiE5dLSdcYWitDLO6kfFRPzZQEk7vuh+0bhDBTxaA8B
-         dxgjyMyMB/rKS+/EW0jvKk0ShOBAIOcCo0e4V5etquNViZZZniIcPfsePvvvL0esMI6t
-         O0sIcjqoDHyj62eHTJxKGeeey9HV+Uu1i3mTxciN8r+gYAKTaIsEe1R/a4waEd2YRfh7
-         MtUEoJ5gqI8UKHP+reGPxAsRZtbJzJwoM4kngbNis3BGKpXtcPyVVxX7fXcC1AJR/yAY
-         6nplHwaCBrOfJKbrPp25JIlEN0mPoQuSgNjxwIH4gC4PoJou1kF+UN5xwEFVOhEl3crT
-         oO9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVANrfPx+aKjePQtgh5TrCCVeoK8QdSUNU05l/K0tiJ1lOqbc9N6oK+N8OGjYAN7TR7cmQnjYEimJRECK0Cl5TlLGT69sny/jHf3bOKbezFJ9E7tFixpPvhTx3YoVTMe5r8OfOeSsIo
-X-Gm-Message-State: AOJu0YzOBW2KovuKtwxD0ya7Ul8b4gJ0jWaHnWY3ntF+vFAR128st+Ro
-	tIgaI8EQnLv+Lh+rUNpD+7OqDK91lRsPkQ1WEyrhvnzxFzGN0g2p4FsrVi0T
-X-Google-Smtp-Source: AGHT+IEDvX2K6Si8LB0HPSmGFjaJY3UNx5iXdACTQu0hQsI176AMqQsKKaL3/Y9mkhasPuEsE6RGAA==
-X-Received: by 2002:a7b:c056:0:b0:426:491e:6252 with SMTP id 5b1f17b1804b1-4264a3d7676mr13617585e9.11.1720104629665;
-        Thu, 04 Jul 2024 07:50:29 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a283577sm27295385e9.44.2024.07.04.07.50.27
+        d=1e100.net; s=20230601; t=1720104658; x=1720709458;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n7Ak2uR/dWTZjvtNbmJG4Hg5R/nijnavlw2ab/tTrrA=;
+        b=aQovqm7vU6gy7tk7GQBJ0pw+tZJTjMAtt+0dF2tO5LEMEZmglmUMOZN+I+hPABOTsg
+         TVkvUsY9BrKtSYmwBFiB9KsGB7EUS5kGBGfUr2EKWGI0UmK32WcB1FW65bN+zIaEKWxA
+         AWWhlBxRKUgWalyc2nQG5LQy5LHL/GWwRkVBzDJyQG69QyjCeOSZZOpUeSya6XhnC6Ld
+         IcT+83i2ERqJXQK4qbFbblAFVE+5uREKNUMTm9D1UDBEUfzPnPZI822km00a9s6j5W3U
+         EKtx+raUdMoIgdxDNqNRUcQFWkWi2rMF3mccMMTyq4O8i9iE8vB5wdVgw2yqMOpuS5Ju
+         Gj5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXdOuLpMKtUVdIxc8zHjDetegVrVqrwNaqcd8CkiZ/o7PWYyPO1N11c4hUAA4SiqPuJf+ktYHUdK9qj/bVOKW1NEd2iF7wZnPER26vA
+X-Gm-Message-State: AOJu0YzhdZccpAj/VwnYc1/cQnWKyGIC9aMnC17itQnJ1P1cPMEQnt5a
+	/ZNo4G8++4DTmHFe3O8YBeTy93jLqhZRTPXAFpfoeqHu+7Mh1MTU
+X-Google-Smtp-Source: AGHT+IGk7QlVTcf7Bc92V+E03dQbTz93pk4va96tRqfZF4c48lKdQBqW7UzjWeG7vUIMd/daqmxivg==
+X-Received: by 2002:a05:6830:6b83:b0:701:f1cd:350a with SMTP id 46e09a7af769-7034a756368mr2075298a34.11.1720104658051;
+        Thu, 04 Jul 2024 07:50:58 -0700 (PDT)
+Received: from [10.40.5.113] ([89.207.175.15])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d69260065sm681584085a.5.2024.07.04.07.50.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 07:50:28 -0700 (PDT)
-Message-ID: <7a8d4e4d-4e2b-48a6-b8e2-d23460154777@gmail.com>
-Date: Thu, 4 Jul 2024 16:50:26 +0200
+        Thu, 04 Jul 2024 07:50:56 -0700 (PDT)
+Message-ID: <ddc3d261-6cf1-4e51-a889-962c57008eeb@gmail.com>
+Date: Thu, 4 Jul 2024 16:50:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,120 +76,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: kirin: fix memory leak in kirin_pcie_parse_port()
-To: Xiaowei Song <songxiaowei@hisilicon.com>,
- Binghui Wang <wangbinghui@hisilicon.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240609-pcie-kirin-memleak-v1-1-62b45b879576@gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20240609-pcie-kirin-memleak-v1-1-62b45b879576@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH net 1/2] dsa: lan9303: Fix mapping between DSA port number
+ and PHY address
+To: Christian Eggers <ceggers@arri.de>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Juergen Beisert <jbe@pengutronix.de>, Stefan Roese <sr@denx.de>,
+ Juergen Borleis <kernel@pengutronix.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240703145718.19951-1-ceggers@arri.de>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20240703145718.19951-1-ceggers@arri.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 09/06/2024 12:56, Javier Carrasco wrote:
-> The conversion of this file to use the agnostic GPIO API has introduced
-> a new early return where the refcounts of two device nodes (parent and
-> child) are not decremented.
-> 
-> Given that the device nodes are not required outside the loops where
-> they are used, and to avoid potential bugs every time a new error path
-> is introduced to the loop, the _scoped() versions of the macros have
-> been applied. The bug was introduced recently, and the fix is not
-> relevant for old stable kernels that might not support the scoped()
-> variant.
-> 
-> Fixes: 1d38f9d89f85 ("PCI: kirin: Convert to use agnostic GPIO API")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
-> This bug was found while analyzing the code and I don't have hardware to
-> validate it beyond compilation and static analysis. Any test with real
-> hardware to make sure there are no regressions is always welcome.
-> 
-> The dev_err() messages have not been converted into dev_err_probe() to
-> keep the current format, but I am open to convert them if preferred.
-> ---
->  drivers/pci/controller/dwc/pcie-kirin.c | 21 ++++++---------------
->  1 file changed, 6 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
-> index d1f54f188e71..0a29136491b8 100644
-> --- a/drivers/pci/controller/dwc/pcie-kirin.c
-> +++ b/drivers/pci/controller/dwc/pcie-kirin.c
-> @@ -403,11 +403,10 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
->  				 struct device_node *node)
->  {
->  	struct device *dev = &pdev->dev;
-> -	struct device_node *parent, *child;
->  	int ret, slot, i;
->  
-> -	for_each_available_child_of_node(node, parent) {
-> -		for_each_available_child_of_node(parent, child) {
-> +	for_each_available_child_of_node_scoped(node, parent) {
-> +		for_each_available_child_of_node_scoped(parent, child) {
->  			i = pcie->num_slots;
->  
->  			pcie->id_reset_gpio[i] = devm_fwnode_gpiod_get_index(dev,
-> @@ -424,14 +423,13 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
->  			pcie->num_slots++;
->  			if (pcie->num_slots > MAX_PCI_SLOTS) {
->  				dev_err(dev, "Too many PCI slots!\n");
-> -				ret = -EINVAL;
-> -				goto put_node;
-> +				return -EINVAL;
->  			}
->  
->  			ret = of_pci_get_devfn(child);
->  			if (ret < 0) {
->  				dev_err(dev, "failed to parse devfn: %d\n", ret);
-> -				goto put_node;
-> +				return ret;
->  			}
->  
->  			slot = PCI_SLOT(ret);
-> @@ -439,10 +437,8 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
->  			pcie->reset_names[i] = devm_kasprintf(dev, GFP_KERNEL,
->  							      "pcie_perst_%d",
->  							      slot);
-> -			if (!pcie->reset_names[i]) {
-> -				ret = -ENOMEM;
-> -				goto put_node;
-> -			}
-> +			if (!pcie->reset_names[i])
-> +				return -ENOMEM;
->  
->  			gpiod_set_consumer_name(pcie->id_reset_gpio[i],
->  						pcie->reset_names[i]);
-> @@ -450,11 +446,6 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
->  	}
->  
->  	return 0;
-> -
-> -put_node:
-> -	of_node_put(child);
-> -	of_node_put(parent);
-> -	return ret;
->  }
->  
->  static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
-> 
-> ---
-> base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
-> change-id: 20240609-pcie-kirin-memleak-18c83a31d111
-> 
-> Best regards,
 
 
-Hi, has this patch been applied anywhere? I couldn't find it in
-linux-next and pci/next.
+On 7/3/2024 3:57 PM, Christian Eggers wrote:
+> The 'phy' parameter supplied to lan9303_phy_read/_write was sometimes a
+> DSA port number and sometimes a PHY address. This isn't a problem as
+> long as they are equal.  But if the external phy_addr_sel_strap pin is
+> wired to 'high', the PHY addresses change from 0-1-2 to 1-2-3 (CPU,
+> slave0, slave1).  In this case, lan9303_phy_read/_write must translate
+> between DSA port numbers and the corresponding PHY address.
+> 
+> Fixes: a1292595e006 ("net: dsa: add new DSA switch driver for the SMSC-LAN9303")
+> Signed-off-by: Christian Eggers <ceggers@arri.de>
 
-Best regards,
-Javier Carrasco
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
