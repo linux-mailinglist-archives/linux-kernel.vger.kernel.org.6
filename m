@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-241292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597EC92796F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:02:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E73927973
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A7AB1C20CBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:02:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00DDA282501
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22151B142E;
-	Thu,  4 Jul 2024 15:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E15E1B14F8;
+	Thu,  4 Jul 2024 15:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSh6sHGm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQjKScyD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF251B1410;
-	Thu,  4 Jul 2024 15:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D2A1B143F;
+	Thu,  4 Jul 2024 15:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720105321; cv=none; b=S17IMvxf83M/zcKqIVzJgoSWeKmpvAPRXp+nwn1Ss9jnj5rGRdiQG46br8SOeAx29cWaj9IpEfOiLrX761t/cPBgUiUNgcgMxmdpoiP68gHfNOISblgrSdBp5nITRGIgQzzaML4MO6lJM21LSbcpbSLlF1at6jUMNLVM/qi3cJY=
+	t=1720105323; cv=none; b=HqUhVM50EWuFHJCABN5BQ5f1wqrlJeLr78ivZu3YNbjraavCl+ukDyP52ZX1ehEJMO4KcsmGTy+PooWtqtdDkXZa2ppQCJQ92gNVzghLjubL3G+PLv941MX1tTVX9+G4nu+EQgYFM9nk0a60RaoyrnGRUjPUJb+qF4xqw5Nawj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720105321; c=relaxed/simple;
-	bh=Kb6Bg3h/wyL/yJijCF3T8Ygmjctgt3DijUcQ0c+p20E=;
+	s=arc-20240116; t=1720105323; c=relaxed/simple;
+	bh=7UHlyrvutroT0e2Bj7J6khcsqqDlXY5x61RtVzZzXig=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=YXLvblAF5XyvjMqv9XAl8bzXkvLeMEZqYEYXQxC58a1W5zG0WgGwbGng0b5r6eztmdEReFCo/t8p5ojSYoC9Jn0Elpq8kWJBlm/CH5fpUS9do8rI/1mxXKtryDklbf+g6LgIbycT774KUF629pYJbpNWRnivVb2NS1NH/HQwEGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSh6sHGm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05DC9C4AF12;
-	Thu,  4 Jul 2024 15:01:58 +0000 (UTC)
+	 MIME-Version:Content-Type; b=uSFtyLkdGl01dauiK90AjEmgDTP4sFm/cZLNAQoRgU8gWrCEB+tJJQz/e/vMCeh094uWDtdF6uJ4siHyA2MNoEAaUZ2DbF0Uu16dgEwG7iGz3SC+t3fUoM86svLB3230z+RZpLIvglpWLc02QtvYE1mAAwTu4p8a8DexP8iZevw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQjKScyD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5053FC4AF0E;
+	Thu,  4 Jul 2024 15:02:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720105320;
-	bh=Kb6Bg3h/wyL/yJijCF3T8Ygmjctgt3DijUcQ0c+p20E=;
+	s=k20201202; t=1720105322;
+	bh=7UHlyrvutroT0e2Bj7J6khcsqqDlXY5x61RtVzZzXig=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hSh6sHGmu76Q8A4/5Wx4hKaveyEAmppSlgyT9aP4gTWQnURYA/IldGnCT+JPCO0ny
-	 C+ZEjNV1zdMdQrlAfJsL8sNwbvjBqSUV7VUY3TUZ4RUY8iS2kO0eDmqGEO7gcxV4yW
-	 UQWCT0pbpP1JzCiaVU/h/A5Vw8dazyUxEKNuH8Zoa+pQo+FzCVlACxiVLcY173CofK
-	 x8qtGdfpD3RHtqnio8zvikASnd2oVS9CDNREUY3KWZGvxpAPA8JjsNVVSDEA3rhxYJ
-	 aUm1de+d7+DetYP9BWx5B3dxECPZgHdOg2mpG1uZ0tvmIMd/wZdzKSJXVX6l7Vlark
-	 0HQLiGScpRdog==
+	b=bQjKScyD1701uwvQqGnFVg7mzBu9pxrhpdV3QMhVuITH0B1wLcQ4zdzicCpAesTtX
+	 6OmZ21c3HGM7kkifugPF/TEwyg0ovTj3tXWta2AMWCLzToj4CzfuBRa/nnVDmmPZMY
+	 LKnZnY2rvXjpccQpGSUjJJHRxYN6f4azWNb+stt3RZtdfhMnMHz8EQbrCgv272RkW+
+	 kQ+Ae3z62q4QamcxQPd4nYrik7uo39mj1eDPKHEi5YNZQA8kzoADO1yFH/iKaeWCzv
+	 hQZvsZHvryVNPcHOZ8EsSaXtNznYtbbdaEgvbByKqWzkRJU1m9FJGToZO9yrQ3dEo8
+	 2hm+bhdzwwtLQ==
 From: Mark Brown <broonie@kernel.org>
-To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
- Aleksandr Mishin <amishin@t-argos.ru>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
  linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- lvc-project@linuxtesting.org
-In-Reply-To: <20240703191007.8524-1-amishin@t-argos.ru>
-References: <20240703191007.8524-1-amishin@t-argos.ru>
-Subject: Re: [PATCH v2] ASoC: amd: Adjust error handling in case of absent
- codec device
-Message-Id: <172010531874.64240.1946699241818022514.b4-ty@kernel.org>
-Date: Thu, 04 Jul 2024 16:01:58 +0100
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: stable@vger.kernel.org
+In-Reply-To: <20240701122616.414158-1-krzysztof.kozlowski@linaro.org>
+References: <20240701122616.414158-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] ASoC: codecs: wcd939x: Fix typec mux and switch leak
+ during device removal
+Message-Id: <172010532104.64240.18084031474568618131.b4-ty@kernel.org>
+Date: Thu, 04 Jul 2024 16:02:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,14 +62,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Wed, 03 Jul 2024 22:10:07 +0300, Aleksandr Mishin wrote:
-> acpi_get_first_physical_node() can return NULL in several cases (no such
-> device, ACPI table error, reference count drop to 0, etc).
-> Existing check just emit error message, but doesn't perform return.
-> Then this NULL pointer is passed to devm_acpi_dev_add_driver_gpios()
-> where it is dereferenced.
-> 
-> Adjust this error handling by adding error code return.
+On Mon, 01 Jul 2024 14:26:16 +0200, Krzysztof Kozlowski wrote:
+> Driver does not unregister typec structures (typec_mux_dev and
+> typec_switch_desc) during removal leading to leaks.  Fix this by moving
+> typec registering parts to separate function and using devm interface to
+> release them.  This also makes code a bit simpler:
+>  - Smaller probe() function with less error paths and no #ifdefs,
+>  - No need to store typec_mux_dev and typec_switch_desc in driver state
+>    container structure.
 > 
 > [...]
 
@@ -81,8 +79,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: amd: Adjust error handling in case of absent codec device
-      commit: 5080808c3339de2220c602ab7c7fa23dc6c1a5a3
+[1/1] ASoC: codecs: wcd939x: Fix typec mux and switch leak during device removal
+      commit: 9f3ae72c5dbca9ba558c752f1ef969ed6908be01
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
