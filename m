@@ -1,156 +1,196 @@
-Return-Path: <linux-kernel+bounces-241175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DAC89277CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:09:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1630B9277D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A07501C235A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:09:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 392811C21B22
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8761AEFDB;
-	Thu,  4 Jul 2024 14:09:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E691AED59;
-	Thu,  4 Jul 2024 14:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720102151; cv=none; b=QSYBhKPVgTGfp9Ik/aPtZcFlW6Rq72OVZzZD3a2N0RasBEw86y7chNqN3IKaLeh4O+NGw7KPKIRXyrKdJpGXp4nFJnyuEu/MZTcGmcU6aCAjgtZOmkML3VuBQV/SPxlTGk1KkQgh7potD1T4VgJqxOdXQzCdc2QuS47KtdX4svU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720102151; c=relaxed/simple;
-	bh=pFRLn+y1mz1uVUqeKtVvQepYQ3kownJiUBKeIvxzUsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H78YXlDty1Vt9CtXoJViqK1XdaSewykr2twNXBpJtxNfBPkit7+OSq1gHMcpv32qP8EB1bZfRb2ZjyV0VJTmwcAeK3ITMo1SqEDCoF0uaXTxf4hp7QUHYBeepTO7/mT7GZ5PkE6Zu7H6SZO8hhdCZDtBSXPNsGtIg7DGU7LC79o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F369367;
-	Thu,  4 Jul 2024 07:09:33 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C1D933F766;
-	Thu,  4 Jul 2024 07:09:06 -0700 (PDT)
-Date: Thu, 4 Jul 2024 15:09:04 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	"cristian.marussi@arm.com" <cristian.marussi@arm.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH V2 1/2] dt-bindings: firmware: arm,scmi: introduce
- property mbox-rx-timeout-ms
-Message-ID: <ZoatADKjBfpRCeLz@pluto>
-References: <20240703031715.379815-1-peng.fan@oss.nxp.com>
- <ZoZ7NCSaG0YRK-60@bogus>
- <AM6PR04MB5941A61736496B9850A3B52C88DE2@AM6PR04MB5941.eurprd04.prod.outlook.com>
- <ZoZ8pfi5KZZGY1wd@bogus>
- <AM6PR04MB5941F61DFB15AFDA384C153A88DE2@AM6PR04MB5941.eurprd04.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA5D1AEFF4;
+	Thu,  4 Jul 2024 14:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PmgbC2uw"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2048.outbound.protection.outlook.com [40.107.236.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7EE1ABC25;
+	Thu,  4 Jul 2024 14:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720102255; cv=fail; b=J3B85bA3HMSY33/toA8rm3Ha4TIk9ckzzqFlZssu59PqAdfop+lxnWaZQTI7Hz4Du+0QnZ0MV0wCmzEOy0wb63l3eh6HWO0UO9kUq7pA5Hy5QfFlPsd5WgUpBeMey1v6INVJ9cRJSH6KJK52EbVGv+4cZSaPT50qGDNX2WZi3tk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720102255; c=relaxed/simple;
+	bh=en3cGpMzmz0BEMy9wk8n7gnN779UeCGd67BJnxhtQWo=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=anwSejw0a/hJWciPy1gYdxbPrQVWxCBiRyodG8fppJX/hfXES2D4aXBafxcRAxJJEPqsMc5Nh1oa/HSuGlm9klgmUsko4dNr4gUWaWpuZwiy5B1+Qe6UeVyniv5mWvagNg5EVC3i3fjMVib81P8jiWJOwcKMMhkyxAoWTLvk9jw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PmgbC2uw; arc=fail smtp.client-ip=40.107.236.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jG09YQzthp1Q6s9bSDwVC6An90wL/Wdh41MZ6YkhLGGmhZjgSxiIpOP/DGcQBMnSUbdCQ04PaAkh1Eiu4jzmg0DPIHTBHUlXqX1lRYk3ZP7R0E2uH2+Vqm+7rRmeyV59eQqyZtyKmAdl31MJFr5QNLEZsP1LZSAweEMAvya05+gqqz18L3YP5n0noxsuaKQ/CZQDlKfaiA9eOWPemHH+oOpmM0Vfo77HZ/zOUM58gAmAgQs+uyElxM63mzCgEJSs1Y5lRg9B57d6Uo1JjdxtenTr/2Vn0t7YrOvq+L+X52VMHu2rbcfQYM4ucBC0qJftwcVfgKUVDv3S9auQiChKQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PYA9bSUE8jaatM3JOa/bymQw4WT9YBRCu2Ep9mf9cnY=;
+ b=F4l91S0KcllLqngvii0JkFWdRBPTVUjBz1tOCM2OCAOSigiSmKOK6yxprv5SslUF7e5wFHmNvsB6I8p/2NbbfMoRXTIwFTAVqYYan4bPAUJWaWqFpgYIebnYzF9gIYHOrbZ2fyxNoBmS0YJvKFV9rz4no/H1UyekDnhkokuJs0EffUTB+nOvU4XYGNfl+wsy7qqNFUBh/bTa1OY/bPX3Lpwb32UDUc9u0cj3c6+OCXWK0d6t99OIGJQZJd92hQ1MypQa+SBYawwdPmUIQFde16UApVuV1kc0FhcaTbaIBVpKNDTgV3poECkUj5SbnETs7HfE2Ys3WPhKCbte8rUx/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PYA9bSUE8jaatM3JOa/bymQw4WT9YBRCu2Ep9mf9cnY=;
+ b=PmgbC2uwyjTpQICLx1uyQJyGqA4pZWwDGj/TPYHjB/OHJAUXAnn2CdPkBWLgqsvcaX4vRn18rCd6WIaC8uY/SlQ8Jm6iPr8/0sHsZ9pnosWdmFrX+9lAwtse/GPTHQOOZN5drKQ0KRWoIHdnoVLCEryZdjQ9f7WnFL8al4RJ+Be+XvoTBpYjY0t/lsSqYiW6kPgO+GFJtLkavMOgsda6/CTBRil5/pysMLTNbJKoQxaXXKA3jgvHln2sv5jDA8vnKYa/eyb+Awt0B6aB7bmSAR2UxgXApCdzv3Ipu4qinZ4QVfhQbqXL/CUeDH2vXb+/3o0GkvqCTB+TKCs1PaRsSQ==
+Received: from BL0PR01CA0016.prod.exchangelabs.com (2603:10b6:208:71::29) by
+ SA1PR12MB7221.namprd12.prod.outlook.com (2603:10b6:806:2bd::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7719.33; Thu, 4 Jul 2024 14:10:48 +0000
+Received: from BN2PEPF000055DB.namprd21.prod.outlook.com
+ (2603:10b6:208:71:cafe::bb) by BL0PR01CA0016.outlook.office365.com
+ (2603:10b6:208:71::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.29 via Frontend
+ Transport; Thu, 4 Jul 2024 14:10:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN2PEPF000055DB.mail.protection.outlook.com (10.167.245.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7762.1 via Frontend Transport; Thu, 4 Jul 2024 14:10:48 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 4 Jul 2024
+ 07:10:32 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 4 Jul 2024 07:10:31 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 4 Jul 2024 07:10:31 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.4 000/183] 5.4.279-rc2 review
+In-Reply-To: <20240704094447.657619578@linuxfoundation.org>
+References: <20240704094447.657619578@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR04MB5941F61DFB15AFDA384C153A88DE2@AM6PR04MB5941.eurprd04.prod.outlook.com>
+Message-ID: <c62ecd11-1a80-4610-8355-f513f82750df@drhqmail202.nvidia.com>
+Date: Thu, 4 Jul 2024 07:10:31 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000055DB:EE_|SA1PR12MB7221:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89167c52-ecc8-4914-74ed-08dc9c331a88
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RVJsYzk1c1VUZ1lQK3A1SGJhb1E2a2U2a0RCbE1qRWZPcEpwdVlJQ1FaSkR4?=
+ =?utf-8?B?d3ZCckxnK1BzRmJ3dGpkWTdSMVlCKzZnNWkxWlRrRnJwbTBmcHcvVkloQ3RW?=
+ =?utf-8?B?eEZRT3FXMllNWTJvU1gvUGdNeTAvUzhyV1V2VERXR2NIVXZaanMrVlc4OFVQ?=
+ =?utf-8?B?V2k0Ynd4K2JiUy9tQi94M2xkSCtLV3dIcit2by9kRnpVOGVRYjhJRTJpL05W?=
+ =?utf-8?B?MlVwelI3UGJ3cXVhOVFqOTdVWG1LN0x1MEpKRTZyc0tkQ2pVU1VFN1B0cktH?=
+ =?utf-8?B?KzdMUXJtanFKc1BxcGdHZzJjOHcvRTArVjFicFFiNllFaEwwc1NkU2VxTVJl?=
+ =?utf-8?B?MS9UQ2pKKzRldjhqekxwc2VCaDNyKzN6MDRhLzRERk42NEZhbFVNL05SUWZa?=
+ =?utf-8?B?ZVc4Z0UydVdyRFBiR2txRG13NmU2K1ozQ0phL0V3Q0p2V2ZHL1hzOE9RSHlC?=
+ =?utf-8?B?bXlZalc0UXNoT3lFbVI1ZFlSb3UvZkZYRWFBNTl2ZWgvNzFDTDRmaXpTMDNk?=
+ =?utf-8?B?U2dYU0JIbmZsSUt6ekU5bXpvdlZQbGJzY1BXVjY2TDVYUlJ3ZE82N3VsQVZt?=
+ =?utf-8?B?dmo2OW1CSjdrUlZvMzlYTWEySU1SZnVORmhPVW10cTFtTW4yRmw0Q0tLQVBF?=
+ =?utf-8?B?K2trcjBYQ1ZDT29ZOXBlYXpjTVZmVlpMN0tvRVlPWXlHRXpRblZHL1Q2L3hJ?=
+ =?utf-8?B?aUtRZVdUU0o5THZyd25ORnNzMy9CN2p6QmV6N1FvRmdjVzN4cWg5Z2J5MDc5?=
+ =?utf-8?B?VFZKRTAwb2JLMkdqMlV2WHhyTUFQUVF2Qk8rSzRGRi9zcW5ISTFnelBub2pa?=
+ =?utf-8?B?REcvZ0NWMEpXU2VxUS9mVmJhY0I0a2ZCZTNZMlVkK1YrcHFmb2g2b1N4bmRk?=
+ =?utf-8?B?dmVLRkdySUJWa1Rkb3VYS0ZKeityN3Q4VHJGY0MxUlpjTmNTUHdFN0FMbUoz?=
+ =?utf-8?B?S1cwTk04QUFhRjlIV2RLMTVOSnlVTE9keVNNUElaYXJqR3R4eTB4citlWSsr?=
+ =?utf-8?B?dGNMeXBBeUZXQ3R6ZTQ1MmdqNXZhVEk1T1dqNkNnNVJjWGdaVmwwVll6TXBr?=
+ =?utf-8?B?SmRlaDdkQ3VPRWYrWjNTd2k3WFB3QkthZkpLckpsbFh1U3dEQ2hvNGRmY0Z2?=
+ =?utf-8?B?WWY3cHYza0tnY1lOVUxJTVIvOW1pcnl6SmtReU1KNUhjcTY0eGFmNGExa0E2?=
+ =?utf-8?B?VUZjSTdueXYwcnVCVkpLckRWWTE3ZjRWM2pnVVJCZWZJc01hMnV3SkhvcGFX?=
+ =?utf-8?B?bWVPNjNCendVbUhvNGFKYmluMUkzSDc4cmtDemIzcjZtNFpKTm5lTjNYZHph?=
+ =?utf-8?B?cElOWjU3SGRrK0VzVXgyRS9oM2RYQkNNVDZTUW8zSkZSZmYvU1I2MFNvZ0pL?=
+ =?utf-8?B?T0hJV25PN0VMY3F3S3ZRUUI5Q1hWRzFrY2NHZUp3NUFpancrY1ZBSDEzNkdQ?=
+ =?utf-8?B?UG05cTRQZGE1a210K2ZHak9NeUlxZ0NTNnZPSzZHRlNRcGVtcFgrdVR2TnRx?=
+ =?utf-8?B?ZkszMnc5UGJWU0hQY0lDcmhhTEJwcGFDZDFOMHdrYXcwMmhLVTIrVU9GQnMv?=
+ =?utf-8?B?dW9KLzRSNkVjU1dPeGt2TFhOK1BnRTFyZjJ3Q1NxdHZsZE9YTTN3OTlWTk51?=
+ =?utf-8?B?NHdXOGt6QWI2U1FpZkV6YXhsYUNSeEN5OWplQWgrL2ZETmtBT0VqVUxqQ2hw?=
+ =?utf-8?B?Skp5RmZ1ZUMwdFhqdS9tUDZMVDBEc09Dc2syQTJKWHNUbUhBeFlYTmdZYUdX?=
+ =?utf-8?B?aXpsUzJIRzBRSGt2Si9LbTJ5TG5SMGVmK2MvcnlqQ2dwT2U2WVFndGk0aENu?=
+ =?utf-8?B?YytSa0xnVWh4elFlY3Irem1vN3BpdUwzdlN1c0ZxQTZ5MlB5Q1NEa0tvZkNR?=
+ =?utf-8?B?bHFCOEZFb1cveUh6c2swOVZLcU5Kcjh1M3djWWxVcldEb1lGMkZHVXJlQVA2?=
+ =?utf-8?Q?jzpWnbOgZs/s1Mi9fVj87XxEsRk6dZRr?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 14:10:48.0308
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89167c52-ecc8-4914-74ed-08dc9c331a88
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000055DB.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7221
 
-On Thu, Jul 04, 2024 at 12:33:09PM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH V2 1/2] dt-bindings: firmware: arm,scmi: introduce
-> > property mbox-rx-timeout-ms
-> > 
-> > On Thu, Jul 04, 2024 at 10:39:53AM +0000, Peng Fan wrote:
-> > > > Subject: Re: [PATCH V2 1/2] dt-bindings: firmware: arm,scmi:
-> > > > introduce property mbox-rx-timeout-ms
-> > > >
-> > > > On Wed, Jul 03, 2024 at 11:17:14AM +0800, Peng Fan (OSS) wrote:
-> > > > > From: Peng Fan <peng.fan@nxp.com>
-> > > > >
-> > > > > System Controller Management Interface(SCMI) firmwares might
-> > > > have
-> > > > > different designs by SCMI firmware developers. So the maximum
-> > > > receive
-> > > > > channel timeout value might also varies in the various designs.
-> > > > >
-> > > > > So introduce property mbox-rx-timeout-ms to let each platform
-> > > > > could set its own timeout value in device tree.
-> > > > >
-> > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > > > ---
-> > > > >
-> > > > > V2:
-> > > > >  Drop defaults, update description.
-> > > > >
-> > > > >  Documentation/devicetree/bindings/firmware/arm,scmi.yaml | 6
-> > > > ++++++
-> > > > >  1 file changed, 6 insertions(+)
-> > > > >
-> > > > > diff --git
-> > > > a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > > > > b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > > > > index ebf384e76df1..dcac0b36c76f 100644
-> > > > > ---
-> > a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > > > > +++
-> > b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > > > > @@ -121,6 +121,12 @@ properties:
-> > > > >        atomic mode of operation, even if requested.
-> > > > >      default: 0
-> > > > >
-> > > > > +  max-rx-timeout-ms:
-> > > > > +    description:
-> > > > > +      An optional time value, expressed in milliseconds,
-> > > > > + representing
-> > > > the
-> > > > > +      mailbox maximum timeout value for receive channel. The
-> > > > > + value
-> > > > should
-> > > > > +      be a non-zero value if set.
-> > > > > +
-> > > >
-> > > > IIRC, you had the min and max constraint in the earlier response.
-> > > > You need to have rushed and posted another version before I could
-> > > > respond with my preference.
-> > > >
-> > > > So there is no rush, these are v6.12 material. Take time for
-> > > > respining and give some time for the review.
-> > >
-> > > Sure. I just not sure what the maximum should be set, so I drop the
-> > > minimum and maximum from my previous email.
-> > >
-> > 
-> > Worst case we can just have min constraint to indicate it must be non-
-> > zero value as you have mentioned above and drop that statement as it
-> > becomes explicit with the constraint.
+On Thu, 04 Jul 2024 11:48:03 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.279 release.
+> There are 183 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> I'll use below in v3:
->   max-rx-timeout-ms:                                                                                
->     description:                                                                                    
->       An optional time value, expressed in milliseconds, representing the                           
->       mailbox maximum timeout value for receive channel. The value should                           
->       be a non-zero value if set.                                                                   
->     minimum: 1
+> Responses should be made by Sat, 06 Jul 2024 09:44:13 +0000.
+> Anything received after that time might be too late.
 > 
-> Put the binding away, when you have time, please check
-> whether the driver changes are good or not.
-> BTW, since our Android team is waiting for this patchset
-> got R-b or A-b, then the patches could be accepted by Google common
-> kernel, we could support GKI in our release which is soon in near
-> days. So I am being pushed :) 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.279-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Hi Peng,
+All tests passing for Tegra ...
 
-once the bindings are accepted I wanted to fold also this series of
-yours in my transport rework series.
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    24 boots:	24 pass, 0 fail
+    54 tests:	54 pass, 0 fail
 
-Thanks,
-Cristian
+Linux version:	5.4.279-rc2-geee0f6627f74
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
 
