@@ -1,115 +1,200 @@
-Return-Path: <linux-kernel+bounces-241150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308A0927792
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:59:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47DA927790
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61BF71C21439
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:59:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7146C284772
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1262A1AED5B;
-	Thu,  4 Jul 2024 13:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nivqRoXF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EDF1AED58;
+	Thu,  4 Jul 2024 13:59:07 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541F41AE852;
-	Thu,  4 Jul 2024 13:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EFD1ABC25
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720101567; cv=none; b=r2FpXUAp+sV/W69jAlyQZEBU+FTDp1Ol+x7dvcgDacm5zFo23psjnaNauFKlBckYjwjEKOC9eskioiI0ZzKJzrkOUugFp98DHEiveMVn7z6LrpUyyj6k2iG/1jJl+u30v03Q+uVI/KLIxwEQYVWbnr95Ri+hD3hJbURPRJULX9M=
+	t=1720101547; cv=none; b=SiWajC19Oi+X/s/wLuuJB2PJMis2OG1qZXdTlwahbtWdFew7euL2jAiyOGKg9cjIBTqcFHH/9aG+dSt9Ilfvv6X9ieund9ixv7YwqqNKFBjc/haQNQP7FIgJ0xO+S4ymNq/Tt+erGKPYTSU4cP4uhITGFY/2LqEJyx7B9Kc+ryo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720101567; c=relaxed/simple;
-	bh=GiFNrRC5ZHb7Hxbh4vVwGtsfmzcjtWemmZgP3AnxegY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gS2eLVA8Rm2TeUsQZf0yUVuL3y71lZCE3muU6ncbm0Cdadwny5Em6B8xL4Qxj8Pvfa29jeAclMmQcToSYSgJSx+dTBXAqH8rnGV3LHF/fRjMZvIvuvqwnRZ/25AzoIXgUjeuDKc7quQ4akX2bG4g7wmay48Hl22RYHKqlOhSGEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nivqRoXF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D147DC3277B;
-	Thu,  4 Jul 2024 13:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720101566;
-	bh=GiFNrRC5ZHb7Hxbh4vVwGtsfmzcjtWemmZgP3AnxegY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nivqRoXFiy5R/h79TRhpMSLyeCBWRjHCX0d/Z4P9Gg/hB4yH64j/dLLwMjR/gVvON
-	 UXD5WxmmbLeQHYopqQuKJYkzUeqyBSy5feIxtI1S1/o5syfMsgHY4+N6oE9LU+jrlM
-	 rK0HINvg+4QMygsLQZGhirfIyq42t4xjq3++CFYS5LVh/8R7jbds+6EcM1Yyy0tOkK
-	 Q3j/xhPiZ37x2UDvMnhxF8wH69YGn9Q7ZBteUa66PXw5pB5CcovGhMqXJTZ5xtBqpP
-	 QkWOmH4zbalHvaRlsfohKUu2WPc/7sPquoKXSR1GuR6B8LPiA81vc5JoFw731zdvcf
-	 dSUit0cUM5usw==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ee794ec046so7193101fa.2;
-        Thu, 04 Jul 2024 06:59:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWjf1+HENO+5SVqWc6yaTaNOIaZ2BoS6QUsKZE0GduBoUNhUgsz8G8ZHJabs4+zMiGFcPqnFISqzV7J1TpPlv2AodsLLn7BR8QSAeYF
-X-Gm-Message-State: AOJu0Ywp63cEIkkRtwRQRr/oGHqDMq1Dzn7LHQiaXHXnKzV4scwj2sTd
-	mcX0YQ8p4HofZF2pdNA+pqbLADtOUohi/skv92xmvwcRNwpgyEgbNUW2xC+pMcUax7QpnLPnl/W
-	UG05NjKr+/knzMZxcP+DN1U1OpEo=
-X-Google-Smtp-Source: AGHT+IF+CHxSsSYPe+elMB6CRNK5thn1dazWoWQgYaGFhA+1aiJhuLN8GpIixNnM9hbQ+rlQWVkF3e5f4fSARKAoA0U=
-X-Received: by 2002:a2e:3c03:0:b0:2ee:4ccf:ca4f with SMTP id
- 38308e7fff4ca-2ee8eda42e4mr11245841fa.31.1720101565403; Thu, 04 Jul 2024
- 06:59:25 -0700 (PDT)
+	s=arc-20240116; t=1720101547; c=relaxed/simple;
+	bh=AdrH1yAP4BQS3OHXaXlsGgtbCEKl4ndO+e9riIcJhIE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=crBBADemagtRhUkofxH5TeEnUvlprzJLHw6RylxicYpC3Dz8vWjw77iqfzGps59NoFCzEhKpVSzQAc1wQGIw9zRdGJjmHetSmhvX+ggNIGR5gnhf/YDBh5IuYKyFosH5j5jYwM+uCVcDIWHgQuh3bvWzB54dp/NxPGwgh0BN/Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPMz7-00029i-Bl; Thu, 04 Jul 2024 15:58:53 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPMz5-0076Us-SF; Thu, 04 Jul 2024 15:58:51 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPMz5-00GWo5-2a;
+	Thu, 04 Jul 2024 15:58:51 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Yuiko Oshino <yuiko.oshino@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: [PATCH net-next v1 1/1] net: phy: microchip: lan937x: add support for 100BaseTX PHY
+Date: Thu,  4 Jul 2024 15:58:50 +0200
+Message-Id: <20240704135850.3939342-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAK7LNATxSePzOrHaQvS1MQo4mpAwdfwrDu3iuUsYZ+RL=LiirA@mail.gmail.com>
- <20240611211123.959459-2-aquini@redhat.com>
-In-Reply-To: <20240611211123.959459-2-aquini@redhat.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 4 Jul 2024 22:58:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQviPKzppow8Vpjz_hOT0kidLihgjS5gBxTx82SOzj9PQ@mail.gmail.com>
-Message-ID: <CAK7LNAQviPKzppow8Vpjz_hOT0kidLihgjS5gBxTx82SOzj9PQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kbuild: rpm-pkg: make sure to have versioned
- 'Obsoletes' for kernel.spec
-To: Rafael Aquini <aquini@redhat.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2024 at 6:11=E2=80=AFAM Rafael Aquini <aquini@redhat.com> w=
-rote:
->
-> Fix the following rpmbuild warning:
->
->   $ make srcrpm-pkg
->   ...
->   RPM build warnings:
->       line 34: It's not recommended to have unversioned Obsoletes: Obsole=
-tes: kernel-headers
->
-> Signed-off-by: Rafael Aquini <aquini@redhat.com>
-> ---
->  scripts/package/kernel.spec | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/package/kernel.spec b/scripts/package/kernel.spec
-> index e095eb1e290e..19e458341f45 100644
-> --- a/scripts/package/kernel.spec
-> +++ b/scripts/package/kernel.spec
-> @@ -27,7 +27,7 @@ The Linux Kernel, the operating system core itself
->  %package headers
->  Summary: Header files for the Linux kernel for use by glibc
->  Group: Development/System
-> -Obsoletes: kernel-headers
-> +Obsoletes: kernel-headers < %{version}
->  Provides: kernel-headers =3D %{version}
->  %description headers
->  Kernel-headers includes the C header files that specify the interface
-> --
-> 2.45.1
->
->
+Add support of 100BaseTX PHY build in to LAN9371 and LAN9372 switches.
 
-Applied to linux-kbuild.
-Thanks!
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/phy/microchip_t1.c | 74 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
+diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
+index a35528497a576..c7ca0d04b9e1b 100644
+--- a/drivers/net/phy/microchip_t1.c
++++ b/drivers/net/phy/microchip_t1.c
+@@ -12,6 +12,7 @@
+ 
+ #define PHY_ID_LAN87XX				0x0007c150
+ #define PHY_ID_LAN937X				0x0007c180
++#define PHY_ID_LAN937X_TX			0x0007c190
+ 
+ /* External Register Control Register */
+ #define LAN87XX_EXT_REG_CTL                     (0x14)
+@@ -94,6 +95,10 @@
+ /* SQI defines */
+ #define LAN87XX_MAX_SQI			0x07
+ 
++#define LAN937X_MODE_CTRL_STATUS_REG	0x11
++#define LAN937X_AUTOMDIX_EN		BIT(7)
++#define LAN937X_MDI_MODE		BIT(6)
++
+ #define DRIVER_AUTHOR	"Nisar Sayed <nisar.sayed@microchip.com>"
+ #define DRIVER_DESC	"Microchip LAN87XX/LAN937x T1 PHY driver"
+ 
+@@ -860,6 +865,66 @@ static int lan87xx_get_sqi_max(struct phy_device *phydev)
+ 	return LAN87XX_MAX_SQI;
+ }
+ 
++static int lan937x_tx_read_status(struct phy_device *phydev)
++{
++	int ret;
++
++	ret = genphy_read_status(phydev);
++	if (ret < 0)
++		return ret;
++
++	ret = phy_read(phydev, LAN937X_MODE_CTRL_STATUS_REG);
++	if (ret < 0)
++		return ret;
++
++	if (ret & LAN937X_AUTOMDIX_EN) {
++		phydev->mdix_ctrl = ETH_TP_MDI_AUTO;
++		/* MDI/MDIX status is unknown */
++		phydev->mdix = ETH_TP_MDI_INVALID;
++	} else if (ret & LAN937X_MDI_MODE) {
++		phydev->mdix_ctrl = ETH_TP_MDI_X;
++		phydev->mdix = ETH_TP_MDI_X;
++	} else {
++		phydev->mdix_ctrl = ETH_TP_MDI;
++		phydev->mdix = ETH_TP_MDI;
++	}
++
++	return 0;
++}
++
++static int lan937x_tx_config_mdix(struct phy_device *phydev, u8 ctrl)
++{
++	u16 val;
++
++	switch (ctrl) {
++	case ETH_TP_MDI:
++		val = 0;
++		break;
++	case ETH_TP_MDI_X:
++		val = LAN937X_MDI_MODE;
++		break;
++	case ETH_TP_MDI_AUTO:
++		val = LAN937X_AUTOMDIX_EN;
++		break;
++	default:
++		return 0;
++	}
++
++	return phy_modify(phydev, LAN937X_MODE_CTRL_STATUS_REG,
++			  LAN937X_AUTOMDIX_EN | LAN937X_MDI_MODE, val);
++}
++
++static int lan937x_tx_config_aneg(struct phy_device *phydev)
++{
++	int ret;
++
++	ret = genphy_config_aneg(phydev);
++	if (ret)
++		return ret;
++
++	return lan937x_tx_config_mdix(phydev, phydev->mdix_ctrl);
++}
++
+ static struct phy_driver microchip_t1_phy_driver[] = {
+ 	{
+ 		PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX),
+@@ -894,6 +959,14 @@ static struct phy_driver microchip_t1_phy_driver[] = {
+ 		.get_sqi_max	= lan87xx_get_sqi_max,
+ 		.cable_test_start = lan87xx_cable_test_start,
+ 		.cable_test_get_status = lan87xx_cable_test_get_status,
++	},
++	{
++		PHY_ID_MATCH_MODEL(PHY_ID_LAN937X_TX),
++		.name		= "Microchip LAN937x TX",
++		.suspend	= genphy_suspend,
++		.resume		= genphy_resume,
++		.config_aneg	= lan937x_tx_config_aneg,
++		.read_status	= lan937x_tx_read_status,
+ 	}
+ };
+ 
+@@ -902,6 +975,7 @@ module_phy_driver(microchip_t1_phy_driver);
+ static struct mdio_device_id __maybe_unused microchip_t1_tbl[] = {
+ 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX) },
+ 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN937X) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN937X_TX) },
+ 	{ }
+ };
+ 
+-- 
+2.39.2
 
---=20
-Best Regards
-Masahiro Yamada
 
