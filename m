@@ -1,107 +1,151 @@
-Return-Path: <linux-kernel+bounces-240593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B10926F7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8782D926FAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AD55B21CBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:27:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44CE0283541
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 06:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F50E1A08B5;
-	Thu,  4 Jul 2024 06:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEAB41A08A7;
+	Thu,  4 Jul 2024 06:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uTQpUHlb"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDFbQCZy"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6A61A072A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 06:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FF62208E;
+	Thu,  4 Jul 2024 06:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720074405; cv=none; b=c0VYc4oPExdKcrzz7PgFhnFYtQOOSueTLoAb68SWWIQezg/MaDvZ0RyaTKMb8KmK6BmSByW7iPelGLtyQj5aJcdsIHI00vjuS4ZN8Dy+d1wA/CLsdHFVHdIMcYGzQ7SR4SfL1WNqzCKFqahYdcf2bdX/fo5jAoo5fxPORy1g55U=
+	t=1720075055; cv=none; b=faYdasGmYYQ12cRsPB2DnbJxOL58FkSA+yFVHBkMOgzjy1seW2BoMo5uW3trL8WYWuygoUgEcbZVr3jaQSmX7e7LsHNBQPasVdjFXLYah76evgUngzt0YXoUhu+DY/1vfmrKFPaN65uktjDZdq7iHbgbJaaZk8+bDt0s+6D/pow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720074405; c=relaxed/simple;
-	bh=uCF2EB4gbFocwquJvCdIKzAh9CSf5NQdGLskTgx1PY8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=euVahMYFUtdePRKh1FY85Ig0dLhOSvsnjUz9R4lRBIaVgFZdybBfjbImCQIHaXmtfAbfW5OlhTHFSsSSmo3Oco9qYEecQ1/6GkszS9fBtBExD3CADQgpfulT3IX7gK2tljySQc7eceVjUueKTmPQlZ2jwwtnXchqihbY4A9ouIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uTQpUHlb; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720074374; x=1720679174; i=markus.elfring@web.de;
-	bh=uCF2EB4gbFocwquJvCdIKzAh9CSf5NQdGLskTgx1PY8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=uTQpUHlb8ZnUwyNUGHCsQCMUJLUmJxZ9tuEb2AjrOyOJrTrb2+FU9gIbWnY8VdYs
-	 W1+PE1YQGL9xT41AC9fjiuy97JY2WyeY6Tr54hBVF0OlrCV96KCgF994pYXyr1xVm
-	 ZcAiSGkPGCYdgBw5pP++BB8iBpOFWDlfFGW9TFacYUdstLlrw1Fcfn1fBeJVtz0qI
-	 MYMSUzjTdOxLtMu9YNlaVo3Zb0JVQ4UWhN3o7FWTpfvNS2ryxwikIeCFeVFgFZzXR
-	 oGJ0J22lUscFE+gYVTL84jQ94NlBmp64Ausq9xVogWWM5HULu2gtj5pexUpv2K1bL
-	 sUn40UYKIVHWv6MuWA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M91Lg-1sS1sO29Oo-00CnbU; Thu, 04
- Jul 2024 08:26:14 +0200
-Message-ID: <2121fd23-5cb8-493b-bee8-0c7d74bccfa9@web.de>
-Date: Thu, 4 Jul 2024 08:26:00 +0200
+	s=arc-20240116; t=1720075055; c=relaxed/simple;
+	bh=AkZrkSFSx5lc0JtPptkBI5YnorqqqY84dL+IvfE81kM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=raXZ0f+UaWRnCIUS/6ex6YlhXyc6FUr1cD1x7G/1mwBFQOJegQ6fbwvMXEp5KxkbKYyEK6Ti+jPLANCGZDR98Q4NI2rWYieSeV0KqSvyrS2xGRXLcjXBhgvRaXMJVnQVQfrqYtgJyEj/ELr3ydNfNUxHzg7tOjAAAUQMCX+6NVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iDFbQCZy; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2bfdae7997aso239371a91.2;
+        Wed, 03 Jul 2024 23:37:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720075053; x=1720679853; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q9wcD4PWr8YAogAElKHlzCUbgCE7uJ7/yxnZjstIV5o=;
+        b=iDFbQCZyxYCnA8fOUJE0zmtTUupmK0kGbnMIHrTJpJ7pk/LbA2ovjXZpeRXki2KOqX
+         SKo+LF77ULp6ZTVajY6j+j/SRxOuVwgS2NlnVXxwHc6LkCnIy0welmoG5YdTgI8ib1RM
+         zg6AB7c43us8A8b65ikzzLZdTSW8qiVn87WlU7DnJjA3F9mp33jc1mMmZ0z3eJ/qgMkl
+         //OHARrCwnmWLqmCovMbfHg0eR0BGFqARin46UrmsOfSfRGTCdj5WVe4uGSq0RzM0ZAM
+         UcLePUiAxjBUEH1brYnWdRv9N8b4pn05yKKuhmykDGA4o2A3D3QJTCUVWfKEqPbVKVO6
+         chmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720075053; x=1720679853;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q9wcD4PWr8YAogAElKHlzCUbgCE7uJ7/yxnZjstIV5o=;
+        b=emOuzefyP4/4CQMmU5NHiF2ImcTF8OQ+WXqF13OyNEE4b6konJ9oI+n//QBEQghZe1
+         x27KtrQjNmQ1F0k7E6sgPzorAHH4mOZQ4uT+hwNmMsQKVH33wFkiz5AeK7yqL0tvM47E
+         4JXWqt0SAJb5kdXltRwyhGCC3r9a7foSJkKYdOOijr32TFcbAhX/FxDSC5tFCOTjJHUW
+         onjTMhgdQR2NpDAoPvmoxUT+2RGhs8zUxZh2TG5z0aV/CIoFu5cXOH5uUroRn33CwbX3
+         zZbncO5twpwtzD6/vmyjcv1ZIiNbL/KJn9zUV9/XeNQfokt4bSASc0V+8q9OPt1XMVG7
+         bKdg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8834jqVMOf8Tg9ABy365Eur+txf/dzjfenTGvfumEz0jUDikoTNFEYHbXz4+rxGNdwAXWD7a3tOGRGxoWF1NMMCrUp+PDeHEvU7KXoGu+fUEA74xFRMc4m52Yu4qXH9nGFs1uk3qWn8Becauz7uz/YJvbA/2oSQAbQDQk9sMQwajn6g==
+X-Gm-Message-State: AOJu0YyOC5U4zSCqxOfXEZ188Gc93XhOtsr5P9uY83iBTEXGUoysi1mV
+	LS9J4IrKWdb9Vfb2KYH3qg6dBTq3m/qIRr3l0gZ0kg7SVwAIB2v7
+X-Google-Smtp-Source: AGHT+IEXpW7QC6BZPKVS4Pkn43o+XVWNg9bvWBSKIs78gLrv3gqo0RR3sbFIBeXVBHfqY2DiBvHZwQ==
+X-Received: by 2002:a17:90b:618:b0:2c9:83f3:128c with SMTP id 98e67ed59e1d1-2c99c86be82mr550963a91.31.1720075053011;
+        Wed, 03 Jul 2024 23:37:33 -0700 (PDT)
+Received: from localhost.localdomain (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99aa6fd28sm666835a91.36.2024.07.03.23.37.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 23:37:32 -0700 (PDT)
+From: Shan-Chun Hung <shanchun1218@gmail.com>
+To: ulf.hansson@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	adrian.hunter@intel.com,
+	p.zabel@pengutronix.de,
+	pbrobinson@gmail.com,
+	serghox@gmail.com,
+	mcgrof@kernel.org,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	forbidden405@outlook.com,
+	tmaimon77@gmail.com,
+	andy.shevchenko@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com,
+	schung@nuvoton.com,
+	Shan-Chun Hung <shanchun1218@gmail.com>
+Subject: [PATCH v4 0/2] Add support for Nuvoton MA35D1 SDHCI
+Date: Thu,  4 Jul 2024 14:26:21 +0800
+Message-Id: <20240704062623.1480062-1-shanchun1218@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Daejun Park <daejun7.park@samsung.com>,
- linux-f2fs-devel@lists.sourceforge.net, Chao Yu <chao@kernel.org>,
- Daeho Jeong <daehojeong@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Dongjin Kim <dongjin_.kim@samsung.com>,
- Jaeyoon Choi <j_yoon.choi@samsung.com>, Nayeon Kim
- <nayeoni.kim@samsung.com>, Seokhwan Kim <sukka.kim@samsung.com>,
- Siwoo Jung <siu.jung@samsung.com>, Yonggil Song <yonggil.song@samsung.com>
-References: <20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90@epcms2p4>
-Subject: Re: [PATCH] f2fs: fix null reference error when checking end of zone
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90@epcms2p4>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:sziOUlnAjE0P9t6Baaq3Q0zyVJT9942lH223iRRgb2sewW374dX
- f9eJKFIqVlJ0E3PANv06WVqLvxcx9jP3cF2q3B/xsmvJMJ+Ym7QI6mbIlFPnMxa4w+PQC3C
- NoF9KfCkfX6dT8w+cYcpsbYvvYTB3bSA+MKpZAPW6GbZIfvdXPtqtllWkR+0G6NUlE8LHzg
- 2LT3x/v1BNYmR9zRHZ3cg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:s5l9pmtnMnc=;lJXEK0apfPqzZOEwUykEJjDA8md
- V9sFsO/B0b8g467YFV0XoCUMZYDPMbZ9red8OIv5PBYkljX19iPJHG/YcT04Iy7VfW+ezgtQa
- 28HNOwwqG7oaifiEnbAWdzT0gjtdH71Q+RlHYopVIeDEoObUR6Tb1liEvsqy7uEbfeqTo67zt
- AAKzxSZIj/HEiJ+cFzIrsiLDkR7wxfYvR5b9pzoqsR48Jto/BxGAgbO5iULYezSAByL4UjTfv
- BNNvx8KXXS7GO0SNwXT1iD6C8ZrSd0yQlySk8Ed98oqcpZ4p7IuMVOy+Wyfe3T+rbDFGLaUz/
- 0lhL54kDNh4wwtHdxjzt4K9XRBXtwim7GTD/K7HRX3e8rJcwjnA12PDcssauQeeFko+sZ7+Sl
- 8IwBJXayMf6SonjYxspEHf3S6Ur2GPdeV64WEHh4Ox9ePsc+Sz6dcqzVT/z2O8ZHoP65nXnG7
- HSxV7lpqknCCax0BWOSO760r8cVkxBseCXwt0ApMtGk/QCGY3fceLQpl8b72/9u0Bamt0VLdD
- GkMn5mXbiJiaRY7EXNLUstRxApHaZuXeDK8aK76cs2GH56wEGaDABI6E1SqMTQKaYQaAhbxA6
- fK/gITSDjvJbra0BctW+K2nJ7wVfBGPrPU4C0hujx33HjYUu3lWZcFNxlqRS+nVjbInJ1mGxX
- OFvJEhP0avtM/8kLxjwDIuVOMdz9v2aRZlZtfVYBIcfQbP8DExQo6Ft0DgrQcZzCfbM0vQ25Z
- fL9P+V5081DSXDcZ2YOopWWe44Jr/wqUrBrfuNg8/W/DTFWzeQFM7wVy4UcwFSOK9vaiA3tNV
- mZgFNf6s5kBvYPIARhX9X7iNvF/DikbpyJYHRMPZ5W5qQ=
+Content-Transfer-Encoding: 8bit
 
-> This patch fixes a potentially null pointer being accessed by
-=E2=80=A6
+This patch adds the SDHCI driver and DT binding documentation
+for the Nuvoton MA35D1 platform.
 
-Please improve such a change description with imperative wordings.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n94
+This MA35D1 SDHCI driver has been tested on the MA35D1 SOM board with
+Linux 6.10
 
+v4:
+  - Update to nuvoton,ma35d1-sdhci.yaml
+    - Fixing overlooked issues.
 
-How do you think about to use a summary phrase like
-=E2=80=9CPrevent null pointer dereference in is_end_zone_blkaddr()=E2=80=
-=9D?
+v3:
+  - Update ma35d1 sdhci driver
+    - Fixing "Alignment" and "spaces preferred around".
+    - Fixing style for multi-line comments.
+    - Fixing double call to sdhci_pltfm_free().
 
-Regards,
-Markus
+v2:
+  - Update to nuvoton,ma35d1-sdhci.yaml
+    - Remove some redundant descriptions.
+    - Replace 'minitem' with 'maxitem' in the clock settings.
+    - Make corrections to nuvoton,sys description.
+    - Add sdhci-common.yaml.
+    - Remove '|' except where necessary to be preserved.
+    - Keeping one example is sufficient.
+    - Add regulators in the example.
+  - Update ma35d1 sdhci driver
+    - Refer to 'include what you use' to modify included header files.
+    - Replace the number 8 with sizeof(u8), and similarly for others.
+    - Use "dev" instead of "&pdev->dev".
+    - Use the min() macro to improve the code.
+    - Use dev_err_probe() instead of dev_err().
+    - Implement an error reset check mechanism.
+    - Add devm_add_action_or_reset() to help with sdhci_pltfm_free().
+    - Use devm_reset_control_get_exclusive() instead of devm_reset_control_get().
+
+Shan-Chun Hung (2):
+  dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document MA35D1 SDHCI
+    controller
+  mmc: sdhci-of-ma35d1: Add Nuvoton MA35D1 SDHCI driver
+
+ .../bindings/mmc/nuvoton,ma35d1-sdhci.yaml    |  87 +++++
+ drivers/mmc/host/Kconfig                      |  12 +
+ drivers/mmc/host/Makefile                     |   1 +
+ drivers/mmc/host/sdhci-of-ma35d1.c            | 297 ++++++++++++++++++
+ 4 files changed, 397 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/nuvoton,ma35d1-sdhci.yaml
+ create mode 100644 drivers/mmc/host/sdhci-of-ma35d1.c
+
+--
+2.25.1
+
 
