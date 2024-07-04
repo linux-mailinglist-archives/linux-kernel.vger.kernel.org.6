@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-240815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E496C927328
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:36:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D69392732C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662451F21E4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37A18285AAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342691AB51B;
-	Thu,  4 Jul 2024 09:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6DF1AB51A;
+	Thu,  4 Jul 2024 09:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TK1ypddT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MruRNUHP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D544A1422D3
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEF01A4F22;
+	Thu,  4 Jul 2024 09:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720085807; cv=none; b=eR+nnzMGGtIcWlHT4L/6I9Qc0LKtEDSvZyLrGDbzhEE8XGHSqXOq+RGSI/2H8OPVkRxyzBuqCSni0bq84Iy38Xa5pt6NvqTtEAC3xsW4+tpbD3upobG+Yr/VyiaQtQqqM0QfHbyl++88spfKpTKJong0n44lTqnJumwc/n/2NDM=
+	t=1720085825; cv=none; b=XNZavQJ8dMith+KOeKjGsTpo5Unlab2DziS2ZK5hHz6mZKbd4fga+gXLNL9juMn6054O5IuSXXr5s9Lu+m81hM+DwILklPh/kAd6XLCF2zGjxH+Sc657jC7F1Np4Bri8YRWOXbnejj2fqS2PwHiNUCUpzkujUhTThNCRsTjExgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720085807; c=relaxed/simple;
-	bh=UYHgdrm5mVpms80udoSPFvlRdflG4BHyFvKupYGXpkE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=k1a879ZvN0GQG+vIf74E8W65+RuhHiYHvIj9ACa1MmA7SzY2v2G98ohlDOkVEFQwJ1lOcO0pdehK+VnCqk45hFKVNCvGm9CFWGwKNgmzYbId0VZ6l19fdxkMRvYFVf+iJCVda63pKeO+2xHdx5IeTDJ4CjFpQJc0bvPJUm5v5wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TK1ypddT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720085804;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UYHgdrm5mVpms80udoSPFvlRdflG4BHyFvKupYGXpkE=;
-	b=TK1ypddTj+ZV+eustK5nxcvQuz47t8DhmXkhgEuvYhhYek/DZS8Q6WomR1eIkFwBZNw7+M
-	/M+SaK1yTn8kZszkTaWTw3bIUzo/0dfqOy/zwmBexwwDvOEIjWoCq7n/kr04WvUdmq4v54
-	5cmQtagZZMFIU+CmFw2GvWWrnaOkZF8=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-154-S4Cf1fUHPpmcAjoNRcBqWw-1; Thu, 04 Jul 2024 05:36:39 -0400
-X-MC-Unique: S4Cf1fUHPpmcAjoNRcBqWw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-36795758ce3so80779f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:36:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720085798; x=1720690598;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UYHgdrm5mVpms80udoSPFvlRdflG4BHyFvKupYGXpkE=;
-        b=VbiK7KYoZEx8OaTFIJY1uJY61LSveIVK69QGdPMd753RZEoQzWvYrPkIcxAMtyoLXA
-         I4NQ0ixRJVOfmkIRC5K8SGJWuu7I1+i1j6OsqBOGuX/mhy3OnB6oneqpr3rE3t0NKvwh
-         oXNcg/dPlulUMb5i9LXNLiiyNdrsNeX+WF11Sx9eETf5PgKOhAla6M+J6U2nHpxA2jQw
-         w8uJ4srYuJJ2fSIt/s4SaWQfGz5WnatvYIzKQut64ME2sG+5XWDTtD43We1r/vFJh90t
-         kX3t1H2JDkKCf5d9DYcqOt7V2t0OOpJ9y4e/6KATdI2O9r3vq6InrswrhzhBIb8qHwKV
-         Enig==
-X-Forwarded-Encrypted: i=1; AJvYcCXQsjDKEVEyskitlZDRekrWQW3XIvUpNl+zo53C3lm2LttVldO3pse6zrSIYGgg33CPOya9IsVwXY6PvihgiYyeXy0IC0anqDrT55DX
-X-Gm-Message-State: AOJu0YwM/Ep/OLUZcpVC4wIKlini4+rAwyerDtPTQZPnbp4GetIuIzBh
-	c8PQPUe8qI6LPfDIXuqbiq2KO0Fdy33+D2mncEF8pgqTQXhiYewNlF9ELzywv8/clz1pPMiqy5t
-	itejk4Y0BpBRR9BAvvdgC9RjqnP5TRw4a5EOrZxU6e1U5+XSI/+gZ4gBz0m87jQ==
-X-Received: by 2002:a05:6000:1847:b0:35f:2584:76e9 with SMTP id ffacd0b85a97d-3679dd170acmr808230f8f.2.1720085798720;
-        Thu, 04 Jul 2024 02:36:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqMYfRCeOduG8hmxDn1os8aMqWyFiuk1czJ0qPOICA/k5l/iFZ0n0rpzcYV6E3kNOasUJjEg==
-X-Received: by 2002:a05:6000:1847:b0:35f:2584:76e9 with SMTP id ffacd0b85a97d-3679dd170acmr808204f8f.2.1720085798363;
-        Thu, 04 Jul 2024 02:36:38 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3344:172b:1510:dd78:6ccd:a776:5943])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd784sm18022859f8f.7.2024.07.04.02.36.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 02:36:37 -0700 (PDT)
-Message-ID: <65153ac3f432295a89b42c8b9de83fcabdefe19c.camel@redhat.com>
-Subject: Re: [PATCH net-next] ntp: fix size argument for kcalloc
-From: Paolo Abeni <pabeni@redhat.com>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Chen Ni
- <nichen@iscas.ac.cn>
-Cc: oss-drivers@corigine.com, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, louis.peens@corigine.com, kuba@kernel.org, 
- davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
- yinjun.zhang@corigine.com, johannes.berg@intel.com,
- ryno.swart@corigine.com,  ziyang.chen@corigine.com, linma@zju.edu.cn,
- niklas.soderlund@corigine.com
-Date: Thu, 04 Jul 2024 11:36:36 +0200
-In-Reply-To: <5cafbf6e-37ad-4792-963e-568bcc20640d@intel.com>
-References: <20240703025625.1695052-1-nichen@iscas.ac.cn>
-	 <5cafbf6e-37ad-4792-963e-568bcc20640d@intel.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1720085825; c=relaxed/simple;
+	bh=Y5ZZ4NJ9EbtCr2Y9omXiRAO1MHjSjiox9FbqVaEaEwU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rrAo6C/pV9Fq9UBJSTdVkqJ7KVRBCdrqxtPrmbBXt7WT/RQRSLZXou04mS66D/APHJF41MkMnqz9Wh3FY0qpHlRxjMy/RT+heZ0ML2MTIAkRlZZ+AL1Nb/vQFOS9e0Flfk7/8bcgOJ+unq9hK6wgB+lLT7nw0MMNy3cGXCp3q9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MruRNUHP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 641E9C4AF0E;
+	Thu,  4 Jul 2024 09:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720085824;
+	bh=Y5ZZ4NJ9EbtCr2Y9omXiRAO1MHjSjiox9FbqVaEaEwU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MruRNUHPf/Q6j7rKgP/iwgqp/Y3ezohxwnrCOY+a2rJZ+JpW/Zc970RIBugYAQpgw
+	 hlcktUALLCz7oRHAU9yDYy8+DWYx4zOLPmC+ZBoTh0tgL7p+P6RTmyBEjW9uKHEQs9
+	 C8WOMpHj/YjsGCfx5UwTOpP1Xwntx4zGWMJ39wOMv9LjJNgaQqf8k0fjuZFO3XeD53
+	 U4LfFb2F3jEtePLraUWpBrwOv//pXSpUI3n9zuTp955bLgmos8UqEjnzsdLoytvGLG
+	 N/HJ/VT9M2mP9ey1LYh8oOgWZJRfoEXnFl0qhC5stHPRoiyRYpU7dCMyQmLxOwIWnm
+	 vIG79AZxw+gHw==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso12055a12.3;
+        Thu, 04 Jul 2024 02:37:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVhkF4qY8ejne0KlITsGM8e0+STxRX9VuEHLngmgQJAEE4hs5DOPGy1irFZQ/iOZcIVl3ZWgbHAefrtVVKi+Ohpsb2w1691MbRO9Nm+f4aszkj+sdsgFEOc5utbY66jORgYIdHfO4Ub97N3c9m3wE509r98JSlPegVn2g8YAqa8ZauN
+X-Gm-Message-State: AOJu0Yxf1sx9PqNaycSzq0pYixwAfHmfvqFxzf5BW5D09yYRIwvcfGPQ
+	e3cX6gNAitIPLNbZlhQ+WmwQ60fYCYsq60d1VQ2MQZ9REZA7Mj2wzJeMdMr9DfPeIWUC9hxmizp
+	A/Lesf0JGeolFJap0f+h+dBZ0eUc=
+X-Google-Smtp-Source: AGHT+IEfnVppQjNn4Xl/+dYerNkiNX2JL+01n+mxYMdoqIoBLf5oc1L9HAY5x2Xlahb+pNBKpQBSUMpPXkJFEtcGhp4=
+X-Received: by 2002:a17:907:94d0:b0:a77:a403:f260 with SMTP id
+ a640c23a62f3a-a77ba44c776mr91053066b.4.1720085822929; Thu, 04 Jul 2024
+ 02:37:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <cover.1720075640.git.viresh.kumar@linaro.org> <f09ee1fa731db0c1565b5d4b919d54d5f258957b.1720075640.git.viresh.kumar@linaro.org>
+In-Reply-To: <f09ee1fa731db0c1565b5d4b919d54d5f258957b.1720075640.git.viresh.kumar@linaro.org>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 4 Jul 2024 17:36:49 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7S5jruSvkt6PcuChxNEbuZQ=75Oj6VSgSvDqeydGvFLw@mail.gmail.com>
+Message-ID: <CAAhV-H7S5jruSvkt6PcuChxNEbuZQ=75Oj6VSgSvDqeydGvFLw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] cpufreq: loongson2: Remove empty exit() callback
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-pm@vger.kernel.org, 
+	Vincent Guittot <vincent.guittot@linaro.org>, linux-mips@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2024-07-03 at 11:16 +0200, Przemek Kitszel wrote:
-> On 7/3/24 04:56, Chen Ni wrote:
-> > The size argument to kcalloc should be the size of desired structure,
->=20
-> xsk_pools is a double pointer, so not "desired structure" but rather you
-> should talk about an element size.
->=20
-> > not the pointer to it.
-> >=20
-> > Fixes: 6402528b7a0b ("nfp: xsk: add AF_XDP zero-copy Rx and Tx support"=
-)
->=20
-> even if the the behavior is not changed, the fix should be targeted to
-> net tree
+Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
 
-This patch is IMHO more a cleanup than a real fix. As such it's more
-suited for net-next. For the same reason I think it should not go to
-stable, so I'm dropping the fixes tag, too.
-
-Thanks,
-
-Paolo
-
+On Thu, Jul 4, 2024 at 2:56=E2=80=AFPM Viresh Kumar <viresh.kumar@linaro.or=
+g> wrote:
+>
+> The exit() callback is optional, remove the empty one.
+>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  drivers/cpufreq/loongson2_cpufreq.c | 6 ------
+>  1 file changed, 6 deletions(-)
+>
+> diff --git a/drivers/cpufreq/loongson2_cpufreq.c b/drivers/cpufreq/loongs=
+on2_cpufreq.c
+> index afc59b292153..6a8e97896d38 100644
+> --- a/drivers/cpufreq/loongson2_cpufreq.c
+> +++ b/drivers/cpufreq/loongson2_cpufreq.c
+> @@ -85,18 +85,12 @@ static int loongson2_cpufreq_cpu_init(struct cpufreq_=
+policy *policy)
+>         return 0;
+>  }
+>
+> -static int loongson2_cpufreq_exit(struct cpufreq_policy *policy)
+> -{
+> -       return 0;
+> -}
+> -
+>  static struct cpufreq_driver loongson2_cpufreq_driver =3D {
+>         .name =3D "loongson2",
+>         .init =3D loongson2_cpufreq_cpu_init,
+>         .verify =3D cpufreq_generic_frequency_table_verify,
+>         .target_index =3D loongson2_cpufreq_target,
+>         .get =3D cpufreq_generic_get,
+> -       .exit =3D loongson2_cpufreq_exit,
+>         .attr =3D cpufreq_generic_attr,
+>  };
+>
+> --
+> 2.31.1.272.g89b43f80a514
+>
+>
 
