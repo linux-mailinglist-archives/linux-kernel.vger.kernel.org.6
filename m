@@ -1,100 +1,140 @@
-Return-Path: <linux-kernel+bounces-241446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2869927B85
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:02:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0768C927B8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64DC4B22E36
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:02:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 381C71C20915
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BD91B3F03;
-	Thu,  4 Jul 2024 17:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBB61B3F09;
+	Thu,  4 Jul 2024 17:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cYDhpaEp"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="df40TwYn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NhEwsS5d"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F47A1B373D;
-	Thu,  4 Jul 2024 17:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B035D1B11EA;
+	Thu,  4 Jul 2024 17:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720112561; cv=none; b=WTvsDzCwa+fiaOzyM+QwxedqKdOLUYvcBXEGuHxlkVgbdy+JqRYmOIRr8V+nYWJWoSToDglebjpQ9m/gvtU2uZ2q2tgv6YbzUF8e8AfuEy64QLAGcLBGZ2QPApkqgI9c4Eeo6NzllxXQXdZLeZvrHI/E+tKPR2IWCmKJcfj9Ghs=
+	t=1720112672; cv=none; b=ntmG3VQZ1ga/cSMD3Jd41T3I2aC/NDzvTg/nyRuP/q9w16lTfKunjdhGnWjfDvI6UqPoXWm9jLbl6WJLrmQZL5D+xQgCmt08sArxxztgUcR89Uz+u8KV/HGPJSdp5nifNaj0jYhh0M0o1apiXIh04M9tlmLg3OjX9hJB8R8gerM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720112561; c=relaxed/simple;
-	bh=PMbpOjeTPJIQ+ym2vhhuRkSdYi3dqwlIAbf+Z6clYtw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eiK8aQ0lhJZKr0+k1Qq9IBAQYBDHxbrDpY2X3uqgPT1g/87y5CDhiFX8P8ZE2dwa6cUnXA3+QCKOr0V9pvt7GyWIRvZBCKgDYJgmNUUF52Kr+9dr7zTFSN6Nf581KoHVVqDifi5QfDDJmZBqVJR2desZqI4I4l+M4dR783HS4GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cYDhpaEp; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GY7/X0M+gI9Jpp0bI//NE3lhiuxlSU8pX2nOGe9YRDw=; b=cYDhpaEpztN5af7E8bRP9PpO7G
-	4OAsGGjv+rfnfSemDBe6UVLQzgP55uV1g8yICN1AjG6ampErvcJctrgTK+Je5AxYk7Jk60pSkytEY
-	8YvfsAtotDFCTYpFy4tfzpvoPWnf/8ZCtW2RRG8cK5oAt8GvSUDfp2HJlVDg8cI1NjCw1UAibXipJ
-	VQk0dDZaG974XJw1MWnZ9htTsrO2uQh2d4e3jsTexzxRlZXrlL7vlM4VByzgPQmky/HSe4k9eJXjF
-	95lnPkVRjwC6V8rtNzMtNxYzhiEZdDcwPqRTEKNrQryELD/9BdYjK5oWPJOBHwqASbpiWmiuL1Do/
-	VjPke0jQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sPPql-000000033Fn-03Ps;
-	Thu, 04 Jul 2024 17:02:27 +0000
-Date: Thu, 4 Jul 2024 18:02:26 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Martin Oliveira <martin.oliveira@eideticom.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-rdma@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Artemy Kovalyov <artemyko@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Sloan <david.sloan@eideticom.com>
-Subject: Re: [PATCH v3 1/3] kernfs: remove page_mkwrite() from
- vm_operations_struct
-Message-ID: <ZobVol_trCwtwjK4@casper.infradead.org>
-References: <20240704163724.2462161-1-martin.oliveira@eideticom.com>
- <20240704163724.2462161-2-martin.oliveira@eideticom.com>
+	s=arc-20240116; t=1720112672; c=relaxed/simple;
+	bh=3WfFCHTftvxsbGLRuQ3ylLf6HjzX+2CJHFzwOchYMuc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Jqwxwaq+9ZcpswPG6trHapEzylatDA/Kq/+UBNJvFxcHgeQLGLb9voofGkebvSpfY4reFdvDtHkbK5DknjbYg3AVobNHk/xC3flnJZP4lzW1756Vywfn8PJqSq1+94RK3Gui58T/gJOWzcMW0McOGbP0G71knSn5Qcx443UwyEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=df40TwYn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NhEwsS5d; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720112668;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YLTV7EHjaqTWVE9vs7iolrAMajWrkh9Agp0VGasT9OY=;
+	b=df40TwYn2eIDNUmKOoFiayMc8vb4TCl7az/vk8LGLPo44x5/XbSFjRjhodVIQscK+3K1+s
+	VDPxduP4C7R9mdBFfz9rS7CnpUHtNJAcAhcGu1dqIOVTevam/2aNyG7SHfGkNg3PtLavGI
+	nqBfH4k5G5m9+cuDBjedFaZI994/kZgSSXkGmfmli91s7MM82IzJAFKAIORA0Rn1VyG4ZJ
+	LwhiorOdokapZvok5e2gbJH+1BjMZg4Qj4o7oM2nVsUKjlJllxfgz2Cqiuw9eUMSd8O1iI
+	T1FJiO07WTmRAid4McbZmkRijvIt6KcrXIbCov+U5YkNu8A9kEfqfpJ4zRItBg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720112668;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YLTV7EHjaqTWVE9vs7iolrAMajWrkh9Agp0VGasT9OY=;
+	b=NhEwsS5dVddS2gbmg35koqcl+l2+8N0IMa++l5GK6x0bBFsaOywVun6RN7M+v1Qsj5x6nt
+	yR8T7m+1Q6vi+zAA==
+To: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang  <kan.liang@linux.intel.com>,
+	Marco Elver <elver@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v5 0/6] perf: Make SIGTRAP and __perf_pending_irq() work on RT.
+Date: Thu,  4 Jul 2024 19:03:34 +0200
+Message-ID: <20240704170424.1466941-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704163724.2462161-2-martin.oliveira@eideticom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 04, 2024 at 10:37:22AM -0600, Martin Oliveira wrote:
-> @@ -482,6 +459,8 @@ static int kernfs_fop_mmap(struct file *file, struct vm_area_struct *vma)
->  	if (vma->vm_ops && vma->vm_ops->close)
->  		goto out_put;
->  
-> +	WARN_ON(vma->vm_ops && vma->vm_ops->page_mkwrite);
-> +
->  	rc = 0;
->  	if (!of->mmapped) {
->  		of->mmapped = true;
+Hi,
 
-Seems to me we should actually _handle_ that, not do something wrong.
-eg:
+Arnaldo reported that "perf test sigtrap" fails on PREEMPT_RT. Sending
+the signal gets delayed until event_sched_out() which then uses
+task_work_add() for its delivery. This breaks on PREEMPT_RT because the
+signal is delivered with disabled preemption.
 
-	if (vma->vm_ops) {
-		if (vma->vm_ops->close)
-			goto out_put;
-		if (WARN_ON(vma->vm_ops->page_mkwrite))
-			goto out_put;
-	}
+While looking at this, I also stumbled upon __perf_pending_irq() which
+requires disabled interrupts but this is not the case on PREEMPT_RT.
 
-or maybe this doesn't need to be a WARN at all?  After all, there
-isn't one for having a ->close method, so why is page_mkwrite special?
+This series aim to address both issues while not introducing a new issue
+at the same time ;)
+Any testing is appreciated.
+
+v4=E2=80=A6v5: https://lore.kernel.org/all/20240624152732.1231678-1-bigeasy=
+@linutronix.de/
+   - Add TWA_NMI_CURRENT as notify mode for task_work_add() and use it.
+     PeterZ pointed out that the current version is not NMI safe.
+
+v3=E2=80=A6v4: https://lore.kernel.org/all/20240322065208.60456-1-bigeasy@l=
+inutronix.de/
+   - Rebased on top of Frederic's series
+      (https://lore.kernel.org/all/20240621091601.18227-1-frederic@kernel.o=
+rg)
+   - Frederick pointed out that perf_pending_task() needs to
+     perf_swevent_get_recursion_context() in order not to recurse if
+     something within perf_swevent_.*_recursion_context() triggers a
+     software event. To address this, the counters have been moved to
+     the task_struct (#3 + #4) and preemt_disable() has been replaced
+     with a RCU-read lock (#5).
+   - The remaning logic same that means the event is pushed to task-work
+     instead of delivering from IRQ-work. The series was tested with
+     remove_on_exec as suggested by Marco Elver: On PREEMPT_RT a single
+     invocation passes, 100 parallel invocations report (for some)
+     unexpected SIGTRAPs and timeouts. This also observed on !RT
+     (without the series) with a higher task-count.
+
+v2=E2=80=A6v3: https://lore.kernel.org/all/20240312180814.3373778-1-bigeasy=
+@linutronix.de/
+    - Marco suggested to add a few comments
+      - Added a comment to __perf_event_overflow() to explain why irq_work
+        is raised in the in_nmi() case.
+      - Added a comment to perf_event_exit_event() to explain why the
+        pending event is deleted.
+
+v1=E2=80=A6v2: https://lore.kernel.org/all/20240308175810.2894694-1-bigeasy=
+@linutronix.de/
+    - Marco pointed me to the testsuite that showed two problems:
+      - Delayed task_work from NMI / missing events.
+        Fixed by triggering dummy irq_work to enforce an interrupt for
+	the exit-to-userland path which checks task_work
+      - Increased ref-count on clean up/ during exec.
+        Mostly addressed by the former change. There is still a window
+	if the NMI occurs during execve(). This is addressed by removing
+	the task_work before free_event().
+      The testsuite (remove_on_exec) fails sometimes if the event/
+      SIGTRAP is sent before the sighandler is installed.
+
+Sebastian
+
 
