@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-241476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9EF927BB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:13:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A28927BB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0D921F2449B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02282846E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56ECC1B4C46;
-	Thu,  4 Jul 2024 17:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC7B1B5803;
+	Thu,  4 Jul 2024 17:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B1no5Vrb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="evwFRpip"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BFA1CF3DA
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 17:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2B31CFD43
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 17:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720112964; cv=none; b=HUaDQ9UibduVSErIxsVlAmWPMa5lKF4ppKmWLeTcqaxv/+altvH+JLkaiCapZRMxHoyDF91fMyVQPlvoSz7xegw5tY20IuPKYj2gkUttuunb0OG3XODD+4aHYyYrXTANBGvVsRl3FKgO8cLHfWAail+oV7c7/jSy5L9lyx2PG7Q=
+	t=1720112969; cv=none; b=mmikiisHok9bdJVpBWD54k8gQGsT8ISdhdqG5FUyXIRYoigKB30nY9XCZiexD+xiDAHhZMUvozPkelgRFRR5Un2oNICdc0+kdntb62sabLIjsyxnL6IDwvxlg8vMD8tmshZic/yutvOHtHYfsaJMb+wVlBlTIAsasSwecxkRx6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720112964; c=relaxed/simple;
-	bh=XaoL+c3CKcLGkGaS6dN6gGgH1UcvqowfyMOc7PMR0Mw=;
+	s=arc-20240116; t=1720112969; c=relaxed/simple;
+	bh=unZd8SNo4EyBPZwAOYtJ6SCq7DPMNM2ujfeIqLeIoPs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sL3ujwvj5IbtTHofydXTEBJjjGtigR0csOrjY5KY92RnConKEb1Bb3r+LhTFPoXv9Y5w4wqQGwVKXrj0pD3Dt29tyVCpwtZKerJg6bmv1YJSdGACbimZ9uyf6ESPjjzOyySwGeaO3fQ8vBJlYLKVt9uQemRkXDu3zscTVyMEOk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B1no5Vrb; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=PqCFr5L2cIKVq3zrn4ZIBUgg/2jlSDkCdCXRiEJnmxX0s52pDMrywByIhWNh8SUVVa2avSqkNnkdFVhHGi1NgaiAxfM8Ig6G0Eb+SFfSf3O0dkrU1ygxizyWt8wA8oDS866vQfiW6nHO2+VLONITIkKSta5R9NLdi+1lwUqk4jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=evwFRpip; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720112962;
+	s=mimecast20190719; t=1720112966;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0zplR95ywjysz6XCCMayD+WP0RtbZS0dmGGMbrdUaAU=;
-	b=B1no5VrbLFwm03OavJmIEtIrlou5bN6/P0gd5lAGcDeVXFsmZ68pnByt/BhdmKRGea9+6j
-	IT73bhEbfJK6s/JFEvPDCHnZoyZbtGeotu/2QCw7+jY7hYUEjoZ28CACCqz3LJkOQQ6kdV
-	rz0+MUGft+RDGDTkBn/qCSxAyV4Rtyg=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=D0CT3DkkY+yNqCNHJuyWLBFD/Y9xzpFr8fJwqHRElVo=;
+	b=evwFRpipyuYydY4UXdUQ2Ndyv6zSYPiV51CBHTlxl7eiKS2wO0Xx1hjsBVFbe7yHrpTBZL
+	g/RUxFJ/rzBi5QPJrQCtDZyE4Ld4naIAN1mxzLprhqOV22PkJGY/gk4r6CBrDhbh38HZbY
+	2/l1I2DCtQCTMagq3BcwGo0b3JOXPcw=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-397-vep26zuAO3CRirSvkoidmw-1; Thu, 04 Jul 2024 13:09:21 -0400
-X-MC-Unique: vep26zuAO3CRirSvkoidmw-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52e969d0198so921166e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 10:09:20 -0700 (PDT)
+ us-mta-341-xQe3NCOdNMioEhgKTC0x9A-1; Thu, 04 Jul 2024 13:09:24 -0400
+X-MC-Unique: xQe3NCOdNMioEhgKTC0x9A-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4256718144dso8258415e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 10:09:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720112959; x=1720717759;
+        d=1e100.net; s=20230601; t=1720112963; x=1720717763;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0zplR95ywjysz6XCCMayD+WP0RtbZS0dmGGMbrdUaAU=;
-        b=XqJbAU3zs/alIFRtxelZpOstXJ6nlYBLjdsA0QUFVRQrBdfH65aHW+Q7shcw49BG7Q
-         nP78bUadZ6ztOXVgsOZubcnxTRLoxdA2wY/K0z7WLfvzCLcqXc20thsLNyiAGvrxxmZO
-         JRU3JYdGvOphg/TIxtAVLEXrMkFHnDgyL4zHE7KmG8LtjTz0QoOBLK4MFbNkndU/0lmG
-         6JC6FVjmvJ1DsS8nKGLPH7aep1Y3/S+1v6lp1K+Yc+mhWvVBEprUEdZe6nxwo0hphb79
-         T+FUOcFAsbFPKY4tlZ+Wb851txoVeXE/F02uZFOXz6nLHWSVYMXPeyHbSSO1x3raMBPU
-         hQfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGslvbUW9zpUyJZuICBnFF0HdUtJBiYTZ1WRz6dUIB+DFVcjJJPPLOK27K0HMh6uk812eMxdtLh3dlU4Z3n7KaC6u8FSKdY/CpQag7
-X-Gm-Message-State: AOJu0Yxt2F1YA8QOKuyIqRoFb7yV8frVlgotVsrdyiruALmMLYVC1I/P
-	JlZIfYijEdfW1B0PlTtl39LIMLiD1kYIpvBMpnmJBG2rroRq2Uzegrzn/CZCAMgO+mE8tXRQ22h
-	2RHGRETHYpiGTCUrtIyB4IVoSs1otX0HjlE5MqhcUU19Pj7pTmvop2VHqzFDuMisQu8yWEA==
-X-Received: by 2002:ac2:4436:0:b0:52c:df77:6507 with SMTP id 2adb3069b0e04-52ea0641231mr1734208e87.37.1720112959049;
-        Thu, 04 Jul 2024 10:09:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFn5MmEc0L9zeEIwNR+k6aoMoK9A1IqV3mcSkP+FvZJEBEpoHcx3+B4DzC1hITE2cXFqTfSvQ==
-X-Received: by 2002:ac2:4436:0:b0:52c:df77:6507 with SMTP id 2adb3069b0e04-52ea0641231mr1734171e87.37.1720112958598;
-        Thu, 04 Jul 2024 10:09:18 -0700 (PDT)
+        bh=D0CT3DkkY+yNqCNHJuyWLBFD/Y9xzpFr8fJwqHRElVo=;
+        b=C97SbAwobycSvUN4mxTl4szh5u4yaSMppCzvroU4F4/sBYrnRY/3TddwZbiOQXvDG6
+         CLT39PJ62acpGdx7UJWSdXRpUkXXmX1pI1E8KvfprWayEpYaPgEs4EFL7CmF2SQ6W1WJ
+         lDc1/uuIhzhP5r53Wuik4FmOwWDuU4g6sSSNR5dtKKDdRsmJ0xxl+SlEYLmF8+g0Y2o6
+         GMj05SWsvQxVi0ZFP7MnvFePQqMk3BP1cRaLgbdn+eFUNS6pdzszWw4R5QR6kDqGsm4R
+         h7EU+CsoiiR6qwXvnuTZ7PnP8YmIf5EKHQl4rELlIZ176HkTnjM0kSZHh18vIfc4SbfU
+         Mrnw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/JEa1pVH41sNMykUHZFJKfsNv048Kr/sQnbkQvUvxb75zEGP5VndMPhGQVMzAetlyspyIe4Vqrth26gEpbhZazYYlZO7zZS43zwnA
+X-Gm-Message-State: AOJu0YwchAdVqeJrqG68WQLoNyJjy4Mya7jN66DX/m7C/S2wOQb244ms
+	Jo3Z7YqrHO90RqA87ZxPyqme6h57ZziQHMA4a+eMubEREl88MOV3e8vBTeOzIZyIeGT+hMECcGB
+	kVgqrzx+Dh3Sj/yrkR7VgBcu5cBKiGBFhETIvKN5lJOkqvKmjTQWOs8w+84bYbg==
+X-Received: by 2002:a05:600c:12d2:b0:425:73ba:e012 with SMTP id 5b1f17b1804b1-4264a3bc309mr19751585e9.7.1720112962996;
+        Thu, 04 Jul 2024 10:09:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfh6LXgR2Un18etB/U4D4xFPGKtOmoSHMl3k9SXFcepz5JY5ESDnz4WGx8qOXEK4Bv7oGh0Q==
+X-Received: by 2002:a05:600c:12d2:b0:425:73ba:e012 with SMTP id 5b1f17b1804b1-4264a3bc309mr19751375e9.7.1720112962569;
+        Thu, 04 Jul 2024 10:09:22 -0700 (PDT)
 Received: from cassiopeiae.. ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2fc8bcsm30972425e9.44.2024.07.04.10.09.17
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2fc8bcsm30974125e9.44.2024.07.04.10.09.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 10:09:18 -0700 (PDT)
+        Thu, 04 Jul 2024 10:09:22 -0700 (PDT)
 From: Danilo Krummrich <dakr@redhat.com>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -97,9 +97,9 @@ Cc: daniel.almeida@collabora.com,
 	linux-kernel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	Danilo Krummrich <dakr@redhat.com>
-Subject: [PATCH 16/20] rust: treewide: switch to `KVec`
-Date: Thu,  4 Jul 2024 19:06:44 +0200
-Message-ID: <20240704170738.3621-17-dakr@redhat.com>
+Subject: [PATCH 17/20] rust: alloc: remove `VecExt` extension
+Date: Thu,  4 Jul 2024 19:06:45 +0200
+Message-ID: <20240704170738.3621-18-dakr@redhat.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240704170738.3621-1-dakr@redhat.com>
 References: <20240704170738.3621-1-dakr@redhat.com>
@@ -111,110 +111,236 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that we got `KVec` in place, convert all existing `Vec` users to
-`KVec`.
+Now that all existing `Vec` users were moved to `KVec`, remove the
+`VecExt` extension.
 
 Signed-off-by: Danilo Krummrich <dakr@redhat.com>
 ---
- rust/kernel/str.rs            | 12 +++++-------
- rust/kernel/sync/locked_by.rs |  2 +-
- rust/kernel/types.rs          |  2 +-
- samples/rust/rust_minimal.rs  |  4 ++--
- 4 files changed, 9 insertions(+), 11 deletions(-)
+ rust/kernel/alloc.rs         |   1 -
+ rust/kernel/alloc/vec_ext.rs | 185 -----------------------------------
+ rust/kernel/prelude.rs       |   5 +-
+ 3 files changed, 1 insertion(+), 190 deletions(-)
+ delete mode 100644 rust/kernel/alloc/vec_ext.rs
 
-diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-index bb8d4f41475b..0b6ffbade521 100644
---- a/rust/kernel/str.rs
-+++ b/rust/kernel/str.rs
-@@ -2,8 +2,7 @@
+diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+index e6a5d65e0c48..178f556aa7b0 100644
+--- a/rust/kernel/alloc.rs
++++ b/rust/kernel/alloc.rs
+@@ -6,7 +6,6 @@
+ pub mod allocator;
+ pub mod kbox;
+ pub mod kvec;
+-pub mod vec_ext;
  
- //! String representations.
- 
--use crate::alloc::{flags::*, vec_ext::VecExt, AllocError};
+ #[cfg(any(test, testlib))]
+ pub mod allocator_test;
+diff --git a/rust/kernel/alloc/vec_ext.rs b/rust/kernel/alloc/vec_ext.rs
+deleted file mode 100644
+index bf277976ed38..000000000000
+--- a/rust/kernel/alloc/vec_ext.rs
++++ /dev/null
+@@ -1,185 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-
+-//! Extensions to [`Vec`] for fallible allocations.
+-
+-use super::{AllocError, Flags};
 -use alloc::vec::Vec;
-+use crate::alloc::{flags::*, AllocError, KVec};
- use core::fmt::{self, Write};
- use core::ops::{self, Deref, DerefMut, Index};
+-use core::ptr;
+-
+-/// Extensions to [`Vec`].
+-pub trait VecExt<T>: Sized {
+-    /// Creates a new [`Vec`] instance with at least the given capacity.
+-    ///
+-    /// # Examples
+-    ///
+-    /// ```
+-    /// let v = Vec::<u32>::with_capacity(20, GFP_KERNEL)?;
+-    ///
+-    /// assert!(v.capacity() >= 20);
+-    /// # Ok::<(), Error>(())
+-    /// ```
+-    fn with_capacity(capacity: usize, flags: Flags) -> Result<Self, AllocError>;
+-
+-    /// Appends an element to the back of the [`Vec`] instance.
+-    ///
+-    /// # Examples
+-    ///
+-    /// ```
+-    /// let mut v = Vec::new();
+-    /// v.push(1, GFP_KERNEL)?;
+-    /// assert_eq!(&v, &[1]);
+-    ///
+-    /// v.push(2, GFP_KERNEL)?;
+-    /// assert_eq!(&v, &[1, 2]);
+-    /// # Ok::<(), Error>(())
+-    /// ```
+-    fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError>;
+-
+-    /// Pushes clones of the elements of slice into the [`Vec`] instance.
+-    ///
+-    /// # Examples
+-    ///
+-    /// ```
+-    /// let mut v = Vec::new();
+-    /// v.push(1, GFP_KERNEL)?;
+-    ///
+-    /// v.extend_from_slice(&[20, 30, 40], GFP_KERNEL)?;
+-    /// assert_eq!(&v, &[1, 20, 30, 40]);
+-    ///
+-    /// v.extend_from_slice(&[50, 60], GFP_KERNEL)?;
+-    /// assert_eq!(&v, &[1, 20, 30, 40, 50, 60]);
+-    /// # Ok::<(), Error>(())
+-    /// ```
+-    fn extend_from_slice(&mut self, other: &[T], flags: Flags) -> Result<(), AllocError>
+-    where
+-        T: Clone;
+-
+-    /// Ensures that the capacity exceeds the length by at least `additional` elements.
+-    ///
+-    /// # Examples
+-    ///
+-    /// ```
+-    /// let mut v = Vec::new();
+-    /// v.push(1, GFP_KERNEL)?;
+-    ///
+-    /// v.reserve(10, GFP_KERNEL)?;
+-    /// let cap = v.capacity();
+-    /// assert!(cap >= 10);
+-    ///
+-    /// v.reserve(10, GFP_KERNEL)?;
+-    /// let new_cap = v.capacity();
+-    /// assert_eq!(new_cap, cap);
+-    ///
+-    /// # Ok::<(), Error>(())
+-    /// ```
+-    fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocError>;
+-}
+-
+-impl<T> VecExt<T> for Vec<T> {
+-    fn with_capacity(capacity: usize, flags: Flags) -> Result<Self, AllocError> {
+-        let mut v = Vec::new();
+-        <Self as VecExt<_>>::reserve(&mut v, capacity, flags)?;
+-        Ok(v)
+-    }
+-
+-    fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError> {
+-        <Self as VecExt<_>>::reserve(self, 1, flags)?;
+-        let s = self.spare_capacity_mut();
+-        s[0].write(v);
+-
+-        // SAFETY: We just initialised the first spare entry, so it is safe to increase the length
+-        // by 1. We also know that the new length is <= capacity because of the previous call to
+-        // `reserve` above.
+-        unsafe { self.set_len(self.len() + 1) };
+-        Ok(())
+-    }
+-
+-    fn extend_from_slice(&mut self, other: &[T], flags: Flags) -> Result<(), AllocError>
+-    where
+-        T: Clone,
+-    {
+-        <Self as VecExt<_>>::reserve(self, other.len(), flags)?;
+-        for (slot, item) in core::iter::zip(self.spare_capacity_mut(), other) {
+-            slot.write(item.clone());
+-        }
+-
+-        // SAFETY: We just initialised the `other.len()` spare entries, so it is safe to increase
+-        // the length by the same amount. We also know that the new length is <= capacity because
+-        // of the previous call to `reserve` above.
+-        unsafe { self.set_len(self.len() + other.len()) };
+-        Ok(())
+-    }
+-
+-    #[cfg(any(test, testlib))]
+-    fn reserve(&mut self, additional: usize, _flags: Flags) -> Result<(), AllocError> {
+-        Vec::reserve(self, additional);
+-        Ok(())
+-    }
+-
+-    #[cfg(not(any(test, testlib)))]
+-    fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocError> {
+-        let alloc: &dyn super::Allocator = &super::allocator::Kmalloc;
+-        let len = self.len();
+-        let cap = self.capacity();
+-
+-        if cap - len >= additional {
+-            return Ok(());
+-        }
+-
+-        if core::mem::size_of::<T>() == 0 {
+-            // The capacity is already `usize::MAX` for SZTs, we can't go higher.
+-            return Err(AllocError);
+-        }
+-
+-        // We know cap is <= `isize::MAX` because `Layout::array` fails if the resulting byte size
+-        // is greater than `isize::MAX`. So the multiplication by two won't overflow.
+-        let new_cap = core::cmp::max(cap * 2, len.checked_add(additional).ok_or(AllocError)?);
+-        let layout = core::alloc::Layout::array::<T>(new_cap).map_err(|_| AllocError)?;
+-
+-        let (old_ptr, len, cap) = destructure(self);
+-
+-        // We need to make sure that `ptr` is either NULL or comes from a previous call to
+-        // `krealloc_aligned`. A `Vec<T>`'s `ptr` value is not guaranteed to be NULL and might be
+-        // dangling after being created with `Vec::new`. Instead, we can rely on `Vec<T>`'s capacity
+-        // to be zero if no memory has been allocated yet.
+-        let ptr = if cap == 0 { ptr::null_mut() } else { old_ptr };
+-
+-        // SAFETY: `ptr` is valid because it's either NULL or comes from a previous call to
+-        // `krealloc_aligned`. We also verified that the type is not a ZST.
+-        match unsafe { alloc.realloc(ptr.cast(), cap, layout, flags) } {
+-            Ok(ptr) => {
+-                // SAFETY: `ptr` has been reallocated with the layout for `new_cap` elements.
+-                // `new_cap` is greater than `cap`, so it continues to be >= `len`.
+-                unsafe { rebuild(self, ptr.as_ptr().cast(), len, new_cap) };
+-                Ok(())
+-            }
+-            Err(err) => {
+-                // SAFETY: We are just rebuilding the existing `Vec` with no changes.
+-                unsafe { rebuild(self, old_ptr, len, cap) };
+-                Err(err)
+-            }
+-        }
+-    }
+-}
+-
+-#[cfg(not(any(test, testlib)))]
+-fn destructure<T>(v: &mut Vec<T>) -> (*mut T, usize, usize) {
+-    let mut tmp = Vec::new();
+-    core::mem::swap(&mut tmp, v);
+-    let mut tmp = core::mem::ManuallyDrop::new(tmp);
+-    let len = tmp.len();
+-    let cap = tmp.capacity();
+-    (tmp.as_mut_ptr(), len, cap)
+-}
+-
+-/// Rebuilds a `Vec` from a pointer, length, and capacity.
+-///
+-/// # Safety
+-///
+-/// The same as [`Vec::from_raw_parts`].
+-#[cfg(not(any(test, testlib)))]
+-unsafe fn rebuild<T>(v: &mut Vec<T>, ptr: *mut T, len: usize, cap: usize) {
+-    // SAFETY: The safety requirements from this function satisfy those of `from_raw_parts`.
+-    let mut tmp = unsafe { Vec::from_raw_parts(ptr, len, cap) };
+-    core::mem::swap(&mut tmp, v);
+-}
+diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+index 0ee3f0d203e2..0836394ddab8 100644
+--- a/rust/kernel/prelude.rs
++++ b/rust/kernel/prelude.rs
+@@ -14,10 +14,7 @@
+ #[doc(no_inline)]
+ pub use core::pin::Pin;
  
-@@ -790,7 +789,7 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
- /// assert_eq!(s.is_ok(), false);
- /// ```
- pub struct CString {
--    buf: Vec<u8>,
-+    buf: KVec<u8>,
- }
+-pub use crate::alloc::{flags::*, vec_ext::VecExt, KBox, KVec};
+-
+-#[doc(no_inline)]
+-pub use alloc::vec::Vec;
++pub use crate::alloc::{flags::*, KBox, KVec};
  
- impl CString {
-@@ -803,7 +802,7 @@ pub fn try_from_fmt(args: fmt::Arguments<'_>) -> Result<Self, Error> {
-         let size = f.bytes_written();
- 
-         // Allocate a vector with the required number of bytes, and write to it.
--        let mut buf = <Vec<_> as VecExt<_>>::with_capacity(size, GFP_KERNEL)?;
-+        let mut buf = KVec::with_capacity(size, GFP_KERNEL)?;
-         // SAFETY: The buffer stored in `buf` is at least of size `size` and is valid for writes.
-         let mut f = unsafe { Formatter::from_buffer(buf.as_mut_ptr(), size) };
-         f.write_fmt(args)?;
-@@ -850,10 +849,9 @@ impl<'a> TryFrom<&'a CStr> for CString {
-     type Error = AllocError;
- 
-     fn try_from(cstr: &'a CStr) -> Result<CString, AllocError> {
--        let mut buf = Vec::new();
-+        let mut buf = KVec::new();
- 
--        <Vec<_> as VecExt<_>>::extend_from_slice(&mut buf, cstr.as_bytes_with_nul(), GFP_KERNEL)
--            .map_err(|_| AllocError)?;
-+        KVec::extend_from_slice(&mut buf, cstr.as_bytes_with_nul(), GFP_KERNEL)?;
- 
-         // INVARIANT: The `CStr` and `CString` types have the same invariants for
-         // the string data, and we copied it over without changes.
-diff --git a/rust/kernel/sync/locked_by.rs b/rust/kernel/sync/locked_by.rs
-index babc731bd5f6..b94517231fcc 100644
---- a/rust/kernel/sync/locked_by.rs
-+++ b/rust/kernel/sync/locked_by.rs
-@@ -43,7 +43,7 @@
- /// struct InnerDirectory {
- ///     /// The sum of the bytes used by all files.
- ///     bytes_used: u64,
--///     _files: Vec<File>,
-+///     _files: KVec<File>,
- /// }
- ///
- /// struct Directory {
-diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index 0b2a3ce538a6..5ef52d46a386 100644
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@ -155,7 +155,7 @@ unsafe fn from_foreign(_: *const core::ffi::c_void) -> Self {}
- /// # use kernel::types::ScopeGuard;
- /// fn example3(arg: bool) -> Result {
- ///     let mut vec =
--///         ScopeGuard::new_with_data(Vec::new(), |v| pr_info!("vec had {} elements\n", v.len()));
-+///         ScopeGuard::new_with_data(KVec::new(), |v| pr_info!("vec had {} elements\n", v.len()));
- ///
- ///     vec.push(10u8, GFP_KERNEL)?;
- ///     if arg {
-diff --git a/samples/rust/rust_minimal.rs b/samples/rust/rust_minimal.rs
-index 2a9eaab62d1c..4aaf117bf8e3 100644
---- a/samples/rust/rust_minimal.rs
-+++ b/samples/rust/rust_minimal.rs
-@@ -13,7 +13,7 @@
- }
- 
- struct RustMinimal {
--    numbers: Vec<i32>,
-+    numbers: KVec<i32>,
- }
- 
- impl kernel::Module for RustMinimal {
-@@ -21,7 +21,7 @@ fn init(_module: &'static ThisModule) -> Result<Self> {
-         pr_info!("Rust minimal sample (init)\n");
-         pr_info!("Am I built-in? {}\n", !cfg!(MODULE));
- 
--        let mut numbers = Vec::new();
-+        let mut numbers = KVec::new();
-         numbers.push(72, GFP_KERNEL)?;
-         numbers.push(108, GFP_KERNEL)?;
-         numbers.push(200, GFP_KERNEL)?;
+ #[doc(no_inline)]
+ pub use macros::{module, pin_data, pinned_drop, vtable, Zeroable};
 -- 
 2.45.2
 
