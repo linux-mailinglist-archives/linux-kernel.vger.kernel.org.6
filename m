@@ -1,274 +1,220 @@
-Return-Path: <linux-kernel+bounces-241591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E512927CF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:21:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE06B927CF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B614928454E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:21:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387591F24142
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A9773476;
-	Thu,  4 Jul 2024 18:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FA5770F8;
+	Thu,  4 Jul 2024 18:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcvIG2yv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmObUB3R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CD049637;
-	Thu,  4 Jul 2024 18:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99489101DB;
+	Thu,  4 Jul 2024 18:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720117278; cv=none; b=E+CmPMu06lPITy4bbayG11IxvIbdBpR9zabxPknwKVs0KxF09EsYB/zNbl/tihY61oDzQ2bpqKe5+546ZbUAxK7l5yM4kzmgmcXhNYvJt5vFInreSSr9J7N2PNgetzcjDJ7MHaEnyCBQfRBEKcURFwfbesjtSTD7GKANhqjd7+Y=
+	t=1720117415; cv=none; b=pF4cIaHaPpBCoU1IZ2ZqTFZwxIcrUpiv1IF/h/Ti1EUztgW0wSBBCCVe5O0S1MwaVdRUdMn5WbbRnhnBVkkV1kE6GGmUUrA9DrfQVi5jn99IOMKpArKP5ABu8MhsZHDMVBO4mFaK/uETZYBAL79xawAEkBNPX7OB6NO8eAuU8MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720117278; c=relaxed/simple;
-	bh=6WEu4OIBexUQMzi2SJjppCDTIMAnxr7vhkDdK0UPQqk=;
+	s=arc-20240116; t=1720117415; c=relaxed/simple;
+	bh=1gOMpOWjLezCyg/YwRnvdCDadwOiGFbKKqb9FaVZ1Ps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TcFgtXRXo2NORiwtRQbhGOMXQbhKzHY85Qsp0uQgjQ31Rt+DUCJoK/C0b3ptgpCMGbk86TYnzrZAcMeaa5h42s72K0bLgZkqUwtPum6508aCwG5C4ADMr+otBoGXZf+66Nk5QHdCVzufE2X0S5IrGlF9tJ5zBeBpWtYDBygbbVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qcvIG2yv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 291ADC3277B;
-	Thu,  4 Jul 2024 18:21:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LdUOcOwaQTr0qdo4hO1BVqNSNktHMwQCbzWWtjoATg2JLLuWHshEHS2COF+B59F+2LS7L2Nz70xpYUtChXFvHv6jeKFTZYamAD3nD0eDtiDyN9/sME7dKcCuB47wiWxtV5Mnvz5XL4DVBDpIGZdz9ELbpP7gxxWAjCCBfDGdluE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmObUB3R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC49C3277B;
+	Thu,  4 Jul 2024 18:23:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720117277;
-	bh=6WEu4OIBexUQMzi2SJjppCDTIMAnxr7vhkDdK0UPQqk=;
+	s=k20201202; t=1720117415;
+	bh=1gOMpOWjLezCyg/YwRnvdCDadwOiGFbKKqb9FaVZ1Ps=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qcvIG2yvyuRDjnFk1vRH8pUfrEC+DaWqbxzc2M/5tIjeD6h3wMOpxVt6Pp5ciBBBA
-	 AOpYdEupBTdNxiTi8YXLPPuiEiuuHo9Mr7DXcwEeydVrS7PcrN0EPhEBJqby5fm2Sz
-	 gV0hwaGU+gIbQnjm7r6MdtWRXTYosVdch1FEjafRyBwbTsi6iTdYX0JrdzkijBxtLN
-	 wrNsnwa+zAQzCquqaDyeqLzOXLh0yyzXkehVK1WOu3fM3j2z0OORxDPiZGVtZ0gYCT
-	 vAIf9+0qF7qqhuu7hSTSn+ecM+4yaGT989oDjbBMnD4bwdAP6FmYxy5E2ufp9GgVPu
-	 plRgtupbJBB7g==
-Date: Thu, 4 Jul 2024 11:21:15 -0700
+	b=jmObUB3RXWpAOTziKIxShAXrbMDwPQg0Tyo4OIbrWNc3fDBChvEuX5UyqJmjEcVSv
+	 tLiU9KKNsazbubPe2iv4yg2HhOnD0RBcCDaxO1ykVaJlG6sLrryjVVIN+aK5fxZGpB
+	 6cCLOtJS4V6T2L9UZfRuTaMTQDTPH6YqDv1bLzL0y65SRgQ5tm9ssVAyOiNCKtC2zP
+	 WZXbcizFwioyD3s55m7GcKZiHI21+CE3xQRtlOS1V4n/fFIOHfeCU6vAMFtNKciOY/
+	 g+oUFYw7gd4jKosZJ56dIVxarhPzlXzyEDAHQaM8F4HhvhBMjPG23n6Mii/hdsQkvp
+	 blsEC0/Ue7wJA==
+Date: Thu, 4 Jul 2024 11:23:32 -0700
 From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH] kbuild: add script and target to generate pacman package
-Message-ID: <20240704182115.GA300903@thelio-3990X>
-References: <20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Shuah Khan <shuah@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-kselftest@vger.kernel.org, llvm@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] selftests: introduce and use SELFTESTS_CC_IS_CLANG
+ instead of LLVM
+Message-ID: <20240704182332.GB300903@thelio-3990X>
+References: <20240704030452.88793-1-jhubbard@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net>
+In-Reply-To: <20240704030452.88793-1-jhubbard@nvidia.com>
 
-Hi Thomas,
-
-On Thu, Jul 04, 2024 at 06:36:34PM +0200, Thomas Weißschuh wrote:
-> pacman is the package manager used by Arch Linux and its derivates.
-> Creating native packages from the kernel tree has multiple advantages:
+On Wed, Jul 03, 2024 at 08:04:52PM -0700, John Hubbard wrote:
+> Current practice in the selftests Makefiles is to use $(LLVM) as a way
+> to decide if clang is being used as the compiler (and/or the linker
+> front end). Unfortunately, this does not cover all of the use cases:
 > 
-> * The package triggers the correct hooks for initramfs generation and
->   bootloader configuration
-> * Uninstallation is complete and also invokes the relevant hooks
-> * New UAPI headers can be installed without any manual bookkeeping
+> 1) CC could have been set within selftests/lib.mk, by inferring it from
+> LLVM==1, or
 > 
-> The PKGBUILD file is a simplified version of the one used for the
-> downstream Arch Linux "linux" package.
-> Extra steps that should not be necessary for a development kernel have
-> been removed and an UAPI header package has been added.
+> 2) CC could have been set externally, such as when cross compiling.
 > 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-
-This is pretty awesome and much needed I think, it would allow me to
-replace my own home grown "build an Arch Linux kernel package" script.
-It should also make it much easier for users of Arch Linux and related
-distributions to build and test mainline kernels for issue reproduction
-and bisecting, which is one of the biggest hurdles I have encountered
-when it comes to working with those users.
-
-The resulting package that I get boots in my virtual machine (I can't
-take down my workstation at the moment).
-
-I notice one warning during the build phase that appears to come from makepkg
-itself? The permissions of the pkg folder are execute only. This is building
-using O=, I haven't had much time to look into it aside from that.
-
-  $ make -skj"$(nproc)" ARCH=x86_64 LLVM=1 O=... olddefconfig pacman-pkg
-  ==> Making package: linux-upstream 6.10.0_rc6_00051_g1dfe225e9af5_dirty-1 (Thu 04 Jul 2024 10:02:14 AM MST)
-  ==> Checking runtime dependencies...
-  ==> Checking buildtime dependencies...
-  ==> Retrieving sources...
-  ==> Extracting sources...
-  ==> Starting build()...
-  find: ‘./pacman/linux-upstream/pkg’: Permission denied
-  ...
-
-  $ ls -al .../pacman/linux-upstream
-  total 16
-  drwxr-xr-x 4 nathan nathan 4096 Jul  4 10:02 .
-  drwxr-xr-x 3 nathan nathan 4096 Jul  4 10:02 ..
-  d--x--x--x 2 nathan nathan 4096 Jul  4 10:02 pkg
-  drwxr-xr-x 2 nathan nathan 4096 Jul  4 10:02 src
-
-Not a big deal to me though, it's only a warning.
-
+> Solution: In order to allow subsystem selftests to more accurately
+> control clang-specific behavior, such as compiler options, provide a new
+> Makefile variable: SELFTESTS_CC_IS_CLANG. If $(CC) contains an
+> invocation of clang in any form, then SELFTESTS_CC_IS_CLANG will be
+> non-empty.
+> 
+> SELFTESTS_CC_IS_CLANG does not specify which linker is being used.
+> However, it can still help with linker options, because $(CC) is often
+> used to do both the compile and link steps (often in the same step).
+> 
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 > ---
->  .gitignore               |  6 ++++
->  scripts/Makefile.package | 15 ++++++++++
->  scripts/package/PKGBUILD | 72 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 93 insertions(+)
 > 
-> diff --git a/.gitignore b/.gitignore
-> index c59dc60ba62e..7902adf4f7f1 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -92,6 +92,12 @@ modules.order
->  #
->  /tar-install/
+> Hi,
+> 
+> If this looks reasonable, I'll break it up into separate patches and
+> post it as a non-RFC.
+
+Aside from the polarity issue with the checks as you already noted, this
+seems reasonable to me and matches what I had in mind.
+
+>  tools/testing/selftests/bpf/Makefile       |  2 +-
+>  tools/testing/selftests/fchmodat2/Makefile | 12 +++++++-----
+>  tools/testing/selftests/hid/Makefile       |  2 +-
+>  tools/testing/selftests/lib.mk             | 15 +++++++++++++++
+>  tools/testing/selftests/openat2/Makefile   | 16 +++++++++-------
+>  5 files changed, 33 insertions(+), 14 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+> index dd49c1d23a60..6b924297ab71 100644
+> --- a/tools/testing/selftests/bpf/Makefile
+> +++ b/tools/testing/selftests/bpf/Makefile
+> @@ -55,7 +55,7 @@ progs/test_sk_lookup.c-CFLAGS := -fno-strict-aliasing
+>  progs/timer_crash.c-CFLAGS := -fno-strict-aliasing
+>  progs/test_global_func9.c-CFLAGS := -fno-strict-aliasing
 >  
+> -ifneq ($(LLVM),)
+> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
+>  # Silence some warnings when compiled with clang
+>  CFLAGS += -Wno-unused-command-line-argument
+>  endif
+> diff --git a/tools/testing/selftests/fchmodat2/Makefile b/tools/testing/selftests/fchmodat2/Makefile
+> index 4373cea79b79..d00b01be5d96 100644
+> --- a/tools/testing/selftests/fchmodat2/Makefile
+> +++ b/tools/testing/selftests/fchmodat2/Makefile
+> @@ -2,14 +2,16 @@
+>  
+>  CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined $(KHDR_INCLUDES)
+>  
+> +TEST_GEN_PROGS := fchmodat2_test
+> +
+> +include ../lib.mk
+> +
+>  # gcc requires -static-libasan in order to ensure that Address Sanitizer's
+>  # library is the first one loaded. However, clang already statically links the
+>  # Address Sanitizer if -fsanitize is specified. Therefore, simply omit
+>  # -static-libasan for clang builds.
+> -ifeq ($(LLVM),)
+> +# This check must be done after including ../lib.mk, in order to pick up the
+> +# correct value of SELFTESTS_CC_IS_CLANG.
+> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
+>      CFLAGS += -static-libasan
+>  endif
+> -
+> -TEST_GEN_PROGS := fchmodat2_test
+> -
+> -include ../lib.mk
+> diff --git a/tools/testing/selftests/hid/Makefile b/tools/testing/selftests/hid/Makefile
+> index 2b5ea18bde38..734a53dc8ad9 100644
+> --- a/tools/testing/selftests/hid/Makefile
+> +++ b/tools/testing/selftests/hid/Makefile
+> @@ -27,7 +27,7 @@ CFLAGS += -I$(OUTPUT)/tools/include
+>  LDLIBS += -lelf -lz -lrt -lpthread
+>  
+>  # Silence some warnings when compiled with clang
+> -ifneq ($(LLVM),)
+> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
+>  CFLAGS += -Wno-unused-command-line-argument
+>  endif
+>  
+> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+> index 429535816dbd..f321ad5a1d0c 100644
+> --- a/tools/testing/selftests/lib.mk
+> +++ b/tools/testing/selftests/lib.mk
+> @@ -43,6 +43,21 @@ else
+>  CC := $(CROSS_COMPILE)gcc
+>  endif # LLVM
+>  
+> +# SELFTESTS_CC_IS_CLANG allows subsystem selftests to more accurately control
+> +# clang-specific behavior, such as compiler options. If CC is an invocation of
+> +# clang in any form, then SELFTESTS_CC_IS_CLANG will be non-empty. Notes:
 > +#
-> +# pacman files (make pacman-pkg)
+> +# 1) CC could have been set above, by inferring it from LLVM==1, or externally,
+> +# from the CC shell environment variable.
 > +#
-> +/PKGBUILD
-> +/pacman/
+> +# 2) SELFTESTS_CC_IS_CLANG does not specify which linker is being used. However,
+> +#    it can still help with linker options, if clang or gcc is used for the
+> +#    linker front end.
+> +SELFTESTS_CC_IS_CLANG :=
+> +ifeq ($(findstring clang,$(CC)),clang)
+> +    SELFTESTS_CC_IS_CLANG := 1
+> +endif
 > +
->  #
->  # We don't want to ignore the following even if they are dot-files
->  #
-> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> index bf016af8bf8a..8c0c80f8bec0 100644
-> --- a/scripts/Makefile.package
-> +++ b/scripts/Makefile.package
-> @@ -141,6 +141,20 @@ snap-pkg:
->  	cd $(objtree)/snap && \
->  	snapcraft --target-arch=$(UTS_MACHINE)
+>  ifeq (0,$(MAKELEVEL))
+>      ifeq ($(OUTPUT),)
+>  	OUTPUT := $(shell pwd)
+> diff --git a/tools/testing/selftests/openat2/Makefile b/tools/testing/selftests/openat2/Makefile
+> index 185dc76ebb5f..7acb85a8f2ac 100644
+> --- a/tools/testing/selftests/openat2/Makefile
+> +++ b/tools/testing/selftests/openat2/Makefile
+> @@ -3,16 +3,18 @@
+>  CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined
+>  TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test
 >  
-> +# pacman-pkg
-> +# ---------------------------------------------------------------------------
+> +LOCAL_HDRS += helpers.h
 > +
-> +PHONY += pacman-pkg
-> +pacman-pkg:
-> +	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
-> +	cd $(objtree) && \
-> +		srctree="$(realpath $(srctree))" \
-> +		objtree="$(realpath $(objtree))" \
-> +		BUILDDIR="$(realpath $(objtree))/pacman" \
-> +		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
-> +		KBUILD_REVISION="$(shell $(srctree)/init/build-version)" \
-> +		makepkg
+> +include ../lib.mk
 > +
->  # dir-pkg tar*-pkg - tarball targets
->  # ---------------------------------------------------------------------------
->  
-> @@ -221,6 +235,7 @@ help:
->  	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
->  	@echo '  snap-pkg            - Build only the binary kernel snap package'
->  	@echo '                        (will connect to external hosts)'
-> +	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
->  	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
->  	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
->  	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
-> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> new file mode 100644
-> index 000000000000..29daf357edc1
-> --- /dev/null
-> +++ b/scripts/package/PKGBUILD
-> @@ -0,0 +1,72 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
-> +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
+> +$(TEST_GEN_PROGS): helpers.c
 > +
-> +pkgbase=linux-upstream
-> +pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
-> +pkgver="${KERNELRELEASE//-/_}"
-> +pkgrel="$KBUILD_REVISION"
-> +pkgdesc='Linux'
-> +url='https://www.kernel.org/'
-> +arch=("$UTS_MACHINE")
-> +options=(!strip)
-> +license=(GPL-2.0-only)
-> +
-> +build() {
-> +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +  cd "$objtree"
-> +
-> +  ${MAKE} -f "${srctree}/Makefile"
-> +
-> +}
-> +
-> +package_linux-upstream() {
-> +  pkgdesc="The $pkgdesc kernel and modules"
-> +
-> +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +  cd "$objtree"
-> +  local modulesdir="$pkgdir/usr/$MODLIB"
-> +
-> +  echo "Installing boot image..."
-> +  # systemd expects to find the kernel here to allow hibernation
-> +  # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-> +  install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
-
-should this be ${MAKE}? I suppose it does not really matter much.
-
-Would it be worth copying the .config and System.map to $modulesdir like
-kernel.spec here as well? I know that upstream does not do this, as it
-enables IKCONFIG in /proc but it would be potentially useful in certain
-scenarios.
-
-One other minor suggestion would be installing the dtbs somewhere if
-the architecture supports them, maybe to $modulesdir/dtbs? Not super
-critical but I know Arch Linux Ports is gaining traction, so it might be
-good to future proof this a little bit.
-
-> +  # Used by mkinitcpio to name the kernel
-> +  echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
-> +
-> +  echo "Installing modules..."
-> +  ${MAKE} INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
-> +    DEPMOD=/doesnt/exist modules_install  # Suppress depmod
-> +
-> +  # remove build link
-
-Perhaps it is worth mentioning that this is done because it will be
-created again/properly in the headers package?
-
-> +  rm -f "$modulesdir/build"
-> +}
-> +
-> +package_linux-upstream-headers() {
-> +  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
-> +
-> +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +  cd "$objtree"
-> +  local builddir="$pkgdir/usr/$MODLIB/build"
-> +
-> +  echo "Installing build files..."
-> +  "$srctree/scripts/package/install-extmod-build" "$builddir"
-> +
-> +  echo "Adding symlink..."
-> +  mkdir -p "$pkgdir/usr/src"
-> +  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
-> +}
-> +
-> +package_linux-upstream-api-headers() {
-> +  pkgdesc="Kernel headers sanitized for use in userspace"
-> +  provides=(linux-api-headers)
-> +  conflicts=(linux-api-headers)
-> +
-> +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +  cd "$objtree"
-> +
-> +  ${MAKE} headers_install INSTALL_HDR_PATH="$pkgdir/usr"
-> +}
-> +
-> +# vim:set ts=8 sts=2 sw=2 et:
+>  # gcc requires -static-libasan in order to ensure that Address Sanitizer's
+>  # library is the first one loaded. However, clang already statically links the
+>  # Address Sanitizer if -fsanitize is specified. Therefore, simply omit
+>  # -static-libasan for clang builds.
+> -ifeq ($(LLVM),)
+> +# This check must be done after including ../lib.mk, in order to pick up the
+> +# correct value of SELFTESTS_CC_IS_CLANG.
+> +ifeq ($(SELFTESTS_CC_IS_CLANG),)
+>      CFLAGS += -static-libasan
+>  endif
+> -
+> -LOCAL_HDRS += helpers.h
+> -
+> -include ../lib.mk
+> -
+> -$(TEST_GEN_PROGS): helpers.c
 > 
-> ---
-> base-commit: 795c58e4c7fc6163d8fb9f2baa86cfe898fa4b19
-> change-id: 20240625-kbuild-pacman-pkg-b4f87e19d036
-> 
-> Best regards,
+> base-commit: 9a5cd459be8a425d70cda1fa1c89af7875a35d17
 > -- 
-> Thomas Weißschuh <linux@weissschuh.net>
+> 2.45.2
+> 
 > 
 
