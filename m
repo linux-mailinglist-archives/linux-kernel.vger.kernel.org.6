@@ -1,78 +1,132 @@
-Return-Path: <linux-kernel+bounces-241206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35448927841
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:24:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504DD927860
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669DB1C22061
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:24:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5020B21F14
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242031B0112;
-	Thu,  4 Jul 2024 14:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CDA1B11F4;
+	Thu,  4 Jul 2024 14:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIAOXV1a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TByTh8Qo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606FDD2F5;
-	Thu,  4 Jul 2024 14:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C281B11E1
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 14:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720103075; cv=none; b=pfvkXWzMEb1ckQHcEi2svJI7swnzX0qabAD6oBil2ox0hflgW7ZCPcMx0GT3wRmjIgOYM2MmvcaZkqAjFzT6H+1P9+zErWIbu+WR0ox7hgeGFSNv1WxaCbEo62u9OCtC4LrDgbpgGc7KRUdNM5LHZ+ElsvlkfIlzk+9+d+kB0x8=
+	t=1720103405; cv=none; b=t1+bN8IdCR2qxY6w+A80ACsc/R2DdHsO5SdBCCABDUeJwlgh6xUp74+CaY2SNE9FgpqssKz3F/ixr9X3C7mRPjBzcmxo+as3xAGaHOw7sTyJilaZGZQrDf2+7ywLyWKdIaDfivHwf23fVL7AdnNokMI4jTQmUtv4cssLYltXTJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720103075; c=relaxed/simple;
-	bh=7W6PGcV0q4XvpyTVd6THPTQCSRFEAPGvv2zfX0f+eKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oGtpj38j4cBPgHD3IhhcKuXe8mrykmsKrK3Eoktcn86lWRbra9XJPLk8OC7xigyticQTsHklVaQvY86WxKXXla8MV1t/HYZxhKP6mSQihMY3qJZD4wqmdQxfuFCmPjRBtJJOM7dqdBLz0xAT3Nyl/NW7rzpr+umDx/hDHBoV+0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIAOXV1a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EB9AC4AF0A;
-	Thu,  4 Jul 2024 14:24:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720103075;
-	bh=7W6PGcV0q4XvpyTVd6THPTQCSRFEAPGvv2zfX0f+eKs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TIAOXV1a7Asp0aXQq4HFq0Ka+zkLktSbRMop2HWZfa+z3Z5LZsF/v36ZsZPbRKuH6
-	 aKvBgmyvNG0Q9hdITb7VVbkyeGNmPhPg6oPmWk0Mri3pOYZvK6+Pg69u064amRnIDt
-	 Xhs/9zvfZAgOsdPgFJjY0B609ea45zyhffux+wA/InneRxqrAcLYmMa/BzY9snqa+X
-	 7FuFMH9vP3W5zkCfdWOphTWMGW72tgkteT/wtSVCIcAcAWnL5YaVRHnJTXKrYo3fqV
-	 Cmpv3FlqU9DYz5eaxw2jykSWjoxJA34fBQYMMbPv6xBV/Ps4vjSEZbxJS2/tkNsgEx
-	 OHH30yioUC90Q==
-Date: Thu, 4 Jul 2024 07:24:33 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: syzbot <syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com>,
- andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com,
- haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
- martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
- song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Subject: Re: [PATCH v2 net-net] tun: Assign missing bpf_net_context.
-Message-ID: <20240704072433.4531a7e1@kernel.org>
-In-Reply-To: <20240704101452.NhpibjJt@linutronix.de>
-References: <000000000000adb970061c354f06@google.com>
-	<20240702114026.1e1f72b7@kernel.org>
-	<20240703122758.i6lt_jii@linutronix.de>
-	<20240703120143.43cc1770@kernel.org>
-	<20240703192118.RIqHj9kS@linutronix.de>
-	<20240704101452.NhpibjJt@linutronix.de>
+	s=arc-20240116; t=1720103405; c=relaxed/simple;
+	bh=aqW9gjTA95ciOjlGYFV47g4h2LobgpnPA7tQQS4gw9E=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gSLxwRUoin1hQet5gYUDUECYP65S3I0tNKOThXIorbUhZzYdehlEpo1VOCvjXWA1vd0BWVoxNWqisGGy95ASGRBY2uPmG8MUKD7FpyzAlfGOYiVV/foiQg1J2CHiOu+Rjnb8hwQgbQdBhihIrncVfPz1YvvnWWzZ/vG+J1L2MOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TByTh8Qo; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720103403; x=1751639403;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aqW9gjTA95ciOjlGYFV47g4h2LobgpnPA7tQQS4gw9E=;
+  b=TByTh8QoJSgyfbrxaeR2TzOVwZ5ibkZMOYi/fBfVheL1/L+VgOEKdwQe
+   NP/gtQULHuP8+vdW0xorrrqhGWNcWy4BkGbhQ32vIMibS/LTupA8wgqg6
+   ijoC6htBzVDH6YKj5qVq8LBEVwCXav9qm9asKgGvpbPxt/ygbMNOi26FK
+   XA/6HZda9I0Ee3GCkngxnlKWSxvBEb5Slns2HsHXGOpBgbdSN6h47uCn6
+   qxXYokoDYnc8Chi/WzXMTiN6Q9tpp+ThnrRZQLNH9J6lpitdxocWczgND
+   QSGJ0naSjxAR3J3teOY+wTC/T+2nDbZcdLAvMND6Ft+AagDlSnPhAR94m
+   A==;
+X-CSE-ConnectionGUID: on1ksiqWSIi8XPA8iXk2UA==
+X-CSE-MsgGUID: kZ5afCSUQaydptDXbpP8Ww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="17522267"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="17522267"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 07:25:00 -0700
+X-CSE-ConnectionGUID: up9qyxkjSw6G1sTT0A8oiw==
+X-CSE-MsgGUID: KX0cngofS5azc7TaKb/4Jg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="84166564"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 07:24:54 -0700
+Message-ID: <f273615a-ebbd-488c-a301-e5cefc0715b1@linux.intel.com>
+Date: Thu, 4 Jul 2024 22:24:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, catalin.marinas@arm.com,
+ kernel-team@android.com, Yi Liu <yi.l.liu@intel.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Kalle Valo <kvalo@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
+ Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jeff Johnson <quic_jjohnson@quicinc.com>, ath10k@lists.infradead.org,
+ ath11k@lists.infradead.org, iommu@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/21] iommu: Refactoring domain allocation interface
+To: Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>
+References: <20240610085555.88197-1-baolu.lu@linux.intel.com>
+ <172009858593.2049787.5200500337719932334.b4-ty@kernel.org>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <172009858593.2049787.5200500337719932334.b4-ty@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 4 Jul 2024 12:14:52 +0200 Sebastian Andrzej Siewior wrote:
-> Subject: [PATCH v2 net-net] tun: Assign missing bpf_net_context.
+On 2024/7/4 22:18, Will Deacon wrote:
+> On Mon, 10 Jun 2024 16:55:34 +0800, Lu Baolu wrote:
+>> The IOMMU subsystem has undergone some changes, including the removal
+>> of iommu_ops from the bus structure. Consequently, the existing domain
+>> allocation interface, which relies on a bus type argument, is no longer
+>> relevant:
+>>
+>>      struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
+>>
+>> [...]
+> Applied a few of these to iommu (iommufd/paging-domain-alloc), thanks!
+> 
+> [01/21] iommu: Add iommu_paging_domain_alloc() interface
+>          https://git.kernel.org/iommu/c/a27bf2743cb8
+> [02/21] iommufd: Use iommu_paging_domain_alloc()
+>          https://git.kernel.org/iommu/c/26a581606fab
+> [03/21] vfio/type1: Use iommu_paging_domain_alloc()
+>          https://git.kernel.org/iommu/c/60ffc4501722
+> [04/21] vhost-vdpa: Use iommu_paging_domain_alloc()
+>          https://git.kernel.org/iommu/c/9c159f6de1ae
+> [05/21] drm/msm: Use iommu_paging_domain_alloc()
+>          https://git.kernel.org/iommu/c/45acf35af200
+> 
+> [10/21] wifi: ath10k: Use iommu_paging_domain_alloc()
+>          https://git.kernel.org/iommu/c/d5b7485588df
+> [11/21] wifi: ath11k: Use iommu_paging_domain_alloc()
+>          https://git.kernel.org/iommu/c/ef50d41fbf1c
+> 
+> [14/21] RDMA/usnic: Use iommu_paging_domain_alloc()
+>          https://git.kernel.org/iommu/c/3b10f25704be
+> [15/21] iommu/vt-d: Add helper to allocate paging domain
+>          https://git.kernel.org/iommu/c/9e9ba576c259
 
-LG, but can I bother you for a repost? the subject tag is typo'ed
-(net-net vs net-next) and our CI put this on top of net, since it
-applies. But it doesn't build on top of net. 
-Feel free to repost without any wait.
+Will, the patch [15/21] has already been included in my VT-d update pull
+request. I have also addressed Yi's comment in that patch. So can you
+please remove it from this branch?
+
+Thanks,
+baolu
 
