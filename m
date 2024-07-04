@@ -1,156 +1,104 @@
-Return-Path: <linux-kernel+bounces-241718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082A5927E75
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 23:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6974927E78
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 23:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA3CB284D01
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:08:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72C41282330
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68A113C69C;
-	Thu,  4 Jul 2024 21:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C646514374F;
+	Thu,  4 Jul 2024 21:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gATVg5se"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EGhoQSVd"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0298873454
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 21:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCE01755B;
+	Thu,  4 Jul 2024 21:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720127283; cv=none; b=cfFeMAJCrd1PvCnBX3n9OXyhY9pnfUyivAhI9UfZnHxPEwL0HdREAtmbBxud9v1XTPcIEvejMuiR4IUbHrPFPEhscOhy7DNisRHFiMIBii/Y6t2YzkbM2jECbTOt5Ld2HvgpD5qjNTvYoua40lqEtk3R9bKdjO/oXAXs3KyOg2Y=
+	t=1720127518; cv=none; b=izH5Dv6RqGci9+BfviWauX+maWgIBWHvL0UWA+i+Bi295F6NKYQh8kDycuKtHEjEwe1S7jApHFJmpkdTdgn/aihf/c60dES/IbcUwpLzabtcJtX2p2DO9qAfBw7k31lHu0CWislciCBNSvjqTNKDhnDtJoplIWaE/ezgk/ay5gQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720127283; c=relaxed/simple;
-	bh=tsSeSJw/wskqqIQ95nhOCClgJITWSQXmHVQgcE3x0fU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OWmgaPvfjCnftb6THO9Vtz7x1+8xaUkayK9lS4NOuANJJIRxWWbWr2wr4L3v4CfPrtQx48yWz/YGKei7lLDBnrMEzOqpMp7VGACYoqdm0aJHdLDzktcLny2bdM37YPs2U1m9yo8vrUfBNIbUlO5Uz7qqAEf591ughm5/nsJo7gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gATVg5se; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so14019471fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 14:08:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1720127280; x=1720732080; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PAwkodzaV7fvFpdWbJ56Wv8CLAuFVUCXlI2rcaicgMo=;
-        b=gATVg5seAL5NonkTgcKp8WW+ToYjd+ZHSQDRcEZXs/OzASnl8kdRtmvxaIjPolB59Q
-         fEtyltYML8psu+EEbx/296UMzi0JM1zQ4/t1KTY717TH1AA0n+EY6TrchoX+VFT18R84
-         GrCroJjJWj2Y9gTRp+r8HT3DzTk3EIajp8WJM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720127280; x=1720732080;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PAwkodzaV7fvFpdWbJ56Wv8CLAuFVUCXlI2rcaicgMo=;
-        b=CemsXY/V5V9zg/QbU1eTd0if+vuOSSamibXy56JP+hOup0eBGIOkECN8rnFDVAR9cp
-         b95pkZ+1eGTHq20YRCwCJrt4qUpVCKIESWiNH+e4TBlvucDXko5KQKGOk2S8Kvuwl1sU
-         XGkFPpSnuNQVTcPmI5+2WgZ20Ua1whpeFerbHD8djIyF6wAx8zM6Dy/aQoJOuSiptH58
-         xFpLBk3mpGpYmHtwHjw4qoHLCpqn0CBUFk8peyYEtDyZhMyojTWJL3iPrZklXrCte5hr
-         QUc6FoS6lRFeAPzjjt8qdAJWZ1g12XSoq7Cutz3H3CDayVGxCJLlNmmSGHtchwT25JHv
-         qECQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRIndhESzfyLY4T7p7ZpBbWEEH4YLUY6Ch0GGESCpXipgQXNcGb6rlXaeaoaB+YvqXLo96lXiqXtQsVEiioaNVaJGGKRD2d9v/VV9u
-X-Gm-Message-State: AOJu0YyOeNBwmcFUXF34PrQlxhUJ1aixdpQu8K4lrnAYtZ+xExE+n2t9
-	SXnVcRRMJZ96QU7970p6N6Ggp/qIVe+xEVz968ouU54z2OI7/ydkVOb+3mxCjtNHzjJB30fsUaK
-	T6IDwzQ==
-X-Google-Smtp-Source: AGHT+IF6tDppXEmkKibCH0LmKeFiR9Z6lDJz8RYoJImrxmBZTCTuyHsCWl7hmopYcKkKCYi+EYlTaw==
-X-Received: by 2002:a2e:7e07:0:b0:2ee:4cd8:94b6 with SMTP id 38308e7fff4ca-2ee8ed90e17mr21796061fa.15.1720127279851;
-        Thu, 04 Jul 2024 14:07:59 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee8d815d47sm3858361fa.83.2024.07.04.14.07.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 14:07:59 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52ea5dc3c66so63099e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 14:07:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6kEaZmFlAmlVAWnQC6nwMMT8AjrwXw0nzchGECpztI5L92CrUUwQYCAKUYyeiyblmwLhGcPHKKNYQnYfQRnaUXAqcRRbKJ7GPL6RW
-X-Received: by 2002:a05:6512:15e:b0:52c:76ac:329b with SMTP id
- 2adb3069b0e04-52ea0632400mr2207288e87.35.1720127278580; Thu, 04 Jul 2024
- 14:07:58 -0700 (PDT)
+	s=arc-20240116; t=1720127518; c=relaxed/simple;
+	bh=1HtV605rr1/Y3GdSz1tJZ3XhiXaiq/FJwY3hYlYAuq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F0YwVyn2Mq37kO0fwry7CAuUERDkDomNlsA9x4XjGkiccURbDdRRH9rUdllcEm5KRxVxYJmgjruFe7p5sGKw0o3MaQHRmJlmSG4Kvq1cuJlwlRGMIsKt2gFvheSXZZUC1WSU1mDguieRkTBvSzeXvBmgnoIxSu4qGbvD1t71/UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EGhoQSVd; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=iS4Ki0FfgKFDGFlTkcQJD+T+q8NKxHbuR15GMQm4etM=; b=EGhoQSVdSKOnHDaL16nn+ug5Si
+	zukYO68rDkOFds4nGPLCNHEQqOgCqOEQWCETTUMe2dUduxmH08c11Mx7BWZTwuBcYBZJjiTDAoU58
+	CZLQgJ4qJ3Z6pdKLWJSm8tPF6s0tWy6vsPer5mn6jwS7/LUUYca1Yv2i+cCKMlD5f/4A=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sPTjx-001qMx-7h; Thu, 04 Jul 2024 23:11:41 +0200
+Date: Thu, 4 Jul 2024 23:11:41 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Conor Dooley <conor@kernel.org>
+Cc: Kamil =?iso-8859-1?Q?Hor=E1k_=282N=29?= <kamilh@axis.com>,
+	florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 3/4] dt-bindings: ethernet-phy: add optional brr-mode
+ flag
+Message-ID: <35d571bd-251d-45b5-9e4f-93c83d1a43c8@lunn.ch>
+References: <20240704140413.2797199-1-kamilh@axis.com>
+ <20240704140413.2797199-4-kamilh@axis.com>
+ <20240704-snitch-national-0ac33afdfb68@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZobXdDCYBi8OM-Fo@zx2c4.com> <CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
- <Zobf3fZOuvOJOGPN@zx2c4.com> <CAHk-=whf2Pb8fSmUsLRSn6CnYvQoyUkLikKpFDWN_xnTJqix=A@mail.gmail.com>
- <CAHmME9pm+ZE2_qf1DNxukB6ufPrjTAsnwin05-VX_gS03Yq-ag@mail.gmail.com>
- <CAHk-=whTjdO6szgRKp51ZeDLDmA1+YYSbg+vEUt9OsxTMDUtjQ@mail.gmail.com>
- <CAHk-=wgqD9h0Eb-n94ZEuK9SugnkczXvX497X=OdACVEhsw5xQ@mail.gmail.com>
- <Zobt_M91PEnVobML@zx2c4.com> <CAHk-=wh47WSNQYuSWqdu_8XeRzfpWbozzTDL6KtkGbSmLrWU4g@mail.gmail.com>
- <CAHmME9pgFXhSdWpTwt_x51pFu2Qm878dhcQjG9WhPXV_XFXm9w@mail.gmail.com> <CAHk-=wjCmw1L42W-o=pW7_i=nJK5r0_HFQTWD_agKWGt4hE7JQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wjCmw1L42W-o=pW7_i=nJK5r0_HFQTWD_agKWGt4hE7JQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 4 Jul 2024 14:07:41 -0700
-X-Gmail-Original-Message-ID: <CAHk-=win2mesMNEfL-KZQ_jk1YH8N8dL9r=7XOLp28_WMazpVg@mail.gmail.com>
-Message-ID: <CAHk-=win2mesMNEfL-KZQ_jk1YH8N8dL9r=7XOLp28_WMazpVg@mail.gmail.com>
-Subject: Re: deconflicting new syscall numbers for 6.11
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: jolsa@kernel.org, mhiramat@kernel.org, cgzones@googlemail.com, 
-	brauner@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704-snitch-national-0ac33afdfb68@spud>
 
-On Thu, 4 Jul 2024 at 12:19, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Bah. I guess I'll have to walk through the patch series once again.
+> > ---
+> >  Documentation/devicetree/bindings/net/ethernet-phy.yaml | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > index 8fb2a6ee7e5b..349ae72ebf42 100644
+> > --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > @@ -93,6 +93,14 @@ properties:
+> >        the turn around line low at end of the control phase of the
+> >        MDIO transaction.
+> >  
+> > +  brr-mode:
+> > +    $ref: /schemas/types.yaml#/definitions/flag
+> > +    description:
+> > +      If set, indicates the network cable interface is alternative one as
+> > +      defined in the BroadR-Reach link mode specification under 1BR-100 and
+> > +      1BR-10 names. The driver needs to configure the PHY to operate in
+> > +      BroadR-Reach mode.
+> 
+> I find this second sentence unclear. Does the driver need to do
+> configure the phy because this mode is not enabled by default or because
+> the device will not work outside of this mode.
 
-Ok, I went through it once. First comments:
+BroadR-Reach uses one pair. Standard 10/100Mbps ethernet needs 2 pair,
+and 1G needs 4 pair. So any attempt to use standard 10/100/1G is going
+to fail, the socket/plug and cable just don't work for anything other
+than BroadR-Reach.
 
-The system call additions look really random. You don't add them to
-all architectures, but the ones you *do* add them to seem positively
-pointless:
+As far as i understand it, the PHY could be strapped into BroadR-Reach
+mode, but there is no guarantee it is, so we should also program it to
+BroadR-Reach mode if this property is present.
 
- - I don't think you should introduce the system all on 32-bit
-architectures, and that includes as a compat call on 64-bit.
-
-    The VM_DROPPABLE infrastructure doesn't even exist on 32-bit, and
-while that might not be technically a requirement, it does seem to
-argue against doing this on 32-bit architectures. Plus nobody sane
-cares.
-
-    You didn't even enable it on 32-bit x86 in the vdso, so why did
-you enable it as a syscall?
-
- - even 64-bit architectures don't necessarily have anything like a
-vdso, eg alpha.
-
-It looks like you randomly just picked the architectures that have a
-syscall.tbl file, rather than architectures where this made sense. I
-thin kyou should drop all of them except possibly arm64, s390 and
-powerpc.
-
-I'm very ambivalent about the VM_DROPPABLE code.
-
-On one hand, it's something we've discussed many times, and I don't
-hate it. On the other hand, the discussions have always been about
-actually exposing it to user space as a MAP_DROPPABLE so that user
-space can do caching.
-
-In fact, I'm almost certain that *because* you didn't expose it to
-mmap(), people will now then instead mis-use vgetrandom_alloc()
-instead to allocate random MAP_DROPPABLE pages. That is going to be a
-nightmare.
-
-And that nightmare has to be avoided. Which in turn means that I think
-vgetrandom_alloc() has to go, and you just need to expose
-MAP_DROPPABLE instead that obly works for private anonymous mappings,
-and make sure glibc uses that.
-
-Because as your patch series stands now, the semantics are unacceptable.
-
-This is a non-starter. When I see a new system call where my reaction
-is not just "this should have been just a mmap()", but then
-immediately followed by "Oh, and people will mis-use this as a cool
-mmap", I'm not merging that system call.
-
-So I don't hate VM_DROPPABLE per se, but the interface is simply not
-ok. vgetrandom_alloc() absolutely *has* to go, and needs to just be a
-user-space wrapper around regular mmap.
-
-                 Linus
+	Andrew
 
