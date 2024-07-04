@@ -1,308 +1,213 @@
-Return-Path: <linux-kernel+bounces-240890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 493AF92743E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:43:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB47927440
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8480FB23747
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:43:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF821F226BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3161ABC56;
-	Thu,  4 Jul 2024 10:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FFF1A38DD;
+	Thu,  4 Jul 2024 10:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Vjj78pAk"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISJC6noj"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57321ABC47;
-	Thu,  4 Jul 2024 10:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C551A0AEA
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 10:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720089782; cv=none; b=RRgk14nTDga9jiZarAyHcr6/NSBDRSKJletAbkt0gEKGF1U1UzFFzd9QdDy1/ABOWr0QNUM45u3Yr+tfcjkQOi74lMX8CLH9FcWvIP4WY2Oxhj4yqCfZp8CAFODpJeHjn5qae+hXTL6Q2Uih7mbKAmCdfkfMkNKUS4h2Dz+1MRU=
+	t=1720089819; cv=none; b=cUgu/SOnJrXYjkN8MgLzjb1sBQAnaTE3qw4UcComKIBvZ24yuIE8c0SSSSvDJy+8hmXLqv2tpF7MdKdiU4kA5iczhP4XsYbhXdGFWbOc5f0AKHKf0RPoRgd4zELPOc3JF50ixb20e+m4e4kw/eoVah35qZ2Iyk4CyQy4Okb6A1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720089782; c=relaxed/simple;
-	bh=r6Hn0e3IalT2uWaAgGJoLIJ8VgpjCZODVCW/nG64NLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gW6mIVB2ke1WsjukmUiTRV1PY+ijO3ZU+BJmdHZxqjWUVHta0fAhaW4Ilur7CdqgR4b5QDqaO4u+G9r59a4MVwvhDNHkYM/TlVUo38UjBa22qzVL9xskoG8hohn0WLCBuomZAIu+wr553JMP87QkpIfpVAQfA53BTfm6tKpOry8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Vjj78pAk; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720089778;
-	bh=r6Hn0e3IalT2uWaAgGJoLIJ8VgpjCZODVCW/nG64NLc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vjj78pAk1mnKrn7xbAK4oSuTNoAURhIn850ZIMZlrMYTDEWmEHwRScSHM85GUIFSm
-	 nOuwpBczZgd09C6qEC/AuM9w7O3b2zCZjDz05UM28vbIougGSJD0Ookcz+JY/bg7Ai
-	 hOQDW61hCV9gBhdclQQjPsNpJXDs8hjQQ1X+uKqfgPXKPAyyzfxNiU7lGAjL5byXuH
-	 bOW5UvF/2lOIt3nrMdgUn8Bh5da6SK9erYXWeBoQNC20UchDjnu13Rd6BahTIV6ump
-	 FUxG0G6n0S3sCaXndyOQ+SZT65vnnGkHQKlJt1X4ExZaHHVZXaG/SyXo7RsH0hOkaz
-	 CS8NB160aCcsg==
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 385B93781144;
-	Thu,  4 Jul 2024 10:42:58 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id 61FB4106066C; Thu, 04 Jul 2024 12:42:57 +0200 (CEST)
-Date: Thu, 4 Jul 2024 12:42:57 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Armin Wolf <W_Armin@gmx.de>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 2/5] power: supply: core: avoid iterating
- properties directly
-Message-ID: <sl55t3ds2lak53pe6omee25vt7zdtnzl2j24ec54lui42w47jt@urbvvqmns5nv>
-References: <20240608-power-supply-extensions-v2-0-2dcd35b012ad@weissschuh.net>
- <20240608-power-supply-extensions-v2-2-2dcd35b012ad@weissschuh.net>
+	s=arc-20240116; t=1720089819; c=relaxed/simple;
+	bh=kLrhaR+1UBp8gvQNoBqnTS0wMECkG7vE5QiNlpFWVGk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oMmuAlROZHzA0SyNMyHqsEcCS/66apP9SF8i9LUlUO9duFsQA9WfmAny/x+S4LIbtHKGtp5yBeEd1WydjzZ+rCTM0ZZTEcoY0aqB2vcn08X7QYDL//M4GWDhcKCuvzB7uX6Teqqh65aZPIB4P9OGNexld7zp2NwH014wuLJHs9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ISJC6noj; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70af8062039so371233b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 03:43:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720089817; x=1720694617; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BV1NRVd6+8QOeMy6RKDnNQikMEGyoeyplnHtMAi0lv8=;
+        b=ISJC6nojBHXmeWYr+B9p6LEkNU5Rff7ELOiQf/HmuTO0RZWsn+ymiQ/7G2r21i7uMD
+         jdxhxgY38LJCL2rJxM7BcAGXo9egSgOtvwNg43AXxsCLA+8q2FVLBrZIxV7XqWJZ7TyC
+         OzyR0uFqF8/XpAfGSbYYqVCXqth2sPilT8WD1tLSQdj1uLanTs/GJg1HYkpJttCqcDfw
+         vFQcYaMqQKvgl3UdvMyJ0UBoFKAGvaSqcMlHVuT8drx0iZe8q642oDiVSn+ER+6oiIfY
+         fTk+Qpc1jn8F5y5mVkj/P/K66c2pff5k/csRMIrGOmxvSl8aaSEJ7CNdamf30RyNbHxB
+         E02g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720089817; x=1720694617;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BV1NRVd6+8QOeMy6RKDnNQikMEGyoeyplnHtMAi0lv8=;
+        b=IU2UtHoAg8lmk/pQPksB2lqzNBLQgn3lXSWMJ7e7ezylKDFdcSTycCHbZfIRnlpDgO
+         nqz38XR6xMET/aQsY1i27DH7euExzd5Q2c4ic5gqKNreZZiho/IiVRQ/iF7Re5BN7/jv
+         NdLkCycmhbgbNBwub1JhLisnGxbPLW6IAWYkrxlnrNRbn7eFVMFjGH2cNUOQpjdPVj6l
+         z/R+77V8ZZJkc2ah06Ym772NGu1wwzRNxCD38t3TDD7C34DLovm7IaEdVjvKSsg4WcIp
+         CmUb4lOtbwbOfPymIBPKc3J5RBqC/bUAQ0zb7aidD5wXXGImVYpuCT8jT5/x1GmFIgkI
+         NvKg==
+X-Gm-Message-State: AOJu0YydOkK4IMPAJ2Ofb+5ilIYOPEsMMOQFhzi+j5ILtI1dEChSe37Q
+	QcizmpcxcKHsknBO48d4r0ne3QxCECEkYPkWFH622FLh51gw5f3k
+X-Google-Smtp-Source: AGHT+IFwgszc+40tcdaP7jNGjzWN5U4vwFahbUKcjOP4NQirYKGBnXEukHVzk9WI/5Iy0igAeFveBQ==
+X-Received: by 2002:a05:6a20:a125:b0:1bd:212d:ac63 with SMTP id adf61e73a8af0-1c0cc73ead8mr1412518637.22.1720089816667;
+        Thu, 04 Jul 2024 03:43:36 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15698d6sm118819395ad.192.2024.07.04.03.43.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 03:43:36 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH net] team: Fix ABBA deadlock caused by race in team_del_slave
+Date: Thu,  4 Jul 2024 19:43:31 +0900
+Message-Id: <20240704104331.90527-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <000000000000ffc5d80616fea23d@google.com>
+References: <000000000000ffc5d80616fea23d@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xswfieillim2hyws"
-Content-Disposition: inline
-In-Reply-To: <20240608-power-supply-extensions-v2-2-2dcd35b012ad@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+>
+> On Wed, Jul 03, 2024 at 11:51:59PM +0900, Jeongjun Park wrote:
+> >        CPU0                    CPU1
+> >        ----                    ----
+> >   lock(&rdev->wiphy.mtx);
+> >                                lock(team->team_lock_key#4);
+> >                                lock(&rdev->wiphy.mtx);
+> >   lock(team->team_lock_key#4);
+> >
+> > Deadlock occurs due to the above scenario. Therefore,
+> > modify the code as shown in the patch below to prevent deadlock.
+> >
+> > Regards,
+> > Jeongjun Park.
+>
+> The commit message should contain the patch description only (without
+> salutations, etc.).
+>
+> >
+> > Reported-and-tested-by: syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com
+> > Fixes: 61dc3461b954 ("team: convert overall spinlock to mutex")
+> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > ---
+> >  drivers/net/team/team_core.c | 14 ++++++++------
+> >  1 file changed, 8 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
+> > index ab1935a4aa2c..3ac82df876b0 100644
+> > --- a/drivers/net/team/team_core.c
+> > +++ b/drivers/net/team/team_core.c
+> > @@ -1970,11 +1970,12 @@ static int team_add_slave(struct net_device *dev, struct net_device *port_dev,
+> >                           struct netlink_ext_ack *extack)
+> >  {
+> >         struct team *team = netdev_priv(dev);
+> > -       int err;
+> > +       int err, locked;
+> > 
+> > -       mutex_lock(&team->lock);
+> > +       locked = mutex_trylock(&team->lock);
+> >         err = team_port_add(team, port_dev, extack);
+> > -       mutex_unlock(&team->lock);
+> > +       if (locked)
+> > +               mutex_unlock(&team->lock);
+>
+> This is not correct usage of 'mutex_trylock()' API. In such a case you
+> could as well remove the lock completely from that part of code.
+> If "mutex_trylock()" returns false it means the mutex cannot be taken
+> (because it was already taken by other thread), so you should not modify
+> the resources that were expected to be protected by the mutex.
+> In other words, there is a risk of modifying resources using
+> "team_port_add()" by several threads at a time.
+>
+> > 
+> >         if (!err)
+> >                 netdev_change_features(dev);
+> > @@ -1985,11 +1986,12 @@ static int team_add_slave(struct net_device *dev, struct net_device *port_dev,
+> >  static int team_del_slave(struct net_device *dev, struct net_device *port_dev)
+> >  {
+> >         struct team *team = netdev_priv(dev);
+> > -       int err;
+> > +       int err, locked;
+> > 
+> > -       mutex_lock(&team->lock);
+> > +       locked = mutex_trylock(&team->lock);
+> >         err = team_port_del(team, port_dev);
+> > -       mutex_unlock(&team->lock);
+> > +       if (locked)
+> > +               mutex_unlock(&team->lock);
+>
+> The same story as in case of "team_add_slave()".
+>
+> > 
+> >         if (err)
+> >                 return err;
+> > --
+> >
+>
+> The patch does not seem to be a correct solution to remove a deadlock.
+> Most probably a synchronization design needs an inspection.
+> If you really want to use "mutex_trylock()" API, please consider several
+> attempts of taking the mutex, but never modify the protected resources when
+> the mutex is not taken successfully.
+>
 
---xswfieillim2hyws
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your comment. I rewrote the patch based on those comments. 
+This time, we modified it to return an error so that resources are not 
+modified when a race situation occurs. We would appreciate your 
+feedback on what this patch would be like.
 
-Hi,
+> Thanks,
+> Michal
+>
+>
 
-On Sat, Jun 08, 2024 at 09:19:38PM GMT, Thomas Wei=DFschuh wrote:
-> With the introduction of power supply extension, it will not be enough
-> to iterate the properties on the struct power_supply directly.
-> Instead introduce a helper power_supply_has_property() which will handle
-> properties added by extensions.
+Regards,
+Jeongjun Park
 
-power_supply_has_property() needs to include properties from
-battery_info, which are exposed in addition to the driver's
-own properties.
+---
+ drivers/net/team/team_core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Greetings,
-
--- Sebastian
-
->=20
-> Signed-off-by: Thomas Wei=DFschuh <linux@weissschuh.net>
-> ---
->  drivers/power/supply/power_supply.h       |  3 ++
->  drivers/power/supply/power_supply_core.c  | 10 +++----
->  drivers/power/supply/power_supply_hwmon.c | 48 +++++++++++++++----------=
-------
->  drivers/power/supply/power_supply_sysfs.c | 14 +++------
->  4 files changed, 36 insertions(+), 39 deletions(-)
->=20
-> diff --git a/drivers/power/supply/power_supply.h b/drivers/power/supply/p=
-ower_supply.h
-> index 3cbafc58bdad..622be1f0a180 100644
-> --- a/drivers/power/supply/power_supply.h
-> +++ b/drivers/power/supply/power_supply.h
-> @@ -13,6 +13,9 @@ struct device;
->  struct device_type;
->  struct power_supply;
-> =20
-> +extern bool power_supply_has_property(const struct power_supply_desc *ps=
-y_desc,
-> +				      enum power_supply_property psp);
-> +
->  #ifdef CONFIG_SYSFS
-> =20
->  extern void power_supply_init_attrs(void);
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/sup=
-ply/power_supply_core.c
-> index fefe938c9342..d57ecdd966e0 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -1183,8 +1183,8 @@ bool power_supply_battery_bti_in_range(struct power=
-_supply_battery_info *info,
->  }
->  EXPORT_SYMBOL_GPL(power_supply_battery_bti_in_range);
-> =20
-> -static bool psy_has_property(const struct power_supply_desc *psy_desc,
-> -			     enum power_supply_property psp)
-> +bool power_supply_has_property(const struct power_supply_desc *psy_desc,
-> +			       enum power_supply_property psp)
->  {
->  	bool found =3D false;
->  	int i;
-> @@ -1209,7 +1209,7 @@ int power_supply_get_property(struct power_supply *=
-psy,
->  		return -ENODEV;
->  	}
-> =20
-> -	if (psy_has_property(psy->desc, psp))
-> +	if (power_supply_has_property(psy->desc, psp))
->  		return psy->desc->get_property(psy, psp, val);
->  	else if (power_supply_battery_info_has_prop(psy->battery_info, psp))
->  		return power_supply_battery_info_get_prop(psy->battery_info, psp, val);
-> @@ -1308,7 +1308,7 @@ static int psy_register_thermal(struct power_supply=
- *psy)
->  		return 0;
-> =20
->  	/* Register battery zone device psy reports temperature */
-> -	if (psy_has_property(psy->desc, POWER_SUPPLY_PROP_TEMP)) {
-> +	if (power_supply_has_property(psy->desc, POWER_SUPPLY_PROP_TEMP)) {
->  		/* Prefer our hwmon device and avoid duplicates */
->  		struct thermal_zone_params tzp =3D {
->  			.no_hwmon =3D IS_ENABLED(CONFIG_POWER_SUPPLY_HWMON)
-> @@ -1361,7 +1361,7 @@ __power_supply_register(struct device *parent,
->  		pr_warn("%s: Expected proper parent device for '%s'\n",
->  			__func__, desc->name);
-> =20
-> -	if (psy_has_property(desc, POWER_SUPPLY_PROP_USB_TYPE) &&
-> +	if (power_supply_has_property(desc, POWER_SUPPLY_PROP_USB_TYPE) &&
->  	    (!desc->usb_types || !desc->num_usb_types))
->  		return ERR_PTR(-EINVAL);
-> =20
-> diff --git a/drivers/power/supply/power_supply_hwmon.c b/drivers/power/su=
-pply/power_supply_hwmon.c
-> index c97893d4c25e..2ecbe4a74c25 100644
-> --- a/drivers/power/supply/power_supply_hwmon.c
-> +++ b/drivers/power/supply/power_supply_hwmon.c
-> @@ -8,6 +8,8 @@
->  #include <linux/power_supply.h>
->  #include <linux/slab.h>
-> =20
-> +#include "power_supply.h"
-> +
->  struct power_supply_hwmon {
->  	struct power_supply *psy;
->  	unsigned long *props;
-> @@ -324,9 +326,26 @@ static const struct hwmon_chip_info power_supply_hwm=
-on_chip_info =3D {
->  	.info =3D power_supply_hwmon_info,
->  };
-> =20
-> +static const enum power_supply_property power_supply_hwmon_props[] =3D {
-> +	POWER_SUPPLY_PROP_CURRENT_AVG,
-> +	POWER_SUPPLY_PROP_CURRENT_MAX,
-> +	POWER_SUPPLY_PROP_CURRENT_NOW,
-> +	POWER_SUPPLY_PROP_TEMP,
-> +	POWER_SUPPLY_PROP_TEMP_MAX,
-> +	POWER_SUPPLY_PROP_TEMP_MIN,
-> +	POWER_SUPPLY_PROP_TEMP_ALERT_MIN,
-> +	POWER_SUPPLY_PROP_TEMP_ALERT_MAX,
-> +	POWER_SUPPLY_PROP_TEMP_AMBIENT,
-> +	POWER_SUPPLY_PROP_TEMP_AMBIENT_ALERT_MIN,
-> +	POWER_SUPPLY_PROP_TEMP_AMBIENT_ALERT_MAX,
-> +	POWER_SUPPLY_PROP_VOLTAGE_AVG,
-> +	POWER_SUPPLY_PROP_VOLTAGE_MIN,
-> +	POWER_SUPPLY_PROP_VOLTAGE_MAX,
-> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-> +};
-> +
->  int power_supply_add_hwmon_sysfs(struct power_supply *psy)
->  {
-> -	const struct power_supply_desc *desc =3D psy->desc;
->  	struct power_supply_hwmon *psyhw;
->  	struct device *dev =3D &psy->dev;
->  	struct device *hwmon;
-> @@ -352,30 +371,11 @@ int power_supply_add_hwmon_sysfs(struct power_suppl=
-y *psy)
->  		goto error;
->  	}
-> =20
-> -	for (i =3D 0; i < desc->num_properties; i++) {
-> -		const enum power_supply_property prop =3D desc->properties[i];
-> -
-> -		switch (prop) {
-> -		case POWER_SUPPLY_PROP_CURRENT_AVG:
-> -		case POWER_SUPPLY_PROP_CURRENT_MAX:
-> -		case POWER_SUPPLY_PROP_CURRENT_NOW:
-> -		case POWER_SUPPLY_PROP_TEMP:
-> -		case POWER_SUPPLY_PROP_TEMP_MAX:
-> -		case POWER_SUPPLY_PROP_TEMP_MIN:
-> -		case POWER_SUPPLY_PROP_TEMP_ALERT_MIN:
-> -		case POWER_SUPPLY_PROP_TEMP_ALERT_MAX:
-> -		case POWER_SUPPLY_PROP_TEMP_AMBIENT:
-> -		case POWER_SUPPLY_PROP_TEMP_AMBIENT_ALERT_MIN:
-> -		case POWER_SUPPLY_PROP_TEMP_AMBIENT_ALERT_MAX:
-> -		case POWER_SUPPLY_PROP_VOLTAGE_AVG:
-> -		case POWER_SUPPLY_PROP_VOLTAGE_MIN:
-> -		case POWER_SUPPLY_PROP_VOLTAGE_MAX:
-> -		case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-> +	for (i =3D 0; i < ARRAY_SIZE(power_supply_hwmon_props); i++) {
-> +		const enum power_supply_property prop =3D power_supply_hwmon_props[i];
-> +
-> +		if (power_supply_has_property(psy->desc, prop))
->  			set_bit(prop, psyhw->props);
-> -			break;
-> -		default:
-> -			break;
-> -		}
->  	}
-> =20
->  	name =3D psy->desc->name;
-> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/su=
-pply/power_supply_sysfs.c
-> index 3e63d165b2f7..abd44ebfe6fe 100644
-> --- a/drivers/power/supply/power_supply_sysfs.c
-> +++ b/drivers/power/supply/power_supply_sysfs.c
-> @@ -367,7 +367,6 @@ static umode_t power_supply_attr_is_visible(struct ko=
-bject *kobj,
->  	struct device *dev =3D kobj_to_dev(kobj);
->  	struct power_supply *psy =3D dev_get_drvdata(dev);
->  	umode_t mode =3D S_IRUSR | S_IRGRP | S_IROTH;
-> -	int i;
-> =20
->  	if (!power_supply_attrs[attrno].prop_name)
->  		return 0;
-> @@ -375,15 +374,10 @@ static umode_t power_supply_attr_is_visible(struct =
-kobject *kobj,
->  	if (attrno =3D=3D POWER_SUPPLY_PROP_TYPE)
->  		return mode;
-> =20
-> -	for (i =3D 0; i < psy->desc->num_properties; i++) {
-> -		int property =3D psy->desc->properties[i];
-> -
-> -		if (property =3D=3D attrno) {
-> -			if (power_supply_property_is_writeable(psy, property) > 0)
-> -				mode |=3D S_IWUSR;
-> -
-> -			return mode;
-> -		}
-> +	if (power_supply_has_property(psy->desc, attrno)) {
-> +		if (power_supply_property_is_writeable(psy, attrno) > 0)
-> +			mode |=3D S_IWUSR;
-> +		return mode;
->  	}
-> =20
->  	if (power_supply_battery_info_has_prop(psy->battery_info, attrno))
->=20
-> --=20
-> 2.45.2
->=20
->=20
-
---xswfieillim2hyws
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmaGfKYACgkQ2O7X88g7
-+ppA4hAAgr6kixbmAxt3HpswiG12L1aQBRjsNvCaval66hpmqtGGjRVbde8TYXAl
-GCFoiPkfQ7kBSluAjalHWoVWfOUPIQjBplSEXGpJnc6mhchIIbDV9ElPxkSAFX3r
-i61xhqD+4M26NHyxl4C7uC58e2BwPcZ2zNZ/JbDVGQzrT2O3VkJ1Vj5eiVSgkawL
-dope8NI7gxzGorCyWlIGTWlTaWA+YdzxkthoSR0jaOXjoreeJw0s6Fm9UKZDf2ol
-fyPZXJ7NtQ9Cfdcsqm+NLD2gOiqRFlh8UefqhxORASl75W8X0EIrVJzsLSC7UkqL
-AlBbUi5vBJqDoE/+on6awj0f28Nq+zxRe8h8rxJC2ydh973EYHccswrPlsDuVlQ6
-D6ODtgGuemwuRWkMqeKFGYrpD8XIFzGQcD7+FiiETO7m554CGvFJenbQJb4WnU7c
-kLIsrWGl3QNSXrS0kYXq5QeAymmcYYPrTppW5kqPokOLUaFvev6RIz05RpL4diUp
-sgUXE+Np+hYRd2oEgI7NliGHRH/1LZwANKhy7dNrSJa4fKJR3h3vudI4EnqK+3dl
-pqaKiECqLohlxCS/w1oteqhm0rxl6wvPZprLaW7UCGx0UpISbbAzluwPxYX1Ki+i
-YI8WGsnJHh6ejNZM2qIW7ZAQgm7nnGLguHQgOjgi0OG9qqCElcQ=
-=FIE3
------END PGP SIGNATURE-----
-
---xswfieillim2hyws--
+diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
+index ab1935a4aa2c..43d7c73b25aa 100644
+--- a/drivers/net/team/team_core.c
++++ b/drivers/net/team/team_core.c
+@@ -1972,7 +1972,8 @@ static int team_add_slave(struct net_device *dev, struct net_device *port_dev,
+        struct team *team = netdev_priv(dev);
+        int err;
+ 
+-       mutex_lock(&team->lock);
++       if (!mutex_trylock(&team->lock))
++               return -EBUSY;
+        err = team_port_add(team, port_dev, extack);
+        mutex_unlock(&team->lock);
+ 
+@@ -1987,7 +1988,8 @@ static int team_del_slave(struct net_device *dev, struct net_device *port_dev)
+        struct team *team = netdev_priv(dev);
+        int err;
+ 
+-       mutex_lock(&team->lock);
++       if (!mutex_trylock(&team->lock))
++               return -EBUSY;
+        err = team_port_del(team, port_dev);
+        mutex_unlock(&team->lock);
+ 
+--
 
