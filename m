@@ -1,51 +1,50 @@
-Return-Path: <linux-kernel+bounces-240993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FFB5927572
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:47:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B671927575
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BEDD1F226F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:47:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C89328261D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EA71ACE63;
-	Thu,  4 Jul 2024 11:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE381AD3F4;
+	Thu,  4 Jul 2024 11:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CX3LoUce"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IoyZ3fM2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDAA1ABC29;
-	Thu,  4 Jul 2024 11:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B49F16A945;
+	Thu,  4 Jul 2024 11:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720093637; cv=none; b=tGNpQ0LDI3AMlHJSfXnoEcMMt+TXEudNS6m99swdPCcaNUe69C1RlgMaYyILnuuZ7Fw0dGwm+xymqCQdUvukCzcWdlMAMEu3QuWva/ypKk1dy4Ppluf0OoSn66G3jOGNmogk6mJbeumVytnwcaNvg7QsqDcZ6FqQnUW2Pv4D3hs=
+	t=1720093719; cv=none; b=TGcDyzvcT5iKRbXBK9ytVi1b9MyX9cmyk8mUuGioRO73vXW8Pw4dZ8P/9QVX1T9Ou6wNxtdoJzWqkZ7xLHLtUvXe+J2eNs67ytfFAxvgOYcLqy5tUQegOlGKkElQRzf9maiuBI5oytmUwhUSSNeEvvfRt7Km+tNpxBWnEDHhn48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720093637; c=relaxed/simple;
-	bh=2hHfiNTrMunafGHifKj+0dJHBw6gtN+42Y+OqGplmJ8=;
+	s=arc-20240116; t=1720093719; c=relaxed/simple;
+	bh=c4OshHpTxBAdoC0PCCGARRV97ciDLNCp+eTfY08+D8w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=To2VZ9Gd6bGVkMz5cVphTOW/MRLHFg8Pw0/qeb/K4lh12Sh56K1oH6LqUf2DwZwwycbTkUNkI48++Root9htqp7/BGjOSgxh+3ygv/eeD4wje6/7Ntz7rSAOZiMP3lR2AdV3zApXOeLKKJp3vw7liMVtrJj6OY6ll5wgf6DYsBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CX3LoUce; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72547C4AF10;
-	Thu,  4 Jul 2024 11:47:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxG1SVInaayVpyKZFoUvQJ6khiZdKKIeUbv4LgHM2hcDqyBY1dAWZRnl9ZKjV8Wq0B9hAwF9wZry9HgF77oxTKsvJ/uCnHNw+02PIymHExvUf8xXgt2qRRLmsPLQ/wVYFM6W+d7GGwLwN18cNKQui+G7t5HEUsvM2SyaOJ6UCt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IoyZ3fM2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B2DC3277B;
+	Thu,  4 Jul 2024 11:48:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720093637;
-	bh=2hHfiNTrMunafGHifKj+0dJHBw6gtN+42Y+OqGplmJ8=;
+	s=korg; t=1720093718;
+	bh=c4OshHpTxBAdoC0PCCGARRV97ciDLNCp+eTfY08+D8w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CX3LoUce3s/jfHnb8Qy1WdNi+QrHQbDxUOadSBx2mDFEGNY3GdHmo714FV8q39Jq8
-	 wEn7CCsqgedkMKhlW0Fw0Wobi4EI2d6scgbOui1ECHdDZCZFc7H0zOd75qTvtGhOYX
-	 zFrLNqC9Rl1IRC24dLbMYv9/N1G9gIlU89Txou1c=
-Date: Thu, 4 Jul 2024 13:47:13 +0200
+	b=IoyZ3fM2L8dLuiR+jLFo4RN3qwSY8fZ4Blc4SBotEqbxybfC91Xyl8mMLJBCl3ixN
+	 EmEzGDBN5Dd04NGlNtX+wrspAPikfUvw5DJoZHjan5FvNo9ejyzdJTq5X4WJbcl9RN
+	 VJBLpd0G827Lnmzo/6/lB2LDDNZYYZekn4u1Yusc=
+Date: Thu, 4 Jul 2024 13:48:35 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Akshay Gupta <akshay.gupta@amd.com>
 Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux@roeck-us.net, arnd@arndb.de, naveenkrishna.chatradhi@amd.com
-Subject: Re: [PATCH 1/6] hwmon/misc sbrmi: Move core sbrmi from hwmon to misc
-Message-ID: <2024070448-spectacle-pungent-38ba@gregkh>
+Subject: Re: [PATCH 0/6] misc: add amd side-band functionality
+Message-ID: <2024070416-cosponsor-barrack-6125@gregkh>
 References: <20240704111624.1583460-1-akshay.gupta@amd.com>
- <20240704111624.1583460-2-akshay.gupta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,19 +53,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240704111624.1583460-2-akshay.gupta@amd.com>
+In-Reply-To: <20240704111624.1583460-1-akshay.gupta@amd.com>
 
-On Thu, Jul 04, 2024 at 11:16:19AM +0000, Akshay Gupta wrote:
-> --- a/drivers/hwmon/sbrmi.c
-> +++ b/drivers/hwmon/sbrmi.c
-> @@ -3,190 +3,18 @@
->   * sbrmi.c - hwmon driver for a SB-RMI mailbox
->   *           compliant AMD SoC device.
->   *
-> - * Copyright (C) 2020-2021 Advanced Micro Devices, Inc.
-> + * Copyright (C) 2020-2024 Advanced Micro Devices, Inc.
+On Thu, Jul 04, 2024 at 11:16:18AM +0000, Akshay Gupta wrote:
+> AMD's APML interface provides system management functionality accessed by
+> the BMC. Sbrmi driver under hwmon subsystem, which is probed as an i2c
+> driver and reports power using APML specified protocol.
 
-Are you sure this shouldn't be "2020-2021,2024"?
+What is "APML"?  What is "BMC"?
+
+> However, APML interface defines few other protocols to support
+> full system management functionality out-of-band.
+
+What is out-of-band here?
+
+> This patchset is an attempt to add all APML core functionality in one place
+> and provide hwmon and user interface
+> 1. Move the i2c client probe and sbrmi core functionality from drivers/hwmon
+>    to drivers/misc/
+> 2. Add a platform device, which probes the hwmon/sbrmi and continues to
+>    report power using the symbol exported by the misc/sbrmi-core.
+
+Are you sure this is a platform device?  It better not be a pci one...
+
+> 3. Convert i2c to regmap which provides multiple benefits
+>    over direct smbus APIs.
+
+What are those?
+
+> 4. Register a misc device which provides 
+>     a. An ioctl interface through node /dev/sbrmiX
+
+Why?
+
+>     b. Open-sourced and widely used https://github.com/amd/esmi_oob_library
+>        will continue to provide user-space programmable API.
+
+Will this use the new ioctl api?  If it's not present, what will it use
+instead?
 
 thanks,
 
